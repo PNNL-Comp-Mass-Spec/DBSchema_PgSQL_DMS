@@ -173,10 +173,10 @@ BEGIN
                 RAISE INFO '  ProteinCollectionList=%', _proteinCollectionList;
                 RAISE INFO '  ProteinOptions=       %', _proteinOptions;
             Else
-                CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'OrganismName',          _value => _organismName,          _deleteParam => false);
-                CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'LegacyFastaFileName',   _value => _legacyFastaFileName,   _deleteParam => false);
-                CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'ProteinCollectionList', _value => _proteinCollectionList, _deleteParam => false);
-                CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'ProteinOptions',        _value => _proteinOptions,        _deleteParam => false);
+                CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'OrganismName',          _value => _organismName,          _deleteParam => false, _message => _message, _returncode => _returncode, _infoOnly => false);
+                CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'LegacyFastaFileName',   _value => _legacyFastaFileName,   _deleteParam => false, _message => _message, _returncode => _returncode, _infoOnly => false);
+                CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'ProteinCollectionList', _value => _proteinCollectionList, _deleteParam => false, _message => _message, _returncode => _returncode, _infoOnly => false);
+                CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'ProteinOptions',        _value => _proteinOptions,        _deleteParam => false, _message => _message, _returncode => _returncode, _infoOnly => false);
             End If;
 
             _message := format('Defined OrgDb related parameters for job %s', _job);
@@ -204,10 +204,10 @@ BEGIN
                 RAISE INFO '  ProteinCollectionList';
                 RAISE INFO '  ProteinOptions';
             Else
-                CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'OrganismName',          _value => '',  _deleteParam => true);
-                CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'LegacyFastaFileName',   _value => '',  _deleteParam => true);
-                CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'ProteinCollectionList', _value => '',  _deleteParam => true);
-                CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'ProteinOptions',        _value => '',  _deleteParam => true);
+                CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'OrganismName',          _value => '',  _deleteParam => false, _message => _message, _returncode => _returncode, _infoOnly => false);
+                CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'LegacyFastaFileName',   _value => '',  _deleteParam => false, _message => _message, _returncode => _returncode, _infoOnly => false);
+                CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'ProteinCollectionList', _value => '',  _deleteParam => false, _message => _message, _returncode => _returncode, _infoOnly => false);
+                CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'ProteinOptions',        _value => '',  _deleteParam => false, _message => _message, _returncode => _returncode, _infoOnly => false);
             End If;
 
             _messageAddon := format('Deleted OrgDb related parameters from the PeptideSearch section of the job parameters for job %s', _job);

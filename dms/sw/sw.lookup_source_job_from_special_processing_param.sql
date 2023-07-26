@@ -1,31 +1,34 @@
 --
-CREATE OR REPLACE PROCEDURE sw.lookup_source_job_from_special_processing_param
-(
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _previewSql boolean= false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: lookup_source_job_from_special_processing_param(text, text, boolean); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.lookup_source_job_from_special_processing_param(INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _previewsql boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Looks up the source job defined for a new job
-*
-**      The calling procedure must CREATE TEMP TABLE Tmp_Source_Job_Folders
+**
+**      The calling procedure must create temp table Tmp_Source_Job_Folders
 **
 **      CREATE TEMP TABLE Tmp_Source_Job_Folders (
-**              Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-**              Job int NOT NULL,
-**              Step int NOT NULL,
-**              SourceJob int NULL,
-**              SourceJobResultsFolder text NULL,
-**              SourceJob2 int NULL,
-**              SourceJob2Dataset text NULL,
-**              SourceJob2FolderPath text NULL,
-**              SourceJob2FolderPathArchive text NULL,
-**              WarningMessage text NULL
-**      )
+**          Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+**          Job int NOT NULL,
+**          Step int NOT NULL,
+**          SourceJob int NULL,
+**          SourceJobResultsFolder text NULL,
+**          SourceJob2 int NULL,
+**          SourceJob2Dataset text NULL,
+**          SourceJob2FolderPath text NULL,
+**          SourceJob2FolderPathArchive text NULL,
+**          WarningMessage text NULL
+**      );
+**
+**  Arguments:
+**    _message          Output: status message
+**    _returnCode       Output: return code
+**    _previewSql       When true, set _previewSql to true when calling sw.lookup_source_job_from_special_processing_text()
 **
 **  Auth:   mem
 **  Date:   03/21/2011 mem - Initial Version
@@ -37,7 +40,7 @@ AS $$
 **          07/13/2012 mem - Now storing SourceJob2Dataset in Tmp_Source_Job_Folders
 **          03/11/2013 mem - Now overriding _sourceJobResultsFolder if there is a problem determining the details for Job2
 **          02/23/2016 mem - Add set XACT_ABORT on
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/25/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -57,7 +60,7 @@ DECLARE
     _sourceJob2FolderPath text;
     _sourceJob2FolderPathArchive text;
     _autoQuerySql text;
-    _warningMessage citext;
+    _warningMessage text;
     _logMessage text;
     _callingProcName text;
 
@@ -114,7 +117,7 @@ BEGIN
                 SELECT Value
                 INTO _specialProcessingText
                 FROM sw.get_job_param_table_local(_job)
-                WHERE Name = 'Special_Processing'
+                WHERE Name = 'Special_Processing';
 
                 If Not FOUND Then
                     _warningMessage := format('Job %s does not have a Special_Processing entry in sw.t_job_parameters', _job);
@@ -130,22 +133,22 @@ BEGIN
                 _tagName := 'SourceJob';
 
                 CALL sw.lookup_source_job_from_special_processing_text (
-                                          _job,
-                                          _dataset,
-                                          _specialProcessingText,
-                                          _tagName,
-                                          _sourceJob => _sourceJob,             -- Output
-                                          _autoQueryUsed => _autoQueryUsed,     -- Output
-                                          _warningMessage => _warningMessage,   -- Output
-                                          _returnCode => _returnCode,           -- Output
-                                          _previewSql => _previewSql,
-                                          _autoQuerySql => _autoQuerySql);      -- Output
+                          _job,
+                          _dataset,
+                          _specialProcessingText,
+                          _tagName,
+                          _sourceJob => _sourceJob,             -- Output
+                          _autoQueryUsed => _autoQueryUsed,     -- Output
+                          _warningMessage => _warningMessage,   -- Output
+                          _returnCode => _returnCode,           -- Output
+                          _previewSql => _previewSql,
+                          _autoQuerySql => _autoQuerySql);      -- Output
 
                 If Coalesce(_warningMessage, '') <> '' Then
                     CALL public.post_log_entry ('Debug', _warningMessage, 'Lookup_Source_Job_From_Special_Processing_Param', 'sw');
 
                     -- Override _sourceJobResultsFolder with an error message; this will force the job to fail since the input folder will not be found
-                    If _warningMessage Like '%exception%' Then
+                    If _warningMessage ILike '%exception%' Then
                         _sourceJobResultsFolder := 'UnknownFolder_Exception_Determining_SourceJob';
                     Else
                         If _autoQueryUsed Then
@@ -211,14 +214,14 @@ BEGIN
                           _autoQueryUsed => _autoQueryUsed,     -- Output
                           _warningMessage => _warningMessage,   -- Output
                           _returnCode => _returnCode,           -- Output
-                          _previewSql = _previewSql,
-                          _autoQuerySql = _autoQuerySql);       -- Output
+                          _previewSql => _previewSql,
+                          _autoQuerySql => _autoQuerySql);      -- Output
 
                 If Coalesce(_warningMessage, '') <> '' Then
                     CALL public.post_log_entry ('Debug', _warningMessage, 'Lookup_Source_Job_From_Special_Processing_Param', 'sw');
 
                     -- Override _sourceJobResultsFolder with an error message; this will force the job to fail since the input folder will not be found
-                    If _warningMessage Like '%exception%' Then
+                    If _warningMessage ILike '%exception%' Then
                         _sourceJob2FolderPath := 'UnknownFolder_Exception_Determining_SourceJob2';
                         _sourceJobResultsFolderOverride := _sourceJob2FolderPath;
                     Else
@@ -306,4 +309,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.lookup_source_job_from_special_processing_param IS 'LookupSourceJobFromSpecialProcessingParam';
+
+ALTER PROCEDURE sw.lookup_source_job_from_special_processing_param(INOUT _message text, INOUT _returncode text, IN _previewsql boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE lookup_source_job_from_special_processing_param(INOUT _message text, INOUT _returncode text, IN _previewsql boolean); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.lookup_source_job_from_special_processing_param(INOUT _message text, INOUT _returncode text, IN _previewsql boolean) IS 'LookupSourceJobFromSpecialProcessingParam';
+

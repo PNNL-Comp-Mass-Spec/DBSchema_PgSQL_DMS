@@ -1,24 +1,15 @@
 --
-CREATE OR REPLACE PROCEDURE sw.add_new_jobs
-(
-    _bypassDMS boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _maxJobsToProcess int = 0,
-    _logIntervalThreshold int = 15,
-    _loggingEnabled boolean = false,
-    _loopingUpdateInterval int = 5,
-    _infoOnly boolean = false,
-    _infoLevel int = 0,
-    _debugMode boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_new_jobs(boolean, text, text, integer, integer, boolean, integer, boolean, integer, boolean); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.add_new_jobs(IN _bypassdms boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _maxjobstoprocess integer DEFAULT 0, IN _logintervalthreshold integer DEFAULT 15, IN _loggingenabled boolean DEFAULT false, IN _loopingupdateinterval integer DEFAULT 5, IN _infoonly boolean DEFAULT false, IN _infolevel integer DEFAULT 0, IN _debugmode boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Add jobs from DMS that are in 'New' state that aren't
-**      already in table.  Choose script for DMS analysis tool.
+**      Add jobs from DMS that are in 'New' state in public.t_analysis_job, but aren't already in sw.t_jobs
+**      The DMS analysis tool tool determines the pipeline script to use
 **
 **      Suspend running jobs that now have state 'Holding' in public.t_analysis_job
 **
@@ -52,6 +43,9 @@ AS $$
 **
 **  Arguments:
 **    _bypassDMS                If true, the logic in this procedure is completely bypassed
+**    _message                  Output: status message
+**    _returnCode               Output: return code
+**    _maxJobsToProcess         Maximum number of jobs to process
 **    _logIntervalThreshold     If this procedure runs longer than this threshold, status messages will be posted to the log
 **    _loggingEnabled           Set to true to immediately enable progress logging; if false, logging will auto-enable if _logIntervalThreshold seconds elapse
 **    _loopingUpdateInterval    Seconds between detailed logging while looping through the dependencies
@@ -85,14 +79,14 @@ AS $$
 **          07/12/2011 mem - Now calling Validate_Job_Server_Info
 **          01/09/2012 mem - Now populating Owner in T_Jobs
 **          01/12/2012 mem - Now only auto-adding jobs for scripts with Backfill_to_DMS = 0
-**          01/19/2012 mem - Now populating DataPkgID in T_Jobs
+**          01/19/2012 mem - Now populating Data_Pkg_ID in T_Jobs
 **          04/28/2014 mem - Bumped up _maxJobsToAddResetOrResume from 1 million to 1 billion
 **          09/24/2014 mem - Rename Job in T_Job_Step_Dependencies
 **          11/07/2014 mem - No longer performing a full job reset for ICR2LS or LTQ_FTPek jobs where the job state is failed but the DMS state is new
 **          01/04/2016 mem - Truncate the job comment at the first semicolon for failed jobs being reset
 **          05/12/2017 mem - Update Next_Try and Remote_Info_ID
 **`         03/30/2018 mem - Add support for job step states 9=Running_Remote, 10=Holding_Staging, and 16=Failed_Remote
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/25/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -124,7 +118,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly  := Coalesce(_infoOnly, false);
     _infoLevel := Coalesce(_infoLevel, 0);
 
     _bypassDMS := Coalesce(_bypassDMS, false);
@@ -252,7 +246,7 @@ BEGIN
 
     -- New or held jobs are available
     If _debugMode Then
-        INSERT INTO Tmp_JobDebugMessages (Message, Job, Script, DMS_State, Pipeline_State);
+        INSERT INTO Tmp_JobDebugMessages (Message, Job, Script, DMS_State, Pipeline_State)
         SELECT 'New or Held Jobs', J.job, J.script, J.state, T.state
         FROM Tmp_DMSJobs J
              LEFT OUTER JOIN sw.t_jobs T
@@ -270,242 +264,243 @@ BEGIN
         CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
     End If;
 
-    BEGIN
-        ---------------------------------------------------
-        -- Reset job:
-        -- delete existing job info from database
-        ---------------------------------------------------
+    ---------------------------------------------------
+    -- Reset job:
+    -- delete existing job info from database
+    ---------------------------------------------------
 
-        -- Find jobs that are complete in the broker, but in state 1=New in public.t_analysis_job
+    -- Find jobs that are complete in the broker, but in state 1=New in public.t_analysis_job
 
-        INSERT INTO Tmp_ResetJobs (job)
-        SELECT T.job
-        FROM Tmp_DMSJobs T
-             INNER JOIN sw.t_jobs
-               ON T.job = sw.t_jobs.job
-        WHERE sw.t_jobs.state = 4 AND            -- Complete in the broker
-              T.state = 1;                       -- New in public.t_analysis_job
-        --
-        GET DIAGNOSTICS _jobCountToReset = ROW_COUNT;
+    INSERT INTO Tmp_ResetJobs (job)
+    SELECT T.job
+    FROM Tmp_DMSJobs T
+         INNER JOIN sw.t_jobs
+           ON T.job = sw.t_jobs.job
+    WHERE sw.t_jobs.state = 4 AND            -- Complete in the broker
+          T.state = 1;                       -- New in public.t_analysis_job
+    --
+    GET DIAGNOSTICS _jobCountToReset = ROW_COUNT;
 
-        If _jobCountToReset > 0 Then
-            _statusMessage := format('Resetting %s completed %s',
-                                        _jobCountToReset, public.check_plural(_jobCountToReset, 'job', 'jobs');
+    If _jobCountToReset > 0 Then
+        _statusMessage := format('Resetting %s completed %s',
+                                 _jobCountToReset, public.check_plural(_jobCountToReset, 'job', 'jobs'));
 
-            CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
+        CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
+    End If;
+
+    -- Also look for jobs where the DMS state is 'New', the broker state is 2, 5, or 8 (In Progress, Failed, or Holding),
+    -- and none of the jobs Steps have completed or are running
+
+    -- It is typically safer to perform a full reset on these jobs (rather than a resume) in case an admin changed the settings file for the job
+    -- Exception: LTQ_FTPek and ICR2LS jobs because ICR-2LS runs as the first step and we create checkpoint copies of the .PEK files to allow for a resume
+
+    INSERT INTO Tmp_ResetJobs (job)
+    SELECT T.job
+    FROM Tmp_DMSJobs T
+         INNER JOIN sw.t_jobs
+           ON T.job = sw.t_jobs.job
+         LEFT OUTER JOIN ( SELECT J.job
+                           FROM sw.t_jobs J
+                                INNER JOIN sw.t_job_steps JS
+                                  ON J.job = JS.job
+                           WHERE J.state IN (2, 5, 8) AND   -- Jobs that are running, failed, or holding
+                                 JS.state IN (4, 5, 9)      -- Steps that are running or finished (but not failed or holding)
+                          ) LookupQ
+     ON sw.t_jobs.job = LookupQ.job
+    WHERE sw.t_jobs.state IN (2, 5, 8) AND
+          NOT T.script IN ('LTQ_FTPek','ICR2LS') AND
+          LookupQ.job IS NULL;                       -- Assure there are no running or finished steps
+    --
+    GET DIAGNOSTICS _matchCount = ROW_COUNT;
+
+    If _matchCount > 0 Then
+        _jobCountToReset := _jobCountToReset + _matchCount;
+
+        _statusMessage := format('Resetting %s %s that %s In Progress, Failed, or Holding and % no completed or running job steps',
+                                 _matchCount,
+                                 public.check_plural(_matchCount, 'job', 'jobs'),
+                                 public.check_plural(_matchCount, 'is',  'are'),
+                                 public.check_plural(_matchCount, 'has', 'have'));
+
+        CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
+    End If;
+
+    If _jobCountToReset = 0 Then
+        If _debugMode Then
+            INSERT INTO Tmp_JobDebugMessages (Message, Job)
+            VALUES ('No Jobs to Reset', 0);
         End If;
+    Else
+        -- Reset jobs
 
-        -- Also look for jobs where the DMS state is 'New', the broker state is 2, 5, or 8 (In Progress, Failed, or Holding),
-        -- and none of the jobs Steps have completed or are running
-
-        -- It is typically safer to perform a full reset on these jobs (rather than a resume) in case an admin changed the settings file for the job
-        -- Exception: LTQ_FTPek and ICR2LS jobs because ICR-2LS runs as the first step and we create checkpoint copies of the .PEK files to allow for a resume
-
-        INSERT INTO Tmp_ResetJobs (job)
-        SELECT T.job
-        FROM Tmp_DMSJobs T
-             INNER JOIN sw.t_jobs
-               ON T.job = sw.t_jobs.job
-             LEFT OUTER JOIN ( SELECT J.job
-                               FROM sw.t_jobs J
-                                    INNER JOIN sw.t_job_steps JS
-                                      ON J.job = JS.job
-                               WHERE J.state IN (2, 5, 8) AND   -- Jobs that are running, failed, or holding
-                                     JS.state IN (4, 5, 9))     -- Steps that are running or finished (but not failed or holding)
-                              ) LookupQ
-         ON sw.t_jobs.job = LookupQ.job
-        WHERE sw.t_jobs.state IN (2, 5, 8) AND
-              NOT T.script IN ('LTQ_FTPek','ICR2LS') AND
-              LookupQ.job IS NULL;                       -- Assure there are no running or finished steps
-        --
-        GET DIAGNOSTICS _matchCount = ROW_COUNT;
-
-        If _matchCount > 0 Then
-            _jobCountToReset := _jobCountToReset + _matchCount;
-
-            _statusMessage := format('Resetting %s %s that %s In Progress, Failed, or Holding and % no completed or running job steps',
-                                        _matchCount,
-                                        public.check_plural(_matchCount, 'job', 'jobs'),
-                                        public.check_plural(_matchCount, 'is',  'are'),
-                                        public.check_plural(_matchCount, 'has', 'have'));
-
-            CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
-        End If;
-
-        If _jobCountToReset = 0 Then
-            If _debugMode Then
-                INSERT INTO Tmp_JobDebugMessages (Message, Job);
-                VALUES ('No Jobs to Reset', 0);
-            End If;
-        Else
-            -- Reset jobs
-
-            If _maxJobsToProcess > 0 Then
-                -- Limit the number of jobs to reset
-                DELETE FROM Tmp_ResetJobs
-                WHERE NOT Job IN ( SELECT Job
-                                   FROM Tmp_ResetJobs
-                                   ORDER BY Job
-                                   LIMIT _maxJobsToProcess );
-            End If;
-
-            If _debugMode Then
-                INSERT INTO Tmp_JobDebugMessages (Message, job, script, DMS_State, Pipeline_State)
-                SELECT 'Jobs to Reset', J.job, J.script, J.state, T.state
-                FROM Tmp_ResetJobs R INNER JOIN Tmp_DMSJobs J ON R.job = J.job
-                     INNER JOIN sw.t_jobs T ON J.job = T.job
-                ORDER BY job;
-            Else
-
-                ---------------------------------------------------
-                -- Set up and populate temp table and call procedure
-                -- to delete jobs listed in it
-                ---------------------------------------------------
-
-                CREATE TEMP TABLE Tmp_Selected_Jobs (Job int);
-
-                CREATE INDEX IX_Tmp_Selected_Jobs_Job ON Tmp_Selected_Jobs (Job);
-
-                _createdSelectedJobsTable := true;
-
-                INSERT INTO SJL (Job)
-                SELECT Job FROM Tmp_ResetJobs;
-
-                CALL sw.remove_selected_jobs (
-                            _infoOnly,
-                            _message => _message,
-                            _returnCode => _returnCode,
-                            _logDeletions => false,
-                            _logToConsoleOnly => false);
-
-            End If;
-        End If;
-
-        If Not _infoOnly Or _infoOnly And _infoLevel = 2 Then
-
-            -- Import new jobs
-
-            If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
-                _loggingEnabled := true;
-                _statusMessage := 'Adding new jobs to sw.t_jobs';
-                CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
-            End If;
-
-            ---------------------------------------------------
-            -- Import job:
-            -- Copy new jobs from DMS that are not already in table
-            -- (only take jobs that have script that is currently active)
-            ---------------------------------------------------
-
-            INSERT INTO sw.t_jobs ( job, priority, script, State, Dataset, Dataset_ID, Transfer_Folder_Path,
-                                    comment, special_processing, storage_server, owner_username, DataPkgID )
-            SELECT DJ.job, DJ.priority, DJ.script, 0 As State, DJ.Dataset, DJ.Dataset_ID, DJ.Transfer_Folder_Path,
-                   DJ.comment, DJ.special_processing, sw.extract_server_name(DJ.transfer_folder_path) AS Storage_Server, DJ.Owner_Username, 0 AS DataPkgID
-            FROM Tmp_DMSJobs DJ
-                 INNER JOIN sw.t_scripts S
-                   ON DJ.script = S.script
-            WHERE state = 1 AND
-                  job NOT IN ( SELECT job
-                               FROM sw.t_jobs ) AND
-                  S.enabled = 'Y' AND
-                  S.backfill_to_dms = 0
-            LIMIT _maxJobsToAddResetOrResume;
-
-        End If;
-
-        ---------------------------------------------------
-        -- Find jobs to Resume or Reset
-        --
-        -- Jobs that are reset in public.t_analysis_job will be in 'new' state,
-        -- but there will be an entry for the job in sw.t_jobs that is in the 'failed' or 'holding' state
-        --
-        -- For all such jobs, set all steps that are in 'failed' state to the 'waiting' state
-        -- and set the job state to 'resuming'
-        ---------------------------------------------------
-
-        If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
-            _loggingEnabled := true;
-            _statusMessage := 'Finding jobs to Resume';
-            CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
-        End If;
-
-        INSERT INTO Tmp_JobsToResumeOrReset (job, dataset, FailedJob)
-        SELECT J.job,
-               J.dataset,
-               CASE WHEN J.state = 5 THEN 1 ELSE 0 END AS FailedJob
-        FROM sw.t_jobs J
-        WHERE J.state IN (5, 8) AND                    -- 5=Failed, 8=Holding
-              J.job IN (SELECT job FROM Tmp_DMSJobs WHERE state = 1)
-        LIMIT _maxJobsToAddResetOrResume;
-        --
-        GET DIAGNOSTICS _jobCountToResume = ROW_COUNT;
-
-        If _jobCountToResume = 0 Then
-            If _debugMode Then
-                INSERT INTO Tmp_JobDebugMessages (Message, Job);
-                VALUES ('No Jobs to Resume', 0);
-            End If;
-        Else
-            -- Resume or reset jobs
-
-            If _debugMode Then
-                INSERT INTO Tmp_JobDebugMessages (Message, job, script, DMS_State, Pipeline_State)
-                SELECT 'Jobs to Resume', J.job, J.script, J.state, T.state
-                FROM Tmp_JobsToResumeOrReset R
-                     INNER JOIN Tmp_DMSJobs J
-                       ON R.job = J.job
-                     INNER JOIN sw.t_jobs T
-                       ON J.job = T.job
-                ORDER BY job;
-            Else
-                _resumeUpdatesRequired := true;
-            End If;
+        If _maxJobsToProcess > 0 Then
+            -- Limit the number of jobs to reset
+            DELETE FROM Tmp_ResetJobs
+            WHERE NOT Job IN ( SELECT Job
+                               FROM Tmp_ResetJobs
+                               ORDER BY Job
+                               LIMIT _maxJobsToProcess );
         End If;
 
         If _debugMode Then
             INSERT INTO Tmp_JobDebugMessages (Message, job, script, DMS_State, Pipeline_State)
-            SELECT 'Jobs to Suspend', J.job, J.script, J.state, T.state
-            FROM sw.t_jobs T
-                 INNER JOIN Tmp_DMSJobs J
-                   ON T.job = J.job
-            WHERE
-                (T.state <> 8) AND                    -- 8=Holding
-                (T.job IN (SELECT job FROM Tmp_DMSJobs WHERE state = 8));
-
-            If Not FOUND Then
-                INSERT INTO Tmp_JobDebugMessages (Message, Job);
-                VALUES ('No Jobs to Suspend', 0);
-            End If;
+            SELECT 'Jobs to Reset', J.job, J.script, J.state, T.state
+            FROM Tmp_ResetJobs R INNER JOIN Tmp_DMSJobs J ON R.job = J.job
+                 INNER JOIN sw.t_jobs T ON J.job = T.job
+            ORDER BY job;
         Else
 
             ---------------------------------------------------
-            -- Find jobs to suspend
+            -- Set up and populate temp table and call procedure
+            -- to delete jobs listed in it
             ---------------------------------------------------
 
-            If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
-                _loggingEnabled := true;
-                _statusMessage := 'Finding jobs to Suspend (Hold)';
-                CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
-            End If;
+            CREATE TEMP TABLE Tmp_Selected_Jobs (Job int);
 
-            -- Set local job state to holding for jobs
-            -- that are in holding state in public.t_analysis_job
-            --
-            UPDATE sw.t_jobs
-            SET state = 8                            -- 8=Holding
-            WHERE sw.t_jobs.state <> 8 AND
-                  sw.t_jobs.job IN ( SELECT job
-                                     FROM Tmp_DMSJobs
-                                     WHERE state = 8 );
-            --
-            GET DIAGNOSTICS _updateCount = ROW_COUNT;
+            CREATE INDEX IX_Tmp_Selected_Jobs_Job ON Tmp_Selected_Jobs (Job);
 
-            If _updateCount > 0 Then
-                _statusMessage := format('Suspended %s %s', _updateCount, public.check_plural(_updateCount, 'job', 'jobs'));
-                CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
-            End If;
+            _createdSelectedJobsTable := true;
+
+            INSERT INTO Tmp_Selected_Jobs (Job)
+            SELECT Job FROM Tmp_ResetJobs;
+
+            CALL sw.remove_selected_jobs (
+                        _infoOnly,
+                        _message => _message,           -- Output
+                        _returnCode => _returnCode,     -- Output
+                        _logDeletions => false,
+                        _logToConsoleOnly => false);
+
         End If;
-    END;
+
+    End If;
+
+    If Not _infoOnly Or _infoOnly And _infoLevel = 2 Then
+
+        ---------------------------------------------------
+        -- Import new jobs
+        ---------------------------------------------------
+
+        If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
+            _loggingEnabled := true;
+            _statusMessage := 'Adding new jobs to sw.t_jobs';
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
+        End If;
+
+        ---------------------------------------------------
+        -- Import job:
+        -- Copy new jobs from DMS that are not already in table
+        -- (only take jobs that have script that is currently active)
+        ---------------------------------------------------
+
+        INSERT INTO sw.t_jobs ( job, priority, script, State, Dataset, Dataset_ID, Transfer_Folder_Path,
+                                comment, special_processing, storage_server, owner_username, Data_Pkg_ID )
+        SELECT DJ.job, DJ.priority, DJ.script, 0 As State, DJ.Dataset, DJ.Dataset_ID, DJ.Transfer_Folder_Path,
+               DJ.comment, DJ.special_processing, sw.extract_server_name(DJ.transfer_folder_path) AS Storage_Server, DJ.Owner_Username, 0 AS Data_Pkg_ID
+        FROM Tmp_DMSJobs DJ
+             INNER JOIN sw.t_scripts S
+               ON DJ.script = S.script
+        WHERE state = 1 AND
+              job NOT IN ( SELECT job
+                           FROM sw.t_jobs ) AND
+              S.enabled = 'Y' AND
+              S.backfill_to_dms = 0
+        LIMIT _maxJobsToAddResetOrResume;
+
+    End If;
+
+    ---------------------------------------------------
+    -- Find jobs to Resume or Reset
+    --
+    -- Jobs that are reset in public.t_analysis_job will be in 'new' state,
+    -- but there will be an entry for the job in sw.t_jobs that is in the 'failed' or 'holding' state
+    --
+    -- For all such jobs, set all steps that are in 'failed' state to the 'waiting' state
+    -- and set the job state to 'resuming'
+    ---------------------------------------------------
+
+    If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
+        _loggingEnabled := true;
+        _statusMessage := 'Finding jobs to Resume';
+        CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
+    End If;
+
+    INSERT INTO Tmp_JobsToResumeOrReset (job, dataset, FailedJob)
+    SELECT J.job,
+           J.dataset,
+           CASE WHEN J.state = 5 THEN 1 ELSE 0 END AS FailedJob
+    FROM sw.t_jobs J
+    WHERE J.state IN (5, 8) AND                    -- 5=Failed, 8=Holding
+          J.job IN (SELECT job FROM Tmp_DMSJobs WHERE state = 1)
+    LIMIT _maxJobsToAddResetOrResume;
+    --
+    GET DIAGNOSTICS _jobCountToResume = ROW_COUNT;
+
+    If _jobCountToResume = 0 Then
+        If _debugMode Then
+            INSERT INTO Tmp_JobDebugMessages (Message, Job)
+            VALUES ('No Jobs to Resume', 0);
+        End If;
+    Else
+        -- Resume or reset jobs
+
+        If _debugMode Then
+            INSERT INTO Tmp_JobDebugMessages (Message, job, script, DMS_State, Pipeline_State)
+            SELECT 'Jobs to Resume', J.job, J.script, J.state, T.state
+            FROM Tmp_JobsToResumeOrReset R
+                 INNER JOIN Tmp_DMSJobs J
+                   ON R.job = J.job
+                 INNER JOIN sw.t_jobs T
+                   ON J.job = T.job
+            ORDER BY job;
+        Else
+            _resumeUpdatesRequired := true;
+        End If;
+    End If;
+
+    If _debugMode Then
+        INSERT INTO Tmp_JobDebugMessages (Message, job, script, DMS_State, Pipeline_State)
+        SELECT 'Jobs to Suspend', J.job, J.script, J.state, T.state
+        FROM sw.t_jobs T
+             INNER JOIN Tmp_DMSJobs J
+               ON T.job = J.job
+        WHERE
+            (T.state <> 8) AND                    -- 8=Holding
+            (T.job IN (SELECT job FROM Tmp_DMSJobs WHERE state = 8));
+
+        If Not FOUND Then
+            INSERT INTO Tmp_JobDebugMessages (Message, Job)
+            VALUES ('No Jobs to Suspend', 0);
+        End If;
+    Else
+
+        ---------------------------------------------------
+        -- Find jobs to suspend
+        ---------------------------------------------------
+
+        If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
+            _loggingEnabled := true;
+            _statusMessage := 'Finding jobs to Suspend (Hold)';
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
+        End If;
+
+        -- Set local job state to holding for jobs
+        -- that are in holding state in public.t_analysis_job
+        --
+        UPDATE sw.t_jobs
+        SET state = 8                            -- 8=Holding
+        WHERE sw.t_jobs.state <> 8 AND
+              sw.t_jobs.job IN ( SELECT job
+                                 FROM Tmp_DMSJobs
+                                 WHERE state = 8 );
+        --
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
+
+        If _updateCount > 0 Then
+            _statusMessage := format('Suspended %s %s', _updateCount, public.check_plural(_updateCount, 'job', 'jobs'));
+            CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
+        End If;
+    End If;
 
     If _resumeUpdatesRequired Then
 
@@ -513,7 +508,7 @@ BEGIN
         -- Process the jobs that need to be resumed
         ---------------------------------------------------
 
-        _statusMessage := format('Resuming %s %s', _jobCountToResume, public.check_plural(_jobCountToResume, 'job', 'jobs');
+        _statusMessage := format('Resuming %s %s', _jobCountToResume, public.check_plural(_jobCountToResume, 'job', 'jobs'));
 
         CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
 
@@ -549,7 +544,7 @@ BEGIN
                 DROP TABLE Tmp_JobsToResumeOrReset;
                 DROP TABLE Tmp_JobDebugMessages;
 
-                If _createdSelectedJobsTable := true; Then
+                If _createdSelectedJobsTable Then
                     DROP TABLE Tmp_Selected_Jobs;
                 End If;
 
@@ -623,48 +618,44 @@ BEGIN
             CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
         End If;
 
-        BEGIN
+        ---------------------------------------------------
+        -- Set any failed or holding job steps to waiting
+        ---------------------------------------------------
 
-            ---------------------------------------------------
-            -- Set any failed or holding job steps to waiting
-            ---------------------------------------------------
+        UPDATE sw.t_job_steps
+        SET state = 1,                  -- 1=waiting
+            tool_version_id = 1,        -- 1=Unknown
+            next_try = CURRENT_TIMESTAMP,
+            retry_count = 0,
+            remote_info_id = 1,         -- 1=Unknown
+            remote_timestamp = Null,
+            remote_start = Null,
+            remote_finish = Null,
+            remote_progress = Null
+        WHERE
+            state IN (6, 7, 10, 16) AND          -- 6=Failed, 7=Holding, 10=Holding_Staging, 16=Failed_Remote
+            job IN (SELECT job From Tmp_JobsToResumeOrReset);
 
-            UPDATE sw.t_job_steps
-            SET state = 1,                  -- 1=waiting
-                tool_version_id = 1,        -- 1=Unknown
-                next_try = CURRENT_TIMESTAMP,
-                retry_count = 0,
-                remote_info_id = 1,         -- 1=Unknown
-                remote_timestamp = Null,
-                remote_start = Null,
-                remote_finish = Null,
-                remote_progress = Null
-            WHERE
-                state IN (6, 7, 10, 16) AND          -- 6=Failed, 7=Holding, 10=Holding_Staging, 16=Failed_Remote
-                job IN (SELECT job From Tmp_JobsToResumeOrReset);
+        ---------------------------------------------------
+        -- Reset the entries in sw.t_job_step_dependencies for any steps with state 1
+        ---------------------------------------------------
 
-            ---------------------------------------------------
-            -- Reset the entries in sw.t_job_step_dependencies for any steps with state 1
-            ---------------------------------------------------
+        UPDATE sw.t_job_step_dependencies JSD
+        SET evaluated = 0,
+            triggered = 0
+        FROM sw.t_job_steps JS
+        WHERE JSD.job = JS.job AND
+            JSD.step = JS.step AND
+            JS.state = 1 AND            -- 1=Waiting
+            JS.job IN (SELECT job From Tmp_JobsToResumeOrReset);
 
-            UPDATE sw.t_job_step_dependencies JSD
-            SET evaluated = 0,
-                triggered = 0
-            FROM sw.t_job_steps JS
-            WHERE JSD.job = JS.job AND
-                JSD.step = JS.step AND
-                JS.state = 1 AND            -- 1=Waiting
-                JS.job IN (SELECT job From Tmp_JobsToResumeOrReset);
+        ---------------------------------------------------
+        -- Set job state to 'resuming'
+        ---------------------------------------------------
 
-            ---------------------------------------------------
-            -- Set job state to 'resuming'
-            ---------------------------------------------------
-
-            UPDATE sw.t_jobs
-            SET state = 20                        -- 20=resuming
-            WHERE job IN (SELECT job From Tmp_JobsToResumeOrReset);
-
-        END;
+        UPDATE sw.t_jobs
+        SET state = 20                        -- 20=resuming
+        WHERE job IN (SELECT job From Tmp_JobsToResumeOrReset);
 
     End If;
 
@@ -709,7 +700,7 @@ BEGIN
                    Pipeline_State,
                    Entry_ID
             FROM Tmp_JobDebugMessages
-            ORDER BY Entry_ID;
+            ORDER BY Entry_ID
         LOOP
             _infoData := format(_formatSpecifier,
                                 _previewData.Message,
@@ -730,10 +721,18 @@ BEGIN
     DROP TABLE Tmp_JobsToResumeOrReset;
     DROP TABLE Tmp_JobDebugMessages;
 
-    If _createdSelectedJobsTable := true; Then
+    If _createdSelectedJobsTable Then
         DROP TABLE Tmp_Selected_Jobs;
     End If;
 END
 $$;
 
-COMMENT ON PROCEDURE sw.add_new_jobs IS 'AddNewJobs';
+
+ALTER PROCEDURE sw.add_new_jobs(IN _bypassdms boolean, INOUT _message text, INOUT _returncode text, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean, IN _infolevel integer, IN _debugmode boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_new_jobs(IN _bypassdms boolean, INOUT _message text, INOUT _returncode text, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean, IN _infolevel integer, IN _debugmode boolean); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.add_new_jobs(IN _bypassdms boolean, INOUT _message text, INOUT _returncode text, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean, IN _infolevel integer, IN _debugmode boolean) IS 'AddNewJobs';
+

@@ -1,19 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE sw.lookup_source_job_from_special_processing_text
-(
-    _job int,
-    _dataset text,
-    _specialProcessingText text,
-    _tagName text = 'SourceJob',
-    INOUT _sourceJob int = 0,
-    INOUT _autoQueryUsed boolean = false,
-    INOUT _warningMessage text = '',
-    INOUT _returnCode text default '',
-    _previewSql boolean= false,
-    INOUT _autoQuerySql text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: lookup_source_job_from_special_processing_text(integer, text, text, text, integer, boolean, text, text, boolean, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.lookup_source_job_from_special_processing_text(IN _job integer, IN _dataset text, IN _specialprocessingtext text, IN _tagname text DEFAULT 'SourceJob'::text, INOUT _sourcejob integer DEFAULT 0, INOUT _autoqueryused boolean DEFAULT false, INOUT _warningmessage text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _previewsql boolean DEFAULT false, INOUT _autoquerysql text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $_$
 /****************************************************
 **
 **  Desc:
@@ -21,8 +12,15 @@ AS $$
 **      to determine the source job defined for a new job
 **
 **  Arguments:
-**    _tagName        Typically 'SourceJob' or Job2'
-**    _autoQuerySql   The auto-query SQL that was used
+**    _job                      Job number
+**    _dataset                  Dataset Name
+**    _specialProcessingText    Special processing text; see below for examples (look for SourceJob:Auto{Tool = "MSGFPlus_MzML_NoRefine")
+**    _tagName                  Typically 'SourceJob' or Job2'
+**    _sourceJob                Output: source job
+**    _autoQueryUsed            Output: true if _specialProcessingText has 'SourceJob:Auto'
+**    _warningMessage           Output: warning message
+**    _returnCode               Output: return code
+**    _autoQuerySql             Output: the auto-query SQL that was used
 **
 **  Auth:   mem
 **  Date:   05/03/2012 mem - Initial version (extracted from LookupSourceJobFromSpecialProcessingParam)
@@ -36,7 +34,9 @@ AS $$
 **          04/06/2016 mem - Now using Try_Convert to convert from text to int
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          06/30/2022 mem - Update comments to use [Param File]
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/25/2023 mem - When parsing the special processing text, replace '[Param File]' with 'Param_File'
+**                         - Update comments to use Param_File
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -44,15 +44,15 @@ DECLARE
     _sourceJobText text;
     _indexStart int;
     _indexEnd int;
-    _whereClause text := '';
+    _whereClause citext := '';
     _orderBy text := '';
     _callingProcName text;
-    _part1 text := '';
-    _part2 text := '';
-    _part3 text := '';
-    _textToSearch text;
-    _textToFind text;
-    _replacement text;
+    _part1 citext := '';
+    _part2 citext := '';
+    _part3 citext := '';
+    _textToSearch citext;
+    _textToFind citext;
+    _replacement citext;
     _message text;
 
     _sqlState text;
@@ -60,9 +60,6 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-    _warningMessage := '';
-    _returnCode := '';
-    _autoQuerySql := '';
 
     ------------------------------------------------
     -- Validate the inputs
@@ -75,16 +72,18 @@ BEGIN
     _sourceJob := 0;
     _autoQueryUsed := false;
     _warningMessage := '';
+    _returnCode := '';
     _autoQuerySql := '';
 
     BEGIN
-        If _tagName Not Like '%:' Then
+        If Not _tagName Like '%:' Then
             _tagName := format('%s:', _tagName);
         End If;
 
         ------------------------------------------------
         -- Parse the Special_Processing text to extract out the source job info
         ------------------------------------------------
+
         _sourceJobText := sw.extract_tagged_name(_tagName, _specialProcessingText);
 
         If Coalesce(_sourceJobText, '') <> '' Then
@@ -97,17 +96,21 @@ BEGIN
 
             If _sourceJobText Like 'Auto%' Then
             -- <e>
-                -- Parse _specialProcessingText to look for        :Auto  (Note that we must process _specialProcessingText since _sourceJobText won't have the full text)
+                -- Parse _specialProcessingText to look for 'SourceJob:Auto' or 'Job2:Auto' (Note that we must process _specialProcessingText since _sourceJobText won't have the full text)
                 -- Then find { and }
                 -- The text between { and } will be used as a Where clause to query public.V_Source_Analysis_Job to find the best job for this dataset
-                -- Example:
+
+                -- Example 1:
                 --   SourceJob:Auto{Tool = "Decon2LS_V2" AND Settings_File = "Decon2LS_FF_IMS_UseHardCodedFilters_20ppm_NoFlags_2011-02-04.xml"}
                 --
                 -- Example 2:
-                --   SourceJob:Auto{Tool = "XTandem" AND Settings_File = "IonTrapDefSettings_DeconMSN_CIDOnly.xml" AND [Param File] = "xtandem_Rnd1PartTryp_Rnd2DynMetOx.xml"}, Job2:Auto{Tool = "MASIC_Finnigan"}
+                --   SourceJob:Auto{Tool = "XTandem" AND Settings_File = "IonTrapDefSettings_DeconMSN_CIDOnly.xml" AND Param_File = "xtandem_Rnd1PartTryp_Rnd2DynMetOx.xml"}, Job2:Auto{Tool = "MASIC_Finnigan"}
                 --
                 -- Example 3:
-                --   SourceJob:Auto{Tool = "Decon2LS_V2" AND [Param File] = "LTQ_FT_Lipidomics_2012-04-16.xml"}, Job2:Auto{Tool = "Decon2LS_V2" AND [Param File] = "LTQ_FT_Lipidomics_2012-04-16.xml" AND Dataset LIKE "$Replace($ThisDataset,_Pos,)%NEG"}
+                --   SourceJob:Auto{Tool = "Decon2LS_V2" AND Param_File = "LTQ_FT_Lipidomics_2012-04-16.xml"}, Job2:Auto{Tool = "Decon2LS_V2" AND Param_File = "LTQ_FT_Lipidomics_2012-04-16.xml" AND Dataset LIKE "$Replace($ThisDataset,_Pos,%NEG%)"}
+                --
+                -- Example 4:
+                --   SourceJob:Auto{Tool = "MSGFPlus_MzML_NoRefine" AND (Settings_File = "IonTrapDefSettings_MzML.xml") AND Param_File = "MSGFPlus_Tryp_MetOx_StatCysAlk_20ppmParTol.txt"}, Job2:Auto{Tool = "MASIC_Finnigan"}
 
                 _autoQueryUsed := true;
                 _indexStart := Position(format('%sAuto', _tagName) In _specialProcessingText);
@@ -123,15 +126,21 @@ BEGIN
                     _indexEnd := Position('}' In _whereClause);
 
                     If _indexStart > 0 And _indexEnd > _indexStart Then
-                        _whereClause := SUBSTRING(_whereClause, _indexStart + 1, _indexEnd-_indexStart-1);
+                        _whereClause := SUBSTRING(_whereClause, _indexStart + 1, _indexEnd - _indexStart - 1);
                     Else
                         _whereClause := '';
                     End If;
 
-                    If _whereClause Like '%$ThisDataset%' Then
+                    -- Prior to July 2023, the special processing text used [Param File]
+                    -- If present, replace with Param_File
+                    If Position('[Param File]' IN _whereClause) > 0 Then
+                        _whereClause := REPLACE(_whereClause, '[Param File]', 'Param_File');
+                    End If;
+
+                    If _whereClause ILike '%$ThisDataset%' Then
                         -- The Where Clause contains a Dataset filter clause utilizing this dataset's name
 
-                        If _whereClause Like '%$ThisDatasetTrimAfter%' Then
+                        If _whereClause ILike '%$ThisDatasetTrimAfter%' Then
                         -- <g1>
                             -- The Where Clause contains a command of the form: $ThisDatasetTrimAfter(_Pos)
                             -- Find the specified characters in the dataset's name and remove any characters that follow them
@@ -143,7 +152,7 @@ BEGIN
                             If _indexStart > 0 And _indexEnd > _indexStart Then
                             -- <h1>
 
-                                _part1 := SUBSTRING(_whereClause, 1, _indexStart - 1);
+                                _part1 := SUBSTRING(_whereClause, 1,             _indexStart - 1);
                                 _part2 := SUBSTRING(_whereClause, _indexStart,   _indexEnd - _indexStart + 1);
                                 _part3 := SUBSTRING(_whereClause, _indexEnd + 1, char_length(_whereClause));
 
@@ -243,7 +252,7 @@ BEGIN
 
                     -- By default, order by Job Descending
                     -- However, if _whereClause already contains ORDER BY, we don't want to add another one
-                    If _whereClause LIKE '%ORDER BY%' Then
+                    If _whereClause ILike '%ORDER BY%' Then
                         _orderBy := '';
                     Else
                         _orderBy := 'ORDER BY Job Desc';
@@ -301,6 +310,14 @@ BEGIN
     END;
 
 END
-$$;
+$_$;
 
-COMMENT ON PROCEDURE sw.lookup_source_job_from_special_processing_text IS 'LookupSourceJobFromSpecialProcessingText';
+
+ALTER PROCEDURE sw.lookup_source_job_from_special_processing_text(IN _job integer, IN _dataset text, IN _specialprocessingtext text, IN _tagname text, INOUT _sourcejob integer, INOUT _autoqueryused boolean, INOUT _warningmessage text, INOUT _returncode text, IN _previewsql boolean, INOUT _autoquerysql text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE lookup_source_job_from_special_processing_text(IN _job integer, IN _dataset text, IN _specialprocessingtext text, IN _tagname text, INOUT _sourcejob integer, INOUT _autoqueryused boolean, INOUT _warningmessage text, INOUT _returncode text, IN _previewsql boolean, INOUT _autoquerysql text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.lookup_source_job_from_special_processing_text(IN _job integer, IN _dataset text, IN _specialprocessingtext text, IN _tagname text, INOUT _sourcejob integer, INOUT _autoqueryused boolean, INOUT _warningmessage text, INOUT _returncode text, IN _previewsql boolean, INOUT _autoquerysql text) IS 'LookupSourceJobFromSpecialProcessingText';
+

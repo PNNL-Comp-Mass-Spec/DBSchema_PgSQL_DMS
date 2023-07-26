@@ -1,21 +1,21 @@
 --
-CREATE OR REPLACE PROCEDURE sw.validate_job_server_info
-(
-    _job int,
-    _useJobParameters boolean = true,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-    _debugMode boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: validate_job_server_info(integer, boolean, text, text, boolean); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.validate_job_server_info(IN _job integer, IN _usejobparameters boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _debugmode boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates fields Transfer_Folder_Path and Storage_Server in T_Jobs
+**      Updates columns Transfer_Folder_Path and Storage_Server in sw.t_jobs
 **
 **  Arguments:
-**    _useJobParameters   When non-zero, then preferentially uses T_Job_Parameters; otherwise, directly queries DMS
+**    _job                  Job number
+**    _useJobParameters     When non-zero, preferentially uses sw.t_job_parameters; otherwise, uses the public schema tables
+**    _message              Output: status message
+**    _returnCode           Output: return code
+**    _debugMode            When true, show values of variables using RAISE INFO (however, sw.t_jobs will still be updated if required)
 **
 **  Auth:   mem
 **  Date:   07/12/2011 mem - Initial version
@@ -23,15 +23,16 @@ AS $$
 **          12/21/2016 mem - Use job parameter DatasetFolderName when constructing the transfer folder path
 **          03/22/2023 mem - Rename job parameter to DatasetName
 **          03/24/2023 mem - Capitalize job parameter TransferFolderPath
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/25/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
-    _updateCount int;
+    _createdTempTable boolean;
     _transferFolderPath text;
-    _storageServerName text;
     _dataset text;
     _datasetFolderName text;
+    _storageServerName text;
+    _updateCount int;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -43,6 +44,7 @@ BEGIN
     _job := Coalesce(_job, 0);
     _useJobParameters := Coalesce(_useJobParameters, true);
 
+    _createdTempTable := false;
     _transferFolderPath := '';
     _dataset := '';
     _datasetFolderName := '';
@@ -55,7 +57,7 @@ BEGIN
         -- <Param Section="JobParameters" Name="TransferFolderPath" Value="\\proto-9\DMS3_Xfer\"/>
         ---------------------------------------------------
 
-        SELECT Value
+        SELECT Trim(Value)
         INTO _transferFolderPath
         FROM sw.get_job_param_table_local ( _job )
         WHERE Name = 'TransferFolderPath';
@@ -73,8 +75,11 @@ BEGIN
         WHERE Name = 'DatasetFolderName';
 
         If _debugMode Then
-            RAISE INFO 'Job: %, TransferFolder: %, Dataset: %, Dataset Folder: %, Source: sw.t_job_parameters',
-                        _job, _transferFolderPath, _dataset, _datasetFolderName, _updateCount;
+            RAISE INFO '';
+            RAISE INFO 'Job: %, Source: sw.t_job_parameters', _job;
+            RAISE INFO '  Dataset:         %', _dataset;
+            RAISE INFO '  Dataset Folder:  %', _datasetFolderName;
+            RAISE INFO '  Transfer Folder: %', _transferFolderPath;
         End If;
     End If;
 
@@ -82,7 +87,7 @@ BEGIN
         ---------------------------------------------------
         -- Info not found in sw.t_job_parameters (or _useJobParameters is false)
         --
-        -- Get the settings from public.t_analysis_job (and related tables) using sw.get_job_param_table,
+        -- Get the settings from public.t_analysis_job (and related tables) using sw.get_job_param_table(),
         -- which references public.v_get_pipeline_job_parameters
         ---------------------------------------------------
 
@@ -92,6 +97,8 @@ BEGIN
             Name text,
             Value text
         );
+
+        _createdTempTable := true;
 
         INSERT INTO Tmp_Job_Parameters (Job, Section, Name, Value)
         SELECT job, section, name, value
@@ -115,8 +122,11 @@ BEGIN
         WHERE Name = 'DatasetFolderName';
 
         If _debugMode Then
-            RAISE INFO 'Job: %, TransferFolder: %, Dataset: %, Dataset Folder: %, Source: sw.t_job_parameters',
-                        _job, _transferFolderPath, _dataset, _datasetFolderName, _updateCount;
+            RAISE INFO '';
+            RAISE INFO 'Job: %, Source: public schema tables', _job;
+            RAISE INFO '  Dataset:         %', _dataset;
+            RAISE INFO '  Dataset Folder:  %', _datasetFolderName;
+            RAISE INFO '  Transfer Folder: %', _transferFolderPath;
         End If;
 
     End If;
@@ -136,22 +146,28 @@ BEGIN
             _transferFolderPath := format('%s\', _transferFolderPath);
         End If;
 
-        _storageServerName := public.extract_server_name(_transferFolderPath);
+        _storageServerName := sw.extract_server_name(_transferFolderPath);
 
         UPDATE sw.t_jobs
         SET transfer_folder_path = _transferFolderPath,
-            storage_server = Case When _storageServerName = ''
-                             Then storage_server
-                             Else _storageServerName End
+            storage_server = CASE WHEN _storageServerName = ''
+                             THEN storage_server
+                             ELSE _storageServerName
+                             END
         WHERE Job = _job AND
-                (Coalesce(Transfer_Folder_Path, '') <> _transferFolderPath OR
-                 Coalesce(Storage_Server, '') <> _storageServerName)
+              (Coalesce(Transfer_Folder_Path, '') <> _transferFolderPath OR
+               Coalesce(Storage_Server, '') <> _storageServerName);
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
         If _debugMode Then
-            RAISE INFO 'Job: %, TransferFolder: %, Dataset: %, Storage Server: %',
-                            _job, _transferFolderPath, _dataset, _storageServerName, _updateCount;
+            RAISE INFO '  Storage Server:  %', _storageServerName;
+
+            If _updateCount = 0 Then
+                RAISE INFO '  Transfer Folder Path is already up-to-date in sw.t_jobs';
+            Else
+                RAISE INFO '  Updated Transfer Folder Path in sw.t_jobs for job %', _job;
+            End If;
         End If;
 
     Else
@@ -161,11 +177,23 @@ BEGIN
         _returnCode := 'U5205';
 
         If _debugMode Then
-            RAISE ERROR '%', _message;
+            RAISE WARNING '%', _message;
         End If;
+
     End If;
 
+    If _createdTempTable Then
+        DROP TABLE Tmp_Job_Parameters;
+    End If;
 END
 $$;
 
-COMMENT ON PROCEDURE sw.validate_job_server_info IS 'ValidateJobServerInfo';
+
+ALTER PROCEDURE sw.validate_job_server_info(IN _job integer, IN _usejobparameters boolean, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE validate_job_server_info(IN _job integer, IN _usejobparameters boolean, INOUT _message text, INOUT _returncode text, IN _debugmode boolean); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.validate_job_server_info(IN _job integer, IN _usejobparameters boolean, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) IS 'ValidateJobServerInfo';
+

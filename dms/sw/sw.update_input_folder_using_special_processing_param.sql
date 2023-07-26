@@ -1,30 +1,28 @@
 --
-CREATE OR REPLACE PROCEDURE sw.update_input_folder_using_special_processing_param
-(
-    _jobList text,
-    _infoOnly boolean = false,
-    _showResultsMode int = 2,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_input_folder_using_special_processing_param(text, boolean, integer, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.update_input_folder_using_special_processing_param(IN _joblist text, IN _infoonly boolean DEFAULT false, IN _showresultsmode integer DEFAULT 2, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Updates the input folder name using the SourceJob:0000 tag defined for the specified jobs
-**      Only affects job steps that have Special = 'ExtractSourceJobFromComment'
-**      defined in the job script
+**
+**      Only affects job steps that have 'Special="ExtractSourceJobFromComment"' defined in the job script
 **
 **  Arguments:
-**    _showResultsMode   0 to not show results, 1 to show results if Tmp_Source_Job_Folders is populated; 2 to show results even if Tmp_Source_Job_Folders is not populated
+**    _jobList              Comma-separated list of jobs
+**    _infoOnly             When true, preview the changes; when false, update input_folder_name in t_job_steps
+**    _showResultsMode      When 0, do not show results; when 1, show results if Tmp_Source_Job_Folders is populated; when 2, show results even if Tmp_Source_Job_Folders is not populated
 **
 **  Auth:   mem
 **  Date:   03/21/2011 mem - Initial Version
 **          03/22/2011 mem - Now calling Add_Update_Job_Parameter to store the SourceJob in T_Job_Parameters
 **          04/04/2011 mem - Updated to use the Special_Processing param instead of the job comment
 **          07/13/2012 mem - Now determining job parameters with additional items if SourceJob2 is defined: SourceJob2, SourceJob2Dataset, SourceJob2FolderPath, and SourceJob2FolderPathArchive
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/25/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -35,6 +33,7 @@ DECLARE
     _warningMessage text;
     _actionText text;
     _jobInfo record;
+    _sourceJobText text;
 
     _formatSpecifier text;
     _infoHead text;
@@ -79,9 +78,9 @@ BEGIN
     SELECT Value AS Job,
            Coalesce(J.script, '') AS Script,
            CASE WHEN J.job IS NULL THEN 'Job Number not found in sw.t_jobs' ELSE '' END
-    FROM public.parse_delimited_integer_list ( _jobList, ',' ) JL
+    FROM public.parse_delimited_integer_list ( _jobList, ',' ) AS JL
          LEFT OUTER JOIN sw.t_jobs J
-           ON JL.VALUE = J.job;
+           ON JL.Value = J.job;
 
     ---------------------------------------------------
     -- Step through the jobs in Tmp_JobList
@@ -114,7 +113,7 @@ BEGIN
         End If;
 
         -- Add new rows to Tmp_Source_Job_Folders for any steps in the script
-        -- that have Special_Instructions = 'ExtractSourceJobFromComment'
+        -- that have Special="ExtractSourceJobFromComment"
         --
         INSERT INTO Tmp_Source_Job_Folders (Job, Step)
         SELECT _job, Step
@@ -127,17 +126,21 @@ BEGIN
                                   tool citext PATH '@Tool',
                                   special_instructions citext PATH '@Special')
              ) XmlQ
-        WHERE Special_Instructions = 'ExtractSourceJobFromComment'
+        WHERE Special_Instructions = 'ExtractSourceJobFromComment';
 
         If Not FOUND Then
             -- Record a warning since no valid steps were found
-
-            _warningMessage := format('Script %s for job %s does not contain a step with Special_Instructions=''ExtractSourceJobFromComment''', _script, _job);
-            RAISE WARNING '%', _warningMessage;
+            _warningMessage := format('Script %s for job %s does not contain a step with Special_Instructions="ExtractSourceJobFromComment"', _script, _job);
 
             UPDATE Tmp_JobList
             SET Message = _warningMessage
             WHERE Job = _job;
+
+            -- Only show this warning if _infoOnly is true, since sw.create_job_steps() and sw.update_job_parameters() call this procedure
+            -- for all job types, not just jobs with special instructions that have 'ExtractSourceJobFromComment'
+            If _infoOnly Then
+                RAISE WARNING '%', _warningMessage;
+            End If;
         End If;
 
     END LOOP;
@@ -149,7 +152,7 @@ BEGIN
 
             RAISE INFO '';
 
-            _formatSpecifier := '%-9s %-40s %-40s';
+            _formatSpecifier := '%-9s %-35s %-70s';
 
             _infoHead := format(_formatSpecifier,
                                 'Job',
@@ -159,8 +162,8 @@ BEGIN
 
             _infoHeadSeparator := format(_formatSpecifier,
                                          '---------',
-                                         '----------------------------------------',
-                                         '----------------------------------------'
+                                         '-----------------------------------',
+                                         '----------------------------------------------------------------------'
                                         );
 
             RAISE INFO '%', _infoHead;
@@ -192,16 +195,19 @@ BEGIN
 
     -- Lookup the SourceJob info for each job in Tmp_Source_Job_Folders
     -- This procedure examines the Special_Processing parameter for each job (in sw.t_job_parameters)
-    CALL sw.lookup_source_job_from_special_processing_param (_message => _message output, _previewSql => _infoOnly)
+    CALL sw.lookup_source_job_from_special_processing_param (
+            _message => _message,           -- Output
+            _returnCode => _returnCode,     -- Output
+            _previewSql => _infoOnly);
 
     If Not _infoOnly Then
-    -- <b2>
+
         -- Apply the changes
         UPDATE sw.t_job_steps JS
         SET input_folder_name = SJF.SourceJobResultsFolder
         FROM Tmp_Source_Job_Folders SJF
         WHERE JS.Job = SJF.Job AND
-              JS.Step_Number = SJF.Step AND
+              JS.Step = SJF.Step AND
               Coalesce(SJF.SourceJobResultsFolder, '') <> '';
 
         -- Update the parameters for each job in Tmp_Source_Job_Folders
@@ -219,20 +225,20 @@ BEGIN
 
             If Coalesce(_jobInfo.SourceJob, 0) > 0 Then
                 _sourceJobText := _jobInfo.SourceJob::text;
-                CALL sw.add_update_job_parameter (_job, 'JobParameters', 'SourceJob', _sourceJobText, _deleteParam => false, _infoOnly => false);
+                CALL sw.add_update_job_parameter (_job, 'JobParameters', 'SourceJob', _sourceJobText, _deleteParam => false, _message => _message, _returncode => _returncode, _infoOnly => false);
             End If;
 
             If Coalesce(_jobInfo.SourceJob2, 0) > 0 Then
                 _sourceJobText := _jobInfo.SourceJob2::text;
-                CALL sw.add_update_job_parameter (_job, 'JobParameters', 'SourceJob2', _sourceJobText, _deleteParam => false, _infoOnly => false);
-                CALL sw.add_update_job_parameter (_job, 'JobParameters', 'SourceJob2Dataset', _jobInfo.SourceJob2Dataset, _deleteParam => false, _infoOnly => false);
-                CALL sw.add_update_job_parameter (_job, 'JobParameters', 'SourceJob2FolderPath', _jobInfo.SourceJob2FolderPath, _deleteParam => false, _infoOnly => false);
-                CALL sw.add_update_job_parameter (_job, 'JobParameters', 'SourceJob2FolderPathArchive', _jobInfo.SourceJob2FolderPathArchive, _deleteParam => false, _infoOnly => false);
+                CALL sw.add_update_job_parameter (_job, 'JobParameters', 'SourceJob2', _sourceJobText,                                        _deleteParam => false, _message => _message, _returncode => _returncode, _infoOnly => false);
+                CALL sw.add_update_job_parameter (_job, 'JobParameters', 'SourceJob2Dataset', _jobInfo.SourceJob2Dataset,                     _deleteParam => false, _message => _message, _returncode => _returncode, _infoOnly => false);
+                CALL sw.add_update_job_parameter (_job, 'JobParameters', 'SourceJob2FolderPath', _jobInfo.SourceJob2FolderPath,               _deleteParam => false, _message => _message, _returncode => _returncode, _infoOnly => false);
+                CALL sw.add_update_job_parameter (_job, 'JobParameters', 'SourceJob2FolderPathArchive', _jobInfo.SourceJob2FolderPathArchive, _deleteParam => false, _message => _message, _returncode => _returncode, _infoOnly => false);
             End If;
 
-        END LOOP; -- </c>
+        END LOOP;
 
-    End If; -- </b2>
+    End If;
 
     If Not _infoOnly Then
         _actionText := 'Updated input folder to ';
@@ -241,8 +247,8 @@ BEGIN
     End If;
 
     -- Update the message field in Tmp_JobList
-    UPDATE Tmp_JobList
-    Set Message = format('%s%s', _actionText, SJF.SourceJobResultsFolder)
+    UPDATE Tmp_JobList JL
+    SET Message = format('%s%s', _actionText, SJF.SourceJobResultsFolder)
     FROM Tmp_Source_Job_Folders SJF
     WHERE JL.Job = SJF.Job AND Coalesce(SJF.SourceJobResultsFolder, '') <> '';
 
@@ -250,7 +256,7 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-9s %-40s %-40s %-4s %-10s %-25s %-100s';
+        _formatSpecifier := '%-9s %-35s %-70s %-4s %-10s %-35s %-100s';
 
         _infoHead := format(_formatSpecifier,
                             'Job',
@@ -264,11 +270,11 @@ BEGIN
 
         _infoHeadSeparator := format(_formatSpecifier,
                                      '---------',
-                                     '----------------------------------------',
-                                     '----------------------------------------',
+                                     '-----------------------------------',
+                                     '----------------------------------------------------------------------',
                                      '----',
                                      '----------',
-                                     '-------------------------',
+                                     '-----------------------------------',
                                      '----------------------------------------------------------------------------------------------------'
                                     );
 
@@ -308,4 +314,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.update_input_folder_using_special_processing_param IS 'UpdateInputFolderUsingSpecialProcessingParam';
+
+ALTER PROCEDURE sw.update_input_folder_using_special_processing_param(IN _joblist text, IN _infoonly boolean, IN _showresultsmode integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_input_folder_using_special_processing_param(IN _joblist text, IN _infoonly boolean, IN _showresultsmode integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.update_input_folder_using_special_processing_param(IN _joblist text, IN _infoonly boolean, IN _showresultsmode integer, INOUT _message text, INOUT _returncode text) IS 'UpdateInputFolderUsingSpecialProcessingParam';
+
