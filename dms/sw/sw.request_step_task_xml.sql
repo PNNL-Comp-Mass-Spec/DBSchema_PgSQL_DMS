@@ -309,7 +309,7 @@ BEGIN
             WHERE processor_name = _processorName;
 
             If char_length(_analysisManagerVersion) = 0 Then
-                RAISE Warning 'Manager version is an empty string; updated latest_request in sw.t_local_processors but left manager_version unchanged';
+                RAISE WARNING 'Manager version is an empty string; updated latest_request in sw.t_local_processors but left manager_version unchanged';
             End If;
 
             If Not Coalesce(_logSPUsage, false) Then

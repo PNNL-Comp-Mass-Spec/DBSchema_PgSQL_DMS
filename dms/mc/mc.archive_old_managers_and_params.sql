@@ -87,7 +87,7 @@ BEGIN
 
     If Not Exists (SELECT * FROM TmpManagerList) Then
         _message := '_mgrList did not match any managers in mc.t_mgrs: ';
-        Raise Info 'Warning: %', _message;
+        RAISE INFO 'Warning: %', _message;
 
         RETURN QUERY
         SELECT '_mgrList did not match any managers in mc.t_mgrs' as Message,
@@ -214,7 +214,7 @@ BEGIN
         RETURN;
     End If;
 
-    RAISE Info 'Insert into t_old_managers';
+    RAISE INFO 'Insert into t_old_managers';
 
     INSERT INTO mc.t_old_managers(
                                mgr_id,
@@ -236,7 +236,7 @@ BEGIN
            ON Src.mgr_id = Target.mgr_id
     WHERE Target.mgr_id IS NULL;
 
-    RAISE Info 'Insert into t_param_value_old_managers';
+    RAISE INFO 'Insert into t_param_value_old_managers';
 
     -- The following query uses
     --   ON CONFLICT ON CONSTRAINT pk_t_param_value_old_managers
@@ -272,17 +272,17 @@ BEGIN
         last_affected = EXCLUDED.last_affected,
         entered_by = EXCLUDED.entered_by;
 
-    RAISE Info 'Delete from mc.t_param_value';
+    RAISE INFO 'Delete from mc.t_param_value';
 
     DELETE FROM mc.t_param_value target
     WHERE target.mgr_id IN (SELECT MgrList.mgr_id FROM TmpManagerList MgrList);
 
-    RAISE Info 'Delete from mc.t_mgrs';
+    RAISE INFO 'Delete from mc.t_mgrs';
 
     DELETE FROM mc.t_mgrs target
     WHERE target.mgr_id IN (SELECT MgrList.mgr_id FROM TmpManagerList MgrList);
 
-    RAISE Info 'Delete succeeded; returning results';
+    RAISE INFO 'Delete succeeded; returning results';
 
     RETURN QUERY
     SELECT 'Moved to mc.t_old_managers and mc.t_param_value_old_managers' as Message,

@@ -71,7 +71,7 @@ EXCEPTION
                             Coalesce(_innerExceptionMessage, '??'),
                             Coalesce(_exceptionMessage, '??'));
 
-    RAISE Warning '%', _result;
+    RAISE WARNING '%', _result;
 
     RETURN Coalesce(_errorMessage, '');
 END

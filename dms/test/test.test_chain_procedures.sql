@@ -13,7 +13,7 @@ DECLARE
 
     _entryID int;
 Begin
-    RAISE Info 'Start';
+    RAISE INFO 'Start';
 
     If 1 = 1 Then
         ------------------------------------------------------------
@@ -22,14 +22,14 @@ Begin
         ------------------------------------------------------------
 
         Begin
-            RAISE Info 'Insert new log entry';
+            RAISE INFO 'Insert new log entry';
 
             INSERT INTO t_log_entries (posted_by, type, message)
             VALUES ('Monroe', 'Test', 'Test log message')
             RETURNING entry_id
             INTO _entryID;
 
-            RAISE Info 'Call alter_entered_by_user';
+            RAISE INFO 'Call alter_entered_by_user';
             CALL alter_entered_by_user('public', 't_log_entries', 'entry_id', _entryID, 'bob',
                                     _entrydatecolumnname := 'entered',
                                     _message := _message);
@@ -106,10 +106,10 @@ Begin
              End If;
         END;
 
-        RAISE Info 'Inside End If';
+        RAISE INFO 'Inside End If';
     End If;
 
-    RAISE Info 'End';
+    RAISE INFO 'End';
 
 End
 $$;

@@ -89,7 +89,7 @@ BEGIN
         RETURN;
     End If;
 
-    RAISE Info 'Param type ID is %', _paramTypeID;
+    RAISE INFO 'Param type ID is %', _paramTypeID;
 
     ---------------------------------------------------
     -- Create a temporary table that will hold the entry_id
@@ -129,7 +129,7 @@ BEGIN
         RETURN;
     END If;
 
-    RAISE Info 'Inserted % manager IDs into Tmp_MgrIDs', _managerCount;
+    RAISE INFO 'Inserted % manager IDs into Tmp_MgrIDs', _managerCount;
 
     If Not Exists (SELECT *
                    FROM mc.t_mgrs M
@@ -315,7 +315,7 @@ BEGIN
                             _newValue,
                             _paramName);
 
-        RAISE Info '%', _message;
+        RAISE INFO '%', _message;
 
         DROP TABLE Tmp_ParamValueEntriesToUpdate;
         DROP TABLE Tmp_MgrIDs;

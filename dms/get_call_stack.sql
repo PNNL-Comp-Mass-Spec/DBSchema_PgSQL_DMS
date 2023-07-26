@@ -127,7 +127,7 @@ EXCEPTION
         _errorMessage := format('%s: %s', _errorMessage, _exceptionDetail);
     End If;
 
-    RAISE Warning '%', Coalesce(_errorMessage, '??');
+    RAISE WARNING '%', Coalesce(_errorMessage, '??');
 
     If Coalesce(array_length(_callStack, 1), 0) = 0 Then
         _callStack := _callStack || ARRAY[['1', '', 'Undefined_Function', '0']];

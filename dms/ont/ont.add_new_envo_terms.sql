@@ -90,7 +90,7 @@ BEGIN
 
     DROP TABLE Tmp_CandidateTables;
 
-    RAISE info 'Importing from %.%', _sourceSchema, _sourceTable;
+    RAISE INFO 'Importing from %.%', _sourceSchema, _sourceTable;
 
     ---------------------------------------------------
     -- Populate a temporary table with the source data

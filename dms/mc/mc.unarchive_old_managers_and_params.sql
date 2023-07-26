@@ -84,7 +84,7 @@ BEGIN
 
     If Not FOUND Then
         _message := '_mgrList did not match any managers in mc.t_mgrs: ';
-        Raise Info 'Warning: %', _message;
+        RAISE INFO 'Warning: %', _message;
 
         RETURN QUERY
         SELECT '_mgrList did not match any managers in mc.t_mgrs' as Message,
@@ -215,7 +215,7 @@ BEGIN
         RETURN;
     End If;
 
-    RAISE Info 'Insert into t_mgrs';
+    RAISE INFO 'Insert into t_mgrs';
 
     INSERT INTO mc.t_mgrs (
                          mgr_id,
@@ -244,7 +244,7 @@ BEGIN
     PERFORM setval('mc.t_mgrs_mgr_id_seq', _newSeqValue);
     RAISE INFO 'Sequence mc.t_mgrs_mgr_id_seq set to %', _newSeqValue;
 
-    RAISE Info 'Insert into t_param_value';
+    RAISE INFO 'Insert into t_param_value';
 
     INSERT INTO mc.t_param_value (
              entry_id,
@@ -285,7 +285,7 @@ BEGIN
     DELETE FROM mc.t_old_managers
     WHERE mc.t_old_managers.mgr_id IN (SELECT MgrList.mgr_id FROM Tmp_ManagerList MgrList);
 
-    RAISE Info 'Restore succeeded; returning results';
+    RAISE INFO 'Restore succeeded; returning results';
 
     RETURN QUERY
     SELECT 'Moved to mc.t_mgrs and mc.t_param_value' as Message,

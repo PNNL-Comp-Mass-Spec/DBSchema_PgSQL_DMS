@@ -33,7 +33,7 @@ BEGIN
     FROM mc.t_param_type pt
     WHERE pt.param_name = 'ManagerErrorCleanupMode';
 
-    RAISE info 'ManagerErrorCleanupMode param type ID: %', _paramTypeID;
+    RAISE INFO 'ManagerErrorCleanupMode param type ID: %', _paramTypeID;
 
     RETURN query
     SELECT M.mgr_id, M.manager_name, 0 AS param_type_id, ''::citext AS value
@@ -59,8 +59,8 @@ EXCEPTION
 
     _message := format('Error calling parse_manager_name_list or updating data: %s', _exceptionMessage);
 
-    RAISE Info '%', _message;
-    RAISE Info 'Exception context; %', _exceptionContext;
+    RAISE INFO '%', _message;
+    RAISE INFO 'Exception context; %', _exceptionContext;
 
     RAISE Exception '%, code %; see the output for context', _message, _sqlState;
 

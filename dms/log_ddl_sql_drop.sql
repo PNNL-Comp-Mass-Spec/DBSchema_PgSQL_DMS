@@ -49,8 +49,8 @@ EXCEPTION
 
     _message := format('Exception adding row to t_schema_change_log; %s', _exceptionMessage);
 
-    RAISE Warning '%', _message;
-    -- RAISE Warning 'Context: %', _exceptionContext;
+    RAISE WARNING '%', _message;
+    -- RAISE WARNING 'Context: %', _exceptionContext;
 
 END
 $$;

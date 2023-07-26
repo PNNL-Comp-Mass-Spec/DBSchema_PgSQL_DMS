@@ -96,7 +96,7 @@ BEGIN
 
     _sourceTableWithSchema := format('%s.%s', _sourceSchema, _sourceTable);
 
-    RAISE info 'Back filling ont.t_term and ont.t_term_relationship using %', _sourceTableWithSchema;
+    RAISE INFO 'Back filling ont.t_term and ont.t_term_relationship using %', _sourceTableWithSchema;
 
     ---------------------------------------------------
     -- Populate a temporary table with the source data

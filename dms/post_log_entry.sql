@@ -107,7 +107,7 @@ BEGIN
     End If;
 
     If _duplicateRowCount > 0 THEN
-        RAISE Info 'Skipping recently logged message; duplicate count: %', _duplicateRowCount;
+        RAISE INFO 'Skipping recently logged message; duplicate count: %', _duplicateRowCount;
         RETURN;
     End If;
 

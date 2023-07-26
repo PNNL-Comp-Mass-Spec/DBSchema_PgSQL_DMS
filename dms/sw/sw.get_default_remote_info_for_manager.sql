@@ -87,7 +87,7 @@ BEGIN
                           param_name = 'RemoteHostName' AND
                           char_length(value) > 0 )  Then
 
-        RAISE Warning 'Manager % does not have RunJobsRemotely=True or does not have RemoteHostName defined', _managerName;
+        RAISE WARNING 'Manager % does not have RunJobsRemotely=True or does not have RemoteHostName defined', _managerName;
 
         DROP TABLE Tmp_Mgr_Params;
         RETURN;
