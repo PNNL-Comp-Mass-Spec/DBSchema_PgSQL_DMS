@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION sw.extract_server_name(_path text) RETURNS text
 **          06/26/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
 **          05/30/2023 mem - Use ElsIf for Else If
+**          07/25/2023 mem - Fix logic bug for server paths
 **
 ****************************************************/
 DECLARE
@@ -29,7 +30,7 @@ BEGIN
 
     If char_length(_path) > 0 Then
         -- Remove any '\' or '/' characters from the front of _path
-        _path = Trim(Trim(_path, '\'), '/');
+        _path := Trim(Trim(_path, '\'), '/');
 
         -- Look for the next backslash or forward slash character
         _charPosition1 := position('\' in _path);
@@ -37,7 +38,7 @@ BEGIN
 
         If _charPosition1 = 0 And _charPosition2 = 0 Then
             _serverName := _path;
-        ElsIf _charPosition1 > 1 And _charPosition1 < _charPosition2 Then
+        ElsIf _charPosition1 > 1 And (_charPosition2 = 0 OR _charPosition1 < _charPosition2) Then
             _serverName := SubString(_path, 1, _charPosition1 - 1);
         ElsIf _charPosition2 > 1 Then
             _serverName := SubString(_path, 1, _charPosition2 - 1);
