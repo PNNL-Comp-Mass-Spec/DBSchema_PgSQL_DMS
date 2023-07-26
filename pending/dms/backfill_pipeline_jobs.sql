@@ -17,7 +17,7 @@ AS $$
 **
 **  Arguments:
 **    _jobsToProcess   Set to a positive number to process a finite number of jobs
-**    _startJob        Set to a positive number to start with the given job number (useful if we know that a job was just created in the Pipeline database)
+**    _startJob        Set to a positive number to start with the given job number (useful if we know that a job was just created in sw.t_jobs)
 **
 **  Auth:   mem
 **  Date:   01/12/2012
@@ -120,29 +120,97 @@ BEGIN
     CREATE INDEX IX_Tmp_Job_Backfill_Details ON Tmp_Job_Backfill_Details (Job);
 
     If _infoOnly Then
-        -- Preview all of the jobs that will be backfilled
-        SELECT J.Job,
-               J.Priority,
-               J.Script,
-               J.State,
-               J.Dataset,
-               J.Results_Folder_Name,
-               J.Imported,
-               J.Start,
-               J.Finish,
-               J.Transfer_Folder_Path,
-               J.Comment,
-               J.Owner,
-               JPT.ProcessingTimeMinutes,
-               J.DataPkgID
-        FROM sw.t_jobs J
-             INNER JOIN sw.t_scripts S
-               ON J.Script = S.Script
-             INNER JOIN sw..V_Job_Processing_Time JPT
-               ON J.Job = JPT.Job
-        WHERE S.Backfill_to_DMS = 1 AND
-              J.job IS NULL
-        ORDER BY PJ.job;
+
+        -- Preview all of the jobs that would be backfilled
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-9s %-8s %-25s %-5s %-80s %-40s %-20s %-20s %-20s %-60s %-30s %-14s %-23s %-11s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Job',
+                            'Priority',
+                            'Script',
+                            'State',
+                            'Dataset',
+                            'Results_Folder_Name',
+                            'Imported',
+                            'Start',
+                            'Finish',
+                            'Transfer_Folder_Path',
+                            'Comment',
+                            'Owner_Username',
+                            'Processing_Time_Minutes',
+                            'Data_Pkg_ID'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---------',
+                                     '--------',
+                                     '-------------------------',
+                                     '-----',
+                                     '--------------------------------------------------------------------------------',
+                                     '----------------------------------------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '------------------------------------------------------------',
+                                     '------------------------------',
+                                     '--------------',
+                                     '-----------------------',
+                                     '-----------'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT PJ.Job,
+                   PJ.Priority,
+                   PJ.Script,
+                   PJ.State,
+                   PJ.Dataset,
+                   PJ.Results_Folder_Name,
+                   public.timestamp_text(PJ.Imported) AS Imported,
+                   public.timestamp_text(PJ.Start) AS Start,
+                   public.timestamp_text(PJ.Finish) AS Finish,
+                   PJ.Transfer_Folder_Path,
+                   PJ.Comment,
+                   PJ.Owner_Username,
+                   JPT.Processing_Time_Minutes,
+                   PJ.Data_Pkg_ID
+            FROM sw.t_jobs PJ
+                 INNER JOIN sw.t_scripts S
+                   ON PJ.Script = S.Script
+                 INNER JOIN sw.V_Job_Processing_Time JPT
+                   ON PJ.Job = JPT.Job
+                 LEFT OUTER JOIN public.T_Analysis_Job J
+                   ON PJ.Job = J.job
+            WHERE S.Backfill_to_DMS = 1 AND
+                  PJ.Job >= _startJob AND
+                  J.job IS NULL
+            ORDER BY PJ.job
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Job,
+                                _previewData.Priority,
+                                _previewData.Script,
+                                _previewData.State,
+                                _previewData.Dataset,
+                                _previewData.Results_Folder_Name,
+                                _previewData.Imported,
+                                _previewData.Start,
+                                _previewData.Finish,
+                                _previewData.Transfer_Folder_Path,
+                                _previewData.Comment,
+                                _previewData.Owner_Username,
+                                _previewData.Processing_Time_Minutes,
+                                _previewData.Data_Pkg_ID
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
     End If;
 
     ---------------------------------------------------
@@ -150,28 +218,30 @@ BEGIN
     ---------------------------------------------------
 
     FOR _jobInfo IN
-        SELECT J.Job,
-               J.Priority,
-               J.Script,
-               J.State,
-               J.Dataset,
-               J.Results_Folder_Name,
-               J.Imported,
-               J.Start,
-               J.Finish,
-               J.Transfer_Folder_Path As TransferFolderPath,
-               J.Comment,
-               J.Owner,
+        SELECT PJ.Job,
+               PJ.Priority,
+               PJ.Script,
+               PJ.State,
+               PJ.Dataset,
+               PJ.Results_Folder_Name,
+               PJ.Imported,
+               PJ.Start,
+               PJ.Finish,
+               PJ.Transfer_Folder_Path As TransferFolderPath,
+               PJ.Comment,
+               PJ.Owner,
                JPT.ProcessingTimeMinutes,
-               J.DataPkgID As DataPackageID
-        FROM sw.t_jobs J
+               PJ.Data_Pkg_ID As DataPackageID
+        FROM sw.t_jobs PJ
              INNER JOIN sw.t_scripts S
-               ON J.Script = S.Script
-             INNER JOIN sw.v_job_processing_time JPT
-               ON J.Job = JPT.Job
+               ON PJ.Script = S.Script
+             INNER JOIN sw.V_Job_Processing_Time JPT
+               ON PJ.Job = JPT.Job
+             LEFT OUTER JOIN public.T_Analysis_Job J
+               ON PJ.Job = J.job
         WHERE S.Backfill_to_DMS = 1 AND
-              J.job IS NULL AND
-              PJ.Job >= _startJob
+              PJ.Job >= _startJob AND
+              J.job IS NULL
         ORDER BY PJ.job
     LOOP
 

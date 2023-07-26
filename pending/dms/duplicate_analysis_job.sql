@@ -57,7 +57,7 @@ BEGIN
 
     If _job = 0 Then
         _message := '_job is invalid';
-        RAISE ERROR '%', _message;
+        RAISE WARNING '%', _message;
 
         RETURN;
     End If;
@@ -91,7 +91,7 @@ BEGIN
 
     If Not FOUND Then
         _message := format('Job not found: %s', _job);
-        RAISE ERROR '%', _message;
+        RAISE WARNING '%', _message;
 
         RETURN;
     End If;

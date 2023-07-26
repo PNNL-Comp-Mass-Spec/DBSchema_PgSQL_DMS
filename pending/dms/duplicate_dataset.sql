@@ -79,28 +79,28 @@ BEGIN
 
     If _sourceDataset = '' Then
         _message := '_sourceDataset is empty';
-        RAISE ERROR '%', _message;
+        RAISE WARNING '%', _message;
 
         RETURN;
     End If;
 
     If _newDataset = '' Then
         _message := '_newDataset is empty';
-        RAISE ERROR '%', _message;
+        RAISE WARNING '%', _message;
 
         RETURN;
     End If;
 
     If Not Exists (Select * From t_dataset Where dataset = _sourceDataset) Then
         _message := format('Source dataset not found in t_dataset: %s', _sourceDataset);
-        RAISE ERROR '%', _message;
+        RAISE WARNING '%', _message;
 
         RETURN;
     End If;
 
     If Exists (Select * From t_dataset Where dataset = _newDataset) Then
         _message := format('t_dataset already has dataset: %s', _newDataset);
-        RAISE ERROR '%', _message;
+        RAISE WARNING '%', _message;
 
         RETURN;
     End If;
@@ -133,7 +133,7 @@ BEGIN
 
     If Not FOUND Then
         _message := format('Dataset not found: %s', _sourceDataset);
-        RAISE ERROR '%', _message;
+        RAISE WARNING '%', _message;
 
         RETURN;
     End If;
@@ -172,7 +172,7 @@ BEGIN
 
     If Not FOUND Then
         _message := 'Source dataset does not have a requested run; use AddMissingRequestedRun to add one';
-        RAISE ERROR '%', _message;
+        RAISE WARNING '%', _message;
 
         RETURN;
     End If;
@@ -209,7 +209,7 @@ BEGIN
                 _datasetInfo.OperUsername := _newUsername;
             Else
                 _message := format('Could not find entry in database for operator username %s', _newOperatorUsername);
-                RAISE ERROR '%', _message;
+                RAISE WARNING '%', _message;
                 RETURN;
             End If;
         End If;
@@ -378,7 +378,7 @@ BEGIN
         _message := format('Create AutoReq run request failed: dataset %s with Proposal ID %s, Usage Type %s, and Users List %s -> %s',
                             _newDataset, _requestedRunInfo.EusProposalID, _requestedRunInfo.EusUsageType, _eusUsersList, _message
 
-        RAISE ERROR '%', _message;
+        RAISE WARNING '%', _message;
 
         RETURN;
     End If;
@@ -393,7 +393,7 @@ BEGIN
         ROLLBACK;
 
         _message := format('Consume operation failed: dataset %s -> %s', _newDataset, _message);
-        RAISE ERROR '%', _message;
+        RAISE WARNING '%', _message;
 
         RETURN;
     End If;

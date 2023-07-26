@@ -224,9 +224,9 @@ BEGIN
                 _msg2 := format('FT hours is not numeric: %s', _ft);
                 RAISE EXCEPTION '%', _msg2;
             Else
-                INSERT INTO Tmp_Allocation_Operations (Operation, Proposal, InstGroup, Allocation, Comment, FY);
+                INSERT INTO Tmp_Allocation_Operations (Operation, Proposal, InstGroup, Allocation, Comment, FY)
+                VALUES ('',  _proposalID, 'FT', _ftHours, _ftComment, _fy);
             End If;
-                VALUES ('',  _proposalID, 'FT', _ftHours, _ftComment, _fy)
         End If;
 
         If _ims <> '' Then
@@ -236,9 +236,9 @@ BEGIN
                 _msg2 := format('IMS hours is not numeric: %s', _ims);
                 RAISE EXCEPTION '%', _msg2;
             Else
-                INSERT INTO Tmp_Allocation_Operations (Operation, Proposal, InstGroup, Allocation, Comment, FY);
+                INSERT INTO Tmp_Allocation_Operations (Operation, Proposal, InstGroup, Allocation, Comment, FY)
+                VALUES ('',  _proposalID, 'IMS', _imsHours, _imsComment, _fy);
             End If;
-                VALUES ('',  _proposalID, 'IMS', _imsHours, _imsComment, _fy)
         End If;
 
         If _orb <> '' Then
@@ -248,9 +248,9 @@ BEGIN
                 _msg2 := format('Orbitrap hours is not numeric: %s', _orb);
                 RAISE EXCEPTION '%', _msg2;
             Else
-                INSERT INTO Tmp_Allocation_Operations (Operation, Proposal, InstGroup, Allocation, Comment, FY);
+                INSERT INTO Tmp_Allocation_Operations (Operation, Proposal, InstGroup, Allocation, Comment, FY)
+                VALUES ('',  _proposalID, 'ORB', _orbHours, _orbComment, _fy);
             End If;
-                VALUES ('',  _proposalID, 'ORB', _orbHours, _orbComment, _fy)
         End If;
 
         If _exa <> '' Then
@@ -260,9 +260,9 @@ BEGIN
                 _msg2 := format('Exactive hours is not numeric: %s', _exa);
                 RAISE EXCEPTION '%', _msg2;
             Else
-                INSERT INTO Tmp_Allocation_Operations (Operation, Proposal, InstGroup, Allocation, Comment, FY);
+                INSERT INTO Tmp_Allocation_Operations (Operation, Proposal, InstGroup, Allocation, Comment, FY)
+                VALUES ('',  _proposalID, 'EXA', _exaHours, _exaComment, _fy);
             End If;
-                VALUES ('',  _proposalID, 'EXA', _exaHours, _exaComment, _fy)
         End If;
 
         If _ltq <> '' Then
@@ -271,9 +271,10 @@ BEGIN
             If _ltqHours Is Null Then
                 _msg2 := format('LTQ hours is not numeric: %s', _ltq);
                 RAISE EXCEPTION '%', _msg2;
-            End If;
+            Else
                 INSERT INTO Tmp_Allocation_Operations (Operation, Proposal, InstGroup, Allocation, Comment, FY)
-                VALUES ('',  _proposalID, 'LTQ', _ltqHours, _ltqComment, _fy)
+                VALUES ('',  _proposalID, 'LTQ', _ltqHours, _ltqComment, _fy);
+            End If;
         End If;
 
         If _gc <> '' Then
@@ -282,9 +283,10 @@ BEGIN
             If _gcHours Is Null Then
                 _msg2 := format('GC hours is not numeric: %s', _gc);
                 RAISE EXCEPTION '%', _msg2;
-            End If;
+            Else
                 INSERT INTO Tmp_Allocation_Operations (Operation, Proposal, InstGroup, Allocation, Comment, FY)
-                VALUES ('',  _proposalID, 'GC', _gcHours, _gcComment, _fy)
+                VALUES ('',  _proposalID, 'GC', _gcHours, _gcComment, _fy);
+            End If;
         End If;
 
         If _qqq <> '' Then
@@ -293,9 +295,10 @@ BEGIN
             If _qqqHours Is Null Then
                 _msg2 := format('QQQ hours is not numeric: %s', _qqq);
                 RAISE EXCEPTION '%', _msg2;
-            End If;
+            Else
                 INSERT INTO Tmp_Allocation_Operations (Operation, Proposal, InstGroup, Allocation, Comment, FY)
-                VALUES ('',  _proposalID, 'QQQ', _qqqHours, _qqqComment, _fy)
+                VALUES ('',  _proposalID, 'QQQ', _qqqHours, _qqqComment, _fy);
+            End If;
         End If;
 
         -----------------------------------------------------------

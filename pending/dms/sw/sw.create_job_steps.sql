@@ -83,9 +83,7 @@ DECLARE
     _jobsProcessed int;
     _errorMessage text;
     _jobInfo record;
-    _prevJob int;
     _datasetOrDataPackageId int;
-    _continue boolean;
     _resultsDirectoryName text;
     _jobList text;
     _xmlParameters xml;
@@ -262,7 +260,7 @@ BEGIN
                 TJ.State,
                 TJ.Dataset,
                 TJ.Dataset_ID,
-                TJ.DataPkgID,
+                TJ.Data_Pkg_ID,
                 NULL
             FROM sw.t_jobs TJ
             WHERE TJ.state = 0
@@ -271,7 +269,7 @@ BEGIN
 
         If _debugMode And _existingJob <> 0 Then
             INSERT INTO Tmp_Jobs (job, priority, script, State, Dataset, Dataset_ID, DataPkgID, Results_Directory_Name)
-            SELECT job, priority, script, State, Dataset, Dataset_ID, DataPkgID, NULL
+            SELECT job, priority, script, State, Dataset, Dataset_ID, Data_Pkg_ID, NULL
             FROM sw.t_jobs
             WHERE job = _existingJob;
 
@@ -314,7 +312,7 @@ BEGIN
         End If;
 
         INSERT INTO Tmp_Jobs (job, priority, script, State, Dataset, Dataset_ID, DataPkgID, Results_Directory_Name)
-        SELECT job, priority, script, State, Dataset, Dataset_ID, DataPkgID, Results_Folder_Name
+        SELECT job, priority, script, State, Dataset, Dataset_ID, Data_Pkg_ID, Results_Folder_Name
         FROM sw.t_jobs
         WHERE job = _existingJob
     End If;
@@ -376,53 +374,29 @@ BEGIN
     INTO _jobCountToProcess
     FROM Tmp_Jobs;
 
-    _prevJob := 0;
     _jobsProcessed := 0;
     _lastLogTime := clock_timestamp();
     _jobList := '';
-    _continue := true;
 
-    WHILE _continue
-    LOOP
-        ---------------------------------------------------
-        -- Get next unprocessed job and
-        -- build it into the temporary tables
-        ---------------------------------------------------
-
-        SELECT
-            Job,
-            Script As ScriptName,
-            Dataset,
-            Dataset_ID As DatasetID,
-            DataPkgID,
-            Coalesce(Results_Directory_Name, '') As ResultsDirectoryName
-        INTO _jobInfo
+    FOR _jobInfo IN
+        SELECT Job,
+               Script As ScriptName,
+               Dataset,
+               Dataset_ID As DatasetID,
+               DataPkgID,
+               Coalesce(Results_Directory_Name, '') As ResultsDirectoryName
         FROM Tmp_Jobs
-        WHERE Job > _prevJob
         ORDER BY Job
-        LIMIT 1;
-
-        ---------------------------------------------------
-        -- If no job was found, we are done
-        -- otherwise, process the job
-        ---------------------------------------------------
-
-        If Not FOUND Then
-            -- Break out of the while loop
-            EXIT;
-        End If;
-
-        -- Set up to get next job on next pass
-        _prevJob := _jobInfo.Job;
+    LOOP
 
         If _jobInfo.DatasetID = 0 And _jobInfo.Dataset <> 'Aggregation' Then
-            _errorMessage := 'Dataset_ID can be 0 only when the Dataset name is "Aggregation"';
+            _errorMessage := 'Dataset_ID can be 0 only when the dataset name is "Aggregation"';
             _returnCode := 'U5207';
 
         End If;
 
         If _jobInfo.DatasetID <> 0 And _jobInfo.Dataset = 'Aggregation' Then
-            _errorMessage := 'Dataset_ID must be 0 when the Dataset name is "Aggregation"';
+            _errorMessage := 'Dataset_ID must be 0 when the dataset name is "Aggregation"';
             _returnCode := 'U5208';
         End If;
 
@@ -439,183 +413,181 @@ BEGIN
             SET State = 5
             WHERE Job = _jobInfo.Job;
 
+            CONTINUE;
+        End If;
+
+        If _jobList = '' Then
+            _jobList := _jobInfo.Job::text;
         Else
-        -- <c>
+            _jobList := format('%s,%s', _jobList, _job);
+        End If;
 
-            If _jobList = '' Then
-                _jobList := _jobInfo.Job::text;
-            Else
-                _jobList := format('%s,%s', _jobList, _job);
-            End If;
+        _tag := 'unk';
 
-            _tag := 'unk';
+        -- Get contents of script and tag for results directory name
+        SELECT results_tag
+        INTO _tag
+        FROM sw.t_scripts
+        WHERE script = _jobInfo.ScriptName;
 
-            -- Get contents of script and tag for results directory name
-            SELECT results_tag
-            INTO _tag
+        -- Add additional script if extending an existing job
+        If _mode::citext = 'ExtendExistingJob' and _extensionScriptName <> '' Then
+
+            SELECT contents
+            INTO _scriptXML2
             FROM sw.t_scripts
-            WHERE script = _jobInfo.ScriptName;
+            WHERE script = _extensionScriptName;
 
-            -- Add additional script if extending an existing job
-            If _mode::citext = 'ExtendExistingJob' and _extensionScriptName <> '' Then
+            -- FUTURE: process as list INTO _scriptXML2
+            _scriptXML := format('%s%s', _scriptXML, _scriptXML2)::xml;
+        End If;
 
-                SELECT contents
-                INTO _scriptXML2
-                FROM sw.t_scripts
-                WHERE script = _extensionScriptName;
+        If _debugMode Then
+            RAISE INFO 'Script XML: %', _scriptXML;
+        End If;
 
-                -- FUTURE: process as list INTO _scriptXML2
-                _scriptXML := format('%s%s', _scriptXML, _scriptXML2)::xml;
-            End If;
+        -- Construct the results directory name
+        If _mode::citext = 'CreateFromImportedJobs' or _mode::citext = 'UpdateExistingJob' Then
+            _resultsDirectoryName = sw.get_results_directory_name (_jobInfo.Job, _tag);
 
-            If _debugMode Then
-                RAISE INFO 'Script XML: %', _scriptXML;
-            End If;
+            UPDATE Tmp_Jobs
+            SET Results_Directory_Name = _resultsDirectoryName
+            WHERE Job = _jobInfo.Job;
 
-            -- Construct the results directory name
-            If _mode::citext = 'CreateFromImportedJobs' or _mode::citext = 'UpdateExistingJob' Then
-                _resultsDirectoryName = sw.get_results_directory_name (_jobInfo.Job, _tag);
+            _jobInfo.ResultsDirectoryName := _resultsDirectoryName;
+        End If;
 
-                UPDATE Tmp_Jobs
-                SET Results_Directory_Name = _resultsDirectoryName
-                WHERE Job = _jobInfo.Job;
+        -- Get parameters for the job as XML
+        --
+        _xmlParameters := sw.create_parameters_for_job (
+                                _jobInfo.Job,
+                                _settingsFileOverride => _extensionScriptSettingsFileOverride,
+                                _debugMode => _debugMode);
 
-                _jobInfo.ResultsDirectoryName := _resultsDirectoryName;
-            End If;
+        -- Store the parameters in Tmp_Job_Parameters
+        INSERT INTO Tmp_Job_Parameters (Job, Parameters)
+        VALUES (_jobInfo.Job, _xmlParameters);
 
-            -- Get parameters for the job as XML
-            --
-            _xmlParameters := sw.create_parameters_for_job (
-                                    _jobInfo.Job,
-                                    _settingsFileOverride => _extensionScriptSettingsFileOverride,
-                                    _debugMode => _debugMode);
-
-            -- Store the parameters in Tmp_Job_Parameters
-            INSERT INTO Tmp_Job_Parameters (Job, Parameters)
-            VALUES (_jobInfo.Job, _xmlParameters);
-
-            -- Create the basic job structure (steps and dependencies)
-            -- Details are stored in Tmp_Job_Steps and Tmp_Job_Step_Dependencies
-            CALL sw.create_steps_for_job (
-                        _job,
-                        _scriptXML,
-                        _resultsDirectoryName,
-                        _message => _message,
-                        _returnCode => _returnCode);
-
-            -- Calculate signatures for steps that require them (and also handle shared results directories)
-            -- Details are stored in Tmp_Job_Steps
-            CALL sw.create_signatures_for_job_steps (
-                        _job,
-                        _xmlParameters,
-                        _datasetOrDataPackageId,
-                        _message => _message,
-                        _returnCode => _returnCode,
-                        _debugMode => _debugMode);
-
-            -- Update the memory usage for job steps that have JavaMemorySize entries defined in the parameters
-            -- This updates Memory_Usage_MB in Tmp_Job_Steps
-            CALL sw.update_job_step_memory_usage (
-                        _job,
-                        _xmlParameters,
-                        _message => _message,
-                        _returnCode => _returnCode);
-
-            -- For MSXML_Gen and ProMex jobs, _resultsFolderName will be of the form XML202212141459_Auto2113610 or PMX202301141131_Auto2139566
-            -- We actually want the results folder to be the shared results directory name (e.g. MSXML_Gen_1_194_863076 or ProMex_1_286_1112666)
-            -- This change will be made by finish_job_creation when it looks for Special="Job_Results" in the pipeline script XML, for example
-            --
-            -- <JobScript Name="ProMex">
-            -- <Step Number="1" Tool="PBF_Gen"/>
-            -- <Step Number="2" Tool="ProMex" Special="Job_Results">
-            -- <Depends_On Step_Number="1"/>
-            -- </Step>
-
-            If _debugMode Then
-                SELECT COUNT(*)
-                INTO _stepCount
-                FROM Tmp_Job_Steps ;
-
-                -- Show the contents of Tmp_Jobs
-                CALL sw.show_tmp_jobs();
-
-                -- Show the contents of Tmp_Job_Steps and Tmp_Job_Step_Dependencies
-                CALL sw.show_tmp_job_steps_and_job_step_dependencies();
-
-                -- Show the XML parameters
-                RAISE INFO 'Parameters for job %: %', _jobInfo.Job, _xmlParameters);
-            End If;
-
-            -- Handle any step cloning
-            CALL sw.clone_job_step (
-                        _job,
-                        _xmlParameters,
-                        _message => _message,
-                        _returnCode => _returnCode);
-
-            If _debugMode Then
-                SELECT COUNT(*)
-                INTO _stepCountNew
-                FROM Tmp_Job_Steps;
-
-                If _stepCountNew <> _stepCount Then
-                    RAISE INFO '';
-                    RAISE INFO 'Data after Cloning';
-
-                    CALL sw.show_tmp_job_steps_and_job_step_dependencies();
-                End If;
-            End If;
-
-            -- Handle external DTas If any
-            -- This updates DTA_Gen steps in Tmp_Job_Steps for which the job parameters contain parameter 'ExternalDTAFolderName' with value 'DTA_Manual'
-            CALL sw.override_dta_gen_for_external_dta (
-                        _job,
-                        _xmlParameters,
-                        _message => _message,
-                        _returnCode => _returnCode);
-
-            -- Perform a mixed bag of operations on the jobs in the temporary tables to finalize them before
-            -- copying to the main database tables
-            CALL sw.finish_job_creation (
+        -- Create the basic job structure (steps and dependencies)
+        -- Details are stored in Tmp_Job_Steps and Tmp_Job_Step_Dependencies
+        CALL sw.create_steps_for_job (
                     _job,
+                    _scriptXML,
+                    _resultsDirectoryName,
+                    _message => _message,
+                    _returnCode => _returnCode);
+
+        -- Calculate signatures for steps that require them (and also handle shared results directories)
+        -- Details are stored in Tmp_Job_Steps
+        CALL sw.create_signatures_for_job_steps (
+                    _job,
+                    _xmlParameters,
+                    _datasetOrDataPackageId,
                     _message => _message,
                     _returnCode => _returnCode,
                     _debugMode => _debugMode);
 
-            -- Do current job parameters conflict with existing job?
-            If _mode::citext = 'ExtendExistingJob' or _mode::citext = 'UpdateExistingJob' Then
+        -- Update the memory usage for job steps that have JavaMemorySize entries defined in the parameters
+        -- This updates Memory_Usage_MB in Tmp_Job_Steps
+        CALL sw.update_job_step_memory_usage (
+                    _job,
+                    _xmlParameters,
+                    _message => _message,
+                    _returnCode => _returnCode);
 
-                CALL sw.cross_check_job_parameters (
-                        _job,
-                        _message => _message,               -- Output
-                        _returnCode => _returnCode,         -- Output
-                        _ignoreSignatureMismatch => true);
+        -- For MSXML_Gen and ProMex jobs, _resultsFolderName will be of the form XML202212141459_Auto2113610 or PMX202301141131_Auto2139566
+        -- We actually want the results folder to be the shared results directory name (e.g. MSXML_Gen_1_194_863076 or ProMex_1_286_1112666)
+        -- This change will be made by finish_job_creation when it looks for Special="Job_Results" in the pipeline script XML, for example
+        --
+        -- <JobScript Name="ProMex">
+        -- <Step Number="1" Tool="PBF_Gen"/>
+        -- <Step Number="2" Tool="ProMex" Special="Job_Results">
+        -- <Depends_On Step_Number="1"/>
+        -- </Step>
 
-                If _returnCode <> '' Then
-                    If _mode::citext = 'UpdateExistingJob' Then
-                        -- If None of the job steps has completed yet, it's OK if there are parameter differences
-                        If Exists (SELECT * FROM sw.t_job_steps WHERE job = _job AND state = 5) Then
-                            _message := format('Conflicting parameters are not allowed when one or more job steps has completed: %s', _message);
-                            RETURN;
-                        Else
-                            _message := '';
-                        End If;
+        If _debugMode Then
+            SELECT COUNT(*)
+            INTO _stepCount
+            FROM Tmp_Job_Steps ;
 
-                    Else
-                        -- Mode is 'ExtendExistingJob'; exit the procedure
+            -- Show the contents of Tmp_Jobs
+            CALL sw.show_tmp_jobs();
 
-                        DROP TABLE Tmp_Jobs;
-                        DROP TABLE Tmp_Job_Steps;
-                        DROP TABLE Tmp_Job_Step_Dependencies;
-                        DROP TABLE Tmp_Job_Parameters;
+            -- Show the contents of Tmp_Job_Steps and Tmp_Job_Step_Dependencies
+            CALL sw.show_tmp_job_steps_and_job_step_dependencies();
 
+            -- Show the XML parameters
+            RAISE INFO 'Parameters for job %: %', _jobInfo.Job, _xmlParameters);
+        End If;
+
+        -- Handle any step cloning
+        CALL sw.clone_job_step (
+                    _job,
+                    _xmlParameters,
+                    _message => _message,
+                    _returnCode => _returnCode);
+
+        If _debugMode Then
+            SELECT COUNT(*)
+            INTO _stepCountNew
+            FROM Tmp_Job_Steps;
+
+            If _stepCountNew <> _stepCount Then
+                RAISE INFO '';
+                RAISE INFO 'Data after Cloning';
+
+                CALL sw.show_tmp_job_steps_and_job_step_dependencies();
+            End If;
+        End If;
+
+        -- Handle external DTas If any
+        -- This updates DTA_Gen steps in Tmp_Job_Steps for which the job parameters contain parameter 'ExternalDTAFolderName' with value 'DTA_Manual'
+        CALL sw.override_dta_gen_for_external_dta (
+                    _job,
+                    _xmlParameters,
+                    _message => _message,
+                    _returnCode => _returnCode);
+
+        -- Perform a mixed bag of operations on the jobs in the temporary tables to finalize them before
+        -- copying to the main database tables
+        CALL sw.finish_job_creation (
+                _job,
+                _message => _message,
+                _returnCode => _returnCode,
+                _debugMode => _debugMode);
+
+        -- Do current job parameters conflict with existing job?
+        If _mode::citext = 'ExtendExistingJob' or _mode::citext = 'UpdateExistingJob' Then
+
+            CALL sw.cross_check_job_parameters (
+                    _job,
+                    _message => _message,               -- Output
+                    _returnCode => _returnCode,         -- Output
+                    _ignoreSignatureMismatch => true);
+
+            If _returnCode <> '' Then
+                If _mode::citext = 'UpdateExistingJob' Then
+                    -- If None of the job steps has completed yet, it's OK if there are parameter differences
+                    If Exists (SELECT * FROM sw.t_job_steps WHERE job = _job AND state = 5) Then
+                        _message := format('Conflicting parameters are not allowed when one or more job steps has completed: %s', _message);
                         RETURN;
+                    Else
+                        _message := '';
                     End If;
-                End If;
 
+                Else
+                    -- Mode is 'ExtendExistingJob'; exit the procedure
+
+                    DROP TABLE Tmp_Jobs;
+                    DROP TABLE Tmp_Job_Steps;
+                    DROP TABLE Tmp_Job_Step_Dependencies;
+                    DROP TABLE Tmp_Job_Parameters;
+
+                    RETURN;
+                End If;
             End If;
 
-        End If; -- </c>
+        End If;
 
         _jobsProcessed := _jobsProcessed + 1;
 
@@ -648,8 +620,8 @@ BEGIN
                         _jobList,
                         _infoOnly => false,
                         _showResultsMode => 0,
-                        _message => _message,
-                        _returnCode => _returnCode);
+                        _message => _message,           -- Output
+                        _returnCode => _returnCode);    -- Output
         End If;
 
         If _mode::citext = 'ExtendExistingJob' Then

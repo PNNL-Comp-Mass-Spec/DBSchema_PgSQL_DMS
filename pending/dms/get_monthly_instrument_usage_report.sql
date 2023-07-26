@@ -918,7 +918,7 @@ BEGIN
             _message := _exceptionMessage;
         End If;
 
-        RAISE ERROR '%', _message;
+        RAISE WARNING '%', _message;
 
     END;
 
