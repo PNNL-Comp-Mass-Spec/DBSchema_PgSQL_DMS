@@ -1,28 +1,28 @@
 --
-CREATE OR REPLACE PROCEDURE public.validate_protein_collection_params
-(
-    _toolName text,
-    INOUT _organismDBName text,
-    _organismName text,
-    INOUT _protCollNameList text,
-    INOUT _protCollOptionsList text,
-    _ownerUsername text := '',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _debugMode boolean := false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: validate_protein_collection_params(text, text, text, text, text, text, text, text, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.validate_protein_collection_params(IN _toolname text, INOUT _organismdbname text, IN _organismname text, INOUT _protcollnamelist text, INOUT _protcolloptionslist text, IN _ownerusername text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _debugmode boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Validates the organism DB and/or protein collection options
 **
 **  Arguments:
-**    _toolName           If blank, will assume _orgDbReqd=1
-**    _protCollNameList   Will raise an error if over 4000 characters long. This was previously necessary since the Broker DB (DMS_Pipeline) had a 4000 character limit on analysis job parameter values. While likely not true for PostgreSQL, excessively long protein collection name lists could lead to issues.
-**    _ownerUsername      Only required if the user chooses an 'Encrypted' protein collection; as of August 2010 we don't have any encrypted protein collections
-**    _debugMode          If true, will display some debug info
+**    _toolName             If blank, will assume _orgDbReqd=1
+**    _organismDBName       Organism DB name (legacy FASTA file)
+**    _organismName         Organism name
+**    _protCollNameList     Comma-separated list of protein collection names
+**                          Will set _returnCode to 'U5310' and update _message if over 4000 characters long
+**                          - This was previously necessary since the Broker DB (DMS_Pipeline) had a 4000 character limit on analysis job parameter values
+**                          - While not true for PostgreSQL, excessively long protein collection name lists could lead to issues
+**    _protCollOptionsList  Protein collection options list
+**    _ownerUsername        Only required if the user chooses an 'Encrypted' protein collection; as of August 2010 we don't have any encrypted protein collections
+**    _message              Status messgae
+**    _returnCode           Return code
+**    _debugMode            If true, shows the values sent to pc.validate_analysis_job_protein_parameters()
 **
 **  Auth:   mem
 **  Date:   08/26/2010
@@ -31,7 +31,7 @@ AS $$
 **          08/19/2013 mem - Auto-clearing _organismDBName if both _organismDBName and _protCollNameList are defined and _organismDBName is the auto-generated FASTA file for the specified protein collection
 **          07/12/2016 mem - Now using a synonym when calling Validate_Analysis_Job_Protein_Parameters in the Protein_Sequences database
 **          04/11/2022 mem - Increase warning threshold for length of _protCollNameList to 4000
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/26/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -51,9 +51,6 @@ BEGIN
 
     ---------------------------------------------------
     -- Make sure settings for which 'na' is acceptable truly have lowercase 'na' and not 'NA' or 'n/a'
-    --
-    -- Since .NET string comparisons are case sensitive,
-    -- _settingsFileName needs to be lowercase 'na' for compatibility with the analysis manager
     ---------------------------------------------------
 
     _organismDBName := public.validate_na_parameter(_organismDBName, 1);
@@ -61,7 +58,7 @@ BEGIN
     _protCollOptionsList := public.validate_na_parameter(_protCollOptionsList, 1);
 
     If _organismDBName = '' Then
-        _organismDBName := 'na'
+        _organismDBName := 'na';
     End If;
 
     If _protCollNameList = '' Then
@@ -69,11 +66,11 @@ BEGIN
     End If;
 
     If _protCollOptionsList = '' Then
-        _protCollOptionsList := 'na'
+        _protCollOptionsList := 'na';
     End If;
 
     ---------------------------------------------------
-    -- Lookup orgDbReqd for the analysis tool
+    -- Lookup org_db_required for the analysis tool
     ---------------------------------------------------
 
     _orgDbReqd := 0;
@@ -105,7 +102,7 @@ BEGIN
 
     If _orgDbReqd = 0 Then
         If _organismDBName::citext <> 'na' OR _protCollNameList::citext <> 'na' OR _protCollOptionsList::citext <> 'na' Then
-            _message := format('Protein parameters must all be "na"; you have: Legacy Fasta (OrgDBName) = "%s", ProteinCollectionList = "%s", ProteinOptionsList = "%s"',
+            _message := format('Protein parameters must all be "na"; you have: Legacy FASTA (OrgDBName) = "%s", ProteinCollectionList = "%s", ProteinOptionsList = "%s"',
                                _organismDBName, _protCollNameList,  _protCollOptionsList);
 
             _returnCode := 'U5393';
@@ -116,14 +113,14 @@ BEGIN
     End If;
 
     If Not _organismDBName::citext In ('', 'na') And Not _protCollNameList::citext In ('', 'na') Then
-        -- User defined both a Legacy Fasta file and a Protein Collection List
+        -- User defined both a Legacy FASTA file and a Protein Collection List
         -- Auto-change _organismDBName to 'na' if possible
-        If Exists (SELECT * FROM t_analysis_job
+        If Exists (SELECT job FROM t_analysis_job
                    WHERE organism_db_name = _organismDBName::citext AND
                          protein_collection_list = _protCollNameList::citext AND
                          job_state_id IN (1, 2, 4, 14)) Then
 
-            -- Existing job found with both this legacy fasta file name and this protein collection list
+            -- Existing job found with both this legacy FASTA file name and this protein collection list
             -- Thus, use the protein collection list and clear _organismDBName
             _organismDBName := '';
 
@@ -132,20 +129,21 @@ BEGIN
 
     If Not _organismDBName::citext In ('', 'na') Then
         If Not _protCollNameList::citext In ('', 'na') Then
-            _message := 'Cannot define both a Legacy Fasta file and a Protein Collection List; one must be "na"';
+            _message := 'Cannot define both a Legacy FASTA file and a Protein Collection List; one must be "na"';
             _returnCode := 'U5314';
             RETURN;
         End If;
 
-        If _protCollNameList::citext In ('', 'na') and Not _protCollOptionsList::citext In ('', 'na') Then
+        If _protCollNameList::citext In ('', 'na') And Not _protCollOptionsList::citext In ('', 'na') Then
             _protCollOptionsList := 'na';
         End If;
 
         -- Verify that _organismDBName is defined in t_organism_db_file and that the organism matches up
 
-        If Not Exists ( SELECT *
-                        FROM t_organism_db_file ODB INNER JOIN
-                             t_organisms O ON ODB.organism_id = O.organism_id
+        If Not Exists ( SELECT org_db_file_id
+                        FROM t_organism_db_file ODB
+                             INNER JOIN t_organisms O
+                               ON ODB.organism_id = O.organism_id
                         WHERE ODB.file_name = _organismDBName::citext AND
                               O.organism = _organismName::citext AND
                               O.active > 0 AND
@@ -155,12 +153,13 @@ BEGIN
 
             SELECT O.organism
             INTO _organismMatch
-            FROM t_organism_db_file ODB INNER JOIN
-                 t_organisms O ON ODB.organism_id = O.organism_id
+            FROM t_organism_db_file ODB
+                 INNER JOIN t_organisms O
+                   ON ODB.organism_id = O.organism_id
             WHERE ODB.file_name = _organismDBName::citext AND O.active > 0 AND ODB.valid > 0;
 
             If FOUND Then
-                _message := format('Legacy Fasta file "%s" is defined for organism %s; you specified organism %s; cannot continue',
+                _message := format('Legacy FASTA file "%s" is defined for organism %s; you specified organism %s; cannot continue',
                                    _organismDBName, _organismMatch, _organismName);
 
                 _returnCode := 'U5320';
@@ -168,19 +167,19 @@ BEGIN
             Else
                 -- Match still not found; check if it is disabled
 
-                If Exists ( SELECT *
+                If Exists ( SELECT org_db_file_id
                             FROM t_organism_db_file ODB INNER JOIN
                                  t_organisms O ON ODB.organism_id = O.organism_id
                             WHERE ODB.file_name = _organismDBName::citext AND
                                   (O.active = 0 OR ODB.valid = 0)) Then
 
-                    _message := format('Legacy Fasta file "%s" is disabled and cannot be used (see t_organism_db_file)', _organismDBName);
+                    _message := format('Legacy FASTA file "%s" is disabled and cannot be used (see t_organism_db_file)', _organismDBName);
                     _returnCode := 'U5321';
                     RETURN;
 
                 Else
 
-                    _message := format('Legacy Fasta file "%s" is not a recognized fasta file', _organismDBName);
+                    _message := format('Legacy FASTA file "%s" is not a recognized FASTA file', _organismDBName);
                     _returnCode := 'U5322';
                     RETURN;
 
@@ -192,17 +191,13 @@ BEGIN
     End If;
 
     If _debugMode Then
-        _message := format('Calling pc.validate_analysis_job_protein_parameters: %s; %s; %s; %s; %s',
-                            Coalesce(_organismName, '??'),
-                            Coalesce(_ownerUsername, '??'),
-                            Coalesce(_organismDBName, '??'),
-                            Coalesce(_protCollNameList, '??'),
-                            Coalesce(_protCollOptionsList, '??'));
-
-        RAISE INFO '%', _message;
-        -- CALL post_log_entry ('Debug',_message, 'Validate_Protein_Collection_Params');
-
-        _message := '';
+        RAISE INFO '';
+        RAISE INFO 'Calling pc.validate_analysis_job_protein_parameters';
+        RAISE INFO '  _organismName:        %', Coalesce(_organismName, '??');
+        RAISE INFO '  _ownerUsername:       %', Coalesce(_ownerUsername, '??');
+        RAISE INFO '  _organismDBName:      %', Coalesce(_organismDBName, '??');
+        RAISE INFO '  _protCollNameList:    %', Coalesce(_protCollNameList, '??');
+        RAISE INFO '  _protCollOptionsList: %', Coalesce(_protCollOptionsList, '??');
     End If;
 
     CALL pc.validate_analysis_job_protein_parameters (
@@ -214,9 +209,15 @@ BEGIN
             _message => _message,                           -- Output
             _returnCode => _returnCode);                    -- Output
 
-
 END
 $$;
 
-COMMENT ON PROCEDURE public.validate_protein_collection_params IS 'ValidateProteinCollectionParams';
+
+ALTER PROCEDURE public.validate_protein_collection_params(IN _toolname text, INOUT _organismdbname text, IN _organismname text, INOUT _protcollnamelist text, INOUT _protcolloptionslist text, IN _ownerusername text, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE validate_protein_collection_params(IN _toolname text, INOUT _organismdbname text, IN _organismname text, INOUT _protcollnamelist text, INOUT _protcolloptionslist text, IN _ownerusername text, INOUT _message text, INOUT _returncode text, IN _debugmode boolean); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.validate_protein_collection_params(IN _toolname text, INOUT _organismdbname text, IN _organismname text, INOUT _protcollnamelist text, INOUT _protcolloptionslist text, IN _ownerusername text, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) IS 'ValidateProteinCollectionParams';
 
