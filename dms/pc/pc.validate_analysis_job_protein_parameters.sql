@@ -145,7 +145,7 @@ BEGIN
 
 
     CREATE TEMP TABLE Tmp_ProteinCollectionList (
-        Collection_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         Collection_Name text
     );
 
@@ -163,11 +163,11 @@ BEGIN
             _cleanCollNameList := format('%s,', _cleanCollNameList);
         End If;
 
-        SELECT Collection_ID, Collection_Name
+        SELECT Entry_ID, Collection_Name
         INTO _entryID, _collectionName
         FROM Tmp_ProteinCollectionList
-        WHERE Collection_ID > _entryID
-        ORDER BY Collection_ID
+        WHERE Entry_ID > _entryID
+        ORDER BY Entry_ID
         LIMIT 1;
 
         If Not FOUND Then
