@@ -24,7 +24,7 @@ CREATE VIEW public.v_notification_analysis_job_request_by_request_owner AS
      JOIN public.t_experiments e ON ((ds.exp_id = e.exp_id)))
      JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id)))
      JOIN public.t_users u ON ((ajr.user_id = u.user_id)))
-  WHERE ((tet.target_entity_type = 2) AND (tet.visible = 'Y'::bpchar) AND (u.active OPERATOR(public.=) 'Y'::public.citext));
+  WHERE ((tet.target_entity_type = 2) AND (tet.visible OPERATOR(public.=) 'Y'::public.citext) AND (u.active OPERATOR(public.=) 'Y'::public.citext));
 
 
 ALTER TABLE public.v_notification_analysis_job_request_by_request_owner OWNER TO d3l243;

@@ -10,8 +10,8 @@ CREATE TABLE public.t_emsl_instruments (
     local_category_name public.citext,
     local_instrument_name public.citext,
     last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    eus_active_sw character(1),
-    eus_primary_instrument character(1)
+    eus_active_sw public.citext,
+    eus_primary_instrument public.citext
 );
 
 

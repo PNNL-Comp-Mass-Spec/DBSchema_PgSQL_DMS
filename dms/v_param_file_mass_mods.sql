@@ -20,12 +20,12 @@ CREATE VIEW public.v_param_file_mass_mods AS
     ' || Mod Type || Residue || Mod Name (DMS) || Mod Name (UniMod) || Mod Mass ||'::text AS table_code_header,
     ((((((((((' | '::text || (
         CASE pfmm.mod_type_symbol
-            WHEN 'S'::bpchar THEN 'Static'::bpchar
-            WHEN 'D'::bpchar THEN 'Dynamic'::bpchar
-            WHEN 'T'::bpchar THEN 'Static Terminal Peptide'::bpchar
-            WHEN 'P'::bpchar THEN 'Static Terminal Protein'::bpchar
-            WHEN 'I'::bpchar THEN 'Isotopic'::bpchar
-            ELSE pfmm.mod_type_symbol
+            WHEN 'S'::bpchar THEN 'Static'::public.citext
+            WHEN 'D'::bpchar THEN 'Dynamic'::public.citext
+            WHEN 'T'::bpchar THEN 'Static Terminal Peptide'::public.citext
+            WHEN 'P'::bpchar THEN 'Static Terminal Protein'::public.citext
+            WHEN 'I'::bpchar THEN 'Isotopic'::public.citext
+            ELSE (pfmm.mod_type_symbol)::public.citext
         END)::text) || ' | '::text) || (r.description)::text) || ' | '::text) || (mcf.mass_correction_tag)::text) || ' | '::text) || (
         CASE
             WHEN (mcf.original_source OPERATOR(public.~~) '%UniMod%'::public.citext) THEN mcf.original_source_name

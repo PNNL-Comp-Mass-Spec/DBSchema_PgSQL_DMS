@@ -71,7 +71,7 @@ CREATE VIEW public.v_requested_run_batch_list_report_uncached AS
             max(qt.days_in_queue) AS days_in_prep_queue,
             sum(
                 CASE
-                    WHEN ((COALESCE(spr.block_and_randomize_runs, ''::bpchar) = 'yes'::bpchar) AND ((COALESCE(rr3.block, 0) = 0) OR (COALESCE(rr3.run_order, 0) = 0))) THEN 1
+                    WHEN ((COALESCE(spr.block_and_randomize_runs, ''::citext) = 'yes'::citext) AND ((COALESCE(rr3.block, 0) = 0) OR (COALESCE(rr3.run_order, 0) = 0))) THEN 1
                     ELSE 0
                 END) AS block_missing,
             sum(

@@ -35,7 +35,7 @@ CREATE VIEW public.v_notification_requested_run_batches_by_research_team AS
              JOIN public.t_users u ON ((srtm.user_id = u.user_id)))
              JOIN public.t_research_team_roles srtr ON ((srtm.role_id = srtr.role_id)))
           WHERE ((c.state OPERATOR(public.=) 'Active'::public.citext) AND (u.active OPERATOR(public.=) 'Y'::public.citext))) t ON ((t.dataset_id = rr.dataset_id)))
-  WHERE ((tet.target_entity_type = 1) AND (tet.visible = 'Y'::bpchar) AND (rrb.batch_id <> 0));
+  WHERE ((tet.target_entity_type = 1) AND (tet.visible OPERATOR(public.=) 'Y'::public.citext) AND (rrb.batch_id <> 0));
 
 
 ALTER TABLE public.v_notification_requested_run_batches_by_research_team OWNER TO d3l243;

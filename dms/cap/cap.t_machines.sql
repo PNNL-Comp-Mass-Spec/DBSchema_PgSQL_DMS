@@ -6,7 +6,7 @@ CREATE TABLE cap.t_machines (
     machine public.citext NOT NULL,
     total_cpus smallint DEFAULT 2 NOT NULL,
     cpus_available integer DEFAULT 0 NOT NULL,
-    bionet_available character(1) DEFAULT 'N'::bpchar NOT NULL,
+    bionet_available public.citext DEFAULT 'N'::bpchar NOT NULL,
     enabled smallint DEFAULT 1 NOT NULL
 );
 

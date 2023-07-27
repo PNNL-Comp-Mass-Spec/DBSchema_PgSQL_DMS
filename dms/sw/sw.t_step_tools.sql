@@ -13,7 +13,7 @@ CREATE TABLE sw.t_step_tools (
     uses_all_cores smallint DEFAULT 0 NOT NULL,
     memory_usage_mb integer DEFAULT 250 NOT NULL,
     parameter_template xml,
-    available_for_general_processing character(1) DEFAULT 'Y'::bpchar NOT NULL,
+    available_for_general_processing public.citext DEFAULT 'Y'::bpchar NOT NULL,
     param_file_storage_path public.citext DEFAULT ''::public.citext,
     comment public.citext DEFAULT ''::public.citext,
     tag public.citext,

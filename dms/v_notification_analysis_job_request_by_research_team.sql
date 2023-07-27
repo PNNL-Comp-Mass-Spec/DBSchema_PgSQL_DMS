@@ -35,7 +35,7 @@ CREATE VIEW public.v_notification_analysis_job_request_by_research_team AS
              JOIN public.t_users ON ((srtm.user_id = t_users.user_id)))
              JOIN public.t_research_team_roles srtr ON ((srtm.role_id = srtr.role_id)))
           WHERE ((t_campaign.state OPERATOR(public.=) 'Active'::public.citext) AND (t_users.active OPERATOR(public.=) 'Y'::public.citext))) t ON ((t.dataset_id = j.dataset_id)))
-  WHERE ((tet.target_entity_type = 2) AND (tet.visible = 'Y'::bpchar));
+  WHERE ((tet.target_entity_type = 2) AND (tet.visible OPERATOR(public.=) 'Y'::public.citext));
 
 
 ALTER TABLE public.v_notification_analysis_job_request_by_research_team OWNER TO d3l243;

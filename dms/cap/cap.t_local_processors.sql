@@ -4,7 +4,7 @@
 
 CREATE TABLE cap.t_local_processors (
     processor_name public.citext NOT NULL,
-    state character(1) DEFAULT 'E'::bpchar NOT NULL,
+    state public.citext DEFAULT 'E'::bpchar NOT NULL,
     machine public.citext NOT NULL,
     latest_request timestamp without time zone,
     manager_version public.citext

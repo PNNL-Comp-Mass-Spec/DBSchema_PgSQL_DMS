@@ -12,7 +12,7 @@ CREATE VIEW public.v_instrument_list_report AS
     instname.usage,
     instname.operations_role AS ops_role,
         CASE
-            WHEN (instname.status = 'active'::bpchar) THEN scansourceyesno.description
+            WHEN (instname.status OPERATOR(public.=) 'active'::public.citext) THEN scansourceyesno.description
             ELSE 'No'::public.citext
         END AS scan_source,
     instgroup.allocation_tag,

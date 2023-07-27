@@ -6,7 +6,7 @@ CREATE TABLE sw.t_scripts (
     script_id integer NOT NULL,
     script public.citext NOT NULL,
     description public.citext,
-    enabled character(1) DEFAULT 'N'::bpchar NOT NULL,
+    enabled public.citext DEFAULT 'N'::bpchar NOT NULL,
     results_tag public.citext,
     contents xml,
     parameters xml,

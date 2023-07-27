@@ -8,9 +8,9 @@ CREATE TABLE public.t_aux_info_description (
     aux_subcategory_id integer,
     sequence smallint DEFAULT 0 NOT NULL,
     data_size integer DEFAULT 64 NOT NULL,
-    helper_append character(1) DEFAULT 'N'::bpchar NOT NULL,
-    active character(1) DEFAULT 'Y'::bpchar NOT NULL,
-    CONSTRAINT ck_t_aux_info_description_active CHECK (((active = 'N'::bpchar) OR (active = 'Y'::bpchar)))
+    helper_append public.citext DEFAULT 'N'::bpchar NOT NULL,
+    active public.citext DEFAULT 'Y'::bpchar NOT NULL,
+    CONSTRAINT ck_t_aux_info_description_active CHECK (((active OPERATOR(public.=) 'N'::public.citext) OR (active OPERATOR(public.=) 'Y'::public.citext)))
 );
 
 

@@ -21,7 +21,7 @@ CREATE VIEW public.v_organism_db_file AS
      CROSS JOIN ( SELECT t_misc_paths.server,
             t_misc_paths.client
            FROM public.t_misc_paths
-          WHERE (t_misc_paths.path_function = 'DMSOrganismFiles'::bpchar)) mpath);
+          WHERE (t_misc_paths.path_function OPERATOR(public.=) 'DMSOrganismFiles'::public.citext)) mpath);
 
 
 ALTER TABLE public.v_organism_db_file OWNER TO d3l243;

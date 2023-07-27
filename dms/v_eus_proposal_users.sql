@@ -18,7 +18,7 @@ CREATE VIEW public.v_eus_proposal_users AS
            FROM public.t_sample_prep_request
           WHERE (NOT (t_sample_prep_request.eus_user_id IS NULL))
           GROUP BY t_sample_prep_request.eus_user_id) usageq ON ((u.person_id = usageq.person_id)))
-  WHERE ((pu.of_dms_interest = 'Y'::bpchar) AND (pu.state_id <> 5));
+  WHERE ((pu.of_dms_interest OPERATOR(public.=) 'Y'::public.citext) AND (pu.state_id <> 5));
 
 
 ALTER TABLE public.v_eus_proposal_users OWNER TO d3l243;

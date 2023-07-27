@@ -21,7 +21,7 @@ CREATE VIEW public.v_instrument_detail_report AS
     instname.operations_role AS ops_role,
     trackingyesno.description AS track_usage_when_inactive,
         CASE
-            WHEN (instname.status = 'active'::bpchar) THEN scansourceyesno.description
+            WHEN (instname.status OPERATOR(public.=) 'active'::public.citext) THEN scansourceyesno.description
             ELSE 'No (not active)'::public.citext
         END AS scan_source,
     instgroup.allocation_tag,

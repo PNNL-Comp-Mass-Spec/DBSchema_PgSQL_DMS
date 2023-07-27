@@ -9,7 +9,7 @@ CREATE VIEW public.v_instrument_name_rna_picklist AS
    FROM ((public.t_instrument_name instname
      JOIN public.t_instrument_group i ON ((instname.instrument_group OPERATOR(public.=) i.instrument_group)))
      LEFT JOIN public.t_dataset_type_name dt ON ((i.default_dataset_type = dt.dataset_type_id)))
-  WHERE ((instname.operations_role OPERATOR(public.=) 'Transcriptomics'::public.citext) AND (instname.status <> 'Inactive'::bpchar));
+  WHERE ((instname.operations_role OPERATOR(public.=) 'Transcriptomics'::public.citext) AND (instname.status OPERATOR(public.<>) 'Inactive'::public.citext));
 
 
 ALTER TABLE public.v_instrument_name_rna_picklist OWNER TO d3l243;

@@ -10,7 +10,7 @@ CREATE TABLE public.t_instrument_name (
     source_path_id integer,
     storage_path_id integer,
     capture_method public.citext,
-    status character(8) DEFAULT 'active'::bpchar,
+    status public.citext DEFAULT 'active'::bpchar,
     room_number public.citext,
     description public.citext,
     usage public.citext DEFAULT ''::public.citext NOT NULL,
@@ -38,7 +38,7 @@ CASE
 END) STORED,
     default_purge_priority smallint DEFAULT 3 NOT NULL,
     storage_purge_holdoff_months smallint DEFAULT 1 NOT NULL,
-    CONSTRAINT ck_t_instrument_name_status CHECK (((status = 'offline'::bpchar) OR (status = 'inactive'::bpchar) OR (status = 'active'::bpchar) OR (status = 'broken'::bpchar)))
+    CONSTRAINT ck_t_instrument_name_status CHECK (((status OPERATOR(public.=) 'offline'::public.citext) OR (status OPERATOR(public.=) 'inactive'::public.citext) OR (status OPERATOR(public.=) 'active'::public.citext) OR (status OPERATOR(public.=) 'broken'::public.citext)))
 );
 
 

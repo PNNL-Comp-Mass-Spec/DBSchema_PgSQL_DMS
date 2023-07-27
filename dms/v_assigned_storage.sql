@@ -19,14 +19,14 @@ CREATE VIEW public.v_assigned_storage AS
             t_storage_path.storage_path,
             t_storage_path.vol_name_server
            FROM public.t_storage_path
-          WHERE ((t_storage_path.storage_path_function)::text = ('inbox'::bpchar)::text)) vs ON ((t_instrument_name.source_path_id = vs.storage_path_id)))
+          WHERE (t_storage_path.storage_path_function OPERATOR(public.=) 'inbox'::public.citext)) vs ON ((t_instrument_name.source_path_id = vs.storage_path_id)))
      JOIN ( SELECT t_storage_path.storage_path_id,
             t_storage_path.storage_path,
             t_storage_path.vol_name_client,
             t_storage_path.vol_name_server,
             t_storage_path.machine_name
            FROM public.t_storage_path
-          WHERE ((t_storage_path.storage_path_function)::text = ('raw-storage'::bpchar)::text)) vr ON ((t_instrument_name.storage_path_id = vr.storage_path_id)));
+          WHERE (t_storage_path.storage_path_function OPERATOR(public.=) 'raw-storage'::public.citext)) vr ON ((t_instrument_name.storage_path_id = vr.storage_path_id)));
 
 
 ALTER TABLE public.v_assigned_storage OWNER TO d3l243;

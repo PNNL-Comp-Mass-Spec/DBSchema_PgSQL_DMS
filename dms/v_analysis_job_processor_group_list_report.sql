@@ -16,12 +16,12 @@ CREATE VIEW public.v_analysis_job_processor_group_list_report AS
      JOIN ( SELECT ajpg_1.group_id,
             sum(
                 CASE
-                    WHEN (ajpgm.membership_enabled = 'Y'::bpchar) THEN 1
+                    WHEN (ajpgm.membership_enabled OPERATOR(public.=) 'Y'::public.citext) THEN 1
                     ELSE 0
                 END) AS enabled_procs_count,
             sum(
                 CASE
-                    WHEN (ajpgm.membership_enabled <> 'Y'::bpchar) THEN 1
+                    WHEN (ajpgm.membership_enabled OPERATOR(public.<>) 'Y'::public.citext) THEN 1
                     ELSE 0
                 END) AS disabled_procs_count
            FROM (public.t_analysis_job_processor_group ajpg_1

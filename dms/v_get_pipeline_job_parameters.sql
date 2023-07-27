@@ -26,7 +26,7 @@ CREATE VIEW public.v_get_pipeline_job_parameters AS
     ((sp.vol_name_client)::text || (sp.storage_path)::text) AS dataset_storage_path,
     ((sp.vol_name_client)::text || (( SELECT t_misc_paths.client
            FROM public.t_misc_paths
-          WHERE (t_misc_paths.path_function = 'AnalysisXfer'::bpchar)))::text) AS transfer_folder_path,
+          WHERE (t_misc_paths.path_function OPERATOR(public.=) 'AnalysisXfer'::public.citext)))::text) AS transfer_folder_path,
     j.results_folder_name,
     j.special_processing,
     dtn.dataset_type,

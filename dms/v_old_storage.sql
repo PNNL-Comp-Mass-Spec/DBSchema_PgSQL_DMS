@@ -10,7 +10,7 @@ CREATE VIEW public.v_old_storage AS
     t_storage_path.storage_path_function,
     t_storage_path.instrument
    FROM public.t_storage_path
-  WHERE ((t_storage_path.storage_path_function)::text = ('old-storage'::bpchar)::text);
+  WHERE (t_storage_path.storage_path_function OPERATOR(public.=) 'old-storage'::public.citext);
 
 
 ALTER TABLE public.v_old_storage OWNER TO d3l243;

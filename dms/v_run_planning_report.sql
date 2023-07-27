@@ -125,7 +125,7 @@ CREATE VIEW public.v_run_planning_report AS
                             ELSE qt.days_in_queue
                         END AS days_in_prep_queue,
                         CASE
-                            WHEN ((COALESCE(spr.block_and_randomize_runs, ''::bpchar) = 'yes'::bpchar) AND ((COALESCE(rr.block, 0) = 0) OR (COALESCE(rr.run_order, 0) = 0))) THEN 1
+                            WHEN ((COALESCE(spr.block_and_randomize_runs, ''::public.citext) OPERATOR(public.=) 'yes'::public.citext) AND ((COALESCE(rr.block, 0) = 0) OR (COALESCE(rr.run_order, 0) = 0))) THEN 1
                             ELSE 0
                         END AS block_missing,
                         CASE

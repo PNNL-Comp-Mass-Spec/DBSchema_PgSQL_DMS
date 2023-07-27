@@ -17,7 +17,7 @@ CREATE VIEW public.v_instrument_info_lcmsnet AS
     i.capture_method
    FROM (public.t_instrument_name i
      JOIN public.t_storage_path tp ON ((i.source_path_id = tp.storage_path_id)))
-  WHERE ((i.instrument OPERATOR(public.!~) similar_to_escape('SW[_]%'::text)) AND (i.status = 'active'::bpchar) AND (i.operations_role OPERATOR(public.<>) 'QC'::public.citext));
+  WHERE ((i.instrument OPERATOR(public.!~) similar_to_escape('SW[_]%'::text)) AND (i.status OPERATOR(public.=) 'active'::public.citext) AND (i.operations_role OPERATOR(public.<>) 'QC'::public.citext));
 
 
 ALTER TABLE public.v_instrument_info_lcmsnet OWNER TO d3l243;

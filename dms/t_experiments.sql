@@ -23,7 +23,7 @@ CREATE TABLE public.t_experiments (
     post_digest_internal_std_id integer DEFAULT 0 NOT NULL,
     wellplate public.citext,
     well public.citext,
-    alkylation character(1) DEFAULT 'N'::bpchar NOT NULL,
+    alkylation public.citext DEFAULT 'N'::bpchar NOT NULL,
     barcode public.citext,
     tissue_id public.citext,
     tissue_source_id smallint,

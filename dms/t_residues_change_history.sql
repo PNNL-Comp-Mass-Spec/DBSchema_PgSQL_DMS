@@ -5,7 +5,7 @@
 CREATE TABLE public.t_residues_change_history (
     event_id integer NOT NULL,
     residue_id integer NOT NULL,
-    residue_symbol character(1) NOT NULL,
+    residue_symbol public.citext NOT NULL,
     description public.citext NOT NULL,
     average_mass double precision NOT NULL,
     monoisotopic_mass double precision NOT NULL,

@@ -9,7 +9,7 @@ CREATE VIEW public.v_instrument_source_paths AS
     instname.instrument
    FROM (public.t_instrument_name instname
      JOIN public.t_storage_path spath ON ((instname.source_path_id = spath.storage_path_id)))
-  WHERE ((instname.status = 'active'::bpchar) AND (instname.scan_source_dir > 0));
+  WHERE ((instname.status OPERATOR(public.=) 'active'::public.citext) AND (instname.scan_source_dir > 0));
 
 
 ALTER TABLE public.v_instrument_source_paths OWNER TO d3l243;

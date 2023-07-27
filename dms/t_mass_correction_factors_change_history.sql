@@ -9,7 +9,7 @@ CREATE TABLE public.t_mass_correction_factors_change_history (
     description public.citext,
     monoisotopic_mass double precision NOT NULL,
     average_mass double precision,
-    affected_atom character(1) NOT NULL,
+    affected_atom public.citext NOT NULL,
     original_source public.citext,
     original_source_name public.citext,
     alternative_name public.citext,

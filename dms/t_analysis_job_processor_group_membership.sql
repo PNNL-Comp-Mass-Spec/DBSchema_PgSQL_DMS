@@ -5,10 +5,10 @@
 CREATE TABLE public.t_analysis_job_processor_group_membership (
     processor_id integer NOT NULL,
     group_id integer NOT NULL,
-    membership_enabled character(1) DEFAULT 'Y'::bpchar NOT NULL,
+    membership_enabled public.citext DEFAULT 'Y'::bpchar NOT NULL,
     last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     entered_by public.citext DEFAULT SESSION_USER,
-    CONSTRAINT ck_t_analysis_job_processor_group_membership_enabled CHECK (((membership_enabled = 'N'::bpchar) OR (membership_enabled = 'Y'::bpchar)))
+    CONSTRAINT ck_t_analysis_job_processor_group_membership_enabled CHECK (((membership_enabled OPERATOR(public.=) 'N'::public.citext) OR (membership_enabled OPERATOR(public.=) 'Y'::public.citext)))
 );
 
 
@@ -31,7 +31,7 @@ CREATE INDEX ix_t_analysis_job_processor_group_membership_group_id_enabled ON pu
 -- Name: t_analysis_job_processor_group_membership trig_t_analysis_job_processor_group_membership_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_analysis_job_processor_group_membership_after_update AFTER UPDATE ON public.t_analysis_job_processor_group_membership FOR EACH ROW WHEN (((old.processor_id <> new.processor_id) OR (old.group_id <> new.group_id) OR (old.membership_enabled <> new.membership_enabled))) EXECUTE FUNCTION public.trigfn_t_analysis_job_processor_group_membership_after_update();
+CREATE TRIGGER trig_t_analysis_job_processor_group_membership_after_update AFTER UPDATE ON public.t_analysis_job_processor_group_membership FOR EACH ROW WHEN (((old.processor_id <> new.processor_id) OR (old.group_id <> new.group_id) OR (old.membership_enabled OPERATOR(public.<>) new.membership_enabled))) EXECUTE FUNCTION public.trigfn_t_analysis_job_processor_group_membership_after_update();
 
 --
 -- Name: t_analysis_job_processor_group_membership fk_t_analysis_job_processor_group_t_analysis_job_processor; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

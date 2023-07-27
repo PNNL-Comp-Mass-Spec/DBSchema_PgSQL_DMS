@@ -19,7 +19,7 @@ CREATE VIEW public.v_aux_info_value AS
      JOIN public.t_aux_info_description item ON ((subcategory.aux_subcategory_id = item.aux_subcategory_id)))
      JOIN public.t_aux_info_value val ON ((item.aux_description_id = val.aux_description_id)))
      JOIN public.t_aux_info_target category_target ON ((category.target_type_id = category_target.target_type_id)))
-  WHERE (item.active = 'Y'::bpchar);
+  WHERE (item.active OPERATOR(public.=) 'Y'::public.citext);
 
 
 ALTER TABLE public.v_aux_info_value OWNER TO d3l243;

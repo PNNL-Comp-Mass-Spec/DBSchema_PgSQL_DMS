@@ -6,12 +6,12 @@ CREATE TABLE cap.t_step_tools (
     step_tool_id integer NOT NULL,
     step_tool public.citext NOT NULL,
     description public.citext,
-    bionet_required character(1) DEFAULT 'N'::bpchar NOT NULL,
-    only_on_storage_server character(1) DEFAULT 'N'::bpchar NOT NULL,
-    instrument_capacity_limited character(1) DEFAULT 'N'::bpchar NOT NULL,
+    bionet_required public.citext DEFAULT 'N'::bpchar NOT NULL,
+    only_on_storage_server public.citext DEFAULT 'N'::bpchar NOT NULL,
+    instrument_capacity_limited public.citext DEFAULT 'N'::bpchar NOT NULL,
     holdoff_interval_minutes smallint DEFAULT 0 NOT NULL,
     number_of_retries smallint DEFAULT 0 NOT NULL,
-    processor_assignment_applies character(1) DEFAULT 'N'::bpchar NOT NULL
+    processor_assignment_applies public.citext DEFAULT 'N'::bpchar NOT NULL
 );
 
 

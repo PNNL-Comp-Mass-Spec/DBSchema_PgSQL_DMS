@@ -22,21 +22,21 @@ CREATE VIEW public.v_param_file_mass_mod_info AS
         END AS unimod_mod_name,
     (((((((
         CASE pfmm.mod_type_symbol
-            WHEN 'D'::bpchar THEN 'Dyn'::bpchar
-            WHEN 'S'::bpchar THEN 'Stat'::bpchar
-            WHEN 'T'::bpchar THEN 'PepTerm'::bpchar
-            WHEN 'P'::bpchar THEN 'ProtTerm'::bpchar
-            WHEN 'I'::bpchar THEN 'Iso'::bpchar
-            ELSE pfmm.mod_type_symbol
+            WHEN 'D'::bpchar THEN 'Dyn'::public.citext
+            WHEN 'S'::bpchar THEN 'Stat'::public.citext
+            WHEN 'T'::bpchar THEN 'PepTerm'::public.citext
+            WHEN 'P'::bpchar THEN 'ProtTerm'::public.citext
+            WHEN 'I'::bpchar THEN 'Iso'::public.citext
+            ELSE (pfmm.mod_type_symbol)::public.citext
         END)::text || '_'::text) || (r.abbreviation)::text) || '_'::text) || (mcf.mass_correction_tag)::text) || '_'::text) || (mcf.original_source_name)::text) AS mod_code,
     (((((((((
         CASE pfmm.mod_type_symbol
-            WHEN 'D'::bpchar THEN 'Dyn'::bpchar
-            WHEN 'S'::bpchar THEN 'Stat'::bpchar
-            WHEN 'T'::bpchar THEN 'PepTerm'::bpchar
-            WHEN 'P'::bpchar THEN 'ProtTerm'::bpchar
-            WHEN 'I'::bpchar THEN 'Iso'::bpchar
-            ELSE pfmm.mod_type_symbol
+            WHEN 'D'::bpchar THEN 'Dyn'::public.citext
+            WHEN 'S'::bpchar THEN 'Stat'::public.citext
+            WHEN 'T'::bpchar THEN 'PepTerm'::public.citext
+            WHEN 'P'::bpchar THEN 'ProtTerm'::public.citext
+            WHEN 'I'::bpchar THEN 'Iso'::public.citext
+            ELSE (pfmm.mod_type_symbol)::public.citext
         END)::text || '_'::text) || (r.abbreviation)::text) || '_'::text) || (mcf.mass_correction_tag)::text) || '_'::text) || (mcf.original_source_name)::text) || '_'::text) || (s.local_symbol)::text) AS mod_code_with_symbol
    FROM (((((public.t_mass_correction_factors mcf
      JOIN public.t_param_file_mass_mods pfmm ON ((mcf.mass_correction_id = pfmm.mass_correction_id)))

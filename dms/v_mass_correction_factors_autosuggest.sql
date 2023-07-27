@@ -8,7 +8,7 @@ CREATE VIEW public.v_mass_correction_factors_autosuggest AS
     ((rtrim((t_mass_correction_factors.mass_correction_tag)::text) || ' - '::text) || (t_mass_correction_factors.description)::text) AS info,
     t_mass_correction_factors.mass_correction_tag AS extra,
         CASE
-            WHEN (COALESCE(t_mass_correction_factors.affected_atom, ''::bpchar) = '-'::bpchar) THEN 'std'::text
+            WHEN (COALESCE(t_mass_correction_factors.affected_atom, ''::public.citext) OPERATOR(public.=) '-'::public.citext) THEN 'std'::text
             ELSE 'iso'::text
         END AS type
    FROM public.t_mass_correction_factors

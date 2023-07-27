@@ -6,7 +6,7 @@ CREATE TABLE public.t_analysis_job_processor_group (
     group_id integer NOT NULL,
     group_name public.citext NOT NULL,
     group_description public.citext,
-    group_enabled character(1) DEFAULT 'Y'::bpchar NOT NULL,
+    group_enabled public.citext DEFAULT 'Y'::bpchar NOT NULL,
     group_created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     entered_by public.citext DEFAULT SESSION_USER
@@ -46,7 +46,7 @@ ALTER TABLE ONLY public.t_analysis_job_processor_group
 -- Name: t_analysis_job_processor_group trig_t_analysis_job_processor_group_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_analysis_job_processor_group_after_update AFTER UPDATE ON public.t_analysis_job_processor_group FOR EACH ROW WHEN (((old.group_name OPERATOR(public.<>) new.group_name) OR (old.group_enabled <> new.group_enabled))) EXECUTE FUNCTION public.trigfn_t_analysis_job_processor_group_after_update();
+CREATE TRIGGER trig_t_analysis_job_processor_group_after_update AFTER UPDATE ON public.t_analysis_job_processor_group FOR EACH ROW WHEN (((old.group_name OPERATOR(public.<>) new.group_name) OR (old.group_enabled OPERATOR(public.<>) new.group_enabled))) EXECUTE FUNCTION public.trigfn_t_analysis_job_processor_group_after_update();
 
 --
 -- Name: TABLE t_analysis_job_processor_group; Type: ACL; Schema: public; Owner: d3l243
