@@ -1,17 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE sw.update_job_param_org_db_info_using_data_pkg
-(
-    _job int,
-    _dataPackageID int,
-    _deleteIfInvalid boolean = false,
-    _debugMode boolean = false,
-    _scriptNameForDebug text = '',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_job_param_org_db_info_using_data_pkg(integer, integer, boolean, boolean, text, text, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.update_job_param_org_db_info_using_data_pkg(IN _job integer, IN _datapackageid integer, IN _deleteifinvalid boolean DEFAULT false, IN _debugmode boolean DEFAULT false, IN _scriptnamefordebug text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -20,7 +13,14 @@ AS $$
 **      for the specified job using the specified data package
 **
 **  Arguments:
-**    _deleteIfInvalid   When true, deletes entries for OrganismName, LegacyFastaFileName, ProteinOptions, and ProteinCollectionList if _dataPackageID = 0, or _dataPackageID points to a non-existent data package, or if the data package doesn't have any Peptide_Hit jobs (MAC Jobs) or doesn't have any datasets (MaxQuant, MSFragger, or DiaNN)
+**    _job                  Job Number
+**    _dataPackageID        Data package ID
+**    _deleteIfInvalid      When true, deletes entries for OrganismName, LegacyFastaFileName, ProteinOptions, and ProteinCollectionList if any of these conditions is true:
+**                          - _dataPackageID is 0
+**                          - _dataPackageID references a non-existent data package,
+**                          - the data package doesn't have any Peptide_Hit jobs (MAC Jobs) or doesn't have any datasets (MaxQuant, MSFragger, or DiaNN)
+**    _debugMode            When true, preview the job parameters that would be updated
+**    _scriptNameForDebug   Script name to use if _job is not found in sw.t_jobs
 **
 **  Auth:   mem
 **  Date:   03/20/2012 mem - Initial version
@@ -30,13 +30,13 @@ AS $$
 **          01/31/2022 mem - Add support for MSFragger
 **                         - Add parameters _debugMode and _scriptNameForDebug
 **          03/27/2023 mem - Add support for DiaNN
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/26/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _insertCount int;
     _messageAddon text;
-    _scriptName text := '';
+    _scriptName citext := '';
     _organismName text := '';
     _legacyFastaFileName text := '';
     _proteinCollectionList text := '';
@@ -60,28 +60,46 @@ BEGIN
 
     If _debugMode Then
         RAISE INFO '';
-        RAISE INFO 'Examining parameters for job %, script %', _job, _scriptNameForDebug;
+    End If;
 
-        _scriptName := _scriptNameForDebug;
-    Else
-        ---------------------------------------------------
-        -- Lookup the name of the job script
-        ---------------------------------------------------
+    ---------------------------------------------------
+    -- Lookup the name of the job script
+    ---------------------------------------------------
 
-        SELECT script
-        INTO _scriptName
-        FROM sw.t_jobs
-        WHERE job = _job;
+    SELECT script
+    INTO _scriptName
+    FROM sw.t_jobs
+    WHERE job = _job;
 
-        _scriptName := Coalesce(_scriptName, '??');
+    If Not FOUND Then
+        If _debugMode Then
+            If Coalesce(_scriptNameForDebug, '') = '' Then
+                _message := format('Job %s not found in sw.t_jobs; use _scriptNameForDebug to specify the script to use', _job);
+                RAISE WARNING '%', _message;
+                RETURN;
+            Else
+                _scriptName := _scriptNameForDebug;
+            End If;
+        Else
+            _message := format('Update_Job_Param_Org_Db_Info_Using_Data_Pkg: job %s not found in sw.t_jobs', _job);
+            RAISE WARNING '%', _message;
+
+            _returnCode := 'U5202';
+            RETURN;
+        End If;
+    End If;
+
+    If _debugMode Then
+        RAISE INFO '';
+        RAISE INFO 'Examining parameters for job %, script %', _job, _scriptName;
     End If;
 
     ---------------------------------------------------
     -- Validate _dataPackageID
     ---------------------------------------------------
 
-    If Not Exists (SELECT * FROM dpkg.t_data_package WHERE data_pkg_id = _dataPackageID) Then
-        _message := format('Data package %s not found in the Data_Package database', _dataPackageID);
+    If Not Exists (SELECT data_pkg_id FROM dpkg.t_data_package WHERE data_pkg_id = _dataPackageID) Then
+        _message := format('Data package %s not found in dpkg.t_data_package', _dataPackageID);
         _dataPackageID := -1;
 
         If _debugMode Then
@@ -102,7 +120,7 @@ BEGIN
             ProteinCollectionList text NULL,
             ProteinOptions text NULL,
             UseCount int NOT NULL
-        )
+        );
 
         ---------------------------------------------------
         -- Lookup the OrgDB info for jobs associated with data package _dataPackageID
@@ -115,20 +133,20 @@ BEGIN
                                    UseCount )
         SELECT J.Organism,
                CASE
-                   WHEN Coalesce(J.ProteinCollectionList, 'na') <> 'na' AND
-                        Coalesce(J.ProteinOptionsList,    'na') <> 'na'
+                   WHEN Coalesce(J.Protein_Collection_List, 'na') <> 'na' AND
+                        Coalesce(J.Protein_Options_List,    'na') <> 'na'
                    THEN 'na'
-                   ELSE J.OrganismDBName
-               END AS LegacyFastaFileName,
-               J.ProteinCollectionList,
-               J.ProteinOptionsList,
-               COUNT(J.job) AS UseCount
+                   ELSE J.Organism_DB_Name
+               END AS Legacy_Fasta_File_Name,
+               J.Protein_Collection_List,
+               J.Protein_Options_List,
+               COUNT(J.job) AS Use_Count
         FROM public.V_Get_Pipeline_Job_Parameters J
         WHERE J.Job IN ( SELECT Job
                          FROM dpkg.t_data_package_analysis_jobs
-                         WHERE Data_Package_ID = _dataPackageID ) AND
-              J.OrgDBRequired <> 0
-        GROUP BY J.Organism, J.OrganismDBName, J.ProteinCollectionList, J.ProteinOptionsList
+                         WHERE Data_Pkg_ID = _dataPackageID ) AND
+              J.Org_DB_Required <> 0
+        GROUP BY J.Organism, J.Organism_DB_Name, J.Protein_Collection_List, J.Protein_Options_List
         ORDER BY COUNT(J.job) DESC;
         --
         GET DIAGNOSTICS _insertCount = ROW_COUNT;
@@ -146,7 +164,7 @@ BEGIN
         Else
 
             If _insertCount > 1 Then
-                -- Mix of protein collections / fasta files defined
+                -- Mix of protein collections / FASTA files defined
 
                 _organismName := 'InvalidData';
                 _legacyFastaFileName := 'na';
@@ -185,13 +203,13 @@ BEGIN
 
         End If;
 
-    End If; -- </a>
+    End If;
 
     If _dataPackageID <= 0 Then
         ---------------------------------------------------
-        -- One of the following is tue:
+        -- One of the following is true:
         --   Data package ID was invalid
-        --   For MAC jobs, the data package does not have any jobs with a protein collection or legacy fasta file
+        --   For MAC jobs, the data package does not have any jobs with a protein collection or legacy FASTA file
         --   For MaxQuant, MSFragger, or DiaNN jobs, the data package does not have any datasets
         ---------------------------------------------------
 
@@ -221,6 +239,15 @@ BEGIN
         End If;
     End If;
 
+END
 $$;
 
-COMMENT ON PROCEDURE sw.update_job_param_org_db_info_using_data_pkg IS 'UpdateJobParamOrgDbInfoUsingDataPkg';
+
+ALTER PROCEDURE sw.update_job_param_org_db_info_using_data_pkg(IN _job integer, IN _datapackageid integer, IN _deleteifinvalid boolean, IN _debugmode boolean, IN _scriptnamefordebug text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_job_param_org_db_info_using_data_pkg(IN _job integer, IN _datapackageid integer, IN _deleteifinvalid boolean, IN _debugmode boolean, IN _scriptnamefordebug text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.update_job_param_org_db_info_using_data_pkg(IN _job integer, IN _datapackageid integer, IN _deleteifinvalid boolean, IN _debugmode boolean, IN _scriptnamefordebug text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UpdateJobParamOrgDbInfoUsingDataPkg';
+
