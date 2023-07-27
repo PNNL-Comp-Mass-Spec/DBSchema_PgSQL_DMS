@@ -142,8 +142,8 @@ BEGIN
             End If;
         End If;
 
-        SELECT dataset
-        INTO _conflictingDataset
+        SELECT dataset, dataset_id
+        INTO _conflictingDataset, _datasetID
         FROM t_dataset
         WHERE acq_time_start = _bom AND instrument_id = _instID;
 
@@ -153,8 +153,8 @@ BEGIN
 
         _conflictingDataset := '';
 
-        SELECT dataset_id
-        INTO _datasetID
+        SELECT dataset, dataset_id
+        INTO _conflictingDataset, _datasetID
         FROM t_dataset
         WHERE (Not (acq_time_start IS NULL)) AND
               (Not (acq_time_end IS NULL)) AND

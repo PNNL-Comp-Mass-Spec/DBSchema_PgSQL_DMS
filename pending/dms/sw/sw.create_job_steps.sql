@@ -425,8 +425,8 @@ BEGIN
         _tag := 'unk';
 
         -- Get contents of script and tag for results directory name
-        SELECT results_tag
-        INTO _tag
+        SELECT contents, results_tag
+        INTO _scriptXML, _tag
         FROM sw.t_scripts
         WHERE script = _jobInfo.ScriptName;
 

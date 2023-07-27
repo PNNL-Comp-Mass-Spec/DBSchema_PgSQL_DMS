@@ -41,6 +41,7 @@ CREATE OR REPLACE FUNCTION public.get_run_tracking_monthly_info(_instrument text
 **          10/22/2022 mem - Directly pass value to function argument
 **          05/22/2023 mem - Capitalize reserved words
 **          05/30/2023 mem - Replace * with specific column names when returning query results
+**          07/27/2023 mem - Add missing assignment to _firstRunSeq
 **
 *****************************************************/
 DECLARE
@@ -157,8 +158,8 @@ BEGIN
     -- close to beginning of month
     ---------------------------------------------------
 
-    SELECT MAX(Tmp_TX.seq)
-    INTO _lastRunSeq
+    SELECT MIN(Tmp_TX.seq), MAX(Tmp_TX.seq)
+    INTO _firstRunSeq, _lastRunSeq
     FROM Tmp_TX;
 
     SELECT Tmp_TX.time_start

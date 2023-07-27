@@ -26,6 +26,7 @@ CREATE OR REPLACE FUNCTION public.get_run_tracking_monthly_info_by_id(_eusinstru
 **          05/22/2023 mem - Capitalize reserved words
 **          05/30/2023 mem - Replace * with specific column names when returning query results
 **                         - Use format() for string concatenation
+**          07/27/2023 mem - Add missing assignment to _firstRunSeq
 **
 *****************************************************/
 DECLARE
@@ -149,8 +150,8 @@ BEGIN
     -- close to beginning of month
     ---------------------------------------------------
 
-    SELECT MAX(Tmp_TX.seq)
-    INTO _lastRunSeq
+    SELECT MIN(Tmp_TX.seq), MAX(Tmp_TX.seq)
+    INTO _firstRunSeq, _lastRunSeq
     FROM Tmp_TX;
 
     SELECT Tmp_TX.time_start
@@ -167,10 +168,10 @@ BEGIN
     If extract(epoch FROM (_firstStart - _firstDayOfStartingMonth)) / 60.0 > _maxNormalInterval Then
         SELECT TD.dataset_id AS id,
                TD.dataset AS dataset,
-               TD.acq_time_start as start,
-               TD.acq_time_end as end,
-               TD.acq_length_minutes as duration,
-               TD.interval_to_next_ds as "interval"
+               TD.acq_time_start AS start,
+               TD.acq_time_end AS end,
+               TD.acq_length_minutes AS duration,
+               TD.interval_to_next_ds AS "interval"
         INTO _preceedingDataset
         FROM t_dataset AS TD
              INNER JOIN t_emsl_dms_instrument_mapping AS InstMapping
@@ -208,7 +209,7 @@ BEGIN
         VALUES( _firstRunSeq - 1,               -- seq
                 _preceedingDataset.dataset,
                 _preceedingDataset.id,
-                1,                              -- Day
+                1,                              -- Day of month
                 _preceedingDataset.start,
                 _preceedingDataset.end,
                 _preceedingDataset.duration,

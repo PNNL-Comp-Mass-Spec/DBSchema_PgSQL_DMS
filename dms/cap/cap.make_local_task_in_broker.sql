@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE cap.make_local_task_in_broker(IN _scriptname text, I
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          05/17/2019 mem - Switch from folder to directory
 **          06/19/2023 mem - Ported to PostgreSQL
+**          07/27/2023 mem - Add missing assignment to variable _scriptXML
 **
 *****************************************************/
 DECLARE
@@ -127,8 +128,9 @@ BEGIN
         _currentLocation := 'Look for script in cap.t_scripts';
 
         -- Get contents of script and tag for results directory name
-        SELECT results_tag
-        INTO _tag
+        --
+        SELECT contents, results_tag
+        INTO _scriptXML, _tag
         FROM cap.t_scripts
         WHERE script = _scriptName;
 

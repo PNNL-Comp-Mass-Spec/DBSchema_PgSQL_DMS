@@ -146,8 +146,8 @@ BEGIN
 
         -- Get contents of script and tag for results directory name
         --
-        SELECT results_tag
-        INTO _tag
+        SELECT contents, results_tag
+        INTO _scriptXML, _tag
         FROM sw.t_scripts
         WHERE script = _scriptName;
 
@@ -156,7 +156,7 @@ BEGIN
             RAISE EXCEPTION 'Script not found in sw.t_scripts: %', Coalesce(_scriptName, '??');
         End If;
 
-        If _scriptXML Is Null Then
+        If Coalesce(_scriptXML, '') = '' Then
             _returnCode := 'U5214';
             RAISE EXCEPTION 'Script XML not defined in the contents field of sw.t_scripts for script %', Coalesce(_scriptName, '??');
         End If;

@@ -26,7 +26,8 @@ CREATE OR REPLACE PROCEDURE pc.validate_analysis_job_protein_parameters(IN _orga
 **          05/11/2023 mem - Ported to PostgreSQL
 **          05/30/2023 mem - Use format() for string concatenation
 **          07/26/2023 mem - Rename owner username parameter to _ownerUsername
-**          07/27/2023 mem - Use renamed column name in V_Legacy_Static_File_Locations
+**                         - Use renamed column name in V_Legacy_Static_File_Locations
+**          07/27/2023 mem - Add missing column to t_protein_collections query
 **
 *****************************************************/
 DECLARE
@@ -181,8 +182,8 @@ BEGIN
             _collectionName := SUBSTRING(_collectionName, 0, _extensionPosition);
         End If;
 
-        SELECT contents_encrypted
-        INTO _isEncrypted
+        SELECT protein_collection_id, contents_encrypted
+        INTO _collectionID, _isEncrypted
         FROM pc.t_protein_collections
         WHERE collection_name = _collectionName;
 
@@ -199,7 +200,7 @@ BEGIN
 
             SELECT authorization_id
             FROM pc.t_encrypted_collection_authorizations
-            WHERE login_name LIKE '%' || _ownerUsername || '%' AND
+            WHERE login_name ILIKE '%' || _ownerUsername || '%' AND
                   protein_collection_id = _collectionID;
 
             If Not FOUND Then

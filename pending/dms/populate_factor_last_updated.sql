@@ -111,8 +111,8 @@ BEGIN
     -- Step through the rows in t_factor_log
     -----------------------------------------------------------
 
-    FOR _factorChanges, _eventID IN
-        SELECT changes, event_id
+    FOR _eventID, _changeDate, _factorChanges IN
+        SELECT event_id, changed_on, changes
         FROM t_factor_log
         WHERE event_id >= _eventIDStart AND changes LIKE '<r i%'
         ORDER BY event_id
