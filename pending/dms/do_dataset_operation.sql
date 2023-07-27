@@ -217,7 +217,7 @@ BEGIN
 
             -- If dataset not in failed state, can't reset it
             --
-            If _currentState not in (5, 9) -- 'Failed' or 'Not ready' Then
+            If Not _currentState In (5, 9) -- 'Failed' or 'Not ready' Then
                 _logErrors := false;
                 RAISE EXCEPTION 'Dataset "%" cannot be reset if capture not in failed or in not ready state %', _datasetName, _currentState;
             End If;

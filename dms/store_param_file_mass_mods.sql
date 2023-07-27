@@ -129,7 +129,8 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **          05/23/2023 mem - Use format() for string concatenation
 **          05/25/2023 mem - Simplify calls to RAISE INFO
 **          05/30/2023 mem - Use format() for string concatenation
-**          06/07/2023 mem - Add Order By to string_agg()
+**          06/07/2023 mem - Add ORDER BY to string_agg()
+**          07/26/2023 mem - Move "Not" keyword to before the field name
 **
 *****************************************************/
 DECLARE
@@ -623,7 +624,7 @@ BEGIN
 
         _modType := SubString(_field, 1, _charIndex - 1);
 
-        If _modType Not In ('DynamicMod', 'StaticMod') Then
+        If Not _modType In ('DynamicMod', 'StaticMod') Then
             RAISE INFO '';
             RAISE INFO 'Skipping row since setting is not a DynamicMod or StaticMod setting: %', _row;
             CONTINUE;
@@ -926,7 +927,7 @@ BEGIN
             WHERE _paramFileType::citext = 'MSGFPlus' And EntryID = 4 Or
                   _paramFileType::citext = 'TopPIC' And EntryID = 4;
 
-            If _paramFileType::citext = 'MSGFPlus' And _location Not In ('any', 'N-term', 'C-term', 'Prot-N-term', 'Prot-C-term') Then
+            If _paramFileType::citext = 'MSGFPlus' And Not _location In ('any', 'N-term', 'C-term', 'Prot-N-term', 'Prot-C-term') Then
                 _message := format('Invalid location "%s"; should be "any", "N-term", "C-term", "Prot-N-term", or "Prot-C-term"; see row: %s',
                                     _location, _row);
 
@@ -941,7 +942,7 @@ BEGIN
                 RETURN;
             End If;
 
-            If _paramFileType::citext = 'TopPIC' And _location Not In ('any', 'N-term', 'C-term') Then
+            If _paramFileType::citext = 'TopPIC' And Not _location In ('any', 'N-term', 'C-term') Then
                 _message := format('Invalid location "%s"; should be "any", "N-term", or "C-term"; see row: %s',
                                     _location, _row);
 

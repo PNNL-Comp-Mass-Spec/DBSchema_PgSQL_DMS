@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE public.update_eus_instruments_from_eus_imports(INOUT
 **          12/30/2022 mem - Ported to PostgreSQL
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **          07/10/2023 mem - Use COUNT(eus_instrument_id) instead of COUNT(*)
+**          07/26/2023 mem - Move "Not" keyword to before the field name
 **
 *****************************************************/
 DECLARE
@@ -132,7 +133,7 @@ BEGIN
         -- Find EUS instruments that could be deleted:
         -- SELECT *
         -- FROM public.t_emsl_instruments t
-        -- WHERE t.eus_instrument_id NOT IN (SELECT instrument_id FROM public.V_NEXUS_Import_Instruments)
+        -- WHERE NOT t.eus_instrument_id IN (SELECT instrument_id FROM public.V_NEXUS_Import_Instruments)
 
     EXCEPTION
         WHEN OTHERS THEN

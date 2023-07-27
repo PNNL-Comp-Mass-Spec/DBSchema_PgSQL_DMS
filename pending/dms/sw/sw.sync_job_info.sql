@@ -112,7 +112,7 @@ BEGIN
             FROM public.v_get_pipeline_job_processors AS VGP
             WHERE job IN ( SELECT job
                            FROM sw.t_jobs
-                           WHERE state NOT IN (4)
+                           WHERE state <> 4
                          )
           ) AS Source
     ON (target.job = source.job And
@@ -141,7 +141,7 @@ BEGIN
                                FROM public.v_get_pipeline_job_processors AS VGP
                                WHERE job IN ( SELECT job
                                               FROM sw.t_jobs
-                                              WHERE state NOT IN (4)
+                                              WHERE state <> 4
                                             )
                               ) AS Source
                         WHERE target.job = source.job And

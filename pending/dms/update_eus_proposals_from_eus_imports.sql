@@ -77,8 +77,8 @@ BEGIN
               target.Proposal_Type <> source.Proposal_Type OR
               Coalesce(target.Proposal_Start_Date, make_date(2000, 1, 1)) <> source.Proposal_Start_Date OR
               Coalesce(target.Proposal_End_Date, make_date(2000, 1, 1)) <> source.Proposal_End_Date OR
-              source.Active = 1 And target.State_ID NOT IN (2, 4) OR
-              source.Active = 0 And target.State_ID IN (1, 2)) THEN
+              source.Active = 1 AND NOT target.State_ID IN (2, 4) OR
+              source.Active = 0 AND     target.State_ID IN (1, 2)) THEN
             UPDATE SET
                 Title = source.Title,
                 Proposal_Type = source.Proposal_Type,

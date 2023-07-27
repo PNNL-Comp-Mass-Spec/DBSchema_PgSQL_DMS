@@ -303,12 +303,12 @@ BEGIN
     SELECT string_agg(Dataset_Name, ', ' ORDER BY Dataset_Name)
     INTO _datasetList
     FROM Tmp_DatasetInfo
-    WHERE instrument_class <> 'Data_Folders' And
-          instrument_class NOT IN ( SELECT AIC.instrument_class
-                            FROM t_analysis_tool AnTool
-                                 INNER JOIN t_analysis_tool_allowed_instrument_class AIC
-                                   ON AnTool.analysis_tool_id = AIC.analysis_tool_id
-                            WHERE AnTool.analysis_tool = _toolName::citext )
+    WHERE instrument_class <> 'Data_Folders' AND
+          NOT instrument_class IN ( SELECT AIC.instrument_class
+                                    FROM t_analysis_tool AnTool
+                                         INNER JOIN t_analysis_tool_allowed_instrument_class AIC
+                                           ON AnTool.analysis_tool_id = AIC.analysis_tool_id
+                                    WHERE AnTool.analysis_tool = _toolName::citext )
 
     If _datasetList <> '' Then
         _message := format('The instrument class for the following datasets is not compatible with the analysis tool: "%s"', _datasetList);
@@ -330,7 +330,7 @@ BEGIN
     INTO _datasetList
     FROM Tmp_DatasetInfo
     WHERE dataset_type <> 'DataFiles' And
-          dataset_type NOT IN ( SELECT ADT.dataset_type
+          NOT dataset_type IN ( SELECT ADT.dataset_type
                                 FROM t_analysis_tool_allowed_dataset_type ADT
                                      INNER JOIN t_analysis_tool Tool
                                        ON ADT.analysis_tool_id = Tool.analysis_tool_id

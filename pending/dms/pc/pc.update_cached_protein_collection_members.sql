@@ -92,11 +92,13 @@ BEGIN
                false As Processed
         FROM (SELECT protein_collection_id, num_proteins
               FROM pc.t_protein_collections
-              WHERE collection_state_id NOT IN (4)) PC
+              WHERE NOT collection_state_id IN (4)
+             ) PC
              LEFT OUTER JOIN ( SELECT protein_collection_id,
                                       COUNT(reference_id) AS CachedProteinCount
                                FROM pc.t_protein_collection_members_cached
-                               GROUP BY protein_collection_id ) CacheQ
+                               GROUP BY protein_collection_id
+                             ) CacheQ
                ON PC.protein_collection_id = CacheQ.protein_collection_id
         WHERE CacheQ.protein_collection_id IS NULL OR
               PC.num_proteins <> CachedProteinCount;

@@ -442,7 +442,7 @@ BEGIN
             SET charge_code_state = 0
             WHERE charge_code_state IN (1, 2) AND
                   inactive_date_most_recent < CURRENT_TIMESTAMP - INTERVAL '1 year' AND
-                  charge_code NOT IN ( SELECT charge_code
+                  NOT charge_code IN ( SELECT charge_code
                                        FROM Tmp_WPsInUseLast3Years
                                        WHERE Most_Recent_Usage >= CURRENT_TIMESTAMP - INTERVAL '1 year' );
 
@@ -456,7 +456,7 @@ BEGIN
             SET charge_code_state = 0
             WHERE charge_code_state IN (1, 2) AND
                   setup_date < CURRENT_TIMESTAMP - INTERVAL '3 years' AND
-                  charge_code NOT IN ( SELECT charge_code
+                  NOT charge_code IN ( SELECT charge_code
                                        FROM Tmp_WPsInUseLast3Years );
 
             ----------------------------------------------------------

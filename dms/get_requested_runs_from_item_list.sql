@@ -29,7 +29,8 @@ CREATE OR REPLACE FUNCTION public.get_requested_runs_from_item_list(_itemlist te
 **          03/12/2012 grk - Added 'Data_Package_ID' mode
 **          10/19/2022 mem - Ported to PostgreSQL
 **          05/30/2023 mem - Use ElsIf for Else If
-**          06/07/2023 mem - Add Order By to string_agg()
+**          06/07/2023 mem - Add ORDER BY to string_agg()
+**          07/26/2023 mem - Move "Not" keyword to before the field name
 **
 *****************************************************/
 DECLARE
@@ -74,37 +75,37 @@ BEGIN
         SELECT string_agg(Item, ', ' ORDER BY Item)
         INTO _invalidItems
         FROM Tmp_Items
-        WHERE Item NOT IN (SELECT batch_id::text AS Item FROM t_requested_run_batches);
+        WHERE NOT Item IN (SELECT batch_id::text AS Item FROM t_requested_run_batches);
 
     ElsIf _itemType::citext = 'Requested_Run_ID'::citext Then
         SELECT string_agg(Item, ', ' ORDER BY Item)
         INTO _invalidItems
         FROM Tmp_Items
-        WHERE Item NOT IN (SELECT t_requested_run.request_id::text AS Item FROM t_requested_run);
+        WHERE NOT Item IN (SELECT t_requested_run.request_id::text AS Item FROM t_requested_run);
 
     ElsIf _itemType::citext = 'Dataset_Name'::citext Then
         SELECT string_agg(Item, ', ' ORDER BY Item)
         INTO _invalidItems
         FROM Tmp_Items
-        WHERE Item NOT IN (SELECT dataset FROM t_dataset);
+        WHERE NOT Item IN (SELECT dataset FROM t_dataset);
 
     ElsIf _itemType::citext = 'Dataset_ID'::citext Then
         SELECT string_agg(Item, ', ' ORDER BY Item)
         INTO _invalidItems
         FROM Tmp_Items
-        WHERE Item NOT IN (SELECT dataset_id::text AS Item FROM t_dataset);
+        WHERE NOT Item IN (SELECT dataset_id::text AS Item FROM t_dataset);
 
     ElsIf _itemType::citext = 'Experiment_Name'::citext Then
         SELECT string_agg(Item, ', ' ORDER BY Item)
         INTO _invalidItems
         FROM Tmp_Items
-        WHERE Item NOT IN (SELECT experiment FROM t_experiments);
+        WHERE NOT Item IN (SELECT experiment FROM t_experiments);
 
     ElsIf _itemType::citext = 'Experiment_ID'::citext Then
         SELECT string_agg(Item, ', ' ORDER BY Item)
         INTO _invalidItems
         FROM Tmp_Items
-        WHERE Item NOT IN (SELECT exp_id::text AS Item FROM t_experiments);
+        WHERE NOT Item IN (SELECT exp_id::text AS Item FROM t_experiments);
 
     ElsIf _itemType::citext = 'Data_Package_ID'::citext Then
         -- Assume valid

@@ -116,7 +116,7 @@ BEGIN
     FROM Tmp_UserIDs NewUsers
          INNER JOIN t_eus_users U
            ON NewUsers.ID = U.person_id
-    WHERE NewUsers.ID NOT IN ( SELECT eus_person_id
+    WHERE NOT NewUsers.ID IN ( SELECT eus_person_id
                                FROM t_requested_run_eus_users
                                WHERE request_id = _request );
 
@@ -127,7 +127,7 @@ BEGIN
 
     DELETE FROM t_requested_run_eus_users
     WHERE request_id = _request AND
-          eus_person_id NOT IN ( SELECT ID
+          NOT eus_person_id IN ( SELECT ID
                                  FROM Tmp_UserIDs );
 
 END

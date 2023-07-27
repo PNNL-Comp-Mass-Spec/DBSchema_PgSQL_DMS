@@ -170,7 +170,7 @@ BEGIN
               ) AS Source
         ON (target.proposal_id = Source.proposal_id AND
             target.person_id = Source.person_id)
-        WHEN MATCHED AND Coalesce(target.state_id, 0) NOT IN (1, 4) THEN
+        WHEN MATCHED AND NOT Coalesce(target.state_id, 0) IN (1, 4) THEN
             UPDATE SET
                 state_id = 1,
                 last_affected = CURRENT_TIMESTAMP
@@ -192,13 +192,13 @@ BEGIN
             _mergeUpdateCount := 0;
         End If;
 
-        -- Set state_id to 3 (unknown association) for rows with state NOT IN (2,4) that are also not
+        -- Set state_id to 3 (unknown association) for rows with state not in (2,4) that are also not in V_NEXUS_Import_Proposal_Participants
         --
         UPDATE t_eus_proposal_users target
         SET state_id = 3,       -- Unknown association; may need to delete
             last_affected = CURRENT_TIMESTAMP
         WHERE NOT Coalesce(target.state_id, 0) IN (2, 4) AND
-              NOT EXISTS (SELECT source.xyz
+              NOT EXISTS (SELECT source.Person_ID
                           FROM (SELECT DISTINCT Source.project_id AS Proposal_ID,
                                                 Source.user_id As Person_ID
                                 FROM V_NEXUS_Import_Proposal_Participants Source

@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE cap.evaluate_task_step_dependencies(INOUT _message t
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **          06/20/2023 mem - Remove unused variable
 **          07/11/2023 mem - Use COUNT(Job) instead of COUNT(*)
+**          07/26/2023 mem - Move "Not" keyword to before the field name
 **
 *****************************************************/
 DECLARE
@@ -189,11 +190,10 @@ BEGIN
 
             _triggered := 0;
 /*
-            ---------------------------------------------------
-            -- skip if signature of dependent step matches
+            -- Skip if signature of dependent step matches
             -- test value (usually used with value of "0"
             -- which happens when there are no parameters)
-            --
+
             If _stepInfo.ConditionTest = 'No_Parameters' Then
                 -- get filter signature for dependent step
                 --
@@ -218,12 +218,9 @@ BEGIN
             Else
 */
 
--- skip if instrument class not in list
--- skip if dataset type not in list
-            ---------------------------------------------------
-            -- skip if state of target step
+            -- Skip if state of target step
             -- is skipped
-            --
+
             If _stepInfo.ConditionTest = 'Target_Skipped' Then
 
                 -- Get shared result setting for target step

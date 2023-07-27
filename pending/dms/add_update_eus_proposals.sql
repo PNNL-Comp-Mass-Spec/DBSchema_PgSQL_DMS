@@ -249,7 +249,7 @@ BEGIN
               ) AS Source
         ON (target.proposal_id = source.proposal_id AND
             target.person_id = source.person_id)
-        WHEN MATCHED AND Coalesce(target.state_id, 0) NOT IN (_proposalUserStateID, 4) THEN
+        WHEN MATCHED AND NOT Coalesce(target.state_id, 0) IN (_proposalUserStateID, 4) THEN
             UPDATE SET
                 state_id = _proposalUserStateID,
                 last_affected = CURRENT_TIMESTAMP
@@ -272,7 +272,7 @@ BEGIN
         SET State_ID = 5,
             Last_Affected = CURRENT_TIMESTAMP
         WHERE target.proposal_id = _eusPropID AND
-              Coalesce(target.state_id, 0) NOT IN (4) AND
+              NOT Coalesce(target.state_id, 0) IN (4) AND
               NOT EXISTS (SELECT U.person_id
                           FROM Tmp_EUS_Users U
                           WHERE target.proposal_id = U.proposal_id AND

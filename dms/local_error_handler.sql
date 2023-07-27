@@ -48,6 +48,7 @@ CREATE OR REPLACE FUNCTION public.local_error_handler(_sqlstate text, _exception
 **          10/11/2022 mem - Remove transaction rollback
 **          05/22/2023 mem - Capitalize reserved words
 **          05/31/2023 mem - Use format() for string concatenation
+**          07/26/2023 mem - Move "Not" keyword to before the field name
 **
 ****************************************************/
 DECLARE
@@ -103,7 +104,7 @@ BEGIN
                     INTO _schemaName
                     FROM pg_proc p
                         INNER JOIN pg_namespace n ON p.pronamespace = n.oid
-                    WHERE n.nspname NOT IN ('pg_catalog', 'information_schema') AND
+                    WHERE NOT n.nspname IN ('pg_catalog', 'information_schema') AND
                           p.proname = _callingProcName
                     ORDER BY n.nspname
                     LIMIT 1;

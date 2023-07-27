@@ -333,7 +333,7 @@ BEGIN
        public.get_dataset_priority(_experimentName) > 0 OR
        (_datasetName LIKE 'Blank%' AND Not _datasetName LIKE '%-bad')
     Then
-        If _interestRating::citext Not In ('Not Released', 'No Interest') And _interestRating Not ILike 'No Data%' Then
+        If Not _interestRating::citext In ('Not Released', 'No Interest') And _interestRating Not ILike 'No Data%' Then
             -- Auto set interest rating to 5
 
             SELECT dataset_rating

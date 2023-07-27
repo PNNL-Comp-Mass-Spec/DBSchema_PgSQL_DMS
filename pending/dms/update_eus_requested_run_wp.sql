@@ -114,7 +114,7 @@ BEGIN
                WHERE DS.created BETWEEN CURRENT_TIMESTAMP - make_interval(days => _searchWindowDays) AND CURRENT_TIMESTAMP AND
                      EUSPro.proposal_type NOT IN
                      ('Proprietary', 'Proprietary Public', 'Proprietary_Public', 'Resource Owner') AND
-                     Coalesce(RR.work_package, '') NOT IN ('none', 'na', 'n/a', '')
+                     NOT Coalesce(RR.work_package, '') IN ('none', 'na', 'n/a', '')
                GROUP BY EUSPro.proposal_id, work_package
              ) LookupQ;
 
@@ -179,7 +179,7 @@ BEGIN
              INNER JOIN Tmp_WPInfo
                ON EUSPro.proposal_id = Tmp_WPInfo.Proposal_ID And Usage_Rank = 1
         WHERE DS.created BETWEEN CURRENT_TIMESTAMP - make_interval(days => _searchWindowDays) AND CURRENT_TIMESTAMP AND
-              EUSPro.proposal_type NOT IN ('Proprietary', 'Proprietary Public', 'Proprietary_Public', 'Resource Owner') AND
+              NOT EUSPro.proposal_type IN ('Proprietary', 'Proprietary Public', 'Proprietary_Public', 'Resource Owner') AND
               Coalesce(RR.work_package, '') IN ('none', 'na', 'n/a', '')
         GROUP BY RR.request_id,
                  EUSPro.proposal_id,

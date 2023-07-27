@@ -273,7 +273,7 @@ BEGIN
         --
         DELETE FROM t_experiment_group_members
         WHERE (group_id = _id) AND
-              (exp_id NOT IN ( SELECT exp_id FROM Tmp_Experiments ))
+              (NOT exp_id IN ( SELECT exp_id FROM Tmp_Experiments ))
 
         -- Add group members from temporary table that are not already members
         --
@@ -284,13 +284,13 @@ BEGIN
         SELECT _id,
                Tmp_Experiments.exp_id
         FROM Tmp_Experiments
-        WHERE Tmp_Experiments.exp_id NOT IN ( SELECT exp_id
+        WHERE NOT Tmp_Experiments.exp_id IN ( SELECT exp_id
                                               FROM t_experiment_group_members
-                                              WHERE group_id = _id )
+                                              WHERE group_id = _id );
 
         -- Update MemberCount
         --
-        CALL update_experiment_group_member_count (_groupID => _id)
+        CALL update_experiment_group_member_count (_groupID => _id);
 
     End If;
 

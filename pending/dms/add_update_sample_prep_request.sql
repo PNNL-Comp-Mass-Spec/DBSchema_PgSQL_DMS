@@ -384,10 +384,7 @@ BEGIN
         SELECT COUNT(*)
         INTO _missingCount
         FROM Tmp_MaterialContainers
-        WHERE name Not In (
-            SELECT container
-            FROM t_material_containers
-        );
+        WHERE Not name In ( SELECT container FROM t_material_containers );
 
         If _missingCount > 0 Then
             RAISE EXCEPTION 'One or more material containers was not in database';

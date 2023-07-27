@@ -281,7 +281,7 @@ BEGIN
                 ON TP.Identifier = TX.Experiment
             WHERE
                 TP.ItemType = 'Experiment' AND
-                TX.Biomaterial_Name NOT IN ('(none)')
+                NOT TX.Biomaterial_Name IN ('(none)')
                 AND NOT EXISTS (
                     SELECT *
                     FROM Tmp_DataPackageItems

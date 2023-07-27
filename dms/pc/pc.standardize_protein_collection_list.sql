@@ -26,6 +26,7 @@ CREATE OR REPLACE FUNCTION pc.standardize_protein_collection_list(_protcollnamel
 **          03/17/2023 mem - Ported to PostgreSQL
 **          03/28/2023 mem - Use a custom collation to sort underscores before letters
 **          05/07/2023 mem - Remove unused variable
+**          07/26/2023 mem - Move "Not" keyword to before the field name
 **
 *****************************************************/
 DECLARE
@@ -100,7 +101,7 @@ BEGIN
     SELECT string_agg(Collection_Name, ',' ORDER BY Collection_Name)
     INTO _textToAppend
     FROM Tmp_Protein_Collections
-    WHERE Collection_Type_ID NOT IN (4,5);
+    WHERE NOT Collection_Type_ID IN (4,5);
 
      _protCollNameListNew := public.append_to_text(_protCollNameListNew, _textToAppend, _delimiter => ',');
 

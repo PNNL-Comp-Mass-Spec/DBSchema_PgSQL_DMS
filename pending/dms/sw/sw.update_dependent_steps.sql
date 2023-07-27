@@ -539,7 +539,7 @@ BEGIN
                         output_folder_name =
                           CASE WHEN (_newState = 3 AND
                                     Coalesce(input_folder_name, '') <> '' AND
-                                    tool NOT IN ( SELECT step_tool
+                                    NOT tool IN ( SELECT step_tool
                                                   FROM sw.t_step_tools
                                                   WHERE shared_result_version > 0 AND
                                                         disable_output_folder_name_override_on_skip > 0 )

@@ -1320,7 +1320,7 @@ BEGIN
                     WHERE InstUsage.Year = _year AND
                           InstUsage.Month = _month AND
                           InstUsage.Type = 'Dataset' AND
-                          Coalesce(InstUsageType.usage_type, '') NOT IN ('MAINTENANCE', 'ONSITE') AND
+                          NOT Coalesce(InstUsageType.usage_type, '') IN ('MAINTENANCE', 'ONSITE') AND
                           Coalesce(InstUsage.Comment, '') = '';
                 LOOP
                     _infoData := format(_formatSpecifierUpdateComment,

@@ -156,7 +156,7 @@ BEGIN
         ---------------------------------------------------
 
         If _insertCount = 0 Then
-            If _scriptName Not In ('Global_Label-Free_AMT_Tag', 'MultiAlign', 'MultiAlign_Aggregator') Then
+            If Not _scriptName In ('Global_Label-Free_AMT_Tag', 'MultiAlign', 'MultiAlign_Aggregator') Then
                 _message := format('Note: Data package %s either has no jobs or has no jobs with a protein collection or legacy fasta file; pipeline job parameters will not contain organism, fasta file, or protein collection', _dataPackageID);
             End If;
 

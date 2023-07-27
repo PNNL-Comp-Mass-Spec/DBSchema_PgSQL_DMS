@@ -126,7 +126,7 @@ BEGIN
                WHEN EUSPro.Proposal_Type IN ('Capacity') THEN 4                                                   -- Capacity (replaces Proprietary Public)
                WHEN EUSPro.Proposal_Type IN ('Partner') THEN 5                                                    -- Partner
                WHEN EUSPro.Proposal_Type IN ('Staff Time') THEN 6                                                 -- Staff Time
-               WHEN EUSPro.Proposal_Type NOT IN ('Capacity', 'Partner', 'Proprietary', 'Proprietary Public', 'Proprietary_Public', 'Resource Owner', 'Staff Time') THEN 3  -- EMSL_User
+               WHEN NOT EUSPro.Proposal_Type IN ('Capacity', 'Partner', 'Proprietary', 'Proprietary Public', 'Proprietary_Public', 'Resource Owner', 'Staff Time') THEN 3  -- EMSL_User
                ELSE 0                                                                                             -- Unknown
            END AS Project_Type_ID,
            0 AS Samples,
@@ -178,7 +178,7 @@ BEGIN
                        WHEN EUSPro.Proposal_Type IN ('Capacity') THEN 4                                                   -- Capacity (replaces Proprietary Public)
                        WHEN EUSPro.Proposal_Type IN ('Partner') THEN 5                                                    -- Partner
                        WHEN EUSPro.Proposal_Type IN ('Staff Time') THEN 6                                                 -- Staff Time
-                       WHEN EUSPro.Proposal_Type NOT IN ('Capacity', 'Partner', 'Proprietary', 'Proprietary Public', 'Proprietary_Public', 'Resource Owner', 'Staff Time') THEN 3  -- EMSL_User
+                       WHEN NOT EUSPro.Proposal_Type IN ('Capacity', 'Partner', 'Proprietary', 'Proprietary Public', 'Proprietary_Public', 'Resource Owner', 'Staff Time') THEN 3  -- EMSL_User
                        ELSE 0                                                                                             -- Unknown
                    END AS Project_Type_ID,
                    0 AS Samples,
@@ -259,7 +259,7 @@ BEGIN
                        WHEN EUSPro.Proposal_Type IN ('Capacity') THEN 4                                                   -- Capacity (replaces Proprietary Public)
                        WHEN EUSPro.Proposal_Type IN ('Partner') THEN 5                                                    -- Partner
                        WHEN EUSPro.Proposal_Type IN ('Staff Time') THEN 6                                                 -- Staff Time
-                       WHEN EUSPro.Proposal_Type NOT IN ('Capacity', 'Partner', 'Proprietary', 'Proprietary Public', 'Proprietary_Public', 'Resource Owner', 'Staff Time') THEN 3  -- EMSL_User
+                       WHEN NOT EUSPro.Proposal_Type IN ('Capacity', 'Partner', 'Proprietary', 'Proprietary Public', 'Proprietary_Public', 'Resource Owner', 'Staff Time') THEN 3  -- EMSL_User
                        ELSE 0                                                                                             -- Unknown
                    END AS Project_Type_ID,
                    COUNT(DISTINCT exp_id) AS Samples,

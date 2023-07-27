@@ -49,6 +49,7 @@ CREATE OR REPLACE FUNCTION public.get_current_function_info(_schemaname text DEF
 **  Date:   08/24/2022 mem - Initial version
 **          09/01/2022 mem - Auto-determine the schema name if the context does not include a schema name and _schemaName is '<auto>' or '<lookup>'
 **          05/31/2023 mem - Add support for calling this function from an anonymous code block (DO ... BEGIN ... END)
+**          07/26/2023 mem - Move "Not" keyword to before the field name
 **
 *****************************************************/
 DECLARE
@@ -133,7 +134,7 @@ BEGIN
             INTO _schemaFromQuery
             FROM pg_proc p
                 INNER JOIN pg_namespace n ON p.pronamespace = n.oid
-            WHERE n.nspname NOT IN ('pg_catalog', 'information_schema') AND
+            WHERE NOT n.nspname IN ('pg_catalog', 'information_schema') AND
                   p.proname = _objectName
             ORDER BY n.nspname
             LIMIT 1;
@@ -165,7 +166,7 @@ BEGIN
                 SELECT p.proname as Function, min(n.nspname) as First_Schema, max(n.nspname) as Last_Schema
                 FROM pg_proc p
                     INNER JOIN pg_namespace n ON p.pronamespace = n.oid
-                WHERE n.nspname NOT IN ('pg_catalog', 'information_schema')
+                WHERE NOT n.nspname IN ('pg_catalog', 'information_schema')
                 GROUP BY p.proname
                 HAVING count(*) > 1 and min(n.nspname) <> max(n.nspname)
                 ORDER BY p.proname

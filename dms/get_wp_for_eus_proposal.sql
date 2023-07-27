@@ -25,11 +25,12 @@ CREATE OR REPLACE FUNCTION public.get_wp_for_eus_proposal(_eusproposalid text) R
 **  Date:   01/29/2016 mem - Initial Version
 **          10/14/2022 mem - Ported to PostgreSQL
 **          07/11/2023 mem - Use COUNT(RR.request_id) insted of COUNT(*)
+**          07/26/2023 mem - Move "Not" keyword to before the field name
 **
 *****************************************************/
 DECLARE
     _workPackage text;
-    _workPackageNew text := '';
+    _workPackageNew citext := '';
     _monthsSearched int;
     _allMonthsCount int;
     _monthThreshold int;
@@ -87,7 +88,7 @@ BEGIN
 
         _workPackageNew := Coalesce(_workPackageNew, '');
 
-        If _workPackageNew Not In ('', 'none', 'na') Then
+        If Not _workPackageNew In ('', 'none', 'na') Then
             _workPackage := _workPackageNew;
             _monthsSearched := _monthThreshold;
         End If;

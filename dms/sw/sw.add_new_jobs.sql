@@ -87,6 +87,7 @@ CREATE OR REPLACE PROCEDURE sw.add_new_jobs(IN _bypassdms boolean DEFAULT false,
 **          05/12/2017 mem - Update Next_Try and Remote_Info_ID
 **`         03/30/2018 mem - Add support for job step states 9=Running_Remote, 10=Holding_Staging, and 16=Failed_Remote
 **          07/25/2023 mem - Ported to PostgreSQL
+**          07/26/2023 mem - Move "Not" keyword to before the field name
 **
 *****************************************************/
 DECLARE
@@ -401,7 +402,7 @@ BEGIN
              INNER JOIN sw.t_scripts S
                ON DJ.script = S.script
         WHERE state = 1 AND
-              job NOT IN ( SELECT job
+              NOT job IN ( SELECT job
                            FROM sw.t_jobs ) AND
               S.enabled = 'Y' AND
               S.backfill_to_dms = 0
