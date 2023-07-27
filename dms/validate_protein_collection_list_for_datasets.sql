@@ -11,6 +11,8 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_datasets
 **      Validates that the protein collection names in _protCollNameList include protein collections
 **      for the internal standards associated with the datasets listed in _datasets
 **
+**      This procedure is very similar to procedure validate_protein_collection_list_for_dataset_table()
+**
 **  Auth:   mem
 **  Date:   11/13/2006 mem - Initial revision (Ticket #320)
 **          02/08/2007 mem - Updated to use T_Internal_Std_Parent_Mixes to determine the protein collections associated with internal standards (Ticket #380)
@@ -25,13 +27,14 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_datasets
 **          07/27/2022 mem - Switch from FileName to Collection_Name when querying pc.V_Protein_Collections_by_Organism
 **          11/08/2022 mem - Ported to PostgreSQL
 **          05/31/2023 mem - Use format() for string concatenation
+**          07/26/2023 mem - Prevent _protCollNameList from containing both HumanContam and Tryp_Pig_Bov
 **
 *****************************************************/
 DECLARE
     _msg text;
     _startTime timestamp;
     _continue boolean;
-    _proteinCollectionInfo record;
+    _collectionInfo record;
     _matchCount int;
     _collectionWithContaminants text;
     _datasetCountTotal int;
@@ -103,10 +106,9 @@ BEGIN
     HAVING COUNT(*) > 1;
 
     If Coalesce(_dups, '') <> '' Then
-        _msg := format('There were duplicate names in the protein collections list, will auto remove: %s', _dups);
 
         If _showDebug Then
-            RAISE INFO '%', _msg;
+            RAISE INFO 'There were duplicate names in the protein collections list, will auto remove: %', _dups;
         End If;
 
         DELETE FROM Tmp_ProteinCollections
@@ -139,20 +141,20 @@ BEGIN
     --------------------------------------------------------------
 
     INSERT INTO Tmp_IntStds( Internal_Std_Mix_ID,
-                            protein_collection_name,
-                            Dataset_Count,
-                            Experiment_Count,
-                            Enzyme_Contaminant_Collection )
+                             Protein_Collection_Name,
+                             Dataset_Count,
+                             Experiment_Count,
+                             Enzyme_Contaminant_Collection )
     SELECT DISTINCT Internal_Std_Mix_ID,
                     protein_collection_name,
                     Dataset_Count,
                     Experiment_Count,
                     Enzyme_Contaminant_Collection
     FROM ( SELECT -1 AS Internal_Std_Mix_ID,
-                    Coalesce(Enz.protein_collection_name, '') AS Protein_Collection_Name,
-                    COUNT(DISTINCT DS.dataset) AS Dataset_Count,
-                    COUNT(DISTINCT E.exp_id) AS Experiment_Count,
-                    1 AS Enzyme_Contaminant_Collection
+                  Coalesce(Enz.protein_collection_name, '') AS Protein_Collection_Name,
+                  COUNT(DISTINCT DS.dataset) AS Dataset_Count,
+                  COUNT(DISTINCT E.exp_id) AS Experiment_Count,
+                  1 AS Enzyme_Contaminant_Collection
             FROM Tmp_Datasets
                 INNER JOIN t_dataset DS
                     ON Tmp_Datasets.Dataset = DS.dataset
@@ -170,22 +172,21 @@ BEGIN
 
     If Exists (SELECT * FROM Tmp_IntStds WHERE Enzyme_Contaminant_Collection > 0) Then
         --------------------------------------------------------------
-        -- Check whether any of the protein collections already includes contaminants
+        -- Check whether any of the protein collections already have contaminants
         --------------------------------------------------------------
 
         SELECT COUNT(*),
-               Min(PCLocal.Protein_Collection_Name)
+               MIN(PCLocal.Protein_Collection_Name)
         INTO _matchCount, _collectionWithContaminants
         FROM Tmp_ProteinCollections PCLocal
             INNER JOIN pc.V_Protein_Collections_by_Organism PCMaster
             ON PCLocal.Protein_Collection_Name = PCMaster.Collection_Name
         WHERE PCMaster.Includes_Contaminants > 0;
 
-        If _matchCount > 0 Then
-            _msg := format('Not adding enzyme-associated protein collections (typically contaminant collections) since %s already includes contaminants', _collectionWithContaminants);
+        If Coalesce(_matchCount, 0) > 0 Then
 
             If _showDebug Then
-                RAISE INFO '%', _msg;
+                RAISE INFO 'Not adding enzyme-associated protein collections (typically contaminant collections) since % already includes contaminants', _collectionWithContaminants;
             End If;
 
             _message := format('Did not add contaminants since %s already includes contaminant proteins', _collectionWithContaminants);
@@ -202,12 +203,14 @@ BEGIN
     -- with the datasets in Tmp_Datasets, including their parent experiments
     --------------------------------------------------------------
 
-    INSERT INTO Tmp_IntStds( Internal_Std_Mix_ID, protein_collection_name,
-                             Dataset_Count, Experiment_Count,
+    INSERT INTO Tmp_IntStds( Internal_Std_Mix_ID,
+                             Protein_Collection_Name,
+                             Dataset_Count,
+                             Experiment_Count,
                              Enzyme_Contaminant_Collection )
     SELECT DSIntStd.internal_standard_id,
            ISPM.protein_collection_name,
-           COUNT(*) AS Dataset_Count,
+           COUNT(DS.dataset_id) AS Dataset_Count,
            0 AS Experiment_Count,
            0 AS Enzyme_Contaminant_Collection
     FROM Tmp_Datasets
@@ -265,6 +268,31 @@ BEGIN
         RAISE INFO 'Internal standards: %', _message;
     End If;
 
+    -------------------------------------------------------------
+    -- If Tmp_IntStds contains 'HumanContam' but Tmp_ProteinCollections contains 'Tryp_Pig_Bov',
+    -- remove 'HumanContam' from Tmp_IntStds since every protein in 'HumanContam' is also in 'Tryp_Pig_Bov'
+    --------------------------------------------------------------
+
+    If Exists ( SELECT *
+                FROM Tmp_ProteinCollections
+                WHERE Protein_Collection_Name = 'Tryp_Pig_Bov' ) AND
+       Exists ( SELECT *
+                FROM Tmp_IntStds
+                WHERE Protein_Collection_Name = 'HumanContam' ) Then
+
+        DELETE FROM Tmp_IntStds
+        WHERE Protein_Collection_Name = 'HumanContam';
+
+        If _showDebug Then
+            If Exists (SELECT * FROM Tmp_IntStds) Then
+                RAISE INFO 'Removed HumanContam from Tmp_IntStds since Tmp_ProteinCollections has Tryp_Pig_Bov';
+            Else
+                RAISE INFO 'Tmp_IntStds is empty after removing HumanContam';
+            End If;
+        End If;
+
+    End If;
+
     --------------------------------------------------------------
     -- Make sure _protCollNameList contains each of the
     -- Protein_Collection_Name values in Tmp_IntStds
@@ -284,7 +312,7 @@ BEGIN
     WHERE PC.Protein_Collection_Name IS NULL
     GROUP BY I.Protein_Collection_Name;
 
-    If Not FOUND Then
+    If Not Exists (SELECT * FROM Tmp_ProteinCollectionsToAdd) Then
         If _showDebug Then
             RAISE INFO 'Protein collections validated; nothing to add';
             RAISE INFO 'Elapsed time: % msec',  Round(extract(epoch FROM (clock_timestamp() - _startTime)) * 1000, 3);
@@ -325,7 +353,7 @@ BEGIN
     FROM Tmp_ProteinCollections
     WHERE Protein_Collection_Name IN ('Tryp_Pig_Bov', 'Tryp_Pig');
 
-    If FOUND And _matchCount = 2 Then
+    If Coalesce(_matchCount, 0) = 2 Then
         -- The list has two overlapping contaminant collections; remove one of them
         --
         DELETE FROM Tmp_ProteinCollections
@@ -334,15 +362,30 @@ BEGIN
         _collectionCountAdded := _collectionCountAdded - 1;
     End If;
 
+    -- Check for the presence of both Tryp_Pig_Bov and Human_Contam in Tmp_ProteinCollections
+    --
+    SELECT COUNT(*)
+    INTO _matchCount
+    FROM Tmp_ProteinCollections
+    WHERE Protein_Collection_Name IN ('Tryp_Pig_Bov', 'HumanContam');
+
+    If Coalesce(_matchCount, 0) = 2 Then
+        -- The list has two overlapping contaminant collections; remove one of them
+        --
+        DELETE FROM Tmp_ProteinCollections
+        WHERE Protein_Collection_Name = 'HumanContam';
+
+        _collectionCountAdded := _collectionCountAdded - 1;
+    End If;
+
     --------------------------------------------------------------
     -- Collapse Tmp_ProteinCollections into _protCollNameList
     --
-    -- The Order By statements in this query assure that the
+    -- The Order By clause in this query assures that any added
     -- internal standard collections and contaminant collections
-    -- are listed first and that the original collection order is preserved
+    -- are listed last and that the original collection order is preserved
     --
     -- Note that Validate_Analysis_Job_Parameters will call Validate_Protein_Collection_Params,
-    -- which calls pc.Validate_Analysis_Job_Protein_Parameters
     -- and that procedure uses Standardize_Protein_Collection_List to order the protein collections in a standard manner,
     -- so the order here is not critical
     --
@@ -355,12 +398,14 @@ BEGIN
     FROM Tmp_ProteinCollections;
 
     -- Count the total number of datasets and experiments in Tmp_Datasets
-    SELECT COUNT(*),
+    SELECT COUNT(DS.dataset_id),
            COUNT(DISTINCT E.exp_id)
     INTO _datasetCountTotal, _experimentCountTotal
-    FROM Tmp_Datasets INNER JOIN
-        t_dataset DS ON Tmp_Datasets.dataset = DS.dataset INNER JOIN
-        t_experiments E ON DS.exp_id = E.exp_id;
+    FROM Tmp_Datasets
+         INNER JOIN t_dataset DS
+           ON Tmp_Datasets.dataset = DS.dataset
+         INNER JOIN t_experiments E
+           ON DS.exp_id = E.exp_id;
 
     If Not _showDebug Then
         DROP TABLE Tmp_Datasets;
@@ -370,10 +415,10 @@ BEGIN
         RETURN;
     End If;
 
-    -- Display messages listing the collections added
+    -- Use RAISE INFO to show the added protein collections
 
-    FOR _proteinCollectionInfo IN
-        SELECT UniqueID
+    FOR _collectionInfo IN
+        SELECT UniqueID,
                Protein_Collection_Name,
                Dataset_Count,
                Experiment_Count,
@@ -382,32 +427,27 @@ BEGIN
         ORDER BY UniqueID
     LOOP
 
-        If Not FOUND Then
-            -- Break out of the while loop
-            EXIT;
-        End If;
-
-        If _proteinCollectionInfo.Enzyme_Contaminant_Collection <> 0 Then
-            _msg := format('Added enzyme contaminant collection %s', _proteinCollectionInfo.Protein_Collection_Name);
+        If _collectionInfo.Enzyme_Contaminant_Collection <> 0 Then
+            _msg := format('Added enzyme contaminant collection %s', _collectionInfo.Protein_Collection_Name);
         Else
-            _msg := format('Added protein collection %s since it is present in', _proteinCollectionInfo.Protein_Collection_Name);
+            _msg := format('Added protein collection %s since it is present in', _collectionInfo.Protein_Collection_Name);
 
-            If _proteinCollectionInfo.Dataset_Count > 0 Then
+            If _collectionInfo.Dataset_Count > 0 Then
                 _msg := format('%s %s of %s %s',
                                 _msg,
-                                _proteinCollectionInfo.Dataset_Count,
+                                _collectionInfo.Dataset_Count,
                                 _datasetCountTotal,
                                 public.check_plural(_datasetCountTotal, 'dataset', 'datasets'));
 
-            ElsIf _proteinCollectionInfo.Experiment_Count > 0 Then
+            ElsIf _collectionInfo.Experiment_Count > 0 Then
                 _msg := format('%s %s of %s %s',
                                 _msg,
-                                _proteinCollectionInfo.Experiment_Count,
+                                _collectionInfo.Experiment_Count,
                                 _experimentCountTotal,
                                 public.check_plural(_experimentCountTotal, 'experiment', 'experiments'));
 
             Else
-                -- Both _proteinCollectionInfo.Dataset_Count and _proteinCollectionInfo.Experiment_Count are 0
+                -- Both _collectionInfo.Dataset_Count and _collectionInfo.Experiment_Count are 0
                 -- This code should not be reached
                 _msg := format('%s ? datasets and/or ? experiments (unexpected stats)', _msg);
             End If;
