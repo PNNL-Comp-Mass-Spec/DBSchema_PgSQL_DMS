@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE pc.validate_analysis_job_protein_parameters(IN _orga
 **          05/11/2023 mem - Ported to PostgreSQL
 **          05/30/2023 mem - Use format() for string concatenation
 **          07/26/2023 mem - Rename owner username parameter to _ownerUsername
+**          07/27/2023 mem - Use renamed column name in V_Legacy_Static_File_Locations
 **
 *****************************************************/
 DECLARE
@@ -123,7 +124,7 @@ BEGIN
         SELECT ID
         INTO _legacyFileID
         FROM pc.V_Legacy_Static_File_Locations
-        WHERE FileName = _organismDBFileName;
+        WHERE file_name = _organismDBFileName;
 
         If Not FOUND Then
             _message := format('FASTA file "%s" does not exist (pc.V_Legacy_Static_File_Locations)', _organismDBFileName);
