@@ -1,15 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE sw.verify_job_parameters
-(
-    INOUT _jobParam text,
-    _scriptName text,
-    _dataPackageID int,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _debugMode boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: verify_job_parameters(text, text, integer, text, text, boolean); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.verify_job_parameters(INOUT _jobparam text, IN _scriptname text, IN _datapackageid integer, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _debugmode boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -23,6 +18,20 @@ AS $$
 **    _returnCode       Return code
 **    _debugMode        When true, set _debugMode to true when calling pc.validate_protein_collection_params()
 **
+**  Example contents of _jobParam
+**      Note that element and attribute names are case sensitive (use Value= and not value=)
+**      Default parameters for each job script are defined in the Parameters column of table T_Scripts
+**
+**      <Param Section="JobParameters" Name="CreateMzMLFiles" Value="False" />
+**      <Param Section="JobParameters" Name="CacheFolderRootPath" Value="\\protoapps\MaxQuant_Staging" />        (or \\proto-9\MSFragger_Staging)
+**      <Param Section="JobParameters" Name="DatasetName" Value="Aggregation" />
+**      <Param Section="PeptideSearch" Name="ParamFileName" Value="MaxQuant_Tryp_Stat_CysAlk_Dyn_MetOx_NTermAcet_20ppmParTol.xml" />
+**      <Param Section="PeptideSearch" Name="ParamFileStoragePath" Value="\\gigasax\DMS_Parameter_Files\MaxQuant" />
+**      <Param Section="PeptideSearch" Name="OrganismName" Value="Homo_Sapiens" />
+**      <Param Section="PeptideSearch" Name="ProteinCollectionList" Value="H_sapiens_UniProt_SPROT_2021-06-20,Tryp_Pig_Bov" />
+**      <Param Section="PeptideSearch" Name="ProteinOptions" Value="seq_direction=forward,filetype=fasta" />
+**      <Param Section="PeptideSearch" Name="LegacyFastaFileName" Value="na" />
+**
 **  Auth:   grk
 **  Date:   10/06/2010 grk - Initial release
 **          11/25/2010 mem - Now validating that the script exists in T_Scripts
@@ -35,7 +44,7 @@ AS $$
 **          04/11/2022 mem - Use varchar(4000) when populating temporary tables
 **          03/22/2023 mem - Add support for DiaNN
 **          05/10/2023 mem - Do not update _protCollOptionsList when using a legacy FASTA file
-**          07/26/2023 mem - Ported to PostgreSQL
+**          07/27/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -64,11 +73,10 @@ BEGIN
     -- This is null for most scripts
     ---------------------------------------------------
 
-    --
     SELECT parameters
     INTO _paramDefinition
     FROM t_scripts
-    WHERE script = _scriptName;
+    WHERE script = _scriptName::citext;
 
     If Not FOUND Then
         _message := format('Script not found in sw.t_scripts: %s', Coalesce(_scriptName, '??'));
@@ -90,7 +98,7 @@ BEGIN
     );
 
     INSERT INTO Tmp_ParamDefinition (Section, Name, Value, Reqd)
-    SELECT _job AS Job, XmlQ.section, XmlQ.name, XmlQ.value, Coalesce(XmlQ.required, 'No') AS Requied
+    SELECT XmlQ.section, XmlQ.name, XmlQ.value, Coalesce(XmlQ.required, 'No') AS Requied
     FROM (
         SELECT xmltable.*
         FROM ( SELECT ('<params>' || _paramDefinition::text || '</params>')::xml as rooted_xml ) Src,
@@ -145,6 +153,7 @@ BEGIN
 
         _returnCode := 'U5202';
         DROP TABLE Tmp_ParamDefinition;
+        DROP TABLE Tmp_JobParameters;
         RETURN;
     End If;
 
@@ -176,34 +185,34 @@ BEGIN
 
             _returnCode := 'U5203';
             DROP TABLE Tmp_ParamDefinition;
+            DROP TABLE Tmp_JobParameters;
             RETURN;
-        End
-
+        End If;
 
         SELECT Value
         INTO _parameterFileName
         FROM Tmp_JobParameters
-        WHERE Name = 'ParamFileName'
+        WHERE Name = 'ParamFileName';
 
         SELECT Value
         INTO _protCollNameList
         FROM Tmp_JobParameters
-        WHERE Name = 'ProteinCollectionList'
+        WHERE Name = 'ProteinCollectionList';
 
         SELECT Value
         INTO _protCollOptionsList
         FROM Tmp_JobParameters
-        WHERE Name = 'ProteinOptions'
+        WHERE Name = 'ProteinOptions';
 
         SELECT Value
         INTO _organismName
         FROM Tmp_JobParameters
-        WHERE Name = 'OrganismName'
+        WHERE Name = 'OrganismName';
 
         SELECT Value
         INTO _organismDBName
         FROM Tmp_JobParameters
-        WHERE Name = 'LegacyFastaFileName'
+        WHERE Name = 'LegacyFastaFileName';
 
         _protCollNameList    := Trim(Coalesce(_protCollNameList, ''));
         _protCollOptionsList := Trim(Coalesce(_protCollOptionsList, ''));
@@ -229,6 +238,7 @@ BEGIN
 
             _returnCode := 'U5204';
             DROP TABLE Tmp_ParamDefinition;
+            DROP TABLE Tmp_JobParameters;
             RETURN;
         End If;
 
@@ -238,11 +248,12 @@ BEGIN
 
             _returnCode := 'U5205';
             DROP TABLE Tmp_ParamDefinition;
+            DROP TABLE Tmp_JobParameters;
             RETURN;
         End If;
 
-        SELECT Valid
-        INTO _paramFileValid
+        SELECT param_file_type, valid
+        INTO _paramFileType, _paramFileValid
         FROM public.V_Param_File_Export
         WHERE Param_File_Name = _parameterFileName;
 
@@ -252,6 +263,7 @@ BEGIN
 
             _returnCode := 'U5206';
             DROP TABLE Tmp_ParamDefinition;
+            DROP TABLE Tmp_JobParameters;
             RETURN;
         End If;
 
@@ -261,6 +273,7 @@ BEGIN
 
             _returnCode := 'U5207';
             DROP TABLE Tmp_ParamDefinition;
+            DROP TABLE Tmp_JobParameters;
             RETURN;
         End If;
 
@@ -272,6 +285,7 @@ BEGIN
 
             _returnCode := 'U5208';
             DROP TABLE Tmp_ParamDefinition;
+            DROP TABLE Tmp_JobParameters;
             RETURN;
         End If;
 
@@ -290,8 +304,8 @@ BEGIN
             ---------------------------------------------------
             -- Validate _protCollNameList
             --
-            -- Note that validate_protein_collection_list_for_dataset_table will populate _message with an explanatory note
-            -- if _protCollNameList is updated
+            -- Note that setting _showMessages to true means that validate_protein_collection_list_for_dataset_table
+            -- will populate _message with an explanatory note if _protCollNameList is updated
             ---------------------------------------------------
 
             CALL sw.validate_protein_collection_list_for_data_package (
@@ -299,7 +313,8 @@ BEGIN
                                 _protCollNameList => _protCollNameList,             -- Output
                                 _collectionCountAdded => _collectionCountAdded,     -- Output
                                 _showMessages => true,
-                                _message => _message);                              -- Output
+                                _message => _message,
+                                _returnCode => _returnCode);                        -- Output
         End If;
 
         If _returnCode = '' Then
@@ -307,19 +322,19 @@ BEGIN
 
             UPDATE Tmp_JobParameters
             SET Value = _protCollNameList
-            WHERE Name = 'ProteinCollectionList'
+            WHERE Name = 'ProteinCollectionList';
 
             UPDATE Tmp_JobParameters
             SET Value = _protCollOptionsList
-            WHERE Name = 'ProteinOptions'
+            WHERE Name = 'ProteinOptions';
 
             UPDATE Tmp_JobParameters
             SET Value = _organismName
-            WHERE Name = 'OrganismName'
+            WHERE Name = 'OrganismName';
 
             UPDATE Tmp_JobParameters
             SET Value = _organismDBName
-            WHERE Name = 'LegacyFastaFileName'
+            WHERE Name = 'LegacyFastaFileName';
 
             SELECT xml_item
             INTO _jobParamXML
@@ -344,5 +359,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.verify_job_parameters IS 'VerifyJobParameters';
+
+ALTER PROCEDURE sw.verify_job_parameters(INOUT _jobparam text, IN _scriptname text, IN _datapackageid integer, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE verify_job_parameters(INOUT _jobparam text, IN _scriptname text, IN _datapackageid integer, INOUT _message text, INOUT _returncode text, IN _debugmode boolean); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.verify_job_parameters(INOUT _jobparam text, IN _scriptname text, IN _datapackageid integer, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) IS 'VerifyJobParameters';
 
