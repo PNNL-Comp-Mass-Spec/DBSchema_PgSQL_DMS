@@ -2,18 +2,15 @@
 -- Name: validate_analysis_job_protein_parameters(text, text, text, text, text, text, text); Type: PROCEDURE; Schema: pc; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE pc.validate_analysis_job_protein_parameters(IN _organismname text, IN _ownerprn text, IN _organismdbfilename text, INOUT _protcollnamelist text, INOUT _protcolloptionslist text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE pc.validate_analysis_job_protein_parameters(IN _organismname text, IN _ownerusername text, IN _organismdbfilename text, INOUT _protcollnamelist text, INOUT _protcolloptionslist text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
 **  Desc:
-**    Validate the combination of organism DB file
-**    (FASTA) file name, protein collection list,
-**    and protein options list.
+**    Validate the combination of organism DB file (FASTA) file name, protein collection list, and protein options list
 **
-**    The protein collection list and protein options
-**    list should be returned in canonical format.
+**    The protein collection list and protein options are updated to a canonical format and returned via the INOUT parameters
 **
 **  Auth:   04/04/2006 grk
 **  Date:   04/11/2006 kja
@@ -28,6 +25,7 @@ CREATE OR REPLACE PROCEDURE pc.validate_analysis_job_protein_parameters(IN _orga
 **          06/24/2013 mem - Now removing duplicate protein collection names in _protCollNameList
 **          05/11/2023 mem - Ported to PostgreSQL
 **          05/30/2023 mem - Use format() for string concatenation
+**          07/26/2023 mem - Rename owner username parameter to _ownerUsername
 **
 *****************************************************/
 DECLARE
@@ -200,11 +198,11 @@ BEGIN
 
             SELECT authorization_id
             FROM pc.t_encrypted_collection_authorizations
-            WHERE login_name LIKE '%' || _ownerPRN || '%' AND
-                    protein_collection_id = _collectionID;
+            WHERE login_name LIKE '%' || _ownerUsername || '%' AND
+                  protein_collection_id = _collectionID;
 
             If Not FOUND Then
-                _message := format('%s is not authorized for the encrypted collection "%s"', _ownerPRN, _collectionName);
+                _message := format('%s is not authorized for the encrypted collection "%s"', _ownerUsername, _collectionName);
                 _returnCode := 'U5206';
                 RAISE WARNING '%', _message;
 
@@ -405,11 +403,11 @@ END
 $$;
 
 
-ALTER PROCEDURE pc.validate_analysis_job_protein_parameters(IN _organismname text, IN _ownerprn text, IN _organismdbfilename text, INOUT _protcollnamelist text, INOUT _protcolloptionslist text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE pc.validate_analysis_job_protein_parameters(IN _organismname text, IN _ownerusername text, IN _organismdbfilename text, INOUT _protcollnamelist text, INOUT _protcolloptionslist text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE validate_analysis_job_protein_parameters(IN _organismname text, IN _ownerprn text, IN _organismdbfilename text, INOUT _protcollnamelist text, INOUT _protcolloptionslist text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: pc; Owner: d3l243
+-- Name: PROCEDURE validate_analysis_job_protein_parameters(IN _organismname text, IN _ownerusername text, IN _organismdbfilename text, INOUT _protcollnamelist text, INOUT _protcolloptionslist text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: pc; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE pc.validate_analysis_job_protein_parameters(IN _organismname text, IN _ownerprn text, IN _organismdbfilename text, INOUT _protcollnamelist text, INOUT _protcolloptionslist text, INOUT _message text, INOUT _returncode text) IS 'ValidateAnalysisJobProteinParameters';
+COMMENT ON PROCEDURE pc.validate_analysis_job_protein_parameters(IN _organismname text, IN _ownerusername text, IN _organismdbfilename text, INOUT _protcollnamelist text, INOUT _protcolloptionslist text, INOUT _message text, INOUT _returncode text) IS 'ValidateAnalysisJobProteinParameters';
 
