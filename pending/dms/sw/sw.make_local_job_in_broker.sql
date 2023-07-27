@@ -52,7 +52,7 @@ AS $$
 **          05/25/2011 mem - Updated call to Create_Steps_For_Job and removed Priority from Tmp_Job_Steps
 **          10/17/2011 mem - Added column Memory_Usage_MB
 **          11/14/2011 mem - Now populating column Transfer_Folder_Path in T_Jobs
-**          01/09/2012 mem - Added parameter _ownerPRN
+**          01/09/2012 mem - Added parameter _ownerUsername
 **          01/19/2012 mem - Added parameter _dataPackageID
 **          02/07/2012 mem - Now validating that _dataPackageID is > 0 when _scriptName is MultiAlign_Aggregator
 **          03/20/2012 mem - Now calling Update_Job_Param_Org_Db_Info_Using_Data_Pkg

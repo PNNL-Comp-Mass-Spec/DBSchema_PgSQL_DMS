@@ -15,6 +15,14 @@ AS $$
 **  Desc:
 **      Check input parameters against the definition for the script
 **
+**  Arguments:
+**    _dataPackageID            Data package ID
+**    _protCollNameList         Comma-separated list of protein collection names
+**    _collectionCountAdded     Output: Number of protein collections added
+**    _showMessages             When true, display any protein collections that were added
+**    _message                  Status message
+**    _returnCode               Return code
+**
 **  Auth:   grk
 **  Date:   10/06/2010 grk - Initial release
 **          11/25/2010 mem - Now validating that the script exists in T_Scripts
@@ -40,6 +48,8 @@ BEGIN
         Dataset_Name text,
     );
 
+    CREATE UNIQUE INDEX IX_Tmp_DatasetList ON Tmp_DatasetList ( Dataset_Name );
+
     ---------------------------------------------------
     -- Validate the data package ID
     ---------------------------------------------------
@@ -60,7 +70,7 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_DatasetList (Dataset_Name)
-    SELECT Dataset
+    SELECT DISTINCT Dataset
     FROM dpkg.t_Data_Package_Datasets
     WHERE data_pkg_id = _dataPackageID;
 

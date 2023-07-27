@@ -232,7 +232,7 @@ BEGIN
                 RAISE EXCEPTION 'Cannot update: entry is not in database';
             End If;
 
-            If Exists (Select * From t_analysis_job Where request_id = _requestID) Then
+            If Exists (Select job From t_analysis_job Where request_id = _requestID) Then
                 -- The request has jobs associated with it
 
                 SELECT request_name,
@@ -292,7 +292,7 @@ BEGIN
             Archive_State_ID int NULL,
             Dataset_Type text NULL,
             Dataset_rating int NULL
-        )
+        );
 
         If _dataPackageID > 0 Then
             ---------------------------------------------------
@@ -359,33 +359,35 @@ BEGIN
 
         CREATE TEMP TABLE Tmp_DatasetList (
             Dataset_Name text Not NULL
-        )
+        );
 
         CREATE UNIQUE INDEX IX_Tmp_DatasetList ON Tmp_DatasetList ( Dataset_Name );
 
         INSERT INTO Tmp_DatasetList( Dataset_Name )
-        SELECT Dataset_Name
+        SELECT DISTINCT Dataset_Name
         FROM Tmp_DatasetInfo;
 
         ---------------------------------------------------
         -- Validate _protCollNameList
         --
-        -- Note that validate_protein_collection_list_for_dataset_table
-        -- will populate _message with an explanatory note
+        -- Note that validate_protein_collection_list_for_dataset_table will populate _message with an explanatory note
         -- if _protCollNameList is updated
         ---------------------------------------------------
 
         _protCollNameList := Trim(Coalesce(_protCollNameList, ''));
 
         If char_length(_protCollNameList) > 0 And public.validate_na_parameter(_protCollNameList, 1) <> 'na' Then
-            CALL validate_protein_collection_list_for_dataset_table (
-                                _protCollNameList => _protCollNameList output,
-                                _collectionCountAdded => _collectionCountAdded output,
-                                _showMessages => true,
-                                _message => _message,           -- Output
-                                _returnCode => _returnCode);    -- Output
+            CALL public.validate_protein_collection_list_for_dataset_table (
+                                _protCollNameList => _protCollNameList,             -- Output
+                                _collectionCountAdded => _collectionCountAdded,     -- Output
+                                _showMessages => _showMessages,
+                                _message => _message,                               -- Output
+                                _returncode => _returnCode,                         -- Output
+                                _showDebug => false);
 
             If _returnCode <> '' Then
+                DROP TABLE Tmp_DatasetInfo;
+                DROP TABLE Tmp_DatasetList;
                 RETURN;
             End If;
         End If;
@@ -653,7 +655,7 @@ BEGIN
             SELECT _newRequestNum, Tmp_DatasetInfo.dataset_id
             FROM Tmp_DatasetInfo;
 
-            -- return ID of the newly created request
+            -- Return ID of the newly created request
             --
             _requestID := _newRequestNum;
 
@@ -684,41 +686,37 @@ BEGIN
         If _mode::citext In ('update', 'append') Then
             -- Update the request
 
-            Begin
+            UPDATE t_analysis_job_request
+            SET request_name = _requestName,
+                analysis_tool = _toolName,
+                param_file_name = _paramFileName,
+                settings_file_name = _settingsFileName,
+                organism_db_name = _organismDBName,
+                organism_id = _organismID,
+                protein_collection_list = _protCollNameList,
+                protein_options_list = _protCollOptionsList,
+                comment = _comment,
+                special_processing = _specialProcessing,
+                request_state_id = _stateID,
+                user_id = _userID,
+                dataset_min = _datasetMin,
+                dataset_max = _datasetMax,
+                data_package_id = Case When _dataPackageId > 0 Then _dataPackageId Else Null End
+            WHERE request_id = _requestID;
 
-                UPDATE t_analysis_job_request
-                SET request_name = _requestName,
-                    analysis_tool = _toolName,
-                    param_file_name = _paramFileName,
-                    settings_file_name = _settingsFileName,
-                    organism_db_name = _organismDBName,
-                    organism_id = _organismID,
-                    protein_collection_list = _protCollNameList,
-                    protein_options_list = _protCollOptionsList,
-                    comment = _comment,
-                    special_processing = _specialProcessing,
-                    request_state_id = _stateID,
-                    user_id = _userID,
-                    dataset_min = _datasetMin,
-                    dataset_max = _datasetMax,
-                    data_package_id = Case When _dataPackageId > 0 Then _dataPackageId Else Null End
-                WHERE request_id = _requestID;
+            MERGE INTO t_analysis_job_request_datasets AS t
+            USING ( SELECT _requestID As Request_ID, Dataset_ID
+                    FROM Tmp_DatasetInfo
+                  ) AS s
+            ON (t.dataset_id = s.dataset_id AND t.request_id = s.request_id)
+            -- Note: all of the columns in table t_analysis_job_request_datasets are primary keys or identity columns; there are no updatable columns
+            WHEN NOT MATCHED THEN
+                INSERT (Request_ID, Dataset_ID)
+                VALUES (s.Request_ID, s.Dataset_ID);
 
-                MERGE INTO t_analysis_job_request_datasets AS t
-                USING ( SELECT _requestID As Request_ID, Dataset_ID
-                        FROM Tmp_DatasetInfo
-                      ) AS s
-                ON (t.dataset_id = s.dataset_id AND t.request_id = s.request_id)
-                -- Note: all of the columns in table t_analysis_job_request_datasets are primary keys or identity columns; there are no updatable columns
-                WHEN NOT MATCHED THEN
-                    INSERT (Request_ID, Dataset_ID)
-                    VALUES (s.Request_ID, s.Dataset_ID);
-
-                DELETE FROM t_analysis_job_request_datasets target
-                WHERE target.Request_ID = _requestID AND
-                      NOT EXISTS (SELECT DI.Dataset_ID FROM Tmp_DatasetInfo DI WHERE target.dataset_id = DI.dataset_id);
-
-            End;
+            DELETE FROM t_analysis_job_request_datasets target
+            WHERE target.Request_ID = _requestID AND
+                  NOT EXISTS (SELECT DI.Dataset_ID FROM Tmp_DatasetInfo DI WHERE target.dataset_id = DI.dataset_id);
 
             If char_length(_callingUser) > 0 Then
                 -- _callingUser is defined; call public.alter_event_log_entry_user or public.alter_event_log_entry_user_multi_id

@@ -62,7 +62,7 @@ AS $$
 **          10/25/2010 grk - Removed creation prohibition all jobs except aggregation jobs
 **          11/25/2010 mem - Added parameter _debugMode
 **          07/05/2011 mem - Now updating Tool_Version_ID when resetting job steps
-**          01/09/2012 mem - Added parameter _ownerPRN
+**          01/09/2012 mem - Added parameter _ownerUsername
 **          01/19/2012 mem - Added parameter _dataPackageID
 **          02/07/2012 mem - Now updating Transfer_Folder_Path after updating T_Job_Parameters
 **          03/20/2012 mem - Now calling Update_Job_Param_Org_Db_Info_Using_Data_Pkg
@@ -73,7 +73,7 @@ AS $$
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/08/2016 mem - Include job number in errors raised by RAISERROR
 **          06/16/2016 mem - Add call to Add_Update_Transfer_Paths_In_Params_Using_Data_Pkg
-**          11/08/2016 mem - Auto-define _ownerPRN if it is empty
+**          11/08/2016 mem - Auto-define _ownerUsername if it is empty
 **          11/10/2016 mem - Pass _callingUser to GetUserLoginWithoutDomain
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized

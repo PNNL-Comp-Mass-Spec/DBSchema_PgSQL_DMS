@@ -35,7 +35,7 @@ AS $$
 **          04/11/2022 mem - Use varchar(4000) when populating temporary tables
 **          03/22/2023 mem - Add support for DiaNN
 **          05/10/2023 mem - Do not update _protCollOptionsList when using a legacy FASTA file
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/26/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -275,7 +275,7 @@ BEGIN
             RETURN;
         End If;
 
-        CALL pc.validate_protein_collection_params (
+        CALL public.validate_protein_collection_params (
                         _scriptBaseName,
                         _organismDBName,            -- Output
                         _organismName,
@@ -290,8 +290,7 @@ BEGIN
             ---------------------------------------------------
             -- Validate _protCollNameList
             --
-            -- Note that validate_protein_collection_list_for_dataset_table
-            -- will populate _message with an explanatory note
+            -- Note that validate_protein_collection_list_for_dataset_table will populate _message with an explanatory note
             -- if _protCollNameList is updated
             ---------------------------------------------------
 

@@ -41,7 +41,7 @@ AS $$
 **          03/25/2008 mem - Now calling alter_event_log_entry_user if _callingUser is not blank (Ticket #644)
 **          05/05/2010 mem - Now calling auto_resolve_name_to_username to check if _ownerPRN and _piPRN contain a person's real name rather than their username
 **          08/19/2010 grk - Use try-catch for error handling
-**          11/15/2012 mem - Renamed parameter _ownerPRN to _contactPRN; renamed column CC_Owner_PRN to CC_Contact_PRN
+**          11/15/2012 mem - Renamed parameter _ownerPRN to _contactPRN (aka _contactUsername); renamed column CC_Owner_PRN to CC_Contact_PRN (aka Contact_Username)
 **                         - Added new fields to support peptide standards
 **          06/02/2015 mem - Replaced IDENT_CURRENT with SCOPE_IDENTITY()
 **          02/23/2016 mem - Add Set XACT_ABORT on
