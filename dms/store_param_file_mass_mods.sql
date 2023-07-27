@@ -92,7 +92,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **    _showResidueTable     When _infoOnly is true, if this is true will show Tmp_Residues for each modification
 **    _replaceExisting      When true, replace existing mass mods; if false, report an error if mass mods are already defined
 **    _validateUnimod       When true, require that the mod names are known Unimod names
-**    _paramFileType        MS-GF+, DiaNN, TopPIC, MSFragger, or MaxQuant; if empty, will lookup using _paramFileID; if no match (or if _paramFileID is null or 0) assumes MS-GF+
+**    _paramFileType        MSGFPlus, DiaNN, TopPIC, MSFragger, or MaxQuant; if empty, will lookup using _paramFileID; if no match (or if _paramFileID is null or 0) assumes MSGFPlus
 **
 **  Auth:   mem
 **  Date:   05/16/2013 mem - Initial version
@@ -133,6 +133,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **          07/26/2023 mem - Move "Not" keyword to before the field name
 **          07/27/2023 mem - Use "Not Found" to determine if a parameter file does not exist
 **                         - Remove unused variables
+**                         - Move Drop Tables commands to outside the for loop; you cannot drop a table being used by a for loop
 **
 *****************************************************/
 DECLARE
@@ -174,6 +175,7 @@ DECLARE
     _paramFileInfo record;
     _residueInfo record;
     _formatString text;
+    _exitProcedure boolean;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -209,9 +211,6 @@ BEGIN
         -----------------------------------------
         -- Make sure the parameter file ID is valid
         -----------------------------------------
-
-        _paramFileName := '';
-        _paramFileTypeID := 0;
 
         SELECT param_file_name, param_file_type_id
         INTO _paramFileName, _paramFileTypeID
@@ -419,6 +418,8 @@ BEGIN
     -----------------------------------------
     -- Parse the modification definitions
     -----------------------------------------
+
+    _exitProcedure := false;
 
     FOR _row IN
         SELECT Value
@@ -651,13 +652,8 @@ BEGIN
                 _returnCode := 'U5310';
 
                 If Not _infoOnly Then
-                    DROP TABLE Tmp_Mods;
-                    DROP TABLE Tmp_ModDef;
-                    DROP TABLE Tmp_Residues;
-                    DROP TABLE Tmp_ModsToStore;
-                    DROP TABLE Tmp_MaxQuant_Mods;
-
-                    RETURN;
+                    _exitProcedure := true;
+                    EXIT;
                 End If;
             Else
                 -- MS-GF+ uses 'StaticMod=None' and 'DynamicMod=None' to indicate no static or dynamic mods
@@ -669,13 +665,8 @@ BEGIN
                     If Not _infoOnly Then
                         RAISE WARNING '%', _message;
 
-                        DROP TABLE Tmp_Mods;
-                        DROP TABLE Tmp_ModDef;
-                        DROP TABLE Tmp_Residues;
-                        DROP TABLE Tmp_ModsToStore;
-                        DROP TABLE Tmp_MaxQuant_Mods;
-
-                        RETURN;
+                        _exitProcedure := true;
+                        EXIT;
                     End If;
                 End If;
             End If;
@@ -722,13 +713,8 @@ BEGIN
                 _message := format('DynamicMod entries must have "opt" in the 3rd column; aborting; see row: %s', _row);
                 _returnCode := 'U5312';
 
-                DROP TABLE Tmp_Mods;
-                DROP TABLE Tmp_ModDef;
-                DROP TABLE Tmp_Residues;
-                DROP TABLE Tmp_ModsToStore;
-                DROP TABLE Tmp_MaxQuant_Mods;
-
-                RETURN;
+                _exitProcedure := true;
+                EXIT;
             End If;
 
         End If;
@@ -740,13 +726,8 @@ BEGIN
                 _message := format('StaticMod entries must have "fix" in the 3rd column; aborting; see row: %s', _row);
                 _returnCode := 'U5313';
 
-                DROP TABLE Tmp_Mods;
-                DROP TABLE Tmp_ModDef;
-                DROP TABLE Tmp_Residues;
-                DROP TABLE Tmp_ModsToStore;
-                DROP TABLE Tmp_MaxQuant_Mods;
-
-                RETURN;
+                _exitProcedure := true;
+                EXIT;
             End If;
         End If;
 
@@ -804,13 +785,8 @@ BEGIN
                         _message := format('Mod name "%s" is not in the expected form (e.g. UniMod:35); see row: %s', _field, _row);
                         _returnCode := 'U5314';
 
-                        DROP TABLE Tmp_Mods;
-                        DROP TABLE Tmp_ModDef;
-                        DROP TABLE Tmp_Residues;
-                        DROP TABLE Tmp_ModsToStore;
-                        DROP TABLE Tmp_MaxQuant_Mods;
-
-                        RETURN;
+                        _exitProcedure := true;
+                        EXIT;
                     Else
                         _lookupUniModID = false;
                     End If;
@@ -827,26 +803,16 @@ BEGIN
                         _message := format('UniMod ID "%s" is not an integer; see row: %s', _uniModIDText, _row);
                         _returnCode := 'U5315';
 
-                        DROP TABLE Tmp_Mods;
-                        DROP TABLE Tmp_ModDef;
-                        DROP TABLE Tmp_Residues;
-                        DROP TABLE Tmp_ModsToStore;
-                        DROP TABLE Tmp_MaxQuant_Mods;
-
-                        RETURN;
+                        _exitProcedure := true;
+                        EXIT;
                     End If;
 
                     If _uniModID = 4 And Not _staticCysCarbamidomethyl Then
                         _message := format('Define static Cys Carbamidomethyl using "StaticCysCarbamidomethyl=True", not using "StaticMod=UniMod:4"; see row: %s', _row);
                         _returnCode := 'U5316';
 
-                        DROP TABLE Tmp_Mods;
-                        DROP TABLE Tmp_ModDef;
-                        DROP TABLE Tmp_Residues;
-                        DROP TABLE Tmp_ModsToStore;
-                        DROP TABLE Tmp_MaxQuant_Mods;
-
-                        RETURN;
+                        _exitProcedure := true;
+                        EXIT;
                     End If;
 
                     SELECT Name
@@ -858,13 +824,8 @@ BEGIN
                         _message := format('UniMod ID "%s" not found in T_Unimod_Mods; see row: %s', _field, _row);
                         _returnCode := 'U5317';
 
-                        DROP TABLE Tmp_Mods;
-                        DROP TABLE Tmp_ModDef;
-                        DROP TABLE Tmp_Residues;
-                        DROP TABLE Tmp_ModsToStore;
-                        DROP TABLE Tmp_MaxQuant_Mods;
-
-                        RETURN;
+                        _exitProcedure := true;
+                        EXIT;
                     End If;
                 End If;
             End If;
@@ -873,7 +834,7 @@ BEGIN
             -- Determine the Mass_Correction_ID based on the UniMod name
             -----------------------------------------
 
-            SELECT Mass_Correction_ID, monoisotopic_mass
+            SELECT mass_correction_id, monoisotopic_mass
             INTO _massCorrectionID, _modMass
             FROM t_mass_correction_factors
             WHERE original_source_name = _modName AND
@@ -903,13 +864,8 @@ BEGIN
 
                 _returnCode := 'U5318';
 
-                DROP TABLE Tmp_Mods;
-                DROP TABLE Tmp_ModDef;
-                DROP TABLE Tmp_Residues;
-                DROP TABLE Tmp_ModsToStore;
-                DROP TABLE Tmp_MaxQuant_Mods;
-
-                RETURN;
+                _exitProcedure := true;
+                EXIT;
             End If;
 
             -----------------------------------------
@@ -928,13 +884,8 @@ BEGIN
 
                 _returnCode := 'U5319';
 
-                DROP TABLE Tmp_Mods;
-                DROP TABLE Tmp_ModDef;
-                DROP TABLE Tmp_Residues;
-                DROP TABLE Tmp_ModsToStore;
-                DROP TABLE Tmp_MaxQuant_Mods;
-
-                RETURN;
+                _exitProcedure := true;
+                EXIT;
             End If;
 
             If _paramFileType::citext = 'TopPIC' And Not _location In ('any', 'N-term', 'C-term') Then
@@ -943,13 +894,8 @@ BEGIN
 
                 _returnCode := 'U5320';
 
-                DROP TABLE Tmp_Mods;
-                DROP TABLE Tmp_ModDef;
-                DROP TABLE Tmp_Residues;
-                DROP TABLE Tmp_ModsToStore;
-                DROP TABLE Tmp_MaxQuant_Mods;
-
-                RETURN;
+                _exitProcedure := true;
+                EXIT;
             End If;
 
             If _paramFileType::citext = 'DiaNN' Then
@@ -1000,13 +946,8 @@ BEGIN
                 _message := format('Use * to match all residues, not the word "any"; see row: %s', _row);
                 _returnCode := 'U5321';
 
-                DROP TABLE Tmp_Mods;
-                DROP TABLE Tmp_ModDef;
-                DROP TABLE Tmp_Residues;
-                DROP TABLE Tmp_ModsToStore;
-                DROP TABLE Tmp_MaxQuant_Mods;
-
-                RETURN;
+                _exitProcedure := true;
+                EXIT;
             End If;
 
             _affectedResidues := _field;
@@ -1028,13 +969,8 @@ BEGIN
                 _message := 'Mod mass "%s" is not a number; see row: %s', _field, _row;
                 _returnCode := 'U5322';
 
-                DROP TABLE Tmp_Mods;
-                DROP TABLE Tmp_ModDef;
-                DROP TABLE Tmp_Residues;
-                DROP TABLE Tmp_ModsToStore;
-                DROP TABLE Tmp_MaxQuant_Mods;
-
-                RETURN;
+                _exitProcedure := true;
+                EXIT;
             End If;
 
             If Abs(_modMassToFind) < 0.01 Then
@@ -1043,11 +979,11 @@ BEGIN
                 CONTINUE;
             End If;
 
-            SELECT monoisotopic_mass
-            INTO _modMass
+            SELECT mass_correction_id, mass_correction_tag, monoisotopic_mass
+            INTO _massCorrectionID, _modName, _modMass
             FROM t_mass_correction_factors
             WHERE Abs(monoisotopic_mass - _modMassToFind) < 0.25
-            Order By Abs(monoisotopic_mass - _modMassToFind)
+            ORDER BY Abs(monoisotopic_mass - _modMassToFind)
             LIMIT 1;
 
             If Not FOUND Then
@@ -1055,13 +991,8 @@ BEGIN
 
                 _returnCode := 'U5323';
 
-                DROP TABLE Tmp_Mods;
-                DROP TABLE Tmp_ModDef;
-                DROP TABLE Tmp_Residues;
-                DROP TABLE Tmp_ModsToStore;
-                DROP TABLE Tmp_MaxQuant_Mods;
-
-                RETURN;
+                _exitProcedure := true;
+                EXIT;
             End If;
 
             SELECT Trim(Value)
@@ -1120,31 +1051,19 @@ BEGIN
                 _message := format('MaxQuant modification not found in t_maxquant_mods: %s', _field);
                 _returnCode := 'U5324';
 
-                DROP TABLE Tmp_Mods;
-                DROP TABLE Tmp_ModDef;
-                DROP TABLE Tmp_Residues;
-                DROP TABLE Tmp_ModsToStore;
-                DROP TABLE Tmp_MaxQuant_Mods;
-
-                RETURN;
+                _exitProcedure := true;
+                EXIT;
             End If;
 
             If Coalesce(_massCorrectionID, 0) = 0 Then
                 _message := format('Mass Correction ID not defined for MaxQuant modification "%s"; either update table t_maxquant_mods or delete this mod from the XML', _field);
                 _returnCode := 'U5325';
 
-                DROP TABLE Tmp_Mods;
-                DROP TABLE Tmp_ModDef;
-                DROP TABLE Tmp_Residues;
-                DROP TABLE Tmp_ModsToStore;
-                DROP TABLE Tmp_MaxQuant_Mods;
-
-                RETURN;
+                _exitProcedure := true;
+                EXIT;
             End If;
 
-            SELECT mass_correction_id,
-                   mass_correction_tag,
-                   monoisotopic_mass
+            SELECT mass_correction_id, mass_correction_tag, monoisotopic_mass
             INTO _massCorrectionID, _modName, _modMass
             FROM t_mass_correction_factors
             WHERE mass_correction_id = _massCorrectionID
@@ -1223,13 +1142,8 @@ BEGIN
                             _message := format('Lowercase n or c should be followed by a residue or *; see row: %s', _row);
                             _returnCode := 'U5326';
 
-                            DROP TABLE Tmp_Mods;
-                            DROP TABLE Tmp_ModDef;
-                            DROP TABLE Tmp_Residues;
-                            DROP TABLE Tmp_ModsToStore;
-                            DROP TABLE Tmp_MaxQuant_Mods;
-
-                            RETURN;
+                            _exitProcedure := true;
+                            EXIT;
                         End If;
 
                         _charIndex := _charIndex + 1;
@@ -1242,6 +1156,10 @@ BEGIN
             End If;
 
         END LOOP;
+
+        If _exitProcedure Then
+            EXIT;
+        End If;
 
         -----------------------------------------
         -- Determine the residue IDs for the entries in Tmp_Residues
@@ -1296,13 +1214,8 @@ BEGIN
 
             _returnCode := 'U5327';
 
-            DROP TABLE Tmp_Mods;
-            DROP TABLE Tmp_ModDef;
-            DROP TABLE Tmp_Residues;
-            DROP TABLE Tmp_ModsToStore;
-            DROP TABLE Tmp_MaxQuant_Mods;
-
-            RETURN;
+            _exitProcedure := true;
+            EXIT;
         End If;
 
         -----------------------------------------
@@ -1397,99 +1310,110 @@ BEGIN
 
     END LOOP;
 
+    If _exitProcedure Then
+        DROP TABLE Tmp_Mods;
+        DROP TABLE Tmp_ModDef;
+        DROP TABLE Tmp_Residues;
+        DROP TABLE Tmp_ModsToStore;
+        DROP TABLE Tmp_MaxQuant_Mods;
+        RETURN;
+    End If;
+
     If _infoOnly Then
-            -- Preview the mod defs
+        -- Preview the mod defs
 
-            _formatString := '%-10s %-20s %-20s %-15s %-10s %-10s %-15s %-12s %-13s %-15s %-18s %-15s %-30s %-20s';
+        _formatString := '%-10s %-30s %-20s %-15s %-10s %-10s %-15s %-20s %-17s %-15s %-18s %-15s %-20s %-100s';
 
-            RAISE INFO '';
-            RAISE INFO '%',
-                format(_formatString,
-                        'Entry_ID',
-                        'Mod_Name',
-                        'Mass_Correction_ID',
-                        'Mod_Type_Symbol',
-                        'Residue',
-                        'Residue_ID',
-                        'Local_Symbol_ID',
-                        'Residue_Desc',
-                        'Monoisotopic_Mass',
-                        'MaxQuant_Mod_ID',
-                        'Isobaric_Mod_Ion_#',
-                        'Param_File_ID',
-                        'Param_File',
-                        'Isobaric Mod Comment');
+        RAISE INFO '';
+        RAISE INFO '%',
+            format(_formatString,
+                   'Entry_ID',
+                   'Mod_Name',
+                   'Mass_Correction_ID',
+                   'Mod_Type_Symbol',
+                   'Residue',
+                   'Residue_ID',
+                   'Local_Symbol_ID',
+                   'Residue_Desc',
+                   'Monoisotopic_Mass',
+                   'MaxQuant_Mod_ID',
+                   'Isobaric_Mod_Ion_#',
+                   'Param_File_ID',
+                   'Isobaric Mod Comment',
+                   'Param_File'
+                  );
 
-            RAISE INFO '%',
-                       format(_formatString,
-                                '----------',
-                                '--------------------',
-                                '--------------------',
-                                '---------------',
-                                '----------',
-                                '----------',
-                                '---------------',
-                                '------------',
-                                '-----------------',
-                                '---------------',
-                                '------------------',
-                                '---------------',
-                                '------------------------------',
-                                '--------------------');
+        RAISE INFO '%',
+                   format(_formatString,
+                                     '----------',
+                                     '------------------------------',
+                                     '--------------------',
+                                     '---------------',
+                                     '----------',
+                                     '----------',
+                                     '---------------',
+                                     '--------------------',
+                                     '-----------------',
+                                     '---------------',
+                                     '------------------',
+                                     '---------------',
+                                     '--------------------',
+                                     '----------------------------------------------------------------------------------------------------'
+                         );
 
+        FOR _modInfo IN
+            SELECT M.Entry_ID,
+                   M.Mod_Name,
+                   M.Mass_Correction_ID,
+                   M.Mod_Type_Symbol,
+                   M.Residue_Symbol,
+                   M.Residue_ID,
+                   M.Local_Symbol_ID,
+                   M.Residue_Desc,
+                   M.Monoisotopic_Mass,
+                   M.MaxQuant_Mod_ID,
+                   M.Isobaric_Mod_Ion_Number,
+                   _paramFileID AS Param_File_ID,
+                   _paramFileName AS Param_File,
+                   CASE
+                       WHEN LookupQ.Min_Isobaric_Mod_Ion_Number IS NULL THEN
+                         'Duplicate isobaric mod that will be skipped'
+                       ELSE ''
+                   END AS Isobaric_Mod_Comment
+            FROM Tmp_ModsToStore M
+                 LEFT OUTER JOIN ( SELECT Residue_ID,
+                                          Local_Symbol_ID,
+                                          Mass_Correction_ID,
+                                          Mod_Type_Symbol,
+                                          MIN(Isobaric_Mod_Ion_Number) AS Min_Isobaric_Mod_Ion_Number
+                                   FROM Tmp_ModsToStore
+                                   GROUP BY Residue_ID, Local_Symbol_ID, Mass_Correction_ID, Mod_Type_Symbol) AS LookupQ
+                   ON M.Residue_ID = LookupQ.Residue_ID AND
+                      M.Local_Symbol_ID = LookupQ.Local_Symbol_ID AND
+                      M.Mass_Correction_ID = LookupQ.Mass_Correction_ID AND
+                      M.Mod_Type_Symbol = LookupQ.Mod_Type_Symbol AND
+                      M.Isobaric_Mod_Ion_Number = LookupQ.Min_Isobaric_Mod_Ion_Number
+            ORDER BY M.Entry_ID
+        LOOP
+        RAISE INFO '%',
+            format(_formatString,
+                    _modInfo.Entry_ID,
+                    _modInfo.Mod_Name,
+                    _modInfo.Mass_Correction_ID,
+                    _modInfo.Mod_Type_Symbol,
+                    _modInfo.Residue_Symbol,
+                    _modInfo.Residue_ID,
+                    _modInfo.Local_Symbol_ID,
+                    _modInfo.Residue_Desc,
+                    _modInfo.Monoisotopic_Mass,
+                    _modInfo.MaxQuant_Mod_ID,
+                    _modInfo.Isobaric_Mod_Ion_Number,
+                    _modInfo.Param_File_ID,
+                    _modInfo.Isobaric_Mod_Comment,
+                    _modInfo.Param_File
+                   );
 
-            FOR _modInfo IN
-                SELECT M.Entry_ID,
-                       M.Mod_Name,
-                       M.Mass_Correction_ID,
-                       M.Mod_Type_Symbol,
-                       M.Residue_Symbol,
-                       M.Residue_ID,
-                       M.Local_Symbol_ID,
-                       M.Residue_Desc,
-                       M.Monoisotopic_Mass,
-                       M.MaxQuant_Mod_ID,
-                       M.Isobaric_Mod_Ion_Number,
-                       _paramFileID AS Param_File_ID,
-                       _paramFileName AS Param_File,
-                       CASE
-                           WHEN LookupQ.Min_Isobaric_Mod_Ion_Number IS NULL THEN
-                             'Duplicate isobaric mod that will be skipped'
-                           ELSE ''
-                       END AS Isobaric_Mod_Comment
-                FROM Tmp_ModsToStore M
-                     LEFT OUTER JOIN ( SELECT Residue_ID,
-                                              Local_Symbol_ID,
-                                              Mass_Correction_ID,
-                                              Mod_Type_Symbol,
-                                              MIN(Isobaric_Mod_Ion_Number) AS Min_Isobaric_Mod_Ion_Number
-                                       FROM Tmp_ModsToStore
-                                       GROUP BY Residue_ID, Local_Symbol_ID, Mass_Correction_ID, Mod_Type_Symbol) AS LookupQ
-                       ON M.Residue_ID = LookupQ.Residue_ID AND
-                          M.Local_Symbol_ID = LookupQ.Local_Symbol_ID AND
-                          M.Mass_Correction_ID = LookupQ.Mass_Correction_ID AND
-                          M.Mod_Type_Symbol = LookupQ.Mod_Type_Symbol AND
-                          M.Isobaric_Mod_Ion_Number = LookupQ.Min_Isobaric_Mod_Ion_Number
-                ORDER BY M.Entry_ID
-            LOOP
-            RAISE INFO '%',
-                format(_formatString,
-                        _modInfo.Entry_ID,
-                        _modInfo.Mod_Name,
-                        _modInfo.Mass_Correction_ID,
-                        _modInfo.Mod_Type_Symbol,
-                        _modInfo.Residue_Symbol,
-                        _modInfo.Residue_ID,
-                        _modInfo.Local_Symbol_ID,
-                        _modInfo.Residue_Desc,
-                        _modInfo.Monoisotopic_Mass,
-                        _modInfo.MaxQuant_Mod_ID,
-                        _modInfo.Isobaric_Mod_Ion_Number,
-                        _modInfo.Param_File_ID,
-                        _modInfo.Param_File,
-                        _modInfo.Isobaric_Mod_Comment);
-
-            END LOOP;
+        END LOOP;
 
     End If;
 
