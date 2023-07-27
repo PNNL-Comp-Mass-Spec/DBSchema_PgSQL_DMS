@@ -131,6 +131,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **          05/30/2023 mem - Use format() for string concatenation
 **          06/07/2023 mem - Add ORDER BY to string_agg()
 **          07/26/2023 mem - Move "Not" keyword to before the field name
+**          07/27/2023 mem - Use "Not Found" to determine if a parameter file does not exist
 **
 *****************************************************/
 DECLARE
@@ -219,7 +220,7 @@ BEGIN
         FROM t_param_files
         WHERE param_file_id = _paramFileID;
 
-        If Coalesce(_paramFileName, '') = '' Then
+        If Not FOUND Then
             _message := format('Param File ID (%s) not found in t_param_files; unable to continue', _paramFileID);
             _returnCode := 'U5303';
             RETURN;
@@ -1055,7 +1056,7 @@ BEGIN
             Order By Abs(monoisotopic_mass - _modMassToFind)
             LIMIT 1;
 
-            If Not FOUND Or Coalesce(_massCorrectionID, 0) = 0 Then
+            If Not FOUND Then
                 _message := format('Matching modification not found for mass %s in t_mass_correction_factors; see row: %s', _modMassToFind, _row);
 
                 _returnCode := 'U5323';
