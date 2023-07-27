@@ -1,15 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE sw.validate_protein_collection_list_for_data_package
-(
-    _dataPackageID int,
-    INOUT _protCollNameList text = '',
-    INOUT _collectionCountAdded int = 0,
-    _showMessages boolean = true,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: validate_protein_collection_list_for_data_package(integer, text, integer, boolean, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.validate_protein_collection_list_for_data_package(IN _datapackageid integer, INOUT _protcollnamelist text DEFAULT ''::text, INOUT _collectioncountadded integer DEFAULT 0, IN _showmessages boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -19,7 +14,7 @@ AS $$
 **    _dataPackageID            Data package ID
 **    _protCollNameList         Comma-separated list of protein collection names
 **    _collectionCountAdded     Output: Number of protein collections added
-**    _showMessages             When true, display any protein collections that were added
+**    _showMessages             When true, update _message to list any protein collections that were added
 **    _message                  Status message
 **    _returnCode               Return code
 **
@@ -31,39 +26,34 @@ AS $$
 **          03/10/2021 mem - Validate protein collection (or FASTA file) options for MaxQuant jobs
 **                         - Rename the XML job parameters argument and make it an input/output argument
 **                         - Add argument _debugMode
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/27/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
-    _dataPackageName text;
+
 BEGIN
     _message := Coalesce(_message, '');
     _returnCode := 0;
+
+    ---------------------------------------------------
+    -- Validate the data package ID
+    ---------------------------------------------------
+
+    If Not Exists (SELECT data_pkg_id FROM dpkg.t_data_package WHERE data_pkg_id = _dataPackageID) Then
+        _message := format('Data package ID is invalid: %s', _dataPackageID);
+        _returnCode := 'U5220';
+        RETURN;
+    End If;
 
     ---------------------------------------------------
     -- Create a temporary table to hold dataset names
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_DatasetList (
-        Dataset_Name text,
+        Dataset_Name text
     );
 
     CREATE UNIQUE INDEX IX_Tmp_DatasetList ON Tmp_DatasetList ( Dataset_Name );
-
-    ---------------------------------------------------
-    -- Validate the data package ID
-    ---------------------------------------------------
-
-    SELECT package_name
-    INTO _dataPackageName
-    FROM dpkg.t_data_package
-    WHERE data_pkg_id = _dataPackageID;
-
-    If Not FOUND Then
-        _message := format('Data package ID is invalid: %s', _dataPackageID);
-        _returnCode := 'U5202';
-        RETURN;
-    End If;
 
     ---------------------------------------------------
     -- Populate the table
@@ -76,7 +66,9 @@ BEGIN
 
     If Not FOUND Then
         _message := format('Data package does not have any datasets, ID: %s', _dataPackageID);
-        _returnCode := 'U5203';
+        _returnCode := 'U5221';
+
+        DROP TABLE Tmp_DatasetList;
         RETURN;
     End If;
 
@@ -92,4 +84,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.validate_protein_collection_list_for_data_package IS 'ValidateProteinCollectionListForDataPackage';
+
+ALTER PROCEDURE sw.validate_protein_collection_list_for_data_package(IN _datapackageid integer, INOUT _protcollnamelist text, INOUT _collectioncountadded integer, IN _showmessages boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE validate_protein_collection_list_for_data_package(IN _datapackageid integer, INOUT _protcollnamelist text, INOUT _collectioncountadded integer, IN _showmessages boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.validate_protein_collection_list_for_data_package(IN _datapackageid integer, INOUT _protcollnamelist text, INOUT _collectioncountadded integer, IN _showmessages boolean, INOUT _message text, INOUT _returncode text) IS 'ValidateProteinCollectionListForDataPackage';
+
