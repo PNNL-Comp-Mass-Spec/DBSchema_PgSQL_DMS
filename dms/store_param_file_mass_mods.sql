@@ -132,6 +132,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **          06/07/2023 mem - Add ORDER BY to string_agg()
 **          07/26/2023 mem - Move "Not" keyword to before the field name
 **          07/27/2023 mem - Use "Not Found" to determine if a parameter file does not exist
+**                         - Remove unused variables
 **
 *****************************************************/
 DECLARE
@@ -143,8 +144,6 @@ DECLARE
     _paramFileTypeNew citext := '';
     _delimiter text := '';
     _xml XML;
-    _entryID int := 0;
-    _entryIDEnd int := 0;
     _charIndex int;
     _rowCount int;
     _row citext;
@@ -171,7 +170,6 @@ DECLARE
     _localSymbolIDToStore int;
     _terminalMod boolean;
     _residueSymbol citext;
-    _storeMods citext := 'StoreMods';
     _modInfo record;
     _paramFileInfo record;
     _residueInfo record;
@@ -417,10 +415,6 @@ BEGIN
 
         RAISE INFO '';
     End If;
-
-    SELECT MAX(EntryID)
-    INTO _entryIDEnd
-    FROM Tmp_Mods;
 
     -----------------------------------------
     -- Parse the modification definitions
