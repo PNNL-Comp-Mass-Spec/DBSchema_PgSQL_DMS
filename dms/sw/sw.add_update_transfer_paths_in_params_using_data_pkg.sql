@@ -1,13 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE sw.add_update_transfer_paths_in_params_using_data_pkg
-(
-    _dataPackageID int,
-    INOUT _paramsUpdated boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_transfer_paths_in_params_using_data_pkg(integer, boolean, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.add_update_transfer_paths_in_params_using_data_pkg(IN _datapackageid integer, INOUT _paramsupdated boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -23,18 +20,18 @@ AS $$
 **          Section citext,
 **          Name citext,
 **          Value citext
-**      )
+**      );
 **
 **  Arguments:
 **    _dataPackageID   If 0 or null, will auto-define using parameter 'DataPackageID' in the Tmp_Job_Params table (in section 'JobParameters')
-**    _paramsUpdated   Output: will be true if Tmp_Job_Params is updated
+**    _paramsUpdated   Output: true if table Tmp_Job_Params was updated
 **
 **  Auth:   mem
 **  Date:   06/16/2016 mem - Initial version
 **          06/09/2021 mem - Tabs to spaces
 **          06/24/2012 mem - Add parameter DataPackagePath
 **          03/24/2023 mem - Capitalize job parameter TransferFolderPath
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/27/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -66,7 +63,7 @@ BEGIN
         SELECT Value
         INTO _value
         FROM Tmp_Job_Params
-        WHERE Section = 'JobParameters' and Name = 'DataPackageID'
+        WHERE Section = 'JobParameters' and Name = 'DataPackageID';
 
         If FOUND And Coalesce(_value, '') <> '' Then
             _dataPackageID := public.try_cast(_value, 0);
@@ -84,7 +81,13 @@ BEGIN
         FROM dpkg.t_data_package dp
              INNER JOIN dpkg.v_data_package_paths dpp
                ON dp.data_pkg_id = dpp.id
-        WHERE dp.data_pkg_id = _dataPackageID
+        WHERE dp.data_pkg_id = _dataPackageID;
+
+        If Not FOUND Then
+            RAISE WARNING 'Data Package ID % not found in dpkg.t_data_package', _dataPackageID;
+            _dataPkgName := '';
+            _dataPkgSharePath := '';
+        End If;
     End If;
 
     ---------------------------------------------------
@@ -110,8 +113,8 @@ BEGIN
     ---------------------------------------------------
 
     If _dataPackageID > 0 Then
+
         -- Lookup paths already defined in Tmp_Job_Params
-        --
 
         SELECT Value
         INTO _cacheFolderPathOld
@@ -129,7 +132,7 @@ BEGIN
             _cacheFolderPath := format('%s\%s_%s', _cacheRootFolderPath, _dataPackageID, REPLACE(_dataPkgName, ' ', '_'));
             _xferPath := _cacheRootFolderPath;
 
-            If _cacheFolderPathOld <> _cacheFolderPath Then
+            If _cacheFolderPathOld IS DISTINCT FROM _cacheFolderPath Then
                 DELETE FROM Tmp_Job_Params
                 WHERE Name = 'CacheFolderPath';
 
@@ -138,7 +141,7 @@ BEGIN
             End If;
         End If;
 
-        If _xferPathOld <> _xferPath Then
+        If _xferPathOld IS DISTINCT FROM _xferPath Then
             DELETE FROM Tmp_Job_Params
             WHERE Name = 'TransferFolderPath';
 
@@ -158,4 +161,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.add_update_transfer_paths_in_params_using_data_pkg IS 'AddUpdateTransferPathsInParamsUsingDataPkg';
+
+ALTER PROCEDURE sw.add_update_transfer_paths_in_params_using_data_pkg(IN _datapackageid integer, INOUT _paramsupdated boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_transfer_paths_in_params_using_data_pkg(IN _datapackageid integer, INOUT _paramsupdated boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.add_update_transfer_paths_in_params_using_data_pkg(IN _datapackageid integer, INOUT _paramsupdated boolean, INOUT _message text, INOUT _returncode text) IS 'AddUpdateTransferPathsInParamsUsingDataPkg';
+

@@ -1,32 +1,35 @@
 --
-CREATE OR REPLACE PROCEDURE sw.add_update_local_job_in_broker
-(
-    INOUT _job int,
-    _scriptName text,
-    _datasetName text = 'na',
-    _priority int,
-    _jobParam text,
-    _comment text,
-    _ownerUsername text,
-    _dataPackageID int,
-    INOUT _resultsDirectoryName text,
-    _mode text default 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = '',
-    _debugMode boolean = false,
-    _logDebugMessages boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_local_job_in_broker(integer, text, text, integer, text, text, text, integer, text, text, text, text, text, boolean, boolean); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.add_update_local_job_in_broker(INOUT _job integer, IN _scriptname text, IN _datasetname text DEFAULT 'na'::text, IN _priority integer DEFAULT 3, IN _jobparam text DEFAULT ''::text, IN _comment text DEFAULT ''::text, IN _ownerusername text DEFAULT ''::text, IN _datapackageid integer DEFAULT 0, INOUT _resultsdirectoryname text DEFAULT ''::text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text, IN _debugmode boolean DEFAULT false, IN _logdebugmessages boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Create or edit analysis job directly in broker database
+**      Create or edit an analysis job directly in sw.t_jobs
 **
-**      Example contents of _jobParam
-**        Note that element and attribute names are case sensitive (use Value= and not value=)
-**        Default parameters for each job script are defined in the Parameters column of table T_Scripts
+**  Arguments:
+**    _job                      Job number
+**    _scriptName               Pipeline script name
+**    _datasetName              Dataset name
+**    _priority                 Priority
+**    _jobParam                 XML parameters for the job (as text)
+**    _comment                  Job comment
+**    _ownerUsername            Owner username
+**    _dataPackageID            Data package ID (0 if not applicable)
+**    _resultsDirectoryName     Results directory name
+**    _mode                     'add', 'update', 'reset', or 'previewAdd'
+**    _message                  Output: message
+**    _returnCode               Output: return code
+**    _callingUser              Calling user
+**    _debugMode                When true, display debug messages (the new job will not be actually created)
+**    _logDebugMessages         When true, log debug messages in sw.T_Log_Entries (ignored if _debugMode is false)
+**
+**  Example contents of _jobParam
+**      Note that element and attribute names are case sensitive (use Value= and not value=)
+**      Default parameters for each job script are defined in the Parameters column of table T_Scripts
 **
 **      <Param Section="JobParameters" Name="CreateMzMLFiles" Value="False" />
 **      <Param Section="JobParameters" Name="CacheFolderRootPath" Value="\\protoapps\MaxQuant_Staging" />        (or \\proto-9\MSFragger_Staging)
@@ -34,26 +37,9 @@ AS $$
 **      <Param Section="PeptideSearch" Name="ParamFileName" Value="MaxQuant_Tryp_Stat_CysAlk_Dyn_MetOx_NTermAcet_20ppmParTol.xml" />
 **      <Param Section="PeptideSearch" Name="ParamFileStoragePath" Value="\\gigasax\DMS_Parameter_Files\MaxQuant" />
 **      <Param Section="PeptideSearch" Name="OrganismName" Value="Homo_Sapiens" />
-**      <Param Section="PeptideSearch" Name="ProteinCollectionList" Value="TBD" />
+**      <Param Section="PeptideSearch" Name="ProteinCollectionList" Value="H_sapiens_UniProt_SPROT_2021-06-20,Tryp_Pig_Bov" />
 **      <Param Section="PeptideSearch" Name="ProteinOptions" Value="seq_direction=forward,filetype=fasta" />
 **      <Param Section="PeptideSearch" Name="LegacyFastaFileName" Value="na" />
-**
-**  Arguments:
-**    _job                      Job number
-**    _scriptName               Pipeline script name
-**    _datasetName              Dataset name
-**    _priority                 Priority
-**    _jobParam                 Job parameter XML (as text)
-**    _comment                  Comment
-**    _ownerUsername            Owner username
-**    _dataPackageID            Data package ID (0 if not applicable)
-**    _resultsDirectoryName     Results directory name
-**    _mode                     'add', 'update', 'reset', or 'previewAdd'
-**    _message                  Status message
-**    _returnCode               Return code
-**    _callingUser              Calling user
-**    _debugMode                Set to true to print debug messages (the new job will not actually be created)
-**    _logDebugMessages         Set to true to log debug messages in sw.T_Log_Entries (ignored if _debugMode is false)
 **
 **  Auth:   grk
 **  Date:   08/29/2010 grk - Initial release
@@ -94,7 +80,7 @@ AS $$
 **          03/22/2023 mem - Rename job parameter to DatasetName (in example XML)
 **          03/24/2023 mem - Capitalize job parameter TransferFolderPath
 **          03/25/2023 mem - Force dataset name to 'Aggregation' if using a data package
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/27/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -106,14 +92,14 @@ DECLARE
     _id int := 0;
     _state int := 0;
     _jobParamXML XML;
-    _logErrors boolean := true;
     _result int := 0;
     _tool text := '';
     _msg text := '';
-    _reset text := 'N';
+    _reset boolean := false;
     _paramsUpdated boolean := false;
     _transferFolderPath text := '';
     _logEntryID int;
+    _alterEnteredByMessage text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -122,6 +108,10 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode := '';
+
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
 
     _datasetName := Coalesce(_datasetName, 'na');
     _dataPackageID := Coalesce(_dataPackageID, 0);
@@ -137,7 +127,7 @@ BEGIN
 
     If _mode = 'reset' Then
         _mode := 'update';
-        _reset := 'Y';
+        _reset := true;
     End If;
 
     If _mode::citext = 'previewAdd' AND Not _debugMode Then
@@ -146,8 +136,9 @@ BEGIN
 
     If _debugMode Then
         RAISE INFO '';
-        RAISE INFO '%', 'AddUpdateLocalJobInBroker';
+        RAISE INFO '%', 'Add_Update_Local_Job_In_Broker';
         RAISE INFO '%', _jobParam;
+        RAISE INFO '';
     End If;
 
     ---------------------------------------------------
@@ -182,11 +173,11 @@ BEGIN
         FROM sw.t_jobs
         WHERE job = _job;
 
-        If _mode = 'update' AND _id = 0 Then
+        If _mode = 'update' AND Not FOUND Then
             RAISE EXCEPTION 'Cannot update nonexistent job %', _job;
         End If;
 
-        If _mode = 'update' AND _datasetName <> 'Aggregation' Then
+        If _mode = 'update' AND _datasetName::citext <> 'Aggregation' Then
             RAISE EXCEPTION 'Currently only aggregation jobs can be updated; cannot update %', _job;
         End If;
 
@@ -203,15 +194,15 @@ BEGIN
         End If;
 
         -- Uncomment to log the job parameters to sw.t_log_entries
-        -- CALL post_log_entry ('Debug', _jobParam, 'Add_Update_Local_Job_In_Broker');
+        -- CALL post_log_entry ('Debug', _jobParam, 'Add_Update_Local_Job_In_Broker', 'sw');
         -- RETURN;
 
         CALL sw.verify_job_parameters (
-                _jobParam output,
+                _jobParam,                      -- Input / Output
                 _scriptName,
                 _dataPackageID,
-                _message => _msg,
-                _returnCode => _returnCode,
+                _message => _msg,               -- Output
+                _returnCode => _returnCode,     -- Output
                 _debugMode => _debugMode);
 
         If _returnCode <> '' Then
@@ -237,20 +228,17 @@ BEGIN
             -- Is data package set up correctly for the job?
             ---------------------------------------------------
 
-            -- Validate scripts 'Isobaric_Labeling' and 'MAC_iTRAQ'
+            -- Validate scripts that reference a data package, including MaxQuant, MSFragger, DiaNN, PRIDE_Converter, Phospho_FDR_Aggregator, MAC_iTRAQ, MAC_TMT10Plex, and Isobaric_Labeling
+
             CALL sw.validate_data_package_for_mac_job (
                                     _dataPackageID,
                                     _scriptName,
                                     _tool,                          -- Output
-                                    'validate',
                                     _message => _msg,               -- Output
                                     _returnCode => _returnCode);    -- Output
 
 
             If _returnCode <> '' Then
-                -- Change _logErrors to false since the error was already logged to sw.t_log_entries by Validate_Data_Package_For_MAC_Job
-                _logErrors := false;
-
                 RAISE EXCEPTION '%', _msg;
             End If;
         End If;
@@ -263,7 +251,11 @@ BEGIN
 
         If _mode = 'update' Then
 
-            _jobParamXML := _jobParam::XML;
+            _jobParamXML := public.try_cast(_jobParam, null::xml);
+
+            If _jobParamXML Is Null Then
+                RAISE EXCEPTION 'XML job parameters are not valid XML for job %: %', _job, Coalesce(_jobParam, '??');
+            End If;
 
             -- Update job and params
 
@@ -308,10 +300,12 @@ BEGIN
                 CALL sw.add_update_transfer_paths_in_params_using_data_pkg (
                         _dataPackageID,
                         _paramsUpdated => _paramsUpdated,   -- Output
-                        _message => _message);              -- Output
+                        _message => _message,               -- Output
+                        _returnCode => _returnCode);        -- Output
 
                 If _paramsUpdated Then
-                    SELECT xml_item, true as Success, '' As message
+                    SELECT xml_item
+                    INTO _jobParamXML
                     FROM ( SELECT
                              XMLAGG(XMLELEMENT(
                                     NAME "Param",
@@ -323,8 +317,6 @@ BEGIN
                                    ) AS xml_item
                            FROM Tmp_Job_Params
                         ) AS LookupQ;
-
-                    _jobParamXML := ( SELECT * FROM Tmp_Job_Params AS Param FOR XML AUTO, TYPE);
                 End If;
 
                 DROP TABLE Tmp_Job_Params;
@@ -350,7 +342,7 @@ BEGIN
                 If Coalesce(_transferFolderPath, '') <> '' Then
                     UPDATE sw.t_jobs
                     SET transfer_folder_path = _transferFolderPath
-                    WHERE job = _job
+                    WHERE job = _job;
                 End If;
 
                 ---------------------------------------------------
@@ -359,14 +351,23 @@ BEGIN
                 ---------------------------------------------------
 
                 If _dataPackageID > 0 Then
-                    CALL sw.update_job_param_org_db_info_using_data_pkg _job, _dataPackageID, _deleteIfInvalid => 0, _message => _message output, _callingUser => _callingUser
+                    CALL sw.update_job_param_org_db_info_using_data_pkg (
+                                _job,
+                                _dataPackageID,
+                                _deleteIfInvalid => false,
+                                _debugMode => false,
+                                _scriptNameForDebug => '',
+                                _message => _message,           -- Output
+                                _returncode => _returncode,     -- Output
+                                _callingUser => _callingUser);  -- Output
                 End If;
 
-                If _reset = 'Y' Then
+                If _reset Then
                     CALL sw.reset_aggregation_job (
                             _job,
                             _infoOnly => false,
-                            _message => _message);
+                            _message => _message,
+                            _returncode => _returncode);
                 End If;
             Else
                 _message := 'Only updating priority, comment, and owner since job state is not New, Complete, or Failed';
@@ -417,26 +418,22 @@ BEGIN
                 _exceptionDetail  = pg_exception_detail,
                 _exceptionContext = pg_exception_context;
 
-        If _logErrors Then
-            _message := local_error_handler (
-                            _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                            _callingProcLocation => '', _logError => true);
+        _message := local_error_handler (
+                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                        _callingProcLocation => '', _logError => true);
 
-            If char_length(Coalesce(_callingUser, '')) > 0 Then
+        If char_length(Coalesce(_callingUser, '')) > 0 Then
 
-                SELECT MAX(entry_id)
-                INTO _logEntryID
-                FROM sw.t_log_entries
-                WHERE Position (_exceptionMessage In message) > 0 AND
-                      ABS( extract(epoch FROM (CURRENT_TIMESTAMP - Entered)) ) < 15;
+            SELECT MAX(entry_id)
+            INTO _logEntryID
+            FROM sw.t_log_entries
+            WHERE Position (_exceptionMessage In message) > 0 AND
+                  ABS( extract(epoch FROM (CURRENT_TIMESTAMP - Entered)) ) < 15;
 
-                If FOUND Then
-                    CALL alter_entered_by_user ('sw.t_log_entries', 'entry_id', _logEntryID, _callingUser, _entryDateColumnName => 'Entered');
-                End If;
+            If FOUND Then
+                CALL public.alter_entered_by_user ('sw', 't_log_entries', 'entry_id', _logEntryID, _callingUser, _entryDateColumnName => 'entered', _message => _alterEnteredByMessage);
+                RAISE INFO '%', _alterEnteredByMessage;
             End If;
-
-        Else
-            _message := _exceptionMessage;
         End If;
 
         If Coalesce(_returnCode, '') = '' Then
@@ -448,4 +445,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.add_update_local_job_in_broker IS 'AddUpdateLocalJobInBroker';
+
+ALTER PROCEDURE sw.add_update_local_job_in_broker(INOUT _job integer, IN _scriptname text, IN _datasetname text, IN _priority integer, IN _jobparam text, IN _comment text, IN _ownerusername text, IN _datapackageid integer, INOUT _resultsdirectoryname text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _debugmode boolean, IN _logdebugmessages boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_local_job_in_broker(INOUT _job integer, IN _scriptname text, IN _datasetname text, IN _priority integer, IN _jobparam text, IN _comment text, IN _ownerusername text, IN _datapackageid integer, INOUT _resultsdirectoryname text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _debugmode boolean, IN _logdebugmessages boolean); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.add_update_local_job_in_broker(INOUT _job integer, IN _scriptname text, IN _datasetname text, IN _priority integer, IN _jobparam text, IN _comment text, IN _ownerusername text, IN _datapackageid integer, INOUT _resultsdirectoryname text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _debugmode boolean, IN _logdebugmessages boolean) IS 'AddUpdateLocalJobInBroker';
+

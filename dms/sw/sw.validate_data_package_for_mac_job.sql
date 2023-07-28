@@ -1,19 +1,21 @@
 --
-CREATE OR REPLACE PROCEDURE sw.validate_data_package_for_mac_job
-(
-    _dataPackageID int,
-    _scriptName citext,
-    INOUT _tool text,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: validate_data_package_for_mac_job(integer, text, text, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.validate_data_package_for_mac_job(IN _datapackageid integer, IN _scriptname text, INOUT _tool text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Verify configuration and contents of a data package suitable for running a given MAC job from job template
+**      Verify configuration and contents of a data package for given pipeline script
+**
+**  Arguments:
+**    _dataPackageID    Data package id
+**    _scriptName       Pipeline script name, e.g., MaxQuant, MSFragger, DiaNN, PRIDE_Converter, Phospho_FDR_Aggregator, MAC_iTRAQ, MAC_TMT10Plex
+**    _tool             Output: tool
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   grk
 **  Date:   10/29/2012 grk - Initial release
@@ -24,7 +26,7 @@ AS $$
 **          02/18/2013 mem - Fix misspelled word
 **          08/13/2013 mem - Now validating required analysis tools for the MAC_iTRAQ script
 **          08/14/2013 mem - Now validating datasets and jobs for script Global_Label-Free_AMT_Tag
-**          04/20/2014 mem - Now mentioning ReporterTol param file when MASIC counts are not correct for an Isobaric_Labeling or MAC_iTRAQ script
+**          04/20/2014 mem - Now mentioning ReporterTol parameter file when MASIC counts are not correct for an Isobaric_Labeling or MAC_iTRAQ script
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          11/15/2017 mem - Use Append_To_Text to combine strings
@@ -39,20 +41,20 @@ AS $$
 **          06/30/2022 mem - Use new parameter file column name
 **          12/07/2022 mem - Include script name in the error message
 **          03/27/2023 mem - Add support for DiaNN
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/27/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
-    _errMsg text = '',
-    _datasetCount int,
-    _deconToolsCountNotOne int,
-    _masicCountNotOne int,
-    _msgfPlusCountExactlyOne int,
-    _msgfPlusCountNotOne int,
-    _msgfPlusCountOneOrMore int,
-    _sequestCountExactlyOne int,
-    _sequestCountNotOne int,
-    _sequestCountOneOrMore int
+    _errMsg text = '';
+    _datasetCount int;
+    _deconToolsCountNotOne int;
+    _masicCountNotOne int;
+    _msgfPlusCountExactlyOne int;
+    _msgfPlusCountNotOne int;
+    _msgfPlusCountOneOrMore int;
+    _sequestCountExactlyOne int;
+    _sequestCountNotOne int;
+    _sequestCountOneOrMore int;
 
     _sqlState text;
     _exceptionMessage text;
@@ -72,12 +74,12 @@ BEGIN
         ---------------------------------------------------
 
         CREATE TEMP TABLE Tmp_DataPackageItems (
-          Dataset_ID int,
-          Dataset text,
-          Decon2LS_V2 int NULL,
-          MASIC int NULL,
-          MSGFPlus int NULL,
-          SEQUEST int NULL
+            Dataset_ID int,
+            Dataset text,
+            Decon2LS_V2 int NULL,
+            MASIC int NULL,
+            MSGFPlus int NULL,
+            SEQUEST int NULL
         );
 
         ---------------------------------------------------
@@ -86,32 +88,32 @@ BEGIN
 
         INSERT INTO Tmp_DataPackageItems( Dataset_ID,
                                           Dataset )
-        SELECT DISTINCT Dataset_ID,
-                        Dataset
+        SELECT DISTINCT dataset_id,
+                        dataset
         FROM dpkg.t_data_package_datasets AS DPD
-        WHERE DPD.Data_Package_ID = _dataPackageID;
+        WHERE DPD.data_pkg_id = _dataPackageID;
 
         ---------------------------------------------------
         -- Determine job counts per dataset for required tools
         ---------------------------------------------------
 
         UPDATE Tmp_DataPackageItems
-        SET Decon2LS_V2 = TargetTable.Decon2LS_V2,
-            MASIC = TargetTable.MASIC,
-            MSGFPlus = TargetTable.MSGFPlus,
-            SEQUEST = TargetTable.SEQUEST
-        FROM ( SELECT DPD.Dataset,
-                      SUM(CASE WHEN DPD.Tool = 'Decon2LS_V2' THEN 1 ELSE 0 END) AS Decon2LS_V2,
-                      SUM(CASE WHEN DPD.Tool = 'MASIC_Finnigan' AND TD.Param_File LIKE '%ReporterTol%' THEN 1 ELSE 0 END) AS MASIC,
-                      SUM(CASE WHEN DPD.Tool LIKE 'MSGFPlus%' THEN 1 ELSE 0 END) AS MSGFPlus,
-                      SUM(CASE WHEN DPD.Tool LIKE 'SEQUEST%' THEN 1 ELSE 0 END) AS SEQUEST
+        SET Decon2LS_V2 = SourceQ.Decon2LS_V2,
+            MASIC = SourceQ.MASIC,
+            MSGFPlus = SourceQ.MSGFPlus,
+            SEQUEST = SourceQ.SEQUEST
+        FROM ( SELECT DPD.dataset,
+                      SUM(CASE WHEN DPD.tool = 'Decon2LS_V2'::citext THEN 1 ELSE 0 END) AS Decon2LS_V2,
+                      SUM(CASE WHEN DPD.tool = 'MASIC_Finnigan'::citext AND J.param_file_name ILIKE '%ReporterTol%' THEN 1 ELSE 0 END) AS MASIC,
+                      SUM(CASE WHEN DPD.tool ILIKE 'MSGFPlus%' THEN 1 ELSE 0 END) AS MSGFPlus,
+                      SUM(CASE WHEN DPD.tool ILIKE 'SEQUEST%' THEN 1 ELSE 0 END) AS SEQUEST
                FROM dpkg.t_data_package_analysis_jobs AS DPD
-                    INNER JOIN public.V_Source_Analysis_Job AS TD
-                      ON DPD.Job = TD.Job
-               WHERE DPD.Data_Package_ID = _dataPackageID
-               GROUP BY DPD.Dataset
-             ) TargetTable
-        WHERE Tmp_DataPackageItems.Dataset = TargetTable.Dataset;
+                    INNER JOIN public.t_analysis_job J
+                      ON DPD.job = J.job
+               WHERE DPD.data_pkg_id = _dataPackageID
+               GROUP BY DPD.dataset
+             ) SourceQ
+        WHERE Tmp_DataPackageItems.Dataset = SourceQ.dataset;
 
         ---------------------------------------------------
         -- Assess job/tool coverage of datasets
@@ -161,19 +163,17 @@ BEGIN
         FROM Tmp_DataPackageItems
         WHERE SEQUEST >= 1;
 
-        DROP TABLE Tmp_DataPackageItems;
-
-        If _scriptName ILIKE ('MaxQuant%') Or _scriptName ILIKE ('MSFragger%') Or _scriptName ILIKE ('DiaNN%') Then
+        If _scriptName ILIKE 'MaxQuant%' Or _scriptName ILIKE 'MSFragger%' Or _scriptName ILIKE 'DiaNN%' Then
             If _datasetCount = 0 Then
                 _errMsg := format('Data package currently does not have any datasets (script %s)', _scriptName);
             End If;
         End If;
 
-        If Not _scriptName In ('Global_Label-Free_AMT_Tag') AND Not _scriptName ILIKE ('MaxQuant%') AND Not _scriptName ILIKE ('MSFragger%') AND Not _scriptName ILIKE ('DiaNN%') Then
-            If _scriptName = 'PRIDE_Converter' Then
+        If Not _scriptName::citext In ('Global_Label-Free_AMT_Tag') AND Not _scriptName ILIKE 'MaxQuant%' AND Not _scriptName ILIKE 'MSFragger%' AND Not _scriptName ILIKE 'DiaNN%' Then
+            If _scriptName::citext = 'PRIDE_Converter' Then
                 If _msgfPlusCountOneOrMore > 0 Then
                     _tool := 'msgfplus';
-                ElsIf _sequestCountOneOrMore > 0
+                ElsIf _sequestCountOneOrMore > 0 Then
                     _tool := 'sequest';
                 End If;
             End If;
@@ -182,13 +182,13 @@ BEGIN
                 If _msgfPlusCountNotOne = 0 And _msgfPlusCountExactlyOne = _msgfPlusCountOneOrMore Then
                     _tool := 'msgfplus';
                 Else
-                    If _scriptName In ('Phospho_FDR_Aggregator') Then
-                        -- Allow multiple MSGF+ jobs for each dataset;
-                    End If;
+                    If _scriptName::citext In ('Phospho_FDR_Aggregator') Then
+                        -- Allow multiple MS-GF+ jobs for each dataset;
                         _tool := 'msgfplus';
                     Else
                         _errMsg := format('Data package does not have exactly one MSGFPlus job for each dataset (%s invalid datasets); script %s',
-                                            _msgfPlusCountNotOne, _scriptName;
+                                          _msgfPlusCountNotOne, _scriptName);
+                    End If;
                 End If;
             End If;
 
@@ -196,20 +196,22 @@ BEGIN
                 If _sequestCountNotOne = 0 And _sequestCountExactlyOne = _sequestCountOneOrMore Then
                     _tool := 'sequest';
                 Else
-                    If _scriptName In ('Phospho_FDR_Aggregator') Then
+                    If _scriptName::citext In ('Phospho_FDR_Aggregator') Then
                         -- Allow multiple Sequest jobs for each dataset;
-                    End If;
                         _tool := 'sequest';
                     Else
                         _errMsg := format('Data package does not have exactly one Sequest job for each dataset (%s invalid datasets); script %s',
-                                            _sequestCountNotOne, _scriptName);
+                                          _sequestCountNotOne, _scriptName);
+                    End If;
                 End If;
             End If;
 
             If _tool = '' Then
-                _errMsg := public.append_to_text(_errMsg,
-                            format('Data package must have one or more MSGFPlus (or Sequest) jobs; error validating script %s' _scriptName),
-                            _delimiter => '; ', _maxlength => 1024);
+                _errMsg := public.append_to_text(
+                                _errMsg,
+                                format('Data package must have one or more MSGFPlus jobs; error validating script %s', _scriptName),
+                                _delimiter => '; ',
+                                _maxlength => 1024);
             End If;
         End If;
 
@@ -218,40 +220,48 @@ BEGIN
         -- given job template
         ---------------------------------------------------
 
-        If _scriptName IN ('Isobaric_Labeling') Then
+        If _scriptName::citext IN ('Isobaric_Labeling') Then
+            If _deconToolsCountNotOne > 0 Then
+                _errMsg := public.append_to_text(
+                                _errMsg,
+                                format('There must be exactly one Decon2LS_V2 job per dataset for script %s', scriptName),
+                                _delimiter => '; ',
+                                _maxlength => 1024);
+            End If;
+
+            If _masicCountNotOne > 0 Then
+                _errMsg := public.append_to_text(
+                                _errMsg,
+                                format('There must be exactly one MASIC_Finnigan job per dataset (and that job must use a parameter file with ReporterTol in the name) for script %s', scriptName),
+                                _delimiter => '; ',
+                                _maxlength => 1024);
+            End If;
+        End If;
+
+        If _scriptName::citext IN ('MAC_iTRAQ', 'MAC_TMT10Plex') Then
+            If _masicCountNotOne > 0 Then
+                _errMsg := public.append_to_text(
+                                    _errMsg,
+                                    format('There must be exactly one MASIC_Finnigan job per dataset (and that job must use a parameter file with ReporterTol in the name) for script %s', scriptName),
+                                    _delimiter => '; ',
+                                    _maxlength => 1024);
+            End If;
+        End If;
+
+        If _scriptName::citext IN ('Global_Label-Free_AMT_Tag') Then
             If _deconToolsCountNotOne > 0 Then
                 _errMsg := public.append_to_text(
                                     _errMsg,
                                     format('There must be exactly one Decon2LS_V2 job per dataset for script %s', scriptName),
-                                    _delimiter => '; ', _maxlength => 1024);
-            End If;
-
-            If _masicCountNotOne > 0 Then
-                _errMsg := public.append_to_text(
-                                    _errMsg,
-                                    format('There must be exactly one MASIC_Finnigan job per dataset (and that job must use a param file with ReporterTol in the name) for script %s', scriptName),
-                                    _delimiter => '; ', _maxlength => 1024);
-            End If;
-        End If;
-
-        If _scriptName IN ('MAC_iTRAQ', 'MAC_TMT10Plex') Then
-            If _masicCountNotOne > 0 Then
-                _errMsg := public.append_to_text(
-                                    _errMsg,
-                                    format('There must be exactly one MASIC_Finnigan job per dataset (and that job must use a param file with ReporterTol in the name) for script %s', scriptName),
-                                    _delimiter => '; ', _maxlength => 1024);
-            End If;
-        End If;
-
-        If _scriptName IN ('Global_Label-Free_AMT_Tag') Then
-            If _deconToolsCountNotOne > 0 Then
-                _errMsg := public.append_to_text(_errMsg, format('There must be exactly one Decon2LS_V2 job per dataset for script %s', scriptName), _delimiter => '; ', _maxlength => 1024);
+                                    _delimiter => '; ',
+                                    _maxlength => 1024);
             End If;
         End If;
 
         If _errMsg <> '' Then
-            _errMsg := format('Data package %s is not configured correctly for this job: %s', _dataPackageID, _errMsg);
-             RAISE EXCEPTION '%', _errMsg;
+            _message := format('Data package %s is not configured correctly for this job: %s', _dataPackageID, _errMsg);
+             RAISE WARNING '%', _message;
+            _returnCode := 'U5251';
         End If;
 
     EXCEPTION
@@ -273,8 +283,16 @@ BEGIN
 
     END;
 
-    DROP TABLE Tmp_DataPackageItems;
+    DROP TABLE IF EXISTS Tmp_DataPackageItems;
 END
 $$;
 
-COMMENT ON PROCEDURE sw.validate_data_package_for_mac_job IS 'ValidateDataPackageForMACJob';
+
+ALTER PROCEDURE sw.validate_data_package_for_mac_job(IN _datapackageid integer, IN _scriptname text, INOUT _tool text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE validate_data_package_for_mac_job(IN _datapackageid integer, IN _scriptname text, INOUT _tool text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.validate_data_package_for_mac_job(IN _datapackageid integer, IN _scriptname text, INOUT _tool text, INOUT _message text, INOUT _returncode text) IS 'ValidateDataPackageForMACJob';
+
