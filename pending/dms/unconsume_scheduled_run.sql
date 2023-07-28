@@ -81,6 +81,7 @@ DECLARE
     _newStatus text := 'Active';
     _newQueueState int;
     _stateID int := 0;
+    _alterEnteredByMessage text;
 BEGIN
     _message := Coalesce(_message, '');
     _returnCode := '';
@@ -347,7 +348,7 @@ BEGIN
             FROM t_requested_run_state_name
             WHERE state_name = _newStatus;
 
-            CALL alter_event_log_entry_user (11, _requestIDOriginal, _stateID, _callingUser);
+            CALL alter_event_log_entry_user (11, _requestIDOriginal, _stateID, _callingUser, _message => _alterEnteredByMessage);
         End If;
 
         ---------------------------------------------------

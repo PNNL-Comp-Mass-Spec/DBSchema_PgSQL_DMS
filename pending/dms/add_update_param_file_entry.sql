@@ -45,6 +45,7 @@ DECLARE
     _massCorrectionID int;
     _counter int;
     _paramEntryID int := 0;
+    _alterEnteredByMessage text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -280,7 +281,7 @@ BEGIN
 
             -- If _callingUser is defined, update entered_by in t_analysis_job_processor_group
             If char_length(_callingUser) > 0 Then
-                CALL alter_entered_by_user ('t_param_entries', 'param_entry_id', _paramEntryID, _callingUser);
+                CALL alter_entered_by_user ('public', 't_param_entries', 'param_entry_id', _paramEntryID, _callingUser, _message => _alterEnteredByMessage);
             End If;
         End If;
     End If;
@@ -303,7 +304,7 @@ BEGIN
 
             -- If _callingUser is defined, update entered_by in t_analysis_job_processor_group
             If char_length(_callingUser) > 0 Then
-                CALL alter_entered_by_user ('t_param_entries', 'param_entry_id', _paramEntryID, _callingUser);
+                CALL alter_entered_by_user ('public', 't_param_entries', 'param_entry_id', _paramEntryID, _callingUser, _message => _alterEnteredByMessage);
             End If;
         End If;
 

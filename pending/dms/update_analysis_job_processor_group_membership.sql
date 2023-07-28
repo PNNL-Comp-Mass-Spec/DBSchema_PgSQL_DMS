@@ -37,6 +37,7 @@ DECLARE
     _localMembership text;
     _nonLocalMembership text;
     _usageMessage text;
+    _alterEnteredByMessage text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -199,8 +200,8 @@ BEGIN
         SELECT ID
         FROM Tmp_Processors;
 
-        CALL alter_entered_by_user_multi_id ('t_analysis_job_processor_group_membership', 'processor_id', _callingUser,
-                                             _entryTimeWindowSeconds => 5, _entryDateColumnName => 'last_affected');
+        CALL alter_entered_by_user_multi_id ('public', 't_analysis_job_processor_group_membership', 'processor_id', _callingUser,
+                                             _entryTimeWindowSeconds => 5, _entryDateColumnName => 'last_affected', _message => _alterEnteredByMessage);
 
         DROP TABLE Tmp_ID_Update_List;
     End If;

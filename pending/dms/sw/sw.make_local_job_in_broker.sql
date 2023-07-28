@@ -21,7 +21,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Create analysis job directly in broker database
+**      Create analysis job directly in sw.t_jobs
 **
 **  Arguments:
 **    _scriptName           Script name
@@ -75,6 +75,7 @@ DECLARE
     _datasetID int := 0;
     _transferFolderPath text := '';
     _msg text;
+    _alterEnteredByMessage text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -378,7 +379,7 @@ BEGIN
 
             CALL sw.move_jobs_to_main_tables (_message => _message, _returnCode => _returnCode)
 
-            CALL alter_entered_by_user ('sw.t_job_events', 'job', _job, _callingUser);
+            CALL public.alter_entered_by_user ('sw', 't_job_events', 'job', _job, _callingUser, _message => _alterEnteredByMessage);
         End If;
 
         If Not _debugMode Then

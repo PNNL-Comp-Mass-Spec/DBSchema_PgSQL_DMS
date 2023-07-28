@@ -119,6 +119,7 @@ DECLARE
     _expId int;
     _wn text;
     _nameFractionLinker text;
+    _alterEnteredByMessage text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -629,7 +630,7 @@ BEGIN
                     If char_length(_callingUser) > 0 Then
                         -- Call public.alter_entered_by_user to alter the entered_by field in t_experiment_plex_members_history
                         --
-                        CALL alter_entered_by_user ('t_experiment_plex_members_history', 'plex_exp_id', _newExpID, _callingUser);
+                        CALL alter_entered_by_user ('public', 't_experiment_plex_members_history', 'plex_exp_id', _newExpID, _callingUser, _message => _alterEnteredByMessage);
                     End If;
 
                 End If; -- </CopyPlexInfo>

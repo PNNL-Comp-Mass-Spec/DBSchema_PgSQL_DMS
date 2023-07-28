@@ -35,6 +35,7 @@ DECLARE
     _result int;
     _biomaterialID int;
     _stateID int;
+    _alterEnteredByMessage text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -106,7 +107,7 @@ BEGIN
         If char_length(_callingUser) > 0 Then
             _stateID := 0;
 
-            CALL alter_event_log_entry_user (2, _biomaterialID, _stateID, _callingUser);
+            CALL alter_event_log_entry_user (2, _biomaterialID, _stateID, _callingUser, _message => _alterEnteredByMessage);
         End If;
 
         RETURN;

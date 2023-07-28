@@ -102,6 +102,7 @@ DECLARE
     _existingOrganismID int := 0;
     _existingOrgName text;
     _logMessage text;
+    _alterEnteredByMessage text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -326,18 +327,17 @@ BEGIN
 
         -- Cannot update a non-existent entry
         --
-
         If _mode = 'update' Then
 
             SELECT organism
             INTO _existingOrgName
             FROM  t_organisms
-            WHERE (organism_id = _id)
+            WHERE organism_id = _id;
 
             If Not FOUND Then
                 RAISE EXCEPTION 'Cannot update: Organism "%" is not in database', _orgName;
             End If;
-            --
+
             If _existingOrgName <> _orgName Then
                 RAISE EXCEPTION 'Cannot update: Organism name may not be changed from "%"', _existingOrgName;
             End If;
@@ -476,7 +476,7 @@ BEGIN
 
             -- If _callingUser is defined, update entered_by in t_organisms_change_history
             If char_length(_callingUser) > 0 Then
-                CALL alter_entered_by_user ('t_organisms_change_history', 'organism_id', _id, _callingUser);
+                CALL alter_entered_by_user ('public', 't_organisms_change_history', 'organism_id', _id, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
         End If; -- add mode
@@ -511,7 +511,7 @@ BEGIN
 
             -- If _callingUser is defined, update entered_by in t_organisms_change_history
             If char_length(_callingUser) > 0 Then
-                CALL alter_entered_by_user ('t_organisms_change_history', 'organism_id', _id, _callingUser);
+                CALL alter_entered_by_user ('public', 't_organisms_change_history', 'organism_id', _id, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
         End If; -- update mode

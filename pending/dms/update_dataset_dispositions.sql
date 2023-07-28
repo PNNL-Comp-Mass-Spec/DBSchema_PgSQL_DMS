@@ -53,6 +53,7 @@ DECLARE
     _ratingID int;
     _datasetInfo record;
     _usageMessage text;
+    _alterEnteredByMessage text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -305,7 +306,7 @@ BEGIN
             BEGIN
                 -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
                 If char_length(_callingUser) > 0 Then
-                    CALL alter_event_log_entry_user (8, _datasetInfo.DatasetID, _ratingID, _callingUser);
+                    CALL alter_event_log_entry_user (8, _datasetInfo.DatasetID, _ratingID, _callingUser, _message => _alterEnteredByMessage);
                 End If;
             EXCEPTION
                 WHEN OTHERS THEN

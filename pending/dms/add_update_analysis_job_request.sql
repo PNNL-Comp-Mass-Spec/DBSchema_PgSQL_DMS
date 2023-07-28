@@ -146,6 +146,7 @@ DECLARE
     _stateID int := -1;
     _newRequestNum int;
     _logMessage text;
+    _alterEnteredByMessage text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -663,7 +664,7 @@ BEGIN
                 -- _callingUser is defined; call public.alter_event_log_entry_user or public.alter_event_log_entry_user_multi_id
                 -- to alter the entered_by field in t_event_log
                 --
-                CALL alter_event_log_entry_user (12, _requestID, _stateID, _callingUser);
+                CALL alter_event_log_entry_user (12, _requestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             CALL update_cached_job_request_existing_jobs (_processingMode => 0, _requestID => _requestID, _infoOnly => false);
@@ -722,7 +723,7 @@ BEGIN
                 -- _callingUser is defined; call public.alter_event_log_entry_user or public.alter_event_log_entry_user_multi_id
                 -- to alter the entered_by field in t_event_log
                 --
-                CALL alter_event_log_entry_user (12, _requestID, _stateID, _callingUser);
+                CALL alter_event_log_entry_user (12, _requestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             CALL update_cached_job_request_existing_jobs (_processingMode => 0, _requestID => _requestID, _infoOnly => false);

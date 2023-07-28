@@ -55,6 +55,7 @@ DECLARE
     _callingUserUnconsume text;
     _batchID int;
     _msg text;
+    _alterEnteredByMessage text;
 
     _formatSpecifier text;
     _infoHead text;
@@ -373,7 +374,7 @@ BEGIN
     End If;
 
     If char_length(_callingUser) > 0 Then
-        CALL alter_event_log_entry_user (11, _newRequestID, _stateID, _callingUser);
+        CALL alter_event_log_entry_user (11, _newRequestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
     End If;
 
     ------------------------------------------------------------

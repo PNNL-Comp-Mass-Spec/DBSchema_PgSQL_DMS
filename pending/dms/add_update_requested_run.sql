@@ -192,6 +192,7 @@ DECLARE
     _allowNoneWP boolean := _autoPopulateUserListIfBlank;
     _requireWP int := 1;
     _logMessage text;
+    _alterEnteredByMessage text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -864,7 +865,7 @@ BEGIN
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 Then
-                CALL alter_event_log_entry_user (11, _request, _statusID, _callingUser);
+                CALL alter_event_log_entry_user (11, _request, _statusID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             If _logDebugMessages Then
@@ -940,10 +941,6 @@ BEGIN
                     location_id = _locationId
                 WHERE request_id = _requestID;
 
-                -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-                If char_length(_callingUser) > 0 Then
-                    CALL alter_event_log_entry_user (11, _requestID, _statusID, _callingUser);
-                End If;
 
                 -- Assign users to the request
                 --
@@ -959,6 +956,10 @@ BEGIN
                 End If;
 
             END;
+            -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
+            If char_length(_callingUser) > 0 Then
+                CALL alter_event_log_entry_user (11, _requestID, _statusID, _callingUser, _message => _alterEnteredByMessage);
+            End If;
 
             -- Make sure that t_active_requested_run_cached_eus_users is up-to-date
             CALL update_cached_requested_run_eus_users (

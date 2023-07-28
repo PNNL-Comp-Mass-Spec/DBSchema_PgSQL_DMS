@@ -59,6 +59,7 @@ DECLARE
     _debugEnabled boolean := false;
     _argLength Int;
     _requestID int := -100000;
+    _alterEnteredByMessage text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -219,7 +220,7 @@ BEGIN
             FROM t_requested_run_state_name
             WHERE state_name = _mode;
 
-            CALL alter_event_log_entry_user_multi_id (11, _stateID, _callingUser);
+            CALL alter_event_log_entry_user_multi_id (11, _stateID, _callingUser, _message => _alterEnteredByMessage);
         End If;
 
         -- Call update_cached_requested_run_eus_users for each entry in Tmp_Requests
@@ -257,7 +258,7 @@ BEGIN
             --
             _stateID := 0;
 
-            CALL alter_event_log_entry_user_multi_id (11, _stateID, _callingUser);
+            CALL alter_event_log_entry_user_multi_id (11, _stateID, _callingUser, _message => _alterEnteredByMessage);
         End If;
 
         -- Remove any cached EUS user lists

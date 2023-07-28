@@ -46,6 +46,7 @@ DECLARE
     _newAutoRequestID int := 0;
     _status text := 'Completed';
     _statusID int := 0;
+    _alterEnteredByMessage text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -175,7 +176,7 @@ BEGIN
             FROM t_requested_run_state_name
             WHERE (state_name = _status)
 
-            CALL alter_event_log_entry_user (11, _requestID, _statusID, _callingUser);
+            CALL alter_event_log_entry_user (11, _requestID, _statusID, _callingUser, _message => _alterEnteredByMessage);
         End If;
 
     END;

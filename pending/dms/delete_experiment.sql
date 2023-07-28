@@ -49,6 +49,7 @@ DECLARE
     _groupID int := 0;
     _stateID int := 0;
     _placeholderExpID int;
+    _alterEnteredByMessage text;
 
     _formatSpecifier text;
     _infoHead text;
@@ -341,7 +342,7 @@ BEGIN
     ElsIf char_length(_callingUser) > 0 Then
         -- Call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
 
-        CALL alter_event_log_entry_user (3, _experimentId, _stateID, _callingUser);
+        CALL alter_event_log_entry_user (3, _experimentId, _stateID, _callingUser, _message => _alterEnteredByMessage);
     End If;
 
 END

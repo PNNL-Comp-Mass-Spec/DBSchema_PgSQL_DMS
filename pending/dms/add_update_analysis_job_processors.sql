@@ -39,6 +39,8 @@ DECLARE
     _currentProcedure text;
     _nameWithSchema text;
     _authorized boolean;
+
+    _alterEnteredByMessage text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -147,7 +149,7 @@ BEGIN
 
         -- If _callingUser is defined, update entered_by in t_analysis_job_processors
         If char_length(_callingUser) > 0 Then
-            CALL alter_entered_by_user ('t_analysis_job_processors', 'processor_id', _id, _callingUser, _entryDateColumnName => 'last_affected');
+            CALL alter_entered_by_user ('public', 't_analysis_job_processors', 'processor_id', _id, _callingUser, _entryDateColumnName => 'last_affected', _message => _alterEnteredByMessage);
         End If;
 
     End If; -- add mode
@@ -168,7 +170,7 @@ BEGIN
 
         -- If _callingUser is defined, update entered_by in t_analysis_job_processors
         If char_length(_callingUser) > 0 Then
-            CALL alter_entered_by_user ('t_analysis_job_processors', 'processor_id', _id, _callingUser, _entryDateColumnName => 'last_affected');
+            CALL alter_entered_by_user ('public', 't_analysis_job_processors', 'processor_id', _id, _callingUser, _entryDateColumnName => 'last_affected', _message => _alterEnteredByMessage);
         End If;
 
     End If; -- update mode
@@ -199,7 +201,7 @@ BEGIN
 
         -- If _callingUser is defined, update entered_by in t_analysis_job_processor_tools
         If char_length(_callingUser) > 0 Then
-            CALL alter_entered_by_user ('t_analysis_job_processor_tools', 'processor_id', _id, _callingUser);
+            CALL alter_entered_by_user ('public', 't_analysis_job_processor_tools', 'processor_id', _id, _callingUser, _message => _alterEnteredByMessage);
         End If;
 
     End If; -- add or update mode

@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_param_work(IN _paramname text, 
 **          01/31/2023 mem - Use new column names in tables
 **          05/22/2023 mem - Use format() for string concatenation
 **          07/11/2023 mem - Use COUNT(PV.entry_id) instead of COUNT(*)
+**          07/27/2023 mem - Use local variable for the return value of _message from alter_event_log_entry_user_multi_id
 **
 *****************************************************/
 DECLARE
@@ -128,14 +129,16 @@ BEGIN
             End If;
 
             -- Populate Tmp_ID_Update_List with Manager ID values, then call alter_event_log_entry_user_multi_id
-            Truncate Table Tmp_ID_Update_List;
+            TRUNCATE TABLE Tmp_ID_Update_List;
 
             INSERT INTO Tmp_ID_Update_List (TargetID)
             SELECT PV.mgr_id
             FROM mc.t_param_value PV
             WHERE PV.entry_id IN (SELECT entry_id FROM Tmp_ParamValueEntriesToUpdate);
 
-            CALL public.alter_event_log_entry_user_multi_id ('mc', 1, _targetState, _callingUser, _message => _message);
+            CALL public.alter_event_log_entry_user_multi_id ('mc', 1, _targetState, _callingUser, _message => _alterEnteredByMessage);
+
+            RAISE INFO '%', _alterEnteredByMessage;
         End If;
 
         DROP TABLE Tmp_ID_Update_List;

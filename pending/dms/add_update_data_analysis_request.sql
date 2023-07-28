@@ -84,6 +84,7 @@ DECLARE
     _activationStateName text;
     _currentEstimatedAnalysisTimeDays Int;
     _logMessage text;
+    _alterEnteredByMessage text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -639,7 +640,7 @@ BEGIN
                     analysis_specifications,
                     comment,
                     representative_batch_id,
-                    data_package_id,
+                    data_pkg_id,
                     exp_group_id,
                     work_package,
                     requested_personnel,
@@ -683,8 +684,8 @@ BEGIN
 
             -- If _callingUser is defined, update entered_by in t_data_analysis_request_updates
             If char_length(_callingUser) > 0 Then
-                CALL alter_entered_by_user ('t_data_analysis_request_updates', 'request_id', _id, _callingUser,
-                                            _entryDateColumnName => 'entered', _enteredByColumnName => 'entered_by');
+                CALL alter_entered_by_user ('public', 't_data_analysis_request_updates', 'request_id', _id, _callingUser,
+                                            _entryDateColumnName => 'entered', _enteredByColumnName => 'entered_by', _message => _alterEnteredByMessage);
             End If;
 
             If _batchDefined > 0 Then
@@ -714,19 +715,17 @@ BEGIN
                     description = _description,
                     analysis_specifications = _analysisSpecifications,
                     comment = _comment,
-                    representative_batch_id = Case When _batchDefined > 0 Then _representativeBatchID Else Null End,
-                    data_package_id = Case When _dataPackageDefined > 0 Then _dataPackageID Else Null End,
-                    exp_group_id = Case When _experimentGroupDefined > 0 Then _experimentGroupID Else Null End,
+                    representative_batch_id = CASE WHEN _batchDefined > 0           THEN _representativeBatchID ELSE Null END,
+                    data_pkg_id =             CASE WHEN _dataPackageDefined > 0     THEN _dataPackageID         ELSE Null END,
+                    exp_group_id =            CASE WHEN _experimentGroupDefined > 0 THEN _experimentGroupID     ELSE Null END,
                     work_package = _workPackage,
                     requested_personnel = _requestedPersonnel,
                     assigned_personnel = _assignedPersonnel,
                     priority = _priority,
                     reason_for_high_priority = _reasonForHighPriority,
-                    estimated_analysis_time_days =
-                      CASE
-                          WHEN _allowUpdateEstimatedAnalysisTime THEN _estimatedAnalysisTimeDays
-                          ELSE Estimated_Analysis_Time_Days
-                      End If;,
+                    estimated_analysis_time_days = CASE WHEN _allowUpdateEstimatedAnalysisTime THEN _estimatedAnalysisTimeDays
+                                                   ELSE Estimated_Analysis_Time_Days
+                                                   END,
                     State = _stateID,
                     State_Changed = Case When _currentStateID = _stateID Then State_Changed Else CURRENT_TIMESTAMP End,
                     State_Comment = _stateComment,
@@ -740,8 +739,8 @@ BEGIN
 
             -- If _callingUser is defined, update entered_by in t_data_analysis_request_updates
             If char_length(_callingUser) > 0 Then
-                CALL alter_entered_by_user ('t_data_analysis_request_updates', 'request_id', _id, _callingUser,
-                                            _entryDateColumnName => 'entered', _enteredByColumnName => 'entered_by');
+                CALL alter_entered_by_user ('public', 't_data_analysis_request_updates', 'request_id', _id, _callingUser,
+                                            _entryDateColumnName => 'entered', _enteredByColumnName => 'entered_by', _message => _alterEnteredByMessage);
             End If;
 
             If _currentEstimatedAnalysisTimeDays <> _estimatedAnalysisTimeDays And Not _allowUpdateEstimatedAnalysisTime Then

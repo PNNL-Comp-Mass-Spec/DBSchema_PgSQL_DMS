@@ -75,6 +75,7 @@ DECLARE
     _requestTypeExisting text;
     _activationState int := 10;
     _activationStateName text;
+    _alterEnteredByMessage text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -395,8 +396,8 @@ BEGIN
 
             -- If _callingUser is defined, update system_account in t_sample_prep_request_updates
             If char_length(_callingUser) > 0 Then
-                CALL alter_entered_by_user ('t_sample_prep_request_updates', 'request_id', _id, _callingUser,
-                                            _entryDateColumnName => 'Date_of_Change', _enteredByColumnName => 'System_Account');
+                CALL alter_entered_by_user ('public', 't_sample_prep_request_updates', 'request_id', _id, _callingUser,
+                                            _entryDateColumnName => 'date_of_change', _enteredByColumnName => 'system_account', _message => _alterEnteredByMessage);
             End If;
 
         End If;
@@ -434,8 +435,8 @@ BEGIN
 
             -- If _callingUser is defined, update system_account in t_sample_prep_request_updates
             If char_length(_callingUser) > 0 Then
-                CALL alter_entered_by_user ('t_sample_prep_request_updates', 'request_id', _id, _callingUser,
-                                        _entryDateColumnName => 'Date_of_Change', _enteredByColumnName => 'System_Account');
+                CALL alter_entered_by_user ('public', 't_sample_prep_request_updates', 'request_id', _id, _callingUser,
+                                            _entryDateColumnName => 'date_of_change', _enteredByColumnName => 'system_account', _message => _alterEnteredByMessage);
             End If;
 
         End If;

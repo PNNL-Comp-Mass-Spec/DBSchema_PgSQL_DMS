@@ -38,6 +38,7 @@ DECLARE
     _currentProcedure text;
     _nameWithSchema text;
     _authorized boolean;
+    _alterEnteredByMessage text;
 
     _jobID int;
     _stateID int;
@@ -149,7 +150,7 @@ BEGIN
     If char_length(_callingUser) > 0 Then
         _stateID := 0;
 
-        CALL alter_event_log_entry_user (5, _jobID, _stateID, _callingUser);
+        CALL alter_event_log_entry_user (5, _jobID, _stateID, _callingUser, _message => _alterEnteredByMessage);
     End If;
 
     -------------------------------------------------------

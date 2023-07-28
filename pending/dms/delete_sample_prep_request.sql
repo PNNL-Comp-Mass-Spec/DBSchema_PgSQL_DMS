@@ -29,6 +29,7 @@ DECLARE
     _currentProcedure text;
     _nameWithSchema text;
     _authorized boolean;
+    _alterEnteredByMessage text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -92,10 +93,11 @@ BEGIN
     -- If _callingUser is defined, update system_account in t_sample_prep_request_updates
     If char_length(_callingUser) > 0 Then
         CALL alter_entered_by_user (
-                't_sample_prep_request_updates', 'request_id',
+                'public', 't_sample_prep_request_updates', 'request_id',
                 _requestID, _callingUser,
-                _entryDateColumnName => 'Date_of_Change',
-                _enteredByColumnName => 'System_Account');
+                _entryDateColumnName => 'date_of_change',
+                _enteredByColumnName => 'system_account',
+                _message => _alterEnteredByMessage);
     End If;
 
 END

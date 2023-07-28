@@ -80,6 +80,7 @@ DECLARE
     _newUsername text;
     _stateID int := 1;
     _logMessage text;
+    _alterEnteredByMessage text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -371,7 +372,7 @@ BEGIN
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 Then
-                CALL alter_event_log_entry_user (13, _compoundID, _stateID, _callingUser);
+                CALL alter_event_log_entry_user (13, _compoundID, _stateID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             -- Material movement logging

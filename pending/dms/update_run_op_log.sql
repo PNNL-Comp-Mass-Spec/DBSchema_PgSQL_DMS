@@ -51,6 +51,7 @@ DECLARE
     _comment text;
     _invalidUsage int := 0;     -- Leave as an integer
     _invalidEntries int := 0;
+    _alterEnteredByMessage text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -183,7 +184,7 @@ BEGIN
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 Then
-                CALL alter_event_log_entry_user (11, _curID, _statusID, _callingUser);
+                CALL alter_event_log_entry_user (11, _curID, _statusID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             -- Assign users to the request

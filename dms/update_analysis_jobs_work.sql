@@ -59,6 +59,8 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work(IN _state text DEFA
 **                         - Use procedure name without schema when calling verify_sp_authorized()
 **          06/07/2023 mem - Add Order By to string_agg()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
+**          07/27/2023 mem - Add schema name parameter when calling alter_entered_by_user_multi_id()
+**                         - Use local variable for the return value of _message from alter_event_log_entry_user_multi_id()
 **
 *****************************************************/
 DECLARE
@@ -86,6 +88,7 @@ DECLARE
     _invalidJobList text;
     _propMode int;
     _gid int;
+    _alterEnteredByMessage text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -640,14 +643,14 @@ BEGIN
             -- Call public.alter_event_log_entry_user_multi_id
             -- to alter the entered_by field in t_event_log
 
-            CALL alter_event_log_entry_user_multi_id (5, _stateID, _callingUser);
+            CALL alter_event_log_entry_user_multi_id ('public', 5, _stateID, _callingUser, _message => _alterEnteredByMessage);
         End If;
 
         If _alterEnteredByRequired Then
             -- Call public.alter_entered_by_user_multi_id
             -- to alter the entered_by field in t_analysis_job_processor_group_associations
 
-            CALL alter_entered_by_user_multi_id ('t_analysis_job_processor_group_associations', 'job', _callingUser);
+            CALL alter_entered_by_user_multi_id ('public', 't_analysis_job_processor_group_associations', 'job', _callingUser, _message => _message);
         End If;
 
         DROP TABLE Tmp_ID_Update_List;

@@ -28,6 +28,8 @@ CREATE OR REPLACE PROCEDURE public.delete_requested_run(IN _requestid integer DE
 **                         - Append data to t_deleted_requested_run and t_deleted_factor prior to deleting the requested run
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
+**          07/27/2023 mem - Add schema name parameter when calling alter_event_log_entry_user()
+**                         - Use local variable for the return value of _message from alter_event_log_entry_user()
 **
 *****************************************************/
 DECLARE
@@ -44,6 +46,7 @@ DECLARE
     _stateID int;
     _deletedRequestedRunEntryID int;
     _message2 text;
+    _alterEnteredByMessage text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -199,7 +202,9 @@ BEGIN
         If char_length(_callingUser) > 0 Then
             _stateID := 0;
 
-            CALL alter_event_log_entry_user (11, _requestID, _stateID, _callingUser);
+            CALL alter_event_log_entry_user ('public', 11, _requestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
+
+            RAISE INFO '%', _alterEnteredByMessage;
         End If;
 
         COMMIT;

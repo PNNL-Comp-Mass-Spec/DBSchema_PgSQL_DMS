@@ -52,6 +52,7 @@ DECLARE
     _ratingID int;
     _currentDataset text;
     _usageMessage text;
+    _alterEnteredByMessage text;
 
     _formatSpecifier text;
     _infoHead text;
@@ -376,11 +377,11 @@ BEGIN
                 WHERE dataset IN (SELECT Dataset_Name FROM Tmp_DatasetInfo);
 
                 If _datasetStateUpdated Then
-                    CALL alter_event_log_entry_user_multi_id (4, _stateID, _callingUser);
+                    CALL alter_event_log_entry_user_multi_id (4, _stateID, _callingUser, _message => _alterEnteredByMessage);
                 End If;
 
                 If _datasetRatingUpdated Then
-                    CALL alter_event_log_entry_user_multi_id (8, _ratingID, _callingUser);
+                    CALL alter_event_log_entry_user_multi_id (8, _ratingID, _callingUser, _message => _alterEnteredByMessage);
                 End If;
 
                 DROP TABLE Tmp_ID_Update_List;

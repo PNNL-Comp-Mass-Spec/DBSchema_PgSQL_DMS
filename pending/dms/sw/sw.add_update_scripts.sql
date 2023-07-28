@@ -47,6 +47,7 @@ DECLARE
     _id int;
     _backFill int;
     _scriptIDNew int := 1;
+    _alterEnteredByMessage text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -176,7 +177,7 @@ BEGIN
 
         -- If _callingUser is defined, update entered_by in sw.t_scripts_history
         If char_length(_callingUser) > 0 And Not _id Is Null Then
-            CALL alter_entered_by_user ('sw.t_scripts_history', 'script_id', _id, _callingUser);
+            CALL public.alter_entered_by_user ('sw', 't_scripts_history', 'script_id', _id, _callingUser, _message => _alterEnteredByMessage);
         End If;
 
     End If;
@@ -207,7 +208,7 @@ BEGIN
             WHERE script = _script;
 
             If FOUND And Not _id Is Null Then
-                CALL alter_entered_by_user ('sw.t_scripts_history', 'script_id', _id, _callingUser);
+                CALL public.alter_entered_by_user ('sw', 't_scripts_history', 'script_id', _id, _callingUser, _message => _alterEnteredByMessage);
             End If;
         End If;
 
