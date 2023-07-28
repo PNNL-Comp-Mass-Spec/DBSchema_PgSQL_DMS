@@ -8,8 +8,8 @@ CREATE OR REPLACE PROCEDURE cap.force_dataset_archive_job(IN _job integer, INOUT
 /****************************************************
 **
 **  Desc:
-**      Creates a DatasetArchive capture task job in broker
-**      for given broker DatasetCapture task
+**      Creates a DatasetArchive capture task job in cap.t_tasks
+**      for given DatasetCapture task
 **
 **  Arguments:
 **    _job  Capture task job to lookup dataset info in cap.t_tasks
@@ -48,7 +48,7 @@ BEGIN
 
     ---------------------------------------------------
     -- Is there another DatasetArchive capture task job
-    -- for this dataset already in broker?
+    -- for this dataset already in cap.t_tasks?
     ---------------------------------------------------
 
     SELECT job

@@ -14,10 +14,10 @@ CREATE OR REPLACE FUNCTION public.get_new_job_id(_note text, _infoonly boolean D
 **
 **      -- Preview the next available job number
 **      SELECT *
-**      FROM public.get_new_job_id('Job created in DMS', true);
+**      FROM public.get_new_job_id('Created in t_analysis_job', true);
 **
 **      -- Get the next job number, storing the note and job number as a new row in t_analysis_job_id
-**      _job := public.get_new_job_id('Job created in DMS', false)
+**      _job := public.get_new_job_id('Created in t_analysis_job', false)
 **
 **  Auth:   grk
 **  Date:   08/04/2009

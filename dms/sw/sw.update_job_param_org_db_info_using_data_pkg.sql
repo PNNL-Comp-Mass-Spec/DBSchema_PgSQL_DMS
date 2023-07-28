@@ -16,9 +16,9 @@ CREATE OR REPLACE PROCEDURE sw.update_job_param_org_db_info_using_data_pkg(IN _j
 **    _job                  Job Number
 **    _dataPackageID        Data package ID
 **    _deleteIfInvalid      When true, deletes entries for OrganismName, LegacyFastaFileName, ProteinOptions, and ProteinCollectionList if any of these conditions is true:
-**                          - _dataPackageID is 0
-**                          - _dataPackageID references a non-existent data package,
-**                          - the data package doesn't have any Peptide_Hit jobs (MAC Jobs) or doesn't have any datasets (MaxQuant, MSFragger, or DiaNN)
+**                          - Data package ID (_dataPackageID) is 0
+**                          - Data package ID references a non-existent data package,
+**                          - The data package doesn't have any Peptide_Hit jobs (MAC Jobs)
 **    _debugMode            When true, preview the job parameters that would be updated
 **    _scriptNameForDebug   Script name to use if _job is not found in sw.t_jobs
 **
@@ -108,6 +108,13 @@ BEGIN
     End If;
 
     If _dataPackageID > 0 AND NOT _scriptName ILIKE 'MaxQuant%' AND NOT _scriptName ILIKE 'MSFragger%' AND NOT _scriptName ILIKE 'DiaNN%' Then
+        -- The script is one of the following:
+        --   MAC_iTRAQ
+        --   MAC_TMT10Plex
+        --   Phospho_FDR_Aggregator
+        --   PRIDE_Converter
+
+        -- Auto-add job parameters OrganismName, LegacyFastaFileName, ProteinCollectionList, and ProteinOptions
 
         If _debugMode Then
             RAISE INFO 'Update_Job_Param_Org_Db_Info_Using_Data_Pkg: update OrgDB info for jobs associated with data package % for script %', _dataPackageID, _scriptName;
@@ -190,14 +197,16 @@ BEGIN
                 RAISE INFO '  LegacyFastaFileName=  %', _legacyFastaFileName;
                 RAISE INFO '  ProteinCollectionList=%', _proteinCollectionList;
                 RAISE INFO '  ProteinOptions=       %', _proteinOptions;
+
+                _message := format('Would define OrgDb related parameters for job %s', _job);
             Else
                 CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'OrganismName',          _value => _organismName,          _deleteParam => false, _message => _message, _returncode => _returncode, _infoOnly => false);
                 CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'LegacyFastaFileName',   _value => _legacyFastaFileName,   _deleteParam => false, _message => _message, _returncode => _returncode, _infoOnly => false);
                 CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'ProteinCollectionList', _value => _proteinCollectionList, _deleteParam => false, _message => _message, _returncode => _returncode, _infoOnly => false);
                 CALL sw.add_update_job_parameter (_job, 'PeptideSearch', 'ProteinOptions',        _value => _proteinOptions,        _deleteParam => false, _message => _message, _returncode => _returncode, _infoOnly => false);
-            End If;
 
-            _message := format('Defined OrgDb related parameters for job %s', _job);
+                _message := format('Defined OrgDb related parameters for job %s', _job);
+            End If;
 
             DROP TABLE Tmp_OrgDBInfo;
 
@@ -210,7 +219,6 @@ BEGIN
         -- One of the following is true:
         --   Data package ID was invalid
         --   For MAC jobs, the data package does not have any jobs with a protein collection or legacy FASTA file
-        --   For MaxQuant, MSFragger, or DiaNN jobs, the data package does not have any datasets
         ---------------------------------------------------
 
         If _deleteIfInvalid Then

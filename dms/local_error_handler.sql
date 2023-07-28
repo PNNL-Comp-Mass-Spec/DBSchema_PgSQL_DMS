@@ -60,6 +60,7 @@ BEGIN
     -----------------------------------------------
     -- Validate the inputs
     -----------------------------------------------
+
     _sqlState            := Coalesce(_sqlState, '');
     _exceptionMessage    := Coalesce(_exceptionMessage, '');
     _exceptionDetail     := Coalesce(_exceptionDetail, '');

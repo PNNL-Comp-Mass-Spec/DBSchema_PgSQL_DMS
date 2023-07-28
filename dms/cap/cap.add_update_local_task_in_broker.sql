@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_local_task_in_broker(INOUT _job integ
 /****************************************************
 **
 **  Desc:
-**      Edit or reset a capture task job directly in broker database
+**      Edit or reset a capture task job directly in cap.t_tasks
 **
 **  Arguments:
 **    _job              Capture task job
