@@ -31,6 +31,7 @@ CREATE OR REPLACE FUNCTION public.get_requested_runs_from_item_list(_itemlist te
 **          05/30/2023 mem - Use ElsIf for Else If
 **          06/07/2023 mem - Add ORDER BY to string_agg()
 **          07/26/2023 mem - Move "Not" keyword to before the field name
+**          07/27/2023 mem - Use table alias when referencing column
 **
 *****************************************************/
 DECLARE
@@ -167,7 +168,7 @@ BEGIN
         SELECT DISTINCT TR.request_id
         FROM t_requested_run TR
         INNER join dpkg.v_data_package_dataset_export DS ON TR.dataset_id = DS.dataset_id
-        WHERE Data_Package_ID IN (SELECT try_cast(Item, 0) FROM Tmp_Items);
+        WHERE DS.data_package_id IN (SELECT public.try_cast(Item, 0) FROM Tmp_Items);
     End If;
 
     DROP TABLE Tmp_Items;
