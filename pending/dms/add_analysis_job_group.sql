@@ -113,6 +113,7 @@ AS $$
 **                         - For data package based jobs, convert every settings file setting to XML compatible with add_update_local_job_in_broker
 **          03/27/2023 mem - Synchronize protein collection options validation with add_update_analysis_job_request
 **                         - Remove dash from DiaNN tool name
+**          07/27/2023 mem - Update message sent to get_new_job_id()
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -547,7 +548,7 @@ BEGIN
                 SELECT request_state_id
                 INTO _requestStateID
                 FROM t_analysis_job_request
-                WHERE request_id = _requestID
+                WHERE request_id = _requestID;
 
                 _requestStateID := Coalesce(_requestStateID, 0);
 
@@ -854,7 +855,7 @@ BEGIN
 
             INSERT INTO Tmp_NewJobIDs (ID)
             SELECT Job
-            FROM get_new_job_id_block (_numDatasets, 'Job created in DMS');
+            FROM get_new_job_id_block (_numDatasets, 'Created in t_analysis_job');
 
             -- Use the job number information in Tmp_NewJobIDs to update Tmp_DatasetInfo
 

@@ -108,6 +108,7 @@ AS $$
 **          09/05/2018 mem - When _mode is 'add', if _state is 'hold' or 'holding', create the job, but put it on hold (state 8)
 **          06/30/2022 mem - Rename parameter file argument
 **          07/29/2022 mem - Assure that the parameter file and settings file names are not null
+**          07/27/2023 mem - Update message sent to get_new_job_id()
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -541,7 +542,7 @@ BEGIN
             -- Get ID for new job
             ---------------------------------------------------
 
-            _jobID := public.get_new_job_id ('Job created in DMS', _infoOnly)
+            _jobID := public.get_new_job_id ('Created in t_analysis_job', _infoOnly)
 
             If _jobID = 0 Then
                 _msg := 'Failed to get valid new job ID';

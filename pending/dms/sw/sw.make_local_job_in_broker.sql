@@ -171,7 +171,7 @@ BEGIN
         ---------------------------------------------------
 
         If Not _debugMode Then
-            _job := public.get_new_job_id('Created in broker', false)
+            _job := public.get_new_job_id('Created in sw.t_jobs', false)
 
             If _job = 0 Then
                 _returnCode := 'U5210';
