@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE sw.update_job_param_org_db_info_using_data_pkg(IN _j
 **                         - Add parameters _debugMode and _scriptNameForDebug
 **          03/27/2023 mem - Add support for DiaNN
 **          07/26/2023 mem - Ported to PostgreSQL
+**          07/27/2023 mem - Switch from using view V_Get_Pipeline_Job_Parameters to directly querying tables
 **
 *****************************************************/
 DECLARE
@@ -138,7 +139,7 @@ BEGIN
                                    ProteinCollectionList,
                                    ProteinOptions,
                                    UseCount )
-        SELECT J.Organism,
+        SELECT Org.Organism,
                CASE
                    WHEN Coalesce(J.Protein_Collection_List, 'na') <> 'na' AND
                         Coalesce(J.Protein_Options_List,    'na') <> 'na'
@@ -148,12 +149,16 @@ BEGIN
                J.Protein_Collection_List,
                J.Protein_Options_List,
                COUNT(J.job) AS Use_Count
-        FROM public.V_Get_Pipeline_Job_Parameters J
+        FROM public.t_analysis_job J
+             INNER JOIN public.t_organisms Org
+               ON J.organism_id = Org.organism_id
+             INNER JOIN public.t_analysis_tool Tool
+               ON J.analysis_tool_id = Tool.analysis_tool_id
         WHERE J.Job IN ( SELECT Job
                          FROM dpkg.t_data_package_analysis_jobs
                          WHERE Data_Pkg_ID = _dataPackageID ) AND
-              J.Org_DB_Required <> 0
-        GROUP BY J.Organism, J.Organism_DB_Name, J.Protein_Collection_List, J.Protein_Options_List
+              Tool.Org_DB_Required <> 0
+        GROUP BY Org.Organism, J.Organism_DB_Name, J.Protein_Collection_List, J.Protein_Options_List
         ORDER BY COUNT(J.job) DESC;
         --
         GET DIAGNOSTICS _insertCount = ROW_COUNT;
