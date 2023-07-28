@@ -11,7 +11,7 @@ CREATE VIEW public.v_data_analysis_request_detail_report AS
     r.analysis_specifications,
     r.comment,
     public.get_data_analysis_request_batch_list(r.request_id) AS requested_run_batch_ids,
-    r.data_package_id AS data_package,
+    r.data_pkg_id AS data_package,
     r.exp_group_id AS experiment_group,
     r.campaign,
     r.organism,

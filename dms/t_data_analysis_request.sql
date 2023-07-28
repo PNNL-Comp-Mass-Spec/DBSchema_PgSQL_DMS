@@ -11,7 +11,7 @@ CREATE TABLE public.t_data_analysis_request (
     analysis_specifications public.citext,
     comment public.citext,
     representative_batch_id integer,
-    data_package_id integer,
+    data_pkg_id integer,
     exp_group_id integer,
     work_package public.citext,
     requested_personnel public.citext,

@@ -22,7 +22,7 @@ CREATE TABLE public.t_analysis_job_request (
     special_processing public.citext,
     dataset_min public.citext,
     dataset_max public.citext,
-    data_package_id integer
+    data_pkg_id integer
 );
 
 

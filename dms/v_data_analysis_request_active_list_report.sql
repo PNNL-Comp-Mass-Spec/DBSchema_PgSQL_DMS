@@ -18,7 +18,7 @@ CREATE VIEW public.v_data_analysis_request_active_list_report AS
     r.requested_personnel,
     r.assigned_personnel,
     r.representative_batch_id AS batch,
-    r.data_package_id AS data_package,
+    r.data_pkg_id AS data_package,
     r.exp_group_id AS exp_group,
     r.campaign,
     r.organism,

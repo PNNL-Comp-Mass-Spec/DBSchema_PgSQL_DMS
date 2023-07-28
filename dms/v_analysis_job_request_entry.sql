@@ -12,10 +12,10 @@ CREATE VIEW public.v_analysis_job_request_entry AS
     ajr.organism_db_name,
     org.organism AS organism_name,
         CASE
-            WHEN (COALESCE(ajr.data_package_id, 0) > 0) THEN ''::text
+            WHEN (COALESCE(ajr.data_pkg_id, 0) > 0) THEN ''::text
             ELSE public.get_job_request_dataset_name_list(ajr.request_id)
         END AS datasets,
-    ajr.data_package_id,
+    ajr.data_pkg_id AS data_package_id,
     ajr.comment,
     ajr.special_processing,
     ars.request_state AS state,

@@ -14,7 +14,7 @@ CREATE VIEW public.v_analysis_job_request_detail_report AS
     ajr.protein_options_list AS protein_options,
     ajr.organism_db_name AS legacy_fasta,
     public.get_job_request_dataset_name_list(ajr.request_id) AS datasets,
-    ajr.data_package_id,
+    ajr.data_pkg_id AS data_package_id,
     ajr.comment,
     ajr.special_processing,
     u.name AS requester_name,
