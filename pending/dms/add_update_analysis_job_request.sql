@@ -213,7 +213,7 @@ BEGIN
         -- Cannot create an entry with a duplicate name
         --
         If _mode::citext In ('add', 'PreviewAdd') Then
-            If Exists (SELECT request_id FROM t_analysis_job_request WHERE request_name = _requestName) Then
+            If Exists (SELECT request_id FROM t_analysis_job_request WHERE request_name = _requestName::citext) Then
                 RAISE EXCEPTION 'Cannot add: request with same name already in database';
             End If;
         End If;
@@ -627,7 +627,7 @@ BEGIN
                 user_id,
                 dataset_min,
                 dataset_max,
-                data_package_id
+                data_pkg_id
             )
             VALUES
             (
@@ -702,7 +702,7 @@ BEGIN
                 user_id = _userID,
                 dataset_min = _datasetMin,
                 dataset_max = _datasetMax,
-                data_package_id = Case When _dataPackageId > 0 Then _dataPackageId Else Null End
+                data_pkg_id = CASE WHEN _dataPackageId > 0 THEN _dataPackageId ELSE Null END
             WHERE request_id = _requestID;
 
             MERGE INTO t_analysis_job_request_datasets AS t

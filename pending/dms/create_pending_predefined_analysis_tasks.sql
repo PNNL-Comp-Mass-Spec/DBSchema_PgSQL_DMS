@@ -121,7 +121,7 @@ BEGIN
                             WHEN _returnCode = 'U5260' THEN 'Skipped'
                             WHEN _returnCode <> '' THEN 'Error'
                             ELSE 'Complete'
-                        End If;,
+                        END,
                 Jobs_Created = Coalesce(_jobsCreated, 0),
                 Last_Affected = CURRENT_TIMESTAMP
             WHERE Item = _currentItemID;

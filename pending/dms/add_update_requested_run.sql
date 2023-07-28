@@ -182,7 +182,6 @@ DECLARE
     _matchCount int;
     _newUsername text;
     _datasetTypeID int;
-    _sepID int := 0;
     _matchedSeparationGroup text := '';
     _mrmAttachmentID int;
     _eusUsageTypeID Int;
@@ -568,7 +567,7 @@ BEGIN
         SELECT separation_group
         INTO _matchedSeparationGroup
         FROM t_separation_group
-        WHERE separation_group = _separationGroup
+        WHERE separation_group = _separationGroup::citext;
 
         If FOUND Then
             _separationGroup := _matchedSeparationGroup;
@@ -578,7 +577,7 @@ BEGIN
             SELECT separation_group
             INTO _matchedSeparationGroup
             FROM t_secondary_sep
-            WHERE separation_type = _separationGroup
+            WHERE separation_type = _separationGroup::citext;
 
             If Not FOUND Then
                 RAISE EXCEPTION 'Separation group not recognized';
@@ -788,7 +787,7 @@ BEGIN
         End If;
 
         _resolvedInstrumentInfo := format('instrument group %s, run type %s, and separation group %s',
-                                            _instrumentGroup, _msType, _separationGroup);
+                                          _instrumentGroup, _msType, _separationGroup);
 
         -- Validation checks are complete; now enable _logErrors
         _logErrors := true;
@@ -913,52 +912,48 @@ BEGIN
             FROM t_requested_run
             WHERE request_id = _requestID;
 
-            BEGIN
+            UPDATE t_requested_run
+            SET request_name = CASE WHEN _requestIDForUpdate > 0 THEN _requestName ELSE request_name END,
+                requester_username = _requesterUsername,
+                comment = _comment,
+                instrument_group = _instrumentGroup,
+                request_type_id = _datasetTypeID,
+                instrument_setting = _instrumentSettings,
+                exp_id = _experimentID,
+                work_package = _workPackage,
+                wellplate = _wellplateName,
+                well = _wellNumber,
+                request_internal_standard = _internalStandard,
+                batch_id = _batch,
+                block = _block,
+                run_order = _runOrder,
+                eus_proposal_id = _eusProposalID,
+                eus_usage_type_id = _eusUsageTypeID,
+                separation_group = _separationGroup,
+                mrm_attachment = _mrmAttachmentID,
+                state_name = _status,
+                created = CASE WHEN _oldStatus = 'Inactive' AND _status = 'Active' THEN CURRENT_TIMESTAMP ELSE created END,
+                vialing_conc = _vialingConc,
+                vialing_vol = _vialingVol,
+                location_id = _locationId
+            WHERE request_id = _requestID;
 
-                UPDATE t_requested_run
-                SET request_name = CASE WHEN _requestIDForUpdate > 0 THEN _requestName ELSE request_name END,
-                    requester_username = _requesterUsername,
-                    comment = _comment,
-                    instrument_group = _instrumentGroup,
-                    request_type_id = _datasetTypeID,
-                    instrument_setting = _instrumentSettings,
-                    exp_id = _experimentID,
-                    work_package = _workPackage,
-                    wellplate = _wellplateName,
-                    well = _wellNumber,
-                    request_internal_standard = _internalStandard,
-                    batch_id = _batch,
-                    block = _block,
-                    run_order = _runOrder,
-                    eus_proposal_id = _eusProposalID,
-                    eus_usage_type_id = _eusUsageTypeID,
-                    separation_group = _separationGroup,
-                    mrm_attachment = _mrmAttachmentID,
-                    state_name = _status,
-                    created = CASE WHEN _oldStatus = 'Inactive' AND _status = 'Active' THEN CURRENT_TIMESTAMP ELSE created END,
-                    vialing_conc = _vialingConc,
-                    vialing_vol = _vialingVol,
-                    location_id = _locationId
-                WHERE request_id = _requestID;
-
-
-                -- Assign users to the request
-                --
-                CALL assign_eus_users_to_requested_run (
-                                        _requestID,
-                                        _eusProposalID,
-                                        _eusUsersList,
-                                        _message => _msg,               -- Output
-                                        _returnCode => _returnCode);    -- Output
-                --
-                If _returnCode <> '' Then
-                    RAISE EXCEPTION 'assign_eus_users_to_requested_run: %', _msg;
-                End If;
-
-            END;
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 Then
                 CALL alter_event_log_entry_user (11, _requestID, _statusID, _callingUser, _message => _alterEnteredByMessage);
+            End If;
+
+            -- Assign users to the request
+            --
+            CALL assign_eus_users_to_requested_run (
+                                    _requestID,
+                                    _eusProposalID,
+                                    _eusUsersList,
+                                    _message => _msg,               -- Output
+                                    _returnCode => _returnCode);    -- Output
+            --
+            If _returnCode <> '' Then
+                RAISE EXCEPTION 'assign_eus_users_to_requested_run: %', _msg;
             End If;
 
             -- Make sure that t_active_requested_run_cached_eus_users is up-to-date

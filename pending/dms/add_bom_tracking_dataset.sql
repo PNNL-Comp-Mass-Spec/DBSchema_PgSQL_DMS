@@ -148,7 +148,8 @@ BEGIN
         WHERE acq_time_start = _bom AND instrument_id = _instID;
 
         If (_conflictingDataset <> '') Then
-            RAISE EXCEPTION 'Dataset "%" has same start time', _conflictingDataset;
+            _message := format('Dataset "%s" has same start time, Dataset ID %s', _conflictingDataset, _datasetID);
+            RAISE EXCEPTION '%', _message;
         End If;
 
         _conflictingDataset := '';
@@ -162,7 +163,8 @@ BEGIN
               instrument_id = _instID;
 
         If (_conflictingDataset <> '') Then
-            RAISE EXCEPTION 'Tracking dataset would overlap existing dataset "%", Dataset ID %', _conflictingDataset, _datasetID;
+             _message := format('Tracking dataset would overlap existing dataset "%s", Dataset ID %s', _conflictingDataset, _datasetID;);
+            RAISE EXCEPTION '%', _message;
         End If;
 
         If _mode = 'debug' Then

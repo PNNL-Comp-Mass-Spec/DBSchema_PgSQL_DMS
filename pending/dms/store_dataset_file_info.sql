@@ -276,7 +276,6 @@ BEGIN
         _filePath := Replace (_filePath, '*', '');
 
         If _colCount = 2 Then
-        -- <d1>
             -- Determine the dataset name from the file name
             If _filePath Like '%.%' Then
                 _lastPeriodLoc := char_length(_filePath) - Position('.' In Reverse(_filePath));
@@ -289,7 +288,6 @@ BEGIN
                 CONTINUE;
             End If;
         Else
-        -- <d2>
             SELECT Value
             INTO _datasetNameOrId
             FROM Tmp_DataColumns
@@ -315,7 +313,7 @@ BEGIN
                 _datasetName := _datasetNameOrId;
             End If;
 
-        End If; -- </d2>
+        End If;
 
         -- Validate the dataset name
         SELECT dataset_id

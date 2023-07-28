@@ -605,8 +605,6 @@ BEGIN
     End If; -- </a1>
 
     If _campaignID > 0 OR _experimentID > 0 Then
-    -- <a2>
-
         If _campaignID > 0 Then
             SELECT EUT.eus_usage_type
             INTO _eusUsageTypeCampaign

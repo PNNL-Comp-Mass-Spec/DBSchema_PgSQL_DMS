@@ -60,7 +60,7 @@ BEGIN
     SELECT request_id
     INTO _tempID
     FROM t_analysis_job_request
-    WHERE request_id = _requestID
+    WHERE request_id = _requestID;
 
     If Not FOUND Then
         _message := 'Could not find job request';

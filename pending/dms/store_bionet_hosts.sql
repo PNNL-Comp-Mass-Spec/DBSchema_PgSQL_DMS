@@ -136,7 +136,7 @@ BEGIN
     -- Set the delimiter to a tab character
     _tabDelimiter := chr(9);
 
-    FOR  _row IN
+    FOR _row IN
         SELECT Value
         FROM Tmp_HostData
         ORDER BY EntryID
