@@ -16,11 +16,12 @@ CREATE OR REPLACE FUNCTION sw.get_results_directory_name(_job integer, _tag text
 **
 **  Auth:   grk
 **  Date:   01/31/2009 grk - Initial release  (http://prismtrac.pnl.gov/trac/ticket/720)
-**          11/30/2022 mem - Ported to PostgresQL
+**          11/30/2022 mem - Ported to PostgreSQL
+**          07/27/2023 mem - Remove local variable
 **
 *****************************************************/
 DECLARE
-    _resultsDirectoryName text;
+
 BEGIN
 
     ---------------------------------------------------
@@ -34,9 +35,7 @@ BEGIN
     --  d) the text _Auto
     --  e) the Job number
 
-    _resultsDirectoryName := format('%s%s_Auto%s', _tag, to_char(CURRENT_TIMESTAMP, 'yyyymmddhh24mi'), _job);
-
-    RETURN _resultsDirectoryName;
+    RETURN format('%s%s_Auto%s', _tag, to_char(CURRENT_TIMESTAMP, 'yyyymmddhh24mi'), _job);
 END
 $$;
 
