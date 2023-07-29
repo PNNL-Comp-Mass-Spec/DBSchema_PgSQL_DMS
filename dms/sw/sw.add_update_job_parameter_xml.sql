@@ -154,6 +154,7 @@ CREATE OR REPLACE FUNCTION sw.add_update_job_parameter_xml(_xmlparameters xml, _
 **          04/11/2022 mem - Expand Section and Name to varchar(128)
 **                         - Expand _value to varchar(4000)
 **          07/19/2023 mem - Ported to PostgreSQL
+**          07/28/2023 mem - Rename temporary table to avoid conflicts with calling procedures
 **
 *****************************************************/
 DECLARE
@@ -193,7 +194,7 @@ BEGIN
     -- Parse the XML and store in a table
     ---------------------------------------------------
 
-    CREATE TEMP TABLE Tmp_Job_Parameters (
+    CREATE TEMP TABLE Tmp_Job_Params_Updated (
         Section citext,
         Name citext,
         Value text,
@@ -204,7 +205,7 @@ BEGIN
     -- Surround the job parameter XML with <params></params> so that the XML will be rooted, as required by XMLTABLE()
     ---------------------------------------------------
 
-    INSERT INTO Tmp_Job_Parameters (Section, Name, Value, State)
+    INSERT INTO Tmp_Job_Params_Updated (Section, Name, Value, State)
     SELECT XmlQ.section, XmlQ.name, XmlQ.value, 'Unchanged'
     FROM (
         SELECT xmltable.*
@@ -242,7 +243,7 @@ BEGIN
 
         FOR _previewData IN
             SELECT 'Initial Value' As State, Section, Name, Value
-            FROM Tmp_Job_Parameters
+            FROM Tmp_Job_Params_Updated
             ORDER BY Section, Name
         LOOP
             _infoData := format(_formatSpecifier,
@@ -263,7 +264,7 @@ BEGIN
         -- First try an update
         ---------------------------------------------------
 
-        UPDATE Tmp_Job_Parameters
+        UPDATE Tmp_Job_Params_Updated
         SET Value = _value,
             State = Case When Value Is Distinct From _value Then 'Updated Value' Else 'Unchanged Value' End
         WHERE Section = _section::citext AND
@@ -271,7 +272,7 @@ BEGIN
 
         If Not FOUND Then
             -- Match not found; Insert a new parameter
-            INSERT INTO Tmp_Job_Parameters(Section, Name, Value, State)
+            INSERT INTO Tmp_Job_Params_Updated(Section, Name, Value, State)
             VALUES (_section, _paramName, _value, 'Added');
         End If;
 
@@ -280,7 +281,7 @@ BEGIN
         -- Delete the specified parameter
         ---------------------------------------------------
 
-        UPDATE Tmp_Job_Parameters
+        UPDATE Tmp_Job_Params_Updated
         SET State = _deletedFlag
         WHERE Section = _section::citext AND
               Name    = _paramName::citext;
@@ -295,7 +296,7 @@ BEGIN
 
         FOR _previewData IN
             SELECT State, Section, Name, Value
-            FROM Tmp_Job_Parameters
+            FROM Tmp_Job_Params_Updated
             WHERE State <> 'Unchanged'
             ORDER BY Section, Name
         LOOP
@@ -312,7 +313,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Convert the parameters in table Tmp_Job_Parameters into XML
+    -- Convert the parameters in table Tmp_Job_Params_Updated into XML
     ---------------------------------------------------
 
     RETURN QUERY
@@ -326,11 +327,11 @@ BEGIN
                         value As "Value"))
                     ORDER BY section, name
                    ) AS xml_item
-           FROM Tmp_Job_Parameters
+           FROM Tmp_Job_Params_Updated
            WHERE State <> _deletedFlag
         ) AS LookupQ;
 
-    DROP TABLE Tmp_Job_Parameters;
+    DROP TABLE Tmp_Job_Params_Updated;
 END
 $$;
 
