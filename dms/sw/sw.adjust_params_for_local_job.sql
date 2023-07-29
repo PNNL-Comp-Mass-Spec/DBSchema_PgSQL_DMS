@@ -1,23 +1,25 @@
 --
-CREATE OR REPLACE PROCEDURE sw.adjust_params_for_local_job
-(
-    _scriptName text,
-    _datasetName text = 'na',
-    _dataPackageID int,
-    INOUT _jobParamXML xml,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: adjust_params_for_local_job(text, integer, xml, text, text, boolean); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.adjust_params_for_local_job(IN _scriptname text, IN _datapackageid integer, INOUT _jobparamxml xml, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _debugmode boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Adjust the job parameters for special cases, for example
 **      local jobs that target other jobs (typically as defined by a data package)
 **
+**      Uses temp table Tmp_Job_Steps, created by sw.make_local_job_in_broker
+**
 **  Arguments:
-**    _jobParamXML   Input / Output parameter
+**    _scriptName       Script name
+**    _dataPackageID    Data package ID (0 if not applicable)
+**    _jobParamXML      XML Job parameters (input / output)
+**    _message          Status message
+**    _returnCode       Return code
+**    _debugMode        When true, show the source job number (if defined) and show the XML job parameters
 **
 **  Auth:   grk
 **  Date:   10/16/2010 grk - Initial release
@@ -28,7 +30,7 @@ AS $$
 **          04/11/2022 mem - Use varchar(4000) when populating temp table Tmp_Job_Params using _jobParamXML
 **          03/22/2023 mem - Rename job parameter to DatasetName
 **          03/24/2023 mem - Capitalize job parameter TransferFolderPath
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/28/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -40,16 +42,17 @@ BEGIN
     _returnCode := '';
 
     _dataPackageID := Coalesce(_dataPackageID, 0);
+    _debugMode := Coalesce(_debugMode, false);
 
     ---------------------------------------------------
     -- Convert job params from XML to temp table
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_Job_Params (
-        Section text,
-        Name text,
-        Value text
-    )
+        Section citext,
+        Name citext,
+        Value citext
+    );
 
     INSERT INTO Tmp_Job_Params (Section, Name, Value)
     SELECT XmlQ.section, XmlQ.name, XmlQ.value
@@ -92,13 +95,15 @@ BEGIN
     SELECT Value
     INTO _sourceJob
     FROM Tmp_Job_Params
-    WHERE Name::citext = 'sourceJob';
+    WHERE Name = 'SourceJob';
 
     If FOUND And _sourceJob > 0 Then
 
-        -- RAISE INFO 'SourceJob: %', _sourceJob;
+        If _debugMode Then
+            RAISE INFO 'SourceJob: %', _sourceJob;
+        End If;
 
-        -- look up path to results directory for job given by _sourceJob and add it to temp parameters table
+        -- Lookup path to results directory for job given by _sourceJob and add it to temp parameters table
         --
         SELECT Archive_Folder_Path AS ArchiveFolderPath,
                Dataset,
@@ -111,8 +116,10 @@ BEGIN
         FROM public.V_Source_Analysis_Job
         WHERE Job = _sourceJob;
 
-        If FOUND Then
-            -- UPDATE Input_Directory_Name for job steps
+        If Not FOUND Then
+            RAISE WARNING 'Warning: Source Job % not found in public.V_Source_Analysis_Job', _sourceJob;
+        Else
+            -- Update Input_Directory_Name for job steps
             -- (in the future, we may want to be more selective about which steps are not updated)
 
             UPDATE Tmp_Job_Steps
@@ -142,11 +149,13 @@ BEGIN
             UNION
             SELECT 'JobParameters', 'DatasetFolderName', _jobInfo.Dataset
             UNION
-            SELECT 'JobParameters', 'InstrumentDataPurged', _jobInfo.InstrumentDataPurged;
+            SELECT 'JobParameters', 'InstrumentDataPurged', _jobInfo.InstrumentDataPurged::text;
 
             _paramsUpdated := true;
-
         End If;
+
+    ElsIf _debugMode Then
+        RAISE INFO 'Job does not have job parameter "SourceJob"';
     End If;
 
     ---------------------------------------------------
@@ -167,10 +176,26 @@ BEGIN
                        ) AS xml_item
                FROM Tmp_Job_Params
             ) AS LookupQ;
+
+        If _debugMode Then
+            RAISE INFO 'Job parameters were updated';
+        End If;
+    End If;
+
+    If _debugMode Then
+        RAISE INFO '%', _jobParamXML;
     End If;
 
     DROP TABLE Tmp_Job_Params;
 END
 $$;
 
-COMMENT ON PROCEDURE sw.adjust_params_for_local_job IS 'AdjustParamsForLocalJob';
+
+ALTER PROCEDURE sw.adjust_params_for_local_job(IN _scriptname text, IN _datapackageid integer, INOUT _jobparamxml xml, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE adjust_params_for_local_job(IN _scriptname text, IN _datapackageid integer, INOUT _jobparamxml xml, INOUT _message text, INOUT _returncode text, IN _debugmode boolean); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.adjust_params_for_local_job(IN _scriptname text, IN _datapackageid integer, INOUT _jobparamxml xml, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) IS 'AdjustParamsForLocalJob';
+

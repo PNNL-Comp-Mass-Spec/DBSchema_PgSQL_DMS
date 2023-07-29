@@ -1,21 +1,23 @@
 --
-CREATE OR REPLACE PROCEDURE sw.create_steps_for_job
-(
-    _job int,
-    _scriptXML xml,
-    _resultsDirectoryName text,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: create_steps_for_job(integer, xml, text, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.create_steps_for_job(IN _job integer, IN _scriptxml xml, IN _resultsdirectoryname text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Make entries in temporary tables for the the given capture task job according to definition of _scriptXML
-**      Uses temp tables:
+**
+**      Uses temp tables created by sw.make_local_job_in_broker
 **        Tmp_Job_Steps
 **        Tmp_Job_Step_Dependencies
+**
+**  Arguments:
+**    _job                      Job number
+**    _scriptXML                XML loaded from table sw.t_scripts
+**    _resultsDirectoryName     Results directory name
 **
 **  Auth:   grk
 **  Date:   08/23/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)
@@ -28,7 +30,7 @@ AS $$
 **          10/17/2011 mem - Added column Memory_Usage_MB
 **          04/16/2012 grk - Added error checking for missing step tools
 **          09/24/2014 mem - Rename Job in T_Job_Step_Dependencies
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/28/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -54,7 +56,7 @@ BEGIN
     WHERE NOT XmlQ.tool IN ( SELECT StepTools.step_tool FROM sw.t_step_tools StepTools );
 
     If _missingTools <> '' Then
-        _message := format('Step tool(s) %s do not exist in t_step_tools', _missingTools);
+        _message := format('Step tool(s) %s do not exist in sw.t_step_tools', _missingTools);
         _returnCode := 'U5301';
         RETURN;
     End If;
@@ -64,26 +66,26 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_Job_Steps (
-        job,
-        step,
-        tool,
-        cpu_load,
-        memory_usage_mb,
-        shared_result_version,
-        filter_version,
-        dependencies,
-        state,
-        output_directory_name,
-        special_instructions
+        Job,
+        Step,
+        Tool,
+        Cpu_Load,
+        Memory_Usage_MB,
+        Shared_Result_Version,
+        Filter_Version,
+        Dependencies,
+        State,
+        Output_Directory_Name,
+        Special_Instructions
     )
     SELECT
         _job AS job,
         XmlQ.step,
         XmlQ.tool,
-        T.cpu_load,
-        T.memory_usage_mb,
-        T.shared_result_version,
-        T.filter_version,
+        ST.cpu_load,
+        ST.memory_usage_mb,
+        ST.shared_result_version,
+        ST.filter_version,
         0 AS dependencies,
         1 AS state,
         _resultsDirectoryName,
@@ -131,8 +133,15 @@ BEGIN
                               enable_only citext PATH '@Enable_Only')
          ) XmlQ;
 
-
 END
 $$;
 
-COMMENT ON PROCEDURE sw.create_steps_for_job IS 'CreateStepsForJob';
+
+ALTER PROCEDURE sw.create_steps_for_job(IN _job integer, IN _scriptxml xml, IN _resultsdirectoryname text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE create_steps_for_job(IN _job integer, IN _scriptxml xml, IN _resultsdirectoryname text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.create_steps_for_job(IN _job integer, IN _scriptxml xml, IN _resultsdirectoryname text, INOUT _message text, INOUT _returncode text) IS 'CreateStepsForJob';
+

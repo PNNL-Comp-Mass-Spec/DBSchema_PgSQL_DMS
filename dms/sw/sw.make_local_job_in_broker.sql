@@ -1,48 +1,37 @@
 --
-CREATE OR REPLACE PROCEDURE sw.make_local_job_in_broker
-(
-    _scriptName text,
-    _datasetName text = 'na',
-    _priority int,
-    _jobParamXML xml,
-    _comment text,
-    _ownerUsername text,
-    _dataPackageID int,
-    _debugMode boolean = false,
-    _logDebugMessages boolean = false
-    INOUT _job int,
-    INOUT _resultsFolderName text,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: make_local_job_in_broker(text, text, integer, xml, text, text, integer, boolean, boolean, integer, text, text, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.make_local_job_in_broker(IN _scriptname text, IN _datasetname text, IN _priority integer, IN _jobparamxml xml, IN _comment text, IN _ownerusername text, IN _datapackageid integer, IN _debugmode boolean DEFAULT false, IN _logdebugmessages boolean DEFAULT false, INOUT _job integer DEFAULT 0, INOUT _resultsdirectoryname text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Create analysis job directly in sw.t_jobs
 **
 **  Arguments:
-**    _scriptName           Script name
-**    _datasetName          Dataset name
-**    _priority             Job priority
-**    _jobParamXML          XML job parameters
-**    _comment              Comment to store in t_tasks
-**    _ownerUsername        Owner username
-**    _dataPackageID        Data package id (0 if not applicable)
-**    _debugMode            When true, store the contents of the temp tables in the following tables (auto-created if missing)
-**                            sw.t_debug_tmp_jobs
-**                            sw.t_debug_tmp_job_steps
-**                            sw.t_debug_tmp_job_step_dependencies
-**                            sw.t_debug_tmp_job_parameters
-**                          When _debugMode is true, the new job will not be added to sw.t_jobs
-**    _logDebugMessages     Set to true to log debug messages in sw.T_Log_Entries (ignored if _debugMode is false)
-**    _job                  Output: job number
-**    _resultsFolderName    Output: results folder name
-**    _message              Status message
-**    _returnCode           Return code
-**    _returnCode           Calling user
+**    _scriptName               Script name
+**    _datasetName              Dataset name
+**    _priority                 Job priority
+**    _jobParamXML              XML job parameters
+**    _comment                  Comment to store in t_jobs
+**    _ownerUsername            Owner username
+**    _dataPackageID            Data package id (0 if not applicable)
+**
+**    _debugMode                When true, store the contents of the temp tables in the following tables (auto-created if missing)
+**                                sw.t_debug_tmp_jobs
+**                                sw.t_debug_tmp_job_steps
+**                                sw.t_debug_tmp_job_step_dependencies
+**                                sw.t_debug_tmp_job_parameters
+**                              When _debugMode is true, the new job will not be added to sw.t_jobs
+**
+**    _logDebugMessages         Set to true to log debug messages in sw.T_Log_Entries (ignored if _debugMode is false)
+**    _job                      Output: job number
+**    _resultsDirectoryName     Output: results folder name
+**    _message                  Status message
+**    _returnCode               Return code
+**    _returnCode               Calling user
 **
 **  Auth:   grk
 **  Date:   04/13/2010 grk - Initial release
@@ -65,27 +54,47 @@ AS $$
 **                         - Pass data package ID to create_signatures_for_job_steps
 **          03/24/2023 mem - Capitalize job parameter TransferFolderPath
 **          03/27/2022 mem - Require that data package ID is non-zero for DiaNN_DataPkg jobs
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/28/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _xmlParameters xml;
     _scriptXML xml;
     _tag text := 'unk';
-    _datasetID int := 0;
+    _datasetID int;
     _transferFolderPath text := '';
+    _currentLocation text := 'Starting';
     _msg text;
     _alterEnteredByMessage text;
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
     _message := '';
     _returnCode := '';
 
     BEGIN
-        _dataPackageID := Coalesce(_dataPackageID, 0);
-        _scriptName := Trim(Coalesce(_scriptName, ''));
 
+        ---------------------------------------------------
+        -- Validate the inputs
+        ---------------------------------------------------
+
+        _currentLocation := 'Validate the inputs';
+
+        _scriptName := Trim(Coalesce(_scriptName, ''));
+        _datasetName := Trim(Coalesce(_datasetName, ''));
+        _priority := Coalesce(_priority, 3);
+        _comment := Coalesce(_comment, '');
+        _ownerUsername := Coalesce(_ownerUsername, SESSION_USER);
+        _dataPackageID := Coalesce(_dataPackageID, 0);
         _debugMode := Coalesce(_debugMode, false);
         _logDebugMessages := Coalesce(_logDebugMessages, false);
+
+        If _datasetName = '' Then
+            _datasetName = 'na';
+        End If;
 
         If _dataPackageID < 0 Then
             _dataPackageID := 0;
@@ -99,6 +108,8 @@ BEGIN
         -- Create temporary tables to accumulate job steps,
         -- job step dependencies, and job parameters for jobs being created
         ---------------------------------------------------
+
+        _currentLocation := 'Create temp tables';
 
         CREATE TEMP TABLE Tmp_Jobs (
             Job int NOT NULL,
@@ -145,34 +156,38 @@ BEGIN
         -- Script
         ---------------------------------------------------
 
+        _currentLocation := 'Get script contents';
+
         -- Get contents of script and tag for results directory name
         --
         SELECT contents, results_tag
         INTO _scriptXML, _tag
         FROM sw.t_scripts
-        WHERE script = _scriptName;
+        WHERE script = _scriptName::citext;
 
         If Not FOUND Then
             _returnCode := 'U5213';
             RAISE EXCEPTION 'Script not found in sw.t_scripts: %', Coalesce(_scriptName, '??');
         End If;
 
-        If Coalesce(_scriptXML, '') = '' Then
+        If Coalesce(_scriptXML::text, '') = '' Then
             _returnCode := 'U5214';
             RAISE EXCEPTION 'Script XML not defined in the contents field of sw.t_scripts for script %', Coalesce(_scriptName, '??');
         End If;
 
-        If _scriptName IN ('MultiAlign_Aggregator', 'MaxQuant_DataPkg', 'MSFragger_DataPkg', 'DiaNN_DataPkg') And _dataPackageID = 0 Then
+        If _scriptName::citext IN ('MultiAlign_Aggregator', 'MaxQuant_DataPkg', 'MSFragger_DataPkg', 'DiaNN_DataPkg') And _dataPackageID = 0 Then
             _returnCode := 'U5215';
-            RAISE EXCEPTION '"Data Package ID" must be positive when using script %', _scriptName
+            RAISE EXCEPTION '"Data Package ID" must be positive when using script %', _scriptName;
         End If;
 
         ---------------------------------------------------
         -- Obtain new job number (if not debugging)
         ---------------------------------------------------
 
+        _currentLocation := 'Get new job number';
+
         If Not _debugMode Then
-            _job := public.get_new_job_id('Created in sw.t_jobs', false)
+            _job := public.get_new_job_id('Created in sw.t_jobs', false);
 
             If _job = 0 Then
                 _returnCode := 'U5210';
@@ -184,20 +199,26 @@ BEGIN
         -- Note: _datasetID needs to be 0
         --
         -- If it is non-zero, the newly created job will get deleted from
-        -- this sw.t_jobs the next time Update_Context runs, since the system will think
+        -- sw.t_jobs the next time Update_Context runs, since the system will think
         -- the job no-longer exists in public.t_analysis_job and thus should be deleted
         ---------------------------------------------------
+
+        _datasetID := 0;
 
         ---------------------------------------------------
         -- Add job to temp table
         ---------------------------------------------------
 
+        _currentLocation := 'Add row to Tmp_Jobs';
+
         INSERT INTO Tmp_Jobs (Job, Priority, Script, State, Dataset, Dataset_ID, Results_Directory_Name)
-        VALUES (_job, _priority, _scriptName, 1, _datasetName, _datasetID, NULL)
+        VALUES (_job, _priority, _scriptName, 1, _datasetName, _datasetID, NULL);
 
         ---------------------------------------------------
         -- Construct the results directory name
         ---------------------------------------------------
+
+        _currentLocation := 'Get results directory name';
 
         _resultsDirectoryName := sw.get_results_directory_name (_job, _tag);
 
@@ -221,6 +242,8 @@ BEGIN
         -- Create the basic job structure (steps and dependencies)
         -- Details are stored in Tmp_Job_Steps and Tmp_Job_Step_Dependencies
         ---------------------------------------------------
+
+        _currentLocation := 'Call sw.create_steps_for_job()';
 
         CALL sw.create_steps_for_job (
                     _job,
@@ -250,23 +273,28 @@ BEGIN
         -- Do special needs for local jobs that target other jobs
         ---------------------------------------------------
 
-        CALL sw.adjust_params_for_local_job (
-                    _scriptName,
-                    _datasetName,
-                    _dataPackageID,
-                    _jobParamXML => _jobParamXML,   -- Output
-                    _message => _message,           -- Output
-                    _returnCode => _returnCode);    -- Output
-
         If _debugMode Then
             RAISE INFO '';
-            RAISE INFO 'Job params after calling adjust_params_for_local_job: %', _jobParamXML;
+            RAISE INFO 'Calling sw.adjust_params_for_local_job';
         End If;
+
+        _currentLocation := 'Call sw.adjust_params_for_local_job()';
+
+        CALL sw.adjust_params_for_local_job (
+                    _scriptName,
+                    _dataPackageID,
+                    _jobParamXML => _jobParamXML,   -- Input / Output
+                    _message => _message,           -- Output
+                    _returnCode => _returnCode,     -- Output
+                    _debugMode => _debugMode
+                    );
 
         ---------------------------------------------------
         -- Calculate signatures for steps that require them (and also handle shared results directories)
         -- Details are stored in Tmp_Job_Steps
         ---------------------------------------------------
+
+        _currentLocation := 'Call sw.create_signatures_for_job_steps()';
 
         CALL sw.create_signatures_for_job_steps (
                     _job,
@@ -294,18 +322,19 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Save job parameters as XML into temp table
+        -- Store XML job parameters in Tmp_Job_Parameters
         ---------------------------------------------------
 
-        -- FUTURE: need to get set of parameters normally provided by Get_Job_Param_Table,
-        -- except for the job specifc ones which need to be provided as initial content of _jobParamXML
-        --
+        _currentLocation := 'Add row to Tmp_Job_Parameters';
+
         INSERT INTO Tmp_Job_Parameters (Job, Parameters)
         VALUES (_job, _jobParamXML);
 
         ---------------------------------------------------
         -- Handle any step cloning
         ---------------------------------------------------
+
+        _currentLocation := 'Call sw.clone_job_step()';
 
         CALL sw.clone_job_step (
                     _job,
@@ -331,8 +360,10 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Update step dependency count (code taken from SP FinishJobCreation)
+        -- Update step dependency count (code taken from procedure Finish_Job_Creation)
         ---------------------------------------------------
+
+        _currentLocation := 'Update step dependencies';
 
         UPDATE Tmp_Job_Steps
         SET Dependencies = T.dependencies
@@ -345,7 +376,7 @@ BEGIN
               Tmp_Job_Steps.Job = _job;
 
         ---------------------------------------------------
-        -- Move temp tables to main tables
+        -- Copy data from temp tables to main tables
         ---------------------------------------------------
 
         If Not _debugMode Then
@@ -365,19 +396,26 @@ BEGIN
                                    storage_server,
                                    owner_username,
                                    data_pkg_id )
-            VALUES( _job,
-                    _priority,
-                    _scriptName,
-                    1,              -- State
-                    _datasetName,
-                    _datasetID,
-                    NULL,           -- Transfer folder path
-                    _comment,
-                    NULL,           -- Storage server
-                    _ownerUsername,
-                    Coalesce(_dataPackageID, 0));
+            SELECT Job,
+                   Priority,
+                   Script,
+                   State,
+                   Dataset,
+                   Dataset_ID,
+                   NULL AS transfer_folder_path,
+                   _comment,
+                   NULL AS storage_server,
+                   _ownerUsername,
+                   Coalesce(_dataPackageID, 0)
+            FROM Tmp_Jobs;
 
-            CALL sw.move_jobs_to_main_tables (_message => _message, _returnCode => _returnCode)
+            _currentLocation := 'Call sw.move_jobs_to_main_tables';
+
+            CALL sw.move_jobs_to_main_tables (
+                    _message => _message,
+                    _returnCode => _returnCode);
+
+            _currentLocation := 'Call public.alter_entered_by_user';
 
             CALL public.alter_entered_by_user ('sw', 't_job_events', 'job', _job, _callingUser, _message => _alterEnteredByMessage);
         End If;
@@ -387,6 +425,8 @@ BEGIN
             -- Populate column transfer_folder_path in sw.t_jobs
             ---------------------------------------------------
 
+            _currentLocation := 'Store TransferFolderPath in sw.t_jobs';
+
             SELECT Value
             INTO _transferFolderPath
             FROM sw.get_job_param_table_local ( _job )
@@ -395,7 +435,7 @@ BEGIN
             If Coalesce(_transferFolderPath, '') <> '' Then
                 UPDATE sw.t_jobs
                 SET transfer_folder_path = _transferFolderPath
-                WHERE job = _job
+                WHERE job = _job;
             End If;
 
             ---------------------------------------------------
@@ -404,6 +444,8 @@ BEGIN
             ---------------------------------------------------
 
             If _dataPackageID > 0 Then
+                _currentLocation := 'Call sw.update_job_param_org_db_info_using_data_pkg()';
+
                 CALL sw.update_job_param_org_db_info_using_data_pkg (
                                 _job,
                                 _dataPackageID,
@@ -420,6 +462,8 @@ BEGIN
             -- Call update_job_param_org_db_info_using_data_pkg with debug mode enabled
             ---------------------------------------------------
 
+            _currentLocation := 'Call sw.update_job_param_org_db_info_using_data_pkg()';
+
             CALL sw.update_job_param_org_db_info_using_data_pkg (
                         _job,
                         _dataPackageID,
@@ -434,10 +478,9 @@ BEGIN
 
         If _debugMode Then
 
-            _currentLocation := 'Preview the new analysis job';
-
             -- Tmp_Jobs
             RAISE INFO 'Storing contents of Tmp_Jobs in table sw.t_debug_tmp_jobs';
+            _currentLocation := 'Store data in sw.t_debug_tmp_jobs';
 
             If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'sw' And tablename::citext = 't_debug_tmp_jobs') Then
                 DELETE FROM sw.t_debug_tmp_jobs;
@@ -453,24 +496,26 @@ BEGIN
 
             -- Tmp_Job_Steps
             RAISE INFO 'Storing contents of Tmp_Job_Steps in table sw.t_debug_tmp_job_steps';
+            _currentLocation := 'Store data in sw.t_debug_tmp_job_steps';
 
             If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'sw' And tablename::citext = 't_debug_tmp_job_steps') Then
                 DELETE FROM sw.t_debug_tmp_job_steps;
 
-                INSERT INTO sw.t_debug_tmp_job_steps (Job, Step, Tool, CPU_Load, Memory_Usage_MB, Dependencies, Shared_Result_Version, Filter_Version, Signature, State
+                INSERT INTO sw.t_debug_tmp_job_steps (Job, Step, Tool, CPU_Load, Memory_Usage_MB, Dependencies, Shared_Result_Version, Filter_Version, Signature, State,
                                                       Input_Directory_Name, Output_Directory_Name, Processor, Special_Instructions)
-                SELECT Job, Step, Tool, CPU_Load, Memory_Usage_MB, Dependencies, Shared_Result_Version, Filter_Version, Signature, State
+                SELECT Job, Step, Tool, CPU_Load, Memory_Usage_MB, Dependencies, Shared_Result_Version, Filter_Version, Signature, State,
                        Input_Directory_Name, Output_Directory_Name, Processor, Special_Instructions
                 FROM Tmp_Job_Steps;
             Else
                 CREATE TABLE sw.t_debug_tmp_job_steps AS
-                SELECT Job, Step, Tool, CPU_Load, Memory_Usage_MB, Dependencies, Shared_Result_Version, Filter_Version, Signature, State
+                SELECT Job, Step, Tool, CPU_Load, Memory_Usage_MB, Dependencies, Shared_Result_Version, Filter_Version, Signature, State,
                        Input_Directory_Name, Output_Directory_Name, Processor, Special_Instructions
                 FROM Tmp_Job_Steps;
             End If;
 
             -- Tmp_Job_Step_Dependencies
             RAISE INFO 'Storing contents of Tmp_Job_Step_Dependencies in table sw.t_debug_tmp_job_step_dependencies';
+            _currentLocation := 'Store data in sw.t_debug_tmp_job_step_dependencies';
 
             If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'sw' And tablename::citext = 't_debug_tmp_job_step_dependencies') Then
                 DELETE FROM sw.t_debug_tmp_job_step_dependencies;
@@ -486,6 +531,7 @@ BEGIN
 
             -- Tmp_Job_Parameters
             RAISE INFO 'Storing contents of Tmp_Job_Parameters in table sw.t_debug_tmp_job_parameters';
+            _currentLocation := 'Store data in sw.t_debug_tmp_job_parameters';
 
             If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'sw' And tablename::citext = 't_debug_tmp_job_parameters') Then
                 DELETE FROM sw.t_debug_tmp_job_parameters;
@@ -503,6 +549,8 @@ BEGIN
                 CALL public.post_log_entry ('Debug', _jobParamXML::text, 'Make_Local_Job_In_Broker', 'sw');
             End If;
         End If;
+
+        _currentLocation := 'Drop tables';
 
         DROP TABLE Tmp_Jobs;
         DROP TABLE Tmp_Job_Steps;
@@ -534,4 +582,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.make_local_job_in_broker IS 'MakeLocalJobInBroker';
+
+ALTER PROCEDURE sw.make_local_job_in_broker(IN _scriptname text, IN _datasetname text, IN _priority integer, IN _jobparamxml xml, IN _comment text, IN _ownerusername text, IN _datapackageid integer, IN _debugmode boolean, IN _logdebugmessages boolean, INOUT _job integer, INOUT _resultsdirectoryname text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE make_local_job_in_broker(IN _scriptname text, IN _datasetname text, IN _priority integer, IN _jobparamxml xml, IN _comment text, IN _ownerusername text, IN _datapackageid integer, IN _debugmode boolean, IN _logdebugmessages boolean, INOUT _job integer, INOUT _resultsdirectoryname text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.make_local_job_in_broker(IN _scriptname text, IN _datasetname text, IN _priority integer, IN _jobparamxml xml, IN _comment text, IN _ownerusername text, IN _datapackageid integer, IN _debugmode boolean, IN _logdebugmessages boolean, INOUT _job integer, INOUT _resultsdirectoryname text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'MakeLocalJobInBroker';
+

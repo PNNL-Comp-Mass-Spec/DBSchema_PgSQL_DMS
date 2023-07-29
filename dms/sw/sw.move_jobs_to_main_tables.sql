@@ -1,12 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE sw.move_jobs_to_main_tables
-(
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _debugMode boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: move_jobs_to_main_tables(text, text, boolean); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.move_jobs_to_main_tables(INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _debugmode boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -33,11 +31,10 @@ AS $$
 **          09/24/2014 mem - Rename Job in T_Job_Step_Dependencies
 **          09/14/2015 mem - Added parameter _debugMode
 **          11/18/2015 mem - Add Actual_CPU_Load
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/28/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
-
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -55,23 +52,30 @@ BEGIN
     If _debugMode Then
 
         -- Store the contents of the temporary tables in persistent tables
-        --
+
+        RAISE INFO '';
+        RAISE INFO 'Storing contents of temporary tables in database tables:';
+        RAISE INFO '  sw.T_Tmp_New_Jobs';
+        RAISE INFO '  sw.T_Tmp_New_Job_Steps';
+        RAISE INFO '  sw.T_Tmp_New_Job_Step_Dependencies';
+        RAISE INFO '  sw.T_Tmp_New_Job_Parameters';
+
         DROP TABLE IF EXISTS sw.T_Tmp_New_Jobs;
         DROP TABLE IF EXISTS sw.T_Tmp_New_Job_Steps;
         DROP TABLE IF EXISTS sw.T_Tmp_New_Job_Step_Dependencies;
         DROP TABLE IF EXISTS sw.T_Tmp_New_Job_Parameters;
 
-        SELECT * INTO sw.T_Tmp_New_Jobs                  FROM Tmp_Jobs;
-        SELECT * INTO sw.T_Tmp_New_Job_Steps             FROM Tmp_Job_Steps;
-        SELECT * INTO sw.T_Tmp_New_Job_Step_Dependencies FROM Tmp_Job_Step_Dependencies;
-        SELECT * INTO sw.T_Tmp_New_Job_Parameters        FROM Tmp_Job_Parameters;
+        CREATE TABLE sw.T_Tmp_New_Jobs                  AS SELECT * FROM Tmp_Jobs;
+        CREATE TABLE sw.T_Tmp_New_Job_Steps             AS SELECT * FROM Tmp_Job_Steps;
+        CREATE TABLE sw.T_Tmp_New_Job_Step_Dependencies AS SELECT * FROM Tmp_Job_Step_Dependencies;
+        CREATE TABLE sw.T_Tmp_New_Job_Parameters        AS SELECT * FROM Tmp_Job_Parameters;
     End If;
 
     BEGIN
 
         UPDATE sw.t_jobs
-        SET sw.t_jobs.state = Tmp_Jobs.state,
-            sw.t_jobs.results_folder_name = Tmp_Jobs.results_directory_name
+        SET state = Tmp_Jobs.state,
+            results_folder_name = Tmp_Jobs.results_directory_name
         FROM Tmp_Jobs
         WHERE sw.t_jobs.job = Tmp_Jobs.job;
 
@@ -90,20 +94,19 @@ BEGIN
             output_folder_name,
             processor
         )
-        SELECT
-            job,
-            step,
-            tool,
-            cpu_load,
-            cpu_load,
-            memory_usage_mb,
-            dependencies,
-            shared_result_version,
-            signature,
-            state,
-            input_folder_name,
-            output_folder_name,
-            processor
+        SELECT job,
+               step,
+               tool,
+               cpu_load,
+               cpu_load,
+               memory_usage_mb,
+               dependencies,
+               shared_result_version,
+               signature,
+               state,
+               input_directory_name,
+               output_directory_name,
+               processor
         FROM Tmp_Job_Steps;
 
         INSERT INTO sw.t_job_step_dependencies (
@@ -114,22 +117,20 @@ BEGIN
             test_value,
             enable_only
         )
-        SELECT
-            job,
-            step,
-            target_step,
-            condition_test,
-            test_value,
-            enable_only
+        SELECT job,
+               step,
+               target_step,
+               condition_test,
+               test_value,
+               enable_only
         FROM Tmp_Job_Step_Dependencies;
 
         INSERT INTO sw.t_job_parameters (
             job,
             parameters
         )
-        SELECT
-            job,
-            parameters
+        SELECT job,
+               parameters
         FROM Tmp_Job_Parameters;
 
     EXCEPTION
@@ -153,4 +154,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.move_jobs_to_main_tables IS 'MoveJobsToMainTables';
+
+ALTER PROCEDURE sw.move_jobs_to_main_tables(INOUT _message text, INOUT _returncode text, IN _debugmode boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE move_jobs_to_main_tables(INOUT _message text, INOUT _returncode text, IN _debugmode boolean); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.move_jobs_to_main_tables(INOUT _message text, INOUT _returncode text, IN _debugmode boolean) IS 'MoveJobsToMainTables';
+
