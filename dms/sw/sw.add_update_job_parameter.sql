@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_job_parameter(IN _job integer, IN _sec
 **          06/22/2017 mem - If updating DataPackageID, also update T_Jobs
 **          08/01/2017 mem - Use THROW if not authorized
 **          07/20/2023 mem - Ported to PostgreSQL
+**          07/28/2023 mem - Update warning message and capitalize keywords
 **
 *****************************************************/
 DECLARE
@@ -130,14 +131,14 @@ BEGIN
     _message := _results.message;
 
     If Not _results.success Then
-        RAISE WARNING 'Function add_update_task_parameter_xml was unable to update the XML for capture task job %: %',
+        RAISE WARNING 'Function sw.add_update_task_parameter_xml() was unable to update the XML for analysis job %: %',
             _job,
-            Case When Coalesce(_message, '') = '' Then 'Unknown reason' Else _message End;
+            CASE WHEN Coalesce(_message, '') = '' THEN 'Unknown reason' ELSE _message END;
 
     ElsIf Not _infoOnly Then
+
         ---------------------------------------------------
         -- Update sw.t_job_parameters
-        -- Note: Ordering by Section name but not by parameter name
         ---------------------------------------------------
 
         If _existingParamsFound Then

@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.create_steps_for_job(IN _job integer, IN _scriptx
 /****************************************************
 **
 **  Desc:
-**      Make entries in temporary tables for the the given capture task job according to definition of _scriptXML
+**      Make entries in temporary tables for the the given analysis job according to definition of _scriptXML
 **
 **      Uses temp tables created by sw.make_local_job_in_broker
 **        Tmp_Job_Steps
