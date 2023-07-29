@@ -45,6 +45,7 @@ CREATE OR REPLACE PROCEDURE sw.verify_job_parameters(INOUT _jobparam text, IN _s
 **          03/22/2023 mem - Add support for DiaNN
 **          05/10/2023 mem - Do not update _protCollOptionsList when using a legacy FASTA file
 **          07/27/2023 mem - Ported to PostgreSQL
+**          07/28/2023 mem - Trim leading and trailing whitespace from parameter values
 **
 *****************************************************/
 DECLARE
@@ -189,27 +190,27 @@ BEGIN
             RETURN;
         End If;
 
-        SELECT Value
+        SELECT Trim(Value)
         INTO _parameterFileName
         FROM Tmp_JobParameters
         WHERE Name = 'ParamFileName';
 
-        SELECT Value
+        SELECT Trim(Value)
         INTO _protCollNameList
         FROM Tmp_JobParameters
         WHERE Name = 'ProteinCollectionList';
 
-        SELECT Value
+        SELECT Trim(Value)
         INTO _protCollOptionsList
         FROM Tmp_JobParameters
         WHERE Name = 'ProteinOptions';
 
-        SELECT Value
+        SELECT Trim(Value)
         INTO _organismName
         FROM Tmp_JobParameters
         WHERE Name = 'OrganismName';
 
-        SELECT Value
+        SELECT Trim(Value)
         INTO _organismDBName
         FROM Tmp_JobParameters
         WHERE Name = 'LegacyFastaFileName';
