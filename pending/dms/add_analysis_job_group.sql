@@ -308,7 +308,7 @@ BEGIN
             INSERT INTO Tmp_DatasetInfo ( Dataset_Name )
             SELECT DISTINCT Dataset
             FROM dpkg.v_data_package_dataset_export
-            WHERE Data_Package_ID = _dataPackageID
+            WHERE Data_Package_ID = _dataPackageID;
 
             If Not Found Then
                 _message := 'Data package does not have any datasets associated with it';
@@ -322,7 +322,7 @@ BEGIN
 
             INSERT INTO Tmp_DatasetInfo (Dataset_Name)
             SELECT DISTINCT Trim(Item)
-            FROM public.parse_delimited_list(_datasetList)
+            FROM public.parse_delimited_list(_datasetList);
             --
             GET DIAGNOSTICS _jobCountToBeCreated = ROW_COUNT;
 
@@ -446,7 +446,7 @@ BEGIN
                 -- Remove datasets from list that have existing jobs
                 --
                 DELETE FROM Tmp_DatasetInfo
-                WHERE Dataset_Name IN (SELECT Dataset FROM Tmp_MatchingJobDatasets)
+                WHERE Dataset_Name IN (SELECT Dataset FROM Tmp_MatchingJobDatasets);
                 --
                 GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 

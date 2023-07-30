@@ -143,7 +143,7 @@ BEGIN
         RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
-            SELECT State_ID,
+            SELECT Job_State_ID AS State_ID,
                    _newDMSJobState AS State_ID_New,
                    public.timestamp_text(Start) AS Start,
                    CASE

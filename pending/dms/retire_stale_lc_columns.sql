@@ -69,7 +69,7 @@ BEGIN
         -- Populate column Most_Recent_Dataset
         --
         UPDATE Tmp_LCColumns
-        SET Most_Recent_Dataset = LookupQ.Dataset_Name
+        SET Most_Recent_Dataset = LookupQ.dataset
         FROM ( SELECT lc_column_ID,
                       dataset,
                       created

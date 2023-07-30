@@ -452,7 +452,6 @@ BEGIN
         -- Convert state name to ID
         ---------------------------------------------------
 
-        --
         SELECT state_id
         INTO _stateID
         FROM  t_sample_prep_request_state_name

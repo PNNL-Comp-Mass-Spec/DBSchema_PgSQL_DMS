@@ -158,7 +158,7 @@ BEGIN
             priority = _priority,
             processor_group_id = _processorGroupID,
             enabled = _enabled
-        WHERE (rule_id = _id)
+        WHERE rule_id = _id;
 
     End If;
 

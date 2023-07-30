@@ -249,7 +249,7 @@ BEGIN
 
             FOR _previewData IN
                 SELECT Dataset_ID,
-                       Dataset_Name,
+                       Dataset,
                        dataset_state_id AS State_ID,
                        CASE
                            WHEN _state <> '[no change]' THEN _stateID

@@ -60,18 +60,18 @@ BEGIN
         Dataset_ID int NULL,
         Dataset_Name text NOT NULL,
         MASIC_Job int NULL                            -- Analysis job used to generate the MASIC results; not stored in the QC table
-    )
+    );
 
     CREATE TEMP TABLE Tmp_Measurements (
         Name text NOT NULL,
         ValueText text NULL,
         Value float8 NULL   -- Double precision float initially, but values are restricted to -1E+37 to 1E+37 since stored as float4 (aka real)
-    )
+    );
 
     CREATE TEMP TABLE Tmp_KnownMetrics (
         Dataset_ID int NOT NULL,
         QCART real NULL
-    )
+    );
 
     ---------------------------------------------------
     -- Validate the inputs

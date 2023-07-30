@@ -272,7 +272,7 @@ BEGIN
         SELECT state_id
         INTO _statusID
         FROM t_requested_run_state_name
-        WHERE state_name = _status
+        WHERE state_name = _status;
 
         ---------------------------------------------------
         -- Validate that the experiment exists

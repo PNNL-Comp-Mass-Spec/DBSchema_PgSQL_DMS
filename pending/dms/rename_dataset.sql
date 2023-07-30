@@ -311,10 +311,10 @@ BEGIN
         Else
 
             RETURN QUERY
-            SELECT Dataset_Name     AS Dataset_Name_Old,
+            SELECT DS.Dataset      AS Dataset_Name_Old,
                    _datasetNameNew AS Dataset_Name_New,
                    Dataset_ID,
-                   Created      AS Dataset_Created,
+                   DS.Created      AS Dataset_Created,
                    CASE WHEN DS.Exp_ID = _newExperimentID
                         THEN format('%s (Unchanged)', DS.Exp_ID)
                         ELSE format('%s -> %s', DS.Exp_ID, _newExperimentID)
@@ -326,7 +326,7 @@ BEGIN
             FROM t_dataset DS
                  INNER JOIN t_experiments AS E
                    ON DS.exp_id = E.exp_id
-            WHERE dataset = _datasetNameOld::citext
+            WHERE dataset = _datasetNameOld::citext;
         End If;
 
         If Exists (SELECT dataset_id FROM t_dataset_files WHERE dataset_id = _datasetID) Then

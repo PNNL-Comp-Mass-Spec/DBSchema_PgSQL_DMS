@@ -62,18 +62,18 @@ BEGIN
         Dataset_Name text NOT NULL,
         SMAQC_Job int NULL,                -- Analysis job used to generate the SMAQC results
         Quameter_Job int NULL            -- Analysis job used to generate the Quameter results
-    )
+    );
 
     CREATE TEMP TABLE Tmp_Measurements (
         Name text NOT NULL,
         ValueText text NULL,
         Value float8 NULL   -- Double precision float initially, but values are restricted to -1E+37 to 1E+37 since stored as float4 (aka real)
-    )
+    );
 
     CREATE TEMP TABLE Tmp_KnownMetrics (
         Dataset_ID int NOT NULL,
         QCDM real NULL
-    )
+    );
 
     ---------------------------------------------------
     -- Validate the inputs
@@ -144,7 +144,7 @@ BEGIN
         UPDATE Tmp_DatasetInfo Target
         SET Dataset_ID = DS.Dataset_ID
         FROM t_dataset DS
-        WHERE Target.Dataset_Name = DS.dataset
+        WHERE Target.Dataset_Name = DS.dataset;
 
         If Not FOUND Then
             _message := format('Warning: dataset not found in table t_dataset: %s', _datasetName);

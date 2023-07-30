@@ -609,7 +609,7 @@ BEGIN
     FROM public.t_analysis_job AS DMSJobs
          INNER JOIN sw.t_jobs AS J
            ON J.job = DMSJobs.job
-    WHERE DMSJobs.state_id = 5 AND
+    WHERE DMSJobs.job_state_id = 5 AND
           J.state IN (1, 2, 4);
 
     -- Also look for jobs that are in state New in public.t_analysis_job, but are in-progress in sw.t_jobs
@@ -620,7 +620,7 @@ BEGIN
     FROM public.t_analysis_job AS DMSJobs
          INNER JOIN sw.t_jobs AS J
            ON J.job = DMSJobs.job
-    WHERE DMSJobs.state_id = 1 AND
+    WHERE DMSJobs.job_state_id = 1 AND
           J.state IN (2);
 
     If Not Exists (SELECT job FROM Tmp_JobsToReset) Then

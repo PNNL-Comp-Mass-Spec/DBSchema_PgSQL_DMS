@@ -81,13 +81,13 @@ BEGIN
         Dataset_Name text NOT NULL,
         Job int NULL,                   -- Analysis job used to generate the SMAQC results
         PSM_Source_Job int NULL         -- MS_GF+ or X!Tandem job whose results were used by SMAQDC
-    )
+    );
 
     CREATE TEMP TABLE Tmp_Measurements (
         Name text NOT NULL,
         ValueText text NULL,
         Value float8 NULL   -- Double precision float initially, but values are restricted to -1E+37 to 1E+37 since stored as float4 (aka real)
-    )
+    );
 
     CREATE TEMP TABLE Tmp_KnownMetrics (
         Dataset_ID int NOT NULL,
@@ -146,7 +146,7 @@ BEGIN
         MS2_RepIon_1Missing real NULL,
         MS2_RepIon_2Missing real NULL,
         MS2_RepIon_3Missing real NULL
-    )
+    );
 
     ---------------------------------------------------
     -- Validate the inputs
