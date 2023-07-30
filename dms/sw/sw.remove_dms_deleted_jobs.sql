@@ -1,20 +1,20 @@
 --
-CREATE OR REPLACE PROCEDURE sw.remove_dms_deleted_jobs
-(
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _maxJobsToProcess int = 0
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: remove_dms_deleted_jobs(boolean, text, text, integer); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.remove_dms_deleted_jobs(IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _maxjobstoprocess integer DEFAULT 0)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Delete failed jobs that have been removed from the main tables in the public scchema
 **
 **  Arguments:
-**    _infoOnly     When true, don't actually delete, just dump list of jobs that would have been
+**    _infoOnly             When true, don't actually delete, just dump list of jobs that would have been
+**    _message              Status message
+**    _returnCode           Return code
+**    _maxJobsToProcess     Maximum number of jobs to process
 **
 **  Auth:   grk
 **  Date:   02/19/2009 grk - Initial release (Ticket #723)
@@ -22,10 +22,11 @@ AS $$
 **          06/01/2009 mem - Added parameter _maxJobsToProcess (Ticket #738, http://prismtrac.pnl.gov/trac/ticket/738)
 **          04/13/2010 grk - Don't delete jobs where dataset ID = 0
 **          05/26/2017 mem - Treat state 9 (Running_Remote) as an active job
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/29/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
+
 BEGIN
     _message := '';
     _returnCode := '';
@@ -44,13 +45,14 @@ BEGIN
 
     ---------------------------------------------------
     -- Find all jobs present in sw.t_jobs but not present in public.t_analysis_job
-    -- sw.v_dms_pipeline_existing_jobs returns a list of all jobs in public.t_analysis_job (regardless of state)
+    -- View sw.v_dms_pipeline_existing_jobs returns a list of all jobs in public.t_analysis_job (regardless of state)
     ---------------------------------------------------
 
     INSERT INTO Tmp_Selected_Jobs (job, state)
     SELECT job, state
-    FROM t_jobs
-    WHERE dataset_id <> 0 AND NOT job IN (SELECT job FROM sw.v_dms_pipeline_existing_jobs);
+    FROM sw.t_jobs
+    WHERE dataset_id <> 0 AND
+          NOT job IN (SELECT job FROM sw.v_dms_pipeline_existing_jobs);
 
     If Not FOUND Then
         DROP TABLE Tmp_Selected_Jobs;
@@ -62,11 +64,15 @@ BEGIN
     -- However, ignore job steps that started over 48 hours ago
     ---------------------------------------------------
 
-    DELETE Tmp_Selected_Jobs
-    FROM sw.t_job_steps JS
-    WHERE Tmp_Selected_Jobs.job = JS.job AND
-          JS.state IN (4,9) AND
-          JS.start >= CURRENT_TIMESTAMP - INTERVAL '48 hours';
+    DELETE FROM Tmp_Selected_Jobs
+    WHERE EXISTS
+        ( SELECT 1
+          FROM Tmp_Selected_Jobs INNER JOIN
+               sw.t_job_steps JS
+                 ON Tmp_Selected_Jobs.job = JS.job
+          WHERE JS.state IN (4,9) AND
+                JS.start >= CURRENT_TIMESTAMP - INTERVAL '48 hours'
+        );
 
     If Not Exists (SELECT * FROM Tmp_Selected_Jobs) Then
         DROP TABLE Tmp_Selected_Jobs;
@@ -79,7 +85,7 @@ BEGIN
         WHERE NOT Job IN ( SELECT Job
                            FROM Tmp_Selected_Jobs
                            ORDER BY Job
-                           LIMIT _maxJobsToProcess)
+                           LIMIT _maxJobsToProcess);
     End If;
 
     ---------------------------------------------------
@@ -97,4 +103,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.remove_dms_deleted_jobs IS 'RemoveDMSDeletedJobs';
+
+ALTER PROCEDURE sw.remove_dms_deleted_jobs(IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _maxjobstoprocess integer) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE remove_dms_deleted_jobs(IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _maxjobstoprocess integer); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.remove_dms_deleted_jobs(IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _maxjobstoprocess integer) IS 'RemoveDMSDeletedJobs';
+

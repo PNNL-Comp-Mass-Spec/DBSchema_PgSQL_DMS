@@ -1,16 +1,19 @@
 --
-CREATE OR REPLACE PROCEDURE sw.auto_fix_failed_jobs
-(
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _infoOnly boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: auto_fix_failed_jobs(text, text, boolean); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.auto_fix_failed_jobs(INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infoonly boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Automatically deal with certain types of failed job situations
+**
+**  Arguments:
+**    _message      Status message
+**    _returnCode   Return code
+**    _infoOnly     When true, preview job steps that would be updated
 **
 **  Auth:   mem
 **  Date:   05/01/2015 mem - Initial version
@@ -18,7 +21,7 @@ AS $$
 **          05/26/2017 mem - Add step state 16 (Failed_Remote)
 **          03/30/2018 mem - Reset MSGF+ steps with 'Timeout expired'
 **          06/05/2018 mem - Add support for Formularity
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/29/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -44,9 +47,10 @@ BEGIN
 
     _infoOnly := Coalesce(_infoOnly, false);
 
-    _formatSpecifier := '%-10s %-80s %-4s %-25s %-20s %-10s %-5s %-20s %-20s %-20s %-15s %-30s %-15s %-30s %-11s';
+    _formatSpecifier := '%-55s %-10s %-80s %-4s %-25s %-20s %-10s %-5s %-20s %-20s %-20s %-15s %-30s %-15s %-30s %-11s';
 
     _infoHead := format(_formatSpecifier,
+                        'Action',
                         'Job',
                         'Dataset',
                         'Step',
@@ -65,6 +69,7 @@ BEGIN
                        );
 
     _infoHeadSeparator := format(_formatSpecifier,
+                                 '-------------------------------------------------------',
                                  '----------',
                                  '--------------------------------------------------------------------------------',
                                  '----',
@@ -123,6 +128,7 @@ BEGIN
                 ORDER BY JS.Job, JS.Step
             LOOP
                 _infoData := format(_formatSpecifier,
+                                    'Change step state to 3',
                                     _previewData.Job,
                                     _previewData.Dataset,
                                     _previewData.Step,
@@ -144,7 +150,7 @@ BEGIN
             END LOOP;
 
         Else
-            -- We will leave these jobs as 'failed' in T_Analysis_Job since there are no results to track
+            -- We will leave these jobs as 'failed' in public.T_Analysis_Job since there are no results to track
 
             -- Change the step state to 3 (Skipped) for all of the steps in this job
             --
@@ -168,7 +174,7 @@ BEGIN
     FROM sw.t_job_steps
     WHERE tool In ('Formularity', 'NOMSI') AND
           state IN (6, 16) AND
-          completion_message = 'No peaks found'
+          completion_message = 'No peaks found';
 
     If FOUND Then
         If _infoOnly Then
@@ -200,6 +206,7 @@ BEGIN
                 ORDER BY JS.Job, JS.Step
             LOOP
                 _infoData := format(_formatSpecifier,
+                                    'Change step state to 3 and propagation mode to 1',
                                     _previewData.Job,
                                     _previewData.Dataset,
                                     _previewData.Step,
@@ -224,8 +231,8 @@ BEGIN
             -- Change the Propagation Mode to 1 (so that the job will be set to state 14 (No Export)
             --
             UPDATE public.t_analysis_job Target
-            SET Propagation_Mode = 1,
-                State_ID = 2
+            SET propagation_mode = 1,
+                job_state_id = 2
             FROM Tmp_JobsToFix F
             WHERE Target.job = F.Job;
 
@@ -254,7 +261,7 @@ BEGIN
     -- Error retrieving protein collection or legacy FASTA file: Timeout expired
     ---------------------------------------------------
 
-    DELETE FROM Tmp_JobsToFix
+    DELETE FROM Tmp_JobsToFix;
 
     INSERT INTO Tmp_JobsToFix (job, step)
     SELECT job, step
@@ -262,7 +269,7 @@ BEGIN
     WHERE tool = 'MSGFPlus' AND
           state IN (6, 16) AND
           (completion_message LIKE '%Cannot run BuildSA since less than % MB of free memory%' OR
-           completion_message LIKE '%Timeout expired%')
+           completion_message LIKE '%Timeout expired%');
 
     If FOUND Then
         If _infoOnly Then
@@ -294,6 +301,7 @@ BEGIN
                 ORDER BY JS.Job, JS.Step
             LOOP
                 _infoData := format(_formatSpecifier,
+                                    'Change step state to 2 and clear the completion msg',
                                     _previewData.Job,
                                     _previewData.Dataset,
                                     _previewData.Step,
@@ -315,7 +323,6 @@ BEGIN
             END LOOP;
 
         Else
-
             -- Clear the completion_message and update the step state
             --
             UPDATE sw.t_job_steps Target
@@ -335,16 +342,15 @@ BEGIN
 
             -- Update the job to state 2 and remove the error message
             UPDATE public.t_analysis_job Target
-            SET state_id = 2,
-                Comment = CASE
-                                 WHEN Target.Comment LIKE 'Auto predefined%' AND Position(';' In Target.Comment) > 0
-                                      THEN Substring(Target.Comment, 1, Position(';' In Target.Comment) - 1)
-                                 WHEN Target.Comment LIKE 'Auto predefined%'
-                                      THEN Target.Comment
-                                 ELSE ''
-                             End If;
+            SET job_state_id = 2,
+                comment = CASE WHEN Target.comment LIKE 'Auto predefined%' AND Position(';' In Target.comment) > 0
+                                    THEN Substring(Target.comment, 1, Position(';' In Target.comment) - 1)
+                               WHEN Target.comment LIKE 'Auto predefined%'
+                                    THEN Target.comment
+                               ELSE ''
+                          END
             FROM Tmp_JobsToFix F
-            WHERE Target.job = F.Job
+            WHERE Target.job = F.Job;
 
             -- Change the job state back to 'In Progress'
             --
@@ -360,4 +366,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.auto_fix_failed_jobs IS 'AutoFixFailedJobs';
+
+ALTER PROCEDURE sw.auto_fix_failed_jobs(INOUT _message text, INOUT _returncode text, IN _infoonly boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE auto_fix_failed_jobs(INOUT _message text, INOUT _returncode text, IN _infoonly boolean); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.auto_fix_failed_jobs(INOUT _message text, INOUT _returncode text, IN _infoonly boolean) IS 'AutoFixFailedJobs';
+

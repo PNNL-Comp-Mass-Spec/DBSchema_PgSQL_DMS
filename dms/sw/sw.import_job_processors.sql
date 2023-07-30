@@ -1,17 +1,16 @@
 --
-CREATE OR REPLACE PROCEDURE sw.import_job_processors
-(
-    _bypassDMS boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: import_job_processors(boolean, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.import_job_processors(IN _bypassdms boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Get list of jobs and associated processors
-**      and count of associated groups that are enabled for general processing
+**      Get list of jobs and associated processors and count of associated groups that are enabled for general processing
+**
+**      This procedure was deprecated in May 2015 since we no longer use sw.import_job_processors
 **
 **  Auth:   grk
 **  Date:   05/26/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)
@@ -21,7 +20,7 @@ AS $$
 **          06/01/2015 mem - No longer deleting rows in T_Local_Job_Processors since we have deprecated processor groups
 **          02/15/2016 mem - Re-enabled support for processor groups, but altered logic to wait for 2 hours before deleting completed jobs
 **          01/30/2017 mem - Switch from DateDiff to DateAdd
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/29/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -29,6 +28,8 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode := '';
+
+    _bypassDMS := Coalesce(_bypassDMS, false);
 
     If _bypassDMS Then
         RETURN;
@@ -43,9 +44,18 @@ BEGIN
     WHERE job IN ( SELECT job
                    FROM sw.t_jobs
                    WHERE state = 4 AND
-                         finish < CURRENT_TIMESTAMP - INTERVAL '2 hours';
+                         finish < CURRENT_TIMESTAMP - INTERVAL '2 hours'
+                 );
 
 END
 $$;
 
-COMMENT ON PROCEDURE sw.import_job_processors IS 'ImportJobProcessors';
+
+ALTER PROCEDURE sw.import_job_processors(IN _bypassdms boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE import_job_processors(IN _bypassdms boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.import_job_processors(IN _bypassdms boolean, INOUT _message text, INOUT _returncode text) IS 'ImportJobProcessors';
+
