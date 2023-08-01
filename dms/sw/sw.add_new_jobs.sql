@@ -42,7 +42,7 @@ CREATE OR REPLACE PROCEDURE sw.add_new_jobs(IN _bypassdms boolean DEFAULT false,
 **
 **
 **  Arguments:
-**    _bypassDMS                If true, the logic in this procedure is completely bypassed
+**    _bypassDMS                If true, the logic in this procedure is completely bypassed (and thus new jobs are not imported from public.t_analysis_job)
 **    _message                  Output: status message
 **    _returnCode               Output: return code
 **    _maxJobsToProcess         Maximum number of jobs to process
@@ -174,7 +174,7 @@ BEGIN
     CREATE INDEX IX_Tmp_DMSJobs_Job ON Tmp_DMSJobs (Job);
 
     ---------------------------------------------------
-    -- Get list of new or held jobs from DMS
+    -- Get list of new or held jobs from public.t_analysis_job
     --
     -- Data comes from view V_Get_Pipeline_Jobs,
     -- which shows new jobs in state 1 or 8 but it

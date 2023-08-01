@@ -11,6 +11,9 @@ CREATE OR REPLACE PROCEDURE sw.import_processors(IN _bypassdms boolean DEFAULT f
 **      Get list of processors from public.V_Get_Pipeline_Processors
 **      (which references public schema tables t_analysis_job_processors and t_analysis_job_processor_group_membership)
 **
+**  Arguments:
+**    _bypassDMS    If true, the logic in this procedure is completely bypassed
+**
 **  Auth:   grk
 **  Date:   06/03/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)
 **          09/03/2009 mem - Now skipping disabled processors when looking for new processors to import
@@ -24,7 +27,7 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    If _bypassDMS Then
+    If Coalesce(_bypassDMS, false) Then
         RETURN;
     End If;
 
