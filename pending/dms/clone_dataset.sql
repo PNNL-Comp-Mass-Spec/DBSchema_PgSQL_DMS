@@ -280,7 +280,6 @@ BEGIN
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
         End If;
-
     END;
 
     If _returnCode <> '' Then
@@ -319,7 +318,6 @@ BEGIN
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
         End If;
-
     END;
 
     -- Commit changes now
@@ -528,7 +526,6 @@ BEGIN
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
         End If;
-
     END;
 
 END

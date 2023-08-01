@@ -11,10 +11,10 @@ CREATE OR REPLACE PROCEDURE sw.reset_aggregation_job(IN _job integer, IN _infoon
 **      Resets an aggregation job
 **
 **      Case 1:
-**      If the job is complete (state 4), renames the Output_Folder and resets all steps
+**        If the job is complete (state 4), renames the Output_Folder and resets all steps
 **
-        Case 2:
-**      If the job has one or more failed steps, leaves the Output Folder name unchanged but resets the failed steps
+**      Case 2:
+**        If the job has one or more failed steps, leaves the Output Folder name unchanged but resets the failed steps
 **
 **  Arguments:
 **    _job        Job that needs to be rerun, including re-generating the shared results
@@ -444,7 +444,6 @@ EXCEPTION
     If Coalesce(_returnCode, '') = '' Then
         _returnCode := _sqlState;
     End If;
-
 END
 $$;
 

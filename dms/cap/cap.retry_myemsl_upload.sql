@@ -307,7 +307,6 @@ BEGIN
         DROP TABLE IF EXISTS Tmp_Archive_Jobs_To_Skip;
         DROP TABLE IF EXISTS Tmp_Archive_Jobs_To_Reset;
         DROP TABLE IF EXISTS Tmp_Archive_JobStepsToReset;
-
     END;
 END
 $$;

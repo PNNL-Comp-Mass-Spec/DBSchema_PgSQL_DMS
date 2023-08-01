@@ -143,7 +143,6 @@ BEGIN
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
         End If;
-
     END;
 
     -- Do not drop Tmp_Datasets since it is used by the cursor

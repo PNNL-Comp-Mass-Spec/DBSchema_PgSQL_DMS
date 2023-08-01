@@ -1514,7 +1514,6 @@ BEGIN
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
         End If;
-
     END;
 
     DROP TABLE IF EXISTS Tmp_ID_Update_List;

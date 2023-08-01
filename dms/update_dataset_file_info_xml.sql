@@ -964,7 +964,6 @@ BEGIN
         DROP TABLE IF EXISTS Tmp_ScanTypes;
         DROP TABLE IF EXISTS Tmp_InstrumentFiles;
         DROP TABLE IF EXISTS Tmp_DuplicateDatasets;
-
     END;
 
 END

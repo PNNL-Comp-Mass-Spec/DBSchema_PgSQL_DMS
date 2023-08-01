@@ -128,7 +128,6 @@ BEGIN
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
         End If;
-
     END;
 
     ---------------------------------------------------

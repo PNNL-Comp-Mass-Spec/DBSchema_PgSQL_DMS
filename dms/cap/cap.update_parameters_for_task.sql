@@ -345,7 +345,6 @@ BEGIN
         DROP TABLE IF EXISTS Tmp_Job_List;
         DROP TABLE IF EXISTS Tmp_Jobs;
         DROP TABLE IF EXISTS Tmp_Job_Parameters;
-
     END;
 END
 $$;

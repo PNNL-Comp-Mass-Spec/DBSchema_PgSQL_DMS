@@ -349,7 +349,6 @@ BEGIN
         DROP TABLE IF EXISTS Tmp_Job_Steps;
         DROP TABLE IF EXISTS Tmp_Job_Step_Dependencies;
         DROP TABLE IF EXISTS Tmp_Job_Parameters;
-
     END;
 END
 $$;
