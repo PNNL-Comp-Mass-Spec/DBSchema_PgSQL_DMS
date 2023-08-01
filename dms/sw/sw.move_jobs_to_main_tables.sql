@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE sw.move_jobs_to_main_tables(INOUT _message text DEFA
 **          09/14/2015 mem - Added parameter _debugMode
 **          11/18/2015 mem - Add Actual_CPU_Load
 **          07/28/2023 mem - Ported to PostgreSQL
+**          07/31/2023 mem - Remove processor column from Tmp_Job_Steps (it was typically null, but obsolete procedure sw.override_dta_gen_for_external_dta() set it to 'Internal')
 **
 *****************************************************/
 DECLARE
@@ -91,8 +92,7 @@ BEGIN
             signature,
             state,
             input_folder_name,
-            output_folder_name,
-            processor
+            output_folder_name
         )
         SELECT job,
                step,
@@ -105,8 +105,7 @@ BEGIN
                signature,
                state,
                input_directory_name,
-               output_directory_name,
-               processor
+               output_directory_name
         FROM Tmp_Job_Steps;
 
         INSERT INTO sw.t_job_step_dependencies (

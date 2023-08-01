@@ -55,6 +55,7 @@ CREATE OR REPLACE PROCEDURE sw.make_local_job_in_broker(IN _scriptname text, IN 
 **          03/24/2023 mem - Capitalize job parameter TransferFolderPath
 **          03/27/2022 mem - Require that data package ID is non-zero for DiaNN_DataPkg jobs
 **          07/28/2023 mem - Ported to PostgreSQL
+**          07/31/2023 mem - Remove processor column from Tmp_Job_Steps (it was typically null, but obsolete procedure sw.override_dta_gen_for_external_dta() set it to 'Internal')
 **
 *****************************************************/
 DECLARE
@@ -134,7 +135,6 @@ BEGIN
             State int NULL,
             Input_Directory_Name text NULL,
             Output_Directory_Name text NULL,
-            Processor text NULL,
             Special_Instructions text NULL
         );
 
@@ -502,14 +502,14 @@ BEGIN
                 DELETE FROM sw.t_debug_tmp_job_steps;
 
                 INSERT INTO sw.t_debug_tmp_job_steps (Job, Step, Tool, CPU_Load, Memory_Usage_MB, Dependencies, Shared_Result_Version, Filter_Version, Signature, State,
-                                                      Input_Directory_Name, Output_Directory_Name, Processor, Special_Instructions)
+                                                      Input_Directory_Name, Output_Directory_Name, Special_Instructions)
                 SELECT Job, Step, Tool, CPU_Load, Memory_Usage_MB, Dependencies, Shared_Result_Version, Filter_Version, Signature, State,
-                       Input_Directory_Name, Output_Directory_Name, Processor, Special_Instructions
+                       Input_Directory_Name, Output_Directory_Name, Special_Instructions
                 FROM Tmp_Job_Steps;
             Else
                 CREATE TABLE sw.t_debug_tmp_job_steps AS
                 SELECT Job, Step, Tool, CPU_Load, Memory_Usage_MB, Dependencies, Shared_Result_Version, Filter_Version, Signature, State,
-                       Input_Directory_Name, Output_Directory_Name, Processor, Special_Instructions
+                       Input_Directory_Name, Output_Directory_Name, Special_Instructions
                 FROM Tmp_Job_Steps;
             End If;
 
