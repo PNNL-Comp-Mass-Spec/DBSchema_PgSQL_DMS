@@ -39,6 +39,7 @@ CREATE OR REPLACE FUNCTION sw.create_parameters_for_job(_job integer, _settingsf
 **          10/14/2022 mem - Ported to PostgreSQL
 **          03/26/2023 mem - Update logic to handle data package based jobs (which should have dataset name 'Aggregation')
 **          03/27/2023 mem - Remove step_number column from temp tables since unused
+**          07/31/2023 mem - Rename temporary table to avoid conflicts with calling procedures
 **
 *****************************************************/
 DECLARE
@@ -49,7 +50,7 @@ DECLARE
     _value text;
 BEGIN
 
-    CREATE TEMP TABLE Tmp_Job_Parameters (
+    CREATE TEMP TABLE Tmp_Job_Parameters_CPJ (
         Job int,
         Section text,
         Name text,
@@ -60,7 +61,7 @@ BEGIN
     -- Get job parameters from public schema tables
     ---------------------------------------------------
 
-    INSERT INTO Tmp_Job_Parameters (Job, Section, Name, Value)
+    INSERT INTO Tmp_Job_Parameters_CPJ (Job, Section, Name, Value)
     SELECT Job, Section, Name, Value
     FROM sw.get_job_param_table(_job, _settingsFileOverride, _debugMode => _debugMode);
 
@@ -74,7 +75,7 @@ BEGIN
 
         ---------------------------------------------------
         -- This is a data package based job with existing parameters
-        -- Selectively update the existing job parameters using the parameters in Tmp_Job_Parameters
+        -- Selectively update the existing job parameters using the parameters in Tmp_Job_Parameters_CPJ
         ---------------------------------------------------
 
         CREATE TEMP TABLE Tmp_Job_Parameters_Merged (
@@ -105,7 +106,7 @@ BEGIN
                                       value citext PATH '@Value')
              ) XmlQ;
 
-        -- Update Tmp_Job_Parameters_Merged using selected rows in Tmp_Job_Parameters
+        -- Update Tmp_Job_Parameters_Merged using selected rows in Tmp_Job_Parameters_CPJ
         -- Only update settings that come from T_Analysis_Job
 
         CREATE TEMP TABLE Tmp_Job_Parameters_To_Update (
@@ -131,7 +132,7 @@ BEGIN
         LOOP
             SELECT Value
             INTO _value
-            FROM Tmp_Job_Parameters
+            FROM Tmp_Job_Parameters_CPJ
             WHERE Section = _section AND Name = _name;
 
             If Not FOUND Then
@@ -182,12 +183,12 @@ BEGIN
                             value As "Value"))
                         ORDER BY section, name
                        ) AS xml_item
-               FROM Tmp_Job_Parameters
+               FROM Tmp_Job_Parameters_CPJ
             ) AS LookupQ;
 
     End If;
 
-    DROP TABLE Tmp_Job_Parameters;
+    DROP TABLE Tmp_Job_Parameters_CPJ;
 
     RETURN _xmlParameters;
 END
