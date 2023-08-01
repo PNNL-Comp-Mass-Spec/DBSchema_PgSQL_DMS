@@ -63,6 +63,7 @@ CREATE OR REPLACE PROCEDURE sw.create_job_steps(INOUT _message text DEFAULT ''::
 **                         - Add results folder name comment regarding Special="Job_Results"
 **          07/20/2023 mem - Use the correct remote info name when adding the ID=1 row to T_Remote_Info
 **          07/31/2023 mem - Ported to PostgreSQL
+**          08/01/2023 mem - Use text parsing to combine XML when mode is 'ExtendExistingJob'
 **                         - Set _captureTaskJob to false when calling sw.show_tmp_job_steps_and_job_step_dependencies
 **
 *****************************************************/
@@ -84,6 +85,8 @@ DECLARE
     _scriptXML xml;
     _tag text;
     _scriptXML2 xml;
+    _closingTagScript1 int;
+    _firstStepScript2 int;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -154,7 +157,7 @@ BEGIN
             RETURN;
         End If;
 
-        If Not Exists (Select * from sw.t_scripts WHERE script = _extensionScriptName) Then
+        If Not Exists (SELECT script_id FROM sw.t_scripts WHERE script = _extensionScriptName) Then
             _message := format('Error: Extension script "%s" not found in sw.t_scripts', _extensionScriptName);
             _returnCode := 'U5204';
 
@@ -278,6 +281,12 @@ BEGIN
             If Not FOUND Then
                 _message := format('Job %s not found in sw.t_jobs; unable to continue debugging', _existingJob);
                 _returnCode := 'U5205';
+
+                DROP TABLE Tmp_Jobs;
+                DROP TABLE Tmp_Job_Steps;
+                DROP TABLE Tmp_Job_Step_Dependencies;
+                DROP TABLE Tmp_Job_Parameters;
+
                 RETURN;
             End If;
         End If;
@@ -433,30 +442,63 @@ BEGIN
         WHERE script = _jobInfo.ScriptName;
 
         -- Add additional script if extending an existing job
-        If _mode::citext = 'ExtendExistingJob' and _extensionScriptName <> '' Then
+        If _mode::citext = 'ExtendExistingJob' And _extensionScriptName <> '' Then
 
             SELECT contents
             INTO _scriptXML2
             FROM sw.t_scripts
             WHERE script = _extensionScriptName;
 
-            -- FUTURE: process as list INTO _scriptXML2
-            _scriptXML := format('%s%s', _scriptXML, _scriptXML2)::xml;
+            -- Combine the XML for the two scripts
+            _closingTagScript1 := Position('</JobScript>' IN _scriptXML::text);
+            _firstStepScript2 := Position('<Step ' IN _scriptXML2::text);
+
+            If _closingTagScript1 = 0 Then
+                _message = format('Cannot combine original job script with extension script; could not find "</JobScript>" in the script XML for %s', _jobInfo.ScriptName);
+                _returnCode := 'U5209';
+            ElsIf _firstStepScript2 = 0 Then
+                _message = format('Cannot combine original job script with extension script; could not find "<Step " in the script XML for %s', _extensionScriptName);
+                _returnCode := 'U5210';
+            Else
+                _message := '';
+            End If;
+
+            If _message <> '' Then
+                RAISE WARNING '%', _message;
+
+                DROP TABLE Tmp_Jobs;
+                DROP TABLE Tmp_Job_Steps;
+                DROP TABLE Tmp_Job_Step_Dependencies;
+                DROP TABLE Tmp_Job_Parameters;
+
+                RETURN;
+            End If;
+
+            If _debugMode Then
+                RAISE INFO 'Merging XML for scripts % and %', _jobInfo.ScriptName, _extensionScriptName;
+            End If;
+
+            _scriptXML := format('%s%s',
+                                 Substring(_scriptXML::text, 1, _closingTagScript1 - 1),
+                                 Substring(_scriptXML2::text, _firstStepScript2, Char_Length(_scriptXML2::text))
+                                )::xml;
         End If;
 
         If _debugMode Then
+            RAISE INFO '';
             RAISE INFO 'Script XML: %', _scriptXML;
+            RAISE INFO '';
         End If;
 
         -- Construct the results directory name
-        If _mode::citext = 'CreateFromImportedJobs' or _mode::citext = 'UpdateExistingJob' Then
-            _resultsDirectoryName = sw.get_results_directory_name (_jobInfo.Job, _tag);
+        _resultsDirectoryName = sw.get_results_directory_name (_jobInfo.Job, _tag);
 
+        _jobInfo.ResultsDirectoryName := _resultsDirectoryName;
+
+        If _mode::citext = 'CreateFromImportedJobs' or _mode::citext = 'UpdateExistingJob' Then
             UPDATE Tmp_Jobs
             SET Results_Directory_Name = _resultsDirectoryName
             WHERE Job = _jobInfo.Job;
-
-            _jobInfo.ResultsDirectoryName := _resultsDirectoryName;
         End If;
 
         -- Get parameters for the job as XML
