@@ -1,19 +1,21 @@
 --
-CREATE OR REPLACE PROCEDURE sw.copy_history_to_job
-(
-    _job int,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _debugMode boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: copy_history_to_job(integer, text, text, boolean); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.copy_history_to_job(IN _job integer, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _debugmode boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      For a given job, copies the job details, steps,
-**      and parameters from the most recent successful
-**      run in the history tables back into the main tables
+**      For a given job, copies the job details, steps, and parameters
+**      from the most recent successful job in the history tables back into the main tables
+**
+**  Arguments:
+**    _job          Job number
+**    _message      Status message
+**    _returnCode   Return code
+**    _debugMode    When true, show additional status messages
 **
 **  Auth:   grk
 **  Date:   02/06/2009 grk - Initial release  (http://prismtrac.pnl.gov/trac/ticket/720)
@@ -38,7 +40,7 @@ AS $$
 **          05/12/2017 mem - Add Remote_Info_ID
 **          01/19/2018 mem - Add Runtime_Minutes
 **          07/25/2019 mem - Add Remote_Start and Remote_Finish
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/31/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -71,6 +73,7 @@ BEGIN
     End If;
 
     If _debugMode Then
+        RAISE INFO '';
         RAISE INFO 'Looking for job % in the history tables', _job;
     End If;
 
@@ -78,7 +81,7 @@ BEGIN
     -- Bail if job already exists in main tables
     ---------------------------------------------------
 
-    If Exists (SELECT * FROM sw.t_jobs WHERE job = _job) Then
+    If Exists (SELECT job FROM sw.t_jobs WHERE job = _job) Then
         _message := format('Job %s already exists in sw.t_jobs; aborting', _job);
         RAISE WARNING '%', _message;
 
@@ -170,7 +173,7 @@ BEGIN
         RAISE INFO 'Added job % to sw.t_jobs', _job;
 
         ---------------------------------------------------
-        -- Copy Steps
+        -- Copy job steps
         ---------------------------------------------------
 
         _currentLocation := format('Insert into sw.t_job_steps for %s', _jobDateDescription);
@@ -277,7 +280,7 @@ BEGIN
                                         ON JSD.Job = H.Job AND
                                            JSD.Step = H.Step AND
                                            JSD.Target_Step = H.Target_Step
-                                 WHERE JSD.Job = _newJob AND
+                                 WHERE JSD.Job = _job AND
                                        H.Job IS NULL
                                 ) DeleteQ
                       ON TSD.Job = DeleteQ.Job AND
@@ -289,7 +292,7 @@ BEGIN
 
         -- Check whether this job has entries in sw.t_job_step_dependencies_history
         --
-        If Not Exists (Select * From sw.t_job_step_dependencies_history Where job = _job) Then
+        If Not Exists (SELECT job FROM sw.t_job_step_dependencies_history WHERE job = _job) Then
             -- Job did not have cached dependencies
             -- Look for a job that used the same script
 
@@ -304,7 +307,7 @@ BEGIN
                                                WHERE job = _job AND
                                                      most_recent_entry = 1 )
                              ) SimilarJobQ
-                   ON H.job = SimilarJobQ.job
+                   ON H.job = SimilarJobQ.job;
 
             If FOUND Then
                 If _debugMode Then
@@ -341,7 +344,7 @@ BEGIN
                 -- Create default dependencenies
 
                 If _debugMode Then
-                    RAISE INFO 'Create default dependencies for job %', _newJob;
+                    RAISE INFO 'Create default dependencies for job %', _job;
                 End If;
 
                 INSERT INTO sw.t_job_step_dependencies( job,
@@ -358,7 +361,7 @@ BEGIN
                        0 AS Enable_Only
                 FROM sw.t_job_steps
                 WHERE job = _job AND
-                      step > 1
+                      step > 1;
                 --
                 GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
@@ -419,13 +422,23 @@ BEGIN
     -- Update the job parameters in case any parameters have changed (in particular, storage path)
     ---------------------------------------------------
 
-    CALL sw.update_job_parameters (_job, _infoOnly => false);
+    CALL sw.update_job_parameters (
+                _job,
+                _infoOnly => false,
+                _settingsFileOverride => '',
+                _message => _message,
+                _returnCode => _returnCode);
 
     ---------------------------------------------------
     -- Make sure transfer_folder_path and storage_server are up-to-date in sw.t_jobs
     ---------------------------------------------------
 
-    CALL sw.validate_job_server_info (_job, _useJobParameters => true);
+    CALL sw.validate_job_server_info (
+                _job,
+                _useJobParameters => true,
+                _message => _message,
+                _returnCode => _returnCode,
+                _debugMode => _debugMode);
 
     ---------------------------------------------------
     -- Make sure the dependencies column is up-to-date in sw.t_job_steps
@@ -451,4 +464,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.copy_history_to_job IS 'CopyHistoryToJob';
+
+ALTER PROCEDURE sw.copy_history_to_job(IN _job integer, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE copy_history_to_job(IN _job integer, INOUT _message text, INOUT _returncode text, IN _debugmode boolean); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.copy_history_to_job(IN _job integer, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) IS 'CopyHistoryToJob';
+

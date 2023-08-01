@@ -1,21 +1,23 @@
 --
-CREATE OR REPLACE PROCEDURE sw.copy_history_to_job_multi
-(
-    _jobList text,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _debugMode boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: copy_history_to_job_multi(text, boolean, text, text, boolean); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.copy_history_to_job_multi(IN _joblist text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _debugmode boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      For a list of jobs, copies the job details, steps,
-**      and parameters from the most recent successful
-**      run in the history tables back into the main tables
+**      For a list of jobs, copies the job details, steps, and parameters
+**      from the most recent successful jobs in the history tables back into the main tables
 **
+**  Arguments:
+**    _jobList      Comma-separated list of job numbers
+**    _infoOnly     If true, preview the jobs that would be copied
+**    _message      Status message
+**    _returnCode   Return code
+**    _debugMode    When true, show additional status messages
+
 **  Auth:   mem
 **  Date:   09/27/2012 mem - Initial version
 **          03/26/2013 mem - Added column Comment
@@ -29,7 +31,8 @@ AS $$
 **          01/19/2018 mem - Add Runtime_Minutes
 **          06/20/2018 mem - Move rollback transaction to before the call to Local_Error_Handler
 **          07/25/2019 mem - Add Remote_Start and Remote_Finish
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/31/2023 mem - Make sure the dependencies column is up-to-date in t_job_steps
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -68,7 +71,7 @@ BEGIN
 
     INSERT INTO Tmp_JobsToCopy (Job)
     SELECT Value
-    FROM public.parse_delimited_integer_list(_jobList, ',')
+    FROM public.parse_delimited_integer_list(_jobList, ',');
 
     ---------------------------------------------------
     -- Bail if no candidates found
@@ -148,7 +151,7 @@ BEGIN
         RAISE INFO 'Deleted % % from _jobList because they do not exist in sw.t_jobs_history with state 4', _deleteCount, public.check_plural(_deleteCount, 'job', 'jobs');
     End If;
 
-    SELECT string_agg(job, ', ' ORDER BY Job)
+    SELECT string_agg(job::text, ', ' ORDER BY Job)
     INTO _jobList
     FROM Tmp_JobsToCopy;
 
@@ -157,7 +160,7 @@ BEGIN
     FROM Tmp_JobsToCopy;
 
     If _infoOnly Then
-        RAISE INFO 'Job(s) to copy from sw.t_jobs_history to sw.t_jobs: %', _jobList
+        RAISE INFO '% to copy from sw.t_jobs_history to sw.t_jobs: %', public.check_plural(_jobCount, 'Job', 'Jobs'), _jobList;
 
         DROP TABLE Tmp_JobsToCopy;
         RETURN;
@@ -219,8 +222,10 @@ BEGIN
 
         RAISE INFO 'Added % % to sw.t_jobs', _insertCount, public.check_plural(_insertCount, 'job', 'jobs');
 
+        _jobsCopied := _insertCount;
+
         ---------------------------------------------------
-        -- Copy Steps
+        -- Copy job steps
         ---------------------------------------------------
 
         _currentLocation := 'Populate sw.t_job_steps';
@@ -279,6 +284,7 @@ BEGIN
         GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
         If _debugMode Then
+            RAISE INFO '';
             RAISE INFO 'Inserted % % into sw.t_job_steps for %', _insertCount, public.check_plural(_insertCount, 'step', 'steps'), _jobDateDescription;
         End If;
 
@@ -423,17 +429,17 @@ BEGIN
                                                     evaluated,
                                                     triggered,
                                                     enable_only )
-            SELECT MD.job AS Job,
-                   step,
-                   target_step,
-                   condition_test,
-                   test_value,
+            SELECT MD.job,
+                   H.step,
+                   H.target_step,
+                   H.condition_test,
+                   H.test_value,
                    0 AS Evaluated,
                    0 AS Triggered,
                    enable_only
             FROM sw.t_job_step_dependencies_history H
                  INNER JOIN Tmp_JobsMissingDependencies MD
-                   ON H.job = MD.SimilarJob
+                   ON H.job = MD.SimilarJob;
 
         End If;
 
@@ -441,7 +447,7 @@ BEGIN
         -- Jobs successfully copied
         ---------------------------------------------------
 
-        _message := format('Copied %s jobs from the history tables to the main tables', _jobsCopied);
+        _message := format('Copied %s %s from the history tables to the main tables', _jobsCopied, public.check_plural(_jobsCopied, 'job', 'jobs'));
 
         CALL public.post_log_entry ('Normal', _message, 'Copy_History_To_Job_Multi', 'sw');
 
@@ -458,7 +464,12 @@ BEGIN
 
             _currentLocation := format('Call update_job_parameters for job ', _job);
             --
-            CALL sw.update_job_parameters (_job, _infoOnly => false);
+            CALL sw.update_job_parameters (
+                        _job,
+                        _infoOnly => false,
+                        _settingsFileOverride => '',
+                        _message => _message,
+                        _returnCode => _returnCode);
 
             ---------------------------------------------------
             -- Make sure transfer_folder_path and storage_server are up-to-date in sw.t_jobs
@@ -466,11 +477,33 @@ BEGIN
 
             _currentLocation := format('Call validate_job_server_info for job ', _job);
             --
-            CALL sw.validate_job_server_info (_job, _useJobParameters => true);
+            CALL sw.validate_job_server_info (
+                        _job,
+                        _useJobParameters => true,
+                        _message => _message,
+                        _returnCode => _returnCode,
+                        _debugMode => _debugMode);
+
+
+            ---------------------------------------------------
+            -- Make sure the dependencies column is up-to-date in sw.t_job_steps
+            ---------------------------------------------------
+
+            UPDATE sw.t_job_steps target
+            SET dependencies = CountQ.dependencies
+            FROM ( SELECT step,
+                          COUNT(target_step) AS dependencies
+                   FROM sw.t_job_step_dependencies
+                   WHERE job = _job
+                   GROUP BY step
+                 ) CountQ
+            WHERE target.Job = _job AND
+                  CountQ.Step = target.Step AND
+                  CountQ.Dependencies > target.Dependencies;
 
             _jobsRefreshed := _jobsRefreshed + 1;
 
-            If extract(epoch FROM (clock_timestamp() - _lastStatusTime)) >= 60 Then
+            If extract(epoch FROM (clock_timestamp() - _lastStatusTime)) >= 15 Then
                 _lastStatusTime := clock_timestamp();
                 _progressMsg := format('Updating job parameters and storage info for copied jobs: %s / %s', _jobsRefreshed, _jobsCopied);
                 CALL public.post_log_entry ('Progress', _progressMsg, 'Copy_History_To_Job_Multi', 'sw');
@@ -502,4 +535,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.copy_history_to_job_multi IS 'CopyHistoryToJobMulti';
+
+ALTER PROCEDURE sw.copy_history_to_job_multi(IN _joblist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE copy_history_to_job_multi(IN _joblist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _debugmode boolean); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.copy_history_to_job_multi(IN _joblist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) IS 'CopyHistoryToJobMulti';
+
