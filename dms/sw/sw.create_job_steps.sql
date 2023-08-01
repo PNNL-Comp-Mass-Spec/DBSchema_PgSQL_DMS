@@ -1,21 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE sw.create_job_steps
-(
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _mode text = 'CreateFromImportedJobs',
-    _existingJob int = 0,
-    _extensionScriptName text = '',
-    _extensionScriptSettingsFileOverride text = '',
-    _maxJobsToProcess int = 0,
-    _logIntervalThreshold int = 15,
-    _loggingEnabled boolean = false,
-    _loopingUpdateInterval int = 5,
-    _infoOnly boolean = false,
-    _debugMode boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: create_job_steps(text, text, text, integer, text, text, integer, integer, boolean, integer, boolean, boolean); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.create_job_steps(INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _mode text DEFAULT 'CreateFromImportedJobs'::text, IN _existingjob integer DEFAULT 0, IN _extensionscriptname text DEFAULT ''::text, IN _extensionscriptsettingsfileoverride text DEFAULT ''::text, IN _maxjobstoprocess integer DEFAULT 0, IN _logintervalthreshold integer DEFAULT 15, IN _loggingenabled boolean DEFAULT false, IN _loopingupdateinterval integer DEFAULT 5, IN _infoonly boolean DEFAULT false, IN _debugmode boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -23,22 +12,26 @@ AS $$
 **      for each newly added job according to definition of script for that job
 **
 **    Example usage for debugging:
-**
-**        Declare _message text;
-**
-**        CALL sw.create_job_steps (_message => _message, 'CreateFromImportedJobs', _existingJob => 555225, _infoOnly => true);
-**
-**        RAISE INFO '%', _message;
+**        CALL sw.create_job_steps (_mode => 'CreateFromImportedJobs', _existingJob => 555225, _infoOnly => true);
 **
 **  Arguments:
-**    _mode                                  Modes: CreateFromImportedJobs, ExtendExistingJob, UpdateExistingJob (rarely used)
-**    _existingJob                           Used if _mode = 'ExtendExistingJob' or _mode = 'UpdateExistingJob'; can also be used when _mode = 'CreateFromImportedJobs' and _debugMode is true
-**    _extensionScriptName                   Only used if _mode = 'ExtendExistingJob'; name of the job script to apply when extending an existing job
-**    _extensionScriptSettingsFileOverride   Only used if _mode = 'ExtendExistingJob'; new settings file to use instead of the one defined in public.t_analysis_job
-**    _logIntervalThreshold                  If this procedure runs longer than this threshold, status messages will be posted to the log
-**    _loggingEnabled                        Set to true to immediately enable progress logging; if false, logging will auto-enable if _logIntervalThreshold seconds elapse
-**    _loopingUpdateInterval                 Seconds between detailed logging while looping through the dependencies
-**    _debugMode                             When setting this to true, you can optionally specify a job using _existingJob to view the steps that would be created for that job.  Also, when this is true, various debug tables will be shown
+**    _message                              Status message
+**    _returnCode                           Return code
+**    _mode                                 Modes: CreateFromImportedJobs, ExtendExistingJob, UpdateExistingJob (rarely used)
+**    _existingJob                          Used if _mode = 'ExtendExistingJob' or _mode = 'UpdateExistingJob'; can also be used when _mode = 'CreateFromImportedJobs' and _debugMode is true
+**    _extensionScriptName                  Only used if _mode = 'ExtendExistingJob'; name of the job script to apply when extending an existing job
+**    _extensionScriptSettingsFileOverride  Only used if _mode = 'ExtendExistingJob'; new settings file to use instead of the one defined in public.t_analysis_job
+**    _maxJobsToProcess                     Maximum number of jobs to process
+**    _logIntervalThreshold                 If this procedure runs longer than this threshold, status messages will be posted to the log
+**    _loggingEnabled                       Set to true to immediately enable progress logging; if false, logging will auto-enable if _logIntervalThreshold seconds elapse
+**    _loopingUpdateInterval                Seconds between detailed logging while looping through the dependencies
+**    _infoOnly                             When true, populate the temporary tables, but do not add new rows to t_jobs, t_job_steps, etc. When true, auto-sets _debugMode to true
+**    _debugMode                            When this is true, you can optionally specify a job using _existingJob to view the steps that would be created for that job
+**                                          Also, when this is true, various debug messages will be shown, and the contents of the temporary tables are written to four database tables
+**                                          - sw.T_Tmp_New_Jobs
+**                                          - sw.T_Tmp_New_Job_Steps
+**                                          - sw.T_Tmp_New_Job_Step_Dependencies
+**                                          - sw.T_Tmp_New_Job_Parameters
 **
 **  Auth:   grk
 **  Date:   05/06/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)
@@ -69,7 +62,7 @@ AS $$
 **          02/13/2023 mem - Show contents of temp table Tmp_Jobs when _debugMode is true
 **                         - Add results folder name comment regarding Special="Job_Results"
 **          07/20/2023 mem - Use the correct remote info name when adding the ID=1 row to T_Remote_Info
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/31/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -106,6 +99,15 @@ BEGIN
 
     _mode := Trim(Coalesce(_mode, ''));
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
+
+    If _existingJob > 0 And _mode = 'CreateFromImportedJobs' And _debugMode And Not _infoOnly Then
+        RAISE INFO 'Auto-setting _infoOnly to true since _debugMode is true and _existingJob is defined';
+        _infoOnly := true;
+    End If;
+
+    If _infoOnly Then
+        _debugMode := true;
+    End If;
 
     If _debugMode Then
         RAISE INFO '';
@@ -208,7 +210,6 @@ BEGIN
         State int NULL,
         Input_Directory_Name citext NULL,
         Output_Directory_Name citext NULL,
-        Processor citext NULL,
         Special_Instructions citext NULL
     );
 
@@ -291,7 +292,7 @@ BEGIN
         CALL sw.set_up_to_extend_existing_job (
                     _existingJob,
                     _message => _message,
-                    _returnCode => _returnCode)
+                    _returnCode => _returnCode);
     End If;
 
     If _mode::citext = 'UpdateExistingJob' Then
@@ -314,7 +315,7 @@ BEGIN
         INSERT INTO Tmp_Jobs (job, priority, script, State, Dataset, Dataset_ID, DataPkgID, Results_Directory_Name)
         SELECT job, priority, script, State, Dataset, Dataset_ID, Data_Pkg_ID, Results_Folder_Name
         FROM sw.t_jobs
-        WHERE job = _existingJob
+        WHERE job = _existingJob;
     End If;
 
     ---------------------------------------------------
@@ -403,7 +404,7 @@ BEGIN
         If _jobInfo.DatasetID > 0 Then
             _datasetOrDataPackageId := _jobInfo.DatasetID;
         Else
-            _datasetOrDataPackageId := _jobInfo.DataPackageID;
+            _datasetOrDataPackageId := _jobInfo.DataPkgID;
         End If;
 
         If _returnCode <> '' Then
@@ -419,7 +420,7 @@ BEGIN
         If _jobList = '' Then
             _jobList := _jobInfo.Job::text;
         Else
-            _jobList := format('%s,%s', _jobList, _job);
+            _jobList := format('%s, %s', _jobList, _jobInfo.Job);
         End If;
 
         _tag := 'unk';
@@ -471,7 +472,7 @@ BEGIN
         -- Create the basic job structure (steps and dependencies)
         -- Details are stored in Tmp_Job_Steps and Tmp_Job_Step_Dependencies
         CALL sw.create_steps_for_job (
-                    _job,
+                    _jobInfo.Job,
                     _scriptXML,
                     _resultsDirectoryName,
                     _message => _message,
@@ -480,7 +481,7 @@ BEGIN
         -- Calculate signatures for steps that require them (and also handle shared results directories)
         -- Details are stored in Tmp_Job_Steps
         CALL sw.create_signatures_for_job_steps (
-                    _job,
+                    _jobInfo.Job,
                     _xmlParameters,
                     _datasetOrDataPackageId,
                     _message => _message,
@@ -490,7 +491,7 @@ BEGIN
         -- Update the memory usage for job steps that have JavaMemorySize entries defined in the parameters
         -- This updates Memory_Usage_MB in Tmp_Job_Steps
         CALL sw.update_job_step_memory_usage (
-                    _job,
+                    _jobInfo.Job,
                     _xmlParameters,
                     _message => _message,
                     _returnCode => _returnCode);
@@ -508,7 +509,7 @@ BEGIN
         If _debugMode Then
             SELECT COUNT(*)
             INTO _stepCount
-            FROM Tmp_Job_Steps ;
+            FROM Tmp_Job_Steps;
 
             -- Show the contents of Tmp_Jobs
             CALL sw.show_tmp_jobs();
@@ -516,16 +517,19 @@ BEGIN
             -- Show the contents of Tmp_Job_Steps and Tmp_Job_Step_Dependencies
             CALL sw.show_tmp_job_steps_and_job_step_dependencies();
 
+            RAISE INFO '';
+
             -- Show the XML parameters
-            RAISE INFO 'Parameters for job %: %', _jobInfo.Job, _xmlParameters);
+            RAISE INFO 'Parameters for job %: %', _jobInfo.Job, _xmlParameters;
         End If;
 
         -- Handle any step cloning
         CALL sw.clone_job_step (
-                    _job,
+                    _jobInfo.Job,
                     _xmlParameters,
                     _message => _message,
-                    _returnCode => _returnCode);
+                    _returnCode => _returnCode,
+                    _debugMode => _debugMode);
 
         If _debugMode Then
             SELECT COUNT(*)
@@ -540,27 +544,26 @@ BEGIN
             End If;
         End If;
 
-        -- Handle external DTas If any
+        -- Deprecated in July 2023: Handle external DTAs
         -- This updates DTA_Gen steps in Tmp_Job_Steps for which the job parameters contain parameter 'ExternalDTAFolderName' with value 'DTA_Manual'
-        CALL sw.override_dta_gen_for_external_dta (
-                    _job,
-                    _xmlParameters,
-                    _message => _message,
-                    _returnCode => _returnCode);
+        -- CALL sw.override_dta_gen_for_external_dta (
+        --             _job,
+        --             _xmlParameters,
+        --             _message => _message,
+        --             _returnCode => _returnCode);
 
         -- Perform a mixed bag of operations on the jobs in the temporary tables to finalize them before
         -- copying to the main database tables
         CALL sw.finish_job_creation (
-                _job,
+                _jobInfo.Job,
                 _message => _message,
-                _returnCode => _returnCode,
-                _debugMode => _debugMode);
+                _returnCode => _returnCode);
 
         -- Do current job parameters conflict with existing job?
-        If _mode::citext = 'ExtendExistingJob' or _mode::citext = 'UpdateExistingJob' Then
+        If _mode::citext = 'ExtendExistingJob' Or _mode::citext = 'UpdateExistingJob' Then
 
             CALL sw.cross_check_job_parameters (
-                    _job,
+                    _jobInfo.Job,
                     _message => _message,               -- Output
                     _returnCode => _returnCode,         -- Output
                     _ignoreSignatureMismatch => true);
@@ -568,8 +571,15 @@ BEGIN
             If _returnCode <> '' Then
                 If _mode::citext = 'UpdateExistingJob' Then
                     -- If None of the job steps has completed yet, it's OK if there are parameter differences
-                    If Exists (SELECT * FROM sw.t_job_steps WHERE job = _job AND state = 5) Then
+                    If Exists (SELECT * FROM sw.t_job_steps WHERE job = _jobInfo.Job AND state = 5) Then
                         _message := format('Conflicting parameters are not allowed when one or more job steps has completed: %s', _message);
+                        RAISE WARNING '%', _message;
+
+                        DROP TABLE Tmp_Jobs;
+                        DROP TABLE Tmp_Job_Steps;
+                        DROP TABLE Tmp_Job_Step_Dependencies;
+                        DROP TABLE Tmp_Job_Parameters;
+
                         RETURN;
                     Else
                         _message := '';
@@ -577,6 +587,8 @@ BEGIN
 
                 Else
                     -- Mode is 'ExtendExistingJob'; exit the procedure
+
+                    RAISE WARNING '%', _message;
 
                     DROP TABLE Tmp_Jobs;
                     DROP TABLE Tmp_Job_Steps;
@@ -608,6 +620,7 @@ BEGIN
 
     If Not _infoOnly Then
         If _mode::citext = 'CreateFromImportedJobs' Then
+
             -- Move temp tables to main tables
             CALL sw.move_jobs_to_main_tables (
                         _message => _message,
@@ -645,7 +658,7 @@ BEGIN
             CALL sw.merge_jobs_to_main_tables (
                     _message => _message,
                     _returnCode => _returnCode,
-                    _infoOnly => _infoOnly);
+                    _infoOnly => true);
         End If;
     End If;
 
@@ -674,4 +687,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.create_job_steps IS 'CreateJobSteps';
+
+ALTER PROCEDURE sw.create_job_steps(INOUT _message text, INOUT _returncode text, IN _mode text, IN _existingjob integer, IN _extensionscriptname text, IN _extensionscriptsettingsfileoverride text, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean, IN _debugmode boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE create_job_steps(INOUT _message text, INOUT _returncode text, IN _mode text, IN _existingjob integer, IN _extensionscriptname text, IN _extensionscriptsettingsfileoverride text, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean, IN _debugmode boolean); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.create_job_steps(INOUT _message text, INOUT _returncode text, IN _mode text, IN _existingjob integer, IN _extensionscriptname text, IN _extensionscriptsettingsfileoverride text, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean, IN _debugmode boolean) IS 'CreateJobSteps';
+

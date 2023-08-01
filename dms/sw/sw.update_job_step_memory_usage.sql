@@ -1,13 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE sw.update_job_step_memory_usage
-(
-    _job int,
-    _xmlParameters xml,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_job_step_memory_usage(integer, xml, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.update_job_step_memory_usage(IN _job integer, IN _xmlparameters xml, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -17,17 +14,19 @@ AS $$
 **      The calling procedure must create and populate temporary table Tmp_Job_Steps,
 **      which must include these columns:
 **
-**          CREATE TEMP TABLE Tmp_Job_Steps (
-**              Job int NOT NULL,
-**              Tool text NOT NULL,
-**              Memory_Usage_MB
-**          );
+**      CREATE TEMP TABLE Tmp_Job_Steps (
+**          Job int NOT NULL,
+**          Step int NOT NULL,
+**          Tool citext NOT NULL,
+**          CPU_Load int NULL,
+**          Memory_Usage_MB int NULL
+**      );
 **
 **  Arguments:
 **    _job              Analysis job number
 **    _xmlParameters    XML parameters
 **    _message          Status message
-**    _returnCode       Return Code
+**    _returnCode       Return code
 **
 **  Example nodes in _xmlParameters:
 **
@@ -41,7 +40,7 @@ AS $$
 **          04/06/2016 mem - Now using Try_Convert to convert from text to int
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          02/28/2023 mem - Use XML element names that start with 'MSGFPlus'
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/31/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -62,7 +61,7 @@ BEGIN
         UniqueID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         Tool text,
         MemoryRequiredMB text
-    )
+    );
 
     _rootedXML := ('<params>' || _xmlParameters::text || '</params>')::xml;
 
@@ -82,6 +81,7 @@ BEGIN
     SELECT 'MSAlign' AS Tool, unnest(xpath('//params/Param[@Name="MSAlignJavaMemorySize"]/@Value', _rootedXML))::text AS MemoryRequiredMB;
 
     If Not Exists (SELECT * FROM Tmp_Memory_Settings) Then
+        DROP TABLE Tmp_Memory_Settings;
         RETURN;
     End If;
 
@@ -109,4 +109,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.update_job_step_memory_usage IS 'UpdateJobStepMemoryUsage';
+
+ALTER PROCEDURE sw.update_job_step_memory_usage(IN _job integer, IN _xmlparameters xml, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_job_step_memory_usage(IN _job integer, IN _xmlparameters xml, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.update_job_step_memory_usage(IN _job integer, IN _xmlparameters xml, INOUT _message text, INOUT _returncode text) IS 'UpdateJobStepMemoryUsage';
+

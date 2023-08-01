@@ -1,28 +1,35 @@
 --
-CREATE OR REPLACE PROCEDURE sw.validate_extension_script_for_job
-(
-    _job int,
-    _extensionScriptName text,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: validate_extension_script_for_job(integer, text, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.validate_extension_script_for_job(IN _job integer, IN _extensionscriptname text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Validates that the given extension script is appropriate for the given job
 **
+**  Arguments:
+**    _job                      Job number
+**    _extensionScriptName      Pipeline script name
+**
 **  Auth:   mem
 **  Date:   10/22/2010 mem - Initial version
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/31/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
-    _currentScript text;
+    _currentScript citext;
     _currentScriptXML xml;
     _extensionScriptXML xml;
     _overlapCount int;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -46,12 +53,12 @@ BEGIN
         INTO _currentScript
         FROM sw.t_jobs_history
         WHERE job = _job AND state = 4
-        ORDER BY saved Desc
+        ORDER BY saved DESC
         LIMIT 1;
 
         If Not FOUND Then
             If Exists (SELECT * FROM sw.t_jobs_history WHERE job = _job) Then
-                _message := 'Error: job not found in sw.t_jobs, but is present in sw.t_jobs_history.  However, job is not complete (state <> 4).  Therefore, the job cannot be extended';
+                _message := 'Error: job not found in sw.t_jobs, but it is present in sw.t_jobs_history. However, the job is not complete (state <> 4). Therefore, the job cannot be extended.';
             Else
                 _message := 'Error: job not found in sw.t_jobs or sw.t_jobs_history.';
             End If;
@@ -92,7 +99,7 @@ BEGIN
     SELECT contents
     INTO _currentScriptXML
     FROM sw.t_scripts
-    WHERE script = _currentScript
+    WHERE script = _currentScript;
 
     If Not FOUND Then
         _message := format('Error: Current script (%s) not found in sw.t_scripts', _currentScript);
@@ -102,11 +109,10 @@ BEGIN
         RETURN;
     End If;
 
-    SELECT contents,
-           script
+    SELECT contents, script
     INTO _extensionScriptXML, _extensionScriptName
     FROM sw.t_scripts
-    WHERE script = _extensionScriptName;
+    WHERE script = _extensionScriptName::citext;
 
     If Not FOUND Then
         _message := format('Error: Extension script (%s) not found in sw.t_scripts', _extensionScriptName);
@@ -188,7 +194,7 @@ BEGIN
                     SELECT _currentScript AS Script,
                            xmltable.step_number,
                            xmltable.step_tool
-                    FROM ( _currentScript AS rooted_xml
+                    FROM ( SELECT _currentScriptXML AS rooted_xml
                          ) Src,
                          XMLTABLE('//JobScript/Step'
                                   PASSING Src.rooted_xml
@@ -204,7 +210,7 @@ BEGIN
                     SELECT _extensionScriptName AS Script,
                            xmltable.step_number,
                            xmltable.step_tool
-                    FROM ( _extensionScriptName AS rooted_xml
+                    FROM ( SELECT _extensionScriptXML AS rooted_xml
                          ) Src,
                          XMLTABLE('//JobScript/Step'
                                   PASSING Src.rooted_xml
@@ -225,6 +231,7 @@ BEGIN
 
         _message := format('One or more steps overlap between scripts "%s" and "%s"', _currentScript, _extensionScriptName);
 
+        RAISE INFO '';
         RAISE WARNING '%', _message;
 
         _returnCode := 'U6203';
@@ -235,4 +242,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.validate_extension_script_for_job IS 'ValidateExtensionScriptForJob';
+
+ALTER PROCEDURE sw.validate_extension_script_for_job(IN _job integer, IN _extensionscriptname text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE validate_extension_script_for_job(IN _job integer, IN _extensionscriptname text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.validate_extension_script_for_job(IN _job integer, IN _extensionscriptname text, INOUT _message text, INOUT _returncode text) IS 'ValidateExtensionScriptForJob';
+

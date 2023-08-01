@@ -1,16 +1,15 @@
 --
-CREATE OR REPLACE PROCEDURE sw.update_job_in_main_tables
-(
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_job_in_main_tables(text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.update_job_in_main_tables(INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates T_Jobs, T_Job_Steps, and T_Job_Parameters
-**      using the information in Tmp_Job_Parameters, Tmp_Jobs, and Tmp_Job_Steps
+**      Updates sw.T_Jobs, sw.T_Job_Steps, and sw.T_Job_Parameters using the information in Tmp_Jobs, Tmp_Job_Steps, and Tmp_Job_Parameters
+**      This procedure is only called if procedure sw.create_job_steps() is called with Mode 'UpdateExistingJob'
 **
 **      Note: Does not update job steps in state 5 = Complete
 **
@@ -21,7 +20,7 @@ AS $$
 **          10/17/2011 mem - Added column Memory_Usage_MB
 **          09/24/2014 mem - Rename Job in T_Job_Step_Dependencies
 **          11/18/2015 mem - Add Actual_CPU_Load
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/31/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -35,7 +34,7 @@ BEGIN
     ---------------------------------------------------
 
     UPDATE sw.t_job_parameters
-    SET sw.t_job_parameters.parameters = Tmp_Job_Parameters.parameters
+    SET parameters = Tmp_Job_Parameters.parameters
     FROM Tmp_Job_Parameters
     WHERE Tmp_Job_Parameters.job = sw.t_job_parameters.job;
 
@@ -53,21 +52,27 @@ BEGIN
     WHERE Tmp_Jobs.job = sw.t_jobs.job;
 
     -- Delete job step dependencies for job steps that are not yet completed
-    DELETE sw.t_job_step_dependencies JSD
-    FROM sw.t_job_steps JS
-         INNER JOIN Tmp_Job_Steps
-           ON JS.job = Tmp_Job_Steps.job AND
-              JS.step = Tmp_Job_Steps.step
-    WHERE JSD.job = JS.job AND
-          JSD.step = JS.step AND
-          JS.state <> 5;            -- 5 = Complete
+    DELETE FROM sw.t_job_step_dependencies JSD
+    WHERE EXISTS
+        ( SELECT 1
+          FROM sw.t_job_steps JS
+               INNER JOIN Tmp_Job_Steps
+                 ON JS.job = Tmp_Job_Steps.job AND
+                    JS.step = Tmp_Job_Steps.step
+          WHERE JSD.job = JS.job AND
+                JSD.step = JS.step AND
+                JS.state <> 5            -- 5 = Complete
+        );
 
     -- Delete job steps that are not yet completed
-    DELETE sw.t_job_steps JS
-    FROM Tmp_Job_Steps
-    WHERE JS.Job = Tmp_Job_Steps.Job AND
-          JS.Step_Number = Tmp_Job_Steps.Step_Number AND
-          JS.State <> 5;            -- 5 = Complete
+    DELETE FROM sw.t_job_steps JS
+    WHERE EXISTS
+        ( SELECT 1
+          FROM Tmp_Job_Steps
+          WHERE JS.Job = Tmp_Job_Steps.Job AND
+                JS.Step = Tmp_Job_Steps.Step AND
+                JS.State <> 5            -- 5 = Complete
+        );
 
     ---------------------------------------------------
     -- Add steps for job that currently aren't in main tables
@@ -85,8 +90,7 @@ BEGIN
         signature,
         state,
         input_folder_name,
-        output_folder_name,
-        processor
+        output_folder_name
     )
     SELECT
         Src.job,
@@ -99,9 +103,8 @@ BEGIN
         Src.shared_result_version,
         Src.signature,
         1,            -- state
-        Src.input_folder_name,
-        Src.output_folder_name,
-        Src.processor
+        Src.input_directory_name,
+        Src.output_directory_name
     FROM Tmp_Job_Steps Src
          LEFT OUTER JOIN sw.t_job_steps JS
            ON JS.job = Src.job AND
@@ -137,4 +140,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.update_job_in_main_tables IS 'UpdateJobInMainTables';
+
+ALTER PROCEDURE sw.update_job_in_main_tables(INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_job_in_main_tables(INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.update_job_in_main_tables(INOUT _message text, INOUT _returncode text) IS 'UpdateJobInMainTables';
+

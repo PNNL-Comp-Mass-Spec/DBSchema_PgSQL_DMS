@@ -1,17 +1,15 @@
 --
-CREATE OR REPLACE PROCEDURE sw.merge_jobs_to_main_tables
-(
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _infoOnly boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: merge_jobs_to_main_tables(text, text, boolean); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.merge_jobs_to_main_tables(INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infoonly boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Merges data in the temp tables into T_Jobs, T_Job_Steps, etc.
-**      Intended for use with an extension job script
+**      Merges data in the temp tables into sw.T_Jobs, sw.T_Job_Steps, etc.
+**      This procedure is only called if procedure sw.create_job_steps() is called with Mode 'ExtendExistingJob'
 **
 **  Auth:   grk
 **  Date:   02/06/2009 grk - Initial release  (http://prismtrac.pnl.gov/trac/ticket/720)
@@ -21,7 +19,7 @@ AS $$
 **          10/17/2011 mem - Added column Memory_Usage_MB
 **          09/24/2014 mem - Rename Job in T_Job_Step_Dependencies
 **          11/18/2015 mem - Add Actual_CPU_Load
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/31/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -41,13 +39,12 @@ BEGIN
 
         FOR _job, _jobParamXML IN
             SELECT Job, Parameters
-            INTO _jobParamXML
             FROM Tmp_Job_Parameters
         LOOP
             RAISE INFO 'Parameters for job %: %', _job, _jobParamXML;
         END LOOP;
 
-        -- No need to output these tables, since procedure Create_Job_Steps will have already displayed them using sw.show_tmp_job_steps_and_job_step_dependencies()
+        -- No need to output these tables, since procedure sw.Create_Job_Steps will have already displayed them using sw.show_tmp_job_steps_and_job_step_dependencies()
         -- SELECT 'Tmp_Job_Steps ' as Table, * FROM Tmp_Job_Steps
         -- SELECT 'Tmp_Job_Step_Dependencies' as Table, * FROM Tmp_Job_Step_Dependencies
 
@@ -59,7 +56,7 @@ BEGIN
     ---------------------------------------------------
 
     UPDATE sw.t_job_parameters
-    SET sw.t_job_parameters.parameters = Tmp_Job_Parameters.parameters
+    SET parameters = Tmp_Job_Parameters.parameters
     FROM Tmp_Job_Parameters
     WHERE Tmp_Job_Parameters.job = sw.t_job_parameters.job;
 
@@ -92,8 +89,7 @@ BEGIN
         signature,
         state,
         input_folder_name,
-        output_folder_name,
-        processor
+        output_folder_name
     )
     SELECT
         job,
@@ -107,8 +103,7 @@ BEGIN
         signature,
         state,
         input_directory_name,
-        output_directory_name,
-        processor
+        output_directory_name
     FROM Tmp_Job_Steps
     WHERE NOT EXISTS
     (
@@ -119,8 +114,7 @@ BEGIN
     );
 
     ---------------------------------------------------
-    -- Add step dependencies for job that currently aren't
-    -- in main tables
+    -- Add step dependencies for job that currently aren't in main tables
     ---------------------------------------------------
 
     INSERT INTO sw.t_job_step_dependencies (
@@ -150,4 +144,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.merge_jobs_to_main_tables IS 'MergeJobsToMainTables';
+
+ALTER PROCEDURE sw.merge_jobs_to_main_tables(INOUT _message text, INOUT _returncode text, IN _infoonly boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE merge_jobs_to_main_tables(INOUT _message text, INOUT _returncode text, IN _infoonly boolean); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.merge_jobs_to_main_tables(INOUT _message text, INOUT _returncode text, IN _infoonly boolean) IS 'MergeJobsToMainTables';
+
