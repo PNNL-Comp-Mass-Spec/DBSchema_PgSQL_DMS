@@ -1077,7 +1077,7 @@ BEGIN
                 END LOOP;
 
                 If _previewCount > 0 Then
-                    RAISE INFO 'Would insert % rows into t_emsl_instrument_usage_report', _previewCount);
+                    RAISE INFO 'Would insert % rows into t_emsl_instrument_usage_report', _previewCount;
                 End If;
             End If;
 
@@ -1184,7 +1184,7 @@ BEGIN
                 END LOOP;
 
                 If _previewCount > 0 Then
-                    RAISE INFO 'Would delete % shorter "long intervals" from t_emsl_instrument_usage_report', _previewCount);
+                    RAISE INFO 'Would delete % shorter "long intervals" from t_emsl_instrument_usage_report', _previewCount;
                 End If;
             End If;
 
@@ -1259,7 +1259,7 @@ BEGIN
                 END LOOP;
 
                 If _previewCount > 0 Then
-                    RAISE INFO 'Would delete % longer "long intervals" from t_emsl_instrument_usage_report', _previewCount);
+                    RAISE INFO 'Would delete % longer "long intervals" from t_emsl_instrument_usage_report', _previewCount;
                 End If;
             End If;
 

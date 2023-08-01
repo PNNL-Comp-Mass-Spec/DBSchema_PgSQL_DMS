@@ -229,7 +229,7 @@ BEGIN
                 RAISE INFO '%', _message;
 
                 If _showDebug Then
-                    RAISE WARNING '%', _message);
+                    RAISE WARNING '%', _message;
 
                     DROP TABLE Tmp_CampaignFilter;
                     DROP TABLE Tmp_InstrumentFilter;
@@ -268,7 +268,7 @@ BEGIN
 
         If _returnCode <> '' Then
             If _showDebug Then
-                RAISE WARNING '%', _message);
+                RAISE WARNING '%', _message;
 
                 DROP TABLE Tmp_CampaignFilter;
                 DROP TABLE Tmp_InstrumentFilter;

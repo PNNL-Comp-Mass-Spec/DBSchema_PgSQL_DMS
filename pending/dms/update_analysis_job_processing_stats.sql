@@ -21,7 +21,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates job state, start, and finish in T_Analysis_Job
+**      Updates job state, start, and finish in public.t_analysis_job
 **
 **      Sets archive status of dataset to update required
 **

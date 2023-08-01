@@ -468,7 +468,7 @@ BEGIN
         ---------------------------------------------------
 
         If Not _bypassDMS AND _jobInDMS And Not _infoOnly Then
-            -- DMS changes enabled, update DMS job state
+            -- Public schema changes enabled, update job state in public.t_analysis_job
 
             -- Uncomment to debug
             -- Declare _debugMsg text = format('Calling update_analysis_job_processing_stats for job %s', _jobInfo.Job);

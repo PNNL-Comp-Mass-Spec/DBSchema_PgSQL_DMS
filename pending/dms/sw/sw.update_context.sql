@@ -20,7 +20,7 @@ AS $$
 **      Update context under which job steps are assigned
 **
 **  Arguments:
-**    _bypassDMS                If false, lookup the bypass mode in sw.t_process_step_control; otherwise, do not update states in tables in the public schema
+**    _bypassDMS                If false, lookup the bypass mode in sw.t_process_step_control; when _bypassDMS is true, do not import new jobs from public.t_analysis_job and do not synchronize the sw schema tables with the public schema tables
 **    _maxJobsToProcess         Maximum number of jobs to process
 **    _logIntervalThreshold     If this procedure runs longer than this threshold (in seconds), status messages will be posted to the log
 **    _loggingEnabled           Set to true to immediately enable progress logging; if false, logging will auto-enable if _logIntervalThreshold seconds elapse

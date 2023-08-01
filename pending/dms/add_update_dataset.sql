@@ -1251,7 +1251,7 @@ BEGIN
                                         _returnCode);   -- Output
 
                     If _returnCode <> '' Then
-                        RAISE EXCEPTION 'Update LC cart name failed: dataset % -> %',_datasetName, _message);
+                        RAISE EXCEPTION 'Update LC cart name failed: dataset % -> %',_datasetName, _message;
                     End If;
                 End If;
 

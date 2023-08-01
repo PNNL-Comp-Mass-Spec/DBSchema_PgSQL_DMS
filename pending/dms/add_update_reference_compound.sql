@@ -152,7 +152,7 @@ BEGIN
         End If;
 
         If char_length(_campaignName) < 1 Then
-            RAISE EXCEPTION 'Campaign Name must be defined', 11, 1)
+            RAISE EXCEPTION 'Campaign Name must be defined';
         End If;
 
         If char_length(_contactUsername) < 1 Then
