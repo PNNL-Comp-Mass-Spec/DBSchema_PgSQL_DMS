@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE sw.lookup_source_job_from_special_processing_param(I
 **          03/11/2013 mem - Now overriding _sourceJobResultsFolder if there is a problem determining the details for Job2
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          07/25/2023 mem - Ported to PostgreSQL
+**          08/01/2023 mem - Update _returnCode if an exception is caught
 **
 *****************************************************/
 DECLARE
@@ -289,6 +290,10 @@ BEGIN
             _message := local_error_handler (
                             _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
                             _callingProcLocation => _currentLocation, _logError => true);
+
+            If Coalesce(_returnCode, '') = '' Then
+                _returnCode := _sqlState;
+            End If;
 
             _sourceJobResultsFolder := 'UnknownFolder_Exception_Determining_SourceJob';
 

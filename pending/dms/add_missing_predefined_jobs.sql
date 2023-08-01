@@ -872,6 +872,10 @@ BEGIN
             _message := local_error_handler (
                             _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
                             _callingProcLocation => '', _logError => true);
+
+            If Coalesce(_returnCode, '') = '' Then
+                _returnCode := _sqlState;
+            End If;
         END;
 
         If Not _infoOnly Then

@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE sw.lookup_source_job_from_special_processing_text(IN
 **          07/25/2023 mem - When parsing the special processing text, replace '[Param File]' with 'Param_File'
 **                         - Update comments to use Param_File
 **                         - Ported to PostgreSQL
+**          08/01/2023 mem - Update _returnCode if an exception is caught
 **
 *****************************************************/
 DECLARE
@@ -297,6 +298,10 @@ BEGIN
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
                         _callingProcLocation => _currentLocation, _logError => true);
+
+        If Coalesce(_returnCode, '') = '' Then
+            _returnCode := _sqlState;
+        End If;
 
         If _whereClause <> '' Then
             _warningMessage := format('Query for SourceJob determination for job %s: %s', _job, _autoQuerySql);
