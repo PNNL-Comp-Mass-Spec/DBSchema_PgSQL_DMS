@@ -42,6 +42,7 @@ CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''
 **          06/21/2023 mem - Use Order By when finding tasks with state 0 in cap.t_tasks
 **                         - Do not change _mode to lowercase
 **          07/11/2023 mem - Use COUNT(job) instead of COUNT(*)
+**          08/01/2023 mem - Set _captureTaskJob to true when calling sw.show_tmp_job_steps_and_job_step_dependencies
 **
 *****************************************************/
 DECLARE
@@ -375,8 +376,7 @@ BEGIN
 
         If _debugMode Then
             -- Show contents of Tmp_Job_Steps and Tmp_Job_Step_Dependencies
-            --
-            CALL sw.show_tmp_job_steps_and_job_step_dependencies();
+            CALL sw.show_tmp_job_steps_and_job_step_dependencies(_captureTaskJob => true);
         End If;
 
         -- Perform a mixed bag of operations on the capture task jobs in the temporary tables to finalize them before

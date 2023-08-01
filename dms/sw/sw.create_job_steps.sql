@@ -63,6 +63,7 @@ CREATE OR REPLACE PROCEDURE sw.create_job_steps(INOUT _message text DEFAULT ''::
 **                         - Add results folder name comment regarding Special="Job_Results"
 **          07/20/2023 mem - Use the correct remote info name when adding the ID=1 row to T_Remote_Info
 **          07/31/2023 mem - Ported to PostgreSQL
+**                         - Set _captureTaskJob to false when calling sw.show_tmp_job_steps_and_job_step_dependencies
 **
 *****************************************************/
 DECLARE
@@ -515,7 +516,7 @@ BEGIN
             CALL sw.show_tmp_jobs();
 
             -- Show the contents of Tmp_Job_Steps and Tmp_Job_Step_Dependencies
-            CALL sw.show_tmp_job_steps_and_job_step_dependencies();
+            CALL sw.show_tmp_job_steps_and_job_step_dependencies(_captureTaskJob => false);
 
             RAISE INFO '';
 
@@ -540,7 +541,7 @@ BEGIN
                 RAISE INFO '';
                 RAISE INFO 'Data after Cloning';
 
-                CALL sw.show_tmp_job_steps_and_job_step_dependencies();
+                CALL sw.show_tmp_job_steps_and_job_step_dependencies(_captureTaskJob => false);
             End If;
         End If;
 
