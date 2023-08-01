@@ -1,18 +1,28 @@
 --
-CREATE OR REPLACE PROCEDURE sw.override_dta_gen_for_external_dta
-(
-    _job int,
-    _xmlParameters xml,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: override_dta_gen_for_external_dta(integer, xml, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.override_dta_gen_for_external_dta(IN _job integer, IN _xmlparameters xml, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      If settings file contains parameter for externally-supplied DTA file,
 **      override existing DTA_Gen step to point to it
+**
+**      The calling procedure must create and populate temporary table Tmp_Job_Steps,
+**      which must include these columns:
+**
+**      CREATE TEMP TABLE Tmp_Job_Steps (
+**          Job int NOT NULL,
+**          Step int NOT NULL,
+**          Tool citext NOT NULL,
+**          State int NULL,
+**          Input_Directory_Name citext NULL,
+**          Output_Directory_Name citext NULL,
+**          Processor citext NULL
+**      );
 **
 **  Auth:   grk
 **  Date:   01/28/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/719)
@@ -21,7 +31,7 @@ AS $$
 **          04/14/2009 grk - Modified to apply to DTA_Import step tool also (Ticket #733, http://prismtrac.pnl.gov/trac/ticket/733)
 **          04/15/2009 grk - Modified to maintain shared results for imported DTA (Ticket #733, http://prismtrac.pnl.gov/trac/ticket/733)
 **          03/21/2011 mem - Rearranged logic to remove Goto
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/31/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -52,8 +62,8 @@ BEGIN
                          ELSE State
                     END,
             Processor = 'Internal',
-            Output_Folder_Name = _externalDTAFolderName,
-            Input_Folder_Name = 'External'
+            Input_Directory_Name = 'External',
+            Output_Directory_Name = _externalDTAFolderName
         WHERE Tool IN ('DTA_Gen', 'DTA_Import') AND
               Job = _job;
 
@@ -62,4 +72,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.override_dta_gen_for_external_dta IS 'OverrideDTAGenForExternalDTA';
+
+ALTER PROCEDURE sw.override_dta_gen_for_external_dta(IN _job integer, IN _xmlparameters xml, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE override_dta_gen_for_external_dta(IN _job integer, IN _xmlparameters xml, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.override_dta_gen_for_external_dta(IN _job integer, IN _xmlparameters xml, INOUT _message text, INOUT _returncode text) IS 'OverrideDTAGenForExternalDTA';
+
