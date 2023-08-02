@@ -191,7 +191,7 @@ BEGIN
                 FROM Tmp_RequestsAndExistingJobs RJ
                      LEFT OUTER JOIN t_analysis_job_request_existing_jobs CachedJobs
                        ON RJ.request_id = CachedJobs.request_id
-                ORDER BY RJ.request_id;
+                ORDER BY RJ.request_id
             LOOP
                 _infoData := format(_formatSpecifier,
                                     _previewData.Request_ID,

@@ -309,7 +309,7 @@ BEGIN
                        InstrumentID,
                        InstrumentClass
                 FROM Tmp_MatchingInstruments
-                ORDER BY UniqueID;
+                ORDER BY UniqueID
             LOOP
                 If Not Exists (
                     SELECT *

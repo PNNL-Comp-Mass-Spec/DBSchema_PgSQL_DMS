@@ -304,7 +304,7 @@ BEGIN
                            Src.Work_Package,
                            Src.Message
                     FROM Tmp_ReqRunsToUpdate Src
-                    ORDER BY Src.Proposal_ID, Src.Entry_ID;
+                    ORDER BY Src.Proposal_ID, Src.Entry_ID
                 LOOP
                     _infoData := format(_formatSpecifier,
                                         _previewData.Entry_ID,

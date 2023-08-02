@@ -206,12 +206,6 @@ BEGIN
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
         End If;
-
-        DROP TABLE IF EXISTS Tmp_Selected_Jobs;
-        DROP TABLE IF EXISTS Tmp_DMSJobs;
-        DROP TABLE IF EXISTS Tmp_ResetJobs;
-        DROP TABLE IF EXISTS Tmp_JobsToResumeOrReset;
-        DROP TABLE IF EXISTS Tmp_JobDebugMessages;
     END;
 
     COMMIT;
@@ -323,7 +317,6 @@ BEGIN
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
         End If;
-
     END;
 
     COMMIT;
@@ -382,11 +375,6 @@ BEGIN
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
         End If;
-
-        DROP TABLE IF EXISTS Tmp_Jobs;
-        DROP TABLE IF EXISTS Tmp_Job_Steps;
-        DROP TABLE IF EXISTS Tmp_Job_Step_Dependencies;
-        DROP TABLE IF EXISTS Tmp_Job_Parameters;
     END;
 
     COMMIT;
@@ -441,7 +429,6 @@ BEGIN
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
         End If;
-
     END;
 
     COMMIT;
@@ -497,10 +484,6 @@ BEGIN
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
         End If;
-
-        DROP TABLE IF EXISTS Tmp_ChangedJobs;
-        DROP TABLE IF EXISTS Tmp_JobsToReset;
-        DROP TABLE IF EXISTS Tmp_JobStatePreview;
     END;
 
     COMMIT;
@@ -554,9 +537,6 @@ BEGIN
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
         End If;
-
-        DROP TABLE IF EXISTS Tmp_PendingUpdates;
-        DROP TABLE IF EXISTS Tmp_MachineStats
     END;
 
     COMMIT;
@@ -609,8 +589,6 @@ BEGIN
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
         End If;
-
-        DROP TABLE IF EXISTS Tmp_JobsToFix;
     END;
 
     COMMIT;

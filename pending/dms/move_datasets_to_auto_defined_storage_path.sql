@@ -130,7 +130,7 @@ BEGIN
                 FROM Tmp_Datasets DS
                      INNER JOIN t_instrument_name Inst
                        ON Inst.instrument_id = DS.InstrumentID
-                WHERE Inst.auto_define_storage_path = 0;
+                WHERE Inst.auto_define_storage_path = 0
             LOOP
                 RAISE WARNING 'Skipping % since it has auto_define_storage_path = 0 in t_instrument_name', _instrument;
             END LOOP;

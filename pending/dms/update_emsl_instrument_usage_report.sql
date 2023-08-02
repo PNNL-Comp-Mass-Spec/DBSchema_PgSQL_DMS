@@ -972,7 +972,7 @@ BEGIN
                             ON InstUsage.dataset_id = Tmp_Staging.dataset_id AND
                                 InstUsage.type = Tmp_Staging.type
                     WHERE Tmp_Staging.mark = 1
-                    ORDER BY Tmp_Staging.start;
+                    ORDER BY Tmp_Staging.start
                 LOOP
                     _infoData := format(_formatSpecifier,
                                         _previewData.Action,
@@ -1233,7 +1233,7 @@ BEGIN
                           InstUsage.Year = _year AND
                           InstUsage.Month = _month AND
                           InstName.instrument = _instrument AND
-                          NOT InstUsage.Dataset_ID IN ( SELECT interval_id FROM t_run_interval );
+                          NOT InstUsage.Dataset_ID IN ( SELECT interval_id FROM t_run_interval )
                 LOOP
                     _infoData := format(_formatSpecifierInstUsage,
                                         _previewData.Action,
@@ -1321,7 +1321,7 @@ BEGIN
                           InstUsage.Month = _month AND
                           InstUsage.Type = 'Dataset' AND
                           NOT Coalesce(InstUsageType.usage_type, '') IN ('MAINTENANCE', 'ONSITE') AND
-                          Coalesce(InstUsage.Comment, '') = '';
+                          Coalesce(InstUsage.Comment, '') = ''
                 LOOP
                     _infoData := format(_formatSpecifierUpdateComment,
                                         _previewData.Action,
@@ -1375,7 +1375,7 @@ BEGIN
                           InstName.instrument = _instrument AND
                           InstUsage.Year = _year AND
                           InstUsage.Month = _month AND
-                          (Comment IS NULL OR Coalesce(Comment, '') <> '');
+                          (Comment IS NULL OR Coalesce(Comment, '') <> '')
                 LOOP
                     _infoData := format(_formatSpecifierUpdateComment,
                                         _previewData.Action,
