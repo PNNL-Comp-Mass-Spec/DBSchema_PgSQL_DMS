@@ -1,47 +1,20 @@
 --
-CREATE OR REPLACE FUNCTION sw.copy_runtime_metadata_from_history
-(
-    _jobList text,
-    _infoOnly boolean = false,
-)
-RETURNS TABLE (
-    job int,
-    update_required boolean,
-    invalid boolean,
-    comment citext,
-    dataset citext,
-    step int,
-    tool citext,
-    statename citext,
-    state int2,
-    new_state int2,
-    start timestamp,
-    finish timestamp,
-    new_start timestamp,
-    new_finish timestamp,
-    input_folder citext,
-    output_folder citext,
-    processor citext,
-    new_processor citext,
-    tool_version_id int,
-    tool_version citext,
-    completion_code int,
-    completion_message citext,
-    evaluation_code int,
-    evaluation_message citext
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: copy_runtime_metadata_from_history(text, boolean); Type: FUNCTION; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE FUNCTION sw.copy_runtime_metadata_from_history(_joblist text, _infoonly boolean DEFAULT false) RETURNS TABLE(job integer, update_required boolean, invalid boolean, mismatch_results_transfer boolean, comment public.citext, dataset public.citext, step integer, tool public.citext, state_name public.citext, state smallint, new_state smallint, start timestamp without time zone, finish timestamp without time zone, new_start timestamp without time zone, new_finish timestamp without time zone, input_folder public.citext, output_folder public.citext, processor public.citext, new_processor public.citext, tool_version_id integer, tool_version public.citext, completion_code integer, completion_message public.citext, evaluation_code integer, evaluation_message public.citext)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Copies selected pieces of metadata from the history tables
-**      to sw.T_Jobs and sw.T_Job_Steps. Specifically:
-**          Start, Finish, Processor,
-**          Completion_Code, Completion_Message,
-**          Evaluation_Code, Evaluation_Message,
-**          Tool_Version_ID, Remote_Info_ID,
-**          Remote_Timestamp, Remote_Start, Remote_Finish
+**      Copies selected pieces of metadata from the history tables to sw.T_Jobs and sw.T_Job_Steps
+**      Specifically:
+**        Start, Finish, Processor,
+**        Completion_Code, Completion_Message,
+**        Evaluation_Code, Evaluation_Message,
+**        Tool_Version_ID, Remote_Info_ID,
+**        Remote_Timestamp, Remote_Start, Remote_Finish
 **
 **      This function is intended to be used in situations where
 **      a job step was manually re-run for debugging purposes,
@@ -50,6 +23,9 @@ AS $$
 **
 **      It will only copy the runtime metadata if the Results_Transfer (or Results_Cleanup) steps
 **      in sw.T_Job_Steps match exactly the Results_Transfer (or Results_Cleanup) steps in sw.T_Job_Steps_History
+**
+**      Additionally, data is only copied if the job step with a newer start time
+**      has a state of 4 or 5 (Running or Complete) and a null Finish date
 **
 **  Example usage:
 **
@@ -61,11 +37,11 @@ AS $$
 **          02/17/2018 mem - Treat Results_Cleanup steps the same as Results_Transfer steps
 **          04/27/2018 mem - Use T_Job_Steps instead of V_Job_Steps so we can see the Start and Finish times for the job step (and not Remote_Start or Remote_Finish)
 **          01/04/2021 mem - Add support for PRIDE_Converter jobs
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/01/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
-    _message text;
+    _message citext;
     _updateCount int;
     _job int;
     _jobStep int;
@@ -90,8 +66,9 @@ BEGIN
     CREATE TEMP TABLE Tmp_Jobs (
         Job int not null,
         Update_Required boolean not null,
-        Invalid boolean not null,
-        Comment text null
+        Invalid boolean not null,                   -- Will be set to True if the job does not exist in sw.t_jobs
+        Mismatch_Results_Transfer boolean not null, -- Will be set to true if the job has a results_Transfer step that has a different start/finish value in sw.t_job_steps vs. sw.t_job_steps_history
+        Comment citext null
     );
 
     CREATE TEMP TABLE Tmp_JobStepsToUpdate (
@@ -103,22 +80,23 @@ BEGIN
     -- Populate a temporary table with jobs to process
     ---------------------------------------------------
 
-    INSERT INTO Tmp_Jobs (Job, Update_Required, Invalid)
-    SELECT Value As Job, false, false
+    INSERT INTO Tmp_Jobs (Job, Update_Required, Invalid, Mismatch_Results_Transfer)
+    SELECT Value As Job, false, false, false
     FROM public.parse_delimited_integer_list(_jobList, ',');
 
     If Not Exists (SELECT * FROM Tmp_Jobs) Then
         _message := format('No valid jobs were found: %s', _jobList);
 
         RETURN QUERY
-        SELECT     0 As job,
+        SELECT  0 As job,
                 false As update_required,
                 true As invalid,
-                _message::citext As "comment",
+                false As Mismatch_Results_Transfer,
+                _message As "comment",
                 format('Jobs: %s', _jobList)::citext As dataset,
                 step int,
                 ''::citext As tool,
-                ''::citext As statename,
+                ''::citext As state_name,
                 0::int2 As state,
                 0::int2 As new_state,
                 null::timestamp As "start",
@@ -141,6 +119,48 @@ BEGIN
         RETURN;
     End If;
 
+    UPDATE Tmp_Jobs
+    SET Invalid = true
+    WHERE NOT EXISTS ( SELECT J.job
+                       FROM sw.t_jobs J
+                       WHERE J.job = Tmp_Jobs.Job);
+
+    If Exists (SELECT * FROM Tmp_Jobs J WHERE J.Invalid) Then
+        _message := format('Invalid jobs were found: %s', _jobList);
+
+        RETURN QUERY
+        SELECT J.job,
+               false As update_required,
+               J.Invalid,
+               J.Mismatch_Results_Transfer,
+               _message As "comment",
+               ''::citext As dataset,
+               step int,
+               ''::citext As tool,
+               ''::citext As state_name,
+               0::int2 As state,
+               0::int2 As new_state,
+               null::timestamp As "start",
+               null::timestamp As finish,
+               null::timestamp As new_start,
+               null::timestamp As new_finish,
+               ''::citext As input_folder,
+               ''::citext As output_folder,
+               ''::citext As processor,
+               ''::citext As new_processor,
+               0 As tool_version_id,
+               ''::citext As tool_version,
+               0 As completion_code,
+               ''::citext As completion_message,
+               0 As evaluation_code,
+               ''::citext As evaluation_message
+        FROM Tmp_Jobs J;
+
+        DROP TABLE Tmp_Jobs;
+        DROP TABLE Tmp_JobStepsToUpdate;
+        RETURN;
+    End If;
+
     ---------------------------------------------------
     -- Find job steps that need to be updated
     ---------------------------------------------------
@@ -153,9 +173,9 @@ BEGIN
     FROM Tmp_Jobs
          INNER JOIN sw.t_job_steps JS
            ON Tmp_Jobs.job = JS.job
-         INNER JOIN ( SELECT job, step, start, input_folder_name
-                      FROM sw.t_job_steps
-                      WHERE tool In ('Results_Transfer', 'Results_Cleanup')
+         INNER JOIN ( SELECT JSR.job, JSR.step, JSR.start, JSR.input_folder_name
+                      FROM sw.t_job_steps JSR
+                      WHERE JSR.tool In ('Results_Transfer', 'Results_Cleanup')
                     ) FilterQ
            ON JS.job = FilterQ.job AND
               JS.output_folder_name = FilterQ.input_folder_name AND
@@ -172,9 +192,9 @@ BEGIN
     FROM Tmp_Jobs
          INNER JOIN sw.t_job_steps JS
            ON Tmp_Jobs.job = JS.job
-         INNER JOIN ( SELECT job, step, start, input_folder_name
-                      FROM sw.t_job_steps
-                      WHERE tool In ('Results_Transfer', 'Results_Cleanup')
+         INNER JOIN ( SELECT JSR.job, JSR.step, JSR.start, JSR.input_folder_name
+                      FROM sw.t_job_steps JSR
+                      WHERE JSR.tool In ('Results_Transfer', 'Results_Cleanup')
                     ) FilterQ
            ON JS.job = FilterQ.job AND
               JS.output_folder_name = FilterQ.input_folder_name AND
@@ -196,30 +216,30 @@ BEGIN
     ---------------------------------------------------
     -- Update the job list table using Tmp_JobStepsToUpdate
     --
-    UPDATE Tmp_Jobs
+    UPDATE Tmp_Jobs target
     SET Update_Required = true
-    WHERE Job IN ( SELECT DISTINCT Job
-                   FROM Tmp_JobStepsToUpdate );
+    WHERE target.Job IN ( SELECT DISTINCT JSU.Job
+                          FROM Tmp_JobStepsToUpdate JSU );
 
     ---------------------------------------------------
     -- Look for jobs with Update_Required = false
     ---------------------------------------------------
 
-    UPDATE Tmp_Jobs
+    UPDATE Tmp_Jobs target
     SET Comment = 'Nothing to update; no job steps were started (or completed) after their corresponding Results_Transfer or Results_Cleanup step'
-    WHERE Not Update_Required;
+    WHERE Not target.Update_Required;
 
     ---------------------------------------------------
     -- Look for jobs where the Results_Transfer steps do not match sw.t_job_steps_history
     ---------------------------------------------------
 
-    UPDATE Tmp_Jobs
+    UPDATE Tmp_Jobs target
     SET Comment = format('Results_Transfer step in sw.t_job_steps has a different start/finish value vs. sw.t_job_steps_history; '
                          'step %s; start %s vs. %s; finish %s vs. %s',
                            InvalidQ.step,
                            public.timestamp_text(InvalidQ.start),  public.timestamp_text(InvalidQ.start_history),
                            public.timestamp_text(InvalidQ.finish), public.timestamp_text(InvalidQ.finish_history)),
-        Invalid = true
+        Mismatch_Results_Transfer = true
     FROM ( SELECT JS.job,
                   JS.step AS Step,
                   JS.start, JS.finish,
@@ -230,32 +250,32 @@ BEGIN
                   ON JS.job = JSH.job AND
                      JS.step = JSH.step AND
                      JSH.most_recent_entry = 1
-           WHERE JS.job IN (Select DISTINCT job FROM Tmp_JobStepsToUpdate) AND
+           WHERE JS.job IN (SELECT DISTINCT JSU.job FROM Tmp_JobStepsToUpdate JSU) AND
                  JS.tool In ('Results_Transfer', 'Results_Cleanup') AND
                  (JSH.start <> JS.start OR JSH.finish <> JS.finish)
           ) InvalidQ
-    WHERE Tmp_Jobs.job = InvalidQ.job;
+    WHERE target.job = InvalidQ.job;
 
     If _infoOnly Then
-        UPDATE Tmp_Jobs
+        UPDATE Tmp_Jobs target
         SET Comment = 'Metadata would be updated'
         FROM Tmp_JobStepsToUpdate JSU
-        WHERE J.Job = JSU.Job AND Not J.Invalid;
+        WHERE target.Job = JSU.Job AND Not target.Mismatch_Results_Transfer;
     End If;
 
     If Not _infoOnly And Exists (
-        SELECT *
+        SELECT J.job
         FROM Tmp_Jobs J INNER JOIN
              Tmp_JobStepsToUpdate JSU
                ON J.Job = JSU.Job
-        WHERE Not J.Invalid) Then
+        WHERE Not J.Mismatch_Results_Transfer) Then
 
         ---------------------------------------------------
         -- Update metadata for the job steps in Tmp_JobStepsToUpdate,
-        -- filtering out any jobs with Invalid = true
+        -- filtering out any jobs with Mismatch_Results_Transfer = true
         ---------------------------------------------------
 
-        UPDATE sw.t_job_steps
+        UPDATE sw.t_job_steps AS target
         SET start = JSH.start,
             finish = JSH.finish,
             state = JSH.state,
@@ -269,14 +289,13 @@ BEGIN
         FROM Tmp_Jobs J
              INNER JOIN Tmp_JobStepsToUpdate JSU
                ON J.job = JSU.job
-             INNER JOIN sw.t_job_steps JS
-               ON JS.job = JSU.job AND
-                  JSU.step = JS.step
              INNER JOIN sw.t_job_steps_history JSH
-               ON JS.job = JSH.job AND
-                  JS.step = JSH.step AND
+               ON JSU.job = JSH.job AND
+                  JSU.step = JSH.step AND
                   JSH.most_recent_entry = 1
-        WHERE Not J.Invalid;
+        WHERE target.job = JSU.job AND
+              target.step = JSU.step AND
+              Not J.Mismatch_Results_Transfer;
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -285,13 +304,13 @@ BEGIN
 
             RAISE INFO '';
 
-            _formatSpecifier := '%-8s %-10s %-15s %-7s %-80s';
+            _formatSpecifier := '%-8s %-10s %-15s %-8s %-80s';
 
             _infoHead := format(_formatSpecifier,
                                 'Table',
                                 'Job',
                                 'Update_Required',
-                                'Invalid',
+                                'Mismatch',
                                 'Comment'
                                );
 
@@ -299,7 +318,7 @@ BEGIN
                                          '--------',
                                          '----------',
                                          '---------------',
-                                         '-------',
+                                         '--------',
                                          '--------------------------------------------------------------------------------'
                                         );
 
@@ -310,7 +329,7 @@ BEGIN
                 SELECT 'Tmp_Jobs' AS TheTable,
                         Job,
                         Update_Required,
-                        Invalid,
+                        Mismatch_Results_Transfer,
                         Comment
                 FROM Tmp_Jobs
             LOOP
@@ -318,7 +337,7 @@ BEGIN
                                     _previewData.TheTable,
                                     _previewData.Job,
                                     _previewData.Update_Required,
-                                    _previewData.Invalid,
+                                    _previewData.Mismatch_Results_Transfer,
                                     _previewData.Comment
                                    );
 
@@ -368,7 +387,7 @@ BEGIN
             FROM Tmp_Jobs J
                  INNER JOIN Tmp_JobStepsToUpdate JSU
                    ON J.Job = JSU.Job
-            WHERE NOT J.Invalid;
+            WHERE NOT J.Mismatch_Results_Transfer;
 
             _message := format('Updated step %s for job %s in sw.t_job_steps, copying metadata from sw.t_job_steps_history', _jobStep, _job);
         End If;
@@ -377,10 +396,10 @@ BEGIN
             _message := format('Updated %s job steps in sw.t_job_steps, copying metadata from sw.t_job_steps_history', _updateCount);
         End If;
 
-        UPDATE Tmp_Jobs
+        UPDATE Tmp_Jobs target
         SET Comment = 'Metadata updated'
         FROM Tmp_JobStepsToUpdate JSU
-        WHERE J.Job = JSU.Job AND Not J.Invalid;
+        WHERE target.Job = JSU.Job AND Not target.Mismatch_Results_Transfer;
 
     End If;
 
@@ -392,11 +411,12 @@ BEGIN
     SELECT J.job,
            J.Update_Required,
            J.Invalid,
+           J.Mismatch_Results_Transfer,
            J.Comment,
            JS.Dataset,
            JS.step,
            JS.Tool,
-           JS.StateName,
+           JS.state_name,
            JS.state,
            JSH.state As New_State,
            JS.start,
@@ -422,7 +442,7 @@ BEGIN
               JS.step = JSH.step AND
               JSH.most_recent_entry = 1
          RIGHT OUTER JOIN Tmp_Jobs J
-           ON J.job = JSU.job
+           ON J.job = JSU.job;
 
     ---------------------------------------------------
     -- Exit
@@ -438,4 +458,6 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.copy_runtime_metadata_from_history IS 'CopyRuntimeMetadataFromHistory';
+
+ALTER FUNCTION sw.copy_runtime_metadata_from_history(_joblist text, _infoonly boolean) OWNER TO d3l243;
+

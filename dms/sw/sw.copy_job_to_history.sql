@@ -1,24 +1,20 @@
 --
-CREATE OR REPLACE PROCEDURE sw.copy_job_to_history
-(
-    _job int,
-    _jobState int,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _overrideSaveTime boolean = false,
-    _saveTimeOverride timestamp = Null
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: copy_job_to_history(integer, integer, text, text, boolean, timestamp without time zone); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.copy_job_to_history(IN _job integer, IN _jobstate integer, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _overridesavetime boolean DEFAULT false, IN _savetimeoverride timestamp without time zone DEFAULT NULL::timestamp without time zone)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      For a given job, copies the job details, steps,
-**      and parameters to the history tables
+**      For a given job, copies the job details, steps, and parameters to the history tables
 **
 **  Arguments:
 **    _job                  Job number
 **    _jobState             Current job state
+**    _message              Status message
+**    _returnCode           Return code
 **    _overrideSaveTime     Set to true to use _saveTimeOverride for the SaveTime instead of CURRENT_TIMESTAMP
 **    _saveTimeOverride     Timestamp to use when _overrideSaveTime is true
 **
@@ -38,7 +34,7 @@ AS $$
 **          01/19/2018 mem - Add Runtime_Minutes
 **          07/25/2019 mem - Add Remote_Start and Remote_Finish
 **          08/17/2021 mem - Fix typo in argument _saveTimeOverride
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/01/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -62,7 +58,7 @@ BEGIN
     -- Bail if not a state we save for
     ---------------------------------------------------
 
-    If Not _jobState in (4, 5) Then
+    If Not Coalesce(_jobState, 0) In (4, 5) Then
         _message := 'Job state must be 4 or 5 to be copied to t_jobs_history (this is not an error)';
         RETURN;
     End If;
@@ -121,7 +117,7 @@ BEGIN
         comment,
         _saveTime
     FROM sw.t_jobs
-    WHERE job = _job
+    WHERE job = _job;
 
     ---------------------------------------------------
     -- Copy Steps
@@ -173,7 +169,7 @@ BEGIN
         remote_start,
         remote_finish
     FROM sw.t_job_steps
-    WHERE job = _job
+    WHERE job = _job;
 
     ---------------------------------------------------
     -- Copy parameters
@@ -188,7 +184,7 @@ BEGIN
            parameters,
            _saveTime
     FROM sw.t_job_parameters
-    WHERE job = _job
+    WHERE job = _job;
 
     ---------------------------------------------------
     -- Copy job step dependencies
@@ -228,7 +224,7 @@ BEGIN
            triggered,
            enable_only,
            _saveTime
-    FROM sw.t_task_step_dependencies
+    FROM sw.t_job_step_dependencies
     WHERE job = _job
     ON CONFLICT (Job, Step, Target_Step)
     DO UPDATE SET
@@ -243,4 +239,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.copy_job_to_history IS 'CopyJobToHistory';
+
+ALTER PROCEDURE sw.copy_job_to_history(IN _job integer, IN _jobstate integer, INOUT _message text, INOUT _returncode text, IN _overridesavetime boolean, IN _savetimeoverride timestamp without time zone) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE copy_job_to_history(IN _job integer, IN _jobstate integer, INOUT _message text, INOUT _returncode text, IN _overridesavetime boolean, IN _savetimeoverride timestamp without time zone); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.copy_job_to_history(IN _job integer, IN _jobstate integer, INOUT _message text, INOUT _returncode text, IN _overridesavetime boolean, IN _savetimeoverride timestamp without time zone) IS 'CopyJobToHistory';
+
