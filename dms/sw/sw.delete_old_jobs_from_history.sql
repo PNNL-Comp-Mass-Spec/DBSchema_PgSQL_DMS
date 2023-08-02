@@ -1,27 +1,31 @@
 --
-CREATE OR REPLACE PROCEDURE sw.delete_old_jobs_from_history
-(
-    _infoOnly boolean = true,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: delete_old_jobs_from_history(boolean, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.delete_old_jobs_from_history(IN _infoonly boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Delete jobs over three years old from
-**      T_Jobs_History, T_Job_Steps_History, T_Job_Step_Dependencies_History, and T_Job_Parameters_History
+**      Delete jobs over three years old from the history tables:
+**      - sw.T_Jobs_History
+**      - sw.T_Job_Steps_History
+**      - sw.T_Job_Step_Dependencies_History
+**      - sw.T_Job_Parameters_History
 **
 **      However, assure that at least 250,000 jobs are retained
 **
 **      Additionally:
-**      - Delete old status rows from T_Machine_Status_History
-**      - Delete old rows from T_Job_Step_Processing_Stats
+**      - Delete old status rows from sw.T_Machine_Status_History
+**      - Delete old rows from sw.T_Job_Step_Processing_Stats
 **
+**  Arguments:
+**    _infoOnly     When true, preview the 10 oldest and 10 newest jobs that would be deleted
+
 **  Auth:   mem
 **  Date:   05/29/2022 mem - Initial version
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/01/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -50,7 +54,7 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, true);
 
     ---------------------------------------------------
-    -- Create a temp table to hold the jobs to delete
+    -- Create a temporary table to hold the jobs to delete
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_JobsToDelete (
@@ -78,6 +82,13 @@ BEGIN
 
     If _jobCountToDelete = 0 Then
         _message := 'No old jobs were found; exiting';
+
+        If _infoOnly Then
+            RAISE INFO '';
+            RAISE INFO '%', _message;
+        End If;
+
+        DROP TABLE Tmp_JobsToDelete;
         RETURN;
     End If;
 
@@ -97,7 +108,7 @@ BEGIN
         WHERE job IN ( SELECT Job
                        FROM Tmp_JobsToDelete
                        ORDER BY Job DESC
-                       LIMIT _tempTableJobsToRemove)
+                       LIMIT _tempTableJobsToRemove);
         --
         GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
@@ -151,7 +162,7 @@ BEGIN
                    'Preview delete' As Comment
             From Tmp_JobsToDelete
             ORDER By Job
-            LIMIT 10;
+            LIMIT 10
         LOOP
             _infoData := format(_formatSpecifier,
                                 _previewData.Job,
@@ -176,7 +187,7 @@ BEGIN
                    FROM Tmp_JobsToDelete
                    ORDER BY Job DESC
                    LIMIT 10) FilterQ
-            ORDER BY Job;
+            ORDER BY Job
         LOOP
             _infoData := format(_formatSpecifier,
                                 _previewData.Job,
@@ -187,7 +198,7 @@ BEGIN
             RAISE INFO '%', _infoData;
         END LOOP;
 
-        -- Show the first row to be deleted from t_machine_status_history for each machine
+        -- Show the first row to be deleted from sw.t_machine_status_history for each machine
 
         RAISE INFO '';
 
@@ -262,33 +273,31 @@ BEGIN
         WHERE job IN (SELECT job FROM Tmp_JobsToDelete);
 
         -- Keep the 1000 most recent status values for each machine
-        DELETE sw.t_machine_status_history
-        WHERE entry_id IN
-              ( SELECT entry_id
-                FROM ( SELECT entry_id,
-                              Row_Number() OVER ( PARTITION BY machine ORDER BY entry_id DESC ) AS RowRank
-                       FROM sw.t_machine_status_history ) RankQ
-                WHERE RowRank > 1000 );
+        DELETE FROM sw.t_machine_status_history Target
+        WHERE EXISTS ( SELECT 1
+                       FROM ( SELECT entry_id,
+                                     Row_Number() OVER ( PARTITION BY machine ORDER BY entry_id DESC ) AS RowRank
+                              FROM sw.t_machine_status_history ) RankQ
+                       WHERE Target.entry_id = RankQ.entry_id AND
+                             RowRank > 1000
+                     );
 
         -- Keep the 500 most recent processing stats values for each processor
-        DELETE sw.t_job_step_processing_stats
-        WHERE entry_id IN
-              ( SELECT entry_id
-                FROM ( SELECT entry_id,
-                              processor,
-                              entered,
-                              job,
-                              step,
-                              Row_Number() OVER ( PARTITION BY processor ORDER BY entered DESC ) AS RowRank
+        DELETE FROM sw.t_job_step_processing_stats Target
+        WHERE EXISTS ( SELECT 1
+                       FROM ( SELECT entry_id,
+                                     Row_Number() OVER ( PARTITION BY processor ORDER BY entered DESC ) AS RowRank
                        FROM sw.t_job_step_processing_stats ) RankQ
-                WHERE RowRank > 500 );
+                       WHERE Target.entry_id = RankQ.entry_id AND
+                             RowRank > 500
+                     );
 
     End If;
 
     If _infoOnly Then
-        _message := 'Would delete ';
+        _message := 'Would delete';
     Else
-        _message := 'Deleted ';
+        _message := 'Deleted';
     End If;
 
     _message := format('%s %s old jobs from the history tables; job number range %s to %s',
@@ -303,6 +312,7 @@ BEGIN
     ---------------------------------------------------
 
     If char_length(_message) > 0 Then
+        RAISE INFO '';
         RAISE INFO '%', _message;
     End If;
 
@@ -310,4 +320,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.delete_old_jobs_from_history IS 'DeleteOldJobsFromHistory';
+
+ALTER PROCEDURE sw.delete_old_jobs_from_history(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE delete_old_jobs_from_history(IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.delete_old_jobs_from_history(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'DeleteOldJobsFromHistory';
+
