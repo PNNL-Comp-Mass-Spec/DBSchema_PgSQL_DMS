@@ -17,12 +17,14 @@ CREATE OR REPLACE PROCEDURE sw.validate_extension_script_for_job(IN _job integer
 **  Auth:   mem
 **  Date:   10/22/2010 mem - Initial version
 **          07/31/2023 mem - Ported to PostgreSQL
+**          08/01/2023 mem - Fix bug that cleared _extensionScriptName if the script did not exist in sw.t_scripts
 **
 *****************************************************/
 DECLARE
     _currentScript citext;
     _currentScriptXML xml;
     _extensionScriptXML xml;
+    _extensionScriptNameMatch citext;
     _overlapCount int;
 
     _formatSpecifier text;
@@ -110,7 +112,7 @@ BEGIN
     End If;
 
     SELECT contents, script
-    INTO _extensionScriptXML, _extensionScriptName
+    INTO _extensionScriptXML, _extensionScriptNameMatch
     FROM sw.t_scripts
     WHERE script = _extensionScriptName::citext;
 
@@ -121,6 +123,8 @@ BEGIN
         _returnCode := 'U6202';
         RETURN;
     End If;
+
+    _extensionScriptName := _extensionScriptNameMatch;
 
     -- Make sure there is no overlap in step numbers between the two scripts
 
