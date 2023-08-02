@@ -1,27 +1,22 @@
 --
-CREATE OR REPLACE PROCEDURE sw.extend_multiple_jobs
-(
-    _jobList text,
-    _extensionScriptName text,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _infoOnly boolean = false,
-    _debugMode boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: extend_multiple_jobs(text, text, text, text, boolean, boolean); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.extend_multiple_jobs(IN _joblist text, IN _extensionscriptname text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infoonly boolean DEFAULT false, IN _debugmode boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Applies an extension script to a series of jobs
 **
 **  Arguments:
-**    _jobList               Comma-separated list of jobs to extend
-**    _extensionScriptName   Example: Sequest_Extend_MSGF
+**    _jobList                  Comma-separated list of jobs to extend
+**    _extensionScriptName      Example: MSGFPlus_MzXml_Extend_IDPicker
 **
 **  Auth:   mem
 **  Date:   10/22/2010 mem - Initial version
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/01/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -65,11 +60,11 @@ BEGIN
     -- Warn the user if any invalid jobs are present
     ---------------------------------------------------
 
-    If Exists (SELECT * FROM Tmp_JobsToExtend WHERE Valid = 0) Then
+    If Exists (SELECT * FROM Tmp_JobsToExtend WHERE Not Valid) Then
         FOR _message IN
             SELECT format('Invalid job (either not in sw.t_jobs or in sw.t_jobs_history but does not have state=4): %s', job)
             FROM Tmp_JobsToExtend
-            WHERE Not Valid;
+            WHERE Not Valid
         LOOP
             RAISE WARNING '%', _message;
         END LOOP;
@@ -94,7 +89,7 @@ BEGIN
            MAX(Script),
            MIN(Job)
     INTO _scriptFirst, _scriptLast, _Job
-    FROM Tmp_JobsToExtend
+    FROM Tmp_JobsToExtend;
 
     If Coalesce(_scriptFirst, '') <> Coalesce(_scriptLast, '') Then
         _message := format('The jobs must all have the same script defined: %s <> %s', _scriptFirst, _scriptLast);
@@ -133,8 +128,8 @@ BEGIN
             _message => _message,
             _returnCode => _returnCode,
             _mode => 'ExtendExistingJob',
-            _extensionScriptName => _extensionScriptName,
             _existingJob => _job,
+            _extensionScriptName => _extensionScriptName,
             _infoOnly => _infoOnly,
             _debugMode => _debugMode);
 
@@ -145,4 +140,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.extend_multiple_jobs IS 'ExtendMultipleJobs';
+
+ALTER PROCEDURE sw.extend_multiple_jobs(IN _joblist text, IN _extensionscriptname text, INOUT _message text, INOUT _returncode text, IN _infoonly boolean, IN _debugmode boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE extend_multiple_jobs(IN _joblist text, IN _extensionscriptname text, INOUT _message text, INOUT _returncode text, IN _infoonly boolean, IN _debugmode boolean); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.extend_multiple_jobs(IN _joblist text, IN _extensionscriptname text, INOUT _message text, INOUT _returncode text, IN _infoonly boolean, IN _debugmode boolean) IS 'ExtendMultipleJobs';
+
