@@ -1,27 +1,30 @@
 --
-CREATE OR REPLACE PROCEDURE sw.delete_job
-(
-    _job text,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: delete_job(text, text, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.delete_job(IN _job text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Deletes the given job from T_Jobs and T_Job_Steps
-**      This procedure was previously called by public.Delete_Analysis_Job
-**      However, now public.Delete_Analysis_Job calls sw.Delete_Job_If_New_Or_Failed
+**      This procedure was previously called by public.delete_analysis_job()
+**      However, now public.Delete_Analysis_Job calls sw.delete_job_if_new_or_failed()
 **
+**  Arguments:
+**    _job          Job to delete (as text)
+**    _message      Status message
+**    _returnCode   Return code
+**    _callingUser  Calling user
+*
 **  Auth:   mem
 **  Date:   12/31/2008 mem - Initial release
 **          05/26/2009 mem - Now deleting from T_Job_Step_Dependencies and T_Job_Parameters
 **          09/24/2014 mem - Rename Job in T_Job_Step_Dependencies
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/01/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -93,4 +96,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.delete_job IS 'DeleteJob';
+
+ALTER PROCEDURE sw.delete_job(IN _job text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE delete_job(IN _job text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.delete_job(IN _job text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'DeleteJob';
+
