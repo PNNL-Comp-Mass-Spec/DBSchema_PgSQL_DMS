@@ -1,22 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.get_psm_job_defaults
-(
-    INOUT _datasets text,
-    INOUT _metadata text,
-    INOUT _toolName text,
-    INOUT _jobTypeName text,
-    INOUT _jobTypeDesc text,
-    INOUT _dynMetOxEnabled int,
-    INOUT _statCysAlkEnabled int,
-    INOUT _dynSTYPhosEnabled int,
-    INOUT _organismName text,
-    INOUT _protCollNameList text,
-    INOUT _protCollOptionsList text,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: get_psm_job_defaults(text); Type: FUNCTION; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE FUNCTION public.get_psm_job_defaults(_datasets text) RETURNS TABLE(datasets public.citext, metadata public.citext, tool_name public.citext, job_type_name public.citext, job_type_desc public.citext, dyn_met_ox_enabled integer, stat_cys_alk_enabled integer, dyn_sty_phos_enabled integer, organism_name public.citext, prot_coll_name_list public.citext, prot_coll_options_list public.citext, error_message public.citext)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -24,44 +12,37 @@ AS $$
 **      default search settings for creating an analysis job to search MS/MS data (PSM search)
 **
 **  Arguments:
-**    _datasets             Input/output parameter; comma-separated list of datasets; will be alphabetized after removing duplicates
-**    _metadata             Output parameter; table of metadata with columns separated by colons and rows separated by vertical bars
-**    _toolName             Output parameter; tool name
-**    _jobTypeName          Output parameter; job type name
-**    _jobTypeDesc          Output parameter; job type description
-**    _dynMetOxEnabled      Output parameter; 1 if dynamic Met Oxidation should be enabled, otherwise 0
-**    _statCysAlkEnabled    Output parameter; 1 if static Cys Alkylation should be enabled, otherwise 0
-**    _dynSTYPhosEnabled    Output parameter; 1 if dynamic STY Phosphorylation should be enabled, otherwise 0
-**    _organismName         Output parameter; organism
-**    _protCollNameList     Output parameter; protein collections
-**    _protCollOptionsList  Output parameter; protein collection options
+**    _datasets             Comma-separated list of dataset names
+**
+**  Description of data columns returned by this function:
+**    datasets                  Alphabetized list of dataset names (duplicate datasets are consolidated)
+**    metadata                  Table of metadata with columns separated by colons and rows separated by vertical bars
+**    tool_name                 Tool name
+**    job_type_name             Job type name
+**    job_type_desc             Job type description
+**    dyn_met_ox_enabled        1 if dynamic Met Oxidation should be enabled, otherwise 0
+**    stat_cys_alk_enabled      1 if static Cys Alkylation should be enabled, otherwise 0
+**    dyn_sty_phos_enabled      1 if dynamic STY Phosphorylation should be enabled, otherwise 0
+**    organism_name             Organism name
+**    prot_coll_name_list       Protein collection list
+**    prot_coll_options_list    Protein collection options
+**    error_message             Empty string if no problems, error message if an issue
 **
 **  Example usage:
-**    CALL get_psm_job_defaults ('QC_Mam_23_01_Run01_FAIMS_Merry_02June23_WBEH-23-05-13',
-**                               _metadata,              -- Output
-**                               _toolName,              -- Output
-**                               _jobTypeName,           -- Output
-**                               _jobTypeDesc,           -- Output
-**                               _dynMetOxEnabled,       -- Output
-**                               _statCysAlkEnabled,     -- Output
-**                               _dynSTYPhosEnabled,     -- Output
-**                               _organismName,          -- Output
-**                               _protCollNameList,      -- Output
-**                               _protCollOptionsList,   -- Output
-**                               _message,               -- Output
-**                               _returnCode);           -- Output
+**    SELECT * FROM get_psm_job_defaults ('QC_Mam_23_01_Run01_FAIMS_Merry_02June23_WBEH-23-05-13');
 **
-**    Output values:
-**      _metadata = 'Metadata:Description:Datasets|HMS-HCD-HMSn:High res MS with high res HCD MSn:1|Alkylated:Sample (experiment) marked as alkylated in DMS:1|Labeling:none:1|Enzyme:Trypsin:1|'
-**      _toolName = 'MSGFPlus_MzML'
-**      _jobTypeName = 'High Res MS1'
-**      _jobTypeDesc = 'Data acquired with high resolution MS1 spectra, typically an Orbitrap or LTQ-FT'
-**      _dynMetOxEnabled = '1'
-**      _statCysAlkEnabled = '1'
-**      _dynSTYPhosEnabled = '0'
-**      _organismName = 'Mus_musculus'
-**      _protCollNameList = 'M_musculus_UniProt_SPROT_2023-03-01,Tryp_Pig_Bov'
-**      _protCollOptionsList = 'seq_direction=decoy	'
+**  Example results:
+**    Datasets:                 QC_Mam_23_01_Run01_FAIMS_Merry_02June23_WBEH-23-05-13
+**    Metadata:                 Metadata:Description:Datasets|HMS-HCD-HMSn:High res MS with high res HCD MSn:1|Alkylated:Sample (experiment) marked as alkylated in DMS:1|Labeling:none:1|Enzyme:Trypsin:1|
+**    Tool_name:                MSGFPlus_MzML
+**    Job_type_name:            High Res MS1
+**    Job_type_desc:            Data acquired with high resolution MS1 spectra, typically an Orbitrap or LTQ-FT
+**    Dyn_met_ox_enabled:       1
+**    Stat_cys_alk_enabled:     1
+**    Dyn_sty_phos_enabled:     0
+**    Organism_name:            Mus_musculus
+**    Prot_coll_name_list:      M_musculus_UniProt_SPROT_2023-03-01,Tryp_Pig_Bov
+**    Prot_coll_options_list:   seq_direction=decoy
 **
 **  Auth:   mem
 **  Date:   11/14/2012 mem - Initial version
@@ -78,13 +59,25 @@ AS $$
 **          06/04/2018 mem - Change default tool to MSGFPlus_MzML
 **          01/28/2020 mem - Use '%TMT1%' instead of '%TMT10' so we can match TMT10 and TMT11
 **          09/10/2020 mem - Add job types 'TMT Zero' and 'TMT 16-plex'
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/02/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
-    _msg text;
-    _result int := 0;
-    _list text;
+    _metadata citext;
+    _toolName citext;
+    _jobTypeName citext;
+    _jobTypeDesc citext;
+    _dynMetOxEnabled int;
+    _statCysAlkEnabled int;
+    _dynSTYPhosEnabled int;
+    _organismName citext;
+    _protCollNameList text;
+    _protCollOptionsList citext;
+
+    _collectionCountAdded int;
+    _message text;
+    _returncode text;
+
     _addon text;
     _topDatasetType citext := '';
     _topLabeling citext := '';
@@ -100,7 +93,7 @@ DECLARE
     _exceptionContext text;
 BEGIN
     _message := '';
-    _returnCode := '';
+    _returncode := '';
 
     ---------------------------------------------------
     -- Initialize the output parameters
@@ -122,7 +115,23 @@ BEGIN
     ---------------------------------------------------
 
     If Coalesce(_datasets, '') = '' Then
-        RAISE EXCEPTION 'Dataset list is empty';
+        _message := 'Dataset list is empty';
+
+        RETURN QUERY
+        SELECT ''::citext As datasets,
+               ''::citext As metadata,
+               ''::citext As tool_name,
+               ''::citext As job_type_name,
+               ''::citext As job_type_desc,
+               0          As dyn_met_ox_enabled,
+               0          As stat_cys_alk_enabled,
+               0          As dyn_sty_phos_enabled,
+               ''::citext As organism_name,
+               ''::citext As prot_coll_name_list,
+               ''::citext As prot_coll_options_list,
+               _message::citext As error_message;
+
+        RETURN;
     End If;
 
     _logErrors := true;
@@ -138,7 +147,7 @@ BEGIN
         Dataset_State_ID int NULL,
         Archive_State_ID int NULL,
         Dataset_Type text NULL,
-        Dataset_rating int NULL
+        Dataset_Rating_ID int NULL
     );
 
     CREATE INDEX IX_Tmp_DatasetInfo_DatasetID ON Tmp_DatasetInfo (Dataset_ID);
@@ -169,7 +178,7 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_DatasetInfo ( Dataset_Name )
-    SELECT DISTINCT Item
+    SELECT DISTINCT Value
     FROM public.parse_delimited_list ( _datasets );
 
     ---------------------------------------------------
@@ -177,21 +186,42 @@ BEGIN
     ---------------------------------------------------
 
     CALL validate_analysis_job_request_datasets (
-                _message => _message,                   -- Output
                 _autoRemoveNotReleasedDatasets => true,
                 _toolName => _toolName,
-                _allowNewDatasets => true);
+                _allowNewDatasets => true,
+                _message => _message,               -- Output
+                _returnCode => _returnCode          -- Output
+                );
 
     If _returnCode <> '' Then
-        _logErrors := false;
-        RAISE EXCEPTION _message;
+
+        RETURN QUERY
+        SELECT ''::citext As datasets,
+               ''::citext As metadata,
+               ''::citext As tool_name,
+               ''::citext As job_type_name,
+               ''::citext As job_type_desc,
+               0          As dyn_met_ox_enabled,
+               0          As stat_cys_alk_enabled,
+               0          As dyn_sty_phos_enabled,
+               ''::citext As organism_name,
+               ''::citext As prot_coll_name_list,
+               ''::citext As prot_coll_options_list,
+               _message::citext As error_message;
+
+        DROP TABLE Tmp_DatasetInfo;
+        DROP TABLE Tmp_DatasetTypeStats;
+        DROP TABLE Tmp_DatasetLabelingStats;
+        DROP TABLE Tmp_Organisms;
+
+        RETURN;
     End If;
 
     ---------------------------------------------------
     -- Regenerate the dataset list, sorting by dataset name
     ---------------------------------------------------
 
-    SELECT string_agg(Dataset_Name, ', ' ORDER BY Dataset_Name;)
+    SELECT string_agg(Dataset_Name, ', ' ORDER BY Dataset_Name)
     INTO _datasets
     FROM Tmp_DatasetInfo;
 
@@ -270,8 +300,11 @@ BEGIN
         -- Append the default contaminant collections
         CALL validate_protein_collection_list_for_datasets (
                             _datasets,
-                            _protCollNameList => _protCollNameList,     -- Output
-                            _showDebug => true);
+                            _protCollNameList => _protCollNameList,             -- Output
+                            _collectionCountAdded => _collectionCountAdded,     -- Output
+                            _message => _message,                               -- Output
+                            _returncode => _returncode,                         -- Output
+                            _showDebug => false);
 
     End If;
 
@@ -302,7 +335,7 @@ BEGIN
          INNER JOIN t_experiments E
            ON DS.exp_id = E.exp_id;
 
-    _metadata := format('%sAlkylated:Sample (experiment) marked As alkylated in DMS:%s|', _metadata, datasetCountAlkylated);
+    _metadata := format('%sAlkylated:Sample (experiment) marked As alkylated in DMS:%s|', _metadata, _datasetCountAlkylated);
 
     -- Labeling
     --
@@ -314,7 +347,7 @@ BEGIN
 
     -- Enzyme
     --
-    SELECT string_agg('Enzyme:%s:%s', CountQ.enzyme_name, CountQ.Datasets, '|' ORDER BY CountQ.enzyme_name)
+    SELECT string_agg(format('Enzyme:%s:%s', CountQ.enzyme_name, CountQ.Datasets), '|' ORDER BY CountQ.enzyme_name)
     INTO _addon
     FROM (  SELECT Enz.enzyme_name, COUNT(DSInfo.dataset_id) As Datasets
             FROM Tmp_DatasetInfo DSInfo
@@ -325,8 +358,7 @@ BEGIN
                  INNER JOIN t_enzymes Enz
                    ON E.enzyme_id = Enz.enzyme_id
             GROUP BY Enz.enzyme_name
-        ) CountQ
-    ORDER BY;
+        ) CountQ;
 
     _metadata := format('%s%s|', _metadata, _addon);
 
@@ -398,12 +430,31 @@ BEGIN
 
     -- Lookup the description for _jobTypeName
     --
-    SELECT job_type_description
+    SELECT JT.job_type_description
     INTO _jobTypeDesc
-    FROM t_default_psm_job_types
-    WHERE job_type_name = _jobTypeName;
+    FROM t_default_psm_job_types JT
+    WHERE JT.job_type_name = _jobTypeName;
 
     _jobTypeDesc := Coalesce(_jobTypeDesc, '');
+
+    RETURN QUERY
+    SELECT _datasets::citext         As datasets,
+           _metadata                 As metadata,
+           _toolName                 As tool_name,
+           _jobTypeName              As job_type_name,
+           _jobTypeDesc              As job_type_desc,
+           _dynMetOxEnabled          As dyn_met_ox_enabled,
+           _statCysAlkEnabled        As stat_cys_alk_enabled,
+           _dynSTYPhosEnabled        As dyn_sty_phos_enabled,
+           _organismName             As organism_name,
+           _protCollNameList::citext As prot_coll_name_list,
+           _protCollOptionsList      As prot_coll_options_list,
+           ''::citext                As error_message;
+
+    DROP TABLE Tmp_DatasetInfo;
+    DROP TABLE Tmp_DatasetTypeStats;
+    DROP TABLE Tmp_DatasetLabelingStats;
+    DROP TABLE Tmp_Organisms;
 
 EXCEPTION
     WHEN OTHERS THEN
@@ -425,6 +476,25 @@ EXCEPTION
         _returnCode := _sqlState;
     End If;
 
+    If Position(_returnCode In _message) = 0 Then
+        _message := format('%s (%s)', _message, _returnCode);
+    End If;
+
+    RETURN QUERY
+    SELECT _datasets::citext As datasets,
+           ''::citext As metadata,
+           ''::citext As tool_name,
+           ''::citext As job_type_name,
+           ''::citext As job_type_desc,
+           0          As dyn_met_ox_enabled,
+           0          As stat_cys_alk_enabled,
+           0          As dyn_sty_phos_enabled,
+           ''::citext As organism_name,
+           ''::citext As prot_coll_name_list,
+           ''::citext As prot_coll_options_list,
+           _message::citext As error_message;
+
+
     DROP TABLE IF EXISTS Tmp_DatasetInfo;
     DROP TABLE IF EXISTS Tmp_DatasetTypeStats;
     DROP TABLE IF EXISTS Tmp_DatasetLabelingStats;
@@ -432,4 +502,12 @@ EXCEPTION
 END
 $$;
 
-COMMENT ON PROCEDURE public.get_psm_job_defaults IS 'GetPSMJobDefaults';
+
+ALTER FUNCTION public.get_psm_job_defaults(_datasets text) OWNER TO d3l243;
+
+--
+-- Name: FUNCTION get_psm_job_defaults(_datasets text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON FUNCTION public.get_psm_job_defaults(_datasets text) IS 'GetPSMJobDefaults';
+

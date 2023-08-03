@@ -1,15 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.get_psm_job_definitions
-(
-    INOUT _datasets text,
-    INOUT _metadata text,
-    INOUT _defaults text,
-    _mode text = 'PSM',
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: get_psm_job_definitions(text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.get_psm_job_definitions(INOUT _datasets text, INOUT _metadata text DEFAULT ''::text, INOUT _defaults text DEFAULT ''::text, IN _mode text DEFAULT 'PSM'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -41,19 +36,11 @@ AS $$
 **          11/20/2012 grk - Removed extra RETURN that was blocking error return
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/02/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
-    _toolName text,
-    _jobTypeName text,
-    _jobTypeDesc text,
-    _dynMetOxEnabled int,
-    _statCysAlkEnabled int,
-    _dynSTYPhosEnabled int,
-    _organismName text,
-    _protCollNameList text,
-    _protCollOptionsList text
+    _psmJobDefaults record;
 
     _sqlState text;
     _exceptionMessage text;
@@ -65,30 +52,38 @@ BEGIN
 
     BEGIN
 
-        CALL get_psm_job_defaults (
-                _datasets => _datasets,                         -- Output
-                _metadata => _metadata,                         -- Output
-                _toolName => _toolName,                         -- Output
-                _jobTypeName => _jobTypeName,                   -- Output
-                _jobTypeDesc => _jobTypeDesc,                   -- Output
-                _dynMetOxEnabled => _dynMetOxEnabled,           -- Output
-                _statCysAlkEnabled => _statCysAlkEnabled,       -- Output
-                _dynSTYPhosEnabled => _dynSTYPhosEnabled,       -- Output
-                _organismName => _organismName,                 -- Output
-                _protCollNameList => _protCollNameList,         -- Output
-                _protCollOptionsList => _protCollOptionsList,   -- Output
-                _message => _message,                           -- Output
-                _returnCode => _returnCode);                    -- Output
+        SELECT datasets,
+               metadata,
+               tool_name,
+               job_type_name,
+               job_type_desc,
+               dyn_met_ox_enabled,
+               stat_cys_alk_enabled,
+               dyn_sty_phos_enabled,
+               organism_name,
+               prot_coll_name_list,
+               prot_coll_options_list,
+               error_message
+        INTO _psmJobDefaults
+        FROM public.get_psm_job_defaults(_datasets);
 
-        _defaults := format('ToolName:%s|',               _toolName)              ||
-                     format('JobTypeName:%s|',            _jobTypeName)           ||
-                     format('JobTypeDesc:%s|',            _jobTypeDesc)           ||
-                     format('DynMetOxEnabled:%s|',        _dynMetOxEnabled)       ||
-                     format('StatCysAlkEnabled:%s|',      _statCysAlkEnabled)     ||
-                     format('DynSTYPhosEnabled:%s|',      _dynSTYPhosEnabled)     ||
-                     format('OrganismName:%s|',           _organismName)          ||
-                     format('ProteinCollectionList:%s|',  _protCollNameList)      ||
-                     format('ProteinOptionsList:%s|',     _protCollOptionsList);
+        If _psmJobDefaults.error_message <> '' Then
+            RAISE EXCEPTION '%', _psmJobDefaults.error_message;
+        End If;
+
+        _datasets := _psmJobDefaults.datasets;
+
+        _metadata := _psmJobDefaults.metadata;
+
+        _defaults := format('ToolName:%s|',               _psmJobDefaults.tool_name)               ||
+                     format('JobTypeName:%s|',            _psmJobDefaults.job_type_name)           ||
+                     format('JobTypeDesc:%s|',            _psmJobDefaults.job_type_desc)           ||
+                     format('DynMetOxEnabled:%s|',        _psmJobDefaults.dyn_met_ox_enabled)      ||
+                     format('StatCysAlkEnabled:%s|',      _psmJobDefaults.stat_cys_alk_enabled)    ||
+                     format('DynSTYPhosEnabled:%s|',      _psmJobDefaults.dyn_sty_phos_enabled)    ||
+                     format('OrganismName:%s|',           _psmJobDefaults.organism_name)           ||
+                     format('ProteinCollectionList:%s|',  _psmJobDefaults.prot_coll_name_list)     ||
+                     format('ProteinOptionsList:%s|',     _psmJobDefaults.prot_coll_options_list);
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -110,4 +105,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.get_psm_job_definitions IS 'GetPSMJobDefinitions';
+
+ALTER PROCEDURE public.get_psm_job_definitions(INOUT _datasets text, INOUT _metadata text, INOUT _defaults text, IN _mode text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE get_psm_job_definitions(INOUT _datasets text, INOUT _metadata text, INOUT _defaults text, IN _mode text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.get_psm_job_definitions(INOUT _datasets text, INOUT _metadata text, INOUT _defaults text, IN _mode text, INOUT _message text, INOUT _returncode text) IS 'GetPSMJobDefinitions';
+

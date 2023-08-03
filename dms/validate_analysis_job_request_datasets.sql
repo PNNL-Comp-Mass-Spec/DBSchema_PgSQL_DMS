@@ -1,17 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.validate_analysis_job_request_datasets
-(
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _autoRemoveNotReleasedDatasets boolean = false,
-    _toolName text = 'unknown',
-    _allowNewDatasets boolean = false,
-    _allowNonReleasedDatasets boolean = false,
-    _showDebugMessages boolean = false,
-    _showDatasetInfoTable boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: validate_analysis_job_request_datasets(boolean, text, boolean, boolean, boolean, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.validate_analysis_job_request_datasets(IN _autoremovenotreleaseddatasets boolean DEFAULT false, IN _toolname text DEFAULT 'unknown'::text, IN _allownewdatasets boolean DEFAULT false, IN _allownonreleaseddatasets boolean DEFAULT false, IN _showdebugmessages boolean DEFAULT false, IN _showdatasetinfotable boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -21,23 +14,23 @@ AS $$
 **      the remaining columns in the table will be populated by this procedure
 **
 **      CREATE TEMP TABLE Tmp_DatasetInfo (
-**          Dataset_Name text,
+**          Dataset_Name citext,
 **          Dataset_ID int NULL,
 **          Instrument_Class text NULL,
 **          Dataset_State_ID int NULL,
 **          Archive_State_ID int NULL,
 **          Dataset_Type text NULL,
-**          Dataset_Rating_ID smallint NULL,
+**          Dataset_Rating_ID smallint NULL
 **      );
 **
 **  Arguments:
-**    _message                         Output: error message
-**    _returnCode                      Output: empty string if no error, error code if a validation problem
 **    _autoRemoveNotReleasedDatasets   When true, automatically removes datasets from Tmp_DatasetInfo if they have an invalid rating
 **    _allowNewDatasets                When false, all datasets must have state 3 (Complete); when true, will also allow datasets with state 1 or 2 (New or Capture In Progress)
 **    _allowNonReleasedDatasets        When true, allow datasets to have a rating of 'Not Released'
 **    _showDebugMessages               When true, show message info
-**    _showDatasetInfoTable            When true, if _showDebugMessages is also true, show the contents of Tmp_DatasetInfo
+**    _showDatasetInfoTable            When true, show the contents of Tmp_DatasetInfo
+**    _message                         Output: error message
+**    _returnCode                      Output: empty string if no error, error code if a validation problem
 **
 **  Auth:   mem
 **  Date:   11/12/2012 mem - Initial version (extracted code from Add_Update_Analysis_Job_Request and Validate_Analysis_Job_Parameters)
@@ -55,7 +48,7 @@ AS $$
 **          10/20/2022 mem - Added parameter _showDatasetInfoTable
 **          03/22/2023 mem - Also auto-remove datasets named 'Dataset Name' and 'Dataset_Name' from Tmp_DatasetInfo
 **          03/27/2023 mem - Skip HMS vs. MS check when the tool is DiaNN
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/02/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -63,47 +56,55 @@ DECLARE
     _notReleasedCount int := 0;
     _hmsCount int := 0;
     _msCount int := 0;
+
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';
 
     _autoRemoveNotReleasedDatasets := Coalesce(_autoRemoveNotReleasedDatasets, false);
-    _toolName = Coalesce(_toolName, 'unknown');
-    _allowNewDatasets := Coalesce(_allowNewDatasets, false);
-    _allowNonReleasedDatasets := Coalesce(_allowNonReleasedDatasets, false);
-    _showDebugMessages := Coalesce(_showDebugMessages, false);
-    _showDatasetInfoTable := Coalesce(_showDatasetInfoTable, false);
+    _toolName                      := Coalesce(_toolName, 'unknown');
+    _allowNewDatasets              := Coalesce(_allowNewDatasets, false);
+    _allowNonReleasedDatasets      := Coalesce(_allowNonReleasedDatasets, false);
+    _showDebugMessages             := Coalesce(_showDebugMessages, false);
+    _showDatasetInfoTable          := Coalesce(_showDatasetInfoTable, false);
 
     ---------------------------------------------------
     -- Auto-delete dataset column names from Tmp_DatasetInfo
     ---------------------------------------------------
 
     DELETE FROM Tmp_DatasetInfo
-    WHERE Dataset_Name::citext IN ('Dataset', 'Dataset Name', 'Dataset_Name', 'Dataset_Num')
+    WHERE Dataset_Name::citext IN ('Dataset', 'Dataset Name', 'Dataset_Name', 'Dataset_Num');
 
     ---------------------------------------------------
     -- Update the additional info in Tmp_DatasetInfo
     ---------------------------------------------------
 
     UPDATE Tmp_DatasetInfo
-    SET Tmp_DatasetInfo.dataset_id = t_dataset.dataset_id,
-        Tmp_DatasetInfo.instrument_class = t_instrument_class.instrument_class,
-        Tmp_DatasetInfo.dataset_state_id = t_dataset.dataset_state_id,
-        Tmp_DatasetInfo.archive_state_id = Coalesce(t_dataset_archive.archive_state_id, 0),
-        Tmp_DatasetInfo.Dataset_Type = t_dataset_rating_name.Dataset_Type,
-        Tmp_DatasetInfo.Dataset_Rating_ID = t_dataset.dataset_rating_id
-    FROM t_dataset
-         INNER JOIN t_instrument_name
-           ON t_dataset.instrument_id = t_instrument_name.instrument_id
-         INNER JOIN t_instrument_class
-           ON t_instrument_name.instrument_class = t_instrument_class.instrument_class
-         INNER JOIN t_dataset_rating_name
-           ON t_dataset_type_name.dataset_type_id = t_dataset.dataset_type_ID
-         LEFT OUTER JOIN t_dataset_archive
-           ON t_dataset.dataset_id = t_dataset_archive.dataset_id
-    WHERE Tmp_DatasetInfo.dataset = t_dataset.dataset;
+    SET dataset_id        = DS.dataset_id,
+        instrument_class  = InstClass.instrument_class,
+        dataset_state_id  = DS.dataset_state_id,
+        archive_state_id  = Coalesce(DA.archive_state_id, 0),
+        Dataset_Type      = DTN.Dataset_Type,
+        Dataset_Rating_ID = DRN.dataset_rating_id
+    FROM t_dataset DS
+         INNER JOIN t_instrument_name InstName
+           ON DS.instrument_id = InstName.instrument_id
+         INNER JOIN t_instrument_class InstClass
+           ON InstName.instrument_class = InstClass.instrument_class
+         INNER JOIN t_dataset_rating_name DRN
+           ON DRN.dataset_rating_id = DS.dataset_rating_id
+         INNER JOIN t_dataset_type_name DTN
+           ON DTN.dataset_type_id = DS.dataset_type_ID
+         LEFT OUTER JOIN t_dataset_archive DA
+           ON DS.dataset_id = DA.dataset_id
+    WHERE Tmp_DatasetInfo.dataset_name = DS.dataset;
 
-    If _showDebugMessages And _showDatasetInfoTable Then
+    If _showDatasetInfoTable Then
 
         RAISE INFO '';
 
@@ -298,4 +299,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.validate_analysis_job_request_datasets IS 'ValidateAnalysisJobRequestDatasets';
+
+ALTER PROCEDURE public.validate_analysis_job_request_datasets(IN _autoremovenotreleaseddatasets boolean, IN _toolname text, IN _allownewdatasets boolean, IN _allownonreleaseddatasets boolean, IN _showdebugmessages boolean, IN _showdatasetinfotable boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE validate_analysis_job_request_datasets(IN _autoremovenotreleaseddatasets boolean, IN _toolname text, IN _allownewdatasets boolean, IN _allownonreleaseddatasets boolean, IN _showdebugmessages boolean, IN _showdatasetinfotable boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.validate_analysis_job_request_datasets(IN _autoremovenotreleaseddatasets boolean, IN _toolname text, IN _allownewdatasets boolean, IN _allownonreleaseddatasets boolean, IN _showdebugmessages boolean, IN _showdatasetinfotable boolean, INOUT _message text, INOUT _returncode text) IS 'ValidateAnalysisJobRequestDatasets';
+
