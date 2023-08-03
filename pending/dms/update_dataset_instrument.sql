@@ -23,6 +23,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   04/30/2019 mem - Initial Version
+**          08/02/2023 mem - Add call to update_cached_dataset_instruments
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -311,7 +312,7 @@ BEGIN
             Instrument_Class = _instrumentClassNew
         WHERE Job = _captureJob AND Dataset_ID = _datasetId
 
-        CALL cap.update_parameters_for_task (_captureJob, _message => _message, _returncode => _returncode);
+        CALL cap.update_parameters_for_task (_captureJob, _message => _message, _returnCode => _returnCode);
     Else
         DELETE cap.t_tasks
         WHERE Job = _captureJob AND Dataset_ID = _datasetId
@@ -326,6 +327,9 @@ BEGIN
                         _instrumentNameOld, _instrumentNameNew, _datasetName, _datasetId, _storagePathIdOld, _storagePathIdNew);
 
     CALL post_log_entry ('Normal', _message, 'Update_Dataset_Instrument');
+
+    -- Update T_Cached_Dataset_Instruments
+    CALL update_cached_dataset_instruments (_processingMode => 0, _datasetId => _datasetID, _infoOnly => false);
 
     ---------------------------------------------------
     -- Done
