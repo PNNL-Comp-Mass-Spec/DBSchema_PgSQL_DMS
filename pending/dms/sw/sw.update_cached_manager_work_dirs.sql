@@ -1,9 +1,9 @@
 --
 CREATE OR REPLACE PROCEDURE sw.update_cached_manager_work_dirs
 (
+    _infoOnly boolean = false,
     INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _infoOnly boolean = false
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

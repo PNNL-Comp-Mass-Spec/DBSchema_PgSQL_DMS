@@ -3,16 +3,16 @@ CREATE OR REPLACE PROCEDURE sw.remove_job_from_main_tables
 (
     _job int,
     _infoOnly boolean = false,
+    _validateJobStepSuccess boolean = false,
     INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _validateJobStepSuccess boolean = false
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
 **  Desc:
-**      Delete specified job from the main tables in the public schema
+**      Delete specified job from sw.t_jobs, sw.t_job_steps, etc.
 **
 **  Arguments:
 **    _job                      Job to remove

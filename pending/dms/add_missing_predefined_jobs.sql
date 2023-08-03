@@ -9,13 +9,13 @@ CREATE OR REPLACE PROCEDURE public.add_missing_predefined_jobs
     _excludeDatasetsNotReleased boolean = true,
     _excludeUnreviewedDatasets boolean = true,
     _instrumentSkipList text = 'Agilent_GC_MS_01, TSQ_1, TSQ_3',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
     _datasetNameIgnoreExistingJobs text = '',
     _ignoreJobsCreatedBeforeDisposition boolean = true,
     _campaignFilter text = '',
     _datasetIDFilterList text = '',
-    _showDebug boolean = false
+    _showDebug boolean = false,
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$

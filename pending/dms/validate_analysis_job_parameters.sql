@@ -162,13 +162,14 @@ BEGIN
     End If;
 
     CALL validate_analysis_job_request_datasets (
-                _message => _message,                                                   -- Output
-                _returnCode => _returnCode,                                             -- Output
                 _autoRemoveNotReleasedDatasets => _autoRemoveNotReleasedDatasets,
                 _toolName => _toolName,
                 _allowNewDatasets => _allowNewDatasets,
                 _allowNonReleasedDatasets => _allowNonReleasedDatasets,
-                _showDebugMessages => _showDebugMessages);
+                _showDebugMessages => _showDebugMessages,
+                _message => _message,           -- Output
+                _returnCode => _returnCode,     -- Output
+                );
 
     If _returnCode <> '' Then
         If Coalesce(_message, '') = '' Then

@@ -362,7 +362,8 @@ BEGIN
             RETURNING dataset_id
             INTO _datasetID;
 
-            -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
+            -- If _callingUser is defined, call alter_event_log_entry_user to alter the entered_by field in t_event_log
+
             If char_length(_callingUser) > 0 Then
                 CALL alter_event_log_entry_user (4, _datasetID, _newDSStateID, _callingUser, _message => _alterEnteredByMessage);
 
@@ -441,7 +442,7 @@ BEGIN
             End If;
 
             -- Update t_cached_dataset_instruments
-            CALL public.update_cached_dataset_instruments (_processingMode => 0, _datasetId => _datasetID, _infoOnly => false);
+            CALL update_cached_dataset_instruments (_processingMode => 0, _datasetId => _datasetID, _infoOnly => false);
 
         End If;
 
@@ -462,7 +463,8 @@ BEGIN
                     acq_time_end = _acqEnd
             WHERE dataset = _datasetName
 
-            -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
+            -- If _callingUser is defined, call alter_event_log_entry_user to alter the entered_by field in t_event_log
+
             If char_length(_callingUser) > 0 AND _ratingID <> Coalesce(_curDSRatingID, -1000) Then
                 CALL alter_event_log_entry_user (8, _datasetID, _ratingID, _callingUser, _message => _alterEnteredByMessage);
             End If;

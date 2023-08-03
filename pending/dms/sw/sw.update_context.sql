@@ -406,11 +406,11 @@ BEGIN
 
         If _result > 0 Then
             CALL sw.update_step_states (
-                        _message => _message,
-                        _returnCode => _returnCode,
                         _infoOnly => _infoOnly,
                         _maxJobsToProcess => _maxJobsToProcess,
-                        _loopingUpdateInterval => _loopingUpdateInterval);
+                        _loopingUpdateInterval => _loopingUpdateInterval,
+                        _message => _message,
+                        _returnCode => _returnCode);
         End If;
 
     EXCEPTION
@@ -461,11 +461,12 @@ BEGIN
         If _result > 0 Then
             CALL sw.update_job_state (
                         _bypassDMS,
-                        _message => _message,
-                        _returnCode => _returnCode,
                         _maxJobsToProcess => _maxJobsToProcess,
                         _loopingUpdateInterval => _loopingUpdateInterval,
-                        _infoOnly => _infoOnly);
+                        _infoOnly => _infoOnly,
+                        _message => _message,               -- Output
+                        _returnCode => _returnCode          -- Output
+                        );
         End If;
 
     EXCEPTION

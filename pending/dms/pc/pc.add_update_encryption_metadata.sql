@@ -4,7 +4,7 @@ CREATE OR REPLACE PROCEDURE pc.add_update_encryption_metadata
     _proteinCollectionID int,
     _encryptionPassphrase text,
     _passphraseSHA1Hash text,
-    OUT _passphraseID int default 0,
+    INOUT _passphraseID int default 0,
     INOUT _message text default '',
     INOUT _returnCode text default ''
 )

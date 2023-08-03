@@ -16,8 +16,8 @@ LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
-**  Delete jobs past their expiration date
-**  from the main tables in the database
+**  Desc:
+**      Delete jobs past their expiration date from the main tables in the database
 **
 **  Arguments:
 **    _intervalDaysForSuccess   Successful jobs must be this old to be deleted (0 -> no deletion)
@@ -196,7 +196,14 @@ BEGIN
             If _infoOnly Then
                 RAISE INFO 'Call copy_job_to_history for job % with date %', _jobInfo.JobToAdd, public.timestamp_text(_jobInfo.SaveTimeOverride);
             Else
-                CALL sw.copy_job_to_history (_jobInfo.JobToAdd, _jobInfo.State, _message => _message, _overrideSaveTime => true, _saveTimeOverride => _jobInfo.JobToAdd.SaveTimeOverride);
+                CALL sw.copy_job_to_history (
+                            _jobInfo.JobToAdd,
+                            _jobInfo.State,
+                            _overrideSaveTime => true,
+                            _saveTimeOverride => _jobInfo.JobToAdd.SaveTimeOverride,
+                            _message => _message,                   -- Output
+                            _returnCode => _returnCode              -- Output
+                            );
             End If;
         END LOOP;
 

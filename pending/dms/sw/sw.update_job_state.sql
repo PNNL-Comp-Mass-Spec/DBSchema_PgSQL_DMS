@@ -2,11 +2,11 @@
 CREATE OR REPLACE PROCEDURE sw.update_job_state
 (
     _bypassDMS boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
     _maxJobsToProcess int = 0,
     _loopingUpdateInterval int = 5,
-    _infoOnly boolean = false
+    _infoOnly boolean = false,
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -59,10 +59,9 @@ AS $$
 **
 **  Arguments:
 **    _bypassDMS                If true, update tables in the sw schema but not in the public schema
-**    _message                  Output: status message
 **    _maxJobsToProcess         Maximum number of jobs to update
 **    _loopingUpdateInterval    Seconds between detailed logging while looping through the dependencies
-**    _infoOnly                 If true, preview updates
+**    _infoOnly                 When true, preview updates
 **
 **  Auth:   grk
 **  Date:   05/06/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)
@@ -287,45 +286,20 @@ BEGIN
         _finishMax := Null;
         _processingTimeMinutes := 0;
 
-        -- Note: You can use the following query to update _startMin and _finishMax
-
-        -- However, when a job has some completed steps and some not yet started, this query
-        -- will trigger the warning 'Null value is eliminated by an aggregate or other Set operation'
-
-        -- The warning can be safely ignored, but tends to bloat up the Sql Server Agent logs,
-        -- so we are instead populating _startMin and _finishMax separately
-
-        /*
         SELECT MIN(start),
                MAX(finish)
         INTO _startMin, _finishMax
         FROM sw.t_job_steps
         WHERE job = _jobInfo.Job;
-        */
-
-        -- Update _startMin
-        -- Note that if no steps have started yet, _startMin will be Null
-        SELECT MIN(start)
-        INTO _startMin
-        FROM sw.t_job_steps
-        WHERE job = _jobInfo.Job AND Not start Is Null;
-
-        -- Update _finishMax
-        -- Note that if no steps have finished yet, _finishMax will be Null
-        SELECT MAX(finish)
-        INTO _finishMax
-        FROM sw.t_job_steps
-        WHERE job = _jobInfo.Job AND Not finish Is Null;
 
         ---------------------------------------------------
         -- Roll up step completion comments
         ---------------------------------------------------
 
-        --
         SELECT string_agg(Completion_Message, '; ' ORDER BY step)
         INTO _comment
         FROM sw.t_job_steps
-        WHERE job = _jobInfo.Job AND Not completion_message Is Null
+        WHERE job = _jobInfo.Job AND Not completion_message Is Null;
 
         ---------------------------------------------------
         -- Examine the steps for this job to determine total processing time
@@ -355,8 +329,7 @@ BEGIN
             ---------------------------------------------------
 
             UPDATE sw.t_jobs
-            SET
-                state = _jobInfo.NewJobStateInBroker,
+            SET state = _jobInfo.NewJobStateInBroker,
                 start = CASE WHEN _jobInfo.NewJobStateInBroker >= 2                     -- job state is 2 or higher
                              THEN Coalesce(_startMin, CURRENT_TIMESTAMP)
                              ELSE Start
@@ -366,19 +339,18 @@ BEGIN
                               ELSE Finish
                          END,
                 Comment = CASE WHEN _jobInfo.NewJobStateInBroker IN (5)                 -- 5=Failed
-                                 THEN _comment
+                               THEN _comment
                                WHEN _jobInfo.NewJobStateInBroker IN (4, 7)              -- 4=Complete, 7=No Intermediate Files Created
-                                 THEN public.append_to_text(Comment, _comment, _delimiter => '; ', _maxlength => 1024)
+                               THEN public.append_to_text(Comment, _comment, _delimiter => '; ', _maxlength => 1024)
                                ELSE Comment
                           END,
                 Runtime_Minutes = _processingTimeMinutes
-            WHERE Job = _jobInfo.Job
+            WHERE Job = _jobInfo.Job;
 
         End If;
 
         ---------------------------------------------------
-        -- Figure out what DMS job state should be
-        -- and update it
+        -- Figure out what the job state should be in public.t_analysis_job and update it
         ---------------------------------------------------
 
         If _jobInfo.NewJobStateInBroker IN (2, 4, 5, 7) Then
@@ -392,9 +364,8 @@ BEGIN
         -- change the job state to 14=No Export
         ---------------------------------------------------
 
-        If _newDMSJobState = 4 Then
-            -- State 4: Complete
-            --
+        If _newDMSJobState = 4 Then     -- State 4: Complete
+
             If Exists ( SELECT Step_Number Then
                         FROM sw.t_job_steps;
                         WHERE Job = _jobInfo.Job AND
@@ -402,6 +373,7 @@ BEGIN
                               tool = 'DataExtractor' ) Then
                 _newDMSJobState := 14;
             End If;
+
         End If;
 
         ---------------------------------------------------
@@ -409,9 +381,8 @@ BEGIN
         -- change the job state to 14=No Export
         ---------------------------------------------------
 
-        If _newDMSJobState = 4 Then
-            -- State 4: Complete
-            --
+        If _newDMSJobState = 4 Then     -- State 4: Complete
+
             If Exists ( SELECT Step_Number
                         FROM sw.t_job_steps;
                         WHERE Job = _jobInfo.Job AND
@@ -419,10 +390,11 @@ BEGIN
                               tool LIKE 'Decon%' ) Then
                 _newDMSJobState := 14;
             End If;
+
         End If;
 
         ---------------------------------------------------
-        -- Decide on the fasta file name to save in job
+        -- Decide on the FASTA file name to use for the job
         -- In addition, check whether the job has a Propagation mode of 1
         ---------------------------------------------------
 
@@ -430,7 +402,7 @@ BEGIN
 
             SELECT CASE WHEN protein_collection_list = 'na'
                         THEN organism_db_name
-                        Else _jobInfo.OrgDBName
+                        ELSE _jobInfo.OrgDBName
                    END,
                    propagation_mode
             INTO _orgDBName, _jobPropagationMode
@@ -456,7 +428,7 @@ BEGIN
 
         ---------------------------------------------------
         -- If the DMS job state is 4=complete, but _jobPropagationMode is non-zero,
-        -- then change the DMS job state to 14=No Export
+        -- change the DMS job state to 14=No Export
         ---------------------------------------------------
 
         If _newDMSJobState = 4 AND Coalesce(_jobPropagationMode, 0) <> 0 Then
@@ -471,7 +443,7 @@ BEGIN
             -- Public schema changes enabled, update job state in public.t_analysis_job
 
             -- Uncomment to debug
-            -- Declare _debugMsg text = format('Calling update_analysis_job_processing_stats for job %s', _jobInfo.Job);
+            -- _debugMsg := format('Calling update_analysis_job_processing_stats for job %s', _jobInfo.Job);
             -- CALL Post_Log_Entry ('Debug', _debugMsg, 'Update_Job_State');
 
             -- Compute the value for _updateCode, which is used as a safety feature to prevent unauthorized job updates
@@ -512,15 +484,18 @@ BEGIN
 
         End If;
 
-        If Not _infoOnly Then
-            If _jobInfo.NewJobStateInBroker IN (4,5) Then
-                ---------------------------------------------------
-                -- Save job history
-                ---------------------------------------------------
+        If Not _infoOnly And _jobInfo.NewJobStateInBroker IN (4, 5) Then
 
-                CALL sw.copy_job_to_history (_jobInfo.Job, _jobInfo.NewJobStateInBroker, _message => _message);
-            End If;
+            ---------------------------------------------------
+            -- Save job history
+            ---------------------------------------------------
 
+            CALL sw.copy_job_to_history (
+                        _jobInfo.Job,
+                        _jobInfo.NewJobStateInBroker,
+                        _message => _message,           -- Output
+                        _returnCode => _returnCode      -- Output
+                        );
         End If;
 
         _jobsProcessed := _jobsProcessed + 1;
@@ -653,12 +628,11 @@ BEGIN
 
         -- Update the job start time based on the job steps
         -- Note that if no steps have started yet, _startMin will be Null
-        _startMin := null;
 
         SELECT MIN(start)
         INTO _startMin
         FROM sw.t_job_steps
-        WHERE job = _jobInfo.Job AND Not start Is Null;
+        WHERE job = _jobInfo.Job;
 
         CALL public.update_failed_job_now_in_progress (
                 _job => _jobInfo.Job,
@@ -666,8 +640,8 @@ BEGIN
                 _jobStart => _startMin,
                 _updateCode => _updateCode,
                 _infoOnly => _infoOnly,
-                _message => _message,      -- Output
-                _returncode => _returnCode);        -- Output
+                _message => _message,           -- Output
+                _returncode => _returnCode);    -- Output
 
         If _returnCode <> '' Then
             CALL public.post_log_entry ('Error', _message, 'Update_Job_State', 'sw');

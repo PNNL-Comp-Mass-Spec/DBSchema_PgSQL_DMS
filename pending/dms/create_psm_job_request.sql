@@ -198,10 +198,12 @@ BEGIN
         ---------------------------------------------------
 
         CALL validate_analysis_job_request_datasets (
-                    _message => _message,                   -- Output
                     _autoRemoveNotReleasedDatasets => true,
                     _toolName => _toolName,
-                    _allowNewDatasets => true);
+                    _allowNewDatasets => true,
+                    _message => _message,                   -- Output
+                    _returnCode => _returnCode              -- Output
+                    );
 
         If _returnCode <> '' Then
             _logErrors := false;
