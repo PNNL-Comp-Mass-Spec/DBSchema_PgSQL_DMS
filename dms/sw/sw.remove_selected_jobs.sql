@@ -8,7 +8,8 @@ CREATE OR REPLACE PROCEDURE sw.remove_selected_jobs(IN _infoonly boolean DEFAULT
 /****************************************************
 **
 **  Desc:
-**      Delete jobs in temp table Tmp_Selected_Jobs (populated by the caller)
+**      Remove specified jobs from sw.t_jobs, sw.t_job_steps, etc.
+**      The list of jobs to delete is read from temporary table Tmp_Selected_Jobs (created and populated by the caller)
 **
 **          CREATE TEMP TABLE Tmp_Selected_Jobs (
 **              Job int,

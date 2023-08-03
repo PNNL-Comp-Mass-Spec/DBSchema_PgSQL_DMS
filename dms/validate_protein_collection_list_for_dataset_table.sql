@@ -74,8 +74,6 @@ BEGIN
 
     _protCollNameList := Coalesce(_protCollNameList,'');
     _collectionCountAdded := 0;
-    _message := '';
-    _returnCode := '';
     _showMessages := Coalesce(_showMessages, true);
     _showDebug := Coalesce(_showDebug, false);
 

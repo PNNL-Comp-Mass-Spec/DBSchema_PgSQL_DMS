@@ -1,8 +1,8 @@
 --
--- Name: validate_protein_collection_list_for_datasets(text, text, integer, text, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: validate_protein_collection_list_for_datasets(text, text, integer, text, text, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_datasets(IN _datasets text, INOUT _protcollnamelist text DEFAULT ''::text, INOUT _collectioncountadded integer DEFAULT 0, INOUT _message text DEFAULT ''::text, IN _showdebug boolean DEFAULT false)
+CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_datasets(IN _datasets text, INOUT _protcollnamelist text DEFAULT ''::text, INOUT _collectioncountadded integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _showdebug boolean DEFAULT false)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_datasets
 **          11/08/2022 mem - Ported to PostgreSQL
 **          05/31/2023 mem - Use format() for string concatenation
 **          07/26/2023 mem - Prevent _protCollNameList from containing both HumanContam and Tryp_Pig_Bov
+**          08/02/2023 mem - Add _returncode procedure argument
 **
 *****************************************************/
 DECLARE
@@ -41,13 +42,15 @@ DECLARE
     _experimentCountTotal int;
     _dups text := '';
 BEGIN
+    _message := '';
+    _returncode := '';
+
     --------------------------------------------------------------
     -- Validate the inputs
     --------------------------------------------------------------
 
     _protCollNameList := Coalesce(_protCollNameList,'');
     _collectionCountAdded := 0;
-    _message := '';
     _showDebug := Coalesce(_showDebug, false);
 
     _startTime := clock_timestamp();
@@ -468,11 +471,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.validate_protein_collection_list_for_datasets(IN _datasets text, INOUT _protcollnamelist text, INOUT _collectioncountadded integer, INOUT _message text, IN _showdebug boolean) OWNER TO d3l243;
+ALTER PROCEDURE public.validate_protein_collection_list_for_datasets(IN _datasets text, INOUT _protcollnamelist text, INOUT _collectioncountadded integer, INOUT _message text, INOUT _returncode text, IN _showdebug boolean) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE validate_protein_collection_list_for_datasets(IN _datasets text, INOUT _protcollnamelist text, INOUT _collectioncountadded integer, INOUT _message text, IN _showdebug boolean); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE validate_protein_collection_list_for_datasets(IN _datasets text, INOUT _protcollnamelist text, INOUT _collectioncountadded integer, INOUT _message text, INOUT _returncode text, IN _showdebug boolean); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.validate_protein_collection_list_for_datasets(IN _datasets text, INOUT _protcollnamelist text, INOUT _collectioncountadded integer, INOUT _message text, IN _showdebug boolean) IS 'ValidateProteinCollectionListForDatasets';
+COMMENT ON PROCEDURE public.validate_protein_collection_list_for_datasets(IN _datasets text, INOUT _protcollnamelist text, INOUT _collectioncountadded integer, INOUT _message text, INOUT _returncode text, IN _showdebug boolean) IS 'ValidateProteinCollectionListForDatasets';
 
