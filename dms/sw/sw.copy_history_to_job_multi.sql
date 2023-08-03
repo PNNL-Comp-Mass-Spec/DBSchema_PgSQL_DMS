@@ -1,8 +1,8 @@
 --
--- Name: copy_history_to_job_multi(text, boolean, text, text, boolean); Type: PROCEDURE; Schema: sw; Owner: d3l243
+-- Name: copy_history_to_job_multi(text, boolean, boolean, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE sw.copy_history_to_job_multi(IN _joblist text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _debugmode boolean DEFAULT false)
+CREATE OR REPLACE PROCEDURE sw.copy_history_to_job_multi(IN _joblist text, IN _infoonly boolean DEFAULT false, IN _debugmode boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE sw.copy_history_to_job_multi(IN _joblist text, IN _i
 **          07/25/2019 mem - Add Remote_Start and Remote_Finish
 **          07/31/2023 mem - Make sure the dependencies column is up-to-date in t_job_steps
 **                         - Ported to PostgreSQL
+**          08/02/2023 mem - Move the _message and _returnCode arguments to the end of the argument list
 **
 *****************************************************/
 DECLARE
@@ -463,7 +464,7 @@ BEGIN
             ---------------------------------------------------
 
             _currentLocation := format('Call update_job_parameters for job ', _job);
-            --
+
             CALL sw.update_job_parameters (
                         _job,
                         _infoOnly => false,
@@ -476,14 +477,14 @@ BEGIN
             ---------------------------------------------------
 
             _currentLocation := format('Call validate_job_server_info for job ', _job);
-            --
+
             CALL sw.validate_job_server_info (
                         _job,
                         _useJobParameters => true,
-                        _message => _message,
-                        _returnCode => _returnCode,
-                        _debugMode => _debugMode);
-
+                        _debugMode => _debugMode,
+                        _message => _message,           -- Output
+                        _returnCode => _returnCode      -- Output
+                        );
 
             ---------------------------------------------------
             -- Make sure the dependencies column is up-to-date in sw.t_job_steps
@@ -535,11 +536,11 @@ END
 $$;
 
 
-ALTER PROCEDURE sw.copy_history_to_job_multi(IN _joblist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) OWNER TO d3l243;
+ALTER PROCEDURE sw.copy_history_to_job_multi(IN _joblist text, IN _infoonly boolean, IN _debugmode boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE copy_history_to_job_multi(IN _joblist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _debugmode boolean); Type: COMMENT; Schema: sw; Owner: d3l243
+-- Name: PROCEDURE copy_history_to_job_multi(IN _joblist text, IN _infoonly boolean, IN _debugmode boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE sw.copy_history_to_job_multi(IN _joblist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) IS 'CopyHistoryToJobMulti';
+COMMENT ON PROCEDURE sw.copy_history_to_job_multi(IN _joblist text, IN _infoonly boolean, IN _debugmode boolean, INOUT _message text, INOUT _returncode text) IS 'CopyHistoryToJobMulti';
 

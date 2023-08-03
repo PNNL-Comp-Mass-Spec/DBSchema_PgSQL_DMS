@@ -1,8 +1,8 @@
 --
--- Name: copy_job_to_history(integer, integer, text, text, boolean, timestamp without time zone); Type: PROCEDURE; Schema: sw; Owner: d3l243
+-- Name: copy_job_to_history(integer, integer, boolean, timestamp without time zone, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE sw.copy_job_to_history(IN _job integer, IN _jobstate integer, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _overridesavetime boolean DEFAULT false, IN _savetimeoverride timestamp without time zone DEFAULT NULL::timestamp without time zone)
+CREATE OR REPLACE PROCEDURE sw.copy_job_to_history(IN _job integer, IN _jobstate integer, IN _overridesavetime boolean DEFAULT false, IN _savetimeoverride timestamp without time zone DEFAULT NULL::timestamp without time zone, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE sw.copy_job_to_history(IN _job integer, IN _jobstate
 **          07/25/2019 mem - Add Remote_Start and Remote_Finish
 **          08/17/2021 mem - Fix typo in argument _saveTimeOverride
 **          08/01/2023 mem - Ported to PostgreSQL
+**          08/02/2023 mem - Move the _message and _returnCode arguments to the end of the argument list
 **
 *****************************************************/
 DECLARE
@@ -240,11 +241,11 @@ END
 $$;
 
 
-ALTER PROCEDURE sw.copy_job_to_history(IN _job integer, IN _jobstate integer, INOUT _message text, INOUT _returncode text, IN _overridesavetime boolean, IN _savetimeoverride timestamp without time zone) OWNER TO d3l243;
+ALTER PROCEDURE sw.copy_job_to_history(IN _job integer, IN _jobstate integer, IN _overridesavetime boolean, IN _savetimeoverride timestamp without time zone, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE copy_job_to_history(IN _job integer, IN _jobstate integer, INOUT _message text, INOUT _returncode text, IN _overridesavetime boolean, IN _savetimeoverride timestamp without time zone); Type: COMMENT; Schema: sw; Owner: d3l243
+-- Name: PROCEDURE copy_job_to_history(IN _job integer, IN _jobstate integer, IN _overridesavetime boolean, IN _savetimeoverride timestamp without time zone, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE sw.copy_job_to_history(IN _job integer, IN _jobstate integer, INOUT _message text, INOUT _returncode text, IN _overridesavetime boolean, IN _savetimeoverride timestamp without time zone) IS 'CopyJobToHistory';
+COMMENT ON PROCEDURE sw.copy_job_to_history(IN _job integer, IN _jobstate integer, IN _overridesavetime boolean, IN _savetimeoverride timestamp without time zone, INOUT _message text, INOUT _returncode text) IS 'CopyJobToHistory';
 

@@ -1,8 +1,8 @@
 --
--- Name: validate_job_server_info(integer, boolean, text, text, boolean); Type: PROCEDURE; Schema: sw; Owner: d3l243
+-- Name: validate_job_server_info(integer, boolean, boolean, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE sw.validate_job_server_info(IN _job integer, IN _usejobparameters boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _debugmode boolean DEFAULT false)
+CREATE OR REPLACE PROCEDURE sw.validate_job_server_info(IN _job integer, IN _usejobparameters boolean DEFAULT true, IN _debugmode boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE sw.validate_job_server_info(IN _job integer, IN _use
 **          03/22/2023 mem - Rename job parameter to DatasetName
 **          03/24/2023 mem - Capitalize job parameter TransferFolderPath
 **          07/25/2023 mem - Ported to PostgreSQL
+**          08/02/2023 mem - Move the _message and _returnCode arguments to the end of the argument list
 **
 *****************************************************/
 DECLARE
@@ -189,11 +190,11 @@ END
 $$;
 
 
-ALTER PROCEDURE sw.validate_job_server_info(IN _job integer, IN _usejobparameters boolean, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) OWNER TO d3l243;
+ALTER PROCEDURE sw.validate_job_server_info(IN _job integer, IN _usejobparameters boolean, IN _debugmode boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE validate_job_server_info(IN _job integer, IN _usejobparameters boolean, INOUT _message text, INOUT _returncode text, IN _debugmode boolean); Type: COMMENT; Schema: sw; Owner: d3l243
+-- Name: PROCEDURE validate_job_server_info(IN _job integer, IN _usejobparameters boolean, IN _debugmode boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE sw.validate_job_server_info(IN _job integer, IN _usejobparameters boolean, INOUT _message text, INOUT _returncode text, IN _debugmode boolean) IS 'ValidateJobServerInfo';
+COMMENT ON PROCEDURE sw.validate_job_server_info(IN _job integer, IN _usejobparameters boolean, IN _debugmode boolean, INOUT _message text, INOUT _returncode text) IS 'ValidateJobServerInfo';
 
