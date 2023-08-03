@@ -167,6 +167,7 @@ AS $$
 **          02/27/2023 mem - Use new argument name, _requestName
 **                         - Use calling user name for the dataset creator user
 **          08/02/2023 mem - Prevent adding a dataset for an inactive instrument
+**          08/03/2023 mem - Allow creation of datasets for instruments in group 'Data_Folders' (specifically, the DMS_Pipeline_Data instrument)
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -207,8 +208,9 @@ DECLARE
     _experimentID int;
     _newExperiment text;
     _instrumentID int;
-    _instrumentGroup text;
-    _instrumentStatus text;
+    _instrumentClass citext;
+    _instrumentGroup citext;
+    _instrumentStatus citext;
     _defaultDatasetTypeID int;
     _msTypeOld text;
     _datasetTypeID int;
@@ -578,16 +580,16 @@ BEGIN
         -- Lookup the instrument group and status
         ---------------------------------------------------
 
-        SELECT instrument_group, status
-        INTO _instrumentGroup, _instrumentStatus
+        SELECT instrument_class, instrument_group, status
+        INTO _instrumentClass, _instrumentGroup, _instrumentStatus
         FROM t_instrument_name
-        WHERE instrument_id::citext = _instrumentID::citext;
+        WHERE instrument_id = _instrumentID;
 
         If Not FOUND Then
             RAISE EXCEPTION 'Instrument group not defined for instrument %; contact a DMS administrator to fix this', _instrumentName;
         End If;
 
-        If Coalesce(_instrumentStatus, '') <> 'active' Then
+        If Coalesce(_instrumentStatus, '') <> 'active' And _instrumentClass <> 'Data_Folders' Then
             RAISE EXCEPTION 'Instrument % is not active; new datasets cannot be added for this instrument; contact a DMS administrator if the instrument status should be changed', _instrumentName;
         End If;
 
