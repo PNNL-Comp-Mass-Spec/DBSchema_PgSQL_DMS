@@ -166,6 +166,7 @@ AS $$
 **          11/25/2022 mem - Rename parameter to _wellplate
 **          02/27/2023 mem - Use new argument name, _requestName
 **                         - Use calling user name for the dataset creator user
+**          08/02/2023 mem - Prevent adding a dataset for an inactive instrument
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -206,7 +207,8 @@ DECLARE
     _experimentID int;
     _newExperiment text;
     _instrumentID int;
-    _instrumentGroup text := '';
+    _instrumentGroup text;
+    _instrumentStatus text;
     _defaultDatasetTypeID int;
     _msTypeOld text;
     _datasetTypeID int;
@@ -573,16 +575,20 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Lookup the Instrument Group
+        -- Lookup the instrument group and status
         ---------------------------------------------------
 
-        SELECT instrument_group
-        INTO _instrumentGroup
+        SELECT instrument_group, status
+        INTO _instrumentGroup, _instrumentStatus
         FROM t_instrument_name
         WHERE instrument_id::citext = _instrumentID::citext;
 
         If Not FOUND Then
-            RAISE EXCEPTION 'Instrument group not defined for instrument %', _instrumentName;
+            RAISE EXCEPTION 'Instrument group not defined for instrument %; contact a DMS administrator to fix this', _instrumentName;
+        End If;
+
+        If Coalesce(_instrumentStatus, '') <> 'active' Then
+            RAISE EXCEPTION 'Instrument % is not active; new datasets cannot be added for this instrument; contact a DMS administrator if the instrument status should be changed', _instrumentName;
         End If;
 
         ---------------------------------------------------
