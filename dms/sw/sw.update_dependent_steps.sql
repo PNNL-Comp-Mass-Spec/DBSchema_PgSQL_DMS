@@ -1,28 +1,23 @@
 --
-CREATE OR REPLACE PROCEDURE sw.update_dependent_steps
-(
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    INOUT _numStepsSkipped int = 0,
-    _infoOnly boolean = false,
-    _maxJobsToProcess int = 0,
-    _loopingUpdateInterval int = 5
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_dependent_steps(boolean, integer, integer, integer, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.update_dependent_steps(IN _infoonly boolean DEFAULT false, IN _maxjobstoprocess integer DEFAULT 0, IN _loopingupdateinterval integer DEFAULT 5, INOUT _numstepsskipped integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Examine all dependencies for steps in 'Waiting' state
-**      and update the state of steps for which all dependencies
-**      have been satisfied
+**      and update the state of steps for which all dependencies have been satisfied
 **
-**      The updated state can be affected by conditions on
-**      conditional dependencies and by whether or not the
-**      step tool produces shared results
+**      The updated state can be affected by conditions on conditional dependencies
+**      and by whether or not the step tool produces shared results
 **
 **  Arguments:
-**    _loopingUpdateInterval   Seconds between detailed logging while looping through the dependencies
+**    _infoOnly                 When true, preview updates
+**    _maxJobsToProcess         Maximum number of jobs to process (0 to process all)
+**    _loopingUpdateInterval    Seconds between detailed logging while looping through the dependencies
 **
 **  Auth:   grk
 **  Date:   05/06/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)
@@ -45,15 +40,16 @@ AS $$
 **          03/02/2022 mem - For data package based jobs, skip checks for existing shared results
 **          03/10/2022 mem - Clear the completion code and completion message when skipping a job step
 **                         - Check for a job step with shared results being repeatedly skipped, then reset, then skipped again
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/02/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
+    _jobList text;
+    _totalSteps int;
     _insertCount int;
     _jobCount int;
     _msg text;
     _statusMessage text;
-    _stepSkipCount int := 0;
     _startTime timestamp := CURRENT_TIMESTAMP;
     _candidateStepCount int;
     _rowCountToProcess int;
@@ -86,8 +82,8 @@ BEGIN
 
     _infoOnly := Coalesce(_infoOnly, false);
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
-
     _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
+
     If _loopingUpdateInterval < 2 Then
         _loopingUpdateInterval := 2;
     End If;
@@ -122,27 +118,58 @@ BEGIN
     -- This will happen if new rows are manually added to sw.t_job_step_dependencies
     ---------------------------------------------------
 
-    UPDATE sw.t_job_steps
-    SET dependencies = CompareQ.Actual_Dependencies
-    FROM ( SELECT job,
-                  step,
-                  COUNT(target_step) AS Actual_Dependencies
-           FROM sw.t_job_step_dependencies
-           WHERE job IN ( SELECT job FROM sw.t_job_steps WHERE state = 1 )
-           GROUP BY job, step
-         ) CompareQ
-    WHERE JS.state = 1 AND
-          JS.job = CompareQ.job AND
-          JS.step = CompareQ.step AND
-          JS.dependencies < CompareQ.Actual_Dependencies;
+    If _infoOnly Then
+        SELECT string_agg(CountQ.job::text, ', ' ORDER BY CountQ.Job),
+               SUM(CountQ.Job_Steps) As Job_Steps
+        INTO _jobList, _totalSteps
+        FROM ( SELECT JS.job, Count(*) as Job_Steps
+               FROM t_job_steps JS INNER JOIN
+                    ( SELECT job,
+                             step,
+                             COUNT(target_step) AS Actual_Dependencies
+                      FROM sw.t_job_step_dependencies
+                      WHERE job IN ( SELECT job FROM sw.t_job_steps WHERE state = 1 )
+                      GROUP BY job, step
+                    ) CompareQ ON
+                       JS.job = CompareQ.job AND
+                       JS.step = CompareQ.step
+               WHERE JS.state = 1 AND
+                     JS.dependencies < CompareQ.Actual_Dependencies
+               GROUP BY JS.job
+               ) CountQ;
+
+        If _totalSteps > 0 Then
+           RAISE INFO 'Need to update the dependencies count for % % for %',
+                    _totalSteps,
+                    public.check_plural(_totalSteps, 'step', 'steps'),
+                    CASE WHEN _jobList LIKE '%,%'
+                         THEN format('jobs: %s', _jobList)
+                         ELSE format('job %s',   _jobList)
+                    END;
+        End If;
+    Else
+        UPDATE sw.t_job_steps JS
+        SET dependencies = CompareQ.Actual_Dependencies
+        FROM ( SELECT job,
+                      step,
+                      COUNT(target_step) AS Actual_Dependencies
+               FROM sw.t_job_step_dependencies
+               WHERE job IN ( SELECT job FROM sw.t_job_steps WHERE state = 1 )
+               GROUP BY job, step
+             ) CompareQ
+        WHERE JS.state = 1 AND
+              JS.job = CompareQ.job AND
+              JS.step = CompareQ.step AND
+              JS.dependencies < CompareQ.Actual_Dependencies;
+    End If;
 
     ---------------------------------------------------
     -- Get summary of dependencies for steps
     -- in 'Waiting' state and add to scratch list
     ---------------------------------------------------
 
-    INSERT INTO Tmp_Steplist (job, step, Tool, Priority, Total, Evaluated, Triggered, Shared, signature, Output_Folder_Name,
-                                 completion_code, completion_message, evaluation_code, Evaluation_Message)
+    INSERT INTO Tmp_Steplist (Job, Step, Tool, Priority, Total, Evaluated, Triggered, Shared, signature, Output_Folder_Name,
+                              completion_code, completion_message, evaluation_code, Evaluation_Message)
     SELECT JSD.job,
            JSD.step,
            JS.tool,
@@ -169,7 +196,7 @@ BEGIN
              J.priority, JS.tool, JS.output_folder_name,
              JS.completion_code, JS.completion_message,
              JS.evaluation_code, JS.evaluation_message
-    HAVING JS.dependencies = SUM(JSD.evaluated)
+    HAVING JS.dependencies = SUM(JSD.evaluated);
     --
     GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
@@ -180,7 +207,7 @@ BEGIN
     -- to scratch list
     ---------------------------------------------------
 
-    INSERT INTO Tmp_Steplist (job, step, Tool, Priority, Total, Evaluated, Triggered, Shared, signature, Output_Folder_Name,
+    INSERT INTO Tmp_Steplist (Job, Step, Tool, Priority, Total, Evaluated, Triggered, Shared, signature, Output_Folder_Name,
                               completion_code, completion_message, evaluation_code, Evaluation_Message)
     SELECT JS.job,
            JS.step,
@@ -200,7 +227,7 @@ BEGIN
          INNER JOIN sw.t_jobs J
            ON JS.job = J.job
     WHERE JS.state = 1 AND
-          JS.dependencies = 0
+          JS.dependencies = 0;
     --
     GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
@@ -214,7 +241,8 @@ BEGIN
 
     ---------------------------------------------------
     -- Populate the Processing_Order column in Tmp_Steplist
-    -- Sorting by Priority so that shared steps will tend to be enabled for higher priority jobs first
+    --
+    -- Sort by Priority so that shared steps will tend to be enabled for higher priority jobs first
     ---------------------------------------------------
 
     UPDATE Tmp_Steplist TargetQ
@@ -226,7 +254,6 @@ BEGIN
     WHERE TargetQ.Entry_ID = LookupQ.Entry_ID;
 
     If _infoOnly Then
-
 
         RAISE INFO '';
 
@@ -274,7 +301,6 @@ BEGIN
         RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
-
             SELECT Job,
                    Step,
                    Tool,
@@ -328,8 +354,6 @@ BEGIN
     INTO _rowCountToProcess
     FROM Tmp_Steplist;
 
-    _rowCountToProcess := Coalesce(_rowCountToProcess, 0);
-
     FOR _stepInfo IN
         SELECT
             Job,
@@ -346,20 +370,20 @@ BEGIN
             Completion_Message As CompletionMessage,
             Evaluation_Code As EvaluationCode,
             Evaluation_Message As EvaluationMessage
-        INTO _stepInfo
         FROM Tmp_Steplist
         ORDER BY Processing_Order
     LOOP
 
         ---------------------------------------------------
-        -- Job step obtained, process it
-        --
         -- If all dependencies for the step are evaluated,
         -- the step's state may be changed
         ---------------------------------------------------
 
         If _stepInfo.Evaluated = _stepInfo.Total Then
         -- <c>
+            If _infoOnly Then
+                RAISE INFO '';
+            End If;
 
             ---------------------------------------------------
             -- Get information from parent job
@@ -371,8 +395,7 @@ BEGIN
             WHERE job = _stepInfo.Job;
 
             ---------------------------------------------------
-            -- If any conditional dependencies were triggered,
-            -- new state will be 'Skipped'
+            -- If any conditional dependencies were triggered, new state will be 'Skipped'
             -- otherwise, new state will be 'Enabled'
             ---------------------------------------------------
 
@@ -434,7 +457,7 @@ BEGIN
                             RAISE INFO 'Insert "%" into sw.t_shared_results', _stepInfo.OutputFolderName;
                         Else
                             INSERT INTO sw.t_shared_results( results_name )
-                            VALUES (_stepInfo.OutputFolderName)
+                            VALUES (_stepInfo.OutputFolderName);
                         End If;
                     End If;
                 End If;
@@ -467,26 +490,25 @@ BEGIN
                             CALL public.post_log_entry ('Warning', _msg, 'Update_Dependent_Steps', 'sw');
                         End If;
 
-                        _newState := 2      ; -- 'Enabled'
+                        _newState := 2; -- 'Enabled'
                     Else
-                        _newState := 3      ; -- 'Skipped'
+                        _newState := 3; -- 'Skipped'
                     End If;
                 Else
                     If _numPending > 0 Then
-                        _newState := 1  ; -- 'Waiting'
+                        _newState := 1; -- 'Waiting'
                     End If;
                 End If;
 
             End If; -- </d>
 
             If _infoOnly Then
-
-                RAISE INFO 'Job %, step %, _outputFolderName %, _numCompleted %, _numPending %, _newState %',
+                RAISE INFO 'Job %, Step %, Output_Folder %: Num_Completed=%, Num_Pending=%, New_State=%',
                             _stepInfo.job, _stepInfo.step, _stepInfo.outputFolderName, _numCompleted, _numPending, _newState;
             End If;
 
             ---------------------------------------------------
-            -- If step state needs to be changed, update step
+            -- If step state needs to be changed, update it
             ---------------------------------------------------
 
             If _newState <> 1 Then
@@ -545,7 +567,7 @@ BEGIN
                                                         disable_output_folder_name_override_on_skip > 0 )
                                     )
                                THEN input_folder_name
-                               ELSE Output_Folder_Name
+                               ELSE output_folder_name
                           End,
                           Completion_Code = 0,
                           Completion_Message = '',
@@ -562,6 +584,7 @@ BEGIN
                 If _newState = 3 Then
                     _numStepsSkipped := _numStepsSkipped + 1;
                 End If;
+
             End If; -- </e>
 
         End If; -- </c>
@@ -589,6 +612,7 @@ BEGIN
     END LOOP;
 
     If _infoOnly Then
+        RAISE INFO '';
         RAISE INFO 'Steps updated: %', _numStepsUpdated;
         RAISE INFO 'Steps set to state 3 (skipped): %', _numStepsSkipped;
     End If;
@@ -597,4 +621,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.update_dependent_steps IS 'UpdateDependentSteps';
+
+ALTER PROCEDURE sw.update_dependent_steps(IN _infoonly boolean, IN _maxjobstoprocess integer, IN _loopingupdateinterval integer, INOUT _numstepsskipped integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_dependent_steps(IN _infoonly boolean, IN _maxjobstoprocess integer, IN _loopingupdateinterval integer, INOUT _numstepsskipped integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.update_dependent_steps(IN _infoonly boolean, IN _maxjobstoprocess integer, IN _loopingupdateinterval integer, INOUT _numstepsskipped integer, INOUT _message text, INOUT _returncode text) IS 'UpdateDependentSteps';
+

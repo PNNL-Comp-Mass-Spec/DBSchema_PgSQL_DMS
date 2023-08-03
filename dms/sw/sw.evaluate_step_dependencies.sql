@@ -1,22 +1,20 @@
 --
-CREATE OR REPLACE PROCEDURE sw.evaluate_step_dependencies
-(
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _maxJobsToProcess int = 0,
-    _loopingUpdateInterval int = 5,
-    _infoOnly boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: evaluate_step_dependencies(integer, integer, boolean, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.evaluate_step_dependencies(IN _maxjobstoprocess integer DEFAULT 0, IN _loopingupdateinterval integer DEFAULT 5, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Look at all unevaluated dependentices for steps
+**      Look at all unevaluated dependencies for steps
 **      that are finised (completed or skipped) and evaluate them
 **
 **  Arguments:
-**    _loopingUpdateInterval   Seconds between detailed logging while looping through the dependencies
+**    _maxJobsToProcess         Maximum number of jobs to process (0 to process all)
+**    _loopingUpdateInterval    Seconds between detailed logging while looping through the dependencies
+**    _infoOnly                 When true, preview updates
 **
 **  Auth:   grk
 **  Date:   05/06/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)
@@ -27,7 +25,7 @@ AS $$
 **          12/20/2011 mem - Changed _message to an optional output parameter
 **          09/24/2014 mem - Rename Job in T_Job_Step_Dependencies
 **          03/30/2018 mem - Rename variables and reformat queries
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/02/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -62,18 +60,17 @@ BEGIN
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
-    _message := '';
-    _returnCode := '';
-    _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
 
+    _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
     _startTime := CURRENT_TIMESTAMP;
     _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
+
     If _loopingUpdateInterval < 2 Then
         _loopingUpdateInterval := 2;
     End If;
 
     ---------------------------------------------------
-    -- Temp table for processing dependenices
+    -- Temp table for processing dependencies
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_DepTable (
@@ -86,7 +83,7 @@ BEGIN
         Test_Value text,
         Enable_Only int,
         Sort_Order int PRIMARY KEY GENERATED ALWAYS AS IDENTITY
-    )
+    );
 
     CREATE INDEX IX_Tmp_DepTable_Sort_Order ON Tmp_DepTable (Sort_Order);
 
@@ -142,7 +139,7 @@ BEGIN
         WHERE NOT Job IN ( SELECT Job
                            FROM Tmp_DepTable
                            ORDER BY Job
-                           LIMIT _maxJobsToProcess )
+                           LIMIT _maxJobsToProcess );
 
     End If;
 
@@ -217,9 +214,12 @@ BEGIN
 
     SELECT COUNT(*)
     INTO _rowCountToProcess
-    FROM Tmp_DepTable
+    FROM Tmp_DepTable;
 
-    _rowCountToProcess := Coalesce(_rowCountToProcess, 0);
+    If _rowCountToProcess = 0 Then
+        DROP TABLE Tmp_DepTable;
+        RETURN;
+    End If;
 
     _sortOrder := -1;
 
@@ -255,10 +255,13 @@ BEGIN
 
         _triggered := false;
 
+        If _infoOnly Then
+            RAISE INFO '';
+        End If;
+
         ---------------------------------------------------
-        -- Skip if signature of dependent step matches
-        -- test value (usually used with value of '0'
-        -- which happens when there are no parameters)
+        -- Skip if signature of dependent step matches the test value
+        -- (usually used with value of '0', which happens when there are no parameters)
         --
         If _condition_Test = 'No_Parameters' Then
             -- Get filter signature for dependent step
@@ -270,7 +273,7 @@ BEGIN
                   step = _dependentStep;
 
             If Not FOUND Then
-                _message := format('Error getting dependent step filter signature: step %s for job %s not found in t_job_steps', _dependentStep, _job);
+                _message := format('Error getting dependent step filter signature: step %s for job %s not found in sw.t_job_steps', _dependentStep, _job);
                 _returnCode = 'U5431';
 
                 DROP TABLE Tmp_DepTable;
@@ -280,12 +283,10 @@ BEGIN
             If _actualValue = 0 Then
                 _triggered := true;
             End If;
-
         End If;
 
         ---------------------------------------------------
-        -- Skip if state of target step
-        -- is skipped
+        -- Skip if state of target step is skipped
         --
         If _condition_Test = 'Target_Skipped' Then
             -- Get shared result setting for target step
@@ -297,7 +298,7 @@ BEGIN
                   step = _targetStep;
 
             If Not FOUND Then
-                _message := format('Error getting target step state: step %s for job %s not found in t_job_steps', _targetStep, _job);
+                _message := format('Error getting target step state: step %s for job %s not found in sw.t_job_steps', _targetStep, _job);
                 _returnCode = 'U5432';
 
                 DROP TABLE Tmp_DepTable;
@@ -310,8 +311,7 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Skip if completion message of target step
-        -- contains test value
+        -- Skip if completion message of target step contains test value
         --
         If _condition_Test = 'Completion_Message_Contains' Then
             -- Get completion message for target step
@@ -320,7 +320,7 @@ BEGIN
             INTO _targetCompletionMessage
             FROM sw.t_job_steps
             WHERE job = _job AND
-                  step = _targetStep
+                  step = _targetStep;
 
             If FOUND And _targetCompletionMessage Like ('%' || _testValue || '%')::citext Then
                 _triggered := true;
@@ -328,12 +328,13 @@ BEGIN
         End If;
 
         If _infoOnly And Coalesce(_condition_Test, '') <> '' Then
-            RAISE INFO 'Dependent Step %, Target Step %, Condition Test %; Triggered = %',_dependentStep, _targetStep, _condition_Test, _triggered;
+            RAISE INFO 'Dependent Step %, Target Step %, Condition Test %; Triggered = %',
+                        _dependentStep, _targetStep, _condition_Test, CASE WHEN _triggered THEN 1 ELSE 0 END;
         End If;
 
         ---------------------------------------------------
         -- Copy output folder from target step
-        -- to be input folder for dependent step
+        -- to be input folder for dependent step,
         -- unless dependency is 'Enable_Only'
         ---------------------------------------------------
 
@@ -342,7 +343,8 @@ BEGIN
             SELECT output_folder_name
             INTO _outputFolderName
             FROM sw.t_job_steps
-            WHERE job = _job AND step = _targetStep
+            WHERE job = _job AND
+                  step = _targetStep;
 
             If _infoOnly Then
                 RAISE INFO 'Update Job %, step % to have Input_Folder_Name = "%"', _job, _dependentStep, _outputFolderName;
@@ -360,10 +362,10 @@ BEGIN
         ---------------------------------------------------
 
         If _infoOnly Then
-            RAISE INFO 'Update job %, step % with target step % to have evaluated=1 and triggered= % in table sw.t_job_step_dependencies',
-                          _job, _dependentStep, _targetStep, _triggered;
+            RAISE INFO 'Update job %, step % with target step % to have evaluated=1 and triggered=% in table sw.t_job_step_dependencies',
+                          _job, _dependentStep, _targetStep, CASE WHEN _triggered THEN 1 ELSE 0 END;
         Else
-            UPDATE sw.t_job_step_dependencies;
+            UPDATE sw.t_job_step_dependencies
             SET Evaluated = 1,
                 Triggered = CASE WHEN _triggered THEN 1 ELSE 0 END
             WHERE Job = _job AND
@@ -388,4 +390,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.evaluate_step_dependencies IS 'EvaluateStepDependencies';
+
+ALTER PROCEDURE sw.evaluate_step_dependencies(IN _maxjobstoprocess integer, IN _loopingupdateinterval integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE evaluate_step_dependencies(IN _maxjobstoprocess integer, IN _loopingupdateinterval integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.evaluate_step_dependencies(IN _maxjobstoprocess integer, IN _loopingupdateinterval integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'EvaluateStepDependencies';
+
