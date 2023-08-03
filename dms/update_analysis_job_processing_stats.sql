@@ -1,23 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_analysis_job_processing_stats
-(
-    _job int,
-    _newDMSJobState int,
-    _newBrokerJobState int,
-    _jobStart timestamp,
-    _jobFinish timestamp,
-    _resultsDirectoryName text,
-    _assignedProcessor text,
-    _jobCommentAddnl text,
-    _organismDBName text,
-    _processingTimeMinutes real,
-    _updateCode int,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_analysis_job_processing_stats(integer, integer, integer, timestamp without time zone, timestamp without time zone, text, text, text, text, real, integer, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_analysis_job_processing_stats(IN _job integer, IN _newdmsjobstate integer, IN _newbrokerjobstate integer, IN _jobstart timestamp without time zone, IN _jobfinish timestamp without time zone, IN _resultsdirectoryname text, IN _assignedprocessor text, IN _jobcommentaddnl text, IN _organismdbname text, IN _processingtimeminutes real, IN _updatecode integer, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -26,8 +13,18 @@ AS $$
 **      Sets archive status of dataset to update required
 **
 **  Arguments:
-**    _jobCommentAddnl   Additional text to append to the comment (direct append; no separator character is used when appending _jobCommentAddnl)
-**    _updateCode        Safety feature to prevent unauthorized job updates
+**    _job                      Job Number
+**    _newDMSJobState           New job state in public.t_analysis_job
+**    _newBrokerJobState        New job state in sw.t_jobs
+**    _jobStart
+**    _jobFinish
+**    _resultsDirectoryName
+**    _assignedProcessor
+**    _jobCommentAddnl          Additional text to append to the comment (direct append; no separator character is used when appending _jobCommentAddnl)
+**    _organismDBName
+**    _processingTimeMinutes
+**    _updateCode               Safety feature to prevent unauthorized job updates
+**    _infoOnly                 When true, preview updates
 **
 **  Auth:   mem
 **  Date:   06/02/2009 mem - Initial version
@@ -37,7 +34,7 @@ AS $$
 **          06/15/2015 mem - Use function Append_To_Text to concatenate _jobCommentAddnl to comment
 **          06/12/2018 mem - Send _maxLength to Append_To_Text
 **          08/03/2020 mem - Update T_Cached_Dataset_Links.MASIC_Directory_Name when a MASIC job finishes successfully
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/02/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -68,7 +65,7 @@ BEGIN
     End If;
 
     If _newDMSJobState Is Null Or _newBrokerJobState Is Null Then
-        _message := 'Job and Broker state cannot be null';
+        _message := 'Job and broker state cannot be null';
         _returnCode := 'U5202';
         RETURN;
     End If;
@@ -81,14 +78,14 @@ BEGIN
     End If;
 
     If Coalesce(_updateCode, 0) <> _updateCodeExpected Then
-        _message := 'Invalid Update Code';
+        _message := 'Invalid update code';
         _returnCode := 'U5203';
         RETURN;
     End If;
 
     -- Uncomment to debug
     -- _debugMsg := format('Updating job state for %s, NewDMSJobState = %s, NewBrokerJobState = %s, JobCommentAddnl = %s',
-    --                    _job, _newDMSJobState, _newBrokerJobState, Coalesce(_jobCommentAddnl, ''));
+    --                     _job, _newDMSJobState, _newBrokerJobState, _jobCommentAddnl);
     --
     -- CALL post_log_entry ('Debug', _debugMsg, 'Update_Analysis_Job_Processing_Stats');
 
@@ -98,6 +95,11 @@ BEGIN
     ---------------------------------------------------
 
     If _infoOnly Then
+
+        If Not Exists (SELECT job FROM t_analysis_job WHERE job = _job) Then
+            RAISE WARNING 'Job % not found in t_analysis_job', _job;
+            RETURN;
+        End If;
 
         RAISE INFO '';
 
@@ -234,7 +236,7 @@ BEGIN
     -- If Job is Complete or No Export, do some additional tasks
     -------------------------------------------------------------------
 
-    If _newDMSJobState in (4, 14) Then
+    If _newDMSJobState IN (4, 14) Then
         -- Get the dataset ID, dataset name, and tool name
         --
         SELECT DS.dataset_id,
@@ -246,16 +248,16 @@ BEGIN
                ON J.dataset_id = DS.dataset_id
              INNER JOIN t_analysis_tool T
                ON J.analysis_tool_id = T.analysis_tool_id
-        WHERE J.job = _job
+        WHERE J.job = _job;
 
         If FOUND Then
             -- Schedule an archive update
-            CALL set_archive_update_required (_datasetName, _message => _message);
+            CALL set_archive_update_required (_datasetName, _message => _message, _returncode => _returncode);
 
             If _toolName LIKE 'Masic%' Then
                 -- Update the cached MASIC Directory Name
                 UPDATE t_cached_dataset_links
-                Set masic_directory_name = _resultsDirectoryName
+                SET masic_directory_name = _resultsDirectoryName
                 WHERE dataset_id = _datasetID;
             End If;
         End If;
@@ -265,4 +267,6 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_analysis_job_processing_stats IS 'UpdateAnalysisJobProcessingStats';
+
+ALTER PROCEDURE public.update_analysis_job_processing_stats(IN _job integer, IN _newdmsjobstate integer, IN _newbrokerjobstate integer, IN _jobstart timestamp without time zone, IN _jobfinish timestamp without time zone, IN _resultsdirectoryname text, IN _assignedprocessor text, IN _jobcommentaddnl text, IN _organismdbname text, IN _processingtimeminutes real, IN _updatecode integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
