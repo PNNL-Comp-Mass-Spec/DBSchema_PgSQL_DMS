@@ -33,6 +33,7 @@ AS $$
 **          05/23/2022 mem - Rename _requestorPRN to _requesterPRN when calling Add_Update_Requested_Run
 **          11/25/2022 mem - Update call to Add_Update_Requested_Run to use new parameter name
 **          02/27/2023 mem - Use new argument name, _requestName
+**          03/04/2023 mem - Use new T_Task tables
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -371,26 +372,26 @@ BEGIN
 
             If FOUND Then
 
-                INSERT INTO cap.t_job_steps( Job,
-                                             Step_Number,
-                                             Step_Tool,
-                                             State,
-                                             Input_Folder_Name,
-                                             Output_Folder_Name,
-                                             Processor,
-                                             Start,
-                                             Finish,
-                                             Tool_Version_ID,
-                                             Completion_Code,
-                                             Completion_Message,
-                                             Evaluation_Code,
-                                             Evaluation_Message,
-                                             Holdoff_Interval_Minutes,
-                                             Next_Try,
-                                             Retry_Count )
+                INSERT INTO cap.t_task_steps ( Job,
+                                               Step,
+                                               Step_Tool,
+                                               State,
+                                               Input_Folder_Name,
+                                               Output_Folder_Name,
+                                               Processor,
+                                               Start,
+                                               Finish,
+                                               Tool_Version_ID,
+                                               Completion_Code,
+                                               Completion_Message,
+                                               Evaluation_Code,
+                                               Evaluation_Message,
+                                               Holdoff_Interval_Minutes,
+                                               Next_Try,
+                                               Retry_Count )
                 SELECT _captureJobNew AS Job,
-                       Step_Number,
-                       Step_Tool,
+                       Step,
+                       tool,
                        Case When Not State In (3,5,7) Then 7 Else State End As State,
                        Input_Folder_Name,
                        Output_Folder_Name,
@@ -405,7 +406,7 @@ BEGIN
                        0 AS Holdoff_Interval_Minutes,
                        CURRENT_TIMESTAMP AS Next_Try,
                        0 AS Retry_Count
-                FROM cap.t_job_steps_history
+                FROM cap.t_task_steps_history
                 WHERE Job = _captureJob AND
                       Saved = _dateStamp;
 
@@ -441,28 +442,28 @@ BEGIN
 
             If FOUND Then
 
-                INSERT INTO cap.t_job_steps( Job,
-                                             Step_Number,
-                                             Step_Tool,
-                                             CPU_Load,
-                                             Dependencies,
-                                             State,
-                                             Input_Folder_Name,
-                                             Output_Folder_Name,
-                                             Processor,
-                                             Start,
-                                             Finish,
-                                             Tool_Version_ID,
-                                             Completion_Code,
-                                             Completion_Message,
-                                             Evaluation_Code,
-                                             Evaluation_Message,
-                                             Holdoff_Interval_Minutes,
-                                             Next_Try,
-                                             Retry_Count )
+                INSERT INTO cap.t_task_steps( Job,
+                                              Step,
+                                              Tool,
+                                              CPU_Load,
+                                              Dependencies,
+                                              State,
+                                              Input_Folder_Name,
+                                              Output_Folder_Name,
+                                              Processor,
+                                              Start,
+                                              Finish,
+                                              Tool_Version_ID,
+                                              Completion_Code,
+                                              Completion_Message,
+                                              Evaluation_Code,
+                                              Evaluation_Message,
+                                              Holdoff_Interval_Minutes,
+                                              Next_Try,
+                                              Retry_Count )
                 SELECT _captureJobNew AS Job,
-                       Step_Number,
-                       Step_Tool,
+                       Step,
+                       Tool,
                        CPU_Load,
                        Dependencies,
                        Case When Not State In (3,5,7) Then 7 Else State End As State,
@@ -479,21 +480,21 @@ BEGIN
                        Holdoff_Interval_Minutes,
                        CURRENT_TIMESTAMP AS Next_Try,
                        Retry_Count
-                FROM cap.t_job_steps
+                FROM cap.t_task_steps
                 WHERE Job = _captureJob
 
-                INSERT INTO cap.t_job_step_dependencies (Job, Step_Number, Target_Step_Number,
-                                                         Condition_Test, Test_Value, Evaluated,
-                                                         Triggered, Enable_Only)
+                INSERT INTO cap.t_task_step_dependencies (Job, Step, Target_Step,
+                                                          Condition_Test, Test_Value, Evaluated,
+                                                          Triggered, Enable_Only)
                 SELECT _captureJobNew AS Job,
-                       Step_Number,
-                       Target_Step_Number,
+                       Step,
+                       Target_Step,
                        Condition_Test,
                        Test_Value,
                        Evaluated,
                        Triggered,
                        Enable_Only
-                FROM cap.t_job_step_dependencies
+                FROM cap.t_task_step_dependencies
                 WHERE Job = _captureJob;
 
             End If;
