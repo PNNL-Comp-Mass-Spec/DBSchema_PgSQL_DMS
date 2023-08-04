@@ -1,20 +1,15 @@
 --
-CREATE OR REPLACE PROCEDURE sw.update_job_state
-(
-    _bypassDMS boolean = false,
-    _maxJobsToProcess int = 0,
-    _loopingUpdateInterval int = 5,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_job_state(boolean, integer, integer, boolean, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.update_job_state(IN _bypassdms boolean DEFAULT false, IN _maxjobstoprocess integer DEFAULT 0, IN _loopingupdateinterval integer DEFAULT 5, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Based on step state, look for jobs that have been completed or have entered the 'in progress' state.
-**      Update state of job in sw.t_jobs and in public.t_analysis_job accordingly.
+**      Update job states in sw.t_jobs and in public.t_analysis_job accordingly.
 **
 **      Processing steps:
 **
@@ -23,35 +18,27 @@ AS $$
 **
 **      2) Accumulate list of jobs whose new state is different than their current state
 **
-**         Current             Current                     New
-**         Broker              Job                         Broker
-**         Job                 Step                        Job
-**         State               States                      State
-**         -----               -------                     ---------
-**         New or Busy         One or more steps failed    Failed
+**         Current               Current                      New
+**         Broker                Job Step                     Broker
+**         Job State             States                       Job State
+**         (in sw.t_jobs)        (in sw.t_job_steps)          To Assign
+**         -----------------     -------------------------    ---------
+**         New or Busy           One or more steps failed     Failed
 **
-**         New or Busy         All steps complete          Complete
+**         New or Busy           All steps complete           Complete
 **
-**         New,Busy,Resuming   One or more steps busy      Busy
+**         New, Busy, Resuming   One or more steps busy       Busy
 **
-**         Failed              All steps complete          Complete, though only if max Job Step completion time is greater than Finish time in T_Jobs
+**         Failed                All steps complete           Complete, though only if max Job Step completion time is greater than Finish time in sw.t_jobs
 **
 **      3) Go through list of jobs whose current state must be changed and
 **         update tables in the sw and public schemas
 **
 **         New             Action by broker
-**         Broker          - Always set job state in broker to new state
-**         Job             - Roll up step completion messages and append to comment in public.t_analysis_job
-**         State
-**         ------          ---------------------------------------
-**         Failed          Current: Update DMS job state to 'Failed'
-**
-**                                In the future, might implement updating
-**                                DMS job state to one of several failure states
-**                                according to job step completion codes (See note 1)
-**                                - Failed
-**                                - No Intermediate Files Created
-**                                - Data Extraction Failed
+**         Broker          - Always set job state in sw.t_jobs to new state
+**         Job State       - Roll up step completion messages and append to comment in public.t_analysis_job
+**         ---------       ---------------------------------------
+**         Failed          Update DMS job state to 'Failed'
 **
 **         Complete        Update DMS job state to 'Complete'
 **
@@ -110,7 +97,7 @@ AS $$
 **          05/10/2018 mem - Append to the job comment, rather than replacing it (provided the job completed successfully)
 **          06/12/2018 mem - Send _maxLength to append_to_text
 **          03/12/2021 mem - Expand _comment to varchar(1024)
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/03/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -158,11 +145,6 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------
-    -- FUTURE: may need to look at jobs in the holding
-    -- state that have been reset
-    ---------------------------------------------------
-
-    ---------------------------------------------------
     -- Temp table to hold state changes
     ---------------------------------------------------
 
@@ -194,11 +176,11 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_ChangedJobs( Job,
-                                  NewState,
-                                  Results_Directory_Name,
-                                  Organism_DB_Name,
-                                  Dataset_Name,
-                                  Dataset_ID )
+                                 NewState,
+                                 Results_Directory_Name,
+                                 Organism_DB_Name,
+                                 Dataset_Name,
+                                 Dataset_ID )
     SELECT Job,
            NewState,
            Results_Directory_Name,
@@ -206,57 +188,55 @@ BEGIN
            Dataset,
            Dataset_ID
     FROM (
-        -- Look at the state of steps for active or failed jobs
+        -- Look at the step states for active or failed jobs
         -- and determine what the new state of each job should be
-        SELECT
-          J.Job,
-          J.State,
-          J.Results_Folder_Name As Results_Directory_Name,
-          J.Organism_DB_Name,
-          CASE
-            WHEN JS_Stats.Failed > 0 THEN 5                                        -- Job Failed
-            WHEN JS_Stats.FinishedOrSkipped = Total THEN
-                CASE WHEN JS_Stats.FinishedOrSkipped = JS_Stats.Skipped THEN 7     -- No Intermediate Files Created (all steps skipped)
-                Else 4                                                             -- Job Complete
-                End
-            WHEN JS_Stats.StartedFinishedOrSkipped > 0 THEN 2                      -- Job In Progress
-            Else J.State
-          End AS NewState,
-          J.Dataset,
-          J.Dataset_ID
-        FROM
-          (
-            -- Count the number of steps for each job
-            -- that are in the busy, finished, or failed states
-            SELECT
-                JS.Job,
-                COUNT(JS.step) AS Total,
-                SUM(CASE
-                    WHEN JS.state IN (3,4,5,9) THEN 1
-                    ELSE 0
-                    END) AS StartedFinishedOrSkipped,
-                SUM(CASE
-                    WHEN JS.state IN (6,16) THEN 1
-                    ELSE 0
-                    END) AS Failed,
-                SUM(CASE
-                    WHEN JS.state IN (3,5) THEN 1
-                    ELSE 0
-                    END) AS FinishedOrSkipped,
-                SUM(CASE
-                    WHEN JS.state = 3 Then 1
-                    ELSE 0
-                    END) AS Skipped
-            FROM sw.t_job_steps JS
-                 INNER JOIN sw.t_jobs J
-                   ON JS.job = J.job
-            WHERE J.state IN (1, 2, 5, 20)    -- job state (not step state!): new, in progress, failed, or resuming state
-            GROUP BY JS.job, J.state
+        SELECT J.Job,
+               J.State,
+               J.Results_Folder_Name As Results_Directory_Name,
+               J.Organism_DB_Name,
+               CASE
+                 WHEN JS_Stats.Failed > 0 THEN 5                                        -- Job Failed
+                 WHEN JS_Stats.FinishedOrSkipped = Total THEN
+                     CASE WHEN JS_Stats.FinishedOrSkipped = JS_Stats.Skipped THEN 7     -- No Intermediate Files Created (all steps skipped)
+                     ELSE 4                                                             -- Job Complete
+                     END
+                 WHEN JS_Stats.StartedFinishedOrSkipped > 0 THEN 2                      -- Job In Progress
+                 ELSE J.State
+               END AS NewState,
+               J.Dataset,
+               J.Dataset_ID
+        FROM (
+              -- Count the number of steps for each job
+              -- that are in the busy, finished, or failed states
+              SELECT
+                  JS.Job,
+                  COUNT(JS.step) AS Total,
+                  SUM(CASE
+                      WHEN JS.state IN (3,4,5,9) THEN 1
+                      ELSE 0
+                      END) AS StartedFinishedOrSkipped,
+                  SUM(CASE
+                      WHEN JS.state IN (6,16) THEN 1
+                      ELSE 0
+                      END) AS Failed,
+                  SUM(CASE
+                      WHEN JS.state IN (3,5) THEN 1
+                      ELSE 0
+                      END) AS FinishedOrSkipped,
+                  SUM(CASE
+                      WHEN JS.state = 3 Then 1
+                      ELSE 0
+                      END) AS Skipped
+              FROM sw.t_job_steps JS
+                   INNER JOIN sw.t_jobs J
+                     ON JS.job = J.job
+              WHERE J.state IN (1, 2, 5, 20)    -- job state (not step state!): new, in progress, failed, or resuming state
+              GROUP BY JS.job, J.state
            ) AS JS_Stats
            INNER JOIN sw.t_jobs AS J
              ON JS_Stats.job = J.job
         ) UpdateQ
-    WHERE UpdateQ.state <> UpdateQ.NewState
+    WHERE UpdateQ.state <> UpdateQ.NewState;
     --
     GET DIAGNOSTICS _jobCountToProcess = ROW_COUNT;
 
@@ -272,19 +252,14 @@ BEGIN
         SELECT Job,
                NewState AS NewJobStateInBroker,
                Results_Directory_Name AS ResultsDirectoryName,
-               Organism_DB_Name AS OrgDBName
+               Organism_DB_Name AS OrgDBName,
                Dataset_ID AS DatasetID
-        INTO _jobInfo
         FROM Tmp_ChangedJobs
         ORDER BY Job
     LOOP
         ---------------------------------------------------
-        -- Examine the steps for this job to determine actual start/End times
+        -- Examine the steps for this job to determine actual start/end times
         ---------------------------------------------------
-
-        _startMin := Null;
-        _finishMax := Null;
-        _processingTimeMinutes := 0;
 
         SELECT MIN(start),
                MAX(finish)
@@ -299,7 +274,8 @@ BEGIN
         SELECT string_agg(Completion_Message, '; ' ORDER BY step)
         INTO _comment
         FROM sw.t_job_steps
-        WHERE job = _jobInfo.Job AND Not completion_message Is Null;
+        WHERE job = _jobInfo.Job AND
+              Trim(Coalesce(completion_message, '')) <> '';
 
         ---------------------------------------------------
         -- Examine the steps for this job to determine total processing time
@@ -308,25 +284,22 @@ BEGIN
         -- therefore, we use a MAX(ProcessingTime) on steps with the same Step Tool name
         ---------------------------------------------------
 
-        SELECT ProcTimeMinutes_CompletedSteps
+        SELECT Proc_Time_Minutes_Completed_Steps
         INTO _processingTimeMinutes
-        FROM V_Job_Processing_Time
+        FROM sw.v_job_processing_time
         WHERE Job = _jobInfo.Job;
 
         _processingTimeMinutes := Coalesce(_processingTimeMinutes, 0);
 
         If _infoOnly Then
-
-            INSERT INTO Tmp_JobStatePreview (job, Old_State, New_State)
+            INSERT INTO Tmp_JobStatePreview (Job, Old_State, New_State)
             SELECT job, state, _jobInfo.NewJobStateInBroker
             FROM sw.t_jobs
             WHERE job = _jobInfo.Job;
-
         Else
-
-            ---------------------------------------------------
+            ------------------------------------------------------------------
             -- Update local job state, timestamp (if appropriate), and comment
-            ---------------------------------------------------
+            ------------------------------------------------------------------
 
             UPDATE sw.t_jobs
             SET state = _jobInfo.NewJobStateInBroker,
@@ -350,7 +323,7 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Figure out what the job state should be in public.t_analysis_job and update it
+        -- Figure out what the job state should be in public.t_analysis_job
         ---------------------------------------------------
 
         If _jobInfo.NewJobStateInBroker IN (2, 4, 5, 7) Then
@@ -366,8 +339,8 @@ BEGIN
 
         If _newDMSJobState = 4 Then     -- State 4: Complete
 
-            If Exists ( SELECT Step_Number Then
-                        FROM sw.t_job_steps;
+            If Exists ( SELECT Step
+                        FROM sw.t_job_steps
                         WHERE Job = _jobInfo.Job AND
                               Completion_Message LIKE '%No results above threshold%' AND
                               tool = 'DataExtractor' ) Then
@@ -383,8 +356,8 @@ BEGIN
 
         If _newDMSJobState = 4 Then     -- State 4: Complete
 
-            If Exists ( SELECT Step_Number
-                        FROM sw.t_job_steps;
+            If Exists ( SELECT Step
+                        FROM sw.t_job_steps
                         WHERE Job = _jobInfo.Job AND
                               Completion_Message LIKE '%No results in DeconTools Isos file%' AND
                               tool LIKE 'Decon%' ) Then
@@ -436,7 +409,7 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Are we enabled for making changes to DMS?
+        -- Are we enabled for making changes to public.t_analysis_job?
         ---------------------------------------------------
 
         If Not _bypassDMS AND _jobInDMS And Not _infoOnly Then
@@ -444,16 +417,16 @@ BEGIN
 
             -- Uncomment to debug
             -- _debugMsg := format('Calling update_analysis_job_processing_stats for job %s', _jobInfo.Job);
-            -- CALL Post_Log_Entry ('Debug', _debugMsg, 'Update_Job_State');
+            -- CALL public.post_log_entry ('Debug', _debugMsg, 'Update_Job_State', 'sw');
 
             -- Compute the value for _updateCode, which is used as a safety feature to prevent unauthorized job updates
             -- Procedure update_analysis_job_processing_stats will re-compute _updateCode based on _jobInfo.Job,
             -- and if the values don't match, the update is not performed
 
-            If char_length(_comment) <= 512 Then
+            If char_length(_comment) <= 1024 Then
                 _jobCommentAddnl := _comment;
             Else
-                _jobCommentAddnl := Substring(_comment, 1, 512);
+                _jobCommentAddnl := Substring(_comment, 1, 1024);
             End If;
 
             If _jobInfo.Job % 2 = 0 Then
@@ -508,7 +481,7 @@ BEGIN
 
         If _maxJobsToProcess > 0 And _jobsProcessed >= _maxJobsToProcess Then
             -- Break out of the for loop
-            EXIT
+            EXIT;
         End If;
 
     END LOOP;
@@ -556,11 +529,6 @@ BEGIN
 
     End If;
 
-    ---------------------------------------------------
-    -- Look for jobs in public.t_analysis_job that are failed, yet are not failed in sw.t_jobs
-    -- Also look for jobs listed as new that are actually in progress
-    ---------------------------------------------------
-
     If _bypassDMS Then
         DROP TABLE Tmp_ChangedJobs;
 
@@ -571,13 +539,18 @@ BEGIN
         RETURN;
     End If;
 
+    ---------------------------------------------------
+    -- Look for jobs in public.t_analysis_job that are failed, yet are not failed in sw.t_jobs
+    -- Also look for jobs listed as new that are actually in progress
+    ---------------------------------------------------
+
     CREATE TEMP TABLE Tmp_JobsToReset (
         Job int not null,
         NewState int not null
     );
 
     -- Look for jobs that are listed as Failed in public.t_analysis_job, but are in-progress in sw.t_jobs
-    --
+
     INSERT INTO Tmp_JobsToReset (job, NewState )
     SELECT DMSJobs.job AS Job,
            J.state AS NewState
@@ -588,7 +561,7 @@ BEGIN
           J.state IN (1, 2, 4);
 
     -- Also look for jobs that are in state New in public.t_analysis_job, but are in-progress in sw.t_jobs
-    --
+
     INSERT INTO Tmp_JobsToReset (job, NewState )
     SELECT DMSJobs.job AS Job,
            J.state AS NewState
@@ -605,6 +578,8 @@ BEGIN
         If _infoOnly Then
             DROP TABLE Tmp_JobStatePreview;
         End If;
+
+        RETURN;
     End If;
 
     -- Add an index to Tmp_JobsToReset, which will be beneficial if Tmp_JobsToReset has a large number of jobs
@@ -617,8 +592,6 @@ BEGIN
         ORDER BY Job
     LOOP
         -- Compute the value for _updateCode, which is used as a safety feature to prevent unauthorized job updates
-        -- Procedure will re-compute _updateCode based on _jobInfo.Job,
-        -- and if the values don't match, the update is not performed
 
         If _jobInfo.Job % 2 = 0 Then
             _updateCode := (_jobInfo.Job % 220) + 14;
@@ -655,8 +628,15 @@ BEGIN
     If _infoOnly Then
         DROP TABLE Tmp_JobStatePreview;
     End If;
-
 END
 $$;
 
-COMMENT ON PROCEDURE sw.update_job_state IS 'UpdateJobState';
+
+ALTER PROCEDURE sw.update_job_state(IN _bypassdms boolean, IN _maxjobstoprocess integer, IN _loopingupdateinterval integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_job_state(IN _bypassdms boolean, IN _maxjobstoprocess integer, IN _loopingupdateinterval integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.update_job_state(IN _bypassdms boolean, IN _maxjobstoprocess integer, IN _loopingupdateinterval integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateJobState';
+

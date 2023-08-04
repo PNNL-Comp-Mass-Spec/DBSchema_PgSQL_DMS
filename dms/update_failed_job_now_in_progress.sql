@@ -1,20 +1,14 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_failed_job_now_in_progress
-(
-    _job int,
-    _newBrokerJobState int,
-    _jobStart timestamp,
-    _updateCode int,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_failed_job_now_in_progress(integer, integer, timestamp without time zone, integer, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_failed_job_now_in_progress(IN _job integer, IN _newbrokerjobstate integer, IN _jobstart timestamp without time zone, IN _updatecode integer, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates job state to 2 for an analysis job that is now in-progress in sw.t_jobs database
+**      Updates job state to 2 for an analysis job that is now in-progress in sw.t_jobs
 **
 **      Typically used to update jobs listed as Failed in public.t_analysis_job,
 **      but occasionally updates jobs listed as New
@@ -28,7 +22,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   02/21/2013 mem - Initial version
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/03/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -46,7 +40,7 @@ BEGIN
 
     _datasetName := '';
 
-       ---------------------------------------------------
+    ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
 
@@ -120,7 +114,6 @@ BEGIN
         END LOOP;
 
         RETURN;
-
     End If;
 
     -- Perform the update
@@ -136,4 +129,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_failed_job_now_in_progress IS 'UpdateFailedJobNowInProgress';
+
+ALTER PROCEDURE public.update_failed_job_now_in_progress(IN _job integer, IN _newbrokerjobstate integer, IN _jobstart timestamp without time zone, IN _updatecode integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_failed_job_now_in_progress(IN _job integer, IN _newbrokerjobstate integer, IN _jobstart timestamp without time zone, IN _updatecode integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_failed_job_now_in_progress(IN _job integer, IN _newbrokerjobstate integer, IN _jobstart timestamp without time zone, IN _updatecode integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateFailedJobNowInProgress';
+

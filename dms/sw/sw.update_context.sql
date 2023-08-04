@@ -1,19 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE sw.update_context
-(
-    _bypassDMS boolean = false,
-    _maxJobsToProcess int = 0,
-    _logIntervalThreshold int = 15,
-    _loggingEnabled boolean = false,
-    _loopingUpdateInterval int = 5,
-    _infoOnly boolean = false,
-    _infoLevel int = 0,
-    _debugMode boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_context(boolean, integer, integer, boolean, integer, boolean, integer, boolean, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.update_context(IN _bypassdms boolean DEFAULT false, IN _maxjobstoprocess integer DEFAULT 0, IN _logintervalthreshold integer DEFAULT 15, IN _loggingenabled boolean DEFAULT false, IN _loopingupdateinterval integer DEFAULT 5, IN _infoonly boolean DEFAULT false, IN _infolevel integer DEFAULT 0, IN _debugmode boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -51,7 +42,7 @@ AS $$
 **          11/20/2015 mem - Now calling Update_Actual_CPU_Loading
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          03/30/2018 mem - Update comments
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/03/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -150,7 +141,7 @@ BEGIN
                         _bypassDMS,
                         _message => _message,
                         _returnCode => _returnCode,
-                        _maxJobsToProcess => _maxJobsToProcess;
+                        _maxJobsToProcess => _maxJobsToProcess);
         End If;
 
         -- Step 2: Add new jobs, hold/resume/reset existing jobs
@@ -595,11 +586,19 @@ BEGIN
     COMMIT;
 
     If _loggingEnabled Then
-        _statusMessage := format('Update context complete: %s seconds elapsed', extract(epoch FROM clock_timestamp() - _startTime);
+        _statusMessage := format('Update context complete: %s seconds elapsed', extract(epoch FROM clock_timestamp() - _startTime));
         CALL public.post_log_entry ('Normal', _statusMessage, 'Update_Context', 'sw');
     End If;
 
 END
 $$;
 
-COMMENT ON PROCEDURE sw.update_context IS 'UpdateContext';
+
+ALTER PROCEDURE sw.update_context(IN _bypassdms boolean, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean, IN _infolevel integer, IN _debugmode boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_context(IN _bypassdms boolean, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean, IN _infolevel integer, IN _debugmode boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.update_context(IN _bypassdms boolean, IN _maxjobstoprocess integer, IN _logintervalthreshold integer, IN _loggingenabled boolean, IN _loopingupdateinterval integer, IN _infoonly boolean, IN _infolevel integer, IN _debugmode boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateContext';
+
