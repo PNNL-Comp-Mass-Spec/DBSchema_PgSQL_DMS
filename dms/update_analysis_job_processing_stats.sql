@@ -34,7 +34,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_job_processing_stats(IN _job 
 **          06/15/2015 mem - Use function Append_To_Text to concatenate _jobCommentAddnl to comment
 **          06/12/2018 mem - Send _maxLength to Append_To_Text
 **          08/03/2020 mem - Update T_Cached_Dataset_Links.MASIC_Directory_Name when a MASIC job finishes successfully
-**          08/02/2023 mem - Ported to PostgreSQL
+**          08/03/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -221,10 +221,10 @@ BEGIN
                        ELSE public.append_to_text(comment, _jobCommentAddnl, _delimiter => '; ', _maxlength => 512)
                   END,
         Organism_DB_Name = Coalesce(_organismDBName, Organism_DB_Name),
-        Processing_TimeMinutes = CASE WHEN _newBrokerJobState <> 2
-                                      THEN _processingTimeMinutes
-                                      ELSE Processing_TimeMinutes
-                                 END,
+        Processing_Time_Minutes = CASE WHEN _newBrokerJobState <> 2
+                                       THEN _processingTimeMinutes
+                                       ELSE Processing_Time_Minutes
+                                  END,
         -- Note: setting Purged to 0 even if job failed since admin might later manually set job to complete and we want Purged to be 0 in that case
         Purged = CASE WHEN _newBrokerJobState IN (4, 5, 14)
                       THEN 0
