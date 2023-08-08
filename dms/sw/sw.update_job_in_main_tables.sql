@@ -61,7 +61,7 @@ BEGIN
                     JS.step = Tmp_Job_Steps.step
           WHERE JSD.job = JS.job AND
                 JSD.step = JS.step AND
-                JS.state <> 5            -- 5 = Complete
+                JS.state <> 5            -- 5=Complete
         );
 
     -- Delete job steps that are not yet completed
@@ -71,7 +71,7 @@ BEGIN
           FROM Tmp_Job_Steps
           WHERE JS.Job = Tmp_Job_Steps.Job AND
                 JS.Step = Tmp_Job_Steps.Step AND
-                JS.State <> 5            -- 5 = Complete
+                JS.State <> 5            -- 5=Complete
         );
 
     ---------------------------------------------------

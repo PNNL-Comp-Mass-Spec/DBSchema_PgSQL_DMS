@@ -141,7 +141,7 @@ BEGIN
             UPDATE  cap.t_tasks
             SET     priority = _priority ,
                     comment = _comment ,
-                    state = CASE WHEN _reset THEN 20 ELSE state END -- 20=resuming (update_task_state will handle final task state update)
+                    state = CASE WHEN _reset THEN 20 ELSE state END -- 20=Resuming (update_task_state will handle final task state update)
             WHERE   job = _job;
 
             -- Only update parameters if not an empty string

@@ -252,7 +252,7 @@ BEGIN
             WHERE job = _job;
 
             UPDATE sw.t_job_steps
-            SET state = 1,                      -- 1=waiting
+            SET state = 1,                      -- 1=Waiting
                 tool_version_id = 1,            -- 1=Unknown
                 next_try = CURRENT_TIMESTAMP,
                 remote_info_id = 1              -- 1=Unknown

@@ -624,7 +624,7 @@ BEGIN
         ---------------------------------------------------
 
         UPDATE sw.t_job_steps
-        SET state = 1,                  -- 1=waiting
+        SET state = 1,                  -- 1=Waiting
             tool_version_id = 1,        -- 1=Unknown
             next_try = CURRENT_TIMESTAMP,
             retry_count = 0,
@@ -655,7 +655,7 @@ BEGIN
         ---------------------------------------------------
 
         UPDATE sw.t_jobs
-        SET state = 20                        -- 20=resuming
+        SET state = 20                  -- 20=Resuming
         WHERE job IN (SELECT job From Tmp_JobsToResumeOrReset);
 
     End If;

@@ -61,9 +61,9 @@ BEGIN
 
         UPDATE t_job_steps
         SET state = 2,
-            tool_version_id = 1,        -- 1=Unknown
+            tool_version_id = 1,            -- 1=Unknown
             next_try = CURRENT_TIMESTAMP,
-            remote_info_id = 1            -- 1=Unknown
+            remote_info_id = 1              -- 1=Unknown
         FROM sw.t_job_steps
              INNER JOIN ( SELECT JS_MSGF.job,
                                  JS_MSGF.step

@@ -60,7 +60,7 @@ BEGIN
     ---------------------------------------------------
 
     UPDATE cap.t_tasks
-    SET State = 1                           -- 1=new
+    SET State = 1                           -- 1=New
     WHERE Job IN ( SELECT Job FROM Tmp_Selected_Jobs );
 
 END
