@@ -1,19 +1,16 @@
 --
-CREATE OR REPLACE PROCEDURE sw.reset_dependent_job_steps
-(
-    _jobs text,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: reset_dependent_job_steps(text, boolean, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.reset_dependent_job_steps(IN _jobs text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Resets entries in T_Job_Steps and T_Job_Step_Dependencies for the given jobs
-**      for which the job steps that are complete yet depend on a job step that is enabled,
-**      in progress, or completed after the given job step finished
+**      Resets entries in sw.t_job_steps and sw.t_job_step_dependencies for the given jobs
+**      for any job steps that are complete but depend on a job step that is
+**      enabled, in progress, or completed after the given job step finished
 **
 **  Arguments:
 **    _jobs       List of jobs whose steps should be reset
@@ -29,12 +26,10 @@ AS $$
 **          05/12/2017 mem - Update Next_Try and Remote_Info_ID
 **          05/13/2017 mem - Treat state 9 (Running_Remote) as 'In progress'
 **          03/22/2021 mem - Do not reset steps in state 7 (Holding)
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/07/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
-    _jobResetTran text := 'DependentJobStepReset';
-
     _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
@@ -57,14 +52,13 @@ BEGIN
 
         _jobs := Coalesce(_jobs, '');
         _infoOnly := Coalesce(_infoOnly, false);
-        _message := '';
 
         If _jobs = '' Then
             _message := 'The jobs parameter is empty';
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5201';
-            RETURN
+            RETURN;
         End If;
 
         -----------------------------------------------------------
@@ -185,7 +179,7 @@ BEGIN
         -- Update the Job Steps to state Waiting
         --
         UPDATE sw.t_job_steps JS
-        SET state = 1,                      -- 1=waiting
+        SET state = 1,                      -- 1=Waiting
             tool_version_id = 1,            -- 1=Unknown
             next_try = CURRENT_TIMESTAMP,
             remote_info_id = 1              -- 1=Unknown
@@ -215,4 +209,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.reset_dependent_job_steps IS 'ResetDependentJobSteps';
+
+ALTER PROCEDURE sw.reset_dependent_job_steps(IN _jobs text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE reset_dependent_job_steps(IN _jobs text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.reset_dependent_job_steps(IN _jobs text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'ResetDependentJobSteps';
+
