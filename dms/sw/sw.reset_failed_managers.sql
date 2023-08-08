@@ -1,17 +1,19 @@
 --
-CREATE OR REPLACE PROCEDURE sw.reset_failed_managers
-(
-    _infoOnly boolean = false,
-    _resetAllWithError boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: reset_failed_managers(boolean, boolean, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.reset_failed_managers(IN _infoonly boolean DEFAULT false, IN _resetallwitherror boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Resets managers that report 'flag file' in V_Processor_Status_Warnings
+**      Resets managers with a status message of 'Flag file'
+**      posted to sw.t_processor_status within the last 6 hours
+**
+**      This procedure is intended to be run on a regular basis by a job scheduler,
+**      though only in cases where we expect managers to fail and
+**      we want to auto-reset them on a regular basis
 **
 **  Arguments:
 **    _infoOnly            True to preview the changes
@@ -20,7 +22,7 @@ AS $$
 **  Auth:   mem
 **  Date:   12/02/2014 mem - Initial version
 **          03/29/2019 mem - Add parameter _resetAllWithError
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/07/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -49,10 +51,10 @@ BEGIN
     INSERT INTO Tmp_ManagersToReset (Processor_Name, Status_Date)
     SELECT Processor_Name,
            Status_Date
-    FROM sw.V_Processor_Status_Warnings
+    FROM sw.v_processor_status_warnings
     WHERE (Most_Recent_Log_Message = 'Flag file' Or
            _resetAllWithError And Mgr_Status = 'Stopped Error') AND
-          Status_Date > CURRENT_TIMESTAMP - INTERVAL '6 hours'
+          Status_Date > CURRENT_TIMESTAMP - INTERVAL '6 hours';
 
     If Not FOUND Then
         _message := 'No failed managers were found';
@@ -86,4 +88,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.reset_failed_managers IS 'ResetFailedManagers';
+
+ALTER PROCEDURE sw.reset_failed_managers(IN _infoonly boolean, IN _resetallwitherror boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE reset_failed_managers(IN _infoonly boolean, IN _resetallwitherror boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.reset_failed_managers(IN _infoonly boolean, IN _resetallwitherror boolean, INOUT _message text, INOUT _returncode text) IS 'ResetFailedManagers';
+
