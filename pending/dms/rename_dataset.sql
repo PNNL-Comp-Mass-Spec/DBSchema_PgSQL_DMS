@@ -37,6 +37,7 @@ AS $$
 **          07/21/2022 mem - Move misplaced 'cd ..' and add missing 'rem'
 **          10/10/2022 mem - Add _newRequestedRunID; if defined (and active), associate the dataset with this Request ID and use it to update the dataset's experiment
 **          04/25/2023 mem - Update Queue_State for the old and new requested runs
+**          08/07/2023 mem - Show a custom error message if the dataset does not exist in T_Requested_Run
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -234,8 +235,13 @@ BEGIN
     WHERE dataset_id = _datasetID;
 
     If Not FOUND Then
-        _message := format('Dataset ID not found in t_requested_run: %s', _datasetID);
-        RETURN;
+        If _newRequestedRunID > 0 Then
+            _message := format('Dataset ID not found in t_requested_run: %s; cannot rename the dataset', _datasetID);
+            RETURN;
+        Else
+            _message := format('Dataset ID not found in t_requested_run: %s; it needs to be manually associated with a Requested Run', _datasetID);
+            RAISE INFO '%', _message;
+        End If;
     End If;
 
     -- Lookup the experiment name for _newExperimentID
