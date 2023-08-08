@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text D
 **          05/12/2023 mem - Rename variables
 **          05/30/2023 mem - Use format() for string concatenation
 **          06/24/2023 mem - Use check_plural() to customize preview message
+**          08/07/2023 mem - Display a blank line before additional status messages
 **
 *****************************************************/
 DECLARE
@@ -94,6 +95,8 @@ BEGIN
 
         If Not Exists (SELECT * FROM Tmp_ManagerList) Then
             _message := 'No valid managers were found in _mgrList';
+
+            RAISE INFO '';
             RAISE INFO '%', _message;
 
             DROP TABLE Tmp_ManagerList;
@@ -159,6 +162,7 @@ BEGIN
                             _insertCount,
                             public.check_plural(_insertCount, 'manager', 'managers'));
 
+        RAISE INFO '';
         RAISE INFO '%', _message;
     End If;
 
@@ -250,6 +254,7 @@ BEGIN
                             _insertCount,
                             public.check_plural(_insertCount, 'manager', 'managers'));
 
+        RAISE INFO '';
         RAISE INFO '%', _message;
     ELSE
         _message := format('All managers already have ManagerErrorCleanupMode set to %s', _cleanupModeString);
