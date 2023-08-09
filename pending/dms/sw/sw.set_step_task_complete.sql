@@ -380,7 +380,7 @@ BEGIN
 
         If Coalesce(_remoteInfo, '') <> '' Then
 
-            _remoteInfoID := get_remote_info_id (_remoteInfo);
+            _remoteInfoID := sw.get_remote_info_id (_remoteInfo, _infoOnly => false);
 
             If Coalesce(_remoteInfoID, 0) = 0 Then
                 ---------------------------------------------------

@@ -120,6 +120,7 @@ CREATE OR REPLACE PROCEDURE sw.request_step_task_xml(IN _processorname text, INO
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          06/23/2023 mem - Add missing underscore to column Processor_ID
 **          07/11/2023 mem - Use COUNT(step) and COUNT(processor) instead of COUNT(*)
+**          08/08/2023 mem - Include the schema name when calling procedure get_remote_info_id
 **
 *****************************************************/
 DECLARE
@@ -516,9 +517,9 @@ BEGIN
             -- on the remote server associated with this manager
             ---------------------------------------------------
 
-            _remoteInfoID := get_remote_info_id (_remoteInfo);
+            _remoteInfoID := sw.get_remote_info_id (_remoteInfo, _infoOnly => true);
 
-            -- Note that _remoteInfoID 1 means the _remoteInfo is 'Unknown'
+            -- Note that _remoteInfoID=1 means the _remoteInfo is 'Unknown'
 
             If _remoteInfoID > 1 Then
                 If _infoLevel > 0 Then
@@ -1557,7 +1558,7 @@ BEGIN
             End If;
 
             If _infoLevel > 1 Then
-                RAISE INFO '%, Request_Step_Task_XML: Call get_job_step_params_xml', public.timestamp_text_immutable(clock_timestamp());
+                RAISE INFO '%, Request_Step_Task_XML: Call sw.get_job_step_params_xml', public.timestamp_text_immutable(clock_timestamp());
             End If;
 
             _currentLocation := 'Call sw.get_job_step_params_xml() to obtain job parameters';
