@@ -43,6 +43,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_job_parameter_temp_table(IN _job integ
 **  Date:   03/22/2011 mem - Initial Version
 **          01/19/2012 mem - Now using Add_Update_Job_Parameter_XML
 **          07/28/2023 mem - Ported to PostgreSQL
+**          08/08/2023 mem - Fix typo in warning message
 **
 *****************************************************/
 DECLARE
@@ -97,7 +98,7 @@ BEGIN
     _message := _results.message;
 
     If Not _results.success Then
-        RAISE WARNING 'Function sw.add_update_task_parameter_xml() was unable to update the XML for analysis job %: %',
+        RAISE WARNING 'Function sw.add_update_job_parameter_xml() was unable to update the XML for analysis job %: %',
             _job,
             CASE WHEN Coalesce(_message, '') = '' THEN 'Unknown reason' ELSE _message END;
 

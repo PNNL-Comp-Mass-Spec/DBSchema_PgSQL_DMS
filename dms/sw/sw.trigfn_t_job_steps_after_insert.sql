@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION sw.trigfn_t_job_steps_after_insert() RETURNS trigger
 /****************************************************
 **
 **  Desc:
-**      Add entries to t_task_step_events for each new job step
+**      Add entries to t_job_step_events for each new job step
 **
 **  Auth:   mem
 **  Date:   07/31/2022 mem - Ported to PostgreSQL

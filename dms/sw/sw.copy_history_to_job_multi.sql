@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE sw.copy_history_to_job_multi(IN _joblist text, IN _i
 **          07/31/2023 mem - Make sure the dependencies column is up-to-date in t_job_steps
 **                         - Ported to PostgreSQL
 **          08/02/2023 mem - Move the _message and _returnCode arguments to the end of the argument list
+**          08/08/2023 mem - Fix typo in warning message
 **
 *****************************************************/
 DECLARE
@@ -347,7 +348,7 @@ BEGIN
             );
 
         If _debugMode Then
-            RAISE INFO 'Insert into sw.t_job_step_dependencies using sw.t_task_step_dependencies_history for %', _jobDateDescription;
+            RAISE INFO 'Insert into sw.t_job_step_dependencies using sw.t_job_step_dependencies_history for %', _jobDateDescription;
         End If;
 
         -- Now add/update the job step dependencies
