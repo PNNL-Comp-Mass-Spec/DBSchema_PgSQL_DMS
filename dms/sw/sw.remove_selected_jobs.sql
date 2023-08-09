@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE sw.remove_selected_jobs(IN _infoonly boolean DEFAULT
 **          06/16/2014 mem - Now disabling trigger trig_ud_T_Job_Steps when deleting rows from T_Job_Steps
 **          09/24/2014 mem - Rename Job in T_Job_Step_Dependencies
 **          06/29/2023 mem - Ported to PostgreSQL
+**          08/08/2023 mem - Store the deletion count summary in _message
 **
 *****************************************************/
 DECLARE
@@ -206,7 +207,9 @@ BEGIN
 
         END LOOP;
 
-        RAISE INFO 'Deleted % % from sw.t_jobs', _deleteCount, public.check_plural(_deleteCount, 'row', 'rows');
+        _message := format('Deleted %s %s from sw.t_jobs', _deleteCount, public.check_plural(_deleteCount, 'row', 'rows'));
+
+        RAISE INFO '%', _message;
 
     Else
 
@@ -221,8 +224,10 @@ BEGIN
         --
         GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
+        _message := format('Deleted %s %s from sw.t_jobs', _deleteCount, public.check_plural(_deleteCount, 'row', 'rows'));
+
         If _logDeletions Then
-            RAISE INFO 'Deleted % % from sw.t_jobs', _deleteCount, public.check_plural(_deleteCount, 'row', 'rows');
+            RAISE INFO '%', _message;
         End If;
 
         ALTER TABLE sw.t_jobs ENABLE TRIGGER trig_t_jobs_after_delete;
