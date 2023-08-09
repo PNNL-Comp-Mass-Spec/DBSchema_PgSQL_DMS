@@ -1,23 +1,21 @@
 --
-CREATE OR REPLACE PROCEDURE sw.synchronize_job_stats_with_job_steps
-(
-    _infoOnly boolean = true,
-    _completedJobsOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: synchronize_job_stats_with_job_steps(boolean, boolean, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.synchronize_job_stats_with_job_steps(IN _infoonly boolean DEFAULT true, IN _completedjobsonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Makes sure the job stats (start and finish)
-**      agree with the job steps for the job
+**      Makes sure job start and finish times
+**      agree with job step start and finish times
 **
 **  Auth:   mem
 **  Date:   01/22/2010 mem - Initial version
 **          03/10/2014 mem - Fixed logic related to _completedJobsOnly
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/08/2023 mem - Handle null values for Start and Finish in sw.t_jobs
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -35,12 +33,12 @@ BEGIN
     ---------------------------------------------------
 
     _infoOnly := Coalesce(_infoOnly, false);
-]
+
     CREATE TEMP TABLE Tmp_JobsToUpdate (
         Job int,
         Start_New timestamp Null,
         Finish_New timestamp Null
-    )
+    );
 
     CREATE UNIQUE INDEX IX_Tmp_JobsToUpdate ON Tmp_JobsToUpdate (Job);
 
@@ -54,16 +52,18 @@ BEGIN
     FROM sw.t_jobs J
          INNER JOIN sw.t_job_steps JS
            ON J.job = JS.job
-    WHERE (J.state = 4 And _completedJobsOnly OR Not _completedJobsOnly) AND
-          J.finish < JS.finish
+    WHERE (J.state = 4 AND _completedJobsOnly OR Not _completedJobsOnly) AND
+          (J.finish < JS.finish OR
+           J.finish IS NULL AND NOT JS.finish IS NULL AND J.state > 2)  -- Do not update Finish for jobs that are New or In Progress
     GROUP BY J.job
     UNION
     SELECT J.job
     FROM sw.t_jobs J
          INNER JOIN sw.t_job_steps JS
            ON J.job = JS.job
-    WHERE (J.state = 4 And _completedJobsOnly OR Not _completedJobsOnly) AND
-          J.start > JS.start
+    WHERE (J.state = 4 AND _completedJobsOnly OR Not _completedJobsOnly) AND
+          (J.start > JS.start OR
+           J.start IS NULL AND NOT JS.start IS NULL)
     GROUP BY J.job;
 
     UPDATE Tmp_JobsToUpdate
@@ -78,13 +78,19 @@ BEGIN
            WHERE J.job IN ( SELECT job FROM Tmp_JobsToUpdate )
            GROUP BY J.Job
          ) SourceQ
-    WHERE Tmp_JobsToUpdate.Job = SourceQ.Job
+    WHERE Tmp_JobsToUpdate.Job = SourceQ.Job;
 
     If _infoOnly Then
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-9s %-5s %-20s %-20s %-20s %-20s';
+        If Not Exists (SELECT job FROM Tmp_JobsToUpdate) THEN
+            RAISE INFO 'Did not find any jobs that require updating';
+            DROP TABLE Tmp_JobsToUpdate;
+            RETURN;
+        End If;
+
+        _formatSpecifier := '%-9s %-5s %-20s %-20s %-30s %-30s';
 
         _infoHead := format(_formatSpecifier,
                             'Job',
@@ -100,8 +106,8 @@ BEGIN
                                      '-----',
                                      '--------------------',
                                      '--------------------',
-                                     '--------------------',
-                                     '--------------------'
+                                     '------------------------------',
+                                     '------------------------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -112,8 +118,19 @@ BEGIN
                    J.State,
                    public.timestamp_text(J.Start)        AS Start,
                    public.timestamp_text(J.Finish)       AS Finish,
-                   public.timestamp_text(JTU.Start_New)  AS Start_New,
-                   public.timestamp_text(JTU.Finish_New) AS Finish_New
+                   public.timestamp_text(JTU.Start_New) ||
+                       CASE WHEN J.Start IS NULL AND NOT JTU.Start_New IS NULL THEN ' (was null)'
+                            WHEN NOT J.Start IS NULL AND J.Start IS DISTINCT FROM JTU.Start_New THEN ' (updated)'
+                            ELSE ''
+                       END AS Start_New,
+                   CASE WHEN J.State IN (1,2)
+                        THEN public.timestamp_text(J.Finish)
+                        ELSE public.timestamp_text(JTU.Finish_New) ||
+                             CASE WHEN J.Finish IS NULL AND NOT JTU.Finish_New IS NULL THEN ' (was null)'
+                                  WHEN NOT J.Finish IS NULL AND J.Finish IS DISTINCT FROM JTU.Finish_New THEN ' (updated)'
+                                  ELSE ''
+                             END
+                   END AS Finish_New
             FROM sw.t_jobs J
                  INNER JOIN Tmp_JobsToUpdate JTU
                    ON J.job = JTU.job
@@ -139,9 +156,14 @@ BEGIN
 
         UPDATE sw.t_jobs J
         SET start = JTU.Start_New,
-            finish = JTU.Finish_New
+            finish = CASE WHEN J.State IN (1,2)
+                          THEN J.Finish
+                          ELSE JTU.Finish_New
+                     END
         FROM Tmp_JobsToUpdate JTU
-        WHERE J.Job = JTU.Job;
+        WHERE J.Job = JTU.Job AND
+              (start  IS DISTINCT FROM JTU.Start_New OR
+               finish IS DISTINCT FROM JTU.Finish_New);
 
     End If;
 
@@ -150,4 +172,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.synchronize_job_stats_with_job_steps IS 'SynchronizeJobStatsWithJobSteps';
+
+ALTER PROCEDURE sw.synchronize_job_stats_with_job_steps(IN _infoonly boolean, IN _completedjobsonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE synchronize_job_stats_with_job_steps(IN _infoonly boolean, IN _completedjobsonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.synchronize_job_stats_with_job_steps(IN _infoonly boolean, IN _completedjobsonly boolean, INOUT _message text, INOUT _returncode text) IS 'SynchronizeJobStatsWithJobSteps';
+
