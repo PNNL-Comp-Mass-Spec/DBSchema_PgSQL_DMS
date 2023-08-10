@@ -1,46 +1,40 @@
 --
-CREATE OR REPLACE PROCEDURE sw.request_folder_create_task
-(
-    _processorName text,
-    INOUT _taskID int = 0,
-    INOUT _parameters text,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _infoOnly boolean = false,
-    _taskCountToPreview int = 10
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: request_folder_create_task(text, integer, text, text, text, boolean, integer); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.request_folder_create_task(IN _processorname text, INOUT _taskid integer DEFAULT 0, INOUT _parameters text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infoonly boolean DEFAULT false, IN _taskcounttopreview integer DEFAULT 10)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Returns first available entry in T_Data_Folder_Create_Queue
+**      Returns first available entry in sw.t_data_folder_create_queue
 **
 **  Example XML parameters returned in _parameters:
 **      <root>
-**      <package>264</package>
-**      <Path_Local_Root>F:\DataPkgs</Path_Local_Root>
-**      <Path_Shared_Root>\\protoapps\DataPkgs\</Path_Shared_Root>
-**      <Path_Folder>2011\Public\264_PNWRCE_Dengue_iTRAQ</Path_Folder>
-**      <cmd>add</cmd>
-**      <Source_DB>DMS_Data_Package</Source_DB>
-**      <Source_Table>T_Data_Package</Source_Table>
+**        <package>4893</package>
+**        <Path_Local_Root>E:\DataPkgs</Path_Local_Root>
+**        <Path_Shared_Root>\\protoapps\DataPkgs\</Path_Shared_Root>
+**        <Path_Folder>Public\2023\4893_51920_PhoHet_metabolites</Path_Folder>
+**        <cmd>add</cmd>
+**        <Source_DB>DMS_Data_Package</Source_DB>
+**        <Source_Table>T_Data_Package</Source_Table>
 **      </root>
 **
 **  Arguments:
 **    _processorName        Name of the processor requesting a task
 **    _taskID               TaskID assigned; 0 if no task available
-**    _parameters           Task parameters (in XML)
-**    _message              Output message
+**    _parameters           Task parameters (as XML)
+**    _message              Status message
 **    _returnCode           Return code
-**    _infoOnly             Set to true to preview the task that would be returned
+**    _infoOnly             When true, preview the task that would be returned
 **    _taskCountToPreview   The number of tasks to preview when _infoOnly is true
 **
 **  Auth:   mem
 **  Date:   03/17/2011 mem - Initial version
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/09/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -49,8 +43,8 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _taskAssigned boolean
-    _taskNotAvailableErrorCode int;
+    _taskAssigned boolean;
+    _taskNotAvailableErrorCode text;
 
     _formatSpecifier text;
     _infoHead text;
@@ -95,12 +89,12 @@ BEGIN
     _taskCountToPreview := Coalesce(_taskCountToPreview, 10);
 
     ---------------------------------------------------
-    -- The analysis manager expects a non-zero
+    -- The Package Folder Create Manager expects a non-zero
     -- return value if no tasks are available
     -- Code 'U53000' is used for this
     ---------------------------------------------------
 
-    _taskNotAvailableErrorCode := 53000;
+    _taskNotAvailableErrorCode := 'U53000';
 
     BEGIN
 
@@ -144,23 +138,29 @@ BEGIN
         -- Task was assigned; return parameters in XML format
         --
         -- Example XML:
-        -- <Param package="4898" path_local_root="E:\DataPkgs" path_shared_root="\\protoapps\DataPkgs\" path_folder="Public\2023\4898_Agilent_tune_files_acquired_on_20May2021" cmd="add" source_db="DMS_Data_Package" source_table="T_Data_Package"/>
+        -- <root>
+        --   <package>4893</package>
+        --   <Path_Local_Root>E:\DataPkgs</Path_Local_Root>
+        --   <Path_Shared_Root>\\protoapps\DataPkgs\</Path_Shared_Root>
+        --   <Path_Folder>Public\2023\4893_51920_PhoHet_metabolites</Path_Folder>
+        --   <cmd>add</cmd>
+        --   <Source_DB>DMS_Data_Package</Source_DB>
+        --   <Source_Table>T_Data_Package</Source_Table>
+        -- </root>
         ---------------------------------------------------
 
-        SELECT xml_item
-        INTO _xmlParameters
+        SELECT xml_item::text
+        INTO _parameters
         FROM ( SELECT
-                 XMLAGG(XMLELEMENT(
-                        NAME "Param",
-                        XMLATTRIBUTES(
-                            source_id As "package",
-                            path_local_root As "path_local_root",
-                            path_shared_root As "path_shared_root",
-                            path_folder As "path_folder",
-                            command As "cmd",
-                            source_db As "source_db",
-                            source_table As "source_table"))
-                       ) AS xml_item
+                XMLELEMENT(name "root",
+                   XMLELEMENT(name "package", source_id),
+                   XMLELEMENT(name "Path_Local_Root", path_local_root),
+                   XMLELEMENT(name "Path_Shared_Root", path_shared_root),
+                   XMLELEMENT(name "Path_Folder", path_folder),
+                   XMLELEMENT(name "cmd", command),
+                   XMLELEMENT(name "Source_DB", source_db),
+                   XMLELEMENT(name "Source_Table", source_table)
+                        ) AS xml_item
                FROM sw.t_data_folder_create_queue
                WHERE entry_id = _taskID
             ) AS LookupQ;
@@ -175,7 +175,7 @@ BEGIN
         -- _returnCode will be 'U53000'
         ---------------------------------------------------
 
-        _returnCode := format('U%s', _taskNotAvailableErrorCode);
+        _returnCode := _taskNotAvailableErrorCode;
         _message := 'No available tasks';
 
     End If;
@@ -219,7 +219,7 @@ BEGIN
 
         FOR _previewData IN
             SELECT Source_DB,
-                   Source_Table
+                   Source_Table,
                    Entry_ID,
                    Source_ID,
                    Path_Local_Root,
@@ -250,4 +250,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.request_folder_create_task IS 'RequestFolderCreateTask';
+
+ALTER PROCEDURE sw.request_folder_create_task(IN _processorname text, INOUT _taskid integer, INOUT _parameters text, INOUT _message text, INOUT _returncode text, IN _infoonly boolean, IN _taskcounttopreview integer) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE request_folder_create_task(IN _processorname text, INOUT _taskid integer, INOUT _parameters text, INOUT _message text, INOUT _returncode text, IN _infoonly boolean, IN _taskcounttopreview integer); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.request_folder_create_task(IN _processorname text, INOUT _taskid integer, INOUT _parameters text, INOUT _message text, INOUT _returncode text, IN _infoonly boolean, IN _taskcounttopreview integer) IS 'RequestFolderCreateTask';
+

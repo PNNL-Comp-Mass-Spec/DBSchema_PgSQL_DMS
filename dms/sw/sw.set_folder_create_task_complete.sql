@@ -1,27 +1,26 @@
 --
-CREATE OR REPLACE PROCEDURE sw.set_folder_create_task_complete
-(
-    _taskID int,
-    _completionCode int,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: set_folder_create_task_complete(integer, integer, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.set_folder_create_task_complete(IN _taskid integer, IN _completioncode integer, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Update state, finish time, and completion code in t_data_folder_create_queue
+**      Update state, finish time, and completion code in sw.t_data_folder_create_queue
 **
 **  Arguments:
 **    _completionCode   0 means success; non-zero means failure
-**    _message          Output message
+**    _message          Status message
+**    _returnCode       Return code
+**
 **
 **  Auth:   mem
 **  Date:   03/17/2011 mem - Initial version
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/09/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -61,13 +60,16 @@ BEGIN
     -- Get current state of this task
     ---------------------------------------------------
 
-    _processor := '';
-    --
-    _state := 0;
-    --
-    SELECT
-        _state = state,
-        _processor = processor
+    If Coalesce(_taskID, 0) = 0 Then
+        _returnCode := 'U5266';
+        _message := format('Parameter _taskID is null or 0', _taskID);
+        RETURN;
+    End If;
+
+    _completionCode := Coalesce(_completionCode, 0);
+
+    SELECT state, processor
+    INTO _state, _processor
     FROM sw.t_data_folder_create_queue
     WHERE entry_id = _taskID;
 
@@ -98,13 +100,20 @@ BEGIN
     ---------------------------------------------------
 
     UPDATE sw.t_data_folder_create_queue
-    SET    state = _stepState,
-           finish = CURRENT_TIMESTAMP,
-           completion_code = _completionCode
+    SET state = _stepState,
+        finish = CURRENT_TIMESTAMP,
+        completion_code = _completionCode
     WHERE entry_id = _taskID;
 
 END
 $$;
 
-COMMENT ON PROCEDURE sw.set_folder_create_task_complete IS 'SetFolderCreateTaskComplete';
+
+ALTER PROCEDURE sw.set_folder_create_task_complete(IN _taskid integer, IN _completioncode integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE set_folder_create_task_complete(IN _taskid integer, IN _completioncode integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.set_folder_create_task_complete(IN _taskid integer, IN _completioncode integer, INOUT _message text, INOUT _returncode text) IS 'SetFolderCreateTaskComplete';
 
