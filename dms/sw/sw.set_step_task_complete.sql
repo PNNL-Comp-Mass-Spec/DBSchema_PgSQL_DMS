@@ -1,24 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE sw.set_step_task_complete
-(
-    _job int,
-    _step int,
-    _completionCode int,
-    _completionMessage text = '',
-    _evaluationCode int = 0,
-    _evaluationMessage text = '',
-    _organismDBName text = '',
-    _remoteInfo text = '',
-    _remoteTimestamp text = null,
-    _remoteProgress real = null,
-    _remoteStart timestamp = null,
-    _remoteFinish timestamp = null,
-    _processorName text = '',
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: set_step_task_complete(integer, integer, integer, text, integer, text, text, text, text, real, timestamp without time zone, timestamp without time zone, text, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.set_step_task_complete(IN _job integer, IN _step integer, IN _completioncode integer, IN _completionmessage text DEFAULT ''::text, IN _evaluationcode integer DEFAULT 0, IN _evaluationmessage text DEFAULT ''::text, IN _organismdbname text DEFAULT ''::text, IN _remoteinfo text DEFAULT ''::text, IN _remotetimestamp text DEFAULT NULL::text, IN _remoteprogress real DEFAULT NULL::real, IN _remotestart timestamp without time zone DEFAULT NULL::timestamp without time zone, IN _remotefinish timestamp without time zone DEFAULT NULL::timestamp without time zone, IN _processorname text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -87,7 +73,7 @@ DECLARE
 
     _stepToolsToSkip text[];
     _jobStepDescription text;
-    _jobStepDescriptionCapital;
+    _jobStepDescriptionCapital text;
     _jobInfo record;
     _stepState int;
     _resetSharedResultStep boolean := false;
@@ -100,6 +86,7 @@ DECLARE
     _sharedResultStep int := -1;
     _newTargetStep int := -1;
     _nextStep int := -1;
+    _abortReset boolean;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -145,7 +132,7 @@ BEGIN
                 ELSE Coalesce(JS.Actual_CPU_Load, 1)
            END As CpuLoad,
            Coalesce(JS.memory_usage_mb, 0) As MemoryUsageMB,
-           JS.state,
+           JS.State,
            JS.processor As JobStepsProcessor,
            JS.tool As StepTool,
            JS.retry_count As RetryCount
@@ -179,19 +166,19 @@ BEGIN
         RETURN;
     End If;
 
-    If _state <> 4 Then
+    If _jobInfo.State <> 4 Then
         _message := format('%s is not in the correct state (4) to be marked complete by processor %s; actual state is %s',
-                            _jobStepDescriptionCapital, _processorName, _state);
+                            _jobStepDescriptionCapital, _processorName, _jobInfo.State);
 
         CALL public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
 
         _returnCode := 'U5267';
         RETURN;
     Else
-        If _processorName <> '' And _jobStepsProcessor <> _processorName Then
+        If _processorName <> '' And _jobInfo.JobStepsProcessor <> _processorName::citext Then
 
             _message := format('%s is being processed by %s; processor %s is not allowed to mark it As complete',
-                                _jobStepDescriptionCapital, _jobStepsProcessor, _processorName);
+                                _jobStepDescriptionCapital, _jobInfo.JobStepsProcessor, _processorName);
 
             CALL public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
 
@@ -210,50 +197,50 @@ BEGIN
     Else
         _stepState := 0;
 
-        If _completionCode = 16  -- CLOSEOUT_FILE_NOT_IN_CACHE Then
+        If _completionCode = 16 Then        -- CLOSEOUT_FILE_NOT_IN_CACHE
             _stepState := 1; -- waiting
             _resetSharedResultStep := true;
             _completionCodeDescription := 'File not in cache';
         End If;
 
-        If _completionCode = 17  -- CLOSEOUT_UNABLE_TO_USE_MZ_REFINERY Then
+        If _completionCode = 17 Then        -- CLOSEOUT_UNABLE_TO_USE_MZ_REFINERY
             _stepState := 3; -- skipped
             _handleSkippedStep := true;
             _completionCodeDescription := 'Unable to use MZ_Refinery';
         End If;
 
-        If _completionCode = 18  -- CLOSEOUT_SKIPPED_MZ_REFINERY Then
+        If _completionCode = 18 Then        -- CLOSEOUT_SKIPPED_MZ_REFINERY
             _stepState := 3; -- skipped
             _handleSkippedStep := true;
             _completionCodeDescription := 'Skipped MZ_Refinery';
         End If;
 
-        If _completionCode = 21  -- CLOSEOUT_SKIPPED_MSXML_GEN Then
+        If _completionCode = 21 Then        -- CLOSEOUT_SKIPPED_MSXML_GEN
             _stepState := 3; -- skipped
             _handleSkippedStep := true;
             _completionCodeDescription := 'Skipped MSXml_Gen';
         End If;
 
-        If _completionCode = 22  -- CLOSEOUT_SKIPPED_MAXQUANT Then
+        If _completionCode = 22 Then        -- CLOSEOUT_SKIPPED_MAXQUANT
             _stepState := 3; -- skipped
             _handleSkippedStep := true;
             _completionCodeDescription := 'Skipped MaxQuant';
         End If;
 
-        If _completionCode = 23  -- CLOSEOUT_RESET_JOB_STEP Then
+        If _completionCode = 23 Then        -- CLOSEOUT_RESET_JOB_STEP
             _stepState := 2; -- New
             _handleSkippedStep := false;
             _completionCodeDescription := 'Insufficient memory or free disk space; retry';
         End If;
 
-        If _completionCode = 20  -- CLOSEOUT_NO_DATA Then
+        If _completionCode = 20 Then        -- CLOSEOUT_NO_DATA Then
             _completionCodeDescription := 'No Data';
 
             -- Note that Formularity and NOMSI jobs that report completion code 20 are handled in AutoFixFailedJobs
 
-            If _stepTool IN ('Decon2LS_V2') Then
+            If _jobInfo.StepTool IN ('Decon2LS_V2') Then
                 -- Treat 'No_data' results for DeconTools as a completed job step but skip the next step if it is LCMSFeatureFinder
-                _stepState := 5; -- Complete
+                _stepState := 5;    -- Complete
 
                 -- Append to the array that tracks step tools that should be skipped when a job step reports NO_DATA
                 _stepToolsToSkip := array_append(_stepToolsToSkip, 'LCMSFeatureFinder');
@@ -262,9 +249,9 @@ BEGIN
                 CALL public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
             End If;
 
-            If _stepTool IN ('DataExtractor') Then
+            If _jobInfo.StepTool IN ('DataExtractor') Then
                 -- Treat 'No_data' results for the DataExtractor as a completed job step but skip later job steps that match certain tools
-                _stepState := 5; -- Complete
+                _stepState := 5;    -- Complete
 
                 -- Append to the array that tracks step tools that should be skipped when a job step reports NO_DATA
                 _stepToolsToSkip := array_cat(_stepToolsToSkip, ARRAY ['MSGF', 'IDPicker', 'MSAlign_Quant']);
@@ -276,9 +263,9 @@ BEGIN
 
         If _completionCode = 25 OR  -- RUNNING_REMOTE
            _completionCode = 28     -- WAITING_FOR_DIA_NN_SPEC_LIB
-           Then
+        Then
 
-            If _completionCode Then
+            If _completionCode = 25 Then
                 _stepState := 9;    -- Running_Remote
                 _completionCodeDescription := 'Running remote';
 
@@ -288,27 +275,28 @@ BEGIN
 
             Else
                 _stepState := 6;    -- Failed
-                _completionCodeDescription := 'Unrecognized completion code';
+                _completionCodeDescription := format('Unrecognized completion code; expecting 25 or 28 but actually %s', _completionCode);
             End If;
 
             SELECT holdoff_interval_minutes
             INTO _holdoffIntervalMinutes
             FROM sw.t_step_tools
-            WHERE step_tool = _stepTool;
+            WHERE step_tool = _jobInfo.StepTool;
 
             If Coalesce(_holdoffIntervalMinutes, 0) < 1 Then
                 _holdoffIntervalMinutes := 3;
             End If;
 
-            _retryCount := _retryCount + 1;
-            If (_retryCount < 1) Then
-                _retryCount := 1;
+            _jobInfo.RetryCount := _jobInfo.RetryCount + 1;
+
+            If _jobInfo.RetryCount < 1 Then
+                _jobInfo.RetryCount := 1;
             End If;
 
             -- Wait longer after each check of remote status, with a maximum holdoff interval of 30 minutes
             -- If _holdoffIntervalMinutes is 5, will wait 5 minutes initially, then wait 6 minutes after the next check, 7, etc.
 
-            _adjustedHoldoffInterval := _holdoffIntervalMinutes + (_retryCount - 1)
+            _adjustedHoldoffInterval := _holdoffIntervalMinutes + (_jobInfo.RetryCount - 1);
 
             If _adjustedHoldoffInterval > 30 Then
                 _adjustedHoldoffInterval := 30;
@@ -331,210 +319,206 @@ BEGIN
         End If;
 
         If _completionCode = 27 Then    -- SKIPPED_DIA_NN_SPEC_LIB
-        Begin
-            _stepState := 3; -- skipped
+            _stepState := 3;   -- Skipped
             _handleSkippedStep := true;
             _completionCodeDescription := 'Skipped DIA-NN spectral library creation';
-        End
+        End If;
 
         If _stepState = 0 Then
-            _stepState := 6; -- fail
+            _stepState := 6;   -- Failed
             _completionCodeDescription := 'General error';
         End If;
     End If;
 
-    BEGIN
+    ---------------------------------------------------
+    -- Update job step
+    ---------------------------------------------------
 
-        ---------------------------------------------------
-        -- Update job step
-        ---------------------------------------------------
+    UPDATE sw.t_job_steps
+    SET    state = _stepState,
+           finish = CURRENT_TIMESTAMP,
+           completion_code = _completionCode,
+           completion_message = _completionMessage,
+           evaluation_code = _evaluationCode,
+           evaluation_message = _evaluationMessage,
+           next_try = _nextTry,
+           retry_count = _jobInfo.RetryCount,
+           remote_timestamp = _remoteTimestamp,
+           remote_progress = _remoteProgress,
+           remote_start = _remoteStart,
+           remote_finish = _remoteFinish
+    WHERE job = _job AND
+          step = _step;
 
-        UPDATE sw.t_job_steps
-        Set    state = _stepState,
-               finish = CURRENT_TIMESTAMP,
-               completion_code = _completionCode,
-               completion_message = _completionMessage,
-               evaluation_code = _evaluationCode,
-               evaluation_message = _evaluationMessage,
-               next_try = _nextTry,
-               retry_count = _retryCount,
-               remote_timestamp = _remoteTimestamp,
-               remote_progress = _remoteProgress,
-               remote_start = _remoteStart,
-               remote_finish = _remoteFinish
-        WHERE job = _job AND
-              step = _step;
+    ---------------------------------------------------
+    -- Update machine loading for this job step's processor's machine
+    ---------------------------------------------------
 
-        ---------------------------------------------------
-        -- Update machine loading for this job step's processor's machine
-        ---------------------------------------------------
+    UPDATE sw.t_machines
+    SET cpus_available = cpus_available + _jobInfo.CpuLoad,
+        memory_available = memory_available + _jobInfo.MemoryUsageMB
+    WHERE machine = _jobInfo.Machine;
 
-        UPDATE sw.t_machines
-        Set cpus_available = cpus_available + _cpuLoad,
-            memory_available = memory_available + _memoryUsageMB
-        WHERE machine = _machine;
+    ---------------------------------------------------
+    -- Update sw.t_remote_info if appropriate
+    ---------------------------------------------------
 
-        ---------------------------------------------------
-        -- Update sw.t_remote_info if appropriate
-        ---------------------------------------------------
+    If Coalesce(_remoteInfo, '') <> '' Then
 
-        If Coalesce(_remoteInfo, '') <> '' Then
+        _remoteInfoID := sw.get_remote_info_id (_remoteInfo, _infoOnly => false);
 
-            _remoteInfoID := sw.get_remote_info_id (_remoteInfo, _infoOnly => false);
+        If Coalesce(_remoteInfoID, 0) = 0 Then
+            ---------------------------------------------------
+            -- Something went wrong; _remoteInfo wasn't found in sw.t_remote_info
+            -- and get_remote_info_id() was unable to add it with the Merge statement
+            ---------------------------------------------------
 
-            If Coalesce(_remoteInfoID, 0) = 0 Then
-                ---------------------------------------------------
-                -- Something went wrong; _remoteInfo wasn't found in sw.t_remote_info
-                -- and we were unable to add it with the Merge statement
-                ---------------------------------------------------
+            UPDATE sw.t_job_steps
+            SET remote_info_id = 1
+            WHERE job = _job AND
+                  step = _step AND
+                  remote_info_id IS NULL;
+        Else
 
-                UPDATE sw.t_job_steps
-                SET remote_info_id = 1
-                WHERE job = _job AND
-                    step = _step AND
-                    remote_info_id IS NULL
-            Else
+            UPDATE sw.t_job_steps
+            SET remote_info_id = _remoteInfoID,
+                remote_progress = CASE WHEN _stepState = 5 THEN 100 ELSE remote_progress END
+            WHERE job = _job AND
+                  step = _step;
 
-                UPDATE sw.t_job_steps
-                SET remote_info_id = _remoteInfoID,
-                    remote_progress = CASE WHEN _stepState = 5 THEN 100 ELSE remote_progress END
-                WHERE job = _job AND
-                      step = _step;
-
-                UPDATE sw.t_remote_info
-                SET most_recent_job = _job,
-                    last_used = CURRENT_TIMESTAMP
-                WHERE remote_info_id = _remoteInfoID;
-
-            End If;
+            UPDATE sw.t_remote_info
+            SET most_recent_job = _job,
+                last_used = CURRENT_TIMESTAMP
+            WHERE remote_info_id = _remoteInfoID;
 
         End If;
 
-        If _resetSharedResultStep <> 0 Then
-            -- Possibly reset the the DTA_Gen, DTA_Refinery, Mz_Refinery,
-            -- MSXML_Gen, MSXML_Bruker, PBF_Gen, or ProMex step just upstream from this step
+    End If;
 
-            SELECT step
-            INTO _sharedResultStep
-            FROM sw.t_job_steps
-            WHERE job = _job AND
-                  step < _step AND
-                  tool IN (SELECT Name FROM sw.t_step_tools WHERE shared_result_version > 0)
-            ORDER BY step DESC
-            LIMIT 1;
+    _abortReset := false;
 
-            If Coalesce(_sharedResultStep, -1) < 0 Then
-                _message := format('Job %s does not have a Mz_Refinery, MSXML_Gen, MSXML_Bruker, PBF_Gen, or ProMex step prior to step %s; Completion code %s (%s) is invalid',
-                                    _job, _step, _completionCode, _completionCodeDescription);
+    If _resetSharedResultStep Then
+        -- Possibly reset the the DTA_Gen, DTA_Refinery, Mz_Refinery,
+        -- MSXML_Gen, MSXML_Bruker, PBF_Gen, or ProMex step just upstream from this step
+
+        SELECT step
+        INTO _sharedResultStep
+        FROM sw.t_job_steps
+        WHERE job = _job AND
+              step < _step AND
+              tool IN (SELECT Step_Tool FROM sw.t_step_tools WHERE shared_result_version > 0)
+        ORDER BY step DESC
+        LIMIT 1;
+
+        If Not Found Then
+            _message := format('Job %s does not have a Mz_Refinery, MSXML_Gen, MSXML_Bruker, PBF_Gen, or ProMex step prior to step %s; Completion code %s (%s) is invalid',
+                                _job, _step, _completionCode, _completionCodeDescription);
+
+            CALL public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
+
+            _abortReset := true;
+        Else
+
+            _message := format('Re-running step %s for job %s because step %s reported completion code %s (%s)',
+                                _sharedResultStep, _job, _step, _completionCode, _completionCodeDescription);
+
+            If Exists ( SELECT entry_id
+                        FROM sw.t_log_entries
+                        WHERE Message = _message And
+                              type = 'Normal' And
+                              Entered >= CURRENT_TIMESTAMP - INTERVAL '1 day'
+                      ) Then
+
+                _message := format('has already reported completion code %s (%s) within the last 24 hours',
+                                    _completionCode, _completionCodeDescription);
+
+                UPDATE sw.t_job_steps
+                SET state = 7,        -- Holding
+                    completion_message = public.append_to_text(completion_message, _message, _delimiter => '; ', _maxlength => 256)
+                WHERE job = _job AND
+                      step = _step;
+
+                _message := format('Step %s in job %s %s; will not reset step %s again because this likely represents a problem; this step is now in state "holding"',
+                                   _step, _job, _message, _sharedResultStep);
 
                 CALL public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
 
                 _abortReset := true;
-            Else
 
-                _message := format('Re-running step %s for job %s because step %s reported completion code %s (%s)',
-                                    _sharedResultStep, _job, _step, _completionCode, _completionCodeDescription
-
-                If Exists ( SELECT * Then
-                            FROM sw.t_log_entries;
-                            WHERE Message = _message And
-                                  type = 'Normal' And
-                                  Entered >= CURRENT_TIMESTAMP - INTERVAL '1 day'
-                          ) Then
-
-                    _message := format('has already reported completion code %s (%s) within the last 24 hours',
-                                        _completionCode, _completionCodeDescription);
-
-                    UPDATE sw.t_job_steps
-                    SET state = 7,        -- Holding
-                        completion_message = public.append_to_text(completion_message, _message, _delimiter => '; ', _maxlength => 256)
-                    WHERE job = _job AND
-                          step = _step;
-
-                    _message := format('Step %s in job %s %s; will not reset step %s again because this likely represents a problem; this step is now in state "holding"',
-                                        _step, _job, _message, _sharedResultStep);
-
-                    CALL public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
-
-                    _abortReset := true;
-
-                End If;
-
-                If Not _abortReset Then
-                    CALL public.post_log_entry ('Normal', _message, 'Set_Step_Task_Complete', 'sw');
-
-                    -- Reset shared results step just upstream from this step
-
-                    UPDATE sw.t_job_steps
-                    Set state = 2,                  -- 2=Enabled
-                        tool_version_id = 1,        -- 1=Unknown
-                        next_try = CURRENT_TIMESTAMP,
-                        remote_info_id = 1          -- 1=Unknown
-                    WHERE job = _job AND
-                          step = _sharedResultStep And
-                          Not state IN (4, 9);      -- Do not reset the step if it is already running
-
-                    UPDATE sw.t_job_step_dependencies
-                    SET evaluated = 0,
-                        triggered = 0
-                    WHERE job = _job AND
-                          step = _step;
-
-                    UPDATE sw.t_job_step_dependencies
-                    SET evaluated = 0,
-                        triggered = 0
-                    WHERE job = _job AND
-                          target_step = _sharedResultStep;
-
-                End If;
             End If;
 
-        End If;
-
-        If _handleSkippedStep <> 0 And Not _abortReset Then
-            -- This step was skipped
-            -- Update sw.t_job_step_dependencies and sw.t_job_steps
-
-            SELECT target_step
-            INTO _newTargetStep
-            FROM sw.t_job_step_dependencies
-            WHERE job = _job AND
-                  step = _step;
-
-            SELECT step
-            INTO _nextStep
-            FROM sw.t_job_step_dependencies
-            WHERE job = _job AND
-                  target_step = _step AND
-                  Coalesce(condition_test, '') <> 'Target_Skipped';
-
-            If _newTargetStep > -1 And _newTargetStep > -1 Then
-                UPDATE sw.t_job_step_dependencies
-                SET target_step = _newTargetStep
-                WHERE job = _job AND step = _nextStep
-
-                _message := format('Updated job step dependencies for job %s since step %s has been skipped', _job, _step);
+            If Not _abortReset Then
                 CALL public.post_log_entry ('Normal', _message, 'Set_Step_Task_Complete', 'sw');
+
+                -- Reset shared results step just upstream from this step
+
+                UPDATE sw.t_job_steps
+                SET state = 2,                  -- 2=Enabled
+                    tool_version_id = 1,        -- 1=Unknown
+                    next_try = CURRENT_TIMESTAMP,
+                    remote_info_id = 1          -- 1=Unknown
+                WHERE job = _job AND
+                      step = _sharedResultStep AND
+                      NOT state IN (4, 9);      -- Do not reset the step if it is already running
+
+                UPDATE sw.t_job_step_dependencies
+                SET evaluated = 0,
+                    triggered = 0
+                WHERE job = _job AND
+                      step = _step;
+
+                UPDATE sw.t_job_step_dependencies
+                SET evaluated = 0,
+                    triggered = 0
+                WHERE job = _job AND
+                      target_step = _sharedResultStep;
+
             End If;
-
         End If;
 
-        If Not _abortReset And array_length(_stepToolsToSkip, 1) > 0 Then
+    End If;
 
-            -- Skip specific waiting step tools for this job
+    If _handleSkippedStep And Not _abortReset Then
+        -- This step was skipped
+        -- Update sw.t_job_step_dependencies and sw.t_job_steps
 
-            UPDATE sw.t_job_steps JS
-            SET state = 3
-            FROM ( SELECT unnest(_stepToolsToSkip) As tool) ToolsToSkip
-            WHERE JS.tool = ToolsToSkip.tool AND
-                  JS.Job = _job AND
-                  JS.State = 1;
+        SELECT target_step
+        INTO _newTargetStep
+        FROM sw.t_job_step_dependencies
+        WHERE job = _job AND
+              step = _step;
 
+        SELECT step
+        INTO _nextStep
+        FROM sw.t_job_step_dependencies
+        WHERE job = _job AND
+              target_step = _step AND
+              Coalesce(condition_test, '') <> 'Target_Skipped';
+
+        If _newTargetStep > -1 And _newTargetStep > -1 Then
+
+            UPDATE sw.t_job_step_dependencies
+            SET target_step = _newTargetStep
+            WHERE job = _job AND step = _nextStep;
+
+            _message := format('Updated job step dependencies for job %s since step %s has been skipped', _job, _step);
+            CALL public.post_log_entry ('Normal', _message, 'Set_Step_Task_Complete', 'sw');
         End If;
 
-    END;
+    End If;
 
-    COMMIT;
+    If Not _abortReset And array_length(_stepToolsToSkip, 1) > 0 Then
+
+        -- Skip specific waiting step tools for this job
+
+        UPDATE sw.t_job_steps JS
+        SET state = 3
+        FROM ( SELECT unnest(_stepToolsToSkip) AS tool) ToolsToSkip
+        WHERE JS.tool = ToolsToSkip.tool AND
+              JS.Job = _job AND
+              JS.State = 1;
+
+    End If;
 
     ---------------------------------------------------
     -- Update FASTA file name (if one was passed in from the analysis tool manager)
@@ -542,11 +526,19 @@ BEGIN
 
     If Coalesce(_organismDBName,'') <> '' Then
         UPDATE sw.t_jobs
-        Set organism_db_name = _organismDBName
-        WHERE job = _job
+        SET organism_db_name = _organismDBName
+        WHERE job = _job;
     End If;
 
 END
 $$;
 
-COMMENT ON PROCEDURE sw.set_step_task_complete IS 'SetStepTaskComplete';
+
+ALTER PROCEDURE sw.set_step_task_complete(IN _job integer, IN _step integer, IN _completioncode integer, IN _completionmessage text, IN _evaluationcode integer, IN _evaluationmessage text, IN _organismdbname text, IN _remoteinfo text, IN _remotetimestamp text, IN _remoteprogress real, IN _remotestart timestamp without time zone, IN _remotefinish timestamp without time zone, IN _processorname text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE set_step_task_complete(IN _job integer, IN _step integer, IN _completioncode integer, IN _completionmessage text, IN _evaluationcode integer, IN _evaluationmessage text, IN _organismdbname text, IN _remoteinfo text, IN _remotetimestamp text, IN _remoteprogress real, IN _remotestart timestamp without time zone, IN _remotefinish timestamp without time zone, IN _processorname text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.set_step_task_complete(IN _job integer, IN _step integer, IN _completioncode integer, IN _completionmessage text, IN _evaluationcode integer, IN _evaluationmessage text, IN _organismdbname text, IN _remoteinfo text, IN _remotetimestamp text, IN _remoteprogress real, IN _remotestart timestamp without time zone, IN _remotefinish timestamp without time zone, IN _processorname text, INOUT _message text, INOUT _returncode text) IS 'SetStepTaskComplete';
+
