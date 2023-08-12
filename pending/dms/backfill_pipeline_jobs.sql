@@ -39,6 +39,7 @@ AS $$
 **          10/04/2022 mem - Assure that auto-generated dataset names only contain alphanumeric characters (plus underscore or dash)
 **          03/27/2023 mem - Auto change script DiaNN_DataPkg to DiaNN
 **          06/13/2023 mem - Fix bug that used harded coded job number 1914830 instead of _job
+**          08/10/2023 mem - Add user MSDADMIN to T_Users if missing
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -491,6 +492,16 @@ BEGIN
                     ------------------------------------------------
                     -- Dataset does not exist; create it
                     ------------------------------------------------
+
+                    If Not Exists (SELECT user_id FROM t_users WHERE username = 'MSDADMIN')
+                    Begin
+                        -- MSDAdmin user not defined; add it
+
+                        _currentLocation := 'Add user MSDADMIN to T_Users';
+
+                        INSERT INTO t_users (username, name, hid, status, email, domain, payroll, active, update, comment)
+                        VALUES ('MSDADMIN', 'MSDADMIN', 'H0000000', 'Active', NULL, NULL, NULL, 'Y', 'N', '');
+                    End
 
                     _currentLocation := format('Call add_update_dataset to create dataset %s', _jobInfo.Dataset);
 
