@@ -1,21 +1,23 @@
 --
-CREATE OR REPLACE PROCEDURE sw.update_cached_manager_work_dirs
-(
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_cached_manager_work_dirs(boolean, boolean, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.update_cached_manager_work_dirs(IN _infoonly boolean DEFAULT false, IN _showall boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $_$
 /****************************************************
 **
 **  Desc:
 **      Update the cached working directory for each manager
 **
+**  Arguments:
+**    _infoOnly     When true, show the managers that would be updated
+**    _showAll      When true, show the working directory for all managers
+**
 **  Auth:   mem
 **  Date:   10/05/2016 mem - Initial release
 **          02/17/2020 mem - Update the Mgr_Name column in mc.V_Mgr_Work_Dir
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/13/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -38,6 +40,7 @@ BEGIN
     _returnCode := '';
 
     _infoOnly := Coalesce(_infoOnly, false);
+    _showAll  := Coalesce(_showAll, false);
 
     ---------------------------------------------------
     -- Create a temporary table to cache the data
@@ -71,20 +74,22 @@ BEGIN
 
             RAISE INFO '';
 
-            _formatSpecifier := '%-12s %-20s %-30s %-30s';
+            _formatSpecifier := '%-12s %-20s %-30s %-30s %-15s';
 
             _infoHead := format(_formatSpecifier,
                                 'Processor_ID',
                                 'Processor_Name',
                                 'Work_Dir_Admin_Share',
-                                'Work_Dir_Admin_Share_New'
+                                'Work_Dir_Admin_Share_New',
+                                'Comment'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
                                          '------------',
                                          '--------------------',
                                          '------------------------------',
-                                         '------------------------------'
+                                         '------------------------------',
+                                         '---------------'
                                         );
 
             RAISE INFO '%', _infoHead;
@@ -94,18 +99,24 @@ BEGIN
                 SELECT Target.Processor_ID,
                        Target.Processor_Name,
                        Target.Work_Dir_Admin_Share,
-                       Src.MgrWorkDir AS Work_Dir_Admin_Share_New
-                FROM Tmp_MgrWorkDirs Src
-                     INNER JOIN sw.t_local_processors Target
+                       Src.Work_Dir_Admin_Share AS Work_Dir_Admin_Share_New,
+                       CASE WHEN Target.work_dir_admin_share IS DISTINCT FROM Src.work_dir_admin_share
+                            THEN 'Update required'
+                            ELSE ''
+                       END AS Comment
+                FROM sw.t_local_processors Target
+                     INNER JOIN Tmp_MgrWorkDirs Src
                        ON Src.processor_name = Target.processor_name
-                WHERE Target.work_dir_admin_share IS DISTINCT FROM Src.work_dir_admin_share
+                WHERE _showAll OR
+                       Target.work_dir_admin_share IS DISTINCT FROM Src.work_dir_admin_share
                 ORDER BY Processor_Name
             LOOP
                 _infoData := format(_formatSpecifier,
                                     _previewData.Processor_ID,
                                     _previewData.Processor_Name,
                                     _previewData.Work_Dir_Admin_Share,
-                                    _previewData.Work_Dir_Admin_Share_New
+                                    _previewData.Work_Dir_Admin_Share_New,
+                                    _previewData.Comment
                                    );
 
                 RAISE INFO '%', _infoData;
@@ -115,12 +126,11 @@ BEGIN
             RETURN;
         End If;
 
-        UPDATE sw.t_local_processors
+        UPDATE sw.t_local_processors Target
         SET work_dir_admin_share = Src.work_dir_admin_share
         FROM Tmp_MgrWorkDirs Src
-             INNER JOIN sw.t_local_processors Target
-               ON Src.processor_name = Target.processor_name
-        WHERE Target.work_dir_admin_share IS DISTINCT FROM Src.work_dir_admin_share
+        WHERE Src.processor_name = Target.processor_name AND
+              Target.work_dir_admin_share IS DISTINCT FROM Src.work_dir_admin_share;
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -150,6 +160,14 @@ BEGIN
 
     DROP TABLE Tmp_MgrWorkDirs;
 END
-$$;
+$_$;
 
-COMMENT ON PROCEDURE sw.update_cached_manager_work_dirs IS 'UpdateCachedManagerWorkDirs';
+
+ALTER PROCEDURE sw.update_cached_manager_work_dirs(IN _infoonly boolean, IN _showall boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_cached_manager_work_dirs(IN _infoonly boolean, IN _showall boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.update_cached_manager_work_dirs(IN _infoonly boolean, IN _showall boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateCachedManagerWorkDirs';
+
