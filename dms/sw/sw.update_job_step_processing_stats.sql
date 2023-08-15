@@ -1,33 +1,29 @@
 --
-CREATE OR REPLACE PROCEDURE sw.update_job_step_processing_stats
-(
-    _minimumTimeIntervalMinutes integer = 4,
-    _minimumTimeIntervalMinutesForIdenticalStats integer = 60,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_job_step_processing_stats(integer, integer, boolean, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.update_job_step_processing_stats(IN _minimumtimeintervalminutes integer DEFAULT 4, IN _minimumtimeintervalminutesforidenticalstats integer DEFAULT 60, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Appends new entries to T_Job_Step_Processing_Stats,
-**      showing details of running job steps
+**      Appends new entries to sw.T_Job_Step_Processing_Stats, showing details of running job steps
 **
 **  Arguments:
-**    _minimumTimeIntervalMinutes                    Set this to 0 to force the addition of new data to T_Job_Step_Processing_Stats
-**    _minimumTimeIntervalMinutesForIdenticalStats   This controls how often identical stats will get added to T_Job_Step_Processing_Stats
+**    _minimumTimeIntervalMinutes                   Set this to 0 to force the addition of new data to sw.T_Job_Step_Processing_Stats
+**    _minimumTimeIntervalMinutesForIdenticalStats  This controls how often identical stats will get added to the table
+**    _infoOnly                                     When true, preview the data that would be added to the table
 **
 **  Auth:   mem
 **  Date:   11/23/2015
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/14/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _insertCount int;
-    _timeIntervalLastUpdateMinutes real;
-    _timeIntervalIdenticalStatsMinutes real;
+    _timeIntervalLastUpdateMinutes numeric;
+    _timeIntervalIdenticalStatsMinutes numeric;
     _mostRecentPostingTime timestamp;
     _updateTable boolean := true;
 
@@ -47,8 +43,8 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------------
 
-    _message := '';
-    _returnCode := '';
+    _minimumTimeIntervalMinutes := Coalesce(_minimumTimeIntervalMinutes, 0);
+    _minimumTimeIntervalMinutesForIdenticalStats := Coalesce(_minimumTimeIntervalMinutesForIdenticalStats, 60);
     _infoOnly := Coalesce(_infoOnly, false);
 
     _mostRecentPostingTime := Null;
@@ -61,7 +57,7 @@ BEGIN
     INTO _mostRecentPostingTime
     FROM sw.t_job_step_processing_stats;
 
-    If Coalesce(_minimumTimeIntervalMinutes, 0) = 0 Or _mostRecentPostingTime Is Null Then
+    If Not FOUND Or _minimumTimeIntervalMinutes <= 0 Then
         _updateTable := true;
     Else
         _timeIntervalLastUpdateMinutes := extract(epoch FROM (CURRENT_TIMESTAMP - _mostRecentPostingTime)) / 60.0;
@@ -82,10 +78,10 @@ BEGIN
         Job int NOT NULL,
         Step int NOT NULL,
         Processor text NULL,
-        RunTime_Minutes numeric(9,1) NULL,
+        RunTime_Minutes numeric NULL,
         Job_Progress real NULL,
-        RunTime_Predicted_Hours numeric(9,2) NULL,
-        ProgRunner_CoreUsage real NULL,
+        RunTime_Predicted_Hours numeric NULL,
+        Prog_Runner_Core_Usage real NULL,
         CPU_Load int NULL,
         Actual_CPU_Load int
     );
@@ -100,7 +96,7 @@ BEGIN
                                             RunTime_Minutes,
                                             Job_Progress,
                                             RunTime_Predicted_Hours,
-                                            ProgRunner_CoreUsage,
+                                            Prog_Runner_Core_Usage,
                                             CPU_Load,
                                             Actual_CPU_Load )
     SELECT Job,
@@ -109,17 +105,25 @@ BEGIN
            RunTime_Minutes,
            Job_Progress,
            RunTime_Predicted_Hours,
-           ProgRunner_CoreUsage,
+           Prog_Runner_Core_Usage,
            CPU_Load,
            Actual_CPU_Load
-    FROM V_Job_Steps
+    FROM sw.V_Job_Steps
     WHERE State = 4;
 
     If _infoOnly Then
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-9s %-4s %-25s %-15s %-12s %-23s %-20s %-8s %-15s';
+        If Not Exists (SELECT job FROM Tmp_JobStepProcessingStats) Then
+            _message := 'No running job steps were found in sw.V_Job_Steps';
+            RAISE INFO '%', _message;
+
+            DROP TABLE Tmp_JobStepProcessingStats;
+            RETURN;
+        End If;
+
+        _formatSpecifier := '%-9s %-4s %-25s %-15s %-12s %-23s %-22s %-8s %-15s';
 
         _infoHead := format(_formatSpecifier,
                             'Job',
@@ -128,7 +132,7 @@ BEGIN
                             'RunTime_Minutes',
                             'Job_Progress',
                             'RunTime_Predicted_Hours',
-                            'ProgRunner_CoreUsage',
+                            'Prog_Runner_Core_Usage',
                             'CPU_Load',
                             'Actual_CPU_Load'
                            );
@@ -140,7 +144,7 @@ BEGIN
                                      '---------------',
                                      '------------',
                                      '-----------------------',
-                                     '--------------------',
+                                     '----------------------',
                                      '--------',
                                      '---------------'
                                     );
@@ -155,7 +159,7 @@ BEGIN
                    RunTime_Minutes,
                    Job_Progress,
                    RunTime_Predicted_Hours,
-                   ProgRunner_CoreUsage,
+                   Prog_Runner_Core_Usage,
                    CPU_Load,
                    Actual_CPU_Load
             FROM Tmp_JobStepProcessingStats
@@ -168,7 +172,7 @@ BEGIN
                                 _previewData.RunTime_Minutes,
                                 _previewData.Job_Progress,
                                 _previewData.RunTime_Predicted_Hours,
-                                _previewData.ProgRunner_CoreUsage,
+                                _previewData.Prog_Runner_Core_Usage,
                                 _previewData.CPU_Load,
                                 _previewData.Actual_CPU_Load
                                );
@@ -181,15 +185,15 @@ BEGIN
     End If;
 
     INSERT INTO sw.t_job_step_processing_stats( entered,
-                                             job,
-                                             step,
-                                             processor,
-                                             runtime_minutes,
-                                             job_progress,
-                                             runtime_predicted_hours,
-                                             prog_runner_core_usage,
-                              cpu_load,
-                                             actual_cpu_load )
+                                                job,
+                                                step,
+                                                processor,
+                                                runtime_minutes,
+                                                job_progress,
+                                                runtime_predicted_hours,
+                                                prog_runner_core_usage,
+                                                cpu_load,
+                                                actual_cpu_load )
     SELECT CURRENT_TIMESTAMP::timestamp Entered,
            job,
            step,
@@ -200,16 +204,22 @@ BEGIN
            prog_runner_core_usage,
            cpu_load,
            actual_cpu_load
-    FROM Tmp_JobStepProcessingStats
+    FROM Tmp_JobStepProcessingStats;
     --
     GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
     _message := format('Appended %s rows to the Job Step Processing Stats table', _insertCount);
 
     DROP TABLE Tmp_JobStepProcessingStats;
-    RETURN;
-
 END
 $$;
 
-COMMENT ON PROCEDURE sw.update_job_step_processing_stats IS 'UpdateJobStepProcessingStats';
+
+ALTER PROCEDURE sw.update_job_step_processing_stats(IN _minimumtimeintervalminutes integer, IN _minimumtimeintervalminutesforidenticalstats integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_job_step_processing_stats(IN _minimumtimeintervalminutes integer, IN _minimumtimeintervalminutesforidenticalstats integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.update_job_step_processing_stats(IN _minimumtimeintervalminutes integer, IN _minimumtimeintervalminutesforidenticalstats integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateJobStepProcessingStats';
+

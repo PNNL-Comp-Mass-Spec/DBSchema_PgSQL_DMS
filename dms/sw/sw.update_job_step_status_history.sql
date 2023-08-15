@@ -1,36 +1,33 @@
 --
-CREATE OR REPLACE PROCEDURE sw.update_job_step_status_history
-(
-    _minimumTimeIntervalMinutes integer = 60,
-    _minimumTimeIntervalMinutesForIdenticalStats integer = 355,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_job_step_status_history(integer, integer, boolean, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.update_job_step_status_history(IN _minimumtimeintervalminutes integer DEFAULT 60, IN _minimumtimeintervalminutesforidenticalstats integer DEFAULT 355, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Appends new entries to T_Job_Step_Status_History,
-**      summarizing the number of job steps in each state in T_Job_Steps
+**      Appends new entries to sw.T_Job_Step_Status_History,
+**      summarizing the number of job steps in each state in sw.T_Job_Steps
 **
 **  Arguments:
-**    _minimumTimeIntervalMinutes                    Set this to 0 to force the addition of new data to T_Job_Step_Status_History
-**    _minimumTimeIntervalMinutesForIdenticalStats   This controls how often identical stats will get added to T_Job_Step_Status_History
+**    _minimumTimeIntervalMinutes                   Set this to 0 to force the addition of new data to sw.T_Job_Step_Status_History
+**    _minimumTimeIntervalMinutesForIdenticalStats  This controls how often identical stats will get added to the table
+**    _infoOnly                                     When true, preview the data that would be added to the table
 **
 **  Auth:   mem
 **  Date:   12/05/2008
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/14/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _insertCount int;
-    _timeIntervalLastUpdateMinutes real;
-    _timeIntervalIdenticalStatsMinutes real;
+    _timeIntervalLastUpdateMinutes numeric;
+    _timeIntervalIdenticalStatsMinutes numeric;
     _newStatCount int;
     _identicalStatCount int;
-    _updateTable booleahn;
+    _updateTable boolean;
     _mostRecentPostingTime timestamp;
 
     _formatSpecifier text;
@@ -51,8 +48,8 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------------
 
-    _message := '';
-    _returnCode := '';
+    _minimumTimeIntervalMinutes := Coalesce(_minimumTimeIntervalMinutes, 0);
+    _minimumTimeIntervalMinutesForIdenticalStats := Coalesce(_minimumTimeIntervalMinutesForIdenticalStats, 355);
     _infoOnly := Coalesce(_infoOnly, false);
 
     _mostRecentPostingTime := Null;
@@ -63,9 +60,9 @@ BEGIN
 
     SELECT MAX(posting_time)
     INTO _mostRecentPostingTime
-    FROM sw.t_job_step_status_history
+    FROM sw.t_job_step_status_history;
 
-    If Coalesce(_minimumTimeIntervalMinutes, 0) = 0 Or _mostRecentPostingTime Is Null Then
+    If Not FOUND Or _minimumTimeIntervalMinutes <= 0 Then
         _updateTable := true;
     Else
         _timeIntervalLastUpdateMinutes := extract(epoch FROM (CURRENT_TIMESTAMP - _mostRecentPostingTime)) / 60.0;
@@ -87,13 +84,13 @@ BEGIN
         Step_Tool text NOT NULL,
         State int NOT NULL,
         Step_Count int NOT NULL
-    )
+    );
 
     -----------------------------------------------------
     -- Compute the new stats
     -----------------------------------------------------
 
-    INSERT INTO Tmp_JobStepStatusHistory  (Posting_Time, step_tool, state, Step_Count)
+    INSERT INTO Tmp_JobStepStatusHistory (Posting_Time, Step_Tool, State, Step_Count)
     SELECT CURRENT_TIMESTAMP AS Posting_Time,
            tool,
            state,
@@ -116,9 +113,9 @@ BEGIN
                       FROM sw.t_job_step_status_history
                       WHERE posting_time = _mostRecentPostingTime
                     ) RecentStats
-           ON NewStats.step_tool = RecentStats.step_tool AND
-              NewStats.state = RecentStats.state AND
-              NewStats.step_count = RecentStats.step_count;
+           ON NewStats.Step_tool = RecentStats.step_tool AND
+              NewStats.State = RecentStats.state AND
+              NewStats.Step_Count = RecentStats.step_count;
 
     If _identicalStatCount = _newStatCount Then
         -----------------------------------------------------
@@ -166,7 +163,7 @@ BEGIN
         RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
-            SELECT public.timestamp_text(Posting_Time) AS Posting_Time
+            SELECT public.timestamp_text(Posting_Time) AS Posting_Time,
                    Step_Tool,
                    State,
                    Step_Count
@@ -187,10 +184,10 @@ BEGIN
         RETURN;
     End If;
 
-    INSERT INTO sw.t_job_step_status_history  (posting_time, step_tool, state, Step_Count)
-    SELECT posting_time, step_tool, state, Step_Count
+    INSERT INTO sw.t_job_step_status_history (posting_time, step_tool, state, step_count)
+    SELECT Posting_Time, Step_Tool, State, Step_Count
     FROM Tmp_JobStepStatusHistory
-    ORDER BY step_tool, state
+    ORDER BY step_tool, state;
     --
     GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
@@ -200,4 +197,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.update_job_step_status_history IS 'UpdateJobStepStatusHistory';
+
+ALTER PROCEDURE sw.update_job_step_status_history(IN _minimumtimeintervalminutes integer, IN _minimumtimeintervalminutesforidenticalstats integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_job_step_status_history(IN _minimumtimeintervalminutes integer, IN _minimumtimeintervalminutesforidenticalstats integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.update_job_step_status_history(IN _minimumtimeintervalminutes integer, IN _minimumtimeintervalminutesforidenticalstats integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateJobStepStatusHistory';
+

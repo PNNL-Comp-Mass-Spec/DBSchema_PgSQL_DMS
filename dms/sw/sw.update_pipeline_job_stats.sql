@@ -1,20 +1,21 @@
 --
-CREATE OR REPLACE PROCEDURE sw.update_pipeline_job_stats
-(
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_pipeline_job_stats(boolean, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.update_pipeline_job_stats(IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Update processing statistics in T_Pipeline_Job_Stats
+**      Update processing statistics in sw.T_Pipeline_Job_Stats
+**
+**  Arguments:
+**    _infoOnly     When true, preview the processing statistics
 **
 **  Auth:   mem
 **  Date:   05/29/2022 mem - Initial version
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/14/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -34,8 +35,6 @@ BEGIN
     ---------------------------------------------------
 
     _infoOnly := Coalesce(_infoOnly, false);
-    _message := '';
-    _returnCode := '';
 
     ---------------------------------------------------
     -- Create a temp table to hold the statistics
@@ -53,8 +52,8 @@ BEGIN
     -- Summarize jobs by script, instrument group, and year
     ---------------------------------------------------
 
-    INSERT INTO Tmp_Pipeline_Job_Stats( script, Instrument_Group, Year, Jobs )
-    SELECT JH.script,
+    INSERT INTO Tmp_Pipeline_Job_Stats( Script, Instrument_Group, Year, Jobs )
+    SELECT JH.Script,
            Coalesce(InstName.instrument_group, '') AS Instrument_Group,
            Extract(year from JH.start) AS Year,
            COUNT(JH.job) AS Jobs
@@ -83,7 +82,7 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-35s %-25s %-4s %-6s';
+        _formatSpecifier := '%-35s %-25s %-5s %-6s';
 
         _infoHead := format(_formatSpecifier,
                             'Script',
@@ -112,7 +111,7 @@ BEGIN
         LOOP
             _infoData := format(_formatSpecifier,
                                 _previewData.Script,
-                                _previewData.Instrument_Group
+                                _previewData.Instrument_Group,
                                 _previewData.Year,
                                 _previewData.Jobs
                                );
@@ -131,8 +130,8 @@ BEGIN
     -- assure that the maximum value is used for each row
     ---------------------------------------------------
 
-    MERGE sw.t_pipeline_job_stats AS t
-    USING ( SELECT script, instrument_group, year, Jobs
+    MERGE INTO sw.t_pipeline_job_stats AS t
+    USING ( SELECT Script, Instrument_Group, Year, Jobs
             FROM Tmp_Pipeline_Job_Stats
           ) AS s
     ON ( t.instrument_group = s.instrument_group AND t.script = s.script AND t.year = s.year)
@@ -146,18 +145,6 @@ BEGIN
 
     _message := format('Updated %s %s in sw.t_pipeline_job_stats', _updateCount, public.check_plural(_updateCount, 'row', 'rows'));
 
-    If _returnCode <> '' Then
-        If _message = '' Then
-            _message := 'Error in UpdatePipelineJobStats';
-        End If;
-
-        _message := format('%s; error code = %s', _message, _returnCode);
-
-        If Not _infoOnly Then
-            CALL public.post_log_entry ('Error', _message, 'Update_Pipeline_Job_Stats', 'sw');
-        End If;
-    End If;
-
     If char_length(_message) > 0 Then
         RAISE INFO '%', _message;
     End If;
@@ -166,4 +153,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.update_pipeline_job_stats IS 'UpdatePipelineJobStats';
+
+ALTER PROCEDURE sw.update_pipeline_job_stats(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_pipeline_job_stats(IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.update_pipeline_job_stats(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'UpdatePipelineJobStats';
+

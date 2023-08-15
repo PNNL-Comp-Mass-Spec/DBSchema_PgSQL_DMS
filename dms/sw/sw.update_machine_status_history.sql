@@ -1,33 +1,30 @@
 --
-CREATE OR REPLACE PROCEDURE sw.update_machine_status_history
-(
-    _minimumTimeIntervalHours int = 1,
-    _activeProcessWindowHours int = 24,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_machine_status_history(integer, integer, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.update_machine_status_history(IN _minimumtimeintervalhours integer DEFAULT 1, IN _activeprocesswindowhours integer DEFAULT 24, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Appends new entries to T_Machine_Status_History,
+**      Appends new entries to sw.T_Machine_Status_History,
 **      summarizing the number of active jobs on each machine
 **      and the max reported free memory in the last 24 hours
 **
 **  Arguments:
-**    _minimumTimeIntervalHours   Set this to 0 to force the addition of new data to T_Analysis_Job_Status_History
-**    _activeProcessWindowHours   Will consider status values posted within the last _activeProcessWindowHours as valid status values
+**    _minimumTimeIntervalHours     Set this to 0 to force the addition of new data to T_Analysis_Job_Status_History
+**    _activeProcessWindowHours     Will consider status values posted within the last _activeProcessWindowHours as valid status values
 **
 **  Auth:   mem
 **  Date:   08/10/2010 mem - Initial version
 **          01/30/2017 mem - Switch from DateDiff to DateAdd
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/14/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _insertCount int;
-    _timeIntervalLastUpdateHours real;
+    _timeIntervalLastUpdateHours numeric;
     _updateTable boolean;
 BEGIN
     _message := '';
@@ -39,10 +36,8 @@ BEGIN
 
     _minimumTimeIntervalHours := Coalesce(_minimumTimeIntervalHours, 1);
     _activeProcessWindowHours := Coalesce(_activeProcessWindowHours, 24);
-    _message := '';
-    _returnCode := '';
 
-    If Coalesce(_minimumTimeIntervalHours, 0) = 0 Then
+    If Coalesce(_minimumTimeIntervalHours, 0) <= 0 Then
         _updateTable := true;
     Else
         ----------------------------------------
@@ -90,4 +85,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE sw.update_machine_status_history IS 'UpdateMachineStatusHistory';
+
+ALTER PROCEDURE sw.update_machine_status_history(IN _minimumtimeintervalhours integer, IN _activeprocesswindowhours integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_machine_status_history(IN _minimumtimeintervalhours integer, IN _activeprocesswindowhours integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.update_machine_status_history(IN _minimumtimeintervalhours integer, IN _activeprocesswindowhours integer, INOUT _message text, INOUT _returncode text) IS 'UpdateMachineStatusHistory';
+
