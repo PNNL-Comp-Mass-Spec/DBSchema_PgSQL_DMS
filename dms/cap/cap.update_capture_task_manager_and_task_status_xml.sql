@@ -8,19 +8,26 @@ CREATE OR REPLACE PROCEDURE cap.update_capture_task_manager_and_task_status_xml(
 /****************************************************
 **
 **  Desc:
-**      Update processor status in cap.t_processor_status using the XML status messages in _managerStatusXML
+**      Update processor status in cap.t_processor_status using the concatenated list of XML status messages in _managerStatusXML
 **
 **  Arguments:
 **    _managerStatusXML     Manager status XML
 **    _infoLevel            Info level modes:
 **                            0: Update cap.t_processor_status
-**                            1: View debug messages and update update cap.t_processor_status
+**                            1: View debug messages and update cap.t_processor_status
 **                            2: Preview updates
 **                            3: Ignore _managerStatusXML, use test XML, and update cap.t_processor_status
 **                            4: Ignore _managerStatusXML, use test XML, and preview updates
 **    _logProcessorNames    When true, log the names of updated processors (in cap.t_log_entries)
 **    _message              Output message
 **    _returnCode           Return code
+**
+**  Example XML in _managerStatusXML
+**      <Root><Manager><MgrName>Proto-3_CTM</MgrName>  <MgrStatus>Running</MgrStatus><!--Local status log time: 2023-08-14 04:51:44 PM--><!--Local last start time: 2023-08-14 04:51:44 PM--><LastUpdate>2023-08-14T23:51:44.487Z</LastUpdate><LastStartTime>2023-08-14T23:51:44.487Z</LastStartTime><CPUUtilization>0.0</CPUUtilization><FreeMemoryMB>0.0</FreeMemoryMB><ProcessID>9696</ProcessID> <RecentErrorMessages /></Manager><Task><Tool>DatasetCapture</Tool><Status>Running</Status><Duration>0.00</Duration><DurationMinutes>0.0</DurationMinutes><Progress>0.00</Progress><CurrentOperation /><TaskDetails><Status>Running_Tool</Status><Job>6120318</Job><Step>0</Step><Dataset>MCF10A_EGF_Exp6_TMT18_PremixQC_Bane_14Aug23_WBEH-23-06-31</Dataset><MostRecentLogMessage>08/14/2023 16:51:44; Job 6120318, step 1 assigned; DEBUG</MostRecentLogMessage><MostRecentJobInfo>08/14/2023 04:51:44 PM, Job 6120318, Step 1, Tool DatasetCapture</MostRecentJobInfo></TaskDetails></Task></Root>
+**      <Root><Manager><MgrName>Proto-5_CTM_2</MgrName><MgrStatus>Stopped</MgrStatus><!--Local status log time: 2023-08-14 04:32:16 PM--><!--Local last start time: 2023-08-14 04:32:16 PM--><LastUpdate>2023-08-14T23:32:16.840Z</LastUpdate><LastStartTime>2023-08-14T23:32:16.709Z</LastStartTime><CPUUtilization>0.0</CPUUtilization><FreeMemoryMB>0.0</FreeMemoryMB><ProcessID>904</ProcessID>  <RecentErrorMessages /></Manager><Task><Tool /><Status>No_Task</Status><Duration>0.00</Duration><DurationMinutes>0.0</DurationMinutes><Progress>0.00</Progress><CurrentOperation /><TaskDetails><Status>No_Task</Status><Job>0</Job><Step>0</Step><Dataset /><MostRecentLogMessage>08/14/2023 16:32:16; No capture tasks found for Proto-5_CTM_2; DEBUG</MostRecentLogMessage><MostRecentJobInfo>08/14/2023 03:23:44 PM, Job 6120278, Step 1, Tool SourceFileRename</MostRecentJobInfo></TaskDetails></Task></Root>
+**      <Root><Manager><MgrName>Proto-8_CTM</MgrName>  <MgrStatus>Running</MgrStatus><!--Local status log time: 2023-08-14 04:32:43 PM--><!--Local last start time: 2023-08-14 04:32:43 PM--><LastUpdate>2023-08-14T23:32:43.903Z</LastUpdate><LastStartTime>2023-08-14T23:32:43.903Z</LastStartTime><CPUUtilization>0.0</CPUUtilization><FreeMemoryMB>0.0</FreeMemoryMB><ProcessID>11624</ProcessID><RecentErrorMessages /></Manager><Task><Tool /><Status>No_Task</Status><Duration>0.00</Duration><DurationMinutes>0.0</DurationMinutes><Progress>0.00</Progress><CurrentOperation /><TaskDetails><Status>No_Task</Status><Job>0</Job><Step>0</Step><Dataset /><MostRecentLogMessage>08/14/2023 16:32:43; Message handler initialized; DEBUG</MostRecentLogMessage><MostRecentJobInfo /></TaskDetails></Task></Root>
+**      <Root><Manager><MgrName>Proto-8_CTM_2</MgrName><MgrStatus>Stopped</MgrStatus><!--Local status log time: 2023-08-14 04:32:24 PM--><!--Local last start time: 2023-08-14 04:32:24 PM--><LastUpdate>2023-08-14T23:32:24.516Z</LastUpdate><LastStartTime>2023-08-14T23:32:24.437Z</LastStartTime><CPUUtilization>0.0</CPUUtilization><FreeMemoryMB>0.0</FreeMemoryMB><ProcessID>3520</ProcessID> <RecentErrorMessages /></Manager><Task><Tool /><Status>No_Task</Status><Duration>0.00</Duration><DurationMinutes>0.0</DurationMinutes><Progress>0.00</Progress><CurrentOperation /><TaskDetails><Status>No_Task</Status><Job>0</Job><Step>0</Step><Dataset /><MostRecentLogMessage>08/14/2023 16:32:24; No capture tasks found for Proto-8_CTM_2; DEBUG</MostRecentLogMessage><MostRecentJobInfo>08/14/2023 03:25:38 PM, Job 6120279, Step 1, Tool ArchiveUpdate</MostRecentJobInfo></TaskDetails></Task></Root>
+**      <Root><Manager><MgrName>Pub-50_CTM_2</MgrName> <MgrStatus>Stopped</MgrStatus><!--Local status log time: 2023-08-14 04:32:18 PM--><!--Local last start time: 2023-08-14 04:32:17 PM--><LastUpdate>2023-08-14T23:32:18.858Z</LastUpdate><LastStartTime>2023-08-14T23:32:17.485Z</LastStartTime><CPUUtilization>0.0</CPUUtilization><FreeMemoryMB>0.0</FreeMemoryMB><ProcessID>7112</ProcessID> <RecentErrorMessages /></Manager><Task><Tool /><Status>No_Task</Status><Duration>0.00</Duration><DurationMinutes>0.0</DurationMinutes><Progress>0.00</Progress><CurrentOperation /><TaskDetails><Status>No_Task</Status><Job>0</Job><Step>0</Step><Dataset /><MostRecentLogMessage>08/14/2023 16:32:18; No capture tasks found for Pub-50_CTM_2; DEBUG</MostRecentLogMessage><MostRecentJobInfo>08/14/2023 04:31:45 PM, Job 6120310, Step 1, Tool ArchiveStatusCheck</MostRecentJobInfo></TaskDetails></Task></Root>
 **
 **  Auth:   grk
 **  Date:   08/20/2009 grk - Initial release
@@ -36,6 +43,7 @@ CREATE OR REPLACE PROCEDURE cap.update_capture_task_manager_and_task_status_xml(
 **          08/01/2017 mem - Use THROW if not authorized
 **          09/19/2018 mem - Add parameter _logProcessorNames
 **          06/28/2023 mem - Ported to PostgreSQL
+**          08/14/2023 mem - Update example XML status messages
 **
 *****************************************************/
 DECLARE
@@ -104,13 +112,11 @@ BEGIN
             RAISE INFO 'Overriding XML in _statusXML using Test Data';
 
             _statusXML := '<StatusInfo>
-                             <Root><Manager><MgrName>TestManager1</MgrName><MgrStatus>Stopped</MgrStatus><LastUpdate>6/20/2023 10:39:21 AM</LastUpdate><LastStartTime>6/20/2023 10:39:20 AM</LastStartTime><CPUUtilization>100.0</CPUUtilization><FreeMemoryMB>490.0</FreeMemoryMB><ProcessID>5555</ProcessID><RecentErrorMessages><ErrMsg>Error 1</ErrMsg><ErrMsg>Error 2</ErrMsg><ErrMsg>Error 3</ErrMsg></RecentErrorMessages></Manager><Task><Tool /><Status>No Task</Status><Duration>0.00</Duration><DurationMinutes>0.0</DurationMinutes><Progress>0.00</Progress><CurrentOperation /><TaskDetails><Status>No Task</Status><Job>0</Job><Step>0</Step><Dataset /><MostRecentLogMessage>Closing manager.</MostRecentLogMessage><MostRecentJobInfo /><SpectrumCount>0</SpectrumCount></TaskDetails></Task></Root>
-                             <Root><Manager><MgrName>TestManager1</MgrName><MgrStatus>Running</MgrStatus><LastUpdate>6/20/2023 10:39:39 AM</LastUpdate><LastStartTime>6/20/2023 10:39:20 AM</LastStartTime><CPUUtilization>100.0</CPUUtilization><FreeMemoryMB>490.0</FreeMemoryMB><ProcessID>5555</ProcessID><RecentErrorMessages><ErrMsg>Error 1</ErrMsg><ErrMsg>Error 2</ErrMsg><ErrMsg>Error 3</ErrMsg></RecentErrorMessages></Manager><Task><Tool /><Status>No Task</Status><Duration>0.00</Duration><DurationMinutes>0.0</DurationMinutes><Progress>0.00</Progress><CurrentOperation /><TaskDetails><Status>No Task</Status><Job>0</Job><Step>0</Step><Dataset /><MostRecentLogMessage>Closing manager.</MostRecentLogMessage><MostRecentJobInfo /><SpectrumCount>0</SpectrumCount></TaskDetails></Task></Root>
-                             <Root><Manager><MgrName>TestManager2</MgrName><MgrStatus>Running</MgrStatus><LastUpdate>6/20/2023 10:39:35 AM</LastUpdate><LastStartTime>6/20/2023 10:23:11 AM</LastStartTime><CPUUtilization>28.0</CPUUtilization><FreeMemoryMB>402.0</FreeMemoryMB><ProcessID>4444</ProcessID><RecentErrorMessages><ErrMsg>Error 10</ErrMsg></RecentErrorMessages></Manager><Task><Tool>Sequest, Step 3</Tool><Status>Running</Status><Duration>0.27</Duration><DurationMinutes>16.4</DurationMinutes><Progress>8.34</Progress><CurrentOperation /><TaskDetails><Status>Running Tool</Status><Job>525282</Job><Step>3</Step><Dataset>Mcq_CynoLung_norm_11_7Apr08_Phoenix_08-03-01</Dataset><MostRecentLogMessage /><MostRecentJobInfo>Job 525282; Sequest, Step 3; Mcq_CynoLung_norm_11_7Apr08_Phoenix_08-03-01; 6/20/2023 10:23:11 AM</MostRecentJobInfo><SpectrumCount>26897</SpectrumCount></TaskDetails></Task></Root>
-                             <Root><Manager><MgrName>TestManager3</MgrName><MgrStatus>Running</MgrStatus><LastUpdate>6/20/2023 10:39:30 AM</LastUpdate><LastStartTime>6/19/2023 10:02:28 PM</LastStartTime><CPUUtilization>14.0</CPUUtilization><FreeMemoryMB>3054.0</FreeMemoryMB><ProcessID>3333</ProcessID><RecentErrorMessages><ErrMsg /></RecentErrorMessages></Manager><Task><Tool>Sequest, Step 3</Tool><Status>Running</Status><Duration>12.62</Duration><DurationMinutes>757.0</DurationMinutes><Progress>74.46</Progress><CurrentOperation /><TaskDetails><Status>Running Tool</Status><Job>525235</Job><Step>3</Step><Dataset>PL-1_pro_B_5Aug09_Owl_09-05-10</Dataset><MostRecentLogMessage /><MostRecentJobInfo>Job 525235; Sequest, Step 3; PL-1_pro_B_5Aug09_Owl_09-05-10; 6/19/2023 10:02:28 PM</MostRecentJobInfo><SpectrumCount>50229</SpectrumCount></TaskDetails></Task></Root>
-                             <Root><Manager><MgrName>TestManager4</MgrName><MgrStatus>Stopped</MgrStatus><LastUpdate>6/20/2023 10:39:23 AM</LastUpdate><LastStartTime>6/20/2023 10:39:22 AM</LastStartTime><CPUUtilization>25.0</CPUUtilization><FreeMemoryMB>917.0</FreeMemoryMB><ProcessID>2222</ProcessID><RecentErrorMessages><ErrMsg>6/18/2023 02:44:31, Pub-02-2: No spectra files created, Job 524793, Dataset QC_Shew_09_02-pt5-e_18Aug09_Griffin_09-07-13</ErrMsg></RecentErrorMessages></Manager><Task><Tool /><Status>No Task</Status><Duration>0.00</Duration><DurationMinutes>0.0</DurationMinutes><Progress>0.00</Progress><CurrentOperation /><TaskDetails><Status>No Task</Status><Job>0</Job><Step>0</Step><Dataset /><MostRecentLogMessage>Closing manager.</MostRecentLogMessage><MostRecentJobInfo /><SpectrumCount>0</SpectrumCount></TaskDetails></Task></Root>
-                             <Root><Manager><MgrName>TestManager5</MgrName><MgrStatus>Running</MgrStatus><LastUpdate>6/20/2023 10:39:31 AM</LastUpdate><LastStartTime>6/20/2023 10:24:05 AM</LastStartTime><CPUUtilization>30.0</CPUUtilization><FreeMemoryMB>415.0</FreeMemoryMB><ProcessID>1111</ProcessID><RecentErrorMessages><ErrMsg>Error 11</ErrMsg></RecentErrorMessages></Manager><Task><Tool>Sequest, Step 3</Tool><Status>Running</Status><Duration>0.26</Duration><DurationMinutes>15.4</DurationMinutes><Progress>9.88</Progress><CurrentOperation /><TaskDetails><Status>Running Tool</Status><Job>525283</Job><Step>3</Step><Dataset>Mcq_CynoLung_norm_12_7Apr08_Phoenix_08-03-01</Dataset><MostRecentLogMessage /><MostRecentJobInfo>Job 525283; Sequest, Step 3; Mcq_CynoLung_norm_12_7Apr08_Phoenix_08-03-01; 6/20/2023 10:24:05 AM</MostRecentJobInfo><SpectrumCount>27664</SpectrumCount></TaskDetails></Task></Root>
-                             <Root><Manager><MgrName>TestManager6</MgrName><MgrStatus>Running</MgrStatus><LastUpdate>6/20/2023 10:39:30 AM</LastUpdate><LastStartTime>6/19/2023 10:24:32 PM</LastStartTime><CPUUtilization>33.0</CPUUtilization><FreeMemoryMB>1133.0</FreeMemoryMB><ProcessID>6666</ProcessID><RecentErrorMessages><ErrMsg /></RecentErrorMessages></Manager><Task><Tool>Sequest, Step 3</Tool><Status>Running</Status><Duration>12.25</Duration><DurationMinutes>735.0</DurationMinutes><Progress>81.81</Progress><CurrentOperation /><TaskDetails><Status>Running Tool</Status><Job>525236</Job><Step>3</Step><Dataset>PL-1_pro_A_5Aug09_Owl_09-05-10</Dataset><MostRecentLogMessage /><MostRecentJobInfo>Job 525236; Sequest, Step 3; PL-1_pro_A_5Aug09_Owl_09-05-10; 6/19/2023 10:24:32 PM</MostRecentJobInfo><SpectrumCount>44321</SpectrumCount></TaskDetails></Task></Root>
+                             <Root><Manager><MgrName>TestManager1</MgrName><MgrStatus>Running</MgrStatus><!--Local status log time: 2023-08-14 04:51:44 PM--><!--Local last start time: 2023-08-14 04:51:44 PM--><LastUpdate>2023-08-14T23:51:44.487Z</LastUpdate><LastStartTime>2023-08-14T23:51:44.487Z</LastStartTime><CPUUtilization>0.0</CPUUtilization><FreeMemoryMB>0.0</FreeMemoryMB><ProcessID>9696</ProcessID><RecentErrorMessages /></Manager><Task><Tool>DatasetCapture</Tool><Status>Running</Status><Duration>0.00</Duration><DurationMinutes>0.0</DurationMinutes><Progress>0.00</Progress><CurrentOperation /><TaskDetails><Status>Running_Tool</Status><Job>6120318</Job><Step>0</Step><Dataset>MCF10A_EGF_Exp6_TMT18_PremixQC_Bane_14Aug23_WBEH-23-06-31</Dataset><MostRecentLogMessage>08/14/2023 16:51:44; Job 6120318, step 1 assigned; DEBUG</MostRecentLogMessage><MostRecentJobInfo>08/14/2023 04:51:44 PM, Job 6120318, Step 1, Tool DatasetCapture</MostRecentJobInfo></TaskDetails></Task></Root>
+                             <Root><Manager><MgrName>TestManager2</MgrName><MgrStatus>Stopped</MgrStatus><!--Local status log time: 2023-08-14 04:32:16 PM--><!--Local last start time: 2023-08-14 04:32:16 PM--><LastUpdate>2023-08-14T23:32:16.840Z</LastUpdate><LastStartTime>2023-08-14T23:32:16.709Z</LastStartTime><CPUUtilization>0.0</CPUUtilization><FreeMemoryMB>0.0</FreeMemoryMB><ProcessID>904</ProcessID><RecentErrorMessages /></Manager><Task><Tool /><Status>No_Task</Status><Duration>0.00</Duration><DurationMinutes>0.0</DurationMinutes><Progress>0.00</Progress><CurrentOperation /><TaskDetails><Status>No_Task</Status><Job>0</Job><Step>0</Step><Dataset /><MostRecentLogMessage>08/14/2023 16:32:16; No capture tasks found for Proto-5_CTM_2; DEBUG</MostRecentLogMessage><MostRecentJobInfo>08/14/2023 03:23:44 PM, Job 6120278, Step 1, Tool SourceFileRename</MostRecentJobInfo></TaskDetails></Task></Root>
+                             <Root><Manager><MgrName>TestManager3</MgrName><MgrStatus>Running</MgrStatus><!--Local status log time: 2023-08-14 04:32:43 PM--><!--Local last start time: 2023-08-14 04:32:43 PM--><LastUpdate>2023-08-14T23:32:43.903Z</LastUpdate><LastStartTime>2023-08-14T23:32:43.903Z</LastStartTime><CPUUtilization>0.0</CPUUtilization><FreeMemoryMB>0.0</FreeMemoryMB><ProcessID>11624</ProcessID><RecentErrorMessages /></Manager><Task><Tool /><Status>No_Task</Status><Duration>0.00</Duration><DurationMinutes>0.0</DurationMinutes><Progress>0.00</Progress><CurrentOperation /><TaskDetails><Status>No_Task</Status><Job>0</Job><Step>0</Step><Dataset /><MostRecentLogMessage>08/14/2023 16:32:43; Message handler initialized; DEBUG</MostRecentLogMessage><MostRecentJobInfo /></TaskDetails></Task></Root>
+                             <Root><Manager><MgrName>TestManager4</MgrName><MgrStatus>Stopped</MgrStatus><!--Local status log time: 2023-08-14 04:32:24 PM--><!--Local last start time: 2023-08-14 04:32:24 PM--><LastUpdate>2023-08-14T23:32:24.516Z</LastUpdate><LastStartTime>2023-08-14T23:32:24.437Z</LastStartTime><CPUUtilization>0.0</CPUUtilization><FreeMemoryMB>0.0</FreeMemoryMB><ProcessID>3520</ProcessID><RecentErrorMessages /></Manager><Task><Tool /><Status>No_Task</Status><Duration>0.00</Duration><DurationMinutes>0.0</DurationMinutes><Progress>0.00</Progress><CurrentOperation /><TaskDetails><Status>No_Task</Status><Job>0</Job><Step>0</Step><Dataset /><MostRecentLogMessage>08/14/2023 16:32:24; No capture tasks found for Proto-8_CTM_2; DEBUG</MostRecentLogMessage><MostRecentJobInfo>08/14/2023 03:25:38 PM, Job 6120279, Step 1, Tool ArchiveUpdate</MostRecentJobInfo></TaskDetails></Task></Root>
+                             <Root><Manager><MgrName>TestManager5</MgrName><MgrStatus>Stopped</MgrStatus><!--Local status log time: 2023-08-14 04:32:18 PM--><!--Local last start time: 2023-08-14 04:32:17 PM--><LastUpdate>2023-08-14T23:32:18.858Z</LastUpdate><LastStartTime>2023-08-14T23:32:17.485Z</LastStartTime><CPUUtilization>0.0</CPUUtilization><FreeMemoryMB>0.0</FreeMemoryMB><ProcessID>7112</ProcessID><RecentErrorMessages /></Manager><Task><Tool /><Status>No_Task</Status><Duration>0.00</Duration><DurationMinutes>0.0</DurationMinutes><Progress>0.00</Progress><CurrentOperation /><TaskDetails><Status>No_Task</Status><Job>0</Job><Step>0</Step><Dataset /><MostRecentLogMessage>08/14/2023 16:32:18; No capture tasks found for Pub-50_CTM_2; DEBUG</MostRecentLogMessage><MostRecentJobInfo>08/14/2023 04:31:45 PM, Job 6120310, Step 1, Tool ArchiveStatusCheck</MostRecentJobInfo></TaskDetails></Task></Root>
                            </StatusInfo>';
         Else
             -- We must surround the status XML with <StatusInfo></StatusInfo> so that the XML will be rooted, as required by XMLTABLE()
@@ -128,14 +134,14 @@ BEGIN
             Status_Date_Value timestamp NULL,
             Last_Start_Time text,               -- timestamp
             Last_Start_Time_Value timestamp,
-            CPU_Utilization text,               -- numeric
-            Free_Memory_MB text,                -- numeric
+            CPU_Utilization text,               -- real
+            Free_Memory_MB text,                -- real
             Process_ID text,                    -- int
             Most_Recent_Error_Message text,
             Step_Tool text,
             Task_Status text,
-            Duration_Minutes text,              -- numeric
-            Progress text,                      -- numeric
+            Duration_Minutes text,              -- real
+            Progress text,                      -- real
             Current_Operation text,
             Task_Detail_Status text,
             Job text,                           -- int
@@ -255,7 +261,7 @@ BEGIN
 
             RAISE INFO '';
 
-            _formatSpecifier := '%-15s %-15s %-22s %-22s %-5s %-11s %-10s %-20s %-20s %-15s %-15s %-10s %-10s %-5s %-80s';
+            _formatSpecifier := '%-25s %-15s %-24s %-24s %-5s %-11s %-10s %-20s %-20s %-15s %-15s %-10s %-10s %-5s %-80s';
 
             _infoHead := format(_formatSpecifier,
                                 'Processor_Name',
@@ -276,10 +282,10 @@ BEGIN
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
+                                         '-------------------------',
                                          '---------------',
-                                         '---------------',
-                                         '----------------------',
-                                         '----------------------',
+                                         '------------------------',
+                                         '------------------------',
                                          '-----',
                                          '-----------',
                                          '----------',
@@ -468,10 +474,15 @@ BEGIN
             INTO _updatedProcessors
             FROM Tmp_Processor_Status_Info;
 
-            _logMessage := format('%s, processors %s', _statusMessageInfo, _updatedProcessors);
+            _logMessage := format('%s; Processors: %s', _statusMessageInfo, _updatedProcessors);
 
             CALL public.post_log_entry ('Debug', _logMessage, 'Update_Capture_Task_Manager_And_Task_Status_XML', 'cap');
         End If;
+
+        _message := _statusMessageInfo;
+
+        DROP TABLE Tmp_Processor_Status_Info;
+        RETURN;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -494,13 +505,9 @@ BEGIN
         End If;
     END;
 
-    If _returnCode = '' Then
-        _message := _statusMessageInfo;
-    Else
-        _message := format('Error storing info, code %s', _returnCode);
-    End If;
+    _message := format('Error storing info, code %s', _returnCode);
 
-    DROP TABLE Tmp_Processor_Status_Info;
+    DROP TABLE IF EXISTS Tmp_Processor_Status_Info;
 END
 $$;
 
