@@ -1,12 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE dpkg.update_data_package_eus_info
-(
-    _dataPackageList text,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_data_package_eus_info(text, text, text); Type: PROCEDURE; Schema: dpkg; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE dpkg.update_data_package_eus_info(IN _datapackagelist text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -14,7 +12,7 @@ AS $$
 **      Also updates Instrument_ID
 **
 **  Arguments:
-**    _dataPackageList   '' or 0 to update all data packages, otherwise a comma-separated list of data package IDs to update
+**    _dataPackageList   Comma-separated list of data package IDs to update; use '' or '0' to update all data packages
 **
 **  Auth:   mem
 **  Date:   10/18/2016 mem - Initial version
@@ -25,7 +23,7 @@ AS $$
 **          03/07/2018 mem - Properly handle null values for Best_EUS_Proposal_ID, Best_EUS_Instrument_ID, and Best_Instrument_Name
 **          05/18/2022 mem - Use new EUS Proposal column name
 **          06/08/2022 mem - Use new Item_Added column name
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/14/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -35,7 +33,7 @@ DECLARE
     _authorized boolean;
 
     _dataPackageCount int;
-    _updateCount int
+    _updateCount int;
     _firstID int;
 BEGIN
     _message := '';
@@ -65,16 +63,14 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _dataPackageList := Coalesce(_dataPackageList, '');
-    _message := '';
-    _returnCode := '';
+    _dataPackageList := Trim(Coalesce(_dataPackageList, ''));
 
     ---------------------------------------------------
     -- Populate a temporary table with the data package IDs to update
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_DataPackagesToUpdate (
-        ID int not NULL,
+        Data_Pkg_ID int not NULL,
         Best_EUS_Proposal_ID text NULL,
         Best_Instrument_Name text NULL,
         Best_EUS_Instrument_ID int NULL
@@ -82,7 +78,7 @@ BEGIN
 
     CREATE INDEX IX_Tmp_DataPackagesToUpdate ON Tmp_DataPackagesToUpdate
     (
-        ID ASC
+        Data_Pkg_ID ASC
     );
 
     If _dataPackageList = '' Or _dataPackageList = '0' or _dataPackageList = ',' Then
@@ -93,9 +89,9 @@ BEGIN
         INSERT INTO Tmp_DataPackagesToUpdate (data_pkg_id)
         SELECT data_pkg_id
         FROM dpkg.t_data_package
-        WHERE data_pkg_id IN (
-                SELECT Value
-                FROM public.parse_delimited_integer_list ( _dataPackageList, ',' ) );
+        WHERE data_pkg_id IN ( SELECT Value
+                               FROM public.parse_delimited_integer_list ( _dataPackageList, ',' )
+                             );
     End If;
 
     SELECT COUNT(*)
@@ -108,20 +104,19 @@ BEGIN
 
         DROP TABLE Tmp_DataPackagesToUpdate;
         RETURN;
-    Else
-        If _dataPackageCount > 1 Then
-            _message := format('Updating %s data packages', _dataPackageCount);
-        Else
-
-            SELECT ID
-            INTO _firstID
-            FROM Tmp_DataPackagesToUpdate
-
-            _message := format('Updating data package %s', _firstID)
-        End If;
-
-        -- RAISE INFO '%', _message
     End If;
+
+    If _dataPackageCount > 1 Then
+        _message := format('Updating %s data packages', _dataPackageCount);
+    Else
+        SELECT Data_Pkg_ID
+        INTO _firstID
+        FROM Tmp_DataPackagesToUpdate;
+
+        _message := format('Updating data package %s', _firstID);
+    End If;
+
+    -- RAISE INFO '%', _message
 
     ---------------------------------------------------
     -- Update the EUS Person ID of the data package owner
@@ -129,11 +124,10 @@ BEGIN
 
     UPDATE dpkg.t_data_package DP
     SET eus_person_id = EUSUser.eus_person_id
-    FROM Tmp_DataPackagesToUpdate Src
-         INNER JOIN V_EUS_User_ID_Lookup EUSUser
-           ON DP.Owner = EUSUser.Username
-    WHERE DP.ID = Src.ID AND
-          Coalesce(DP.EUS_Person_ID, '') <> Coalesce(EUSUser.EUS_Person_ID, '');
+    FROM public.V_EUS_User_ID_Lookup EUSUser
+    WHERE DP.data_pkg_id IN ( SELECT Data_Pkg_ID FROM Tmp_DataPackagesToUpdate) AND
+          DP.owner_username = EUSUser.Username AND
+          DP.EUS_Person_ID IS DISTINCT FROM EUSUser.EUS_Person_ID;
     --
     GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -156,29 +150,31 @@ BEGIN
            FROM ( SELECT data_pkg_id,
                          EUS_Proposal_ID,
                          Proposal_Count,
-                         Row_Number() OVER ( Partition By SourceQ.data_pkg_id Order By Proposal_Count DESC ) AS CountRank
+                         Row_Number() OVER ( Partition By SourceQ.data_pkg_id ORDER BY Proposal_Count DESC ) AS CountRank
                   FROM ( SELECT DPD.data_pkg_id,
-                                DR.Proposal AS EUS_Proposal_ID,
-                                COUNT(DR.Proposal) AS Proposal_Count
+                                RR.EUS_Proposal_ID,           -- EUS Proposal ID (stored as text since typically an integer, but could be 'EPR56820')
+                                COUNT(RR.EUS_Proposal_ID) AS Proposal_Count
                          FROM dpkg.t_data_package_datasets DPD
                               INNER JOIN Tmp_DataPackagesToUpdate Src
-                                ON DPD.data_pkg_id = Src.ID
-                              INNER JOIN V_Dataset_List_Report_2 DR
-                                ON DPD.dataset_id = DR.ID
-                         WHERE NOT DR.Proposal IS NULL AND NOT DR.Proposal LIKE 'EPR%'
-                         GROUP BY DPD.data_pkg_id, DR.Proposal
+                                ON DPD.data_pkg_id = Src.Data_Pkg_ID
+                              INNER JOIN public.t_dataset DS
+                                ON DPD.dataset_id = DS.dataset_id
+                              LEFT OUTER JOIN public.t_requested_run RR
+                                ON DS.dataset_id = RR.dataset_id
+                         WHERE NOT RR.EUS_Proposal_ID IS NULL AND NOT RR.EUS_Proposal_ID LIKE 'EPR%'
+                         GROUP BY DPD.data_pkg_id, RR.EUS_Proposal_ID
                        ) SourceQ
                 ) RankQ
            WHERE RankQ.CountRank = 1
-          ) FilterQ
-    WHERE Target.ID = FilterQ.data_pkg_id;
+         ) FilterQ
+    WHERE Target.Data_Pkg_ID = FilterQ.data_pkg_id;
 
     ---------------------------------------------------
-    -- Look for any data packages that have a null Best_EUS_Proposal_ID in Tmp_DataPackagesToUpdate
+    -- Look for any data packages that have a null Best_EUS_Proposal_ID in Tmp_DataPackagesToUpdate,
     -- yet have entries defined in dpkg.t_data_package_eus_proposals
     ---------------------------------------------------
 
-    UPDATE Tmp_DataPackagesToUpdateTarget
+    UPDATE Tmp_DataPackagesToUpdate Target
     SET Best_EUS_Proposal_ID = FilterQ.Proposal_ID
     FROM ( SELECT data_pkg_id,
                   proposal_id
@@ -187,13 +183,13 @@ BEGIN
                          item_added,
                          Row_Number() OVER ( Partition By data_pkg_id Order By item_added DESC ) AS IdRank
                   FROM dpkg.t_data_package_eus_proposals
-                  WHERE (data_pkg_id IN ( SELECT ID
-                                          FROM
-                                          WHERE Best_EUS_Proposal_ID IS NULL ))
+                  WHERE data_pkg_id IN ( SELECT Data_Pkg_ID
+                                         FROM Tmp_DataPackagesToUpdate
+                                         WHERE Best_EUS_Proposal_ID IS NULL )
                 ) RankQ
            WHERE RankQ.IdRank = 1
          ) FilterQ
-    WHERE Target.ID = FilterQ.Data_Package_ID;
+    WHERE Target.Data_Pkg_ID = FilterQ.data_pkg_id;
 
     ---------------------------------------------------
     -- Find the most common Instrument used by the datasets associated with each data package
@@ -212,14 +208,14 @@ BEGIN
                                 COUNT(DPD.instrument) AS InstrumentCount
                          FROM dpkg.t_data_package_datasets DPD
                               INNER JOIN Tmp_DataPackagesToUpdate Src
-                                ON DPD.data_pkg_id = Src.ID
+                                ON DPD.data_pkg_id = Src.Data_Pkg_ID
                          WHERE NOT DPD.instrument Is Null
                          GROUP BY DPD.data_pkg_id, DPD.instrument
                        ) SourceQ
                 ) RankQ
            WHERE RankQ.CountRank = 1
          ) FilterQ
-    WHERE Target.ID = FilterQ.data_pkg_id;
+    WHERE Target.Data_Pkg_ID = FilterQ.data_pkg_id;
 
     ---------------------------------------------------
     -- Update EUS_Instrument_ID in Tmp_DataPackagesToUpdate
@@ -227,7 +223,7 @@ BEGIN
 
     UPDATE Tmp_DataPackagesToUpdate Target
     SET Best_EUS_Instrument_ID = EUSInst.EUS_Instrument_ID
-    FROM V_EUS_Instrument_ID_Lookup EUSInst
+    FROM public.V_EUS_Instrument_ID_Lookup EUSInst
     WHERE Target.Best_Instrument_Name = EUSInst.Instrument_Name;
 
     ---------------------------------------------------
@@ -236,13 +232,13 @@ BEGIN
     ---------------------------------------------------
 
     UPDATE dpkg.t_data_package DP
-    SET eus_proposal_id = Coalesce(Best_EUS_Proposal_ID, eus_proposal_id),
+    SET eus_proposal_id   = Coalesce(Best_EUS_Proposal_ID,   eus_proposal_id),
         eus_instrument_id = Coalesce(Best_EUS_Instrument_ID, eus_instrument_id),
-        instrument = Coalesce(Best_Instrument_Name, instrument)
+        instrument        = Coalesce(Best_Instrument_Name,   instrument)
     FROM Tmp_DataPackagesToUpdate Src
-    WHERE DP.ID = Src.ID AND
+    WHERE DP.data_pkg_id = Src.Data_Pkg_ID AND
           ( Coalesce(DP.EUS_Proposal_ID, '') <> Src.Best_EUS_Proposal_ID OR
-            Coalesce(DP.EUS_Instrument_ID, '') <> Src.Best_EUS_Instrument_ID OR
+            Not Src.Best_EUS_Instrument_ID Is Null AND DP.EUS_Instrument_ID IS DISTINCT FROM Src.Best_EUS_Instrument_ID OR
             Coalesce(DP.Instrument, '') <> Src.Best_Instrument_Name
           );
     --
@@ -255,7 +251,16 @@ BEGIN
         CALL public.post_log_entry ('Normal', _message, 'Update_Data_Package_EUS_Info', 'dpkg');
     End If;
 
+    DROP TABLE Tmp_DataPackagesToUpdate;
 END
 $$;
 
-COMMENT ON PROCEDURE dpkg.update_data_package_eus_info IS 'UpdateDataPackageEUSInfo';
+
+ALTER PROCEDURE dpkg.update_data_package_eus_info(IN _datapackagelist text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_data_package_eus_info(IN _datapackagelist text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: dpkg; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE dpkg.update_data_package_eus_info(IN _datapackagelist text, INOUT _message text, INOUT _returncode text) IS 'UpdateDataPackageEUSInfo';
+
