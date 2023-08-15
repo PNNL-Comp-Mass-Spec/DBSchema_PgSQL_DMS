@@ -1,25 +1,32 @@
 --
-CREATE OR REPLACE PROCEDURE sw.update_manager_and_task_status_xml
-(
-    _managerStatusXML text = '',
-    _infoLevel int = 0,
-    _logProcessorNames boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_manager_and_task_status_xml(text, integer, boolean, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE sw.update_manager_and_task_status_xml(IN _managerstatusxml text DEFAULT ''::text, IN _infolevel integer DEFAULT 0, IN _logprocessornames boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Update processor status from concatenated list of XML status messages
+**      Update processor status in sw.t_processor_status using the concatenated list of XML status messages in _managerStatusXML
 **
 **  Arguments:
 **    _managerStatusXML     Manager status XML
-**    _infoLevel            0 to update tables; 1 to view debug messages and update the tables; 2 to preview the data but not update tables, 3 to ignore _managerStatusXML, use test data, and update tables, 4 to ignore _managerStatusXML, use test data, and not update tables
-**    _logProcessorNames    true to log the names of updated processors (in sw.T_Log_Entries)
+**    _infoLevel            Info level modes:
+**                            0: Update sw.t_processor_status
+**                            1: View debug messages and update sw.t_processor_status
+**                            2: Preview updates
+**                            3: Ignore _managerStatusXML, use test XML, and update sw.t_processor_status
+**                            4: Ignore _managerStatusXML, use test XML, and preview updates
+**    _logProcessorNames    When true, log the names of updated processors (in sw.t_log_entries)
 **    _message              Output message
 **    _returnCode           Return code
+**
+**  Example XML in _managerStatusXML
+**      <Root><Manager><MgrName>Proto-3_Analysis-1</MgrName><RemoteMgrName /><MgrStatus>Stopped</MgrStatus><!--Local status log time: 2023-08-14 04:14:04 PM--><!--Local last start time: 2023-08-14 04:14:03 PM--><LastUpdate>2023-08-14T23:14:04.210Z</LastUpdate><LastStartTime>2023-08-14T23:14:03.757Z</LastStartTime><CPUUtilization>0.0</CPUUtilization><FreeMemoryMB>43095.9</FreeMemoryMB><ProcessID>9252</ProcessID><ProgRunnerProcessID>0</ProgRunnerProcessID>   <ProgRunnerCoreUsage>0.00</ProgRunnerCoreUsage><RecentErrorMessages><ErrMsg /></RecentErrorMessages></Manager><Task><Tool /><Status>No Task</Status><Duration>0.00</Duration><DurationMinutes>0.0</DurationMinutes><Progress>0.00</Progress><CurrentOperation /><TaskDetails><Status>No Task</Status><Job>0</Job><Step>0</Step><Dataset /><WorkDirPath /><MostRecentLogMessage>Closing manager.</MostRecentLogMessage><MostRecentJobInfo>Job 2211481; Results_Transfer (MASIC_Finnigan); Blank_01_14Aug23_Remus_WBEH-CoAnn-23-07-09; 2023-08-14 12:12:07</MostRecentJobInfo><SpectrumCount>0</SpectrumCount></TaskDetails></Task></Root>
+**      <Root><Manager><MgrName>Proto-3_Analysis-2</MgrName><RemoteMgrName /><MgrStatus>Stopped</MgrStatus><!--Local status log time: 2023-08-14 04:14:04 PM--><!--Local last start time: 2023-08-14 04:14:03 PM--><LastUpdate>2023-08-14T23:14:04.414Z</LastUpdate><LastStartTime>2023-08-14T23:14:03.960Z</LastStartTime><CPUUtilization>0.0</CPUUtilization><FreeMemoryMB>43094.6</FreeMemoryMB><ProcessID>9824</ProcessID><ProgRunnerProcessID>0</ProgRunnerProcessID>   <ProgRunnerCoreUsage>0.00</ProgRunnerCoreUsage><RecentErrorMessages><ErrMsg /></RecentErrorMessages></Manager><Task><Tool /><Status>No Task</Status><Duration>0.00</Duration><DurationMinutes>0.0</DurationMinutes><Progress>0.00</Progress><CurrentOperation /><TaskDetails><Status>No Task</Status><Job>0</Job><Step>0</Step><Dataset /><WorkDirPath /><MostRecentLogMessage>Closing manager.</MostRecentLogMessage><MostRecentJobInfo>Job 2211495; Results_Transfer (MASIC_Finnigan); 51920_PhoHet_TMT_01_f17_14Au23_Remus_WBEH-CoAnn-23-07-09; 2023-08-14 15:39:42</MostRecentJobInfo><SpectrumCount>0</SpectrumCount></TaskDetails></Task></Root>
+**      <Root><Manager><MgrName>Proto-5_Analysis-1</MgrName><RemoteMgrName /><MgrStatus>Stopped</MgrStatus><!--Local status log time: 2023-08-14 04:14:03 PM--><!--Local last start time: 2023-08-14 04:14:02 PM--><LastUpdate>2023-08-14T23:14:03.570Z</LastUpdate><LastStartTime>2023-08-14T23:14:02.655Z</LastStartTime><CPUUtilization>0.0</CPUUtilization><FreeMemoryMB>13121.9</FreeMemoryMB><ProcessID>3564</ProcessID><ProgRunnerProcessID>0</ProgRunnerProcessID>   <ProgRunnerCoreUsage>0.00</ProgRunnerCoreUsage><RecentErrorMessages><ErrMsg /></RecentErrorMessages></Manager><Task><Tool /><Status>No Task</Status><Duration>0.00</Duration><DurationMinutes>0.0</DurationMinutes><Progress>0.00</Progress><CurrentOperation /><TaskDetails><Status>No Task</Status><Job>0</Job><Step>0</Step><Dataset /><WorkDirPath /><MostRecentLogMessage>Closing manager.</MostRecentLogMessage><MostRecentJobInfo /><SpectrumCount>0</SpectrumCount></TaskDetails></Task></Root>
+**      <Root><Manager><MgrName>Pub-12-8</MgrName>          <RemoteMgrName /><MgrStatus>Running</MgrStatus><!--Local status log time: 2023-08-14 04:14:09 PM--><!--Local last start time: 2023-08-14 02:47:06 PM--><LastUpdate>2023-08-14T23:14:09.301Z</LastUpdate><LastStartTime>2023-08-14T21:47:06.964Z</LastStartTime><CPUUtilization>6.0</CPUUtilization><FreeMemoryMB>26660.6</FreeMemoryMB><ProcessID>2444</ProcessID><ProgRunnerProcessID>5724</ProgRunnerProcessID><ProgRunnerCoreUsage>1.01</ProgRunnerCoreUsage><RecentErrorMessages><ErrMsg /></RecentErrorMessages></Manager><Task><Tool>Decon2LS_V2, Step 1</Tool><Status>Running</Status><Duration>1.45</Duration><DurationMinutes>87.0</DurationMinutes><Progress>28.90</Progress><CurrentOperation /><TaskDetails><Status>Running Tool</Status><Job>2211490</Job><Step>1</Step><Dataset>QC_Mam_23_01_R1_14Aug23_Oak_WBEH-CoAnn-23-07-10</Dataset><WorkDirPath>G:\DMS_WorkDir8</WorkDirPath><MostRecentLogMessage /><MostRecentJobInfo>Job 2211490; Decon2LS_V2, Step 1; QC_Mam_23_01_R1_14Aug23_Oak_WBEH-CoAnn-23-07-10; 2023-08-14 02:47:06 PM</MostRecentJobInfo><SpectrumCount>0</SpectrumCount></TaskDetails></Task><ProgRunnerCoreUsage Count="10"><CoreUsageSample Date="2023-08-14 04:09:10 PM">1.0</CoreUsageSample><CoreUsageSample Date="2023-08-14 04:09:41 PM">1.0</CoreUsageSample><CoreUsageSample Date="2023-08-14 04:10:12 PM">1.1</CoreUsageSample><CoreUsageSample Date="2023-08-14 04:10:44 PM">1.0</CoreUsageSample><CoreUsageSample Date="2023-08-14 04:11:15 PM">1.0</CoreUsageSample><CoreUsageSample Date="2023-08-14 04:11:46 PM">1.0</CoreUsageSample><CoreUsageSample Date="2023-08-14 04:12:17 PM">1.0</CoreUsageSample><CoreUsageSample Date="2023-08-14 04:12:48 PM">1.0</CoreUsageSample><CoreUsageSample Date="2023-08-14 04:13:19 PM">1.0</CoreUsageSample><CoreUsageSample Date="2023-08-14 04:13:51 PM">1.0</CoreUsageSample></ProgRunnerCoreUsage></Root>
 **
 **  Auth:   grk
 **  Date:   08/20/2009 grk - Initial release
@@ -27,7 +34,7 @@ AS $$
 **                         - Added Try/Catch error handling
 **          08/31/2009 mem - Switched to running a bulk Insert and bulk Update instead of a Delete then Bulk Insert
 **          05/04/2015 mem - Added Process_ID
-**          11/20/2015 mem - Added ProgRunner_ProcessID and ProgRunner_CoreUsage
+**          11/20/2015 mem - Added Prog_Runner_Process_ID and Prog_Runner_Core_Usage
 **                         - Added parameter _debugMode
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          05/22/2017 mem - Replace Remote_Status_Location with Remote_Manager
@@ -39,7 +46,7 @@ AS $$
 **                           Use Try_Cast to convert from varchar to numbers
 **          08/01/2017 mem - Use THROW if not authorized
 **          09/19/2018 mem - Add parameter _logProcessorNames
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/14/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -48,8 +55,9 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _matchCount int;
+    _statusInfoCount int;
     _updateCount int;
+    _insertCount int;
     _statusMessageInfo text := '';
     _statusXML xml;
     _updatedProcessors text;
@@ -68,9 +76,6 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode := '';
-
-    _infoLevel := Coalesce(_infoLevel, 0);
-    _logProcessorNames := Coalesce(_logProcessorNames, false);
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -93,21 +98,28 @@ BEGIN
     End If;
 
     BEGIN
+        ---------------------------------------------------
+        -- Validate the inputs
+        ---------------------------------------------------
+
+        _statusXML := try_cast(_managerStatusXML, null::xml);
+        _infoLevel := Coalesce(_infoLevel, 0);
+        _logProcessorNames := Coalesce(_logProcessorNames, false);
 
         ---------------------------------------------------
         -- Extract parameters from XML input
         ---------------------------------------------------
 
         If _infoLevel >= 3 Then
-            -- Use test data
+            RAISE INFO '';
+            RAISE INFO 'Overriding XML in _statusXML using Test Data';
+
             _statusXML := '<StatusInfo>
-                             <Root><Manager><MgrName>TestManager1</MgrName><MgrStatus>Stopped</MgrStatus><LastUpdate>8/20/2009 10:39:21 AM</LastUpdate><LastStartTime>8/20/2009 10:39:20 AM</LastStartTime><CPUUtilization>100.0</CPUUtilization><FreeMemoryMB>490.0</FreeMemoryMB><ProcessID>5555</ProcessID><ProgRunnerProcessID>50000</ProgRunnerProcessID><ProgRunnerCoreUsage>5.01</ProgRunnerCoreUsage><RecentErrorMessages><ErrMsg /></RecentErrorMessages></Manager><Task><Tool /><Status>No Task</Status><Duration>0.00</Duration><DurationMinutes>0.0</DurationMinutes><Progress>0.00</Progress><CurrentOperation /><TaskDetails><Status>No Task</Status><Job>0</Job><Step>0</Step><Dataset /><MostRecentLogMessage>Closing manager.</MostRecentLogMessage><MostRecentJobInfo /><SpectrumCount>0</SpectrumCount></TaskDetails></Task></Root>;
-                             <Root><Manager><MgrName>TestManager2</MgrName><MgrStatus>Running</MgrStatus><LastUpdate>8/20/2009 10:39:35 AM</LastUpdate><LastStartTime>8/20/2009 10:23:11 AM</LastStartTime><CPUUtilization>28.0</CPUUtilization><FreeMemoryMB>402.0</FreeMemoryMB><ProcessID>4444</ProcessID><RecentErrorMessages><ErrMsg /></RecentErrorMessages></Manager><Task><Tool>Sequest, Step 3</Tool><Status>Running</Status><Duration>0.27</Duration><DurationMinutes>16.4</DurationMinutes><Progress>8.34</Progress><CurrentOperation /><TaskDetails><Status>Running Tool</Status><Job>525282</Job><Step>3</Step><Dataset>Mcq_CynoLung_norm_11_7Apr08_Phoenix_08-03-01</Dataset><MostRecentLogMessage /><MostRecentJobInfo>Job 525282; Sequest, Step 3; Mcq_CynoLung_norm_11_7Apr08_Phoenix_08-03-01; 8/20/2009 10:23:11 AM</MostRecentJobInfo><SpectrumCount>26897</SpectrumCount></TaskDetails></Task></Root>
-                             <Root><Manager><MgrName>TestManager3</MgrName><MgrStatus>Running</MgrStatus><LastUpdate>8/20/2009 10:39:30 AM</LastUpdate><LastStartTime>8/19/2009 10:02:28 PM</LastStartTime><CPUUtilization>14.0</CPUUtilization><FreeMemoryMB>3054.0</FreeMemoryMB><ProcessID>3333</ProcessID><ProgRunnerProcessID>50010</ProgRunnerProcessID><ProgRunnerCoreUsage>1.99</ProgRunnerCoreUsage><RecentErrorMessages><ErrMsg /></RecentErrorMessages></Manager><Task><Tool>Sequest, Step 3</Tool><Status>Running</Status><Duration>12.62</Duration><DurationMinutes>757.0</DurationMinutes><Progress>74.46</Progress><CurrentOperation /><TaskDetails><Status>Running Tool</Status><Job>525235</Job><Step>3</Step><Dataset>PL-1_pro_B_5Aug09_Owl_09-05-10</Dataset><MostRecentLogMessage /><MostRecentJobInfo>Job 525235; Sequest, Step 3; PL-1_pro_B_5Aug09_Owl_09-05-10; 8/19/2009 10:02:28 PM</MostRecentJobInfo><SpectrumCount>50229</SpectrumCount></TaskDetails></Task></Root>
-                             <Root><Manager><MgrName>TestManager4</MgrName><MgrStatus>Stopped</MgrStatus><LastUpdate>8/20/2009 10:39:23 AM</LastUpdate><LastStartTime>8/20/2009 10:39:22 AM</LastStartTime><CPUUtilization>25.0</CPUUtilization><FreeMemoryMB>917.0</FreeMemoryMB><ProcessID>2222</ProcessID><RecentErrorMessages><ErrMsg>8/18/2009 02:44:31, Pub-02-2: No spectra files created, Job 524793, Dataset QC_Shew_09_02-pt5-e_18Aug09_Griffin_09-07-13</ErrMsg></RecentErrorMessages></Manager><Task><Tool /><Status>No Task</Status><Duration>0.00</Duration><DurationMinutes>0.0</DurationMinutes><Progress>0.00</Progress><CurrentOperation /><TaskDetails><Status>No Task</Status><Job>0</Job><Step>0</Step><Dataset /><MostRecentLogMessage>Closing manager.</MostRecentLogMessage><MostRecentJobInfo /><SpectrumCount>0</SpectrumCount></TaskDetails></Task></Root>
-                             <Root><Manager><MgrName>TestManager5</MgrName><MgrStatus>Running</MgrStatus><LastUpdate>8/20/2009 10:39:31 AM</LastUpdate><LastStartTime>8/20/2009 10:24:05 AM</LastStartTime><CPUUtilization>30.0</CPUUtilization><FreeMemoryMB>415.0</FreeMemoryMB><ProcessID>1111</ProcessID><RecentErrorMessages><ErrMsg /></RecentErrorMessages></Manager><Task><Tool>Sequest, Step 3</Tool><Status>Running</Status><Duration>0.26</Duration><DurationMinutes>15.4</DurationMinutes><Progress>9.88</Progress><CurrentOperation /><TaskDetails><Status>Running Tool</Status><Job>525283</Job><Step>3</Step><Dataset>Mcq_CynoLung_norm_12_7Apr08_Phoenix_08-03-01</Dataset><MostRecentLogMessage /><MostRecentJobInfo>Job 525283; Sequest, Step 3; Mcq_CynoLung_norm_12_7Apr08_Phoenix_08-03-01; 8/20/2009 10:24:05 AM</MostRecentJobInfo><SpectrumCount>27664</SpectrumCount></TaskDetails></Task></Root>
-                             <Root><Manager><MgrName>TestManager6</MgrName><MgrStatus>Running</MgrStatus><LastUpdate>8/20/2009 10:39:30 AM</LastUpdate><LastStartTime>8/19/2009 10:24:32 PM</LastStartTime><CPUUtilization>33.0</CPUUtilization><FreeMemoryMB>1133.0</FreeMemoryMB><ProcessID>6666</ProcessID><ProgRunnerProcessID>50030</ProgRunnerProcessID><ProgRunnerCoreUsage>2</ProgRunnerCoreUsage><RecentErrorMessages><ErrMsg /></RecentErrorMessages></Manager><Task><Tool>Sequest, Step 3</Tool><Status>Running</Status><Duration>12.25</Duration><DurationMinutes>735.0</DurationMinutes><Progress>81.81</Progress><CurrentOperation /><TaskDetails><Status>Running Tool</Status><Job>525236</Job><Step>3</Step><Dataset>PL-1_pro_A_5Aug09_Owl_09-05-10</Dataset><MostRecentLogMessage /><MostRecentJobInfo>Job 525236; Sequest, Step 3; PL-1_pro_A_5Aug09_Owl_09-05-10; 8/19/2009 10:24:32 PM</MostRecentJobInfo><SpectrumCount>44321</SpectrumCount></TaskDetails></Task></Root>
-                             <Root><Manager><MgrName>TestManager7</MgrName><RemoteMgrName>PrismWeb2</RemoteMgrName><MgrStatus>Running</MgrStatus><LastUpdate>5/20/2017 8:52:30 AM</LastUpdate><LastStartTime>5/20/2017 9:32:30 AM</LastStartTime><CPUUtilization>53.0</CPUUtilization><FreeMemoryMB>11323.0</FreeMemoryMB><ProcessID>436</ProcessID><ProgRunnerProcessID>3030</ProgRunnerProcessID><ProgRunnerCoreUsage>12</ProgRunnerCoreUsage><RecentErrorMessages><ErrMsg /></RecentErrorMessages></Manager><Task><Tool>MSGFPlus, Step 3</Tool><Status>Running</Status><Duration>1.5</Duration><DurationMinutes>90.0</DurationMinutes><Progress>23</Progress><CurrentOperation /><TaskDetails><Status>Running Tool</Status><Job>1451054</Job><Step>3</Step><Dataset>QC_Mam_16_01_pt7_B5c_10May17_Bane_REP-16-02-02</Dataset><MostRecentLogMessage /><MostRecentJobInfo>Job 1451054; MSGFPlus, Step 3; QC_Mam_16_01_pt7_B5c_10May17_Bane_REP-16-02-02; 5/22/2017 8:00:00 AM</MostRecentJobInfo><SpectrumCount>31221</SpectrumCount></TaskDetails></Task></Root>
+                             <Root><Manager><MgrName>TestManager1</MgrName><RemoteMgrName /><MgrStatus>Stopped</MgrStatus><!--Local status log time: 2023-08-14 04:14:04 PM--><!--Local last start time: 2023-08-14 04:14:03 PM--><LastUpdate>2023-08-14T23:14:04.210Z</LastUpdate><LastStartTime>2023-08-14T23:14:03.757Z</LastStartTime><CPUUtilization>0.0</CPUUtilization><FreeMemoryMB>43095.9</FreeMemoryMB><ProcessID>9252</ProcessID><ProgRunnerProcessID>0</ProgRunnerProcessID><ProgRunnerCoreUsage>0.00</ProgRunnerCoreUsage><RecentErrorMessages><ErrMsg /></RecentErrorMessages></Manager><Task><Tool /><Status>No Task</Status><Duration>0.00</Duration><DurationMinutes>0.0</DurationMinutes><Progress>0.00</Progress><CurrentOperation /><TaskDetails><Status>No Task</Status><Job>0</Job><Step>0</Step><Dataset /><WorkDirPath /><MostRecentLogMessage>Closing manager.</MostRecentLogMessage><MostRecentJobInfo>Job 2211481; Results_Transfer (MASIC_Finnigan); Blank_01_14Aug23_Remus_WBEH-CoAnn-23-07-09; 2023-08-14 12:12:07</MostRecentJobInfo><SpectrumCount>0</SpectrumCount></TaskDetails></Task></Root>
+                             <Root><Manager><MgrName>TestManager2</MgrName><RemoteMgrName /><MgrStatus>Stopped</MgrStatus><!--Local status log time: 2023-08-14 04:14:04 PM--><!--Local last start time: 2023-08-14 04:14:03 PM--><LastUpdate>2023-08-14T23:14:04.414Z</LastUpdate><LastStartTime>2023-08-14T23:14:03.960Z</LastStartTime><CPUUtilization>0.0</CPUUtilization><FreeMemoryMB>43094.6</FreeMemoryMB><ProcessID>9824</ProcessID><ProgRunnerProcessID>0</ProgRunnerProcessID><ProgRunnerCoreUsage>0.00</ProgRunnerCoreUsage><RecentErrorMessages><ErrMsg /></RecentErrorMessages></Manager><Task><Tool /><Status>No Task</Status><Duration>0.00</Duration><DurationMinutes>0.0</DurationMinutes><Progress>0.00</Progress><CurrentOperation /><TaskDetails><Status>No Task</Status><Job>0</Job><Step>0</Step><Dataset /><WorkDirPath /><MostRecentLogMessage>Closing manager.</MostRecentLogMessage><MostRecentJobInfo>Job 2211495; Results_Transfer (MASIC_Finnigan); 51920_PhoHet_TMT_01_f17_14Au23_Remus_WBEH-CoAnn-23-07-09; 2023-08-14 15:39:42</MostRecentJobInfo><SpectrumCount>0</SpectrumCount></TaskDetails></Task></Root>
+                             <Root><Manager><MgrName>TestManager3</MgrName><RemoteMgrName /><MgrStatus>Stopped</MgrStatus><!--Local status log time: 2023-08-14 04:14:03 PM--><!--Local last start time: 2023-08-14 04:14:02 PM--><LastUpdate>2023-08-14T23:14:03.570Z</LastUpdate><LastStartTime>2023-08-14T23:14:02.655Z</LastStartTime><CPUUtilization>0.0</CPUUtilization><FreeMemoryMB>13121.9</FreeMemoryMB><ProcessID>3564</ProcessID><ProgRunnerProcessID>0</ProgRunnerProcessID><ProgRunnerCoreUsage>0.00</ProgRunnerCoreUsage><RecentErrorMessages><ErrMsg /></RecentErrorMessages></Manager><Task><Tool /><Status>No Task</Status><Duration>0.00</Duration><DurationMinutes>0.0</DurationMinutes><Progress>0.00</Progress><CurrentOperation /><TaskDetails><Status>No Task</Status><Job>0</Job><Step>0</Step><Dataset /><WorkDirPath /><MostRecentLogMessage>Closing manager.</MostRecentLogMessage><MostRecentJobInfo /><SpectrumCount>0</SpectrumCount></TaskDetails></Task></Root>
+                             <Root><Manager><MgrName>TestManager4</MgrName><RemoteMgrName /><MgrStatus>Running</MgrStatus><!--Local status log time: 2023-08-14 04:14:09 PM--><!--Local last start time: 2023-08-14 02:47:06 PM--><LastUpdate>2023-08-14T23:14:09.301Z</LastUpdate><LastStartTime>2023-08-14T21:47:06.964Z</LastStartTime><CPUUtilization>6.0</CPUUtilization><FreeMemoryMB>26660.6</FreeMemoryMB><ProcessID>2444</ProcessID><ProgRunnerProcessID>5724</ProgRunnerProcessID><ProgRunnerCoreUsage>1.01</ProgRunnerCoreUsage><RecentErrorMessages><ErrMsg /></RecentErrorMessages></Manager><Task><Tool>Decon2LS_V2, Step 1</Tool><Status>Running</Status><Duration>1.45</Duration><DurationMinutes>87.0</DurationMinutes><Progress>28.90</Progress><CurrentOperation /><TaskDetails><Status>Running Tool</Status><Job>2211490</Job><Step>1</Step><Dataset>QC_Mam_23_01_R1_14Aug23_Oak_WBEH-CoAnn-23-07-10</Dataset><WorkDirPath>G:\DMS_WorkDir8</WorkDirPath><MostRecentLogMessage /><MostRecentJobInfo>Job 2211490; Decon2LS_V2, Step 1; QC_Mam_23_01_R1_14Aug23_Oak_WBEH-CoAnn-23-07-10; 2023-08-14 02:47:06 PM</MostRecentJobInfo><SpectrumCount>0</SpectrumCount></TaskDetails></Task><ProgRunnerCoreUsage Count="10"><CoreUsageSample Date="2023-08-14 04:09:10 PM">1.0</CoreUsageSample><CoreUsageSample Date="2023-08-14 04:09:41 PM">1.0</CoreUsageSample><CoreUsageSample Date="2023-08-14 04:10:12 PM">1.1</CoreUsageSample><CoreUsageSample Date="2023-08-14 04:10:44 PM">1.0</CoreUsageSample><CoreUsageSample Date="2023-08-14 04:11:15 PM">1.0</CoreUsageSample><CoreUsageSample Date="2023-08-14 04:11:46 PM">1.0</CoreUsageSample><CoreUsageSample Date="2023-08-14 04:12:17 PM">1.0</CoreUsageSample><CoreUsageSample Date="2023-08-14 04:12:48 PM">1.0</CoreUsageSample><CoreUsageSample Date="2023-08-14 04:13:19 PM">1.0</CoreUsageSample><CoreUsageSample Date="2023-08-14 04:13:51 PM">1.0</CoreUsageSample></ProgRunnerCoreUsage></Root>
+                             <Root><Manager><MgrName>TestManager5</MgrName><RemoteMgrName>PrismWeb2</RemoteMgrName><MgrStatus>Running</MgrStatus><LastUpdate>5/20/2017 8:52:30 AM</LastUpdate><LastStartTime>5/20/2017 9:32:30 AM</LastStartTime><CPUUtilization>53.0</CPUUtilization><FreeMemoryMB>11323.0</FreeMemoryMB><ProcessID>436</ProcessID><ProgRunnerProcessID>3030</ProgRunnerProcessID><ProgRunnerCoreUsage>12</ProgRunnerCoreUsage><RecentErrorMessages><ErrMsg /></RecentErrorMessages></Manager><Task><Tool>MSGFPlus, Step 3</Tool><Status>Running</Status><Duration>1.5</Duration><DurationMinutes>90.0</DurationMinutes><Progress>23</Progress><CurrentOperation /><TaskDetails><Status>Running Tool</Status><Job>1451054</Job><Step>3</Step><Dataset>QC_Mam_16_01_pt7_B5c_10May17_Bane_REP-16-02-02</Dataset><MostRecentLogMessage /><MostRecentJobInfo>Job 1451054; MSGFPlus, Step 3; QC_Mam_16_01_pt7_B5c_10May17_Bane_REP-16-02-02; 5/22/2017 8:00:00 AM</MostRecentJobInfo><SpectrumCount>31221</SpectrumCount></TaskDetails></Task></Root>
                            </StatusInfo>'::XML As StatusXML;
         Else
             -- We must surround the status XML with <StatusInfo></StatusInfo> so that the XML will be rooted, as required by XMLTABLE()
@@ -122,30 +134,30 @@ BEGIN
             Processor_Name text,
             Remote_Manager text,
             Mgr_Status text,
-            Status_Date text, -- timestamp
+            Status_Date text,               -- timestamp
             Status_Date_Value timestamp NULL,
-            Last_Start_Time text, -- timestamp
+            Last_Start_Time text,           -- timestamp
             Last_Start_Time_Value timestamp,
-            CPU_Utilization text, -- real
-            Free_Memory_MB text, -- real
-            Process_ID text, -- int
-            ProgRunner_ProcessID text, -- int
-            ProgRunner_CoreUsage text, -- real
+            CPU_Utilization text,           -- real
+            Free_Memory_MB text,            -- real
+            Process_ID text,                -- int
+            Prog_Runner_Process_ID text,    -- int
+            Prog_Runner_Core_Usage text,    -- real
             Most_Recent_Error_Message text,
             Step_Tool text,
             Task_Status text,
-            Duration_Minutes text, -- real
-            Progress text, -- real
+            Duration_Minutes text,          -- real
+            Progress text,                  -- real
             Current_Operation text,
             Task_Detail_Status text,
-            Job text, -- int
-            Job_Step text, -- int
+            Job text,                       -- int
+            Job_Step text,                  -- int
             Dataset text,
             Most_Recent_Log_Message text,
             Most_Recent_Job_Info text,
-            Spectrum_Count text, -- int
+            Spectrum_Count text,            -- int
             IsNew boolean
-        )
+        );
 
         CREATE INDEX IX_Tmp_Processor_Status_Info_Processor_Name ON Tmp_Processor_Status_Info (Processor_Name);
 
@@ -154,35 +166,34 @@ BEGIN
         ---------------------------------------------------
 
         WITH Src (StatusXML) AS (SELECT _statusXML)
-        INSERT INTO Tmp_Processor_Status_Info(
-                          Processor_Name,
-                          Remote_Manager,
-                          Mgr_Status,
-                          Status_Date,
-                          Last_Start_Time,
-                          CPU_Utilization,
-                          Free_Memory_MB,
-                          Process_ID,
-                          ProgRunner_ProcessID,
-                          ProgRunner_CoreUsage,
-                          Most_Recent_Error_Message,
-                          Step_Tool,
-                          Task_Status,
-                          Duration_Minutes,
-                          Progress,
-                          Current_Operation,
-                          Task_Detail_Status,
-                          Job,
-                          Job_Step,
-                          Dataset,
-                          Most_Recent_Log_Message,
-                          Most_Recent_Job_Info,
-                          Spectrum_Count,
-                          IsNew )
+        INSERT INTO Tmp_Processor_Status_Info( Processor_Name,
+                                               Remote_Manager,
+                                               Mgr_Status,
+                                               Status_Date,
+                                               Last_Start_Time,
+                                               CPU_Utilization,
+                                               Free_Memory_MB,
+                                               Process_ID,
+                                               Prog_Runner_Process_ID,
+                                               Prog_Runner_Core_Usage,
+                                               Most_Recent_Error_Message,
+                                               Step_Tool,
+                                               Task_Status,
+                                               Duration_Minutes,
+                                               Progress,
+                                               Current_Operation,
+                                               Task_Detail_Status,
+                                               Job,
+                                               Job_Step,
+                                               Dataset,
+                                               Most_Recent_Log_Message,
+                                               Most_Recent_Job_Info,
+                                               Spectrum_Count,
+                                               IsNew )
         SELECT ManagerInfoQ.Processor_Name, ManagerInfoQ.Remote_Manager, ManagerInfoQ.Mgr_Status, ManagerInfoQ.Status_Date,
                ManagerInfoQ.Last_Start_Time, ManagerInfoQ.CPU_Utilization,
                ManagerInfoQ.Free_Memory_MB, ManagerInfoQ.Process_ID,
-               ManagerInfoQ.ProgRunner_ProcessID, ManagerInfoQ.ProgRunner_CoreUsage,
+               ManagerInfoQ.Prog_Runner_Process_ID, ManagerInfoQ.Prog_Runner_Core_Usage,
                RecentErrorMessageQ.Most_Recent_Error_Message,
                TaskQ.Step_Tool, TaskQ.Task_Status, TaskQ.Duration_Minutes, TaskQ.Progress, TaskQ.Current_Operation,
                TaskDetailQ.Task_Detail_Status, TaskDetailQ.Job, TaskDetailQ.Job_Step, TaskDetailQ.Dataset,
@@ -200,8 +211,8 @@ BEGIN
                                       CPU_Utilization           citext PATH 'CPUUtilization',
                                       Free_Memory_MB            citext PATH 'FreeMemoryMB',
                                       Process_ID                citext PATH 'ProcessID',
-                                      ProgRunner_ProcessID      citext PATH 'ProgRunnerProcessID',
-                                      ProgRunner_CoreUsage      citext PATH 'ProgRunnerCoreUsage'
+                                      Prog_Runner_Process_ID    citext PATH 'ProgRunnerProcessID',
+                                      Prog_Runner_Core_Usage    citext PATH 'ProgRunnerCoreUsage'
                             )
              ) ManagerInfoQ
              LEFT OUTER JOIN
@@ -211,7 +222,7 @@ BEGIN
                                  PASSING Src.StatusXML
                                  COLUMNS Processor_Name            citext PATH '../MgrName',
                                          Status_Date               citext PATH '../LastUpdate',
-                                         Most_Recent_Error_Message citext PATH 'ErrMsg[1]'         -- If there are multiple recent error messages, only select the first one
+                                         Most_Recent_Error_Message citext PATH 'ErrMsg[1]'      -- If there are multiple recent error messages, only select the first one
                                 )
                  ) RecentErrorMessageQ
                  ON ManagerInfoQ.Processor_Name = RecentErrorMessageQ.Processor_Name AND
@@ -252,15 +263,15 @@ BEGIN
                    ManagerInfoQ.Status_Date = TaskDetailQ.Status_Date
         ORDER BY ManagerInfoQ.Processor_Name, ManagerInfoQ.Status_Date;
         --
-        GET DIAGNOSTICS _matchCount = ROW_COUNT;
+        GET DIAGNOSTICS _statusInfoCount = ROW_COUNT;
 
-        _statusMessageInfo := format('Status info count: %s', _matchCount);
+        _statusMessageInfo := format('Status info count: %s', _statusInfoCount);
 
         -- Make sure Remote_Manager is defined
         --
         UPDATE Tmp_Processor_Status_Info
         SET Remote_Manager = ''
-        WHERE Remote_Manager Is Null
+        WHERE Remote_Manager Is Null;
 
         -- Change the IsNew flag to false for known processors
         --
@@ -271,13 +282,13 @@ BEGIN
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        _statusMessageInfo := format('Messages: %s', _updateCount);
+        _statusMessageInfo := format('Status info count: %s', _updateCount);
 
         If _infoLevel > 0 Then
 
             RAISE INFO '';
 
-            _formatSpecifier := '%-20s %-15s %-15s %-20s %-20s %-5s %-11s %-10s %-20s %-20s %-15s %-15s %-15s %-15s %-9s %-50s %-25s %-10s %-10s %-80s';
+            _formatSpecifier := '%-20s %-15s %-15s %-25s %-25s %-5s %-11s %-10s %-22s %-22s %-17s %-30s %-15s %-15s %-9s %-50s %-25s %-10s %-5s %-80s';
 
             _infoHead := format(_formatSpecifier,
                                 'Processor_Name',
@@ -288,8 +299,8 @@ BEGIN
                                 'CPU_%',
                                 'Free_Mem_MB',
                                 'Process_ID',
-                                'ProgRunner_ProcessID',
-                                'ProgRunner_CoreUsage',
+                                'Prog_Runner_Process_ID',
+                                'Prog_Runner_Core_Usage',
                                 'Most_Recent_Error',
                                 'Step_Tool',
                                 'Task_Status',
@@ -303,25 +314,25 @@ BEGIN
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
-                                         '-------------------',
-                                         '--------------',
-                                         '--------------',
-                                         '-------------------',
-                                         '-------------------',
+                                         '--------------------',
+                                         '---------------',
+                                         '---------------',
+                                         '-------------------------',
+                                         '-------------------------',
                                          '-----',
+                                         '-----------',
                                          '----------',
-                                         '----------',
-                                         '--------------------',
-                                         '--------------------',
-                                         '---------------',
-                                         '---------------',
+                                         '----------------------',
+                                         '----------------------',
+                                         '-----------------',
+                                         '------------------------------',
                                          '---------------',
                                          '---------------',
                                          '---------',
-                                         '------------------',
-                                         '------------------',
+                                         '--------------------------------------------------',
+                                         '-------------------------',
                                          '----------',
-                                         '----------',
+                                         '-----',
                                          '--------------------------------------------------------------------------------'
                                         );
 
@@ -337,8 +348,8 @@ BEGIN
                        CPU_Utilization,
                        Free_Memory_MB,
                        Process_ID,
-                       ProgRunner_ProcessID,
-                       ProgRunner_CoreUsage,
+                       Prog_Runner_Process_ID,
+                       Prog_Runner_Core_Usage,
                        Most_Recent_Error_Message,
                        Step_Tool,
                        Task_Status,
@@ -361,8 +372,8 @@ BEGIN
                                     _previewData.CPU_Utilization,
                                     _previewData.Free_Memory_MB,
                                     _previewData.Process_ID,
-                                    _previewData.ProgRunner_ProcessID,
-                                    _previewData.ProgRunner_CoreUsage,
+                                    _previewData.Prog_Runner_Process_ID,
+                                    _previewData.Prog_Runner_Core_Usage,
                                     _previewData.Most_Recent_Error_Message,
                                     _previewData.Step_Tool,
                                     _previewData.Task_Status,
@@ -380,8 +391,10 @@ BEGIN
 
         End If;
 
-        If _infoLevel IN (2, 4) Then
+        If _infoLevel = 2 Or _infoLevel >= 4 Then
             _message := _statusMessageInfo;
+            RAISE INFO '%', _message;
+
             DROP TABLE Tmp_Processor_Status_Info;
             RETURN;
         End If;
@@ -409,7 +422,7 @@ BEGIN
 
         -- First update managers with a Remote_Manager defined
         --
-        UPDATE sw.t_processor_status
+        UPDATE sw.t_processor_status Target
         SET remote_manager = Src.remote_manager,
             mgr_status = Src.mgr_status,
             status_date = Src.Status_Date_Value,
@@ -430,7 +443,7 @@ BEGIN
 
         -- Next update managers where Remote_Manager is empty
         --
-        UPDATE sw.t_processor_status
+        UPDATE sw.t_processor_status Target
         SET remote_manager = Src.remote_manager,
             mgr_status = Src.mgr_status,
             status_date = Src.Status_Date_Value,
@@ -508,9 +521,9 @@ BEGIN
                 ON Src.processor_name = Target.processor_name
         WHERE Src.IsNew AND Src.remote_manager <> '' AND Target.processor_name IS NULL;
         --
-        GET DIAGNOSTICS _updateCount = ROW_COUNT;
+        GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-        _statusMessageInfo := format('%s, InsertedA: %s', _statusMessageInfo, _updateCount);
+        _statusMessageInfo := format('%s, InsertedA: %s', _statusMessageInfo, _insertCount);
 
         -- Add managers where Remote_Manager is empty
         --
@@ -569,9 +582,9 @@ BEGIN
             ON Src.processor_name = Target.processor_name
         WHERE Src.IsNew AND Src.remote_manager = '' AND Target.processor_name IS NULL;
         --
-        GET DIAGNOSTICS _updateCount = ROW_COUNT;
+        GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-        _statusMessageInfo := format('%s, InsertedB: %s', _statusMessageInfo, _updateCount);
+        _statusMessageInfo := format('%s, InsertedB: %s', _statusMessageInfo, _insertCount);
 
         If _logProcessorNames Then
 
@@ -579,10 +592,15 @@ BEGIN
             INTO _updatedProcessors
             FROM Tmp_Processor_Status_Info;
 
-            _logMessage := format('%s, processors %s', _statusMessageInfo, _updatedProcessors);
+            _logMessage := format('%s; Processors: %s', _statusMessageInfo, _updatedProcessors);
 
             CALL public.post_log_entry ('Debug', _logMessage, 'Update_Manager_And_Task_Status_XML', 'sw');
         End If;
+
+        _message := _statusMessageInfo;
+
+        DROP TABLE Tmp_Processor_Status_Info;
+        RETURN;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -599,16 +617,24 @@ BEGIN
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
         End If;
+
+        If _infoLevel > 1 Then
+            RAISE WARNING '%', _message;
+        End If;
     END;
 
-    If _returnCode = '' Then
-        _message := _statusMessageInfo;
-    Else
-        _message := format('Error storing info, code %s', _returnCode);
-    End If;
+    _message := format('Error storing info, code %s', _returnCode);
 
     DROP TABLE IF EXISTS Tmp_Processor_Status_Info;
 END
 $$;
 
-COMMENT ON PROCEDURE sw.update_manager_and_task_status_xml IS 'UpdateManagerAndTaskStatusXML';
+
+ALTER PROCEDURE sw.update_manager_and_task_status_xml(IN _managerstatusxml text, IN _infolevel integer, IN _logprocessornames boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_manager_and_task_status_xml(IN _managerstatusxml text, IN _infolevel integer, IN _logprocessornames boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE sw.update_manager_and_task_status_xml(IN _managerstatusxml text, IN _infolevel integer, IN _logprocessornames boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateManagerAndTaskStatusXML';
+
