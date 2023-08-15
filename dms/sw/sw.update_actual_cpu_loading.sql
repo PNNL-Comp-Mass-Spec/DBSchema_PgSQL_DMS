@@ -9,7 +9,7 @@ CREATE OR REPLACE PROCEDURE sw.update_actual_cpu_loading(IN _infoonly boolean DE
 **
 **  Desc:
 **      Updates Actual_CPU_Load based on T_Processor_Status
-**      (using ProgRunner_CoreUsage values pushed by the Analysis Manager)
+**      (using Prog_Runner_Core_Usage values pushed by the Analysis Manager)
 **
 **  Auth:   mem
 **  Date:   11/20/2015 mem - Initial release
@@ -37,7 +37,7 @@ BEGIN
     );
 
     ---------------------------------------------------
-    -- Find managers with an active job step and valid values for ProgRunner_ProcessID and ProgRunner_CoreUsage
+    -- Find managers with an active job step and valid values for Prog_Runner_Process_ID and Prog_Runner_Core_Usage
     ---------------------------------------------------
 
     INSERT INTO Tmp_PendingUpdates( Processor_Name,
