@@ -84,7 +84,7 @@ BEGIN
             FROM pc.t_protein_collections
             WHERE collection_state_id = 1 AND
                   protein_collection_id > _proteinCollectionID AND
-                  date_created >= DATEADD(month, -_mostRecentMonths, CURRENT_TIMESTAMP)
+                  date_created >= CURRENT_TIMESTAMP + make_interval(months => -Abs(_mostRecentMonths))
             ORDER BY protein_collection_id
             LIMIT 1;
 
