@@ -1,33 +1,30 @@
 --
-CREATE OR REPLACE PROCEDURE dpkg.add_update_osm_package
-(
-    INOUT _id int,
-    _name text,
-    _packageType text,
-    _description text,
-    _keywords text,
-    _comment text,
-    _owner text,
-    _state text,
-    _samplePrepRequestList text,
-    _userFolderPath text,
-    _mode text default 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_osm_package(integer, text, text, text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: dpkg; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE dpkg.add_update_osm_package(INOUT _id integer, IN _name text, IN _packagetype text, IN _description text, IN _keywords text, IN _comment text, IN _owner text, IN _state text, IN _samplepreprequestlist text, IN _userfolderpath text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**    Adds new or edits existing item in T_OSM_Package
+**      Adds new or edits existing item in sw.t_osm_package
 **
 **  Arguments:
-**    _mode   or 'update'
+**    _id                       OSM package ID
+**    _name                     OSM package name
+**    _packageType              OSM package type ('General' or 'Software Testing')
+**    _description              OSM package description
+**    _keywords                 Keywords
+**    _comment                  Comment
+**    _owner                    Owner username
+**    _state                    State ('Active', 'Complete', 'Inactive', or 'Future')
+**    _samplePrepRequestList    Comma-separated list of sample prep request IDs
+**    _userFolderPath           Network share path, e.g. \\protoapps\UserData\Zink\PrepRequest_Summaries\EMSL_Projects\Martin_EUP-47558
+**    _mode                     'add' or 'update'
 **
 **  Auth:   grk
-**  Date:
+**  Date:   10/22/2012 grk - Initial Release
 **          10/26/2012 grk - Now setting "last affected" date
 **          11/02/2012 grk - Removed _requester
 **          05/20/2013 grk - Added _noteFilesLink
@@ -41,7 +38,7 @@ AS $$
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          06/19/2017 mem - Use _logErrors to toggle logging errors caught by the try/catch block
 **                         - Validate _state
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -50,11 +47,13 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _logErrors boolean := false;
+    _matchingValue text;
     _rootPath int;
     _badIDs text := '';
     _goodIDs text := '';
+    _logErrors boolean := false;
     _wikiLink text := '';
+    _msg text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -87,6 +86,48 @@ BEGIN
     BEGIN
 
         ---------------------------------------------------
+        -- Validate input fields
+        ---------------------------------------------------
+
+        _packageType           := Trim(Coalesce(_packageType, ''));
+        _description           := Trim(Coalesce(_description, ''));
+        _comment               := Trim(Coalesce(_comment, ''));
+        _samplePrepRequestList := Trim(Coalesce(_samplePrepRequestList, ''));
+        _mode                  := Lower(Trim(Coalesce(_mode, '')));
+
+        If Not _mode In ('add', 'update') Then
+            _message := 'Mode must be "add" or "update"';
+            _returnCode := 'U5103';
+            RETURN;
+        End If;
+
+        If _mode = 'update' And Coalesce(_id, 0) = 0 Then
+            _message := 'OSM package ID cannot be null or 0 when mode is "update"';
+            _returnCode := 'U5104';
+            RETURN;
+        End If;
+
+        If _packageType = '' Then
+            _message := 'OSM package type cannot be blank';
+            _returnCode := 'U5105';
+            RETURN;
+        End If;
+
+        -- Make sure the OSM package type is valid (and capitalize it, if necessary)
+        SELECT package_type
+        INTO _matchingValue
+        FROM dpkg.t_osm_package_type
+        WHERE package_type = _packageType::citext;
+
+        If Not Found Then
+            _message := format('Invalid OSM package type: %s', _packageType);
+            _returnCode := 'U5106';
+            RETURN;
+        Else
+            _packageType := _matchingValue;
+        End If;
+
+        ---------------------------------------------------
         -- Get active path
         ---------------------------------------------------
 
@@ -95,24 +136,30 @@ BEGIN
         FROM dpkg.t_osm_package_storage
         WHERE state = 'Active';
 
+        If Not Found Then
+            _message := 'Table dpkg.t_osm_package_storage does not have an active storage path';
+            _returnCode := 'U5107';
+            RETURN;
+        End If;
+
         ---------------------------------------------------
         -- Validate sample prep request list
         ---------------------------------------------------
 
-        CREATE TEMP TABLE Tmp_PrepRequestItems
+        CREATE TEMP TABLE Tmp_PrepRequestItems (
             Item int,
             Valid boolean not null
         );
 
         -- Populate table from sample prep request list
         INSERT INTO Tmp_PrepRequestItems ( Item, Valid)
-        SELECT Item, false
+        SELECT Value, false
         FROM public.parse_delimited_integer_list(_samplePrepRequestList);
 
         -- Mark sample prep requests that exist in the database
         UPDATE Tmp_PrepRequestItems
         SET Valid = true
-        WHERE Item in (SELECT prep_request_id FROM t_sample_prep_request);
+        WHERE Item IN (SELECT prep_request_id FROM t_sample_prep_request);
 
         -- Get list of any list items that weren't in the database
         SELECT string_agg(item::text, ', ' ORDER BY item)
@@ -122,7 +169,10 @@ BEGIN
 
         If _badIDs <> '' Then
             _message := format('Sample prep request IDs "%s" do not exist', _badIDs);
-            RAISE EXCEPTION '%', message;
+            _returnCode := 'U5108';
+
+            DROP TABLE Tmp_PrepRequestItems;
+            RETURN;
         End If;
 
         SELECT string_agg(Item::text, ', ' ORDER BY item)
@@ -133,9 +183,19 @@ BEGIN
         -- Validate the state
         ---------------------------------------------------
 
-        If Not Exists (SELECT * FROM dpkg.t_osm_package_state WHERE state_name = _state) Then
+        SELECT state_name
+        INTO _matchingValue
+        FROM dpkg.t_osm_package_state
+        WHERE state_name = _state::citext;
+
+        If Not Found Then
             _message := format('Invalid state: %s', _state);
-            RAISE EXCEPTION '%', message;
+            _returnCode := 'U5109';
+
+            DROP TABLE Tmp_PrepRequestItems;
+            RETURN;
+        Else
+            _state := _matchingValue;
         End If;
 
         ---------------------------------------------------
@@ -143,11 +203,14 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-            -- cannot update a non-existent entry
+            -- Cannot update a non-existent entry
             --
             If Not Exists (SELECT osm_pkg_id FROM dpkg.t_osm_package WHERE osm_pkg_id = _id) Then
                 _message := format('OSM package ID %s does not exist; cannot update', _id);
-                RAISE EXCEPTION '%', _message;
+                _returnCode := 'U5110';
+
+                DROP TABLE Tmp_PrepRequestItems;
+                RETURN;
             End If;
         End If;
 
@@ -160,14 +223,17 @@ BEGIN
         If _mode = 'add' Then
 
             -- Make sure the data package name doesn't already exist
-            If Exists (SELECT * FROM dpkg.t_osm_package WHERE osm_package_name = _name) Then
+            If Exists (SELECT osm_package_name FROM dpkg.t_osm_package WHERE osm_package_name = _name) Then
                 _message := format('OSM package "%s" already exists; cannot create an identically named package', _name);
-                RAISE EXCEPTION '%', _message;
+                _returnCode := 'U5111';
+
+                DROP TABLE Tmp_PrepRequestItems;
+                RETURN;
             End If;
 
             -- Create the wiki page link
             If NOT _name IS NULL Then
-                _wikiLink := format('http://prismwiki.pnl.gov/wiki/OSMPackages:%s', REPLACE(_name, ' ', '_'))
+                _wikiLink := format('https://prismwiki.pnl.gov/wiki/OSMPackages:%s', REPLACE(_name, ' ', '_'));
             End If;
 
             INSERT INTO dpkg.t_osm_package (
@@ -176,7 +242,7 @@ BEGIN
                 description,
                 keywords,
                 comment,
-                owner,
+                owner_username,
                 state,
                 wiki_page_link,
                 path_root,
@@ -207,13 +273,12 @@ BEGIN
         If _mode = 'update' Then
 
             UPDATE dpkg.t_osm_package
-            SET
-                osm_package_name = _name,
+            SET osm_package_name = _name,
                 package_type = _packageType,
                 description = _description,
                 keywords = _keywords,
                 comment = _comment,
-                owner = _owner,
+                owner_username = _owner,
                 state = _state,
                 last_modified = CURRENT_TIMESTAMP,
                 sample_prep_requests = _goodIDs,
@@ -227,12 +292,16 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-            CALL Make_OSM_Package_Storage_Folder (
+            CALL dpkg.make_osm_package_storage_folder (
                         _id,
-                        _mode,
-                        _message => _message,           -- Output
-                        _returnCode => returnCode,      -- Output
-                        _callingUser => _callingUser);
+                        _infoOnly => false,
+                        _message => _msg,               -- Output
+                        _returnCode => _returnCode);    -- Output
+
+            If _returnCode <> '' Then
+                _message := public.append_to_text(_message, _msg);
+            End If;
+
         End If;
 
         DROP TABLE Tmp_PrepRequestItems;
@@ -262,9 +331,17 @@ BEGIN
         End If;
 
         DROP TABLE IF EXISTS Tmp_PrepRequestItems;
-    END CATCH
+    END;
 
 END
 $$;
 
-COMMENT ON PROCEDURE dpkg.add_update_osm_package IS 'AddUpdateOSMPackage';
+
+ALTER PROCEDURE dpkg.add_update_osm_package(INOUT _id integer, IN _name text, IN _packagetype text, IN _description text, IN _keywords text, IN _comment text, IN _owner text, IN _state text, IN _samplepreprequestlist text, IN _userfolderpath text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_osm_package(INOUT _id integer, IN _name text, IN _packagetype text, IN _description text, IN _keywords text, IN _comment text, IN _owner text, IN _state text, IN _samplepreprequestlist text, IN _userfolderpath text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: dpkg; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE dpkg.add_update_osm_package(INOUT _id integer, IN _name text, IN _packagetype text, IN _description text, IN _keywords text, IN _comment text, IN _owner text, IN _state text, IN _samplepreprequestlist text, IN _userfolderpath text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateOSMPackage';
+

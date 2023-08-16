@@ -1,18 +1,23 @@
 --
-CREATE OR REPLACE PROCEDURE dpkg.delete_all_items_from_data_package
-(
-    _packageID INT,
-    _mode text default 'delete',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: delete_all_items_from_data_package(integer, text, text, text, text); Type: PROCEDURE; Schema: dpkg; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE dpkg.delete_all_items_from_data_package(IN _packageid integer, IN _mode text DEFAULT 'delete'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**  removes all existing items from data package
+**      Removes all existing items from a data package, deleting rows in the associated tracking tables:
+**          dpkg.t_data_package_analysis_jobs
+**          dpkg.t_data_package_datasets
+**          dpkg.t_data_package_experiments
+**          dpkg.t_data_package_biomaterial
+**          dpkg.t_data_package_eus_proposals
+**
+**  Arguments:
+**    _packageID        Data package ID
+**    _mode             Should be 'delete', but the actual value is ignored
 **
 **  Auth:   grk
 **  Date:   06/10/2009 grk - Initial release
@@ -20,7 +25,7 @@ AS $$
 **          04/05/2016 mem - Add T_Data_Package_EUS_Proposals
 **          05/18/2016 mem - Log errors to T_Log_Entries
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -95,15 +100,13 @@ BEGIN
         RETURN;
     END;
 
-    COMMIT;
-
     BEGIN
 
         ---------------------------------------------------
         -- Update item counts
         ---------------------------------------------------
 
-        CALL update_data_package_item_counts (_packageID);
+        CALL dpkg.update_data_package_item_counts (_packageID);
 
         UPDATE dpkg.t_data_package
         SET last_modified = CURRENT_TIMESTAMP
@@ -133,4 +136,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE dpkg.delete_all_items_from_data_package IS 'DeleteAllItemsFromDataPackage';
+
+ALTER PROCEDURE dpkg.delete_all_items_from_data_package(IN _packageid integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE delete_all_items_from_data_package(IN _packageid integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: dpkg; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE dpkg.delete_all_items_from_data_package(IN _packageid integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'DeleteAllItemsFromDataPackage';
+

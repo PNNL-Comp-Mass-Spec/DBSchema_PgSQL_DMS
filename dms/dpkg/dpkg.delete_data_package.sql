@@ -1,21 +1,23 @@
 --
-CREATE OR REPLACE PROCEDURE dpkg.delete_data_package
-(
-    _packageID int,
-    INOUT _message text default '',
-    INOUT returnCode text default '',
-    _infoOnly boolean = true
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: delete_data_package(integer, boolean, text, text); Type: PROCEDURE; Schema: dpkg; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE dpkg.delete_data_package(IN _packageid integer, IN _infoonly boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
-**  Desc:   Deletes the data package, including deleting rows in the associated tracking tables:
-**            T_Data_Package_Analysis_Jobs
-**            T_Data_Package_Datasets
-**            T_Data_Package_Experiments
-**            T_Data_Package_Biomaterial
-**            T_Data_Package_EUS_Proposals
+**  Desc:
+**      Deletes the data package, including deleting rows in the associated tracking tables:
+**          dpkg.t_data_package_analysis_jobs
+**          dpkg.t_data_package_datasets
+**          dpkg.t_data_package_experiments
+**          dpkg.t_data_package_biomaterial
+**          dpkg.t_data_package_eus_proposals
+**
+**  Arguments:
+**    _packageID    Data package ID
+**    _infoOnly     When true, preview the delete
 **
 **  Auth:   mem
 **  Date:   04/08/2016 mem - Initial release
@@ -23,7 +25,7 @@ AS $$
 **          04/05/2019 mem - Log the data package ID, Name, first dataset, and last dataset associated with a data package
 **                         - Change the default for _infoOnly to 1 (true)
 **          01/20/2023 mem - Use new column names in V_Data_Package_Detail_Report
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -57,7 +59,7 @@ BEGIN
 
     BEGIN
 
-        If Not Exists (SELECT * FROM dpkg.t_data_package WHERE data_pkg_id = _packageID) Then
+        If Not Exists (SELECT data_pkg_id FROM dpkg.t_data_package WHERE data_pkg_id = _packageID) Then
             _message := format('Data package %s not found in dpkg.t_data_package', _packageID);
 
             RAISE INFO '%', _message;
@@ -145,7 +147,6 @@ BEGIN
                 RAISE INFO '%', _infoData;
             END LOOP;
 
-            RETURN;
         End If;
 
         ---------------------------------------------------
@@ -192,53 +193,70 @@ BEGIN
         FROM dpkg.V_Data_Package_Paths
         WHERE ID = _packageID;
 
-        ---------------------------------------------------
-        -- Delete the associated items
-        ---------------------------------------------------
-
-        CALL dpkg.delete_all_items_from_data_package (
-                        _packageID => _packageID,
-                        _mode => 'delete',
-                        _message => _message,           -- Output
-                        _returnCode => _returnCode)     -- Output
-
-        If _message <> '' Then
-            RAISE INFO '%', _message;
-            _message := '';
-        End If;
-
-        DELETE FROM dpkg.t_data_package
-        WHERE data_pkg_id = _packageID;
-
-        If FOUND Then
-            _message := format('Deleted data package %s and all associated metadata', _packageID);
+        If _infoOnly Then
+            _message := format('Would delete data package %s and all associated metadata', _packageID);
         Else
-            _message := format('No rows were deleted from dpkg.t_data_package for data package %s; this is unexpected', _packageID);
+
+            ---------------------------------------------------
+            -- Delete the associated items
+            ---------------------------------------------------
+
+            CALL dpkg.delete_all_items_from_data_package (
+                            _packageID => _packageID,
+                            _mode => 'delete',
+                            _message => _message,           -- Output
+                            _returnCode => _returnCode);     -- Output
+
+            If _message <> '' Then
+                RAISE INFO '';
+                RAISE INFO '%', _message;
+                _message := '';
+            End If;
+
+            DELETE FROM dpkg.t_data_package
+            WHERE data_pkg_id = _packageID;
+
+            If FOUND Then
+                _message := format('Deleted data package %s and all associated metadata', _packageID);
+            Else
+                _message := format('No rows were deleted from dpkg.t_data_package for data package %s; this is unexpected', _packageID);
+            End If;
         End If;
 
-        -- Log the deletion
+        -- Update message to include the data package name and the first or last dataset or experiment associated with the data package
         -- First append the data package name
-        _logMessage :=  format('%s: %s', _message, _dataPackageName);
+        _logMessage := format('%s: %s', _message, _dataPackageName);
 
         If _datasetOrExperimentCount > 0 Then
             -- Append the dataset or experiment counts and first/last names
-            _logMessage := format('%s; Included %s %s: %s - %s',
+            _logMessage := format('%s; %s %s %s: %s - %s',
                                 _logMessage,
+                                CASE WHEN _infoOnly THEN 'Including' ELSE 'Included' END,
                                 _datasetOrExperimentCount,
                                 _datasetOrExperiment,
                                 _firstDatasetOrExperiment,
                                 _lastDatasetOrExperiment);
         End If;
 
-        CALL public.post_log_entry ('Normal', _logMessage, 'Delete_Data_Package', 'dpkg');
+        If _infoOnly Then
+            _message := _logMessage;
 
-        ---------------------------------------------------
-        -- Display some messages
-        ---------------------------------------------------
+            RAISE INFO '';
+            RAISE INFO '%', _message;
+            RAISE INFO 'Directory to manually delete: %', _sharePath;
+        Else
+            -- Log the deletion
+            CALL public.post_log_entry ('Normal', _logMessage, 'Delete_Data_Package', 'dpkg');
 
-        RAISE INFO '%', _message;
-        RAISE INFO '';
-        RAISE INFO 'Be sure to delete directory %', _sharePath;
+            ---------------------------------------------------
+            -- Display some messages
+            ---------------------------------------------------
+
+            RAISE INFO '';
+            RAISE INFO '%', _message;
+            RAISE INFO '';
+            RAISE INFO 'Be sure to delete directory %', _sharePath;
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -262,4 +280,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE dpkg.delete_data_package IS 'DeleteDataPackage';
+
+ALTER PROCEDURE dpkg.delete_data_package(IN _packageid integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE delete_data_package(IN _packageid integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: dpkg; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE dpkg.delete_data_package(IN _packageid integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'DeleteDataPackage';
+
