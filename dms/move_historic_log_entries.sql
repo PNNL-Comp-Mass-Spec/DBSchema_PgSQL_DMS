@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.move_historic_log_entries(IN _intervalhrs int
 /****************************************************
 **
 **  Desc:
-**      Move entries from public.t_log_entries into the historic log table (logdms.t_log_entries)
+**      Move log entries from public.t_log_entries into the historic log table (logdms.t_log_entries)
 **
 **  Arguments:
 **    _intervalHrs      Threshold, in hours, to use when moving move entries from t_log_entries; required to be at least 120
@@ -32,6 +32,11 @@ DECLARE
     _cutoffDateTime timestamp;
     _rowCount int;
 BEGIN
+
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
     -- Require that _intervalHrs be at least 120
     If Coalesce(_intervalHrs, 0) < 120 Then
         _intervalHrs := 120;
@@ -98,7 +103,6 @@ BEGIN
            );
 
     -- Copy entries into the historic log tables
-    --
     INSERT INTO logdms.t_log_entries (entry_id, posted_by, Entered, type, message)
     SELECT entry_id,
            posted_by,
@@ -110,7 +114,6 @@ BEGIN
     ORDER BY entry_id;
 
     -- Remove the old entries from t_log_entries
-    --
     DELETE FROM public.t_log_entries
     WHERE Entered < _cutoffDateTime;
 
