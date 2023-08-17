@@ -99,16 +99,16 @@ CREATE INDEX ix_t_experiments_exp_id_container_id ON public.t_experiments USING 
 CREATE INDEX ix_t_experiments_exp_id_ex_campaign_id ON public.t_experiments USING btree (exp_id, campaign_id);
 
 --
--- Name: ix_t_experiments_experiment_num; Type: INDEX; Schema: public; Owner: d3l243
+-- Name: ix_t_experiments_experiment_name; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE UNIQUE INDEX ix_t_experiments_experiment_num ON public.t_experiments USING btree (experiment);
+CREATE UNIQUE INDEX ix_t_experiments_experiment_name ON public.t_experiments USING btree (experiment);
 
 --
--- Name: ix_t_experiments_experiment_num_container_id_exp_id; Type: INDEX; Schema: public; Owner: d3l243
+-- Name: ix_t_experiments_experiment_name_container_id_exp_id; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE INDEX ix_t_experiments_experiment_num_container_id_exp_id ON public.t_experiments USING btree (experiment, container_id, exp_id);
+CREATE INDEX ix_t_experiments_experiment_name_container_id_exp_id ON public.t_experiments USING btree (experiment, container_id, exp_id);
 
 --
 -- Name: ix_t_experiments_prep_request_id_include_ex_created; Type: INDEX; Schema: public; Owner: d3l243
