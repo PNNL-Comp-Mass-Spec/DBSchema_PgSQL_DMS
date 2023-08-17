@@ -47,6 +47,8 @@ CREATE OR REPLACE FUNCTION public.get_data_package_xml(_datapackageid integer, _
 **          04/27/2023 mem - Use boolean for data type name
 **          05/30/2023 mem - Use format() for string concatenation
 **          08/17/2023 mem - Use renamed column data_pkg_id in views V_Data_Package_Analysis_Jobs_Export, V_Data_Package_Dataset_Export, and V_Data_Package_Experiments_Export
+**                         - Coalesce null values to empty strings
+**                         - Indent XML
 **
 *****************************************************/
 DECLARE
@@ -76,7 +78,7 @@ BEGIN
     ---------------------------------------------------
 
     If _includeAll Or position(lower('Parameters') in lower(_options)) > 0 Then
-        _result := format('%s<general>%s', _result, _newline);
+        _result := format('%s  <general>%s', _result, _newline);
 
         -- Note: if LookupQ returns multiple rows, use XMLFOREST to wrap the <package></package> items in <packages></packages>
         -- SELECT XMLFOREST(LookupQ.xml_item AS packages)
@@ -94,19 +96,19 @@ BEGIN
                             DPE.team,
                             DPE.state,
                             DPE.package_type,
-                            DPE.requester,
+                            Coalesce(DPE.requester, '') AS requester,
                             DPE.total,
                             DPE.jobs,
                             DPE.datasets,
                             DPE.experiments,
                             DPE.biomaterial,
-                            DPE.created::date::text as created))
+                            DPE.created::date::text AS created))
                        ) AS xml_item
                FROM dpkg.V_Data_Package_Export AS DPE
                WHERE ID = _dataPackageID
             ) AS LookupQ;
 
-        _result := format('%s%s%s%s%s',
+        _result := format('%s    %s%s  %s%s',
                             _result,
                             Coalesce(_paramXML::text, ''), _newline,
                             '</general>', _newline);
@@ -117,7 +119,7 @@ BEGIN
     ---------------------------------------------------
 
     If _includeAll Or position(lower('Experiments') in lower(_options)) > 0 Then
-        _result := format('%s<experiments>%s', _result, _newline);
+        _result := format('%s  <experiments>%s', _result, _newline);
 
         SELECT xml_item
         INTO _experimentXML
@@ -125,25 +127,32 @@ BEGIN
                  XMLAGG(XMLELEMENT(
                         NAME experiment,
                         XMLATTRIBUTES(
-                            TDPE.experiment_id,
-                            TDPE.experiment,
+                            DPE.experiment_id,
+                            DPE.experiment,
                             TRG.organism,
                             TC.campaign,
-                            TDPE.created,
-                            TEX.reason,
-                            TDPE.package_comment))
+                            DPE.created,
+                            Coalesce(TEX.reason, '') AS reason,
+                            Coalesce(DPE.package_comment, '') AS package_comment))
                        ) AS xml_item
-               FROM dpkg.V_Data_Package_Experiments_Export AS TDPE
-                    INNER JOIN t_experiments TEX ON TDPE.Experiment_ID = TEX.exp_id
+               FROM dpkg.V_Data_Package_Experiments_Export AS DPE
+                    INNER JOIN t_experiments TEX ON DPE.Experiment_ID = TEX.exp_id
                     INNER JOIN t_campaign TC ON TC.campaign_id = TEX.campaign_id
                     INNER JOIN public.t_organisms TRG ON TRG.organism_id = TEX.organism_id
                WHERE DPE.data_pkg_id = _dataPackageID
             ) AS LookupQ;
 
-        _result := format('%s%s%s%s%s',
-                            _result,
-                            Coalesce(_experimentXML::text, ''), _newline,
-                            '</experiments>', _newline);
+        If (Coalesce(_experimentXML::text, '') = '') Then
+            _result := format('%s  %s%s',
+                                _result,
+                                '</experiments>', _newline);
+        Else
+            _result := format('%s    %s%s  %s%s',
+                                _result,
+                                _experimentXML, _newline,
+                                '</experiments>', _newline);
+        End If;
+
     End If;
 
     ---------------------------------------------------
@@ -151,7 +160,7 @@ BEGIN
     ---------------------------------------------------
 
     If _includeAll Or position(lower('Datasets') in lower(_options)) > 0 Then
-        _result := format('%s<datasets>%s', _result, _newline);
+        _result := format('%s  <datasets>%s', _result, _newline);
 
         SELECT xml_item
         INTO _datasetXML
@@ -161,21 +170,29 @@ BEGIN
                         XMLATTRIBUTES(
                             DS.dataset_id,
                             DPD.dataset,
-                            -- Experiment,
-                            DS.exp_id as Experiment_ID,
+                            -- DPD.experiment,
+                            DS.exp_id AS Experiment_ID,
                             DPD.instrument,
                             DPD.created,
-                            DPD.package_comment))
+                            Coalesce(DPD.package_comment, '') AS package_comment))
                        ) AS xml_item
                FROM dpkg.V_Data_Package_Dataset_Export AS DPD
                     INNER JOIN t_dataset AS DS ON DS.Dataset_ID = DPD.Dataset_ID
                WHERE DPD.data_pkg_id = _dataPackageID
             ) AS LookupQ;
 
-        _result := format('%s%s%s%s%s',
-                            _result,
-                            Coalesce(_datasetXML::text, ''), _newline,
-                            '</datasets>', _newline);
+
+        If (Coalesce(_datasetXML::text, '') = '') Then
+            _result := format('%s  %s%s',
+                                _result,
+                                '</datasets>', _newline);
+        Else
+            _result := format('%s    %s%s  %s%s',
+                                _result,
+                                _datasetXML, _newline,
+                                '</datasets>', _newline);
+        End If;
+
     End If;
 
     ---------------------------------------------------
@@ -183,7 +200,7 @@ BEGIN
     ---------------------------------------------------
 
     If _includeAll Or position(lower('Jobs') in lower(_options)) > 0 Then
-        _result := format('%s<jobs>%s', _result, _newline);
+        _result := format('%s  <jobs>%s', _result, _newline);
 
         SELECT xml_item
         INTO _jobXML
@@ -196,29 +213,36 @@ BEGIN
                             VMA.tool,
                             VMA.parameter_file,
                             VMA.settings_file,
-                            VMA.protein_collection_list,
-                            VMA.protein_options,
-                            VMA.comment,
-                            VMA.state,
-                            DPJ.package_comment))
+                            Coalesce(VMA.protein_collection_list, '') AS protein_collection_list,
+                            Coalesce(VMA.protein_options, '') AS protein_options,
+                            Coalesce(VMA.comment, '') AS comment,
+                            Coalesce(VMA.state, '') AS state,
+                            Coalesce(DPJ.package_comment, '') AS package_comment))
                        ) AS xml_item
                FROM dpkg.V_Data_Package_Analysis_Jobs_Export AS DPJ
                     INNER JOIN V_Mage_Analysis_Jobs AS VMA  ON VMA.Job = DPJ.Job
                WHERE DPJ.data_pkg_id = _dataPackageID
             ) AS LookupQ;
 
-        _result := format('%s%s%s%s%s',
-                            _result,
-                            Coalesce(_jobXML::text, ''), _newline,
-                            '</jobs>', _newline);
+        If (Coalesce(_jobXML::text, '') = '') Then
+            _result := format('%s  %s%s',
+                                _result,
+                                '</jobs>', _newline);
+        Else
+            _result := format('%s    %s%s  %s%s',
+                                _result,
+                                _jobXML, _newline,
+                                '</jobs>', _newline);
+        End If;
+
     End If;
 
     ---------------------------------------------------
     -- Storage Paths
     ---------------------------------------------------
 
-    If _includeAll Or position(lower('Paths') in lower(_options)) > 0 Then
-        _result := format('%s<paths>%s', _result, _newline);
+    If _includeAll Or Position(Lower('Paths') In Lower(_options)) > 0 Then
+        _result := format('%s  <paths>%s', _result, _newline);
 
         ---------------------------------------------------
         -- Data package path
@@ -237,7 +261,7 @@ BEGIN
                WHERE ID = _dataPackageID
             ) AS LookupQ;
 
-        _result := format('%s%s%s', _result, Coalesce(_dpPathXML::text, ''), _newline);
+        _result := format('%s    %s%s', _result, Coalesce(_dpPathXML::text, ''), _newline);
 
         ---------------------------------------------------
         -- Dataset paths
@@ -261,7 +285,9 @@ BEGIN
                WHERE DPD.data_pkg_id = _dataPackageID
             ) AS LookupQ;
 
-        _result := format('%s%s%s', _result, Coalesce(_dsPathXML::text, ''), _newline);
+        If (Coalesce(_dsPathXML::text, '') <> '') Then
+           _result := format('%s    %s%s', _result, _dsPathXML, _newline);
+        End If;
 
         ---------------------------------------------------
         -- Job paths
@@ -275,9 +301,10 @@ BEGIN
                         XMLATTRIBUTES(
                             -- DPJ.data_pkg_id,
                             DPJ.job,
-                            format('%s\%s', DFP.dataset_folder_path, AJ.results_folder_name) AS folder_path,
-                            format('%s\%s', DFP.archive_folder_path, AJ.results_folder_name) AS archive_path,
-                            format('%s\%s', DFP.myemsl_path_flag   , AJ.results_folder_name) AS myemsl_path))
+                            -- DPJ.tool,
+                            DFP.dataset_folder_path || '\' || AJ.results_folder_name AS folder_path,
+                            DFP.archive_folder_path || '\' || AJ.results_folder_name AS archive_path,
+                            DFP.myemsl_path_flag    || '\' || AJ.results_folder_name AS myemsl_path))
                        ) AS xml_item
                FROM dpkg.V_Data_Package_Analysis_Jobs_Export AS DPJ
                     INNER JOIN t_dataset AS DS ON DS.dataset = DPJ.Dataset
@@ -286,10 +313,16 @@ BEGIN
                WHERE DPJ.data_pkg_id = _dataPackageID
             ) AS LookupQ;
 
-        _result := format('%s%s%s%s%s',
-                            _result,
-                            Coalesce(_jobPathXML::text, ''), _newline,
-                            '</paths>', _newline);
+        If (Coalesce(_jobPathXML::text, '') = '') Then
+            _result := format('%s  %s%s',
+                                _result,
+                                '</paths>', _newline);
+        Else
+            _result := format('%s    %s%s  %s%s',
+                                _result,
+                                _jobPathXML, _newline,
+                                '</paths>', _newline);
+        End If;
 
     End If;
 
