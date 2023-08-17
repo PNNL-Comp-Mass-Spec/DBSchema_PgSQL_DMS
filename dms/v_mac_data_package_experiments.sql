@@ -3,13 +3,14 @@
 --
 
 CREATE VIEW public.v_mac_data_package_experiments AS
- SELECT v_data_package_experiments_export.data_package_id,
-    v_data_package_experiments_export.experiment_id,
-    v_data_package_experiments_export.experiment,
-    v_data_package_experiments_export.created,
-    v_data_package_experiments_export.item_added,
-    v_data_package_experiments_export.package_comment
-   FROM dpkg.v_data_package_experiments_export;
+ SELECT dpe.data_pkg_id,
+    dpe.experiment_id,
+    dpe.experiment,
+    dpe.created,
+    dpe.item_added,
+    dpe.package_comment,
+    dpe.data_pkg_id AS data_package_id
+   FROM dpkg.v_data_package_experiments_export dpe;
 
 
 ALTER TABLE public.v_mac_data_package_experiments OWNER TO d3l243;

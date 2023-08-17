@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW sw.v_dms_data_package_datasets AS
- SELECT dpd.data_package_id,
+ SELECT dpd.data_pkg_id,
     dpd.dataset_id,
     dpd.dataset,
     dpd.dataset_folder_path,
@@ -22,7 +22,8 @@ CREATE VIEW sw.v_dms_data_package_datasets AS
     dpd.experiment_comment,
     dpd.experiment_tissue_id,
     dpd.experiment_tissue_name,
-    COALESCE(dpd.package_comment, ''::public.citext) AS package_comment
+    COALESCE(dpd.package_comment, ''::public.citext) AS package_comment,
+    dpd.data_pkg_id AS data_package_id
    FROM dpkg.v_dms_data_package_aggregation_datasets dpd;
 
 

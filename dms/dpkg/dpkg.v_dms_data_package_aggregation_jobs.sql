@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW dpkg.v_dms_data_package_aggregation_jobs AS
- SELECT tpj.data_pkg_id AS data_package_id,
+ SELECT tpj.data_pkg_id,
     aj.job,
     analysistool.analysis_tool AS tool,
     ds.dataset,
@@ -30,7 +30,8 @@ CREATE VIEW dpkg.v_dms_data_package_aggregation_jobs AS
     e.reason AS experiment_reason,
     e.comment AS experiment_comment,
     org.newt_id AS experiment_newt_id,
-    org.newt_name AS experiment_newt_name
+    org.newt_name AS experiment_newt_name,
+    tpj.data_pkg_id AS data_package_id
    FROM (((((((((dpkg.t_data_package_analysis_jobs tpj
      JOIN public.t_analysis_job aj ON ((tpj.job = aj.job)))
      JOIN public.t_dataset ds ON ((aj.dataset_id = ds.dataset_id)))

@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_data_package_analysis_job_psm_list_report AS
- SELECT dpj.data_package_id AS data_pkg,
+ SELECT dpj.data_pkg_id AS data_pkg,
     aj.job,
     aj.state_name_cached AS state,
     analysistool.analysis_tool AS tool,

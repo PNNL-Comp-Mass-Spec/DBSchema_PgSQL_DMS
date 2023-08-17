@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW sw.v_dms_data_package_aggregation_jobs AS
- SELECT src.data_package_id,
+ SELECT src.data_pkg_id,
     src.job,
     src.tool,
     src.dataset,
@@ -32,7 +32,8 @@ CREATE VIEW sw.v_dms_data_package_aggregation_jobs AS
     src.experiment_reason,
     src.experiment_comment,
     src.experiment_newt_id,
-    src.experiment_newt_name
+    src.experiment_newt_name,
+    src.data_pkg_id AS data_package_id
    FROM (dpkg.v_dms_data_package_aggregation_jobs src
      LEFT JOIN sw.t_job_steps_history jsh ON (((src.job = jsh.job) AND (jsh.most_recent_entry = 1) AND (jsh.shared_result_version > 0) AND (jsh.state = ANY (ARRAY[3, 5])))));
 

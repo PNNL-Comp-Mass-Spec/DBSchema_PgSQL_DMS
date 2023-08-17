@@ -4,7 +4,7 @@
 
 CREATE VIEW dpkg.v_myemsl_data_package_uploads AS
  SELECT mu.entry_id,
-    mu.data_pkg_id AS data_package_id,
+    mu.data_pkg_id,
     mu.subfolder,
     mu.file_count_new,
     mu.file_count_updated,
@@ -20,7 +20,8 @@ CREATE VIEW dpkg.v_myemsl_data_package_uploads AS
         END) AS status_uri,
     mu.available,
     mu.verified,
-    mu.entered
+    mu.entered,
+    mu.data_pkg_id AS data_package_id
    FROM (dpkg.t_myemsl_uploads mu
      LEFT JOIN dpkg.t_uri_paths p ON ((mu.status_uri_path_id = p.uri_path_id)));
 

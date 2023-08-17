@@ -3,13 +3,14 @@
 --
 
 CREATE VIEW dpkg.v_data_package_analysis_jobs_export AS
- SELECT t_data_package_analysis_jobs.data_pkg_id AS data_package_id,
-    t_data_package_analysis_jobs.job,
-    t_data_package_analysis_jobs.dataset,
-    t_data_package_analysis_jobs.tool,
-    t_data_package_analysis_jobs.package_comment,
-    t_data_package_analysis_jobs.item_added
-   FROM dpkg.t_data_package_analysis_jobs;
+ SELECT dpj.data_pkg_id,
+    dpj.job,
+    dpj.dataset,
+    dpj.tool,
+    dpj.package_comment,
+    dpj.item_added,
+    dpj.data_pkg_id AS data_package_id
+   FROM dpkg.t_data_package_analysis_jobs dpj;
 
 
 ALTER TABLE dpkg.v_data_package_analysis_jobs_export OWNER TO d3l243;

@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW dpkg.v_dms_data_package_aggregation_datasets AS
- SELECT tpd.data_pkg_id AS data_package_id,
+ SELECT tpd.data_pkg_id,
     ds.dataset_id,
     ds.dataset,
     dfp.dataset_folder_path,
@@ -22,7 +22,8 @@ CREATE VIEW dpkg.v_dms_data_package_aggregation_datasets AS
     e.comment AS experiment_comment,
     tpd.package_comment,
     e.tissue_id AS experiment_tissue_id,
-    bto.term_name AS experiment_tissue_name
+    bto.term_name AS experiment_tissue_name,
+    tpd.data_pkg_id AS data_package_id
    FROM ((((((((((dpkg.t_data_package_datasets tpd
      JOIN public.t_dataset ds ON ((tpd.dataset_id = ds.dataset_id)))
      JOIN public.v_dataset_folder_paths dfp ON ((dfp.dataset_id = ds.dataset_id)))
