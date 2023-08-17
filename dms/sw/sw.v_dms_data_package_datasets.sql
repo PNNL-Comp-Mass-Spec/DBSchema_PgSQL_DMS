@@ -3,27 +3,27 @@
 --
 
 CREATE VIEW sw.v_dms_data_package_datasets AS
- SELECT v_dms_data_package_aggregation_datasets.data_package_id,
-    v_dms_data_package_aggregation_datasets.dataset_id,
-    v_dms_data_package_aggregation_datasets.dataset,
-    v_dms_data_package_aggregation_datasets.dataset_folder_path,
-    v_dms_data_package_aggregation_datasets.archive_folder_path,
-    v_dms_data_package_aggregation_datasets.instrument_name,
-    v_dms_data_package_aggregation_datasets.instrument_group,
-    v_dms_data_package_aggregation_datasets.instrument_class,
-    v_dms_data_package_aggregation_datasets.raw_data_type,
-    v_dms_data_package_aggregation_datasets.acq_time_start,
-    v_dms_data_package_aggregation_datasets.dataset_created,
-    v_dms_data_package_aggregation_datasets.organism,
-    v_dms_data_package_aggregation_datasets.experiment_newt_id,
-    v_dms_data_package_aggregation_datasets.experiment_newt_name,
-    v_dms_data_package_aggregation_datasets.experiment,
-    v_dms_data_package_aggregation_datasets.experiment_reason,
-    v_dms_data_package_aggregation_datasets.experiment_comment,
-    v_dms_data_package_aggregation_datasets.experiment_tissue_id,
-    v_dms_data_package_aggregation_datasets.experiment_tissue_name,
-    COALESCE(v_dms_data_package_aggregation_datasets.package_comment, ''::public.citext) AS package_comment
-   FROM dpkg.v_dms_data_package_aggregation_datasets;
+ SELECT dpd.data_package_id,
+    dpd.dataset_id,
+    dpd.dataset,
+    dpd.dataset_folder_path,
+    dpd.archive_folder_path,
+    dpd.instrument_name,
+    dpd.instrument_group,
+    dpd.instrument_class,
+    dpd.raw_data_type,
+    dpd.acq_time_start,
+    dpd.dataset_created,
+    dpd.organism,
+    dpd.experiment_newt_id,
+    dpd.experiment_newt_name,
+    dpd.experiment,
+    dpd.experiment_reason,
+    dpd.experiment_comment,
+    dpd.experiment_tissue_id,
+    dpd.experiment_tissue_name,
+    COALESCE(dpd.package_comment, ''::public.citext) AS package_comment
+   FROM dpkg.v_dms_data_package_aggregation_datasets dpd;
 
 
 ALTER TABLE sw.v_dms_data_package_datasets OWNER TO d3l243;
