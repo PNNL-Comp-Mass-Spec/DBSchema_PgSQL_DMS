@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_requested_runs_from_item_list(_itemlist te
 /****************************************************
 **
 **  Desc:
-**      Returns a table of the requested runs associated with
-**      the comma-separated list of item IDs
+**      Returns a table of the requested runs associated with the comma-separated list of request IDs
 **
 **  Arguments:
 **    _itemList     Comma-separated list of item IDs
@@ -32,6 +31,7 @@ CREATE OR REPLACE FUNCTION public.get_requested_runs_from_item_list(_itemlist te
 **          06/07/2023 mem - Add ORDER BY to string_agg()
 **          07/26/2023 mem - Move "Not" keyword to before the field name
 **          07/27/2023 mem - Use table alias when referencing column
+**          08/16/2023 mem - Update table alias
 **
 *****************************************************/
 DECLARE
@@ -124,7 +124,7 @@ BEGIN
     End If;
 
     -----------------------------------------
-    -- Return requsets runs based on items in list
+    -- Return requested runs based on items in list
     -----------------------------------------
 
     If _itemType::citext = 'Batch_ID'::citext Then
@@ -165,10 +165,10 @@ BEGIN
 
     ElsIf _itemType::citext = 'Data_Package_ID'::citext Then
         RETURN QUERY
-        SELECT DISTINCT TR.request_id
-        FROM t_requested_run TR
-        INNER join dpkg.v_data_package_dataset_export DS ON TR.dataset_id = DS.dataset_id
-        WHERE DS.data_package_id IN (SELECT public.try_cast(Item, 0) FROM Tmp_Items);
+        SELECT DISTINCT RR.request_id
+        FROM t_requested_run RR
+        INNER join dpkg.v_data_package_dataset_export DPDE ON RR.dataset_id = DPDE.dataset_id
+        WHERE DPDE.data_package_id IN (SELECT public.try_cast(Item, 0) FROM Tmp_Items);
     End If;
 
     DROP TABLE Tmp_Items;
