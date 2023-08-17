@@ -32,6 +32,7 @@ CREATE OR REPLACE FUNCTION public.get_requested_runs_from_item_list(_itemlist te
 **          07/26/2023 mem - Move "Not" keyword to before the field name
 **          07/27/2023 mem - Use table alias when referencing column
 **          08/16/2023 mem - Update table alias
+**          08/17/2023 mem - Use renamed column data_pkg_id in V_Data_Package_Dataset_Export
 **
 *****************************************************/
 DECLARE
@@ -167,8 +168,9 @@ BEGIN
         RETURN QUERY
         SELECT DISTINCT RR.request_id
         FROM t_requested_run RR
-        INNER join dpkg.v_data_package_dataset_export DPDE ON RR.dataset_id = DPDE.dataset_id
-        WHERE DPDE.data_package_id IN (SELECT public.try_cast(Item, 0) FROM Tmp_Items);
+             INNER JOIN dpkg.V_Data_Package_Dataset_Export DPDE
+               ON RR.dataset_id = DPDE.dataset_id
+        WHERE DPDE.data_pkg_id IN (SELECT public.try_cast(Item, 0) FROM Tmp_Items);
     End If;
 
     DROP TABLE Tmp_Items;

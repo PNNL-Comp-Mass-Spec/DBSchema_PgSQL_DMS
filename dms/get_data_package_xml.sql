@@ -46,6 +46,7 @@ CREATE OR REPLACE FUNCTION public.get_data_package_xml(_datapackageid integer, _
 **          11/15/2022 mem - Use new column name
 **          04/27/2023 mem - Use boolean for data type name
 **          05/30/2023 mem - Use format() for string concatenation
+**          08/17/2023 mem - Use renamed column data_pkg_id in views V_Data_Package_Analysis_Jobs_Export, V_Data_Package_Dataset_Export, and V_Data_Package_Experiments_Export
 **
 *****************************************************/
 DECLARE
@@ -136,7 +137,7 @@ BEGIN
                     INNER JOIN t_experiments TEX ON TDPE.Experiment_ID = TEX.exp_id
                     INNER JOIN t_campaign TC ON TC.campaign_id = TEX.campaign_id
                     INNER JOIN public.t_organisms TRG ON TRG.organism_id = TEX.organism_id
-               WHERE TDPE.Data_Package_ID = _dataPackageID
+               WHERE DPE.data_pkg_id = _dataPackageID
             ) AS LookupQ;
 
         _result := format('%s%s%s%s%s',
@@ -168,7 +169,7 @@ BEGIN
                        ) AS xml_item
                FROM dpkg.V_Data_Package_Dataset_Export AS DPD
                     INNER JOIN t_dataset AS DS ON DS.Dataset_ID = DPD.Dataset_ID
-               WHERE DPD.data_package_id = _dataPackageID
+               WHERE DPD.data_pkg_id = _dataPackageID
             ) AS LookupQ;
 
         _result := format('%s%s%s%s%s',
@@ -203,7 +204,7 @@ BEGIN
                        ) AS xml_item
                FROM dpkg.V_Data_Package_Analysis_Jobs_Export AS DPJ
                     INNER JOIN V_Mage_Analysis_Jobs AS VMA  ON VMA.Job = DPJ.Job
-               WHERE DPJ.Data_Package_ID = _dataPackageID
+               WHERE DPJ.data_pkg_id = _dataPackageID
             ) AS LookupQ;
 
         _result := format('%s%s%s%s%s',
@@ -257,7 +258,7 @@ BEGIN
                FROM dpkg.v_data_package_dataset_export AS DPD
                     INNER JOIN t_dataset AS DS ON DS.Dataset_ID = DPD.Dataset_ID
                     INNER JOIN t_cached_dataset_folder_paths AS DFP ON DFP.dataset_id = DS.Dataset_ID
-               WHERE DPD.data_package_id = _dataPackageID
+               WHERE DPD.data_pkg_id = _dataPackageID
             ) AS LookupQ;
 
         _result := format('%s%s%s', _result, Coalesce(_dsPathXML::text, ''), _newline);
@@ -272,7 +273,7 @@ BEGIN
                  XMLAGG(XMLELEMENT(
                         NAME job_path,
                         XMLATTRIBUTES(
-                            --TDPA.data_package_id,
+                            -- DPJ.data_pkg_id,
                             DPJ.job,
                             format('%s\%s', DFP.dataset_folder_path, AJ.results_folder_name) AS folder_path,
                             format('%s\%s', DFP.archive_folder_path, AJ.results_folder_name) AS archive_path,
@@ -282,7 +283,7 @@ BEGIN
                     INNER JOIN t_dataset AS DS ON DS.dataset = DPJ.Dataset
                     INNER JOIN t_cached_dataset_folder_paths AS DFP ON DFP.dataset_id = DS.Dataset_ID
                     INNER JOIN t_analysis_job AS AJ ON AJ.job = DPJ.Job
-               WHERE DPJ.Data_Package_ID = _dataPackageID
+               WHERE DPJ.data_pkg_id = _dataPackageID
             ) AS LookupQ;
 
         _result := format('%s%s%s%s%s',
