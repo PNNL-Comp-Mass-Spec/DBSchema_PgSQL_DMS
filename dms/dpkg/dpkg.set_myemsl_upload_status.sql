@@ -1,36 +1,33 @@
 --
-CREATE OR REPLACE PROCEDURE dpkg.set_myemsl_upload_status
-(
-    _entryID int,
-    _dataPackageID int,
-    _available int,
-    _verified int,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: set_myemsl_upload_status(integer, integer, integer, integer, text, text); Type: PROCEDURE; Schema: dpkg; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE dpkg.set_myemsl_upload_status(IN _entryid integer, IN _datapackageid integer, IN _available integer, IN _verified integer, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the status for an entry in T_MyEMSL_Uploads
+**      Updates the status for an entry in dpkg.t_myemsl_uploads
 **
 **      Updates column Available if Step 5 is "completed"
 **      Updates column Verified  if Step 6 is "verified"
 **
-**      For example, see https://a4.my.emsl.pnl.gov/myemsl/cgi-bin/status/2271574/xml
+**      For example, see https://ingestdms.my.emsl.pnl.gov/get_state?job_id=2825321
 **
 **  Arguments:
-**    _dataPackageID   Used as a safety check to confirm that we're updating a valid entry
+**    _entryID          Row identifier in dpkg.t_myemsl_uploads
+**    _dataPackageID    Used as a safety check to confirm that we're updating a valid entry
+**    _available        1 if the data was successfully ingested, otherwise 0
+**    _verified         1 if the data was successfully verified, otherwise 0
 **
 **  Auth:   mem
 **  Date:   09/25/2013 mem - Initial version
 **          05/20/2019 mem - Add Set XACT_ABORT
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/16/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
-
 BEGIN
     _message := '';
     _returnCode := '';
@@ -60,7 +57,7 @@ BEGIN
     -- Make sure this is a valid entry
     ---------------------------------------------------
 
-    If Not Exists (SELECT * FROM dpkg.t_myemsl_uploads WHERE entry_id = _entryID AND data_pkg_id = _dataPackageID) Then
+    If Not Exists (SELECT entry_id FROM dpkg.t_myemsl_uploads WHERE entry_id = _entryID AND data_pkg_id = _dataPackageID) Then
         _message := format('Entry %s does not correspond to data package %s', _entryID, _dataPackageID);
         _returnCode := 'U5203';
         RETURN;
@@ -79,4 +76,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE dpkg.set_myemsl_upload_status IS 'SetMyEMSLUploadStatus';
+
+ALTER PROCEDURE dpkg.set_myemsl_upload_status(IN _entryid integer, IN _datapackageid integer, IN _available integer, IN _verified integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE set_myemsl_upload_status(IN _entryid integer, IN _datapackageid integer, IN _available integer, IN _verified integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: dpkg; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE dpkg.set_myemsl_upload_status(IN _entryid integer, IN _datapackageid integer, IN _available integer, IN _verified integer, INOUT _message text, INOUT _returncode text) IS 'SetMyEMSLUploadStatus';
+
