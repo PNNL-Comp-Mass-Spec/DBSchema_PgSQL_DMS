@@ -15,14 +15,15 @@ AS $$
 **
 **  Desc:
 **      Updates data package items in list according to command mode
-**      This procedure is used by web page "Data Package Items List Report page" (data_package_items/report)
+**      This procedure is used by web page "Data Package Items List Report" (data_package_items/report)
 **
 **      Example contents of _paramListXML
 **      <item pkg="194" type="Job" id="913603"></item><item pkg="194" type="Job" id="913604"></item>
 **
 **  Arguments:
-**    _mode            'add', 'update', 'comment', 'delete'
-**    _removeParents   When 1, remove parent datasets and experiments for affected jobs (or experiments for affected datasets)
+**    _paramListXML     XML listing items to update for one or more data packages
+**    _mode            'add', 'update', 'comment', or 'delete'
+**    _removeParents   When 1 and _mode is 'delete', remove parent datasets and experiments for affected jobs (or experiments for affected datasets)
 **
 **  Auth:   grk
 **  Date:   06/10/2009 grk - Initial release
@@ -46,6 +47,7 @@ DECLARE
     _logUsage bool := false;
     _logMessage text;
     _xml xml;
+    _removeParentItems boolean;
 
     _sqlState text;
     _exceptionMessage text;
@@ -78,12 +80,13 @@ BEGIN
     BEGIN
 
         _removeParents := Coalesce(_removeParents, 0);
+        _removeParentItems := CASE WHEN _removeParents > 0 THEN true ELSE false END;
 
         -- Set this to true to log a debug message
         If _logUsage Then
             _logMessage := format('Mode: %s; RemoveParents: %s; %s',
                                 _mode,
-                                _removeParents,
+                                _removeParentItems,
                                 Coalesce(_paramListXML, 'Error: _paramListXML is null'));
 
             CALL public.post_log_entry ('Debug', _logMessage, 'Update_Data_Package_Items_XML', 'dpkg');
@@ -96,7 +99,7 @@ BEGIN
         CREATE TEMP TABLE Tmp_DataPackageItems (
             DataPackageID int not null,   -- Data package ID
             ItemType   citext null,       -- 'Job', 'Dataset', 'Experiment', 'Biomaterial', or 'EUSProposal'
-            Identifier citext null        -- Job ID, Dataset Name or ID, Experiment Name, Cell_Culture Name, or EUSProposal ID
+            Identifier citext null        -- Job ID, Dataset Name or ID, Experiment Name, Biomaterial Name, or EUSProposal ID
         );
 
         _xml := _paramListXML;
@@ -113,10 +116,10 @@ BEGIN
                                   Identifier citext PATH '@id')
              ) XmlQ;
 
-        CALL update_data_package_items_utility (
+        CALL dpkg.update_data_package_items_utility (
                                 _comment,
                                 _mode,
-                                _removeParents,
+                                _removeParents => _removeParentItems,
                                 _message => _message,           -- Output
                                 _returnCode => _returnCode,     -- Output
                                 _callingUser => _callingUser);

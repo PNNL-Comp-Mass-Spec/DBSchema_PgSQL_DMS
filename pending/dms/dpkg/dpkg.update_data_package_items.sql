@@ -24,7 +24,7 @@ AS $$
 **    _packageID       Data package ID
 **    _itemType        analysis_jobs, datasets, experiments, biomaterial, or proposals
 **    _itemList        Comma-separated list of items
-**    _mode            'add', 'update', 'comment', 'delete'
+**    _mode            'add', 'comment', or 'delete'
 **    _removeParents   When 1, remove parent datasets and experiments for affected jobs (or experiments for affected datasets)
 **
 **  Auth:   grk
@@ -114,7 +114,7 @@ BEGIN
         CREATE TEMP TABLE Tmp_DataPackageItems (
             DataPackageID int not null,   -- Data package ID
             ItemType   citext null,       -- 'Job', 'Dataset', 'Experiment', 'Biomaterial', or 'EUSProposal'
-            Identifier citext null        -- Job ID, Dataset Name or ID, Experiment Name, Cell_Culture Name, or EUSProposal ID
+            Identifier citext null        -- Job ID, Dataset Name or ID, Experiment Name, Biomaterial Name, or EUSProposal ID
         );
 
         INSERT INTO Tmp_DataPackageItems (DataPackageID, ItemType, Identifier)
@@ -125,7 +125,7 @@ BEGIN
         -- Apply the changes
         ---------------------------------------------------
 
-        CALL update_data_package_items_utility (
+        CALL dpkg.update_data_package_items_utility (
                                     _comment,
                                     _mode,
                                     _removeParents,

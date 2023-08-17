@@ -347,7 +347,7 @@ BEGIN
             FROM t_requested_run RR
                  INNER JOIN Tmp_BatchIDs
                    ON RR.batch_id = Tmp_BatchIDs.batch_id
-            GROUP BY RR.batch_id
+            GROUP BY RR.batch_id;
         End If;
 
         If _dataPackageDefined > 0 Then
@@ -356,7 +356,7 @@ BEGIN
             FROM dpkg.V_Data_Package_Dataset_Export DataPkgDatasets
                  INNER JOIN t_dataset DS
                    ON DataPkgDatasets.dataset_id = DS.dataset_id
-            WHERE DataPkgDatasets.Data_Package_ID = _dataPackageID
+            WHERE DataPkgDatasets.Data_Package_ID = _dataPackageID;
         End If;
 
         If _experimentGroupDefined > 0 Then
