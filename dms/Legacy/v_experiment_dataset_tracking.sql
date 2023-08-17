@@ -8,7 +8,7 @@ CREATE VIEW public.v_experiment_dataset_tracking AS
     instname.instrument,
     c.campaign,
     ds.created,
-    e.experiment AS "#experiment_num"
+    e.experiment AS "#experiment"
    FROM ((((public.t_experiments e
      JOIN public.t_dataset ds ON ((e.exp_id = ds.exp_id)))
      JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id)))
