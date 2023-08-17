@@ -1,19 +1,15 @@
 --
-CREATE OR REPLACE PROCEDURE dpkg.update_osm_package
-(
-    _osmPackageID INT,
-    _mode text,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_osm_package(integer, text, text, text, text); Type: PROCEDURE; Schema: dpkg; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE dpkg.update_osm_package(IN _osmpackageid integer, IN _mode text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Update or delete given OSM Package
-**      (only supports delete)
+**      Update or delete the given OSM Package
+**      (the only supported mode is 'delete')
 **
 **  Arguments:
 **    _osmPackageID     OSM Package ID
@@ -24,7 +20,7 @@ AS $$
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          05/18/2016 mem - Log errors to T_Log_Entries
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/16/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -63,24 +59,42 @@ BEGIN
 
     BEGIN
 
+        ---------------------------------------------------
+        -- Validate the inputs
+        ---------------------------------------------------
+
+        _mode := Trim(Coalesce(_mode, ''));
+
+        If Not _mode In ( 'delete') Then
+            _message := format('The only supported mode is delete; "%s" is invalid', _mode);
+            RAISE WARNING '%', _message
+            RETURN;
+        End If;
+
         If _mode = 'delete' Then
             ---------------------------------------------------
             -- 'delete' (mark as inactive) associated file attachments
             ---------------------------------------------------
 
-            UPDATE t_file_attachment
+            UPDATE public.t_file_attachment
             SET active = 0
             WHERE Entity_Type = 'osm_package' AND
-                  Entity_ID = _osmPackageID;
+                  Entity_ID = _osmPackageID::text;
 
             ---------------------------------------------------
             -- Remove OSM package from table
             ---------------------------------------------------
 
-            DELETE FROM t_osm_package
+            DELETE FROM dpkg.t_osm_package
             WHERE osm_pkg_id = _osmPackageID;
 
-        End If; --<delete>
+            If FOUND Then
+                _message := format('Deleted OSM package %s', _osmPackageID);
+            Else
+                _message := format('OSM package %s does not exist; nothing to delete', _osmPackageID);
+            End If;
+
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -102,5 +116,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE dpkg.update_osm_package IS 'UpdateOSMPackage';
+
+ALTER PROCEDURE dpkg.update_osm_package(IN _osmpackageid integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_osm_package(IN _osmpackageid integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: dpkg; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE dpkg.update_osm_package(IN _osmpackageid integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UpdateOSMPackage';
 
