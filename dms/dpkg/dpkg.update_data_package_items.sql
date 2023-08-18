@@ -1,19 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE dpkg.update_data_package_items
-(
-    _packageID int,
-    _itemType text,
-    _itemList text,
-    _comment text,
-    _mode text = 'update',
-    _removeParents int default 0,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text default '',
-    _infoOnly boolean default false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_data_package_items(integer, text, text, text, text, integer, text, text, text, boolean); Type: PROCEDURE; Schema: dpkg; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE dpkg.update_data_package_items(IN _packageid integer, IN _itemtype text, IN _itemlist text, IN _comment text, IN _mode text DEFAULT 'update'::text, IN _removeparents integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text, IN _infoonly boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -23,9 +14,14 @@ AS $$
 **  Arguments:
 **    _packageID       Data package ID
 **    _itemType        analysis_jobs, datasets, experiments, biomaterial, or proposals
-**    _itemList        Comma-separated list of items
+**    _itemList        Comma-separated list of item IDs or Names
+**                     Allowed values: Job IDs, Dataset Names, Dataset IDs, Experiment Names, Biomaterial Names, or EUSProposal IDs
 **    _mode            'add', 'comment', or 'delete'
-**    _removeParents   When 1, remove parent datasets and experiments for affected jobs (or experiments for affected datasets)
+**    _removeParents    When 1 and _mode is 'delete', remove parent datasets and experiments for affected jobs (or experiments for affected datasets)
+**    _message          Output: status message
+**    _returnCode       Output: return code
+**    _callingUser      Username of the calling user
+**    _infoOnly         When true, preview updates
 **
 **  Auth:   grk
 **  Date:   05/21/2009
@@ -40,7 +36,7 @@ AS $$
 **          11/14/2016 mem - Add parameter _removeParents
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          03/10/2022 mem - Replace spaces and tabs in the item list with commas
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/17/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -51,8 +47,9 @@ DECLARE
 
     _entityName text;
     _logUsage bool := false;
-    _usageMessage text;
-    _msgForLog text := ERROR_MESSAGE();
+    _logMessage text;
+
+    _removeParentItems boolean;
 
     _sqlState text;
     _exceptionMessage text;
@@ -83,29 +80,33 @@ BEGIN
     End If;
 
     BEGIN
-        SELECT CASE
-                WHEN _itemType::citext IN ('analysis_jobs', 'job', 'jobs') THEN 'Job'
-                WHEN _itemType::citext IN ('datasets', 'dataset') THEN 'Dataset'
-                WHEN _itemType::citext IN ('experiments', 'experiment') THEN 'Experiment'
-                WHEN _itemType::citext = 'biomaterial' THEN 'Biomaterial'
-                WHEN _itemType::citext = 'proposals' THEN 'EUSProposal'
-                ELSE ''
-               END
-        INTO _entityName;
+        _entityName := CASE
+                            WHEN _itemType::citext IN ('analysis_jobs', 'job', 'jobs') THEN 'Job'
+                            WHEN _itemType::citext IN ('datasets', 'dataset') THEN 'Dataset'
+                            WHEN _itemType::citext IN ('experiments', 'experiment') THEN 'Experiment'
+                            WHEN _itemType::citext = 'biomaterial' THEN 'Biomaterial'
+                            WHEN _itemType::citext = 'proposals' THEN 'EUSProposal'
+                            ELSE ''
+                       END;
 
         If Coalesce(_entityName, '') = '' Then
-            _message := format('Item type "%s" is unrecognized', _itemType);
+            _message := format('Item type "%s" is unrecognized', Coalesce(_itemType, 'Error: _itemType is Null'));
             RAISE EXCEPTION '%', _message;
         End If;
 
+        _removeParents := Coalesce(_removeParents, 0);
+        _removeParentItems := CASE WHEN _removeParents > 0 THEN true ELSE false END;
+
         -- Set this to true to log a debug message
         If _logUsage Then
-            _usageMessage := format('Updating %ss for data package %s', _entityName, _packageID);
-            CALL public.post_log_entry ('Debug', _usageMessage, 'Update_Data_Package_Items', 'dpkg')
+            _logMessage := format('Updating %ss for data package %s', _entityName, _packageID);
+            CALL public.post_log_entry ('Debug', _logMessage, 'Update_Data_Package_Items', 'dpkg');
         End If;
 
         _itemList := Trim(Coalesce(_itemList, ''));
-        _itemList := Replace(Replace(_itemList, ' ', ','), Char(9), ',');
+
+        -- Replace spaces and tabs with commas
+        _itemList := Replace(Replace(_itemList, ' ', ','), Chr(9), ',');
 
         ---------------------------------------------------
         -- Create and populate a temporary table using the XML in _paramListXML
@@ -126,13 +127,14 @@ BEGIN
         ---------------------------------------------------
 
         CALL dpkg.update_data_package_items_utility (
-                                    _comment,
-                                    _mode,
-                                    _removeParents,
-                                    _message => _message,           -- Output
-                                    _returnCode => _returnCode,     -- Output
-                                    _callingUser => _callingUser,
-                                    _infoOnly => _infoOnly);
+                            _comment,
+                            _mode,
+                            _removeParents => _removeParentItems,
+                            _message => _message,           -- Output
+                            _returnCode => _returnCode,     -- Output
+                            _callingUser => _callingUser,
+                            _infoOnly => _infoOnly);
+
         If _returnCode <> '' Then
             If Coalesce(_message, '') = '' Then
                 _message := format('Unknown error calling update_data_package_items_utility (return code %s)', _returnCode);
@@ -167,4 +169,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE dpkg.update_data_package_items IS 'UpdateDataPackageItems';
+
+ALTER PROCEDURE dpkg.update_data_package_items(IN _packageid integer, IN _itemtype text, IN _itemlist text, IN _comment text, IN _mode text, IN _removeparents integer, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _infoonly boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_data_package_items(IN _packageid integer, IN _itemtype text, IN _itemlist text, IN _comment text, IN _mode text, IN _removeparents integer, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _infoonly boolean); Type: COMMENT; Schema: dpkg; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE dpkg.update_data_package_items(IN _packageid integer, IN _itemtype text, IN _itemlist text, IN _comment text, IN _mode text, IN _removeparents integer, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _infoonly boolean) IS 'UpdateDataPackageItems';
+
