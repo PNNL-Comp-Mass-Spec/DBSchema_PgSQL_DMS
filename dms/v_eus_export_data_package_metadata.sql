@@ -3,25 +3,26 @@
 --
 
 CREATE VIEW public.v_eus_export_data_package_metadata AS
- SELECT v_data_package_export.id,
-    v_data_package_export.name,
-    v_data_package_export.description,
-    v_data_package_export.owner AS owner_username,
-    v_data_package_export.team,
-    v_data_package_export.state,
-    v_data_package_export.package_type,
-    v_data_package_export.total AS total_items,
-    v_data_package_export.jobs,
-    v_data_package_export.datasets,
-    v_data_package_export.experiments,
-    v_data_package_export.biomaterial,
-    v_data_package_export.last_modified,
-    v_data_package_export.created,
-    v_data_package_export.package_file_folder,
-    v_data_package_export.storage_path_relative,
-    v_data_package_export.share_path,
-    v_data_package_export.archive_path
-   FROM dpkg.v_data_package_export;
+ SELECT dpe.data_pkg_id,
+    dpe.name,
+    dpe.description,
+    dpe.owner AS owner_username,
+    dpe.team,
+    dpe.state,
+    dpe.package_type,
+    dpe.total AS total_items,
+    dpe.jobs,
+    dpe.datasets,
+    dpe.experiments,
+    dpe.biomaterial,
+    dpe.last_modified,
+    dpe.created,
+    dpe.package_file_folder,
+    dpe.storage_path_relative,
+    dpe.share_path,
+    dpe.archive_path,
+    dpe.data_pkg_id AS id
+   FROM dpkg.v_data_package_export dpe;
 
 
 ALTER TABLE public.v_eus_export_data_package_metadata OWNER TO d3l243;

@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_transfer_paths_in_params_using_data_pk
 **          06/24/2012 mem - Add parameter DataPackagePath
 **          03/24/2023 mem - Capitalize job parameter TransferFolderPath
 **          07/27/2023 mem - Ported to PostgreSQL
+**          08/17/2023 mem - Use renamed column data_pkg_id in view V_Data_Package_Paths
 **
 *****************************************************/
 DECLARE
@@ -80,7 +81,7 @@ BEGIN
         INTO _dataPkgName, _dataPkgSharePath
         FROM dpkg.t_data_package dp
              INNER JOIN dpkg.v_data_package_paths dpp
-               ON dp.data_pkg_id = dpp.id
+               ON dp.data_pkg_id = dpp.data_pkg_id
         WHERE dp.data_pkg_id = _dataPackageID;
 
         If Not FOUND Then

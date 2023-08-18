@@ -46,7 +46,7 @@ BEGIN
                ON TD.dataset = TA.dataset AND
                   TD.data_pkg_id = TA.data_pkg_id AND
                   TA.tool = _tool
-        WHERE TD.data_pkg_id = _packageID AND TA.job is null;
+        WHERE TD.data_pkg_id = _packageID AND TA.job IS NULL;
     End If;
 
     -- Package datasets with no DMS jobs for given tool
@@ -57,12 +57,12 @@ BEGIN
                NULL::int AS job_count
         FROM dpkg.t_data_package_datasets AS TD
         WHERE TD.data_pkg_id = _packageID AND
-              NOT EXISTS (  SELECT J.dataset_id
-                            FROM public.t_analysis_job AS J
-                                 INNER JOIN public.t_analysis_tool Tool
-                                   ON J.analysis_tool_id = Tool.analysis_tool_id AND
-                                      Tool.analysis_tool = _tool
-                            WHERE J.dataset_id = TD.dataset_id
+              NOT EXISTS ( SELECT J.dataset_id
+                           FROM public.t_analysis_job AS J
+                                INNER JOIN public.t_analysis_tool Tool
+                                  ON J.analysis_tool_id = Tool.analysis_tool_id AND
+                                     Tool.analysis_tool = _tool
+                           WHERE J.dataset_id = TD.dataset_id
                          );
     End If;
 

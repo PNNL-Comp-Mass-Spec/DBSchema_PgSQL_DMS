@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE dpkg.delete_data_package(IN _packageid integer, IN _
 **                         - Change the default for _infoOnly to 1 (true)
 **          01/20/2023 mem - Use new column names in V_Data_Package_Detail_Report
 **          08/15/2023 mem - Ported to PostgreSQL
+**          08/17/2023 mem - Use renamed column data_pkg_id in view V_Data_Package_Paths
 **
 *****************************************************/
 DECLARE
@@ -191,7 +192,7 @@ BEGIN
         SELECT Share_Path
         INTO _sharePath
         FROM dpkg.V_Data_Package_Paths
-        WHERE ID = _packageID;
+        WHERE data_pkg_id = _packageID;
 
         If _infoOnly Then
             _message := format('Would delete data package %s and all associated metadata', _packageID);

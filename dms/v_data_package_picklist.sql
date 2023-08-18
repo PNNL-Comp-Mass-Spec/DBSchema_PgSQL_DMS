@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_data_package_picklist AS
- SELECT v_data_package_export.id,
+ SELECT v_data_package_export.data_pkg_id AS id,
     v_data_package_export.name,
     (((v_data_package_export.id)::text || ': '::text) || (v_data_package_export.name)::text) AS id_with_name
    FROM dpkg.v_data_package_export;

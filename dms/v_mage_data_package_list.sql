@@ -3,18 +3,19 @@
 --
 
 CREATE VIEW public.v_mage_data_package_list AS
- SELECT v_data_package_export.id,
-    v_data_package_export.name AS package,
-    v_data_package_export.description,
-    v_data_package_export.owner,
-    v_data_package_export.team,
-    v_data_package_export.state,
-    v_data_package_export.package_type,
-    v_data_package_export.last_modified,
-    v_data_package_export.created,
-    v_data_package_export.share_path AS folder,
-    ''::text AS archive_path
-   FROM dpkg.v_data_package_export;
+ SELECT dpe.data_pkg_id,
+    dpe.name AS package,
+    dpe.description,
+    dpe.owner,
+    dpe.team,
+    dpe.state,
+    dpe.package_type,
+    dpe.last_modified,
+    dpe.created,
+    dpe.share_path AS folder,
+    ''::text AS archive_path,
+    dpe.data_pkg_id AS id
+   FROM dpkg.v_data_package_export dpe;
 
 
 ALTER TABLE public.v_mage_data_package_list OWNER TO d3l243;

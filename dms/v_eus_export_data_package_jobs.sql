@@ -29,7 +29,7 @@ CREATE VIEW public.v_eus_export_data_package_jobs AS
      JOIN public.t_analysis_tool tool ON ((j.analysis_tool_id = tool.analysis_tool_id)))
      LEFT JOIN dpkg.t_data_package_analysis_jobs dpj ON ((j.job = dpj.job)))
      JOIN dpkg.t_data_package dp ON ((dp.data_pkg_id = dpj.data_pkg_id)))
-     JOIN dpkg.v_data_package_paths dpp ON ((dp.data_pkg_id = dpp.id)))
+     JOIN dpkg.v_data_package_paths dpp ON ((dp.data_pkg_id = dpp.data_pkg_id)))
   WHERE (j.job_state_id = 4);
 
 
