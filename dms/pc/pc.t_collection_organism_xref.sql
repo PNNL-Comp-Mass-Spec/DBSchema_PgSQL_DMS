@@ -38,6 +38,13 @@ ALTER TABLE ONLY pc.t_collection_organism_xref
 CREATE UNIQUE INDEX ix_t_collection_organism_xref_prot_collection_id_organism_id ON pc.t_collection_organism_xref USING btree (protein_collection_id, organism_id);
 
 --
+-- Name: t_collection_organism_xref fk_t_collection_organism_xref_t_organisms; Type: FK CONSTRAINT; Schema: pc; Owner: d3l243
+--
+
+ALTER TABLE ONLY pc.t_collection_organism_xref
+    ADD CONSTRAINT fk_t_collection_organism_xref_t_organisms FOREIGN KEY (organism_id) REFERENCES public.t_organisms(organism_id);
+
+--
 -- Name: TABLE t_collection_organism_xref; Type: ACL; Schema: pc; Owner: d3l243
 --
 
