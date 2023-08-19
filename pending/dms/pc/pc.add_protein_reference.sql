@@ -1,4 +1,4 @@
---
+
 CREATE OR REPLACE PROCEDURE pc.add_protein_reference
 (
     _name text,
@@ -84,7 +84,7 @@ BEGIN
     SELECT reference_id
     INTO _referenceID
     FROM pc.t_protein_names
-    WHERE reference_fingerprint = _nameDescHash;
+    WHERE reference_fingerprint = _nameDescHash::citext;
 
     If FOUND Then
         -- Already exists; return the reference ID

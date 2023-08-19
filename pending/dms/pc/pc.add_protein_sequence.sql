@@ -1,4 +1,4 @@
---
+
 CREATE OR REPLACE PROCEDURE pc.add_protein_sequence
 (
     _sequence text,
@@ -52,7 +52,7 @@ BEGIN
     SELECT protein_id
     INTO _proteinID
     FROM pc.t_proteins
-    WHERE length = _length AND sha1_hash = _sha1Hash;
+    WHERE length = _length AND sha1_hash = _sha1Hash::citext;
 
     If FOUND And _mode = 'add' Then
         _returnCode := _proteinID::text;
