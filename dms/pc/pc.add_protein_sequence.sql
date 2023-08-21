@@ -1,23 +1,14 @@
+--
+-- Name: add_protein_sequence(text, integer, text, double precision, double precision, text, integer, text, text, text); Type: PROCEDURE; Schema: pc; Owner: d3l243
+--
 
-CREATE OR REPLACE PROCEDURE pc.add_protein_sequence
-(
-    _sequence text,
-    _length int,
-    _molecularFormula text,
-    _monoisotopicMass float,
-    _averageMass float,
-    _sha1Hash text,
-    _isEncrypted int,
-    _mode text default 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+CREATE OR REPLACE PROCEDURE pc.add_protein_sequence(IN _sequence text, IN _length integer, IN _molecularformula text, IN _monoisotopicmass double precision, IN _averagemass double precision, IN _sha1hash text, IN _isencrypted integer, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds a new protein sequence entry to T_Proteins
+**      Adds a new protein sequence entry to pc.t_proteins
 **
 **  Arguments:
 **    _sequence             Protein sequence
@@ -36,7 +27,7 @@ AS $$
 **  Auth:   kja
 **  Date:   10/06/2004
 **          12/11/2012 mem - Removed transaction
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/20/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -65,7 +56,7 @@ BEGIN
         ---------------------------------------------------
 
         INSERT INTO pc.t_proteins (
-            "sequence",
+            sequence,
             length,
             molecular_formula,
             monoisotopic_mass,
@@ -94,4 +85,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE pc.add_protein_sequence IS 'AddProteinSequence';
+
+ALTER PROCEDURE pc.add_protein_sequence(IN _sequence text, IN _length integer, IN _molecularformula text, IN _monoisotopicmass double precision, IN _averagemass double precision, IN _sha1hash text, IN _isencrypted integer, IN _mode text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_protein_sequence(IN _sequence text, IN _length integer, IN _molecularformula text, IN _monoisotopicmass double precision, IN _averagemass double precision, IN _sha1hash text, IN _isencrypted integer, IN _mode text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: pc; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE pc.add_protein_sequence(IN _sequence text, IN _length integer, IN _molecularformula text, IN _monoisotopicmass double precision, IN _averagemass double precision, IN _sha1hash text, IN _isencrypted integer, IN _mode text, INOUT _message text, INOUT _returncode text) IS 'AddProteinSequence';
+

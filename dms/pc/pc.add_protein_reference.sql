@@ -1,27 +1,20 @@
+--
+-- Name: add_protein_reference(text, text, integer, integer, text, integer, text, text); Type: PROCEDURE; Schema: pc; Owner: d3l243
+--
 
-CREATE OR REPLACE PROCEDURE pc.add_protein_reference
-(
-    _name text,
-    _description text,
-    _authorityID int,
-    _proteinID int,
-    _nameDescHash text,
-    _maxProteinNameLength int default 32,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+CREATE OR REPLACE PROCEDURE pc.add_protein_reference(IN _name text, IN _description text, IN _authorityid integer, IN _proteinid integer, IN _namedeschash text, IN _maxproteinnamelength integer DEFAULT 32, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds a new protein reference entry to T_Protein_Names
+**      Adds a new protein reference entry to pc.t_protein_names
 **
 **  Arguments:
 **    _name                     Protein name
 **    _description              Protein description
 **    _authorityID              Authority ID
-**    _proteinID                Protein ID
+**    _proteinID                Protein ID (corresponding to pc.t_proteins)
 **    _nameDescHash             Name/description hash
 **    _maxProteinNameLength     Maximum protein name length (default is 32; allowed range is 25 to 125)
 **
@@ -36,7 +29,7 @@ AS $$
 **          04/29/2011 mem - Added parameter _maxProteinNameLength; default is 25
 **          12/11/2012 mem - Removed transaction
 **          01/10/2013 mem - Now validating that _maxProteinNameLength is between 25 and 125; changed _maxProteinNameLength to 32
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/20/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -70,7 +63,7 @@ BEGIN
     End If;
 
     If char_length(_name) > _maxProteinNameLength Then
-        _message := 'Protein name is too long; max length is %s characters: _name', _maxProteinNameLength, _name);
+        _message := format('Protein name is too long; max length is %s characters: _name', _maxProteinNameLength, _name);
         RAISE WARNING '%', _message;
 
         _returnCode = '0'
@@ -93,7 +86,7 @@ BEGIN
     End If;
 
     INSERT INTO pc.t_protein_names (
-        "name",
+        name,
         description,
         annotation_type_id,
         reference_fingerprint,
@@ -113,4 +106,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE pc.add_protein_reference IS 'AddProteinReference';
+
+ALTER PROCEDURE pc.add_protein_reference(IN _name text, IN _description text, IN _authorityid integer, IN _proteinid integer, IN _namedeschash text, IN _maxproteinnamelength integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_protein_reference(IN _name text, IN _description text, IN _authorityid integer, IN _proteinid integer, IN _namedeschash text, IN _maxproteinnamelength integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: pc; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE pc.add_protein_reference(IN _name text, IN _description text, IN _authorityid integer, IN _proteinid integer, IN _namedeschash text, IN _maxproteinnamelength integer, INOUT _message text, INOUT _returncode text) IS 'AddProteinReference';
+
