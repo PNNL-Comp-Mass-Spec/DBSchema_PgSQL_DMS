@@ -21,7 +21,7 @@ CREATE OR REPLACE PROCEDURE pc.get_archived_file_id_for_protein_collection_list(
 **  Auth:   mem
 **  Date:   06/07/2006
 **          07/04/2006 mem - Updated to return the newest Archived File Collection ID when there is more than one possible match
-**          08/21/2023 mem - Ported to PostgreSQL
+**          08/22/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -52,7 +52,7 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_ProteinCollectionList (
         Unique_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        ProteinCollectionName text NOT NULL,
+        ProteinCollectionName citext NOT NULL,
         Valid boolean NOT NULL
     );
 
