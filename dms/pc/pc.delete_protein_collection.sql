@@ -1,23 +1,31 @@
 --
-CREATE OR REPLACE PROCEDURE pc.delete_protein_collection
-(
-    _collectionID int,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: delete_protein_collection(integer, text, text); Type: PROCEDURE; Schema: pc; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE pc.delete_protein_collection(IN _collectionid integer, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
-**  Desc:   Deletes the given Protein Collection (use with caution)
-**            Collection_State_ID must be 1 or 2
+**  Desc:
+**      Deletes the given protein collection, removing rows from the following tables:
+**        pc.t_archived_output_file_collections_xref
+**        pc.t_archived_output_files
+**        pc.t_annotation_groups
+**        pc.t_protein_collection_members_cached
+**        pc.t_protein_collections
 **
+**      The protein collection must have state 1 or 2 (New or Provisional) in pc.t_protein_collections
+**
+**  Arguments:
+**    _collectionID     Protein collection ID
+
 **  Auth:   mem
 **  Date:   06/24/2008
 **          02/23/2016 mem - Add Set XACT_ABORT on
 **          06/20/2018 mem - Delete entries in T_Protein_Collection_Members_Cached
 **                         - Add RAISERROR calls with severity level 11 (forcing the Catch block to be entered)
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/21/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -28,7 +36,7 @@ DECLARE
     _archivedFileID int;
     _callingProcName text;
     _logErrors boolean := false;
-    _collectionState int;
+    _collectionStateID int;
     _logMessage text;
 
     _sqlState text;
@@ -40,40 +48,37 @@ BEGIN
     _returnCode := '';
 
     BEGIN
-        _currentLocation := 'Examine _collectionState in pc.t_protein_collections'    ;
+        _currentLocation := 'Examine collection_state_id in pc.t_protein_collections';
 
         ---------------------------------------------------
         -- Check if collection is OK to delete
         ---------------------------------------------------
 
-        SELECT collection_state_id
-        INTO _collectionState
+        _collectionID := Coalesce(_collectionID, 0);
+
+        SELECT collection_state_id, collection_name
+        INTO _collectionStateID, _collectionName
         FROM pc.t_protein_collections
-        WHERE protein_collection_id = _collectionID
+        WHERE protein_collection_id = _collectionID;
 
         If Not FOUND Then
-            _message := format('Collection_ID %s not found in pc.t_protein_collections; unable to continue', _collectionID);
+            _message := format('Protein collection ID %s not found in pc.t_protein_collections; unable to continue', _collectionID);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5102';
             RETURN;
         End If;
 
-        SELECT collection_name
-        INTO _collectionName
-        FROM pc.t_protein_collections
-        WHERE protein_collection_id = _collectionID;
-
         SELECT state
         INTO _stateName
         FROM pc.t_protein_collection_states
-        WHERE collection_state_id = _collectionState;
+        WHERE collection_state_id = _collectionStateID;
 
-        If _collectionState > 2 Then
-            _message := format('Cannot Delete collection "%s" since it has state %s', _collectionName, _stateName);
+        If _collectionStateID > 2 Then
+            _message := format('Cannot delete protein collection %s since it has state %s', _collectionName, _stateName);
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5102';
+            _returnCode := 'U5103';
             RETURN;
         End If;
 
@@ -83,7 +88,7 @@ BEGIN
         -- Delete the collection members
         ---------------------------------------------------
 
-        CALL delete_protein_collection_members (_collectionID, _message => _message, _returnCode => _returnCode);
+        CALL pc.delete_protein_collection_members (_collectionID, _message => _message, _returnCode => _returnCode);
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -120,7 +125,7 @@ BEGIN
         RAISE WARNING '%', _message;
 
         If Coalesce(_returnCode, '') = '' Then
-            _returnCode := 'U5103';
+            _returnCode := 'U5104';
         End If;
 
         RETURN;
@@ -144,9 +149,9 @@ BEGIN
         WHERE protein_collection_id = _collectionID;
 
         -- Delete the entry from pc.t_archived_output_files if not used in pc.t_archived_output_file_collections_xref
-        If _archivedFileID > 0 And Not Exists (SELECT * FROM pc.t_archived_output_file_collections_xref WHERE archived_file_id = _archivedFileID) Then
+        If _archivedFileID > 0 And Not Exists (SELECT archived_file_id FROM pc.t_archived_output_file_collections_xref WHERE archived_file_id = _archivedFileID) Then
             DELETE FROM pc.t_archived_output_files
-            WHERE archived_file_id = _archivedFileID
+            WHERE archived_file_id = _archivedFileID;
         End If;
 
         -- Delete the entry from pc.t_annotation_groups
@@ -184,4 +189,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE pc.delete_protein_collection IS 'DeleteProteinCollection';
+
+ALTER PROCEDURE pc.delete_protein_collection(IN _collectionid integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE delete_protein_collection(IN _collectionid integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: pc; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE pc.delete_protein_collection(IN _collectionid integer, INOUT _message text, INOUT _returncode text) IS 'DeleteProteinCollection';
+
