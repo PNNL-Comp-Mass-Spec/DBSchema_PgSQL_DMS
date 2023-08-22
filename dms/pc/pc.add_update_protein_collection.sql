@@ -1,20 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE pc.add_update_protein_collection
-(
-    _collectionName text,
-    _description text,
-    _collectionSource text default '',
-    _collectionType int default 1,
-    _collectionState int,
-    _primaryAnnotationTypeId int,
-    _numProteins int default 0,
-    _numResidues int default 0,
-    _mode text default 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_protein_collection(text, text, text, integer, integer, integer, integer, integer, text, text, text); Type: PROCEDURE; Schema: pc; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE pc.add_update_protein_collection(IN _collectionname text, IN _description text, IN _collectionsource text DEFAULT ''::text, IN _collectiontype integer DEFAULT 1, IN _collectionstate integer DEFAULT 1, IN _primaryannotationtypeid integer DEFAULT 14, IN _numproteins integer DEFAULT 0, IN _numresidues integer DEFAULT 0, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -44,7 +34,7 @@ AS $$
 **          11/24/2015 mem - Added _collectionSource
 **          06/26/2019 mem - Add comments and convert tabs to spaces
 **          01/20/2020 mem - Replace < and > with ( and ) in the source and description
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/21/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -57,6 +47,12 @@ BEGIN
     -- Validate input fields
     ---------------------------------------------------
 
+    _collectionName   := Trim(Coalesce(_collectionName, ''));
+    _description      := Trim(Coalesce(_description, ''));
+    _collectionSource := Trim(Coalesce(_collectionSource, ''));
+
+    _mode := Lower(Trim(Coalesce(_mode, '')));
+
     If char_length(_collectionName) < 1 Then
         _message := '_collectionName was blank';
         RAISE WARNING '%', _message;
@@ -66,8 +62,16 @@ BEGIN
         RETURN;
     End If;
 
+    If Not _mode In ('add', 'update') Then
+        _message := 'Invalid mode; should be "add" or "update"';
+        RAISE WARNING '%', _message;
+
+        -- The Organism Database Handler expects this procedure to return '0' if there is an error
+        _returnCode := '0'
+        RETURN;
+    End If;
+
     -- Make sure _collectionName does not contain a space
-    _collectionName := Trim(_collectionName);
 
     If _collectionName Like '% %' Then
         _message := format('Protein collection contains a space: "%s"', _collectionName);
@@ -79,12 +83,11 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Make sure the Source and Description do not have text surrounded by < and >, since web browsers will treat that as an HTML tag
+    -- Make sure the Description and Source do not have text surrounded by < and >, since web browsers will treat that as an HTML tag
     ---------------------------------------------------
 
-    _collectionSource := REPLACE(REPLACE(Coalesce(_collectionSource, ''), '<', '('), '>', ')');
-
     _description :=      REPLACE(REPLACE(Coalesce(_description,      ''), '<', '('), '>', ')');
+    _collectionSource := REPLACE(REPLACE(Coalesce(_collectionSource, ''), '<', '('), '>', ')');
 
     ---------------------------------------------------
     -- Does entry already exist?
@@ -92,20 +95,20 @@ BEGIN
 
     _collectionID := pc.get_protein_collection_id (_collectionName);
 
-    if _collectionID > 0 And _mode = 'add' Then
-        -- Collection already exists; change _mode to 'update'
+    If _collectionID > 0 And _mode = 'add' Then
+        -- Collection already exists; auto-change _mode to 'update'
         _mode := 'update';
     End If;
 
-    if _collectionID = 0 And _mode = 'update' Then
-        -- Collection not found; change _mode to 'add'
+    If _collectionID = 0 And _mode = 'update' Then
+        -- Collection not found; auto-change _mode to 'add'
         _mode := 'add';
     End If;
 
     -- Uncomment to debug
     --
     -- _message := format('mode %s, collection %s', _mode, _collectionName);
-    -- Call public.Post_Log_Entry ('Debug', _message, 'Add_Update_Protein_Collection', 'pc');
+    -- Call public.post_log_entry ('Debug', _message, 'Add_Update_Protein_Collection', 'pc');
     -- _message := ''
 
     ---------------------------------------------------
@@ -137,7 +140,7 @@ BEGIN
             _numResidues,
             CURRENT_TIMESTAMP,
             CURRENT_TIMESTAMP,
-            SYSTEM_USER
+            CURRENT_USER
         );
 
     End If;
@@ -145,9 +148,8 @@ BEGIN
     If _mode = 'update' Then
 
         UPDATE pc.t_protein_collections
-        SET
-            description = _description,
-            source = Case When _collectionSource = '' and Coalesce(source, '') <> '' Then source Else _collectionSource End,
+        SET description = _description,
+            source = CASE WHEN _collectionSource = '' AND Coalesce(source, '') <> '' THEN source ELSE _collectionSource END,
             collection_state_id = _collectionState,
             collection_type_id = _collectionType,
             num_proteins = _numProteins,
@@ -162,15 +164,15 @@ BEGIN
 
     If _mode = 'add' And _collectionID > 0 Then
 
-        INSERT INTO pc.t_annotation_groups (
+        INSERT INTO pc.t_annotation_groups(
             protein_collection_id,
             annotation_group,
-            annotation_type_id
-        ) VALUES (
+            annotation_type_id )
+        VALUES(
             _collectionID,
             0,
             _primaryAnnotationTypeId
-        )
+        );
 
     End If;
 
@@ -178,4 +180,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE pc.add_update_protein_collection IS 'AddUpdateProteinCollection';
+
+ALTER PROCEDURE pc.add_update_protein_collection(IN _collectionname text, IN _description text, IN _collectionsource text, IN _collectiontype integer, IN _collectionstate integer, IN _primaryannotationtypeid integer, IN _numproteins integer, IN _numresidues integer, IN _mode text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_protein_collection(IN _collectionname text, IN _description text, IN _collectionsource text, IN _collectiontype integer, IN _collectionstate integer, IN _primaryannotationtypeid integer, IN _numproteins integer, IN _numresidues integer, IN _mode text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: pc; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE pc.add_update_protein_collection(IN _collectionname text, IN _description text, IN _collectionsource text, IN _collectiontype integer, IN _collectionstate integer, IN _primaryannotationtypeid integer, IN _numproteins integer, IN _numresidues integer, IN _mode text, INOUT _message text, INOUT _returncode text) IS 'AddUpdateProteinCollection';
+
