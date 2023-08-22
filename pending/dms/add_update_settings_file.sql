@@ -207,7 +207,7 @@ BEGIN
         ---------------------------------------------------
 
         If _settingsFileID Is Null Then
-            _message := 'Settings file ID is null; cannot udpate';
+            _message := 'Settings file ID is null; cannot update';
             RAISE EXCEPTION '%', _message;
         End If;
 

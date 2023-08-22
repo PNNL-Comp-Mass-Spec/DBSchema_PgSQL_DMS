@@ -25,7 +25,7 @@ CREATE OR REPLACE PROCEDURE cap.update_dms_file_info_xml(IN _datasetid integer, 
 **    _deleteFromTableOnSuccess     When true, delete from cap.t_dataset_info_xml if successfully stored in the dataset tables
 **    _message                      Output message
 **    _returnCode                   Return code; will be 'U5360' if this dataset is a duplicate to another dataset (based on T_Dataset_Files)
-**    _infoOnly                     When true, preview udpates
+**    _infoOnly                     When true, preview updates
 **
 **  Auth:   mem
 **  Date:   09/01/2010 mem - Initial Version
