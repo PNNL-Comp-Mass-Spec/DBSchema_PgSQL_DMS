@@ -44,7 +44,7 @@ ALTER TABLE ONLY pc.t_annotation_groups
 --
 
 ALTER TABLE ONLY pc.t_annotation_groups
-    ADD CONSTRAINT fk_t_annotation_groups_t_protein_collections FOREIGN KEY (protein_collection_id) REFERENCES pc.t_protein_collections(protein_collection_id);
+    ADD CONSTRAINT fk_t_annotation_groups_t_protein_collections FOREIGN KEY (protein_collection_id) REFERENCES pc.t_protein_collections(protein_collection_id) ON DELETE CASCADE;
 
 --
 -- Name: TABLE t_annotation_groups; Type: ACL; Schema: pc; Owner: d3l243
