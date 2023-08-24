@@ -1,31 +1,25 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_settings_file
-(
-    INOUT _settingsFileID int,
-    _analysisTool text,
-    _fileName text,
-    _description text,
-    _active int,
-    _contents text,
-    _hmsAutoSupersede text = '',
-    _msgfPlusAutoCentroid text = '',
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_settings_file(integer, text, text, text, integer, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_settings_file(INOUT _settingsfileid integer, IN _analysistool text, IN _filename text, IN _description text, IN _active integer, IN _contents text, IN _hmsautosupersede text DEFAULT ''::text, IN _msgfplusautocentroid text DEFAULT ''::text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing entity in T_Settings_Files table
+**      Adds new or edits existing entity in T_Settings_Files
 **
 **  Arguments:
-**    _settingsFileID         Settings file ID to edit, or the ID of the newly created settings file
-**    _hmsAutoSupersede       Settings file name to use instead of this settings file if the dataset comes from a high res MS instrument
-**    _msgfPlusAutoCentroid   Settings file name to use instead of this settings file if MSGF+ reports that not enough spectra are centroided; see SP AutoResetFailedJobs
-**    _mode                   'add' or 'update'
+**    _settingsFileID           Settings file ID to edit, or the ID of the newly created settings file
+**    _analysisTool             Analysis tool name
+**    _fileName                 Settings file name
+**    _description              Settings file description
+**    _active                   1 if active, 0 if inactive
+**    _contents                 Settings file contents (XML as text)
+**    _hmsAutoSupersede         Settings file name to use instead of this settings file if the dataset comes from a high res MS instrument
+**    _msgfPlusAutoCentroid     Settings file name to use instead of this settings file if MSGF+ reports that not enough spectra are centroided; see SP AutoResetFailedJobs
+**    _mode                     'add' or 'update'
 **
 **  Auth:   grk
 **  Date:   08/22/2008
@@ -37,7 +31,7 @@ AS $$
 **          12/10/2018 mem - Rename parameters and make _settingsFileID an output parameter
 **          04/11/2022 mem - Check for existing settings file (by name) when _mode is 'add'
 **                         - Check for whitespace in _fileName
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/23/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -47,13 +41,11 @@ DECLARE
     _authorized boolean;
 
     _xmlContents xml;
-    _analysisToolForAutoSupersede text := '';
-    _analysisToolForAutoCentroid text := '';
+    _analysisToolForAutoSupersede citext := '';
+    _analysisToolForAutoCentroid citext := '';
 BEGIN
     _message := '';
     _returnCode := '';
-
-    _xmlContents := _contents;
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -79,10 +71,11 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _analysisTool := Trim(Coalesce(_analysisTool, ''));
-    _fileName := Trim(Coalesce(_fileName, ''));
-    _hmsAutoSupersede := Trim(Coalesce(_hmsAutoSupersede, ''));
+    _analysisTool         := Trim(Coalesce(_analysisTool, ''));
+    _fileName             := Trim(Coalesce(_fileName, ''));
+    _hmsAutoSupersede     := Trim(Coalesce(_hmsAutoSupersede, ''));
     _msgfPlusAutoCentroid := Trim(Coalesce(_msgfPlusAutoCentroid, ''));
+    _contents             := Trim(Coalesce(_contents, ''));
 
     If _analysisTool = '' Then
         _message := 'Analysis Tool cannot be empty';
@@ -100,7 +93,25 @@ BEGIN
         RETURN;
     End If;
 
-    If public.has_whitespace_chars(_fileName, 0) Then
+    If _contents = '' Then
+        _message := 'Settings file contents cannot be empty';
+         RAISE WARNING '%', _message;
+
+        _returnCode := 'U5203';
+        RETURN;
+    End If;
+
+    _xmlContents := public.try_cast(_contents, null::xml);
+
+    If _xmlContents Is Null Then
+        _message := 'Settings file contents are not valid XML';
+         RAISE WARNING '%', _message;
+
+        _returnCode := 'U5204';
+        RETURN;
+    End If;
+
+    If public.has_whitespace_chars(_fileName, _allowspace => false) Then
         If Position(chr(9) In _fileName) > 0 Then
             RAISE EXCEPTION 'Settings file name cannot contain tabs';
         Else
@@ -109,33 +120,33 @@ BEGIN
     End If;
 
     If char_length(_hmsAutoSupersede) > 0 Then
-        If _hmsAutoSupersede = _fileName Then
+        If _hmsAutoSupersede::citext = _fileName::citext Then
             _message := 'The HMS_AutoSupersede file cannot have the same name as this settings file';
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5203';
+            _returnCode := 'U5205';
             RETURN;
         End If;
 
-        If Not Exists (SELECT * FROM t_settings_files WHERE file_name = _hmsAutoSupersede) Then
+        If Not Exists (SELECT settings_file_id FROM t_settings_files WHERE file_name = _hmsAutoSupersede::citext) Then
             _message := format('hms_auto_supersede settings file not found in the database: %s', _hmsAutoSupersede);
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5204';
+            _returnCode := 'U5206';
             RETURN;
         End If;
 
         SELECT analysis_tool
         INTO _analysisToolForAutoSupersede
         FROM t_settings_files
-        WHERE file_name = _hmsAutoSupersede
+        WHERE file_name = _hmsAutoSupersede::citext;
 
-        If _analysisToolForAutoSupersede <> _analysisTool Then
+        If _analysisToolForAutoSupersede <> _analysisTool::citext Then
             _message := format('The Analysis Tool for the HMS_AutoSupersede file ("%s") must match the analysis tool for this settings file: %s vs. %s',
                                _hmsAutoSupersede, _analysisToolForAutoSupersede, _analysisTool);
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5205';
+            _returnCode := 'U5207';
             RETURN;
         End If;
 
@@ -144,33 +155,33 @@ BEGIN
     End If;
 
     If char_length(_msgfPlusAutoCentroid) > 0 Then
-        If _msgfPlusAutoCentroid = _fileName Then
+        If _msgfPlusAutoCentroid::citext = _fileName::citext Then
             _message := 'The MSGFPlus_AutoCentroid file cannot have the same name as this settings file';
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5206';
+            _returnCode := 'U5208';
             RETURN;
         End If;
 
-        If Not Exists (SELECT * FROM t_settings_files WHERE file_name = _msgfPlusAutoCentroid) Then
+        If Not Exists (SELECT settings_file_id FROM t_settings_files WHERE file_name = _msgfPlusAutoCentroid::citext) Then
             _message := format('MSGFPlus AutoCentroid settings file not found in the database: %s', _msgfPlusAutoCentroid);
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5207';
+            _returnCode := 'U5209';
             RETURN;
         End If;
 
         SELECT analysis_tool
         INTO _analysisToolForAutoCentroid
         FROM t_settings_files
-        WHERE file_name = _msgfPlusAutoCentroid
+        WHERE file_name = _msgfPlusAutoCentroid::citext;
 
-        If _analysisToolForAutoCentroid <> _analysisTool Then
+        If _analysisToolForAutoCentroid <> _analysisTool::citext Then
             _message := format('The Analysis Tool for the MSGFPlus_AutoCentroid file ("%s") must match the analysis tool for this settings file: %s vs. %s',
                                _msgfPlusAutoCentroid, _analysisToolForAutoCentroid, _analysisTool);
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5208';
+            _returnCode := 'U5210';
             RETURN;
         End If;
 
@@ -188,7 +199,7 @@ BEGIN
         SELECT settings_file_id
         INTO _settingsFileID
         FROM t_settings_files
-        WHERE file_name = _fileName;
+        WHERE file_name = _fileName::citext;
 
         If FOUND Then
             _message := format('Settings file ID %s is named "%s"; cannot create a new, duplicate settings file',
@@ -196,7 +207,7 @@ BEGIN
 
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5209';
+            _returnCode := 'U5211';
             RETURN;
         End If;
     End If;
@@ -213,12 +224,11 @@ BEGIN
 
         -- Cannot update a non-existent entry
         --
-        --
-        If Not Exists (SELECT * FROM t_settings_files WHERE settings_file_id = _settingsFileID) Then
+        If Not Exists (SELECT settings_file_id FROM t_settings_files WHERE settings_file_id = _settingsFileID) Then
             _message := format('Settings file settings_file_id %s not found in database; cannot update', _settingsFileID);
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5210';
+            _returnCode := 'U5212';
             RETURN;
         End If;
 
@@ -267,11 +277,19 @@ BEGIN
             hms_auto_supersede = _hmsAutoSupersede,
             msgfplus_auto_centroid = _msgfPlusAutoCentroid,
             last_updated = CURRENT_TIMESTAMP
-        WHERE settings_file_id = _settingsFileID
+        WHERE settings_file_id = _settingsFileID;
 
     End If;
 
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_settings_file IS 'AddUpdateSettingsFile';
+
+ALTER PROCEDURE public.add_update_settings_file(INOUT _settingsfileid integer, IN _analysistool text, IN _filename text, IN _description text, IN _active integer, IN _contents text, IN _hmsautosupersede text, IN _msgfplusautocentroid text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_settings_file(INOUT _settingsfileid integer, IN _analysistool text, IN _filename text, IN _description text, IN _active integer, IN _contents text, IN _hmsautosupersede text, IN _msgfplusautocentroid text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_settings_file(INOUT _settingsfileid integer, IN _analysistool text, IN _filename text, IN _description text, IN _active integer, IN _contents text, IN _hmsautosupersede text, IN _msgfplusautocentroid text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateSettingsFile';
+
