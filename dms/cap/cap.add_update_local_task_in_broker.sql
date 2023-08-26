@@ -51,6 +51,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_local_task_in_broker(INOUT _job integ
 **          04/27/2023 mem - Use boolean for data type name
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
+**          08/25/2023 mem - Use Trim() on procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -96,13 +97,13 @@ BEGIN
         -- Validate the inputs
         -----------------------------------------------
 
-        _job := Coalesce(_job, 0);
-        _scriptName := Coalesce(_scriptName, '');
-        _priority := Coalesce(_priority, 4);
-        _jobParam := Coalesce(_jobParam, '');
-        _comment := Coalesce(_comment, '');
+        _job        := Coalesce(_job, 0);
+        _scriptName := Trim(Coalesce(_scriptName, ''));
+        _priority   := Coalesce(_priority, 4);
+        _jobParam   := Trim(Coalesce(_jobParam, ''));
+        _comment    := Trim(Coalesce(_comment, ''));
 
-        _mode := Lower(Coalesce(_mode, ''));
+        _mode       := Trim(Lower(Coalesce(_mode, '')));
 
         If _mode = 'reset' Then
             _mode := 'update';
