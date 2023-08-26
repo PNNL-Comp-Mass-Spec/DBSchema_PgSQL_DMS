@@ -118,7 +118,7 @@ BEGIN
         ---------------------------------------------------
 
         _comment       := Trim(Coalesce(_comment, ''));
-        _mode          := Trim(Lower(Coalesce(_mode , '')));
+        _mode          := Trim(Lower(Coalesce(_mode, '')));
         _removeParents := Coalesce(_removeParents, false);
 
         SELECT string_agg(ItemType, ', ' ORDER BY ItemType)

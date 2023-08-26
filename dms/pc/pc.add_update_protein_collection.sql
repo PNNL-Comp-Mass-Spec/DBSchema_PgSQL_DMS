@@ -51,7 +51,7 @@ BEGIN
     _description      := Trim(Coalesce(_description, ''));
     _collectionSource := Trim(Coalesce(_collectionSource, ''));
 
-    _mode := Lower(Trim(Coalesce(_mode, '')));
+    _mode := Trim(Lower(Coalesce(_mode, '')));
 
     If char_length(_collectionName) < 1 Then
         _message := '_collectionName was blank';

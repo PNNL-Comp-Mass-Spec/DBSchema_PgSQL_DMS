@@ -93,7 +93,7 @@ BEGIN
         _description           := Trim(Coalesce(_description, ''));
         _comment               := Trim(Coalesce(_comment, ''));
         _samplePrepRequestList := Trim(Coalesce(_samplePrepRequestList, ''));
-        _mode                  := Lower(Trim(Coalesce(_mode, '')));
+        _mode                  := Trim(Lower(Coalesce(_mode, '')));
 
         If Not _mode In ('add', 'update') Then
             _message := 'Mode must be "add" or "update"';

@@ -98,7 +98,7 @@ BEGIN
         -- What mode are we in?
         ---------------------------------------------------
 
-        _mode := Lower(Coalesce(_mode, 'undefined_mode'));
+        _mode := Trim(Lower(Coalesce(_mode, 'undefined_mode')));
 
         If _mode::citext In ('check_update', 'check_add') Then
             _mode := 'check_only';

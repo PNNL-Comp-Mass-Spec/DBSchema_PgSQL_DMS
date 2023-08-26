@@ -108,7 +108,7 @@ BEGIN
         _packageType := Trim(Coalesce(_packageType, ''));
         _description := Trim(Coalesce(_description, ''));
         _comment     := Trim(Coalesce(_comment, ''));
-        _mode        := Lower(Trim(Coalesce(_mode, '')));
+        _mode        := Trim(Lower(Coalesce(_mode, '')));
 
         If Not _mode In ('add', 'update') Then
             _message := 'Mode must be "add" or "update"';
