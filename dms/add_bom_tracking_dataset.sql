@@ -1,21 +1,15 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_bom_tracking_dataset
-(
-    _month text = '',
-    _year text = '',
-    _instrumentName text,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text  = 'D3E154',
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_bom_tracking_dataset(text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_bom_tracking_dataset(IN _month text DEFAULT ''::text, IN _year text DEFAULT ''::text, IN _instrumentname text DEFAULT ''::text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT 'D3E154'::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Adds new tracking dataset for the beginning of the month (BOM)
-**      for the given year, month, and instrument
+**      for the given month, year, and instrument
 **
 **      If _month is 'next', adds a tracking dataset for the beginning of the next month
 **
@@ -24,6 +18,8 @@ AS $$
 **    _year             Year  (use the current year if blank)
 **    _instrumentName   Instrument
 **    _mode             Mode: 'add' or 'debug'
+**    _message          Status message
+**    _returnCode       Return code
 **    _callingUser      Calling user
 **
 **  Auth:   grk
@@ -37,10 +33,11 @@ AS $$
 **                         - When _mode is 'debug', update _message to include the run start date and dataset name
 **          02/15/2022 mem - Mention Update_Dataset_Interval and T_Run_Interval in the debug message
 **          02/22/2022 mem - When _mode is 'debug', do not log an error if the dataset already exists
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/25/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
+    _logErrors boolean := false;
     _datasetName text;
     _runStart text;
     _experimentName text := 'Tracking';
@@ -51,8 +48,8 @@ DECLARE
     _eusUsageType text := 'MAINTENANCE';
     _eusUsersList text := '';
     _now timestamp;
-    _mn text;
-    _yr text;
+    _mn int;
+    _yr int;
     _bom timestamp;
     _dateLabel text;
     _instID int := 0;
@@ -71,40 +68,70 @@ BEGIN
     -- Validate input arguments
     ---------------------------------------------------
 
-    If Coalesce(_instrumentName, '') = '' Then
-        RAISE EXCEPTION 'Instrument name cannot be empty';
+    _mode := Trim(Lower(Coalesce(_mode, '')));
+
+    If Trim(Coalesce(_instrumentName, '')) = '' Then
+        _message := 'Instrument name cannot be empty';
+
+        If _mode = 'debug' Then
+            RAISE WARNING '%', _message;
+            RETURN;
+        End If;
+
+        RAISE EXCEPTION '%', _message;
     End If;
 
-    _mode := Lower(_mode);
-
-    ---------------------------------------------------
-    -- Declare parameters for making BOM tracking dataset
-    ---------------------------------------------------
+    If _mode = 'add' Then
+        _logErrors := true;
+    End If;
 
     BEGIN
         _operatorUsername := _callingUser;
 
-        _month := Trim(Coalesce(_month, ''));
-        _year  := Trim(Coalesce(_year, ''));
+        _month := Trim(Lower(Coalesce(_month, '')));
+        _year  := Trim(Lower(Coalesce(_year, '')));
 
         ---------------------------------------------------
         -- Determine the beginning of month (BOM) date to use
         ---------------------------------------------------
 
         _now := CURRENT_TIMESTAMP;
-        _mn := _month;
-        _yr := _year;
 
         If _month = '' OR _month = 'next' Then
-            _mn := Extract(month from _now)::text;
+            _mn := Extract(month From _now)::text;
+        Else
+            _mn := public.try_cast(_month, null::int);
+
+            If _mn Is Null Then
+                _message := format('_month must be an integer, an empty string, or "next", not "%s"', _month);
+
+                If _mode = 'debug' Then
+                    RAISE WARNING '%', _message;
+                    RETURN;
+                End If;
+
+                RAISE EXCEPTION '%', _message;
+            End If;
         End If;
 
         If _year = '' OR _month = 'next' Then
-            _yr := Extract(year from _now)::text;
+            _yr := Extract(year From _now)::text;
+        Else
+            _yr := public.try_cast(_year, null::int);
+
+            If _yr Is Null Then
+                _message := format('_year must be an integer or an empty string, not "%s"', _year);
+
+                If _mode = 'debug' Then
+                    RAISE WARNING '%', _message;
+                    RETURN;
+                End If;
+
+                RAISE EXCEPTION '%', _message;
+            End If;
+
         End If;
 
-        -- make_date() accepts numbers stored as text, but will report an error if _yr or _mn are not integers
-        --
         _bom := make_date(_yr, _mn, 1)::timestamp;
 
         If _month = 'next' Then
@@ -129,16 +156,24 @@ BEGIN
         WHERE instrument = _instrumentName;
 
         If Not FOUND Then
-            RAISE EXCEPTION 'Instrument "%" cannot be found', _instrumentName;
+            _message := format('Instrument "%s" does not exist', _instrumentName);
+
+            If _mode = 'debug' Then
+                RAISE WARNING '%', _message;
+                RETURN;
+            End If;
+
+            RAISE EXCEPTION '%', _message;
         End If;
 
-        If Exists (SELECT * FROM t_dataset WHERE dataset = _datasetName) Then
+        If Exists (SELECT dataset_id FROM t_dataset WHERE dataset = _datasetName) Then
+            _message := format('Dataset already exists: %s', _datasetName);
+
             If _mode = 'debug' Then
-                _message := format('Dataset already exists: %s', _datasetName);
-                RAISE INFO '%', _message;
+                RAISE WARNING '%', _message;
                 RETURN;
             Else
-                RAISE EXCEPTION 'Dataset "%" already exists', _datasetName;
+                RAISE EXCEPTION '%', _message;
             End If;
         End If;
 
@@ -147,8 +182,14 @@ BEGIN
         FROM t_dataset
         WHERE acq_time_start = _bom AND instrument_id = _instID;
 
-        If (_conflictingDataset <> '') Then
-            _message := format('Dataset "%s" has same start time, Dataset ID %s', _conflictingDataset, _datasetID);
+        If FOUND Then
+            _message := format('Dataset "%s" has same start time as the new tracking dataset (see Dataset ID %s)', _conflictingDataset, _datasetID);
+
+            If _mode = 'debug' Then
+                RAISE WARNING '%', _message;
+                RETURN;
+            End If;
+
             RAISE EXCEPTION '%', _message;
         End If;
 
@@ -157,13 +198,19 @@ BEGIN
         SELECT dataset, dataset_id
         INTO _conflictingDataset, _datasetID
         FROM t_dataset
-        WHERE (Not (acq_time_start IS NULL)) AND
-              (Not (acq_time_end IS NULL)) AND
+        WHERE Not acq_time_start IS NULL AND
+              Not acq_time_end IS NULL AND
               _bom BETWEEN acq_time_start AND acq_time_end AND
               instrument_id = _instID;
 
-        If (_conflictingDataset <> '') Then
-             _message := format('Tracking dataset would overlap existing dataset "%s", Dataset ID %s', _conflictingDataset, _datasetID;);
+        If FOUND Then
+            _message := format('Tracking dataset would overlap with existing dataset "%s" (Dataset ID %s)', _conflictingDataset, _datasetID);
+
+            If _mode = 'debug' Then
+                RAISE WARNING '%', _message;
+                RETURN;
+            End If;
+
             RAISE EXCEPTION '%', _message;
         End If;
 
@@ -172,6 +219,7 @@ BEGIN
             -- Show debug info
             ---------------------------------------------------
 
+            RAISE INFO '';
             RAISE INFO 'Dataset:             %', _datasetName;
             RAISE INFO 'Run Start:           %', _runStart;
             RAISE INFO 'Experiment:          %', _experimentName;
@@ -193,7 +241,7 @@ BEGIN
             -- Add the tracking dataset
             ---------------------------------------------------
 
-            CALL add_update_tracking_dataset (
+            CALL public.add_update_tracking_dataset (
                                 _datasetName,
                                 _experimentName,
                                 _operatorUsername,
@@ -205,7 +253,8 @@ BEGIN
                                 _eusUsageType,
                                 _eusUsersList,
                                 _mode,
-                                _message,           -- Output
+                                _message => _message,           -- Output
+                                _returnCode => _returnCode,     -- Output
                                 _callingUser);
         End If;
 
@@ -219,7 +268,7 @@ BEGIN
 
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => '', _logError => true);
+                        _callingProcLocation => '', _logError => _logErrors);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
@@ -228,4 +277,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_bom_tracking_dataset IS 'AddBOMTrackingDataset';
+
+ALTER PROCEDURE public.add_bom_tracking_dataset(IN _month text, IN _year text, IN _instrumentname text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_bom_tracking_dataset(IN _month text, IN _year text, IN _instrumentname text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_bom_tracking_dataset(IN _month text, IN _year text, IN _instrumentname text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddBOMTrackingDataset';
+

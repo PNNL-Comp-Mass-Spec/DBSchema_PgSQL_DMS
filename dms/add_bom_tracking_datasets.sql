@@ -1,15 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_bom_tracking_datasets
-(
-    _month text = '',
-    _year text = '',
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text  = 'D3E154'
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_bom_tracking_datasets(text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_bom_tracking_datasets(IN _month text DEFAULT ''::text, IN _year text DEFAULT ''::text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT 'D3E154'::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -19,10 +14,12 @@ AS $$
 **      If _month is 'next', adds a tracking dataset for the beginning of the next month
 **
 **  Arguments:
-**    _month         Month (use the current month if blank)
-**    _year          Year  (use the current year if blank)
-**    _mode          Mode: 'add, 'info' (just show instrument names), or 'debug' (call Add_BOM_Tracking_Dataset and preview tracking datasets)
-**    _callingUser   Ron Moore
+**    _month            Month (use the current month if blank)
+**    _year             Year  (use the current year if blank)
+**    _mode             Mode: 'add, 'info' (just show instrument names), or 'debug' (call public.add_bom_tracking_dataset and preview tracking datasets)
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Calling user
 **
 **  Auth:   grk
 **  Date:   12/16/2012
@@ -30,7 +27,7 @@ AS $$
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          02/14/2022 mem - Assure that msg is not an empty string when _mode is 'debug'
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/25/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -62,7 +59,7 @@ BEGIN
         result text NULL
     );
 
-    _mode := Lower(_mode);
+    _mode := Trim(Lower(Coalesce(_mode, '')));
 
     BEGIN
 
@@ -71,8 +68,9 @@ BEGIN
         ---------------------------------------------------
 
         INSERT INTO Tmp_TrackedInstruments (instrument)
-        SELECT VT.Name
-        FROM public.V_Instrument_Tracked VT;
+        SELECT TI.Name
+        FROM public.V_Instrument_Tracked TI
+        ORDER BY TI.Name;
 
         ---------------------------------------------------
         -- Loop through tracked instruments
@@ -85,22 +83,23 @@ BEGIN
             ORDER BY Entry_ID
         LOOP
 
-            If _mode::citext In ('debug', 'info') Then
+            If _mode In ('debug', 'info') Then
+                RAISE INFO '';
                 RAISE INFO '-> %', _instrumentName;
             End If;
 
-            If _mode::citext In ('add', 'debug') Then
-                CALL add_bom_tracking_dataset (
-                        _month,
-                        _year,
-                        _instrumentName => _instrumentName,
-                        _mode => _mode,
-                        _message => _message,
-                        _returnCode => _returnCode,
-                        _callingUser => _callingUser);
+            If _mode In ('add', 'debug') Then
+                CALL public.add_bom_tracking_dataset (
+                                _month,
+                                _year,
+                                _instrumentName => _instrumentName,
+                                _mode => _mode,
+                                _message => _message,
+                                _returnCode => _returnCode,
+                                _callingUser => _callingUser);
 
                 If _mode = 'debug' And Coalesce(_message, '') = '' Then
-                    _message := 'Called Add_BOM_Tracking_Dataset with _mode=''debug''';
+                    _message := 'Called Add_BOM_Tracking_Dataset with _mode => ''debug''';
                 End If;
             Else
                 _message := '';
@@ -109,12 +108,12 @@ BEGIN
 
             UPDATE Tmp_TrackedInstruments
             SET msg = _message,
-                result = _returnCode,
+                result = _returnCode
             WHERE Entry_ID = _entryID;
 
         END LOOP;
 
-        If _mode::citext In ('debug', 'info') Then
+        If _mode In ('debug', 'info') Then
 
             RAISE INFO '';
 
@@ -156,6 +155,9 @@ BEGIN
 
         End If;
 
+        DROP TABLE Tmp_TrackedInstruments;
+        RETURN;
+
     EXCEPTION
         WHEN OTHERS THEN
             GET STACKED DIAGNOSTICS
@@ -177,4 +179,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_bom_tracking_datasets IS 'AddBOMTrackingDatasets';
+
+ALTER PROCEDURE public.add_bom_tracking_datasets(IN _month text, IN _year text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_bom_tracking_datasets(IN _month text, IN _year text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_bom_tracking_datasets(IN _month text, IN _year text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddBOMTrackingDatasets';
+
