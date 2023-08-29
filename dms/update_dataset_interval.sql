@@ -1,20 +1,20 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_dataset_interval
-(
-    _instrumentName text,
-    _startDate timestamp,
-    _endDate timestamp,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _infoOnly boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_dataset_interval(text, timestamp without time zone, timestamp without time zone, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_dataset_interval(IN _instrumentname text, IN _startdate timestamp without time zone, IN _enddate timestamp without time zone, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates dataset interval and creates entries
-**      for long intervals in the intervals table
+**      Updates dataset intervals in public.t_dataset and creates entries for long intervals in public.t_run_interval
+**
+**  Arguments:
+**    _instrumentName       Instrument name
+**    _startDate            Start date
+**    _endDate              End date
+**    _infoOnly             When true, preview updates
 **
 **  Auth:   grk
 **  Date:   02/08/2012
@@ -33,7 +33,7 @@ AS $$
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          05/03/2019 mem - Use EUS_Instrument_ID for DMS instruments that share a single eusInstrumentId
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/28/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -45,10 +45,11 @@ DECLARE
     _maxNormalInterval int;
     _instrumentNameMatch text := '';
     _eusInstrumentId int := 0;
-    _maxSeq Int;
-    _start timestamp, _end timestamp, _interval int;
-    _index int := 1;
-    _seqIncrement int := 1;
+    _maxSeq int;
+    _start timestamp;
+    _end timestamp;
+    _interval int;
+    _index int;
 
     _formatSpecifier text;
     _infoHead text;
@@ -63,10 +64,6 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode := '';
-
-    _infoOnly := Coalesce(_infoOnly, false);
-
-    _maxNormalInterval := get_long_interval_threshold();
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -91,17 +88,30 @@ BEGIN
     BEGIN
 
         ---------------------------------------------------
+        -- Validate the inputs
+        ---------------------------------------------------
+
+        _instrumentNameMatch := Trim(Coalesce(_instrumentNameMatch, ''));
+        _infoOnly            := Coalesce(_infoOnly, false);
+
+        -- Lookup the long interval threshold (which should be 180 minutes)
+
+        _maxNormalInterval := public.get_long_interval_threshold();
+
+        ---------------------------------------------------
         -- Make sure _instrumentName is valid (and is properly capitalized)
         ---------------------------------------------------
 
         SELECT instrument
         INTO _instrumentNameMatch
         FROM t_instrument_name
-        WHERE instrument = _instrumentName
+        WHERE instrument = _instrumentName::citext;
 
-        If Coalesce(_instrumentNameMatch, '') = '' Then
+        If Not FOUND Then
             _message := format('Unknown instrument: %s', _instrumentName);
+
             If _infoOnly Then
+                RAISE INFO '';
                 RAISE INFO '%', _message;
             End If;
 
@@ -123,7 +133,7 @@ BEGIN
             Time_End timestamp,
             Duration int,                -- Duration of run, in minutes
             Interval int NULL
-        )
+        );
 
         ---------------------------------------------------
         -- Auto switch to _eusInstrumentId if needed
@@ -139,9 +149,10 @@ BEGIN
                                INNER JOIN t_emsl_dms_instrument_mapping InstMapping
                                  ON InstName.instrument_id = InstMapping.dms_instrument_id
                           GROUP BY InstMapping.eus_instrument_id
-                          HAVING COUNT(InstName.instrument_id) > 1 ) LookupQ
+                          HAVING COUNT(InstName.instrument_id) > 1
+                        ) LookupQ
                ON InstMapping.eus_instrument_id = LookupQ.eus_instrument_id
-        WHERE InstName.instrument = _instrumentName;
+        WHERE InstName.instrument = _instrumentName::citext;
 
         If _eusInstrumentId > 0 Then
             INSERT INTO Tmp_Durations (
@@ -157,14 +168,13 @@ BEGIN
                    InstName.instrument,
                    DS.acq_time_start,
                    DS.acq_time_end,
-                   extract(epoch FROM DS.acq_time_end - DS.acq_time_start) / 60.0
+                   extract(epoch FROM DS.acq_time_end - DS.acq_time_start) / 60.0   -- Length, in minutes
             FROM t_dataset DS
                  INNER JOIN t_instrument_name InstName
                    ON DS.instrument_id = InstName.instrument_id
                  INNER JOIN t_emsl_dms_instrument_mapping InstMapping
                    ON InstName.instrument_id = InstMapping.dms_instrument_id
-            WHERE _startDate <= DS.acq_time_start AND
-                  DS.acq_time_start <= _endDate AND
+            WHERE DS.acq_time_start BETWEEN _startDate AND _endDate AND
                   InstMapping.eus_instrument_id = _eusInstrumentId
             ORDER BY DS.acq_time_start;
 
@@ -182,13 +192,12 @@ BEGIN
                    InstName.instrument,
                    DS.acq_time_start,
                    DS.acq_time_end,
-                   extract(epoch FROM DS.acq_time_end - DS.acq_time_start) / 60.0
+                   extract(epoch FROM DS.acq_time_end - DS.acq_time_start) / 60.0  -- Length, in minutes
             FROM t_dataset DS
                  INNER JOIN t_instrument_name InstName
                    ON DS.instrument_id = InstName.instrument_id
-            WHERE _startDate <= DS.acq_time_start AND
-                  DS.acq_time_start <= _endDate AND
-                  InstName.instrument = _instrumentName
+            WHERE DS.acq_time_start BETWEEN _startDate AND _endDate AND
+                  InstName.instrument = _instrumentName::citext
             ORDER BY DS.Acq_Time_Start;
         End If;
 
@@ -200,45 +209,52 @@ BEGIN
         INTO _maxSeq
         FROM Tmp_Durations;
 
-        WHILE _index < _maxSeq
+        FOR _index IN 1 .. _maxSeq
         LOOP
-            _start := NULL;
-            _end := NULL;
-
             SELECT Time_Start
             INTO _start
             FROM Tmp_Durations
-            WHERE Seq = _index + _seqIncrement
+            WHERE Seq = _index + 1;
+
+            If Not FOUND Then
+                CONTINUE;
+            End If;
 
             SELECT Time_End
             INTO _end
             FROM Tmp_Durations
-            WHERE Seq = _index
+            WHERE Seq = _index;
 
-            _interval := CASE WHEN _start <= _end THEN 0
-                              ELSE Coalesce(extract(epoch FROM _start - _end) / 60.0, 0)
-                         END;
-
-            -- Make sure that start and end times are not null
-            --
-            If (NOT _start IS NULL) AND (NOT _end IS NULL) Then
-                UPDATE Tmp_Durations
-                SET Interval = Coalesce(_interval, 0)
-                WHERE Seq = _index
+            If Not FOUND Then
+                CONTINUE;
             End If;
 
-            _index := _index + _seqIncrement;
+            -- Compute the interval from the end time of the first dataset to the start time of the next dataset
+            -- Thus, use "epoch from _start - _end" since _start is after _end
+
+            _interval := CASE WHEN _start <= _end THEN 0
+                              ELSE Coalesce(extract(epoch FROM _start - _end) / 60.0, 0)  -- Length, in minutes
+                         END;
+
+            -- Update the durations table, provided start and end times are not null
+
+            If NOT _start IS NULL AND NOT _end IS NULL Then
+                UPDATE Tmp_Durations
+                SET Interval = Coalesce(_interval, 0)
+                WHERE Seq = _index;
+            End If;
+
         END LOOP;
 
         If _infoOnly Then
 
             ---------------------------------------------------
-            -- Preview dataset intervals
+            -- Preview the dataset intervals
             ---------------------------------------------------
 
             RAISE INFO '';
 
-            _formatSpecifier := '%-25s %-80s %-10s %-20s %-20s %-19s %-13s';
+            _formatSpecifier := '%-25s %-80s %-10s %-20s %-20s %-19s %-13s %-20s';
 
             _infoHead := format(_formatSpecifier,
                                 'Instrument',
@@ -247,7 +263,8 @@ BEGIN
                                 'Created',
                                 'Acq_Time_Start',
                                 'Interval_to_Next_DS',
-                                'Long_Interval'
+                                'Long_Interval',
+                                'Comment'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
@@ -257,7 +274,8 @@ BEGIN
                                          '--------------------',
                                          '--------------------',
                                          '-------------------',
-                                         '-------------'
+                                         '-------------',
+                                         '--------------------'
                                         );
 
             RAISE INFO '%', _infoHead;
@@ -270,6 +288,7 @@ BEGIN
                        public.timestamp_text(DS.Created) AS Created,
                        public.timestamp_text(DS.Acq_Time_Start) AS Acq_Time_Start,
                        Tmp_Durations.Interval AS Interval_to_Next_DS,
+                       DS.interval_to_next_ds AS Current_Interval_to_Next_DS,
                        CASE
                            WHEN Interval > _maxNormalInterval THEN 'Yes'
                            ELSE ''
@@ -282,7 +301,8 @@ BEGIN
                 ORDER BY CASE
                              WHEN Interval > _maxNormalInterval THEN 'Yes'
                              ELSE ''
-                         END, DS.Dataset_ID
+                         END,
+                         DS.Dataset_ID
             LOOP
                 _infoData := format(_formatSpecifier,
                                     _previewData.Instrument,
@@ -291,7 +311,23 @@ BEGIN
                                     _previewData.Created,
                                     _previewData.Acq_Time_Start,
                                     _previewData.Interval_to_Next_DS,
-                                    _previewData.Long_Interval
+                                    _previewData.Long_Interval,
+                                    CASE WHEN Not _previewData.Interval_to_Next_DS Is Null AND
+                                              _previewData.Current_Interval_to_Next_DS Is NULL THEN 'Storing new interval'
+                                         WHEN Not _previewData.Interval_to_Next_DS Is Distinct From _previewData.Current_Interval_to_Next_DS THEN ''   -- Matches existing interval
+                                         ELSE
+                                             CASE WHEN Not _previewData.Interval_to_Next_DS Is Null AND
+                                                       _previewData.Current_Interval_to_Next_DS Is Distinct From _previewData.Interval_to_Next_DS
+                                                  THEN format('Updating interval: %s -> %s',
+                                                                _previewData.Current_Interval_to_Next_DS,
+                                                                _previewData.Interval_to_Next_DS)
+                                                  ELSE format('New interval is null; leaving existing interval unchanged: %s',
+                                                                CASE WHEN _previewData.Current_Interval_to_Next_DS IS NULL
+                                                                     THEN '<Null>'
+                                                                     ELSE _previewData.Current_Interval_to_Next_DS::text
+                                                                END)
+                                             END
+                                    END
                                    );
 
                 RAISE INFO '%', _infoData;
@@ -305,29 +341,28 @@ BEGIN
         -- Update intervals in dataset table
         ---------------------------------------------------
 
-        UPDATE DS
+        UPDATE t_dataset target
         SET interval_to_next_ds = Tmp_Durations.Interval
-        FROM t_dataset DS
-             INNER JOIN Tmp_Durations
-               ON DS.dataset_id = Tmp_Durations.dataset_id
-        WHERE Coalesce(DS.interval_to_next_ds, 0) <> Coalesce(Tmp_Durations.Interval, DS.interval_to_next_ds, 0)
+        FROM Tmp_Durations
+        WHERE target.dataset_id = Tmp_Durations.dataset_id AND
+              Not Tmp_Durations.Interval Is Null AND
+              target.interval_to_next_ds Is Distinct From Tmp_Durations.Interval;
 
         ---------------------------------------------------
         -- Update intervals in long interval table
         ---------------------------------------------------
 
-        UPDATE t_run_interval
+        UPDATE t_run_interval target
         SET Interval = Tmp_Durations.Interval
         FROM Tmp_Durations
-        WHERE t_run_interval.ID = Tmp_Durations.Dataset_ID AND
+        WHERE target.dataset_id = Tmp_Durations.Dataset_ID AND
               Coalesce(target.Interval, 0) <> Coalesce(Tmp_Durations.Interval, target.Interval, 0);
 
         ---------------------------------------------------
-        -- Make entries in interval tracking table
-        -- for long intervals
+        -- Make entries in interval tracking table for long intervals
         ---------------------------------------------------
 
-        INSERT INTO t_run_interval( interval_id,
+        INSERT INTO t_run_interval( dataset_id,
                                     instrument,
                                     start,
                                     Interval )
@@ -340,7 +375,7 @@ BEGIN
                ON DS.dataset_id = Tmp_Durations.dataset_id
              INNER JOIN t_instrument_name InstName
                ON DS.instrument_id = InstName.instrument_id
-        WHERE NOT Tmp_Durations.dataset_id IN ( SELECT interval_id FROM t_run_interval ) AND
+        WHERE NOT Tmp_Durations.dataset_id IN ( SELECT dataset_id FROM t_run_interval ) AND
               Tmp_Durations.Interval > _maxNormalInterval;
 
         ---------------------------------------------------
@@ -350,6 +385,9 @@ BEGIN
 
         DELETE FROM t_run_interval
         WHERE interval < _maxNormalInterval;
+
+        DROP TABLE Tmp_Durations;
+        RETURN;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -376,4 +414,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_dataset_interval IS 'UpdateDatasetInterval';
+
+ALTER PROCEDURE public.update_dataset_interval(IN _instrumentname text, IN _startdate timestamp without time zone, IN _enddate timestamp without time zone, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_dataset_interval(IN _instrumentname text, IN _startdate timestamp without time zone, IN _enddate timestamp without time zone, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_dataset_interval(IN _instrumentname text, IN _startdate timestamp without time zone, IN _enddate timestamp without time zone, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateDatasetInterval';
+

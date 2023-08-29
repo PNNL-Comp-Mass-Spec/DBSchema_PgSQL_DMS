@@ -1,27 +1,22 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_dataset_interval_for_multiple_instruments
-(
-    _daysToProcess int = 60,
-    _updateEMSLInstrumentUsage boolean = true
-    _infoOnly boolean = false,
-    _previewProcedureCall boolean = false,
-    _instrumentsToProcess text = '',
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_dataset_interval_for_multiple_instruments(integer, boolean, boolean, boolean, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_dataset_interval_for_multiple_instruments(IN _daystoprocess integer DEFAULT 60, IN _updateemslinstrumentusage boolean DEFAULT true, IN _infoonly boolean DEFAULT false, IN _previewprocedurecall boolean DEFAULT false, IN _instrumentstoprocess text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates dataset interval and creates entries for long intervals in the intervals table
+**      Updates dataset intervals in public.t_dataset and creates entries for long intervals in public.t_run_interval
 **      for all production instruments
 **
 **  Arguments:
-**    _daysToProcess                Also affects whether Update_EMSL_Instrument_Usage_Report is called for previous months
+**    _daysToProcess                Updates datasets acquired between the current timestamp and this many days in the past
 **    _updateEMSLInstrumentUsage    When true, call update_emsl_instrument_usage_report() to update T_EMSL_Instrument_Usage_Report
+**                                  Called for each month between the computed start date and the current month
 **    _infoOnly                     When true, preview updates
-**    _previewProcedureCall         When true, preview calls to update_dataset_interval() and update_emsl_instrument_usage_report()
+**    _previewProcedureCall         When true, preview calls to update_dataset_interval() and update_emsl_instrument_usage_report() when _infoOnly is true
 **    _instrumentsToProcess         Optional comma-separated list of instruments to process
 **
 **  Auth:   grk
@@ -47,7 +42,7 @@ AS $$
 **          02/15/2022 mem - Fix major bug decrementing _instrumentUsageMonth when processing multiple instruments
 **                         - Add missing Order By clause
 **          07/21/2023 mem - Look for both 'Y' and '1' when examining the eus_primary_instrument flag (aka EMSL_Primary_Instrument)
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/28/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -114,6 +109,7 @@ BEGIN
     ---------------------------------------------------
 
     _daysToProcess := Coalesce(_daysToProcess, 60);
+
     If _daysToProcess < 10 Then
         _daysToProcess := 10;
     End If;
@@ -136,7 +132,7 @@ BEGIN
 
     -- Update instrument usage for the current month, plus possibly the last few months, depending on _daysToProcess
     -- For example, if _daysToProcess is 60, will call Update_EMSL_Instrument_Usage_Report for this month plus the last two months
-    _instrumentUsageMonthsToUpdate := 1 + Round(_daysToProcess / 31.0, 0)
+    _instrumentUsageMonthsToUpdate := 1 + Round(_daysToProcess / 31.0, 0);
 
     _startDate        := _endDate - make_interval(days => _daysToProcess);
     _currentYear      := Extract(year from _endDate);
@@ -171,7 +167,7 @@ BEGIN
     );
 
     CREATE TEMP TABLE Tmp_EUS_IDs_Processed (
-        EUS_Instrument_ID Int Not Null,
+        EUS_Instrument_ID Int Not Null
     );
 
     ---------------------------------------------------
@@ -225,7 +221,7 @@ BEGIN
                    EUS_Instrument_ID,
                    false
             FROM V_Instrument_Tracked
-            ORDER BY Coalesce(EUS_Instrument_ID, 0), Name
+            ORDER BY Coalesce(EUS_Instrument_ID, 0), Name;
 
         End If;
 
@@ -296,12 +292,12 @@ BEGIN
                                     _previewData.EMSL_Primary_Instrument,
                                     _previewData.Tracked,
                                     _previewData.EUS_Instrument_ID,
-                                    _previewData.Use_EUS_ID
-
+                                    _previewData.Use_EUS_ID);
 
                 RAISE INFO '%', _infoData;
             END LOOP;
 
+            RAISE INFO '';
         End If;
 
         ---------------------------------------------------
@@ -325,8 +321,8 @@ BEGIN
                 If Exists (SELECT * FROM Tmp_EUS_IDs_Processed WHERE EUS_Instrument_ID = _instrumentInfo.EusInstrumentId) Then
                     _skipInstrument := true;
                 Else
-                    Insert Into Tmp_EUS_IDs_Processed (EUS_Instrument_ID)
-                    Values (_instrumentInfo.EusInstrumentId)
+                    INSERT INTO Tmp_EUS_IDs_Processed (EUS_Instrument_ID)
+                    VALUES (_instrumentInfo.EusInstrumentId);
                 End If;
             End If;
 
@@ -335,15 +331,21 @@ BEGIN
             End If;
 
             If _infoOnly And _previewProcedureCall Then
-                RAISE INFO 'Call update_dataset_interval %, %, %, _message => _message, _infoOnly => _infoOnly)', _instrumentInfo.Instrument, _startDate, _startOfNextMonth;
+                RAISE INFO 'Call update_dataset_interval %, %, %, _infoOnly => _infoOnly)', _instrumentInfo.Instrument, _startDate, _startOfNextMonth;
             Else
-                CALL update_dataset_interval (_instrumentInfo.Instrument, _startDate, _startOfNextMonth, _message => _message, _infoOnly => _infoOnly);
+                CALL public.update_dataset_interval (
+                        _instrumentName => _instrumentInfo.Instrument,
+                        _startDate      => _startDate,
+                        _endDate        => _startOfNextMonth,
+                        _infoOnly       => _infoOnly,
+                        _message        => _message,        -- Output
+                        _returnCode     => _returnCode);    -- Output
             End If;
 
             -- EMSL_Primary_Instrument comes from eus_primary_instrument in table t_emsl_instruments and will be '0', '1', 'N', or 'Y'
 
-            If Not (_updateEMSLInstrumentUsage AND (_instrumentInfo.EMSL_Primary_Instrument IN ('Y', '1') OR _instrumentInfo.Tracked = 1)) Then
-                If _infoOnly Then
+            If Not _updateEMSLInstrumentUsage Then
+                If _infoOnly AND (_instrumentInfo.EMSL_Primary_Instrument IN ('Y', '1') OR _instrumentInfo.Tracked = 1) Then
                     RAISE INFO 'Skip call to Update_EMSL_Instrument_Usage_Report for Instrument %', _instrument;
                     RAISE INFO '';
                 End If;
@@ -353,13 +355,10 @@ BEGIN
 
             -- Call Update_EMSL_Instrument_Usage_Report for this month, plus optionally previous months (if _instrumentUsageMonthsToUpdate is greater than 1)
             --
-            _iteration := 0;
             _currentInstrumentUsageMonth := _instrumentUsageMonth;
 
-            WHILE _iteration < _instrumentUsageMonthsToUpdate
+            FOR _iteration IN 1 .. _instrumentUsageMonthsToUpdate
             LOOP
-                _iteration := _iteration + 1;
-
                 If _infoOnly Then
                     RAISE INFO 'Call Update_EMSL_Instrument_Usage_Report for Instrument %, target month %-%',
                                 _instrumentInfo.Instrument,
@@ -368,22 +367,44 @@ BEGIN
 
                 End If;
 
-                If Not _infoOnly Or _infoOnly And Not _previewProcedureCall Then
+                If Not _infoOnly Or _infoOnly And _previewProcedureCall Then
                     If _instrumentInfo.Use_EUS_ID Then
-                        CALL update_emsl_instrument_usage_report ('', _instrumentInfo.EusInstrumentId, _currentInstrumentUsageMonth, _message => _message, _infoOnly => _infoOnly);
+                        CALL public.update_emsl_instrument_usage_report (
+                                        _instrument => '',
+                                        _eusInstrumentId => _instrumentInfo.EusInstrumentId,
+                                        _endDate => _currentInstrumentUsageMonth,
+                                        _infoOnly => _infoOnly,
+                                        _message => _message,
+                                        _returnCode => _returnCode);
                     Else
-                        CALL update_emsl_instrument_usage_report (_instrumentInfo.Instrument, 0, _currentInstrumentUsageMonth, _message => _message, _infoOnly => _infoOnly);
+                        CALL public.update_emsl_instrument_usage_report (
+                                        _instrument => _instrumentInfo.Instrument,
+                                        _eusInstrumentId => 0,
+                                        _endDate => _currentInstrumentUsageMonth,
+                                        _infoOnly => _infoOnly,
+                                        _message => _message,
+                                        _returnCode => _returnCode);
                     End If;
+
+                    If _returnCode <> '' And Not _infoOnly Then
+                        RAISE EXCEPTION '%', _msg;
+                    End If;
+
                 End If;
 
                 If _infoOnly Then
                     RAISE INFO '';
                 End If;
 
-                _currentInstrumentUsageMonth :=  _currentInstrumentUsageMonth - Interval '1 month';
+                _currentInstrumentUsageMonth := _currentInstrumentUsageMonth - Interval '1 month';
             END LOOP;
 
         END LOOP;
+
+        DROP TABLE Tmp_Instruments;
+        DROP TABLE Tmp_InstrumentFilter;
+        DROP TABLE Tmp_EUS_IDs_Processed;
+        RETURN;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -412,4 +433,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_dataset_interval_for_multiple_instruments IS 'UpdateDatasetIntervalForMultipleInstruments';
+
+ALTER PROCEDURE public.update_dataset_interval_for_multiple_instruments(IN _daystoprocess integer, IN _updateemslinstrumentusage boolean, IN _infoonly boolean, IN _previewprocedurecall boolean, IN _instrumentstoprocess text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_dataset_interval_for_multiple_instruments(IN _daystoprocess integer, IN _updateemslinstrumentusage boolean, IN _infoonly boolean, IN _previewprocedurecall boolean, IN _instrumentstoprocess text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_dataset_interval_for_multiple_instruments(IN _daystoprocess integer, IN _updateemslinstrumentusage boolean, IN _infoonly boolean, IN _previewprocedurecall boolean, IN _instrumentstoprocess text, INOUT _message text, INOUT _returncode text) IS 'UpdateDatasetIntervalForMultipleInstruments';
+
