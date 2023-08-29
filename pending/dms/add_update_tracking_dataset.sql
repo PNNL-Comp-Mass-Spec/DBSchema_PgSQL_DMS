@@ -1,4 +1,4 @@
---
+
 CREATE OR REPLACE PROCEDURE public.add_update_tracking_dataset
 (
     _datasetName text = 'TrackingDataset1',
@@ -283,11 +283,11 @@ BEGIN
             -- Could not find entry in database for username _operatorUsername
             -- Try to auto-resolve the name
 
-            CALL auto_resolve_name_to_username (
-                    _operatorUsername,
-                    _matchCount => _matchCount,         -- Output
-                    _matchingUsername => _newUsername,  -- Output
-                    _matchingUserID => _userID);        -- Output
+            CALL public.auto_resolve_name_to_username (
+                            _operatorUsername,
+                            _matchCount => _matchCount,         -- Output
+                            _matchingUsername => _newUsername,  -- Output
+                            _matchingUserID => _userID);        -- Output
 
             If _matchCount = 1 Then
                 -- Single match found; update _operatorUsername
@@ -383,7 +383,7 @@ BEGIN
 
                 _requestName := format('AutoReq_%s', _datasetName);
 
-                CALL add_update_requested_run (
+                CALL public.add_update_requested_run (
                                         _requestName => _requestName,
                                         _experimentName => _experimentName,
                                         _requesterUsername => _operatorUsername,
@@ -430,19 +430,25 @@ BEGIN
                 _warning := _message;
             End If;
 
-            CALL consume_scheduled_run (
-                    _datasetID,
-                    _requestID,
-                    _message => _message,           -- Output
-                    _callingUser => _callingUser,
-                    _returnCode => _returnCode);    -- Output
+            CALL public.consume_scheduled_run (
+                            _datasetID,
+                            _requestID,
+                            _message => _message,           -- Output
+                            _returnCode => _returnCode,     -- Output
+                            _callingUser => _callingUser,
+                            _logDebugMessages => false);
 
             If _returnCode <> '' Then
                 RAISE EXCEPTION 'Consume operation failed: dataset % -> %', _datasetName, _message;
             End If;
 
             -- Update t_cached_dataset_instruments
-            CALL update_cached_dataset_instruments (_processingMode => 0, _datasetId => _datasetID, _infoOnly => false);
+            CALL public.update_cached_dataset_instruments (
+                            _processingMode => 0,
+                            _datasetId => _datasetID,
+                            _infoOnly => false,
+                            _message => _message,
+                            _returnCode => _returnCode);
 
         End If;
 
@@ -488,7 +494,7 @@ BEGIN
               Coalesce(_existingEusUsageType, '') <> _eusUsageType OR
               Coalesce(_existingEusUser, '') <> _eusUsersList) Then
 
-                CALL add_update_requested_run (
+                CALL public.add_update_requested_run (
                                         _requestName => _requestName,
                                         _experimentName => _experimentName,
                                         _requesterUsername => _operatorUsername,
@@ -547,12 +553,13 @@ BEGIN
         _startDate := _refDate - INTERVAL '1 month';
         _endDate   := _refDate + INTERVAL '1 month';
 
-        CALL update_dataset_interval (
-                _instrumentName,
-                _startDate,
-                _endDate,
-                _message => _message,   -- Output
-                _infoOnly => false)
+        CALL public.update_dataset_interval (
+                        _instrumentName,
+                        _startDate,
+                        _endDate,
+                        _message => _message,           -- Output
+                        _returnCode => _returnCode,     -- Output
+                        _infoOnly => false)
 
     EXCEPTION
         WHEN OTHERS THEN

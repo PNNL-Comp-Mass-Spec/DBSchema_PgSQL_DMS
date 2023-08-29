@@ -484,11 +484,11 @@ BEGIN
             -- Could not find entry in database for username _requesterUsername
             -- Try to auto-resolve the name
 
-            CALL auto_resolve_name_to_username (
-                    _requesterUsername,
-                    _matchCount => _matchCount,         -- Output
-                    _matchingUsername => _newUsername,  -- Output
-                    _matchingUserID => _userID);        -- Output
+            CALL public.auto_resolve_name_to_username (
+                            _requesterUsername,
+                            _matchCount => _matchCount,         -- Output
+                            _matchingUsername => _newUsername,  -- Output
+                            _matchingUserID => _userID);        -- Output
 
             If _matchCount = 1 Then
                 -- Single match found; update _requesterUsername
@@ -508,7 +508,7 @@ BEGIN
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
-        CALL lookup_instrument_run_info_from_experiment_sample_prep (
+        CALL public.lookup_instrument_run_info_from_experiment_sample_prep (
                             _experimentName,
                             _instrumentGroup => _instrumentGroup,       -- Output
                             _msType => _msType,                         -- Output
@@ -543,7 +543,7 @@ BEGIN
         End If;
 
 
-        CALL validate_instrument_group_and_dataset_type (
+        CALL public.validate_instrument_group_and_dataset_type (
                         _datasetType => _msType,
                         _instrumentGroup => _instrumentGroup,           -- Output
                         _datasetTypeID => _datasetTypeID output,        -- Output
@@ -613,7 +613,7 @@ BEGIN
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
-        CALL lookup_eus_from_experiment_sample_prep (
+        CALL public.lookup_eus_from_experiment_sample_prep (
                             _experimentName,
                             _eusUsageType => _eusUsageType,     -- Output
                             _eusProposalID => _eusProposalID,   -- Output
@@ -653,7 +653,7 @@ BEGIN
             _addingItem := true;
         End If;
 
-        CALL validate_eus_usage (
+        CALL public.validate_eus_usage (
                         _eusUsageType   => _eusUsageType,       -- Input/Output
                         _eusProposalID  => _eusProposalID,      -- Input/Output
                         _eusUsersList   => _eusUsersList,       -- Input/Output
@@ -701,7 +701,7 @@ BEGIN
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
-        CALL lookup_other_from_experiment_sample_prep
+        CALL public.lookup_other_from_experiment_sample_prep
                             _experimentName,
                             _workPackage => _workPackage,       -- Output
                             _message => _msg,                   -- Output
@@ -762,10 +762,11 @@ BEGIN
             _allowNoneWP := true;
         End If;
 
-        CALL validate_wp ( _workPackageNumber,
-                           _allowNoneWP,
-                           _message => _msg,
-                           _returnCode => _returnCode);
+        CALL public.validate_wp (
+                        _workPackageNumber,
+                        _allowNoneWP,
+                        _message => _msg,
+                        _returnCode => _returnCode);
 
         If _returnCode <> '' Then
             RAISE EXCEPTION 'validate_wp: %', _msg;
@@ -874,7 +875,7 @@ BEGIN
 
             -- Assign users to the request
             --
-            CALL assign_eus_users_to_requested_run (
+            CALL public.assign_eus_users_to_requested_run (
                                     _request,
                                     _eusProposalID,
                                     _eusUsersList,
@@ -893,10 +894,10 @@ BEGIN
 
             If _status = 'Active' Then
                 -- Add a new row to t_active_requested_run_cached_eus_users
-                CALL update_cached_requested_run_eus_users (
-                        _request,
-                        _message => _message,           -- Output
-                        _returnCode => _returnCode);    -- Output
+                CALL public.update_cached_requested_run_eus_users (
+                                _request,
+                                _message => _message,           -- Output
+                                _returnCode => _returnCode);    -- Output
             End If;
 
         End If;
@@ -945,7 +946,7 @@ BEGIN
 
             -- Assign users to the request
             --
-            CALL assign_eus_users_to_requested_run (
+            CALL public.assign_eus_users_to_requested_run (
                                     _requestID,
                                     _eusProposalID,
                                     _eusUsersList,
@@ -957,10 +958,10 @@ BEGIN
             End If;
 
             -- Make sure that t_active_requested_run_cached_eus_users is up-to-date
-            CALL update_cached_requested_run_eus_users (
-                    _request,
-                    _message => _message,           -- Output
-                    _returnCode => _returnCode);    -- Output
+            CALL public.update_cached_requested_run_eus_users (
+                                    _request,
+                                    _message => _message,           -- Output
+                                    _returnCode => _returnCode);    -- Output
 
             If _batch = 0 And _currentBatch <> 0 Then
                 _msg := format('Removed request %s from batch %s', _request, _currentBatch);
@@ -973,8 +974,9 @@ BEGIN
         ---------------------------------------------------
 
         If _batch > 0 Then
-            CALL update_cached_requested_run_batch_stats (
+            CALL public.update_cached_requested_run_batch_stats (
                     _batch,
+                    _fullRefresh => false,
                     _message => _msg,               -- Output
                     _returnCode => _returnCode);    -- Output
 
@@ -984,10 +986,11 @@ BEGIN
         End If;
 
         If _currentBatch > 0 Then
-            CALL update_cached_requested_run_batch_stats (
-                    _currentBatch,
-                    _message => _msg,               -- Output
-                    _returnCode => _returnCode);    -- Output
+            CALL public.update_cached_requested_run_batch_stats (
+                            _currentBatch,
+                            _fullrefresh => false,
+                            _message => _msg,               -- Output
+                            _returnCode => _returnCode);    -- Output
 
             If _returnCode <> '' Then
                 _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 1024);

@@ -144,12 +144,12 @@ BEGIN
     -- Trim whitespace from input/output parameters
     ---------------------------------------------------
 
-    _paramFileName       = Trim(_paramFileName);
-    _settingsFileName    = Trim(_settingsFileName;
-    _organismDBName      = Trim(_organismDBName);
-    _protCollNameList    = Trim(_protCollNameList);
-    _protCollOptionsList = Trim(_protCollOptionsList);
-    _ownerUsername       = Trim(_ownerUsername);
+    _paramFileName       := Trim(_paramFileName);
+    _settingsFileName    := Trim(_settingsFileName;
+    _organismDBName      := Trim(_organismDBName);
+    _protCollNameList    := Trim(_protCollNameList);
+    _protCollOptionsList := Trim(_protCollOptionsList);
+    _ownerUsername       := Trim(_ownerUsername);
 
     ---------------------------------------------------
     -- Validate the datasets in Tmp_DatasetInfo

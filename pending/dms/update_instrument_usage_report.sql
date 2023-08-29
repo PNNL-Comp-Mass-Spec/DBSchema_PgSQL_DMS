@@ -316,7 +316,13 @@ BEGIN
 
         If _operation::citext = 'refresh' Then
             If char_length(Coalesce(_instrument, '')) > 0 Then
-                CALL update_emsl_instrument_usage_report (_instrument, 0, _endOfMonth, _message => _msg, _returnCode => _returnCode);
+                CALL update_emsl_instrument_usage_report (
+                                        _instrument => _instrument,
+                                        _eusInstrumentId => 0,
+                                        _endDate => _endOfMonth,
+                                        _infoOnly => false,
+                                        _message => _msg,
+                                        _returnCode => _returnCode);
 
                 If _returnCode <> '' Then
                     RAISE EXCEPTION '%', _msg;
@@ -327,7 +333,13 @@ BEGIN
                     FROM Tmp_Instruments
                     ORDER BY Seq
                 LOOP
-                    CALL update_emsl_instrument_usage_report (_currentInstrument, 0, _endOfMonth, _message => _msg, _returnCode => _returnCode);
+                    CALL update_emsl_instrument_usage_report (
+                                        _instrument => _currentInstrument,
+                                        _eusInstrumentId => 0,
+                                        _endDate => _endOfMonth,
+                                        _infoOnly => false,
+                                        _message => _msg,
+                                        _returnCode => _returnCode);
 
                     If _returnCode <> '' Then
                         RAISE EXCEPTION '%', _msg;

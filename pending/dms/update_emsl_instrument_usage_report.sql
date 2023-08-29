@@ -4,9 +4,9 @@ CREATE OR REPLACE PROCEDURE public.update_emsl_instrument_usage_report
     _instrument text,
     _eusInstrumentId int,
     _endDate timestamp,
+    _infoOnly boolean = false,
     INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _infoOnly boolean = false
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -131,7 +131,7 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_DebugReports (
         Debug_ID int
-    )
+    );
 
     If _message <> '' Then
         ------------------------------------------------------
@@ -143,7 +143,7 @@ BEGIN
         FROM public.parse_delimited_integer_list(_message, ',')
         ORDER BY Value;
 
-        If Not Exists (Select * from Tmp_DebugReports) Then
+        If Not Exists (SELECT * FROM Tmp_DebugReports) Then
             _message := 'To see debug reports, _message must have a comma-separated list of integers';
             RAISE WARNING '%', _message;
         End If;
@@ -250,7 +250,7 @@ BEGIN
 
         If _actualInstrument <> '' Then
             If _instrument <> _actualInstrument And
-               (_infoOnly Or Exists (Select * from Tmp_DebugReports)) Then
+               (_infoOnly Or Exists (SELECT * FROM Tmp_DebugReports)) Then
 
                 RAISE INFO '%', 'Setting _instrument to _actualInstrument';
 
@@ -324,7 +324,7 @@ BEGIN
                                      '--------'
                                     );
 
-        If Exists (Select * from Tmp_DebugReports Where Debug_ID = 1) Then
+        If Exists (SELECT * FROM Tmp_DebugReports Where Debug_ID = 1) Then
 
             RAISE INFO '';
             RAISE INFO '%', _infoHeadStaging;
@@ -377,7 +377,7 @@ BEGIN
         WHERE Tmp_Staging.dataset_id = TR.dataset_id AND
               Tmp_Staging.type = TR.type;
 
-        If Exists (Select * from Tmp_DebugReports Where Debug_ID = 2) Then
+        If Exists (SELECT * FROM Tmp_DebugReports Where Debug_ID = 2) Then
 
             RAISE INFO '';
             RAISE INFO '%', _infoHeadStaging;
@@ -451,7 +451,7 @@ BEGIN
               WHERE Mark Is Null) SourceQ
         WHERE Tmp_Staging.Staging_ID = SourceQ.Staging_ID
 
-        If Exists (Select * from Tmp_DebugReports Where Debug_ID = 3) Then
+        If Exists (SELECT * FROM Tmp_DebugReports Where Debug_ID = 3) Then
 
 
             RAISE INFO '';
@@ -544,7 +544,7 @@ BEGIN
 
         END LOOP;
 
-        If Exists (Select * from Tmp_DebugReports Where Debug_ID = 4) Then
+        If Exists (SELECT * FROM Tmp_DebugReports Where Debug_ID = 4) Then
 
             RAISE INFO '';
             RAISE INFO '%', _infoHeadStaging;
@@ -596,7 +596,7 @@ BEGIN
         SET Start = _bom
         WHERE Type = 'Interval' AND Start < _bom
 
-        If Exists (Select * from Tmp_DebugReports Where Debug_ID = 5) Then
+        If Exists (SELECT * FROM Tmp_DebugReports Where Debug_ID = 5) Then
 
             RAISE INFO '';
             RAISE INFO '%', _infoHeadStaging;
@@ -640,7 +640,7 @@ BEGIN
 
         End If;
 
-        If Exists (Select * from Tmp_DebugReports Where Debug_ID = 6) Then
+        If Exists (SELECT * FROM Tmp_DebugReports Where Debug_ID = 6) Then
 
             RAISE INFO '';
 
@@ -891,8 +891,7 @@ BEGIN
         -- Update existing values in report table from staging table
         ---------------------------------------------------
 
-        If Not Exists (Select * from Tmp_DebugReports) Then
-        -- <a>
+        If Not Exists (SELECT * FROM Tmp_DebugReports) Then
 
             If Not _infoOnly Then
                 UPDATE InstUsage
@@ -1394,9 +1393,9 @@ BEGIN
             -- Populate field Dataset_ID_Acq_Overlap, which is used to track datasets with identical acquisition start times
             ---------------------------------------------------
 
-            CALL update_emsl_instrument_acq_overlap_data (_instrument, _year, _month, _message => _message, _infoOnly => _infoOnly);
+            CALL public.update_emsl_instrument_acq_overlap_data (_instrument, _year, _month, _message => _message, _infoOnly => _infoOnly);
 
-        End If; -- </a>
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN
