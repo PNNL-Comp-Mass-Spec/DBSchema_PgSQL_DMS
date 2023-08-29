@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_run_interval_entry AS
- SELECT t_run_interval.interval_id AS id,
+ SELECT t_run_interval.dataset_id AS id,
     t_run_interval.instrument,
     t_run_interval.entered,
     t_run_interval.start,

@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_run_interval_usage AS
- SELECT t_run_interval.interval_id AS id,
+ SELECT t_run_interval.dataset_id AS id,
     COALESCE(xmlnode.user_remote, '0'::text) AS user_remote,
     COALESCE(xmlnode.user_onsite, '0'::text) AS user_onsite,
     COALESCE(xmlnode."user", '0'::text) AS "user",

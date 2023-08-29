@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_run_interval_list_report AS
- SELECT r.interval_id AS id,
+ SELECT r.dataset_id AS id,
     r.instrument,
     r.start,
     r."interval",
@@ -33,7 +33,7 @@ CREATE VIEW public.v_run_interval_list_report AS
     r.last_affected,
     r.entered_by
    FROM (public.t_run_interval r
-     LEFT JOIN public.v_run_interval_usage u ON ((r.interval_id = u.id)));
+     LEFT JOIN public.v_run_interval_usage u ON ((r.dataset_id = u.id)));
 
 
 ALTER TABLE public.v_run_interval_list_report OWNER TO d3l243;

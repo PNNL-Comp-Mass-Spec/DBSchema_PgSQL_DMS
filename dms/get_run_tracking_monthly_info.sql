@@ -42,6 +42,7 @@ CREATE OR REPLACE FUNCTION public.get_run_tracking_monthly_info(_instrument text
 **          05/22/2023 mem - Capitalize reserved words
 **          05/30/2023 mem - Replace * with specific column names when returning query results
 **          07/27/2023 mem - Add missing assignment to _firstRunSeq
+**          08/28/2023 mem - Use new column name "dataset_id" when querying t_run_interval
 **
 *****************************************************/
 DECLARE
@@ -262,7 +263,7 @@ BEGIN
                              ELSE '+'
                         END
     FROM t_run_interval TRI
-    WHERE Tmp_TX.ID = TRI.interval_id;
+    WHERE Tmp_TX.ID = TRI.dataset_id;
 
     UPDATE Tmp_TX
     SET comment_state = 'x'

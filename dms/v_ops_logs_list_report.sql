@@ -41,7 +41,7 @@ UNION
     ''::public.citext AS entered_by,
     t_run_interval.instrument,
     'Long Interval'::text AS type,
-    (t_run_interval.interval_id)::text AS id,
+    (t_run_interval.dataset_id)::text AS id,
     ''::text AS log,
     t_run_interval."interval" AS minutes,
     COALESCE(t_run_interval.comment, ''::public.citext) AS note,

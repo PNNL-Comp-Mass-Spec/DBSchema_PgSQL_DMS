@@ -3,7 +3,7 @@
 --
 
 CREATE TABLE public.t_run_interval (
-    interval_id integer NOT NULL,
+    dataset_id integer NOT NULL,
     instrument public.citext NOT NULL,
     start timestamp without time zone,
     "interval" integer,
@@ -21,14 +21,14 @@ ALTER TABLE public.t_run_interval OWNER TO d3l243;
 -- Name: TABLE t_run_interval; Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON TABLE public.t_run_interval IS 'Tracks long intervals that follow the acquisition of a dataset; interval_id is the dataset_id of the dataset that was acquired just before a given long interval';
+COMMENT ON TABLE public.t_run_interval IS 'Tracks long intervals that follow the acquisition of a dataset; dataset_id is the dataset_id of the dataset that was acquired just before a given long interval';
 
 --
 -- Name: t_run_interval pk_t_run_interval; Type: CONSTRAINT; Schema: public; Owner: d3l243
 --
 
 ALTER TABLE ONLY public.t_run_interval
-    ADD CONSTRAINT pk_t_run_interval PRIMARY KEY (interval_id);
+    ADD CONSTRAINT pk_t_run_interval PRIMARY KEY (dataset_id);
 
 --
 -- Name: TABLE t_run_interval; Type: ACL; Schema: public; Owner: d3l243
