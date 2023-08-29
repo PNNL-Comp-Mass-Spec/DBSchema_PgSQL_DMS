@@ -86,7 +86,7 @@ BEGIN
     -- Make sure the Description and Source do not have text surrounded by < and >, since web browsers will treat that as an HTML tag
     ---------------------------------------------------
 
-    _description :=      REPLACE(REPLACE(Coalesce(_description,      ''), '<', '('), '>', ')');
+    _description      := REPLACE(REPLACE(Coalesce(_description,      ''), '<', '('), '>', ')');
     _collectionSource := REPLACE(REPLACE(Coalesce(_collectionSource, ''), '<', '('), '>', ')');
 
     ---------------------------------------------------

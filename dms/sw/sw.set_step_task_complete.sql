@@ -119,7 +119,7 @@ BEGIN
     _step := Coalesce(_step, 0);
     _processorName := Coalesce(_processorName, '');
 
-    _jobStepDescription :=        format('job %s, step %s', _job, _step);
+    _jobStepDescription        := format('job %s, step %s', _job, _step);
     _jobStepDescriptionCapital := format('Job %s, step %s', _job, _step);
 
     ---------------------------------------------------

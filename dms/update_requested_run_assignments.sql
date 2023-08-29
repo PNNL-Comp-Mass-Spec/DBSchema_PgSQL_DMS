@@ -128,8 +128,8 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _mode :=         Trim(Lower(Coalesce(_mode, '')));
-        _newValue :=     Trim(Coalesce(_newValue, ''));
+        _mode         := Trim(Lower(Coalesce(_mode, '')));
+        _newValue     := Trim(Coalesce(_newValue, ''));
         _reqRunIDList := Trim(Coalesce(_reqRunIDList, ''));
 
         ---------------------------------------------------

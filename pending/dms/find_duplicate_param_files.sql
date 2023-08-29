@@ -567,14 +567,14 @@ BEGIN
                 -- Find all other parameter files that don't have any param entries
                 -----------------------------------------
 
-                _sql :=  ' INSERT INTO Tmp_ParamEntryDuplicates (param_file_id)'
-                         ' SELECT PF.param_file_id'
-                         ' FROM t_param_files PF LEFT OUTER JOIN'
-                              ' Tmp_ParamEntries PE ON '
-                              ' PF.param_file_id = PE.param_file_id AND PE.Compare'
-                         ' WHERE PE.param_file_id IS NULL AND '
-                               ' PF.param_file_id <> $1 AND'
-                               ' PF.param_file_type_id = $2';
+                _sql := ' INSERT INTO Tmp_ParamEntryDuplicates (param_file_id)'
+                        ' SELECT PF.param_file_id'
+                        ' FROM t_param_files PF LEFT OUTER JOIN'
+                             ' Tmp_ParamEntries PE ON '
+                             ' PF.param_file_id = PE.param_file_id AND PE.Compare'
+                        ' WHERE PE.param_file_id IS NULL AND '
+                              ' PF.param_file_id <> $1 AND'
+                              ' PF.param_file_type_id = $2';
 
                 If _checkValidOnly Then
                     _sql := format('%s AND PF.Valid <> 0', _sql);

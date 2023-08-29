@@ -114,7 +114,7 @@ BEGIN
 
         _refDate := Coalesce(_refDate, CURRENT_TIMESTAMP);
 
-        _currentYear :=    Extract(year    from _refDate);
+        _currentYear    := Extract(year    from _refDate);
         _currentQuarter := Extract(quarter from _refDate);
 
         _suffix := format('%s_%s\', _currentYear, _currentQuarter);

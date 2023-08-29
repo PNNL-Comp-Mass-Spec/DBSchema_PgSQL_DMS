@@ -83,8 +83,8 @@ BEGIN
         ---------------------------------------------------
 
         _description := Trim(Coalesce(_description, ''));
-        _enabled :=     Trim(Upper(Coalesce(_enabled, 'Y')));
-        _mode :=        Trim(Lower(Coalesce(_mode, '')));
+        _enabled     := Trim(Upper(Coalesce(_enabled, 'Y')));
+        _mode        := Trim(Lower(Coalesce(_mode, '')));
         _callingUser := Coalesce(_callingUser, '');
 
         If _description = '' Then

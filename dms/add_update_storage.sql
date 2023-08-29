@@ -114,9 +114,9 @@ BEGIN
         -- Validate input fields
         ---------------------------------------------------
 
-        _path :=           Trim(Coalesce(_path, ''));
+        _path           := Trim(Coalesce(_path, ''));
         _instrumentName := Trim(Coalesce(_instrumentName, ''));
-        _storFunction :=   Trim(Coalesce(_storFunction, ''));
+        _storFunction   := Trim(Coalesce(_storFunction, ''));
 
         If char_length(_path) < 1 Then
             _message := 'path was blank';

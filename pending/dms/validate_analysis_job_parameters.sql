@@ -354,7 +354,7 @@ BEGIN
     ---------------------------------------------------
 
     _settingsFileName := public.validate_na_parameter(_settingsFileName, 1);
-    _paramFileName :=    public.validate_na_parameter(_paramFileName, 1);
+    _paramFileName    := public.validate_na_parameter(_paramFileName, 1);
 
     ---------------------------------------------------
     -- Check for settings file or parameter file being 'na' when not allowed

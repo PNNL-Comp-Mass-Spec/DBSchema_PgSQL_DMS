@@ -80,9 +80,9 @@ BEGIN
     -- Handle overrides
     ---------------------------------------------------
 
-    _eusUsageType :=  CASE WHEN _eusUsageType::citext  = _ovr THEN _usageTypeSamplePrep  ELSE _eusUsageType  END;
+    _eusUsageType  := CASE WHEN _eusUsageType::citext  = _ovr THEN _usageTypeSamplePrep  ELSE _eusUsageType  END;
     _eusProposalID := CASE WHEN _eusProposalID::citext = _ovr THEN _proposalIdSamplePrep ELSE _eusProposalID END;
-    _eusUsersList :=  CASE WHEN _eusUsersList::citext  = _ovr THEN _userListSamplePrep   ELSE _eusUsersList  END;
+    _eusUsersList  := CASE WHEN _eusUsersList::citext  = _ovr THEN _userListSamplePrep   ELSE _eusUsersList  END;
 
     If _usageTypeSamplePrep = 'USER_REMOTE' And _eusUsageType::citext In ('USER', 'USER_ONSITE') Then
         _message := format('Changed Usage Type to USER_REMOTE based on Prep Request ID %s', _prepRequestID);

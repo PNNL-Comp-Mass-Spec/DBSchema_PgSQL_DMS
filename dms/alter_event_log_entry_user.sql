@@ -110,9 +110,9 @@ BEGIN
         _entryDateFilterSqlWithVariables := ' AND entered BETWEEN $4 AND $5';
 
         If _previewSql Then
-            _dateFilterSql :=  _entryDateFilterSqlWithValues;
+            _dateFilterSql := _entryDateFilterSqlWithValues;
         Else
-            _dateFilterSql :=  _entryDateFilterSqlWithVariables;
+            _dateFilterSql := _entryDateFilterSqlWithVariables;
         End If;
 
         _entryDescription := format('%s and Entry Time between %s and %s',

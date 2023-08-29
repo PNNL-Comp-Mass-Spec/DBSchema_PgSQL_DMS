@@ -112,19 +112,19 @@ BEGIN
 
         _targetTableWithSchema := format('%s.%s', _targetSchema, _targetTable);
 
-        _s :=  'CREATE TABLE %I.%I ('
-                  ' entry_id int NOT NULL GENERATED ALWAYS AS IDENTITY,'
-                  ' term_pk citext NOT NULL,'
-                  ' term_name citext NOT NULL,'
-                  ' identifier citext NOT NULL,'
-                  ' is_leaf smallint NOT NULL,'
-                  ' parent_term_name citext NOT NULL,'
-                  ' parent_term_id citext NOT NULL,'
-                  ' grandparent_term_name citext,'
-                  ' grandparent_term_id citext,'
-                  ' entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,' ||
-           format(' CONSTRAINT pk_%s PRIMARY KEY (entry_id)', _targetTable)                  ||
-               '); ';
+        _s := 'CREATE TABLE %I.%I ('
+                 ' entry_id int NOT NULL GENERATED ALWAYS AS IDENTITY,'
+                 ' term_pk citext NOT NULL,'
+                 ' term_name citext NOT NULL,'
+                 ' identifier citext NOT NULL,'
+                 ' is_leaf smallint NOT NULL,'
+                 ' parent_term_name citext NOT NULL,'
+                 ' parent_term_id citext NOT NULL,'
+                 ' grandparent_term_name citext,'
+                 ' grandparent_term_id citext,'
+                 ' entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,' ||
+          format(' CONSTRAINT pk_%s PRIMARY KEY (entry_id)', _targetTable)                  ||
+              '); ';
 
         If _previewSql Then
             RAISE INFO '%', format(_s, _targetSchema, _targetTable);
