@@ -1,42 +1,24 @@
 --
-CREATE OR REPLACE FUNCTION public.get_monthly_instrument_usage_report
-(
-    _instrument text,
-    _eusInstrumentId int = 0,
-    _year text,
-    _month text,
-    _outputFormat text = 'details'
-)
-RETURNS TABLE (
-    Instrument text,
-    EMSL_Inst_ID int,
-    Start timestamp,
-    Type citext,
-    Minutes int,
-    Percentage numeric,
-    Usage citext,
-    Proposal text,
-    Users text,
-    Operator text,
-    Comment text,
-    Year int,
-    Month int,
-    Dataset_ID int
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: get_monthly_instrument_usage_report(text, integer, text, text, text); Type: FUNCTION; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE FUNCTION public.get_monthly_instrument_usage_report(_instrument text, _eusinstrumentid integer DEFAULT 0, _year text DEFAULT ''::text, _month text DEFAULT ''::text, _outputformat text DEFAULT 'details'::text) RETURNS TABLE(instrument public.citext, emsl_inst_id integer, start timestamp without time zone, type public.citext, minutes integer, percentage numeric, usage public.citext, proposal text, users text, operator text, comment text, year integer, month integer, dataset_id integer)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Create a monthly usage report for given instrument, year, and month
 **
 **  Arguments:
-**    _eusInstrumentId   EMSL instrument ID to process; use this to process instruments like the 12T or the 15T where there are two instrument entries in DMS, yet they both map to the same EUS_Instrument_ID
-**    _outputFormat      'report', 'details', 'rollup', 'check', 'debug1', 'debug2', 'debug3'
+**    _instrument           Instrument name
+**    _eusInstrumentId      EMSL instrument ID to process; use this to process instruments like the 12T or the 15T where there are two instrument entries in DMS, yet they both map to the same EUS_Instrument_ID
+**    _year                 Year (as text, for compatibility with the website)
+**    _month                Month (as text)
+**    _outputFormat         Output format: 'report', 'details', 'rollup', 'check', 'debug1', 'debug2', 'debug3'
 **
 **  Auth:   grk
-**  Date:   03/06/2012
-**          03/06/2012 grk - Rename _mode to _outputFormat
+**  Date:   03/06/2012 grk - Rename _mode to _outputFormat
 **          03/06/2012 grk - Add long interval comment to 'detail' output format
 **          03/10/2012 grk - Add '_otherNotAvailable'
 **          03/15/2012 grk - Add 'report' _outputFormat
@@ -60,7 +42,7 @@ AS $$
 **          05/27/2022 mem - Do not log year or month conversion errors to the database
 **                         - Validate _year, _month, and _outputFormat
 **          06/15/2023 mem - Add support for usage type 'RESOURCE_OWNER'
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/29/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -95,9 +77,9 @@ DECLARE
     _message text;
 BEGIN
 
-    _instrument := Coalesce(_instrument, '');
+    _instrument      := Trim(Coalesce(_instrument, ''));
     _eusInstrumentId := Coalesce(_eusInstrumentId, 0);
-    _outputFormat := Lower(Coalesce(_outputFormat, ''));
+    _outputFormat    := Trim(Lower(Coalesce(_outputFormat, '')));
 
     If _eusInstrumentId > 0 Then
         _processByEUS := true;
@@ -117,7 +99,12 @@ BEGIN
             RAISE EXCEPTION 'Invalid year, must be an integer';
         End If;
 
-        If Not _outputFormat In ('', 'report', 'details', 'rollup', 'check', 'debug1', 'debug2', 'debug3') Then
+        -- If _outputFormat is an empty string, change it to 'details'
+        If _outputFormat = '' Then
+            _outputFormat := 'details';
+        End If;
+
+        If Not _outputFormat In ('report', 'details', 'rollup', 'check', 'debug1', 'debug2', 'debug3') Then
             RAISE EXCEPTION 'Invalid output format; should be report, details, rollup, or check';
         End If;
 
@@ -130,14 +117,15 @@ BEGIN
             FROM t_instrument_name InstName
                  INNER JOIN t_emsl_dms_instrument_mapping InstMapping
                    ON InstName.instrument_id = InstMapping.dms_instrument_id
-                 INNER JOIN ( SELECT eus_instrument_id
+                 INNER JOIN ( SELECT InstMapping.eus_instrument_id
                               FROM t_instrument_name InstName
                                    INNER JOIN t_emsl_dms_instrument_mapping InstMapping
                                      ON InstName.instrument_id = InstMapping.dms_instrument_id
-                              GROUP BY eus_instrument_id
-                              HAVING COUNT(InstMapping.dms_instrument_id) > 1 ) LookupQ
+                              GROUP BY InstMapping.eus_instrument_id
+                              HAVING COUNT(InstMapping.dms_instrument_id) > 1
+                            ) LookupQ
                    ON InstMapping.eus_instrument_id = LookupQ.eus_instrument_id
-            WHERE InstName.instrument = _instrument;
+            WHERE InstName.instrument = _instrument::citext;
 
             If FOUND Then
                 _processByEUS := true;
@@ -149,7 +137,7 @@ BEGIN
         -- Get maximum time available in month
         ---------------------------------------------------
 
-        _currentMonthStart := make_date(_year, _month, 1)::timestamp;
+        _currentMonthStart := make_date(_yearValue, _monthValue, 1)::timestamp;
         _nextMonth := _currentMonthStart + Interval '1 month';  -- Beginning of the next month after _currentMonthStart
 
         _daysInMonth := Extract(day FROM _nextMonth - _currentMonthStart);
@@ -158,10 +146,9 @@ BEGIN
         _logErrors := true;
 
         ---------------------------------------------------
-        -- Create temporary table to contain report data
-        -- and populate with datasets in for the specified
-        -- instrument and reporting month
-        -- (the UDF returns intervals adjusted to monthly boundaries)
+        -- Create temporary table to hold report data and
+        -- populate with datasets for the specified instrument and reporting month
+        -- (function get_run_tracking_monthly_info_by_id returns intervals adjusted to monthly boundaries)
         ---------------------------------------------------
 
         CREATE TEMP TABLE Tmp_InstrumentUsage (
@@ -197,19 +184,19 @@ BEGIN
             RETURN QUERY
             SELECT ''::citext As Instrument,
                    0 As EMSL_Inst_ID,
-                   Start,
-                   Type,
-                   Duration As Minutes,
+                   U.Start,
+                   U.Type,
+                   U.Duration As Minutes,
                    null::numeric As Percentage,
-                   Usage,
-                   Proposal,
-                   Users,
-                   Operator,
-                   Comment,
-                   _year As Year,
-                   _month As Month ,
-                   Dataset_ID
-            FROM Tmp_InstrumentUsage;
+                   U.Usage,
+                   U.Proposal,
+                   U.Users,
+                   U.Operator,
+                   U.Comment,
+                   _yearValue As Year,
+                   _monthValue As Month,
+                   U.Dataset_ID
+            FROM Tmp_InstrumentUsage U;
 
             DROP TABLE Tmp_InstrumentUsage;
 
@@ -237,7 +224,7 @@ BEGIN
                    RR.eus_usage_type_id AS UsageID,
                    EUT.eus_usage_type AS Usage,
                    1
-            FROM get_run_tracking_monthly_info_by_id ( _eusInstrumentId, _year, _month, '' ) AS GRTMI
+            FROM get_run_tracking_monthly_info_by_id ( _eusInstrumentId, _yearValue, _monthValue, _options => '' ) AS GRTMI
                  LEFT OUTER JOIN t_requested_run AS RR
                    ON GRTMI.id = RR.dataset_id
                  INNER JOIN t_eus_usage_type EUT
@@ -265,7 +252,7 @@ BEGIN
                    RR.eus_usage_type_id AS UsageID,
                    EUT.eus_usage_type AS Usage,
                    1
-            FROM get_run_tracking_monthly_info ( 'Lumos03',2023, 1, '' ) AS GRTMI
+            FROM public.get_run_tracking_monthly_info ( _instrument, _yearValue, _monthValue, _options => '' ) AS GRTMI
                  LEFT OUTER JOIN t_requested_run AS RR
                    ON GRTMI.id = RR.dataset_id
                  INNER JOIN t_eus_usage_type EUT
@@ -274,40 +261,20 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Pull comments from datasets
+        -- Get dataset comments
         --
-        -- The Common Table Expression (CTE) is used to create a cleaned up comment that removes
-        -- text of the form Auto-switched dataset type from HMS-MSn to HMS-HCD-HMSn on 2012-01-01
+        -- Use RegEx to remove text of the form:
+        -- 'Auto-switched dataset type from HMS-MSn to HMS-HCD-HMSn on 2012-01-01'
         ---------------------------------------------------
 
-        WITH DSCommentClean (dataset_id, comment)
-        AS ( SELECT Dataset_ID, REPLACE(Comment, TextToRemove, '') AS Comment
-             FROM ( SELECT dataset_id, comment,
-                           SUBSTRING(comment, AutoSwitchIndex, AutoSwitchIndex + AutoSwitchIndexEnd) AS TextToRemove
-                    FROM ( SELECT dataset_id, comment, AutoSwitchIndex,
-                                  PATINDEX('%"0-9""0-9""0-9""0-9"-"0-9""0-9"-"0-9""0-9"%', AutoSwitchTextPortion) + 10 AS AutoSwitchIndexEnd
-                            FROM ( SELECT dataset_id, comment, AutoSwitchIndex,
-                                          SUBSTRING(comment, AutoSwitchIndex, 200) AS AutoSwitchTextPortion
-                                    FROM ( SELECT DS.dataset_id, comment,
-                                                  PATINDEX('%Auto-switched dataset type from%to%on "0-9""0-9""0-9""0-9"-"0-9""0-9"-"0-9""0-9"%', comment) AS AutoSwitchIndex
-                                            FROM t_dataset DS INNER JOIN
-                                                 Tmp_InstrumentUsage ON DS.dataset_id = Tmp_InstrumentUsage.dataset_id
-                                          ) FilterQ
-                                    WHERE AutoSwitchIndex > 0
-                                  ) FilterQ2
-                           ) FilterQ3
-                    ) FilterQ4
-          )
         UPDATE Tmp_InstrumentUsage
-        SET comment = Coalesce(DSCommentClean.comment, Coalesce(DS.comment, ''))
+        SET comment = regexp_replace(Coalesce(DS.comment, ''), 'Auto-switched dataset type from.+to.+on \d{4,4}-\d{1,2}-\d{1,2}[;, ]*', '', 'g')
         FROM t_dataset AS DS
-             LEFT OUTER JOIN
-               DSCommentClean ON DSCommentClean.dataset_id = Tmp_InstrumentUsage.dataset_id;
         WHERE DS.Dataset_ID = Tmp_InstrumentUsage.Dataset_ID;
 
         ---------------------------------------------------
-        -- Make a temp table to work with long intervals
-        -- and populate it with long intervals for the datasets
+        -- Make a temp table to work with long intervals and
+        -- populate it with long intervals for the datasets
         -- that were added to the temp report table
         ---------------------------------------------------
 
@@ -321,20 +288,19 @@ BEGIN
         INSERT INTO Tmp_LongIntervals (
             Dataset_ID,
             Start,
-            Breakdown,  -- Holds usage description, from t_run_interval.comment
+            Breakdown,          -- Holds usage description, from t_run_interval.comment
             Comment
         )
-        SELECT TRI.interval_id,     -- interval_id is the dataset_id of the dataset that was acquired just before a given long interval
-               TRI.start,
-               TRI.usage,           -- Examples: '<u Maintenance="100" />' or '<u UserOnsite="100" Proposal="60594" PropUser="60420" />'  or '<u User="100" Proposal="51667" PropUser="48542" />'
-               TRI.comment          -- Examples: 'Maintenance[100%]'       or 'UserOnsite[100%], Proposal[60594], PropUser[60420]'        or 'User[100%], Proposal[51667], PropUser[48542]'
-        FROM t_run_interval TRI
+        SELECT I.dataset_id,    -- Dataset ID of the dataset that was acquired just before a given long interval
+               I.start,
+               I.usage,         -- Examples: '<u Maintenance="100" />' or '<u UserOnsite="100" Proposal="60594" PropUser="60420" />'  or '<u User="100" Proposal="51667" PropUser="48542" />'
+               I.comment        -- Examples: 'Maintenance[100%]'       or 'UserOnsite[100%], Proposal[60594], PropUser[60420]'        or 'User[100%], Proposal[51667], PropUser[48542]'
+        FROM t_run_interval I
              INNER JOIN Tmp_InstrumentUsage
-               ON TRI.interval_id = Tmp_InstrumentUsage.Dataset_ID;
+               ON I.dataset_id = Tmp_InstrumentUsage.Dataset_ID;
 
         ---------------------------------------------------
-        -- Mark datasets in temp report table
-        -- that have long intervals
+        -- Mark datasets in temp report table that have long intervals
         ---------------------------------------------------
 
         UPDATE Tmp_InstrumentUsage
@@ -358,8 +324,9 @@ BEGIN
         );
 
         ---------------------------------------------------
-        -- Extract long interval apportionments from XML
-        -- and use to save apportioned intervals to the temp table
+        -- Extract long interval apportionments from XML and
+        -- use to save apportioned intervals to the temp table
+        --
         -- Example XML in column Breakdown
         --   <u Maintenance="100" />
         --   <u User="100" Proposal="35092" />
@@ -369,100 +336,92 @@ BEGIN
         ---------------------------------------------------
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Proposal, Usage, Comment)
-        SELECT
-            Tmp_LongIntervals.Dataset_ID,
-            Tmp_LongIntervals.Start,
-            public.try_cast((xpath('//u/@Broken', BreakDown))[1]::text, 0.0) * Tmp_InstrumentUsage.Interval / 100 AS Interval,
-            '' AS Proposal,
-            'BROKEN' AS USAGE,
-            Tmp_LongIntervals.Comment
+        SELECT Tmp_LongIntervals.Dataset_ID,
+               Tmp_LongIntervals.Start,
+               public.try_cast((xpath('//u/@Broken', BreakDown))[1]::text, 0.0) * Tmp_InstrumentUsage.Interval / 100 AS Interval,
+               '' AS Proposal,
+               'BROKEN' AS Usage,
+               Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID;
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Proposal, Usage, Comment)
-        SELECT
-            Tmp_LongIntervals.Dataset_ID,
-            Tmp_LongIntervals.Start,
-            public.try_cast((xpath('//u/@Maintenance', BreakDown))[1]::text, 0.0) * Tmp_InstrumentUsage.Interval / 100 AS Interval,
-            '' AS Proposal,
-            'MAINTENANCE' AS Usage,            -- This is defined in t_emsl_instrument_usage_type
-            Tmp_LongIntervals.Comment
+        SELECT Tmp_LongIntervals.Dataset_ID,
+               Tmp_LongIntervals.Start,
+               public.try_cast((xpath('//u/@Maintenance', BreakDown))[1]::text, 0.0) * Tmp_InstrumentUsage.Interval / 100 AS Interval,
+               '' AS Proposal,
+               'MAINTENANCE' AS Usage,            -- This is defined in t_emsl_instrument_usage_type
+               Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID;
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Proposal, Usage, Comment)
-        SELECT
-            Tmp_LongIntervals.Dataset_ID,
-            Tmp_LongIntervals.Start,
-            public.try_cast((xpath('//u/@OtherNotAvailable', BreakDown))[1]::text, 0.0) * Tmp_InstrumentUsage.Interval / 100 AS Interval,
-            '' AS Proposal,
-            'UNAVAILABLE' AS Usage,                 -- This is defined in t_emsl_instrument_usage_type
-            Tmp_LongIntervals.Comment
+        SELECT Tmp_LongIntervals.Dataset_ID,
+               Tmp_LongIntervals.Start,
+               public.try_cast((xpath('//u/@OtherNotAvailable', BreakDown))[1]::text, 0.0) * Tmp_InstrumentUsage.Interval / 100 AS Interval,
+               '' AS Proposal,
+               'UNAVAILABLE' AS Usage,                 -- This is defined in t_emsl_instrument_usage_type
+               Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID;
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Proposal, Usage, Comment)
-        SELECT
-            Tmp_LongIntervals.Dataset_ID,
-            Tmp_LongIntervals.Start,
-            public.try_cast((xpath('//u/@StaffNotAvailable', BreakDown))[1]::text, 0.0) * Tmp_InstrumentUsage.Interval / 100 AS Interval,
-            '' AS Proposal,
-            'UNAVAIL_STAFF' AS Usage,               -- This is defined in t_emsl_instrument_usage_type
-            Tmp_LongIntervals.Comment
+        SELECT Tmp_LongIntervals.Dataset_ID,
+               Tmp_LongIntervals.Start,
+               public.try_cast((xpath('//u/@StaffNotAvailable', BreakDown))[1]::text, 0.0) * Tmp_InstrumentUsage.Interval / 100 AS Interval,
+               '' AS Proposal,
+               'UNAVAIL_STAFF' AS Usage,               -- This is defined in t_emsl_instrument_usage_type
+               Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID;
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Operator, Proposal, Usage, Comment)
-        SELECT
-            Tmp_LongIntervals.Dataset_ID,
-            Tmp_LongIntervals.Start,
-            public.try_cast((xpath('//u/@CapDev', BreakDown))[1]::text, 0.0) * Tmp_InstrumentUsage.Interval / 100 AS Interval,
-            (xpath('//u/@Operator', BreakDown))[1]::text AS Operator,
-            '' AS Proposal,
-            'CAP_DEV' AS Usage,                     -- This is defined in t_emsl_instrument_usage_type
-            Tmp_LongIntervals.Comment
+        SELECT Tmp_LongIntervals.Dataset_ID,
+               Tmp_LongIntervals.Start,
+               public.try_cast((xpath('//u/@CapDev', BreakDown))[1]::text, 0.0) * Tmp_InstrumentUsage.Interval / 100 AS Interval,
+               (xpath('//u/@Operator', BreakDown))[1]::text AS Operator,
+               '' AS Proposal,
+               'CAP_DEV' AS Usage,                     -- This is defined in t_emsl_instrument_usage_type
+               Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID;
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Operator, Proposal, Usage, Comment)
-        SELECT
-            Tmp_LongIntervals.Dataset_ID,
-            Tmp_LongIntervals.Start,
-            public.try_cast((xpath('//u/@ResourceOwner', BreakDown))[1]::text, 0.0) * Tmp_InstrumentUsage.Interval / 100 AS Interval,
-            (xpath('//u/@Operator', BreakDown))[1]::text AS Operator,
-            '' AS Proposal,
-            'RESOURCE_OWNER' AS Usage,              -- This is defined in t_emsl_instrument_usage_type
-            Tmp_LongIntervals.Comment
+        SELECT Tmp_LongIntervals.Dataset_ID,
+               Tmp_LongIntervals.Start,
+               public.try_cast((xpath('//u/@ResourceOwner', BreakDown))[1]::text, 0.0) * Tmp_InstrumentUsage.Interval / 100 AS Interval,
+               (xpath('//u/@Operator', BreakDown))[1]::text AS Operator,
+               '' AS Proposal,
+               'RESOURCE_OWNER' AS Usage,              -- This is defined in t_emsl_instrument_usage_type
+               Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID;
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Proposal, Usage, Comment)
-        SELECT
-            Tmp_LongIntervals.Dataset_ID,
-            Tmp_LongIntervals.Start,
-            public.try_cast((xpath('//u/@InstrumentAvailable', BreakDown))[1]::text, 0.0) * Tmp_InstrumentUsage.Interval / 100 AS Interval,
-            '' AS Proposal,
-            'AVAILABLE' AS Usage,                   -- This is defined in t_emsl_instrument_usage_type
-            Tmp_LongIntervals.Comment
+        SELECT Tmp_LongIntervals.Dataset_ID,
+               Tmp_LongIntervals.Start,
+               public.try_cast((xpath('//u/@InstrumentAvailable', BreakDown))[1]::text, 0.0) * Tmp_InstrumentUsage.Interval / 100 AS Interval,
+               '' AS Proposal,
+               'AVAILABLE' AS Usage,                   -- This is defined in t_emsl_instrument_usage_type
+               Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID;
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Proposal, Users, Usage, Comment)
-        SELECT
-            Tmp_LongIntervals.Dataset_ID,
-            Tmp_LongIntervals.Start,
-            (
-             public.try_cast((xpath('//u/@User', BreakDown))[1]::text, 0.0) +
-             public.try_cast((xpath('//u/@UserRemote', BreakDown))[1]::text, 0.0) +
-             public.try_cast((xpath('//u/@UserOnsite', BreakDown))[1]::text, 0.0)
-            ) * Tmp_InstrumentUsage.Interval / 100 AS Interval,
-            (xpath('//u/@Proposal', BreakDown))[1]::text AS Proposal,
-            (xpath('//u/@PropUser', BreakDown))[1]::text AS Users,
-            CASE WHEN public.try_cast((xpath('//u/@UserRemote', BreakDown))[1]::text, 0.0) > 0
-            THEN 'REMOTE'       -- Defined in t_emsl_instrument_usage_type; means we analyzed a sample for a person outside PNNL, typically as part of an EMSL User Project
-            ELSE 'ONSITE'       -- Defined in t_emsl_instrument_usage_type; means we analyzed a sample for a PNNL staff member, or for an external collaborator who was actually onsite overseeing the data acquisition
-            END AS Usage,
-            Tmp_LongIntervals.Comment
+        SELECT Tmp_LongIntervals.Dataset_ID,
+               Tmp_LongIntervals.Start,
+               (
+                 public.try_cast((xpath('//u/@User', BreakDown))[1]::text, 0.0) +
+                 public.try_cast((xpath('//u/@UserRemote', BreakDown))[1]::text, 0.0) +
+                 public.try_cast((xpath('//u/@UserOnsite', BreakDown))[1]::text, 0.0)
+               ) * Tmp_InstrumentUsage.Interval / 100 AS Interval,
+               (xpath('//u/@Proposal', BreakDown))[1]::text AS Proposal,
+               (xpath('//u/@PropUser', BreakDown))[1]::text AS Users,
+               CASE WHEN public.try_cast((xpath('//u/@UserRemote', BreakDown))[1]::text, 0.0) > 0
+                    THEN 'REMOTE'       -- Defined in t_emsl_instrument_usage_type; means we analyzed a sample for a person outside PNNL, typically as part of an EMSL User Project
+                    ELSE 'ONSITE'       -- Defined in t_emsl_instrument_usage_type; means we analyzed a sample for a PNNL staff member, or for an external collaborator who was actually onsite overseeing the data acquisition
+               END AS Usage,
+               Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID;
 
@@ -500,14 +459,14 @@ BEGIN
             RAISE INFO '%', _infoHeadSeparator;
 
             FOR _previewData IN
-                SELECT Dataset_ID,
-                       public.timestamp_text(Start) AS Start,
-                       Interval,
-                       Proposal,
-                       Usage,
-                       Comment
-                FROM Tmp_ApportionedIntervals
-                ORDER BY Start
+                SELECT I.Dataset_ID,
+                       public.timestamp_text(I.Start) AS Start,
+                       I.Interval,
+                       I.Proposal,
+                       I.Usage,
+                       I.Comment
+                FROM Tmp_ApportionedIntervals I
+                ORDER BY I.Start
             LOOP
                 _infoData := format(_formatSpecifier,
                                     _previewData.Dataset_ID,
@@ -527,9 +486,9 @@ BEGIN
         -- Clean up unecessary comments
         ---------------------------------------------------
 
-        UPDATE Tmp_ApportionedIntervals
+        UPDATE Tmp_ApportionedIntervals I
         SET Comment = ''
-        WHERE Usage In ('CAP_DEV', 'ONSITE', 'REMOTE');
+        WHERE I.Usage In ('CAP_DEV', 'ONSITE', 'REMOTE');
 
         ---------------------------------------------------
         -- Add apportioned long intervals to report table
@@ -547,18 +506,17 @@ BEGIN
             Users,
             Operator
         )
-        SELECT
-            Dataset_ID,
-            'Interval' AS Type,
-            Start,
-            0 AS Duration,
-            Interval,
-            Proposal,
-            Usage,
-            Comment,
-            Users,
-            Operator
-        FROM Tmp_ApportionedIntervals
+        SELECT I.Dataset_ID,
+               'Interval' AS Type,
+               I.Start,
+               0 AS Duration,
+               I.Interval,
+               I.Proposal,
+               I.Usage,
+               I.Comment,
+               I.Users,
+               I.Operator
+        FROM Tmp_ApportionedIntervals I;
 
         If _outputFormat Like 'debug%' Then
 
@@ -599,18 +557,18 @@ BEGIN
             RAISE INFO '%', _infoHeadSeparatorInstUsage;
 
             FOR _previewData IN
-                SELECT Dataset_ID,
-                       Type,
-                       public.timestamp_text(Start) As Start,
-                       Duration,
-                       Interval,
-                       Proposal,
-                       Usage,
-                       Comment,
-                       Users,
-                       Operator
-                FROM Tmp_InstrumentUsage
-                ORDER BY Start
+                SELECT U.Dataset_ID,
+                       U.Type,
+                       public.timestamp_text(U.Start) As Start,
+                       U.Duration,
+                       U.Interval,
+                       U.Proposal,
+                       U.Usage,
+                       U.Comment,
+                       U.Users,
+                       U.Operator
+                FROM Tmp_InstrumentUsage U
+                ORDER BY U.Start
             LOOP
                 _infoData := format(_formatSpecifierInstUsage,
                                     _previewData.Dataset_ID,
@@ -634,22 +592,22 @@ BEGIN
         -- Zero interval values for datasets with long intervals
         ---------------------------------------------------
 
-        UPDATE Tmp_InstrumentUsage
+        UPDATE Tmp_InstrumentUsage U
         SET Interval = 0
-        WHERE Type = 'Dataset' AND Normal = 0;
+        WHERE U.Type = 'Dataset' AND U.Normal = 0;
 
         ---------------------------------------------------
         -- Translate remaining DMS usage categories
         -- to EMSL usage categories
         ---------------------------------------------------
 
-        UPDATE Tmp_InstrumentUsage
+        UPDATE Tmp_InstrumentUsage U
         SET Usage = 'ONSITE'
-        WHERE Usage In ('USER', 'USER_ONSITE');
+        WHERE U.Usage In ('USER', 'USER_ONSITE');
 
-        UPDATE Tmp_InstrumentUsage
+        UPDATE Tmp_InstrumentUsage U
         SET Usage = 'REMOTE'
-        WHERE Usage = 'USER_REMOTE';
+        WHERE U.Usage = 'USER_REMOTE';
 
         -- Starting in FY 24, Usage can also be 'RESOURCE_OWNER'
 
@@ -663,10 +621,10 @@ BEGIN
         -- Add interval to duration for normal datasets
         ---------------------------------------------------
 
-        UPDATE Tmp_InstrumentUsage
-        SET Duration = Duration + Interval,
+        UPDATE Tmp_InstrumentUsage U
+        SET Duration = U.Duration + U.Interval,
             Interval = 0
-        WHERE Type = 'Dataset' AND Normal > 0;
+        WHERE U.Type = 'Dataset' AND U.Normal > 0;
 
         ---------------------------------------------------
         -- Uncomment to debug
@@ -683,18 +641,18 @@ BEGIN
             RAISE INFO '%', _infoHeadSeparatorInstUsage;
 
             FOR _previewData IN
-                SELECT Dataset_ID,
-                       Type,
-                       public.timestamp_text(Start) As Start,
-                       Duration,
-                       Interval,
-                       Proposal,
-                       Usage,
-                       Comment,
-                       Users,
-                       Operator
-                FROM Tmp_InstrumentUsage
-                ORDER BY Start
+                SELECT U.Dataset_ID,
+                       U.Type,
+                       public.timestamp_text(U.Start) As Start,
+                       U.Duration,
+                       U.Interval,
+                       U.Proposal,
+                       U.Usage,
+                       U.Comment,
+                       U.Users,
+                       U.Operator
+                FROM Tmp_InstrumentUsage U
+                ORDER BY U.Start
             LOOP
                 _infoData := format(_formatSpecifierInstUsage,
                                     _previewData.Dataset_ID,
@@ -725,7 +683,7 @@ BEGIN
             FROM t_instrument_name AS InstName
                  LEFT OUTER JOIN t_emsl_dms_instrument_mapping AS InstMapping
                    ON InstName.instrument_id = InstMapping.dms_instrument_id
-            WHERE InstName.instrument = _instrument
+            WHERE InstName.instrument = _instrument::citext;
         Else
             -- Look up DMS Instrument Name for this EUSInstrumentID
             SELECT InstName.instrument
@@ -744,65 +702,65 @@ BEGIN
             ---------------------------------------------------
 
             -- Get user lists for datasets
-            UPDATE Tmp_InstrumentUsage
+            UPDATE Tmp_InstrumentUsage IU
             SET Users = '',
                 Operator = ''
-            WHERE Tmp_InstrumentUsage.Type = 'Dataset'
+            WHERE IU.Type = 'Dataset';
 
-            UPDATE Tmp_InstrumentUsage
-            SET Operator = TEU.PERSON_ID
-            FROM t_dataset AS TD
-                 INNER JOIN t_users AS TU
-                   ON TD.operator_username = TU.username
-                 INNER JOIN t_eus_users AS TEU
-                   ON TU.hid = TEU.hid
-            WHERE Tmp_InstrumentUsage.dataset_id = TD.dataset_id AND
-                  Tmp_InstrumentUsage.Type = 'dataset';
+            UPDATE Tmp_InstrumentUsage IU
+            SET Operator = EU.person_id
+            FROM t_dataset AS DS
+                 INNER JOIN t_users AS U
+                   ON DS.operator_username = U.username
+                 INNER JOIN t_eus_users AS EU
+                   ON U.hid = EU.hid
+            WHERE IU.dataset_id = DS.dataset_id AND
+                  IU.Type = 'dataset';
 
             -- Get operator user ID for datasets
-            UPDATE Tmp_InstrumentUsage
+            UPDATE Tmp_InstrumentUsage IU
             SET Users = get_requested_run_eus_users_list(RR.request_id, 'I')
             FROM t_requested_run RR
-            WHERE Tmp_InstrumentUsage.Type = 'Dataset' AND
-                  Tmp_InstrumentUsage.dataset_id = RR.dataset_id;
+            WHERE IU.Type = 'Dataset' AND
+                  IU.dataset_id = RR.dataset_id;
 
             -- Get operator user ID for ONSITE, REMOTE, and RESOURCE_OWNER intervals
-            UPDATE Tmp_InstrumentUsage
-            SET Operator = TEU.PERSON_ID
-            FROM t_run_interval TRI
-                 INNER JOIN t_users AS TU
-                   ON TRI.entered_by = TU.username
-                 INNER JOIN t_eus_users AS TEU
-                   ON TU.hid = TEU.hid
-            WHERE TRI.interval_id = Tmp_InstrumentUsage.Dataset_ID AND
-                  Tmp_InstrumentUsage.Type = 'interval' AND
-                  Tmp_InstrumentUsage.Usage In ('ONSITE', 'REMOTE', 'RESOURCE_OWNER');
+            UPDATE Tmp_InstrumentUsage IU
+            SET Operator = EU.person_id
+            FROM t_run_interval I
+                 INNER JOIN t_users AS U
+                   ON I.entered_by = U.username
+                 INNER JOIN t_eus_users AS EU
+                   ON U.hid = EU.hid
+            WHERE I.dataset_id = IU.Dataset_ID AND
+                  IU.Type = 'interval' AND
+                  IU.Usage In ('ONSITE', 'REMOTE', 'RESOURCE_OWNER');
 
             -- Output report rows
             --
             RETURN QUERY
             SELECT
                 _instrument::citext AS Instrument,
-                _eusInstrumentId::citext AS EMSL_Inst_ID,
+                _eusInstrumentId AS EMSL_Inst_ID,
                 -- Could use this to format timestamps in the form Dec 08 2022 06:07 PM
                 -- to_char(Start, 'Mon dd yyyy hh12:mi AM') AS Start,
-                Start,
-                Type,
-                CASE WHEN Type = 'Interval' THEN Interval ELSE Duration END AS Minutes,
+                U.Start,
+                U.Type,
+                CASE WHEN U.Type = 'Interval' THEN U.Interval ELSE U.Duration END AS Minutes,
                 null::numeric As Percentage,
-                Usage,
-                Proposal,
-                Users,
-                Operator,
-                Coalesce(Comment, '') AS Comment,
-                _year AS Year,
-                _month AS Month,
-                Tmp_InstrumentUsage.Dataset_ID
-             FROM Tmp_InstrumentUsage
-             ORDER BY Start;
+                U.Usage,
+                U.Proposal,
+                U.Users,
+                U.Operator,
+                Coalesce(U.Comment, '') AS Comment,
+                _yearValue AS Year,
+                _monthValue AS Month,
+                U.Dataset_ID
+             FROM Tmp_InstrumentUsage U
+             ORDER BY U.Start;
         End If;
 
-        If _outputFormat = 'details' OR _outputFormat = '' -- default mode Then
+        If _outputFormat = 'details' OR _outputFormat = '' Then
             ---------------------------------------------------
             -- Return usage details
             ---------------------------------------------------
@@ -810,20 +768,20 @@ BEGIN
             RETURN QUERY
             SELECT _instrument::citext AS Instrument,
                    _eusInstrumentId AS EMSL_Inst_ID,
-                   Start,
-                   Type,
-                   Duration As Minutes,
+                   U.Start,
+                   U.Type,
+                   U.Duration As Minutes,
                    null::numeric As Percentage,
-                   Usage,
-                   Proposal,
-                   Users,
-                   Operator,
-                   Coalesce(Comment, '') AS Comment,
-                   _year As Year,
-                   _month As Month ,
-                   Dataset_ID
-            FROM Tmp_InstrumentUsage;
-            ORDER BY Start
+                   U.Usage,
+                   U.Proposal,
+                   U.Users,
+                   U.Operator,
+                   Coalesce(U.Comment, '') AS Comment,
+                   _yearValue As Year,
+                   _monthValue As Month ,
+                   U.Dataset_ID
+            FROM Tmp_InstrumentUsage U
+            ORDER BY U.Start;
         End If;
 
         If _outputFormat = 'rollup' Then
@@ -834,29 +792,30 @@ BEGIN
             RETURN QUERY
             SELECT _instrument::citext AS Instrument,
                    _eusInstrumentId AS EMSL_Inst_ID,
-                   Start,
-                   Type,
-                   Minutes,
+                   SumQ.Start,
+                   SumQ.Type,
+                   SumQ.Minutes::int,
                    null::numeric AS Percentage,
-                   Usage,
-                   Proposal,
-                   ''::citext As Users,
-                   ''::citext As Operator,
-                   ''::citext As Comment,
-                   _year As Year,
-                   _month As Month ,
+                   SumQ.Usage,
+                   SumQ.Proposal,
+                   '' As Users,
+                   '' As Operator,
+                   '' As Comment,
+                   _yearValue As Year,
+                   _monthValue As Month ,
                    0 As Dataset_ID
-            FROM ( SELECT MIN(Start) AS Start,
-                          Type,
+            FROM ( SELECT MIN(U.Start) AS Start,
+                          U.Type,
                           SUM(CASE
-                                  WHEN Type = 'Interval' THEN Interval
-                                  ELSE Duration
+                                  WHEN U.Type = 'Interval' THEN U.Interval
+                                  ELSE U.Duration
                               END) AS Minutes,
-                          Proposal,
-                          Usage
-                   FROM Tmp_InstrumentUsage
-                   GROUP BY Type, Usage, Proposal ) TQZ
-            ORDER BY Type, Usage, Proposal;
+                          U.Proposal,
+                          U.Usage
+                   FROM Tmp_InstrumentUsage U
+                   GROUP BY U.Type, U.Usage, U.Proposal
+                 ) SumQ
+            ORDER BY SumQ.Type, SumQ.Usage, SumQ.Proposal;
 
         End If;
 
@@ -865,24 +824,23 @@ BEGIN
             -- Check grand totals against available
             ---------------------------------------------------
 
-            SELECT
-                MIN(Start) As Start,
-                SUM(Duration),
-                SUM(Interval),
-                (SUM(Duration + Interval))::numeric / _minutesInMonth * 100.0
+            SELECT MIN(U.Start) As Start,
+                   SUM(U.Duration),
+                   SUM(U.Interval),
+                   (SUM(U.Duration + U.Interval))::numeric / _minutesInMonth * 100.0
             INTO _startMin, _durationSum, _intervalSum, _percentInUse
-            FROM Tmp_InstrumentUsage;
+            FROM Tmp_InstrumentUsage U;
 
             RAISE INFO '';
             RAISE INFO 'Available minutes in month: %', _minutesInMonth;
             RAISE INFO 'Minutes in use (duration):  %', _durationSum;
             RAISE INFO 'Interval sum:               %', _intervalSum;
             RAISE INFO 'Duration plus interval sum: %', _durationSum + _intervalSum;
-            RAISE INFO '(Duration + Interval) / minutes_in_month: %%%', _percentInUse;
+            RAISE INFO '(Duration + Interval) / minutes_in_month: %', format('%s%%', Round(_percentInUse, 1));
 
             RETURN QUERY
             SELECT
-                _instrument AS Instrument,
+                _instrument::citext AS Instrument,
                 _eusInstrumentId AS EMSL_Inst_ID,
                 _startMin As Start,
                 'Check'::citext AS Type,
@@ -892,12 +850,12 @@ BEGIN
                             _durationSum,
                             _intervalSum,
                             _durationSum + _intervalSum)::citext As Usage,
-                '' As Proposal text,
-                '' As Users text,
-                '' As Operator text,
-                '' As Comment text,
-                _year As Year,
-                _month As Month,
+                '' As Proposal,
+                '' As Users,
+                '' As Operator,
+                '' As Comment,
+                _yearValue As Year,
+                _monthValue As Month,
                 0 As Dataset_ID;
 
         End If;
@@ -928,4 +886,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.get_monthly_instrument_usage_report IS 'GetMonthlyInstrumentUsageReport';
+
+ALTER FUNCTION public.get_monthly_instrument_usage_report(_instrument text, _eusinstrumentid integer, _year text, _month text, _outputformat text) OWNER TO d3l243;
+
+--
+-- Name: FUNCTION get_monthly_instrument_usage_report(_instrument text, _eusinstrumentid integer, _year text, _month text, _outputformat text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON FUNCTION public.get_monthly_instrument_usage_report(_instrument text, _eusinstrumentid integer, _year text, _month text, _outputformat text) IS 'GetMonthlyInstrumentUsageReport';
+
