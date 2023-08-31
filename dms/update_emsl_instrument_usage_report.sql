@@ -56,7 +56,7 @@ CREATE OR REPLACE PROCEDURE public.update_emsl_instrument_usage_report(IN _instr
 **          03/17/2022 mem - After populating the staging table, update _instrument if required
 **                         - Call procedure Update_EMSL_Instrument_Acq_Overlap_Data
 **          07/15/2022 mem - Instrument operator ID is now tracked as an actual integer
-**          08/29/2023 mem - Ported to PostgreSQL
+**          08/30/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
