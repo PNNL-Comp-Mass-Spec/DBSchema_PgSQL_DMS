@@ -2,7 +2,7 @@
 -- Name: get_monthly_instrument_usage_report(text, integer, text, text, text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_monthly_instrument_usage_report(_instrument text, _eusinstrumentid integer DEFAULT 0, _year text DEFAULT ''::text, _month text DEFAULT ''::text, _outputformat text DEFAULT 'details'::text) RETURNS TABLE(instrument public.citext, emsl_inst_id integer, start timestamp without time zone, type public.citext, minutes integer, percentage numeric, usage public.citext, proposal text, users text, operator text, comment text, year integer, month integer, dataset_id integer)
+CREATE OR REPLACE FUNCTION public.get_monthly_instrument_usage_report(_instrument text, _eusinstrumentid integer DEFAULT 0, _year text DEFAULT ''::text, _month text DEFAULT ''::text, _outputformat text DEFAULT 'details'::text) RETURNS TABLE(instrument public.citext, emsl_inst_id integer, start timestamp without time zone, type public.citext, minutes integer, percentage numeric, proposal public.citext, usage public.citext, users public.citext, operator public.citext, comment public.citext, year integer, month integer, dataset_id integer)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -44,6 +44,11 @@ CREATE OR REPLACE FUNCTION public.get_monthly_instrument_usage_report(_instrumen
 **          06/15/2023 mem - Add support for usage type 'RESOURCE_OWNER'
 **          08/29/2023 mem - Ported to PostgreSQL
 **          08/30/2023 mem - Exclude null values when parsing XML in column Breakdown
+**          08/31/2023 mem - Swap columns usage and proposal and change to citext
+**                         - Round start times to the nearest minute
+**                         - Fix bug that changed _eusInstrumentId to null
+**                         - Compute percentage values when _outputFormat is 'rollup'
+**                         - Add missing columns to debug reports
 **
 *****************************************************/
 DECLARE
@@ -55,6 +60,9 @@ DECLARE
     _nextMonth timestamp;
     _daysInMonth int;
     _minutesInMonth int;
+
+    _eusInstrumentIdAlt int;
+    _actualInstrument text;
 
     _startMin timestamp;
     _durationSum int;
@@ -110,11 +118,11 @@ BEGIN
         End If;
 
         If Not _processByEUS Then
-            -- Auto switch to _eusInstrumentId if needed
+            -- Auto switch to EUS Instrument ID if needed
             -- Look for EUS Instruments mapped to two or more DMS instruments
 
             SELECT InstMapping.eus_instrument_id
-            INTO _eusInstrumentId
+            INTO _eusInstrumentIdAlt
             FROM t_instrument_name InstName
                  INNER JOIN t_emsl_dms_instrument_mapping InstMapping
                    ON InstName.instrument_id = InstMapping.dms_instrument_id
@@ -129,7 +137,12 @@ BEGIN
             WHERE InstName.instrument = _instrument::citext;
 
             If FOUND Then
-                _processByEUS := true;
+                If Coalesce(_eusInstrumentIdAlt, 0) = 0 Then
+                    RAISE WARNING 'EUS Instrument ID is null in t_emsl_dms_instrument_mapping for instrument %', _instrument;
+                Else
+                    _processByEUS := true;
+                    _eusInstrumentId := _eusInstrumentIdAlt;
+                End If;
             End If;
 
         End If;
@@ -158,13 +171,13 @@ BEGIN
             Start timestamp,
             Duration int,
             Interval int,
-            Proposal text NULL,
+            Proposal citext NULL,
             Usage citext NULL,
             UsageID int NULL,
             Normal int NULL,            -- 1 if a normal interval after a dataset (less than 180 minutes); 0 if a long interval after a dataset
-            Comment text NULL,
-            Users text NULL,
-            Operator text NULL
+            Comment citext NULL,
+            Users citext NULL,
+            Operator citext NULL
         );
 
         If _instrument = '' AND _eusInstrumentId = 0 Then
@@ -189,8 +202,8 @@ BEGIN
                    U.Type,
                    U.Duration As Minutes,
                    null::numeric As Percentage,
-                   U.Usage,
                    U.Proposal,
+                   U.Usage,
                    U.Users,
                    U.Operator,
                    U.Comment,
@@ -206,7 +219,7 @@ BEGIN
 
         If _processByEUS Then
             INSERT INTO Tmp_InstrumentUsage (
-                dataset_id,
+                Dataset_ID,
                 Type,
                 Start,
                 Duration,
@@ -218,7 +231,7 @@ BEGIN
             )
             SELECT GRTMI.id,                -- Dataset_ID
                    'Dataset' AS Type,
-                   GRTMI.Time_Start AS Start,
+                   date_trunc('minute', GRTMI.Time_Start) AS Start,     -- Round start time to the nearest minute
                    GRTMI.Duration,
                    Coalesce(GRTMI.INTERVAL, 0) AS Interval,
                    Coalesce(RR.eus_proposal_id, '') AS Proposal,
@@ -234,7 +247,7 @@ BEGIN
         Else
 
             INSERT INTO Tmp_InstrumentUsage (
-                dataset_id,
+                Dataset_ID,
                 Type,
                 Start,
                 Duration,
@@ -246,7 +259,7 @@ BEGIN
             )
             SELECT GRTMI.id AS Dataset_ID,
                    'Dataset' AS Type,
-                   GRTMI.Time_Start AS Start,
+                   date_trunc('minute', GRTMI.Time_Start) AS Start,     -- Round start time to the nearest minute
                    GRTMI.Duration,
                    Coalesce(GRTMI.INTERVAL, 0) AS Interval,
                    Coalesce(RR.eus_proposal_id, '') AS Proposal,
@@ -269,7 +282,7 @@ BEGIN
         ---------------------------------------------------
 
         UPDATE Tmp_InstrumentUsage
-        SET comment = regexp_replace(Coalesce(DS.comment, ''), 'Auto-switched dataset type from.+to.+on \d{4,4}-\d{1,2}-\d{1,2}[;, ]*', '', 'g')
+        SET Comment = regexp_replace(Coalesce(DS.comment, ''), 'Auto-switched dataset type from.+to.+on \d{4,4}-\d{1,2}-\d{1,2}[;, ]*', '', 'g')
         FROM t_dataset AS DS
         WHERE DS.Dataset_ID = Tmp_InstrumentUsage.Dataset_ID;
 
@@ -444,7 +457,7 @@ BEGIN
 
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-20s %-10s %-10s %-15s %-20s';
+            _formatSpecifier := '%-10s %-20s %-10s %-10s %-15s %-20s %-20s %-20s';
 
             _infoHead := format(_formatSpecifier,
                                 'Dataset_ID',
@@ -452,7 +465,9 @@ BEGIN
                                 'Interval',
                                 'Proposal',
                                 'Usage',
-                                'Comment'
+                                'Comment',
+                                'Users',
+                                'Operator'
                                );
 
             _infoHeadSeparator := format(_formatSpecifier,
@@ -461,6 +476,8 @@ BEGIN
                                          '----------',
                                          '----------',
                                          '---------------',
+                                         '--------------------',
+                                         '--------------------',
                                          '--------------------'
                                         );
 
@@ -473,7 +490,9 @@ BEGIN
                        I.Interval,
                        I.Proposal,
                        I.Usage,
-                       I.Comment
+                       I.Comment,
+                       I.Users,
+                       I.Operator
                 FROM Tmp_ApportionedIntervals I
                 ORDER BY I.Start
             LOOP
@@ -483,7 +502,9 @@ BEGIN
                                     _previewData.Interval,
                                     _previewData.Proposal,
                                     _previewData.Usage,
-                                    _previewData.Comment
+                                    _previewData.Comment,
+                                    _previewData.Users,
+                                    _previewData.Operator
                                    );
 
                 RAISE INFO '%', _infoData;
@@ -529,7 +550,7 @@ BEGIN
 
         If _outputFormat Like 'debug%' Then
 
-            _formatSpecifierInstUsage := '%-10s %-8s %-20s %-8s %-8s %-8s %-11s %-25s %-15s %-8s';
+            _formatSpecifierInstUsage := '%-10s %-8s %-20s %-8s %-8s %-8s %-11s %-7s %-6s %-25s %-15s %-8s';
 
             _infoHeadInstUsage := format(_formatSpecifierInstUsage,
                                          'Dataset_ID',
@@ -539,6 +560,8 @@ BEGIN
                                          'Interval',
                                          'Proposal',
                                          'Usage',
+                                         'UsageID',
+                                         'Normal',
                                          'Comment',
                                          'Users',
                                          'Operator'
@@ -552,6 +575,8 @@ BEGIN
                                                   '--------',
                                                   '--------',
                                                   '-----------',
+                                                  '-------',
+                                                  '------',
                                                   '-------------------------',
                                                   '---------------',
                                                   '--------'
@@ -573,6 +598,8 @@ BEGIN
                        U.Interval,
                        U.Proposal,
                        U.Usage,
+                       U.UsageID,
+                       U.Normal,
                        U.Comment,
                        U.Users,
                        U.Operator
@@ -587,6 +614,8 @@ BEGIN
                                     _previewData.Interval,
                                     _previewData.Proposal,
                                     _previewData.Usage,
+                                    _previewData.UsageID,
+                                    _previewData.Normal,
                                     _previewData.Comment,
                                     _previewData.Users,
                                     _previewData.Operator
@@ -657,6 +686,8 @@ BEGIN
                        U.Interval,
                        U.Proposal,
                        U.Usage,
+                       U.UsageID,
+                       U.Normal,
                        U.Comment,
                        U.Users,
                        U.Operator
@@ -671,6 +702,8 @@ BEGIN
                                     _previewData.Interval,
                                     _previewData.Proposal,
                                     _previewData.Usage,
+                                    _previewData.UsageID,
+                                    _previewData.Normal,
                                     _previewData.Comment,
                                     _previewData.Users,
                                     _previewData.Operator
@@ -687,14 +720,24 @@ BEGIN
 
         If _eusInstrumentId = 0 Then
             -- Look up EMSL instrument ID for this instrument (will be null if not an EMSL tracked instrument)
-            SELECT InstMapping.eus_instrument_id
-            INTO _eusInstrumentId
+            -- Make sure instrument name is properly capitalized
+
+            SELECT InstName.instrument, InstMapping.eus_instrument_id
+            INTO _actualInstrument, _eusInstrumentId
             FROM t_instrument_name AS InstName
                  LEFT OUTER JOIN t_emsl_dms_instrument_mapping AS InstMapping
                    ON InstName.instrument_id = InstMapping.dms_instrument_id
             WHERE InstName.instrument = _instrument::citext;
+
+            If Not FOUND Then
+                RAISE WARNING 'Instrument % not found in t_instrument_name; this is unexpected', _instrument;
+            Else
+                _instrument := _actualInstrument;
+            End If;
+
         Else
             -- Look up DMS Instrument Name for this EUSInstrumentID
+
             SELECT InstName.instrument
             INTO _instrument
             FROM t_instrument_name AS InstName
@@ -703,6 +746,11 @@ BEGIN
             WHERE InstMapping.eus_instrument_id = _eusInstrumentID
             ORDER BY InstName.instrument
             LIMIT 1;
+
+            If Not FOUND Then
+                RAISE WARNING 'EUS Instrument ID % not found in t_instrument_name and t_emsl_dms_instrument_mapping; this is unexpected', _eusInstrumentID;
+            End If;
+
         End If;
 
         If _outputFormat = 'report' Then
@@ -748,23 +796,22 @@ BEGIN
             -- Output report rows
             --
             RETURN QUERY
-            SELECT
-                _instrument::citext AS Instrument,
-                _eusInstrumentId AS EMSL_Inst_ID,
-                -- Could use this to format timestamps in the form Dec 08 2022 06:07 PM
-                -- to_char(Start, 'Mon dd yyyy hh12:mi AM') AS Start,
-                U.Start,
-                U.Type,
-                CASE WHEN U.Type = 'Interval' THEN U.Interval ELSE U.Duration END AS Minutes,
-                null::numeric As Percentage,
-                U.Usage,
-                U.Proposal,
-                U.Users,
-                U.Operator,
-                Coalesce(U.Comment, '') AS Comment,
-                _yearValue AS Year,
-                _monthValue AS Month,
-                U.Dataset_ID
+            SELECT _instrument::citext AS Instrument,
+                   _eusInstrumentId AS EMSL_Inst_ID,
+                   -- Could use this to format timestamps in the form Dec 08 2022 06:07 PM
+                   -- to_char(Start, 'Mon dd yyyy hh12:mi AM') AS Start,
+                   U.Start,
+                   U.Type,
+                   CASE WHEN U.Type = 'Interval' THEN U.Interval ELSE U.Duration END AS Minutes,
+                   null::numeric As Percentage,
+                   U.Proposal,
+                   U.Usage,
+                   U.Users,
+                   U.Operator,
+                   Coalesce(U.Comment, '')::citext AS Comment,
+                   _yearValue AS Year,
+                   _monthValue AS Month,
+                   U.Dataset_ID
              FROM Tmp_InstrumentUsage U
              ORDER BY U.Start;
         End If;
@@ -772,6 +819,12 @@ BEGIN
         If _outputFormat = 'details' OR _outputFormat = '' Then
             ---------------------------------------------------
             -- Return usage details
+            --
+            -- To match the column order returned by SQL Server procedure get_monthly_instrument_usage_report for the 'details' output format, use:
+            --
+            -- SELECT start, type, minutes, proposal, usage, comment, dataset_id
+            -- FROM get_monthly_instrument_usage_report('lumos01', 0, '2023', '1', 'details')
+            -- ORDER BY start;
             ---------------------------------------------------
 
             RETURN QUERY
@@ -781,11 +834,11 @@ BEGIN
                    U.Type,
                    U.Duration As Minutes,
                    null::numeric As Percentage,
-                   U.Usage,
                    U.Proposal,
+                   U.Usage,
                    U.Users,
                    U.Operator,
-                   Coalesce(U.Comment, '') AS Comment,
+                   Coalesce(U.Comment, '')::citext AS Comment,
                    _yearValue As Year,
                    _monthValue As Month ,
                    U.Dataset_ID
@@ -796,7 +849,15 @@ BEGIN
         If _outputFormat = 'rollup' Then
             ---------------------------------------------------
             -- Rollup by type, category, and proposal
+            --
+            -- To match the column order returned by SQL Server procedure get_monthly_instrument_usage_report for the 'rollup' output format, use:
+            --
+            -- SELECT type, minutes, percentage, usage, proposal
+            -- FROM get_monthly_instrument_usage_report('lumos01', 0, '2023', '1', 'rollup')
+            -- ORDER BY usage, proposal;
             ---------------------------------------------------
+
+            -- Compute percentage values:
 
             RETURN QUERY
             SELECT _instrument::citext AS Instrument,
@@ -804,12 +865,12 @@ BEGIN
                    SumQ.Start,
                    SumQ.Type,
                    SumQ.Minutes::int,
-                   null::numeric AS Percentage,
-                   SumQ.Usage,
+                   Round(SumQ.Minutes::numeric / _minutesInMonth * 100.0, 1) AS Percentage,
                    SumQ.Proposal,
-                   '' As Users,
-                   '' As Operator,
-                   '' As Comment,
+                   SumQ.Usage,
+                   ''::citext As Users,
+                   ''::citext As Operator,
+                   ''::citext As Comment,
                    _yearValue As Year,
                    _monthValue As Month ,
                    0 As Dataset_ID
@@ -848,24 +909,23 @@ BEGIN
             RAISE INFO '(Duration + Interval) / minutes_in_month: %', format('%s%%', Round(_percentInUse, 1));
 
             RETURN QUERY
-            SELECT
-                _instrument::citext AS Instrument,
-                _eusInstrumentId AS EMSL_Inst_ID,
-                _startMin As Start,
-                'Check'::citext AS Type,
-                _durationSum + _intervalSum As Minutes,
-                Round(_percentInUse, 1) As Percentage,
-                format('Duration: %s, Interval: %s, total: %s',
-                            _durationSum,
-                            _intervalSum,
-                            _durationSum + _intervalSum)::citext As Usage,
-                '' As Proposal,
-                '' As Users,
-                '' As Operator,
-                '' As Comment,
-                _yearValue As Year,
-                _monthValue As Month,
-                0 As Dataset_ID;
+            SELECT _instrument::citext AS Instrument,
+                   _eusInstrumentId AS EMSL_Inst_ID,
+                   _startMin As Start,
+                   'Check'::citext AS Type,
+                   _durationSum + _intervalSum As Minutes,
+                   Round(_percentInUse, 1) As Percentage,
+                   ''::citext As Proposal,
+                   format('Duration: %s, Interval: %s, total: %s',
+                               _durationSum,
+                               _intervalSum,
+                               _durationSum + _intervalSum)::citext As Usage,
+                   ''::citext As Users,
+                   ''::citext As Operator,
+                   ''::citext As Comment,
+                   _yearValue As Year,
+                   _monthValue As Month,
+                   0 As Dataset_ID;
 
         End If;
 
@@ -897,10 +957,4 @@ $$;
 
 
 ALTER FUNCTION public.get_monthly_instrument_usage_report(_instrument text, _eusinstrumentid integer, _year text, _month text, _outputformat text) OWNER TO d3l243;
-
---
--- Name: FUNCTION get_monthly_instrument_usage_report(_instrument text, _eusinstrumentid integer, _year text, _month text, _outputformat text); Type: COMMENT; Schema: public; Owner: d3l243
---
-
-COMMENT ON FUNCTION public.get_monthly_instrument_usage_report(_instrument text, _eusinstrumentid integer, _year text, _month text, _outputformat text) IS 'GetMonthlyInstrumentUsageReport';
 
