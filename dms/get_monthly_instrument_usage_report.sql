@@ -43,6 +43,7 @@ CREATE OR REPLACE FUNCTION public.get_monthly_instrument_usage_report(_instrumen
 **                         - Validate _year, _month, and _outputFormat
 **          06/15/2023 mem - Add support for usage type 'RESOURCE_OWNER'
 **          08/29/2023 mem - Ported to PostgreSQL
+**          08/30/2023 mem - Exclude null values when parsing XML in column Breakdown
 **
 *****************************************************/
 DECLARE
@@ -343,7 +344,8 @@ BEGIN
                'BROKEN' AS Usage,
                Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
-        INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID;
+        INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID
+        WHERE Not Breakdown Is Null;
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Proposal, Usage, Comment)
         SELECT Tmp_LongIntervals.Dataset_ID,
@@ -353,7 +355,8 @@ BEGIN
                'MAINTENANCE' AS Usage,            -- This is defined in t_emsl_instrument_usage_type
                Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
-        INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID;
+        INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID
+        WHERE Not Breakdown Is Null;
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Proposal, Usage, Comment)
         SELECT Tmp_LongIntervals.Dataset_ID,
@@ -363,7 +366,8 @@ BEGIN
                'UNAVAILABLE' AS Usage,                 -- This is defined in t_emsl_instrument_usage_type
                Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
-        INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID;
+        INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID
+        WHERE Not Breakdown Is Null;
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Proposal, Usage, Comment)
         SELECT Tmp_LongIntervals.Dataset_ID,
@@ -373,7 +377,8 @@ BEGIN
                'UNAVAIL_STAFF' AS Usage,               -- This is defined in t_emsl_instrument_usage_type
                Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
-        INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID;
+        INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID
+        WHERE Not Breakdown Is Null;
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Operator, Proposal, Usage, Comment)
         SELECT Tmp_LongIntervals.Dataset_ID,
@@ -384,7 +389,8 @@ BEGIN
                'CAP_DEV' AS Usage,                     -- This is defined in t_emsl_instrument_usage_type
                Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
-        INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID;
+        INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID
+        WHERE Not Breakdown Is Null;
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Operator, Proposal, Usage, Comment)
         SELECT Tmp_LongIntervals.Dataset_ID,
@@ -395,7 +401,8 @@ BEGIN
                'RESOURCE_OWNER' AS Usage,              -- This is defined in t_emsl_instrument_usage_type
                Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
-        INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID;
+        INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID
+        WHERE Not Breakdown Is Null;
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Proposal, Usage, Comment)
         SELECT Tmp_LongIntervals.Dataset_ID,
@@ -405,7 +412,8 @@ BEGIN
                'AVAILABLE' AS Usage,                   -- This is defined in t_emsl_instrument_usage_type
                Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
-        INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID;
+        INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID
+        WHERE Not Breakdown Is Null;
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Proposal, Users, Usage, Comment)
         SELECT Tmp_LongIntervals.Dataset_ID,
@@ -423,7 +431,8 @@ BEGIN
                END AS Usage,
                Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
-        INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID;
+        INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID
+        WHERE Not Breakdown Is Null;
 
         ---------------------------------------------------
         -- Get rid of meaningless apportioned long intervals
