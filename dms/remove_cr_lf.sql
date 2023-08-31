@@ -23,9 +23,9 @@ CREATE OR REPLACE FUNCTION public.remove_cr_lf(_text text) RETURNS text
 **
 *****************************************************/
 BEGIN
-    _text := REPLACE(_text, CHR(13) || CHR(10), '; ');
-    _text := REPLACE(_text, CHR(10), '; ');
-    _text := REPLACE(_text, CHR(13), '; ');
+    _text := REPLACE(_text, chr(13) || chr(10), '; ');
+    _text := REPLACE(_text, chr(10), '; ');
+    _text := REPLACE(_text, chr(13), '; ');
 
     -- Check for leading or trailing whitespace, comma, or semicolon
     _text := Trim(_text);

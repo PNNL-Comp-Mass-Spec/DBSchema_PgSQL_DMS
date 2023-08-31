@@ -37,9 +37,9 @@ BEGIN
         _previousLength = _currentLength;
 
         _newText := Trim(_newText);
-        _newText := Trim(_newText, Chr(10));    -- CR
-        _newText := Trim(_newText, Chr(13));    -- LF
-        _newText := Trim(_newText, Chr(9));     -- Tab
+        _newText := Trim(_newText, chr(10));    -- CR
+        _newText := Trim(_newText, chr(13));    -- LF
+        _newText := Trim(_newText, chr(9));     -- Tab
 
         _currentLength := char_length(_newText);
     END LOOP;

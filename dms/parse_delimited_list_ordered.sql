@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION public.parse_delimited_list_ordered(_delimitedlist te
 **      Note that if two commas in a row are encountered,
 **      the resultant table will contain an empty cell for that row
 **
-**      If _delimiter is Chr(13) or Chr(10), will split _delimitedList on CR or LF
+**      If _delimiter is chr(13) or chr(10), will split _delimitedList on CR or LF
 **      In this case, blank lines will not be included in output table
 **
 **  Arguments:
@@ -34,18 +34,18 @@ CREATE OR REPLACE FUNCTION public.parse_delimited_list_ordered(_delimitedlist te
 BEGIN
 
     -- Replace any CR or LF characters with _delimiter
-    If _delimitedList Like '%' || Chr(13) || '%' Then
-        _delimitedList := Trim(Replace(_delimitedList, Chr(13), _delimiter));
+    If _delimitedList Like '%' || chr(13) || '%' Then
+        _delimitedList := Trim(Replace(_delimitedList, chr(13), _delimiter));
     End If;
 
-    If _delimitedList Like '%' || Chr(10) || '%' Then
-        _delimitedList := Trim(Replace(_delimitedList, Chr(10), _delimiter));
+    If _delimitedList Like '%' || chr(10) || '%' Then
+        _delimitedList := Trim(Replace(_delimitedList, chr(10), _delimiter));
     End If;
 
-    If _delimiter <> Chr(9) Then
+    If _delimiter <> chr(9) Then
         -- Replace any tab characters with _delimiter
-        If _delimitedList Like '%' || Chr(9) || '%' Then
-            _delimitedList := Trim(Replace(_delimitedList, Chr(9), _delimiter));
+        If _delimitedList Like '%' || chr(9) || '%' Then
+            _delimitedList := Trim(Replace(_delimitedList, chr(9), _delimiter));
         End If;
     End If;
 

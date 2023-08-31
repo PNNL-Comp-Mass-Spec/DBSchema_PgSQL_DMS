@@ -27,18 +27,18 @@ CREATE OR REPLACE FUNCTION public.parse_delimited_integer_list(_delimitedlist te
 BEGIN
 
     -- Replace any CR or LF characters with _delimiter
-    If _delimitedList Like '%' || Chr(13) || '%' Then
-        _delimitedList := Trim(Replace(_delimitedList, Chr(13), _delimiter));
+    If _delimitedList Like '%' || chr(13) || '%' Then
+        _delimitedList := Trim(Replace(_delimitedList, chr(13), _delimiter));
     End If;
 
-    If _delimitedList Like '%' || Chr(10) || '%' Then
-        _delimitedList := Trim(Replace(_delimitedList, Chr(10), _delimiter));
+    If _delimitedList Like '%' || chr(10) || '%' Then
+        _delimitedList := Trim(Replace(_delimitedList, chr(10), _delimiter));
     End If;
 
-    If _delimiter <> Chr(9) Then
+    If _delimiter <> chr(9) Then
         -- Replace any tab characters with _delimiter
-        If _delimitedList Like '%' || Chr(9) || '%' Then
-            _delimitedList := Trim(Replace(_delimitedList, Chr(9), _delimiter));
+        If _delimitedList Like '%' || chr(9) || '%' Then
+            _delimitedList := Trim(Replace(_delimitedList, chr(9), _delimiter));
         End If;
     End If;
 

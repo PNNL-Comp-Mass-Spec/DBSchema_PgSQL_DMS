@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION public.parse_delimited_list(_delimitedlist text, _del
 **      if the list is 'Value1,,Value2' or ',Value1,Value2'
 **      the table will only contain entries 'Value1' and 'Value2'
 **
-**      If _delimiter is Chr(13) or Chr(10), will split _delimitedList on CR or LF
+**      If _delimiter is chr(13) or chr(10), will split _delimitedList on CR or LF
 **      In this case, blank lines will not be included in the output table
 **
 **  Auth:   mem
@@ -31,18 +31,18 @@ CREATE OR REPLACE FUNCTION public.parse_delimited_list(_delimitedlist text, _del
 BEGIN
 
     -- Replace any CR or LF characters with _delimiter
-    If _delimitedList Like '%' || Chr(13) || '%' Then
-        _delimitedList := Trim(Replace(_delimitedList, Chr(13), _delimiter));
+    If _delimitedList Like '%' || chr(13) || '%' Then
+        _delimitedList := Trim(Replace(_delimitedList, chr(13), _delimiter));
     End If;
 
-    If _delimitedList Like '%' || Chr(10) || '%' Then
-        _delimitedList := Trim(Replace(_delimitedList, Chr(10), _delimiter));
+    If _delimitedList Like '%' || chr(10) || '%' Then
+        _delimitedList := Trim(Replace(_delimitedList, chr(10), _delimiter));
     End If;
 
-    If _delimiter <> Chr(9) Then
+    If _delimiter <> chr(9) Then
         -- Replace any tab characters with _delimiter
-        If _delimitedList Like '%' || Chr(9) || '%' Then
-            _delimitedList := Trim(Replace(_delimitedList, Chr(9), _delimiter));
+        If _delimitedList Like '%' || chr(9) || '%' Then
+            _delimitedList := Trim(Replace(_delimitedList, chr(9), _delimiter));
         End If;
     End If;
 

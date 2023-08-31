@@ -106,7 +106,7 @@ BEGIN
         _itemList := Trim(Coalesce(_itemList, ''));
 
         -- Replace spaces and tabs with commas
-        _itemList := Replace(Replace(_itemList, ' ', ','), Chr(9), ',');
+        _itemList := Replace(Replace(_itemList, ' ', ','), chr(9), ',');
 
         ---------------------------------------------------
         -- Create and populate a temporary table using the XML in _paramListXML

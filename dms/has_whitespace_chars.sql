@@ -26,9 +26,9 @@ CREATE OR REPLACE FUNCTION public.has_whitespace_chars(_entityname text, _allows
 ****************************************************/
 BEGIN
 
-    If Position(Chr(10) In _entityName) > 0 OR              -- CR
-       Position(Chr(13) In _entityName) > 0 OR              -- LF
-       Position(Chr(9) In _entityName) > 0 OR               -- Tab
+    If Position(chr(10) In _entityName) > 0 OR              -- CR
+       Position(chr(13) In _entityName) > 0 OR              -- LF
+       Position(chr(9) In _entityName) > 0 OR               -- Tab
        Not _allowspace And Position(' ' In _entityName) > 0 -- Space
     Then
         RETURN True;
