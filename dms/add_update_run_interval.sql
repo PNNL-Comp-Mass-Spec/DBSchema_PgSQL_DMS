@@ -1,27 +1,25 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_run_interval
-(
-    _id int,
-    _comment text,
-    _mode text = 'update',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = '',
-    _showDebug boolean = false,
-    INOUT _invalidUsage int = 0             -- Leave as an integer since called from the website
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_run_interval(integer, text, text, text, text, text, boolean, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_run_interval(IN _id integer, IN _comment text, IN _mode text DEFAULT 'update'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text, IN _showdebug boolean DEFAULT false, INOUT _invalidusage integer DEFAULT 0)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Edits existing item in T_Run_Interval
-**      This procedure cannot be used to add rows to T_Run_Interval
+**      Edits existing item in t_run_interval
+**      This procedure cannot be used to add rows to t_run_interval
 **
 **  Arguments:
-**    _comment        Usage comment, e.g. 'User[100%], Proposal[49521], PropUser[50151]'
-**    _mode           'update' (note that 'add' is not supported)
-**    _invalidUsage   Output: will be 1 if the usage text in _comment cannot be parsed (or if the total percentage is not 100); UpdateRunOpLog uses this to skip invalid entries
+**    _id               Interval ID (equal to the ID of the dataset directly before the interval)
+**    _comment          Usage comment, e.g. 'UserOnsite[100%], Proposal[49361], PropUser[50082]'
+**    _mode             The only supported mode is 'update'
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Calling user
+**    _showDebug        When true, show debug statements
+**    _invalidUsage     Output: 1 if the usage text in _comment cannot be parsed (or if the total percentage is not 100); Update_Run_Op_Log uses this to skip invalid entries
 **
 **  Auth:   grk
 **  Date:   02/15/2012
@@ -39,7 +37,7 @@ AS $$
 **                         - Pass _id and _invalidUsage to Parse_Usage_Text
 **          05/03/2019 mem - Update comments
 **          02/15/2022 mem - Update error messages and rename variables
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/30/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -59,19 +57,6 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode := '';
-
-    ---------------------------------------------------
-    -- Validate the inputs
-    ---------------------------------------------------
-
-    _id := Coalesce(_id, -1);
-    _showDebug := Coalesce(_showDebug, false);
-    _invalidUsage := 0;
-
-    _callingUser := Coalesce(_callingUser, '');
-    If _callingUser = '' Then
-        _callingUser := session_user;
-    End If;
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -94,6 +79,19 @@ BEGIN
     End If;
 
     BEGIN
+        ---------------------------------------------------
+        -- Validate the inputs
+        ---------------------------------------------------
+
+        _id           := Coalesce(_id, -1);
+        _showDebug    := Coalesce(_showDebug, false);
+        _invalidUsage := 0;
+
+        _callingUser  := Coalesce(_callingUser, '');
+
+        If _callingUser = '' Then
+            _callingUser := session_user;
+        End If;
 
         If _id < 0 Then
             RAISE EXCEPTION 'Invalid ID: %', _id;
@@ -101,15 +99,16 @@ BEGIN
 
         ---------------------------------------------------
         -- Validate usage and comment
+        --
         -- Parse_Usage_Text looks for special usage tags in the comment and extracts that information, returning it as XML
         --
-        -- If _comment is 'User[100%], Proposal[49361], PropUser[50082] Extra information about interval'
-        -- after calling Parse_Usage_Text, _cleanedComment will be 'Extra information about interval'
-        -- and _usageXML will be <u User="100" Proposal="49361" PropUser="50082" />
+        -- If _cleanedComment is initially 'UserOnsite[100%], Proposal[49361], PropUser[50082] Extra info about the interval'
+        -- after calling Parse_Usage_Text, _cleanedComment will be 'Extra info about the interval'
+        -- and _usageXML will be <u UserOnsite="100" Proposal="49361" PropUser="50082" />
         --
-        -- If _comment only has 'User[100%], Proposal[49361], PropUser[50082]', _cleanedComment will be empty after the call to Parse_Usage_Text
+        -- If _cleanedComment only has 'UserOnsite[100%], Proposal[49361], PropUser[50082]', _cleanedComment will be empty after the call to Parse_Usage_Text
         --
-        -- Since _validateTotal is set to 1, if the percentages do not add up to 100%, Parse_Usage_Text will raise an error (and _usageXML will be null)
+        -- Since _validateTotal is set to true, if the percentages do not add up to 100%, Parse_Usage_Text will raise an error (and _usageXML will be null)
         ---------------------------------------------------
 
         _cleanedComment := _comment;
@@ -118,25 +117,26 @@ BEGIN
             RAISE INFO '%', 'Calling Parse_Usage_Text';
         End If;
 
-        CALL parse_usage_text (_cleanedComment => _cleanedComment,      -- Input / Output
-                               _usageXML => _usageXML,                  -- Output
-                               _message => _message,                    -- Output
-                               _returnCode => _returnCode,              -- Output
-                               _seq => _ID,
-                               _showDebug => _showDebug,
-                               _validateTotal => true,
-                               _invalidUsage => _invalidUsage);
+        CALL public.parse_usage_text (
+                        _comment => _cleanedComment,        -- Input / Output
+                        _usageXML => _usageXML,             -- Output
+                        _message => _message,               -- Output
+                        _returnCode => _returnCode,         -- Output
+                        _seq => _id,                        -- Procedure parse_usage_text uses this in status messages and warnings
+                        _showDebug => _showDebug,
+                        _validateTotal => true,
+                        _invalidUsage => _invalidUsage);    -- Output
 
         If _showDebug Then
-            RAISE INFO 'Parse_Usage_Text return code: %', _returnCode;
+            If _returnCode = '' Then
+                RAISE INFO 'Parse_Usage_Text return code is an empty string';
+            Else
+                RAISE INFO 'Parse_Usage_Text return code: %', _returnCode;
+            End If;
         End If;
 
         If _returnCode <> '' Then
             RAISE EXCEPTION '%', _message;
-        End If;
-
-        If _showDebug Then
-            RAISE INFO '_returnCode is '''' after Parse_Usage_Text';
         End If;
 
         _logErrors := true;
@@ -150,7 +150,7 @@ BEGIN
         If _mode = 'update' Then
             -- Cannot update a non-existent entry
             --
-            If Not Exists (SELECT interval_id FROM t_run_interval WHERE interval_id = _id) Then
+            If Not Exists (SELECT dataset_id FROM t_run_interval WHERE dataset_id = _id) Then
                 _message := format('Invalid ID: %s; cannot update', _id);
                 RAISE EXCEPTION '%', _message;
             End If;
@@ -171,7 +171,7 @@ BEGIN
                 usage = _usageXML,
                 last_affected = CURRENT_TIMESTAMP,
                 entered_by = _callingUser
-            WHERE interval_id = _id
+            WHERE dataset_id = _id;
 
         End If;
 
@@ -199,4 +199,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_run_interval IS 'AddUpdateRunInterval';
+
+ALTER PROCEDURE public.add_update_run_interval(IN _id integer, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _showdebug boolean, INOUT _invalidusage integer) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_run_interval(IN _id integer, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _showdebug boolean, INOUT _invalidusage integer); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_run_interval(IN _id integer, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _showdebug boolean, INOUT _invalidusage integer) IS 'AddUpdateRunInterval';
+
