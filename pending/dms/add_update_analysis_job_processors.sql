@@ -81,7 +81,7 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_DatasetInfo (ToolName)
-    SELECT DISTINCT Item
+    SELECT DISTINCT Value
     FROM public.parse_delimited_list(_analysisToolsList);
 
     ---------------------------------------------------

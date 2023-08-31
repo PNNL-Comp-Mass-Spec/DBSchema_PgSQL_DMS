@@ -235,6 +235,7 @@ BEGIN
         _id := Coalesce(_id, 0);
 
         _newtIDList := Coalesce(_newtIDList, '');
+
         If char_length(_newtIDList) > 0 Then
             CREATE TEMP TABLE Tmp_NEWT_IDs (
                 NEWT_ID_Text text,
@@ -242,8 +243,8 @@ BEGIN
             )
 
             INSERT INTO Tmp_NEWT_IDs (NEWT_ID_Text)
-            SELECT Cast(Value As text)
-            FROM public.parse_delimited_list(_newtIDList, ',')
+            SELECT Value
+            FROM public.parse_delimited_list(_newtIDList)
             WHERE Coalesce(Value, '') <> ''
 
             -- Look for non-numeric values

@@ -108,7 +108,7 @@ BEGIN
            Type
     FROM V_Material_Container_Item_Stats
     WHERE Container_ID IN ( SELECT Value
-                            FROM public.parse_delimited_list ( _containerList ) );
+                            FROM public.parse_delimited_list(_containerList) );
     --
     GET DIAGNOSTICS _numContainers = ROW_COUNT;
 

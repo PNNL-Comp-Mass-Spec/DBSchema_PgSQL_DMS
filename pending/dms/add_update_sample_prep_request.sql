@@ -372,12 +372,13 @@ BEGIN
         --
         CREATE TEMP TABLE Tmp_MaterialContainers (
             name text not null
-        )
+        );
 
         -- Get names of material containers from list argument into table
         --
         INSERT INTO Tmp_MaterialContainers (name)
-        SELECT item FROM public.parse_delimited_list(_materialContainerList)
+        SELECT Value
+        FROM public.parse_delimited_list(_materialContainerList);
 
         -- Verify that material containers exist
         --

@@ -64,10 +64,10 @@ BEGIN
             Item text,                  -- Either container name or location name
             IsContainer boolean,
             IsLocation boolean
-        )
-        --
+        );
+
         INSERT INTO Tmp_ContainerItems (Item, IsContainer, IsLocation)
-        SELECT Item, false, false
+        SELECT Value, false, false
         FROM public.parse_delimited_list(_containerList);
 
         ---------------------------------------------------

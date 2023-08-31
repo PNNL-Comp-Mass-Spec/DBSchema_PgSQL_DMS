@@ -145,7 +145,7 @@ BEGIN
             --
             INSERT INTO Tmp_RequestedRunList( request_id )
             SELECT Value
-            FROM public.parse_delimited_list (_requestIdList, ',')
+            FROM public.parse_delimited_list(_requestIdList);
 
             SELECT COUNT(request_id)
             INTO _rrCount

@@ -155,7 +155,7 @@ BEGIN
 
         INSERT INTO Tmp_DatasetInfo (Dataset_Name)
         SELECT DISTINCT Value
-        FROM public.parse_delimited_list(_datasetList, ',');
+        FROM public.parse_delimited_list(_datasetList);
 
         ---------------------------------------------------
         -- Verify that all datasets exist

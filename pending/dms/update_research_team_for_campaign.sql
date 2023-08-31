@@ -142,27 +142,27 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_TeamMembers ( Username, Role )
-    SELECT DISTINCT Item AS Username, 'Project Mgr' AS Role
+    SELECT DISTINCT Value AS Username, 'Project Mgr' AS Role
     FROM public.parse_delimited_list(_progmgrUsername) AS member
 
     INSERT INTO Tmp_TeamMembers ( Username, Role )
-    SELECT DISTINCT Item AS Username, 'PI' AS Role
+    SELECT DISTINCT Value AS Username, 'PI' AS Role
     FROM public.parse_delimited_list(_piUsername) AS member
 
     INSERT INTO Tmp_TeamMembers ( Username, Role )
-    SELECT DISTINCT Item AS Username, 'Technical Lead' AS Role
+    SELECT DISTINCT Value AS Username, 'Technical Lead' AS Role
     FROM public.parse_delimited_list(_technicalLead) AS member
 
     INSERT INTO Tmp_TeamMembers ( Username, Role )
-    SELECT DISTINCT Item AS Username, 'Sample Preparation' AS Role
+    SELECT DISTINCT Value AS Username, 'Sample Preparation' AS Role
     FROM public.parse_delimited_list(_samplePreparationStaff) AS member
 
     INSERT INTO Tmp_TeamMembers ( Username, Role )
-    SELECT DISTINCT Item AS Username, 'Dataset Acquisition' AS Role
+    SELECT DISTINCT Value AS Username, 'Dataset Acquisition' AS Role
     FROM public.parse_delimited_list(_datasetAcquisitionStaff) AS member
 
     INSERT INTO Tmp_TeamMembers ( Username, Role )
-    SELECT DISTINCT Item AS Username, 'Informatics' AS Role
+    SELECT DISTINCT Value AS Username, 'Informatics' AS Role
     FROM public.parse_delimited_list(_informaticsStaff) AS member
 
     ---------------------------------------------------

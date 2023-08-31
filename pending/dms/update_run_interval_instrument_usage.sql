@@ -83,7 +83,7 @@ BEGIN
         SELECT instrument
         INTO _instrumentName
         FROM t_run_interval
-        WHERE interval_id = _runIntervalId;
+        WHERE dataset_id = _runIntervalId;
 
         If Not FOUND Then
             _message := format('Run Interval ID %s does not exist; cannot determine the instrument', _runIntervalId);

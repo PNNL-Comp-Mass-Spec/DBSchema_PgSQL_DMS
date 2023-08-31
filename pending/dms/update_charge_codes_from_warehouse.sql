@@ -86,7 +86,7 @@ BEGIN
             -- Populate IX_Tmp_WPsExplicit
             INSERT INTO Tmp_WPsExplicit (Charge_Code)
             SELECT Value
-            FROM public.parse_delimited_list(_explicitChargeCodeList, ',')
+            FROM public.parse_delimited_list(_explicitChargeCodeList)
         End If;
 
         ----------------------------------------------------------

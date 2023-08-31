@@ -66,9 +66,9 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_UserOperations( User_Operation )
-    SELECT Item
-    FROM public.parse_delimited_list ( _operationsList )
-    WHERE Item::citext IN ( SELECT Operation FROM t_user_operations );
+    SELECT Value
+    FROM public.parse_delimited_list(_operationsList)
+    WHERE Value::citext IN ( SELECT Operation FROM t_user_operations );
 
     ---------------------------------------------------
     -- Add missing associations between operations and user

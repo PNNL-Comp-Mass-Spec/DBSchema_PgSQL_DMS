@@ -36,14 +36,10 @@ BEGIN
     CREATE TEMP TABLE Tmp_Proposals (
         Item text
     );
-    --
+
     INSERT INTO Tmp_Proposals (Item)
-    SELECT Item
+    SELECT Value
     FROM public.parse_delimited_list(_itemList);
-
-    -----------------------------------------
-
-    -----------------------------------------
 
     SELECT  fiscal_year,
             proposal_id,

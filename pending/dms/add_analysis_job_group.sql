@@ -321,7 +321,7 @@ BEGIN
             ---------------------------------------------------
 
             INSERT INTO Tmp_DatasetInfo (Dataset_Name)
-            SELECT DISTINCT Trim(Item)
+            SELECT DISTINCT Trim(Value)
             FROM public.parse_delimited_list(_datasetList);
             --
             GET DIAGNOSTICS _jobCountToBeCreated = ROW_COUNT;

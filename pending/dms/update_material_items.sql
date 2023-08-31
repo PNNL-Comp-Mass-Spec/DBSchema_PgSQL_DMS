@@ -140,11 +140,9 @@ BEGIN
         -- _itemList is a comma-separated list of items of the form Type:ID, for example 'E:8432,E:8434,E:9786'
         -- This is a list of three experiments, IDs 8432, 8434, and 9786
 
-        INSERT INTO Tmp_Material_Items
-            (ID, itemType)
-        SELECT
-            Substring(Value, 3, 300) AS ID,
-            Upper(Substring(Value, 1, 1)) AS itemType        -- B for Biomaterial, E for Experiment, R for RefCompound
+        INSERT INTO Tmp_Material_Items ( ID, itemType )
+        SELECT Substring(Value, 3, 300) AS ID,
+               Upper(Substring(Value, 1, 1)) AS itemType        -- B for Biomaterial, E for Experiment, R for RefCompound
         FROM public.parse_delimited_list(_itemList)
         --
         GET DIAGNOSTICS _mixedMaterialCount = ROW_COUNT;
@@ -253,7 +251,7 @@ BEGIN
                        compound_id AS Item_ID
                 FROM t_reference_compound
             ) AS T ON T.container_id = t_material_containers.container_id
-        WHERE T.container_id in (SELECT public.try_cast(Item, null::int) FROM public.parse_delimited_list(_itemList));
+        WHERE T.container_id in (SELECT Value FROM public.parse_delimited_integer_list(_itemList));
 
     End If;
 

@@ -154,7 +154,7 @@ BEGIN
 
     INSERT INTO Tmp_ParamFileTypeFilter (Param_File_Type, Valid)
     SELECT DISTINCT Value, true
-    FROM public.parse_delimited_list(_paramFileTypeList, ',');
+    FROM public.parse_delimited_list(_paramFileTypeList);
 
     UPDATE Tmp_ParamFileTypeFilter
     SET Valid = false

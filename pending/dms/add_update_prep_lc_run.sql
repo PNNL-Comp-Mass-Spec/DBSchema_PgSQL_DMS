@@ -118,11 +118,11 @@ BEGIN
         If char_length(_samplePrepRequest) > 0 Then
             SELECT COUNT(*)
             INTO _itemCount
-            FROM public.parse_delimited_list ( _samplePrepRequest )
+            FROM public.parse_delimited_list(_samplePrepRequest)
 
             INSERT INTO Tmp_SamplePrepRequests (Prep_Request_ID)
             SELECT DISTINCT Value
-            FROM public.parse_delimited_integer_list ( _samplePrepRequests, ',' );
+            FROM public.parse_delimited_integer_list(_samplePrepRequests);
 
             GET DIAGNOSTICS _integerCount = ROW_COUNT;
 
@@ -162,8 +162,8 @@ BEGIN
         )
 
         INSERT INTO Tmp_Datasets( Dataset )
-        SELECT Item AS Dataset
-        FROM public.parse_delimited_list ( _datasets )
+        SELECT Value
+        FROM public.parse_delimited_list(_datasets)
 
         UPDATE Tmp_Datasets
         SET dataset_id = t_dataset.dataset_id

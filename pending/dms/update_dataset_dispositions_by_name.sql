@@ -105,8 +105,8 @@ BEGIN
         ---------------------------------------------------
 
         INSERT INTO Tmp_DatasetsToUpdate( DatasetName )
-        SELECT Item
-        FROM public.parse_delimited_list ( _datasetList )
+        SELECT Value
+        FROM public.parse_delimited_list(_datasetList);
 
         ---------------------------------------------------
         -- Look up dataset IDs for datasets

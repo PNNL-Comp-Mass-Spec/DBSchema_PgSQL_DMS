@@ -118,8 +118,8 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_BiomaterialOrganisms ( Organism_Name )
-    SELECT Item
-    FROM public.parse_delimited_list(_organismList) AS Organisms
+    SELECT Value
+    FROM public.parse_delimited_list(_organismList);
 
     ---------------------------------------------------
     -- Resolve the organism ID for the organism names

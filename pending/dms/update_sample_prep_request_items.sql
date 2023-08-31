@@ -112,8 +112,8 @@ BEGIN
                B.Created AS Created
         FROM t_sample_prep_request SPR
              JOIN LATERAL (
-               SELECT value as Item
-               FROM public.parse_delimited_list ( SPR.Biomaterial_List, ';' )
+               SELECT Value AS Item
+               FROM public.parse_delimited_list(SPR.Biomaterial_List, ';')
              ) AS TL On true
              INNER JOIN t_biomaterial B
                ON B.Biomaterial_Name = TL.Item

@@ -204,7 +204,7 @@ BEGIN
         If _eusUsageFilterList <> '' Then
             INSERT INTO Tmp_EUSUsageFilter (Usage_Name, Usage_ID)
             SELECT DISTINCT Value AS Usage_Name, 0 AS ID
-            FROM public.parse_delimited_list(_eusUsageFilterList, ',')
+            FROM public.parse_delimited_list(_eusUsageFilterList)
             ORDER BY Value;
 
             -- Look for invalid Usage_Name values

@@ -37,7 +37,7 @@ AS $$
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          09/10/2018 mem - Remove invalid check of _mode against check_add or check_update
-**          11/19/2018 mem - Pass 0 to the _maxRows parameter to Parse_Delimited_ListOrdered
+**          11/19/2018 mem - Pass 0 to the _maxRows parameter to parse_delimited_list_ordered
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          06/16/2022 mem - Auto change _targetName from 'Cell Culture' to 'Biomaterial' if T_Aux_Info_Target has an entry for 'Biomaterial
 **          07/06/2022 mem - Use new aux info definition view name

@@ -26,7 +26,7 @@ AS $$
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          08/02/2017 mem - Pass _invalidUsage to AddUpdateRunInterval; continue updating long intervals if the usage info fails validation for a given entry
+**          08/02/2017 mem - Pass _invalidUsage to add_update_run_interval; continue updating long intervals if the usage info fails validation for a given entry
 **          06/12/2018 mem - Send _maxLength to Append_To_Text
 **          05/24/2022 mem - Do not call post_log_entry for errors of the form 'Total percentage (0) does not add up to 100 for ID 1017648'
 **          12/15/2023 mem - Ported to PostgreSQL
@@ -160,7 +160,7 @@ BEGIN
             FROM Tmp_IntervalUpdates
             ORDER BY request
         LOOP
-            CALL validate_eus_usage (
+            CALL public.validate_eus_usage (
                             _eusUsageType   => _eusUsageType,       -- Input/Output
                             _eusProposalID  => _eusProposalID,      -- Input/Output
                             _eusUsersList   => _eusUsersList,       -- Input/Output
@@ -184,18 +184,20 @@ BEGIN
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 Then
-                CALL alter_event_log_entry_user (11, _curID, _statusID, _callingUser, _message => _alterEnteredByMessage);
+                CALL public.alter_event_log_entry_user (11, _curID, _statusID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             -- Assign users to the request
             --
-            CALL assign_eus_users_to_requested_run
-                                    _curID,
-                                    _eusProposalID,
-                                    _eusUsersList,
-                                    _msg output
+            CALL public.assign_eus_users_to_requested_run (
+                                    _request => _curID,
+                                    _eusProposalID => _eusProposalID,
+                                    _eusUsersList => _eusUsersList,
+                                    _message => _msg,
+                                    _returnCode => _returnCode);
+
             If _returnCode <> '' Then
-                RAISE EXCEPTION 'assign_eus_users_to_requested_run: %', _msg;
+                RAISE EXCEPTION 'Message from assign_eus_users_to_requested_run: %', _msg;
             End If;
 
         END LOOP;
@@ -210,14 +212,15 @@ BEGIN
             FROM Tmp_IntervalUpdates
             ORDER BY id
         LOOP
-            CALL add_update_run_interval (
+            CALL public.add_update_run_interval (
                                         _curID,
                                         _comment,
                                         'update',
                                         _message => _msg,                   -- Output
+                                        _returnCode => _returnCode,         -- Output
                                         _callingUser => _callingUser,
                                         _showDebug => false,
-                                        _invalidUsage => _invalidUsage);     -- Output
+                                        _invalidUsage => _invalidUsage);    -- Output
 
             If _invalidUsage > 0 Then
                 -- Update _message then continue to the next item

@@ -78,7 +78,7 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_Processors (Processor_Name)
-    SELECT DISTINCT Item
+    SELECT DISTINCT Value
     FROM public.parse_delimited_list(_processorNameList);
 
     ---------------------------------------------------

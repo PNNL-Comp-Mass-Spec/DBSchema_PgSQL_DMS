@@ -88,7 +88,7 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_JobList (Job)
-    SELECT DISTINCT Item
+    SELECT DISTINCT Value
     FROM public.parse_delimited_list(_jobList);
 
     ---------------------------------------------------

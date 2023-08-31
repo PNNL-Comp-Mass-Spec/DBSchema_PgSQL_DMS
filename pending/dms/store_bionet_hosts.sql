@@ -32,7 +32,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   12/02/2015 mem - Initial version
-**          11/19/2018 mem - Pass 0 to the _maxRows parameter to Parse_Delimited_ListOrdered
+**          11/19/2018 mem - Pass 0 to the _maxRows parameter of parse_delimited_list_ordered
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -112,8 +112,8 @@ BEGIN
     End If;
 
     INSERT INTO Tmp_HostData (Value)
-    SELECT Item
-    FROM public.parse_delimited_list ( _hostList, _lineDelimiter )
+    SELECT Value
+    FROM public.parse_delimited_list(_hostList, _lineDelimiter)
 
     If Not Exists (SELECT * FROM Tmp_HostData) Then
         _message := 'Nothing returned when splitting the Host List on CR or LF';

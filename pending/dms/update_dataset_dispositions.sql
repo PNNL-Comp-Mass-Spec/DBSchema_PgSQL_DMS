@@ -126,8 +126,8 @@ BEGIN
         ---------------------------------------------------
 
         INSERT INTO Tmp_DatasetInfo (DatasetID)
-        SELECT CAST(Item As int)
-        FROM public.parse_delimited_list(_datasetIDList)
+        SELECT Value
+        FROM public.parse_delimited_integer_list(_datasetIDList);
 
         ---------------------------------------------------
         -- Verify that all datasets exist

@@ -487,8 +487,8 @@ BEGIN
             --
             If _eusUsersList Like '%,%' Then
                 INSERT INTO Tmp_Users (Item)
-                SELECT Item
-                FROM public.parse_delimited_list(_eusUsersList)
+                SELECT Value
+                FROM public.parse_delimited_list(_eusUsersList);
 
                 If _infoOnly Then
                     RAISE INFO 'User IDs: %', _eusUsersList;

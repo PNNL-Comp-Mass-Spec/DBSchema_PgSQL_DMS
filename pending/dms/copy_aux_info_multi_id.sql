@@ -123,7 +123,7 @@ BEGIN
                                     Valid )
     SELECT LookupQ.value, false As Valid
     FROM ( SELECT DISTINCT public.try_cast(value, null::int) As value
-           FROM public.parse_delimited_list ( _targetEntityIDList )
+           FROM public.parse_delimited_list(_targetEntityIDList)
          ) LookupQ
     WHERE Not LookupQ.Value Is Null;
 

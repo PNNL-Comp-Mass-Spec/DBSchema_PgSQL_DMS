@@ -106,7 +106,7 @@ BEGIN
             DELETE FROM Tmp_IntervalsToUpdate;
 
             INSERT INTO Tmp_IntervalsToUpdate( IntervalID )
-            SELECT interval_id
+            SELECT dataset_id
             FROM t_run_interval
             WHERE instrument = _instrumentName AND
                   Extract(month from start) = _targetMonth AND

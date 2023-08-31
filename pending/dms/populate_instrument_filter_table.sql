@@ -44,7 +44,7 @@ BEGIN
 
         INSERT INTO Tmp_MatchSpec (Match_Spec)
         SELECT DISTINCT Value
-        FROM public.parse_delimited_list(_instrumentFilterList, ',')
+        FROM public.parse_delimited_list(_instrumentFilterList)
         ORDER BY Value
 
         FOR _matchSpec IN

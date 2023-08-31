@@ -79,7 +79,7 @@ BEGIN
 
     SELECT COUNT (DISTINCT Value)
     INTO _datasetCount
-    FROM public.parse_delimited_list(_datasets, ',')
+    FROM public.parse_delimited_list(_datasets)
 
     If _datasetCount = 0 Then
         _message := '_datasets cannot be empty';

@@ -305,7 +305,6 @@ BEGIN
         ---------------------------------------------------
 
         If char_length(_plexMembers) > 0 Then
-        -- <ParsePlexMembers>
             -- Split _plexMembers on newline characters
 
             CREATE TEMP TABLE Tmp_RowData (Entry_ID int, Value text);
@@ -323,14 +322,13 @@ BEGIN
                 FROM Tmp_RowData
                 ORDER BY Entry_ID
             LOOP
-
                 DELETE FROM Tmp_ColData;
 
                 -- Note that public.parse_delimited_list_ordered will replace tabs with commas
 
                 INSERT INTO Tmp_ColData( Entry_ID, Value)
                 SELECT Entry_ID, Value
-                FROM public.parse_delimited_list_ordered (_value, ',', 4);
+                FROM public.parse_delimited_list_ordered(_value, ',', 4);
 
                 If FOUND Then
                     _parseColData := true;
@@ -555,8 +553,8 @@ BEGIN
 
                 End If; -- </ParseColData>
 
-            END LOOP;  -- </ForLoop>
-        End If; -- <ParsePlexMembers>
+            END LOOP;
+        End If;
 
         ---------------------------------------------------
         -- Check whether we even need to parse the individual parameters

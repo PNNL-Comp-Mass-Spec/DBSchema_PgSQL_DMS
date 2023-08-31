@@ -141,9 +141,9 @@ BEGIN
 
     INSERT INTO Tmp_Experiments ( Experiment,
                                   Exp_ID )
-    SELECT value AS Experiment,
+    SELECT Value AS Experiment,
            0 AS Exp_ID
-    FROM public.parse_delimited_list ( _experimentList )
+    FROM public.parse_delimited_list(_experimentList)
 
     ---------------------------------------------------
     -- Resolve experiment name to ID in temp table

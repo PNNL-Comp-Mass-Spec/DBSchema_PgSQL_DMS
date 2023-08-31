@@ -321,6 +321,7 @@ BEGIN
                                         _eusInstrumentId => 0,
                                         _endDate => _endOfMonth,
                                         _infoOnly => false,
+                                        _debugReports => '',
                                         _message => _msg,
                                         _returnCode => _returnCode);
 
@@ -338,6 +339,7 @@ BEGIN
                                         _eusInstrumentId => 0,
                                         _endDate => _endOfMonth,
                                         _infoOnly => false,
+                                        _debugReports => '',
                                         _message => _msg,
                                         _returnCode => _returnCode);
 
