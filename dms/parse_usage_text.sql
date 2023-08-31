@@ -1,17 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.parse_usage_text
-(
-    INOUT _comment text,
-    INOUT _usageXML XML,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _seq int default -1,
-    _showDebug boolean default false,
-    _validateTotal boolean default true,
-    INOUT _invalidUsage int default 0             -- Leave as an integer since add_update_run_interval tracks this using an integer
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: parse_usage_text(text, xml, text, text, integer, boolean, boolean, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.parse_usage_text(INOUT _comment text, INOUT _usagexml xml, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _seq integer DEFAULT '-1'::integer, IN _showdebug boolean DEFAULT false, IN _validatetotal boolean DEFAULT true, INOUT _invalidusage integer DEFAULT 0)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -29,10 +22,14 @@ AS $$
 **        'CapDev[10%], User[90%], Proposal[49361], PropUser[50082]'
 **
 **  Arguments:
-**    _comment         Usage (input / output); see above for examples.  Usage keys and values will be removed from this string
-**    _usageXML        Usage information, as XML.  Will be Null if _validateTotal is true and the percentages do not sum to 100%
-**    _validateTotal   When true, raise an error (and do not update _comment or _usageXML) if the sum of the percentages is not 100
-**    _invalidUsage    Output: 1 if the usage text in _comment cannot be parsed; UpdateRunOpLog uses this to skip invalid entries (value passed back via AddUpdateRunInterval)
+**    _comment          Input/Output: usage comment; see above for examples (usage keys and values will be removed from this string)
+**    _usageXML         Output: usage information, as XML; will be Null if _validateTotal is true and the percentages do not sum to 100%
+**    _message          Output: status messgae
+**    _returnCode       Output: return code
+**    _seq              Row ID in table t_emsl_instrument_usage_report or table t_run_interval; used for status messages
+**    _showDebug        When true, show debug messages
+**    _validateTotal    When true, raise an error (and do not update _comment or _usageXML) if the sum of the percentages is not 100
+**    _invalidUsage     Output: 1 if the usage text in _comment cannot be parsed; Update_Run_Op_Log uses this to skip invalid entries (value passed back via add_update_run_interval)
 **
 **  Auth:   grk
 **  Date:   03/02/2012
@@ -52,24 +49,27 @@ AS $$
 **          05/25/2021 mem - Add support for usage types 'UserOnsite' and 'UserRemote'
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          06/15/2023 mem - Add support for usage type 'ResourceOwner'
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/30/2023 mem - Only validate that values are numeric for percentage based usage types
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _logErrors boolean := true;
-    _commentToSearch text;
+    _commentToSearch citext;
     _index int;
     _startOfValue int := 0;
     _endOfValue Int;
     _val text;
     _curVal text;
     _keywordStartIndex int := 0;
-    _uniqueID int := 0
+    _uniqueID int := 0;
+    _usageKey text;
     _keyword text;
     _total int := 0;
     _hasUser int := 0;
     _hasProposal int := 0;
-    _sql text := '';
+    _xmlAttributes text := '';
+    _usageText text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -84,9 +84,6 @@ BEGIN
     ---------------------------------------------------
 
     _comment := Trim(Coalesce(_comment, ''));
-    _message := '';
-    _returnCode := '';
-
     _seq := Coalesce(_seq, -1);
     _showDebug := Coalesce(_showDebug, false);
     _validateTotal := Coalesce(_validateTotal, true);
@@ -101,14 +98,14 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_UsageInfo (
+        UniqueID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         UsageKey citext,
-        UsageValue text NULL,
-        UniqueID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY
-    )
+        UsageValue text NULL
+    );
 
     CREATE TEMP TABLE Tmp_NonPercentageKeys (
-        UsageKey text
-    )
+        UsageKey citext
+    );
 
     ---------------------------------------------------
     -- Temp table to hold location of usage text
@@ -116,11 +113,7 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_UsageText (
         UsageText text
-    )
-
-    ---------------------------------------------------
-    -- Usage keywords
-    ---------------------------------------------------
+    );
 
     BEGIN
         ---------------------------------------------------
@@ -139,13 +132,13 @@ BEGIN
         -- Store the non-percentage based keys
         --
         INSERT INTO Tmp_NonPercentageKeys (UsageKey)
-        SELECT Trim(Item)
+        SELECT Trim(Value)
         FROM public.parse_delimited_list('Operator, Proposal, PropUser');
 
         -- Add the percentage-based keys to Tmp_UsageInfo
         --
         INSERT INTO Tmp_UsageInfo (UsageKey)
-        SELECT Trim(Item)
+        SELECT Trim(Value)
         FROM public.parse_delimited_list('CapDev, Broken, Maintenance, StaffNotAvailable, OtherNotAvailable, InstrumentAvailable, UserOnsite, UserRemote, ResourceOwner, Onsite, Remote, User');
 
         -- Add the non-percentage-based keys to Tmp_UsageInfo
@@ -159,13 +152,13 @@ BEGIN
         -- corresponding values
         ---------------------------------------------------
 
-        FOR _keyword, _curVal, _uniqueID IN
-            SELECT format(',%s[', UsageKey) As KeyWord
+        FOR _usageKey, _keyword, _curVal, _uniqueID IN
+            SELECT UsageKey,
+                   format(',%s[', UsageKey) As KeyWord,
                    UsageValue,
                    UniqueID
             FROM Tmp_UsageInfo
             ORDER BY UniqueID
-
         LOOP
             ---------------------------------------------------
             -- Look for the keyword in _commentToSearch
@@ -201,23 +194,32 @@ BEGIN
                 RAISE EXCEPTION 'Could not find closing bracket for "%"', _keyword;
             End If;
 
-            INSERT INTO Tmp_UsageText ( UsageText )
-            VALUES (SUBSTRING(_commentToSearch, _keywordStartIndex + 1, (_endOfValue - _keywordStartIndex) + 1))
+            _usageText := SUBSTRING(_commentToSearch, _keywordStartIndex + 1, (_endOfValue - _keywordStartIndex) + 1);
+            _val       := SUBSTRING(_commentToSearch, _startOfValue, _endOfValue - _startOfValue);
 
-            _val := SUBSTRING(_commentToSearch, _startOfValue, _endOfValue - _startOfValue);
+            -- Uncomment to debug
+            -- If _showDebug Then
+            --     RAISE INFO 'Matched usage "%" with value "%" between positions % and % in "%"',
+            --                 _usageText, _val, _startOfValue, _endOfValue, _commentToSearch;
+            -- End If;
+
+            INSERT INTO Tmp_UsageText ( UsageText )
+            VALUES (_usageText);
 
             _val := REPLACE(_val, '%', '');
             _val := REPLACE(_val, ',', '');
 
-            If public.try_cast(_val, null::int) Is Null Then
-                _logErrors := false;
-                _invalidUsage := 1;
-                RAISE EXCEPTION 'Percentage value for usage "%" is not a valid integer; see ID %', _keyword, _seq;
+            If Not Exists (SELECT * FROM Tmp_NonPercentageKeys WHERE UsageKey = _usageKey) Then
+                If public.try_cast(_val, null::int) Is Null Then
+                    _logErrors := false;
+                    _invalidUsage := 1;
+                    RAISE EXCEPTION 'Percentage value for usage "%" is not a valid integer; see ID %', _keyword, _seq;
+                End If;
             End If;
 
             UPDATE Tmp_UsageInfo
             SET UsageValue = _val
-            WHERE UniqueID = _uniqueID
+            WHERE UniqueID = _uniqueID;
 
         END LOOP;
 
@@ -225,7 +227,8 @@ BEGIN
         -- Clear keywords not found from table
         ---------------------------------------------------
 
-        DELETE FROM Tmp_UsageInfo WHERE UsageValue IS null
+        DELETE FROM Tmp_UsageInfo
+        WHERE UsageValue IS null;
 
         ---------------------------------------------------
         -- Updated abbreviated keywords
@@ -233,11 +236,11 @@ BEGIN
 
         UPDATE Tmp_UsageInfo
         SET UsageKey = 'UserOnsite'
-        WHERE UsageKey = 'Onsite'
+        WHERE UsageKey = 'Onsite';
 
         UPDATE Tmp_UsageInfo
         SET UsageKey = 'UserRemote'
-        WHERE UsageKey = 'Remote'
+        WHERE UsageKey = 'Remote';
 
         ---------------------------------------------------
         -- Verify percentage total
@@ -269,7 +272,7 @@ BEGIN
         FROM Tmp_UsageInfo
         WHERE UsageKey = 'Proposal';
 
-        If (_hasUser > 0 ) AND (_hasProposal = 0) Then
+        If _hasUser > 0 AND _hasProposal = 0 Then
             _logErrors := false;
             _invalidUsage := 1;
             RAISE EXCEPTION 'Proposal is needed if user allocation is specified; see ID %', _seq;
@@ -279,22 +282,25 @@ BEGIN
         -- Make XML
         --
         -- Convert keys and values into XML attributes of the form:
-        -- Key="Value"
+        -- <u KeyA="Value" KeyB="Value" />
         ---------------------------------------------------
 
-        SELECT string_agg(format('%s="%s"', UsageKey, UsageValue, ' ' ORDER BY UsageKey)
-        INTO _sql
+        SELECT string_agg(format('%s="%s"', UsageKey, UsageValue), ' ' ORDER BY UniqueID)
+        INTO _xmlAttributes
         FROM Tmp_UsageInfo;
 
-        _usageXML := format('<u %s />', _sql);
+        _usageXML := public.try_cast(format('<u %s />', _xmlAttributes), null::xml);
 
         ---------------------------------------------------
         -- Remove usage text from comment
         ---------------------------------------------------
 
-        SELECT REPLACE(_comment, UsageText, '')
-        INTO _comment
-        FROM Tmp_UsageText;
+        FOR _usageText IN
+            SELECT DISTINCT UsageText
+            FROM Tmp_UsageText
+        LOOP
+            _comment := Trim(REPLACE(_comment, _usageText, ''));
+        END LOOP;
 
         _comment := Trim(_comment);
 
@@ -317,8 +323,14 @@ BEGIN
         End If;
 
         If _showDebug Then
-            RAISE INFO 'Final comment for _seq %: %; _total = %', _seq, Coalesce(_comment, '<Empty>'), _total;
+            RAISE INFO 'Final comment for _seq %: "%"; _total = %', _seq, Coalesce(_comment, '<Empty>'), _total;
         End If;
+
+        DROP TABLE Tmp_UsageInfo;
+        DROP TABLE Tmp_NonPercentageKeys;
+        DROP TABLE Tmp_UsageText;
+
+        RETURN;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -347,4 +359,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.parse_usage_text IS 'ParseUsageText';
+
+ALTER PROCEDURE public.parse_usage_text(INOUT _comment text, INOUT _usagexml xml, INOUT _message text, INOUT _returncode text, IN _seq integer, IN _showdebug boolean, IN _validatetotal boolean, INOUT _invalidusage integer) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE parse_usage_text(INOUT _comment text, INOUT _usagexml xml, INOUT _message text, INOUT _returncode text, IN _seq integer, IN _showdebug boolean, IN _validatetotal boolean, INOUT _invalidusage integer); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.parse_usage_text(INOUT _comment text, INOUT _usagexml xml, INOUT _message text, INOUT _returncode text, IN _seq integer, IN _showdebug boolean, IN _validatetotal boolean, INOUT _invalidusage integer) IS 'ParseUsageText';
+
