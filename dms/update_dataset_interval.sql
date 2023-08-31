@@ -95,7 +95,6 @@ BEGIN
         _infoOnly            := Coalesce(_infoOnly, false);
 
         -- Lookup the long interval threshold (which should be 180 minutes)
-
         _maxNormalInterval := public.get_long_interval_threshold();
 
         ---------------------------------------------------

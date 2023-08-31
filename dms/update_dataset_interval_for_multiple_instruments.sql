@@ -42,7 +42,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_interval_for_multiple_instrume
 **          02/15/2022 mem - Fix major bug decrementing _instrumentUsageMonth when processing multiple instruments
 **                         - Add missing Order By clause
 **          07/21/2023 mem - Look for both 'Y' and '1' when examining the eus_primary_instrument flag (aka EMSL_Primary_Instrument)
-**          08/28/2023 mem - Ported to PostgreSQL
+**          08/29/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -374,6 +374,7 @@ BEGIN
                                         _eusInstrumentId => _instrumentInfo.EusInstrumentId,
                                         _endDate => _currentInstrumentUsageMonth,
                                         _infoOnly => _infoOnly,
+                                        _debugReports => '',
                                         _message => _message,
                                         _returnCode => _returnCode);
                     Else
@@ -382,6 +383,7 @@ BEGIN
                                         _eusInstrumentId => 0,
                                         _endDate => _currentInstrumentUsageMonth,
                                         _infoOnly => _infoOnly,
+                                        _debugReports => '',
                                         _message => _message,
                                         _returnCode => _returnCode);
                     End If;
