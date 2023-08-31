@@ -11,9 +11,9 @@ CREATE OR REPLACE FUNCTION public.get_run_tracking_monthly_info(_instrument text
 **      Returns run tracking information for given instrument
 **
 **  Arguments:
-**    _instrument   'VOrbiETD04'
-**    _year         2012
-**    _month        1
+**    _instrument   Instrument name
+**    _year         Year
+**    _month        Month
 **    _options      Reserved for future use
 **
 **  Columns in the query results from this function:
@@ -43,12 +43,14 @@ CREATE OR REPLACE FUNCTION public.get_run_tracking_monthly_info(_instrument text
 **          05/30/2023 mem - Replace * with specific column names when returning query results
 **          07/27/2023 mem - Add missing assignment to _firstRunSeq
 **          08/28/2023 mem - Use new column name "dataset_id" when querying t_run_interval
+**          08/29/2023 mem - Ignore case when finding instruments by name
 **
 *****************************************************/
 DECLARE
     _maxNormalInterval int;
     _message text := '';
     _instrumentID int;
+    _instrumentNameToUse text;
     _firstDayOfStartingMonth timestamp;
     _firstDayOfTrailingMonth timestamp;
     _seqIncrement int := 1;
@@ -64,17 +66,17 @@ DECLARE
 BEGIN
 
     CREATE TEMP TABLE Tmp_TX (
-        seq int primary key,
-        id int NULL,
-        dataset text,
-        day int NULL,
-        duration int NULL,
+        Seq int primary key,
+        ID int NULL,
+        Dataset text,
+        Day int NULL,
+        Duration int NULL,
         "interval" int NULL,
-        time_start timestamp NULL,
-        time_end timestamp NULL,
-        instrument text NULL,
-        comment_state text NULL,
-        comment text NULL
+        Time_Start timestamp NULL,
+        Time_End timestamp NULL,
+        Instrument text NULL,
+        Comment_State text NULL,
+        Comment text NULL
     );
 
     ---------------------------------------------------
@@ -82,7 +84,7 @@ BEGIN
     ---------------------------------------------------
 
     If Coalesce(_year, 0) = 0 OR Coalesce(_month, 0) = 0 OR Coalesce(_instrument, '') = '' Then
-        INSERT INTO Tmp_TX (seq, dataset)
+        INSERT INTO Tmp_TX (Seq, Dataset)
         VALUES (1, 'Bad arguments');
 
         RETURN QUERY
@@ -99,13 +101,13 @@ BEGIN
     -- Get instrument ID
     ---------------------------------------------------
 
-    SELECT InstName.instrument_id
-    INTO _instrumentID
+    SELECT InstName.instrument_id, InstName.instrument
+    INTO _instrumentID, _instrumentNameToUse
     FROM t_instrument_name InstName
-    WHERE InstName.instrument = _instrument;
+    WHERE InstName.instrument = _instrument::citext;
 
     If Not FOUND Then
-        INSERT INTO Tmp_TX (seq, dataset)
+        INSERT INTO Tmp_TX (Seq, Dataset)
         VALUES (1, 'Unrecognized instrument');
 
         RETURN QUERY
@@ -117,6 +119,8 @@ BEGIN
         DROP TABLE Tmp_TX;
         RETURN;
     End If;
+
+    _instrument := _instrumentNameToUse;
 
     ---------------------------------------------------
     -- Set up dates for beginning and end of month
@@ -257,13 +261,13 @@ BEGIN
     ---------------------------------------------------
 
     UPDATE Tmp_TX
-    SET comment = TRI.comment,
-        comment_state = CASE WHEN Coalesce(TRI.comment, '') = ''
+    SET comment = I.comment,
+        comment_state = CASE WHEN Coalesce(I.comment, '') = ''
                              THEN '-'
                              ELSE '+'
                         END
-    FROM t_run_interval TRI
-    WHERE Tmp_TX.ID = TRI.dataset_id;
+    FROM t_run_interval I
+    WHERE Tmp_TX.ID = I.dataset_id;
 
     UPDATE Tmp_TX
     SET comment_state = 'x'
