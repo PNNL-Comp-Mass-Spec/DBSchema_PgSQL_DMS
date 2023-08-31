@@ -13,8 +13,8 @@ CREATE OR REPLACE FUNCTION public.get_run_tracking_monthly_info_by_id(_eusinstru
 **
 **  Arguments:
 **    _eusInstrumentId  EUS Instrument ID
-**    _year             2012
-**    _month            1
+**    _year             Year
+**    _month            Month
 **    _options          Reserved for future use
 **
 **  Auth:   mem
@@ -28,6 +28,7 @@ CREATE OR REPLACE FUNCTION public.get_run_tracking_monthly_info_by_id(_eusinstru
 **                         - Use format() for string concatenation
 **          07/27/2023 mem - Add missing assignment to _firstRunSeq
 **          08/28/2023 mem - Use new column name "dataset_id" when querying t_run_interval
+**          08/29/2023 mem - Add missing table aliases
 **
 *****************************************************/
 DECLARE
@@ -74,7 +75,7 @@ BEGIN
         SELECT T.Seq, T.ID, T.Dataset, T.Day, T.Duration, T."interval",
                T.Time_Start, T.Time_End, T.Instrument,
                T.Comment_State, T.Comment
-        FROM Tmp_TX;
+        FROM Tmp_TX T;
 
         DROP TABLE Tmp_TX;
         RETURN;
@@ -101,7 +102,7 @@ BEGIN
         SELECT T.Seq, T.ID, T.Dataset, T.Day, T.Duration, T."interval",
                T.Time_Start, T.Time_End, T.Instrument,
                T.Comment_State, T.Comment
-        FROM Tmp_TX;
+        FROM Tmp_TX T;
 
         DROP TABLE Tmp_TX;
         RETURN;
@@ -251,13 +252,13 @@ BEGIN
     ---------------------------------------------------
 
     UPDATE Tmp_TX
-    SET comment = TRI.comment,
-        comment_state = CASE WHEN Coalesce(TRI.comment, '') = ''
+    SET comment = I.comment,
+        comment_state = CASE WHEN Coalesce(I.comment, '') = ''
                              THEN '-'
                              ELSE '+'
                         END
-    FROM t_run_interval TRI
-    WHERE Tmp_TX.ID = TRI.dataset_id;
+    FROM t_run_interval I
+    WHERE Tmp_TX.ID = I.dataset_id;
 
     UPDATE Tmp_TX
     SET comment_state = 'x'
