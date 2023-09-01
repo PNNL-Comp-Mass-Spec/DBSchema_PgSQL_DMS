@@ -85,10 +85,10 @@ BEGIN
     ---------------------------------------------------
 
     UPDATE Tmp_DatasetInfo
-    SET dataset_id        = DS.dataset_id,
-        instrument_class  = InstClass.instrument_class,
-        dataset_state_id  = DS.dataset_state_id,
-        archive_state_id  = Coalesce(DA.archive_state_id, 0),
+    SET Dataset_ID        = DS.dataset_id,
+        Instrument_Class  = InstClass.instrument_class,
+        Dataset_State_ID  = DS.dataset_state_id,
+        Archive_State_ID  = Coalesce(DA.archive_state_id, 0),
         Dataset_Type      = DTN.Dataset_Type,
         Dataset_Rating_ID = DRN.dataset_rating_id
     FROM t_dataset DS
