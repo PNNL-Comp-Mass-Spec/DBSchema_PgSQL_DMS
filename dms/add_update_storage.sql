@@ -122,7 +122,7 @@ BEGIN
         _id             := Trim(Coalesce(_id, ''));
 
         If char_length(_path) < 1 Then
-            _message := 'path was blank';
+            _message := 'Storage path cannot be blank';
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5201';
@@ -130,7 +130,7 @@ BEGIN
         End If;
 
         If char_length(_instrumentName) < 1 Then
-            _message := 'instrumentName was blank';
+            _message := 'Instrument name cannot be blank';
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5201';
@@ -436,8 +436,7 @@ BEGIN
             End If;
 
             ---------------------------------------------------
-            -- Validate against changing current raw-storage path
-            -- to old-storage
+            -- Do not allow changing current raw-storage path to old-storage
             ---------------------------------------------------
 
             If _storFunction <> 'raw-storage' And _oldFunction = 'raw-storage' Then
