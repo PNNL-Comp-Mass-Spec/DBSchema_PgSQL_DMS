@@ -79,6 +79,7 @@ AS $$
 **          10/27/2020 mem - Populate Auto_SP_URL_Domain and store https:// in T_Storage_Path_Hosts.URL_Prefix
 **                           Pass _urlDomain to Add_Update_Storage
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
+**          09/01/2023 mem - Expand _instrumentName to varchar(64), _description to varchar(1024), and _usage to varchar(128)
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -113,7 +114,11 @@ BEGIN
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
-    _autoDefineStoragePath := Coalesce(_autoDefineStoragePath, 'No');
+
+    _instrumentName        := Trim(Coalesce(_instrumentName, ''));
+    _description           := Trim(Coalesce(_description, ''));
+    _usage                 := Trim(Coalesce(_usage, ''));
+    _autoDefineStoragePath := Trim(Coalesce(_autoDefineStoragePath, 'No'));
 
     _percentEMSLOwnedVal := Round(public.try_cast(_percentEMSLOwned, null::numeric))::int;
 

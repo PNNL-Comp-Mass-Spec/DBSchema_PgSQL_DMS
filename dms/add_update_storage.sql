@@ -117,6 +117,9 @@ BEGIN
         _path           := Trim(Coalesce(_path, ''));
         _instrumentName := Trim(Coalesce(_instrumentName, ''));
         _storFunction   := Trim(Coalesce(_storFunction, ''));
+        _mode           := Trim(Coalesce(_mode, ''));
+        _urlDomain      := Trim(Coalesce(_urlDomain, ''));
+        _id             := Trim(Coalesce(_id, ''));
 
         If char_length(_path) < 1 Then
             _message := 'path was blank';

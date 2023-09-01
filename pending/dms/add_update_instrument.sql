@@ -62,6 +62,7 @@ AS $$
 **          12/06/2018 mem - Change variable names to camelCase
 **                         - Use Try_Cast instead of Try_Convert
 **          05/28/2019 mem - Add parameter _trackUsageWhenInactive
+**          09/01/2023 mem - Expand _instrumentName to varchar(64), _description to varchar(1024), and _usage to varchar(128)
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -113,9 +114,10 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        If _usage is null Then
-            _usage := '';
-        End If;
+        _instrumentName := Trim(Coalesce(_instrumentName, ''));
+        _description    := Trim(Coalesce(_description, ''));
+        _usage          := Trim(Coalesce(_usage, ''));
+        _mode           := Trim(Coalesce(_mode, ''));
 
         _percentEMSLOwnedVal := public.try_cast(_percentEMSLOwned, null::int);
 
