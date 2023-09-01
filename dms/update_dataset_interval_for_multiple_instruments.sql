@@ -43,6 +43,8 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_interval_for_multiple_instrume
 **                         - Add missing Order By clause
 **          07/21/2023 mem - Look for both 'Y' and '1' when examining the eus_primary_instrument flag (aka EMSL_Primary_Instrument)
 **          08/29/2023 mem - Ported to PostgreSQL
+**          08/31/2023 mem - Remove invalid where clause in For Loop query
+**                         - Change "months to update" variable to an integer
 **
 *****************************************************/
 DECLARE
@@ -54,7 +56,7 @@ DECLARE
     _endDate timestamp;
     _instrumentUsageMonth timestamp;
     _currentInstrumentUsageMonth timestamp;
-    _instrumentUsageMonthsToUpdate real;
+    _instrumentUsageMonthsToUpdate int;
     _startDate timestamp;
     _currentYear int;
     _currentMonth int;
@@ -132,7 +134,7 @@ BEGIN
 
     -- Update instrument usage for the current month, plus possibly the last few months, depending on _daysToProcess
     -- For example, if _daysToProcess is 60, will call Update_EMSL_Instrument_Usage_Report for this month plus the last two months
-    _instrumentUsageMonthsToUpdate := 1 + Round(_daysToProcess / 31.0, 0);
+    _instrumentUsageMonthsToUpdate := (1 + Round(_daysToProcess / 31.0, 0))::int;
 
     _startDate        := _endDate - make_interval(days => _daysToProcess);
     _currentYear      := Extract(year from _endDate);
@@ -312,7 +314,6 @@ BEGIN
                    EUS_Instrument_ID AS EusInstrumentId,
                    Entry_ID AS EntryID
             FROM Tmp_Instruments
-            WHERE Entry_ID > _entryID
             ORDER BY Entry_ID
         LOOP
             _skipInstrument := false;
@@ -346,7 +347,8 @@ BEGIN
 
             If Not _updateEMSLInstrumentUsage Then
                 If _infoOnly AND (_instrumentInfo.EMSL_Primary_Instrument IN ('Y', '1') OR _instrumentInfo.Tracked = 1) Then
-                    RAISE INFO 'Skip call to Update_EMSL_Instrument_Usage_Report for Instrument %', _instrument;
+                    RAISE INFO '';
+                    RAISE INFO 'Skip call to Update_EMSL_Instrument_Usage_Report for Instrument %', _instrumentInfo.Instrument;
                     RAISE INFO '';
                 End If;
 
