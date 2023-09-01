@@ -32,7 +32,7 @@ BEGIN
     _returnCode := '';
 
     ---------------------------------------------------
-    -- Validate input fields
+    -- Validate the inputs
     ---------------------------------------------------
 
     _modName         := Trim(Coalesce(_modName, ''));

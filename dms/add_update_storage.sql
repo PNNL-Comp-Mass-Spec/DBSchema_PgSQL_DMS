@@ -111,7 +111,7 @@ BEGIN
         _currentlocation := 'Validate inputs';
 
         ---------------------------------------------------
-        -- Validate input fields
+        -- Validate the inputs
         ---------------------------------------------------
 
         _path           := Trim(Coalesce(_path, ''));

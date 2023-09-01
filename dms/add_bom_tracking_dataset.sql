@@ -65,7 +65,7 @@ BEGIN
     _returnCode := '';
 
     ---------------------------------------------------
-    -- Validate input arguments
+    -- Validate the inputs
     ---------------------------------------------------
 
     _mode := Trim(Lower(Coalesce(_mode, '')));

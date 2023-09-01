@@ -48,7 +48,7 @@ BEGIN
     _returnCode := '';
 
     -----------------------------------------
-    -- Validate the input parameters
+    -- Validate the inputs
     -----------------------------------------
 
     _updateParamEntries := Coalesce(_updateParamEntries, true);

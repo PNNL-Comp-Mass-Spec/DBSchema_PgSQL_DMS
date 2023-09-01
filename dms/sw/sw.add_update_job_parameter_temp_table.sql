@@ -55,7 +55,7 @@ BEGIN
     _returnCode := '';
 
     ---------------------------------------------------
-    -- Validate input fields
+    -- Validate the inputs
     ---------------------------------------------------
 
     _infoOnly := Coalesce(_infoOnly, false);

@@ -25,7 +25,7 @@ DECLARE
     _infoData text;
 BEGIN
     -----------------------------------------
-    -- Validate the input parameters
+    -- Validate the inputs
     -----------------------------------------
 
     _infoOnly := Coalesce(_infoOnly, false);

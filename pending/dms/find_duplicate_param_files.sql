@@ -63,7 +63,7 @@ BEGIN
     _returnCode := '';
 
     -----------------------------------------
-    -- Validate the input parameters
+    -- Validate the inputs
     -----------------------------------------
 
     _paramFileNameFilter := Trim(Coalesce(_paramFileNameFilter, ''));

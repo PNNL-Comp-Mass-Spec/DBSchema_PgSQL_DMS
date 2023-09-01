@@ -51,7 +51,7 @@ DECLARE
     _autoNumberStartID int := 0;
 BEGIN
     ---------------------------------------------------
-    -- Validate inputs
+    -- Validate the inputs
     ---------------------------------------------------
 
     _sourceTable := Coalesce(_sourceTable, '');

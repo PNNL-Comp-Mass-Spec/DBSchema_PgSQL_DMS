@@ -59,7 +59,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Validate input fields
+    -- Validate the inputs
     ---------------------------------------------------
 
     If Coalesce(_fastaFileName, '') = '' Then

@@ -83,7 +83,7 @@ BEGIN
     BEGIN
 
         ---------------------------------------------------
-        -- Validate input fields
+        -- Validate the inputs
         ---------------------------------------------------
 
         If char_length(Coalesce(_columnNumber, '')) < 1 Then

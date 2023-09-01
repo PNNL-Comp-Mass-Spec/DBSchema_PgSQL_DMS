@@ -110,7 +110,7 @@ BEGIN
     BEGIN
 
         ---------------------------------------------------
-        -- Validate input fields
+        -- Validate the inputs
         ---------------------------------------------------
 
         If _usage is null Then

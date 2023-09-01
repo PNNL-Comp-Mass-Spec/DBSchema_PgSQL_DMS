@@ -66,7 +66,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Validate input fields
+    -- Validate the inputs
     ---------------------------------------------------
 
     If _postedBy IS NULL OR _postedBy = '' Then

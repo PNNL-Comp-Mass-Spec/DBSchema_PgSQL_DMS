@@ -44,7 +44,7 @@ BEGIN
     _returnCode := '';
 
     ---------------------------------------------------
-    -- Validate input fields
+    -- Validate the inputs
     ---------------------------------------------------
 
     _collectionName   := Trim(Coalesce(_collectionName, ''));

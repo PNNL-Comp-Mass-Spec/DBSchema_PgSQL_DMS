@@ -33,7 +33,7 @@ BEGIN
     _returnCode := '';
 
     -----------------------------------------------------
-    -- Validate the intputs
+    -- Validate the inputs
     -----------------------------------------------------
 
     _proteinCollectionList := Trim(Coalesce(_proteinCollectionList, ''));

@@ -67,7 +67,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Validate input fields
+    -- Validate the inputs
     ---------------------------------------------------
 
     _processorGroup := Trim(Coalesce(_processorGroup, ''));

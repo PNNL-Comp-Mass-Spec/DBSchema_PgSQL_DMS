@@ -147,7 +147,7 @@ BEGIN
         _datasetTypeID := get_dataset_type_id (_msType);
 
         ---------------------------------------------------
-        -- Validate input fields
+        -- Validate the inputs
         ---------------------------------------------------
 
         _mode := Trim(Lower(Coalesce(_mode, '')));

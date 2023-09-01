@@ -83,7 +83,7 @@ BEGIN
     BEGIN
 
         ---------------------------------------------------
-        -- Validate input fields
+        -- Validate the inputs
         ---------------------------------------------------
 
         _campaign := Coalesce(_campaign, '');

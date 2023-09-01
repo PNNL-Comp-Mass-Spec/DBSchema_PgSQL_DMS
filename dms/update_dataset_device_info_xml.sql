@@ -113,7 +113,7 @@ BEGIN
     );
 
     ---------------------------------------------------
-    -- Validate input fields
+    -- Validate the inputs
     ---------------------------------------------------
 
     _datasetID := Coalesce(_datasetID, 0);

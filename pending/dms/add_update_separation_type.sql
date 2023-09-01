@@ -48,7 +48,7 @@ BEGIN
     _returnCode := '';
 
     ---------------------------------------------------
-    -- Validate input fields
+    -- Validate the inputs
     ---------------------------------------------------
 
     _id := Coalesce(_id, 0);

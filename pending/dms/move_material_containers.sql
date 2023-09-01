@@ -48,7 +48,7 @@ BEGIN
     _returnCode := '';
 
     ---------------------------------------------------
-    -- Validate the Inputs
+    -- Validate the inputs
     ---------------------------------------------------
 
     _freezerTagOld := Coalesce(_freezerTagOld, '');

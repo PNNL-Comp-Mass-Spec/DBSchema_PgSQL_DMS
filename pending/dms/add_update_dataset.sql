@@ -265,7 +265,7 @@ BEGIN
     BEGIN
 
         ---------------------------------------------------
-        -- Validate input fields
+        -- Validate the inputs
         ---------------------------------------------------
 
         _mode := Trim(Lower(Coalesce(_mode, '')));

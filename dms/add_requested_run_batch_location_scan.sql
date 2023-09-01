@@ -70,7 +70,7 @@ BEGIN
     BEGIN
 
         ---------------------------------------------------
-        -- Validate input fields
+        -- Validate the inputs
         ---------------------------------------------------
 
         _locationId  := Coalesce(_locationId, 0);

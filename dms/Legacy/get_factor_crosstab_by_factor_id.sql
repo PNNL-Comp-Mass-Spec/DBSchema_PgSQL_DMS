@@ -95,7 +95,7 @@ BEGIN
     _returnCode := '';
 
     -----------------------------------------
-    -- Validate the input parameters
+    -- Validate the inputs
     -----------------------------------------
 
     _generateSQLOnly := Coalesce(_generateSQLOnly, false);

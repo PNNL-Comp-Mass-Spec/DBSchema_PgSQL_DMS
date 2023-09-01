@@ -40,7 +40,7 @@ DECLARE
     _infoData text;
 BEGIN
     -----------------------------------------
-    -- Validate the input parameters
+    -- Validate the inputs
     -----------------------------------------
 
     _job := Coalesce(_job, 0);

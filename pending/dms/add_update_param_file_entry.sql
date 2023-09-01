@@ -51,7 +51,7 @@ BEGIN
     _returnCode := '';
 
     ---------------------------------------------------
-    -- Validate input fields
+    -- Validate the inputs
     ---------------------------------------------------
 
     If _paramFileID = 0 Then

@@ -114,7 +114,7 @@ BEGIN
     BEGIN
 
         ---------------------------------------------------
-        -- Validate the input parameters
+        -- Validate the inputs
         ---------------------------------------------------
 
         _allowAddNew := Coalesce(_allowAddNew, false);

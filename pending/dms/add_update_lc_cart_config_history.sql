@@ -46,7 +46,7 @@ BEGIN
     BEGIN
 
         ---------------------------------------------------
-        -- Validate input fields
+        -- Validate the inputs
         ---------------------------------------------------
 
         _entryDate := public.try_cast(_dateOfChange, null, null::timestamp);

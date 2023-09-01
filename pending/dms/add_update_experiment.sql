@@ -177,7 +177,7 @@ BEGIN
     BEGIN
 
         ---------------------------------------------------
-        -- Validate input fields
+        -- Validate the inputs
         ---------------------------------------------------
 
         _experimentID := Coalesce(_experimentID, 0);

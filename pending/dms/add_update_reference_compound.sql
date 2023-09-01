@@ -113,7 +113,7 @@ BEGIN
     BEGIN
 
         ---------------------------------------------------
-        -- Validate input fields
+        -- Validate the inputs
         ---------------------------------------------------
 
         _compoundName := Trim(Coalesce(_compoundName, ''));

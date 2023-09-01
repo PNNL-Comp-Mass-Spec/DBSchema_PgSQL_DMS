@@ -50,7 +50,7 @@ BEGIN
     _returnCode := '';
 
     ---------------------------------------------------
-    -- Validate input fields
+    -- Validate the inputs
     ---------------------------------------------------
 
     If Not _mode::citext In ('copyCategory', 'copySubcategory', 'copyAll') Then

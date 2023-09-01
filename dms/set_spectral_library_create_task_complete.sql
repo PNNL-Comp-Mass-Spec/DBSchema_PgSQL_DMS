@@ -64,7 +64,7 @@ BEGIN
     BEGIN
 
         ---------------------------------------------------
-        -- Validate the input parameters
+        -- Validate the inputs
         ---------------------------------------------------
 
         _libraryId = Coalesce(_libraryId, 0);

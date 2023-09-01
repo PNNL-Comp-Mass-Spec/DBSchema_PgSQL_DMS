@@ -243,7 +243,7 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Validate input fields
+        -- Validate the inputs
         ---------------------------------------------------
 
         If _logDebugMessages Then

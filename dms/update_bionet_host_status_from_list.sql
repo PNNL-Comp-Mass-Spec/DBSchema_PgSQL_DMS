@@ -45,7 +45,7 @@ BEGIN
 
     BEGIN
         -----------------------------------------
-        -- Validate the input parameters
+        -- Validate the inputs
         -----------------------------------------
 
         _hostNames := Coalesce(_hostNames, '');

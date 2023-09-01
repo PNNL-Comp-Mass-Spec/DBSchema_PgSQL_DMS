@@ -47,7 +47,7 @@ BEGIN
     _returnCode := '';
 
     ---------------------------------------------------
-    -- Validate input fields
+    -- Validate the inputs
     ---------------------------------------------------
 
     If _targetEntityName::citext = _sourceEntityName::citext Then

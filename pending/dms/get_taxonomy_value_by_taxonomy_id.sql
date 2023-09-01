@@ -62,7 +62,7 @@ BEGIN
     _message := '';
 
     ---------------------------------------------------
-    -- Validate input fields
+    -- Validate the inputs
     ---------------------------------------------------
 
     _ncbiTaxonomyID := Coalesce(_ncbiTaxonomyID, 0);

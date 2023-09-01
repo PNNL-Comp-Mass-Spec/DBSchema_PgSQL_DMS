@@ -96,7 +96,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Validate inputs
+    -- Validate the inputs
     ---------------------------------------------------
 
     If Coalesce(_callingUser, '') = '' Then

@@ -77,7 +77,7 @@ BEGIN
     BEGIN
 
         ---------------------------------------------------
-        -- Validate input parameters
+        -- Validate the inputs
         ---------------------------------------------------
 
         _rating := Coalesce(_rating, '');

@@ -67,7 +67,7 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Validate input fields
+        -- Validate the inputs
         ---------------------------------------------------
 
         If char_length(Coalesce(_requestedCompletionDate, '')) > 0 Then

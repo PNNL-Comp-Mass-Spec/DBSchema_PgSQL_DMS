@@ -42,7 +42,7 @@ DECLARE
     _infoData text;
 BEGIN
     -----------------------------------------
-    -- Validate the input parameters
+    -- Validate the inputs
     -----------------------------------------
 
     _windowDays := Coalesce(_windowDays, 7);

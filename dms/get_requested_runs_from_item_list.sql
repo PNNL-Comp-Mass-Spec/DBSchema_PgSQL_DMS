@@ -40,7 +40,7 @@ DECLARE
     _invalidItems text;
 BEGIN
     -----------------------------------------
-    -- Validate the input parameters
+    -- Validate the inputs
     -----------------------------------------
 
     IF Coalesce(_itemType, '') = '' Then

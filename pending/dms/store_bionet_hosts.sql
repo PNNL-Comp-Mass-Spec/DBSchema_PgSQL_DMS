@@ -61,7 +61,7 @@ BEGIN
     _returnCode := '';
 
     -----------------------------------------
-    -- Validate the input parameters
+    -- Validate the inputs
     -----------------------------------------
 
     _hostList := Coalesce(_hostList, '');

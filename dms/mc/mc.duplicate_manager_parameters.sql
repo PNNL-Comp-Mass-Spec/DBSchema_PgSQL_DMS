@@ -43,7 +43,7 @@ DECLARE
 BEGIN
 
     ---------------------------------------------------
-    -- Validate input fields
+    -- Validate the inputs
     ---------------------------------------------------
 
     _infoOnly := Coalesce(_infoOnly, true);

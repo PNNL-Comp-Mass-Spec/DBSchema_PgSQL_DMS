@@ -63,7 +63,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Validate input fields
+    -- Validate the inputs
     ---------------------------------------------------
 
     _instrumentName := Trim(Coalesce(_instrumentName, ''));

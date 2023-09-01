@@ -42,7 +42,7 @@ BEGIN
     _returnCode := '';
 
     ----------------------------------------------
-    -- Validate the Inputs
+    -- Validate the inputs
     ----------------------------------------------
 
     -- Do not allow _campaignName to be blank

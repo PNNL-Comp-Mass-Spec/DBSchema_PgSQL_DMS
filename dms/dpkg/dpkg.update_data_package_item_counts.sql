@@ -27,7 +27,7 @@ DECLARE
     _biomaterialCount int := 0;
 BEGIN
     ---------------------------------------------------
-    -- Validate input fields
+    -- Validate the inputs
     ---------------------------------------------------
 
     _packageID := Coalesce(_packageID, -1);

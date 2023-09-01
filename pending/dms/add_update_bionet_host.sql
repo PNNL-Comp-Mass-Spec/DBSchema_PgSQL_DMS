@@ -72,7 +72,7 @@ BEGIN
     BEGIN
 
         ---------------------------------------------------
-        -- Validate input fields
+        -- Validate the inputs
         ---------------------------------------------------
 
         If _mode IS NULL OR char_length(_mode) < 1 Then

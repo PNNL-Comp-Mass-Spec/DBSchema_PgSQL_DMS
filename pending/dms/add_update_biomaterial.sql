@@ -120,7 +120,7 @@ BEGIN
     BEGIN
 
         ---------------------------------------------------
-        -- Validate input fields
+        -- Validate the inputs
         ---------------------------------------------------
 
         _biomaterialName := Trim(Coalesce(_biomaterialName, ''));

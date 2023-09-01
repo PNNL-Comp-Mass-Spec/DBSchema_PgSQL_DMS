@@ -112,7 +112,7 @@ BEGIN
     BEGIN
 
         ---------------------------------------------------
-        -- Validate input fields
+        -- Validate the inputs
         ---------------------------------------------------
 
         _instrumentName := Coalesce(_instrumentName, '');

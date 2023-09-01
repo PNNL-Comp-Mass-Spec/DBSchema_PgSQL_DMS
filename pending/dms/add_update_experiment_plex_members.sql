@@ -218,7 +218,7 @@ BEGIN
     BEGIN
 
         ---------------------------------------------------
-        -- Validate input fields
+        -- Validate the inputs
         ---------------------------------------------------
 
         -- Set _compoundName = Trim(Coalesce(_compoundName, ''))

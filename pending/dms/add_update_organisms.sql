@@ -135,7 +135,7 @@ BEGIN
     BEGIN
 
         ---------------------------------------------------
-        -- Validate input fields
+        -- Validate the inputs
         ---------------------------------------------------
 
         _orgStorageLocation := Coalesce(_orgStorageLocation, '');

@@ -167,7 +167,7 @@ DECLARE
 BEGIN
 
     ---------------------------------------------------
-    -- Validate input fields
+    -- Validate the inputs
     ---------------------------------------------------
 
     _section := Coalesce(_section, '');

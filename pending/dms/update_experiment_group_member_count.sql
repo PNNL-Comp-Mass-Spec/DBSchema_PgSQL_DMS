@@ -29,7 +29,7 @@ BEGIN
     _returnCode := '';
 
     ---------------------------------------------------
-    -- Validate inputs
+    -- Validate the inputs
     ---------------------------------------------------
 
     _groupID := Coalesce(_groupID, 0);

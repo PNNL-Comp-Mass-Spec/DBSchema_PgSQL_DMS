@@ -57,7 +57,7 @@ BEGIN
     _returnCode := '';
 
     ---------------------------------------------------
-    -- Validate input fields
+    -- Validate the inputs
     ---------------------------------------------------
 
     _proteinCollectionID := Coalesce(_proteinCollectionID, 0);

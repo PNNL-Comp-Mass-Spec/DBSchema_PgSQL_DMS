@@ -39,7 +39,7 @@ BEGIN
     _returnCode := '';
 
     ----------------------------------------------
-    -- Validate the Inputs
+    -- Validate the inputs
     ----------------------------------------------
 
     _infoOnly := Coalesce(_infoOnly, false);

@@ -66,7 +66,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Validate input fields
+    -- Validate the inputs
     ---------------------------------------------------
 
     If char_length(_eusPersonID) < 1 Then

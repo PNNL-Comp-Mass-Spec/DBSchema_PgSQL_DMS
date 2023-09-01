@@ -77,7 +77,7 @@ DECLARE
     _exceptionContext text;
 BEGIN
     ---------------------------------------------------
-    -- Validate inputs
+    -- Validate the inputs
     ---------------------------------------------------
 
     _procedureName := Coalesce(_procedureName, '');

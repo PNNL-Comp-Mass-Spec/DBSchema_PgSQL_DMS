@@ -57,7 +57,7 @@ BEGIN
     _returnCode := '';
 
     -----------------------------------------
-    -- Validate the input parameters
+    -- Validate the inputs
     -----------------------------------------
 
     _addMissingFilterCriteria := Coalesce(_addMissingFilterCriteria, true);

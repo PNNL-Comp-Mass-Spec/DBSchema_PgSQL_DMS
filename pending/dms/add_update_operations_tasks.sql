@@ -89,7 +89,7 @@ BEGIN
     BEGIN
 
         ---------------------------------------------------
-        -- Validate input fields
+        -- Validate the inputs
         ---------------------------------------------------
 
         _taskType := Coalesce(_taskType, 'Generic');
