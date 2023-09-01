@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_interval(IN _instrumentname te
 **          08/01/2017 mem - Use THROW if not authorized
 **          05/03/2019 mem - Use EUS_Instrument_ID for DMS instruments that share a single eusInstrumentId
 **          08/28/2023 mem - Ported to PostgreSQL
+**          08/31/2023 mem - Exit the procedure if no datasets are found between the start and end dates
 **
 *****************************************************/
 DECLARE
@@ -42,6 +43,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
+    _insertCount int;
     _maxNormalInterval int;
     _instrumentNameMatch text := '';
     _eusInstrumentId int := 0;
@@ -176,6 +178,8 @@ BEGIN
             WHERE DS.acq_time_start BETWEEN _startDate AND _endDate AND
                   InstMapping.eus_instrument_id = _eusInstrumentId
             ORDER BY DS.acq_time_start;
+            --
+            GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
         Else
             INSERT INTO Tmp_Durations (
@@ -198,6 +202,17 @@ BEGIN
             WHERE DS.acq_time_start BETWEEN _startDate AND _endDate AND
                   InstName.instrument = _instrumentName::citext
             ORDER BY DS.Acq_Time_Start;
+            --
+            GET DIAGNOSTICS _insertCount = ROW_COUNT;
+
+        End If;
+
+        If _insertCount = 0 Then
+            RAISE INFO 'No datasets were found for instrument % between % and %',
+                        _instrumentName, _startDate::date, _endDate::date;
+
+            DROP TABLE Tmp_Durations;
+            RETURN;
         End If;
 
         ---------------------------------------------------
@@ -208,7 +223,11 @@ BEGIN
         INTO _maxSeq
         FROM Tmp_Durations;
 
-        FOR _index IN 1 .. _maxSeq
+        If _infoOnly Then
+            RAISE INFO 'Calculating inter-run intervals for instrument %: % %', _instrumentName, _insertCount, public.check_plural(_insertCount, 'dataset', 'datasets');
+        End If;
+
+        FOR _index IN 1 .. Coalesce(_maxSeq, 0)
         LOOP
             SELECT Time_Start
             INTO _start
@@ -253,7 +272,7 @@ BEGIN
 
             RAISE INFO '';
 
-            _formatSpecifier := '%-25s %-80s %-10s %-20s %-20s %-19s %-13s %-20s';
+            _formatSpecifier := '%-25s %-80s %-10s %-20s %-20s %-19s %-13s %-35s';
 
             _infoHead := format(_formatSpecifier,
                                 'Instrument',
@@ -274,7 +293,7 @@ BEGIN
                                          '--------------------',
                                          '-------------------',
                                          '-------------',
-                                         '--------------------'
+                                         '-----------------------------------'
                                         );
 
             RAISE INFO '%', _infoHead;
