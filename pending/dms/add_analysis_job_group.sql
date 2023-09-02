@@ -276,13 +276,13 @@ BEGIN
         ---------------------------------------------------
 
         CREATE TEMP TABLE Tmp_DatasetInfo (
-            Dataset_Name text,
+            Dataset_Name citext,
             Dataset_ID int NULL,
-            Instrument_class text NULL,
+            Instrument_Class text NULL,
             Dataset_State_ID int NULL,
             Archive_State_ID int NULL,
             Dataset_Type text NULL,
-            Dataset_rating int NULL,
+            Dataset_Rating_ID smallint NULL,
             Job int NULL,
             Dataset_Unreviewed int NULL
         );
@@ -487,7 +487,7 @@ BEGIN
 
         _organismName := Trim(_organismName);
 
-        CALL validate_analysis_job_parameters (
+        CALL public.validate_analysis_job_parameters (
                                 _toolName => _toolName,
                                 _paramFileName => _paramFileName,               -- Output
                                 _settingsFileName => _settingsFileName,         -- Output

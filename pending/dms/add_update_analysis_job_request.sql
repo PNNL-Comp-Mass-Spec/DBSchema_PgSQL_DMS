@@ -286,13 +286,13 @@ BEGIN
         ---------------------------------------------------
 
         CREATE TEMP TABLE Tmp_DatasetInfo (
-            Dataset_Name text,
+            Dataset_Name citext,
             Dataset_ID int NULL,
-            Instrument_class text NULL,
+            Instrument_Class text NULL,
             Dataset_State_ID int NULL,
             Archive_State_ID int NULL,
             Dataset_Type text NULL,
-            Dataset_rating int NULL
+            Dataset_Rating_ID smallint NULL
         );
 
         If _dataPackageID > 0 Then

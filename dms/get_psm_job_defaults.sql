@@ -60,6 +60,7 @@ CREATE OR REPLACE FUNCTION public.get_psm_job_defaults(_datasets text) RETURNS T
 **          01/28/2020 mem - Use '%TMT1%' instead of '%TMT10' so we can match TMT10 and TMT11
 **          09/10/2020 mem - Add job types 'TMT Zero' and 'TMT 16-plex'
 **          08/02/2023 mem - Ported to PostgreSQL
+**          09/01/2023 mem - Change column Dataset_Rating_ID to smallint in temp table
 **
 *****************************************************/
 DECLARE
@@ -143,11 +144,11 @@ BEGIN
     CREATE TEMP TABLE Tmp_DatasetInfo (
         Dataset_Name citext,
         Dataset_ID int NULL,
-        Instrument_class text NULL,
+        Instrument_Class text NULL,
         Dataset_State_ID int NULL,
         Archive_State_ID int NULL,
         Dataset_Type text NULL,
-        Dataset_Rating_ID int NULL
+        Dataset_Rating_ID smallint NULL
     );
 
     CREATE INDEX IX_Tmp_DatasetInfo_DatasetID ON Tmp_DatasetInfo (Dataset_ID);
