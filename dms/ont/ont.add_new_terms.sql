@@ -31,6 +31,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_terms(_ontologyname public.citext DEFAULT
 **          05/25/2023 mem - Show a custom message if _ontologyName is BTO, ENVO, or MS
 **                         - Reduce nesting
 **          05/30/2023 mem - Use format() for string concatenation
+**          09/01/2023 mem - Remove unnecessary cast to citext for string constants
 ***
 *****************************************************/
 DECLARE
@@ -245,7 +246,7 @@ BEGIN
                             _logError => false);
 
         If _errorMessage Like '%duplicate key value violates unique constraint%' Then
-            If _targetTable::citext = 't_cv_newt'::citext Then
+            If _targetTable::citext = 't_cv_newt' Then
                 _s := 'Use the following query to update the next value for the sequence behind the entry_id field in the target table: SELECT setval(''ont.t_cv_newt_entry_id_seq'', (SELECT MAX(entry_id) FROM ont.t_cv_newt));';
             Else
                 _s := format('Use the following query to look for a backing sequence behind an Identity column in the target table: SELECT * FROM pg_catalog.pg_sequences WHERE sequencename LIKE ''%s%'';', _targetTable);

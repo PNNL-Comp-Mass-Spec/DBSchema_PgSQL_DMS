@@ -168,7 +168,7 @@ BEGIN
         CALL update_taxonomy_item_if_defined ('subkingdom', _value => _newKingdom);
         CALL update_taxonomy_item_if_defined ('kingdom', _value => _newKingdom);
 
-        If _newKingdom = '' And _newDomain::citext = 'bacteria'::citext Then
+        If _newKingdom = '' And _newDomain::citext = 'bacteria' Then
             _newKingdom := 'Prokaryote';
         End If;
 
@@ -209,7 +209,7 @@ BEGIN
         FROM Tmp_TaxonomyInfo
         WHERE Entry_ID = 1;
 
-        If _taxonomyRank::citext = 'no rank'::citext And _taxonomyName::citext <> 'environmental samples'::citext Then
+        If _taxonomyRank::citext = 'no rank' And _taxonomyName::citext <> 'environmental samples' Then
             _newStrain := _taxonomyName;
 
             -- Remove genus and species if present

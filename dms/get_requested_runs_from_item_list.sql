@@ -33,6 +33,7 @@ CREATE OR REPLACE FUNCTION public.get_requested_runs_from_item_list(_itemlist te
 **          07/27/2023 mem - Use table alias when referencing column
 **          08/16/2023 mem - Update table alias
 **          08/17/2023 mem - Use renamed column data_pkg_id in V_Data_Package_Dataset_Export
+**          09/01/2023 mem - Remove unnecessary cast to citext for string constants
 **
 *****************************************************/
 DECLARE
@@ -73,43 +74,43 @@ BEGIN
 
     _invalidItems := '';
 
-    If _itemType::citext = 'Batch_ID'::citext Then
+    If _itemType::citext = 'Batch_ID' Then
         SELECT string_agg(Item, ', ' ORDER BY Item)
         INTO _invalidItems
         FROM Tmp_Items
         WHERE NOT Item IN (SELECT batch_id::text AS Item FROM t_requested_run_batches);
 
-    ElsIf _itemType::citext = 'Requested_Run_ID'::citext Then
+    ElsIf _itemType::citext = 'Requested_Run_ID' Then
         SELECT string_agg(Item, ', ' ORDER BY Item)
         INTO _invalidItems
         FROM Tmp_Items
         WHERE NOT Item IN (SELECT t_requested_run.request_id::text AS Item FROM t_requested_run);
 
-    ElsIf _itemType::citext = 'Dataset_Name'::citext Then
+    ElsIf _itemType::citext = 'Dataset_Name' Then
         SELECT string_agg(Item, ', ' ORDER BY Item)
         INTO _invalidItems
         FROM Tmp_Items
         WHERE NOT Item IN (SELECT dataset FROM t_dataset);
 
-    ElsIf _itemType::citext = 'Dataset_ID'::citext Then
+    ElsIf _itemType::citext = 'Dataset_ID' Then
         SELECT string_agg(Item, ', ' ORDER BY Item)
         INTO _invalidItems
         FROM Tmp_Items
         WHERE NOT Item IN (SELECT dataset_id::text AS Item FROM t_dataset);
 
-    ElsIf _itemType::citext = 'Experiment_Name'::citext Then
+    ElsIf _itemType::citext = 'Experiment_Name' Then
         SELECT string_agg(Item, ', ' ORDER BY Item)
         INTO _invalidItems
         FROM Tmp_Items
         WHERE NOT Item IN (SELECT experiment FROM t_experiments);
 
-    ElsIf _itemType::citext = 'Experiment_ID'::citext Then
+    ElsIf _itemType::citext = 'Experiment_ID' Then
         SELECT string_agg(Item, ', ' ORDER BY Item)
         INTO _invalidItems
         FROM Tmp_Items
         WHERE NOT Item IN (SELECT exp_id::text AS Item FROM t_experiments);
 
-    ElsIf _itemType::citext = 'Data_Package_ID'::citext Then
+    ElsIf _itemType::citext = 'Data_Package_ID' Then
         -- Assume valid
         _invalidItems := '';
     End If;
@@ -128,43 +129,43 @@ BEGIN
     -- Return requested runs based on items in list
     -----------------------------------------
 
-    If _itemType::citext = 'Batch_ID'::citext Then
+    If _itemType::citext = 'Batch_ID' Then
         RETURN QUERY
         SELECT Request
         FROM V_Requested_Run_Unified_List
         WHERE batch_id IN (SELECT public.try_cast(Item, 0) FROM Tmp_Items);
 
-    ElsIf _itemType::citext = 'Requested_Run_ID'::citext Then
+    ElsIf _itemType::citext = 'Requested_Run_ID' Then
         RETURN QUERY
         SELECT Request
         FROM V_Requested_Run_Unified_List
         WHERE Request IN (SELECT public.try_cast(Item, 0) FROM Tmp_Items);
 
-    ElsIf _itemType::citext = 'Dataset_Name'::citext Then
+    ElsIf _itemType::citext = 'Dataset_Name' Then
         RETURN QUERY
         SELECT Request
         FROM V_Requested_Run_Unified_List
         WHERE Dataset IN (SELECT Item FROM Tmp_Items);
 
-    ElsIf _itemType::citext = 'Dataset_ID'::citext Then
+    ElsIf _itemType::citext = 'Dataset_ID' Then
         RETURN QUERY
         SELECT Request
         FROM V_Requested_Run_Unified_List
         WHERE Dataset_ID IN (SELECT public.try_cast(Item, 0) FROM Tmp_Items);
 
-    ElsIf _itemType::citext = 'Experiment_Name'::citext Then
+    ElsIf _itemType::citext = 'Experiment_Name' Then
         RETURN QUERY
         SELECT Request
         FROM V_Requested_Run_Unified_List
         WHERE Experiment IN (SELECT Item FROM Tmp_Items);
 
-    ElsIf _itemType::citext = 'Experiment_ID'::citext Then
+    ElsIf _itemType::citext = 'Experiment_ID' Then
         RETURN QUERY
         SELECT Request
         FROM V_Requested_Run_Unified_List
         WHERE Experiment_ID IN (SELECT public.try_cast(Item, 0) FROM Tmp_Items);
 
-    ElsIf _itemType::citext = 'Data_Package_ID'::citext Then
+    ElsIf _itemType::citext = 'Data_Package_ID' Then
         RETURN QUERY
         SELECT DISTINCT RR.request_id
         FROM t_requested_run RR

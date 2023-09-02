@@ -49,6 +49,7 @@ CREATE OR REPLACE FUNCTION public.local_error_handler(_sqlstate text, _exception
 **          05/22/2023 mem - Capitalize reserved words
 **          05/31/2023 mem - Use format() for string concatenation
 **          07/26/2023 mem - Move "Not" keyword to before the field name
+**          09/01/2023 mem - Remove unnecessary cast to citext for string constants
 **
 ****************************************************/
 DECLARE
@@ -73,17 +74,13 @@ BEGIN
     _duplicateEntryHoldoffHours := Coalesce(_duplicateEntryHoldoffHours, 0);
 
     If (_callingProcName = '' Or
-        _callingProcName::citext = '<Auto>'::citext Or
-        _callingProcName::citext = '<AutoDetermine>'::citext Or
-        _callingProcSchema::citext = '<Auto>'::citext Or
-        _callingProcSchema::citext = '<AutoDetermine>'::citext
+        _callingProcName::citext   IN ('<Auto>', '<AutoDetermine>') Or
+        _callingProcSchema::citext IN ('<Auto>', '<AutoDetermine>')
        ) AND
        char_length(_exceptionContext) > 0 Then
 
         If char_length(_callingProcSchema) > 0 And
-           ( _callingProcSchema::citext = '<Auto>'::citext Or
-             _callingProcSchema::citext = '<AutoDetermine>'::citext
-           ) Then
+           _callingProcSchema::citext IN ('<Auto>', '<AutoDetermine>') Then
             _callingProcSchema := '';
         End If;
 

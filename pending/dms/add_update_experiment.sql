@@ -500,7 +500,7 @@ BEGIN
         -- Auto-switch name from 'none' to 'na'
         ---------------------------------------------------
 
-        If _container::citext = 'none'::citext Then
+        If _container::citext = 'none' Then
             _container := 'na';
         End If;
 

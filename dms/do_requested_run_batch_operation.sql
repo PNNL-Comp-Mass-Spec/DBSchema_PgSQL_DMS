@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE public.do_requested_run_batch_operation(IN _batchid 
 **                         - When deleting a batch, archive it in T_Deleted_Requested_Run_Batch
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
+**          09/01/2023 mem - Remove unnecessary cast to citext for string constants
 **
 *****************************************************/
 DECLARE
@@ -64,7 +65,6 @@ BEGIN
     End If;
 
     _batchID := Coalesce(_batchID, 0);
-    _mode := Coalesce(_mode, '');
 
     If _batchID = 0 Then
         RAISE EXCEPTION 'Batch operation tasks are not allowed for Batch 0' USING ERRCODE = 'U5201';
@@ -118,7 +118,7 @@ BEGIN
     -- Remove current member requests from batch
     ---------------------------------------------------
 
-    If _mode::citext = 'FreeMembers'::citext Or _mode = 'Delete' Then
+    If _mode::citext IN ('FreeMembers', 'Delete') Then
         If _locked = 'Yes' Then
             _message := 'Cannot remove member requests of locked batch';
             RAISE WARNING '%', _message;

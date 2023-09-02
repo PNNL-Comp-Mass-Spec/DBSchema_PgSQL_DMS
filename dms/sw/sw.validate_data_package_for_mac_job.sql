@@ -42,6 +42,7 @@ CREATE OR REPLACE PROCEDURE sw.validate_data_package_for_mac_job(IN _datapackage
 **          12/07/2022 mem - Include script name in the error message
 **          03/27/2023 mem - Add support for DiaNN
 **          07/27/2023 mem - Ported to PostgreSQL
+**          09/01/2023 mem - Remove unnecessary cast to citext for string constants
 **
 *****************************************************/
 DECLARE
@@ -103,8 +104,8 @@ BEGIN
             MSGFPlus = SourceQ.MSGFPlus,
             SEQUEST = SourceQ.SEQUEST
         FROM ( SELECT DPD.dataset,
-                      SUM(CASE WHEN DPD.tool = 'Decon2LS_V2'::citext THEN 1 ELSE 0 END) AS Decon2LS_V2,
-                      SUM(CASE WHEN DPD.tool = 'MASIC_Finnigan'::citext AND J.param_file_name ILIKE '%ReporterTol%' THEN 1 ELSE 0 END) AS MASIC,
+                      SUM(CASE WHEN DPD.tool = 'Decon2LS_V2' THEN 1 ELSE 0 END) AS Decon2LS_V2,
+                      SUM(CASE WHEN DPD.tool = 'MASIC_Finnigan' AND J.param_file_name ILIKE '%ReporterTol%' THEN 1 ELSE 0 END) AS MASIC,
                       SUM(CASE WHEN DPD.tool ILIKE 'MSGFPlus%' THEN 1 ELSE 0 END) AS MSGFPlus,
                       SUM(CASE WHEN DPD.tool ILIKE 'SEQUEST%' THEN 1 ELSE 0 END) AS SEQUEST
                FROM dpkg.t_data_package_analysis_jobs AS DPD

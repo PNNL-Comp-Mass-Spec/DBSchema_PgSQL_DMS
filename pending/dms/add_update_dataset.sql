@@ -356,7 +356,7 @@ BEGIN
         _aggregationJobDataset := Coalesce(_aggregationJobDataset, false);
         _captureSubfolder := Trim(Coalesce(_captureSubfolder, ''));
 
-        If _captureSubfolder Similar To '\\%' OR _captureSubfolder::citext Similar To '[A-Z]:\%'::citext Then
+        If _captureSubfolder Similar To '\\%' OR _captureSubfolder::citext Similar To '[A-Z]:\%' Then
             RAISE EXCEPTION 'Capture subfolder should be a subdirectory name below the source share for this instrument; it is currently a full path';
         End If;
 
@@ -401,7 +401,7 @@ BEGIN
             RAISE EXCEPTION '%', _msg;
         End If;
 
-        If Not _aggregationJobDataset And (_datasetName::citext Similar To '%[.]raw'::citext Or _datasetName::citext Similar To '%[.]wiff'::citext Or _datasetName::citext Similar To '%[.]d'::citext) Then
+        If Not _aggregationJobDataset And (_datasetName::citext Similar To '%[.]raw' Or _datasetName::citext Similar To '%[.]wiff' Or _datasetName::citext Similar To '%[.]d') Then
             RAISE EXCEPTION 'Dataset name may not end in .raw, .wiff, or .d';
         End If;
 

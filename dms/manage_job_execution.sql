@@ -44,6 +44,7 @@ CREATE OR REPLACE PROCEDURE public.manage_job_execution(IN _parameters text DEFA
 **          05/30/2023 mem - Use format() for string concatenation
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
+**          09/01/2023 mem - Remove unnecessary cast to citext for string constants
 **
 *****************************************************/
 DECLARE
@@ -169,7 +170,7 @@ BEGIN
     ---------------------------------------------------
 
     If _action = 'state' Then
-        If _value::citext = 'Hold'::citext Then
+        If _value::citext = 'Hold' Then
             -- Holding;
             SELECT job_state
             INTO _state
@@ -177,7 +178,7 @@ BEGIN
             WHERE job_state_id = 8;
         End If;
 
-        If _value::citext = 'Release'::citext Then
+        If _value::citext = 'Release' Then
             -- Release (unhold)
             SELECT job_state
             INTO _state
@@ -185,7 +186,7 @@ BEGIN
             WHERE job_state_id = 1;
         End If;
 
-        If _value::citext = 'Reset'::citext Then
+        If _value::citext = 'Reset' Then
             -- Reset
             -- For a reset, we still just Set the DMS state to 'New'
             -- If the job was failed in the broker, it will get reset

@@ -24,6 +24,7 @@ CREATE OR REPLACE FUNCTION cap.enable_disable_archive_step_tools(_enable boolean
 **          10/11/2022 mem - Ported to PostgreSQL
 **          05/12/2023 mem - Rename variables
 **          05/29/2023 mem - Use format() for string concatenation
+**          09/01/2023 mem - Remove unnecessary cast to citext for string constants
 **
 *****************************************************/
 DECLARE
@@ -137,7 +138,7 @@ BEGIN
         FROM Tmp_ToolsToUpdate FilterQ
         WHERE ProcTool.Tool_Name = FilterQ.Tool_Name AND
               ProcTool.enabled = _newState AND
-              ProcTool.comment::citext LIKE 'Disabled%'::citext;
+              ProcTool.comment ILIKE 'Disabled%';
 
     End If;
 

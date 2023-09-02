@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_requested_run_batch_stats(IN _b
 **                         - Post a log entry if the runtime exceeds 30 seconds
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **          07/11/2023 mem - Use COUNT(RR.request_id) and COUNT(RR.dataset_id) instead of COUNT(*)
+**          09/01/2023 mem - Remove unnecessary cast to citext for string constants
 **
 *****************************************************/
 DECLARE
@@ -154,7 +155,7 @@ BEGIN
                            FROM t_requested_run RR
                                 INNER JOIN Tmp_BatchIDs
                                   ON RR.batch_id = Tmp_BatchIDs.batch_id
-                           WHERE RR.state_name = 'Active'::citext
+                           WHERE RR.state_name = 'Active'
                            GROUP BY RR.batch_id
                          ) ActiveStatsQ ON BatchQ.batch_id = ActiveStatsQ.batch_id
                   ) AS s

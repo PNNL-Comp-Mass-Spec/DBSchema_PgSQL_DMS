@@ -29,6 +29,7 @@ CREATE OR REPLACE FUNCTION public.find_existing_jobs_for_job_params(_datasetlist
 **          11/28/2022 mem - Ported to PostgreSQL
 **          05/05/2023 mem - Change table alias name
 **          05/12/2023 mem - Rename variables
+**          09/01/2023 mem - Remove unnecessary cast to citext for string constants
 **
 *****************************************************/
 DECLARE
@@ -172,11 +173,11 @@ BEGIN
           (_resultType NOT LIKE '%Peptide_Hit%' OR
            _resultType LIKE '%Peptide_Hit%' AND
            (
-             (_protCollNameList::citext <> 'na'::citext AND
+             (_protCollNameList::citext <> 'na' AND
               AJ.protein_collection_list = _protCollNameList::citext AND
               AJ.protein_options_list = _protCollOptionsList::citext
              ) OR
-             (_protCollNameList::citext = 'na'::citext AND
+             (_protCollNameList::citext = 'na' AND
               AJ.protein_collection_list = _protCollNameList::citext AND
               AJ.organism_db_name = _organismDBName::citext AND
               Org.organism = _organismName::citext

@@ -113,7 +113,7 @@ BEGIN
         ORDER BY EntityTypeID
     LOOP
 
-        If _notifyUser::citext = 'Yes'::citext Then
+        If _notifyUser::citext = 'Yes' Then
             If Not Exists ( SELECT *
                             FROM t_notification_entity_user
                             WHERE user_id = _userID AND entity_type_id = _entityTypeID ) Then
@@ -125,7 +125,7 @@ BEGIN
             CONTINUE;
         End If;
 
-        If _notifyUser::citext = 'No'::citext Then
+        If _notifyUser::citext = 'No' Then
             DELETE FROM t_notification_entity_user
             WHERE user_id = _userID AND entity_type_id = _entityTypeID;
 
