@@ -49,6 +49,7 @@ CREATE OR REPLACE PROCEDURE public.validate_analysis_job_request_datasets(IN _au
 **          03/22/2023 mem - Also auto-remove datasets named 'Dataset Name' and 'Dataset_Name' from Tmp_DatasetInfo
 **          03/27/2023 mem - Skip HMS vs. MS check when the tool is DiaNN
 **          08/02/2023 mem - Ported to PostgreSQL
+**          09/05/2023 mem - Swap if statement branches for readability
 **
 *****************************************************/
 DECLARE
@@ -180,7 +181,16 @@ BEGIN
             _list := format('%s...', Left(_list, 397));
         End If;
 
-        If Not _autoRemoveNotReleasedDatasets Then
+        If _autoRemoveNotReleasedDatasets Then
+            _message := format('Skipped %s "Not Released" %s: %s', _notReleasedCount, public.check_plural(_notReleasedCount, 'dataset', 'datasets'), _list);
+
+            If _showDebugMessages Then
+                RAISE INFO '%', _message;
+            End If;
+
+            DELETE FROM Tmp_DatasetInfo
+            WHERE dataset_rating_id = -5;
+        Else
             If _notReleasedCount = 1 Then
                 _message := format('Dataset is "Not Released": %s', _list);
             Else
@@ -193,16 +203,6 @@ BEGIN
 
             _returnCode := 'U5201';
             RETURN;
-        Else
-            _message := format('Skipped %s "Not Released" %s: %s', _notReleasedCount, public.check_plural(_notReleasedCount, 'dataset', 'datasets'), _list);
-
-            If _showDebugMessages Then
-                RAISE INFO '%', _message;
-            End If;
-
-            DELETE FROM Tmp_DatasetInfo
-            WHERE dataset_rating_id = -5;
-
         End If;
     End If;
 
