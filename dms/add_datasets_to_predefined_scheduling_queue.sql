@@ -1,28 +1,25 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_datasets_to_predefined_scheduling_queue
-(
-    _datasetIDs text = '',
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_datasets_to_predefined_scheduling_queue(text, boolean, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_datasets_to_predefined_scheduling_queue(IN _datasetids text DEFAULT ''::text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds datasets to T_Predefined_Analysis_Scheduling_Queue
+**      Adds datasets to public.t_predefined_analysis_scheduling_queue
 **      so that they can be checked against the predefined analysis job rules
 **
 **      Useful for processing a set of datasets after creating a new predefine
 **
 **  Arguments:
 **    _datasetIDs   List of dataset IDs (comma, tab, or newline separated)
+**    _infoOnly     When true, preview rows that would be added
 **
 **  Auth:   mem
 **  Date:   03/31/2016 mem - Initial Version
-**          12/15/2023 mem - Ported to PostgreSQL
+**          09/05/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -31,6 +28,7 @@ DECLARE
     _infoHeadSeparator text;
     _previewData record;
     _infoData text;
+    _insertCount int;
 
     _sqlState text;
     _exceptionMessage text;
@@ -98,20 +96,24 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-12s %-25s %-30s %-22s %-5s';
+        _formatSpecifier := '%-10s %-66s %-12s %-25s %-23s %-22s %-5s';
 
         _infoHead := format(_formatSpecifier,
+                            'Dataset_ID',
+                            'Error_Message',
                             'Calling_User',
                             'Analysis_Tool_Name_Filter',
-                            'Exclude_Datasets_Not_Released',
+                            'Exclude_DS_Not_Released',
                             'Prevent_Duplicate_Jobs',
                             'State'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
+                                     '----------',
+                                     '------------------------------------------------------------------',
                                      '------------',
                                      '-------------------------',
-                                     '------------------------------',
+                                     '-----------------------',
                                      '----------------------',
                                      '-----'
                                     );
@@ -121,10 +123,10 @@ BEGIN
 
         FOR _previewData IN
             SELECT Source.dataset_id AS DatasetID,
-                   CASE WHEN AlreadyWaiting > 0
+                   CASE WHEN AlreadyWaiting
                         THEN 'Already in t_predefined_analysis_scheduling_queue with state "New"'
                    ELSE
-                        CASE WHEN IsValid = 0
+                        CASE WHEN Not IsValid
                              THEN 'Unknown dataset_id'
                              ELSE ''
                         END
@@ -144,40 +146,48 @@ BEGIN
                                 _previewData.CallingUser,
                                 _previewData.AnalysisToolNameFilter,
                                 _previewData.ExcludeDatasetsNotReleased,
-                                _previewData.PreventDuplicateJobs
+                                _previewData.PreventDuplicateJobs,
                                 _previewData.State
                                );
 
             RAISE INFO '%', _infoData;
         END LOOP;
 
-    Else
-
-        INSERT INTO t_predefined_analysis_scheduling_queue( dataset_id,
-                                                            calling_user,
-                                                            analysis_tool_name_filter,
-                                                            exclude_datasets_not_released,
-                                                            prevent_duplicate_jobs,
-                                                            state,
-                                                            message )
-        SELECT dataset_id,
-               _callingUser,
-               '' AS AnalysisToolNameFilter,
-               'Yes' AS ExcludeDatasetsNotReleased,
-               'Yes' AS PreventDuplicateJobs,
-               'New' AS State,
-               '' AS Message
-        FROM Tmp_DatasetsToProcess
-        WHERE IsValid And Not AlreadyWaiting;
-        --
-        GET DIAGNOSTICS _jobCountToProcess = ROW_COUNT;
-
-        RAISE INFO 'Added % datasets to t_predefined_analysis_scheduling_queue', _jobCountToProcess;
-
+        DROP TABLE Tmp_DatasetsToProcess;
+        RETURN;
     End If;
+
+    INSERT INTO t_predefined_analysis_scheduling_queue( dataset_id,
+                                                        calling_user,
+                                                        analysis_tool_name_filter,
+                                                        exclude_datasets_not_released,
+                                                        prevent_duplicate_jobs,
+                                                        state,
+                                                        message )
+    SELECT dataset_id,
+           _callingUser,
+           '' AS AnalysisToolNameFilter,
+           'Yes' AS ExcludeDatasetsNotReleased,
+           'Yes' AS PreventDuplicateJobs,
+           'New' AS State,
+           '' AS Message
+    FROM Tmp_DatasetsToProcess
+    WHERE IsValid And Not AlreadyWaiting;
+    --
+    GET DIAGNOSTICS _insertCount = ROW_COUNT;
+
+    RAISE INFO 'Added % % to t_predefined_analysis_scheduling_queue', _insertCount, public.check_plural(_insertCount, 'dataset', 'datasets');
 
     DROP TABLE Tmp_DatasetsToProcess;
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_datasets_to_predefined_scheduling_queue IS 'AddDatasetsToPredefinedSchedulingQueue';
+
+ALTER PROCEDURE public.add_datasets_to_predefined_scheduling_queue(IN _datasetids text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_datasets_to_predefined_scheduling_queue(IN _datasetids text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_datasets_to_predefined_scheduling_queue(IN _datasetids text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddDatasetsToPredefinedSchedulingQueue';
+
