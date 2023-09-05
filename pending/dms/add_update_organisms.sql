@@ -477,7 +477,7 @@ BEGIN
 
             -- If _callingUser is defined, update entered_by in t_organisms_change_history
             If char_length(_callingUser) > 0 Then
-                CALL alter_entered_by_user ('public', 't_organisms_change_history', 'organism_id', _id, _callingUser, _message => _alterEnteredByMessage);
+                CALL public.alter_entered_by_user ('public', 't_organisms_change_history', 'organism_id', _id, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
         End If; -- add mode
@@ -512,7 +512,7 @@ BEGIN
 
             -- If _callingUser is defined, update entered_by in t_organisms_change_history
             If char_length(_callingUser) > 0 Then
-                CALL alter_entered_by_user ('public', 't_organisms_change_history', 'organism_id', _id, _callingUser, _message => _alterEnteredByMessage);
+                CALL public.alter_entered_by_user ('public', 't_organisms_change_history', 'organism_id', _id, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
         End If; -- update mode

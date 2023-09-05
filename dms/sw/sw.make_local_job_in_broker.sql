@@ -88,7 +88,7 @@ BEGIN
         _datasetName := Trim(Coalesce(_datasetName, ''));
         _priority := Coalesce(_priority, 3);
         _comment := Coalesce(_comment, '');
-        _ownerUsername := Coalesce(_ownerUsername, SESSION_USER);
+        _ownerUsername := Coalesce(_ownerUsername, session_user);
         _dataPackageID := Coalesce(_dataPackageID, 0);
         _debugMode := Coalesce(_debugMode, false);
         _logDebugMessages := Coalesce(_logDebugMessages, false);

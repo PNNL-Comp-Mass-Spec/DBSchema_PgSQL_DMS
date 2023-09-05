@@ -756,7 +756,7 @@ BEGIN
                     -- _callingUser is defined; call public.alter_event_log_entry_user or public.alter_event_log_entry_user_multi_id
                     -- to alter the entered_by field in t_event_log
                     --
-                    CALL alter_event_log_entry_user (12, _requestID, _requestStateID, _callingUser, _message => _alterEnteredByMessage);
+                    CALL public.alter_event_log_entry_user (12, _requestID, _requestStateID, _callingUser, _message => _alterEnteredByMessage);
                 End If;
 
                 _message := format(' Created aggregation job %s for ', _pipelineJob);
@@ -837,7 +837,7 @@ BEGIN
                         -- _callingUser is defined; call public.alter_event_log_entry_user or public.alter_event_log_entry_user_multi_id
                         -- to alter the entered_by field in t_event_log
                         --
-                        CALL alter_event_log_entry_user (12, _requestID, _requestStateID, _callingUser, _message => _alterEnteredByMessage);
+                        CALL public.alter_event_log_entry_user (12, _requestID, _requestStateID, _callingUser, _message => _alterEnteredByMessage);
                     End If;
                 Else
                     -- Request ID is non-zero and request is not in state 1 or state 5
@@ -989,7 +989,7 @@ BEGIN
                        ) StatQ
                 WHERE target.request_id = StatQ.request_id;
 
-                CALL update_cached_job_request_existing_jobs (_processingMode => 0, _requestID => _requestID, _infoOnly => false)
+                CALL public.update_cached_job_request_existing_jobs (_processingMode => 0, _requestID => _requestID, _infoOnly => false)
 
             End If;
 
@@ -998,7 +998,7 @@ BEGIN
                 -- to alter the entered_by field in t_event_log
                 --
                 If _batchID = 0 Then
-                    CALL alter_event_log_entry_user (5, _jobID, _jobStateID, _callingUser, _message => _alterEnteredByMessage);
+                    CALL public.alter_event_log_entry_user (5, _jobID, _jobStateID, _callingUser, _message => _alterEnteredByMessage);
                 Else
                     -- Populate a temporary table with the list of Job IDs just created
                     CREATE TEMP TABLE Tmp_ID_Update_List (
@@ -1012,7 +1012,7 @@ BEGIN
                     FROM t_analysis_job
                     WHERE batch_id = _batchID
 
-                    CALL alter_event_log_entry_user_multi_id (5, _jobStateID, _callingUser, _entryTimeWindowSeconds => 45, _message => _alterEnteredByMessage);
+                    CALL public.alter_event_log_entry_user_multi_id (5, _jobStateID, _callingUser, _entryTimeWindowSeconds => 45, _message => _alterEnteredByMessage);
 
                     DROP TABLE Tmp_ID_Update_List;
                 End If;

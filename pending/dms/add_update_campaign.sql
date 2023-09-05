@@ -319,7 +319,7 @@ BEGIN
             -- Create research team
             ---------------------------------------------------
 
-            CALL update_research_team_for_campaign
+            CALL public.update_research_team_for_campaign
                                 _campaignName,
                                 _progmgrUsername,
                                 _piUsername,
@@ -397,9 +397,9 @@ BEGIN
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 Then
-                CALL alter_event_log_entry_user (1, _campaignID, _stateID, _callingUser, _message => _alterEnteredByMessage);
-                CALL alter_event_log_entry_user (9, _campaignID, _percentEMSLFunded, _callingUser, _message => _alterEnteredByMessage);
-                CALL alter_event_log_entry_user (10, _campaignID, _dataReleaseRestrictionsID, _callingUser, _message => _alterEnteredByMessage);
+                CALL public.alter_event_log_entry_user (1, _campaignID, _stateID, _callingUser, _message => _alterEnteredByMessage);
+                CALL public.alter_event_log_entry_user (9, _campaignID, _percentEMSLFunded, _callingUser, _message => _alterEnteredByMessage);
+                CALL public.alter_event_log_entry_user (10, _campaignID, _dataReleaseRestrictionsID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
         End If; -- add mode
@@ -434,7 +434,7 @@ BEGIN
             -- Update research team membershipe
             ---------------------------------------------------
 
-            CALL update_research_team_for_campaign (
+            CALL public.update_research_team_for_campaign (
                                 _campaignName,
                                 _progmgrUsername,
                                 _piUsername,
@@ -455,8 +455,8 @@ BEGIN
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 Then
-                CALL alter_event_log_entry_user (9, _campaignID, _percentEMSLFunded, _callingUser, _message => _alterEnteredByMessage);
-                CALL alter_event_log_entry_user (10, _campaignID, _dataReleaseRestrictionsID, _callingUser, _message => _alterEnteredByMessage);
+                CALL public.alter_event_log_entry_user (9, _campaignID, _percentEMSLFunded, _callingUser, _message => _alterEnteredByMessage);
+                CALL public.alter_event_log_entry_user (10, _campaignID, _dataReleaseRestrictionsID, _callingUser, _message => _alterEnteredByMessage);
             End If;
         End If; -- update mode
 

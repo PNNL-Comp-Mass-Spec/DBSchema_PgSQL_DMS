@@ -92,12 +92,14 @@ BEGIN
 
     -- If _callingUser is defined, update system_account in t_sample_prep_request_updates
     If char_length(_callingUser) > 0 Then
-        CALL alter_entered_by_user (
+
+        CALL public.alter_entered_by_user (
                 'public', 't_sample_prep_request_updates', 'request_id',
                 _requestID, _callingUser,
                 _entryDateColumnName => 'date_of_change',
                 _enteredByColumnName => 'system_account',
                 _message => _alterEnteredByMessage);
+
     End If;
 
 END

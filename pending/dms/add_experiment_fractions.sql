@@ -630,7 +630,7 @@ BEGIN
                     If char_length(_callingUser) > 0 Then
                         -- Call public.alter_entered_by_user to alter the entered_by field in t_experiment_plex_members_history
                         --
-                        CALL alter_entered_by_user ('public', 't_experiment_plex_members_history', 'plex_exp_id', _newExpID, _callingUser, _message => _alterEnteredByMessage);
+                        CALL public.alter_entered_by_user ('public', 't_experiment_plex_members_history', 'plex_exp_id', _newExpID, _callingUser, _message => _alterEnteredByMessage);
                     End If;
 
                 End If; -- </CopyPlexInfo>
@@ -642,7 +642,7 @@ BEGIN
                 -- Note that the count includes the parent experiment
                 ---------------------------------------------------
 
-                CALL update_experiment_group_member_count (_groupID => _groupID);
+                CALL public.update_experiment_group_member_count (_groupID => _groupID);
             End If;
 
             ---------------------------------------------------
@@ -676,15 +676,15 @@ BEGIN
             -- Move new fraction experiments to container
             ---------------------------------------------------
 
-            CALL update_material_items (
-                        'move_material',
-                        _materialIDList,
-                        'mixed_material',
-                        _container,
-                        '',
-                        _message => _message,           -- Output
-                        _returnCode => _returnCode,     -- Output
-                        _callingUser => _callingUser);
+            CALL public.update_material_items (
+                            'move_material',
+                            _materialIDList,
+                            'mixed_material',
+                            _container,
+                            '',
+                            _message => _message,           -- Output
+                            _returnCode => _returnCode,     -- Output
+                            _callingUser => _callingUser);
 
             If _returnCode <> '' Then
                 RAISE EXCEPTION '%', _message;

@@ -374,7 +374,7 @@ BEGIN
     End If;
 
     If char_length(_callingUser) > 0 Then
-        CALL alter_event_log_entry_user (11, _newRequestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
+        CALL public.alter_event_log_entry_user (11, _newRequestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
     End If;
 
     ------------------------------------------------------------
@@ -393,7 +393,7 @@ BEGIN
 
     -- Now copy the factors
     --
-    CALL update_requested_run_copy_factors (
+    CALL public.update_requested_run_copy_factors (
                         _requestID,
                         _newRequestID,
                         _message => _message,           -- Output
@@ -424,10 +424,10 @@ BEGIN
     -- Make sure that t_active_requested_run_cached_eus_users is up-to-date
     ---------------------------------------------------
 
-    CALL update_cached_requested_run_eus_users (
-            _newRequestID,
-            _message => _message,           -- Output
-            _returnCode => _returnCode);    -- Output
+    CALL public.update_cached_requested_run_eus_users (
+                    _newRequestID,
+                    _message => _message,           -- Output
+                    _returnCode => _returnCode);    -- Output
 
     ---------------------------------------------------
     -- Update stats in t_cached_requested_run_batch_stats
@@ -439,10 +439,10 @@ BEGIN
     WHERE request_id = _requestID;
 
     If _batchID > 0 Then
-        CALL update_cached_requested_run_batch_stats (
-                    _batchID,
-                    _message => _msg,               -- Output
-                    _returnCode => _returnCode);    -- Output
+        CALL public.update_cached_requested_run_batch_stats (
+                        _batchID,
+                        _message => _msg,               -- Output
+                        _returnCode => _returnCode);    -- Output
 
         If _returnCode <> '' Then
             _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 1024);

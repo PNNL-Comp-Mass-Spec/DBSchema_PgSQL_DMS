@@ -281,7 +281,7 @@ BEGIN
 
             -- If _callingUser is defined, update entered_by in t_analysis_job_processor_group
             If char_length(_callingUser) > 0 Then
-                CALL alter_entered_by_user ('public', 't_param_entries', 'param_entry_id', _paramEntryID, _callingUser, _message => _alterEnteredByMessage);
+                CALL public.alter_entered_by_user ('public', 't_param_entries', 'param_entry_id', _paramEntryID, _callingUser, _message => _alterEnteredByMessage);
             End If;
         End If;
     End If;
@@ -297,14 +297,13 @@ BEGIN
         Else
 
             UPDATE t_param_entries
-            SET
-                entry_specifier = _entrySpecifier,
+            SET entry_specifier = _entrySpecifier,
                 entry_value = _entryValue
-            WHERE (param_entry_id = _paramEntryID)
+            WHERE param_entry_id = _paramEntryID;
 
             -- If _callingUser is defined, update entered_by in t_analysis_job_processor_group
             If char_length(_callingUser) > 0 Then
-                CALL alter_entered_by_user ('public', 't_param_entries', 'param_entry_id', _paramEntryID, _callingUser, _message => _alterEnteredByMessage);
+                CALL public.alter_entered_by_user ('public', 't_param_entries', 'param_entry_id', _paramEntryID, _callingUser, _message => _alterEnteredByMessage);
             End If;
         End If;
 

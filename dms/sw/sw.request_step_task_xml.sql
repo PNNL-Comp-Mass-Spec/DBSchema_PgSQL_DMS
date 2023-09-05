@@ -288,7 +288,7 @@ BEGIN
                                        calling_user )
             VALUES('Request_Step_Task_XML',
                    NULL,
-                   format('%s (Invalid processor: %s)', SESSION_USER, _processorName));
+                   format('%s (Invalid processor: %s)', session_user, _processorName));
 
             RETURN;
         End If;

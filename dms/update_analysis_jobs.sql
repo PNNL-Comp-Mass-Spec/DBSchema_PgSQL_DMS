@@ -64,6 +64,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs(IN _joblist text, IN _st
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
+**          09/05/2023 mem - Use schema name when calling procedures
 **
 *****************************************************/
 DECLARE
@@ -143,7 +144,7 @@ BEGIN
         -- It uses Tmp_AnalysisJobs to determine which jobs to update
         ---------------------------------------------------
 
-        CALL update_analysis_jobs_work (
+        CALL public.update_analysis_jobs_work (
                             _state,
                             _priority,
                             _comment,

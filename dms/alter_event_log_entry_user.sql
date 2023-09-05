@@ -145,7 +145,7 @@ BEGIN
         RAISE INFO '%;', _s;
 
         _eventID   := 0;
-        _enteredBy := format('%s_simulated', SESSION_USER);
+        _enteredBy := format('%s_simulated', session_user);
         _targetIdMatched := _targetId;
     Else
         EXECUTE _s

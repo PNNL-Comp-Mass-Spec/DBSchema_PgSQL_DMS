@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE public.delete_requested_run(IN _requestid integer DE
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          07/27/2023 mem - Add schema name parameter when calling alter_event_log_entry_user()
 **                         - Use local variable for the return value of _message from alter_event_log_entry_user()
+**          09/05/2023 mem - Use schema name when calling procedures
 **
 *****************************************************/
 DECLARE
@@ -202,7 +203,7 @@ BEGIN
         If char_length(_callingUser) > 0 Then
             _stateID := 0;
 
-            CALL alter_event_log_entry_user ('public', 11, _requestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
+            CALL public.alter_event_log_entry_user ('public', 11, _requestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
 
             RAISE INFO '%', _alterEnteredByMessage;
         End If;
@@ -216,11 +217,11 @@ BEGIN
 
     If _batchID > 0 Then
 
-        CALL update_cached_requested_run_batch_stats (
-                _batchID,
-                _fullrefresh => false,
-                _message => _message2,          -- Output
-                _returncode => _returncode);    -- Output
+        CALL public.update_cached_requested_run_batch_stats (
+                        _batchID,
+                        _fullrefresh => false,
+                        _message => _message2,          -- Output
+                        _returncode => _returncode);    -- Output
 
         If _returnCode <> '' Then
             _message := _message2;

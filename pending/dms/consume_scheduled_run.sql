@@ -176,7 +176,7 @@ BEGIN
             FROM t_requested_run_state_name
             WHERE state_name = _status;
 
-            CALL alter_event_log_entry_user (11, _requestID, _statusID, _callingUser, _message => _alterEnteredByMessage);
+            CALL public.alter_event_log_entry_user (11, _requestID, _statusID, _callingUser, _message => _alterEnteredByMessage);
         End If;
 
     END;
@@ -191,10 +191,10 @@ BEGIN
     -- This procedure will delete the cached EUS user list from t_active_requested_run_cached_eus_users for this request ID
     ---------------------------------------------------
 
-    CALL update_cached_requested_run_eus_users (
-            _requestID,
-            _message => _message,           -- Output
-            _returnCode => _returnCode);    -- Output
+    CALL public.update_cached_requested_run_eus_users (
+                    _requestID,
+                    _message => _message,           -- Output
+                    _returnCode => _returnCode);    -- Output
 
 END
 $$;

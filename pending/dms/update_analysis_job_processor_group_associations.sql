@@ -160,7 +160,7 @@ BEGIN
         SELECT Job
         FROM Tmp_JobList;
 
-        CALL alter_entered_by_user_multi_id ('public', 't_analysis_job_processor_group_associations', 'job', _callingUser, _message => _alterEnteredByMessage);
+        CALL public.alter_entered_by_user_multi_id ('public', 't_analysis_job_processor_group_associations', 'job', _callingUser, _message => _alterEnteredByMessage);
 
         DROP TABLE Tmp_ID_Update_List;
     End If;

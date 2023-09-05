@@ -205,7 +205,7 @@ BEGIN
 
         If Not _infoOnly Then
             -- Update MemberCount
-            CALL update_experiment_group_member_count (_groupID => _groupID);
+            CALL public.update_experiment_group_member_count (_groupID => _groupID);
         End If;
     End If;
 
@@ -340,9 +340,9 @@ BEGIN
         DROP TABLE T_Tmp_Target_Items;
 
     ElsIf char_length(_callingUser) > 0 Then
-        -- Call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
+        -- Call alter_event_log_entry_user to alter the entered_by field in t_event_log
 
-        CALL alter_event_log_entry_user (3, _experimentId, _stateID, _callingUser, _message => _alterEnteredByMessage);
+        CALL public.alter_event_log_entry_user (3, _experimentId, _stateID, _callingUser, _message => _alterEnteredByMessage);
     End If;
 
 END

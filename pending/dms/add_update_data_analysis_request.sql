@@ -683,8 +683,8 @@ BEGIN
 
             -- If _callingUser is defined, update entered_by in t_data_analysis_request_updates
             If char_length(_callingUser) > 0 Then
-                CALL alter_entered_by_user ('public', 't_data_analysis_request_updates', 'request_id', _id, _callingUser,
-                                            _entryDateColumnName => 'entered', _enteredByColumnName => 'entered_by', _message => _alterEnteredByMessage);
+                CALL public.alter_entered_by_user ('public', 't_data_analysis_request_updates', 'request_id', _id, _callingUser,
+                                                   _entryDateColumnName => 'entered', _enteredByColumnName => 'entered_by', _message => _alterEnteredByMessage);
             End If;
 
             If _batchDefined > 0 Then
@@ -738,8 +738,8 @@ BEGIN
 
             -- If _callingUser is defined, update entered_by in t_data_analysis_request_updates
             If char_length(_callingUser) > 0 Then
-                CALL alter_entered_by_user ('public', 't_data_analysis_request_updates', 'request_id', _id, _callingUser,
-                                            _entryDateColumnName => 'entered', _enteredByColumnName => 'entered_by', _message => _alterEnteredByMessage);
+                CALL public.alter_entered_by_user ('public', 't_data_analysis_request_updates', 'request_id', _id, _callingUser,
+                                                   _entryDateColumnName => 'entered', _enteredByColumnName => 'entered_by', _message => _alterEnteredByMessage);
             End If;
 
             If _currentEstimatedAnalysisTimeDays <> _estimatedAnalysisTimeDays And Not _allowUpdateEstimatedAnalysisTime Then

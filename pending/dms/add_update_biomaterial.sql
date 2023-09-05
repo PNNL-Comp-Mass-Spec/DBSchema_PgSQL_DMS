@@ -369,7 +369,7 @@ BEGIN
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 Then
-                CALL alter_event_log_entry_user (2, _biomaterialID, _stateID, _callingUser, _message => _alterEnteredByMessage);
+                CALL public.alter_event_log_entry_user (2, _biomaterialID, _stateID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             -- Material movement logging
@@ -386,7 +386,7 @@ BEGIN
 
             If Coalesce(_organismList, '') <> '' Then
                 -- Update the associated organism(s)
-                CALL update_organism_list_for_biomaterial (_biomaterialName, _organismList, _infoOnly => false, _message => _message);
+                CALL public.update_organism_list_for_biomaterial (_biomaterialName, _organismList, _infoOnly => false, _message => _message);
             End If;
 
         End If; -- </add>
@@ -432,7 +432,7 @@ BEGIN
 
             -- Update the associated organism(s)
             _organismList := Coalesce(_organismList, '');
-            CALL update_organism_list_for_biomaterial (_biomaterialName, _organismList, _infoOnly => false, _message => _message);
+            CALL public.update_organism_list_for_biomaterial (_biomaterialName, _organismList, _infoOnly => false, _message => _message);
 
         End If; -- </update>
 

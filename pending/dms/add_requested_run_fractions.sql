@@ -758,7 +758,7 @@ BEGIN
 
                 -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
                 If char_length(_callingUser) > 0 Then
-                    CALL alter_event_log_entry_user (11, _requestID, _statusID, _callingUser, _message => _alterEnteredByMessage);
+                    CALL public.alter_event_log_entry_user (11, _requestID, _statusID, _callingUser, _message => _alterEnteredByMessage);
                 End If;
 
                 If _logDebugMessages Then
@@ -812,10 +812,10 @@ BEGIN
                 FROM Tmp_NewRequests
                 ORDER BY Request_ID
             LOOP
-                CALL update_cached_requested_run_eus_users (
-                        _requestID,
-                        _message => _message,           -- Output
-                        _returnCode => _returnCode);    -- Output
+                CALL public.update_cached_requested_run_eus_users (
+                                _requestID,
+                                _message => _message,           -- Output
+                                _returnCode => _returnCode);    -- Output
 
             END LOOP;
 
@@ -824,10 +824,10 @@ BEGIN
             ---------------------------------------------------
 
             If _sourceRequestBatchID > 0 Then
-                CALL update_cached_requested_run_batch_stats (
-                    _sourceRequestBatchID,
-                    _message => _msg,               -- Output
-                    _returnCode => _returnCode);    -- Output
+                CALL public.update_cached_requested_run_batch_stats (
+                                _sourceRequestBatchID,
+                                _message => _msg,               -- Output
+                                _returnCode => _returnCode);    -- Output
 
                 If _returnCode <> '' Then
                     _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 1024);

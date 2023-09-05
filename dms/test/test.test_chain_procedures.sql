@@ -30,7 +30,7 @@ Begin
             INTO _entryID;
 
             RAISE INFO 'Call alter_entered_by_user';
-            CALL alter_entered_by_user('public', 't_log_entries', 'entry_id', _entryID, 'bob',
+            CALL public.alter_entered_by_user('public', 't_log_entries', 'entry_id', _entryID, 'bob',
                                     _entrydatecolumnname := 'entered',
                                     _message := _message);
         EXCEPTION

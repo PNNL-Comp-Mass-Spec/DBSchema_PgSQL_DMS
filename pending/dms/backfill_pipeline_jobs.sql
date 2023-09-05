@@ -512,7 +512,7 @@ BEGIN
                         _mode := 'add';
                     End If;
 
-                    CALL add_update_dataset (
+                    CALL public.add_update_dataset (
                                         _jobInfo.Dataset,       -- Dataset
                                         'DMS_Pipeline_Data',    -- Experiment
                                         'MSDADMIN',             -- Operator Username

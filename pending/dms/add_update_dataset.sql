@@ -633,11 +633,11 @@ BEGIN
         ---------------------------------------------------
 
         If _logDebugMessages Then
-            _debugMsg := format('CALL Validate_Instrument_Group_and_Dataset_Type with type = %s and group = %s', _msType, _instrumentGroup);
+            _debugMsg := format('Call Validate_Instrument_Group_and_Dataset_Type with type = %s and group = %s', _msType, _instrumentGroup);
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
         End If;
 
-        CALL validate_instrument_group_and_dataset_type (
+        CALL public.validate_instrument_group_and_dataset_type (
                         _datasetType => _msType,
                         _instrumentGroup => _instrumentGroup,           -- Output
                         _datasetTypeID => _datasetTypeID output,        -- Output
@@ -692,7 +692,7 @@ BEGIN
 
             -- Validate the new dataset type name (in case the default dataset type is invalid for this instrument group, which would indicate invalid data in table t_instrument_group)
 
-            CALL validate_instrument_group_and_dataset_type (
+            CALL public.validate_instrument_group_and_dataset_type (
                             _datasetType => _msType,
                             _instrumentGroup => _instrumentGroup,           -- Output
                             _datasetTypeID => _datasetTypeID output,        -- Output
@@ -749,7 +749,7 @@ BEGIN
                 CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
-            CALL auto_resolve_name_to_username (
+            CALL public.auto_resolve_name_to_username (
                     _operatorUsername,
                     _matchCount => _matchCount,         -- Output
                     _matchingUsername => _newUsername,  -- Output
@@ -840,7 +840,7 @@ BEGIN
                 CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
-            CALL find_active_requested_run_for_dataset (
+            CALL public.find_active_requested_run_for_dataset (
                         _datasetName,
                         _experimentID,
                         _requestID => _requestID,                   -- Output
@@ -943,7 +943,7 @@ BEGIN
                 -- This will update the data in _eusUsageType, _eusProposalID, or _eusUsersList if it is '(lookup)'
                 ---------------------------------------------------
 
-                CALL lookup_eus_from_experiment_sample_prep (
+                CALL public.lookup_eus_from_experiment_sample_prep (
                                     _experimentName,
                                     _eusUsageType => _eusUsageType,     -- Input/output
                                     _eusProposalID => _eusProposalID,   -- Input/output
@@ -963,7 +963,7 @@ BEGIN
                 -- Validate EUS type, proposal, and user list
                 ---------------------------------------------------
 
-                CALL validate_eus_usage (
+                CALL public.validate_eus_usage (
                                 _eusUsageType   => _eusUsageType,   -- Input/Output
                                 _eusProposalID  => _eusProposalID,  -- Input/Output
                                 _eusUsersList   => _eusUsersList,   -- Input/Output
@@ -1016,7 +1016,7 @@ BEGIN
                 CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
-            CALL create_xml_dataset_trigger_file (
+            CALL public.create_xml_dataset_trigger_file (
                             _datasetName,
                             _experimentName,
                             _instrumentName,
@@ -1162,9 +1162,9 @@ BEGIN
                         RAISE INFO '%', 'Call public.alter_event_log_entry_user';
                     End If;
 
-                    CALL alter_event_log_entry_user (4, _datasetID, _newDSStateID, _callingUser, _message => _alterEnteredByMessage);
+                    CALL public.alter_event_log_entry_user (4, _datasetID, _newDSStateID, _callingUser, _message => _alterEnteredByMessage);
 
-                    CALL alter_event_log_entry_user (8, _datasetID, _ratingID, _callingUser, _message => _alterEnteredByMessage);
+                    CALL public.alter_event_log_entry_user (8, _datasetID, _ratingID, _callingUser, _message => _alterEnteredByMessage);
                 End If;
 
                 ---------------------------------------------------
@@ -1194,7 +1194,7 @@ BEGIN
                         RAISE INFO '%', 'Call Add_Update_Requested_Run';
                     End If;
 
-                    CALL add_update_requested_run (
+                    CALL public.add_update_requested_run (
                                             _requestName => _requestName,
                                             _experimentName => _experimentName,
                                             _requesterUsername => _operatorUsername,
@@ -1251,7 +1251,7 @@ BEGIN
                         RAISE INFO '%', 'Call update_cart_parameters';
                     End If;
 
-                    CALL update_cart_parameters (
+                    CALL public.update_cart_parameters (
                                         'CartName',
                                         _requestID,
                                         _lcCartName,    -- Output
@@ -1282,7 +1282,7 @@ BEGIN
                     RAISE INFO 'Call consume_scheduled_run';
                 End If;
 
-                CALL consume_scheduled_run (
+                CALL public.consume_scheduled_run (
                             _datasetID,
                             _requestID,
                             _message => _message,           -- Output
@@ -1336,7 +1336,7 @@ BEGIN
 
             -- If _callingUser is defined, Call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 AND _ratingID <> Coalesce(_curDSRatingID, -1000) Then
-                CALL alter_event_log_entry_user (8, _datasetID, _ratingID, _callingUser, _message => _alterEnteredByMessage);
+                CALL public.alter_event_log_entry_user (8, _datasetID, _ratingID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             -- Lookup the Requested Run info for this dataset
@@ -1382,7 +1382,7 @@ BEGIN
                     _warning := public.append_to_text(_warning, _warningAddon, _delimiter => '; ', _maxlength => 512);
                 Else
                     _warningAddon := '';
-                    CALL update_cart_parameters (
+                    CALL public.update_cart_parameters (
                                         'CartName',
                                         _requestID,
                                         _lcCartName,                    -- Output
@@ -1411,7 +1411,7 @@ BEGIN
                 _block := Coalesce(_block, 0);
                 _runOrder := Coalesce(_runOrder, 0);
 
-                CALL add_update_requested_run (
+                CALL public.add_update_requested_run (
                                     _requestName => _requestName,
                                     _experimentName => _experimentName,
                                     _requesterUsername => _operatorUsername,
@@ -1455,7 +1455,7 @@ BEGIN
 
             If _ratingID >= 2 and Coalesce(_curDSRatingID, -1000) IN (-5, -6, -7) Then
                 If Not Exists (SELECT * FROM t_analysis_job WHERE dataset_id = _datasetID AND dataset_unreviewed = 0 ) Then
-                    CALL schedule_predefined_analysis_jobs (_datasetName, _callingUser => _callingUser);
+                    CALL public.schedule_predefined_analysis_jobs (_datasetName, _callingUser => _callingUser);
 
                     -- If _callingUser is defined, Call public.alter_event_log_entry_user to alter the entered_by field
                     -- in t_event_log for any newly created jobs for this dataset
@@ -1472,7 +1472,7 @@ BEGIN
                         FROM t_analysis_job
                         WHERE dataset_id = _datasetID;
 
-                        CALL alter_event_log_entry_user_multi_id (5, _jobStateID, _callingUser, _message => _alterEnteredByMessage);
+                        CALL public.alter_event_log_entry_user_multi_id (5, _jobStateID, _callingUser, _message => _alterEnteredByMessage);
                     End If;
 
                 End If;

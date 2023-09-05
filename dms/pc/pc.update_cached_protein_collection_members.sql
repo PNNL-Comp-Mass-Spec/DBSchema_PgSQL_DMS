@@ -266,7 +266,7 @@ BEGIN
         End If;
 
         _currentRange := format('%s protein %s (%s to %s)',
-                                _currentRangeCount, check_plural(_currentRangeCount, 'collection ', 'collections'),
+                                _currentRangeCount, public.check_plural(_currentRangeCount, 'collection ', 'collections'),
                                 _currentRangeStart, _currentRangeEnd);
 
         RAISE INFO 'Processing %', _currentRange;

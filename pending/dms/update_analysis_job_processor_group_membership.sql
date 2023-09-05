@@ -200,8 +200,8 @@ BEGIN
         SELECT ID
         FROM Tmp_Processors;
 
-        CALL alter_entered_by_user_multi_id ('public', 't_analysis_job_processor_group_membership', 'processor_id', _callingUser,
-                                             _entryTimeWindowSeconds => 5, _entryDateColumnName => 'last_affected', _message => _alterEnteredByMessage);
+        CALL public.alter_entered_by_user_multi_id ('public', 't_analysis_job_processor_group_membership', 'processor_id', _callingUser,
+                                                    _entryTimeWindowSeconds => 5, _entryDateColumnName => 'last_affected', _message => _alterEnteredByMessage);
 
         DROP TABLE Tmp_ID_Update_List;
     End If;

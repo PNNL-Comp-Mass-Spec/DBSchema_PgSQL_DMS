@@ -280,7 +280,7 @@ BEGIN
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 Then
-                CALL alter_event_log_entry_user (4, _datasetID, _newState, _callingUser, _message => _alterEnteredByMessage);
+                CALL public.alter_event_log_entry_user (4, _datasetID, _newState, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             _validMode := true;

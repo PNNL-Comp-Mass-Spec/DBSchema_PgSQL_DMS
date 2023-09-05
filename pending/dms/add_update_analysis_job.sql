@@ -371,7 +371,7 @@ BEGIN
         -- Validate job parameters
         ---------------------------------------------------
 
-        CALL validate_analysis_job_parameters (
+        CALL public.validate_analysis_job_parameters (
                                 _toolName => _toolName,
                                 _paramFileName => _paramFileName,               -- Output
                                 _settingsFileName => _settingsFileName,         -- Output
@@ -665,7 +665,7 @@ BEGIN
 
                 -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
                 If char_length(_callingUser) > 0 Then
-                    CALL alter_event_log_entry_user (5, _jobID, _newStateID, _callingUser, _message => _alterEnteredByMessage);
+                    CALL public.alter_event_log_entry_user (5, _jobID, _newStateID, _callingUser, _message => _alterEnteredByMessage);
                 End If;
 
                 -- Associate job with processor group
@@ -804,7 +804,7 @@ BEGIN
 
                 -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
                 If char_length(_callingUser) > 0 Then
-                    CALL alter_event_log_entry_user (5, _jobID, _updateStateID, _callingUser, _message => _alterEnteredByMessage);
+                    CALL public.alter_event_log_entry_user (5, _jobID, _updateStateID, _callingUser, _message => _alterEnteredByMessage);
                 End If;
 
 ]               -- Deal with job association with group,
@@ -841,7 +841,7 @@ BEGIN
                     -- Call public.alter_entered_by_user
                     -- to alter the entered_by field in t_analysis_job_processor_group_associations
 
-                    CALL alter_entered_by_user ('public', 't_analysis_job_processor_group_associations', 'job', _jobID, _callingUser, _message => _alterEnteredByMessage);
+                    CALL public.alter_entered_by_user ('public', 't_analysis_job_processor_group_associations', 'job', _jobID, _callingUser, _message => _alterEnteredByMessage);
                 End If;
             End If;
 

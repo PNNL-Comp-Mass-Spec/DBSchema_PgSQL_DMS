@@ -348,17 +348,17 @@ BEGIN
             FROM t_requested_run_state_name
             WHERE state_name = _newStatus;
 
-            CALL alter_event_log_entry_user (11, _requestIDOriginal, _stateID, _callingUser, _message => _alterEnteredByMessage);
+            CALL public.alter_event_log_entry_user (11, _requestIDOriginal, _stateID, _callingUser, _message => _alterEnteredByMessage);
         End If;
 
         ---------------------------------------------------
         -- Make sure that t_active_requested_run_cached_eus_users is up-to-date
         ---------------------------------------------------
 
-        CALL update_cached_requested_run_eus_users (
-            _requestIDOriginal,
-            _message => _message,           -- Output
-            _returnCode => _returnCode);    -- Output
+        CALL public.update_cached_requested_run_eus_users (
+                        _requestIDOriginal,
+                        _message => _message,           -- Output
+                        _returnCode => _returnCode);    -- Output
 
     End If; -- </a4>
 

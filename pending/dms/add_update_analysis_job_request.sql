@@ -399,7 +399,7 @@ BEGIN
         -- and that validate_analysis_job_request_datasets populates Dataset_ID, etc. in Tmp_DatasetInfo
         ---------------------------------------------------
 
-        CALL validate_analysis_job_parameters (
+        CALL public.validate_analysis_job_parameters (
                                 _toolName => _toolName,
                                 _paramFileName => _paramFileName,               -- Output
                                 _settingsFileName => _settingsFileName,         -- Output
@@ -664,10 +664,10 @@ BEGIN
                 -- _callingUser is defined; call public.alter_event_log_entry_user or public.alter_event_log_entry_user_multi_id
                 -- to alter the entered_by field in t_event_log
                 --
-                CALL alter_event_log_entry_user (12, _requestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
+                CALL public.alter_event_log_entry_user (12, _requestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
-            CALL update_cached_job_request_existing_jobs (_processingMode => 0, _requestID => _requestID, _infoOnly => false);
+            CALL public.update_cached_job_request_existing_jobs (_processingMode => 0, _requestID => _requestID, _infoOnly => false);
 
         End If; -- add mode
 
@@ -723,10 +723,10 @@ BEGIN
                 -- _callingUser is defined; call public.alter_event_log_entry_user or public.alter_event_log_entry_user_multi_id
                 -- to alter the entered_by field in t_event_log
                 --
-                CALL alter_event_log_entry_user (12, _requestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
+                CALL public.alter_event_log_entry_user (12, _requestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
-            CALL update_cached_job_request_existing_jobs (_processingMode => 0, _requestID => _requestID, _infoOnly => false);
+            CALL public.update_cached_job_request_existing_jobs (_processingMode => 0, _requestID => _requestID, _infoOnly => false);
 
         End If; -- update mode
 
