@@ -122,11 +122,11 @@ BEGIN
     SELECT U.username
     INTO _username
     FROM t_users U
-    WHERE U.username = SESSION_USER::citext
+    WHERE U.username = session_user::citext
     LIMIT 1;
 
     If Not FOUND Then
-        RAISE NOTICE 'Warning: Session user % is not in t_users', SESSION_USER;
+        RAISE NOTICE 'Warning: Session user % is not in t_users', session_user;
 
         SELECT O.username
         INTO _username

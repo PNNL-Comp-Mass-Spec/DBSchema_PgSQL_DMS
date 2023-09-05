@@ -132,7 +132,7 @@ BEGIN
         RAISE INFO '%;', _s;
         RAISE INFO '%;', regexp_replace(_s, '\$1', _targetID::text);
 
-        _enteredBy := format('%s_simulated', SESSION_USER);
+        _enteredBy := format('%s_simulated', session_user);
         _targetIDMatch := _targetID;
     Else
         EXECUTE _s
