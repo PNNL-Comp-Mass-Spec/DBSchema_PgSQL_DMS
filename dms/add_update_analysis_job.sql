@@ -235,6 +235,23 @@ BEGIN
             -- Changes are typically only allowed to jobs in 'new', 'failed', or 'holding' state
             -- However, we do allow the job comment or export mode to be updated
 
+            If _currentStateID <> 4 And _stateName::citext = 'Complete' Then
+                SELECT AJS.job_state
+                INTO _currentStateName
+                FROM t_analysis_job J
+                     INNER JOIN t_analysis_job_state AJS
+                       ON J.job_state_id = AJS.job_state_id
+                WHERE J.job = _jobID;
+
+                _msg := format('State for Analysis Job %s cannot be changed from "%s" to "Complete"', _job, _currentStateName);
+
+                If _infoOnly Then
+                    RAISE WARNING '%', _msg;
+                End If;
+
+                RAISE EXCEPTION '%', _msg;
+            End If;
+
             If Not _currentStateID IN (1, 5, 8, 19) Then
 
                 -- Allow the job comment and Export Mode to be updated
