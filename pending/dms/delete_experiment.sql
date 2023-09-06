@@ -342,7 +342,7 @@ BEGIN
     ElsIf char_length(_callingUser) > 0 Then
         -- Call alter_event_log_entry_user to alter the entered_by field in t_event_log
 
-        CALL public.alter_event_log_entry_user (3, _experimentId, _stateID, _callingUser, _message => _alterEnteredByMessage);
+        CALL public.alter_event_log_entry_user ('public', 3, _experimentId, _stateID, _callingUser, _message => _alterEnteredByMessage);
     End If;
 
 END

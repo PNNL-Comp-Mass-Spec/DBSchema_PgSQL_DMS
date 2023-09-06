@@ -91,7 +91,7 @@ BEGIN
             -- Delete the job
             ---------------------------------------------------
 
-            CALL Delete_New_Analysis_Job (
+            CALL public.delete_new_analysis_job (
                     _job,
                     _message => _msg,               -- Output
                     _returnCode => _returnCode,     -- Output

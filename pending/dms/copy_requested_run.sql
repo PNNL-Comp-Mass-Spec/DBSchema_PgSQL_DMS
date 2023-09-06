@@ -374,7 +374,7 @@ BEGIN
     End If;
 
     If char_length(_callingUser) > 0 Then
-        CALL public.alter_event_log_entry_user (11, _newRequestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
+        CALL public.alter_event_log_entry_user ('public', 11, _newRequestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
     End If;
 
     ------------------------------------------------------------

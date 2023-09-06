@@ -176,7 +176,7 @@ BEGIN
             FROM t_requested_run_state_name
             WHERE state_name = _status;
 
-            CALL public.alter_event_log_entry_user (11, _requestID, _statusID, _callingUser, _message => _alterEnteredByMessage);
+            CALL public.alter_event_log_entry_user ('public', 11, _requestID, _statusID, _callingUser, _message => _alterEnteredByMessage);
         End If;
 
     END;

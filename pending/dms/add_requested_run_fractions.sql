@@ -758,7 +758,7 @@ BEGIN
 
                 -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
                 If char_length(_callingUser) > 0 Then
-                    CALL public.alter_event_log_entry_user (11, _requestID, _statusID, _callingUser, _message => _alterEnteredByMessage);
+                    CALL public.alter_event_log_entry_user ('public', 11, _requestID, _statusID, _callingUser, _message => _alterEnteredByMessage);
                 End If;
 
                 If _logDebugMessages Then

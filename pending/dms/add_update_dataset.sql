@@ -1162,9 +1162,8 @@ BEGIN
                         RAISE INFO '%', 'Call public.alter_event_log_entry_user';
                     End If;
 
-                    CALL public.alter_event_log_entry_user (4, _datasetID, _newDSStateID, _callingUser, _message => _alterEnteredByMessage);
-
-                    CALL public.alter_event_log_entry_user (8, _datasetID, _ratingID, _callingUser, _message => _alterEnteredByMessage);
+                    CALL public.alter_event_log_entry_user ('public', 4, _datasetID, _newDSStateID, _callingUser, _message => _alterEnteredByMessage);
+                    CALL public.alter_event_log_entry_user ('public', 8, _datasetID, _ratingID, _callingUser, _message => _alterEnteredByMessage);
                 End If;
 
                 ---------------------------------------------------
@@ -1336,7 +1335,7 @@ BEGIN
 
             -- If _callingUser is defined, Call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 AND _ratingID <> Coalesce(_curDSRatingID, -1000) Then
-                CALL public.alter_event_log_entry_user (8, _datasetID, _ratingID, _callingUser, _message => _alterEnteredByMessage);
+                CALL public.alter_event_log_entry_user ('public', 8, _datasetID, _ratingID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             -- Lookup the Requested Run info for this dataset
@@ -1472,7 +1471,7 @@ BEGIN
                         FROM t_analysis_job
                         WHERE dataset_id = _datasetID;
 
-                        CALL public.alter_event_log_entry_user_multi_id (5, _jobStateID, _callingUser, _message => _alterEnteredByMessage);
+                        CALL public.alter_event_log_entry_user_multi_id ('public', 5, _jobStateID, _callingUser, _message => _alterEnteredByMessage);
                     End If;
 
                 End If;

@@ -107,7 +107,7 @@ BEGIN
         If char_length(_callingUser) > 0 Then
             _stateID := 0;
 
-            CALL public.alter_event_log_entry_user (2, _biomaterialID, _stateID, _callingUser, _message => _alterEnteredByMessage);
+            CALL public.alter_event_log_entry_user ('public', 2, _biomaterialID, _stateID, _callingUser, _message => _alterEnteredByMessage);
         End If;
 
         RETURN;

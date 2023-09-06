@@ -377,11 +377,11 @@ BEGIN
                 WHERE dataset IN (SELECT Dataset_Name FROM Tmp_DatasetInfo);
 
                 If _datasetStateUpdated Then
-                    CALL public.alter_event_log_entry_user_multi_id (4, _stateID, _callingUser, _message => _alterEnteredByMessage);
+                    CALL public.alter_event_log_entry_user_multi_id ('public', 4, _stateID, _callingUser, _message => _alterEnteredByMessage);
                 End If;
 
                 If _datasetRatingUpdated Then
-                    CALL public.alter_event_log_entry_user_multi_id (8, _ratingID, _callingUser, _message => _alterEnteredByMessage);
+                    CALL public.alter_event_log_entry_user_multi_id ('public', 8, _ratingID, _callingUser, _message => _alterEnteredByMessage);
                 End If;
 
                 DROP TABLE Tmp_ID_Update_List;
