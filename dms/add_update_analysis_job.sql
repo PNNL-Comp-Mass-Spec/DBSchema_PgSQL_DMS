@@ -102,7 +102,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job(IN _datasetname text,
 **          06/30/2022 mem - Rename parameter file argument
 **          07/29/2022 mem - Assure that the parameter file and settings file names are not null
 **          07/27/2023 mem - Update message sent to get_new_job_id()
-**          09/05/2023 mem - Ported to PostgreSQL
+**          09/06/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -132,7 +132,7 @@ DECLARE
     _datasetUnreviewed int := 0;
     _newJobNum int;
     _newStateID int := 1;
-    _updateStateID int := -1;
+    _updateStateID int;
     _pgaAssocID int := 0;
     _logMessage text;
     _alterEnteredByMessage text;
@@ -156,15 +156,14 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _paramFileName := Trim(Coalesce(_paramFileName, ''));
-    _settingsFileName := Trim(Coalesce(_settingsFileName, ''));
-
-    _comment := Trim(Coalesce(_comment, ''));
-    _associatedProcessorGroup := Trim(Coalesce(_associatedProcessorGroup, ''));
-    _callingUser := Trim(Coalesce(_callingUser, ''));
-    _preventDuplicateJobs := Coalesce(_preventDuplicateJobs, false);
+    _paramFileName                    := Trim(Coalesce(_paramFileName, ''));
+    _settingsFileName                 := Trim(Coalesce(_settingsFileName, ''));
+    _comment                          := Trim(Coalesce(_comment, ''));
+    _associatedProcessorGroup         := Trim(Coalesce(_associatedProcessorGroup, ''));
+    _callingUser                      := Trim(Coalesce(_callingUser, ''));
+    _preventDuplicateJobs             := Coalesce(_preventDuplicateJobs, false);
     _preventDuplicatesIgnoresNoExport := Coalesce(_preventDuplicatesIgnoresNoExport, true);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly                         := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -265,7 +264,7 @@ BEGIN
                        ON J.job_state_id = AJS.job_state_id
                 WHERE J.job = _jobID;
 
-                If _comment::citext  IS DISTINCT FROM _currentComment Or
+                If _comment::citext IS DISTINCT FROM _currentComment Or
                    _propMode IS DISTINCT FROM _currentExportMode Or
                    _currentStateName::citext = 'Complete' And _stateName::citext = 'No export' Then
 
@@ -384,6 +383,10 @@ BEGIN
                  t_dataset ON t_experiments.exp_id = t_dataset.exp_id INNER JOIN
                  t_organisms ON t_experiments.organism_id = t_organisms.organism_id
             WHERE t_dataset.dataset = _datasetName::citext;
+
+            If Not FOUND Then
+                _organismName := '(default)';
+            End If;
         End If;
 
         ---------------------------------------------------
@@ -416,19 +419,15 @@ BEGIN
                                 _returnCode => _returnCode);                    -- Output
 
         If _returnCode <> '' Then
-            If Coalesce(_warning, '') = '' Then
-                _warning := format('Error code %s returned by validate_analysis_job_parameters', _returnCode);
+            If Coalesce(_msg, '') = '' Then
+                _msg := format('Error code %s returned by validate_analysis_job_parameters', _returnCode);
             End If;
 
             If _infoOnly Then
-                RAISE WARNING '%', _warning;
+                RAISE WARNING '%', _msg;
             End If;
 
-            RAISE EXCEPTION '%', _warning;
-        End If;
-
-        If Coalesce(_msg, '') <> '' Then
-            _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 512);
+            RAISE EXCEPTION '%', _msg;
         End If;
 
         If Coalesce(_warning, '') <> '' Then
@@ -442,7 +441,7 @@ BEGIN
 
         _logErrors := true;
 
-        _formatSpecifier := '%-13s %-10s %-8s %-20s %-16s %-60s %-50s %-50s %-80s %-40s %-11s %-10s %-20s %-20s %-10s %-8s %-8s %-20s %-20s %-16s %-18s';
+        _formatSpecifier := '%-13s %-10s %-8s %-20s %-16s %-60s %-50s %-50s %-80s %-40s %-11s %-10s %-40s %-10s %-8s %-8s %-20s %-20s %-16s %-18s %-20s';
 
         _infoHead := format(_formatSpecifier,
                             'Mode',
@@ -458,14 +457,14 @@ BEGIN
                             'Organism_ID',
                             'Dataset_ID',
                             'Comment',
-                            'Special_Processing',
                             'Owner',
                             'Batch_ID',
                             'State_ID',
                             'Start',
                             'Finish',
                             'Propagation_Mode',
-                            'Dataset_Unreviewed'
+                            'Dataset_Unreviewed',
+                            'Special_Processing'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
@@ -481,15 +480,15 @@ BEGIN
                                      '----------------------------------------',
                                      '-----------',
                                      '----------',
-                                     '--------------------',
-                                     '--------------------',
+                                     '----------------------------------------',
                                      '----------',
                                      '--------',
                                      '--------',
                                      '--------------------',
                                      '--------------------',
                                      '----------------',
-                                     '------------------'
+                                     '------------------',
+                                     '--------------------'
                                     );
 
         ---------------------------------------------------
@@ -640,14 +639,14 @@ BEGIN
                                         _previewData.OrganismID,
                                         _previewData.DatasetID,
                                         _previewData.Comment,
-                                        _previewData.SpecialProcessing,
                                         _previewData.Owner,
                                         _previewData.BatchID,
                                         _previewData.StateID,
                                         _previewData.Start,
                                         _previewData.Finish,
                                         _previewData.PropagationMode,
-                                        _previewData.DatasetUnreviewed
+                                        _previewData.DatasetUnreviewed,
+                                        _previewData.SpecialProcessing
                                        );
 
                     RAISE INFO '%', _infoData;
@@ -707,8 +706,7 @@ BEGIN
             -- Associate job with processor group
 
             If _gid <> 0 Then
-                INSERT INTO t_analysis_job_processor_group_associations( job,
-                                                                         group_id )
+                INSERT INTO t_analysis_job_processor_group_associations ( job, group_id )
                 VALUES (_jobID, _gid);
             End If;
 
@@ -733,7 +731,7 @@ BEGIN
                 FROM t_analysis_job_state
                 WHERE job_state = _stateName::citext;
 
-                If _updateStateID = -1 Then
+                If Not FOUND Then
                     _msg := format('State name not recognized: %s', _stateName);
                     If _infoOnly Then
                         RAISE INFO '%', _msg;
@@ -756,6 +754,10 @@ BEGIN
             INTO _pgaAssocID
             FROM t_analysis_job_processor_group_associations
             WHERE job = _jobID;
+
+            If Not FOUND Then
+                _pgaAssocID := 0;
+            End If;
 
             If _infoOnly Then
                 _currentLocation := 'Preview updating a job';
@@ -803,14 +805,14 @@ BEGIN
                                         _previewData.OrganismID,
                                         _previewData.DatasetID,
                                         _previewData.Comment,
-                                        _previewData.SpecialProcessing,
                                         _previewData.Owner,
                                         _previewData.BatchID,
                                         _previewData.StateID,
                                         _previewData.Start,
                                         _previewData.Finish,
                                         _previewData.PropagationMode,
-                                        _previewData.DatasetUnreviewed
+                                        _previewData.DatasetUnreviewed,
+                                        _previewData.SpecialProcessing
                                        );
 
                     RAISE INFO '%', _infoData;
@@ -838,9 +840,9 @@ BEGIN
                 dataset_id = _datasetID,
                 comment = _comment,
                 special_processing = _specialProcessing,
-                owner = _ownerUsername,
+                owner_username = _ownerUsername,
                 job_state_id = _updateStateID,
-                start =  CASE WHEN _mode <> 'reset' THEN start  ELSE NULL End,
+                start  = CASE WHEN _mode <> 'reset' THEN start  ELSE NULL End,
                 finish = CASE WHEN _mode <> 'reset' THEN finish ELSE NULL End,
                 propagation_mode = _propMode
             WHERE job = _jobID;
@@ -849,7 +851,7 @@ BEGIN
             If char_length(_callingUser) > 0 Then
                 _currentLocation := format('Call alter_event_log_entry_user for job %s', _jobID);
 
-                CALL public.alter_event_log_entry_user ('public', _jobID, _updateStateID, _callingUser, _message => _alterEnteredByMessage);
+                CALL public.alter_event_log_entry_user ('public', 5, _jobID, _updateStateID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             -- Deal with job association with group,
@@ -867,8 +869,7 @@ BEGIN
             If _gid <> 0 and _pgaAssocID = 0 Then
                 _currentLocation := format('Add job %s to t_analysis_job_processor_group_associations', _jobID);
 
-                INSERT INTO t_analysis_job_processor_group_associations( job,
-                                                                         group_id )
+                INSERT INTO t_analysis_job_processor_group_associations ( job, group_id )
                 VALUES (_jobID, _gid);
 
                 _alterEnteredByRequired := true;
