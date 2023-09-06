@@ -1,47 +1,40 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_analysis_job
-(
-    _datasetName text,
-    _priority int = 2,
-    _toolName text,
-    _paramFileName text,
-    _settingsFileName text,
-    _organismName text,
-    _protCollNameList text,
-    _protCollOptionsList text,
-    _organismDBName text,
-    _ownerUsername text,
-    _comment text = null,
-    _specialProcessing text = null,
-    _associatedProcessorGroup text = '',
-    _propagationMode text,
-    _stateName text,
-    INOUT _job text = '0',
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = '',
-    _preventDuplicateJobs boolean = false,
-    _preventDuplicatesIgnoresNoExport boolean = true,
-    _specialProcessingWaitUntilReady boolean = false,
-    _infoOnly boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_analysis_job(text, integer, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, boolean, boolean, boolean, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_analysis_job(IN _datasetname text, IN _priority integer, IN _toolname text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _organismdbname text, IN _ownerusername text, IN _comment text, IN _specialprocessing text, IN _associatedprocessorgroup text, IN _propagationmode text, IN _statename text, INOUT _job text DEFAULT '0'::text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text, IN _preventduplicatejobs boolean DEFAULT false, IN _preventduplicatesignoresnoexport boolean DEFAULT true, IN _specialprocessingwaituntilready boolean DEFAULT false, IN _infoonly boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new analysis job to job table
+**      Adds or updates an analysis job in t_analysis_job
 **
 **  Arguments:
-**    _associatedProcessorGroup          Processor group
-**    _propagationMode                   Propagation mode, aka export mode
-**    _stateName                         Job state when updating or resetting the job.  When _mode is 'add', if this is 'hold' or 'holding', the job will be created and placed in state holding
-**    _job                               New job number if adding a job; existing job number if updating or resetting a job
-**    _mode                              or 'update' or 'reset'; use 'previewadd' or 'previewupdate' to validate the parameters but not actually make the change (used by the Spreadsheet loader page)
-**    _preventDuplicateJobs              Only used if _mode is 'add'; when true, ignores jobs with state 5 (failed), 13 (inactive) or 14 (no export)
-**    _specialProcessingWaitUntilReady   When true, sets the job state to 19="Special Proc. Waiting" when the _specialProcessing parameter is not empty
-**    _infoOnly                          When true, preview the change even when _mode is 'add' or 'update'
+**    _datasetName                  Dataset name
+**    _priority                     Job priority; suggested default is 3
+**    _toolName                     Analysis tool name
+**    _paramFileName                Parameter file name
+**    _settingsFileName             Settings file name
+**    _organismName                 Organism name
+**    _protCollNameList             Comma-separated list of protein collection names
+**    _protCollOptionsList          Protein collection options list
+**    _organismDBName               Organism DB name (legacy FASTA file); should be 'na' if using a protein collection list
+**    _ownerUsername                Username of the job owner
+**    _comment                      Comment
+**    _specialProcessing            Special processing parameters
+**    _associatedProcessorGroup     Processor group
+**    _propagationMode              Propagation mode, aka export mode; should be 'Export' or 'No Export'
+**    _stateName                    Job state when updating or resetting the job. When _mode is 'add', if this is 'hold' or 'holding', the job will be created and placed in state holding; see also T_Analysis_Job_Request_State
+**    _job                          Input/Output: New job number if adding a job; existing job number if updating or resetting a job (number as text for compatibility with the web page)
+**    _mode                         Mode: typically 'add', 'update', or 'reset'; use 'previewadd' or 'previewupdate' to validate the parameters but not actually make the change (used by the Spreadsheet loader page)
+**    _message                      Output: status message
+**    _returnCode                   Output: return code
+**    _callingUser                  Username of the calling user
+**    _preventDuplicateJobs                 Only used if _mode is 'add'; when true, ignores jobs with state 5 (failed), 13 (inactive) or 14 (no export)
+**    _preventDuplicatesIgnoresNoExport     When true, ignores jobs with state 5 or 13, but updates jobs with state 14
+**    _specialProcessingWaitUntilReady      When true, sets the job state to 19="Special Proc. Waiting" when the _specialProcessing parameter is not empty
+**    _infoOnly                             When true, preview updates
 **
 **  Auth:   grk
 **  Date:   01/10/2002
@@ -109,7 +102,7 @@ AS $$
 **          06/30/2022 mem - Rename parameter file argument
 **          07/29/2022 mem - Assure that the parameter file and settings file names are not null
 **          07/27/2023 mem - Update message sent to get_new_job_id()
-**          12/15/2023 mem - Ported to PostgreSQL
+**          09/05/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -125,9 +118,9 @@ DECLARE
     _jobID int := 0;
     _currentStateID int := 0;
     _propMode int;
-    _currentStateName text;
+    _currentStateName citext;
+    _currentComment citext;
     _currentExportMode int;
-    _currentComment text;
     _gid int := 0;
     _userID int;
     _analysisToolID int;
@@ -150,6 +143,7 @@ DECLARE
     _previewData record;
     _infoData text;
 
+    _currentLocation text := 'Start';
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -200,14 +194,16 @@ BEGIN
         -- Is entry already in database? (only applies to updates and resets)
         ---------------------------------------------------
 
-        If _mode = 'update' or _mode = 'reset' Then
+        If _mode = 'update' Or _mode = 'reset' Then
+            _currentLocation := 'Check for non-existent entry';
+
             -- Cannot update a non-existent entry
             --
             SELECT job,
                    job_state_id
             INTO _jobID, _currentStateID
             FROM t_analysis_job
-            WHERE job = public.try_cast(_job, 0)
+            WHERE job = public.try_cast(_job, 0);
 
             If Not FOUND Then
                 _msg := format('Cannot update: Analysis Job %s is not in database', _job);
@@ -225,18 +221,21 @@ BEGIN
         -- Resolve propagation mode
         ---------------------------------------------------
 
-        _propMode := CASE _propagationMode;
+        _currentLocation := 'Resolve propagation mode';
+
+        _propMode := CASE _propagationMode::citext
                          WHEN 'Export' THEN 0
                          WHEN 'No Export' THEN 1
                          ELSE 0
-                     END
+                     END;
 
         If _mode = 'update' Then
+            _currentLocation := 'Validate settings when _mode is "update"';
 
             -- Changes are typically only allowed to jobs in 'new', 'failed', or 'holding' state
             -- However, we do allow the job comment or export mode to be updated
 
-            If Not _currentStateID IN (1,5,8,19) Then
+            If Not _currentStateID IN (1, 5, 8, 19) Then
 
                 -- Allow the job comment and Export Mode to be updated
 
@@ -249,22 +248,22 @@ BEGIN
                        ON J.job_state_id = AJS.job_state_id
                 WHERE J.job = _jobID;
 
-                If _comment <> _currentComment Or
-                   _propMode <> _currentExportMode Or
-                   _currentStateName = 'Complete' And _stateName = 'No export' Then
+                If _comment::citext  IS DISTINCT FROM _currentComment Or
+                   _propMode IS DISTINCT FROM _currentExportMode Or
+                   _currentStateName::citext = 'Complete' And _stateName::citext = 'No export' Then
 
                     If Not _infoOnly Then
                         UPDATE t_analysis_job
                         SET comment = _comment,
                             propagation_mode = _propMode
-                        WHERE job = _jobID
+                        WHERE job = _jobID;
                     End If;
 
-                    If _comment <> _currentComment And _propMode <> _currentExportMode Then
+                    If _comment::citext IS DISTINCT FROM _currentComment And _propMode IS DISTINCT FROM _currentExportMode Then
                         _message := 'Updated job comment and export mode';
                     End If;
 
-                    If _message = '' And _comment <> _currentComment Then
+                    If _message = '' And _comment::citext IS DISTINCT FROM _currentComment Then
                         _message := 'Updated job comment';
                     End If;
 
@@ -272,12 +271,12 @@ BEGIN
                         _message := 'Updated export mode';
                     End If;
 
-                    If _stateName <> _currentStateName Then
-                        If _propMode = 1 And _currentStateName = 'Complete' And _stateName = 'No export' Then
+                    If _stateName::citext IS DISTINCT FROM _currentStateName Then
+                        If _propMode = 1 And _currentStateName = 'Complete' And _stateName::citext = 'No export' Then
                             If Not _infoOnly Then
                                 UPDATE t_analysis_job
                                 SET job_state_id = 14
-                                WHERE job = _jobID
+                                WHERE job = _jobID;
                             End If;
 
                             _message := public.append_to_text(_message, 'set job state to "No export"', _delimiter => '; ', _maxlength => 512);
@@ -285,7 +284,7 @@ BEGIN
                             _msg := format('job state cannot be changed from %s to %s', _currentStateName, _stateName);
                             _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 512);
 
-                            If _propagationMode = 'Export' And _stateName = 'No export' Then
+                            If _propagationMode::citext = 'Export' And _stateName::citext = 'No export' Then
                                 -- Job propagation mode is Export (0) but user wants to set the state to No export
                                 _message := public.append_to_text(_message, 'to make this change, set the Export Mode to "No Export"', _delimiter => '; ', _maxlength => 512);
                             End If;
@@ -310,7 +309,9 @@ BEGIN
         End If;
 
         If _mode = 'reset' Then
-            If _organismDBName SIMILAR TO 'ID[_]%' And Not Coalesce(_protCollNameList, '')::citext In ('', 'na') Then
+            _currentLocation := 'Validate settings when _mode is "reset"';
+
+            If _organismDBName::citext SIMILAR TO 'ID[_]%' And Not Coalesce(_protCollNameList, '')::citext In ('', 'na') Then
                 -- We are resetting a job that used a protein collection; clear _organismDBName
                 _organismDBName := '';
             End If;
@@ -320,11 +321,13 @@ BEGIN
         -- Resolve processor group ID
         ---------------------------------------------------
 
+        _currentLocation := 'Resolve processor group ID';
+
         If _associatedProcessorGroup <> '' Then
             SELECT group_id
             INTO _gid
             FROM t_analysis_job_processor_group
-            WHERE (group_name = _associatedProcessorGroup)
+            WHERE group_name = _associatedProcessorGroup::citext;
 
             If Not FOUND Then
                 RAISE EXCEPTION 'Processor group "%" not found', _associatedProcessorGroup;
@@ -350,26 +353,27 @@ BEGIN
         -- Add dataset to table
         ---------------------------------------------------
 
-        INSERT INTO Tmp_DatasetInfo( Dataset_Name )
+        INSERT INTO Tmp_DatasetInfo ( Dataset_Name )
         VALUES (_datasetName);
 
         ---------------------------------------------------
         -- Handle '(default)' organism
         ---------------------------------------------------
 
-        If _organismName = '(default)' Then
+        If _organismName::citext = '(default)' Then
             SELECT t_organisms.organism
             INTO _organismName
-            FROM
-                t_experiments INNER JOIN
-                t_dataset ON t_experiments.exp_id = t_dataset.exp_id INNER JOIN
-                t_organisms ON t_experiments.organism_id = t_organisms.organism_id
-            WHERE t_dataset.dataset = _datasetName;
+            FROM t_experiments INNER JOIN
+                 t_dataset ON t_experiments.exp_id = t_dataset.exp_id INNER JOIN
+                 t_organisms ON t_experiments.organism_id = t_organisms.organism_id
+            WHERE t_dataset.dataset = _datasetName::citext;
         End If;
 
         ---------------------------------------------------
         -- Validate job parameters
         ---------------------------------------------------
+
+        _currentLocation := 'Validate job parameters';
 
         CALL public.validate_analysis_job_parameters (
                                 _toolName => _toolName,
@@ -384,14 +388,15 @@ BEGIN
                                 _userID => _userID,                             -- Output
                                 _analysisToolID => _analysisToolID,             -- Output
                                 _organismID => _organismID,                     -- Output
-                                _message => _msg,                               -- Output
-                                _returnCode => _returnCode,                     -- Output
-                                _autoRemoveNotReleasedDatasets => false,
                                 _job => _jobID,
+                                _autoRemoveNotReleasedDatasets => false,
                                 _autoUpdateSettingsFileToCentroided => true,
                                 _allowNewDatasets => false,
                                 _warning => _warning,                           -- Output
-                                _showDebugMessages => _infoOnly)
+                                _priority => _priority,                         -- Output
+                                _showDebugMessages => _infoOnly,
+                                _message => _msg,                               -- Output
+                                _returnCode => _returnCode);                    -- Output
 
         If _returnCode <> '' Then
             If Coalesce(_warning, '') = '' Then
@@ -403,6 +408,10 @@ BEGIN
             End If;
 
             RAISE EXCEPTION '%', _warning;
+        End If;
+
+        If Coalesce(_msg, '') <> '' Then
+            _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 512);
         End If;
 
         If Coalesce(_warning, '') <> '' Then
@@ -480,6 +489,7 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
+            _currentLocation := 'Prepare to add a new job';
 
             If _preventDuplicateJobs Then
                 ---------------------------------------------------
@@ -487,34 +497,34 @@ BEGIN
                 -- If it does, do not add another job
                 ---------------------------------------------------
 
+                _currentLocation := 'Check for an existing, matching job';
+
                 SELECT COUNT(AJ.job),
                        MAX(AJ.job)
                 INTO _existingJobCount, _existingMatchingJob
-                FROM
-                    t_dataset DS INNER JOIN
-                    t_analysis_job AJ ON AJ.dataset_id = DS.dataset_id INNER JOIN
-                    t_analysis_tool AJT ON AJ.analysis_tool_id = AJT.analysis_tool_id INNER JOIN
-                    t_organisms Org ON AJ.organism_id = Org.organism_id  INNER JOIN
-                    -- t_analysis_job_state AJS ON AJ.job_state_id = AJS.job_state_id INNER JOIN
-                    Tmp_DatasetInfo ON Tmp_DatasetInfo.dataset = DS.dataset
-                WHERE
-                    ( _preventDuplicatesIgnoresNoExport     AND NOT AJ.job_state_id IN (5, 13, 14) OR
-                      Not _preventDuplicatesIgnoresNoExport AND AJ.job_state_id <> 5
-                    ) AND
-                    AJT.analysis_tool = _toolName AND
-                    AJ.param_file_name = _paramFileName AND
-                    AJ.settings_file_name = _settingsFileName AND
-                    (
-                      ( _protCollNameList = 'na' AND
-                        AJ.organism_db_name = _organismDBName AND
-                        Org.organism = Coalesce(_organismName, Org.organism)
-                      ) OR
-                      ( _protCollNameList <> 'na' AND
-                        AJ.protein_collection_list = Coalesce(_protCollNameList, AJ.protein_collection_list) AND
-                         AJ.protein_options_list = Coalesce(_protCollOptionsList, AJ.protein_options_list)
-                      ) OR
-                      ( AJT.org_db_required = 0 )
-                    )
+                FROM t_dataset DS INNER JOIN
+                     t_analysis_job AJ ON AJ.dataset_id = DS.dataset_id INNER JOIN
+                     t_analysis_tool AJT ON AJ.analysis_tool_id = AJT.analysis_tool_id INNER JOIN
+                     t_organisms Org ON AJ.organism_id = Org.organism_id INNER JOIN
+                     -- t_analysis_job_state AJS ON AJ.job_state_id = AJS.job_state_id INNER JOIN
+                     Tmp_DatasetInfo ON Tmp_DatasetInfo.dataset_name = DS.dataset
+                WHERE ( _preventDuplicatesIgnoresNoExport     AND NOT AJ.job_state_id IN (5, 13, 14) OR
+                        Not _preventDuplicatesIgnoresNoExport AND AJ.job_state_id <> 5
+                      ) AND
+                      AJT.analysis_tool = _toolName::citext AND
+                      AJ.param_file_name = _paramFileName::citext AND
+                      AJ.settings_file_name = _settingsFileName::citext AND
+                      (
+                        ( _protCollNameList::citext = 'na' AND
+                          AJ.organism_db_name = _organismDBName::citext AND
+                          Org.organism = Coalesce(_organismName::citext, Org.organism)
+                        ) OR
+                        ( _protCollNameList::citext <> 'na' AND
+                          AJ.protein_collection_list = Coalesce(_protCollNameList::citext, AJ.protein_collection_list) AND
+                           AJ.protein_options_list = Coalesce(_protCollOptionsList::citext, AJ.protein_options_list)
+                        ) OR
+                        ( AJT.org_db_required = 0 )
+                      );
 
                 If _existingJobCount > 0 Then
                     _message := format('Job not created since duplicate job exists: %s', _existingMatchingJob);
@@ -535,7 +545,9 @@ BEGIN
             -- Check whether the dataset is unreviewed
             ---------------------------------------------------
 
-            If Exists (SELECT * FROM t_dataset WHERE dataset_id = _datasetID AND dataset_rating_id = -10) Then
+            _currentLocation := 'Lookup dataset rating';
+
+            If Exists (SELECT dataset_id FROM t_dataset WHERE dataset_id = _datasetID AND dataset_rating_id = -10) Then
                 _datasetUnreviewed := 1;
             End If;
 
@@ -543,7 +555,9 @@ BEGIN
             -- Get ID for new job
             ---------------------------------------------------
 
-            _jobID := public.get_new_job_id ('Created in t_analysis_job', _infoOnly)
+            _currentLocation := 'Get ID for new job';
+
+            _jobID := public.get_new_job_id ('Created in t_analysis_job', _infoOnly);
 
             If _jobID = 0 Then
                 _msg := 'Failed to get valid new job ID';
@@ -554,17 +568,18 @@ BEGIN
                 RAISE EXCEPTION '%', _msg;
             End If;
 
-            _job := _jobID::text
+            _job := _jobID::text;
 
             If Coalesce(_specialProcessingWaitUntilReady, false) And Coalesce(_specialProcessing, '') <> '' Then
                 _newStateID := 19;
             End If;
 
-            If _stateName Like 'hold%' Then
+            If _stateName::citext Like 'hold%' Then
                 _newStateID := 8;
             End If;
 
             If _infoOnly Then
+                _currentLocation := 'Preview adding a new job';
 
                 RAISE INFO '';
                 RAISE INFO '%', _infoHead;
@@ -584,7 +599,7 @@ BEGIN
                        _protCollOptionsList AS ProteinOptionsList,
                        _organismID AS OrganismID,
                        _datasetID AS DatasetID,
-                       REPLACE(_comment, '#DatasetNum#', _datasetID)::text AS Comment,
+                       REPLACE(_comment, '#DatasetNum#', _datasetID::text) AS Comment,
                        _specialProcessing AS SpecialProcessing,
                        _ownerUsername AS Owner,
                        _batchID AS BatchID,
@@ -621,80 +636,85 @@ BEGIN
                     RAISE INFO '%', _infoData;
                 END LOOP;
 
-            Else
-
-                INSERT INTO t_analysis_job (
-                    job,
-                    priority,
-                    created,
-                    analysis_tool_id,
-                    param_file_name,
-                    settings_file_name,
-                    organism_db_name,
-                    protein_collection_list,
-                    protein_options_list,
-                    organism_id,
-                    dataset_id,
-                    comment,
-                    special_processing,
-                    owner,
-                    batch_id,
-                    job_state_id,
-                    propagation_mode,
-                    dataset_unreviewed
-                ) VALUES (
-                    _jobID,
-                    _priority,
-                    CURRENT_TIMESTAMP,
-                    _analysisToolID,
-                    _paramFileName,
-                    _settingsFileName,
-                    _organismDBName,
-                    _protCollNameList,
-                    _protCollOptionsList,
-                    _organismID,
-                    _datasetID,
-                    REPLACE(_comment, '#DatasetNum#', _datasetID)::text,
-                    _specialProcessing,
-                    _ownerUsername,
-                    _batchID,
-                    _newStateID,
-                    _propMode,
-                    _datasetUnreviewed
-                )
-
-                -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-                If char_length(_callingUser) > 0 Then
-                    CALL public.alter_event_log_entry_user (5, _jobID, _newStateID, _callingUser, _message => _alterEnteredByMessage);
-                End If;
-
-                -- Associate job with processor group
-
-                If _gid <> 0 Then
-                    INSERT INTO t_analysis_job_processor_group_associations( job,
-                                                                             group_id )
-                    VALUES (_jobID, _gid)
-                End If;
-
+                DROP TABLE Tmp_DatasetInfo;
+                RETURN;
             End If;
+
+            _currentLocation := 'Add the new job to t_analysis_job';
+
+            INSERT INTO t_analysis_job (
+                job,
+                priority,
+                created,
+                analysis_tool_id,
+                param_file_name,
+                settings_file_name,
+                organism_db_name,
+                protein_collection_list,
+                protein_options_list,
+                organism_id,
+                dataset_id,
+                comment,
+                special_processing,
+                owner_username,
+                batch_id,
+                job_state_id,
+                propagation_mode,
+                dataset_unreviewed
+            ) VALUES (
+                _jobID,
+                _priority,
+                CURRENT_TIMESTAMP,
+                _analysisToolID,
+                _paramFileName,
+                _settingsFileName,
+                _organismDBName,
+                _protCollNameList,
+                _protCollOptionsList,
+                _organismID,
+                _datasetID,
+                REPLACE(_comment, '#DatasetNum#', _datasetID::text),
+                _specialProcessing,
+                _ownerUsername,
+                _batchID,
+                _newStateID,
+                _propMode,
+                _datasetUnreviewed
+            );
+
+            -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
+            If char_length(_callingUser) > 0 Then
+                CALL public.alter_event_log_entry_user ('public', 5, _jobID, _newStateID, _callingUser, _message => _alterEnteredByMessage);
+            End If;
+
+            -- Associate job with processor group
+
+            If _gid <> 0 Then
+                INSERT INTO t_analysis_job_processor_group_associations( job,
+                                                                         group_id )
+                VALUES (_jobID, _gid);
+            End If;
+
+            DROP TABLE Tmp_DatasetInfo;
+            RETURN;
         End If;
 
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
 
-        If _mode = 'update' or _mode = 'reset' Then
+        If _mode = 'update' Or _mode = 'reset' Then
+            _currentLocation := 'Prepare to update or reset a job';
 
             -- Resolve state ID according to mode and state name
 
             If _mode = 'reset' Then
                 _updateStateID := 1;
             Else
-                --
                 SELECT job_state_id
                 INTO _updateStateID
                 FROM t_analysis_job_state
-                WHERE job_state = _stateName;
+                WHERE job_state = _stateName::citext;
 
                 If _updateStateID = -1 Then
                     _msg := format('State name not recognized: %s', _stateName);
@@ -710,15 +730,18 @@ BEGIN
             -- Associate job with processor group
             ---------------------------------------------------
 
+            _currentLocation := 'Lookup the processor group for the existing job';
+
             -- Is there an existing association between the job
             -- and a processor group?
 
             SELECT group_id
             INTO _pgaAssocID
             FROM t_analysis_job_processor_group_associations
-            WHERE job = _jobID
+            WHERE job = _jobID;
 
             If _infoOnly Then
+                _currentLocation := 'Preview updating a job';
 
                 RAISE INFO '';
                 RAISE INFO '%', _infoHead;
@@ -776,77 +799,90 @@ BEGIN
                     RAISE INFO '%', _infoData;
                 END LOOP;
 
-            Else
-
-                ---------------------------------------------------
-                -- Update the database
-                ---------------------------------------------------
-
-                UPDATE t_analysis_job
-                SET
-                    priority = _priority,
-                    analysis_tool_id = _analysisToolID,
-                    param_file_name = _paramFileName,
-                    settings_file_name = _settingsFileName,
-                    organism_db_name = _organismDBName,
-                    protein_collection_list = _protCollNameList,
-                    protein_options_list = _protCollOptionsList,
-                    organism_id = _organismID,
-                    dataset_id = _datasetID,
-                    comment = _comment,
-                    special_processing = _specialProcessing,
-                    owner = _ownerUsername,
-                    job_state_id = _updateStateID,
-                    start =  CASE WHEN _mode <> 'reset' THEN start  ELSE NULL End,
-                    finish = CASE WHEN _mode <> 'reset' THEN finish ELSE NULL End,
-                    propagation_mode = _propMode
-                WHERE (job = _jobID)
-
-                -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-                If char_length(_callingUser) > 0 Then
-                    CALL public.alter_event_log_entry_user (5, _jobID, _updateStateID, _callingUser, _message => _alterEnteredByMessage);
-                End If;
-
-]               -- Deal with job association with group,
-                -- If no group is given, but existing association exists for job, delete it
-
-                If _gid = 0 Then
-                    DELETE FROM t_analysis_job_processor_group_associations
-                    WHERE (job = _jobID);
-                End If;
-
-                -- If group is given, and no association for job exists create one
-
-                If _gid <> 0 and _pgaAssocID = 0 Then
-                    INSERT INTO t_analysis_job_processor_group_associations( job,
-                                                                             group_id )
-                    VALUES (_jobID, _gid);
-
-                    _alterEnteredByRequired := true;
-                End If;
-
-                -- If group is given, and an association for job does exist update it
-
-                If _gid <> 0 and _pgaAssocID <> 0 and _pgaAssocID <> _gid Then
-                    UPDATE t_analysis_job_processor_group_associations
-                    SET group_id = _gid,
-                        entered = CURRENT_TIMESTAMP,
-                        entered_by = session_user
-                    WHERE job = _jobID
-
-                    _alterEnteredByRequired := true;
-                End If;
-
-                If char_length(_callingUser) > 0 AND _alterEnteredByRequired Then
-                    -- Call public.alter_entered_by_user
-                    -- to alter the entered_by field in t_analysis_job_processor_group_associations
-
-                    CALL public.alter_entered_by_user ('public', 't_analysis_job_processor_group_associations', 'job', _jobID, _callingUser, _message => _alterEnteredByMessage);
-                End If;
+                DROP TABLE Tmp_DatasetInfo;
+                RETURN;
             End If;
 
+            ---------------------------------------------------
+            -- Update the database
+            ---------------------------------------------------
+
+            _currentLocation := format('Update job %s', _jobID);
+
+            UPDATE t_analysis_job
+            SET priority = _priority,
+                analysis_tool_id = _analysisToolID,
+                param_file_name = _paramFileName,
+                settings_file_name = _settingsFileName,
+                organism_db_name = _organismDBName,
+                protein_collection_list = _protCollNameList,
+                protein_options_list = _protCollOptionsList,
+                organism_id = _organismID,
+                dataset_id = _datasetID,
+                comment = _comment,
+                special_processing = _specialProcessing,
+                owner = _ownerUsername,
+                job_state_id = _updateStateID,
+                start =  CASE WHEN _mode <> 'reset' THEN start  ELSE NULL End,
+                finish = CASE WHEN _mode <> 'reset' THEN finish ELSE NULL End,
+                propagation_mode = _propMode
+            WHERE job = _jobID;
+
+            -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
+            If char_length(_callingUser) > 0 Then
+                _currentLocation := format('Call alter_event_log_entry_user for job %s', _jobID);
+
+                CALL public.alter_event_log_entry_user ('public', _jobID, _updateStateID, _callingUser, _message => _alterEnteredByMessage);
+            End If;
+
+            -- Deal with job association with group,
+            -- If no group is given, but existing association exists for job, delete it
+
+            If _gid = 0 Then
+                _currentLocation := format('Remove job %s from t_analysis_job_processor_group_associations', _jobID);
+
+                DELETE FROM t_analysis_job_processor_group_associations
+                WHERE job = _jobID;
+            End If;
+
+            -- If group is given, and no association for job exists create one
+
+            If _gid <> 0 and _pgaAssocID = 0 Then
+                _currentLocation := format('Add job %s to t_analysis_job_processor_group_associations', _jobID);
+
+                INSERT INTO t_analysis_job_processor_group_associations( job,
+                                                                         group_id )
+                VALUES (_jobID, _gid);
+
+                _alterEnteredByRequired := true;
+            End If;
+
+            -- If group is given, and an association for job does exist update it
+
+            If _gid <> 0 and _pgaAssocID <> 0 and _pgaAssocID <> _gid Then
+                _currentLocation := format('Update info for job %s in t_analysis_job_processor_group_associations', _jobID);
+
+                UPDATE t_analysis_job_processor_group_associations
+                SET group_id = _gid,
+                    entered = CURRENT_TIMESTAMP,
+                    entered_by = session_user
+                WHERE job = _jobID;
+
+                _alterEnteredByRequired := true;
+            End If;
+
+            If char_length(_callingUser) > 0 AND _alterEnteredByRequired Then
+                _currentLocation := format('Call alter_entered_by_user for job %s', _jobID);
+
+                -- Call public.alter_entered_by_user
+                -- to alter the entered_by field in t_analysis_job_processor_group_associations
+
+                CALL public.alter_entered_by_user ('public', 't_analysis_job_processor_group_associations', 'job', _jobID, _callingUser, _message => _alterEnteredByMessage);
+            End If;
         End If;
 
+        DROP TABLE Tmp_DatasetInfo;
+        RETURN;
     EXCEPTION
         WHEN OTHERS THEN
             GET STACKED DIAGNOSTICS
@@ -860,7 +896,8 @@ BEGIN
 
             _message := local_error_handler (
                             _sqlState, _logMessage, _exceptionDetail, _exceptionContext,
-                            _callingProcLocation => '', _logError => true);
+                            _callingProcLocation => _currentLocation, _logError => true);
+
         Else
             _message := _exceptionMessage;
         End If;
@@ -874,4 +911,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_analysis_job IS 'AddUpdateAnalysisJob';
+
+ALTER PROCEDURE public.add_update_analysis_job(IN _datasetname text, IN _priority integer, IN _toolname text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _organismdbname text, IN _ownerusername text, IN _comment text, IN _specialprocessing text, IN _associatedprocessorgroup text, IN _propagationmode text, IN _statename text, INOUT _job text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _preventduplicatejobs boolean, IN _preventduplicatesignoresnoexport boolean, IN _specialprocessingwaituntilready boolean, IN _infoonly boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_analysis_job(IN _datasetname text, IN _priority integer, IN _toolname text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _organismdbname text, IN _ownerusername text, IN _comment text, IN _specialprocessing text, IN _associatedprocessorgroup text, IN _propagationmode text, IN _statename text, INOUT _job text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _preventduplicatejobs boolean, IN _preventduplicatesignoresnoexport boolean, IN _specialprocessingwaituntilready boolean, IN _infoonly boolean); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_analysis_job(IN _datasetname text, IN _priority integer, IN _toolname text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _organismdbname text, IN _ownerusername text, IN _comment text, IN _specialprocessing text, IN _associatedprocessorgroup text, IN _propagationmode text, IN _statename text, INOUT _job text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _preventduplicatejobs boolean, IN _preventduplicatesignoresnoexport boolean, IN _specialprocessingwaituntilready boolean, IN _infoonly boolean) IS 'AddUpdateAnalysisJob';
+
