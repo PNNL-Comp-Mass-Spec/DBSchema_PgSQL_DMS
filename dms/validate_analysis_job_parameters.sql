@@ -1,8 +1,8 @@
 --
--- Name: validate_analysis_job_parameters(text, text, text, text, text, text, text, text, text, integer, integer, integer, integer, boolean, boolean, text, integer, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: validate_analysis_job_parameters(text, text, text, text, text, text, text, text, text, integer, integer, integer, integer, boolean, boolean, boolean, text, integer, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.validate_analysis_job_parameters(IN _toolname text, INOUT _paramfilename text, INOUT _settingsfilename text, INOUT _organismdbname text, IN _organismname text, INOUT _protcollnamelist text, INOUT _protcolloptionslist text, INOUT _ownerusername text, IN _mode text, INOUT _userid integer, INOUT _analysistoolid integer, INOUT _organismid integer, IN _job integer DEFAULT 0, IN _autoupdatesettingsfiletocentroided boolean DEFAULT true, IN _allownewdatasets boolean DEFAULT false, INOUT _warning text DEFAULT ''::text, INOUT _priority integer DEFAULT 2, IN _showdebugmessages boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.validate_analysis_job_parameters(IN _toolname text, INOUT _paramfilename text, INOUT _settingsfilename text, INOUT _organismdbname text, IN _organismname text, INOUT _protcollnamelist text, INOUT _protcolloptionslist text, INOUT _ownerusername text, IN _mode text, INOUT _userid integer, INOUT _analysistoolid integer, INOUT _organismid integer, IN _job integer DEFAULT 0, IN _autoremovenotreleaseddatasets boolean DEFAULT false, IN _autoupdatesettingsfiletocentroided boolean DEFAULT true, IN _allownewdatasets boolean DEFAULT false, INOUT _warning text DEFAULT ''::text, INOUT _priority integer DEFAULT 3, IN _showdebugmessages boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -43,7 +43,7 @@ CREATE OR REPLACE PROCEDURE public.validate_analysis_job_parameters(IN _toolname
 **    _autoUpdateSettingsFileToCentroided       When true, auto-update the settings file to a centroided version if any of the datasets in Tmp_DatasetInfo are centroided
 **    _allowNewDatasets     When false, all datasets must have state 3 (Complete); when true, will also allow datasets with state 1 or 2 (New or Capture In Progress)
 **    _warning              Output: Warning
-**    _priority             Input/Output: Job priority; changed to 4 if _organismDBName is over 400 MB and _priority is less than 4
+**    _priority             Input/Output: Job priority (typically 3); this procedure changes it to 4 if _organismDBName is over 400 MB and _priority is less than 4
 **    _showDebugMessages    When true, show debug messages
 **    _message              Output: warning message
 **    _returnCode           Output: return code
@@ -106,6 +106,8 @@ CREATE OR REPLACE PROCEDURE public.validate_analysis_job_parameters(IN _toolname
 **          03/22/2023 mem - Trim trailing whitespace from output parameters
 **          03/27/2023 mem - Add logic for DiaNN
 **          09/01/2023 mem - Ported to PostgreSQL
+**          09/05/2023 mem - Add back parameter _autoRemoveNotReleasedDatasets since used by add_update_analysis_job_request
+**                         - Assure that parameters are not null
 **
 *****************************************************/
 DECLARE
@@ -145,6 +147,7 @@ BEGIN
 
     ---------------------------------------------------
     -- Trim whitespace from input/output parameters
+    -- Assure that parameters are not null
     ---------------------------------------------------
 
     _paramFileName       := Trim(Coalesce(_paramFileName, ''));
@@ -153,6 +156,12 @@ BEGIN
     _protCollNameList    := Trim(Coalesce(_protCollNameList, ''));
     _protCollOptionsList := Trim(Coalesce(_protCollOptionsList, ''));
     _ownerUsername       := Trim(Coalesce(_ownerUsername, ''));
+
+    _job                                := Coalesce(_job, 0);
+    _autoRemoveNotReleasedDatasets      := Coalesce(_autoRemoveNotReleasedDatasets, false);
+    _autoUpdateSettingsFileToCentroided := Coalesce(_autoUpdateSettingsFileToCentroided, true);
+    _allowNewDatasets                   := Coalesce(_allowNewDatasets, false);
+    _priority                           := Coalesce(_priority, 3);
 
     BEGIN
 
@@ -168,8 +177,10 @@ BEGIN
 
         _currentlocation := 'Call validate_analysis_job_request_datasets';
 
+
+
         CALL public.validate_analysis_job_request_datasets (
-                    _autoRemoveNotReleasedDatasets => false,
+                    _autoRemoveNotReleasedDatasets => _autoRemoveNotReleasedDatasets,
                     _toolName => _toolName,
                     _allowNewDatasets => _allowNewDatasets,
                     _allowNonReleasedDatasets => _allowNonReleasedDatasets,
@@ -294,7 +305,7 @@ BEGIN
                 _message := format('%s %s must be reset by clicking Edit on the Pipeline Job Detail report',
                                     _toolName, public.check_plural(_toolName, 'job', 'jobs'));
 
-                If Coalesce(_job, 0) > 0 Then
+                If _job > 0 Then
                     _message := format('%s; see https://dms2.pnl.gov/pipeline_jobs/show/%s', _message, _job);
                 Else
                     _message := format('%s; see https://dms2.pnl.gov/pipeline_jobs/report/-/-/~Aggregation', _message);
@@ -568,8 +579,8 @@ BEGIN
                 End If;
 
                 If _showDebugMessages Then
-                    RAISE INFO '_profileModeMSn=%', _profileModeMSn;
-                    RAISE INFO '_toolName=%', _toolName;
+                    RAISE INFO '  _profileModeMSn=%', _profileModeMSn;
+                    RAISE INFO '  _toolName=%', _toolName;
                 End If;
 
                 If _profileModeMSn > 0 AND _toolName::citext IN ('MSGFPlus', 'MSGFPlus_DTARefinery', 'MSGFPlus_SplitFasta') Then
@@ -935,11 +946,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.validate_analysis_job_parameters(IN _toolname text, INOUT _paramfilename text, INOUT _settingsfilename text, INOUT _organismdbname text, IN _organismname text, INOUT _protcollnamelist text, INOUT _protcolloptionslist text, INOUT _ownerusername text, IN _mode text, INOUT _userid integer, INOUT _analysistoolid integer, INOUT _organismid integer, IN _job integer, IN _autoupdatesettingsfiletocentroided boolean, IN _allownewdatasets boolean, INOUT _warning text, INOUT _priority integer, IN _showdebugmessages boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE public.validate_analysis_job_parameters(IN _toolname text, INOUT _paramfilename text, INOUT _settingsfilename text, INOUT _organismdbname text, IN _organismname text, INOUT _protcollnamelist text, INOUT _protcolloptionslist text, INOUT _ownerusername text, IN _mode text, INOUT _userid integer, INOUT _analysistoolid integer, INOUT _organismid integer, IN _job integer, IN _autoremovenotreleaseddatasets boolean, IN _autoupdatesettingsfiletocentroided boolean, IN _allownewdatasets boolean, INOUT _warning text, INOUT _priority integer, IN _showdebugmessages boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE validate_analysis_job_parameters(IN _toolname text, INOUT _paramfilename text, INOUT _settingsfilename text, INOUT _organismdbname text, IN _organismname text, INOUT _protcollnamelist text, INOUT _protcolloptionslist text, INOUT _ownerusername text, IN _mode text, INOUT _userid integer, INOUT _analysistoolid integer, INOUT _organismid integer, IN _job integer, IN _autoupdatesettingsfiletocentroided boolean, IN _allownewdatasets boolean, INOUT _warning text, INOUT _priority integer, IN _showdebugmessages boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE validate_analysis_job_parameters(IN _toolname text, INOUT _paramfilename text, INOUT _settingsfilename text, INOUT _organismdbname text, IN _organismname text, INOUT _protcollnamelist text, INOUT _protcolloptionslist text, INOUT _ownerusername text, IN _mode text, INOUT _userid integer, INOUT _analysistoolid integer, INOUT _organismid integer, IN _job integer, IN _autoremovenotreleaseddatasets boolean, IN _autoupdatesettingsfiletocentroided boolean, IN _allownewdatasets boolean, INOUT _warning text, INOUT _priority integer, IN _showdebugmessages boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.validate_analysis_job_parameters(IN _toolname text, INOUT _paramfilename text, INOUT _settingsfilename text, INOUT _organismdbname text, IN _organismname text, INOUT _protcollnamelist text, INOUT _protcolloptionslist text, INOUT _ownerusername text, IN _mode text, INOUT _userid integer, INOUT _analysistoolid integer, INOUT _organismid integer, IN _job integer, IN _autoupdatesettingsfiletocentroided boolean, IN _allownewdatasets boolean, INOUT _warning text, INOUT _priority integer, IN _showdebugmessages boolean, INOUT _message text, INOUT _returncode text) IS 'ValidateAnalysisJobParameters';
+COMMENT ON PROCEDURE public.validate_analysis_job_parameters(IN _toolname text, INOUT _paramfilename text, INOUT _settingsfilename text, INOUT _organismdbname text, IN _organismname text, INOUT _protcollnamelist text, INOUT _protcolloptionslist text, INOUT _ownerusername text, IN _mode text, INOUT _userid integer, INOUT _analysistoolid integer, INOUT _organismid integer, IN _job integer, IN _autoremovenotreleaseddatasets boolean, IN _autoupdatesettingsfiletocentroided boolean, IN _allownewdatasets boolean, INOUT _warning text, INOUT _priority integer, IN _showdebugmessages boolean, INOUT _message text, INOUT _returncode text) IS 'ValidateAnalysisJobParameters';
 
