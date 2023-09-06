@@ -142,6 +142,8 @@ DECLARE
     _userID int;
     _analysisToolID int;
     _organismID int;
+    _warning text;
+    _priority int;
     _profileModeMSnDatasets int := 0;
     _stateID int := -1;
     _newRequestNum int;
@@ -395,9 +397,11 @@ BEGIN
 
         ---------------------------------------------------
         -- Validate job parameters
-        -- Note that Validate_Analysis_Job_Parameters calls validate_analysis_job_request_datasets
+        -- Note that validate_analysis_job_parameters calls validate_analysis_job_request_datasets
         -- and that validate_analysis_job_request_datasets populates Dataset_ID, etc. in Tmp_DatasetInfo
         ---------------------------------------------------
+
+        _priority := 2;
 
         CALL public.validate_analysis_job_parameters (
                                 _toolName => _toolName,
@@ -412,11 +416,16 @@ BEGIN
                                 _userID => _userID,                             -- Output
                                 _analysisToolID => _analysisToolID,             -- Output
                                 _organismID => _organismID,                     -- Output
+                                _job => 0,
+                                _autoRemoveNotReleasedDatasets => CASE WHEN Coalesce(_autoRemoveNotReleasedDatasets, 0) = 0 THEN false ELSE true END,
+                                _autoUpdateSettingsFileToCentroided => false,
+                                _allowNewDatasets => true
+                                _warning => _warning,                           -- Output
+                                _priority => _priority,                         -- Output
+                                _showDebugMessages => false,
                                 _message => _msg,                               -- Output
                                 _returnCode => _returnCode,                     -- Output
-                                _autoRemoveNotReleasedDatasets => CASE _autoRemoveNotReleasedDatasets WHEN 0 THEN false ELSE true END,
-                                _autoUpdateSettingsFileToCentroided => false,
-                                _allowNewDatasets => true);
+                                );
         --
         If _returnCode <> '' Then
             RAISE EXCEPTION '%', _msg;

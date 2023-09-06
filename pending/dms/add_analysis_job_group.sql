@@ -140,7 +140,6 @@ DECLARE
     _datasetCountToRemove int := 0;
     _removedDatasetsMsg text := '';
     _removedDatasets text := '';
-    _threshold int := 5;
     _propMode int;
     _userID int;
     _analysisToolID int;
@@ -424,25 +423,35 @@ BEGIN
                  --  ON AJ.job_state_id = AJS.job_state_id
                  INNER JOIN Tmp_DatasetInfo
                    ON Tmp_DatasetInfo.dataset = DS.dataset
-            WHERE (NOT (AJ.job_state_id IN (5))) AND
-                  AJT.analysis_tool = _toolName AND
-                  AJ.param_file_name = _paramFileName AND
-                  (AJ.settings_file_name = _settingsFileName OR
-                   AJ.settings_file_name = 'na' AND
-                   _settingsFileName = 'Decon2LS_DefSettings.xml') AND
-                  ((_protCollNameList = 'na' AND
-                    AJ.organism_db_name = _organismDBName AND
-                    Org.organism = Coalesce(_organismName, Org.organism)) OR
-                   (_protCollNameList <> 'na' AND
-                    AJ.protein_collection_list = Coalesce(_protCollNameList, AJ.protein_collection_list) AND
-                    AJ.protein_options_list = Coalesce(_protCollOptionsList, AJ.protein_options_list)) OR
-                   (AJT.org_db_required = 0)) AND
-                  Coalesce(AJ.special_processing, '') = Coalesce(_specialProcessing, '')
-            GROUP BY DS.dataset
+            WHERE NOT AJ.job_state_id IN (5) AND
+                  AJT.analysis_tool = _toolName::citext AND
+                  AJ.param_file_name = _paramFileName::citext AND
+                  ( AJ.settings_file_name = _settingsFileName::citext OR
+                    AJ.settings_file_name = 'na' AND
+                    _settingsFileName::citext = 'Decon2LS_DefSettings.xml'
+                  )
+                  AND
+                  (
+                    ( _protCollNameList::citext = 'na' AND
+                      AJ.organism_db_name = _organismDBName::citext AND
+                      Org.organism = Coalesce(_organismName::citext, Org.organism)
+                    )
+                    OR
+                    ( _protCollNameList::citext <> 'na' AND
+                      AJ.protein_collection_list = Coalesce(_protCollNameList::citext, AJ.protein_collection_list) AND
+                      AJ.protein_options_list = Coalesce(_protCollOptionsList::citext, AJ.protein_options_list)
+                    )
+                    OR
+                    AJT.org_db_required = 0
+                  )
+                  AND
+                  Coalesce(AJ.special_processing, '') = Coalesce(_specialProcessing::citext, '')
+            GROUP BY DS.dataset;
             --
             GET DIAGNOSTICS _datasetCountToRemove = ROW_COUNT;
 
             If _datasetCountToRemove > 0 Then
+
                 -- Remove datasets from list that have existing jobs
                 --
                 DELETE FROM Tmp_DatasetInfo
@@ -455,8 +464,8 @@ BEGIN
                 -- Construct message of removed dataset(s)
                 --
                 _removedDatasetsMsg := format('Skipped %s %s existing jobs',
-                                                _datasetCountToRemove,
-                                                public.check_plural(_datasetCountToRemove, 'dataset that has', 'datasets that have'));
+                                              _datasetCountToRemove,
+                                              public.check_plural(_datasetCountToRemove, 'dataset that has', 'datasets that have'));
 
                 SELECT string_agg(Dataset, ', ' ORDER BY Dataset)
                 INTO _removedDatasets
@@ -464,7 +473,7 @@ BEGIN
 
                 _removedDatasetsMsg := format('%s: %s', _removedDatasetsMsg, _removedDatasets);
 
-                If _datasetCountToRemove > _threshold Then
+                If _datasetCountToRemove > 5 Then
                     _removedDatasets := format('%s (more datasets not shown)', _removedDatasets);
                 End If;
             End If;
@@ -475,10 +484,10 @@ BEGIN
         ---------------------------------------------------
         -- Resolve propagation mode
         ---------------------------------------------------
-        _propMode := CASE _propagationMode;
-                            WHEN 'Export' THEN 0
-                            WHEN 'No Export' THEN 1
-                            ELSE 0
+        _propMode := CASE _propagationMode::citext
+                         WHEN 'Export' THEN 0
+                         WHEN 'No Export' THEN 1
+                         ELSE 0
                      END;
 
         ---------------------------------------------------
@@ -500,13 +509,16 @@ BEGIN
                                 _userID => _userID,                             -- Output
                                 _analysisToolID => _analysisToolID,             -- Output
                                 _organismID => _organismID,                     -- Output
-                                _message => _message,                           -- Output
-                                _returnCode => _returnCode,
+                                _job => 0,
                                 _autoRemoveNotReleasedDatasets => false,
                                 _autoUpdateSettingsFileToCentroided => true,
                                 _allowNewDatasets => false,
-                                _warning => _warning,            -- Output
-                                _priority => _priority)          -- Output
+                                _warning => _warning,                           -- Output
+                                _priority => _priority,                         -- Output
+                                _showDebugMessages => false,
+                                _message => _message,                           -- Output
+                                _returnCode => _returnCode);                    -- Output
+
 
         If _returnCode <> '' Then
             RAISE EXCEPTION 'Validate_Analysis_Job_Parameters: % for request % (code %)', _message, _requestID, _returnCode;
@@ -524,7 +536,7 @@ BEGIN
         _jobStateID := 1;
 
         If Coalesce(_specialProcessing, '') <> '' AND
-           Exists (SELECT * FROM t_analysis_tool WHERE analysis_tool = _toolName AND use_special_proc_waiting > 0) Then
+           Exists (SELECT analysis_tool_id FROM t_analysis_tool WHERE analysis_tool = _toolName AND use_special_proc_waiting > 0) Then
 
             _jobStateID := 19;
 
@@ -567,7 +579,7 @@ BEGIN
                 SELECT param_file_storage_path
                 INTO _paramFileStoragePath
                 FROM t_analysis_tool
-                WHERE analysis_tool = _toolName;
+                WHERE analysis_tool = _toolName::citext;
 
                 If Not FOUND Then
                     RAISE EXCEPTION 'Tool % not found in t_analysis_tool', _toolName;
@@ -590,7 +602,7 @@ BEGIN
                     SELECT xmltable.*
                     FROM ( SELECT contents As settings
                            FROM t_settings_files
-                           WHERE file_name = _settingsFileName AND analysis_tool = _toolName
+                           WHERE file_name = _settingsFileName::citext AND analysis_tool = _toolName::citext
                          ) Src,
                          XMLTABLE('//sections/section/item'
                                   PASSING Src.settings
@@ -678,15 +690,15 @@ BEGIN
                     _mode := 'previewAdd';
                 End If;
 
-                If _toolName = 'MaxQuant' Then
+                If _toolName::citext = 'MaxQuant' Then
                     _scriptName := 'MaxQuant_DataPkg';
                 End If;
 
-                If _toolName = 'MSFragger' Then
+                If _toolName::citext = 'MSFragger' Then
                     _scriptName := 'MSFragger_DataPkg';
                 End If;
 
-                If _toolName = 'DiaNN' Then
+                If _toolName::citext = 'DiaNN' Then
                     _scriptName := 'DiaNN_DataPkg';
                 End If;
 
@@ -704,7 +716,8 @@ BEGIN
                                     _message => _message,                           -- Output
                                     _returnCode => _returnCode,                     -- Output
                                     _callingUser => _callingUser,                   -- Output
-                                    _debugMode => false);
+                                    _debugMode => false,
+                                    _logdebugmessages => false);
 
                 If _returnCode <> '' Then
                     _msgForLog := format('Error code %s from sw.pipeline_add_update_local_job: %s', _returnCode, Coalesce(_message, '??'));
