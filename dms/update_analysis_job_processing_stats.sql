@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_job_processing_stats(IN _job 
 **          06/12/2018 mem - Send _maxLength to Append_To_Text
 **          08/03/2020 mem - Update T_Cached_Dataset_Links.MASIC_Directory_Name when a MASIC job finishes successfully
 **          08/03/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
 **
 *****************************************************/
 DECLARE
@@ -166,7 +167,7 @@ BEGIN
                    CASE
                        WHEN _newBrokerJobState = 2
                        THEN Comment
-                       ELSE public.append_to_text(comment, _jobCommentAddnl, _delimiter => '; ', _maxlength => 512)
+                       ELSE public.append_to_text(comment, _jobCommentAddnl)
                    END AS Comment_New,
                    Organism_DB_Name,
                    Coalesce(_organismDBName, Organism_DB_Name) AS Organism_DB_Name_New,
@@ -218,7 +219,7 @@ BEGIN
         Assigned_Processor_Name = 'Job_Broker',
         Comment = CASE WHEN _newBrokerJobState = 2
                        THEN Comment
-                       ELSE public.append_to_text(comment, _jobCommentAddnl, _delimiter => '; ', _maxlength => 512)
+                       ELSE public.append_to_text(comment, _jobCommentAddnl)
                   END,
         Organism_DB_Name = Coalesce(_organismDBName, Organism_DB_Name),
         Processing_Time_Minutes = CASE WHEN _newBrokerJobState <> 2

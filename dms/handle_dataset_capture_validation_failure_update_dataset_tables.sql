@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE public.handle_dataset_capture_validation_failure_upd
 **          06/12/2018 mem - Send _maxLength to Append_To_Text
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          06/17/2023 mem - Ported to PostgreSQL, renaming from handle_dataset_capture_validation_failure to handle_dataset_capture_validation_failure_update_dataset_tables
+**          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
 **
 *****************************************************/
 DECLARE
@@ -50,7 +51,7 @@ BEGIN
     ----------------------------------------
 
     _datasetNameOrID := Trim(Coalesce(_datasetNameOrID, ''));
-    _comment := Trim(Coalesce(_comment, ''));
+    _comment         := Trim(Coalesce(_comment, ''));
 
     -- Treat the following characters as meaning "do not update the comment"
     If _comment In (' ', '.', ';', ',', '!', '^') Then
@@ -116,7 +117,7 @@ BEGIN
     End If;
 
     UPDATE t_dataset
-    SET comment = public.append_to_text(comment, _comment, _delimiter => '; ', _maxlength => 512),
+    SET comment = public.append_to_text(comment, _comment),
         dataset_state_id = 4,
         dataset_rating_id = -1
     WHERE dataset_id = _datasetID;

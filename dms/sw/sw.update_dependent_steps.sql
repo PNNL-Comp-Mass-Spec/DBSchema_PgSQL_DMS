@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE sw.update_dependent_steps(IN _infoonly boolean DEFAU
 **          03/10/2022 mem - Clear the completion code and completion message when skipping a job step
 **                         - Check for a job step with shared results being repeatedly skipped, then reset, then skipped again
 **          08/02/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
 **
 *****************************************************/
 DECLARE
@@ -80,8 +81,8 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _infoOnly := Coalesce(_infoOnly, false);
-    _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
+    _infoOnly              := Coalesce(_infoOnly, false);
+    _maxJobsToProcess      := Coalesce(_maxJobsToProcess, 0);
     _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
 
     If _loopingUpdateInterval < 2 Then
@@ -540,11 +541,11 @@ BEGIN
                     _newEvaluationMessage := Coalesce(_stepInfo.evaluationMessage, '');
 
                     If _stepInfo.completionCode > 0 Then
-                        _newEvaluationMessage := public.append_to_text(_newEvaluationMessage, format('Original completion code: %s', _stepInfo.completionCode), _delimiter => '; ', _maxlength => 512);
+                        _newEvaluationMessage := public.append_to_text(_newEvaluationMessage, format('Original completion code: %s', _stepInfo.completionCode));
                     End If;
 
                     If Coalesce(_stepInfo.completionMessage, '') <> '' Then
-                        _newEvaluationMessage := public.append_to_text(_newEvaluationMessage, format('Original completion msg: %s', _stepInfo.completionMessage), _delimiter => '; ', _maxlength => 512);
+                        _newEvaluationMessage := public.append_to_text(_newEvaluationMessage, format('Original completion msg: %s', _stepInfo.completionMessage));
                     End If;
 
                     -- This query updates the state to _newState

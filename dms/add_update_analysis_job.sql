@@ -103,6 +103,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job(IN _datasetname text,
 **          07/29/2022 mem - Assure that the parameter file and settings file names are not null
 **          07/27/2023 mem - Update message sent to get_new_job_id()
 **          09/06/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
 **
 *****************************************************/
 DECLARE
@@ -431,7 +432,7 @@ BEGIN
         End If;
 
         If Coalesce(_warning, '') <> '' Then
-            _comment := public.append_to_text(_comment, _warning, _delimiter => '; ', _maxlength => 512);
+            _comment := public.append_to_text(_comment, _warning);
 
             If _mode Like 'preview%' Then
                 _message := _warning;

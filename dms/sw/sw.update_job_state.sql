@@ -98,6 +98,7 @@ CREATE OR REPLACE PROCEDURE sw.update_job_state(IN _bypassdms boolean DEFAULT fa
 **          06/12/2018 mem - Send _maxLength to append_to_text
 **          03/12/2021 mem - Expand _comment to varchar(1024)
 **          08/03/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
 **                         - Align assignment statements
 **
 *****************************************************/
@@ -313,7 +314,7 @@ BEGIN
                 Comment = CASE WHEN _jobInfo.NewJobStateInBroker IN (5)                 -- 5=Failed
                                THEN _comment
                                WHEN _jobInfo.NewJobStateInBroker IN (4, 7)              -- 4=Complete, 7=No Intermediate Files Created
-                               THEN public.append_to_text(Comment, _comment, _delimiter => '; ', _maxlength => 1024)
+                               THEN public.append_to_text(Comment, _comment)
                                ELSE Comment
                           END,
                 Runtime_Minutes = _processingTimeMinutes

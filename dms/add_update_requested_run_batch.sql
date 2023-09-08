@@ -66,6 +66,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **                         - Fix bug reporting number of requested runs that would be associated with the batch
 **                         - Use new column name, owner_user_id
 **          07/11/2023 mem - Use COUNT(batch_id) instead of COUNT(*)
+**          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
 **
 *****************************************************/
 DECLARE
@@ -397,7 +398,7 @@ BEGIN
 
                     _duplicateMessage := format('Warning, both this batch and batch %s have batch group order = %s', _duplicateBatchID, _batchGroupOrder);
 
-                    _message := append_to_text(_message, _duplicateMessage, _delimiter => '; ', _maxlength => 512);
+                    _message := append_to_text(_message, _duplicateMessage);
                 End If;
             End If;
 

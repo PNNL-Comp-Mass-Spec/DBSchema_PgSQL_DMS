@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE public.set_capture_task_complete(IN _datasetname tex
 **          08/08/2018 mem - Add _completionState 14 (Duplicate Dataset Files)
 **          06/16/2023 mem - Ported to PostgreSQL
 **          07/11/2023 mem - Use COUNT(event_id) instead of COUNT(*)
+**          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
 **
 *****************************************************/
 DECLARE
@@ -157,7 +158,7 @@ BEGIN
 
     If _completionState = 5 And _failureMessage <> '' Then
         -- Add _failureMessage to the dataset comment (If not yet present)
-        _comment := public.append_to_text(_comment, _failureMessage, _delimiter => '; ', _maxlength => 512);
+        _comment := public.append_to_text(_comment, _failureMessage);
 
         UPDATE t_dataset
         SET comment = _comment

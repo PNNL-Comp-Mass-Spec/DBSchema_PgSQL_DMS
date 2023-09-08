@@ -62,7 +62,8 @@ CREATE OR REPLACE PROCEDURE sw.set_step_task_complete(IN _job integer, IN _step 
 **          09/21/2021 mem - Add support for completion code 23 (CLOSEOUT_RESET_JOB_STEP)
 **          08/26/2022 mem - Use new column name in T_Log_Entries
 **          03/29/2023 mem - Add support for completion codes 27 and 28 (SKIPPED_DIA_NN_SPEC_LIB and WAITING_FOR_DIA_NN_SPEC_LIB)
-**          12/15/2023 mem - Ported to PostgreSQL
+**          08/11/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
 **
 *****************************************************/
 DECLARE
@@ -115,8 +116,8 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _job := Coalesce(_job, 0);
-    _step := Coalesce(_step, 0);
+    _job           := Coalesce(_job, 0);
+    _step          := Coalesce(_step, 0);
     _processorName := Coalesce(_processorName, '');
 
     _jobStepDescription        := format('job %s, step %s', _job, _step);
@@ -434,7 +435,7 @@ BEGIN
 
                 UPDATE sw.t_job_steps
                 SET state = 7,        -- Holding
-                    completion_message = public.append_to_text(completion_message, _message, _delimiter => '; ', _maxlength => 256)
+                    completion_message = public.append_to_text(completion_message, _message)
                 WHERE job = _job AND
                       step = _step;
 

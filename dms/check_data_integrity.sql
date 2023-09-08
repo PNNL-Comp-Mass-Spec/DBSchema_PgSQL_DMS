@@ -17,6 +17,7 @@ CREATE OR REPLACE PROCEDURE public.check_data_integrity(IN _logerrors boolean DE
 **          06/01/2023 mem - Ported to PostgreSQL
 **          06/16/2023 mem - Use named arguments when calling append_to_text()
 **          07/11/2023 mem - Use COUNT(request_id) instead of COUNT(*)
+**          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
 **
 *****************************************************/
 DECLARE
@@ -61,7 +62,7 @@ BEGIN
             RAISE INFO '%', _errMsg;
         End If;
 
-        _message := public.append_to_text(_message, _errMsg, _delimiter => '; ', _maxlength => 512);
+        _message := public.append_to_text(_message, _errMsg);
 
     ElsIf Not _logErrors Then
         RAISE INFO 'No errors were found';
