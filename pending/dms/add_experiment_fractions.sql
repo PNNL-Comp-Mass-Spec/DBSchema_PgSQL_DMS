@@ -490,7 +490,7 @@ BEGIN
 
             -- Verify that experiment name is not duplicated in table
             --
-            _expId := get_experiment_id(_newExpName);
+            _expId := public.get_experiment_id(_newExpName);
 
             If _expId <> 0 Then
                 _message := format('Failed to add new fraction experiment since existing experiment already exists named: %s', _newExpName);
@@ -648,7 +648,7 @@ BEGIN
 
             If Not _wn Is Null Then
                 _wellIndex := _wellIndex + 1;
-                _wn := get_well_position(_wellIndex);
+                _wn := public.get_well_position(_wellIndex);
             End If;
 
         END LOOP; -- </AddFractions>

@@ -303,7 +303,7 @@ BEGIN
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
         End If;
 
-        _userID := get_user_id (_requesterUsername);
+        _userID := public.get_user_id(_requesterUsername);
 
         If _userID > 0 Then
             -- Function get_user_id recognizes both a username and the form 'LastName, FirstName (Username)'

@@ -69,7 +69,7 @@ BEGIN
     -- Resolve id for rating
     ---------------------------------------------------
 
-    _ratingID := get_dataset_rating_id (_rating);
+    _ratingID := public.get_dataset_rating_id(_rating);
 
     If _ratingID = 0 Then
         _message := format('Could not find entry in database for rating "%s"', _rating);

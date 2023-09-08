@@ -177,7 +177,7 @@ BEGIN
         RETURN;
     End If;
 
-    _eusUsersList := get_requested_run_eus_users_list(_requestedRunInfo.SourceDatasetRequestID, 'I');
+    _eusUsersList := public.get_requested_run_eus_users_list(_requestedRunInfo.SourceDatasetRequestID, 'I');
 
     If _newOperatorUsername <> '' Then
         ---------------------------------------------------

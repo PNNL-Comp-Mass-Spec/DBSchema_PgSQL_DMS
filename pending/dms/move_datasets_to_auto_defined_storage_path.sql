@@ -214,11 +214,11 @@ BEGIN
             -- Lookup the auto-defined archive path
             -----------------------------------------
 
-            _archivePathIDNew := get_instrument_archive_path_for_new_datasets (
-                                    _datasetInfo.InstrumentID,
-                                    _datasetInfo.DatasetID,
-                                    _autoSwitchActiveArchive => false,
-                                    _infoOnly => false);
+            _archivePathIDNew := public.get_instrument_archive_path_for_new_datasets (
+                                            _datasetInfo.InstrumentID,
+                                            _datasetInfo.DatasetID,
+                                            _autoSwitchActiveArchive => false,
+                                            _infoOnly => false);
 
             If _archivePathIDNew = 0 Or _archivePathID = _archivePathIDNew Then
                 CONTINUE;

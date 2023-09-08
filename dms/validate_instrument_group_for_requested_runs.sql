@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE public.validate_instrument_group_for_requested_runs(
 **  Date:   01/15/2023 mem - Initial version (code refactored code from UpdateRequestedRunAssignments)
 **          05/31/2023 mem - Use format() for string concatenation
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Include schema name when calling function
 **
 *****************************************************/
 DECLARE
@@ -121,7 +122,7 @@ BEGIN
                            FROM t_instrument_group_allowed_ds_type
                            WHERE instrument_group = _instrumentGroup::citext AND dataset_type = _requestInfo.DatasetTypeName) Then
 
-                _allowedDatasetTypes := get_instrument_group_dataset_type_list(_instrumentGroup::citext, ', ');
+                _allowedDatasetTypes := public.get_instrument_group_dataset_type_list (_instrumentGroup::citext, ', ');
 
                 _message := format('Dataset type "%s" is invalid for instrument group "%s"; valid types are "%s"',
                                    _requestInfo.DatasetTypeName, _instrumentGroup, _allowedDatasetTypes);

@@ -261,7 +261,7 @@ BEGIN
         -- Resolve _tissue to BTO identifier
         ---------------------------------------------------
 
-        CALL get_tissue_id (
+        CALL public.get_tissue_id (
                 _tissueNameOrID => _tissue,
                 _tissueIdentifier => _tissueIdentifier output,
                 _tissueName => _tissueName output,
@@ -345,7 +345,7 @@ BEGIN
         -- Resolve campaign ID
         ---------------------------------------------------
 
-        _campaignID := get_campaign_id (_campaignName);
+        _campaignID := public.get_campaign_id(_campaignName);
 
         If _campaignID = 0 Then
             RAISE EXCEPTION 'Could not find entry in database for campaign "%"', _campaignName;
@@ -388,7 +388,7 @@ BEGIN
         -- Resolve organism ID
         ---------------------------------------------------
 
-        _organismID := get_organism_id(_organismName);
+        _organismID := public.get_organism_id(_organismName);
 
         If _organismID = 0 Then
             RAISE EXCEPTION 'Could not find entry in database for organism name "%"', _organismName;

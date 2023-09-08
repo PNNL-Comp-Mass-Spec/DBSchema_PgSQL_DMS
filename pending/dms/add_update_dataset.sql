@@ -431,7 +431,7 @@ BEGIN
             _mode := 'add';
             _addingDataset := true;
         Else
-            _ratingID := get_dataset_rating_id (_rating);
+            _ratingID := public.get_dataset_rating_id (_rating);
 
             If _ratingID = 0 Then
                 RAISE EXCEPTION 'Could not find entry in database for rating %', _rating;
@@ -547,12 +547,12 @@ BEGIN
         -- Resolve experiment ID
         ---------------------------------------------------
 
-        _experimentID := get_experiment_id(_experimentName);
+        _experimentID := public.get_experiment_id (_experimentName);
 
         If _experimentID = 0 And _experimentName::citext SIMILAR TO 'QC_Shew_[0-9][0-9]_[0-9][0-9]' And _experimentName Like '%-%' Then
 
             _newExperiment := Replace(_experimentName, '-', '_');
-            _experimentID := get_experiment_id(_newExperiment);
+            _experimentID := public.get_experiment_id (_newExperiment);
 
             If _experimentID > 0 Then
                 SELECT experiment
@@ -570,7 +570,7 @@ BEGIN
         -- Resolve instrument ID
         ---------------------------------------------------
 
-        _instrumentID := get_instrument_id(_instrumentName);
+        _instrumentID := public.get_instrument_id (_instrumentName);
 
         If _instrumentID = 0 Then
             RAISE EXCEPTION 'Could not find entry in database for instrument %', _instrumentName;
@@ -606,7 +606,7 @@ BEGIN
         -- Resolve dataset type ID
         ---------------------------------------------------
 
-        _datasetTypeID := get_dataset_type_id(_msType);
+        _datasetTypeID := public.get_dataset_type_id(_msType);
 
         If _datasetTypeID = 0 Then
             -- Could not resolve _msType to a dataset type
@@ -666,7 +666,7 @@ BEGIN
 
                 -- This is an IMS MS/MS dataset
                 _msType := 'IMS-HMS-HMSn';
-                _datasetTypeID := get_dataset_type_id (_msType);
+                _datasetTypeID := public.get_dataset_type_id (_msType);
 
             Else
                 -- Not an IMS dataset; change _datasetTypeID to zero so that the default dataset type is used
@@ -1068,7 +1068,7 @@ BEGIN
                 CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
-            _storagePathID := get_instrument_storage_path_for_new_datasets (_instrumentID, _refDate, _autoSwitchActiveStorage => true, _infoOnly => false);
+            _storagePathID := public.get_instrument_storage_path_for_new_datasets (_instrumentID, _refDate, _autoSwitchActiveStorage => true, _infoOnly => false);
 
             If _storagePathID = 0 Then
                 _storagePathID := 2; -- index of 'none' in t_storage_path

@@ -35,6 +35,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_instrument_runtime(_startinterval 
 **          05/31/2023 mem - Use format() for string concatenation
 **          07/18/2023 mem - Specify column names when returning data from Tmp_TX
 **          09/08/2023 mem - Adjust capitalization of keywords
+**                         - Include schema name when calling function
 **
 *****************************************************/
 DECLARE
@@ -395,7 +396,7 @@ BEGIN
     ---------------------------------------------------
 
     If _longIntervalsOnly = 1 Then
-        _maxNormalInterval := get_long_interval_threshold();
+        _maxNormalInterval := public.get_long_interval_threshold();
 
         DELETE FROM Tmp_TX
         WHERE Tmp_TX.Dataset = 'Interval' AND Tmp_TX.Duration <= _maxNormalInterval;

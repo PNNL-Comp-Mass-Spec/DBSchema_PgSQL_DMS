@@ -878,7 +878,7 @@ BEGIN
 
             INSERT INTO Tmp_NewJobIDs (ID)
             SELECT Job
-            FROM get_new_job_id_block (_numDatasets, 'Created in t_analysis_job');
+            FROM public.get_new_job_id_block(_numDatasets, 'Created in t_analysis_job');
 
             -- Use the job number information in Tmp_NewJobIDs to update Tmp_DatasetInfo
 

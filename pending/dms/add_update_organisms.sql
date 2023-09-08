@@ -295,18 +295,18 @@ BEGIN
             -- Existing values are preserved if matches are not found
             ---------------------------------------------------
 
-            CALL get_taxonomy_value_by_taxonomy_id (
-                    _ncbiTaxonomyID,
-                    _orgDomain => _orgDomain,       -- Output
-                    _orgKingdom => _orgKingdom,     -- Output
-                    _orgPhylum => _orgPhylum,       -- Output
-                    _orgClass => _orgClass,         -- Output
-                    _orgOrder => _orgOrder,         -- Output
-                    _orgFamily => _orgFamily,       -- Output
-                    _orgGenus => _orgGenus,         -- Output
-                    _orgSpecies => _orgSpecies,     -- Output
-                    _orgStrain => _orgStrain,       -- Output
-                    _previewResults => false);
+            CALL public.get_taxonomy_value_by_taxonomy_id (
+                            _ncbiTaxonomyID,
+                            _orgDomain => _orgDomain,       -- Output
+                            _orgKingdom => _orgKingdom,     -- Output
+                            _orgPhylum => _orgPhylum,       -- Output
+                            _orgClass => _orgClass,         -- Output
+                            _orgOrder => _orgOrder,         -- Output
+                            _orgFamily => _orgFamily,       -- Output
+                            _orgGenus => _orgGenus,         -- Output
+                            _orgSpecies => _orgSpecies,     -- Output
+                            _orgStrain => _orgStrain,       -- Output
+                            _previewResults => false);
 
         End If;
 
@@ -319,7 +319,7 @@ BEGIN
         -- Cannot create an entry that already exists
         --
         If _mode = 'add' Then
-            _existingOrganismID := get_organism_id(_orgName);
+            _existingOrganismID := public.get_organism_id(_orgName);
 
             If _existingOrganismID <> 0 Then
                 RAISE EXCEPTION 'Cannot add: Organism "%" already in database', _orgName;

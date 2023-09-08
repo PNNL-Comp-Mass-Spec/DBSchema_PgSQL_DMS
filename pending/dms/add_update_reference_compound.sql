@@ -226,7 +226,7 @@ BEGIN
         -- Resolve organism name to ID
         ---------------------------------------------------
 
-        _organismID := get_organism_id(_organismName);
+        _organismID := public.get_organism_id(_organismName);
 
         If _organismID = 0 Then
             RAISE EXCEPTION 'Could not find entry in database for organism name "%"', _organismName;
@@ -254,7 +254,7 @@ BEGIN
         -- Resolve campaign name to ID
         ---------------------------------------------------
 
-        _campaignID := get_campaign_id (_campaignName);
+        _campaignID := public.get_campaign_id(_campaignName);
 
         If _campaignID = 0 Then
             RAISE EXCEPTION 'Could not resolve campaign name "%" to ID', _campaignName;

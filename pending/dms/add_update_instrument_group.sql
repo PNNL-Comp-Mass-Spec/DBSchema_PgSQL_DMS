@@ -89,7 +89,7 @@ BEGIN
         _mode                   := Trim(Lower(Coalesce(_mode, '')));
 
         If _defaultDatasetTypeName <> '' Then
-            _datasetTypeID := get_dataset_type_id (_defaultDatasetTypeName);
+            _datasetTypeID := public.get_dataset_type_id(_defaultDatasetTypeName);
         Else
             _datasetTypeID := 0;
         End If;

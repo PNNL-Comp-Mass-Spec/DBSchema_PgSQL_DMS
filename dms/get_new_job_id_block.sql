@@ -17,11 +17,11 @@ CREATE OR REPLACE FUNCTION public.get_new_job_id_block(_jobcount integer, _note 
 **
 **      INSERT INTO Tmp_Jobs (Job)
 **      SELECT job
-**      FROM get_new_job_id_block (4, 'Created in t_analysis_job');
+**      FROM public.get_new_job_id_block(4, 'Created in t_analysis_job');
 **
 **      INSERT INTO Tmp_Jobs (Job)
 **      SELECT job
-**      FROM get_new_job_id_block (1, 'Created in sw.t_jobs');
+**      FROM public.get_new_job_id_block(1, 'Created in sw.t_jobs');
 **
 **  Arguments:
 **    _jobCount   Number of jobs to make

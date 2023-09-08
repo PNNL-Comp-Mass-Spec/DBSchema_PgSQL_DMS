@@ -15,13 +15,14 @@ CREATE OR REPLACE FUNCTION dpkg.get_myemsl_url_data_package_name(_datapackagenam
 **  Date:   09/24/2013
 **          06/12/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
+**          09/08/2023 mem - Include schema name when calling function
 **
 *****************************************************/
 DECLARE
     _keyName text := 'extended_metadata.gov_pnnl_emsl_dms_datapackage.name.untouched';
     _url text;
 BEGIN
-    _url := public.get_myemsl_url_work(_keyName, _dataPackageName);
+    _url := public.get_myemsl_url_work (_keyName, _dataPackageName);
 
     RETURN _url;
 END

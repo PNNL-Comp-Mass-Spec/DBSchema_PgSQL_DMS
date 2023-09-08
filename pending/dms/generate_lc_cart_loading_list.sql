@@ -335,7 +335,7 @@ BEGIN
         RR.run_order AS Run_Order,
         EUT.eus_usage_type AS EMSL_Usage_Type,
         RR.eus_proposal_id AS EMSL_Proposal_ID,
-        get_requested_run_eus_users_list(RR.request_id, 'I')::citext AS EMSL_Users_List
+        public.get_requested_run_eus_users_list(RR.request_id, 'I')::citext AS EMSL_Users_List
     FROM t_experiments E
          INNER JOIN t_requested_run RR
            ON E.exp_id = RR.exp_id

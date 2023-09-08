@@ -29,7 +29,7 @@ CREATE OR REPLACE FUNCTION public.get_psm_job_defaults(_datasets text) RETURNS T
 **    error_message             Empty string if no problems, error message if an issue
 **
 **  Example usage:
-**    SELECT * FROM get_psm_job_defaults ('QC_Mam_23_01_Run01_FAIMS_Merry_02June23_WBEH-23-05-13');
+**    SELECT * FROM public.get_psm_job_defaults('QC_Mam_23_01_Run01_FAIMS_Merry_02June23_WBEH-23-05-13');
 **
 **  Example results:
 **    Datasets:                 QC_Mam_23_01_Run01_FAIMS_Merry_02June23_WBEH-23-05-13

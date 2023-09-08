@@ -11,9 +11,9 @@ CREATE OR REPLACE FUNCTION public.get_dataset_rating_id(_datasetratingname text 
 **      Gets dataset rating ID for given dataset rating name
 **
 **  Example usage:
-**      SELECT get_dataset_rating_id ('Unknown');
-**      SELECT get_dataset_rating_id ('Unreviewed');
-**      SELECT get_dataset_rating_id ('Released');
+**      SELECT public.get_dataset_rating_id('Unknown');
+**      SELECT public.get_dataset_rating_id('Unreviewed');
+**      SELECT public.get_dataset_rating_id('Released');
 **
 **  Auth:   grk
 **  Date:   01/26/2001 grk - Initial version

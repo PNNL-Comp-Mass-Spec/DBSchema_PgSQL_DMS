@@ -446,7 +446,7 @@ BEGIN
 
             INSERT INTO Tmp_NewJobIDs (ID)
             SELECT Job
-            FROM get_new_job_id_block (_jobCount, 'Clone_Analysis_Jobs');
+            FROM public.get_new_job_id_block(_jobCount, 'Clone_Analysis_Jobs');
 
             SELECT MIN(Id)
             INTO _newJobIdStart

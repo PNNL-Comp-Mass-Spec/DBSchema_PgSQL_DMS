@@ -108,7 +108,7 @@ BEGIN
         End If;
 
         If (_entryType = 'DynamicModification') Then
-            _localSymbolID := get_next_local_symbol_id (_paramFileID)
+            _localSymbolID := public.get_next_local_symbol_id(_paramFileID)
             _typeSymbol := 'D';
         End If;
 

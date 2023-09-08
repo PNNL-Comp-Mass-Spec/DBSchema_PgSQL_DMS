@@ -145,7 +145,7 @@ BEGIN
         End If;
 
         _msType        := 'Tracking';
-        _datasetTypeID := get_dataset_type_id (_msType);
+        _datasetTypeID := public.get_dataset_type_id(_msType);
 
         ---------------------------------------------------
         -- Validate the inputs
@@ -250,7 +250,7 @@ BEGIN
         -- Resolve experiment ID
         ---------------------------------------------------
 
-        _experimentID := get_experiment_id(_experimentName);
+        _experimentID := public.get_experiment_id(_experimentName);
 
         If _experimentID = 0 Then
             RAISE EXCEPTION 'Could not find entry in database for experiment %', _experimentName;
@@ -260,7 +260,7 @@ BEGIN
         -- Resolve instrument ID
         ---------------------------------------------------
 
-        _instrumentID := get_instrument_id(_instrumentName);
+        _instrumentID := public.get_instrument_id(_instrumentName);
 
         If _instrumentID = 0 Then
             RAISE EXCEPTION 'Could not find entry in database for instrument %', _instrumentName;
@@ -270,10 +270,10 @@ BEGIN
         -- Resolve user ID for operator username
         ---------------------------------------------------
 
-        _userID := public.get_user_id (_operatorUsername);
+        _userID := public.get_user_id(_operatorUsername);
 
         If _userID > 0 Then
-            -- Function get_user_id recognizes both a username and the form 'LastName, FirstName (Username)'
+            -- Function get_user_id() recognizes both a username and the form 'LastName, FirstName (Username)'
             -- Assure that _operatorUsername contains simply the username
             --
             SELECT username
@@ -310,7 +310,7 @@ BEGIN
             -- Lookup storage path ID
             ---------------------------------------------------
 
-            _storagePathID := get_instrument_storage_path_for_new_datasets (_instrumentID, _refDate, _autoSwitchActiveStorage => true, _infoOnly => false);
+            _storagePathID := public.get_instrument_storage_path_for_new_datasets(_instrumentID, _refDate, _autoSwitchActiveStorage => true, _infoOnly => false);
 
             If _storagePathID = 0 Then
                 _storagePathID := 2; -- index of 'none' in table

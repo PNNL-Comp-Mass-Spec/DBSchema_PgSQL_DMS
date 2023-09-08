@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_archive_path(INOUT _archivepathid 
 **          09/07/2023 mem - Align assignment statements
 **                         - Update warning messages
 **          09/08/2023 mem - Adjust capitalization of keywords
+**                         - Include schema name when calling function
 **
 *****************************************************/
 DECLARE
@@ -109,7 +110,7 @@ BEGIN
     -- Resolve instrument ID
     ---------------------------------------------------
 
-    _instrumentID := get_instrument_id(_instrumentName);
+    _instrumentID := public.get_instrument_id (_instrumentName);
 
     If _instrumentID = 0 Then
         RAISE EXCEPTION 'Could not find entry in database for instrument "%"', _instrumentName;

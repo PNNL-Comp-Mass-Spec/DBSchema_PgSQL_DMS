@@ -60,7 +60,7 @@ BEGIN
     -- Get ParamFileID
     ---------------------------------------------------
 
-    _paramEntryID := get_param_entry_id(_paramFileID, _entryType, _entrySpecifier, _entrySeqOrder);
+    _paramEntryID := public.get_param_entry_id(_paramFileID, _entryType, _entrySpecifier, _entrySeqOrder);
 
     ---------------------------------------------------
     -- Delete any entries for the parameter file from the entries table

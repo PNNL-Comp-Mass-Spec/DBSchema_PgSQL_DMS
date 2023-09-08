@@ -199,7 +199,7 @@ BEGIN
         -- Resolve campaign name to ID
         ---------------------------------------------------
 
-        _campaignID := get_campaign_id (_campaignName);
+        _campaignID := public.get_campaign_id(_campaignName);
 
         If _campaignID = 0 Then
             _msg := format('Could not resolve campaign name "%s" to ID"', _campaignName);
@@ -247,7 +247,7 @@ BEGIN
         -- Verify that Owner Username  is valid
         -- and get its id number
 
-        _userID := get_user_id (_contactUsername);
+        _userID := public.get_user_id(_contactUsername);
 
         If _userID > 0 Then
             -- Function get_user_id recognizes both a username and the form 'LastName, FirstName (Username)'

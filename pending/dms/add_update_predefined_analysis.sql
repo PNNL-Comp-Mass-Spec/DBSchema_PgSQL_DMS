@@ -370,7 +370,7 @@ BEGIN
         -- Resolve organism ID
         ---------------------------------------------------
 
-        _organismID := get_organism_id(_organismName);
+        _organismID := public.get_organism_id(_organismName);
 
         If _organismID = 0 Then
             _msg := format('Could not find entry in database for organismName "%s"', _organismName);

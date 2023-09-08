@@ -78,7 +78,7 @@ BEGIN
         _status := Trim(Coalesce(_status, ''));
 
         If Coalesce(_callingUser, '') = '' Then
-            _callingUser := get_user_login_without_domain('');
+            _callingUser := public.get_user_login_without_domain('');
         End If;
 
         If char_length(_locationTag) < 1 Then

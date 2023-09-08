@@ -50,6 +50,7 @@ CREATE OR REPLACE FUNCTION public.get_monthly_instrument_usage_report(_instrumen
 **                         - Compute percentage values when _outputFormat is 'rollup'
 **                         - Add missing columns to debug reports
 **          09/08/2023 mem - Adjust capitalization of keywords
+**                         - Include schema name when calling function
 **
 *****************************************************/
 DECLARE
@@ -239,7 +240,7 @@ BEGIN
                    RR.eus_usage_type_id AS UsageID,
                    EUT.eus_usage_type AS Usage,
                    1
-            FROM get_run_tracking_monthly_info_by_id ( _eusInstrumentId, _yearValue, _monthValue, _options => '' ) AS GRTMI
+            FROM public.get_run_tracking_monthly_info_by_id ( _eusInstrumentId, _yearValue, _monthValue, _options => '' ) AS GRTMI
                  LEFT OUTER JOIN t_requested_run AS RR
                    ON GRTMI.id = RR.dataset_id
                  INNER JOIN t_eus_usage_type EUT
@@ -777,7 +778,7 @@ BEGIN
 
             -- Get operator user ID for datasets
             UPDATE Tmp_InstrumentUsage IU
-            SET Users = get_requested_run_eus_users_list(RR.request_id, 'I')
+            SET Users = public.get_requested_run_eus_users_list(RR.request_id, 'I')
             FROM t_requested_run RR
             WHERE IU.Type = 'Dataset' AND
                   IU.dataset_id = RR.dataset_id;

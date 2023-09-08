@@ -17,12 +17,13 @@ CREATE OR REPLACE FUNCTION public.get_myemsl_url_analysis_job(_jobresultsfoldern
 **  Date:   09/12/2013
 **          06/21/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
+**          09/08/2023 mem - Include schema name when calling function
 **
 *****************************************************/
 DECLARE
     _keyName text := 'extended_metadata.gov_pnnl_emsl_dms_analysisjob.name.untouched';
 BEGIN
-    RETURN get_myemsl_url_work(_keyName, _jobResultsFolderName);
+    RETURN public.get_myemsl_url_work (_keyName, _jobResultsFolderName);
 END
 $$;
 

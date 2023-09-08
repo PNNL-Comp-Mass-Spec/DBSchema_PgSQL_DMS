@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE public.add_archive_dataset(IN _datasetid integer, IN
 **          05/19/2023 mem - Remove redundant parentheses
 **          05/30/2023 mem - Use format() for string concatenation
 **          06/15/2023 mem - Leave _returnCode as '' if the dataset already exists in t_dataset_archive
+**          09/08/2023 mem - Include schema name when calling function
 **
 *****************************************************/
 DECLARE
@@ -114,7 +115,7 @@ BEGIN
     -- Get the assigned archive path
     ---------------------------------------------------
 
-    _archivePathID := get_instrument_archive_path_for_new_datasets (_instrumentID, _datasetID, _autoSwitchActiveArchive => true, _infoOnly => false);
+    _archivePathID := public.get_instrument_archive_path_for_new_datasets (_instrumentID, _datasetID, _autoSwitchActiveArchive => true, _infoOnly => false);
 
     If _archivePathID = 0 Then
         _message := format('get_instrument_archive_path_for_new_datasets returned zero for an archive path ID for dataset %s', _datasetID);

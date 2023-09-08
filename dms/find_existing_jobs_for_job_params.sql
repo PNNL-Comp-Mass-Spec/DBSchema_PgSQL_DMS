@@ -31,6 +31,7 @@ CREATE OR REPLACE FUNCTION public.find_existing_jobs_for_job_params(_datasetlist
 **          05/12/2023 mem - Rename variables
 **          09/01/2023 mem - Remove unnecessary cast to citext for string constants
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Include schema name when calling function
 **
 *****************************************************/
 DECLARE
@@ -121,13 +122,13 @@ BEGIN
     -- Convert organism name to ID
     ---------------------------------------------------
 
-    _organismID := get_organism_id(_organismName);
+    _organismID := public.get_organism_id (_organismName);
 
     ---------------------------------------------------
     -- Convert tool name to ID
     ---------------------------------------------------
 
-    _analysisToolID := get_analysis_tool_id (_toolName);
+    _analysisToolID := public.get_analysis_tool_id (_toolName);
 
     ---------------------------------------------------
     -- Look for existing jobs

@@ -62,6 +62,7 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **                         - Set _returnCode to 'U5225' if an existing spectral library is not found, and _allowAddNew is false
 **          09/07/2023 mem - Align assignment statements
 **                         - Update warning messages
+**          09/08/2023 mem - Include schema name when calling function
 **
 *****************************************************/
 DECLARE
@@ -449,7 +450,7 @@ BEGIN
         -- Compute a SHA-1 hash of the settings
         ---------------------------------------------------
 
-        _hash := get_spectral_library_settings_hash (
+        _hash := public.get_spectral_library_settings_hash (
                     _libraryId => 0,
                     _proteinCollectionList => _proteinCollectionList,
                     _organismDbFile => _organismDbFile,

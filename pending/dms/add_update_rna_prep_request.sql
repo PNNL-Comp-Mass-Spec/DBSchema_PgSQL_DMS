@@ -175,7 +175,7 @@ BEGIN
         -- Resolve campaign ID
         ---------------------------------------------------
 
-        _campaignID := get_campaign_id (_campaignName);
+        _campaignID := public.get_campaign_id(_campaignName);
 
         If _campaignID = 0 Then
             RAISE EXCEPTION 'Could not find entry in database for campaignNum "%"', _campaign;
@@ -185,7 +185,7 @@ BEGIN
         -- Resolve organism ID
         ---------------------------------------------------
 
-        _organismID := get_organism_id(_organism);
+        _organismID := public.get_organism_id(_organism);
 
         If _organismID = 0 Then
             RAISE EXCEPTION 'Could not find entry in database for organismName "%"', _organism;

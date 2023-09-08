@@ -186,7 +186,7 @@ BEGIN
                        Year,
                        Month,
                        Dataset_ID
-                FROM get_monthly_instrument_usage_report (_instrument, 0, _year, _month, 'report');
+                FROM public.get_monthly_instrument_usage_report(_instrument, 0, _year, _month, 'report');
             End If;
 
         END LOOP;
@@ -202,7 +202,7 @@ BEGIN
             ORDER BY EUS_Instrument_ID
         LOOP
             If _infoOnly Then
-                RAISE INFO 'SELECT * FROM get_monthly_instrument_usage_report ('''', %, %, %, ''report'')', _eusInstrumentId, _year, _month;
+                RAISE INFO 'SELECT * FROM public.get_monthly_instrument_usage_report('''', %, %, %, ''report'')', _eusInstrumentId, _year, _month;
             End If;
 
             If Not _skipProcedureCall Then
@@ -220,7 +220,7 @@ BEGIN
                        Year,
                        Month,
                        Dataset_ID
-                FROM get_monthly_instrument_usage_report ('', _eusInstrumentId, _year, _month, 'report');
+                FROM public.get_monthly_instrument_usage_report('', _eusInstrumentId, _year, _month, 'report');
             End If;
 
         END LOOP;

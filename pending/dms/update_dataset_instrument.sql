@@ -132,7 +132,7 @@ BEGIN
         RETURN;
     End If;
 
-    _storagePathIdNew := get_instrument_storage_path_for_new_datasets (_instrumentIdNew, _datasetCreated, _autoSwitchActiveStorage => false, _infoOnly => false);
+    _storagePathIdNew := public.get_instrument_storage_path_for_new_datasets(_instrumentIdNew, _datasetCreated, _autoSwitchActiveStorage => false, _infoOnly => false);
 
     SELECT public.combine_paths(vol_client, Path)
     INTO _storagePathNew

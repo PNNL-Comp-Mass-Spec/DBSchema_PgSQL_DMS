@@ -136,7 +136,7 @@ BEGIN
     _returnCode := '';
 
     If Coalesce(_callingUser, '') = '' Then
-        _callingUser := get_user_login_without_domain('');
+        _callingUser := public.get_user_login_without_domain('');
     End If;
 
     _infoOnly := Coalesce(_infoOnly, false);

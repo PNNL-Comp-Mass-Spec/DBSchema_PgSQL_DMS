@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE public.add_mass_correction_entry(IN _modname text, I
 **          04/02/2020 mem - Expand _modName to varchar(32)
 **          08/27/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Update warning messages
+**          09/08/2023 mem - Include schema name when calling function
 **
 *****************************************************/
 DECLARE
@@ -69,7 +70,7 @@ BEGIN
     -- Is mod mass already in database?
     ---------------------------------------------------
 
-    _massCorrectionID := get_mass_correction_id(_modMassChange);
+    _massCorrectionID := public.get_mass_correction_id (_modMassChange);
 
     -- Cannot create an entry that already exists
     -- Look for existing modifications with a mass within 0.00006 Da of _modMasschange

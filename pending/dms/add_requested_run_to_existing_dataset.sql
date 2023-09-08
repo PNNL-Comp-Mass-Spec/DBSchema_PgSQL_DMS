@@ -209,7 +209,7 @@ BEGIN
                    requester_username,
                    eus_proposal_id,
                    EUT.eus_usage_type,
-                   get_requested_run_eus_users_list(RR.request_id, 'I')
+                   public.get_requested_run_eus_users_list(RR.request_id, 'I')
             INTO _workPackage, _requesterUsername, _eusProposalID, _eusUsageType, _eusUsersList
             FROM t_requested_run AS RR
                  INNER JOIN t_eus_usage_type AS EUT

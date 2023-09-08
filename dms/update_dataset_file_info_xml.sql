@@ -97,6 +97,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_file_info_xml(IN _datasetid in
 **          07/11/2023 mem - Use COUNT(dataset_file_id) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**                         - Include schema name when calling function
 **
 *****************************************************/
 DECLARE
@@ -840,7 +841,7 @@ BEGIN
         -----------------------------------------------
 
         UPDATE t_dataset_info DI
-        SET scan_types = get_dataset_scan_type_list(_datasetID)
+        SET scan_types = public.get_dataset_scan_type_list (_datasetID)
         WHERE DI.dataset_id = _datasetID;
 
         -----------------------------------------------

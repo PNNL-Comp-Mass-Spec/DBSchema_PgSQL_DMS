@@ -208,7 +208,7 @@ BEGIN
     ---------------------------------------------------
 
     UPDATE t_biomaterial
-    SET Cached_Organism_List = get_biomaterial_organism_list(_biomaterialID)
+    SET Cached_Organism_List = public.get_biomaterial_organism_list(_biomaterialID)
     WHERE Biomaterial_ID = _biomaterialID;
 
     ---------------------------------------------------

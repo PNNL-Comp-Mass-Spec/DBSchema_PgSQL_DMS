@@ -57,6 +57,7 @@ CREATE OR REPLACE PROCEDURE public.update_emsl_instrument_usage_report(IN _instr
 **                         - Call procedure Update_EMSL_Instrument_Acq_Overlap_Data
 **          07/15/2022 mem - Instrument operator ID is now tracked as an actual integer
 **          08/30/2023 mem - Ported to PostgreSQL
+**          09/08/2023 mem - Include schema name when calling function
 **
 *****************************************************/
 DECLARE
@@ -172,9 +173,9 @@ BEGIN
 
     BEGIN
         -- Lookup the long interval threshold (which should be 180 minutes)
-        _maxNormalInterval := get_long_interval_threshold();
+        _maxNormalInterval := public.get_long_interval_threshold ();
 
-        _callingUser := get_user_login_without_domain('');
+        _callingUser := public.get_user_login_without_domain ('');
 
         ---------------------------------------------------
         -- Figure out our time context
@@ -1338,7 +1339,7 @@ BEGIN
         If Not _infoOnly Then
 
             UPDATE t_emsl_instrument_usage_report InstUsage
-            SET comment = get_nearest_preceding_log_entry(InstUsage.seq, false)
+            SET comment = public.get_nearest_preceding_log_entry (InstUsage.seq, false)
             FROM t_emsl_instrument_usage_type InstUsageType
             WHERE InstUsage.Year = _year AND
                   InstUsage.Month = _month AND
@@ -1379,7 +1380,7 @@ BEGIN
                        InstUsage.Seq,
                        InstName.Instrument,
                        comment AS Old_Comment,
-                       get_nearest_preceding_log_entry(InstUsage.seq, false) AS New_Comment
+                       public.get_nearest_preceding_log_entry (InstUsage.seq, false) AS New_Comment
                 FROM t_emsl_instrument_usage_report InstUsage
                      INNER JOIN t_instrument_name InstName
                        ON InstUsage.DMS_Inst_ID = InstName.instrument_id

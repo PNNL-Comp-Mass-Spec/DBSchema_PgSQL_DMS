@@ -83,6 +83,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_local_job_in_broker(INOUT _job integer
 **          07/27/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**                         - Include schema name when calling function
 **
 *****************************************************/
 DECLARE
@@ -220,7 +221,7 @@ BEGIN
 
         If Coalesce(_ownerUsername, '') = '' Then
             -- Auto-define the owner
-            _ownerUsername := get_user_login_without_domain(_callingUser);
+            _ownerUsername := public.get_user_login_without_domain (_callingUser);
         End If;
 
         If _mode::citext in ('add', 'previewAdd') Then

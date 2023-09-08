@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE public.report_dataset_instrument_runtime(IN _startda
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          07/18/2023 mem - Ported to PostgreSQL
+**          09/08/2023 mem - Include schema name when calling function
 **
 *****************************************************/
 DECLARE
@@ -135,7 +136,7 @@ BEGIN
                    Src.campaign_id,
                    Src.fraction_emsl_funded,
                    Src.campaign_proposals
-            FROM get_dataset_instrument_runtime(_stDate, _eDate, _instrumentName::citext, _reportOptions::citext) As Src
+            FROM public.get_dataset_instrument_runtime (_stDate, _eDate, _instrumentName::citext, _reportOptions::citext) As Src
             ORDER BY Src.Seq;
 
     EXCEPTION

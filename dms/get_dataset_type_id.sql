@@ -11,9 +11,9 @@ CREATE OR REPLACE FUNCTION public.get_dataset_type_id(_datasettype text DEFAULT 
 **      Gets Dataset Type ID for given for given dataset type name
 **
 **  Example usage:
-**      SELECT get_dataset_type_id ('HMS-MSn');
-**      SELECT get_dataset_type_id ('HMS-HCD-HMSn');
-**      SELECT get_dataset_type_id ('IMS-HMS-HMSn');
+**      SELECT public.get_dataset_type_id('HMS-MSn');
+**      SELECT public.get_dataset_type_id('HMS-HCD-HMSn');
+**      SELECT public.get_dataset_type_id('IMS-HMS-HMSn');
 **
 **  Auth:   grk
 **  Date:   01/26/2001 grk - Initial version
