@@ -19,6 +19,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_sample_prep_request_after_update() RE
 **          06/15/2021 mem - Do not insert a row if the state is unchanged and current user is msdadmin
 **          08/06/2022 mem - Ported to PostgreSQL
 **          08/08/2022 mem - Reference the OLD and NEW variables directly instead of using transition tables (which contain every updated row, not just the current row)
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -28,9 +29,9 @@ BEGIN
 
     _username := public.get_user_login_without_domain('');
 
-    If OLD.state_id <> NEW.state_id OR          -- Use <> since state_id is never null
-       OLD.state_id = NEW.state_id AND
-       Not _username IN ('postgres', 'msdadmin') Then
+    If OLD.state_id <> NEW.state_id Or          -- Use <> since state_id is never null
+       OLD.state_id = NEW.state_id And
+       Not _username In ('postgres', 'msdadmin') Then
 
         INSERT INTO t_sample_prep_request_updates
             (

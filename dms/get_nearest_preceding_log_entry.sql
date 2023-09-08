@@ -27,6 +27,7 @@ CREATE OR REPLACE FUNCTION public.get_nearest_preceding_log_entry(_seq integer, 
 **          06/21/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
 **          05/30/2023 mem - Use format() for string concatenation
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -54,7 +55,7 @@ BEGIN
            ON InstUsage.usage_type_id = InstUsageType.usage_type_id
     WHERE InstUsage.seq = _seq;
 
-    If _usageInfo.usage_type <> 'ONSITE' AND Coalesce(_usageInfo.comment, '') = '' Then
+    If _usageInfo.usage_type <> 'ONSITE' And Coalesce(_usageInfo.comment, '') = '' Then
 
         SELECT entry_id,
                entered,

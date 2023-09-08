@@ -306,7 +306,7 @@ BEGIN
                 _mergeUpdateCount := 0;
             End If;
 
-            If _mergeUpdateCount > 0 OR _mergeInsertCount > 0 Then
+            If _mergeUpdateCount > 0 Or _mergeInsertCount > 0 Then
                 _message := format('Updated t_charge_code: %s added, %s updated', _mergeInsertCount, _mergeUpdateCount);
 
                 CALL post_log_entry ('Normal', _message, 'Update_Charge_Codes_From_Warehouse');
@@ -346,7 +346,7 @@ BEGIN
                   ) OuterQ
             WHERE target.Charge_Code = OuterQ.Charge_Code AND
                   NOT OuterQ.Inactive_Date_Most_Recent IS NULL AND
-                  target.Inactive_Date_Most_Recent Is Distinct From OuterQ.Inactive_Date_Most_Recent;
+                  target.Inactive_Date_Most_Recent IS DISTINCT FROM OuterQ.Inactive_Date_Most_Recent;
 
             ----------------------------------------------------------
             -- Update Inactive_Date_Most_Recent

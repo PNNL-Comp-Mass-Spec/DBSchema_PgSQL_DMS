@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE pc.add_protein_reference(IN _name text, IN _descript
 **          12/11/2012 mem - Removed transaction
 **          01/10/2013 mem - Now validating that _maxProteinNameLength is between 25 and 125; changed _maxProteinNameLength to 32
 **          08/20/2023 mem - Ported to PostgreSQL
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -54,7 +55,7 @@ BEGIN
     -- Verify that protein name does not contain a space and is not too long
     ---------------------------------------------------
 
-    If _name LIKE '% %' Then
+    If _name Like '% %' Then
         _message := format('Protein name contains a space: %s', _name);
         RAISE WARNING '%', _message;
 

@@ -29,8 +29,10 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_dataset_archive_after_update() RETURN
 **          08/05/2022 mem - Ported to PostgreSQL
 **          08/08/2022 mem - Move value comparison to WHEN condition of trigger
 **                         - Reference the OLD and NEW variables directly instead of using transition tables (which contain every updated row, not just the current row)
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
+
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
@@ -72,7 +74,7 @@ BEGIN
 
     -- Use <> with archive_state_id since never null
     -- In contrast, archive_update_state_id could be null
-    If OLD.archive_state_id <> NEW.archive_state_id OR
+    If OLD.archive_state_id <> NEW.archive_state_id Or
        OLD.archive_update_state_id IS DISTINCT FROM NEW.archive_update_state_id Then
 
         UPDATE t_analysis_job
@@ -94,10 +96,10 @@ BEGIN
     End If;
 
     -- Use <> since these columns are never null
-    If OLD.archive_state_id <> NEW.archive_state_id OR
-       OLD.storage_path_id <> NEW.storage_path_id OR
-       OLD.instrument_data_purged <> NEW.instrument_data_purged OR
-       OLD.qc_data_purged <> NEW.qc_data_purged OR
+    If OLD.archive_state_id <> NEW.archive_state_id Or
+       OLD.storage_path_id <> NEW.storage_path_id Or
+       OLD.instrument_data_purged <> NEW.instrument_data_purged Or
+       OLD.qc_data_purged <> NEW.qc_data_purged Or
        OLD.myemsl_state <> NEW.myemsl_state Then
 
         UPDATE t_cached_dataset_links

@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE public.validate_instrument_group_and_dataset_type(IN
 **          11/12/2013 mem - Changed _instrumentName to be an input/output parameter
 **          03/25/2014 mem - Now auto-updating dataset type from HMS-HMSn to HMS-HCD-HMSn for group QExactive
 **          09/07/2023 mem - Ported to PostgreSQL
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -60,7 +61,7 @@ BEGIN
     End If;
 
     -- Possibly auto-update the dataset type
-    If _instrumentGroup::citext = 'QExactive' AND _datasetType::citext IN ('HMS-HMSn') Then
+    If _instrumentGroup::citext = 'QExactive' And _datasetType::citext In ('HMS-HMSn') Then
         _datasetType := 'HMS-HCD-HMSn';
     End If;
 

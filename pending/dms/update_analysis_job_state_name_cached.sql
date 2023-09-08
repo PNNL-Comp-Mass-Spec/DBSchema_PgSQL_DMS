@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates column state_name_cached in T_Analysis_Job for 1 or more jobs
+**      Updates column state_name_cached in T_Analysis_Job for one or more jobs
 **
 **  Auth:   mem
 **  Date:   12/12/2007 mem - Initial version (Ticket #585)
@@ -61,7 +61,7 @@ BEGIN
            ON AJ.job = AJDAS.job
     WHERE AJ.job >= _jobStart AND
           AJ.job <= _jobFinish AND
-          AJ.state_name_cached Is Distinct From AJDAS.Job_State;
+          AJ.state_name_cached IS DISTINCT FROM AJDAS.Job_State;
 
     If _infoOnly Then
 

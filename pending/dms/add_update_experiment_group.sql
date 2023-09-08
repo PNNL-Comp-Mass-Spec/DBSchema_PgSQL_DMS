@@ -267,7 +267,7 @@ BEGIN
     -- Update member experiments
     ---------------------------------------------------
 
-    If _mode = 'add' OR _mode = 'update' Then
+    If _mode = 'add' Or _mode = 'update' Then
 
         -- Remove any existing group members that are not in the temporary table
         --

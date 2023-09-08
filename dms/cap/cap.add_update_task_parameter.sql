@@ -44,6 +44,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _s
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          07/19/2023 mem - Add missing variable declaration
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -140,7 +141,7 @@ BEGIN
     If Not _results.success Then
         RAISE WARNING 'Function add_update_task_parameter_xml was unable to update the XML for capture task job %: %',
             _job,
-            Case When Coalesce(_message, '') = '' Then 'Unknown reason' Else _message End;
+            CASE WHEN Coalesce(_message, '') = '' THEN 'Unknown reason' ELSE _message END;
 
     ElsIf Not _infoOnly Then
         ---------------------------------------------------

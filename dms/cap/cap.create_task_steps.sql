@@ -44,6 +44,7 @@ CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''
 **          07/11/2023 mem - Use COUNT(job) instead of COUNT(*)
 **          08/01/2023 mem - Set _captureTaskJob to true when calling sw.show_tmp_job_steps_and_job_step_dependencies
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -199,7 +200,7 @@ BEGIN
             _maxJobsToAdd := 1000000;
         End If;
 
-        If Not _debugMode OR (_debugMode And _existingJob = 0) Then
+        If Not _debugMode Or (_debugMode And _existingJob = 0) Then
             INSERT INTO Tmp_Jobs (
                 Job,
                 Priority,

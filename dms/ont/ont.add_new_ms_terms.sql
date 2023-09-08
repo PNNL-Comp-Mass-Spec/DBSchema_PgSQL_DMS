@@ -35,6 +35,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_ms_terms(_sourcetable public.citext DEFAU
 **          05/25/2023 mem - Simplify call to RAISE INFO
 **          05/29/2023 mem - Use format() for string concatenation
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -124,8 +125,8 @@ BEGIN
           '   grandparent_term_type, grandparent_term_name, grandparent_term_id, 0 as matches_existing'
           ' FROM %I.%I'
           ' WHERE Coalesce(parent_term_name, '''') <> '''' AND '
-          '       Not Coalesce(Definition::citext, '''') Similar To ''Obsolete%%'' AND '
-          '       Not Coalesce(Comment::citext, '''') Similar To ''Obsolete%%'' ';
+          '       Not Coalesce(Definition::citext, '''') SIMILAR TO ''Obsolete%%'' AND '
+          '       Not Coalesce(Comment::citext, '''') SIMILAR TO ''Obsolete%%'' ';
 
     EXECUTE format(_s, _sourceSchema, _sourceTable);
 
@@ -209,7 +210,7 @@ BEGIN
 
     If Not _infoOnly Then
 
-        If _deleteObsolete1 <> '' OR _deleteObsolete2 <> '' Then
+        If _deleteObsolete1 <> '' Or _deleteObsolete2 <> '' Then
             ---------------------------------------------------
             -- Delete obsolete entries
             ---------------------------------------------------
@@ -287,7 +288,7 @@ BEGIN
     Else
         -- _infoOnly is true
 
-        If _deleteObsolete1 <> '' OR _deleteObsolete2 <> '' Then
+        If _deleteObsolete1 <> '' Or _deleteObsolete2 <> '' Then
             RAISE INFO '-- Delete Obsolete rows';
             RAISE INFO '%', format(_deleteObsolete1, _sourceSchema, _sourceTable);
             RAISE INFO '%', format(_deleteObsolete2, _sourceSchema, _sourceTable);

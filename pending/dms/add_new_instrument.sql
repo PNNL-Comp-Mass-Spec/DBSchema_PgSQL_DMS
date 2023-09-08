@@ -153,7 +153,7 @@ BEGIN
     -- Resolve Yes/No parameters to 0 or 1
     ---------------------------------------------------
 
-    If _autoDefineStoragePath = 'Yes' Or _autoDefineStoragePath = 'Y' OR _autoDefineStoragePath = '1' Then
+    If _autoDefineStoragePath = 'Yes' Or _autoDefineStoragePath = 'Y' Or _autoDefineStoragePath = '1' Then
         _autoDefineStoragePathBool := true;
     Else
         _autoDefineStoragePathBool := false;
@@ -172,12 +172,12 @@ BEGIN
         _autoSPArchivePathRoot := _archivePath;
         _autoSPArchiveSharePathRoot := _archiveNetworkSharePath;
 
-        If Coalesce(_autoSPVolNameClient, '') <> '' AND _autoSPVolNameClient NOT LIKE '%\\' Then
+        If Coalesce(_autoSPVolNameClient, '') <> '' And _autoSPVolNameClient Not Like '%\\' Then
             -- Auto-add a slash;
         End If;
             _autoSPVolNameClient := format('%s\', _autoSPVolNameClient);
 
-        If Coalesce(_autoSPVolNameServer, '') <> '' AND _autoSPVolNameServer NOT LIKE '%\\' Then
+        If Coalesce(_autoSPVolNameServer, '') <> '' And _autoSPVolNameServer Not Like '%\\' Then
             -- Auto-add a slash;
         End If;
             _autoSPVolNameServer := format('%s\', _autoSPVolNameServer);

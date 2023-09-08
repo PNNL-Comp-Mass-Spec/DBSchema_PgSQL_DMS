@@ -108,6 +108,7 @@ CREATE OR REPLACE PROCEDURE public.validate_analysis_job_parameters(IN _toolname
 **          09/01/2023 mem - Ported to PostgreSQL
 **          09/05/2023 mem - Add back parameter _autoRemoveNotReleasedDatasets since used by add_update_analysis_job_request
 **                         - Assure that parameters are not null
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -444,7 +445,7 @@ BEGIN
         _result := 0;
 
         If _paramFileName <> 'na' Then
-            If _paramFileName::citext Similar To 'MSGFDB[_]%' Then
+            If _paramFileName::citext SIMILAR TO 'MSGFDB[_]%' Then
                 _paramFileName := format('MSGFPlus_%s', Substring(_paramFileName, 8, 500));
             End If;
 
@@ -583,7 +584,7 @@ BEGIN
                     RAISE INFO '  _toolName=%', _toolName;
                 End If;
 
-                If _profileModeMSn > 0 AND _toolName::citext IN ('MSGFPlus', 'MSGFPlus_DTARefinery', 'MSGFPlus_SplitFasta') Then
+                If _profileModeMSn > 0 And _toolName::citext In ('MSGFPlus', 'MSGFPlus_DTARefinery', 'MSGFPlus_SplitFasta') Then
                     -- The selected settings file must use MSConvert with Centroiding enabled
                     -- DeconMSn potentially works, but it can cause more harm than good
 
@@ -775,8 +776,8 @@ BEGIN
 
                     If Not ( _paramFileName ILike '%PartTryp_NoMods%' Or
                              _paramFileName ILike '%PartTryp_StatCysAlk.txt' Or
-                             _paramFileName::citext Similar To '%PartTryp_StatCysAlk_[0-9]%ppm%' Or
-                             _paramFileName::citext Similar To '%[_]Tryp[_]%'
+                             _paramFileName::citext SIMILAR TO '%PartTryp_StatCysAlk_[0-9]%ppm%' Or
+                             _paramFileName::citext SIMILAR TO '%[_]Tryp[_]%'
                             ) Then
 
                         _message := format('Legacy fasta file "%s" is very large (%s); you must choose a parameter file that is fully tryptic (MSGFPlus_Tryp_) '

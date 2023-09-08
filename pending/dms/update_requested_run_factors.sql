@@ -189,7 +189,7 @@ BEGIN
         _idType := 'RequestID';
     End If;
 
-    If _idType = 'DatasetName' OR _idType Like 'Dataset_Name' OR _idType Like 'Dataset_Num' Then
+    If _idType = 'DatasetName' Or _idType Like 'Dataset_Name' Or _idType Like 'Dataset_Num' Then
         _idType := 'Dataset';
     End If;
 
@@ -270,7 +270,7 @@ BEGIN
     -- Validate _idType
     -----------------------------------------------------------
 
-    If Not _idType IN ('RequestID', 'DatasetID', 'Job', 'Dataset') Then
+    If Not _idType In ('RequestID', 'DatasetID', 'Job', 'Dataset') Then
         _message := format('Identifier type "%s" was not recognized in the header row; should be Request, RequestID, DatasetID, Job, or Dataset (i.e. Dataset Name)',
                            _idTypeOriginal);
 
@@ -289,7 +289,7 @@ BEGIN
     -- Make sure the identifiers are all numeric for certain types
     -----------------------------------------------------------
 
-    If _idType IN ('RequestID', 'DatasetID', 'Job') Then
+    If _idType In ('RequestID', 'DatasetID', 'Job') Then
 
         SELECT string_agg(Coalesce(Identifier, '<NULL>'), ',' ORDER BY Identifier)
         INTO _invalidIDs

@@ -41,7 +41,7 @@ BEGIN
         -- Allow the work package to be 'none'
     Else
 
-        If _workPackage::citext IN ('none', 'na', 'n/a', '(none)') Then
+        If _workPackage::citext In ('none', 'na', 'n/a', '(none)') Then
             _message := 'A valid work package must be provided; see https://dms2.pnl.gov/helper_charge_code/report';
             _returnCode := 'U5131';
             RETURN;

@@ -15,8 +15,9 @@ CREATE OR REPLACE FUNCTION public.merge_text_three_items(_text1 text, _text2 tex
 **  Date:   08/03/2007
 **          06/23/2022 mem - Ported to PostgreSQL
 **          05/30/2023 mem - Use format() for string concatenation
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
-****************************************************/
+*****************************************************/
 DECLARE
     _combinedText text;
 BEGIN
@@ -27,7 +28,7 @@ BEGIN
     _combinedText := merge_text(_text1, _text2);
 
     If char_length(_text3) > 0 Then
-        If _text1 <> _text3 AND _text2 <> _text3 Then
+        If _text1 <> _text3 And _text2 <> _text3 Then
             If char_length(_combinedText) > 0 Then
                 _combinedText := format('%s; %s', _combinedText, _text3);
             Else

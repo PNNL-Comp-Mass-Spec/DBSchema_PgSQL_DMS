@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE cap.set_myemsl_upload_manually_verified(IN _job inte
 **          07/13/2017 mem - Pass both StatusNumList and StatusURIList to SetMyEMSLUploadVerified
 **          06/26/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -85,7 +86,7 @@ BEGIN
         RETURN;
     End If;
 
-    If NOT _state IN (2, 6) Then
+    If Not _state In (2, 6) Then
         _message := format('The %s step for capture task job %s is in state %s; to use this procedure the state must be 2 or 6', _tool, _job, _state);
         _returnCode := 'U5203';
 

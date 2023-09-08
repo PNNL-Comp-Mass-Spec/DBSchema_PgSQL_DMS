@@ -410,31 +410,31 @@ BEGIN
 
         _status := Coalesce(_status, '');
 
-        If _mode::citext In ('add', 'check_add') AND (_status::citext = 'Completed' OR _status = '') Then
+        If _mode::citext In ('add', 'check_add') And (_status::citext = 'Completed' Or _status = '') Then
             _status := 'Active';
         End If;
         --
-        If _mode::citext In ('add', 'check_add') AND (NOT (_status::citext IN ('Active', 'Inactive', 'Completed'))) Then
+        If _mode::citext In ('add', 'check_add') And (Not (_status::citext In ('Active', 'Inactive', 'Completed'))) Then
             RAISE EXCEPTION 'Status "%" is not valid; must be Active, Inactive, or Completed', _status;
         End If;
         --
-        If _mode::citext In ('update', 'check_update') AND (NOT (_status::citext IN ('Active', 'Inactive', 'Completed'))) Then
+        If _mode::citext In ('update', 'check_update') And (Not (_status::citext In ('Active', 'Inactive', 'Completed'))) Then
             RAISE EXCEPTION 'Status "%" is not valid; must be Active, Inactive, or Completed', _status;
         End If;
         --
-        If _mode::citext In ('update', 'check_update') AND (_status::citext = 'Completed' AND _oldStatus::citext <> 'Completed' ) Then
+        If _mode::citext In ('update', 'check_update') And (_status::citext = 'Completed' And _oldStatus::citext <> 'Completed' ) Then
             RAISE EXCEPTION 'Cannot set status of request to "Completed" when existing status is "%"', _oldStatus;
         End If;
         --
-        If _mode::citext In ('update', 'check_update') AND (_oldStatus::citext = 'Completed' AND _status::citext <> 'Completed') Then
+        If _mode::citext In ('update', 'check_update') And (_oldStatus::citext = 'Completed' And _status::citext <> 'Completed') Then
             RAISE EXCEPTION 'Cannot change status of a request that has been consumed by a dataset';
         End If;
 
-        If Coalesce(_wellplateName, '')::citext IN ('', 'na') Then
+        If Coalesce(_wellplateName, '')::citext In ('', 'na') Then
             _wellplateName := null;
         End If;
 
-        If Coalesce(_wellNumber, '')::citext IN ('', 'na') Then
+        If Coalesce(_wellNumber, '')::citext In ('', 'na') Then
             _wellNumber := null;
         End If;
 

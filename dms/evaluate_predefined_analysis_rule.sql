@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE public.evaluate_predefined_analysis_rule(IN _minleve
 **          02/08/2023 mem - Switch from PRN to username
 **          05/19/2023 mem - Remove redundant parentheses
 **          05/30/2023 mem - Use append_to_text() for string concatenation
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -131,7 +132,7 @@ BEGIN
         -- If there is a next level value for rule,
         -- Set minimum level to it
         --
-        If NOT _predefineInfo.RuleNextLevel IS NULL Then
+        If Not _predefineInfo.RuleNextLevel Is Null Then
             _minLevelNew := _predefineInfo.RuleNextLevel;
 
             _ruleEvalNotes := public.append_to_text(_ruleEvalNotes, format('Next rule must have level >= %s', _predefineInfo.RuleNextLevel));
@@ -150,9 +151,9 @@ BEGIN
         INTO _schedulingRulePriority, _schedulingRuleID
         FROM t_predefined_analysis_scheduling_rules
         WHERE enabled > 0 AND
-              (_instrumentClass::citext SIMILAR TO instrument_class          OR instrument_class   = '') AND
-              (_instrumentName::citext  SIMILAR TO instrument_name           OR instrument_name    = '') AND
-              (_datasetName::citext     SIMILAR TO dataset_name              OR dataset_name       = '') AND
+              (_instrumentClass::citext        SIMILAR TO instrument_class   OR instrument_class   = '') AND
+              (_instrumentName::citext         SIMILAR TO instrument_name    OR instrument_name    = '') AND
+              (_datasetName::citext            SIMILAR TO dataset_name       OR dataset_name       = '') AND
               (_predefineInfo.AnalysisToolName SIMILAR TO analysis_tool_name OR analysis_tool_name = '')
         ORDER BY evaluation_order
         LIMIT 1;

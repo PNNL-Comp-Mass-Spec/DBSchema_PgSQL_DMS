@@ -45,6 +45,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname tex
 **          01/31/2023 mem - Use new column names in tables
 **          05/22/2023 mem - Capitalize reserved word
 **          05/30/2023 mem - Use format() for string concatenation
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -118,7 +119,7 @@ BEGIN
     --
     GET DIAGNOSTICS _managerCount = ROW_COUNT;
 
-    If NOT FOUND Then
+    If Not FOUND Then
         _message := 'Use Manager IDs, not manager names';
 
         RAISE WARNING '%', _message;
@@ -184,7 +185,7 @@ BEGIN
                    PV.param_type_id,
                    PV.value,
                    _newValue AS NewValue,
-                   Case When Coalesce(PV.value, '') <> _newValue Then 'Changed' Else 'Unchanged' End As Status
+                   CASE WHEN Coalesce(PV.value, '') <> _newValue THEN 'Changed' ELSE 'Unchanged' END As Status
             FROM mc.t_mgrs M
                  INNER JOIN Tmp_MgrIDs
                    ON M.mgr_id = Tmp_MgrIDs.mgr_id

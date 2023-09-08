@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_job_processing_stats(IN _job 
 **          08/03/2020 mem - Update T_Cached_Dataset_Links.MASIC_Directory_Name when a MASIC job finishes successfully
 **          08/03/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -237,7 +238,7 @@ BEGIN
     -- If Job is Complete or No Export, do some additional tasks
     -------------------------------------------------------------------
 
-    If _newDMSJobState IN (4, 14) Then
+    If _newDMSJobState In (4, 14) Then
         -- Get the dataset ID, dataset name, and tool name
         --
         SELECT DS.dataset_id,

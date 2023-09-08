@@ -82,7 +82,7 @@ BEGIN
     -- Resolve container name to actual ID (if applicable)
     ---------------------------------------------------
 
-    If _mode = 'move_material' AND _newValue = '' Then
+    If _mode = 'move_material' And _newValue = '' Then
         _message := 'No destination container was provided';
         RAISE WARNING '%', _message;
 
@@ -188,7 +188,7 @@ BEGIN
         WHERE Tmp_Material_Items.itemType = 'R' AND
               V.ID = Tmp_Material_Items.ID;
 
-        If _mode = 'retire_items' AND _mixedMaterialCount = 1 AND _experimentCount = 1 Then
+        If _mode = 'retire_items' And _mixedMaterialCount = 1 And _experimentCount = 1 Then
             -- Retiring a single experiment
             -- Check whether the item being updated is already retired
 

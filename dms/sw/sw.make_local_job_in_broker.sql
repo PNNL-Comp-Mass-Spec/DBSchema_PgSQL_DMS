@@ -57,6 +57,7 @@ CREATE OR REPLACE PROCEDURE sw.make_local_job_in_broker(IN _scriptname text, IN 
 **          07/28/2023 mem - Ported to PostgreSQL
 **          07/31/2023 mem - Remove processor column from Tmp_Job_Steps (it was typically null, but obsolete procedure sw.override_dta_gen_for_external_dta() set it to 'Internal')
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -176,7 +177,7 @@ BEGIN
             RAISE EXCEPTION 'Script XML not defined in the contents field of sw.t_scripts for script %', Coalesce(_scriptName, '??');
         End If;
 
-        If _scriptName::citext IN ('MultiAlign_Aggregator', 'MaxQuant_DataPkg', 'MSFragger_DataPkg', 'DiaNN_DataPkg') And _dataPackageID = 0 Then
+        If _scriptName::citext In ('MultiAlign_Aggregator', 'MaxQuant_DataPkg', 'MSFragger_DataPkg', 'DiaNN_DataPkg') And _dataPackageID = 0 Then
             _returnCode := 'U5215';
             RAISE EXCEPTION '"Data Package ID" must be positive when using script %', _scriptName;
         End If;

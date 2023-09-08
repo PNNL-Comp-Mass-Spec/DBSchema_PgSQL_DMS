@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION public.boolean_text_to_tinyint(_booleantext public.ci
 **  Date:   05/28/2019 mem - Initial version
 **          06/17/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -23,7 +24,7 @@ BEGIN
 
     _booleanText := Trim(Coalesce(_booleanText, ''));
 
-    If _booleanText = 'Yes' Or _booleanText = 'Y' OR _booleanText = '1' Or _booleanText = 'True' Or _booleanText = 'T' Then
+    If _booleanText = 'Yes' Or _booleanText = 'Y' Or _booleanText = '1' Or _booleanText = 'True' Or _booleanText = 'T' Then
         _value := 1;
     End If;
 

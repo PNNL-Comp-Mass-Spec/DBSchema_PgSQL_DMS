@@ -108,6 +108,7 @@ CREATE OR REPLACE PROCEDURE cap.request_ctm_step_task(IN _processorname text, IN
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          07/11/2023 mem - Use COUNT(TS.job) and COUNT(processor_name) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -309,7 +310,7 @@ BEGIN
         INTO _numTools
         FROM Tmp_AvailableProcessorTools;
 
-        If _infoLevel = 0 AND _numTools = 0 Then
+        If _infoLevel = 0 And _numTools = 0 Then
             _message := format('No tools presently available for processor "%s"', _processorName);
             _returnCode := _jobNotAvailableErrorCode;
 
@@ -475,7 +476,7 @@ BEGIN
         -- Bail out if no steps available, and _infoLevel = 0
         ---------------------------------------------------
 
-        If _infoLevel = 0 AND _numCandidates = 0 Then
+        If _infoLevel = 0 And _numCandidates = 0 Then
             _message := 'No candidates presently available';
             _returnCode := _jobNotAvailableErrorCode;
 
@@ -532,7 +533,7 @@ BEGIN
             -- if _infoLevel is 0, update the step state to Running
             ---------------------------------------------------
 
-            If _jobAssigned AND _infoLevel = 0 Then
+            If _jobAssigned And _infoLevel = 0 Then
                 _currentLocation := 'Update State and Processor in cap.t_task_steps';
 
                 UPDATE cap.t_task_steps

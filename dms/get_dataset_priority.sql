@@ -29,19 +29,20 @@ CREATE OR REPLACE FUNCTION public.get_dataset_priority(_datasetname public.citex
 **          06/27/2019 mem - Renamed from DatasetPreference to GetDatasetPriority
 **          06/19/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
     _result int2;
 BEGIN
 
-    If (_datasetName SIMILAR TO 'QC[_][0-9][0-9]%' OR
-        _datasetName SIMILAR TO 'QC[_-]Shew[_-][0-9][0-9]%' OR
-        _datasetName SIMILAR TO 'QC[_-]ShewIntact%' OR
-        _datasetName SIMILAR TO 'QC[_]Shew[_]TEDDY%' OR
-        _datasetName SIMILAR TO 'QC[_]Mam%' OR
+    If (_datasetName SIMILAR TO 'QC[_][0-9][0-9]%' Or
+        _datasetName SIMILAR TO 'QC[_-]Shew[_-][0-9][0-9]%' Or
+        _datasetName SIMILAR TO 'QC[_-]ShewIntact%' Or
+        _datasetName SIMILAR TO 'QC[_]Shew[_]TEDDY%' Or
+        _datasetName SIMILAR TO 'QC[_]Mam%' Or
         _datasetName SIMILAR TO 'QC[_]PP[_]MCF-7%'
-       ) AND NOT _datasetName LIKE '%-bad' Then
+       ) And Not_datasetName Like '%-bad' Then
         _result := 1;
     Else
         _result := 0;

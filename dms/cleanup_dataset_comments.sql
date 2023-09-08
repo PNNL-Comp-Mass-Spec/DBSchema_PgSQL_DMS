@@ -14,6 +14,7 @@ CREATE OR REPLACE PROCEDURE public.cleanup_dataset_comments(IN _datasetids text,
 **  Date:   12/16/2017 mem - Initial version
 **          01/02/2018 mem - Check for 'Authentication failure' and "Error: NeedToAbortProcessing"
 **          06/16/2023 mem - Ported to PostgreSQL
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -125,7 +126,7 @@ BEGIN
         _message := '';
     End If;
 
-    If Exists (Select * From Tmp_DatasetsToUpdate WHERE Not InvalidID AND NOT StateID IN (3, 4)) Then
+    If Exists (SELECT * FROM Tmp_DatasetsToUpdate WHERE NOT InvalidID AND NOT StateID IN (3, 4)) Then
         SELECT string_agg(DatasetID::text, ', ' ORDER BY DatasetID)
         INTO _idsWrongState
         FROM Tmp_DatasetsToUpdate
@@ -175,7 +176,7 @@ BEGIN
 
     UPDATE Tmp_DatasetsToUpdate
     SET UpdateRequired = CASE
-                             WHEN ExistingComment Is Distinct From NewComment THEN true
+                             WHEN ExistingComment IS DISTINCT FROM NewComment THEN true
                              ELSE false
                          END;
 

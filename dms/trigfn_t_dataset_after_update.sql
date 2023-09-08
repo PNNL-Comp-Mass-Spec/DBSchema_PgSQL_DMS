@@ -24,8 +24,10 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_dataset_after_update() RETURNS trigge
 **          08/05/2022 mem - Ported to PostgreSQL
 **          08/08/2022 mem - Move value comparison to WHEN condition of trigger
 **                         - Reference the OLD and NEW variables directly instead of using transition tables (which contain every updated row, not just the current row)
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
+
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
@@ -59,7 +61,7 @@ BEGIN
 
     -- Use <> with dataset name since never null
     -- In contrast, folder_name could be null
-    If OLD.dataset <> NEW.dataset OR
+    If OLD.dataset <> NEW.dataset Or
        OLD.folder_name IS DISTINCT FROM NEW.folder_name Then
 
         UPDATE t_cached_dataset_folder_paths
@@ -74,8 +76,8 @@ BEGIN
 
     -- Use <> with exp_id and created since never null
     -- In contrast, acq_time_start could be null
-    If OLD.exp_id <> NEW.exp_id OR
-       OLD.created <> NEW.created OR
+    If OLD.exp_id <> NEW.exp_id Or
+       OLD.created <> NEW.created Or
        OLD.acq_time_start IS DISTINCT FROM NEW.acq_time_start Then
 
         -- This query must stay sync'd with the Update query in trigger trigfn_t_dataset_after_insert

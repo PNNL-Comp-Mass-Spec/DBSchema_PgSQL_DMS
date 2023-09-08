@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE sw.update_step_states(IN _infoonly boolean DEFAULT f
 **          12/21/2009 mem - Now passing _infoOnly to EvaluateStepDependencies
 **          08/02/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -74,7 +75,7 @@ BEGIN
 
         -- Repeat if any step states were changed (but only If Not _infoOnly)
         --
-        If Not (_numStepsSkipped > 0 AND Not _infoOnly) Then
+        If Not (_numStepsSkipped > 0 And Not _infoOnly) Then
             -- Break out of the while loop
             EXIT;
         End If;

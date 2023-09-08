@@ -62,7 +62,7 @@ BEGIN
         _jobMinimum := Coalesce(_jobMinimum, 0);
         _jobMaximum := Coalesce(_jobMaximum, 0);
 
-        If _jobMinimum <= 0 AND _jobMaximum <= 0 Then
+        If _jobMinimum <= 0 And _jobMaximum <= 0 Then
             _fullRefreshPerformed := true;
             _jobMinimum := -_maxInt;
             _jobMaximum := _maxInt;

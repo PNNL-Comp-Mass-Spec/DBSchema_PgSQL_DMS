@@ -235,7 +235,7 @@ BEGIN
         -- who are in list, but not in association table
         ---------------------------------------------------
 
-        If _eusPropStateID IN (1, 2) Then
+        If _eusPropStateID In (1, 2) Then
             _proposalUserStateID := 1;
         Else
             _proposalUserStateID := 2;

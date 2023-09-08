@@ -297,7 +297,7 @@ BEGIN
 
     _message := 'PSM stats storage successful';
 
-    If char_length(_message) > 0 AND _infoOnly Then
+    If char_length(_message) > 0 And _infoOnly Then
         RAISE INFO '%', _message;
     End If;
 

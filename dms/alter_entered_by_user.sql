@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE public.alter_entered_by_user(IN _targettableschema t
 **          05/31/2023 mem - Use format() for string concatenation
 **                         - Add back implicit string concatenation
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -147,7 +148,7 @@ BEGIN
     --
     GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-    If Not _previewSql AND (_updateCount = 0 Or _targetIDMatch <> _targetID) Then
+    If Not _previewSql And (_updateCount = 0 Or _targetIDMatch <> _targetID) Then
         _message := format('Match not found for %s', _entryDescription);
         RETURN;
     End If;

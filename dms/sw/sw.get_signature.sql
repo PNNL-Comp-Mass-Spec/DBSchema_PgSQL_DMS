@@ -19,6 +19,7 @@ CREATE OR REPLACE FUNCTION sw.get_signature(_settings text) RETURNS integer
 **  Date:   08/22/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)
 **          03/22/2011 mem - Now populating String, Entered, and Last_Used in T_Signatures
 **          10/14/2022 mem - Ported to PostgreSQL
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -66,7 +67,7 @@ BEGIN
         -- Update Last_Used and possibly update String
         ---------------------------------------------------
 
-        IF Exists (SELECT * FROM sw.t_signatures WHERE reference = _reference AND string IS NULL) Then
+        If Exists (SELECT reference FROM sw.t_signatures WHERE reference = _reference AND string IS NULL) Then
             UPDATE sw.t_signatures
             SET Last_Used = CURRENT_TIMESTAMP,
                 String = _settings

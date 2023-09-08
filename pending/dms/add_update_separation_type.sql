@@ -64,7 +64,7 @@ BEGIN
     -- Validate _state
     ---------------------------------------------------
 
-    If Not _state::citext IN ('Active', 'Inactive') Then
+    If Not _state::citext In ('Active', 'Inactive') Then
         _message := format('Separation type state must be Active or Inactive; %s is not allowed', _state);
         RAISE WARNING '%', _message;
 

@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE sw.cross_check_job_parameters(IN _job integer, INOUT
 **          03/11/2009 mem - Now including Old/New step tool and Old/New Signatures if differences are found (Ticket #725, http://prismtrac.pnl.gov/trac/ticket/725)
 **          01/06/2011 mem - Added parameter _ignoreSignatureMismatch
 **          07/31/2023 mem - Ported to PostgreSQL
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -36,19 +37,19 @@ BEGIN
     ---------------------------------------------------
 
     SELECT string_agg(
-        CASE WHEN Not OJS.Shared_Result_Version Is Distinct From NJS.Shared_Result_Version THEN ''
+        CASE WHEN Not OJS.Shared_Result_Version IS DISTINCT FROM NJS.Shared_Result_Version THEN ''
              ELSE format(' step %s Shared_Result_Version (%s|%s);', OJS.Step, Coalesce(OJS.Shared_Result_Version::text, '<Null>'), Coalesce(NJS.Shared_Result_Version::text, '<Null>'))
         END ||
 
-        CASE WHEN Not OJS.Tool Is Distinct From NJS.Tool THEN ''
+        CASE WHEN Not OJS.Tool IS DISTINCT FROM NJS.Tool THEN ''
              ELSE format(' step %s Tool (%s|%s);', OJS.Step, Coalesce(OJS.Tool, '<Null>'), Coalesce(NJS.Tool, '<Null>'))
         END ||
 
-        CASE WHEN (Not OJS.Signature Is Distinct From NJS.Signature) OR _ignoreSignatureMismatch THEN ''
+        CASE WHEN (Not OJS.Signature IS DISTINCT FROM NJS.Signature) OR _ignoreSignatureMismatch THEN ''
              ELSE format(' step %s Signature (%s|%s);', OJS.Step, Coalesce(OJS.Signature::text, '<Null>'), Coalesce(NJS.Signature::text, '<Null>'))
         END
 
-        -- || CASE WHEN Not OJS.Output_Folder_Name Is Distinct From NJS.Output_Directory_Name THEN ''
+        -- || CASE WHEN Not OJS.Output_Folder_Name IS DISTINCT FROM NJS.Output_Directory_Name THEN ''
         --         ELSE format(' step %s Output_Folder_Name (%s|%s);', OJS.Step, Coalesce(OJS.Output_Folder_Name, '<blank>'), Coalesce(NJS.Output_Directory_Name, '<blank>'))
         --    END
 

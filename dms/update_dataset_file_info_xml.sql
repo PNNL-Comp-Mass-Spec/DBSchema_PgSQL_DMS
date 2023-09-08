@@ -96,6 +96,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_file_info_xml(IN _datasetid in
 **          06/14/2023 mem - Ported to PostgreSQL
 **          07/11/2023 mem - Use COUNT(dataset_file_id) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -516,7 +517,7 @@ BEGIN
         INTO _acqLengthMinutes
         FROM Tmp_DSInfoTable;
 
-        If _acqLengthMinutes > 1 AND Coalesce(_separationType, '') <> '' Then
+        If _acqLengthMinutes > 1 And Coalesce(_separationType, '') <> '' Then
             -- Possibly update the separation type
             -- Note that the Analysis Manager will also call update_dataset_file_info_xml when the MSFileInfoScanner tool runs
             CALL public.auto_update_separation_type (
@@ -524,12 +525,12 @@ BEGIN
                         _acqLengthMinutes,
                         _optimalSeparationType => _optimalSeparationType);      -- Output
 
-            If _optimalSeparationType <> _separationType AND Not _infoOnly Then
+            If _optimalSeparationType <> _separationType And Not _infoOnly Then
                 UPDATE t_dataset
                 SET separation_type = _optimalSeparationType
                 WHERE dataset_id = _datasetID;
 
-                If NOT Exists (SELECT * FROM t_log_entries WHERE message LIKE 'Auto-updated separation type%' And Entered >= CURRENT_TIMESTAMP - INTERVAL '2 hours') Then
+                If Not Exists (SELECT entry_id FROM t_log_entries WHERE message LIKE 'Auto-updated separation type%' And Entered >= CURRENT_TIMESTAMP - INTERVAL '2 hours') Then
                     _msg := format('Auto-updated separation type from %s to %s for dataset %s', _separationType, _optimalSeparationType, _datasetName);
                     CALL post_log_entry ('Normal', _msg, 'Update_Dataset_File_Info_XML');
                 End If;
@@ -920,7 +921,7 @@ BEGIN
             End If;
         End If;
 
-        If char_length(_message) > 0 AND _infoOnly Then
+        If char_length(_message) > 0 And _infoOnly Then
             RAISE INFO '%', _message;
         End If;
 

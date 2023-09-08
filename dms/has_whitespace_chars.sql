@@ -22,13 +22,14 @@ CREATE OR REPLACE FUNCTION public.has_whitespace_chars(_entityname text, _allows
 **          04/05/2022 mem - Ported to PostgreSQL
 **          02/24/2023 mem - Change _allowSpace argument to boolean
 **          05/22/2023 mem - Capitalize reserved words
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
-****************************************************/
+*****************************************************/
 BEGIN
 
-    If Position(chr(10) In _entityName) > 0 OR              -- CR
-       Position(chr(13) In _entityName) > 0 OR              -- LF
-       Position(chr(9) In _entityName) > 0 OR               -- Tab
+    If Position(chr(10) In _entityName) > 0 Or              -- CR
+       Position(chr(13) In _entityName) > 0 Or              -- LF
+       Position(chr(9)  In _entityName) > 0 Or              -- Tab
        Not _allowspace And Position(' ' In _entityName) > 0 -- Space
     Then
         RETURN True;

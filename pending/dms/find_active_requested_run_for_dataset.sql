@@ -78,7 +78,7 @@ BEGIN
         _dashPos       := Position('-' IN Substring(_datasetReversed, _startPos));
 
         If _underscorePos > 0 Then
-            If _dashPos > 0 AND _dashPos < _underscorePos Then
+            If _dashPos > 0 And _dashPos < _underscorePos Then
                 _startPos := _dashPos + _startPos;
             Else
                 _startPos := _underscorePos + _startPos;

@@ -42,6 +42,7 @@ CREATE OR REPLACE FUNCTION mc.unarchive_old_managers_and_params(_mgrlist text, _
 **          05/12/2023 mem - Rename variables
 **          05/30/2023 mem - Use format() for string concatenation
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -177,7 +178,7 @@ BEGIN
         WHERE manager_name IN (SELECT WarnMsgs.manager_name FROM Tmp_WarningMessages WarnMsgs);
     End If;
 
-    If _infoOnly OR NOT EXISTS (SELECT * FROM Tmp_ManagerList) Then
+    If _infoOnly Or Not Exists (SELECT * FROM Tmp_ManagerList) Then
         RETURN QUERY
         SELECT ' To be restored' as message,
                Src.manager_name,

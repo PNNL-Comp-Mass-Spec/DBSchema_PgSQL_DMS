@@ -122,6 +122,7 @@ CREATE OR REPLACE PROCEDURE sw.request_step_task_xml(IN _processorname text, INO
 **          07/11/2023 mem - Use COUNT(step) and COUNT(processor) instead of COUNT(*)
 **          08/08/2023 mem - Include the schema name when calling procedure get_remote_info_id
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -828,7 +829,7 @@ BEGIN
         -- by processor in order of assignment priority
         ---------------------------------------------------
 
-        If _useBigBangQuery OR _infoLevel <> 0 Then
+        If _useBigBangQuery Or _infoLevel <> 0 Then
 
             _currentLocation := 'Populate Tmp_CandidateJobSteps using all-in-one query';
 
@@ -1390,7 +1391,7 @@ BEGIN
         -- update the step state to Running
         ---------------------------------------------------
 
-        If _jobAssigned AND _infoLevel = 0 Then
+        If _jobAssigned And _infoLevel = 0 Then
 
             _currentLocation := 'Update State and Processor in sw.t_job_steps';
 
@@ -1476,7 +1477,7 @@ BEGIN
             RAISE INFO '%, Request_Step_Task_XML: Transaction committed', public.timestamp_text_immutable(clock_timestamp());
         End If;
 
-        If _jobAssigned AND _infoLevel = 0 And _remoteInfoID <= 1 Then
+        If _jobAssigned And _infoLevel = 0 And _remoteInfoID <= 1 Then
 
             _currentLocation := 'Update CPU loading for this processor''s machine';
 

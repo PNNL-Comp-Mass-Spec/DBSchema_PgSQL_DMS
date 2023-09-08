@@ -50,6 +50,7 @@ CREATE OR REPLACE PROCEDURE public.validate_analysis_job_request_datasets(IN _au
 **          03/27/2023 mem - Skip HMS vs. MS check when the tool is DiaNN
 **          08/02/2023 mem - Ported to PostgreSQL
 **          09/05/2023 mem - Swap if statement branches for readability
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -284,7 +285,7 @@ BEGIN
     WHERE Dataset_Type LIKE 'MS%' OR
           Dataset_Type LIKE 'IMS-MS%';
 
-    If _hmsCount > 0 AND _msCount > 0 AND NOT _toolName::citext IN ('MSXML_Gen', 'MaxQuant', 'MSFragger', 'DiaNN') Then
+    If _hmsCount > 0 And _msCount > 0 And Not _toolName::citext In ('MSXML_Gen', 'MaxQuant', 'MSFragger', 'DiaNN') Then
         _message := format('You cannot mix high-res MS datasets with low-res datasets; create separate analysis job requests. '
                            'You currently have %s high res (HMS) and %s low res (MS) datasets', _hmsCount, _msCount);
 

@@ -27,6 +27,7 @@ CREATE OR REPLACE FUNCTION pc.standardize_protein_collection_list(_protcollnamel
 **          03/28/2023 mem - Use a custom collation to sort underscores before letters
 **          05/07/2023 mem - Remove unused variable
 **          07/26/2023 mem - Move "Not" keyword to before the field name
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -36,7 +37,7 @@ BEGIN
     -- Check for Null values
     _protCollNameList := Coalesce(_protCollNameList, '');
 
-    If _protCollNameList IN ('', 'na') Then
+    If _protCollNameList In ('', 'na') Then
         RETURN _protCollNameList;
     End If;
 

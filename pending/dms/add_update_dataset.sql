@@ -322,7 +322,7 @@ BEGIN
         _msType := Coalesce(_msType, '');
 
         -- Allow _msType to be blank if _mode is 'add' or 'bad' but not if check_add or add_trigger or update
-        If _msType = '' And NOT _mode::citext In ('add', 'bad') Then
+        If _msType = '' And Not _mode::citext In ('add', 'bad') Then
             RAISE EXCEPTION 'Dataset type must be specified';
         End If;
 
@@ -340,11 +340,11 @@ BEGIN
             RAISE EXCEPTION 'Rating must be specified';
         End If;
 
-        If Coalesce(_wellplateName, '')::citext IN ('', 'na') Then
+        If Coalesce(_wellplateName, '')::citext In ('', 'na') Then
             _wellplateName := NULL;
         End If;
 
-        If Coalesce(_wellNumber, '')::citext IN ('', 'na') Then
+        If Coalesce(_wellNumber, '')::citext In ('', 'na') Then
             _wellNumber := NULL;
         End If;
 
@@ -360,7 +360,7 @@ BEGIN
         _logDebugMessages      := Coalesce(_logDebugMessages, false);
         _callingUser           := Coalesce(_callingUser, '');
 
-        If _captureSubfolder SIMILAR TO '\\%' OR _captureSubfolder::citext SIMILAR TO '[A-Z]:\%' Then
+        If _captureSubfolder SIMILAR TO '\\%' Or _captureSubfolder::citext SIMILAR TO '[A-Z]:\%' Then
             RAISE EXCEPTION 'Capture subfolder should be a subdirectory name below the source share for this instrument; it is currently a full path';
         End If;
 
@@ -534,7 +534,7 @@ BEGIN
         ---------------------------------------------------
 
         If _datasetName::citext Like 'Blank%' And _addingDataset Then
-            If Not _experimentName::citext LIKE '%blank%' Then
+            If Not _experimentName::citext Like '%blank%' Then
                 _experimentName := 'blank';
             End If;
 
@@ -549,7 +549,7 @@ BEGIN
 
         _experimentID := get_experiment_id(_experimentName);
 
-        If _experimentID = 0 And _experimentName::citext SIMILAR TO 'QC_Shew_[0-9][0-9]_[0-9][0-9]' And _experimentName LIKE '%-%' Then
+        If _experimentID = 0 And _experimentName::citext SIMILAR TO 'QC_Shew_[0-9][0-9]_[0-9][0-9]' And _experimentName Like '%-%' Then
 
             _newExperiment := Replace(_experimentName, '-', '_');
             _experimentID := get_experiment_id(_newExperiment);
@@ -654,7 +654,7 @@ BEGIN
             -- Dataset type is not valid for this instrument group
             -- However, _mode is 'add', so we will auto-update _msType
             --
-            If _msType::citext IN ('HMS-MSn', 'HMS-HMSn') And Exists (
+            If _msType::citext In ('HMS-MSn', 'HMS-HMSn') And Exists (
                 SELECT IGADST.Dataset_Type;
                 FROM t_instrument_group ING
                      INNER JOIN t_instrument_name InstName
@@ -767,13 +767,13 @@ BEGIN
         -- Perform additional steps if a requested run ID was provided
         ---------------------------------------------------
 
-        If _requestID <> 0 AND _addingDataset Then
+        If _requestID <> 0 And _addingDataset Then
             ---------------------------------------------------
             -- Verify acceptable combination of EUS fields
             ---------------------------------------------------
 
-            If (_eusProposalID <> '' OR _eusUsageType <> '' OR _eusUsersList <> '') Then
-                If (_eusUsageType::citext = '(lookup)' AND _eusProposalID::citext = '(lookup)' AND _eusUsersList::citext = '(lookup)') OR
+            If (_eusProposalID <> '' Or _eusUsageType <> '' Or _eusUsersList <> '') Then
+                If (_eusUsageType::citext = '(lookup)' And _eusProposalID::citext = '(lookup)' And _eusUsersList::citext = '(lookup)') Or
                    (_eusUsageType::citext = '(ignore)') Then
                     _warning := '';
                 Else
@@ -816,7 +816,7 @@ BEGIN
         -- If the dataset starts with 'blank' and _requestID is zero, perform some additional checks
         ---------------------------------------------------
 
-        If _requestID = 0 AND _addingDataset Then
+        If _requestID = 0 And _addingDataset Then
             -- If the EUS information is not defined, auto-define the EUS usage type as 'MAINTENANCE'
             If (_datasetName::citext SIMILAR TO 'Blank%' Or
                 _datasetName::citext SIMILAR TO '%[_]Tune[_]%' Or
@@ -833,7 +833,7 @@ BEGIN
         -- Possibly look for an active requested run that we can auto-associate with this dataset
         ---------------------------------------------------
 
-        If _requestID = 0 AND _addingDataset Then
+        If _requestID = 0 And _addingDataset Then
 
             If _logDebugMessages Then
                 _debugMsg := format('Call Find_Active_Requested_Run_for_Dataset with _datasetName = %s', _datasetName);
@@ -861,7 +861,7 @@ BEGIN
         -- Update the dataset comment if it starts with the requested run's comment
         ---------------------------------------------------
 
-        If _requestID <> 0 AND _addingDataset Then
+        If _requestID <> 0 And _addingDataset Then
             _reqRunComment := '';
 
             SELECT comment
@@ -872,7 +872,7 @@ BEGIN
             -- Assure that _reqRunComment doesn't have &quot; or &#34; or &amp;
             _reqRunComment := public.replace_character_codes(_reqRunComment);
 
-            If char_length(_reqRunComment) > 0 And (_comment = _reqRunComment Or _comment LIKE _reqRunComment + '%') Then
+            If char_length(_reqRunComment) > 0 And (_comment = _reqRunComment Or _comment Like _reqRunComment + '%') Then
                 If char_length(_comment) = char_length(_reqRunComment) Then
                     _comment := '';
                 Else
@@ -1240,7 +1240,7 @@ BEGIN
                 -- requested run
                 ---------------------------------------------------
 
-                If Not _lcCartName::citext IN ('', 'no update') And _requestID > 0 Then
+                If Not _lcCartName::citext In ('', 'no update') And _requestID > 0 Then
 
                     If Coalesce(_message, '') <> '' and Coalesce(_warning, '') = '' Then
                         _warning := _message;
@@ -1334,7 +1334,7 @@ BEGIN
             WHERE dataset_id = _datasetID
 
             -- If _callingUser is defined, Call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-            If char_length(_callingUser) > 0 AND _ratingID <> Coalesce(_curDSRatingID, -1000) Then
+            If char_length(_callingUser) > 0 And _ratingID <> Coalesce(_curDSRatingID, -1000) Then
                 CALL public.alter_event_log_entry_user ('public', 8, _datasetID, _ratingID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
@@ -1374,7 +1374,7 @@ BEGIN
             -- requested run
             ---------------------------------------------------
 
-            If Not _lcCartName::citext IN ('', 'no update') Then
+            If Not _lcCartName::citext In ('', 'no update') Then
 
                 If Coalesce(_requestID, 0) = 0 Then
                     _warningAddon := 'Dataset is not associated with a requested run; cannot update the LC Cart Name';
@@ -1452,7 +1452,7 @@ BEGIN
             -- Skip jobs with dataset_unreviewed = 1 when looking for existing jobs (these jobs were created before the dataset was dispositioned)
             ---------------------------------------------------
 
-            If _ratingID >= 2 and Coalesce(_curDSRatingID, -1000) IN (-5, -6, -7) Then
+            If _ratingID >= 2 And Coalesce(_curDSRatingID, -1000) In (-5, -6, -7) Then
                 If Not Exists (SELECT * FROM t_analysis_job WHERE dataset_id = _datasetID AND dataset_unreviewed = 0 ) Then
                     CALL public.schedule_predefined_analysis_jobs (_datasetName, _callingUser => _callingUser);
 

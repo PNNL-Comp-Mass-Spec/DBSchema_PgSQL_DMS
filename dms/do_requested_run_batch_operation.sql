@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE public.do_requested_run_batch_operation(IN _batchid 
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          09/01/2023 mem - Remove unnecessary cast to citext for string constants
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -89,7 +90,7 @@ BEGIN
     -- Lock run order
     ---------------------------------------------------
 
-    If _mode::citext IN ('LockBatch', 'Lock') Then
+    If _mode::citext In ('LockBatch', 'Lock') Then
         If _batchExists Then
             UPDATE t_requested_run_batches
             SET locked = 'Yes'
@@ -104,7 +105,7 @@ BEGIN
     -- Unlock run order
     ---------------------------------------------------
 
-    If _mode::citext IN ('UnlockBatch', 'Unlock') Then
+    If _mode::citext In ('UnlockBatch', 'Unlock') Then
         If _batchExists Then
             UPDATE t_requested_run_batches
             SET locked = 'No'
@@ -118,7 +119,7 @@ BEGIN
     -- Remove current member requests from batch
     ---------------------------------------------------
 
-    If _mode::citext IN ('FreeMembers', 'Delete') Then
+    If _mode::citext In ('FreeMembers', 'Delete') Then
         If _locked = 'Yes' Then
             _message := 'Cannot remove member requests of locked batch';
             RAISE WARNING '%', _message;

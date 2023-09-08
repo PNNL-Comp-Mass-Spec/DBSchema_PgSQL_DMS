@@ -52,6 +52,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_local_task_in_broker(INOUT _job integ
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          08/25/2023 mem - Use Trim() on procedure arguments
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -119,12 +120,12 @@ BEGIN
         FROM cap.t_tasks
         WHERE Job = _job;
 
-        If _mode = 'update' AND Not Found Then
+        If _mode = 'update' And Not Found Then
             _logErrors := false;
             RAISE EXCEPTION 'Cannot update nonexistent capture task job: %', _job;
         End If;
 
-        If _mode = 'update' AND NOT _state IN (1, 3, 5, 100) Then -- new, complete, failed, hold
+        If _mode = 'update' And Not _state In (1, 3, 5, 100) Then -- new, complete, failed, hold
             _logErrors := false;
             RAISE EXCEPTION 'Cannot update capture task job % in state %; must be 1, 3, 5, or 100', _job, _state;
         End If;

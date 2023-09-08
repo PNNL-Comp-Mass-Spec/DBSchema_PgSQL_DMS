@@ -148,19 +148,19 @@ BEGIN
         -- Assure that _jobTypeName, _toolName, and _requestName are valid
         ---------------------------------------------------
 
-        If Not Exists (SELECT * FROM t_default_psm_job_types WHERE job_type_name = _jobTypeName) Then
+        If Not Exists (SELECT job_type_id FROM t_default_psm_job_types WHERE job_type_name = _jobTypeName) Then
             RAISE EXCEPTION 'Invalid job type name: %', _jobTypeName;
         End If;
 
-        If Not Exists (SELECT * FROM t_default_psm_job_settings WHERE tool_name = _toolName AND enabled > 0) Then
+        If Not Exists (SELECT entry_id FROM t_default_psm_job_settings WHERE tool_name = _toolName AND enabled > 0) Then
             RAISE EXCEPTION 'Invalid analysis tool for creating a defaults-based PSM job: %', _toolName;
         End If;
 
-        If Exists (SELECT * FROM t_analysis_job_request WHERE request_name = _requestName) Then
+        If Exists (SELECT request_id FROM t_analysis_job_request WHERE request_name = _requestName) Then
             RAISE EXCEPTION 'Cannot add; analysis job request named "%" already exists', _requestName;
         End If;
 
-        If _toolName::citext LIKE '%_DTARefinery' And _jobTypeName = 'Low Res MS1' Then
+        If _toolName::citext Like '%_DTARefinery' And _jobTypeName = 'Low Res MS1' Then
             RAISE EXCEPTION 'DTARefinery cannot be used with datasets that have low resolution MS1 spectra';
         End If;
 

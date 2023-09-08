@@ -24,13 +24,14 @@ CREATE OR REPLACE FUNCTION public.get_campaign_role_person_list(_campaignid inte
 **          11/14/2022 mem - Allow mode to be either PRN or USERNAME
 **          02/09/2023 mem - Change default value for _mode to 'USERNAME'
 **          05/24/2023 mem - Alias table names
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
     _result text;
 BEGIN
 
-    IF NOT _campaignID IS NULL AND NOT _role IS NULL Then
+    If Not _campaignID Is Null And Not _role Is Null Then
         SELECT string_agg(LookupQ.Value, ', ' ORDER BY LookupQ.Value)
         INTO _result
         FROM (  SELECT CASE WHEN _mode IN ('PRN', 'USERNAME')

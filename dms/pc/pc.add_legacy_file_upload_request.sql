@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE pc.add_legacy_file_upload_request(IN _legacyfilename
 **          09/03/2010 mem - Now updating the stored Authentication_Hash value if _authenticationHash differs from the stored value
 **          05/03/2023 mem - Return 0 if no errors (previously returned the ID of the newly added row, but the calling application does not use that value)
 **          08/18/2023 mem - Ported to PostgreSQL
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -62,7 +63,7 @@ BEGIN
 
     If FOUND Then
         -- Entry already exists; update the hash if different
-        If _authenticationHashStored Is Distinct From _authenticationHash Then
+        If _authenticationHashStored IS DISTINCT FROM _authenticationHash Then
             UPDATE pc.t_legacy_file_upload_requests
             SET Authentication_Hash = _authenticationHash
             WHERE Legacy_File_ID = _legacyFileID;

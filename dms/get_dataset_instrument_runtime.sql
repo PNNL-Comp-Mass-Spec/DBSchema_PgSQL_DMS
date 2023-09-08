@@ -34,6 +34,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_instrument_runtime(_startinterval 
 **          05/22/2023 mem - Capitalize reserved words
 **          05/31/2023 mem - Use format() for string concatenation
 **          07/18/2023 mem - Specify column names when returning data from Tmp_TX
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -133,7 +134,7 @@ BEGIN
     -- Check arguments
     ---------------------------------------------------
 
-    If _startInterval Is Null OR _endInterval Is Null OR Coalesce(_instrument, '') = '' Then
+    If _startInterval Is Null Or _endInterval Is Null Or Coalesce(_instrument, '') = '' Then
         INSERT INTO Tmp_TX
         (
             Seq,

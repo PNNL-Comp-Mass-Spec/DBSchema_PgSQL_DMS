@@ -245,7 +245,7 @@ BEGIN
            ON P.param_file_id = MM.param_file_id
     GROUP BY P.param_file_id
 
-    If _paramFileTypeList ILIKE '%Sequest%' Then
+    If _paramFileTypeList ILike '%Sequest%' Then
 
         -----------------------------------------
         -- Populate Tmp_ParamEntries with t_param_entries

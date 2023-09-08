@@ -125,14 +125,14 @@ BEGIN
     -- Add / update the user
     ---------------------------------------------------
 
-    If _membershipExists > 0 AND _mode = 'remove' Then
+    If _membershipExists > 0 And _mode = 'remove' Then
         DELETE FROM t_research_team_membership
         WHERE team_id = _researchTeamID AND
               role_id = _observerRoleID AND
               user_id = _userID
     End If;
 
-    If _membershipExists = 0 AND _mode = 'add' Then
+    If _membershipExists = 0 And _mode = 'add' Then
       INSERT INTO t_research_team_membership( team_id,
                                                   role_id,
                                                   user_id )

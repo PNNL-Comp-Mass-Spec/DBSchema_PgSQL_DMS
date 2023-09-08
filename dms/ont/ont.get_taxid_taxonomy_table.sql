@@ -13,6 +13,7 @@ CREATE OR REPLACE FUNCTION ont.get_taxid_taxonomy_table(_taxonomyid integer) RET
 **  Date:   03/02/2016 mem - Initial version
 **          03/30/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -37,7 +38,7 @@ BEGIN
         FROM ont.t_ncbi_taxonomy_cached T
         WHERE T.tax_id = _taxonomyID;
 
-        If NOT FOUND Then
+        If Not FOUND Then
             _taxonomyID := 1;
         Else
 

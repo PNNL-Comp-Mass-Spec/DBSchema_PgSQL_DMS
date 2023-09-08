@@ -52,6 +52,7 @@ CREATE OR REPLACE PROCEDURE dpkg.add_update_data_package(INOUT _id integer, IN _
 **          05/10/2023 mem - Update warning messages
 **          08/15/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Update warning messages
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -232,7 +233,7 @@ BEGIN
             If _name Like '%&%' Then
                 -- Replace & with 'and'
 
-                If _name::citext Similar To '%[a-z0-9]&[a-z0-9]%' Then
+                If _name::citext SIMILAR TO '%[a-z0-9]&[a-z0-9]%' Then
                     If _name Like '% %' Then
                         _name := Replace(_name, '&', ' and ');
                     Else
@@ -371,7 +372,7 @@ BEGIN
                 _exceptionContext = pg_exception_context;
 
         If _logErrors Then
-            If Coalesce(_id, 0) > 0 And Position(format('ID %s', _id) IN _exceptionMessage) = 0 Then
+            If Coalesce(_id, 0) > 0 And Position(format('ID %s', _id) In _exceptionMessage) = 0 Then
                 _exceptionMessage := format('%s; Data Package ID %s', _exceptionMessage, _id);
             End If;
 

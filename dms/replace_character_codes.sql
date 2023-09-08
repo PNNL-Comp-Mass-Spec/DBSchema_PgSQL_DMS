@@ -24,24 +24,25 @@ CREATE OR REPLACE FUNCTION public.replace_character_codes(_text text) RETURNS te
 **  Date:   02/25/2021 mem - Initial version
 **          06/23/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 BEGIN
     _text := Coalesce(_text, '');
 
-    If _text LIKE '%&quot;%' Then
+    If _text Like '%&quot;%' Then
         _text := Replace(_text, '&quot;', '"');
     End If;
 
-    If _text LIKE '%&#34;%' Then
+    If _text Like '%&#34;%' Then
         _text := Replace(_text, '&#34;', '"');
     End If;
 
-    If _text LIKE '%&apos;%' Then
+    If _text Like '%&apos;%' Then
         _text := Replace(_text, '&apos;', '''');
     End If;
 
-    If _text LIKE '%&amp;%' Then
+    If _text Like '%&amp;%' Then
         _text := Replace(_text, '&amp;', '&');
     End If;
 

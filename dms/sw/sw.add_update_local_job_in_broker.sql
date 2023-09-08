@@ -82,6 +82,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_local_job_in_broker(INOUT _job integer
 **          03/25/2023 mem - Force dataset name to 'Aggregation' if using a data package
 **          07/27/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -129,7 +130,7 @@ BEGIN
         _reset := true;
     End If;
 
-    If _mode::citext = 'previewAdd' AND Not _debugMode Then
+    If _mode::citext = 'previewAdd' And Not _debugMode Then
         _debugMode := true;
     End If;
 
@@ -172,11 +173,11 @@ BEGIN
         FROM sw.t_jobs
         WHERE job = _job;
 
-        If _mode = 'update' AND Not FOUND Then
+        If _mode = 'update' And Not FOUND Then
             RAISE EXCEPTION 'Cannot update nonexistent job %', _job;
         End If;
 
-        If _mode = 'update' AND _datasetName::citext <> 'Aggregation' Then
+        If _mode = 'update' And _datasetName::citext <> 'Aggregation' Then
             RAISE EXCEPTION 'Currently only aggregation jobs can be updated; cannot update %', _job;
         End If;
 
@@ -268,7 +269,7 @@ BEGIN
                               END
             WHERE job = _job;
 
-            If _state IN (1, 4, 5) And _dataPackageID > 0 Then
+            If _state In (1, 4, 5) And _dataPackageID > 0 Then
                  CREATE TEMP TABLE Tmp_Job_Params (
                     Section citext,
                     Name citext,
@@ -321,7 +322,7 @@ BEGIN
                 DROP TABLE Tmp_Job_Params;
             End If;
 
-            If _state IN (1, 4, 5) Then
+            If _state In (1, 4, 5) Then
 
                 -- Store the job parameters (as XML) in sw.t_job_parameters
 

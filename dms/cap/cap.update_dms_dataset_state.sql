@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE cap.update_dms_dataset_state(IN _job integer, IN _da
 **          08/09/2018 mem - Set the capture task job state to 14 when the error code is 'U5360'
 **          08/17/2021 mem - Remove extra information from Completion messages with warning "Over 10% of the MS/MS spectra have a minimum m/z value larger than the required minimum; reporter ion peaks likely could not be detected"
 **          06/17/2023 mem - Ported to PostgreSQL
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -42,7 +43,7 @@ BEGIN
     -- Dataset Capture
     ---------------------------------------------------
 
-    If _script = 'DatasetCapture' OR _script = 'IMSDatasetCapture' Then
+    If _script = 'DatasetCapture' Or _script = 'IMSDatasetCapture' Then
         If _newJobStateInBroker In (2, 3, 5) Then
              -- Always call in case capture task job completes too quickly for normal update cycle
             CALL public.set_capture_task_busy (

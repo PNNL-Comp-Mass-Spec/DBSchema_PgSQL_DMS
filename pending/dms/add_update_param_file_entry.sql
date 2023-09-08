@@ -89,7 +89,7 @@ BEGIN
     -- Detour if Mass mod
     ---------------------------------------------------
 
-    If (_entryType::citext IN ('DynamicModification', 'StaticModification', 'IsotopicModification', 'TermDynamicModification')) Then
+    If (_entryType::citext In ('DynamicModification', 'StaticModification', 'IsotopicModification', 'TermDynamicModification')) Then
 
         If _infoOnly Then
             RAISE INFO '_entryType = %', _entryType;
@@ -148,7 +148,7 @@ BEGIN
 
             _counter := _counter + 1;
 
-            If (_entryType = 'StaticModification') AND _counter < 2 Then
+            If (_entryType = 'StaticModification') And _counter < 2 Then
             -- <b>
                 If char_length(_entrySpecifier) > 1  -- Then the mod is a terminal mod Then
                 -- <c>
@@ -180,7 +180,7 @@ BEGIN
 
             Else
                 -- Jump out of the while if this is a static modification or a 'TermDynamicModification'
-                If (_entryType = 'StaticModification' OR _entryType = 'TermDynamicModification') AND _counter > 1 Then
+                If (_entryType = 'StaticModification' Or _entryType = 'TermDynamicModification') And _counter > 1 Then
                     break;
                 End If;
             End If;

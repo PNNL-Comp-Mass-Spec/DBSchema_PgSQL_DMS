@@ -27,30 +27,30 @@ AS $$
 **
 *****************************************************/
 BEGIN
-    _autoSPVolNameClient := Trim(Coalesce(_autoSPVolNameClient, ''));
-    _autoSPVolNameServer := Trim(Coalesce(_autoSPVolNameServer, ''));
-    _autoSPPathRoot := Trim(Coalesce(_autoSPPathRoot, ''));
-    _autoSPArchiveServerName := Trim(Coalesce(_autoSPArchiveServerName, ''));
-    _autoSPArchivePathRoot := Trim(Coalesce(_autoSPArchivePathRoot, ''));
+    _autoSPVolNameClient        := Trim(Coalesce(_autoSPVolNameClient, ''));
+    _autoSPVolNameServer        := Trim(Coalesce(_autoSPVolNameServer, ''));
+    _autoSPPathRoot             := Trim(Coalesce(_autoSPPathRoot, ''));
+    _autoSPArchiveServerName    := Trim(Coalesce(_autoSPArchiveServerName, ''));
+    _autoSPArchivePathRoot      := Trim(Coalesce(_autoSPArchivePathRoot, ''));
     _autoSPArchiveSharePathRoot := Trim(Coalesce(_autoSPArchiveSharePathRoot, ''));
 
     If _autoDefineStoragePath Then
-        If _autoSPVolNameClient IN ('', '\', '/') Then
+        If _autoSPVolNameClient In ('', '\', '/') Then
             RAISE EXCEPTION 'Auto Storage VolNameClient cannot be blank or \ or /';
         End If;
-        If _autoSPVolNameServer IN ('', '\', '/') Then
+        If _autoSPVolNameServer In ('', '\', '/') Then
             RAISE EXCEPTION 'Auto Storage VolNameServer cannot be blank or \ or /';
         End If;
-        If _autoSPPathRoot IN ('', '\', '/') Then
+        If _autoSPPathRoot In ('', '\', '/') Then
             RAISE EXCEPTION 'Auto Storage Path Root cannot be blank or \ or /';
         End If;
-        If _autoSPArchiveServerName IN ('', '\', '/') Then
+        If _autoSPArchiveServerName In ('', '\', '/') Then
             RAISE EXCEPTION 'Auto Storage Archive Server Name cannot be blank or \ or /';
         End If;
-        If _autoSPArchivePathRoot IN ('', '\', '/') Then
+        If _autoSPArchivePathRoot In ('', '\', '/') Then
             RAISE EXCEPTION 'Auto Storage Archive Path Root cannot be blank or \ or /';
         End If;
-        If _autoSPArchiveSharePathRoot IN ('', '\', '/') Then
+        If _autoSPArchiveSharePathRoot In ('', '\', '/') Then
             RAISE EXCEPTION 'Auto Storage Archive Share Path Root cannot be blank or \ or /';
         End If;
     End If;
@@ -66,7 +66,7 @@ BEGIN
     End If;
 
     If _autoSPVolNameServer <> '' Then
-        If _autoSPVolNameServer Not SIMILAR TO '[A-Z]:%' Then
+        If _autoSPVolNameServer::citext Not SIMILAR TO '[A-Z]:%' Then
             RAISE EXCEPTION 'Auto Storage VolNameServer should be a drive letter, for example: G:\';
         End If;
 

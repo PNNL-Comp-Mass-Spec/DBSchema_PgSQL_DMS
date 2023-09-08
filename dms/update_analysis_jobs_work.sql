@@ -62,6 +62,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work(IN _state text DEFA
 **          07/27/2023 mem - Add schema name parameter when calling alter_entered_by_user_multi_id()
 **                         - Use local variable for the return value of _message from alter_event_log_entry_user_multi_id()
 **          09/05/2023 mem - Use schema name when calling procedures
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -545,9 +546,8 @@ BEGIN
     -- Deprecated in May 2015:
     -- Handle associated processor Group
     -- (though only if we're actually performing an update or reset)
-    --
-    If _associatedProcessorGroup <> _noChangeText And _mode IN ('update', 'reset') Then
-    -- <associated processor group>
+
+    If _associatedProcessorGroup <> _noChangeText And _mode In ('update', 'reset') Then
 
         ---------------------------------------------------
         -- Resolve processor group ID
@@ -623,10 +623,10 @@ BEGIN
 
             _alterEnteredByRequired := true;
         End If;
-    End If;  -- </associated processor Group>
+    End If;
     */
 
-     If char_length(_callingUser) > 0 AND (_alterEventLogRequired OR _alterEnteredByRequired) Then
+     If char_length(_callingUser) > 0 And (_alterEventLogRequired Or _alterEnteredByRequired) Then
         -- _callingUser is defined and items need to be updated in t_event_log and/or t_analysis_job_processor_group_associations
         --
         -- Populate a temporary table with the list of job IDs just updated

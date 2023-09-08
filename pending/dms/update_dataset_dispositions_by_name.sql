@@ -84,7 +84,7 @@ BEGIN
         _recycleRequest := Trim(Lower(Coalesce(_recycleRequest, '')));
         _comment := Coalesce(_comment, '');
 
-        If Not _recycleRequest::citext IN ('yes', 'no') Then
+        If Not _recycleRequest::citext In ('yes', 'no') Then
             _message := format('RecycleRequest must be Yes or No (currently "%s")', _recycleRequest);
             RAISE EXCEPTION '%', _message;
         End If;

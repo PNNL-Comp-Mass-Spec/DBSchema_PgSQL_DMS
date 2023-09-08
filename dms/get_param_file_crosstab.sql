@@ -50,6 +50,7 @@ CREATE OR REPLACE PROCEDURE public.get_param_file_crosstab(IN _analysistoolname 
 **          02/12/2010 mem - Expanded _parameterFileFilter to varchar(255)
 **          07/17/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -106,7 +107,7 @@ BEGIN
     End If;
 
     -- Assure that one of the following is non-zero
-    If _showModSymbol = 0 AND _showModName = 0 AND _showModMass = 0 Then
+    If _showModSymbol = 0 And _showModName = 0 And _showModMass = 0 Then
         _showModName := 1;
     End If;
 

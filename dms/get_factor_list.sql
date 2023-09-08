@@ -16,12 +16,13 @@ CREATE OR REPLACE FUNCTION public.get_factor_list(_requestid integer) RETURNS te
 **  Date:   05/17/2011
 **          06/16/2022 mem - Ported to PostgreSQL
 **          05/30/2023 mem - Use format() for string concatenation
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
     _result text;
 BEGIN
-    IF NOT _requestID IS NULL Then
+    IF Not _requestID Is Null Then
         SELECT string_agg(format('%s:%s', name, value), ', ' ORDER BY name)
         INTO _result
         FROM t_factor

@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE cap.update_multiple_capture_tasks(IN _joblist text, 
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW instead of RAISERROR
 **          06/22/2023 mem - Ported to PostgreSQL
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -102,7 +103,7 @@ BEGIN
         -- Update parameters for capture task jobs
         ---------------------------------------------------
 
-        If _action::citext = 'UpdateParameters' AND _mode::citext = 'Update' Then
+        If _action::citext = 'UpdateParameters' And _mode::citext = 'Update' Then
             CALL cap.update_parameters_for_task (
                             _jobList,
                             _message => _message,
@@ -110,7 +111,7 @@ BEGIN
             RETURN;
         End If;
 
-        If _action::citext = 'UpdateParameters' AND _mode::citext = 'Preview' Then
+        If _action::citext = 'UpdateParameters' And _mode::citext = 'Preview' Then
             CALL cap.update_parameters_for_task (
                                         _jobList,
                                         _message => _message,
@@ -181,7 +182,7 @@ BEGIN
         -- Retry capture task jobs
         ---------------------------------------------------
 
-        If _action::citext = 'Retry' AND _mode::citext = 'Update' Then
+        If _action::citext = 'Retry' And _mode::citext = 'Update' Then
 
             -- Procedure retry_selected_tasks performs the following actions
             --   1) Set any failed or holding capture task job steps to waiting and reset retry count from step tools table
@@ -198,7 +199,7 @@ BEGIN
         -- Hold
         ---------------------------------------------------
 
-        If _action::citext = 'Hold' AND _mode::citext = 'Update' Then
+        If _action::citext = 'Hold' And _mode::citext = 'Update' Then
 
             UPDATE cap.t_tasks
             SET state = 100
@@ -212,7 +213,7 @@ BEGIN
         -- Ignore
         ---------------------------------------------------
 
-        If _action::citext = 'Ignore' AND _mode::citext = 'Update' Then
+        If _action::citext = 'Ignore' And _mode::citext = 'Update' Then
 
             UPDATE cap.t_tasks
             SET state = 101
@@ -226,7 +227,7 @@ BEGIN
         -- Release
         ---------------------------------------------------
 
-        If _action::citext = 'Release' AND _mode::citext = 'Update' Then
+        If _action::citext = 'Release' And _mode::citext = 'Update' Then
 
             UPDATE cap.t_tasks
             SET state = 1

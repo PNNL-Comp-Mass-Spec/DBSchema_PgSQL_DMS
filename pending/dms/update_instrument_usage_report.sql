@@ -232,11 +232,11 @@ BEGIN
             -- Validation
             -----------------------------------------------------------
 
-            If _operation::citext = 'reload' AND Coalesce(_instrument, '') = '' Then
+            If _operation::citext = 'reload' And Coalesce(_instrument, '') = '' Then
                 RAISE EXCEPTION 'An instrument must be specified for the reload operation';
             End If;
 
-            If Coalesce(_year, '') = '' OR Coalesce(_month, '') = '' Then
+            If Coalesce(_year, '') = '' Or Coalesce(_month, '') = '' Then
                 RAISE EXCEPTION 'A year and month must be specified for this operation';
             End If;
 

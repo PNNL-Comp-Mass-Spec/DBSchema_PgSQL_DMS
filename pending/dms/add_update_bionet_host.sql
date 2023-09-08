@@ -75,12 +75,12 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        If _mode IS NULL OR char_length(_mode) < 1 Then
+        If _mode Is Null Or char_length(_mode) < 1 Then
             _returnCode := 'U5102';
             RAISE EXCEPTION '_mode must be specified';
         End If;
 
-        If _host IS NULL OR char_length(_host) < 1 Then
+        If _host Is Null Or char_length(_host) < 1 Then
             _returnCode := 'U5103';
             RAISE EXCEPTION '_host must be specified';
         End If;

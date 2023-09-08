@@ -231,13 +231,13 @@ BEGIN
                 EXIT;
             END;
 
-            If _datasetInfo.Comment <> '' AND _comment <> '' Then
+            If _datasetInfo.Comment <> '' And _comment <> '' Then
                 -- Append the new comment only if it is not already present
                 If Position(_comment In _datasetInfo.Comment) = 0 Then
                     _datasetInfo.Comment := format('%s; %s', _datasetInfo.Comment, _comment);
                 End If;
 
-            ElsIf _datasetInfo.Comment = '' AND _comment <> '' Then
+            ElsIf _datasetInfo.Comment = '' And _comment <> '' Then
                 _datasetInfo.Comment := _comment;
 
             End If;
@@ -290,7 +290,7 @@ BEGIN
             -- If rating changes from unreviewed to released
             -- and dataset capture is complete
             --
-            If _datasetInfo.RatingID = -10 and _ratingID = 5 AND _datasetInfo.StateID IN (3, 4) Then
+            If _datasetInfo.RatingID = -10 And _ratingID = 5 And _datasetInfo.StateID In (3, 4) Then
                 -- schedule default analyses for this dataset
                 --
                 CALL schedule_predefined_analysis_jobs (_datasetInfo.DatasetName, _callingUser, _returnCode => _returnCode);

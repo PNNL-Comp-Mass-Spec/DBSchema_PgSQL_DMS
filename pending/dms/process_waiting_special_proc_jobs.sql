@@ -138,7 +138,7 @@ BEGIN
 
             _hoursSinceStateLastChanged := extract(epoch FROM CURRENT_TIMESTAMP - _jobInfo.LastAffected) / 3600.0;
 
-            If _jobInfo.DatasetState = 4 Or _jobInfoatasetRating IN (-2, -1) Then
+            If _jobInfo.DatasetState = 4 Or _jobInfoatasetRating In (-2, -1) Then
 
                 _tagAvailable := false;
 
@@ -203,7 +203,7 @@ BEGIN
                             _readyToProcess := false;
                             _jobMessage := format('Source job %s not found in t_analysis_job', _sourceJob);
                         Else
-                            If _sourceJobState IN (4, 14) Then
+                            If _sourceJobState In (4, 14) Then
                                 _jobMessage := 'Ready';
                             Else
                                 _readyToProcess := false;

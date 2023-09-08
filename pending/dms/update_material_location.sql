@@ -152,7 +152,7 @@ BEGIN
         -- Enable error logging if an exception is caught
         _logErrors := true;
 
-        If _status Is Distinct From _oldStatus Then
+        If _status IS DISTINCT FROM _oldStatus Then
             -- Update the status
 
             UPDATE t_material_locations
@@ -167,7 +167,7 @@ BEGIN
             _message := format('Set status to %s', _status);
         End If;
 
-        If _oldComment Is Distinct From _comment Then
+        If _oldComment IS DISTINCT FROM _comment Then
             -- Update the comment
 
             UPDATE t_material_locations

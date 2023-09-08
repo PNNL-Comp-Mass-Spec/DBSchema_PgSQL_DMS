@@ -14,6 +14,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_data_analysis_request_after_update() 
 **  Date:   03/21/2022 mem - Initial version
 **          08/04/2022 mem - Ported to PostgreSQL
 **          08/08/2022 mem - Reference the NEW and OLD variables directly instead of using transition tables (which contain every updated row, not just the current row)
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -23,8 +24,8 @@ BEGIN
 
     _username := public.get_user_login_without_domain('');
 
-    If OLD.state <> NEW.state OR
-       OLD.state = NEW.state AND
+    If OLD.state <> NEW.state Or
+       OLD.state = NEW.state And
        Not _username IN ('postgres', 'msdadmin') Then
 
         INSERT INTO t_data_analysis_request_updates( request_id,

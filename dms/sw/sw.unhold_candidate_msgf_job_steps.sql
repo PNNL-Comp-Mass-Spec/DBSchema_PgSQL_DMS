@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE sw.unhold_candidate_msgf_job_steps(IN _steptool text
 **          05/12/2017 mem - Update Tool_Version_ID, Next_Try, and Remote_Info_ID
 **          08/12/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -73,7 +74,7 @@ BEGIN
     -----------------------------------------------------------
     _jobsToRelease := _targetCandidates - _candidateSteps;
 
-    If _targetCandidates = 1 And _jobsToRelease > 0 OR
+    If _targetCandidates = 1 And _jobsToRelease > 0 Or
        _targetCandidates > 1 And _jobsToRelease > 1 Then
 
         -----------------------------------------------------------

@@ -61,6 +61,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable boolean, IN _m
 **          06/23/2023 mem - No longer mention "FETCH ALL FROM _results" in the output message
 **          07/11/2023 mem - Use COUNT(PV.entry_id) instead of COUNT(*)
 **          09/07/2023 mem - Update warning messages
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -121,7 +122,7 @@ BEGIN
               mgr_type_active > 0;
 
         If Not Found Then
-            If Exists (SELECT * FROM mc.t_mgr_types WHERE mgr_type_id = _managerTypeID AND mgr_type_active = 0) Then
+            If Exists (SELECT mgr_type_id FROM mc.t_mgr_types WHERE mgr_type_id = _managerTypeID AND mgr_type_active = 0) Then
                 _message := format('_managerTypeID %s has mgr_type_active = 0 in mc.t_mgr_types; unable to continue', _managerTypeID);
             Else
                 _message := format('_managerTypeID %s not found in mc.t_mgr_types', _managerTypeID);
@@ -132,7 +133,7 @@ BEGIN
         End If;
     End If;
 
-    If _enable AND char_length(_managerNameList) = 0 Then
+    If _enable And char_length(_managerNameList) = 0 Then
         _message := '_managerNameList must be specified when _enable is true; to update all managers, set _managerNameList to ''All''';
         _returnCode := 'U5204';
         RETURN;

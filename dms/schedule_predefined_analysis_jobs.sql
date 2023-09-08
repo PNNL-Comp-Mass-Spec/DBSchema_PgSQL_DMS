@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE public.schedule_predefined_analysis_jobs(IN _dataset
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/15/2023 mem - Exit the procedure if _datasetName is not found in T_Dataset
 **                         - Ported to PostgreSQL
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -89,7 +90,7 @@ BEGIN
         -- However, if the dataset already exists and has state 'New', don't add another row
         ---------------------------------------------------
 
-        If Exists (SELECT * FROM t_predefined_analysis_scheduling_queue WHERE dataset_id = _datasetID AND state = 'New') Then
+        If Exists (SELECT dataset_id FROM t_predefined_analysis_scheduling_queue WHERE dataset_id = _datasetID AND state = 'New') Then
             If _infoOnly Then
                 RAISE INFO 'Skip dataset since it already has a "New" entry in t_predefined_analysis_scheduling_queue: %', _datasetName;
             End If;

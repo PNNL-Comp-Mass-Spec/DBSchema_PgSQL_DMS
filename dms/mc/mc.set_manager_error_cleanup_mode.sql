@@ -40,6 +40,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text D
 **          06/24/2023 mem - Use check_plural() to customize preview message
 **          08/07/2023 mem - Display a blank line before additional status messages
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -85,7 +86,7 @@ BEGIN
         mgr_id int NULL
     );
 
-    If char_length(_mgrList) > 0 AND _mgrList <> '%' Then
+    If char_length(_mgrList) > 0 And _mgrList <> '%' Then
         ---------------------------------------------------
         -- Populate Tmp_ManagerList with the managers in _mgrList
         ---------------------------------------------------

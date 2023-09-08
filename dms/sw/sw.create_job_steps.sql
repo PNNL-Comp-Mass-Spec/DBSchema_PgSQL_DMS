@@ -66,6 +66,7 @@ CREATE OR REPLACE PROCEDURE sw.create_job_steps(INOUT _message text DEFAULT ''::
 **          08/01/2023 mem - Use text parsing to combine XML when mode is 'ExtendExistingJob'
 **                         - Set _captureTaskJob to false when calling sw.show_tmp_job_steps_and_job_step_dependencies
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -248,7 +249,7 @@ BEGIN
             _maxJobsToAdd := 1000000;
         End If;
 
-        If Not _debugMode OR (_debugMode And _existingJob = 0) Then
+        If Not _debugMode Or (_debugMode And _existingJob = 0) Then
             INSERT INTO Tmp_Jobs (
                 Job,
                 Priority,
@@ -614,7 +615,7 @@ BEGIN
             If _returnCode <> '' Then
                 If _mode::citext = 'UpdateExistingJob' Then
                     -- If None of the job steps has completed yet, it's OK if there are parameter differences
-                    If Exists (SELECT * FROM sw.t_job_steps WHERE job = _jobInfo.Job AND state = 5) Then
+                    If Exists (SELECT job FROM sw.t_job_steps WHERE job = _jobInfo.Job AND state = 5) Then
                         _message := format('Conflicting parameters are not allowed when one or more job steps has completed: %s', _message);
                         RAISE WARNING '%', _message;
 

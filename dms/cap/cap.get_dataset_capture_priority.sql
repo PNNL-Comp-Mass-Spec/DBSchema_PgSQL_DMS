@@ -22,17 +22,18 @@ CREATE OR REPLACE FUNCTION cap.get_dataset_capture_priority(_datasetname public.
 **          08/24/2022 mem - Fix ElsIf typo
 **          04/02/2023 mem - Rename procedure and functions
 **          05/22/2023 mem - Capitalize reserved word
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
     _priority int;
 BEGIN
     -- These dataset names are modeled after those in function public.get_dataset_priority
-    If (_datasetName SIMILAR TO 'QC[_][0-9][0-9]%' OR
-        _datasetName SIMILAR TO 'QC[_-]Shew[_-][0-9][0-9]%' OR
-        _datasetName SIMILAR TO 'QC[_-]ShewIntact%' OR
-        _datasetName SIMILAR TO 'QC[_]Shew[_]TEDDY%' OR
-        _datasetName SIMILAR TO 'QC[_]Mam%' OR
+    If (_datasetName SIMILAR TO 'QC[_][0-9][0-9]%' Or
+        _datasetName SIMILAR TO 'QC[_-]Shew[_-][0-9][0-9]%' Or
+        _datasetName SIMILAR TO 'QC[_-]ShewIntact%' Or
+        _datasetName SIMILAR TO 'QC[_]Shew[_]TEDDY%' Or
+        _datasetName SIMILAR TO 'QC[_]Mam%' Or
         _datasetName SIMILAR TO 'QC[_]PP[_]MCF-7%'
        ) AND NOT _datasetName LIKE '%-bad' Then
          _priority := 2;

@@ -12,6 +12,7 @@ CREATE OR REPLACE FUNCTION public.get_datasets_with_flanking_qcs(_startdate time
 **
 **  Auth:   mem
 **  Date:   07/11/2022 mem - Initial release (based on view V_Datasets_With_Flanking_QCs)
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -60,13 +61,13 @@ BEGIN
                                     FROM public.t_dataset QCD
                                     WHERE (QCD.dataset LIKE 'qc_shew%' OR
                                            QCD.dataset LIKE 'qc_mam%' OR
-                                           QCD.dataset like 'qc_pp_mcf%') And
-                                          COALESCE(QCD.Acq_Time_Start, QCD.created) Between _qcStartDate And _qcEndDate
+                                           QCD.dataset LIKE 'qc_pp_mcf%') AND
+                                          COALESCE(QCD.Acq_Time_Start, QCD.created) BETWEEN _qcStartDate AND _qcEndDate
                                   ) QCDatasets
                          ON DS.instrument_id = QCDatasets.instrument_id AND
                             DS.lc_column_ID = QCDatasets.lc_column_ID AND
                             DS.dataset <> QCDatasets.dataset
-                  WHERE COALESCE(DS.Acq_Time_Start, DS.created) Between _startDate And _EndDate
+                  WHERE COALESCE(DS.Acq_Time_Start, DS.created) BETWEEN _startDate And _EndDate
                  ) LookupQ
        ) RankQ
          INNER JOIN public.t_instrument_name InstName

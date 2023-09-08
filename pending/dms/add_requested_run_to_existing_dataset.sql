@@ -104,7 +104,7 @@ BEGIN
         _datasetName := Coalesce(_datasetName, '');
         _mode := Trim(_mode);
 
-        If _datasetID <> 0 AND _datasetName <> '' Then
+        If _datasetID <> 0 And _datasetName <> '' Then
             RAISE EXCEPTION 'Cannot specify both datasetID "%" and datasetName "%"', _datasetID, _datasetName;
         End If;
 

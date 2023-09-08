@@ -26,6 +26,7 @@ CREATE OR REPLACE FUNCTION cap.enable_disable_archive_step_tools(_enable boolean
 **          05/29/2023 mem - Use format() for string concatenation
 **          09/01/2023 mem - Remove unnecessary cast to citext for string constants
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -132,7 +133,7 @@ BEGIN
         End If;
     End If;
 
-    If _disableComment = '' AND _enable Then
+    If _disableComment = '' And _enable Then
 
         UPDATE cap.t_processor_tool ProcTool
         SET comment = ''

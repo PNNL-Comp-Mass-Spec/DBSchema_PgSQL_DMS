@@ -29,14 +29,15 @@ CREATE OR REPLACE FUNCTION public.get_user_id(_username text DEFAULT ''::text) R
 **          10/22/2020 mem - Add support for names of the form 'LastName, FirstName (Username)'
 **          10/13/2022 mem - Ported to PostgreSQL
 **          02/08/2023 mem - Rename argument to _username
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
     _userID int;
     _startLoc int;
 BEGIN
-    If _username LIKE '%(%)' Then
-        _startLoc := position('(' in _username);
+    If _username Like '%(%)' Then
+        _startLoc := position('(' In _username);
         If _startLoc > 0 Then
             _username := Substring(_username, _startLoc + 1, char_length(_username) - _startLoc - 1);
         End If;

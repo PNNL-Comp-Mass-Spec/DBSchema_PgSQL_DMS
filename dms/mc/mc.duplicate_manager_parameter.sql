@@ -37,6 +37,7 @@ CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid int
 **          05/22/2023 mem - Capitalize reserved word
 **          05/23/2023 mem - Use format() for string concatenation
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -69,7 +70,7 @@ BEGIN
         _returnCode := 'U5201';
     End If;
 
-    If _returnCode = '' And Not _paramValueSearchText Is Null AND _paramValueReplaceText Is Null Then
+    If _returnCode = '' And Not _paramValueSearchText Is Null And _paramValueReplaceText Is Null Then
         _message := '_paramValueReplaceText cannot be null when _paramValueSearchText is defined; unable to continue';
         RAISE WARNING '%', _message;
         _returnCode := 'U5202';

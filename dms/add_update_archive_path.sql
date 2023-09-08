@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_archive_path(INOUT _archivepathid 
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          09/07/2023 mem - Align assignment statements
 **                         - Update warning messages
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -137,7 +138,7 @@ BEGIN
 
     -- Check for active instrument to prevent multiple Active paths for an instrument
     --
-    If _archiveFunction::citext = 'Active' AND Exists (
+    If _archiveFunction::citext = 'Active' And Exists (
             SELECT InstName.instrument_id
             FROM t_instrument_name InstName
                  INNER JOIN t_archive_path ArchPath

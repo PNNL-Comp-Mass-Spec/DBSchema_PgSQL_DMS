@@ -35,6 +35,7 @@ CREATE OR REPLACE FUNCTION public.trim_schema_change_log_source_data(_infolevel 
 **          04/27/2023 mem - Use boolean for data type name
 **          05/12/2023 mem - Rename variables
 **          05/31/2023 mem - Use format() for string concatenation
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -85,12 +86,12 @@ BEGIN
                SCL.function_name,
                SCL.function_source,
                char_length(SCL.function_source) as source_length_current,
-               Case When RankQ.version_rank > 3 Then
-                        Case When char_length(SCL.function_source) > 100 Then 100
-                             Else char_length(SCL.function_source)
-                        End
-                    Else char_length(SCL.function_source)
-               End As source_length_new
+               CASE WHEN RankQ.version_rank > 3 THEN
+                        CASE WHEN char_length(SCL.function_source) > 100 THEN 100
+                             ELSE char_length(SCL.function_source)
+                        END
+                    ELSE char_length(SCL.function_source)
+               END As source_length_new
         FROM t_schema_change_log SCL
              INNER JOIN
                 (SELECT DISTINCT L.schema_name AS schema_name, L.object_name as object_name

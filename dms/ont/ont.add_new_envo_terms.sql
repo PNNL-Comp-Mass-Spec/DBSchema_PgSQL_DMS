@@ -34,6 +34,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_envo_terms(_sourcetable public.citext DEF
 **          05/29/2023 mem - Use format() for string concatenation
 **          07/11/2023 mem - Use COUNT(s.entry_id) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -117,7 +118,7 @@ BEGIN
           '   parent_term_name, parent_term_id,'
           '   grandparent_term_name, grandparent_term_id, 0 as matches_existing'
           ' FROM %I.%I'
-          ' WHERE parent_term_name <> '''' And term_pk Similar To ''ENVO%''';
+          ' WHERE parent_term_name <> '''' And term_pk SIMILAR TO ''ENVO%''';
 
     EXECUTE format(_s, _sourceSchema, _sourceTable);
 

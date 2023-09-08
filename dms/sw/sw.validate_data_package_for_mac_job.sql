@@ -43,6 +43,7 @@ CREATE OR REPLACE PROCEDURE sw.validate_data_package_for_mac_job(IN _datapackage
 **          03/27/2023 mem - Add support for DiaNN
 **          07/27/2023 mem - Ported to PostgreSQL
 **          09/01/2023 mem - Remove unnecessary cast to citext for string constants
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -164,13 +165,13 @@ BEGIN
         FROM Tmp_DataPackageItems
         WHERE SEQUEST >= 1;
 
-        If _scriptName ILIKE 'MaxQuant%' Or _scriptName ILIKE 'MSFragger%' Or _scriptName ILIKE 'DiaNN%' Then
+        If _scriptName ILike 'MaxQuant%' Or _scriptName ILike 'MSFragger%' Or _scriptName ILike 'DiaNN%' Then
             If _datasetCount = 0 Then
                 _errMsg := format('Data package currently does not have any datasets (script %s)', _scriptName);
             End If;
         End If;
 
-        If Not _scriptName::citext In ('Global_Label-Free_AMT_Tag') AND Not _scriptName ILIKE 'MaxQuant%' AND Not _scriptName ILIKE 'MSFragger%' AND Not _scriptName ILIKE 'DiaNN%' Then
+        If Not _scriptName::citext In ('Global_Label-Free_AMT_Tag') And Not _scriptName ILike 'MaxQuant%' And Not _scriptName ILike 'MSFragger%' And Not _scriptName ILike 'DiaNN%' Then
             If _scriptName::citext = 'PRIDE_Converter' Then
                 If _msgfPlusCountOneOrMore > 0 Then
                     _tool := 'msgfplus';
@@ -221,7 +222,7 @@ BEGIN
         -- given job template
         ---------------------------------------------------
 
-        If _scriptName::citext IN ('Isobaric_Labeling') Then
+        If _scriptName::citext In ('Isobaric_Labeling') Then
             If _deconToolsCountNotOne > 0 Then
                 _errMsg := public.append_to_text(
                                 _errMsg,
@@ -239,7 +240,7 @@ BEGIN
             End If;
         End If;
 
-        If _scriptName::citext IN ('MAC_iTRAQ', 'MAC_TMT10Plex') Then
+        If _scriptName::citext In ('MAC_iTRAQ', 'MAC_TMT10Plex') Then
             If _masicCountNotOne > 0 Then
                 _errMsg := public.append_to_text(
                                     _errMsg,
@@ -249,7 +250,7 @@ BEGIN
             End If;
         End If;
 
-        If _scriptName::citext IN ('Global_Label-Free_AMT_Tag') Then
+        If _scriptName::citext In ('Global_Label-Free_AMT_Tag') Then
             If _deconToolsCountNotOne > 0 Then
                 _errMsg := public.append_to_text(
                                     _errMsg,

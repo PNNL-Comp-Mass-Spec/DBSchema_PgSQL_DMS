@@ -213,7 +213,7 @@ BEGIN
     -- container must be empty
     ---------------------------------------------------
 
-    If _mode = 'retire_container' AND _nonEmptyContainerCount > 0 Then
+    If _mode = 'retire_container' And _nonEmptyContainerCount > 0 Then
         If _numContainers = 1 Then
             _message := format('Container %s is not empty; cannot retire it', _containerList);
         Else
@@ -239,12 +239,12 @@ BEGIN
     -- Arrange for containers and their contents to have common comment
     -- Example comment: CR-2022.08.11_14:23:11
 
-    If _mode = 'retire_container_and_contents' AND _comment = '' Then
+    If _mode = 'retire_container_and_contents' And _comment = '' Then
         _comment := format('CR-%s', to_char(CURRENT_TIMESTAMP, 'yyyy.mm.dd_hh24:mi:ss'));
     End If;
 
     -- Retire the contents
-    If _mode = 'retire_container_and_contents' AND _nonEmptyContainerCount > 0 Then
+    If _mode = 'retire_container_and_contents' And _nonEmptyContainerCount > 0 Then
         CALL update_material_items (
                     'retire_items',
                     containerList,

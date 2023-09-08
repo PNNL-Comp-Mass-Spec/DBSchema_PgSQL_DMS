@@ -104,7 +104,7 @@ BEGIN
 
         -- Optionally generate a container name
 
-        If _container::citext = '(generate name)' OR _mode = 'add' Then
+        If _container::citext = '(generate name)' Or _mode = 'add' Then
 
             SELECT MAX(container_id) + 1
             INTO _nextContainerID
@@ -119,7 +119,7 @@ BEGIN
             RETURN;
         End If;
 
-        If _container::citext ='na' Or _container ILIKE '%Staging%' Then
+        If _container::citext ='na' Or _container ILike '%Staging%' Then
             _message := format('The "%s" container cannot be updated via the website; contact a DMS admin (see AddUpdateMaterialContainer)', _container);
             _returnCode := 'U5203';
             RETURN;

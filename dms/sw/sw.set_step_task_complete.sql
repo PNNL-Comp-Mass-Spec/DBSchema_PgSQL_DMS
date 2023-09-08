@@ -64,6 +64,7 @@ CREATE OR REPLACE PROCEDURE sw.set_step_task_complete(IN _job integer, IN _step 
 **          03/29/2023 mem - Add support for completion codes 27 and 28 (SKIPPED_DIA_NN_SPEC_LIB and WAITING_FOR_DIA_NN_SPEC_LIB)
 **          08/11/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -239,7 +240,7 @@ BEGIN
 
             -- Note that Formularity and NOMSI jobs that report completion code 20 are handled in AutoFixFailedJobs
 
-            If _jobInfo.StepTool IN ('Decon2LS_V2') Then
+            If _jobInfo.StepTool In ('Decon2LS_V2') Then
                 -- Treat 'No_data' results for DeconTools as a completed job step but skip the next step if it is LCMSFeatureFinder
                 _stepState := 5;    -- Complete
 
@@ -250,7 +251,7 @@ BEGIN
                 CALL public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
             End If;
 
-            If _jobInfo.StepTool IN ('DataExtractor') Then
+            If _jobInfo.StepTool In ('DataExtractor') Then
                 -- Treat 'No_data' results for the DataExtractor as a completed job step but skip later job steps that match certain tools
                 _stepState := 5;    -- Complete
 
@@ -262,7 +263,7 @@ BEGIN
             End If;
         End If;
 
-        If _completionCode = 25 OR  -- RUNNING_REMOTE
+        If _completionCode = 25 Or  -- RUNNING_REMOTE
            _completionCode = 28     -- WAITING_FOR_DIA_NN_SPEC_LIB
         Then
 

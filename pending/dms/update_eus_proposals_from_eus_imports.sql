@@ -120,7 +120,7 @@ BEGIN
 
         GET DIAGNOSTICS _setInactiveCount = ROW_COUNT;
 
-        If _mergeInsertCount > 0 OR _mergeUpdateCount > 0 Then
+        If _mergeInsertCount > 0 Or _mergeUpdateCount > 0 Then
             _message := format('Updated t_eus_proposals: %s added, %s updated', _mergeInsertCount, _mergeUpdateCount);
 
             If _setInactiveCount > 0 Then

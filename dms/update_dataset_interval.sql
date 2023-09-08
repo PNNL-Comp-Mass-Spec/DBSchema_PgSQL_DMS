@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_interval(IN _instrumentname te
 **          05/03/2019 mem - Use EUS_Instrument_ID for DMS instruments that share a single eusInstrumentId
 **          08/28/2023 mem - Ported to PostgreSQL
 **          08/31/2023 mem - Exit the procedure if no datasets are found between the start and end dates
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -256,7 +257,7 @@ BEGIN
 
             -- Update the durations table, provided start and end times are not null
 
-            If NOT _start IS NULL AND NOT _end IS NULL Then
+            If Not _start Is Null And Not _end Is Null Then
                 UPDATE Tmp_Durations
                 SET Interval = Coalesce(_interval, 0)
                 WHERE Seq = _index;
@@ -332,10 +333,10 @@ BEGIN
                                     _previewData.Long_Interval,
                                     CASE WHEN Not _previewData.Interval_to_Next_DS Is Null AND
                                               _previewData.Current_Interval_to_Next_DS Is NULL THEN 'Storing new interval'
-                                         WHEN Not _previewData.Interval_to_Next_DS Is Distinct From _previewData.Current_Interval_to_Next_DS THEN ''   -- Matches existing interval
+                                         WHEN Not _previewData.Interval_to_Next_DS IS DISTINCT FROM _previewData.Current_Interval_to_Next_DS THEN ''   -- Matches existing interval
                                          ELSE
                                              CASE WHEN Not _previewData.Interval_to_Next_DS Is Null AND
-                                                       _previewData.Current_Interval_to_Next_DS Is Distinct From _previewData.Interval_to_Next_DS
+                                                       _previewData.Current_Interval_to_Next_DS IS DISTINCT FROM _previewData.Interval_to_Next_DS
                                                   THEN format('Updating interval: %s -> %s',
                                                                 _previewData.Current_Interval_to_Next_DS,
                                                                 _previewData.Interval_to_Next_DS)
@@ -364,7 +365,7 @@ BEGIN
         FROM Tmp_Durations
         WHERE target.dataset_id = Tmp_Durations.dataset_id AND
               Not Tmp_Durations.Interval Is Null AND
-              target.interval_to_next_ds Is Distinct From Tmp_Durations.Interval;
+              target.interval_to_next_ds IS DISTINCT FROM Tmp_Durations.Interval;
 
         ---------------------------------------------------
         -- Update intervals in long interval table

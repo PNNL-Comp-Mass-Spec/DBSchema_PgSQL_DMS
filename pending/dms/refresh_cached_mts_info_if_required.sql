@@ -143,11 +143,11 @@ BEGIN
                     RAISE INFO 'Hours since last full refresh: % %', _hoursSinceLastFullRefresh, Case When _hoursSinceLastFullRefresh >= _updateIntervalAllItems Then '-> Full refresh required' Else '' End;
                 End If;
 
-                If _hoursSinceLastRefresh >= _updateInterval OR _hoursSinceLastFullRefresh >= _updateIntervalAllItems Then
+                If _hoursSinceLastRefresh >= _updateInterval Or _hoursSinceLastFullRefresh >= _updateIntervalAllItems Then
                 -- <c>
 
                     _idMinimum := 0;
-                    If _idColumnName <> '' AND _hoursSinceLastFullRefresh < _updateIntervalAllItems Then
+                    If _idColumnName <> '' And _hoursSinceLastFullRefresh < _updateIntervalAllItems Then
                         -- Less than _updateIntervalAllItems hours has elapsed since the last full update
                         -- Bump up _idMinimum to _dynamicMinimumCountThreshold less than the max ID in the target table
 

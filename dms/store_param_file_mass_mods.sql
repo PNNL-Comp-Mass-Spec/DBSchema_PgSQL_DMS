@@ -135,6 +135,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **                         - Remove unused variables
 **                         - Move Drop Tables commands to outside the for loop; you cannot drop a table being used by a for loop
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -481,7 +482,7 @@ BEGIN
         If _paramFileType::citext = 'MSFragger' Then
             _rowParsed := true;
 
-            If _row Similar To 'variable[_]mod%' Then
+            If _row SIMILAR TO 'variable[_]mod%' Then
                 _charIndex := Position('=' In _row);
                 If _charIndex > 0 Then
                     _rowValue := Trim(Substring(_row, _charIndex+1, char_length(_row)));
@@ -496,7 +497,7 @@ BEGIN
                 End If;
             End If;
 
-            If _row Similar To 'add[_]%' Then
+            If _row SIMILAR TO 'add[_]%' Then
                 _charIndex := Position('=' In _row);
                 If _charIndex > 0 Then
                     _rowKey := Trim(Substring(_row, 1, _charIndex-1));
@@ -515,20 +516,20 @@ BEGIN
                     _rowKey := Substring(_rowKey, 5, 100);
 
                     -- Add the affected mod symbol as the second column
-                    If _rowKey Similar To 'Nterm[_]peptide%' Then
+                    If _rowKey SIMILAR TO 'Nterm[_]peptide%' Then
                         _residueSymbol := '<';
-                    ElsIf _rowKey Similar To 'Cterm[_]peptide%' Then
+                    ElsIf _rowKey SIMILAR TO 'Cterm[_]peptide%' Then
                         _residueSymbol := '>';
-                    ElsIf _rowKey Similar To 'Nterm[_]protein%' Then
+                    ElsIf _rowKey SIMILAR TO 'Nterm[_]protein%' Then
                         _residueSymbol := '[';
-                    ElsIf _rowKey Similar To 'Cterm[_]protein%' Then
+                    ElsIf _rowKey SIMILAR TO 'Cterm[_]protein%' Then
                         _residueSymbol := ']';
                     Else
                         -- _rowKey is Similar To C_cysteine
                         _residueSymbol := Substring(_rowKey, 1, 1);
                     End If;
 
-                    If Exists (Select * From Tmp_ModDef Where EntryID = 2) Then
+                    If Exists (SELECT * FROM Tmp_ModDef WHERE EntryID = 2) Then
                         UPDATE Tmp_ModDef
                         SET Value = _residueSymbol
                         WHERE EntryID = 2;
@@ -776,7 +777,7 @@ BEGIN
                 _lookupUniModID := true;
                 _staticCysCarbamidomethyl := false;
 
-                If Not _field Similar To 'UniMod:[0-9]%' Then
+                If Not _field SIMILAR TO 'UniMod:[0-9]%' Then
                     If _field = 'StaticCysCarbamidomethyl' Then
                         _field := 'UniMod:4';
                         _staticCysCarbamidomethyl := true;
@@ -1093,7 +1094,7 @@ BEGIN
 
             If _location in ('anyNterm', 'notNterm') Then
                 _terminalMod := true;
-                If Coalesce(_affectedResidues, '') = '' Or Not _affectedResidues Similar To '[A-Z]' Then
+                If Coalesce(_affectedResidues, '') = '' Or Not _affectedResidues SIMILAR TO '[A-Z]' Then
                     _affectedResidues := '<';
                 End If;
 
@@ -1102,7 +1103,7 @@ BEGIN
 
             If _location in ('anyCterm', 'notCterm') Then
                 _terminalMod := true;
-                If Coalesce(_affectedResidues, '') = '' Or Not _affectedResidues Similar To '[A-Z]' Then
+                If Coalesce(_affectedResidues, '') = '' Or Not _affectedResidues SIMILAR TO '[A-Z]' Then
                     _affectedResidues := '>';
                 End If;
 
@@ -1187,10 +1188,10 @@ BEGIN
                             _residueInfo.ID,
                             _residueInfo.Symbol,
                             _residueInfo.Description,
-                            Case When Terminal_AnyAA
-                               Then '(match any residue)'
-                               Else '(match specific residue)'
-                            End;
+                            CASE WHEN Terminal_AnyAA
+                               THEN '(match any residue)'
+                               ELSE '(match specific residue)'
+                            END;
             END LOOP;
 
             RAISE INFO '';
@@ -1223,7 +1224,7 @@ BEGIN
         -- Check for N-terminal or C-terminal static mods that do not use *
         -----------------------------------------
 
-        If _modTypeSymbol = 'S' And Exists (Select * From Tmp_Residues Where Residue_Symbol In ('<', '>') AND Not Terminal_AnyAA) Then
+        If _modTypeSymbol = 'S' And Exists (SELECT * FROM Tmp_Residues WHERE Residue_Symbol IN ('<', '>') AND NOT Terminal_AnyAA) Then
             -- Auto-switch to tracking as a dynamic mod (required for PHRP)
             _modTypeSymbol := 'D';
         End If;

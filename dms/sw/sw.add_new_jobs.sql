@@ -89,6 +89,7 @@ CREATE OR REPLACE PROCEDURE sw.add_new_jobs(IN _bypassdms boolean DEFAULT false,
 **          07/25/2023 mem - Ported to PostgreSQL
 **          07/26/2023 mem - Move "Not" keyword to before the field name
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -202,7 +203,7 @@ BEGIN
                     FROM sw.t_scripts
                     WHERE enabled = 'Y' );
 
-    If NOT FOUND Then
+    If Not FOUND Then
         -- No new or held jobs were found in public.t_analysis_job
 
         If _debugMode Then

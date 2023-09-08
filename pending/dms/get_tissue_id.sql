@@ -39,7 +39,7 @@ BEGIN
     _tissueIdentifier := null;
     _tissueName := null;
 
-    If _tissueNameOrID::citext IN ('none', 'na', 'n/a') Then
+    If _tissueNameOrID::citext In ('none', 'na', 'n/a') Then
         _tissueNameOrID := '';
     End If;
 

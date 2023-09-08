@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE sw.unhold_candidate_job_steps(IN _steptool text DEFA
 **          05/13/2017 mem - Add step state 9 (Running_Remote)
 **          08/12/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -98,7 +99,7 @@ BEGIN
 
     RAISE INFO 'Target candidates: %; Jobs to release: %', _targetCandidates, _jobsToRelease;
 
-    If _targetCandidates = 1 And _jobsToRelease > 0 OR
+    If _targetCandidates = 1 And _jobsToRelease > 0 Or
        _targetCandidates >= 1 And _jobsToRelease >= 1 Then
 
         -----------------------------------------------------------

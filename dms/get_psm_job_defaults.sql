@@ -61,6 +61,7 @@ CREATE OR REPLACE FUNCTION public.get_psm_job_defaults(_datasets text) RETURNS T
 **          09/10/2020 mem - Add job types 'TMT Zero' and 'TMT 16-plex'
 **          08/02/2023 mem - Ported to PostgreSQL
 **          09/01/2023 mem - Change column Dataset_Rating_ID to smallint in temp table
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -399,7 +400,7 @@ BEGIN
         _jobTypeName := 'TMT 16-plex';
     End If;
 
-    If _jobTypeName = '' And _topLabeling IN ('TMT6', 'TMT10', 'TMT11') And _topDatasetType Like '%HCD%' Then
+    If _jobTypeName = '' And _topLabeling In ('TMT6', 'TMT10', 'TMT11') And _topDatasetType Like '%HCD%' Then
         _jobTypeName := 'TMT 6-plex';
     End If;
 

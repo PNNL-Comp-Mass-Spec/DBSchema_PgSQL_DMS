@@ -133,7 +133,7 @@ BEGIN
 
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
-        If _compoundID Is Null AND NOT _mode::citext In ('add', 'check_add') Then
+        If _compoundID Is Null And Not _mode::citext In ('add', 'check_add') Then
             RAISE EXCEPTION 'Compound ID cannot be null';
         End If;
 

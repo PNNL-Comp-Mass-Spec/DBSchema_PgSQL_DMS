@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_update_required(IN _mgrlist text DEFA
 **          05/22/2023 mem - Capitalize reserved word
 **          05/30/2023 mem - Use format() for string concatenation
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -74,7 +75,7 @@ BEGIN
         mgr_id int NULL
     );
 
-    If char_length(_mgrList) > 0 AND _mgrList <> '%' Then
+    If char_length(_mgrList) > 0 And _mgrList <> '%' Then
         ---------------------------------------------------
         -- Populate Tmp_ManagerList with the managers in _mgrList
         ---------------------------------------------------

@@ -107,7 +107,7 @@ BEGIN
 
     -- Show any new entries in T_Log_Entries
 
-    If Exists (SELECT * FROM t_log_entries WHERE entry_id > _entryID AND posted_by ILike 'Update%EUS%') Then
+    If Exists (SELECT entry_id FROM t_log_entries WHERE entry_id > _entryID AND posted_by ILIKE 'Update%EUS%') Then
         RAISE INFO '';
 
         _formatSpecifier := '%-12s %-40s %-20s %-10s %-60s';

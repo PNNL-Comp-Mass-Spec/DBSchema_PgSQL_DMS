@@ -44,6 +44,7 @@ CREATE OR REPLACE FUNCTION cap.create_parameters_for_task(_job integer, _dataset
 **          07/11/2013 mem - Added support for script 'MyEMSLDatasetPushRecursive'
 **          09/28/2022 mem - Ported to PostgreSQL
 **          04/02/2023 mem - Rename procedure and functions
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -65,7 +66,7 @@ BEGIN
     SELECT Job, Section, Name, Value
     FROM cap.get_task_param_table(_job, _dataset, _datasetID, _storageServer, _instrument, _instrumentClass, _maxSimultaneousCaptures, _captureSubdirectory);
 
-    If _scriptName IN ('MyEMSLDatasetPush', 'MyEMSLDatasetPushRecursive') Then
+    If _scriptName In ('MyEMSLDatasetPush', 'MyEMSLDatasetPushRecursive') Then
         INSERT INTO Tmp_Task_Parameters (Job, Section, Name, Value)
         Values (_job, 'JobParameters', 'PushDatasetToMyEMSL', 'True');
     End If;

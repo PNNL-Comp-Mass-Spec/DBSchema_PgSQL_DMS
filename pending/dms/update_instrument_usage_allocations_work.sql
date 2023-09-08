@@ -188,7 +188,7 @@ BEGIN
                 fiscal_year = _fy AND
                 entered BETWEEN _currentTime - INTERVAL '15 seconds' AND _currentTime + INTERVAL '1 second';
 
-        If NOT FOUND Then
+        If Not FOUND Then
             CONTINUE;
         End If;
 

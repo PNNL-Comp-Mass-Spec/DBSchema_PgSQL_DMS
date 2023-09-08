@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE cap.set_ctm_step_task_complete(IN _job integer, IN _
 **          08/21/2020 mem - Set _holdoffIntervalMinutes to 60 (or higher) if _retryCount is 0
 **          06/11/2023 mem - Ported to PostgreSQL
 **          06/14/2023 mem - Send true to post_email_alert instead of 1
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -133,7 +134,7 @@ BEGIN
                 _newStepState := 3;
             End If;
 
-            If Not _newStepState IN (3, 6) And (_stepInfo.RetryCount > 0 Or _evaluationCode = 3) Then
+            If Not _newStepState In (3, 6) And (_stepInfo.RetryCount > 0 Or _evaluationCode = 3) Then
                 If _stepInfo.InitialState = 4 Then
                     -- Retry the step
                     _newStepState := 2;
@@ -148,7 +149,7 @@ BEGIN
                     -- Auto-retry the capture again (even if _stepInfo.RetryCount is 0)
                     _stepInfo.NextTry := CURRENT_TIMESTAMP + INTERVAL '15 minutes';
                 Else
-                    If _stepInfo.StepTool = 'ArchiveVerify' AND _stepInfo.RetryCount > 0 Then
+                    If _stepInfo.StepTool = 'ArchiveVerify' And _stepInfo.RetryCount > 0 Then
                         _stepInfo.HoldoffIntervalMinutes :=
                             CASE WHEN _stepInfo.HoldoffIntervalMinutes < 5 THEN 5
                                  WHEN _stepInfo.HoldoffIntervalMinutes < 10 THEN 10
@@ -158,7 +159,7 @@ BEGIN
                             END;
                     End If;
 
-                    If _stepInfo.RetryCount = 0 AND _stepInfo.HoldoffIntervalMinutes < 60 Then
+                    If _stepInfo.RetryCount = 0 And _stepInfo.HoldoffIntervalMinutes < 60 Then
                         _stepInfo.HoldoffIntervalMinutes := 60;
                     End If;
 
@@ -168,7 +169,7 @@ BEGIN
                 End If;
 
             Else
-                If Not _newStepState IN (3, 6) Then
+                If Not _newStepState In (3, 6) Then
                     -- Failed
                     _newStepState := 6;
                 End If;
@@ -194,7 +195,7 @@ BEGIN
             WHERE Job = _job AND
                   Step = _step;
 
-            If _stepInfo.StepTool In ('ArchiveUpdate', 'ArchiveUpdateTest', 'DatasetArchive') AND _evaluationCode IN (6, 7) Then
+            If _stepInfo.StepTool In ('ArchiveUpdate', 'ArchiveUpdateTest', 'DatasetArchive') And _evaluationCode In (6, 7) Then
                 -- If _evaluationCode = 6, we copied data to Aurora via FTP but did not upload to MyEMSL
                 -- If _evaluationCode = 7, we uploaded data to MyEMSL, but there were no new files to upload, so there is nothing to verify
                 -- In either case, skip the ArchiveVerify and ArchiveStatusCheck steps for this capture task job (if they exist)
@@ -266,7 +267,7 @@ BEGIN
             -- _evaluationCode = 4 means Submitted to MyEMSL
             -- _evaluationCode = 5 means Verified in MyEMSL
 
-            If _stepInfo.StepTool Like '%Archive%' And _evaluationCode IN (4, 5) Then
+            If _stepInfo.StepTool Like '%Archive%' And _evaluationCode In (4, 5) Then
                 -- Update the MyEMSLState values
 
                 If _evaluationCode = 4 Then

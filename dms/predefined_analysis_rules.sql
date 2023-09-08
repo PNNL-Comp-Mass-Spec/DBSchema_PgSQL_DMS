@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_rules(_datasetname text, _
 **                         - Rename columns in the query results
 **          02/08/2023 mem - Switch from PRN to username
 **          05/22/2023 mem - Use format() for string concatenation
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -66,13 +67,13 @@ BEGIN
     End If;
 
     -- Only perform the following checks if the rating is less than 2
-    If _datasetRating < 2 AND _datasetRating <> -10 Then
+    If _datasetRating < 2 And _datasetRating <> -10 Then
 
-        If Not _excludeDatasetsNotReleased And _datasetRating IN (-4, -5, -6) Then
+        If Not _excludeDatasetsNotReleased And _datasetRating In (-4, -5, -6) Then
             -- Allow the jobs to be created
             _message := '';
         Else
-            If _datasetRating IN (-4, -6) Then
+            If _datasetRating In (-4, -6) Then
                 -- Either Rating is -4 (Not released, allow analysis)
                 -- or     Rating is -6 (Not released, good data)
                 -- Allow the jobs to be created

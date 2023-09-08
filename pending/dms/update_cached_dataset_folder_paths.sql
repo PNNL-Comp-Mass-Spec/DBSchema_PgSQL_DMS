@@ -50,7 +50,7 @@ BEGIN
     _processingMode := Coalesce(_processingMode, 0);
     _showDebug := Coalesce(_showDebug, 0);
 
-    If _processingMode IN (0, 1) Then
+    If _processingMode In (0, 1) Then
         SELECT MIN(dataset_id)
         INTO _minimumDatasetID
         FROM ( SELECT dataset_id
@@ -101,7 +101,7 @@ BEGIN
         _datasetBatchSize := 0;
     End If;
 
-    If _processingMode IN (1, 2) Then
+    If _processingMode In (1, 2) Then
         If _showDebug Then
             RAISE INFO 'Setting update_required to 1 in t_cached_dataset_folder_paths for datasets with dataset_id >= % and differing row versions', _minimumDatasetID;
         End If;

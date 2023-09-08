@@ -150,7 +150,7 @@ BEGIN
 
     -- Look for '..\' at the start of _captureSubfolder
     --
-    If _captureSubfolder Similar To '..\\%\\%' Then
+    If _captureSubfolder SIMILAR TO '..\\%\\%' Then
         -- Find the second backslash
         _charPos := 4 + Position('\' In substring(_captureSubfolder, 4));
 

@@ -441,7 +441,7 @@ BEGIN
                  INNER JOIN t_requested_run RR
                    ON RL.Request = RR.request_id
             WHERE RL.Dataset IN (_datasetNameOld::citext, _datasetNameNew::citext) OR
-                  RL.Name ILIKE _experiment || '%'
+                  RL.Name ILike _experiment || '%'
         LOOP
             _infoData := format(_formatSpecifier,
                                 _previewData.Request,

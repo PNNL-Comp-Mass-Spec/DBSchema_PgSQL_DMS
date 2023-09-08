@@ -46,6 +46,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_interval_for_multiple_instrume
 **          08/31/2023 mem - Remove invalid where clause in For Loop query
 **                         - Change "months to update" variable to an integer
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -345,7 +346,7 @@ BEGIN
             -- EMSL_Primary_Instrument comes from eus_primary_instrument in table t_emsl_instruments and will be '0', '1', 'N', or 'Y'
 
             If Not _updateEMSLInstrumentUsage Then
-                If _infoOnly AND (_instrumentInfo.EMSL_Primary_Instrument IN ('Y', '1') OR _instrumentInfo.Tracked = 1) Then
+                If _infoOnly And (_instrumentInfo.EMSL_Primary_Instrument In ('Y', '1') Or _instrumentInfo.Tracked = 1) Then
                     RAISE INFO '';
                     RAISE INFO 'Skip call to Update_EMSL_Instrument_Usage_Report for Instrument %', _instrumentInfo.Instrument;
                     RAISE INFO '';

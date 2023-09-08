@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE public.set_archive_task_complete(IN _datasetname tex
 **          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          07/09/2022 mem - Tabs to spaces
 **          06/16/2023 mem - Ported to PostgreSQL
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -87,7 +88,7 @@ BEGIN
     -- Update dataset archive state
     ---------------------------------------------------
 
-    If _completionCode = 0 OR _completionCode = 100 Then
+    If _completionCode = 0 Or _completionCode = 100 Then
         -- Task completed successfully
 
         -- Decide what state is next

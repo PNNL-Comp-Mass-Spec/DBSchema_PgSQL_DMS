@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE sw.request_folder_create_task(IN _processorname text
 **          08/01/2017 mem - Use THROW if not authorized
 **          08/09/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -118,7 +119,7 @@ BEGIN
         -- update the step state to Running
         ---------------------------------------------------
 
-        If _taskAssigned AND Not _infoOnly Then
+        If _taskAssigned And Not _infoOnly Then
             UPDATE sw.t_data_folder_create_queue
             SET state = 2,
                 processor = _processorName,

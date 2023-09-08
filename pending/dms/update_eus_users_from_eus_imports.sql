@@ -88,11 +88,11 @@ BEGIN
             ) AS Source
         ON (target.Person_ID = Source.Person_ID)
         WHEN MATCHED AND
-             (target.NAME_FM <> Source.name_fm OR
-              target.HID IS DISTINCT FROM Source.HID AND NOT Source.HID is null OR
+             (target.NAME_FM     <> Source.name_fm OR
+              target.HID         IS DISTINCT FROM Source.HID AND NOT Source.HID is null OR
               target.Site_Status <> Source.Site_Status OR
-              target.First_Name IS DISTINCT FROM Source.first_name AND NOT Source.first_name is null OR
-              target.Last_Name  IS DISTINCT FROM Source.last_name  AND NOT Source.last_name is null) THEN
+              target.First_Name  IS DISTINCT FROM Source.first_name AND NOT Source.first_name is null OR
+              target.Last_Name   IS DISTINCT FROM Source.last_name  AND NOT Source.last_name is null) THEN
             UPDATE SET
                 NAME_FM = Source.name_fm,
                 HID = Coalesce(Source.HID, target.HID),
@@ -123,7 +123,7 @@ BEGIN
         -- Note: don't delete data from t_eus_users
         _mergeDeleteCount := 0;
 
-        If _mergeInsertCount > 0 OR _mergeUpdateCount > 0 OR _mergeDeleteCount > 0 Then
+        If _mergeInsertCount > 0 Or _mergeUpdateCount > 0 Or _mergeDeleteCount > 0 Then
             _message := format('Updated t_eus_users: %s added; %s updated%s',
                                 _mergeInsertCount,
                                 _mergeUpdateCount,
@@ -238,7 +238,7 @@ BEGIN
               t_eus_proposal_users.state_id = 3 AND
               t_eus_proposals.state_id = 2;
 
-        If _mergeInsertCount > 0 OR _mergeUpdateCount > 0 OR _setUnknownCount > 0 Then
+        If _mergeInsertCount > 0 Or _mergeUpdateCount > 0 Or _setUnknownCount > 0 Then
             _message := format('Updated t_eus_proposal_users: %s added; %s updated%s',
                                 _mergeInsertCount,
                                 _mergeUpdateCount,

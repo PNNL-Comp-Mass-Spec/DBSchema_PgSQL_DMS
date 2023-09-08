@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE mc.ack_manager_update_required(IN _managername text,
 **          01/31/2023 mem - Use new column names in tables
 **          05/12/2023 mem - Rename variables
 **          05/22/2023 mem - Use format() for string concatenation
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -63,7 +64,7 @@ BEGIN
     FROM mc.t_mgrs
     WHERE mgr_name = _managerName::citext;
 
-    IF NOT FOUND THEN
+    If Not FOUND Then
         _message := format('Could not find entry for manager: %s', _managername);
         _returnCode := 'U5202';
         RETURN;
@@ -93,8 +94,8 @@ BEGIN
         FROM mc.t_param_type
         WHERE param_name = 'ManagerUpdateRequired';
 
-        IF FOUND THEN
-            If Exists (SELECT * FROM mc.t_param_value WHERE mgr_id = _mgrID AND param_type_id = _paramTypeID) Then
+        If FOUND Then
+            If Exists (SELECT mgr_id FROM mc.t_param_value WHERE mgr_id = _mgrID AND param_type_id = _paramTypeID) Then
                 _message := 'ManagerUpdateRequired was already acknowledged in t_param_value';
             Else
                 INSERT INTO mc.t_param_value (mgr_id, param_type_id, value)

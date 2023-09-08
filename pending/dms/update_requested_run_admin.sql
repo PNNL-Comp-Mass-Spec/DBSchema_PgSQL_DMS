@@ -200,7 +200,7 @@ BEGIN
     -- Update status
     -----------------------------------------------------------
 
-    If _mode = 'active' OR _mode = 'inactive' Then
+    If _mode = 'active' Or _mode = 'inactive' Then
         UPDATE t_requested_run
         SET state_name = _mode
         WHERE request_id IN ( SELECT request_id FROM Tmp_Requests ) AND

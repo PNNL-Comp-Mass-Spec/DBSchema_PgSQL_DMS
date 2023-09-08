@@ -110,14 +110,14 @@ BEGIN
                 _orgStrain => _orgStrain,       -- Output
                 _previewResults => false);
 
-        If  _orgDomain  <> _organismInfo.OldDomain  OR
-            _orgKingdom <> _organismInfo.OldKingdom OR
-            _orgPhylum  <> _organismInfo.OldPhylum  OR
-            _orgClass   <> _organismInfo.OldClass   OR
-            _orgOrder   <> _organismInfo.OldOrder   OR
-            _orgFamily  <> _organismInfo.OldFamily  OR
-            _orgGenus   <> _organismInfo.OldGenus   OR
-            _orgSpecies <> _organismInfo.OldSpecies OR
+        If  _orgDomain  <> _organismInfo.OldDomain  Or
+            _orgKingdom <> _organismInfo.OldKingdom Or
+            _orgPhylum  <> _organismInfo.OldPhylum  Or
+            _orgClass   <> _organismInfo.OldClass   Or
+            _orgOrder   <> _organismInfo.OldOrder   Or
+            _orgFamily  <> _organismInfo.OldFamily  Or
+            _orgGenus   <> _organismInfo.OldGenus   Or
+            _orgSpecies <> _organismInfo.OldSpecies Or
             _orgStrain  <> _organismInfo.OldStrain Then
 
             ---------------------------------------------------

@@ -243,13 +243,13 @@ BEGIN
                 FROM t_analysis_job_request
                 WHERE request_id = _requestID;
 
-                If _currentName <> _requestName OR _currentComment <> _comment Then
+                If _currentName <> _requestName Or _currentComment <> _comment Then
                     UPDATE t_analysis_job_request
                     SET request_name = _requestName,
                         comment = _comment
                     WHERE request_id = _requestID;
 
-                    If _currentName <> _requestName AND _currentComment <> _comment Then
+                    If _currentName <> _requestName And _currentComment <> _comment Then
                         _message := 'Updated the request name and comment';
                     Else
                         If _currentName <> _requestName Then
@@ -444,25 +444,25 @@ BEGIN
         -- However, if the parameter file contains _NoDecoy in the name, we'll allow _protCollOptionsList to contain Decoy
         ---------------------------------------------------
 
-        If (_toolName ILIKE 'MSGFPlus%' Or _toolName ILIKE 'TopPIC%' Or _toolName ILIKE 'MaxQuant%' Or _toolName ILIKE 'DiaNN%') And
-           _protCollOptionsList ILIKE '%decoy%' And
-           Not _paramFileName ILIKE '%_NoDecoy%' Then
+        If (_toolName ILike 'MSGFPlus%' Or _toolName ILike 'TopPIC%' Or _toolName ILike 'MaxQuant%' Or _toolName ILike 'DiaNN%') And
+           _protCollOptionsList ILike '%decoy%' And
+           Not _paramFileName ILike '%_NoDecoy%' Then
 
             _protCollOptionsList := 'seq_direction=forward,filetype=fasta';
 
-            If Coalesce(_message, '') = '' And _toolName ILIKE 'MSGFPlus%' Then
+            If Coalesce(_message, '') = '' And _toolName ILike 'MSGFPlus%' Then
                 _message := 'Note: changed protein options to forward-only since MS-GF+ parameter files typically have tda=1';
             End If;
 
-            If Coalesce(_message, '') = '' And _toolName ILIKE 'TopPIC%' Then
+            If Coalesce(_message, '') = '' And _toolName ILike 'TopPIC%' Then
                 _message := 'Note: changed protein options to forward-only since TopPIC parameter files typically have Decoy=True';
             End If;
 
-            If Coalesce(_message, '') = '' And _toolName ILIKE 'MaxQuant%' Then
+            If Coalesce(_message, '') = '' And _toolName ILike 'MaxQuant%' Then
                 _message := 'Note: changed protein options to forward-only since MaxQuant parameter files typically have <decoyMode>revert</decoyMode>';
             End If;
 
-            If Coalesce(_message, '') = '' And _toolName ILIKE 'DiaNN%' Then
+            If Coalesce(_message, '') = '' And _toolName ILike 'DiaNN%' Then
                 _message := 'Note: changed protein options to forward-only since DiaNN expects the FASTA file to not have decoy proteins';
             End If;
         End If;
@@ -472,7 +472,7 @@ BEGIN
         -- However, if the parameter file contains _NoDecoy in the name, we'll allow @protCollOptionsList to contain Decoy
         ---------------------------------------------------
 
-        If (_toolName ILIKE 'MODa%' Or _toolName ILIKE 'MSFragger%') And _protCollOptionsList ILIKE '%forward%' And Not _paramFileName ILIKE '%_NoDecoy%' Then
+        If (_toolName ILike 'MODa%' Or _toolName ILike 'MSFragger%') And _protCollOptionsList ILike '%forward%' And Not _paramFileName ILike '%_NoDecoy%' Then
             _protCollOptionsList := 'seq_direction=decoy,filetype=fasta';
 
             If Coalesce(_message, '') = '' Then
@@ -553,7 +553,7 @@ BEGIN
         -- Auto-change the settings file if TMTpro samples
         ---------------------------------------------------
 
-        If (_toolName LIKE 'MSGFPlus%' AND _settingsFileName LIKE '%TMT%') Then
+        If (_toolName Like 'MSGFPlus%' And _settingsFileName Like '%TMT%') Then
             SELECT COUNT(Distinct DS.dataset_id)
             INTO _tmtProDatasets
             FROM Tmp_DatasetInfo

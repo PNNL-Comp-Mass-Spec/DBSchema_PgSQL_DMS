@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_params(IN _toolna
 **          04/11/2022 mem - Increase warning threshold for length of _protCollNameList to 4000
 **          07/26/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -102,7 +103,7 @@ BEGIN
     End If;
 
     If _orgDbReqd = 0 Then
-        If _organismDBName::citext <> 'na' OR _protCollNameList::citext <> 'na' OR _protCollOptionsList::citext <> 'na' Then
+        If _organismDBName::citext <> 'na' Or _protCollNameList::citext <> 'na' Or _protCollOptionsList::citext <> 'na' Then
             _message := format('Protein parameters must all be "na"; you have: Legacy FASTA (OrgDBName) = "%s", ProteinCollectionList = "%s", ProteinOptionsList = "%s"',
                                _organismDBName, _protCollNameList,  _protCollOptionsList);
 

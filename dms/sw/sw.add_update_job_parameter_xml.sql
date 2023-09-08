@@ -156,6 +156,7 @@ CREATE OR REPLACE FUNCTION sw.add_update_job_parameter_xml(_xmlparameters xml, _
 **          07/19/2023 mem - Ported to PostgreSQL
 **          07/28/2023 mem - Rename temporary table to avoid conflicts with calling procedures
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -267,7 +268,7 @@ BEGIN
 
         UPDATE Tmp_Job_Params_Updated
         SET Value = _value,
-            State = Case When Value Is Distinct From _value Then 'Updated Value' Else 'Unchanged Value' End
+            State = CASE WHEN Value IS DISTINCT FROM _value THEN 'Updated Value' ELSE 'Unchanged Value' END
         WHERE Section = _section::citext AND
               Name = _paramName::citext;
 

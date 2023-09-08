@@ -41,6 +41,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_archive_path_for_new_datasets(_
 **          04/24/2023 mem - Ported to PostgreSQL
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **          05/22/2023 mem - Use format() for string concatenation
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -100,8 +101,8 @@ BEGIN
         _currentLocation := 'Auto-defining archive path';
 
         -- Validate the _autoSP variables
-        If Coalesce(_instrumentInfo.AutoSPArchiveServerName, '') = '' OR
-           Coalesce(_instrumentInfo.AutoSPArchivePathRoot, '') = '' OR
+        If Coalesce(_instrumentInfo.AutoSPArchiveServerName, '') = '' Or
+           Coalesce(_instrumentInfo.AutoSPArchivePathRoot, '') = '' Or
            Coalesce(_instrumentInfo.AutoSPArchiveSharePathRoot, '') = '' Then
 
             _message := format('One or more Auto_SP fields are empty or null for instrument %s; unable to auto-define the archive path', _instrumentInfo.InstrumentName);

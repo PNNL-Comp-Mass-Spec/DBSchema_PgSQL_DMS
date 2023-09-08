@@ -255,7 +255,7 @@ Code 6 (Purged all data except QC folder)
               Coalesce(instrument_data_purged, 0) = 0;
     End If;
 
-    If _completionState in (4) Then
+    If _completionState In (4) Then
         -- Make sure QC_Data_Purged is now 1
         -- Note that trigger trig_u_Dataset_Archive will likely have already updated instrument_data_purged
         --
@@ -265,7 +265,7 @@ Code 6 (Purged all data except QC folder)
               Coalesce(qc_data_purged, 0) = 0;
     End If;
 
-    If _completionState IN (4, 15) Then
+    If _completionState In (4, 15) Then
         -- Update purged in t_analysis_job for all jobs associated with this dataset
         UPDATE t_analysis_job
         SET purged = 1

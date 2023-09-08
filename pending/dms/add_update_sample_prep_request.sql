@@ -242,11 +242,11 @@ BEGIN
             RAISE EXCEPTION 'Estimated number of MS runs not specified; it should be 0 or a positive number';
         End If;
 
-        If Not Coalesce(_blockAndRandomizeSamples, '')::citext IN ('Yes', 'No', 'NA') Then
+        If Not Coalesce(_blockAndRandomizeSamples, '')::citext In ('Yes', 'No', 'NA') Then
             RAISE EXCEPTION 'Block And Randomize Samples must be Yes, No, or NA';
         End If;
 
-        If Not Coalesce(_blockAndRandomizeRuns, '')::citext IN ('Yes', 'No') Then
+        If Not Coalesce(_blockAndRandomizeRuns, '')::citext In ('Yes', 'No') Then
             RAISE EXCEPTION 'Block And Randomize Runs must be Yes or No';
         End If;
 
@@ -291,11 +291,11 @@ BEGIN
         -- Validate priority
         ---------------------------------------------------
 
-        If _priority <> 'Normal' AND Coalesce(_reasonForHighPriority, '') = '' Then
+        If _priority <> 'Normal' And Coalesce(_reasonForHighPriority, '') = '' Then
             RAISE EXCEPTION 'Priority "%" requires justification reason to be provided', _priority;
         End If;
 
-        If Not _priority::citext IN ('Normal', 'High') Then
+        If Not _priority::citext In ('Normal', 'High') Then
             RAISE EXCEPTION 'Priority should be Normal or High';
         End If;
 
@@ -303,8 +303,8 @@ BEGIN
         -- Validate instrument group and dataset type
         ---------------------------------------------------
 
-        If NOT (_estimatedMSRuns::citext IN ('0', 'None')) Then
-            If _instrumentGroup::citext IN ('none', 'na') Then
+        If NOT (_estimatedMSRuns::citext In ('0', 'None')) Then
+            If _instrumentGroup::citext In ('none', 'na') Then
                 RAISE EXCEPTION 'Estimated runs must be 0 or "none" when instrument group is: %', _instrumentGroup;
             End If;
 
@@ -573,12 +573,12 @@ BEGIN
 
             -- Changes not allowed if in 'closed' state
             --
-            If _currentStateID = 5 AND NOT EXISTS (SELECT * FROM V_Operations_Task_Staff WHERE username = _callingUser) Then
+            If _currentStateID = 5 And Not Exists(SELECT username FROM V_Operations_Task_Staff WHERE username = _callingUser) Then
                 RAISE EXCEPTION 'Changes to entry are not allowed if it is in the "Closed" state';
             End If;
 
             -- Don't allow change to 'Prep in Progress' unless someone has been assigned
-            If _state = 'Prep in Progress' AND ((_assignedPersonnel = '') OR (_assignedPersonnel = 'na')) Then
+            If _state = 'Prep in Progress' And (_assignedPersonnel = '' Or _assignedPersonnel = 'na') Then
                 RAISE EXCEPTION 'State cannot be changed to "Prep in Progress" unless someone has been assigned';
             End If;
 

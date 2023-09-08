@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE sw.reset_aggregation_job(IN _job integer, IN _infoon
 **          05/12/2017 mem - Update Next_Try and Remote_Info_ID
 **          07/27/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -91,26 +92,26 @@ BEGIN
     End If;
 
     -- See if we have any failed job steps
-    If Exists (SELECT * FROM sw.t_job_steps WHERE job = _job AND state = 6) Then
+    If Exists (SELECT job FROM sw.t_job_steps WHERE job = _job AND state = 6) Then
         -- Override _jobState
         _jobState := 5;
     End If;
 
-    If _jobState = 5 AND Not Exists (SELECT * FROM sw.t_job_steps WHERE job = _job AND state IN (6,7)) Then
+    If _jobState = 5 AND Not Exists (SELECT job FROM sw.t_job_steps WHERE job = _job AND state IN (6,7)) Then
         _message := format('Job %s is marked As failed (State=5 in sw.t_jobs) yet there are no failed or holding job steps; the job cannot be reset at this time', _job);
         RAISE WARNING '%', _message;
         _returnCode := 'U5304';
         RETURN;
     End If;
 
-    If Exists (SELECT * FROM sw.t_job_steps WHERE job = _job AND state = 4) Then
+    If Exists (SELECT job FROM sw.t_job_steps WHERE job = _job AND state = 4) Then
         _message := format('Job %s has running steps (state=4); the job cannot be reset while steps are running', _job);
         RAISE WARNING '%', _message;
         _returnCode := 'U5305';
         RETURN;
     End If;
 
-    If Not _jobState IN (4, 5) Then
+    If Not _jobState In (4, 5) Then
         _message := format('Job %s is not complete or failed; the job cannot be reset at this time', _job);
         RAISE WARNING '%', _message;
         _returnCode := 'U5306';

@@ -29,6 +29,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_requested_run_after_insert_or_update(
 **          02/08/2023 mem - Switch from PRN to username
 **          02/21/2023 mem - Pass batch group ID to get_requested_run_name_code
 **          05/31/2023 mem - Use format() for string concatenation
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -45,13 +46,13 @@ BEGIN
 
     -- Use <> for request_name, created, requester_username, and batch_id since they are never null
     -- For the others, use IS DISTINCT FROM
-    If TG_OP = 'INSERT' OR
-       OLD.request_name       <> NEW.request_name OR
-       OLD.created            <> NEW.created OR
-       OLD.requester_username <> NEW.requester_username OR
-       OLD.batch_id           <> NEW.batch_id OR
-       OLD.request_name_code  IS DISTINCT FROM NEW.request_name_code OR
-       OLD.request_type_id    IS DISTINCT FROM NEW.request_type_id OR
+    If TG_OP = 'INSERT' Or
+       OLD.request_name       <> NEW.request_name Or
+       OLD.created            <> NEW.created Or
+       OLD.requester_username <> NEW.requester_username Or
+       OLD.batch_id           <> NEW.batch_id Or
+       OLD.request_name_code  IS DISTINCT FROM NEW.request_name_code Or
+       OLD.request_type_id    IS DISTINCT FROM NEW.request_type_id Or
        OLD.separation_group   IS DISTINCT FROM NEW.separation_group Then
 
         SELECT batch, created, batch_group_id
@@ -81,7 +82,7 @@ BEGIN
                                         request_type_id, separation_group)
         FROM t_requested_run_batches RRB
         WHERE t_requested_run.batch_id = RRB.batch_id AND
-              request_name_code is distinct from public.get_requested_run_name_code(
+              request_name_code IS DISTINCT FROM public.get_requested_run_name_code(
                                         request_name, t_requested_run.created, requester_username,
                                         t_requested_run.batch_id, rrb.batch, rrb.batch_group_id, rrb.created,
                                         request_type_id, separation_group);
@@ -146,7 +147,7 @@ BEGIN
         End If;
 
         -- Check for updated Dataset ID (including changing to null)
-        If NOT OLD.dataset_id IS Null And OLD.dataset_id IS DISTINCT FROM NEW.dataset_id Then
+        If Not OLD.dataset_id Is Null And OLD.dataset_id IS DISTINCT FROM NEW.dataset_id Then
 
             SELECT dataset
             INTO _datasetNameOld
@@ -193,7 +194,7 @@ BEGIN
 
     End If;
 
-    If TG_OP = 'INSERT' Or NOT NEW.dataset_id IS Null And OLD.dataset_id IS DISTINCT FROM NEW.dataset_id Then
+    If TG_OP = 'INSERT' Or Not NEW.dataset_id Is Null And OLD.dataset_id IS DISTINCT FROM NEW.dataset_id Then
 
         -- Check whether another requested run already has the new Dataset ID
         INSERT INTO T_Entity_Rename_Log ( target_type, Target_ID, Old_Name, New_Name )

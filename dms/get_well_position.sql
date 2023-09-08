@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION public.get_well_position(_index integer) RETURNS text
 **  Date:   07/15/2000
 **          06/23/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Use format() for string concatenation
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -29,7 +30,7 @@ DECLARE
 BEGIN
     _index := Coalesce(_index, 0);
 
-    If _index < 1 OR _index > 96 Then
+    If _index < 1 Or _index > 96 Then
         RETURN '';
     End If;
 

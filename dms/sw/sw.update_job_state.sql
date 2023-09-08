@@ -100,6 +100,7 @@ CREATE OR REPLACE PROCEDURE sw.update_job_state(IN _bypassdms boolean DEFAULT fa
 **          08/03/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
 **                         - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -326,7 +327,7 @@ BEGIN
         -- Figure out what the job state should be in public.t_analysis_job
         ---------------------------------------------------
 
-        If _jobInfo.NewJobStateInBroker IN (2, 4, 5, 7) Then
+        If _jobInfo.NewJobStateInBroker In (2, 4, 5, 7) Then
             _newDMSJobState := _jobInfo.NewJobStateInBroker;
         Else
             _newDMSJobState := 99;
@@ -404,7 +405,7 @@ BEGIN
         -- change the DMS job state to 14=No Export
         ---------------------------------------------------
 
-        If _newDMSJobState = 4 AND Coalesce(_jobPropagationMode, 0) <> 0 Then
+        If _newDMSJobState = 4 And Coalesce(_jobPropagationMode, 0) <> 0 Then
             _newDMSJobState := 14;
         End If;
 
@@ -412,7 +413,7 @@ BEGIN
         -- Are we enabled for making changes to public.t_analysis_job?
         ---------------------------------------------------
 
-        If Not _bypassDMS AND _jobInDMS And Not _infoOnly Then
+        If Not _bypassDMS And _jobInDMS And Not _infoOnly Then
             -- Public schema changes enabled, update job state in public.t_analysis_job
 
             -- Uncomment to debug
@@ -457,7 +458,7 @@ BEGIN
 
         End If;
 
-        If Not _infoOnly And _jobInfo.NewJobStateInBroker IN (4, 5) Then
+        If Not _infoOnly And _jobInfo.NewJobStateInBroker In (4, 5) Then
 
             ---------------------------------------------------
             -- Save job history

@@ -63,9 +63,3 @@ $$;
 
 ALTER FUNCTION public.get_requested_run_block_cart_assignment(_batchid integer, _block integer, _mode text) OWNER TO d3l243;
 
---
--- Name: FUNCTION get_requested_run_block_cart_assignment(_batchid integer, _block integer, _mode text); Type: COMMENT; Schema: public; Owner: d3l243
---
-
-COMMENT ON FUNCTION public.get_requested_run_block_cart_assignment(_batchid integer, _block integer, _mode text) IS 'GetRequestedRunBlockCartAssignment';
-

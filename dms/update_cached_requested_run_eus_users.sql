@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_requested_run_eus_users(IN _req
 **          11/21/2016 mem - Do not use a Merge statement when _requestID is non-zero
 **          03/31/2023 mem - Ported to PostgreSQL
 **          05/07/2023 mem - Remove unused variable
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -43,9 +44,9 @@ BEGIN
 
         If _requestID <> 0 Then
             -- Updating a specific requested run
-            If Exists (SELECT * FROM t_requested_run WHERE state_name = 'Active' AND request_id = _requestID) Then
+            If Exists (SELECT request_id FROM t_requested_run WHERE state_name = 'Active' AND request_id = _requestID) Then
                 -- Updating a single requested run; to avoid commit conflicts, do not use a merge statement
-                If Exists (SELECT * FROM t_active_requested_run_cached_eus_users WHERE request_id = _requestID) Then
+                If Exists (SELECT request_id FROM t_active_requested_run_cached_eus_users WHERE request_id = _requestID) Then
                     UPDATE t_active_requested_run_cached_eus_users
                     SET user_list = get_requested_run_eus_users_list(_requestID, 'V')
                     WHERE request_id = _requestID;

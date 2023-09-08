@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_settings_files_after_update() RETURNS
 **          03/30/2015 mem - Now validating msgfplus_auto_centroid
 **          08/06/2022 mem - Ported to PostgreSQL
 **          08/08/2022 mem - Reference the OLD and NEW variables directly instead of using transition tables (which contain every updated row, not just the current row)
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -27,7 +28,7 @@ BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
     -- Use IS DISTINCT FROM since hms_auto_supersede and msgfplus_auto_centroid can be null
-    If OLD.hms_auto_supersede IS DISTINCT FROM NEW.hms_auto_supersede OR
+    If OLD.hms_auto_supersede     IS DISTINCT FROM NEW.hms_auto_supersede Or
        OLD.msgfplus_auto_centroid IS DISTINCT FROM NEW.msgfplus_auto_centroid Then
 
         -- Make sure a valid name (or null) was entered into the hms_auto_supersede and msgfplus_auto_centroid fields
@@ -91,8 +92,8 @@ BEGIN
 
     -- Use <> for analysis_tool and file_name since they are never null
     -- In contrast, contents can be null
-    If OLD.analysis_tool <> NEW.analysis_tool OR
-       OLD.file_name <> NEW.file_name OR
+    If OLD.analysis_tool <> NEW.analysis_tool Or
+       OLD.file_name <> NEW.file_name Or
        OLD.contents::text IS DISTINCT FROM NEW.contents::text Then
 
         INSERT INTO t_settings_files_xml_history (

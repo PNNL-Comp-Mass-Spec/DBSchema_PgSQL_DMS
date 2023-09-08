@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE public.populate_param_file_mod_info_table(IN _showmo
 **          07/14/2023 mem - Add parameter _previewSql
 **          07/17/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -58,7 +59,7 @@ BEGIN
     -----------------------------------------------------------
 
     -- Assure that one of the following is non-zero
-    If Coalesce(_showModSymbol, 0) = 0 AND Coalesce(_showModName, 0) = 0 AND Coalesce(_showModMass, 0) = 0 Then
+    If Coalesce(_showModSymbol, 0) = 0 And Coalesce(_showModName, 0) = 0 And Coalesce(_showModMass, 0) = 0 Then
         _showModSymbol := 0;
         _showModName   := 1;
         _showModMass   := 0;
@@ -111,7 +112,7 @@ BEGIN
     If _showModSymbol <> 0 Then
         _sql := _sql || ' Coalesce(Local_Symbol, ''-'')';
 
-        If _showModName <> 0 OR _showModMass <> 0 Then
+        If _showModName <> 0 Or _showModMass <> 0 Then
             _sql := _sql || ' || '', '' ||';
         End If;
     End If;

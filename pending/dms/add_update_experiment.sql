@@ -220,7 +220,7 @@ BEGIN
             RAISE EXCEPTION 'Labelling must be specified';
         End If;
 
-        If Not _alkylation::citext IN ('Y', 'N') Then
+        If Not _alkylation::citext In ('Y', 'N') Then
             RAISE EXCEPTION 'Alkylation must be Y or N';
         End If;
 
@@ -418,11 +418,11 @@ BEGIN
 
         -- Make sure we do not put two experiments in the same place
         --
-        If exists (SELECT * FROM t_experiments WHERE wellplate = _wellplateName AND well = _wellNumber) AND _mode::citext In ('add', 'check_add') Then
+        If Exists (SELECT exp_id FROM t_experiments WHERE wellplate = _wellplateName AND well = _wellNumber) And _mode::citext In ('add', 'check_add') Then
             RAISE EXCEPTION 'There is another experiment assigned to the same wellplate and well';
         End If;
-        --
-        If exists (SELECT * FROM t_experiments WHERE wellplate = _wellplateName AND well = _wellNumber AND experiment <> _experimentName) AND _mode::citext In ('update', 'check_update') Then
+
+        If Exists (SELECT exp_id FROM t_experiments WHERE wellplate = _wellplateName AND well = _wellNumber AND experiment <> _experimentName) And _mode::citext In ('update', 'check_update') Then
             RAISE EXCEPTION 'There is another experiment assigned to the same wellplate and well';
         End If;
 
@@ -543,7 +543,7 @@ BEGIN
         -- Auto-switch from 'none' or 'na' or '(none)' to ''
         ---------------------------------------------------
 
-        If _biomaterialList::citext IN ('none', 'na', '(none)') Then
+        If _biomaterialList::citext In ('none', 'na', '(none)') Then
             _biomaterialList := '';
         End If;
 
@@ -584,7 +584,7 @@ BEGIN
         -- Auto-switch from 'none' or 'na' or '(none)' to ''
         ---------------------------------------------------
 
-        If _referenceCompoundList::citext IN ('none', 'na', '(none)', '100:(none)') Then
+        If _referenceCompoundList::citext In ('none', 'na', '(none)', '100:(none)') Then
             _referenceCompoundList := '';
         End If;
 

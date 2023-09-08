@@ -151,7 +151,7 @@ BEGIN
                                      '---------------'
                                     );
 
-        If _mode = 'update' OR _mode = 'debug' Then
+        If _mode = 'update' Or _mode = 'debug' Then
             -----------------------------------------------------------
             -- Convert _blockingList to rooted XML
             -----------------------------------------------------------

@@ -145,7 +145,7 @@ BEGIN
                 RAISE EXCEPTION 'Proposal ID is empty; cannot add';
             End If;
 
-            If Exists (SELECT * FROM t_instrument_allocation WHERE proposal_id = _proposalID AND fiscal_year = _fiscalYear) Then
+            If Exists (SELECT proposal_id FROM t_instrument_allocation WHERE proposal_id = _proposalID AND fiscal_year = _fiscalYear) Then
                 _msg2 := format('Existing entry already exists, cannot add: %s_%s', _fiscalYear, _proposalID);
                 RAISE EXCEPTION '%', _msg2;
             End If;
@@ -169,12 +169,12 @@ BEGIN
             _fiscalYear := Substring(_fYProposal, 1, _charIndex-1);
             _proposalID := Substring(_fYProposal, _charIndex+1, 128);
 
-            If Not Exists (SELECT * FROM t_instrument_allocation WHERE fy_proposal = _fYProposal) Then
+            If Not Exists (SELECT fy_proposal FROM t_instrument_allocation WHERE fy_proposal = _fYProposal) Then
                 _msg2 := format('Entry not found, unable to update: %s', _fYProposal);
                 RAISE EXCEPTION '%', _msg2;
             End If;
 
-            If Not Exists (SELECT * FROM t_instrument_allocation WHERE fy_proposal = _fYProposal AND proposal_id = _proposalID AND fiscal_year = _fiscalYear) Then
+            If Not Exists (SELECT fy_proposal FROM t_instrument_allocation WHERE fy_proposal = _fYProposal AND proposal_id = _proposalID AND fiscal_year = _fiscalYear) Then
                 _msg2 := format('Mismatch between fy_proposal, FiscalYear, and ProposalID: %s vs. %s vs. %s',
                                 _fYProposal, _fiscalYear, _proposalID);
                 RAISE EXCEPTION '%', _msg2;

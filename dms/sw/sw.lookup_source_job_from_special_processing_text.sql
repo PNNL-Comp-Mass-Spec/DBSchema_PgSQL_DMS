@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE sw.lookup_source_job_from_special_processing_text(IN
 **                         - Ported to PostgreSQL
 **          08/01/2023 mem - Update _returnCode if an exception is caught
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -139,7 +140,7 @@ BEGIN
 
                     -- Prior to July 2023, the special processing text used [Param File]
                     -- If present, replace with Param_File
-                    If Position('[Param File]' IN _whereClause) > 0 Then
+                    If Position('[Param File]' In _whereClause) > 0 Then
                         _whereClause := REPLACE(_whereClause, '[Param File]', 'Param_File');
                     End If;
 

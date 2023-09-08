@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE public.validate_dataset_type(IN _datasetid integer, 
 **          06/12/2023 mem - Sum actual scan counts, not simply 0 or 1
 **                         - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -145,9 +146,10 @@ BEGIN
     If _scanCounts.ActualCountMRM > 0 Then
         -- Auto switch to MRM if not MRM or SRM
 
-        If Not (_currentDatasetType LIKE '%SRM' OR
-                _currentDatasetType LIKE '%MRM' OR
-                _currentDatasetType LIKE '%SIM') Then
+        If Not (_currentDatasetType Like '%SRM' Or
+                _currentDatasetType Like '%MRM' Or
+                _currentDatasetType Like '%SIM'
+               ) Then
 
             _newDatasetType := 'MRM';
 
@@ -172,13 +174,19 @@ BEGIN
         End If;
     End If;
 
-    If _requiredAction = '' And _scanCounts.ActualCountHMS > 0 AND Not (_currentDatasetType LIKE 'HMS%' OR _currentDatasetType LIKE '%-HMS' OR _currentDatasetType LIKE 'IMS-HMS%') Then
+    If _requiredAction = '' And _scanCounts.ActualCountHMS > 0 And
+       Not (_currentDatasetType Like 'HMS%' Or
+            _currentDatasetType Like '%-HMS' Or
+            _currentDatasetType Like 'IMS-HMS%'
+           ) Then
+
         -- Dataset contains HMS spectra, but the current dataset type doesn't reflect that this is an HMS dataset
 
-        If Not _currentDatasetType LIKE 'IMS%' Then
+        If Not _currentDatasetType Like 'IMS%' Then
             _autoDefineDSType := true;
+
             If _infoOnly Then
-                RAISE INFO 'Set _autoDefineDSType to true because ActualCountHMS > 0 AND Not (_currentDatasetType LIKE ''HMS%%'' Or _currentDatasetType LIKE ''%%-HMS'')';
+                RAISE INFO 'Set _autoDefineDSType to true because ActualCountHMS > 0 And Not (_currentDatasetType Like ''HMS%%'' Or _currentDatasetType Like ''%%-HMS'')';
             End If;
         Else
             _newDatasetType := ' an HMS-based dataset type';
@@ -188,18 +196,18 @@ BEGIN
     End If;
 
     If _requiredAction = '' And
-       (_scanCounts.ActualCountCIDHMSn + _scanCounts.ActualCountETDHMSn + _scanCounts.ActualCountHCDHMSn + _scanCounts.ActualCountETciDHMSn + _scanCounts.ActualCountEThcDHMSn) > 0 AND
-       Not _currentDatasetType LIKE '%-HMSn%' Then
+       (_scanCounts.ActualCountCIDHMSn + _scanCounts.ActualCountETDHMSn + _scanCounts.ActualCountHCDHMSn + _scanCounts.ActualCountETciDHMSn + _scanCounts.ActualCountEThcDHMSn) > 0 And
+       Not _currentDatasetType Like '%-HMSn%' Then
 
         -- Dataset contains CID, ETD, or HCD HMSn spectra, but the current dataset type doesn't reflect that this is an HMSn dataset
 
-        If _currentDatasetType IN ('IMS-HMS', 'IMS-HMS-MSn') Then
+        If _currentDatasetType In ('IMS-HMS', 'IMS-HMS-MSn') Then
             _newDatasetType := 'IMS-HMS-HMSn';
-        ElsIf Not _currentDatasetType LIKE 'IMS%' Then
+        ElsIf Not _currentDatasetType Like 'IMS%' Then
             _autoDefineDSType := true;
 
             If _infoOnly Then
-                RAISE INFO 'Set _autoDefineDSType to true because (ActualCountCIDHMSn + ActualCountETDHMSn + ActualCountHCDHMSn + ActualCountETciDHMSn + ActualCountEThcDHMSn) > 0 AND Not _currentDatasetType LIKE ''%%-HMSn%%''';
+                RAISE INFO 'Set _autoDefineDSType to true because (ActualCountCIDHMSn + ActualCountETDHMSn + ActualCountHCDHMSn + ActualCountETciDHMSn + ActualCountEThcDHMSn) > 0 And Not _currentDatasetType Like ''%%-HMSn%%''';
             End If;
 
         Else
@@ -210,17 +218,17 @@ BEGIN
     End If;
 
     If _requiredAction = '' And
-       (_scanCounts.ActualCountCIDMSn + _scanCounts.ActualCountETDMSn + _scanCounts.ActualCountHCDMSn + _scanCounts.ActualCountETciDMSn + _scanCounts.ActualCountEThcDMSn) > 0 AND
-       Not _currentDatasetType LIKE '%-MSn%' Then
+       (_scanCounts.ActualCountCIDMSn + _scanCounts.ActualCountETDMSn + _scanCounts.ActualCountHCDMSn + _scanCounts.ActualCountETciDMSn + _scanCounts.ActualCountEThcDMSn) > 0 And
+       Not _currentDatasetType Like '%-MSn%' Then
 
         -- Dataset contains CID or ETD MSn spectra, but the current dataset type doesn't reflect that this is an MSn dataset
         If _currentDatasetType = 'IMS-HMS' Then
             _newDatasetType := 'IMS-HMS-MSn';
-        ElsIf Not _currentDatasetType LIKE 'IMS%' Then
+        ElsIf Not _currentDatasetType Like 'IMS%' Then
             _autoDefineDSType := true;
 
             If _infoOnly Then
-                RAISE INFO 'Set _autoDefineDSType to true because (ActualCountCIDMSn + ActualCountETDMSn + ActualCountHCDMSn + ActualCountETciDMSn + ActualCountEThcDMSn) > 0 AND Not _currentDatasetType LIKE ''%%-MSn%%''';
+                RAISE INFO 'Set _autoDefineDSType to true because (ActualCountCIDMSn + ActualCountETDMSn + ActualCountHCDMSn + ActualCountETciDMSn + ActualCountEThcDMSn) > 0 And Not _currentDatasetType Like ''%%-MSn%%''';
             End If;
 
         Else
@@ -230,14 +238,14 @@ BEGIN
         _requiredAction := 'AutoDefineDSType';
     End If;
 
-    If _requiredAction = '' And (_scanCounts.ActualCountETDMSn + _scanCounts.ActualCountETDHMSn) > 0 AND Not _currentDatasetType LIKE '%ETD%' Then
+    If _requiredAction = '' And (_scanCounts.ActualCountETDMSn + _scanCounts.ActualCountETDHMSn) > 0 And Not _currentDatasetType Like '%ETD%' Then
 
         -- Dataset has ETD scans, but current dataset type doesn't reflect this
-        If Not _currentDatasetType LIKE 'IMS%' Then
+        If Not _currentDatasetType Like 'IMS%' Then
             _autoDefineDSType := true;
 
             If _infoOnly Then
-                RAISE INFO 'Set _autoDefineDSType to true because (ActualCountETDMSn + ActualCountETDHMSn) > 0 AND Not _currentDatasetType LIKE ''%%ETD%%''';
+                RAISE INFO 'Set _autoDefineDSType to true because (ActualCountETDMSn + ActualCountETDHMSn) > 0 And Not _currentDatasetType Like ''%%ETD%%''';
             End If;
 
         Else
@@ -247,14 +255,14 @@ BEGIN
         _requiredAction := 'AutoDefineDSType';
     End If;
 
-    If _requiredAction = '' And  _scanCounts.ActualCountHCDMSn + _scanCounts.ActualCountHCDHMSn > 0 AND Not _currentDatasetType LIKE '%HCD%' Then
+    If _requiredAction = '' And  _scanCounts.ActualCountHCDMSn + _scanCounts.ActualCountHCDHMSn > 0 And Not _currentDatasetType Like '%HCD%' Then
 
         -- Dataset has HCD scans, but current dataset type doesn't reflect this
-        If Not _currentDatasetType LIKE 'IMS%' Then
+        If Not _currentDatasetType Like 'IMS%' Then
             _autoDefineDSType := true;
 
             If _infoOnly Then
-                RAISE INFO 'Set _autoDefineDSType to true because ActualCountHCDMSn + ActualCountHCDHMSn > 0 AND Not _currentDatasetType LIKE ''%%HCD%%''';
+                RAISE INFO 'Set _autoDefineDSType to true because ActualCountHCDMSn + ActualCountHCDHMSn > 0 And Not _currentDatasetType Like ''%%HCD%%''';
             End If;
 
         Else
@@ -264,13 +272,13 @@ BEGIN
         _requiredAction := 'AutoDefineDSType';
     End If;
 
-    If _requiredAction = '' And _scanCounts.ActualCountPQD > 0 AND Not _currentDatasetType LIKE '%PQD%' Then
+    If _requiredAction = '' And _scanCounts.ActualCountPQD > 0 And Not _currentDatasetType Like '%PQD%' Then
         -- Dataset has PQD scans, but current dataset type doesn't reflect this
-        If Not _currentDatasetType LIKE 'IMS%' Then
+        If Not _currentDatasetType Like 'IMS%' Then
             _autoDefineDSType := true;
 
             If _infoOnly Then
-                RAISE INFO 'Set _autoDefineDSType to true because ActualCountPQD > 0 AND Not _currentDatasetType LIKE ''%%PQD%%''';
+                RAISE INFO 'Set _autoDefineDSType to true because ActualCountPQD > 0 And Not _currentDatasetType Like ''%%PQD%%''';
             End If;
 
         Else
@@ -280,13 +288,13 @@ BEGIN
         _requiredAction := 'AutoDefineDSType';
     End If;
 
-    If _requiredAction = '' And _scanCounts.ActualCountHCDMSn + _scanCounts.ActualCountHCDHMSn = 0 AND _currentDatasetType LIKE '%HCD%' Then
+    If _requiredAction = '' And _scanCounts.ActualCountHCDMSn + _scanCounts.ActualCountHCDHMSn = 0 And _currentDatasetType Like '%HCD%' Then
         -- Dataset does not have HCD scans, but current dataset type says it does
-        If Not _currentDatasetType LIKE 'IMS%' Then
+        If Not _currentDatasetType Like 'IMS%' Then
             _autoDefineDSType := true;
 
             If _infoOnly Then
-                RAISE INFO 'Set _autoDefineDSType to true because ActualCountHCDMSn + ActualCountHCDHMSn = 0 AND _currentDatasetType LIKE ''%%HCD%%''';
+                RAISE INFO 'Set _autoDefineDSType to true because ActualCountHCDMSn + ActualCountHCDHMSn = 0 And _currentDatasetType Like ''%%HCD%%''';
             End If;
 
         Else
@@ -296,13 +304,13 @@ BEGIN
         _requiredAction := 'AutoDefineDSType';
     End If;
 
-    If _requiredAction = '' And (_scanCounts.ActualCountETDMSn + _scanCounts.ActualCountETDHMSn) = 0 AND _currentDatasetType LIKE '%ETD%' Then
+    If _requiredAction = '' And (_scanCounts.ActualCountETDMSn + _scanCounts.ActualCountETDHMSn) = 0 And _currentDatasetType Like '%ETD%' Then
         -- Dataset does not have ETD scans, but current dataset type says it does
-        If Not _currentDatasetType LIKE 'IMS%' Then
+        If Not _currentDatasetType Like 'IMS%' Then
             _autoDefineDSType := true;
 
             If _infoOnly Then
-                RAISE INFO 'Set _autoDefineDSType to true because (ActualCountETDMSn + ActualCountETDHMSn) = 0 AND _currentDatasetType LIKE ''%%ETD%%''';
+                RAISE INFO 'Set _autoDefineDSType to true because (ActualCountETDMSn + ActualCountETDHMSn) = 0 And _currentDatasetType Like ''%%ETD%%''';
             End If;
 
         Else
@@ -312,15 +320,15 @@ BEGIN
         _requiredAction := 'AutoDefineDSType';
     End If;
 
-    If _requiredAction = '' And _scanCounts.ActualCountAnyMSn > 0 AND Not _currentDatasetType LIKE '%-MSn%' Then
+    If _requiredAction = '' And _scanCounts.ActualCountAnyMSn > 0 And Not _currentDatasetType Like '%-MSn%' Then
         -- Dataset contains MSn spectra, but the current dataset type doesn't reflect that this is an MSn dataset
         If _currentDatasetType = 'IMS-HMS' Then
             _newDatasetType := 'IMS-HMS-MSn';
-        ElsIf Not _currentDatasetType LIKE 'IMS%' Then
+        ElsIf Not _currentDatasetType Like 'IMS%' Then
             _autoDefineDSType := true;
 
             If _infoOnly Then
-                RAISE INFO 'Set _autoDefineDSType to true because ActualCountAnyMSn > 0 AND Not _currentDatasetType LIKE ''%%-MSn%%''';
+                RAISE INFO 'Set _autoDefineDSType to true because ActualCountAnyMSn > 0 And Not _currentDatasetType Like ''%%-MSn%%''';
             End If;
 
         Else
@@ -330,13 +338,13 @@ BEGIN
         _requiredAction := 'AutoDefineDSType';
     End If;
 
-    If _requiredAction = '' And (_scanCounts.ActualCountCIDHMSn + _scanCounts.ActualCountETDHMSn + _scanCounts.ActualCountHCDHMSn + _scanCounts.ActualCountETciDHMSn + _scanCounts.ActualCountEThcDHMSn) = 0 AND _currentDatasetType LIKE '%-HMSn%' Then
+    If _requiredAction = '' And (_scanCounts.ActualCountCIDHMSn + _scanCounts.ActualCountETDHMSn + _scanCounts.ActualCountHCDHMSn + _scanCounts.ActualCountETciDHMSn + _scanCounts.ActualCountEThcDHMSn) = 0 And _currentDatasetType Like '%-HMSn%' Then
         -- Dataset does not have HMSn scans, but current dataset type says it does
-        If Not _currentDatasetType LIKE 'IMS%' Then
+        If Not _currentDatasetType Like 'IMS%' Then
             _autoDefineDSType := true;
 
             If _infoOnly Then
-                RAISE INFO 'Set _autoDefineDSType to true because (ActualCountCIDHMSn + ActualCountETDHMSn + ActualCountHCDHMSn + ActualCountETciDHMSn + ActualCountEThcDHMSn) = 0 AND _currentDatasetType LIKE ''%%-HMSn%%''';
+                RAISE INFO 'Set _autoDefineDSType to true because (ActualCountCIDHMSn + ActualCountETDHMSn + ActualCountHCDHMSn + ActualCountETciDHMSn + ActualCountEThcDHMSn) = 0 And _currentDatasetType Like ''%%-HMSn%%''';
             End If;
 
         Else
@@ -346,13 +354,13 @@ BEGIN
         _requiredAction := 'AutoDefineDSType';
     End If;
 
-    If _requiredAction = '' And (_scanCounts.ActualCountCIDMSn + _scanCounts.ActualCountETDMSn + _scanCounts.ActualCountHCDMSn + _scanCounts.ActualCountETciDMSn + _scanCounts.ActualCountEThcDMSn) = 0 AND _currentDatasetType LIKE '%-MSn%' Then
+    If _requiredAction = '' And (_scanCounts.ActualCountCIDMSn + _scanCounts.ActualCountETDMSn + _scanCounts.ActualCountHCDMSn + _scanCounts.ActualCountETciDMSn + _scanCounts.ActualCountEThcDMSn) = 0 And _currentDatasetType Like '%-MSn%' Then
         -- Dataset does not have MSn scans, but current dataset type says it does
-        If Not _currentDatasetType LIKE 'IMS%' Then
+        If Not _currentDatasetType Like 'IMS%' Then
             _autoDefineDSType := true;
 
             If _infoOnly Then
-                RAISE INFO 'Set _autoDefineDSType to true because (ActualCountCIDMSn + ActualCountETDMSn + ActualCountHCDMSn + ActualCountETciDMSn + ActualCountEThcDMSn) = 0 AND _currentDatasetType LIKE ''%%-MSn%%''';
+                RAISE INFO 'Set _autoDefineDSType to true because (ActualCountCIDMSn + ActualCountETDMSn + ActualCountHCDMSn + ActualCountETciDMSn + ActualCountEThcDMSn) = 0 And _currentDatasetType Like ''%%-MSn%%''';
             End If;
 
         Else
@@ -362,13 +370,13 @@ BEGIN
         _requiredAction := 'AutoDefineDSType';
     End If;
 
-    If _requiredAction = '' And _scanCounts.ActualCountHMS = 0 AND (_currentDatasetType LIKE 'HMS%' Or _currentDatasetType LIKE '%-HMS') Then
+    If _requiredAction = '' And _scanCounts.ActualCountHMS = 0 And (_currentDatasetType Like 'HMS%' Or _currentDatasetType Like '%-HMS') Then
         -- Dataset does not have HMS scans, but current dataset type says it does
-        If Not _currentDatasetType LIKE 'IMS%' Then
+        If Not _currentDatasetType Like 'IMS%' Then
             _autoDefineDSType := true;
 
             If _infoOnly Then
-                RAISE INFO 'Set _autoDefineDSType to true because ActualCountHMS = 0 AND (_currentDatasetType LIKE ''HMS%%'' Or _currentDatasetType LIKE ''%%-HMS'')';
+                RAISE INFO 'Set _autoDefineDSType to true because ActualCountHMS = 0 And (_currentDatasetType Like ''HMS%%'' Or _currentDatasetType Like ''%%-HMS'')';
             End If;
 
         Else
@@ -378,15 +386,15 @@ BEGIN
         _requiredAction := 'AutoDefineDSType';
     End If;
 
-    If _requiredAction = '' And _scanCounts.ActualCountAnyHMSn > 0 AND Not _currentDatasetType LIKE '%-HMSn%' Then
+    If _requiredAction = '' And _scanCounts.ActualCountAnyHMSn > 0 And Not _currentDatasetType Like '%-HMSn%' Then
         -- Dataset contains HMSn spectra, but the current dataset type doesn't reflect that this is an HMSn dataset
         If _currentDatasetType = 'IMS-HMS' Then
             _newDatasetType := 'IMS-HMS-HMSn';
-        ElsIf Not _currentDatasetType LIKE 'IMS%' Then
+        ElsIf Not _currentDatasetType Like 'IMS%' Then
             _autoDefineDSType := true;
 
             If _infoOnly Then
-                RAISE INFO 'Set _autoDefineDSType to true because ActualCountAnyHMSn > 0 AND Not _currentDatasetType LIKE ''%%-HMSn%%''';
+                RAISE INFO 'Set _autoDefineDSType to true because ActualCountAnyHMSn > 0 And Not _currentDatasetType Like ''%%-HMSn%%''';
             End If;
 
         Else
@@ -404,7 +412,7 @@ BEGIN
         -- Otherwise, will compare to the actual dataset type and post a warning if they differ
         -----------------------------------------------------------
 
-        If Not _currentDatasetType LIKE 'IMS%' AND NOT _currentDatasetType IN ('MALDI-HMS', 'C60-SIMS-HMS') Then
+        If Not _currentDatasetType Like 'IMS%' And Not _currentDatasetType In ('MALDI-HMS', 'C60-SIMS-HMS') Then
             -- Auto-define the dataset type based on the scan type counts
             -- The auto-defined types will be one of the following:
                 -- MS
@@ -436,7 +444,7 @@ BEGIN
             If (_scanCounts.ActualCountETciDMSn + _scanCounts.ActualCountEThcDMSn + _scanCounts.ActualCountETciDHMSn + _scanCounts.ActualCountEThcDHMSn) > 0 Then
                 -- Has ETciD or EThcD spectra
 
-                If (_scanCounts.ActualCountETciDMSn + _scanCounts.ActualCountETciDHMSn) > 0 AND (_scanCounts.ActualCountEThcDMSn + _scanCounts.ActualCountEThcDHMSn) > 0 Then
+                If (_scanCounts.ActualCountETciDMSn + _scanCounts.ActualCountETciDHMSn) > 0 And (_scanCounts.ActualCountEThcDMSn + _scanCounts.ActualCountEThcDHMSn) > 0 Then
                     _datasetTypeAutoGen := _datasetTypeAutoGen || '-ETciD-EThcD';
                 Else
 
@@ -504,7 +512,7 @@ BEGIN
                             End If;
                         Else
                             -- No ETD spectra
-                            If _scanCounts.ActualCountCIDMSn > 0 OR _scanCounts.ActualCountPQD > 0 Then
+                            If _scanCounts.ActualCountCIDMSn > 0 Or _scanCounts.ActualCountPQD > 0 Then
                                 _datasetTypeAutoGen := _datasetTypeAutoGen || '-CID';
                             Else
                                 _datasetTypeAutoGen := _datasetTypeAutoGen;
@@ -532,7 +540,7 @@ BEGIN
 
         End If;
 
-        If _datasetTypeAutoGen <> '' AND _autoDefineOnAllMismatches Then
+        If _datasetTypeAutoGen <> '' And _autoDefineOnAllMismatches Then
             _autoDefineDSType := true;
 
             If _infoOnly Then

@@ -162,7 +162,7 @@ BEGIN
 
         /*
          * Uncomment to debug
-        If _infoOnly AND _validFactorEntries <= 3 Then
+        If _infoOnly And _validFactorEntries <= 3 Then
             FOR _requestID, _factorName IN
                 SELECT RequestID, FactorName
                 FROM Tmp_FactorUpdates

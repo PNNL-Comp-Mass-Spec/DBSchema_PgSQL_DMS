@@ -161,11 +161,11 @@ BEGIN
         -- Validate priority
         ---------------------------------------------------
 
-        If _priority <> 'Normal' AND Coalesce(_reasonForHighPriority, '') = '' Then
+        If _priority <> 'Normal' And Coalesce(_reasonForHighPriority, '') = '' Then
             RAISE EXCEPTION 'Priority "%" requires justification reason to be provided', _priority;
         End If;
 
-        If Not _priority::citext IN ('Normal', 'High') Then
+        If Not _priority::citext In ('Normal', 'High') Then
             RAISE EXCEPTION 'Priority should be Normal or High';
         End If;
 
@@ -173,7 +173,7 @@ BEGIN
         -- Validate analysis type
         ---------------------------------------------------
 
-        If NOT Exists (Select * From t_data_analysis_request_type_name Where analysis_type = _analysisType) Then
+        If Not Exists (SELECT analysis_type FROM t_data_analysis_request_type_name WHERE analysis_type = _analysisType) Then
             RAISE EXCEPTION 'Invalid data analysis type: %', _analysisType;
         End If;
 
@@ -581,13 +581,13 @@ BEGIN
 
             -- Limit who can make changes if in 'closed' state
             --
-            If _currentStateID = 4 AND NOT EXISTS (SELECT * FROM V_Data_Analysis_Request_User_Picklist WHERE username = _callingUser) Then
+            If _currentStateID = 4 And Not Exists (SELECT username FROM V_Data_Analysis_Request_User_Picklist WHERE username = _callingUser) Then
                 RAISE EXCEPTION 'Changes to entry are not allowed if it is in the "Closed" state';
             End If;
 
             -- Don't allow change to 'Analysis in Progress' unless someone has been assigned
             --
-            If _state = 'Analysis in Progress' AND ((_assignedPersonnel = '') OR (_assignedPersonnel = 'na')) Then
+            If _state::citext = 'Analysis in Progress' And (_assignedPersonnel = '' Or _assignedPersonnel = 'na') Then
                 RAISE EXCEPTION 'Assigned personnel must be selected when the state is "Analysis in Progress"';
             End If;
         End If;
@@ -602,7 +602,7 @@ BEGIN
             FROM t_charge_code CC
                  INNER JOIN t_charge_code_activation_state CCAS
                    ON CC.activation_state = CCAS.activation_state
-            WHERE (CC.charge_code = _workPackage)
+            WHERE CC.charge_code = _workPackage;
 
             If _activationState >= 3 Then
                 RAISE EXCEPTION 'Cannot use inactive Work Package "%" for a new Data Analysis Request', _workPackage;

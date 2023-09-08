@@ -471,7 +471,7 @@ BEGIN
 
             -- If _callingUser is defined, call alter_event_log_entry_user to alter the entered_by field in t_event_log
 
-            If char_length(_callingUser) > 0 AND _ratingID <> Coalesce(_curDSRatingID, -1000) Then
+            If char_length(_callingUser) > 0 And _ratingID <> Coalesce(_curDSRatingID, -1000) Then
                 CALL public.alter_event_log_entry_user ('public', 8, _datasetID, _ratingID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 

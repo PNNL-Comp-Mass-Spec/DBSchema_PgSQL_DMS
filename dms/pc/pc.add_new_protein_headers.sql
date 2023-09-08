@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE pc.add_new_protein_headers(IN _proteinidstart intege
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          07/20/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -107,7 +108,7 @@ BEGIN
 
             _proteinIDStart := _proteinIDEnd + 1;
 
-            If _maxProteinsToProcess > 0 AND _proteinsProcessed >= _maxProteinsToProcess Then
+            If _maxProteinsToProcess > 0 And _proteinsProcessed >= _maxProteinsToProcess Then
                 -- Break out of the while loop
                 EXIT;
             End If;

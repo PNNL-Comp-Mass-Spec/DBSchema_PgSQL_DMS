@@ -135,13 +135,13 @@ BEGIN
         _experimentList    := Trim(Coalesce(_experimentList, ''));
         _batchName         := Trim(Coalesce(_batchName, ''));
 
-        If _experimentGroupID <> '' AND _experimentList <> '' Then
+        If _experimentGroupID <> '' And _experimentList <> '' Then
             _returnCode := 'U5130';
             _message := 'Experiment Group ID and Experiment List cannot both be non-blank';
             RAISE EXCEPTION '%', _message;
         End If;
         --
-        If _experimentGroupID = '' AND _experimentList = '' Then
+        If _experimentGroupID = '' And _experimentList = '' Then
             _returnCode := 'U5131';
             _message := 'Experiment Group ID and Experiment List cannot both be blank';
             RAISE EXCEPTION '%', _message;

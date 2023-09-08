@@ -134,6 +134,7 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **          09/28/2022 mem - Rename temporary table
 **          07/19/2023 mem - Synchronize with sw.add_update_job_parameter_xml
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -245,7 +246,7 @@ BEGIN
 
         UPDATE Tmp_Task_Parameters
         SET Value = _value,
-            State = Case When Value Is Distinct From _value Then 'Updated Value' Else 'Unchanged Value' End
+            State = CASE WHEN Value IS DISTINCT FROM _value THEN 'Updated Value' ELSE 'Unchanged Value' END
         WHERE Section = _section::citext AND
               Name = _paramName::citext;
 

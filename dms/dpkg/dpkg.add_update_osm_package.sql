@@ -40,6 +40,7 @@ CREATE OR REPLACE PROCEDURE dpkg.add_update_osm_package(INOUT _id integer, IN _n
 **                         - Validate _state
 **          08/15/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Update warning messages
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -233,7 +234,7 @@ BEGIN
             End If;
 
             -- Create the wiki page link
-            If NOT _name IS NULL Then
+            If Not _name Is Null Then
                 _wikiLink := format('https://prismwiki.pnl.gov/wiki/OSMPackages:%s', REPLACE(_name, ' ', '_'));
             End If;
 
@@ -316,7 +317,7 @@ BEGIN
                 _exceptionContext = pg_exception_context;
 
         If _logErrors Then
-            If Coalesce(_id, 0) > 0 And Position(format('ID %s', _id) IN _exceptionMessage) = 0 Then
+            If Coalesce(_id, 0) > 0 And Position(format('ID %s', _id) In _exceptionMessage) = 0 Then
                 _exceptionMessage := format('%s; OSM Package ID %s', _exceptionMessage, _id);
             End If;
 

@@ -25,6 +25,7 @@ CREATE OR REPLACE FUNCTION public.append_to_text(_basetext text, _addnltext text
 **          05/22/2023 mem - Use format() for string concatenation
 **          06/16/2023 mem - Change _addDuplicateText to a boolean
 **                         - Ignore _maxlength if _addnlText is an empty string
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -61,7 +62,7 @@ BEGIN
         End If;
     End If;
 
-    If Coalesce(_maxLength, 0) > 0 AND char_length(_updatedText) > _maxLength THEN
+    If Coalesce(_maxLength, 0) > 0 And char_length(_updatedText) > _maxLength THEN
         _updatedText := Substring(_updatedText, 1, _maxLength);
     End IF;
 

@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_statistics(INOUT _message text 
 **          07/10/2023 mem - Use COUNT(AJ.job) and COUNT(DS.dataset_id) instead of COUNT(*)
 **                         - Fix bug referencing a field in a record
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -106,7 +107,7 @@ BEGIN
               ) StatsQ
         WHERE target.param_file_id = StatsQ.param_file_id AND
               (
-                target.Job_Usage_Count IS DISTINCT FROM StatsQ.JobCount OR
+                target.Job_Usage_Count     IS DISTINCT FROM StatsQ.JobCount OR
                 target.Job_Usage_Last_Year IS DISTINCT FROM StatsQ.JobCountLastYear
               );
 
@@ -144,7 +145,7 @@ BEGIN
               ) StatsQ
         WHERE target.settings_file_id = StatsQ.settings_file_id AND
               (
-                target.Job_Usage_Count IS DISTINCT FROM StatsQ.JobCount OR
+                target.Job_Usage_Count     IS DISTINCT FROM StatsQ.JobCount OR
                 target.Job_Usage_Last_Year IS DISTINCT FROM StatsQ.JobCountLastYear
               );
 
@@ -179,7 +180,7 @@ BEGIN
              ) StatsQ
         WHERE target.cart_config_id = StatsQ.cart_config_ID AND
               (
-                target.dataset_usage_count IS DISTINCT FROM StatsQ.DatasetCount or
+                target.dataset_usage_count     IS DISTINCT FROM StatsQ.DatasetCount or
                 target.dataset_usage_last_year IS DISTINCT FROM StatsQ.DatasetCountLastYear
               );
 
@@ -221,7 +222,7 @@ BEGIN
         WHERE target.instrument_group = StatsQ.instrument_group AND
               target.Dataset_Type = StatsQ.Dataset_Type AND
               (
-                  target.dataset_usage_count IS DISTINCT FROM StatsQ.DatasetCount OR
+                  target.dataset_usage_count     IS DISTINCT FROM StatsQ.DatasetCount OR
                   target.dataset_usage_last_year IS DISTINCT FROM StatsQ.DatasetCountLastYear
               );
 
@@ -291,7 +292,7 @@ BEGIN
         WHERE target.instrument_id = StatsQ.instrument_id AND
               target.dataset_type = StatsQ.dataset_type AND
               (
-                  target.dataset_usage_count IS DISTINCT FROM StatsQ.DatasetCount OR
+                  target.dataset_usage_count     IS DISTINCT FROM StatsQ.DatasetCount OR
                   target.dataset_usage_last_year IS DISTINCT FROM StatsQ.DatasetCountLastYear
               );
 
@@ -396,12 +397,12 @@ BEGIN
 
             End If;
 
-            If Exists ( SELECT * FROM t_general_statistics WHERE category = _statEntry.Category AND label = _statEntry.Label ) Then
+            If Exists (SELECT entry_id FROM t_general_statistics WHERE category = _statEntry.Category AND label = _statEntry.Label) Then
                 UPDATE t_general_statistics
                 SET value = _value, last_affected = CURRENT_TIMESTAMP
                 WHERE category = _statEntry.Category AND
                       label = _statEntry.Label AND
-                      value Is Distinct From _value;
+                      value IS DISTINCT FROM _value;
             Else
                 INSERT INTO t_general_statistics( category, label, value, Last_Affected)
                 VALUES(_statEntry.Category, _statEntry.Label, _value, CURRENT_TIMESTAMP);

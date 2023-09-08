@@ -116,7 +116,7 @@ BEGIN
 
     If Not _infoOnly Or _infoOnly And _previewCount < 0 Then
         -- Verify that both _storageServerName and _serverDisk are specified
-        If _storageServerName = '' OR _serverDisk = '' Then
+        If _storageServerName = '' Or _serverDisk = '' Then
             _message := 'Error, both a storage server and a storage disk must be specified when requesting a purge task or when previewing the task that would be returned';
             _returnCode := 'U5201';
             RETURN;
@@ -308,7 +308,7 @@ BEGIN
             CONTINUE;
         End If;
 
-        If _storageServerName <> '' AND _serverDisk <> '' Then
+        If _storageServerName <> '' And _serverDisk <> '' Then
             If _candidateCount >= _previewCount Then
                 -- Break out of the For Loop
                 EXIT;

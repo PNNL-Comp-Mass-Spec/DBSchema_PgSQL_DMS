@@ -47,6 +47,7 @@ CREATE OR REPLACE FUNCTION mc.archive_old_managers_and_params(_mgrlist text, _in
 **          01/31/2023 mem - Use new column names in tables
 **          05/12/2023 mem - Rename variables
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -177,7 +178,7 @@ BEGIN
                ON Src.mgr_id = Target.mgr_id;
     End If;
 
-    If _infoOnly OR NOT EXISTS (SELECT * FROM TmpManagerList) Then
+    If _infoOnly Or Not Exists (SELECT * FROM TmpManagerList) Then
         RETURN QUERY
         SELECT ' To be archived' as message,
                Src.manager_name,

@@ -61,6 +61,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_assignments(IN _mode tex
 **                         - Use format() for string concatenation
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -154,7 +155,7 @@ BEGIN
         -- Initial validation checks are complete; now enable _logErrors
         _logErrors := true;
 
-        If _mode::citext IN ('instrumentGroup', 'instrumentGroupIgnoreType') Then
+        If _mode::citext In ('instrumentGroup', 'instrumentGroupIgnoreType') Then
 
             ---------------------------------------------------
             -- Validate the instrument group
@@ -335,7 +336,7 @@ BEGIN
         End If;
 
         -------------------------------------------------
-        If _mode::citext IN ('instrumentGroup', 'instrumentGroupIgnoreType') Then
+        If _mode::citext In ('instrumentGroup', 'instrumentGroupIgnoreType') Then
 
             UPDATE t_requested_run RR
             SET    instrument_group = _newInstrumentGroup

@@ -72,27 +72,27 @@ BEGIN
     _datasetRatingUpdated := false;
 
     _state := Coalesce(_state, '');
-    If _state::citext IN ('', '[no change]') Then
+    If _state::citext In ('', '[no change]') Then
         _state := '[no change]';
     End If;
 
     _rating := Coalesce(_rating, '');
-    If _rating::citext IN ('', '[no change]') Then
+    If _rating::citext In ('', '[no change]') Then
         _rating := '[no change]';
     End If;
 
     _comment := Coalesce(_comment, '');
-    If _comment::citext IN ('', '[no change]') Then
+    If _comment::citext In ('', '[no change]') Then
         _comment := '[no change]';
     End If;
 
     _findText := Coalesce(_findText, '');
-    If _findText::citext IN ('', '[no change]') Then
+    If _findText::citext In ('', '[no change]') Then
         _findText := '[no change]';
     End If;
 
     _replaceText := Coalesce(_replaceText, '');
-    If _replaceText::citext IN ('', '[no change]') Then
+    If _replaceText::citext In ('', '[no change]') Then
         _replaceText := '[no change]';
     End If;
 
@@ -128,7 +128,7 @@ BEGIN
             RAISE EXCEPTION '%', _msg;
         End If;
 
-        If (_findText = '[no change]' and _replaceText <> '[no change]') OR (_findText <> '[no change]' and _replaceText = '[no change]') Then
+        If (_findText = '[no change]' And _replaceText <> '[no change]') Or (_findText <> '[no change]' And _replaceText = '[no change]') Then
             _msg := 'The Find In Comment and Replace In Comment enabled flags must both be enabled or disabled';
             RAISE INFO '%', _msg;
             RAISE EXCEPTION '%', _msg;

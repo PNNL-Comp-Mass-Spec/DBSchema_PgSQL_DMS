@@ -141,21 +141,21 @@ BEGIN
         _orgStorageLocation := Trim(Coalesce(_orgStorageLocation, ''));
 
         If _orgStorageLocation <> '' Then
-            If Not _orgStorageLocation LIKE '\\\\%' Then
+            If Not _orgStorageLocation Like '\\\\%' Then
                 RAISE EXCEPTION 'Org. Storage Path must start with \\';
             End If;
 
             -- Make sure _orgStorageLocation does not End in \FASTA or \FASTA\
             -- That text gets auto-appended via computed column organism_db_path
-            If _orgStorageLocation ILIKE '%\\FASTA' Then
+            If _orgStorageLocation ILike '%\\FASTA' Then
                 _orgStorageLocation := Substring(_orgStorageLocation, 1, char_length(_orgStorageLocation) - 6);
             End If;
 
-            If _orgStorageLocation ILIKE '%\\FASTA\\' Then
+            If _orgStorageLocation ILike '%\\FASTA\\' Then
                 _orgStorageLocation := Substring(_orgStorageLocation, 1, char_length(_orgStorageLocation) - 7);
             End If;
 
-            If Not _orgStorageLocation LIKE '%\\' Then
+            If Not _orgStorageLocation Like '%\\' Then
                 _orgStorageLocation := format('%s\', _orgStorageLocation);
             End If;
 
@@ -353,9 +353,9 @@ BEGIN
         _orgSpecies := public.validate_na_parameter(_orgSpecies, 1);
         _orgStrain := public.validate_na_parameter(_orgStrain, 1);
 
-        If _orgGenus::citext   IN ('unknown', 'na', 'none') AND
-           _orgSpecies::citext IN ('unknown', 'na', 'none') AND
-           _orgStrain::citext  IN ('unknown', 'na', 'none') THEN
+        If _orgGenus::citext   In ('unknown', 'na', 'none') And
+           _orgSpecies::citext In ('unknown', 'na', 'none') And
+           _orgStrain::citext  In ('unknown', 'na', 'none') Then
 
             _orgGenus := 'na';
             _orgSpecies := 'na';
@@ -371,7 +371,7 @@ BEGIN
         _duplicateTaxologyMsg := format('Another organism was found with Genus "%s", Species "%s", and Strain "%s"; if unknown, use "na" for these values',
                                         _orgGenus, _orgSpecies, _orgStrain);
 
-        If Not (_orgGenus = 'na' AND _orgSpecies = 'na' AND _orgStrain = 'na') Then
+        If Not (_orgGenus = 'na' And _orgSpecies = 'na' And _orgStrain = 'na') Then
 
             If _mode = 'add' Then
                 -- Make sure that an existing entry doesn't exist with the same values for Genus, Species, and Strain
@@ -383,7 +383,7 @@ BEGIN
                       Coalesce(species, '') = _orgSpecies::citext AND
                       Coalesce(strain, '')  = _orgStrain::citext;
 
-                If _matchCount <> 0 AND Not _orgSpecies LIKE '%metagenome' Then
+                If _matchCount <> 0 And Not _orgSpecies Like '%metagenome' Then
                     RAISE EXCEPTION 'Cannot add: %', _duplicateTaxologyMsg;
                 End If;
             End If;
@@ -399,7 +399,7 @@ BEGIN
                       Coalesce(strain, '')  = _orgStrain::citext AND
                       organism_id <> _id;
 
-                If _matchCount <> 0 AND Not _orgSpecies LIKE '%metagenome' Then
+                If _matchCount <> 0 And Not _orgSpecies Like '%metagenome' Then
                     RAISE EXCEPTION 'Cannot update: %', _duplicateTaxologyMsg;
                 End If;
             End If;

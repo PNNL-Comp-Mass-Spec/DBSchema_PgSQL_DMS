@@ -350,25 +350,25 @@ BEGIN
         -- However, if the parameter file contains _NoDecoy in the name, we'll allow _protCollOptionsList to contain Decoy
         ---------------------------------------------------
 
-        If (_toolName ILIKE 'MSGFPlus%' Or _toolName ILIKE 'TopPIC%' Or _toolName ILIKE 'MaxQuant%' Or _toolName ILIKE 'DiaNN%') And
-           _protCollOptionsList ILIKE '%decoy%' And
-           Not _paramFileName ILIKE '%_NoDecoy%' Then
+        If (_toolName ILike 'MSGFPlus%' Or _toolName ILike 'TopPIC%' Or _toolName ILike 'MaxQuant%' Or _toolName ILike 'DiaNN%') And
+           _protCollOptionsList ILike '%decoy%' And
+           Not _paramFileName ILike '%_NoDecoy%' Then
 
             _protCollOptionsList := 'seq_direction=forward,filetype=fasta';
 
-            If Coalesce(_message, '') = '' And _toolName ILIKE 'MSGFPlus%' Then
+            If Coalesce(_message, '') = '' And _toolName ILike 'MSGFPlus%' Then
                 _message := 'Note: changed protein options to forward-only since MS-GF+ parameter files typically have tda=1';
             End If;
 
-            If Coalesce(_message, '') = '' And _toolName ILIKE 'TopPIC%' Then
+            If Coalesce(_message, '') = '' And _toolName ILike 'TopPIC%' Then
                 _message := 'Note: changed protein options to forward-only since TopPIC parameter files typically have Decoy=True';
             End If;
 
-            If Coalesce(_message, '') = '' And _toolName ILIKE 'MaxQuant%' Then
+            If Coalesce(_message, '') = '' And _toolName ILike 'MaxQuant%' Then
                 _message := 'Note: changed protein options to forward-only since MaxQuant parameter files typically have <decoyMode>revert</decoyMode>';
             End If;
 
-            If Coalesce(_message, '') = '' And _toolName ILIKE 'DiaNN%' Then
+            If Coalesce(_message, '') = '' And _toolName ILike 'DiaNN%' Then
                 _message := 'Note: changed protein options to forward-only since DiaNN expects the FASTA file to not have decoy proteins';
             End If;
         End If;
@@ -378,7 +378,7 @@ BEGIN
         -- However, if the parameter file contains _NoDecoy in the name, we'll allow @protCollOptionsList to contain Decoy
         ---------------------------------------------------
 
-        If (_toolName ILIKE 'MODa%' Or _toolName ILIKE 'MSFragger%') And _protCollOptionsList ILIKE '%forward%' And Not _paramFileName ILIKE '%_NoDecoy%' Then
+        If (_toolName ILike 'MODa%' Or _toolName ILike 'MSFragger%') And _protCollOptionsList ILike '%forward%' And Not _paramFileName ILike '%_NoDecoy%' Then
             _protCollOptionsList := 'seq_direction=decoy,filetype=fasta';
 
             If Coalesce(_message, '') = '' Then
@@ -413,7 +413,7 @@ BEGIN
         -- If AJT_orgDbReqd = 0, we ignore organism, protein collection, and organism DB
         ---------------------------------------------------
 
-        If _dataPackageID = 0 And _removeDatasetsWithJobs::citext NOT IN ('N', 'No') Then
+        If _dataPackageID = 0 And _removeDatasetsWithJobs::citext Not In ('N', 'No') Then
 
             CREATE TEMP TABLE Tmp_MatchingJobDatasets (
                 Dataset text
@@ -544,8 +544,8 @@ BEGIN
 
         _jobStateID := 1;
 
-        If Coalesce(_specialProcessing, '') <> '' AND
-           Exists (SELECT analysis_tool_id FROM t_analysis_tool WHERE analysis_tool = _toolName::citext AND use_special_proc_waiting > 0) Then
+        If Coalesce(_specialProcessing, '') <> '' And Exists
+           (SELECT analysis_tool_id FROM t_analysis_tool WHERE analysis_tool = _toolName::citext AND use_special_proc_waiting > 0) Then
 
             _jobStateID := 19;
 
@@ -574,7 +574,7 @@ BEGIN
 
                 _requestStateID := Coalesce(_requestStateID, 0);
 
-                If Not _requestStateID IN (1, 5) Then
+                If Not _requestStateID In (1, 5) Then
                     -- Request ID is non-zero and request is not in state 1 or state 5
                     RAISE EXCEPTION 'Request is not in state New; cannot create an aggregation job for request %', _requestID;
                 End If;
@@ -804,7 +804,7 @@ BEGIN
         If _mode = 'add' Then
         -- <add>
 
-            If _jobCountToBeCreated = 0 AND _datasetCountToRemove > 0 Then
+            If _jobCountToBeCreated = 0 And _datasetCountToRemove > 0 Then
                 RAISE EXCEPTION 'No jobs were made for request % because there were existing jobs for all datasets in the list', _requestID;
             End If;
 
@@ -846,7 +846,7 @@ BEGIN
 
                 _requestStateID := Coalesce(_requestStateID, 0);
 
-                If _requestStateID IN (1, 5) Then
+                If _requestStateID In (1, 5) Then
                     -- Mark request as used
                     --
                     _requestStateID := 2;
@@ -955,7 +955,7 @@ BEGIN
             --
             GET DIAGNOSTICS _jobCountToBeCreated = ROW_COUNT;
 
-            If _batchID = 0 AND _jobCountToBeCreated = 1 Then
+            If _batchID = 0 And _jobCountToBeCreated = 1 Then
                 -- Added a single job; cache the jobID value
                 _jobID := _jobIDStart;
             End If;
@@ -968,7 +968,7 @@ BEGIN
             If _gid <> 0 Then
                 -- if single job was created, get its identity directly
                 --
-                If _batchID = 0 AND _jobCountToBeCreated = 1 Then
+                If _batchID = 0 And _jobCountToBeCreated = 1 Then
                     INSERT INTO t_analysis_job_processor_group_associations (job, group_id)
                     VALUES (_jobID, _gid);
                 End If;
@@ -976,7 +976,7 @@ BEGIN
                 -- if multiple jobs were created, get job identities
                 -- from all jobs using new batch ID
                 --
-                If _batchID <> 0 AND _jobCountToBeCreated >= 1 Then
+                If _batchID <> 0 And _jobCountToBeCreated >= 1 Then
                     INSERT INTO t_analysis_job_processor_group_associations (job, group_id)
                     SELECT job, _gid
                     FROM t_analysis_job

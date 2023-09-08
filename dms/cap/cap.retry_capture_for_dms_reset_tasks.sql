@@ -16,6 +16,7 @@ CREATE OR REPLACE PROCEDURE cap.retry_capture_for_dms_reset_tasks(INOUT _message
 **          08/16/2017 mem - For capture task jobs with error 'Error running OpenChrom', only reset the DatasetIntegrity step
 **          06/20/2023 mem - Ported to PostgreSQL
 **          06/21/2023 mem - Add missing Drop Table call
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -178,7 +179,7 @@ BEGIN
     End If;
 
     -- Post a log entry that the capture task job(s) have been reset
-    If _jobList LIKE '%,%' Then
+    If _jobList Like '%,%' Then
         _message := format('Reset dataset capture for capture task jobs %s', _jobList);
     Else
         _message := format('Reset dataset capture for capture task job %s', _jobList);

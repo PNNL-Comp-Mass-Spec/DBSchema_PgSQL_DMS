@@ -52,6 +52,7 @@ CREATE OR REPLACE PROCEDURE public.parse_usage_text(INOUT _comment text, INOUT _
 **          08/30/2023 mem - Only validate that values are numeric for percentage based usage types
 **                         - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -273,7 +274,7 @@ BEGIN
         FROM Tmp_UsageInfo
         WHERE UsageKey = 'Proposal';
 
-        If _hasUser > 0 AND _hasProposal = 0 Then
+        If _hasUser > 0 And _hasProposal = 0 Then
             _logErrors := false;
             _invalidUsage := 1;
             RAISE EXCEPTION 'Proposal is needed if user allocation is specified; see ID %', _seq;
@@ -305,11 +306,11 @@ BEGIN
 
         _comment := Trim(_comment);
 
-        If _comment LIKE ',%' Then
+        If _comment Like ',%' Then
             _comment := LTRIM(Substring(_comment, 2, char_length(_comment) - 1));
         End If;
 
-        If _comment LIKE '%,' Then
+        If _comment Like '%,' Then
             _comment := RTRIM(Substring(_comment, 1, char_length(_comment) - 1));
         End If;
 

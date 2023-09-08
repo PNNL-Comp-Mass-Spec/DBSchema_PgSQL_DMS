@@ -49,6 +49,7 @@ CREATE OR REPLACE FUNCTION public.get_monthly_instrument_usage_report(_instrumen
 **                         - Fix bug that changed _eusInstrumentId to null
 **                         - Compute percentage values when _outputFormat is 'rollup'
 **                         - Add missing columns to debug reports
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -180,7 +181,7 @@ BEGIN
             Operator citext NULL
         );
 
-        If _instrument = '' AND _eusInstrumentId = 0 Then
+        If _instrument = '' And _eusInstrumentId = 0 Then
             INSERT INTO Tmp_InstrumentUsage (
                 Dataset_ID,
                 Type,
@@ -816,7 +817,7 @@ BEGIN
              ORDER BY U.Start;
         End If;
 
-        If _outputFormat = 'details' OR _outputFormat = '' Then
+        If _outputFormat = 'details' Or _outputFormat = '' Then
             ---------------------------------------------------
             -- Return usage details
             --

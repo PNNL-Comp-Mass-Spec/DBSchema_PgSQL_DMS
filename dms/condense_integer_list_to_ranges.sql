@@ -50,6 +50,7 @@ CREATE OR REPLACE FUNCTION public.condense_integer_list_to_ranges(_debugmode boo
 **  Date:   07/01/2014 mem - Initial version
 **          12/29/2022 mem - Ported to PostgreSQL
 **          06/07/2023 mem - Add Order By to string_agg()
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -108,7 +109,7 @@ BEGIN
     FROM (
         SELECT RangeQ.Category, string_agg(RangeQ.ValueList, ', ' ORDER BY RangeQ.ValueList) ValueList
         FROM (
-            SELECT a.category, Case When b.StartValue = b.EndValue Then b.StartValue::text Else format('%s-%s', b.StartValue,b.EndValue) End As ValueList
+            SELECT a.category, CASE WHEN b.StartValue = b.EndValue THEN b.StartValue::text ELSE format('%s-%s', b.StartValue,b.EndValue) END As ValueList
             FROM Tmp_ValueCategories a INNER JOIN Islands b ON a.Category = b.Category
             ORDER BY b.StartValue) RangeQ
         GROUP BY RangeQ.Category) ValueListQ;

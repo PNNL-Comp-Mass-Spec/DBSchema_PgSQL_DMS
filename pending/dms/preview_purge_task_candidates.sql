@@ -38,32 +38,32 @@ BEGIN
     -- Validate the inputs
     --------------------------------------------------
 
-    _storageServerName := Coalesce(_storageServerName, '');
-    _storageVol := Coalesce(_storageVol, '');
-    _datasetsPerShare := Coalesce(_datasetsPerShare, 5);
-    _previewSql := Coalesce(_previewSql, false);
+    _storageServerName := Trim(Coalesce(_storageServerName, ''));
+    _storageVol        := Trim(Coalesce(_storageVol, ''));
+    _datasetsPerShare  := Coalesce(_datasetsPerShare, 5);
+    _previewSql        := Coalesce(_previewSql, false);
 
     If _datasetsPerShare < 1 Then
         _datasetsPerShare := 1;
     End If;
 
     -- Auto change \\proto-6 to proto-6
-    If _storageServerName LIKE '\\\\%' Then
+    If _storageServerName Like '\\\\%' Then
         _storageServerName := Substring(_storageServerName, 3, char_length(_storageServerName));
     End If;
 
     -- Auto change proto-6\ to proto-6
-    If _storageServerName LIKE '%\\' Then
+    If _storageServerName Like '%\\' Then
         _storageServerName := Substring(_storageServerName, 1, char_length(_storageServerName) - 1);
     End If;
 
     -- Auto change drive F to F:\
-    If _storageVol SIMILAR TO '[A-Z]' Then
+    If _storageVol::citext SIMILAR TO '[A-Z]' Then
         _storageVol := format('%s:\', _storageVol);
     End If;
 
     -- Auto change drive F: to F:\
-    If _storageVol SIMILAR TO '[a-z]:' Then
+    If _storageVol::citext SIMILAR TO '[A-Z]:' Then
         _storageVol := format('%s\', _storageVol);
     End If;
 
@@ -75,14 +75,14 @@ BEGIN
     --------------------------------------------------
 
     CALL request_purge_task (
-                        _storageServerName => _storageServerName,
-                        _serverDisk => _storageVol,
-                        _excludeStageMD5RequiredDatasets => false,
-                        _message => _message,                   -- Output
-                        _returnCode => _returnCode,             -- Output
-                        _infoOnly => true,
-                        _previewCount => _datasetsPerShare
-                        _previewSql => _previewSql);
+                _storageServerName => _storageServerName,
+                _serverDisk => _storageVol,
+                _excludeStageMD5RequiredDatasets => false,
+                _message => _message,                   -- Output
+                _returnCode => _returnCode,             -- Output
+                _infoOnly => true,
+                _previewCount => _datasetsPerShare
+                _previewSql => _previewSql);
 
 END
 $$;

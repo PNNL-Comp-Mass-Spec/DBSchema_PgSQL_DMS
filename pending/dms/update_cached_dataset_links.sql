@@ -51,7 +51,7 @@ BEGIN
     _processingMode := Coalesce(_processingMode, 0);
     _showDebug := Coalesce(_showDebug, false);
 
-    If _processingMode IN (0, 1) Then
+    If _processingMode In (0, 1) Then
         SELECT MIN(dataset_id)
         INTO _minimumDatasetID
         FROM ( SELECT dataset_id
@@ -100,7 +100,7 @@ BEGIN
         _datasetBatchSize := 0;
     End If;
 
-    If _processingMode IN (1,2) Then
+    If _processingMode In (1, 2) Then
         If _showDebug Then
             RAISE INFO 'Setting update_required to 1 in t_cached_dataset_links for datasets with dataset_id >= % and differing row versions', _minimumDatasetID;
         End If;
@@ -432,10 +432,10 @@ BEGIN
                   target.storage_path_row_version <> source.storage_path_row_version OR
                   target.dataset_folder_path IS DISTINCT FROM source.dataset_folder_path OR
                   target.archive_folder_path IS DISTINCT FROM source.archive_folder_path OR
-                  target.myemsl_url IS DISTINCT FROM source.myemsl_url OR
-                  target.qc_link IS DISTINCT FROM source.qc_link OR
-                  target.qc_2d IS DISTINCT FROM source.qc_2d OR
-                  target.qc_metric_stats IS DISTINCT FROM source.qc_metric_stats) THEN
+                  target.myemsl_url          IS DISTINCT FROM source.myemsl_url OR
+                  target.qc_link             IS DISTINCT FROM source.qc_link OR
+                  target.qc_2d               IS DISTINCT FROM source.qc_2d OR
+                  target.qc_metric_stats     IS DISTINCT FROM source.qc_metric_stats) THEN
                 UPDATE SET
                     dataset_row_version = source.dataset_row_version,
                     storage_path_row_version = source.storage_path_row_version,

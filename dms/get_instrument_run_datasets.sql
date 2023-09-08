@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_run_datasets(_mostrecentweeks i
 **          10/22/2022 mem - Directly pass value to function argument
 **          05/22/2023 mem - Capitalize reserved word
 **          05/29/2023 mem - Use format() for string concatenation
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -54,7 +55,7 @@ BEGIN
         Instrument text
     );
 
-    IF Coalesce(_mostRecentWeeks, 0) = 0 OR Coalesce(_instrument, '') = '' Then
+    If Coalesce(_mostRecentWeeks, 0) = 0 Or Coalesce(_instrument, '') = '' Then
         INSERT INTO Tmp_TX (Seq, ID, Dataset) VALUES (0, 0, 'Bad arguments');
 
         RETURN QUERY

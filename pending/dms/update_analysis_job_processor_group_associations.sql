@@ -127,7 +127,7 @@ BEGIN
     ---------------------------------------------------
     -- Remove selected jobs from associations
     ---------------------------------------------------
-    If _mode IN ('remove', 'add') Then
+    If _mode In ('remove', 'add') Then
         DELETE FROM t_analysis_job_processor_group_associations
         WHERE job IN (SELECT job FROM Tmp_JobList);
             -- AND Group_ID = _gid  -- will need this in future if multiple associations allowed per job
@@ -138,7 +138,7 @@ BEGIN
     -- Add associations for new jobs to list
     ---------------------------------------------------
 
-    If _mode IN ('replace', 'add') Then
+    If _mode In ('replace', 'add') Then
         INSERT INTO t_analysis_job_processor_group_associations (job, group_id)
         SELECT job, _gid
         FROM Tmp_JobList;

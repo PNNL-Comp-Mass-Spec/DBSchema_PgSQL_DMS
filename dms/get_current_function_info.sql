@@ -50,6 +50,7 @@ CREATE OR REPLACE FUNCTION public.get_current_function_info(_schemaname text DEF
 **          09/01/2022 mem - Auto-determine the schema name if the context does not include a schema name and _schemaName is '<auto>' or '<lookup>'
 **          05/31/2023 mem - Add support for calling this function from an anonymous code block (DO ... BEGIN ... END)
 **          07/26/2023 mem - Move "Not" keyword to before the field name
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -127,7 +128,7 @@ BEGIN
     Else
         _objectName := _objectNameAndSchema;
 
-        If Lower(_schemaName) IN ('<auto>', '<lookup>') Then
+        If Lower(_schemaName) In ('<auto>', '<lookup>') Then
 
             -- Lookup the schema name, choosing the first schema found if multiple functions match _objectName
             SELECT n.nspname AS schema

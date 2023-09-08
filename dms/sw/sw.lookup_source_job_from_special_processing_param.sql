@@ -42,6 +42,7 @@ CREATE OR REPLACE PROCEDURE sw.lookup_source_job_from_special_processing_param(I
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          07/25/2023 mem - Ported to PostgreSQL
 **          08/01/2023 mem - Update _returnCode if an exception is caught
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -245,7 +246,7 @@ BEGIN
                 CALL public.post_log_entry ('Debug', _logMessage, 'Lookup_Source_Job_From_Special_Processing_Param', 'sw');
             End If;
 
-            If _sourceJob2 > 0 AND _warningMessage = '' Then
+            If _sourceJob2 > 0 And _warningMessage = '' Then
 
                 -- Lookup the results directory for _sourceJob2
                 --
@@ -261,7 +262,7 @@ BEGIN
                 End If;
             End If;
 
-            If _sourceJob2 > 0 OR _warningMessage <> '' Then
+            If _sourceJob2 > 0 Or _warningMessage <> '' Then
                 -- Store the results
                 --
                 UPDATE Tmp_Source_Job_Folders

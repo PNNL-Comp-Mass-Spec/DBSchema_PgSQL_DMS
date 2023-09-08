@@ -224,15 +224,15 @@ BEGIN
             End If;
 
             -- Do not allow a reset if the dataset succeeded the first step of capture
-            If Exists (SELECT * FROM cap.V_Task_Steps WHERE Dataset_ID = _datasetID AND Tool = 'DatasetCapture' AND State IN (1,2,4,5)) Then
+            If Exists (SELECT Job FROM cap.V_Task_Steps WHERE Dataset_ID = _datasetID AND Tool = 'DatasetCapture' AND State IN (1,2,4,5)) Then
 
-                If Exists (SELECT * FROM cap.V_Task_Steps WHERE Dataset_ID = _datasetID AND Tool = 'DatasetIntegrity' AND State = 6) AND
-                   Exists (SELECT * FROM cap.V_Task_Steps WHERE Dataset_ID = _datasetID AND Tool = 'DatasetCapture' AND State = 5)
+                If Exists (SELECT Job FROM cap.V_Task_Steps WHERE Dataset_ID = _datasetID AND Tool = 'DatasetIntegrity' AND State = 6) AND
+                   Exists (SELECT Job FROM cap.V_Task_Steps WHERE Dataset_ID = _datasetID AND Tool = 'DatasetCapture' AND State = 5)
                 Then
                     -- Do allow a reset if the DatasetIntegrity step failed and if we haven't already retried capture of this dataset once
                     _msg := format('Retrying capture of dataset %s at user request (dataset was captured, but DatasetIntegrity failed)', _datasetName);
 
-                    If Exists (SELECT * FROM t_log_entries WHERE message LIKE _msg || '%') Then
+                    If Exists (SELECT entry_id FROM t_log_entries WHERE message LIKE _msg || '%') Then
                         _msg := format('Dataset "%s" cannot be reset because it has already been reset once', _datasetName);
 
                         If _callingUser = '' Then

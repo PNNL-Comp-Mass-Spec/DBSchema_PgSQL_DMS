@@ -41,6 +41,7 @@ CREATE OR REPLACE FUNCTION test.test_triggers(_createitems boolean DEFAULT false
 **          05/22/2023 mem - Update whitespace
 **          07/11/2023 mem - Change argument flags from integer to boolean
 **                         - Use COUNT(H.entry_id) and COUNT(L.event_id) instead of COUNT(*)
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -537,7 +538,7 @@ BEGIN
     If _updateStates Then
         If _campaignsFoundOrCreated Then
             UPDATE t_campaign
-            SET state = Case When state = 'Active' Then 'Inactive' Else 'Active' End
+            SET state = CASE WHEN state = 'Active' THEN 'Inactive' ELSE 'Active' END
             FROM T_Tmp_Campaigns
             WHERE t_campaign.campaign_id = T_Tmp_Campaigns.campaign_id;
 
@@ -549,7 +550,7 @@ BEGIN
 
         If _experimentsFoundOrCreated Then
             UPDATE t_experiments
-            SET material_active = Case When material_active = 'Active' Then 'Inactive' Else 'Active' End
+            SET material_active = CASE WHEN material_active = 'Active' THEN 'Inactive' ELSE 'Active' END
             FROM T_Tmp_Experiments
             WHERE t_experiments.exp_id = T_Tmp_Experiments.experiment_id;
 

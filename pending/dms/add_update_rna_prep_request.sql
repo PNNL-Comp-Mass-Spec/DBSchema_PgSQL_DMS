@@ -125,7 +125,7 @@ BEGIN
         -- Validate dataset type
         ---------------------------------------------------
 
-        If NOT (_instrumentName::citext IN ('', 'none', 'na')) Then
+        If Not _instrumentName::citext In ('', 'none', 'na') Then
             If Coalesce(_datasetType, '') = '' Then
                 RAISE EXCEPTION 'Dataset type cannot be empty since the Instrument Name is defined';
             End If;
@@ -306,7 +306,7 @@ BEGIN
 
             -- Changes not allowed if in 'closed' state
             --
-            If _currentStateID = 5 AND NOT EXISTS (SELECT * FROM V_Operations_Task_Staff_Picklist WHERE username = _callingUser) Then
+            If _currentStateID = 5 And Not Exists (SELECT * FROM V_Operations_Task_Staff_Picklist WHERE username = _callingUser) Then
                 RAISE EXCEPTION 'Changes to entry are not allowed if it is in the "Closed" state';
             End If;
 

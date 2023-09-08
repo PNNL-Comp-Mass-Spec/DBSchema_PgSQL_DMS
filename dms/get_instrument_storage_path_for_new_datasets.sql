@@ -27,6 +27,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_storage_path_for_new_datasets(_
 **          12/17/2020 mem - Rollback any open transactions before calling Local_Error_Handler
 **          05/08/2023 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Use format() for string concatenation
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -92,8 +93,8 @@ BEGIN
         _currentLocation := 'Auto-defining storage path';
 
         -- Validate the _autoSP variables
-        If Coalesce(_instrumentInfo.AutoSPVolNameClient, '') = '' OR
-           Coalesce(_instrumentInfo.autoSPVolNameServer, '') = '' OR
+        If Coalesce(_instrumentInfo.AutoSPVolNameClient, '') = '' Or
+           Coalesce(_instrumentInfo.autoSPVolNameServer, '') = '' Or
            Coalesce(_instrumentInfo.AutoSPPathRoot, '') = '' Then
 
             _message := format('One or more Auto_SP fields are empty or null for instrument %s; unable to auto-define the storage path', _instrumentInfo.InstrumentName);

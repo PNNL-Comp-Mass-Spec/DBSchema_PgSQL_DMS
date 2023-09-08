@@ -14,6 +14,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_dataset_after_delete_all() RETURNS tr
 **  Auth:   mem
 **  Date:   08/01/2022 mem - Ported to PostgreSQL
 **          07/10/2023 mem - Use COUNT(dataset_id) instead of COUNT(*)
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -33,7 +34,7 @@ BEGIN
 
     -- RAISE NOTICE 'New row count: %, deleted rows: %', _newRowCount, _deletedRowCount;
 
-    If _deletedRowCount > 0 AND _newRowCount = 0 Then
+    If _deletedRowCount > 0 And _newRowCount = 0 Then
         _message := format('Cannot delete all %s rows in %s; use a WHERE clause to limit the affected rows (see trigger function %s)',
                            _deletedRowCount, 't_dataset', 'trigfn_t_dataset_after_delete_all');
 

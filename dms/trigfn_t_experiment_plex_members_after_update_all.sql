@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_experiment_plex_members_after_update_
 **          08/01/2022 mem - Ported to PostgreSQL
 **          08/06/2022 mem - Rename transition table to avoid confusion (the OLD and NEW variables are null for statement-level triggers)
 **          07/10/2023 mem - Use COUNT(plex_exp_id) instead of COUNT(*)
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -36,7 +37,7 @@ BEGIN
 
     -- RAISE NOTICE 'Existing row count: %, Updated row count: %', _existingRowCount, _updatedRowCount;
 
-    If _updatedRowCount > 1 AND _updatedRowCount >= _existingRowCount Then
+    If _updatedRowCount > 1 And _updatedRowCount >= _existingRowCount Then
         _message := format('Cannot update all %s rows in %s; use a WHERE clause to limit the affected rows (see trigger function %s)',
                            _updatedRowCount, 't_experiment_plex_members', 'trigfn_t_experiment_plex_members_after_update_all');
 

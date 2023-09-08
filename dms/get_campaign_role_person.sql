@@ -16,12 +16,13 @@ CREATE OR REPLACE FUNCTION public.get_campaign_role_person(_campaignid integer, 
 **  Date:   02/03/2010
 **          12/08/2014 mem - Now using name_with_username to obtain the user's name and username
 **          07/07/2022 mem - Ported to PostgreSQL
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
     _person text;
 BEGIN
-    IF NOT _campaignID IS NULL AND NOT _role IS NULL Then
+    If Not _campaignID Is Null And Not _role Is Null Then
         SELECT t_users.name_with_username
         INTO _person
         FROM t_research_team_roles

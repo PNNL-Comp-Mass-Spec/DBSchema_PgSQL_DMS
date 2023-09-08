@@ -56,6 +56,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_device_info_xml(IN _datasetid 
 **          06/14/2023 mem - Use public.trim_whitespace() to remove leading and trailing whitespace from the device description
 **                         - Add argument _showDatasetInfoOnPreview
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -351,7 +352,7 @@ BEGIN
     FROM Tmp_DatasetDevicesTable Src
     WHERE NOT Src.device_id IS NULL;
 
-    If char_length(_message) > 0 AND _infoOnly Then
+    If char_length(_message) > 0 And _infoOnly Then
         RAISE INFO '%', _message;
     End If;
 

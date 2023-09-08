@@ -96,7 +96,7 @@ BEGIN
         _labName  := Trim(Coalesce(_labName, 'Undefined'));
         _mode     := Trim(Lower(Coalesce(_mode, '')));
 
-        If _status::citext IN ('Completed', 'Not Implemented') Then
+        If _status::citext In ('Completed', 'Not Implemented') Then
             _closed := CURRENT_TIMESTAMP;
         End If;
 
@@ -144,7 +144,7 @@ BEGIN
                 RAISE EXCEPTION 'No entry could be found in database for update';
             End If;
 
-            If _curStatus::citext IN ('Completed', 'Not Implemented') Then
+            If _curStatus::citext In ('Completed', 'Not Implemented') Then
                 _closed := _curClosed;
             End If;
 

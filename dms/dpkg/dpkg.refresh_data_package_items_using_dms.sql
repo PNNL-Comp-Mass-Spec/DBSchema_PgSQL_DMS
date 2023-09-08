@@ -19,6 +19,7 @@ CREATE OR REPLACE PROCEDURE dpkg.refresh_data_package_items_using_dms(IN _packag
 **          06/10/2009 grk - Changed size of item list to max
 **          03/07/2012 grk - Changed data type of _itemList from varchar(max) to text
 **          08/16/2023 mem - Ported to PostgreSQL
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -54,7 +55,7 @@ BEGIN
          public.t_experiments E ON DS.Exp_ID = E.Exp_ID
     WHERE Target.data_pkg_id = _packageID And
           Target.dataset_id = DS.Dataset_ID And
-          Target.experiment Is Distinct From E.Experiment;
+          Target.experiment IS DISTINCT FROM E.Experiment;
     --
     GET DIAGNOSTICS _updateCount = ROW_COUNT;
 

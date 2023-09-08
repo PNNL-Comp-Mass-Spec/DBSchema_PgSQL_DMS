@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE public.add_bom_tracking_dataset(IN _month text DEFAU
 **          02/15/2022 mem - Mention Update_Dataset_Interval and T_Run_Interval in the debug message
 **          02/22/2022 mem - When _mode is 'debug', do not log an error if the dataset already exists
 **          08/25/2023 mem - Ported to PostgreSQL
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -97,7 +98,7 @@ BEGIN
 
         _now := CURRENT_TIMESTAMP;
 
-        If _month = '' OR _month = 'next' Then
+        If _month = '' Or _month = 'next' Then
             _mn := Extract(month From _now)::text;
         Else
             _mn := public.try_cast(_month, null::int);
@@ -114,7 +115,7 @@ BEGIN
             End If;
         End If;
 
-        If _year = '' OR _month = 'next' Then
+        If _year = '' Or _month = 'next' Then
             _yr := Extract(year From _now)::text;
         Else
             _yr := public.try_cast(_year, null::int);

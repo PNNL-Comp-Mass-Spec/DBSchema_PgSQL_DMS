@@ -142,7 +142,7 @@ BEGIN
         END LOOP;
 
     Else
-        If NOT Exists (SELECT * FROM Tmp_ProposalsToUpdate) Then
+        If Not Exists (SELECT * FROM Tmp_ProposalsToUpdate) Then
             _message := 'No superseded proposals were found; nothing to do';
         Else
             ---------------------------------------------------

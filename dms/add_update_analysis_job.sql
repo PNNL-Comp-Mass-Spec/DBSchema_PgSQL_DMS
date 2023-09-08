@@ -104,6 +104,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job(IN _datasetname text,
 **          07/27/2023 mem - Update message sent to get_new_job_id()
 **          09/06/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -252,7 +253,7 @@ BEGIN
                 RAISE EXCEPTION '%', _msg;
             End If;
 
-            If Not _currentStateID IN (1, 5, 8, 19) Then
+            If Not _currentStateID In (1, 5, 8, 19) Then
 
                 -- Allow the job comment and Export Mode to be updated
 
@@ -890,7 +891,7 @@ BEGIN
                 _alterEnteredByRequired := true;
             End If;
 
-            If char_length(_callingUser) > 0 AND _alterEnteredByRequired Then
+            If char_length(_callingUser) > 0 And _alterEnteredByRequired Then
                 _currentLocation := format('Call alter_entered_by_user for job %s', _jobID);
 
                 -- Call public.alter_entered_by_user

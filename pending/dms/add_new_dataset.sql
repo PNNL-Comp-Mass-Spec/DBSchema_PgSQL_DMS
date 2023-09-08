@@ -329,9 +329,9 @@ BEGIN
     -- Check for QC or Blank datasets
     ---------------------------------------------------
 
-    If public.get_dataset_priority(_datasetName) > 0 OR
-       public.get_dataset_priority(_experimentName) > 0 OR
-       (_datasetName LIKE 'Blank%' AND Not _datasetName LIKE '%-bad')
+    If public.get_dataset_priority(_datasetName) > 0 Or
+       public.get_dataset_priority(_experimentName) > 0 Or
+       (_datasetName Like 'Blank%' And Not _datasetName Like '%-bad')
     Then
         If Not _interestRating::citext In ('Not Released', 'No Interest') And _interestRating Not ILike 'No Data%' Then
             -- Auto set interest rating to 5
@@ -357,7 +357,7 @@ BEGIN
     If _experimentName = '' Then
         If _datasetName Like 'Blank%' Then
             _experimentName := 'Blank';
-        ElsIf _datasetName Similar To 'QC_Shew[_-][0-9][0-9][_-][0-9][0-9]%' Then
+        ElsIf _datasetName SIMILAR TO 'QC_Shew[_-][0-9][0-9][_-][0-9][0-9]%' Then
             _experimentName := Substring(_datasetName, 1, 13);
         End If;
     End If;
@@ -367,7 +367,7 @@ BEGIN
     ---------------------------------------------------
 
     If _emslUsageType = '' Then
-        If _datasetName Like 'Blank%' OR _datasetName Like 'QC_Shew%' Then
+        If _datasetName Like 'Blank%' Or _datasetName Like 'QC_Shew%' Then
             _emslUsageType := 'MAINTENANCE';
         End If;
     End If;
@@ -388,7 +388,7 @@ BEGIN
         _comment := Substring(_comment, 1, char_length(_comment) - 8);
     End If;
 
-    If _captureSubdirectory Similar To '[A-Z]:\%' OR _captureSubdirectory LIKE '\\\\%' Then
+    If _captureSubdirectory SIMILAR TO '[A-Z]:\%' Or _captureSubdirectory Like '\\\\%' Then
         _message := format('Capture subfolder is not a relative path for dataset %s; ignoring %s',
                             _datasetName, _captureSubdirectory);
 
@@ -465,7 +465,7 @@ BEGIN
     -- Trap 'check' modes here
     ---------------------------------------------------
 
-    If _mode = 'check_add' OR _mode = 'check_update' Then
+    If _mode = 'check_add' Or _mode = 'check_update' Then
         -- Show the parsed values
 
         RAISE INFO '';

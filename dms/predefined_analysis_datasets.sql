@@ -37,6 +37,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_datasets(_ruleid integer, 
 **          05/30/2023 mem - Use format() for string concatenation
 **          07/11/2023 mem - Use COUNT(id) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -186,37 +187,37 @@ BEGIN
         RETURN QUERY
         SELECT format('%s%s',
                       _predefineInfo.DatasetNameCriteria,
-                      Case When _predefineInfo.DatasetExclCriteria = ''
-                           Then ''
-                           Else format(' (Exclude "%s")', _predefineInfo.DatasetExclCriteria)
-                      End)::citext AS Dataset,
+                      CASE WHEN _predefineInfo.DatasetExclCriteria = ''
+                           THEN ''
+                           ELSE format(' (Exclude "%s")', _predefineInfo.DatasetExclCriteria)
+                      END)::citext AS Dataset,
                _datasetCount As Dataset_ID,
                _predefineInfo.InstrumentClassCriteria::citext AS Instrument_Class,
                format('%s%s',
                       _predefineInfo.InstrumentNameCriteria,
-                      Case When _predefineInfo.InstrumentExclCriteria = ''
-                           Then ''
-                           Else format(' (Exclude "%s")', _predefineInfo.InstrumentExclCriteria)
-                      End)::citext AS Instrument,
+                      CASE WHEN _predefineInfo.InstrumentExclCriteria = ''
+                           THEN ''
+                           ELSE format(' (Exclude "%s")', _predefineInfo.InstrumentExclCriteria)
+                      END)::citext AS Instrument,
                format('%s%s',
                       _predefineInfo.CampaignNameCriteria,
-                      Case When _predefineInfo.CampaignExclCriteria = ''
-                           Then ''
-                           Else format(' (Exclude "%s")', _predefineInfo.CampaignExclCriteria)
-                      End)::citext AS Campaign,
+                      CASE WHEN _predefineInfo.CampaignExclCriteria = ''
+                           THEN ''
+                           ELSE format(' (Exclude "%s")', _predefineInfo.CampaignExclCriteria)
+                      END)::citext AS Campaign,
                format('%s%s',
                       _predefineInfo.ExperimentNameCriteria,
-                      Case When _predefineInfo.ExperimentExclCriteria = ''
-                           Then ''
-                           Else format(' (Exclude "%s")', _predefineInfo.ExperimentExclCriteria)
-                      End)::citext AS Experiment,
+                      CASE WHEN _predefineInfo.ExperimentExclCriteria = ''
+                           THEN ''
+                           ELSE format(' (Exclude "%s")', _predefineInfo.ExperimentExclCriteria)
+                      END)::citext AS Experiment,
                _predefineInfo.OrganismNameCriteria::citext AS Organism,
                 format('%s%s',
                       _predefineInfo.LabellingInclCriteria,
-                      Case When _predefineInfo.LabellingExclCriteria = ''
-                           Then ''
-                           Else format(' (Exclude "%s")', _predefineInfo.LabellingExclCriteria)
-                      End)::citext AS Experiment_Labelling,
+                      CASE WHEN _predefineInfo.LabellingExclCriteria = ''
+                           THEN ''
+                           ELSE format(' (Exclude "%s")', _predefineInfo.LabellingExclCriteria)
+                      END)::citext AS Experiment_Labelling,
                _predefineInfo.ExpCommentCriteria::citext AS Experiment_Comment,
                ''::citext AS Dataset_Comment,
                _predefineInfo.DatasetTypeCriteria::citext AS Dataset_Type,

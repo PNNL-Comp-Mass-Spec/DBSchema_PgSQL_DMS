@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE sw.delete_job_if_new_or_failed(IN _job integer, INOU
 **          10/18/2022 mem - Fix logic bugs for warning messages
 **          08/01/2023 mem - Use a 7 day threshold for ignoring running job steps (previously 48 hours)
 **                         - Ported to PostgreSQL
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -123,9 +124,9 @@ BEGIN
             WHERE job = _job;
 
             If _skipMessage = '' Then
-                If _jobState IN (2,3,9) Then
+                If _jobState In (2, 3, 9) Then
                     _skipMessage := 'Job will not be deleted from sw.t_jobs; job is in progress';
-                ElsIf _jobState IN (4,7,14) Then
+                ElsIf _jobState In (4, 7, 14) Then
                     _skipMessage := 'Job will not be deleted from sw.t_jobs; job completed successfully';
                 Else
                     _skipMessage := 'Job will not be deleted from sw.t_jobs; job state is not New, Failed, or Holding';
@@ -165,12 +166,12 @@ BEGIN
         RETURN;
     End If;
 
-    If Not Exists (SELECT * FROM sw.t_jobs WHERE job = _job) Then
+    If Not Exists (SELECT job FROM sw.t_jobs WHERE job = _job) Then
         RAISE WARNING 'Job not found in sw.t_jobs: %', _job;
         RETURN;
     End If;
 
-    If _jobState IN (2,3,9) Or Exists ( SELECT JS.job
+    If _jobState In (2,3,9) Or Exists ( SELECT JS.job
                                         FROM sw.t_job_steps JS
                                         WHERE JS.job = _job AND
                                               JS.state IN (4, 9) AND

@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE sw.update_job_param_org_db_info_using_data_pkg(IN _j
 **          07/26/2023 mem - Ported to PostgreSQL
 **          07/27/2023 mem - Switch from using view V_Get_Pipeline_Job_Parameters to directly querying tables
 **          09/07/2023 mem - Align assignment statements
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -109,7 +110,7 @@ BEGIN
         End If;
     End If;
 
-    If _dataPackageID > 0 AND NOT _scriptName ILIKE 'MaxQuant%' AND NOT _scriptName ILIKE 'MSFragger%' AND NOT _scriptName ILIKE 'DiaNN%' Then
+    If _dataPackageID > 0 And Not _scriptName ILike 'MaxQuant%' And Not _scriptName ILike 'MSFragger%' And Not _scriptName ILike 'DiaNN%' Then
         -- The script is one of the following:
         --   MAC_iTRAQ
         --   MAC_TMT10Plex

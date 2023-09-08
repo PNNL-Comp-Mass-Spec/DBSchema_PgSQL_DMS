@@ -29,6 +29,7 @@ CREATE OR REPLACE FUNCTION public.get_run_tracking_monthly_info_by_id(_eusinstru
 **          07/27/2023 mem - Add missing assignment to _firstRunSeq
 **          08/28/2023 mem - Use new column name "dataset_id" when querying t_run_interval
 **          08/29/2023 mem - Add missing table aliases
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -67,7 +68,7 @@ BEGIN
     -- Check arguments
     ---------------------------------------------------
 
-    If Coalesce(_year, 0) = 0 OR Coalesce(_month, 0) = 0 OR Coalesce(_eusInstrumentId, 0) = 0 Then
+    If Coalesce(_year, 0) = 0 Or Coalesce(_month, 0) = 0 Or Coalesce(_eusInstrumentId, 0) = 0 Then
         INSERT INTO Tmp_TX (Seq, Dataset)
         VALUES (1, 'Bad arguments');
 

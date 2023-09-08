@@ -46,6 +46,7 @@ CREATE OR REPLACE PROCEDURE sw.verify_job_parameters(INOUT _jobparam text, IN _s
 **          05/10/2023 mem - Do not update _protCollOptionsList when using a legacy FASTA file
 **          07/27/2023 mem - Ported to PostgreSQL
 **          07/28/2023 mem - Trim leading and trailing whitespace from parameter values
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -162,21 +163,21 @@ BEGIN
     -- Cross check to make sure required parameters are defined in Tmp_JobParameters (populated using _paramInput)
     ---------------------------------------------------
 
-    If _scriptName ILIKE 'MaxQuant%' Or _scriptName ILIKE 'MSFragger%' Or _scriptName ILIKE 'DiaNN%' Then
+    If _scriptName ILike 'MaxQuant%' Or _scriptName ILike 'MSFragger%' Or _scriptName ILike 'DiaNN%' Then
         -- Verify the MaxQuant, MSFragger, or DiaNN parameter file name
 
         -- Also verify the protein collection (or legacy FASTA file)
         -- For protein collections, will auto-add contaminants if needed
 
-        If _scriptName ILIKE 'MaxQuant%' Then
+        If _scriptName ILike 'MaxQuant%' Then
             _scriptBaseName := 'MaxQuant';
         End If;
 
-        If _scriptName ILIKE 'MSFragger%' Then
+        If _scriptName ILike 'MSFragger%' Then
             _scriptBaseName := 'MSFragger';
         End If;
 
-        If _scriptName ILIKE 'DiaNN%' Then
+        If _scriptName ILike 'DiaNN%' Then
             _scriptBaseName := 'DiaNN';
         End If;
 
@@ -301,7 +302,7 @@ BEGIN
                         _returncode => _returnCode, -- Output
                         _debugMode => _debugMode);
 
-        If _returncode = '' AND char_length(_protCollNameList) > 0 And public.validate_na_parameter(_protCollNameList) <> 'na' Then
+        If _returncode = '' And char_length(_protCollNameList) > 0 And public.validate_na_parameter(_protCollNameList) <> 'na' Then
             ---------------------------------------------------
             -- Validate _protCollNameList
             --

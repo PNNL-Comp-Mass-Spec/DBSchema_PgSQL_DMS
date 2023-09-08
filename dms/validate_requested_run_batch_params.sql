@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE public.validate_requested_run_batch_params(IN _batch
 **          06/16/2023 mem - Report an error if _mode is 'update' and _batchID is 0
 **                         - Validate instrument group name
 **                         - Use citext for _locked
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -111,7 +112,7 @@ BEGIN
         -- High priority requires justification
         ---------------------------------------------------
 
-        If _requestedBatchPriority = 'High' AND Coalesce(_justificationHighPriority, '') = '' Then
+        If _requestedBatchPriority = 'High' And Coalesce(_justificationHighPriority, '') = '' Then
             _message := 'Justification must be entered If high priority is being requested';
             _returnCode := 'U5204';
             RETURN;

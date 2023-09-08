@@ -40,6 +40,7 @@ CREATE OR REPLACE FUNCTION sw.create_parameters_for_job(_job integer, _settingsf
 **          03/26/2023 mem - Update logic to handle data package based jobs (which should have dataset name 'Aggregation')
 **          03/27/2023 mem - Remove step_number column from temp tables since unused
 **          07/31/2023 mem - Rename temporary table to avoid conflicts with calling procedures
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -139,7 +140,7 @@ BEGIN
                 CONTINUE;
             End If;
 
-            If Exists (Select * From Tmp_Job_Parameters_Merged WHERE Section = _section AND Name = _name) Then
+            If Exists (SELECT * FROM Tmp_Job_Parameters_Merged WHERE Section = _section AND Name = _name) Then
                 UPDATE Tmp_Job_Parameters_Merged
                 SET Value = _value
                 WHERE Section = _section AND Name = _name;

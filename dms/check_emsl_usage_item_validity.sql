@@ -37,6 +37,7 @@ CREATE OR REPLACE FUNCTION public.check_emsl_usage_item_validity(_seq integer) R
 **          06/15/2023 mem - Add support for usage type 'RESOURCE_OWNER'
 **          06/16/2023 mem - Use named arguments when calling append_to_text()
 **          07/11/2023 mem - Use COUNT(proposal_id) instead of COUNT(*)
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -66,23 +67,23 @@ BEGIN
            ON InstUsage.usage_type_id = InstUsageType.usage_type_id
     WHERE InstUsage.seq = _seq;
 
-    If _instrumentUsage.usage = 'CAP_DEV' AND _instrumentUsage.operator is null Then
+    If _instrumentUsage.usage = 'CAP_DEV' And _instrumentUsage.operator Is Null Then
         _message := public.append_to_text(_message, 'Capability Development requires an instrument operator ID', _delimiter => ', ');
     End If;
 
-    If _instrumentUsage.usage = 'RESOURCE_OWNER' AND _instrumentUsage.operator is null Then
+    If _instrumentUsage.usage = 'RESOURCE_OWNER' And _instrumentUsage.operator Is Null Then
         _message := public.append_to_text(_message, 'Resource Owner requires an instrument operator ID', _delimiter => ', ');
     End If;
 
-    If NOT _instrumentUsage.usage IN ('ONSITE', 'MAINTENANCE') AND Coalesce(_instrumentUsage.comment, '') = '' Then
+    If Not _instrumentUsage.usage In ('ONSITE', 'MAINTENANCE') And Coalesce(_instrumentUsage.comment, '') = '' Then
         _message := public.append_to_text(_message, 'Missing Comment', _delimiter => ', ');
     End If;
 
-    If _instrumentUsage.usage = 'OFFSITE' AND _instrumentUsage.proposal = '' Then
+    If _instrumentUsage.usage = 'OFFSITE' And _instrumentUsage.proposal = '' Then
         _message := public.append_to_text(_message, 'Missing Proposal', _delimiter => ', ');
     End If;
 
-    If _instrumentUsage.usage = 'ONSITE' AND Not _instrumentUsage.proposal similar to '[0-9]%' Then
+    If _instrumentUsage.usage = 'ONSITE' And Not _instrumentUsage.proposal SIMILAR TO '[0-9]%' Then
         _message := public.append_to_text(_message, 'Preliminary Proposal number', _delimiter => ', ');
     End If;
 
@@ -93,16 +94,16 @@ BEGIN
     FROM  t_eus_proposals
     WHERE proposal_id = _instrumentUsage.proposal;
 
-    If _instrumentUsage.usage = 'ONSITE' AND _proposalInfo.proposalID IS null Then
+    If _instrumentUsage.usage = 'ONSITE' And _proposalInfo.proposalID IS null Then
         _message := public.append_to_text(_message, 'Proposal number is not in EUS', _delimiter => ', ');
     End If;
 
-    If NOT _proposalInfo.proposalID IS NULL and _instrumentUsage.usage = 'ONSITE' AND
-       NOT (_instrumentUsage.start BETWEEN _proposalInfo.proposalStartDate AND _proposalInfo.proposalEndDate) Then
+    If Not _proposalInfo.proposalID Is Null And _instrumentUsage.usage = 'ONSITE' And
+       Not (_instrumentUsage.start Between _proposalInfo.proposalStartDate And _proposalInfo.proposalEndDate) Then
         _message := public.append_to_text(_message, 'Run start not between proposal start/end dates', _delimiter => ', ');
     End If;
 
-    If NOT _proposalInfo.proposalID IS NULL Then
+    If Not _proposalInfo.proposalID Is Null Then
         If _instrumentUsage.users Like '%,%' Then
             SELECT COUNT(*)
             INTO _hits

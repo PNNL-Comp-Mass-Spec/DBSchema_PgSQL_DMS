@@ -107,7 +107,7 @@ BEGIN
     -- even if the cart config is already associated with datasets
     ---------------------------------------------------
 
-    If Not _state::citext IN ('Active', 'Inactive', 'Invalid', 'Override') Then
+    If Not _state::citext In ('Active', 'Inactive', 'Invalid', 'Override') Then
         _message := format('Cart config state must be Active, Inactive, or Invalid; %s is not allowed', _state);
         RAISE WARNING '%', _message;
 

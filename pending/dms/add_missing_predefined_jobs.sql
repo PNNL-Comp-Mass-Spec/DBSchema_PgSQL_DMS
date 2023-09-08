@@ -112,7 +112,7 @@ BEGIN
         _dayCountForRecentDatasets := 1;
     End If;
 
-    If _infoOnly And (Not _previewOutputType::citext IN ('Show Rules', 'Show Jobs')) Then
+    If _infoOnly And (Not _previewOutputType::citext In ('Show Rules', 'Show Jobs')) Then
         _message := format('Unknown value for _previewOutputType (%s); should be "Show Rules" or "Show Jobs"', _previewOutputType);
 
         RAISE WARNING '%', _message;
@@ -229,7 +229,7 @@ BEGIN
                                  '------------------------------------------------------------'
                                 );
 
-    If _infoOnly And _showDebug AND EXISTS (SELECT * FROM Tmp_DatasetID_Filter_List) Then
+    If _infoOnly And _showDebug And Exists (SELECT * FROM Tmp_DatasetID_Filter_List) Then
 
         RAISE INFO '';
         RAISE INFO '%', _infoHead;

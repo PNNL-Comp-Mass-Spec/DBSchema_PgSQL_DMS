@@ -234,7 +234,7 @@ BEGIN
 
         -- Append the suffix, if defined
         If char_length(_suffix) > 0 Then
-            If Substring(_suffix, 1, 1) IN ('_', '-') Then
+            If Substring(_suffix, 1, 1) In ('_', '-') Then
                 _baseFractionName := format('%s%s', _baseFractionName, _suffix);
             Else
                 _baseFractionName := format('%s_%s', _baseFractionName, _suffix);
@@ -339,7 +339,7 @@ BEGIN
                 RAISE EXCEPTION '%', _message;
             End If;
 
-            If Coalesce(_tissueID, '') = '' AND Coalesce(_prepRequestTissueID, '') <> '' Then
+            If Coalesce(_tissueID, '') = '' And Coalesce(_prepRequestTissueID, '') <> '' Then
                 _tissueID := _prepRequestTissueID;
             End If;
         End If;
@@ -422,7 +422,7 @@ BEGIN
 
         _logErrors := true;
 
-        If _mode LIKE '%preview%' Then
+        If _mode Like '%preview%' Then
             _groupID := 0;
         Else
             ---------------------------------------------------
@@ -653,7 +653,7 @@ BEGIN
 
         END LOOP; -- </AddFractions>
 
-        If _mode LIKE '%Preview%' Then
+        If _mode Like '%Preview%' Then
             _message := format('Preview of new fraction names: %s', _fractionNamePreviewList);
         Else
         -- <AddToContainer>

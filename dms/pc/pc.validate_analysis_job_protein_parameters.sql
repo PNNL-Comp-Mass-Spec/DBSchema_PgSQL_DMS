@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE pc.validate_analysis_job_protein_parameters(IN _orga
 **          07/27/2023 mem - Add missing column to t_protein_collections query
 **          09/07/2023 mem - Align assignment statements
 **                         - Update warning messages
+**          09/08/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -71,17 +72,17 @@ BEGIN
         RETURN;
     End If;
 
-    If char_length(_organismDBFileName) < 1 AND char_length(_protCollNameList) > 0 Then
+    If char_length(_organismDBFileName) < 1 And char_length(_protCollNameList) > 0 Then
         _organismDBFileName := 'na';
         -- No error needed, just fix it
     End If;
 
-    If char_length(_protCollNameList) < 1 AND char_length(_organismDBFileName) > 0 AND _organismDBFileName::citext <> 'na' Then
+    If char_length(_protCollNameList) < 1 And char_length(_organismDBFileName) > 0 And _organismDBFileName::citext <> 'na' Then
         _protCollNameList := 'na';
         -- No error needed, just fix it
     End If;
 
-    If (char_length(_organismDBFileName) = 0 AND char_length(_protCollNameList) = 0) OR (_organismDBFileName::citext = 'na' AND _protCollNameList::citext = 'na') Then
+    If (char_length(_organismDBFileName) = 0 And char_length(_protCollNameList) = 0) Or (_organismDBFileName::citext = 'na' And _protCollNameList::citext = 'na') Then
         _message := 'Org DB validation failure: Protein collection list and Legacy Fasta (OrgDBName) name cannot both be undefined (or "na")';
         _returnCode := 'U5202';
 
@@ -89,7 +90,7 @@ BEGIN
         RETURN;
     End If;
 
-    If _protCollNameList::citext <> 'na' AND char_length(_protCollNameList) > 0 Then
+    If _protCollNameList::citext <> 'na' And char_length(_protCollNameList) > 0 Then
         -- No error needed, just fix it
         _organismDBFileName := 'na';
     End If;
@@ -115,7 +116,7 @@ BEGIN
     -- Check Validity of Legacy FASTA filename
     ---------------------------------------------------
 
-    If _organismDBFileName::citext <> 'na' AND _protCollNameList::citext = 'na' Then
+    If _organismDBFileName::citext <> 'na' And _protCollNameList::citext = 'na' Then
         If RIGHT(_organismDBFileName, 6)::citext <> '.fasta' Then
             _organismDBFileName := _organismDBFileName || '.fasta';
         End If;
@@ -282,7 +283,7 @@ BEGIN
             CONTINUE;
         End If;
 
-        If _equalsPosition = 1 OR _equalsPosition = char_length(_optionString) Then
+        If _equalsPosition = 1 Or _equalsPosition = char_length(_optionString) Then
 
             -- Keyword starts or ends with an equals sign
             _message := format('Keyword: "%s"', _optionString);
@@ -305,7 +306,7 @@ BEGIN
         _optionValue      := TRIM(substring(_optionString, _equalsPosition + 1));
 
         -- Auto-update seq_direction 'reverse' to 'reversed'
-        If _optionKeyword = 'seq_direction' AND _optionValue = 'reverse' Then
+        If _optionKeyword = 'seq_direction' And _optionValue = 'reverse' Then
             _optionValue := 'reversed';
         End If;
 
@@ -384,7 +385,7 @@ BEGIN
             _keywordFound := false;
         End If;
 
-        If Not _keywordFound AND _optionItem.IsRequired > 0 Then
+        If Not _keywordFound And _optionItem.IsRequired > 0 Then
             If char_length(_cleanOptions) > 0 Then
                 _cleanOptions := format('%s,', _cleanOptions);
             End If;

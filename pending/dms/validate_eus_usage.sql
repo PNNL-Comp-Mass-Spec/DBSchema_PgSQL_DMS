@@ -111,7 +111,7 @@ BEGIN
     _eusProposalID := Trim(Coalesce(_eusProposalID, ''));
     _eusUsersList  := Trim(Coalesce(_eusUsersList, ''));
 
-    If _eusUsageType::citext = '(ignore)' AND Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
+    If _eusUsageType::citext = '(ignore)' And Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
         _eusUsageType := 'CAP_DEV';
         _eusProposalID := '';
         _eusUsersList := '';
@@ -121,19 +121,19 @@ BEGIN
     -- Auto-fix _eusUsageType if it is an abbreviated form of Cap_Dev, Maintenance, or Broken
     ---------------------------------------------------
 
-    If _eusUsageType::citext Like 'Cap%' AND Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
+    If _eusUsageType::citext Like 'Cap%' And Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
         _eusUsageType := 'CAP_DEV';
     End If;
 
-    If _eusUsageType::citext Like 'Maint%' AND Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
+    If _eusUsageType::citext Like 'Maint%' And Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
         _eusUsageType := 'MAINTENANCE';
     End If;
 
-    If _eusUsageType::citext Like 'Brok%' AND Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
+    If _eusUsageType::citext Like 'Brok%' And Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
         _eusUsageType := 'BROKEN';
     End If;
 
-    If _eusUsageType::citext Like 'Res%' AND Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
+    If _eusUsageType::citext Like 'Res%' And Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
         _eusUsageType := 'RESOURCE_OWNER';
     End If;
 
@@ -214,7 +214,7 @@ BEGIN
 
     If Not _eusUsageType::citext In ('USER', 'USER_ONSITE', 'USER_REMOTE') Then
         -- Make sure no proposal ID or users are specified
-        If Coalesce(_eusProposalID, '') <> '' OR _eusUsersList <> '' Then
+        If Coalesce(_eusProposalID, '') <> '' Or _eusUsersList <> '' Then
             _message := format('Warning: Cleared proposal ID and/or users since usage type is "%s"', _eusUsageType);
         End If;
 
@@ -353,7 +353,7 @@ BEGIN
             End If; -- </c>
         END LOOP; -- </b>
 
-        If _infoOnly AND EXISTS (SELECT * from Tmp_Proposal_Stack) Then
+        If _infoOnly And EXISTS (SELECT * from Tmp_Proposal_Stack) Then
 
             RAISE INFO '';
 
@@ -439,7 +439,7 @@ BEGIN
         If _eusUsersList <> '' Then
         -- <e>
 
-            If _eusUsersList Similar To '%[A-Z]%' And _eusUsersList Similar To '%([0-9]%' And _eusUsersList Similar To '%[0-9])%' Then
+            If _eusUsersList SIMILAR TO '%[A-Z]%' And _eusUsersList SIMILAR TO '%([0-9]%' And _eusUsersList SIMILAR TO '%[0-9])%' Then
                 If _infoOnly Then
                     RAISE INFO 'Parsing %', _eusUsersList;
                 End If;
@@ -454,7 +454,7 @@ BEGIN
                 LOOP
                     _currentChar := Substring(_eusUsersList, _charNum, 1);
 
-                    If _currentChar = ',' Or _currentChar Similar To '[0-9]' Then
+                    If _currentChar = ',' Or _currentChar SIMILAR TO '[0-9]' Then
                         _integerList := format('%s%s', _integerList, _currentChar);
                     End If;
 
@@ -604,7 +604,7 @@ BEGIN
         End If; -- </e>
     End If; -- </a1>
 
-    If _campaignID > 0 OR _experimentID > 0 Then
+    If _campaignID > 0 Or _experimentID > 0 Then
         If _campaignID > 0 Then
             SELECT EUT.eus_usage_type
             INTO _eusUsageTypeCampaign
