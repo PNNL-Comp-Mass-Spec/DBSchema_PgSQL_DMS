@@ -17,7 +17,7 @@ CREATE OR REPLACE FUNCTION sw.extract_server_name(_path text) RETURNS text
 **          05/30/2023 mem - Use ElsIf for Else If
 **          07/25/2023 mem - Fix logic bug for server paths
 **
-****************************************************/
+*****************************************************/
 DECLARE
     _serverName text;
     _charPosition1 int;

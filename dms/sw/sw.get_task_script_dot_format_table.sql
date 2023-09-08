@@ -43,7 +43,7 @@ CREATE OR REPLACE FUNCTION sw.get_task_script_dot_format_table(_script text) RET
 **          12/18/2022 mem - Customized for the pipeline jobs schema
 **          05/30/2023 mem - Use format() for string concatenation
 **
-****************************************************/
+*****************************************************/
 DECLARE
     _scriptStep record;
 BEGIN

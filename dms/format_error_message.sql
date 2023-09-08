@@ -24,7 +24,7 @@ CREATE OR REPLACE FUNCTION public.format_error_message(_sqlstate text, _exceptio
 **          08/24/2022 mem - Ported to PostgreSQL
 **          05/30/2023 mem - Use format() for string concatenation
 **
-****************************************************/
+*****************************************************/
 DECLARE
     _schemaName text;
     _functionName text;

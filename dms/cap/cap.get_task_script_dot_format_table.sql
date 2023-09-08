@@ -15,7 +15,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_script_dot_format_table(_script text) RE
 **          08/17/2022 mem - Use case-insensitive comparison for script name
 **          03/07/2023 mem - Rename columns in temporary table
 **
-****************************************************/
+*****************************************************/
 DECLARE
     _scriptStep record;
 BEGIN

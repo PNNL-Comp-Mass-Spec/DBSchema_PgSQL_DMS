@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION public.merge_text(_text1 text, _text2 text) RETURNS t
 **          06/23/2022 mem - Ported to PostgreSQL
 **          05/30/2023 mem - Use format() for string concatenation
 **
-****************************************************/
+*****************************************************/
 DECLARE
     _combinedText text;
 BEGIN

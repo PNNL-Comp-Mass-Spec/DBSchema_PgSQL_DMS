@@ -36,7 +36,7 @@ CREATE OR REPLACE FUNCTION public.get_call_stack(_pgcontext text) RETURNS TABLE(
 **          05/22/2023 mem - Update whitespace
 **          05/30/2023 mem - Use format() for string concatenation
 **
-****************************************************/
+*****************************************************/
 DECLARE
     _callStack text[][];            -- 2D array, columns: depth, schema_name, object_name, and line_number
     _matches text[];

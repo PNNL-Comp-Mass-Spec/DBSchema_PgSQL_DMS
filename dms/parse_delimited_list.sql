@@ -27,7 +27,7 @@ CREATE OR REPLACE FUNCTION public.parse_delimited_list(_delimitedlist text, _del
 **          03/27/2013 mem - Now replacing Tab characters, carriage returns and line feeds with _delimiter
 **          01/14/2020 mem - Ported to PostgreSQL
 **
-****************************************************/
+*****************************************************/
 BEGIN
 
     -- Replace any CR or LF characters with _delimiter

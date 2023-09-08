@@ -14,7 +14,7 @@ CREATE OR REPLACE FUNCTION public.combine_paths(_path1 text, _path2 text) RETURN
 **          04/15/2022 mem - Ported to PostgreSQL
 **          05/30/2023 mem - Use format() for string concatenation
 **
-****************************************************/
+*****************************************************/
 DECLARE
     _newPath text;
 BEGIN

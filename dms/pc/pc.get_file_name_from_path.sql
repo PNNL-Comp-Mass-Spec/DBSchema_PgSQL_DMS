@@ -15,7 +15,7 @@ CREATE OR REPLACE FUNCTION pc.get_file_name_from_path(_filepath text) RETURNS te
 **  Date:   10/09/2006
 **          06/27/2022 mem - Ported to PostgreSQL
 **
-****************************************************/
+*****************************************************/
 DECLARE
     _slashLoc int;
     _pathLength int;

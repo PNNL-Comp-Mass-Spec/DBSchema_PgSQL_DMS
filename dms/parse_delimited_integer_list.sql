@@ -23,7 +23,7 @@ CREATE OR REPLACE FUNCTION public.parse_delimited_integer_list(_delimitedlist te
 **          03/27/2013 mem - Now replacing carriage return and line feed characters with _delimiter
 **          01/14/2020 mem - Ported to PostgreSQL
 **
-****************************************************/
+*****************************************************/
 BEGIN
 
     -- Replace any CR or LF characters with _delimiter

@@ -30,7 +30,7 @@ CREATE OR REPLACE FUNCTION public.parse_delimited_list_ordered(_delimitedlist te
 **          01/14/2020 mem - Ported to PostgreSQL
 **          06/10/2022 mem - Added parameter _maxRows
 **
-****************************************************/
+*****************************************************/
 BEGIN
 
     -- Replace any CR or LF characters with _delimiter

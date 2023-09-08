@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_script_graphic_cmd_list(_script text) RE
 **  Date:   09/08/2009
 **          06/24/2022 mem - Ported to PostgreSQL
 **
-****************************************************/
+*****************************************************/
 DECLARE
     _result text;
 BEGIN

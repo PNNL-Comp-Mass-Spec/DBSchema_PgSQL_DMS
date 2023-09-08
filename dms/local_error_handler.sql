@@ -52,7 +52,7 @@ CREATE OR REPLACE FUNCTION public.local_error_handler(_sqlstate text, _exception
 **          09/01/2023 mem - Remove unnecessary cast to citext for string constants
 **          09/07/2023 mem - Align assignment statements
 **
-****************************************************/
+*****************************************************/
 DECLARE
     _schemaName text;
     _message text;
