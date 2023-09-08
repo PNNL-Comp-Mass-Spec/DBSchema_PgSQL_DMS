@@ -20,6 +20,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_type_id(_datasettype text DEFAULT 
 **          09/02/2010 mem - Expand _datasetType to varchar(50)
 **          08/03/2017 mem - Add Set NoCount On
 **          10/18/2022 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Ignore case when querying t_dataset_type_name
 **
 *****************************************************/
 DECLARE
@@ -28,7 +29,7 @@ BEGIN
     SELECT dataset_type_id
     INTO _datasetTypeID
     FROM t_dataset_type_name
-    WHERE dataset_type  = _datasetType;
+    WHERE dataset_type  = _datasetType::citext;
 
     If FOUND Then
         RETURN _datasetTypeID;
