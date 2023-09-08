@@ -61,6 +61,7 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **          06/19/2023 mem - Set _organismDbFile to 'na' when _proteinCollectionList is defined; otherwise, set _proteinCollectionList to 'na' when _organismDbFile is defined
 **                         - Set _returnCode to 'U5225' if an existing spectral library is not found, and _allowAddNew is false
 **          09/07/2023 mem - Align assignment statements
+**                         - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -430,7 +431,7 @@ BEGIN
         _storagePath := _defaultStoragePath;
 
         If _defaultLibraryName = '' Then
-            _message := 'Cannot create a new spectral library since both the protein collection list and organism DB file are blank or "na"';
+            _message := 'Cannot create a new spectral library since both the protein collection list and organism DB file are empty strings or "na"';
             RAISE INFO '%', _message;
             _returnCode := 'U5204';
 

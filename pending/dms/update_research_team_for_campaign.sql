@@ -96,7 +96,7 @@ BEGIN
     If _researchTeamID = 0 Then
         If _campaignName = '' Then
             _returnCode := 'U5102';
-            _message := 'Campaign name is blank; cannot create a new research team';
+            _message := 'Campaign name was not specified; cannot create a new research team';
             RETURN;
         End If;
 

@@ -146,19 +146,19 @@ BEGIN
         _piUsername := Trim(Coalesce(_piUsername, ''));
 
         If char_length(_campaignName) < 1 Then
-            RAISE EXCEPTION 'Campaign name is blank';
+            RAISE EXCEPTION 'Campaign name must be specified';
         End If;
         --
         If char_length(_projectName) < 1 Then
-            RAISE EXCEPTION 'Project Number is blank';
+            RAISE EXCEPTION 'Project Number must be specified';
         End If;
         --
         If char_length(_progmgrUsername) < 1 Then
-            RAISE EXCEPTION 'Project Manager username is blank';
+            RAISE EXCEPTION 'Project Manager username must be specified';
         End If;
         --
         If char_length(_piUsername) < 1 Then
-            RAISE EXCEPTION 'Principle Investigator username is blank';
+            RAISE EXCEPTION 'Principle Investigator username must be specified';
         End If;
 
         _mode := Trim(Lower(Coalesce(_mode, '')));

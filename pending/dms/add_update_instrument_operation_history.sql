@@ -80,11 +80,11 @@ BEGIN
         ---------------------------------------------------
 
         If Coalesce(_instrument, '') = '' Then
-            RAISE EXCEPTION 'Instrument name not defined';
+            RAISE EXCEPTION 'Instrument name must be specified';
         End If;
 
         If _note Is Null Then
-            RAISE EXCEPTION 'Note cannot be blank';
+            RAISE EXCEPTION 'Note must be specified';
         End If;
 
         _mode := Trim(Lower(Coalesce(_mode, '')));

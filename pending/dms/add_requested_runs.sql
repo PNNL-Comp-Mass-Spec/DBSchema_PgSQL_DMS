@@ -160,22 +160,22 @@ BEGIN
         --
         If char_length(_operatorUsername) < 1 Then
             _returnCode := 'U5113';
-            RAISE EXCEPTION 'Operator username was blank';
+            RAISE EXCEPTION 'Operator username must be specified';
         End If;
         --
         If char_length(_instrumentGroup) < 1 Then
             _returnCode := 'U5114';
-            RAISE EXCEPTION 'Instrument group was blank';
+            RAISE EXCEPTION 'Instrument group must be specified';
         End If;
         --
         If char_length(_msType) < 1 Then
             _returnCode := 'U5115';
-            RAISE EXCEPTION 'Dataset type was blank';
+            RAISE EXCEPTION 'Dataset type must be specified';
         End If;
         --
         If char_length(_workPackage) < 1 Then
             _returnCode := 'U5116';
-            RAISE EXCEPTION 'Work package was blank';
+            RAISE EXCEPTION 'Work package must be specified';
         End If;
         --
         If _returnCode <> '' Then

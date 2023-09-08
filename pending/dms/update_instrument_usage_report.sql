@@ -118,18 +118,18 @@ BEGIN
 
     _operation := Trim(Coalesce(_operation, ''));
     If char_length(_operation) = 0 Then
-        RAISE EXCEPTION 'Operation must be defined';
+        RAISE EXCEPTION 'Operation must be specified';
     End If;
 
     _month := Trim(Coalesce(_month, ''));
     _year := Trim(Coalesce(_year, ''));
 
     If char_length(_month) = 0 Then
-        RAISE EXCEPTION 'Month must be defined';
+        RAISE EXCEPTION 'Month must be specified';
     End If;
 
     If char_length(_year) = 0 Then
-        RAISE EXCEPTION 'Year must be defined';
+        RAISE EXCEPTION 'Year must be specified';
     End If;
 
     _monthValue := public.try_cast(_month, null::int);

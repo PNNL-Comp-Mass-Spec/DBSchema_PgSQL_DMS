@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE public.add_mass_correction_entry(IN _modname text, I
 **          11/30/2018 mem - Renamed the Monoisotopic_Mass and Average_Mass columns
 **          04/02/2020 mem - Expand _modName to varchar(32)
 **          08/27/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -41,7 +42,7 @@ BEGIN
     _modAffectedAtom := Trim(Coalesce(_modAffectedAtom, '-'));
 
     If char_length(_modName) < 1 Then
-        _message := 'Modification name cannot be blank';
+        _message := 'Modification name must be specified';
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';
@@ -49,7 +50,7 @@ BEGIN
     End If;
 
     If char_length(_modDescription) < 1 Then
-        _message := 'Modification description cannot be blank';
+        _message := 'Modification description must be specified';
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5202';

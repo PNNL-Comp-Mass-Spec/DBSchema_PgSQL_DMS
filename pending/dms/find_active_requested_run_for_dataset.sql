@@ -53,7 +53,7 @@ BEGIN
     _showDebugMessages := Coalesce(_showDebugMessages, false);
 
     If _datasetName = '' Then
-        RAISE EXCEPTION 'Dataset name cannot be blank';
+        RAISE EXCEPTION 'Dataset name must be specified';
     End If;
 
     ---------------------------------------------------

@@ -285,48 +285,48 @@ BEGIN
         End If;
 
         If Coalesce(_mode, '') = '' Then
-            RAISE EXCEPTION '_mode was blank';
+            RAISE EXCEPTION '_mode must be specified';
         End If;
 
         If Coalesce(_secSep, '') = '' Then
-            RAISE EXCEPTION 'Separation type was blank';
+            RAISE EXCEPTION 'Separation type must be specified';
         End If;
 
         If Coalesce(_lcColumnNum, '') = '' Then
-            RAISE EXCEPTION 'LC Column name was blank';
+            RAISE EXCEPTION 'LC Column name must be specified';
         End If;
 
         If Coalesce(_datasetName, '') = '' Then
-            RAISE EXCEPTION 'Dataset name was blank';
+            RAISE EXCEPTION 'Dataset name must be specified';
         End If;
 
         _folderName := _datasetName;
 
         If Coalesce(_experimentName, '') = '' Then
-            RAISE EXCEPTION 'Experiment name was blank';
+            RAISE EXCEPTION 'Experiment name must be specified';
         End If;
 
         If Coalesce(_folderName, '') = '' Then
-            RAISE EXCEPTION 'Folder name was blank';
+            RAISE EXCEPTION 'Folder name must be specified';
         End If;
 
         If Coalesce(_operatorUsername, '') = '' Then
-            RAISE EXCEPTION 'Operator payroll number/HID was blank';
+            RAISE EXCEPTION 'Operator payroll number/HID must be specified';
         End If;
 
         If Coalesce(_instrumentName, '') = '' Then
-            RAISE EXCEPTION 'Instrument name was blank';
+            RAISE EXCEPTION 'Instrument name must be specified';
         End If;
 
         _msType := Coalesce(_msType, '');
 
         -- Allow _msType to be blank if _mode is 'add' or 'bad' but not if check_add or add_trigger or update
         If _msType = '' And NOT _mode::citext In ('add', 'bad') Then
-            RAISE EXCEPTION 'Dataset type was blank';
+            RAISE EXCEPTION 'Dataset type must be specified';
         End If;
 
         If Coalesce(_lcCartName, '') = '' Then
-            RAISE EXCEPTION 'LC Cart name was blank';
+            RAISE EXCEPTION 'LC Cart name must be specified';
         End If;
 
         -- Assure that _comment is not null and assure that it doesn't have &quot; or &#34; or &amp;
@@ -336,7 +336,7 @@ BEGIN
         _comment := public.remove_cr_lf(_comment);
 
         If Coalesce(_rating, '') = '' Then
-            RAISE EXCEPTION 'Rating was blank';
+            RAISE EXCEPTION 'Rating must be specified';
         End If;
 
         If Coalesce(_wellplateName, '')::citext IN ('', 'na') Then
@@ -694,13 +694,13 @@ BEGIN
 
             CALL public.validate_instrument_group_and_dataset_type (
                             _datasetType => _msType,
-                            _instrumentGroup => _instrumentGroup,           -- Output
-                            _datasetTypeID => _datasetTypeID output,        -- Output
+                            _instrumentGroup => _instrumentGroup,           -- Input/Output
+                            _datasetTypeID => _datasetTypeID,               -- Output
                             _message => _msg,                               -- Output
                             _returnCode => _returnCode);                    -- Output
 
             If _returnCode <> '' Then
-                _comment := public.append_to_text(_comment, 'Error: Default dataset type defined in t_instrument_group is invalid', _delimiter => ' - ', _maxlength => 512);
+                _comment := public.append_to_text(_comment, 'Error: Default dataset type defined in t_instrument_group is invalid', _delimiter => ' - ');
             End If;
         End If;
 
@@ -852,7 +852,7 @@ BEGIN
                 If _requestInstGroup <> _instrumentGroup Then
                     _warning := public.append_to_text(_warning,
                         format('Instrument group for requested run (%s) does not match instrument group for %s (%s)',
-                               _requestInstGroup, _instrumentName, _instrumentGroup), _delimiter => '; ', _maxlength => 512)
+                               _requestInstGroup, _instrumentName, _instrumentGroup), _delimiter => '; ');
                 End If;
             End If;
         End If;
@@ -956,7 +956,7 @@ BEGIN
                 End If;
 
                 If Coalesce(_msg, '') <> '' Then
-                    _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 1024);
+                    _message := public.append_to_text(_message, _msg, _delimiter => '; ');
                 End If;
 
                 ---------------------------------------------------
@@ -982,7 +982,7 @@ BEGIN
                 End If;
 
                 If Coalesce(_msg, '') <> '' Then
-                    _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 1024);
+                    _message := public.append_to_text(_message, _msg, _delimiter => '; ');
                 End If;
 
             Else
@@ -1378,7 +1378,7 @@ BEGIN
 
                 If Coalesce(_requestID, 0) = 0 Then
                     _warningAddon := 'Dataset is not associated with a requested run; cannot update the LC Cart Name';
-                    _warning := public.append_to_text(_warning, _warningAddon, _delimiter => '; ', _maxlength => 512);
+                    _warning := public.append_to_text(_warning, _warningAddon, _delimiter => '; ');
                 Else
                     _warningAddon := '';
                     CALL public.update_cart_parameters (
@@ -1390,7 +1390,7 @@ BEGIN
 
                     If _returnCode <> '' Then
                         _warningAddon := format('Update LC cart name failed: %s', _warningAddon);
-                        _warning := public.append_to_text(_warning, _warningAddon, _delimiter => '; ', _maxlength => 512);
+                        _warning := public.append_to_text(_warning, _warningAddon, _delimiter => '; ');
                     End If;
                 End If;
             End If;

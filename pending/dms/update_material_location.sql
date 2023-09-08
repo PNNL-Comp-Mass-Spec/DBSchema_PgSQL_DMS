@@ -82,7 +82,7 @@ BEGIN
         End If;
 
         If char_length(_locationTag) < 1 Then
-            RAISE EXCEPTION 'Location tag must be defined';
+            RAISE EXCEPTION 'Location tag must be specified';
         End If;
 
         If Not _status::citext In ('Active', 'Inactive') Then

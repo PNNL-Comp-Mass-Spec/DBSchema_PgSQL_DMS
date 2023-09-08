@@ -80,6 +80,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_scripts(IN _script text, IN _descripti
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          07/28/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -144,7 +145,7 @@ BEGIN
     End If;
 
     If _description = '' Then
-        _message := 'Description cannot be blank';
+        _message := 'Description must be specified';
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5202';

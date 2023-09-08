@@ -27,6 +27,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_archive_path(INOUT _archivepathid 
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          09/07/2023 mem - Align assignment statements
+**                         - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -75,15 +76,15 @@ BEGIN
 
     If _instrumentName = '' Then
         _returnCode := 'U5201';
-        RAISE EXCEPTION 'Instrument Name was blank';
+        RAISE EXCEPTION 'Instrument Name must be specified';
     End If;
 
     If _archivePath = '' Then
-        RAISE EXCEPTION 'Archive Path was blank';
+        RAISE EXCEPTION 'Archive Path must be specified';
     End If;
 
     If _archiveFunction = '' Then
-        RAISE EXCEPTION 'Archive Function was blank';
+        RAISE EXCEPTION 'Archive Function must be specified';
     End If;
 
     _archivePathIDValue := public.try_cast(_archivePathID, 0);

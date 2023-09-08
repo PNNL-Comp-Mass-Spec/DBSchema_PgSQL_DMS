@@ -142,32 +142,32 @@ BEGIN
         _callingUser := Coalesce(_callingUser, '');
 
         If char_length(_contactUsername) < 1 Then
-            RAISE EXCEPTION 'Contact Name must be defined';
+            RAISE EXCEPTION 'Contact Name must be specified';
         End If;
         --
         If char_length(_piUsername) < 1 Then
-            RAISE EXCEPTION 'Principle Investigator Username must be defined';
+            RAISE EXCEPTION 'Principle Investigator Username must be specified';
         End If;
         --
         If char_length(_biomaterialName) < 1 Then
-            RAISE EXCEPTION 'Biomaterial Name must be defined';
+            RAISE EXCEPTION 'Biomaterial Name must be specified';
         End If;
         --
         If char_length(_sourceName) < 1 Then
-            RAISE EXCEPTION 'Source Name must be defined';
+            RAISE EXCEPTION 'Source Name must be specified';
         End If;
         --
         If char_length(_biomaterialType) < 1 Then
             _returnCode := 'U5201';
-            RAISE EXCEPTION 'Biomaterial Type must be defined';
+            RAISE EXCEPTION 'Biomaterial Type must be specified';
         End If;
         --
         If char_length(_reason) < 1 Then
-            RAISE EXCEPTION 'Reason must be defined';
+            RAISE EXCEPTION 'Reason must be specified';
         End If;
         --
         If char_length(_campaignName) < 1 Then
-            RAISE EXCEPTION 'Campaign Name must be defined';
+            RAISE EXCEPTION 'Campaign Name must be specified';
         End If;
 
         _mode := Trim(Lower(Coalesce(_mode, '')));

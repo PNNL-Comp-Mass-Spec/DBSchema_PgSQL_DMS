@@ -177,14 +177,14 @@ BEGIN
 
         _orgName := Trim(Coalesce(_orgName, ''));
         If char_length(_orgName) < 1 Then
-            RAISE EXCEPTION 'Organism Name cannot be blank';
+            RAISE EXCEPTION 'Organism Name must be specified';
         End If;
 
         If public.has_whitespace_chars(_orgName, 0) Then
             If Position(chr(9) In _orgName) > 0 Then
                 RAISE EXCEPTION 'Organism name cannot contain tabs';
             Else
-                RAISE EXCEPTION 'Organism  name cannot contain spaces';
+                RAISE EXCEPTION 'Organism name cannot contain spaces';
             End If;
         End If;
 

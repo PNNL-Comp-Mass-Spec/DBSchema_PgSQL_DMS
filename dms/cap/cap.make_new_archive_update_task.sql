@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE cap.make_new_archive_update_task(IN _datasetname tex
 **          06/27/2019 mem - Default capture task job priority is now 4; higher priority is now 3
 **          06/20/2023 mem - Ported to PostgreSQL, removing parameters _pushDatasetToMyEMSL and _pushDatasetRecursive
 **          09/07/2023 mem - Align assignment statements
+**                         - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -90,7 +91,7 @@ BEGIN
         End If;
 
         If _resultsDirectoryName = '' And Not _allowBlankResultsDirectory Then
-            _message := 'Results directory name is blank; to update the dataset file and all subdirectories, set _allowBlankResultsDirectory to true';
+            _message := 'Results directory name was not specified; to update the dataset file and all subdirectories, set _allowBlankResultsDirectory to true';
             _returnCode := 'U5202';
 
             RAISE WARNING '%', _message;

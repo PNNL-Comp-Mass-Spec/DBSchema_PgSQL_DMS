@@ -34,6 +34,7 @@ CREATE OR REPLACE FUNCTION public.get_requested_runs_from_item_list(_itemlist te
 **          08/16/2023 mem - Update table alias
 **          08/17/2023 mem - Use renamed column data_pkg_id in V_Data_Package_Dataset_Export
 **          09/01/2023 mem - Remove unnecessary cast to citext for string constants
+**          09/07/2023 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -45,13 +46,13 @@ BEGIN
     -----------------------------------------
 
     IF Coalesce(_itemType, '') = '' Then
-        _message := 'Item Type may not be blank';
+        _message := 'Item Type must be specified';
         RAISE WARNING '%', _message;
         RETURN;
     End If;
 
     IF char_length(_itemList) = 0 Then
-        _message := 'Item List may not be blank';
+        _message := 'Item List must be specified';
         RAISE WARNING '%', _message;
         RETURN;
     End If;

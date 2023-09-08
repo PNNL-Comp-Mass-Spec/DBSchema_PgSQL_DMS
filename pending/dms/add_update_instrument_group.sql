@@ -22,7 +22,7 @@ AS $$
 **      Adds new or edits existing item in T_Instrument_Group
 **
 **  Arguments:
-**    _defaultDatasetTypeName   This is allowed to be blank
+**    _defaultDatasetTypeName   This is allowed to be an empty string
 **    _mode                     'add' or 'update'
 **
 **  Auth:   grk

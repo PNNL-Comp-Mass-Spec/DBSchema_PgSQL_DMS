@@ -159,15 +159,15 @@ BEGIN
         End If;
         --
         If Coalesce(_requesterUsername, '') = '' Then
-            RAISE EXCEPTION 'Requester username was blank';
+            RAISE EXCEPTION 'Requester username must be specified';
         End If;
         --
         If Coalesce(_separationGroup, '') = '' Then
-            RAISE EXCEPTION 'Separation group was blank';
+            RAISE EXCEPTION 'Separation group must be specified';
         End If;
         --
         If Coalesce(_workPackage, '') = '' Then
-            RAISE EXCEPTION 'Work package was blank';
+            RAISE EXCEPTION 'Work package must be specified';
         End If;
 
         _mode := Trim(Lower(Coalesce(_mode, '')));

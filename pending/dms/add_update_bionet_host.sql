@@ -77,12 +77,12 @@ BEGIN
 
         If _mode IS NULL OR char_length(_mode) < 1 Then
             _returnCode := 'U5102';
-            RAISE EXCEPTION '_mode cannot be blank';
+            RAISE EXCEPTION '_mode must be specified';
         End If;
 
         If _host IS NULL OR char_length(_host) < 1 Then
             _returnCode := 'U5103';
-            RAISE EXCEPTION '_host cannot be blank';
+            RAISE EXCEPTION '_host must be specified';
         End If;
 
         _ip := Coalesce(_ip, '');

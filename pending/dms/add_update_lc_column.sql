@@ -88,7 +88,7 @@ BEGIN
 
         If char_length(Coalesce(_columnNumber, '')) < 1 Then
             _returnCode := 'U5110';
-            RAISE EXCEPTION 'Column name was blank';
+            RAISE EXCEPTION 'Column name must be specified';
         End If;
 
         _mode := Trim(Lower(Coalesce(_mode, '')));

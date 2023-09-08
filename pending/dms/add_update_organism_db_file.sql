@@ -63,13 +63,13 @@ BEGIN
     ---------------------------------------------------
 
     If Coalesce(_fastaFileName, '') = '' Then
-        _message := '_fastaFileName cannot be blank';
+        _message := '_fastaFileName must be specified';
         _returnCode := 'U6200';
         RETURN;
     End If;
 
     If Coalesce(_organismName, '') = '' Then
-        _message := '_organismName cannot be blank';
+        _message := '_organismName must be specified';
         _returnCode := 'U6201';
         RETURN;
     End If;

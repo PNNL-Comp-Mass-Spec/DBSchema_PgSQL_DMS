@@ -64,7 +64,7 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, false);
 
     If _sourceFilterSetID Is Null Or _destFilterSetID Is Null Then
-        _message := 'Both the source and target filter set ID must be defined; unable to continue';
+        _message := 'Both the source and target filter set ID must be specified; unable to continue';
         _returnCode := 'U5201';
         RETURN;
     End If;

@@ -198,27 +198,27 @@ BEGIN
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
         If char_length(_experimentName) < 1 Then
-            RAISE EXCEPTION 'Experiment name must be defined';
+            RAISE EXCEPTION 'Experiment name must be specified';
         End If;
         --
         If char_length(_campaignName) < 1 Then
-            RAISE EXCEPTION 'Campaign name must be defined';
+            RAISE EXCEPTION 'Campaign name must be specified';
         End If;
         --
         If char_length(_researcherUsername) < 1 Then
-            RAISE EXCEPTION 'Researcher Username must be defined';
+            RAISE EXCEPTION 'Researcher Username must be specified';
         End If;
         --
         If char_length(_organismName) < 1 Then
-            RAISE EXCEPTION 'Organism name must be defined';
+            RAISE EXCEPTION 'Organism name must be specified';
         End If;
         --
         If char_length(_reason) < 1 Then
-            RAISE EXCEPTION 'Reason cannot be blank';
+            RAISE EXCEPTION 'Reason must be specified';
         End If;
         --
         If char_length(_labelling) < 1 Then
-            RAISE EXCEPTION 'Labelling cannot be blank';
+            RAISE EXCEPTION 'Labelling must be specified';
         End If;
 
         If Not _alkylation::citext IN ('Y', 'N') Then

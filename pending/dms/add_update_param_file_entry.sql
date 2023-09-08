@@ -56,29 +56,29 @@ BEGIN
 
     If _paramFileID = 0 Then
         _returnCode := 'U5201';
-        RAISE EXCEPTION 'ParamFileID was blank';
+        RAISE EXCEPTION 'ParamFileID cannot be 0';
     End If;
 
     If _entrySeqOrder = 0 Then
         _returnCode := 'U5202';
-        RAISE EXCEPTION 'EntrySeqOrder was blank';
+        RAISE EXCEPTION 'EntrySeqOrder cannot be 0';
 
     End If;
 
     If char_length(_entryType) < 1 Then
         _returnCode := 'U5203';
-        RAISE EXCEPTION 'EntryType was blank';
+        RAISE EXCEPTION 'EntryType must be specified';
     End If;
 
     If char_length(_entrySpecifier) < 1 Then
         _returnCode := 'U5204';
-        RAISE EXCEPTION 'EntrySpecifier was blank';
+        RAISE EXCEPTION 'EntrySpecifier must be specified';
 
     End If;
 
     If char_length(_entryValue) < 1 Then
         _returnCode := 'U5205';
-        RAISE EXCEPTION 'EntryValue was blank';
+        RAISE EXCEPTION 'EntryValue must be specified';
     End If;
 
     _infoOnly := Coalesce(_infoOnly, false);

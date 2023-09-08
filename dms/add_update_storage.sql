@@ -60,6 +60,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_storage(IN _path text, IN _volname
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/07/2023 mem - Add Order By to string_agg()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
+**          09/07/2023 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -122,7 +123,7 @@ BEGIN
         _id             := Trim(Coalesce(_id, ''));
 
         If char_length(_path) < 1 Then
-            _message := 'Storage path cannot be blank';
+            _message := 'Storage path must be specified';
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5201';
@@ -130,7 +131,7 @@ BEGIN
         End If;
 
         If char_length(_instrumentName) < 1 Then
-            _message := 'Instrument name cannot be blank';
+            _message := 'Instrument name must be specified';
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5201';

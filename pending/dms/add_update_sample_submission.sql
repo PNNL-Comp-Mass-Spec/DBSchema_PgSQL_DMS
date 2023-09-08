@@ -88,24 +88,24 @@ BEGIN
 
         _campaign := Coalesce(_campaign, '');
         If _campaign = '' Then
-            RAISE EXCEPTION 'Campaign name cannot be empty';
+            RAISE EXCEPTION 'Campaign name must be specified';
         End If;
 
         _containerList := Coalesce(_containerList, '');
         If _containerList = '' Then
-            RAISE EXCEPTION 'Container list cannot be empty';
+            RAISE EXCEPTION 'Container list must be specified';
         End If;
 
         _receivedBy := Coalesce(_receivedBy, '');
         If _receivedBy = '' Then
-            RAISE EXCEPTION 'Received by name cannot be empty';
+            RAISE EXCEPTION 'Received by name must be specified';
         End If;
 
         _newContainerComment := Coalesce(_newContainerComment, '');
 
         _description := Coalesce(_description, '');
         If _description = '' Then
-            RAISE EXCEPTION 'Description cannot be blank';
+            RAISE EXCEPTION 'Description must be specified';
         End If;
 
         ---------------------------------------------------

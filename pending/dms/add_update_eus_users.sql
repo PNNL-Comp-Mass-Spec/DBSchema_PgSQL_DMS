@@ -71,18 +71,18 @@ BEGIN
 
     If char_length(_eusPersonID) < 1 Then
         _returnCode := 'U5201';
-        _message := 'EUS Person ID was blank';
+        _message := 'EUS Person ID must be specified';
         RAISE EXCEPTION '%', _message;
     End If;
     --
     If char_length(_eusNameFm) < 1 Then
         _returnCode := 'U5202';
-        RAISE EXCEPTION 'EUS Person''s Name was blank';
+        RAISE EXCEPTION 'EUS Person''s Name must be specified';
     End If;
 
     If char_length(_eusSiteStatus) < 1 Then
         _returnCode := 'U5203';
-        RAISE EXCEPTION 'EUS Site Status was blank';
+        RAISE EXCEPTION 'EUS Site Status must be specified';
     End If;
 
     If char_length(Coalesce(_hanfordID, '')) = 0 Then

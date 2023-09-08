@@ -42,6 +42,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable boole
 **          05/30/2023 mem - Use format() for string concatenation
 **          07/11/2023 mem - Use COUNT(PV.entry_id) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
+**                         - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -84,7 +85,7 @@ BEGIN
     End If;
 
     If char_length(_managerNameList) = 0 Then
-        _message := '_managerNameList cannot be blank';
+        _message := '_managerNameList must be specified';
         _returnCode := 'U5202';
         RETURN;
     End If;

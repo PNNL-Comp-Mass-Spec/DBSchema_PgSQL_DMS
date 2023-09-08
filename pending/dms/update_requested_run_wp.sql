@@ -106,11 +106,11 @@ BEGIN
         End If;
 
         If _oldWorkPackage = '' Then
-            RAISE EXCEPTION 'Old work package cannot be blank';
+            RAISE EXCEPTION 'Old work package must be specified';
         End If;
 
         If _newWorkPackage = '' Then
-            RAISE EXCEPTION 'New work package cannot be blank';
+            RAISE EXCEPTION 'New work package must be specified';
         End If;
 
         -- Uncomment to debug

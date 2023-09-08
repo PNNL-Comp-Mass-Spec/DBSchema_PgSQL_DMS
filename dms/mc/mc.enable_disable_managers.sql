@@ -60,6 +60,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable boolean, IN _m
 **          05/30/2023 mem - Use format() for string concatenation
 **          06/23/2023 mem - No longer mention "FETCH ALL FROM _results" in the output message
 **          07/11/2023 mem - Use COUNT(PV.entry_id) instead of COUNT(*)
+**          09/07/2023 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -132,7 +133,7 @@ BEGIN
     End If;
 
     If _enable AND char_length(_managerNameList) = 0 Then
-        _message := '_managerNameList cannot be blank when _enable is true; to update all managers, set _managerNameList to ''All''';
+        _message := '_managerNameList must be specified when _enable is true; to update all managers, set _managerNameList to ''All''';
         _returnCode := 'U5204';
         RETURN;
     End If;

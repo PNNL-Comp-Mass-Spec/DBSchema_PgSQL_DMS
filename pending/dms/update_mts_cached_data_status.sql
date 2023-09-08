@@ -49,7 +49,7 @@ BEGIN
 
         -- Abort if _cachedDataTableName is blank
         If char_length(_cachedDataTableName) = 0 Then
-            _message := '_cachedDataTableName is blank; unable to continue';
+            _message := '_cachedDataTableName not specified; unable to continue';
             RAISE WARNING '%', _message;
             RETURN;
         End If;

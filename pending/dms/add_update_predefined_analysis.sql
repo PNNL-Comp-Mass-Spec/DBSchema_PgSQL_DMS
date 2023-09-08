@@ -141,27 +141,27 @@ BEGIN
 
         If char_length(Coalesce(_analysisToolName,'')) < 1 Then
             _returnCode := 'U5201';
-            RAISE EXCEPTION 'Analysis tool name was blank';
+            RAISE EXCEPTION 'Analysis tool name must be specified';
         End If;
 
         If char_length(Coalesce(_paramFileName,'')) < 1 Then
             _returnCode := 'U5202';
-            RAISE EXCEPTION 'Parameter file name was blank';
+            RAISE EXCEPTION 'Parameter file name must be specified';
         End If;
 
         If char_length(Coalesce(_settingsFileName,'')) < 1 Then
             _returnCode := 'U5203';
-            RAISE EXCEPTION 'Settings file name was blank';
+            RAISE EXCEPTION 'Settings file name must be specified';
         End If;
 
         If char_length(Coalesce(_organismName,'')) < 1 Then
             _returnCode := 'U5204';
-            RAISE EXCEPTION 'Organism name was blank; use "(default)" to auto-assign at job creation';
+            RAISE EXCEPTION 'Organism name must be specified; use "(default)" to auto-assign at job creation';
         End If;
 
         If char_length(Coalesce(_organismDBName,'')) < 1 Then
             _returnCode := 'U5205';
-            RAISE EXCEPTION 'Organism DB name was blank';
+            RAISE EXCEPTION 'Organism DB name must be specified';
         End If;
 
         _mode := Trim(Lower(Coalesce(_mode, '')));

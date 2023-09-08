@@ -100,7 +100,7 @@ BEGIN
         ---------------------------------------------------
 
         If char_length(_instrumentClass) < 1 Then
-            RAISE EXCEPTION 'Instrument Class Name cannot be blank' USING ERRCODE = 'U5201';
+            RAISE EXCEPTION 'Instrument Class Name must be specified' USING ERRCODE = 'U5201';
         End If;
 
         If _isPurgeable Is Null Then
@@ -108,7 +108,7 @@ BEGIN
         End If;
         --
         If char_length(_rawDataType) < 1 Then
-            RAISE EXCEPTION 'Raw Data Type cannot be blank' USING ERRCODE = 'U5203';
+            RAISE EXCEPTION 'Raw Data Type must be specified' USING ERRCODE = 'U5203';
         End If;
         --
 

@@ -49,6 +49,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_param_file(INOUT _paramfileid inte
 **          05/22/2023 mem - Remove local variable use when raising exceptions
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
+**          09/07/2023 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -112,13 +113,13 @@ BEGIN
         _paramFileName := Trim(Coalesce(_paramFileName, ''));
         If _paramFileName = '' Then
             _returnCode := 'U5201';
-            RAISE EXCEPTION 'ParamFileName was blank';
+            RAISE EXCEPTION 'ParamFileName must be specified';
         End If;
 
         _paramFileDesc := Trim(Coalesce(_paramFileDesc, ''));
         If _paramFileDesc = '' Then
             _returnCode := 'U5202';
-            RAISE EXCEPTION 'ParamFileDesc was blank';
+            RAISE EXCEPTION 'ParamFileDesc must be specified';
         End If;
 
         _paramFileType := Trim(Coalesce(_paramFileType, ''));
@@ -371,7 +372,7 @@ BEGIN
                 _exceptionContext = pg_exception_context;
 
         If Not _exceptionMessage Like '%already exists%' And
-           Not _exceptionMessage Like '%was blank%' And
+           Not _exceptionMessage Like '%must be specified%' And
            Not _exceptionMessage Like '%is used by%' Then
 
             _logMessage := format('%s; Param file %s', _exceptionMessage, _paramFileName);

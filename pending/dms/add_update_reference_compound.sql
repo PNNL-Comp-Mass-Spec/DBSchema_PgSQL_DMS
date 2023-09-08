@@ -138,13 +138,13 @@ BEGIN
         End If;
 
         If char_length(_compoundName) < 1 Then
-            RAISE EXCEPTION 'Compound Name must be defined';
+            RAISE EXCEPTION 'Compound Name must be specified';
         End If;
 
         _compoundIdAndName := format('%s: %s', Coalesce(_compoundID, 0), Coalesce(_compoundName, '??'));
 
         If char_length(_compoundTypeName) < 1 Then
-            RAISE EXCEPTION 'Compound type name must be defined';
+            RAISE EXCEPTION 'Compound type name must be specified';
         End If;
 
         If char_length(_organismName) < 1 Then
@@ -152,15 +152,15 @@ BEGIN
         End If;
 
         If char_length(_campaignName) < 1 Then
-            RAISE EXCEPTION 'Campaign Name must be defined';
+            RAISE EXCEPTION 'Campaign Name must be specified';
         End If;
 
         If char_length(_contactUsername) < 1 Then
-            RAISE EXCEPTION 'Contact Name cannot be blank';
+            RAISE EXCEPTION 'Contact Name must be specified';
         End If;
 
         If char_length(_supplier) < 1 Then
-            RAISE EXCEPTION 'Supplier cannot be blank';
+            RAISE EXCEPTION 'Supplier must be specified';
         End If;
 
         If _pubChemID = '' Then

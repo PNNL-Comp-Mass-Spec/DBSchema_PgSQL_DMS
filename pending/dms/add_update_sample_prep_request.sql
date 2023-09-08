@@ -239,7 +239,7 @@ BEGIN
         _datasetType := Coalesce(_datasetType, '');
 
         If char_length(Coalesce(_estimatedMSRuns, '')) < 1 Then
-            RAISE EXCEPTION 'Estimated number of MS runs was blank; it should be 0 or a positive number';
+            RAISE EXCEPTION 'Estimated number of MS runs not specified; it should be 0 or a positive number';
         End If;
 
         If Not Coalesce(_blockAndRandomizeSamples, '')::citext IN ('Yes', 'No', 'NA') Then

@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE pc.validate_analysis_job_protein_parameters(IN _orga
 **                         - Use renamed column name in V_Legacy_Static_File_Locations
 **          07/27/2023 mem - Add missing column to t_protein_collections query
 **          09/07/2023 mem - Align assignment statements
+**                         - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -63,7 +64,7 @@ BEGIN
     _protCollOptionsList := Trim(Coalesce(_protCollOptionsList, ''));
 
     If char_length(_organismName) < 1 Then
-        _message := 'Org DB validation failure: Organism Name cannot be blank';
+        _message := 'Org DB validation failure: Organism Name was not specified';
         _returnCode := 'U5201';
 
         RAISE WARNING '%', _message;
@@ -81,7 +82,7 @@ BEGIN
     End If;
 
     If (char_length(_organismDBFileName) = 0 AND char_length(_protCollNameList) = 0) OR (_organismDBFileName::citext = 'na' AND _protCollNameList::citext = 'na') Then
-        _message := 'Org DB validation failure: Protein collection list and Legacy Fasta (OrgDBName) name cannot both be blank (or "na")';
+        _message := 'Org DB validation failure: Protein collection list and Legacy Fasta (OrgDBName) name cannot both be undefined (or "na")';
         _returnCode := 'U5202';
 
         RAISE WARNING '%', _message;

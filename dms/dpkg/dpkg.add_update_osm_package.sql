@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE dpkg.add_update_osm_package(INOUT _id integer, IN _n
 **          06/19/2017 mem - Use _logErrors to toggle logging errors caught by the try/catch block
 **                         - Validate _state
 **          08/15/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -108,7 +109,7 @@ BEGIN
         End If;
 
         If _packageType = '' Then
-            _message := 'OSM package type cannot be blank';
+            _message := 'OSM package type must be specified';
             _returnCode := 'U5105';
             RETURN;
         End If;

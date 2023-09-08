@@ -81,7 +81,7 @@ DECLARE
     _columnID int := 0;
     _intStdID int := 0;
     _ratingID int := 1 -- 'No Interest';
-    _msType text := 'Tracking';
+    _msType text;
     _refDate timestamp;
     _acqStart timestamp;
     _acqEnd timestamp;
@@ -136,14 +136,15 @@ BEGIN
 
     BEGIN
 
-        _refDate := CURRENT_TIMESTAMP;
+        _refDate  := CURRENT_TIMESTAMP;
         _acqStart := _runStart;
-        _acqEnd := _acqStart + INTERVAL '10 minutes' -- default;
+        _acqEnd   := _acqStart + INTERVAL '10 minutes'; -- default;
 
         If Coalesce(_runDuration, '') <> '' Then
             _acqEnd := _acqStart + make_interval(mins => public.try_cast(_runDuration, 10))
         End If;
 
+        _msType        := 'Tracking';
         _datasetTypeID := get_dataset_type_id (_msType);
 
         ---------------------------------------------------
@@ -153,29 +154,29 @@ BEGIN
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
         If _mode = '' Then
-            RAISE EXCEPTION '_mode was blank';
+            RAISE EXCEPTION '_mode must be specified';
         End If;
 
         If Coalesce(_datasetName, '') = '' Then
-            RAISE EXCEPTION 'Dataset name was blank';
+            RAISE EXCEPTION 'Dataset name must be specified';
         End If;
 
         _folderName := _datasetName;
 
         If Coalesce(_experimentName, '') = '' Then
-            RAISE EXCEPTION 'Experiment name was blank';
+            RAISE EXCEPTION 'Experiment name must be specified';
         End If;
 
         If Coalesce(_folderName, '') = '' Then
-            RAISE EXCEPTION 'Folder name was blank';
+            RAISE EXCEPTION 'Folder name must be specified';
         End If;
 
         If Coalesce(_operatorUsername, '') = '' Then
-            RAISE EXCEPTION 'Operator username was blank';
+            RAISE EXCEPTION 'Operator username must be specified';
         End If;
 
         If Coalesce(_instrumentName, '') = '' Then
-            RAISE EXCEPTION 'Instrument name was blank';
+            RAISE EXCEPTION 'Instrument name must be specified';
         End If;
 
         -- Assure that _comment is not null and assure that it doesn't have &quot; or &#34; or &amp;

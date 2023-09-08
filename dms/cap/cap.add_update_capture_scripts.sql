@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_capture_scripts(IN _script text, IN _
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          06/21/2023 mem - Assure that _enabled is uppercase
+**          09/07/2023 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -88,7 +89,7 @@ BEGIN
         _callingUser := Coalesce(_callingUser, '');
 
         If _description = '' Then
-            _message := 'Description cannot be blank';
+            _message := 'Description must be specified';
             _returnCode := 'U5201';
             RETURN;
         End If;

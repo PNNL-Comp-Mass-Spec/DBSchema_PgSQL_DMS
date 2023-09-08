@@ -106,7 +106,7 @@ BEGIN
 
         If char_length(_username) < 1 Then
             _returnCode := 'U5201';
-            RAISE EXCEPTION 'Username was blank';
+            RAISE EXCEPTION 'Username must be specified';
         Else
             _charIndex := Position('\' In _username);
             If _charIndex > 0 Then
@@ -116,7 +116,7 @@ BEGIN
 
         If char_length(_lastNameFirstName) < 1 Then
             _returnCode := 'U5202';
-            RAISE EXCEPTION 'Last Name, First Name was blank';
+            RAISE EXCEPTION 'Last Name, First Name must be specified';
         End If;
         --
         If char_length(_hanfordIdNum) <= 1 Then
@@ -126,7 +126,7 @@ BEGIN
         --
         If char_length(_userStatus) < 1 Then
             _returnCode := 'U5204';
-            RAISE EXCEPTION 'User status was blank';
+            RAISE EXCEPTION 'User status must be specified';
         End If;
 
         _mode := Trim(Lower(Coalesce(_mode, '')));

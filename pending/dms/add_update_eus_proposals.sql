@@ -91,7 +91,7 @@ BEGIN
 
         If char_length(_eusPropID) < 1 Then
             _logErrors := false;
-            _msg := 'EUS Proposal ID was blank';
+            _msg := 'EUS Proposal ID must be specified';
             RAISE EXCEPTION '%', _msg;
         End If;
 
@@ -103,7 +103,7 @@ BEGIN
 
         If char_length(_eusPropTitle) < 1 Then
             _logErrors := false;
-            _msg := 'EUS Proposal Title was blank';
+            _msg := 'EUS Proposal Title must be specified';
             RAISE EXCEPTION '%', _msg;
         End If;
 
@@ -116,7 +116,7 @@ BEGIN
         -- IsDate() equivalent
         If public.try_cast(_eusPropImpDate, null::timestamp) Is Null Then
             _logErrors := false;
-            _msg := 'EUS Proposal Import Date was blank or an invalid date';
+            _msg := 'EUS Proposal Import Date was not specified or is an invalid date';
             RAISE EXCEPTION '%', _msg;
         End If;
 

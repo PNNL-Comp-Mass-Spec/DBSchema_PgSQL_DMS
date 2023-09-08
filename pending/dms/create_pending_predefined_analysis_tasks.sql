@@ -91,7 +91,7 @@ BEGIN
         If Coalesce(_currentItem.DatasetNam, '') = '' Then
             -- Dataset not defined; skip this entry
             _returnCode := 'U5250';
-            _message := 'Invalid entry: dataset name is blank';
+            _message := 'Invalid entry: dataset name must be specified';
 
         ElsIf _datasetStateId = 4
             -- Dataset state is Inactive

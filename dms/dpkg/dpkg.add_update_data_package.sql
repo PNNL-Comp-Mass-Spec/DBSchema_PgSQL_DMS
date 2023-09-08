@@ -51,6 +51,7 @@ CREATE OR REPLACE PROCEDURE dpkg.add_update_data_package(INOUT _id integer, IN _
 **          07/05/2022 mem - Include the data package ID when logging errors
 **          05/10/2023 mem - Update warning messages
 **          08/15/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -123,13 +124,13 @@ BEGIN
         End If;
 
         If _team = '' Then
-            _message := 'Data package team cannot be blank';
+            _message := 'Data package team must be specified';
             _returnCode := 'U5105';
             RETURN;
         End If;
 
         If _packageType = '' Then
-            _message := 'Data package type cannot be blank';
+            _message := 'Data package type must be specified';
             _returnCode := 'U5106';
             RETURN;
         End If;

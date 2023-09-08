@@ -252,29 +252,29 @@ BEGIN
         End If;
 
         If Coalesce(_requestName, '') = '' Then
-            RAISE EXCEPTION 'Request name was blank';
+            RAISE EXCEPTION 'Request name must be specified';
         End If;
         --
         If Coalesce(_experimentName, '') = '' Then
-            RAISE EXCEPTION 'Experiment number was blank';
+            RAISE EXCEPTION 'Experiment number must be specified';
         End If;
         --
         If Coalesce(_requesterUsername, '') = '' Then
-            RAISE EXCEPTION 'Requester username was blank';
+            RAISE EXCEPTION 'Requester username must be specified';
         End If;
 
         _instrumentGroup := _instrumentName;
 
         If Coalesce(_instrumentGroup, '') = '' Then
-            RAISE EXCEPTION 'Instrument group was blank';
+            RAISE EXCEPTION 'Instrument group must be specified';
         End If;
         --
         If Coalesce(_msType, '') = '' Then
-            RAISE EXCEPTION 'Dataset type was blank';
+            RAISE EXCEPTION 'Dataset type must be specified';
         End If;
         --
         If Coalesce(_workPackage, '') = '' Then
-            RAISE EXCEPTION 'Work package was blank';
+            RAISE EXCEPTION 'Work package must be specified';
         End If;
 
         _requestIDForUpdate := Coalesce(_requestIDForUpdate, 0);

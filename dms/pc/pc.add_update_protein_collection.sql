@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE pc.add_update_protein_collection(IN _collectionname 
 **          01/20/2020 mem - Replace < and > with ( and ) in the source and description
 **          08/21/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**                         - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -55,7 +56,7 @@ BEGIN
     _mode             := Trim(Lower(Coalesce(_mode, '')));
 
     If char_length(_collectionName) < 1 Then
-        _message := '_collectionName was blank';
+        _message := '_collectionName must be specified';
         RAISE WARNING '%', _message;
 
         -- The Organism Database Handler expects this procedure to return '0' if there is an error

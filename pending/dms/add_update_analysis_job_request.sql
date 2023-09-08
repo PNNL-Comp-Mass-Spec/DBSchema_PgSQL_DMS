@@ -188,7 +188,7 @@ BEGIN
         _comment := Coalesce(_comment, '');
 
         If _requestName = '' Then
-            RAISE EXCEPTION 'Cannot add: request name cannot be blank';
+            RAISE EXCEPTION 'Cannot add: request name must be specified';
         End If;
 
         _requesterUsername := Trim(Coalesce(_requesterUsername, ''));
