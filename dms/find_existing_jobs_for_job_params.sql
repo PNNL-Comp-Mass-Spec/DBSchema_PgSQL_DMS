@@ -30,6 +30,7 @@ CREATE OR REPLACE FUNCTION public.find_existing_jobs_for_job_params(_datasetlist
 **          05/05/2023 mem - Change table alias name
 **          05/12/2023 mem - Rename variables
 **          09/01/2023 mem - Remove unnecessary cast to citext for string constants
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -45,13 +46,13 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _datasetList := Trim(Coalesce(_datasetList, ''));
-    _toolName := Trim(Coalesce(_toolName, ''));
-    _paramFileName := Trim(Coalesce(_paramFileName, ''));
-    _settingsFileName := Trim(Coalesce(_settingsFileName, ''));
-    _organismDBName := Trim(Coalesce(_organismDBName, ''));
-    _organismName := Trim(Coalesce(_organismName, ''));
-    _protCollNameList := Trim(Coalesce(_protCollNameList, ''));
+    _datasetList         := Trim(Coalesce(_datasetList, ''));
+    _toolName            := Trim(Coalesce(_toolName, ''));
+    _paramFileName       := Trim(Coalesce(_paramFileName, ''));
+    _settingsFileName    := Trim(Coalesce(_settingsFileName, ''));
+    _organismDBName      := Trim(Coalesce(_organismDBName, ''));
+    _organismName        := Trim(Coalesce(_organismName, ''));
+    _protCollNameList    := Trim(Coalesce(_protCollNameList, ''));
     _protCollOptionsList := Trim(Coalesce(_protCollOptionsList, ''));
 
     ---------------------------------------------------

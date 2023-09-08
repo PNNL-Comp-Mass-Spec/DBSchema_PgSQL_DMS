@@ -19,6 +19,7 @@ CREATE OR REPLACE PROCEDURE public.validate_instrument_group_for_requested_runs(
 **  Auth:   mem
 **  Date:   01/15/2023 mem - Initial version (code refactored code from UpdateRequestedRunAssignments)
 **          05/31/2023 mem - Use format() for string concatenation
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -40,7 +41,7 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _reqRunIDList := Trim(Coalesce(_reqRunIDList, ''));
+        _reqRunIDList    := Trim(Coalesce(_reqRunIDList, ''));
         _instrumentGroup := Trim(Coalesce(_instrumentGroup, ''));
 
         If _reqRunIDList = '' Then

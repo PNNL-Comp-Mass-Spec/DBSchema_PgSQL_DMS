@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE public.store_reporter_ion_obs_stats(IN _job integer,
 **          08/12/2020 mem - Replace _observationStatsAll with _medianIntensitiesTopNPct
 **          05/25/2023 mem - Ported to PostgreSQL
 **          05/30/2023 mem - Use format() for string concatenation
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -47,12 +48,11 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _job := Coalesce(_job, 0);
-    _infoOnly := Coalesce(_infoOnly, false);
-
-    _topNPct := Coalesce(_topNPct, 0);
+    _job                      := Coalesce(_job, 0);
+    _infoOnly                 := Coalesce(_infoOnly, false);
+    _topNPct                  := Coalesce(_topNPct, 0);
     _medianIntensitiesTopNPct := Coalesce(_medianIntensitiesTopNPct, '');
-    _observationStatsTopNPct := Coalesce(_observationStatsTopNPct, '');
+    _observationStatsTopNPct  := Coalesce(_observationStatsTopNPct, '');
 
     ---------------------------------------------------
     -- Make sure _job is defined in t_analysis_job

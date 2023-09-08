@@ -133,6 +133,7 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **          08/27/2022 mem - Change arguments _deleteParam and _showDebug from int to boolean
 **          09/28/2022 mem - Rename temporary table
 **          07/19/2023 mem - Synchronize with sw.add_update_job_parameter_xml
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -148,11 +149,11 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _section := Coalesce(_section, '');
-    _paramName := Coalesce(_paramName, '');
-    _value := Coalesce(_value, '');
+    _section     := Coalesce(_section, '');
+    _paramName   := Coalesce(_paramName, '');
+    _value       := Coalesce(_value, '');
     _deleteParam := Coalesce(_deleteParam, false);
-    _showDebug := Coalesce(_showDebug, false);
+    _showDebug   := Coalesce(_showDebug, false);
 
     If _xmlParameters Is Null Then
         RAISE INFO 'Null value sent to _xmlParameters; initializing a new XML instance';

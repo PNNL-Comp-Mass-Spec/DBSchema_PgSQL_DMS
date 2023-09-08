@@ -19,6 +19,7 @@ CREATE OR REPLACE PROCEDURE sw.update_job_step_status_history(IN _minimumtimeint
 **  Auth:   mem
 **  Date:   12/05/2008
 **          08/14/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -48,9 +49,9 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------------
 
-    _minimumTimeIntervalMinutes := Coalesce(_minimumTimeIntervalMinutes, 0);
+    _minimumTimeIntervalMinutes                  := Coalesce(_minimumTimeIntervalMinutes, 0);
     _minimumTimeIntervalMinutesForIdenticalStats := Coalesce(_minimumTimeIntervalMinutesForIdenticalStats, 355);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly                                    := Coalesce(_infoOnly, false);
 
     _mostRecentPostingTime := Null;
 

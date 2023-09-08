@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE pc.get_archived_file_id_for_protein_collection_list(
 **  Date:   06/07/2006
 **          07/04/2006 mem - Updated to return the newest Archived File Collection ID when there is more than one possible match
 **          08/22/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -36,9 +37,9 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------------
 
-    _proteinCollectionList := Trim(Coalesce(_proteinCollectionList, ''));
-    _creationOptions := Trim(Coalesce(_creationOptions, ''));
-    _archivedFileID := 0;
+    _proteinCollectionList  := Trim(Coalesce(_proteinCollectionList, ''));
+    _creationOptions        := Trim(Coalesce(_creationOptions, ''));
+    _archivedFileID         := 0;
     _proteinCollectionCount := 0;
 
     If char_length(_proteinCollectionList) = 0 Then

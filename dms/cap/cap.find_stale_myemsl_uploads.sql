@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE cap.find_stale_myemsl_uploads(IN _staleuploaddays in
 **          05/12/2023 mem - Rename variables
 **          05/31/2023 mem - Use implicit string concatenation
 **          06/07/2023 mem - Add Order By to string_agg()
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -50,7 +51,7 @@ BEGIN
     ---------------------------------------------------
 
     _staleUploadDays := Abs(Coalesce(_staleUploadDays, 45));
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly        := Coalesce(_infoOnly, false);
 
     If _staleUploadDays < 14 Then
         -- Require _staleUploadDays to be at least 14

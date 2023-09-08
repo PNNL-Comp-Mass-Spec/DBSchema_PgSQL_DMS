@@ -45,7 +45,8 @@ AS $$
 **          12/06/2018 mem - Call update_experiment_group_member_count to update T_Experiment_Groups
 **          08/15/2022 mem - Use new column names
 **          08/26/2022 mem - Use new column name in T_Log_Entries
-**          12/15/2023 mem - Ported to PostgreSQL
+**          07/07/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -106,8 +107,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _infoOnly := Coalesce(_infoOnly, true);
-
+    _infoOnly      := Coalesce(_infoOnly, true);
     _yearsToRetain := Coalesce(_yearsToRetain, 4);
 
     If _yearsToRetain < 1 Then
@@ -126,23 +126,21 @@ BEGIN
         _logEntryMonthsToRetain := 1;
     End If;
 
-    _datasetSkipList := Coalesce(_datasetSkipList, '');
+    _datasetSkipList    := Coalesce(_datasetSkipList, '');
     _experimentSkipList := Coalesce(_experimentSkipList, '');
 
-    _deleteJobs := Coalesce(_deleteJobs, true);
-    _deleteDatasets := Coalesce(_deleteDatasets, true);
-    _deleteExperiments := Coalesce(_deleteExperiments, true);
+    _deleteJobs         := Coalesce(_deleteJobs, true);
+    _deleteDatasets     := Coalesce(_deleteDatasets, true);
+    _deleteExperiments  := Coalesce(_deleteExperiments, true);
 
-    _maxItemsToProcess := Coalesce(_maxItemsToProcess, 75000);
+    _maxItemsToProcess  := Coalesce(_maxItemsToProcess, 75000);
+
     If _maxItemsToProcess <= 0 Then
         _maxItemsToProcess := 1000000;
     End If;
 
-    _message := '';
-    _returnCode := '';
-
-    _deleteThreshold := CURRENT_TIMESTAMP - make_interval(years => _yearsToRetain);
-    _jobKeepThreshold := CURRENT_TIMESTAMP - make_interval(days => Round(_recentJobOverrideYears * 365)::int);
+    _deleteThreshold    := CURRENT_TIMESTAMP - make_interval(years  => _yearsToRetain);
+    _jobKeepThreshold   := CURRENT_TIMESTAMP - make_interval(days   => Round(_recentJobOverrideYears * 365)::int);
     _logDeleteThreshold := CURRENT_TIMESTAMP - make_interval(months => _logEntryMonthsToRetain);
 
     RAISE INFO 'Delete threshold:     %', _deleteThreshold;

@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE pc.add_update_protein_collection(IN _collectionname 
 **          06/26/2019 mem - Add comments and convert tabs to spaces
 **          01/20/2020 mem - Replace < and > with ( and ) in the source and description
 **          08/21/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -51,7 +52,7 @@ BEGIN
     _description      := Trim(Coalesce(_description, ''));
     _collectionSource := Trim(Coalesce(_collectionSource, ''));
 
-    _mode := Trim(Lower(Coalesce(_mode, '')));
+    _mode             := Trim(Lower(Coalesce(_mode, '')));
 
     If char_length(_collectionName) < 1 Then
         _message := '_collectionName was blank';

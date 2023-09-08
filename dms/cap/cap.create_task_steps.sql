@@ -43,6 +43,7 @@ CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''
 **                         - Do not change _mode to lowercase
 **          07/11/2023 mem - Use COUNT(job) instead of COUNT(*)
 **          08/01/2023 mem - Set _captureTaskJob to true when calling sw.show_tmp_job_steps_and_job_step_dependencies
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -70,10 +71,10 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _infoOnly := Coalesce(_infoOnly, false);
-    _debugMode := Coalesce(_debugMode, false);
-    _existingJob := Coalesce(_existingJob, 0);
-    _mode := Trim(Coalesce(_mode, ''));
+    _infoOnly         := Coalesce(_infoOnly, false);
+    _debugMode        := Coalesce(_debugMode, false);
+    _existingJob      := Coalesce(_existingJob, 0);
+    _mode             := Trim(Coalesce(_mode, ''));
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
 
     If _debugMode Then
@@ -88,9 +89,9 @@ BEGIN
         RETURN;
     End If;
 
-    _startTime := CURRENT_TIMESTAMP;
-    _loggingEnabled := Coalesce(_loggingEnabled, false);
-    _logIntervalThreshold := Coalesce(_logIntervalThreshold, 15);
+    _startTime             := CURRENT_TIMESTAMP;
+    _loggingEnabled        := Coalesce(_loggingEnabled, false);
+    _logIntervalThreshold  := Coalesce(_logIntervalThreshold, 15);
     _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
 
     If _logIntervalThreshold = 0 Then

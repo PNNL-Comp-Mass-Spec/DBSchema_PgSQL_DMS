@@ -81,6 +81,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_local_job_in_broker(INOUT _job integer
 **          03/24/2023 mem - Capitalize job parameter TransferFolderPath
 **          03/25/2023 mem - Force dataset name to 'Aggregation' if using a data package
 **          07/27/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -113,17 +114,15 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _datasetName := Coalesce(_datasetName, 'na');
-    _dataPackageID := Coalesce(_dataPackageID, 0);
+    _datasetName      := Coalesce(_datasetName, 'na');
+    _dataPackageID    := Coalesce(_dataPackageID, 0);
+    _debugMode        := Coalesce(_debugMode, false);
+    _logDebugMessages := Coalesce(_logDebugMessages, false);
+    _mode             := Trim(Lower(Coalesce(_mode, '')));
 
     If _dataPackageID > 0 And _datasetName <> 'Aggregation' Then
         _datasetName := 'Aggregation';
     End If;
-
-    _debugMode := Coalesce(_debugMode, false);
-    _logDebugMessages := Coalesce(_logDebugMessages, false);
-
-    _mode := Trim(Lower(Coalesce(_mode, '')));
 
     If _mode = 'reset' Then
         _mode := 'update';

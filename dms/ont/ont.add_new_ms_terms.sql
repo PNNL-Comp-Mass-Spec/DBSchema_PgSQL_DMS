@@ -34,6 +34,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_ms_terms(_sourcetable public.citext DEFAU
 **          05/19/2023 mem - Capitalize keyword
 **          05/25/2023 mem - Simplify call to RAISE INFO
 **          05/29/2023 mem - Use format() for string concatenation
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -53,7 +54,7 @@ BEGIN
     ---------------------------------------------------
 
     _sourceTable := Coalesce(_sourceTable, '');
-    _infoOnly := Coalesce(_infoOnly, true);
+    _infoOnly    := Coalesce(_infoOnly, true);
 
     CREATE TEMP TABLE Tmp_CandidateTables AS
     SELECT Table_to_Find, Schema_Name, Table_Name, Table_Exists, Message

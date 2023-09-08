@@ -27,6 +27,7 @@ CREATE OR REPLACE PROCEDURE cap.reset_dependent_task_steps(IN _jobs text, IN _in
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          07/10/2017 mem - Clear Completion_Code, Completion_Message, Evaluation_Code, & Evaluation_Message when resetting a capture task job step
 **          06/24/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -52,7 +53,7 @@ BEGIN
         -- Validate the inputs
         -----------------------------------------------------------
 
-        _jobs := Trim(Coalesce(_jobs, ''));
+        _jobs     := Trim(Coalesce(_jobs, ''));
         _infoOnly := Coalesce(_infoOnly, false);
 
         If _jobs = '' Then

@@ -18,6 +18,7 @@ CREATE OR REPLACE PROCEDURE sw.remove_job_from_main_tables(IN _job integer, IN _
 **  Auth:   mem
 **  Date:   11/19/2010 mem - Initial version
 **          08/08/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -38,7 +39,7 @@ BEGIN
         RETURN;
     End If;
 
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly               := Coalesce(_infoOnly, false);
     _validateJobStepSuccess := Coalesce(_validateJobStepSuccess, false);
 
     ---------------------------------------------------

@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE dpkg.store_myemsl_upload_stats(IN _datapackageid int
 **          05/20/2019 mem - Add Set XACT_ABORT
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          06/27/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -49,7 +50,7 @@ BEGIN
     ---------------------------------------------------
 
     _dataPackageID     := Coalesce(_dataPackageID, 0);
-    _subfolder         := Coalesce(_subfolder, '');
+    _subfolder         := Trim(Coalesce(_subfolder, ''));
     _fileCountNew      := Coalesce(_fileCountNew, 0);
     _fileCountUpdated  := Coalesce(_fileCountUpdated, 0);
     _bytes             := Coalesce(_bytes, 0);

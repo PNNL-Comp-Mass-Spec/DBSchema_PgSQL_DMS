@@ -36,26 +36,26 @@ CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid int
 **          05/12/2023 mem - Rename variables
 **          05/22/2023 mem - Capitalize reserved word
 **          05/23/2023 mem - Use format() for string concatenation
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
-    _message text = '';
-    _returnCode text = '';
+    _message text;
+    _returnCode text;
 
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
 
     _infoOnly := Coalesce(_infoOnly, true);
-
-    _message := '';
-    _returnCode := '';
 
     If _returnCode = '' And _sourceParamTypeID Is Null Then
         _message := '_sourceParamTypeID cannot be null; unable to continue';

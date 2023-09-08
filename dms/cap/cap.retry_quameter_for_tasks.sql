@@ -26,6 +26,7 @@ CREATE OR REPLACE FUNCTION cap.retry_quameter_for_tasks(_jobs text, _infoonly bo
 **  Date:   07/11/2019 mem - Initial version
 **          07/22/2019 mem - When _infoOnly is false, return a table listing the capture task jobs that were reset
 **          06/25/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -45,8 +46,8 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------------------
 
-    _jobs := Trim(Coalesce(_jobs, ''));
-    _infoOnly := Coalesce(_infoOnly, false);
+    _jobs                 := Trim(Coalesce(_jobs, ''));
+    _infoOnly             := Coalesce(_infoOnly, false);
     _ignoreQuameterErrors := Coalesce(_ignoreQuameterErrors, true);
 
     If _jobs = '' Then

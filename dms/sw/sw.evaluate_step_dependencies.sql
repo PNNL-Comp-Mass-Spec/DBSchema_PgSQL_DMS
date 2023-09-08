@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE sw.evaluate_step_dependencies(IN _maxjobstoprocess i
 **          09/24/2014 mem - Rename Job in T_Job_Step_Dependencies
 **          03/30/2018 mem - Rename variables and reformat queries
 **          08/02/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -61,13 +62,14 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
-    _startTime := CURRENT_TIMESTAMP;
+    _maxJobsToProcess      := Coalesce(_maxJobsToProcess, 0);
     _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
 
     If _loopingUpdateInterval < 2 Then
         _loopingUpdateInterval := 2;
     End If;
+
+    _startTime := CURRENT_TIMESTAMP;
 
     ---------------------------------------------------
     -- Temp table for processing dependencies

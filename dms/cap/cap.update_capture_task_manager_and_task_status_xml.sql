@@ -44,6 +44,7 @@ CREATE OR REPLACE PROCEDURE cap.update_capture_task_manager_and_task_status_xml(
 **          09/19/2018 mem - Add parameter _logProcessorNames
 **          06/28/2023 mem - Ported to PostgreSQL
 **          08/14/2023 mem - Update example XML status messages
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -99,8 +100,8 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _statusXML := try_cast(_managerStatusXML, null::xml);
-        _infoLevel := Coalesce(_infoLevel, 0);
+        _statusXML         := try_cast(_managerStatusXML, null::xml);
+        _infoLevel         := Coalesce(_infoLevel, 0);
         _logProcessorNames := Coalesce(_logProcessorNames, false);
 
         ---------------------------------------------------

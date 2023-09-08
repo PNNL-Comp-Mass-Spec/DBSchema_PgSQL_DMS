@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE sw.unhold_candidate_msgf_job_steps(IN _steptool text
 **  Date:   12/20/2011 mem - Initial version
 **          05/12/2017 mem - Update Tool_Version_ID, Next_Try, and Remote_Info_ID
 **          08/12/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -38,7 +39,7 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------------------
 
-    _stepTool := Coalesce(_stepTool, '');
+    _stepTool         := Coalesce(_stepTool, '');
     _targetCandidates := Coalesce(_targetCandidates, 25);
 
     -----------------------------------------------------------

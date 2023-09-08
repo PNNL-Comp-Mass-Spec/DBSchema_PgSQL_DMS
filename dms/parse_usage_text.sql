@@ -51,6 +51,7 @@ CREATE OR REPLACE PROCEDURE public.parse_usage_text(INOUT _comment text, INOUT _
 **          06/15/2023 mem - Add support for usage type 'ResourceOwner'
 **          08/30/2023 mem - Only validate that values are numeric for percentage based usage types
 **                         - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -83,11 +84,11 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _comment := Trim(Coalesce(_comment, ''));
-    _seq := Coalesce(_seq, -1);
-    _showDebug := Coalesce(_showDebug, false);
+    _comment       := Trim(Coalesce(_comment, ''));
+    _seq           := Coalesce(_seq, -1);
+    _showDebug     := Coalesce(_showDebug, false);
     _validateTotal := Coalesce(_validateTotal, true);
-    _invalidUsage := 0;
+    _invalidUsage  := 0;
 
     If _showDebug Then
         RAISE INFO 'Initial comment for ID %: %', _seq, _comment;

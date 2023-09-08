@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE pc.promote_protein_collection_state(IN _addnewprotei
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          09/12/2016 mem - Add parameter _mostRecentMonths
 **          08/22/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -55,14 +56,12 @@ BEGIN
     --------------------------------------------------------------
 
     _addNewProteinHeaders := Coalesce(_addNewProteinHeaders, true);
-
-    _mostRecentMonths := Coalesce(_mostRecentMonths, 12);
+    _mostRecentMonths     := Coalesce(_mostRecentMonths, 12);
+    _infoOnly             := Coalesce(_infoOnly, false);
 
     If _mostRecentMonths <= 0 Then
         _mostRecentMonths := 12;
     End If;
-
-    _infoOnly := Coalesce(_infoOnly, false);
 
     --------------------------------------------------------------
     -- Loop through the protein collections with a state of 1

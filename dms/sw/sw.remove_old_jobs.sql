@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE sw.remove_old_jobs(IN _intervaldaysforsuccess intege
 **          08/17/2021 mem - When looking for completed or inactive jobs, use the Start time if Finish is null
 **                         - Also look for jobs with state 14 = Failed, Ignore Job Step States
 **          08/08/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -59,13 +60,11 @@ BEGIN
         _intervalDaysForFail := 0;
     End If;
 
-    _jobListOverride := Coalesce(_jobListOverride, '');
-
-    _maxJobsToProcess := Coalesce(_maxJobsToProcess, 25000);
-    _logDeletions := Coalesce(_logDeletions, false);
-    _logToConsoleOnly := Coalesce(_logToConsoleOnly, false);
-
-    _infoOnly := Coalesce(_infoOnly, false);
+    _jobListOverride        := Coalesce(_jobListOverride, '');
+    _maxJobsToProcess       := Coalesce(_maxJobsToProcess, 25000);
+    _logDeletions           := Coalesce(_logDeletions, false);
+    _logToConsoleOnly       := Coalesce(_logToConsoleOnly, false);
+    _infoOnly               := Coalesce(_infoOnly, false);
     _validateJobStepSuccess := Coalesce(_validateJobStepSuccess, false);
 
     ---------------------------------------------------

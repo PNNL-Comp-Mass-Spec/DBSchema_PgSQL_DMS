@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_step_params_as_table_use_history(_job inte
 **  Date:   07/31/2013 mem - Initial release
 **          01/05/2018 mem - Add parameters _section, _paramName, and _firstParameterValue
 **          06/08/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -31,7 +32,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _section := Trim(Coalesce(_section, ''));
+    _section   := Trim(Coalesce(_section, ''));
     _paramName := Trim(Coalesce(_paramName, ''));
 
     ---------------------------------------------------

@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE cap.update_missed_myemsl_state_values(IN _windowdays
 **          02/27/2014 mem - Now updating the appropriate ArchiveUpdate capture task job if the job steps were skipped
 **          03/25/2014 mem - Changed log message type to be a warning
 **          06/29/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -41,7 +42,7 @@ BEGIN
     ---------------------------------------------------
 
     _windowDays := Abs(Coalesce(_windowDays, 30));
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly   := Coalesce(_infoOnly, false);
 
     If _windowDays < 1 Then
         _windowDays := 1;

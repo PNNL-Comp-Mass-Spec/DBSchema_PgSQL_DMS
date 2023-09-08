@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_params(IN _toolna
 **          07/12/2016 mem - Now using a synonym when calling Validate_Analysis_Job_Protein_Parameters in the Protein_Sequences database
 **          04/11/2022 mem - Increase warning threshold for length of _protCollNameList to 4000
 **          07/26/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -47,7 +48,7 @@ BEGIN
     -----------------------------------------------------------
 
     _ownerUsername := Coalesce(_ownerUsername, '');
-    _debugMode := Coalesce(_debugMode, false);
+    _debugMode     := Coalesce(_debugMode, false);
 
     ---------------------------------------------------
     -- Make sure settings for which 'na' is acceptable truly have lowercase 'na' and not 'NA' or 'n/a'

@@ -20,6 +20,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_stats_by_campaign(_mostrecentweeks
 **          06/10/2019 mem - Add parameters _excludeQCAndBlankWithoutWP, _campaignNameExclude, and _instrumentBuilding
 **          03/24/2020 mem - Add parameter _excludeAllQCAndBlank
 **          07/13/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -34,14 +35,14 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------
 
-    _mostRecentWeeks := Coalesce(_mostRecentWeeks, 0);
-    _includeInstrument := Coalesce(_includeInstrument, 0);
+    _mostRecentWeeks            := Coalesce(_mostRecentWeeks, 0);
+    _includeInstrument          := Coalesce(_includeInstrument, 0);
     _excludeQCAndBlankWithoutWP := Coalesce(_excludeQCAndBlankWithoutWP, 1);
-    _excludeAllQCAndBlank := Coalesce(_excludeAllQCAndBlank, 0);
-    _campaignNameFilter := Coalesce(_campaignNameFilter, '');
-    _campaignNameExclude := Coalesce(_campaignNameExclude, '');
-    _instrumentBuilding := Coalesce(_instrumentBuilding, '');
-    _previewSql := Coalesce(_previewSql, false);
+    _excludeAllQCAndBlank       := Coalesce(_excludeAllQCAndBlank, 0);
+    _campaignNameFilter         := Coalesce(_campaignNameFilter, '');
+    _campaignNameExclude        := Coalesce(_campaignNameExclude, '');
+    _instrumentBuilding         := Coalesce(_instrumentBuilding, '');
+    _previewSql                 := Coalesce(_previewSql, false);
 
     If _previewSql Then
         RAISE INFO '';
@@ -49,7 +50,7 @@ BEGIN
 
     If _mostRecentWeeks < 1 Then
         _startDate := Coalesce(_startDate, CURRENT_TIMESTAMP - INTERVAL '20 weeks');
-        _endDate := Coalesce(_endDate, CURRENT_TIMESTAMP);
+        _endDate   := Coalesce(_endDate,   CURRENT_TIMESTAMP);
 
         If _previewSql Then
             RAISE INFO 'Filtering on date range % to %', _startDate, _endDate;

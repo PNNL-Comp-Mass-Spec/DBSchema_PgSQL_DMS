@@ -18,6 +18,7 @@ CREATE OR REPLACE PROCEDURE cap.make_new_dataset_source_file_rename_task(IN _dat
 **  Date:   03/06/2012 mem - Initial version
 **          09/09/2022 mem - Fix typo in message
 **          06/20/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -32,7 +33,7 @@ BEGIN
     ---------------------------------------------------
 
     _datasetName := Trim(Coalesce(_datasetName, ''));
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly    := Coalesce(_infoOnly, false);
 
     If _datasetName = '' Then
         _message := 'Dataset name not defined';

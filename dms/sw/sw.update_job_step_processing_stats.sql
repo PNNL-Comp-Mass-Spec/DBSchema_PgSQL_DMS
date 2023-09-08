@@ -18,6 +18,7 @@ CREATE OR REPLACE PROCEDURE sw.update_job_step_processing_stats(IN _minimumtimei
 **  Auth:   mem
 **  Date:   11/23/2015
 **          08/14/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -43,9 +44,9 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------------
 
-    _minimumTimeIntervalMinutes := Coalesce(_minimumTimeIntervalMinutes, 0);
+    _minimumTimeIntervalMinutes                  := Coalesce(_minimumTimeIntervalMinutes, 0);
     _minimumTimeIntervalMinutesForIdenticalStats := Coalesce(_minimumTimeIntervalMinutesForIdenticalStats, 60);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly                                    := Coalesce(_infoOnly, false);
 
     _mostRecentPostingTime := Null;
 

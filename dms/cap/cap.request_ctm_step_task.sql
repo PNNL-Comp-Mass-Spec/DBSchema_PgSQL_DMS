@@ -107,6 +107,7 @@ CREATE OR REPLACE PROCEDURE cap.request_ctm_step_task(IN _processorname text, IN
 **          06/07/2023 mem - Renamed _infoOnly to _infoLevel and Ported to PostgreSQL
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          07/11/2023 mem - Use COUNT(TS.job) and COUNT(processor_name) instead of COUNT(*)
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -172,12 +173,11 @@ BEGIN
         -- Validate the inputs; clear the outputs
         ---------------------------------------------------
 
-        _processorName := Coalesce(_processorName, '');
-        _jobNumber := 0;
-        _message := '';
-        _infoLevel := Coalesce(_infoLevel, 0);
-        _managerVersion := Coalesce(_managerVersion, '');
-        _jobCountToPreview := Coalesce(_jobCountToPreview, 10);
+        _processorName            := Coalesce(_processorName, '');
+        _jobNumber                := 0;
+        _infoLevel                := Coalesce(_infoLevel, 0);
+        _managerVersion           := Coalesce(_managerVersion, '');
+        _jobCountToPreview        := Coalesce(_jobCountToPreview, 10);
         _serverPerspectiveEnabled := Coalesce(_serverPerspectiveEnabled, 0);
 
         If _jobCountToPreview > _candidateJobStepsToRetrieve Then

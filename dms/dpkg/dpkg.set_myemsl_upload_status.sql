@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE dpkg.set_myemsl_upload_status(IN _entryid integer, I
 **  Date:   09/25/2013 mem - Initial version
 **          05/20/2019 mem - Add Set XACT_ABORT
 **          08/16/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -36,10 +37,10 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _entryID := Coalesce(_entryID, 0);
+    _entryID       := Coalesce(_entryID, 0);
     _dataPackageID := Coalesce(_dataPackageID, 0);
-    _available := Coalesce(_available, 0);
-    _verified := Coalesce(_verified, 0);
+    _available     := Coalesce(_available, 0);
+    _verified      := Coalesce(_verified, 0);
 
     If _entryID <= 0 Then
         _message := '_entryID must be positive; unable to continue';

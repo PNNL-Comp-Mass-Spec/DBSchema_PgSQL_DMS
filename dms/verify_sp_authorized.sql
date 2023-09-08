@@ -59,6 +59,7 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **                         - Add back implicit string concatenation
 **                         - Rename variable
 **          06/12/2023 mem - Ignore prefix 'PNL\' when looking for the login name in t_sp_authorization
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -81,10 +82,10 @@ BEGIN
     ---------------------------------------------------
 
     _procedureName := Coalesce(_procedureName, '');
-    _logError := Coalesce(_logError, false);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _logError      := Coalesce(_logError, false);
+    _infoOnly      := Coalesce(_infoOnly, false);
 
-    _targetSchema := COALESCE(_targetSchema, '');
+    _targetSchema  := Trim(Coalesce(_targetSchema, ''));
 
     If char_length(_targetSchema) = 0 Then
         _targetSchema := 'public';

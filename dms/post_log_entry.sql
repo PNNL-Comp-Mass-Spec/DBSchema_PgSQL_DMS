@@ -40,6 +40,7 @@ CREATE OR REPLACE PROCEDURE public.post_log_entry(IN _type text, IN _message tex
 **          05/30/2023 mem - Use format() for string concatenation
 **                         - Add back implicit string concatenation
 **          07/11/2023 mem - Use COUNT(entry_id) instead of COUNT(*)
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -74,11 +75,11 @@ BEGIN
         _targetTableWithSchema := 'public.t_log_entries';
     End If;
 
-    _type := Coalesce(_type, 'Normal');
-    _message := Coalesce(_message, '');
-    _postedBy := Coalesce(_postedBy, 'na');
+    _type                       := Coalesce(_type, 'Normal');
+    _message                    := Coalesce(_message, '');
+    _postedBy                   := Coalesce(_postedBy, 'na');
     _duplicateEntryHoldoffHours := Coalesce(_duplicateEntryHoldoffHours, 0);
-    _ignoreErrors := Coalesce(_ignoreErrors, false);
+    _ignoreErrors               := Coalesce(_ignoreErrors, false);
 
     If _postedBy ILike 'Space%' And _type::citext In ('Health', 'Normal') Then
         -- Auto-update _duplicateEntryHoldoffHours to be 24 if it is zero

@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE sw.reset_job_and_shared_results(IN _job integer, IN 
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          05/12/2017 mem - Update Next_Try and Remote_Info_ID
 **          08/03/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -60,10 +61,10 @@ BEGIN
         -- Validate the inputs
         -----------------------------------------------------------
 
-        _job := Coalesce(_job, 0);
+        _job                    := Coalesce(_job, 0);
         _sharedResultFolderName := Trim(Coalesce(_sharedResultFolderName, ''));
-        _infoOnly := Coalesce(_infoOnly, false);
-        _resetJob := Coalesce(_resetJob, false);
+        _infoOnly               := Coalesce(_infoOnly, false);
+        _resetJob               := Coalesce(_resetJob, false);
 
         If _job = 0 Then
             _message := 'Job number not supplied';

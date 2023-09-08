@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE pc.add_output_file_archive_entry(IN _proteincollecti
 **          08/18/2023 mem - When checking for an existing row in pc.t_archived_output_files, use both _crc32Authentication and _collectionStringHash
 **                         - Update the file ID in _archivedFilePath even if an existing entry is found in T_Archived_Output_Files
 **                         - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -60,17 +61,17 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _proteinCollectionID := Coalesce(_proteinCollectionID, 0);
-    _crc32Authentication := Coalesce(_crc32Authentication, '');
+    _proteinCollectionID     := Coalesce(_proteinCollectionID, 0);
+    _crc32Authentication     := Coalesce(_crc32Authentication, '');
 
-    _fileSize := Coalesce(_fileSize, 0);
-    _proteinCount := Coalesce(_proteinCount, 0);
-    _archivedFileType := Coalesce(_archivedFileType, '');
-    _creationOptions := Coalesce(_creationOptions, '');
+    _fileSize                := Coalesce(_fileSize, 0);
+    _proteinCount            := Coalesce(_proteinCount, 0);
+    _archivedFileType        := Coalesce(_archivedFileType, '');
+    _creationOptions         := Coalesce(_creationOptions, '');
     _proteinCollectionString := Coalesce(_proteinCollectionString, '');
-    _collectionStringHash := Coalesce(_collectionStringHash, '');
-    _showDebug := Coalesce(_showDebug, false);
-    _archivedFilePath := Trim(Coalesce(_archivedFilePath, ''));
+    _collectionStringHash    := Coalesce(_collectionStringHash, '');
+    _showDebug               := Coalesce(_showDebug, false);
+    _archivedFilePath        := Trim(Coalesce(_archivedFilePath, ''));
 
     If _showDebug Then
         RAISE INFO '';

@@ -26,6 +26,7 @@ CREATE OR REPLACE FUNCTION public.get_wp_for_eus_proposal(_eusproposalid text) R
 **          10/14/2022 mem - Ported to PostgreSQL
 **          07/11/2023 mem - Use COUNT(RR.request_id) insted of COUNT(*)
 **          07/26/2023 mem - Move "Not" keyword to before the field name
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -40,9 +41,8 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _eusProposalID := Coalesce(_eusProposalID, '');
-
-    _workPackage := 'none';
+    _eusProposalID  := Coalesce(_eusProposalID, '');
+    _workPackage    := 'none';
     _monthsSearched := 0;
 
     -- This is an estimate to the number of months between today and January 1, 1900

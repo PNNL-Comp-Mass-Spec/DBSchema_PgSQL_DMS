@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE cap.make_new_tasks_from_dms(INOUT _message text DEFA
 **          08/01/2017 mem - Use THROW if not authorized
 **          06/27/2019 mem - Use get_dataset_capture_priority to determine capture capture task jobs priority using dataset name and instrument group
 **          06/20/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -74,10 +75,7 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _infoOnly := Coalesce(_infoOnly, false);
-
-        _message := '';
-
+        _infoOnly       := Coalesce(_infoOnly, false);
         _loggingEnabled := Coalesce(_loggingEnabled, false);
 
         If _loggingEnabled Then

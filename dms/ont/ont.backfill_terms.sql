@@ -38,6 +38,7 @@ CREATE OR REPLACE FUNCTION ont.backfill_terms(_sourcetable public.citext DEFAULT
 **          05/19/2023 mem - Remove redundant parentheses
 **          05/29/2023 mem - Use format() for string concatenation
 **          07/11/2023 mem - Use COUNT(term_pk) instead of COUNT(*)
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -54,8 +55,8 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _sourceTable := Coalesce(_sourceTable, '');
-    _infoOnly := Coalesce(_infoOnly, true);
+    _sourceTable                := Coalesce(_sourceTable, '');
+    _infoOnly                   := Coalesce(_infoOnly, true);
     _previewRelationshipUpdates := Coalesce(_previewRelationshipUpdates, true);
 
     ---------------------------------------------------

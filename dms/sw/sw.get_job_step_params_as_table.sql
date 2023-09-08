@@ -23,6 +23,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_step_params_as_table(_job integer, _step i
 **          01/05/2018 mem - Add parameters _section, _paramName, and _firstParameterValue
 **          02/12/2020 mem - Allow _section and _paramName to have wildcards
 **          06/08/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -32,7 +33,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _section := Trim(Coalesce(_section, ''));
+    _section   := Trim(Coalesce(_section, ''));
     _paramName := Trim(Coalesce(_paramName, ''));
 
     ---------------------------------------------------

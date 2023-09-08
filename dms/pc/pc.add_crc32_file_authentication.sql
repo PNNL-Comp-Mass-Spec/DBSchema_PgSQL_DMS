@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE pc.add_crc32_file_authentication(IN _collectionid in
 **  Date:   04/15/2005
 **          07/20/2015 mem - Added parameters _numProteins and _totalResidueCount
 **          08/18/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -34,8 +35,8 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _collectionID := Coalesce(_collectionID, 0);
-    _numProteins := Coalesce(_numProteins, 0);
+    _collectionID      := Coalesce(_collectionID, 0);
+    _numProteins       := Coalesce(_numProteins, 0);
     _totalResidueCount := Coalesce(_totalResidueCount, 0);
 
     If Not Exists (SELECT protein_collection_id FROM pc.t_protein_collections WHERE protein_collection_id = _collectionID) Then

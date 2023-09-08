@@ -41,6 +41,7 @@ CREATE OR REPLACE FUNCTION mc.unarchive_old_managers_and_params(_mgrlist text, _
 **          01/31/2023 mem - Use new column names in tables
 **          05/12/2023 mem - Rename variables
 **          05/30/2023 mem - Use format() for string concatenation
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -57,8 +58,8 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _mgrList := Coalesce(_mgrList, '');
-    _infoOnly := Coalesce(_infoOnly, true);
+    _mgrList                  := Coalesce(_mgrList, '');
+    _infoOnly                 := Coalesce(_infoOnly, true);
     _enableControlFromWebsite := Coalesce(_enableControlFromWebsite, true);
 
     CREATE TEMP TABLE Tmp_ManagerList (

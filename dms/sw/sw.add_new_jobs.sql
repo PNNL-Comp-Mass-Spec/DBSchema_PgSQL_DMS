@@ -88,6 +88,7 @@ CREATE OR REPLACE PROCEDURE sw.add_new_jobs(IN _bypassdms boolean DEFAULT false,
 **`         03/30/2018 mem - Add support for job step states 9=Running_Remote, 10=Holding_Staging, and 16=Failed_Remote
 **          07/25/2023 mem - Ported to PostgreSQL
 **          07/26/2023 mem - Move "Not" keyword to before the field name
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -119,16 +120,11 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _infoOnly  := Coalesce(_infoOnly, false);
-    _infoLevel := Coalesce(_infoLevel, 0);
-
-    _bypassDMS := Coalesce(_bypassDMS, false);
-    _debugMode := Coalesce(_debugMode, false);
-
+    _infoOnly         := Coalesce(_infoOnly, false);
+    _infoLevel        := Coalesce(_infoLevel, 0);
+    _bypassDMS        := Coalesce(_bypassDMS, false);
+    _debugMode        := Coalesce(_debugMode, false);
     _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
-
-    _message := '';
-    _returnCode := '';
 
     If _bypassDMS Then
         RETURN;
@@ -140,9 +136,9 @@ BEGIN
         _maxJobsToAddResetOrResume := _maxJobsToProcess;
     End If;
 
-    _startTime := CURRENT_TIMESTAMP;
-    _loggingEnabled := Coalesce(_loggingEnabled, false);
-    _logIntervalThreshold := Coalesce(_logIntervalThreshold, 15);
+    _startTime             := CURRENT_TIMESTAMP;
+    _loggingEnabled        := Coalesce(_loggingEnabled, false);
+    _logIntervalThreshold  := Coalesce(_logIntervalThreshold, 15);
     _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
 
     If _logIntervalThreshold = 0 Then

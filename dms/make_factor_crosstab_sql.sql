@@ -32,6 +32,7 @@ CREATE OR REPLACE FUNCTION public.make_factor_crosstab_sql(_collist text, _viewn
 **          10/19/2022 mem - Combined make_factor_crosstab_sql and make_factor_crosstab_sql_ex
 **          11/11/2022 mem - Exclude unnamed factors when querying T_Factor
 **          07/13/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -44,9 +45,9 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------
 
-    _colList := Trim(Coalesce(_colList, ''));
+    _colList  := Trim(Coalesce(_colList, ''));
     _viewName := Trim(Coalesce(_viewName, ''));
-    _sql := '';
+    _sql      := '';
 
     If Not Exists (SELECT * FROM Tmp_RequestIDs) Then
         RAISE WARNING 'Temporary table Tmp_RequestIDs is empty; nothing to do';

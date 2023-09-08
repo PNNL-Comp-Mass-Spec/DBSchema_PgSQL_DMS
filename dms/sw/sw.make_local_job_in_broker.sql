@@ -56,6 +56,7 @@ CREATE OR REPLACE PROCEDURE sw.make_local_job_in_broker(IN _scriptname text, IN 
 **          03/27/2022 mem - Require that data package ID is non-zero for DiaNN_DataPkg jobs
 **          07/28/2023 mem - Ported to PostgreSQL
 **          07/31/2023 mem - Remove processor column from Tmp_Job_Steps (it was typically null, but obsolete procedure sw.override_dta_gen_for_external_dta() set it to 'Internal')
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -84,13 +85,13 @@ BEGIN
 
         _currentLocation := 'Validate the inputs';
 
-        _scriptName := Trim(Coalesce(_scriptName, ''));
-        _datasetName := Trim(Coalesce(_datasetName, ''));
-        _priority := Coalesce(_priority, 3);
-        _comment := Coalesce(_comment, '');
-        _ownerUsername := Coalesce(_ownerUsername, session_user);
-        _dataPackageID := Coalesce(_dataPackageID, 0);
-        _debugMode := Coalesce(_debugMode, false);
+        _scriptName       := Trim(Coalesce(_scriptName, ''));
+        _datasetName      := Trim(Coalesce(_datasetName, ''));
+        _priority         := Coalesce(_priority, 3);
+        _comment          := Coalesce(_comment, '');
+        _ownerUsername    := Coalesce(_ownerUsername, session_user);
+        _dataPackageID    := Coalesce(_dataPackageID, 0);
+        _debugMode        := Coalesce(_debugMode, false);
         _logDebugMessages := Coalesce(_logDebugMessages, false);
 
         If _datasetName = '' Then

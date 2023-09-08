@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE cap.set_myemsl_upload_superseded_if_failed(IN _datas
 **          06/27/2023 mem - Update dataset_id validation to support multiple rows in T_MyEMSL_Uploads having the same status_num but different dataset IDs
 **                         - Store _ingestStepsCompleted in cap.t_myemsl_uploads if it is larger than the existing value
 **                         - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -69,8 +70,8 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _datasetID := Coalesce(_datasetID, 0);
-        _statusNumList := Trim(Coalesce(_statusNumList, ''));
+        _datasetID            := Coalesce(_datasetID, 0);
+        _statusNumList        := Trim(Coalesce(_statusNumList, ''));
         _ingestStepsCompleted := Coalesce(_ingestStepsCompleted, 0);
 
         If _datasetID <= 0 Then

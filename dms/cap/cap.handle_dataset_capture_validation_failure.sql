@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE cap.handle_dataset_capture_validation_failure(IN _da
 **          11/02/2020 mem - Fix bug validating the dataset name
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          06/17/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -39,8 +40,8 @@ BEGIN
     -- Validate the inputs
     ----------------------------------------
 
-    _datasetNameOrID := Coalesce(_datasetNameOrID, '');
-    _comment := Coalesce(_comment, '');
+    _datasetNameOrID := Trim(Coalesce(_datasetNameOrID, ''));
+    _comment         := Trim(Coalesce(_comment, ''));
 
     If _comment = '' Then
         _comment := 'Bad dataset';

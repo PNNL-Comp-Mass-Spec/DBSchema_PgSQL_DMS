@@ -20,6 +20,7 @@ CREATE OR REPLACE FUNCTION public.get_aux_info_target_table_info(_targettypename
 **  Auth:   mem
 **  Date:   11/29/2022 mem - Initial release
 **          03/22/2023 mem - Use lowercase strings in comparisons
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -40,9 +41,9 @@ BEGIN
     -- Resolve target name to target ID using the entity's data table, as defined in t_aux_info_target
     ---------------------------------------------------
 
-    SELECT lower(T.target_table),
-           lower(T.target_id_col),
-           lower(T.target_name_col)
+    SELECT Lower(T.target_table),
+           Lower(T.target_id_col),
+           Lower(T.target_name_col)
     INTO _tgtTableName, _tgtTableIDCol, _tgtTableNameCol
     FROM t_aux_info_target T
     WHERE T.target_type_name = _targetTypeName::citext;

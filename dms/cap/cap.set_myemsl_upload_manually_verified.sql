@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE cap.set_myemsl_upload_manually_verified(IN _job inte
 **  Date:   10/03/2013 mem - Initial version
 **          07/13/2017 mem - Pass both StatusNumList and StatusURIList to SetMyEMSLUploadVerified
 **          06/26/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -42,9 +43,9 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _job := Coalesce(_job, 0);
+    _job           := Coalesce(_job, 0);
     _statusNumList := Trim(Coalesce(_statusNumList, ''));
-    _infoOnly := Coalesce(_infoOnly, true);
+    _infoOnly      := Coalesce(_infoOnly, true);
 
     If _job <= 0 Then
         _message := '_job must be positive; unable to continue';

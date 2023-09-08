@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE public.add_datasets_to_predefined_scheduling_queue(I
 **  Auth:   mem
 **  Date:   03/31/2016 mem - Initial Version
 **          09/05/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -42,8 +43,8 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _datasetIDs := Coalesce(_datasetIDs, '');
-    _infoOnly := Coalesce(_infoOnly, false);
+    _datasetIDs  := Coalesce(_datasetIDs, '');
+    _infoOnly    := Coalesce(_infoOnly, false);
     _callingUser := Coalesce(_callingUser, '');
 
     If _callingUser = '' Then

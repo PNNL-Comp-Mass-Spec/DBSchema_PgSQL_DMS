@@ -18,6 +18,7 @@ CREATE OR REPLACE PROCEDURE sw.synchronize_job_stats_with_dms(IN _joblisttoproce
 **  Auth:   mem
 **  Date:   02/27/2010 mem - Initial version
 **          08/12/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -38,8 +39,9 @@ BEGIN
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
+
     _jobListToProcess := Coalesce(_jobListToProcess, '');
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly         := Coalesce(_infoOnly, false);
 
     _defaultDate := make_date(2000, 1, 1);
 

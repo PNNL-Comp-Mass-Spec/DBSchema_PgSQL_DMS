@@ -25,6 +25,7 @@ CREATE OR REPLACE FUNCTION cap.enable_disable_archive_step_tools(_enable boolean
 **          05/12/2023 mem - Rename variables
 **          05/29/2023 mem - Use format() for string concatenation
 **          09/01/2023 mem - Remove unnecessary cast to citext for string constants
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -38,9 +39,9 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------
 
-    _enable := Coalesce(_enable, false);
+    _enable         := Coalesce(_enable, false);
     _disableComment := Coalesce(_disableComment, '');
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly       := Coalesce(_infoOnly, false);
 
     If _enable Then
         _newState := 1;

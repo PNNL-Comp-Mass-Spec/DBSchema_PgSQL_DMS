@@ -155,6 +155,7 @@ CREATE OR REPLACE FUNCTION sw.add_update_job_parameter_xml(_xmlparameters xml, _
 **                         - Expand _value to varchar(4000)
 **          07/19/2023 mem - Ported to PostgreSQL
 **          07/28/2023 mem - Rename temporary table to avoid conflicts with calling procedures
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -170,11 +171,11 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _section := Coalesce(_section, '');
-    _paramName := Coalesce(_paramName, '');
-    _value := Coalesce(_value, '');
+    _section     := Coalesce(_section, '');
+    _paramName   := Coalesce(_paramName, '');
+    _value       := Coalesce(_value, '');
     _deleteParam := Coalesce(_deleteParam, false);
-    _showDebug := Coalesce(_showDebug, false);
+    _showDebug   := Coalesce(_showDebug, false);
 
     If _xmlParameters Is Null Then
         RAISE INFO 'Null value sent to _xmlParameters; initializing a new XML instance';

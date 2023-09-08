@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_archive_path(INOUT _archivepathid 
 **          05/11/2023 mem - Update return code
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -66,8 +67,8 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _instrumentName := Trim(Coalesce(_instrumentName, ''));
-    _archivePath := Trim(Coalesce(_archivePath, ''));
+    _instrumentName  := Trim(Coalesce(_instrumentName, ''));
+    _archivePath     := Trim(Coalesce(_archivePath, ''));
     _archiveFunction := Trim(Coalesce(_archiveFunction, ''));
 
     _mode := Trim(Lower(Coalesce(_mode, '')));

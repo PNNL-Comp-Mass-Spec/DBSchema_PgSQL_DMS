@@ -86,6 +86,7 @@ CREATE OR REPLACE PROCEDURE public.get_factor_crosstab_by_factor_id(IN _results 
 **  Date:   02/18/2010
 **          02/19/2010 grk - Tweaked logic that creates _factorNameList
 **          07/14/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -99,8 +100,8 @@ BEGIN
     -----------------------------------------
 
     _generateSQLOnly := Coalesce(_generateSQLOnly, false);
-    _crossTabSql := '';
-    _factorNameList := '';
+    _crossTabSql     := '';
+    _factorNameList  := '';
 
     If Not Exists (SELECT * FROM Tmp_FactorItems) Then
         _crossTabSql := 'SELECT type, target_id FROM t_factor WHERE 1 = 2';

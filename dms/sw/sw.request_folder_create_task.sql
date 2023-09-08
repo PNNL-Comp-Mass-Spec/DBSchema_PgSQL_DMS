@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE sw.request_folder_create_task(IN _processorname text
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          08/09/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -81,11 +82,10 @@ BEGIN
     -- Validate the inputs; clear the outputs
     ---------------------------------------------------
 
-    _processorName := Coalesce(_processorName, '');
-    _taskID := 0;
-    _parameters := '';
-
-    _infoOnly := Coalesce(_infoOnly, false);
+    _processorName      := Coalesce(_processorName, '');
+    _taskID             := 0;
+    _parameters         := '';
+    _infoOnly           := Coalesce(_infoOnly, false);
     _taskCountToPreview := Coalesce(_taskCountToPreview, 10);
 
     ---------------------------------------------------

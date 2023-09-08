@@ -17,6 +17,7 @@ CREATE OR REPLACE PROCEDURE cap.make_new_quameter_task(IN _datasetname text, IN 
 **  Auth:   mem
 **  Date:   02/22/2013 mem - Initial version
 **          06/20/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -31,7 +32,7 @@ BEGIN
     ---------------------------------------------------
 
     _datasetName := Trim(Coalesce(_datasetName, ''));
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly    := Coalesce(_infoOnly, false);
 
     If _datasetName = '' Then
         _message := 'Dataset name not defined';

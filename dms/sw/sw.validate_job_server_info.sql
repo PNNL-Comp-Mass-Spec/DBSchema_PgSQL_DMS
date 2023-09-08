@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE sw.validate_job_server_info(IN _job integer, IN _use
 **          03/24/2023 mem - Capitalize job parameter TransferFolderPath
 **          07/25/2023 mem - Ported to PostgreSQL
 **          08/02/2023 mem - Move the _message and _returnCode arguments to the end of the argument list
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -42,14 +43,14 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _job := Coalesce(_job, 0);
+    _job              := Coalesce(_job, 0);
     _useJobParameters := Coalesce(_useJobParameters, true);
 
-    _createdTempTable := false;
+    _createdTempTable   := false;
     _transferFolderPath := '';
-    _dataset := '';
-    _datasetFolderName := '';
-    _storageServerName := '';
+    _dataset            := '';
+    _datasetFolderName  := '';
+    _storageServerName  := '';
 
     If _useJobParameters Then
         ---------------------------------------------------

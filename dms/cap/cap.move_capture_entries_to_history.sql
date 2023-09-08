@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE cap.move_capture_entries_to_history(IN _intervaldays
 **          04/12/2023 mem - Use new table names
 **          05/13/2023 mem - Rename variables
 **          07/11/2023 mem - Use COUNT(job) and COUNT(entry_id) instead of COUNT(*)
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -44,8 +45,7 @@ BEGIN
     End If;
 
     _cutoffDateTime := CURRENT_TIMESTAMP - make_interval(days => _intervalDays);
-
-    _dateThreshold = public.timestamp_text(_cutoffDateTime);
+    _dateThreshold  := public.timestamp_text(_cutoffDateTime);
 
     ----------------------------------------------------------
     -- Copy Job_Events entries into historic log tables

@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE sw.update_job_param_org_db_info_using_data_pkg(IN _j
 **          03/27/2023 mem - Add support for DiaNN
 **          07/26/2023 mem - Ported to PostgreSQL
 **          07/27/2023 mem - Switch from using view V_Get_Pipeline_Job_Parameters to directly querying tables
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -57,7 +58,7 @@ BEGIN
     End If;
 
     _deleteIfInvalid := Coalesce(_deleteIfInvalid, false);
-    _debugMode := Coalesce(_debugMode, false);
+    _debugMode       := Coalesce(_debugMode, false);
 
     If _debugMode Then
         RAISE INFO '';

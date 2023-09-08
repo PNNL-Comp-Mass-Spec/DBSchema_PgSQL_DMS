@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE public.store_quameter_results(IN _datasetid integer 
 **          04/06/2016 mem - Now using Try_Convert to convert from text to int
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          06/28/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -124,7 +125,7 @@ BEGIN
     ---------------------------------------------------
 
     _datasetID := Coalesce(_datasetID, 0);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly  := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------
     -- Parse out the dataset name from _resultsXML

@@ -76,6 +76,7 @@ CREATE OR REPLACE PROCEDURE public.find_log_entry(IN _entryid text DEFAULT ''::t
 **          02/23/2023 bcg - Rename procedure and parameters to a case-insensitive match to postgres
 **          06/05/2023 mem - Add _maxRowCount and rename procedure arguments
 **                         - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -96,18 +97,18 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------
 
-    _entryIDValue := public.try_cast(_EntryID, null::int);
+    _entryIDValue        := public.try_cast(_EntryID, null::int);
 
-    _postedByWildcard := '%' || _PostedBy || '%';
+    _postedByWildcard    := '%' || _PostedBy || '%';
 
-    _earliestPostingTime := public.try_cast(_PostingTimeAfter, null::timestamp);
-    _latestPostingTime  := public.try_cast(_PostingTimeBefore, null::timestamp);
+    _earliestPostingTime := public.try_cast(_PostingTimeAfter,  null::timestamp);
+    _latestPostingTime   := public.try_cast(_PostingTimeBefore, null::timestamp);
 
-    _typeWildcard := '%' || _EntryType || '%';
+    _typeWildcard        := '%' || _EntryType || '%';
 
-    _messageWildcard := '%' || _MessageText || '%';
+    _messageWildcard     := '%' || _MessageText || '%';
 
-    _maxRowCount := Coalesce(_maxRowCount, 0);
+    _maxRowCount         := Coalesce(_maxRowCount, 0);
 
     ---------------------------------------------------
     -- Construct the query

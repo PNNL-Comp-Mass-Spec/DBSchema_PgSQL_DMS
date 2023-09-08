@@ -49,6 +49,7 @@ CREATE OR REPLACE PROCEDURE public.get_param_file_crosstab(IN _analysistoolname 
 **          05/19/2009 mem - Now returning column Job_Usage_Count
 **          02/12/2010 mem - Expanded _parameterFileFilter to varchar(255)
 **          07/17/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -61,17 +62,15 @@ BEGIN
     _returnCode := '';
 
     _paramFileInfoColumnList := '';
-
-    _sql := '';
-    _massModFilterSql := '';
-
-    _addWildcardChars := true;
+    _sql                     := '';
+    _massModFilterSql        := '';
+    _addWildcardChars        := true;
 
     -----------------------------------------------------------
     -- Validate the inputs
     -----------------------------------------------------------
 
-    _analysisToolName          := Coalesce(_analysisToolName, 'MSGFPlus_MzML');
+    _analysisToolName          := Trim(Coalesce(_analysisToolName, 'MSGFPlus_MzML'));
     _parameterFileFilter       := Coalesce(_parameterFileFilter, '');
     _showValidOnly             := Coalesce(_showValidOnly, 0);
     _showModSymbol             := Coalesce(_showModSymbol, 0);

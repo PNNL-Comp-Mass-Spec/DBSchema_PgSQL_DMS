@@ -29,6 +29,7 @@ CREATE OR REPLACE FUNCTION public.consolidate_log_messages(_messagetype text DEF
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **          05/25/2023 mem - Simplify call to RAISE WARNING
 **          07/11/2023 mem - Use COUNT(L.entry_id) instead of COUNT(*)
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -51,11 +52,11 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _messageType := Trim(Coalesce(_messageType, ''));
-    _messageFilter := Coalesce(_messageFilter, '');
-    _keepFirstMessageOnly := Coalesce(_keepFirstMessageOnly, false);
+    _messageType               := Trim(Coalesce(_messageType, ''));
+    _messageFilter             := Coalesce(_messageFilter, '');
+    _keepFirstMessageOnly      := Coalesce(_keepFirstMessageOnly, false);
     _changeErrorsToErrorIgnore := Coalesce(_changeErrorsToErrorIgnore, true);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly                  := Coalesce(_infoOnly, false);
 
     If char_length(_messageType) = 0 Then
         RAISE WARNING '_messageType cannot be empty';

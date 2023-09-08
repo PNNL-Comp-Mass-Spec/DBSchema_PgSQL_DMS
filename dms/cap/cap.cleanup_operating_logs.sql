@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE cap.cleanup_operating_logs(IN _infoholdoffweeks inte
 **          04/02/2023 mem - Rename procedure and functions
 **          05/12/2023 mem - Rename variables
 **          07/11/2023 mem - Use COUNT(entry_id) instead of COUNT(*)
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -56,8 +57,7 @@ BEGIN
     End If;
 
     _infoCutoffDateTime := CURRENT_TIMESTAMP - make_interval(weeks => _infoHoldoffWeeks);
-
-    _dateThreshold := public.timestamp_text(_infoCutoffDateTime);
+    _dateThreshold      := public.timestamp_text(_infoCutoffDateTime);
 
     ----------------------------------------------------
     -- Delete Info and Warn entries posted more than _infoHoldoffWeeks weeks ago

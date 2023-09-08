@@ -33,6 +33,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_bto_terms(_sourcetable public.citext DEFA
 **          05/28/2023 mem - Simplify string concatenation
 **          05/29/2023 mem - Use format() for string concatenation
 **          07/11/2023 mem - Use COUNT(s.entry_id) instead of COUNT(*)
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -46,8 +47,8 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _sourceTable := Coalesce(_sourceTable, '');
-    _infoOnly := Coalesce(_infoOnly, true);
+    _sourceTable         := Coalesce(_sourceTable, '');
+    _infoOnly            := Coalesce(_infoOnly, true);
     _previewDeleteExtras := Coalesce(_previewDeleteExtras, true);
 
     CREATE TEMP TABLE Tmp_CandidateTables AS

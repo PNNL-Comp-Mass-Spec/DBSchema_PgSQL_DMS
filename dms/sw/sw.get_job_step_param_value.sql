@@ -23,6 +23,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_step_param_value(_job integer, _step integ
 **  Auth:   mem
 **  Date:   03/09/2021 mem - Initial release
 **          06/08/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -32,7 +33,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _section := Trim(Coalesce(_section, ''));
+    _section   := Trim(Coalesce(_section, ''));
     _paramName := Trim(Coalesce(_paramName, ''));
 
     If _paramName= '' Then

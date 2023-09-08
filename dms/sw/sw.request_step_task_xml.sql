@@ -121,6 +121,7 @@ CREATE OR REPLACE PROCEDURE sw.request_step_task_xml(IN _processorname text, INO
 **          06/23/2023 mem - Add missing underscore to column Processor_ID
 **          07/11/2023 mem - Use COUNT(step) and COUNT(processor) instead of COUNT(*)
 **          08/08/2023 mem - Include the schema name when calling procedure get_remote_info_id
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -207,24 +208,22 @@ BEGIN
         -- Validate the inputs; clear the outputs
         ---------------------------------------------------
 
-        _processorName := Coalesce(_processorName, '');
-        _job := 0;
-        _parameters := '';
-        _message := '';
-        _returnCode := '';
-        _infoLevel := Coalesce(_infoLevel, 0);
+        _processorName          := Coalesce(_processorName, '');
+        _job                    := 0;
+        _parameters             := '';
+        _infoLevel              := Coalesce(_infoLevel, 0);
         _analysisManagerVersion := Coalesce(_analysisManagerVersion, '');
-        _remoteInfo := Coalesce(_remoteInfo, '');
-        _jobCountToPreview := Coalesce(_jobCountToPreview, 10);
+        _remoteInfo             := Coalesce(_remoteInfo, '');
+        _jobCountToPreview      := Coalesce(_jobCountToPreview, 10);
+
         If _jobCountToPreview <= 0 Then
             _jobCountToPreview := 10;
         End If;
 
-        _useBigBangQuery := Coalesce(_useBigBangQuery, true);
-
-        _throttleByStartTime := Coalesce(_throttleByStartTime, false);
-        _maxStepNumToThrottle := Coalesce(_maxStepNumToThrottle, 10);
-        _throttleAllStepTools := Coalesce(_throttleAllStepTools, false);
+        _useBigBangQuery        := Coalesce(_useBigBangQuery, true);
+        _throttleByStartTime    := Coalesce(_throttleByStartTime, false);
+        _maxStepNumToThrottle   := Coalesce(_maxStepNumToThrottle, 10);
+        _throttleAllStepTools   := Coalesce(_throttleAllStepTools, false);
 
         If _maxStepNumToThrottle < 1 Then
             _maxStepNumToThrottle := 1000000;

@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE public.set_spectral_library_create_task_complete(IN 
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -67,8 +68,8 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _libraryId = Coalesce(_libraryId, 0);
-        _completionCode = Coalesce(_completionCode, 0);
+        _libraryId      := Coalesce(_libraryId, 0);
+        _completionCode := Coalesce(_completionCode, 0);
 
          ---------------------------------------------------
         -- Lookup the current state of the library
@@ -81,7 +82,7 @@ BEGIN
         WHERE Library_ID = _libraryId;
 
         If Not FOUND Then
-            _message = format('Spectral library ID %s not found in T_Spectral_Library', _libraryId);
+            _message := format('Spectral library ID %s not found in T_Spectral_Library', _libraryId);
             CALL post_log_entry ('Error', _message, 'Set_Spectral_Library_Create_Task_Complete');
 
             _returnCode := 'U5201';
@@ -110,7 +111,7 @@ BEGIN
               Library_State_ID = 2;
 
         If Not FOUND Then
-            _message = format('Error setting the state for Spectral library ID %s to %s; no rows were updated',
+            _message := format('Error setting the state for Spectral library ID %s to %s; no rows were updated',
                                 _libraryId, _newLibraryState);
             CALL post_log_entry ('Error', _message, 'Set_Spectral_Library_Create_Task_Complete');
 

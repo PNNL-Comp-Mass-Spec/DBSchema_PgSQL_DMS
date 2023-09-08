@@ -95,6 +95,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_file_info_xml(IN _datasetid in
 **          04/24/2023 mem - Store DIA scan count values
 **          06/14/2023 mem - Ported to PostgreSQL
 **          07/11/2023 mem - Use COUNT(dataset_file_id) instead of COUNT(*)
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -160,8 +161,8 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _datasetID := Coalesce(_datasetID, 0);
-        _infoOnly := Coalesce(_infoOnly, false);
+        _datasetID           := Coalesce(_datasetID, 0);
+        _infoOnly            := Coalesce(_infoOnly, false);
         _validateDatasetType := Coalesce(_validateDatasetType, true);
 
         ---------------------------------------------------

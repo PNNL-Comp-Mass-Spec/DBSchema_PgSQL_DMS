@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE public.update_bionet_host_status_from_list(IN _hostn
 **          03/17/2017 mem - Pass this procedure's name to Parse_Delimited_List
 **          05/09/2023 mem - Add arguments _message and _returnCode
 **                     mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -48,9 +49,9 @@ BEGIN
         -- Validate the inputs
         -----------------------------------------
 
-        _hostNames := Coalesce(_hostNames, '');
+        _hostNames       := Coalesce(_hostNames, '');
         _addMissingHosts := Coalesce(_addMissingHosts, false);
-        _infoOnly := Coalesce(_infoOnly, false);
+        _infoOnly        := Coalesce(_infoOnly, false);
 
         -----------------------------------------
         -- Create a temporary table

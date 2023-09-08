@@ -23,6 +23,7 @@ CREATE OR REPLACE FUNCTION cap.enable_disable_ctm_step_tool_for_debugging(_tool 
 **          04/02/2023 mem - Rename procedure and functions
 **          05/12/2023 mem - Rename variables
 **          05/22/2023 mem - Use format() for string concatenation
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -34,9 +35,9 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _tool := Coalesce(_tool, '');
+    _tool      := Coalesce(_tool, '');
     _debugMode := Coalesce(_debugMode, false);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly  := Coalesce(_infoOnly, false);
 
     If Not Exists (SELECT * FROM cap.t_processor_tool T WHERE T.tool_name = _tool) Then
         RAISE INFO 'Tool not found: "%"; cannot continue', _tool;

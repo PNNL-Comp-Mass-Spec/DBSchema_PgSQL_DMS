@@ -60,6 +60,7 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          06/19/2023 mem - Set _organismDbFile to 'na' when _proteinCollectionList is defined; otherwise, set _proteinCollectionList to 'na' when _organismDbFile is defined
 **                         - Set _returnCode to 'U5225' if an existing spectral library is not found, and _allowAddNew is false
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -117,27 +118,27 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _allowAddNew := Coalesce(_allowAddNew, false);
-        _dmsSourceJob := Coalesce(_dmsSourceJob, 0);
+        _allowAddNew              := Coalesce(_allowAddNew, false);
+        _dmsSourceJob             := Coalesce(_dmsSourceJob, 0);
 
-        _proteinCollectionList := Trim(Coalesce(_proteinCollectionList, ''));
-        _organismDbFile := Trim(Coalesce(_organismDbFile, ''));
-        _fragmentIonMzMin := Coalesce(_fragmentIonMzMin, 0);
-        _fragmentIonMzMax := Coalesce(_fragmentIonMzMax, 0);
-        _trimNTerminalMet := Coalesce(_trimNTerminalMet, false);
-        _cleavageSpecificity := Trim(Coalesce(_cleavageSpecificity, ''));
-        _missedCleavages := Coalesce(_missedCleavages, 0);
-        _peptideLengthMin := Coalesce(_peptideLengthMin, 0);
-        _peptideLengthMax := Coalesce(_peptideLengthMax, 0);
-        _precursorMzMin := Coalesce(_precursorMzMin, 0);
-        _precursorMzMax := Coalesce(_precursorMzMax, 0);
-        _precursorChargeMin := Coalesce(_precursorChargeMin, 0);
-        _precursorChargeMax := Coalesce(_precursorChargeMax, 0);
+        _proteinCollectionList    := Trim(Coalesce(_proteinCollectionList, ''));
+        _organismDbFile           := Trim(Coalesce(_organismDbFile, ''));
+        _fragmentIonMzMin         := Coalesce(_fragmentIonMzMin, 0);
+        _fragmentIonMzMax         := Coalesce(_fragmentIonMzMax, 0);
+        _trimNTerminalMet         := Coalesce(_trimNTerminalMet, false);
+        _cleavageSpecificity      := Trim(Coalesce(_cleavageSpecificity, ''));
+        _missedCleavages          := Coalesce(_missedCleavages, 0);
+        _peptideLengthMin         := Coalesce(_peptideLengthMin, 0);
+        _peptideLengthMax         := Coalesce(_peptideLengthMax, 0);
+        _precursorMzMin           := Coalesce(_precursorMzMin, 0);
+        _precursorMzMax           := Coalesce(_precursorMzMax, 0);
+        _precursorChargeMin       := Coalesce(_precursorChargeMin, 0);
+        _precursorChargeMax       := Coalesce(_precursorChargeMax, 0);
         _staticCysCarbamidomethyl := Coalesce(_staticCysCarbamidomethyl, false);
-        _staticMods := Trim(Coalesce(_staticMods, ''));
-        _dynamicMods := Trim(Coalesce(_dynamicMods, ''));
-        _maxDynamicMods := Coalesce(_maxDynamicMods, 0);
-        _infoOnly := Coalesce(_infoOnly, false);
+        _staticMods               := Trim(Coalesce(_staticMods, ''));
+        _dynamicMods              := Trim(Coalesce(_dynamicMods, ''));
+        _maxDynamicMods           := Coalesce(_maxDynamicMods, 0);
+        _infoOnly                 := Coalesce(_infoOnly, false);
 
         _libraryId := 0;
         _libraryStateId := 0;

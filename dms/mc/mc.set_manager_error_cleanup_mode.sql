@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text D
 **          05/30/2023 mem - Use format() for string concatenation
 **          06/24/2023 mem - Use check_plural() to customize preview message
 **          08/07/2023 mem - Display a blank line before additional status messages
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -66,10 +67,10 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _mgrList := Coalesce(_mgrList, '');
+    _mgrList     := Coalesce(_mgrList, '');
     _cleanupMode := Coalesce(_cleanupMode, 1);
-    _showTable := Coalesce(_showTable, true);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _showTable   := Coalesce(_showTable, true);
+    _infoOnly    := Coalesce(_infoOnly, false);
 
     If _cleanupMode < 0 Then
         _cleanupMode := 0;

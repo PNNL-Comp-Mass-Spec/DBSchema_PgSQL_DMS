@@ -134,6 +134,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **          07/27/2023 mem - Use "Not Found" to determine if a parameter file does not exist
 **                         - Remove unused variables
 **                         - Move Drop Tables commands to outside the for loop; you cannot drop a table being used by a for loop
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -184,11 +185,11 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------
 
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly        := Coalesce(_infoOnly, false);
     _replaceExisting := Coalesce(_replaceExisting, false);
-    _validateUnimod := Coalesce(_validateUnimod, true);
+    _validateUnimod  := Coalesce(_validateUnimod, true);
 
-    _paramFileType := Trim(Coalesce(_paramFileType, ''));
+    _paramFileType   := Trim(Coalesce(_paramFileType, ''));
 
     If _paramFileID Is Null Then
         _message := 'The Parameter file ID must be defined; unable to continue';

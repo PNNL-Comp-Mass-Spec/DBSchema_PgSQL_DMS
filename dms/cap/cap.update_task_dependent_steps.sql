@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE cap.update_task_dependent_steps(INOUT _message text 
 **          03/10/2015 mem - Now updating t_task_steps.Dependencies if the dependency count listed is lower than that defined in t_task_step_dependencies
 **          06/20/2023 mem - Ported to PostgreSQL
 **          07/11/2023 mem - Use COUNT(job) instead of COUNT(*)
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -56,10 +57,10 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _infoOnly := Coalesce(_infoOnly, false);
-    _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
-
+    _infoOnly              := Coalesce(_infoOnly, false);
+    _maxJobsToProcess      := Coalesce(_maxJobsToProcess, 0);
     _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
+
     If _loopingUpdateInterval < 2 Then
         _loopingUpdateInterval := 2;
     End If;

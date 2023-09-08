@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE cap.make_new_tasks_from_analysis_broker(IN _infoonly
 **          01/30/2017 mem - Switch from DateDiff to DateAdd
 **          06/19/2023 mem - Ported to PostgreSQL
 **          06/20/2023 mem - Fix typo in argument name
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -104,21 +105,20 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _infoOnly := Coalesce(_infoOnly, false);
-    _message := '';
-    _returnCode := '';
-
+    _infoOnly         := Coalesce(_infoOnly, false);
     _importWindowDays := Abs(Coalesce(_importWindowDays, 10));
+
     If _importWindowDays < 1 Then
         _importWindowDays := 1;
     End If;
 
-    _bypassDatasetArchive := Coalesce(_bypassDatasetArchive, true);
-    _datasetIDFilterMin := Coalesce(_datasetIDFilterMin, 0);
-    _datasetIDFilterMax := Coalesce(_datasetIDFilterMax, 0);
+    _bypassDatasetArchive     := Coalesce(_bypassDatasetArchive, true);
+    _datasetIDFilterMin       := Coalesce(_datasetIDFilterMin, 0);
+    _datasetIDFilterMax       := Coalesce(_datasetIDFilterMax, 0);
     _infoOnlyShowsNewJobsOnly := Coalesce(_infoOnlyShowsNewJobsOnly, false);
 
     _timeWindowToRequireExistingDatasetArchiveJob := Coalesce(_timeWindowToRequireExistingDatasetArchiveJob, 30);
+
     If _timeWindowToRequireExistingDatasetArchiveJob < 1 Then
         _timeWindowToRequireExistingDatasetArchiveJob := 1;
     End If;

@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable boole
 **          05/25/2023 mem - Simplify calls to RAISE INFO
 **          05/30/2023 mem - Use format() for string concatenation
 **          07/11/2023 mem - Use COUNT(PV.entry_id) instead of COUNT(*)
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -72,8 +73,8 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------
 
-    _managerNameList := Coalesce(_managerNameList, '');
-    _infoOnly := Coalesce(_infoOnly, false);
+    _managerNameList       := Coalesce(_managerNameList, '');
+    _infoOnly              := Coalesce(_infoOnly, false);
     _addMgrParamsIfMissing := Coalesce(_addMgrParamsIfMissing, false);
 
     If _enable Is Null Then

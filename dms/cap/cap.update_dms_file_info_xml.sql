@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE cap.update_dms_file_info_xml(IN _datasetid integer, 
 **          06/13/2018 mem - Add comment regarding duplicate datasets
 **          08/09/2018 mem - Set Ignore to true when the return code from public.update_dataset_file_info_xml is 53600 (aka 'U5360')
 **          06/14/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -45,7 +46,7 @@ BEGIN
     --------------------------------------------
 
     _deleteFromTableOnSuccess := Coalesce(_deleteFromTableOnSuccess, true);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly                 := Coalesce(_infoOnly, false);
 
     SELECT ds_info_xml
     INTO _datasetInfoXML

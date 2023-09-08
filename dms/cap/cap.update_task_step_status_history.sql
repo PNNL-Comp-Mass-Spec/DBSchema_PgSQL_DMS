@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE cap.update_task_step_status_history(IN _minimumtimei
 **  Date:   02/05/2016 mem - Initial version (copied from the DMS_Pipeline DB)
 **          06/29/2023 mem - Ported to PostgreSQL
 **          07/11/2023 mem - Use COUNT(job) instead of COUNT(*)
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -48,10 +49,7 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------------
 
-    _message := '';
-    _returnCode := '';
-    _infoOnly := Coalesce(_infoOnly, false);
-
+    _infoOnly              := Coalesce(_infoOnly, false);
     _mostRecentPostingTime := Null;
 
     -----------------------------------------------------

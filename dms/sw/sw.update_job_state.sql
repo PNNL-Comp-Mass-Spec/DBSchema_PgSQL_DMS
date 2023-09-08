@@ -98,6 +98,7 @@ CREATE OR REPLACE PROCEDURE sw.update_job_state(IN _bypassdms boolean DEFAULT fa
 **          06/12/2018 mem - Send _maxLength to append_to_text
 **          03/12/2021 mem - Expand _comment to varchar(1024)
 **          08/03/2023 mem - Ported to PostgreSQL
+**                         - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -132,17 +133,15 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _bypassDMS := Coalesce(_bypassDMS, false);
-    _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
-
-    _startTime := CURRENT_TIMESTAMP;
+    _bypassDMS             := Coalesce(_bypassDMS, false);
+    _maxJobsToProcess      := Coalesce(_maxJobsToProcess, 0);
+    _startTime             := CURRENT_TIMESTAMP;
     _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
+    _infoOnly              := Coalesce(_infoOnly, false);
 
     If _loopingUpdateInterval < 2 Then
         _loopingUpdateInterval := 2;
     End If;
-
-    _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------
     -- Temp table to hold state changes

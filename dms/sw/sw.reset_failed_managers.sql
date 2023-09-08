@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE sw.reset_failed_managers(IN _infoonly boolean DEFAUL
 **  Date:   12/02/2014 mem - Initial version
 **          03/29/2019 mem - Add parameter _resetAllWithError
 **          08/07/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -35,7 +36,7 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------------------
 
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly          := Coalesce(_infoOnly, false);
     _resetAllWithError := Coalesce(_resetAllWithError, false);
 
     -- Temp table for managers

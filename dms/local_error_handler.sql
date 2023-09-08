@@ -50,6 +50,7 @@ CREATE OR REPLACE FUNCTION public.local_error_handler(_sqlstate text, _exception
 **          05/31/2023 mem - Use format() for string concatenation
 **          07/26/2023 mem - Move "Not" keyword to before the field name
 **          09/01/2023 mem - Remove unnecessary cast to citext for string constants
+**          09/07/2023 mem - Align assignment statements
 **
 ****************************************************/
 DECLARE
@@ -62,15 +63,15 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------
 
-    _sqlState            := Coalesce(_sqlState, '');
-    _exceptionMessage    := Coalesce(_exceptionMessage, '');
-    _exceptionDetail     := Coalesce(_exceptionDetail, '');
-    _exceptionContext    := Coalesce(_exceptionContext, '');
-    _callingProcLocation := Trim(Coalesce(_callingProcLocation, ''));
-    _callingProcName     := Trim(Coalesce(_callingProcName, ''));
-    _callingProcSchema   := Trim(Coalesce(_callingProcSchema, ''));
-    _logError            := Coalesce(_logError, false);
-    _displayError        := Coalesce(_displayError, false);
+    _sqlState                   := Coalesce(_sqlState, '');
+    _exceptionMessage           := Coalesce(_exceptionMessage, '');
+    _exceptionDetail            := Coalesce(_exceptionDetail, '');
+    _exceptionContext           := Coalesce(_exceptionContext, '');
+    _callingProcLocation        := Trim(Coalesce(_callingProcLocation, ''));
+    _callingProcName            := Trim(Coalesce(_callingProcName, ''));
+    _callingProcSchema          := Trim(Coalesce(_callingProcSchema, ''));
+    _logError                   := Coalesce(_logError, false);
+    _displayError               := Coalesce(_displayError, false);
     _duplicateEntryHoldoffHours := Coalesce(_duplicateEntryHoldoffHours, 0);
 
     If (_callingProcName = '' Or

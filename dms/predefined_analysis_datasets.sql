@@ -36,6 +36,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_datasets(_ruleid integer, 
 **          05/26/2023 mem - Ported to PostgreSQL
 **          05/30/2023 mem - Use format() for string concatenation
 **          07/11/2023 mem - Use COUNT(id) instead of COUNT(*)
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -51,36 +52,35 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _ruleID := Coalesce(_ruleID, 0);
-    _infoOnly := Coalesce(_infoOnly, false);
-    _previewSql := Coalesce(_previewSql, false);
+    _ruleID            := Coalesce(_ruleID, 0);
+    _infoOnly          := Coalesce(_infoOnly, false);
+    _previewSql        := Coalesce(_previewSql, false);
     _populateTempTable := Coalesce(_populateTempTable, false);
 
     If _populateTempTable And Not _previewSql Then
         DROP TABLE IF EXISTS T_Tmp_PredefinedAnalysisDatasets;
     End If;
 
-    SELECT
-        Coalesce(instrument_class_criteria, '') AS InstrumentClassCriteria,
-        Coalesce(campaign_name_criteria, '') AS CampaignNameCriteria,
-        Coalesce(experiment_name_criteria, '') AS ExperimentNameCriteria,
-        Coalesce(instrument_name_criteria, '') AS InstrumentNameCriteria,
-        Coalesce(instrument_excl_criteria, '') AS InstrumentExclCriteria,
-        Coalesce(organism_name_criteria, '') AS OrganismNameCriteria,
-        Coalesce(labelling_incl_criteria, '') AS LabellingInclCriteria,
-        Coalesce(labelling_excl_criteria, '') AS LabellingExclCriteria,
-        Coalesce(dataset_name_criteria, '') AS DatasetNameCriteria,
-        Coalesce(dataset_type_criteria, '') AS DatasetTypeCriteria,
-        Coalesce(exp_comment_criteria, '') AS ExpCommentCriteria,
-        Coalesce(separation_type_criteria, '') AS SeparationTypeCriteria,
-        Coalesce(campaign_excl_criteria, '') AS CampaignExclCriteria,
-        Coalesce(experiment_excl_criteria, '') AS ExperimentExclCriteria,
-        Coalesce(dataset_excl_criteria, '') AS DatasetExclCriteria,
-        Coalesce(analysis_tool_name, '') AS AnalysisToolName,
-        Coalesce(param_file_name, '') AS ParamFileName,
-        Coalesce(settings_file_name, '') AS SettingsFileName,
-        Coalesce(protein_collection_list, '') AS ProteinCollectionList,
-        Coalesce(organism_db_name, '') AS OrganismDBName
+    SELECT Coalesce(instrument_class_criteria, '') AS InstrumentClassCriteria,
+           Coalesce(campaign_name_criteria,    '') AS CampaignNameCriteria,
+           Coalesce(experiment_name_criteria,  '') AS ExperimentNameCriteria,
+           Coalesce(instrument_name_criteria,  '') AS InstrumentNameCriteria,
+           Coalesce(instrument_excl_criteria,  '') AS InstrumentExclCriteria,
+           Coalesce(organism_name_criteria,    '') AS OrganismNameCriteria,
+           Coalesce(labelling_incl_criteria,   '') AS LabellingInclCriteria,
+           Coalesce(labelling_excl_criteria,   '') AS LabellingExclCriteria,
+           Coalesce(dataset_name_criteria,     '') AS DatasetNameCriteria,
+           Coalesce(dataset_type_criteria,     '') AS DatasetTypeCriteria,
+           Coalesce(exp_comment_criteria,      '') AS ExpCommentCriteria,
+           Coalesce(separation_type_criteria,  '') AS SeparationTypeCriteria,
+           Coalesce(campaign_excl_criteria,    '') AS CampaignExclCriteria,
+           Coalesce(experiment_excl_criteria,  '') AS ExperimentExclCriteria,
+           Coalesce(dataset_excl_criteria,     '') AS DatasetExclCriteria,
+           Coalesce(analysis_tool_name,        '') AS AnalysisToolName,
+           Coalesce(param_file_name,           '') AS ParamFileName,
+           Coalesce(settings_file_name,        '') AS SettingsFileName,
+           Coalesce(protein_collection_list,   '') AS ProteinCollectionList,
+           Coalesce(organism_db_name,          '') AS OrganismDBName
     INTO _predefineInfo
     FROM t_predefined_analysis
     WHERE predefine_id = _ruleID;

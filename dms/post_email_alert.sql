@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE public.post_email_alert(IN _type text, IN _message t
 **          08/26/2022 mem - Fix bug subtracting _duplicateEntryHoldoffHours from the current date/time
 **          06/14/2023 mem - Ported to PostgreSQL
 **          07/11/2023 mem - Use COUNT(email_alert_id) instead of COUNT(*)
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -33,11 +34,11 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _type := Trim(Coalesce(_type, 'Error'));
-    _message := Trim(Coalesce(_message, ''));
-    _postedBy := Trim(Coalesce(_postedBy, 'Unknown'));
-    _recipients := Trim(Coalesce(_recipients, ''));
-    _postMessageToLogEntries := Coalesce(_postMessageToLogEntries, true);
+    _type                       := Trim(Coalesce(_type, 'Error'));
+    _message                    := Trim(Coalesce(_message, ''));
+    _postedBy                   := Trim(Coalesce(_postedBy, 'Unknown'));
+    _recipients                 := Trim(Coalesce(_recipients, ''));
+    _postMessageToLogEntries    := Coalesce(_postMessageToLogEntries, true);
     _duplicateEntryHoldoffHours := Coalesce(_duplicateEntryHoldoffHours, 0);
 
     If Coalesce(_duplicateEntryHoldoffHours, 0) > 0 Then

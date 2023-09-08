@@ -20,6 +20,7 @@ CREATE OR REPLACE FUNCTION sw.enable_disable_step_tool_for_debugging(_tool text 
 **          09/01/2017 mem - Implement functionality of _infoOnly
 **          08/26/2021 mem - Auto-change _groupName to the default value if an empty string
 **          06/09/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -32,10 +33,10 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _tool := Coalesce(_tool, '');
+    _tool      := Trim(Coalesce(_tool, ''));
+    _groupName := Trim(Coalesce(_groupName, ''));
     _debugMode := Coalesce(_debugMode, false);
-    _groupName := Coalesce(_groupName, '');
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly  := Coalesce(_infoOnly, false);
 
     If _groupName = '' Then
         _groupName := 'Monroe Development Box';

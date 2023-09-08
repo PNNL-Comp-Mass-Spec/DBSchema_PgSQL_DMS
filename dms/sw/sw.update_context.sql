@@ -43,6 +43,7 @@ CREATE OR REPLACE PROCEDURE sw.update_context(IN _bypassdms boolean DEFAULT fals
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          03/30/2018 mem - Update comments
 **          08/03/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -68,16 +69,16 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _bypassDMS := Coalesce(_bypassDMS, false);
-        _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
+        _bypassDMS             := Coalesce(_bypassDMS, false);
+        _maxJobsToProcess      := Coalesce(_maxJobsToProcess, 0);
 
-        _logIntervalThreshold := Coalesce(_logIntervalThreshold, 15);
-        _loggingEnabled := Coalesce(_loggingEnabled, false);
+        _logIntervalThreshold  := Coalesce(_logIntervalThreshold, 15);
+        _loggingEnabled        := Coalesce(_loggingEnabled, false);
         _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
 
-        _infoOnly := Coalesce(_infoOnly, false);
-        _infoLevel := Coalesce(_infoLevel, 0);
-        _debugMode := Coalesce(_debugMode, false);
+        _infoOnly              := Coalesce(_infoOnly, false);
+        _infoLevel             := Coalesce(_infoLevel, 0);
+        _debugMode             := Coalesce(_debugMode, false);
 
         If _logIntervalThreshold = 0 Then
             _loggingEnabled := true;

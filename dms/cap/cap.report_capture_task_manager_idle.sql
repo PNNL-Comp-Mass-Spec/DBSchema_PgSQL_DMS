@@ -18,6 +18,7 @@ CREATE OR REPLACE PROCEDURE cap.report_capture_task_manager_idle(IN _managername
 **  Date:   08/01/2017 mem - Initial release
 **          01/31/2020 mem - Add _returnCode, which duplicates the integer returned by this procedure; _returnCode is varchar for compatibility with Postgres error codes
 **          06/22/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -68,7 +69,7 @@ BEGIN
         ---------------------------------------------------
 
         _managerName := Trim(Coalesce(_managerName, ''));
-        _infoOnly := Coalesce(_infoOnly, false);
+        _infoOnly    := Coalesce(_infoOnly, false);
 
         If _managerName = '' Then
             _message := 'Manager name cannot be empty';

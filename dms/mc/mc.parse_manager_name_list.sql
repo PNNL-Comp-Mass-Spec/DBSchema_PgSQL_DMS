@@ -29,6 +29,7 @@ CREATE OR REPLACE FUNCTION mc.parse_manager_name_list(_manager_name_list text DE
 **          08/22/2022 mem - Change column manager_name to citext in the returned table
 **          05/22/2023 mem - Capitalize reserved word
 **          05/30/2023 mem - Use format() for string concatenation
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -45,7 +46,7 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------
 
-    _manager_name_list := Coalesce(_manager_name_list, '');
+    _manager_name_list       := Coalesce(_manager_name_list, '');
     _remove_unknown_managers := Coalesce(_remove_unknown_managers, 1);
 
     If char_length(_manager_name_list) = 0 Then

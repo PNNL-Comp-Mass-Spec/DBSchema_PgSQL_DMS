@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE public.alter_event_log_entry_user_multi_id(IN _event
 **          11/10/2022 mem - Change _applyTimeFilter, _infoOnly, and _previewSql to booleans
 **                         - Remove unused variables and use clock_timestamp()
 **          05/22/2023 mem - Capitalize reserved word
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -56,16 +57,17 @@ BEGIN
     -- Validate the inputs
     ------------------------------------------------
 
-    _eventLogSchema := COALESCE(_eventLogSchema, '');
+    _eventLogSchema := Trim(Coalesce(_eventLogSchema, ''));
+
     If (char_length(_eventLogSchema) = 0) Then
         _eventLogSchema := 'public';
     End If;
 
-    _newUser := Coalesce(_newUser, '');
-    _applyTimeFilter := Coalesce(_applyTimeFilter, false);
+    _newUser                := Coalesce(_newUser, '');
+    _applyTimeFilter        := Coalesce(_applyTimeFilter, false);
     _entryTimeWindowSeconds := Coalesce(_entryTimeWindowSeconds, 15);
-    _infoOnly := Coalesce(_infoOnly, false);
-    _previewSql := Coalesce(_previewSql, false);
+    _infoOnly               := Coalesce(_infoOnly, false);
+    _previewSql             := Coalesce(_previewSql, false);
 
     If _targetType Is Null Or _targetState Is Null Then
         _message := '_targetType and _targetState must be defined; unable to continue';

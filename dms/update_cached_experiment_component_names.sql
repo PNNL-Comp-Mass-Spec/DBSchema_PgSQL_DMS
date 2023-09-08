@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_experiment_component_names(IN _
 **          11/26/2022 mem - Rename parameter to _biomaterialList
 **          07/21/2023 mem - Ported to PostgreSQL
 **          07/23/2023 mem - Use new alias names for tables
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -42,7 +43,7 @@ BEGIN
     -- Validate the inputs
     ------------------------------------------------
 
-    _expID := Coalesce(_expID, 0);
+    _expID    := Coalesce(_expID, 0);
     _infoOnly := Coalesce(_infoOnly, false);
 
     If _expID > 0 Then

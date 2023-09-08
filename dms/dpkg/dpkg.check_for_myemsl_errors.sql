@@ -19,6 +19,7 @@ CREATE OR REPLACE PROCEDURE dpkg.check_for_myemsl_errors(IN _mostrecentdays inte
 **  Auth:   mem
 **  Date:   12/10/2013 mem - Initial version
 **          08/15/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -39,14 +40,14 @@ BEGIN
     -----------------------------------------------
 
     _mostRecentDays := Coalesce(_mostRecentDays, 0);
-    _logErrors := Coalesce(_logErrors, true);
+    _logErrors      := Coalesce(_logErrors, true);
 
     If _mostRecentDays > 0 Then
-        _endDate := CURRENT_TIMESTAMP;
+        _endDate   := CURRENT_TIMESTAMP;
         _startDate := _endDate + make_interval(days => -Abs(_mostRecentDays));
     Else
-        _startDate := Coalesce(_startDate, current_timestamp + make_interval(days => -Abs(2)));
-        _endDate := Coalesce(_endDate, CURRENT_TIMESTAMP);
+        _startDate := Coalesce(_startDate, CURRENT_TIMESTAMP + make_interval(days => -Abs(2)));
+        _endDate   := Coalesce(_endDate,   CURRENT_TIMESTAMP);
     End If;
 
     -----------------------------------------------

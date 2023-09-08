@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE sw.lookup_source_job_from_special_processing_text(IN
 **                         - Update comments to use Param_File
 **                         - Ported to PostgreSQL
 **          08/01/2023 mem - Update _returnCode if an exception is caught
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -67,14 +68,18 @@ BEGIN
     ------------------------------------------------
 
     _specialProcessingText := Coalesce(_specialProcessingText, '');
-    _tagName := Coalesce(_tagName, 'SourceJob');
-    _previewSql := Coalesce(_previewSql, false);
+    _tagName               := Coalesce(_tagName, 'SourceJob');
+    _previewSql            := Coalesce(_previewSql, false);
 
-    _sourceJob := 0;
-    _autoQueryUsed := false;
+    ------------------------------------------------
+    -- Initialize the outputs
+    ------------------------------------------------
+
+    _sourceJob      := 0;
+    _autoQueryUsed  := false;
     _warningMessage := '';
-    _returnCode := '';
-    _autoQuerySql := '';
+    _returnCode     := '';
+    _autoQuerySql   := '';
 
     BEGIN
         If Not _tagName Like '%:' Then

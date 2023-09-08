@@ -32,6 +32,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_terms(_ontologyname public.citext DEFAULT
 **                         - Reduce nesting
 **          05/30/2023 mem - Use format() for string concatenation
 **          09/01/2023 mem - Remove unnecessary cast to citext for string constants
+**          09/07/2023 mem - Align assignment statements
 ***
 *****************************************************/
 DECLARE
@@ -55,8 +56,8 @@ BEGIN
     ---------------------------------------------------
 
     _ontologyName := Coalesce(_ontologyName, '');
-    _infoOnly := Coalesce(_infoOnly, false);
-    _previewsql := Coalesce(_previewSql, false);
+    _infoOnly     := Coalesce(_infoOnly, false);
+    _previewsql   := Coalesce(_previewSql, false);
 
     ---------------------------------------------------
     -- Ontology PSI is superseded by PSI_MS

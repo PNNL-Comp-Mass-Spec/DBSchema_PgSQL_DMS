@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE dpkg.regenerate_data_package_folder_name(IN _datapkg
 **          06/26/2009 mem - Now also updating the wiki page (if parameter _updateWikiLink is true)
 **          10/23/2009 mem - Expanded _currentDataPackageWiki and _newDataPackageWiki to varchar(1024)
 **          08/15/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -39,7 +40,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _infoOnly := Coalesce(_infoOnly, true);
+    _infoOnly       := Coalesce(_infoOnly, true);
     _updateWikiLink := Coalesce(_updateWikiLink, true);
 
     If _dataPkgID Is Null Then

@@ -18,6 +18,7 @@ CREATE OR REPLACE PROCEDURE dpkg.find_stale_myemsl_uploads(IN _staleuploaddays i
 **  Auth:   mem
 **  Date:   05/20/2019 mem - Initial version
 **          08/15/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -41,7 +42,7 @@ BEGIN
     ---------------------------------------------------
 
     _staleUploadDays := Coalesce(_staleUploadDays, 45);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly        := Coalesce(_infoOnly, false);
 
     If _staleUploadDays < 20 Then
         -- Require _staleUploadDays to be at least 20

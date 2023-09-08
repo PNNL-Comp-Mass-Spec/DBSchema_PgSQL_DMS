@@ -42,6 +42,7 @@ CREATE OR REPLACE PROCEDURE public.alter_entered_by_user_multi_id(IN _targettabl
 **          11/10/2022 mem - Change _applyTimeFilter, _infoOnly, and _previewSql to booleans
 **                         - Remove unused variables and use clock_timestamp()
 **          05/22/2023 mem - Capitalize reserved word
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -57,16 +58,17 @@ BEGIN
     -- Validate the inputs
     ------------------------------------------------
 
-    _targetTableSchema := COALESCE(_targetTableSchema, '');
+    _targetTableSchema := Trim(Coalesce(_targetTableSchema, ''));
+
     If (char_length(_targetTableSchema) = 0) Then
         _targetTableSchema := 'public';
     End If;
 
-    _newUser := Coalesce(_newUser, '');
-    _applyTimeFilter := Coalesce(_applyTimeFilter, false);
+    _newUser                := Coalesce(_newUser, '');
+    _applyTimeFilter        := Coalesce(_applyTimeFilter, false);
     _entryTimeWindowSeconds := Coalesce(_entryTimeWindowSeconds, 15);
-    _infoOnly := Coalesce(_infoOnly, false);
-    _previewSql := Coalesce(_previewSql, false);
+    _infoOnly               := Coalesce(_infoOnly, false);
+    _previewSql             := Coalesce(_previewSql, false);
 
     If _targetTableName Is Null Or _targetIDColumnName Is Null Then
         _message := '_targetTableName and _targetIDColumnName must be defined; unable to continue';

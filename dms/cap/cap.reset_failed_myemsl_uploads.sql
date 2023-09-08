@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE cap.reset_failed_myemsl_uploads(IN _infoonly boolean
 **          04/29/2020 bcg - Reset steps with message 'ingest/backend/tasks.py'
 **          06/25/2023 mem - Ported to PostgreSQL
 **          07/11/2023 mem - Use COUNT(entry_id) and COUNT(job) instead of COUNT(*)
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -62,9 +63,9 @@ BEGIN
         -- Validate the inputs
         -----------------------------------------------------------
 
-        _infoOnly := Coalesce(_infoOnly, false);
-        _maxJobsToReset := Coalesce(_maxJobsToReset, 0);
-        _jobListOverride := Trim(Coalesce(_jobListOverride, ''));
+        _infoOnly            := Coalesce(_infoOnly, false);
+        _maxJobsToReset      := Coalesce(_maxJobsToReset, 0);
+        _jobListOverride     := Trim(Coalesce(_jobListOverride, ''));
         _resetHoldoffMinutes := Coalesce(_resetHoldoffMinutes, 15);
 
         -----------------------------------------------------------

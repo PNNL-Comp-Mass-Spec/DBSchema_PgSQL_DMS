@@ -45,6 +45,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          10/04/2022 mem - Change _enable and _infoOnly from integer to boolean
 **          06/23/2023 mem - No longer look for "FETCH ALL FROM _results" in the output message from mc.enable_disable_managers
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -65,10 +66,10 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------
 
-    _enable := Coalesce(_enable, false);
+    _enable            := Coalesce(_enable, false);
     _managerTypeIDList := Coalesce(_managerTypeIDList, '');
-    _managerNameList := Coalesce(_managerNameList, '');
-    _infoOnly := Coalesce(_infoOnly, false);
+    _managerNameList   := Coalesce(_managerNameList, '');
+    _infoOnly          := Coalesce(_infoOnly, false);
 
     If char_length(_managerTypeIDList) > 0 THEN
         -- Parse _managerTypeIDList

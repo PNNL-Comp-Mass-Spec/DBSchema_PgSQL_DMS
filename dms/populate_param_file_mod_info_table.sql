@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE public.populate_param_file_mod_info_table(IN _showmo
 **          11/30/2018 mem - Renamed the Monoisotopic_Mass and Average_Mass columns
 **          07/14/2023 mem - Add parameter _previewSql
 **          07/17/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -59,13 +60,13 @@ BEGIN
     -- Assure that one of the following is non-zero
     If Coalesce(_showModSymbol, 0) = 0 AND Coalesce(_showModName, 0) = 0 AND Coalesce(_showModMass, 0) = 0 Then
         _showModSymbol := 0;
-        _showModName := 1;
-        _showModMass := 0;
+        _showModName   := 1;
+        _showModMass   := 0;
     End If;
 
     _massModFilterTextColumn := Coalesce(_massModFilterTextColumn, '');
-    _massModFilterText := Coalesce(_massModFilterText, '');
-    _previewSql := Coalesce(_previewSql, false);
+    _massModFilterText       := Coalesce(_massModFilterText, '');
+    _previewSql              := Coalesce(_previewSql, false);
 
     _massModFilterSql := '';
 

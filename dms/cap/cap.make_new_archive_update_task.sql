@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE cap.make_new_archive_update_task(IN _datasetname tex
 **          05/17/2019 mem - Switch from folder to directory
 **          06/27/2019 mem - Default capture task job priority is now 4; higher priority is now 3
 **          06/20/2023 mem - Ported to PostgreSQL, removing parameters _pushDatasetToMyEMSL and _pushDatasetRecursive
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -75,11 +76,10 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _datasetName := Trim(Coalesce(_datasetName, ''));
-        _resultsDirectoryName := Trim(Coalesce(_resultsDirectoryName, ''));
+        _datasetName                := Trim(Coalesce(_datasetName, ''));
+        _resultsDirectoryName       := Trim(Coalesce(_resultsDirectoryName, ''));
         _allowBlankResultsDirectory := Coalesce(_allowBlankResultsDirectory, false);
-        _infoOnly := Coalesce(_infoOnly, false);
-        _message := '';
+        _infoOnly                   := Coalesce(_infoOnly, false);
 
         If _datasetName = '' Then
             _message := 'Dataset name not defined';

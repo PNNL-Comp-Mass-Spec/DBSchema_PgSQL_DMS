@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE cap.set_myemsl_upload_verified(IN _datasetid integer
 **          07/13/2017 mem - Add parameter _statusURIList (required to avoid conflicts between StatusNums from the old MyEMSL backend vs. transaction IDs from the new backend)
 **          08/01/2017 mem - Use THROW if not authorized
 **          06/26/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -72,12 +73,10 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _datasetID := Coalesce(_datasetID, 0);
-        _statusNumList := Trim(Coalesce(_statusNumList, ''));
-        _statusURIList := Trim(Coalesce(_statusURIList, ''));
+        _datasetID            := Coalesce(_datasetID, 0);
+        _statusNumList        := Trim(Coalesce(_statusNumList, ''));
+        _statusURIList        := Trim(Coalesce(_statusURIList, ''));
         _ingestStepsCompleted := Coalesce(_ingestStepsCompleted, 0);
-
-        _message := '';
 
         If _datasetID <= 0 Then
             _message := '_datasetID must be positive; unable to continue';

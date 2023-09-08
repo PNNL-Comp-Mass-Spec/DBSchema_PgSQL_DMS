@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE public.validate_dataset_type(IN _datasetid integer, 
 **          07/01/2021 mem - Auto-switch from HMS-CID-MSn to HMS-MSn
 **          06/12/2023 mem - Sum actual scan counts, not simply 0 or 1
 **                         - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -54,7 +55,7 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------------------
 
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly                  := Coalesce(_infoOnly, false);
     _autoDefineOnAllMismatches := Coalesce(_autoDefineOnAllMismatches, true);
 
     -----------------------------------------------------------

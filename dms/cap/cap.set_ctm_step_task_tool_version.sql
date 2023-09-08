@@ -18,6 +18,7 @@ CREATE OR REPLACE PROCEDURE cap.set_ctm_step_task_tool_version(IN _job integer, 
 **          08/01/2017 mem - Use THROW if not authorized
 **          01/31/2020 mem - Add _returnCode, which duplicates the integer returned by this procedure; _returnCode is varchar for compatibility with Postgres error codes
 **          06/26/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -62,8 +63,8 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _job := Coalesce(_job, 0);
-        _step := Coalesce(_step, 0);
+        _job             := Coalesce(_job, 0);
+        _step            := Coalesce(_step, 0);
         _toolVersionInfo := Coalesce(_toolVersionInfo, '');
 
         If _toolVersionInfo = '' Then

@@ -44,6 +44,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_dataset_
 **          07/31/2019 mem - Prevent _protCollNameList from containing both HumanContam and Tryp_Pig_Bov
 **          07/27/2022 mem - Switch from FileName to Collection_Name when querying pc.V_Protein_Collections_by_Organism
 **          07/26/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -72,10 +73,10 @@ BEGIN
     -- Validate the inputs
     --------------------------------------------------------------
 
-    _protCollNameList := Coalesce(_protCollNameList,'');
+    _protCollNameList     := Coalesce(_protCollNameList,'');
     _collectionCountAdded := 0;
-    _showMessages := Coalesce(_showMessages, true);
-    _showDebug := Coalesce(_showDebug, false);
+    _showMessages         := Coalesce(_showMessages, true);
+    _showDebug            := Coalesce(_showDebug, false);
 
     --------------------------------------------------------------
     -- Create the required temporary tables

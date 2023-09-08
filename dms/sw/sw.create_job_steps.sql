@@ -65,6 +65,7 @@ CREATE OR REPLACE PROCEDURE sw.create_job_steps(INOUT _message text DEFAULT ''::
 **          07/31/2023 mem - Ported to PostgreSQL
 **          08/01/2023 mem - Use text parsing to combine XML when mode is 'ExtendExistingJob'
 **                         - Set _captureTaskJob to false when calling sw.show_tmp_job_steps_and_job_step_dependencies
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -95,14 +96,13 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _infoOnly := Coalesce(_infoOnly, false);
-    _debugMode := Coalesce(_debugMode, false);
-    _existingJob := Coalesce(_existingJob, 0);
-    _extensionScriptName := Coalesce(_extensionScriptName, '');
+    _infoOnly                            := Coalesce(_infoOnly, false);
+    _debugMode                           := Coalesce(_debugMode, false);
+    _existingJob                         := Coalesce(_existingJob, 0);
+    _extensionScriptName                 := Coalesce(_extensionScriptName, '');
     _extensionScriptSettingsFileOverride := Coalesce(_extensionScriptSettingsFileOverride, '');
-
-    _mode := Trim(Coalesce(_mode, ''));
-    _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
+    _mode                                := Trim(Coalesce(_mode, ''));
+    _maxJobsToProcess                    := Coalesce(_maxJobsToProcess, 0);
 
     If _existingJob > 0 And _mode = 'CreateFromImportedJobs' And _debugMode And Not _infoOnly Then
         RAISE INFO 'Auto-setting _infoOnly to true since _debugMode is true and _existingJob is defined';

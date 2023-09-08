@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE cap.check_for_myemsl_errors(IN _mostrecentdays integ
 **          05/04/2023 mem - Add _returnCode procedure argument
 **          05/10/2023 mem - Fix call to post_log_entry
 **          07/11/2023 mem - Use COUNT(entry_id) instead of COUNT(*)
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -41,13 +42,13 @@ BEGIN
     -----------------------------------------------
 
     _mostRecentDays := Coalesce(_mostRecentDays, 0);
-    _startDate := Coalesce(_startDate, CURRENT_TIMESTAMP - Interval '2 days');
+    _startDate      := Coalesce(_startDate, CURRENT_TIMESTAMP - Interval '2 days');
 
-    _endDate := Coalesce(_endDate, CURRENT_TIMESTAMP);
-    _logErrors := Coalesce(_logErrors, true);
+    _endDate        := Coalesce(_endDate, CURRENT_TIMESTAMP);
+    _logErrors      := Coalesce(_logErrors, true);
 
     If _mostRecentDays > 0 Then
-        _endDate := CURRENT_TIMESTAMP;
+        _endDate   := CURRENT_TIMESTAMP;
         _startDate := _endDate - make_interval(days => _mostRecentDays);
     End If;
 

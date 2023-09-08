@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE cap.make_new_archive_tasks_from_dms(INOUT _message t
 **          06/13/2018 mem - Remove unused parameter _debugMode
 **          06/27/2019 mem - Changed priority to 3 (since default capture task job priority is now 4)
 **          06/20/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -42,8 +43,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _infoOnly := Coalesce(_infoOnly, false);
-
+    _infoOnly       := Coalesce(_infoOnly, false);
     _loggingEnabled := Coalesce(_loggingEnabled, false);
 
     If _loggingEnabled Then

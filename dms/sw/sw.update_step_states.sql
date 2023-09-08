@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE sw.update_step_states(IN _infoonly boolean DEFAULT f
 **          06/03/2009 mem - Added parameter _loopingUpdateInterval
 **          12/21/2009 mem - Now passing _infoOnly to EvaluateStepDependencies
 **          08/02/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -35,8 +36,8 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _infoOnly := Coalesce(_infoOnly, false);
-    _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
+    _infoOnly              := Coalesce(_infoOnly, false);
+    _maxJobsToProcess      := Coalesce(_maxJobsToProcess, 0);
     _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
 
     ---------------------------------------------------

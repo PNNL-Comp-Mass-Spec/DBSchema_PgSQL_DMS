@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE cap.retry_myemsl_upload(IN _job integer, IN _infoonl
 **
 **  Auth:   mem
 **  Date:   06/25/2023 mem - Initial version
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -94,7 +95,7 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------------------
 
-    _jobs := Trim(Coalesce(_jobs, ''));
+    _jobs     := Trim(Coalesce(_jobs, ''));
     _infoOnly := Coalesce(_infoOnly, false);
 
     If _jobs = '' Then

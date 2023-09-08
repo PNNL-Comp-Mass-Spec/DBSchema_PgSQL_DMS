@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE cap.update_capture_task_stats(IN _year integer DEFAU
 **          06/28/2023 mem - Add option to filter by year
 **                         - Ported to PostgreSQL
 **          07/11/2023 mem - Use COUNT(JH.job) instead of COUNT(*)
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -43,7 +44,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _year := Coalesce(_year, 0);
+    _year     := Coalesce(_year, 0);
     _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------

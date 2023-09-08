@@ -47,6 +47,7 @@ CREATE OR REPLACE PROCEDURE sw.update_manager_and_task_status_xml(IN _managersta
 **          08/01/2017 mem - Use THROW if not authorized
 **          09/19/2018 mem - Add parameter _logProcessorNames
 **          08/14/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -102,8 +103,8 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _statusXML := try_cast(_managerStatusXML, null::xml);
-        _infoLevel := Coalesce(_infoLevel, 0);
+        _statusXML         := try_cast(_managerStatusXML, null::xml);
+        _infoLevel         := Coalesce(_infoLevel, 0);
         _logProcessorNames := Coalesce(_logProcessorNames, false);
 
         ---------------------------------------------------

@@ -38,6 +38,7 @@ CREATE OR REPLACE FUNCTION sw.copy_runtime_metadata_from_history(_joblist text, 
 **          04/27/2018 mem - Use T_Job_Steps instead of V_Job_Steps so we can see the Start and Finish times for the job step (and not Remote_Start or Remote_Finish)
 **          01/04/2021 mem - Add support for PRIDE_Converter jobs
 **          08/01/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -56,7 +57,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _jobList := Coalesce(_jobList, '');
+    _jobList  := Coalesce(_jobList, '');
     _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------

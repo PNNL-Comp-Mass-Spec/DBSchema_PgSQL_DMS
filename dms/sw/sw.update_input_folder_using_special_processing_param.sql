@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE sw.update_input_folder_using_special_processing_para
 **          04/04/2011 mem - Updated to use the Special_Processing param instead of the job comment
 **          07/13/2012 mem - Now determining job parameters with additional items if SourceJob2 is defined: SourceJob2, SourceJob2Dataset, SourceJob2FolderPath, and SourceJob2FolderPathArchive
 **          07/25/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -67,7 +68,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly        := Coalesce(_infoOnly, false);
     _showResultsMode := Coalesce(_showResultsMode, 2);
 
     ---------------------------------------------------

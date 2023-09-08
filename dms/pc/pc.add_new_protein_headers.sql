@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE pc.add_new_protein_headers(IN _proteinidstart intege
 **  Date:   04/08/2008
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          07/20/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -42,9 +43,9 @@ BEGIN
     -- Validate the inputs
     --------------------------------------------------------------
 
-    _proteinIDStart := Coalesce(_proteinIDStart, 0);
+    _proteinIDStart       := Coalesce(_proteinIDStart, 0);
     _maxProteinsToProcess := Coalesce(_maxProteinsToProcess, 0);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly             := Coalesce(_infoOnly, false);
 
     BEGIN
 

@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE cap.update_task_context(IN _bypassdms boolean DEFAUL
 **          01/29/2021 mem - No longer pass _maxJobsToProcess to make_new_automatic_tasks
 **          06/20/2023 mem - Use new step names in cap.t_process_step_control
 **          06/21/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -59,15 +60,15 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _bypassDMS := Coalesce(_bypassDMS, false);
-        _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
+        _bypassDMS             := Coalesce(_bypassDMS, false);
+        _maxJobsToProcess      := Coalesce(_maxJobsToProcess, 0);
 
-        _logIntervalThreshold := Coalesce(_logIntervalThreshold, 15);
-        _loggingEnabled := Coalesce(_loggingEnabled, false);
+        _logIntervalThreshold  := Coalesce(_logIntervalThreshold, 15);
+        _loggingEnabled        := Coalesce(_loggingEnabled, false);
         _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
 
-        _infoOnly := Coalesce(_infoOnly, false);
-        _debugMode := Coalesce(_debugMode, false);
+        _infoOnly              := Coalesce(_infoOnly, false);
+        _debugMode             := Coalesce(_debugMode, false);
 
         If _logIntervalThreshold = 0 Then
             _loggingEnabled := true;

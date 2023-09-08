@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_statistics(INOUT _message text 
 **          12/31/2022 mem - Ported to PostgreSQL
 **          07/10/2023 mem - Use COUNT(AJ.job) and COUNT(DS.dataset_id) instead of COUNT(*)
 **                         - Fix bug referencing a field in a record
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -57,11 +58,11 @@ BEGIN
     -- Validate the inputs
     ------------------------------------------------
 
-    _previewSql := Coalesce(_previewSql, false);
+    _previewSql                    := Coalesce(_previewSql, false);
     _updateParamSettingsFileCounts := Coalesce(_updateParamSettingsFileCounts, true);
-    _updateGeneralStatistics := Coalesce(_updateGeneralStatistics, false);
-    _updateJobRequestStatistics := Coalesce(_updateJobRequestStatistics, true);
-    _showRuntimeStats := Coalesce(_showRuntimeStats, false);
+    _updateGeneralStatistics       := Coalesce(_updateGeneralStatistics, false);
+    _updateJobRequestStatistics    := Coalesce(_updateJobRequestStatistics, true);
+    _showRuntimeStats              := Coalesce(_showRuntimeStats, false);
 
     _thresholdOneYear := CURRENT_TIMESTAMP - INTERVAL '1 year';
 

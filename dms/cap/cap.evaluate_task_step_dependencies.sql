@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE cap.evaluate_task_step_dependencies(INOUT _message t
 **          06/20/2023 mem - Remove unused variable
 **          07/11/2023 mem - Use COUNT(Job) instead of COUNT(*)
 **          07/26/2023 mem - Move "Not" keyword to before the field name
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -53,10 +54,9 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
-
+    _maxJobsToProcess      := Coalesce(_maxJobsToProcess, 0);
     _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
-    _showDebug := Coalesce(_showDebug, false);
+    _showDebug             := Coalesce(_showDebug, false);
 
     If _loopingUpdateInterval < 2 Then
         _loopingUpdateInterval := 2;

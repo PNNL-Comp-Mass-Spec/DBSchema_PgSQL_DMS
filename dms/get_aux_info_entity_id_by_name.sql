@@ -28,6 +28,7 @@ CREATE OR REPLACE FUNCTION public.get_aux_info_entity_id_by_name(_targettypename
 **  Auth:   mem
 **  Date:   11/29/2022 mem - Initial release
 **          05/31/2023 mem - Use format() for string concatenation
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -39,7 +40,7 @@ BEGIN
     ---------------------------------------------------
 
     _targetTypeName := Coalesce(_targetTypeName, '');
-    _showDebug := Coalesce(_showDebug, false);
+    _showDebug      := Coalesce(_showDebug, false);
 
     ---------------------------------------------------
     -- Resolve target name and entity name to entity ID

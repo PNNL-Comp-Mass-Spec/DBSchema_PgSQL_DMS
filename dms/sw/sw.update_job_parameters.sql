@@ -27,6 +27,7 @@ CREATE OR REPLACE PROCEDURE sw.update_job_parameters(IN _job integer, IN _infoon
 **          04/04/2011 mem - Now calling Update_Input_Folder_Using_Special_Processing_Param
 **          01/11/2012 mem - Updated to support _xmlParameters being null, which will be the case for a job created directly in the pipeline database
 **          07/25/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -47,7 +48,7 @@ BEGIN
         RETURN;
     End If;
 
-    _infoOnly := Coalesce(_infoOnly, true);
+    _infoOnly             := Coalesce(_infoOnly, true);
     _settingsFileOverride := Coalesce(_settingsFileOverride, '');
 
     -- Make sure _job exists in sw.t_jobs

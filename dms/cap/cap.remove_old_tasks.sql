@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE cap.remove_old_tasks(IN _intervaldaysforsuccess inte
 **          08/17/2021 mem - When looking for completed or inactive capture task jobs, use Start time if Finish is null
 **                         - Also look for capture task jobs with state 14 = Failed, Ignore Job Step States
 **          06/22/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -72,10 +73,10 @@ BEGIN
         _intervalDaysForFail := 0;
     End If;
 
-    _logDeletions := Coalesce(_logDeletions, false);
-    _maxTasksToRemove := Coalesce(_maxTasksToRemove, 0);
+    _logDeletions           := Coalesce(_logDeletions, false);
+    _maxTasksToRemove       := Coalesce(_maxTasksToRemove, 0);
     _validateJobStepSuccess := Coalesce(_validateJobStepSuccess, false);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly               := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------
     -- Make sure the capture task job Start and Finish values are up-to-date

@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE sw.reset_aggregation_job(IN _job integer, IN _infoon
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          05/12/2017 mem - Update Next_Try and Remote_Info_ID
 **          07/27/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -56,7 +57,7 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------------------
 
-    _job := Coalesce(_job, 0);
+    _job      := Coalesce(_job, 0);
     _infoOnly := Coalesce(_infoOnly, false);
 
     If _job = 0 Then

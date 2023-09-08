@@ -43,6 +43,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _s
 **          05/22/2023 mem - Capitalize reserved word
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          07/19/2023 mem - Add missing variable declaration
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -85,12 +86,12 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _job := Coalesce(_job, 0);
-    _section := Coalesce(_section, '');
-    _paramName := Coalesce(_paramName, '');
-    _value := Coalesce(_value, '');
+    _job         := Coalesce(_job, 0);
+    _section     := Coalesce(_section, '');
+    _paramName   := Coalesce(_paramName, '');
+    _value       := Coalesce(_value, '');
     _deleteParam := Coalesce(_deleteParam, false);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly    := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------
     -- Lookup the current parameters stored in cap.t_task_parameters for this capture task job

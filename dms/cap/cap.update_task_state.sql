@@ -65,6 +65,7 @@ CREATE OR REPLACE PROCEDURE cap.update_task_state(IN _bypassdms boolean DEFAULT 
 **          06/17/2023 mem - Update if statement to remove conditions that are always true
 **                         - Ported to PostgreSQL
 **          07/11/2023 mem - Use COUNT(TS.step) instead of COUNT(*)
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -95,18 +96,16 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _bypassDMS := Coalesce(_bypassDMS, false);
-    _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
-
-    _startTime := CURRENT_TIMESTAMP;
-
+    _bypassDMS             := Coalesce(_bypassDMS, false);
+    _maxJobsToProcess      := Coalesce(_maxJobsToProcess, 0);
     _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
+    _infoOnly              := Coalesce(_infoOnly, false);
 
     If _loopingUpdateInterval < 2 Then
         _loopingUpdateInterval := 2;
     End If;
 
-    _infoOnly := Coalesce(_infoOnly, false);
+    _startTime := CURRENT_TIMESTAMP;
 
     ---------------------------------------------------
     -- Table to hold state changes

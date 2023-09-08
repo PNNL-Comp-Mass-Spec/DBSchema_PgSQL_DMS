@@ -45,6 +45,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_interval_for_multiple_instrume
 **          08/29/2023 mem - Ported to PostgreSQL
 **          08/31/2023 mem - Remove invalid where clause in For Loop query
 **                         - Change "months to update" variable to an integer
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -117,11 +118,9 @@ BEGIN
     End If;
 
     _updateEMSLInstrumentUsage := Coalesce(_updateEMSLInstrumentUsage, true);
-
-    _infoOnly := Coalesce(_infoOnly, false);
-    _previewProcedureCall := Coalesce(_previewProcedureCall, false);
-
-    _instrumentsToProcess := Coalesce(_instrumentsToProcess, '');
+    _infoOnly                  := Coalesce(_infoOnly, false);
+    _previewProcedureCall      := Coalesce(_previewProcedureCall, false);
+    _instrumentsToProcess      := Coalesce(_instrumentsToProcess, '');
 
     ---------------------------------------------------
     -- Set up date interval and key values

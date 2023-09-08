@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_update_required(IN _mgrlist text DEFA
 **          05/12/2023 mem - Rename variables
 **          05/22/2023 mem - Capitalize reserved word
 **          05/30/2023 mem - Use format() for string concatenation
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
@@ -64,9 +65,9 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _mgrList := Coalesce(_mgrList, '');
+    _mgrList   := Coalesce(_mgrList, '');
     _showTable := Coalesce(_showTable, false);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly  := Coalesce(_infoOnly, false);
 
     CREATE TEMP TABLE Tmp_ManagerList (
         manager_name citext NOT NULL,

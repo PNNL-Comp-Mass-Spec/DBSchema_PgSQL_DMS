@@ -30,23 +30,26 @@ CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameters(_sourcemgrid integer,
 **          05/07/2023 mem - Remove unused variable
 **          05/22/2023 mem - Capitalize reserved word
 **          05/23/2023 mem - Use format() for string concatenation
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
-    _message text = '';
-    _returnCode text = '';
+    _message text;
+    _returnCode text;
 
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
 
-    _infoOnly := Coalesce(_infoOnly, true);
+    _infoOnly              := Coalesce(_infoOnly, true);
     _mergeSourceWithTarget := Coalesce(_mergeSourceWithTarget, false);
 
     If _returnCode = '' And _sourceMgrID Is Null Then

@@ -28,10 +28,10 @@ CREATE OR REPLACE PROCEDURE pc.validate_analysis_job_protein_parameters(IN _orga
 **          07/26/2023 mem - Rename owner username parameter to _ownerUsername
 **                         - Use renamed column name in V_Legacy_Static_File_Locations
 **          07/27/2023 mem - Add missing column to t_protein_collections query
+**          09/07/2023 mem - Align assignment statements
 **
 *****************************************************/
 DECLARE
-    _legacyNameExists int;
     _organismID int;
     _legacyFileID int;
     _cleanCollNameList text;
@@ -54,16 +54,13 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    -- Check for Null values
-    _organismDBFileName := Trim(Coalesce(_organismDBFileName, ''));
-    _protCollNameList := Trim(Coalesce(_protCollNameList, ''));
-    _protCollOptionsList := Trim(Coalesce(_protCollOptionsList, ''));
-
-    _legacyNameExists := 0;
-
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
+
+    _organismDBFileName  := Trim(Coalesce(_organismDBFileName, ''));
+    _protCollNameList    := Trim(Coalesce(_protCollNameList, ''));
+    _protCollOptionsList := Trim(Coalesce(_protCollOptionsList, ''));
 
     If char_length(_organismName) < 1 Then
         _message := 'Org DB validation failure: Organism Name cannot be blank';
@@ -125,7 +122,7 @@ BEGIN
         SELECT ID
         INTO _legacyFileID
         FROM pc.V_Legacy_Static_File_Locations
-        WHERE file_name = _organismDBFileName;
+        WHERE file_name = _organismDBFileName::citext;
 
         If Not FOUND Then
             _message := format('FASTA file "%s" does not exist (pc.V_Legacy_Static_File_Locations)', _organismDBFileName);
