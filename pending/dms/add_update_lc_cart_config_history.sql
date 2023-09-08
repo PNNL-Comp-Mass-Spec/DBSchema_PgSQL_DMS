@@ -50,16 +50,15 @@ BEGIN
         ---------------------------------------------------
 
         _entryDate := public.try_cast(_dateOfChange, null, null::timestamp);
+        _mode      := Trim(Lower(Coalesce(_mode, '')));
 
         If _entryDate Is Null Then
             _entryDate := CURRENT_TIMESTAMP;
         End If;
 
-        If _postedBy IS NULL OR _postedBy = '' Then
+        If Trim(Coalesce(_postedBy, '')) = '' Then
             _postedBy := _callingUser;
         End If;
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
         -- Is entry already in database? (only applies to updates)

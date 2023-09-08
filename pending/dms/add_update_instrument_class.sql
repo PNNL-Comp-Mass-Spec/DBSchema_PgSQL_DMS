@@ -106,13 +106,13 @@ BEGIN
         If _isPurgeable Is Null Then
             RAISE EXCEPTION 'Is Purgeable cannot be null' USING ERRCODE = 'U5202';
         End If;
-        --
+
         If char_length(_rawDataType) < 1 Then
             RAISE EXCEPTION 'Raw Data Type must be specified' USING ERRCODE = 'U5203';
         End If;
-        --
 
         _params := Coalesce(_params, '');
+        _mode   := Trim(Lower(Coalesce(_mode, '')));
 
         If char_length(_params) > 0 Then
             _xmlParams := public.try_cast(_params, null::XML);
@@ -120,8 +120,6 @@ BEGIN
                 RAISE EXCEPTION 'Could not convert Params to XML' USING ERRCODE = 'U5205';
             End If;
         End If;
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
         -- Note: the add mode is not enabled in this procedure

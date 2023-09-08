@@ -97,11 +97,10 @@ BEGIN
         -- Is entry already in database?
         ---------------------------------------------------
 
-        --
         SELECT lc_column_id
         INTO _columnID
         FROM t_lc_column
-        WHERE (lc_column = _columnNumber)
+        WHERE lc_column = _columnNumber;
         --
         GET DIAGNOSTICS _existingCount = ROW_COUNT;
 

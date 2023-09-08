@@ -114,18 +114,16 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _instrumentName := Trim(Coalesce(_instrumentName, ''));
-        _description    := Trim(Coalesce(_description, ''));
-        _usage          := Trim(Coalesce(_usage, ''));
-        _mode           := Trim(Coalesce(_mode, ''));
-
+        _instrumentName      := Trim(Coalesce(_instrumentName, ''));
+        _description         := Trim(Coalesce(_description, ''));
+        _usage               := Trim(Coalesce(_usage, ''));
+        _mode                := Trim(Coalesce(_mode, ''));
         _percentEMSLOwnedVal := public.try_cast(_percentEMSLOwned, null::int);
+        _mode                := Trim(Lower(Coalesce(_mode, '')));
 
         If _percentEMSLOwnedVal Is Null Or _percentEMSLOwnedVal < 0 Or _percentEMSLOwnedVal > 100 Then
             RAISE EXCEPTION 'Percent EMSL Owned should be a number between 0 and 100' USING ERRCODE = 'U5201';
         End If;
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
         -- Is entry already in database? (only applies to updates)

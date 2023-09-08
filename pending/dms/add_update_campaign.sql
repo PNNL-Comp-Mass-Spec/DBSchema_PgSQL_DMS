@@ -140,28 +140,27 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _campaignName := Trim(Coalesce(_campaignName, ''));
-        _projectName := Trim(Coalesce(_projectName, ''));
+        _campaignName    := Trim(Coalesce(_campaignName, ''));
+        _projectName     := Trim(Coalesce(_projectName, ''));
         _progmgrUsername := Trim(Coalesce(_progmgrUsername, ''));
-        _piUsername := Trim(Coalesce(_piUsername, ''));
+        _piUsername      := Trim(Coalesce(_piUsername, ''));
+        _mode            := Trim(Lower(Coalesce(_mode, '')));
 
         If char_length(_campaignName) < 1 Then
             RAISE EXCEPTION 'Campaign name must be specified';
         End If;
-        --
+
         If char_length(_projectName) < 1 Then
             RAISE EXCEPTION 'Project Number must be specified';
         End If;
-        --
+
         If char_length(_progmgrUsername) < 1 Then
             RAISE EXCEPTION 'Project Manager username must be specified';
         End If;
-        --
+
         If char_length(_piUsername) < 1 Then
             RAISE EXCEPTION 'Principle Investigator username must be specified';
         End If;
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
         -- Is entry already in database?

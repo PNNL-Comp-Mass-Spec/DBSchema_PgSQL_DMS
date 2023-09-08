@@ -129,7 +129,7 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    Begin
+    BEGIN
 
         ---------------------------------------------------
         -- Validate the inputs
@@ -163,20 +163,17 @@ BEGIN
             RAISE EXCEPTION '%', _message;
         End If;
 
-        _suffix := Coalesce(_suffix, '');
-        _nameSearch := Coalesce(_nameSearch, '');
-        _nameReplace := Coalesce(_nameReplace, '');
+        _suffix           := Coalesce(_suffix, '');
+        _nameSearch       := Coalesce(_nameSearch, '');
+        _nameReplace      := Coalesce(_nameReplace, '');
+        _addUnderscore    := Coalesce(_addUnderscore, 'Yes');
 
-        _addUnderscore := Coalesce(_addUnderscore, 'Yes');
-
-        _requestOverride := Trim(Coalesce(_requestOverride, 'parent'));
+        _requestOverride  := Trim(Coalesce(_requestOverride,  'parent'));
         _internalStandard := Trim(Coalesce(_internalStandard, 'parent'));
         _postdigestIntStd := Trim(Coalesce(_postdigestIntStd, 'parent'));
-        _researcher := Trim(Coalesce(_researcher, 'parent'));
+        _researcher       := Trim(Coalesce(_researcher,       'parent'));
 
-        _message := '';
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
+        _mode             := Trim(Lower(Coalesce(_mode, '')));
 
         If Not _mode::citext In ('add', 'preview') Then
             RAISE EXCEPTION 'Invalid mode: should be "add" or "preview", not "%"', _mode;

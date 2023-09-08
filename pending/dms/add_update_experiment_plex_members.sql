@@ -221,8 +221,6 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        -- Set _compoundName = Trim(Coalesce(_compoundName, ''))
-
         If _plexExperimentIdOrName Is Null Then
             RAISE EXCEPTION 'plexExperimentIdOrName cannot be null';
         End If;
@@ -246,16 +244,12 @@ BEGIN
         _plexExperimentIdOrName := _plexExperimentId;
 
         _plexMembers := Coalesce(_plexMembers, '');
-
-        _mode := Trim(Lower(Coalesce(_mode, 'check_add')));
-
+        _mode        := Trim(Lower(Coalesce(_mode, 'check_add')));
         _callingUser := Coalesce(_callingUser, '');
 
         ---------------------------------------------------
         -- Lookup the label associated with _plexExperimentId
         ---------------------------------------------------
-
-        _experimentLabel := '';
 
         SELECT Trim(labelling)
         INTO _experimentLabel

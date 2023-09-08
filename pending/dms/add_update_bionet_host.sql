@@ -104,8 +104,7 @@ BEGIN
         End If;
 
         _active := Coalesce(_active, 1);
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
+        _mode   := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
         -- Is entry already in database?

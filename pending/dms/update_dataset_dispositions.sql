@@ -94,7 +94,7 @@ BEGIN
         End If;
 
         _recycleRequest := Trim(Lower(Coalesce(_recycleRequest, '')));
-        _mode := Trim(Lower(Coalesce(_mode, '')));
+        _mode           := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
         -- Resolve rating name

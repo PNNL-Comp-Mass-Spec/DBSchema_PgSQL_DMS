@@ -124,22 +124,21 @@ BEGIN
         ---------------------------------------------------
 
         _biomaterialName := Trim(Coalesce(_biomaterialName, ''));
-        _sourceName := Trim(Coalesce(_sourceName, ''));
+        _sourceName      := Trim(Coalesce(_sourceName, ''));
         _contactUsername := Trim(Coalesce(_contactUsername, ''));
-        _piUsername := Trim(Coalesce(_piUsername, ''));
+        _piUsername      := Trim(Coalesce(_piUsername, ''));
         _biomaterialType := Trim(Coalesce(_biomaterialType, ''));
-        _reason := Trim(Coalesce(_reason, ''));
-        _campaignName := Trim(Coalesce(_campaignName, ''));
-
-        _container := Trim(Coalesce(_container, ''));
+        _reason          := Trim(Coalesce(_reason, ''));
+        _campaignName    := Trim(Coalesce(_campaignName, ''));
+        _container       := Trim(Coalesce(_container, ''));
 
         -- Note: leave _organismList null
         -- Procedure Update_Organism_List_For_Biomaterial will leave t_biomaterial_organisms unchanged if _organismList is null
 
-        _mutation := Trim(Coalesce(_mutation, ''));
-        _plasmid := Trim(Coalesce(_plasmid, ''));
-        _cellLine := Trim(Coalesce(_cellLine, ''));
-        _callingUser := Coalesce(_callingUser, '');
+        _mutation        := Trim(Coalesce(_mutation, ''));
+        _plasmid         := Trim(Coalesce(_plasmid, ''));
+        _cellLine        := Trim(Coalesce(_cellLine, ''));
+        _callingUser     := Coalesce(_callingUser, '');
 
         If char_length(_contactUsername) < 1 Then
             RAISE EXCEPTION 'Contact Name must be specified';
@@ -431,7 +430,11 @@ BEGIN
             End If;
 
             -- Update the associated organism(s)
+            -- If _organismList is an empty string, any rows for the biomaterial will be removed from t_biomaterial_organisms and
+            -- Cached_Organism_List will be cleared in t_biomaterial for _biomaterialName
+
             _organismList := Coalesce(_organismList, '');
+
             CALL public.update_organism_list_for_biomaterial (_biomaterialName, _organismList, _infoOnly => false, _message => _message);
 
         End If; -- </update>

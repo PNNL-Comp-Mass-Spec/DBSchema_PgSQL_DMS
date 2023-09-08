@@ -184,33 +184,32 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _requestName := Coalesce(_requestName, '');
-        _comment := Coalesce(_comment, '');
+        _requestName       := Trim(Coalesce(_requestName, ''));
+        _comment           := Trim(Coalesce(_comment, ''));
+        _requesterUsername := Trim(Coalesce(_requesterUsername, ''));
+        _dataPackageID     := Coalesce(_dataPackageID, 0);
+        _datasets          := Trim(Coalesce(_datasets, ''));
+        _mode              := Trim(Lower(Coalesce(_mode, '')));
 
         If _requestName = '' Then
             RAISE EXCEPTION 'Cannot add: request name must be specified';
         End If;
 
-        _requesterUsername := Trim(Coalesce(_requesterUsername, ''));
-
         If _requesterUsername = 'H09090911' Or _requesterUsername = 'Autouser' Then
             RAISE EXCEPTION 'Cannot add: the "Requested by" username cannot be the Autouser';
         End If;
 
-        _dataPackageID := Coalesce(_dataPackageID, 0);
         If _dataPackageID < 0 Then
             _dataPackageID := 0;
         End If;
 
-        _datasets := Trim(Coalesce(_datasets, ''));
+        -- Replace spaces and tabs with commas
         _datasets := Replace(Replace(_datasets, ' ', ','), chr(9), ',');
 
         ---------------------------------------------------
         -- Resolve mode against presence or absence
         -- of request in database, and its current state
         ---------------------------------------------------
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
 
         -- Cannot create an entry with a duplicate name
         --

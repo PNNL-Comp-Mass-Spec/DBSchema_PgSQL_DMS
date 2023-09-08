@@ -81,20 +81,18 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _comment := Coalesce(_comment, '');
-        _active := Coalesce(_active, 0);
-        _samplePrepVisible := Coalesce(_samplePrepVisible, 0);
-        _requestedRunVisible := Coalesce(_requestedRunVisible, 0);
-
-        _defaultDatasetTypeName := Coalesce(_defaultDatasetTypeName, '');
+        _comment                := Trim(Coalesce(_comment, ''));
+        _active                 := Coalesce(_active, 0);
+        _samplePrepVisible      := Coalesce(_samplePrepVisible, 0);
+        _requestedRunVisible    := Coalesce(_requestedRunVisible, 0);
+        _defaultDatasetTypeName := Trim(Coalesce(_defaultDatasetTypeName, ''));
+        _mode                   := Trim(Lower(Coalesce(_mode, '')));
 
         If _defaultDatasetTypeName <> '' Then
             _datasetTypeID := get_dataset_type_id (_defaultDatasetTypeName);
         Else
             _datasetTypeID := 0;
         End If;
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
         -- Is entry already in database? (only applies to updates)

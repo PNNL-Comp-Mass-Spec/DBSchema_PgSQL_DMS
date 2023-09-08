@@ -16,7 +16,7 @@ AS $$
 **
 **  Arguments:
 **    _biomaterialName   Biomaterial name, aka cell culture
-**    _organismList      Comma-separated list of organism names.  Should be full organism name, but can also be short names, in which case AutoResolveOrganismName will try to resolve the short name to a full organsim name
+**    _organismList      Comma-separated list of organism names.  Should be full organism name, but can also be short names, in which case AutoResolveOrganismName will try to resolve the short name to a full organism name
 **
 **  Auth:   mem
 **  Date:   12/02/2016 mem - Initial version
@@ -77,14 +77,16 @@ BEGIN
     If Not FOUND Then
         _message := format('Cannot update organisms for biomaterial: "%s" does not exist', _biomaterialName);
         RAISE WARNING '%', _message;
-        _returnCode := 'U5201';
+
+        -- Leave _returnCode as an empty string
         RETURN;
     End If;
 
     If _organismList Is Null Then
         _message := format('Cannot update biomaterial "%s": organism list cannot be null', _biomaterialName);
         RAISE WARNING '%', _message;
-        _returnCode := 'U5202';
+
+        -- Leave _returnCode as an empty string
         RETURN;
     End If;
 
@@ -198,7 +200,7 @@ BEGIN
     WHERE target.Biomaterial_ID = _biomaterialID AND
           NOT EXISTS (SELECT source.organism_id
                       FROM Tmp_BiomaterialOrganisms source
-                      WHERE target.organism_id = source.organism_id
+                      WHERE target.organism_id = source.organism_id;
                      );
 
     ---------------------------------------------------
@@ -207,7 +209,7 @@ BEGIN
 
     UPDATE t_biomaterial
     SET Cached_Organism_List = get_biomaterial_organism_list(_biomaterialID)
-    WHERE Biomaterial_ID = _biomaterialID
+    WHERE Biomaterial_ID = _biomaterialID;
 
     ---------------------------------------------------
     -- Log SP usage

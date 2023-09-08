@@ -69,11 +69,12 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    If _postedBy IS NULL OR _postedBy = '' Then
+    If Trim(Coalesce(_postedBy, '')) = '' Then
         _postedBy := _callingUser;
     End If;
 
     _validatedDate := public.try_cast(_dateOfChange, null, null::timestamp);
+    _mode          := Trim(Lower(Coalesce(_mode, '')));
 
     If _validatedDate Is Null Then
         _message := 'Date Of Change is not a valid date';
@@ -82,8 +83,6 @@ BEGIN
         _returnCode := 'U5201';
         RETURN;
     End If;
-
-    _mode := Trim(Lower(Coalesce(_mode, '')));
 
     ---------------------------------------------------
     -- Is entry already in database? (only applies to updates)

@@ -33,12 +33,12 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _sourceFreezerTag := Coalesce(_sourceFreezerTag, '');
-    _newFreezerTag := Coalesce(_newFreezerTag, '');
-    _infoOnly := Coalesce(_infoOnly, true);
+    _sourceFreezerTag := Trim(Coalesce(_sourceFreezerTag, ''));
+    _newFreezerTag    := Trim(Coalesce(_newFreezerTag, ''));
+    _infoOnly         := Coalesce(_infoOnly, true);
 
     If _sourceFreezerTag = '' Then
-        _message := 'Source freezer tag is empty';
+        _message := 'Source freezer tag must be specified';
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5202';
@@ -46,7 +46,7 @@ BEGIN
     End If;
 
     If _newFreezerTag = '' Then
-        _message := 'New freezer tag is empty';
+        _message := 'New freezer tag must be specified';
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5203';

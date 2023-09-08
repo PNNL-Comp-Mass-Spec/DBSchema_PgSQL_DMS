@@ -388,7 +388,7 @@ BEGIN
         _comment := Substring(_comment, 1, char_length(_comment) - 8);
     End If;
 
-    If _captureSubdirectory Similar To '[A-Z]:\%' OR _captureSubdirectory LIKE '\\%' Then
+    If _captureSubdirectory Similar To '[A-Z]:\%' OR _captureSubdirectory LIKE '\\\\%' Then
         _message := format('Capture subfolder is not a relative path for dataset %s; ignoring %s',
                             _datasetName, _captureSubdirectory);
 

@@ -62,13 +62,13 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    If Coalesce(_fastaFileName, '') = '' Then
+    If Trim(Coalesce(_fastaFileName, '')) = '' Then
         _message := '_fastaFileName must be specified';
         _returnCode := 'U6200';
         RETURN;
     End If;
 
-    If Coalesce(_organismName, '') = '' Then
+    If Trim(Coalesce(_organismName, '')) = '' Then
         _message := '_organismName must be specified';
         _returnCode := 'U6201';
         RETURN;
@@ -76,7 +76,7 @@ BEGIN
 
     _numProteins := Coalesce(_numProteins, 0);
     _numResidues := Coalesce(_numResidues, 0);
-    _fileSizeKB := Coalesce(_fileSizeKB, 0);
+    _fileSizeKB  := Coalesce(_fileSizeKB, 0);
 
     ---------------------------------------------------
     -- Resolve _organismName to _organismID

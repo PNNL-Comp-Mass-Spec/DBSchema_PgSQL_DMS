@@ -92,15 +92,13 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _taskType := Coalesce(_taskType, 'Generic');
-
-        _labName := Coalesce(_labName, 'Undefined');
+        _taskType := Trim(Coalesce(_taskType, 'Generic'));
+        _labName  := Trim(Coalesce(_labName, 'Undefined'));
+        _mode     := Trim(Lower(Coalesce(_mode, '')));
 
         If _status::citext IN ('Completed', 'Not Implemented') Then
             _closed := CURRENT_TIMESTAMP;
         End If;
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
         -- Resolve task type name to task type ID

@@ -339,8 +339,8 @@ BEGIN
 
                     If Not _retryJob And _retryCount < 5 Then
                         -- Check for file copy errors from the Archive
-                        If _comment Like '%Error copying file \\adms%' Or Then
-                           _comment Like '%File not found: \\adms%' Or;
+                        If _comment Like '%Error copying file \\\\adms%' Or Then
+                           _comment Like '%File not found: \\\\adms%' Or;
                         End If;
                            _comment Like '%Error copying %dta.zip%' Or
                            _comment Like '%Source dataset file file not found%'

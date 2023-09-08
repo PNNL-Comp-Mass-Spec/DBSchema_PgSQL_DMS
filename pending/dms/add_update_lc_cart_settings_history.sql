@@ -53,7 +53,8 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    -- future: this could get more complicated
+    _cartName := Trim(Coalesce(_cartName, ''));
+    _mode     := Trim(Lower(Coalesce(_mode, '')));
 
     ---------------------------------------------------
     -- Resolve cart name to ID
@@ -62,7 +63,7 @@ BEGIN
     SELECT cart_id
     INTO _cartID
     FROM  t_lc_cart
-    WHERE cart_name = _cartName
+    WHERE cart_name = _cartName;
 
     If Not FOUND Then
         _message := 'Could not find cart';
@@ -71,8 +72,6 @@ BEGIN
         _returnCode := 'U5201';
         RETURN;
     End If;
-
-    _mode := Trim(Lower(Coalesce(_mode, '')));
 
     ---------------------------------------------------
     -- Is entry already in database? (only applies to updates)
@@ -84,7 +83,7 @@ BEGIN
         SELECT entry_id
         INTO _tmp
         FROM t_lc_cart_settings_history
-        WHERE (entry_id = _id)
+        WHERE entry_id = _id;
 
         If Not FOUND Then
             _message := 'No entry could be found in database for update';
@@ -146,13 +145,14 @@ BEGIN
         RETURNING entry_id
         INTO _id;
 
-    End If; -- add mode
+    End If;
 
     ---------------------------------------------------
     -- Action for update mode
     ---------------------------------------------------
 
     If _mode = 'update' Then
+
         UPDATE t_lc_cart_settings_history
         SET valve_to_column_extension = _valveToColumnExtension,
             operating_pressure = _operatingPressure,
@@ -172,9 +172,9 @@ BEGIN
             comment = _comment,
             date_of_change = _dateOfChange,
             entered_by = _callingUser
-        WHERE (entry_id = _id)
+        WHERE entry_id = _id;
 
-    End If; -- update mode
+    End If;
 
 END
 $$;

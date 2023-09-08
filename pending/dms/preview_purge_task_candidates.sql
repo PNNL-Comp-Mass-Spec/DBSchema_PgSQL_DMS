@@ -48,13 +48,13 @@ BEGIN
     End If;
 
     -- Auto change \\proto-6 to proto-6
-    If _storageServerName Like '\\%' Then
-        _storageServerName := Substring(_storageServerName, 3, 50);
+    If _storageServerName LIKE '\\\\%' Then
+        _storageServerName := Substring(_storageServerName, 3, char_length(_storageServerName));
     End If;
 
     -- Auto change proto-6\ to proto-6
-    If _storageServerName Like '%\' Then
-        _storageServerName := Substring(_storageServerName, 1, char_length(_storageServerName)-1);
+    If _storageServerName LIKE '%\\' Then
+        _storageServerName := Substring(_storageServerName, 1, char_length(_storageServerName) - 1);
     End If;
 
     -- Auto change drive F to F:\

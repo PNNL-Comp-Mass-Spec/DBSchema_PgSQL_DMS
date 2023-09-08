@@ -87,12 +87,12 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _id := Coalesce(_id, 0);
-    _configName := Coalesce(_configName, '');
-    _state := Coalesce(_state, 'Active');
-    _entryUser := Coalesce(_entryUser, '');
-    _callingUser := Coalesce(_callingUser, '');
-    _mode := Trim(Lower(Coalesce(_mode, 'add')));
+    _id          := Coalesce(_id, 0);
+    _configName  := Trim(Coalesce(_configName, ''));
+    _state       := Trim(Coalesce(_state, 'Active'));
+    _entryUser   := Trim(Coalesce(_entryUser, ''));
+    _callingUser := Trim(Coalesce(_callingUser, ''));
+    _mode        := Trim(Lower(Coalesce(_mode, 'add')));
 
     If _state = '' Then
         _state := 'Active';

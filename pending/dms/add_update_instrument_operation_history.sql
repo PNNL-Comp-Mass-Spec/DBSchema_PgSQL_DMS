@@ -79,7 +79,7 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        If Coalesce(_instrument, '') = '' Then
+        If Trim(Coalesce(_instrument, '')) = '' Then
             RAISE EXCEPTION 'Instrument name must be specified';
         End If;
 

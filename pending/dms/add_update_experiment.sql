@@ -180,22 +180,21 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _experimentID := Coalesce(_experimentID, 0);
-        _experimentName := Trim(Coalesce(_experimentName, ''));
-        _campaignName := Trim(Coalesce(_campaignName, ''));
-        _researcherUsername := Trim(Coalesce(_researcherUsername, ''));
-        _organismName := Trim(Coalesce(_organismName, ''));
-        _reason := Trim(Coalesce(_reason, ''));
-        _comment := Trim(Coalesce(_comment, ''));
-        _enzymeName := Trim(Coalesce(_enzymeName, ''));
-        _labelling := Trim(Coalesce(_labelling, ''));
-        _biomaterialList := Trim(Coalesce(_biomaterialList, ''));
+        _experimentID          := Coalesce(_experimentID, 0);
+        _experimentName        := Trim(Coalesce(_experimentName, ''));
+        _campaignName          := Trim(Coalesce(_campaignName, ''));
+        _researcherUsername    := Trim(Coalesce(_researcherUsername, ''));
+        _organismName          := Trim(Coalesce(_organismName, ''));
+        _reason                := Trim(Coalesce(_reason, ''));
+        _comment               := Trim(Coalesce(_comment, ''));
+        _enzymeName            := Trim(Coalesce(_enzymeName, ''));
+        _labelling             := Trim(Coalesce(_labelling, ''));
+        _biomaterialList       := Trim(Coalesce(_biomaterialList, ''));
         _referenceCompoundList := Trim(Coalesce(_referenceCompoundList, ''));
-        _internalStandard := Trim(Coalesce(_internalStandard, ''));
-        _postdigestIntStd := Trim(Coalesce(_postdigestIntStd, ''));
-        _alkylation := Trim(Coalesce(_alkylation, ''));
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
+        _internalStandard      := Trim(Coalesce(_internalStandard, ''));
+        _postdigestIntStd      := Trim(Coalesce(_postdigestIntStd, ''));
+        _alkylation            := Trim(Coalesce(_alkylation, ''));
+        _mode                  := Trim(Lower(Coalesce(_mode, '')));
 
         If char_length(_experimentName) < 1 Then
             RAISE EXCEPTION 'Experiment name must be specified';

@@ -153,7 +153,7 @@ BEGIN
         -- Add an H to _hanfordIdNum if it starts with a number
         ---------------------------------------------------
 
-        If _hanfordIdNum Similar To '[0-9]%' Then
+        If _hanfordIdNum SIMILAR TO '[0-9]%' Then
             _hanfordIdNum := format('H%s', _hanfordIdNum);
         End If;
 

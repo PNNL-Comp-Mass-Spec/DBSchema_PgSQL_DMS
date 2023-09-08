@@ -172,12 +172,12 @@ BEGIN
         _autoSPArchivePathRoot := _archivePath;
         _autoSPArchiveSharePathRoot := _archiveNetworkSharePath;
 
-        If Coalesce(_autoSPVolNameClient, '') <> '' AND _autoSPVolNameClient NOT LIKE '%\' Then
+        If Coalesce(_autoSPVolNameClient, '') <> '' AND _autoSPVolNameClient NOT LIKE '%\\' Then
             -- Auto-add a slash;
         End If;
             _autoSPVolNameClient := format('%s\', _autoSPVolNameClient);
 
-        If Coalesce(_autoSPVolNameServer, '') <> '' AND _autoSPVolNameServer NOT LIKE '%\' Then
+        If Coalesce(_autoSPVolNameServer, '') <> '' AND _autoSPVolNameServer NOT LIKE '%\\' Then
             -- Auto-add a slash;
         End If;
             _autoSPVolNameServer := format('%s\', _autoSPVolNameServer);

@@ -53,7 +53,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _dataset := Coalesce(_dataset, '');
+    _dataset  := Coalesce(_dataset, '');
     _infoOnly := Coalesce(_infoOnly, true);
 
     ---------------------------------------------------

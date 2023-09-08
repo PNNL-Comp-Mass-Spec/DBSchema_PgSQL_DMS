@@ -94,19 +94,19 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _infoOnly := Coalesce(_infoOnly, false);
-    _maxDatasetsToProcess := Coalesce(_maxDatasetsToProcess, 0);
-    _dayCountForRecentDatasets := Coalesce(_dayCountForRecentDatasets, 30);
-    _previewOutputType := Coalesce(_previewOutputType, 'Show Rules');
-    _analysisToolNameFilter := Coalesce(_analysisToolNameFilter, '');
-    _excludeDatasetsNotReleased := Coalesce(_excludeDatasetsNotReleased, true);
-    _excludeUnreviewedDatasets := Coalesce(_excludeUnreviewedDatasets, true);
-    _instrumentSkipList := Coalesce(_instrumentSkipList, '');
-    _datasetNameIgnoreExistingJobs := Coalesce(_datasetNameIgnoreExistingJobs, '');
+    _infoOnly                           := Coalesce(_infoOnly, false);
+    _maxDatasetsToProcess               := Coalesce(_maxDatasetsToProcess, 0);
+    _dayCountForRecentDatasets          := Coalesce(_dayCountForRecentDatasets, 30);
+    _previewOutputType                  := Coalesce(_previewOutputType, 'Show Rules');
+    _analysisToolNameFilter             := Coalesce(_analysisToolNameFilter, '');
+    _excludeDatasetsNotReleased         := Coalesce(_excludeDatasetsNotReleased, true);
+    _excludeUnreviewedDatasets          := Coalesce(_excludeUnreviewedDatasets, true);
+    _instrumentSkipList                 := Coalesce(_instrumentSkipList, '');
+    _datasetNameIgnoreExistingJobs      := Coalesce(_datasetNameIgnoreExistingJobs, '');
     _ignoreJobsCreatedBeforeDisposition := Coalesce(_ignoreJobsCreatedBeforeDisposition, true);
-    _campaignFilter := Coalesce(_campaignFilter, '');
-    _datasetIDFilterList := Coalesce(_datasetIDFilterList, '');
-    _showDebug := Coalesce(_showDebug, false);
+    _campaignFilter                     := Coalesce(_campaignFilter, '');
+    _datasetIDFilterList                := Coalesce(_datasetIDFilterList, '');
+    _showDebug                          := Coalesce(_showDebug, false);
 
     If _dayCountForRecentDatasets < 1 Then
         _dayCountForRecentDatasets := 1;

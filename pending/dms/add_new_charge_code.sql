@@ -29,8 +29,8 @@ BEGIN
     -- Validate the inputs
     ----------------------------------------------------------
 
-    _infoOnly := Coalesce(_infoOnly, false);
-    _chargeCodeList := Coalesce(_chargeCodeList, '');
+    _infoOnly       := Coalesce(_infoOnly, false);
+    _chargeCodeList := Trim(Coalesce(_chargeCodeList, ''));
 
     If _chargeCodeList = '' Then
         _message := '_chargeCodeList is empty; nothing to do';

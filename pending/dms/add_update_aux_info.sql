@@ -112,14 +112,14 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _targetName := Trim(Coalesce(_targetName, ''));
+        _targetName       := Trim(Coalesce(_targetName, ''));
         _targetEntityName := Trim(Coalesce(_targetEntityName, ''));
-        _categoryName := Trim(Coalesce(_categoryName, ''));
-        _subCategoryName := Trim(Coalesce(_subCategoryName, ''));
-        _itemNameList := Trim(Coalesce(_itemNameList, ''));
-        _itemValueList := Trim(Coalesce(_itemValueList, ''));
+        _categoryName     := Trim(Coalesce(_categoryName, ''));
+        _subCategoryName  := Trim(Coalesce(_subCategoryName, ''));
+        _itemNameList     := Trim(Coalesce(_itemNameList, ''));
+        _itemValueList    := Trim(Coalesce(_itemValueList, ''));
 
-        If _targetName::citext = 'Cell Culture' And Exists (Select * From t_aux_info_target Where target_type_name = 'Biomaterial') Then
+        If _targetName::citext = 'Cell Culture' And Exists (SELECT target_type_id FROM t_aux_info_target WHERE target_type_name = 'Biomaterial') Then
             _targetName := 'Biomaterial';
         End If;
 

@@ -81,11 +81,10 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _infoOnly := Coalesce(_infoOnly, true);
+    _infoOnly      := Coalesce(_infoOnly, true);
     _jobsToProcess := Coalesce(_jobsToProcess, 0);
-    _startJob := Coalesce(_startJob, 0);
-
-    _mode := Trim(Lower(Coalesce(_mode, '')));
+    _startJob      := Coalesce(_startJob, 0);
+    _mode          := Trim(Lower(Coalesce(_mode, '')));
 
     ---------------------------------------------------
     -- Create a temporary table to hold the job details

@@ -56,11 +56,11 @@ BEGIN
     End If;
 
     If _autoSPVolNameClient <> '' Then
-        If _autoSPVolNameClient Not Like '\\%' Then
+        If _autoSPVolNameClient Not Like '\\\\%' Then
             RAISE EXCEPTION 'Auto Storage VolNameClient should be a network share, for example: \\Proto-3\';
         End If;
 
-        If _autoSPVolNameClient Not Like '%\' Then
+        If _autoSPVolNameClient Not Like '%\\' Then
             RAISE EXCEPTION 'Auto Storage VolNameClient must end in a backslash, for example: \\Proto-3\';
         End If;
     End If;
@@ -70,7 +70,7 @@ BEGIN
             RAISE EXCEPTION 'Auto Storage VolNameServer should be a drive letter, for example: G:\';
         End If;
 
-        If _autoSPVolNameServer Not Like '%\' Then
+        If _autoSPVolNameServer Not Like '%\\' Then
             RAISE EXCEPTION 'Auto Storage VolNameServer must end in a backslash, for example: G:\';
         End If;
     End If;
@@ -83,7 +83,7 @@ BEGIN
     End If;
 
     If _autoSPArchiveSharePathRoot <> '' Then
-        If _autoSPArchiveSharePathRoot Not Like '\\%' Then
+        If _autoSPArchiveSharePathRoot Not Like '\\\\%' Then
             RAISE EXCEPTION 'Auto Storage Archive Share Path Root should be a network share, for example: \\adms.emsl.pnl.gov\dmsarch\VOrbiETD01';
         End If;
     End If;

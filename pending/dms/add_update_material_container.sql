@@ -91,8 +91,7 @@ BEGIN
     BEGIN
 
         ---------------------------------------------------
-        -- Make sure the inputs are not null
-        -- Additional validation occurs later
+        -- Validate the inputs
         ---------------------------------------------------
 
         _container := Trim(Coalesce(_container, ''));
@@ -103,12 +102,10 @@ BEGIN
         _researcher := Trim(Coalesce(_researcher, ''));
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
-        ---------------------------------------------------
         -- Optionally generate a container name
-        ---------------------------------------------------
 
-        If _container = '(generate name)' OR _mode = 'add' Then
-            --
+        If _container::citext = '(generate name)' OR _mode = 'add' Then
+
             SELECT MAX(container_id) + 1
             INTO _nextContainerID
             FROM  t_material_containers;
@@ -116,17 +113,13 @@ BEGIN
             _container := format('MC-%s', _nextContainerID);
         End If;
 
-        ---------------------------------------------------
-        -- Validate the inputs
-        ---------------------------------------------------
-
         If char_length(_container) = 0 Then
             _message := 'Container name cannot be empty';
             _returnCode := 'U5202';
             RETURN;
         End If;
 
-        If _container::citext ='na' Or _container Like '%Staging%' Then
+        If _container::citext ='na' Or _container ILIKE '%Staging%' Then
             _message := format('The "%s" container cannot be updated via the website; contact a DMS admin (see AddUpdateMaterialContainer)', _container);
             _returnCode := 'U5203';
             RETURN;
@@ -142,7 +135,7 @@ BEGIN
             RETURN;
         End If;
 
-        If _type = 'na' Then
+        If _type::citext = 'na' Then
             _message := 'Containers of type "na" cannot be updated via the website; contact a DMS admin';
             _returnCode := 'U5205';
             RETURN;
@@ -170,7 +163,7 @@ BEGIN
             SELECT name_with_username
             INTO _researcher
             FROM t_users
-            WHERE username = _researcherUsername
+            WHERE username = _researcherUsername::citext;
 
         Else
             -- Single match not found
@@ -198,7 +191,7 @@ BEGIN
                status
         INTO _containerID, _curLocationID, _curType, _curStatus
         FROM  t_material_containers
-        WHERE container = _container;
+        WHERE container = _container::citext;
 
         If _mode = 'add' and _containerID <> 0 Then
             _message := format('Cannot add container with same name as existing container: %s', _container);
@@ -221,7 +214,7 @@ BEGIN
                container_limit
         INTO _locationID, _limit
         FROM t_material_locations
-        WHERE location = _location;
+        WHERE location = _location::citext;
 
         If Not FOUND Then
             _message := format('Invalid location: %s (for container %s)', _location, _container);
@@ -305,13 +298,13 @@ BEGIN
             -- Material movement logging
             --
             If _curLocationName <> _location Then
-                CALL post_material_log_entry
-                     'Container Move',
-                     _container,
-                     _curLocationName,
-                     _location,
-                     _callingUser,
-                     ''
+                CALL post_material_log_entry ( 'Container Move',
+                                               _container,
+                                               _curLocationName,
+                                               _location,
+                                               _callingUser,
+                                               ''
+                                             );
             End If;
 
         End If;

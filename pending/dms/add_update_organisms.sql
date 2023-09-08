@@ -1,4 +1,4 @@
---
+
 CREATE OR REPLACE PROCEDURE public.add_update_organisms
 (
     _orgName text,
@@ -138,24 +138,24 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _orgStorageLocation := Coalesce(_orgStorageLocation, '');
+        _orgStorageLocation := Trim(Coalesce(_orgStorageLocation, ''));
 
         If _orgStorageLocation <> '' Then
-            If Not _orgStorageLocation LIKE '\\%' Then
+            If Not _orgStorageLocation LIKE '\\\\%' Then
                 RAISE EXCEPTION 'Org. Storage Path must start with \\';
             End If;
 
             -- Make sure _orgStorageLocation does not End in \FASTA or \FASTA\
             -- That text gets auto-appended via computed column organism_db_path
-            If _orgStorageLocation Like '%\FASTA' Then
+            If _orgStorageLocation ILIKE '%\\FASTA' Then
                 _orgStorageLocation := Substring(_orgStorageLocation, 1, char_length(_orgStorageLocation) - 6);
             End If;
 
-            If _orgStorageLocation Like '%\FASTA\' Then
+            If _orgStorageLocation ILIKE '%\\FASTA\\' Then
                 _orgStorageLocation := Substring(_orgStorageLocation, 1, char_length(_orgStorageLocation) - 7);
             End If;
 
-            If Not _orgStorageLocation Like '%\' Then
+            If Not _orgStorageLocation LIKE '%\\' Then
                 _orgStorageLocation := format('%s\', _orgStorageLocation);
             End If;
 

@@ -31,13 +31,24 @@ AS $$
 **      Adds new analysis jobs for list of datasets
 **
 **  Arguments:
-**    _datasetList                Ignored if _dataPackageID is a positive integer
-**    _organismDBName             Legacy FASTA name; 'na' if using protein collections
-**    _ownerUsername              Will get updated to _callingUser if _callingUser is valid
-**    _requestID                  0 if not associated with a request; otherwise, Request ID in T_Analysis_Job_Request
-**    _associatedProcessorGroup   Processor group name; deprecated in May 2015
-**    _propagationMode            'Export', 'No Export'
-**    _mode                       'add' or 'preview'
+**    _datasetList                  Comma-separated list of dataset names; ignored if _dataPackageID is a positive integer
+**    _priority
+**    _toolName
+**    _paramFileName
+**    _settingsFileName
+**    _organismDBName               Legacy FASTA name; 'na' if using protein collections
+**    _organismName
+**    _protCollNameList
+**    _protCollOptionsList
+**    _ownerUsername                Will get updated to _callingUser if _callingUser is valid
+**    _comment
+**    _specialProcessing
+**    _requestID                    0 if not associated with a request; otherwise, Request ID in T_Analysis_Job_Request
+**    _dataPackageID
+**    _associatedProcessorGroup     Processor group name; deprecated in May 2015
+**    _propagationMode              'Export', 'No Export'
+**    _removeDatasetsWithJobs       If 'N' or 'No', do not remove datasets with existing jobs (ignored if _dataPackageID is non-zero)
+**    _mode                         'add' or 'preview'
 **
 **  Auth:   grk
 **  Date:   01/29/2004
@@ -114,6 +125,7 @@ AS $$
 **          03/27/2023 mem - Synchronize protein collection options validation with add_update_analysis_job_request
 **                         - Remove dash from DiaNN tool name
 **          07/27/2023 mem - Update message sent to get_new_job_id()
+**          09/06/2023 mem - Remove leading space from messages
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -132,7 +144,6 @@ DECLARE
     _requestStateID int := 0;
     _jobCountToBeCreated int := 0;
     _msgForLog text;
-    _backfillError int;
     _logErrors boolean := false;
     _gid int;
     _newUsername text;
@@ -222,16 +233,14 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _requestID := Coalesce(_requestID, 0);
-
+        _requestID     := Coalesce(_requestID, 0);
         _dataPackageID := Coalesce(_dataPackageID, 0);
+        _datasetList   := Trim(Coalesce(_datasetList, ''));
+        _mode          := Trim(Lower(Coalesce(_mode, '')));
+
         If _dataPackageID < 0 Then
             _dataPackageID := 0;
         End If;
-
-        _datasetList := Trim(Coalesce(_datasetList, ''));
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
 
         If Not _mode::citext In ('add', 'preview') Then
             RAISE EXCEPTION 'Invalid mode: should be "add" or "preview", not "%"', _mode;
@@ -404,7 +413,7 @@ BEGIN
         -- If AJT_orgDbReqd = 0, we ignore organism, protein collection, and organism DB
         ---------------------------------------------------
 
-        If _dataPackageID = 0 And _removeDatasetsWithJobs <> 'N' Then
+        If _dataPackageID = 0 And _removeDatasetsWithJobs::citext NOT IN ('N', 'No') Then
 
             CREATE TEMP TABLE Tmp_MatchingJobDatasets (
                 Dataset text
@@ -536,7 +545,7 @@ BEGIN
         _jobStateID := 1;
 
         If Coalesce(_specialProcessing, '') <> '' AND
-           Exists (SELECT analysis_tool_id FROM t_analysis_tool WHERE analysis_tool = _toolName AND use_special_proc_waiting > 0) Then
+           Exists (SELECT analysis_tool_id FROM t_analysis_tool WHERE analysis_tool = _toolName::citext AND use_special_proc_waiting > 0) Then
 
             _jobStateID := 19;
 
@@ -733,7 +742,7 @@ BEGIN
                                 _message => _msgForLog,         -- Output
                                 _returnCode => _returnCode);    -- Output
 
-                    If _backfillError = 0 Then
+                    If _returnCode = '' Then
                         -- Associate the new job with this job request
                         -- Also update settings file, parameter file, protein collection, etc.
                         --
@@ -772,15 +781,15 @@ BEGIN
                     CALL public.alter_event_log_entry_user ('public', 12, _requestID, _requestStateID, _callingUser, _message => _alterEnteredByMessage);
                 End If;
 
-                _message := format(' Created aggregation job %s for ', _pipelineJob);
+                _message := format('Created aggregation job %s for ', _pipelineJob);
 
             ElsIf _returnCode = '' Then
-                _message := ' Would create an aggregation job for ';
+                _message := 'Would create an aggregation job for ';
 
             End If;
 
             If _returnCode = '' Then
-                _message := format('%s %s datasets', _message, _jobCountToBeCreated);
+                _message := format('%s %s %s', _message, public.check_plural(_jobCountToBeCreated, 'dataset', 'datasets');
             End If;
 
             DROP TABLE Tmp_DatasetInfo;
@@ -1002,7 +1011,13 @@ BEGIN
                        ) StatQ
                 WHERE target.request_id = StatQ.request_id;
 
-                CALL public.update_cached_job_request_existing_jobs (_processingMode => 0, _requestID => _requestID, _infoOnly => false)
+                CALL public.update_cached_job_request_existing_jobs (
+                            _processingMode => 0,
+                            _requestID => _requestID,
+                            _jobSearchHours => 0,
+                            _infoOnly => false,
+                            _message => _message,           -- Output
+                            _returnCode => _returnCode);    -- Output
 
             End If;
 
@@ -1039,15 +1054,15 @@ BEGIN
 
         If _jobCountToBeCreated = 1 Then
             If _mode = 'add' Then
-                _message := ' There was 1 job created.';
+                _message := 'There was 1 job created.';
             Else
-                _message := ' There would be 1 job created.';
+                _message := 'There would be 1 job created.';
             End If;
         Else
             If _mode = 'add' Then
-                _message := ' There were ';
+                _message := 'There were ';
             Else
-                _message := ' There would be ';
+                _message := 'There would be ';
             End If;
 
             _message := format('%s %s %s created.',

@@ -132,8 +132,8 @@ BEGIN
         ---------------------------------------------------
 
         _experimentGroupID := Trim(Coalesce(_experimentGroupID, ''));
-        _experimentList := Trim(Coalesce(_experimentList, ''));
-        _batchName := Trim(Coalesce(_batchName, ''));
+        _experimentList    := Trim(Coalesce(_experimentList, ''));
+        _batchName         := Trim(Coalesce(_batchName, ''));
 
         If _experimentGroupID <> '' AND _experimentList <> '' Then
             _returnCode := 'U5130';

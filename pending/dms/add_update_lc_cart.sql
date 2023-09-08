@@ -66,10 +66,10 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _cartName := Trim(Coalesce(_cartName, ''));
+    _cartName        := Trim(Coalesce(_cartName, ''));
     _cartDescription := Trim(Coalesce(_cartDescription, ''));
-    _cartState := Trim(Coalesce(_cartState, ''));
-    _mode := Trim(Lower(Coalesce(_mode, '')));
+    _cartState       := Trim(Coalesce(_cartState, ''));
+    _mode            := Trim(Lower(Coalesce(_mode, '')));
 
     If public.has_whitespace_chars(_cartName, 0) Then
         If Position(chr(9) In _cartName) > 0 Then
@@ -83,7 +83,6 @@ BEGIN
     -- Resolve cart state name to ID
     ---------------------------------------------------
 
-    --
     SELECT cart_state_id
     INTO _cartStateID
     FROM t_lc_cart_state_name

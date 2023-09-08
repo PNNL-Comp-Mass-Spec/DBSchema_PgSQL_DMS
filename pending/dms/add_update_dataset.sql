@@ -268,24 +268,25 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _mode := Trim(Lower(Coalesce(_mode, '')));
+        _mode              := Trim(Lower(Coalesce(_mode, '')));
 
-        _secSep := Trim(Coalesce(_secSep, ''));
-        _lcColumnNum := Trim(Coalesce(_lcColumnNum, ''));
-        _datasetName := Trim(Coalesce(_datasetName, ''));
+        _secSep            := Trim(Coalesce(_secSep, ''));
+        _lcColumnNum       := Trim(Coalesce(_lcColumnNum, ''));
+        _datasetName       := Trim(Coalesce(_datasetName, ''));
 
-        _experimentName := Trim(Coalesce(_experimentName, ''));
-        _operatorUsername := Trim(Coalesce(_operatorUsername, ''));
-        _instrumentName := Trim(Coalesce(_instrumentName, ''));
-        _rating := Trim(Coalesce(_rating, ''));
+        _experimentName    := Trim(Coalesce(_experimentName, ''));
+        _operatorUsername  := Trim(Coalesce(_operatorUsername, ''));
+        _instrumentName    := Trim(Coalesce(_instrumentName, ''));
+        _rating            := Trim(Coalesce(_rating, ''));
 
-        _internalStandards := Coalesce(_internalStandards, '');
+        _internalStandards := Trim(Coalesce(_internalStandards, ''));
+
         If _internalStandards = '' Or _internalStandards = 'na' Then
             _internalStandards := 'none';
         End If;
 
         If Coalesce(_mode, '') = '' Then
-            RAISE EXCEPTION '_mode must be specified';
+            RAISE EXCEPTION 'Mode must be specified';
         End If;
 
         If Coalesce(_secSep, '') = '' Then
@@ -347,26 +348,25 @@ BEGIN
             _wellNumber := NULL;
         End If;
 
-        _workPackage := Coalesce(_workPackage, '');
-        _eusProposalID := Coalesce(_eusProposalID, '');
-        _eusUsageType := Coalesce(_eusUsageType, '');
-        _eusUsersList := Coalesce(_eusUsersList, '');
+        _workPackage           := Trim(Coalesce(_workPackage, ''));
+        _eusProposalID         := Trim(Coalesce(_eusProposalID, ''));
+        _eusUsageType          := Trim(Coalesce(_eusUsageType, ''));
+        _eusUsersList          := Trim(Coalesce(_eusUsersList, ''));
 
-        _requestID := Coalesce(_requestID, 0);
+        _requestID             := Coalesce(_requestID, 0);
         _aggregationJobDataset := Coalesce(_aggregationJobDataset, false);
-        _captureSubfolder := Trim(Coalesce(_captureSubfolder, ''));
+        _captureSubfolder      := Trim(Coalesce(_captureSubfolder, ''));
+        _lcCartConfig          := Trim(Coalesce(_lcCartConfig, ''));
+        _logDebugMessages      := Coalesce(_logDebugMessages, false);
+        _callingUser           := Coalesce(_callingUser, '');
 
-        If _captureSubfolder Similar To '\\%' OR _captureSubfolder::citext Similar To '[A-Z]:\%' Then
+        If _captureSubfolder SIMILAR TO '\\%' OR _captureSubfolder::citext SIMILAR TO '[A-Z]:\%' Then
             RAISE EXCEPTION 'Capture subfolder should be a subdirectory name below the source share for this instrument; it is currently a full path';
         End If;
 
-        _lcCartConfig := Trim(Coalesce(_lcCartConfig, ''));
         If _lcCartConfig = '' Then
             _lcCartConfig := null;
         End If;
-
-        _callingUser := Coalesce(_callingUser, '');
-        _logDebugMessages := Coalesce(_logDebugMessages, false);
 
         ---------------------------------------------------
         -- Determine if we are adding or check_adding a dataset
@@ -401,7 +401,7 @@ BEGIN
             RAISE EXCEPTION '%', _msg;
         End If;
 
-        If Not _aggregationJobDataset And (_datasetName::citext Similar To '%[.]raw' Or _datasetName::citext Similar To '%[.]wiff' Or _datasetName::citext Similar To '%[.]d') Then
+        If Not _aggregationJobDataset And (_datasetName::citext SIMILAR TO '%[.]raw' Or _datasetName::citext SIMILAR TO '%[.]wiff' Or _datasetName::citext SIMILAR TO '%[.]d') Then
             RAISE EXCEPTION 'Dataset name may not end in .raw, .wiff, or .d';
         End If;
 
@@ -549,7 +549,7 @@ BEGIN
 
         _experimentID := get_experiment_id(_experimentName);
 
-        If _experimentID = 0 And _experimentName::citext Similar To 'QC_Shew_[0-9][0-9]_[0-9][0-9]' And _experimentName LIKE '%-%' Then
+        If _experimentID = 0 And _experimentName::citext SIMILAR TO 'QC_Shew_[0-9][0-9]_[0-9][0-9]' And _experimentName LIKE '%-%' Then
 
             _newExperiment := Replace(_experimentName, '-', '_');
             _experimentID := get_experiment_id(_newExperiment);
@@ -818,9 +818,9 @@ BEGIN
 
         If _requestID = 0 AND _addingDataset Then
             -- If the EUS information is not defined, auto-define the EUS usage type as 'MAINTENANCE'
-            If (_datasetName::citext Similar To 'Blank%' Or
-                _datasetName::citext Similar To '%[_]Tune[_]%' Or
-                _datasetName::citext Similar To '%TuneMix%'
+            If (_datasetName::citext SIMILAR TO 'Blank%' Or
+                _datasetName::citext SIMILAR TO '%[_]Tune[_]%' Or
+                _datasetName::citext SIMILAR TO '%TuneMix%'
                ) And
                _eusProposalID = '' And
                _eusUsageType = ''

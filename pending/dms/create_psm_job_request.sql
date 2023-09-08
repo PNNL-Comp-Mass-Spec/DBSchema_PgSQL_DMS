@@ -340,7 +340,7 @@ BEGIN
         -- We don't want the warning message to appear when the user is using Create_PSM_Job_Request; instead we silently update things
         ---------------------------------------------------
 
-        If _toolName::citext Like 'MSGFPlus%' And _protCollOptionsList::citext Like '%decoy%' And Not _paramFile::citext Similar To '%[_]NoDecoy%' Then
+        If _toolName::citext Like 'MSGFPlus%' And _protCollOptionsList::citext Like '%decoy%' And Not _paramFile::citext SIMILAR TO '%[_]NoDecoy%' Then
             _protCollOptionsList := 'seq_direction=forward,filetype=fasta';
         End If;
 

@@ -100,8 +100,8 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _mode := Trim(Lower(Coalesce(_mode, '')));
-        _usage := Coalesce(_usage, '');
+        _mode  := Trim(Lower(Coalesce(_mode, '')));
+        _usage := Trim(Coalesce(_usage, ''));
 
         SELECT usage_type_id
         INTO _usageTypeID
@@ -118,7 +118,7 @@ BEGIN
         _operator := try_cast(_operator, null::int);
 
         -- Assure that _comment does not contain LF or CR
-        _comment := Replace(Replace(_comment, chr(10), ' '), chr(13), ' ');
+        _comment := Trim(Replace(Replace(_comment, chr(10), ' '), chr(13), ' '));
 
         ---------------------------------------------------
         -- Is entry already in database? (only applies to updates)
@@ -137,25 +137,24 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-            RAISE EXCEPTION '"Add" mode not supported';
-        End If; -- add mode
+            RAISE EXCEPTION '"Add" mode is not supported';
+        End If;
 
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
 
         If _mode = 'update' Then
-            --
+
             UPDATE t_emsl_instrument_usage_report
-            SET
-                proposal = _proposal,
+            SET proposal = _proposal,
                 usage_type_id = _usageTypeID,
                 users = _users,
                 operator = _operator,
                 comment = _comment
             WHERE seq = _seq;
 
-        End If; -- update mode
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN
