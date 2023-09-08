@@ -1,45 +1,53 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_cached_job_request_existing_jobs
-(
-    _processingMode int = 0,
-    _requestID int = 0,
-    _jobSearchHours int = 0,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_cached_job_request_existing_jobs(integer, integer, integer, integer, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_cached_job_request_existing_jobs(IN _processingmode integer DEFAULT 0, IN _requestid integer DEFAULT 0, IN _jobsearchhours integer DEFAULT 0, IN _modezerosearchdays integer DEFAULT 30, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates T_Analysis_Job_Request_Existing_Jobs
+**      Updates t_analysis_job_request_existing_jobs
 **
 **  Arguments:
-**    _processingMode   0 to only add new job requests, 1 to add new job requests and update existing information; ignored if _requestID or _jobSearchHours is non-zero
-**    _requestID        When non-zero, a single request ID to add / update
-**    _jobSearchHours   When non-zero, compare jobs created within this many hours to existing job requests
+**    _processingMode       0 to only add new job requests created within the last 30 days (customizable using _modeZeroSearchDays)
+**                          1 to add new job requests and update existing information
+**                          Ignored if _requestID is non-zero or _jobSearchHours is non-zero
+**    _requestID            When > 0, a single analysis job request to add / update
+**    _jobSearchHours       When > 0, compare jobs created within this many hours to existing job requests (ignored if _requestID is non-zero)
+**    _modeZeroSearchDays   Number of days to search when _processingMode is 0 (and _requestID and _jobSearchHours are each zero)
+**    _infoOnly             When true, preview changes
 **
 **  Auth:   mem
 **  Date:   07/30/2019 mem - Initial version
 **          07/31/2019 mem - Add option to find existing job requests that match jobs created within the last _jobSearchHours
 **          06/25/2021 mem - Fix bug comparing legacy organism DB name in T_Analysis_Job to T_Analysis_Job_Request_Datasets
-**          12/15/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _matchCount int;
-    _updateCount int;
     _currentRequestId int := 0;
     _jobRequestsAdded int := 0;
-    _jobRequestsUpdated int := 0;
+    _insertCount int;
+    _insertCountOverall int;
     _addon text;
+
+    _requestIdMax int;
+    _requestIdStart int;
+    _requestIdEnd int;
+    _batchSize int;
 
     _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
     _previewData record;
     _infoData text;
+
+    _formatSpecifierLoop text;
+    _infoHeadLoop text;
+    _infoHeadSeparatorLoop text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -48,10 +56,15 @@ BEGIN
     -- Validate the inputs
     ------------------------------------------------
 
-    _processingMode := Coalesce(_processingMode, 0);
-    _requestID := Coalesce(_requestID, 0);
-    _jobSearchHours := Coalesce(_jobSearchHours, 0);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _processingMode     := Coalesce(_processingMode, 0);
+    _requestID          := Coalesce(_requestID, 0);
+    _jobSearchHours     := Coalesce(_jobSearchHours, 0);
+    _modeZeroSearchDays := Coalesce(_modeZeroSearchDays, 30);
+    _infoOnly           := Coalesce(_infoOnly, false);
+
+    If _modeZeroSearchDays < 2 Then
+        _modeZeroSearchDays := 2;
+    End If;
 
     If _requestID = 1 Then
         RAISE WARNING '_requestID 1 is a special placeholder request; table t_analysis_job_request_existing_jobs does not track jobs for _requestID 1';
@@ -80,10 +93,9 @@ BEGIN
 
             FOR _previewData IN
                 SELECT DISTINCT AJR.Request_ID,
-                       CASE
-                           WHEN CachedJobs.request_id IS NULL
-                           THEN 'Analysis job request to add to t_analysis_job_request_existing_jobs'
-                           ELSE 'Existing Analysis job request to validate against t_analysis_job_request_existing_jobs'
+                       CASE WHEN CachedJobs.request_id IS NULL
+                            THEN 'Analysis job request to add to t_analysis_job_request_existing_jobs'
+                            ELSE 'Existing Analysis job request to validate against t_analysis_job_request_existing_jobs'
                        END AS Status
                 FROM t_analysis_job_request AJR
                      LEFT OUTER JOIN t_analysis_job_request_existing_jobs CachedJobs
@@ -169,12 +181,12 @@ BEGIN
                )
               )
         GROUP BY AJR.request_id, AJ.job
-        ORDER BY AJR.request_id, AJ.job
+        ORDER BY AJR.request_id, AJ.job;
 
         If _infoOnly Then
 
             ------------------------------------------------
-            -- Preview the update of cached info
+            -- Preview updating cached info
             ------------------------------------------------
 
             RAISE INFO '';
@@ -183,10 +195,9 @@ BEGIN
 
             FOR _previewData IN
                 SELECT DISTINCT RJ.Request_ID,
-                       CASE
-                           WHEN CachedJobs.request_id IS NULL
-                           THEN 'Analysis job request to add to t_analysis_job_request_existing_jobs'
-                           ELSE 'Existing Analysis job request to validate against t_analysis_job_request_existing_jobs'
+                       CASE WHEN CachedJobs.request_id IS NULL
+                            THEN 'Analysis job request to add to t_analysis_job_request_existing_jobs'
+                            ELSE 'Existing Analysis job request to validate against t_analysis_job_request_existing_jobs'
                        END AS Status
                 FROM Tmp_RequestsAndExistingJobs RJ
                      LEFT OUTER JOIN t_analysis_job_request_existing_jobs CachedJobs
@@ -223,6 +234,8 @@ BEGIN
         -- delete extra rows in t_analysis_job_request_existing_jobs for each request_id
         ------------------------------------------------
 
+        _insertCountOverall := 0;
+
         FOR _currentRequestId IN
             SELECT Request_ID
             FROM Tmp_RequestsAndExistingJobs
@@ -237,10 +250,10 @@ BEGIN
             WHEN NOT MATCHED THEN
                 INSERT (request_id, job)
                 VALUES (source.request_id, source.job);
+            --
+            GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-            If FOUND Then
-                _jobRequestsUpdated := _jobRequestsUpdated + 1;
-            End If;
+            _insertCountOverall := _insertCountOverall + _insertCount;
 
             -- Delete rows in t_analysis_job_request_existing_jobs that have Request_ID = _currentRequestId
             -- but are not in the job list returned by get_existing_jobs_matching_job_request()
@@ -253,15 +266,15 @@ BEGIN
                                    ) AS source
                               WHERE target.job = source.job);
 
-        END LOOP; -- </c>
+        END LOOP;
 
         If _jobRequestsAdded > 0 Then
-            _message := format('%s %s', _jobRequestsAdded, public.check_plural(_jobRequestsAdded, 'job request was added', 'job requests were added'));
+            _message := format('%s %s to t_analysis_job_request_existing_jobs', _jobRequestsAdded, public.check_plural(_jobRequestsAdded, 'job request was added', 'job requests were added'));
         End If;
 
-        If _jobRequestsUpdated > 0 Then
-            _addon := format('%s %s via a merge', _jobRequestsUpdated, public.check_plural(_jobRequestsUpdated, 'job request was updated', 'job requests were updated'));
-            _message := public.append_to_text(_message, _addon, _delimiter => '; ', _maxlength => 512);
+        If _insertCountOverall > 0 Then
+            _addon := format('%s %s to t_analysis_job_request_existing_jobs', _insertCountOverall, public.check_plural(_insertCountOverall, 'row was added', 'rows were added'));
+            _message := public.append_to_text(_message, _addon, _delimiter => '; ');
         End If;
 
         DROP TABLE Tmp_RequestsAndExistingJobs;
@@ -278,6 +291,9 @@ BEGIN
 
             ------------------------------------------------
             -- Preview the addition of new analysis job requests
+            --
+            -- There are a large number of existing job requests that were never used to create jobs
+            -- Therefore, this query only examines job requests from the last _modeZeroSearchDays days
             ------------------------------------------------
 
             RAISE INFO '';
@@ -293,6 +309,7 @@ BEGIN
                      LEFT OUTER JOIN t_analysis_job_request_existing_jobs CachedJobs
                        ON AJR.request_id = CachedJobs.request_id
                 WHERE AJR.request_id > 1 AND
+                      AJR.created > CURRENT_TIMESTAMP - make_interval(days => _modeZeroSearchDays) AND
                       CachedJobs.request_id IS NULL
                 ORDER BY AJR.request_id
             LOOP
@@ -308,117 +325,199 @@ BEGIN
             If _matchCount = 0 Then
                 RAISE INFO 'No analysis job requests need to be added to t_analysis_job_request_existing_jobs';
             End If;
-        Else
-            ------------------------------------------------
-            -- Add missing analysis job requests
-            --
-            -- There are a large number of existing job requests that were never used to create jobs
-            -- Therefore, this query only examines job requests from the last 30 days
-            ------------------------------------------------
 
-            INSERT INTO t_analysis_job_request_existing_jobs( request_id, job )
-            SELECT DISTINCT LookupQ.request_id,
-                            get_existing_jobs_matching_job_request.job
-            FROM ( SELECT AJR.request_id AS Request_ID
-                   FROM t_analysis_job_request AJR
-                        LEFT OUTER JOIN t_analysis_job_request_existing_jobs CachedJobs
-                          ON AJR.request_id = CachedJobs.request_id
-                   WHERE AJR.request_id > 1 AND
-                         AJR.created > CURRENT_TIMESTAMP - INTERVAL '30 days' AND
-                         CachedJobs.request_id IS NULL
-                 ) LookupQ
-                 CROSS APPLY get_existing_jobs_matching_job_request ( LookupQ.request_id )
-            ORDER BY LookupQ.request_id, job
-            --
-            GET DIAGNOSTICS _matchCount = ROW_COUNT;
-
-            If _matchCount > 0 Then
-                _message := format('Added %s new analysis job %s', _matchCount, public.check_plural(_matchCount, 'request', 'requests'));
-            End If;
+            RETURN;
         End If;
 
-    Else
+        ------------------------------------------------
+        -- Add missing analysis job requests
+        --
+        -- There are a large number of existing job requests that were never used to create jobs
+        -- Therefore, this query only examines job requests from the last _modeZeroSearchDays days
+        ------------------------------------------------
+
+        INSERT INTO t_analysis_job_request_existing_jobs( request_id, job )
+        SELECT DISTINCT LookupQ.request_id,
+                        RequestJobs.job
+        FROM ( SELECT AJR.request_id AS Request_ID
+               FROM t_analysis_job_request AJR
+                    LEFT OUTER JOIN t_analysis_job_request_existing_jobs CachedJobs
+                      ON AJR.request_id = CachedJobs.request_id
+               WHERE AJR.request_id > 1 AND
+                     AJR.created > CURRENT_TIMESTAMP - make_interval(days => _modeZeroSearchDays) AND
+                     CachedJobs.request_id IS NULL
+             ) LookupQ
+             JOIN LATERAL (
+                SELECT job
+                FROM get_existing_jobs_matching_job_request ( LookupQ.Request_ID )
+                ) As RequestJobs On true
+        ORDER BY LookupQ.request_id, RequestJobs.job;
+        --
+        GET DIAGNOSTICS _matchCount = ROW_COUNT;
+
+        If _matchCount > 0 Then
+            _message := format('Added %s new analysis job %s', _matchCount, public.check_plural(_matchCount, 'request', 'requests'));
+        End If;
+
+        RETURN;
+    End If;
+
+    ------------------------------------------------
+    -- Update t_analysis_job_request_existing_jobs using all existing analysis job requests (_processingMode is 1)
+    -- The queries are run in batches of 500 job requests at a time, since processing the entire table at once takes too long
+    ------------------------------------------------
+
+    _batchSize := 500;
+
+    RAISE INFO '';
+    RAISE INFO '% new rows to t_analysis_job_request_existing_jobs, processing % job requests at a time',
+                    CASE WHEN _infoOnly
+                         THEN 'Preview adding'
+                         ELSE 'Adding'
+                    END,
+                    _batchSize;
+    RAISE INFO '';
+
+    If _infoOnly Then
 
         ------------------------------------------------
-        -- Update t_analysis_job_request_existing_jobs using all existing analysis job requests
+        -- Preview each range of request IDs to process
         ------------------------------------------------
+
+        _formatSpecifierLoop := '%-16s %-15s %-15s %-15s';
+
+        _infoHeadLoop := format(_formatSpecifierLoop,
+                            'Request_ID_Start',
+                            'Request_ID_End',
+                            'Request_Count',
+                            'New_Jobs_to_Add'
+                           );
+
+        _infoHeadSeparatorLoop := format(_formatSpecifierLoop,
+                                     '----------------',
+                                     '---------------',
+                                     '---------------',
+                                     '---------------'
+                                    );
+
+        RAISE INFO '%', _infoHeadLoop;
+        RAISE INFO '%', _infoHeadSeparatorLoop;
+
+    End If;
+
+    SELECT MAX(request_id)
+    INTO _requestIdMax
+    FROM t_analysis_job_request;
+
+    _requestIdMax := Coalesce(_requestIdMax, 2);
+    _requestIdStart := 2;
+    _insertCountOverall := 0;
+
+    WHILE true
+    LOOP
+        If _requestIdStart < _batchSize Then
+            _requestIdEnd := _batchSize - 1;
+        Else
+            _requestIdEnd := _requestIdStart + _batchSize - 1;
+        End If;
 
         If _infoOnly Then
 
-            ------------------------------------------------
-            -- Preview the update of cached info
-            ------------------------------------------------
+            SELECT COUNT(DISTINCT AJR.request_id) AS Request_Count,
+                   SUM(CASE WHEN CachedJobs.request_id IS NULL THEN 1 ELSE 0 END) AS New_Jobs_to_Add
+            INTO _previewData
+            FROM t_analysis_job_request AJR
+                 LEFT OUTER JOIN t_analysis_job_request_existing_jobs CachedJobs
+                   ON AJR.request_id = CachedJobs.request_id
+            WHERE AJR.request_id BETWEEN _requestIdStart AND _requestIdEnd;
 
-            RAISE INFO '';
-            RAISE INFO '%', _infoHead;
-            RAISE INFO '%', _infoHeadSeparator;
+            _infoData := format(_formatSpecifierLoop,
+                                _requestIdStart,
+                                _requestIdEnd,
+                                _previewData.Request_Count,
+                                _previewData.New_Jobs_to_Add
+                               );
 
-            _matchCount := 0;
-
-            FOR _previewData IN
-                SELECT DISTINCT AJR.request_id AS Request_ID,
-                       CASE
-                           WHEN CachedJobs.request_id IS NULL
-                           THEN 'Analysis job request to add to t_analysis_job_request_existing_jobs'
-                           ELSE 'Existing Analysis job request to validate against t_analysis_job_request_existing_jobs'
-                       END AS Status
-                FROM t_analysis_job_request AJR
-                     LEFT OUTER JOIN t_analysis_job_request_existing_jobs CachedJobs
-                       ON AJR.request_id = CachedJobs.request_id
-                ORDER BY AJR.request_id
-            LOOP
-                _infoData := format(_formatSpecifier,
-                                    _previewData.Request_ID,
-                                    _previewData.Status
-                                   );
-
-                RAISE INFO '%', _infoData;
-                _matchCount := _matchCount + 1;
-            END LOOP;
-
-            If _matchCount = 0 Then
-                RAISE INFO 'No data in t_analysis_job_request_existing_jobs needs to be updated';
-            End If;
+            RAISE INFO '%', _infoData;
 
         Else
-            ------------------------------------------------
-            -- Update cached info for all job requests
-            -- This will take at least 30 seconds to complete
-            ------------------------------------------------
+
+            RAISE INFO 'Processing job requests % to %', _requestIdStart, _requestIdEnd;
+
+            -- Add new rows to t_analysis_job_request_existing_jobs
 
             MERGE INTO t_analysis_job_request_existing_jobs AS target
             USING ( SELECT DISTINCT AJR.request_id As Request_ID, MatchingJobs.Job
-                    FROM t_analysis_job_request AJR CROSS APPLY get_existing_jobs_matching_job_request(AJR.request_id) MatchingJobs
-                    WHERE AJR.request_id > 1
+                    FROM t_analysis_job_request AJR
+                         JOIN LATERAL (
+                            SELECT job
+                            FROM get_existing_jobs_matching_job_request ( AJR.Request_ID )
+                            ) As MatchingJobs On true
+                    WHERE AJR.request_id BETWEEN _requestIdStart AND _requestIdEnd
                   ) AS source
             ON (target.request_id = source.request_id AND target.job = source.job)
             WHEN NOT MATCHED THEN
                 INSERT (request_id, job)
                 VALUES (source.request_id, source.job);
             --
-            GET DIAGNOSTICS _updateCount = ROW_COUNT;
+            GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-            If _updateCount > 0 Then
-                _message := format('%s %s via a merge', _updateCount, public.check_plural(_updateCount, 'job request was updated', 'job requests were updated'));
-            End If;
+            _insertCountOverall := _insertCountOverall + _insertCount;
 
             -- Delete rows in t_analysis_job_request_existing_jobs that are not in
             -- the job list returned by get_existing_jobs_matching_job_request()
 
             DELETE FROM t_analysis_job_request_existing_jobs target
-            WHERE NOT EXISTS (SELECT source.Job
-                              FROM ( SELECT DISTINCT AJR.request_id As Request_ID, MatchingJobs.Job
-                                     FROM t_analysis_job_request AJR CROSS APPLY get_existing_jobs_matching_job_request(AJR.request_id) MatchingJobs
-                                     WHERE AJR.request_id > 1
-                                   ) AS source
-                              WHERE target.request_id = source.request_id AND target.job = source.job);
-
+            WHERE target.request_id BETWEEN _requestIdStart AND _requestIdEnd
+                  AND NOT EXISTS (SELECT source.Job
+                                  FROM ( SELECT DISTINCT AJR.request_id As Request_ID, MatchingJobs.Job
+                                         FROM t_analysis_job_request AJR
+                                              JOIN LATERAL (
+                                                 SELECT job
+                                                 FROM get_existing_jobs_matching_job_request ( AJR.Request_ID )
+                                                 ) As MatchingJobs On true
+                                         WHERE AJR.request_id BETWEEN _requestIdStart AND _requestIdEnd
+                                       ) AS source
+                                  WHERE target.request_id = source.request_id AND target.job = source.job);
         End If;
 
+        If _requestIdStart < _batchSize Then
+            _requestIdStart := _batchSize;
+        Else
+            _requestIdStart := _requestIdStart + _batchSize;
+        End If;
+
+        COMMIT;
+
+        If _requestIdStart > _requestIdMax Then
+            -- Break out of the while loop
+            EXIT;
+        End If;
+    END LOOP;
+
+    If _infoOnly Then
+        RETURN;
     End If;
+
+    If _insertCountOverall > 0 Then
+        _message := format('Processing complete: %s %s to t_analysis_job_request_existing_jobs', _insertCountOverall, public.check_plural(_insertCountOverall, 'row was added', 'rows were added'));
+    Else
+        _message := 'Processing complete: no rows were added to t_analysis_job_request_existing_jobs';
+    End If;
+
+    RAISE INFO '';
+    RAISE INFO '%', _message;
 
     -- CALL post_log_entry ('Debug', _message, 'Update_Cached_Job_Request_Existing_Jobs');
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_cached_job_request_existing_jobs IS 'UpdateCachedJobRequestExistingJobs';
+
+ALTER PROCEDURE public.update_cached_job_request_existing_jobs(IN _processingmode integer, IN _requestid integer, IN _jobsearchhours integer, IN _modezerosearchdays integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_cached_job_request_existing_jobs(IN _processingmode integer, IN _requestid integer, IN _jobsearchhours integer, IN _modezerosearchdays integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_cached_job_request_existing_jobs(IN _processingmode integer, IN _requestid integer, IN _jobsearchhours integer, IN _modezerosearchdays integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateCachedJobRequestExistingJobs';
+
