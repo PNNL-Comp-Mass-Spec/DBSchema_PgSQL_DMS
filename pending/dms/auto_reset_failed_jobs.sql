@@ -91,20 +91,19 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-
     BEGIN
 
         ---------------------------------------------------
         -- Validate the inputs
         ---------------------------------------------------
 
-        _windowHours := Coalesce(_windowHours, 12);
+        _windowHours    := Coalesce(_windowHours, 12);
+        _infoOnly       := Coalesce(_infoOnly, false);
+        _stepToolFilter := Coalesce(_stepToolFilter, '');
+
         If _windowHours < 2 Then
             _windowHours := 2;
         End If;
-
-        _infoOnly := Coalesce(_infoOnly, false);
-        _stepToolFilter := Coalesce(_stepToolFilter, '');
 
         CREATE TEMP TABLE Tmp_FailedJobs (
             Job int NOT NULL,
@@ -181,390 +180,398 @@ BEGIN
               JS.start <= CURRENT_TIMESTAMP - INTERVAL '1 hour' AND
               ProcStatus.Status_Date > CURRENT_TIMESTAMP - INTERVAL '30 minutes';
 
-        If Exists (SELECT * FROM Tmp_FailedJobs) Then
+        If Not Exists (SELECT * FROM Tmp_FailedJobs) Then
+            DROP TABLE Tmp_FailedJobs;
+            RETURN;
+        End If;
 
-            -- Step through the jobs and reset them if appropriate
+        -- Step through the jobs and reset them if appropriate
 
-            FOR _jobInfo IN
-                SELECT Job,
-                       Step_Number,
-                       Step_Tool,                -- Step tool name
-                       Job_State,
-                       Step_State,
-                       Processor,
-                       Comment,
-                       Settings_File,
-                       AnalysisTool        -- Overall Job Analysis Tool Name
-                FROM Tmp_FailedJobs
-                ORDER BY Job
+        FOR _jobInfo IN
+            SELECT Job,
+                   Step_Number,
+                   Step_Tool,                -- Step tool name
+                   Job_State,
+                   Step_State,
+                   Processor,
+                   Comment,
+                   Settings_File,
+                   AnalysisTool        -- Overall Job Analysis Tool Name
+            FROM Tmp_FailedJobs
+            ORDER BY Job
+        LOOP
+
+            _retryJob := false;
+            _retryCount := ;
+            _setProcessorAutoRecover := false;
+            _settingsFileChanged := false;
+            _newSettingsFile := '';
+            _skipInfo := '';
+
+            -- Examine the comment to determine if we've retried this job before
+            -- Need to find the last instance of '(retry'
+
+            _matchIndexLast := 0;
+            _matchIndex := 999;
+
+            WHILE _matchIndex > 0
             LOOP
+                _matchIndex := Position('(retry' In Substring(_comment, _matchIndexLast + 1));
 
-                _retryJob := false;
-                _retryCount := ;
-                _setProcessorAutoRecover := false;
-                _settingsFileChanged := false;
-                _newSettingsFile := '';
-                _skipInfo := '';
+                If _matchIndex > 0 Then
+                    _matchIndexLast := _matchIndex + _matchIndexLast;
+                End If;
+            END LOOP;
 
-                -- Examine the comment to determine if we've retried this job before
-                -- Need to find the last instance of '(retry'
+            _matchIndex := _matchIndexLast;
 
-                _matchIndexLast := 0;
-                _matchIndex := 999;
+            If _matchIndex = 0 Then
+                -- Comment does not contain '(retry'
+                _newComment := _comment;
 
-                WHILE _matchIndex > 0
-                LOOP
-                    _matchIndex := Position('(retry' In Substring(_comment, _matchIndexLast + 1));
-
-                    If _matchIndex > 0 Then
-                        _matchIndexLast := _matchIndex + _matchIndexLast;
-                    End If;
-                END LOOP;
-
-                _matchIndex := _matchIndexLast;
-
-                If _matchIndex = 0 Then
-                    -- Comment does not contain '(retry'
-                    _newComment := _comment;
-
-                    If _newComment LIKE '%;%' Then
-                        -- Comment contains a semicolon
-                        -- Remove the text after the semicolon
-                        _matchIndex := Position(';' In _newComment);
-                        If _matchIndex > 1 Then
-                            _newComment := SubString(_newComment, 1, _matchIndex-1);
-                        Else
-                            _newComment := '';
-                        End If;
-                    End If;
-                Else
-                    -- Comment contains '(retry'
-
+                If _newComment Like '%;%' Then
+                    -- Comment contains a semicolon
+                    -- Remove the text after the semicolon
+                    _matchIndex := Position(';' In _newComment);
                     If _matchIndex > 1 Then
-                        _newComment := SubString(_comment, 1, _matchIndex-1);
+                        _newComment := SubString(_newComment, 1, _matchIndex-1);
                     Else
                         _newComment := '';
                     End If;
+                End If;
+            Else
+                -- Comment contains '(retry'
 
-                    -- Determine the number of times the job has been retried
-                    _retryCount := 1;
-                    _retryText := SubString(_comment, _matchIndex, char_length(_comment));
+                If _matchIndex > 1 Then
+                    _newComment := SubString(_comment, 1, _matchIndex-1);
+                Else
+                    _newComment := '';
+                End If;
 
-                    -- Find the closing parenthesis
-                    _matchIndex := Position(')' In _retryText);
-                    If _matchIndex > 0 Then
-                        _poundIndex := Position('#' In _retryText);
+                -- Determine the number of times the job has been retried
+                _retryCount := 1;
+                _retryText := SubString(_comment, _matchIndex, char_length(_comment));
 
-                        If _poundIndex > 0 Then
-                            If _matchIndex - _poundIndex - 1 > 0 Then
-                                _retryCountText := SubString(_retryText, _poundIndex+1, _matchIndex - _poundIndex - 1);
-                                _retryCount := Coalesce(public.try_cast(_retryCountText, null::int), _retryCount);
-                            End If;
+                -- Find the closing parenthesis
+                _matchIndex := Position(')' In _retryText);
+                If _matchIndex > 0 Then
+                    _poundIndex := Position('#' In _retryText);
+
+                    If _poundIndex > 0 Then
+                        If _matchIndex - _poundIndex - 1 > 0 Then
+                            _retryCountText := SubString(_retryText, _poundIndex+1, _matchIndex - _poundIndex - 1);
+                            _retryCount := Coalesce(public.try_cast(_retryCountText, null::int), _retryCount);
                         End If;
                     End If;
                 End If;
+            End If;
 
-                If _stepState = 6 Then
-                -- <failedJob>
-                    -- Job step is failed and overall job is failed
+            If _stepState = 6 Then
+                -- Job step is failed and overall job is failed
 
-                    If Not _retryJob And _stepTool IN ('Decon2LS', 'MSGF', 'Bruker_DA_Export') And _retryCount < 2 Then
+                If Not _retryJob And _stepTool In ('Decon2LS', 'MSGF', 'Bruker_DA_Export') And _retryCount < 2 Then
+                    _retryJob := true;
+                End If;
+
+                If Not _retryJob And _stepTool = 'ICR2LS' And _retryCount < 15 Then
+                    _retryJob := true;
+                End If;
+
+                If Not _retryJob And _stepTool = 'DataExtractor' And Not _comment Like '%have a mass error over%' And _retryCount < 2 Then
+                    _retryJob := true;
+                End If;
+
+                If Not _retryJob And _stepTool In ('Sequest', 'MSGFPlus', 'XTandem', 'MSAlign') And _comment Like '%Exception generating OrgDb file%' And _retryCount < 2 Then
+                    _retryJob := true;
+                End If;
+
+                If Not _retryJob And
+                   (_stepTool Like 'MSGFPlus%' Or _stepTool = 'DTA_Refinery') And
+                   (_comment Like '%None of the spectra are centroided; unable to process%' Or
+                    _comment Like '%skipped % of the spectra because they did not appear centroided%' Or
+                    _comment Like '%skip % of the spectra because they do not appear centroided%'
+                   ) Then
+
+                    -- MSGF+ job that failed due to too many profile-mode spectra
+                    -- Auto-change the SettingsFile to a MSConvert version if possible.
+
+                    _newSettingsFile := '';
+
+                    SELECT msgfplus_auto_centroid
+                    INTO _newSettingsFile
+                    FROM t_settings_files
+                    WHERE analysis_tool = _analysisTool AND
+                          file_name = _settingsFile AND
+                          Coalesce(msgfplus_auto_centroid, '') <> ''
+
+                    If FOUND Then
+
                         _retryJob := true;
-                    End If;
+                        _settingsFileChanged := true;
 
-                    If Not _retryJob And _stepTool = 'ICR2LS' And _retryCount < 15 Then
-                        _retryJob := true;
-                    End If;
-
-                    If Not _retryJob And _stepTool = 'DataExtractor' And Not _comment Like '%have a mass error over%' And _retryCount < 2 Then
-                        _retryJob := true;
-                    End If;
-
-                    If Not _retryJob And _stepTool IN ('Sequest', 'MSGFPlus', 'XTandem', 'MSAlign') And _comment Like '%Exception generating OrgDb file%' And _retryCount < 2 Then
-                        _retryJob := true;
-                    End If;
-
-                    If Not _retryJob And
-                       (_stepTool LIKE 'MSGFPlus%' OR _stepTool = 'DTA_Refinery') And
-                       (_comment Like '%None of the spectra are centroided; unable to process%' OR
-                        _comment Like '%skipped % of the spectra because they did not appear centroided%' OR
-                        _comment Like '%skip % of the spectra because they do not appear centroided%'
-                       ) Then -- <nonCentroided>
-
-                        -- MSGF+ job that failed due to too many profile-mode spectra
-                        -- Auto-change the SettingsFile to a MSConvert version if possible.
-
-                        _newSettingsFile := '';
-
-                        SELECT msgfplus_auto_centroid
-                        INTO _newSettingsFile
-                        FROM t_settings_files
-                        WHERE analysis_tool = _analysisTool AND
-                              file_name = _settingsFile AND
-                              Coalesce(msgfplus_auto_centroid, '') <> ''
-
-                        If FOUND Then
-
-                            _retryJob := true;
-                            _settingsFileChanged := true;
-
-                            If _comment Like '%None of the spectra are centroided; unable to process%' Then
-                                _skipInfo := 'None of the spectra are centroided';
+                        If _comment Like '%None of the spectra are centroided; unable to process%' Then
+                            _skipInfo := 'None of the spectra are centroided';
+                        Else
+                            _matchIndex := Position('MSGF+ skipped' In _comment);
+                            If _matchIndex > 0 Then
+                                _skipInfo := SubString(_comment, _matchIndex, char_length(_comment));
                             Else
-                                _matchIndex := Position('MSGF+ skipped' In _comment);
+
+                                _matchIndex := Position('MSGF+ will likely skip' In _comment);
                                 If _matchIndex > 0 Then
                                     _skipInfo := SubString(_comment, _matchIndex, char_length(_comment));
                                 Else
-
-                                    _matchIndex := Position('MSGF+ will likely skip' In _comment);
-                                    If _matchIndex > 0 Then
-                                        _skipInfo := SubString(_comment, _matchIndex, char_length(_comment));
-                                    Else
-                                        _skipInfo := 'MSGF+ skipped ??% of the spectra because they did not appear centroided';
-                                    End If;
-
+                                    _skipInfo := 'MSGF+ skipped ??% of the spectra because they did not appear centroided';
                                 End If;
+
                             End If;
                         End If;
-                    End If; -- </nonCentroided>
-
-                    If Not _retryJob And
-                       _stepTool IN ('MSGFPlus', 'MSGFPlus_IMS', 'MSAlign', 'MSAlign_Histone', 'DataExtractor', 'Mz_Refinery') And
-                       _comment Like '%Not enough free memory%' And
-                       _retryCount < 10 Then
-
-                        RAISE INFO 'Reset %', _job;
-                        _retryJob := true;
-                    End If;
-
-                    If Not _retryJob And _retryCount < 5 Then
-                        -- Check for file copy errors from the Archive
-                        If _comment Like '%Error copying file \\\\adms%' Or Then
-                           _comment Like '%File not found: \\\\adms%' Or;
-                        End If;
-                           _comment Like '%Error copying %dta.zip%' Or
-                           _comment Like '%Source dataset file file not found%'
-                            _retryJob := true;
-
-                    End If;
-
-                    If Not _retryJob And _retryCount < 5 Then
-                        -- Check for network errors
-                        If _comment Like '%unexpected network error occurred%' Then
-                            _retryJob := true;
-                        End If;
-
-                    End If;
-                End If; -- </failedJob>
-
-                If _stepState = 4 Then
-                    -- Job is still running, but processor has an error (likely a flagfile)
-                    -- This likely indicates an out-of-memory error
-
-                    If _stepTool In ('DataExtractor', 'MSGF') And _retryCount < 5 Then
-                        _retryJob := true;
-                    End If;
-
-                    If _retryJob Then
-                        _setProcessorAutoRecover := true;
                     End If;
                 End If;
 
-                If _retryJob Then   -- <retryJob>
-                    _newComment := RTrim(_newComment);
+                If Not _retryJob And
+                   _stepTool In ('MSGFPlus', 'MSGFPlus_IMS', 'MSAlign', 'MSAlign_Histone', 'DataExtractor', 'Mz_Refinery') And
+                   _comment Like '%Not enough free memory%' And
+                   _retryCount < 10 Then
 
-                    If _settingsFileChanged Then
-                        -- Note: do not append a semicolon because if the job fails again in the future, the text after the semicolon may get auto-removed
-                        If char_length(_newComment) > 0 Then
-                            _newComment := format('%s, ', _newComment);
-                        End If;
+                    RAISE INFO 'Reset %', _job;
+                    _retryJob := true;
+                End If;
 
-                        _newComment := format('%sAuto-switched settings file from %s (%s)';
-                                              _newComment, _settingsFile, _skipInfo);
-                    Else
-                        If char_length(_newComment) > 0 Then
-                            _newComment := format('%s ', _newComment);
-                        End If;
+                If Not _retryJob And _retryCount < 5 Then
+                    -- Check for file copy errors from the Archive
+                    If _comment Like '%Error copying file \\\\adms%' Or
+                       _comment Like '%File not found: \\\\adms%' Or
+                       _comment Like '%Error copying %dta.zip%' Or
+                       _comment Like '%Source dataset file file not found%' Then
 
-                        _newComment := format('%s(retry %s', _newComment, _stepTool);
+                        _retryJob := true;
 
-                        _retryCount := _retryCount + 1;
-
-                        If _retryCount = 1 Then
-                            _newComment := format('%s)', _newComment);
-                        Else
-                            _newComment := format('%s #%s)', _newComment, _retryCount);
-                        End If;
                     End If;
 
-                    If _stepState = 6 Then
-                        _newJobState := 1;
+                End If;
 
-                        UPDATE Tmp_FailedJobs
-                        SET NewJobState = _newJobState,
-                            NewStepState = _stepState,
-                            NewComment = _newComment,
-                            ResetJob = 1,
-                            NewSettingsFile = _newSettingsFile,
-                            RerunAllJobSteps = _settingsFileChanged
-                        WHERE Job = _job
-
-                        _resetReason := format('job step failed in the last %s hours', _windowHours);
+                If Not _retryJob And _retryCount < 5 Then
+                    -- Check for network errors
+                    If _comment Like '%unexpected network error occurred%' Then
+                        _retryJob := true;
                     End If;
 
-                    If _stepState = 4 Then
-                        _newJobState := _jobState;
-
-                        UPDATE Tmp_FailedJobs
-                        SET NewJobState = _newJobState,
-                            NewStepState = 2,
-                            NewComment = _newComment,
-                           ResetJob = 1
-                        WHERE Job = _job
-
-                        If Not _infoOnly Then
-                            -- Reset the step back to state 2=Enabled
-                            UPDATE sw.t_job_steps
-                            SET State = 2
-                            WHERE Job = _job And Step_Number = _step
-                        End If;
-
-                        _resetReason := 'job step in progress but manager reports "Stopped Error"';
-                    End If;
-
-                    If Not _infoOnly Then
-
-                        If _settingsFileChanged Then
-                            -- The settings file for this job has changed, thus we must re-generate the job in the pipeline DB
-                            -- Note that deletes auto-cascade from T_Jobs to T_Job_Steps, T_Job_Parameters, and T_Job_Step_Dependencies
-                            --
-                            DELETE FROM sw.t_jobs
-                            WHERE Job = _job
-
-                            UPDATE t_analysis_job
-                            SET settings_file_name = _newSettingsFile
-                            WHERE job = _job
-
-                        End If;
-
-                        -- Update the JobState and comment in t_analysis_job
-                        UPDATE t_analysis_job
-                        SET job_state_id = _newJobState,
-                            comment = _newComment
-                        WHERE job = _job
-
-                        _logMessage := format('Auto-reset job %s; %s; %s', _job, _resetReason, _newComment);
-
-                        CALL post_log_entry ('Warning', _logMessage, 'Auto_Reset_Failed_Jobs');
-                    End If;
-
-                    If _setProcessorAutoRecover Then
-                        If Not _infoOnly Then
-                            _logMessage := format('%s reports "Stopped Error"; setting ManagerErrorCleanupMode to 1 in the Manager_Control DB', _processor);
-
-                            CALL post_log_entry ('Warning', _logMessage, 'Auto_Reset_Failed_Jobs');
-
-                            CALL mc.set_manager_error_cleanup_mode ( _managerList => _processor, _cleanupMode => 1);
-                        Else
-                            RAISE INFO '%', 'Call mc.set_manager_error_cleanup_mode (_managerList = _processor, _cleanupMode = 1)';
-                        End If;
-                    End If;
-
-                End If;     -- </retryJob>
-            END LOOP; -- </c>
-
-            If _infoOnly Then
-
-                RAISE INFO '';
-
-                _formatSpecifier := '%-10s %-11s %-25s %-30s %-16s %-20s %-40s %-20s %-50s %-25s %-30s %-16s %-40s %-50s %-9s %-19s';
-
-                _infoHead := format(_formatSpecifier,
-                                    'Job',
-                                    'Step_Number',
-                                    'Step_Tool',
-                                    'Job_State',
-                                    'Step_State',
-                                    'Processor',
-                                    'Comment',
-                                    'Job_Finish',
-                                    'Settings_File',
-                                    'Analysis_Tool',
-                                    'New_Job_State',
-                                    'New_Step_State',
-                                    'New_Comment',
-                                    'New_Settings_File',
-                                    'Reset_Job',
-                                    'Rerun_All_Job_Steps'
-                                   );
-
-                _infoHeadSeparator := format(_formatSpecifier,
-                                             '----------',
-                                             '-----------',
-                                             '-------------------------',
-                                             '------------------------------',
-                                             '----------------',
-                                             '--------------------',
-                                             '----------------------------------------',
-                                             '--------------------',
-                                             '--------------------------------------------------',
-                                             '-------------------------',
-                                             '------------------------------',
-                                             '----------------',
-                                             '----------------------------------------',
-                                             '--------------------------------------------------',
-                                             '---------',
-                                             '-------------------'
-                                            );
-
-                RAISE INFO '%', _infoHead;
-                RAISE INFO '%', _infoHeadSeparator;
-
-                FOR _previewData IN
-                    SELECT Job,
-                           Step_Number,
-                           Step_Tool,
-                           Job_State,
-                           Step_State,
-                           Processor,
-                           Comment,
-                           public.timestamp_text(Job_Finish),
-                           Settings_File,
-                           AnalysisTool,
-                           NewJobState,
-                           NewStepState,
-                           NewComment,
-                           NewSettingsFile,
-                           ResetJob,
-                           RerunAllJobSteps;
-                    FROM Tmp_FailedJobs
-                    ORDER BY Job
-                LOOP
-                    _infoData := format(_formatSpecifier,
-                                        _previewData.Job,
-                                        _previewData.Step_Number,
-                                        _previewData.Step_Tool,
-                                        _previewData.Job_State,
-                                        _previewData.Step_State,
-                                        _previewData.Processor,
-                                        _previewData.Comment,
-                                        _previewData.Job_Finish,
-                                        _previewData.Settings_File,
-                                        _previewData.AnalysisTool,
-                                        _previewData.NewJobState,
-                                        _previewData.NewStepState,
-                                        _previewData.NewComment,
-                                        _previewData.NewSettingsFile,
-                                        _previewData.ResetJob,
-                                        _previewData.RerunAllJobSteps
-                                       );
-
-                    RAISE INFO '%', _infoData;
-                END LOOP;
-
+                End If;
             End If;
 
-        End If; -- </a>
+            If _stepState = 4 Then
+                -- Job is still running, but processor has an error (likely a flagfile)
+                -- This likely indicates an out-of-memory error
+
+                If _stepTool In ('DataExtractor', 'MSGF') And _retryCount < 5 Then
+                    _retryJob := true;
+                End If;
+
+                If _retryJob Then
+                    _setProcessorAutoRecover := true;
+                End If;
+            End If;
+
+            If Not _retryJob Then
+                CONTINUE;
+            End If;
+
+            _newComment := RTrim(_newComment);
+
+            If _settingsFileChanged Then
+                -- Note: do not append a semicolon because if the job fails again in the future, the text after the semicolon may get auto-removed
+                If char_length(_newComment) > 0 Then
+                    _newComment := format('%s, ', _newComment);
+                End If;
+
+                _newComment := format('%sAuto-switched settings file from %s (%s)';
+                                      _newComment, _settingsFile, _skipInfo);
+            Else
+                If char_length(_newComment) > 0 Then
+                    _newComment := format('%s ', _newComment);
+                End If;
+
+                _newComment := format('%s(retry %s', _newComment, _stepTool);
+
+                _retryCount := _retryCount + 1;
+
+                If _retryCount = 1 Then
+                    _newComment := format('%s)', _newComment);
+                Else
+                    _newComment := format('%s #%s)', _newComment, _retryCount);
+                End If;
+            End If;
+
+            If _stepState = 6 Then
+                _newJobState := 1;
+
+                UPDATE Tmp_FailedJobs
+                SET NewJobState = _newJobState,
+                    NewStepState = _stepState,
+                    NewComment = _newComment,
+                    ResetJob = 1,
+                    NewSettingsFile = _newSettingsFile,
+                    RerunAllJobSteps = _settingsFileChanged
+                WHERE Job = _job
+
+                _resetReason := format('job step failed in the last %s hours', _windowHours);
+            End If;
+
+            If _stepState = 4 Then
+                _newJobState := _jobState;
+
+                UPDATE Tmp_FailedJobs
+                SET NewJobState = _newJobState,
+                    NewStepState = 2,
+                    NewComment = _newComment,
+                   ResetJob = 1
+                WHERE Job = _job
+
+                If Not _infoOnly Then
+                    -- Reset the step back to state 2=Enabled
+                    UPDATE sw.t_job_steps
+                    SET State = 2
+                    WHERE Job = _job And Step_Number = _step
+                End If;
+
+                _resetReason := 'job step in progress but manager reports "Stopped Error"';
+            End If;
+
+            If Not _infoOnly Then
+
+                If _settingsFileChanged Then
+                    -- The settings file for this job has changed, thus we must re-generate the job in the pipeline DB
+                    -- Note that deletes auto-cascade from T_Jobs to T_Job_Steps, T_Job_Parameters, and T_Job_Step_Dependencies
+                    --
+                    DELETE FROM sw.t_jobs
+                    WHERE Job = _job
+
+                    UPDATE t_analysis_job
+                    SET settings_file_name = _newSettingsFile
+                    WHERE job = _job
+
+                End If;
+
+                -- Update the JobState and comment in t_analysis_job
+                UPDATE t_analysis_job
+                SET job_state_id = _newJobState,
+                    comment = _newComment
+                WHERE job = _job
+
+                _logMessage := format('Auto-reset job %s; %s; %s', _job, _resetReason, _newComment);
+
+                CALL post_log_entry ('Warning', _logMessage, 'Auto_Reset_Failed_Jobs');
+            End If;
+
+            If _setProcessorAutoRecover Then
+                If Not _infoOnly Then
+                    _logMessage := format('%s reports "Stopped Error"; setting ManagerErrorCleanupMode to 1 in the Manager_Control DB', _processor);
+
+                    CALL post_log_entry ('Warning', _logMessage, 'Auto_Reset_Failed_Jobs');
+
+                    CALL mc.set_manager_error_cleanup_mode ( _managerList => _processor, _cleanupMode => 1);
+                Else
+                    RAISE INFO '%', 'Call mc.set_manager_error_cleanup_mode (_managerList = _processor, _cleanupMode = 1)';
+                End If;
+            End If;
+
+        END LOOP;
+
+        If Not _infoOnly Then
+            DROP TABLE Tmp_FailedJobs;
+            RETURN;
+        End If;
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-10s %-11s %-25s %-30s %-16s %-20s %-40s %-20s %-50s %-25s %-30s %-16s %-40s %-50s %-9s %-19s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Job',
+                            'Step_Number',
+                            'Step_Tool',
+                            'Job_State',
+                            'Step_State',
+                            'Processor',
+                            'Comment',
+                            'Job_Finish',
+                            'Settings_File',
+                            'Analysis_Tool',
+                            'New_Job_State',
+                            'New_Step_State',
+                            'New_Comment',
+                            'New_Settings_File',
+                            'Reset_Job',
+                            'Rerun_All_Job_Steps'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '----------',
+                                     '-----------',
+                                     '-------------------------',
+                                     '------------------------------',
+                                     '----------------',
+                                     '--------------------',
+                                     '----------------------------------------',
+                                     '--------------------',
+                                     '--------------------------------------------------',
+                                     '-------------------------',
+                                     '------------------------------',
+                                     '----------------',
+                                     '----------------------------------------',
+                                     '--------------------------------------------------',
+                                     '---------',
+                                     '-------------------'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT Job,
+                   Step_Number,
+                   Step_Tool,
+                   Job_State,
+                   Step_State,
+                   Processor,
+                   Comment,
+                   public.timestamp_text(Job_Finish),
+                   Settings_File,
+                   AnalysisTool,
+                   NewJobState,
+                   NewStepState,
+                   NewComment,
+                   NewSettingsFile,
+                   ResetJob,
+                   RerunAllJobSteps;
+            FROM Tmp_FailedJobs
+            ORDER BY Job
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Job,
+                                _previewData.Step_Number,
+                                _previewData.Step_Tool,
+                                _previewData.Job_State,
+                                _previewData.Step_State,
+                                _previewData.Processor,
+                                _previewData.Comment,
+                                _previewData.Job_Finish,
+                                _previewData.Settings_File,
+                                _previewData.AnalysisTool,
+                                _previewData.NewJobState,
+                                _previewData.NewStepState,
+                                _previewData.NewComment,
+                                _previewData.NewSettingsFile,
+                                _previewData.ResetJob,
+                                _previewData.RerunAllJobSteps
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
+        DROP TABLE Tmp_FailedJobs;
+        RETURN;
 
     EXCEPTION
         WHEN OTHERS THEN

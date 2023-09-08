@@ -90,7 +90,7 @@ DECLARE
     _targetGroupFractionCount int := 0;
     _mrmAttachmentID int;
     _fractionNumber int;
-    _requestName text;
+    _requestName citext;
     _requestID int;
     _requestIdList text := '';
     _firstRequest text;
@@ -182,11 +182,11 @@ BEGIN
         -- Replace instances of CRLF (or LF) with semicolons
         _comment := public.remove_cr_lf(_comment);
 
-        If Coalesce(_wellplateName, '')::citext IN ('', 'na') Then
+        If Coalesce(_wellplateName, '')::citext In ('', 'na') Then
             _wellplateName := null;
         End If;
 
-        If Coalesce(_wellNumber, '')::citext IN ('', 'na') Then
+        If Coalesce(_wellNumber, '')::citext In ('', 'na') Then
             _wellNumber := null;
         End If;
 
@@ -243,7 +243,7 @@ BEGIN
         If _sourceStatus <> 'Active' Then
             _requestName := format('%s_f01%%', _sourceRequestName);
 
-            If Exists (SELECT * FROM t_requested_run WHERE request_name LIKE _requestName) Then
+            If Exists (SELECT request_id FROM t_requested_run WHERE request_name LIKE _requestName) Then
                 RAISE EXCEPTION 'Fraction-based requested runs have already been created for this requested run; nothing to do';
             Else
                 RAISE EXCEPTION 'Source requested run is not active; cannot continue';
@@ -631,14 +631,14 @@ BEGIN
             SELECT request_id
             INTO _requestID
             FROM t_requested_run
-            WHERE request_name = _requestName
+            WHERE request_name = _requestName;
 
             If FOUND Then
                 RAISE EXCEPTION 'Name conflict: a requested run named % already exists, ID %', _requestName, _requestID;
             End If;
 
             INSERT INTO Tmp_NewRequests (Fraction_Number, Request_Name)
-            VALUES (_fractionNumber, _requestName)
+            VALUES (_fractionNumber, _requestName);
 
             _fractionNumber := _fractionNumber + 1;
         END LOOP;
@@ -754,7 +754,7 @@ BEGIN
 
                 UPDATE Tmp_NewRequests
                 SET Request_ID = _requestID
-                WHERE Request_Name = _requestName
+                WHERE Request_Name = _requestName;
 
                 -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
                 If char_length(_callingUser) > 0 Then
