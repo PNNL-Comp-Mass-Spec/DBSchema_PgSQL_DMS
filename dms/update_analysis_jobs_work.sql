@@ -15,11 +15,20 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work(IN _state text DEFA
 **      CREATE TEMP TABLE Tmp_AnalysisJobs (job int);
 **
 **  Arguments:
-**    _comment                    Text to append to the comment
-**    _findText                   Text to find in the comment; ignored if '[no change]'
-**    _replaceText                The replacement text when _findText is not '[no change]'
-**    _associatedProcessorGroup   Processor group; deprecated in May 2015
-**    _mode                       'update' or 'reset' to change data; otherwise, will simply validate parameters
+**    _state                    Job state name
+**    _priority                 Processing priority (1, 2, 3, etc.)
+**    _comment                  Text to append to the comment
+**    _findText                 Text to find in the comment; ignored if '[no change]'
+**    _replaceText              The replacement text when _findText is not '[no change]'
+**    _assignedProcessor        Assigned processor name (obsolete)
+**    _associatedProcessorGroup Processor group; deprecated in May 2015
+**    _propagationMode          Propagation mode ('Export' or 'No Export')
+**    _paramFileName            Parameter file name
+**    _settingsFileName         Settings file name
+**    _organismName             Organism name
+**    _protCollNameList         Protein collection list
+**    _protCollOptionsList      Protein options list
+**    _mode                     'update' or 'reset' to change data; otherwise, will simply validate parameters
 **
 **  Auth:   grk
 **  Date:   04/06/2006
@@ -63,6 +72,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work(IN _state text DEFA
 **                         - Use local variable for the return value of _message from alter_event_log_entry_user_multi_id()
 **          09/05/2023 mem - Use schema name when calling procedures
 **          09/08/2023 mem - Adjust capitalization of keywords
+**                         - Use a case insensitive search when finding text to replace
 **
 *****************************************************/
 DECLARE
@@ -71,7 +81,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _noChangeText text := '[no change]';
+    _noChangeText citext := '[no change]';
     _list text;
     _alterEventLogRequired boolean := false;
     _alterEnteredByRequired boolean := false;
@@ -131,30 +141,30 @@ BEGIN
     -- Clean up null arguments
     ---------------------------------------------------
 
-    _state := Trim(Coalesce(_state, _noChangeText));
-    _priority := Trim(Coalesce(_priority, _noChangeText));
-    _comment := Trim(Coalesce(_comment, _noChangeText));
-    _findText := Trim(Coalesce(_findText, _noChangeText));
-    _replaceText := Trim(Coalesce(_replaceText, _noChangeText));
-    _assignedProcessor := Trim(Coalesce(_assignedProcessor, _noChangeText));
+    _state                    := Trim(Coalesce(_state, _noChangeText));
+    _priority                 := Trim(Coalesce(_priority, _noChangeText));
+    _comment                  := Trim(Coalesce(_comment, _noChangeText));
+    _findText                 := Trim(Coalesce(_findText, _noChangeText));
+    _replaceText              := Trim(Coalesce(_replaceText, _noChangeText));
+    _assignedProcessor        := Trim(Coalesce(_assignedProcessor, _noChangeText));
     _associatedProcessorGroup := Trim(Coalesce(_associatedProcessorGroup, ''));
-    _propagationMode := Trim(Coalesce(_propagationMode, _noChangeText));
-    _paramFileName := Trim(Coalesce(_paramFileName, _noChangeText));
-    _settingsFileName := Trim(Coalesce(_settingsFileName, _noChangeText));
-    _organismName := Trim(Coalesce(_organismName, _noChangeText));
-    _protCollNameList := Trim(Coalesce(_protCollNameList, _noChangeText));
-    _protCollOptionsList := Trim(Coalesce(_protCollOptionsList, _noChangeText));
+    _propagationMode          := Trim(Coalesce(_propagationMode, _noChangeText));
+    _paramFileName            := Trim(Coalesce(_paramFileName, _noChangeText));
+    _settingsFileName         := Trim(Coalesce(_settingsFileName, _noChangeText));
+    _organismName             := Trim(Coalesce(_organismName, _noChangeText));
+    _protCollNameList         := Trim(Coalesce(_protCollNameList, _noChangeText));
+    _protCollOptionsList      := Trim(Coalesce(_protCollOptionsList, _noChangeText));
 
-    _callingUser := Trim(Coalesce(_callingUser, ''));
-    _disableRaiseError := Coalesce(_disableRaiseError, false);
+    _callingUser              := Trim(Coalesce(_callingUser, ''));
+    _disableRaiseError        := Coalesce(_disableRaiseError, false);
 
-    _mode := Trim(Lower(Coalesce(_mode, '')));
+    _mode                     := Trim(Lower(Coalesce(_mode, '')));
 
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
 
-    If (_findText = _noChangeText and _replaceText <> _noChangeText) OR (_findText <> _noChangeText and _replaceText = _noChangeText) Then
+    If (_findText::citext = _noChangeText And _replaceText::citext <> _noChangeText) Or (_findText::citext <> _noChangeText And _replaceText::citext = _noChangeText) Then
         _message := format('The Find In Comment and Replace In Comment arguments must either both be defined, or both be "%s"', _noChangeText);
 
         If Not _disableRaiseError Then
@@ -361,9 +371,9 @@ BEGIN
         End If;
 
         -----------------------------------------------
-        If _findText <> _noChangeText and _replaceText <> _noChangeText Then
+        If _findText::citext <> _noChangeText And _replaceText::citext <> _noChangeText Then
             UPDATE t_analysis_job
-            SET comment = replace(comment, _findText, _replaceText)
+            SET comment = Replace(comment, _findText::citext, _replaceText::citext)
             WHERE job in (SELECT job FROM Tmp_AnalysisJobs);
             --
             GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
@@ -527,9 +537,9 @@ BEGIN
         End If;
 
         -----------------------------------------------
-        If _findText <> _noChangeText and _replaceText <> _noChangeText Then
+        If _findText::citext <> _noChangeText And _replaceText::citext <> _noChangeText Then
             UPDATE t_analysis_job
-            SET comment = replace(comment, _findText, _replaceText)
+            SET comment = Replace(comment, _findText::citext, _replaceText::citext)
             WHERE job in (SELECT job FROM Tmp_AnalysisJobs);
 
             If _assignedProcessor <> _noChangeText Then
