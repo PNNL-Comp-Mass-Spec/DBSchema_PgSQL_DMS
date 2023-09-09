@@ -8,20 +8,20 @@ CREATE OR REPLACE PROCEDURE public.auto_resolve_name_to_username(IN _namesearchs
 /****************************************************
 **
 **  Desc:
-**      Looks for entries in T_Users that match _nameSearchSpec (supports % as a wildcard)
+**      Looks for entries in t_users that match _nameSearchSpec (supports % as a wildcard)
 **      Updates _matchCount with the number of matching entries
 **      If a match is found, also updates _matchingUsername and _matchingUserID with the first match
 **
 **  Arguments:
-**    _nameSearchSpec       Used to search both name and username in T_Users; use % for a wildcard
+**    _nameSearchSpec       Used to search both name and username in t_users; use % for a wildcard
 **                          - % will be appended to _nameSearchSpec if it doesn't end in one
 **                          - If the search spec is of the form 'Last, First (D3P704)' or 'Last, First Middle (D3P704)',
-**                            extracts the username (e.g., 'D3P704') and searches the username column in T_Users
+**                            extracts the username (e.g., 'D3P704') and searches the username column in t_users
 **                          - Otherwise, first searches the name column (which lists people by LastName, FirstName)
 **                          - If no match, searches the username column
-**    _matchCount           Number of entries in T_Users that match _nameSearchSpec
-**    _matchingUsername     If _matchCount > 0, will have the username of the first match in T_Users
-**    _matchingUserID       If _matchCount > 0, will have the ID of the first match in T_Users
+**    _matchCount           Output: Number of entries in t_users that match _nameSearchSpec
+**    _matchingUsername     Output: If _matchCount > 0, will have the username of the first match in t_users
+**    _matchingUserID       Output: If _matchCount > 0, will have the ID of the first match in t_users
 **
 **  Auth:   mem
 **  Date:   02/07/2010
