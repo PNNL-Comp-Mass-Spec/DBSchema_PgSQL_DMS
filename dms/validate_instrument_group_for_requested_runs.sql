@@ -122,7 +122,7 @@ BEGIN
                            FROM t_instrument_group_allowed_ds_type
                            WHERE instrument_group = _instrumentGroup::citext AND dataset_type = _requestInfo.DatasetTypeName) Then
 
-                _allowedDatasetTypes := public.get_instrument_group_dataset_type_list (_instrumentGroup::citext, ', ');
+                _allowedDatasetTypes := public.get_instrument_group_dataset_type_list(_instrumentGroup::citext, ', ');
 
                 _message := format('Dataset type "%s" is invalid for instrument group "%s"; valid types are "%s"',
                                    _requestInfo.DatasetTypeName, _instrumentGroup, _allowedDatasetTypes);

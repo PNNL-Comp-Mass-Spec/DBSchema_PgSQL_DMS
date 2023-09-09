@@ -209,7 +209,7 @@ BEGIN
 
         _currentlocation := 'Resolve user ID for job owner';
 
-        _userID := public.get_user_id (_ownerUsername);
+        _userID := public.get_user_id(_ownerUsername);
 
         If _userID > 0 Then
             -- Function get_user_id recognizes both a username and the form 'LastName, FirstName (Username)'
@@ -254,7 +254,7 @@ BEGIN
 
         _currentlocation := 'Determine analysis tool ID';
 
-        _analysisToolID := public.get_analysis_tool_id (_toolName);
+        _analysisToolID := public.get_analysis_tool_id(_toolName);
 
         If _analysisToolID = 0 Then
             _message := format('Could not find entry in database for analysis tool "%s"', _toolName);

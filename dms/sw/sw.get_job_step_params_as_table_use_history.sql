@@ -51,7 +51,7 @@ BEGIN
 
     INSERT INTO Tmp_JobParamsTable (Section, Name, Value)
     SELECT Src.Section, Src.Name, Src.Value
-    FROM sw.get_job_step_params_from_history_work (_job, _step) Src;
+    FROM sw.get_job_step_params_from_history_work(_job, _step) Src;
 
     If Not FOUND Then
         DROP TABLE Tmp_JobParamsTable;

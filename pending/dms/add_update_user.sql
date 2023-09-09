@@ -135,7 +135,7 @@ BEGIN
         -- Is entry already in database?
         ---------------------------------------------------
 
-        _userID := public.get_user_id (_username);
+        _userID := public.get_user_id(_username);
 
         -- Cannot create an entry that already exists
         --

@@ -114,7 +114,7 @@ BEGIN
 
         SELECT work_package
         INTO _workPackage
-        FROM public.get_wp_for_eus_proposal (_eusProposalID);
+        FROM public.get_wp_for_eus_proposal(_eusProposalID);
 
         CALL add_update_requested_run(
                                 _requestName => _requestName,

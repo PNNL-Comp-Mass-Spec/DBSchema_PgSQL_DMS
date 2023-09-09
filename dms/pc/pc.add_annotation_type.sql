@@ -49,7 +49,7 @@ BEGIN
     -- Does entry already exist?
     ---------------------------------------------------
 
-    _annotationTypeID := pc.get_annotation_type_id (_name, _authID);
+    _annotationTypeID := pc.get_annotation_type_id(_name, _authID);
 
     If Coalesce(_annotationTypeID, 0) > 0 Then
         _message := format('Annotation type "%s" already exists for naming authority ID %s', _name, Coalesce(_authId, 0));

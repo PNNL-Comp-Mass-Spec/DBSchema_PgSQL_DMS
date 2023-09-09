@@ -354,7 +354,7 @@ BEGIN
 
                     SELECT AllowedInstrumentClasses
                     INTO _allowedInstClassesForTool
-                    FROM public.get_analysis_tool_allowed_instrument_class_list (_analysisToolID);
+                    FROM public.get_analysis_tool_allowed_instrument_class_list(_analysisToolID);
 
                     _msg := format('Criteria matched instrument "%s" which is Instrument Class "%s"; however, analysis tool %s allows these instrument classes: "%s"'
                                    _instrument.InstrumentName, _instrument.InstrumentClass, _analysisToolName, _allowedInstClassesForTool);
@@ -426,10 +426,10 @@ BEGIN
         -- Auto-capitalize it or auto-resolve it from a name to a username
         ---------------------------------------------------
 
-        _userID := public.get_user_id (_creator);
+        _userID := public.get_user_id(_creator);
 
         If _userID > 0 Then
-            -- Function get_user_id recognizes both a username and the form 'LastName, FirstName (Username)'
+            -- Function get_user_id() recognizes both a username and the form 'LastName, FirstName (Username)'
             -- Assure that _creator contains simply the username
             --
             SELECT username

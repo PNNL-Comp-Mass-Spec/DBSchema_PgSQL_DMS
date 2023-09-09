@@ -110,7 +110,7 @@ BEGIN
     -- Resolve instrument ID
     ---------------------------------------------------
 
-    _instrumentID := public.get_instrument_id (_instrumentName);
+    _instrumentID := public.get_instrument_id(_instrumentName);
 
     If _instrumentID = 0 Then
         RAISE EXCEPTION 'Could not find entry in database for instrument "%"', _instrumentName;

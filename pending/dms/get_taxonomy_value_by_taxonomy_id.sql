@@ -154,7 +154,7 @@ BEGIN
     SELECT Entry_ID,
            Rank,
            Name
-    FROM ont.get_taxid_taxonomy_table ( _ncbiTaxonomyID );
+    FROM ont.get_taxid_taxonomy_table(_ncbiTaxonomyID);
 
     If FOUND Then
         ---------------------------------------------------

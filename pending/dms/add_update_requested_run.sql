@@ -470,10 +470,10 @@ BEGIN
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
-        _userID := public.get_user_id (_requesterUsername);
+        _userID := public.get_user_id(_requesterUsername);
 
         If _userID > 0 Then
-            -- Function get_user_id recognizes both a username and the form 'LastName, FirstName (Username)'
+            -- Function get_user_id() recognizes both a username and the form 'LastName, FirstName (Username)'
             -- Assure that _requesterUsername contains simply the username
             --
             SELECT username

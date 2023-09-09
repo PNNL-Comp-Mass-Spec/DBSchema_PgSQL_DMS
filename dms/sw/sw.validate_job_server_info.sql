@@ -61,19 +61,19 @@ BEGIN
 
         SELECT Trim(Value)
         INTO _transferFolderPath
-        FROM sw.get_job_param_table_local ( _job )
+        FROM sw.get_job_param_table_local(_job)
         WHERE Name = 'TransferFolderPath';
 
         SELECT Value
         INTO _dataset
-        FROM sw.get_job_param_table_local ( _job )
+        FROM sw.get_job_param_table_local(_job)
         WHERE Name IN ('DatasetName', 'DatasetNum')
         ORDER BY Name
         LIMIT 1;
 
         SELECT Value
         INTO _datasetFolderName
-        FROM sw.get_job_param_table_local ( _job )
+        FROM sw.get_job_param_table_local(_job)
         WHERE Name = 'DatasetFolderName';
 
         If _debugMode Then

@@ -23,7 +23,7 @@ DECLARE
     _keyName text := 'extended_metadata.gov_pnnl_emsl_dms_datapackage.id';
     _url text;
 BEGIN
-    _url := public.get_myemsl_url_work (_keyName, _dataPackageID::text);
+    _url := public.get_myemsl_url_work(_keyName, _dataPackageID::text);
 
     RETURN _url;
 END

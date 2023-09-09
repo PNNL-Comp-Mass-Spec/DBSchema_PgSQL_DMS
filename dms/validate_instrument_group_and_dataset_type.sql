@@ -46,7 +46,7 @@ BEGIN
     -- and get its id number
     ---------------------------------------------------
 
-    _datasetTypeID := public.get_dataset_type_id (_datasetType);
+    _datasetTypeID := public.get_dataset_type_id(_datasetType);
 
     -- No further validation required for certain dataset types
     -- In particular, dataset type 100 (Tracking)

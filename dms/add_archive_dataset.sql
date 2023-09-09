@@ -115,7 +115,7 @@ BEGIN
     -- Get the assigned archive path
     ---------------------------------------------------
 
-    _archivePathID := public.get_instrument_archive_path_for_new_datasets (_instrumentID, _datasetID, _autoSwitchActiveArchive => true, _infoOnly => false);
+    _archivePathID := public.get_instrument_archive_path_for_new_datasets(_instrumentID, _datasetID, _autoSwitchActiveArchive => true, _infoOnly => false);
 
     If _archivePathID = 0 Then
         _message := format('get_instrument_archive_path_for_new_datasets returned zero for an archive path ID for dataset %s', _datasetID);

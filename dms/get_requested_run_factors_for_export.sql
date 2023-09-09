@@ -94,7 +94,7 @@ BEGIN
 
     INSERT INTO Tmp_RequestIDs (Request)
     SELECT request_id
-    FROM public.get_requested_runs_from_item_list (_itemList, _itemType);
+    FROM public.get_requested_runs_from_item_list(_itemList, _itemType);
 
 /*
     -----------------------------------------

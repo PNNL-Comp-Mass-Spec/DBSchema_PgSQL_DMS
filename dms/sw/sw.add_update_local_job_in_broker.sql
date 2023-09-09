@@ -221,7 +221,7 @@ BEGIN
 
         If Coalesce(_ownerUsername, '') = '' Then
             -- Auto-define the owner
-            _ownerUsername := public.get_user_login_without_domain (_callingUser);
+            _ownerUsername := public.get_user_login_without_domain(_callingUser);
         End If;
 
         If _mode::citext in ('add', 'previewAdd') Then
@@ -337,7 +337,7 @@ BEGIN
 
                 SELECT Value
                 INTO _transferFolderPath
-                FROM sw.get_job_param_table_local ( _job )
+                FROM sw.get_job_param_table_local( _job)
                 WHERE Name = 'TransferFolderPath';
 
                 If Coalesce(_transferFolderPath, '') <> '' Then

@@ -20,7 +20,7 @@ CREATE OR REPLACE FUNCTION public.get_myemsl_url_campaign(_experimentname text) 
 DECLARE
     _keyName text := 'extended_metadata.gov_pnnl_emsl_dms_campaign.name.untouched';
 BEGIN
-    RETURN public.get_myemsl_url_work (_keyName, _experimentName);
+    RETURN public.get_myemsl_url_work(_keyName, _experimentName);
 END
 $$;
 

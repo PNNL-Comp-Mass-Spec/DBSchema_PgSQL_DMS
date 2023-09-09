@@ -46,7 +46,7 @@ BEGIN
 
     INSERT INTO Tmp_ExistingJobs( Job )
     SELECT job
-    FROM public.get_existing_jobs_matching_job_request ( _requestID );
+    FROM public.get_existing_jobs_matching_job_request(_requestID );
     --
     GET DIAGNOSTICS _existingCount = ROW_COUNT;
 

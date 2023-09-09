@@ -126,7 +126,7 @@ BEGIN
         FROM sw.t_scripts
         WHERE script = _script;
 
-        _resultsDirectoryName := sw.get_results_directory_name (_job, _tag);
+        _resultsDirectoryName := sw.get_results_directory_name(_job, _tag);
 
         If Not _infoOnly Then
             RAISE INFO 'New results directory name: %', _resultsDirectoryName;

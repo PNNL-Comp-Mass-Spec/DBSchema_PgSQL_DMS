@@ -289,10 +289,10 @@ BEGIN
 
         -- Verify that Contact Username is valid and resolve its ID
         --
-        _userID := public.get_user_id (_contactUsername);
+        _userID := public.get_user_id(_contactUsername);
 
         If _userID > 0 Then
-            -- Function get_user_id recognizes both a username and the form 'LastName, FirstName (Username)'
+            -- Function get_user_id() recognizes both a username and the form 'LastName, FirstName (Username)'
             -- Assure that _contactUsername contains simply the username
             --
             SELECT username

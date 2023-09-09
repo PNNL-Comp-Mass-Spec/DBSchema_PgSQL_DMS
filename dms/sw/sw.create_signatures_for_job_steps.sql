@@ -216,7 +216,7 @@ BEGIN
 
             -- Get signature for rolled-up parameter string
 
-            _signature = sw.get_signature (_settings);
+            _signature = sw.get_signature(_settings);
 
             If _signature = 0 Then
                 _message := 'Error calculating signature (_signature is 0)';

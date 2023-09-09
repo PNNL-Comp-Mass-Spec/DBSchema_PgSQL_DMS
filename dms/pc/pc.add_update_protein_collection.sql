@@ -95,7 +95,7 @@ BEGIN
     -- Does entry already exist?
     ---------------------------------------------------
 
-    _collectionID := pc.get_protein_collection_id (_collectionName);
+    _collectionID := pc.get_protein_collection_id(_collectionName);
 
     If _collectionID > 0 And _mode = 'add' Then
         -- Collection already exists; auto-change _mode to 'update'
@@ -162,7 +162,7 @@ BEGIN
     End If;
 
     -- Lookup the collection ID for _collectionName
-    _collectionID := pc.get_protein_collection_id (_collectionName);
+    _collectionID := pc.get_protein_collection_id(_collectionName);
 
     If _mode = 'add' And _collectionID > 0 Then
 

@@ -185,7 +185,7 @@ BEGIN
     Else
         -- Resolve _statusURI_Path to _statusURI_PathID
 
-        _statusURI_PathID := cap.get_uri_path_id (_statusURI_Path, _infoOnly => _infoOnly);
+        _statusURI_PathID := cap.get_uri_path_id(_statusURI_Path, _infoOnly => _infoOnly);
 
         If _statusURI_PathID <= 1 Then
             _logMsg := format('Unable to resolve StatusURI_Path to URI_PathID for capture task job %s, dataset ID %s: %s', _job, _datasetID, _statusURI_Path);

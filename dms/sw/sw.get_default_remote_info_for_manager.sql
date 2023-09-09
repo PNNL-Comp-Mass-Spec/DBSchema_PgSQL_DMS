@@ -73,7 +73,7 @@ BEGIN
     );
 
     -- Populate the temporary table with the manager parameters
-    CALL mc.get_manager_parameters_work (_managerName, 0, 50, _message => _message);
+    CALL mc.get_manager_parameters_work(_managerName, 0, 50, _message => _message);
 
     If Not Exists ( SELECT value
                     FROM Tmp_Mgr_Params

@@ -184,7 +184,7 @@ BEGIN
         -- Resolve user ID for operator username
         ---------------------------------------------------
 
-        _userID := public.get_user_id (_newOperatorUsername);
+        _userID := public.get_user_id(_newOperatorUsername);
 
         If _userID > 0 Then
             -- Function get_user_id recognizes both a username and the form 'LastName, FirstName (Username)'

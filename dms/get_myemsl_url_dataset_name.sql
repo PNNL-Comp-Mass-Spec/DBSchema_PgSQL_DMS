@@ -20,7 +20,7 @@ CREATE OR REPLACE FUNCTION public.get_myemsl_url_dataset_name(_datasetname text)
 DECLARE
     _keyName text := 'extended_metadata.gov_pnnl_emsl_dms_dataset.name.untouched';
 BEGIN
-    RETURN public.get_myemsl_url_work (_keyName, _datasetName);
+    RETURN public.get_myemsl_url_work(_keyName, _datasetName);
 END
 $$;
 

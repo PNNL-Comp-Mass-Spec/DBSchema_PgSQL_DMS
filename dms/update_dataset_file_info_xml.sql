@@ -841,7 +841,7 @@ BEGIN
         -----------------------------------------------
 
         UPDATE t_dataset_info DI
-        SET scan_types = public.get_dataset_scan_type_list (_datasetID)
+        SET scan_types = public.get_dataset_scan_type_list(_datasetID)
         WHERE DI.dataset_id = _datasetID;
 
         -----------------------------------------------

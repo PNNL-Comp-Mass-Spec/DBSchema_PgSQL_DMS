@@ -238,7 +238,7 @@ BEGIN
 
                 SELECT work_package
                 INTO _workPackage
-                FROM public.get_wp_for_eus_proposal (_eusProposalID);
+                FROM public.get_wp_for_eus_proposal(_eusProposalID);
 
                 If _showDebugStatements Then
                     RAISE INFO 'Get_WP_for_EUS_Proposal returned work package %', _workPackage;

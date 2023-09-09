@@ -222,7 +222,7 @@ BEGIN
 
         _currentLocation := 'Get results directory name';
 
-        _resultsDirectoryName := sw.get_results_directory_name (_job, _tag);
+        _resultsDirectoryName := sw.get_results_directory_name(_job, _tag);
 
         If _resultsDirectoryName Is Null Then
 
@@ -431,7 +431,7 @@ BEGIN
 
             SELECT Value
             INTO _transferFolderPath
-            FROM sw.get_job_param_table_local ( _job )
+            FROM sw.get_job_param_table_local( _job)
             WHERE Name = 'TransferFolderPath';
 
             If Coalesce(_transferFolderPath, '') <> '' Then

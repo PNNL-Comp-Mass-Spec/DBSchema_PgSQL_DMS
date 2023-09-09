@@ -575,7 +575,7 @@ BEGIN
 
             _currentLocation := 'Get ID for new job';
 
-            _jobID := public.get_new_job_id ('Created in t_analysis_job', _infoOnly);
+            _jobID := public.get_new_job_id('Created in t_analysis_job', _infoOnly);
 
             If _jobID = 0 Then
                 _msg := 'Failed to get valid new job ID';

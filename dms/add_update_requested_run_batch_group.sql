@@ -116,7 +116,7 @@ BEGIN
         -- Resolve user ID for owner username
         ---------------------------------------------------
 
-        _userID := public.get_user_id (_ownerUsername);
+        _userID := public.get_user_id(_ownerUsername);
 
         If _userID > 0 Then
             -- Function get_user_id recognizes both a username and the form 'LastName, FirstName (Username)'

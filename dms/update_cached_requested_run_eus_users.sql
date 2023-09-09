@@ -49,11 +49,11 @@ BEGIN
                 -- Updating a single requested run; to avoid commit conflicts, do not use a merge statement
                 If Exists (SELECT request_id FROM t_active_requested_run_cached_eus_users WHERE request_id = _requestID) Then
                     UPDATE t_active_requested_run_cached_eus_users
-                    SET user_list = public.get_requested_run_eus_users_list (_requestID, 'V')
+                    SET user_list = public.get_requested_run_eus_users_list(_requestID, 'V')
                     WHERE request_id = _requestID;
                 Else
                     INSERT INTO t_active_requested_run_cached_eus_users (request_id, user_list)
-                    Values (_requestID, public.get_requested_run_eus_users_list (_requestID, 'V'));
+                    Values (_requestID, public.get_requested_run_eus_users_list(_requestID, 'V'));
                 End If;
             Else
                 -- The request is not active; assure there is no cached entry
@@ -72,7 +72,7 @@ BEGIN
 
         MERGE INTO t_active_requested_run_cached_eus_users AS target
         USING (SELECT request_id AS Request_ID,
-                      public.get_requested_run_eus_users_list (request_id, 'V') AS User_List
+                      public.get_requested_run_eus_users_list(request_id, 'V') AS User_List
                FROM t_requested_run
                WHERE state_name = 'Active' AND (_requestID = 0 OR request_id = _requestID)
               ) AS source
@@ -91,7 +91,7 @@ BEGIN
             DELETE FROM t_active_requested_run_cached_eus_users target
             WHERE NOT EXISTS (SELECT source.request_id
                               FROM (SELECT request_id AS Request_ID,
-                                           public.get_requested_run_eus_users_list (request_id, 'V') AS User_List
+                                           public.get_requested_run_eus_users_list(request_id, 'V') AS User_List
                                     FROM t_requested_run
                                     WHERE state_name = 'Active' AND (_requestID = 0 OR request_id = _requestID)
                                    ) AS source

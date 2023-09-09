@@ -70,7 +70,7 @@ BEGIN
     -- Is mod mass already in database?
     ---------------------------------------------------
 
-    _massCorrectionID := public.get_mass_correction_id (_modMassChange);
+    _massCorrectionID := public.get_mass_correction_id(_modMassChange);
 
     -- Cannot create an entry that already exists
     -- Look for existing modifications with a mass within 0.00006 Da of _modMasschange

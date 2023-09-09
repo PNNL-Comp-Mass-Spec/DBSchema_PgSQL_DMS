@@ -143,7 +143,7 @@ BEGIN
 
         INSERT INTO Tmp_Param_Tab (Section, Name, Value)
         SELECT Src.Section, Src.Name, Src.Value
-        FROM cap.get_metadata_for_dataset (_dataset) Src
+        FROM cap.get_metadata_for_dataset(_dataset) Src
         ORDER BY Src.Section, Src.Name;
 
     End If;

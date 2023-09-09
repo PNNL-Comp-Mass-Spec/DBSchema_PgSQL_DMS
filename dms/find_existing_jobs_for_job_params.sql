@@ -122,13 +122,13 @@ BEGIN
     -- Convert organism name to ID
     ---------------------------------------------------
 
-    _organismID := public.get_organism_id (_organismName);
+    _organismID := public.get_organism_id(_organismName);
 
     ---------------------------------------------------
     -- Convert tool name to ID
     ---------------------------------------------------
 
-    _analysisToolID := public.get_analysis_tool_id (_toolName);
+    _analysisToolID := public.get_analysis_tool_id(_toolName);
 
     ---------------------------------------------------
     -- Look for existing jobs

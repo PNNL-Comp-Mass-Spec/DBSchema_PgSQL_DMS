@@ -186,10 +186,10 @@ BEGIN
     -- Resolve researcher username
     ---------------------------------------------------
 
-    _userID := public.get_user_id (_researcher);
+    _userID := public.get_user_id(_researcher);
 
     If _userID > 0 Then
-        -- Function get_user_id recognizes both a username and the form 'LastName, FirstName (Username)'
+        -- Function get_user_id() recognizes both a username and the form 'LastName, FirstName (Username)'
         -- Assure that _researcher contains simply the username
         --
         SELECT username

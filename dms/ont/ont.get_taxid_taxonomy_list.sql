@@ -27,7 +27,7 @@ DECLARE
 BEGIN
     SELECT string_agg(format('%s:%s', T.Rank, T.Name), '|' ORDER BY Entry_ID DESC)
     INTO _list
-    FROM ont.get_taxid_taxonomy_table ( _taxonomyID ) T
+    FROM ont.get_taxid_taxonomy_table(_taxonomyID) T
     WHERE T.Entry_ID = 1 OR
           T.Rank <> 'no rank' OR
           _extendedInfo > 0;

@@ -517,7 +517,7 @@ BEGIN
             -- on the remote server associated with this manager
             ---------------------------------------------------
 
-            _remoteInfoID := sw.get_remote_info_id (_remoteInfo, _infoOnly => true);
+            _remoteInfoID := sw.get_remote_info_id(_remoteInfo, _infoOnly => true);
 
             -- Note that _remoteInfoID=1 means the _remoteInfo is 'Unknown'
 

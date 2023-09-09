@@ -23,7 +23,7 @@ CREATE OR REPLACE FUNCTION public.get_myemsl_url_analysis_job(_jobresultsfoldern
 DECLARE
     _keyName text := 'extended_metadata.gov_pnnl_emsl_dms_analysisjob.name.untouched';
 BEGIN
-    RETURN public.get_myemsl_url_work (_keyName, _jobResultsFolderName);
+    RETURN public.get_myemsl_url_work(_keyName, _jobResultsFolderName);
 END
 $$;
 

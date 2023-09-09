@@ -21,7 +21,7 @@ CREATE OR REPLACE PROCEDURE dpkg.get_package_dataset_job_tool_crosstab(IN _datap
 **  Note that this will result in an error if no matching items are found
 **
 **      BEGIN;
-**          CALL dpkg.get_package_dataset_job_tool_crosstab ( _dataPackageID => '3050' );
+**          CALL dpkg.get_package_dataset_job_tool_crosstab(_dataPackageID => '3050');
 **          FETCH ALL FROM _results;
 **      END;
 **

@@ -492,7 +492,7 @@ BEGIN
         End If;
 
         -- Construct the results directory name
-        _resultsDirectoryName = sw.get_results_directory_name (_jobInfo.Job, _tag);
+        _resultsDirectoryName = sw.get_results_directory_name(_jobInfo.Job, _tag);
 
         _jobInfo.ResultsDirectoryName := _resultsDirectoryName;
 

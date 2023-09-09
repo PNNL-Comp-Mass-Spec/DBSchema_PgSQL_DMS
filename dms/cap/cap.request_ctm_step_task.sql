@@ -618,7 +618,7 @@ BEGIN
 
             INSERT INTO Tmp_JobParamsTable (Section, Name, Value)
             SELECT Src.Section, Src.Name, Src.Value
-            FROM cap.get_task_step_params (_jobNumber, _step) Src;
+            FROM cap.get_task_step_params(_jobNumber, _step) Src;
 
         Else
             ---------------------------------------------------

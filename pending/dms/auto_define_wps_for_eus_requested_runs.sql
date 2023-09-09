@@ -94,7 +94,7 @@ BEGIN
     LOOP
         SELECT work_package, months_searched
         INTO _workPackage, _monthsSearched
-        FROM public.get_wp_for_eus_proposal (_eusProposalID);
+        FROM public.get_wp_for_eus_proposal(_eusProposalID);
 
         If FOUND And _workPackage <> 'none' Then
             UPDATE Tmp_ProposalsToCheck

@@ -117,7 +117,7 @@ BEGIN
 
         MERGE INTO t_analysis_job_request_existing_jobs AS target
         USING ( SELECT DISTINCT _requestID As Request_ID, Job
-                FROM public.get_existing_jobs_matching_job_request (_requestID)
+                FROM public.get_existing_jobs_matching_job_request(_requestID)
               ) AS source
         ON (target.request_id = source.request_id AND target.job = source.job)
         -- Note: all of the columns in table t_analysis_job_request_existing_jobs are primary keys or identity columns; there are no updatable columns
@@ -132,7 +132,7 @@ BEGIN
         WHERE target.Request_ID = _requestID AND
               NOT EXISTS (SELECT source.Job
                           FROM (SELECT DISTINCT Job
-                                FROM public.get_existing_jobs_matching_job_request (_requestID)
+                                FROM public.get_existing_jobs_matching_job_request(_requestID)
                                ) AS source
                           WHERE target.job = source.job);
 
@@ -245,7 +245,7 @@ BEGIN
 
             MERGE INTO t_analysis_job_request_existing_jobs AS target
             USING ( SELECT DISTINCT _currentRequestId As Request_ID, Job
-                    FROM public.get_existing_jobs_matching_job_request (_currentRequestId)
+                    FROM public.get_existing_jobs_matching_job_request(_currentRequestId)
                   ) AS source
             ON (target.request_id = source.request_id AND target.job = source.job)
             WHEN NOT MATCHED THEN
@@ -263,7 +263,7 @@ BEGIN
             WHERE target.Request_ID = _currentRequestId AND
                   NOT EXISTS (SELECT source.Job
                               FROM (SELECT DISTINCT Job
-                                    FROM public.get_existing_jobs_matching_job_request (_currentRequestId)
+                                    FROM public.get_existing_jobs_matching_job_request(_currentRequestId)
                                    ) AS source
                               WHERE target.job = source.job);
 
@@ -350,7 +350,7 @@ BEGIN
              ) LookupQ
              JOIN LATERAL (
                 SELECT job
-                FROM public.get_existing_jobs_matching_job_request (LookupQ.Request_ID)
+                FROM public.get_existing_jobs_matching_job_request(LookupQ.Request_ID)
                 ) As RequestJobs On true
         ORDER BY LookupQ.request_id, RequestJobs.job;
         --
@@ -452,7 +452,7 @@ BEGIN
                     FROM t_analysis_job_request AJR
                          JOIN LATERAL (
                             SELECT job
-                            FROM public.get_existing_jobs_matching_job_request (AJR.Request_ID)
+                            FROM public.get_existing_jobs_matching_job_request(AJR.Request_ID)
                             ) As MatchingJobs On true
                     WHERE AJR.request_id BETWEEN _requestIdStart AND _requestIdEnd
                   ) AS source
@@ -475,7 +475,7 @@ BEGIN
                                          FROM t_analysis_job_request AJR
                                               JOIN LATERAL (
                                                  SELECT job
-                                                 FROM public.get_existing_jobs_matching_job_request (AJR.Request_ID)
+                                                 FROM public.get_existing_jobs_matching_job_request(AJR.Request_ID)
                                                  ) As MatchingJobs On true
                                          WHERE AJR.request_id BETWEEN _requestIdStart AND _requestIdEnd
                                        ) AS source

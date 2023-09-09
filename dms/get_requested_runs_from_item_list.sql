@@ -15,12 +15,12 @@ CREATE OR REPLACE FUNCTION public.get_requested_runs_from_item_list(_itemlist te
 **    _itemType     Item type: Batch_ID, Requested_Run_ID, Dataset_Name, Dataset_ID, Experiment_Name, Experiment_ID, or Data_Package_ID
 **
 **  Example usage:
-**      SELECT request_id FROM get_requested_runs_from_item_list ('1400,1401', 'Requested_Run_ID');
-**      SELECT request_id FROM get_requested_runs_from_item_list ('MNST_bil_E_30_470_R1_MRM_01_20220811, MNST_bil_J_10_990_R2_01_20220811', 'Dataset_Name');
-**      SELECT request_id FROM get_requested_runs_from_item_list ('1066204,1066226', 'Dataset_ID');
-**      SELECT request_id FROM get_requested_runs_from_item_list ('MNST_bil_A_10-490_R1', 'Experiment_Name');
-**      SELECT request_id FROM get_requested_runs_from_item_list ('332440,238638', 'Experiment_ID');
-**      SELECT request_id FROM get_requested_runs_from_item_list ('3324', 'Data_Package_ID');
+**      SELECT request_id FROM get_requested_runs_from_item_list('1400,1401', 'Requested_Run_ID');
+**      SELECT request_id FROM get_requested_runs_from_item_list('MNST_bil_E_30_470_R1_MRM_01_20220811, MNST_bil_J_10_990_R2_01_20220811', 'Dataset_Name');
+**      SELECT request_id FROM get_requested_runs_from_item_list('1066204,1066226', 'Dataset_ID');
+**      SELECT request_id FROM get_requested_runs_from_item_list('MNST_bil_A_10-490_R1', 'Experiment_Name');
+**      SELECT request_id FROM get_requested_runs_from_item_list('332440,238638', 'Experiment_ID');
+**      SELECT request_id FROM get_requested_runs_from_item_list('3324', 'Data_Package_ID');
 **
 **  Auth:   grk
 **  Date:   03/22/2010
