@@ -22,11 +22,12 @@ AS $$
 **      If multiple matches are found, _requestID will be 0
 **
 **  Arguments:
-**    _datasetName         Dataset name
-**    _experimentID        Optional; include to limit by experiment ID,
-**    _requestID           Output: Matched request run ID; 0 if no match
-**    _requestInstGroup    Output: Instrument group for the matched request; empty if no match
-**    _requestMatchCount   Output: Number of matching candidate run requests
+**    _datasetName          Dataset name
+**    _experimentID         Optional; include to limit by experiment ID,
+**    _requestID            Output: Matched request run ID; 0 if no match
+**    _requestInstGroup     Output: Instrument group for the matched request; empty if no match
+**    _requestMatchCount    Output: Number of matching candidate run requests
+**    _showDebugMessages    When true, show debug messages
 **
 **  Auth:   mem
 **  Date:   06/10/2016 mem - Initial version

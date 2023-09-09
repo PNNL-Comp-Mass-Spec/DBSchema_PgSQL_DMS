@@ -512,26 +512,28 @@ BEGIN
                     End If;
 
                     CALL public.add_update_dataset (
-                                        _jobInfo.Dataset,       -- Dataset
-                                        'DMS_Pipeline_Data',    -- Experiment
-                                        'MSDADMIN',             -- Operator Username
-                                        'DMS_Pipeline_Data',    -- Instrument
-                                        'DataFiles',            -- Dataset Type
-                                        'unknown',              -- LC Column
-                                        'na',                   -- Well plate
-                                        'na',                   -- Well number
-                                        'none',                 -- Secondary Sep
-                                        'none',                 -- Internal Standard
-                                        _datasetComment,        -- Comment
-                                        'Released',             -- Rating
-                                        'No_Cart',              -- LC Cart
-                                        '',                     -- EUS Proposal
-                                        'CAP_DEV',              -- EUS Usage
-                                        '',                     -- EUS Users
-                                        _requestID => 0,
+                                        _jobInfo.Dataset,           -- Dataset
+                                        'DMS_Pipeline_Data',        -- Experiment
+                                        'MSDADMIN',                 -- Operator Username
+                                        'DMS_Pipeline_Data',        -- Instrument
+                                        'DataFiles',                -- Dataset Type
+                                        'unknown',                  -- LC Column
+                                        'na',                       -- Well plate
+                                        'na',                       -- Well number
+                                        'none',                     -- Secondary Sep
+                                        'none',                     -- Internal Standard
+                                        _datasetComment,            -- Comment
+                                        'Released',                 -- Rating
+                                        'No_Cart',                  -- LC Cart
+                                        '',                         -- EUS Proposal
+                                        'CAP_DEV',                  -- EUS Usage
+                                        '',                         -- EUS Users
+                                        _requestID => 0,            -- Requested run ID
+                                        _workPackage => 'none',     -- Work package
                                         _mode => _mode,
                                         _message => _msg,               -- Output
                                         _returnCode => _returnCode,     -- Output
+                                        _callingUser => '',
                                         _aggregationJobDataset => true);
 
                     If _returnCode <> '' Then

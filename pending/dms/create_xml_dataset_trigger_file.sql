@@ -39,23 +39,28 @@ AS $$
 **      and submit back to DMS
 **
 **  Arguments:
-**    _datasetName       Dataset name
-**    _experimentName    Experiment Name
-**    _instrumentName    Instrument Name
-**    _separationType    Separation Type
-**    _lcCartName        LC Cart Name
-**    _lcColumn          LC Column Name
-**    _wellplateName     Wellplate
-**    _wellNumber        Well Number
-**    _datasetType       Dataset Type
-**    _operatorUsername  Operator Username
-**    _dsCreatorUsername Dataset Creator Username
-**    _comment           Comment
-**    _interestRating    Interest Rating (aka Dataset Rating Name)
-**    _request           Requested Run ID
-**    _emslUsageType     EUS Usage Type
-**    _emslProposalID    EUS Proposal ID
-**    _emslUsersList     EUS Users List
+**    _datasetName          Dataset name
+**    _experimentName       Experiment Name
+**    _instrumentName       Instrument Name
+**    _separationType       Separation Type
+**    _lcCartName           LC Cart Name
+**    _lcColumn             LC Column Name
+**    _wellplateName        Wellplate
+**    _wellNumber           Well Number
+**    _datasetType          Dataset Type
+**    _operatorUsername     Operator Username
+**    _dsCreatorUsername    Dataset Creator Username
+**    _comment              Comment
+**    _interestRating       Interest Rating (aka Dataset Rating Name)
+**    _request              Requested Run ID
+**    _workPackage          Work package
+**    _emslUsageType        EUS Usage Type
+**    _emslProposalID       EUS Proposal ID
+**    _emslUsersList        EUS Users List
+**    _runStart             Run start timestamp (as text)
+**    _runFinish            Run finish timestamp (as text)
+**    _captureSubfolder     Capture subfolder
+**    _lcCartConfig         LC Cart Config
 **
 **  Auth:   jds
 **  Date:   10/03/2007 jds - Initial version

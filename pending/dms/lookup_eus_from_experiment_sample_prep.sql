@@ -17,9 +17,12 @@ AS $$
 **      associated with the given experiment (if there is one)
 **
 **  Arguments:
-**    _eusUsageType    If this is '(lookup)', will override with the EUS info from the sample prep request (if found)
-**    _eusProposalID   If this is '(lookup)', will override with the EUS info from the sample prep request (if found)
-**    _eusUsersList    If this is '(lookup)', will override with the EUS info from the sample prep request (if found)
+**    _experimentName   Experiment name
+**    _eusUsageType     Input/output: If this is '(lookup)', will override with the EUS info from the sample prep request (if found)
+**    _eusProposalID    Input/output: If this is '(lookup)', will override with the EUS info from the sample prep request (if found)
+**    _eusUsersList     Input/output: If this is '(lookup)', will override with the EUS info from the sample prep request (if found)
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   grk
 **  Date:   07/11/2007 grk - Ticket #499

@@ -17,13 +17,13 @@ AS $$
 **      Creates a requested run and associates it with
 **      the given dataset if there is not currently one
 **
-**      The requested run will be named one of the following:
+**      Example requested run names:
 **      'AutoReq_DatasetName'
 **      'AutoReq2_DatasetName'
 **      'AutoReq3_DatasetName'
 **
 **
-**      Note that this procedure is similar to AddMissingRequestedRun,
+**      Note that this procedure is similar to Add_Missing_Requested_Run,
 **      though that procedure is intended to be run via automation
 **      to add requested runs to existing datasets that don't yet have one
 **
@@ -31,10 +31,10 @@ AS $$
 **      an existing requested run ID from which to lookup EUS information
 **
 **  Arguments:
-**    _datasetID           Can supply ID for dataset or name for dataset (but not both)
-**    _datasetName
-**    _templateRequestID   existing request to use for looking up some parameters for new one
-**    _mode                compatibility with web entry page and possible future use; supports 'add', 'add-debug', and 'preview'
+**    _datasetID            Dataset ID; can supply ID for dataset or name for dataset (but not both)
+**    _datasetName          Dataset name
+**    _templateRequestID    Existing requested run to use for looking up some parameters for the new requested run
+**    _mode                 Compatibility with web entry page and possible future use; supports 'add', 'add-debug', and 'preview'
 **
 **  Auth:   grk
 **  Date:   05/23/2011 grk - Initial release
@@ -62,19 +62,19 @@ DECLARE
     _existingDatasetID int;
     _existingDatasetName text;
     _requestID int;
-    _requestName text;
-    _checkForDuplicates int := 1;
+    _requestName citext;
     _iteration int := 1;
     _experimentName text;
     _instrumentName text;
     _msType text;
-    _comment text := 'Automatically created by Dataset entry';
-    _workPackage text  := 'none';
+    _comment text;
+    _workPackage citext := 'none';
     _requesterUsername text := '';
     _eusProposalID text := 'na';
     _eusUsageType text;
     _eusUsersList text := '';
     _secSep text := 'LC-Formic_1hr';
+    _resolvedInstrumentInfo text;
     _msg text := '';
     _addUpdateMode text;
 
@@ -100,12 +100,11 @@ BEGIN
         -- (either name or ID, but not both)
         ---------------------------------------------------
 
-        _datasetID := Coalesce(_datasetID, 0);
-        _datasetName := Coalesce(_datasetName, '');
-        _mode := Trim(_mode);
+        _datasetID   := Coalesce(_datasetID, 0);
+        _datasetName := Trim(Coalesce(_datasetName, ''));
 
         If _datasetID <> 0 And _datasetName <> '' Then
-            RAISE EXCEPTION 'Cannot specify both datasetID "%" and datasetName "%"', _datasetID, _datasetName;
+            RAISE EXCEPTION 'Cannot specify both dataset ID "%" and dataset name "%"', _datasetID, _datasetName;
         End If;
 
         ---------------------------------------------------
@@ -131,20 +130,20 @@ BEGIN
         End If;
 
         If _existingCount = 0 Then
-            RAISE EXCEPTION 'Could not find datasetID "%" or dataset "%"', _datasetID, _datasetName;
+            RAISE EXCEPTION 'Could not find dataset ID "%" or dataset "%"', _datasetID, _datasetName;
         End If;
 
-        _datasetID := _existingDatasetID;
+        _datasetID   := _existingDatasetID;
         _datasetName := _existingDatasetName;
 
         ---------------------------------------------------
-        -- Does the dataset have an associated request?
+        -- Does the dataset have an associated requested run?
         ---------------------------------------------------
 
         SELECT RR.request_id
         INTO _requestID
         FROM t_requested_run AS RR
-        WHERE RR.dataset_id = _datasetID
+        WHERE RR.dataset_id = _datasetID;
 
         If FOUND Then
             RAISE EXCEPTION 'Dataset "%" has existing requested run, ID "%"', _datasetID, _requestID;
@@ -154,20 +153,21 @@ BEGIN
         -- Parameters for creating requested run
         ---------------------------------------------------
 
-        _requestName := 'AutoReq_' + _datasetName;
+        _requestName := format('AutoReq_%s', _datasetName);
 
-        WHILE _checkForDuplicates > 0
+        WHILE true
         LOOP
             If _showDebugStatements Then
                 RAISE INFO 'Looking for existing requested run named %', _requestName;
             End If;
 
-            If Exists (SELECT * FROM t_requested_run WHERE request_name = _requestName) Then
+            If Exists (SELECT request_id FROM t_requested_run WHERE request_name = _requestName) Then
                 -- Requested run already exists; bump up _iteration and try again
                 _iteration := _iteration + 1;
                 _requestName := format('AutoReq%s_%s', _iteration, _datasetName);
             Else
-                _checkForDuplicates := 0;
+                -- Break out of the while loop
+                EXIT;
             End If;
         END LOOP;
 
@@ -200,9 +200,11 @@ BEGIN
         -- (if an ID was provided in _templateRequestID)
         ---------------------------------------------------
 
+        _comment := 'Automatically created by Dataset entry';
+
         If Coalesce(_templateRequestID, 0) <> 0 Then
             If _showDebugStatements Then
-                RAISE INFO 'Querying t_requested_run AND t_eus_usage_type for request eus_usage_type_id  %', _templateRequestID;
+                RAISE INFO 'Querying t_requested_run and t_eus_usage_type for request eus_usage_type_id  %', _templateRequestID;
             End If;
 
             SELECT work_package
@@ -214,7 +216,7 @@ BEGIN
             FROM t_requested_run AS RR
                  INNER JOIN t_eus_usage_type AS EUT
                    ON RR.eus_usage_type_id = EUT.eus_usage_type_id
-            WHERE RR.request_id = _templateRequestID
+            WHERE RR.request_id = _templateRequestID;
 
             If Not FOUND Then
                 _message := format('Template request ID %s not found', _templateRequestID);
@@ -252,7 +254,7 @@ BEGIN
         ---------------------------------------------------
 
         If Coalesce(_templateRequestID, 0) = 0 Then
-            RAISE EXCEPTION 'For now, a template request is mandatory';
+            RAISE EXCEPTION 'Template request id must be non-zero when calling add_requested_run_to_existing_dataset';
         End If;
 
         If Coalesce(_callingUser, '') <> '' Then
@@ -307,6 +309,9 @@ BEGIN
                                 _wellNumber => NULL,
                                 _internalStandard => 'na',
                                 _comment => _comment,
+                                _batch => 0,
+                                _block => 0,
+                                _runOrder => 0,
                                 _eusProposalID => _eusProposalID,
                                 _eusUsageType => _eusUsageType,
                                 _eusUsersList => _eusUsersList,
@@ -315,11 +320,17 @@ BEGIN
                                 _message => _msg,               -- Output
                                 _returnCode => _returnCode,     -- Output
                                 _secSep => _secSep,
-                                _mRMAttachment => '',
-                                _status =>> 'Completed',
+                                _mrmAttachment => '',
+                                _status => 'Completed',
                                 _skipTransactionRollback => true,
-                                _autoPopulateUserListIfBlank => true,        -- Auto populate _eusUsersList if blank since this is an Auto-Request
-                                _callingUser => _callingUser)
+                                _autoPopulateUserListIfBlank => true,   -- Auto populate _eusUsersList if blank since this is an Auto-Request
+                                _callingUser => _callingUser,
+                                _vialingConc => null,
+                                _vialingVol => null,
+                                _stagingLocation => null,
+                                _requestIDForUpdate => null,
+                                _logDebugMessages => false,
+                                _resolvedInstrumentInfo => _resolvedInstrumentInfo);    -- Output
 
         If _returnCode <> '' Then
             RAISE EXCEPTION '%', _msg;
@@ -342,11 +353,11 @@ BEGIN
                 RAISE INFO 'Calling consume_scheduled_run with DatasetID % and RequestID %', _datasetID, _requestID;
             End If;
 
-            CALL consume_scheduled_run ( _datasetID,
-                                         _requestID,
-                                         _message => _msg,              -- Output
-                                         _returnCode => _returnCode,    -- Output
-                                         _callingUser => _callingUser
+            CALL public.consume_scheduled_run ( _datasetID,
+                                                _requestID,
+                                                _message => _msg,              -- Output
+                                                _returnCode => _returnCode,    -- Output
+                                                _callingUser => _callingUser);
 
             If _returnCode <> '' Then
                 RAISE EXCEPTION '%', _msg;

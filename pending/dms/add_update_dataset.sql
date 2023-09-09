@@ -83,7 +83,7 @@ AS $$
 **          03/25/2008 mem - Added optional parameter _callingUser; if provided, will call alter_event_log_entry_user (Ticket #644)
 **          04/09/2008 mem - Added call to alter_event_log_entry_user to handle dataset rating entries (event log target type 8)
 **          05/23/2008 mem - Now calling schedule_predefined_analysis_jobs if the dataset rating is changed from -5 to 5 and no jobs exist yet for this dataset (Ticket #675)
-**          04/08/2009 jds - Added support for the additional parameters _secSep and _mRMAttachment to the Add_Update_Requested_Run procedure (Ticket #727)
+**          04/08/2009 jds - Added support for the additional parameters _secSep and _mrmAttachment to the Add_Update_Requested_Run procedure (Ticket #727)
 **          09/16/2009 mem - Now checking dataset type (_msType) against the Instrument_Allowed_Dataset_Type table (Ticket #748)
 **          01/14/2010 grk - Assign storage path on creation of dataset
 **          02/28/2010 grk - Added add-auto mode for requested run
@@ -192,7 +192,8 @@ DECLARE
     _reqRunStatus text;
     _batchID int;
     _block int;
-    _runOrder Int;
+    _runOrder int;
+    _resolvedInstrumentInfo text;
     _badCh text;
     _ratingID int;
     _datasetID int;
@@ -209,7 +210,7 @@ DECLARE
     _newExperiment text;
     _instrumentID int;
     _instrumentClass citext;
-    _instrumentGroup citext;
+    _instrumentGroup text;
     _instrumentStatus citext;
     _defaultDatasetTypeID int;
     _msTypeOld text;
@@ -219,6 +220,7 @@ DECLARE
     _matchCount int;
     _newUsername text;
     _requestInstGroup text;
+    _requestMatchCount int;
     _reqExperimentID int := 0;
     _cartID int := 0;
     _eusUsageTypeID Int;
@@ -226,7 +228,7 @@ DECLARE
     _runStart text;
     _runFinish text;
     _storagePathID int;
-    _refDate timestamp;
+    _refDate timestamp without time zone;
     _datasetIDConfirm int;
     _jobStateID int;
     _warningWithPrefix text;
@@ -600,7 +602,7 @@ BEGIN
         SELECT default_dataset_type
         INTO _defaultDatasetTypeID
         FROM t_instrument_group
-        WHERE instrument_group = _instrumentGroup;
+        WHERE instrument_group = _instrumentGroup::citext;
 
         ---------------------------------------------------
         -- Resolve dataset type ID
@@ -639,8 +641,8 @@ BEGIN
 
         CALL public.validate_instrument_group_and_dataset_type (
                         _datasetType => _msType,
-                        _instrumentGroup => _instrumentGroup,           -- Output
-                        _datasetTypeID => _datasetTypeID output,        -- Output
+                        _instrumentGroup => _instrumentGroup,           -- Input/Output
+                        _datasetTypeID => _datasetTypeID,               -- Output
                         _message => _msg,                               -- Output
                         _returnCode => _returnCode);                    -- Output
 
@@ -772,7 +774,7 @@ BEGIN
             -- Verify acceptable combination of EUS fields
             ---------------------------------------------------
 
-            If (_eusProposalID <> '' Or _eusUsageType <> '' Or _eusUsersList <> '') Then
+            If _eusProposalID <> '' Or _eusUsageType <> '' Or _eusUsersList <> '' Then
                 If (_eusUsageType::citext = '(lookup)' And _eusProposalID::citext = '(lookup)' And _eusUsersList::citext = '(lookup)') Or
                    (_eusUsageType::citext = '(ignore)') Then
                     _warning := '';
@@ -804,7 +806,7 @@ BEGIN
                 INTO _experimentCheck
                 FROM t_experiments E INNER JOIN
                     t_requested_run RR ON E.exp_id = RR.exp_id
-                WHERE RR.request_id = _requestID
+                WHERE RR.request_id = _requestID;
 
                 If _experimentCheck <> _experimentName Then
                     _requestID := 0;
@@ -813,7 +815,7 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- If the dataset starts with 'blank' and _requestID is zero, perform some additional checks
+        -- If the dataset starts with 'Blank' and _requestID is zero, perform some additional checks
         ---------------------------------------------------
 
         If _requestID = 0 And _addingDataset Then
@@ -841,15 +843,16 @@ BEGIN
             End If;
 
             CALL public.find_active_requested_run_for_dataset (
-                        _datasetName,
-                        _experimentID,
-                        _requestID => _requestID,                   -- Output
-                        _requestInstGroup => _requestInstGroup,     -- Output
-                        _showDebugMessages => false);
+                            _datasetName,
+                            _experimentID,
+                            _requestID => _requestID,                   -- Output
+                            _requestInstGroup => _requestInstGroup,     -- Output
+                            _requestMatchCount => _requestMatchCount,   -- Output
+                            _showDebugMessages => false);
 
             If _requestID > 0 Then
                 -- Match found; check for an instrument group mismatch
-                If _requestInstGroup <> _instrumentGroup Then
+                If _requestInstGroup::citext <> _instrumentGroup::citext Then
                     _warning := public.append_to_text(_warning,
                         format('Instrument group for requested run (%s) does not match instrument group for %s (%s)',
                                _requestInstGroup, _instrumentName, _instrumentGroup), _delimiter => '; ');
@@ -889,12 +892,11 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add_trigger' Then
-        -- <AddTrigger>
 
             If _requestID <> 0 Then
-                --**Check code taken from Consume_Scheduled_Run procedure**
                 ---------------------------------------------------
                 -- Validate that experiments match
+                -- (check code taken from Consume_Scheduled_Run procedure)
                 ---------------------------------------------------
 
                 -- Get experiment ID from dataset;
@@ -916,9 +918,9 @@ BEGIN
                 End If;
             End If;
 
-            -- ** Check code taken from procedure update_cart_parameters **
             ---------------------------------------------------
             -- Resolve ID for LC Cart and update requested run table
+            -- (Check code taken from procedure update_cart_parameters)
             ---------------------------------------------------
 
             SELECT cart_id
@@ -931,12 +933,10 @@ BEGIN
             End If;
 
             If _requestID = 0 Then
-            -- <b1>
 
                 -- RequestID not specified
                 -- Try to determine EUS information using Experiment name
-
-                --**Check code taken from Add_Update_Requested_Run procedure**
+                -- (Check code taken from Add_Update_Requested_Run procedure)
 
                 ---------------------------------------------------
                 -- Lookup EUS field (only effective for experiments that have associated sample prep requests)
@@ -964,17 +964,18 @@ BEGIN
                 ---------------------------------------------------
 
                 CALL public.validate_eus_usage (
-                                _eusUsageType   => _eusUsageType,   -- Input/Output
-                                _eusProposalID  => _eusProposalID,  -- Input/Output
-                                _eusUsersList   => _eusUsersList,   -- Input/Output
-                                _eusUsageTypeID => _eusUsageTypeID, -- Output
-                                _message => _msg,                   -- Output
-                                _returnCode => _returnCode,         -- Output
+                                _eusUsageType   => _eusUsageType,       -- Input/Output
+                                _eusProposalID  => _eusProposalID,      -- Input/Output
+                                _eusUsersList   => _eusUsersList,       -- Input/Output
+                                _eusUsageTypeID => _eusUsageTypeID,     -- Output
+                                _message => _msg,                       -- Output
+                                _returnCode => _returnCode,             -- Output
                                 _autoPopulateUserListIfBlank => false,
                                 _samplePrepRequest => false,
                                 _experimentID => _experimentID,
                                 _campaignID => 0,
-                                _addingItem => _addingDataset);
+                                _addingItem => _addingDataset,
+                                _infoOnly => false);
 
                 If _returnCode <> '' Then
                     _logErrors := false;
@@ -986,7 +987,6 @@ BEGIN
                 End If;
 
             Else
-            -- <b2>
 
                 ---------------------------------------------------
                 -- Verify that request ID is correct
@@ -996,7 +996,7 @@ BEGIN
                     RAISE EXCEPTION 'Request request_id not found';
                 End If;
 
-            End If; -- </b2>
+            End If;
 
             If _callingUser = '' Then
                 _dsCreatorUsername := session_user;
@@ -1048,14 +1048,13 @@ BEGIN
                 _logErrors := false;
                 RAISE EXCEPTION 'There was an error while creating the XML Trigger file: %', _message;
             End If;
-        End If; -- </AddTrigger>
+        End If;
 
         ---------------------------------------------------
         -- Action for add mode
         ---------------------------------------------------
 
         If _mode = 'add' Then
-        -- <AddMode>
 
             ---------------------------------------------------
             -- Lookup storage path ID
@@ -1068,7 +1067,11 @@ BEGIN
                 CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
-            _storagePathID := public.get_instrument_storage_path_for_new_datasets(_instrumentID, _refDate, _autoSwitchActiveStorage => true, _infoOnly => false);
+            _storagePathID := public.get_instrument_storage_path_for_new_datasets(
+                                        _instrumentID,
+                                        _refDate,
+                                        _autoSwitchActiveStorage => true,
+                                        _infoOnly => false);
 
             If _storagePathID = 0 Then
                 _storagePathID := 2; -- index of 'none' in t_storage_path
@@ -1171,7 +1174,6 @@ BEGIN
                 ---------------------------------------------------
 
                 If _requestID = 0 Then
-                -- <b3>
 
                     If Coalesce(_message, '') <> '' and Coalesce(_warning, '') = '' Then
                         _warning := _message;
@@ -1193,11 +1195,13 @@ BEGIN
                         RAISE INFO '%', 'Call Add_Update_Requested_Run';
                     End If;
 
+                    -- Make a new requested run for the new dataset
+
                     CALL public.add_update_requested_run (
                                             _requestName => _requestName,
                                             _experimentName => _experimentName,
                                             _requesterUsername => _operatorUsername,
-                                            _instrumentName => _instrumentName,
+                                            _instrumentGroup => _instrumentGroup,
                                             _workPackage => _workPackage,
                                             _msType => _msType,
                                             _instrumentSettings => 'na',
@@ -1205,6 +1209,9 @@ BEGIN
                                             _wellNumber => NULL,
                                             _internalStandard => 'na',
                                             _comment => 'Automatically created by Dataset entry',
+                                            _batch => 0,
+                                            _block => 0,
+                                            _runOrder => 0,
                                             _eusProposalID => _eusProposalID,
                                             _eusUsageType => _eusUsageType,
                                             _eusUsersList => _eusUsersList,
@@ -1213,12 +1220,17 @@ BEGIN
                                             _message => _message,           -- Output
                                             _returnCode => _returnCode,     -- Output
                                             _secSep => _secSep,
-                                            _mRMAttachment => '',
+                                            _mrmAttachment => '',
                                             _status => 'Completed',
                                             _skipTransactionRollback => true,
                                             _autoPopulateUserListIfBlank => true,        -- Auto populate _eusUsersList if blank since this is an Auto-Request
                                             _callingUser => _callingUser,
-                                            _logDebugMessages => _logDebugMessages);
+                                            _vialingConc => null,
+                                            _vialingVol => null,
+                                            _stagingLocation => null,
+                                            _requestIDForUpdate => null,
+                                            _logDebugMessages => _logDebugMessages,
+                                            _resolvedInstrumentInfo => _resolvedInstrumentInfo);    -- Output
 
                     If _returnCode <> '' Then
                         If _eusProposalID = '' And _eusUsageType = '' and _eusUsersList = '' Then
@@ -1233,11 +1245,10 @@ BEGIN
 
                         RAISE EXCEPTION '%', _msg;
                     End If;
-                End If; -- </b3>
+                End If;
 
                 ---------------------------------------------------
-                -- If a cart name is specified, update it for the
-                -- requested run
+                -- If a cart name is specified, update it for the requested run
                 ---------------------------------------------------
 
                 If Not _lcCartName::citext In ('', 'no update') And _requestID > 0 Then
@@ -1253,9 +1264,9 @@ BEGIN
                     CALL public.update_cart_parameters (
                                         'CartName',
                                         _requestID,
-                                        _lcCartName,    -- Output
-                                        _message,       -- Output
-                                        _returnCode);   -- Output
+                                        _newValue => _lcCartName,
+                                        _message => _message,           -- Output
+                                        _returnCode => _returnCode);    -- Output
 
                     If _returnCode <> '' Then
                         RAISE EXCEPTION 'Update LC cart name failed: dataset % -> %',_datasetName, _message;
@@ -1303,14 +1314,13 @@ BEGIN
             -- Update t_cached_dataset_instruments
             CALL public.update_cached_dataset_instruments (_processingMode => 0, _datasetId => _datasetID, _infoOnly => false);
 
-        End If; -- </AddMode>
+        End If;
 
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
 
         If _mode = 'update' Then
-        -- <UpdateMode>
 
             If _logDebugMessages Then
                 _debugMsg := format('Update dataset %s (Dataset ID %s)', _datasetName, _datasetID);
@@ -1370,8 +1380,7 @@ BEGIN
             End If;
 
             ---------------------------------------------------
-            -- If a cart name is specified, update it for the
-            -- requested run
+            -- If a cart name is specified, update it for the requested run
             ---------------------------------------------------
 
             If Not _lcCartName::citext In ('', 'no update') Then
@@ -1384,8 +1393,8 @@ BEGIN
                     CALL public.update_cart_parameters (
                                         'CartName',
                                         _requestID,
-                                        _lcCartName,                    -- Output
-                                        _warningAddon,                  -- Output
+                                        _lcCartName,
+                                        _message => _warningAddon,      -- Output
                                         _returnCode => _returnCode);    -- Output
 
                     If _returnCode <> '' Then
@@ -1396,7 +1405,7 @@ BEGIN
             End If;
 
             If _requestID > 0 And _eusUsageType <> '' Then
-            -- <b4>
+
                 -- Lookup _batchID, _block, and _runOrder
 
                 SELECT batch_id,
@@ -1414,7 +1423,7 @@ BEGIN
                                     _requestName => _requestName,
                                     _experimentName => _experimentName,
                                     _requesterUsername => _operatorUsername,
-                                    _instrumentName => _instrumentName,
+                                    _instrumentGroup => _instrumentGroup,
                                     _workPackage => _workPackage,
                                     _msType => _msType,
                                     _instrumentSettings => _reqRunInstSettings,
@@ -1433,18 +1442,23 @@ BEGIN
                                     _message => _message,           -- Output
                                     _returnCode => _returnCode      -- Output
                                     _secSep => _secSep,
-                                    _mRMAttachment => _mrmAttachmentID,
+                                    _mrmAttachment => _mrmAttachmentID,
                                     _status => _reqRunStatus,
                                     _skipTransactionRollback => true,
-                                    _autoPopulateUserListIfBlank => true,        -- Auto populate _eusUsersList if blank since this is an Auto-Request
+                                    _autoPopulateUserListIfBlank => true,   -- Auto populate _eusUsersList if blank since this is an Auto-Request
                                     _callingUser => _callingUser,
-                                    _logDebugMessages => _logDebugMessages);
+                                    _vialingConc => null,
+                                    _vialingVol => null,
+                                    _stagingLocation => null,
+                                    _requestIDForUpdate => null,
+                                    _logDebugMessages => _logDebugMessages,
+                                    _resolvedInstrumentInfo => _resolvedInstrumentInfo);    -- Output
 
                 If _returnCode <> '' Then
                     RAISE EXCEPTION 'Requested run update error using Proposal ID %, Usage Type %, and Users List % ->%',
                                     _eusProposalID, _eusUsageType, _eusUsersList, _message;
                 End If;
-            End If; -- </b4>
+            End If;
 
             ---------------------------------------------------
             -- If rating changed from -5, -6, or -7 to 5, check if any jobs exist for this dataset
@@ -1480,7 +1494,7 @@ BEGIN
             -- Update t_cached_dataset_instruments
             CALL public.update_cached_dataset_instruments (_processingMode => 0, _datasetId => _datasetID, _infoOnly => false);
 
-        End If; -- </UpdateMode>
+        End If;
 
         -- Update _message if _warning is not empty
         If Coalesce(_warning, '') <> '' Then

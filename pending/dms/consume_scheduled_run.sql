@@ -15,6 +15,13 @@ AS $$
 **  Desc:
 **      Associates given requested run with the given dataset
 **
+**  Arguments:
+**    _datasetID            Dataset ID
+**    _requestID            Requested run ID
+**    _message              Output: error message
+**    _returnCode           Output: return code
+**    _callingUser          Username of the calling user
+**    _logDebugMessages     If true, log debug messages
 **
 **  Auth:   grk
 **  Date:   02/13/2003
@@ -44,8 +51,8 @@ DECLARE
     _reqExperimentID int;
     _existingDatasetName text := '';
     _newAutoRequestID int := 0;
-    _status text := 'Completed';
-    _statusID int := 0;
+    _stateName text;
+    _stateID int := 0;
     _alterEnteredByMessage text;
 BEGIN
     _message := '';
@@ -60,27 +67,43 @@ BEGIN
     SELECT exp_id
     INTO _experimentID
     FROM t_dataset
-    WHERE dataset_id = _datasetID
+    WHERE dataset_id = _datasetID;
 
-    -- Get experiment ID from scheduled run
-    --
-    SELECT exp_id
-    INTO _reqExperimentID
-    FROM t_requested_run
-    WHERE request_id = _requestID
-
-    -- Validate that experiments match
-    --
-    If Coalesce(_experimentID, -1) <> Coalesce(_reqExperimentID, -2) Then
-        _message := 'Experiment in dataset does not match with one in scheduled run';
+    If Not FOUND Then
+        _message := format('Dataset ID %s not found in t_dataset', _datasetID);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';
         RETURN;
     End If;
 
+    -- Get experiment ID from scheduled run
+    --
+    SELECT exp_id
+    INTO _reqExperimentID
+    FROM t_requested_run
+    WHERE request_id = _requestID;
+
+    If Not FOUND Then
+        _message := format('Requested Run ID %s not found in t_requested_run', _requestID);
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5202';
+        RETURN;
+    End If;
+
+    -- Validate that experiments match
+    --
+    If Coalesce(_experimentID, -1) <> Coalesce(_reqExperimentID, -2) Then
+        _message := 'Experiment in dataset does not match with one in requested run';
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5203';
+        RETURN;
+    End If;
+
     If _logDebugMessages Then
-        _logMessage := format('Start transaction for creating a new auto-request for dataset ID %s', _existingDatasetID);
+        _logMessage := format('Creating a new auto-request for dataset ID %s', _existingDatasetID);
         CALL post_log_entry ('Debug', _logMessage, 'Consume_Scheduled_Run');
     End If;
 
@@ -109,14 +132,14 @@ BEGIN
             SET dataset_id = Null
             WHERE request_id = _requestID;
 
-            CALL add_requested_run_to_existing_dataset (
-                        _datasetID => _ExistingDatasetID,
-                        _datasetName => '',
-                        _templateRequestID => _requestID,
-                        _mode => 'add',
-                        _message => _message,               -- Output
-                        _returnCode => _returnCode,         -- Output
-                        _callingUser => _callingUser);
+            CALL public.add_requested_run_to_existing_dataset (
+                            _datasetID => _existingDatasetID,
+                            _datasetName => '',
+                            _templateRequestID => _requestID,
+                            _mode => 'add',
+                            _message => _message,               -- Output
+                            _returnCode => _returnCode,         -- Output
+                            _callingUser => _callingUser);
 
             -- Lookup the request ID created for _existingDatasetName
 
@@ -150,7 +173,7 @@ BEGIN
 
             Else
 
-                _logMessage := format('Tried to add a new automatic requested run for dataset "%s" since re-using request %s; however, add_requested_run_to_existing_dataset was unable to auto-create a new Requested Run',
+                _logMessage := format('Tried to add a new automatic requested run for dataset "%s" since re-using request %s; however, add_requested_run_to_existing_dataset was unable to auto-create a new requested run',
                                       _existingDatasetName, _requestID);
 
                 CALL post_log_entry ('Error', _logMessage, 'Consume_Scheduled_Run');
@@ -160,23 +183,25 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Change the status of the Requested Run to Completed
+        -- Change the state of the Requested Run to Completed
         ---------------------------------------------------
+
+        _stateName := 'Completed';
 
         UPDATE t_requested_run
         SET dataset_id = _datasetID,
-            state_name = _status
+            state_name = _stateName
         WHERE request_id = _requestID
 
         -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
         If char_length(_callingUser) > 0 Then
 
             SELECT state_id
-            INTO _statusID
+            INTO _stateID
             FROM t_requested_run_state_name
-            WHERE state_name = _status;
+            WHERE state_name = _stateName;
 
-            CALL public.alter_event_log_entry_user ('public', 11, _requestID, _statusID, _callingUser, _message => _alterEnteredByMessage);
+            CALL public.alter_event_log_entry_user ('public', 11, _requestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
         End If;
 
     END;

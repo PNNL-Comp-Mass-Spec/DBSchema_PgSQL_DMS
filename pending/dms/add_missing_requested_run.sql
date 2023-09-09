@@ -136,10 +136,17 @@ BEGIN
                                 _message => _message,           -- Output
                                 _returnCode => _returnCode,     -- Output
                                 _secSep => _secSep,
-                                _mRMAttachment => '',
+                                _mrmAttachment => '',
                                 _status => 'Completed',
                                 _skipTransactionRollback => true,
-                                _autoPopulateUserListIfBlank => true);        -- Auto populate _eusUsersList if blank since this is an Auto-Request
+                                _autoPopulateUserListIfBlank => true,   -- Auto populate _eusUsersList if blank since this is an Auto-Request
+                                _callingUser => '',
+                                _vialingConc => null,
+                                _vialingVol => null,
+                                _stagingLocation => null,
+                                _requestIDForUpdate => null,
+                                _logDebugMessages => false,
+                                _resolvedInstrumentInfo => _resolvedInstrumentInfo);    -- Output
 
         If _returnCode <> '' Or Coalesce(_requestID, 0) = 0 Then
             If Coalesce(_message, '') = '' Then

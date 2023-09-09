@@ -263,8 +263,6 @@ BEGIN
             RAISE EXCEPTION 'Requester username must be specified';
         End If;
 
-        _instrumentGroup := _instrumentName;
-
         If Coalesce(_instrumentGroup, '') = '' Then
             RAISE EXCEPTION 'Instrument group must be specified';
         End If;
