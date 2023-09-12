@@ -35,6 +35,7 @@ CREATE OR REPLACE FUNCTION public.get_call_stack(_pgcontext text) RETURNS TABLE(
 **          08/31/2022 mem - Update comments
 **          05/22/2023 mem - Update whitespace
 **          05/30/2023 mem - Use format() for string concatenation
+**          09/11/2023 mem - Use schema name with try_cast
 **
 *****************************************************/
 DECLARE
@@ -105,7 +106,7 @@ BEGIN
     FOREACH _stackRow SLICE 1 IN ARRAY _callStack
     LOOP
         RETURN QUERY
-        SELECT try_cast(_stackRow[1], 0), _stackRow[2], _stackRow[3], try_cast(_stackRow[4], 0);
+        SELECT public.try_cast(_stackRow[1], 0), _stackRow[2], _stackRow[3], public.try_cast(_stackRow[4], 0);
     END LOOP;
 
 EXCEPTION
@@ -136,7 +137,7 @@ EXCEPTION
     FOREACH _stackRow SLICE 1 IN ARRAY _callStack
     LOOP
         RETURN QUERY
-        SELECT try_cast(_stackRow[1], 0), _stackRow[2], _stackRow[3], try_cast(_stackRow[4], 0);
+        SELECT public.try_cast(_stackRow[1], 0), _stackRow[2], _stackRow[3], public.try_cast(_stackRow[4], 0);
     END LOOP;
 END;
 $$;

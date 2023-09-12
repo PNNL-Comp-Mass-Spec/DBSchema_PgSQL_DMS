@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE public.add_requested_run_batch_location_scan(IN _loc
 **                         - Ported to PostgreSQL
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
+**          09/11/2023 mem - Use schema name with try_cast
 **
 *****************************************************/
 DECLARE
@@ -114,9 +115,9 @@ BEGIN
         ---------------------------------------------------
 
         UPDATE Tmp_BatchIDs
-        SET Batch_ID = try_cast(BatchIDText, null::int);
+        SET Batch_ID = public.try_cast(BatchIDText, null::int);
 
-        If Exists (Select * FROM Tmp_BatchIDs WHERE Batch_ID Is Null) Then
+        If Exists (SELECT * FROM Tmp_BatchIDs WHERE Batch_ID Is Null) Then
 
             SELECT BatchIDText
             INTO _firstInvalid

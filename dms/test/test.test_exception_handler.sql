@@ -30,6 +30,7 @@ CREATE OR REPLACE FUNCTION test.test_exception_handler(_divisor text, _useerrorh
 **          08/31/2022 mem - Add a linefeed before showing the context
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **          05/22/2023 mem - Capitalize reserved words
+**          09/11/2023 mem - Use schema name with try_cast
 **
 *****************************************************/
 DECLARE
@@ -49,7 +50,7 @@ BEGIN
 
     _currentLocation := 'Cast to numeric';
 
-    _divisorValue = try_cast(_divisor, true, 0::numeric);
+    _divisorValue = public.try_cast(_divisor, true, 0::numeric);
 
     If _divisorValue Is Null Then
         RAISE EXCEPTION 'Value is not numeric: %', Coalesce(_divisor, 'null');

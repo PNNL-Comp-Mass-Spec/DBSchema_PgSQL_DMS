@@ -58,6 +58,7 @@ CREATE OR REPLACE PROCEDURE dpkg.update_data_package_items_utility(IN _comment t
 **          05/19/2023 mem - When adding analysis jobs, do not add data package placeholder datasets
 **          08/16/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
+**          09/11/2023 mem - Use schema name with try_cast
 **
 *****************************************************/
 DECLARE
@@ -155,7 +156,7 @@ BEGIN
         --
         If Exists ( SELECT DataPackageID FROM Tmp_DataPackageItems WHERE ItemType = 'Job' ) Then
             DELETE FROM Tmp_DataPackageItems
-            WHERE Coalesce(Identifier, '') = '' OR try_cast(Identifier, null::int) Is Null;
+            WHERE Coalesce(Identifier, '') = '' OR public.try_cast(Identifier, null::int) Is Null;
             --
             GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
@@ -168,7 +169,7 @@ BEGIN
             SELECT DataPackageID,
                    Job
             FROM ( SELECT DataPackageID,
-                          try_cast(Identifier, null::int) As Job
+                          public.try_cast(Identifier, null::int) As Job
                    FROM Tmp_DataPackageItems
                    WHERE ItemType = 'Job' AND
                          NOT DataPackageID IS NULL ) SourceQ
@@ -192,7 +193,7 @@ BEGIN
             SELECT DataPackageID,
                    DatasetID
             FROM ( SELECT DataPackageID,
-                          try_cast(Identifier, null::int) AS DatasetID
+                          public.try_cast(Identifier, null::int) AS DatasetID
                    FROM Tmp_DataPackageItems
                    WHERE ItemType = 'Dataset' AND
                          NOT DataPackageID IS NULL ) SourceQ

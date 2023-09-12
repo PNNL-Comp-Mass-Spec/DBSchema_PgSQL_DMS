@@ -62,6 +62,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_assignments(IN _mode tex
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/11/2023 mem - Use schema name with try_cast
 **
 *****************************************************/
 DECLARE
@@ -318,7 +319,7 @@ BEGIN
 
             -- Get priority numerical value (use 0 if _newValue is not an integer)
             --
-            _pri := try_cast(_newValue, 0);
+            _pri := public.try_cast(_newValue, 0);
 
             -- If priority is being set to non-zero, clear the note field
             --

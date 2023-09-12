@@ -54,6 +54,7 @@ CREATE OR REPLACE FUNCTION public.get_file_attachment_path(_entitytype public.ci
 **          06/21/2022 mem - Ported to PostgreSQL
 **          12/15/2022 mem - Use extract(year from _variable) and extract(month from _variable) to extract the year and month from timestamps
 **          05/19/2023 mem - Use format() for string concatenation
+**          09/11/2023 mem - Use schema name with try_cast
 **
 *****************************************************/
 DECLARE
@@ -67,7 +68,7 @@ DECLARE
 BEGIN
 
     If _entityType = 'campaign' Then
-        _campaignID := try_cast(_entityID, true, 0);
+        _campaignID := public.try_cast(_entityID, true, 0);
 
         If _campaignID Is Null Then
             SELECT campaign_id::text, created
@@ -91,7 +92,7 @@ BEGIN
     End If;
 
     If _entityType = 'experiment' Then
-        _experimentID := try_cast(_entityID, true, 0);
+        _experimentID := public.try_cast(_entityID, true, 0);
 
         If _experimentID Is Null Then
             SELECT exp_id::text, created
@@ -115,7 +116,7 @@ BEGIN
     End If;
 
     If _entityType = 'dataset' Then
-        _datasetID := try_cast(_entityID, true, 0);
+        _datasetID := public.try_cast(_entityID, true, 0);
 
         If _datasetID Is Null Then
             SELECT dataset_id::text, created
@@ -139,7 +140,7 @@ BEGIN
     End If;
 
     If _entityType = 'sample_prep_request' Then
-        _samplePrepID := try_cast(_entityID, true, 0);
+        _samplePrepID := public.try_cast(_entityID, true, 0);
 
         If _samplePrepID Is Null Then
             SELECT prep_request_id::text, created
@@ -164,7 +165,7 @@ BEGIN
 
     If _entityType = 'instrument_operation_history' Then
         _entityType := 'instrument_operation';
-        _idValue := try_cast(_entityID, true, 0);
+        _idValue := public.try_cast(_entityID, true, 0);
 
         If Not _idValue Is Null Then
             SELECT entered
@@ -180,7 +181,7 @@ BEGIN
 
     If _entityType = 'instrument_config_history' Then
         _entityType := 'instrument_config';
-        _idValue := try_cast(_entityID, true, 0);
+        _idValue := public.try_cast(_entityID, true, 0);
 
         If Not _idValue Is Null Then
             SELECT entered
@@ -196,7 +197,7 @@ BEGIN
 
     If _entityType = 'lc_cart_config_history' Then
         _entityType := 'lc_cart_config';
-        _idValue := try_cast(_entityID, true, 0);
+        _idValue := public.try_cast(_entityID, true, 0);
 
         If Not _idValue Is Null Then
             SELECT entered
@@ -211,7 +212,7 @@ BEGIN
     End If;
 
     If _entityType = 'experiment_group' Then
-        _idValue := try_cast(_entityID, true, 0);
+        _idValue := public.try_cast(_entityID, true, 0);
 
         If Not _idValue Is Null Then
             SELECT created
@@ -226,7 +227,7 @@ BEGIN
     End If;
 
     If _entityType = 'sample_submission' Then
-        _idValue := try_cast(_entityID, true, 0);
+        _idValue := public.try_cast(_entityID, true, 0);
 
         If Not _idValue Is Null Then
             SELECT created

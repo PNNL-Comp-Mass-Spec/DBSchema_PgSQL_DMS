@@ -61,7 +61,7 @@ BEGIN
     ---------------------------------------------------
     -- Resolve processor group ID
     ---------------------------------------------------
-    _gid := try_cast(_processorGroupID, int);
+    _gid := public.try_cast(_processorGroupID, int);
 
 /*
     SELECT group_id

@@ -60,7 +60,7 @@ BEGIN
     _users := Coalesce(_users, '');
 
     -- Assure that _operator is either an integer or null
-    _operator := try_cast(_operator, null::int);
+    _operator := public.try_cast(_operator, null::int);
 
     _newValue := Coalesce(_newValue, '');
 

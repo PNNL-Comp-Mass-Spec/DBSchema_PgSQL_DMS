@@ -115,7 +115,7 @@ BEGIN
         End If;
 
         -- Assure that _operator is either an integer or null
-        _operator := try_cast(_operator, null::int);
+        _operator := public.try_cast(_operator, null::int);
 
         -- Assure that _comment does not contain LF or CR
         _comment := Trim(Replace(Replace(_comment, chr(10), ' '), chr(13), ' '));

@@ -38,6 +38,7 @@ CREATE OR REPLACE FUNCTION public.check_emsl_usage_item_validity(_seq integer) R
 **          06/16/2023 mem - Use named arguments when calling append_to_text()
 **          07/11/2023 mem - Use COUNT(proposal_id) instead of COUNT(*)
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/11/2023 mem - Use schema name with try_cast
 **
 *****************************************************/
 DECLARE
@@ -112,12 +113,12 @@ BEGIN
                                      person_id
                               FROM t_eus_proposal_users
                               WHERE proposal_id = _instrumentUsage.proposal ) ProposalUsers
-                   ON ProposalUsers.person_id = try_cast(Value, 0);
+                   ON ProposalUsers.person_id = public.try_cast(Value, 0);
         Else
             SELECT COUNT(proposal_id)
             INTO _hits
             FROM t_eus_proposal_users
-            WHERE proposal_id = _instrumentUsage.proposal And person_id = try_cast(_instrumentUsage.users, 0);
+            WHERE proposal_id = _instrumentUsage.proposal And person_id = public.try_cast(_instrumentUsage.users, 0);
         End If;
 
         If _hits = 0 Then

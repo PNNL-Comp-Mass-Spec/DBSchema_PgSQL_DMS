@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE dpkg.update_data_package_items_xml(IN _paramlistxml 
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          04/25/2018 mem - Assure that _removeParents is not null
 **          08/17/2023 mem - Ported to PostgreSQL
+**          09/11/2023 mem - Use schema name with try_cast
 **
 *****************************************************/
 DECLARE
@@ -97,7 +98,7 @@ BEGIN
             Identifier citext null        -- Job ID, Dataset Name or ID, Experiment Name, Biomaterial Name, or EUSProposal ID
         );
 
-        _xml := try_cast(_paramListXML, null::xml);
+        _xml := public.try_cast(_paramListXML, null::xml);
 
         If _xml Is Null Then
             _message := format('Parameter _paramListXML does not have valid XML: %s', Coalesce(_paramListXML, 'Error: _paramListXML is null'));
@@ -205,6 +206,7 @@ CREATE OR REPLACE PROCEDURE dpkg.update_data_package_items_xml(IN _paramlistxml 
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          04/25/2018 mem - Assure that _removeParents is not null
 **          08/17/2023 mem - Ported to PostgreSQL
+**          09/11/2023 mem - Use schema name with try_cast
 **
 *****************************************************/
 DECLARE
@@ -271,7 +273,7 @@ BEGIN
             Identifier citext null        -- Job ID, Dataset Name or ID, Experiment Name, Biomaterial Name, or EUSProposal ID
         );
 
-        _xml := try_cast(_paramListXML, null::xml);
+        _xml := public.try_cast(_paramListXML, null::xml);
 
         If _xml Is Null Then
             _message := format('Parameter _paramListXML does not have valid XML: %s', Coalesce(_paramListXML, 'Error: _paramListXML is null'));

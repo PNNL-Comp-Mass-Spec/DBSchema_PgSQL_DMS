@@ -18,6 +18,7 @@ CREATE OR REPLACE FUNCTION public.extract_integer(_in text) RETURNS integer
 **  Date:   04/26/2016 mem - Initial release
 **          04/15/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
+**          09/11/2023 mem - Use schema name with try_cast
 **
 *****************************************************/
 DECLARE
@@ -27,7 +28,7 @@ BEGIN
     -- However, function try_cast relies on exception handling, so it's better to just use a RegEx match
     /*
     SELECT _out
-    FROM try_cast(_in, NULL::int)
+    FROM public.try_cast(_in, NULL::int)
     INTO _value;
 
     If _value Is Null And Not _in Is Null Then

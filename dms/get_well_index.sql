@@ -23,6 +23,7 @@ CREATE OR REPLACE FUNCTION public.get_well_index(_wellposition public.citext) RE
 **  Date:   07/15/2000
 **          06/23/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved words
+**          09/11/2023 mem - Use schema name with try_cast
 **
 *****************************************************/
 DECLARE
@@ -40,8 +41,8 @@ BEGIN
     _numCols := 12;
 
     -- Get row and column for current well
-    _wpRow := ASCII(Upper(substring(_wellPosition, 1, 1))) - _wpRowCharBase;
-    _wpCol := try_cast(substring(_wellPosition, 2, 20), -1);
+    _wpRow := ASCII(Upper(Substring(_wellPosition, 1, 1))) - _wpRowCharBase;
+    _wpCol := public.try_cast(Substring(_wellPosition, 2, 20), -1);
 
     If _wpRow <= 7 and _wpRow >= 0 and _wpCol <= 12 and _wpCol >= 1 Then
         _index := (_wpRow * _numCols) + _wpCol;
