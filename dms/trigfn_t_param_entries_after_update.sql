@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_param_entries_after_update() RETURNS 
 **          08/08/2022 mem - Move value comparison to WHEN condition of trigger
 **                         - Reference the NEW variable directly instead of using transition tables (which contain every updated row, not just the current row)
 **          05/31/2023 mem - Use format() for string concatenation
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -48,14 +49,14 @@ BEGIN
     -- in the form: 2006-09-01 09:05:03
 
     _sepChar := ' (';
-    _matchLoc := Position(_sepChar in COALESCE(NEW.entered_by, ''));
+    _matchLoc := Position(_sepChar in Coalesce(NEW.entered_by, ''));
 
-    _userInfo := format('%s; %s', public.timestamp_text(CURRENT_TIMESTAMP), LEFT(SESSION_USER, 75));
+    _userInfo := format('%s; %s', public.timestamp_text(CURRENT_TIMESTAMP), Left(SESSION_USER, 75));
 
     UPDATE t_param_entries
     SET entered_by = CASE WHEN _matchLoc > 0 THEN format('%s%s%s)', Left(t_param_entries.entered_by, _matchLoc - 1), _sepChar, _userInfo)
                           WHEN t_param_entries.entered_by IS NULL THEN SESSION_USER
-                          ELSE format('%s%s%s)', COALESCE(t_param_entries.entered_by, '??'), _sepChar, _userInfo)
+                          ELSE format('%s%s%s)', Coalesce(t_param_entries.entered_by, '??'), _sepChar, _userInfo)
                      END
     WHERE t_param_entries.param_entry_id = NEW.param_entry_id;
 

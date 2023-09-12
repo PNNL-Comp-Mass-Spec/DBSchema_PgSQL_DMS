@@ -157,7 +157,7 @@ BEGIN
     --
     If _captureSubfolder SIMILAR TO '..\\%\\%' Then
         -- Find the second backslash
-        _charPos := 4 + Position('\' In substring(_captureSubfolder, 4));
+        _charPos := 4 + Position('\' In Substring(_captureSubfolder, 4));
 
         If _charPos > 4 Then
             _captureShareName    := Substring(_captureSubfolder, 4, _charPos - 4);

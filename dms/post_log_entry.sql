@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE public.post_log_entry(IN _type text, IN _message tex
 **                         - Add back implicit string concatenation
 **          07/11/2023 mem - Use COUNT(entry_id) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -59,7 +60,7 @@ BEGIN
     -- Validate the inputs
     ------------------------------------------------
 
-    _targetSchema := COALESCE(_targetSchema, '');
+    _targetSchema := Coalesce(_targetSchema, '');
 
     If (char_length(_targetSchema) = 0) Then
         _targetSchema := 'public';

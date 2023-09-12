@@ -233,7 +233,7 @@ BEGIN
 
         If _mode = 'add' Then
             _badCh := public.validate_chars(_campaignName, '');
-            _badCh := REPLACE(_badCh, 'space', '');
+            _badCh := Replace(_badCh, 'space', '');
 
             If _badCh <> '' Then
                 If _badCh = 'space' Then

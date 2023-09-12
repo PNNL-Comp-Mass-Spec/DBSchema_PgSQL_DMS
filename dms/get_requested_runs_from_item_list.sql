@@ -35,6 +35,7 @@ CREATE OR REPLACE FUNCTION public.get_requested_runs_from_item_list(_itemlist te
 **          08/17/2023 mem - Use renamed column data_pkg_id in V_Data_Package_Dataset_Export
 **          09/01/2023 mem - Remove unnecessary cast to citext for string constants
 **          09/07/2023 mem - Update warning messages
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -117,7 +118,7 @@ BEGIN
     End If;
 
     If _invalidItems <> '' Then
-        If position(',' in _invalidItems) > 0 Then
+        If Position(',' In _invalidItems) > 0 Then
             _message := format('"%s" are not valid %ss', _invalidItems, replace(_itemType, '_', ' '));
         Else
             _message := format('"%s" is not a valid %s', _invalidItems, replace(_itemType, '_', ' '));

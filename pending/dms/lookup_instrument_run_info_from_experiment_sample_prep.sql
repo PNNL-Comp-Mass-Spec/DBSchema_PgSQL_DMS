@@ -78,9 +78,9 @@ BEGIN
 
     SELECT
         COALESCE(instrument_group, instrument_name, '') As InstrumentGroup,
-        Coalesce(dataset_type, '') As DatasetType,
-        Coalesce(instrument_analysis_specifications, '') As InstrumentSettings,
-        Coalesce(separation_type, '') As SeparationType
+        COALESCE(dataset_type, '') As DatasetType,
+        COALESCE(instrument_analysis_specifications, '') As InstrumentSettings,
+        COALESCE(separation_type, '') As SeparationType
     INTO _instrumentInfo
     FROM t_sample_prep_request
     WHERE prep_request_id = _prepRequestID;

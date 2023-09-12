@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE pc.add_update_protein_collection(IN _collectionname 
 **          08/21/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **                         - Update warning messages
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -88,8 +89,8 @@ BEGIN
     -- Make sure the Description and Source do not have text surrounded by < and >, since web browsers will treat that as an HTML tag
     ---------------------------------------------------
 
-    _description      := REPLACE(REPLACE(Coalesce(_description,      ''), '<', '('), '>', ')');
-    _collectionSource := REPLACE(REPLACE(Coalesce(_collectionSource, ''), '<', '('), '>', ')');
+    _description      := Replace(Replace(Coalesce(_description,      ''), '<', '('), '>', ')');
+    _collectionSource := Replace(Replace(Coalesce(_collectionSource, ''), '<', '('), '>', ')');
 
     ---------------------------------------------------
     -- Does entry already exist?

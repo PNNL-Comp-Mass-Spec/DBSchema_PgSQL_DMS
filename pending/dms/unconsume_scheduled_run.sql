@@ -201,7 +201,7 @@ BEGIN
 
                 If _charIndex > 0 Then
                 -- <d>
-                    _extracted := LTRIM(SUBSTRING(_requestComment, _charIndex + char_length('by recycling request'), 20));
+                    _extracted := LTrim(SUBSTRING(_requestComment, _charIndex + char_length('by recycling request'), 20));
 
                     -- Comment is now of the form: '286793 from dataset'
                     -- Find the space after the number

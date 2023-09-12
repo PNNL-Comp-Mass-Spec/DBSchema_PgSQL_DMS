@@ -13,6 +13,7 @@ CREATE OR REPLACE FUNCTION public.combine_paths(_path1 text, _path2 text) RETURN
 **  Date:   07/03/2006
 **          04/15/2022 mem - Ported to PostgreSQL
 **          05/30/2023 mem - Use format() for string concatenation
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -31,7 +32,7 @@ BEGIN
             End If;
 
             If Left(_path2, 1) = '\' Then
-                _path2 := SubString(_path2, 2, char_length(_path2) - 1);
+                _path2 := Substring(_path2, 2, char_length(_path2) - 1);
             End If;
 
             _newPath := format('%s%s', _path1, _path2);

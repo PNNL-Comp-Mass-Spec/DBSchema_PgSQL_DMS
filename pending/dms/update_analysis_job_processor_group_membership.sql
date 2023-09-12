@@ -114,7 +114,7 @@ BEGIN
     If _mode like 'set_membership_enabled_%' Then
         -- Get membership enabled value for this group
         --
-        _localMembership := REPLACE (_mode, 'set_membership_enabled_' , '' );
+        _localMembership := Replace (_mode, 'set_membership_enabled_' , '' );
 
         -- Get membership enabled value for groups other than this group
         --

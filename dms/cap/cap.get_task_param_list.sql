@@ -25,6 +25,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_list(_job integer) RETURNS public.
 **          04/02/2023 mem - Rename procedure and functions
 **          05/22/2023 mem - Capitalize reserved word
 **          05/31/2023 mem - Use format() for string concatenation
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -87,8 +88,8 @@ EXCEPTION
 
     -- Replace the XML tags with HTML tags
     --
-    _result := REPLACE(_result, '<Param', '');
-    _result := REPLACE(_result, '/>', '<br>');
+    _result := Replace(_result, '<Param', '');
+    _result := Replace(_result, '/>', '<br>');
 
     RETURN _result;
 END

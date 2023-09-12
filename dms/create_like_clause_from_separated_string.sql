@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION public.create_like_clause_from_separated_string(_inst
 **          06/17/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved words
 **          05/30/2023 mem - Use format() for string concatenation
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -30,7 +31,7 @@ BEGIN
 
     WHILE char_length(_inString) > 0
     LOOP
-        _sepPosition := position(_separator in _inString);
+        _sepPosition := Position(_separator In _inString);
 
         If _sepPosition > 0 Then
             If _i = 1 Then

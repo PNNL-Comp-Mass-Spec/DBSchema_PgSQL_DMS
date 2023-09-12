@@ -90,6 +90,7 @@ CREATE OR REPLACE PROCEDURE sw.add_new_jobs(IN _bypassdms boolean DEFAULT false,
 **          07/26/2023 mem - Move "Not" keyword to before the field name
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -577,7 +578,7 @@ BEGIN
         -- For failed jobs being reset, truncate the comment at the first semi-colon
         --
         UPDATE Tmp_DMSJobs
-        SET Comment = RTrim(SubString(Target.Comment, 1, FilterQ.Matchindex - 1))
+        SET Comment = RTrim(Substring(Target.Comment, 1, FilterQ.Matchindex - 1))
         FROM ( SELECT DJ.Job,
                       Position(';' In DJ.Comment) AS MatchIndex
                FROM Tmp_DMSJobs DJ

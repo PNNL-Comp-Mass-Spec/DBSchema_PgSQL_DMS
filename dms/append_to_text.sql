@@ -26,6 +26,7 @@ CREATE OR REPLACE FUNCTION public.append_to_text(_basetext text, _addnltext text
 **          06/16/2023 mem - Change _addDuplicateText to a boolean
 **                         - Ignore _maxlength if _addnlText is an empty string
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -33,13 +34,13 @@ DECLARE
     _updatedText text;
 BEGIN
 
-    If Trim(COALESCE(_baseText, '')) = '' THEN
+    If Trim(Coalesce(_baseText, '')) = '' THEN
         _updatedText = '';
     Else
         _updatedText = _baseText;
     End If;
 
-    If Trim(COALESCE(_addnlText, '')) = '' THEN
+    If Trim(Coalesce(_addnlText, '')) = '' THEN
         RETURN _updatedText;
     End If;
 

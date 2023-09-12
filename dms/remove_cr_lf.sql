@@ -20,12 +20,13 @@ CREATE OR REPLACE FUNCTION public.remove_cr_lf(_text text) RETURNS text
 **  Date:   02/25/2021 mem - Initial version
 **          06/23/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 BEGIN
-    _text := REPLACE(_text, chr(13) || chr(10), '; ');
-    _text := REPLACE(_text, chr(10), '; ');
-    _text := REPLACE(_text, chr(13), '; ');
+    _text := Replace(_text, chr(13) || chr(10), '; ');
+    _text := Replace(_text, chr(10), '; ');
+    _text := Replace(_text, chr(13), '; ');
 
     -- Check for leading or trailing whitespace, comma, or semicolon
     _text := Trim(_text);

@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE pc.add_output_file_archive_entry(IN _proteincollecti
 **                         - Update the file ID in _archivedFilePath even if an existing entry is found in T_Archived_Output_Files
 **                         - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -162,7 +163,7 @@ BEGIN
                         _archiveFileID, _crc32Authentication, _collectionStringHash;
         End If;
 
-        _archivedFilePath := REPLACE(_archivedFilePath, '00000', RIGHT(format('000000%s', _archiveFileID), 6));
+        _archivedFilePath := Replace(_archivedFilePath, '00000', Right(format('000000%s', _archiveFileID), 6));
     Else
         ---------------------------------------------------
         -- Make the initial entry
@@ -200,7 +201,7 @@ BEGIN
         RETURNING archived_file_id
         INTO _archiveFileID;
 
-        _archivedFilePath := REPLACE(_archivedFilePath, '00000', RIGHT(format('000000%s', _archiveFileID), 6));
+        _archivedFilePath := Replace(_archivedFilePath, '00000', Right(format('000000%s', _archiveFileID), 6));
 
         UPDATE pc.t_archived_output_files
         SET archived_file_path = _archivedFilePath

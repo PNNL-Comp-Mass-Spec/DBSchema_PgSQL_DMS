@@ -335,7 +335,7 @@ BEGIN
                            Inactive1,
                            Inactive2,
                            CASE
-                               WHEN Inactive1 >= Coalesce(Inactive2, Inactive1) THEN Inactive1
+                               WHEN Inactive1 >= COALESCE(Inactive2, Inactive1) THEN Inactive1
                                ELSE Inactive2
                            END AS Inactive_Date_Most_Recent
                     FROM ( SELECT charge_code,

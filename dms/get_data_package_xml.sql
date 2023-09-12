@@ -49,6 +49,7 @@ CREATE OR REPLACE FUNCTION public.get_data_package_xml(_datapackageid integer, _
 **          08/17/2023 mem - Use renamed column data_pkg_id in views V_Data_Package_Analysis_Jobs_Export, V_Data_Package_Dataset_Export, and V_Data_Package_Experiments_Export
 **                         - Coalesce null values to empty strings
 **                         - Indent XML
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -77,7 +78,7 @@ BEGIN
     -- Data Package Parameters
     ---------------------------------------------------
 
-    If _includeAll Or position(lower('Parameters') in lower(_options)) > 0 Then
+    If _includeAll Or Position(Lower('Parameters') In Lower(_options)) > 0 Then
         _result := format('%s  <general>%s', _result, _newline);
 
         -- Note: if LookupQ returns multiple rows, use XMLFOREST to wrap the <package></package> items in <packages></packages>
@@ -118,7 +119,7 @@ BEGIN
     -- Experiment Details
     ---------------------------------------------------
 
-    If _includeAll Or position(lower('Experiments') in lower(_options)) > 0 Then
+    If _includeAll Or Position(Lower('Experiments') In Lower(_options)) > 0 Then
         _result := format('%s  <experiments>%s', _result, _newline);
 
         SELECT xml_item
@@ -159,7 +160,7 @@ BEGIN
     -- Dataset Details
     ---------------------------------------------------
 
-    If _includeAll Or position(lower('Datasets') in lower(_options)) > 0 Then
+    If _includeAll Or Position(Lower('Datasets') In Lower(_options)) > 0 Then
         _result := format('%s  <datasets>%s', _result, _newline);
 
         SELECT xml_item
@@ -199,7 +200,7 @@ BEGIN
     -- Job Details
     ---------------------------------------------------
 
-    If _includeAll Or position(lower('Jobs') in lower(_options)) > 0 Then
+    If _includeAll Or Position(Lower('Jobs') In Lower(_options)) > 0 Then
         _result := format('%s  <jobs>%s', _result, _newline);
 
         SELECT xml_item

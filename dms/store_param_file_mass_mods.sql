@@ -136,6 +136,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **                         - Move Drop Tables commands to outside the for loop; you cannot drop a table being used by a for loop
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -459,7 +460,7 @@ BEGIN
         -- Remove any text after the comment character, #
         _charIndex := Position('#' In _row);
         If _charIndex > 0 Then
-            _row := SubString(_row, 1, _charIndex-1);
+            _row := Substring(_row, 1, _charIndex-1);
         End If;
 
         -- Remove unwanted whitespace characters
@@ -620,7 +621,7 @@ BEGIN
         -- Determine the ModType
         -----------------------------------------
 
-        _modType := SubString(_field, 1, _charIndex - 1);
+        _modType := Substring(_field, 1, _charIndex - 1);
 
         If Not _modType In ('DynamicMod', 'StaticMod') Then
             RAISE INFO '';
@@ -1118,7 +1119,7 @@ BEGIN
         LOOP
             _charIndex := _charIndex + 1;
 
-            _residueSymbol := SubString(_affectedResidues, _charIndex, 1);
+            _residueSymbol := Substring(_affectedResidues, _charIndex, 1);
 
             If _terminalMod Then
                 If _paramFileType::citext = 'DiaNN' Then
@@ -1149,7 +1150,7 @@ BEGIN
                         End If;
 
                         _charIndex := _charIndex + 1;
-                        _residueSymbol := SubString(_affectedResidues, _charIndex, 1);
+                        _residueSymbol := Substring(_affectedResidues, _charIndex, 1);
                     End If;
                 End If;
 

@@ -67,6 +67,7 @@ CREATE OR REPLACE PROCEDURE sw.create_job_steps(INOUT _message text DEFAULT ''::
 **                         - Set _captureTaskJob to false when calling sw.show_tmp_job_steps_and_job_step_dependencies
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -481,7 +482,7 @@ BEGIN
 
             _scriptXML := format('%s%s',
                                  Substring(_scriptXML::text, 1, _closingTagScript1 - 1),
-                                 Substring(_scriptXML2::text, _firstStepScript2, Char_Length(_scriptXML2::text))
+                                 Substring(_scriptXML2::text, _firstStepScript2, char_length(_scriptXML2::text))
                                 )::xml;
         End If;
 

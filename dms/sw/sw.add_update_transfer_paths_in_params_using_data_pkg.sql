@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_transfer_paths_in_params_using_data_pk
 **          03/24/2023 mem - Capitalize job parameter TransferFolderPath
 **          07/27/2023 mem - Ported to PostgreSQL
 **          08/17/2023 mem - Use renamed column data_pkg_id in view V_Data_Package_Paths
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -130,7 +131,7 @@ BEGIN
         If Coalesce(_cacheRootFolderPath, '') = '' Then
             _xferPath := _dataPkgSharePath;
         Else
-            _cacheFolderPath := format('%s\%s_%s', _cacheRootFolderPath, _dataPackageID, REPLACE(_dataPkgName, ' ', '_'));
+            _cacheFolderPath := format('%s\%s_%s', _cacheRootFolderPath, _dataPackageID, Replace(_dataPkgName, ' ', '_'));
             _xferPath := _cacheRootFolderPath;
 
             If _cacheFolderPathOld IS DISTINCT FROM _cacheFolderPath Then

@@ -197,7 +197,7 @@ BEGIN
                 _isAlias := true;
 
                 If _hostData Like '%.' Then
-                    _hostData := SubString(_hostData, 1, char_length(_hostData) - 1);
+                    _hostData := Substring(_hostData, 1, char_length(_hostData) - 1);
                 End If;
             End If;
 

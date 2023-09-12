@@ -20,6 +20,7 @@ CREATE OR REPLACE FUNCTION sw.get_signature(_settings text) RETURNS integer
 **          03/22/2011 mem - Now populating String, Entered, and Last_Used in T_Signatures
 **          10/14/2022 mem - Ported to PostgreSQL
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -36,7 +37,7 @@ BEGIN
 
     If char_length(_pattern) > 32 Then
         -- Only keep the first 32 characters
-        _pattern := substring(_pattern, 1, 32);
+        _pattern := Substring(_pattern, 1, 32);
     End If;
 
     ---------------------------------------------------

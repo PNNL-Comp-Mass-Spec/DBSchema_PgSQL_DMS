@@ -62,6 +62,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable boolean, IN _m
 **          07/11/2023 mem - Use COUNT(PV.entry_id) instead of COUNT(*)
 **          09/07/2023 mem - Update warning messages
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -234,8 +235,8 @@ BEGIN
           PV.value = _newValue AND
           MT.mgr_type_active > 0;
 
-    _countToUpdate  := COALESCE(_countToUpdate, 0);
-    _countUnchanged := COALESCE(_countUnchanged, 0);
+    _countToUpdate  := Coalesce(_countToUpdate, 0);
+    _countUnchanged := Coalesce(_countUnchanged, 0);
 
     -- Store the manager names in an array,
     -- which allows the refcursor to filter by manager name

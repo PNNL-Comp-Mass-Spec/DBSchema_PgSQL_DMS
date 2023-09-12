@@ -53,6 +53,7 @@ CREATE OR REPLACE PROCEDURE public.parse_usage_text(INOUT _comment text, INOUT _
 **                         - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -307,17 +308,17 @@ BEGIN
         _comment := Trim(_comment);
 
         If _comment Like ',%' Then
-            _comment := LTRIM(Substring(_comment, 2, char_length(_comment) - 1));
+            _comment := LTrim(Substring(_comment, 2, char_length(_comment) - 1));
         End If;
 
         If _comment Like '%,' Then
-            _comment := RTRIM(Substring(_comment, 1, char_length(_comment) - 1));
+            _comment := RTrim(Substring(_comment, 1, char_length(_comment) - 1));
         End If;
 
-        _comment := REPLACE(_comment, ',,', '');
-        _comment := REPLACE(_comment, ', ,', '');
-        _comment := REPLACE(_comment, '. ,', '. ');
-        _comment := REPLACE(_comment, '.,', '. ');
+        _comment := Replace(_comment, ',,', '');
+        _comment := Replace(_comment, ', ,', '');
+        _comment := Replace(_comment, '. ,', '. ');
+        _comment := Replace(_comment, '.,', '. ');
         _comment := Trim(_comment);
 
         If _comment = ',' Then

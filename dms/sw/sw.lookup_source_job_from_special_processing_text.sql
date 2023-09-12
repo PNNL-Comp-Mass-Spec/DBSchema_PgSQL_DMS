@@ -40,6 +40,7 @@ CREATE OR REPLACE PROCEDURE sw.lookup_source_job_from_special_processing_text(IN
 **          08/01/2023 mem - Update _returnCode if an exception is caught
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -124,16 +125,16 @@ BEGIN
 
                 If _indexStart > 0 Then
                 -- <f>
-                    _whereClause := SUBSTRING(_specialProcessingText, _indexStart + char_length(format('%sAuto', _tagName)), char_length(_specialProcessingText));
+                    _whereClause := Substring(_specialProcessingText, _indexStart + char_length(format('%sAuto', _tagName)), char_length(_specialProcessingText));
 
                     -- Replace double quotes with single quotes
-                    _whereClause := REPLACE(_whereClause, '"', '''');
+                    _whereClause := Replace(_whereClause, '"', '''');
 
                     _indexStart := Position('{' In _whereClause);
                     _indexEnd := Position('}' In _whereClause);
 
                     If _indexStart > 0 And _indexEnd > _indexStart Then
-                        _whereClause := SUBSTRING(_whereClause, _indexStart + 1, _indexEnd - _indexStart - 1);
+                        _whereClause := Substring(_whereClause, _indexStart + 1, _indexEnd - _indexStart - 1);
                     Else
                         _whereClause := '';
                     End If;
@@ -141,7 +142,7 @@ BEGIN
                     -- Prior to July 2023, the special processing text used [Param File]
                     -- If present, replace with Param_File
                     If Position('[Param File]' In _whereClause) > 0 Then
-                        _whereClause := REPLACE(_whereClause, '[Param File]', 'Param_File');
+                        _whereClause := Replace(_whereClause, '[Param File]', 'Param_File');
                     End If;
 
                     If _whereClause ILike '%$ThisDataset%' Then
@@ -170,12 +171,12 @@ BEGIN
                                 _indexEnd   := Position(')' In Substring(_part2, _indexStart + 1)) + _indexStart;
 
                                 If _indexStart > 0 And _indexEnd > _indexStart Then
-                                    _textToFind := SUBSTRING(_part2, _indexStart + 1, _indexEnd - _indexStart - 1);
+                                    _textToFind := Substring(_part2, _indexStart + 1, _indexEnd - _indexStart - 1);
 
                                     _indexStart := Position(_textToFind In _dataset);
 
                                     If _indexStart > 0 Then
-                                        _dataset := SUBSTRING(_dataset, 1, _indexStart + char_length(_textToFind) - 1);
+                                        _dataset := Substring(_dataset, 1, _indexStart + char_length(_textToFind) - 1);
                                     End If;
 
                                 End If;
@@ -234,16 +235,16 @@ BEGIN
                                     If _indexEnd >= _indexStart Then
                                     -- <k>
                                         -- We have determined the replacement text
-                                        _replacement := SUBSTRING(_part2, _indexStart, _indexEnd - _indexStart);
+                                        _replacement := Substring(_part2, _indexStart, _indexEnd - _indexStart);
 
                                         -- Make sure the text doesn't have any single quotes
                                         -- This would be the case if _specialProcessingText originally contained "$Replace($ThisDataset,"_Pos","")%NEG"}'
-                                        _textToFind := REPLACE(_textToFind, '''', '');
-                                        _replacement := REPLACE(_replacement, '''', '');
+                                        _textToFind := Replace(_textToFind, '''', '');
+                                        _replacement := Replace(_replacement, '''', '');
 
                                         -- RAISE INFO '%, [%], [%], [%]', _part2, _textToSearch, _textToFind, _replacement
 
-                                        _part2 := REPLACE(_textToSearch, _textToFind, _replacement);
+                                        _part2 := Replace(_textToSearch, _textToFind, _replacement);
 
                                         -- RAISE INFO '%', _part2;
 

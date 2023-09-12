@@ -46,6 +46,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist
 **          10/04/2022 mem - Change _enable and _infoOnly from integer to boolean
 **          06/23/2023 mem - No longer look for "FETCH ALL FROM _results" in the output message from mc.enable_disable_managers
 **          09/07/2023 mem - Align assignment statements
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -110,7 +111,7 @@ BEGIN
             Close _results;
         End If;
 
-        If Char_Length(_msg) > 0 Then
+        If char_length(_msg) > 0 Then
             _message := public.append_to_text(_message, _msg, _delimiter := '; ');
         End If;
 

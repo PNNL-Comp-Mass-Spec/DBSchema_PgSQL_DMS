@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE pc.validate_analysis_job_protein_parameters(IN _orga
 **          09/07/2023 mem - Align assignment statements
 **                         - Update warning messages
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -117,7 +118,7 @@ BEGIN
     ---------------------------------------------------
 
     If _organismDBFileName::citext <> 'na' And _protCollNameList::citext = 'na' Then
-        If RIGHT(_organismDBFileName, 6)::citext <> '.fasta' Then
+        If Right(_organismDBFileName, 6)::citext <> '.fasta' Then
             _organismDBFileName := _organismDBFileName || '.fasta';
         End If;
 
@@ -175,7 +176,7 @@ BEGIN
             EXIT;
         End If;
 
-        _extensionPosition := position('.fasta' in _collectionName);
+        _extensionPosition := Position('.fasta' In _collectionName);
 
         If _extensionPosition > 0 Then
             _collectionName := SUBSTRING(_collectionName, 0, _extensionPosition);
@@ -267,7 +268,7 @@ BEGIN
             CONTINUE;
         End If;
 
-        _equalsPosition := position('=' in _optionString);
+        _equalsPosition := Position('=' In _optionString);
 
         If _equalsPosition = 0 Then
             If _optionString <> 'na' Then
@@ -302,8 +303,8 @@ BEGIN
             RETURN;
         End If;
 
-        _optionKeyword    := TRIM(substring(_optionString, 1, _equalsPosition - 1));
-        _optionValue      := TRIM(substring(_optionString, _equalsPosition + 1));
+        _optionKeyword := Trim(Substring(_optionString, 1, _equalsPosition - 1));
+        _optionValue   := Trim(Substring(_optionString, _equalsPosition + 1));
 
         -- Auto-update seq_direction 'reverse' to 'reversed'
         If _optionKeyword = 'seq_direction' And _optionValue = 'reverse' Then

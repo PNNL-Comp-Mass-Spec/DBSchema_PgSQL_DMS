@@ -408,7 +408,7 @@ BEGIN
         If char_length(_badFactorNames) < 256 Then
             _message := format('Unacceptable characters in factor names "%s"', _badFactorNames);
         Else
-            _message := format('Unacceptable characters in factor names "%s ..."', LEFT(_badFactorNames, 256));
+            _message := format('Unacceptable characters in factor names "%s ..."', Left(_badFactorNames, 256));
         End If;
 
         If _infoOnly Then

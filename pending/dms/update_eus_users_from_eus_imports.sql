@@ -139,11 +139,11 @@ BEGIN
         _currentLocation := 'Update first_name and last_name in t_eus_users';
 
         Update t_eus_users
-        Set first_name = Ltrim(SubString(name_fm, Position(',' In name_fm) + 1, 128))
+        Set first_name = Ltrim(Substring(name_fm, Position(',' In name_fm) + 1, 128))
         Where Coalesce(first_name, '') = '' And Position(',' In name_fm) > 1
 
         Update t_eus_users
-        Set last_name = SubString(name_fm, 1, Position(',' In name_fm) - 1)
+        Set last_name = Substring(name_fm, 1, Position(',' In name_fm) - 1)
         Where Coalesce(last_name, '') = '' And Position(',' In name_fm) > 1
 
         _currentLocation := 'Update t_eus_proposal_users';

@@ -186,7 +186,7 @@ BEGIN
             End If;
 
             If _entryType = 'DynamicModification' or _entryType = 'TermDynamicModification' Then
-                _affectedResidue := substring(_entrySpecifier, _counter, 1);
+                _affectedResidue := Substring(_entrySpecifier, _counter, 1);
 
                 SELECT residue_id
                 INTO _affectedResidueID

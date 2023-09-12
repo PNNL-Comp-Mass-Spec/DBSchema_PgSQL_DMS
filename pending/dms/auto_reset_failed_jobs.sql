@@ -234,7 +234,7 @@ BEGIN
                     -- Remove the text after the semicolon
                     _matchIndex := Position(';' In _newComment);
                     If _matchIndex > 1 Then
-                        _newComment := SubString(_newComment, 1, _matchIndex-1);
+                        _newComment := Substring(_newComment, 1, _matchIndex-1);
                     Else
                         _newComment := '';
                     End If;
@@ -243,14 +243,14 @@ BEGIN
                 -- Comment contains '(retry'
 
                 If _matchIndex > 1 Then
-                    _newComment := SubString(_comment, 1, _matchIndex-1);
+                    _newComment := Substring(_comment, 1, _matchIndex-1);
                 Else
                     _newComment := '';
                 End If;
 
                 -- Determine the number of times the job has been retried
                 _retryCount := 1;
-                _retryText := SubString(_comment, _matchIndex, char_length(_comment));
+                _retryText := Substring(_comment, _matchIndex, char_length(_comment));
 
                 -- Find the closing parenthesis
                 _matchIndex := Position(')' In _retryText);
@@ -259,7 +259,7 @@ BEGIN
 
                     If _poundIndex > 0 Then
                         If _matchIndex - _poundIndex - 1 > 0 Then
-                            _retryCountText := SubString(_retryText, _poundIndex+1, _matchIndex - _poundIndex - 1);
+                            _retryCountText := Substring(_retryText, _poundIndex+1, _matchIndex - _poundIndex - 1);
                             _retryCount := Coalesce(public.try_cast(_retryCountText, null::int), _retryCount);
                         End If;
                     End If;
@@ -314,12 +314,12 @@ BEGIN
                         Else
                             _matchIndex := Position('MSGF+ skipped' In _comment);
                             If _matchIndex > 0 Then
-                                _skipInfo := SubString(_comment, _matchIndex, char_length(_comment));
+                                _skipInfo := Substring(_comment, _matchIndex, char_length(_comment));
                             Else
 
                                 _matchIndex := Position('MSGF+ will likely skip' In _comment);
                                 If _matchIndex > 0 Then
-                                    _skipInfo := SubString(_comment, _matchIndex, char_length(_comment));
+                                    _skipInfo := Substring(_comment, _matchIndex, char_length(_comment));
                                 Else
                                     _skipInfo := 'MSGF+ skipped ??% of the spectra because they did not appear centroided';
                                 End If;

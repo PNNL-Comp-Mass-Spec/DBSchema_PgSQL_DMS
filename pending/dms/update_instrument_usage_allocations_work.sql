@@ -209,8 +209,8 @@ BEGIN
         If _matchIndex > 0 Then
             _enteredByNew := format ('%s (via %s)%s',
                                     _callingUser,
-                                    SubString(_enteredBy, 1, _matchIndex - 1)
-                                    SubString(_enteredBy, _matchIndex, char_length(_enteredBy)));
+                                    Substring(_enteredBy, 1, _matchIndex - 1)
+                                    Substring(_enteredBy, _matchIndex, char_length(_enteredBy)));
         Else
             _enteredByNew := format('%s (via %s)', _callingUser, _enteredBy);
         End If;

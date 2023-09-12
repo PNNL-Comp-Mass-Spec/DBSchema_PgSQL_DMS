@@ -43,6 +43,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable boole
 **          07/11/2023 mem - Use COUNT(PV.entry_id) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
 **                         - Update warning messages
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -239,8 +240,8 @@ BEGIN
           PV.value = _newValue AND
           MT.mgr_type_active > 0;
 
-    _countToUpdate  := COALESCE(_countToUpdate, 0);
-    _countUnchanged := COALESCE(_countUnchanged, 0);
+    _countToUpdate  := Coalesce(_countToUpdate, 0);
+    _countUnchanged := Coalesce(_countUnchanged, 0);
 
     If _countToUpdate = 0 Then
         If _countUnchanged = 0 Then

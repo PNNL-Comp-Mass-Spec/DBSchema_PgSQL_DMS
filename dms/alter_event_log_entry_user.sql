@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE public.alter_event_log_entry_user(IN _eventlogschema
 **                         - Add back implicit string concatenation
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -170,7 +171,7 @@ BEGIN
     -- Confirm that _enteredBy doesn't already contain _newUser
     -- If it does, there's no need to update it
 
-    _matchIndex := position(_newUser in _enteredBy);
+    _matchIndex := Position(_newUser In _enteredBy);
     If _matchIndex > 0 Then
         _message := format('Entry %s is already attributed to %s: "%s"',
                             _entryDescription, _newUser, _enteredBy);
@@ -179,13 +180,13 @@ BEGIN
 
     -- Look for a semicolon in _enteredBy
 
-    _matchIndex := position(';' in _enteredBy);
+    _matchIndex := Position(';' In _enteredBy);
 
     If _matchIndex > 0 Then
         _enteredByNew := format('%s (via %s)%s',
                                 _newUser,
-                                SubString(_enteredBy, 1, _matchIndex-1),
-                                SubString(_enteredBy, _matchIndex, char_length(_enteredBy)));
+                                Substring(_enteredBy, 1, _matchIndex-1),
+                                Substring(_enteredBy, _matchIndex, char_length(_enteredBy)));
     Else
         _enteredByNew := format('%s (via %s)', _newUser, _enteredBy);
     End If;

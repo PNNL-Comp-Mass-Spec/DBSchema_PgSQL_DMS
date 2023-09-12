@@ -147,7 +147,7 @@ BEGIN
     -- Derive shared path name
     ---------------------------------------------------
 
-    _archiveNetworkSharePath := format('\%s', REPLACE(REPLACE(_archivePath, 'archive', 'adms.emsl.pnl.gov'), '/', '\'));
+    _archiveNetworkSharePath := format('\%s', Replace(Replace(_archivePath, 'archive', 'adms.emsl.pnl.gov'), '/', '\'));
 
     ---------------------------------------------------
     -- Resolve Yes/No parameters to 0 or 1

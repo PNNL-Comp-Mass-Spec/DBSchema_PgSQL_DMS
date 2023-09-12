@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE public.update_bionet_host_status_from_list(IN _hostn
 **          05/09/2023 mem - Add arguments _message and _returnCode
 **                     mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -78,8 +79,8 @@ BEGIN
         -- Split out IP address
         --
         UPDATE Tmp_Hosts
-        SET Host = SubString(FilterQ.HostAndIP, 1, AtSignLoc - 1),
-            IP = SubString(FilterQ.HostAndIP, AtSignLoc + 1, 16)
+        SET Host = Substring(FilterQ.HostAndIP, 1, AtSignLoc - 1),
+            IP   = Substring(FilterQ.HostAndIP, AtSignLoc + 1, 16)
         FROM ( SELECT Entry_ID,
                       Host AS HostAndIP,
                       Position('@' In Host) AS AtSignLoc

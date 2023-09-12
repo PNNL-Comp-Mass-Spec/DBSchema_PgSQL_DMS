@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE dpkg.add_update_osm_package(INOUT _id integer, IN _n
 **          08/15/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Update warning messages
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -235,7 +236,7 @@ BEGIN
 
             -- Create the wiki page link
             If Not _name Is Null Then
-                _wikiLink := format('https://prismwiki.pnl.gov/wiki/OSMPackages:%s', REPLACE(_name, ' ', '_'));
+                _wikiLink := format('https://prismwiki.pnl.gov/wiki/OSMPackages:%s', Replace(_name, ' ', '_'));
             End If;
 
             INSERT INTO dpkg.t_osm_package (
