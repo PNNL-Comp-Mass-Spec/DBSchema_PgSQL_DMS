@@ -452,8 +452,8 @@ BEGIN
             WHERE script = _extensionScriptName;
 
             -- Combine the XML for the two scripts
-            _closingTagScript1 := Position('</JobScript>' IN _scriptXML::text);
-            _firstStepScript2 := Position('<Step ' IN _scriptXML2::text);
+            _closingTagScript1 := Position('</JobScript>' In _scriptXML::text);
+            _firstStepScript2 := Position('<Step ' In _scriptXML2::text);
 
             If _closingTagScript1 = 0 Then
                 _message = format('Cannot combine original job script with extension script; could not find "</JobScript>" in the script XML for %s', _jobInfo.ScriptName);

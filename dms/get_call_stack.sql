@@ -76,14 +76,14 @@ BEGIN
         -- regexp_matches returns a set of arrays, so must use two sets of square brackets to extract the match
         _functionNameAndLineNumber := _matches[_iteration][1];
 
-        _startPosition := Position(_functionNameAndLineNumber IN _pgContext);
+        _startPosition := Position(_functionNameAndLineNumber In _pgContext);
 
         _subcontext := Substring(_pgContext, _startPosition);
 
         -- Note that the function name will include the schema if not in the public schema
         _functionNameAndSchema := (regexp_match(_subcontext, 'function ([^(]+)' ))[1];
 
-        _dotPosition := Position('.' IN _functionNameAndSchema);
+        _dotPosition := Position('.' In _functionNameAndSchema);
         If _dotPosition > 1 And _dotPosition < char_length(_functionNameAndSchema) Then
             _schemaName   := Left(_functionNameAndSchema, _dotPosition - 1);
             _functionName := Substring(_functionNameAndSchema, _dotPosition + 1);

@@ -51,6 +51,7 @@ CREATE OR REPLACE FUNCTION public.get_current_function_info(_schemaname text DEF
 **          05/31/2023 mem - Add support for calling this function from an anonymous code block (DO ... BEGIN ... END)
 **          07/26/2023 mem - Move "Not" keyword to before the field name
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -121,7 +122,7 @@ BEGIN
         _objectArguments := '';
     End If;
 
-    _dotPosition := Position('.' IN _objectNameAndSchema);
+    _dotPosition := Position('.' In _objectNameAndSchema);
     If _dotPosition > 1 And _dotPosition < char_length(_objectNameAndSchema) Then
         _schemaName := Left(_objectNameAndSchema, _dotPosition - 1);
         _objectName := Substring(_objectNameAndSchema, _dotPosition + 1);

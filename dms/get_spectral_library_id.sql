@@ -63,6 +63,7 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **          09/07/2023 mem - Align assignment statements
 **                         - Update warning messages
 **          09/08/2023 mem - Include schema name when calling function
+**          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/
 DECLARE
@@ -184,7 +185,7 @@ BEGIN
             _defaultLibraryName := _proteinCollectionList;
 
             -- Lookup the organism associated with the first protein collection in the list
-            _commaPosition := Position(',' IN _proteinCollectionList);
+            _commaPosition := Position(',' In _proteinCollectionList);
 
             If _commaPosition > 0 Then
                 _proteinCollection := Left(_proteinCollectionList, _commaPosition - 1);
@@ -220,7 +221,7 @@ BEGIN
                 _defaultLibraryName := Left(_defaultLibraryName, char_length(_defaultLibraryName) - char_length('.faa'));
             Else
                 -- Find the position of the last period
-                _periodLocation := Position('.' IN Reverse(_defaultLibraryName));
+                _periodLocation := Position('.' In Reverse(_defaultLibraryName));
 
                 If _periodLocation > 0 Then
                     _periodLocation := char_length(_defaultLibraryName) - _periodLocation;

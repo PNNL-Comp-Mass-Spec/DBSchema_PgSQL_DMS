@@ -193,7 +193,7 @@ BEGIN
 
             _message := format('%s; updating location for Batch %s %s',
                                _message,
-                               CASE WHEN Position(',' IN _validIDs) > 0 THEN 'IDs' ELSE 'ID' END,
+                               CASE WHEN Position(',' In _validIDs) > 0 THEN 'IDs' ELSE 'ID' END,
                                _validIDs);
         End If;
 
