@@ -594,10 +594,10 @@ BEGIN
         WHERE charge_code = _workPackage
 
         If Not _autoPopulateUserListIfBlank Then
-            If Exists (SELECT * FROM t_charge_code WHERE charge_code = _workPackage And deactivated = 'Y') Then
-                _message := public.append_to_text(_message, format('Warning: Work Package %s is deactivated', _workPackage),        _delimiter => '; ', _maxlength => 1024);
-            ElsIf Exists (SELECT * FROM t_charge_code WHERE charge_code = _workPackage And charge_code_state = 0) Then
-                _message := public.append_to_text(_message, format('Warning: Work Package %s is likely deactivated', _workPackage), _delimiter => '; ', _maxlength => 1024);
+            If Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackage And deactivated = 'Y') Then
+                _message := public.append_to_text(_message, format('Warning: Work Package %s is deactivated', _workPackage));
+            ElsIf Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackage And charge_code_state = 0) Then
+                _message := public.append_to_text(_message, format('Warning: Work Package %s is likely deactivated', _workPackage));
             End If;
         End If;
 

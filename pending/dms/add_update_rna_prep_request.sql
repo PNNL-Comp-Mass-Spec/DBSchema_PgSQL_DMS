@@ -272,10 +272,10 @@ BEGIN
             RAISE EXCEPTION 'validate_wp: %', _msg;
         End If;
 
-        If Exists (SELECT * FROM t_charge_code WHERE charge_code = _workPackageNumber And deactivated = 'Y') Then
-            _message := public.append_to_text(_message, format('Warning: Work Package %s is deactivated', _workPackageNumber), _delimiter => '; ', _maxlength => 512);
-        ElsIf Exists (SELECT * FROM t_charge_code WHERE charge_code = _workPackageNumber And charge_code_state = 0) Then
-            _message := public.append_to_text(_message, format('Warning: Work Package %s is likely deactivated', _workPackageNumber), _delimiter => '; ', _maxlength => 512);
+        If Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackageNumber And deactivated = 'Y') Then
+            _message := public.append_to_text(_message, format('Warning: Work Package %s is deactivated', _workPackageNumber));
+        ElsIf Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackageNumber And charge_code_state = 0) Then
+            _message := public.append_to_text(_message, format('Warning: Work Package %s is likely deactivated', _workPackageNumber));
         End If;
 
         -- Make sure the Work Package is capitalized properly
