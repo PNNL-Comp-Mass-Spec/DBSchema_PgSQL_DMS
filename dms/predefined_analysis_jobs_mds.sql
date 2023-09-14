@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs_mds(_datasetlist text
 /****************************************************
 **
 **  Desc:
-**      Evaluate predefined analysis rules for given list of datasets
-**      and return the list of jobs that would be created
+**      Evaluate predefined analysis rules for given list of datasets and return the list of jobs that would be created
 **
 **  Arguments:
 **    _datasetList                      Comma-separated list of dataset names
@@ -36,6 +35,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs_mds(_datasetlist text
 **          01/27/2023 mem - Show legacy FASTA file name after the protein collection info
 **          02/08/2023 mem - Switch from PRN to username
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**                         - Fix bug that failed to pass _excludeDatasetsNotReleased and _createJobsForUnreviewedDatasets to predefined_analysis_jobs()
 **
 *****************************************************/
 DECLARE
@@ -163,8 +163,8 @@ BEGIN
         FROM public.predefined_analysis_jobs(
                                 _datasetName,
                                 _raiseErrorMessages => true,
-                                _excludeDatasetsNotReleased => false,
-                                _createJobsForUnreviewedDatasets => true,
+                                _excludeDatasetsNotReleased => _excludeDatasetsNotReleased,
+                                _createJobsForUnreviewedDatasets => _createJobsForUnreviewedDatasets,
                                 _analysisToolNameFilter => _analysisToolNameFilter) Src
         ORDER BY Src.ID;
 
