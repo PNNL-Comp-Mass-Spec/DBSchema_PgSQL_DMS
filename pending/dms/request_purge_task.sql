@@ -105,12 +105,13 @@ BEGIN
     --------------------------------------------------
     -- Validate the inputs
     --------------------------------------------------
-    _storageServerName := Coalesce(_storageServerName, '');
+
+    _storageServerName := Trim(Coalesce(_storageServerName, ''));
 
     If _storageServerName = '' Then
         _serverDisk := '';
     Else
-        _serverDisk := Coalesce(_serverDisk, '');
+        _serverDisk := Trim(Coalesce(_serverDisk, ''));
     End If;
 
 

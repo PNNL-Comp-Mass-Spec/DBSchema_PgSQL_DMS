@@ -31,6 +31,7 @@ CREATE OR REPLACE FUNCTION cap.consolidate_log_messages(_messagetype text DEFAUL
 **          05/25/2023 mem - Simplify call to RAISE WARNING
 **          07/11/2023 mem - Use COUNT(L.entry_id) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -54,7 +55,7 @@ BEGIN
     ---------------------------------------------------
 
     _messageType               := Trim(Coalesce(_messageType, ''));
-    _messageFilter             := Coalesce(_messageFilter, '');
+    _messageFilter             := Trim(Coalesce(_messageFilter, ''));
     _keepFirstMessageOnly      := Coalesce(_keepFirstMessageOnly, false);
     _changeErrorsToErrorIgnore := Coalesce(_changeErrorsToErrorIgnore, true);
     _infoOnly                  := Coalesce(_infoOnly, false);

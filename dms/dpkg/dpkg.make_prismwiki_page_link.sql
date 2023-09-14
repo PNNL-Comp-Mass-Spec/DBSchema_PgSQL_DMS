@@ -18,6 +18,7 @@ CREATE OR REPLACE FUNCTION dpkg.make_prismwiki_page_link(_packagename text) RETU
 **          09/21/2012 mem - Changed from https:// to http://
 **          06/25/2022 mem - Ported to PostgreSQL
 **          05/30/2023 mem - Use format() for string concatenation
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -27,7 +28,7 @@ DECLARE
 BEGIN
     _baseURL := 'http://prismwiki.pnl.gov/wiki/DataPackages:';
 
-    _temp := Coalesce(_packageName, '');
+    _temp := Trim(Coalesce(_packageName, ''));
 
     -- Replace invalid path characters with an underscore
     _temp := Replace(_temp, ' ', '_');

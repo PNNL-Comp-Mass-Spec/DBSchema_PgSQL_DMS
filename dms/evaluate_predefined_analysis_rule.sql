@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE public.evaluate_predefined_analysis_rule(IN _minleve
 **          05/19/2023 mem - Remove redundant parentheses
 **          05/30/2023 mem - Use append_to_text() for string concatenation
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -168,7 +169,7 @@ BEGIN
             --     FROM t_analysis_job_processor_group
             --     WHERE group_id = _tmpProcessorGroupID;
             --
-            --     _associatedProcessorGroup := Coalesce(_associatedProcessorGroup, '');
+            --     _associatedProcessorGroup := Trim(Coalesce(_associatedProcessorGroup, ''));
             -- Else
             --     _associatedProcessorGroup := '';
             -- End If;

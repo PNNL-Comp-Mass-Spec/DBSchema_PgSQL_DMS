@@ -42,6 +42,7 @@ CREATE OR REPLACE PROCEDURE sw.update_dependent_steps(IN _infoonly boolean DEFAU
 **                         - Check for a job step with shared results being repeatedly skipped, then reset, then skipped again
 **          08/02/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -538,7 +539,7 @@ BEGIN
                     -- In this scenario (which happened with job 2010021), we do not want the completion message to have any text,
                     -- since we don't want that text to end up in the job comment in the primary job table (T_Analysis_Job).
 
-                    _newEvaluationMessage := Coalesce(_stepInfo.evaluationMessage, '');
+                    _newEvaluationMessage := Trim(Coalesce(_stepInfo.evaluationMessage, ''));
 
                     If _stepInfo.completionCode > 0 Then
                         _newEvaluationMessage := public.append_to_text(_newEvaluationMessage, format('Original completion code: %s', _stepInfo.completionCode));

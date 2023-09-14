@@ -43,6 +43,7 @@ CREATE OR REPLACE FUNCTION mc.unarchive_old_managers_and_params(_mgrlist text, _
 **          05/30/2023 mem - Use format() for string concatenation
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -59,7 +60,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _mgrList                  := Coalesce(_mgrList, '');
+    _mgrList                  := Trim(Coalesce(_mgrList, ''));
     _infoOnly                 := Coalesce(_infoOnly, true);
     _enableControlFromWebsite := Coalesce(_enableControlFromWebsite, true);
 

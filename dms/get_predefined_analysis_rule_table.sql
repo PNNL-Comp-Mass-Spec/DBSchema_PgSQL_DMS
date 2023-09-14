@@ -19,14 +19,15 @@ CREATE OR REPLACE FUNCTION public.get_predefined_analysis_rule_table(_datasetnam
 **  Auth:   mem
 **  Date:   11/08/2022 mem - Initial version (refactored code from evaluate_predefined_analysis_rules)
 **          05/30/2023 mem - Use format() for string concatenation
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
     _predefineInfo record;
     _message citext;
 BEGIN
-    _datasetName := Coalesce(_datasetName, '');
-    _analysisToolNameFilter := Coalesce(_analysisToolNameFilter, '');
+    _datasetName            := Trim(Coalesce(_datasetName, ''));
+    _analysisToolNameFilter := Trim(Coalesce(_analysisToolNameFilter, ''));
 
     _message := '';
     ---------------------------------------------------

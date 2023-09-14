@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE public.predefined_analysis_rules_proc(IN _datasetnam
 **  Auth:   mem
 **  Date:   11/08/2022 mem - Initial version
 **          01/27/2023 mem - Rename columns in the query results
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -39,9 +40,9 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    _datasetName := Coalesce(_datasetName, '');
+    _datasetName                := Trim(Coalesce(_datasetName, ''));
     _excludeDatasetsNotReleased := Coalesce(_excludeDatasetsNotReleased, true);
-    _analysisToolNameFilter := Coalesce(_analysisToolNameFilter, '');
+    _analysisToolNameFilter     := Trim(Coalesce(_analysisToolNameFilter, ''));
 
     Open _results For
         SELECT

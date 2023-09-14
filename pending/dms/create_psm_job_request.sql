@@ -104,25 +104,25 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _requestID := 0;
-        _toolName := Coalesce(_toolName, '');
+        _requestID           := 0;
+        _toolName            := Trim(Coalesce(_toolName, ''));
 
-        _requestName := Coalesce(_requestName, format('New %s request on %s', _toolName, public.timestamp_text(current_timestamp)));
-        _datasets := Coalesce(_datasets, '');
-        _jobTypeName := Coalesce(_jobTypeName, '');
-        _protCollNameList := Coalesce(_protCollNameList, '');
-        _protCollOptionsList := Coalesce(_protCollOptionsList, '');
+        _requestName         := Trim(Coalesce(_requestName, format('New %s request on %s', _toolName, public.timestamp_text(current_timestamp))));
+        _datasets            := Trim(Coalesce(_datasets, ''));
+        _jobTypeName         := Trim(Coalesce(_jobTypeName, ''));
+        _protCollNameList    := Trim(Coalesce(_protCollNameList, ''));
+        _protCollOptionsList := Trim(Coalesce(_protCollOptionsList, ''));
 
-        _dynMetOxEnabled := Coalesce(_dynMetOxEnabled, 0);
-        _statCysAlkEnabled := Coalesce(_statCysAlkEnabled, 0);
-        _dynSTYPhosEnabled := Coalesce(_dynSTYPhosEnabled, 0);
+        _dynMetOxEnabled     := Coalesce(_dynMetOxEnabled, 0);
+        _statCysAlkEnabled   := Coalesce(_statCysAlkEnabled, 0);
+        _dynSTYPhosEnabled   := Coalesce(_dynSTYPhosEnabled, 0);
 
-        _comment := Coalesce(_comment, '');
-        _ownerUsername := Coalesce(_ownerUsername, session_user);
-        _infoOnly := Coalesce(_infoOnly, false);
-        _callingUser := Coalesce(_callingUser, '');
+        _comment             := Trim(Coalesce(_comment, ''));
+        _ownerUsername       := Trim(Coalesce(_ownerUsername, session_user));
+        _infoOnly            := Coalesce(_infoOnly, false);
+        _callingUser         := Trim(Coalesce(_callingUser, ''));
 
-        _mode := Trim(Lower(Coalesce(_mode, '')));
+        _mode                := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
         -- Assure that key parameters are not empty

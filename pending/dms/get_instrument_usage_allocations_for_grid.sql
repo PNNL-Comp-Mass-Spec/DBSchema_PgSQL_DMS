@@ -26,8 +26,8 @@ AS $$
 *****************************************************/
 DECLARE
 BEGIN
-    _fiscalYear := Coalesce(_fiscalYear, '');
-    _itemList := Coalesce(_itemList, '');
+    _fiscalYear := Trim(Coalesce(_fiscalYear, ''));
+    _itemList   := Trim(Coalesce(_itemList, ''));
 
     -----------------------------------------
     -- Convert item list into temp table

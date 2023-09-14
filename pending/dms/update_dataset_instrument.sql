@@ -60,9 +60,9 @@ BEGIN
     -- Validate the inputs
     ----------------------------------------------------------
 
-    _datasetName := Coalesce(_datasetName, '');
-    _newInstrument := Coalesce(_newInstrument, '');
-    _infoOnly := Coalesce(_infoOnly, true);
+    _datasetName    := Trim(Coalesce(_datasetName, ''));
+    _newInstrument  := Trim(Coalesce(_newInstrument, ''));
+    _infoOnly       := Coalesce(_infoOnly, true);
     _updateCaptured := Coalesce(_updateCaptured, false);
 
     ----------------------------------------------------------

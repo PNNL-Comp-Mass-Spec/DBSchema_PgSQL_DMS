@@ -85,7 +85,7 @@ BEGIN
             RAISE EXCEPTION '_host must be specified';
         End If;
 
-        _ip := Coalesce(_ip, '');
+        _ip := Trim(Coalesce(_ip, ''));
 
         If char_length(Trim(Coalesce(_alias, ''))) = 0 Then
             _alias := null;

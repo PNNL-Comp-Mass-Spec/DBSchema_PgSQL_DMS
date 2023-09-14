@@ -51,15 +51,15 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _freezerTagOld := Coalesce(_freezerTagOld, '');
-    _shelfOld := Coalesce(_shelfOld, -1);
-    _rackOld := Coalesce(_rackOld, -1);
+    _freezerTagOld := Trim(Coalesce(_freezerTagOld, ''));
+    _shelfOld      := Coalesce(_shelfOld, -1);
+    _rackOld       := Coalesce(_rackOld, -1);
 
-    _freezerTagNew := Coalesce(_freezerTagNew, '');
-    _shelfNew := Coalesce(_shelfNew, -1);
-    _rackNew := Coalesce(_rackNew, -1);
-    _infoOnly := Coalesce(_infoOnly, true);
-    _callingUser := Coalesce(_callingUser, '');
+    _freezerTagNew := Trim(Coalesce(_freezerTagNew, ''));
+    _shelfNew      := Coalesce(_shelfNew, -1);
+    _rackNew       := Coalesce(_rackNew, -1);
+    _infoOnly      := Coalesce(_infoOnly, true);
+    _callingUser   := Trim(Coalesce(_callingUser, ''));
 
     If _freezerTagOld = '' Then
         _message := '_freezerTagOld cannot be empty';

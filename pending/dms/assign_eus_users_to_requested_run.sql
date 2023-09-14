@@ -38,8 +38,8 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    _eusProposalID := Coalesce(_eusProposalID, '');
-    _eusUsersList := Coalesce(_eusUsersList, '');
+    _eusProposalID := Trim(Coalesce(_eusProposalID, ''));
+    _eusUsersList  := Trim(Coalesce(_eusUsersList, ''));
 
     ---------------------------------------------------
     -- Clear all associations if the user list is blank

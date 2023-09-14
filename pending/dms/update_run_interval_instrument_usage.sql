@@ -45,9 +45,9 @@ BEGIN
 
     _runIntervalId := Coalesce(_runIntervalId, -1);
     _daysToProcess := Coalesce(_daysToProcess, 90);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly      := Coalesce(_infoOnly, false);
+    _callingUser   := Trim(Coalesce(_callingUser, ''));
 
-    _callingUser := Coalesce(_callingUser, '');
     If _callingUser = '' Then
         _callingUser := session_user;
     End If;

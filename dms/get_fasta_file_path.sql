@@ -20,6 +20,7 @@ CREATE OR REPLACE FUNCTION public.get_fasta_file_path(_fastafilename public.cite
 **          09/06/2007 mem - Updated to reflect Protein_Sequences DB move to server ProteinSeqs (Ticket #531)
 **          09/11/2015 mem - Now using synonym S_ProteinSeqs_T_Archived_Output_Files
 **          06/14/2022 mem - Ported to PostgreSQL
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -66,7 +67,7 @@ BEGIN
                 LIMIT 1;
             End If;
 
-            _filePath := Coalesce(_filePath, '');
+            _filePath := Trim(Coalesce(_filePath, ''));
 
         End If;
     End If;

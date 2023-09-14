@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE public.predefined_analysis_jobs_proc(IN _datasetname
 **  Date:   11/08/2022 mem - Initial version
 **          01/27/2023 mem - Show legacy FASTA file name after the protein collection info
 **          02/08/2023 mem - Switch from PRN to username
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -41,10 +42,10 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    _datasetName := Coalesce(_datasetName, '');
-    _excludeDatasetsNotReleased := Coalesce(_excludeDatasetsNotReleased, true);
+    _datasetName                     := Trim(Coalesce(_datasetName, ''));
+    _excludeDatasetsNotReleased      := Coalesce(_excludeDatasetsNotReleased, true);
     _createJobsForUnreviewedDatasets := Coalesce(_createJobsForUnreviewedDatasets, true);
-    _analysisToolNameFilter := Coalesce(_analysisToolNameFilter, '');
+    _analysisToolNameFilter          := Trim(Coalesce(_analysisToolNameFilter, ''));
 
     DROP TABLE IF EXISTS Tmp_PredefinedAnalysisJobResults;
 

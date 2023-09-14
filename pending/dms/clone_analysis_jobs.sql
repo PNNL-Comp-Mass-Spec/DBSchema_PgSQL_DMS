@@ -73,15 +73,15 @@ BEGIN
         -- Validate the inputs
         -----------------------------------------
 
-        _sourceJobs := Coalesce(_sourceJobs, '');
-        _newParamFileName := Trim(Coalesce(_newParamFileName, ''));
-        _newSettingsFileName := Trim(Coalesce(_newSettingsFileName, ''));
+        _sourceJobs               := Trim(Coalesce(_sourceJobs, ''));
+        _newParamFileName         := Trim(Coalesce(_newParamFileName, ''));
+        _newSettingsFileName      := Trim(Coalesce(_newSettingsFileName, ''));
         _newProteinCollectionList := Trim(Coalesce(_newProteinCollectionList, ''));
 
-        _supersedeOldJob := Coalesce(_supersedeOldJob, false);
-        _updateOldJobComment := Coalesce(_updateOldJobComment, true);
-        _allowDuplicateJob := Coalesce(_supersedeOldJob, false);
-        _infoOnly := Coalesce(_infoOnly, true);
+        _supersedeOldJob          := Coalesce(_supersedeOldJob, false);
+        _updateOldJobComment      := Coalesce(_updateOldJobComment, true);
+        _allowDuplicateJob        := Coalesce(_supersedeOldJob, false);
+        _infoOnly                 := Coalesce(_infoOnly, true);
 
         If _sourceJobs = '' Then
             _message := '_sourceJobs cannot both be empty';

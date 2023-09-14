@@ -71,27 +71,28 @@ BEGIN
     _datasetStateUpdated := false;
     _datasetRatingUpdated := false;
 
-    _state := Coalesce(_state, '');
+    _state       := Trim(Coalesce(_state, ''));
+    _rating      := Trim(Coalesce(_rating, ''));
+    _comment     := Trim(Coalesce(_comment, ''));
+    _findText    := Trim(Coalesce(_findText, ''));
+    _replaceText := Trim(Coalesce(_replaceText, ''));
+
     If _state::citext In ('', '[no change]') Then
         _state := '[no change]';
     End If;
 
-    _rating := Coalesce(_rating, '');
     If _rating::citext In ('', '[no change]') Then
         _rating := '[no change]';
     End If;
 
-    _comment := Coalesce(_comment, '');
     If _comment::citext In ('', '[no change]') Then
         _comment := '[no change]';
     End If;
 
-    _findText := Coalesce(_findText, '');
     If _findText::citext In ('', '[no change]') Then
         _findText := '[no change]';
     End If;
 
-    _replaceText := Coalesce(_replaceText, '');
     If _replaceText::citext In ('', '[no change]') Then
         _replaceText := '[no change]';
     End If;

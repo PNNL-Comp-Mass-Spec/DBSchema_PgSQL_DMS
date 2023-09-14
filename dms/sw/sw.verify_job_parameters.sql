@@ -47,6 +47,7 @@ CREATE OR REPLACE PROCEDURE sw.verify_job_parameters(INOUT _jobparam text, IN _s
 **          07/27/2023 mem - Ported to PostgreSQL
 **          07/28/2023 mem - Trim leading and trailing whitespace from parameter values
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -64,10 +65,10 @@ DECLARE
     _jobParamXML XML;
     _missingParameters text := '';
 BEGIN
-    _message := Coalesce(_message, '');
-    _returnCode := Coalesce(_returnCode, '');
+    _message := Trim(Coalesce(_message, ''));
+    _returnCode := '';
 
-    _scriptName := Coalesce(_scriptName, '');
+    _scriptName    := Trim(Coalesce(_scriptName, ''));
     _dataPackageID := Coalesce(_dataPackageID, 0);
 
     ---------------------------------------------------

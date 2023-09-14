@@ -90,7 +90,7 @@ BEGIN
     -- Validate the inputs
     ------------------------------------------------
 
-    _datasetName := Coalesce(_datasetName, '');
+    _datasetName := Trim(Coalesce(_datasetName, ''));
 
     If _datasetName = '' Then
         _message := '_datasetName parameter is blank; nothing to delete';

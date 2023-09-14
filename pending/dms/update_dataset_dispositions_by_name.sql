@@ -80,9 +80,9 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _rating := Coalesce(_rating, '');
+        _rating         := Trim(Coalesce(_rating, ''));
         _recycleRequest := Trim(Lower(Coalesce(_recycleRequest, '')));
-        _comment := Coalesce(_comment, '');
+        _comment        := Trim(Coalesce(_comment, ''));
 
         If Not _recycleRequest::citext In ('yes', 'no') Then
             _message := format('RecycleRequest must be Yes or No (currently "%s")', _recycleRequest);

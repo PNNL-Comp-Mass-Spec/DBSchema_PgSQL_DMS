@@ -31,6 +31,7 @@ CREATE OR REPLACE FUNCTION public.generate_merge_statement(_tablename text, _sou
 **                         - Use a DELETE query instead of WHEN NOT MATCHED BY SOURCE THEN DELETE
 **          01/01/2023 mem - Update whitespace
 **          05/23/2023 mem - Use format() for string concatenation
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -49,9 +50,9 @@ DECLARE
     _insertedList text := '';
     _deletedList text := '';
 BEGIN
-    _tableName := Coalesce(_tableName, '');
-    _sourceSchema := Coalesce(_sourceSchema, '');
-    _targetSchema := Coalesce(_targetSchema, 'target_schema');
+    _tableName    := Trim(Coalesce(_tableName, ''));
+    _sourceSchema := Trim(Coalesce(_sourceSchema, ''));
+    _targetSchema := Trim(Coalesce(_targetSchema, 'target_schema'));
 
     _includeDeleteTest := Coalesce(_includeDeleteTest, true);
     _message := '';

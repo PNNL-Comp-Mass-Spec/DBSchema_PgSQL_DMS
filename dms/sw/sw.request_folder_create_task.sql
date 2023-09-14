@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE sw.request_folder_create_task(IN _processorname text
 **          08/09/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -83,7 +84,7 @@ BEGIN
     -- Validate the inputs; clear the outputs
     ---------------------------------------------------
 
-    _processorName      := Coalesce(_processorName, '');
+    _processorName      := Trim(Coalesce(_processorName, ''));
     _taskID             := 0;
     _parameters         := '';
     _infoOnly           := Coalesce(_infoOnly, false);

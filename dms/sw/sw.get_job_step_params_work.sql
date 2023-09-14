@@ -31,6 +31,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_step_params_work(_job integer, _step integ
 **          07/27/2022 mem - Move check for missing ToolName parameter to after adding job parameters using T_Job_Parameters
 **          06/07/2023 mem - Rename variables and update alias names
 **                         - Ported to PostgreSQL
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -102,7 +103,7 @@ BEGIN
         FROM sw.t_remote_info
         WHERE remote_info_id = _remoteInfoId;
 
-        _remoteInfo := Coalesce(_remoteInfo, '');
+        _remoteInfo := Trim(Coalesce(_remoteInfo, ''));
     End If;
 
 

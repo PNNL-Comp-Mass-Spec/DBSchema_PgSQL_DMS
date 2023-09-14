@@ -54,6 +54,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_param_table(_job integer, _settingsfileove
 **          05/12/2023 mem - Rename variables
 **          06/05/2023 mem - Rename temp table
 **          07/25/2023 mem - Do not show a warning message when _debugMode is true and the settings file is 'na'
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -76,7 +77,7 @@ BEGIN
       Value text
     );
 
-    _settingsFileOverride := Coalesce(_settingsFileOverride, '');
+    _settingsFileOverride := Trim(Coalesce(_settingsFileOverride, ''));
     _debugMode := Coalesce(_debugMode, false);
 
     ---------------------------------------------------

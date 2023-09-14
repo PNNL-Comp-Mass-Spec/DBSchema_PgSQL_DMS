@@ -62,7 +62,7 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
-    _job := Coalesce(_job, '');
+    _job   := Trim(Coalesce(_job, ''));
     _jobID := public.try_cast(_job, null::int);
 
     If _jobID is null Then

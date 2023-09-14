@@ -29,6 +29,7 @@ CREATE OR REPLACE FUNCTION mc.get_manager_parameters(_managernamelist text DEFAU
 **          08/19/2022 mem - Drop the temp table when exiting the function
 **          02/01/2023 mem - Rename columns in Tmp_Mgr_Params
 **          09/07/2023 mem - Align assignment statements
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -38,7 +39,7 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------
 
-    _managerNameList := Coalesce(_managerNameList, '');
+    _managerNameList := Trim(Coalesce(_managerNameList, ''));
     _sortMode        := Coalesce(_sortMode, 0);
 
     If _maxRecursion > 10 Then

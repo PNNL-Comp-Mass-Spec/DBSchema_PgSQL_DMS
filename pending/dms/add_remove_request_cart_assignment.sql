@@ -38,7 +38,7 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    _requestIDList := Coalesce(_requestIDList, '');
+    _requestIDList := Trim(Coalesce(_requestIDList, ''));
 
     If _requestIDList = '' Then
         -- No Request IDs; nothing to do

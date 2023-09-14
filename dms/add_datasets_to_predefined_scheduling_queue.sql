@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE public.add_datasets_to_predefined_scheduling_queue(I
 **  Date:   03/31/2016 mem - Initial Version
 **          09/05/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -45,7 +46,7 @@ BEGIN
 
     _datasetIDs  := Coalesce(_datasetIDs, '');
     _infoOnly    := Coalesce(_infoOnly, false);
-    _callingUser := Coalesce(_callingUser, '');
+    _callingUser := Trim(Coalesce(_callingUser, ''));
 
     If _callingUser = '' Then
         _callingUser := session_user;

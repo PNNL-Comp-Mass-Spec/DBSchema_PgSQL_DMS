@@ -68,6 +68,7 @@ CREATE OR REPLACE PROCEDURE sw.create_job_steps(INOUT _message text DEFAULT ''::
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/11/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -101,8 +102,8 @@ BEGIN
     _infoOnly                            := Coalesce(_infoOnly, false);
     _debugMode                           := Coalesce(_debugMode, false);
     _existingJob                         := Coalesce(_existingJob, 0);
-    _extensionScriptName                 := Coalesce(_extensionScriptName, '');
-    _extensionScriptSettingsFileOverride := Coalesce(_extensionScriptSettingsFileOverride, '');
+    _extensionScriptName                 := Trim(Coalesce(_extensionScriptName, ''));
+    _extensionScriptSettingsFileOverride := Trim(Coalesce(_extensionScriptSettingsFileOverride, ''));
     _mode                                := Trim(Coalesce(_mode, ''));
     _maxJobsToProcess                    := Coalesce(_maxJobsToProcess, 0);
 

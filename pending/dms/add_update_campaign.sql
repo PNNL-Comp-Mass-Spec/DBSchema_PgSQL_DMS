@@ -203,7 +203,7 @@ BEGIN
         -- If _fractionEMSLFunded is empty we treat it as a Null value
         ---------------------------------------------------
 
-        _fractionEMSLFunded := Coalesce(_fractionEMSLFunded, '');
+        _fractionEMSLFunded := Trim(Coalesce(_fractionEMSLFunded, ''));
         If char_length(_fractionEMSLFunded) > 0 Then
             _fractionEMSLFundedValue := public.try_cast(_fractionEMSLFunded, null::real);
 
@@ -248,7 +248,7 @@ BEGIN
         -- Validate EUS Usage Type
         ---------------------------------------------------
 
-        _eusUsageType := Coalesce(_eusUsageType, '');
+        _eusUsageType := Trim(Coalesce(_eusUsageType, ''));
 
         If char_length(_eusUsageType) = 0 Then
             _eusUsageType := 'USER_ONSITE';

@@ -54,8 +54,8 @@ BEGIN
         -- Validate the inputs
         -----------------------------------------
 
-        _datasetIDList := Coalesce(_datasetIDList, '');
-        _infoOnly := Coalesce(_infoOnly, true);
+        _datasetIDList := Trim(Coalesce(_datasetIDList, ''));
+        _infoOnly      := Coalesce(_infoOnly, true);
 
         -----------------------------------------
         -- Parse the values in _datasetIDList

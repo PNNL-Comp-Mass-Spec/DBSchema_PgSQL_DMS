@@ -51,6 +51,7 @@ CREATE OR REPLACE PROCEDURE public.get_param_file_crosstab(IN _analysistoolname 
 **          07/17/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -72,14 +73,14 @@ BEGIN
     -----------------------------------------------------------
 
     _analysisToolName          := Trim(Coalesce(_analysisToolName, 'MSGFPlus_MzML'));
-    _parameterFileFilter       := Coalesce(_parameterFileFilter, '');
+    _parameterFileFilter       := Trim(Coalesce(_parameterFileFilter, ''));
     _showValidOnly             := Coalesce(_showValidOnly, 0);
     _showModSymbol             := Coalesce(_showModSymbol, 0);
     _showModName               := Coalesce(_showModName, 1);
     _showModMass               := Coalesce(_showModMass, 1);
     _useModMassAlternativeName := Coalesce(_useModMassAlternativeName, 1);
-    _massModFilterTextColumn   := Coalesce(_massModFilterTextColumn, '');
-    _massModFilterText         := Coalesce(_massModFilterText, '');
+    _massModFilterTextColumn   := Trim(Coalesce(_massModFilterTextColumn, ''));
+    _massModFilterText         := Trim(Coalesce(_massModFilterText, ''));
     _previewSql                := Coalesce(_previewSql, false);
 
     -- Make sure _analysisToolName corresponds to an analysis tool with entries in T_Param_File_Mass_Mods

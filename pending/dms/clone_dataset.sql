@@ -62,9 +62,9 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _infoOnly := Coalesce(_infoOnly, true);
-    _dataset := Coalesce(_dataset, '');
-    _suffix := Coalesce(_suffix, '');
+    _infoOnly                 := Coalesce(_infoOnly, true);
+    _dataset                  := Trim(Coalesce(_dataset, ''));
+    _suffix                   := Trim(Coalesce(_suffix, ''));
     _createDatasetArchiveTask := Coalesce(_createDatasetArchiveTask, false);
 
     If _dataset = '' Then
@@ -117,7 +117,7 @@ BEGIN
         FROM t_requested_run_eus_users
         WHERE request_id = _requestID;
 
-        _eusUsersList := Coalesce(_eusUsersList, '');
+        _eusUsersList := Trim(Coalesce(_eusUsersList, ''));
 
         -- Lookup the information requred to create a new requested run
         -- Also look up information required for previewing the cloned dataset

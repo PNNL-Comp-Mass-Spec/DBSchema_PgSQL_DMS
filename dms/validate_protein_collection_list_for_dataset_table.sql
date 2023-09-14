@@ -45,6 +45,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_dataset_
 **          07/27/2022 mem - Switch from FileName to Collection_Name when querying pc.V_Protein_Collections_by_Organism
 **          07/26/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -73,7 +74,7 @@ BEGIN
     -- Validate the inputs
     --------------------------------------------------------------
 
-    _protCollNameList     := Coalesce(_protCollNameList,'');
+    _protCollNameList     := Trim(Coalesce(_protCollNameList,''));
     _collectionCountAdded := 0;
     _showMessages         := Coalesce(_showMessages, true);
     _showDebug            := Coalesce(_showDebug, false);

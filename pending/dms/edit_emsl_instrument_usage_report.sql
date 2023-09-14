@@ -50,19 +50,19 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _month := Coalesce(_month, 0);
-    _year := Coalesce(_year, 0);
+    _month      := Coalesce(_month, 0);
+    _year       := Coalesce(_year, 0);
 
-    _instrument := Coalesce(_instrument, '');
-    _type := Coalesce(_type, '');
-    _usage := Coalesce(_usage, '');
-    _proposal := Coalesce(_proposal, '');
-    _users := Coalesce(_users, '');
+    _instrument := Trim(Coalesce(_instrument, ''));
+    _type       := Trim(Coalesce(_type, ''));
+    _usage      := Trim(Coalesce(_usage, ''));
+    _proposal   := Trim(Coalesce(_proposal, ''));
+    _users      := Trim(Coalesce(_users, ''));
 
     -- Assure that _operator is either an integer or null
     _operator := public.try_cast(_operator, null::int);
 
-    _newValue := Coalesce(_newValue, '');
+    _newValue := Trim(Coalesce(_newValue, ''));
 
     If _instrument <> '' Then
         SELECT instrument_id

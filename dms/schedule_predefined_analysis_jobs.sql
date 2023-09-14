@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE public.schedule_predefined_analysis_jobs(IN _dataset
 **          06/15/2023 mem - Exit the procedure if _datasetName is not found in T_Dataset
 **                         - Ported to PostgreSQL
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -53,10 +54,9 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    _analysisToolNameFilter := Coalesce(_analysisToolNameFilter, '');
+    _analysisToolNameFilter     := Trim(Coalesce(_analysisToolNameFilter, ''));
     _excludeDatasetsNotReleased := Coalesce(_excludeDatasetsNotReleased, true);
-    _infoOnly := Coalesce(_infoOnly, false);
-    _returnCode := '';
+    _infoOnly                   := Coalesce(_infoOnly, false);
 
     BEGIN
 

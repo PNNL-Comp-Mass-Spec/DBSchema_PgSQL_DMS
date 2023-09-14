@@ -157,6 +157,7 @@ CREATE OR REPLACE FUNCTION sw.add_update_job_parameter_xml(_xmlparameters xml, _
 **          07/28/2023 mem - Rename temporary table to avoid conflicts with calling procedures
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -172,8 +173,8 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _section     := Coalesce(_section, '');
-    _paramName   := Coalesce(_paramName, '');
+    _section     := Trim(Coalesce(_section, ''));
+    _paramName   := Trim(Coalesce(_paramName, ''));
     _value       := Coalesce(_value, '');
     _deleteParam := Coalesce(_deleteParam, false);
     _showDebug   := Coalesce(_showDebug, false);

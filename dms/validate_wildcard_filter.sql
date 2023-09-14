@@ -19,10 +19,11 @@ CREATE OR REPLACE FUNCTION public.validate_wildcard_filter(_wildcardfilter text)
 **  Date:   06/10/2019 mem - Initial version
 **          06/24/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 BEGIN
-    _wildcardFilter := Coalesce(_wildcardFilter, '');
+    _wildcardFilter := Trim(Coalesce(_wildcardFilter, ''));
 
     -- Add wildcards if _wildcardFilter doesn't contain a percent sign
     --

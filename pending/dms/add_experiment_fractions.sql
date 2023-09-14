@@ -163,10 +163,10 @@ BEGIN
             RAISE EXCEPTION '%', _message;
         End If;
 
-        _suffix           := Coalesce(_suffix, '');
-        _nameSearch       := Coalesce(_nameSearch, '');
-        _nameReplace      := Coalesce(_nameReplace, '');
-        _addUnderscore    := Coalesce(_addUnderscore, 'Yes');
+        _suffix           := Trim(Coalesce(_suffix, ''));
+        _nameSearch       := Trim(Coalesce(_nameSearch, ''));
+        _nameReplace      := Trim(Coalesce(_nameReplace, ''));
+        _addUnderscore    := Trim(Coalesce(_addUnderscore, 'Yes'));
 
         _requestOverride  := Trim(Coalesce(_requestOverride,  'parent'));
         _internalStandard := Trim(Coalesce(_internalStandard, 'parent'));

@@ -109,6 +109,7 @@ CREATE OR REPLACE PROCEDURE public.validate_analysis_job_parameters(IN _toolname
 **          09/05/2023 mem - Add back parameter _autoRemoveNotReleasedDatasets since used by add_update_analysis_job_request
 **                         - Assure that parameters are not null
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -657,7 +658,7 @@ BEGIN
                         FROM Tmp_SettingsFile_Values
                         WHERE KeyName = 'CentroidMGF';
 
-                        _centroidSetting := Coalesce(_centroidSetting, 'False');
+                        _centroidSetting := Trim(Coalesce(_centroidSetting, 'False'));
                     End If;
 
                     If _dtaGenerator = 'DeconMSN.exe' Then
@@ -666,7 +667,7 @@ BEGIN
                         FROM Tmp_SettingsFile_Values
                         WHERE KeyName = 'CentroidDTAs';
 
-                        _centroidSetting := Coalesce(_centroidSetting, 'False');
+                        _centroidSetting := Trim(Coalesce(_centroidSetting, 'False'));
                     End If;
 
                     If _centroidSetting <> 'True' Then

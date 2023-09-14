@@ -109,6 +109,7 @@ CREATE OR REPLACE PROCEDURE cap.request_ctm_step_task(IN _processorname text, IN
 **          07/11/2023 mem - Use COUNT(TS.job) and COUNT(processor_name) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -174,10 +175,10 @@ BEGIN
         -- Validate the inputs; clear the outputs
         ---------------------------------------------------
 
-        _processorName            := Coalesce(_processorName, '');
+        _processorName            := Trim(Coalesce(_processorName, ''));
         _jobNumber                := 0;
         _infoLevel                := Coalesce(_infoLevel, 0);
-        _managerVersion           := Coalesce(_managerVersion, '');
+        _managerVersion           := Trim(Coalesce(_managerVersion, ''));
         _jobCountToPreview        := Coalesce(_jobCountToPreview, 10);
         _serverPerspectiveEnabled := Coalesce(_serverPerspectiveEnabled, 0);
 

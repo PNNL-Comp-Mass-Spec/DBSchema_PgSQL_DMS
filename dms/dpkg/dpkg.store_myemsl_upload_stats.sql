@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE dpkg.store_myemsl_upload_stats(IN _datapackageid int
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          06/27/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -55,7 +56,7 @@ BEGIN
     _fileCountUpdated  := Coalesce(_fileCountUpdated, 0);
     _bytes             := Coalesce(_bytes, 0);
     _uploadTimeSeconds := Coalesce(_uploadTimeSeconds, 0);
-    _statusURI         := Coalesce(_statusURI, '');
+    _statusURI         := Trim(Coalesce(_statusURI, ''));
     _errorCode         := Coalesce(_errorCode, 0);
     _infoOnly          := Coalesce(_infoOnly, false);
 

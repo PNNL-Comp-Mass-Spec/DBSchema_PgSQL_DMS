@@ -147,11 +147,8 @@ BEGIN
 
     _xmlLine := '';
 
-    _captureSubfolder := Coalesce(_captureSubfolder, '');
-    _lcCartConfig := Coalesce(_lcCartConfig, '');
-
-    _message := '';
-    _returnCode := '';
+    _captureSubfolder := Trim(Coalesce(_captureSubfolder, ''));
+    _lcCartConfig     := Trim(Coalesce(_lcCartConfig, ''));
 
     -- Look for '..\' at the start of _captureSubfolder
     --

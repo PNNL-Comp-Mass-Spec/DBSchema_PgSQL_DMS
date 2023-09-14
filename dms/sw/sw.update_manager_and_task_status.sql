@@ -63,6 +63,7 @@ CREATE OR REPLACE PROCEDURE sw.update_manager_and_task_status(IN _mgrname text, 
 **                         - Replaced int parameters _mgrStatusCode, _taskStatusCode, and _taskDetailStatusCode
 **                           with string parameters _mgrStatus, _taskStatus, and _taskDetailStatus
 **          08/14/2023 mem - Ported to PostgreSQL
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -75,18 +76,18 @@ BEGIN
     ---------------------------------------------------
 
     _mgrName                := Trim(Coalesce(_mgrName, ''));
-    _mgrStatus              := Coalesce(_mgrStatus, 'Stopped');
+    _mgrStatus              := Trim(Coalesce(_mgrStatus, 'Stopped'));
     _lastUpdate             := Coalesce(_lastUpdate, CURRENT_TIMESTAMP);
-    _mostRecentErrorMessage := Coalesce(_mostRecentErrorMessage, '');
+    _mostRecentErrorMessage := Trim(Coalesce(_mostRecentErrorMessage, ''));
 
-    _stepTool               := Coalesce(_stepTool, '');
-    _taskStatus             := Coalesce(_taskStatus, 'No Task');
-    _currentOperation       := Coalesce(_currentOperation, '');
+    _stepTool               := Trim(Coalesce(_stepTool, ''));
+    _taskStatus             := Trim(Coalesce(_taskStatus, 'No Task'));
+    _currentOperation       := Trim(Coalesce(_currentOperation, ''));
 
-    _taskDetailStatus       := Coalesce(_taskDetailStatus, 'No Task');
-    _dataset                := Coalesce(_dataset, '');
-    _mostRecentLogMessage   := Coalesce(_mostRecentLogMessage, '');
-    _mostRecentJobInfo      := Coalesce(_mostRecentJobInfo, '');
+    _taskDetailStatus       := Trim(Coalesce(_taskDetailStatus, 'No Task'));
+    _dataset                := Trim(Coalesce(_dataset, ''));
+    _mostRecentLogMessage   := Trim(Coalesce(_mostRecentLogMessage, ''));
+    _mostRecentJobInfo      := Trim(Coalesce(_mostRecentJobInfo, ''));
     _spectrumCount          := Coalesce(_spectrumCount, 0);
 
     If char_length(_mgrName) = 0 Then

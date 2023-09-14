@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE public.populate_param_file_mod_info_table(IN _showmo
 **          07/17/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -65,8 +66,8 @@ BEGIN
         _showModMass   := 0;
     End If;
 
-    _massModFilterTextColumn := Coalesce(_massModFilterTextColumn, '');
-    _massModFilterText       := Coalesce(_massModFilterText, '');
+    _massModFilterTextColumn := Trim(Coalesce(_massModFilterTextColumn, ''));
+    _massModFilterText       := Trim(Coalesce(_massModFilterText, ''));
     _previewSql              := Coalesce(_previewSql, false);
 
     _massModFilterSql := '';

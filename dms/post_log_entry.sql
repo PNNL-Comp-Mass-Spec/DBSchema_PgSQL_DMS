@@ -42,6 +42,7 @@ CREATE OR REPLACE PROCEDURE public.post_log_entry(IN _type text, IN _message tex
 **          07/11/2023 mem - Use COUNT(entry_id) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
 **          09/11/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -60,7 +61,7 @@ BEGIN
     -- Validate the inputs
     ------------------------------------------------
 
-    _targetSchema := Coalesce(_targetSchema, '');
+    _targetSchema := Trim(Coalesce(_targetSchema, ''));
 
     If (char_length(_targetSchema) = 0) Then
         _targetSchema := 'public';
@@ -76,9 +77,9 @@ BEGIN
         _targetTableWithSchema := 'public.t_log_entries';
     End If;
 
-    _type                       := Coalesce(_type, 'Normal');
-    _message                    := Coalesce(_message, '');
-    _postedBy                   := Coalesce(_postedBy, 'na');
+    _type                       := Trim(Coalesce(_type, 'Normal'));
+    _message                    := Trim(Coalesce(_message, ''));
+    _postedBy                   := Trim(Coalesce(_postedBy, 'na'));
     _duplicateEntryHoldoffHours := Coalesce(_duplicateEntryHoldoffHours, 0);
     _ignoreErrors               := Coalesce(_ignoreErrors, false);
 

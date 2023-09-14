@@ -87,7 +87,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _campaignName := Coalesce(_campaignName, '');
+    _campaignName := Trim(Coalesce(_campaignName, ''));
 
     ---------------------------------------------------
     -- Make new research team if ID is 0

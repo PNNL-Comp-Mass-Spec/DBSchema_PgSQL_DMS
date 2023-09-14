@@ -243,9 +243,9 @@ BEGIN
         -- Assure that _plexExperimentIdOrName has Experiment ID
         _plexExperimentIdOrName := _plexExperimentId;
 
-        _plexMembers := Coalesce(_plexMembers, '');
+        _plexMembers := Trim(Coalesce(_plexMembers, ''));
         _mode        := Trim(Lower(Coalesce(_mode, 'check_add')));
-        _callingUser := Coalesce(_callingUser, '');
+        _callingUser := Trim(Coalesce(_callingUser, ''));
 
         ---------------------------------------------------
         -- Lookup the label associated with _plexExperimentId

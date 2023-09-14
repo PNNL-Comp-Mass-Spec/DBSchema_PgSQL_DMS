@@ -33,6 +33,7 @@ CREATE OR REPLACE FUNCTION public.make_factor_crosstab_sql(_collist text, _viewn
 **          11/11/2022 mem - Exclude unnamed factors when querying T_Factor
 **          07/13/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -101,10 +102,10 @@ BEGIN
            GROUP BY Src.name) GroupQ;
 
     -- This will have a comma separated list of factor names, for example: 'BioRep, Sample, Time'
-    _factorNameList := Coalesce(_factorNameList, '');
+    _factorNameList := Trim(Coalesce(_factorNameList, ''));
 
     -- This will have a comma separated list of factor names and the data type to use, for example: 'BioRep text, Sample text, Time text'
-    _factorNameAndTypeList := Coalesce(_factorNameAndTypeList, '');
+    _factorNameAndTypeList := Trim(Coalesce(_factorNameAndTypeList, ''));
 
     If _factorNameList <> '' Then
         -- Create the SQL for displaying the factors as a crosstab (aka PivotTable)

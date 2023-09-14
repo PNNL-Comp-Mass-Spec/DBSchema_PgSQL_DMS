@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE cap.store_myemsl_upload_stats(IN _job integer, IN _d
 **          06/15/2017 mem - Add support for status URLs of the form https://ingestdms.my.emsl.pnl.gov/get_state?job_id=1305088
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          06/27/2023 mem - Ported to PostgreSQL
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -61,15 +62,15 @@ BEGIN
 
     _job               := Coalesce(_job, 0);
     _datasetID         := Coalesce(_datasetID, 0);
-    _subfolder         := Coalesce(_subfolder, '');
+    _subfolder         := Trim(Coalesce(_subfolder, ''));
     _fileCountNew      := Coalesce(_fileCountNew, 0);
     _fileCountUpdated  := Coalesce(_fileCountUpdated, 0);
     _bytes             := Coalesce(_bytes, 0);
     _uploadTimeSeconds := Coalesce(_uploadTimeSeconds, 0);
-    _statusURI         := Coalesce(_statusURI, '');
+    _statusURI         := Trim(Coalesce(_statusURI, ''));
     _errorCode         := Coalesce(_errorCode, 0);
     _usedTestInstance  := Coalesce(_usedTestInstance, 0);
-    _eusProposalID     := Coalesce(_eusProposalID, '');
+    _eusProposalID     := Trim(Coalesce(_eusProposalID, ''));
     _eusUploaderID     := Coalesce(_eusUploaderID, 0);
     _infoOnly          := Coalesce(_infoOnly, false);
 

@@ -40,6 +40,7 @@ CREATE OR REPLACE PROCEDURE public.validate_requested_run_batch_params(IN _batch
 **                         - Validate instrument group name
 **                         - Use citext for _locked
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -57,9 +58,8 @@ BEGIN
     _returnCode := '';
 
     BEGIN
-        _name := Trim(Coalesce(_name, ''));
-        _description := Coalesce(_description, '');
-        _message := '';
+        _name        := Trim(Coalesce(_name, ''));
+        _description := Trim(Coalesce(_description, ''));
 
         If char_length(_name) < 1 Then
             _message := 'Must define a batch name';

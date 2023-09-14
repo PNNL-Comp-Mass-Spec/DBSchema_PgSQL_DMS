@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE sw.remove_old_jobs(IN _intervaldaysforsuccess intege
 **                         - Also look for jobs with state 14 = Failed, Ignore Job Step States
 **          08/08/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -60,7 +61,7 @@ BEGIN
         _intervalDaysForFail := 0;
     End If;
 
-    _jobListOverride        := Coalesce(_jobListOverride, '');
+    _jobListOverride        := Trim(Coalesce(_jobListOverride, ''));
     _maxJobsToProcess       := Coalesce(_maxJobsToProcess, 25000);
     _logDeletions           := Coalesce(_logDeletions, false);
     _logToConsoleOnly       := Coalesce(_logToConsoleOnly, false);

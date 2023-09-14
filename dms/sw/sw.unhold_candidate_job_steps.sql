@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE sw.unhold_candidate_job_steps(IN _steptool text DEFA
 **          08/12/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -41,7 +42,7 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------------------
 
-    _stepTool              := Coalesce(_stepTool, '');
+    _stepTool              := Trim(Coalesce(_stepTool, ''));
     _targetCandidates      := Coalesce(_targetCandidates, 15);
     _maxCandidatesPlusJobs := Coalesce(_maxCandidatesPlusJobs, 30);
 

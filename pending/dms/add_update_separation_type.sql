@@ -51,10 +51,10 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _id := Coalesce(_id, 0);
-    _sepTypeName := Coalesce(_sepTypeName, '');
-    _state := Coalesce(_state, 'Active');
-    _mode := Trim(Lower(Coalesce(_mode, '')));
+    _id          := Coalesce(_id, 0);
+    _sepTypeName := Trim(Coalesce(_sepTypeName, ''));
+    _state       := Trim(Coalesce(_state, 'Active'));
+    _mode        := Trim(Lower(Coalesce(_mode, '')));
 
     If _state = '' Then
         _state := 'Active';

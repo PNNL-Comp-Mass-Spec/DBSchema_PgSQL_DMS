@@ -32,6 +32,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_table(_job integer, _dataset text,
 **          06/07/2023 mem - Rename temp table
 **          06/20/2023 mem - Use citext for columns in the output table
 **          06/21/2023 mem - Store instrument raw_data_type in the parameter table
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -215,7 +216,7 @@ BEGIN
          ) DirectoryQ
     WHERE Storage_Vol_External = _storageVolExternal;
 
-    _transferDirectoryPath := Coalesce(_transferDirectoryPath, '');
+    _transferDirectoryPath := Trim(Coalesce(_transferDirectoryPath, ''));
 
     INSERT INTO Tmp_Param_Tab (Section, Name, Value)
     VALUES ('JobParameters', 'TransferDirectoryPath', _transferDirectoryPath);

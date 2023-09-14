@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION public.resolve_table_name(_tabletofind text) RETURNS 
 **  Date:   04/01/2022 mem - Initial Version
 **          05/22/2023 mem - Capitalize reserved words
 **          05/30/2023 mem - Use format() for string concatenation
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -32,7 +33,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _tableToFind := Coalesce(_tableToFind, '');
+    _tableToFind := Trim(Coalesce(_tableToFind, ''));
 
     If _tableToFind Like '%.%' Then
         -- Includes schema and name

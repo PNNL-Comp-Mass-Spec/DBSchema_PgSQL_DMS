@@ -29,6 +29,7 @@ CREATE OR REPLACE FUNCTION public.get_aux_info_entity_id_by_name(_targettypename
 **  Date:   11/29/2022 mem - Initial release
 **          05/31/2023 mem - Use format() for string concatenation
 **          09/07/2023 mem - Align assignment statements
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -39,7 +40,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _targetTypeName := Coalesce(_targetTypeName, '');
+    _targetTypeName := Trim(Coalesce(_targetTypeName, ''));
     _showDebug      := Coalesce(_showDebug, false);
 
     ---------------------------------------------------

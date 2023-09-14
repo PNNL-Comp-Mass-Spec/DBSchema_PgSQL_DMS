@@ -45,6 +45,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _s
 **          07/19/2023 mem - Add missing variable declaration
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -88,8 +89,8 @@ BEGIN
     ---------------------------------------------------
 
     _job         := Coalesce(_job, 0);
-    _section     := Coalesce(_section, '');
-    _paramName   := Coalesce(_paramName, '');
+    _section     := Trim(Coalesce(_section, ''));
+    _paramName   := Trim(Coalesce(_paramName, ''));
     _value       := Coalesce(_value, '');
     _deleteParam := Coalesce(_deleteParam, false);
     _infoOnly    := Coalesce(_infoOnly, false);

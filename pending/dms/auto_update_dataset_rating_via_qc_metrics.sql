@@ -46,12 +46,14 @@ BEGIN
     ----------------------------------------------
 
     -- Do not allow _campaignName to be blank
-    _campaignName := Coalesce(_campaignName, '');
+    _campaignName := Trim(Coalesce(_campaignName, ''));
+
     If _campaignName = '' Then
         _campaignName := 'QC-Shew-Standard';
     End If;
 
-    _experimentExclusion := Coalesce(_experimentExclusion, '');
+    _experimentExclusion := Trim(Coalesce(_experimentExclusion, ''));
+
     If _experimentExclusion = '' Then
         _experimentExclusion := 'FakeNonExistentExperiment';
     End If;

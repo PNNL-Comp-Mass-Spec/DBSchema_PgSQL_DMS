@@ -61,6 +61,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_storage(IN _path text, IN _volname
 **          06/07/2023 mem - Add Order By to string_agg()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          09/07/2023 mem - Update warning messages
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -156,7 +157,7 @@ BEGIN
             RETURN;
         End If;
 
-        _urlDomain := Coalesce(_urlDomain, '');
+        _urlDomain := Trim(Coalesce(_urlDomain, ''));
 
         ---------------------------------------------------
         -- Resolve machine name

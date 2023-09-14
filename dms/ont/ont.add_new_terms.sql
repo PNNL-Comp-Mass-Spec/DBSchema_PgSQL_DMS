@@ -33,7 +33,8 @@ CREATE OR REPLACE FUNCTION ont.add_new_terms(_ontologyname public.citext DEFAULT
 **          05/30/2023 mem - Use format() for string concatenation
 **          09/01/2023 mem - Remove unnecessary cast to citext for string constants
 **          09/07/2023 mem - Align assignment statements
-***
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**
 *****************************************************/
 DECLARE
     _warningMessage text := '';
@@ -55,7 +56,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _ontologyName := Coalesce(_ontologyName, '');
+    _ontologyName := Trim(Coalesce(_ontologyName, ''));
     _infoOnly     := Coalesce(_infoOnly, false);
     _previewsql   := Coalesce(_previewSql, false);
 

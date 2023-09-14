@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE sw.lookup_source_job_from_special_processing_text(IN
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/11/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -69,8 +70,8 @@ BEGIN
     -- Validate the inputs
     ------------------------------------------------
 
-    _specialProcessingText := Coalesce(_specialProcessingText, '');
-    _tagName               := Coalesce(_tagName, 'SourceJob');
+    _specialProcessingText := Trim(Coalesce(_specialProcessingText, ''));
+    _tagName               := Trim(Coalesce(_tagName, 'SourceJob'));
     _previewSql            := Coalesce(_previewSql, false);
 
     ------------------------------------------------

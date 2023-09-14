@@ -60,8 +60,8 @@ BEGIN
     -- Validate the inputs
     --------------------------------------------
 
-    _oldUserName := Coalesce(_oldUserName, '');
-    _newUserName := Coalesce(_newUserName, '');
+    _oldUserName := Trim(Coalesce(_oldUserName, ''));
+    _newUserName := Trim(Coalesce(_newUserName, ''));
 
     If _oldUserName = '' Then
         _message := '_oldUserName is empty; unable to continue';

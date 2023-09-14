@@ -84,6 +84,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_local_job_in_broker(INOUT _job integer
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
 **                         - Include schema name when calling function
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -116,7 +117,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _datasetName      := Coalesce(_datasetName, 'na');
+    _datasetName      := Trim(Coalesce(_datasetName, 'na'));
     _dataPackageID    := Coalesce(_dataPackageID, 0);
     _debugMode        := Coalesce(_debugMode, false);
     _logDebugMessages := Coalesce(_logDebugMessages, false);

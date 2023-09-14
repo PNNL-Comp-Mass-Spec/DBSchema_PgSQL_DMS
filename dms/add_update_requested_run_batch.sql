@@ -67,6 +67,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **                         - Use new column name, owner_user_id
 **          07/11/2023 mem - Use COUNT(batch_id) instead of COUNT(*)
 **          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -154,8 +155,8 @@ BEGIN
             End If;
         End If;
 
-        _name := Trim(Replace(Replace(_name, chr(10), ' '), chr(9), ' '));
-        _description := Coalesce(_description, '');
+        _name        := Trim(Replace(Replace(_name, chr(10), ' '), chr(9), ' '));
+        _description := Trim(Coalesce(_description, ''));
 
         If char_length(Coalesce(_requestedCompletionDate, '')) = 0 Then
             _requestedCompletionTimestamp := null;

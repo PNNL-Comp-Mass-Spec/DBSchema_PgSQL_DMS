@@ -59,11 +59,11 @@ BEGIN
     -- Validate the inputs
     ----------------------------------------------------------
 
-    _infoOnly := Coalesce(_infoOnly, false);
-    _updateAll := Coalesce(_updateAll, false);
-    _onlyShowChanged := Coalesce(_onlyShowChanged, false);
+    _infoOnly               := Coalesce(_infoOnly, false);
+    _updateAll              := Coalesce(_updateAll, false);
+    _onlyShowChanged        := Coalesce(_onlyShowChanged, false);
 
-    _explicitChargeCodeList := Coalesce(_explicitChargeCodeList, '');
+    _explicitChargeCodeList := Trim(Coalesce(_explicitChargeCodeList, ''));
 
     -- Create a temporary table to keep track of WPs used within the last 12 months
     CREATE TEMP TABLE Tmp_WPsInUseLast3Years (

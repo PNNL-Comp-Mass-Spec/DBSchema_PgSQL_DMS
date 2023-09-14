@@ -126,8 +126,8 @@ BEGIN
         _logEntryMonthsToRetain := 1;
     End If;
 
-    _datasetSkipList    := Coalesce(_datasetSkipList, '');
-    _experimentSkipList := Coalesce(_experimentSkipList, '');
+    _datasetSkipList    := Trim(Coalesce(_datasetSkipList, ''));
+    _experimentSkipList := Trim(Coalesce(_experimentSkipList, ''));
 
     _deleteJobs         := Coalesce(_deleteJobs, true);
     _deleteDatasets     := Coalesce(_deleteDatasets, true);

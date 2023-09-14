@@ -18,12 +18,13 @@ CREATE OR REPLACE FUNCTION dpkg.make_package_folder_name(_datapackageid integer,
 **          06/25/2022 mem - Ported to PostgreSQL
 **          04/27/2023 mem - Rename function to use "folder" instead of "directory"
 **          05/30/2023 mem - Use format() for string concatenation
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
     _result text;
 BEGIN
-    _packageName := Coalesce(_packageName, '');
+    _packageName := Trim(Coalesce(_packageName, ''));
 
     -- Replace spaces with an underscore
     _result := format('%s_%s', _dataPackageID, Replace(Substring(_packageName, 1, 96), ' ', '_'));

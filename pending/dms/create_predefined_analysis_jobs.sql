@@ -76,10 +76,10 @@ BEGIN
     _returnCode := '';
     _jobsCreated := 0;
 
-    _analysisToolNameFilter := Coalesce(_analysisToolNameFilter, '');
+    _analysisToolNameFilter     := Trim(Coalesce(_analysisToolNameFilter, ''));
     _excludeDatasetsNotReleased := Coalesce(_excludeDatasetsNotReleased, true);
-    _preventDuplicateJobs := Coalesce(_preventDuplicateJobs, true);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _preventDuplicateJobs       := Coalesce(_preventDuplicateJobs, true);
+    _infoOnly                   := Coalesce(_infoOnly, false);
 
     BEGIN
 

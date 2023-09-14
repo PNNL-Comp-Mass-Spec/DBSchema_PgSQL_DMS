@@ -103,7 +103,7 @@ BEGIN
         _callingUser := public.get_user_login_without_domain('');
     End If;
 
-    _instrument := Coalesce(_instrument, '');
+    _instrument := Trim(Coalesce(_instrument, ''));
 
     If _instrument <> '' Then
         SELECT instrument_id

@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE pc.add_output_file_archive_entry(IN _proteincollecti
 **                         - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          09/11/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -63,14 +64,14 @@ BEGIN
     ---------------------------------------------------
 
     _proteinCollectionID     := Coalesce(_proteinCollectionID, 0);
-    _crc32Authentication     := Coalesce(_crc32Authentication, '');
+    _crc32Authentication     := Trim(Coalesce(_crc32Authentication, ''));
 
     _fileSize                := Coalesce(_fileSize, 0);
     _proteinCount            := Coalesce(_proteinCount, 0);
-    _archivedFileType        := Coalesce(_archivedFileType, '');
-    _creationOptions         := Coalesce(_creationOptions, '');
-    _proteinCollectionString := Coalesce(_proteinCollectionString, '');
-    _collectionStringHash    := Coalesce(_collectionStringHash, '');
+    _archivedFileType        := Trim(Coalesce(_archivedFileType, ''));
+    _creationOptions         := Trim(Coalesce(_creationOptions, ''));
+    _proteinCollectionString := Trim(Coalesce(_proteinCollectionString, ''));
+    _collectionStringHash    := Trim(Coalesce(_collectionStringHash, ''));
     _showDebug               := Coalesce(_showDebug, false);
     _archivedFilePath        := Trim(Coalesce(_archivedFilePath, ''));
 

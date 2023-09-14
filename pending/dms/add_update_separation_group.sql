@@ -71,12 +71,11 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _comment := Coalesce(_comment, '');
-        _active := Coalesce(_active, 0);
+        _comment           := Trim(Coalesce(_comment, ''));
+        _active            := Coalesce(_active, 0);
         _samplePrepVisible := Coalesce(_samplePrepVisible, 0);
-        _fractionCount := Coalesce(_fractionCount, 0);
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
+        _fractionCount     := Coalesce(_fractionCount, 0);
+        _mode              := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
         -- Is entry already in database? (only applies to updates)

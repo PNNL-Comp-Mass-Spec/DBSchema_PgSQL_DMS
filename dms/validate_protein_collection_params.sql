@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_params(IN _toolna
 **          07/26/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -48,7 +49,7 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------------------
 
-    _ownerUsername := Coalesce(_ownerUsername, '');
+    _ownerUsername := Trim(Coalesce(_ownerUsername, ''));
     _debugMode     := Coalesce(_debugMode, false);
 
     ---------------------------------------------------

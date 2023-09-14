@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE mc.report_manager_error_cleanup(IN _managername text
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **          05/30/2023 mem - Use format() for string concatenation
 **          09/07/2023 mem - Align assignment statements
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -52,9 +53,9 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _managerName := Coalesce(_managerName, '');
+    _managerName := Trim(Coalesce(_managerName, ''));
     _state       := Coalesce(_state, 0);
-    _failureMsg  := Coalesce(_failureMsg, '');
+    _failureMsg  := Trim(Coalesce(_failureMsg, ''));
 
     ---------------------------------------------------
     -- Confirm that the manager name is valid

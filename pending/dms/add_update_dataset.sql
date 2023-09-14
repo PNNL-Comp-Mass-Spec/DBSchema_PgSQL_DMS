@@ -321,7 +321,7 @@ BEGIN
             RAISE EXCEPTION 'Instrument name must be specified';
         End If;
 
-        _msType := Coalesce(_msType, '');
+        _msType := Trim(Coalesce(_msType, ''));
 
         -- Allow _msType to be blank if _mode is 'add' or 'bad' but not if check_add or add_trigger or update
         If _msType = '' And Not _mode::citext In ('add', 'bad') Then
@@ -360,7 +360,7 @@ BEGIN
         _captureSubfolder      := Trim(Coalesce(_captureSubfolder, ''));
         _lcCartConfig          := Trim(Coalesce(_lcCartConfig, ''));
         _logDebugMessages      := Coalesce(_logDebugMessages, false);
-        _callingUser           := Coalesce(_callingUser, '');
+        _callingUser           := Trim(Coalesce(_callingUser, ''));
 
         If _captureSubfolder SIMILAR TO '\\%' Or _captureSubfolder::citext SIMILAR TO '[A-Z]:\%' Then
             RAISE EXCEPTION 'Capture subfolder should be a subdirectory name below the source share for this instrument; it is currently a full path';

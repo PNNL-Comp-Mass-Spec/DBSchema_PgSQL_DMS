@@ -87,6 +87,13 @@ BEGIN
     _returnCode := '';
 
     ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
+    _datasetName   := Trim(Coalesce(_datasetName, ''));
+    _retainHistory := Coalesce(_retainHistory, false);
+
+    ---------------------------------------------------
     -- Get datasetID
     ---------------------------------------------------
 

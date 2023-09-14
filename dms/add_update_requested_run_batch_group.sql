@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch_group(INOUT _i
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          09/07/2023 mem - Align assignment statements
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -77,9 +78,9 @@ BEGIN
 
         _id                    := Coalesce(_id, 0);
         _name                  := Trim(Replace(Replace(_name, chr(10), ' '), chr(9), ' '));
-        _description           := Coalesce(_description, '');
-        _requestedRunBatchList := Coalesce(_requestedRunBatchList, '');
-        _ownerUsername         := Coalesce(_ownerUsername, '');
+        _description           := Trim(Coalesce(_description, ''));
+        _requestedRunBatchList := Trim(Coalesce(_requestedRunBatchList, ''));
+        _ownerUsername         := Trim(Coalesce(_ownerUsername, ''));
         _mode                  := Trim(Lower(Coalesce(_mode, '')));
 
         If char_length(_name) < 1 Then

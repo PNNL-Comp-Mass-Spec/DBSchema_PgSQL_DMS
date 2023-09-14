@@ -38,10 +38,10 @@ DECLARE
     _firstInvalidUser text := '';
 BEGIN
 
-    _requestName := Coalesce(_requestName, '(unnamed request)');
-    _callingProcedure := Coalesce(_callingProcedure, '(unknown caller)');
-    _requestedPersonnel := Coalesce(_requestedPersonnel, '');
-    _assignedPersonnel := Coalesce(_assignedPersonnel, '');
+    _requestName                    := Trim(Coalesce(_requestName, '(unnamed request)'));
+    _callingProcedure               := Trim(Coalesce(_callingProcedure, '(unknown caller)'));
+    _requestedPersonnel             := Trim(Coalesce(_requestedPersonnel, ''));
+    _assignedPersonnel              := Trim(Coalesce(_assignedPersonnel, ''));
     _requireValidRequestedPersonnel := Coalesce(_requireValidRequestedPersonnel, true);
 
     _message := '';

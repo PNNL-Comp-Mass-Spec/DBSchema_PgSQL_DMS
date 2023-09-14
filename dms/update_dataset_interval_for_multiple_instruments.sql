@@ -47,6 +47,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_interval_for_multiple_instrume
 **                         - Change "months to update" variable to an integer
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -121,7 +122,7 @@ BEGIN
     _updateEMSLInstrumentUsage := Coalesce(_updateEMSLInstrumentUsage, true);
     _infoOnly                  := Coalesce(_infoOnly, false);
     _previewProcedureCall      := Coalesce(_previewProcedureCall, false);
-    _instrumentsToProcess      := Coalesce(_instrumentsToProcess, '');
+    _instrumentsToProcess      := Trim(Coalesce(_instrumentsToProcess, ''));
 
     ---------------------------------------------------
     -- Set up date interval and key values

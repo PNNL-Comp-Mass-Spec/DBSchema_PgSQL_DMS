@@ -107,7 +107,7 @@ BEGIN
             RAISE EXCEPTION '%', _msg;
         End If;
 
-        _eusPropImpDate := Coalesce(_eusPropImpDate, '');
+        _eusPropImpDate := Trim(Coalesce(_eusPropImpDate, ''));
 
         If char_length(_eusPropImpDate) < 1 Then
             _eusPropImpDate := public.timestamp_text(CURRENT_TIMESTAMP);

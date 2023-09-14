@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION public.get_aux_info_target_table_info(_targettypename
 **  Date:   11/29/2022 mem - Initial release
 **          03/22/2023 mem - Use lowercase strings in comparisons
 **          09/07/2023 mem - Align assignment statements
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -35,7 +36,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _targetTypeName := Coalesce(_targetTypeName, '');
+    _targetTypeName := Trim(Coalesce(_targetTypeName, ''));
 
     ---------------------------------------------------
     -- Resolve target name to target ID using the entity's data table, as defined in t_aux_info_target

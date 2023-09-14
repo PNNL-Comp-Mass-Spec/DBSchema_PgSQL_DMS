@@ -28,7 +28,7 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    _workPackage := Coalesce(_workPackage, '');
+    _workPackage := Trim(Coalesce(_workPackage, ''));
     _allowNoneWP := Coalesce(_allowNoneWP, false);
 
     If Coalesce(_workPackage, '') = '' Then

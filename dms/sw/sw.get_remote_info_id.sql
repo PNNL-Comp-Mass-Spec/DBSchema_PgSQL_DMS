@@ -20,6 +20,7 @@ CREATE OR REPLACE FUNCTION sw.get_remote_info_id(_remoteinfo text DEFAULT ''::te
 **  Auth:   mem
 **  Date:   05/18/2017 mem - Initial release
 **          08/08/2023 mem - Ported to PostgreSQL
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -31,8 +32,8 @@ DECLARE
     _previewData record;
     _infoData text;
 BEGIN
-    _remoteInfo := Coalesce(_remoteInfo, '');
-    _infoOnly := Coalesce(_infoOnly, false);
+    _remoteInfo := Trim(Coalesce(_remoteInfo, ''));
+    _infoOnly  := Coalesce(_infoOnly, false);
 
     If Coalesce(_remoteInfo, '') = '' Then
         RETURN 0;

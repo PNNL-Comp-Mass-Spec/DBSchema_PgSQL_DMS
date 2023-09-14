@@ -25,6 +25,7 @@ CREATE OR REPLACE FUNCTION public.get_spectral_library_settings_hash(_libraryid 
 **          04/17/2023 mem - Use 'na' for _organismDBFile if _proteinCollectionList is not 'na' or an empty string
 **          05/22/2023 mem - Capitalize reserved word
 **          05/30/2023 mem - Use format() for string concatenation
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -66,12 +67,12 @@ BEGIN
             RETURN '';
         End If;
     Else
-        _proteinCollectionList    := Coalesce(_proteinCollectionList, '');
-        _organismDBFile           := Coalesce(_organismDBFile, '');
+        _proteinCollectionList    := Trim(Coalesce(_proteinCollectionList, ''));
+        _organismDBFile           := Trim(Coalesce(_organismDBFile, ''));
         _fragmentIonMzMin         := Coalesce(_fragmentIonMzMin, 0);
         _fragmentIonMzMax         := Coalesce(_fragmentIonMzMax, 0);
         _trimNTerminalMet         := Coalesce(_trimNTerminalMet, false);
-        _cleavageSpecificity      := Coalesce(_cleavageSpecificity, '');
+        _cleavageSpecificity      := Trim(Coalesce(_cleavageSpecificity, ''));
         _missedCleavages          := Coalesce(_missedCleavages, 0);
         _peptideLengthMin         := Coalesce(_peptideLengthMin, 0);
         _peptideLengthMax         := Coalesce(_peptideLengthMax, 0);
@@ -80,8 +81,8 @@ BEGIN
         _precursorChargeMin       := Coalesce(_precursorChargeMin, 0);
         _precursorChargeMax       := Coalesce(_precursorChargeMax, 0);
         _staticCysCarbamidomethyl := Coalesce(_staticCysCarbamidomethyl, false);
-        _staticMods               := Coalesce(_staticMods, '');
-        _dynamicMods              := Coalesce(_dynamicMods, '');
+        _staticMods               := Trim(Coalesce(_staticMods, ''));
+        _dynamicMods              := Trim(Coalesce(_dynamicMods, ''));
         _maxDynamicMods           := Coalesce(_maxDynamicMods, 0);
 
         If char_length(_proteinCollectionList) = 0 Then

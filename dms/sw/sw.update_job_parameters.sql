@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE sw.update_job_parameters(IN _job integer, IN _infoon
 **          01/11/2012 mem - Updated to support _xmlParameters being null, which will be the case for a job created directly in the pipeline database
 **          07/25/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -49,7 +50,7 @@ BEGIN
     End If;
 
     _infoOnly             := Coalesce(_infoOnly, true);
-    _settingsFileOverride := Coalesce(_settingsFileOverride, '');
+    _settingsFileOverride := Trim(Coalesce(_settingsFileOverride, ''));
 
     -- Make sure _job exists in sw.t_jobs
     If Not Exists (SELECT job FROM sw.t_jobs WHERE job = _job) Then

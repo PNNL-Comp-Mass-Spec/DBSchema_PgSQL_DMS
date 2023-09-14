@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_capture_scripts(IN _script text, IN _
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          06/21/2023 mem - Assure that _enabled is uppercase
 **          09/07/2023 mem - Update warning messages
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -86,7 +87,7 @@ BEGIN
         _description := Trim(Coalesce(_description, ''));
         _enabled     := Trim(Upper(Coalesce(_enabled, 'Y')));
         _mode        := Trim(Lower(Coalesce(_mode, '')));
-        _callingUser := Coalesce(_callingUser, '');
+        _callingUser := Trim(Coalesce(_callingUser, ''));
 
         If _description = '' Then
             _message := 'Description must be specified';

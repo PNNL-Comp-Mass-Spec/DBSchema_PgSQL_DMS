@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_run_interval(IN _id integer, IN _c
 **          05/03/2019 mem - Update comments
 **          02/15/2022 mem - Update error messages and rename variables
 **          08/30/2023 mem - Ported to PostgreSQL
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -84,10 +85,14 @@ BEGIN
         ---------------------------------------------------
 
         _id           := Coalesce(_id, -1);
+        _mode         := Trim(Lower(Coalesce(_mode, '')));
+        _callingUser  := Trim(Coalesce(_callingUser, ''));
         _showDebug    := Coalesce(_showDebug, false);
         _invalidUsage := 0;
 
-        _callingUser  := Coalesce(_callingUser, '');
+        If Not _comment Is Null Then
+            _comment := Trim(_comment);
+        End If;
 
         If _callingUser = '' Then
             _callingUser := session_user;
@@ -141,8 +146,6 @@ BEGIN
 
         _logErrors := true;
 
-        _mode := Trim(Lower(Coalesce(_mode, '')));
-
         ---------------------------------------------------
         -- Is entry already in database? (only applies to updates)
         ---------------------------------------------------
@@ -167,10 +170,10 @@ BEGIN
         If _mode = 'update' Then
 
             UPDATE t_run_interval
-            SET comment = _comment,
-                usage = _usageXML,
+            SET comment       = _comment,     -- store _comment here, not _cleanedComment; note that _comment is allowed to be null
+                usage         = _usageXML,
                 last_affected = CURRENT_TIMESTAMP,
-                entered_by = _callingUser
+                entered_by    = _callingUser
             WHERE dataset_id = _id;
 
         End If;

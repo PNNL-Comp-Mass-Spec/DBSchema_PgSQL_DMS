@@ -39,6 +39,7 @@ CREATE OR REPLACE FUNCTION sw.copy_runtime_metadata_from_history(_joblist text, 
 **          01/04/2021 mem - Add support for PRIDE_Converter jobs
 **          08/01/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -57,7 +58,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _jobList  := Coalesce(_jobList, '');
+    _jobList  := Trim(Coalesce(_jobList, ''));
     _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------

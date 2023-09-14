@@ -86,24 +86,27 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _campaign := Coalesce(_campaign, '');
+        _campaign := Trim(Coalesce(_campaign, ''));
+
         If _campaign = '' Then
             RAISE EXCEPTION 'Campaign name must be specified';
         End If;
 
-        _containerList := Coalesce(_containerList, '');
+        _containerList := Trim(Coalesce(_containerList, ''));
+
         If _containerList = '' Then
             RAISE EXCEPTION 'Container list must be specified';
         End If;
 
-        _receivedBy := Coalesce(_receivedBy, '');
+        _receivedBy := Trim(Coalesce(_receivedBy, ''));
+
         If _receivedBy = '' Then
             RAISE EXCEPTION 'Received by name must be specified';
         End If;
 
-        _newContainerComment := Coalesce(_newContainerComment, '');
+        _newContainerComment := Trim(Coalesce(_newContainerComment, ''));
 
-        _description := Coalesce(_description, '');
+        _description := Trim(Coalesce(_description, ''));
         If _description = '' Then
             RAISE EXCEPTION 'Description must be specified';
         End If;

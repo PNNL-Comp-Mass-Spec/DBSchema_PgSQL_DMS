@@ -234,9 +234,8 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _instrumentGroup := Coalesce(_instrumentGroup, '');
-
-        _datasetType := Coalesce(_datasetType, '');
+        _instrumentGroup := Trim(Coalesce(_instrumentGroup, ''));
+        _datasetType     := Trim(Coalesce(_datasetType, ''));
 
         If char_length(Coalesce(_estimatedMSRuns, '')) < 1 Then
             RAISE EXCEPTION 'Estimated number of MS runs not specified; it should be 0 or a positive number';

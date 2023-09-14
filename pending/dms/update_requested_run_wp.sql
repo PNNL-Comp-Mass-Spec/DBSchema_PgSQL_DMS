@@ -96,10 +96,9 @@ BEGIN
 
         _oldWorkPackage := public.trim_whitespace(_oldWorkPackage);
         _newWorkPackage := public.trim_whitespace(_newWorkPackage);
-        _requestIdList := Coalesce(_requestIdList, '');
-        _message := '';
-        _callingUser := Coalesce(_callingUser, '');
-        _infoOnly := Coalesce(_infoOnly, false);
+        _requestIdList  := Trim(Coalesce(_requestIdList, ''));
+        _callingUser    := Trim(Coalesce(_callingUser, ''));
+        _infoOnly       := Coalesce(_infoOnly, false);
 
         If _callingUser = '' Then
             _callingUser := session_user;

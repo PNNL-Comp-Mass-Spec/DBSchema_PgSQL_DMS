@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE sw.update_input_folder_using_special_processing_para
 **          07/13/2012 mem - Now determining job parameters with additional items if SourceJob2 is defined: SourceJob2, SourceJob2Dataset, SourceJob2FolderPath, and SourceJob2FolderPathArchive
 **          07/25/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -42,7 +43,7 @@ DECLARE
     _previewData record;
     _infoData text;
 BEGIN
-    _message := Coalesce(_message, '');
+    _message := Trim(Coalesce(_message, ''));
     _returnCode := '';
 
     CREATE TEMP TABLE Tmp_JobList (

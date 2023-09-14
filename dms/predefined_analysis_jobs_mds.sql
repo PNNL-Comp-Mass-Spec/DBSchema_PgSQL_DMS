@@ -35,14 +35,22 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs_mds(_datasetlist text
 **          01/26/2023 mem - Include Predefine_ID in the query results
 **          01/27/2023 mem - Show legacy FASTA file name after the protein collection info
 **          02/08/2023 mem - Switch from PRN to username
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
     _message text;
     _datasetName text;
 BEGIN
-    _datasetList := Coalesce(_datasetList, '');
-    _message := '';
+
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
+    _datasetList                     := Trim(Coalesce(_datasetList, ''));
+    _excludeDatasetsNotReleased      := Coalesce(_excludeDatasetsNotReleased, true);
+    _createJobsForUnreviewedDatasets := Coalesce(_createJobsForUnreviewedDatasets, true);
+    _analysisToolNameFilter          := Trim(Coalesce(_analysisToolNameFilter, ''));
 
     ---------------------------------------------------
     -- Populate a temporary table with the dataset names to create jobs for

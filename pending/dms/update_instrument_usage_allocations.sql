@@ -107,29 +107,28 @@ BEGIN
         -- Validate the inputs
         -----------------------------------------------------------
 
-        _fyProposal := Coalesce(_fyProposal, '');
-        _fiscalYear := Coalesce(_fiscalYear, '');
-        _proposalID := Coalesce(_proposalID, '');
+        _fyProposal := Trim(Coalesce(_fyProposal, ''));
+        _fiscalYear := Trim(Coalesce(_fiscalYear, ''));
+        _proposalID := Trim(Coalesce(_proposalID, ''));
 
-        _ft := Coalesce(_ft, '');
-        _ims := Coalesce(_ims, '');
-        _orb := Coalesce(_orb, '');
-        _exa := Coalesce(_exa, '');
-        _ltq := Coalesce(_ltq, '');
-        _gc := Coalesce(_gc, '');
-        _qqq := Coalesce(_qqq, '');
+        _ft  := Trim(Coalesce(_ft, ''));
+        _ims := Trim(Coalesce(_ims, ''));
+        _orb := Trim(Coalesce(_orb, ''));
+        _exa := Trim(Coalesce(_exa, ''));
+        _ltq := Trim(Coalesce(_ltq, ''));
+        _gc  := Trim(Coalesce(_gc, ''));
+        _qqq := Trim(Coalesce(_qqq, ''));
 
-        _ftComment := Coalesce(_ftComment, '');
-        _imsComment := Coalesce(_imsComment, '');
-        _orbComment := Coalesce(_orbComment, '');
-        _exaComment := Coalesce(_exaComment, '');
-        _ltqComment := Coalesce(_ltqComment, '');
-        _gcComment := Coalesce(_gcComment,  '');
-        _qqqComment := Coalesce(_qqqComment, '');
+        _ftComment  := Trim(Coalesce(_ftComment, ''));
+        _imsComment := Trim(Coalesce(_imsComment, ''));
+        _orbComment := Trim(Coalesce(_orbComment, ''));
+        _exaComment := Trim(Coalesce(_exaComment, ''));
+        _ltqComment := Trim(Coalesce(_ltqComment, ''));
+        _gcComment  := Trim(Coalesce(_gcComment,  ''));
+        _qqqComment := Trim(Coalesce(_qqqComment, ''));
 
-        _infoOnly := Coalesce(_infoOnly, false);
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
+        _infoOnly   := Coalesce(_infoOnly, false);
+        _mode       := Trim(Lower(Coalesce(_mode, '')));
 
         If Not _mode::citext In ('add', 'update') Then
             _msg2 := format('Invalid mode: %s', Coalesce(_mode, '??'));

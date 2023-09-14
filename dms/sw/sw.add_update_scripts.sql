@@ -81,6 +81,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_scripts(IN _script text, IN _descripti
 **          08/01/2017 mem - Use THROW if not authorized
 **          07/28/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Update warning messages
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -130,7 +131,7 @@ BEGIN
     _enabled       := Trim(Upper(Coalesce(_enabled, 'Y')));
     _backfillToDMS := Trim(Upper(Coalesce(_backfillToDMS, 'Y')));
     _mode          := Trim(Lower(Coalesce(_mode, '')));
-    _callingUser   := Coalesce(_callingUser, '');
+    _callingUser   := Trim(Coalesce(_callingUser, ''));
 
     If _backfillToDMS = 'Y' Then
         _backFill := 1;

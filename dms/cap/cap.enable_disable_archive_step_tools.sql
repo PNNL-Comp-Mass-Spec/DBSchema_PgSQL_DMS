@@ -27,6 +27,7 @@ CREATE OR REPLACE FUNCTION cap.enable_disable_archive_step_tools(_enable boolean
 **          09/01/2023 mem - Remove unnecessary cast to citext for string constants
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -41,7 +42,7 @@ BEGIN
     -----------------------------------------------
 
     _enable         := Coalesce(_enable, false);
-    _disableComment := Coalesce(_disableComment, '');
+    _disableComment := Trim(Coalesce(_disableComment, ''));
     _infoOnly       := Coalesce(_infoOnly, false);
 
     If _enable Then

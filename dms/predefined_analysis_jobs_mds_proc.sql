@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE public.predefined_analysis_jobs_mds_proc(IN _dataset
 **          01/27/2023 mem - Include ID column in the query results
 **                         - Show legacy FASTA file name after the protein collection info
 **          02/08/2023 mem - Switch from PRN to username
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -43,10 +44,14 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    _datasetList := Coalesce(_datasetList, '');
-    _excludeDatasetsNotReleased := Coalesce(_excludeDatasetsNotReleased, true);
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
+    _datasetList                     := Trim(Coalesce(_datasetList, ''));
+    _excludeDatasetsNotReleased      := Coalesce(_excludeDatasetsNotReleased, true);
     _createJobsForUnreviewedDatasets := Coalesce(_createJobsForUnreviewedDatasets, true);
-    _analysisToolNameFilter := Coalesce(_analysisToolNameFilter, '');
+    _analysisToolNameFilter          := Trim(Coalesce(_analysisToolNameFilter, ''));
 
     DROP TABLE IF EXISTS Tmp_PredefinedAnalysisJobResults;
 

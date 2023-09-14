@@ -62,6 +62,7 @@ CREATE OR REPLACE FUNCTION public.get_psm_job_defaults(_datasets text) RETURNS T
 **          08/02/2023 mem - Ported to PostgreSQL
 **          09/01/2023 mem - Change column Dataset_Rating_ID to smallint in temp table
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -437,7 +438,7 @@ BEGIN
     FROM t_default_psm_job_types JT
     WHERE JT.job_type_name = _jobTypeName;
 
-    _jobTypeDesc := Coalesce(_jobTypeDesc, '');
+    _jobTypeDesc := Trim(Coalesce(_jobTypeDesc, ''));
 
     RETURN QUERY
     SELECT _datasets::citext         As datasets,

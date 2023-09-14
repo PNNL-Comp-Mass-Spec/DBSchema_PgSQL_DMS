@@ -190,7 +190,7 @@ BEGIN
             _wellNumber := null;
         End If;
 
-        _mrmAttachment := Coalesce(_mrmAttachment, '');
+        _mrmAttachment := Trim(Coalesce(_mrmAttachment, ''));
 
         ---------------------------------------------------
         -- Create a temporary table to track the IDs of new requested runs
@@ -435,6 +435,7 @@ BEGIN
             FROM t_attachments
             WHERE attachment_name = _mrmAttachment
         End If;
+
         ---------------------------------------------------
         -- Lookup EUS field (only effective for experiments that have associated sample prep requests)
         -- This will update the data in _eusUsageType, _eusProposalID, or _eusUserID if it is "(lookup)"
@@ -676,7 +677,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-        -- <add>
 
             If _logDebugMessages Then
                 _debugMsg := 'Start a new transaction';
@@ -791,7 +791,7 @@ BEGIN
                 --
                 _fractionNumber := _fractionNumber + 1;
 
-            END LOOP; -- </while>
+            END LOOP;
 
             UPDATE t_requested_run
             SET state_name = 'Completed'
@@ -839,7 +839,7 @@ BEGIN
 
             CALL post_log_entry ('Normal', _message, 'Add_Requested_Run_Fractions');
 
-        End If; -- </add>
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN

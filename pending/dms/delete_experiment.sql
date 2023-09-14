@@ -60,8 +60,8 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    _experimentName := Coalesce(_experimentName, '');
-    _infoOnly := Coalesce(_infoOnly, false);
+    _experimentName := Trim(Coalesce(_experimentName, ''));
+    _infoOnly       := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host

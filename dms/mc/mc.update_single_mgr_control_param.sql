@@ -46,6 +46,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname tex
 **          05/22/2023 mem - Capitalize reserved word
 **          05/30/2023 mem - Use format() for string concatenation
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -70,7 +71,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _newValue := Coalesce(_newValue, '');
+    _newValue := Trim(Coalesce(_newValue, ''));
     _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------

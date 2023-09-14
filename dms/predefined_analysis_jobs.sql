@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs(_datasetname text, _r
 /****************************************************
 **
 **  Desc:
-**     Evaluate predefined analysis rules for given dataset
-**     and return the list of jobs that would be created
+**      Evaluate predefined analysis rules for given dataset and return the list of jobs that would be created
 **
 **  Arguments:
 **    _datasetName                      Dataset to evaluate
@@ -65,6 +64,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs(_datasetname text, _r
 **          05/22/2023 mem - Use format() for string concatenation
 **          07/11/2023 mem - Use COUNT(job) instead of COUNT(*)
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -86,11 +86,15 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    _datasetName := Coalesce(_datasetName, '');
-    _raiseErrorMessages := Coalesce(_raiseErrorMessages, true);
-    _excludeDatasetsNotReleased := Coalesce(_excludeDatasetsNotReleased, true);
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
+    _datasetName                     := Trim(Coalesce(_datasetName, ''));
+    _raiseErrorMessages              := Coalesce(_raiseErrorMessages, true);
+    _excludeDatasetsNotReleased      := Coalesce(_excludeDatasetsNotReleased, true);
     _createJobsForUnreviewedDatasets := Coalesce(_createJobsForUnreviewedDatasets, true);
-    _analysisToolNameFilter := Coalesce(_analysisToolNameFilter, '');
+    _analysisToolNameFilter          := Trim(Coalesce(_analysisToolNameFilter, ''));
 
     ---------------------------------------------------
     -- Rule selection section

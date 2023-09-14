@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text D
 **          08/07/2023 mem - Display a blank line before additional status messages
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -68,7 +69,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _mgrList     := Coalesce(_mgrList, '');
+    _mgrList     := Trim(Coalesce(_mgrList, ''));
     _cleanupMode := Coalesce(_cleanupMode, 1);
     _showTable   := Coalesce(_showTable, true);
     _infoOnly    := Coalesce(_infoOnly, false);

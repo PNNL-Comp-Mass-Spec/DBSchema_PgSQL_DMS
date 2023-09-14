@@ -67,15 +67,15 @@ BEGIN
 
     _ncbiTaxonomyID := Coalesce(_ncbiTaxonomyID, 0);
 
-    _orgDomain := Coalesce(_orgDomain, '');
-    _orgKingdom := Coalesce(_orgKingdom, '');
-    _orgPhylum := Coalesce(_orgPhylum, '');
-    _orgClass := Coalesce(_orgClass, '');
-    _orgOrder := Coalesce(_orgOrder, '');
-    _orgFamily := Coalesce(_orgFamily, '');
-    _orgGenus := Coalesce(_orgGenus, '');
-    _orgSpecies := Coalesce(_orgSpecies, '');
-    _orgStrain := Coalesce(_orgStrain, '');
+    _orgDomain      := Trim(Coalesce(_orgDomain, ''));
+    _orgKingdom     := Trim(Coalesce(_orgKingdom, ''));
+    _orgPhylum      := Trim(Coalesce(_orgPhylum, ''));
+    _orgClass       := Trim(Coalesce(_orgClass, ''));
+    _orgOrder       := Trim(Coalesce(_orgOrder, ''));
+    _orgFamily      := Trim(Coalesce(_orgFamily, ''));
+    _orgGenus       := Trim(Coalesce(_orgGenus, ''));
+    _orgSpecies     := Trim(Coalesce(_orgSpecies, ''));
+    _orgStrain      := Trim(Coalesce(_orgStrain, ''));
 
     _previewResults := Coalesce(_previewResults, false);
     _previewOrganismID := Coalesce(_previewOrganismID, 0)

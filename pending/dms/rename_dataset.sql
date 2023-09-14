@@ -107,8 +107,8 @@ BEGIN
     -- Validate the inputs
     --------------------------------------------
 
-    _datasetNameOld := Coalesce(_datasetNameOld, '');
-    _datasetNameNew := Coalesce(_datasetNameNew, '');
+    _datasetNameOld    := Trim(Coalesce(_datasetNameOld, ''));
+    _datasetNameNew    := Trim(Coalesce(_datasetNameNew, ''));
     _newRequestedRunID := Coalesce(_newRequestedRunID, 0);
 
     If _datasetNameOld = '' Then

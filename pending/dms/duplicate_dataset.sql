@@ -69,13 +69,13 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _sourceDataset := Coalesce(_sourceDataset, '');
-    _newDataset := Coalesce(_newDataset, '');
-    _newComment := Coalesce(_newComment, '');
-    _newCaptureSubfolder := Coalesce(_newCaptureSubfolder, '');
-    _newOperatorUsername := Coalesce(_newOperatorUsername, '');
-    _datasetStateID := Coalesce(_datasetStateID, 1);
-    _infoOnly := Coalesce(_infoOnly, true);
+    _sourceDataset       := Trim(Coalesce(_sourceDataset, ''));
+    _newDataset          := Trim(Coalesce(_newDataset, ''));
+    _newComment          := Trim(Coalesce(_newComment, ''));
+    _newCaptureSubfolder := Trim(Coalesce(_newCaptureSubfolder, ''));
+    _newOperatorUsername := Trim(Coalesce(_newOperatorUsername, ''));
+    _datasetStateID      := Coalesce(_datasetStateID, 1);
+    _infoOnly            := Coalesce(_infoOnly, true);
 
     If _sourceDataset = '' Then
         _message := '_sourceDataset is empty';

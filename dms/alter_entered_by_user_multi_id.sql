@@ -43,6 +43,7 @@ CREATE OR REPLACE PROCEDURE public.alter_entered_by_user_multi_id(IN _targettabl
 **                         - Remove unused variables and use clock_timestamp()
 **          05/22/2023 mem - Capitalize reserved word
 **          09/07/2023 mem - Align assignment statements
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -64,7 +65,7 @@ BEGIN
         _targetTableSchema := 'public';
     End If;
 
-    _newUser                := Coalesce(_newUser, '');
+    _newUser                := Trim(Coalesce(_newUser, ''));
     _applyTimeFilter        := Coalesce(_applyTimeFilter, false);
     _entryTimeWindowSeconds := Coalesce(_entryTimeWindowSeconds, 15);
     _infoOnly               := Coalesce(_infoOnly, false);

@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_param_work(IN _paramname text, 
 **          05/22/2023 mem - Use format() for string concatenation
 **          07/11/2023 mem - Use COUNT(PV.entry_id) instead of COUNT(*)
 **          07/27/2023 mem - Use local variable for the return value of _message from alter_event_log_entry_user_multi_id
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -51,7 +52,7 @@ BEGIN
     End If;
 
     -- Assure that _newValue is not null
-    _newValue := Coalesce(_newValue, '');
+    _newValue := Trim(Coalesce(_newValue, ''));
 
     -- Lookup the param_type_id for param _paramName
     --

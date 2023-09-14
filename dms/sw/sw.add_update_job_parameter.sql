@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_job_parameter(IN _job integer, IN _sec
 **          07/28/2023 mem - Update warning message and capitalize keywords
 **          08/08/2023 mem - Fix typo in warning message
 **          09/07/2023 mem - Align assignment statements
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -82,8 +83,8 @@ BEGIN
     ---------------------------------------------------
 
     _job         := Coalesce(_job, 0);
-    _section     := Coalesce(_section, '');
-    _paramName   := Coalesce(_paramName, '');
+    _section     := Trim(Coalesce(_section, ''));
+    _paramName   := Trim(Coalesce(_paramName, ''));
     _value       := Coalesce(_value, '');
     _deleteParam := Coalesce(_deleteParam, false);
     _infoOnly    := Coalesce(_infoOnly, false);

@@ -27,12 +27,13 @@ CREATE OR REPLACE PROCEDURE sw.validate_protein_collection_list_for_data_package
 **                         - Rename the XML job parameters argument and make it an input/output argument
 **                         - Add argument _debugMode
 **          07/27/2023 mem - Ported to PostgreSQL
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
 
 BEGIN
-    _message := Coalesce(_message, '');
+    _message := Trim(Coalesce(_message, ''));
     _returnCode := 0;
 
     ---------------------------------------------------

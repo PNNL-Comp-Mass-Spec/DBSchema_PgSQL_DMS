@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE public.set_capture_task_complete(IN _datasetname tex
 **          06/16/2023 mem - Ported to PostgreSQL
 **          07/11/2023 mem - Use COUNT(event_id) instead of COUNT(*)
 **          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -50,7 +51,7 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    _failureMessage := Coalesce(_failureMessage, '');
+    _failureMessage := Trim(Coalesce(_failureMessage, ''));
 
     _maxRetries := 20;
 
@@ -142,7 +143,7 @@ BEGIN
     -- Update the comment as needed
     ---------------------------------------------------
 
-    _comment := Coalesce(_comment, '');
+    _comment := Trim(Coalesce(_comment, ''));
 
     If _completionState = 3 Then
         -- Dataset successfully captured

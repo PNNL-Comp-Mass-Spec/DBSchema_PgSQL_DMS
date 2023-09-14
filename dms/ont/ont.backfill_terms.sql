@@ -39,6 +39,7 @@ CREATE OR REPLACE FUNCTION ont.backfill_terms(_sourcetable public.citext DEFAULT
 **          05/29/2023 mem - Use format() for string concatenation
 **          07/11/2023 mem - Use COUNT(term_pk) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -55,7 +56,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _sourceTable                := Coalesce(_sourceTable, '');
+    _sourceTable                := Trim(Coalesce(_sourceTable, ''));
     _infoOnly                   := Coalesce(_infoOnly, true);
     _previewRelationshipUpdates := Coalesce(_previewRelationshipUpdates, true);
 

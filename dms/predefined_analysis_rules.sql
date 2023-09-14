@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_rules(_datasetname text, _
 **          02/08/2023 mem - Switch from PRN to username
 **          05/22/2023 mem - Use format() for string concatenation
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -40,15 +41,13 @@ DECLARE
 BEGIN
     _message := '';
 
-    _datasetName := Coalesce(_datasetName, '');
+    _datasetName                := Trim(Coalesce(_datasetName, ''));
     _excludeDatasetsNotReleased := Coalesce(_excludeDatasetsNotReleased, true);
-    _analysisToolNameFilter := Coalesce(_analysisToolNameFilter, '');
+    _analysisToolNameFilter     := Trim(Coalesce(_analysisToolNameFilter, ''));
 
-    ---------------------------------------------------
-    ---------------------------------------------------
-    -- Rule selection section
-    ---------------------------------------------------
-    ---------------------------------------------------
+    ----------------------------
+    -- Rule selection section --
+    ----------------------------
 
     ---------------------------------------------------
     -- Get evaluation information for this dataset
@@ -294,42 +293,40 @@ BEGIN
         Protein_Collections, Protein_Options,
         Organism_DB, Special_Processing,
         Priority)
-    SELECT  C.predefine_level, C.predefine_sequence, C.predefine_id, C.next_level,
-            CASE WHEN C.Trigger_Before_Disposition = 1
-                 THEN 'Before Disposition'
-                 ELSE 'Normal'
-                 END AS Trigger_Mode,
-            CASE C.Propagation_Mode WHEN 0
-                 THEN 'Export'
-                 ELSE 'No Export'
-                 END AS Export_Mode,
-            'Skip' AS Action,
-            'Level skip' AS Reason,
-            '' AS Notes,
-            C.analysis_tool_name,
-            C.instrument_class_criteria, C.instrument_name_criteria, C.instrument_excl_criteria,
-            C.campaign_name_criteria, C.campaign_excl_criteria,
-            C.experiment_name_criteria, C.experiment_excl_criteria,
-            C.organism_name_criteria,
-            C.dataset_name_criteria, C.dataset_excl_criteria, C.dataset_type_criteria,
-            C.exp_comment_criteria,
-            C.labelling_incl_criteria, C.labelling_excl_criteria,
-            C.separation_type_criteria,
-            C.scan_count_min_criteria, C.scan_count_max_criteria,
-            C.param_file_name, C.settings_file_name,
-            C.organism,
-            C.protein_collection_list, C.protein_options_list,
-            C.organism_db_name,
-            C.Special_Processing,
-            C.priority
+    SELECT C.predefine_level, C.predefine_sequence, C.predefine_id, C.next_level,
+           CASE WHEN C.Trigger_Before_Disposition = 1
+                THEN 'Before Disposition'
+                ELSE 'Normal'
+                END AS Trigger_Mode,
+           CASE C.Propagation_Mode WHEN 0
+                THEN 'Export'
+                ELSE 'No Export'
+                END AS Export_Mode,
+           'Skip' AS Action,
+           'Level skip' AS Reason,
+           '' AS Notes,
+           C.analysis_tool_name,
+           C.instrument_class_criteria, C.instrument_name_criteria, C.instrument_excl_criteria,
+           C.campaign_name_criteria, C.campaign_excl_criteria,
+           C.experiment_name_criteria, C.experiment_excl_criteria,
+           C.organism_name_criteria,
+           C.dataset_name_criteria, C.dataset_excl_criteria, C.dataset_type_criteria,
+           C.exp_comment_criteria,
+           C.labelling_incl_criteria, C.labelling_excl_criteria,
+           C.separation_type_criteria,
+           C.scan_count_min_criteria, C.scan_count_max_criteria,
+           C.param_file_name, C.settings_file_name,
+           C.organism,
+           C.protein_collection_list, C.protein_options_list,
+           C.organism_db_name,
+           C.Special_Processing,
+           C.priority
     FROM Tmp_Criteria C
     ORDER BY C.predefine_level, C.predefine_sequence, C.predefine_id;
 
-    ---------------------------------------------------
-    ---------------------------------------------------
-    -- Job Creation / Rule Evaluation Section
-    ---------------------------------------------------
-    ---------------------------------------------------
+    --------------------------------------------
+    -- Job Creation / Rule Evaluation Section --
+    --------------------------------------------
 
     ---------------------------------------------------
     -- Get list of jobs to create

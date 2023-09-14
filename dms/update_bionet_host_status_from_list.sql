@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE public.update_bionet_host_status_from_list(IN _hostn
 **                     mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          09/11/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -50,7 +51,7 @@ BEGIN
         -- Validate the inputs
         -----------------------------------------
 
-        _hostNames       := Coalesce(_hostNames, '');
+        _hostNames       := Trim(Coalesce(_hostNames, ''));
         _addMissingHosts := Coalesce(_addMissingHosts, false);
         _infoOnly        := Coalesce(_infoOnly, false);
 

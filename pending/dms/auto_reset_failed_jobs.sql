@@ -99,7 +99,7 @@ BEGIN
 
         _windowHours    := Coalesce(_windowHours, 12);
         _infoOnly       := Coalesce(_infoOnly, false);
-        _stepToolFilter := Coalesce(_stepToolFilter, '');
+        _stepToolFilter := Trim(Coalesce(_stepToolFilter, ''));
 
         If _windowHours < 2 Then
             _windowHours := 2;

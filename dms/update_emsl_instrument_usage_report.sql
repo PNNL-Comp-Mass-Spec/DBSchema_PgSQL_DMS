@@ -58,6 +58,7 @@ CREATE OR REPLACE PROCEDURE public.update_emsl_instrument_usage_report(IN _instr
 **          07/15/2022 mem - Instrument operator ID is now tracked as an actual integer
 **          08/30/2023 mem - Ported to PostgreSQL
 **          09/08/2023 mem - Include schema name when calling function
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -132,7 +133,7 @@ BEGIN
     -- Validate the inputs
     ------------------------------------------------------
 
-    _instrument      := Coalesce(_instrument, '');
+    _instrument      := Trim(Coalesce(_instrument, ''));
     _eusInstrumentId := Coalesce(_eusInstrumentId, 0);
     _infoOnly        := Coalesce(_infoOnly, false);
     _debugReports    := Trim(Coalesce(_debugReports, ''));
@@ -266,7 +267,7 @@ BEGIN
         WHERE Instrument <> ''
         LIMIT 1;
 
-        _actualInstrument := Coalesce(_actualInstrument, '');
+        _actualInstrument := Trim(Coalesce(_actualInstrument, ''));
 
         If _actualInstrument <> '' Then
             If _instrument::citext <> _actualInstrument And

@@ -123,6 +123,7 @@ CREATE OR REPLACE PROCEDURE sw.request_step_task_xml(IN _processorname text, INO
 **          08/08/2023 mem - Include the schema name when calling procedure get_remote_info_id
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -209,12 +210,12 @@ BEGIN
         -- Validate the inputs; clear the outputs
         ---------------------------------------------------
 
-        _processorName          := Coalesce(_processorName, '');
+        _processorName          := Trim(Coalesce(_processorName, ''));
         _job                    := 0;
         _parameters             := '';
         _infoLevel              := Coalesce(_infoLevel, 0);
-        _analysisManagerVersion := Coalesce(_analysisManagerVersion, '');
-        _remoteInfo             := Coalesce(_remoteInfo, '');
+        _analysisManagerVersion := Trim(Coalesce(_analysisManagerVersion, ''));
+        _remoteInfo             := Trim(Coalesce(_remoteInfo, ''));
         _jobCountToPreview      := Coalesce(_jobCountToPreview, 10);
 
         If _jobCountToPreview <= 0 Then

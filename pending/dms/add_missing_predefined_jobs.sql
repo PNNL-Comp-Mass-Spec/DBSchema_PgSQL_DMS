@@ -97,15 +97,15 @@ BEGIN
     _infoOnly                           := Coalesce(_infoOnly, false);
     _maxDatasetsToProcess               := Coalesce(_maxDatasetsToProcess, 0);
     _dayCountForRecentDatasets          := Coalesce(_dayCountForRecentDatasets, 30);
-    _previewOutputType                  := Coalesce(_previewOutputType, 'Show Rules');
-    _analysisToolNameFilter             := Coalesce(_analysisToolNameFilter, '');
+    _previewOutputType                  := Trim(Coalesce(_previewOutputType, 'Show Rules'));
+    _analysisToolNameFilter             := Trim(Coalesce(_analysisToolNameFilter, ''));
     _excludeDatasetsNotReleased         := Coalesce(_excludeDatasetsNotReleased, true);
     _excludeUnreviewedDatasets          := Coalesce(_excludeUnreviewedDatasets, true);
-    _instrumentSkipList                 := Coalesce(_instrumentSkipList, '');
-    _datasetNameIgnoreExistingJobs      := Coalesce(_datasetNameIgnoreExistingJobs, '');
+    _instrumentSkipList                 := Trim(Coalesce(_instrumentSkipList, ''));
+    _datasetNameIgnoreExistingJobs      := Trim(Coalesce(_datasetNameIgnoreExistingJobs, ''));
     _ignoreJobsCreatedBeforeDisposition := Coalesce(_ignoreJobsCreatedBeforeDisposition, true);
-    _campaignFilter                     := Coalesce(_campaignFilter, '');
-    _datasetIDFilterList                := Coalesce(_datasetIDFilterList, '');
+    _campaignFilter                     := Trim(Coalesce(_campaignFilter, ''));
+    _datasetIDFilterList                := Trim(Coalesce(_datasetIDFilterList, ''));
     _showDebug                          := Coalesce(_showDebug, false);
 
     If _dayCountForRecentDatasets < 1 Then

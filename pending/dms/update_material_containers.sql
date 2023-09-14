@@ -77,10 +77,10 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _mode := Trim(Lower(Coalesce(_mode, '')));
-    _containerList := Coalesce(_containerList, '');
-    _newValue := Coalesce(_newValue, '');
-    _comment := Coalesce(_comment, '');
+    _mode          := Trim(Lower(Coalesce(_mode, '')));
+    _containerList := Trim(Coalesce(_containerList, ''));
+    _newValue      := Trim(Coalesce(_newValue, ''));
+    _comment       := Trim(Coalesce(_comment, ''));
 
     ---------------------------------------------------
     -- Temporary table to hold containers

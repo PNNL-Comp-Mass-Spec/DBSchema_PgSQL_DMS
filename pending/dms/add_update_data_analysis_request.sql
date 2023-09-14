@@ -129,7 +129,7 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _analysisType := Coalesce(_analysisType, '');
+        _analysisType := Trim(Coalesce(_analysisType, ''));
 
         If char_length(Coalesce(_description, '')) < 1 Then
             RAISE EXCEPTION 'The description field is required';

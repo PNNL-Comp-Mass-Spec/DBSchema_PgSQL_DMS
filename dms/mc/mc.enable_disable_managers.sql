@@ -63,6 +63,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable boolean, IN _m
 **          09/07/2023 mem - Update warning messages
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/11/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -94,7 +95,7 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------
 
-    _managerNameList := Coalesce(_managerNameList, '');
+    _managerNameList := Trim(Coalesce(_managerNameList, ''));
     _infoOnly        := Coalesce(_infoOnly, false);
     _includeDisabled := Coalesce(_includeDisabled, false);
 

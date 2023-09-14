@@ -29,6 +29,7 @@ CREATE OR REPLACE FUNCTION public.get_existing_jobs_matching_job_request(_reques
 **          07/31/2019 mem - Remove unused table from query join list
 **          06/21/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved words
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -57,8 +58,9 @@ BEGIN
     );
 
     If FOUND Then
+
         -- Lookup the ResultType for the analysis tool
-        --
+
         SELECT result_type
         INTO _resultType
         FROM  t_analysis_tool

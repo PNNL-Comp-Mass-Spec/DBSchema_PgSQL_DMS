@@ -48,10 +48,10 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    _job := Coalesce(_job, '');
+    _job      := Trim(Coalesce(_job, ''));
     _infoOnly := Coalesce(_infoOnly, false);
 
-    _jobID := public.try_cast(_job, null::int);
+    _jobID    := public.try_cast(_job, null::int);
 
     If _jobID is null Then
         _message := format('Job number is not numeric: %s', _job);

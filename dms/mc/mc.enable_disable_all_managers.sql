@@ -48,6 +48,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist
 **          09/07/2023 mem - Align assignment statements
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          09/13/2023 mem - Remove unnecessary delimiter argument when calling append_to_text()
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -69,8 +70,8 @@ BEGIN
     -----------------------------------------------
 
     _enable            := Coalesce(_enable, false);
-    _managerTypeIDList := Coalesce(_managerTypeIDList, '');
-    _managerNameList   := Coalesce(_managerNameList, '');
+    _managerTypeIDList := Trim(Coalesce(_managerTypeIDList, ''));
+    _managerNameList   := Trim(Coalesce(_managerNameList, ''));
     _infoOnly          := Coalesce(_infoOnly, false);
 
     If char_length(_managerTypeIDList) > 0 THEN

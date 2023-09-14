@@ -70,7 +70,8 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
-    _columnName := Coalesce(_columnName, '');
+    _columnName := Trim(Coalesce(_columnName, ''));
+
     If _columnName = '' Then
         _returnCode := 'U5201';
         RAISE EXCEPTION 'Column name was blank';

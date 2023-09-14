@@ -50,6 +50,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_param_file(INOUT _paramfileid inte
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          09/07/2023 mem - Update warning messages
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -136,16 +137,13 @@ BEGIN
             End If;
         End If;
 
-        _paramFileValid := Coalesce(_paramFileValid, 1);
-
-        _paramfileMassMods := Coalesce(_paramfileMassMods, '');
+        _paramFileValid          := Coalesce(_paramFileValid, 1);
+        _paramfileMassMods       := Trim(Coalesce(_paramfileMassMods, ''));
+        _replaceExistingMassMods := Coalesce(_replaceExistingMassMods, 0);
+        _validateUnimod          := Coalesce(_validateUnimod, 1);
 
         -- Assure that _paramfileMassMods does not have any tabs
         _paramfileMassMods := Replace(_paramfileMassMods, chr(9), ' ');
-
-        _replaceExistingMassMods := Coalesce(_replaceExistingMassMods, 0);
-
-        _validateUnimod := Coalesce(_validateUnimod, 1);
 
         ---------------------------------------------------
         -- Validate _paramFileType

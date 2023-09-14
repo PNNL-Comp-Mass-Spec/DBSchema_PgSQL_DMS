@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_datasets
 **          07/26/2023 mem - Prevent _protCollNameList from containing both HumanContam and Tryp_Pig_Bov
 **          08/02/2023 mem - Add _returncode procedure argument
 **          09/07/2023 mem - Align assignment statements
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -50,7 +51,7 @@ BEGIN
     -- Validate the inputs
     --------------------------------------------------------------
 
-    _protCollNameList     := Coalesce(_protCollNameList,'');
+    _protCollNameList     := Trim(Coalesce(_protCollNameList,''));
     _collectionCountAdded := 0;
     _showDebug            := Coalesce(_showDebug, false);
     _startTime            := clock_timestamp();

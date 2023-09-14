@@ -143,10 +143,10 @@ BEGIN
            GROUP BY Src.name) GroupQ;
 
     -- This will have a comma separated list of factor names, for example: 'BioRep, Sample, Time'
-    _factorNameList := Coalesce(_factorNameList, '');
+    _factorNameList := Trim(Coalesce(_factorNameList, ''));
 
     -- This will have a comma separated list of factor names and the data type to use, for example: 'BioRep text, Sample text, Time text'
-    _factorNameAndTypeList := Coalesce(_factorNameAndTypeList, '');
+    _factorNameAndTypeList := Trim(Coalesce(_factorNameAndTypeList, ''));
 
     -----------------------------------------
     -- Populate a temporary table with target IDs and target type names

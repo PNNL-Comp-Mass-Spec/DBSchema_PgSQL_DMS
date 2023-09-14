@@ -64,7 +64,7 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------
 
-    _hostList := Coalesce(_hostList, '');
+    _hostList := Trim(Coalesce(_hostList, ''));
     _infoOnly := Coalesce(_infoOnly, false);
 
     If _hostList = '' Then

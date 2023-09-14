@@ -115,11 +115,9 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _instrumentName := Coalesce(_instrumentName, '');
-
-        _datasetType := Coalesce(_datasetType, '');
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
+        _instrumentName := Trim(Coalesce(_instrumentName, ''));
+        _datasetType    := Trim(Coalesce(_datasetType, ''));
+        _mode           := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
         -- Validate dataset type

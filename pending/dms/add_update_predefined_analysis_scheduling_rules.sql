@@ -70,12 +70,11 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _processorGroup := Trim(Coalesce(_processorGroup, ''));
-    _processorGroupID := Null;
-
-    _instrumentClass := Coalesce(_instrumentClass, '');
-    _instrumentName := Coalesce(_instrumentName, '');
-    _datasetName := Coalesce(_datasetName, '');
+    _processorGroup   := Trim(Coalesce(_processorGroup, ''));
+    _processorGroupID := null;
+    _instrumentClass  := Trim(Coalesce(_instrumentClass, ''));
+    _instrumentName   := Trim(Coalesce(_instrumentName, ''));
+    _datasetName      := Trim(Coalesce(_datasetName, ''));
 
     If char_length(_processorGroup) > 0 Then
         -- Validate _processorGroup and determine the ID value

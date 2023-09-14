@@ -168,8 +168,8 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _infoOnly := Coalesce(_infoOnly, false);
-    _updateExisting := Coalesce(_updateExisting, '');
+    _infoOnly       := Coalesce(_infoOnly, false);
+    _updateExisting := Trim(Coalesce(_updateExisting, ''));
 
     -----------------------------------------
     -- Split _datasetFileInfo on carriage returns

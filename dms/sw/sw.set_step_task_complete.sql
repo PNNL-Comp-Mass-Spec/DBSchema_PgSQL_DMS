@@ -65,6 +65,7 @@ CREATE OR REPLACE PROCEDURE sw.set_step_task_complete(IN _job integer, IN _step 
 **          08/11/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -119,7 +120,7 @@ BEGIN
 
     _job           := Coalesce(_job, 0);
     _step          := Coalesce(_step, 0);
-    _processorName := Coalesce(_processorName, '');
+    _processorName := Trim(Coalesce(_processorName, ''));
 
     _jobStepDescription        := format('job %s, step %s', _job, _step);
     _jobStepDescriptionCapital := format('Job %s, step %s', _job, _step);

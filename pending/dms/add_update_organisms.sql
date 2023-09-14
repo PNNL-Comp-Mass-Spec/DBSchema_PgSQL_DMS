@@ -215,26 +215,28 @@ BEGIN
             End If;
         End If;
 
-        _orgDBName := Coalesce(_orgDBName, '');
-        If _orgDBName Like '%.fasta' Then
+        _orgDBName := Trim(Coalesce(_orgDBName, ''));
+
+        If _orgDBName ILike '%.fasta' Then
             RAISE EXCEPTION 'Default Protein Collection cannot contain ".fasta"';
         End If;
 
-        _orgActive := Coalesce(_orgActive, '');
+        _orgActive := Trim(Coalesce(_orgActive, ''));
+
         If char_length(_orgActive) = 0 Or public.try_cast(_orgActive, null::int) Is Null Then
             RAISE EXCEPTION 'Organism active state must be 0 or 1';
         End If;
 
-        _orgGenus := Coalesce(_orgGenus, '');
-        _orgSpecies := Coalesce(_orgSpecies, '');
-        _orgStrain := Coalesce(_orgStrain, '');
+        _orgGenus   := Trim(Coalesce(_orgGenus, ''));
+        _orgSpecies := Trim(Coalesce(_orgSpecies, ''));
+        _orgStrain  := Trim(Coalesce(_orgStrain, ''));
 
-        _autoDefineTaxonomy := Coalesce(_autoDefineTaxonomy, 'Yes');
+        _autoDefineTaxonomy := Trim(Coalesce(_autoDefineTaxonomy, 'Yes'));
 
         -- Organism ID
         _id := Coalesce(_id, 0);
 
-        _newtIDList := Coalesce(_newtIDList, '');
+        _newtIDList := Trim(Coalesce(_newtIDList, ''));
 
         If char_length(_newtIDList) > 0 Then
             CREATE TEMP TABLE Tmp_NEWT_IDs (

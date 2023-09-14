@@ -32,7 +32,8 @@ BEGIN
     -- Make sure _callingUser is not blank
     ---------------------------------------------------
 
-    _callingUser := Coalesce(_callingUser, '');
+    _callingUser := Trim(Coalesce(_callingUser, ''));
+
     If char_length(_callingUser) = '' Then
         _callingUser := session_user;
     End If;

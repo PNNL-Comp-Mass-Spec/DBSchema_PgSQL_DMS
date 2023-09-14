@@ -43,6 +43,7 @@ CREATE OR REPLACE PROCEDURE public.copy_requested_run(IN _requestid integer, IN 
 **          09/13/2023 mem - If there is an existing requested run with a conflicting name, use @requestNameOverride if defined
 **                         - Include an underscore before appending @iteration when generating a unique name for the new requested run
 **                         - Ported to PostgreSQL
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -76,9 +77,8 @@ BEGIN
     _comment               := Trim(Coalesce(_comment, ''));
     _requestNameAppendText := Trim(Coalesce(_requestNameAppendText, ''));
     _requestNameOverride   := Trim(Coalesce(_requestNameOverride, ''));
-
-    _callingUser := Coalesce(_callingUser, '');
-    _infoOnly := Coalesce(_infoOnly, false);
+    _callingUser           := Trim(Coalesce(_callingUser, ''));
+    _infoOnly              := Coalesce(_infoOnly, false);
 
     If _requestID = 0 Then
         _message := 'Source request ID is 0; nothing to do';

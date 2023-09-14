@@ -406,7 +406,7 @@ BEGIN
         -- Confirm that the new status value is valid
         ---------------------------------------------------
 
-        _status := Coalesce(_status, '');
+        _status := Trim(Coalesce(_status, ''));
 
         If _mode::citext In ('add', 'check_add') And (_status::citext = 'Completed' Or _status = '') Then
             _status := 'Active';
@@ -591,8 +591,7 @@ BEGIN
         -- Resolve ID for MRM attachment
         ---------------------------------------------------
 
-        --
-        _mrmAttachment := Coalesce(_mrmAttachment, '');
+        _mrmAttachment := Trim(Coalesce(_mrmAttachment, ''));
 
         If _mrmAttachment <> '' Then
             SELECT attachment_id

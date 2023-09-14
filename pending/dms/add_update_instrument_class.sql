@@ -111,7 +111,7 @@ BEGIN
             RAISE EXCEPTION 'Raw Data Type must be specified' USING ERRCODE = 'U5203';
         End If;
 
-        _params := Coalesce(_params, '');
+        _params := Trim(Coalesce(_params, ''));
         _mode   := Trim(Lower(Coalesce(_mode, '')));
 
         If char_length(_params) > 0 Then

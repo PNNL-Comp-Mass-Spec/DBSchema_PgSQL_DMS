@@ -21,14 +21,15 @@ CREATE OR REPLACE PROCEDURE public.auto_update_separation_type(IN _separationtyp
 **          10/10/2020 mem - Adjust threshold for LC-Dionex-Formic_30min
 **          06/13/2023 mem - Exit the procedure if the acquisition length is <= 5 minutes
 **                         - Ported to PostgreSQL
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
     _message text;
 BEGIN
 
-    _separationType := Coalesce(_separationType, '');
-    _acqLengthMinutes := Coalesce(_acqLengthMinutes, 0);
+    _separationType        := Trim(Coalesce(_separationType, ''));
+    _acqLengthMinutes      := Coalesce(_acqLengthMinutes, 0);
     _optimalSeparationType := '';
 
     If _acqLengthMinutes <= 5 Then

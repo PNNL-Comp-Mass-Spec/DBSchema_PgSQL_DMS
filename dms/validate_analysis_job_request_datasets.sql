@@ -51,6 +51,7 @@ CREATE OR REPLACE PROCEDURE public.validate_analysis_job_request_datasets(IN _au
 **          08/02/2023 mem - Ported to PostgreSQL
 **          09/05/2023 mem - Swap if statement branches for readability
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/
 DECLARE
@@ -69,7 +70,7 @@ BEGIN
     _returnCode := '';
 
     _autoRemoveNotReleasedDatasets := Coalesce(_autoRemoveNotReleasedDatasets, false);
-    _toolName                      := Coalesce(_toolName, 'unknown');
+    _toolName                      := Trim(Coalesce(_toolName, 'unknown'));
     _allowNewDatasets              := Coalesce(_allowNewDatasets, false);
     _allowNonReleasedDatasets      := Coalesce(_allowNonReleasedDatasets, false);
     _showDebugMessages             := Coalesce(_showDebugMessages, false);

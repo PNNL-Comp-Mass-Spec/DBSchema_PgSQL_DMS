@@ -10,7 +10,7 @@ AS $$
 **
 **  Desc:
 **      Updates Purged to be 1 for the jobs in _jobList
-**      This procedure is called by the SpaceManager
+**      This procedure is called by the Space Manager
 **
 **  Auth:   mem
 **  Date:   06/13/2012
@@ -23,7 +23,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------------
 
-    _jobList := Coalesce(_jobList, '');
+    _jobList  := Trim(Coalesce(_jobList, ''));
     _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------------
@@ -51,7 +51,7 @@ BEGIN
         UPDATE t_analysis_job
         SET purged = 1
         FROM Tmp_JobList JL
-        WHERE JL.job = t_analysis_job.job AND 
+        WHERE JL.job = t_analysis_job.job AND
               t_analysis_job.purged = 0;
 
     End If;

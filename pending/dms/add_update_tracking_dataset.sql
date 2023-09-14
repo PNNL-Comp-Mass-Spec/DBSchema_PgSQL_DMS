@@ -185,9 +185,9 @@ BEGIN
         -- Replace instances of CRLF (or LF) with semicolons
         _comment := public.remove_cr_lf(_comment);
 
-        _eusProposalID := Coalesce(_eusProposalID, '');
-        _eusUsageType := Coalesce(_eusUsageType, '');
-        _eusUsersList := Coalesce(_eusUsersList, '');
+        _eusProposalID := Trim(Coalesce(_eusProposalID, ''));
+        _eusUsageType  := Trim(Coalesce(_eusUsageType, ''));
+        _eusUsersList  := Trim(Coalesce(_eusUsersList, ''));
 
         ---------------------------------------------------
         -- Determine if we are adding or check_adding a dataset

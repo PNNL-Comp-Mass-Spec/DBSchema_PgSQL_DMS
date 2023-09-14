@@ -116,22 +116,21 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _compoundName := Trim(Coalesce(_compoundName, ''));
-        _description := Trim(Coalesce(_description, ''));
+        _compoundName     := Trim(Coalesce(_compoundName, ''));
+        _description      := Trim(Coalesce(_description, ''));
         _compoundTypeName := Trim(Coalesce(_compoundTypeName, ''));
-        _geneName := Trim(Coalesce(_geneName, ''));
-        _organismName := Trim(Coalesce(_organismName, ''));
-        _pubChemID := Trim(Coalesce(_pubChemID, ''));
-        _campaignName := Trim(Coalesce(_campaignName, ''));
-        _contactUsername := Trim(Coalesce(_contactUsername, ''));
-        _supplier := Trim(Coalesce(_supplier, ''));
-        _productId := Trim(Coalesce(_productId, ''));
-        _purchaseDate := Trim(Coalesce(_purchaseDate, ''));
-        _mass := Trim(Coalesce(_mass, ''));
-        _active := Trim(Coalesce(_active, '1'));
-        _callingUser := Coalesce(_callingUser, '');
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
+        _geneName         := Trim(Coalesce(_geneName, ''));
+        _organismName     := Trim(Coalesce(_organismName, ''));
+        _pubChemID        := Trim(Coalesce(_pubChemID, ''));
+        _campaignName     := Trim(Coalesce(_campaignName, ''));
+        _contactUsername  := Trim(Coalesce(_contactUsername, ''));
+        _supplier         := Trim(Coalesce(_supplier, ''));
+        _productId        := Trim(Coalesce(_productId, ''));
+        _purchaseDate     := Trim(Coalesce(_purchaseDate, ''));
+        _mass             := Trim(Coalesce(_mass, ''));
+        _active           := Trim(Coalesce(_active, '1'));
+        _callingUser      := Trim(Coalesce(_callingUser, ''));
+        _mode             := Trim(Lower(Coalesce(_mode, '')));
 
         If _compoundID Is Null And Not _mode::citext In ('add', 'check_add') Then
             RAISE EXCEPTION 'Compound ID cannot be null';

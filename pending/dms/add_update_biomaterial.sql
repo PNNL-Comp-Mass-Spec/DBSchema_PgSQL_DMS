@@ -138,7 +138,7 @@ BEGIN
         _mutation        := Trim(Coalesce(_mutation, ''));
         _plasmid         := Trim(Coalesce(_plasmid, ''));
         _cellLine        := Trim(Coalesce(_cellLine, ''));
-        _callingUser     := Coalesce(_callingUser, '');
+        _callingUser     := Trim(Coalesce(_callingUser, ''));
 
         If char_length(_contactUsername) < 1 Then
             RAISE EXCEPTION 'Contact Name must be specified';
