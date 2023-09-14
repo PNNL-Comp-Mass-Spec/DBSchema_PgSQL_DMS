@@ -224,7 +224,7 @@ BEGIN
 
             If _invalidUsage > 0 Then
                 -- Update _message then continue to the next item
-                _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 512);
+                _message := public.append_to_text(_message, _msg);
                 _invalidEntries := _invalidEntries + 1;
             ElsIf _returnCode <> ''
                 RAISE EXCEPTION 'add_update_run_interval: %', _msg;

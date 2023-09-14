@@ -42,6 +42,7 @@ CREATE OR REPLACE PROCEDURE sw.manage_job_execution(IN _parameters text DEFAULT 
 **          02/15/2016 mem - Added back support for _action = 'group'
 **          05/05/2023 mem - Ported to PostgreSQL
 **          05/07/2023 mem - Remove unused variable
+**          09/13/2023 mem - Remove unnecessary delimiter argument when calling append_to_text()
 **
 *****************************************************/
 DECLARE
@@ -203,7 +204,7 @@ BEGIN
                     _returnCode => _returnCode);    -- Output
 
     If Coalesce(_warning, '') <> '' Then
-        _message = public.append_to_text(_message, _warning, _delimiter => '; ');
+        _message = public.append_to_text(_message, _warning);
     End If;
 
     DROP TABLE Tmp_JobList;

@@ -73,6 +73,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work(IN _state text DEFA
 **          09/05/2023 mem - Use schema name when calling procedures
 **          09/08/2023 mem - Adjust capitalization of keywords
 **                         - Use a case insensitive search when finding text to replace
+**          09/13/2023 mem - Remove unnecessary delimiter argument when calling append_to_text()
 **
 *****************************************************/
 DECLARE
@@ -361,7 +362,7 @@ BEGIN
         -----------------------------------------------
         If _comment <> _noChangeText Then
             UPDATE t_analysis_job
-            SET comment = public.append_to_text(comment, _comment, _delimiter => '; ')
+            SET comment = public.append_to_text(comment, _comment)
             WHERE job IN (SELECT job FROM Tmp_AnalysisJobs) And
                   NOT comment LIKE '%' || _comment;
             --

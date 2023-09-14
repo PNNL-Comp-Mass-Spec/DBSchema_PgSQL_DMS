@@ -528,7 +528,7 @@ BEGIN
             SELECT instrument_group
             INTO _instrumentGroup
             FROM t_instrument_name
-            WHERE instrument = _instrumentGroup
+            WHERE instrument = _instrumentGroup;
         End If;
 
         ---------------------------------------------------
@@ -624,7 +624,7 @@ BEGIN
         End If;
 
         If Coalesce(_msg, '') <> '' Then
-            _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 1024);
+            _message := public.append_to_text(_message, _msg);
         End If;
 
         ---------------------------------------------------
@@ -674,13 +674,13 @@ BEGIN
         End If;
 
         If Coalesce(_msg, '') <> '' Then
-            _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 1024);
+            _message := public.append_to_text(_message, _msg);
         End If;
 
         _commaPosition := Position(',' In _eusUsersList);
 
         If _commaPosition > 1 Then
-            _message := public.append_to_text('Requested runs can only have a single EUS user associated with them', _message, _delimiter => '; ', _maxlength => 1024);
+            _message := public.append_to_text('Requested runs can only have a single EUS user associated with them', _message);
 
             If _raiseErrorOnMultipleEUSUsers Then
                 RAISE EXCEPTION 'Validate_EUS_Usage: %', _message;
@@ -963,7 +963,7 @@ BEGIN
 
             If _batch = 0 And _currentBatch <> 0 Then
                 _msg := format('Removed request %s from batch %s', _request, _currentBatch);
-                _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 1024);
+                _message := public.append_to_text(_message, _msg);
             End If;
         End If;
 
@@ -979,7 +979,7 @@ BEGIN
                     _returnCode => _returnCode);    -- Output
 
             If _returnCode <> '' Then
-                _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 1024);
+                _message := public.append_to_text(_message, _msg);
             End If;
         End If;
 
@@ -991,7 +991,7 @@ BEGIN
                             _returnCode => _returnCode);    -- Output
 
             If _returnCode <> '' Then
-                _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 1024);
+                _message := public.append_to_text(_message, _msg);
             End If;
         End If;
 

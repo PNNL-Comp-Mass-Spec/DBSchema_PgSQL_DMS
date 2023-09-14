@@ -133,7 +133,7 @@ BEGIN
 
         If _updateCount > 0 Then
             _addon := format('%s %s on dataset_row_version or storage_path_row_version', _updateCount, public.check_plural(_updateCount, 'dataset differs', 'datasets differ'));
-            _message := public.append_to_text(_message, _addon, _delimiter => '; ', _maxlength => 512);
+            _message := public.append_to_text(_message, _addon);
 
             _rowCountUpdated := _rowCountUpdated + _updateCount;
         End If;
@@ -471,7 +471,7 @@ BEGIN
 
     If _rowCountUpdated > 0 Then
         _addon := format('Updated %s %s in t_cached_dataset_links', _rowCountUpdated, public.check_plural(_rowCountUpdated, 'row', 'rows'));
-        _message := public.append_to_text(_message, _addon, _delimiter => '; ', _maxlength => 512);
+        _message := public.append_to_text(_message, _addon);
 
         -- CALL post_log_entry ('Debug', _message, 'Update_Cached_Dataset_Links');
     End If;

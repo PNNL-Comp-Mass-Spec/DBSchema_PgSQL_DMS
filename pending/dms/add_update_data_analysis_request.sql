@@ -744,7 +744,7 @@ BEGIN
 
             If _currentEstimatedAnalysisTimeDays <> _estimatedAnalysisTimeDays And Not _allowUpdateEstimatedAnalysisTime Then
                 _msg := 'Not updating estimated analysis time since user does not have permission';
-                _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 1024);
+                _message := public.append_to_text(_message, _msg);
             End If;
 
             If _batchDefined > 0 Then

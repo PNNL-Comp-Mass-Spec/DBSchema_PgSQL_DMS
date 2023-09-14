@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_job_request_existing_jobs(IN _p
 **          06/25/2021 mem - Fix bug comparing legacy organism DB name in T_Analysis_Job to T_Analysis_Job_Request_Datasets
 **          09/07/2023 mem - Ported to PostgreSQL
 **          09/08/2023 mem - Include schema name when calling function
+**          09/13/2023 mem - Remove unnecessary delimiter argument when calling append_to_text()
 **
 *****************************************************/
 DECLARE
@@ -275,7 +276,7 @@ BEGIN
 
         If _insertCountOverall > 0 Then
             _addon := format('%s %s to t_analysis_job_request_existing_jobs', _insertCountOverall, public.check_plural(_insertCountOverall, 'row was added', 'rows were added'));
-            _message := public.append_to_text(_message, _addon, _delimiter => '; ');
+            _message := public.append_to_text(_message, _addon);
         End If;
 
         DROP TABLE Tmp_RequestsAndExistingJobs;

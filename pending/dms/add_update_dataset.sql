@@ -855,7 +855,7 @@ BEGIN
                 If _requestInstGroup::citext <> _instrumentGroup::citext Then
                     _warning := public.append_to_text(_warning,
                         format('Instrument group for requested run (%s) does not match instrument group for %s (%s)',
-                               _requestInstGroup, _instrumentName, _instrumentGroup), _delimiter => '; ');
+                               _requestInstGroup, _instrumentName, _instrumentGroup));
                 End If;
             End If;
         End If;
@@ -920,13 +920,12 @@ BEGIN
 
             ---------------------------------------------------
             -- Resolve ID for LC Cart and update requested run table
-            -- (Check code taken from procedure update_cart_parameters)
             ---------------------------------------------------
 
             SELECT cart_id
             INTO _cartID
             FROM t_lc_cart
-            WHERE cart_name = _lcCartName;
+            WHERE cart_name = _lcCartName::citext;
 
             If Not FOUND Then
                 RAISE EXCEPTION 'Unknown LC Cart name: %', _lcCartName;
@@ -956,7 +955,7 @@ BEGIN
                 End If;
 
                 If Coalesce(_msg, '') <> '' Then
-                    _message := public.append_to_text(_message, _msg, _delimiter => '; ');
+                    _message := public.append_to_text(_message, _msg);
                 End If;
 
                 ---------------------------------------------------
@@ -983,7 +982,7 @@ BEGIN
                 End If;
 
                 If Coalesce(_msg, '') <> '' Then
-                    _message := public.append_to_text(_message, _msg, _delimiter => '; ');
+                    _message := public.append_to_text(_message, _msg);
                 End If;
 
             Else
@@ -1387,7 +1386,7 @@ BEGIN
 
                 If Coalesce(_requestID, 0) = 0 Then
                     _warningAddon := 'Dataset is not associated with a requested run; cannot update the LC Cart Name';
-                    _warning := public.append_to_text(_warning, _warningAddon, _delimiter => '; ');
+                    _warning := public.append_to_text(_warning, _warningAddon);
                 Else
                     _warningAddon := '';
                     CALL public.update_cart_parameters (
@@ -1399,7 +1398,7 @@ BEGIN
 
                     If _returnCode <> '' Then
                         _warningAddon := format('Update LC cart name failed: %s', _warningAddon);
-                        _warning := public.append_to_text(_warning, _warningAddon, _delimiter => '; ');
+                        _warning := public.append_to_text(_warning, _warningAddon);
                     End If;
                 End If;
             End If;
