@@ -182,7 +182,6 @@ BEGIN
         -----------------------------------------------------------
 
         If _operation::citext In ('update') Then
-        --<a>
 
             -----------------------------------------------------------
             -- Temp table to hold update items
@@ -224,10 +223,10 @@ BEGIN
                 RAISE EXCEPTION 'The following field(s) are not editable: %', _badFields;
             End If;
 
-        End If; --<a>
+        End If;
 
         If _operation::citext In ('reload', 'refresh') Then
-        --<b>
+
             -----------------------------------------------------------
             -- Validation
             -----------------------------------------------------------
@@ -255,7 +254,7 @@ BEGIN
                 WHERE Upper(Coalesce(EUS_Primary_Instrument, '')) IN ('Y', '1')
             End If;
 
-        End If; --<b>
+        End If;
 
         If _operation::citext = 'update' Then
             UPDATE t_emsl_instrument_usage_report
@@ -348,7 +347,7 @@ BEGIN
                     End If;
 
                 END LOOP;
-            End If; --<m>
+            End If;
         End If;
 
     EXCEPTION

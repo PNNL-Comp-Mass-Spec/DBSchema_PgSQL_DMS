@@ -509,10 +509,9 @@ BEGIN
             End If;
 
             If _mode = 'add' Then
-            -- <AddFraction>
 
                 -- Insert new experiment into table
-                --
+
                 INSERT INTO t_experiments (
                     experiment,
                     researcher_username,
@@ -609,8 +608,8 @@ BEGIN
                 -- Copy experiment plex info, if defined
                 ---------------------------------------------------
 
-                If Exists (SELECT * FROM t_experiment_plex_members WHERE plex_exp_id = _parentExperimentID) Then
-                -- <CopyPlexInfo>
+                If Exists (SELECT plex_exp_id FROM t_experiment_plex_members WHERE plex_exp_id = _parentExperimentID) Then
+
                     INSERT INTO t_experiment_plex_members( plex_exp_id,
                                                            channel,
                                                            exp_id,
@@ -630,8 +629,8 @@ BEGIN
                         CALL public.alter_entered_by_user ('public', 't_experiment_plex_members_history', 'plex_exp_id', _newExpID, _callingUser, _message => _alterEnteredByMessage);
                     End If;
 
-                End If; -- </CopyPlexInfo>
-            End If; -- </AddFraction>
+                End If;
+            End If;
 
             If _mode = 'add' Then
                 ---------------------------------------------------
@@ -651,12 +650,11 @@ BEGIN
                 _wn := public.get_well_position(_wellIndex);
             End If;
 
-        END LOOP; -- </AddFractions>
+        END LOOP;
 
         If _mode Like '%Preview%' Then
             _message := format('Preview of new fraction names: %s', _fractionNamePreviewList);
         Else
-        -- <AddToContainer>
 
             ---------------------------------------------------
             -- Resolve parent container name
@@ -711,7 +709,7 @@ BEGIN
                 _message := format('New fraction names: %s', _fractionNamePreviewList);
             End If;
 
-        End If; -- </AddToContainer>
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN

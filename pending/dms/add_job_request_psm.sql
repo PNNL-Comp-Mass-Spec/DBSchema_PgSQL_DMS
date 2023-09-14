@@ -69,7 +69,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode::citext In ('add', 'preview') Then
-        --<add>
 
             If _mode = 'preview' Then
                 _infoOnly := true;
@@ -97,7 +96,7 @@ BEGIN
                                 _returnCode => _returnCode,         -- Output
                                 _callingUser => _callingUser);
 
-        End If; --<add>
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN

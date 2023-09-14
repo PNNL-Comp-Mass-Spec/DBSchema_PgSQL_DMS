@@ -225,7 +225,6 @@ BEGIN
     _proposalType := '';
 
     If _eusUsageType::citext In ('USER', 'USER_ONSITE', 'USER_REMOTE') Then
-    -- <a1>
 
         ---------------------------------------------------
         -- Proposal and user list cannot be blank when the usage type is 'USER', 'USER_ONSITE', or 'USER_REMOTE'
@@ -282,7 +281,7 @@ BEGIN
             If Coalesce(_autoSupersedeProposalID, '') = '' Then
                 _checkSuperseded := 0;
             Else
-            -- <c>
+
                 If _eusProposalID = _autoSupersedeProposalID Then
                     _logMessage := format('Proposal %s in t_eus_proposals has proposal_id_auto_supersede set to itself; this is invalid',
                                           Coalesce(_eusProposalID, '??'));
@@ -295,7 +294,7 @@ BEGIN
 
                     _checkSuperseded := 0;
                 Else
-                -- <d>
+
                     If Not Exists (SELECT * FROM t_eus_proposals WHERE proposal_id = _autoSupersedeProposalID) Then
                         _logMessage := format('Proposal %s in t_eus_proposals has proposal_id_auto_supersede set to %s, but that proposal does not exist in t_eus_proposals',
                                               Coalesce(_eusProposalID, '??'), Coalesce(_autoSupersedeProposalID, '??'));
@@ -348,9 +347,9 @@ BEGIN
                             _eusProposalID := _autoSupersedeProposalID;
                         End If;
                     End If;
-                End If; -- </d>
-            End If; -- </c>
-        END LOOP; -- </b>
+                End If;
+            End If;
+        END LOOP;
 
         If _infoOnly And EXISTS (SELECT * from Tmp_Proposal_Stack) Then
 
@@ -435,7 +434,6 @@ BEGIN
         ---------------------------------------------------
 
         If _eusUsersList <> '' Then
-        -- <e>
 
             If _eusUsersList SIMILAR TO '%[A-Z]%' And _eusUsersList SIMILAR TO '%([0-9]%' And _eusUsersList SIMILAR TO '%[0-9])%' Then
                 If _infoOnly Then
@@ -533,7 +531,6 @@ BEGIN
                 );
 
             If _invalidCount > 0 Then
-            -- <f>
 
                 -- Invalid users were found
                 --
@@ -592,14 +589,15 @@ BEGIN
                     End If;
                 End If;
 
-                _eusUsersList := Coalesce(_newUserList, '');
+                _eusUsersList := Trim(Coalesce(_newUserList, ''));
+
                 _message := public.append_to_text(;
                                     _message,
                                     format('Warning: Removed users from EUS User list that are not associated with proposal "%s"', _eusProposalID));
 
-            End If; -- </f>
-        End If; -- </e>
-    End If; -- </a1>
+            End If;
+        End If;
+    End If;
 
     If _campaignID > 0 Or _experimentID > 0 Then
         If _campaignID > 0 Then

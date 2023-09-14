@@ -166,7 +166,7 @@ BEGIN
 
             _validMode := true;
 
-        End If; -- </createjobs>
+        End If;
 
         ---------------------------------------------------
         -- Delete dataset if it is in 'new' state only
@@ -207,7 +207,7 @@ BEGIN
 
             _validMode := true;
 
-        End If; -- </delete>
+        End If;
 
         ---------------------------------------------------
         -- Reset state of failed dataset to 'new'
@@ -285,7 +285,7 @@ BEGIN
 
             _validMode := true;
 
-        End If; -- </reset>
+        End If;
 
         If Not _validMode Then
             ---------------------------------------------------

@@ -156,7 +156,6 @@ BEGIN
     ---------------------------------------------------
 
     If Not _autoCreatedRequest Then
-    -- <a1>
         ---------------------------------------------------
         -- Original request was user-entered,
         -- We will copy it (if commanded to) and set status to 'Completed'
@@ -170,28 +169,24 @@ BEGIN
         End If;
 
     Else
-    -- <a2>
         ---------------------------------------------------
         -- Original request was auto created
         -- delete it (if commanded to)
         ---------------------------------------------------
 
         If Not _retainHistory Then
-        -- <b2>
-            CALL delete_requested_run (
+            CALL public.delete_requested_run (
                                  _requestID,
                                  _skipDatasetCheck => true,
                                  _message => _message,              -- Output
                                  _returnCode => _returnCode,        -- Output
                                  _callingUser => _callingUser);
 
-            --
             If _returnCode <> '' Then
                 ROLLBACK;
                 RETURN;
             End If;
         Else
-        -- <b3>
 
             ---------------------------------------------------
             -- Original request was auto-created
@@ -199,7 +194,6 @@ BEGIN
             ---------------------------------------------------
 
             If _requestComment SIMILAR TO '%Automatically created by recycling request [0-9]%[0-9] from dataset [0-9]%' Then
-            -- <c>
 
                 -- Determine the original request ID
                 --
@@ -207,20 +201,20 @@ BEGIN
                 _charIndex := Position('by recycling request' In _requestComment);
 
                 If _charIndex > 0 Then
-                -- <d>
+
                     _extracted := LTrim(SUBSTRING(_requestComment, _charIndex + char_length('by recycling request'), 20));
 
                     -- Comment is now of the form: '286793 from dataset'
                     -- Find the space after the number
-                    --
+
                     _charIndex := Position(' ' In _extracted);
 
                     If _charIndex > 0 Then
-                    -- <e>
+
                         _extracted := Trim(SUBSTRING(_extracted, 1, _charindex));
 
                         -- Original requested ID has been determined; copy the original request
-                        --
+
                         _requestIDOriginal := _extracted::int;
                         _recycleOriginalRequest := true;
 
@@ -282,7 +276,6 @@ BEGIN
     End If; -- <a2>
 
     If _requestIDOriginal > 0 And _copyRequestedRun Then
-    -- <a3>
 
         ---------------------------------------------------
         -- Copy the request and associate the dataset with the newly created request

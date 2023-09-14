@@ -317,7 +317,7 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-        -- <add>
+
             INSERT INTO t_biomaterial (
                 biomaterial_name,
                 source_name,
@@ -388,15 +388,14 @@ BEGIN
                 CALL public.update_organism_list_for_biomaterial (_biomaterialName, _organismList, _infoOnly => false, _message => _message);
             End If;
 
-        End If; -- </add>
+        End If;
 
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
 
         If _mode = 'update' Then
-        -- <update>
-            --
+
             UPDATE t_biomaterial
             Set
                 Source_Name      = _sourceName,
@@ -433,11 +432,11 @@ BEGIN
             -- If _organismList is an empty string, any rows for the biomaterial will be removed from t_biomaterial_organisms and
             -- Cached_Organism_List will be cleared in t_biomaterial for _biomaterialName
 
-            _organismList := Coalesce(_organismList, '');
+            _organismList := Trim(Coalesce(_organismList, ''));
 
             CALL public.update_organism_list_for_biomaterial (_biomaterialName, _organismList, _infoOnly => false, _message => _message);
 
-        End If; -- </update>
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN

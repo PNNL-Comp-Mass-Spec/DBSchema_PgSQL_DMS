@@ -247,7 +247,7 @@ BEGIN
         GET DIAGNOSTICS _resetCount = ROW_COUNT;
 
         If _resetCount > 0 Then
-        -- <c>
+
             _message := format('Reset dataset state from "Capture Failed" to "New" for %s %s'
                                 _resetCount, public.check_plural(_resetCount, 'Dataset', 'Datasets'));
 

@@ -115,12 +115,12 @@ BEGIN
             End If;
 
             If char_length(_cacheTable) > 0 Then
-            -- <b>
+
                 _currentLocation := format('Check refresh time for %s', _cacheTable);
-                --
+
                 _lastRefreshed := make_date(2000, 1, 1);
                 _lastFullRefresh := make_date(2000, 1, 1);
-                --
+
                 SELECT last_refreshed,
                        last_full_refresh
                 INTO _lastRefreshed, _lastFullRefresh
@@ -144,9 +144,9 @@ BEGIN
                 End If;
 
                 If _hoursSinceLastRefresh >= _updateInterval Or _hoursSinceLastFullRefresh >= _updateIntervalAllItems Then
-                -- <c>
 
                     _idMinimum := 0;
+
                     If _idColumnName <> '' And _hoursSinceLastFullRefresh < _updateIntervalAllItems Then
                         -- Less than _updateIntervalAllItems hours has elapsed since the last full update
                         -- Bump up _idMinimum to _dynamicMinimumCountThreshold less than the max ID in the target table
@@ -183,15 +183,15 @@ BEGIN
                         EXECUTE _sql;
                     End If;
 
-                End If; -- </c>
-            End If; -- </b>
+                End If;
+            End If;
 
             If _infoOnly Then
                 RAISE INFO '';
             End If;
 
             _iteration := _iteration + 1;
-        END LOOP; -- </a>
+        END LOOP;
 
         If Not _infoOnly Then
             -- Update the Job stats in t_mts_pt_dbs_cached

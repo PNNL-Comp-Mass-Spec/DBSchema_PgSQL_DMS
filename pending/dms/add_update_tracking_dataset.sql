@@ -375,7 +375,6 @@ BEGIN
             ---------------------------------------------------
 
             If _requestID = 0 Then
-            -- <b3>
 
                 If Coalesce(_message, '') <> '' and Coalesce(_warning, '') = '' Then
                     _warning := _message;
@@ -413,7 +412,7 @@ BEGIN
                     RAISE EXCEPTION 'Create AutoReq run request failed: dataset % with EUS Proposal ID %, Usage Type %, and Users List % -> %',
                                     _datasetName, _eusProposalID, _eusUsageType, _eusUsersList, _message);
                 End If;
-            End If; -- </b3>
+            End If;
 
             ---------------------------------------------------
             -- Consume the scheduled run

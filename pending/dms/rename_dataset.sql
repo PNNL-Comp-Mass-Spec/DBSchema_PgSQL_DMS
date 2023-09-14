@@ -873,7 +873,7 @@ BEGIN
             RAISE INFO 'cd ..';
         End If;
 
-    END LOOP; -- </jobLoop>
+    END LOOP;
 
     RAISE INFO '';
     RAISE INFO '%', 'popd';

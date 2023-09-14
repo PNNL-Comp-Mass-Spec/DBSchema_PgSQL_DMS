@@ -242,14 +242,13 @@ BEGIN
             End If;
 
             If _mode <> 'check_only' Then
-            --<c>
+
                 -- If value is blank, delete any existing entry from value table
                 --
                 If _vFld = '' Then
                     DELETE FROM t_aux_info_value
                     WHERE Aux_Description_ID = _descriptionID AND target_id = _targetID;
                 Else
-                -- <d>
 
                     -- Does entry exist in value table?
                     --
@@ -275,9 +274,9 @@ BEGIN
                         VALUES (_targetID, _descriptionID, _vFld);
                     End If;
 
-                End If; -- </d>
+                End If;
 
-            End If; -- </c>
+            End If;
 
         END LOOP;
 

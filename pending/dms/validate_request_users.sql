@@ -168,7 +168,7 @@ BEGIN
 
         _nameValidationIteration := _nameValidationIteration + 1;
 
-    END LOOP; -- </a>
+    END LOOP;
 
     DROP TABLE Tmp_UserInfo;
 END

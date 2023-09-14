@@ -151,7 +151,7 @@ BEGIN
     _locID    := 1      -- the null location;
 
     If _mode = 'move_container' Then
-    -- <c>
+
         _location := _newValue;
 
         SELECT ml.location_id,
@@ -197,7 +197,7 @@ BEGIN
             RETURN;
         End If;
 
-    End If; -- </c>
+    End If;
 
     ---------------------------------------------------
     -- Determine whether or not any containers have contents

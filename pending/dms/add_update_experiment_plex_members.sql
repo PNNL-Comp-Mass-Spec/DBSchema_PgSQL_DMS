@@ -331,7 +331,6 @@ BEGIN
                 End If;
 
                 If _parseColData And Not _firstLineParsed Then
-                -- <ParseHeaders>
 
                     SELECT Entry_ID
                     INTO _channelColNum
@@ -404,10 +403,9 @@ BEGIN
 
                     _firstLineParsed := true;
                     _parseColData := false;
-                End If; -- </ParseHeaders>
+                End If;
 
                 If _parseColData Then
-                -- <ParseColData>
 
                     _channelNum := 0;
                     _channelText := '';
@@ -452,7 +450,6 @@ BEGIN
                     End If;
 
                     If char_length(_channelText) > 0 Then
-                        -- <ChannelNum>
                         _channelNum := public.try_cast(_channelText, null::int);
 
                         If _channelNum Is Null Then
@@ -461,7 +458,6 @@ BEGIN
                             RAISE EXCEPTION '%', _message;
                         End If;
                     Else
-                        -- <TagName>
                         If char_length(_tagName) > 0 Then
                             If _experimentLabel = 'TMT10' And _tagName = '131' Then
                                 _tagName := '131N';
@@ -482,7 +478,7 @@ BEGIN
                                 RAISE EXCEPTION '%', _message;
                             End If;
                         End If;
-                    End If; -- </TagName>
+                    End If;
 
                     _experimentId := public.try_cast(_experimentIdOrName, null::int);
 
@@ -508,7 +504,6 @@ BEGIN
                     End If;
 
                     If char_length(_channelTypeName) > 0 Then
-                    -- <ChannelTypeDefined>
                         SELECT channel_type_id
                         INTO _channelTypeId
                         FROM t_experiment_plex_channel_type_name
@@ -545,7 +540,7 @@ BEGIN
                         End If;
                     End If;
 
-                End If; -- </ParseColData>
+                End If;
 
             END LOOP;
         End If;
@@ -592,7 +587,7 @@ BEGIN
             WHILE _channelNum <= 18
             LOOP
                 If Not Exists (SELECT * FROM Tmp_Experiment_Plex_Members WHERE Channel = _channelNum) Then
-                -- <ProcessChannelParam>
+
                     SELECT Trim(Coalesce(ExperimentInfo, '')),
                            Trim(Coalesce(ChannelType, '')),
                            Trim(Coalesce(Comment, ''))
@@ -603,7 +598,6 @@ BEGIN
                     _experimentId := 0;
 
                     If char_length(_experimentIdOrName) > 0 Then
-                    -- <ExperimentIdDefined>
 
                         -- ExperimentIdText can have Experiment ID, or Experiment Name, or both, separated by a colon, comma, space, or tab
                         -- First assure that the delimiter (if present) is a colon
@@ -646,7 +640,6 @@ BEGIN
                         If char_length(_channelTypeName) = 0 Then
                             _channelTypeId := 1;
                         Else
-                        -- <ChannelTypeDefined>
                             SELECT channel_type_id
                             INTO _channelTypeId
                             FROM t_experiment_plex_channel_type_name
@@ -664,16 +657,16 @@ BEGIN
 
                                 RAISE EXCEPTION '%', _message;
                             End If;
-                        End If; -- </ChannelTypeDefined>
+                        End If;
 
                         If Coalesce(_experimentId, 0) > 0 Then
                             INSERT INTO Tmp_Experiment_Plex_Members (Channel, Exp_ID, Channel_Type_ID, Comment, ValidExperiment)
                             VALUES (_channelNum, _experimentId, _channelTypeId, _plexMemberComment, 0)
                         End If;
 
-                    End If; -- </ExperimentIdDefined>
+                    End If;
 
-                End If; -- </ProcessChannelParam>
+                End If;
 
                 _channelNum := _channelNum + 1;
             END LOOP;
@@ -729,7 +722,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode::citext In ('add', 'update', 'preview') Then
-        -- <AddOrUpdate>
 
             ---------------------------------------------------
             -- Create a temporary table to hold the experiment IDs that will be updated with the plex info in Tmp_Experiment_Plex_Members
@@ -923,7 +915,7 @@ BEGIN
                 End If;
             End If;
 
-        End If; -- </AddOrUpdate>
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN

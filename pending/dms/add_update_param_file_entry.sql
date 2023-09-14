@@ -149,9 +149,9 @@ BEGIN
             _counter := _counter + 1;
 
             If (_entryType = 'StaticModification') And _counter < 2 Then
-            -- <b>
+
                 If char_length(_entrySpecifier) > 1  -- Then the mod is a terminal mod Then
-                -- <c>
+
                     If _entrySpecifier = 'N_Term_Protein' Then
                         _affectedResidue := '[';
                         _typeSymbol := 'P';
@@ -171,7 +171,7 @@ BEGIN
                         _affectedResidue := '>';
                         _typeSymbol := 'T';
                     End If;
-                End If; -- </c>
+                End If;
 
                 SELECT residue_id
                 INTO _affectedResidueID

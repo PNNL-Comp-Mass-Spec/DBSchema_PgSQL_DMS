@@ -583,7 +583,6 @@ BEGIN
             _logErrors := true;
 
             If _toolName::citext In ('MaxQuant', 'MSFragger', 'DiaNN') Then
-            -- <MaxQuant_MSFragger_DiaNN>
 
                 SELECT param_file_storage_path
                 INTO _paramFileStoragePath
@@ -761,7 +760,7 @@ BEGIN
                     End If;
                 End If;
 
-            End If; -- </MaxQuant_MSFragger_DiaNN>
+            End If;
 
             If _mode = 'add' Then
                 ---------------------------------------------------
@@ -802,7 +801,6 @@ BEGIN
         End If;
 
         If _mode = 'add' Then
-        -- <add>
 
             If _jobCountToBeCreated = 0 And _datasetCountToRemove > 0 Then
                 RAISE EXCEPTION 'No jobs were made for request % because there were existing jobs for all datasets in the list', _requestID;
@@ -1046,7 +1044,7 @@ BEGIN
                 End If;
             End If;
 
-        End If; -- </add>
+        End If;
 
         ---------------------------------------------------
         -- Build message

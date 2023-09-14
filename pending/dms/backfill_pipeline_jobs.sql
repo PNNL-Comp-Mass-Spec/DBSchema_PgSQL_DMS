@@ -392,7 +392,7 @@ BEGIN
             End If;
 
             If _datasetID < 0 Then
-            -- <c>
+
                 ------------------------------------------------
                 -- Dataset does not exist; auto-define the dataset to associate with this job
                 -- First lookup the data package ID associated with this job
@@ -709,7 +709,6 @@ BEGIN
         End If;
 
     END LOOP;
-
 
     If _infoOnly Then
         ------------------------------------------------

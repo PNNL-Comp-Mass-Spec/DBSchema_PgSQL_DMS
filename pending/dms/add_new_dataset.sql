@@ -531,7 +531,7 @@ BEGIN
     End If;
 
     If char_length(_datasetCreatorUsername) > 0 Then
-    -- <a>
+
         ---------------------------------------------------
         -- Update t_event_log to reflect _datasetCreatorUsername creating this dataset
         ---------------------------------------------------
@@ -543,7 +543,7 @@ BEGIN
               Target_Type = 4 AND
               Entered Between _addUpdateTimeStamp AND _addUpdateTimeStamp + INTERVAL '1 minute';
 
-    End If; -- </a>
+    End If;
 
     ---------------------------------------------------
     -- Update the associated request with run start/finish values

@@ -325,16 +325,11 @@ BEGIN
     End If;
 
     If _valAutoDefineStoragePath = 0 Then
-    -- <a>
+
         ---------------------------------------------------
         -- Add new archive storage path for new instrument
         ---------------------------------------------------
 
-        -- Get new archive ID
-        --
-        --
-        -- Insert new archive path
-        --
         INSERT INTO t_archive_path (
             instrument_id,
             archive_path,
@@ -352,7 +347,7 @@ BEGIN
         )
         RETURNING archive_path_id
         INTO _aID;
-    End If; -- </a>
+    End If;
 
 END
 $$;

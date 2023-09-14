@@ -125,7 +125,7 @@ BEGIN
                    ON J.dataset_id = DS.dataset_id
             WHERE J.job_state_id = 19
             ORDER BY J.job
-        LOOP -- <a>
+        LOOP
 
             _jobMessage := '';
             _readyToProcess := false;
@@ -162,7 +162,7 @@ BEGIN
                     SELECT TagName
                     FROM Tmp_TagNamesTable
                     ORDER BY Entry_ID
-                LOOP -- <b>
+                LOOP
 
                     If Position(format('%s:', _tagName) In _jobInfo.SpecialProcessingText) = 0 Then
                         CONTINUE;
@@ -217,14 +217,13 @@ BEGIN
                         EXIT;
                     End If;
 
-                END LOOP; -- </b>
+                END LOOP;
             End If;
 
             If Not _readyToProcess Then
-            -- <c>
 
                 If _hoursSinceStateLastChanged > _waitThresholdHours And Not _previewSql Then
-                -- <d>
+
                     _message2 := format('Waiting for %s hours', _hoursSinceStateLastChanged);
 
                     If _jobMessage = '' Then
@@ -251,9 +250,9 @@ BEGIN
                         End If;
                     End If;
 
-                End If; -- </d>
+                End If;
 
-            End If; -- </c>
+            End If;
 
             INSERT INTO Tmp_JobsWaiting (Job, Last_Affected, ReadyToProcess, Message)
             Values (_jobInfo.Job, _jobInfo.LastAffected, _readyToProcess, _jobMessage)
@@ -265,7 +264,7 @@ BEGIN
                 EXIT;
             End If;
 
-        END LOOP; -- </a>
+        END LOOP;
 
         If _infoOnly Or _previewSql Then
             ------------------------------------------------

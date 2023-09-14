@@ -233,7 +233,6 @@ BEGIN
         ---------------------------------------------------
 
         If char_length(_instrumentClassCriteria) > 0 Or char_length(_instrumentNameCriteria) > 0 Or char_length(_instrumentExclCriteria) > 0 Then
-        -- <a>
 
             If Not Exists ( Then
                 SELECT ADT.Dataset_Type;
@@ -364,7 +363,7 @@ BEGIN
 
             END LOOP;
 
-        End If; -- </a>
+        End If;
 
         ---------------------------------------------------
         -- Resolve organism ID
