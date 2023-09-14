@@ -1,25 +1,29 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_requested_run_copy_factors
-(
-    _srcRequestID int,
-    _destRequestID int,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_requested_run_copy_factors(integer, integer, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_requested_run_copy_factors(IN _srcrequestid integer, IN _destrequestid integer, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Copy factors from source requested run to destination requested run
+**
+**  Arguments:
+**    _srcRequestID     Source requested run ID
+**    _destRequestID    Source requested run ID
+**    _message          Output: status message
+**    _returnCode       Output: Return code
+**    _callingUser      Username of the calling user
 **
 **  Auth:   grk
 **  Date:   02/24/2010
 **          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          04/25/2012 mem - Now assuring that _callingUser is not blank
 **          11/11/2022 mem - Exclude unnamed factors when querying T_Factor
-**          12/15/2023 mem - Ported to PostgreSQL
+**          09/13/2023 mem - Only delete factors for the destination requested run if the source requested run actually has factors
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -29,7 +33,13 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    _callingUser := Coalesce(_callingUser, '(copy factors)');
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
+    _srcRequestID   := Coalesce(_srcRequestID, 0);
+    _destRequestID  := Coalesce(_destRequestID, 0);
+    _callingUser    := Trim(Coalesce(_callingUser, '(copy factors)'));
 
     -----------------------------------------------------------
     -- Temp table to hold factors being copied
@@ -45,7 +55,7 @@ BEGIN
     -- Populate temp table
     -----------------------------------------------------------
 
-    INSERT INTO Tmp_Factors ( Request, Factor, value )
+    INSERT INTO Tmp_Factors ( Request, Factor, Value )
     SELECT target_id AS Request,
            name AS Factor,
            value
@@ -55,35 +65,41 @@ BEGIN
           Trim(t_factor.name) <> '';
 
     -----------------------------------------------------------
-    -- Clean out old factors for _destRequest
-    -----------------------------------------------------------
-
-    DELETE FROM t_factor
-    WHERE t_factor.type = 'Run_Request' AND target_id = _destRequestID;
-
-    -----------------------------------------------------------
     -- Get rid of any blank entries from temp table
     -- (shouldn't be any, but let's be cautious)
     -----------------------------------------------------------
 
-    DELETE FROM Tmp_Factors WHERE Coalesce(Value, '') = '';
+    DELETE FROM Tmp_Factors
+    WHERE Trim(Coalesce(Value, '')) = '';
 
     -----------------------------------------------------------
     -- Anything to copy?
     -----------------------------------------------------------
 
-    If Not Exists (SELECT * FROM Tmp_Factors) Then
+    If Not Exists (SELECT Factor FROM Tmp_Factors) Then
         _message := 'Nothing to copy';
+
+        DROP TABLE Tmp_Factors;
         RETURN;
     End If;
+
+    -----------------------------------------------------------
+    -- Clean out old factors for _destRequest
+    -----------------------------------------------------------
+
+    DELETE FROM t_factor
+    WHERE t_factor.type = 'Run_Request' AND
+          target_id = _destRequestID;
 
     -----------------------------------------------------------
     -- Copy from temp table to factors table for _destRequest
     -----------------------------------------------------------
 
-    INSERT INTO t_factor ( type, target_id, name, Value )
-    SELECT
-        'Run_Request' AS Type, _destRequestID AS TargetID, Factor AS Name, Value
+    INSERT INTO t_factor ( type, target_id, name, value )
+    SELECT 'Run_Request' AS Type,
+           _destRequestID AS TargetID,
+           Factor AS Name,
+           Value
     FROM Tmp_Factors;
 
     -----------------------------------------------------------
@@ -112,4 +128,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_requested_run_copy_factors IS 'UpdateRequestedRunCopyFactors';
+
+ALTER PROCEDURE public.update_requested_run_copy_factors(IN _srcrequestid integer, IN _destrequestid integer, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_requested_run_copy_factors(IN _srcrequestid integer, IN _destrequestid integer, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_requested_run_copy_factors(IN _srcrequestid integer, IN _destrequestid integer, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UpdateRequestedRunCopyFactors';
+

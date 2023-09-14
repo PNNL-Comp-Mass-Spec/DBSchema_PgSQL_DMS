@@ -1,29 +1,27 @@
 --
-CREATE OR REPLACE PROCEDURE public.copy_requested_run
-(
-    _requestID int,
-    _datasetID int,
-    _status text,
-    _notation text,
-    _requestNameAppendText text = '',
-    _requestNameOverride text = '',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = '',
-    _infoOnly boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: copy_requested_run(integer, integer, text, text, text, text, text, text, text, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.copy_requested_run(IN _requestid integer, IN _datasetid integer, IN _status text, IN _comment text, IN _requestnameappendtext text DEFAULT ''::text, IN _requestnameoverride text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text, IN _infoonly boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Make copy of given requested run and associate it with given dataset
+**      Make a copy of a given requested run and associate it with the given dataset
+**      If _datasetID is 0 or null, the new requested run will have a null dataset ID
 **
 **  Arguments:
-**    _status                  Active, Completed, or Inactive
-**    _notation                Requested run comment
-**    _requestNameAppendText   Text appended to the name of the newly created request; append nothing if null or ''
-**    _requestNameOverride     New request name to use; if blank, will be based on the existing request name, but will append _requestNameAppendText
+**    _requestID                Requested run ID to copy
+**    _datasetID                Dataset ID (use 0 or null if there is not a dataset to associate with the new requested run)
+**    _status                   State to use for the new requested run: 'Active', 'Completed', or 'Inactive'
+**    _comment                  Requested run comment
+**    _requestNameAppendText    Text appended to the name of the newly created request; append nothing if null or ''
+**    _requestNameOverride      New request name to use; if blank, will be based on the existing request name, but will append _requestNameAppendText
+**    _message                  Output: status message
+**    _returnCode               Output: Return code
+**    _callingUser              Username of the calling user
+**    _infoOnly                 When true, preview the requested run that would be created
 **
 **  Auth:   grk
 **  Date:   02/26/2010
@@ -42,14 +40,16 @@ AS $$
 **          10/19/2020 mem - Rename the instrument group column to instrument_group
 **          01/19/2021 mem - Add parameters _requestNameOverride and _infoOnly
 **          02/10/2023 mem - Call update_cached_requested_run_batch_stats
-**          12/15/2023 mem - Ported to PostgreSQL
+**          09/13/2023 mem - If there is an existing requested run with a conflicting name, use @requestNameOverride if defined
+**                         - Include an underscore before appending @iteration when generating a unique name for the new requested run
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
-    _stateID int := 0;
+    _stateID int;
     _newRequestID int;
     _oldRequestName text;
-    _newRequestName text;
+    _newRequestName citext;
     _stateNameList text := NULL;
     _iteration int;
     _callingUserUnconsume text;
@@ -66,19 +66,23 @@ BEGIN
     _message := '';
     _returnCode := '';
 
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
+    _requestID             := Coalesce(_requestID, 0);
+    _datasetID             := Coalesce(_datasetID, 0);
+    _status                := Trim(Coalesce(_status, ''));
+    _comment               := Trim(Coalesce(_comment, ''));
     _requestNameAppendText := Trim(Coalesce(_requestNameAppendText, ''));
-    _requestNameOverride := Trim(Coalesce(_requestNameOverride, ''));
+    _requestNameOverride   := Trim(Coalesce(_requestNameOverride, ''));
 
     _callingUser := Coalesce(_callingUser, '');
     _infoOnly := Coalesce(_infoOnly, false);
 
-    ---------------------------------------------------
-    -- We are done if there is no associated request
-    ---------------------------------------------------
-
-    _requestID := Coalesce(_requestID, 0);
     If _requestID = 0 Then
         _message := 'Source request ID is 0; nothing to do';
+        _returnCode := 'U5251';
         RETURN;
     End If;
 
@@ -89,11 +93,14 @@ BEGIN
     SELECT request_name
     INTO _oldRequestName
     FROM t_requested_run
-    WHERE request_id = _requestID
+    WHERE request_id = _requestID;
 
     If Not FOUND Then
         _message := format('Source request not found in t_requested_run: %s', _requestID);
+
         CALL post_log_entry ('Error', _message, 'Copy_Requested_Run');
+
+        _returnCode := 'U5252';
         RETURN;
     End If;
 
@@ -104,17 +111,18 @@ BEGIN
     SELECT state_id
     INTO _stateID
     FROM t_requested_run_state_name
-    WHERE state_name = _status;
+    WHERE state_name = _status::citext;
 
     If Not FOUND Then
-
         SELECT string_agg(state_name, ', ' ORDER BY state_id)
         INTO _stateNameList
-        FROM t_requested_run_state_name
+        FROM t_requested_run_state_name;
 
         _message := format('Invalid requested run state: %s; valid states are %s', _status, _stateNameList);
+
         CALL post_log_entry ('Error', _message, 'Copy_Requested_Run');
 
+        _returnCode := 'U5253';
         RETURN;
     End If;
 
@@ -124,7 +132,7 @@ BEGIN
     ---------------------------------------------------
 
     If _requestNameOverride = '' Then
-        _newRequestName := format('%s%s' _oldRequestName, _requestNameAppendText);
+        _newRequestName := format('%s%s', _oldRequestName, _requestNameAppendText);
     Else
         _newRequestName := _requestNameOverride;
     End If;
@@ -133,13 +141,18 @@ BEGIN
 
     WHILE true
     LOOP
-        If Not Exists (SELECT * FROM t_requested_run WHERE request_name = _newRequestName) Then
+        If Not Exists (SELECT request_name FROM t_requested_run WHERE request_name = _newRequestName) Then
             -- Break out of the while loop
             EXIT;
         End If;
 
         _iteration := _iteration + 1;
-        _newRequestName := format('%s%s%s', _oldRequestName, _requestNameAppendText, _iteration);
+
+        If _requestNameOverride = '' Then
+            _newRequestName := format('%s%s_%s', _oldRequestName, _requestNameAppendText, _iteration);
+        Else
+            _newRequestName := format('%s_%s', _requestNameOverride, _iteration);
+        End If;
 
     END LOOP;
 
@@ -217,7 +230,7 @@ BEGIN
                 request_id As Source_Request_ID,
                 request_name As Source_Request_Name,
                 _newRequestName As New_Request_Name,
-                _notation As Comment,
+                _comment As Comment,
                 requester_username,
                 public.timestamp_text(created) As created,      -- Pass along the original request's 'created' date into the new entry
                 instrument_group,
@@ -240,7 +253,7 @@ BEGIN
                 separation_group,
                 _status As State_Name,
                 'auto' As Origin,
-                CASE WHEN Coalesce(_datasetID, 0) = 0 THEN NULL ELSE _datasetID END AS Dataset_ID
+                CASE WHEN _datasetID = 0 THEN NULL ELSE _datasetID END AS Dataset_ID
             FROM t_requested_run
             WHERE request_id = _requestID
         LOOP
@@ -277,99 +290,94 @@ BEGIN
             RAISE INFO '%', _infoData;
         END LOOP;
 
-
         RETURN;
     End If;
 
     ---------------------------------------------------
-    -- Make copy
+    -- Copy the requested run
     ---------------------------------------------------
 
-    -- Make new request
-    --
-    INSERT INTO t_requested_run
-    (
-        comment,
-        request_name,
-        requester_username,
-        created,
-        instrument_group,
-        request_type_id,
-        instrument_setting,
-        special_instructions,
-        wellplate,
-        well,
-        vialing_conc,
-        vialing_vol,
-        priority,
-        note,
-        exp_id,
-        request_run_start,
-        request_run_finish,
-        request_internal_standard,
-        work_package,
-        batch_id,
-        blocking_factor,
-        block,
-        run_order,
-        eus_proposal_id,
-        eus_usage_type_id,
-        cart_id,
-        cart_config_id,
-        cart_column,
-        separation_group,
-        mrm_attachment,
-        state_name,
-        origin,
-        dataset_id
-    )
-    SELECT
-        _notation,
-        _newRequestName,
-        requester_username,
-        created,                -- Pass along the original request's 'created' date into the new entry
-        instrument_group,
-        request_type_id,
-        instrument_setting,
-        special_instructions,
-        wellplate,
-        well,
-        vialing_conc,
-        vialing_vol,
-        priority,
-        note,
-        exp_id,
-        request_run_start,
-        request_run_finish,
-        request_internal_standard,
-        work_package,
-        batch_id,
-        blocking_factor,
-        block,
-        run_order,
-        eus_proposal_id,
-        eus_usage_type_id,
-        cart_id,
-        cart_config_id,
-        cart_column,
-        separation_group,
-        mrm_attachment,
-        _status,
-        'auto',
-        CASE WHEN Coalesce(_datasetID, 0) = 0 THEN NULL ELSE _datasetID END
+    INSERT INTO t_requested_run( comment,
+                                 request_name,
+                                 requester_username,
+                                 created,
+                                 instrument_group,
+                                 request_type_id,
+                                 instrument_setting,
+                                 special_instructions,
+                                 wellplate,
+                                 well,
+                                 vialing_conc,
+                                 vialing_vol,
+                                 priority,
+                                 note,
+                                 exp_id,
+                                 request_run_start,
+                                 request_run_finish,
+                                 request_internal_standard,
+                                 work_package,
+                                 batch_id,
+                                 blocking_factor,
+                                 block,
+                                 run_order,
+                                 eus_proposal_id,
+                                 eus_usage_type_id,
+                                 cart_id,
+                                 cart_config_id,
+                                 cart_column,
+                                 separation_group,
+                                 mrm_attachment,
+                                 state_name,
+                                 origin,
+                                 dataset_id )
+    SELECT _comment,
+           _newRequestName,
+           requester_username,
+           created,                -- Pass along the original request's 'created' date into the new entry
+           instrument_group,
+           request_type_id,
+           instrument_setting,
+           special_instructions,
+           wellplate,
+           well,
+           vialing_conc,
+           vialing_vol,
+           priority,
+           note,
+           exp_id,
+           request_run_start,
+           request_run_finish,
+           request_internal_standard,
+           work_package,
+           batch_id,
+           blocking_factor,
+           block,
+           run_order,
+           eus_proposal_id,
+           eus_usage_type_id,
+           cart_id,
+           cart_config_id,
+           cart_column,
+           separation_group,
+           mrm_attachment,
+           _status,
+           'auto',
+           CASE WHEN _datasetID = 0 THEN NULL ELSE _datasetID END AS Dataset_ID
     FROM t_requested_run
     WHERE request_id = _requestID
     RETURNING request_id
     INTO _newRequestID;
 
     If Not FOUND Then
-        If Not Exists (Select * from t_requested_run Where request_id = _requestID) Then
-            _message := format('Problem trying to renumber request in history; RequestID not found: %s', _requestID);
+        If Not Exists (SELECT request_id FROM t_requested_run WHERE request_id = _requestID) Then
+            _message := format('Problem trying to copy an existing requested run; source request ID not found: %s', _requestID);
         Else
-            _message := format('Problem trying to renumber request in history; No rows added for RequestID %s', _requestID);
+            _message := format('Problem trying to copy an existing requested run; no rows added for request ID %s', _requestID);
         End If;
 
         CALL post_log_entry ('Error', _message, 'Copy_Requested_Run');
+
+        _returnCode := 'U5254';
         RETURN;
     End If;
 
@@ -378,12 +386,10 @@ BEGIN
     End If;
 
     ------------------------------------------------------------
-    -- Copy factors from the request being unconsumed to the
-    -- renumbered copy being retained in the history
+    -- Copy factors from the sourc requested run to the new one
     ------------------------------------------------------------
 
     -- First define the calling user text
-    --
 
     If Coalesce(_callingUser, '') <> '' Then
         _callingUserUnconsume := format('(unconsume for %s)', _callingUser);
@@ -392,27 +398,26 @@ BEGIN
     End If;
 
     -- Now copy the factors
-    --
+
     CALL public.update_requested_run_copy_factors (
-                        _requestID,
-                        _newRequestID,
-                        _message => _message,           -- Output
-                        _callingUserUnconsume,
-                        _returnCode => _returnCode);    -- Output
+                    _requestID,
+                    _newRequestID,
+                    _message => _message,                   -- Output
+                    _returnCode => _returnCode,             -- Output
+                    _callingUser => _callingUserUnconsume);
 
     If _returnCode <> '' Then
-        _message := format('Problem copying factors to new request; _returnCode = %s', _returnCode);
+        _message := format('Problem copying factors from requested run %s to requested run %s; _returnCode = %s', _requestID, _newRequestID, _returnCode);
         CALL post_log_entry ('Error', _message, 'Copy_Requested_Run');
         RETURN;
-    Else
-        -- _message may contain the text 'Nothing to copy'
-        -- We don't need that text appearing on the web page, so we'll clear _message
-        _message := '';
     End If;
 
+    -- _message may contain the text 'Nothing to copy'
+    -- We don't need that text appearing on the web page, so clear _message
+    _message := '';
+
     ---------------------------------------------------
-    -- Copy proposal users for new auto request
-    -- from original request
+    -- Copy proposal users for new auto request from original request
     ---------------------------------------------------
 
     INSERT INTO t_requested_run_eus_users (eus_person_id, request_id)
@@ -433,22 +438,31 @@ BEGIN
     -- Update stats in t_cached_requested_run_batch_stats
     ---------------------------------------------------
 
-    SELECT Batch_ID
+    SELECT batch_id
     INTO _batchID
     FROM t_requested_run
     WHERE request_id = _requestID;
 
-    If _batchID > 0 Then
+    If Coalesce(_batchID, 0) > 0 Then
         CALL public.update_cached_requested_run_batch_stats (
                         _batchID,
+                        _fullrefresh => false,
                         _message => _msg,               -- Output
                         _returnCode => _returnCode);    -- Output
 
         If _returnCode <> '' Then
-            _message := public.append_to_text(_message, _msg, _delimiter => '; ', _maxlength => 1024);
+            _message := public.append_to_text(_message, _msg);
         End If;
     End If;
 END
 $$;
 
-COMMENT ON PROCEDURE public.copy_requested_run IS 'CopyRequestedRun';
+
+ALTER PROCEDURE public.copy_requested_run(IN _requestid integer, IN _datasetid integer, IN _status text, IN _comment text, IN _requestnameappendtext text, IN _requestnameoverride text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _infoonly boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE copy_requested_run(IN _requestid integer, IN _datasetid integer, IN _status text, IN _comment text, IN _requestnameappendtext text, IN _requestnameoverride text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _infoonly boolean); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.copy_requested_run(IN _requestid integer, IN _datasetid integer, IN _status text, IN _comment text, IN _requestnameappendtext text, IN _requestnameoverride text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _infoonly boolean) IS 'CopyRequestedRun';
+

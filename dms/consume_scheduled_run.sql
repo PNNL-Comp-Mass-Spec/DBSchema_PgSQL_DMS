@@ -1,15 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.consume_scheduled_run
-(
-    _datasetID int,
-    _requestID int,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = '',
-    _logDebugMessages boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: consume_scheduled_run(integer, integer, text, text, text, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.consume_scheduled_run(IN _datasetid integer, IN _requestid integer, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text, IN _logdebugmessages boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -24,7 +19,7 @@ AS $$
 **    _logDebugMessages     If true, log debug messages
 **
 **  Auth:   grk
-**  Date:   02/13/2003
+**  Date:   02/13/2003 grk - Initial release
 **          01/05/2002 grk - Added stuff for Internal Standard and cart parameters
 **          03/01/2004 grk - Added validation for experiments matching between request and dataset
 **          10/12/2005 grk - Added stuff to copy new work package and proposal fields.
@@ -41,7 +36,7 @@ AS $$
 **          11/16/2016 mem - Call update_cached_requested_run_eus_users to update T_Active_Requested_Run_Cached_EUS_Users
 **          11/21/2016 mem - Add parameter _logDebugMessages
 **          05/22/2017 mem - No longer abort the addition if a request already exists named AutoReq_DatasetName
-**          12/15/2023 mem - Ported to PostgreSQL
+**          09/13/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -49,21 +44,28 @@ DECLARE
     _logMessage text;
     _experimentID int;
     _reqExperimentID int;
-    _existingDatasetName text := '';
-    _newAutoRequestID int := 0;
+    _existingDatasetName text;
+    _newAutoRequestID int;
     _stateName text;
-    _stateID int := 0;
+    _stateID int;
     _alterEnteredByMessage text;
 BEGIN
     _message := '';
     _returnCode := '';
 
     ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
+    _datasetID := Coalesce(_datasetID, 0);
+    _requestID := Coalesce(_requestID, 0);
+
+    ---------------------------------------------------
     -- Validate that experiments match
     ---------------------------------------------------
 
     -- Get experiment ID from dataset
-    --
+
     SELECT exp_id
     INTO _experimentID
     FROM t_dataset
@@ -77,8 +79,8 @@ BEGIN
         RETURN;
     End If;
 
-    -- Get experiment ID from scheduled run
-    --
+    -- Get experiment ID from requested run
+
     SELECT exp_id
     INTO _reqExperimentID
     FROM t_requested_run
@@ -92,10 +94,8 @@ BEGIN
         RETURN;
     End If;
 
-    -- Validate that experiments match
-    --
     If Coalesce(_experimentID, -1) <> Coalesce(_reqExperimentID, -2) Then
-        _message := 'Experiment in dataset does not match with one in requested run';
+        _message := format('Experiment ID for dataset does not match the one associated with the requested run: %s vs. %s', _experimentID, _reqExperimentID);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5203';
@@ -110,7 +110,7 @@ BEGIN
     BEGIN
 
         -- If request already has a dataset associated with it, we need to create a new auto-request for that dataset
-        --
+
         SELECT dataset_id
         INTO _existingDatasetID
         FROM t_requested_run
@@ -162,12 +162,12 @@ BEGIN
                     blocking_factor = Source.blocking_factor,
                     block = Source.block,
                     run_order = Source.run_order
-                FROM ( SELECT batch_id,
-                              blocking_factor,
-                              block,
-                              run_order
-                       FROM t_requested_run
-                       WHERE request_id = _requestID
+                FROM ( SELECT RR.batch_id,
+                              RR.blocking_factor,
+                              RR.block,
+                              RR.run_order
+                       FROM t_requested_run RR
+                       WHERE RR.request_id = _requestID
                     ) Source
                 WHERE Target.request_id = _newAutoRequestID;
 
@@ -191,7 +191,7 @@ BEGIN
         UPDATE t_requested_run
         SET dataset_id = _datasetID,
             state_name = _stateName
-        WHERE request_id = _requestID
+        WHERE request_id = _requestID;
 
         -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
         If char_length(_callingUser) > 0 Then
@@ -224,4 +224,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.consume_scheduled_run IS 'ConsumeScheduledRun';
+
+ALTER PROCEDURE public.consume_scheduled_run(IN _datasetid integer, IN _requestid integer, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _logdebugmessages boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE consume_scheduled_run(IN _datasetid integer, IN _requestid integer, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _logdebugmessages boolean); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.consume_scheduled_run(IN _datasetid integer, IN _requestid integer, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _logdebugmessages boolean) IS 'ConsumeScheduledRun';
+
