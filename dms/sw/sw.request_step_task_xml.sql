@@ -834,15 +834,15 @@ BEGIN
 
             _currentLocation := 'Populate Tmp_CandidateJobSteps using all-in-one query';
 
-            -- *********************************************************************************
+            ------------------------------------------------------------------------------------
             -- Big-bang query
             -- This query can be very expensive if there is a large number of active jobs
             -- and SQL Server gets confused about which indices to use (more likely on SQL Server 2005)
             --
             -- This can lead to huge "lock request/sec" rates, particularly when there are
             -- thouands of jobs in sw.t_jobs with state <> 8 and steps with state IN (2, 9)
-            -- *********************************************************************************
-            --
+            ------------------------------------------------------------------------------------
+
             INSERT INTO Tmp_CandidateJobSteps (
                 Job,
                 Step,
@@ -979,8 +979,6 @@ BEGIN
 
         Else
             _currentLocation := 'Populate Tmp_CandidateJobSteps using multi-step query';
-
-
 
             ---------------------------------------------------
             -- Deprecated in May 2015:

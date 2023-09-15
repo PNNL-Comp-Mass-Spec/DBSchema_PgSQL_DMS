@@ -85,7 +85,7 @@ BEGIN
                     End If;
                 End If;
             End If;
-        End Loop;
+        END LOOP;
 
         _workPackageNew := Trim(Coalesce(_workPackageNew, ''));
 

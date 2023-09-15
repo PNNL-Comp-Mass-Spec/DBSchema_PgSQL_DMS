@@ -80,11 +80,11 @@ BEGIN
                     'FROM mc.t_mgrs '
                     'WHERE mgr_name SIMILAR TO $1 )');
 
-    For _managerFilter In
+    FOR _managerFilter IN
         SELECT NameQ.manager_name
         FROM ( SELECT unnest( _managerSpecList ) AS manager_name ) As NameQ
         WHERE NameQ.manager_name SIMILAR TO '%[%]%' OR NameQ.manager_name SIMILAR TO '%\[%'
-    Loop
+    LOOP
         EXECUTE _s
         INTO _additionalManagers
         USING _managerFilter;
@@ -96,7 +96,7 @@ BEGIN
         -- Uncomment to debug:
         -- RAISE NOTICE '%', regexp_replace(_s, '\$1', format('''%s''', _managerFilter))
 
-    End Loop;
+    END LOOP;
 
     If _remove_unknown_managers = 0 Then
         RETURN QUERY

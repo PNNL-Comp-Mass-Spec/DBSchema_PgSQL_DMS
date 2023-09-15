@@ -32,7 +32,7 @@ BEGIN
     -- Note that BTO, ENVO, and MS have dedicated functions for adding new terms
 
     INSERT INTO Tmp_OntologiesToUpdate (ontology)
-    Values ('CL'),
+    VALUES ('CL'),
            ('GO'),
            ('MI'),
            ('MOD'),
@@ -40,10 +40,10 @@ BEGIN
            ('NEWT'),
            ('DOID');
 
-    For _ontology In
+    FOR _ontology IN
         SELECT u.ontology
         FROM Tmp_OntologiesToUpdate u
-    Loop
+    LOOP
 
         RETURN QUERY
         SELECT _ontology,
@@ -54,7 +54,7 @@ BEGIN
                                _infoOnly => _infoOnly,
                                _previewSql => _previewSql) s;
 
-    End Loop;
+    END LOOP;
 
     Drop Table Tmp_OntologiesToUpdate;
 END
