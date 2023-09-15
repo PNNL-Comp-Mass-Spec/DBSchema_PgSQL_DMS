@@ -313,7 +313,7 @@ BEGIN
     -- Delete any auxiliary info associated with dataset
     ---------------------------------------------------
 
-    CALL delete_aux_info 'Dataset', _datasetName, _message => _message, _returnCode => _returnCode);
+    CALL public.delete_aux_info 'Dataset', _datasetName, _message => _message, _returnCode => _returnCode);
 
     If _returnCode <> '' Then
         _message := format('Delete auxiliary information was unsuccessful for dataset: %s', _message);
@@ -331,7 +331,12 @@ BEGIN
     FROM t_requested_run
     WHERE dataset_id = _datasetID;
 
-    CALL unconsume_scheduled_run (_datasetName, _retainHistory => false, _message => _message, _returnCode => _returnCode, _callingUser => _callingUser);
+    CALL public.unconsume_scheduled_run (
+                    _datasetName,
+                    _retainHistory => false,
+                    _message => _message,           -- Output
+                    _returnCode => _returnCode,     -- Output
+                    _callingUser => _callingUser);
 
     If _returnCode <> '' Then
         _message := format('Unconsume operation was unsuccessful for dataset: %s', _message);
@@ -340,10 +345,69 @@ BEGIN
         RETURN;
     End If;
 
+    _message := '';
+
     If Not _requestID Is Null Then
-        SELECT 'Request updated; verify this action, especially if the deleted dataset was replaced with an identical, renamed dataset' AS Comment, *
-        FROM t_requested_run
-        WHERE request_id = _requestID
+
+        RAISE INFO '';
+
+        _formatSpecifier := '%-135s %-10s %-40s %-10s %-30s %-20s %-9s %-8s %-25s';
+
+        _infoHead := format(_formatSpecifier,
+                            'Message',
+                            'Request_ID',
+                            'Request_Name',
+                            'State_Name',
+                            'Comment',
+                            'Created',
+                            'Exp_ID',
+                            'Batch_ID',
+                            'Instrument_Group'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---------------------------------------------------------------------------------------------------------------------------------------',
+                                     '----------',
+                                     '----------------------------------------',
+                                     '----------',
+                                     '------------------------------',
+                                     '--------------------',
+                                     '---------',
+                                     '--------',
+                                     '-------------------------'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT 'Request updated; verify this action, especially if the deleted dataset was replaced with an identical, renamed dataset' AS message,
+                   Request_ID,
+                   Request_Name,
+                   State_Name,
+                   Comment,
+                   Created,
+                   Exp_ID,
+                   Batch_ID,
+                   Instrument_Group
+            FROM t_requested_run
+            WHERE request_id = _requestID
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Message,
+                                _previewData.Request_ID,
+                                _previewData.Request_Name,
+                                _previewData.State_Name,
+                                _previewData.Comment,
+                                _previewData.Created,
+                                _previewData.Exp_ID,
+                                _previewData.Batch_ID,
+                                _previewData.Instrument_Group
+                               );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
+
     End If;
 
     ---------------------------------------------------
@@ -396,7 +460,7 @@ BEGIN
     UPDATE cap.t_log_entries
     SET type = 'ErrorAutoFixed'
     WHERE type = 'error' AND
-          message LIKE '%' || _datasetName || '%';
+          message ILike '%' || _datasetName || '%';
 
     ---------------------------------------------------
     -- Remove jobs from cap.t_tasks

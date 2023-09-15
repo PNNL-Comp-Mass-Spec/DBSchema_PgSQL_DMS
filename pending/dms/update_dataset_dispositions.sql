@@ -1,4 +1,4 @@
---
+
 CREATE OR REPLACE PROCEDURE public.update_dataset_dispositions
 (
     _datasetIDList text,
@@ -252,7 +252,7 @@ BEGIN
             --
             If _recycleRequest = 'yes' Then
                 BEGIN
-                    CALL unconsume_scheduled_run (
+                    CALL public.unconsume_scheduled_run (
                             _datasetInfo.DatasetName,
                             _retainHistory => true,
                             _message => _message,           -- Output
@@ -263,6 +263,7 @@ BEGIN
                         RAISE EXCEPTION '%', _message;
                     End If;
 
+                    _message := '';
                 EXCEPTION
                     WHEN OTHERS THEN
                         GET STACKED DIAGNOSTICS
@@ -293,7 +294,7 @@ BEGIN
             If _datasetInfo.RatingID = -10 And _ratingID = 5 And _datasetInfo.StateID In (3, 4) Then
                 -- schedule default analyses for this dataset
                 --
-                CALL schedule_predefined_analysis_jobs (_datasetInfo.DatasetName, _callingUser, _returnCode => _returnCode);
+                CALL public.schedule_predefined_analysis_jobs (_datasetInfo.DatasetName, _callingUser, _returnCode => _returnCode);
 
                 If _returnCode <> '' Then
                     ROLLBACK;

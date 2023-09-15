@@ -1,4 +1,4 @@
---
+
 CREATE OR REPLACE PROCEDURE public.unconsume_scheduled_run
 (
     _datasetName text,
@@ -12,26 +12,21 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      The intent is to recycle user-entered requests
-**      (where appropriate) and make sure there is
-**      a requested run for each dataset (unless
-**      dataset is being deleted).
+**      This procedure recycles user-entered requested runs (where appropriate)
+**      and makes sure there is an active requested run for each dataset (unless the dataset is being deleted)
 **
-**      Disassociates the currently-associated requested run
-**      from the given dataset if the requested run was
-**      user-entered (as opposted to automatically created
-**      when dataset was created with requestID = 0).
+**      It disassociates the currently-associated requested run from the given dataset if the requested run was user-entered
+**      (as opposed to automatically created when the dataset was created and requestID was 0)
 **
-**      If original requested run was user-entered and _retainHistory is true,
-**      copy the original requested run to a new one and associate that one with the given dataset.
+**      If the original requested run was user-entered and _retainHistory is true,
+**      copy the original requested run to a new one and associate that one with the given dataset
 **
-**      If the given dataset is to be deleted, the _retainHistory flag
-**      must be false, otherwise a foreign key constraint will fail
-**      when the attempt to delete the dataset is made and the associated
-**      request is still hanging around.
+**      If the given dataset is to be deleted, the _retainHistory flag must be false,
+**      otherwise a foreign key constraint will fail when the attempt to delete the dataset is made
+**      and the associated request is still hanging around.
 **
 **  Auth:   grk
-**  Date:   3/1/2004 grk - Initial release
+**  Date:   03/01/2004 grk - Initial release
 **          01/13/2006 grk - Handling for new blocking columns in request and history tables.
 **          01/17/2006 grk - Handling for new EUS tracking columns in request and history tables.
 **          03/10/2006 grk - Fixed logic to handle absence of associated request
@@ -56,31 +51,30 @@ AS $$
 **          06/12/2018 mem - Send _maxLength to Append_To_Text
 **          06/14/2019 mem - Change cart to Unknown when making the request active again
 **          10/23/2021 mem - If recycling a request with queue state 3 (Analyzed), change the queue state to 2 (Assigned)
-**          12/15/2023 mem - Ported to PostgreSQL
+**          09/14/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
-    _datasetID int := 0;
-    _requestComment text := '';
-    _requestID int := 0;
+    _datasetID int;
+    _requestComment citext;
+    _requestID int;
     _requestOrigin text;
-    _currentQueueState int     -- 1:= Unassigned, 2=Assigned, 3=Analyzed;
+    _currentQueueState int;
     _requestIDOriginal int := 0;
     _copyRequestedRun boolean := false;
     _recycleOriginalRequest boolean := false;
     _autoCreatedRequest boolean := false;
-    _newCartID int := null;
+    _newCartID int;
     _warningMessage text;
     _notation text;
     _addnlText text;
     _charIndex int;
     _extracted text;
-    _originalRequestStatus text := '';
-    _originalRequesetDatasetID int := 0;
-    _requestNameAppendText text := '_Recycled';
-    _newStatus text := 'Active';
+    _originalRequestStatus citext;
+    _originalRequesetDatasetID int;
+    _newStatus text;
     _newQueueState int;
-    _stateID int := 0;
+    _stateID int;
     _alterEnteredByMessage text;
 BEGIN
     _message := Coalesce(_message, '');
@@ -94,22 +88,22 @@ BEGIN
     _retainHistory := Coalesce(_retainHistory, false);
 
     ---------------------------------------------------
-    -- Get datasetID
+    -- Resolve dataset name to ID
     ---------------------------------------------------
 
     SELECT dataset_id
     INTO _datasetID
     FROM t_dataset
     WHERE dataset = _datasetName;
-    --
-    If _datasetID = 0 Then
-        _message := format('Dataset does not exist"%s"', _datasetName);
+
+    If Not FOUND Then
+        _message := format('Dataset does not exist: "%s"', _datasetName);
         _returnCode := 'U5141';
         RETURN;
     End If;
 
     ---------------------------------------------------
-    -- Look for associated request for dataset
+    -- Look for requested run for dataset
     ---------------------------------------------------
 
     SELECT request_id,
@@ -120,11 +114,10 @@ BEGIN
     FROM t_requested_run
     WHERE dataset_id = _datasetID;
 
-    ---------------------------------------------------
-    -- We are done if there is no associated request
-    ---------------------------------------------------
-
     If Not FOUND Then
+        -- Dataset does not have a requested run
+        _message := format('Dataset ID % does not have a requested run; nothing to unconsume', _datasetID);
+        RAISE INFO '%', _message;
         RETURN;
     End If;
 
@@ -193,10 +186,14 @@ BEGIN
             -- Examine the request comment to determine if it was a recycled request
             ---------------------------------------------------
 
-            If _requestComment SIMILAR TO '%Automatically created by recycling request [0-9]%[0-9] from dataset [0-9]%' Then
+            If Not _requestComment SIMILAR TO '%Automatically created by recycling request [0-9]%[0-9] from dataset [0-9]%' Then
+
+                _addnlText := format('Not recycling request %s for dataset %s since it is an AutoRequest', _requestID, _datasetName);
+                _message := public.append_to_text(_message, _addnlText);
+
+            Else
 
                 -- Determine the original request ID
-                --
 
                 _charIndex := Position('by recycling request' In _requestComment);
 
@@ -219,7 +216,8 @@ BEGIN
                         _recycleOriginalRequest := true;
 
                         -- Make sure the original request actually exists
-                        If Not Exists (SELECT * FROM t_requested_run WHERE request_id = _requestIDOriginal) Then
+
+                        If Not Exists (SELECT request_id FROM t_requested_run WHERE request_id = _requestIDOriginal) Then
                             -- Original request doesn't exist; recycle this recycled one
                             _requestIDOriginal := _requestID;
                         End If;
@@ -236,24 +234,19 @@ BEGIN
                             -- The original request is active, don't recycle anything
 
                             If _requestIDOriginal = _requestID Then
-                                _addnlText := format('Not recycling request %s for dataset %s since it is already active',
-                                                        _requestID, _datasetName);
-                                CALL post_log_entry ('Warning', _addnlText, 'Unconsume_Scheduled_Run');
+                                _addnlText := format('Not recycling request %s for dataset %s since it is already active', _requestID, _datasetName);
 
+                                CALL post_log_entry ('Warning', _addnlText, 'Unconsume_Scheduled_Run');
 
                                 _addnlText := format('Not recycling request %s since it is already active', _requestID);
-
-                                _message := public.append_to_text(_message, _addnlText, _delimiter => '; ', _maxlength => 1024);
+                                _message := public.append_to_text(_message, _addnlText);
                             Else
-                                _addnlText := format('Not recycling request %s for dataset %s since the dataset already has an active request (%s)';
-                                                        _requestID, _datasetName, _extracted);
+                                _addnlText := format('Not recycling request %s for dataset %s since the dataset already has an active request (%s)'; _requestID, _datasetName, _extracted);
 
                                 CALL post_log_entry ('Warning', _addnlText, 'Unconsume_Scheduled_Run');
 
-                                _addnlText := format('Not recycling request %s since the dataset already has an active request (%s)',
-                                                        _requestID, _extracted);
-
-                                _message := public.append_to_text(_message, _addnlText, _delimiter => '; ', _maxlength => 1024);
+                                _addnlText := format('Not recycling request %s since the dataset already has an active request (%s)', _requestID, _extracted);
+                                _message := public.append_to_text(_message, _addnlText);
                             End If;
 
                             _requestIDOriginal := 0;
@@ -262,21 +255,17 @@ BEGIN
                             _datasetID := _originalRequesetDatasetID;
                         End If;
 
-                    End If; -- </e>
-                End If; -- </d>
-            Else
-                _addnlText := format('Not recycling request %s for dataset %s since it is an AutoRequest',
-                                        _requestID, _datasetName);
-
-                _message := public.append_to_text(_message, _addnlText, _delimiter => '; ', _maxlength => 1024);
+                    End If;
+                End If;
             End If;
 
-        End If; -- </b3>
+        End If;
 
-    End If; -- <a2>
+    End If;
+
+    _requestIDOriginal := Coalesce(_requestIDOriginal, 0);
 
     If _requestIDOriginal > 0 And _copyRequestedRun Then
-
         ---------------------------------------------------
         -- Copy the request and associate the dataset with the newly created request
         ---------------------------------------------------
@@ -286,12 +275,12 @@ BEGIN
         _notation := format('Automatically created by recycling request %s from dataset %s on %s',
                             _requestIDOriginal, _datasetID, to_char(CURRENT_TIMESTAMP, 'mm/dd/yyyy'));
 
-        CALL copy_requested_run (
+        CALL public.copy_requested_run (
                 _requestIDOriginal,
                 _datasetID,
                 'Completed',
                 _notation,
-                _requestNameAppendText = _requestNameAppendText,
+                _requestNameAppendText = '_Recycled',
                 _message => _message,               -- Output
                 _returnCode => _returnCode,         -- Output
                 _callingUser = _callingUser);
@@ -299,68 +288,67 @@ BEGIN
         If _returnCode <> '' Then
             RETURN;
         End If;
-    End If; -- </a3>
+    End If;
 
-    If _requestIDOriginal > 0 And _recycleOriginalRequest Then
-    -- <a4>
+    If _requestIDOriginal = 0 Or Not _recycleOriginalRequest Then
+        RETURN;
+    End If;
 
-        ---------------------------------------------------
-        -- Recycle the original request
-        ---------------------------------------------------
+    ---------------------------------------------------
+    -- Recycle the original request
+    ---------------------------------------------------
 
-        -- Create annotation to be appended to comment
-        --
-        _notation := format('(recycled from dataset %s on %s)',
-                            _datasetID, to_char(CURRENT_TIMESTAMP, 'mm/dd/yyyy'));
+    -- Create annotation to be appended to comment
 
-        If char_length(_requestComment) + char_length(_notation) > 1024 Then
-            -- Dataset comment could become too long; do not append the additional note
-            _notation := '';
-        End If;
+    _notation := format('(recycled from dataset %s on %s)', _datasetID, to_char(CURRENT_TIMESTAMP, 'mm/dd/yyyy'));
 
-        -- Reset the requested run to 'Active'
-        -- Do not update Created; we want to keep it as the original date for planning purposes
-        --
+    If char_length(_requestComment) + char_length(_notation) > 1024 Then
+        -- Dataset comment could become too long; do not append the additional note
+        _notation := '';
+    End If;
 
-        If _currentQueueState In (2,3) Then
-            _newQueueState := 2     ; -- Assigned
-        Else
-            _newQueueState := 1     ; -- Unassigned;
-        End If;
+    -- Reset the requested run to 'Active'
+    -- Do not update Created; we want to keep it as the original date for planning purposes
 
-        UPDATE t_requested_run
-        SET state_name = _newStatus,
-            request_run_start = NULL,
-            request_run_finish = NULL,
-            dataset_id = NULL,
-            comment = CASE WHEN Coalesce(comment, '') = ''
-                           THEN _notation
-                           ELSE format('%s %s', comment, _notation)
-                      END,
-            cart_id = Coalesce(_newCartID, cart_id),
-            queue_state = _newQueueState
-        WHERE request_id = _requestIDOriginal;
+    If _currentQueueState In (2, 3) Then    -- 2=Assigned, 3=Analyzed
+        _newQueueState := 2;                -- Assigned
+    Else
+        _newQueueState := 1;                -- Unassigned;
+    End If;
 
-        If char_length(_callingUser) > 0 Then
+    _newStatus := 'Active';
 
-            SELECT state_id
-            INTO _stateID
-            FROM t_requested_run_state_name
-            WHERE state_name = _newStatus;
+    UPDATE t_requested_run
+    SET state_name = _newStatus,
+        request_run_start = NULL,
+        request_run_finish = NULL,
+        dataset_id = NULL,
+        comment = CASE WHEN Trim(Coalesce(comment, '')) = ''
+                       THEN _notation
+                       ELSE format('%s %s', comment, _notation)
+                  END,
+        cart_id = Coalesce(_newCartID, cart_id),
+        queue_state = _newQueueState
+    WHERE request_id = _requestIDOriginal;
 
-            CALL public.alter_event_log_entry_user ('public', 11, _requestIDOriginal, _stateID, _callingUser, _message => _alterEnteredByMessage);
-        End If;
+    If char_length(_callingUser) > 0 Then
 
-        ---------------------------------------------------
-        -- Make sure that t_active_requested_run_cached_eus_users is up-to-date
-        ---------------------------------------------------
+        SELECT state_id
+        INTO _stateID
+        FROM t_requested_run_state_name
+        WHERE state_name = _newStatus;
 
-        CALL public.update_cached_requested_run_eus_users (
-                        _requestIDOriginal,
-                        _message => _message,           -- Output
-                        _returnCode => _returnCode);    -- Output
+        CALL public.alter_event_log_entry_user ('public', 11, _requestIDOriginal, _stateID, _callingUser, _message => _alterEnteredByMessage);
+    End If;
 
-    End If; -- </a4>
+    ---------------------------------------------------
+    -- Make sure that t_active_requested_run_cached_eus_users is up-to-date
+    ---------------------------------------------------
+
+    CALL public.update_cached_requested_run_eus_users (
+                    _requestIDOriginal,
+                    _message => _message,           -- Output
+                    _returnCode => _returnCode);    -- Output
 
 END
 $$;

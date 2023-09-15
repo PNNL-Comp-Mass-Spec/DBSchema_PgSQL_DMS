@@ -715,65 +715,71 @@ BEGIN
         -- Preview the new jobs
         ------------------------------------------------
 
+        -- ToDo: Use RAISE INFO
+
         SELECT *
         FROM Tmp_Job_Backfill_Details
-        ORDER BY Job
-    Else
-    -- <f>
+        ORDER BY Job;
 
-        BEGIN
+        DROP TABLE Tmp_Job_Backfill_Details;
+        RETURN;
+    End If;
 
-            ------------------------------------------------
-            -- Use a Merge query to update backfilled jobs where Start, Finish, State, or ProcessingTimeMinutes has changed
-            -- Do not change a job from State 14 to a State > 4
-            ------------------------------------------------
+    BEGIN
 
-            _currentLocation := 'Synchronize t_analysis_job with back-filled jobs from sw.t_jobs';
+        ------------------------------------------------
+        -- Use a Merge query to update backfilled jobs where Start, Finish, State, or ProcessingTimeMinutes has changed
+        -- Do not change a job from State 14 to a State > 4
+        ------------------------------------------------
 
-            MERGE INTO t_analysis_job AS target
-            USING ( SELECT PJ.job,
-                           PJ.priority,
-                           PJ.State,
-                           PJ.start,
-                           PJ.finish,
-                           PJ.processing_time_minutes
-                    FROM sw.V_Pipeline_Jobs_Backfill PJ
-                  ) AS Source
-            ON (target.job = source.job)
-            WHEN MATCHED AND
-                 (target.job_state_id <> 14 AND target.job_state_id <> source.State OR
-                  target.priority <> source.priority OR
-                  target.start IS DISTINCT FROM source.start OR
-                  target.finish IS DISTINCT FROM source.finish OR
-                  target.processing_time_minutes IS DISTINCT FROM source.processing_time_minutes) THEN
-                UPDATE SET
-                    job_state_id = CASE WHEN Target.job_state_id = 14 Then 14 Else source.State End,
-                    priority = source.priority,
-                    start = source.start,
-                    finish = source.finish,
-                    processing_time_minutes = source.ProcessingTimeMinutes
-            ;
+        _currentLocation := 'Synchronize t_analysis_job with back-filled jobs from sw.t_jobs';
 
-        EXCEPTION
-            -- Error caught; log the error then continue with the next job to backfill
-            --
-            WHEN OTHERS THEN
-                GET STACKED DIAGNOSTICS
-                    _sqlState         = returned_sqlstate,
-                    _exceptionMessage = message_text,
-                    _exceptionDetail  = pg_exception_detail,
-                    _exceptionContext = pg_exception_context;
+        MERGE INTO t_analysis_job AS target
+        USING ( SELECT PJ.job,
+                       PJ.priority,
+                       PJ.State,
+                       PJ.start,
+                       PJ.finish,
+                       PJ.processing_time_minutes
+                FROM sw.V_Pipeline_Jobs_Backfill PJ
+              ) AS Source
+        ON (target.job = source.job)
+        WHEN MATCHED AND
+             (target.job_state_id <> 14 AND target.job_state_id <> source.State OR
+              target.priority <> source.priority OR
+              target.start IS DISTINCT FROM source.start OR
+              target.finish IS DISTINCT FROM source.finish OR
+              target.processing_time_minutes IS DISTINCT FROM source.processing_time_minutes) THEN
+            UPDATE SET
+                job_state_id = CASE WHEN Target.job_state_id = 14 Then 14 Else source.State End,
+                priority = source.priority,
+                start = source.start,
+                finish = source.finish,
+                processing_time_minutes = source.ProcessingTimeMinutes
+        ;
 
-            _message := local_error_handler (
-                            _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                            _callingProcLocation => '', _logError => true);
+        DROP TABLE Tmp_Job_Backfill_Details;
+        RETURN;
 
-            If Coalesce(_returnCode, '') = '' Then
-                _returnCode := _sqlState;
-            End If;
-        END;
+    EXCEPTION
+        -- Error caught; log the error then continue with the next job to backfill
+        --
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS
+                _sqlState         = returned_sqlstate,
+                _exceptionMessage = message_text,
+                _exceptionDetail  = pg_exception_detail,
+                _exceptionContext = pg_exception_context;
 
-    END LOOP;
+        _message := local_error_handler (
+                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                        _callingProcLocation => '', _logError => true);
+
+        If Coalesce(_returnCode, '') = '' Then
+            _returnCode := _sqlState;
+        End If;
+    END;
+
 
     DROP TABLE IF EXISTS Tmp_Job_Backfill_Details;
 END
