@@ -414,7 +414,7 @@ BEGIN
 
         -------------------------------------------------
         If _mode = 'delete' Then
-        -- <a>
+
             -- Step through the entries in Tmp_RequestIDs and delete each
 
             FOR _requestID IN

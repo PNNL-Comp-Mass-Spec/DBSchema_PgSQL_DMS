@@ -382,7 +382,7 @@ BEGIN
         ---------------------------------------------------
 
         If _stepInfo.Evaluated = _stepInfo.Total Then
-        -- <c>
+
             If _infoOnly Then
                 RAISE INFO '';
             End If;
@@ -416,7 +416,6 @@ BEGIN
             ---------------------------------------------------
 
             If _stepInfo.Shared <> 0 And _datasetID > 0 Then
-            -- <d>
 
                 -- Any standing shared results that match?
                 --
@@ -502,7 +501,7 @@ BEGIN
                     End If;
                 End If;
 
-            End If; -- </d>
+            End If;
 
             If _infoOnly Then
                 RAISE INFO 'Job %, Step %, Output_Folder %: Num_Completed=%, Num_Pending=%, New_State=%',
@@ -514,7 +513,6 @@ BEGIN
             ---------------------------------------------------
 
             If _newState <> 1 Then
-            -- <e>
 
                 ---------------------------------------------------
                 -- Update step state and output folder name
@@ -587,9 +585,9 @@ BEGIN
                     _numStepsSkipped := _numStepsSkipped + 1;
                 End If;
 
-            End If; -- </e>
+            End If;
 
-        End If; -- </c>
+        End If;
 
         _rowsProcessed := _rowsProcessed + 1;
 

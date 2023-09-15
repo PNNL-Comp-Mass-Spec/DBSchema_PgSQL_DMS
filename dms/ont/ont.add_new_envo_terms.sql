@@ -240,7 +240,7 @@ BEGIN
         End If;
 
         If Exists (Select * From Tmp_InvalidTermNames) Then
-        -- <b>
+
             RETURN QUERY
             SELECT 'Extra term name to delete'::citext As Item_Type,
                    s.entry_id,
@@ -284,12 +284,11 @@ BEGIN
                                       FROM Tmp_IDsToDelete s);
 
             Else
-            -- <c>
 
-                For _invalidTerm In
+                FOR _invalidTerm In
                     SELECT s.identifier, s.term_name
                     FROM Tmp_InvalidTermNames s
-                Loop
+                LOOP
 
                     If Exists (Select *
                                FROM ont.t_cv_envo t
@@ -322,9 +321,9 @@ BEGIN
 
                     End If;
 
-                End Loop; -- </d>
-            End If; -- </c>
-        End If; -- </b>
+                END LOOP;
+            End If;
+        End If;
 
         DROP TABLE Tmp_InvalidTermNames;
         DROP TABLE Tmp_IDsToDelete;

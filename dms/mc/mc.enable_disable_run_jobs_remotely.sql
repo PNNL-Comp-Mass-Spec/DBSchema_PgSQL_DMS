@@ -141,7 +141,7 @@ BEGIN
     End If;
 
     If _addMgrParamsIfMissing Then
-        -- <a>
+
         FOR _mgrRecord IN
             SELECT U.manager_name,
                    M.mgr_id
@@ -155,7 +155,6 @@ BEGIN
             _mgrId   := _mgrRecord.mgr_id;
 
             If Not Exists (SELECT * FROM mc.v_mgr_params Where ParameterName = 'RunJobsRemotely' And ManagerName = _mgrName) Then
-                -- <d1>
 
                 SELECT param_type_id
                 INTO _paramTypeId
@@ -177,10 +176,9 @@ BEGIN
                         VALUES (_mgrId, _paramTypeId, _newValue);
                     End If;
                 End If;
-            End If; -- </d1>
+            End If;
 
             If Not Exists (SELECT * FROM mc.v_mgr_params Where ParameterName = 'RemoteHostName' And ManagerName = _mgrName) Then
-                -- <d2>
 
                 SELECT param_type_id
                 INTO _paramTypeId
@@ -197,15 +195,15 @@ BEGIN
                         VALUES (_mgrId, _paramTypeId, 'PrismWeb2');
                     End If;
                 End If;
-            End If; -- </d1>
+            End If;
 
-        End Loop;
+        END LOOP;
 
         If _infoOnly Then
             RAISE INFO '';
         End If;
 
-    End If; -- </a>
+    End If;
 
     -- Count the number of managers that need to be updated
     --

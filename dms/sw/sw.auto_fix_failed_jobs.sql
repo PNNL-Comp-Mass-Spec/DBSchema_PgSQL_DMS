@@ -252,7 +252,7 @@ BEGIN
                   Target.Step = F.Step;
 
         End If;
-    End If; -- </a2>
+    End If;
 
     ---------------------------------------------------
     -- Look for MSGFPlus jobs where Completion_Message is similar to

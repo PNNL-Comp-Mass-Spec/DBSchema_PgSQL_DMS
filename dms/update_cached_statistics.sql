@@ -74,7 +74,7 @@ BEGIN
     );
 
     If _updateParamSettingsFileCounts Then
-    -- <a1>
+
         ------------------------------------------------
         -- Update Usage Counts for Parameter Files
         ------------------------------------------------
@@ -311,10 +311,10 @@ BEGIN
         INSERT INTO Tmp_Update_Stats( Task, Runtime_Seconds )
         SELECT 'Update usage counts for protein collections',
                extract(epoch FROM (clock_timestamp() - _startTime));
-    End If; -- </a1>
+    End If;
 
     If _updateGeneralStatistics Then
-    -- <a2>
+
         ------------------------------------------------
         -- Make sure t_general_statistics contains the required categories and labels
         ------------------------------------------------
@@ -414,10 +414,10 @@ BEGIN
         SELECT 'Update values in t_general_statistics',
                extract(epoch FROM (clock_timestamp() - _startTime));
 
-    End If; -- </a2>
+    End If;
 
     If _updateJobRequestStatistics Then
-    -- <a3>
+
         _startTime := CURRENT_TIMESTAMP;
 
         UPDATE t_analysis_job_request target
@@ -444,7 +444,7 @@ BEGIN
         INSERT INTO Tmp_Update_Stats( Task, Runtime_Seconds )
         SELECT 'Update job counts in t_analysis_job_request',
                extract(epoch FROM (clock_timestamp() - _startTime));
-    End If; -- </a3>
+    End If;
 
     If _showRuntimeStats Then
 

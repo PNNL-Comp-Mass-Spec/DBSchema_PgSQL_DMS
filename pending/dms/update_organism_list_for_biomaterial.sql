@@ -159,7 +159,7 @@ BEGIN
             WHERE EntryID = _entryID;
 
         End If;
-    END LOOP; -- </a>
+    END LOOP;
 
     ---------------------------------------------------
     -- Error if any of the organism names could not be resolved

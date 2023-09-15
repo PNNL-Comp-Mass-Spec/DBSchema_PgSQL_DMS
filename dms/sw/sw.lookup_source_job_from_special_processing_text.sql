@@ -100,11 +100,11 @@ BEGIN
         End If;
 
         If _sourceJob Is Null Then
-        -- <d>
+
             -- _sourceJobText is non-numeric
 
             If _sourceJobText Like 'Auto%' Then
-            -- <e>
+
                 -- Parse _specialProcessingText to look for 'SourceJob:Auto' or 'Job2:Auto' (Note that we must process _specialProcessingText since _sourceJobText won't have the full text)
                 -- Then find { and }
                 -- The text between { and } will be used as a Where clause to query public.V_Source_Analysis_Job to find the best job for this dataset
@@ -125,7 +125,7 @@ BEGIN
                 _indexStart := Position(format('%sAuto', _tagName) In _specialProcessingText);
 
                 If _indexStart > 0 Then
-                -- <f>
+
                     _whereClause := Substring(_specialProcessingText, _indexStart + char_length(format('%sAuto', _tagName)), char_length(_specialProcessingText));
 
                     -- Replace double quotes with single quotes
@@ -150,7 +150,7 @@ BEGIN
                         -- The Where Clause contains a Dataset filter clause utilizing this dataset's name
 
                         If _whereClause ILike '%$ThisDatasetTrimAfter%' Then
-                        -- <g1>
+
                             -- The Where Clause contains a command of the form: $ThisDatasetTrimAfter(_Pos)
                             -- Find the specified characters in the dataset's name and remove any characters that follow them
                             -- Parse out the $ThisDatasetTrimAfter command and the text inside the parentheses just after the command
@@ -159,7 +159,6 @@ BEGIN
                             _indexEnd   := Position(')' In Substring(_whereClause, _indexStart + 1)) + _indexStart;
 
                             If _indexStart > 0 And _indexEnd > _indexStart Then
-                            -- <h1>
 
                                 _part1 := SUBSTRING(_whereClause, 1,             _indexStart - 1);
                                 _part2 := SUBSTRING(_whereClause, _indexStart,   _indexEnd - _indexStart + 1);
@@ -182,7 +181,7 @@ BEGIN
 
                                 End If;
 
-                            End If; -- </h1>
+                            End If;
 
                             _whereClause := format('%s%s%s', _part1, _dataset, _part3);
                             _whereClause := format('WHERE (%s)', _whereClause);
@@ -196,7 +195,7 @@ BEGIN
                     End If;
 
                     If _whereClause Like '%$Replace(%' Then
-                    -- <g2>
+
                         -- The Where Clause contains a Replace Text command of the form: $Replace(DatasetName,'_Pos','') or $Replace(DatasetName,_Pos,)
                         -- First split up the where clause to obtain the text before and after the replacement directive
 
@@ -204,7 +203,6 @@ BEGIN
                         _indexEnd   := Position(')' In Substring(_whereClause, _indexStart + 1)) + _indexStart;
 
                         If _indexStart > 0 And _indexEnd > _indexStart Then
-                        -- <h2>
 
                             _part1 := SUBSTRING(_whereClause, 1, _indexStart - 1);
                             _part2 := SUBSTRING(_whereClause, _indexStart,   _indexEnd - _indexStart + 1);
@@ -217,7 +215,6 @@ BEGIN
                             _indexEnd   := Position(',' In Substring(_part2, _indexStart + 1)) + _indexStart;
 
                             If _indexStart > 0 And _indexEnd > _indexStart Then
-                            -- <i2>
 
                                 -- We have determined the text to search
                                 _textToSearch := SUBSTRING(_part2, _indexStart + 1, _indexEnd - _indexStart - 1);
@@ -226,7 +223,7 @@ BEGIN
                                 _indexEnd   := Position(',' In Substring(_part2, _indexStart + 1)) + _indexStart;
 
                                 If _indexEnd > _indexStart Then
-                                -- <j>
+
                                     -- We have determined the text to match
                                     _textToFind := SUBSTRING(_part2, _indexStart, _indexEnd - _indexStart);
 
@@ -234,7 +231,7 @@ BEGIN
                                     _indexEnd   := Position(')' In Substring(_part2, _indexStart + 1)) + _indexStart;
 
                                     If _indexEnd >= _indexStart Then
-                                    -- <k>
+
                                         -- We have determined the replacement text
                                         _replacement := Substring(_part2, _indexStart, _indexEnd - _indexStart);
 
@@ -251,13 +248,13 @@ BEGIN
 
                                         _whereClause := format('%s%s%s', _part1, _part2, _part3);
 
-                                    End If; -- <k>
+                                    End If;
 
-                                End If; -- <j>
-                            End If; -- <i2>
-                        End If; -- <h2>
+                                End If;
+                            End If;
+                        End If;
 
-                    End If; -- </g2>
+                    End If;
 
                     -- By default, order by Job Descending
                     -- However, if _whereClause already contains ORDER BY, we don't want to add another one
@@ -280,16 +277,16 @@ BEGIN
                         _warningMessage := format('Unable to determine SourceJob for job %s using query %s', _job, _autoQuerySql);
                     End If;
 
-                End If; -- </f>
+                End If;
 
-            End If; -- </e>
+            End If;
 
             If _whereClause = '' And _warningMessage = '' Then
                 _warningMessage := format('%s tag is not numeric in the Special_Processing parameter for job %s', _tagName, _job);
                 _warningMessage := format('%s; alternatively, can be %sAuto{SqlWhereClause} where SqlWhereClause is the where clause to use to select the best analysis job for the given dataset using public.V_Source_Analysis_Job',
                                             _warningMessage, _tagName);
             End If;
-        End If; -- </d>
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN

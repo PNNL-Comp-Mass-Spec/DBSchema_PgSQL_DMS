@@ -1214,7 +1214,7 @@ BEGIN
             -- The following line is commented out since processor groups were deprecated:
             -- End If;
 
-        End If;-- </UseMultiStep>
+        End If;
 
         ---------------------------------------------------
         -- Check for jobs with Association_Type 101

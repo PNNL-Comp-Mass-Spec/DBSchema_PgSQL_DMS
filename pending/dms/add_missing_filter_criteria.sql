@@ -72,7 +72,6 @@ BEGIN
         If Not FOUND Then
             _continue := false;
         Else
-        -- <b>
 
             -- Make sure an entry is present for each criterion_id defined in t_filter_set_criteria_names
 
@@ -208,11 +207,11 @@ BEGIN
 
                 _criteriaAdded := _criteriaAdded + 1;
 
-            END LOOP; -- </c>
+            END LOOP;
 
             _groupsProcessed := _groupsProcessed + 1;
-        End If; -- </b>
-    END LOOP; -- </a>
+        End If;
+    END LOOP;
 
     If _groupsProcessed = 0 Then
         _message := format('No groups found for Filter Set ID %s', _filterSetID);

@@ -211,7 +211,7 @@ BEGIN
         End If;
 
         If _paramfileMassMods <> '' Then
-        -- <a>
+
             -----------------------------------------
             -- Check whether all of the lines in _paramfileMassMods are blank or start with a # sign (comment character)
             -- Split _paramfileMassMods on carriage returns
@@ -274,9 +274,9 @@ BEGIN
 
                 End If;
 
-            End If; -- </b>
+            End If;
 
-        End If; -- </a>
+        End If;
 
         ---------------------------------------------------
         -- Action for add mode
