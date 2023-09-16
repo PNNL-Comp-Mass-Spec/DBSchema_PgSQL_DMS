@@ -13,13 +13,14 @@ CREATE OR REPLACE FUNCTION public.get_aux_info_entity_id_by_name(_targettypename
 **
 **      The table and column names in _targetTableName, _targetTableIDCol, and _targetTableNameCol
 **      come from t_aux_info_target and should have been looked up
-**      by querying function get_aux_info_target_table_info
+**      by querying function get_aux_info_target_table_info()
 **
 **  Arguments:
 **    _targetTypeName       Should be Experiment, Biomaterial, Dataset, or SamplePrepRequest
-**    _targetTableName      Table name to query (t_experiments, t_biomaterial, t_sample_prep_request, or t_dataset)
-**    _targetTableIDCol     Column name with the entity ID value (exp_id, biomaterial_id, prep_request_id, or dataset_id)
-**    _targetTableNameCol   Column name with the entity name (experiment, biomaterial, prep_request, or dataset)
+**    _targetTableName      Table name to query                  (t_experiments, t_biomaterial,    t_sample_prep_request, or t_dataset)
+**    _targetTableIDCol     Column name with the entity ID value (exp_id,        biomaterial_id,   prep_request_id,       or dataset_id)
+**    _targetTableNameCol   Column name with the entity name     (experiment,    biomaterial_name, prep_request_id,       or dataset)
+**                          Aux info for sample prep requests is tracked by prep request ID, and not request name
 **    _targetEntityName     Entity name to look for
 **
 **  Returns:
@@ -30,6 +31,7 @@ CREATE OR REPLACE FUNCTION public.get_aux_info_entity_id_by_name(_targettypename
 **          05/31/2023 mem - Use format() for string concatenation
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          09/15/2023 mem - Trim whitespace from _targetEntityName and cast to citext
 **
 *****************************************************/
 DECLARE
@@ -40,8 +42,12 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _targetTypeName := Trim(Coalesce(_targetTypeName, ''));
-    _showDebug      := Coalesce(_showDebug, false);
+    _targetTypeName     := Trim(Coalesce(_targetTypeName, ''));
+    _targetTableName    := Trim(Coalesce(_targetTableName, ''));
+    _targetTableIDCol   := Trim(Coalesce(_targetTableIDCol, ''));
+    _targetTableNameCol := Trim(Coalesce(_targetTableNameCol, ''));
+    _targetEntityName   := Trim(Coalesce(_targetEntityName, ''));
+    _showDebug          := Coalesce(_showDebug, false);
 
     ---------------------------------------------------
     -- Resolve target name and entity name to entity ID
@@ -66,7 +72,7 @@ BEGIN
 
     EXECUTE _sql
     INTO _targetID
-    USING _targetEntityName;    -- $1 will be replaced with the text in _targetEntityName
+    USING _targetEntityName::citext;    -- $1 will be replaced with the text in _targetEntityName
 
     If _targetID Is Null Then
         RETURN 0;
