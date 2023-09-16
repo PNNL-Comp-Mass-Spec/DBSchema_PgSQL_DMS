@@ -1,18 +1,18 @@
 --
-CREATE OR REPLACE PROCEDURE public.delete_dataset
-(
-    _datasetName text,
-    _infoOnly boolean = true,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: delete_dataset(text, boolean, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.delete_dataset(IN _datasetname text, IN _infoonly boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Deletes given dataset from the dataset table and all referencing tables
+**
+**  Arguments:
+**    _datasetName      Dataset name
+**    _infoOnly         When true, preview deletes
 **
 **  Auth:   grk
 **  Date:   01/26/2001
@@ -41,7 +41,7 @@ AS $$
 **                           Rename the first parameter
 **          04/17/2019 mem - Delete rows in T_Cached_Dataset_Instruments
 **          11/02/2021 mem - Show the full path to the dataset directory at the console
-**          12/15/2023 mem - Ported to PostgreSQL
+**          09/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -52,8 +52,8 @@ DECLARE
 
     _datasetID int;
     _state int;
-    _datasetDirectoryPath text := Null;
-    _requestID int := Null;
+    _datasetDirectoryPath text := null;
+    _requestID int := null;
     _stateID int := 0;
     _alterEnteredByMessage text;
 
@@ -91,6 +91,7 @@ BEGIN
     ------------------------------------------------
 
     _datasetName := Trim(Coalesce(_datasetName, ''));
+    _infoOnly    := Coalesce(_infoOnly, true);
 
     If _datasetName = '' Then
         _message := '_datasetName parameter is blank; nothing to delete';
@@ -104,13 +105,11 @@ BEGIN
     -- Get the datasetID and current state
     ---------------------------------------------------
 
-    _datasetID := 0;
-    --
     SELECT dataset_state_id,
-        dataset_id
+           dataset_id
     INTO _state, _datasetID
     FROM t_dataset
-    WHERE dataset = _datasetName
+    WHERE dataset = _datasetName::citext;
 
     If Not FOUND Then
         _message := format('Dataset does not exist: %s', _datasetName);
@@ -129,7 +128,7 @@ BEGIN
     FROM V_Dataset_Folder_Paths
     WHERE Dataset_ID = _datasetID;
 
-    If Exists (SELECT * FROM t_analysis_job WHERE dataset_id = _datasetID) Then
+    If Exists (SELECT dataset_id FROM t_analysis_job WHERE dataset_id = _datasetID) Then
         _message := 'Cannot delete a dataset with existing analysis jobs';
         RAISE WARNING '%', _message;
 
@@ -307,13 +306,15 @@ BEGIN
     ---------------------------------------------------
 
     DELETE FROM t_dataset_archive
-    WHERE dataset_id = _datasetID
+    WHERE dataset_id = _datasetID;
 
     ---------------------------------------------------
     -- Delete any auxiliary info associated with dataset
     ---------------------------------------------------
 
-    CALL public.delete_aux_info 'Dataset', _datasetName, _message => _message, _returnCode => _returnCode);
+    CALL public.delete_aux_info (
+                    'Dataset',
+                    _datasetName, _message => _message, _returnCode => _returnCode);
 
     If _returnCode <> '' Then
         _message := format('Delete auxiliary information was unsuccessful for dataset: %s', _message);
@@ -436,7 +437,7 @@ BEGIN
     ---------------------------------------------------
 
     UPDATE t_dataset_files
-    SET deleted = 1
+    SET deleted = true
     WHERE dataset_id = _datasetID;
 
     ---------------------------------------------------
@@ -459,17 +460,18 @@ BEGIN
 
     UPDATE cap.t_log_entries
     SET type = 'ErrorAutoFixed'
-    WHERE type = 'error' AND
+    WHERE type = 'Error' AND
           message ILike '%' || _datasetName || '%';
 
     ---------------------------------------------------
     -- Remove jobs from cap.t_tasks
     ---------------------------------------------------
 
-    DELETE cap.t_tasks Tasks
-    FROM cap.t_tasks_History History
-    WHERE Jobs.Dataset_ID = _datasetID AND
-          Jobs.Job = History.Job;
+    DELETE FROM cap.t_tasks Tasks
+    WHERE Tasks.Dataset_ID = _datasetID AND
+          Tasks.Job IN (SELECT History.job
+                        FROM cap.t_tasks_History History
+                        WHERE History.dataset_id = _datasetID);
 
     ---------------------------------------------------
     -- Delete entry from dataset table
@@ -490,4 +492,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.delete_dataset IS 'DeleteDataset';
+
+ALTER PROCEDURE public.delete_dataset(IN _datasetname text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE delete_dataset(IN _datasetname text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.delete_dataset(IN _datasetname text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'DeleteDataset';
+
