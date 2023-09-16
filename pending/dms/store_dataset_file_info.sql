@@ -536,7 +536,7 @@ BEGIN
     WHEN MATCHED THEN
         UPDATE SET
             file_hash = Source.InstFileHash,
-            deleted = 0
+            deleted = false
     WHEN NOT MATCHED THEN
         INSERT (dataset_id, file_path, file_hash)
         VALUES (Source.dataset_id, Source.InstFilePath, Source.InstFileHash);
@@ -553,7 +553,7 @@ BEGIN
     WHEN MATCHED THEN
         UPDATE SET
             file_size_bytes = Source.InstFileSize,
-            deleted = 0
+            deleted = false
     WHEN NOT MATCHED THEN
         INSERT (dataset_id, file_path, file_size_bytes)
         VALUES (Source.dataset_id, Source.InstFilePath, Source.InstFileSize);

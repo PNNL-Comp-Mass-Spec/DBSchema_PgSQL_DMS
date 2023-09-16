@@ -264,7 +264,11 @@ BEGIN
         -- Delete any auxiliary info associated with Experiment
         ---------------------------------------------------
 
-        CALL delete_aux_info ('Experiment', _experimentName, _message => _message, _returnCode => _returnCode);
+        CALL public.delete_aux_info (
+                        'Experiment',
+                        _experimentName,
+                        _message => _message,           -- Output
+                        _returnCode => _returnCode);    -- Output
 
         If _returnCode <> '' Then
             ROLLBACK;

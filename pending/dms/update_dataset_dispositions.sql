@@ -18,7 +18,11 @@ AS $$
 **      Updates datasets in list according to disposition parameters
 **
 **  Arguments:
-**    _recycleRequest   yes/no
+**    _datasetIDList    Comma-separated list of dataset IDs
+**    _rating           New dataset rating
+**    _comment          Text to append to the dataset comment
+**    _recycleRequest   If 'yes', call unconsume_scheduled_run()
+**    _mode             If 'mode', update t_dataset and possibly call unconsume_scheduled_run and schedule_predefined_analysis_jobs
 **
 **  Auth:   grk
 **  Date:   04/25/2007
@@ -146,6 +150,8 @@ BEGIN
             End If;
 
             _returnCode := 'U5201';
+
+            DROP TABLE Tmp_DatasetInfo;
             RETURN;
         End If;
 
@@ -288,8 +294,7 @@ BEGIN
             -----------------------------------------------
             -- Evaluate predefined analyses
             --
-            -- If rating changes from unreviewed to released
-            -- and dataset capture is complete
+            -- If rating changes from unreviewed to released and dataset capture is complete
             --
             If _datasetInfo.RatingID = -10 And _ratingID = 5 And _datasetInfo.StateID In (3, 4) Then
                 -- schedule default analyses for this dataset
@@ -298,6 +303,7 @@ BEGIN
 
                 If _returnCode <> '' Then
                     ROLLBACK;
+
                     DROP TABLE Tmp_DatasetInfo;
                     RETURN;
                 End If;
