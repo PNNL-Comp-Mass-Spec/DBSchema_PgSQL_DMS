@@ -16,7 +16,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_requested_run_eus_users(IN _req
 **      beneficiary of T_Active_Requested_Run_Cached_EUS_Users
 **
 **  Arguments:
-**    _requestID   Specific Request to update, or 0 to update all active Requested Runs
+**    _requestID   Specific requested run to update, or 0 to update all active requested runs
 **
 **  Auth:   mem
 **  Date:   11/16/2016 mem - Initial Version

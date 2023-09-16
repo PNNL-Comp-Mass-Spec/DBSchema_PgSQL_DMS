@@ -77,7 +77,7 @@ BEGIN
 
     ElsIf _tgtTableName = 't_sample_prep_request' And _tgtTableNameCol = 'id' Then
         _tgtTableIDCol := 'prep_request_id';
-        _tgtTableNameCol := 'prep_request_id';
+        _tgtTableNameCol := 'prep_request_id';      -- Yes, this should be 'prep_request_id' and not 'request_name'
         _message := 'Switched column name from ID to prep_request_id';
 
     End If;

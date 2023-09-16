@@ -82,7 +82,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_file_info_xml(IN _datasetid in
 **          08/08/2018 mem - Fix null value where clause bug in _duplicateDatasetsTable
 **          08/09/2018 mem - Use _duplicateEntryHoldoffHours when logging the duplicate dataset error
 **          08/10/2018 mem - Update duplicate dataset message and use PostEmailAlert to add to T_Email_Alerts
-**          11/09/2018 mem - Set deleted to 0 when updating existing entries
+**          11/09/2018 mem - Set deleted to 0 (false) when updating existing entries
 **                           No longer removed deleted files and sort them last when updating File_Size_Rank
 **          02/11/2020 mem - Ignore zero-byte files when checking for duplicates
 **          02/29/2020 mem - Refactor code into get_dataset_details_from_dataset_info_xml
