@@ -1,14 +1,10 @@
+--
+-- Name: unconsume_scheduled_run(text, boolean, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
 
-CREATE OR REPLACE PROCEDURE public.unconsume_scheduled_run
-(
-    _datasetName text,
-    _retainHistory boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+CREATE OR REPLACE PROCEDURE public.unconsume_scheduled_run(IN _datasetname text, IN _retainhistory boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -24,6 +20,12 @@ AS $$
 **      If the given dataset is to be deleted, the _retainHistory flag must be false,
 **      otherwise a foreign key constraint will fail when the attempt to delete the dataset is made
 **      and the associated request is still hanging around.
+**
+**  Arguments:
+**    _datasetName      Dataset name
+**    _retainHistory    If true and the requested run associated with the dataset was not auto-created, copy the original requested run to a new one and associate that one with the given dataset
+**                      If false and the requested run was auto-created, delete the requested run
+**                      See the code for other situations
 **
 **  Auth:   grk
 **  Date:   03/01/2004 grk - Initial release
@@ -51,14 +53,14 @@ AS $$
 **          06/12/2018 mem - Send _maxLength to Append_To_Text
 **          06/14/2019 mem - Change cart to Unknown when making the request active again
 **          10/23/2021 mem - If recycling a request with queue state 3 (Analyzed), change the queue state to 2 (Assigned)
-**          09/14/2023 mem - Ported to PostgreSQL
+**          09/16/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _datasetID int;
     _requestComment citext;
     _requestID int;
-    _requestOrigin text;
+    _requestOrigin citext;
     _currentQueueState int;
     _requestIDOriginal int := 0;
     _copyRequestedRun boolean := false;
@@ -66,7 +68,7 @@ DECLARE
     _autoCreatedRequest boolean := false;
     _newCartID int;
     _warningMessage text;
-    _notation text;
+    _comment text;
     _addnlText text;
     _charIndex int;
     _extracted text;
@@ -139,13 +141,12 @@ BEGIN
     WHERE cart_name = 'unknown';
 
     If Not FOUND Then
-        _warningMessage := 'Could not find the cart named "unknown" in t_lc_cart; the Cart cart_id of the recycled requested run will be left unchanged';
+        _warningMessage := 'Could not find the cart named "unknown" in t_lc_cart; the cart_id of the recycled requested run will be left unchanged';
         CALL post_log_entry ('Error', _warningMessage, 'Unconsume_Scheduled_Run');
     End If;
 
     ---------------------------------------------------
-    -- Reset request
-    -- if it was not automatically created
+    -- Reset request if it was not automatically created
     ---------------------------------------------------
 
     If Not _autoCreatedRequest Then
@@ -164,7 +165,7 @@ BEGIN
     Else
         ---------------------------------------------------
         -- Original request was auto created
-        -- delete it (if commanded to)
+        -- Delete it (if commanded to)
         ---------------------------------------------------
 
         If Not _retainHistory Then
@@ -194,8 +195,9 @@ BEGIN
             Else
 
                 -- Determine the original request ID
+                -- Use Lower() since Position() uses case sensitive matching, even if the variable is citext
 
-                _charIndex := Position('by recycling request' In _requestComment);
+                _charIndex := Position(Lower('by recycling request') In Lower(_requestComment));
 
                 If _charIndex > 0 Then
 
@@ -212,7 +214,7 @@ BEGIN
 
                         -- Original requested ID has been determined; copy the original request
 
-                        _requestIDOriginal := _extracted::int;
+                        _requestIDOriginal := public.try_cast(_extracted, 0);
                         _recycleOriginalRequest := true;
 
                         -- Make sure the original request actually exists
@@ -241,7 +243,7 @@ BEGIN
                                 _addnlText := format('Not recycling request %s since it is already active', _requestID);
                                 _message := public.append_to_text(_message, _addnlText);
                             Else
-                                _addnlText := format('Not recycling request %s for dataset %s since the dataset already has an active request (%s)'; _requestID, _datasetName, _extracted);
+                                _addnlText := format('Not recycling request %s for dataset %s since the dataset already has an active request (%s)', _requestID, _datasetName, _extracted);
 
                                 CALL post_log_entry ('Warning', _addnlText, 'Unconsume_Scheduled_Run');
 
@@ -267,23 +269,25 @@ BEGIN
 
     If _requestIDOriginal > 0 And _copyRequestedRun Then
         ---------------------------------------------------
-        -- Copy the request and associate the dataset with the newly created request
+        -- Copy the requested run and associate the dataset with the newly created requested run
         ---------------------------------------------------
 
         -- Warning: The text 'Automatically created by recycling request' is used earlier in this procedure; thus, do not update it here
         --
-        _notation := format('Automatically created by recycling request %s from dataset %s on %s',
+        _comment := format('Automatically created by recycling request %s from dataset %s on %s',
                             _requestIDOriginal, _datasetID, to_char(CURRENT_TIMESTAMP, 'mm/dd/yyyy'));
 
         CALL public.copy_requested_run (
                 _requestIDOriginal,
                 _datasetID,
                 'Completed',
-                _notation,
-                _requestNameAppendText = '_Recycled',
+                _comment,
+                _requestNameAppendText => '_Recycled',
+                _requestNameOverride => '',
                 _message => _message,               -- Output
                 _returnCode => _returnCode,         -- Output
-                _callingUser = _callingUser);
+                _callingUser => _callingUser,
+                _infoOnly => false);
 
         If _returnCode <> '' Then
             RETURN;
@@ -300,11 +304,11 @@ BEGIN
 
     -- Create annotation to be appended to comment
 
-    _notation := format('(recycled from dataset %s on %s)', _datasetID, to_char(CURRENT_TIMESTAMP, 'mm/dd/yyyy'));
+    _comment := format('(recycled from dataset %s on %s)', _datasetID, to_char(CURRENT_TIMESTAMP, 'mm/dd/yyyy'));
 
-    If char_length(_requestComment) + char_length(_notation) > 1024 Then
+    If char_length(_requestComment) + char_length(_comment) > 1024 Then
         -- Dataset comment could become too long; do not append the additional note
-        _notation := '';
+        _comment := '';
     End If;
 
     -- Reset the requested run to 'Active'
@@ -324,8 +328,8 @@ BEGIN
         request_run_finish = NULL,
         dataset_id = NULL,
         comment = CASE WHEN Trim(Coalesce(comment, '')) = ''
-                       THEN _notation
-                       ELSE format('%s %s', comment, _notation)
+                       THEN _comment
+                       ELSE format('%s %s', comment, _comment)
                   END,
         cart_id = Coalesce(_newCartID, cart_id),
         queue_state = _newQueueState
@@ -353,5 +357,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.unconsume_scheduled_run IS 'UnconsumeScheduledRun';
+
+ALTER PROCEDURE public.unconsume_scheduled_run(IN _datasetname text, IN _retainhistory boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE unconsume_scheduled_run(IN _datasetname text, IN _retainhistory boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.unconsume_scheduled_run(IN _datasetname text, IN _retainhistory boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UnconsumeScheduledRun';
 
