@@ -14,14 +14,16 @@ AS $$
 **
 **  Desc:
 **      Renames a dataset in T_Dataset
-**      Renames associated jobs in cap.t_tasks and sw.t_jobs
+**
+**      Also updates associated jobs in cap.t_tasks and sw.t_jobs,
+**      and updates dpkg.t_data_package_datasets
 **
 **  Auth:   mem
 **  Date:   01/25/2013 mem - Initial version
 **          07/08/2016 mem - Now show old/new names and jobs even when _infoOnly is false
 **          12/06/2016 mem - Include file rename statements
 **          03/06/2017 mem - Validate that _datasetNameNew is no more than 80 characters long
-**          06/16/2017 mem - Restrict access using VerifySPAuthorized
+**          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          07/03/2018 mem - Rename files in T_Dataset_Files
 **                         - Update commands for renaming the dataset directory and dataset file
@@ -30,14 +32,18 @@ AS $$
 **          01/04/2019 mem - Add sed command for updating the index.html file in the QC directory
 **          01/20/2020 mem - Show the File_Hash in T_Dataset_Files when previewing updates
 **                         - Add commands for updating the DatasetInfo.xml file with sed
-**                         - Switch from Folder to Directory when calling Add_Update_Job_Parameter
+**                         - Switch from Folder to Directory when calling add_update_task_parameter
 **          02/19/2021 mem - Validate the characters in the new dataset name
 **          11/04/2021 mem - Add more MASIC file names and use sed to edit MASIC's index.html file
 **          11/05/2021 mem - Add more MASIC file names and rename files in any MzRefinery directories
 **          07/21/2022 mem - Move misplaced 'cd ..' and add missing 'rem'
 **          10/10/2022 mem - Add _newRequestedRunID; if defined (and active), associate the dataset with this Request ID and use it to update the dataset's experiment
+**          03/04/2023 mem - Use new T_Task tables
+**          03/29/2023 mem - No longer add job parameter DatasetNum
+**          04/01/2023 mem - Use new DMS_Capture procedures and function names
 **          04/25/2023 mem - Update Queue_State for the old and new requested runs
 **          08/07/2023 mem - Show a custom error message if the dataset does not exist in T_Requested_Run
+**          09/26/2023 mem - Update cached dataset names in T_Data_Package_Datasets
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -691,6 +697,18 @@ BEGIN
             WHERE Job = _job;
 
         END LOOP;
+
+    End If;
+
+    If _infoOnly Then
+        --------------------------------------------
+        -- Update cached dataset names in t_data_package_datasets
+        --------------------------------------------
+
+        UPDATE dpkg.t_data_package_datasets
+        SET dataset = _datasetNameNew
+        WHERE dataset_id = _datasetID AND
+              Coalesce(dataset, '') <> _datasetNameNew;
 
     End If;
 
