@@ -33,10 +33,9 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds a new experiment to DB
+**      Adds a new experiment to the database
 **
-**      Note that the Experiment Detail Report web page
-**      uses DoMaterialItemOperation to retire an experiment
+**      Note that the Experiment Detail Report web page uses do_material_item_operation to retire an experiment
 **
 **  Arguments:
 **    _experimentId            Input/output; When copying an experiment, this will have the new experiment's ID; this is required if renaming an existing experiment
@@ -45,7 +44,7 @@ AS $$
 **    _mode                    'add, 'update', 'check_add', 'check_update'
 **
 **  Auth:   grk
-**  Date:   01/8/2002 - initial release
+**  Date:   01/08/2002 grk - Initial release
 **          08/25/2004 jds - Updated proc to add T_Enzyme table value
 **          06/10/2005 grk - Added handling for sample prep request
 **          10/28/2005 grk - Added handling for internal standard
@@ -106,6 +105,8 @@ AS $$
 **                         - Rename the Experiment, Campaign, and Wellplate name arguments
 **          11/26/2022 mem - Rename parameter to _biomaterialList
 **          12/15/2023 mem - Ported to PostgreSQL
+**          09/07/2023 mem - Update warning messages
+**          09/26/2023 mem - Update cached experiment names in t_data_package_experiments
 **
 *****************************************************/
 DECLARE
@@ -263,8 +264,8 @@ BEGIN
 
         CALL public.get_tissue_id (
                 _tissueNameOrID => _tissue,
-                _tissueIdentifier => _tissueIdentifier output,
-                _tissueName => _tissueName output,
+                _tissueIdentifier => _tissueIdentifier,    -- Output
+                _tissueName => _tissueName,                -- Output
                 _returnCode => _returnCode);
 
         If _returnCode <> '' Then
@@ -290,7 +291,7 @@ BEGIN
             If _existingExperimentName <> _experimentName Then
                 -- Allow renaming if the experiment is not associated with a dataset or requested run, and if the new name is unique
 
-                If Exists (Select * From t_experiments Where experiment = _experimentName) Then
+                If Exists (SELECT Exp_ID FROM T_Experiments WHERE experiment = _experimentName) Then
                     SELECT exp_id
                     INTO _existingExperimentID
                     FROM t_experiments
@@ -299,7 +300,7 @@ BEGIN
                     RAISE EXCEPTION 'Cannot rename: Experiment "%" already exists, with ID %', _experimentName, _existingExperimentID;
                 End If;
 
-                If Exists (Select * From t_dataset Where exp_id = _experimentID) Then
+                If Exists (SELECT Exp_ID FROM T_Dataset WHERE exp_id = _experimentID) Then
                     SELECT dataset
                     INTO _existingDataset
                     FROM t_dataset
@@ -308,7 +309,7 @@ BEGIN
                     RAISE EXCEPTION 'Cannot rename: Experiment ID % is associated with dataset "%"', _experimentID, _existingDataset;
                 End If;
 
-                If Exists (Select * From t_requested_run Where exp_id = _experimentID) Then
+                If Exists (SELECT Exp_ID FROM t_requested_run WHERE exp_id = _experimentID) Then
                     SELECT request_name
                     INTO _existingRequestedRun
                     FROM t_requested_run
@@ -861,6 +862,15 @@ BEGIN
 
             If char_length(_existingExperimentName) > 0 And _existingExperimentName <> _experimentName Then
                 _message := format('Renamed experiment from "%s" to "%s"', _existingExperimentName, _experimentName);
+
+                --------------------------------------------
+                -- Update cached experiment names in t_data_package_experiments
+                --------------------------------------------
+
+                UPDATE dpkg.t_data_package_experiments
+                SET experiment = _experimentName
+                WHERE experiment_id = _experimentID AND
+                      Coalesce(experiment, '') <> _experimentName;
             End If;
 
         End If; -- update mode
