@@ -4,14 +4,14 @@
 
 CREATE VIEW dpkg.v_data_package_dataset_files_list_report AS
  SELECT dpd.data_pkg_id AS id,
-    dpd.dataset,
+    ds.dataset,
     dpd.dataset_id,
     df.file_path,
     df.file_size_bytes,
     df.file_hash,
     df.file_size_rank,
-    dpd.experiment,
-    dpd.instrument,
+    e.experiment,
+    instname.instrument,
     dpd.package_comment,
     c.campaign,
     dsn.dataset_state AS state,
@@ -28,11 +28,12 @@ CREATE VIEW dpkg.v_data_package_dataset_files_list_report AS
     dpd.item_added,
     ds.comment,
     dtn.dataset_type
-   FROM ((((((((((dpkg.t_data_package_datasets dpd
+   FROM (((((((((((dpkg.t_data_package_datasets dpd
      JOIN public.t_dataset ds ON ((dpd.dataset_id = ds.dataset_id)))
      JOIN public.t_dataset_state_name dsn ON ((dsn.dataset_state_id = ds.dataset_state_id)))
      JOIN public.t_dataset_type_name dtn ON ((ds.dataset_type_id = dtn.dataset_type_id)))
      JOIN public.t_dataset_rating_name dsrating ON ((ds.dataset_rating_id = dsrating.dataset_rating_id)))
+     JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
      JOIN public.t_experiments e ON ((ds.exp_id = e.exp_id)))
      JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id)))
      JOIN public.t_lc_column lc ON ((ds.lc_column_id = lc.lc_column_id)))

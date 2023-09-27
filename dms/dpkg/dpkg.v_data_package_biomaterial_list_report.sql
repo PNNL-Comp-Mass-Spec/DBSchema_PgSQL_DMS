@@ -4,9 +4,9 @@
 
 CREATE VIEW dpkg.v_data_package_biomaterial_list_report AS
  SELECT dpb.data_pkg_id AS id,
-    dpb.biomaterial,
-    dpb.campaign,
-    dpb.type,
+    b.biomaterial_name AS biomaterial,
+    c.campaign,
+    btn.biomaterial_type AS type,
     dpb.package_comment,
     b.source_name AS source,
     COALESCE(u_contact.name, b.contact_username) AS contact,
@@ -19,9 +19,10 @@ CREATE VIEW dpkg.v_data_package_biomaterial_list_report AS
     b.material_active AS material_status,
     b.biomaterial_id,
     dpb.item_added
-   FROM ((((((dpkg.t_data_package_biomaterial dpb
+   FROM (((((((dpkg.t_data_package_biomaterial dpb
      JOIN public.t_biomaterial b ON ((dpb.biomaterial_id = b.biomaterial_id)))
      JOIN public.t_biomaterial_type_name btn ON ((b.biomaterial_type = btn.biomaterial_type_id)))
+     JOIN public.t_campaign c ON ((b.campaign_id = c.campaign_id)))
      JOIN public.t_material_containers mc ON ((b.container_id = mc.container_id)))
      JOIN public.t_material_locations ml ON ((mc.location_id = ml.location_id)))
      LEFT JOIN public.t_users u_contact ON ((b.contact_username OPERATOR(public.=) u_contact.username)))

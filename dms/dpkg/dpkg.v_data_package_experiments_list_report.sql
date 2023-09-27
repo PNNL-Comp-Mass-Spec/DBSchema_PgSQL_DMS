@@ -4,7 +4,7 @@
 
 CREATE VIEW dpkg.v_data_package_experiments_list_report AS
  SELECT dpe.data_pkg_id AS id,
-    dpe.experiment,
+    e.experiment,
     c.campaign,
     dpe.package_comment,
     u.name_with_username AS researcher,

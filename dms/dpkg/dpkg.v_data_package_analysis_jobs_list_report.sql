@@ -5,9 +5,9 @@
 CREATE VIEW dpkg.v_data_package_analysis_jobs_list_report AS
  SELECT dpj.data_pkg_id AS id,
     dpj.job,
-    dpj.dataset,
-    dpj.dataset_id,
-    dpj.tool,
+    ds.dataset,
+    aj.dataset_id,
+    t.analysis_tool AS tool,
     dpj.package_comment,
     c.campaign,
     e.experiment,
@@ -33,8 +33,9 @@ CREATE VIEW dpkg.v_data_package_analysis_jobs_list_report AS
         END AS results_url,
     dpj.item_added,
     aj.comment
-   FROM ((((((((dpkg.t_data_package_analysis_jobs dpj
+   FROM (((((((((dpkg.t_data_package_analysis_jobs dpj
      JOIN public.t_analysis_job aj ON ((dpj.job = aj.job)))
+     JOIN public.t_analysis_tool t ON ((aj.analysis_tool_id = t.analysis_tool_id)))
      JOIN public.t_dataset ds ON ((aj.dataset_id = ds.dataset_id)))
      JOIN public.t_storage_path spath ON ((ds.storage_path_id = spath.storage_path_id)))
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))

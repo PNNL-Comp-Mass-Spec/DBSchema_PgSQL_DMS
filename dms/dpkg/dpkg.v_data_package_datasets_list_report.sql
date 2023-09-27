@@ -4,10 +4,10 @@
 
 CREATE VIEW dpkg.v_data_package_datasets_list_report AS
  SELECT dpd.data_pkg_id AS id,
-    dpd.dataset,
+    ds.dataset,
     dpd.dataset_id,
-    dpd.experiment,
-    dpd.instrument,
+    e.experiment,
+    instname.instrument,
     dpd.package_comment,
     c.campaign,
     dsn.dataset_state AS state,
@@ -30,9 +30,10 @@ CREATE VIEW dpkg.v_data_package_datasets_list_report AS
     psm.max_unique_peptides,
     psm.max_unique_proteins,
     psm.max_unique_peptides_fdr_filter
-   FROM ((((((((((dpkg.t_data_package_datasets dpd
+   FROM (((((((((((dpkg.t_data_package_datasets dpd
      JOIN public.t_dataset ds ON ((dpd.dataset_id = ds.dataset_id)))
      JOIN public.t_dataset_type_name dtn ON ((ds.dataset_type_id = dtn.dataset_type_id)))
+     JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
      JOIN public.t_experiments e ON ((ds.exp_id = e.exp_id)))
      JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id)))
      JOIN public.t_lc_column lc ON ((ds.lc_column_id = lc.lc_column_id)))

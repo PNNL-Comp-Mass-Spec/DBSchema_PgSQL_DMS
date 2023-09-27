@@ -4,7 +4,7 @@
 
 CREATE VIEW dpkg.v_data_package_experiment_plex_members_list_report AS
  SELECT dpe.data_pkg_id AS id,
-    dpe.experiment,
+    e.experiment,
     plexmembers.plex_exp_id,
     org.organism,
     plexmembers.channel,

@@ -5,12 +5,13 @@
 CREATE VIEW dpkg.v_data_package_experiments_export AS
  SELECT dpe.data_pkg_id,
     dpe.experiment_id,
-    dpe.experiment,
-    dpe.created,
+    e.experiment,
+    e.created,
     dpe.item_added,
     dpe.package_comment,
     dpe.data_pkg_id AS data_package_id
-   FROM dpkg.t_data_package_experiments dpe;
+   FROM (dpkg.t_data_package_experiments dpe
+     JOIN public.t_experiments e ON ((e.exp_id = dpe.experiment_id)));
 
 
 ALTER TABLE dpkg.v_data_package_experiments_export OWNER TO d3l243;

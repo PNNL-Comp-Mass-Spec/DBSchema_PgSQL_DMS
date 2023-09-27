@@ -3,11 +3,13 @@
 --
 
 CREATE VIEW dpkg.v_data_package_dataset_aggregation_list_report AS
- SELECT t_data_package_analysis_jobs.data_pkg_id AS id,
-    t_data_package_analysis_jobs.dataset,
-    count(t_data_package_analysis_jobs.job) AS jobs
-   FROM dpkg.t_data_package_analysis_jobs
-  GROUP BY t_data_package_analysis_jobs.dataset, t_data_package_analysis_jobs.data_pkg_id;
+ SELECT dpj.data_pkg_id AS id,
+    ds.dataset,
+    count(dpj.job) AS jobs
+   FROM ((dpkg.t_data_package_analysis_jobs dpj
+     JOIN public.t_analysis_job aj ON ((aj.job = dpj.job)))
+     JOIN public.t_dataset ds ON ((aj.dataset_id = ds.dataset_id)))
+  GROUP BY ds.dataset, dpj.data_pkg_id;
 
 
 ALTER TABLE dpkg.v_data_package_dataset_aggregation_list_report OWNER TO d3l243;
