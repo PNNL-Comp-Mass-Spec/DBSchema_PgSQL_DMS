@@ -299,9 +299,10 @@ BEGIN
             FROM Tmp_DataPackageItems TP
                  INNER JOIN public.t_dataset DS
                    ON TP.Identifier = DS.Dataset
-                 LEFT JOIN public.t_requested_run RR
+                 INNER JOIN public.t_requested_run RR
                    ON ds.dataset_id = rr.dataset_id
             WHERE TP.ItemType = 'Dataset' AND
+                  Trim(Coalesce(RR.eus_proposal_id, '')) <> '' AND
                   NOT EXISTS ( SELECT DataPackageID
                                FROM Tmp_DataPackageItems PkgItems
                                WHERE PkgItems.ItemType = 'EUSProposal' AND
