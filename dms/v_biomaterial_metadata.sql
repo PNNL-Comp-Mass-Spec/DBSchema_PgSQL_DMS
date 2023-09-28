@@ -16,7 +16,7 @@ CREATE VIEW public.v_biomaterial_metadata AS
     u.comment,
     c.campaign
    FROM ((((public.t_biomaterial u
-     JOIN public.t_biomaterial_type_name btn ON ((u.biomaterial_type = btn.biomaterial_type_id)))
+     JOIN public.t_biomaterial_type_name btn ON ((u.biomaterial_type_id = btn.biomaterial_type_id)))
      JOIN public.t_campaign c ON ((u.campaign_id = c.campaign_id)))
      LEFT JOIN public.t_users u_contact ON ((u.contact_username OPERATOR(public.=) u_contact.username)))
      LEFT JOIN public.t_users u_pi ON ((u.pi_username OPERATOR(public.=) u_pi.username)));

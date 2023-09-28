@@ -3,19 +3,19 @@
 --
 
 CREATE VIEW public.v_biomaterial_report AS
- SELECT u.biomaterial_name AS name,
-    u.source_name AS source,
-    u.contact_username AS contact,
-    ctn.biomaterial_type AS type,
-    u.reason,
-    u.created,
-    u.pi_username AS pi,
-    u.comment,
+ SELECT b.biomaterial_name AS name,
+    b.source_name AS source,
+    b.contact_username AS contact,
+    btn.biomaterial_type AS type,
+    b.reason,
+    b.created,
+    b.pi_username AS pi,
+    b.comment,
     c.campaign,
-    u.biomaterial_id AS id
-   FROM ((public.t_biomaterial u
-     JOIN public.t_biomaterial_type_name ctn ON ((u.biomaterial_type = ctn.biomaterial_type_id)))
-     JOIN public.t_campaign c ON ((u.campaign_id = c.campaign_id)));
+    b.biomaterial_id AS id
+   FROM ((public.t_biomaterial b
+     JOIN public.t_biomaterial_type_name btn ON ((b.biomaterial_type_id = btn.biomaterial_type_id)))
+     JOIN public.t_campaign c ON ((b.campaign_id = c.campaign_id)));
 
 
 ALTER TABLE public.v_biomaterial_report OWNER TO d3l243;

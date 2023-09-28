@@ -54,7 +54,7 @@ UNION
     4 AS sort_key
    FROM (((((dpkg.t_data_package_biomaterial dpb
      JOIN public.t_biomaterial b ON ((dpb.biomaterial_id = b.biomaterial_id)))
-     JOIN public.t_biomaterial_type_name btn ON ((b.biomaterial_type = btn.biomaterial_type_id)))
+     JOIN public.t_biomaterial_type_name btn ON ((b.biomaterial_type_id = btn.biomaterial_type_id)))
      JOIN public.t_campaign c ON ((b.campaign_id = c.campaign_id)))
      JOIN public.t_material_containers mc ON ((b.container_id = mc.container_id)))
      JOIN public.t_material_locations ml ON ((mc.location_id = ml.location_id)));

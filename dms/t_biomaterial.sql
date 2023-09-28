@@ -8,7 +8,7 @@ CREATE TABLE public.t_biomaterial (
     source_name public.citext,
     contact_username public.citext,
     pi_username public.citext,
-    biomaterial_type integer,
+    biomaterial_type_id integer,
     reason public.citext,
     comment public.citext,
     campaign_id integer,
@@ -112,7 +112,7 @@ CREATE TRIGGER trig_t_biomaterial_after_update AFTER UPDATE ON public.t_biomater
 --
 
 ALTER TABLE ONLY public.t_biomaterial
-    ADD CONSTRAINT fk_t_biomaterial_t_biomaterial_type_name FOREIGN KEY (biomaterial_type) REFERENCES public.t_biomaterial_type_name(biomaterial_type_id);
+    ADD CONSTRAINT fk_t_biomaterial_t_biomaterial_type_name FOREIGN KEY (biomaterial_type_id) REFERENCES public.t_biomaterial_type_name(biomaterial_type_id);
 
 --
 -- Name: t_biomaterial fk_t_biomaterial_t_campaign; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

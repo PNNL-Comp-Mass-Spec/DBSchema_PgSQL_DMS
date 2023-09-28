@@ -210,7 +210,6 @@ BEGIN
         -- Resolve type name to ID
         ---------------------------------------------------
 
-        --
         SELECT ID
         INTO _typeID
         FROM t_biomaterial_type_name
@@ -220,7 +219,6 @@ BEGIN
         -- Resolve container name to ID
         ---------------------------------------------------
 
-        --
         If _container = '' Then
             _container := 'na';
         End If;
@@ -323,7 +321,7 @@ BEGIN
                 source_name,
                 contact_username,
                 pi_username,
-                biomaterial_type,
+                biomaterial_type_id,
                 reason,
                 comment,
                 campaign_id,
@@ -397,19 +395,19 @@ BEGIN
         If _mode = 'update' Then
 
             UPDATE t_biomaterial
-            Set
-                Source_Name      = _sourceName,
-                Contact_Username = _contactUsername,
-                PI_Username      = _piUsername,
-                Type             = _typeID,
-                Reason           = _reason,
-                Comment          = _comment,
-                Campaign_ID      = _campaignID,
-                Container_ID     = _contID,
-                Mutation         = _mutation,
-                Plasmid          = _plasmid,
-                Cell_Line        = _cellLine
-            WHERE Biomaterial_Name = _biomaterialName
+            SET
+                source_name         = _sourceName,
+                contact_username    = _contactUsername,
+                pi_username         = _piUsername,
+                biomaterial_type_id = _typeID,
+                reason              = _reason,
+                comment             = _comment,
+                campaign_id         = _campaignID,
+                container_id        = _contID,
+                mutation            = _mutation,
+                plasmid             = _plasmid,
+                cell_line           = _cellLine
+            WHERE biomaterial_name = _biomaterialName
 
             If Not FOUND Then
                 _msg := format('Update operation failed: "%s"', _biomaterialName);

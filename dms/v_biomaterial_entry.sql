@@ -17,7 +17,7 @@ CREATE VIEW public.v_biomaterial_entry AS
     b.plasmid,
     b.cell_line
    FROM (((public.t_biomaterial b
-     JOIN public.t_biomaterial_type_name btn ON ((b.biomaterial_type = btn.biomaterial_type_id)))
+     JOIN public.t_biomaterial_type_name btn ON ((b.biomaterial_type_id = btn.biomaterial_type_id)))
      JOIN public.t_campaign c ON ((b.campaign_id = c.campaign_id)))
      JOIN public.t_material_containers mc ON ((b.container_id = mc.container_id)));
 

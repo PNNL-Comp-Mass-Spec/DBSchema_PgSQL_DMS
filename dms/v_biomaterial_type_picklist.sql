@@ -3,9 +3,9 @@
 --
 
 CREATE VIEW public.v_biomaterial_type_picklist AS
- SELECT t_biomaterial_type_name.biomaterial_type_id AS id,
-    t_biomaterial_type_name.biomaterial_type
-   FROM public.t_biomaterial_type_name;
+ SELECT btn.biomaterial_type_id AS id,
+    btn.biomaterial_type
+   FROM public.t_biomaterial_type_name btn;
 
 
 ALTER TABLE public.v_biomaterial_type_picklist OWNER TO d3l243;

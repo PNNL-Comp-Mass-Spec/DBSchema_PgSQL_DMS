@@ -11,7 +11,7 @@ CREATE VIEW public.v_biomaterial AS
     b.comment,
     c.campaign
    FROM ((public.t_biomaterial b
-     JOIN public.t_biomaterial_type_name btn ON ((b.biomaterial_type = btn.biomaterial_type_id)))
+     JOIN public.t_biomaterial_type_name btn ON ((b.biomaterial_type_id = btn.biomaterial_type_id)))
      JOIN public.t_campaign c ON ((b.campaign_id = c.campaign_id)));
 
 
