@@ -13,7 +13,7 @@ CREATE OR REPLACE PROCEDURE dpkg.update_data_package_items(IN _packageid integer
 **
 **  Arguments:
 **    _packageID       Data package ID
-**    _itemType        analysis_jobs, datasets, experiments, biomaterial, or proposals
+**    _itemType        'analysis_jobs', 'jobs', 'job', 'datasets', 'dataset', 'experiments', 'experiment', 'biomaterial', 'proposals', 'EUSProposal'
 **    _itemList        Comma-separated list of item IDs or Names
 **                     Allowed values: Job IDs, Dataset Names, Dataset IDs, Experiment Names, Biomaterial Names, or EUSProposal IDs
 **    _mode            'add', 'comment', or 'delete'
@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE dpkg.update_data_package_items(IN _packageid integer
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          03/10/2022 mem - Replace spaces and tabs in the item list with commas
 **          08/17/2023 mem - Ported to PostgreSQL
+**          09/27/2023 mem - Add support for _itemType = 'EUSProposal'
 **
 *****************************************************/
 DECLARE
@@ -82,10 +83,10 @@ BEGIN
     BEGIN
         _entityName := CASE
                             WHEN _itemType::citext IN ('analysis_jobs', 'job', 'jobs') THEN 'Job'
-                            WHEN _itemType::citext IN ('datasets', 'dataset') THEN 'Dataset'
-                            WHEN _itemType::citext IN ('experiments', 'experiment') THEN 'Experiment'
-                            WHEN _itemType::citext = 'biomaterial' THEN 'Biomaterial'
-                            WHEN _itemType::citext = 'proposals' THEN 'EUSProposal'
+                            WHEN _itemType::citext IN ('datasets', 'dataset')          THEN 'Dataset'
+                            WHEN _itemType::citext IN ('experiments', 'experiment')    THEN 'Experiment'
+                            WHEN _itemType::citext IN ('biomaterial')                  THEN 'Biomaterial'
+                            WHEN _itemType::citext IN ('proposals', 'EUSProposal')     THEN 'EUSProposal'
                             ELSE ''
                        END;
 
