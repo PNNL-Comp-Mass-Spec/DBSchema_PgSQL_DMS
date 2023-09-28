@@ -59,6 +59,7 @@ CREATE OR REPLACE PROCEDURE dpkg.update_data_package_items_utility(IN _comment t
 **          08/16/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
 **          09/11/2023 mem - Use schema name with try_cast
+**          09/27/2023 mem - Resolve identifier names to IDs using tables in the public schema
 **
 *****************************************************/
 DECLARE
@@ -156,7 +157,7 @@ BEGIN
         --
         If Exists ( SELECT DataPackageID FROM Tmp_DataPackageItems WHERE ItemType = 'Job' ) Then
             DELETE FROM Tmp_DataPackageItems
-            WHERE Coalesce(Identifier, '') = '' OR public.try_cast(Identifier, null::int) Is Null;
+            WHERE Trim(Coalesce(Identifier, '')) = '' OR public.try_cast(Identifier, null::int) Is Null;
             --
             GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
@@ -164,8 +165,7 @@ BEGIN
                 RAISE INFO 'Warning: deleted % job(s) that were not numeric', _deleteCount;
             End If;
 
-            INSERT INTO Tmp_JobsToAddOrDelete( DataPackageID,
-                                               Job )
+            INSERT INTO Tmp_JobsToAddOrDelete( DataPackageID, Job )
             SELECT DataPackageID,
                    Job
             FROM ( SELECT DataPackageID,
@@ -180,16 +180,15 @@ BEGIN
             -- Auto-remove .raw and .d from the end of dataset names
             UPDATE Tmp_DataPackageItems
             SET Identifier = Substring(Identifier, 1, char_length(Identifier) - 4)
-            WHERE ItemType = 'Dataset' And Tmp_DataPackageItems.Identifier Like '%.raw';
+            WHERE ItemType = 'Dataset' And Tmp_DataPackageItems.Identifier ILike '%.raw';
 
             UPDATE Tmp_DataPackageItems
             SET Identifier = Substring(Identifier, 1, char_length(Identifier) - 2)
-            WHERE ItemType = 'Dataset' And Tmp_DataPackageItems.Identifier Like '%.d';
+            WHERE ItemType = 'Dataset' And Tmp_DataPackageItems.Identifier ILike '%.d';
 
             -- Auto-convert dataset IDs to dataset names
             -- First look for dataset IDs
-            INSERT INTO Tmp_DatasetIDsToAdd( DataPackageID,
-                                             DatasetID )
+            INSERT INTO Tmp_DatasetIDsToAdd( DataPackageID, DatasetID )
             SELECT DataPackageID,
                    DatasetID
             FROM ( SELECT DataPackageID,
@@ -253,10 +252,10 @@ BEGIN
                  INNER JOIN public.t_dataset DS
                    ON AJ.dataset_id = DS.dataset_ID
             WHERE NOT EXISTS ( SELECT DataPackageID
-                               FROM Tmp_DataPackageItems
-                               WHERE Tmp_DataPackageItems.ItemType = 'Dataset' AND
-                                     Tmp_DataPackageItems.Identifier = DS.Dataset  AND
-                                     Tmp_DataPackageItems.DataPackageID = TJ.DataPackageID ) AND
+                               FROM Tmp_DataPackageItems PkgItems
+                               WHERE PkgItems.ItemType = 'Dataset' AND
+                                     PkgItems.Identifier = DS.Dataset  AND
+                                     PkgItems.DataPackageID = TJ.DataPackageID ) AND
                   NOT DS.Dataset SIMILAR TO 'DataPackage[_][0-9][0-9]%';
 
             -- Add experiments to list that are parents of datasets in the list
@@ -274,10 +273,10 @@ BEGIN
                    ON DS.exp_id = E.exp_id
             WHERE TP.ItemType = 'Dataset' AND
                   NOT EXISTS ( SELECT DataPackageID
-                               FROM Tmp_DataPackageItems
-                               WHERE Tmp_DataPackageItems.ItemType = 'Experiment' AND
-                                     Tmp_DataPackageItems.Identifier = E.Experiment AND
-                                     Tmp_DataPackageItems.DataPackageID = TP.DataPackageID );
+                               FROM Tmp_DataPackageItems PkgItems
+                               WHERE PkgItems.ItemType = 'Experiment' AND
+                                     PkgItems.Identifier = E.Experiment AND
+                                     PkgItems.DataPackageID = TP.DataPackageID );
 
             -- Add EUS Proposals to list that are parents of datasets in the list
             -- (and are not already in the list)
@@ -294,10 +293,10 @@ BEGIN
                    ON ds.dataset_id = rr.dataset_id
             WHERE TP.ItemType = 'Dataset' AND
                   NOT EXISTS ( SELECT DataPackageID
-                               FROM Tmp_DataPackageItems
-                               WHERE Tmp_DataPackageItems.ItemType = 'EUSProposal' AND
-                                     Tmp_DataPackageItems.Identifier = RR.eus_proposal_id AND
-                                     Tmp_DataPackageItems.DataPackageID = TP.DataPackageID );
+                               FROM Tmp_DataPackageItems PkgItems
+                               WHERE PkgItems.ItemType = 'EUSProposal' AND
+                                     PkgItems.Identifier = RR.eus_proposal_id AND
+                                     PkgItems.DataPackageID = TP.DataPackageID );
 
             -- Add biomaterial items to list that are associated with experiments in the list
             -- (and are not already in the list)
@@ -313,10 +312,10 @@ BEGIN
             WHERE TP.ItemType = 'Experiment' AND
                   NOT EB.Biomaterial_Name IN ('(none)') AND
                   NOT EXISTS ( SELECT DataPackageID
-                               FROM Tmp_DataPackageItems
-                               WHERE Tmp_DataPackageItems.ItemType = 'Biomaterial' AND
-                                     Tmp_DataPackageItems.Identifier = EB.Biomaterial_Name AND
-                                     Tmp_DataPackageItems.DataPackageID = TP.DataPackageID );
+                               FROM Tmp_DataPackageItems PkgItems
+                               WHERE PkgItems.ItemType = 'Biomaterial' AND
+                                     PkgItems.Identifier = EB.Biomaterial_Name AND
+                                     PkgItems.DataPackageID = TP.DataPackageID );
 
         End If;
 
@@ -330,27 +329,29 @@ BEGIN
             SELECT ToDelete.DataPackageID, ToDelete.ItemType, ToDelete.Dataset
             FROM (
                    -- Datasets associated with jobs that we are removing
-                   SELECT DISTINCT TJ.DataPackageID,
+                   SELECT DISTINCT J.DataPackageID,
                                    'Dataset' AS ItemType,
                                    DS.Dataset AS Dataset
-                   FROM Tmp_JobsToAddOrDelete TJ
+                   FROM Tmp_JobsToAddOrDelete J
                         INNER JOIN public.t_analysis_job AJ
-                          ON TJ.Job = AJ.Job
+                          ON J.Job = AJ.Job
                         INNER JOIN public.t_dataset DS
                           ON AJ.dataset_id = DS.dataset_ID
                  ) ToDelete
                  LEFT OUTER JOIN (
                         -- Datasets associated with the data package; skipping the jobs that we're deleting
-                        SELECT Datasets.dataset,
-                               Datasets.data_pkg_id
-                        FROM dpkg.t_data_package_analysis_jobs Jobs
-                             INNER JOIN dpkg.t_data_package_datasets Datasets
-                               ON Jobs.data_pkg_id = Datasets.data_pkg_id AND
-                                  Jobs.dataset_id = Datasets.dataset_id
+                        SELECT DS.dataset,
+                               TD.data_pkg_id
+                        FROM dpkg.t_data_package_analysis_jobs DPJ
+                             INNER JOIN dpkg.t_data_package_datasets TD
+                               ON DPJ.data_pkg_id = TD.data_pkg_id AND
+                                  DPJ.dataset_id = TD.dataset_id
+                            INNER JOIN public.t_dataset DS
+                               ON TD.dataset_id = DS.dataset_id
                              LEFT OUTER JOIN Tmp_JobsToAddOrDelete ItemsQ
-                               ON Jobs.data_pkg_id = ItemsQ.DataPackageID AND
-                                  Jobs.job = ItemsQ.job
-                        WHERE Jobs.data_pkg_id IN (SELECT DISTINCT DataPackageID FROM Tmp_JobsToAddOrDelete) AND
+                               ON DPJ.data_pkg_id = ItemsQ.DataPackageID AND
+                                  DPJ.job = ItemsQ.job
+                        WHERE DPJ.data_pkg_id IN (SELECT DISTINCT DataPackageID FROM Tmp_JobsToAddOrDelete) AND
                               ItemsQ.job IS NULL
                  ) AS ToKeep
                    ON ToDelete.DataPackageID = ToKeep.data_pkg_id AND
@@ -363,12 +364,12 @@ BEGIN
             SELECT ToDelete.DataPackageID, ToDelete.ItemType, ToDelete.Experiment
             FROM (
                    -- Experiments associated with jobs or datasets that we are removing
-                   SELECT DISTINCT TJ.DataPackageID,
+                   SELECT DISTINCT J.DataPackageID,
                                    'Experiment' AS ItemType,
                                    E.Experiment AS Experiment
-                   FROM Tmp_JobsToAddOrDelete TJ
+                   FROM Tmp_JobsToAddOrDelete J
                         INNER JOIN public.t_analysis_job AJ
-                          ON TJ.Job = AJ.Job
+                          ON J.Job = AJ.Job
                         INNER JOIN public.t_dataset DS
                           ON AJ.dataset_id = DS.dataset_ID
                         INNER JOIN public.t_experiments E
@@ -386,36 +387,44 @@ BEGIN
                  ) ToDelete
                  LEFT OUTER JOIN (
                         -- Experiments associated with the data package; skipping any jobs that we're deleting
-                        SELECT Experiments.experiment,
-                               Datasets.data_pkg_id
-                        FROM dpkg.t_data_package_analysis_jobs Jobs
-                             INNER JOIN dpkg.t_data_package_datasets Datasets
-                               ON Jobs.data_pkg_id = Datasets.data_pkg_id AND
-                                  Jobs.dataset_id = Datasets.dataset_id
-                             INNER JOIN dpkg.t_data_package_experiments Experiments
-                               ON Datasets.experiment = Experiments.experiment AND
-                                  Datasets.data_pkg_id = Experiments.data_pkg_id
+                        SELECT E.experiment,
+                               TD.data_pkg_id
+                        FROM dpkg.t_data_package_analysis_jobs DPJ
+                             INNER JOIN dpkg.t_data_package_datasets TD
+                               ON DPJ.data_pkg_id = TD.data_pkg_id AND
+                                  DPJ.dataset_id = TD.dataset_id
+                             INNER JOIN public.t_dataset DS
+                               ON TD.dataset_id = DS.dataset_id
+                             INNER JOIN public.t_experiments E
+                               ON DS.exp_id = E.exp_id
+                             INNER JOIN dpkg.t_data_package_experiments DPE
+                               ON TD.data_pkg_id = DPE.data_pkg_id AND
+                                  E.exp_id = DPE.experiment_id
                              LEFT OUTER JOIN Tmp_JobsToAddOrDelete ItemsQ
-                               ON Jobs.data_pkg_id = ItemsQ.DataPackageID AND
-                                   Jobs.job = ItemsQ.job
-                        WHERE Jobs.data_pkg_id IN (SELECT DISTINCT DataPackageID FROM Tmp_JobsToAddOrDelete) AND
+                               ON DPJ.data_pkg_id = ItemsQ.DataPackageID AND
+                                   DPJ.job = ItemsQ.job
+                        WHERE DPJ.data_pkg_id IN (SELECT DISTINCT DataPackageID FROM Tmp_JobsToAddOrDelete) AND
                               ItemsQ.job IS NULL
                  ) AS ToKeep1
                    ON ToDelete.DataPackageID = ToKeep1.data_pkg_id AND
                       ToDelete.experiment = ToKeep1.experiment
                  LEFT OUTER JOIN (
                         -- Experiments associated with the data package; skipping any datasets that we're deleting
-                        SELECT Experiments.experiment,
-                               Datasets.data_pkg_id
-                        FROM dpkg.t_data_package_datasets Datasets
-                             INNER JOIN dpkg.t_data_package_experiments Experiments
-                               ON Datasets.experiment = Experiments.experiment AND
-                                  Datasets.data_pkg_id = Experiments.data_pkg_id
+                        SELECT E.experiment,
+                               TD.data_pkg_id
+                        FROM dpkg.t_data_package_datasets TD
+                             INNER JOIN public.t_dataset DS
+                               ON TD.dataset_id = DS.dataset_id
+                             INNER JOIN public.t_experiments E
+                               ON DS.exp_id = E.exp_id
+                             INNER JOIN dpkg.t_data_package_experiments DPE
+                               ON TD.data_pkg_id = DPE.data_pkg_id AND
+                                  E.exp_id = DPE.experiment_id
                              LEFT OUTER JOIN Tmp_DataPackageItems ItemsQ
-                               ON Datasets.data_pkg_id = ItemsQ.DataPackageID AND
-                                   ItemsQ.ItemType = 'dataset' AND
-                                   ItemsQ.Identifier = Datasets.dataset
-                        WHERE Datasets.data_pkg_id IN (SELECT DISTINCT DataPackageID FROM Tmp_DataPackageItems) AND
+                               ON TD.data_pkg_id = ItemsQ.DataPackageID AND
+                                   ItemsQ.ItemType = 'Dataset' AND
+                                   ItemsQ.Identifier = DS.dataset
+                        WHERE TD.data_pkg_id IN (SELECT DISTINCT DataPackageID FROM Tmp_DataPackageItems) AND
                               ItemsQ.Identifier IS NULL
                  ) AS ToKeep2
                    ON ToDelete.DataPackageID = ToKeep2.data_pkg_id AND
@@ -429,39 +438,45 @@ BEGIN
             SELECT ToDelete.DataPackageID, ToDelete.ItemType, ToDelete.Biomaterial_Name
             FROM (
                    -- Biomaterial associated with jobs that we are removing
-                   SELECT DISTINCT TJ.DataPackageID,
+                   SELECT DISTINCT J.DataPackageID,
                                    'Biomaterial' AS ItemType,
-                                   Biomaterial.Biomaterial_Name
-                   FROM Tmp_JobsToAddOrDelete TJ
+                                   VEB.Biomaterial_Name
+                   FROM Tmp_JobsToAddOrDelete J
                         INNER JOIN public.t_analysis_job AJ
-                          ON TJ.Job = AJ.Job
+                          ON J.Job = AJ.Job
                         INNER JOIN public.t_dataset DS
                           ON AJ.dataset_id = DS.dataset_ID
                         INNER JOIN public.t_experiments E
                           ON DS.exp_id = E.exp_id
-                        INNER JOIN V_Experiment_Biomaterial Biomaterial
-                          ON Biomaterial.Experiment = E.Experiment
+                        INNER JOIN V_Experiment_Biomaterial VEB
+                          ON VEB.Experiment = E.Experiment
                  ) ToDelete
                  LEFT OUTER JOIN (
                         -- Biomaterial associated with the data package; skipping the jobs that we're deleting
-                        SELECT DISTINCT biomaterial.biomaterial AS biomaterial_name,
-                                        Datasets.data_pkg_id
-                        FROM dpkg.t_data_package_analysis_jobs Jobs
-                             INNER JOIN dpkg.t_data_package_datasets Datasets
-                               ON Jobs.data_pkg_id = Datasets.data_pkg_id AND
-                                  Jobs.dataset_id = Datasets.dataset_id
-                             INNER JOIN dpkg.t_data_package_experiments Experiments
-                               ON Datasets.experiment = Experiments.experiment AND
-                                  Datasets.data_pkg_id = Experiments.data_pkg_id
-                             INNER JOIN dpkg.t_data_package_biomaterial biomaterial
-                               ON Experiments.data_pkg_id = biomaterial.data_pkg_id
-                             INNER JOIN V_Experiment_Biomaterial Exp_Biomaterial_Map
-                               ON Experiments.experiment = Exp_Biomaterial_Map.Experiment AND
-                                  Exp_Biomaterial_Map.biomaterial_name = biomaterial.biomaterial
+                        SELECT DISTINCT B.biomaterial_name,
+                                        TD.data_pkg_id
+                        FROM dpkg.t_data_package_analysis_jobs DPJ
+                             INNER JOIN dpkg.t_data_package_datasets TD
+                               ON DPJ.data_pkg_id = TD.data_pkg_id AND
+                                  DPJ.dataset_id = TD.dataset_id
+                             INNER JOIN public.t_dataset DS
+                               ON TD.dataset_id = DS.dataset_id
+                             INNER JOIN public.t_experiments E
+                               ON DS.exp_id = E.exp_id
+                             INNER JOIN dpkg.t_data_package_experiments DPE
+                               ON TD.data_pkg_id = DPE.data_pkg_id AND
+                                  E.exp_id = DPE.experiment_id
+                             INNER JOIN dpkg.t_data_package_biomaterial DPB
+                               ON DPE.data_pkg_id = DPB.data_pkg_id
+                             INNER JOIN public.t_biomaterial B
+                               ON DPB.biomaterial_id = B.biomaterial_id
+                             INNER JOIN V_Experiment_Biomaterial ExpBioMap
+                               ON E.experiment = ExpBioMap.Experiment AND
+                                  B.biomaterial_name = ExpBioMap.biomaterial_name
                              LEFT OUTER JOIN Tmp_JobsToAddOrDelete ItemsQ
-                               ON Jobs.data_pkg_id = ItemsQ.DataPackageID AND
-                                  Jobs.job = ItemsQ.job
-                        WHERE Jobs.data_pkg_id IN (SELECT DISTINCT DataPackageID FROM Tmp_JobsToAddOrDelete) AND
+                               ON DPJ.data_pkg_id = ItemsQ.DataPackageID AND
+                                  DPJ.job = ItemsQ.job
+                        WHERE DPJ.data_pkg_id IN (SELECT DISTINCT DataPackageID FROM Tmp_JobsToAddOrDelete) AND
                               ItemsQ.job IS NULL
                  ) AS ToKeep
                    ON ToDelete.DataPackageID = ToKeep.data_pkg_id AND
@@ -551,16 +566,18 @@ BEGIN
 
                 FOR _previewData IN
                     SELECT 'Delete Biomaterial' AS Action,
-                           Target.Data_Pkg_ID,
-                           Target.Biomaterial_ID,
-                           Target.Type,
-                           Target.Biomaterial
-                    FROM dpkg.t_data_package_biomaterial Target
-                         INNER JOIN Tmp_DataPackageItems
-                           ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
-                              Tmp_DataPackageItems.Identifier = Target.biomaterial AND
-                              Tmp_DataPackageItems.ItemType = 'Biomaterial'
-                    ORDER BY Target.Data_Pkg_ID, Target.Biomaterial_ID
+                           DPB.Data_Pkg_ID,
+                           DPB.Biomaterial_ID,
+                           DPB.Type,
+                           DPB.Biomaterial
+                    FROM dpkg.t_data_package_biomaterial DPB
+                         INNER JOIN public.t_biomaterial B
+                           ON DPB.biomaterial_id = B.biomaterial_id
+                         INNER JOIN Tmp_DataPackageItems PkgItems
+                           ON PkgItems.DataPackageID = DPB.data_pkg_id AND
+                              PkgItems.Identifier = B.biomaterial_name AND
+                              PkgItems.ItemType = 'Biomaterial'
+                    ORDER BY DPB.Data_Pkg_ID, DPB.Biomaterial_ID
                 LOOP
                     _infoData := format(_formatSpecifier,
                                         _previewData.Action,
@@ -578,9 +595,11 @@ BEGIN
                 WHERE EXISTS
                     ( SELECT 1
                       FROM Tmp_DataPackageItems PkgItems
-                      WHERE PkgItems.ItemType = 'biomaterial' AND
-                            PkgItems.DataPackageID = Target.data_pkg_id AND
-                            PkgItems.Identifier = Target.biomaterial
+                           INNER JOIN public.t_biomaterial B
+                             ON Target.biomaterial_id = B.biomaterial_id
+                      WHERE PkgItems.DataPackageID = Target.data_pkg_id AND
+                            PkgItems.Identifier = B.biomaterial_name AND
+                            PkgItems.ItemType = 'Biomaterial'
                     );
                 --
                 GET DIAGNOSTICS _deleteCount = ROW_COUNT;
@@ -626,17 +645,19 @@ BEGIN
                 FOR _previewData IN
                     SELECT 'Update Biomaterial Comment' AS Action,
                            _comment AS New_Comment,
-                           Target.Data_Pkg_ID,
-                           Target.Biomaterial_ID,
-                           Target.Type,
-                           Target.Biomaterial,
-                           Target.package_comment AS Old_Comment
-                    FROM dpkg.t_data_package_biomaterial Target
-                         INNER JOIN Tmp_DataPackageItems
-                           ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
-                              Tmp_DataPackageItems.Identifier = Target.biomaterial AND
-                              Tmp_DataPackageItems.ItemType = 'Biomaterial'
-                    ORDER BY Target.Data_Pkg_ID, Target.Biomaterial_ID
+                           DPB.Data_Pkg_ID,
+                           DPB.Biomaterial_ID,
+                           DPB.Type,
+                           DPB.Biomaterial,
+                           DPB.package_comment AS Old_Comment
+                    FROM dpkg.t_data_package_biomaterial DPB
+                         INNER JOIN public.t_biomaterial B
+                           ON DPB.biomaterial_id = B.biomaterial_id
+                         INNER JOIN Tmp_DataPackageItems PkgItems
+                           ON PkgItems.DataPackageID = DPB.data_pkg_id AND
+                              PkgItems.Identifier =  B.biomaterial_name AND
+                              PkgItems.ItemType = 'Biomaterial'
+                    ORDER BY DPB.Data_Pkg_ID, DPB.Biomaterial_ID
                 LOOP
                     _infoData := format(_formatSpecifier,
                                         _previewData.Action,
@@ -654,10 +675,12 @@ BEGIN
             Else
                 UPDATE dpkg.t_data_package_biomaterial Target
                 SET package_comment = _comment
-                FROM Tmp_DataPackageItems Src
-                WHERE Src.DataPackageID = Target.data_pkg_id AND
-                      Src.Identifier = Target.biomaterial AND
-                      Src.ItemType = 'Biomaterial';
+                FROM Tmp_DataPackageItems PkgItems
+                     INNER JOIN public.t_biomaterial B
+                       ON PkgItems.Identifier = B.biomaterial_name
+                WHERE PkgItems.DataPackageID = Target.data_pkg_id AND
+                      Target.biomaterial_id = B.biomaterial_id AND
+                      PkgItems.ItemType = 'Biomaterial';
                 --
                 GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -674,14 +697,16 @@ BEGIN
             DELETE FROM Tmp_DataPackageItems Target
             WHERE EXISTS
                 ( SELECT 1
-                  FROM Tmp_DataPackageItems PkgItems
-                       INNER JOIN dpkg.t_data_package_biomaterial Biomaterial
-                         ON PkgItems.DataPackageID = Biomaterial.data_pkg_id AND
-                            PkgItems.Identifier = Biomaterial.biomaterial AND
-                            PkgItems.ItemType = 'biomaterial'
-                  WHERE Target.DataPackageID = PkgItems.DataPackageID AND
-                        Target.Identifier = PkgItems.Identifier AND
-                        Target.ItemType = PkgItems.Itemtype
+                  FROM dpkg.t_data_package_biomaterial DPB
+                       INNER JOIN public.t_biomaterial B
+                         ON DPB.biomaterial_id = B.biomaterial_id
+                       INNER JOIN Tmp_DataPackageItems PkgItems
+                         ON PkgItems.DataPackageID = DPB.Data_Pkg_ID AND
+                            PkgItems.Identifier = B.biomaterial_name AND
+                            PkgItems.ItemType = 'Biomaterial'
+                    WHERE Target.DataPackageID = PkgItems.DataPackageID AND
+                          Target.Identifier = PkgItems.Identifier AND
+                          Target.ItemType = PkgItems.ItemType
                 );
 
             If _infoOnly Then
@@ -715,17 +740,17 @@ BEGIN
 
                 FOR _previewData IN
                     SELECT DISTINCT 'Add Biomaterial to Data Pkg' As Action,
-                                    Tmp_DataPackageItems.DataPackageID As Data_Pkg_ID,
+                                    PkgItems.DataPackageID As Data_Pkg_ID,
                                     B.ID As Biomaterial_ID,
                                     B.Type,
                                     B.Name As Biomaterial,
                                     B.Campaign,
                                     _comment AS Comment
-                    FROM Tmp_DataPackageItems
+                    FROM Tmp_DataPackageItems PkgItems
                          INNER JOIN V_Biomaterial_List_Report_2 B
-                           ON Tmp_DataPackageItems.Identifier = B.Name
-                    WHERE Tmp_DataPackageItems.ItemType = 'Biomaterial'
-                    ORDER BY Tmp_DataPackageItems.DataPackageID, B.ID
+                           ON PkgItems.Identifier = B.Name
+                    WHERE PkgItems.ItemType = 'Biomaterial'
+                    ORDER BY PkgItems.DataPackageID, B.ID
                 LOOP
                     _infoData := format(_formatSpecifier,
                                         _previewData.Action,
@@ -746,24 +771,27 @@ BEGIN
                     data_pkg_id,
                     biomaterial_id,
                     package_comment,
-                    biomaterial,
-                    campaign,
-                    created,
-                    type
+                    biomaterial
+                    -- Deprecated: campaign,
+                    -- Deprecated: created,
+                    -- Deprecated: type
                 )
                 SELECT DISTINCT
-                    Tmp_DataPackageItems.DataPackageID,
+                    PkgItems.DataPackageID,
                     B.biomaterial_id,
                     _comment,
-                    B.biomaterial_name,
-                    C.campaign,
-                    B.created,
-                    btn.biomaterial_type
-                FROM Tmp_DataPackageItems
-                     INNER JOIN public.t_biomaterial B ON B.biomaterial_name = Tmp_DataPackageItems.Identifier
-                     INNER JOIN public.t_biomaterial_type_name btn ON b.biomaterial_type = btn.biomaterial_type_id
-                     INNER JOIN public.t_campaign C ON b.campaign_id = c.campaign_id
-                WHERE Tmp_DataPackageItems.ItemType = 'Biomaterial';
+                    B.biomaterial_name
+                    -- Deprecated: C.campaign,
+                    -- Deprecated: B.created,
+                    -- Deprecated: btn.biomaterial_type
+                FROM Tmp_DataPackageItems PkgItems
+                     INNER JOIN public.t_biomaterial B
+                       ON B.biomaterial_name = PkgItems.Identifier
+                     -- INNER JOIN public.t_biomaterial_type_name btn
+                     --   ON b.biomaterial_type = btn.biomaterial_type_id
+                     -- INNER JOIN public.t_campaign C
+                     --   ON b.campaign_id = c.campaign_id
+                WHERE PkgItems.ItemType = 'Biomaterial';
                 --
                 GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
@@ -803,14 +831,14 @@ BEGIN
 
                 FOR _previewData IN
                     SELECT 'Delete EUS Proposal' AS Action,
-                           Target.Data_Pkg_ID,
-                           Target.Proposal_ID
-                    FROM dpkg.t_data_package_eus_proposals Target
-                         INNER JOIN Tmp_DataPackageItems
-                           ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
-                              Tmp_DataPackageItems.Identifier = Target.proposal_id AND
-                              Tmp_DataPackageItems.ItemType = 'EUSProposal'
-                    ORDER BY Target.Data_Pkg_ID, Target.Proposal_ID
+                           DPP.Data_Pkg_ID,
+                           DPP.Proposal_ID
+                    FROM dpkg.t_data_package_eus_proposals DPP
+                         INNER JOIN Tmp_DataPackageItems PkgItems
+                           ON PkgItems.DataPackageID = DPP.data_pkg_id AND
+                              PkgItems.Identifier = DPP.proposal_id AND
+                              PkgItems.ItemType = 'EUSProposal'
+                    ORDER BY DPP.Data_Pkg_ID, DPP.Proposal_ID
                 LOOP
                     _infoData := format(_formatSpecifier,
                                         _previewData.Action,
@@ -870,15 +898,15 @@ BEGIN
                 FOR _previewData IN
                     SELECT 'Update EUS Proposal Comment' AS Action,
                            _comment AS New_Comment,
-                           Target.Data_Pkg_ID,
-                           Target.Proposal_ID,
-                           Target.package_comment AS Old_Comment
-                    FROM t_data_package_eus_proposals Target
-                         INNER JOIN Tmp_DataPackageItems
-                           ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
-                              Tmp_DataPackageItems.Identifier = Target.proposal_id AND
-                              Tmp_DataPackageItems.ItemType = 'EUSProposal'
-                    ORDER BY Target.Data_Pkg_ID, Target.Proposal_ID
+                           DPP.Data_Pkg_ID,
+                           DPP.Proposal_ID,
+                           DPP.package_comment AS Old_Comment
+                    FROM t_data_package_eus_proposals DPP
+                         INNER JOIN Tmp_DataPackageItems PkgItems
+                           ON PkgItems.DataPackageID = DPP.data_pkg_id AND
+                              PkgItems.Identifier = DPP.proposal_id AND
+                              PkgItems.ItemType = 'EUSProposal'
+                    ORDER BY DPP.Data_Pkg_ID, DPP.Proposal_ID
                 LOOP
                     _infoData := format(_formatSpecifier,
                                         _previewData.Action,
@@ -894,10 +922,10 @@ BEGIN
             Else
                 UPDATE dpkg.t_data_package_eus_proposals Target
                 SET package_comment = _comment
-                FROM Tmp_DataPackageItems Src
-                WHERE Src.DataPackageID = Target.data_pkg_id AND
-                      Src.Identifier = Target.proposal_id AND
-                      Src.ItemType = 'EUSProposal';
+                FROM Tmp_DataPackageItems PkgItems
+                WHERE PkgItems.DataPackageID = Target.data_pkg_id AND
+                      PkgItems.Identifier = Target.proposal_id AND
+                      PkgItems.ItemType = 'EUSProposal';
                 --
                 GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -915,9 +943,9 @@ BEGIN
             WHERE EXISTS
                 ( SELECT 1
                   FROM Tmp_DataPackageItems PkgItems
-                       INNER JOIN dpkg.t_data_package_eus_proposals EUP
-                         ON PkgItems.DataPackageID = EUP.data_pkg_id AND
-                            PkgItems.Identifier = EUP.proposal_id AND
+                       INNER JOIN dpkg.t_data_package_eus_proposals DPP
+                         ON PkgItems.DataPackageID = DPP.data_pkg_id AND
+                            PkgItems.Identifier = DPP.proposal_id AND
                             PkgItems.ItemType = 'EUSProposal'
                   WHERE Target.DataPackageID = PkgItems.DataPackageID AND
                         Target.Identifier = PkgItems.Identifier AND
@@ -951,15 +979,15 @@ BEGIN
 
                 FOR _previewData IN
                     SELECT DISTINCT 'Add EUS Proposal to Data Pkg' As Action,
-                                    Tmp_DataPackageItems.DataPackageID As Data_Pkg_ID,
+                                    PkgItems.DataPackageID As Data_Pkg_ID,
                                     EUP.Proposal_ID,
                                     Substring(EUP.Title, 1, 90) As Proposal,
                                     _comment As Comment
-                    FROM Tmp_DataPackageItems
+                    FROM Tmp_DataPackageItems PkgItems
                          INNER JOIN public.t_eus_proposals EUP
-                           ON Tmp_DataPackageItems.Identifier = EUP.proposal_id
-                    WHERE Tmp_DataPackageItems.ItemType = 'EUSProposal'
-                    ORDER BY Tmp_DataPackageItems.DataPackageID, EUP.ID
+                           ON PkgItems.Identifier = EUP.proposal_id
+                    WHERE PkgItems.ItemType = 'EUSProposal'
+                    ORDER BY PkgItems.DataPackageID, EUP.ID
                 LOOP
                     _infoData := format(_formatSpecifier,
                                         _previewData.Action,
@@ -977,13 +1005,13 @@ BEGIN
                 INSERT INTO dpkg.t_data_package_eus_proposals( data_pkg_id,
                                                                proposal_id,
                                                                package_comment )
-                SELECT DISTINCT Tmp_DataPackageItems.DataPackageID,
+                SELECT DISTINCT PkgItems.DataPackageID,
                                 EUP.proposal_id,                -- This is typically a number, but is stored as text
                                 _comment
-                FROM Tmp_DataPackageItems
+                FROM Tmp_DataPackageItems PkgItems
                      INNER JOIN public.t_eus_proposals EUP
-                       ON Tmp_DataPackageItems.Identifier = EUP.proposal_id
-                WHERE Tmp_DataPackageItems.ItemType = 'EUSProposal';
+                       ON PkgItems.Identifier = EUP.proposal_id
+                WHERE PkgItems.ItemType = 'EUSProposal';
                 --
                 GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
@@ -1025,15 +1053,17 @@ BEGIN
 
                 FOR _previewData IN
                     SELECT 'Delete Experiment' AS Action,
-                           Target.Data_Pkg_ID,
-                           Target.Experiment_ID,
-                           Target.Experiment
-                    FROM dpkg.t_data_package_experiments Target
-                         INNER JOIN Tmp_DataPackageItems
-                           ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
-                              Tmp_DataPackageItems.Identifier = Target.experiment AND
-                              Tmp_DataPackageItems.ItemType = 'Experiment'
-                    ORDER BY Target.Data_Pkg_ID, Target.Experiment_ID
+                           DPE.Data_Pkg_ID,
+                           DPE.Experiment_ID,
+                           DPE.Experiment
+                    FROM dpkg.t_data_package_experiments DPE
+                         INNER JOIN public.t_experiments E
+                           ON DPE.experiment_id = E.exp_id
+                         INNER JOIN Tmp_DataPackageItems PkgItems
+                           ON PkgItems.DataPackageID = DPE.data_pkg_id AND
+                              PkgItems.Identifier = E.experiment AND
+                              PkgItems.ItemType = 'Experiment'
+                    ORDER BY DPE.Data_Pkg_ID, DPE.Experiment_ID
                 LOOP
                     _infoData := format(_formatSpecifier,
                                         _previewData.Action,
@@ -1050,9 +1080,11 @@ BEGIN
                 WHERE EXISTS
                     ( SELECT 1
                       FROM Tmp_DataPackageItems PkgItems
-                      WHERE PkgItems.ItemType = 'Experiment' AND
-                            PkgItems.DataPackageID = Target.data_pkg_id AND
-                            PkgItems.Identifier = Target.experiment
+                           INNER JOIN public.t_experiments E
+                             ON Target.experiment_id = E.exp_id
+                      WHERE PkgItems.DataPackageID = Target.data_pkg_id AND
+                            PkgItems.Identifier = E.experiment AND
+                            PkgItems.ItemType = 'Experiment'
                     );
                 --
                 GET DIAGNOSTICS _deleteCount = ROW_COUNT;
@@ -1096,16 +1128,18 @@ BEGIN
                 FOR _previewData IN
                     SELECT 'Update Experiment Comment' AS Action,
                            _comment AS New_Comment,
-                           Target.Data_Pkg_ID,
-                           Target.Experiment_ID,
-                           Target.Experiment,
-                           Target.package_comment AS Old_Comment
-                    FROM dpkg.t_data_package_experiments Target
-                         INNER JOIN Tmp_DataPackageItems
-                           ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
-                              Tmp_DataPackageItems.Identifier = Target.experiment AND
-                              Tmp_DataPackageItems.ItemType = 'Experiment'
-                    ORDER BY Target.Data_Pkg_ID, Target.Experiment_ID
+                           DPE.Data_Pkg_ID,
+                           DPE.Experiment_ID,
+                           DPE.Experiment,
+                           DPE.package_comment AS Old_Comment
+                    FROM dpkg.t_data_package_experiments DPE
+                         INNER JOIN public.t_experiments E
+                           ON DPE.experiment_id = E.exp_id
+                         INNER JOIN Tmp_DataPackageItems PkgItems
+                           ON PkgItems.DataPackageID = DPE.data_pkg_id AND
+                              PkgItems.Identifier = E.experiment AND
+                              PkgItems.ItemType = 'Experiment'
+                    ORDER BY DPE.Data_Pkg_ID, DPE.Experiment_ID
                 LOOP
                     _infoData := format(_formatSpecifier,
                                         _previewData.Action,
@@ -1122,10 +1156,12 @@ BEGIN
             Else
                 UPDATE dpkg.t_data_package_experiments Target
                 SET package_comment = _comment
-                FROM Tmp_DataPackageItems Src
-                WHERE Src.DataPackageID = Target.data_pkg_id AND
-                      Src.Identifier = Target.experiment AND
-                      Src.ItemType = 'Experiment';
+                FROM Tmp_DataPackageItems PkgItems
+                     INNER JOIN public.t_experiments E
+                       ON PkgItems.Identifier = E.experiment
+                WHERE PkgItems.DataPackageID = Target.data_pkg_id AND
+                      E.exp_id = Target.experiment_id AND
+                      PkgItems.ItemType = 'Experiment';
                 --
                 GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -1142,11 +1178,13 @@ BEGIN
             DELETE FROM Tmp_DataPackageItems Target
             WHERE EXISTS
                 ( SELECT 1
-                  FROM Tmp_DataPackageItems PkgItems
-                       INNER JOIN dpkg.t_data_package_experiments DPE
+                  FROM dpkg.t_data_package_experiments DPE
+                       INNER JOIN public.t_experiments E
+                         ON DPE.experiment_id = E.exp_id
+                       INNER JOIN Tmp_DataPackageItems PkgItems
                          ON PkgItems.DataPackageID = DPE.data_pkg_id AND
-                            PkgItems.Identifier = DPE.experiment AND
-                            PkgItems.ItemType = 'experiment'
+                            PkgItems.Identifier = E.experiment AND
+                            PkgItems.ItemType = 'Experiment'
                   WHERE Target.DataPackageID = PkgItems.DataPackageID AND
                         Target.Identifier = PkgItems.Identifier AND
                         Target.ItemType = PkgItems.ItemType
@@ -1179,15 +1217,15 @@ BEGIN
 
                 FOR _previewData IN
                     SELECT DISTINCT 'Add Experiment to Data Pkg' As Action,
-                                    Tmp_DataPackageItems.DataPackageID As Data_Pkg_ID,
+                                    PkgItems.DataPackageID As Data_Pkg_ID,
                                     E.Exp_ID As Experiment_ID,
                                     E.Experiment,
                                     _comment As Comment
-                    FROM Tmp_DataPackageItems
+                    FROM Tmp_DataPackageItems PkgItems
                          INNER JOIN public.t_experiments E
-                           ON Tmp_DataPackageItems.Identifier = E.Experiment
-                    WHERE Tmp_DataPackageItems.ItemType = 'Experiment'
-                    ORDER BY Tmp_DataPackageItems.DataPackageID, E.Exp_ID
+                           ON PkgItems.Identifier = E.Experiment
+                    WHERE PkgItems.ItemType = 'Experiment'
+                    ORDER BY PkgItems.DataPackageID, E.Exp_ID
                 LOOP
                     _infoData := format(_formatSpecifier,
                                         _previewData.Action,
@@ -1206,19 +1244,19 @@ BEGIN
                     data_pkg_id,
                     experiment_id,
                     package_comment,
-                    experiment,
-                    created
+                    experiment
+                    -- Deprecated: created
                 )
                 SELECT DISTINCT
-                    Tmp_DataPackageItems.DataPackageID,
+                    PkgItems.DataPackageID,
                     E.Exp_ID,
                     _comment,
-                    E.experiment,
-                    E.created
-                FROM Tmp_DataPackageItems
+                    E.experiment
+                    -- Deprecated: E.created
+                FROM Tmp_DataPackageItems PkgItems
                      INNER JOIN public.t_experiments E
-                       ON Tmp_DataPackageItems.Identifier = E.experiment
-                WHERE Tmp_DataPackageItems.ItemType = 'Experiment';
+                       ON PkgItems.Identifier = E.experiment
+                WHERE PkgItems.ItemType = 'Experiment';
                 --
                 GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
@@ -1260,15 +1298,17 @@ BEGIN
 
                 FOR _previewData IN
                     SELECT 'Delete Dataset' AS Action,
-                           Target.Data_Pkg_ID,
-                           Target.Dataset_ID,
-                           Target.Dataset
-                    FROM dpkg.t_data_package_datasets Target
-                         INNER JOIN Tmp_DataPackageItems
-                           ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
-                              Tmp_DataPackageItems.Identifier = Target.dataset AND
-                              Tmp_DataPackageItems.ItemType = 'Dataset'
-                    ORDER BY Target.Data_Pkg_ID, Target.Dataset_ID
+                           DPD.Data_Pkg_ID,
+                           DPD.Dataset_ID,
+                           DPD.Dataset
+                    FROM dpkg.t_data_package_datasets DPD
+                         INNER JOIN public.t_dataset DS
+                           ON DPD.dataset_id = DS.dataset_id
+                         INNER JOIN Tmp_DataPackageItems PkgItems
+                           ON PkgItems.DataPackageID = DPD.data_pkg_id AND
+                              PkgItems.Identifier = DS.dataset AND
+                              PkgItems.ItemType = 'Dataset'
+                    ORDER BY DPD.Data_Pkg_ID, DPD.Dataset_ID
                 LOOP
                     _infoData := format(_formatSpecifier,
                                         _previewData.Action,
@@ -1285,9 +1325,11 @@ BEGIN
                 WHERE EXISTS
                     ( SELECT 1
                       FROM Tmp_DataPackageItems PkgItems
-                      WHERE PkgItems.ItemType = 'Dataset' AND
-                            PkgItems.DataPackageID = Target.data_pkg_id AND
-                            PkgItems.Identifier = Target.dataset
+                           INNER JOIN public.t_dataset DS
+                             ON Target.dataset_id = DS.dataset_id
+                      WHERE PkgItems.DataPackageID = Target.data_pkg_id AND
+                            PkgItems.Identifier = DS.dataset AND
+                            PkgItems.ItemType = 'Dataset'
                     );
                 --
                 GET DIAGNOSTICS _deleteCount = ROW_COUNT;
@@ -1331,16 +1373,18 @@ BEGIN
                 FOR _previewData IN
                     SELECT 'Update Dataset Comment' AS Action,
                            _comment AS New_Comment,
-                           Target.Data_Pkg_ID,
-                           Target.Dataset_ID,
-                           Target.Dataset,
-                           Target.package_comment AS Old_Comment
-                    FROM dpkg.t_data_package_datasets Target
-                         INNER JOIN Tmp_DataPackageItems
-                           ON Tmp_DataPackageItems.DataPackageID = Target.data_pkg_id AND
-                              Tmp_DataPackageItems.Identifier = Target.dataset AND
-                              Tmp_DataPackageItems.ItemType = 'Dataset'
-                    ORDER BY Target.Data_Pkg_ID, Target.Dataset_ID
+                           DPD.Data_Pkg_ID,
+                           DPD.Dataset_ID,
+                           DPD.Dataset,
+                           DPD.package_comment AS Old_Comment
+                    FROM dpkg.t_data_package_datasets DPD
+                         INNER JOIN public.t_dataset DS
+                           ON DPD.dataset_id = DS.dataset_id
+                         INNER JOIN Tmp_DataPackageItems PkgItems
+                           ON PkgItems.DataPackageID = DPD.data_pkg_id AND
+                              PkgItems.Identifier = DS.dataset AND
+                              PkgItems.ItemType = 'Dataset'
+                    ORDER BY DPD.Data_Pkg_ID, DPD.Dataset_ID
                 LOOP
                     _infoData := format(_formatSpecifier,
                                         _previewData.Action,
@@ -1357,10 +1401,12 @@ BEGIN
             Else
                 UPDATE dpkg.t_data_package_datasets Target
                 SET package_comment = _comment
-                FROM Tmp_DataPackageItems Src
-                WHERE Src.DataPackageID = Target.data_pkg_id AND
-                      Src.Identifier = Target.dataset AND
-                      Src.ItemType = 'Dataset';
+                FROM Tmp_DataPackageItems PkgItems
+                     INNER JOIN public.t_dataset DS
+                       ON PkgItems.Identifier = DS.dataset
+                WHERE PkgItems.DataPackageID = Target.data_pkg_id AND
+                      DS.dataset_id = Target.dataset_id AND
+                      PkgItems.ItemType = 'Dataset';
                 --
                 GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -1377,11 +1423,13 @@ BEGIN
             DELETE FROM Tmp_DataPackageItems Target
             WHERE EXISTS
                 ( SELECT 1
-                  FROM Tmp_DataPackageItems PkgItems
-                       INNER JOIN dpkg.t_data_package_datasets DPD
+                  FROM dpkg.t_data_package_datasets DPD
+                       INNER JOIN public.t_dataset DS
+                         ON DPD.dataset_id = DS.dataset_id
+                       INNER JOIN Tmp_DataPackageItems PkgItems
                          ON PkgItems.DataPackageID = DPD.data_pkg_id AND
-                            PkgItems.Identifier = DPD.dataset AND
-                            PkgItems.ItemType = 'dataset'
+                            PkgItems.Identifier = DS.dataset AND
+                            PkgItems.ItemType = 'Dataset'
                   WHERE Target.DataPackageID = PkgItems.DataPackageID AND
                         Target.Identifier = PkgItems.Identifier AND
                         Target.ItemType = PkgItems.ItemType
@@ -1420,22 +1468,22 @@ BEGIN
 
                 FOR _previewData IN
                     SELECT DISTINCT 'Add Dataset to Data Pkg' AS Action,
-                                    Tmp_DataPackageItems.DataPackageID AS Data_Pkg_ID,
+                                    PkgItems.DataPackageID AS Data_Pkg_ID,
                                     DS.Dataset_ID,
                                     DS.Dataset,
                                     public.timestamp_text(DS.Created) As Created,
                                     E.Experiment,
                                     InstName.Instrument,
                                     _comment AS Comment
-                    FROM Tmp_DataPackageItems
+                    FROM Tmp_DataPackageItems PkgItems
                          INNER JOIN public.t_dataset DS
-                           ON Tmp_DataPackageItems.Identifier = DS.Dataset
+                           ON PkgItems.Identifier = DS.Dataset
                          INNER JOIN public.t_experiments E
                            ON DS.exp_id = E.exp_id
                          INNER JOIN public.t_instrument_name InstName
                            ON DS.instrument_id = InstName.instrument_id
-                    WHERE Tmp_DataPackageItems.ItemType = 'Dataset'
-                    ORDER BY Tmp_DataPackageItems.DataPackageID, DS.dataset_id
+                    WHERE PkgItems.ItemType = 'Dataset'
+                    ORDER BY PkgItems.DataPackageID, DS.dataset_id
                 LOOP
                     _infoData := format(_formatSpecifier,
                                         _previewData.Action,
@@ -1453,28 +1501,30 @@ BEGIN
 
             Else
                 -- Add new items
-                INSERT INTO dpkg.t_data_package_datasets( data_pkg_id,
-                                                          dataset_id,
-                                                          package_comment,
-                                                          dataset,
-                                                          created,
-                                                          experiment,
-                                                          instrument )
-                SELECT DISTINCT Tmp_DataPackageItems.DataPackageID,
+                INSERT INTO dpkg.t_data_package_datasets(
+                    data_pkg_id,
+                    dataset_id,
+                    package_comment,
+                    dataset
+                    -- Deprecated: created,
+                    -- Deprecated: experiment,
+                    -- Deprecated: instrument
+                )
+                SELECT DISTINCT PkgItems.DataPackageID,
                                 DS.dataset_id,
                                 _comment,
-                                DS.dataset,
-                                DS.created,
-                                E.experiment,
-                                InstName.instrument
-                FROM Tmp_DataPackageItems
+                                DS.dataset
+                                -- Deprecated: DS.created,
+                                -- Deprecated: E.experiment,
+                                -- Deprecated: InstName.instrument
+                FROM Tmp_DataPackageItems PkgItems
                      INNER JOIN public.t_dataset DS
-                       ON Tmp_DataPackageItems.Identifier = DS.dataset
-                     INNER JOIN public.t_experiments E
-                       ON DS.exp_id = E.exp_id
-                     INNER JOIN public.t_instrument_name InstName
-                       ON DS.instrument_id = InstName.instrument_id
-                WHERE Tmp_DataPackageItems.ItemType = 'Dataset';
+                       ON PkgItems.Identifier = DS.dataset
+                     -- INNER JOIN public.t_experiments E
+                     --   ON DS.exp_id = E.exp_id
+                     -- INNER JOIN public.t_instrument_name InstName
+                     --   ON DS.instrument_id = InstName.instrument_id
+                WHERE PkgItems.ItemType = 'Dataset';
                 --
                 GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
@@ -1520,16 +1570,16 @@ BEGIN
 
                 FOR _previewData IN
                     SELECT 'Delete Analysis Job' AS Action,
-                           Target.Data_Pkg_ID,
-                           Target.Job,
-                           Target.Tool,
-                           Target.Dataset_ID,
-                           Target.Dataset
-                    FROM dpkg.t_data_package_analysis_jobs Target
+                           DPJ.Data_Pkg_ID,
+                           DPJ.Job,
+                           DPJ.Tool,
+                           DPJ.Dataset_ID,
+                           DPJ.Dataset
+                    FROM dpkg.t_data_package_analysis_jobs DPJ
                          INNER JOIN Tmp_JobsToAddOrDelete ItemsQ
-                           ON Target.data_pkg_id = ItemsQ.DataPackageID AND
-                              Target.job = ItemsQ.job
-                    ORDER BY Target.Data_Pkg_ID, Target.Job
+                           ON DPJ.data_pkg_id = ItemsQ.DataPackageID AND
+                              DPJ.job = ItemsQ.job
+                    ORDER BY DPJ.Data_Pkg_ID, DPJ.Job
                 LOOP
                     _infoData := format(_formatSpecifier,
                                         _previewData.Action,
@@ -1595,16 +1645,16 @@ BEGIN
                 FOR _previewData IN
                     SELECT 'Update Job Comment' AS Action,
                            _comment AS New_Comment,
-                           Target.Data_Pkg_ID,
-                           Target.Job,
-                           Target.Tool,
-                           Target.Dataset_ID,
-                           Target.package_comment AS Old_Comment
-                    FROM dpkg.t_data_package_analysis_jobs Target
+                           DPJ.Data_Pkg_ID,
+                           DPJ.Job,
+                           DPJ.Tool,
+                           DPJ.Dataset_ID,
+                           DPJ.package_comment AS Old_Comment
+                    FROM dpkg.t_data_package_analysis_jobs DPJ
                          INNER JOIN Tmp_JobsToAddOrDelete ItemsQ
-                           ON Target.data_pkg_id = ItemsQ.DataPackageID AND
-                              Target.job = ItemsQ.job
-                    ORDER BY Target.Data_Pkg_ID, Target.Job
+                           ON DPJ.data_pkg_id = ItemsQ.DataPackageID AND
+                              DPJ.job = ItemsQ.job
+                    ORDER BY DPJ.Data_Pkg_ID, DPJ.Job
                 LOOP
                     _infoData := format(_formatSpecifier,
                                         _previewData.Action,
@@ -1710,27 +1760,29 @@ BEGIN
 
             Else
                 -- Add new items
-                INSERT INTO dpkg.t_data_package_analysis_jobs( data_pkg_id,
-                                                               job,
-                                                               package_comment,
-                                                               created,
-                                                               dataset_id,
-                                                               dataset,
-                                                               tool )
+                INSERT INTO dpkg.t_data_package_analysis_jobs(
+                    data_pkg_id,
+                    job,
+                    package_comment,
+                    dataset_id
+                    -- Deprecated: created,
+                    -- Deprecated: dataset,
+                    -- Deprecated: tool
+                )
                 SELECT DISTINCT ItemsQ.DataPackageID,
                                 AJ.job,
                                 _comment,
-                                AJ.created,
-                                AJ.dataset_id,
-                                DS.dataset,
-                                T.analysis_tool
+                                AJ.dataset_id
+                                -- Deprecated: AJ.created,
+                                -- Deprecated: DS.dataset,
+                                -- Deprecated: T.analysis_tool
                 FROM Tmp_JobsToAddOrDelete ItemsQ
                      INNER JOIN public.t_analysis_job AJ
-                       ON AJ.Job = ItemsQ.Job
-                     INNER JOIN public.t_dataset DS
-                       ON AJ.dataset_id = DS.dataset_ID
-                     INNER JOIN public.t_analysis_tool T
-                       ON AJ.analysis_tool_id = T.analysis_tool_id;
+                       ON AJ.Job = ItemsQ.Job;
+                     -- INNER JOIN public.t_dataset DS
+                     --   ON AJ.dataset_id = DS.dataset_ID
+                     -- INNER JOIN public.t_analysis_tool T
+                     --   ON AJ.analysis_tool_id = T.analysis_tool_id;
                 --
                 GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
