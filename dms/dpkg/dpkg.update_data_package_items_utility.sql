@@ -59,7 +59,7 @@ CREATE OR REPLACE PROCEDURE dpkg.update_data_package_items_utility(IN _comment t
 **          08/16/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
 **          09/11/2023 mem - Use schema name with try_cast
-**          09/27/2023 mem - Resolve identifier names to IDs using tables in the public schema
+**          09/28/2023 mem - Resolve identifier names to IDs using tables in the public schema
 **
 *****************************************************/
 DECLARE
@@ -341,13 +341,13 @@ BEGIN
                  LEFT OUTER JOIN (
                         -- Datasets associated with the data package; skipping the jobs that we're deleting
                         SELECT DS.dataset,
-                               TD.data_pkg_id
+                               DPD.data_pkg_id
                         FROM dpkg.t_data_package_analysis_jobs DPJ
-                             INNER JOIN dpkg.t_data_package_datasets TD
-                               ON DPJ.data_pkg_id = TD.data_pkg_id AND
-                                  DPJ.dataset_id = TD.dataset_id
+                             INNER JOIN dpkg.t_data_package_datasets DPD
+                               ON DPJ.data_pkg_id = DPD.data_pkg_id AND
+                                  DPJ.dataset_id = DPD.dataset_id
                             INNER JOIN public.t_dataset DS
-                               ON TD.dataset_id = DS.dataset_id
+                               ON DPD.dataset_id = DS.dataset_id
                              LEFT OUTER JOIN Tmp_JobsToAddOrDelete ItemsQ
                                ON DPJ.data_pkg_id = ItemsQ.DataPackageID AND
                                   DPJ.job = ItemsQ.job
@@ -388,17 +388,17 @@ BEGIN
                  LEFT OUTER JOIN (
                         -- Experiments associated with the data package; skipping any jobs that we're deleting
                         SELECT E.experiment,
-                               TD.data_pkg_id
+                               DPD.data_pkg_id
                         FROM dpkg.t_data_package_analysis_jobs DPJ
-                             INNER JOIN dpkg.t_data_package_datasets TD
-                               ON DPJ.data_pkg_id = TD.data_pkg_id AND
-                                  DPJ.dataset_id = TD.dataset_id
+                             INNER JOIN dpkg.t_data_package_datasets DPD
+                               ON DPJ.data_pkg_id = DPD.data_pkg_id AND
+                                  DPJ.dataset_id = DPD.dataset_id
                              INNER JOIN public.t_dataset DS
-                               ON TD.dataset_id = DS.dataset_id
+                               ON DPD.dataset_id = DS.dataset_id
                              INNER JOIN public.t_experiments E
                                ON DS.exp_id = E.exp_id
                              INNER JOIN dpkg.t_data_package_experiments DPE
-                               ON TD.data_pkg_id = DPE.data_pkg_id AND
+                               ON DPD.data_pkg_id = DPE.data_pkg_id AND
                                   E.exp_id = DPE.experiment_id
                              LEFT OUTER JOIN Tmp_JobsToAddOrDelete ItemsQ
                                ON DPJ.data_pkg_id = ItemsQ.DataPackageID AND
@@ -411,20 +411,20 @@ BEGIN
                  LEFT OUTER JOIN (
                         -- Experiments associated with the data package; skipping any datasets that we're deleting
                         SELECT E.experiment,
-                               TD.data_pkg_id
-                        FROM dpkg.t_data_package_datasets TD
+                               DPD.data_pkg_id
+                        FROM dpkg.t_data_package_datasets DPD
                              INNER JOIN public.t_dataset DS
-                               ON TD.dataset_id = DS.dataset_id
+                               ON DPD.dataset_id = DS.dataset_id
                              INNER JOIN public.t_experiments E
                                ON DS.exp_id = E.exp_id
                              INNER JOIN dpkg.t_data_package_experiments DPE
-                               ON TD.data_pkg_id = DPE.data_pkg_id AND
+                               ON DPD.data_pkg_id = DPE.data_pkg_id AND
                                   E.exp_id = DPE.experiment_id
                              LEFT OUTER JOIN Tmp_DataPackageItems ItemsQ
-                               ON TD.data_pkg_id = ItemsQ.DataPackageID AND
+                               ON DPD.data_pkg_id = ItemsQ.DataPackageID AND
                                    ItemsQ.ItemType = 'Dataset' AND
                                    ItemsQ.Identifier = DS.dataset
-                        WHERE TD.data_pkg_id IN (SELECT DISTINCT DataPackageID FROM Tmp_DataPackageItems) AND
+                        WHERE DPD.data_pkg_id IN (SELECT DISTINCT DataPackageID FROM Tmp_DataPackageItems) AND
                               ItemsQ.Identifier IS NULL
                  ) AS ToKeep2
                    ON ToDelete.DataPackageID = ToKeep2.data_pkg_id AND
@@ -454,17 +454,17 @@ BEGIN
                  LEFT OUTER JOIN (
                         -- Biomaterial associated with the data package; skipping the jobs that we're deleting
                         SELECT DISTINCT B.biomaterial_name,
-                                        TD.data_pkg_id
+                                        DPD.data_pkg_id
                         FROM dpkg.t_data_package_analysis_jobs DPJ
-                             INNER JOIN dpkg.t_data_package_datasets TD
-                               ON DPJ.data_pkg_id = TD.data_pkg_id AND
-                                  DPJ.dataset_id = TD.dataset_id
+                             INNER JOIN dpkg.t_data_package_datasets DPD
+                               ON DPJ.data_pkg_id = DPD.data_pkg_id AND
+                                  DPJ.dataset_id = DPD.dataset_id
                              INNER JOIN public.t_dataset DS
-                               ON TD.dataset_id = DS.dataset_id
+                               ON DPD.dataset_id = DS.dataset_id
                              INNER JOIN public.t_experiments E
                                ON DS.exp_id = E.exp_id
                              INNER JOIN dpkg.t_data_package_experiments DPE
-                               ON TD.data_pkg_id = DPE.data_pkg_id AND
+                               ON DPD.data_pkg_id = DPE.data_pkg_id AND
                                   E.exp_id = DPE.experiment_id
                              INNER JOIN dpkg.t_data_package_biomaterial DPB
                                ON DPE.data_pkg_id = DPB.data_pkg_id
@@ -543,7 +543,7 @@ BEGIN
 
                 RAISE INFO '';
 
-                _formatSpecifier := '%-22s %-11s %-15s %-10s %-80s';
+                _formatSpecifier := '%-19s %-11s %-15s %-10s %-80s';
 
                 _infoHead := format(_formatSpecifier,
                                     'Action',
@@ -554,7 +554,7 @@ BEGIN
                                    );
 
                 _infoHeadSeparator := format(_formatSpecifier,
-                                             '----------------------',
+                                             '-------------------',
                                              '-----------',
                                              '---------------',
                                              '----------',
@@ -568,11 +568,13 @@ BEGIN
                     SELECT 'Delete Biomaterial' AS Action,
                            DPB.Data_Pkg_ID,
                            DPB.Biomaterial_ID,
-                           DPB.Type,
-                           DPB.Biomaterial
+                           BTN.Biomaterial_Type AS Type,
+                           B.biomaterial_name AS Biomaterial
                     FROM dpkg.t_data_package_biomaterial DPB
                          INNER JOIN public.t_biomaterial B
                            ON DPB.biomaterial_id = B.biomaterial_id
+                         INNER JOIN public.t_biomaterial_type_name BTN
+                           ON B.biomaterial_type_id = BTN.biomaterial_type_id
                          INNER JOIN Tmp_DataPackageItems PkgItems
                            ON PkgItems.DataPackageID = DPB.data_pkg_id AND
                               PkgItems.Identifier = B.biomaterial_name AND
@@ -617,7 +619,7 @@ BEGIN
 
                 RAISE INFO '';
 
-                _formatSpecifier := '%-22s %-60s %-11s %-15s %-10s %-80s %-60s';
+                _formatSpecifier := '%-27s %-60s %-11s %-15s %-10s %-80s %-60s';
 
                 _infoHead := format(_formatSpecifier,
                                     'Action',
@@ -630,7 +632,7 @@ BEGIN
                                    );
 
                 _infoHeadSeparator := format(_formatSpecifier,
-                                             '----------------------',
+                                             '---------------------------',
                                              '------------------------------------------------------------',
                                              '-----------',
                                              '---------------',
@@ -647,12 +649,14 @@ BEGIN
                            _comment AS New_Comment,
                            DPB.Data_Pkg_ID,
                            DPB.Biomaterial_ID,
-                           DPB.Type,
-                           DPB.Biomaterial,
+                           BTN.Biomaterial_Type AS Type,
+                           B.Biomaterial_Name AS Biomaterial,
                            DPB.package_comment AS Old_Comment
                     FROM dpkg.t_data_package_biomaterial DPB
                          INNER JOIN public.t_biomaterial B
                            ON DPB.biomaterial_id = B.biomaterial_id
+                         INNER JOIN public.t_biomaterial_type_name BTN
+                           ON B.biomaterial_type_id = BTN.biomaterial_type_id
                          INNER JOIN Tmp_DataPackageItems PkgItems
                            ON PkgItems.DataPackageID = DPB.data_pkg_id AND
                               PkgItems.Identifier =  B.biomaterial_name AND
@@ -704,9 +708,9 @@ BEGIN
                          ON PkgItems.DataPackageID = DPB.Data_Pkg_ID AND
                             PkgItems.Identifier = B.biomaterial_name AND
                             PkgItems.ItemType = 'Biomaterial'
-                    WHERE Target.DataPackageID = PkgItems.DataPackageID AND
-                          Target.Identifier = PkgItems.Identifier AND
-                          Target.ItemType = PkgItems.ItemType
+                  WHERE Target.DataPackageID = PkgItems.DataPackageID AND
+                        Target.Identifier = PkgItems.Identifier AND
+                        Target.ItemType = PkgItems.ItemType
                 );
 
             If _infoOnly Then
@@ -874,7 +878,7 @@ BEGIN
 
                 RAISE INFO '';
 
-                _formatSpecifier := '%-28s %-60s %-11s %-11s %-60s';
+                _formatSpecifier := '%-29s %-60s %-11s %-11s %-60s';
 
                 _infoHead := format(_formatSpecifier,
                                     'Action',
@@ -885,7 +889,7 @@ BEGIN
                                    );
 
                 _infoHeadSeparator := format(_formatSpecifier,
-                                             '----------------------------',
+                                             '-----------------------------',
                                              '------------------------------------------------------------',
                                              '-----------',
                                              '-----------',
@@ -956,7 +960,7 @@ BEGIN
 
                 RAISE INFO '';
 
-                _formatSpecifier := '%-30s %-11s %-11s %-90s %-60s';
+                _formatSpecifier := '%-29s %-11s %-11s %-90s %-60s';
 
                 _infoHead := format(_formatSpecifier,
                                     'Action',
@@ -967,7 +971,7 @@ BEGIN
                                    );
 
                 _infoHeadSeparator := format(_formatSpecifier,
-                                             '------------------------------',
+                                             '-----------------------------',
                                              '-----------',
                                              '-----------',
                                              '------------------------------------------------------------------------------------------',
@@ -987,7 +991,7 @@ BEGIN
                          INNER JOIN public.t_eus_proposals EUP
                            ON PkgItems.Identifier = EUP.proposal_id
                     WHERE PkgItems.ItemType = 'EUSProposal'
-                    ORDER BY PkgItems.DataPackageID, EUP.ID
+                    ORDER BY PkgItems.DataPackageID, EUP.Proposal_ID
                 LOOP
                     _infoData := format(_formatSpecifier,
                                         _previewData.Action,
@@ -1055,7 +1059,7 @@ BEGIN
                     SELECT 'Delete Experiment' AS Action,
                            DPE.Data_Pkg_ID,
                            DPE.Experiment_ID,
-                           DPE.Experiment
+                           E.experiment
                     FROM dpkg.t_data_package_experiments DPE
                          INNER JOIN public.t_experiments E
                            ON DPE.experiment_id = E.exp_id
@@ -1102,7 +1106,7 @@ BEGIN
 
                 RAISE INFO '';
 
-                _formatSpecifier := '%-25s %-60s %-11s %-13s %-60s %-60s';
+                _formatSpecifier := '%-26s %-60s %-11s %-13s %-60s %-60s';
 
                 _infoHead := format(_formatSpecifier,
                                     'Action',
@@ -1114,7 +1118,7 @@ BEGIN
                                    );
 
                 _infoHeadSeparator := format(_formatSpecifier,
-                                             '-------------------------',
+                                             '--------------------------',
                                              '------------------------------------------------------------',
                                              '-----------',
                                              '-------------',
@@ -1130,7 +1134,7 @@ BEGIN
                            _comment AS New_Comment,
                            DPE.Data_Pkg_ID,
                            DPE.Experiment_ID,
-                           DPE.Experiment,
+                           E.Experiment,
                            DPE.package_comment AS Old_Comment
                     FROM dpkg.t_data_package_experiments DPE
                          INNER JOIN public.t_experiments E
@@ -1194,7 +1198,7 @@ BEGIN
 
                 RAISE INFO '';
 
-                _formatSpecifier := '%-28s %-11s %-13s %-60s %-60s';
+                _formatSpecifier := '%-27s %-11s %-13s %-60s %-60s';
 
                 _infoHead := format(_formatSpecifier,
                                     'Action',
@@ -1205,7 +1209,7 @@ BEGIN
                                    );
 
                 _infoHeadSeparator := format(_formatSpecifier,
-                                             '----------------------------',
+                                             '---------------------------',
                                              '-----------',
                                              '-------------',
                                              '------------------------------------------------------------',
@@ -1277,20 +1281,22 @@ BEGIN
 
                 RAISE INFO '';
 
-                _formatSpecifier := '%-15s %-11s %-10s %-80s';
+                _formatSpecifier := '%-15s %-11s %-10s %-80s %-60s';
 
                 _infoHead := format(_formatSpecifier,
                                     'Action',
                                     'Data_Pkg_ID',
                                     'Dataset_ID',
-                                    'Dataset'
+                                    'Dataset',
+                                    'Experiment'
                                    );
 
                 _infoHeadSeparator := format(_formatSpecifier,
                                              '---------------',
                                              '-----------',
                                              '----------',
-                                             '--------------------------------------------------------------------------------'
+                                             '--------------------------------------------------------------------------------',
+                                             '------------------------------------------------------------'
                                             );
 
                 RAISE INFO '%', _infoHead;
@@ -1300,10 +1306,13 @@ BEGIN
                     SELECT 'Delete Dataset' AS Action,
                            DPD.Data_Pkg_ID,
                            DPD.Dataset_ID,
-                           DPD.Dataset
+                           DS.Dataset,
+                           E.Experiment
                     FROM dpkg.t_data_package_datasets DPD
                          INNER JOIN public.t_dataset DS
                            ON DPD.dataset_id = DS.dataset_id
+                         INNER JOIN public.t_experiments E
+                           ON DS.exp_id = E.exp_id
                          INNER JOIN Tmp_DataPackageItems PkgItems
                            ON PkgItems.DataPackageID = DPD.data_pkg_id AND
                               PkgItems.Identifier = DS.dataset AND
@@ -1314,7 +1323,8 @@ BEGIN
                                         _previewData.Action,
                                         _previewData.Data_Pkg_ID,
                                         _previewData.Dataset_ID,
-                                        _previewData.Dataset
+                                        _previewData.Dataset,
+                                        _previewData.Experiment
                                        );
 
                     RAISE INFO '%', _infoData;
@@ -1347,7 +1357,7 @@ BEGIN
 
                 RAISE INFO '';
 
-                _formatSpecifier := '%-22s %-60s %-11s %-10s %-80s %-60s';
+                _formatSpecifier := '%-23s %-60s %-11s %-10s %-80s %-60s';
 
                 _infoHead := format(_formatSpecifier,
                                     'Action',
@@ -1359,7 +1369,7 @@ BEGIN
                                    );
 
                 _infoHeadSeparator := format(_formatSpecifier,
-                                             '----------------------',
+                                             '-----------------------',
                                              '------------------------------------------------------------',
                                              '-----------',
                                              '----------',
@@ -1375,7 +1385,7 @@ BEGIN
                            _comment AS New_Comment,
                            DPD.Data_Pkg_ID,
                            DPD.Dataset_ID,
-                           DPD.Dataset,
+                           DS.Dataset,
                            DPD.package_comment AS Old_Comment
                     FROM dpkg.t_data_package_datasets DPD
                          INNER JOIN public.t_dataset DS
@@ -1439,7 +1449,7 @@ BEGIN
 
                 RAISE INFO '';
 
-                _formatSpecifier := '%-25s %-11s %-10s %-80s %-20s %-60s %-30s %-60s';
+                _formatSpecifier := '%-24s %-11s %-10s %-80s %-20s %-60s %-30s %-60s';
 
                 _infoHead := format(_formatSpecifier,
                                     'Action',
@@ -1453,7 +1463,7 @@ BEGIN
                                    );
 
                 _infoHeadSeparator := format(_formatSpecifier,
-                                             '-------------------------',
+                                             '------------------------',
                                              '-----------',
                                              '----------',
                                              '--------------------------------------------------------------------------------',
@@ -1545,7 +1555,7 @@ BEGIN
 
                 RAISE INFO '';
 
-                _formatSpecifier := '%-20s %-11s %-10s %-35s %-10s %-80s';
+                _formatSpecifier := '%-21s %-11s %-10s %-35s %-10s %-80s';
 
                 _infoHead := format(_formatSpecifier,
                                     'Action',
@@ -1557,7 +1567,7 @@ BEGIN
                                    );
 
                 _infoHeadSeparator := format(_formatSpecifier,
-                                             '--------------------',
+                                             '---------------------',
                                              '-----------',
                                              '----------',
                                              '-----------------------------------',
@@ -1572,13 +1582,19 @@ BEGIN
                     SELECT 'Delete Analysis Job' AS Action,
                            DPJ.Data_Pkg_ID,
                            DPJ.Job,
-                           DPJ.Tool,
-                           DPJ.Dataset_ID,
-                           DPJ.Dataset
+                           T.Analysis_Tool AS Tool,
+                           AJ.Dataset_ID,
+                           DS.Dataset
                     FROM dpkg.t_data_package_analysis_jobs DPJ
                          INNER JOIN Tmp_JobsToAddOrDelete ItemsQ
                            ON DPJ.data_pkg_id = ItemsQ.DataPackageID AND
                               DPJ.job = ItemsQ.job
+                         INNER JOIN public.t_analysis_job AJ
+                           ON AJ.Job = ItemsQ.Job
+                         INNER JOIN public.t_dataset DS
+                           ON AJ.dataset_id = DS.dataset_ID
+                         INNER JOIN public.t_analysis_tool T
+                           ON AJ.analysis_tool_id = T.analysis_tool_id
                     ORDER BY DPJ.Data_Pkg_ID, DPJ.Job
                 LOOP
                     _infoData := format(_formatSpecifier,
@@ -1617,7 +1633,7 @@ BEGIN
 
                 RAISE INFO '';
 
-                _formatSpecifier := '%-22s %-60s %-11s %-10s %-35s %-10s %-60s';
+                _formatSpecifier := '%-19s %-60s %-11s %-10s %-35s %-10s %-60s';
 
                 _infoHead := format(_formatSpecifier,
                                     'Action',
@@ -1630,7 +1646,7 @@ BEGIN
                                    );
 
                 _infoHeadSeparator := format(_formatSpecifier,
-                                         '----------------------',
+                                         '-------------------',
                                          '------------------------------------------------------------',
                                          '-----------',
                                          '----------',
@@ -1647,13 +1663,17 @@ BEGIN
                            _comment AS New_Comment,
                            DPJ.Data_Pkg_ID,
                            DPJ.Job,
-                           DPJ.Tool,
-                           DPJ.Dataset_ID,
+                           T.Analysis_Tool AS Tool,
+                           AJ.Dataset_ID,
                            DPJ.package_comment AS Old_Comment
                     FROM dpkg.t_data_package_analysis_jobs DPJ
                          INNER JOIN Tmp_JobsToAddOrDelete ItemsQ
                            ON DPJ.data_pkg_id = ItemsQ.DataPackageID AND
                               DPJ.job = ItemsQ.job
+                         INNER JOIN public.t_analysis_job AJ
+                           ON AJ.Job = ItemsQ.Job
+                         INNER JOIN public.t_analysis_tool T
+                           ON AJ.analysis_tool_id = T.analysis_tool_id
                     ORDER BY DPJ.Data_Pkg_ID, DPJ.Job
                 LOOP
                     _infoData := format(_formatSpecifier,
@@ -1732,7 +1752,7 @@ BEGIN
                     SELECT DISTINCT 'Add Job to Data Pkg' AS Action,
                                     ItemsQ.DataPackageID AS Data_Pkg_ID,
                                     AJ.Job,
-                                    T.Analysis_Tool,
+                                    T.Analysis_Tool AS Tool,
                                     public.timestamp_text(AJ.Created) As Created,
                                     DS.Dataset,
                                     _comment AS Comment
@@ -1749,7 +1769,7 @@ BEGIN
                                         _previewData.Action,
                                         _previewData.Data_Pkg_ID,
                                         _previewData.Job,
-                                        _previewData.Analysis_Tool,
+                                        _previewData.Tool,
                                         _previewData.Created,
                                         _previewData.Dataset,
                                         _previewData.Comment
@@ -1845,7 +1865,7 @@ BEGIN
             WHERE data_pkg_id IN ( SELECT DISTINCT DataPackageID FROM Tmp_DataPackageItems );
         End If;
 
-        If _message = '' Then
+        If _message = '' And Not _infoOnly Then
             _message := 'No items were updated';
 
             If _mode = 'add' Then
