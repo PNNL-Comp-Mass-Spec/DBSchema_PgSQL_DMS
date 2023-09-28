@@ -60,6 +60,7 @@ CREATE OR REPLACE PROCEDURE dpkg.update_data_package_items_utility(IN _comment t
 **          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
 **          09/11/2023 mem - Use schema name with try_cast
 **          09/28/2023 mem - Resolve identifier names to IDs using tables in the public schema
+**                         - Remove return statement that prevented seeing preview data when _infoOnly is true
 **
 *****************************************************/
 DECLARE
@@ -539,10 +540,6 @@ BEGIN
 
                 RAISE INFO '%', _infoData;
             END LOOP;
-
-            DROP TABLE Tmp_DatasetIDsToAdd;
-            DROP TABLE Tmp_JobsToAddOrDelete;
-            RETURN;
         End If;
 
         ---------------------------------------------------
