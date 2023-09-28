@@ -207,8 +207,11 @@ BEGIN
                        'Dataset' AS ItemType,
                        DS.Dataset
                 FROM Tmp_DatasetIDsToAdd Source
-                     INNER JOIN PUBLIC.t_dataset DS
-                       ON Source.DatasetID = DS.dataset_id;
+                     INNER JOIN public.t_dataset DS
+                       ON Source.DatasetID = DS.dataset_id
+                WHERE NOT EXISTS ( SELECT 1
+                                   FROM Tmp_DataPackageItems PkgItems
+                                   WHERE PkgItems.Identifier = DS.Dataset);
 
                 -- Update the Type of the Dataset IDs so that they will be ignored
                 UPDATE Tmp_DataPackageItems
