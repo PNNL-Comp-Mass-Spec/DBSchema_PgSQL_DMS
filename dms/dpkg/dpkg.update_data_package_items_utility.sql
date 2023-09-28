@@ -68,7 +68,9 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _badItemTypes text;
+    _badItemTypes citext;
+    _badItemsWarning text = '';
+
     _deleteCount int;
     _updateCount int;
     _insertCount int;
@@ -132,12 +134,11 @@ BEGIN
              ) FilterQ;
 
         If _badItemTypes <> '' Then
-            RAISE INFO '';
-
+            -- Note that the bad items warning will be shown below, since the warning is skipped if Tmp_DataPackageItems has item types of both Dataset and DatasetID
             If _badItemTypes Like '%,%' Then
-                RAISE WARNING 'Invalid item types in temp table Tmp_DataPackageItems: %', _badItemTypes;
+                _badItemsWarning = format('Invalid item types in temp table Tmp_DataPackageItems: %s', _badItemTypes);
             Else
-                RAISE WARNING 'Item Type "%" is invalid in temp table Tmp_DataPackageItems', _badItemTypes;
+                _badItemsWarning = format('Item Type "%s" is invalid in temp table Tmp_DataPackageItems', _badItemTypes);
             End If;
         End If;
 
@@ -219,6 +220,12 @@ BEGIN
                 FROM Tmp_DatasetIDsToAdd
                 WHERE Tmp_DataPackageItems.Identifier = Tmp_DatasetIDsToAdd.DatasetID::text;
 
+            End If;
+
+            -- Possibly show a warning about the bad item types
+            If _badItemsWarning <> '' And Not (_badItemTypes = 'DatasetID' And Exists (SELECT * FROM Tmp_DataPackageItems WHERE ItemType::citext = 'Dataset')) Then
+                RAISE INFO '';
+                RAISE WARNING '%', _badItemsWarning;
             End If;
 
             If Exists (SELECT DataPackageID FROM Tmp_DataPackageItems WHERE ItemType = 'Dataset' And Identifier SIMILAR TO 'DataPackage[_][0-9][0-9]%') Then
