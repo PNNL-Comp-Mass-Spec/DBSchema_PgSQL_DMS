@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE dpkg.update_data_package_eus_info(IN _datapackagelis
 **          05/18/2022 mem - Use new EUS Proposal column name
 **          06/08/2022 mem - Use new Item_Added column name
 **          08/14/2023 mem - Ported to PostgreSQL
+**          09/28/2023 mem - Obtain dataset names and instrument names from t_dataset and t_instrument_name
 **
 *****************************************************/
 DECLARE
@@ -204,13 +205,17 @@ BEGIN
                          InstrumentCount,
                          Row_Number() OVER ( Partition By SourceQ.data_pkg_id Order By InstrumentCount DESC ) AS CountRank
                   FROM ( SELECT DPD.data_pkg_id,
-                                DPD.instrument,
-                                COUNT(DPD.instrument) AS InstrumentCount
+                                InstName.Instrument AS Instrument,
+                                COUNT(InstName.Instrument) AS InstrumentCount
                          FROM dpkg.t_data_package_datasets DPD
+                              INNER JOIN public.t_dataset DS
+                                ON DPD.Dataset_ID = DS.Dataset_ID
+                              INNER JOIN public.t_instrument_name InstName
+                                ON DS.instrument_id = InstName.instrument_id
                               INNER JOIN Tmp_DataPackagesToUpdate Src
                                 ON DPD.data_pkg_id = Src.Data_Pkg_ID
-                         WHERE NOT DPD.instrument Is Null
-                         GROUP BY DPD.data_pkg_id, DPD.instrument
+                         WHERE NOT InstName.Instrument Is Null
+                         GROUP BY DPD.data_pkg_id, InstName.Instrument
                        ) SourceQ
                 ) RankQ
            WHERE RankQ.CountRank = 1

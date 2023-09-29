@@ -77,6 +77,7 @@ CREATE OR REPLACE PROCEDURE dpkg.get_package_dataset_job_tool_crosstab(IN _datap
 **          10/26/2022 mem - Change column #id to lowercase
 **          10/31/2022 mem - Use new column name id in the temp table
 **          08/15/2023 mem - Ported to PostgreSQL
+**          09/28/2023 mem - Obtain dataset names and analysis tool names from T_Dataset and T_Analysis_Tool
 **
 *****************************************************/
 DECLARE
@@ -130,21 +131,26 @@ BEGIN
         -- Get list of package datasets
         ---------------------------------------------------
 
-        INSERT INTO Tmp_Datasets( Dataset,
-                                  ID )
-        SELECT DISTINCT dataset,
-                        data_pkg_id
-        FROM dpkg.t_data_package_datasets
-        WHERE data_pkg_id = _dataPackageID;
+        INSERT INTO Tmp_Datasets( Dataset, ID )
+        SELECT DISTINCT DS.dataset,
+                        DPD.data_pkg_id
+        FROM dpkg.t_data_package_datasets DPD
+        INNER JOIN public.t_dataset DS
+               ON DPD.Dataset_ID = DS.Dataset_ID
+        WHERE DPD.data_pkg_id = _dataPackageID;
 
         -- Update job counts
         UPDATE Tmp_Datasets
         SET Jobs = CountQ.Total
-        FROM ( SELECT dataset,
-                      COUNT(job) AS Total
-               FROM dpkg.t_data_package_analysis_jobs
-               WHERE data_pkg_id = _dataPackageID
-               GROUP BY dataset
+        FROM ( SELECT DS.dataset,
+                      COUNT(DPJ.job) AS Total
+               FROM dpkg.t_data_package_analysis_jobs DPJ
+                    INNER JOIN public.t_analysis_Job AJ
+                      ON AJ.job = DPJ.job
+                    INNER JOIN public.t_dataset DS
+                      ON AJ.dataset_id = DS.dataset_id
+               WHERE DPJ.data_pkg_id = _dataPackageID
+               GROUP BY DS.dataset
              ) CountQ
         WHERE CountQ.dataset = Tmp_Datasets.dataset;
 
@@ -153,9 +159,13 @@ BEGIN
         ---------------------------------------------------
 
         INSERT INTO Tmp_Tools ( Tool )
-        SELECT DISTINCT tool
-        FROM dpkg.t_data_package_analysis_jobs
-        WHERE data_pkg_id = _dataPackageID;
+        SELECT DISTINCT T.analysis_tool
+        FROM dpkg.t_data_package_analysis_jobs DPJ
+             INNER JOIN public.t_analysis_job AJ
+               ON AJ.job = DPJ.job
+             INNER JOIN public.t_analysis_tool T
+               ON AJ.analysis_tool_id = T.analysis_tool_id
+        WHERE DPJ.data_pkg_id = _dataPackageID;
 
         ---------------------------------------------------
         -- Add columns to temp dataset table for each tool
@@ -174,12 +184,18 @@ BEGIN
             TRUNCATE TABLE Tmp_Scratch;
 
             INSERT INTO Tmp_Scratch ( Dataset, Total )
-            SELECT dataset,
-                   COUNT(job) AS total
-            FROM dpkg.t_data_package_analysis_jobs
-            WHERE data_pkg_id = _dataPackageID AND
-                  tool = _colName
-            GROUP BY dataset;
+            SELECT DS.dataset,
+                   COUNT(DPJ.job) AS total
+            FROM dpkg.t_data_package_analysis_jobs DPJ
+                 INNER JOIN public.t_analysis_job AJ
+                   ON AJ.job = DPJ.job
+                 INNER JOIN public.t_dataset DS
+                   ON AJ.dataset_id = DS.dataset_ID
+                 INNER JOIN public.t_analysis_tool T
+                   ON AJ.analysis_tool_id = T.analysis_tool_id
+            WHERE DPJ.data_pkg_id = _dataPackageID AND
+                  T.analysis_tool = _colName
+            GROUP BY DS.dataset;
 
             _sql := format('UPDATE Tmp_Datasets SET %I = TX.Total FROM Tmp_Scratch TX WHERE TX.Dataset = Tmp_Datasets.Dataset', _colName);
             EXECUTE _sql;

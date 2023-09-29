@@ -16,16 +16,19 @@ CREATE OR REPLACE FUNCTION dpkg.get_data_package_dataset_list(_datapackageid int
 **  Date:   10/22/2014 mem - Initial version
 **          06/12/2022 mem - Ported to PostgreSQL
 **          04/04/2023 mem - Use char_length() to determine string length
+**          09/28/2023 mem - Obtain dataset names from t_dataset
 **
 *****************************************************/
 DECLARE
     _result text;
 BEGIN
-    SELECT string_agg(dataset, ', ' ORDER BY dataset)
+    SELECT string_agg(DS.Dataset, ', ' ORDER BY DS.Dataset)
     INTO _result
-    FROM dpkg.t_data_package_datasets
-    WHERE data_pkg_id = _dataPackageID And
-          char_length(Coalesce(dataset, '')) > 0;
+    FROM dpkg.t_data_package_datasets DPD
+         INNER JOIN public.t_dataset DS
+           ON DPD.dataset_id = DS.dataset_id
+    WHERE DPD.data_pkg_id = _dataPackageID And
+          char_length(Coalesce(DS.Dataset, '')) > 0;
 
     RETURN _result;
 END

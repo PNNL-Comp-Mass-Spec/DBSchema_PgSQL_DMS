@@ -24,9 +24,12 @@ CREATE OR REPLACE FUNCTION dpkg.check_data_package_dataset_job_coverage(_package
 **          04/25/2018 mem - Now joining T_Data_Package_Datasets and T_Data_Package_Analysis_Jobs on Dataset_ID
 **          06/25/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
+**          09/28/2023 mem - Obtain dataset names from t_dataset and tool names from t_analysis_tool
 **
 *****************************************************/
 BEGIN
+    _mode := Trim(Coalesce(_mode, ''));
+
     If Not _mode In ('NoPackageJobs', 'NoDMSJobs', 'PackageJobCount') Then
         RETURN QUERY
         SELECT format('Invalid mode "%s"; should be ''NoPackageJobs'', ''NoDMSJobs'', or ''PackageJobCount''', _mode)::citext,
@@ -39,30 +42,39 @@ BEGIN
     --
     If _mode = 'NoPackageJobs' Then
         RETURN QUERY
-        SELECT TD.dataset,
+        SELECT DS.dataset,
                NULL::int AS job_count
-        FROM dpkg.t_data_package_datasets AS TD
-             LEFT OUTER JOIN dpkg.t_data_package_analysis_jobs AS TA
-               ON TD.dataset = TA.dataset AND
-                  TD.data_pkg_id = TA.data_pkg_id AND
-                  TA.tool = _tool
-        WHERE TD.data_pkg_id = _packageID AND TA.job IS NULL;
+        FROM dpkg.t_data_package_datasets AS DPD
+             INNER JOIN public.t_dataset DS
+               ON DPD.Dataset_ID = DS.Dataset_ID
+             LEFT OUTER JOIN dpkg.t_data_package_analysis_jobs AS DPJ
+                             INNER JOIN public.t_analysis_job AJ
+                               ON AJ.job = DPJ.job
+                             INNER JOIN public.t_analysis_tool T
+                               ON AJ.analysis_tool_id = T.analysis_tool_id AND
+                                  T.analysis_tool = _tool
+               ON DPD.dataset_id = DPJ.dataset_id AND
+                  DPD.data_pkg_id = DPJ.data_pkg_id
+        WHERE DPD.data_pkg_id = _packageID AND
+              DPJ.job IS NULL;
     End If;
 
     -- Package datasets with no DMS jobs for given tool
     --
     If _mode = 'NoDMSJobs' Then
         RETURN QUERY
-        SELECT TD.dataset,
+        SELECT DS.dataset,
                NULL::int AS job_count
-        FROM dpkg.t_data_package_datasets AS TD
-        WHERE TD.data_pkg_id = _packageID AND
+        FROM dpkg.t_data_package_datasets AS DPD
+             INNER JOIN public.t_dataset DS
+               ON DPD.Dataset_ID = DS.Dataset_ID
+        WHERE DPD.data_pkg_id = _packageID AND
               NOT EXISTS ( SELECT J.dataset_id
                            FROM public.t_analysis_job AS J
                                 INNER JOIN public.t_analysis_tool Tool
                                   ON J.analysis_tool_id = Tool.analysis_tool_id AND
                                      Tool.analysis_tool = _tool
-                           WHERE J.dataset_id = TD.dataset_id
+                           WHERE J.dataset_id = DPD.dataset_id
                          );
     End If;
 
@@ -70,15 +82,21 @@ BEGIN
     --
     If _mode = 'PackageJobCount' Then
         RETURN QUERY
-        SELECT TD.Dataset,
-               SUM(CASE WHEN TJ.Job IS NULL THEN 0 ELSE 1 END)::int AS job_count
-        FROM dpkg.t_data_package_datasets AS TD
-             LEFT OUTER JOIN dpkg.t_data_package_analysis_jobs AS TJ
-               ON TD.dataset_id = TJ.dataset_id AND
-                  TD.data_pkg_id = TJ.data_pkg_id AND
-                  TJ.tool = _tool
-        WHERE TD.data_pkg_id = _packageID
-        GROUP BY TD.dataset;
+        SELECT DS.Dataset,
+               SUM(CASE WHEN DPJ.Job IS NULL THEN 0 ELSE 1 END)::int AS job_count
+        FROM dpkg.t_data_package_datasets AS DPD
+             INNER JOIN public.t_dataset DS
+               ON DPD.Dataset_ID = DS.Dataset_ID
+             LEFT OUTER JOIN dpkg.t_data_package_analysis_jobs AS DPJ
+                             INNER JOIN public.t_analysis_job AJ
+                               ON AJ.job = DPJ.job
+                             INNER JOIN public.t_analysis_tool T
+                               ON AJ.analysis_tool_id = T.analysis_tool_id AND
+                                  T.analysis_tool = _tool
+               ON DPD.dataset_id = DPJ.dataset_id AND
+                  DPD.data_pkg_id = DPJ.data_pkg_id
+        WHERE DPD.data_pkg_id = _packageID
+        GROUP BY DS.dataset;
     End If;
 END
 $$;
