@@ -6,9 +6,6 @@ CREATE TABLE dpkg.t_data_package_biomaterial (
     data_pkg_id integer NOT NULL,
     biomaterial_id integer NOT NULL,
     biomaterial public.citext,
-    created timestamp without time zone,
-    campaign public.citext,
-    type public.citext,
     item_added timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     package_comment public.citext DEFAULT ''::public.citext
 );

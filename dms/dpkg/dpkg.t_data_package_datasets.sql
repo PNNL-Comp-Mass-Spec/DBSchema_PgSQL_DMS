@@ -6,9 +6,6 @@ CREATE TABLE dpkg.t_data_package_datasets (
     data_pkg_id integer NOT NULL,
     dataset_id integer NOT NULL,
     dataset public.citext,
-    experiment public.citext,
-    instrument public.citext,
-    created timestamp without time zone,
     item_added timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     package_comment public.citext DEFAULT ''::public.citext
 );

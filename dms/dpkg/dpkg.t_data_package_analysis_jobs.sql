@@ -5,10 +5,7 @@
 CREATE TABLE dpkg.t_data_package_analysis_jobs (
     data_pkg_id integer NOT NULL,
     job integer NOT NULL,
-    tool public.citext,
     dataset_id integer NOT NULL,
-    dataset public.citext,
-    created timestamp without time zone,
     item_added timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     package_comment public.citext DEFAULT ''::public.citext
 );
