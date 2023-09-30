@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.delete_dataset(IN _datasetname text, IN _info
 /****************************************************
 **
 **  Desc:
-**      Deletes given dataset from the dataset table and all referencing tables
+**      Deletes the given dataset from the dataset table and all referencing tables
 **
 **  Arguments:
 **    _datasetName      Dataset name
@@ -42,6 +42,7 @@ CREATE OR REPLACE PROCEDURE public.delete_dataset(IN _datasetname text, IN _info
 **          04/17/2019 mem - Delete rows in T_Cached_Dataset_Instruments
 **          11/02/2021 mem - Show the full path to the dataset directory at the console
 **          09/15/2023 mem - Ported to PostgreSQL
+**          09/29/2023 mem - Store the dataset's storage_path_id in _datasetDirectoryPath if V_Dataset_Folder_Paths does not have the dataset
 **
 *****************************************************/
 DECLARE
@@ -127,6 +128,17 @@ BEGIN
     INTO _datasetDirectoryPath
     FROM V_Dataset_Folder_Paths
     WHERE Dataset_ID = _datasetID;
+
+    If Not FOUND THEN
+        SELECT format('Dataset folder in %s (storage path ID %s; dataset not found in V_Dataset_Folder_Paths)',
+                      SPath.vol_name_client || SPath.storage_path,
+                      DS.storage_path_id)
+        INTO _datasetDirectoryPath
+        FROM t_dataset DS INNER JOIN
+             t_storage_path SPath
+               ON DS.storage_path_id = SPath.storage_path_id
+        WHERE DS.dataset = _datasetName::citext;
+    End If;
 
     If Exists (SELECT dataset_id FROM t_analysis_job WHERE dataset_id = _datasetID) Then
         _message := 'Cannot delete a dataset with existing analysis jobs';
@@ -253,7 +265,7 @@ BEGIN
         SELECT 'To be manually deleted' As Action,
                'Dataset Directory',
                _datasetID,
-               '\\proto-5\share\year\dataset', -- _datasetDirectoryPath,
+               _datasetDirectoryPath,
                '';
 
         -- Show the contents of T_Tmp_Target_Items
