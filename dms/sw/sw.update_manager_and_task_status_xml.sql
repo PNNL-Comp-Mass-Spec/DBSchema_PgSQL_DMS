@@ -49,6 +49,7 @@ CREATE OR REPLACE PROCEDURE sw.update_manager_and_task_status_xml(IN _managersta
 **          08/14/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          09/11/2023 mem - Use schema name with try_cast
+**          09/29/2023 mem - Keep track of the current location in the procedure
 **
 *****************************************************/
 DECLARE
@@ -57,6 +58,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
+    _currentLocation text := 'Start';
     _statusInfoCount int;
     _updateCount int;
     _insertCount int;
@@ -112,6 +114,8 @@ BEGIN
         -- Extract parameters from XML input
         ---------------------------------------------------
 
+        _currentLocation := 'Store _managerStatusXML in _paramXML';
+
         If _infoLevel >= 3 Then
             RAISE INFO '';
             RAISE INFO 'Overriding XML in _statusXML using Test Data';
@@ -166,6 +170,8 @@ BEGIN
         ---------------------------------------------------
         -- Load status messages into temp table
         ---------------------------------------------------
+
+        _currentLocation := 'Populate temp table Tmp_Processor_Status_Info';
 
         WITH Src (StatusXML) AS (SELECT _statusXML)
         INSERT INTO Tmp_Processor_Status_Info( Processor_Name,
@@ -407,6 +413,8 @@ BEGIN
         -- 2017-07-06T08:27:52Z
         ---------------------------------------------------
 
+        _currentLocation := 'Populate columns Status_Date_Value and Last_Start_Time_Value';
+
         -- Old: Compute the difference for our time zone vs. UTC, in hours
         --
         -- SELECT Abs(extract( timezone from CURRENT_TIMESTAMP) / 3600)
@@ -421,6 +429,8 @@ BEGIN
         ---------------------------------------------------
         -- Update status for existing processors
         ---------------------------------------------------
+
+        _currentLocation := 'Update status for existing processors that have Remote_Manager defined';
 
         -- First update managers with a Remote_Manager defined
         --
@@ -442,6 +452,8 @@ BEGIN
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
         _statusMessageInfo := format('%s, PreservedA: %s', _statusMessageInfo, _updateCount);
+
+        _currentLocation := 'Update status for existing processors that do not contact a remote manager';
 
         -- Next update managers where Remote_Manager is empty
         --
@@ -487,6 +499,8 @@ BEGIN
         ---------------------------------------------------
         -- Add missing processors to sw.t_processor_status
         ---------------------------------------------------
+
+        _currentLocation := 'Add missing processors';
 
         -- Add managers with a Remote_Manager defined
         --
@@ -590,6 +604,8 @@ BEGIN
 
         If _logProcessorNames Then
 
+            _currentLocation := 'Log status messages';
+
             SELECT string_agg(Processor_Name, ', ' ORDER BY Processor_Name)
             INTO _updatedProcessors
             FROM Tmp_Processor_Status_Info;
@@ -614,7 +630,7 @@ BEGIN
 
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => '', _logError => true);
+                        _callingProcLocation => _currentLocation, _logError => true);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
