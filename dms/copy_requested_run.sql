@@ -386,7 +386,7 @@ BEGIN
     End If;
 
     ------------------------------------------------------------
-    -- Copy factors from the sourc requested run to the new one
+    -- Copy factors from the source requested run to the new one
     ------------------------------------------------------------
 
     -- First define the calling user text
