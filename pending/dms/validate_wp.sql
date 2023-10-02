@@ -14,7 +14,8 @@ AS $$
 **      Verifies that given work package exists in T_Charge_Code
 **
 **  Arguments:
-**    _allowNoneWP   Set to true to allow _workPackage to be 'none'
+**    _workPackage      Work package name
+**    _allowNoneWP      Set to true to allow _workPackage to be 'none'
 **
 **  Auth:   mem
 **  Date:   06/05/2013 mem - Initial Version

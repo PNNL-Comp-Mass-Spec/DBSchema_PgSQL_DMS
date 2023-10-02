@@ -106,7 +106,7 @@ AS $$
 **          01/09/2012 grk - Added _secSep to Lookup_Instrument_Run_Info_From_Experiment_Sample_Prep
 **          10/19/2012 mem - Now auto-updating secondary separation to separation group name when creating a new requested run
 **          05/08/2013 mem - Added _vialingConc and _vialingVol
-**          06/05/2013 mem - Now validating _workPackageNumber against T_Charge_Code
+**          06/05/2013 mem - Now validating _workPackage against T_Charge_Code
 **          06/06/2013 mem - Now showing warning if the work package is deactivated
 **          11/12/2013 mem - Added _requestIDForUpdate
 **                         - Now auto-capitalizing _instrumentGroup
@@ -162,7 +162,7 @@ DECLARE
 
     _msg text;
     _instrumentMatch text;
-    _separationGroup text;
+    _separationGroup citext;
     _defaultPriority int;
     _currentBatch int := 0;
     _debugMsg text;
@@ -172,9 +172,9 @@ DECLARE
     _badCh text;
     _nameLength int;
     _requestID int := 0;
-    _oldRequestName text := '';
-    _oldEusProposalID text := '';
-    _oldStatus text := '';
+    _oldRequestName citext := '';
+    _oldEusProposalID citext := '';
+    _oldStatus citext := '';
     _matchFound boolean := false;
     _statusID int := 0;
     _experimentID int := 0;
@@ -182,9 +182,9 @@ DECLARE
     _matchCount int;
     _newUsername text;
     _datasetTypeID int;
-    _matchedSeparationGroup text := '';
+    _matchedSeparationGroup citext := '';
     _mrmAttachmentID int;
-    _eusUsageTypeID Int;
+    _eusUsageTypeID int;
     _addingItem boolean := false;
     _commaPosition int;
     _locationID int := null;
@@ -343,12 +343,12 @@ BEGIN
                     _matchFound := true;
                 End If;
 
-                If _oldRequestName <> _requestName Then
+                If _oldRequestName <> _requestName::citext Then
                     If _status <> 'Active' Then
                         RAISE EXCEPTION 'Requested run is not active; cannot rename: "%"', _oldRequestName;
                     End If;
 
-                    If Exists (Select * from t_requested_run Where request_name = _requestName) Then
+                    If Exists (SELECT request_name FROM t_requested_run WHERE request_name = _requestName::citext) Then
                         RAISE EXCEPTION 'Cannot rename "%" since new name already exists: "%"', _oldRequestName, _requestName;
                     End If;
                 End If;
@@ -360,8 +360,8 @@ BEGIN
                        state_name
                 INTO _oldRequestName, _requestID, _oldEusProposalID, _oldStatus
                 FROM t_requested_run
-                WHERE request_name = _requestName AND
-                      state_name = _status;
+                WHERE request_name = _requestName::citext AND
+                      state_name = _status::citext;
 
                 If FOUND Then
                     _matchFound := true;
@@ -378,7 +378,7 @@ BEGIN
                    eus_proposal_id,
                    state_name
             INTO _oldRequestName, _requestID, _oldEusProposalID, _oldStatus
-            WHERE request_name = _requestName;
+            WHERE request_name = _requestName::citext;
 
         End If;
 
@@ -420,11 +420,11 @@ BEGIN
             RAISE EXCEPTION 'Status "%" is not valid; must be Active, Inactive, or Completed', _status;
         End If;
         --
-        If _mode::citext In ('update', 'check_update') And (_status::citext = 'Completed' And _oldStatus::citext <> 'Completed' ) Then
+        If _mode::citext In ('update', 'check_update') And (_status::citext = 'Completed' And _oldStatus <> 'Completed' ) Then
             RAISE EXCEPTION 'Cannot set status of request to "Completed" when existing status is "%"', _oldStatus;
         End If;
         --
-        If _mode::citext In ('update', 'check_update') And (_oldStatus::citext = 'Completed' And _status::citext <> 'Completed') Then
+        If _mode::citext In ('update', 'check_update') And (_oldStatus = 'Completed' And _status::citext <> 'Completed') Then
             RAISE EXCEPTION 'Cannot change status of a request that has been consumed by a dataset';
         End If;
 
@@ -439,7 +439,7 @@ BEGIN
         SELECT state_id
         INTO _statusID
         FROM t_requested_run_state_name
-        WHERE (state_name = _status)
+        WHERE state_name = _status::citext
 
         ---------------------------------------------------
         -- Get experiment ID from experiment number
@@ -565,7 +565,7 @@ BEGIN
         SELECT separation_group
         INTO _matchedSeparationGroup
         FROM t_separation_group
-        WHERE separation_group = _separationGroup::citext;
+        WHERE separation_group = _separationGroup;
 
         If FOUND Then
             _separationGroup := _matchedSeparationGroup;
@@ -575,7 +575,7 @@ BEGIN
             SELECT separation_group
             INTO _matchedSeparationGroup
             FROM t_secondary_sep
-            WHERE separation_type = _separationGroup::citext;
+            WHERE separation_type = _separationGroup;
 
             If Not FOUND Then
                 RAISE EXCEPTION 'Separation group not recognized';
@@ -727,7 +727,7 @@ BEGIN
         -- Validate the batch ID
         ---------------------------------------------------
 
-        If Not Exists (Select * FROM t_requested_run_batches Where batch_id = _batch) Then
+        If Not Exists (Select batch_id FROM t_requested_run_batches Where batch_id = _batch) Then
             If _mode Like '%update%' Then
                 _mode := 'update';
             Else
@@ -746,24 +746,27 @@ BEGIN
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
+        -- Value should be a 0 or a 1
+        -- Cast to text, then cast to boolean
+        --
         SELECT public.try_cast(Value::text, false)
         INTO _requireWP
         FROM t_misc_options
-        WHERE name = 'RequestedRunRequireWorkpackage'
+        WHERE name = 'RequestedRunRequireWorkpackage';
 
         If Not _requireWP Then
             _allowNoneWP := true;
         End If;
 
-        If _status <> 'Active' And (_eusUsageType = 'Maintenance' Or _requestName SIMILAR TO 'AutoReq[_]%') Then
+        If _status::citext <> 'Active' And (_eusUsageType::citext = 'Maintenance' Or _requestName::citext SIMILAR TO 'AutoReq[_]%') Then
             _allowNoneWP := true;
         End If;
 
         CALL public.validate_wp (
-                        _workPackageNumber,
+                        _workPackage,
                         _allowNoneWP,
-                        _message => _msg,
-                        _returnCode => _returnCode);
+                        _message => _msg,               -- Output
+                        _returnCode => _returnCode);    -- Output
 
         If _returnCode <> '' Then
             RAISE EXCEPTION 'validate_wp: %', _msg;
@@ -774,12 +777,12 @@ BEGIN
         SELECT charge_code
         INTO _workPackage
         FROM t_charge_code
-        WHERE charge_code = _workPackage
+        WHERE charge_code = _workPackage::citext;
 
         If Not _autoPopulateUserListIfBlank Then
-            If Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackage And deactivated = 'Y') Then
+            If Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackage::citext And deactivated = 'Y') Then
                 _message := public.append_to_text(_message, format('Warning: Work Package %s is deactivated', _workPackage));
-            ElsIf Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackage And charge_code_state = 0) Then
+            ElsIf Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackage::citext And charge_code_state = 0) Then
                 _message := public.append_to_text(_message, format('Warning: Work Package %s is likely deactivated', _workPackage));
             End If;
         End If;
@@ -879,7 +882,6 @@ BEGIN
                                     _message => _msg,                   -- Output
                                     _returnCode => _returnCode);        -- Output
 
-            --
             If _returnCode <> '' Then
                 RAISE EXCEPTION 'Assign_EUS_Users_To_Requested_Run: %', _msg;
             End If;
@@ -889,7 +891,7 @@ BEGIN
                 CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
             End If;
 
-            If _status = 'Active' Then
+            If _status::citext = 'Active' Then
                 -- Add a new row to t_active_requested_run_cached_eus_users
                 CALL public.update_cached_requested_run_eus_users (
                                 _request,
@@ -930,7 +932,7 @@ BEGIN
                 separation_group = _separationGroup,
                 mrm_attachment = _mrmAttachmentID,
                 state_name = _status,
-                created = CASE WHEN _oldStatus = 'Inactive' AND _status = 'Active' THEN CURRENT_TIMESTAMP ELSE created END,
+                created = CASE WHEN _oldStatus = 'Inactive' AND _status::citext = 'Active' THEN CURRENT_TIMESTAMP ELSE created END,
                 vialing_conc = _vialingConc,
                 vialing_vol = _vialingVol,
                 location_id = _locationId

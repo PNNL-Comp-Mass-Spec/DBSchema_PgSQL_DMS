@@ -34,7 +34,7 @@ AS $$
 **    _requesterUsername             Supports either just the username, or 'LastName, FirstName (Username)'
 **    _wellplateName                 If (lookup), will look for a wellplate defined in T_Experiments
 **    _wellNumber                    If (lookup), will look for a well number defined in T_Experiments
-**    _workPackage                   Work package; could also contain "(lookup)".  May contain 'none' for automatically created requested runs (and those will have _autoPopulateUserListIfBlank = true)
+**    _workPackage                   Work package; could also contain '(lookup)'.  May contain 'none' for automatically created requested runs (and those will have _autoPopulateUserListIfBlank = true)
 **    _eusUserID                     EUS User ID (integer); also supports the form "Baker, Erin (41136)"
 **    _mode                          'add' or 'preview'
 **    _autoPopulateUserListIfBlank   When true, will auto-populate _eusUserID if it is empty and _eusUsageType is 'USER', 'USER_ONSITE', or 'USER_REMOTE'
@@ -438,7 +438,7 @@ BEGIN
 
         ---------------------------------------------------
         -- Lookup EUS field (only effective for experiments that have associated sample prep requests)
-        -- This will update the data in _eusUsageType, _eusProposalID, or _eusUserID if it is "(lookup)"
+        -- This will update the data in _eusUsageType, _eusProposalID, or _eusUserID if it is '(lookup)'
         ---------------------------------------------------
 
         If _logDebugMessages Then
@@ -577,7 +577,7 @@ BEGIN
             _allowNoneWP := true;
         End If;
 
-        CALL validate_wp ( _workPackageNumber,
+        CALL public.validate_wp ( _workPackage,
                            _allowNoneWP,
                            _message => _msg,
                            _returnCode => _returnCode);
