@@ -15,6 +15,7 @@ CREATE OR REPLACE PROCEDURE public.cleanup_dataset_comments(IN _datasetids text,
 **          01/02/2018 mem - Check for 'Authentication failure' and "Error: NeedToAbortProcessing"
 **          06/16/2023 mem - Ported to PostgreSQL
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -94,7 +95,7 @@ BEGIN
            dataset_state_id,
            DS.comment,
            DS.comment
-    FROM public.parse_delimited_integer_list ( _datasetIDs, ',' ) Src
+    FROM public.parse_delimited_integer_list(_datasetIDs) Src
          LEFT OUTER JOIN t_dataset DS
            ON Src.Value = DS.dataset_id;
 

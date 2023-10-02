@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_type_control_param(IN _paramnam
 **          05/07/2023 mem - Remove unused variable
 **          05/22/2023 mem - Capitalize reserved word
 **          05/23/2023 mem - Use format() for string concatenation
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -72,7 +73,7 @@ BEGIN
            ON M.mgr_id = PV.mgr_id
     WHERE PT.param_name = _paramName AND
           M.mgr_type_id IN ( SELECT value
-                             FROM public.parse_delimited_integer_list(_managerTypeIDList, ',')
+                             FROM public.parse_delimited_integer_list(_managerTypeIDList)
                            ) AND
           M.control_from_website > 0;
 

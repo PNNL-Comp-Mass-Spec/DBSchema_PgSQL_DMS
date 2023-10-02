@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE public.update_bionet_host_status_from_list(IN _hostn
 **          09/07/2023 mem - Align assignment statements
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -73,7 +74,7 @@ BEGIN
 
         INSERT INTO Tmp_Hosts (Host)
         SELECT DISTINCT Value
-        FROM public.parse_delimited_list(_hostNames, ',');
+        FROM public.parse_delimited_list(_hostNames);
         --
         GET DIAGNOSTICS _hostCount = ROW_COUNT;
 

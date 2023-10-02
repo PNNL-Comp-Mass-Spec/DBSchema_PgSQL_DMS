@@ -193,7 +193,7 @@ BEGIN
         If char_length(_batchIDs) > 0 Then
             INSERT INTO Tmp_BatchIDs( Batch_ID )
             SELECT Value
-            FROM public.parse_delimited_integer_list ( _batchIDs, ',' )
+            FROM public.parse_delimited_integer_list(_batchIDs)
             WHERE Value <> 0;
             --
             GET DIAGNOSTICS _insertCount = ROW_COUNT;

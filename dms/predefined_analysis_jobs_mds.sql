@@ -36,6 +36,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs_mds(_datasetlist text
 **          02/08/2023 mem - Switch from PRN to username
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **                         - Fix bug that failed to pass _excludeDatasetsNotReleased and _createJobsForUnreviewedDatasets to predefined_analysis_jobs()
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -64,7 +65,7 @@ BEGIN
 
     INSERT INTO Tmp_DatasetsToProcess (Dataset)
     SELECT Value
-    FROM public.parse_delimited_list(_datasetList, ',')
+    FROM public.parse_delimited_list(_datasetList)
     WHERE char_length(Value) > 0
     ORDER BY Value;
 

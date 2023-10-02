@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE sw.remove_old_jobs(IN _intervaldaysforsuccess intege
 **          08/08/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -163,7 +164,7 @@ BEGIN
                state
         FROM sw.t_jobs
         WHERE job IN ( SELECT DISTINCT Value
-                       FROM public.parse_delimited_integer_list ( _jobListOverride, ',' ) ) AND
+                       FROM public.parse_delimited_integer_list(_jobListOverride) ) AND
               NOT job IN ( SELECT job FROM Tmp_Selected_Jobs );
     End If;
 

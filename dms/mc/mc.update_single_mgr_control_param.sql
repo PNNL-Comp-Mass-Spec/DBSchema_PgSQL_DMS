@@ -47,6 +47,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname tex
 **          05/30/2023 mem - Use format() for string concatenation
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -116,7 +117,7 @@ BEGIN
 
     INSERT INTO Tmp_MgrIDs (mgr_id)
     SELECT value
-    FROM public.parse_delimited_integer_list ( _managerIDList, ',' );
+    FROM public.parse_delimited_integer_list(_managerIDList);
     --
     GET DIAGNOSTICS _managerCount = ROW_COUNT;
 

@@ -40,6 +40,7 @@ CREATE OR REPLACE PROCEDURE cap.update_parameters_for_task(IN _joblist text, INO
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          06/23/2023 mem - Use 80 character field width for dataset names
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -97,7 +98,7 @@ BEGIN
 
         INSERT INTO Tmp_Job_List (Job)
         SELECT Value
-        FROM public.parse_delimited_integer_list(_jobList, ',')
+        FROM public.parse_delimited_integer_list(_jobList)
         ORDER BY Value;
 
         -- Update values in T_Tasks

@@ -162,7 +162,7 @@ BEGIN
     If char_length(_datasetIDFilterList) > 0 Then
         INSERT INTO Tmp_DatasetID_Filter_List (Dataset_ID)
         SELECT Value
-        FROM public.parse_delimited_integer_list(_datasetIDFilterList, ',');
+        FROM public.parse_delimited_integer_list(_datasetIDFilterList);
     End If;
 
     ---------------------------------------------------

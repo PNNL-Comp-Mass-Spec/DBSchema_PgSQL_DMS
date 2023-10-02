@@ -17,6 +17,7 @@ CREATE OR REPLACE PROCEDURE sw.extend_multiple_jobs(IN _joblist text, IN _extens
 **  Auth:   mem
 **  Date:   10/22/2010 mem - Initial version
 **          08/01/2023 mem - Ported to PostgreSQL
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -39,7 +40,7 @@ BEGIN
 
     INSERT INTO Tmp_JobsToExtend (Job, Valid)
     SELECT Value, false
-    FROM public.parse_delimited_integer_list(_jobList, ',');
+    FROM public.parse_delimited_integer_list(_jobList);
 
     ---------------------------------------------------
     -- Validate that the job numbers exist in sw.t_jobs or sw.t_jobs_history

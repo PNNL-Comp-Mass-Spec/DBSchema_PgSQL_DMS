@@ -106,7 +106,7 @@ BEGIN
         Prot_Coll_Options_List,
         State
     FROM V_Analysis_Job_Request_Entry
-    WHERE Request_ID IN (SELECT Value FROM public.parse_delimited_integer_list(_jobRequestList, ','))
+    WHERE Request_ID IN (SELECT Value FROM public.parse_delimited_integer_list(_jobRequestList))
 
     -------------------------------------------------
     -- Temp table to hold results for each request

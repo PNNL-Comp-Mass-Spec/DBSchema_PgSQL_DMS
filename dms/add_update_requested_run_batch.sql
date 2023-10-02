@@ -68,6 +68,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **          07/11/2023 mem - Use COUNT(batch_id) instead of COUNT(*)
 **          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -179,7 +180,7 @@ BEGIN
 
         INSERT INTO Tmp_RequestedRuns (RequestIDText)
         SELECT DISTINCT Value
-        FROM public.parse_delimited_list(_requestedRunList, ',');
+        FROM public.parse_delimited_list(_requestedRunList);
 
         ---------------------------------------------------
         -- Convert Request IDs to integers

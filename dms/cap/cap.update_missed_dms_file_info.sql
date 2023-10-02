@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE cap.update_missed_dms_file_info(IN _deletefromtableo
 **          08/09/2018 mem - Filter out dataset info XML entries where Ignore is true (previously 1)
 **          06/28/2023 mem - Fix bug that deleted all rows in the temporary table when _datasetIDs was an empty string
 **                         - Ported to PostgreSQL
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -79,7 +80,7 @@ BEGIN
     If _datasetIDs <> '' Then
         DELETE FROM Tmp_DatasetsToProcess
         WHERE NOT Dataset_ID IN ( SELECT Value
-                                  FROM public.parse_delimited_integer_list ( _datasetIDs, ',' ) );
+                                  FROM public.parse_delimited_integer_list(_datasetIDs) );
     End If;
 
     --------------------------------------------

@@ -48,6 +48,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_interval_for_multiple_instrume
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -190,7 +191,7 @@ BEGIN
 
             INSERT INTO Tmp_InstrumentFilter( Instrument )
             SELECT Value
-            FROM public.parse_delimited_list ( _instrumentsToProcess, ',');
+            FROM public.parse_delimited_list(_instrumentsToProcess);
 
             INSERT INTO Tmp_Instruments( Instrument,
                                          EMSL_Primary_Instrument,

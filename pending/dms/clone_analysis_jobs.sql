@@ -148,7 +148,7 @@ BEGIN
 
         INSERT INTO Tmp_SourceJobs (JobId, Valid, StateID, RowNum)
         SELECT Value, 0 As Valid, 0 AS StateID, Row_Number() Over (Order By Value) As RowNum
-        FROM public.parse_delimited_integer_list(_sourceJobs, ',')
+        FROM public.parse_delimited_integer_list(_sourceJobs)
 
         If Not Exists (SELECT * FROM Tmp_SourceJobs) Then
             _message := format('_sourceJobs did not have any valid Job IDs: %s', _sourceJobs);

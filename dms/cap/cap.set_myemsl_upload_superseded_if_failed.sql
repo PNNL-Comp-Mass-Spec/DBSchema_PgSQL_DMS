@@ -27,6 +27,7 @@ CREATE OR REPLACE PROCEDURE cap.set_myemsl_upload_superseded_if_failed(IN _datas
 **                         - Store _ingestStepsCompleted in cap.t_myemsl_uploads if it is larger than the existing value
 **                         - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -97,7 +98,7 @@ BEGIN
 
         INSERT INTO Tmp_StatusNumListTable (Status_Num, Dataset_ID_Validated)
         SELECT DISTINCT Value, false
-        FROM public.parse_delimited_integer_list(_statusNumList, ',')
+        FROM public.parse_delimited_integer_list(_statusNumList)
         ORDER BY Value;
 
         If Not FOUND Then

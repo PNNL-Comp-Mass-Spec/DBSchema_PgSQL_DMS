@@ -39,7 +39,7 @@ BEGIN
     If _campaignIDFilterList <> '' Then
         INSERT INTO Tmp_CampaignFilter (Campaign_ID)
         SELECT DISTINCT Value
-        FROM public.parse_delimited_integer_list(_campaignIDFilterList, ',')
+        FROM public.parse_delimited_integer_list(_campaignIDFilterList)
         ORDER BY Value
 
         -- Look for invalid Campaign ID values

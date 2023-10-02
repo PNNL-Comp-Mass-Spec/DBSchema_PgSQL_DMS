@@ -59,6 +59,7 @@ CREATE OR REPLACE PROCEDURE public.update_emsl_instrument_usage_report(IN _instr
 **          08/30/2023 mem - Ported to PostgreSQL
 **          09/08/2023 mem - Include schema name when calling function
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -161,7 +162,7 @@ BEGIN
 
         INSERT INTO Tmp_DebugReports (Debug_ID)
         SELECT Value
-        FROM public.parse_delimited_integer_list(_debugReports, ',')
+        FROM public.parse_delimited_integer_list(_debugReports)
         ORDER BY Value;
 
         If Not Exists (SELECT * FROM Tmp_DebugReports) Then

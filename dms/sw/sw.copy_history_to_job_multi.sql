@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE sw.copy_history_to_job_multi(IN _joblist text, IN _i
 **                         - Ported to PostgreSQL
 **          08/02/2023 mem - Move the _message and _returnCode arguments to the end of the argument list
 **          08/08/2023 mem - Fix typo in warning message
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -73,7 +74,7 @@ BEGIN
 
     INSERT INTO Tmp_JobsToCopy (Job)
     SELECT Value
-    FROM public.parse_delimited_integer_list(_jobList, ',');
+    FROM public.parse_delimited_integer_list(_jobList);
 
     ---------------------------------------------------
     -- Bail if no candidates found

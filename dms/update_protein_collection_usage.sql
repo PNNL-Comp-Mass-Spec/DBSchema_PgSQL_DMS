@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE public.update_protein_collection_usage(INOUT _messag
 **          05/07/2023 mem - Remove unused variable
 **          05/19/2023 mem - Remove redundant parentheses
 **          07/10/2023 mem - Use COUNT(J.job) instead of COUNT(*)
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -93,7 +94,7 @@ BEGIN
              ) SourceQ
              JOIN LATERAL (
                  SELECT value
-                 FROM public.parse_delimited_list ( SourceQ.protein_collection_list, ',' )
+                 FROM public.parse_delimited_list(SourceQ.protein_collection_list)
                  ) AS ProteinCollections On True;
 
         -- Update the usage counts in t_protein_collection_usage

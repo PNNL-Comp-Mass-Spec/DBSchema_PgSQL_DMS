@@ -10,9 +10,9 @@ CREATE OR REPLACE PROCEDURE cap.retry_myemsl_upload(IN _job integer, IN _infoonl
 **
 **  Desc:
 **      Resets the DatasetArchive and ArchiveUpdate steps in t_task_steps for the
-**      given capture task jobs, but only if its ArchiveVerify step is failed
+**      given capture task job, but only if its ArchiveVerify step is failed
 **
-**      Calls cap.retry_myemsl_upload that accepts a comma-separated list of jobs
+**      Calls the overloaded version of this procedure that accepts a comma-separated list of jobs
 **
 **  Arguments:
 **    _job        Capture task job number
@@ -70,6 +70,7 @@ CREATE OR REPLACE PROCEDURE cap.retry_myemsl_upload(IN _jobs text, IN _infoonly 
 **          07/09/2017 mem - Clear Completion_Code, Completion_Message, Evaluation_Code, & Evaluation_Message when resetting a capture task job step
 **          02/06/2018 mem - Exclude logging some try/catch errors
 **          06/25/2023 mem - Ported to PostgreSQL
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -134,7 +135,7 @@ BEGIN
 
         INSERT INTO Tmp_Archive_Jobs (Job)
         SELECT DISTINCT Value
-        FROM public.parse_delimited_integer_list(_jobs, ',')
+        FROM public.parse_delimited_integer_list(_jobs)
         ORDER BY Value;
 
         -----------------------------------------------------------

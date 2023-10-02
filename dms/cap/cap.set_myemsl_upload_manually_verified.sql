@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE cap.set_myemsl_upload_manually_verified(IN _job inte
 **          06/26/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -161,7 +162,7 @@ BEGIN
 
     INSERT INTO Tmp_VerifiedStatusNumTable (Status_Num)
     SELECT DISTINCT Value
-    FROM public.parse_delimited_integer_list(_statusNumList, ',')
+    FROM public.parse_delimited_integer_list(_statusNumList)
     ORDER BY Value;
 
     SELECT string_agg(MU.Status_URI, ', ' ORDER BY MU.Status_URI)

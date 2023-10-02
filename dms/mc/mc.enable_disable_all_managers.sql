@@ -49,6 +49,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          09/13/2023 mem - Remove unnecessary delimiter argument when calling append_to_text()
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -79,7 +80,7 @@ BEGIN
         --
         _mgrTypeIDs := ARRAY (
                         SELECT DISTINCT value
-                        FROM public.parse_delimited_integer_list(_managerTypeIDList, ',')
+                        FROM public.parse_delimited_integer_list(_managerTypeIDList)
                         ORDER BY Value );
     Else
         -- Populate _mgrTypeIDs with all manager types in mc.t_mgr_types

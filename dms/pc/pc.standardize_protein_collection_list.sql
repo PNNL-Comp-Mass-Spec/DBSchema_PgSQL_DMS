@@ -29,6 +29,7 @@ CREATE OR REPLACE FUNCTION pc.standardize_protein_collection_list(_protcollnamel
 **          07/26/2023 mem - Move "Not" keyword to before the field name
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -73,7 +74,7 @@ BEGIN
     -- Split _protCollNameList on commas and populate Tmp_Protein_Collections
     INSERT INTO Tmp_Protein_Collections (Collection_Name)
     SELECT DISTINCT Trim(Value)
-    FROM public.parse_delimited_list(_protCollNameList, ',');
+    FROM public.parse_delimited_list(_protCollNameList);
 
     -- Make sure no zero-length records are present in Tmp_Protein_Collections
     DELETE FROM Tmp_Protein_Collections

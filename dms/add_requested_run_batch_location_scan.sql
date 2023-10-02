@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE public.add_requested_run_batch_location_scan(IN _loc
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          09/11/2023 mem - Use schema name with try_cast
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -108,7 +109,7 @@ BEGIN
 
         INSERT INTO Tmp_BatchIDs (BatchIDText)
         SELECT DISTINCT Value
-        FROM public.parse_delimited_list(_batchIDList, ',');
+        FROM public.parse_delimited_list(_batchIDList);
 
         ---------------------------------------------------
         -- Convert Batch IDs to integers

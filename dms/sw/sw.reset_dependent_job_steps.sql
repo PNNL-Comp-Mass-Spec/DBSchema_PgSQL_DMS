@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE sw.reset_dependent_job_steps(IN _jobs text, IN _info
 **          03/22/2021 mem - Do not reset steps in state 7 (Holding)
 **          08/07/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -81,7 +82,7 @@ BEGIN
 
         INSERT INTO Tmp_Jobs (Job)
         SELECT Value
-        FROM public.parse_delimited_integer_list(_jobs, ',')
+        FROM public.parse_delimited_integer_list(_jobs)
         ORDER BY Value;
 
         -----------------------------------------------------------

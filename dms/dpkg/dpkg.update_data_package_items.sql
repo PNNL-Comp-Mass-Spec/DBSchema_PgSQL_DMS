@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE dpkg.update_data_package_items(IN _packageid integer
 **          03/10/2022 mem - Replace spaces and tabs in the item list with commas
 **          08/17/2023 mem - Ported to PostgreSQL
 **          09/27/2023 mem - Add support for _itemType = 'EUSProposal'
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -121,7 +122,7 @@ BEGIN
 
         INSERT INTO Tmp_DataPackageItems (DataPackageID, ItemType, Identifier)
         SELECT _packageID, _entityName, Value
-        FROM public.parse_delimited_list(_itemList, ',');
+        FROM public.parse_delimited_list(_itemList);
 
         ---------------------------------------------------
         -- Apply the changes

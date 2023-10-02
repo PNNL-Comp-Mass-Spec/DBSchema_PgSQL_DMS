@@ -27,6 +27,7 @@ CREATE OR REPLACE FUNCTION cap.retry_quameter_for_tasks(_jobs text, _infoonly bo
 **          07/22/2019 mem - When _infoOnly is false, return a table listing the capture task jobs that were reset
 **          06/25/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -86,7 +87,7 @@ BEGIN
 
         INSERT INTO Tmp_Quameter_Jobs (Job)
         SELECT DISTINCT Value
-        FROM public.parse_delimited_integer_list(_jobs, ',')
+        FROM public.parse_delimited_integer_list(_jobs)
         ORDER BY Value;
 
         -----------------------------------------------------------

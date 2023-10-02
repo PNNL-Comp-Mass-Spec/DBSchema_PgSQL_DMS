@@ -31,6 +31,7 @@ CREATE OR REPLACE FUNCTION mc.parse_manager_name_list(_manager_name_list text DE
 **          05/30/2023 mem - Use format() for string concatenation
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -60,7 +61,7 @@ BEGIN
 
     _managerSpecList := ARRAY (
                             SELECT value
-                            FROM public.parse_delimited_list(_manager_name_list, ',')
+                            FROM public.parse_delimited_list(_manager_name_list)
                         );
 
     -- Populate _managerList with the entries in _managerSpecList that do not contain a % wildcard

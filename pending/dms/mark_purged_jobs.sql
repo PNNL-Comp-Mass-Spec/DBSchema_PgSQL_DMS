@@ -36,7 +36,7 @@ BEGIN
 
     INSERT INTO Tmp_JobList (Job)
     SELECT Value
-    FROM public.parse_delimited_integer_list(_jobList, ',')
+    FROM public.parse_delimited_integer_list(_jobList)
 
     If _infoOnly Then
         -- Preview the jobs

@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE cap.reset_failed_myemsl_uploads(IN _infoonly boolean
 **          06/25/2023 mem - Ported to PostgreSQL
 **          07/11/2023 mem - Use COUNT(entry_id) and COUNT(job) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -120,7 +121,7 @@ BEGIN
                             TS.Output_Folder,
                             TS.Completion_Message,
                             0 AS SkipResetMode
-            FROM public.parse_delimited_integer_list ( _jobListOverride, ',' ) SrcJobs
+            FROM public.parse_delimited_integer_list(_jobListOverride) SrcJobs
                  INNER JOIN cap.v_task_steps TS
                    ON SrcJobs.Value = TS.Job
                  LEFT OUTER JOIN Tmp_FailedJobs Target

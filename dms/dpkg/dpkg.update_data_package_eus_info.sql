@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE dpkg.update_data_package_eus_info(IN _datapackagelis
 **          06/08/2022 mem - Use new Item_Added column name
 **          08/14/2023 mem - Ported to PostgreSQL
 **          09/28/2023 mem - Obtain dataset names and instrument names from t_dataset and t_instrument_name
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -91,7 +92,7 @@ BEGIN
         SELECT data_pkg_id
         FROM dpkg.t_data_package
         WHERE data_pkg_id IN ( SELECT Value
-                               FROM public.parse_delimited_integer_list ( _dataPackageList, ',' )
+                               FROM public.parse_delimited_integer_list(_dataPackageList)
                              );
     End If;
 

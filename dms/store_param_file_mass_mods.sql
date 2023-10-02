@@ -137,6 +137,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/11/2023 mem - Adjust capitalization of keywords
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list_ordered for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -580,7 +581,7 @@ BEGIN
             -- MS-GF+ style mod (also used by DIA-NN and TOPIC)
             INSERT INTO Tmp_ModDef (EntryID, Value)
             SELECT Entry_ID, Value
-            FROM public.parse_delimited_list_ordered(_row, ',', 0);
+            FROM public.parse_delimited_list_ordered(_row);
         End If;
 
         If Not Exists (SELECT * FROM Tmp_ModDef) Then

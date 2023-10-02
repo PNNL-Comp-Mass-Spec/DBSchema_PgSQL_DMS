@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch_group(INOUT _i
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list_ordered for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -166,7 +167,7 @@ BEGIN
 
         INSERT INTO Tmp_BatchIDs (Entry_ID, Batch_ID_Text)
         SELECT Min(Entry_ID), Value
-        FROM public.parse_delimited_list_ordered(_requestedRunBatchList, ',', 0)
+        FROM public.parse_delimited_list_ordered(_requestedRunBatchList)
         GROUP BY Value;
 
         ---------------------------------------------------

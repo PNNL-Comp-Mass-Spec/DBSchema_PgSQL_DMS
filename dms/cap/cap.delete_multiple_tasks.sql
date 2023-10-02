@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE cap.delete_multiple_tasks(IN _joblist text, INOUT _m
 **          05/22/2023 mem - Use format() for string concatenation
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -76,7 +77,7 @@ BEGIN
 
         INSERT INTO Tmp_Job_List (Job)
         SELECT Value
-        FROM public.parse_delimited_integer_list(_jobList, ',')
+        FROM public.parse_delimited_integer_list(_jobList)
         ORDER BY Value;
         --
         GET DIAGNOSTICS _jobCount = ROW_COUNT;

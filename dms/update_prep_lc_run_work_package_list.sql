@@ -17,6 +17,7 @@ CREATE OR REPLACE PROCEDURE public.update_prep_lc_run_work_package_list(IN _prep
 **  Date:   03/09/2023 mem - Initial version
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -115,7 +116,7 @@ BEGIN
 
                 INSERT INTO Tmp_SamplePrepRequests_for_WP_List (Prep_Request_ID)
                 SELECT DISTINCT Value
-                FROM public.parse_delimited_integer_list ( _samplePrepRequestIDs, ',' );
+                FROM public.parse_delimited_integer_list(_samplePrepRequestIDs);
 
                 ---------------------------------------------------
                 -- Construct the list of work packages for the prep request IDs

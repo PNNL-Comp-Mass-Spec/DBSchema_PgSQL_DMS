@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE sw.synchronize_job_stats_with_dms(IN _joblisttoproce
 **          08/12/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -80,7 +81,7 @@ BEGIN
         SELECT sw.t_jobs.job
         FROM sw.t_jobs
              INNER JOIN ( SELECT Value AS Job
-                          FROM public.parse_delimited_integer_list ( _jobListToProcess, ',' )
+                          FROM public.parse_delimited_integer_list(_jobListToProcess)
                         ) ValueQ
             ON sw.t_jobs.job = ValueQ.job
         WHERE sw.t_jobs.state IN (4, 5);

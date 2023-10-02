@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE sw.update_input_folder_using_special_processing_para
 **          07/25/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -80,7 +81,7 @@ BEGIN
     SELECT Value AS Job,
            Coalesce(J.script, '') AS Script,
            CASE WHEN J.job IS NULL THEN 'Job Number not found in sw.t_jobs' ELSE '' END
-    FROM public.parse_delimited_integer_list ( _jobList, ',' ) AS JL
+    FROM public.parse_delimited_integer_list(_jobList) AS JL
          LEFT OUTER JOIN sw.t_jobs J
            ON JL.Value = J.job;
 

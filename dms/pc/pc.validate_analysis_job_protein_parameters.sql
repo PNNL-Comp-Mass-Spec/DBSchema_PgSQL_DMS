@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE pc.validate_analysis_job_protein_parameters(IN _orga
 **                         - Update warning messages
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/11/2023 mem - Adjust capitalization of keywords
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -152,7 +153,7 @@ BEGIN
 
     INSERT INTO Tmp_ProteinCollectionList (Collection_Name)
     SELECT DISTINCT Trim(Value)
-    FROM public.parse_delimited_list(_protCollNameList, ',');
+    FROM public.parse_delimited_list(_protCollNameList);
 
     _cleanCollNameList := '';
 
@@ -246,7 +247,7 @@ BEGIN
 
     INSERT INTO Tmp_OptionTable (Option_Entry)
     SELECT DISTINCT Trim(Value)
-    FROM public.parse_delimited_list(_protCollOptionsList, ',');
+    FROM public.parse_delimited_list(_protCollOptionsList);
 
     _entryID := 0;
 

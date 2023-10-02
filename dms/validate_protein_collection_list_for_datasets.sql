@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_datasets
 **          08/02/2023 mem - Add _returncode procedure argument
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -96,7 +97,7 @@ BEGIN
 
     INSERT INTO Tmp_ProteinCollections (Protein_Collection_Name, Collection_Appended)
     SELECT Value, 0 AS Collection_Appended
-    FROM public.parse_delimited_list(_protCollNameList, ',');
+    FROM public.parse_delimited_list(_protCollNameList);
 
     --------------------------------------------------------------
     -- Look for duplicates in Tmp_ProteinCollections
@@ -136,7 +137,7 @@ BEGIN
 
     INSERT INTO Tmp_Datasets (Dataset)
     SELECT Value
-    FROM public.parse_delimited_list(_datasets, ',');
+    FROM public.parse_delimited_list(_datasets);
 
     --------------------------------------------------------------
     -- Populate Tmp_IntStds with any protein collections associated

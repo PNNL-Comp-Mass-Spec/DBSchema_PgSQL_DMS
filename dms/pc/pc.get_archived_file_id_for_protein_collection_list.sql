@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE pc.get_archived_file_id_for_protein_collection_list(
 **          07/04/2006 mem - Updated to return the newest Archived File Collection ID when there is more than one possible match
 **          08/22/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -69,7 +70,7 @@ BEGIN
 
     INSERT INTO Tmp_ProteinCollectionList (ProteinCollectionName, Valid)
     SELECT DISTINCT Value, False
-    FROM public.parse_delimited_list(_proteinCollectionList, ',');
+    FROM public.parse_delimited_list(_proteinCollectionList);
 
     UPDATE Tmp_ProteinCollectionList
     SET Valid = true

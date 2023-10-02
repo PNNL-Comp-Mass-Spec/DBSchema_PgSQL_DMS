@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE public.store_reporter_ion_obs_stats(IN _job integer,
 **          05/30/2023 mem - Use format() for string concatenation
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list_ordered for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -102,11 +103,11 @@ BEGIN
 
     INSERT INTO Tmp_RepIonObsStatsTopNPct (Channel, Observation_Rate)
     SELECT Entry_ID, Value
-    FROM public.parse_delimited_list_ordered(_observationStatsTopNPct, ',', 0);
+    FROM public.parse_delimited_list_ordered(_observationStatsTopNPct);
 
     INSERT INTO Tmp_RepIonIntensities (Channel, Median_Intensity)
     SELECT Entry_ID, Value
-    FROM public.parse_delimited_list_ordered(_medianIntensitiesTopNPct, ',', 0);
+    FROM public.parse_delimited_list_ordered(_medianIntensitiesTopNPct);
 
     -----------------------------------------------
     -- Construct the SQL insert statements

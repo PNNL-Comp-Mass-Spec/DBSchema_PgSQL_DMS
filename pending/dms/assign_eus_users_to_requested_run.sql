@@ -62,7 +62,7 @@ BEGIN
 
     INSERT INTO Tmp_UserIDs (ID)
     SELECT DISTINCT Value
-    FROM public.parse_delimited_integer_list(_eusUsersList, ',');
+    FROM public.parse_delimited_integer_list(_eusUsersList);
 
     ---------------------------------------------------
     -- Look for unknown EUS users

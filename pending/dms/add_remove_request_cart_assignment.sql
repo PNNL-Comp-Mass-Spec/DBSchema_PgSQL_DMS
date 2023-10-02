@@ -98,7 +98,7 @@ BEGIN
 
     INSERT INTO Tmp_Requests( requestID )
     SELECT Value
-    FROM public.parse_delimited_integer_list ( _requestIDList, ',' )
+    FROM public.parse_delimited_integer_list(_requestIDList)
 
     ---------------------------------------------------
     -- Validate request ids

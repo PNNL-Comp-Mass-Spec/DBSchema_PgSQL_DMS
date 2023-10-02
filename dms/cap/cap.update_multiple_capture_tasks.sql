@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE cap.update_multiple_capture_tasks(IN _joblist text, 
 **          08/01/2017 mem - Use THROW instead of RAISERROR
 **          06/22/2023 mem - Ported to PostgreSQL
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -136,7 +137,7 @@ BEGIN
 
         INSERT INTO Tmp_Selected_Jobs (Job, Valid)
         SELECT DISTINCT Value, false
-        FROM public.parse_delimited_integer_list(_jobList, ',')
+        FROM public.parse_delimited_integer_list(_jobList)
         ORDER BY Value;
 
         ---------------------------------------------------

@@ -43,6 +43,7 @@ CREATE OR REPLACE PROCEDURE mc.get_manager_parameters_work(IN _managernamelist t
 **          02/01/2023 mem - Rename column in temp table
 **          05/12/2023 mem - Rename variables
 **          05/19/2023 mem - Remove redundant parentheses
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -91,7 +92,7 @@ BEGIN
            End As parent_param_pointer_state,
            mgr_name
     FROM mc.v_param_value
-    WHERE mgr_name IN (Select value::citext From public.parse_delimited_list(_managerNameList, ','));
+    WHERE mgr_name IN (Select value::citext From public.parse_delimited_list(_managerNameList));
 
     -----------------------------------------------
     -- Append parameters for parent groups, which are

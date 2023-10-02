@@ -104,7 +104,7 @@ BEGIN
         If _organismIDFilterList <> '' Then
             INSERT INTO Tmp_OrganismFilter (Organism_ID)
             SELECT DISTINCT Value
-            FROM public.parse_delimited_integer_list(_organismIDFilterList, ',')
+            FROM public.parse_delimited_integer_list(_organismIDFilterList)
             ORDER BY Value
 
             -- Look for invalid Organism ID values

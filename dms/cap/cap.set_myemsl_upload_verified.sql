@@ -27,6 +27,7 @@ CREATE OR REPLACE PROCEDURE cap.set_myemsl_upload_verified(IN _datasetid integer
 **          08/01/2017 mem - Use THROW if not authorized
 **          06/26/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list or parse_delimited_integer_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -110,7 +111,7 @@ BEGIN
 
         INSERT INTO Tmp_StatusNumListTable (Status_Num)
         SELECT DISTINCT Value
-        FROM public.parse_delimited_integer_list(_statusNumList, ',')
+        FROM public.parse_delimited_integer_list(_statusNumList)
         ORDER BY Value;
 
         GET DIAGNOSTICS _statusNumCount = ROW_COUNT;
@@ -126,7 +127,7 @@ BEGIN
 
         INSERT INTO Tmp_StatusURIListTable (Status_URI)
         SELECT DISTINCT Value
-        FROM public.parse_delimited_list(_statusURIList, ',')
+        FROM public.parse_delimited_list(_statusURIList)
         ORDER BY Value;
 
         GET DIAGNOSTICS _statusURICount = ROW_COUNT;

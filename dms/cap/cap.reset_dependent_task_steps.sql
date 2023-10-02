@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE cap.reset_dependent_task_steps(IN _jobs text, IN _in
 **          07/10/2017 mem - Clear Completion_Code, Completion_Message, Evaluation_Code, & Evaluation_Message when resetting a capture task job step
 **          06/24/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **
 *****************************************************/
 DECLARE
@@ -83,7 +84,7 @@ BEGIN
 
         INSERT INTO Tmp_Jobs (Job)
         SELECT Value
-        FROM public.parse_delimited_integer_list(_jobs, ',')
+        FROM public.parse_delimited_integer_list(_jobs)
         ORDER BY Value;
 
         SELECT COUNT(*)
