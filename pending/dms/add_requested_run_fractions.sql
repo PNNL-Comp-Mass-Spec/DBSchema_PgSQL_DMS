@@ -530,14 +530,14 @@ BEGIN
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
         End If;
 
-        CALL lookup_other_from_experiment_sample_prep (
+        CALL public.lookup_wp_from_experiment_sample_prep(
                             _experimentName,
-                            _workPackage => _workPackage,   -- Output
+                            _workPackage => _workPackage,   -- Input/Output
                             _message => _msg,               -- Output
                             _returnCode => _returnCode);    -- Output
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'lookup_other_from_experiment_sample_prep: %', _msg;
+            RAISE EXCEPTION 'lookup_wp_from_experiment_sample_prep: %', _msg;
         End If;
 
         ---------------------------------------------------
