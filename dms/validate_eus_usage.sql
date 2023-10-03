@@ -1,21 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.validate_eus_usage
-(
-    INOUT _eusUsageType text,
-    INOUT _eusProposalID text,
-    INOUT _eusUsersList text,
-    INOUT _eusUsageTypeID int,
-    _autoPopulateUserListIfBlank boolean = false,
-    _samplePrepRequest boolean = false,
-    _experimentID int = 0,
-    _campaignID int = 0,
-    _addingItem boolean = false,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: validate_eus_usage(text, text, text, integer, boolean, boolean, integer, integer, boolean, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.validate_eus_usage(INOUT _eususagetype text, INOUT _eusproposalid text, INOUT _eususerslist text, INOUT _eususagetypeid integer, IN _autopopulateuserlistifblank boolean DEFAULT false, IN _samplepreprequest boolean DEFAULT false, IN _experimentid integer DEFAULT 0, IN _campaignid integer DEFAULT 0, IN _addingitem boolean DEFAULT false, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -25,7 +14,7 @@ AS $$
 **
 **  Arguments:
 **    _eusUsageType                 Input/Output: EUS usage type
-**    _eusProposalID                Input/Output: EUS proposal ID
+**    _eusProposalID                Input/Output: EUS proposal ID (typically an integer, but stored as text)
 **    _eusUsersList                 Input/Output: Comma-separated list of EUS user IDs (integers); also supports the form 'Baker, Erin (41136)'; does not support 'Baker, Erin'
 **    _eusUsageTypeID               Output:       EUS usage type ID
 **    _autoPopulateUserListIfBlank  When true, auto-populate _eusUsersList if it is empty and _eusUsageType is 'USER', 'USER_ONSITE', or 'USER_REMOTE'
@@ -64,7 +53,7 @@ AS $$
 **                         - Add additional debug messages
 **                         - Use Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          06/15/2023 mem - Add support for usage type 'RESOURCE_OWNER'
-**          12/15/2023 mem - Ported to PostgreSQL
+**          10/02/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -72,23 +61,22 @@ DECLARE
     _userCount int;
     _personID int;
     _newUserList text;
-    _enabledForPrepRequests boolean := false;
     _eusUsageTypeName text;
     _originalProposalID text;
     _numericID int;
     _proposalType text;
-    _usageTypeUpdated int := 0;
     _autoSupersedeProposalID text;
     _checkSuperseded int;
     _iterations int;
     _logMessage text;
-    _validateEUSData int := 1;
-    _stringLength int;
-    _charNum int := 1;
-    _integerList text := '';
-    _currentChar char;
+    _validateEUSData boolean;
     _eusUsageTypeCampaign text;
     _msg text;
+
+    _createdProposalStackTable boolean := false;
+    _createdUsersTable         boolean := false;
+    _enabledForPrepRequests    boolean := false;
+    _usageTypeUpdated          boolean := false;
 
     _formatSpecifier text;
     _infoHead text;
@@ -99,17 +87,24 @@ BEGIN
     _message := '';
     _returnCode := '';
 
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
+    _eusUsageType   := Trim(Coalesce(_eusUsageType, ''));
+    _eusProposalID  := Trim(Coalesce(_eusProposalID, ''));
+    _eusUsersList   := Trim(Coalesce(_eusUsersList, ''));
+
     _autoPopulateUserListIfBlank := Coalesce(_autoPopulateUserListIfBlank, false);
-    _samplePrepRequest := Coalesce(_samplePrepRequest, false);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _samplePrepRequest           := Coalesce(_samplePrepRequest, false);
 
-    ---------------------------------------------------
-    -- Remove leading and trailing spaces, and check for nulls
-    ---------------------------------------------------
+    _experimentID := Coalesce(_experimentID, 0);
+    _campaignID   := Coalesce(_campaignID, 0);
+    _addingItem   := Coalesce(_addingItem, false);
+    _infoOnly     := Coalesce(_infoOnly, false);
 
-    _eusUsageType  := Trim(Coalesce(_eusUsageType, ''));
-    _eusProposalID := Trim(Coalesce(_eusProposalID, ''));
-    _eusUsersList  := Trim(Coalesce(_eusUsersList, ''));
+    -- Initialize this output to 0
+    _eusUsageTypeID := 0;
 
     If _eusUsageType::citext = '(ignore)' And Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
         _eusUsageType := 'CAP_DEV';
@@ -121,7 +116,7 @@ BEGIN
     -- Auto-fix _eusUsageType if it is an abbreviated form of Cap_Dev, Maintenance, or Broken
     ---------------------------------------------------
 
-    If _eusUsageType::citext Like 'Cap%' And Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
+    If _eusUsageType::citext Like 'Cap%'   And Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
         _eusUsageType := 'CAP_DEV';
     End If;
 
@@ -129,11 +124,11 @@ BEGIN
         _eusUsageType := 'MAINTENANCE';
     End If;
 
-    If _eusUsageType::citext Like 'Brok%' And Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
+    If _eusUsageType::citext Like 'Brok%'  And Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
         _eusUsageType := 'BROKEN';
     End If;
 
-    If _eusUsageType::citext Like 'Res%' And Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
+    If _eusUsageType::citext Like 'Res%'   And Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
         _eusUsageType := 'RESOURCE_OWNER';
     End If;
 
@@ -154,16 +149,16 @@ BEGIN
     -- Confirm that EUS validation is enabled
     ---------------------------------------------------
 
-    SELECT value
+    SELECT CASE WHEN value <> 0 THEN true ELSE false END
     INTO _validateEUSData
     FROM t_misc_options
     WHERE name = 'ValidateEUSData';
 
     If Not FOUND Then
-        _validateEUSData := 1;
+        _validateEUSData := true;
     End If;
 
-    If Coalesce(_validateEUSData, 0) = 0 Then
+    If Not _validateEUSData Then
         -- Validation is disabled
         _eusUsageTypeID := 10;
         _eusProposalID := null;
@@ -182,7 +177,7 @@ BEGIN
 
     SELECT eus_usage_type_id,
            eus_usage_type,
-           public.try_cast(enabled_prep_request::text, false)
+           public.try_cast(enabled_prep_request::text, false)           -- try_cast() converts '0' or '1' to a boolean using ('1'::text)::boolean
     INTO _eusUsageTypeID, _eusUsageTypeName, _enabledForPrepRequests
     FROM t_eus_usage_type
     WHERE eus_usage_type = _eusUsageType::citext;
@@ -218,7 +213,7 @@ BEGIN
             _message := format('Warning: Cleared proposal ID and/or users since usage type is "%s"', _eusUsageType);
         End If;
 
-        _eusProposalID := NULL;
+        _eusProposalID := null;
         _eusUsersList := '';
     End If;
 
@@ -244,7 +239,7 @@ BEGIN
                proposal_type
         INTO _numericID, _proposalType
         FROM t_eus_proposals
-        WHERE proposal_id = _eusProposalID
+        WHERE proposal_id = _eusProposalID;
 
         If Not FOUND Then
             _message := format('Unknown EUS proposal ID: "%s"', _eusProposalID);
@@ -257,12 +252,15 @@ BEGIN
         ---------------------------------------------------
 
         -- Create a table to track superseded proposals in the case of a circular reference
-        -- E.g. two proposals with the same name, but different IDs (and likely different start or end dates)
+        -- For example, two proposals with the same name, but different IDs (and likely different start or end dates)
+
         CREATE TEMP TABLE Tmp_Proposal_Stack (
             Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
             Proposal_ID text,
             Numeric_ID int Not Null
-        )
+        );
+
+        _createdProposalStackTable := true;
 
         _originalProposalID := _eusProposalID;
         _checkSuperseded := 1;
@@ -309,13 +307,13 @@ BEGIN
                     Else
                         If Not Exists (SELECT * FROM Tmp_Proposal_Stack) Then
                             INSERT INTO Tmp_Proposal_Stack (Proposal_ID, Numeric_ID)
-                            VALUES (_eusProposalID, Coalesce(_numericID, 0))
+                            VALUES (_eusProposalID, Coalesce(_numericID, 0));
                         End If;
 
                         SELECT numeric_id
                         INTO _numericID
                         FROM t_eus_proposals
-                        WHERE proposal_id = _autoSupersedeProposalID
+                        WHERE proposal_id = _autoSupersedeProposalID;
 
                         If Exists (SELECT * FROM Tmp_Proposal_Stack WHERE Proposal_ID = _autoSupersedeProposalID) Then
                             -- Circular reference
@@ -388,14 +386,17 @@ BEGIN
                 RAISE INFO '%', _infoData;
             END LOOP;
 
+            RAISE INFO '';
+
         End If;
 
         If _eusProposalID <> _originalProposalID Then
             SELECT proposal_type
             INTO _proposalType
             FROM t_eus_proposals
-            WHERE proposal_id = _eusProposalID
+            WHERE proposal_id = _eusProposalID;
         End If;
+
         ---------------------------------------------------
         -- Check for a blank user list
         ---------------------------------------------------
@@ -410,7 +411,7 @@ BEGIN
             End If;
 
             -- Auto-populate _eusUsersList with the first user associated with the given user proposal
-            --
+
             _personID := 0;
 
             SELECT MIN(EUSU.person_id)
@@ -422,15 +423,14 @@ BEGIN
 
             If Coalesce(_personID, 0) > 0 Then
                 _eusUsersList := _personID;
-                _message := public.append_to_text(;
+                _message := public.append_to_text(
                                     _message,
                                     format('Warning: EUS User list was empty; auto-selected user "%s"', _eusUsersList));
             End If;
         End If;
 
         ---------------------------------------------------
-        -- Verify that all users in list have access to
-        -- given proposal
+        -- Verify that all users in list have access to the given proposal
         ---------------------------------------------------
 
         If _eusUsersList <> '' Then
@@ -441,39 +441,37 @@ BEGIN
                 End If;
 
                 -- _eusUsersList has entries of the form 'Baker, Erin (41136)'
-                -- Parse _eusUsersList to only keep the integers and commas
+                -- Parse _eusUsersList to look for the integers, then re-generate the comma-separated list
+
+                SELECT string_agg(UserID[1]::text, ', ' ORDER BY UserID[1])
+                FROM ( SELECT regexp_matches(_eusUsersList, '[0-9]+', 'g') AS UserID) MatchQ;
+
+                /*
+                -- Alternatively, could iterate character-by-character:
+                -- _charNum := 1;
+                -- _stringLength := char_length(_eusUsersList);
                 --
-
-                _stringLength := char_length(_eusUsersList);
-
-                WHILE _charNum <= _stringLength
-                LOOP
-                    _currentChar := Substring(_eusUsersList, _charNum, 1);
-
-                    If _currentChar = ',' Or _currentChar SIMILAR TO '[0-9]' Then
-                        _integerList := format('%s%s', _integerList, _currentChar);
-                    End If;
-
-                    _charNum := _charNum + 1;
-                END LOOP;
-
-                _eusUsersList := _integerList;
-            End If;
-
-            If _eusUsersList Like ',%' Then
-                -- Trim the leading comma
-                _eusUsersList := Substring(_eusUsersList, 2, char_length(_eusUsersList));
-            End If;
-
-            If _eusUsersList Like '%,' Then
-                -- Trim the trailing comma
-                _eusUsersList := Substring(_eusUsersList, 1, char_length(_eusUsersList) - 1);
+                -- WHILE _charNum <= _stringLength
+                -- LOOP
+                --     _currentChar := Substring(_eusUsersList, _charNum, 1);
+                --
+                --     If _currentChar = ',' Or _currentChar SIMILAR TO '[0-9]' Then
+                --         _integerList := format('%s%s', _integerList, _currentChar);
+                --     End If;
+                --
+                --     _charNum := _charNum + 1;
+                -- END LOOP;
+                --
+                -- _eusUsersList := _integerList;
+                */
             End If;
 
             CREATE TEMP TABLE Tmp_Users
             (
                 Item text
             );
+
+            _createdUsersTable := true;
 
             If _infoOnly Then
                 RAISE INFO 'Splitting: %', _eusUsersList;
@@ -487,14 +485,14 @@ BEGIN
                 FROM public.parse_delimited_list(_eusUsersList);
 
                 If _infoOnly Then
-                    RAISE INFO 'User IDs: %', _eusUsersList;
+                    RAISE INFO 'User IDs:  %', _eusUsersList;
                 End If;
             Else
                 INSERT INTO Tmp_Users (Item)
-                VALUES (_eusUsersList)
+                VALUES (_eusUsersList);
 
                 If _infoOnly Then
-                    RAISE INFO 'User ID: %', _eusUsersList;
+                    RAISE INFO 'User ID:   %', _eusUsersList;
                 End If;
             End If;
 
@@ -514,6 +512,15 @@ BEGIN
                 End If;
 
                 _returnCode := 'U5376';
+
+                If _createdProposalStackTable Then
+                    DROP TABLE Tmp_Proposal_Stack;
+                End If;
+
+                If _createdUsersTable Then
+                    DROP TABLE Tmp_Users;
+                End If;
+
                 RETURN;
             End If;
 
@@ -522,16 +529,11 @@ BEGIN
             SELECT COUNT(*)
             INTO _invalidCount
             FROM Tmp_Users
-            WHERE
-                public.try_cast(item, 0) NOT IN
-                (
-                    SELECT person_id
-                    FROM  t_eus_proposal_users
-                    WHERE proposal_id = _eusProposalID
-                );
+            WHERE NOT public.try_cast(item, 0) IN (SELECT person_id
+                                                   FROM t_eus_proposal_users
+                                                   WHERE proposal_id = _eusProposalID);
 
             If _invalidCount > 0 Then
-
                 -- Invalid users were found
                 --
                 If Not _autoPopulateUserListIfBlank Then
@@ -543,20 +545,24 @@ BEGIN
                     End If;
 
                     _returnCode := 'U5377';
+
+                    If _createdProposalStackTable Then
+                        DROP TABLE Tmp_Proposal_Stack;
+                    End If;
+
+                    If _createdUsersTable Then
+                        DROP TABLE Tmp_Users;
+                    End If;
+
                     RETURN;
                 End If;
 
                 -- Auto-remove invalid entries from Tmp_Users
                 --
-                DELETE
-                FROM Tmp_Users
-                WHERE
-                    CAST(Item As int) NOT IN
-                    (
-                        SELECT person_id
-                        FROM  t_eus_proposal_users
-                        WHERE proposal_id = _eusProposalID
-                    );
+                DELETE FROM Tmp_Users
+                WHERE NOT public.try_cast(item, 0) IN (SELECT person_id
+                                                       FROM t_eus_proposal_users
+                                                       WHERE proposal_id = _eusProposalID);
 
                 SELECT COUNT(*)
                 INTO _userCount
@@ -565,7 +571,7 @@ BEGIN
                 _newUserList := '';
 
                 If _userCount >= 1 Then
-                    -- Reconstruct the users list
+                    -- Reconstruct the user list
                     --
                     SELECT string_agg(Item, ', ' ORDER BY Item)
                     INTO _newUserList
@@ -573,15 +579,16 @@ BEGIN
 
                 End If;
 
-                If Coalesce(_newUserList, '') = '' Then
+                If Trim(Coalesce(_newUserList, '')) = '' Then
                     -- Auto-populate _eusUsersList with the first user associated with the given user proposal
+
                     _personID := 0;
 
                     SELECT MIN(EUSU.person_id)
                     INTO _personID
                     FROM t_eus_proposals EUSP
                         INNER JOIN t_eus_proposal_users EUSU
-                        ON EUSP.proposal_id = EUSU.proposal_id
+                          ON EUSP.proposal_id = EUSU.proposal_id
                     WHERE EUSP.proposal_id = _eusProposalID;
 
                     If Coalesce(_personID, 0) > 0 Then
@@ -591,7 +598,7 @@ BEGIN
 
                 _eusUsersList := Trim(Coalesce(_newUserList, ''));
 
-                _message := public.append_to_text(;
+                _message := public.append_to_text(
                                     _message,
                                     format('Warning: Removed users from EUS User list that are not associated with proposal "%s"', _eusProposalID));
 
@@ -606,7 +613,7 @@ BEGIN
             FROM t_campaign C
                  INNER JOIN t_eus_usage_type EUT
                    ON C.eus_usage_type_id = EUT.eus_usage_type_id
-            WHERE C.campaign_id = _campaignID
+            WHERE C.campaign_id = _campaignID;
         Else
             SELECT EUT.eus_usage_type
             INTO _eusUsageTypeCampaign
@@ -615,14 +622,14 @@ BEGIN
                    ON E.campaign_id = C.campaign_id
                  INNER JOIN t_eus_usage_type EUT
                    ON C.eus_usage_type_id = EUT.eus_usage_type_id
-            WHERE E.exp_id = _experimentID
+            WHERE E.exp_id = _experimentID;
         End If;
 
         If _eusUsageTypeCampaign::citext = 'USER_REMOTE' And _eusUsageType::citext In ('USER_ONSITE', 'USER') And _proposalType::citext <> 'Resource Owner' Then
             If _addingItem Then
                 _eusUsageType := 'USER_REMOTE';
                 _msg := 'Auto-updated EUS Usage Type to USER_REMOTE since the campaign has USER_REMOTE';
-                _usageTypeUpdated := 1;
+                _usageTypeUpdated := true;
             Else
                 _msg := 'Warning: campaign has EUS Usage Type USER_REMOTE; the new item should likely also be of type USER_REMOTE';
             End If;
@@ -633,7 +640,7 @@ BEGIN
         If _eusUsageTypeCampaign::citext = 'USER_ONSITE' And _eusUsageType::citext = 'USER' And _proposalType::citext <> 'Resource Owner' Then
             _eusUsageType := 'USER_ONSITE';
             _msg := 'Auto-updated EUS Usage Type to USER_ONSITE since the campaign has USER_ONSITE';
-            _usageTypeUpdated := 1;
+            _usageTypeUpdated := true;
         End If;
     End If;
 
@@ -641,10 +648,10 @@ BEGIN
         -- Requested runs for Resource Owner projects should always have EUS Usage Type 'USER_ONSITE'
         _eusUsageType := 'USER_ONSITE';
         _msg := 'Auto-updated EUS Usage Type to USER_ONSITE since associated with a Resource Owner project';
-        _usageTypeUpdated := 1;
+        _usageTypeUpdated := true;
     End If;
 
-    If _usageTypeUpdated > 0 Then
+    If _usageTypeUpdated Then
         _message := public.append_to_text(_message, _msg);
 
         SELECT eus_usage_type_id
@@ -662,8 +669,22 @@ BEGIN
         End If;
     End If;
 
-    DROP TABLE Tmp_Proposal_Stack;
+    If _createdProposalStackTable Then
+        DROP TABLE Tmp_Proposal_Stack;
+    End If;
+
+    If _createdUsersTable Then
+        DROP TABLE Tmp_Users;
+    End If;
 END
 $$;
 
-COMMENT ON PROCEDURE public.validate_eus_usage IS 'ValidateEUSUsage';
+
+ALTER PROCEDURE public.validate_eus_usage(INOUT _eususagetype text, INOUT _eusproposalid text, INOUT _eususerslist text, INOUT _eususagetypeid integer, IN _autopopulateuserlistifblank boolean, IN _samplepreprequest boolean, IN _experimentid integer, IN _campaignid integer, IN _addingitem boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE validate_eus_usage(INOUT _eususagetype text, INOUT _eusproposalid text, INOUT _eususerslist text, INOUT _eususagetypeid integer, IN _autopopulateuserlistifblank boolean, IN _samplepreprequest boolean, IN _experimentid integer, IN _campaignid integer, IN _addingitem boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.validate_eus_usage(INOUT _eususagetype text, INOUT _eusproposalid text, INOUT _eususerslist text, INOUT _eususagetypeid integer, IN _autopopulateuserlistifblank boolean, IN _samplepreprequest boolean, IN _experimentid integer, IN _campaignid integer, IN _addingitem boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'ValidateEUSUsage';
+
