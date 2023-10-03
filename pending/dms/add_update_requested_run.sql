@@ -151,6 +151,7 @@ AS $$
 **          11/25/2022 mem - Rename parameter to _wellplateName
 **          12/08/2022 mem - Rename _instrumentName parameter to _instrumentGroup
 **          02/10/2023 mem - Call update_cached_requested_run_batch_stats
+**          10/02/2023 mem - Use _requestID when calling update_cached_requested_run_eus_users
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -382,19 +383,19 @@ BEGIN
 
         End If;
 
-        -- Need non-null request even if we are just checking
+        -- Update _request to match _requestID
         --
         _request := _requestID;
 
         -- Cannot create an entry that already exists
         --
-        If _requestID <> 0 and (_mode::citext In ('add', 'check_add')) Then
+        If _requestID <> 0 And _mode::citext In ('add', 'check_add') Then
             RAISE EXCEPTION 'Cannot add: Requested Run "%" already in the database; cannot add', _requestName;
         End If;
 
         -- Cannot update a non-existent entry
         --
-        If _requestID = 0 and (_mode::citext In ('update', 'check_update')) Then
+        If _requestID = 0 And _mode::citext In ('update', 'check_update') Then
             If _requestIDForUpdate > 0 Then
                 RAISE EXCEPTION 'Cannot update: Requested Run ID "%" is not in the database; cannot update', _requestIDForUpdate;
             Else
@@ -655,13 +656,15 @@ BEGIN
                         _eusProposalID  => _eusProposalID,      -- Input/Output
                         _eusUsersList   => _eusUsersList,       -- Input/Output
                         _eusUsageTypeID => _eusUsageTypeID,     -- Output
-                        _message => _msg,                       -- Output
-                        _returnCode => _returnCode,             -- Output
-                        _autoPopulateUserListIfBlank,
+                        _autoPopulateUserListIfBlank => _autoPopulateUserListIfBlank,
                         _samplePrepRequest => false,
                         _experimentID => _experimentID,
                         _campaignID => 0,
-                        _addingItem => _addingItem);
+                        _addingItem => _addingItem,
+                        _infoOnly => false,
+                        _message => _msg,                       -- Output
+                        _returnCode => _returnCode              -- Output
+                    );
 
         If _returnCode <> '' Then
             _logErrors := false;
@@ -686,7 +689,7 @@ BEGIN
             End If;
 
             -- Only keep the first user
-            _eusUsersList := Left(_eusUsersList, _commaPosition - 1);
+            _eusUsersList := Trim(Left(_eusUsersList, _commaPosition - 1));
         End If;
 
         ---------------------------------------------------
@@ -863,9 +866,11 @@ BEGIN
             RETURNING request_id
             INTO _request;
 
+            _requestID := _request;
+
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 Then
-                CALL public.alter_event_log_entry_user ('public', 11, _request, _statusID, _callingUser, _message => _alterEnteredByMessage);
+                CALL public.alter_event_log_entry_user ('public', 11, _requestID, _statusID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             If _logDebugMessages Then
@@ -876,8 +881,7 @@ BEGIN
             -- Assign users to the request
             --
             CALL public.assign_eus_users_to_requested_run (
-                                    _request,
-                                    _eusProposalID,
+                                    _requestID,
                                     _eusUsersList,
                                     _message => _msg,                   -- Output
                                     _returnCode => _returnCode);        -- Output
@@ -894,7 +898,7 @@ BEGIN
             If _status::citext = 'Active' Then
                 -- Add a new row to t_active_requested_run_cached_eus_users
                 CALL public.update_cached_requested_run_eus_users (
-                                _request,
+                                _requestID,
                                 _message => _message,           -- Output
                                 _returnCode => _returnCode);    -- Output
             End If;
@@ -947,23 +951,22 @@ BEGIN
             --
             CALL public.assign_eus_users_to_requested_run (
                                     _requestID,
-                                    _eusProposalID,
                                     _eusUsersList,
                                     _message => _msg,               -- Output
                                     _returnCode => _returnCode);    -- Output
-            --
+
             If _returnCode <> '' Then
                 RAISE EXCEPTION 'assign_eus_users_to_requested_run: %', _msg;
             End If;
 
             -- Make sure that t_active_requested_run_cached_eus_users is up-to-date
             CALL public.update_cached_requested_run_eus_users (
-                                    _request,
+                                    _requestID,
                                     _message => _message,           -- Output
                                     _returnCode => _returnCode);    -- Output
 
             If _batch = 0 And _currentBatch <> 0 Then
-                _msg := format('Removed request %s from batch %s', _request, _currentBatch);
+                _msg := format('Removed request %s from batch %s', _requestID, _currentBatch);
                 _message := public.append_to_text(_message, _msg);
             End If;
         End If;
