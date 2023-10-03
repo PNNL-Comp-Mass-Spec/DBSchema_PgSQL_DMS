@@ -219,7 +219,7 @@ BEGIN
             CALL post_log_entry ('Warning', _message, 'Validate_Job_Dataset_States');
         End If;
 
-        If Exists (Select * FROM Tmp_Jobs) Then
+        If Exists (SELECT * FROM Tmp_Jobs) Then
 
             _currentLocation := 'Update analysis jobs';
 
@@ -232,7 +232,7 @@ BEGIN
 
             -- Log the update
             --
-            SELECT string_agg(Job::int, ',' ORDER BY Job)
+            SELECT string_agg(Job::text, ',' ORDER BY Job)
             INTO _itemList
             FROM Tmp_Jobs;
 

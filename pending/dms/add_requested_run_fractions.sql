@@ -520,7 +520,7 @@ BEGIN
             End If;
 
             -- Only keep the first user
-            _eusUserID := Left(_eusUserID, _commaPosition - 1);
+            _eusUserID := Trim(Left(_eusUserID, _commaPosition - 1));
         End If;
 
         ---------------------------------------------------
@@ -772,8 +772,7 @@ BEGIN
                 --
                 CALL assign_eus_users_to_requested_run (
                                         _requestID,
-                                        _eusProposalID,
-                                        _eusUserID,
+                                        _eusUserID,                     -- Integer, stored as text
                                         _message => _msg,               -- Output
                                         _returnCode => _returnCode);    -- Output
 

@@ -1,4 +1,4 @@
---
+
 CREATE OR REPLACE PROCEDURE public.update_run_op_log
 (
     _changes text,
@@ -13,12 +13,14 @@ AS $$
 **  Desc:
 **      Update selected items from instrument run tracking-related entities
 **
+**      This procedure is used by web page https://dms2.pnl.gov/run_op_logs/grid
+**
 **      Example contents of _changes:
 **        <run request="206498" usage="USER" proposal="123456" user="1001" />
 **        <interval id="268646" note="On hold pending scheduling,Broken[50%],CapDev[25%],StaffNotAvailable[25%],Operator[40677]" />
 **
 **  Arguments:
-**    _changes      Tracks the updates to be applied, in XML format
+**    _changes      Defines the updates to be applied, in XML format
 **
 **  Auth:   grk
 **  Date:   02/21/2013 grk - Initial release
@@ -41,7 +43,7 @@ DECLARE
     _logErrors boolean := true;
     _xml XML;
     _autoPopulateUserListIfBlank boolean := true,
-    _curID int;
+    _requestID int;
     _eusUsageTypeID int,
     _eusUsageType text,
     _eusProposalID text,
@@ -156,7 +158,7 @@ BEGIN
 
         FOR
             SELECT request, usage, proposal, emsl_user, statusID
-            INTO _curID, _eusUsageType, _eusProposalID, _eusUsersList, _statusID
+            INTO _requestID, _eusUsageType, _eusProposalID, _eusUsersList, _statusID
             FROM Tmp_IntervalUpdates
             ORDER BY request
         LOOP
@@ -165,9 +167,15 @@ BEGIN
                             _eusProposalID  => _eusProposalID,      -- Input/Output
                             _eusUsersList   => _eusUsersList,       -- Input/Output
                             _eusUsageTypeID => _eusUsageTypeID,     -- Output
+                            _autoPopulateUserListIfBlank => _autoPopulateUserListIfBlank,
+                            -- _samplePrepRequest => false,
+                            -- _experimentID => 0,
+                            -- _campaignID => 0,
+                            -- _addingItem => _addingItem,
+                            -- _infoOnly => false,
                             _message => _msg,                       -- Output
-                            _returnCode => _returnCode,             -- Output
-                            _autoPopulateUserListIfBlank => _autoPopulateUserListIfBlank);
+                            _returnCode => _returnCode              -- Output
+                        );
 
             If _returnCode <> '' Then
                 RAISE EXCEPTION 'Validate_EUS_Usage: %', _msg;
@@ -180,18 +188,17 @@ BEGIN
             UPDATE t_requested_run
             SET eus_proposal_id = _eusProposalID,
                 eus_usage_type_id = _eusUsageTypeID
-            WHERE request_id = _curID;
+            WHERE request_id = _requestID;
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 Then
-                CALL public.alter_event_log_entry_user ('public', 11, _curID, _statusID, _callingUser, _message => _alterEnteredByMessage);
+                CALL public.alter_event_log_entry_user ('public', 11, _requestID, _statusID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             -- Assign users to the request
             --
             CALL public.assign_eus_users_to_requested_run (
-                                    _request => _curID,
-                                    _eusProposalID => _eusProposalID,
+                                    _requestID => _requestID,
                                     _eusUsersList => _eusUsersList,
                                     _message => _msg,
                                     _returnCode => _returnCode);
@@ -208,12 +215,12 @@ BEGIN
 
         FOR
             SELECT id, note
-            INTO _curID, _comment
+            INTO _requestID, _comment
             FROM Tmp_IntervalUpdates
             ORDER BY id
         LOOP
             CALL public.add_update_run_interval (
-                                        _curID,
+                                        _requestID,
                                         _comment,
                                         'update',
                                         _message => _msg,                   -- Output
