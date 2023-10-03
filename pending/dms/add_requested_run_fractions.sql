@@ -487,17 +487,19 @@ BEGIN
         End If;
 
         CALL validate_eus_usage (
-                        _eusUsageType   => _eusUsageType,   -- Input/Output
-                        _eusProposalID  => _eusProposalID,  -- Input/Output
-                        _eusUsersList   => _eusUserID,      -- Input/Output
-                        _eusUsageTypeID => _eusUsageTypeID, -- Output
-                        _message => _msg,                   -- Output
-                        _returnCode => _returnCode,         -- Output
-                        _autoPopulateUserListIfBlank,
+                        _eusUsageType   => _eusUsageType,       -- Input/Output
+                        _eusProposalID  => _eusProposalID,      -- Input/Output
+                        _eusUsersList   => _eusUserID,          -- Input/Output
+                        _eusUsageTypeID => _eusUsageTypeID,     -- Output
+                        _autoPopulateUserListIfBlank => _autoPopulateUserListIfBlank,
                         _samplePrepRequest => false,
                         _experimentID => _experimentID,
                         _campaignID => 0,
-                        _addingItem => _addingItem);
+                        _addingItem => _addingItem,
+                        _infoOnly => false,
+                        _message => _msg,                       -- Output
+                        _returnCode => _returnCode              -- Output
+                    );
 
         If _returnCode <> '' Then
             RAISE EXCEPTION 'validate_eus_usage: %', _msg;

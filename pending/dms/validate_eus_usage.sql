@@ -5,37 +5,37 @@ CREATE OR REPLACE PROCEDURE public.validate_eus_usage
     INOUT _eusProposalID text,
     INOUT _eusUsersList text,
     INOUT _eusUsageTypeID int,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
     _autoPopulateUserListIfBlank boolean = false,
     _samplePrepRequest boolean = false,
     _experimentID int = 0,
     _campaignID int = 0,
     _addingItem boolean = false,
-    _infoOnly boolean = false
+    _infoOnly boolean = false,
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
 **  Desc:
-**      Verifies that given usage type, proposal ID,
-**      and user list are valid for DMS
+**      Verifies that the given usage type, proposal ID, and user list are valid
 **
-**      Clears contents of _eusProposalID and _eusUsersList
-**      for certain values of _eusUsageType
+**      Clears contents of _eusProposalID and _eusUsersList for certain values of _eusUsageType
 **
 **  Arguments:
-**    _eusUsageType                 EUS usage type
-**    _eusProposalID                EUS proposal ID
-**    _eusUsersList                 Comma-separated list of EUS user IDs (integers); also supports the form 'Baker, Erin (41136)'; does not support 'Baker, Erin'
-**    _eusUsageTypeID               EUS usage type ID (output)
-**    _autoPopulateUserListIfBlank  When true, will auto-populate _eusUsersList if it is empty and _eusUsageType is 'USER', 'USER_ONSITE', or 'USER_REMOTE'
-**    _samplePrepRequest            When true, validating EUS fields for a sample prep request
+**    _eusUsageType                 Input/Output: EUS usage type
+**    _eusProposalID                Input/Output: EUS proposal ID
+**    _eusUsersList                 Input/Output: Comma-separated list of EUS user IDs (integers); also supports the form 'Baker, Erin (41136)'; does not support 'Baker, Erin'
+**    _eusUsageTypeID               Output:       EUS usage type ID
+**    _autoPopulateUserListIfBlank  When true, auto-populate _eusUsersList if it is empty and _eusUsageType is 'USER', 'USER_ONSITE', or 'USER_REMOTE'
+**    _samplePrepRequest            Set to true when validating EUS fields for a sample prep request
 **    _experimentID                 When non-zero, validate EUS Usage Type against the experiment's campaign
 **    _campaignID                   When non-zero, validate EUS Usage Type against the campaign
-**    _addingItem                   When _experimentID or _campaignID is non-zero, set this to true if creating a new prep request or new requested run
+**    _addingItem                   When _experimentID or _campaignID is non-zero, set this to true if creating a new sample prep request or new requested run
 **    _infoOnly                     When true, show debug info
+**    _message                      Error message
+**    _returnCode                   Return code
 **
 **  Auth:   grk
 **  Date:   07/11/2007 grk - Initial Version

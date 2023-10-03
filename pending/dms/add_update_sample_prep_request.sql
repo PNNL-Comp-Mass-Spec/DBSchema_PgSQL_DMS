@@ -483,13 +483,15 @@ BEGIN
                         _eusProposalID  => _eusProposalID,      -- Input/Output
                         _eusUsersList   => _eusUsersList,       -- Input/Output
                         _eusUsageTypeID => _eusUsageTypeID,     -- Output
-                        _message => _msg,                       -- Output
-                        _returnCode => _returnCode,             -- Output
                         _autoPopulateUserListIfBlank => false,
-                        _samplePrepRequest => 1,
+                        _samplePrepRequest => true,
                         _experimentID => 0,
-                        _campaignID => _campaignID,
-                        _addingItem => _addingItem);
+                        _campaignID => 0,
+                        _addingItem => _addingItem,
+                        _infoOnly => false,
+                        _message => _msg,                       -- Output
+                        _returnCode => _returnCode              -- Output
+                    );
 
         If _returnCode <> '' Then
             RAISE EXCEPTION 'validate_eus_usage: %', _msg;

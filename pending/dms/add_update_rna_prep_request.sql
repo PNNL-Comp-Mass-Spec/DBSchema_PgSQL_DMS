@@ -236,13 +236,15 @@ BEGIN
                         _eusProposalID  => _eusProposalID,      -- Input/Output
                         _eusUsersList   => _eusUsersList,       -- Input/Output
                         _eusUsageTypeID => _eusUsageTypeID,     -- Output
-                        _message => _msg,                       -- Output
-                        _returnCode => _returnCode,             -- Output
                         _autoPopulateUserListIfBlank => false,
                         _samplePrepRequest => false,
                         _experimentID => 0,
                         _campaignID => 0,
-                        _addingItem => false);
+                        _addingItem => false,
+                        _infoOnly => false,
+                        _message => _msg,                       -- Output
+                        _returnCode => _returnCode              -- Output
+                    );
 
         If _returnCode <> '' Then
             _logErrors := false;
