@@ -44,6 +44,8 @@ CREATE OR REPLACE PROCEDURE sw.validate_data_package_for_mac_job(IN _datapackage
 **          07/27/2023 mem - Ported to PostgreSQL
 **          09/01/2023 mem - Remove unnecessary cast to citext for string constants
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          10/03/2023 mem - Obtain dataset name from public.t_dataset since it is no longer in dpkg.t_data_package_analysis_jobs
+**                         - Obtain dataset name from public.t_dataset since the name in dpkg.t_data_package_datasets is a cached name and could be an old dataset name
 **
 *****************************************************/
 DECLARE
@@ -90,9 +92,11 @@ BEGIN
 
         INSERT INTO Tmp_DataPackageItems( Dataset_ID,
                                           Dataset )
-        SELECT DISTINCT dataset_id,
-                        dataset
+        SELECT DISTINCT DS.dataset_id,
+                        DS.dataset
         FROM dpkg.t_data_package_datasets AS DPD
+             INNER JOIN public.t_dataset DS
+               ON DPD.dataset_id = DS.dataset_id
         WHERE DPD.data_pkg_id = _dataPackageID;
 
         ---------------------------------------------------
@@ -104,16 +108,20 @@ BEGIN
             MASIC = SourceQ.MASIC,
             MSGFPlus = SourceQ.MSGFPlus,
             SEQUEST = SourceQ.SEQUEST
-        FROM ( SELECT DPD.dataset,
-                      SUM(CASE WHEN DPD.tool = 'Decon2LS_V2' THEN 1 ELSE 0 END) AS Decon2LS_V2,
-                      SUM(CASE WHEN DPD.tool = 'MASIC_Finnigan' AND J.param_file_name ILIKE '%ReporterTol%' THEN 1 ELSE 0 END) AS MASIC,
-                      SUM(CASE WHEN DPD.tool ILIKE 'MSGFPlus%' THEN 1 ELSE 0 END) AS MSGFPlus,
-                      SUM(CASE WHEN DPD.tool ILIKE 'SEQUEST%' THEN 1 ELSE 0 END) AS SEQUEST
+        FROM ( SELECT DS.dataset,
+                      SUM(CASE WHEN T.analysis_tool = 'Decon2LS_V2' THEN 1 ELSE 0 END) AS Decon2LS_V2,
+                      SUM(CASE WHEN T.analysis_tool = 'MASIC_Finnigan' AND J.param_file_name ILIKE '%ReporterTol%' THEN 1 ELSE 0 END) AS MASIC,
+                      SUM(CASE WHEN T.analysis_tool ILIKE 'MSGFPlus%' THEN 1 ELSE 0 END) AS MSGFPlus,
+                      SUM(CASE WHEN T.analysis_tool ILIKE 'SEQUEST%' THEN 1 ELSE 0 END) AS SEQUEST
                FROM dpkg.t_data_package_analysis_jobs AS DPD
                     INNER JOIN public.t_analysis_job J
                       ON DPD.job = J.job
+                    INNER JOIN public.t_dataset DS
+                      ON J.dataset_id = DS.dataset_id
+                    INNER JOIN public.t_analysis_tool T
+                      ON J.analysis_tool_id = T.analysis_tool_id
                WHERE DPD.data_pkg_id = _dataPackageID
-               GROUP BY DPD.dataset
+               GROUP BY DS.dataset
              ) SourceQ
         WHERE Tmp_DataPackageItems.Dataset = SourceQ.dataset;
 
@@ -265,6 +273,9 @@ BEGIN
              RAISE WARNING '%', _message;
             _returnCode := 'U5251';
         End If;
+
+        DROP TABLE Tmp_DataPackageItems;
+        RETURN;
 
     EXCEPTION
         WHEN OTHERS THEN

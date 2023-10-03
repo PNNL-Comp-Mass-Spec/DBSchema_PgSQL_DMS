@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE sw.validate_protein_collection_list_for_data_package
 **                         - Add argument _debugMode
 **          07/27/2023 mem - Ported to PostgreSQL
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          10/03/2023 mem - Obtain dataset name from public.t_dataset since the name in dpkg.t_data_package_datasets is a cached name and could be an old dataset name
 **
 *****************************************************/
 DECLARE
@@ -61,9 +62,11 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_DatasetList (Dataset_Name)
-    SELECT DISTINCT Dataset
-    FROM dpkg.t_Data_Package_Datasets
-    WHERE data_pkg_id = _dataPackageID;
+    SELECT DISTINCT DS.dataset
+    FROM dpkg.t_Data_Package_Datasets DPD
+         INNER JOIN public.t_dataset DS
+           ON DPD.dataset_id = DS.dataset_id
+    WHERE DPD.data_pkg_id = _dataPackageID;
 
     If Not FOUND Then
         _message := format('Data package does not have any datasets, ID: %s', _dataPackageID);
