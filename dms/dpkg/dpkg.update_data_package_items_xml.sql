@@ -158,7 +158,7 @@ BEGIN
             _returnCode := _sqlState;
         End If;
 
-        DROP TABLE If Exists Tmp_DataPackageItems;
+        DROP TABLE IF EXISTS Tmp_DataPackageItems;
     END;
 
 END

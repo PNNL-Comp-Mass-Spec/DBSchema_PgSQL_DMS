@@ -226,7 +226,7 @@ BEGIN
         End If;
     END;
 
-    DROP TABLE If Exists Tmp_Hosts;
+    DROP TABLE IF EXISTS Tmp_Hosts;
 END
 $$;
 

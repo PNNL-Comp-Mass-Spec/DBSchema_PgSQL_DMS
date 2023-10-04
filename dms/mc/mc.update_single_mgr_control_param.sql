@@ -350,8 +350,8 @@ EXCEPTION
 
     _returnCode := _sqlState;
 
-    DROP TABLE If EXISTS Tmp_ParamValueEntriesToUpdate;
-    DROP TABLE If EXISTS Tmp_MgrIDs;
+    DROP TABLE IF EXISTS Tmp_ParamValueEntriesToUpdate;
+    DROP TABLE IF EXISTS Tmp_MgrIDs;
 END
 $$;
 
