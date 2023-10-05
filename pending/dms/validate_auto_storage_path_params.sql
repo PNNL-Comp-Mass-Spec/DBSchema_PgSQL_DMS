@@ -23,7 +23,7 @@ AS $$
 **          07/05/2016 mem - Archive path is now aurora.emsl.pnl.gov\archive\dmsarch\
 **          09/02/2016 mem - Archive path is now adms.emsl.pnl.gov\dmsarch\
 **          09/08/2020 mem - When _autoDefineStoragePath is true, raise an error if any of the paths are \ or /
-**          12/15/2023 mem - Ported to PostgreSQL
+**          10/05/2023 mem - Archive path is now \\agate.emsl.pnl.gov\dmsarch\  (only used for accessing files added to the archive before MyEMSL)
 **
 *****************************************************/
 BEGIN
@@ -84,7 +84,7 @@ BEGIN
 
     If _autoSPArchiveSharePathRoot <> '' Then
         If _autoSPArchiveSharePathRoot Not Like '\\\\%' Then
-            RAISE EXCEPTION 'Auto Storage Archive Share Path Root should be a network share, for example: \\adms.emsl.pnl.gov\dmsarch\VOrbiETD01';
+            RAISE EXCEPTION 'Auto Storage Archive Share Path Root should be a network share, for example: \\agate.emsl.pnl.gov\dmsarch\VOrbiETD01';
         End If;
     End If;
 

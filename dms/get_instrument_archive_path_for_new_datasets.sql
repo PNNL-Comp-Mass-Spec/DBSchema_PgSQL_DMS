@@ -42,6 +42,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_archive_path_for_new_datasets(_
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **          05/22/2023 mem - Use format() for string concatenation
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          10/05/2023 mem - Archive path is now agate.emsl.pnl.gov
 **
 *****************************************************/
 DECLARE
@@ -119,7 +120,7 @@ BEGIN
         -----------------------------------------
         -- Define the ArchivePath and NetworkSharePath
         -- Archive path will look like /archive/dmsarch/VOrbiETD02/2011_2
-        -- NetworkSharePath will look like \\adms.emsl.pnl.gov\dmsarch\VOrbiETD02\2011_2
+        -- NetworkSharePath will look like \\agate.emsl.pnl.gov\dmsarch\VOrbiETD02\2011_2
         -----------------------------------------
 
         If Coalesce(_datasetID, 0) > 0 Then

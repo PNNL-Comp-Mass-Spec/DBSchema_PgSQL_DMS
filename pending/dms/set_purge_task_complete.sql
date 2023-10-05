@@ -41,6 +41,7 @@ AS $$
 **          07/11/2017 mem - Add support for _completionCode = 9 (Previewed purge)
 **          09/09/2022 mem - Use new argument names when calling Make_New_Archive_Update_Job
 **          06/21/2023 mem - Remove parameter _pushDatasetToMyEMSL in call to cap.make_new_archive_update_task
+**          10/05/2023 mem - Archive path is now agate.emsl.pnl.gov
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -196,7 +197,7 @@ Code 6 (Purged all data except QC folder)
     End If;
 
     If _completionState < 0 And _completionCode = 7 Then
-        -- Dataset folder missing in archive, either in MyEMSL or at \\adms.emsl.pnl.gov\dmsarch
+        -- Dataset folder missing in archive, either in MyEMSL or at \\agate.emsl.pnl.gov\dmsarch
         --
         _message := format('Dataset folder not found in archive or in MyEMSL; most likely a MyEMSL timeout, but could be a permissions error; dataset %s', _datasetName);
         CALL post_log_entry ('Error', _message, _postedBy);
@@ -206,7 +207,7 @@ Code 6 (Purged all data except QC folder)
     End If;
 
     If _completionState < 0 And _completionCode = 8 Then
-        -- Archive is offline (Aurora is offline): \\adms.emsl.pnl.gov\dmsarch
+        -- Archive is offline (Aurora is offline): \\agate.emsl.pnl.gov\dmsarch
         --
         _message := format('Archive is offline; cannot purge dataset %s', _datasetName);
         CALL post_log_entry ('Error', _message, _postedBy);

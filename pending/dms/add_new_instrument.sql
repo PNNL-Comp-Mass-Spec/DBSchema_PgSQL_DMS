@@ -80,6 +80,7 @@ AS $$
 **                           Pass _urlDomain to Add_Update_Storage
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          09/01/2023 mem - Expand _instrumentName to varchar(64), _description to varchar(1024), and _usage to varchar(128)
+**          10/05/2023 mem - Archive path is now agate.emsl.pnl.gov
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -145,9 +146,10 @@ BEGIN
 
     ---------------------------------------------------
     -- Derive shared path name
+    -- e.g., switch from '/archive/dmsarch/Lumos01' to '\\agate.emsl.pnl.gov\dmsarch\Lumos01'
     ---------------------------------------------------
 
-    _archiveNetworkSharePath := format('\%s', Replace(Replace(_archivePath, 'archive', 'adms.emsl.pnl.gov'), '/', '\'));
+    _archiveNetworkSharePath := format('\%s', Replace(Replace(_archivePath, 'archive', 'agate.emsl.pnl.gov'), '/', '\'));
 
     ---------------------------------------------------
     -- Resolve Yes/No parameters to 0 or 1

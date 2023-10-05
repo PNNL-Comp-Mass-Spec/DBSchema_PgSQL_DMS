@@ -47,6 +47,7 @@ AS $$
 **          04/21/2017 mem - Add check for 'An unexpected network error occurred'
 **          09/05/2017 mem - Check for Mz_Refinery reporting Not enough free memory
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
+**          10/05/2023 mem - Switch the archive server path from \\adms to \\agate
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -340,7 +341,9 @@ BEGIN
 
                 If Not _retryJob And _retryCount < 5 Then
                     -- Check for file copy errors from the Archive
-                    If _comment Like '%Error copying file \\\\adms%' Or
+                    If _comment Like '%Error copying file \\\\agate%' Or
+                       _comment Like '%Error copying file \\\\adms%' Or
+                       _comment Like '%File not found: \\\\agate%' Or
                        _comment Like '%File not found: \\\\adms%' Or
                        _comment Like '%Error copying %dta.zip%' Or
                        _comment Like '%Source dataset file file not found%' Then
