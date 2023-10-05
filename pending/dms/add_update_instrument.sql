@@ -196,7 +196,7 @@ BEGIN
                 auto_sp_archive_server_name = _autoSPArchiveServerName,
                 auto_sp_archive_path_root = _autoSPArchivePathRoot,
                 auto_sp_archive_share_path_root = _autoSPArchiveSharePathRoot
-            WHERE (instrument_id = _instrumentID)
+            WHERE instrument_id = _instrumentID;
 
         End If; -- update mode
 

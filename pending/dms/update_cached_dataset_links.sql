@@ -2,12 +2,9 @@
 CREATE OR REPLACE PROCEDURE public.update_cached_dataset_links
 (
     _processingMode int = 0,
-    -- 1 to process new datasets, those with UpdateRequired=1, and the 10,000 most recent datasets in DMS (looking for dataset_row_version or storage_path_row_version differing)
-    -- 2 to process new datasets, those with UpdateRequired=1, and all datasets in DMS (looking for dataset_row_version or storage_path_row_version differing)
-    -- 3 to re-process all of the entries in T_Cached_Dataset_Links (this is the slowest update and will take 10 to 20 seconds)
+    _showDebug boolean = false,
     INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _showDebug boolean = false
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -17,7 +14,12 @@ AS $$
 **      Updates T_Cached_Dataset_Links, which is used by the Dataset Detail Report view (V_Dataset_Detail_Report_Ex)
 **
 **  Arguments:
-**    _processingMode   0 to only process new datasets and datasets with UpdateRequired = 1
+**    _processingMode   Processing mode:
+**                      0 to only process new datasets and datasets with UpdateRequired = 1
+**                      1 to process new datasets, those with UpdateRequired=1, and the 10,000 most recent datasets in DMS (looking for dataset_row_version or storage_path_row_version differing)
+**                      2 to process new datasets, those with UpdateRequired=1, and all datasets in DMS (looking for dataset_row_version or storage_path_row_version differing)
+**                      3 to re-process all of the entries in T_Cached_Dataset_Links (this is the slowest update and will take 10 to 20 seconds)
+**    _showDebug        When true, show debug info
 **
 **  Auth:   mem
 **  Date:   07/25/2017 mem - Initial version
@@ -69,8 +71,8 @@ BEGIN
                                         storage_path_row_version,
                                         update_required )
     SELECT DS.dataset_id,
-           DS.dataset_row_version,
-           DFP.storage_path_row_version,
+           DS.xmin,
+           DFP.xmin,
            1 AS UpdateRequired
     FROM t_dataset DS
          INNER JOIN t_cached_dataset_folder_paths DFP
@@ -126,8 +128,8 @@ BEGIN
         FROM t_cached_dataset_folder_paths DFP
         WHERE DFP.dataset_id = DL.dataset_id AND
               DL.dataset_id >= _minimumDatasetID AND
-              (DL.dataset_row_version <> DFP.dataset_row_version OR
-               DL.storage_path_row_version <> DFP.storage_path_row_version);
+              (DL.dataset_row_version IS DISTINCT FROM DFP.dataset_row_version OR
+               DL.storage_path_row_version IS DISTINCT FROM DFP.storage_path_row_version);
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -428,14 +430,14 @@ BEGIN
                   ) AS Source
             ON (target.dataset_id = source.dataset_id)
             WHEN MATCHED AND
-                 (target.dataset_row_version <> source.dataset_row_version OR
-                  target.storage_path_row_version <> source.storage_path_row_version OR
-                  target.dataset_folder_path IS DISTINCT FROM source.dataset_folder_path OR
-                  target.archive_folder_path IS DISTINCT FROM source.archive_folder_path OR
-                  target.myemsl_url          IS DISTINCT FROM source.myemsl_url OR
-                  target.qc_link             IS DISTINCT FROM source.qc_link OR
-                  target.qc_2d               IS DISTINCT FROM source.qc_2d OR
-                  target.qc_metric_stats     IS DISTINCT FROM source.qc_metric_stats) THEN
+                 (target.dataset_row_version      IS DISTINCT FROM source.dataset_row_version OR
+                  target.storage_path_row_version IS DISTINCT FROM source.storage_path_row_version OR
+                  target.dataset_folder_path      IS DISTINCT FROM source.dataset_folder_path OR
+                  target.archive_folder_path      IS DISTINCT FROM source.archive_folder_path OR
+                  target.myemsl_url               IS DISTINCT FROM source.myemsl_url OR
+                  target.qc_link                  IS DISTINCT FROM source.qc_link OR
+                  target.qc_2d                    IS DISTINCT FROM source.qc_2d OR
+                  target.qc_metric_stats          IS DISTINCT FROM source.qc_metric_stats) THEN
                 UPDATE SET
                     dataset_row_version = source.dataset_row_version,
                     storage_path_row_version = source.storage_path_row_version,

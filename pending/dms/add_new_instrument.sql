@@ -252,19 +252,19 @@ BEGIN
     -- Make sure the source machine exists in t_storage_path_hosts
     ---------------------------------------------------
 
-    _sourceMachineNameToFind := replace(_sourceMachineName, '\', '');
+    _sourceMachineNameToFind := Replace(_sourceMachineName, '\', '');
 
-    If Not Exists (Select * From t_storage_path_hosts Where sp_machine_name = _sourceMachineNameToFind) Then
+    If Not Exists (Select machine_name From t_storage_path_hosts WHERE machine_name = _sourceMachineNameToFind::citext) Then
         _periodLoc := Position('.' In _sourceMachineNameToFind);
         If _periodLoc > 1 Then
             _hostName := Substring(_sourceMachineNameToFind, 1, _periodLoc-1);
-            _suffix := Substring(_sourceMachineNameToFind, _periodLoc, char_length(_sourceMachineNameToFind));
+            _suffix   := Substring(_sourceMachineNameToFind, _periodLoc, char_length(_sourceMachineNameToFind));
         Else
             _hostName := _sourceMachineNameToFind;
-            _suffix := '.pnl.gov';
+            _suffix   := '.pnl.gov';
         End If;
 
-        INSERT INTO t_storage_path_hosts ( sp_machine_name, host_name, dns_suffix, URL_Prefix)
+        INSERT INTO t_storage_path_hosts ( machine_name, host_name, dns_suffix, URL_Prefix)
         VALUES (_sourceMachineNameToFind, _hostName, _suffix, 'https://')
 
         _logMessage := format('Added machine %s to t_storage_path_hosts with host name %s', _sourceMachineNameToFind, _hostName);
@@ -279,18 +279,18 @@ BEGIN
         -- Make new raw storage directory in storage table
         ---------------------------------------------------
 
-        CALL add_update_storage (
-                _spPath,
-                _spVolClient,
-                _spVolServer,
-                'raw-storage',
-                _instrumentName,
-                '(na)',
-                _autoSPUrlDomain,
-                _spStoragePathID,               -- Output
-                'add',
-                _message => _message,           -- Output
-                _returnCode => _returnCode);    -- Output
+        CALL public.add_update_storage (
+                _path           => _spPath,
+                _volnameclient  => _spVolClient,
+                _volnameserver  => _spVolServer,
+                _storfunction   => 'raw-storage',
+                _instrumentname => _instrumentName,
+                _description    => '(na)',
+                _urldomain      => _autoSPUrlDomain,
+                _id             => _spStoragePathID,    -- Output
+                _mode           => 'add',
+                _message        => _message,            -- Output
+                _returnCode     => _returnCode);        -- Output
     End If;
 
     --
@@ -304,20 +304,19 @@ BEGIN
     -- Make new source (inbox) directory in storage table
     ---------------------------------------------------
 
-    CALL add_update_storage (
-            _sourcePath,
-            '(na)',
-            _sourceMachineName,     -- Note that Add_Update_Storage will remove '\' characters from _sourceMachineName since _storFunction = 'inbox'
-            'inbox',
-            _instrumentName,
-            '(na)',
-            '',
-            _spStoragePathID,               -- Output
-            'add',
-            _message => _message,           -- Output
-            _returnCode => _returnCode);    -- Output
+        CALL public.add_update_storage (
+                _path           => _sourcePath,
+                _volnameclient  => '(na)',
+                _volnameserver  => _sourceMachineName,     -- Note that Add_Update_Storage will remove '\' characters from _sourceMachineName since _storFunction = 'inbox'
+                _storfunction   => 'inbox',
+                _instrumentname => _instrumentName,
+                _description    => '(na)',
+                _urldomain      => '',
+                _id             => _spStoragePathID,               -- Output
+                _mode           => 'add',
+                _message        => _message => _message,           -- Output
+                _returnCode     => _returnCode => _returnCode);    -- Output
 
-    --
     If _returnCode <> '' Then
         ROLLBACK;
 
