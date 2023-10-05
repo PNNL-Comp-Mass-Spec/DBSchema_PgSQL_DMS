@@ -40,7 +40,7 @@ BEGIN
     _matchCount := 0;
 
     -- Trim leading and trailing whitespace
-    _nameSearchSpec :=public.trim_whitespace_and_punctuation(Coalesce(_nameSearchSpec, ''));
+    _nameSearchSpec := public.trim_whitespace_and_punctuation(Coalesce(_nameSearchSpec, ''));
 
     If char_length(_nameSearchSpec) = 0 Then
         RETURN;
@@ -53,13 +53,12 @@ BEGIN
         -- Extract D3P704
 
         _charIndexStart := Position('(' In _nameSearchSpec);
-        _charIndexEnd   := Position(')' In substr(_nameSearchSpec, _charIndexStart));
+        _charIndexEnd   := Position(')' In Substring(_nameSearchSpec, _charIndexStart));
 
         If _charIndexStart > 0 And _charIndexEnd > 2 Then
-            _nameSearchSpec := substr(_nameSearchSpec, _charIndexStart + 1, _charIndexEnd - 2);
+            _nameSearchSpec := Substring(_nameSearchSpec, _charIndexStart + 1, _charIndexEnd - 2);
 
-            SELECT username,
-                   user_id
+            SELECT username, user_id
             INTO _matchingUsername, _matchingUserID
             FROM t_users
             WHERE username = _nameSearchSpec;
