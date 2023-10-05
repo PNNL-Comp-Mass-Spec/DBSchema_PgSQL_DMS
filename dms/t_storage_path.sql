@@ -77,7 +77,7 @@ ALTER TABLE ONLY public.t_storage_path
 --
 
 ALTER TABLE ONLY public.t_storage_path
-    ADD CONSTRAINT fk_t_storage_path_t_storage_path_hosts FOREIGN KEY (machine_name) REFERENCES public.t_storage_path_hosts(sp_machine_name);
+    ADD CONSTRAINT fk_t_storage_path_t_storage_path_hosts FOREIGN KEY (machine_name) REFERENCES public.t_storage_path_hosts(machine_name);
 
 --
 -- Name: TABLE t_storage_path; Type: ACL; Schema: public; Owner: d3l243
