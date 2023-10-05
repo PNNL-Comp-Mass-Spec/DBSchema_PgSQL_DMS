@@ -8,14 +8,18 @@ CREATE OR REPLACE FUNCTION public.get_instrument_storage_path_for_new_datasets(_
 /****************************************************
 **
 **  Desc:
-**      Returns the ID for the most appropriate storage path for
-**      new data uploaded for the given instrument.
+**      Returns the ID for the most appropriate storage path for new data uploaded for the given instrument
 **
-**      If the Instrument has Auto_Define_Storage_Path enabled in
-**      T_Instrument_Name, will auto-define the storage path
-**      based on the current year and quarter
+**      If the Instrument has Auto_Define_Storage_Path enabled in T_Instrument_Name, will auto-define the storage path
+**      based on the year and quarter of _refDate (or the current date if _refDate is null)
 **
 **      If necessary, will call add_update_storage to auto-create an entry in T_Storage_Path
+**
+**  Arguments:
+**    _instrumentID                 Instrument ID
+**    _refDate                      Reference date to base the storage path on
+**    _autoSwitchActiveStorage      When true, change the active storage for the instrument if the storage path differs from the current active storage path
+**    _infoOnly                     When true, preview updates
 **
 **  Returns: The storage path ID; 0 if an error
 **
