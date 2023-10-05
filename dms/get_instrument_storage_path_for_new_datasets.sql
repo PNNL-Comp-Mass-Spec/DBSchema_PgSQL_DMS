@@ -23,11 +23,12 @@ CREATE OR REPLACE FUNCTION public.get_instrument_storage_path_for_new_datasets(_
 **  Date:   05/11/2011 mem - Initial Version
 **          05/12/2011 mem - Added _refDate and _autoSwitchActiveStorage
 **          02/23/2016 mem - Add Set XACT_ABORT on
-**          10/27/2020 mem - Pass Auto_SP_URL_Domain to AddUpdateStorage
+**          10/27/2020 mem - Pass Auto_SP_URL_Domain to add_update_storage
 **          12/17/2020 mem - Rollback any open transactions before calling Local_Error_Handler
 **          05/08/2023 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Use format() for string concatenation
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          10/04/2023 mem - Specify argument names when calling add_update_storage
 **
 *****************************************************/
 DECLARE
@@ -50,7 +51,7 @@ DECLARE
     _exceptionContext text;
 BEGIN
 
-    Begin
+    BEGIN
         -----------------------------------------
         -- See if this instrument has Auto_Define_Storage_Path enabled
         -----------------------------------------
@@ -165,18 +166,18 @@ BEGIN
 
         _id := _storagePathID::text;
 
-        CALL add_update_storage (
-                    _storagePathName,
-                    _volNameClient => _instrumentInfo.AutoSPVolNameClient,
-                    _volNameServer => _instrumentInfo.AutoSPVolNameServer,
-                    _storFunction => _storageFunction,
-                    _instrumentName => _instrumentInfo.InstrumentName,
-                    _description => '',
-                    _urlDomain => _instrumentInfo.AutoSPUrlDomain,
-                    _id => _id,                     -- Output
-                    _mode => 'add',
-                    _message => _message,           -- Output
-                    _returnCode => _returnCode);    -- Output
+        CALL public.add_update_storage (
+                _path           => _storagePathName,
+                _volnameclient  => _instrumentInfo.AutoSPVolNameClient,
+                _volnameserver  => _instrumentInfo.AutoSPVolNameServer,
+                _storfunction   => _storageFunction,
+                _instrumentname => _instrumentInfo.InstrumentName,
+                _description    => '',
+                _urldomain      => _instrumentInfo.AutoSPUrlDomain,
+                _id             => _id,                     -- Output
+                _mode           => 'add',
+                _message        => _message,                -- Output
+                _returnCode     => _returnCode);            -- Output
 
          _storagePathID := public.try_cast(_id, null::int);
 
