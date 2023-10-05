@@ -1,23 +1,22 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_cached_dataset_folder_paths
-(
-    _processingMode int = 0,
-    -- 1 to process new datasets, those with UpdateRequired=1, and the 10,000 most recent datasets in DMS (looking for dataset_row_version or storage_path_row_version differing)
-    -- 2 to process new datasets, those with UpdateRequired=1, and all datasets in DMS (looking for dataset_row_version or storage_path_row_version differing)
-    -- 3 to re-process all of the entries in T_Cached_Dataset_Folder_Paths (this is the slowest update and will take 10 to 20 seconds)
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _showDebug int = 0
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_cached_dataset_folder_paths(integer, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_cached_dataset_folder_paths(IN _processingmode integer DEFAULT 0, IN _showdebug boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Updates T_Cached_Dataset_Folder_Paths
 **
 **  Arguments:
-**    _processingMode   0 to only process new datasets and datasets with UpdateRequired = 1
+**    _processingMode   Processing mode:
+**                      0 to only process new datasets and datasets with UpdateRequired = 1
+**                      1 to process new datasets, those with UpdateRequired=1, and the 10,000 most recent datasets in DMS (looking for dataset_row_version or storage_path_row_version differing)
+**                      2 to process new datasets, those with UpdateRequired=1, and all datasets in DMS (looking for dataset_row_version or storage_path_row_version differing)
+**                      3 to re-process all of the entries in T_Cached_Dataset_Folder_Paths (this is the slowest update and will take ~30 seconds to complete)
+**    _showDebug        When true, show debug info
 **
 **  Auth:   mem
 **  Date:   11/14/2013 mem - Initial version
@@ -26,7 +25,7 @@ AS $$
 **          06/12/2018 mem - Send _maxLength to append_to_text
 **          02/27/2019 mem - Use T_Storage_Path_Hosts instead of SP_URL
 **          09/06/2022 mem - When _processingMode is 3, update datasets in batches (to decrease the likelihood of deadlock issues)
-**          12/15/2023 mem - Ported to PostgreSQL
+**          10/04/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -39,6 +38,8 @@ DECLARE
     _datasetIdMax int;
     _datasetBatchSize int;
     _addon text;
+    _startTime timestamp;
+    _runtimeSeconds numeric;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -48,7 +49,13 @@ BEGIN
     ------------------------------------------------
 
     _processingMode := Coalesce(_processingMode, 0);
-    _showDebug := Coalesce(_showDebug, 0);
+    _showDebug      := Coalesce(_showDebug, false);
+
+    If _showDebug Then
+        RAISE INFO '';
+    End If;
+
+    _startTime := clock_timestamp();
 
     If _processingMode In (0, 1) Then
         SELECT MIN(dataset_id)
@@ -67,7 +74,7 @@ BEGIN
                                                dataset_row_version,
                                                update_required )
     SELECT DS.dataset_id,
-           DS.dataset_row_version,
+           DS.xmin,
            1 AS UpdateRequired
     FROM t_dataset DS
          LEFT OUTER JOIN t_cached_dataset_folder_paths DFP
@@ -79,12 +86,16 @@ BEGIN
                            ON DA.storage_path_id = AP.archive_path_id
            ON DS.dataset_id = DA.dataset_id
     WHERE DS.dataset_id >= _minimumDatasetID AND
-          DFP.dataset_id IS NULL
+          DFP.dataset_id IS NULL;
     --
     GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
     If _matchCount > 0 Then
-        _message := format('Added %s new %s', _matchCount, public.check_plural(_matchCount, 'dataset', 'datasets'));
+        _message := format('Added %s new %s to t_cached_dataset_folder_paths', _matchCount, public.check_plural(_matchCount, 'dataset', 'datasets'));
+
+        If _showDebug Then
+            RAISE INFO '%', _message;
+        End If;
     End If;
 
     SELECT MAX(dataset_id)
@@ -118,35 +129,32 @@ BEGIN
         -- Find existing entries with a mismatch in storage_path_row_version
         ------------------------------------------------
 
-        UPDATE t_cached_dataset_folder_paths
+        UPDATE t_cached_dataset_folder_paths DFP
         SET update_required = 1
         FROM t_dataset DS
              INNER JOIN t_storage_path SPath
                ON SPath.storage_path_id = DS.storage_path_id
-             INNER JOIN t_cached_dataset_folder_paths DFP
-               ON DS.dataset_id = DFP.dataset_id
-        WHERE DS.dataset_id >= _minimumDatasetID AND
-              SPath.storage_path_row_version <> DFP.storage_path_row_version;
+        WHERE DFP.dataset_id = DS.dataset_id AND
+              DS.dataset_id >= _minimumDatasetID AND
+              SPath.xmin IS DISTINCT FROM DFP.storage_path_row_version;
         --
         GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
         If _matchCount > 0 Then
             _addon := format('%s %s on storage_path_row_version', _matchCount, public.check_plural(_matchCount, 'dataset differs', 'datasets differ'));
             _message := public.append_to_text(_message, _addon);
-
         End If;
 
         ------------------------------------------------
         -- Find existing entries with a mismatch in dataset_row_version
         ------------------------------------------------
 
-        UPDATE t_cached_dataset_folder_paths
+        UPDATE t_cached_dataset_folder_paths DFP
         SET update_required = 1
         FROM t_dataset DS
-             INNER JOIN t_cached_dataset_folder_paths DFP
-               ON DFP.dataset_id = DS.dataset_id
-        WHERE DS.dataset_id >= _minimumDatasetID AND
-              DS.dataset_row_version <> DFP.dataset_row_version
+        WHERE DFP.dataset_id = DS.dataset_id AND
+              DS.dataset_id >= _minimumDatasetID AND
+              DS.xmin IS DISTINCT FROM DFP.dataset_row_version;
         --
         GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
@@ -154,6 +162,11 @@ BEGIN
             _addon := format('%s %s on dataset_row_version', _matchCount, public.check_plural(_matchCount, 'dataset differs', 'datasets differ'));
             _message := public.append_to_text(_message, _addon);
         End If;
+
+        If _showDebug And _message <> '' Then
+            RAISE INFO '%', _message;
+        End If;
+
     End If;
 
     If _processingMode < 3 Then
@@ -167,29 +180,27 @@ BEGIN
         -- If you update this query, be sure to update the merge statement
         ------------------------------------------------
 
-        UPDATE t_cached_dataset_folder_paths
-        SET dataset_row_version = DS.dataset_row_version,
-            storage_path_row_version = SPath.storage_path_row_version,
-            dataset_folder_path = Coalesce(public.combine_paths(SPath.SP_vol_name_client,
-                                           public.combine_paths(SPath.SP_path, Coalesce(DS.folder_name, DS.Dataset))), ''),
-            archive_folder_path = CASE WHEN AP.AP_network_share_path IS NULL
+        UPDATE t_cached_dataset_folder_paths DFP
+        SET dataset_row_version = DS.xmin,
+            storage_path_row_version = SPath.xmin,
+            dataset_folder_path = Coalesce(public.combine_paths(SPath.vol_name_client,
+                                           public.combine_paths(SPath.storage_path, Coalesce(DS.folder_name, DS.dataset))), ''),
+            archive_folder_path = CASE WHEN AP.network_share_path IS NULL
                                        THEN ''
-                                       ELSE public.combine_paths(AP.AP_network_share_path,
+                                       ELSE public.combine_paths(AP.network_share_path,
                                                                  Coalesce(DS.folder_name, DS.Dataset))
                                   END,
-            MyEMSL_Path_Flag = format('\\MyEMSL\%s', public.combine_paths(SPath.SP_path, Coalesce(DS.folder_name, DS.Dataset))),
-            -- Old: Dataset_URL = format('%s%s/', SPath.SP_URL, Coalesce(DS.folder_name, DS.Dataset)),
+            MyEMSL_Path_Flag = format('\\MyEMSL\%s', public.combine_paths(SPath.storage_path, Coalesce(DS.folder_name, DS.Dataset))),
+            -- Old: Dataset_URL = format('%s%s/', SPath.url, Coalesce(DS.folder_name, DS.Dataset)),
             Dataset_URL = format('%s%s/',
                                  CASE WHEN SPath.storage_path_function LIKE '%inbox%'
                                       THEN ''
-                                      ELSE format('%s%s%s/%s', SPH.URL_Prefix, SPH.Host_Name, SPH.DNS_Suffix, Replace(SP_path, '\', '/'))
+                                      ELSE format('%s%s%s/%s', SPH.URL_Prefix, SPH.Host_Name, SPH.DNS_Suffix, Replace(storage_path, '\', '/'))
                                  END,
                                  Coalesce(DS.folder_name, DS.dataset)),
             update_required = 0,
             last_affected = CURRENT_TIMESTAMP
         FROM t_dataset DS
-             INNER JOIN t_cached_dataset_folder_paths DFP
-               ON DFP.dataset_id = DS.dataset_id
              LEFT OUTER JOIN t_storage_path SPath
                ON SPath.storage_path_id = DS.storage_path_id
              LEFT OUTER JOIN t_storage_path_hosts SPH
@@ -198,7 +209,8 @@ BEGIN
                              INNER JOIN t_archive_path AP
                                ON DA.storage_path_id = AP.archive_path_id
                ON DS.dataset_id = DA.dataset_id
-        WHERE DFP.update_required = 1
+        WHERE DFP.dataset_id = DS.dataset_id AND
+              DFP.update_required = 1;
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -239,21 +251,21 @@ BEGIN
 
             MERGE INTO t_cached_dataset_folder_paths As target
             USING ( SELECT DS.dataset_id,
-                           DS.dataset_row_version,
-                           SPath.storage_path_row_version,
-                           Coalesce(public.combine_paths(SPath.SP_vol_name_client,
-                                    public.combine_paths(SPath.SP_path, Coalesce(DS.folder_name, DS.Dataset))), '') AS Dataset_Folder_Path,
-                           CASE WHEN AP.AP_network_share_path IS NULL
+                           DS.xmin AS XMin_Dataset,
+                           SPath.xmin AS XMin_SPath,
+                           Coalesce(public.combine_paths(SPath.vol_name_client,
+                                    public.combine_paths(SPath.storage_path, Coalesce(DS.folder_name, DS.Dataset))), '') AS Dataset_Folder_Path,
+                           CASE WHEN AP.network_share_path IS NULL
                                 THEN ''
-                                ELSE public.combine_paths(AP.AP_network_share_path,
+                                ELSE public.combine_paths(AP.network_share_path,
                                                           Coalesce(DS.folder_name, DS.Dataset))
                            END AS Archive_Folder_Path,
-                           format('\\MyEMSL\%s', public.combine_paths(SPath.SP_path, Coalesce(DS.folder_name, DS.Dataset))) AS MyEMSL_Path_Flag,
-                           -- Old: format('%s%s/', SPath.SP_URL, Coalesce(DS.folder_name, DS.Dataset)) AS Dataset_URL
+                           format('\\MyEMSL\%s', public.combine_paths(SPath.storage_path, Coalesce(DS.folder_name, DS.Dataset))) AS MyEMSL_Path_Flag,
+                           -- Old: format('%s%s/', SPath.url, Coalesce(DS.folder_name, DS.Dataset)) AS Dataset_URL
                            format('%s%s/',
                                   CASE WHEN SPath.storage_path_function LIKE '%inbox%'
                                        THEN ''
-                                       ELSE format('%s%s%s/%s', SPH.URL_Prefix, SPH.Host_Name, SPH.DNS_Suffix, Replace(SP_path, '\', '/'))
+                                       ELSE format('%s%s%s/%s', SPH.URL_Prefix, SPH.Host_Name, SPH.DNS_Suffix, Replace(storage_path, '\', '/'))
                                   END,
                                   Coalesce(DS.folder_name, DS.dataset)) AS Dataset_URL
                     FROM t_dataset DS
@@ -271,15 +283,15 @@ BEGIN
                   ) AS Source
             ON (target.dataset_id = source.dataset_id)
             WHEN MATCHED AND
-                 (target.dataset_row_version      IS DISTINCT FROM source.dataset_row_version OR
-                  target.storage_path_row_version IS DISTINCT FROM source.storage_path_row_version OR
+                 (target.dataset_row_version      IS DISTINCT FROM source.XMin_Dataset OR
+                  target.storage_path_row_version IS DISTINCT FROM source.XMin_SPath OR
                   target.dataset_folder_path      IS DISTINCT FROM source.dataset_folder_path OR
                   target.archive_folder_path      IS DISTINCT FROM source.archive_folder_path OR
                   target.myemsl_path_flag         IS DISTINCT FROM source.myemsl_path_flag OR
                   target.dataset_url              IS DISTINCT FROM source.dataset_url) THEN
                 UPDATE SET
-                    dataset_row_version = source.dataset_row_version,
-                    storage_path_row_version = source.storage_path_row_version,
+                    dataset_row_version = source.XMin_Dataset,
+                    storage_path_row_version = source.XMin_SPath,
                     dataset_folder_path = source.dataset_folder_path,
                     archive_folder_path = source.archive_folder_path,
                     myemsl_path_flag = source.myemsl_path_flag,
@@ -290,7 +302,7 @@ BEGIN
 
             GET DIAGNOSTICS _mergeCount = ROW_COUNT;
 
-            _updateCount := _updateCount + _mergeCount
+            _updateCount := _updateCount + _mergeCount;
 
             If _datasetBatchSize <= 0 Then
                 -- Break out of the While Loop
@@ -298,13 +310,14 @@ BEGIN
             End If;
 
             _datasetIdStart := _datasetIdStart + _datasetBatchSize;
-            _datasetIdEnd := _datasetIdEnd + _datasetBatchSize;
+            _datasetIdEnd   := _datasetIdEnd   + _datasetBatchSize;
 
             If _datasetIdStart > _datasetIdMax Then
                 -- Break out of the While Loop
                 EXIT;
             End If;
-        End If;
+        END LOOP;
+
     End If;
 
     If _updateCount > 0 Then
@@ -314,7 +327,20 @@ BEGIN
         -- Call post_log_entry ('Debug', _message, 'Update_Cached_Dataset_Folder_Paths');
     End If;
 
+    _runtimeSeconds := Round(extract(epoch FROM (clock_timestamp() - _startTime)), 3);
+
+    If _showDebug Or _runtimeSeconds > 5 Then
+        RAISE INFO 'Processing time: % seconds', _runtimeSeconds;
+    End If;
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_cached_dataset_folder_paths IS 'UpdateCachedDatasetFolderPaths';
+
+ALTER PROCEDURE public.update_cached_dataset_folder_paths(IN _processingmode integer, IN _showdebug boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_cached_dataset_folder_paths(IN _processingmode integer, IN _showdebug boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_cached_dataset_folder_paths(IN _processingmode integer, IN _showdebug boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateCachedDatasetFolderPaths';
+
