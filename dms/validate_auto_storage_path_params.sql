@@ -1,22 +1,24 @@
 --
-CREATE OR REPLACE PROCEDURE public.validate_auto_storage_path_params
-(
-    _autoDefineStoragePath boolean,
-    _autoSPVolNameClient text,
-    _autoSPVolNameServer text,
-    _autoSPPathRoot text,
-    _autoSPArchiveServerName text,
-    _autoSPArchivePathRoot text,
-    _autoSPArchiveSharePathRoot text
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: validate_auto_storage_path_params(boolean, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.validate_auto_storage_path_params(IN _autodefinestoragepath boolean, IN _autospvolnameclient text, IN _autospvolnameserver text, IN _autosppathroot text, IN _autosparchiveservername text, IN _autosparchivepathroot text, IN _autosparchivesharepathroot text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Validates that the Auto storage path parameters are correct
+**      Validates that the auto storage path parameters are correct
+**      Raises an exception if there is a problem
 **
-**  Returns: The storage path ID; 0 if an error
+**  Arguments:
+**    _autoDefineStoragePath        When true, storage paths are auto-defined for the given instrument
+**    _autoSPVolNameClient          Storage server name,                                     e.g. \\proto-8\
+**    _autoSPVolNameServer          Drive letter on storage server (local to server itself), e.g. F:\
+**    _autoSPPathRoot               Storage path (share name) on storage server,             e.g. Lumos01\
+**    _autoSPArchiveServerName      Archive server name           (validated, but obsolete), e.g. agate.emsl.pnl.gov
+**    _autoSPArchivePathRoot        Storage path on EMSL archive  (validated, but obsolete), e.g. /archive/dmsarch/Lumos01
+**    _autoSPArchiveSharePathRoot   Archive share path            (validated, but obsolete), e.g. \\agate.emsl.pnl.gov\dmsarch\Lumos01
 **
 **  Auth:   mem
 **  Date:   05/13/2011 mem - Initial version
@@ -24,9 +26,11 @@ AS $$
 **          09/02/2016 mem - Archive path is now adms.emsl.pnl.gov\dmsarch\
 **          09/08/2020 mem - When _autoDefineStoragePath is true, raise an error if any of the paths are \ or /
 **          10/05/2023 mem - Archive path is now \\agate.emsl.pnl.gov\dmsarch\  (only used for accessing files added to the archive before MyEMSL)
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 BEGIN
+    _autoDefineStoragePath      := Coalesce(_autoDefineStoragePath, false);
     _autoSPVolNameClient        := Trim(Coalesce(_autoSPVolNameClient, ''));
     _autoSPVolNameServer        := Trim(Coalesce(_autoSPVolNameServer, ''));
     _autoSPPathRoot             := Trim(Coalesce(_autoSPPathRoot, ''));
@@ -77,7 +81,7 @@ BEGIN
 
     If _autoSPArchivePathRoot <> '' Then
         If _autoSPArchivePathRoot Not Like '/%' Then
-            RAISE EXCEPTION 'Auto Storage Archive Path Root should be a linux path, for example: /archive/dmsarch/Broad_Orb1';
+            RAISE EXCEPTION 'Auto Storage Archive Path Root should be a Linux path, for example: /archive/dmsarch/VOrbiETD01';
         End If;
 
     End If;
@@ -91,4 +95,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.validate_auto_storage_path_params IS 'ValidateAutoStoragePathParams';
+
+ALTER PROCEDURE public.validate_auto_storage_path_params(IN _autodefinestoragepath boolean, IN _autospvolnameclient text, IN _autospvolnameserver text, IN _autosppathroot text, IN _autosparchiveservername text, IN _autosparchivepathroot text, IN _autosparchivesharepathroot text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE validate_auto_storage_path_params(IN _autodefinestoragepath boolean, IN _autospvolnameclient text, IN _autospvolnameserver text, IN _autosppathroot text, IN _autosparchiveservername text, IN _autosparchivepathroot text, IN _autosparchivesharepathroot text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.validate_auto_storage_path_params(IN _autodefinestoragepath boolean, IN _autospvolnameclient text, IN _autospvolnameserver text, IN _autosppathroot text, IN _autosparchiveservername text, IN _autosparchivepathroot text, IN _autosparchivesharepathroot text) IS 'ValidateAutoStoragePathParams';
+
