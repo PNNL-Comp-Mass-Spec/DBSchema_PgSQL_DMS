@@ -172,13 +172,13 @@ BEGIN
 
         CALL public.add_update_storage (
                 _path           => _storagePathName,
-                _volnameclient  => _instrumentInfo.AutoSPVolNameClient,
-                _volnameserver  => _instrumentInfo.AutoSPVolNameServer,
-                _storfunction   => _storageFunction,
-                _instrumentname => _instrumentInfo.InstrumentName,
+                _volNameClient  => _instrumentInfo.AutoSPVolNameClient,
+                _volNameServer  => _instrumentInfo.AutoSPVolNameServer,
+                _storFunction   => _storageFunction,
+                _instrumentName => _instrumentInfo.InstrumentName,
                 _description    => '',
-                _urldomain      => _instrumentInfo.AutoSPUrlDomain,
-                _id             => _id,                     -- Output
+                _urlDomain      => _instrumentInfo.AutoSPUrlDomain,
+                _id             => _id,                     -- Output, storage path ID (as text)
                 _mode           => 'add',
                 _message        => _message,                -- Output
                 _returnCode     => _returnCode);            -- Output
