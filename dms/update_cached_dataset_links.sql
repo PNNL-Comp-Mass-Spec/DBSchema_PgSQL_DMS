@@ -1,24 +1,21 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_cached_dataset_links
-(
-    _processingMode int = 0,
-    _showDebug boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_cached_dataset_links(integer, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_cached_dataset_links(IN _processingmode integer DEFAULT 0, IN _showdebug boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates T_Cached_Dataset_Links, which is used by the Dataset Detail Report view (V_Dataset_Detail_Report_Ex)
+**      Updates t_cached_dataset_links, which is used by the dataset detail report view (v_dataset_detail_report_ex)
 **
 **  Arguments:
 **    _processingMode   Processing mode:
-**                      0 to only process new datasets and datasets with UpdateRequired = 1
-**                      1 to process new datasets, those with UpdateRequired=1, and the 10,000 most recent datasets in DMS (looking for dataset_row_version or storage_path_row_version differing)
-**                      2 to process new datasets, those with UpdateRequired=1, and all datasets in DMS (looking for dataset_row_version or storage_path_row_version differing)
-**                      3 to re-process all of the entries in T_Cached_Dataset_Links (this is the slowest update and will take 10 to 20 seconds)
+**                      0 to only process new datasets and datasets with update_required = 1
+**                      1 to process new datasets, those with update_required = 1, and the 10,000 most recent datasets in DMS (looking for dataset_row_version or storage_path_row_version differing)
+**                      2 to process new datasets, those with update_required = 1, and all datasets in DMS (looking for dataset_row_version or storage_path_row_version differing)
+**                      3 to re-process all of the entries in T_Cached_Dataset_Links (this is the slowest update and will take ~20 seconds)
 **    _showDebug        When true, show debug info
 **
 **  Auth:   mem
@@ -27,7 +24,8 @@ AS $$
 **          07/31/2020 mem - Update MASIC_Directory_Name
 **          09/06/2022 mem - When _processingMode is 3, update datasets in batches (to decrease the likelihood of deadlock issues)
 **          06/03/2023 mem - Link to the SMAQC P_2C metric for QC_Mam datasets
-**          12/15/2023 mem - Ported to PostgreSQL
+**          10/06/2023 mem - Update SMAQC metric URLs
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -42,6 +40,8 @@ DECLARE
     _addon text;
     _datasetID int;
     _masicDirectoryName text;
+    _startTime timestamp;
+    _runtimeSeconds numeric;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -51,7 +51,9 @@ BEGIN
     ------------------------------------------------
 
     _processingMode := Coalesce(_processingMode, 0);
-    _showDebug := Coalesce(_showDebug, false);
+    _showDebug      := Coalesce(_showDebug, false);
+
+    _startTime := clock_timestamp();
 
     If _processingMode In (0, 1) Then
         SELECT MIN(dataset_id)
@@ -73,14 +75,14 @@ BEGIN
     SELECT DS.dataset_id,
            DS.xmin,
            DFP.xmin,
-           1 AS UpdateRequired
+           1 AS update_required
     FROM t_dataset DS
          INNER JOIN t_cached_dataset_folder_paths DFP
            ON DS.dataset_id = DFP.dataset_id
          LEFT OUTER JOIN t_cached_dataset_links DL
            ON DL.dataset_id = DS.dataset_id
     WHERE DS.dataset_id >= _minimumDatasetID AND
-          DL.dataset_id IS NULL
+          DL.dataset_id IS NULL;
     --
     GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
@@ -102,6 +104,10 @@ BEGIN
         _datasetBatchSize := 0;
     End If;
 
+    If _showDebug Then
+        RAISE INFO '';
+    End If;
+
     If _processingMode In (1, 2) Then
         If _showDebug Then
             RAISE INFO 'Setting update_required to 1 in t_cached_dataset_links for datasets with dataset_id >= % and differing row versions', _minimumDatasetID;
@@ -111,19 +117,19 @@ BEGIN
         -- Find datasets that need to be updated
         --
         -- Notes regarding t_cached_dataset_folder_paths
-        --   Trigger trig_u_Dataset_Folder_Paths will set update_required to 1 when a row is changed in T_Dataset_Folder_Paths
+        --   Trigger trig_u_Dataset_Folder_Paths will set update_required to 1 when a row is changed in t_dataset_folder_paths
         --
         -- Notes regarding t_dataset_archive
         --   Trigger trig_i_Dataset_Archive will set update_required to 1 when a dataset is added to t_dataset_archive
         --   Trigger trig_u_Dataset_Archive will set update_required to 1 when any of the following columns is updated:
-        --     archive_state_id, AS_storage_path_ID, instrument_data_purged, MyEMSLState, qc_data_purged
+        --     archive_state_id, storage_path_id, instrument_data_purged, myemsl_state, qc_data_purged
         ------------------------------------------------
 
         ------------------------------------------------
         -- Find existing entries with a mismatch in dataset_row_version or storage_path_row_version
         ------------------------------------------------
 
-        UPDATE t_cached_dataset_links
+        UPDATE t_cached_dataset_links DL
         SET update_required = 1
         FROM t_cached_dataset_folder_paths DFP
         WHERE DFP.dataset_id = DL.dataset_id AND
@@ -185,7 +191,7 @@ BEGIN
                                 NOT J.results_folder_name IS NULL
                         ) OrderQ
                  ) RankQ
-            WHERE JobRank = 1
+            WHERE JobRank = 1;
             --
             GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
@@ -225,7 +231,7 @@ BEGIN
         WHILE true
         LOOP
             ------------------------------------------------
-            -- Make sure that entries with UpdateRequired > 0 have an up-to-date MASIC_Directory_Name
+            -- Make sure that entries with update_required > 0 have an up-to-date MASIC_Directory_Name
             -- This is a bulk update query, which can take some time to run, though if _processingMode is 3, datasets are processed in baches
             -- It should be kept in sync with the above query that includes Row_Number()
             ------------------------------------------------
@@ -246,18 +252,18 @@ BEGIN
                                                WHEN J.job_state_id = 4 THEN 1
                                                WHEN J.job_state_id = 14 THEN 2
                                                ELSE 3
-                                           END LOOP; AS JobStateRank
+                                           END AS JobStateRank
                                     FROM t_analysis_job J
                                          INNER JOIN t_analysis_tool T
                                            ON J.analysis_tool_id = T.analysis_tool_id
-                                    WHERE T.analysis_tool LIKE 'MASIC%' AND
-                                          NOT J.results_folder_name IS NULL AND
-                                          J.dataset_id BETWEEN _datasetIdStart AND _datasetIdEnd
+                                    WHERE J.dataset_id BETWEEN _datasetIdStart AND _datasetIdEnd AND
+                                          T.analysis_tool LIKE 'MASIC%' AND
+                                          NOT J.results_folder_name IS NULL
                                   ) OrderQ
-                            ) RankQ
+                           ) RankQ
                       WHERE JobRank = 1
                    ) JobDirectoryQ
-            WHERE (Target.UpdateRequired > 0 OR _processingMode >= 3) AND
+            WHERE (Target.update_required > 0 OR _processingMode >= 3) AND
                   Target.dataset_id = JobDirectoryQ.DatasetID AND
                   Coalesce(Target.MASIC_Directory_Name, '') <> JobDirectoryQ.MasicDirectoryName;
             --
@@ -271,7 +277,7 @@ BEGIN
             End If;
 
             _datasetIdStart := _datasetIdStart + _datasetBatchSize;
-            _datasetIdEnd := _datasetIdEnd + _datasetBatchSize;
+            _datasetIdEnd   := _datasetIdEnd + _datasetBatchSize;
 
             If _datasetIdStart > _datasetIdMax Then
                 -- Break out of the while loop
@@ -287,12 +293,12 @@ BEGIN
         End If;
 
         ------------------------------------------------
-        -- Update entries with UpdateRequired > 0
+        -- Update entries with update_required > 0
         -- Note that this query runs 2x faster than the merge statement below
         -- If you update this query, be sure to update the merge statement
         ------------------------------------------------
 
-        UPDATE t_cached_dataset_links
+        UPDATE t_cached_dataset_links Target
         SET dataset_row_version = DFP.dataset_row_version,
             storage_path_row_version = DFP.storage_path_row_version,
             dataset_folder_path = CASE
@@ -302,33 +308,31 @@ BEGIN
                         ELSE DFP.Dataset_Folder_Path
                      END
                 END,
-            Archive_Folder_Path = CASE
+            archive_folder_path = CASE
                 WHEN DA.myemsl_state > 0 And DS.Created >= make_date(2013, 9, 17) THEN ''
                 ELSE DFP.Archive_Folder_Path
                 END,
-            MyEMSL_URL = format('https://metadata.my.emsl.pnl.gov/fileinfo/files_for_keyvalue/omics.dms.dataset_id/%s', DS.Dataset_ID),
-            QC_Link = CASE
+            myemsl_url = format('https://metadata.my.emsl.pnl.gov/fileinfo/files_for_keyvalue/omics.dms.dataset_id/%s', DS.Dataset_ID),
+            qc_link = CASE
                 WHEN DA.QC_Data_Purged > 0 THEN ''
                 ELSE format('%sQC/index.html', DFP.Dataset_URL)
                 END,
-            QC_2D = CASE
+            qc_2d = CASE
                 WHEN DA.QC_Data_Purged > 0 THEN ''
                 ELSE format('%s%s/', DFP.Dataset_URL, J.Results_Folder_Name)
                 END,
-            QC_Metric_Stats = CASE
+            qc_metric_stats = CASE
                 WHEN Experiment SIMILAR TO 'QC[_]Shew%' THEN
-                       format('http://prismsupport.pnl.gov/smaqc/index.php/smaqc/metric/P_2C/inst/%s/filterDS/QC_Shew', Inst.instrument)
+                       format('https://prismsupport.pnl.gov/smaqc/smaqc/metric/P_2C/inst/%s/filterDS/QC_Shew', Inst.instrument)
                 WHEN Experiment SIMILAR TO 'QC[_]Mam%'  THEN
-                       format('http://prismsupport.pnl.gov/smaqc/index.php/smaqc/metric/P_2C/inst/%s/filterDS/QC_Mam', Inst.instrument)
+                       format('https://prismsupport.pnl.gov/smaqc/smaqc/metric/P_2C/inst/%s/filterDS/QC_Mam', Inst.instrument)
                 WHEN Experiment SIMILAR TO 'TEDDY[_]DISCOVERY%' THEN
-                       format('http://prismsupport.pnl.gov/smaqc/index.php/smaqc/qcart/inst/%s/filterDS/TEDDY_DISCOVERY', Inst.instrument)
-                ELSE   format('http://prismsupport.pnl.gov/smaqc/index.php/smaqc/metric/MS2_Count/inst/%s/filterDS/%s', Inst.instrument, SUBSTRING(DS.Dataset, 1, 4))
+                       format('https://prismsupport.pnl.gov/smaqc/smaqc/metric/qcart/inst/%s/filterDS/TEDDY_DISCOVERY', Inst.instrument)
+                ELSE   format('https://prismsupport.pnl.gov/smaqc/smaqc/metric/MS2_Count/inst/%s/filterDS/%s', Inst.instrument, SUBSTRING(DS.Dataset, 1, 4))
                 END,
             update_required = 0,
             last_affected = CURRENT_TIMESTAMP
         FROM t_dataset DS
-             INNER JOIN t_cached_dataset_links DL
-               ON DL.dataset_id = DS.dataset_id
              INNER JOIN t_cached_dataset_folder_paths DFP
                ON DFP.dataset_id = DS.dataset_id
              INNER JOIN t_experiments E
@@ -341,7 +345,8 @@ BEGIN
                              INNER JOIN t_archive_path AP
                                ON DA.storage_path_id = AP.archive_path_id
                ON DS.dataset_id = DA.dataset_id
-        WHERE DL.update_required = 1
+        WHERE Target.update_required = 1 AND
+              Target.dataset_id = DS.dataset_id;
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -404,12 +409,12 @@ BEGIN
                            END AS QC_2D,
                            CASE
                                 WHEN Experiment SIMILAR TO 'QC[_]Shew%' THEN
-                                     format('http://prismsupport.pnl.gov/smaqc/index.php/smaqc/metric/P_2C/inst/%s/filterDS/QC_Shew', Inst.instrument)
-                                WHEN Experiment SIMILAR TO 'QC[_]Mam%' THEN
-                                     format('http://prismsupport.pnl.gov/smaqc/index.php/smaqc/metric/P_2C/inst/%s/filterDS/QC_Mam', Inst.instrument)
+                                       format('https://prismsupport.pnl.gov/smaqc/smaqc/metric/P_2C/inst/%s/filterDS/QC_Shew', Inst.instrument)
+                                WHEN Experiment SIMILAR TO 'QC[_]Mam%'  THEN
+                                       format('https://prismsupport.pnl.gov/smaqc/smaqc/metric/P_2C/inst/%s/filterDS/QC_Mam', Inst.instrument)
                                 WHEN Experiment SIMILAR TO 'TEDDY[_]DISCOVERY%' THEN
-                                     format('http://prismsupport.pnl.gov/smaqc/index.php/smaqc/qcart/inst/%s/filterDS/TEDDY_DISCOVERY', Inst.instrument)
-                                ELSE format('http://prismsupport.pnl.gov/smaqc/index.php/smaqc/metric/MS2_Count/inst/%s/filterDS/%s', Inst.instrument, SUBSTRING(DS.Dataset, 1, 4))
+                                       format('https://prismsupport.pnl.gov/smaqc/smaqc/metric/qcart/inst/%s/filterDS/TEDDY_DISCOVERY', Inst.instrument)
+                                ELSE   format('https://prismsupport.pnl.gov/smaqc/smaqc/metric/MS2_Count/inst/%s/filterDS/%s', Inst.instrument, SUBSTRING(DS.Dataset, 1, 4))
                            END AS QC_Metric_Stats
                     FROM t_dataset DS
                         INNER JOIN t_cached_dataset_links DL
@@ -461,7 +466,7 @@ BEGIN
             End If;
 
             _datasetIdStart := _datasetIdStart + _datasetBatchSize;
-            _datasetIdEnd := _datasetIdEnd + _datasetBatchSize;
+            _datasetIdEnd   := _datasetIdEnd + _datasetBatchSize;
 
             If _datasetIdStart > _datasetIdMax Then
                 -- Break out of the while loop
@@ -478,7 +483,20 @@ BEGIN
         -- CALL post_log_entry ('Debug', _message, 'Update_Cached_Dataset_Links');
     End If;
 
+    _runtimeSeconds := Round(extract(epoch FROM (clock_timestamp() - _startTime)), 3);
+
+    If _showDebug Or _runtimeSeconds > 5 Then
+        RAISE INFO 'Processing time: % seconds', _runtimeSeconds;
+    End If;
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_cached_dataset_links IS 'UpdateCachedDatasetLinks';
+
+ALTER PROCEDURE public.update_cached_dataset_links(IN _processingmode integer, IN _showdebug boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_cached_dataset_links(IN _processingmode integer, IN _showdebug boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_cached_dataset_links(IN _processingmode integer, IN _showdebug boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateCachedDatasetLinks';
+
