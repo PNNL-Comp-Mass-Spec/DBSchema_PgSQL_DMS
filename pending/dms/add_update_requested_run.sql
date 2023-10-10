@@ -201,6 +201,7 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode := '';
+
     _resolvedInstrumentInfo := '';
 
     _separationGroup := _secSep;
@@ -844,7 +845,7 @@ BEGIN
                 _instrumentGroup,
                 _datasetTypeID,
                 _instrumentSettings,
-                _defaultPriority, -- priority
+                _defaultPriority,
                 _experimentID,
                 _workPackage,
                 _wellplateName,
