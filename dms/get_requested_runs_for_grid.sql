@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.get_requested_runs_for_grid(IN _itemlist text
 /****************************************************
 **
 **  Desc:
-**      Returns the info for the requested run IDs in itemList
+**      Returns the info for the requested run IDs in _itemList
 **
 **  Arguments:
 **    _itemList          Comma-separated list of requested run IDs
@@ -29,6 +29,8 @@ CREATE OR REPLACE PROCEDURE public.get_requested_runs_for_grid(IN _itemlist text
 **  Auth:   mem
 **  Date:   10/25/2022 mem - Initial version
 **          03/28/2023 mem - Use new function name
+**          10/10/2023 mem - Rename column instrument to instrument_group
+**                         - Rename column separation_type to separation_group
 **
 *****************************************************/
 DECLARE
@@ -53,8 +55,8 @@ BEGIN
             name,
             status,
             batchID,
-            instrument,
-            separation_Type,
+            instrument_group,
+            separation_group,
             experiment,
             cart,
             "column",

@@ -2,13 +2,13 @@
 -- Name: get_requested_run_table_for_grid(text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_requested_run_table_for_grid(_itemlist text) RETURNS TABLE(request integer, name public.citext, status public.citext, batchid integer, instrument public.citext, separation_type public.citext, experiment public.citext, cart public.citext, "column" smallint, block integer, run_order integer)
+CREATE OR REPLACE FUNCTION public.get_requested_run_table_for_grid(_itemlist text) RETURNS TABLE(request integer, name public.citext, status public.citext, batchid integer, instrument_group public.citext, separation_group public.citext, experiment public.citext, cart public.citext, "column" smallint, block integer, run_order integer)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
 **  Desc:
-**      Returns the info for the requested run IDs in itemList
+**      Returns the info for the requested run IDs in _itemList
 **
 **  Auth:   grk
 **  Date:   01/13/2013
@@ -17,6 +17,8 @@ CREATE OR REPLACE FUNCTION public.get_requested_run_table_for_grid(_itemlist tex
 **          10/19/2020 mem - Rename the instrument group column to RDS_instrument_group
 **          10/25/2022 mem - Ported to PostgreSQL
 **          03/28/2023 mem - Update table aliases
+**          10/10/2023 mem - Rename column Instrument to Instrument_Group
+**                         - Rename column Separation_Type to Separation_Group
 **
 *****************************************************/
 BEGIN
@@ -25,8 +27,8 @@ BEGIN
            RR.request_name AS Name,
            RR.state_name AS Status,
            RR.batch_id AS BatchID,
-           RR.instrument_group AS Instrument,
-           RR.separation_group AS Separation_Type,
+           RR.instrument_group AS Instrument_Group,
+           RR.separation_group AS Separation_Group,
            E.experiment AS Experiment,
            LCCart.cart_name AS Cart,
            RR.cart_column AS "Column",
