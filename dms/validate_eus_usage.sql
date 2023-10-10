@@ -54,6 +54,7 @@ CREATE OR REPLACE PROCEDURE public.validate_eus_usage(INOUT _eususagetype text, 
 **                         - Use Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          06/15/2023 mem - Add support for usage type 'RESOURCE_OWNER'
 **          10/02/2023 mem - Ported to PostgreSQL
+**          10/09/2023 mem - Use a backslash when looking for parentheses using SIMILAR TO
 **
 *****************************************************/
 DECLARE
@@ -72,6 +73,7 @@ DECLARE
     _validateEUSData boolean;
     _eusUsageTypeCampaign text;
     _msg text;
+    _eusUserIDList text;
 
     _createdProposalStackTable boolean := false;
     _createdUsersTable         boolean := false;
@@ -435,16 +437,31 @@ BEGIN
 
         If _eusUsersList <> '' Then
 
-            If _eusUsersList SIMILAR TO '%[A-Z]%' And _eusUsersList SIMILAR TO '%([0-9]%' And _eusUsersList SIMILAR TO '%[0-9])%' Then
+            If _eusUsersList SIMILAR TO '%[A-Z]%' And _eusUsersList SIMILAR TO '%\([0-9]%' And _eusUsersList SIMILAR TO '%[0-9]\)%' Then
                 If _infoOnly Then
-                    RAISE INFO 'Parsing %', _eusUsersList;
+                    RAISE INFO 'Parsing:   %', _eusUsersList;
                 End If;
 
                 -- _eusUsersList has entries of the form 'Baker, Erin (41136)'
                 -- Parse _eusUsersList to look for the integers, then re-generate the comma-separated list
 
                 SELECT string_agg(UserID[1]::text, ', ' ORDER BY UserID[1])
+                INTO _eusUserIDList
                 FROM ( SELECT regexp_matches(_eusUsersList, '[0-9]+', 'g') AS UserID) MatchQ;
+
+                If Coalesce(_eusUserIDList, '') = '' Then
+                    _message := format('Unable to convert "person (ID)" entries to integers; integers not found in "%s"', _eusUsersList);
+
+                    _returnCode := 'U5376';
+
+                    If _createdProposalStackTable Then
+                        DROP TABLE Tmp_Proposal_Stack;
+                    End If;
+
+                    RETURN;
+                End If;
+
+                _eusUsersList := _eusUserIDList;
 
                 /*
                 -- Alternatively, could iterate character-by-character:
@@ -511,7 +528,7 @@ BEGIN
                     _message := format('%s EMSL User IDs are not numeric', _invalidCount);
                 End If;
 
-                _returnCode := 'U5376';
+                _returnCode := 'U5377';
 
                 If _createdProposalStackTable Then
                     DROP TABLE Tmp_Proposal_Stack;
@@ -544,7 +561,7 @@ BEGIN
                         _message := format('%s users are not associated with the specified proposal', _invalidCount);
                     End If;
 
-                    _returnCode := 'U5377';
+                    _returnCode := 'U5378';
 
                     If _createdProposalStackTable Then
                         DROP TABLE Tmp_Proposal_Stack;
