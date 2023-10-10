@@ -1,43 +1,37 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_requested_run_fractions
-(
-    _sourceRequestID int,
-    _separationGroup text = 'LC-Formic_2hr',
-    _requesterUsername text,
-    _instrumentSettings text = 'na',
-    _stagingLocation text = null,
-    _wellplateName text = '',
-    _wellNumber text = '',
-    _vialingConc text = null,
-    _vialingVol text = null,
-    _comment text = 'na',
-    _workPackage text,
-    _eusUsageType text,
-    _eusProposalID text = 'na',
-    _eusUserID text = '',
-    _mrmAttachment text,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _autoPopulateUserListIfBlank boolean = false,
-    _callingUser text = '',
-    _logDebugMessages boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_requested_run_fractions(integer, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, boolean, text, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_requested_run_fractions(IN _sourcerequestid integer, IN _separationgroup text DEFAULT 'LC-Formic_2hr'::text, IN _requesterusername text DEFAULT ''::text, IN _instrumentsettings text DEFAULT 'na'::text, IN _staginglocation text DEFAULT NULL::text, IN _wellplatename text DEFAULT ''::text, IN _wellnumber text DEFAULT ''::text, IN _vialingconc text DEFAULT NULL::text, IN _vialingvol text DEFAULT NULL::text, IN _comment text DEFAULT 'na'::text, IN _workpackage text DEFAULT ''::text, IN _eususagetype text DEFAULT ''::text, IN _eusproposalid text DEFAULT 'na'::text, IN _eususerid text DEFAULT ''::text, IN _mrmattachment text DEFAULT ''::text, IN _mode text DEFAULT 'add'::text, IN _autopopulateuserlistifblank boolean DEFAULT false, IN _callinguser text DEFAULT ''::text, IN _logdebugmessages boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Adds requested runs based on a parent requested run that has separation group LC-NanoHpH-6, LC-NanoSCX-6, or similar
 **
 **  Arguments:
-**    _requesterUsername             Supports either just the username, or 'LastName, FirstName (Username)'
-**    _wellplateName                 If (lookup), will look for a wellplate defined in T_Experiments
-**    _wellNumber                    If (lookup), will look for a well number defined in T_Experiments
-**    _workPackage                   Work package; could also contain '(lookup)'.  May contain 'none' for automatically created requested runs (and those will have _autoPopulateUserListIfBlank = true)
-**    _eusUserID                     EUS User ID (integer); also supports the form "Baker, Erin (41136)"
-**    _mode                          'add' or 'preview'
-**    _autoPopulateUserListIfBlank   When true, will auto-populate _eusUserID if it is empty and _eusUsageType is 'USER', 'USER_ONSITE', or 'USER_REMOTE'
+**    _sourceRequestID              Source requested run ID
+**    _separationGroup              Separation group of the fractionated requested runs that will be created
+**    _requesterUsername            Requester username
+**    _instrumentSettings           Instrument settings
+**    _stagingLocation              Staging location
+**    _wellplateName                Wellplate name; if '(lookup)', will look for a wellplate defined in T_Experiments
+**    _wellNumber                   Well number;    if '(lookup)', will look for a well number defined in T_Experiments
+**    _vialingConc                  Vialing concentration
+**    _vialingVol                   Vialing volume
+**    _comment                      Comment
+**    _workPackage                  Work package; could also contain '(lookup)'. May contain 'none' for automatically created requested runs (and those will have _autoPopulateUserListIfBlank = true)
+**    _eusUsageType                 EUS usage type;  if '(lookup)', override with the EUS info from the sample prep request (if found)
+**    _eusProposalID                EUS proposal ID; if '(lookup)', override with the EUS info from the sample prep request (if found)
+**    _eusUserID                    EUS User ID (integer); also supports the form "Baker, Erin (41136)"; can also be '(lookup)'; does not support 'Baker, Erin'
+**    _mrmAttachment                MRM transition list file attachment
+**    _mode                         Mode: 'add' or 'preview'
+**    _autoPopulateUserListIfBlank  When true, auto-populate _eusUserID if it is empty and _eusUsageType is 'USER', 'USER_ONSITE', or 'USER_REMOTE'
+**    _callingUser                  Calling user
+**    _logDebugMessages             When true, log debug messages
+**    _message                      Status message
+**    _returnCode                   Return code
 **
 **  Auth:   mem
 **  Date:   10/22/2020 mem - Initial Version
@@ -59,7 +53,7 @@ AS $$
 **          05/23/2022 mem - Rename requester username argument and update username warning
 **          10/13/2022 mem - Fix bug calling Lookup_EUS_From_Experiment_Sample_Prep
 **          02/10/2023 mem - Call update_cached_requested_run_batch_stats
-**          12/15/2023 mem - Ported to PostgreSQL
+**          10/09/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -70,7 +64,7 @@ DECLARE
 
     _msg text;
     _instrumentMatch text;
-    _defaultPriority int := 0;
+    _defaultPriority int;
     _debugMsg text;
     _logErrors boolean := false;
     _raiseErrorOnMultipleEUSUsers boolean := true;
@@ -84,7 +78,7 @@ DECLARE
     _sourceSeparationGroup text;
     _sourceStatus text;
     _sourceCreated timestamp;
-    _status text := 'Active';
+    _status text;
     _experimentName text;
     _fractionCount int := 0;
     _targetGroupFractionCount int := 0;
@@ -120,6 +114,7 @@ BEGIN
     _returnCode := '';
 
     -- Default priority at which new requests will be created
+    _defaultPriority := 0;
 
     _logDebugMessages := Coalesce(_logDebugMessages, false);
 
@@ -200,7 +195,7 @@ BEGIN
             Fraction_Number int NOT NULL,
             Request_Name text NOT NULL,
             Request_ID int NULL
-        )
+        );
 
         ---------------------------------------------------
         -- Lookup information from the source requested run
@@ -208,7 +203,7 @@ BEGIN
 
         SELECT RR.request_name,
                RR.instrument_group,
-               t_dataset_rating_name.Dataset_Type,
+               DTN.Dataset_Type,
                RR.exp_id,
                RR.separation_group,
                RR.state_name,
@@ -222,9 +217,10 @@ BEGIN
              _sourceStatus,
              _sourceRequestBatchID,
              _sourceCreated
-        FROM t_requested_run RR INNER JOIN t_dataset_type_name
-               ON RR.request_type_id = t_dataset_type_name.dataset_type_id
-        WHERE RR.request_id = _sourceRequestID
+        FROM t_requested_run RR
+             INNER JOIN t_dataset_type_name DTN
+               ON RR.request_type_id = DTN.dataset_type_id
+        WHERE RR.request_id = _sourceRequestID;
 
         If Not FOUND Then
             RAISE EXCEPTION 'Source request ID not found: %', _sourceRequestID;
@@ -243,7 +239,7 @@ BEGIN
         If _sourceStatus <> 'Active' Then
             _requestName := format('%s_f01%%', _sourceRequestName);
 
-            If Exists (SELECT request_id FROM t_requested_run WHERE request_name LIKE _requestName) Then
+            If Exists (SELECT request_id FROM t_requested_run WHERE request_name ILIKE _requestName) Then
                 RAISE EXCEPTION 'Fraction-based requested runs have already been created for this requested run; nothing to do';
             Else
                 RAISE EXCEPTION 'Source requested run is not active; cannot continue';
@@ -269,10 +265,12 @@ BEGIN
         -- Lookup StatusID
         ---------------------------------------------------
 
+        _status := 'Active';
+
         SELECT state_id
         INTO _statusID
         FROM t_requested_run_state_name
-        WHERE state_name = _status;
+        WHERE state_name = _status::citext;
 
         ---------------------------------------------------
         -- Validate that the experiment exists
@@ -317,11 +315,11 @@ BEGIN
             -- Could not find entry in database for _requesterUsername
             -- Try to auto-resolve the name
 
-            CALL auto_resolve_name_to_username (
-                    _requesterUsername,
-                    _matchCount => _matchCount,         -- Output
-                    _matchingUsername => _newUsername,  -- Output
-                    _matchingUserID => _userID);        -- Output
+            CALL public.auto_resolve_name_to_username (
+                            _requesterUsername,
+                            _matchCount       => _matchCount,   -- Output
+                            _matchingUsername => _newUsername,  -- Output
+                            _matchingUserID   => _userID);      -- Output
 
             If _matchCount = 1 Then
                 -- Single match found; update _requesterUsername
@@ -338,7 +336,7 @@ BEGIN
         SELECT target_instrument_group
         INTO _targetInstrumentGroup
         FROM t_instrument_group
-        WHERE instrument_group = _instrumentGroup
+        WHERE instrument_group = _instrumentGroup::citext;
 
         If Not FOUND Then
             RAISE EXCEPTION 'Could not find entry in database for instrument group "%"', _instrumentGroup;
@@ -349,7 +347,7 @@ BEGIN
             SELECT instrument_group
             INTO _fractionBasedInstrumentGroup
             FROM t_instrument_group
-            WHERE target_instrument_group = _instrumentGroup
+            WHERE target_instrument_group = _instrumentGroup::citext;
 
             If FOUND Then
                 _instrumentGroup := _fractionBasedInstrumentGroup;
@@ -357,7 +355,7 @@ BEGIN
                 SELECT target_instrument_group
                 INTO _targetInstrumentGroup
                 FROM t_instrument_group
-                WHERE instrument_group = _instrumentGroup
+                WHERE instrument_group = _instrumentGroup::citext;
             End If;
         End If;
 
@@ -370,16 +368,16 @@ BEGIN
         ---------------------------------------------------
 
         If _logDebugMessages Then
-            _debugMsg := format('Validate_Instrument_Group_and_Dataset_Type for %s', _msType);
+            _debugMsg := format('Call validate_instrument_group_and_dataset_type for %s', _msType);
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
         End If;
 
-        CALL validate_instrument_group_and_dataset_type (
-                        _datasetType => _msType,
+        CALL public.validate_instrument_group_and_dataset_type (
+                        _datasetType     => _msType,
                         _instrumentGroup => _targetInstrumentGroup,     -- Output
-                        _datasetTypeID => _datasetTypeID output,        -- Output
-                        _message => _msg,                               -- Output
-                        _returnCode => _returnCode);                    -- Output
+                        _datasetTypeID   => _datasetTypeID,             -- Output
+                        _message         => _msg,                       -- Output
+                        _returnCode      => _returnCode);               -- Output
 
         If _returnCode <> '' Then
             RAISE EXCEPTION 'Validate_Instrument_Group_and_Dataset_Type: %', _msg;
@@ -397,7 +395,7 @@ BEGIN
         SELECT fraction_count
         INTO _fractionCount
         FROM t_separation_group
-        WHERE separation_group = _sourceSeparationGroup
+        WHERE separation_group = _sourceSeparationGroup::citext;
 
         If Not FOUND Then
             RAISE EXCEPTION 'Separation group of the source request not found: %', _sourceSeparationGroup;
@@ -415,7 +413,7 @@ BEGIN
         SELECT fraction_count
         INTO _targetGroupFractionCount
         FROM t_separation_group
-        WHERE separation_group = _separationGroup
+        WHERE separation_group = _separationGroup::citext;
 
         If Not FOUND Then
             RAISE EXCEPTION 'Separation group not found: %', _separationGroup;
@@ -433,7 +431,7 @@ BEGIN
             SELECT attachment_id
             INTO _mrmAttachmentID
             FROM t_attachments
-            WHERE attachment_name = _mrmAttachment
+            WHERE attachment_name = _mrmAttachment::citext;
         End If;
 
         ---------------------------------------------------
@@ -442,17 +440,17 @@ BEGIN
         ---------------------------------------------------
 
         If _logDebugMessages Then
-            _debugMsg := format('Lookup EUS info for: %s', _experimentName);
+            _debugMsg := format('Lookup EUS info for experiment %s', _experimentName);
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
         End If;
 
-        CALL lookup_eus_from_experiment_sample_prep (
+        CALL public.lookup_eus_from_experiment_sample_prep (
                             _experimentName,
-                            _eusUsageType => _eusUsageType,     -- Input/output
+                            _eusUsageType  => _eusUsageType,    -- Input/output
                             _eusProposalID => _eusProposalID,   -- Input/output
-                            _eusUsersList => _eusUserID,        -- Input/output
-                            _message => _msg,                   -- Output
-                            _returnCode => _returnCode);        -- Output
+                            _eusUsersList  => _eusUserID,       -- Input/output
+                            _message       => _msg,             -- Output
+                            _returnCode    => _returnCode);     -- Output
 
         If _returnCode <> '' Then
             RAISE EXCEPTION 'Lookup_EUS_From_Experiment_Sample_Prep: %', _msg;
@@ -486,19 +484,19 @@ BEGIN
             _addingItem := true;
         End If;
 
-        CALL validate_eus_usage (
-                        _eusUsageType   => _eusUsageType,       -- Input/Output
-                        _eusProposalID  => _eusProposalID,      -- Input/Output
-                        _eusUsersList   => _eusUserID,          -- Input/Output
-                        _eusUsageTypeID => _eusUsageTypeID,     -- Output
+        CALL public.validate_eus_usage (
+                        _eusUsageType      => _eusUsageType,       -- Input/Output
+                        _eusProposalID     => _eusProposalID,      -- Input/Output
+                        _eusUsersList      => _eusUserID,          -- Input/Output
+                        _eusUsageTypeID    => _eusUsageTypeID,     -- Output
                         _autoPopulateUserListIfBlank => _autoPopulateUserListIfBlank,
                         _samplePrepRequest => false,
-                        _experimentID => _experimentID,
-                        _campaignID => 0,
-                        _addingItem => _addingItem,
-                        _infoOnly => false,
-                        _message => _msg,                       -- Output
-                        _returnCode => _returnCode              -- Output
+                        _experimentID      => _experimentID,
+                        _campaignID        => 0,
+                        _addingItem        => _addingItem,
+                        _infoOnly          => false,
+                        _message           => _msg,                 -- Output
+                        _returnCode        => _returnCode           -- Output
                     );
 
         If _returnCode <> '' Then
@@ -535,8 +533,8 @@ BEGIN
         CALL public.lookup_wp_from_experiment_sample_prep(
                             _experimentName,
                             _workPackage => _workPackage,   -- Input/Output
-                            _message => _msg,               -- Output
-                            _returnCode => _returnCode);    -- Output
+                            _message     => _msg,           -- Output
+                            _returnCode  => _returnCode);   -- Output
 
         If _returnCode <> '' Then
             RAISE EXCEPTION 'lookup_wp_from_experiment_sample_prep: %', _msg;
@@ -550,7 +548,7 @@ BEGIN
             SELECT location_id
             INTO _locationID
             FROM t_material_locations
-            WHERE location = _stagingLocation;
+            WHERE location = _stagingLocation::citext;
 
             If Not FOUND Then
                 RAISE EXCEPTION 'Staging location not recognized';
@@ -579,10 +577,11 @@ BEGIN
             _allowNoneWP := true;
         End If;
 
-        CALL public.validate_wp ( _workPackage,
-                           _allowNoneWP,
-                           _message => _msg,
-                           _returnCode => _returnCode);
+        CALL public.validate_wp (
+                        _workPackage,
+                        _allowNoneWP,
+                        _message    => _msg,            -- Output
+                        _returnCode => _returnCode);    -- Output
 
         If _returnCode <> '' Then
             RAISE EXCEPTION 'validate_wp: %', _msg;
@@ -594,12 +593,12 @@ BEGIN
         SELECT charge_code
         INTO _workPackage
         FROM t_charge_code
-        WHERE charge_code = _workPackage
+        WHERE charge_code = _workPackage::citext;
 
         If Not _autoPopulateUserListIfBlank Then
-            If Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackage And deactivated = 'Y') Then
+            If Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackage::citext And deactivated = 'Y') Then
                 _message := public.append_to_text(_message, format('Warning: Work Package %s is deactivated', _workPackage));
-            ElsIf Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackage And charge_code_state = 0) Then
+            ElsIf Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackage::citext And charge_code_state = 0) Then
                 _message := public.append_to_text(_message, format('Warning: Work Package %s is likely deactivated', _workPackage));
             End If;
         End If;
@@ -610,14 +609,10 @@ BEGIN
         End If;
 
         If _logDebugMessages Then
-            _debugMsg := 'Start a new transaction';
-            CALL post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
-        End If;
-
-        If _logDebugMessages Then
             _debugMsg := 'Check for name conflicts';
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Requested_Run_Fractions');
         End If;
+
         ---------------------------------------------------
         -- Make sure none of the new requested runs will conflict with an existing requested run
         ---------------------------------------------------
@@ -634,7 +629,7 @@ BEGIN
             SELECT request_id
             INTO _requestID
             FROM t_requested_run
-            WHERE request_name = _requestName;
+            WHERE request_name = _requestName::citext;
 
             If FOUND Then
                 RAISE EXCEPTION 'Name conflict: a requested run named % already exists, ID %', _requestName, _requestID;
@@ -669,7 +664,7 @@ BEGIN
             LIMIT 1;
 
             _msg := format('Would create %s requested runs named %s ... %s with instrument group %s and separation group %s',
-                            _fractionCount, _firstRequest, _lastRequest, _targetInstrumentGroup, _separationGroup);
+                           _fractionCount, _firstRequest, _lastRequest, _targetInstrumentGroup, _separationGroup);
 
             _message := public.append_to_text(_msg, _message);
         End If;
@@ -689,7 +684,7 @@ BEGIN
                 -- Fix the instrument group name in the source requested run
                 UPDATE t_requested_run
                 SET instrument_group = _fractionBasedInstrumentGroup
-                WHERE request_id = _sourceRequestID
+                WHERE request_id = _sourceRequestID;
             End If;
 
             _fractionNumber := 1;
@@ -699,7 +694,7 @@ BEGIN
                 SELECT Request_Name
                 INTO _requestName
                 FROM Tmp_NewRequests
-                WHERE Fraction_Number = _fractionNumber
+                WHERE Fraction_Number = _fractionNumber;
 
                 INSERT INTO t_requested_run
                 (
@@ -740,7 +735,7 @@ BEGIN
                     _sourceRequestBatchID,
                     _wellplateName,
                     _wellNumber,
-                    'none',
+                    'none',             -- Requested run internal standard
                     _eusProposalID,
                     _eusUsageTypeID,
                     _separationGroup,
@@ -756,7 +751,7 @@ BEGIN
 
                 UPDATE Tmp_NewRequests
                 SET Request_ID = _requestID
-                WHERE Request_Name = _requestName;
+                WHERE Request_Name = _requestName::citext;
 
                 -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
                 If char_length(_callingUser) > 0 Then
@@ -770,10 +765,10 @@ BEGIN
 
                 -- Assign users to the request
                 --
-                CALL assign_eus_users_to_requested_run (
+                CALL public.assign_eus_users_to_requested_run (
                                         _requestID,
                                         _eusUserID,                     -- Integer, stored as text
-                                        _message => _msg,               -- Output
+                                        _message    => _msg,            -- Output
                                         _returnCode => _returnCode);    -- Output
 
                 If _returnCode <> '' Then
@@ -796,7 +791,7 @@ BEGIN
 
             UPDATE t_requested_run
             SET state_name = 'Completed'
-            WHERE request_id = _sourceRequestID
+            WHERE request_id = _sourceRequestID;
 
             If _logDebugMessages Then
                 _debugMsg := 'Fractions created';
@@ -815,7 +810,7 @@ BEGIN
             LOOP
                 CALL public.update_cached_requested_run_eus_users (
                                 _requestID,
-                                _message => _message,           -- Output
+                                _message    => _message,        -- Output
                                 _returnCode => _returnCode);    -- Output
 
             END LOOP;
@@ -827,8 +822,9 @@ BEGIN
             If _sourceRequestBatchID > 0 Then
                 CALL public.update_cached_requested_run_batch_stats (
                                 _sourceRequestBatchID,
-                                _message => _msg,               -- Output
-                                _returnCode => _returnCode);    -- Output
+                                _fullrefresh => false,
+                                _message     => _msg,            -- Output
+                                _returnCode  => _returnCode);    -- Output
 
                 If _returnCode <> '' Then
                     _message := public.append_to_text(_message, _msg);
@@ -869,4 +865,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_requested_run_fractions IS 'AddRequestedRunFractions';
+
+ALTER PROCEDURE public.add_requested_run_fractions(IN _sourcerequestid integer, IN _separationgroup text, IN _requesterusername text, IN _instrumentsettings text, IN _staginglocation text, IN _wellplatename text, IN _wellnumber text, IN _vialingconc text, IN _vialingvol text, IN _comment text, IN _workpackage text, IN _eususagetype text, IN _eusproposalid text, IN _eususerid text, IN _mrmattachment text, IN _mode text, IN _autopopulateuserlistifblank boolean, IN _callinguser text, IN _logdebugmessages boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_requested_run_fractions(IN _sourcerequestid integer, IN _separationgroup text, IN _requesterusername text, IN _instrumentsettings text, IN _staginglocation text, IN _wellplatename text, IN _wellnumber text, IN _vialingconc text, IN _vialingvol text, IN _comment text, IN _workpackage text, IN _eususagetype text, IN _eusproposalid text, IN _eususerid text, IN _mrmattachment text, IN _mode text, IN _autopopulateuserlistifblank boolean, IN _callinguser text, IN _logdebugmessages boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_requested_run_fractions(IN _sourcerequestid integer, IN _separationgroup text, IN _requesterusername text, IN _instrumentsettings text, IN _staginglocation text, IN _wellplatename text, IN _wellnumber text, IN _vialingconc text, IN _vialingvol text, IN _comment text, IN _workpackage text, IN _eususagetype text, IN _eusproposalid text, IN _eususerid text, IN _mrmattachment text, IN _mode text, IN _autopopulateuserlistifblank boolean, IN _callinguser text, IN _logdebugmessages boolean, INOUT _message text, INOUT _returncode text) IS 'AddRequestedRunFractions';
+
