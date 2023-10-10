@@ -19,9 +19,6 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run
     _eusUsageType text,
     _eusUsersList text = '',
     _mode text = 'add',
-    INOUT _request int,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
     _secSep text = 'LC-Formic_100min',
     _mrmAttachment text,
     _status text = 'Active',
@@ -33,28 +30,65 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run
     _stagingLocation text = null,
     _requestIDForUpdate int = null,
     _logDebugMessages boolean = false,
-    INOUT _resolvedInstrumentInfo text = ''
+    INOUT _request int,
+    INOUT _resolvedInstrumentInfo text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds a new entry to the requested run table
+**      Adds or updates a requsted run in t_requested_run
 **
 **  Arguments:
-**    _instrumentGroup               Instrument group; could also contain '(lookup)'
-**    _workPackage                   Work package; could also contain '(lookup)'.  May contain 'none' for automatically created requested runs (and those will have _autoPopulateUserListIfBlank = true)
-**    _batch                         When updating an existing requested run, if this is null or 0, the requested run will be removed from the batch
-**    _block                         When updating an existing requested run, if this is null, Block will be set to 0
-**    _runOrder                      When updating an existing requested run, if this is null, Run_Order will be set to 0
-**    _eusUsersList                  EUS User ID (integer); also supports the form 'Baker, Erin (41136)'. Prior to February 2020, supported a comma-separated list of EUS user IDs
-**    _mode                          'add', 'check_add', 'update', 'check_update', or 'add-auto'
-**    _secSep                        Separation group
-**    _status                        'Active', 'Inactive', 'Completed'
-**    _skipTransactionRollback       This is set to true when procedure add_update_dateset calls this procedure
-**    _autoPopulateUserListIfBlank   When true, will auto-populate _eusUsersList if it is empty and _eusUsageType is 'USER', 'USER_ONSITE', or 'USER_REMOTE'
-**    _requestIDForUpdate            Only used if _mode is 'update' or 'check_update' and only used if not 0 or null.  Can be used to rename an existing request
+**    _requestName                  Requested run name
+**    _experimentName               Experiment name
+**    _requesterUsername            Requester username
+**    _instrumentGroup              Instrument group; could also contain '(lookup)'
+**    _workPackage                  Work package; could also contain '(lookup)'. May contain 'none' for automatically created requested runs (and those will have _autoPopulateUserListIfBlank = true)
+**    _msType                       Dataset type
+**    _instrumentSettings           Instrument settings
+**    _wellplateName                Wellplate name; if '(lookup)', will look for a wellplate defined in T_Experiments
+**    _wellNumber                   Well number;    if '(lookup)', will look for a well number defined in T_Experiments
+**    _internalStandard             Requested run internal standard
+**    _comment                      Comment
+**    _batch                        When updating an existing requested run, if this is null or 0, the requested run will be removed from the batch
+**    _block                        When updating an existing requested run, if this is null, Block will be set to 0
+**    _runOrder                     When updating an existing requested run, if this is null, Run_Order will be set to 0
+**    _eusProposalID                EUS proposal ID; if '(lookup)', override with the EUS info from the sample prep request (if found)
+**    _eusUsageType                 EUS usage type;  if '(lookup)', override with the EUS info from the sample prep request (if found)
+**    _eusUsersList                 EUS User ID (integer); also supports the form 'Baker, Erin (41136)'; can also be '(lookup)'; does not support 'Baker, Erin'. Prior to February 2020, supported a comma-separated list of EUS user IDs
+**    _mode                         Mode: 'add', 'check_add', 'update', 'check_update', or 'add-auto'
+**    _secSep                       Separation group
+**    _mrmAttachment                MRM transition list file attachment
+**    _status                       State: 'Active', 'Inactive', 'Completed'
+**    _skipTransactionRollback      This is set to true when procedure add_update_dateset calls this procedure (unused on PostgreSQL)
+**    _autoPopulateUserListIfBlank  When true, auto-populate _eusUsersList if it is empty and _eusUsageType is 'USER', 'USER_ONSITE', or 'USER_REMOTE'
+**    _callingUser                  Calling user
+**    _vialingConc                  Vialing concentration
+**    _vialingVol                   Vialing volume
+**    _stagingLocation              Staging location
+**    _requestIDForUpdate           Only used if _mode is 'update' or 'check_update' and only used if not 0 or null. Can be used to rename an existing request
+**    _logDebugMessages             When true, log debug messages
+**    _request                      ID of the newly created requested run, or of the updated requested run
+**    _resolvedInstrumentInfo
+**    _message
+**    _returnCode
+
+**    _instrumentGroup
+**    _workPackage
+**    _batch
+**    _block
+**    _runOrder
+**    _eusUsersList
+**    _mode
+**    _secSep
+**    _status
+**    _skipTransactionRollback
+**    _autoPopulateUserListIfBlank
+**    _requestIDForUpdate
 **    _resolvedInstrumentInfo        Output parameter that lists the the instrument group, run type, and separation group; used by AddRequestedRuns when previewing updates
 **
 **  Auth:   grk
@@ -152,7 +186,7 @@ AS $$
 **          12/08/2022 mem - Rename _instrumentName parameter to _instrumentGroup
 **          02/10/2023 mem - Call update_cached_requested_run_batch_stats
 **          10/02/2023 mem - Use _requestID when calling update_cached_requested_run_eus_users
-**          12/15/2023 mem - Ported to PostgreSQL
+**          10/10/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -322,11 +356,9 @@ BEGIN
         ---------------------------------------------------
         -- Is entry already in database?
         --
-        -- Note that if a request is recycled, the old and new requests
-        -- will have the same name but different IDs
+        -- Note that if a request is recycled, the old and new requests will have the same name but different IDs
         --
-        -- When _mode is 'update', we should first look for an existing request
-        -- with name _requestName and status _status
+        -- When _mode is 'update', we should first look for an existing request with name _requestName and status _status
         --
         -- If a match is not found, simply look for a request with the same name
         ---------------------------------------------------
@@ -356,6 +388,7 @@ BEGIN
                 End If;
 
             Else
+                -- Look for the requested run by name and state
                 SELECT request_name,
                        request_id,
                        eus_proposal_id,
@@ -372,9 +405,9 @@ BEGIN
         End If;
 
         If Not _matchFound Then
-            -- Match not found when filtering on Status
-            -- Query again, but this time ignore state_name
-            --
+            -- Match not found when filtering on name and status (or when looking for ID _requestIDForUpdate)
+            -- Query again, but this time only use requested run name
+
             SELECT request_name,
                    request_id,
                    eus_proposal_id,
@@ -382,25 +415,30 @@ BEGIN
             INTO _oldRequestName, _requestID, _oldEusProposalID, _oldStatus
             WHERE request_name = _requestName::citext;
 
+            If Not FOUND Then
+                _requestID := 0;
+            End If;
         End If;
 
         -- Update _request to match _requestID
-        --
-        _request := _requestID;
+        _request := Coalesce(_requestID, 0);
+
+        -- Assure that _oldStatus is not null
+        _oldStatus := Coalesce(_oldStatus, '? request not found ?');
 
         -- Cannot create an entry that already exists
         --
         If _requestID <> 0 And _mode::citext In ('add', 'check_add') Then
-            RAISE EXCEPTION 'Cannot add: Requested Run "%" already in the database; cannot add', _requestName;
+            RAISE EXCEPTION 'Cannot add: Requested Run "%" already exists in the database', _requestName;
         End If;
 
         -- Cannot update a non-existent entry
         --
         If _requestID = 0 And _mode::citext In ('update', 'check_update') Then
             If _requestIDForUpdate > 0 Then
-                RAISE EXCEPTION 'Cannot update: Requested Run ID "%" is not in the database; cannot update', _requestIDForUpdate;
+                RAISE EXCEPTION 'Cannot update: Requested Run ID "%" is not in the database', _requestIDForUpdate;
             Else
-                RAISE EXCEPTION 'Cannot update: Requested Run "%" is not in the database; cannot update', _requestName;
+                RAISE EXCEPTION 'Cannot update: Requested Run "%" is not in the database', _requestName;
             End If;
         End If;
 
@@ -413,28 +451,28 @@ BEGIN
         If _mode::citext In ('add', 'check_add') And (_status::citext = 'Completed' Or _status = '') Then
             _status := 'Active';
         End If;
-        --
+
         If _mode::citext In ('add', 'check_add') And (Not (_status::citext In ('Active', 'Inactive', 'Completed'))) Then
             RAISE EXCEPTION 'Status "%" is not valid; must be Active, Inactive, or Completed', _status;
         End If;
-        --
+
         If _mode::citext In ('update', 'check_update') And (Not (_status::citext In ('Active', 'Inactive', 'Completed'))) Then
             RAISE EXCEPTION 'Status "%" is not valid; must be Active, Inactive, or Completed', _status;
         End If;
-        --
+
         If _mode::citext In ('update', 'check_update') And (_status::citext = 'Completed' And _oldStatus <> 'Completed' ) Then
             RAISE EXCEPTION 'Cannot set status of request to "Completed" when existing status is "%"', _oldStatus;
         End If;
-        --
+
         If _mode::citext In ('update', 'check_update') And (_oldStatus = 'Completed' And _status::citext <> 'Completed') Then
             RAISE EXCEPTION 'Cannot change status of a request that has been consumed by a dataset';
         End If;
 
-        If Coalesce(_wellplateName, '')::citext In ('', 'na') Then
+        If Trim(Coalesce(_wellplateName, ''))::citext In ('', 'na') Then
             _wellplateName := null;
         End If;
 
-        If Coalesce(_wellNumber, '')::citext In ('', 'na') Then
+        If Trim(Coalesce(_wellNumber, ''))::citext In ('', 'na') Then
             _wellNumber := null;
         End If;
 
@@ -443,19 +481,22 @@ BEGIN
         FROM t_requested_run_state_name
         WHERE state_name = _status::citext
 
+        If Not FOUND Then
+            RAISE EXCEPTION 'Invalid requested run state: %', _status;
+        End If;
+
         ---------------------------------------------------
-        -- Get experiment ID from experiment number
-        -- (and validate that it exists in database)
-        -- Also set wellplate and well from experiment
-        -- if called for
+        -- Get experiment ID from experiment name (and validate that it exists in database)
+        --
+        -- Also set wellplate and well from experiment if either is '(lookup)'
         ---------------------------------------------------
 
         SELECT exp_id,
-               CASE WHEN _wellplateName = '(lookup)' THEN wellplate ELSE _wellplateName END,
-               CASE WHEN _wellNumber = '(lookup)' THEN well ELSE _wellNumber END
+               CASE WHEN _wellplateName::citext = '(lookup)' THEN wellplate ELSE _wellplateName END,
+               CASE WHEN _wellNumber::citext    = '(lookup)' THEN well      ELSE _wellNumber END
         INTO _experimentID, _wellplateName, _wellNumber
         FROM t_experiments
-        WHERE experiment = _experimentName
+        WHERE experiment = _experimentName::citext;
 
         If Not FOUND Then
             RAISE EXCEPTION 'Could not find entry in database for experiment "%"', _experimentName;
@@ -475,7 +516,7 @@ BEGIN
         If _userID > 0 Then
             -- Function get_user_id() recognizes both a username and the form 'LastName, FirstName (Username)'
             -- Assure that _requesterUsername contains simply the username
-            --
+
             SELECT username
             INTO _requesterUsername
             FROM t_users
@@ -486,9 +527,9 @@ BEGIN
 
             CALL public.auto_resolve_name_to_username (
                             _requesterUsername,
-                            _matchCount => _matchCount,         -- Output
+                            _matchCount       => _matchCount,   -- Output
                             _matchingUsername => _newUsername,  -- Output
-                            _matchingUserID => _userID);        -- Output
+                            _matchingUserID   => _userID);      -- Output
 
             If _matchCount = 1 Then
                 -- Single match found; update _requesterUsername
@@ -510,12 +551,12 @@ BEGIN
 
         CALL public.lookup_instrument_run_info_from_experiment_sample_prep (
                             _experimentName,
-                            _instrumentGroup => _instrumentGroup,       -- Output
-                            _msType => _msType,                         -- Output
+                            _instrumentGroup    => _instrumentGroup,    -- Output
+                            _datasetType        => _msType,             -- Output
                             _instrumentSettings => _instrumentSettings, -- Output
-                            _separationGroup => _separationGroup,       -- Output
-                            _message => _msg,                           -- Output
-                            _returnCode => _returnCode);                -- Output
+                            _separationGroup    => _separationGroup,    -- Output
+                            _message            => _msg,                -- Output
+                            _returnCode         => _returnCode);        -- Output
 
         If _returnCode <> '' Then
             RAISE EXCEPTION 'Lookup_Instrument_Run_Info_From_Experiment_Sample_Prep: %', _msg;
