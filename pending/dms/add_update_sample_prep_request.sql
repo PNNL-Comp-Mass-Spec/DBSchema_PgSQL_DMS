@@ -654,7 +654,7 @@ BEGIN
                 state_comment,
                 instrument_group,
                 dataset_type,
-                separation_type,
+                separation_group,
                 block_and_randomize_samples,
                 block_and_randomize_runs,
                 reason_for_high_priority,
@@ -749,7 +749,7 @@ BEGIN
                 instrument_group = _instrumentGroup,
                 instrument_name = Null,
                 dataset_type = _datasetType,
-                separation_type = _separationGroup,
+                separation_group = _separationGroup,
                 block_and_randomize_samples = _blockAndRandomizeSamples,
                 block_and_randomize_runs = _blockAndRandomizeRuns,
                 reason_for_high_priority = _reasonForHighPriority

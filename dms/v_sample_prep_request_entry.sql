@@ -32,7 +32,7 @@ CREATE VIEW public.v_sample_prep_request_entry AS
     spr.eus_proposal_id,
     spr.eus_user_id,
     spr.facility,
-    spr.separation_type AS separation_group,
+    spr.separation_group,
     spr.block_and_randomize_samples,
     spr.block_and_randomize_runs,
     ((spr.reason_for_high_priority)::text || '__NoCopy__'::text) AS reason_for_high_priority,

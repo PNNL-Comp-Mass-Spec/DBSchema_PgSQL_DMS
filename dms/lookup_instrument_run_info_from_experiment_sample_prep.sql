@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE public.lookup_instrument_run_info_from_experiment_sa
 **                         - Rename parameter _instrumentName to _instrumentGroup
 **          09/13/2023 mem - Ported to PostgreSQL
 **          10/09/2023 mem - Rename parameter _secSep to _separationGroup
+**          10/10/2023 mem - Use renamed column name separation_group in t_sample_prep_request
 **
 *****************************************************/
 DECLARE
@@ -98,7 +99,7 @@ BEGIN
     SELECT COALESCE(instrument_group, instrument_name, '') As InstrumentGroup,
            COALESCE(dataset_type, '') As DatasetType,
            COALESCE(instrument_analysis_specifications, '') As InstrumentSettings,
-           COALESCE(separation_type, '') As SeparationGroup
+           COALESCE(separation_group, '') As SeparationGroup
     INTO _instrumentInfo
     FROM t_sample_prep_request
     WHERE prep_request_id = _prepRequestID;

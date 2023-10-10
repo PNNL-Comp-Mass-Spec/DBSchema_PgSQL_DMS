@@ -43,7 +43,7 @@ CREATE TABLE public.t_sample_prep_request (
     eus_user_id integer,
     project_number public.citext,
     facility public.citext DEFAULT 'EMSL'::public.citext NOT NULL,
-    separation_type public.citext,
+    separation_group public.citext,
     block_and_randomize_samples public.citext,
     block_and_randomize_runs public.citext,
     reason_for_high_priority public.citext,

@@ -22,7 +22,7 @@ CREATE VIEW public.v_sample_prep_request_detail_report AS
     spr.estimated_ms_runs AS ms_runs_to_be_generated,
     spr.instrument_group,
     spr.dataset_type,
-    spr.separation_type AS separation_group,
+    spr.separation_group,
     spr.instrument_analysis_specifications,
     spr.block_and_randomize_runs,
     spr.sample_naming_convention AS sample_group_naming_prefix,

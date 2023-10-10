@@ -35,7 +35,7 @@ CREATE VIEW public.v_sample_prep_request_list_report AS
     COALESCE(spr.eus_usage_type, ''::public.citext) AS eus_usage_type,
     spr.instrument_group AS inst_group,
     spr.instrument_analysis_specifications AS inst_analysis,
-    spr.separation_type AS separation_group,
+    spr.separation_group,
     spr.material_container_list AS containers,
     sum(
         CASE
@@ -83,7 +83,7 @@ CREATE VIEW public.v_sample_prep_request_list_report AS
      LEFT JOIN public.t_eus_proposal_type ept ON ((eup.proposal_type OPERATOR(public.=) ept.proposal_type)))
      LEFT JOIN ont.v_bto_id_to_name bto ON ((spr.tissue_id OPERATOR(public.=) bto.identifier)))
   WHERE ((spr.state_id > 0) AND (spr.request_type OPERATOR(public.=) 'Default'::public.citext))
-  GROUP BY spr.prep_request_id, spr.request_name, spr.created, spr.estimated_prep_time_days, spr.priority, ta.attachments, spr.state_id, sn.state_name, spr.state_comment, spr.reason, spr.number_of_samples, spr.estimated_ms_runs, qt.days_in_queue, qt.days_in_state, spr.prep_method, spr.requested_personnel, spr.assigned_personnel, qp.name_with_username, spr.organism, spr.biohazard_level, spr.campaign, spr.comment, spr.work_package, spr.instrument_group, spr.instrument_analysis_specifications, spr.separation_type, cc.activation_state, cc.activation_state_name, spr.eus_proposal_id, spr.eus_usage_type, ept.proposal_type_name, bto.tissue, spr.material_container_list;
+  GROUP BY spr.prep_request_id, spr.request_name, spr.created, spr.estimated_prep_time_days, spr.priority, ta.attachments, spr.state_id, sn.state_name, spr.state_comment, spr.reason, spr.number_of_samples, spr.estimated_ms_runs, qt.days_in_queue, qt.days_in_state, spr.prep_method, spr.requested_personnel, spr.assigned_personnel, qp.name_with_username, spr.organism, spr.biohazard_level, spr.campaign, spr.comment, spr.work_package, spr.instrument_group, spr.instrument_analysis_specifications, spr.separation_group, cc.activation_state, cc.activation_state_name, spr.eus_proposal_id, spr.eus_usage_type, ept.proposal_type_name, bto.tissue, spr.material_container_list;
 
 
 ALTER TABLE public.v_sample_prep_request_list_report OWNER TO d3l243;
