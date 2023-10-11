@@ -1,24 +1,28 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_cached_secondary_sep_usage
-(
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_cached_secondary_sep_usage(text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_cached_secondary_sep_usage(INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the data in T_Secondary_Sep_Usage
+**      Updates the data in t_secondary_sep_usage
 **
 **  Auth:   mem
 **  Date:   11/18/2015 mem - Initial Version
 **          02/23/2016 mem - Add set XACT_ABORT on
-**          12/15/2023 mem - Ported to PostgreSQL
+**          10/10/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
-    _callingProcName text;
+    _countBeforeMerge int;
+    _countAfterMerge int;
+
+    _addOrUpdateCount int;
+    _rowsAdded int;
+    _rowsUpdated int;
 
     _sqlState text;
     _exceptionMessage text;
@@ -28,7 +32,11 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    Begin
+    BEGIN
+
+        SELECT COUNT(*)
+        INTO _countBeforeMerge
+        FROM t_secondary_sep_usage;
 
         MERGE INTO t_secondary_sep_usage AS t
         USING ( SELECT
@@ -40,7 +48,7 @@ BEGIN
                     SUM(CASE
                             WHEN DS.Dataset_ID IS NULL THEN 0
                             ELSE 1
-                        END) AS Usage_AllYears,
+                        END) AS Usage_All_Years,
                     MAX(DS.created) AS Most_Recent_Use
                 FROM t_secondary_sep SS
                      LEFT OUTER JOIN t_dataset DS
@@ -50,23 +58,41 @@ BEGIN
         ON (t.separation_type_id = s.separation_type_id)
         WHEN MATCHED AND
              (t.Usage_Last12Months IS DISTINCT FROM s.Usage_Last12Months OR
-              t.Usage_AllYears IS DISTINCT FROM s.Usage_AllYears or
+              t.Usage_All_Years IS DISTINCT FROM s.Usage_All_Years or
               t.Most_Recent_Use IS DISTINCT FROM s.Most_Recent_Use) THEN
             UPDATE SET
                 Usage_Last12Months = s.Usage_Last12Months,
-                Usage_AllYears = s.Usage_AllYears,
+                Usage_All_Years = s.Usage_All_Years,
                 Most_Recent_Use = s.Most_Recent_Use
         WHEN NOT MATCHED THEN
-            INSERT (separation_type_id, Usage_Last12Months, Usage_AllYears, Most_Recent_Use)
-            VALUES (s.separation_type_id, s.Usage_Last12Months, s.Usage_AllYears, s.Most_Recent_Use);
+            INSERT (separation_type_id, Usage_Last12Months, Usage_All_Years, Most_Recent_Use)
+            VALUES (s.separation_type_id, s.Usage_Last12Months, s.Usage_All_Years, s.Most_Recent_Use);
+
+        GET DIAGNOSTICS _addOrUpdateCount = ROW_COUNT;
+
+        SELECT COUNT(*)
+        INTO _countAfterMerge
+        FROM t_secondary_sep_usage;
+
+        _rowsAdded    := _countAfterMerge - _countBeforeMerge;
+        _rowsUpdated := _addOrUpdateCount - _rowsAdded;
+
+        If _rowsAdded > 0 Then
+            _message := format('Added %s %s', _rowsAdded, public.check_plural(_rowsAdded, 'row', 'rows'));
+        End If;
+
+        If _rowsUpdated > 0 Then
+            _message := public.append_to_text(
+                                _message,
+                                format('Updated %s %s', _rowsUpdated, public.check_plural(_rowsUpdated, 'row', 'rows')));
+        End If;
 
         -- Delete rows in t_secondary_sep_usage that are not in t_secondary_sep
 
         DELETE FROM t_secondary_sep_usage target
         WHERE NOT EXISTS (SELECT SS.separation_type_id
                           FROM t_secondary_sep SS
-                          WHERE target.separation_type_id = SS.separation_type_id
-                         );
+                          WHERE target.separation_type_id = SS.separation_type_id);
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -88,4 +114,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_cached_secondary_sep_usage IS 'UpdateCachedSecondarySepUsage';
+
+ALTER PROCEDURE public.update_cached_secondary_sep_usage(INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_cached_secondary_sep_usage(INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_cached_secondary_sep_usage(INOUT _message text, INOUT _returncode text) IS 'UpdateCachedSecondarySepUsage';
+
