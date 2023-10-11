@@ -316,11 +316,16 @@ BEGIN
 
             ----------------------------------------------------------
             -- Update usage columns
+            --
+            -- If not inside a procedure, you can use this to see old and new usage stats
+            -- SELECT * FROM update_charge_code_usage(_infoOnly => false);
+            --
+            -- Use PERFORM to call update_charge_code_usage() from this procedure
             ----------------------------------------------------------
 
             _currentLocation := 'Update usage columns';
 
-            CALL update_charge_code_usage (_infoOnly => false);
+            PERFORM public.update_charge_code_usage(_infoOnly => false);
 
             ----------------------------------------------------------
             -- Update Inactive_Date_Most_Recent
