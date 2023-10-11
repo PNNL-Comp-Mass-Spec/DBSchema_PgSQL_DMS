@@ -17,9 +17,9 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_datasets(_ruleid integer, 
 **    _populateTempTable   When true, populates table T_Tmp_PredefinedAnalysisDatasets with the results (creates the table if it does not yet exist)
 **
 **  Usage:
-**      SELECT * FROM predefined_analysis_datasets(300, _infoonly => true);
-**      SELECT * FROM predefined_analysis_datasets(300, _infoonly => false, _previewSQL => true)
-**      SELECT * FROM predefined_analysis_datasets(300, _infoonly => false)
+**      SELECT * FROM predefined_analysis_datasets(300, _infoOnly => true);
+**      SELECT * FROM predefined_analysis_datasets(300, _infoOnly => false, _previewSQL => true)
+**      SELECT * FROM predefined_analysis_datasets(300, _infoOnly => false)
 **
 **  Auth:   grk
 **  Date:   06/22/2005

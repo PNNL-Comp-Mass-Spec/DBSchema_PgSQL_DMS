@@ -11,7 +11,7 @@ CREATE OR REPLACE PROCEDURE sw.verify_job_parameters(INOUT _jobparam text, IN _s
 **      Check input parameters against the definition for the script
 **
 **  Arguments:
-**    _jobParam         XML job parameters, as text (input / output parameter)
+**    _jobParam         XML job parameters, as text (input/output parameter)
 **    _scriptName       Script name
 **    _dataPackageID    Data package ID
 **    _message          Status message

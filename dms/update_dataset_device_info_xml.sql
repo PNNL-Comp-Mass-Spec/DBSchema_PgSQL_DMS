@@ -46,9 +46,13 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_device_info_xml(IN _datasetid 
 **      </DatasetInfo>
 **
 **  Arguments:
-**    _datasetID        If this value is 0, will determine the dataset ID using the contents of _deviceInfoXML by looking for <Dataset>DatasetName</Dataset>
-**    _datasetInfoXML   Dataset info, in XML format
-**    _skipValidation   When true, if _datasetID is non-zero, skip calling Get_Dataset_Details_From_Dataset_Info_XML
+**    _datasetID                    If this value is 0, will determine the dataset ID using the contents of _deviceInfoXML by looking for <Dataset>DatasetName</Dataset>
+**    _datasetInfoXML               Dataset info, in XML format
+**    _message                      Status message
+**    _returnCode                   Return code
+**    _infoOnly                     When true, preview the device info
+**    _skipValidation               When true, if _datasetID is non-zero, skip calling Get_Dataset_Details_From_Dataset_Info_XML
+**    _showDatasetInfoOnPreview     When true, show dataset info when _infoOnly is true
 **
 **  Auth:   mem
 **  Date:   03/01/2020 mem - Initial version

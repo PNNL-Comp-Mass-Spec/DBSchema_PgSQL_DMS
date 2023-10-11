@@ -9,6 +9,17 @@ CREATE OR REPLACE PROCEDURE public.resolve_start_and_end_dates(IN _startdate tex
 **
 **  Desc:
 **      Examines text arguments _startDate and _endDate to populate output arguments _stDate and _eDate with actual timestamp values
+**      - If _startDate is empty, _stDate will be 2 weeks before _eDate
+**      - If _endDate is empty, _eDate will be the end of the current day
+**      - If _endDate is only year, month, and day, _eDate will span thru 23:59:59.999 on the given day
+**
+**  Arguments:
+**    _startDate    Start date (as text)
+**    _endDate      End date (as text)
+**    _stDate       Output: start date (as a timestamp)
+**    _eDate        Output: end date (as a timestamp)
+**    _message      Status message
+**    _returncode   Return code
 **
 **  Date:   07/22/2019 mem - Initial version
 **          12/12/2022 mem - Ported to PostgreSQL

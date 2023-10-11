@@ -20,7 +20,7 @@ AS $$
 **      Returns a consolidated list of container names
 **
 **  Arguments:
-**    _containerList        Input / Output: Comma-separated list of locations and containers (can be a mix of both)
+**    _containerList        Input/Output: Comma-separated list of locations and containers (can be a mix of both)
 **    _comment              Comment
 **    _type                 Container type: 'Box', 'Bag', or 'Wellplate'
 **    _researcher           Researcher name; supports 'Zink, Erika M (D3P704)' or simply 'D3P704'
