@@ -46,21 +46,21 @@ BEGIN
         -- (skipped or completed)
 
         CALL cap.evaluate_task_step_dependencies (
-                            _message => _message,
-                            _returnCode => _returnCode,
-                            _maxJobsToProcess => _maxJobsToProcess,
-                            _loopingUpdateInterval => _LoopingUpdateInterval);
+                    _message               => _message,     -- Output
+                    _returnCode            => _returnCode,  -- Output
+                    _maxJobsToProcess      => _maxJobsToProcess,
+                    _loopingUpdateInterval => _LoopingUpdateInterval);
 
         -- Examine all dependencies for steps in 'Waiting' state
         -- and set state of steps that have them all satisfied
 
         CALL cap.update_task_dependent_steps (
-                            _message => _message,
-                            _returnCode => _returnCode,
-                            _numStepsSkipped => _numStepsSkipped,
-                            _infoOnly => _infoOnly,
-                            _maxJobsToProcess => _maxJobsToProcess,
-                            _loopingUpdateInterval => _LoopingUpdateInterval);
+                    _message               => _message,     -- Output
+                    _returnCode            => _returnCode,  -- Output
+                    _numStepsSkipped       => _numStepsSkipped,
+                    _infoOnly              => _infoOnly,
+                    _maxJobsToProcess      => _maxJobsToProcess,
+                    _loopingUpdateInterval => _LoopingUpdateInterval);
 
         -- Repeat if any step states were changed (but only if _infoOnly is false)
 

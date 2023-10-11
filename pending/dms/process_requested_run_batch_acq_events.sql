@@ -66,12 +66,12 @@ BEGIN
         FROM Tmp_BatchIDs
         ORDER BY BatchID
     LOOP
-        CALL make_automatic_requested_run_factors (
-                _batchID,
-                'actual_run_order',
-                _message => _message,
-                _returnCode => _returnCode,
-                _callingUser);
+        CALL public.make_automatic_requested_run_factors (
+                        _batchID     => _batchID,
+                        _mode        => 'actual_run_order',
+                        _message     => _message,
+                        _returnCode  => _returnCode,
+                        _callingUser => _callingUser);
 
         If _returnCode <> '' Then
             -- Break out of the For loop

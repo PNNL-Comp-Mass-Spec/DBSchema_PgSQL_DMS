@@ -20,7 +20,7 @@ CREATE OR REPLACE FUNCTION cap.retry_quameter_for_tasks(_jobs text, _infoonly bo
 **    _infoOnly   True to preview the changes,
 **
 ** Example Usage:
-**   SELECT * FROM cap.retry_quameter_for_tasks('6016807, 6016805, 6016798', _infoOnly => true, _ignoreQuameterErrors => fase);
+**   SELECT * FROM cap.retry_quameter_for_tasks('6016807, 6016805, 6016798', _infoOnly => true, _ignoreQuameterErrors => false);
 **
 **  Auth:   mem
 **  Date:   07/11/2019 mem - Initial version
@@ -132,12 +132,12 @@ BEGIN
                 Else
                     CALL cap.add_update_task_parameter (
                                 _job,
-                                _section =>   'StepParameters',
-                                _paramName => 'IgnoreQuameterErrors',
-                                _value =      '1',
-                                _message => _message,
-                                _returncode => _returncode,
-                                _infoOnly => false);
+                                _section    => 'StepParameters',
+                                _paramName  => 'IgnoreQuameterErrors',
+                                _value      => '1',
+                                _message    => _message,        -- Output
+                                _returncode => _returncode,     -- Output
+                                _infoOnly   => false);
                 End If;
             END LOOP;
 
@@ -179,9 +179,9 @@ BEGIN
             --
             CALL cap.reset_dependent_task_steps (
                         _jobList,
-                        _infoOnly => false,
-                        _message => _message,
-                        _returncode => _returncode);
+                        _infoOnly   => false,
+                        _message    => _message,        -- Output
+                        _returncode => _returncode);    -- Output
 
             RETURN QUERY
             SELECT TS.Job,

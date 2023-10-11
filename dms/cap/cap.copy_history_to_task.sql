@@ -416,7 +416,10 @@ BEGIN
             RAISE INFO 'Capture task job % was not found in cap.t_task_parameters_history; re-generating the parameters using cap.update_parameters_for_task', _newJob;
         End If;
 
-        CALL cap.update_parameters_for_task (_newJob::text, _message => _message, _returnCode => _returnCode);
+        CALL cap.update_parameters_for_task (
+                    _newJob::text,
+                    _message => _message,           -- Output
+                    _returnCode => _returnCode);    -- Output
     End If;
 
     ---------------------------------------------------
@@ -427,7 +430,10 @@ BEGIN
         RAISE INFO 'Verifying storage server info by calling cap.update_parameters_for_task for capture task job %', _newJob;
     End If;
 
-    CALL cap.update_parameters_for_task (_jobList, _message => _message, _returnCode => _returnCode);
+    CALL cap.update_parameters_for_task (
+                _jobList,
+                _message    => _message,        -- Output
+                _returnCode => _returnCode);    -- Output
 
     ---------------------------------------------------
     -- Make sure the Dependencies column is up-to-date in t_task_steps

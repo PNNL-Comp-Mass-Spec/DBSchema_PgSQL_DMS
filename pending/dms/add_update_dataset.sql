@@ -640,11 +640,11 @@ BEGIN
         End If;
 
         CALL public.validate_instrument_group_and_dataset_type (
-                        _datasetType => _msType,
-                        _instrumentGroup => _instrumentGroup,           -- Input/Output
-                        _datasetTypeID => _datasetTypeID,               -- Output
-                        _message => _msg,                               -- Output
-                        _returnCode => _returnCode);                    -- Output
+                        _datasetType     => _msType,
+                        _instrumentGroup => _instrumentGroup,   -- Input/Output
+                        _datasetTypeID   => _datasetTypeID,     -- Output
+                        _message         => _msg,               -- Output
+                        _returnCode      => _returnCode);       -- Output
 
         If _returnCode <> '' And _addingDataset And Coalesce(_defaultDatasetTypeID, 0) > 0 Then
 
@@ -695,11 +695,11 @@ BEGIN
             -- Validate the new dataset type name (in case the default dataset type is invalid for this instrument group, which would indicate invalid data in table t_instrument_group)
 
             CALL public.validate_instrument_group_and_dataset_type (
-                            _datasetType => _msType,
-                            _instrumentGroup => _instrumentGroup,           -- Input/Output
-                            _datasetTypeID => _datasetTypeID,               -- Output
-                            _message => _msg,                               -- Output
-                            _returnCode => _returnCode);                    -- Output
+                            _datasetType     => _msType,
+                            _instrumentGroup => _instrumentGroup,   -- Input/Output
+                            _datasetTypeID   => _datasetTypeID,     -- Output
+                            _message         => _msg,               -- Output
+                            _returnCode      => _returnCode);       -- Output
 
             If _returnCode <> '' Then
                 _comment := public.append_to_text(_comment, 'Error: Default dataset type defined in t_instrument_group is invalid', _delimiter => ' - ');
@@ -753,9 +753,9 @@ BEGIN
 
             CALL public.auto_resolve_name_to_username (
                     _operatorUsername,
-                    _matchCount => _matchCount,         -- Output
+                    _matchCount       => _matchCount,   -- Output
                     _matchingUsername => _newUsername,  -- Output
-                    _matchingUserID => _userID);        -- Output
+                    _matchingUserID   => _userID);      -- Output
 
             If _matchCount = 1 Then
                 -- Single match found; update _operatorUsername
@@ -845,8 +845,8 @@ BEGIN
             CALL public.find_active_requested_run_for_dataset (
                             _datasetName,
                             _experimentID,
-                            _requestID => _requestID,                   -- Output
-                            _requestInstGroup => _requestInstGroup,     -- Output
+                            _requestID         => _requestID,           -- Output
+                            _requestInstGroup  => _requestInstGroup,    -- Output
                             _requestMatchCount => _requestMatchCount,   -- Output
                             _showDebugMessages => false);
 
@@ -944,11 +944,11 @@ BEGIN
 
                 CALL public.lookup_eus_from_experiment_sample_prep (
                                     _experimentName,
-                                    _eusUsageType => _eusUsageType,     -- Input/output
+                                    _eusUsageType  => _eusUsageType,    -- Input/output
                                     _eusProposalID => _eusProposalID,   -- Input/output
-                                    _eusUsersList => _eusUsersList,     -- Input/output
-                                    _message => _msg,                   -- Output
-                                    _returnCode => _returnCode);        -- Output
+                                    _eusUsersList  => _eusUsersList,    -- Input/output
+                                    _message       => _msg,             -- Output
+                                    _returnCode    => _returnCode);     -- Output
 
                 If _returnCode <> '' Then
                     RAISE EXCEPTION 'lookup_eus_from_experiment_sample_prep: %', _msg;
@@ -963,18 +963,18 @@ BEGIN
                 ---------------------------------------------------
 
                 CALL public.validate_eus_usage (
-                                _eusUsageType   => _eusUsageType,       -- Input/Output
-                                _eusProposalID  => _eusProposalID,      -- Input/Output
-                                _eusUsersList   => _eusUsersList,       -- Input/Output
-                                _eusUsageTypeID => _eusUsageTypeID,     -- Output
+                                _eusUsageType      => _eusUsageType,       -- Input/Output
+                                _eusProposalID     => _eusProposalID,      -- Input/Output
+                                _eusUsersList      => _eusUsersList,       -- Input/Output
+                                _eusUsageTypeID    => _eusUsageTypeID,     -- Output
                                 _autoPopulateUserListIfBlank => false,
                                 _samplePrepRequest => false,
-                                _experimentID => _experimentID,
-                                _campaignID => 0,
-                                _addingItem => _addingDataset,
-                                _infoOnly => false,
-                                _message => _msg,                       -- Output
-                                _returnCode => _returnCode              -- Output
+                                _experimentID      => _experimentID,
+                                _campaignID        => 0,
+                                _addingItem        => _addingDataset,
+                                _infoOnly          => false,
+                                _message           => _msg,                -- Output
+                                _returnCode        => _returnCode          -- Output
                             );
 
                 If _returnCode <> '' Then
@@ -992,7 +992,7 @@ BEGIN
                 -- Verify that request ID is correct
                 ---------------------------------------------------
 
-                If Not Exists (SELECT * FROM t_requested_run WHERE request_id = _requestID) Then
+                If Not Exists (SELECT request_id FROM t_requested_run WHERE request_id = _requestID) Then
                     RAISE EXCEPTION 'Request request_id not found';
                 End If;
 
@@ -1071,7 +1071,7 @@ BEGIN
                                         _instrumentID,
                                         _refDate,
                                         _autoSwitchActiveStorage => true,
-                                        _infoOnly => false);
+                                        _infoOnly                => false);
 
             If _storagePathID = 0 Then
                 _storagePathID := 2; -- index of 'none' in t_storage_path
@@ -1264,8 +1264,8 @@ BEGIN
                     CALL public.update_cart_parameters (
                                         'CartName',
                                         _requestID,
-                                        _newValue => _lcCartName,
-                                        _message => _message,           -- Output
+                                        _newValue   => _lcCartName,
+                                        _message    => _message,        -- Output
                                         _returnCode => _returnCode);    -- Output
 
                     If _returnCode <> '' Then
@@ -1295,10 +1295,10 @@ BEGIN
                 CALL public.consume_scheduled_run (
                             _datasetID,
                             _requestID,
-                            _message => _message,           -- Output
-                            _callingUser => _callingUser,
+                            _message          => _message,          -- Output
+                            _callingUser      => _callingUser,
                             _logDebugMessages => _logDebugMessages,
-                            _returnCode => _returnCode);    -- Output
+                            _returnCode       => _returnCode);      -- Output
 
                 If _returnCode <> '' Then
                     RAISE EXCEPTION 'Consume operation failed: dataset % -> %', _datasetName, _message;
@@ -1312,7 +1312,12 @@ BEGIN
             End If;
 
             -- Update t_cached_dataset_instruments
-            CALL public.update_cached_dataset_instruments (_processingMode => 0, _datasetId => _datasetID, _infoOnly => false);
+            CALL public.update_cached_dataset_instruments (
+                                _processingMode => 0,
+                                _datasetId      => _datasetID,
+                                _infoOnly       => false,
+                                _message        => _message,        -- Output
+                                _returnCode     => _returnCode);    -- Output
 
         End If;
 
@@ -1394,7 +1399,7 @@ BEGIN
                                         'CartName',
                                         _requestID,
                                         _lcCartName,
-                                        _message => _warningAddon,      -- Output
+                                        _message    => _warningAddon,   -- Output
                                         _returnCode => _returnCode);    -- Output
 
                     If _returnCode <> '' Then
@@ -1420,39 +1425,39 @@ BEGIN
                 _runOrder := Coalesce(_runOrder, 0);
 
                 CALL public.add_update_requested_run (
-                                    _requestName => _requestName,
-                                    _experimentName => _experimentName,
-                                    _requesterUsername => _operatorUsername,
-                                    _instrumentGroup => _instrumentGroup,
-                                    _workPackage => _workPackage,
-                                    _msType => _msType,
-                                    _instrumentSettings => _reqRunInstSettings,
-                                    _wellplateName => _wellplateName,
-                                    _wellNumber => _wellNumber,
-                                    _internalStandard => _reqRunInternalStandard,
-                                    _comment => _reqRunComment,
-                                    _batch => _batchID,
-                                    _block => _block,
-                                    _runOrder => _runOrder,
-                                    _eusProposalID => _eusProposalID,
-                                    _eusUsageType => _eusUsageType,
-                                    _eusUsersList => _eusUsersList,
-                                    _mode => 'update',
-                                    _request => _requestID,         -- Output
-                                    _message => _message,           -- Output
-                                    _returnCode => _returnCode      -- Output
-                                    _secSep => _secSep,
-                                    _mrmAttachment => _mrmAttachmentID,
-                                    _status => _reqRunStatus,
-                                    _skipTransactionRollback => true,
+                                    _requestName                 => _requestName,
+                                    _experimentName              => _experimentName,
+                                    _requesterUsername           => _operatorUsername,
+                                    _instrumentGroup             => _instrumentGroup,
+                                    _workPackage                 => _workPackage,
+                                    _msType                      => _msType,
+                                    _instrumentSettings          => _reqRunInstSettings,
+                                    _wellplateName               => _wellplateName,
+                                    _wellNumber                  => _wellNumber,
+                                    _internalStandard            => _reqRunInternalStandard,
+                                    _comment                     => _reqRunComment,
+                                    _batch                       => _batchID,
+                                    _block                       => _block,
+                                    _runOrder                    => _runOrder,
+                                    _eusProposalID               => _eusProposalID,
+                                    _eusUsageType                => _eusUsageType,
+                                    _eusUsersList                => _eusUsersList,
+                                    _mode                        => 'update',
+                                    _secSep                      => _secSep,
+                                    _mrmAttachment               => _mrmAttachmentID,
+                                    _status                      => _reqRunStatus,
+                                    _skipTransactionRollback     => true,
                                     _autoPopulateUserListIfBlank => true,   -- Auto populate _eusUsersList if blank since this is an Auto-Request
-                                    _callingUser => _callingUser,
-                                    _vialingConc => null,
-                                    _vialingVol => null,
-                                    _stagingLocation => null,
-                                    _requestIDForUpdate => null,
-                                    _logDebugMessages => _logDebugMessages,
-                                    _resolvedInstrumentInfo => _resolvedInstrumentInfo);    -- Output
+                                    _callingUser                 => _callingUser,
+                                    _vialingConc                 => null,
+                                    _vialingVol                  => null,
+                                    _stagingLocation             => null,
+                                    _requestIDForUpdate          => null,
+                                    _logDebugMessages            => _logDebugMessages,
+                                    _request                     => _requestID,                 -- Output
+                                    _resolvedInstrumentInfo      => _resolvedInstrumentInfo,    -- Output
+                                    _message                     => _message,                   -- Output
+                                    _returnCode                  => _returnCode);               -- Output
 
                 If _returnCode <> '' Then
                     RAISE EXCEPTION 'Requested run update error using Proposal ID %, Usage Type %, and Users List % ->%',
@@ -1467,8 +1472,12 @@ BEGIN
             ---------------------------------------------------
 
             If _ratingID >= 2 And Coalesce(_curDSRatingID, -1000) In (-5, -6, -7) Then
-                If Not Exists (SELECT * FROM t_analysis_job WHERE dataset_id = _datasetID AND dataset_unreviewed = 0 ) Then
-                    CALL public.schedule_predefined_analysis_jobs (_datasetName, _callingUser => _callingUser);
+                If Not Exists (SELECT dataset_id FROM t_analysis_job WHERE dataset_id = _datasetID AND dataset_unreviewed = 0) Then
+                    CALL public.schedule_predefined_analysis_jobs (
+                                    _datasetName,
+                                    _callingUser => _callingUser,
+                                    _message     => _message,       -- Output
+                                    _returnCode  => _returnCode);   -- Output
 
                     -- If _callingUser is defined, Call public.alter_event_log_entry_user to alter the entered_by field
                     -- in t_event_log for any newly created jobs for this dataset
@@ -1492,7 +1501,12 @@ BEGIN
             End If;
 
             -- Update t_cached_dataset_instruments
-            CALL public.update_cached_dataset_instruments (_processingMode => 0, _datasetId => _datasetID, _infoOnly => false);
+            CALL public.update_cached_dataset_instruments (
+                            _processingMode => 0,
+                            _datasetId      => _datasetID,
+                            _infoOnly       => false,
+                            _message        => _message,        -- Output
+                            _returnCode     => _returnCode);    -- Output
 
         End If;
 

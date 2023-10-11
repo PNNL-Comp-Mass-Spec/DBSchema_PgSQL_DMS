@@ -109,11 +109,11 @@ BEGIN
            message,
            returncode
     FROM public.predefined_analysis_jobs(
-            _datasetName,
-            _raiseErrorMessages => true,
-            _excludeDatasetsNotReleased => _excludeDatasetsNotReleased,
-            _createJobsForUnreviewedDatasets => _createJobsForUnreviewedDatasets,
-            _analysisToolNameFilter => _analysisToolNameFilter);
+                    _datasetName,
+                    _raiseErrorMessages              => true,
+                    _excludeDatasetsNotReleased      => _excludeDatasetsNotReleased,
+                    _createJobsForUnreviewedDatasets => _createJobsForUnreviewedDatasets,
+                    _analysisToolNameFilter          => _analysisToolNameFilter);
 
     If Not FOUND Then
         _message := format('Function predefined_analysis_jobs did not return any results for dataset %s', _datasetName);

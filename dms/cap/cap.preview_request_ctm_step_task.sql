@@ -68,13 +68,13 @@ BEGIN
     */
 
     CALL cap.request_ctm_step_task(
-                _processorName => _processorName,
-                _jobNumber => _job,
-                _results => _results,
-                _message => _message,
-                _returnCode => _returnCode,
-                _infoLevel => _infoLevel,
-                _managerVersion => '',
+                _processorName     => _processorName,
+                _jobNumber         => _job,
+                _results           => _results,
+                _message           => _message,     -- Output
+                _returnCode        => _returnCode,  -- Output
+                _infoLevel         => _infoLevel,
+                _managerVersion    => '',
                 _jobCountToPreview => _jobCountToPreview
             );
 

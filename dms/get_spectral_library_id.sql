@@ -452,25 +452,25 @@ BEGIN
         ---------------------------------------------------
 
         _hash := public.get_spectral_library_settings_hash (
-                    _libraryId => 0,
-                    _proteinCollectionList => _proteinCollectionList,
-                    _organismDbFile => _organismDbFile,
-                    _fragmentIonMzMin => _fragmentIonMzMin,
-                    _fragmentIonMzMax => _fragmentIonMzMax,
-                    _trimNTerminalMet => _trimNTerminalMet,
-                    _cleavageSpecificity => _cleavageSpecificity,
-                    _missedCleavages => _missedCleavages,
-                    _peptideLengthMin => _peptideLengthMin,
-                    _peptideLengthMax => _peptideLengthMax,
-                    _precursorMzMin => _precursorMzMin,
-                    _precursorMzMax => _precursorMzMax,
-                    _precursorChargeMin => _precursorChargeMin,
-                    _precursorChargeMax => _precursorChargeMax,
+                    _libraryId                => 0,
+                    _proteinCollectionList    => _proteinCollectionList,
+                    _organismDbFile           => _organismDbFile,
+                    _fragmentIonMzMin         => _fragmentIonMzMin,
+                    _fragmentIonMzMax         => _fragmentIonMzMax,
+                    _trimNTerminalMet         => _trimNTerminalMet,
+                    _cleavageSpecificity      => _cleavageSpecificity,
+                    _missedCleavages          => _missedCleavages,
+                    _peptideLengthMin         => _peptideLengthMin,
+                    _peptideLengthMax         => _peptideLengthMax,
+                    _precursorMzMin           => _precursorMzMin,
+                    _precursorMzMax           => _precursorMzMax,
+                    _precursorChargeMin       => _precursorChargeMin,
+                    _precursorChargeMax       => _precursorChargeMax,
                     _staticCysCarbamidomethyl => _staticCysCarbamidomethyl,
-                    _staticMods => _staticMods,
-                    _dynamicMods => _dynamicMods,
-                    _maxDynamicMods => _maxDynamicMods,
-                    _showDebug => false);
+                    _staticMods               => _staticMods,
+                    _dynamicMods              => _dynamicMods,
+                    _maxDynamicMods           => _maxDynamicMods,
+                    _showDebug                => false);
 
 
         ---------------------------------------------------

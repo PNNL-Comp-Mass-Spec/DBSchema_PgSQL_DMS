@@ -245,15 +245,16 @@ BEGIN
 
     -- Retire the contents
     If _mode = 'retire_container_and_contents' And _nonEmptyContainerCount > 0 Then
-        CALL update_material_items (
-                    'retire_items',
-                    containerList,
-                    'containers',
-                    '',
-                    _comment,
-                    _message => _message,           -- Output
-                    _returnCode => _returnCode,     -- Output
-                    _callingUser => _callingUser);
+
+        CALL public.update_material_items (
+                        _mode        => 'retire_items',
+                        _itemList    => containerList,
+                        _itemType    => 'containers',
+                        _newValue    => '',
+                        _comment     => _comment,
+                        _message     => _message,       -- Output
+                        _returnCode  => _returnCode,    -- Output
+                        _callingUser => _callingUser);
 
         If _returnCode <> '' Then
             DROP TABLE Tmp_Material_Container_List;
@@ -320,13 +321,12 @@ BEGIN
         username,
         comment
     )
-    SELECT
-        _moveType,
-        Name,
-        Location,
-        _location,
-        _callingUser,
-        _comment
+    SELECT _moveType,
+           Name,
+           Location,
+           _location,
+           _callingUser,
+           _comment
     FROM Tmp_Material_Container_List
     WHERE Location <> _location Or
           _mode <> 'move_container';

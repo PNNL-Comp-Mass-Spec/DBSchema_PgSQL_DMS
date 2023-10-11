@@ -175,10 +175,10 @@ BEGIN
 
         CALL public.get_dataset_details_from_dataset_info_xml (
                         _datasetInfoXML,
-                        _datasetID => _datasetID,       -- Input/Output
+                        _datasetID   => _datasetID,     -- Input/Output
                         _datasetName => _datasetName,   -- Output
-                        _message => _message,           -- Output
-                        _returnCode => _returnCode);    -- Output
+                        _message     => _message,       -- Output
+                        _returnCode  => _returnCode);   -- Output
 
         If _returnCode <> '' Then
             RETURN;
@@ -463,8 +463,13 @@ BEGIN
 
                 _currentLocation := 'Duplicate dataset found; call post_email_alert';
 
-                CALL post_email_alert ('Error', _message, 'Update_Dataset_File_Info_XML', _recipients => 'admins',
-                                       _postMessageToLogEntries => true, _duplicateEntryHoldoffHours => 6);
+                CALL public.post_email_alert (
+                                _type                       => 'Error',
+                                _message                    => _message,
+                                _postedby                   => 'Update_Dataset_File_Info_XML',
+                                _recipients                 => 'admins',
+                                _postMessageToLogEntries    => true,
+                                _duplicateEntryHoldoffHours => 6);
 
                 -- Error code 'U5360' is used by several procedures in the capture schema (previously used 53600), including:
                 --   handle_dataset_capture_validation_failure
@@ -680,12 +685,12 @@ BEGIN
             END LOOP;
 
             CALL public.update_dataset_device_info_xml (
-                            _datasetID => _datasetID,
-                            _datasetInfoXML => _datasetInfoXML,
-                            _message => _message,           -- Output
-                            _returnCode => _returnCode,     -- Output
-                            _infoOnly => true,
-                            _skipValidation => true,
+                            _datasetID                => _datasetID,
+                            _datasetInfoXML           => _datasetInfoXML,
+                            _message                  => _message,          -- Output
+                            _returnCode               => _returnCode,       -- Output
+                            _infoOnly                 => true,
+                            _skipValidation           => true,
                             _showDatasetInfoOnPreview => false);
 
             DROP TABLE Tmp_DSInfoTable;
@@ -888,9 +893,9 @@ BEGIN
 
             CALL public.validate_dataset_type (
                             _datasetID,
-                            _message => _message,           -- Output
+                            _message    => _message,        -- Output
                             _returncode => _returncode,     -- Output
-                            _infoOnly => _infoOnly);
+                            _infoOnly   => _infoOnly);
         End If;
 
         -----------------------------------------------
@@ -900,11 +905,11 @@ BEGIN
         _currentLocation := 'Call update_dataset_device_info_xml';
 
         CALL public.update_dataset_device_info_xml (
-                        _datasetID => _datasetID,
+                        _datasetID      => _datasetID,
                         _datasetInfoXML => _datasetInfoXML,
-                        _message => _message,                   -- Output
-                        _returnCode => _returnCode,             -- Output
-                        _infoOnly => false,
+                        _message        => _message,            -- Output
+                        _returnCode     => _returnCode,         -- Output
+                        _infoOnly       => false,
                         _skipValidation => true);
 
         _message := 'Dataset info update successful';

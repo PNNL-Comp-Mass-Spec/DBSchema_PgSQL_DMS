@@ -374,22 +374,22 @@ BEGIN
                 If Not _infoOnly Or _infoOnly And _previewProcedureCall Then
                     If _instrumentInfo.Use_EUS_ID Then
                         CALL public.update_emsl_instrument_usage_report (
-                                        _instrument => '',
+                                        _instrument      => '',
                                         _eusInstrumentId => _instrumentInfo.EusInstrumentId,
-                                        _endDate => _currentInstrumentUsageMonth,
-                                        _infoOnly => _infoOnly,
-                                        _debugReports => '',
-                                        _message => _message,
-                                        _returnCode => _returnCode);
+                                        _endDate         => _currentInstrumentUsageMonth,
+                                        _infoOnly        => _infoOnly,
+                                        _debugReports    => '',
+                                        _message         => _message,       -- Output
+                                        _returnCode      => _returnCode);   -- Output
                     Else
                         CALL public.update_emsl_instrument_usage_report (
-                                        _instrument => _instrumentInfo.Instrument,
+                                        _instrument      => _instrumentInfo.Instrument,
                                         _eusInstrumentId => 0,
-                                        _endDate => _currentInstrumentUsageMonth,
-                                        _infoOnly => _infoOnly,
-                                        _debugReports => '',
-                                        _message => _message,
-                                        _returnCode => _returnCode);
+                                        _endDate         => _currentInstrumentUsageMonth,
+                                        _infoOnly        => _infoOnly,
+                                        _debugReports    => '',
+                                        _message         => _message,       -- Output
+                                        _returnCode      => _returnCode);   -- Output
                     End If;
 
                     If _returnCode <> '' And Not _infoOnly Then

@@ -252,8 +252,8 @@ BEGIN
                     _job,
                     _scriptXML,
                     _resultsDirectoryName,
-                    _message => _message,
-                    _returnCode => _returnCode);
+                    _message    => _message,        -- Output
+                    _returnCode => _returnCode);    -- Output
 
         If _returnCode <> '' Then
             _msg := format('Error returned by create_steps_for_job: %s', _returnCode);
@@ -286,10 +286,10 @@ BEGIN
         CALL sw.adjust_params_for_local_job (
                     _scriptName,
                     _dataPackageID,
-                    _jobParamXML => _jobParamXML,   -- Input / Output
-                    _message => _message,           -- Output
-                    _returnCode => _returnCode,     -- Output
-                    _debugMode => _debugMode
+                    _jobParamXML => _jobParamXML,   -- Input/Output
+                    _message     => _message,       -- Output
+                    _returnCode  => _returnCode,    -- Output
+                    _debugMode   => _debugMode
                     );
 
         ---------------------------------------------------
@@ -303,9 +303,9 @@ BEGIN
                     _job,
                     _jobParamXML,
                     _dataPackageID,
-                    _message => _message,
-                    _returnCode => _returnCode,
-                    _debugMode => _debugMode);
+                    _message    => _message,        -- Output
+                    _returnCode => _returnCode,     -- Output
+                    _debugMode  => _debugMode);
 
         If _returnCode <> '' Then
             _msg := format('Error returned by create_signatures_for_job_steps: %s', _returnCode);
@@ -342,8 +342,8 @@ BEGIN
         CALL sw.clone_job_step (
                     _job,
                     _jobParamXML,
-                    _message => _message,
-                    _returnCode => _returnCode);
+                    _message    => _message,        -- Output
+                    _returnCode => _returnCode);    -- Output
 
         If _returnCode <> '' Then
             _msg := format('Error returned by clone_job_step: %s', _returnCode);
@@ -415,8 +415,8 @@ BEGIN
             _currentLocation := 'Call sw.move_jobs_to_main_tables';
 
             CALL sw.move_jobs_to_main_tables (
-                    _message => _message,
-                    _returnCode => _returnCode);
+                        _message    => _message,        -- Output
+                        _returnCode => _returnCode);    -- Output
 
             _currentLocation := 'Call public.alter_entered_by_user';
 
@@ -450,12 +450,12 @@ BEGIN
                 _currentLocation := 'Call sw.update_job_param_org_db_info_using_data_pkg()';
 
                 CALL sw.update_job_param_org_db_info_using_data_pkg (
-                                _job,
-                                _dataPackageID,
-                                _deleteIfInvalid => false,
-                                _message => _message,           -- Output
-                                _returnCode => _returnCode,     -- Output
-                                _callingUser => _callingUser);
+                            _job,
+                            _dataPackageID,
+                            _deleteIfInvalid => false,
+                            _message     => _message,       -- Output
+                            _returnCode  => _returnCode,    -- Output
+                            _callingUser => _callingUser);
             End If;
         End If;
 
@@ -470,12 +470,12 @@ BEGIN
             CALL sw.update_job_param_org_db_info_using_data_pkg (
                         _job,
                         _dataPackageID,
-                        _deleteIfInvalid => false,
-                        _debugMode => true,
+                        _deleteIfInvalid    => false,
+                        _debugMode          => true,
                         _scriptNameForDebug => _scriptName,
-                        _message => _message,
-                        _returnCode => _returnCode,
-                        _callingUser => _callingUser);
+                        _message            => _message,        -- Output
+                        _returnCode         => _returnCode,     -- Output
+                        _callingUser        => _callingUser);
 
         End If;
 

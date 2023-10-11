@@ -123,7 +123,11 @@ BEGIN
     ---------------------------------------------------
 
     If _updateCachedInfo Then
-        CALL update_cached_experiment_component_names (_expID);
+        CALL public.public.update_cached_experiment_component_names (
+                        _expID,
+                        _infoonly   => false,
+                        _message    => _message,        -- Output
+                        _returnCode => _returnCode);    -- Output
     End If;
 
 END

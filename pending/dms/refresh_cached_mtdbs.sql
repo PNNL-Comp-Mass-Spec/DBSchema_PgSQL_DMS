@@ -46,12 +46,14 @@ BEGIN
         _fullRefreshPerformed := true;
 
         _currentLocation := 'Update t_mts_cached_data_status';
-        --
-        CALL update_mts_cached_data_status (
-                    't_mts_mt_dbs_cached',
-                    _incrementRefreshCount => false,
-                    _fullRefreshPerformed => _fullRefreshPerformed,
-                    _lastRefreshMinimumID => 0);
+
+        CALL public.update_mts_cached_data_status (
+                        _cachedDataTableName   => 't_mts_mt_dbs_cached',
+                        _incrementRefreshCount => false,
+                        _fullRefreshPerformed  => _fullRefreshPerformed,
+                        _lastRefreshMinimumID  => 0,
+                        _message               => _message,
+                        _returnCode            => _returnCode);
 
         _currentLocation := 'Update t_mts_mt_dbs_cached by merging data from S_MTS_MT_DB';
 
@@ -127,14 +129,16 @@ BEGIN
 
         _currentLocation := 'Update stats in t_mts_cached_data_status';
 
-        CALL update_mts_cached_data_status (
-                    't_mts_mt_dbs_cached',
+        CALL public.update_mts_cached_data_status (
+                    _cachedDataTableName   =>'t_mts_mt_dbs_cached',
                     _incrementRefreshCount => true,
-                    _insertCountNew => _mergeInsertCount,
-                    _updateCountNew => _mergeUpdateCount,
-                    _deleteCountNew => _mergeDeleteCount,
-                    _fullRefreshPerformed => _fullRefreshPerformed,
-                    _lastRefreshMinimumID => 0);
+                    _insertCountNew        => _mergeInsertCount,
+                    _updateCountNew        => _mergeUpdateCount,
+                    _deleteCountNew        => _mergeDeleteCount,
+                    _fullRefreshPerformed  => _fullRefreshPerformed,
+                    _lastRefreshMinimumID  => 0,
+                    _message               => _message,
+                    _returnCode            => _returnCode);
 
     EXCEPTION
         WHEN OTHERS THEN

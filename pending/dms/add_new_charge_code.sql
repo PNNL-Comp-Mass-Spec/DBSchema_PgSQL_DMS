@@ -36,7 +36,13 @@ BEGIN
         _message := '_chargeCodeList is empty; nothing to do';
         RAISE INFO '%', _message;
     Else
-        CALL update_charge_codes_from_warehouse (_infoOnly => _infoOnly, _updateAll => false, _onlyShowChanged => true, _explicitChargeCodeList => _ChargeCodeList, _message => _message);
+        CALL public.update_charge_codes_from_warehouse (
+                        _infoOnly               => _infoOnly,
+                        _updateAll              => false,
+                        _onlyShowChanged        => true,
+                        _explicitChargeCodeList => _chargeCodeList,
+                        _message                => _message,        -- Output
+                        _returnCode             => _returnCode);    -- Output
 
         If _message <> '' Then
             RAISE INFO '%', _message;

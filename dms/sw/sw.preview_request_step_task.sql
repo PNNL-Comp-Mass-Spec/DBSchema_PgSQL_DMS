@@ -40,20 +40,20 @@ BEGIN
     End If;
 
     CALL sw.get_default_remote_info_for_manager (
-            _processorName,
-            _remoteInfoXML => _remoteInfo); -- Output
+                _processorName,
+                _remoteInfoXML => _remoteInfo); -- Output
 
     CALL sw.request_step_task_xml (
-            _processorName,
-            _job => _job,                   -- Output
-            _parameters => _parameters,     -- Output
-            _message => _message,           -- Output
-            _returnCode => _returnCode,
-            _infoLevel => _infoLevel,
-            _jobCountToPreview => _jobCountToPreview,
-            _remoteInfo => _remoteInfo);
+                _processorName,
+                _job               => _job,                 -- Output
+                _parameters        => _parameters,          -- Output
+                _message           => _message,             -- Output
+                _returnCode        => _returnCode,          -- Output
+                _infoLevel         => _infoLevel,
+                _jobCountToPreview => _jobCountToPreview,
+                _remoteInfo        => _remoteInfo);
 
-    If Exists (Select * FROM sw.t_jobs WHERE job = _job) Then
+    If Exists (Select job FROM sw.t_jobs WHERE job = _job) Then
         RETURN QUERY
         SELECT _job AS JobNumber,
                J.Dataset,

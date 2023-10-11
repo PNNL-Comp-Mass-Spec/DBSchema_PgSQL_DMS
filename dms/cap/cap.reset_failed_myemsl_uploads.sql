@@ -245,10 +245,10 @@ BEGIN
             WHERE SkipResetMode = 0;
 
             CALL cap.retry_myemsl_upload (
-                        _jobs => _jobList,
-                        _infoOnly => _infoOnly,
-                        _message => _message,
-                        _returnCode => _returnCode);
+                        _jobs       => _jobList,
+                        _infoOnly   => _infoOnly,
+                        _message    => _message,        -- Output
+                        _returnCode => _returnCode);    -- Output
 
             -----------------------------------------------------------
             -- Post a log entry if any capture task jobs were reset

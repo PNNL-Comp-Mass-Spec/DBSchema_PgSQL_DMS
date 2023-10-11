@@ -162,42 +162,42 @@ BEGIN
         ---------------------------------------------------
 
         -- Superkingdom
-        CALL update_taxonomy_item_if_defined ('superkingdom',  _value => _newDomain);
+        CALL public.update_taxonomy_item_if_defined ('superkingdom',  _value => _newDomain);
 
         -- Subkingdom, Kingdom
-        CALL update_taxonomy_item_if_defined ('subkingdom', _value => _newKingdom);
-        CALL update_taxonomy_item_if_defined ('kingdom', _value => _newKingdom);
+        CALL public.update_taxonomy_item_if_defined ('subkingdom', _value => _newKingdom);
+        CALL public.update_taxonomy_item_if_defined ('kingdom', _value => _newKingdom);
 
         If _newKingdom = '' And _newDomain::citext = 'bacteria' Then
             _newKingdom := 'Prokaryote';
         End If;
 
         -- Subphylum, phylum
-        CALL update_taxonomy_item_if_defined ('subphylum', _value => _newPhylum);
-        CALL update_taxonomy_item_if_defined ('phylum', _value => _newPhylum);
+        CALL public.update_taxonomy_item_if_defined ('subphylum', _value => _newPhylum);
+        CALL public.update_taxonomy_item_if_defined ('phylum', _value => _newPhylum);
 
         -- Subclass, superclass, class
-        CALL update_taxonomy_item_if_defined ('subclass', _value => _newClass);
-        CALL update_taxonomy_item_if_defined ('superclass', _value => _newClass);
-        CALL update_taxonomy_item_if_defined ('class', _value => _newClass);
+        CALL public.update_taxonomy_item_if_defined ('subclass', _value => _newClass);
+        CALL public.update_taxonomy_item_if_defined ('superclass', _value => _newClass);
+        CALL public.update_taxonomy_item_if_defined ('class', _value => _newClass);
 
         -- Suborder, superorder, order
-        CALL update_taxonomy_item_if_defined ('suborder', _value => _newOrder);
-        CALL update_taxonomy_item_if_defined ('superorder', _value => _newOrder);
-        CALL update_taxonomy_item_if_defined ('order', _value => _newOrder);
+        CALL public.update_taxonomy_item_if_defined ('suborder', _value => _newOrder);
+        CALL public.update_taxonomy_item_if_defined ('superorder', _value => _newOrder);
+        CALL public.update_taxonomy_item_if_defined ('order', _value => _newOrder);
 
         -- Subfamily, superfamily, family
-        CALL update_taxonomy_item_if_defined ('subfamily', _value => _newFamily);
-        CALL update_taxonomy_item_if_defined ('superfamily', _value => _newFamily);
-        CALL update_taxonomy_item_if_defined ('family', _value => _newFamily);
+        CALL public.update_taxonomy_item_if_defined ('subfamily', _value => _newFamily);
+        CALL public.update_taxonomy_item_if_defined ('superfamily', _value => _newFamily);
+        CALL public.update_taxonomy_item_if_defined ('family', _value => _newFamily);
 
         -- Subgenus, Genus
-        CALL update_taxonomy_item_if_defined ('subgenus', _value => _newGenus);
-        CALL update_taxonomy_item_if_defined ('genus', _value => _newGenus);
+        CALL public.update_taxonomy_item_if_defined ('subgenus', _value => _newGenus);
+        CALL public.update_taxonomy_item_if_defined ('genus', _value => _newGenus);
 
         -- Subspecies, species
-        CALL update_taxonomy_item_if_defined ('subspecies', _value => _newSpecies);
-        CALL update_taxonomy_item_if_defined ('species', _value => _newSpecies);
+        CALL public.update_taxonomy_item_if_defined ('subspecies', _value => _newSpecies);
+        CALL public.update_taxonomy_item_if_defined ('species', _value => _newSpecies);
 
         -- If the species name starts with the genus name, remove it
         If _newSpecies::citext Like (_newGenus || ' %')::citext And char_length(_newSpecies) > char_length(_newGenus) + 1 Then

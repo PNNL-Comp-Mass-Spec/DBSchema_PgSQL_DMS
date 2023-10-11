@@ -123,14 +123,14 @@ BEGIN
         End If;
 
         CALL public.parse_usage_text (
-                        _comment => _cleanedComment,        -- Input / Output
-                        _usageXML => _usageXML,             -- Output
-                        _message => _message,               -- Output
-                        _returnCode => _returnCode,         -- Output
-                        _seq => _id,                        -- Procedure parse_usage_text uses this in status messages and warnings
-                        _showDebug => _showDebug,
+                        _comment       => _cleanedComment,  -- Input/Output
+                        _usageXML      => _usageXML,        -- Output
+                        _message       => _message,         -- Output
+                        _returnCode    => _returnCode,      -- Output
+                        _seq           => _id,              -- Procedure parse_usage_text uses this in status messages and warnings
+                        _showDebug     => _showDebug,
                         _validateTotal => true,
-                        _invalidUsage => _invalidUsage);    -- Output
+                        _invalidUsage  => _invalidUsage);   -- Output
 
         If _showDebug Then
             If _returnCode = '' Then

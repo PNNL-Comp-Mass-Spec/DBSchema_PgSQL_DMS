@@ -198,12 +198,13 @@ BEGIN
         _proteinCollectionListValidated := Trim(Coalesce(_predefineInfo.ProteinCollectionList, ''));
 
         If char_length(_proteinCollectionListValidated) > 0 And public.validate_na_parameter(_proteinCollectionListValidated, 1) <> 'na' Then
-            CALL validate_protein_collection_list_for_datasets (
+            CALL public.validate_protein_collection_list_for_datasets (
                                 _datasetName,
-                                _protCollNameList => _proteinCollectionListValidated,   -- Output
-                                _collectionCountAdded => _collectionCountAdded,         -- Output (unused, but required)
-                                _message => _message,                                   -- Output
-                                _showDebug => false);
+                                _protCollNameList     => _proteinCollectionListValidated,   -- Output
+                                _collectionCountAdded => _collectionCountAdded,             -- Output (unused, but required)
+                                _message              => _message,                          -- Output
+                                _returnCode           => _returnCode,                       -- Output
+                                _showDebug            => false);
         End If;
 
         ---------------------------------------------------

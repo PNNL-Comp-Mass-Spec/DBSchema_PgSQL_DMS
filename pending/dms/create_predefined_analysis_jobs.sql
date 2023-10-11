@@ -202,31 +202,31 @@ BEGIN
             -- Create the job
             ---------------------------------------------------
 
-            CALL add_update_analysis_job (
-                        _datasetName                      => _jobInfo.DatasetName,
-                        _priority                         => _jobInfo.Priority,
-                        _toolName                         => _jobInfo.AnalysisToolName,
-                        _paramFileName                    => _jobInfo.ParamFileName,
-                        _settingsFileName                 => _jobInfo.SettingsFileName,
-                        _organismName                     => _jobInfo.OrganismName,
-                        _protCollNameList                 => _jobInfo.ProteinCollectionList,
-                        _protCollOptionsList              => _jobInfo.ProteinOptionsList,
-                        _organismDBName                   => _jobInfo.OrganismDBName,
-                        _ownerUsername                    => _jobInfo.OwnerUsername,
-                        _comment                          => _jobInfo.Comment,
-                        _associatedProcessorGroup         => _jobInfo.AssociatedProcessorGroup,
-                        _propagationMode                  => _propagationModeText,
-                        _stateName                        => 'new',
-                        _job                              => _job,              -- Output
-                        _mode                             => 'add',
-                        _message                          => _newMessage,       -- Output
-                        _returnCode                       => _returnCode,       -- Output
-                        _callingUser                      => _callingUser,
-                        _preventDuplicateJobs             => _preventDuplicateJobs,
-                        _preventDuplicatesIgnoresNoExport => false,
-                        _specialProcessing                => _jobInfo.SpecialProcessing,
-                        _specialProcessingWaitUntilReady  => true,
-                        _infoOnly                         => _infoOnly);
+            CALL public.add_update_analysis_job (
+                            _datasetName                      => _jobInfo.DatasetName,
+                            _priority                         => _jobInfo.Priority,
+                            _toolName                         => _jobInfo.AnalysisToolName,
+                            _paramFileName                    => _jobInfo.ParamFileName,
+                            _settingsFileName                 => _jobInfo.SettingsFileName,
+                            _organismName                     => _jobInfo.OrganismName,
+                            _protCollNameList                 => _jobInfo.ProteinCollectionList,
+                            _protCollOptionsList              => _jobInfo.ProteinOptionsList,
+                            _organismDBName                   => _jobInfo.OrganismDBName,
+                            _ownerUsername                    => _jobInfo.OwnerUsername,
+                            _comment                          => _jobInfo.Comment,
+                            _associatedProcessorGroup         => _jobInfo.AssociatedProcessorGroup,
+                            _propagationMode                  => _propagationModeText,
+                            _stateName                        => 'new',
+                            _job                              => _job,              -- Output
+                            _mode                             => 'add',
+                            _message                          => _newMessage,       -- Output
+                            _returnCode                       => _returnCode,       -- Output
+                            _callingUser                      => _callingUser,
+                            _preventDuplicateJobs             => _preventDuplicateJobs,
+                            _preventDuplicatesIgnoresNoExport => false,
+                            _specialProcessing                => _jobInfo.SpecialProcessing,
+                            _specialProcessingWaitUntilReady  => true,
+                            _infoOnly                         => _infoOnly);
 
             -- If there was an error creating the job, store it in _message
             -- otherwise bump the job count

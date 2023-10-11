@@ -193,10 +193,11 @@ BEGIN
         ---------------------------------------------------
 
         If _workPackage <> '(lookup)' Then
-            CALL validate_wp ( _workPackageNumber,
-                               _allowNoneWP,
-                               _message => _msg,
-                               _returnCode => _returnCode);
+            CALL public.validate_wp (
+                            _workPackageNumber,
+                            _allowNoneWP,
+                            _message    => _msg,            -- Output
+                            _returnCode => _returnCode);    -- Output
 
             If _returnCode <> '' Then
                 RAISE EXCEPTION 'validate_wp: %', _msg;
@@ -268,21 +269,21 @@ BEGIN
             -- Validate batch fields
             ---------------------------------------------------
 
-            CALL validate_requested_run_batch_params (
-                    _batchID => 0,
-                    _name => _batchName,
-                    _description => _batchDescription,
-                    _ownerUsername => _operatorUsername,
-                    _requestedBatchPriority => _batchPriority,
-                    _requestedCompletionDate => _batchCompletionDate,
-                    _justificationHighPriority => _batchPriorityJustification,
-                    _requestedInstrumentGroup => _instrumentGroup,              -- Will typically contain an instrument group, not an instrument name
-                    _comment => _batchComment,
-                    _mode => _mode,
-                    _instrumentGroupToUse => _instrumentGroupToUse, -- Output
-                    _userID => _userID,                             -- Output
-                    _message => _message,                           -- Output
-                    _returnCode => _returnCode);                    -- Output
+            CALL public.validate_requested_run_batch_params (
+                            _batchID                   => 0,
+                            _name                      => _batchName,
+                            _description               => _batchDescription,
+                            _ownerUsername             => _operatorUsername,
+                            _requestedBatchPriority    => _batchPriority,
+                            _requestedCompletionDate   => _batchCompletionDate,
+                            _justificationHighPriority => _batchPriorityJustification,
+                            _requestedInstrumentGroup  => _instrumentGroup,              -- Will typically contain an instrument group, not an instrument name
+                            _comment                   => _batchComment,
+                            _mode                      => _mode,
+                            _instrumentGroupToUse      => _instrumentGroupToUse,    -- Output
+                            _userID                    => _userID,                  -- Output
+                            _message                   => _message,                 -- Output
+                            _returnCode                => _returnCode);             -- Output
 
             If _returnCode <> '' Then
                 RAISE EXCEPTION '%', _message;
@@ -398,21 +399,21 @@ BEGIN
             Else
 
                 -- Auto-create a batch for the new requests
-                CALL add_update_requested_run_batch (
-                                               _id => _batchID,             -- Output
-                                               _name => _batchName,
-                                               _description => _batchDescription,
-                                               _requestedRunList => _requestedRunList,
-                                               _ownerUsername => _operatorUsername,
-                                               _requestedBatchPriority => _batchPriority,
-                                               _requestedCompletionDate => _batchCompletionDate,
-                                               _justificationHighPriority => _batchPriorityJustification,
-                                               _requestedInstrumentGroup => _instrumentGroupToUse,
-                                               _comment => _batchComment,
-                                               _mode => _mode,
-                                               _message => _msg,            -- Output
-                                               _returnCode => _returnCode,  -- Output
-                                               _useRaiseError => false);
+                CALL public.add_update_requested_run_batch (
+                               _id                        => _batchID,          -- Output
+                               _name                      => _batchName,
+                               _description               => _batchDescription,
+                               _requestedRunList          => _requestedRunList,
+                               _ownerUsername             => _operatorUsername,
+                               _requestedBatchPriority    => _batchPriority,
+                               _requestedCompletionDate   => _batchCompletionDate,
+                               _justificationHighPriority => _batchPriorityJustification,
+                               _requestedInstrumentGroup  => _instrumentGroupToUse,
+                               _comment                   => _batchComment,
+                               _mode                      => _mode,
+                               _message                   => _msg,              -- Output
+                               _returnCode                => _returnCode,       -- Output
+                               _useRaiseError             => false);
 
                 If _returnCode <> '' Then
                     If Coalesce(_msg, '') = '' Then

@@ -133,11 +133,11 @@ BEGIN
     -- Perform the actions necessary when dataset is complete
     ---------------------------------------------------
 
-    CALL do_dataset_completion_actions (
-            _datasetName,
-            _completionState,
-            _message => _message,           -- Output
-            _returnCode => _returnCode);    -- Output
+    CALL public.do_dataset_completion_actions (
+                    _datasetName,
+                    _completionState,
+                    _message    => _message,        -- Output
+                    _returnCode => _returnCode);    -- Output
 
     ---------------------------------------------------
     -- Update the comment as needed
@@ -149,11 +149,11 @@ BEGIN
         -- Dataset successfully captured
         -- Remove error messages of the form Error while copying \\15TFTICR64\data\ ...
 
-        CALL cleanup_dataset_comments (
-                    _datasetID::text,
-                    _message => _message,           -- Output
-                    _returnCode => _returnCode,     -- Output
-                    _infoOnly => false);
+        CALL public.cleanup_dataset_comments (
+                        _datasetID::text,
+                        _message    => _message,        -- Output
+                        _returnCode => _returnCode,     -- Output
+                        _infoOnly   => false);
 
     End If;
 

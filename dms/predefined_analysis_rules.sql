@@ -363,18 +363,19 @@ BEGIN
         ---------------------------------------------------
         -- Evaluate the next rule in the holding table
         ---------------------------------------------------
+
         CALL public.evaluate_predefined_analysis_rule(
-                _minLevel => _minLevel,
-                _datasetName => _datasetName,
-                _instrumentName => _instrumentName,
+                _minLevel        => _minLevel,
+                _datasetName     => _datasetName,
+                _instrumentName  => _instrumentName,
                 _instrumentClass => _instrumentClass,
-                _datasetRating => _datasetRating,
-                _datasetType => _datasetType,
+                _datasetRating   => _datasetRating,
+                _datasetType     => _datasetType,
                 _previewingRules => true,
-                _predefineFound => _predefineFound,         -- Output
-                _predefineID => _predefineID,               -- Output
-                _minLevelNew => _minLevelNew,               -- Output
-                _message => _message);                      -- Output
+                _predefineFound  => _predefineFound,    -- Output
+                _predefineID     => _predefineID,       -- Output
+                _minLevelNew     => _minLevelNew,       -- Output
+                _message         => _message);          -- Output
 
         If Not _predefineFound Then
             -- Break out of the while loop

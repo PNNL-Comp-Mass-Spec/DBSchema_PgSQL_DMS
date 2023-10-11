@@ -129,13 +129,13 @@ BEGIN
         ---------------------------------------------------
 
         CALL dpkg.update_data_package_items_utility (
-                            _comment,
-                            _mode,
-                            _removeParents => _removeParentItems,
-                            _message => _message,           -- Output
-                            _returnCode => _returnCode,     -- Output
-                            _callingUser => _callingUser,
-                            _infoOnly => _infoOnly);
+                    _comment,
+                    _mode,
+                    _removeParents => _removeParentItems,
+                    _message       => _message,         -- Output
+                    _returnCode    => _returnCode,      -- Output
+                    _callingUser   => _callingUser,
+                    _infoOnly      => _infoOnly);
 
         If _returnCode <> '' Then
             If Coalesce(_message, '') = '' Then

@@ -328,8 +328,13 @@ BEGIN
 
     CALL post_log_entry ('Normal', _message, 'Update_Dataset_Instrument');
 
-    -- Update T_Cached_Dataset_Instruments
-    CALL update_cached_dataset_instruments (_processingMode => 0, _datasetId => _datasetID, _infoOnly => false);
+    -- Update t_cached_dataset_instruments
+    CALL public.update_cached_dataset_instruments (
+                    _processingMode => 0,
+                    _datasetId      => _datasetID,
+                    _infoOnly       => false,
+                    _message        => _message,        -- Output
+                    _returnCode     => _returnCode);    -- Output
 
     ---------------------------------------------------
     -- Done

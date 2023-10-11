@@ -253,14 +253,14 @@ BEGIN
         -- Names should be in the form 'Last Name, First Name (Username)'
         ---------------------------------------------------
 
-        CALL validate_request_users (
-                _requestName,
-                'add_update_data_analysis_request',
-                _requestedPersonnel => _requestedPersonnel,     -- Output
-                _assignedPersonnel => _assignedPersonnel,       -- Output
-                _requireValidRequestedPersonnel => false,
-                _message => _message,                           -- Output
-                _returnCode => _returnCode                      -- Output
+        CALL public.validate_request_users (
+                        _requestName,
+                        'add_update_data_analysis_request',
+                        _requestedPersonnel             => _requestedPersonnel,     -- Output
+                        _assignedPersonnel              => _assignedPersonnel,      -- Output
+                        _requireValidRequestedPersonnel => false,
+                        _message                        => _message,                -- Output
+                        _returnCode                     => _returnCode              -- Output
 
         If _returnCode <> '' Then
             If Coalesce(_message, '') = '' Then
@@ -307,10 +307,11 @@ BEGIN
             End If;
         End If;
 
-        CALL validate_wp ( _workPackageNumber,
-                           _allowNoneWP,
-                           _message => _msg,
-                           _returnCode => _returnCode);
+        CALL public.validate_wp (
+                        _workPackageNumber,
+                        _allowNoneWP,
+                        _message    => _msg,            -- Output
+                        _returnCode => _returnCode);    -- Output
 
         If _returnCode <> '' Then
             RAISE EXCEPTION 'validate_wp: %', _msg;

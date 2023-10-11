@@ -35,7 +35,11 @@ BEGIN
         RETURN;
     End If;
 
-    CALL cap.retry_myemsl_upload(_job::text, _infoOnly =>_infoOnly, _message => _message, _returnCode => _returnCode);
+    CALL cap.retry_myemsl_upload(
+                _job::text,
+                _infoOnly   =>_infoOnly,
+                _message    => _message,        -- Output
+                _returnCode => _returnCode);    -- Output
 END
 $$;
 
@@ -265,9 +269,9 @@ BEGIN
             --
             CALL cap.reset_dependent_task_steps (
                         _jobList,
-                        _infoOnly => false,
-                        _message => _message,
-                        _returncode => _returncode);
+                        _infoOnly   => false,
+                        _message    => _message,        -- Output
+                        _returncode => _returncode);    -- Output
 
             -- Reset the retry counts for the ArchiveVerify step
             --

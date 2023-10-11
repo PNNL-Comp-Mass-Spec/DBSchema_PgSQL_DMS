@@ -254,11 +254,11 @@ BEGIN
 
     If _batchID > 0 Then
 
-        CALL update_cached_requested_run_batch_stats (
-                _batchID,
-                _fullrefresh => false,
-                _message => _message2,          -- Output
-                _returncode => _returncode);    -- Output
+        CALL public.update_cached_requested_run_batch_stats (
+                        _batchID,
+                        _fullrefresh => false,
+                        _message     => _message2,      -- Output
+                        _returncode  => _returncode);   -- Output
 
         If _returnCode <> '' Then
             _message := _message2;

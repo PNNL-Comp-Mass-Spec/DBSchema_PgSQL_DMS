@@ -311,15 +311,15 @@ BEGIN
     CALL public.add_update_storage (
             _path           => _sourcePath,
             _volnameclient  => '(na)',
-            _volnameserver  => _sourceMachineName,      -- Note that Add_Update_Storage will remove '\' characters from _sourceMachineName since _storFunction is 'inbox'
+            _volnameserver  => _sourceMachineName,  -- Note that Add_Update_Storage will remove '\' characters from _sourceMachineName since _storFunction is 'inbox'
             _storfunction   => 'inbox',
             _instrumentname => _instrumentName,
             _description    => '(na)',
             _urldomain      => '',
-            _id             => _sourcePathIdText,       -- Input/Output, source path ID (as text)
+            _id             => _sourcePathIdText,   -- Input/Output, source path ID (as text)
             _mode           => 'add',
-            _message        => _message,                -- Output
-            _returnCode     => _returnCode);            -- Output
+            _message        => _message,            -- Output
+            _returnCode     => _returnCode);        -- Output
 
     If _returnCode <> '' Then
         ROLLBACK;

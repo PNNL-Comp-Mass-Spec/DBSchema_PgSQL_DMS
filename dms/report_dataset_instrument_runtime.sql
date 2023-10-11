@@ -24,10 +24,10 @@ CREATE OR REPLACE PROCEDURE public.report_dataset_instrument_runtime(IN _startda
 **
 **      BEGIN;
 **          CALL public.report_dataset_instrument_runtime (
-**                      _startDate => '2023-01-01',
-**                      _endDate => '2023-01-30',
+**                      _startDate      => '2023-01-01',
+**                      _endDate        => '2023-01-30',
 **                      _instrumentName => 'Lumos01',
-**                      _reportOptions => 'Show All'
+**                      _reportOptions  => 'Show All'
 **               );
 **          FETCH ALL FROM _results;
 **      END;

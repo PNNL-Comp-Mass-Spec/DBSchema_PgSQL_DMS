@@ -68,9 +68,10 @@ BEGIN
     -- Create dataset archive entry in public.t_dataset_archive
     ---------------------------------------------------
 
-    CALL public.add_archive_dataset (_datasetID,
-                                     _message => _message,          -- Output
-                                     _returnCode => _returnCode);   -- Output
+    CALL public.add_archive_dataset (
+                    _datasetID,
+                    _message    => _message,        -- Output
+                    _returnCode => _returnCode);    -- Output
 
     If Coalesce(_returnCode, '') <> '' Then
         RETURN;

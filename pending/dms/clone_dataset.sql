@@ -308,7 +308,10 @@ BEGIN
         -- Possibly create a Dataset Archive task
         --
         If _createDatasetArchiveTask Then
-            CALL Add_Archive_Dataset (_datasetIDNew);
+            CALL public.add_archive_dataset (
+                            _datasetID  => _datasetIDNew,
+                            _message    => _message,
+                            _returnCode => _returnCode);
         Else
             RAISE INFO 'You should manually create a dataset archive task using: CALL Add_Archive_Dataset %', _datasetIDNew;
         End If;

@@ -74,11 +74,12 @@ BEGIN
         _callingUser := public.get_user_login_without_domain('');
     End If;
 
-    CALL update_requested_run_factors (
-                            _factorList,
-                            _message => _message,           -- Output
-                            _returnCode => _returnCode,     -- Output
-                            _callingUser);
+    CALL public.update_requested_run_factors (
+                    _factorList,
+                    _message     => _message,       -- Output
+                    _returnCode  => _returnCode,    -- Output
+                    _callingUser => _callingUser,
+                    _infoOnly    => false);
 
     DROP TABLE Tmp_Requests;
 END

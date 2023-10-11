@@ -257,7 +257,11 @@ BEGIN
             FROM Tmp_Datasets Src
             WHERE Target.Dataset_ID = Src.DatasetID;
 
-            CALL update_cached_dataset_folder_paths (_processingMode => 0);
+            CALL public.update_cached_dataset_folder_paths (
+                            _processingMode => 0,
+                            _showdebug      => false,
+                            _message        => _message,       -- Output
+                            _returnCode     => _returnCode);   -- Output
 
         End If;
 

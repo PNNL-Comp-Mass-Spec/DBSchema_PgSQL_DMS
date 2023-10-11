@@ -151,11 +151,11 @@ BEGIN
             RETURN;
         End If;
 
-        CALL auto_resolve_name_to_username (
-                _researcher,
-                _matchCount => _matchCount,                 -- Output
-                _matchingUsername => _researcherUsername,   -- Output
-                _matchingUserID => _userID);                -- Output
+        CALL public.auto_resolve_name_to_username (
+                        _researcher,
+                        _matchCount       => _matchCount,           -- Output
+                        _matchingUsername => _researcherUsername,   -- Output
+                        _matchingUserID   => _userID);              -- Output
 
         If _matchCount = 1 Then
             -- Single match found; update _researcher to be in the form 'Zink, Erika M (D3P704)'
@@ -270,13 +270,13 @@ BEGIN
 
             -- Material movement logging
             --
-            CALL post_material_log_entry
-                 'Container Creation',
-                 _container,
-                 'na',
-                 _location,
-                 _callingUser,
-                 ''
+            CALL public.post_material_log_entry (
+                            _type         => 'Container Creation',
+                            _item         => _container,
+                            _initialState => 'na',                  -- Initial State: Old location ('na')
+                            _finalState   => _location,             -- Final State:   New location
+                            _callingUser  => _callingUser,
+                            _comment      => '');
 
         End If;
 
@@ -298,13 +298,13 @@ BEGIN
             -- Material movement logging
             --
             If _curLocationName <> _location Then
-                CALL post_material_log_entry ( 'Container Move',
-                                               _container,
-                                               _curLocationName,
-                                               _location,
-                                               _callingUser,
-                                               ''
-                                             );
+                CALL public.post_material_log_entry (
+                                _type         => 'Container Move',
+                                _item         => _container,
+                                _initialState => _curLocationName,      -- Initial State: Old location
+                                _finalState   => _location,             -- Final State    New location
+                                _callingUser  => _callingUser,
+                                _comment      => '');
             End If;
 
         End If;

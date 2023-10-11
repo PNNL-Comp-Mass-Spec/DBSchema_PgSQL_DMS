@@ -189,16 +189,16 @@ BEGIN
         _archivePathIDText := _archivePathID::text;
 
         CALL public.add_update_archive_path (
-                          _archivePathID => _archivePathIDText,         -- Input/Output
-                          _archivePath => _archivePathName,
-                          _archiveServer => _instrumentInfo.AutoSPArchiveServerName,
-                          _instrumentName => _instrumentInfo.InstrumentName,
+                          _archivePathID    => _archivePathIDText,  -- Input/Output
+                          _archivePath      => _archivePathName,
+                          _archiveServer    => _instrumentInfo.AutoSPArchiveServerName,
+                          _instrumentName   => _instrumentInfo.InstrumentName,
                           _networkSharePath => _networkSharePath,
-                          _archiveNote => _instrumentInfo.InstrumentName,
-                          _archiveFunction => _archiveFunction,
-                          _mode => 'add',
-                          _message => _message,             -- Output
-                          _returnCode => _returnCode);      -- Output
+                          _archiveNote      => _instrumentInfo.InstrumentName,
+                          _archiveFunction  => _archiveFunction,
+                          _mode             => 'add',
+                          _message          => _message,            -- Output
+                          _returnCode       => _returnCode);        -- Output
 
         _archivePathID := public.try_cast(_archivePathIDText, 0);
 

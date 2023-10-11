@@ -130,10 +130,10 @@ BEGIN
 
         CALL public.get_dataset_details_from_dataset_info_xml (
                         _datasetInfoXML,
-                        _datasetID => _datasetID,       -- Input/Output
+                        _datasetID   => _datasetID,     -- Input/Output
                         _datasetName => _datasetName,   -- Output
-                        _message => _message,           -- Output
-                        _returnCode => _returnCode);    -- Output
+                        _message     => _message,       -- Output
+                        _returnCode  => _returnCode);   -- Output
 
         If _returnCode <> '' Then
             DROP TABLE Tmp_DatasetDevicesTable;

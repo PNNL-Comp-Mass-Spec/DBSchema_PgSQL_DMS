@@ -69,9 +69,10 @@ BEGIN
         RETURN;
     End If;
 
-    CALL delete_param_file_by_id (_paramFileID,
-                                  _message => _message,     -- Output
-                                  _returnCode => _returnCode);
+    CALL public.delete_param_file_by_id (
+                    _paramFileID,
+                    _message => _message,           -- Output
+                    _returnCode => _returnCode);    -- Output
 
     If _returnCode = '' Then
         _message := format('Deleted parameter file %s', _paramFileName);

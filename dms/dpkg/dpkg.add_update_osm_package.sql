@@ -297,8 +297,8 @@ BEGIN
         If _mode = 'add' Then
             CALL dpkg.make_osm_package_storage_folder (
                         _id,
-                        _infoOnly => false,
-                        _message => _msg,               -- Output
+                        _infoOnly   => false,
+                        _message    => _msg,            -- Output
                         _returnCode => _returnCode);    -- Output
 
             If _returnCode <> '' Then

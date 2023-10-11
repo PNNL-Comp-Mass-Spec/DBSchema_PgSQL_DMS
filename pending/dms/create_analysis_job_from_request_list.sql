@@ -188,25 +188,25 @@ BEGIN
             -- Convert the analysis job request to analysis jobs
             -------------------------------------------------
 
-            CALL add_analysis_job_group (
-                    _datasetList => _requestInfo.DatasetList,
-                    _priority => 3,
-                    _toolName => _requestInfo.ToolName,
-                    _paramFileName => _requestInfo.ParamFileName,
-                    _settingsFileName => _requestInfo.SettingsFileName,
-                    _organismDBName => _requestInfo.OrganismDBName,
-                    _organismName => _requestInfo.OrganismName,
-                    _protCollNameList => _requestInfo.ProtCollNameList,
-                    _protCollOptionsList => _requestInfo.ProtCollOptionsList,
-                    _ownerUsername => _requestInfo.OwnerUsername,
-                    _comment => _requestInfo.Comment,
-                    _specialProcessing => _requestInfo.SpecialProcessing,
-                    _requestID => _requestInfo.RequestID,
-                    _associatedProcessorGroup => '',
-                    _removeDatasetsWithJobs => 'Y',
-                    _mode => _mode,
-                    _message => _message,               -- Output
-                    _returnCode => _returnCode);        -- Output
+            CALL public.add_analysis_job_group (
+                            _datasetList              => _requestInfo.DatasetList,
+                            _priority                 => 3,
+                            _toolName                 => _requestInfo.ToolName,
+                            _paramFileName            => _requestInfo.ParamFileName,
+                            _settingsFileName         => _requestInfo.SettingsFileName,
+                            _organismDBName           => _requestInfo.OrganismDBName,
+                            _organismName             => _requestInfo.OrganismName,
+                            _protCollNameList         => _requestInfo.ProtCollNameList,
+                            _protCollOptionsList      => _requestInfo.ProtCollOptionsList,
+                            _ownerUsername            => _requestInfo.OwnerUsername,
+                            _comment                  => _requestInfo.Comment,
+                            _specialProcessing        => _requestInfo.SpecialProcessing,
+                            _requestID                => _requestInfo.RequestID,
+                            _associatedProcessorGroup => '',
+                            _removeDatasetsWithJobs   => 'Y',
+                            _mode                     => _mode,
+                            _message                  => _message,      -- Output
+                            _returnCode               => _returnCode);  -- Output
 
             _message := Coalesce(_message, '');
 

@@ -74,15 +74,15 @@ BEGIN
     -- Call Request_Purge_Task to obtain the data
     --------------------------------------------------
 
-    CALL request_purge_task (
-                _storageServerName => _storageServerName,
-                _serverDisk => _storageVol,
-                _excludeStageMD5RequiredDatasets => false,
-                _message => _message,                   -- Output
-                _returnCode => _returnCode,             -- Output
-                _infoOnly => true,
-                _previewCount => _datasetsPerShare
-                _previewSql => _previewSql);
+    CALL public.request_purge_task (
+                    _storageServerName               => _storageServerName,
+                    _serverDisk                      => _storageVol,
+                    _excludeStageMD5RequiredDatasets => false,
+                    _message                         => _message,           -- Output
+                    _returnCode                      => _returnCode,        -- Output
+                    _infoOnly                        => true,
+                    _previewCount                    => _datasetsPerShare
+                    _previewSql                      => _previewSql);
 
 END
 $$;

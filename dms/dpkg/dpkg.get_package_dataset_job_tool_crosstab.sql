@@ -38,9 +38,9 @@ CREATE OR REPLACE PROCEDURE dpkg.get_package_dataset_job_tool_crosstab(IN _datap
 **      BEGIN
 **          CALL dpkg.get_package_dataset_job_tool_crosstab (
 **                      _dataPackageID => 3050,
-**                      _results => _results,
-**                      _message => _message,
-**                      _returnCode => _returnCode
+**                      _results       => _results,
+**                      _message       => _message,
+**                      _returnCode    => _returnCode
 **                );
 **
 **          RAISE INFO '';

@@ -133,16 +133,16 @@ BEGIN
     CALL cap.update_dms_file_info_xml (
                 _datasetID,
                 _deleteFromTableOnSuccess => true,
-                _message => _message,
-                _returnCode => _returnCode);
+                _message                  => _message,      -- Output
+                _returnCode               => _returnCode);  -- Output
 
     If _returnCode = 'U5360' Then
         -- Use special completion code of 101
         CALL public.set_capture_task_complete (
                         _datasetName,
                         _completionCode => 101,
-                        _message => _message,           -- Output
-                        _returnCode => _returnCode,     -- Output
+                        _message        => _message,        -- Output
+                        _returnCode     => _returnCode,     -- Output
                         _failureMessage => _message);
 
         -- Fail out the capture task job with state 14 (Failed, Ignore Job Step States)
@@ -170,7 +170,7 @@ BEGIN
                         _datasetID::text,
                         _comment,
                         _infoOnly,
-                        _message => _message,           -- Output
+                        _message    => _message,        -- Output
                         _returnCode => _returnCode);    -- Output
     End If;
 

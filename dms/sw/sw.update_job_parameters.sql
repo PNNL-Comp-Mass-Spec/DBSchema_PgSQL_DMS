@@ -75,7 +75,7 @@ BEGIN
     _xmlParameters := sw.create_parameters_for_job (
                             _job,
                             _settingsFileOverride => _settingsFileOverride,
-                            _debugMode => _debugMode);
+                            _debugMode            => _debugMode);
 
     If _infoOnly Then
         RAISE INFO '';
@@ -106,11 +106,11 @@ BEGIN
     End If;
 
     CALL sw.update_input_folder_using_special_processing_param (
-            _jobList => _job::text,
-            _infoOnly => _infoOnly,
-            _showResultsMode => _showResultsMode,
-            _message => _message,           -- Output
-            _returnCode => _returnCode);    -- Output
+                _jobList         => _job::text,
+                _infoOnly        => _infoOnly,
+                _showResultsMode => _showResultsMode,
+                _message         => _message,           -- Output
+                _returnCode      => _returnCode);       -- Output
 
     If _infoOnly And _message <> '' Then
         RAISE INFO '%', _message;

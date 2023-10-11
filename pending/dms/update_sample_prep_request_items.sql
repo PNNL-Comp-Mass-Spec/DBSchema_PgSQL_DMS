@@ -320,7 +320,7 @@ BEGIN
             -- Update item counts
             ---------------------------------------------------
 
-            CALL update_sample_prep_request_item_count (_samplePrepRequestID);
+            CALL public.update_sample_prep_request_item_count (_samplePrepRequestID);
 
         End If;
 

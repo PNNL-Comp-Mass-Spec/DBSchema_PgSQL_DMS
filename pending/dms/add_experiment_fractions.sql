@@ -271,13 +271,13 @@ BEGIN
         -- Set up and validate wellplate values
         ---------------------------------------------------
 
-        CALL validate_wellplate_loading (
-                                _wellplateName => _wellplateName,   -- Output
-                                _wellNumber => _wellNumber,         -- Output
-                                _totalCount => _totalCount,
-                                _wellIndex => _wellIndex,           -- Output
-                                _message => _message,               -- Output
-                                _returnCode => _returnCode);        -- Output
+        CALL public.validate_wellplate_loading (
+                        _wellplateName => _wellplateName,   -- Output
+                        _wellNumber    => _wellNumber,      -- Output
+                        _totalCount    => _totalCount,
+                        _wellIndex     => _wellIndex,       -- Output
+                        _message       => _message,         -- Output
+                        _returnCode    => _returnCode);     -- Output
 
         If _returnCode <> '' Then
             RAISE EXCEPTION '%', _message;
@@ -290,20 +290,20 @@ BEGIN
         ---------------------------------------------------
 
         If Not _wellplateName Is Null Then
-            If _wellplateName = 'new' Then
+            If _wellplateName::citext = 'new' Then
                 _wellplateName := '(generate name)';
                 _wellPlateMode := 'add';
             Else
                 _wellPlateMode := 'assure';
             End If;
-            --
-            CALL add_update_wellplate (
-                                _wellplateName => _wellplateName,       -- Output
-                                _note => _note,
-                                _wellPlateMode => _wellPlateMode,
-                                _message => _message,           -- Output
-                                _returnCode => _returnCode,     -- Output
-                                _callingUser => _callingUser)
+
+            CALL public.add_update_wellplate (
+                            _wellplateName => _wellplateName,   -- Output
+                            _note          => _note,
+                            _wellPlateMode => _wellPlateMode,
+                            _message       => _message,         -- Output
+                            _returnCode    => _returnCode,      -- Output
+                            _callingUser   => _callingUser)
 
             If _returnCode <> '' Then
                 DROP TABLE Tmp_Experiment_to_Biomaterial_Map;
@@ -401,11 +401,11 @@ BEGIN
                 -- Could not find entry in database for _researcher
                 -- Try to auto-resolve the name
 
-                CALL auto_resolve_name_to_username (
-                        _researcher,
-                        _matchCount => _matchCount,         -- Output
-                        _matchingUsername => _newUsername,  -- Output
-                        _matchingUserID => _userID);        -- Output
+                CALL public.auto_resolve_name_to_username (
+                                _researcher,
+                                _matchCount       => _matchCount,   -- Output
+                                _matchingUsername => _newUsername,  -- Output
+                                _matchingUserID   => _userID);      -- Output
 
                 If _matchCount = 1 Then
                     -- Single match found; update _researcher
@@ -556,13 +556,13 @@ BEGIN
 
                 -- Add the experiment to biomaterial mapping
                 -- The procedure uses table Tmp_Experiment_to_Biomaterial_Map
-                --
-                CALL add_experiment_biomaterial (
-                                        _newExpID,
-                                        _updateCachedInfo => false,
-                                        _message => _message,
-                                        _returnCode => _returnCode);
-                --
+
+                CALL public.add_experiment_biomaterial (
+                                _newExpID,
+                                _updateCachedInfo => false,
+                                _message          => _message,      -- Output
+                                _returnCode       => _returnCode);  -- Output
+
                 If _returnCode <> '' Then
                     RAISE EXCEPTION 'Could not add experiment biomaterial to database for experiment: "%", %', _newExpName, _message);
                 End If;
@@ -570,11 +570,11 @@ BEGIN
                 -- Add the experiment to reference compound mapping
                 -- The procedure uses table Tmp_ExpToRefCompoundMap
                 --
-                CALL add_experiment_reference_compound (
-                                        _newExpID,
-                                        _updateCachedInfo => true,
-                                        _message => _message,           -- Output
-                                        _returnCode => _returnCode);    -- Output
+                CALL public.add_experiment_reference_compound (
+                                _newExpID,
+                                _updateCachedInfo => true,
+                                _message          => _message,      -- Output
+                                _returnCode       => _returnCode);  -- Output
                 --
                 If _returnCode <> '' Then
                     RAISE EXCEPTION 'Could not add experiment reference compounds to database for experiment: "%", %', _newExpName, _message
@@ -672,16 +672,16 @@ BEGIN
             ---------------------------------------------------
 
             CALL public.update_material_items (
-                            'move_material',
-                            _materialIDList,
-                            'mixed_material',
-                            _container,
-                            '',
-                            _message => _message,           -- Output
-                            _returnCode => _returnCode,     -- Output
+                            _mode        => 'move_material',
+                            _itemList    => _materialIDList,
+                            _itemType    => 'mixed_material',
+                            _newValue    => _container,
+                            _comment     => '',
+                            _message     => _message,       -- Output
+                            _returnCode  => _returnCode,    -- Output
                             _callingUser => _callingUser);
 
-            If _returnCode <> '' Then
+                      If _returnCode <> '' Then
                 RAISE EXCEPTION '%', _message;
             End If;
 
@@ -690,15 +690,15 @@ BEGIN
             -- into the fractionated experiments
             ---------------------------------------------------
 
-            CALL copy_aux_info_multi_id (
-                            _targetName => 'Experiment',
+            CALL public.copy_aux_info_multi_id (
+                            _targetName         => 'Experiment',
                             _targetEntityIDList => _experimentIDList,
-                            _categoryName => '',
-                            _subCategoryName => '',
-                            _sourceEntityID => _parentExperimentID,
-                            _mode => 'copyAll',
-                            _message => _message,           -- Output
-                            _returnCode => _returnCode)     -- Output
+                            _categoryName       => '',
+                            _subCategoryName    => '',
+                            _sourceEntityID     => _parentExperimentID,
+                            _mode               => 'copyAll',
+                            _message            => _message,        -- Output
+                            _returnCode         => _returnCode)     -- Output
 
             If _returnCode <> '' Then
                 _message := format('Error copying Aux Info from parent Experiment to fractionated experiments, code %s', _returnCode);

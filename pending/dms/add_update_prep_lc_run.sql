@@ -214,7 +214,7 @@ BEGIN
             SELECT _id AS Prep_LC_Run_ID, Dataset_ID
             FROM Tmp_Datasets;
 
-        End If; -- add mode
+        End If;
 
         ---------------------------------------------------
         -- Action for update mode
@@ -251,10 +251,13 @@ BEGIN
             WHERE prep_lc_run_id = _id AND
                   NOT t_prep_lc_run_dataset.dataset_id IN (SELECT dataset_id FROM Tmp_Datasets)
 
-        End If; -- update mode
+        End If;
 
         -- Update the work package list
-        CALL update_prep_lc_run_work_package_list (_id);
+        CALL public.update_prep_lc_run_work_package_list (
+                        _prepLCRunID => _id,
+                        _message     => _message,       -- Output
+                        _returnCode  => _returnCode);   -- Output
 
     EXCEPTION
         WHEN OTHERS THEN

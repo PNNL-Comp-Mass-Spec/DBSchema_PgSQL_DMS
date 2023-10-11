@@ -37,6 +37,7 @@ DECLARE
     _instrumentID int;
     _instrumentName text;
     _runIntervalID int;
+    _invalidUsage int;
 
     _sqlState text;
     _exceptionMessage text;
@@ -140,12 +141,15 @@ BEGIN
                 If _infoOnly Then
                     RAISE INFO 'Preview: Call add_update_run_interval to annotate %', _intervalDescription;
                 Else
-                    CALL add_update_run_interval (
-                                _runIntervalID,
-                                'Broken[100%]',
-                                'update',
-                                _message => _message,       -- Output
-                                _callingUser => 'PNL\msdadmin (Auto_Annotate_Broken_Instrument_Long_Intervals)');
+                    CALL public.add_update_run_interval (
+                                    _id           => _runIntervalID,
+                                    _comment      => 'Broken[100%]',
+                                    _mode         => 'update',
+                                    _message      => _message,          -- Output
+                                    _returnCode   => _returnCode,       -- Output
+                                    _callingUser  => 'PNL\msdadmin (Auto_Annotate_Broken_Instrument_Long_Intervals)',
+                                    _showdebug    => false,
+                                    _invalidUsage => _invalidUsage);    -- Output
 
                     If _returnCode = '' Then
                         _message := format('Annotated %s', _intervalDescription);

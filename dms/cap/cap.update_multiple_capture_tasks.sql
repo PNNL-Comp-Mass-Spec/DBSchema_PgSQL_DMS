@@ -106,18 +106,18 @@ BEGIN
 
         If _action::citext = 'UpdateParameters' And _mode::citext = 'Update' Then
             CALL cap.update_parameters_for_task (
-                            _jobList,
-                            _message => _message,
-                            _returnCode => _returnCode);
-            RETURN;
+                        _jobList,
+                        _message    => _message,        -- Output
+                        _returnCode => _returnCode);    -- Output
+        RETURN;
         End If;
 
         If _action::citext = 'UpdateParameters' And _mode::citext = 'Preview' Then
             CALL cap.update_parameters_for_task (
-                                        _jobList,
-                                        _message => _message,
-                                        _returnCode => _returnCode,
-                                        _infoOnly => true);
+                        _jobList,
+                        _message    => _message,        -- Output
+                        _returnCode => _returnCode,     -- Output
+                        _infoOnly   => true);
             RETURN;
         End If;
 
@@ -190,7 +190,9 @@ BEGIN
             --   2) Reset the entries in cap.t_task_step_dependencies for any steps with state 1
             --   3) Set capture task job state to 1 (New)
 
-            CALL cap.retry_selected_tasks (_message => _message, _returncode => _returncode);
+            CALL cap.retry_selected_tasks (
+                        _message => _message,           -- Output
+                        _returncode => _returncode);    -- Output
 
             DROP TABLE Tmp_Selected_Jobs;
             RETURN;

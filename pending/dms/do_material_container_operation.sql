@@ -41,7 +41,6 @@ DECLARE
     _logMessage text;
     _logErrors boolean := false;
     _tmpID int := 0;
-    _iMode text;
     _containerList text;
     _newValue text := '';
 
@@ -105,18 +104,17 @@ BEGIN
             RAISE EXCEPTION '%', _msg;
         Else
 
-            _iMode := _mode;
             _containerList := _tmpID;
             _logErrors := true;
 
-            CALL update_material_containers (
-                    _iMode,
-                    _containerList,
-                    _newValue,
-                    _comment,
-                    _message => _msg,           -- Output
-                    _returnCode => _returnCode, -- Output
-                    _callingUser);
+            CALL public.update_material_containers (
+                            _mode          => _mode,
+                            _containerList => _containerList,
+                            _newValue      => _newValue,
+                            _comment       => _comment,
+                            _message       => _msg,            -- Output
+                            _returnCode    => _returnCode,     -- Output
+                            _callingUser   => _callingUser);
 
             If _returnCode <> '' Then
                 RAISE EXCEPTION '%', _msg;

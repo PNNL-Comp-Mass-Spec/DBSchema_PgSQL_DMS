@@ -59,11 +59,11 @@ BEGIN
     End If;
 
     CALL public.store_quameter_results (
-                    _datasetID => _datasetID,
+                    _datasetID  => _datasetID,
                     _resultsXML => _resultsXML,
-                    _message => _message,
-                    _returnCode => _returnCode,
-                    _infoOnly => _infoOnly);
+                    _message    => _message,        -- Output
+                    _returnCode => _returnCode,     -- Output
+                    _infoOnly   => _infoOnly);
 END
 $$;
 

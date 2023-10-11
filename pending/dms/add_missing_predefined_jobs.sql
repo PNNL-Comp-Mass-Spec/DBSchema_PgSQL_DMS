@@ -810,11 +810,13 @@ BEGIN
             _currentLocation := format('Calling schedule_predefined_analysis_jobs for %s', _datasetName);
             _startDate := CURRENT_TIMESTAMP;
 
-            CALL schedule_predefined_analysis_jobs (_datasetName,
-                                                    _analysisToolNameFilter => _analysisToolNameFilter,
-                                                    _excludeDatasetsNotReleased => _excludeDatasetsNotReleased,
-                                                    _infoOnly => _infoOnly,
-                                                    _returnCode => _returnCode);
+            CALL public.schedule_predefined_analysis_jobs (
+                            _datasetName,
+                            _analysisToolNameFilter     => _analysisToolNameFilter,
+                            _excludeDatasetsNotReleased => _excludeDatasetsNotReleased,
+                            _infoOnly                   => _infoOnly,
+                            _message                    => _message,        -- Output
+                            _returnCode                 => _returnCode);    -- Output
 
             If _returnCode = '' And Not _infoOnly Then
                 -- See if jobs were actually added by querying t_analysis_job

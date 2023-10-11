@@ -144,7 +144,12 @@ BEGIN
         -- Call update_instrument_usage_allocations_work to perform the work
         -----------------------------------------------------------
 
-        CALL update_instrument_usage_allocations_work (_fy, _message => _message, _callingUser, _infoOnly);
+        CALL public.update_instrument_usage_allocations_work (
+                        _fy          => _fy,
+                        _message     => _message,
+                        _returnCode  => _returnCode,
+                        _callingUser => _callingUser,
+                        _infoOnly    => _infoOnly);
 
     EXCEPTION
         WHEN OTHERS THEN

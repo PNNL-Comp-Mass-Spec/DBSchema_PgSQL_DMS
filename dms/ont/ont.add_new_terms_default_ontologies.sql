@@ -51,8 +51,8 @@ BEGIN
                s.parent_term_name, s.parent_term_id,
                s.grandparent_term_name, s.grandparent_term_id
         FROM ont.add_new_terms(_ontologyName => _ontology,
-                               _infoOnly => _infoOnly,
-                               _previewSql => _previewSql) s;
+                               _infoOnly     => _infoOnly,
+                               _previewSql   => _previewSql) s;
 
     END LOOP;
 

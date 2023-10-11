@@ -126,27 +126,30 @@ BEGIN
     End If;
 
     -- Call the procedure to create/preview the job creation
-    CALL add_update_analysis_job (
-        _jobInfo.Dataset,
-        _jobInfo.Priority,
-        _jobInfo.ToolName,
-        _jobInfo.ParamFileName,
-        _jobInfo.SettingsFileName,
-        _jobInfo.OrganismName,
-        _jobInfo.ProtCollNameList,
-        _jobInfo.ProtCollOptionsList,
-        _jobInfo.OrganismDBName,
-        _jobInfo.OwnerUsername,
-        _jobInfo.Comment,
-        _jobInfo.SpecialProcessing,
-        _propagationMode      => _propagationMode,
-        _stateName            => 'New',
-        _mode                 => 'add',
-        _message              => _message,      -- Output
-        _returnCode           => _returnCode,   -- Output
-        _preventDuplicateJobs => false,
-        _infoOnly             => _infoOnly,
-        _job                  => _newJob);      -- Output
+
+    CALL public.add_update_analysis_job (
+                    _datasetName              => _jobInfo.Dataset,
+                    _priority                 => _jobInfo.Priority,
+                    _toolName                 => _jobInfo.ToolName,
+                    _paramFileName            => _jobInfo.ParamFileName,
+                    _settingsFileName         => _jobInfo.SettingsFileName,
+                    _organismName             => _jobInfo.OrganismName,
+                    _protCollNameList         => _jobInfo.ProtCollNameList,
+                    _protCollOptionsList      => _jobInfo.ProtCollOptionsList,
+                    _organismDBName           => _jobInfo.OrganismDBName,
+                    _ownerUsername            => _jobInfo.OwnerUsername,
+                    _comment                  => _jobInfo.Comment,
+                    _specialProcessing        => _jobInfo.SpecialProcessing,
+                    _associatedProcessorGroup => '',
+                    _propagationMode          => _propagationMode,
+                    _stateName                => 'New',
+                    _job                      => _newJob,       -- Output
+                    _mode                     => 'add',
+                    _message                  => _message,      -- Output
+                    _returnCode               => _returnCode,   -- Output
+                    _callingUser              => '',
+                    _preventDuplicateJobs     => false,
+                    _infoOnly                 => _infoOnly);
 
     If Not _infoOnly Then
         If _returnCode = '' Then

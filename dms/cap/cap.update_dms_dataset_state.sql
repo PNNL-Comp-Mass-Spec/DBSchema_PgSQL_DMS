@@ -49,8 +49,8 @@ BEGIN
             CALL public.set_capture_task_busy (
                             _datasetName,
                             _machinename => '(broker)',
-                            _message => _message,
-                            _returnCode => _returnCode);
+                            _message     => _message,       -- Output
+                            _returnCode  => _returnCode);   -- Output
         End If;
 
         If _newJobStateInBroker = 3 Then
@@ -62,18 +62,18 @@ BEGIN
             ---------------------------------------------------
 
             CALL cap.update_dms_file_info_xml (
-                            _datasetID,
-                            _deleteFromTableOnSuccess => true,
-                            _message => _message,
-                            _returnCode => _returnCode);
+                        _datasetID,
+                        _deleteFromTableOnSuccess => true,
+                        _message                  => _message,      -- Output
+                        _returnCode               => _returnCode);  -- Output
 
             If _returnCode = 'U5360' Then
                 -- Use special completion code of 101
                 CALL public.set_capture_task_complete (
                                 _datasetName,
                                 _completionCode => 101,
-                                _message => _message,           -- Output
-                                _returnCode => _returnCode,     -- Output
+                                _message        => _message,        -- Output
+                                _returnCode     => _returnCode,     -- Output
                                 _failureMessage => _message);
 
                 -- Fail out the capture task job with state 14 (Failed, Ignore Job Step States)
@@ -85,8 +85,8 @@ BEGIN
                 CALL public.set_capture_task_complete (
                                 _datasetName,
                                 _completionCode => 100,
-                                _message => _message,           -- Output
-                                _returnCode => _returnCode,     -- Output
+                                _message        => _message,        -- Output
+                                _returnCode     => _returnCode,     -- Output
                                 _failureMessage => '');
 
             End If;
@@ -131,8 +131,8 @@ BEGIN
             CALL public.set_capture_task_complete (
                             _datasetName,
                             _completionCode => 1,
-                            _message => _message,           -- Output
-                            _returnCode => _returnCode,     -- Output
+                            _message        => _message,        -- Output
+                            _returnCode     => _returnCode,     -- Output
                             _failureMessage => _failureMessage);
         End If;
     End If;
@@ -147,24 +147,24 @@ BEGIN
             CALL public.set_archive_task_busy (
                             _datasetName,
                             _storageServerName,
-                            _message => _message,
-                            _returnCode => _returnCode);
+                            _message    => _message,        -- Output
+                            _returnCode => _returnCode);    -- Output
         End If;
 
         If _newJobStateInBroker = 3 Then
             CALL public.set_archive_task_complete (
                             _datasetName,
-                            _completionCode => 100,           -- Use special completion code of 100
-                            _message => _message,
-                            _returnCode => _returnCode);
+                            _completionCode => 100,             -- Use special completion code of 100
+                            _message        => _message,        -- Output
+                            _returnCode     => _returnCode);
         End If;
 
         If _newJobStateInBroker = 5 Then
             CALL public.set_archive_task_complete (
                             _datasetName,
                             _completionCode => 1,
-                            _message => _message,
-                            _returnCode => _returnCode);
+                            _message        => _message,        -- Output
+                            _returnCode     => _returnCode);    -- Output
         End If;
     End If;
 
@@ -178,24 +178,24 @@ BEGIN
             CALL public.set_archive_update_task_busy (
                             _datasetName,
                             _storageServerName,
-                            _message => _message,
-                            _returnCode => _returnCode);
+                            _message    => _message,        -- Output
+                            _returnCode => _returnCode);    -- Output
         End If;
 
         If _newJobStateInBroker = 3 Then
             CALL public.set_archive_update_task_complete (
                             _datasetName,
                             _completionCode => 0,
-                            _message => _message,
-                            _returnCode => _returnCode);
+                            _message        => _message,        -- Output
+                            _returnCode     => _returnCode);    -- Output
         End If;
 
         If _newJobStateInBroker = 5 Then
             CALL public.set_archive_update_task_complete (
                             _datasetName,
                             _completionCode => 1,
-                            _message => _message,
-                            _returnCode => _returnCode);
+                            _message        => _message,        -- Output
+                            _returnCode     => _returnCode);    -- Output
         End If;
     End If;
 

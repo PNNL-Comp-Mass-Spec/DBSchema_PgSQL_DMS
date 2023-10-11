@@ -173,7 +173,7 @@ BEGIN
         CALL sw.validate_extension_script_for_job (
                     _existingJob,
                     _extensionScriptName,
-                    _message => _message,           -- Output
+                    _message    => _message,        -- Output
                     _returnCode => _returnCode);    -- Output
 
         If _returnCode <> '' Then
@@ -304,8 +304,8 @@ BEGIN
         -- If it only exists in history, restore it to main tables
         CALL sw.set_up_to_extend_existing_job (
                     _existingJob,
-                    _message => _message,
-                    _returnCode => _returnCode);
+                    _message    => _message,        -- Output
+                    _returnCode => _returnCode);    -- Output
     End If;
 
     If _mode::citext = 'UpdateExistingJob' Then
@@ -509,7 +509,7 @@ BEGIN
         _xmlParameters := sw.create_parameters_for_job (
                                 _jobInfo.Job,
                                 _settingsFileOverride => _extensionScriptSettingsFileOverride,
-                                _debugMode => _debugMode);
+                                _debugMode            => _debugMode);
 
         -- Store the parameters in Tmp_Job_Parameters
         INSERT INTO Tmp_Job_Parameters (Job, Parameters)
@@ -521,8 +521,8 @@ BEGIN
                     _jobInfo.Job,
                     _scriptXML,
                     _resultsDirectoryName,
-                    _message => _message,
-                    _returnCode => _returnCode);
+                    _message    => _message,        -- Output
+                    _returnCode => _returnCode);    -- Output
 
         -- Calculate signatures for steps that require them (and also handle shared results directories)
         -- Details are stored in Tmp_Job_Steps
@@ -530,17 +530,17 @@ BEGIN
                     _jobInfo.Job,
                     _xmlParameters,
                     _datasetOrDataPackageId,
-                    _message => _message,
-                    _returnCode => _returnCode,
-                    _debugMode => _debugMode);
+                    _message    => _message,        -- Output
+                    _returnCode => _returnCode,     -- Output
+                    _debugMode  => _debugMode);
 
         -- Update the memory usage for job steps that have JavaMemorySize entries defined in the parameters
         -- This updates Memory_Usage_MB in Tmp_Job_Steps
         CALL sw.update_job_step_memory_usage (
                     _jobInfo.Job,
                     _xmlParameters,
-                    _message => _message,
-                    _returnCode => _returnCode);
+                    _message    => _message,        -- Output
+                    _returnCode => _returnCode);    -- Output
 
         -- For MSXML_Gen and ProMex jobs, _resultsFolderName will be of the form XML202212141459_Auto2113610 or PMX202301141131_Auto2139566
         -- We actually want the results folder to be the shared results directory name (e.g. MSXML_Gen_1_194_863076 or ProMex_1_286_1112666)
@@ -573,9 +573,9 @@ BEGIN
         CALL sw.clone_job_step (
                     _jobInfo.Job,
                     _xmlParameters,
-                    _message => _message,
-                    _returnCode => _returnCode,
-                    _debugMode => _debugMode);
+                    _message    => _message,        -- Output
+                    _returnCode => _returnCode,     -- Output
+                    _debugMode  => _debugMode);
 
         If _debugMode Then
             SELECT COUNT(*)
@@ -595,24 +595,24 @@ BEGIN
         -- CALL sw.override_dta_gen_for_external_dta (
         --             _job,
         --             _xmlParameters,
-        --             _message => _message,
+        --             _message    => _message,
         --             _returnCode => _returnCode);
 
         -- Perform a mixed bag of operations on the jobs in the temporary tables to finalize them before
         -- copying to the main database tables
         CALL sw.finish_job_creation (
-                _jobInfo.Job,
-                _message => _message,
-                _returnCode => _returnCode);
+                    _jobInfo.Job,
+                    _message    => _message,        -- Output
+                    _returnCode => _returnCode);    -- Output
 
         -- Do current job parameters conflict with existing job?
         If _mode::citext = 'ExtendExistingJob' Or _mode::citext = 'UpdateExistingJob' Then
 
             CALL sw.cross_check_job_parameters (
-                    _jobInfo.Job,
-                    _message => _message,               -- Output
-                    _returnCode => _returnCode,         -- Output
-                    _ignoreSignatureMismatch => true);
+                        _jobInfo.Job,
+                        _message                 => _message,       -- Output
+                        _returnCode              => _returnCode,    -- Output
+                        _ignoreSignatureMismatch => true);
 
             If _returnCode <> '' Then
                 If _mode::citext = 'UpdateExistingJob' Then
@@ -669,42 +669,42 @@ BEGIN
 
             -- Move temp tables to main tables
             CALL sw.move_jobs_to_main_tables (
-                        _message => _message,
-                        _returnCode => _returnCode,
-                        _debugMode => _debugMode);
+                        _message    => _message,        -- Output
+                        _returnCode => _returnCode,     -- Output
+                        _debugMode  => _debugMode);
 
             -- Possibly update the input folder using the
             -- Special_Processing param in the job parameters
             CALL sw.update_input_folder_using_special_processing_param (
                         _jobList,
-                        _infoOnly => false,
+                        _infoOnly        => false,
                         _showResultsMode => 0,
-                        _message => _message,           -- Output
-                        _returnCode => _returnCode);    -- Output
+                        _message         => _message,       -- Output
+                        _returnCode      => _returnCode);   -- Output
         End If;
 
         If _mode::citext = 'ExtendExistingJob' Then
             -- Merge temp tables with existing job
             CALL sw.merge_jobs_to_main_tables (
-                        _message => _message,
-                        _returnCode => _returnCode,
-                        _infoOnly => _infoOnly);
+                        _message    => _message,        -- Output
+                        _returnCode => _returnCode,     -- Output
+                        _infoOnly   => _infoOnly);
         End If;
 
         If _mode::citext = 'UpdateExistingJob' Then
             -- Merge temp tables with existing job
             CALL sw.update_job_in_main_tables (
-                        _message => _message,
-                        _returnCode => _returnCode);
+                        _message    => _message,        -- Output
+                        _returnCode => _returnCode);    -- Output
         End If;
 
     Else
         If _mode::citext = 'ExtendExistingJob' Then
             -- Preview changes that would be made
             CALL sw.merge_jobs_to_main_tables (
-                    _message => _message,
-                    _returnCode => _returnCode,
-                    _infoOnly => true);
+                    _message    => _message,        -- Output
+                    _returnCode => _returnCode,     -- Output
+                    _infoOnly   => true);
         End If;
     End If;
 

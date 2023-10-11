@@ -16,7 +16,7 @@ CREATE OR REPLACE PROCEDURE sw.adjust_params_for_local_job(IN _scriptname text, 
 **  Arguments:
 **    _scriptName       Script name
 **    _dataPackageID    Data package ID (0 if not applicable)
-**    _jobParamXML      XML Job parameters (input / output)
+**    _jobParamXML      XML Job parameters (input/output)
 **    _message          Status message
 **    _returnCode       Return code
 **    _debugMode        When true, show the source job number (if defined) and show the XML job parameters
@@ -74,10 +74,10 @@ BEGIN
     ---------------------------------------------------
 
     CALL sw.add_update_transfer_paths_in_params_using_data_pkg (
-            _dataPackageID,
-            _paramsUpdated => _paramsUpdated,   -- Input / Output
-            _message => _message,               -- Output
-            _returnCode => _returnCode);        -- Output
+                _dataPackageID,
+                _paramsUpdated => _paramsUpdated,   -- Input/Output
+                _message       => _message,         -- Output
+                _returnCode    => _returnCode);     -- Output
 
     ---------------------------------------------------
     -- If this job has a 'SourceJob' parameter, update parameters

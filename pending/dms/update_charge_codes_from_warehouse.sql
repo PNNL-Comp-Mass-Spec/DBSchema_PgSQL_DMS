@@ -464,7 +464,10 @@ BEGIN
             -- We only add users associated with charge codes that have been used in DMS
             ----------------------------------------------------------
 
-            CALL auto_add_charge_code_users (_infoOnly => false);
+            CALL public.auto_add_charge_code_users (
+                            _infoOnly   => false,
+                            _message    => _message,
+                            _returnCode => _returnCode);
 
             DROP TABLE Tmp_WPsInUseLast3Years;
             DROP TABLE Tmp_WPsExplicit;

@@ -199,9 +199,9 @@ BEGIN
     -- Lookup the SourceJob info for each job in Tmp_Source_Job_Folders
     -- This procedure examines the Special_Processing parameter for each job (in sw.t_job_parameters)
     CALL sw.lookup_source_job_from_special_processing_param (
-            _message => _message,           -- Output
-            _returnCode => _returnCode,     -- Output
-            _previewSql => _infoOnly);
+                _message    => _message,        -- Output
+                _returnCode => _returnCode,     -- Output
+                _previewSql => _infoOnly);
 
     If Not _infoOnly Then
 

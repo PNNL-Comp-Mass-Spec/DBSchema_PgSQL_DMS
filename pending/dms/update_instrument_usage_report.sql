@@ -308,21 +308,26 @@ BEGIN
                   _month = month AND
                   (_instrument = '' OR dms_inst_id = _instrumentID);
 
-            CALL update_dataset_interval _instrument, _startOfMonth, _endOfMonth, _message => _message
+            CALL public.update_dataset_interval (
+                            _instrumentName => _instrument,
+                            _startDate      => _startOfMonth,
+                            _endDate        => _endOfMonth,
+                            _message        => _message,        -- Output
+                            _returnCode     => _returnCode);    -- Output
 
             _operation := 'refresh';
         End If;
 
         If _operation::citext = 'refresh' Then
             If char_length(Coalesce(_instrument, '')) > 0 Then
-                CALL update_emsl_instrument_usage_report (
-                                        _instrument => _instrument,
-                                        _eusInstrumentId => 0,
-                                        _endDate => _endOfMonth,
-                                        _infoOnly => false,
-                                        _debugReports => '',
-                                        _message => _msg,
-                                        _returnCode => _returnCode);
+                CALL public.update_emsl_instrument_usage_report (
+                                _instrument      => _instrument,
+                                _eusInstrumentId => 0,
+                                _endDate         => _endOfMonth,
+                                _infoOnly        => false,
+                                _debugReports    => '',
+                                _message         => _msg,
+                                _returnCode      => _returnCode);
 
                 If _returnCode <> '' Then
                     RAISE EXCEPTION '%', _msg;
@@ -333,14 +338,14 @@ BEGIN
                     FROM Tmp_Instruments
                     ORDER BY Seq
                 LOOP
-                    CALL update_emsl_instrument_usage_report (
-                                        _instrument => _currentInstrument,
-                                        _eusInstrumentId => 0,
-                                        _endDate => _endOfMonth,
-                                        _infoOnly => false,
-                                        _debugReports => '',
-                                        _message => _msg,
-                                        _returnCode => _returnCode);
+                    CALL public.update_emsl_instrument_usage_report (
+                                    _instrument      => _currentInstrument,
+                                    _eusInstrumentId => 0,
+                                    _endDate         => _endOfMonth,
+                                    _infoOnly        => false,
+                                    _debugReports    => '',
+                                    _message         => _msg,
+                                    _returnCode      => _returnCode);
 
                     If _returnCode <> '' Then
                         RAISE EXCEPTION '%', _msg;

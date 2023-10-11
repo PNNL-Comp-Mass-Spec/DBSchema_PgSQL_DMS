@@ -1859,8 +1859,8 @@ BEGIN
 
             CALL dpkg.update_data_package_eus_info (
                         _dataPackageList,
-                        _message => _message,
-                        _returncode => _returncode);
+                        _message    => _message,        -- Output
+                        _returncode => _returncode);    -- Output
         End If;
 
         ---------------------------------------------------

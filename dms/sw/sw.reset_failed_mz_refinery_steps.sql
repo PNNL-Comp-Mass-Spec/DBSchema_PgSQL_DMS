@@ -237,11 +237,11 @@ BEGIN
 
             CALL mc.set_manager_error_cleanup_mode (
                         _mgrlist     => _jobStep.Processor,
-                        _CleanupMode => 1,
+                        _cleanupMode => 1,
                         _showTable   => true,
                         _infoOnly    => false,
-                        _message     => _message,           -- Output
-                        _returnCode  => _returnCode);       -- Output
+                        _message     => _message,       -- Output
+                        _returnCode  => _returnCode);   -- Output
 
             -----------------------------------------------------------
             -- Update t_log_entries to change the log type from 'Error' to 'ErrorAutoFixed'

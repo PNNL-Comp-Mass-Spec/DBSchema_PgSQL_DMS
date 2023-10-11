@@ -250,7 +250,9 @@ BEGIN
                 -- Save existing state of instrument and storage tables
                 ---------------------------------------------------
 
-                CALL backup_storage_state (_message => _message, _returnCode => _returnCode);
+                CALL public.backup_storage_state (
+                                _message    => _message,        -- Output
+                                _returnCode => _returnCode);    -- Output
 
                 If _returnCode <> '' Then
                     ROLLBACK;
@@ -385,7 +387,9 @@ BEGIN
             -- Save existing state of instrument and storage tables
             ---------------------------------------------------
 
-            CALL backup_storage_state (_message => _message, _returnCode => _returnCode);
+            CALL public.backup_storage_state (
+                            _message    => _message,        -- Output
+                            _returnCode => _returnCode);    -- Output
 
             If _returnCode <> '' Then
                 ROLLBACK;

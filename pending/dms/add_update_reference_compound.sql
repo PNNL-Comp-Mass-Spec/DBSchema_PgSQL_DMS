@@ -302,11 +302,11 @@ BEGIN
             -- Could not find entry in database for username _contactUsername
             -- Try to auto-resolve the name
 
-            CALL auto_resolve_name_to_username (
-                    _contactUsername,
-                    _matchCount => _matchCount,         -- Output
-                    _matchingUsername => _newUsername,  -- Output
-                    _matchingUserID => _userID);        -- Output
+            CALL public.auto_resolve_name_to_username (
+                            _contactUsername,
+                            _matchCount       => _matchCount,   -- Output
+                            _matchingUsername => _newUsername,  -- Output
+                            _matchingUserID   => _userID);      -- Output
 
             If _matchCount = 1 Then
                 -- Single match found; update _contactUsername
@@ -377,13 +377,13 @@ BEGIN
             -- Material movement logging
             --
             If _curContainerID <> _containerID Then
-                CALL post_material_log_entry
-                    'Reference Compound Move',  -- Type
-                    _compoundIdAndName,         -- Item
-                    'na',                       -- Initial State (aka Old container)
-                    _containerName,             -- Final State   (aka New container
-                    _callingUser,
-                    'Reference Compound added'
+                CALL public.post_material_log_entry (
+                                _type         => 'Reference Compound Move',
+                                _item         => _compoundIdAndName,
+                                _initialState => 'na',                  -- Initial State: Old container ('na')
+                                _finalState   => _containerName,        -- Final State    New container
+                                _callingUser  => _callingUser,
+                                _comment      => 'Reference Compound added');
 
             End If;
 
@@ -425,13 +425,13 @@ BEGIN
             -- Material movement logging
             --
             If _curContainerID <> _containerID Then
-                CALL post_material_log_entry
-                    'Reference Compound Move',  -- Type
-                    _compoundIdAndName,         -- Item
-                    _curContainerName,          -- Initial State (aka Old container)
-                    _containerName,             -- Final State   (aka New container
-                    _callingUser,
-                    'Reference Compound updated'
+                CALL public.post_material_log_entry (
+                                _type         => 'Reference Compound Move',
+                                _item         => _compoundIdAndName,
+                                _initialState => _curContainerName,     -- Initial State: Old container
+                                _finalState   => _containerName,        -- Final State    New container
+                                _callingUser  => _callingUser,
+                                _comment      => 'Reference Compound updated');
             End If;
 
         End If;

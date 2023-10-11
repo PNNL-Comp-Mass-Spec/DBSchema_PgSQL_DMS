@@ -140,8 +140,8 @@ BEGIN
         If _result > 0 Then
             CALL sw.remove_dms_deleted_jobs (
                         _bypassDMS,
-                        _message => _message,
-                        _returnCode => _returnCode,
+                        _message          => _message,          -- Output
+                        _returnCode       => _returnCode,       -- Output
                         _maxJobsToProcess => _maxJobsToProcess);
         End If;
 
@@ -170,15 +170,15 @@ BEGIN
         If _result > 0 Then
             CALL sw.add_new_jobs (
                         _bypassDMS,
-                        _message => _message,
-                        _returnCode => _returnCode,
-                        _maxJobsToProcess => _maxJobsToProcess,
-                        _logIntervalThreshold => _LogIntervalThreshold,
-                        _loggingEnabled => _LoggingEnabled,
+                        _message               => _message,         -- Output
+                        _returnCode            => _returnCode,      -- Output
+                        _maxJobsToProcess      => _maxJobsToProcess,
+                        _logIntervalThreshold  => _LogIntervalThreshold,
+                        _loggingEnabled        => _LoggingEnabled,
                         _loopingUpdateInterval => _LoopingUpdateInterval,
-                        _infoOnly => _infoOnly,
-                        _infoLevel => _infoLevel,
-                        _debugMode => _DebugMode);
+                        _infoOnly              => _infoOnly,
+                        _infoLevel             => _infoLevel,
+                        _debugMode             => _DebugMode);
 
         End If;
 
@@ -230,8 +230,8 @@ BEGIN
         If _result > 0 Then
             CALL sw.import_processors (
                         _bypassDMS,
-                        _message => _message,
-                        _returnCode => _returnCode);
+                        _message    => _message,        -- Output
+                        _returnCode => _returnCode);    -- Output
         End If;
 
         /*
@@ -289,8 +289,8 @@ BEGIN
         If _result > 0 Then
             CALL sw.sync_job_info (
                         _bypassDMS,
-                        _message => _message,
-                        _returnCode => _returnCode);
+                        _message    => _message,        -- Output
+                        _returnCode => _returnCode);    -- Output
         End If;
 
     EXCEPTION
@@ -340,14 +340,14 @@ BEGIN
 
         If _result > 0 Then
             CALL sw.create_job_steps (
-                        _message => _message,
-                        _returnCode => _returnCode,
-                        _maxJobsToProcess => _maxJobsToProcess,
-                        _logIntervalThreshold => _logIntervalThreshold,
-                        _loggingEnabled => _loggingEnabled,
+                        _message               => _message,         -- Output
+                        _returnCode            => _returnCode,      -- Output
+                        _maxJobsToProcess      => _maxJobsToProcess,
+                        _logIntervalThreshold  => _logIntervalThreshold,
+                        _loggingEnabled        => _loggingEnabled,
                         _loopingUpdateInterval => _loopingUpdateInterval,
-                        _infoOnly => _infoOnly,
-                        _debugMode => _debugMode);
+                        _infoOnly              => _infoOnly,
+                        _debugMode             => _debugMode);
 
         End If;
 
@@ -398,11 +398,11 @@ BEGIN
 
         If _result > 0 Then
             CALL sw.update_step_states (
-                        _infoOnly => _infoOnly,
-                        _maxJobsToProcess => _maxJobsToProcess,
+                        _infoOnly              => _infoOnly,
+                        _maxJobsToProcess      => _maxJobsToProcess,
                         _loopingUpdateInterval => _loopingUpdateInterval,
-                        _message => _message,
-                        _returnCode => _returnCode);
+                        _message               => _message,         -- Output
+                        _returnCode            => _returnCode);     -- Output
         End If;
 
     EXCEPTION
@@ -453,11 +453,11 @@ BEGIN
         If _result > 0 Then
             CALL sw.update_job_state (
                         _bypassDMS,
-                        _maxJobsToProcess => _maxJobsToProcess,
+                        _maxJobsToProcess      => _maxJobsToProcess,
                         _loopingUpdateInterval => _loopingUpdateInterval,
-                        _infoOnly => _infoOnly,
-                        _message => _message,               -- Output
-                        _returnCode => _returnCode          -- Output
+                        _infoOnly              => _infoOnly,
+                        _message               => _message,         -- Output
+                        _returnCode            => _returnCode       -- Output
                         );
         End If;
 
@@ -511,7 +511,9 @@ BEGIN
             CALL sw.update_actual_cpu_loading (_infoOnly => false);
 
             -- Now update cpus_available in sw.t_machines
-            CALL sw.update_cpu_loading (_message => _message, _returnCode => _returnCode);
+            CALL sw.update_cpu_loading (
+                        _message => _message,           -- Output
+                        _returnCode => _returnCode);    -- Output
         End If;
 
     EXCEPTION
@@ -561,9 +563,9 @@ BEGIN
 
         If _result > 0 Then
             CALL sw.auto_fix_failed_jobs (
-                        _message => _message,
-                        _returnCode => _returnCode,
-                        _infoOnly => _infoOnly);
+                        _message    => _message,    -- Output
+                        _returnCode => _returnCode, -- Output
+                        _infoOnly   => _infoOnly);
         End If;
 
     EXCEPTION

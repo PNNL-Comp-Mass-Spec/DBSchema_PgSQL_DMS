@@ -168,9 +168,9 @@ BEGIN
 
         If _addNewProteinHeaders Then
             CALL pc.add_new_protein_headers (
-                    _infoOnly => _infoOnly,
-                    _message => _msg,               -- Output
-                    _returncode => _returncode);    -- Output
+                    _infoOnly   => _infoOnly,
+                    _message    => _msg,            -- Output
+                    _returnCode => _returnCode);    -- Output
 
             If _returnCode <> '' Then
                 _message = public.append_to_text (_message, _msg);

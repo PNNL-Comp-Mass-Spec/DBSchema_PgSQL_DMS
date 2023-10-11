@@ -149,15 +149,15 @@ BEGIN
         -- Call sproc to update dataset disposition
         ---------------------------------------------------
 
-        CALL update_dataset_dispositions (
-                            _datasetIDList,
-                            _rating,
-                            _comment,
-                            _recycleRequest,
-                            _mode,
-                            _message => _message,           -- Output
-                            _returnCode => _returnCode,     -- Output
-                            _callingUser);
+        CALL public.update_dataset_dispositions (
+                        _datasetIDList,
+                        _rating,
+                        _comment,
+                        _recycleRequest,
+                        _mode,
+                        _message => _message,           -- Output
+                        _returnCode => _returnCode,     -- Output
+                        _callingUser);
 
     EXCEPTION
         WHEN OTHERS THEN

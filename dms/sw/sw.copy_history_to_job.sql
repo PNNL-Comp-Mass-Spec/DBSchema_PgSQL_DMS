@@ -425,10 +425,10 @@ BEGIN
 
     CALL sw.update_job_parameters (
                 _job,
-                _infoOnly => false,
+                _infoOnly             => false,
                 _settingsFileOverride => '',
-                _message => _message,
-                _returnCode => _returnCode);
+                _message              => _message,      -- Output
+                _returnCode           => _returnCode);  -- Output
 
     ---------------------------------------------------
     -- Make sure transfer_folder_path and storage_server are up-to-date in sw.t_jobs
@@ -437,9 +437,9 @@ BEGIN
     CALL sw.validate_job_server_info (
                 _job,
                 _useJobParameters => true,
-                _debugMode => _debugMode,
-                _message => _message,           -- Output
-                _returnCode => _returnCode      -- Output
+                _debugMode        => _debugMode,
+                _message          => _message,      -- Output
+                _returnCode       => _returnCode    -- Output
                 );
 
     ---------------------------------------------------

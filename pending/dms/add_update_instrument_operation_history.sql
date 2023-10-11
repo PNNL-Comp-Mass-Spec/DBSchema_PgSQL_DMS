@@ -111,11 +111,11 @@ BEGIN
             -- Could not find entry in database for username _postedBy
             -- Try to auto-resolve the name
 
-            CALL auto_resolve_name_to_username (
-                    _postedBy,
-                    _matchCount => _matchCount,         -- Output
-                    _matchingUsername => _newUsername,  -- Output
-                    _matchingUserID => _userID);        -- Output
+            CALL public.auto_resolve_name_to_username (
+                            _postedBy,
+                            _matchCount       => _matchCount,   -- Output
+                            _matchingUsername => _newUsername,  -- Output
+                            _matchingUserID   => _userID);      -- Output
 
             If _matchCount = 1 Then
                 -- Single match found; update _postedBy

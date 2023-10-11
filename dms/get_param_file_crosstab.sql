@@ -35,7 +35,7 @@ CREATE OR REPLACE PROCEDURE public.get_param_file_crosstab(IN _analysistoolname 
 **
 **      BEGIN;
 **          CALL public.get_param_file_crosstab (
-**                      _analysisToolName => 'MSGFPlus_MzML',
+**                      _analysisToolName    => 'MSGFPlus_MzML',
 **                      _parameterFileFilter => 'TMT_16'
 **               );
 **          FETCH ALL FROM _results;
@@ -156,10 +156,10 @@ BEGIN
     -----------------------------------------------------------
 
     If _analysisToolName::citext = 'Sequest' Then
-        CALL populate_param_file_info_table_sequest (
-                                _paramFileInfoColumnList => _paramFileInfoColumnList,   -- Output
-                                _message => _message,                                   -- Output
-                                _returnCode => _returnCode);                            -- Output
+        CALL public.populate_param_file_info_table_sequest (
+                        _paramFileInfoColumnList => _paramFileInfoColumnList,   -- Output
+                        _message                 => _message,                   -- Output
+                        _returnCode              => _returnCode);               -- Output
 
         If _returnCode <> '' Then
             DROP TABLE Tmp_ParamFileInfo;
@@ -172,17 +172,17 @@ BEGIN
     -- Populate Tmp_ParamFileModResults
     -----------------------------------------------------------
 
-    CALL populate_param_file_mod_info_table (
+    CALL public.populate_param_file_mod_info_table (
                         _showModSymbol,
                         _showModName,
                         _showModMass,
                         _useModMassAlternativeName,
                         _massModFilterTextColumn,
                         _massModFilterText,
-                        _previewSql => _previewSql,
-                        _massModFilterSql => _massModFilterSql, -- Output
-                        _message => _message,                   -- Output
-                        _returnCode => _returnCode);            -- Output
+                        _previewSql       => _previewSql,
+                        _massModFilterSql => _massModFilterSql,     -- Output
+                        _message          => _message,              -- Output
+                        _returnCode       => _returnCode);          -- Output
 
     If _returnCode <> '' Then
         DROP TABLE Tmp_ParamFileInfo;

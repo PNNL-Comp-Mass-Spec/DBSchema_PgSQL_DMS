@@ -73,9 +73,9 @@ BEGIN
     CALL public.update_dataset_file_info_xml (
                     _datasetID,
                     _datasetInfoXML,
-                    _message => _message,           -- Output
+                    _message    => _message,        -- Output
                     _returnCode => _returnCode,     -- Output
-                    _infoOnly => _infoOnly);
+                    _infoOnly   => _infoOnly);
 
     If _returnCode = ''      And Not _infoOnly And _deleteFromTableOnSuccess Then
         DELETE FROM cap.t_dataset_info_xml

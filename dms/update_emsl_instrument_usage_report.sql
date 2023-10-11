@@ -573,14 +573,14 @@ BEGIN
                 ---------------------------------------------------
 
                 CALL public.parse_usage_text (
-                    _comment => _cleanedComment,        -- Input / Output
-                    _usageXML => _usageXML,             -- Output
-                    _message => _message,               -- Output
-                    _returnCode => _returnCode,         -- Output
-                    _seq => _seq,                       -- Procedure parse_usage_text uses this in status messages and warnings
-                    _showDebug => _infoOnly,
+                    _comment       => _cleanedComment,  -- Input/Output
+                    _usageXML      => _usageXML,        -- Output
+                    _message       => _message,         -- Output
+                    _returnCode    => _returnCode,      -- Output
+                    _seq           => _seq,             -- Procedure parse_usage_text uses this in status messages and warnings
+                    _showDebug     => _infoOnly,
                     _validateTotal => false,
-                    _invalidUsage => _invalidUsage);    -- Output (but unused by this procedure)
+                    _invalidUsage  => _invalidUsage);   -- Output (but unused by this procedure)
 
             End If;
 
@@ -1468,14 +1468,14 @@ BEGIN
         ---------------------------------------------------
 
         CALL public.update_emsl_instrument_acq_overlap_data (
-                        _instrument => _instrument,
-                        _year => _year,
-                        _month  => _month,
-                        _infoOnly => _infoOnly,
-                        _showStartTimes => false,
+                        _instrument         => _instrument,
+                        _year               => _year,
+                        _month              => _month,
+                        _infoOnly           => _infoOnly,
+                        _showStartTimes     => false,
                         _showPendingUpdates => false,
-                        _message => _message,
-                        _returnCode => _returnCode);
+                        _message            => _message,        -- Output
+                        _returnCode         => _returnCode);    -- Output
 
         DROP TABLE Tmp_DebugReports;
         DROP TABLE Tmp_Staging;

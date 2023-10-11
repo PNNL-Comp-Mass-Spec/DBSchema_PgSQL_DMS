@@ -78,23 +78,23 @@ BEGIN
             _statCysAlkEnabled := CASE WHEN _modificationStatCysAlk = 'Yes' Then 1 ELSE 0 END;
             _dynSTYPhosEnabled := CASE WHEN _modificationDynSTYPhos = 'Yes' Then 1 ELSE 0 END;
 
-            CALL create_psm_job_request (
-                                _requestID => _requestID,           -- Output
-                                _requestName => _requestName,
-                                _datasets => _datasets,             -- Output
-                                _toolName => _toolName,
-                                _jobTypeName => _jobTypeName,
-                                _protCollNameList => _protCollNameList,
-                                _protCollOptionsList => _protCollOptionsList,
-                                _dynMetOxEnabled => _dynMetOxEnabled,
-                                _statCysAlkEnabled => _statCysAlkEnabled,
-                                _dynSTYPhosEnabled => _dynSTYPhosEnabled,
-                                _comment => _comment,
-                                _ownerUsername => _ownerUsername,
-                                _infoOnly => _infoOnly,
-                                _message => _message ,              -- Output
-                                _returnCode => _returnCode,         -- Output
-                                _callingUser => _callingUser);
+            CALL public.create_psm_job_request (
+                            _requestID           => _requestID,         -- Output
+                            _requestName         => _requestName,
+                            _datasets            => _datasets,          -- Output
+                            _toolName            => _toolName,
+                            _jobTypeName         => _jobTypeName,
+                            _protCollNameList    => _protCollNameList,
+                            _protCollOptionsList => _protCollOptionsList,
+                            _dynMetOxEnabled     => _dynMetOxEnabled,
+                            _statCysAlkEnabled   => _statCysAlkEnabled,
+                            _dynSTYPhosEnabled   => _dynSTYPhosEnabled,
+                            _comment             => _comment,
+                            _ownerUsername       => _ownerUsername,
+                            _infoOnly            => _infoOnly,
+                            _message             => _message ,          -- Output
+                            _returnCode          => _returnCode,        -- Output
+                            _callingUser         => _callingUser);
 
         End If;
 

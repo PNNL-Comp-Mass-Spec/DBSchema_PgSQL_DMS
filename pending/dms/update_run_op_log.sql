@@ -163,18 +163,18 @@ BEGIN
             ORDER BY request
         LOOP
             CALL public.validate_eus_usage (
-                            _eusUsageType   => _eusUsageType,       -- Input/Output
-                            _eusProposalID  => _eusProposalID,      -- Input/Output
-                            _eusUsersList   => _eusUsersList,       -- Input/Output
-                            _eusUsageTypeID => _eusUsageTypeID,     -- Output
+                            _eusUsageType                => _eusUsageType,      -- Input/Output
+                            _eusProposalID               => _eusProposalID,     -- Input/Output
+                            _eusUsersList                => _eusUsersList,      -- Input/Output
+                            _eusUsageTypeID              => _eusUsageTypeID,    -- Output
                             _autoPopulateUserListIfBlank => _autoPopulateUserListIfBlank,
-                            -- _samplePrepRequest => false,
-                            -- _experimentID => 0,
-                            -- _campaignID => 0,
-                            -- _addingItem => _addingItem,
-                            -- _infoOnly => false,
-                            _message => _msg,                       -- Output
-                            _returnCode => _returnCode              -- Output
+                            -- _samplePrepRequest        => false,
+                            -- _experimentID             => 0,
+                            -- _campaignID               => 0,
+                            -- _addingItem               => _addingItem,
+                            -- _infoOnly                 => false,
+                            _message                     => _msg,               -- Output
+                            _returnCode                  => _returnCode         -- Output
                         );
 
             If _returnCode <> '' Then
@@ -198,10 +198,10 @@ BEGIN
             -- Assign users to the request
             --
             CALL public.assign_eus_users_to_requested_run (
-                                    _requestID => _requestID,
+                                    _requestID    => _requestID,
                                     _eusUsersList => _eusUsersList,
-                                    _message => _msg,
-                                    _returnCode => _returnCode);
+                                    _message      => _msg,              -- Output
+                                    _returnCode   => _returnCode);      -- Output
 
             If _returnCode <> '' Then
                 RAISE EXCEPTION 'Message from assign_eus_users_to_requested_run: %', _msg;
@@ -223,10 +223,10 @@ BEGIN
                                         _requestID,
                                         _comment,
                                         'update',
-                                        _message => _msg,                   -- Output
-                                        _returnCode => _returnCode,         -- Output
-                                        _callingUser => _callingUser,
-                                        _showDebug => false,
+                                        _message      => _msg,              -- Output
+                                        _returnCode   => _returnCode,       -- Output
+                                        _callingUser  => _callingUser,
+                                        _showDebug    => false,
                                         _invalidUsage => _invalidUsage);    -- Output
 
             If _invalidUsage > 0 Then

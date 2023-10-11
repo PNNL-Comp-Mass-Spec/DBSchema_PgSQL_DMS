@@ -96,12 +96,12 @@ BEGIN
     -----------------------------------------------------------
 
     If char_length(_blockingList) > 0 Then
-        CALL update_requested_run_batch_parameters (
-                            _blockingList,
-                            'update',
-                            _message => _message,           -- Output
-                            _returnCode => _returnCode,     -- Output
-                            _callingUser => _callingUser);
+        CALL public.update_requested_run_batch_parameters (
+                        _blockingList,
+                        _mode        => 'update',
+                        _message     => _message,       -- Output
+                        _returnCode  => _returnCode,    -- Output
+                        _callingUser => _callingUser);
 
     End If;
 
@@ -110,10 +110,10 @@ BEGIN
         -- Update the factors
         -----------------------------------------------------------
 
-        CALL update_requested_run_factors (
+        CALL public.update_requested_run_factors (
                                 _factorList,
-                                _message => _message,           -- Output
-                                _returnCode => _returnCode,     -- Output
+                                _message     => _message,       -- Output
+                                _returnCode  => _returnCode,    -- Output
                                 _callingUser => _callingUser);
     End If;
 

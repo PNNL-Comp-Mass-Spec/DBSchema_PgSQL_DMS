@@ -175,9 +175,9 @@ BEGIN
                     _job,
                     _scriptXML,
                     _resultsDirectoryName,
-                    _message => _message,
-                    _returnCode => _returnCode,
-                    _debugmode => _debugmode);
+                    _message    => _message,        -- Output
+                    _returnCode => _returnCode,     -- Output
+                    _debugmode  => _debugmode);
 
         If _returnCode <> '' Then
             _msg := format('Error returned by create_steps_for_task: %s', _returnCode);
@@ -204,7 +204,10 @@ BEGIN
 
         _currentLocation := 'Call cap.finish_task_creation';
 
-        CALL cap.finish_task_creation (_job, _message => _message, _debugMode => _debugMode);
+        CALL cap.finish_task_creation (
+                    _job,
+                    _message   => _message,     -- Output
+                    _debugMode => _debugMode);
 
         ---------------------------------------------------
         -- Move temp tables to main tables
@@ -243,7 +246,10 @@ BEGIN
             UPDATE Tmp_Job_Step_Dependencies  SET Job = _job;
             UPDATE Tmp_Job_Parameters         SET Job = _job;
 
-            CALL cap.move_tasks_to_main_tables (_message => _message, _returnCode => _returnCode, _debugmode => false);
+            CALL cap.move_tasks_to_main_tables (
+                        _message    => _message,        -- Output
+                        _returnCode => _returnCode,     -- Output
+                        _debugmode  => false);
 
         Else
             -- Debug mode is enabled

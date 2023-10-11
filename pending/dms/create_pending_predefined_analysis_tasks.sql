@@ -100,16 +100,16 @@ BEGIN
 
         Else
 
-            CALL create_predefined_analysis_jobs (
-                                            currentItem.DatasetName,
-                                            currentItem.CallingUser,
-                                            currentItem.AnalysisToolNameFilter,
-                                            currentItem.ExcludeDatasetsNotReleased,
-                                            currentItem.PreventDuplicateJobs,
-                                            _infoOnly,
-                                            _message => _message,
-                                            _jobsCreated => _jobsCreated,
-                                            _returnCode => _returnCode);
+            CALL public.create_predefined_analysis_jobs (
+                            _datasetName                => currentItem.DatasetName,
+                            _callingUser                => currentItem.CallingUser,
+                            _analysisToolNameFilter     => currentItem.AnalysisToolNameFilter,
+                            _excludeDatasetsNotReleased => currentItem.ExcludeDatasetsNotReleased,
+                            _preventDuplicateJobs       => currentItem.PreventDuplicateJobs,
+                            _infoOnly                   => _infoOnly,
+                            _message                    => _message,        -- Output
+                            _returnCode                 => _returnCode,     -- Output
+                            _jobsCreated                => _jobsCreated);    -- Output
 
         End If;
 

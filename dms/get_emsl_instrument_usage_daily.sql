@@ -130,15 +130,15 @@ BEGIN
     LOOP
 
         -- Update working table with end times
-        --
+
         UPDATE  Tmp_T_Working AS W
-        SET     Day = Extract(day from W.Run_or_Interval_Start),
-                Run_or_Interval_End =                 W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds),
-                Day_at_Run_End =   Extract(day   from W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds)),
-                Month_at_Run_End = Extract(month from W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds)),
-                End_Of_Day =            date_trunc('day', W.Run_or_Interval_Start) + Interval '1 day' - Interval '1 millisecond',
+        SET     Day                   = Extract(day   from W.Run_or_Interval_Start),
+                Run_or_Interval_End   =                    W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds),
+                Day_at_Run_End        = Extract(day   from W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds)),
+                Month_at_Run_End      = Extract(month from W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds)),
+                End_Of_Day            = date_trunc('day', W.Run_or_Interval_Start) + Interval '1 day' - Interval '1 millisecond',
                 Beginning_Of_Next_Day = date_trunc('day', W.Run_or_Interval_Start) + Interval '1 day';
-        --
+
         UPDATE  Tmp_T_Working AS W
         SET     Duration_Seconds_In_Current_Day =               extract(epoch FROM (End_Of_Day - W.Run_or_Interval_Start)),
                 Remaining_Duration_Seconds = Duration_Seconds - extract(epoch FROM (End_Of_Day - W.Run_or_Interval_Start));

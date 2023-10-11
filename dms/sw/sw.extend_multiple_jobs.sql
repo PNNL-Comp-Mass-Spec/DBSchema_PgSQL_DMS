@@ -105,10 +105,10 @@ BEGIN
     ---------------------------------------------------
 
     CALL sw.validate_extension_script_for_job (
-            _job,
-            _extensionScriptName,
-            _message => _message,           -- Output
-            _returnCode => _returnCode);    -- Output
+                _job,
+                _extensionScriptName,
+                _message    => _message,        -- Output
+                _returnCode => _returnCode);    -- Output
 
     If _returnCode <> '' Then
         DROP TABLE Tmp_JobsToExtend;
@@ -126,13 +126,13 @@ BEGIN
     LOOP
 
         CALL sw.create_job_steps (
-            _message => _message,
-            _returnCode => _returnCode,
-            _mode => 'ExtendExistingJob',
-            _existingJob => _job,
-            _extensionScriptName => _extensionScriptName,
-            _infoOnly => _infoOnly,
-            _debugMode => _debugMode);
+                    _message             => _message,       -- Output
+                    _returnCode          => _returnCode,    -- Output
+                    _mode                => 'ExtendExistingJob',
+                    _existingJob         => _job,
+                    _extensionScriptName => _extensionScriptName,
+                    _infoOnly            => _infoOnly,
+                    _debugMode           => _debugMode);
 
     END LOOP;
 

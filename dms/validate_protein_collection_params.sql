@@ -204,13 +204,13 @@ BEGIN
     End If;
 
     CALL pc.validate_analysis_job_protein_parameters (
-            _organismName,
-            _ownerUsername,
-            _organismDBName,
-            _protCollNameList => _protCollNameList,         -- Output
-            _protCollOptionsList => _protCollOptionsList,   -- Output
-            _message => _message,                           -- Output
-            _returnCode => _returnCode);                    -- Output
+                _organismName,
+                _ownerUsername,
+                _organismDBName,
+                _protCollNameList    => _protCollNameList,      -- Output
+                _protCollOptionsList => _protCollOptionsList,   -- Output
+                _message             => _message,               -- Output
+                _returnCode          => _returnCode);           -- Output
 
 END
 $$;

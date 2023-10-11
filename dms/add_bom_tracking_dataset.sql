@@ -254,7 +254,7 @@ BEGIN
                                 _eusUsageType,
                                 _eusUsersList,
                                 _mode,
-                                _message => _message,           -- Output
+                                _message    => _message,        -- Output
                                 _returnCode => _returnCode,     -- Output
                                 _callingUser);
         End If;

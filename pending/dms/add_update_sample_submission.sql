@@ -49,7 +49,7 @@ DECLARE
     _campaignID int;
     _researcher text;
     _receivedByUserID int;
-    _cl text;
+    _containerListCopy text;
     _comment text;
 
     _sqlState text;
@@ -166,17 +166,17 @@ BEGIN
             -- Verify container list
             ---------------------------------------------------
 
-            _cl := _containerList;
+            _containerListCopy := _containerList;
 
-            CALL assure_material_containers_exist (
-                                _containerList => _cl,          -- Input / Output
-                                _comment => '',
-                                _type => '',
-                                _researcher => _researcher,
-                                _mode = 'verify_only',
-                                _message => _msg,               -- Output
-                                _returnCode => _returnCode,     -- Output
-                                _callingUser => '');
+            CALL public.assure_material_containers_exist (
+                            _containerList => _containerListCopy,   -- Input/Output
+                            _comment       => '',
+                            _type          => '',
+                            _researcher    => _researcher,
+                            _mode          => 'verify_only',
+                            _message       => _msg,                 -- Output
+                            _returnCode    => _returnCode,          -- Output
+                            _callingUser   => '');
 
             If _returnCode <> '' Then
                 RAISE EXCEPTION 'AssureMaterialContainersExist: %', _msg;
@@ -228,15 +228,15 @@ BEGIN
                     _comment := format('%s (sample submission %s)', _newContainerComment, _id);
                 End If;
 
-                CALL assure_material_containers_exist (
+                CALL public.assure_material_containers_exist (
                                 _containerList => _containerList,   -- Output
-                                _comment => _comment,
-                                _type => 'Box',
-                                _researcher => _researcher,
-                                _mode => 'create',
-                                _message => _msg,                   -- Output
-                                _returnCode => _returnCode,         -- Output
-                                _callingUser => _callingUser);
+                                _comment       => _comment,
+                                _type          => 'Box',
+                                _researcher    => _researcher,
+                                _mode          => 'create',
+                                _message       => _msg,             -- Output
+                                _returnCode    => _returnCode,      -- Output
+                                _callingUser   => _callingUser);
 
                 If _returnCode <> '' Then
                     RAISE EXCEPTION 'AssureMaterialContainersExist: %', _message;

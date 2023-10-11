@@ -41,7 +41,6 @@ DECLARE
     _experimentID int;
     _tmpID int := 0;
     _typeTag text := '';
-    _iMode text,
     _itemList text,
     _itemType text,
     _newValue text,
@@ -136,21 +135,20 @@ BEGIN
             -- Call the material update function
             ---------------------------------------------------
 
-            _iMode := 'retire_items';
             _itemList := format('%s:%s', _typeTag, _tmpID);
             _itemType := 'mixed_material';
             _newValue := '';
             _comment := '';
 
-            CALL update_material_items
-                        _iMode,         -- 'retire_item'
-                        _itemList,
-                        _itemType,      -- 'mixed_material'
-                        _newValue,
-                        _comment,
-                        _message => _message,           -- Output
-                        _returnCode => _returnCode,     -- Output
-                        _callingUser => _callingUser);
+            CALL public.update_material_items (
+                            _mode        => 'retire_items',
+                            _itemList    => _itemList,
+                            _itemType    => _itemType,      -- 'mixed_material'
+                            _newValue    => _newValue,
+                            _comment     => _comment,
+                            _message     => _message,       -- Output
+                            _returnCode  => _returnCode,    -- Output
+                            _callingUser => _callingUser);
 
             If _returnCode <> '' Then
                 RAISE EXCEPTION '%', _message;

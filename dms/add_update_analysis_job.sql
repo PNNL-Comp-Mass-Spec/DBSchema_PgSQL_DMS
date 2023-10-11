@@ -398,27 +398,27 @@ BEGIN
         _currentLocation := 'Validate job parameters';
 
         CALL public.validate_analysis_job_parameters (
-                                _toolName => _toolName,
-                                _paramFileName => _paramFileName,               -- Output
-                                _settingsFileName => _settingsFileName,         -- Output
-                                _organismDBName => _organismDBName,             -- Output
-                                _organismName => _organismName,
-                                _protCollNameList => _protCollNameList,         -- Output
-                                _protCollOptionsList => _protCollOptionsList,   -- Output
-                                _ownerUsername => _ownerUsername,               -- Output
-                                _mode => _mode,
-                                _userID => _userID,                             -- Output
-                                _analysisToolID => _analysisToolID,             -- Output
-                                _organismID => _organismID,                     -- Output
-                                _job => _jobID,
-                                _autoRemoveNotReleasedDatasets => false,
+                                _toolName                           => _toolName,
+                                _paramFileName                      => _paramFileName,          -- Output
+                                _settingsFileName                   => _settingsFileName,       -- Output
+                                _organismDBName                     => _organismDBName,         -- Output
+                                _organismName                       => _organismName,
+                                _protCollNameList                   => _protCollNameList,       -- Output
+                                _protCollOptionsList                => _protCollOptionsList,    -- Output
+                                _ownerUsername                      => _ownerUsername,          -- Output
+                                _mode                               => _mode,
+                                _userID                             => _userID,                 -- Output
+                                _analysisToolID                     => _analysisToolID,         -- Output
+                                _organismID                         => _organismID,             -- Output
+                                _job                                => _jobID,
+                                _autoRemoveNotReleasedDatasets      => false,
                                 _autoUpdateSettingsFileToCentroided => true,
-                                _allowNewDatasets => false,
-                                _warning => _warning,                           -- Output
-                                _priority => _priority,                         -- Output
-                                _showDebugMessages => _infoOnly,
-                                _message => _msg,                               -- Output
-                                _returnCode => _returnCode);                    -- Output
+                                _allowNewDatasets                   => false,
+                                _warning                            => _warning,                -- Output
+                                _priority                           => _priority,               -- Output
+                                _showDebugMessages                  => _infoOnly,
+                                _message                            => _msg,                    -- Output
+                                _returnCode                         => _returnCode);            -- Output
 
         If _returnCode <> '' Then
             If Coalesce(_msg, '') = '' Then

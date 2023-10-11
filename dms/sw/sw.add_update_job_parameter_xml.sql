@@ -72,7 +72,7 @@ CREATE OR REPLACE FUNCTION sw.add_update_job_parameter_xml(_xmlparameters xml, _
 **              'ProteinCollectionList',
 **              'M_musculus_UniProt_SPROT_2013_09_2013-09-18',
 **              _deleteParam => false,
-**              _showDebug => true);
+**              _showDebug   => true);
 **
 **
 **      -- This function can also be called as part of a query, using a LATERAL join
@@ -89,7 +89,7 @@ CREATE OR REPLACE FUNCTION sw.add_update_job_parameter_xml(_xmlparameters xml, _
 **                  'ProteinCollectionList',
 **                  'M_musculus_UniProt_SPROT_2013_09_2013-09-18',
 **                   _deleteParam => false,       -- Optional, defaults to false
-**                   _showDebug => false)         -- Optional, defaults to false
+**                   _showDebug   => false)       -- Optional, defaults to false
 **               ) UpdateQ ON JobParams.job = 2177045;
 **
 **      -- Option 2: Use WHERE clause
@@ -137,7 +137,7 @@ CREATE OR REPLACE FUNCTION sw.add_update_job_parameter_xml(_xmlparameters xml, _
 **          'NewProcessingOption',
 **          'n/a',
 **          _deleteParam => true,
-**          _showDebug => true);
+**          _showDebug   => true);
 **
 **      SELECT *, updated_xml::text
 **      FROM sw.add_update_job_parameter_xml(

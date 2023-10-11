@@ -88,7 +88,10 @@ BEGIN
         -- Delete the collection members
         ---------------------------------------------------
 
-        CALL pc.delete_protein_collection_members (_collectionID, _message => _message, _returnCode => _returnCode);
+        CALL pc.delete_protein_collection_members (
+                    _collectionID,
+                    _message    => _message,        -- Output
+                    _returnCode => _returnCode);    -- Output
 
     EXCEPTION
         WHEN OTHERS THEN

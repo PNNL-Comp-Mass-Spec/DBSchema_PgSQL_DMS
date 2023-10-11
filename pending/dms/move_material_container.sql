@@ -158,16 +158,16 @@ BEGIN
         _mode := 'update';
     End If;
 
-    CALL add_update_material_container (
-                _container => _container,
-                _type => _containerType,
-                _location => _newLocation,
-                _comment => _containerComment,
-                _barcode => _barcode,
-                _researcher => _researcher,
-                _mode => _mode,
-                _message => _message,           -- Output
-                _returnCode => _returnCode,     -- Output
+    CALL public.add_update_material_container (
+                _container   => _container,
+                _type        => _containerType,
+                _location    => _newLocation,
+                _comment     => _containerComment,
+                _barcode     => _barcode,
+                _researcher  => _researcher,
+                _mode        => _mode,
+                _message     => _message,       -- Output
+                _returnCode  => _returnCode,    -- Output
                 _callingUser => _callingUser);
 
     If _returnCode <> '' Then

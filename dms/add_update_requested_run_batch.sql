@@ -130,23 +130,23 @@ BEGIN
 
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
-        CALL validate_requested_run_batch_params (
-                    _batchID => _id,
-                    _name => _name,
-                    _description => _description,
-                    _ownerUsername => _ownerUsername,
-                    _requestedBatchPriority => _requestedCompletionDate,
-                    _requestedCompletionDate => '',
-                    _justificationHighPriority => _justificationHighPriority,
-                    _requestedInstrumentGroup => _requestedInstrumentGroup,
-                    _comment => _comment,
-                    _batchGroupID => _batchGroupID,                     -- Input/Output
-                    _batchGroupOrder => _batchGroupOrder,               -- Input/Output
-                    _mode => _mode,
-                    _instrumentGroupToUse => _instrumentGroupToUse,     -- Output
-                    _userID => _userID,                                 -- Output
-                    _message => _message,                               -- Output
-                    _returnCode => _returnCode);                        -- Output
+        CALL public.validate_requested_run_batch_params (
+                        _batchID                   => _id,
+                        _name                      => _name,
+                        _description               => _description,
+                        _ownerUsername             => _ownerUsername,
+                        _requestedBatchPriority    => _requestedCompletionDate,
+                        _requestedCompletionDate   => '',
+                        _justificationHighPriority => _justificationHighPriority,
+                        _requestedInstrumentGroup  => _requestedInstrumentGroup,
+                        _comment                   => _comment,
+                        _batchGroupID              => _batchGroupID,            -- Input/Output
+                        _batchGroupOrder           => _batchGroupOrder,         -- Input/Output
+                        _mode                      => _mode,
+                        _instrumentGroupToUse      => _instrumentGroupToUse,    -- Output
+                        _userID                    => _userID,                  -- Output
+                        _message                   => _message,                 -- Output
+                        _returnCode                => _returnCode);             -- Output
 
         If _returnCode <> '' Then
             If _raiseExceptions Then
@@ -411,11 +411,11 @@ BEGIN
         ---------------------------------------------------
 
         If _id > 0 Then
-            CALL update_cached_requested_run_batch_stats (
-                _id,
-                _fullrefresh => false,
-                _message => _message,           -- Output
-                _returncode => _returncode);    -- Output
+            CALL public.update_cached_requested_run_batch_stats (
+                            _id,
+                            _fullrefresh => false,
+                            _message     => _message,       -- Output
+                            _returncode  => _returncode);   -- Output
 
         End If;
 

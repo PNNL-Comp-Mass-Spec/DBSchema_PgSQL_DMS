@@ -365,9 +365,9 @@ BEGIN
 
             CALL sw.remove_selected_jobs (
                         _infoOnly,
-                        _message => _message,           -- Output
-                        _returnCode => _returnCode,     -- Output
-                        _logDeletions => false,
+                        _message          => _message,      -- Output
+                        _returnCode       => _returnCode,   -- Output
+                        _logDeletions     => false,
                         _logToConsoleOnly => false);
 
         End If;
@@ -528,11 +528,11 @@ BEGIN
             ORDER BY Job
         LOOP
             CALL sw.update_job_parameters (
-                    _job,
-                    _infoOnly => _infoOnly,
-                    _settingsFileOverride => '',
-                    _message => _message,           -- Output
-                    _returnCode => _returnCode);    -- Output
+                        _job,
+                        _infoOnly             => _infoOnly,
+                        _settingsFileOverride => '',
+                        _message              => _message,      -- Output
+                        _returnCode           => _returnCode);  -- Output
 
             If _returnCode <> '' Then
                 _message := format('Error updating parameters for job %s', _job);
@@ -557,9 +557,9 @@ BEGIN
             CALL sw.validate_job_server_info (
                         _job,
                         _useJobParameters => true,
-                        _message => _message,
-                        _returnCode => _returnCode,
-                        _debugMode => _debugMode);
+                        _message          => _message,      -- Output
+                        _returnCode       => _returnCode,   -- Output
+                        _debugMode        => _debugMode);
 
             _jobsProcessed := _jobsProcessed + 1;
 

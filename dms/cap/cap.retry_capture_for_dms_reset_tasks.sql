@@ -142,7 +142,10 @@ BEGIN
     End If;
 
     -- Update the parameters for each capture task job
-    CALL cap.update_parameters_for_task (_jobList, _message => _message, _returnCode => _returnCode);
+    CALL cap.update_parameters_for_task (
+                _jobList,
+                _message    => _message,        -- Output
+                _returnCode => _returnCode);    -- Output
 
     ------------------------------------------------------------------
     -- Reset the capture task job steps using RetrySelectedJobs
@@ -174,7 +177,9 @@ BEGIN
               Target.State = 5;
 
         -- Next call retry_selected_tasks
-        CALL cap.retry_selected_tasks (_message => _message, _returnCode => _returnCode);
+        CALL cap.retry_selected_tasks (
+                    _message    => _message,        -- Output
+                    _returnCode => _returnCode);    -- Output
 
     End If;
 

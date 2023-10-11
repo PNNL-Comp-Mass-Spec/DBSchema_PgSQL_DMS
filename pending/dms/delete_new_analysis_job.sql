@@ -102,7 +102,12 @@ BEGIN
 
     -- Delete the analysis job
     --
-    CALL delete_analysis_job (_jobID, _callingUser, _infoOnly, _message => _message)
+    CALL public.delete_analysis_job (
+                    _job         => _jobID,
+                    _callingUser => _callingUser,
+                    _infoOnly    =>_infoOnly,
+                    _message     => _message,
+                    _returnCode  => _returnCode);
 
 END
 $$;

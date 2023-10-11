@@ -115,10 +115,10 @@ BEGIN
            message,
            returncode
     FROM public.predefined_analysis_jobs_mds(
-            _datasetList,
-            _excludeDatasetsNotReleased => _excludeDatasetsNotReleased,
-            _createJobsForUnreviewedDatasets => _createJobsForUnreviewedDatasets,
-            _analysisToolNameFilter => _analysisToolNameFilter);
+                    _datasetList,
+                    _excludeDatasetsNotReleased      => _excludeDatasetsNotReleased,
+                    _createJobsForUnreviewedDatasets => _createJobsForUnreviewedDatasets,
+                    _analysisToolNameFilter          => _analysisToolNameFilter);
 
     If Not FOUND Then
         _message := format('Function predefined_analysis_jobs_mds did not return any results for datasets %s', _datasetList);

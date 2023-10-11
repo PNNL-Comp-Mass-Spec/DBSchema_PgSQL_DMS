@@ -133,13 +133,13 @@ BEGIN
             WHERE request_id = _requestID;
 
             CALL public.add_requested_run_to_existing_dataset (
-                            _datasetID => _existingDatasetID,
-                            _datasetName => '',
+                            _datasetID         => _existingDatasetID,
+                            _datasetName       => '',
                             _templateRequestID => _requestID,
-                            _mode => 'add',
-                            _message => _message,               -- Output
-                            _returnCode => _returnCode,         -- Output
-                            _callingUser => _callingUser);
+                            _mode              => 'add',
+                            _message           => _message,         -- Output
+                            _returnCode        => _returnCode,      -- Output
+                            _callingUser       => _callingUser);
 
             -- Lookup the request ID created for _existingDatasetName
 
@@ -218,7 +218,7 @@ BEGIN
 
     CALL public.update_cached_requested_run_eus_users (
                     _requestID,
-                    _message => _message,           -- Output
+                    _message    => _message,        -- Output
                     _returnCode => _returnCode);    -- Output
 
 END

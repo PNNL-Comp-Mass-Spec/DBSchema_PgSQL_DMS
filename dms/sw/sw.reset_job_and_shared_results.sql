@@ -300,11 +300,11 @@ BEGIN
 
             If Exists (SELECT * FROM Tmp_Selected_Jobs) Then
                 CALL sw.remove_selected_jobs (
-                        _infoOnly => false,
-                        _message => _removeJobsMessage,
-                        _returncode => _returncode,
-                        _logDeletions => true,
-                        _logToConsoleOnly => false);
+                            _infoOnly         => false,
+                            _message          => _removeJobsMessage,    -- Output
+                            _returncode       => _returncode,           -- Output
+                            _logDeletions     => true,
+                            _logToConsoleOnly => false);
 
                 _message := format('%s; %s', _message, _removeJobsMessage);
             End If;

@@ -199,7 +199,10 @@ BEGIN
         -- Call Add_Missing_Filter_Criteria to add any missing criteria
         -----------------------------------------
 
-        CALL add_missing_filter_criteria (_destFilterSetID);
+        CALL public.add_missing_filter_criteria (
+                        _filterSetID  => _destFilterSetID,
+                        _message      => _message,
+                        _returnCode   => _returnCode);
     End If;
 
     _message := format('Duplicated criteria from Filter Set ID %s to Filter Set ID %s', _sourceFilterSetID, _destFilterSetID);

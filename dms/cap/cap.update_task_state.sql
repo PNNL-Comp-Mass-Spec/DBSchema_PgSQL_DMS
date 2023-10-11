@@ -423,14 +423,15 @@ BEGIN
             If _infoOnly Then
                 RAISE INFO 'Call update_dms_dataset_state Job=%, NewJobStater=%', _jobInfo.Job, _jobInfo.NewState;
             Else
-                CALL cap.update_dms_dataset_state(_jobInfo.Job,
-                                                  _jobInfo.Dataset_Name,
-                                                  _jobInfo.Dataset_ID,
-                                                  _jobInfo.Script,
-                                                  _jobInfo.Storage_Server,
-                                                  _jobInfo.NewState,
-                                                  _message => _message,
-                                                  _returnCode => _returnCode);
+                CALL cap.update_dms_dataset_state(
+                            _jobInfo.Job,
+                            _jobInfo.Dataset_Name,
+                            _jobInfo.Dataset_ID,
+                            _jobInfo.Script,
+                            _jobInfo.Storage_Server,
+                            _jobInfo.NewState,
+                            _message    => _message,      -- Output
+                            _returnCode => _returnCode);  -- Output
 
                 If _returnCode <> '' Then
                     CALL public.post_log_entry ('Error', _message, 'Update_Task_State', 'cap');
@@ -449,7 +450,7 @@ BEGIN
         --                     _jobInfo.Job,
         --                     _jobInfo.Script,
         --                     _jobInfo.NewState,
-        --                     _message => _message,
+        --                     _message    => _message,
         --                     _returnCode => _returnCode);
         --
         --         If _returnCode <> '' Then

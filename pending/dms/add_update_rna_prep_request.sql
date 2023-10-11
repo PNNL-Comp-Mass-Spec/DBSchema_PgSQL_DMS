@@ -157,12 +157,12 @@ BEGIN
             -- Validate instrument group and dataset type
             ---------------------------------------------------
 
-            CALL validate_instrument_group_and_dataset_type (
-                            _datasetType => _datasetType,
-                            _instrumentGroup => _instrumentGroup,           -- Output
-                            _datasetTypeID => _datasetTypeID output,        -- Output
-                            _message => _msg,                               -- Output
-                            _returnCode => _returnCode);                    -- Output
+            CALL public.validate_instrument_group_and_dataset_type (
+                            _datasetType     => _datasetType,
+                            _instrumentGroup => _instrumentGroup,   -- Output
+                            _datasetTypeID   => _datasetTypeID,     -- Output
+                            _message         => _msg,               -- Output
+                            _returnCode      => _returnCode);       -- Output
 
             If _returnCode <> '' Then
                 RAISE EXCEPTION 'validate_instrument_group_and_dataset_type: %', _msg;
@@ -231,19 +231,19 @@ BEGIN
             _eusUserID := Null;
         End If;
 
-        CALL validate_eus_usage (
-                        _eusUsageType   => _eusUsageType,       -- Input/Output
-                        _eusProposalID  => _eusProposalID,      -- Input/Output
-                        _eusUsersList   => _eusUsersList,       -- Input/Output
-                        _eusUsageTypeID => _eusUsageTypeID,     -- Output
+        CALL public.validate_eus_usage (
+                        _eusUsageType                => _eusUsageType,      -- Input/Output
+                        _eusProposalID               => _eusProposalID,     -- Input/Output
+                        _eusUsersList                => _eusUsersList,      -- Input/Output
+                        _eusUsageTypeID              => _eusUsageTypeID,    -- Output
                         _autoPopulateUserListIfBlank => false,
-                        _samplePrepRequest => false,
-                        _experimentID => 0,
-                        _campaignID => 0,
-                        _addingItem => false,
-                        _infoOnly => false,
-                        _message => _msg,                       -- Output
-                        _returnCode => _returnCode              -- Output
+                        _samplePrepRequest           => false,
+                        _experimentID                => 0,
+                        _campaignID                  => 0,
+                        _addingItem                  => false,
+                        _infoOnly                    => false,
+                        _message                     => _msg,               -- Output
+                        _returnCode                  => _returnCode         -- Output
                     );
 
         If _returnCode <> '' Then
@@ -263,10 +263,11 @@ BEGIN
         -- Validate the work package
         ---------------------------------------------------
 
-        CALL validate_wp ( _workPackageNumber,
-                           _allowNoneWP,
-                           _message => _msg,
-                           _returnCode => _returnCode);
+        CALL public.validate_wp (
+                        _workPackageNumber,
+                        _allowNoneWP,
+                        _message    => _msg,            -- Output
+                        _returnCode => _returnCode);    -- Output
 
         If _returnCode <> '' Then
             RAISE EXCEPTION 'validate_wp: %', _msg;

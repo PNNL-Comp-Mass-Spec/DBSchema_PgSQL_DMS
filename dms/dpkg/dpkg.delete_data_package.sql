@@ -203,10 +203,10 @@ BEGIN
             ---------------------------------------------------
 
             CALL dpkg.delete_all_items_from_data_package (
-                            _packageID => _packageID,
-                            _mode => 'delete',
-                            _message => _message,           -- Output
-                            _returnCode => _returnCode);     -- Output
+                            _packageID  => _packageID,
+                            _mode       => 'delete',
+                            _message    => _message,        -- Output
+                            _returnCode => _returnCode);    -- Output
 
             If _message <> '' Then
                 RAISE INFO '';

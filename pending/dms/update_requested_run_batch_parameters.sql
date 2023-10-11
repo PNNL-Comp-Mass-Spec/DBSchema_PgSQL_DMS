@@ -419,20 +419,20 @@ BEGIN
                     End If;
 
                     -- Update cached data in T_Cached_Requested_Run_Batch_Stats
-                    CALL update_cached_requested_run_batch_stats (
-                        _minBatchID,
-                        _message => _msg,               -- Output
-                        _returnCode => _returnCode);    -- Output
+                    CALL public.update_cached_requested_run_batch_stats (
+                                _minBatchID,
+                                _message => _msg,               -- Output
+                                _returnCode => _returnCode);    -- Output
 
                     If _returnCode <> '' Then
                         _message := public.append_to_text(_message, _msg);
                     End If;
 
                     If _maxBatchID <> _minBatchID Then
-                        CALL update_cached_requested_run_batch_stats (
-                            _maxBatchID,
-                            _message => _msg,               -- Output
-                            _returnCode => _returnCode);    -- Output
+                        CALL public.update_cached_requested_run_batch_stats (
+                                        _maxBatchID,
+                                        _message => _msg,               -- Output
+                                        _returnCode => _returnCode);    -- Output
 
                         If _returnCode <> '' Then
                             _message := public.append_to_text(_message, _msg);
@@ -452,10 +452,10 @@ BEGIN
                     WHERE Parameter = 'Status'
                     ORDER BY request_id
                 LOOP
-                    CALL update_cached_requested_run_eus_users (
-                            _requestID,
-                            _message => _message,           -- Output
-                            _returnCode => _returnCode);    -- Output
+                    CALL public.update_cached_requested_run_eus_users (
+                                    _requestID,
+                                    _message => _message,           -- Output
+                                    _returnCode => _returnCode);    -- Output
                 END LOOP;
             End If;
 

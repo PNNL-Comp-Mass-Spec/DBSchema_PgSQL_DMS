@@ -124,17 +124,17 @@ BEGIN
             Else
                 _container := '(generate name)';
 
-                CALL add_update_material_container (
-                                    _container => _container,       -- Output
-                                    _type => _type,
-                                    _location => _item,
-                                    _comment => _comment,
-                                    _barcode => '',
-                                    _researcher => _researcher,
-                                    _mode => 'add',
-                                    _message => _msg,               -- Output
-                                    _returnCode => _returnCode,     -- Output
-                                    _callingUser => _callingUser);
+                CALL public.add_update_material_container (
+                                _container   => _container,     -- Output
+                                _type        => _type,
+                                _location    => _item,
+                                _comment     => _comment,
+                                _barcode     => '',
+                                _researcher  => _researcher,
+                                _mode        => 'add',
+                                _message     => _msg,           -- Output
+                                _returnCode  => _returnCode,    -- Output
+                                _callingUser => _callingUser);
 
                 If _returnCode <> '' Then
                     RAISE EXCEPTION 'AddUpdateMaterialContainer: %', _msg;

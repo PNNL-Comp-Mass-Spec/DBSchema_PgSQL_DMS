@@ -94,9 +94,9 @@ BEGIN
 
     CALL sw.remove_selected_jobs (
                 _infoOnly,
-                _message => _message,
-                _returnCode => _returnCode,
-                _logDeletions => true,
+                _message          => _message,      -- Output
+                _returnCode       => _returnCode,   -- Output
+                _logDeletions     => true,
                 _logToConsoleOnly => false);
 
     DROP TABLE Tmp_Selected_Jobs;

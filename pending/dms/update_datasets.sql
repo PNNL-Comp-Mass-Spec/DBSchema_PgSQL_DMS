@@ -336,7 +336,10 @@ BEGIN
                         ORDER BY Entry_ID
                     LOOP
 
-                        CALL schedule_predefined_analysis_jobs (_currentDataset);
+                        CALL public.schedule_predefined_analysis_jobs (
+                                        _datasetName =>_currentDataset,
+                                        _message     => _message
+                                        _returnCode  => _returnCode);
 
                     END LOOP;
 

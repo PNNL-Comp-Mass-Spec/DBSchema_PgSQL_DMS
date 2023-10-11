@@ -294,9 +294,9 @@ BEGIN
         Src.propagation_mode,
         Src.special_processing
     FROM public.get_predefined_analysis_rule_table(
-            _datasetName,
-            _analysisToolNameFilter,
-            _ignoreDatasetRating => false) Src;
+                    _datasetName,
+                    _analysisToolNameFilter,
+                    _ignoreDatasetRating => false) Src;
 
     If Not FOUND Then
         RAISE WARNING 'Function get_predefined_analysis_rule_table did not return any results for dataset %', _datasetName;
@@ -390,17 +390,17 @@ BEGIN
         ---------------------------------------------------
 
         CALL public.evaluate_predefined_analysis_rule(
-                _minLevel => _minLevel,
-                _datasetName => _datasetName,
-                _instrumentName => _instrumentName,
+                _minLevel        => _minLevel,
+                _datasetName     => _datasetName,
+                _instrumentName  => _instrumentName,
                 _instrumentClass => _instrumentClass,
-                _datasetRating => _datasetRating,
-                _datasetType => _datasetType,
+                _datasetRating   => _datasetRating,
+                _datasetType     => _datasetType,
                 _previewingRules => false,
-                _predefineFound => _predefineFound,         -- Output
-                _predefineID => _predefineID,               -- Output
-                _minLevelNew => _minLevelNew,               -- Output
-                _message => _message);                      -- Output
+                _predefineFound  => _predefineFound,    -- Output
+                _predefineID     => _predefineID,       -- Output
+                _minLevelNew     => _minLevelNew,       -- Output
+                _message         => _message);          -- Output
 
         If Not _predefineFound Then
             -- Break out of the while loop

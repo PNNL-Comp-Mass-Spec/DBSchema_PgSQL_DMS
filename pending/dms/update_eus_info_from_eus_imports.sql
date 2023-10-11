@@ -52,9 +52,9 @@ BEGIN
     FROM t_log_entries;
 
     -- Update EUS proposals
-    CALL update_eus_proposals_from_eus_imports (
-                        _message => _message,           -- Output
-                        _returnCode => _returnCode);    -- Output
+    CALL public.update_eus_proposals_from_eus_imports (
+                    _message => _message,           -- Output
+                    _returnCode => _returnCode);    -- Output
 
     If _returnCode <> '' And _statusMessage = '' Then
         If _message = '' Then
@@ -66,7 +66,7 @@ BEGIN
 
     If _returnCode = '' Then
         -- Update EUS users
-        CALL update_eus_users_from_eus_imports (
+        CALL public.update_eus_users_from_eus_imports (
                         _updateUsersOnInactiveProposals,
                         _message => _message,           -- Output
                         _returnCode => _returnCode);    -- Output
@@ -82,7 +82,7 @@ BEGIN
 
     If _returnCode = '' Then
         -- Update EUS instruments
-        CALL update_eus_instruments_from_eus_imports (
+        CALL public.update_eus_instruments_from_eus_imports (
                         _message => _message,           -- Output
                         _returnCode => _returnCode);    -- Output
 

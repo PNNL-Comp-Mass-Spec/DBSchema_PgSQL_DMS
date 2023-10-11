@@ -199,7 +199,11 @@ BEGIN
                 -- is appropriate for instrument group _newInstrumentGroup
                 ---------------------------------------------------
 
-                CALL validate_instrument_group_for_requested_runs (_reqRunIDList, _newInstrumentGroup, _message => _message, _returnCode => _returnCode);
+                CALL public.validate_instrument_group_for_requested_runs (
+                                    _reqRunIDList,
+                                    _newInstrumentGroup,
+                                    _message    => _message,        -- Output
+                                    _returnCode => _returnCode);    -- Output
 
                 If _returnCode <> '' Then
                     _logErrors := false;
@@ -236,7 +240,11 @@ BEGIN
                 -- is appropriate for instrument group _newInstrumentGroup
                 ---------------------------------------------------
 
-                CALL validate_instrument_group_for_requested_runs (_reqRunIDList, _newInstrumentGroup, _message => _message, _returnCode => _returnCode);
+                CALL public.validate_instrument_group_for_requested_runs (
+                                    _reqRunIDList,
+                                    _newInstrumentGroup,
+                                    _message    => _message,        -- Output
+                                    _returnCode => _returnCode);    -- Output
 
                 If _returnCode <> '' Then
                     _logErrors := false;
@@ -423,12 +431,12 @@ BEGIN
                 ORDER BY RequestID
             LOOP
 
-                CALL delete_requested_run (
+                CALL public.delete_requested_run (
                                     _requestID,
                                     _skipDatasetCheck => false,
-                                    _message => _message,              -- Output
-                                    _returnCode => _returnCode,        -- Output
-                                    _callingUser => _callingUser);
+                                    _message          => _message,          -- Output
+                                    _returnCode       => _returnCode,       -- Output
+                                    _callingUser      => _callingUser);
 
                 If _returnCode <> '' Then
 

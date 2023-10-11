@@ -25,9 +25,9 @@ CREATE OR REPLACE PROCEDURE public.get_factor_crosstab_by_batch(IN _batchid inte
 **
 **      BEGIN;
 **          CALL public.get_factor_crosstab_by_batch (
-**              _batchID => 9066,
+**              _batchID      => 9066,
 **              _nameContains => '12wk',
-**              _infoOnly => false
+**              _infoOnly     => false
 **          );
 **          FETCH ALL FROM _results;
 **      END;
@@ -44,12 +44,12 @@ CREATE OR REPLACE PROCEDURE public.get_factor_crosstab_by_batch(IN _batchid inte
 **          _currentRow record;
 **      BEGIN
 **          CALL public.get_factor_crosstab_by_batch (
-**                    _batchID => 9066,
+**                    _batchID      => 9066,
 **                    _nameContains => '12wk',
-**                    _infoOnly => false,
-**                    _results => _results,
-**                    _message => _message,
-**                    _returnCode => _returnCode
+**                    _infoOnly     => false,
+**                    _results      => _results,
+**                    _message      => _message,
+**                    _returnCode   => _returnCode
 **                );
 **
 **          If Exists (SELECT * FROM pg_cursors WHERE name = '_results') Then

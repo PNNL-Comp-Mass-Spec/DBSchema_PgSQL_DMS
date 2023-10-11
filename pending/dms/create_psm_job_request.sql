@@ -197,13 +197,13 @@ BEGIN
         -- Validate the datasets in Tmp_DatasetInfo
         ---------------------------------------------------
 
-        CALL validate_analysis_job_request_datasets (
-                    _autoRemoveNotReleasedDatasets => true,
-                    _toolName => _toolName,
-                    _allowNewDatasets => true,
-                    _message => _message,                   -- Output
-                    _returnCode => _returnCode              -- Output
-                    );
+        CALL public.validate_analysis_job_request_datasets (
+                        _autoRemoveNotReleasedDatasets => true,
+                        _toolName                      => _toolName,
+                        _allowNewDatasets              => true,
+                        _message                       => _message,     -- Output
+                        _returnCode                    => _returnCode   -- Output
+                        );
 
         If _returnCode <> '' Then
             _logErrors := false;
@@ -352,24 +352,24 @@ BEGIN
         -- Now create the analysis job request
         ---------------------------------------------------
 
-        CALL add_update_analysis_job_request (
-                _datasets => _datasets,
-                _requestName => _requestName,
-                _toolName => _toolName,
-                _paramFileName => _paramFile,
-                _settingsFileName => _settingsFile,
-                _protCollNameList => _protCollNameList,
-                _protCollOptionsList => _protCollOptionsList,
-                _organismName => _organismName,
-                _organismDBName => 'na',                    -- Legacy fasta file
-                _requesterUsername => _ownerUsername,
-                _comment => _comment,
-                _specialProcessing => null,
-                _state => 'New',
-                _requestID => _requestID,       -- Output
-                _mode => _mode,
-                _message => _message,           -- Output
-                _returnCode => _returnCode);    -- Output
+        CALL public.add_update_analysis_job_request (
+                        _datasets            => _datasets,
+                        _requestName         => _requestName,
+                        _toolName            => _toolName,
+                        _paramFileName       => _paramFile,
+                        _settingsFileName    => _settingsFile,
+                        _protCollNameList    => _protCollNameList,
+                        _protCollOptionsList => _protCollOptionsList,
+                        _organismName        => _organismName,
+                        _organismDBName      => 'na',               -- Legacy fasta file
+                        _requesterUsername   => _ownerUsername,
+                        _comment             => _comment,
+                        _specialProcessing   => null,
+                        _state               => 'New',
+                        _requestID           => _requestID,         -- Output
+                        _mode                => _mode,
+                        _message             => _message,           -- Output
+                        _returnCode          => _returnCode);       -- Output
 
     EXCEPTION
         WHEN OTHERS THEN

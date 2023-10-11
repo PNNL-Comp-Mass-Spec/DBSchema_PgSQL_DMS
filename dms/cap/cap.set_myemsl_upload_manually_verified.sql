@@ -189,8 +189,8 @@ BEGIN
                     _statusNumList,
                     _statusURIList,
                     _ingestStepsCompleted => _ingestStepsCompleted,
-                    _message => _message,
-                    _returnCode => _returnCode);
+                    _message              => _message,          -- Output
+                    _returnCode           => _returnCode);      -- Output
     End If;
 
     If _returnCode <> '' Then

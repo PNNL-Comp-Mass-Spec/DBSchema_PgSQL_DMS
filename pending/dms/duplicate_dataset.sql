@@ -200,9 +200,9 @@ BEGIN
 
             CALL public.auto_resolve_name_to_username (
                     _newOperatorUsername,
-                    _matchCount => _matchCount,         -- Output
+                    _matchCount       => _matchCount,   -- Output
                     _matchingUsername => _newUsername,  -- Output
-                    _matchingUserID => _userID);        -- Output
+                    _matchingUserID   => _userID);      -- Output
 
             If _matchCount = 1 Then
                 -- Single match found; update _operatorUsername
@@ -348,42 +348,45 @@ BEGIN
     ---------------------------------------------------
 
     CALL public.add_update_requested_run (
-            _requestName => _requestName,
-            _experimentName => _datasetInfo.ExperimentName,
-            _requesterUsername => _datasetInfo.OperUsername,
-            _instrumentName => _requestedRunInfo.InstrumentName,
-            _workPackage => _requestedRunInfo.WorkPackage,
-            _msType => _requestedRunInfo.MsType,
-            _instrumentSettings => _requestedRunInfo.InstrumentSettings,
-            _wellplateName => _datasetInfo.Wellplate,
-            _wellNumber => _datasetInfo.WellNum,
-            _internalStandard => 'na',
-            _comment => 'Automatically created by Dataset entry',
-            _eusProposalID => _requestedRunInfo.EusProposalID,
-            _eusUsageType => _requestedRunInfo.EusUsageType,
-            _eusUsersList => _eusUsersList,
-            _mode => 'add-auto',
-            _request => _requestID,         -- Output
-            _message => _message,           -- Output
-            _returnCode => _returnCode,     -- Output
-            _secSep => _requestedRunInfo.SeparationGroup,
-            _mrmAttachment => '',
-            _status => 'Completed',
-            _skipTransactionRollback => true,
-            _autoPopulateUserListIfBlank => true,   -- Auto populate _eusUsersList if blank since this is an Auto-Request
-            _callingUser => '',
-            _vialingConc => null,
-            _vialingVol => null,
-            _stagingLocation => null,
-            _requestIDForUpdate => null,
-            _logDebugMessages => false,
-            _resolvedInstrumentInfo => _resolvedInstrumentInfo);    -- Output
+                    _requestName                 => _requestName,
+                    _experimentName              => _datasetInfo.ExperimentName,
+                    _requesterUsername           => _datasetInfo.OperUsername,
+                    _instrumentGroup             => _requestedRunInfo.InstrumentGroup,
+                    _workPackage                 => _requestedRunInfo.WorkPackage,
+                    _msType                      => _requestedRunInfo.MsType,
+                    _instrumentSettings          => _requestedRunInfo.InstrumentSettings,
+                    _wellplateName               => _datasetInfo.Wellplate,
+                    _wellNumber                  => _datasetInfo.WellNum,
+                    _internalStandard            => 'na',
+                    _comment                     => 'Automatically created by Dataset entry',
+                    _batch                       => 0,
+                    _block                       => 0,
+                    _runOrder                    => 0,
+                    _eusProposalID               => _requestedRunInfo.EusProposalID,
+                    _eusUsageType                => _requestedRunInfo.EusUsageType,
+                    _eusUsersList                => _eusUsersList,
+                    _mode                        => 'add-auto',
+                    _secSep                      => _requestedRunInfo.SeparationGroup,
+                    _mrmAttachment               => '',
+                    _status                      => 'Completed',
+                    _skipTransactionRollback     => true,
+                    _autoPopulateUserListIfBlank => true,       -- Auto populate _eusUsersList if blank since this is an Auto-Request
+                    _callingUser                 => '',
+                    _vialingConc                 => null,
+                    _vialingVol                  => null,
+                    _stagingLocation             => null,
+                    _requestIDForUpdate          => null,
+                    _logDebugMessages            => false,
+                    _request                     => _requestID,                 -- Output
+                    _resolvedInstrumentInfo      => _resolvedInstrumentInfo,    -- Output
+                    _message                     => _message,                   -- Output
+                    _returnCode                  => _returnCode);               -- Output
 
-    If _returnCode <> '' Then
-        ROLLBACK;
+        If _returnCode <> '' Then
+            ROLLBACK;
 
-        _message := format('Create AutoReq run request failed: dataset %s with Proposal ID %s, Usage Type %s, and Users List %s -> %s',
-                            _newDataset, _requestedRunInfo.EusProposalID, _requestedRunInfo.EusUsageType, _eusUsersList, _message
+        _message := format('Create AutoReq run request failed: dataset %s with Proposal ID %s, Usage Type %s, and Users List %s; %s',
+                            _newDataset, _requestedRunInfo.EusProposalID, _requestedRunInfo.EusUsageType, _eusUsersList, _message);
 
         RAISE WARNING '%', _message;
 
@@ -394,8 +397,12 @@ BEGIN
     -- Consume the scheduled run
     ---------------------------------------------------
 
-    CALL public.consume_scheduled_run (_datasetID, _requestID, _message => _message);
-    --
+    CALL public.consume_scheduled_run (
+                    _datasetID,
+                    _requestID,
+                    _message    => _message,        -- Output
+                    _returnCode => _returnCode);    -- Output
+
     If _returnCode <> '' Then
         ROLLBACK;
 
@@ -408,7 +415,12 @@ BEGIN
     COMMIT;
 
     -- Update t_cached_dataset_instruments
-    CALL public.update_cached_dataset_instruments (_processingMode => 0, _datasetId => _datasetID, _infoOnly => false);
+    CALL public.update_cached_dataset_instruments (
+                    _processingMode => 0,
+                    _datasetId      => _datasetID,
+                    _infoOnly       => false,
+                    _message        => _message,        -- Output
+                    _returnCode     => _returnCode);    -- Output
 
     RAISE INFO '';
     RAISE INFO 'Duplicated dataset %, creating %', _sourceDataset, _newDataset;

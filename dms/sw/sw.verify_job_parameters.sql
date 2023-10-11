@@ -294,14 +294,14 @@ BEGIN
 
         CALL public.validate_protein_collection_params (
                         _scriptBaseName,
-                        _organismDBName,            -- Output
+                        _organismDBName,                -- Output
                         _organismName,
-                        _protCollNameList,          -- Output
-                        _protCollOptionsList,       -- Output
+                        _protCollNameList,              -- Output
+                        _protCollOptionsList,           -- Output
                         _ownerUsername => '',
-                        _message => _message,       -- Output
-                        _returncode => _returnCode, -- Output
-                        _debugMode => _debugMode);
+                        _message       => _message,     -- Output
+                        _returncode    => _returnCode,  -- Output
+                        _debugMode     => _debugMode);
 
         If _returncode = '' And char_length(_protCollNameList) > 0 And public.validate_na_parameter(_protCollNameList) <> 'na' Then
             ---------------------------------------------------
@@ -312,12 +312,12 @@ BEGIN
             ---------------------------------------------------
 
             CALL sw.validate_protein_collection_list_for_data_package (
-                                _dataPackageID,
-                                _protCollNameList => _protCollNameList,             -- Output
-                                _collectionCountAdded => _collectionCountAdded,     -- Output
-                                _showMessages => true,
-                                _message => _message,
-                                _returnCode => _returnCode);                        -- Output
+                        _dataPackageID,
+                        _protCollNameList     => _protCollNameList,         -- Output
+                        _collectionCountAdded => _collectionCountAdded,     -- Output
+                        _showMessages         => true,
+                        _message              => _message,                  -- Output
+                        _returnCode           => _returnCode);              -- Output
         End If;
 
         If _returnCode = '' Then

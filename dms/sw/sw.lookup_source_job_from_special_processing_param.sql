@@ -140,12 +140,12 @@ BEGIN
                           _dataset,
                           _specialProcessingText,
                           _tagName,
-                          _sourceJob => _sourceJob,             -- Output
-                          _autoQueryUsed => _autoQueryUsed,     -- Output
+                          _sourceJob      => _sourceJob,        -- Output
+                          _autoQueryUsed  => _autoQueryUsed,    -- Output
                           _warningMessage => _warningMessage,   -- Output
-                          _returnCode => _returnCode,           -- Output
-                          _previewSql => _previewSql,
-                          _autoQuerySql => _autoQuerySql);      -- Output
+                          _returnCode     => _returnCode,       -- Output
+                          _previewSql     => _previewSql,
+                          _autoQuerySql   => _autoQuerySql);    -- Output
 
                 If Coalesce(_warningMessage, '') <> '' Then
                     CALL public.post_log_entry ('Debug', _warningMessage, 'Lookup_Source_Job_From_Special_Processing_Param', 'sw');
@@ -213,12 +213,12 @@ BEGIN
                           _dataset,
                           _specialProcessingText,
                           _tagName,
-                          _sourceJob => _sourceJob2,            -- Output
-                          _autoQueryUsed => _autoQueryUsed,     -- Output
+                          _sourceJob      => _sourceJob2,       -- Output
+                          _autoQueryUsed  => _autoQueryUsed,    -- Output
                           _warningMessage => _warningMessage,   -- Output
-                          _returnCode => _returnCode,           -- Output
-                          _previewSql => _previewSql,
-                          _autoQuerySql => _autoQuerySql);      -- Output
+                          _returnCode     => _returnCode,       -- Output
+                          _previewSql     => _previewSql,
+                          _autoQuerySql   => _autoQuerySql);    -- Output
 
                 If Coalesce(_warningMessage, '') <> '' Then
                     CALL public.post_log_entry ('Debug', _warningMessage, 'Lookup_Source_Job_From_Special_Processing_Param', 'sw');

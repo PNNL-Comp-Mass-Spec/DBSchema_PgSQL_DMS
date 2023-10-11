@@ -93,10 +93,10 @@ BEGIN
     ---------------------------------------------------
 
     CALL sw.synchronize_job_stats_with_job_steps (
-                _infoOnly => false,
+                _infoOnly          => false,
                 _completedJobsOnly => false,
-                _message => _message,           -- Output
-                _returnCode => _returnCode);    -- Output
+                _message           => _message,         -- Output
+                _returnCode        => _returnCode);     -- Output
 
     ---------------------------------------------------
     -- Add old successful jobs that should be deleted
@@ -221,8 +221,8 @@ BEGIN
                             _jobInfo.State,
                             _overrideSaveTime => true,
                             _saveTimeOverride => _jobInfo.JobToAdd.SaveTimeOverride,
-                            _message => _message,                   -- Output
-                            _returnCode => _returnCode);            -- Output
+                            _message          => _message,          -- Output
+                            _returnCode       => _returnCode);      -- Output
             End If;
         END LOOP;
 
@@ -233,11 +233,11 @@ BEGIN
     ---------------------------------------------------
 
     CALL sw.remove_selected_jobs (
-            _infoOnly => _infoOnly,
-            _message => _message,
-            _returncode => _returncode,
-            _logDeletions => _logDeletions,
-            _logToConsoleOnly => _logToConsoleOnly);
+                _infoOnly         => _infoOnly,
+                _message          => _message,          -- Output
+                _returncode       => _returncode,       -- Output
+                _logDeletions     => _logDeletions,
+                _logToConsoleOnly => _logToConsoleOnly);
 
     DROP TABLE Tmp_Selected_Jobs;
     DROP TABLE Tmp_JobsNotInHistory;

@@ -74,12 +74,14 @@ BEGIN
         End If;
 
         _currentLocation := 'Update t_mts_cached_data_status';
-        --
-        CALL update_mts_cached_data_status (
-                    't_mts_peak_matching_tasks_cached',
-                    _incrementRefreshCount => false,
-                    _fullRefreshPerformed => _fullRefreshPerformed,
-                    _lastRefreshMinimumID => _jobMinimum);
+
+        CALL public.update_mts_cached_data_status (
+                        _cachedDataTableName   => 't_mts_peak_matching_tasks_cached',
+                        _incrementRefreshCount => false,
+                        _fullRefreshPerformed  => _fullRefreshPerformed,
+                        _lastRefreshMinimumID  => _jobMinimum,
+                        _message               => _message,
+                        _returnCode            => _returnCode);
 
         -- Use a MERGE Statement to synchronize t_mts_peak_matching_tasks_cached with S_MTS_Peak_Matching_Tasks
 
@@ -259,14 +261,16 @@ BEGIN
 
         _currentLocation := 'Update stats in t_mts_cached_data_status';
 
-        CALL update_mts_cached_data_status (
-                    't_mts_peak_matching_tasks_cached',
-                    _incrementRefreshCount => true,
-                    _insertCountNew => _mergeInsertCount,
-                    _updateCountNew => _mergeUpdateCount,
-                    _deleteCountNew => _mergeDeleteCount,
-                    _fullRefreshPerformed => _fullRefreshPerformed,
-                    _lastRefreshMinimumID => _jobMinimum);
+        CALL public.update_mts_cached_data_status (
+                        _cachedDataTableName   => 't_mts_peak_matching_tasks_cached',
+                        _incrementRefreshCount => true,
+                        _insertCountNew        => _mergeInsertCount,
+                        _updateCountNew        => _mergeUpdateCount,
+                        _deleteCountNew        => _mergeDeleteCount,
+                        _fullRefreshPerformed  => _fullRefreshPerformed,
+                        _lastRefreshMinimumID  => _jobMinimum,
+                        _message               => _message,
+                        _returnCode            => _returnCode);
 
     EXCEPTION
         WHEN OTHERS THEN

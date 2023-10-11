@@ -211,25 +211,25 @@ BEGIN
     -- It uses Tmp_AnalysisJobs to determine which jobs to update
     ---------------------------------------------------
 
-    CALL update_analysis_jobs_work (
-        _state,
-        _priority,
-        _comment,
-        _findText,
-        _replaceText,
-        _assignedProcessor,
-        _associatedProcessorGroup,
-        _propagationMode,
-        _paramFileName,
-        _settingsFileName,
-        _organismName,
-        _protCollNameList,
-        _protCollOptionsList,
-        _mode,
-        _message => _message,
-        _returnCode => _returnCode,
-        _callingUser => _callingUser,
-        _disableRaiseError => true);
+    CALL public.update_analysis_jobs_work (
+                    _state,
+                    _priority,
+                    _comment,
+                    _findText,
+                    _replaceText,
+                    _assignedProcessor,
+                    _associatedProcessorGroup,
+                    _propagationMode,
+                    _paramFileName,
+                    _settingsFileName,
+                    _organismName,
+                    _protCollNameList,
+                    _protCollOptionsList,
+                    _mode,
+                    _message           => _message,         -- Output
+                    _returnCode        => _returnCode,      -- Output
+                    _callingUser       => _callingUser,
+                    _disableRaiseError => true);
 
     ---------------------------------------------------
     -- Report success or error

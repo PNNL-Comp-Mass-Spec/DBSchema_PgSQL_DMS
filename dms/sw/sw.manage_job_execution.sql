@@ -200,7 +200,7 @@ BEGIN
 
     CALL public.manage_job_execution (
                     _parameters,
-                    _message => _message,           -- Output
+                    _message    => _message,        -- Output
                     _returnCode => _returnCode);    -- Output
 
     If Coalesce(_warning, '') <> '' Then

@@ -326,7 +326,9 @@ BEGIN
 
     CALL public.delete_aux_info (
                     'Dataset',
-                    _datasetName, _message => _message, _returnCode => _returnCode);
+                    _datasetName,
+                    _message    => _message,        -- Output
+                    _returnCode => _returnCode);    -- Output
 
     If _returnCode <> '' Then
         _message := format('Delete auxiliary information was unsuccessful for dataset: %s', _message);
@@ -347,9 +349,9 @@ BEGIN
     CALL public.unconsume_scheduled_run (
                     _datasetName,
                     _retainHistory => false,
-                    _message => _message,           -- Output
-                    _returnCode => _returnCode,     -- Output
-                    _callingUser => _callingUser);
+                    _message       => _message,         -- Output
+                    _returnCode    => _returnCode,      -- Output
+                    _callingUser   => _callingUser);
 
     If _returnCode <> '' Then
         _message := format('Unconsume operation was unsuccessful for dataset: %s', _message);

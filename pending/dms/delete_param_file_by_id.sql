@@ -55,7 +55,10 @@ BEGIN
     -- Delete any entries for the parameter file from the entries table
     ---------------------------------------------------
 
-    CALL delete_param_entries_for_id (_paramFileID, _message => _message, _returnCode => _returnCode);
+    CALL public.delete_param_entries_for_id (
+                    _paramFileID => _paramFileID,
+                    _message     => _message,       -- Output
+                    _returnCode  => _returnCode);   -- Output
 
     If _returnCode <> '' Then
         RAISE EXCEPTION 'Delete from entries table was unsuccessful for param file';

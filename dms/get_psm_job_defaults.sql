@@ -188,13 +188,12 @@ BEGIN
     -- Validate the datasets in Tmp_DatasetInfo
     ---------------------------------------------------
 
-    CALL validate_analysis_job_request_datasets (
-                _autoRemoveNotReleasedDatasets => true,
-                _toolName => _toolName,
-                _allowNewDatasets => true,
-                _message => _message,               -- Output
-                _returnCode => _returnCode          -- Output
-                );
+    CALL public.validate_analysis_job_request_datasets (
+                    _autoRemoveNotReleasedDatasets => true,
+                    _toolName                      => _toolName,
+                    _allowNewDatasets              => true,
+                    _message                       => _message,         -- Output
+                    _returnCode                    => _returnCode);     -- Output
 
     If _returnCode <> '' Then
 
@@ -301,13 +300,13 @@ BEGIN
     If char_length(_protCollNameList) > 0 And public.validate_na_parameter(_protCollNameList, 1) <> 'na' Then
 
         -- Append the default contaminant collections
-        CALL validate_protein_collection_list_for_datasets (
+        CALL public.validate_protein_collection_list_for_datasets (
                             _datasets,
-                            _protCollNameList => _protCollNameList,             -- Output
-                            _collectionCountAdded => _collectionCountAdded,     -- Output
-                            _message => _message,                               -- Output
-                            _returncode => _returncode,                         -- Output
-                            _showDebug => false);
+                            _protCollNameList     => _protCollNameList,     -- Output
+                            _collectionCountAdded => _collectionCountAdded, -- Output
+                            _message              => _message,              -- Output
+                            _returncode           => _returnCode,           -- Output
+                            _showDebug            => false);
 
     End If;
 

@@ -95,10 +95,10 @@ BEGIN
         _currentLocation := 'Call sw.move_entries_to_history';
 
         CALL sw.move_entries_to_history (
-                        _logRetentionIntervalDays,
-                        _infoOnly => _infoOnly,
-                        _message => _message,
-                        _returnCode => _returnCode);
+                    _logRetentionIntervalDays,
+                    _infoOnly   => _infoOnly,
+                    _message    => _message,        -- Output
+                    _returnCode => _returnCode);    -- Output
 
    EXCEPTION
         WHEN OTHERS THEN

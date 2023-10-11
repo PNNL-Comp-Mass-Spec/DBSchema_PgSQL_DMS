@@ -47,7 +47,7 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **              'ComputeOverallQualityScores',
 **              'false',
 **              _deleteParam => false,
-**              _showDebug => true);
+**              _showDebug   => true);
 **
 **
 **      -- This function can also be called as part of a query, using a LATERAL join
@@ -64,7 +64,7 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **                  'CreateDatasetInfoFile',
 **                  'false',
 **                   _deleteParam => false,       -- Optional, defaults to false
-**                   _showDebug => false)         -- Optional, defaults to false
+**                   _showDebug   => false)       -- Optional, defaults to false
 **               ) UpdateQ ON TaskParams.job = 6016844;
 **
 **      -- Option 2: Use WHERE clause
@@ -112,7 +112,7 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **          'NewProcessingOption',
 **          'n/a',
 **          _deleteParam => true,
-**          _showDebug => true);
+**          _showDebug   => true);
 **
 **      SELECT *, updated_xml::text
 **      FROM cap.add_update_task_parameter_xml(

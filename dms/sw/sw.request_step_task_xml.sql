@@ -1567,9 +1567,9 @@ BEGIN
             ---------------------------------------------------
 
             _xmlParameters := sw.get_job_step_params_xml (
-                                            _job,
-                                            _step,
-                                            _jobIsRunningRemote => _jobIsRunningRemote);
+                                    _job,
+                                    _step,
+                                    _jobIsRunningRemote => _jobIsRunningRemote);
 
             _parameters := _xmlParameters::text;
         Else

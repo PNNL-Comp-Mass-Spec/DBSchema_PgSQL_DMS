@@ -99,13 +99,13 @@ BEGIN
             CALL post_log_entry ('Info', _message, 'Update_Run_Interval_Instrument_Usage');
         End If;
 
-        CALL update_dataset_interval_for_multiple_instruments (
-                _daysToProcess => _daysToProcess,
-                _updateEMSLInstrumentUsage => true,
-                _infoOnly => _infoOnly,
-                _instrumentsToProcess => _instrumentName,
-                _message => _message,               -- Output
-                _returnCode => _returnCode);        -- Output
+        CALL public.update_dataset_interval_for_multiple_instruments (
+                        _daysToProcess             => _daysToProcess,
+                        _updateEMSLInstrumentUsage => true,
+                        _infoOnly                  => _infoOnly,
+                        _instrumentsToProcess      => _instrumentName,
+                        _message                   => _message,         -- Output
+                        _returnCode                => _returnCode);     -- Output
 
     EXCEPTION
         WHEN OTHERS THEN

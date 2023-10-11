@@ -404,16 +404,16 @@ BEGIN
 
         _ownerUsername := '';
 
-        CALL validate_protein_collection_params (
-                    _analysisToolName,
-                    _organismDBName      => _organismDBName,        -- Output
-                    _organismName        => _organismName,
-                    _protCollNameList    => _protCollNameList,      -- Output
-                    _protCollOptionsList => _protCollOptionsList,   -- Output
-                    _ownerUsername       => _ownerUsername,
-                    _message             => _message,               -- Output
-                    _returnCode          => _returnCode,            -- Output
-                    _debugMode           => _showDebugMessages);
+        CALL public.validate_protein_collection_params (
+                        _analysisToolName,
+                        _organismDBName      => _organismDBName,        -- Output
+                        _organismName        => _organismName,
+                        _protCollNameList    => _protCollNameList,      -- Output
+                        _protCollOptionsList => _protCollOptionsList,   -- Output
+                        _ownerUsername       => _ownerUsername,
+                        _message             => _message,               -- Output
+                        _returnCode          => _returnCode,            -- Output
+                        _debugMode           => _showDebugMessages);
 
         If _returnCode <> '' Then
             _msg := _message;
@@ -443,11 +443,11 @@ BEGIN
             -- try to auto-resolve using the name column in t_users
             ---------------------------------------------------
 
-            CALL auto_resolve_name_to_username (
-                    _creator,
-                    _matchCount => _matchCount,         -- Output
-                    _matchingUsername => _newUsername,  -- Output
-                    _matchingUserID => _userID);        -- Output
+            CALL public.auto_resolve_name_to_username (
+                            _creator,
+                            _matchCount       => _matchCount,   -- Output
+                            _matchingUsername => _newUsername,  -- Output
+                            _matchingUserID   => _userID);      -- Output
 
             If _matchCount = 1 Then
                 -- Single match was found; update _creator

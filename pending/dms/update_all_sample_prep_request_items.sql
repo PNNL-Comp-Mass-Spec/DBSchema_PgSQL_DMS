@@ -94,21 +94,22 @@ BEGIN
             FROM Tmp_PrepRequestItems
             ORDER BY ID
         LOOP
-            CALL update_sample_prep_request_items (
+            CALL public.update_sample_prep_request_items (
                     _currentId,
-                    _mode => 'update',
-                    _message => _message,           -- Output
-                    _returnCode => _returncode,     -- Output
-                    _callingUser) => _callingUser;
+                    _mode        => 'update',
+                    _message     => _message,      -- Output
+                    _returnCode  => _returncode,   -- Output
+                    _callingUser => _callingUser);
 /*
-            CALL update_osm_package_items
+            CALL public.update_osm_package_items (
                                 _currentId,
                                 _itemType,
                                 _itemList,
                                 _comment,
-                                _mode,
-                                _message output,
-                                _callingUser
+                                _mode        => 'update',
+                                _message     => _message,      -- Output
+                                _returnCode  => _returncode,   -- Output
+                                _callingUser => _callingUser);
 */
         END LOOP;
 

@@ -437,20 +437,20 @@ BEGIN
             End If;
 
             CALL public.update_analysis_job_processing_stats (
-                    _job => _jobInfo.Job,
-                    _newDMSJobState => _newDMSJobState,
-                    _newBrokerJobState => _jobInfo.NewJobStateInBroker,
-                    _jobStart => _startMin,
-                    _jobFinish => _finishMax,
-                    _resultsDirectoryName => _jobInfo.ResultsDirectoryName,
-                    _assignedProcessor => 'Job_Broker',
-                    _jobCommentAddnl => _jobCommentAddnl,
-                    _organismDBName => _orgDBName,
+                    _job                   => _jobInfo.Job,
+                    _newDMSJobState        => _newDMSJobState,
+                    _newBrokerJobState     => _jobInfo.NewJobStateInBroker,
+                    _jobStart              => _startMin,
+                    _jobFinish             => _finishMax,
+                    _resultsDirectoryName  => _jobInfo.ResultsDirectoryName,
+                    _assignedProcessor     => 'Job_Broker',
+                    _jobCommentAddnl       => _jobCommentAddnl,
+                    _organismDBName        => _orgDBName,
                     _processingTimeMinutes => _processingTimeMinutes,
-                    _updateCode => _updateCode,
-                    _infoOnly => false,
-                    _message => _message,           -- Output
-                    _returncode => _returnCode);    -- Output
+                    _updateCode            => _updateCode,
+                    _infoOnly              => false,
+                    _message               => _message,         -- Output
+                    _returncode            => _returnCode);     -- Output
 
             If _returnCode <> '' Then
                 CALL public.post_log_entry ('Error', _message, 'Update_Job_State', 'sw');
@@ -467,7 +467,7 @@ BEGIN
             CALL sw.copy_job_to_history (
                         _jobInfo.Job,
                         _jobInfo.NewJobStateInBroker,
-                        _message => _message,           -- Output
+                        _message    => _message,        -- Output
                         _returnCode => _returnCode      -- Output
                         );
         End If;
@@ -609,13 +609,13 @@ BEGIN
         WHERE job = _jobInfo.Job;
 
         CALL public.update_failed_job_now_in_progress (
-                _job => _jobInfo.Job,
-                _newBrokerJobState => _jobInfo.NewJobStateInBroker,
-                _jobStart => _startMin,
-                _updateCode => _updateCode,
-                _infoOnly => _infoOnly,
-                _message => _message,           -- Output
-                _returncode => _returnCode);    -- Output
+                        _job               => _jobInfo.Job,
+                        _newBrokerJobState => _jobInfo.NewJobStateInBroker,
+                        _jobStart          => _startMin,
+                        _updateCode        => _updateCode,
+                        _infoOnly          => _infoOnly,
+                        _message           => _message,         -- Output
+                        _returncode        => _returnCode);     -- Output
 
         If _returnCode <> '' Then
             CALL public.post_log_entry ('Error', _message, 'Update_Job_State', 'sw');

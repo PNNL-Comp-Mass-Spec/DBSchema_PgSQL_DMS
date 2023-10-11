@@ -364,12 +364,12 @@ BEGIN
         -- Create the basic capture task job structure (steps and dependencies)
         -- Details are stored in Tmp_Job_Steps and Tmp_Job_Step_Dependencies
         CALL cap.create_steps_for_task (
-                _jobInfo.Job,
-                _scriptXML,
-                _jobInfo.ResultsDirectoryName,
-                _message => _message,
-                _returnCode => _returnCode,
-                _debugMode => _debugMode);
+                    _jobInfo.Job,
+                    _scriptXML,
+                    _jobInfo.ResultsDirectoryName,
+                    _message    => _message,        -- Output
+                    _returnCode => _returnCode,     -- Output
+                    _debugMode  => _debugMode);
 
         If _returnCode <> '' Then
             RAISE WARNING 'Error %: %', _returnCode, _message;
@@ -385,9 +385,9 @@ BEGIN
         -- copying to the main database tables
 
         CALL cap.finish_task_creation (
-                 _jobInfo.Job,
-                 _message => _message,
-                 _debugMode => _debugMode);
+                     _jobInfo.Job,
+                     _message   => _message,    -- Output
+                     _debugMode => _debugMode);
 
         _jobsProcessed := _jobsProcessed + 1;
 
@@ -411,12 +411,17 @@ BEGIN
         _message = _infoMessage;
     Else
         If _mode::citext = 'CreateFromImportedJobs' Then
-            -- Copies data from the following temp tables to actual database tables:
+
+            -- Copy data from the following temp tables to actual database tables:
             --     Tmp_Jobs
             --     Tmp_Job_Steps
             --     Tmp_Job_Step_Dependencies
             --     Tmp_Job_Parameters
-            CALL cap.move_tasks_to_main_tables (_message => _message, _returnCode => _returnCode, _debugMode => _debugMode);
+
+            CALL cap.move_tasks_to_main_tables (
+                        _message    => _message,
+                        _returnCode => _returnCode,     -- Output
+                        _debugMode  => _debugMode);     -- Output
         End If;
     End If;
 

@@ -147,10 +147,10 @@ BEGIN
 
         CREATE UNIQUE INDEX IX_Tmp_CampaignFilter ON Tmp_CampaignFilter (Campaign_ID);
 
-        CALL populate_campaign_filter_table (
-                    _campaignIDFilterList,
-                    _message => _message,           -- Output
-                    _returnCode => _returnCode);    -- Output
+        CALL public.populate_campaign_filter_table (
+                        _campaignIDFilterList,
+                        _message    => _message,        -- Output
+                        _returnCode => _returnCode);    -- Output
 
         If _returnCode <> '' Then
             If _showDebug Then
@@ -173,10 +173,10 @@ BEGIN
 
         CREATE UNIQUE INDEX IX_Tmp_InstrumentFilter ON Tmp_InstrumentFilter (Instrument_ID);
 
-        CALL populate_instrument_filter_table (
-                    _instrumentFilterList,
-                    _message => _message,           -- Output
-                    _returnCode => _returnCode);    -- Output
+        CALL public.populate_instrument_filter_table (
+                        _instrumentFilterList,
+                        _message    => _message,        -- Output
+                        _returnCode => _returnCode);    -- Output
 
         If _returnCode <> '' Then
             If _showDebug Then
@@ -258,13 +258,13 @@ BEGIN
         -- Determine the start and end dates
         --------------------------------------------------------------------
 
-        CALL resolve_start_and_end_dates (
-            _startDate,
-            _endDate,
-            _stDate => _stDate,             -- Output
-            _eDate => _eDate,               -- Output
-            _message => _message,           -- Output
-            _returnCode => _returnCode);    -- Output
+        CALL public.resolve_start_and_end_dates (
+                        _startDate  => _startDate,      -- Start date, as text
+                        _endDate    => _endDate,        -- End date, as text
+                        _stDate     => _stDate,         -- Output: start date, as a timestamp
+                        _eDate      => _eDate,          -- Output: end date, as a timestamp
+                        _message    => _message,        -- Output
+                        _returnCode => _returnCode);    -- Output
 
         If _returnCode <> '' Then
             If _showDebug Then

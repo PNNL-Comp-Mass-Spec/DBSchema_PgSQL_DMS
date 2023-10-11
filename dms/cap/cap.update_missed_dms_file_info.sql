@@ -156,11 +156,11 @@ BEGIN
         ORDER BY Dataset_ID
     LOOP
         CALL cap.update_dms_file_info_xml (
-                        _datasetID,
-                        _deleteFromTableOnSuccess,
-                        _message => _message,
-                        _returnCode => _returnCode,
-                        _infoOnly => _infoOnly);
+                    _datasetID,
+                    _deleteFromTableOnSuccess,
+                    _message    => _message,        -- Output
+                    _returnCode => _returnCode,     -- Output
+                    _infoOnly   => _infoOnly);
 
         If Coalesce(_returnCode, '') <> '' Then
 

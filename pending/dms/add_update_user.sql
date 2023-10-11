@@ -222,7 +222,11 @@ BEGIN
         -- Add/update operations defined for user
         ---------------------------------------------------
 
-        CALL add_update_user_operations _userID, _operationsList, _message => _message
+        CALL public.add_update_user_operations (
+                        _userID,
+                        _operationsList,
+                        _message    => _message,        -- Output
+                        _returnCode => _returnCode);    -- Output
 
     EXCEPTION
         WHEN OTHERS THEN

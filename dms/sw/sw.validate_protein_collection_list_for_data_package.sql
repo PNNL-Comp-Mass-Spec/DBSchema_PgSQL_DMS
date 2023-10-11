@@ -77,12 +77,12 @@ BEGIN
     End If;
 
     CALL public.validate_protein_collection_list_for_dataset_table (
-                        _protCollNameList => _protCollNameList,             -- Output
-                        _collectionCountAdded => _collectionCountAdded,     -- Output
-                        _showMessages => _showMessages,
-                        _message => _message,                               -- Output
-                        _returncode => _returnCode,                         -- Output
-                        _showDebug => false);
+                    _protCollNameList     => _protCollNameList,         -- Output
+                    _collectionCountAdded => _collectionCountAdded,     -- Output
+                    _showMessages         => _showMessages,
+                    _message              => _message,                  -- Output
+                    _returncode           => _returnCode,               -- Output
+                    _showDebug            => false);
 
     DROP TABLE Tmp_DatasetList;
 END

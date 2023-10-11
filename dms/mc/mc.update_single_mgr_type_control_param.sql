@@ -90,7 +90,12 @@ BEGIN
     -- Note that it calls alter_entered_by_user_multi_id and alter_event_log_entry_user_multi_id for _callingUser
     ---------------------------------------------------
 
-    CALL mc.update_single_mgr_param_work (_paramName, _newValue, _callingUser, _message => _message, _returnCode => _returnCode);
+    CALL mc.update_single_mgr_param_work (
+                _paramName,
+                _newValue,
+                _callingUser,
+                _message => _message,           -- Output
+                _returnCode => _returnCode);    -- Output
 
     DROP TABLE Tmp_ParamValueEntriesToUpdate;
 

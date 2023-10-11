@@ -85,10 +85,10 @@ BEGIN
 
     CALL mc.set_manager_update_required (
                 _mgrList,
-                _showTable => true,
-                _infoonly => false,
-                _message => _message,
-                _returnCode => _returnCode);
+                _showTable  => true,
+                _infoonly   => false,
+                _message    => _message,        -- Output
+                _returnCode => _returnCode);    -- Output
 END
 $$;
 

@@ -254,7 +254,10 @@ BEGIN
 
         If FOUND Then
             -- Schedule an archive update
-            CALL set_archive_update_required (_datasetName, _message => _message, _returncode => _returncode);
+            CALL public.set_archive_update_required (
+                            _datasetName,
+                            _message    => _message,        -- Output
+                            _returncode => _returncode);    -- Output
 
             If _toolName LIKE 'Masic%' Then
                 -- Update the cached MASIC Directory Name

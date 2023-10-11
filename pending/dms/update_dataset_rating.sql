@@ -99,12 +99,13 @@ BEGIN
     -- Call procedure Update_Datasets
     ---------------------------------------------------
 
-    CALL update_datasets (
-        _datasets,
-        _rating => _rating,
-        _mode => _mode,
-        _message => _message,
-        _returnCode => _returnCode,
+    CALL public.update_datasets (
+        _datasetList => _datasets,
+        _state       => '',
+        _rating      => _rating,
+        _mode        => _mode,
+        _message     => _message,       -- Output
+        _returnCode  => _returnCode,    -- Output
         _callingUser => _callingUser);
 
     If _returnCode = '' And Not _infoOnly Then

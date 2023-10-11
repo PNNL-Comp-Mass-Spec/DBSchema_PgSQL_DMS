@@ -183,13 +183,13 @@ BEGIN
 
         CALL public.validate_analysis_job_request_datasets (
                     _autoRemoveNotReleasedDatasets => _autoRemoveNotReleasedDatasets,
-                    _toolName => _toolName,
-                    _allowNewDatasets => _allowNewDatasets,
-                    _allowNonReleasedDatasets => _allowNonReleasedDatasets,
-                    _showDebugMessages => _showDebugMessages,
-                    _showDatasetInfoTable => false,
-                    _message => _message,           -- Output
-                    _returnCode => _returnCode     -- Output
+                    _toolName                      => _toolName,
+                    _allowNewDatasets              => _allowNewDatasets,
+                    _allowNonReleasedDatasets      => _allowNonReleasedDatasets,
+                    _showDebugMessages             => _showDebugMessages,
+                    _showDatasetInfoTable          => false,
+                    _message                       => _message,     -- Output
+                    _returnCode                    => _returnCode   -- Output
                     );
 
         If _returnCode <> '' Then
@@ -229,10 +229,10 @@ BEGIN
             ---------------------------------------------------
 
             CALL public.auto_resolve_name_to_username (
-                    _ownerUsername,
-                    _matchCount => _matchCount,         -- Output
-                    _matchingUsername => _newUsername,  -- Output
-                    _matchingUserID => _userID);        -- Output
+                            _ownerUsername,
+                            _matchCount       => _matchCount,   -- Output
+                            _matchingUsername => _newUsername,  -- Output
+                            _matchingUserID   => _userID);      -- Output
 
             If _matchCount = 1 Then
                 -- Single match was found; update _ownerUsername
@@ -408,8 +408,8 @@ BEGIN
 
         _currentlocation := 'Check for "na" settings and parameter files';
 
-        _settingsFileName := public.validate_na_parameter(_settingsFileName, _trimwhitespace => 1);
-        _paramFileName    := public.validate_na_parameter(_paramFileName,    _trimwhitespace => 1);
+        _settingsFileName := public.validate_na_parameter(_settingsFileName, _trimWhitespace => 1);
+        _paramFileName    := public.validate_na_parameter(_paramFileName,    _trimWhitespace => 1);
 
         ---------------------------------------------------
         -- Check for settings file or parameter file being 'na' when not allowed

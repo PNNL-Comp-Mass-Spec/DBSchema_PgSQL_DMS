@@ -200,12 +200,12 @@ BEGIN
         -- RETURN;
 
         CALL sw.verify_job_parameters (
-                _jobParam,                      -- Input / Output
-                _scriptName,
-                _dataPackageID,
-                _message => _msg,               -- Output
-                _returnCode => _returnCode,     -- Output
-                _debugMode => _debugMode);
+                    _jobParam,                      -- Input/Output
+                    _scriptName,
+                    _dataPackageID,
+                    _message    => _msg,            -- Output
+                    _returnCode => _returnCode,     -- Output
+                    _debugMode  => _debugMode);
 
         If _returnCode <> '' Then
             _message := 'Error from verify_job_parameters';
@@ -233,11 +233,11 @@ BEGIN
             -- Validate scripts that reference a data package, including MaxQuant, MSFragger, DiaNN, PRIDE_Converter, Phospho_FDR_Aggregator, MAC_iTRAQ, MAC_TMT10Plex, and Isobaric_Labeling
 
             CALL sw.validate_data_package_for_mac_job (
-                                    _dataPackageID,
-                                    _scriptName,
-                                    _tool,                          -- Output
-                                    _message => _msg,               -- Output
-                                    _returnCode => _returnCode);    -- Output
+                        _dataPackageID,
+                        _scriptName,
+                        _tool,                          -- Output
+                        _message   => _msg,             -- Output
+                        _returnCode => _returnCode);    -- Output
 
 
             If _returnCode <> '' Then
@@ -300,10 +300,10 @@ BEGIN
                 ---------------------------------------------------
 
                 CALL sw.add_update_transfer_paths_in_params_using_data_pkg (
-                        _dataPackageID,
-                        _paramsUpdated => _paramsUpdated,   -- Output
-                        _message => _message,               -- Output
-                        _returnCode => _returnCode);        -- Output
+                            _dataPackageID,
+                            _paramsUpdated => _paramsUpdated,   -- Output
+                            _message       => _message,         -- Output
+                            _returnCode    => _returnCode);     -- Output
 
                 If _paramsUpdated Then
                     SELECT xml_item
@@ -356,20 +356,20 @@ BEGIN
                     CALL sw.update_job_param_org_db_info_using_data_pkg (
                                 _job,
                                 _dataPackageID,
-                                _deleteIfInvalid => false,
-                                _debugMode => false,
+                                _deleteIfInvalid    => false,
+                                _debugMode          => false,
                                 _scriptNameForDebug => '',
-                                _message => _message,           -- Output
-                                _returncode => _returncode,     -- Output
-                                _callingUser => _callingUser);  -- Output
+                                _message            => _message,        -- Output
+                                _returncode         => _returncode,     -- Output
+                                _callingUser        => _callingUser);   -- Output
                 End If;
 
                 If _reset Then
                     CALL sw.reset_aggregation_job (
-                            _job,
-                            _infoOnly => false,
-                            _message => _message,
-                            _returncode => _returncode);
+                                _job,
+                                _infoOnly   => false,
+                                _message    => _message,        -- Output
+                                _returncode => _returncode);    -- Output
                 End If;
             Else
                 _message := 'Only updating priority, comment, and owner since job state is not New, Complete, or Failed';
@@ -395,20 +395,20 @@ BEGIN
             End If;
 
             CALL sw.make_local_job_in_broker (
-                    _scriptName,
-                    _datasetName,
-                    _priority,
-                    _jobParamXML,
-                    _comment,
-                    _ownerUsername,
-                    _dataPackageID,
-                    _debugMode,
-                    _logDebugMessages,
-                    _job => _job,                                       -- Output
-                    _resultsDirectoryName => _resultsDirectoryName,     -- Output
-                    _message => _message,                               -- Output
-                    _returnCode => _returnCode,                         -- Output
-                    _callingUser => _callingUser);
+                        _scriptName,
+                        _datasetName,
+                        _priority,
+                        _jobParamXML,
+                        _comment,
+                        _ownerUsername,
+                        _dataPackageID,
+                        _debugMode,
+                        _logDebugMessages,
+                        _job                  => _job,                  -- Output
+                        _resultsDirectoryName => _resultsDirectoryName, -- Output
+                        _message              => _message,              -- Output
+                        _returnCode           => _returnCode,           -- Output
+                        _callingUser          => _callingUser);
 
         End If;
 

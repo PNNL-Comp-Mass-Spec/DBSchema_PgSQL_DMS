@@ -135,7 +135,10 @@ BEGIN
     -- However, if 'ArchiveDisabled' has a value of 1 in t_misc_options, the archive task will not be created
     ---------------------------------------------------
 
-    CALL add_archive_dataset (_datasetID, _message => _message, _returnCode => _returnCode);
+    CALL public.add_archive_dataset (
+                    _datasetID,
+                    _message    => _message,        -- Output
+                    _returnCode => _returnCode);    -- Output
 
     If _returnCode <> '' Then
         ROLLBACK;
@@ -151,12 +154,12 @@ BEGIN
     -- Call Schedule_Predefined_Analysis_Jobs even if the rating is -10 = Unreviewed
     ---------------------------------------------------
 
-    CALL schedule_predefined_analysis_jobs (
-                _datasetName,
-                _excludeDatasetsNotReleased => true,
-                _preventDuplicateJobs => true,
-                _message => _message,
-                _returnCode => _returnCode);
+    CALL public.schedule_predefined_analysis_jobs (
+                    _datasetName,
+                    _excludeDatasetsNotReleased => true,
+                    _preventDuplicateJobs       => true,
+                    _message                    => _message,        -- Output
+                    _returnCode                 => _returnCode);    -- Output
 
     If _message <> '' Then
         RAISE WARNING '%', _message;

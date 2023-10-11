@@ -370,11 +370,11 @@ BEGIN
             -- Could not find entry in database for username _researcherUsername
             -- Try to auto-resolve the name
 
-            CALL auto_resolve_name_to_username (
-                    _researcherUsername,
-                    _matchCount => _matchCount,         -- Output
-                    _matchingUsername => _newUsername,  -- Output
-                    _matchingUserID => _userID);        -- Output
+            CALL public.auto_resolve_name_to_username (
+                            _researcherUsername,
+                            _matchCount       => _matchCount,   -- Output
+                            _matchingUsername => _newUsername,  -- Output
+                            _matchingUserID   => _userID);      -- Output
 
             If _matchCount = 1 Then
                 -- Single match found; update _researcherUsername
@@ -405,13 +405,13 @@ BEGIN
             _totalCount := 0;
         End If;
         --
-        CALL validate_wellplate_loading (
-                                _wellplateName => _wellplateName,   -- Output
-                                _wellNumber => _wellNumber,         -- Output
-                                _totalCount => _totalCount,
-                                _wellIndex => _wellIndex,           -- Output
-                                _message => _msg,                   -- Output
-                                _returnCode => _returnCode);        -- Output
+        CALL public.validate_wellplate_loading (
+                        _wellplateName => _wellplateName,   -- Output
+                        _wellNumber    => _wellNumber,      -- Output
+                        _totalCount    => _totalCount,
+                        _wellIndex     => _wellIndex,       -- Output
+                        _message       => _msg,             -- Output
+                        _returnCode    => _returnCode);     -- Output
 
         If _returnCode <> '' Then
             RAISE EXCEPTION 'ValidateWellplateLoading: %', _msg;
@@ -746,11 +746,11 @@ BEGIN
             -- Add the experiment to biomaterial mapping
             -- The procedure uses table Tmp_Experiment_to_Biomaterial_Map
             --
-            CALL add_experiment_biomaterial (
-                                    _experimentID,
-                                    _updateCachedInfo => false,
-                                    _message => _msg,               -- Output
-                                    _returnCode => _returnCode);    -- Output
+            CALL public.add_experiment_biomaterial (
+                            _experimentID,
+                            _updateCachedInfo => false,
+                            _message          => _msg,          -- Output
+                            _returnCode       => _returnCode);  -- Output
 
             If _returnCode <> '' Then
                 RAISE EXCEPTION 'Could not add experiment biomaterial to database for experiment "%" :%', _experimentName, _msg;
@@ -759,11 +759,11 @@ BEGIN
             -- Add the experiment to reference compound mapping
             -- The procedure uses table Tmp_ExpToRefCompoundMap
             --
-            CALL add_experiment_reference_compound (
-                                    _experimentID,
-                                    _updateCachedInfo => true,
-                                    _message => _msg,               -- Output
-                                    _returnCode => _returnCode);    -- Output
+            CALL public.add_experiment_reference_compound (
+                            _experimentID,
+                            _updateCachedInfo => true,
+                            _message          => _msg,          -- Output
+                            _returnCode       => _returnCode);  -- Output
 
             If _returnCode <> '' Then
                 RAISE EXCEPTION 'Could not add experiment reference compounds to database for experiment "%" :%', _experimentName, _msg;
@@ -772,13 +772,13 @@ BEGIN
             -- Material movement logging
             --
             If _curContainerID <> _contID Then
-                CALL post_material_log_entry (
-                    'Experiment Move',
-                    _experimentName,
-                    'na',
-                    _container,
-                    _callingUser,
-                    'Experiment added');
+                CALL public.post_material_log_entry (
+                                _type         => 'Experiment Move',
+                                _item         => _experimentName,
+                                _initialState => 'na',                  -- Initial State: Old container name ('na')
+                                _finalState   => _container,            -- Final State:   New container name
+                                _callingUser  => _callingUser,
+                                _comment      => 'Experiment added');
             End If;
 
         End If; -- add mode
@@ -824,11 +824,11 @@ BEGIN
             -- Update the experiment to biomaterial mapping
             -- The procedure uses table Tmp_Experiment_to_Biomaterial_Map
             --
-            CALL add_experiment_biomaterial (
-                                    _experimentID,
-                                    _updateCachedInfo => false,
-                                    _message => _msg,               -- Output
-                                    _returnCode => _returnCode);    -- Output
+            CALL public.add_experiment_biomaterial (
+                            _experimentID,
+                            _updateCachedInfo => false,
+                            _message          => _msg,          -- Output
+                            _returnCode       => _returnCode);  -- Output
 
             --
             If _returnCode <> '' Then
@@ -838,11 +838,11 @@ BEGIN
             -- Update the experiment to reference compound mapping
             -- The procedure uses table Tmp_ExpToRefCompoundMap
             --
-            CALL add_experiment_reference_compound (
-                                    _experimentID,
-                                    _updateCachedInfo => true,
-                                    _message => _msg,               -- Output
-                                    _returnCode => _returnCode);    -- Output
+            CALL public.add_experiment_reference_compound (
+                            _experimentID,
+                            _updateCachedInfo => true,
+                            _message          => _msg,          -- Output
+                            _returnCode       => _returnCode);  -- Output
             --
             If _returnCode <> '' Then
                 RAISE EXCEPTION 'Could not update experiment reference compound mapping for experiment "%" :%', _experimentName, _msg;
@@ -851,13 +851,13 @@ BEGIN
             -- Material movement logging
             --
             If _curContainerID <> _contID Then
-                CALL post_material_log_entry
-                    'Experiment Move',
-                    _experimentName,
-                    _curContainerName,
-                    _container,
-                    _callingUser,
-                    'Experiment updated'
+                CALL public.post_material_log_entry (
+                                _type         => 'Experiment Move',
+                                _item         => _experimentName,
+                                _initialState => _curContainerName,     -- Initial State: Old container name
+                                _finalState   => _container,            -- Final State:   New container name
+                                _callingUser  => _callingUser,
+                                _comment      => 'Experiment updated');
             End If;
 
             If char_length(_existingExperimentName) > 0 And _existingExperimentName <> _experimentName Then

@@ -259,11 +259,11 @@ BEGIN
             -- Could not find entry in database for Username _contactUsername
             -- Try to auto-resolve the name
 
-            CALL auto_resolve_name_to_username (
-                    _contactUsername,
-                    _matchCount => _matchCount,         -- Output
-                    _matchingUsername => _newUsername,  -- Output
-                    _matchingUserID => _userID);        -- Output
+            CALL public.auto_resolve_name_to_username (
+                            _contactUsername,
+                            _matchCount       => _matchCount,   -- Output
+                            _matchingUsername => _newUsername,  -- Output
+                            _matchingUserID   => _userID);      -- Output
 
             If _matchCount = 1 Then
                 -- Single match found; update _contactUsername
@@ -293,11 +293,11 @@ BEGIN
             -- try to auto-resolve using the name column in t_users
             ---------------------------------------------------
 
-            CALL auto_resolve_name_to_username (
-                    _piUsername,
-                    _matchCount => _matchCount,         -- Output
-                    _matchingUsername => _newUsername,  -- Output
-                    _matchingUserID => _userID);        -- Output
+            CALL public.auto_resolve_name_to_username (
+                            _piUsername,
+                            _matchCount       => _matchCount,   -- Output
+                            _matchingUsername => _newUsername,  -- Output
+                            _matchingUserID   => _userID);      -- Output
 
             If _matchCount = 1 Then
                 -- Single match was found; update _piUsername
@@ -372,13 +372,15 @@ BEGIN
             -- Material movement logging
             --
             If _curContainerID <> _contID Then
-                CALL post_material_log_entry
-                     'Biomaterial Move',
-                     _biomaterialName,
-                     'na',
-                     _container,
-                     _callingUser,
-                     'Biomaterial (Cell Culture) added'
+                CALL public.post_material_log_entry (
+                                _type         => 'Biomaterial Move',
+                                _item         => _biomaterialName,
+                                _initialState => 'na',                  -- Initial State: Old container name (na)
+                                _finalState   => _container,            -- Final State:   New container's name
+                                _callingUser  => _callingUser,
+                                _comment      => 'Biomaterial (Cell Culture) added');
+
+
             End If;
 
             If Coalesce(_organismList, '') <> '' Then
@@ -417,13 +419,13 @@ BEGIN
             -- Material movement logging
             --
             If _curContainerID <> _contID Then
-                CALL post_material_log_entry
-                     'Biomaterial Move',
-                     _biomaterialName,
-                     _curContainerName,
-                     _container,
-                     _callingUser,
-                     'Biomaterial (Cell Culture) updated'
+                CALL public.post_material_log_entry (
+                                _type         => 'Biomaterial Move',
+                                _item         => _biomaterialName,
+                                _initialState => _curContainerName,    -- Initial State: Old container name
+                                _finalState   => _container,            -- Final State:   New container name
+                                _callingUser  => _callingUser,
+                                _comment      => 'Biomaterial (Cell Culture) updated');
             End If;
 
             -- Update the associated organism(s)

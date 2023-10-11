@@ -199,7 +199,12 @@ BEGIN
             -- Delete the dataset
             ---------------------------------------------------
 
-            CALL Delete_Dataset (_datasetName, _infoOnly => false, _message => _message, _returnCode => _returnCode, _callingUser => _callingUser);
+            CALL public.delete_dataset (
+                            _datasetName,
+                            _infoOnly    => false,
+                            _message     => _message,       -- Output
+                            _returnCode  => _returnCode,    -- Output
+                            _callingUser => _callingUser);
             --
             If _returnCode <> '' Then
                 RAISE EXCEPTION 'Could not delete dataset "%"', _datasetName;

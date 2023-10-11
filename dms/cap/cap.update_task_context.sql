@@ -155,9 +155,9 @@ BEGIN
 
         If _result > 0 Then
             CALL cap.make_new_tasks_from_analysis_broker (
-                        _infoOnly => _infoOnly,
-                        _message => _message,
-                        _returnCode => _returnCode,
+                        _infoOnly                 => _infoOnly,
+                        _message                  => _message,      -- Output
+                        _returnCode               => _returnCode,   -- Output
                         _infoOnlyShowsNewJobsOnly => true);
         End If;
 
@@ -185,10 +185,10 @@ BEGIN
 
         If _result > 0 And Not _bypassDMS Then
             CALL cap.make_new_tasks_from_dms (
-                        _message => _message,
-                        _returnCode => _returnCode,
+                        _message        => _message,        -- Output
+                        _returnCode     => _returnCode,     -- Output
                         _loggingEnabled => _loggingEnabled,
-                        _infoOnly => _infoOnly);
+                        _infoOnly       => _infoOnly);
 
         End If;
 
@@ -216,10 +216,10 @@ BEGIN
 
         If _result > 0 And Not _bypassDMS Then
             CALL cap.make_new_archive_tasks_from_dms (
-                        _message => _message,
-                        _returnCode => _returnCode,
+                        _message        => _message,        -- Output
+                        _returnCode     => _returnCode,     -- Output
                         _loggingEnabled => _loggingEnabled,
-                        _infoOnly => _infoOnly);
+                        _infoOnly       => _infoOnly);
         End If;
 
     EXCEPTION
@@ -270,14 +270,14 @@ BEGIN
 
         If _result > 0 Then
             CALL cap.create_task_steps (
-                        _message => _message,
-                        _returnCode => _returnCode,
-                        _maxJobsToProcess => _maxJobsToProcess,
-                        _logIntervalThreshold => _logIntervalThreshold,
-                        _loggingEnabled => _loggingEnabled,
+                        _message               => _message,
+                        _returnCode            => _returnCode,
+                        _maxJobsToProcess      => _maxJobsToProcess,
+                        _logIntervalThreshold  => _logIntervalThreshold,
+                        _loggingEnabled        => _loggingEnabled,
                         _loopingUpdateInterval => _loopingUpdateInterval,
-                        _infoOnly => _infoOnly,
-                        _debugMode => _debugMode);
+                        _infoOnly              => _infoOnly,
+                        _debugMode             => _debugMode);
 
         End If;
 
@@ -331,10 +331,10 @@ BEGIN
 
         If _result > 0 Then
             CALL cap.update_task_step_states (
-                        _message => _message,
-                        _returnCode => _returnCode,
-                        _infoOnly => _infoOnly,
-                        _maxJobsToProcess => _maxJobsToProcess,
+                        _message               => _message,     -- Output
+                        _returnCode            => _returnCode,  -- Output
+                        _infoOnly              => _infoOnly,
+                        _maxJobsToProcess      => _maxJobsToProcess,
                         _loopingUpdateInterval => _loopingUpdateInterval);
         End If;
 
@@ -386,12 +386,12 @@ BEGIN
 
         If _result > 0 Then
             CALL cap.update_task_state (
-                        _bypassDMS => _bypassDMS,
-                        _message => _message,
-                        _returnCode => _returnCode,
-                        _maxJobsToProcess => _maxJobsToProcess,
+                        _bypassDMS             => _bypassDMS,
+                        _message               => _message,     -- Output
+                        _returnCode            => _returnCode,  -- Output
+                        _maxJobsToProcess      => _maxJobsToProcess,
                         _loopingUpdateInterval => _loopingUpdateInterval,
-                        _infoOnly => _infoOnly);
+                        _infoOnly              => _infoOnly);
         End If;
 
     EXCEPTION
@@ -437,9 +437,9 @@ BEGIN
 
         If _result > 0 Then
             CALL cap.retry_capture_for_dms_reset_tasks (
-                        _message => _message,
-                        _returnCode => _returnCode,
-                        _infoOnly => _infoOnly);
+                        _message    => _message,        -- Output
+                        _returnCode => _returnCode,     -- Output
+                        _infoOnly   => _infoOnly);
         End If;
 
     EXCEPTION

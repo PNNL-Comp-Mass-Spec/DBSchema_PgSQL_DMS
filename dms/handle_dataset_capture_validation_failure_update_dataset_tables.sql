@@ -129,10 +129,10 @@ BEGIN
     Else
         If Not Exists (SELECT * FROM t_dataset_archive WHERE dataset_id = _datasetID) Then
             -- Add the dataset to t_dataset_archive
-            CALL add_archive_dataset (
-                        _datasetID,
-                        _message => _message,       -- Output
-                        _returnCode  => _returnCode);   -- Output
+            CALL public.add_archive_dataset (
+                            _datasetID,
+                            _message     => _message,       -- Output
+                            _returnCode  => _returnCode);   -- Output
         End If;
 
         _message := format('Marked dataset as bad in t_dataset: %s', _datasetName);

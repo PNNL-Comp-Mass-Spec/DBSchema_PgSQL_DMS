@@ -253,16 +253,16 @@ BEGIN
 
                 _validateMods := CASE WHEN _validateUnimod > 0 THEN true ELSE false END;
 
-                CALL store_param_file_mass_mods (
-                     _paramFileID      => 0,
-                     _mods             => _paramfileMassMods,
-                     _infoOnly         => CASE WHEN _mode Like 'preview%' THEN true ELSE false END,
-                     _showresiduetable => CASE WHEN _mode Like 'preview%' THEN true ELSE false END,
-                     _replaceExisting  => true,
-                     _validateUnimod   => _validateMods,
-                     _paramFileType    => _paramFileType,
-                     _message          => _message,           -- Output
-                     _returnCode       => _returnCode);       -- Output
+                CALL public.store_param_file_mass_mods (
+                             _paramFileID      => 0,
+                             _mods             => _paramfileMassMods,
+                             _infoOnly         => CASE WHEN _mode LIKE 'preview%' THEN true ELSE false END,
+                             _showresiduetable => CASE WHEN _mode LIKE 'preview%' THEN true ELSE false END,
+                             _replaceExisting  => true,
+                             _validateUnimod   => _validateMods,
+                             _paramFileType    => _paramFileType,
+                             _message          => _message,           -- Output
+                             _returnCode       => _returnCode);       -- Output
 
                 If _returnCode <> '' Then
 
@@ -336,15 +336,15 @@ BEGIN
 
                 _validateMods := CASE WHEN _validateUnimod > 0 THEN true ELSE false END;
 
-                CALL store_param_file_mass_mods (
-                    _paramFileID,
-                    _mods => _paramfileMassMods,
-                    _infoOnly => false,
-                    _showresiduetable => false,
-                    _replaceExisting => CASE WHEN _replaceExistingMassMods > 0 THEN true ELSE false END,
-                    _validateUnimod => _validateMods,
-                    _message => _message,                       -- Output
-                    _returnCode => _returnCode);                -- Output
+                CALL public.store_param_file_mass_mods (
+                            _paramFileID,
+                            _mods             => _paramfileMassMods,
+                            _infoOnly         => false,
+                            _showresiduetable => false,
+                            _replaceExisting  => CASE WHEN _replaceExistingMassMods > 0 THEN true ELSE false END,
+                            _validateUnimod   => _validateMods,
+                            _message          => _message,                  -- Output
+                            _returnCode       => _returnCode);              -- Output
 
                 If _returnCode <> '' Then
                     RAISE EXCEPTION 'Store_Param_File_Mass_Mods: "%"', _message;

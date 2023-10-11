@@ -83,9 +83,9 @@ BEGIN
     ---------------------------------------------------
 
     CALL cap.synchronize_task_stats_with_task_steps (
-                _infoOnly => false,
+                _infoOnly          => false,
                 _completedjobsonly => false,
-                _message => _message);
+                _message           => _message);    -- Output
 
     ---------------------------------------------------
     -- Add old, successful capture task jobs to the temp table
@@ -192,11 +192,12 @@ BEGIN
             If _infoOnly Then
                 RAISE INFO 'Call copy_task_to_history for capture task job % with date %', _jobInfo.JobToAdd, _jobInfo.SaveTimeOverride;
             Else
-                CALL cap.copy_task_to_history (_jobInfo.JobToAdd,
-                                               _jobInfo.State,
-                                               _message => _message,
-                                               _overrideSaveTime => true,
-                                               _saveTimeOverride => _jobInfo.SaveTimeOverride);
+                CALL cap.copy_task_to_history (
+                            _jobInfo.JobToAdd,
+                            _jobInfo.State,
+                            _message          => _message,  -- Output
+                            _overrideSaveTime => true,
+                            _saveTimeOverride => _jobInfo.SaveTimeOverride);
             End If;
         END LOOP;
     End If;
@@ -208,8 +209,8 @@ BEGIN
     CALL cap.remove_selected_tasks (
                 _infoOnly,
                 _logDeletions => _logDeletions,
-                _message => _message,
-                _returnCode => _returnCode);
+                _message      => _message,      -- Output
+                _returnCode   => _returnCode);  -- Output
 
     DROP TABLE Tmp_Selected_Jobs;
     DROP TABLE Tmp_JobsNotInHistory;

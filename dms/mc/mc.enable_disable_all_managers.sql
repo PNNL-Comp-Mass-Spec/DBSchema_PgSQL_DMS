@@ -101,13 +101,13 @@ BEGIN
     LOOP
 
         CALL mc.enable_disable_managers (
-            _enable := _enable,
-            _managerTypeID := _mgrTypeID,
-            _managerNameList := _managerNameList,
-            _infoOnly := _infoOnly,
-            _results := _results,
-            _message := _msg,
-            _returnCode := _returnCode);
+                    _enable := _enable,
+                    _managerTypeID := _mgrTypeID,
+                    _managerNameList := _managerNameList,
+                    _infoOnly := _infoOnly,
+                    _results := _results,
+                    _message := _msg,
+                    _returnCode := _returnCode);
 
         -- Close the cursor
         If Not _results Is Null Then

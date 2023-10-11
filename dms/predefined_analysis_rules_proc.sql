@@ -83,9 +83,9 @@ BEGIN
             Special_Processing,
             Priority
         FROM public.predefined_analysis_rules(
-                _datasetName,
-                _excludeDatasetsNotReleased => _excludeDatasetsNotReleased,
-                _analysisToolNameFilter => _analysisToolNameFilter);
+                        _datasetName,
+                        _excludeDatasetsNotReleased => _excludeDatasetsNotReleased,
+                        _analysisToolNameFilter     => _analysisToolNameFilter);
 
 EXCEPTION
     WHEN OTHERS THEN

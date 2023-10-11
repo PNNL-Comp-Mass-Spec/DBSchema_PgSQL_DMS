@@ -33,11 +33,11 @@ BEGIN
     _jobToPreview := Coalesce(_jobToPreview, 0);
 
     CALL sw.create_job_steps (
-            _message => _message,           -- Output
-            _returnCode => _returnCode,     -- Output
-            _existingJob => _jobToPreview,
-            _infoOnly => true,
-            _debugMode => true);
+                _message     => _message,       -- Output
+                _returnCode  => _returnCode,    -- Output
+                _existingJob => _jobToPreview,
+                _infoOnly    => true,
+                _debugMode   => true);
 
 END
 $$;

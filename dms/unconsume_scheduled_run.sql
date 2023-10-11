@@ -172,9 +172,9 @@ BEGIN
             CALL public.delete_requested_run (
                                  _requestID,
                                  _skipDatasetCheck => true,
-                                 _message => _message,              -- Output
-                                 _returnCode => _returnCode,        -- Output
-                                 _callingUser => _callingUser);
+                                 _message          => _message,         -- Output
+                                 _returnCode       => _returnCode,      -- Output
+                                 _callingUser      => _callingUser);
 
             If _returnCode <> '' Then
                 ROLLBACK;
@@ -283,11 +283,11 @@ BEGIN
                 'Completed',
                 _comment,
                 _requestNameAppendText => '_Recycled',
-                _requestNameOverride => '',
-                _message => _message,               -- Output
-                _returnCode => _returnCode,         -- Output
-                _callingUser => _callingUser,
-                _infoOnly => false);
+                _requestNameOverride   => '',
+                _message               => _message,         -- Output
+                _returnCode            => _returnCode,      -- Output
+                _callingUser           => _callingUser,
+                _infoOnly              => false);
 
         If _returnCode <> '' Then
             RETURN;
@@ -351,7 +351,7 @@ BEGIN
 
     CALL public.update_cached_requested_run_eus_users (
                     _requestIDOriginal,
-                    _message => _message,           -- Output
+                    _message    => _message,        -- Output
                     _returnCode => _returnCode);    -- Output
 
 END

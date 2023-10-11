@@ -24,16 +24,20 @@ CREATE OR REPLACE PROCEDURE cap.add_update_local_task_in_broker(INOUT _job integ
 **  Example usage:
 **
 **      CALL cap.add_update_local_task_in_broker(
-**          5280268, 'DatasetArchive', 4,
-**          _jobParam => '',
-**          _comment => '',
-**          _mode => 'update');
+**          _job        => 5280268,
+**          _scriptname => 'DatasetArchive',
+**          _priority   => 4,
+**          _jobParam   => '',
+**          _comment    => '',
+**          _mode       => 'update');
 **
 **      CALL cap.add_update_local_task_in_broker(
-**          5280268, 'DatasetArchive', 4,
-**          '<Param Section="DatasetQC" Name="ComputeOverallQualityScores" Value="True" /><Param Section="DatasetQC" Name="CreateDatasetInfoFile" Value="True" /><Param Section="DatasetQC" Name="SaveLCMS2DPlots" Value="True" /><Param Section="JobParameters" Name="Dataset" Value="QC_Mam_19_01-run04_19July22_Remus_WBEH-22-05-07" /><Param Section="JobParameters" Name="Dataset_ID" Value="1060934" />',
-**          _comment => '',
-**          _mode => 'update');
+**          job         => 5280268,
+**          _scriptname => 'DatasetArchive',
+**          _priority   => 4,
+**          _jobParam   => '<Param Section="DatasetQC" Name="ComputeOverallQualityScores" Value="True" /><Param Section="DatasetQC" Name="CreateDatasetInfoFile" Value="True" /><Param Section="DatasetQC" Name="SaveLCMS2DPlots" Value="True" /><Param Section="JobParameters" Name="Dataset" Value="QC_Mam_19_01-run04_19July22_Remus_WBEH-22-05-07" /><Param Section="JobParameters" Name="Dataset_ID" Value="1060934" />',
+**          _comment    => '',
+**          _mode       => 'update');
 **
 **  Auth:   grk
 **  Date:   11/16/2010 grk - Initial release

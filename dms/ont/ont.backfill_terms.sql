@@ -24,9 +24,9 @@ CREATE OR REPLACE FUNCTION ont.backfill_terms(_sourcetable public.citext DEFAULT
 **
 **  Usage:
 **      SELECT * FROM ont.backfill_terms  (
-**          _sourceTable => 'ont.t_cv_bto',
-**          _namespace   => 'BrendaTissueOBO',
-**          _infoOnly    => false,
+**          _sourceTable                => 'ont.t_cv_bto',
+**          _namespace                  => 'BrendaTissueOBO',
+**          _infoOnly                   => false,
 **          _previewRelationshipUpdates => true);
 **
 **  Auth:   mem

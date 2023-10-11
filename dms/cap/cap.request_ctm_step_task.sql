@@ -50,13 +50,13 @@ CREATE OR REPLACE PROCEDURE cap.request_ctm_step_task(IN _processorname text, IN
         _formatSpecifier text;
     BEGIN
         CALL cap.request_ctm_step_task(
-                    _processorName => 'Proto-3_CTM',
-                    _jobNumber => _jobNumber,
-                    _results => _results,
-                    _message => _message,
-                    _returnCode => _returnCode,
-                    _infoLevel => 2,
-                    _managerVersion => '',
+                    _processorName     => 'Proto-3_CTM',
+                    _jobNumber         => _jobNumber,
+                    _results           => _results,
+                    _message           => _message,
+                    _returnCode        => _returnCode,
+                    _infoLevel         => 2,
+                    _managerVersion    => '',
                     _jobCountToPreview => 10
                 );
 

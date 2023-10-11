@@ -135,10 +135,10 @@ BEGIN
             -- Update stats in t_cached_requested_run_batch_stats
             ---------------------------------------------------
 
-            CALL update_cached_requested_run_batch_stats (
-                    _batchID,
-                    _message => _message2,          -- Output
-                    _returnCode => _returnCode);    -- Output
+            CALL public.update_cached_requested_run_batch_stats (
+                            _batchID,
+                            _message    => _message2,       -- Output
+                            _returnCode => _returnCode);    -- Output
 
             If _mode::citext = 'FreeMembers' Then
                 RETURN;

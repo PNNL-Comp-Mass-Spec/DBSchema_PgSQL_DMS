@@ -146,10 +146,11 @@ BEGIN
     LOOP
         _matchCount := 0;
 
-        CALL auto_resolve_organism_name (_unknownOrganism,
-                                         _matchCount => _matchCount,            -- Output
-                                         _newOrganismName => _newOrganismName,  -- Output
-                                         _newOrganismID => _newOrganismID);     -- Output
+        CALL public.auto_resolve_organism_name (
+                        _nameSearchSpec       => _unknownOrganism,
+                        _matchCount           => _matchCount,       -- Output
+                        _matchingOrganismName => _newOrganismName,  -- Output
+                        _matchingOrganismID   => _newOrganismID);   -- Output
 
         If _matchCount = 1 Then
             -- Single match was found; update Organism_Name and Organism_ID in Tmp_BiomaterialOrganisms

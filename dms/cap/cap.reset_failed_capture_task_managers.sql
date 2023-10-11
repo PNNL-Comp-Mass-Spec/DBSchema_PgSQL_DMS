@@ -69,10 +69,10 @@ BEGIN
     CALL mc.set_manager_error_cleanup_mode (
                 _managerList,
                 _cleanupMode => 1,
-                _showTable => true,
-                _infoOnly => _infoOnly,
-                _message => _message,
-                _returnCode => _returnCode);
+                _showTable   => true,
+                _infoOnly    => _infoOnly,
+                _message     => _message,       -- Output
+                _returnCode  => _returnCode);   -- Output
 
     DROP TABLE Tmp_ManagersToReset;
 

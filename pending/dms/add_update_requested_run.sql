@@ -1,4 +1,4 @@
---
+
 CREATE OR REPLACE PROCEDURE public.add_update_requested_run
 (
     _requestName text,
@@ -585,11 +585,11 @@ BEGIN
 
 
         CALL public.validate_instrument_group_and_dataset_type (
-                        _datasetType => _msType,
-                        _instrumentGroup => _instrumentGroup,           -- Output
-                        _datasetTypeID => _datasetTypeID output,        -- Output
-                        _message => _msg,                               -- Output
-                        _returnCode => _returnCode);                    -- Output
+                        _datasetType     => _msType,
+                        _instrumentGroup => _instrumentGroup,       -- Output
+                        _datasetTypeID   => _datasetTypeID,         -- Output
+                        _message         => _msg,                   -- Output
+                        _returnCode      => _returnCode);           -- Output
 
         If _returnCode <> '' Then
             RAISE EXCEPTION 'validate_instrument_group_and_dataset_type: %', _msg;
@@ -655,11 +655,11 @@ BEGIN
 
         CALL public.lookup_eus_from_experiment_sample_prep (
                             _experimentName,
-                            _eusUsageType => _eusUsageType,     -- Output
+                            _eusUsageType  => _eusUsageType,    -- Output
                             _eusProposalID => _eusProposalID,   -- Output
-                            _eusUsersList => _eusUsersList,     -- Output
-                            _message => _msg,                   -- Output
-                            _returnCode => _returnCode);        -- Output
+                            _eusUsersList  => _eusUsersList,    -- Output
+                            _message       => _msg,             -- Output
+                            _returnCode    => _returnCode);     -- Output
 
         If _returnCode <> '' Then
             RAISE EXCEPTION 'lookup_eus_from_experiment_sample_prep: %', _msg;
@@ -694,18 +694,18 @@ BEGIN
         End If;
 
         CALL public.validate_eus_usage (
-                        _eusUsageType   => _eusUsageType,       -- Input/Output
-                        _eusProposalID  => _eusProposalID,      -- Input/Output
-                        _eusUsersList   => _eusUsersList,       -- Input/Output
-                        _eusUsageTypeID => _eusUsageTypeID,     -- Output
+                        _eusUsageType      => _eusUsageType,       -- Input/Output
+                        _eusProposalID     => _eusProposalID,      -- Input/Output
+                        _eusUsersList      => _eusUsersList,       -- Input/Output
+                        _eusUsageTypeID    => _eusUsageTypeID,     -- Output
                         _autoPopulateUserListIfBlank => _autoPopulateUserListIfBlank,
                         _samplePrepRequest => false,
-                        _experimentID => _experimentID,
-                        _campaignID => 0,
-                        _addingItem => _addingItem,
-                        _infoOnly => false,
-                        _message => _msg,                       -- Output
-                        _returnCode => _returnCode              -- Output
+                        _experimentID      => _experimentID,
+                        _campaignID        => 0,
+                        _addingItem        => _addingItem,
+                        _infoOnly          => false,
+                        _message           => _msg,                       -- Output
+                        _returnCode        => _returnCode              -- Output
                     );
 
         If _returnCode <> '' Then
@@ -1033,8 +1033,8 @@ BEGIN
             CALL public.update_cached_requested_run_batch_stats (
                             _currentBatch,
                             _fullrefresh => false,
-                            _message => _msg,               -- Output
-                            _returnCode => _returnCode);    -- Output
+                            _message     => _msg,           -- Output
+                            _returnCode  => _returnCode);   -- Output
 
             If _returnCode <> '' Then
                 _message := public.append_to_text(_message, _msg);

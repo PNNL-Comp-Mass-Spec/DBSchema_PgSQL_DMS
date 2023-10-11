@@ -100,11 +100,11 @@ BEGIN
             ORDER BY EntryID
         LOOP
 
-            CALL auto_resolve_name_to_username (
-                    _unknownUser,
-                    _matchCount => _matchCount,         -- Output
-                    _matchingUsername => _newUsername,  -- Output
-                    _matchingUserID => _userID);        -- Output
+            CALL public.auto_resolve_name_to_username (
+                            _unknownUser,
+                            _matchCount       => _matchCount,   -- Output
+                            _matchingUsername => _newUsername,  -- Output
+                            _matchingUserID   => _userID);      -- Output
 
             If _matchCount = 1 Then
                 -- Single match was found; update User_ID in Tmp_UserInfo

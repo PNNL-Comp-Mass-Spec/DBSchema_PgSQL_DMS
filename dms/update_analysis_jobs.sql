@@ -159,8 +159,8 @@ BEGIN
                             _protCollNameList,
                             _protCollOptionsList,
                             _mode,
-                            _message => _msg,               -- Output
-                            _returnCode => _returnCode,     -- Output
+                            _message     => _msg,           -- Output
+                            _returnCode  => _returnCode,    -- Output
                             _callingUser => _callingUser);
 
         If _returnCode <> '' Then

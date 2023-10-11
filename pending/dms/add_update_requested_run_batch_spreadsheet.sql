@@ -86,21 +86,21 @@ BEGIN
 
     _mode := Trim(Lower(Coalesce(_mode, '')));
 
-    CALL add_update_requested_run_batch (
-                           _id => _id,                      -- Output
-                           _name => _name,
-                           _description => _description,
-                           _requestedRunList => _requestedRunList,
-                           _ownerUsername => _ownerUsername,
-                           _requestedBatchPriority => _requestedBatchPriority,
-                           _requestedCompletionDate => _requestedCompletionDate,
-                           _justificationHighPriority => _justificationHighPriority,
-                           _requestedInstrumentGroup => _requestedInstrument,
-                           _comment => _comment,
-                           _mode => _mode,
-                           _message => _message,            -- Output
-                           _returnCode => _returnCode,      -- Output
-                           _useRaiseError => false);
+    CALL public.add_update_requested_run_batch (
+                   _id                        => _id,               -- Output
+                   _name                      => _name,
+                   _description               => _description,
+                   _requestedRunList          => _requestedRunList,
+                   _ownerUsername             => _ownerUsername,
+                   _requestedBatchPriority    => _requestedBatchPriority,
+                   _requestedCompletionDate   => _requestedCompletionDate,
+                   _justificationHighPriority => _justificationHighPriority,
+                   _requestedInstrumentGroup  => _requestedInstrument,
+                   _comment                   => _comment,
+                   _mode                      => _mode,
+                   _message                   => _message,          -- Output
+                   _returnCode                => _returnCode,       -- Output
+                   _useRaiseError             => false);
 
     --check for any errors from procedure
     If _message <> '' Then

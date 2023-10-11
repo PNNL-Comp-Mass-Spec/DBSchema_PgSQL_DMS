@@ -327,7 +327,7 @@ BEGIN
             -- Determine the Instrument Group
             ---------------------------------------------------
 
-            If Not Exists (SELECT * FROM t_instrument_group WHERE instrument_group = _instrumentGroup) Then
+            If Not Exists (SELECT instrument_group FROM t_instrument_group WHERE instrument_group = _instrumentGroup) Then
                 -- Try to update instrument group using t_instrument_name
                 SELECT instrument_group
                 INTO _instrumentGroup
@@ -341,12 +341,12 @@ BEGIN
             -- Validate instrument group and dataset type
             ---------------------------------------------------
 
-            CALL validate_instrument_group_and_dataset_type (
-                            _datasetType => _datasetType,
-                            _instrumentGroup => _instrumentGroup,           -- Output
-                            _datasetTypeID => _datasetTypeID output,        -- Output
-                            _message => _msg,                               -- Output
-                            _returnCode => _returnCode);                    -- Output
+            CALL public.validate_instrument_group_and_dataset_type (
+                            _datasetType     => _datasetType,
+                            _instrumentGroup => _instrumentGroup,   -- Output
+                            _datasetTypeID   => _datasetTypeID,     -- Output
+                            _message         => _msg,               -- Output
+                            _returnCode      => _returnCode);       -- Output
 
             If _returnCode <> '' Then
                 RAISE EXCEPTION 'validate_instrument_group_and_dataset_type: %', _msg;
@@ -406,10 +406,11 @@ BEGIN
         ---------------------------------------------------
 
         CALL public.get_tissue_id (
-                _tissueNameOrID => _tissue,
-                _tissueIdentifier => _tissueIdentifier output,
-                _tissueName => _tissueName output,
-                _returnCode => _returnCode);
+                _tissueNameOrID   => _tissue,
+                _tissueIdentifier => _tissueIdentifier,     -- Output
+                _tissueName       => _tissueName,           -- Output
+                _message          => _message,              -- Output
+                _returnCode       => _returnCode);
 
         If _returnCode <> '' Then
             RAISE EXCEPTION 'Could not resolve tissue name or id: "%"', _tissue;
@@ -431,14 +432,14 @@ BEGIN
         -- Names should be in the form 'Last Name, First Name (Username)'
         ---------------------------------------------------
 
-        CALL validate_request_users (
-                _requestName,
-                'add_update_sample_prep_request',
-                _requestedPersonnel => _requestedPersonnel,     -- Output
-                _assignedPersonnel => _assignedPersonnel,       -- Output
-                _requireValidRequestedPersonnel => true,
-                _message => _message,                           -- Output
-                _returnCode => _returnCode);
+        CALL public.validate_request_users (
+                        _requestName,
+                        'add_update_sample_prep_request',
+                        _requestedPersonnel             => _requestedPersonnel,     -- Input/Output
+                        _assignedPersonnel              => _assignedPersonnel,      -- Input/Output
+                        _requireValidRequestedPersonnel => true,
+                        _message                        => _message,                -- Output
+                        _returnCode                     => _returnCode);
 
         If _returnCode <> '' Then
             If Coalesce(_message, '') = '' Then
@@ -478,19 +479,19 @@ BEGIN
             _eusUserID := Null;
         End If;
 
-        CALL validate_eus_usage (
-                        _eusUsageType   => _eusUsageType,       -- Input/Output
-                        _eusProposalID  => _eusProposalID,      -- Input/Output
-                        _eusUsersList   => _eusUsersList,       -- Input/Output
-                        _eusUsageTypeID => _eusUsageTypeID,     -- Output
+        CALL public.validate_eus_usage (
+                        _eusUsageType                => _eusUsageType,      -- Input/Output
+                        _eusProposalID               => _eusProposalID,     -- Input/Output
+                        _eusUsersList                => _eusUsersList,      -- Input/Output
+                        _eusUsageTypeID              => _eusUsageTypeID,    -- Output
                         _autoPopulateUserListIfBlank => false,
-                        _samplePrepRequest => true,
-                        _experimentID => 0,
-                        _campaignID => 0,
-                        _addingItem => _addingItem,
-                        _infoOnly => false,
-                        _message => _msg,                       -- Output
-                        _returnCode => _returnCode              -- Output
+                        _samplePrepRequest           => true,
+                        _experimentID                => 0,
+                        _campaignID                  => 0,
+                        _addingItem                  => _addingItem,
+                        _infoOnly                    => false,
+                        _message                     => _msg,               -- Output
+                        _returnCode                  => _returnCode         -- Output
                     );
 
         If _returnCode <> '' Then
@@ -513,10 +514,11 @@ BEGIN
         -- Validate the work package
         ---------------------------------------------------
 
-        CALL validate_wp ( _workPackageNumber,
-                           _allowNoneWP,
-                           _message => _msg,
-                           _returnCode => _returnCode);
+        CALL public.validate_wp (
+                        _workPackageNumber,
+                        _allowNoneWP,
+                        _message    => _msg,            -- Output
+                        _returnCode => _returnCode);    -- Output
 
         If _returnCode <> '' Then
             RAISE EXCEPTION 'validate_wp: %', _msg;
@@ -539,7 +541,7 @@ BEGIN
         -- Auto-change separation type to separation group, if applicable
         ---------------------------------------------------
 
-        If Not Exists (SELECT * FROM t_separation_group WHERE separation_group = _separationGroup) Then
+        If Not Exists (SELECT separation_group FROM t_separation_group WHERE separation_group = _separationGroup) Then
 
             SELECT separation_group
             INTO _separationGroupAlt
@@ -610,11 +612,11 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-            If Exists (SELECT * FROM t_sample_prep_request WHERE request_name = _requestName) Then
+            If Exists (SELECT request_id FROM t_sample_prep_request WHERE request_name = _requestName) Then
                 RAISE EXCEPTION 'Cannot add: Request "%" already in database', _requestName;
             End If;
 
-        ElsIf EXISTS (SELECT * FROM t_sample_prep_request WHERE request_name = _requestName AND prep_request_id <> _id) Then
+        ElsIf EXISTS (SELECT prep_request_id FROM t_sample_prep_request WHERE request_name = _requestName AND prep_request_id <> _id) Then
             RAISE EXCEPTION 'Cannot rename: Request "%" already in database', _requestName;
         End If;
 

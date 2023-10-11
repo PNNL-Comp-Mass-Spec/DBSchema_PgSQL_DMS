@@ -306,7 +306,9 @@ BEGIN
 
         _startTime := CURRENT_TIMESTAMP;
 
-        CALL update_protein_collection_usage (_message => _message, _returnCode => _returnCode);
+        CALL public.update_protein_collection_usage (
+                        _message    => _message,        -- Output
+                        _returnCode => _returnCode);    -- Output
 
         INSERT INTO Tmp_Update_Stats( Task, Runtime_Seconds )
         SELECT 'Update usage counts for protein collections',

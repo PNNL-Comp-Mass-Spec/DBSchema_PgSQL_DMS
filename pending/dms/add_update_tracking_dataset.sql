@@ -444,10 +444,10 @@ BEGIN
             -- Update t_cached_dataset_instruments
             CALL public.update_cached_dataset_instruments (
                             _processingMode => 0,
-                            _datasetId => _datasetID,
-                            _infoOnly => false,
-                            _message => _message,
-                            _returnCode => _returnCode);
+                            _datasetId      => _datasetID,
+                            _infoOnly       => false,
+                            _message        => _message,        -- Output
+                            _returnCode     => _returnCode);    -- Output
 
         End If;
 
