@@ -97,7 +97,7 @@ BEGIN
 
     If _optimalSeparationType <> '' Then
         -- Validate the auto-defined separation type
-        If Not Exists (SELECT * FROM t_secondary_sep WHERE separation_type = _optimalSeparationType) Then
+        If Not Exists (SELECT separation_type_id FROM t_secondary_sep WHERE separation_type = _optimalSeparationType) Then
             _message := format('Invalid separation type; %s not found in t_secondary_sep', _optimalSeparationType);
 
             CALL post_log_entry ('Error', _message, 'Auto_Update_Separation_Type', _duplicateEntryHoldoffHours => 1);
