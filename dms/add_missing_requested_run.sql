@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE public.add_missing_requested_run(IN _dataset text, I
 **          11/25/2022 mem - Update call to Add_Update_Requested_Run to use new parameter name
 **          02/27/2023 mem - Use new argument name, _requestName
 **          09/13/2023 mem - Ported to PostgreSQL
+**          10/10/2023 mem - Rearrange argument order when calling add_update_requested_run
 **
 *****************************************************/
 DECLARE
@@ -122,37 +123,40 @@ BEGIN
     INTO _workPackage
     FROM public.get_wp_for_eus_proposal(_eusProposalID);
 
-    CALL public.add_update_requested_run(
-                    _requestName => _requestName,
-                    _experimentName =>_datasetInfo.Experiment,
-                    _requesterUsername => _datasetInfo.OperatorUsername,
-                    _instrumentName => _datasetInfo.InstrumentName,
-                    _workPackage => _workPackage,
-                    _msType => _datasetInfo.MsType,         -- Dataset type
-                    _instrumentSettings => 'na',
-                    _wellplateName => null,
-                    _wellNumber => null,
-                    _internalStandard => 'na',
-                    _comment => 'Automatically created by Dataset entry',
-                    _eusProposalID => _eusProposalID,
-                    _eusUsageType => _eusUsageType,
-                    _eusUsersList => _eusUsersList,
-                    _mode => 'add-auto',
-                    _request => _requestID,                 -- Output
-                    _message => _message,                   -- Output
-                    _returnCode => _returnCode,             -- Output
-                    _secSep => _secSep,
-                    _mrmAttachment => '',
-                    _status => 'Completed',
-                    _skipTransactionRollback => true,
+    CALL public.add_update_requested_run (
+                    _requestName                 => _requestName,
+                    _experimentName              => _datasetInfo.Experiment,
+                    _requesterUsername           => _datasetInfo.OperatorUsername,
+                    _instrumentGroup             => _datasetInfo.InstrumentName,    -- The instrument name will get auto-updated to instrument group
+                    _workPackage                 => _workPackage,
+                    _msType                      => _datasetInfo.MsType,            -- Dataset type
+                    _instrumentSettings          => 'na',
+                    _wellplateName               => null,
+                    _wellNumber                  => null,
+                    _internalStandard            => 'na',
+                    _comment                     => 'Automatically created by Dataset entry',
+                    _batch                       => 0,
+                    _block                       => 0,
+                    _runOrder                    => 0,
+                    _eusProposalID               => _eusProposalID,
+                    _eusUsageType                => _eusUsageType,
+                    _eusUsersList                => _eusUsersList,
+                    _mode                        => 'add-auto',
+                    _secSep                      => _secSep,            -- Separation group
+                    _mrmAttachment               => '',
+                    _status                      => 'Completed',
+                    _skipTransactionRollback     => true,
                     _autoPopulateUserListIfBlank => true,   -- Auto populate _eusUsersList if blank since this is an Auto-Request
-                    _callingUser => '',
-                    _vialingConc => null,
-                    _vialingVol => null,
-                    _stagingLocation => null,
-                    _requestIDForUpdate => null,
-                    _logDebugMessages => false,
-                    _resolvedInstrumentInfo => _resolvedInstrumentInfo);    -- Output
+                    _callingUser                 => '',
+                    _vialingConc                 => null,
+                    _vialingVol                  => null,
+                    _stagingLocation             => null,
+                    _requestIDForUpdate          => null,
+                    _logDebugMessages            => false,
+                    _request                     => _requestID,                 -- Output
+                    _resolvedInstrumentInfo      => _resolvedInstrumentInfo,    -- Output
+                    _message                     => _message,                   -- Output
+                    _returnCode                  => _returnCode);               -- Output
 
     If _returnCode <> '' Or Coalesce(_requestID, 0) = 0 Then
         If Coalesce(_message, '') = '' Then

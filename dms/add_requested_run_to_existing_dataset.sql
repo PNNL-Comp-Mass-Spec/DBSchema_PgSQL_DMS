@@ -46,6 +46,7 @@ CREATE OR REPLACE PROCEDURE public.add_requested_run_to_existing_dataset(IN _dat
 **          11/25/2022 mem - Update call to Add_Update_Requested_Run to use new parameter name
 **          02/27/2023 mem - Use new argument name, _requestName
 **          09/13/2023 mem - Ported to PostgreSQL
+**          10/10/2023 mem - Rearrange argument order when calling add_update_requested_run
 **
 *****************************************************/
 DECLARE
@@ -294,39 +295,39 @@ BEGIN
         End If;
 
         CALL public.add_update_requested_run (
-                        _requestName => _requestName,
-                        _experimentName => _experimentName,
-                        _requesterUsername => _requesterUsername,
-                        _instrumentGroup => _instrumentGroup,
-                        _workPackage => _workPackage,
-                        _msType => _msType,
-                        _instrumentSettings => 'na',
-                        _wellplateName => null,
-                        _wellNumber => null,
-                        _internalStandard => 'na',
-                        _comment => _comment,
-                        _batch => 0,
-                        _block => 0,
-                        _runOrder => 0,
-                        _eusProposalID => _eusProposalID,
-                        _eusUsageType => _eusUsageType,
-                        _eusUsersList => _eusUsersList,
-                        _mode => _addUpdateMode,
-                        _request => _requestID,         -- Output
-                        _message => _msg,               -- Output
-                        _returnCode => _returnCode,     -- Output
-                        _secSep => _secSep,
-                        _mrmAttachment => '',
-                        _status => 'Completed',
-                        _skipTransactionRollback => true,
-                        _autoPopulateUserListIfBlank => true,   -- Auto populate _eusUsersList if blank since this is an Auto-Request
-                        _callingUser => _callingUser,
-                        _vialingConc => null,
-                        _vialingVol => null,
-                        _stagingLocation => null,
-                        _requestIDForUpdate => null,
-                        _logDebugMessages => false,
-                        _resolvedInstrumentInfo => _resolvedInstrumentInfo);    -- Output
+                        _requestName                 => _requestName,
+                        _experimentName              => _experimentName,
+                        _requesterUsername           => _requesterUsername,
+                        _instrumentGroup             => _instrumentGroup,
+                        _workPackage                 => _workPackage,
+                        _msType                      => _msType,                    -- Dataset type
+                        _instrumentSettings          => 'na',
+                        _wellplateName               => null,
+                        _wellNumber                  => null,
+                        _internalStandard            => 'na',
+                        _comment                     => _comment,
+                        _batch                       => 0,
+                        _block                       => 0,
+                        _runOrder                    => 0,
+                        _eusProposalID               => _eusProposalID,
+                        _eusUsageType                => _eusUsageType,
+                        _eusUsersList                => _eusUsersList,
+                        _mode                        => _addUpdateMode,
+                        _secSep                      => _secSep,                    -- Separation group
+                        _mrmAttachment               => '',
+                        _status                      => 'Completed',
+                        _skipTransactionRollback     => true,
+                        _autoPopulateUserListIfBlank => true,                       -- Auto populate _eusUsersList if blank since this is an Auto-Request
+                        _callingUser                 => _callingUser,
+                        _vialingConc                 => null,
+                        _vialingVol                  => null,
+                        _stagingLocation             => null,
+                        _requestIDForUpdate          => null,
+                        _logDebugMessages            => false,
+                        _request                     => _requestID,                 -- Output
+                        _resolvedInstrumentInfo      => _resolvedInstrumentInfo,    -- Output
+                        _message                     => _message,                   -- Output
+                        _returnCode                  => _returnCode);               -- Output
 
         If _returnCode <> '' Then
             RAISE EXCEPTION '%', _msg;
@@ -352,9 +353,9 @@ BEGIN
             CALL public.consume_scheduled_run (
                             _datasetID,
                             _requestID,
-                            _message => _msg,              -- Output
-                            _returnCode => _returnCode,    -- Output
-                            _callingUser => _callingUser,
+                            _message          => _msg,          -- Output
+                            _returnCode       => _returnCode,   -- Output
+                            _callingUser      => _callingUser,
                             _logDebugMessages => false);
 
             If _returnCode <> '' Then
