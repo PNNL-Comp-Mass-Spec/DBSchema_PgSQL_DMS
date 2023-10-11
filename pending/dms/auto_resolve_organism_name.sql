@@ -4,7 +4,7 @@ CREATE OR REPLACE PROCEDURE public.auto_resolve_organism_name
     _nameSearchSpec text,
     INOUT _matchCount int=0,
     INOUT _matchingOrganismName text = '',
-    _matchingOrganismID int=0 output
+    INOUT _matchingOrganismID int=0
 )
 LANGUAGE plpgsql
 AS $$

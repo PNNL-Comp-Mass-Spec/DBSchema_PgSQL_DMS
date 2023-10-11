@@ -2,7 +2,7 @@
 CREATE OR REPLACE PROCEDURE public.add_missing_filter_criteria
 (
     _filterSetID int,
-    _processGroupsWithNoCurrentCriteriaDefined int = 0,
+    _processGroupsWithNoCurrentCriteriaDefined boolean = false,
     INOUT _message text default '',
     INOUT _returnCode text default ''
 )
@@ -39,6 +39,13 @@ BEGIN
     _message := '';
     _returnCode := '';
 
+    -----------------------------------------
+    -- Validate the inputs
+    -----------------------------------------
+
+    _filterSetID := Coalesce(_filterSetID, 0);
+    _processGroupsWithNoCurrentCriteriaDefined := Coalesce(_processGroupsWithNoCurrentCriteriaDefined, false);
+
     _groupsProcessed := 0;
     _criteriaAdded := 0;
 
@@ -48,7 +55,7 @@ BEGIN
     WHILE _continue
     LOOP
         -- Lookup the first _groupID for _filterSetID
-        If _processGroupsWithNoCurrentCriteriaDefined <> 0 Then
+        If _processGroupsWithNoCurrentCriteriaDefined Then
             SELECT Filter_Criteria_Group_ID
             INTO _groupID
             FROM t_filter_set_criteria_groups
@@ -62,7 +69,7 @@ BEGIN
             FROM t_filter_set_criteria_groups FSCG INNER JOIN
                  t_filter_set_criteria FSC ON
                  FSCG.filter_criteria_group_id = FSC.filter_criteria_group_id
-            WHERE (FSCG.filter_set_id = _filterSetID) AND
+            WHERE FSCG.filter_set_id = _filterSetID AND
                   FSC.filter_criteria_group_id > _groupID
             GROUP BY FSCG.filter_criteria_group_id
             ORDER BY FSCG.filter_criteria_group_id

@@ -538,34 +538,6 @@ BEGIN
         End If;
     END;
 
-    BEGIN
-
-        -- Update the cached organism info in MT_Main on ProteinSeqs
-        -- This table is used by the Protein_Sequences database and we want to assure that it is up-to-date
-        -- Note that the table is auto-updated once per hour by a Sql Server Agent job running on ProteinSeqs
-        -- This hourly update captures any changes manually made to table t_organisms
-
-        CALL mts.mt_main_refresh_cached_organisms
-
-    EXCEPTION
-        WHEN OTHERS THEN
-            GET STACKED DIAGNOSTICS
-                _sqlState         = returned_sqlstate,
-                _exceptionMessage = message_text,
-                _exceptionDetail  = pg_exception_detail,
-                _exceptionContext = pg_exception_context;
-
-        _logMessage := format('%s; Job %s', _exceptionMessage, _job);
-
-        _message := local_error_handler (
-                        _sqlState, _logMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => '', _logError => true);
-
-        If Coalesce(_returnCode, '') = '' Then
-            _returnCode := _sqlState;
-        End If;
-    END;
-
     DROP TABLE IF EXISTS Tmp_NEWT_IDs;
 END
 $$;
