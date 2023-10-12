@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE sw.update_input_folder_using_special_processing_para
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
+**          10/11/2023 mem - Set _showDebug to true when calling lookup_source_job_from_special_processing_param and _infoOnly is true
 **
 *****************************************************/
 DECLARE
@@ -201,7 +202,8 @@ BEGIN
     CALL sw.lookup_source_job_from_special_processing_param (
                 _message    => _message,        -- Output
                 _returnCode => _returnCode,     -- Output
-                _previewSql => _infoOnly);
+                _previewSql => _infoOnly,
+                _showDebug  => _infoOnly);
 
     If Not _infoOnly Then
 
