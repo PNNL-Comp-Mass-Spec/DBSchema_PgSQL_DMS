@@ -57,6 +57,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_local_task_in_broker(INOUT _job integ
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          08/25/2023 mem - Use Trim() on procedure arguments
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          10/11/2023 mem - Customize the column names included in the status message
 **
 *****************************************************/
 DECLARE
@@ -68,6 +69,7 @@ DECLARE
     _logErrors boolean := true;
     _state int;
     _reset boolean := false;
+    _updatedColumns text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -152,13 +154,23 @@ BEGIN
 
             -- Only update parameters if not an empty string
             If char_length(_jobParam) = 0 Then
-                _message := format('Updated priority, comment, and state for capture task job %s; did not update parameters since _jobParam is empty', _job);
+                _updatedColumns := CASE WHEN _reset
+                                        THEN 'priority, comment, and state'
+                                        ELSE 'priority and comment'
+                                   END;
+
+                _message := format('Updated %s for capture task job %s; did not update parameters since _jobParam is empty', _updatedColumns, _job);
             Else
                 UPDATE  cap.t_task_parameters
                 SET     parameters = _jobParam::XML
                 WHERE   job = _job;
 
-                _message := format('Updated priority, comment, state, and parameters for capture task job %s', _job);
+                _updatedColumns := CASE WHEN _reset
+                                        THEN 'priority, comment, state, and parameters'
+                                        ELSE 'priority, comment, and parameters'
+                                   END;
+
+                _message := format('Updated %s for capture task job %s', _updatedColumns, _job);
             End If;
         End If;
 
@@ -168,7 +180,7 @@ BEGIN
 
         If _mode = 'add' Then
             _logErrors := true;
-            RAISE EXCEPTION 'Add mode is not implemented in this procedure for capture task jobs';
+            RAISE EXCEPTION 'Add mode is not supported by this procedure for capture task jobs';
 
             /*
             CALL cap.make_local_task_in_broker (
