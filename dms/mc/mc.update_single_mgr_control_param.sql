@@ -48,6 +48,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname tex
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
+**          10/11/2023 mem - Ignore case when resolving parameter name to ID
 **
 *****************************************************/
 DECLARE
@@ -82,7 +83,7 @@ BEGIN
     SELECT param_type_id
     INTO _paramTypeID
     FROM mc.t_param_type
-    WHERE param_name = _paramName;
+    WHERE param_name = _paramName::citext;
 
     If Not Found Then
         _message := format('Error: Parameter "%s" not found in mc.t_param_type', _paramName);
@@ -301,6 +302,7 @@ BEGIN
                        WHERE M.control_from_website > 0 AND
                              PV.param_type_id = _paramTypeID) Then
 
+            -- Example messages:
             -- Managers 1277, 1317, 1318 do not have parameter param_name
             -- Manager 1277 does not have parameter param_name
 

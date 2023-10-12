@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_type_control_param(IN _paramnam
 **          05/22/2023 mem - Capitalize reserved word
 **          05/23/2023 mem - Use format() for string concatenation
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
+**          10/11/2023 mem - Ignore case when filtering on parameter name
 **
 *****************************************************/
 DECLARE
@@ -71,7 +72,7 @@ BEGIN
            ON PV.param_type_id = PT.param_type_id
          INNER JOIN mc.t_mgrs M
            ON M.mgr_id = PV.mgr_id
-    WHERE PT.param_name = _paramName AND
+    WHERE PT.param_name = _paramName::citext AND
           M.mgr_type_id IN ( SELECT value
                              FROM public.parse_delimited_integer_list(_managerTypeIDList)
                            ) AND
