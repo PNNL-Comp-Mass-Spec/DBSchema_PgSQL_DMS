@@ -31,6 +31,7 @@ CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameters(_sourcemgrid integer,
 **          05/22/2023 mem - Capitalize reserved word
 **          05/23/2023 mem - Use format() for string concatenation
 **          09/07/2023 mem - Align assignment statements
+**          10/11/2023 mem - Use mgr_id instead of * when validating manager ID
 **
 *****************************************************/
 DECLARE
@@ -77,13 +78,13 @@ BEGIN
     -- Make sure the source and target managers exist
     ---------------------------------------------------
 
-    If _returnCode = '' And Not Exists (Select * From mc.t_mgrs M Where M.mgr_id = _sourceMgrID) Then
+    If _returnCode = '' And Not Exists (SELECT M.mgr_id FROM mc.t_mgrs M WHERE M.mgr_id = _sourceMgrID) Then
         _message := format('_sourceMgrID %s not found in mc.t_mgrs; unable to continue', _sourceMgrID);
         RAISE WARNING '%', _message;
         _returnCode := 'U5203';
     End If;
 
-    If _returnCode = '' And Not Exists (Select * From mc.t_mgrs M Where M.mgr_id = _targetMgrID) Then
+    If _returnCode = '' And Not Exists (SELECT M.mgr_id FROM mc.t_mgrs M WHERE M.mgr_id = _targetMgrID) Then
         _message := format('_targetMgrID %s not found in mc.t_mgrs; unable to continue', _targetMgrID);
         RAISE WARNING '%', _message;
         _returnCode := 'U5204';
@@ -92,7 +93,7 @@ BEGIN
     If _returnCode = '' And Not _mergeSourceWithTarget Then
         -- Make sure the target manager does not have any parameters
         --
-        If Exists (SELECT * FROM mc.t_param_value PV WHERE PV.mgr_id = _targetMgrID) Then
+        If Exists (SELECT PV.mgr_id FROM mc.t_param_value PV WHERE PV.mgr_id = _targetMgrID) Then
             _message := format('_targetMgrID %s has existing parameters in mc.t_param_value; aborting since _mergeSourceWithTarget is false', _targetMgrID);
             _returnCode := 'U5205';
         End If;
