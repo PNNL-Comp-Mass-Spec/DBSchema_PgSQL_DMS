@@ -64,7 +64,7 @@ BEGIN
         -- Auto-populate _callingUser if necessary
         ---------------------------------------------------
 
-        If Coalesce(_callingUser, '') = '' Then
+        If Trim(Coalesce(_callingUser, '')) = '' Then
             _callingUser := session_user;
         End If;
 
