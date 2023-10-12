@@ -1,8 +1,8 @@
 --
--- Name: lookup_source_job_from_special_processing_param(text, text, boolean); Type: PROCEDURE; Schema: sw; Owner: d3l243
+-- Name: lookup_source_job_from_special_processing_param(text, text, boolean, boolean); Type: PROCEDURE; Schema: sw; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE sw.lookup_source_job_from_special_processing_param(INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _previewsql boolean DEFAULT false)
+CREATE OR REPLACE PROCEDURE sw.lookup_source_job_from_special_processing_param(INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _previewsql boolean DEFAULT false, IN _showdebug boolean DEFAULT false)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE sw.lookup_source_job_from_special_processing_param(I
 **    _message          Output: status message
 **    _returnCode       Output: return code
 **    _previewSql       When true, set _previewSql to true when calling sw.lookup_source_job_from_special_processing_text()
+**    _showDebug        When true, show debug messages
 **
 **  Auth:   mem
 **  Date:   03/21/2011 mem - Initial Version
@@ -44,6 +45,8 @@ CREATE OR REPLACE PROCEDURE sw.lookup_source_job_from_special_processing_param(I
 **          08/01/2023 mem - Update _returnCode if an exception is caught
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          10/11/2023 mem - Add parameter _showDebug
+**                         - Only compare _sourceJob and _sourceJob2 if _sourceJobValid is true
 **
 *****************************************************/
 DECLARE
@@ -76,6 +79,7 @@ BEGIN
     _returnCode := '';
 
     _previewSql := Coalesce(_previewSql, false);
+    _showDebug  := Coalesce(_showDebug, false);
 
     ---------------------------------------------------
     -- Step through each entry in Tmp_Source_Job_Folders
@@ -89,6 +93,11 @@ BEGIN
 
         BEGIN
             _currentLocation := format('Determining SourceJob for job %s', _job);
+
+            If _showDebug Then
+                RAISE INFO '';
+                RAISE INFO '%', _currentLocation;
+            End If;
 
             _dataset := '';
             _specialProcessingText := '';
@@ -113,6 +122,11 @@ BEGIN
                 -- Job not found
                 --
                 _warningMessage := format('Job %s not found in sw.t_jobs', _job);
+
+                If _showDebug Then
+                    RAISE WARNING '%', _warningMessage;
+                End If;
+
             Else
 
                 -- Lookup the Special_Processing parameter for this job
@@ -130,6 +144,11 @@ BEGIN
                     _warningMessage := format('Special_Processing parameter for job %s does not contain tag "SourceJob:0000" Or "SourceJob:Auto{Sql_Where_Clause}"', _job);
                     CALL public.post_log_entry ('Debug', _warningMessage, 'Lookup_Source_Job_From_Special_Processing_Param', 'sw');
                 End If;
+
+                If _warningMessage <> '' And _showDebug Then
+                    RAISE WARNING '%', _warningMessage;
+                End If;
+
             End If;
 
             If _warningMessage = '' Then
@@ -147,7 +166,16 @@ BEGIN
                           _previewSql     => _previewSql,
                           _autoQuerySql   => _autoQuerySql);    -- Output
 
-                If Coalesce(_warningMessage, '') <> '' Then
+                If Coalesce(_warningMessage, '') = '' Then
+                    If _showDebug Then
+                        RAISE INFO 'Called lookup_source_job_from_special_processing_text for job %', _job;
+                        RAISE INFO 'SourceJob: %; AutoQuery used: %', _sourceJob, _autoQueryUsed;
+                    End If;
+                Else
+                    If _showDebug Then
+                        RAISE WARNING '%', _warningMessage;
+                    End If;
+
                     CALL public.post_log_entry ('Debug', _warningMessage, 'Lookup_Source_Job_From_Special_Processing_Param', 'sw');
 
                     -- Override _sourceJobResultsFolder with an error message; this will force the job to fail since the input folder will not be found
@@ -165,7 +193,11 @@ BEGIN
             If _warningMessage = '' Then
 
                 -- Lookup the results directory for the source job
-                --
+
+                If _showDebug Then
+                    RAISE INFO 'Lookup the results folder for job % using V_Source_Analysis_Job', _sourceJob;
+                End If;
+
                 SELECT Coalesce(Results_Folder, '')
                 INTO _sourceJobResultsFolder
                 FROM public.V_Source_Analysis_Job
@@ -173,6 +205,11 @@ BEGIN
 
                 If Not FOUND Then
                     _warningMessage := format('Source Job %s not found in V_Source_Analysis_Job', _job);
+
+                    If _showDebug Then
+                        RAISE WARNING '%', _warningMessage;
+                    End If;
+
                 Else
                     _sourceJobValid := true;
                 End If;
@@ -239,7 +276,7 @@ BEGIN
 
             _sourceJob2 := Coalesce(_sourceJob2, 0);
 
-            If _sourceJob2 = _sourceJob Then
+            If _sourceJobValid And _sourceJob2 = _sourceJob Then
                 _warningMessage := format('Source Job 1 and Source Job 2 are identical (both %s); this is not allowed and likely indicates the Special Processing parameters for determining Job2 are incorrect', _sourceJob);
                 _sourceJobResultsFolderOverride := format('UnknownFolder_Job1_and_Job2_are_both_%s', _sourceJob);
 
@@ -317,11 +354,5 @@ END
 $$;
 
 
-ALTER PROCEDURE sw.lookup_source_job_from_special_processing_param(INOUT _message text, INOUT _returncode text, IN _previewsql boolean) OWNER TO d3l243;
-
---
--- Name: PROCEDURE lookup_source_job_from_special_processing_param(INOUT _message text, INOUT _returncode text, IN _previewsql boolean); Type: COMMENT; Schema: sw; Owner: d3l243
---
-
-COMMENT ON PROCEDURE sw.lookup_source_job_from_special_processing_param(INOUT _message text, INOUT _returncode text, IN _previewsql boolean) IS 'LookupSourceJobFromSpecialProcessingParam';
+ALTER PROCEDURE sw.lookup_source_job_from_special_processing_param(INOUT _message text, INOUT _returncode text, IN _previewsql boolean, IN _showdebug boolean) OWNER TO d3l243;
 
