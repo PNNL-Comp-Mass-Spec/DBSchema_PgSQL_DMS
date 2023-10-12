@@ -60,6 +60,7 @@ CREATE OR REPLACE PROCEDURE sw.clone_job_step(IN _job integer, IN _xmlparameters
 **          10/17/2011 mem - Added column Memory_Usage_MB
 **          09/24/2014 mem - Rename Job in T_Job_Step_Dependencies
 **          07/28/2023 mem - Ported to PostgreSQL
+**          10/11/2023 mem - No longer show a message when Special_Instructions is not 'Clone'
 **
 *****************************************************/
 DECLARE
@@ -91,10 +92,11 @@ BEGIN
 
     If Not FOUND Then
         -- Nothing to do
+        -- Optionally uncomment the following to see a message when this is the case
 
-        If _debugMode Then
-            RAISE INFO 'Job % does not have a job step where Special_Instructions = "Clone"; nothing to do', _job;
-        End If;
+        -- If _debugMode Then
+        --     RAISE INFO 'Job % does not have a job step where Special_Instructions = "Clone"; nothing to do', _job;
+        -- End If;
 
         RETURN;
     End If;
