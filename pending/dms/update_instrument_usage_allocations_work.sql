@@ -61,7 +61,9 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------------------
 
-    If Coalesce(_callingUser, '') = '' Then
+    _callingUser := Trim(Coalesce(_callingUser, ''));
+
+    If char_length(_callingUser) > 0 Then
         _callingUser := public.get_user_login_without_domain('');
     End If;
 
