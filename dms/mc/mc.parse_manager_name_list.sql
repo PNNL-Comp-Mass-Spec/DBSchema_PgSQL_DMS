@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION mc.parse_manager_name_list(_manager_name_list text DE
 /****************************************************
 **
 **  Desc:
-**      Parses the list of managers in _manager_name_list
-**      and returns a list of manager names
+**      Parses the list of managers in _manager_name_list and returns a list of manager names
 **
 **  Arguments:
 **    _manager_name_list        One or more manager names (comma-separated list); supports wildcards

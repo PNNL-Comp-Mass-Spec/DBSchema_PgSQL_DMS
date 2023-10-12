@@ -54,7 +54,10 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **
 **      -- Option 1: Use JOIN LATERAL ... ON
 **      --
-**      SELECT TaskParams.parameters, UpdateQ.*
+**      SELECT TaskParams.parameters::text,
+**             UpdateQ.updated_xml::text,
+**             UpdateQ.success,
+**             UpdateQ.message
 **      FROM cap.t_task_parameters TaskParams
 **           JOIN LATERAL (
 **              SELECT *
@@ -63,13 +66,16 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **                  'DatasetQC',
 **                  'CreateDatasetInfoFile',
 **                  'false',
-**                   _deleteParam => false,       -- Optional, defaults to false
-**                   _showDebug   => false)       -- Optional, defaults to false
+**                   _deleteParam => false,     -- Optional, defaults to false
+**                   _showDebug   => true)      -- Optional, defaults to false
 **               ) UpdateQ ON TaskParams.job = 6016844;
 **
 **      -- Option 2: Use WHERE clause
 **      --
-**      SELECT TaskParams.parameters, UpdateQ.*
+**      SELECT TaskParams.parameters::text,
+**             UpdateQ.updated_xml::text,
+**             UpdateQ.success,
+**             UpdateQ.message
 **      FROM cap.t_task_parameters TaskParams,      -- Note the comma here
 **           LATERAL (
 **              SELECT *

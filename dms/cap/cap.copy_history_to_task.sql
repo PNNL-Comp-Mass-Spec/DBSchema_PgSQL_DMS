@@ -8,9 +8,8 @@ CREATE OR REPLACE PROCEDURE cap.copy_history_to_task(IN _job integer, IN _assign
 /****************************************************
 **
 **  Desc:
-**    For a given capture task job, copies the job details, steps,
-**    and parameters from the most recent successful
-**    run in the history tables back into the main tables
+**      For a given capture task job, copies the job details, steps, and parameters
+**      from the most recent successful run in the history tables back into the main tables
 **
 **  Arguments:
 **    _job                  Capture task job number
@@ -53,6 +52,10 @@ BEGIN
     _message := '';
     _returnCode := '';
     _debugMode := Coalesce(_debugMode, false);
+
+    If _debugMode Then
+        RAISE INFO '';
+    End If;
 
     ---------------------------------------------------
     -- Bail if no candidates found

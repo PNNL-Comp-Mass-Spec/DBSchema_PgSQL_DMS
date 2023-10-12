@@ -8,8 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.lookup_source_job_from_special_processing_text(IN
 /****************************************************
 **
 **  Desc:
-**      Parses the special processing text in _specialProcessingText
-**      to determine the source job defined for a new job
+**      Parses the special processing text in _specialProcessingText to determine the source job defined for a new job
 **
 **  Arguments:
 **    _job                      Job number

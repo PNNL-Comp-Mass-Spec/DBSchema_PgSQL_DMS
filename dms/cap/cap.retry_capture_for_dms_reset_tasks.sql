@@ -8,8 +8,7 @@ CREATE OR REPLACE PROCEDURE cap.retry_capture_for_dms_reset_tasks(INOUT _message
 /****************************************************
 **
 **  Desc:
-**      Retry capture for datasets that failed capture
-**      but for which the dataset state in public.t_dataset is 1=New
+**      Retry capture for datasets that failed capture, but for which the dataset state in public.t_dataset is 1=New
 **
 **  Auth:   mem
 **  Date:   05/25/2011 mem - Initial version

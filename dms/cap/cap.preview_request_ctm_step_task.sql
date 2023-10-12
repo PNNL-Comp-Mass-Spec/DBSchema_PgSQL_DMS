@@ -16,8 +16,8 @@ CREATE OR REPLACE FUNCTION cap.preview_request_ctm_step_task(_processorname text
 **    _infoLevel            0 or 1 to preview the assigned task; 2 to preview the task and see extra status messages; 3 to dump candidate tables and variables
 **
 **  Example usage:
-**    SELECT * FROM cap.preview_request_ctm_step_task('Proto-3_CTM', 10, 1);
-**    SELECT * FROM cap.preview_request_ctm_step_task('Proto-3_CTM', 5,  2);
+**    SELECT * FROM cap.preview_request_ctm_step_task('Proto-3_CTM', _jobCountToPreview => 10, _infoLevel => 1);
+**    SELECT * FROM cap.preview_request_ctm_step_task('Proto-3_CTM', _jobCountToPreview => 5,  _infoLevel => 2);
 **
 **  Auth:   mem
 **  Date:   01/06/2011 mem

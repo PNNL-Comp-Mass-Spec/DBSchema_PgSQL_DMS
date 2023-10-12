@@ -8,10 +8,9 @@ CREATE OR REPLACE PROCEDURE mc.ack_manager_update_required(IN _managername text,
 /****************************************************
 **
 **  Desc:
-**      Acknowledges that a manager has seen that
-**      ManagerUpdateRequired is True in mc.t_param_value
+**      Acknowledges that a manager has seen that parameter 'ManagerUpdateRequired' is True in mc.t_param_value
 **
-**      This SP will thus set ManagerUpdateRequired to False for this manager
+**      This procedure will thus set 'ManagerUpdateRequired' to False for this manager
 **
 **  Example usage:
 **
@@ -19,7 +18,7 @@ CREATE OR REPLACE PROCEDURE mc.ack_manager_update_required(IN _managername text,
 **      SET Value = 'True'
 **      WHERE mgr_name = 'monroe_analysis' and param_name = 'ManagerUpdateRequired';
 **
-**      CALL mc.ack_manager_update_required('monroe_analysis')
+**      CALL mc.ack_manager_update_required('monroe_analysis');
 **
 **  Auth:   mem
 **  Date:   01/16/2009 mem - Initial version
