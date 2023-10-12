@@ -59,6 +59,7 @@ CREATE OR REPLACE PROCEDURE sw.make_local_job_in_broker(IN _scriptname text, IN 
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          10/11/2023 mem - Only call alter_entered_by_user if _callingUser is not an empty string
 **
 *****************************************************/
 DECLARE
@@ -420,7 +421,9 @@ BEGIN
 
             _currentLocation := 'Call public.alter_entered_by_user';
 
-            CALL public.alter_entered_by_user ('sw', 't_job_events', 'job', _job, _callingUser, _message => _alterEnteredByMessage);
+            If Coalesce(_callingUser, '') <> '' Then
+                CALL public.alter_entered_by_user ('sw', 't_job_events', 'job', _job, _callingUser, _message => _alterEnteredByMessage);
+            End If;
         End If;
 
         If Not _debugMode Then
