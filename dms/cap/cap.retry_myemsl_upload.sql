@@ -111,7 +111,7 @@ BEGIN
         RETURN;
     End If;
 
-    Begin
+    BEGIN
         -----------------------------------------------------------
         -- Create the temporary tables
         -----------------------------------------------------------
@@ -256,7 +256,7 @@ BEGIN
             -- Reset the archive step
             --
             UPDATE cap.t_task_steps TS
-            Set state = 2,
+            SET state = 2,
                 completion_code = 0,
                 completion_message = Null,
                 evaluation_code = Null,
