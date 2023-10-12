@@ -391,7 +391,7 @@ BEGIN
 
     -- First define the calling user text
 
-    If Coalesce(_callingUser, '') <> '' Then
+    If char_length(_callingUser) > 0 Then
         _callingUserUnconsume := format('(unconsume for %s)', _callingUser);
     Else
         _callingUserUnconsume := '(unconsume)';
