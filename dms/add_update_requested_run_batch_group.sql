@@ -27,6 +27,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch_group(INOUT _i
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list_ordered for a comma-separated list
+**          10/12/2023 mem - Add/update variables
 **
 *****************************************************/
 DECLARE
@@ -38,7 +39,9 @@ DECLARE
     _logErrors boolean := false;
     _userID int;
     _firstInvalid text;
-    _count int;
+    _matchCount int;
+    _updateCount int;
+    _newUsername text;
     _invalidIDs text;
     _batchGroupIDConfirm int;
     _debugMsg text;
@@ -196,7 +199,7 @@ BEGIN
         ---------------------------------------------------
 
         SELECT COUNT(*)
-        INTO _count
+        INTO _matchCount
         FROM Tmp_BatchIDs
         WHERE NOT (Batch_ID IN
         (
@@ -204,7 +207,7 @@ BEGIN
             FROM t_requested_run_batches)
         );
 
-        If _count <> 0 Then
+        If _matchCount <> 0 Then
 
             SELECT string_agg(Batch_ID_Text, ', ' ORDER BY Batch_ID_Text)
             INTO _invalidIDs
@@ -229,14 +232,14 @@ BEGIN
                FROM Tmp_BatchIDs ) RankQ
         WHERE Tmp_BatchIDs.Batch_ID = RankQ.Batch_ID;
         --
-        GET DIAGNOSTICS _count = ROW_COUNT;
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
         ---------------------------------------------------
         -- Action for preview mode
         ---------------------------------------------------
 
         If _mode = Lower('PreviewAdd') Then
-            _message := format('Would create batch group "%s" with %s batches', _name, _count);
+            _message := format('Would create batch group "%s" with %s batches', _name, _updateCount);
 
             DROP TABLE Tmp_BatchIDs;
             RETURN;
