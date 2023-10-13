@@ -62,6 +62,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_storage(IN _path text, IN _volname
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          09/07/2023 mem - Update warning messages
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          10/12/2023 mem - Prevent adding a second inbox for an instrument
+**                         - Validate host name vs. t_storage_path_hosts
 **
 *****************************************************/
 DECLARE
@@ -71,13 +73,13 @@ DECLARE
     _authorized boolean;
 
     _updateCount int := 0;
-    _machineName text;
-    _num int := 0;
+    _machineName citext;
+    _matchCount int := 0;
     _tmpID int := 0;
-    _oldFunction text;
+    _oldFunction citext;
     _spID int;
     _existingID int := -1;
-    _storagePathID Int;
+    _storagePathID int;
     _pathIDs text;
 
     _currentlocation text := 'Start';
@@ -118,8 +120,8 @@ BEGIN
 
         _path           := Trim(Coalesce(_path, ''));
         _instrumentName := Trim(Coalesce(_instrumentName, ''));
-        _storFunction   := Trim(Coalesce(_storFunction, ''));
-        _mode           := Trim(Coalesce(_mode, ''));
+        _storFunction   := Lower(Trim(Coalesce(_storFunction, '')));
+        _mode           := Lower(Trim(Coalesce(_mode, '')));
         _urlDomain      := Trim(Coalesce(_urlDomain, ''));
         _id             := Trim(Coalesce(_id, ''));
 
@@ -135,32 +137,32 @@ BEGIN
             _message := 'Instrument name must be specified';
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5201';
+            _returnCode := 'U5202';
             RETURN;
         End If;
 
-        If Not _storFunction::citext In ('inbox', 'old-storage', 'raw-storage') Then
+        If Not _storFunction In ('inbox', 'old-storage', 'raw-storage') Then
             _message := format('Function "%s" is not recognized', _storFunction);
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5201';
+            _returnCode := 'U5203';
             RETURN;
         End If;
 
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
         If Not _mode::citext In ('add', 'update') Then
-            _message := format('Function "%s" is not recognized', _mode);
+            _message := format('Mode "%s" is not recognized', _mode);
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5201';
+            _returnCode := 'U5204';
             RETURN;
         End If;
 
         _urlDomain := Trim(Coalesce(_urlDomain, ''));
 
         ---------------------------------------------------
-        -- Resolve machine name
+        -- Resolve machine name (e.g. 'Lumos02.bionet' or 'Proto-2')
         ---------------------------------------------------
 
         If _storFunction = 'inbox' Then
@@ -170,14 +172,26 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Verify instrument name
+        -- Validate instrument name
         ---------------------------------------------------
 
-        If Not Exists (SELECT * FROM t_instrument_name WHERE instrument = _instrumentName) Then
+        If Not Exists (SELECT instrument FROM t_instrument_name WHERE instrument = _instrumentName) Then
             _message := format('Unknown instrument "%s"', _instrumentName);
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5201';
+            _returnCode := 'U5205';
+            RETURN;
+        End If;
+
+        ---------------------------------------------------
+        -- Validate machine name
+        ---------------------------------------------------
+
+        If Not Exists (SELECT machine_name FROM t_storage_path_hosts WHERE machine_name = _machineName) Then
+            _message := format('Unknown machine name "%s" (not in t_storage_path_hosts)', _machineName);
+            RAISE WARNING '%', _message;
+
+            _returnCode := 'U5206';
             RETURN;
         End If;
 
@@ -186,10 +200,18 @@ BEGIN
         ---------------------------------------------------
 
         SELECT COUNT(storage_path_id)
-        INTO _num
+        INTO _matchCount
         FROM t_storage_path
         WHERE instrument = _instrumentName AND
               storage_path_function = _storFunction;
+
+        If _storFunction = 'inbox' And _matchCount > 0 Then
+            _message := format('Inbox already defined for instrument "%s"; change the old inbox to function "old-inbox" in t_storage_path)', _instrumentName);
+            RAISE WARNING '%', _message;
+
+            _returnCode := 'U5207';
+            RETURN;
+        End If;
 
         ---------------------------------------------------
         -- Is entry already in database? (only applies to updates)
@@ -201,18 +223,17 @@ BEGIN
         -- Cannot update a non-existent entry
         --
         If _mode = 'update' Then
-            SELECT
-                storage_path_id,
-                storage_path_function
+            SELECT storage_path_id,
+                   storage_path_function
             INTO _tmpID, _oldFunction
             FROM t_storage_path
             WHERE storage_path_id = _spID;
-            --
+
             If Not FOUND Then
                 _message := format('Cannot update: Storage path "%s" is not in database ', _spID);
                 RAISE WARNING '%', _message;
 
-                _returnCode := 'U5201';
+                _returnCode := 'U5208';
                 RETURN;
             End If;
         End If;
@@ -260,7 +281,7 @@ BEGIN
                     _message := format('Backup failed: %s', _message);
                     RAISE WARNING '%', _message;
 
-                    _returnCode := 'U5201';
+                    _returnCode := 'U5209';
                     RETURN;
                 End If;
 
@@ -315,7 +336,7 @@ BEGIN
                         _message := format('Cannot add new inbox path if one (%s) already exists for instrument', _tmpID);
                         RAISE WARNING '%', _message;
 
-                        _returnCode := 'U5201';
+                        _returnCode := 'U5210';
                         RETURN;
                     End If;
                 End If;
@@ -397,7 +418,7 @@ BEGIN
                 _message := format('Backup failed: %s', _message);
                 RAISE WARNING '%', _message;
 
-                _returnCode := 'U5201';
+                _returnCode := 'U5211';
                 RETURN;
             End If;
 
@@ -451,7 +472,7 @@ BEGIN
                 _message := 'Cannot change existing raw-storage path to old-storage';
                 RAISE WARNING '%', _message;
 
-                _returnCode := 'U5201';
+                _returnCode := 'U5212';
                 RETURN;
             End If;
 
@@ -465,7 +486,7 @@ BEGIN
                 _message := 'Cannot change existing inbox path to another function';
                 RAISE WARNING '%', _message;
 
-                _returnCode := 'U5201';
+                _returnCode := 'U5213';
                 RETURN;
             End If;
 
@@ -476,8 +497,7 @@ BEGIN
             ---------------------------------------------------
 
             UPDATE t_storage_path
-            SET
-                storage_path =_path,
+            SET storage_path =_path,
                 vol_name_client =_volNameClient,
                 vol_name_server =_volNameServer,
                 storage_path_function =_storFunction,
