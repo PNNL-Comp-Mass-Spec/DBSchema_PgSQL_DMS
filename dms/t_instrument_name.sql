@@ -37,8 +37,7 @@ CASE
     ELSE (room_number)::text
 END) STORED,
     default_purge_priority smallint DEFAULT 3 NOT NULL,
-    storage_purge_holdoff_months smallint DEFAULT 1 NOT NULL,
-    CONSTRAINT ck_t_instrument_name_status CHECK (((status OPERATOR(public.=) 'offline'::public.citext) OR (status OPERATOR(public.=) 'inactive'::public.citext) OR (status OPERATOR(public.=) 'active'::public.citext) OR (status OPERATOR(public.=) 'broken'::public.citext)))
+    storage_purge_holdoff_months smallint DEFAULT 1 NOT NULL
 );
 
 
@@ -83,6 +82,13 @@ ALTER TABLE ONLY public.t_instrument_name
 
 ALTER TABLE ONLY public.t_instrument_name
     ADD CONSTRAINT fk_t_instrument_name_t_instrument_ops_role FOREIGN KEY (operations_role) REFERENCES public.t_instrument_ops_role(role);
+
+--
+-- Name: t_instrument_name fk_t_instrument_name_t_instrument_state_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_instrument_name
+    ADD CONSTRAINT fk_t_instrument_name_t_instrument_state_name FOREIGN KEY (status) REFERENCES public.t_instrument_state_name(state_name);
 
 --
 -- Name: t_instrument_name fk_t_instrument_name_t_storage_path_source_path_id; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
