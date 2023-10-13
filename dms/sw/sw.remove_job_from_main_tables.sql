@@ -19,6 +19,7 @@ CREATE OR REPLACE PROCEDURE sw.remove_job_from_main_tables(IN _job integer, IN _
 **  Date:   11/19/2010 mem - Initial version
 **          08/08/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          10/12/2023 mem - Use % with RAISE INFO
 **
 *****************************************************/
 DECLARE
@@ -89,7 +90,7 @@ BEGIN
             DROP TABLE Tmp_Selected_Jobs;
             RETURN;
         Else
-            RAISE INFO 'All of the job''s steps are successful or skipped; deleting job %s', _job;
+            RAISE INFO 'All of the job''s steps are successful or skipped; deleting job %', _job;
         End If;
     End If;
 

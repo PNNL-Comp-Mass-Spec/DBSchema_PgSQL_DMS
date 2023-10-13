@@ -146,7 +146,7 @@ BEGIN
         -- Cannot update a non-existent entry
         --
         If _userID = 0 and _mode = 'update' Then
-            RAISE EXCEPTION 'Cannot update: User "%s" is not in database ', _username;
+            RAISE EXCEPTION 'Cannot update: User "%" is not in database ', _username;
         End If;
 
         ---------------------------------------------------
