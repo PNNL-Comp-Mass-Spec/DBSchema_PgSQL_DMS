@@ -16,7 +16,7 @@ CREATE VIEW public.v_instrument_detail_report AS
     instname.instrument_group,
     instname.room_number AS room,
     instname.capture_method AS capture,
-    instname.status,
+    (((((instname.status)::text || ' ('::text) || (statename.description)::text) || ')'::text))::public.citext AS status,
     instname.usage,
     instname.operations_role AS ops_role,
     trackingyesno.description AS track_usage_when_inactive,
@@ -47,7 +47,8 @@ CREATE VIEW public.v_instrument_detail_report AS
     instname.default_purge_policy,
     instname.default_purge_priority,
     instname.storage_purge_holdoff_months
-   FROM (((((((((public.t_instrument_name instname
+   FROM ((((((((((public.t_instrument_name instname
+     JOIN public.t_instrument_state_name statename ON ((instname.status OPERATOR(public.=) statename.state_name)))
      LEFT JOIN public.t_storage_path spath ON ((instname.storage_path_id = spath.storage_path_id)))
      LEFT JOIN ( SELECT t_storage_path.storage_path_id,
             ((t_storage_path.vol_name_server)::text || (t_storage_path.storage_path)::text) AS source
