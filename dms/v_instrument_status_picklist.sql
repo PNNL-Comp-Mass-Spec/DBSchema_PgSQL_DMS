@@ -3,7 +3,8 @@
 --
 
 CREATE VIEW public.v_instrument_status_picklist AS
- SELECT unnest('{active,inactive,offline,broken}'::text[]) AS val;
+ SELECT t_instrument_state_name.state_name AS val
+   FROM public.t_instrument_state_name;
 
 
 ALTER TABLE public.v_instrument_status_picklist OWNER TO d3l243;
