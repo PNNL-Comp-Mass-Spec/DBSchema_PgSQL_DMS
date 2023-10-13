@@ -54,6 +54,7 @@ CREATE OR REPLACE PROCEDURE public.parse_usage_text(INOUT _comment text, INOUT _
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/11/2023 mem - Adjust capitalization of keywords
+**          10/12/2023 mem - Change from http:// to https://
 **
 *****************************************************/
 DECLARE
@@ -258,7 +259,7 @@ BEGIN
         If _validateTotal And _total <> 100 Then
             _logErrors := false;
             _invalidUsage := 1;
-            RAISE EXCEPTION 'Total percentage (%) does not add up to 100 for ID %; see %', _total, _seq, 'http://prismwiki.pnl.gov/wiki/Long_Interval_Notes';
+            RAISE EXCEPTION 'Total percentage (%) does not add up to 100 for ID %; see %', _total, _seq, 'https://prismwiki.pnl.gov/wiki/Long_Interval_Notes';
         End If;
 
         ---------------------------------------------------

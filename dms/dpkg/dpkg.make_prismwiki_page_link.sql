@@ -13,12 +13,13 @@ CREATE OR REPLACE FUNCTION dpkg.make_prismwiki_page_link(_packagename text) RETU
 **  Auth:   grk
 **          06/05/2009 grk - Initial release
 **          06/10/2009 grk - Using package name for link
-**          06/11/2009 mem - Removed space from before https://
-**          06/26/2009 mem - Updated link format to be _baseURL plus the data package name
-**          09/21/2012 mem - Changed from https:// to http://
+**          06/11/2009 mem - Remove space from before https://
+**          06/26/2009 mem - Update link format to be _baseURL plus the data package name
+**          09/21/2012 mem - Change from https:// to http://
 **          06/25/2022 mem - Ported to PostgreSQL
 **          05/30/2023 mem - Use format() for string concatenation
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          10/12/2023 mem - Change from http:// to https://
 **
 *****************************************************/
 DECLARE
@@ -26,7 +27,7 @@ DECLARE
     _baseURL text;
     _temp text;
 BEGIN
-    _baseURL := 'http://prismwiki.pnl.gov/wiki/DataPackages:';
+    _baseURL := 'https://prismwiki.pnl.gov/wiki/DataPackages:';
 
     _temp := Trim(Coalesce(_packageName, ''));
 
