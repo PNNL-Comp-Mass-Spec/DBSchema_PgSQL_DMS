@@ -32,6 +32,8 @@ BEGIN
 
     _infoOnly := Coalesce(_infoOnly, false);
 
+    RAISE INFO '';
+
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------
