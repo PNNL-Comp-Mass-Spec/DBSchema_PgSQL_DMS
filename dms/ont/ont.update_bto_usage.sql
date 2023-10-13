@@ -24,6 +24,7 @@ CREATE OR REPLACE FUNCTION ont.update_bto_usage(_infoonly boolean DEFAULT false)
 **          05/12/2023 mem - Rename variables
 **          05/30/2023 mem - Use format() for string concatenation
 **          07/11/2023 mem - Use COUNT(E.exp_id) instead of COUNT(*)
+**          10/12/2023 mem - Subtract interval with positive duration
 **
 *****************************************************/
 DECLARE
@@ -58,7 +59,7 @@ BEGIN
                   COUNT(E.exp_id) AS usage_last_12_months
             FROM public.t_experiments E
             WHERE NOT E.tissue_id IS NULL AND
-                  E.created >= CURRENT_DATE + INTERVAL '-365 days'
+                  E.created >= CURRENT_DATE - INTERVAL '365 days'
             GROUP BY E.tissue_id ) SourceQ
     WHERE Tmp_UsageStats.Tissue_ID = SourceQ.tissue_id;
 
