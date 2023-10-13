@@ -109,8 +109,8 @@ BEGIN
         End If;
 
         _entryDateFilterSqlWithValues := format(' AND entered BETWEEN ''%s'' AND ''%s''',
-                                        to_char(_entryDateStart, 'yyyy-mm-dd hh24:mi:ss'),
-                                        to_char(_entryDateEnd,   'yyyy-mm-dd hh24:mi:ss'));
+                                                to_char(_entryDateStart, 'yyyy-mm-dd hh24:mi:ss'),
+                                                to_char(_entryDateEnd,   'yyyy-mm-dd hh24:mi:ss'));
 
         _entryDateFilterSqlWithVariables := ' AND entered BETWEEN $4 AND $5';
 
@@ -175,7 +175,7 @@ BEGIN
     _matchIndex := Position(_newUser In _enteredBy);
     If _matchIndex > 0 Then
         _message := format('Entry %s is already attributed to %s: "%s"',
-                            _entryDescription, _newUser, _enteredBy);
+                           _entryDescription, _newUser, _enteredBy);
         RETURN;
     End If;
 

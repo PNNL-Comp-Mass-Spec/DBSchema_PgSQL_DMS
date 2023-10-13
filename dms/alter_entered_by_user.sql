@@ -115,7 +115,7 @@ BEGIN
 
         _entryDateFilterSqlWithValues := format(
                             '%I BETWEEN ''%s'' And ''%s''',
-                             _entryDateColumnName,
+                            _entryDateColumnName,
                             to_char(_entryDateStart, 'yyyy-mm-dd hh24:mi:ss'),
                             to_char(_entryDateEnd,   'yyyy-mm-dd hh24:mi:ss'));
 

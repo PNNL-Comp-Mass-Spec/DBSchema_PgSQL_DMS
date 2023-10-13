@@ -114,10 +114,9 @@ BEGIN
         RETURN;
     End If;
 
-    _s := format(
-            'INSERT INTO %s (posted_by, entered, type, message) '
-            'VALUES ( $1, CURRENT_TIMESTAMP, $2, $3)',
-            _targetTableWithSchema);
+    _s := format('INSERT INTO %s (posted_by, entered, type, message) '
+                 'VALUES ( $1, CURRENT_TIMESTAMP, $2, $3)',
+                 _targetTableWithSchema);
 
     EXECUTE _s
     USING _postedBy, _type, _message;
