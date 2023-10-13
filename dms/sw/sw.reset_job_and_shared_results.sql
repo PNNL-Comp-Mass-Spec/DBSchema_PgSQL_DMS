@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE sw.reset_job_and_shared_results(IN _job integer, IN 
 **          05/12/2017 mem - Update Next_Try and Remote_Info_ID
 **          08/03/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          10/12/2023 mem - Add missing call to format()
 **
 *****************************************************/
 DECLARE
@@ -282,7 +283,7 @@ BEGIN
             If _deleteCount > 0 Then
                 _message := format('Removed %s %s from sw.t_shared_results', _deleteCount, public.check_plural(_deleteCount, 'row', 'rows'));
             Else
-                _message := ('Match not found in sw.t_shared_results for %s', _outputFolder);
+                _message := format('Match not found in sw.t_shared_results for %s', _outputFolder);
             End If;
 
             TRUNCATE TABLE Tmp_Selected_Jobs;

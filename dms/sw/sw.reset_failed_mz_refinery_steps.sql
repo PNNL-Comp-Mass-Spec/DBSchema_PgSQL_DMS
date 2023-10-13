@@ -16,6 +16,7 @@ CREATE OR REPLACE PROCEDURE sw.reset_failed_mz_refinery_steps(IN _infoonly boole
 **  Auth:   mem
 **          08/23/2023 mem - Initial version
 **          08/24/2023 mem - Ported to PostgreSQL
+**          10/12/2023 mem - Add missing call to format()
 **
 *****************************************************/
 DECLARE
@@ -199,7 +200,7 @@ BEGIN
             _baseMsg := format('Mz_Refinery for job %s, step %s, since processor %s crashed', _job, _step, _processor);
 
             If _infoOnly Then
-                _message = ('Would reset %s', _baseMsg);
+                _message = format('Would reset %s', _baseMsg);
 
                 RAISE INFO '';
                 RAISE INFO '%', _message;

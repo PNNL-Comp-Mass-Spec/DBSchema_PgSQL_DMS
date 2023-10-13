@@ -326,7 +326,7 @@ BEGIN
             ---------------------------------------------------
 
             If Not Exists (SELECT * FROM t_analysis_job_state WHERE job_state_id = _jobInfo.State) Then
-                _message := 'State %s not found in t_analysis_job_state; -- this is unexpected; will set _jobInfo.State to 4'; _jobInfo.State)
+                _message := format('State %s not found in t_analysis_job_state; -- this is unexpected; will set _jobInfo.State to 4', _jobInfo.State)
 
                 If _infoOnly Then
                     RAISE INFO '%', _message;

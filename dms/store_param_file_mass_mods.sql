@@ -138,6 +138,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list_ordered for a comma-separated list
+**          10/12/2023 mem - Add missing call to format()
 **
 *****************************************************/
 DECLARE
@@ -970,7 +971,7 @@ BEGIN
             _modMassToFind := public.try_cast(_field, null::real);
 
             If _modMassToFind Is Null Then
-                _message := 'Mod mass "%s" is not a number; see row: %s', _field, _row;
+                _message := format('Mod mass "%s" is not a number; see row: %s', _field, _row);
                 _returnCode := 'U5322';
 
                 _exitProcedure := true;
