@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE public.add_bom_tracking_dataset(IN _month text DEFAU
 **          02/22/2022 mem - When _mode is 'debug', do not log an error if the dataset already exists
 **          08/25/2023 mem - Ported to PostgreSQL
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          10/12/2023 mem - Update call to add_update_tracking_dataset
 **
 *****************************************************/
 DECLARE
@@ -256,7 +257,7 @@ BEGIN
                                 _mode,
                                 _message    => _message,        -- Output
                                 _returnCode => _returnCode,     -- Output
-                                _callingUser);
+                                _callingUser => _callingUser);
         End If;
 
     EXCEPTION
