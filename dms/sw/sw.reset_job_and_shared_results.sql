@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE sw.reset_job_and_shared_results(IN _job integer, IN 
 **          08/03/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          10/12/2023 mem - Add missing call to format()
+**                         - Fix bug using format() to append a message to _message
 **
 *****************************************************/
 DECLARE
@@ -320,7 +321,7 @@ BEGIN
             If _updateCount <> 0 Then
                 _message := format('%s; Updated %s %s in sw.t_job_steps_history', _message, _updateCount, public.check_plural(_updateCount, 'row', 'rows'));
             Else
-                _message := format('%s; Match not found in sw.t_job_steps_history for %s', _outputFolder, _message);
+                _message := format('%s; Match not found in sw.t_job_steps_history for %s', _message, _outputFolder);
             End If;
 
             -- Look for any jobs that remain in sw.t_job_steps and have completed steps with Output_Folder = _outputFolder
