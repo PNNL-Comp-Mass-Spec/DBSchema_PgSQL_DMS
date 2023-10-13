@@ -8,8 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.reset_job_and_shared_results(IN _job integer, IN 
 /****************************************************
 **
 **  Desc:
-**      Resets a job, including updating the appropriate tables
-**      so that any shared results for a job will get re-created
+**      Resets a job, including updating the appropriate tables so that any shared results for a job will get re-created
 **
 **  Arguments:
 **    _job                      Job that needs to be rerun, including re-generating the shared results
