@@ -63,7 +63,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_storage(IN _path text, IN _volname
 **          09/07/2023 mem - Update warning messages
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/12/2023 mem - Prevent adding a second inbox for an instrument
-**                         - Validate host name vs. t_storage_path_hosts
+**                         - Validate machine name vs. t_storage_path_hosts
 **
 *****************************************************/
 DECLARE
