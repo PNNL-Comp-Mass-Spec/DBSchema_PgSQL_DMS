@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE cap.check_for_myemsl_errors(IN _mostrecentdays integ
 **          05/10/2023 mem - Fix call to post_log_entry
 **          07/11/2023 mem - Use COUNT(entry_id) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
+**          10/12/2023 mem - Use implicit string concatenation
 **
 *****************************************************/
 DECLARE
@@ -102,7 +103,7 @@ BEGIN
 
     If _duplicateRate > 0.05 Then
 
-        _message := format('More than 5%% of the uploads to MyEMSL involved uploading the same dataset and subfolder 2 or more times; ' ||
+        _message := format('More than 5%% of the uploads to MyEMSL involved uploading the same dataset and subfolder 2 or more times; '
                            'duplicate rate: %s%% for %s dataset/folder combos',
                            Round(_duplicateRate * 100, 1), _datasetFolderUploads);
 

@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE public.lookup_wp_from_experiment_sample_prep(IN _exp
 **          01/23/2017 mem - Provide clearer error messages
 **          06/13/2017 mem - Fix failure to update _workPackage using sample prep request's work package
 **          10/01/2023 mem - Ported to PostgreSQL (renamed from lookup_other_from_experiment_sample_prep to lookup_wp_from_experiment_sample_prep)
+**          10/12/2023 mem - Use implicit string concatenation
 **
 *****************************************************/
 DECLARE
@@ -56,10 +57,10 @@ BEGIN
         End If;
 
         If Exists (SELECT exp_id FROM t_experiments WHERE experiment = _experimentName::citext) Then
-            _message := format('Work package cannot be "%s" when the experiment does not have a sample prep request. ' ||
+            _message := format('Work package cannot be "%s" when the experiment does not have a sample prep request. '
                                'Please provide a valid work package.', _ovr);
         Else
-            _message := format('Unable to change the work package from "%s" to the one associated with the experiment ' ||
+            _message := format('Unable to change the work package from "%s" to the one associated with the experiment '
                                'because the experiment was not found: %s', _ovr, _experimentName);
         End If;
 
