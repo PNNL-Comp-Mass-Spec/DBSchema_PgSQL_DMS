@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch_group(INOUT _i
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list_ordered for a comma-separated list
 **          10/12/2023 mem - Add/update variables
+**                         - Only drop temp table if actually created
 **
 *****************************************************/
 DECLARE
@@ -37,6 +38,7 @@ DECLARE
     _authorized boolean;
 
     _logErrors boolean := false;
+    _tempTableCreated boolean := false;
     _userID int;
     _firstInvalid text;
     _matchCount int;
@@ -163,6 +165,8 @@ BEGIN
             Batch_ID int Null,
             Batch_Group_Order Int Null
         );
+
+        _tempTableCreated := true;
 
         ---------------------------------------------------
         -- Populate temporary table from list
@@ -342,7 +346,9 @@ BEGIN
         End If;
     END;
 
-    DROP TABLE IF EXISTS Tmp_BatchIDs;
+    If _tempTableCreated Then
+        DROP TABLE IF EXISTS Tmp_BatchIDs;
+    End If;
 END
 $$;
 

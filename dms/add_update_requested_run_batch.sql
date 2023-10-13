@@ -69,6 +69,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
+**          10/12/2023 mem - Only drop temp table if actually created
 **
 *****************************************************/
 DECLARE
@@ -78,6 +79,7 @@ DECLARE
     _authorized boolean;
 
     _logErrors boolean := false;
+    _tempTableCreated boolean := false;
     _instrumentGroupToUse text;
     _userID int := 0;
     _firstInvalid text;
@@ -173,6 +175,8 @@ BEGIN
             RequestIDText text NULL,
             Request_ID int NULL
         );
+
+        _tempTableCreated := true;
 
         ---------------------------------------------------
         -- Populate temporary table from list
@@ -440,7 +444,9 @@ BEGIN
         End If;
     END;
 
-    DROP TABLE IF EXISTS Tmp_RequestedRuns;
+    If _tempTableCreated Then
+        DROP TABLE IF EXISTS Tmp_RequestedRuns;
+    End If;
 END
 $$;
 
