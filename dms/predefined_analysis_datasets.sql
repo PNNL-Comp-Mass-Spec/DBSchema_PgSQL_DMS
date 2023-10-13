@@ -40,6 +40,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_datasets(_ruleid integer, 
 **          07/11/2023 mem - Use COUNT(id) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          10/12/2023 mem - Exit the function if the predefined analysis rule is not found or if it has no filter criteria
 **
 *****************************************************/
 DECLARE
@@ -87,6 +88,33 @@ BEGIN
     INTO _predefineInfo
     FROM t_predefined_analysis
     WHERE predefine_id = _ruleID;
+
+    If Not FOUND Then
+
+        RETURN QUERY
+        SELECT format('Warning: predefined rule ID %s does not exist', _ruleID)::citext AS Dataset,
+               0 As Dataset_ID,
+               ''::citext AS Instrument_Class,
+               ''::citext AS Instrument,
+               ''::citext AS Campaign,
+               ''::citext AS Experiment,
+               ''::citext AS Organism,
+               ''::citext AS Experiment_Labelling,
+               ''::citext AS Experiment_Comment,
+               ''::citext AS Dataset_Comment,
+               ''::citext AS Dataset_Type,
+               0::smallint AS Dataset_Rating_ID,
+               ''::citext AS Dataset_Rating,
+               ''::citext AS Separation_Type,
+               ''::citext AS Analysis_Tool,
+               ''::citext AS Parameter_File,
+               ''::citext AS Settings_File,
+               ''::citext AS Protein_Collections,
+               ''::citext AS Legacy_FASTA;
+
+        RETURN;
+
+    End If;
 
 /*
     RAISE INFO 'InstrumentClass: %',   _predefineInfo.InstrumentClassCriteria;
@@ -214,7 +242,7 @@ BEGIN
                            ELSE format(' (Exclude "%s")', _predefineInfo.ExperimentExclCriteria)
                       END)::citext AS Experiment,
                _predefineInfo.OrganismNameCriteria::citext AS Organism,
-                format('%s%s',
+               format('%s%s',
                       _predefineInfo.LabellingInclCriteria,
                       CASE WHEN _predefineInfo.LabellingExclCriteria = ''
                            THEN ''
@@ -231,6 +259,32 @@ BEGIN
                format('Matching datasets: %s', _datasetCount)::citext AS Settings_File,
                format('Oldest dataset date: %s', public.timestamp_text(_datasetDateMin))::citext AS Protein_Collections,
                format('Newest dataset date: %s', public.timestamp_text(_datasetDateMax))::citext AS Legacy_FASTA;
+
+        RETURN;
+    End If;
+
+    If _sqlWhere = ' WHERE true' Then
+
+        RETURN QUERY
+        SELECT format('Warning: predefined rule ID %s does not have any filter criteria and would thus match every dataset', _ruleID)::citext AS Dataset,
+               0 As Dataset_ID,
+               ''::citext AS Instrument_Class,
+               ''::citext AS Instrument,
+               ''::citext AS Campaign,
+               ''::citext AS Experiment,
+               ''::citext AS Organism,
+               ''::citext AS Experiment_Labelling,
+               ''::citext AS Experiment_Comment,
+               ''::citext AS Dataset_Comment,
+               ''::citext AS Dataset_Type,
+               0::smallint AS Dataset_Rating_ID,
+               ''::citext AS Dataset_Rating,
+               ''::citext AS Separation_Type,
+               ''::citext AS Analysis_Tool,
+               ''::citext AS Parameter_File,
+               ''::citext AS Settings_File,
+               ''::citext AS Protein_Collections,
+               ''::citext AS Legacy_FASTA;
 
         RETURN;
     End If;
