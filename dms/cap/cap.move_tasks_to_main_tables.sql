@@ -19,10 +19,10 @@ CREATE OR REPLACE PROCEDURE cap.move_tasks_to_main_tables(INOUT _message text, I
 **    _message      Output: status message
 **    _returnCode   Output: return code
 **    _debugMode    When true, store the contents of the temp tables in the following tables (auto-created if missing)
-**                    cap.T_Tmp_New_Jobs
-**                    cap.T_Tmp_New_Job_Steps
-**                    cap.T_Tmp_New_Job_Step_Dependencies
-**                    cap.T_Tmp_New_Job_Parameters
+**                    cap.T_Tmp_New_Tasks
+**                    cap.T_Tmp_New_Task_Steps
+**                    cap.T_Tmp_New_Task_Step_Dependencies
+**                    cap.T_Tmp_New_Task_Parameters
 **
 **  Auth:   grk
 **  Date:   02/06/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/720)
@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE cap.move_tasks_to_main_tables(INOUT _message text, I
 **          03/07/2023 mem - Rename column in temporary table
 **          04/02/2023 mem - Rename procedure and functions
 **          05/12/2023 mem - Rename variables
+**          10/12/2023 mem - Rename debug tables to include "Task" instead of "Job"
 **
 *****************************************************/
 DECLARE
@@ -55,17 +56,17 @@ BEGIN
 
         -- Store the contents of the temporary tables in persistent tables
         --
-        DROP TABLE IF EXISTS cap.T_Tmp_New_Jobs;
-        DROP TABLE IF EXISTS cap.T_Tmp_New_Job_Steps;
-        DROP TABLE IF EXISTS cap.T_Tmp_New_Job_Step_Dependencies;
-        DROP TABLE IF EXISTS cap.T_Tmp_New_Job_Parameters;
+        DROP TABLE IF EXISTS cap.T_Tmp_New_Tasks;
+        DROP TABLE IF EXISTS cap.T_Tmp_New_Task_Steps;
+        DROP TABLE IF EXISTS cap.T_Tmp_New_Task_Step_Dependencies;
+        DROP TABLE IF EXISTS cap.T_Tmp_New_Task_Parameters;
 
-        CREATE TABLE cap.T_Tmp_New_Jobs AS SELECT * FROM Tmp_Jobs;
-        CREATE TABLE cap.T_Tmp_New_Job_Steps AS SELECT * FROM Tmp_Job_Steps;
-        CREATE TABLE cap.T_Tmp_New_Job_Step_Dependencies AS SELECT * FROM Tmp_Job_Step_Dependencies;
-        CREATE TABLE cap.T_Tmp_New_Job_Parameters AS SELECT * FROM Tmp_Job_Parameters;
+        CREATE TABLE cap.T_Tmp_New_Tasks AS SELECT * FROM Tmp_Jobs;
+        CREATE TABLE cap.T_Tmp_New_Task_Steps AS SELECT * FROM Tmp_Job_Steps;
+        CREATE TABLE cap.T_Tmp_New_Task_Step_Dependencies AS SELECT * FROM Tmp_Job_Step_Dependencies;
+        CREATE TABLE cap.T_Tmp_New_Task_Parameters AS SELECT * FROM Tmp_Job_Parameters;
 
-        RAISE INFO 'Stored temporary table contents in database tables T_Tmp_New_Jobs, T_Tmp_New_Job_Steps, etc.';
+        RAISE INFO 'Stored temporary table contents in database tables T_Tmp_New_Tasks, T_Tmp_New_Task_Steps, etc.';
     End If;
 
     ---------------------------------------------------

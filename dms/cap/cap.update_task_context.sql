@@ -19,10 +19,10 @@ CREATE OR REPLACE PROCEDURE cap.update_task_context(IN _bypassdms boolean DEFAUL
 **    _infoOnly                True to preview changes that would be made
 **    _debugMode               When true, show additional information when calling cap.create_task_steps (which calls cap.create_steps_for_task, cap.finish_task_creation, and cap.move_tasks_to_main_tables)
 **                             Additionally, cap.move_tasks_to_main_tables stores the contents of the temporary tables in the following tables when _infoOnly is false and _debugMode is true
-**                               cap.T_Tmp_New_Jobs
-**                               cap.T_Tmp_New_Job_Steps
-**                               cap.T_Tmp_New_Job_Step_Dependencies
-**                               cap.T_Tmp_New_Job_Parameters
+**                               cap.T_Tmp_New_Tasks
+**                               cap.T_Tmp_New_Task_Steps
+**                               cap.T_Tmp_New_Task_Step_Dependencies
+**                               cap.T_Tmp_New_Task_Parameters
 **
 **  Auth:   grk
 **  Date:   09/02/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
