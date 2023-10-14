@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE public.evaluate_predefined_analysis_rule(IN _minleve
 **          05/30/2023 mem - Use append_to_text() for string concatenation
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          10/13/2023 mem - Add missing _returnCode variable
 **
 *****************************************************/
 DECLARE
@@ -50,6 +51,7 @@ DECLARE
 
     _comment text;
     _ownerUsername text;
+    _returnCode text;
 
     _schedulingRulePriority int;
     _schedulingRuleID int;
