@@ -8,17 +8,14 @@ CREATE OR REPLACE FUNCTION public.get_instrument_archive_path_for_new_datasets(_
 /****************************************************
 **
 **  Desc:
-**      Returns the ID for the most appropriate archive path for
-**      the initial archive of new datasets uploaded for the given instrument
+**      Returns the ID for the most appropriate archive path for the initial archive of new datasets uploaded for the given instrument
 **
-**      If the Instrument has Auto_Define_Storage_Path enabled in
-**      T_Instrument_Name, will auto-define the archive path
-**      based on the current year and quarter
+**      If the Instrument has Auto_Define_Storage_Path enabled in T_Instrument_Name,
+**      will auto-define the archive path based on the current year and quarter
 **
-**      If _datasetID is defined, uses the Created value of the given dataset
-**      rather than the current date
+**      If _datasetID is defined, uses the Created value of the given dataset rather than the current date
 **
-**      If necessary, will call add_update_archive_path to auto-create an entry in T_Archive_Path
+**      If necessary, will call add_update_archive_path to auto-create an entry in T_Archive_Path;
 **      Optionally set _autoSwitchActiveArchive to false to not auto-update the system to use the
 **      archive path determined for future datasets for this instrument
 **
