@@ -10,7 +10,7 @@ CREATE TABLE public.t_instrument_name (
     source_path_id integer,
     storage_path_id integer,
     capture_method public.citext,
-    status public.citext DEFAULT 'active'::bpchar,
+    status public.citext DEFAULT 'Active'::public.citext NOT NULL,
     room_number public.citext,
     description public.citext,
     usage public.citext DEFAULT ''::public.citext NOT NULL,
