@@ -446,7 +446,7 @@ BEGIN
     If Coalesce(_batchID, 0) > 0 Then
         CALL public.update_cached_requested_run_batch_stats (
                         _batchID,
-                        _fullrefresh => false,
+                        _fullRefresh => false,
                         _message     => _msg,           -- Output
                         _returnCode  => _returnCode);   -- Output
 

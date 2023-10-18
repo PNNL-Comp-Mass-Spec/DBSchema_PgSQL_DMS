@@ -822,7 +822,7 @@ BEGIN
             If _sourceRequestBatchID > 0 Then
                 CALL public.update_cached_requested_run_batch_stats (
                                 _sourceRequestBatchID,
-                                _fullrefresh => false,
+                                _fullRefresh => false,
                                 _message     => _msg,            -- Output
                                 _returnCode  => _returnCode);    -- Output
 

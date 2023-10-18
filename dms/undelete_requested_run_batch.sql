@@ -167,7 +167,7 @@ BEGIN
 
     CALL public.update_cached_requested_run_batch_stats (
             _batchID,
-            _fullrefresh => false,
+            _fullRefresh => false,
             _message     => _message2,      -- Output
             _returncode  => _returncode);   -- Output
 

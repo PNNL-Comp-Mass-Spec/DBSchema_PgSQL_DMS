@@ -417,7 +417,7 @@ BEGIN
         If _id > 0 Then
             CALL public.update_cached_requested_run_batch_stats (
                             _id,
-                            _fullrefresh => false,
+                            _fullRefresh => false,
                             _message     => _message,       -- Output
                             _returncode  => _returncode);   -- Output
 
