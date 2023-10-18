@@ -16,22 +16,22 @@ CREATE OR REPLACE FUNCTION public.try_cast(_in text, INOUT _out anyelement) RETU
 **          Note: this function uses an exception handler to catch conversion errors, and thus it should not be used when performance is an issue
 **
 **  Example usage:
-**      select _out from try_cast('2343', 0);                       -- 2343
-**      select _out from try_cast('2343', null::int);               -- 2343
-**      select _out from try_cast('2343.53', 0);                    -- 0 since '2343.53'::int throws an exception, then this function returns 0
-**      select _out from try_cast('2343.53', 0.0);                  -- 2343.53
-**      select _out from try_cast('test', 0);                       -- 0 since 'test'::int throws an exception, then this function returns 0
-**      select _out from try_cast('test', 5);                       -- 5 since 'test'::int throws an exception, then this function returns 5
-**      select _out from try_cast('true', false);                   -- true
-**      select _out from try_cast('na', false);                     -- false since 'na'::boolean throws an exception, then this function returns false
-**      select _out from try_cast(0::text, false);                  -- false since '0'::boolean is false
-**      select _out from try_cast(1::text, false);                  -- true  since '1'::boolean is true
-**      select _out from try_cast(2::text, false);                  -- false since '2'::boolean throws an exception, then this function returns false
-**      select _out from try_cast(2::text, true);                   -- true  since '2'::boolean throws an exception,  then this function returns true
-**      select _out from try_cast(null, 0);                         -- null
-**      select _out from try_cast('2022-01-01', null::timestamp);   -- 2022-01-01
-**      select _out from try_cast('2022-01-01', CURRENT_DATE);      -- 2022-01-01
-**      select _out from try_cast('invalid', CURRENT_DATE);         -- The value of CURRENT_DATE (e.g. 2023-10-02), since 'invalid'::timestamp throws an exception
+**      SELECT _out FROM try_cast('2343', 0);                       -- 2343
+**      SELECT _out FROM try_cast('2343', null::int);               -- 2343
+**      SELECT _out FROM try_cast('2343.53', 0);                    -- 0 since '2343.53'::int throws an exception, then this function returns 0
+**      SELECT _out FROM try_cast('2343.53', 0.0);                  -- 2343.53
+**      SELECT _out FROM try_cast('test', 0);                       -- 0 since 'test'::int throws an exception, then this function returns 0
+**      SELECT _out FROM try_cast('test', 5);                       -- 5 since 'test'::int throws an exception, then this function returns 5
+**      SELECT _out FROM try_cast('true', false);                   -- true
+**      SELECT _out FROM try_cast('na', false);                     -- false since 'na'::boolean throws an exception, then this function returns false
+**      SELECT _out FROM try_cast(0::text, false);                  -- false since '0'::boolean is false
+**      SELECT _out FROM try_cast(1::text, false);                  -- true  since '1'::boolean is true
+**      SELECT _out FROM try_cast(2::text, false);                  -- false since '2'::boolean throws an exception, then this function returns false
+**      SELECT _out FROM try_cast(2::text, true);                   -- true  since '2'::boolean throws an exception,  then this function returns true
+**      SELECT _out FROM try_cast(null, 0);                         -- null
+**      SELECT _out FROM try_cast('2022-01-01', null::timestamp);   -- 2022-01-01
+**      SELECT _out FROM try_cast('2022-01-01', CURRENT_DATE);      -- 2022-01-01
+**      SELECT _out FROM try_cast('invalid', CURRENT_DATE);         -- The value of CURRENT_DATE (e.g. 2023-10-02), since 'invalid'::timestamp throws an exception
 **
 **  Auth:   Erwin Brandstetter
 **  Date:   04/15/2022 mem - Initial version, from https://dba.stackexchange.com/a/203986/122858
@@ -67,28 +67,28 @@ CREATE OR REPLACE FUNCTION public.try_cast(_in text, _nullifinvalid boolean, INO
 **          Note: this function uses an exception handler to catch conversion errors, and thus it should not be used when performance is an issue
 **
 **  Example usage:
-**      select _out from try_cast('2343', false, 0);                       -- 2343
-**      select _out from try_cast('2343', false, null::int);               -- 2343
-**      select _out from try_cast('2343.53', false, 0);                    -- 0    since '2343.53'::int throws an exception, then this function returns 0
-**      select _out from try_cast('2343.53', true,  0);                    -- null since '2343.53'::int throws an exception, but _nullIfInvalid is true, so this function returns null
-**      select _out from try_cast('2343.53', false, 0.0);                  -- 2343.53
-**      select _out from try_cast('test', false, 0);                       -- 0    since 'test'::int throws an exception, then this function returns 0
-**      select _out from try_cast('test', true,  0);                       -- null since 'test'::int throws an exception, but _nullIfInvalid is true
-**      select _out from try_cast('test', false, 5);                       -- 5    since 'test'::int throws an exception, then this function returns 5
-**      select _out from try_cast('true', false, false);                   -- true
-**      select _out from try_cast('na', false, false);                     -- false since 'na'::boolean throws an exception, then this function returns false
-**      select _out from try_cast('na', true,  false);                     -- null  since 'na'::boolean throws an exception, but _nullIfInvalid is true
-**      select _out from try_cast(0::text, false, false);                  -- false since '0'::boolean is false
-**      select _out from try_cast(1::text, false, false);                  -- true  since '1'::boolean is true
-**      select _out from try_cast(2::text, false, false);                  -- false since '2'::boolean throws an exception, then this function returns false
-**      select _out from try_cast(2::text, false, true);                   -- true  since '2'::boolean throws an exception, then this function returns true
-**      select _out from try_cast(2::text, true, true);                    -- null  since '2'::boolean throws an exception, but _nullIfInvalid is true
-**      select _out from try_cast(null, false, 0);                         -- null
-**      select _out from try_cast(null, true,  0);                         -- null
-**      select _out from try_cast('2022-01-01', false, null::timestamp);   -- 2022-01-01
-**      select _out from try_cast('2022-01-01', false, CURRENT_DATE);      -- 2022-01-01
-**      select _out from try_cast('invalid', false, CURRENT_DATE);         -- The value of CURRENT_DATE (e.g. 2023-10-02), since 'invalid'::timestamp throws an exception and _nullIfInvalid is false
-**      select _out from try_cast('invalid', true,  CURRENT_DATE);         -- null since 'invalid'::timestamp throws an exception, but _nullIfInvalid is true
+**      SELECT _out FROM try_cast('2343', false, 0);                       -- 2343
+**      SELECT _out FROM try_cast('2343', false, null::int);               -- 2343
+**      SELECT _out FROM try_cast('2343.53', false, 0);                    -- 0    since '2343.53'::int throws an exception, then this function returns 0
+**      SELECT _out FROM try_cast('2343.53', true,  0);                    -- null since '2343.53'::int throws an exception, but _nullIfInvalid is true, so this function returns null
+**      SELECT _out FROM try_cast('2343.53', false, 0.0);                  -- 2343.53
+**      SELECT _out FROM try_cast('test', false, 0);                       -- 0    since 'test'::int throws an exception, then this function returns 0
+**      SELECT _out FROM try_cast('test', true,  0);                       -- null since 'test'::int throws an exception, but _nullIfInvalid is true
+**      SELECT _out FROM try_cast('test', false, 5);                       -- 5    since 'test'::int throws an exception, then this function returns 5
+**      SELECT _out FROM try_cast('true', false, false);                   -- true
+**      SELECT _out FROM try_cast('na', false, false);                     -- false since 'na'::boolean throws an exception, then this function returns false
+**      SELECT _out FROM try_cast('na', true,  false);                     -- null  since 'na'::boolean throws an exception, but _nullIfInvalid is true
+**      SELECT _out FROM try_cast(0::text, false, false);                  -- false since '0'::boolean is false
+**      SELECT _out FROM try_cast(1::text, false, false);                  -- true  since '1'::boolean is true
+**      SELECT _out FROM try_cast(2::text, false, false);                  -- false since '2'::boolean throws an exception, then this function returns false
+**      SELECT _out FROM try_cast(2::text, false, true);                   -- true  since '2'::boolean throws an exception, then this function returns true
+**      SELECT _out FROM try_cast(2::text, true, true);                    -- null  since '2'::boolean throws an exception, but _nullIfInvalid is true
+**      SELECT _out FROM try_cast(null, false, 0);                         -- null
+**      SELECT _out FROM try_cast(null, true,  0);                         -- null
+**      SELECT _out FROM try_cast('2022-01-01', false, null::timestamp);   -- 2022-01-01
+**      SELECT _out FROM try_cast('2022-01-01', false, CURRENT_DATE);      -- 2022-01-01
+**      SELECT _out FROM try_cast('invalid', false, CURRENT_DATE);         -- The value of CURRENT_DATE (e.g. 2023-10-02), since 'invalid'::timestamp throws an exception and _nullIfInvalid is false
+**      SELECT _out FROM try_cast('invalid', true,  CURRENT_DATE);         -- null since 'invalid'::timestamp throws an exception, but _nullIfInvalid is true
 **
 **  Auth:   Erwin Brandstetter
 **  Date:   04/15/2022 mem - Initial version, from https://dba.stackexchange.com/a/203986/122858
