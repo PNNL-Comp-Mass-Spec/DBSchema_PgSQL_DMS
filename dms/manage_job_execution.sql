@@ -25,7 +25,12 @@ CREATE OR REPLACE PROCEDURE public.manage_job_execution(IN _parameters text DEFA
 **            </jobs>
 **          </root>
 **
-**     Allowed values for action: state, priority, group
+**      Allowed values for action: state, priority, group
+**
+**      When the action is "state", allowed values are "Hold", "Release", or "Reset"
+**
+**      When the action is "group", this procedure passses the given processor group to procedure update_analysis_jobs_work(),
+**      but that procedure no longer supports processor groups, and the value will thus be ignored
 **
 **  Arguments:
 **   _parameters    XML with jobs to update and new values

@@ -450,6 +450,8 @@ BEGIN
 
     If _showRuntimeStats Then
 
+        RAISE INFO '';
+
         FOR _statInfo IN
             SELECT Entry_ID, Task, Runtime_Seconds::numeric
             FROM Tmp_Update_Stats

@@ -18,9 +18,9 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_datasets(_ruleid integer, 
 **
 **  Usage:
 **      SELECT * FROM predefined_analysis_datasets(1500, _infoOnly => true);
-**      SELECT * FROM predefined_analysis_datasets(1500, _infoOnly => true, _previewSQL => true)
-**      SELECT * FROM predefined_analysis_datasets(1500, _infoOnly => false, _previewSQL => true)
-**      SELECT * FROM predefined_analysis_datasets(1500, _infoOnly => false)
+**      SELECT * FROM predefined_analysis_datasets(1500, _infoOnly => true, _previewSQL => true);
+**      SELECT * FROM predefined_analysis_datasets(1500, _infoOnly => false, _previewSQL => true);
+**      SELECT * FROM predefined_analysis_datasets(1500, _infoOnly => false);
 **      SELECT * FROM predefined_analysis_datasets(1500, _populateTempTable => true);
 **
 **  Auth:   grk
