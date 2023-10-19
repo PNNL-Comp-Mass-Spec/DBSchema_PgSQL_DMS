@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE public.undelete_requested_run(IN _requestid integer,
 **          05/31/2023 mem - Use implicit string concatenation
 **                         - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
+**          10/18/2023 mem - Add support for a deleted requested run referencing a non-existent dataset
 **
 *****************************************************/
 DECLARE
@@ -31,6 +32,7 @@ DECLARE
     _entryID int;
     _batchID int;
     _eusPersonID int;
+    _datasetID int;
     _batchGroupID int;
     _deletedBatchEntryID int := 0;
     _deletedBatchGroupEntryID int := 0;
@@ -71,12 +73,13 @@ BEGIN
         RETURN;
     End If;
 
-    -- Verify that the deleted requested run exists, and lookup the batch ID and EUS person ID
+    -- Verify that the deleted requested run exists, and lookup the batch ID, EUS person ID, and dataset ID (which may be null)
     --
     SELECT Entry_ID,
            Batch_ID,
-           EUS_Person_Id
-    INTO _entryID, _batchID, _eusPersonID
+           EUS_Person_ID,
+           Dataset_ID
+    INTO _entryID, _batchID, _eusPersonID _datasetID
     FROM T_Deleted_Requested_Run
     WHERE Request_ID = _requestID
     ORDER BY Entry_Id DESC
@@ -164,6 +167,14 @@ BEGIN
         End If;
     End If;
 
+    ---------------------------------------------------
+    -- See if the deleted requested run references a deleted dataset
+    ---------------------------------------------------
+
+    If Not Exists (SELECT dataset_id FROM T_Dataset WHERE dataset_id = _datasetID) Then
+        _datasetID := null;
+    End If;
+
     BEGIN
         If _deletedBatchGroupEntryID > 0 Then
 
@@ -220,7 +231,7 @@ BEGIN
                Request_Run_Start, Request_Run_Finish, Request_Internal_Standard, Work_Package, Batch_Id,
                Blocking_Factor, Block, Run_Order, EUS_Proposal_Id, EUS_Usage_Type_Id,
                Cart_Id, Cart_Config_Id, Cart_Column, Separation_Group, Mrm_Attachment,
-               Dataset_Id, Origin, State_Name, Request_Name_Code, Vialing_Conc, Vialing_Vol, Location_Id,
+               _datasetID, Origin, State_Name, Request_Name_Code, Vialing_Conc, Vialing_Vol, Location_Id,
                Queue_State, Queue_Instrument_Id, Queue_Date, Entered, Updated, Updated_By
         FROM T_Deleted_Requested_Run
         WHERE Entry_ID = _entryID;
