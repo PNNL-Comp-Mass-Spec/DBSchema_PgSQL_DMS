@@ -54,6 +54,7 @@ CREATE OR REPLACE PROCEDURE public.unconsume_scheduled_run(IN _datasetname text,
 **          06/14/2019 mem - Change cart to Unknown when making the request active again
 **          10/23/2021 mem - If recycling a request with queue state 3 (Analyzed), change the queue state to 2 (Assigned)
 **          09/16/2023 mem - Ported to PostgreSQL
+**          10/18/2023 mem - Fix typo in format string
 **
 *****************************************************/
 DECLARE
@@ -118,7 +119,7 @@ BEGIN
 
     If Not FOUND Then
         -- Dataset does not have a requested run
-        _message := format('Dataset ID % does not have a requested run; nothing to unconsume', _datasetID);
+        _message := format('Dataset ID %s does not have a requested run; nothing to unconsume', _datasetID);
         RAISE INFO '%', _message;
         RETURN;
     End If;

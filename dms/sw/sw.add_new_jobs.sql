@@ -91,6 +91,7 @@ CREATE OR REPLACE PROCEDURE sw.add_new_jobs(IN _bypassdms boolean DEFAULT false,
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/11/2023 mem - Adjust capitalization of keywords
+**          10/18/2023 mem - Fix typo in format string
 **
 *****************************************************/
 DECLARE
@@ -315,7 +316,7 @@ BEGIN
     If _matchCount > 0 Then
         _jobCountToReset := _jobCountToReset + _matchCount;
 
-        _statusMessage := format('Resetting %s %s that %s In Progress, Failed, or Holding and % no completed or running job steps',
+        _statusMessage := format('Resetting %s %s that %s In Progress, Failed, or Holding and %s no completed or running job steps',
                                  _matchCount,
                                  public.check_plural(_matchCount, 'job', 'jobs'),
                                  public.check_plural(_matchCount, 'is',  'are'),
