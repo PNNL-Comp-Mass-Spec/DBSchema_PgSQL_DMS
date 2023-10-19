@@ -27,7 +27,9 @@ CREATE OR REPLACE PROCEDURE sw.manage_job_execution(IN _parameters text DEFAULT 
 **          </root>
 **
 **     Allowed values for action: state, priority, group
+**
 **     When the action is "state", the only allowed value is "Hold"
+**     In contrast, procedure public.manage_job_execution() supports "Hold", "Release", or "Reset"
 **
 **  Arguments
 **    _parameters   XML parameters
@@ -43,6 +45,7 @@ CREATE OR REPLACE PROCEDURE sw.manage_job_execution(IN _parameters text DEFAULT 
 **          05/05/2023 mem - Ported to PostgreSQL
 **          05/07/2023 mem - Remove unused variable
 **          09/13/2023 mem - Remove unnecessary delimiter argument when calling append_to_text()
+**          10/18/2023 mem - Drop temp table Tmp_JobList before exiting the procedure
 **
 *****************************************************/
 DECLARE
@@ -130,6 +133,8 @@ BEGIN
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5202';
+
+            DROP TABLE Tmp_JobList;
             RETURN;
         End If;
 
@@ -195,7 +200,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Call manage_job_execution to update the public schema
+    -- Call public.manage_job_execution to update the public schema
     ---------------------------------------------------
 
     CALL public.manage_job_execution (
