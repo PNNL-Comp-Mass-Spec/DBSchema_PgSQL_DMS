@@ -1,21 +1,21 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_sample_prep_request_items
-(
-    _samplePrepRequestID int,
-    _mode text = 'update',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_sample_prep_request_items(integer, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_sample_prep_request_items(IN _samplepreprequestid integer, IN _mode text DEFAULT 'update'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Automatically associates DMS entities with specified sample prep request
+**      Update T_Sample_Prep_Request_Items, which tracks cached DMS entities associated with the given sample prep request
+**
+**      This procedure is called by update_all_sample_prep_request_items for active sample prep requests
+**      It is also called for closed sample prep requests where the state was changed within the last year
 **
 **  Arguments:
-**    _mode   'update' or 'debug'
+**    _samplePrepRequestID      Sample prep request ID
+**    _mode                     Mode: 'update' or 'debug'
 **
 **  Auth:   grk
 **  Date:   07/05/2013 grk - Initial release
@@ -26,7 +26,8 @@ AS $$
 **          07/08/2022 mem - Change Item_ID from text to integer
 **                         - No longer clear the Created column for existing items
 **          03/08/2023 mem - Use new column name Sample_Prep_Requests in T_Prep_LC_Run
-**          12/15/2023 mem - Ported to PostgreSQL
+**          10/19/2023 mem - No longer clear the status field
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -87,13 +88,13 @@ BEGIN
         ---------------------------------------------------
 
         CREATE TEMP TABLE Tmp_PrepRequestItems (
-            ID int,
+            Prep_Request_ID int,
             Item_ID int,
             Item_Name text,
             Item_Type text,
             Status text,
             Created timestamp,
-            Marked text NOT NULL DEFAULT 'N'        -- All items are initially flagged with 'N', meaning not defined in the database; this is later changed to 'Y' or 'D'
+            Marked text NOT NULL DEFAULT 'N'        -- All items are initially flagged with 'N', meaning not present in T_Sample_Prep_Request_Items; this is later changed to 'Y' or 'D'
         );
 
         ---------------------------------------------------
@@ -101,9 +102,9 @@ BEGIN
         -- into staging table
         ---------------------------------------------------
 
-        -- Biomaterial (unused since April 2017, but still tracked)
+        -- Biomaterial (unused by prep requests since April 2017, but still tracked)
         --
-        INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
+        INSERT INTO Tmp_PrepRequestItems (Prep_Request_ID, Item_ID, Item_Name, Item_Type, Status, Created)
         SELECT SPR.prep_request_id,
                B.Biomaterial_ID AS Item_ID,
                TL.Item AS Item_Name,
@@ -155,7 +156,7 @@ BEGIN
         --
         INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
         SELECT DISTINCT SPR.prep_request_id,
-                        MC.prep_request_id AS Item_ID,
+                        MC.container_id AS Item_ID,
                         MC.container AS Item_Name,
                         'material_container' AS Item_Type,
                         MC.status,
@@ -164,15 +165,15 @@ BEGIN
              INNER JOIN t_experiments E
                ON SPR.prep_request_id = E.sample_prep_request_id
              INNER JOIN t_material_containers MC
-               ON E.container_id = MC.prep_request_id
+               ON E.container_id = MC.container_id
         WHERE SPR.prep_request_id = _samplePrepRequestID AND
-              MC.prep_request_id > 1;
+              MC.container_id > 1;
 
         -- Requested runs
         --
         INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
         SELECT SPR.prep_request_id,
-               RR.prep_request_id AS Item_ID,
+               RR.request_id AS Item_ID,
                RR.request_name AS Item_Name,
                'requested_run' AS Item_Type,
                RR.state_name AS Status,
@@ -182,7 +183,7 @@ BEGIN
                ON SPR.prep_request_id = E.sample_prep_request_id
              INNER JOIN t_requested_run RR
                ON E.exp_id = RR.exp_id
-        WHERE SPR.prep_request_id = _samplePrepRequestID
+        WHERE SPR.prep_request_id = _samplePrepRequestID;
 
         -- Datasets
         --
@@ -200,24 +201,24 @@ BEGIN
                ON E.exp_id = DS.exp_id
              INNER JOIN t_dataset_state_name DSN
                ON DS.dataset_state_id = DSN.dataset_state_id
-        WHERE SPR.prep_request_id = _samplePrepRequestID
+        WHERE SPR.prep_request_id = _samplePrepRequestID;
 
         -- HPLC Runs - Reference to sample prep request IDs in comma delimited list in text field
         --
         INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
-        SELECT _samplePrepRequestID AS ID,
+        SELECT _samplePrepRequestID AS Prep_Request_ID,
                Item_ID,
                Item_Name,
                'prep_lc_run' AS Item_Type,
                '' AS Status,
-               created
+               Created
         FROM ( SELECT LCRun.prep_run_id AS Item_ID,
                       LCRun.comment As Item_Name,
                       TL.value AS SPR_ID,
-                      LCRun.created
+                      LCRun.Created
                FROM t_prep_lc_run LCRun
                     INNER JOIN LATERAL public.parse_delimited_integer_list(LCRun.sample_prep_requests) As TL On true
-               WHERE sample_prep_requests ILIKE '%' || _samplePrepRequestID::text || '%'
+               WHERE sample_prep_requests LIKE '%' || _samplePrepRequestID::text || '%'
              ) TX
         WHERE TX.SPR_ID = _samplePrepRequestID;
 
@@ -228,27 +229,26 @@ BEGIN
         UPDATE Tmp_PrepRequestItems TPRI
         SET Marked = 'Y'
         FROM t_sample_prep_request_items I
-        WHERE I.prep_request_item_id = TPRI.prep_request_item_id AND
-              I.item_id = TPRI.item_id AND
-              I.item_type = TPRI.item_type;
+        WHERE I.prep_request_id = TPRI.prep_request_id AND
+              I.item_id         = TPRI.item_id AND
+              I.item_type       = TPRI.item_type;
 
         ---------------------------------------------------
-        -- Mark items for delete that are already in database
-        -- but are not in staging table
+        -- Mark items that should be deleted from T_Sample_Prep_Request_Items
         ---------------------------------------------------
 
-        INSERT INTO Tmp_PrepRequestItems (prep_request_item_id, item_id, item_type, Marked)
-        SELECT I.prep_request_item_id,
+        INSERT INTO Tmp_PrepRequestItems (prep_request_id, item_id, item_type, Marked)
+        SELECT I.prep_request_id,
                I.item_id,
                I.item_type,
                'D' AS Marked
         FROM t_sample_prep_request_items I
-        WHERE prep_request_item_id = _samplePrepRequestID
+        WHERE prep_request_id = _samplePrepRequestID
               AND NOT EXISTS ( SELECT 1
                                FROM Tmp_PrepRequestItems TPRI
-                               WHERE I.prep_request_item_id = TPRI.prep_request_item_id AND
-                                     I.item_id = TPRI.item_id AND
-                                     I.item_type = TPRI.item_type );
+                               WHERE I.prep_request_id = TPRI.prep_request_id AND
+                                     I.item_id         = TPRI.item_id AND
+                                     I.item_type       = TPRI.item_type );
 
         ---------------------------------------------------
         -- Update database
@@ -257,18 +257,18 @@ BEGIN
         If _mode = 'update' Then
 
             ---------------------------------------------------
-            -- Insert unmarked items into table
+            -- Add new items
             ---------------------------------------------------
 
             INSERT INTO t_sample_prep_request_items (
-                prep_request_item_id,
+                prep_request_id,
                 item_id,
                 item_name,
                 item_type,
                 status,
                 created
             )
-            SELECT prep_request_item_id,
+            SELECT prep_request_id,
                    item_id,
                    item_name,
                    item_type,
@@ -277,47 +277,37 @@ BEGIN
             FROM Tmp_PrepRequestItems
             WHERE Marked = 'N';
 
-            ---------------------------------------------------
-            -- Clear the status of marked items
-            ---------------------------------------------------
-
-            UPDATE t_sample_prep_request_items
-            SET Status = ''
-            FROM Tmp_PrepRequestItems TPRI
-            WHERE I.ID = TPRI.ID AND
-                  I.Item_ID = TPRI.Item_ID AND
-                  I.Item_Type = TPRI.Item_Type AND
-                  TPRI.Marked = 'Y' And char_length(Coalesce(I.Status, '')) > 0;
 
             ---------------------------------------------------
-            -- Update the Created date for marked items (if not correct)
+            -- Update the Created date and Status for existing items (if not correct)
             ---------------------------------------------------
 
             UPDATE t_sample_prep_request_items I
-            SET created = TPRI.created
+            SET created = TPRI.created,
+                status = TPRI.Status
             FROM Tmp_PrepRequestItems TPRI
-            WHERE I.ID = TPRI.ID AND
-                  I.Item_ID = TPRI.Item_ID AND
-                  I.Item_Type = TPRI.Item_Type AND
-                  TPRI.Marked = 'Y' AND
-                  ( I.Created Is Null And Not TPRI.Created Is Null OR
-                    I.Created <> TPRI.Created);
+            WHERE I.prep_request_id = TPRI.Prep_Request_ID AND
+                  I.item_id         = TPRI.Item_ID AND
+                  I.item_type       = TPRI.Item_Type AND
+                  TPRI.Marked       = 'Y' AND
+                  ( I.Created Is Null And Not TPRI.Created Is Null Or I.Created <> TPRI.Created OR
+                    I.Status Is Null And Not TPRI.Status Is Null Or I.Status <> TPRI.Status);
 
             ---------------------------------------------------
-            -- Delete marked items from database
+            -- Delete extra items from table
             ---------------------------------------------------
 
-            DELETE FROM t_sample_prep_request_items
+            DELETE FROM t_sample_prep_request_items I
             WHERE EXISTS (SELECT 1
                           FROM Tmp_PrepRequestItems TPRI
-                          WHERE t_sample_prep_request_items.prep_request_item_id = TPRI.prep_request_item_id AND
-                                t_sample_prep_request_items.item_id = TPRI.item_id                           AND
-                                t_sample_prep_request_items.item_type = TPRI.item_type                       AND
+                          WHERE I.prep_request_id = TPRI.prep_request_id AND
+                                I.item_id         = TPRI.item_id         AND
+                                I.item_type       = TPRI.item_type       AND
                                 TPRI.Marked = 'D'
             );
 
             ---------------------------------------------------
-            -- Update item counts
+            -- Update item counts in T_Sample_Prep_Request
             ---------------------------------------------------
 
             CALL public.update_sample_prep_request_item_count (_samplePrepRequestID);
@@ -328,10 +318,10 @@ BEGIN
 
             RAISE INFO '';
 
-            _formatSpecifier := '%-9s %-9s %-80s %-20s %-15s %-20s %-6s';
+            _formatSpecifier := '%-15s %-9s %-80s %-20s %-15s %-20s %-6s';
 
             _infoHead := format(_formatSpecifier,
-                                'ID',
+                                'Prep_Request_ID',
                                 'Item_ID',
                                 'Item_Name',
                                 'Item_Type',
@@ -354,7 +344,7 @@ BEGIN
             RAISE INFO '%', _infoHeadSeparator;
 
             FOR _previewData IN
-                SELECT ID,
+                SELECT Prep_Request_ID,
                        Item_ID,
                        Item_Name,
                        Item_Type,
@@ -365,7 +355,7 @@ BEGIN
                 ORDER BY Marked, Item_Type, Item_Name
             LOOP
                 _infoData := format(_formatSpecifier,
-                                    _previewData.ID,
+                                    _previewData.Prep_Request_ID,
                                     _previewData.Item_ID,
                                     _previewData.Item_Name,
                                     _previewData.Item_Type,
@@ -378,6 +368,9 @@ BEGIN
             END LOOP;
 
         End If;
+
+        DROP TABLE Tmp_PrepRequestItems;
+        RETURN;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -400,4 +393,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_sample_prep_request_items IS 'UpdateSamplePrepRequestItems';
+
+ALTER PROCEDURE public.update_sample_prep_request_items(IN _samplepreprequestid integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_sample_prep_request_items(IN _samplepreprequestid integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_sample_prep_request_items(IN _samplepreprequestid integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UpdateSamplePrepRequestItems';
+
