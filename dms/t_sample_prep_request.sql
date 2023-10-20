@@ -47,7 +47,6 @@ CREATE TABLE public.t_sample_prep_request (
     block_and_randomize_samples public.citext,
     block_and_randomize_runs public.citext,
     reason_for_high_priority public.citext,
-    sample_submission_item_count integer,
     biomaterial_item_count integer,
     experiment_item_count integer,
     experiment_group_item_count integer,
