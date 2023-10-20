@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_sample_prep_request_items_list_report AS
- SELECT t_sample_prep_request_items.prep_request_item_id AS id,
+ SELECT t_sample_prep_request_items.prep_request_id AS id,
     t_sample_prep_request_items.item_id,
     t_sample_prep_request_items.item_name,
     t_sample_prep_request_items.item_type,
