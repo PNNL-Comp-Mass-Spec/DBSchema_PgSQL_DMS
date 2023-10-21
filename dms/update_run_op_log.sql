@@ -1,13 +1,10 @@
+--
+-- Name: update_run_op_log(text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
 
-CREATE OR REPLACE PROCEDURE public.update_run_op_log
-(
-    _changes text,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+CREATE OR REPLACE PROCEDURE public.update_run_op_log(IN _changes text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -41,17 +38,17 @@ DECLARE
     _authorized boolean;
 
     _logErrors boolean := true;
-    _xml XML;
-    _autoPopulateUserListIfBlank boolean := true,
+    _xml xml;
+    _autoPopulateUserListIfBlank boolean := true;
     _requestID int;
-    _eusUsageTypeID int,
-    _eusUsageType text,
-    _eusProposalID text,
-    _eusUsersList text,
-    _statusID int
+    _eusUsageTypeID int;
+    _eusUsageType text;
+    _eusProposalID text;
+    _eusUsersList text;
+    _statusID int;
     _msg text;
     _comment text;
-    _invalidUsage int := 0;     -- leave as an integer since add_update_run_interval is called from a web page
+    _invalidUsage int := 0;     -- Leave as an integer since add_update_run_interval is called from a web page
     _invalidEntries int := 0;
     _alterEnteredByMessage text;
 
@@ -89,7 +86,7 @@ BEGIN
 
         If _xml Is Null Then
             _message := 'Unable to convert text in _changes to XML';
-            REPORT WARNING '%', _message;
+            RAISE WARNING '%', _message;
 
             _returnCode := 'U5201';
             RETURN;
@@ -147,7 +144,7 @@ BEGIN
             FROM ( SELECT ('<updates>' || _xml::text || '</updates>')::xml as rooted_xml ) Src,
                  XMLTABLE('//updates/interval'
                           PASSING Src.rooted_xml
-                          COLUMNS request citext PATH '@id',
+                          COLUMNS request int PATH '@id',
                                   note citext PATH '@note')
              ) XmlQ;
 
@@ -155,10 +152,9 @@ BEGIN
         -- Loop through requested run changes, validate, and update
         -----------------------------------------------------------
 
-        FOR
+        FOR _requestID, _eusUsageType, _eusProposalID, _eusUsersList, _statusID IN
             SELECT request, usage, proposal, emsl_user, statusID
-            INTO _requestID, _eusUsageType, _eusProposalID, _eusUsersList, _statusID
-            FROM Tmp_IntervalUpdates
+            FROM Tmp_RequestedRunUsageInfo
             ORDER BY request
         LOOP
             CALL public.validate_eus_usage (
@@ -212,27 +208,26 @@ BEGIN
         -- Loop though long intervals and update
         ---------------------------------------------------
 
-        FOR
+        FOR _requestID, _comment IN
             SELECT id, note
-            INTO _requestID, _comment
             FROM Tmp_IntervalUpdates
             ORDER BY id
         LOOP
             CALL public.add_update_run_interval (
-                                        _requestID,
-                                        _comment,
-                                        'update',
-                                        _message      => _msg,              -- Output
-                                        _returnCode   => _returnCode,       -- Output
-                                        _callingUser  => _callingUser,
-                                        _showDebug    => false,
-                                        _invalidUsage => _invalidUsage);    -- Output
+                            _requestID,
+                            _comment,
+                            'update',
+                            _message      => _msg,              -- Output
+                            _returnCode   => _returnCode,       -- Output
+                            _callingUser  => _callingUser,
+                            _showDebug    => false,
+                            _invalidUsage => _invalidUsage);    -- Output
 
             If _invalidUsage > 0 Then
                 -- Update _message then continue to the next item
                 _message := public.append_to_text(_message, _msg);
                 _invalidEntries := _invalidEntries + 1;
-            ElsIf _returnCode <> ''
+            ElsIf _returnCode <> '' Then
                 RAISE EXCEPTION 'add_update_run_interval: %', _msg;
             End If;
 
@@ -279,4 +274,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_run_op_log IS 'UpdateRunOpLog';
+
+ALTER PROCEDURE public.update_run_op_log(IN _changes text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_run_op_log(IN _changes text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_run_op_log(IN _changes text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UpdateRunOpLog';
+
