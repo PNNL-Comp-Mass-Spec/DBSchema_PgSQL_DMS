@@ -6,8 +6,8 @@ CREATE VIEW public.v_experiment_group_members_list_report AS
  SELECT e.experiment,
     e.exp_id AS id,
         CASE
-            WHEN (eg.parent_exp_id = e.exp_id) THEN 'Parent'::text
-            ELSE 'Child'::text
+            WHEN (eg.parent_exp_id = e.exp_id) THEN 'Parent'::public.citext
+            ELSE 'Child'::public.citext
         END AS member,
     e.researcher_username AS researcher,
     org.organism,

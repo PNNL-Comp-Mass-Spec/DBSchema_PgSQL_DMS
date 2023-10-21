@@ -6,8 +6,8 @@ CREATE VIEW public.v_instrument_allocation_list_report AS
  SELECT sumq.fiscal_year,
     sumq.proposal_id,
         CASE
-            WHEN (char_length((ep.title)::text) > 32) THEN ("left"((ep.title)::text, 32) || '...'::text)
-            ELSE (ep.title)::text
+            WHEN (char_length((ep.title)::text) > 32) THEN (((("left"((ep.title)::text, 32))::public.citext)::text || ('...'::public.citext)::text))::public.citext
+            ELSE ep.title
         END AS title,
     sn.state_name AS status,
     generalq.general,

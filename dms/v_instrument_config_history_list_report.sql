@@ -8,8 +8,8 @@ CREATE VIEW public.v_instrument_config_history_list_report AS
     (h.date_of_change)::date AS date_of_change,
     h.description,
         CASE
-            WHEN (char_length((h.note)::text) <= 150) THEN (h.note)::text
-            ELSE ("left"((h.note)::text, 150) || ' (more...)'::text)
+            WHEN (char_length((h.note)::text) <= 150) THEN h.note
+            ELSE (((("left"((h.note)::text, 150))::public.citext)::text || (' (more...)'::public.citext)::text))::public.citext
         END AS note,
     h.entered,
         CASE

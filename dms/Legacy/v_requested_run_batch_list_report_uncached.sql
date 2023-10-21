@@ -15,10 +15,10 @@ CREATE VIEW public.v_requested_run_batch_list_report_uncached AS
         CASE
             WHEN (completed_requests.runs > 0) THEN
             CASE
-                WHEN (completed_requests.instrumentfirst OPERATOR(public.=) completed_requests.instrumentlast) THEN (completed_requests.instrumentfirst)::text
-                ELSE (((completed_requests.instrumentfirst)::text || ' - '::text) || (completed_requests.instrumentlast)::text)
+                WHEN (completed_requests.instrumentfirst OPERATOR(public.=) completed_requests.instrumentlast) THEN (completed_requests.instrumentfirst)::public.citext
+                ELSE (((completed_requests.instrumentfirst)::public.citext || ' - '::public.citext) || (completed_requests.instrumentlast)::public.citext)
             END
-            ELSE ''::text
+            ELSE ''::public.citext
         END AS instrument,
     rrb.requested_instrument_group AS inst_group,
     rrb.description,
@@ -33,8 +33,8 @@ CREATE VIEW public.v_requested_run_batch_list_report_uncached AS
     rrb.justification_for_high_priority,
     rrb.comment,
         CASE
-            WHEN (active_req_runs.separation_group_first OPERATOR(public.=) active_req_runs.separation_group_last) THEN (active_req_runs.separation_group_first)::text
-            ELSE (((active_req_runs.separation_group_first)::text || ' - '::text) || (active_req_runs.separation_group_last)::text)
+            WHEN (active_req_runs.separation_group_first OPERATOR(public.=) active_req_runs.separation_group_last) THEN (active_req_runs.separation_group_first)::public.citext
+            ELSE (((active_req_runs.separation_group_first)::public.citext || ' - '::public.citext) || (active_req_runs.separation_group_last)::public.citext)
         END AS separation_group,
         CASE
             WHEN (active_req_runs.requests IS NULL) THEN 0
@@ -71,7 +71,7 @@ CREATE VIEW public.v_requested_run_batch_list_report_uncached AS
             max(qt.days_in_queue) AS days_in_prep_queue,
             sum(
                 CASE
-                    WHEN ((COALESCE(spr.block_and_randomize_runs, ''::citext) = 'yes'::citext) AND ((COALESCE(rr3.block, 0) = 0) OR (COALESCE(rr3.run_order, 0) = 0))) THEN 1
+                    WHEN ((COALESCE(spr.block_and_randomize_runs, ''::public.citext) = 'yes'::public.citext) AND ((COALESCE(rr3.block, 0) = 0) OR (COALESCE(rr3.run_order, 0) = 0))) THEN 1
                     ELSE 0
                 END) AS block_missing,
             sum(

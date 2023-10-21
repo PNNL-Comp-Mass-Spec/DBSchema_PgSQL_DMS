@@ -17,9 +17,9 @@ CREATE VIEW public.v_analysis_job_request_list_report AS
     ajr.protein_collection_list,
     ajr.protein_options_list AS protein_options,
         CASE
-            WHEN (COALESCE(ajr.data_pkg_id, 0) > 0) THEN ''::text
-            WHEN (ajr.dataset_min OPERATOR(public.=) ajr.dataset_max) THEN (ajr.dataset_min)::text
-            ELSE COALESCE((((ajr.dataset_min)::text || ', '::text) || (ajr.dataset_max)::text), (ajr.dataset_min)::text, (ajr.dataset_max)::text)
+            WHEN (COALESCE(ajr.data_pkg_id, 0) > 0) THEN ''::public.citext
+            WHEN (ajr.dataset_min OPERATOR(public.=) ajr.dataset_max) THEN ajr.dataset_min
+            ELSE COALESCE(((((((ajr.dataset_min)::text || (', '::public.citext)::text))::public.citext)::text || (ajr.dataset_max)::text))::public.citext, ajr.dataset_min, ajr.dataset_max)
         END AS datasets,
     ajr.data_pkg_id AS data_package,
     ajr.comment

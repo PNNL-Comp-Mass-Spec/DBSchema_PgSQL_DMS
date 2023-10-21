@@ -39,10 +39,10 @@ CREATE VIEW public.v_instrument_detail_report AS
     eusmapping.eus_instrument_name,
     eusmapping.local_instrument_name,
         CASE
-            WHEN (insttracking.reporting ~~ '%E%'::text) THEN 'EUS Primary Instrument'::text
-            WHEN (insttracking.reporting ~~ '%P%'::text) THEN 'Production operations role'::text
-            WHEN (insttracking.reporting ~~ '%T%'::text) THEN 'tracking flag enabled'::text
-            ELSE ''::text
+            WHEN (insttracking.reporting ~~ '%E%'::text) THEN 'EUS Primary Instrument'::public.citext
+            WHEN (insttracking.reporting ~~ '%P%'::text) THEN 'Production operations role'::public.citext
+            WHEN (insttracking.reporting ~~ '%T%'::text) THEN 'tracking flag enabled'::public.citext
+            ELSE ''::public.citext
         END AS usage_tracking_status,
     instname.default_purge_policy,
     instname.default_purge_priority,

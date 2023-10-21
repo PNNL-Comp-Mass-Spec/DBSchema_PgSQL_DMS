@@ -5,7 +5,7 @@
 CREATE VIEW public.v_active_users AS
  SELECT t_users.username,
     t_users.name,
-    ((((t_users.name)::text || ' ('::text) || (t_users.username)::text) || ')'::text) AS name_with_username
+    (((((t_users.name)::text || (' ('::public.citext)::text) || (t_users.username)::text) || (')'::public.citext)::text))::public.citext AS name_with_username
    FROM public.t_users
   WHERE (t_users.status OPERATOR(public.=) 'Active'::public.citext);
 

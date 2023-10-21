@@ -6,11 +6,11 @@ CREATE VIEW public.v_functions AS
  SELECT n.nspname AS schema,
     (p.proname)::public.citext AS name,
         CASE
-            WHEN (p.prokind = 'f'::"char") THEN 'function'::text
-            WHEN (p.prokind = 'p'::"char") THEN 'procedure'::text
-            WHEN (p.prokind = 'a'::"char") THEN 'aggregate function'::text
-            WHEN (p.prokind = 'w'::"char") THEN 'window function'::text
-            ELSE (p.prokind)::text
+            WHEN (p.prokind = 'f'::"char") THEN 'function'::public.citext
+            WHEN (p.prokind = 'p'::"char") THEN 'procedure'::public.citext
+            WHEN (p.prokind = 'a'::"char") THEN 'aggregate function'::public.citext
+            WHEN (p.prokind = 'w'::"char") THEN 'window function'::public.citext
+            ELSE (p.prokind)::public.citext
         END AS function_type,
     p.proargnames AS arguments,
     p.oid

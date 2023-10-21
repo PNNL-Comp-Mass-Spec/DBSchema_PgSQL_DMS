@@ -5,10 +5,10 @@
 CREATE VIEW public.v_analysis_job_and_dataset_archive_state AS
  SELECT j.job,
         CASE
-            WHEN ((j.job_state_id = 1) AND ((da.archive_state_id = ANY (ARRAY[3, 4, 10, 14, 15])) OR (da.archive_state_last_affected < (CURRENT_TIMESTAMP - '03:00:00'::interval)))) THEN (js.job_state)::text
-            WHEN ((j.job_state_id = 1) AND (da.archive_state_id < 3)) THEN ((js.job_state)::text || ' (Dataset Not Archived)'::text)
-            WHEN ((j.job_state_id = 1) AND (da.archive_state_id > 3)) THEN ((((js.job_state)::text || ' (Dataset '::text) || (dasn.archive_state)::text) || ')'::text)
-            ELSE (js.job_state)::text
+            WHEN ((j.job_state_id = 1) AND ((da.archive_state_id = ANY (ARRAY[3, 4, 10, 14, 15])) OR (da.archive_state_last_affected < (CURRENT_TIMESTAMP - '03:00:00'::interval)))) THEN js.job_state
+            WHEN ((j.job_state_id = 1) AND (da.archive_state_id < 3)) THEN (((js.job_state)::text || (' (Dataset Not Archived)'::public.citext)::text))::public.citext
+            WHEN ((j.job_state_id = 1) AND (da.archive_state_id > 3)) THEN (((((js.job_state)::text || (' (Dataset '::public.citext)::text) || (dasn.archive_state)::text) || (')'::public.citext)::text))::public.citext
+            ELSE js.job_state
         END AS job_state,
     COALESCE(dasn.archive_state, ''::public.citext) AS dataset_archive_state,
     j.dataset_id

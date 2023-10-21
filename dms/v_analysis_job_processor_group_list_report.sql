@@ -7,10 +7,10 @@ CREATE VIEW public.v_analysis_job_processor_group_list_report AS
     ajpg.group_name,
     ajpg.group_description,
     ajpg.group_enabled,
-    'Y'::text AS general_processing,
+    'Y'::public.citext AS general_processing,
     countq.enabled_procs_count AS enabled_procs,
     countq.disabled_procs_count AS disabled_procs,
-    public.get_aj_processor_group_associated_jobs(ajpg.group_id, 1) AS associated_jobs,
+    (public.get_aj_processor_group_associated_jobs(ajpg.group_id, 1))::public.citext AS associated_jobs,
     ajpg.group_created
    FROM (public.t_analysis_job_processor_group ajpg
      JOIN ( SELECT ajpg_1.group_id,

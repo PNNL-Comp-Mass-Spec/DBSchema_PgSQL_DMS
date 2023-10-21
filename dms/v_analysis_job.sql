@@ -7,7 +7,7 @@ CREATE VIEW public.v_analysis_job AS
     tool.analysis_tool AS tool,
     ds.dataset,
     dfp.dataset_folder_path AS dataset_storage_path,
-    (((dfp.dataset_folder_path)::text || '\'::text) || (j.results_folder_name)::text) AS results_folder_path,
+    ((((dfp.dataset_folder_path)::text || '\'::text) || (j.results_folder_name)::text))::public.citext AS results_folder_path,
     j.param_file_name,
     j.settings_file_name,
     tool.param_file_storage_path,

@@ -10,9 +10,9 @@ CREATE VIEW public.v_analysis_job_processor_group_detail_report AS
     ajpg.group_description,
     ajpg.group_created,
     COALESCE(countq.processor_count, (0)::bigint) AS members,
-    public.get_aj_processor_group_membership_list(ajpg.group_id, 1) AS enabled_processors,
-    public.get_aj_processor_group_membership_list(ajpg.group_id, 0) AS disabled_processors,
-    public.get_aj_processor_group_associated_jobs(ajpg.group_id, 2) AS associated_jobs
+    (public.get_aj_processor_group_membership_list(ajpg.group_id, 1))::public.citext AS enabled_processors,
+    (public.get_aj_processor_group_membership_list(ajpg.group_id, 0))::public.citext AS disabled_processors,
+    (public.get_aj_processor_group_associated_jobs(ajpg.group_id, 2))::public.citext AS associated_jobs
    FROM (public.t_analysis_job_processor_group ajpg
      LEFT JOIN ( SELECT ajpgm.group_id,
             count(ajpgm.processor_id) AS processor_count

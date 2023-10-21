@@ -10,7 +10,7 @@ CREATE VIEW public.v_charge_code_list_report AS
     cc.sub_account_title AS sub_account,
     cc.usage_sample_prep,
     cc.usage_requested_run,
-    COALESCE((dmsuser.username)::text, ('D'::text || (cc.resp_username)::text)) AS owner_username,
+    COALESCE((dmsuser.username)::text, (('D'::public.citext)::text || (cc.resp_username)::text)) AS owner_username,
     dmsuser.name AS owner_name,
     cc.setup_date,
     cc.sort_key,

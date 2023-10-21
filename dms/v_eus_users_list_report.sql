@@ -6,7 +6,7 @@ CREATE VIEW public.v_eus_users_list_report AS
  SELECT u.person_id AS id,
     u.name_fm AS name,
     ss.eus_site_status AS site_status,
-    public.get_eus_users_proposal_list(u.person_id) AS proposals,
+    (public.get_eus_users_proposal_list(u.person_id))::public.citext AS proposals,
     u.hid AS hanford_id,
     u.valid AS valid_eus_id,
     u.last_affected

@@ -16,7 +16,7 @@ UNION
  SELECT ds.dataset,
     ds.created AS dataset_created,
     t_instrument_name.instrument,
-    ((dasn.archive_state)::text || ' (archive)'::text) AS state,
+    (((dasn.archive_state)::text || (' (archive)'::public.citext)::text))::public.citext AS state,
     da.archive_state_last_affected AS state_date
    FROM ((((public.t_dataset_archive da
      JOIN public.t_dataset_archive_state_name dasn ON ((da.archive_state_id = dasn.archive_state_id)))
@@ -28,7 +28,7 @@ UNION
  SELECT ds.dataset,
     ds.created AS dataset_created,
     t_instrument_name.instrument,
-    ((ausn.archive_update_state)::text || ' (archive update)'::text) AS state,
+    (((ausn.archive_update_state)::text || (' (archive update)'::public.citext)::text))::public.citext AS state,
     da.archive_update_state_last_affected AS state_date
    FROM ((((public.t_dataset_archive da
      JOIN public.t_dataset_archive_state_name dasn ON ((da.archive_state_id = dasn.archive_state_id)))

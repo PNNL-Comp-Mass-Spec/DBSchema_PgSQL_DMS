@@ -12,8 +12,8 @@ CREATE VIEW public.v_enzymes_list_report AS
     t_enzymes.p2_exception AS right_exception,
     t_enzymes.cleavage_method,
         CASE
-            WHEN (t_enzymes.cleavage_offset = 0) THEN 'Cleave Before'::text
-            ELSE 'Cleave After'::text
+            WHEN (t_enzymes.cleavage_offset = 0) THEN 'Cleave Before'::public.citext
+            ELSE 'Cleave After'::public.citext
         END AS cleavage_offset,
     t_enzymes.protein_collection_name AS protein_collection,
     t_enzymes.comment

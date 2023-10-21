@@ -11,8 +11,8 @@ CREATE VIEW public.v_bionet_list_report AS
     h.last_online,
     h.comment,
         CASE
-            WHEN (char_length((h.instruments)::text) > 70) THEN ("left"((h.instruments)::text, 66) || ' ...'::text)
-            ELSE (h.instruments)::text
+            WHEN (char_length((h.instruments)::text) > 70) THEN (("left"((h.instruments)::text, 66) || (' ...'::public.citext)::text))::public.citext
+            ELSE h.instruments
         END AS instruments,
     t_yes_no.description AS active
    FROM (public.t_bionet_hosts h

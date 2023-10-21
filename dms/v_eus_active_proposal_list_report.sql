@@ -16,7 +16,7 @@ CREATE VIEW public.v_eus_active_proposal_list_report AS
                 ELSE sn.state_name
             END
         END AS state,
-    public.get_proposal_eus_users_list(p.proposal_id, 'L'::text, 100) AS user_last_names
+    (public.get_proposal_eus_users_list(p.proposal_id, 'L'::text, 100))::public.citext AS user_last_names
    FROM (public.t_eus_proposals p
      JOIN public.t_eus_proposal_state_name sn ON ((p.state_id = sn.state_id)))
   WHERE (p.state_id = ANY (ARRAY[2, 5]));

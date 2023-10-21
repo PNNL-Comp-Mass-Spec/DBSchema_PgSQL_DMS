@@ -8,7 +8,7 @@ CREATE VIEW public.v_aux_info_definition_with_allowed_values AS
     subcategory.aux_subcategory AS subcategory,
     item.aux_description AS item,
     item.aux_description_id AS item_id,
-    public.get_aux_info_allowed_values(item.aux_description_id) AS allowed_values,
+    (public.get_aux_info_allowed_values(item.aux_description_id))::public.citext AS allowed_values,
     category.sequence AS sc,
     subcategory.sequence AS ss,
     item.sequence AS si,

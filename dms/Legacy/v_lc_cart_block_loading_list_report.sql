@@ -7,9 +7,9 @@ CREATE VIEW public.v_lc_cart_block_loading_list_report AS
     rrb.batch,
     rr.block,
     count(rr.request_id) AS requests,
-    public.get_requested_run_block_cart_assignment(rr.batch_id, rr.block, 'cart'::text) AS cart,
-    public.get_requested_run_block_cart_assignment(rr.batch_id, rr.block, 'col'::text) AS col,
-    (((rr.batch_id)::text || '.'::text) || COALESCE((rr.block)::text, ''::text)) AS "#idx"
+    public.get_requested_run_block_cart_assignment(rr.batch_id, rr.block, 'cart'::text)::public.citext AS cart,
+    public.get_requested_run_block_cart_assignment(rr.batch_id, rr.block, 'col'::text)::public.citext AS col,
+    (((rr.batch_id)::public.citext || '.'::public.citext) || COALESCE((rr.block)::public.citext, ''::public.citext)) AS "#idx"
    FROM (public.t_requested_run rr
      JOIN public.t_requested_run_batches rrb ON ((rr.batch_id = rrb.batch_id)))
   WHERE ((rr.state_name OPERATOR(public.=) 'Active'::public.citext) AND (rr.batch_id <> 0))

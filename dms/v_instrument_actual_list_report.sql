@@ -7,9 +7,9 @@ CREATE VIEW public.v_instrument_actual_list_report AS
     COALESCE(usageq.proposal_id, '0'::public.citext) AS proposal_id,
     COALESCE(
         CASE
-            WHEN (char_length((ep.title)::text) > 32) THEN ("left"((ep.title)::text, 32) || '...'::text)
-            ELSE (ep.title)::text
-        END, '-No Proposal-'::text) AS title,
+            WHEN (char_length((ep.title)::text) > 32) THEN (((("left"((ep.title)::text, 32))::public.citext)::text || ('...'::public.citext)::text))::public.citext
+            ELSE ep.title
+        END, '-No Proposal-'::public.citext) AS title,
     sn.state_name AS status,
     usageq.ft_usage,
     usageq.ims_usage,

@@ -6,11 +6,11 @@ CREATE VIEW public.v_instrument_actual_montly_list_report AS
  SELECT usageq.year,
     usageq.month,
     COALESCE(usageq.proposal_id, '0'::public.citext) AS proposal_id,
-    COALESCE(
+    (COALESCE(
         CASE
-            WHEN (char_length((ep.title)::text) > 32) THEN ("left"((ep.title)::text, 32) || '...'::text)
+            WHEN (char_length((ep.title)::text) > 32) THEN ((("left"((ep.title)::text, 32))::public.citext)::text || ('...'::public.citext)::text)
             ELSE (ep.title)::text
-        END, '-No Proposal-'::text) AS title,
+        END, ('-No Proposal-'::public.citext)::text))::public.citext AS title,
     sn.state_name AS status,
     ((((((usageq.ft_actual + usageq.ims_actual) + usageq.orb_actual) + usageq.exa_actual) + usageq.ltq_actual) + usageq.gc_actual) + usageq.qqq_actual) AS total_actual,
     usageq.ft_actual,

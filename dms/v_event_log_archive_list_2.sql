@@ -6,7 +6,7 @@ CREATE VIEW public.v_event_log_archive_list_2 AS
  SELECT el.event_id,
     el.target_id AS dataset_id,
     t_dataset.dataset,
-    'Update'::text AS type,
+    'Update'::public.citext AS type,
     oldstate.archive_update_state AS old_state,
     newstate.archive_update_state AS new_state,
     el.entered AS date
@@ -19,7 +19,7 @@ UNION
  SELECT el.event_id,
     el.target_id AS dataset_id,
     t_dataset.dataset,
-    'Archive'::text AS type,
+    'Archive'::public.citext AS type,
     oldstate.archive_state AS old_state,
     newstate.archive_state AS new_state,
     el.entered AS date

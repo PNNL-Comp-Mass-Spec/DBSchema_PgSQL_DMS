@@ -9,7 +9,7 @@ CREATE VIEW public.v_get_pipeline_settings_files_as_text AS
     t_settings_files.description,
     t_settings_files.active,
     t_settings_files.last_updated,
-    (t_settings_files.contents)::text AS contents,
+    (t_settings_files.contents)::public.citext AS contents,
     t_settings_files.job_usage_count
    FROM public.t_settings_files;
 

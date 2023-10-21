@@ -7,7 +7,7 @@ CREATE VIEW public.v_analysis_job_processor_group_membership AS
     ajpg.group_name,
     ajpg.group_description,
     ajpg.group_enabled,
-    'Y'::text AS available_for_general_processing,
+    'Y'::public.citext AS available_for_general_processing,
     ajpgm.processor_id,
     ajp.processor_name,
     ajp.state,

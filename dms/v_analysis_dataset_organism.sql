@@ -6,7 +6,7 @@ CREATE VIEW public.v_analysis_dataset_organism AS
  SELECT ds.dataset,
     org.organism,
     org.organism_db_path AS client_path,
-    ''::text AS server_path
+    ''::public.citext AS server_path
    FROM ((public.t_dataset ds
      JOIN public.t_experiments ON ((ds.exp_id = t_experiments.exp_id)))
      JOIN public.t_organisms org ON ((t_experiments.organism_id = org.organism_id)));
