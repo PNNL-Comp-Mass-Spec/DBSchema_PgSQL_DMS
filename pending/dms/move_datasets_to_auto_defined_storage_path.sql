@@ -14,8 +14,7 @@ AS $$
 **      Updates the storage and archive locations for one or more datasets to use the
 **      auto-defined storage and archive paths instead of the current storage path
 **
-**      Only valid for Instruments that have Auto_Define_Storage_Path
-**      enabled in T_Instrument_Name
+**      Only valid for Instruments that have Auto_Define_Storage_Path enabled in T_Instrument_Name
 **
 **  Returns: The storage path ID; 0 if an error
 **
@@ -70,7 +69,7 @@ BEGIN
 
         INSERT INTO Tmp_Datasets (DatasetID)
         SELECT DISTINCT Value
-        FROM public.parse_delimited_integer_list(_datasetIDList, default)
+        FROM public.parse_delimited_integer_list(_datasetIDList)
 
         If Not FOUND Then
             _message := 'No values found in _datasetIDList; unable to continue';

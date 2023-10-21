@@ -31,7 +31,7 @@ AS $$
 **          08/02/2017 mem - Pass _invalidUsage to add_update_run_interval; continue updating long intervals if the usage info fails validation for a given entry
 **          06/12/2018 mem - Send _maxLength to Append_To_Text
 **          05/24/2022 mem - Do not call post_log_entry for errors of the form 'Total percentage (0) does not add up to 100 for ID 1017648'
-**          12/15/2023 mem - Ported to PostgreSQL
+**          10/20/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -51,7 +51,7 @@ DECLARE
     _statusID int
     _msg text;
     _comment text;
-    _invalidUsage int := 0;     -- Leave as an integer
+    _invalidUsage int := 0;     -- leave as an integer since add_update_run_interval is called from a web page
     _invalidEntries int := 0;
     _alterEnteredByMessage text;
 
@@ -105,8 +105,8 @@ BEGIN
             usage text NULL,
             proposal text NULL,
             emsl_user text NULL,
-            statusID int null
-        )
+            statusID int NULL
+        );
 
         INSERT INTO Tmp_RequestedRunUsageInfo (request, usage, proposal, emsl_user)
         SELECT XmlQ.request, XmlQ.usage, XmlQ.proposal, XmlQ.emsl_user
@@ -124,7 +124,7 @@ BEGIN
         -- Get current status of request (needed for change log updating)
         --
         UPDATE Tmp_RequestedRunUsageInfo
-        Set statusID = TRSN.State_ID
+        SET statusID = TRSN.State_ID
         FROM t_requested_run RR
              INNER JOIN t_requested_run_state_name TRSN
                ON RR.state_name = TRSN.state_name
@@ -138,7 +138,7 @@ BEGIN
         CREATE TEMP TABLE Tmp_IntervalUpdates (
             id int,
             note text
-        )
+        );
 
         INSERT INTO Tmp_IntervalUpdates (id, note)
         SELECT XmlQ.request, XmlQ.note
@@ -152,8 +152,7 @@ BEGIN
              ) XmlQ;
 
         -----------------------------------------------------------
-        -- Loop through requested run changes
-        -- and validate and update
+        -- Loop through requested run changes, validate, and update
         -----------------------------------------------------------
 
         FOR
@@ -249,6 +248,10 @@ BEGIN
 
             RAISE EXCEPTION '%', _msg;
         End If;
+
+        DROP TABLE Tmp_RequestedRunUsageInfo;
+        DROP TABLE Tmp_IntervalUpdates;
+        RETURN;
 
     EXCEPTION
         WHEN OTHERS THEN
