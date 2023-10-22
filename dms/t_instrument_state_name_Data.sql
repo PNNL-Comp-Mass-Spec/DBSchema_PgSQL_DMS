@@ -22,9 +22,9 @@ SET row_security = off;
 
 COPY public.t_instrument_state_name (state_name, description) FROM stdin;
 Active	Instrument is online and available to use
-Offline	Instrument is offline, but might be brought back online in the future
-Inactive	Instrument has been retired and will not be brought back online
 Broken	Instrument is broken, but might get repaired
+Inactive	Instrument has been retired and will not be brought back online
+Offline	Instrument is offline, but might be brought back online in the future
 PrepHPLC	Prep LC instrument that is in active use
 \.
 

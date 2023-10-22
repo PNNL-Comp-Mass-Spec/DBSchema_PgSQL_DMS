@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.1
+-- Dumped from database version 15.4
 -- Dumped by pg_dump version 15.1
 
 SET statement_timeout = 0;
@@ -32,7 +32,7 @@ COPY public.t_instrument_data_type_name (raw_data_type_id, raw_data_type_name, i
 9	bruker_maldi_spot	1		Directory has a .EMF file and a single sub-folder that has an acque file and fid file
 10	bruker_maldi_imaging	1		Dataset directory has a series of zip files with names like 0_R00X329.zip; each .Zip file has a series of subfolders with names like 0_R00X329Y309
 11	sciex_wiff_files	0	.Wiff	Each dataset has a .wiff file and a .wiff.scan file
-12	bruker_tof_baf	1	 	.D directory from Maxis instrument
+12	bruker_tof_baf	1		.D directory from Maxis instrument
 13	data_folders	1		Used for miscellaneous data files
 15	dot_mzml_files	0	.mzML	.mzML file
 16	ab_sequencing_folder	1		\N
