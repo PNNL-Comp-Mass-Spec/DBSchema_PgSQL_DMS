@@ -14,7 +14,7 @@ CREATE VIEW public.v_tracking_dataset_list_report AS
     ds.comment,
     eut.eus_usage_type AS emsl_usage_type,
     rr.eus_proposal_id AS emsl_proposal_id,
-    public.get_requested_run_eus_users_list(rr.request_id, 'I'::text) AS emsl_users_list
+    (public.get_requested_run_eus_users_list(rr.request_id, 'I'::text))::public.citext AS emsl_users_list
    FROM ((((((public.t_dataset ds
      JOIN public.t_experiments e ON ((ds.exp_id = e.exp_id)))
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))

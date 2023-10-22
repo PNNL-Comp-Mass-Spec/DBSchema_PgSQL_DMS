@@ -5,8 +5,8 @@
 CREATE VIEW mc.v_all_mgr_params_by_mgr_type AS
  SELECT DISTINCT tpt.mgr_type_id AS id,
         CASE
-            WHEN (mtpm.mgr_type_id IS NOT NULL) THEN 'TRUE'::text
-            ELSE ''::text
+            WHEN (mtpm.mgr_type_id IS NOT NULL) THEN 'TRUE'::public.citext
+            ELSE ''::public.citext
         END AS selected,
     tpt.param_id,
     tpt.param_name,

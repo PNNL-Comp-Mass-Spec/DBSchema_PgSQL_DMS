@@ -4,11 +4,11 @@
 
 CREATE VIEW public.v_instrument_info_lcmsnet AS
  SELECT i.instrument,
-    ((i.instrument)::text ||
+    (((i.instrument)::text || (
         CASE
-            WHEN (i.usage OPERATOR(public.=) ''::public.citext) THEN ''::text
-            ELSE (' '::text || (i.usage)::text)
-        END) AS name_and_usage,
+            WHEN (i.usage OPERATOR(public.=) ''::public.citext) THEN ''::public.citext
+            ELSE (((' '::public.citext)::text || (i.usage)::text))::public.citext
+        END)::text))::public.citext AS name_and_usage,
     i.instrument_group,
     i.status,
     tp.machine_name AS host_name,
@@ -17,7 +17,7 @@ CREATE VIEW public.v_instrument_info_lcmsnet AS
     i.capture_method
    FROM (public.t_instrument_name i
      JOIN public.t_storage_path tp ON ((i.source_path_id = tp.storage_path_id)))
-  WHERE ((i.instrument OPERATOR(public.!~) similar_to_escape('SW[_]%'::text)) AND (i.status OPERATOR(public.=) 'active'::public.citext) AND (i.operations_role OPERATOR(public.<>) 'QC'::public.citext));
+  WHERE ((i.instrument OPERATOR(public.!~) similar_to_escape(('SW[_]%'::public.citext)::text)) AND (i.status OPERATOR(public.=) 'active'::public.citext) AND (i.operations_role OPERATOR(public.<>) 'QC'::public.citext));
 
 
 ALTER TABLE public.v_instrument_info_lcmsnet OWNER TO d3l243;

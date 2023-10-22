@@ -15,10 +15,10 @@ CREATE VIEW public.v_requested_run_batch_list_report AS
         CASE
             WHEN (COALESCE(rbs.datasets, 0) > 0) THEN
             CASE
-                WHEN (rbs.instrument_first = rbs.instrument_last) THEN rbs.instrument_first
-                ELSE ((rbs.instrument_first || ' - '::text) || rbs.instrument_last)
+                WHEN (rbs.instrument_first = rbs.instrument_last) THEN (rbs.instrument_first)::public.citext
+                ELSE (((rbs.instrument_first || ' - '::text) || rbs.instrument_last))::public.citext
             END
-            ELSE ''::text
+            ELSE ''::public.citext
         END AS instrument,
     rrb.requested_instrument_group AS inst_group,
     rrb.description,
@@ -30,8 +30,8 @@ CREATE VIEW public.v_requested_run_batch_list_report AS
     rrb.justification_for_high_priority,
     rrb.comment,
         CASE
-            WHEN (rbs.separation_group_first = rbs.separation_group_last) THEN rbs.separation_group_first
-            ELSE ((rbs.separation_group_first || ' - '::text) || rbs.separation_group_last)
+            WHEN (rbs.separation_group_first = rbs.separation_group_last) THEN (rbs.separation_group_first)::public.citext
+            ELSE (((rbs.separation_group_first || ' - '::text) || rbs.separation_group_last))::public.citext
         END AS separation_group,
     rrb.batch_group_id AS batch_group,
     rrb.batch_group_order,

@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW dpkg.v_osm_package_picklist AS
- SELECT (((t_osm_package.osm_pkg_id)::text || chr(32)) || (t_osm_package.osm_package_name)::text) AS label,
+ SELECT (((((((t_osm_package.osm_pkg_id)::public.citext)::text || chr(32)))::public.citext)::text || (t_osm_package.osm_package_name)::text))::public.citext AS label,
     t_osm_package.osm_pkg_id AS value
    FROM dpkg.t_osm_package;
 

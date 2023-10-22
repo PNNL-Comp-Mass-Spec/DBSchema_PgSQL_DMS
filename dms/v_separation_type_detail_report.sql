@@ -11,8 +11,8 @@ CREATE VIEW public.v_separation_type_detail_report AS
     u.usage_all_years AS dataset_usage_all_years,
     u.most_recent_use,
         CASE
-            WHEN (ss.active = 1) THEN 'Active'::text
-            ELSE 'Inactive'::text
+            WHEN (ss.active = 1) THEN 'Active'::public.citext
+            ELSE 'Inactive'::public.citext
         END AS state,
     ss.separation_type_id AS id,
     ss.created

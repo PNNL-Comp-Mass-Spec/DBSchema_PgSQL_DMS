@@ -46,7 +46,7 @@ CREATE VIEW sw.v_pipeline_job_steps_list_report AS
     js.evaluation_code,
     js.evaluation_message,
     paramq.settings_file,
-    (paramq.dataset_storage_path || (j.dataset)::text) AS dataset_folder_path,
+    ((paramq.dataset_storage_path)::text || (j.dataset)::text) AS dataset_folder_path,
     js.next_try,
     js.retry_count,
     js.remote_info_id,
@@ -59,9 +59,9 @@ CREATE VIEW sw.v_pipeline_job_steps_list_report AS
      JOIN sw.t_job_state_name jsn ON ((j.state = jsn.job_state_id)))
      LEFT JOIN sw.t_processor_status ps ON ((js.processor OPERATOR(public.=) ps.processor_name)))
      LEFT JOIN ( SELECT src.job,
-            ((xpath('//params/Param[@Name = "SettingsFileName"]/@Value'::text, src.rooted_xml))[1])::text AS settings_file,
-            ((xpath('//params/Param[@Name = "ParamFileName"]/@Value'::text, src.rooted_xml))[1])::text AS parameter_file,
-            ((xpath('//params/Param[@Name = "DatasetStoragePath"]/@Value'::text, src.rooted_xml))[1])::text AS dataset_storage_path
+            ((xpath('//params/Param[@Name = "SettingsFileName"]/@Value'::text, src.rooted_xml))[1])::public.citext AS settings_file,
+            ((xpath('//params/Param[@Name = "ParamFileName"]/@Value'::text, src.rooted_xml))[1])::public.citext AS parameter_file,
+            ((xpath('//params/Param[@Name = "DatasetStoragePath"]/@Value'::text, src.rooted_xml))[1])::public.citext AS dataset_storage_path
            FROM ( SELECT t_job_parameters.job,
                     ((('<params>'::text || (t_job_parameters.parameters)::text) || '</params>'::text))::xml AS rooted_xml
                    FROM sw.t_job_parameters) src) paramq ON ((paramq.job = js.job)));

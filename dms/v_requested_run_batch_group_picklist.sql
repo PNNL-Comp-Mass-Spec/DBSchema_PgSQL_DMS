@@ -5,7 +5,7 @@
 CREATE VIEW public.v_requested_run_batch_group_picklist AS
  SELECT t_requested_run_batch_group.batch_group_id AS id,
     t_requested_run_batch_group.batch_group,
-    (((t_requested_run_batch_group.batch_group_id)::text || ': '::text) || (t_requested_run_batch_group.batch_group)::text) AS id_with_batch_group
+    (((((((t_requested_run_batch_group.batch_group_id)::public.citext)::text || (': '::public.citext)::text))::public.citext)::text || (t_requested_run_batch_group.batch_group)::text))::public.citext AS id_with_batch_group
    FROM public.t_requested_run_batch_group;
 
 

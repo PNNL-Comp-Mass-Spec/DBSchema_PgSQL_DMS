@@ -9,7 +9,7 @@ CREATE VIEW public.v_requested_run_batch_group_list_report AS
     statsq.requests,
     statsq.first_request,
     statsq.last_request,
-    public.get_batch_group_instrument_group_list(bg.batch_group_id) AS instrument_group,
+    (public.get_batch_group_instrument_group_list(bg.batch_group_id))::public.citext AS instrument_group,
     bg.description,
     t_users.name AS owner,
     bg.created

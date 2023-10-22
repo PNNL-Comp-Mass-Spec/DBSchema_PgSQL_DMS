@@ -57,7 +57,7 @@ CREATE VIEW public.v_run_planning_report AS
    FROM (((( SELECT requestq.inst_group,
             min(requestq.requestid) AS min_request,
             count(requestq.requestid) AS requests,
-            min(requestq.request_prefix) AS request_prefix,
+            public.min(requestq.request_prefix) AS request_prefix,
             requestq.requester,
             min(requestq.request_created) AS date_created,
             requestq.separation_group,
@@ -90,11 +90,11 @@ CREATE VIEW public.v_run_planning_report AS
                     rr.separation_group,
                     dtn.dataset_type AS ds_type,
                     rr.request_id AS requestid,
-                    ("left"((rr.request_name)::text, 20) ||
+                    (((("left"((rr.request_name)::text, 20))::public.citext)::text || (
                         CASE
-                            WHEN (char_length((rr.request_name)::text) > 20) THEN '...'::text
-                            ELSE ''::text
-                        END) AS request_prefix,
+                            WHEN (char_length((rr.request_name)::text) > 20) THEN '...'::public.citext
+                            ELSE ''::public.citext
+                        END)::text))::public.citext AS request_prefix,
                     rr.request_name_code,
                     rr.origin AS requestorigin,
                     u.name AS requester,
@@ -114,11 +114,11 @@ CREATE VIEW public.v_run_planning_report AS
                             WHEN (rr.queue_state = 2) THEN COALESCE(assignedinstrument.instrument, ''::public.citext)
                             ELSE ''::public.citext
                         END AS queued_instrument,
-                    ("left"((rrb.batch)::text, 20) ||
+                    (((("left"((rrb.batch)::text, 20))::public.citext)::text || (
                         CASE
-                            WHEN (char_length((rrb.batch)::text) > 20) THEN '...'::text
-                            ELSE ''::text
-                        END) AS batch_prefix,
+                            WHEN (char_length((rrb.batch)::text) > 20) THEN '...'::public.citext
+                            ELSE ''::public.citext
+                        END)::text))::public.citext AS batch_prefix,
                     (rrb.last_ordered)::date AS last_ordered,
                         CASE
                             WHEN (spr.prep_request_id = 0) THEN NULL::numeric

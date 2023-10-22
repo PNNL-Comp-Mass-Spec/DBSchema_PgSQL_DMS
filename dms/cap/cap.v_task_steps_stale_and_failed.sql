@@ -12,7 +12,7 @@ CREATE VIEW cap.v_task_steps_stale_and_failed AS
     (dataq.runtime_minutes)::integer AS runtime_minutes,
     round((dataq.job_progress)::numeric, 1) AS job_progress,
     dataq.runtime_predicted_hours,
-    dataq.state_name,
+    (dataq.state_name)::public.citext AS state_name,
     round(((dataq.last_cpu_status_minutes)::numeric / 60.0), 1) AS last_cpu_status_hours,
     dataq.processor,
     dataq.start,

@@ -9,8 +9,8 @@ CREATE VIEW sw.v_pipeline_script_list_report AS
     t_scripts.results_tag,
     t_scripts.script_id AS id,
         CASE
-            WHEN (t_scripts.backfill_to_dms = 0) THEN 'N'::text
-            ELSE 'Y'::text
+            WHEN (t_scripts.backfill_to_dms = 0) THEN 'N'::public.citext
+            ELSE 'Y'::public.citext
         END AS backfill_to_dms
    FROM sw.t_scripts;
 

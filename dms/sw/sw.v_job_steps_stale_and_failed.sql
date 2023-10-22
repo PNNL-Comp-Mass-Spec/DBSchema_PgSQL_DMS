@@ -9,7 +9,7 @@ CREATE VIEW sw.v_job_steps_stale_and_failed AS
     (round(dataq.runtime_minutes, 0))::integer AS runtime_minutes,
     round((dataq.job_progress)::numeric, 1) AS job_progress,
     dataq.runtime_predicted_hours,
-    dataq.state_name,
+    (dataq.state_name)::public.citext AS state_name,
     round(((dataq.last_cpu_status_minutes)::numeric / 60.0), 1) AS last_cpu_status_hours,
     dataq.processor,
     dataq.start,
@@ -21,13 +21,13 @@ CREATE VIEW sw.v_job_steps_stale_and_failed AS
     dataq.evaluation_message
    FROM ( SELECT
                 CASE
-                    WHEN ((js.state = 4) AND (js.last_cpu_status_minutes >= (4 * 60))) THEN 'No status update for 4 hours'::text
-                    WHEN ((js.state = 4) AND (js.runtime_predicted_hours >= (36)::numeric)) THEN 'Job predicted to run over 36 hours'::text
-                    WHEN ((js.state = 4) AND (round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (js.start)::timestamp with time zone)) / (86400)::numeric), 0) >= (4)::numeric)) THEN 'Job step running over 4 days'::text
-                    WHEN ((js.state = ANY (ARRAY[6, 16])) AND (js.start >= (CURRENT_TIMESTAMP - '14 days'::interval))) THEN 'Job step failed within the last 14 days'::text
-                    WHEN ((js.tool OPERATOR(public.~~) '%sequest%'::public.citext) AND ((js.evaluation_code & 2) = 2) AND (js.start >= (CURRENT_TIMESTAMP - '2 days'::interval))) THEN 'SEQUEST node count is less than the expected value'::text
-                    WHEN (NOT (failedjobq.job IS NULL)) THEN 'Overall job state is "failed"'::text
-                    ELSE ''::text
+                    WHEN ((js.state = 4) AND (js.last_cpu_status_minutes >= (4 * 60))) THEN 'No status update for 4 hours'::public.citext
+                    WHEN ((js.state = 4) AND (js.runtime_predicted_hours >= (36)::numeric)) THEN 'Job predicted to run over 36 hours'::public.citext
+                    WHEN ((js.state = 4) AND (round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (js.start)::timestamp with time zone)) / (86400)::numeric), 0) >= (4)::numeric)) THEN 'Job step running over 4 days'::public.citext
+                    WHEN ((js.state = ANY (ARRAY[6, 16])) AND (js.start >= (CURRENT_TIMESTAMP - '14 days'::interval))) THEN 'Job step failed within the last 14 days'::public.citext
+                    WHEN ((js.tool OPERATOR(public.~~) '%sequest%'::public.citext) AND ((js.evaluation_code & 2) = 2) AND (js.start >= (CURRENT_TIMESTAMP - '2 days'::interval))) THEN 'SEQUEST node count is less than the expected value'::public.citext
+                    WHEN (NOT (failedjobq.job IS NULL)) THEN 'Overall job state is "failed"'::public.citext
+                    ELSE ''::public.citext
                 END AS warning_message,
             js.job,
             js.dataset,
@@ -67,7 +67,7 @@ CREATE VIEW sw.v_job_steps_stale_and_failed AS
                   WHERE (lookupq.rowrank = 1)) failedjobq ON (((js.job = failedjobq.job) AND (js.step = failedjobq.step))))
              LEFT JOIN sw.t_local_processors lp ON ((js.processor OPERATOR(public.=) lp.processor_name)))
              LEFT JOIN public.t_analysis_job aj ON ((js.job = aj.job)))) dataq
-  WHERE (dataq.warning_message <> ''::text);
+  WHERE ((dataq.warning_message)::text <> ''::text);
 
 
 ALTER TABLE sw.v_job_steps_stale_and_failed OWNER TO d3l243;

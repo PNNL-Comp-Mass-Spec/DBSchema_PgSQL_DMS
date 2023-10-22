@@ -17,7 +17,7 @@ CREATE VIEW public.v_instrument_usage_report_list_report AS
     instusage.year,
     instusage.month,
     instusage.dataset_id,
-    public.check_emsl_usage_item_validity(instusage.seq) AS validation
+    (public.check_emsl_usage_item_validity(instusage.seq))::public.citext AS validation
    FROM ((public.t_emsl_instrument_usage_report instusage
      JOIN public.t_instrument_name instname ON ((instusage.dms_inst_id = instname.instrument_id)))
      LEFT JOIN public.t_emsl_instrument_usage_type instusagetype ON ((instusage.usage_type_id = instusagetype.usage_type_id)));

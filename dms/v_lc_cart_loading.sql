@@ -13,7 +13,7 @@ CREATE VIEW public.v_lc_cart_loading AS
     rr.batch_id AS batch,
     rr.block,
     rr.run_order,
-    public.merge_text_three_items((rr.instrument_setting)::text, (rr.special_instructions)::text, (rr.comment)::text) AS comment,
+    (public.merge_text_three_items((rr.instrument_setting)::text, (rr.special_instructions)::text, (rr.comment)::text))::public.citext AS comment,
     e.experiment,
     rr.priority,
     u.name AS requester,

@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_emsl_actual_usage_by_category AS
- SELECT public.get_fiscal_year_text_from_date(filterq.run_date) AS fy,
+ SELECT (public.get_fiscal_year_text_from_date(filterq.run_date))::public.citext AS fy,
     filterq.proposal_id,
     filterq.category,
     (sum(filterq.duration) / (60)::numeric) AS actual_hours_used

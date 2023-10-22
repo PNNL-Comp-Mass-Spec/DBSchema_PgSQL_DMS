@@ -9,7 +9,7 @@ CREATE VIEW public.v_eus_import_proposal_participants AS
     vw_proposal_participants.last_name,
     vw_proposal_participants.first_name,
     vw_proposal_participants.name_fm,
-    (((vw_proposal_participants.last_name)::text || ', '::text) || (vw_proposal_participants.first_name)::text) AS name_fm_computed
+    (((((vw_proposal_participants.last_name)::public.citext)::text || (', '::public.citext)::text) || ((vw_proposal_participants.first_name)::public.citext)::text))::public.citext AS name_fm_computed
    FROM eus.vw_proposal_participants;
 
 

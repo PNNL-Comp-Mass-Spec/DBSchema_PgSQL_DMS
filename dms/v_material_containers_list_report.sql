@@ -10,9 +10,9 @@ CREATE VIEW public.v_material_containers_list_report AS
     containerq.filecount AS files,
     containerq.comment,
     containerq.status,
-    'New Biomaterial'::text AS action,
+    'New Biomaterial'::public.citext AS action,
     containerq.created,
-    public.get_material_container_campaign_list(containerq.container_id, containerq.items) AS campaigns,
+    (public.get_material_container_campaign_list(containerq.container_id, containerq.items))::public.citext AS campaigns,
     containerq.researcher,
     containerq.container_id AS id
    FROM ( SELECT mc.container,

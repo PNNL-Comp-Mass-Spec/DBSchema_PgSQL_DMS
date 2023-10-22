@@ -6,9 +6,9 @@ CREATE VIEW public.v_instrument_detail_report AS
  SELECT instname.instrument_id AS id,
     instname.instrument AS name,
     instname.source_path_id,
-    s.source AS assigned_source,
+    (s.source)::public.citext AS assigned_source,
     instname.storage_path_id,
-    ((spath.vol_name_client)::text || (spath.storage_path)::text) AS assigned_storage,
+    (((spath.vol_name_client)::text || (spath.storage_path)::text))::public.citext AS assigned_storage,
     ap.archive_path AS assigned_archive_path,
     ap.network_share_path AS archive_share_path,
     instname.description,
@@ -26,22 +26,22 @@ CREATE VIEW public.v_instrument_detail_report AS
         END AS scan_source,
     instgroup.allocation_tag,
     instname.percent_emsl_owned,
-    public.get_instrument_dataset_type_list(instname.instrument_id) AS allowed_dataset_types,
+    (public.get_instrument_dataset_type_list(instname.instrument_id))::public.citext AS allowed_dataset_types,
     instname.created,
     definestorageyesno.description AS auto_define_storage,
-    ((instname.auto_sp_vol_name_client)::text || (instname.auto_sp_path_root)::text) AS auto_defined_storage_path_root,
-    ((instname.auto_sp_vol_name_server)::text || (instname.auto_sp_path_root)::text) AS auto_defined_storage_path_on_server,
+    (((instname.auto_sp_vol_name_client)::text || (instname.auto_sp_path_root)::text))::public.citext AS auto_defined_storage_path_root,
+    (((instname.auto_sp_vol_name_server)::text || (instname.auto_sp_path_root)::text))::public.citext AS auto_defined_storage_path_on_server,
     instname.auto_sp_url_domain AS auto_defined_url_domain,
-    ((instname.auto_sp_archive_server_name)::text || (instname.auto_sp_archive_path_root)::text) AS auto_defined_archive_path_root,
+    (((instname.auto_sp_archive_server_name)::text || (instname.auto_sp_archive_path_root)::text))::public.citext AS auto_defined_archive_path_root,
     instname.auto_sp_archive_share_path_root AS auto_defined_archive_share_path_root,
     eusmapping.eus_instrument_id,
     eusmapping.eus_display_name,
     eusmapping.eus_instrument_name,
     eusmapping.local_instrument_name,
         CASE
-            WHEN (insttracking.reporting ~~ '%E%'::text) THEN 'EUS Primary Instrument'::public.citext
-            WHEN (insttracking.reporting ~~ '%P%'::text) THEN 'Production operations role'::public.citext
-            WHEN (insttracking.reporting ~~ '%T%'::text) THEN 'tracking flag enabled'::public.citext
+            WHEN (insttracking.reporting OPERATOR(public.~~) '%E%'::text) THEN 'EUS Primary Instrument'::public.citext
+            WHEN (insttracking.reporting OPERATOR(public.~~) '%P%'::text) THEN 'Production operations role'::public.citext
+            WHEN (insttracking.reporting OPERATOR(public.~~) '%T%'::text) THEN 'tracking flag enabled'::public.citext
             ELSE ''::public.citext
         END AS usage_tracking_status,
     instname.default_purge_policy,

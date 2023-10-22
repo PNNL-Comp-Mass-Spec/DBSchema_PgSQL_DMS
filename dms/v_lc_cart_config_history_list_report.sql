@@ -8,8 +8,8 @@ CREATE VIEW public.v_lc_cart_config_history_list_report AS
     tih.date_of_change,
     tih.description,
         CASE
-            WHEN (char_length((tih.note)::text) < 150) THEN (tih.note)::text
-            ELSE ("substring"((tih.note)::text, 1, 150) || ' (more...)'::text)
+            WHEN (char_length((tih.note)::text) < 150) THEN tih.note
+            ELSE (((("substring"((tih.note)::text, 1, 150))::public.citext)::text || (' (more...)'::public.citext)::text))::public.citext
         END AS note,
     tih.entered,
     tu.name_with_username AS entered_by,

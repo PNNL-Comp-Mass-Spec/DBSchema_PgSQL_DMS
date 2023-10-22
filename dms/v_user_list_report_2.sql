@@ -8,7 +8,7 @@ CREATE VIEW public.v_user_list_report_2 AS
     u.hid AS hanford_id,
     u.name,
     u.status,
-    public.get_user_operations_list(u.user_id) AS operations_list,
+    (public.get_user_operations_list(u.user_id))::public.citext AS operations_list,
     u.comment,
     u.created AS created_dms,
     eu.person_id AS eus_id,

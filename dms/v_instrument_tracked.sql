@@ -17,9 +17,9 @@ CREATE VIEW public.v_instrument_tracked AS
     filterq.eus_primary_instrument,
     filterq.percent_emsl_owned,
     filterq.tracked,
-    ((((filterq.name)::text || ' ('::text) || filterq.reporting) || ')'::text) AS name_with_reporting
+    (((((((((filterq.name)::text || (' ('::public.citext)::text))::public.citext)::text || (filterq.reporting)::text))::public.citext)::text || (')'::public.citext)::text))::public.citext AS name_with_reporting
    FROM ( SELECT td.instrument AS name,
-            ((
+            (((
                 CASE
                     WHEN (upper((ti.eus_primary_instrument)::text) = ANY (ARRAY['Y'::text, '1'::text])) THEN 'E'::text
                     ELSE ''::text
@@ -31,7 +31,7 @@ CREATE VIEW public.v_instrument_tracked AS
                 CASE
                     WHEN (td.tracking = 1) THEN 'T'::text
                     ELSE ''::text
-                END) AS reporting,
+                END))::public.citext AS reporting,
             td.description,
             td.operations_role AS ops_role,
             ti.eus_primary_instrument AS emsl_primary,

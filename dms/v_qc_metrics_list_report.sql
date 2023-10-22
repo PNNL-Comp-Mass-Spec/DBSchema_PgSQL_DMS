@@ -13,7 +13,7 @@ CREATE VIEW public.v_qc_metrics_list_report AS
     pm.task_database,
     aj.param_file_name AS param_file,
     aj.settings_file_name AS settings_file,
-    public.get_factor_list(rr.request_id) AS factors,
+    (public.get_factor_list(rr.request_id))::public.citext AS factors,
     inst.instrument,
     pm.dms_job AS job,
     pm.tool_name,

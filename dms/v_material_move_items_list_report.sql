@@ -8,13 +8,13 @@ CREATE VIEW public.v_material_move_items_list_report AS
     contentsq.material_id AS id,
     mc.container,
     mc.type,
-    (("substring"(contentsq.item_type, 1, 1) || ':'::text) || (contentsq.material_id)::text) AS item_id,
+    ((("substring"((contentsq.item_type)::text, 1, 1) || ':'::text) || (contentsq.material_id)::text))::public.citext AS item_id,
     ml.location,
     mc.status AS container_status,
     contentsq.request_id AS prep_request
    FROM ((public.t_material_containers mc
      JOIN ( SELECT t_experiments.experiment AS item,
-            'Experiment'::text AS item_type,
+            'Experiment'::public.citext AS item_type,
             t_experiments.container_id,
             t_experiments.exp_id AS material_id,
             t_experiments.sample_prep_request_id AS request_id
@@ -22,7 +22,7 @@ CREATE VIEW public.v_material_move_items_list_report AS
           WHERE (t_experiments.material_active OPERATOR(public.=) 'Active'::public.citext)
         UNION
          SELECT t_biomaterial.biomaterial_name AS item,
-            'Biomaterial'::text AS item_type,
+            'Biomaterial'::public.citext AS item_type,
             t_biomaterial.container_id,
             t_biomaterial.biomaterial_id AS material_id,
             NULL::integer AS request_id
@@ -30,7 +30,7 @@ CREATE VIEW public.v_material_move_items_list_report AS
           WHERE (t_biomaterial.material_active OPERATOR(public.=) 'Active'::public.citext)
         UNION
          SELECT t_reference_compound.compound_name AS item,
-            'RefCompound'::text AS item_type,
+            'RefCompound'::public.citext AS item_type,
             t_reference_compound.container_id,
             t_reference_compound.compound_id AS material_id,
             NULL::integer AS request_id

@@ -6,7 +6,7 @@ CREATE VIEW dpkg.v_data_package_eus_proposals_list_report AS
  SELECT dpp.data_pkg_id AS id,
     dpp.proposal_id,
     eup.title,
-    public.get_proposal_eus_users_list(eup.proposal_id, 'N'::text, 125) AS users,
+    (public.get_proposal_eus_users_list(eup.proposal_id, 'N'::text, 125))::public.citext AS users,
     s.state_name AS state,
     dpp.item_added
    FROM ((dpkg.t_data_package_eus_proposals dpp

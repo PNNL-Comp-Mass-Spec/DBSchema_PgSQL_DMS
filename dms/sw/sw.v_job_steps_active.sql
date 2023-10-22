@@ -34,8 +34,8 @@ CREATE VIEW sw.v_job_steps_active AS
             js.tool,
             js.state,
                 CASE
-                    WHEN ((failedjobq.job IS NULL) OR (js.state = 6)) THEN (js.state_name)::text
-                    ELSE ((js.state_name)::text || ' (Failed in sw.t_jobs)'::text)
+                    WHEN ((failedjobq.job IS NULL) OR (js.state = 6)) THEN js.state_name
+                    ELSE (((js.state_name)::text || (' (Failed in sw.t_jobs)'::public.citext)::text))::public.citext
                 END AS state_name,
             aj.settings_file_name AS settings_file,
             aj.param_file_name AS parameter_file,

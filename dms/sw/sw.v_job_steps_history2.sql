@@ -38,7 +38,7 @@ CREATE VIEW sw.v_job_steps_history2 AS
     lp.machine,
     js.saved,
     js.most_recent_entry,
-    (paramq.dataset_storage_path || (j.dataset)::text) AS dataset_folder_path
+    ((paramq.dataset_storage_path)::text || (j.dataset)::text) AS dataset_folder_path
    FROM (((((sw.t_step_tool_versions stv
      RIGHT JOIN (sw.t_job_steps_history js
      JOIN sw.t_job_step_state_name ssn ON ((js.state = ssn.step_state_id))) ON ((stv.tool_version_id = js.tool_version_id)))
@@ -47,9 +47,9 @@ CREATE VIEW sw.v_job_steps_history2 AS
      LEFT JOIN sw.t_remote_info ri ON ((js.remote_info_id = ri.remote_info_id)))
      LEFT JOIN sw.t_local_processors lp ON ((js.processor OPERATOR(public.=) lp.processor_name)))
      LEFT JOIN ( SELECT src.job,
-            ((xpath('//params/Param[@Name = "SettingsFileName"]/@Value'::text, src.rooted_xml))[1])::text AS settings_file,
-            ((xpath('//params/Param[@Name = "ParamFileName"]/@Value'::text, src.rooted_xml))[1])::text AS parameter_file,
-            ((xpath('//params/Param[@Name = "DatasetStoragePath"]/@Value'::text, src.rooted_xml))[1])::text AS dataset_storage_path
+            ((xpath('//params/Param[@Name = "SettingsFileName"]/@Value'::text, src.rooted_xml))[1])::public.citext AS settings_file,
+            ((xpath('//params/Param[@Name = "ParamFileName"]/@Value'::text, src.rooted_xml))[1])::public.citext AS parameter_file,
+            ((xpath('//params/Param[@Name = "DatasetStoragePath"]/@Value'::text, src.rooted_xml))[1])::public.citext AS dataset_storage_path
            FROM ( SELECT t_job_parameters_history.job,
                     ((('<params>'::text || (t_job_parameters_history.parameters)::text) || '</params>'::text))::xml AS rooted_xml
                    FROM sw.t_job_parameters_history

@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_log_entries AS
- SELECT 'public'::text AS schema,
+ SELECT 'public'::public.citext AS schema,
     t_log_entries.entry_id,
     t_log_entries.posted_by,
     t_log_entries.entered,
@@ -12,7 +12,7 @@ CREATE VIEW public.v_log_entries AS
     t_log_entries.entered_by
    FROM public.t_log_entries
 UNION
- SELECT 'cap'::text AS schema,
+ SELECT 'cap'::public.citext AS schema,
     t_log_entries.entry_id,
     t_log_entries.posted_by,
     t_log_entries.entered,
@@ -21,7 +21,7 @@ UNION
     t_log_entries.entered_by
    FROM cap.t_log_entries
 UNION
- SELECT 'sw'::text AS schema,
+ SELECT 'sw'::public.citext AS schema,
     t_log_entries.entry_id,
     t_log_entries.posted_by,
     t_log_entries.entered,
@@ -30,7 +30,7 @@ UNION
     t_log_entries.entered_by
    FROM sw.t_log_entries
 UNION
- SELECT 'dpkg'::text AS schema,
+ SELECT 'dpkg'::public.citext AS schema,
     t_log_entries.entry_id,
     t_log_entries.posted_by,
     t_log_entries.entered,

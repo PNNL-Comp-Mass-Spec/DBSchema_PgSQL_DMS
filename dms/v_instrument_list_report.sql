@@ -19,21 +19,21 @@ CREATE VIEW public.v_instrument_list_report AS
     instname.percent_emsl_owned,
     instname.capture_method AS capture,
     instname.room_number AS room,
-    ((spath.vol_name_client)::text || (spath.storage_path)::text) AS assigned_storage,
-    s.source AS assigned_source,
+    (((spath.vol_name_client)::text || (spath.storage_path)::text))::public.citext AS assigned_storage,
+    (s.source)::public.citext AS assigned_source,
     definestorageyesno.description AS auto_define_storage,
-    ((instname.auto_sp_vol_name_client)::text || (instname.auto_sp_path_root)::text) AS auto_storage_path,
-    public.get_instrument_dataset_type_list(instname.instrument_id) AS allowed_dataset_types,
+    (((instname.auto_sp_vol_name_client)::text || (instname.auto_sp_path_root)::text))::public.citext AS auto_storage_path,
+    (public.get_instrument_dataset_type_list(instname.instrument_id))::public.citext AS allowed_dataset_types,
     instname.created,
     eusmapping.eus_instrument_id,
     eusmapping.eus_display_name,
     eusmapping.eus_instrument_name,
     eusmapping.local_instrument_name,
         CASE
-            WHEN (insttracking.reporting ~~ '%E%'::text) THEN 'EUS Primary Instrument'::text
-            WHEN (insttracking.reporting ~~ '%P%'::text) THEN 'Production operations role'::text
-            WHEN (insttracking.reporting ~~ '%T%'::text) THEN 'tracking flag enabled'::text
-            ELSE ''::text
+            WHEN (insttracking.reporting OPERATOR(public.~~) '%E%'::text) THEN 'EUS Primary Instrument'::public.citext
+            WHEN (insttracking.reporting OPERATOR(public.~~) '%P%'::text) THEN 'Production operations role'::public.citext
+            WHEN (insttracking.reporting OPERATOR(public.~~) '%T%'::text) THEN 'tracking flag enabled'::public.citext
+            ELSE ''::public.citext
         END AS usage_tracking_status,
     trackingyesno.description AS track_when_inactive,
     instname.storage_purge_holdoff_months

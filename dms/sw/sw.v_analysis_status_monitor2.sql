@@ -5,7 +5,7 @@
 CREATE VIEW sw.v_analysis_status_monitor2 AS
  SELECT lp.processor_id,
     ps.processor_name,
-    sw.get_processor_step_tool_list((ps.processor_name)::text) AS tools,
+    (sw.get_processor_step_tool_list((ps.processor_name)::text))::public.citext AS tools,
     COALESCE(ps.mgr_status, 'Unknown_Status'::public.citext) AS mgr_status,
     COALESCE(ps.task_status, 'Unknown_Status'::public.citext) AS task_status,
     COALESCE(ps.task_detail_status, 'Unknown_Status'::public.citext) AS task_detail_status,

@@ -9,7 +9,7 @@ CREATE VIEW dpkg.v_osm_package_list_report AS
     o.description,
     o.keywords,
     o.comment,
-    ((((u.name)::text || ' ('::text) || (COALESCE(o.owner_username, ''::public.citext))::text) || ')'::text) AS owner,
+    (((((((u.name)::text || (' ('::public.citext)::text))::public.citext)::text || (COALESCE(o.owner_username, ''::public.citext))::text) || (')'::public.citext)::text))::public.citext AS owner,
     o.created,
     o.state,
     o.last_modified AS modified,

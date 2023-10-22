@@ -9,7 +9,7 @@ CREATE VIEW pc.v_protein_collections_list_report AS
     pcs.state,
     pc.num_proteins AS protein_count,
     pc.num_residues AS residue_count,
-    (((namingauth.name)::text || ' - '::text) || (antype.type_name)::text) AS annotation_type,
+    ((((((namingauth.name)::text || (' - '::public.citext)::text))::public.citext)::text || (antype.type_name)::text))::public.citext AS annotation_type,
     pc.date_created AS created,
     pc.date_modified AS last_modified
    FROM ((pc.t_annotation_types antype

@@ -15,7 +15,7 @@ CREATE VIEW public.v_organism_db_file AS
     orgdbfile.active,
     orgdbfile.xmin AS org_file_row_version,
     org.organism_db_path AS folder_server,
-    public.replace(org.organism_db_path, mpath.server, mpath.client) AS folder_client
+    (public.replace(org.organism_db_path, mpath.server, mpath.client))::public.citext AS folder_client
    FROM ((public.t_organism_db_file orgdbfile
      JOIN public.t_organisms org ON ((orgdbfile.organism_id = org.organism_id)))
      CROSS JOIN ( SELECT t_misc_paths.server,

@@ -4,7 +4,7 @@
 
 CREATE VIEW pc.v_protein_collections AS
  SELECT t_protein_collections.protein_collection_id,
-    format('%s (%s Entries)'::text, t_protein_collections.collection_name, t_protein_collections.num_proteins) AS display,
+    (format('%s (%s Entries)'::text, t_protein_collections.collection_name, t_protein_collections.num_proteins))::public.citext AS display,
     t_protein_collections.collection_name,
     t_protein_collections.primary_annotation_type_id,
     t_protein_collections.description,

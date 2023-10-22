@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_log_entry_errors AS
- SELECT 'public'::text AS schema,
+ SELECT 'public'::public.citext AS schema,
     t_log_entries.entry_id,
     t_log_entries.posted_by,
     t_log_entries.entered,
@@ -13,7 +13,7 @@ CREATE VIEW public.v_log_entry_errors AS
    FROM public.t_log_entries
   WHERE (t_log_entries.type OPERATOR(public.=) 'Error'::public.citext)
 UNION
- SELECT 'cap'::text AS schema,
+ SELECT 'cap'::public.citext AS schema,
     t_log_entries.entry_id,
     t_log_entries.posted_by,
     t_log_entries.entered,
@@ -23,7 +23,7 @@ UNION
    FROM cap.t_log_entries
   WHERE (t_log_entries.type OPERATOR(public.=) 'Error'::public.citext)
 UNION
- SELECT 'sw'::text AS schema,
+ SELECT 'sw'::public.citext AS schema,
     t_log_entries.entry_id,
     t_log_entries.posted_by,
     t_log_entries.entered,
@@ -33,7 +33,7 @@ UNION
    FROM sw.t_log_entries
   WHERE (t_log_entries.type OPERATOR(public.=) 'Error'::public.citext)
 UNION
- SELECT 'dpkg'::text AS schema,
+ SELECT 'dpkg'::public.citext AS schema,
     t_log_entries.entry_id,
     t_log_entries.posted_by,
     t_log_entries.entered,
@@ -43,7 +43,7 @@ UNION
    FROM dpkg.t_log_entries
   WHERE (t_log_entries.type OPERATOR(public.=) 'Error'::public.citext)
 UNION
- SELECT 'mc'::text AS schema,
+ SELECT 'mc'::public.citext AS schema,
     t_log_entries.entry_id,
     t_log_entries.posted_by,
     t_log_entries.entered,
@@ -53,7 +53,7 @@ UNION
    FROM mc.t_log_entries
   WHERE (t_log_entries.type OPERATOR(public.=) 'Error'::public.citext)
 UNION
- SELECT 'pc'::text AS schema,
+ SELECT 'pc'::public.citext AS schema,
     t_log_entries.entry_id,
     t_log_entries.posted_by,
     t_log_entries.entered,

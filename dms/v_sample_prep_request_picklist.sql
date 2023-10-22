@@ -10,8 +10,8 @@ CREATE VIEW public.v_sample_prep_request_picklist AS
     spr.priority,
     sn.state_name AS state,
         CASE
-            WHEN (char_length((spr.reason)::text) > 42) THEN "left"((spr.reason)::text, 42)
-            ELSE (spr.reason)::text
+            WHEN (char_length((spr.reason)::text) > 42) THEN ("left"((spr.reason)::text, 42))::public.citext
+            ELSE spr.reason
         END AS reason,
     spr.number_of_samples AS num_samples,
     spr.prep_method,

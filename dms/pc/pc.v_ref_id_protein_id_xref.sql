@@ -6,11 +6,11 @@ CREATE VIEW pc.v_ref_id_protein_id_xref AS
  SELECT pcm.original_reference_id AS ref_id,
     pn.name,
     pn.description,
-    rtrim(
+    (rtrim(
         CASE
             WHEN ((org.genus IS NOT NULL) AND (org.genus OPERATOR(public.<>) 'na'::public.citext)) THEN (((((COALESCE(org.genus, ''::public.citext))::text || ' '::text) || (COALESCE(org.species, ''::public.citext))::text) || ' '::text) || (COALESCE(org.strain, ''::public.citext))::text)
             ELSE (org.organism)::text
-        END) AS organism,
+        END))::public.citext AS organism,
     pcm.protein_id
    FROM ((public.t_organisms org
      JOIN pc.t_collection_organism_xref orgxref ON ((org.organism_id = orgxref.organism_id)))

@@ -5,7 +5,7 @@
 CREATE VIEW pc.v_authority_picker AS
  SELECT auth.authority_id AS id,
     auth.name AS display_name,
-    ((((auth.description)::text || ' <'::text) || (auth.web_address)::text) || '>'::text) AS details
+    (((((((((auth.description)::text || (' <'::public.citext)::text))::public.citext)::text || (auth.web_address)::text))::public.citext)::text || ('>'::public.citext)::text))::public.citext AS details
    FROM pc.t_naming_authorities auth;
 
 

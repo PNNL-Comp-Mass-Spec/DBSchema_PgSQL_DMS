@@ -3,11 +3,11 @@
 --
 
 CREATE VIEW public.v_wellplate_picklist AS
- SELECT (((w.wellplate)::text || ',  '::text) || COALESCE(
+ SELECT ((((((w.wellplate)::text || (',  '::public.citext)::text))::public.citext)::text || (COALESCE(
         CASE
-            WHEN (char_length((w.description)::text) > 48) THEN "substring"((w.description)::text, 1, 48)
-            ELSE (w.description)::text
-        END, ''::text)) AS val,
+            WHEN (char_length((w.description)::text) > 48) THEN ("substring"((w.description)::text, 1, 48))::public.citext
+            ELSE w.description
+        END, ''::public.citext))::text))::public.citext AS val,
     w.wellplate AS ex
    FROM public.t_wellplates w;
 

@@ -19,9 +19,9 @@ CREATE VIEW public.v_prep_lc_run_detail_report AS
     preprun.sample_prep_requests,
     preprun.sample_prep_work_packages AS work_packages,
     preprun.number_of_runs,
-    public.get_prep_lc_experiment_groups_list(preprun.prep_run_id) AS experiment_groups,
+    (public.get_prep_lc_experiment_groups_list(preprun.prep_run_id))::public.citext AS experiment_groups,
     preprun.instrument_pressure,
-    public.get_hplc_run_dataset_list(preprun.prep_run_id, 'name'::text) AS datasets
+    (public.get_hplc_run_dataset_list(preprun.prep_run_id, 'name'::text))::public.citext AS datasets
    FROM public.t_prep_lc_run preprun;
 
 

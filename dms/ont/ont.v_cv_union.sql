@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW ont.v_cv_union AS
- SELECT 'BTO'::text AS source,
+ SELECT 'BTO'::public.citext AS source,
     t_cv_bto.term_pk,
     t_cv_bto.term_name,
     t_cv_bto.identifier,
@@ -14,7 +14,7 @@ CREATE VIEW ont.v_cv_union AS
     t_cv_bto.grandparent_term_id
    FROM ont.t_cv_bto
 UNION
- SELECT 'ENVO'::text AS source,
+ SELECT 'ENVO'::public.citext AS source,
     t_cv_envo.term_pk,
     t_cv_envo.term_name,
     t_cv_envo.identifier,
@@ -25,7 +25,7 @@ UNION
     t_cv_envo.grandparent_term_id
    FROM ont.t_cv_envo
 UNION
- SELECT 'CL'::text AS source,
+ SELECT 'CL'::public.citext AS source,
     t_cv_cl.term_pk,
     t_cv_cl.term_name,
     t_cv_cl.identifier,
@@ -36,7 +36,7 @@ UNION
     t_cv_cl.grandparent_term_id
    FROM ont.t_cv_cl
 UNION
- SELECT 'GO'::text AS source,
+ SELECT 'GO'::public.citext AS source,
     t_cv_go.term_pk,
     t_cv_go.term_name,
     t_cv_go.identifier,
@@ -47,7 +47,7 @@ UNION
     t_cv_go.grandparent_term_id
    FROM ont.t_cv_go
 UNION
- SELECT 'PSI-MI'::text AS source,
+ SELECT 'PSI-MI'::public.citext AS source,
     t_cv_mi.term_pk,
     t_cv_mi.term_name,
     t_cv_mi.identifier,
@@ -58,7 +58,7 @@ UNION
     t_cv_mi.grandparent_term_id
    FROM ont.t_cv_mi
 UNION
- SELECT 'PSI-Mod'::text AS source,
+ SELECT 'PSI-Mod'::public.citext AS source,
     t_cv_mod.term_pk,
     t_cv_mod.term_name,
     t_cv_mod.identifier,
@@ -69,7 +69,7 @@ UNION
     t_cv_mod.grandparent_term_id
    FROM ont.t_cv_mod
 UNION
- SELECT 'PSI-MS'::text AS source,
+ SELECT 'PSI-MS'::public.citext AS source,
     t_cv_ms.term_pk,
     t_cv_ms.term_name,
     t_cv_ms.identifier,
@@ -80,7 +80,7 @@ UNION
     t_cv_ms.grandparent_term_id
    FROM ont.t_cv_ms
 UNION
- SELECT 'NEWT'::text AS source,
+ SELECT 'NEWT'::public.citext AS source,
     t_cv_newt.term_pk,
     t_cv_newt.term_name,
     (t_cv_newt.identifier)::public.citext AS identifier,
@@ -91,7 +91,7 @@ UNION
     t_cv_newt.grandparent_term_id
    FROM ont.t_cv_newt
 UNION
- SELECT 'PRIDE'::text AS source,
+ SELECT 'PRIDE'::public.citext AS source,
     t_cv_pride.term_pk,
     t_cv_pride.term_name,
     t_cv_pride.identifier,
@@ -102,7 +102,7 @@ UNION
     t_cv_pride.grandparent_term_id
    FROM ont.t_cv_pride
 UNION
- SELECT 'DOID'::text AS source,
+ SELECT 'DOID'::public.citext AS source,
     t_cv_doid.term_pk,
     t_cv_doid.term_name,
     t_cv_doid.identifier,

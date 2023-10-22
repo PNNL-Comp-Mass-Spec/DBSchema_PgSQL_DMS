@@ -6,60 +6,60 @@ CREATE VIEW logdms.v_event_log AS
  SELECT el.event_id,
     el.target_type,
         CASE el.target_type
-            WHEN 1 THEN 'Campaign'::text
-            WHEN 2 THEN 'Biomaterial'::text
-            WHEN 3 THEN 'Experiment'::text
-            WHEN 4 THEN 'Dataset'::text
-            WHEN 5 THEN 'Job'::text
-            WHEN 6 THEN 'DS Archive'::text
-            WHEN 7 THEN 'DS ArchUpdate'::text
-            WHEN 8 THEN 'DS Rating'::text
-            WHEN 9 THEN 'Campaign Percent EMSL Funded'::text
-            WHEN 10 THEN 'Campaign Data Release State'::text
-            WHEN 11 THEN 'Requested Run'::text
-            WHEN 12 THEN 'Analysis Job Request'::text
-            WHEN 13 THEN 'Reference Compound'::text
-            ELSE NULL::text
+            WHEN 1 THEN 'Campaign'::public.citext
+            WHEN 2 THEN 'Biomaterial'::public.citext
+            WHEN 3 THEN 'Experiment'::public.citext
+            WHEN 4 THEN 'Dataset'::public.citext
+            WHEN 5 THEN 'Job'::public.citext
+            WHEN 6 THEN 'DS Archive'::public.citext
+            WHEN 7 THEN 'DS ArchUpdate'::public.citext
+            WHEN 8 THEN 'DS Rating'::public.citext
+            WHEN 9 THEN 'Campaign Percent EMSL Funded'::public.citext
+            WHEN 10 THEN 'Campaign Data Release State'::public.citext
+            WHEN 11 THEN 'Requested Run'::public.citext
+            WHEN 12 THEN 'Analysis Job Request'::public.citext
+            WHEN 13 THEN 'Reference Compound'::public.citext
+            ELSE NULL::public.citext
         END AS target,
     el.target_id,
     el.target_state,
         CASE
             WHEN (el.target_type = ANY (ARRAY[1, 2, 3, 13])) THEN
             CASE el.target_state
-                WHEN 1 THEN 'Created'::text
-                WHEN 0 THEN 'Deleted'::text
-                ELSE NULL::text
+                WHEN 1 THEN 'Created'::public.citext
+                WHEN 0 THEN 'Deleted'::public.citext
+                ELSE NULL::public.citext
             END
             WHEN (el.target_type = 4) THEN
             CASE
-                WHEN ((el.target_state = 0) AND (el.prev_target_state > 0)) THEN 'Deleted'::text
-                ELSE (dssn.dataset_state)::text
+                WHEN ((el.target_state = 0) AND (el.prev_target_state > 0)) THEN 'Deleted'::public.citext
+                ELSE dssn.dataset_state
             END
             WHEN (el.target_type = 5) THEN
             CASE
-                WHEN ((el.target_state = 0) AND (el.prev_target_state > 0)) THEN 'Deleted'::text
-                ELSE (ajsn.job_state)::text
+                WHEN ((el.target_state = 0) AND (el.prev_target_state > 0)) THEN 'Deleted'::public.citext
+                ELSE ajsn.job_state
             END
             WHEN (el.target_type = 6) THEN
             CASE
-                WHEN ((el.target_state = 0) AND (el.prev_target_state > 0)) THEN 'Deleted'::text
-                ELSE (dasn.archive_state)::text
+                WHEN ((el.target_state = 0) AND (el.prev_target_state > 0)) THEN 'Deleted'::public.citext
+                ELSE dasn.archive_state
             END
-            WHEN (el.target_type = 7) THEN (ausn.archive_update_state)::text
-            WHEN (el.target_type = 8) THEN (dsrn.dataset_rating)::text
-            WHEN (el.target_type = 9) THEN '% EMSL Funded'::text
-            WHEN (el.target_type = 10) THEN (drr.release_restriction)::text
+            WHEN (el.target_type = 7) THEN ausn.archive_update_state
+            WHEN (el.target_type = 8) THEN dsrn.dataset_rating
+            WHEN (el.target_type = 9) THEN '% EMSL Funded'::public.citext
+            WHEN (el.target_type = 10) THEN drr.release_restriction
             WHEN (el.target_type = 11) THEN
             CASE
-                WHEN ((el.target_state = 0) AND (el.prev_target_state > 0)) THEN 'Deleted'::text
-                ELSE (rrsn.state_name)::text
+                WHEN ((el.target_state = 0) AND (el.prev_target_state > 0)) THEN 'Deleted'::public.citext
+                ELSE rrsn.state_name
             END
             WHEN (el.target_type = 12) THEN
             CASE
-                WHEN ((el.target_state = 0) AND (el.prev_target_state > 0)) THEN 'Deleted'::text
-                ELSE (ajrs.request_state)::text
+                WHEN ((el.target_state = 0) AND (el.prev_target_state > 0)) THEN 'Deleted'::public.citext
+                ELSE ajrs.request_state
             END
-            ELSE NULL::text
+            ELSE NULL::public.citext
         END AS state_name,
     el.prev_target_state,
     el.entered,

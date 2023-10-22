@@ -4,8 +4,8 @@
 
 CREATE VIEW pc.v_annotation_type_picker AS
  SELECT antypes.annotation_type_id AS id,
-    (((auth.name)::text || ' - '::text) || (antypes.type_name)::text) AS display_name,
-    COALESCE(((((auth.description)::text || ' <'::text) || (auth.web_address)::text) || '>'::text), '---'::text) AS details,
+    ((((((auth.name)::text || (' - '::public.citext)::text))::public.citext)::text || (antypes.type_name)::text))::public.citext AS display_name,
+    COALESCE((((((((((auth.description)::text || (' <'::public.citext)::text))::public.citext)::text || (auth.web_address)::text))::public.citext)::text || ('>'::public.citext)::text))::public.citext, '---'::public.citext) AS details,
     antypes.authority_id
    FROM (pc.t_naming_authorities auth
      JOIN pc.t_annotation_types antypes ON ((auth.authority_id = antypes.authority_id)));

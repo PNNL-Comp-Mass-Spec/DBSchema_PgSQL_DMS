@@ -12,7 +12,7 @@ CREATE VIEW public.v_run_tracking_list_report AS
     t_instrument_name.instrument,
     dsn.dataset_state AS state,
     drn.dataset_rating AS rating,
-    ('C:'::text || (lc.lc_column)::text) AS lc_column,
+    ((('C:'::public.citext)::text || (lc.lc_column)::text))::public.citext AS lc_column,
     rr.request_id AS request,
     rr.work_package,
     rr.eus_proposal_id AS eus_proposal,
@@ -24,8 +24,8 @@ CREATE VIEW public.v_run_tracking_list_report AS
     EXTRACT(month FROM ds.acq_time_start) AS month,
     EXTRACT(day FROM ds.acq_time_start) AS day,
         CASE
-            WHEN (ds.dataset_type_id = 100) THEN 'Tracking'::text
-            ELSE 'Regular'::text
+            WHEN (ds.dataset_type_id = 100) THEN 'Tracking'::public.citext
+            ELSE 'Regular'::public.citext
         END AS dataset_type
    FROM ((((((((public.t_dataset ds
      JOIN public.t_instrument_name ON ((ds.instrument_id = t_instrument_name.instrument_id)))

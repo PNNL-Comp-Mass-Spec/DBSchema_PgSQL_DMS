@@ -4,7 +4,7 @@
 
 CREATE VIEW mc.v_mgr_type_list_by_param AS
  SELECT groupq.param_name,
-    string_agg((groupq.mgr_type_name)::text, ', '::text ORDER BY (groupq.mgr_type_name)::text) AS mgr_type_list
+    (string_agg((groupq.mgr_type_name)::text, (', '::public.citext)::text ORDER BY (groupq.mgr_type_name)::text))::public.citext AS mgr_type_list
    FROM ( SELECT DISTINCT pt.param_name,
             lookupq.mgr_type_name
            FROM (((mc.t_mgr_type_param_type_map mp

@@ -9,9 +9,9 @@ CREATE VIEW sw.v_machine_status_last_24_hours AS
     statusq.processor_count_active_max,
     COALESCE(activetoolq.jobcount, (0)::bigint) AS active_tool_count,
         CASE
-            WHEN (COALESCE(activetoolq.jobcount, (0)::bigint) = 0) THEN ''::text
-            WHEN (COALESCE(activetoolq.jobcount, (0)::bigint) = 1) THEN (activetoolq.step_tool_first)::text
-            ELSE (((activetoolq.step_tool_first)::text || ' & '::text) || (activetoolq.step_tool_last)::text)
+            WHEN (COALESCE(activetoolq.jobcount, (0)::bigint) = 0) THEN ''::public.citext
+            WHEN (COALESCE(activetoolq.jobcount, (0)::bigint) = 1) THEN activetoolq.step_tool_first
+            ELSE ((((((activetoolq.step_tool_first)::text || (' & '::public.citext)::text))::public.citext)::text || (activetoolq.step_tool_last)::text))::public.citext
         END AS active_tool_name
    FROM (( SELECT ptg.group_name,
             ms.machine,

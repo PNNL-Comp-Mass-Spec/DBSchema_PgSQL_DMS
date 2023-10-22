@@ -11,12 +11,12 @@ CREATE VIEW public.v_predefined_analysis_list_report AS
     pa.enabled,
     pa.analysis_tool_name AS analysis_tool,
         CASE
-            WHEN (pa.trigger_before_disposition = 1) THEN 'Before Disposition'::text
-            ELSE 'Normal'::text
+            WHEN (pa.trigger_before_disposition = 1) THEN 'Before Disposition'::public.citext
+            ELSE 'Normal'::public.citext
         END AS trigger_mode,
         CASE pa.propagation_mode
-            WHEN 0 THEN 'Export'::text
-            ELSE 'No Export'::text
+            WHEN 0 THEN 'Export'::public.citext
+            ELSE 'No Export'::public.citext
         END AS export_mode,
     pa.instrument_name_criteria AS instrument_crit,
     pa.instrument_excl_criteria AS instrument_excl,

@@ -6,18 +6,18 @@ CREATE VIEW pc.v_event_log AS
  SELECT el.event_id,
     el.target_type,
         CASE el.target_type
-            WHEN 1 THEN 'Protein Collection'::text
-            ELSE NULL::text
+            WHEN 1 THEN 'Protein Collection'::public.citext
+            ELSE NULL::public.citext
         END AS target,
     el.target_id,
     el.target_state,
         CASE
             WHEN (el.target_type = 1) THEN
             CASE
-                WHEN ((el.target_state = 0) AND (el.prev_target_state > 0)) THEN 'Deleted'::text
-                ELSE (pcs.state)::text
+                WHEN ((el.target_state = 0) AND (el.prev_target_state > 0)) THEN 'Deleted'::public.citext
+                ELSE pcs.state
             END
-            ELSE NULL::text
+            ELSE NULL::public.citext
         END AS state_name,
     el.prev_target_state,
     el.entered,

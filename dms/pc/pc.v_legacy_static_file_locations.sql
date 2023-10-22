@@ -5,10 +5,10 @@
 CREATE VIEW pc.v_legacy_static_file_locations AS
  SELECT orgdbinfo.org_db_file_id AS id,
     orgdbinfo.file_name,
-    public.combine_paths((org.organism_db_path)::text, (orgdbinfo.file_name)::text) AS full_path,
+    (public.combine_paths((org.organism_db_path)::text, (orgdbinfo.file_name)::text))::public.citext AS full_path,
     org.organism_id,
     org.organism AS organism_name,
-    public.replace(orgdbinfo.file_name, '.fasta'::public.citext, ''::public.citext) AS default_collection_name,
+    (public.replace(orgdbinfo.file_name, '.fasta'::public.citext, ''::public.citext))::public.citext AS default_collection_name,
     COALESCE(lfur.authentication_hash, ''::public.citext) AS authentication_hash
    FROM ((public.t_organism_db_file orgdbinfo
      JOIN public.t_organisms org ON ((orgdbinfo.organism_id = org.organism_id)))

@@ -17,7 +17,7 @@ CREATE VIEW public.v_datasets_stale_and_failed AS
           WHERE ((da.archive_state_id = ANY (ARRAY[2, 7, 12])) AND (js.state <> ALL (ARRAY[3, 5])))
           GROUP BY j.dataset_id
         )
- SELECT unionq.warning_message,
+ SELECT (unionq.warning_message)::public.citext AS warning_message,
     unionq.dataset,
     unionq.dataset_id,
     unionq.dataset_created,

@@ -4,7 +4,7 @@
 
 CREATE VIEW pc.v_protein_collections_by_organism AS
  SELECT DISTINCT pc.protein_collection_id,
-    ((((pc.collection_name)::text || ' ('::text) || (pc.num_proteins)::text) || ' Entries)'::text) AS display,
+    (((((((((pc.collection_name)::text || ' ('::text))::public.citext)::text || (pc.num_proteins)::text))::public.citext)::text || (' Entries)'::public.citext)::text))::public.citext AS display,
     pc.description,
     pc.source,
     pc.collection_state_id,

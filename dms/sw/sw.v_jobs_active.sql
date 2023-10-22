@@ -29,12 +29,12 @@ UNION
  SELECT pj.job,
     pj.priority,
     pj.tool AS script,
-    (
+    (((
         CASE
-            WHEN (pj.state = 1) THEN 'New'::text
-            WHEN (pj.state = 8) THEN 'Holding'::text
-            ELSE '??'::text
-        END || ' (not in Pipeline DB)'::text) AS job_state,
+            WHEN (pj.state = 1) THEN 'New'::public.citext
+            WHEN (pj.state = 8) THEN 'Holding'::public.citext
+            ELSE '??'::public.citext
+        END)::text || (' (not in Pipeline DB)'::public.citext)::text))::public.citext AS job_state,
     pj.dataset,
     NULL::timestamp without time zone AS imported,
     NULL::timestamp without time zone AS start,

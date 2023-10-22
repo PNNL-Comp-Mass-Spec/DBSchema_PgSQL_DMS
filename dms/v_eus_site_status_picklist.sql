@@ -5,7 +5,7 @@
 CREATE VIEW public.v_eus_site_status_picklist AS
  SELECT t_eus_site_status.eus_site_status_id AS id,
     t_eus_site_status.eus_site_status,
-    ((((t_eus_site_status.eus_site_status_id)::public.citext)::text || (' - '::public.citext)::text) || (t_eus_site_status.eus_site_status)::text) AS id_with_name
+    (((t_eus_site_status.eus_site_status_id || ' - '::text) || (t_eus_site_status.eus_site_status)::text))::public.citext AS id_with_name
    FROM public.t_eus_site_status;
 
 

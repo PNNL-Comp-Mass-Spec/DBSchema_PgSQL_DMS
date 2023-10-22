@@ -7,7 +7,7 @@ CREATE VIEW public.v_old_storage_report AS
     ((spath.vol_name_client)::text || (spath.storage_path)::text) AS storage_path
    FROM (public.t_instrument_name instname
      JOIN public.t_storage_path spath ON ((instname.instrument OPERATOR(public.=) spath.instrument)))
-  WHERE ((spath.storage_path_function)::text = ('old-storage'::public.citext)::text);
+  WHERE (spath.storage_path_function OPERATOR(public.=) 'old-storage'::public.citext);
 
 
 ALTER TABLE public.v_old_storage_report OWNER TO d3l243;

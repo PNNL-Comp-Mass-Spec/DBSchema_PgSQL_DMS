@@ -8,10 +8,10 @@ CREATE VIEW public.v_protein_collection_list_report AS
         CASE
             WHEN (COALESCE(org.organism_db_name, ''::public.citext) OPERATOR(public.=) lookupq.name) THEN
             CASE
-                WHEN (COALESCE(lookupq.description, ''::public.citext) OPERATOR(public.=) ''::public.citext) THEN 'PREFERRED'::text
-                ELSE ('PREFERRED: '::text || (lookupq.description)::text)
+                WHEN (COALESCE(lookupq.description, ''::public.citext) OPERATOR(public.=) ''::public.citext) THEN 'PREFERRED'::public.citext
+                ELSE ((('PREFERRED: '::public.citext)::text || (lookupq.description)::text))::public.citext
             END
-            ELSE (lookupq.description)::text
+            ELSE lookupq.description
         END AS description,
     lookupq.organism_name,
     lookupq.state,

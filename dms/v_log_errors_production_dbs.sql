@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_log_errors_production_dbs AS
- SELECT 'Capture'::text AS db,
+ SELECT 'Capture'::public.citext AS db,
     v_log_errors.entry_id,
     v_log_errors.posted_by,
     v_log_errors.entered,
@@ -12,7 +12,7 @@ CREATE VIEW public.v_log_errors_production_dbs AS
     v_log_errors.entered_by
    FROM cap.v_log_errors
 UNION
- SELECT 'DMS'::text AS db,
+ SELECT 'DMS'::public.citext AS db,
     v_log_errors.entry_id,
     v_log_errors.posted_by,
     v_log_errors.entered,
@@ -21,7 +21,7 @@ UNION
     v_log_errors.entered_by
    FROM public.v_log_errors
 UNION
- SELECT 'Pipeline'::text AS db,
+ SELECT 'Pipeline'::public.citext AS db,
     v_log_errors.entry_id,
     v_log_errors.posted_by,
     v_log_errors.entered,
@@ -30,7 +30,7 @@ UNION
     v_log_errors.entered_by
    FROM sw.v_log_errors
 UNION
- SELECT 'Data_Package'::text AS db,
+ SELECT 'Data_Package'::public.citext AS db,
     v_log_errors.entry_id,
     v_log_errors.posted_by,
     v_log_errors.entered,

@@ -9,12 +9,12 @@ CREATE VIEW public.v_predefined_analysis_detail_report AS
     pa.instrument_class_criteria,
     pa.next_level,
         CASE
-            WHEN (pa.trigger_before_disposition = 1) THEN 'Before Disposition'::text
-            ELSE 'Normal'::text
+            WHEN (pa.trigger_before_disposition = 1) THEN 'Before Disposition'::public.citext
+            ELSE 'Normal'::public.citext
         END AS trigger_mode,
         CASE pa.propagation_mode
-            WHEN 0 THEN 'Export'::text
-            ELSE 'No Export'::text
+            WHEN 0 THEN 'Export'::public.citext
+            ELSE 'No Export'::public.citext
         END AS export_mode,
     pa.campaign_name_criteria AS campaign_criteria,
     pa.campaign_excl_criteria AS campaign_exclusion,

@@ -5,10 +5,10 @@
 CREATE VIEW pc.v_creation_string_lookup AS
  SELECT
         CASE
-            WHEN (v.description IS NULL) THEN (v.display)::text
-            ELSE (((v.display)::text || ' - '::text) || (v.description)::text)
+            WHEN (v.description IS NULL) THEN v.display
+            ELSE ((((((v.display)::text || (' - '::public.citext)::text))::public.citext)::text || (v.description)::text))::public.citext
         END AS display_value,
-    (((k.keyword)::text || '='::text) || (v.value_string)::text) AS string_element,
+    ((((((k.keyword)::text || ('='::public.citext)::text))::public.citext)::text || (v.value_string)::text))::public.citext AS string_element,
     k.keyword,
     v.value_string
    FROM (pc.t_creation_option_keywords k

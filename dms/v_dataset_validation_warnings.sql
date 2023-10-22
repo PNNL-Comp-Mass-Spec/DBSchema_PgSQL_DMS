@@ -12,11 +12,11 @@ CREATE VIEW public.v_dataset_validation_warnings AS
     ds.dataset_type_id,
     ds.separation_type,
         CASE
-            WHEN (rr.request_id IS NULL) THEN 'Dataset does not have a requested run; create one'::text
-            WHEN (ds.lc_column_id IS NULL) THEN 'LC Column ID is null'::text
-            WHEN (ds.dataset_type_id IS NULL) THEN 'Dataset Type ID is null'::text
-            WHEN (ds.separation_type IS NULL) THEN 'Separation_Type is null'::text
-            ELSE 'Unknown Error'::text
+            WHEN (rr.request_id IS NULL) THEN 'Dataset does not have a requested run; create one'::public.citext
+            WHEN (ds.lc_column_id IS NULL) THEN 'LC Column ID is null'::public.citext
+            WHEN (ds.dataset_type_id IS NULL) THEN 'Dataset Type ID is null'::public.citext
+            WHEN (ds.separation_type IS NULL) THEN 'Separation_Type is null'::public.citext
+            ELSE 'Unknown Error'::public.citext
         END AS warning
    FROM ((public.t_dataset ds
      LEFT JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))

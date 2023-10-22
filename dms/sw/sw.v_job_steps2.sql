@@ -58,7 +58,7 @@ CREATE VIEW sw.v_job_steps2 AS
     dataq.machine,
     dataq.workdirpath AS work_dir_path,
     dataq.transfer_folder_path,
-    (paramq.dataset_storage_path || (dataq.dataset)::text) AS dataset_folder_path,
+    ((paramq.dataset_storage_path)::text || (dataq.dataset)::text) AS dataset_folder_path,
     ((((((((dataq.log_file_path ||
         CASE
             WHEN (EXTRACT(year FROM CURRENT_TIMESTAMP) <> EXTRACT(year FROM dataq.start)) THEN (dataq.theyear || '\'::text)
@@ -120,9 +120,9 @@ CREATE VIEW sw.v_job_steps2 AS
            FROM (sw.v_job_steps js
              LEFT JOIN sw.t_local_processors lp ON ((js.processor OPERATOR(public.=) lp.processor_name)))) dataq
      LEFT JOIN ( SELECT src.job,
-            ((xpath('//params/Param[@Name = "SettingsFileName"]/@Value'::text, src.rooted_xml))[1])::text AS settings_file,
-            ((xpath('//params/Param[@Name = "ParamFileName"]/@Value'::text, src.rooted_xml))[1])::text AS parameter_file,
-            ((xpath('//params/Param[@Name = "DatasetStoragePath"]/@Value'::text, src.rooted_xml))[1])::text AS dataset_storage_path
+            ((xpath('//params/Param[@Name = "SettingsFileName"]/@Value'::text, src.rooted_xml))[1])::public.citext AS settings_file,
+            ((xpath('//params/Param[@Name = "ParamFileName"]/@Value'::text, src.rooted_xml))[1])::public.citext AS parameter_file,
+            ((xpath('//params/Param[@Name = "DatasetStoragePath"]/@Value'::text, src.rooted_xml))[1])::public.citext AS dataset_storage_path
            FROM ( SELECT t_job_parameters.job,
                     ((('<params>'::text || (t_job_parameters.parameters)::text) || '</params>'::text))::xml AS rooted_xml
                    FROM sw.t_job_parameters) src) paramq ON ((paramq.job = dataq.job)));

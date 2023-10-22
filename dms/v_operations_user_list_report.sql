@@ -5,7 +5,7 @@
 CREATE VIEW public.v_operations_user_list_report AS
  SELECT t_user_operations.operation,
     t_user_operations.operation_description,
-    public.get_operation_dms_users_name_list(t_user_operations.operation_id, 0) AS assigned_users
+    (public.get_operation_dms_users_name_list(t_user_operations.operation_id, 0))::public.citext AS assigned_users
    FROM public.t_user_operations;
 
 

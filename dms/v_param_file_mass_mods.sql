@@ -18,7 +18,7 @@ CREATE VIEW public.v_param_file_mass_mods AS
     pf.param_file_name,
     pf.param_file_description,
     ' || Mod Type || Residue || Mod Name (DMS) || Mod Name (UniMod) || Mod Mass ||'::text AS table_code_header,
-    ((((((((((' | '::text || (
+    ((((((((((((((((((((((((((((' | '::public.citext)::text || (
         CASE pfmm.mod_type_symbol
             WHEN 'S'::bpchar THEN 'Static'::public.citext
             WHEN 'D'::bpchar THEN 'Dynamic'::public.citext
@@ -26,11 +26,11 @@ CREATE VIEW public.v_param_file_mass_mods AS
             WHEN 'P'::bpchar THEN 'Static Terminal Protein'::public.citext
             WHEN 'I'::bpchar THEN 'Isotopic'::public.citext
             ELSE (pfmm.mod_type_symbol)::public.citext
-        END)::text) || ' | '::text) || (r.description)::text) || ' | '::text) || (mcf.mass_correction_tag)::text) || ' | '::text) || (
+        END)::text))::public.citext)::text || (' | '::public.citext)::text))::public.citext)::text || (r.description)::text))::public.citext)::text || (' | '::public.citext)::text))::public.citext)::text || (mcf.mass_correction_tag)::text))::public.citext)::text || (' | '::public.citext)::text))::public.citext)::text || (
         CASE
             WHEN (mcf.original_source OPERATOR(public.~~) '%UniMod%'::public.citext) THEN mcf.original_source_name
             ELSE ''::public.citext
-        END)::text) || ' | '::text) || round((mcf.monoisotopic_mass)::numeric, 4)) || ' | '::text) AS table_code_row
+        END)::text))::public.citext)::text || (' | '::public.citext)::text))::public.citext)::text || round((mcf.monoisotopic_mass)::numeric, 4)) || (' | '::public.citext)::text))::public.citext AS table_code_row
    FROM ((((public.t_param_file_mass_mods pfmm
      JOIN public.t_residues r ON ((pfmm.residue_id = r.residue_id)))
      JOIN public.t_mass_correction_factors mcf ON ((pfmm.mass_correction_id = mcf.mass_correction_id)))
