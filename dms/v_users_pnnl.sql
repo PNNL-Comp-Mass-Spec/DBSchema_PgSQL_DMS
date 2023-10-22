@@ -21,7 +21,7 @@ CREATE VIEW public.v_users_pnnl AS
     src."COR_CD" AS cost_code,
     src."COR_AMOUNT" AS cost_amount
    FROM (pnnldata."VW_PUB_BMI_EMPLOYEE" src
-     LEFT JOIN public.t_users u ON (((u.hid)::text = ('H'::text || (src."HANFORD_ID")::text))));
+     LEFT JOIN public.t_users u ON ((u.hid OPERATOR(public.=) ((('H'::public.citext)::text || ((src."HANFORD_ID")::public.citext)::text))::public.citext)));
 
 
 ALTER TABLE public.v_users_pnnl OWNER TO d3l243;
