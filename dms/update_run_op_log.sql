@@ -8,13 +8,18 @@ CREATE OR REPLACE PROCEDURE public.update_run_op_log(IN _changes text, INOUT _me
 /****************************************************
 **
 **  Desc:
-**      Update selected items from instrument run tracking-related entities
+**      Update selected items from instrument run tracking-related entities,
+**      updating tables t_requested_run and/or t_run_interval
 **
 **      This procedure is used by web page https://dms2.pnl.gov/run_op_logs/grid
 **
 **      Example contents of _changes:
-**        <run request="206498" usage="USER" proposal="123456" user="1001" />
+**        <run request="1263010" usage="RESOURCE_OWNER" proposal="" user="" />
+**        <run request="1254406" usage="USER_ONSITE" proposal="60613" user="49073" />
 **        <interval id="268646" note="On hold pending scheduling,Broken[50%],CapDev[25%],StaffNotAvailable[25%],Operator[40677]" />
+**        <interval id="1176694" note="Test note,UserRemote[100%], Proposal[60046], PropUser[62793]" />
+**
+**      Note that Interval ID is the ID of the dataset directly before the interval
 **
 **  Arguments:
 **    _changes      Defines the updates to be applied, in XML format
