@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_new_dataset_to_creation_queue(IN _dataset
 /****************************************************
 **
 **  Desc:
-**      Adds a new dataset to T_Dataset_Create_Queue
+**      Adds a new dataset creation task to T_Dataset_Create_Queue
 **
 **      The Data Import Manager looks for entries with state 1 in T_Dataset_Create_Queue
 **      For each one, it validates that the dataset file(s) are available, then creates the dataset in DMS
@@ -151,7 +151,7 @@ BEGIN
                 _exceptionDetail  = pg_exception_detail,
                 _exceptionContext = pg_exception_context;
 
-        _logMessage := format('Error adding dataset %s: %s', _datasetName, _exceptionMessage);
+        _logMessage := format('Error adding dataset creation task for %s: %s', _datasetName, _exceptionMessage);
 
         _message := local_error_handler (
                         _sqlState, _logMessage, _exceptionDetail, _exceptionContext,
