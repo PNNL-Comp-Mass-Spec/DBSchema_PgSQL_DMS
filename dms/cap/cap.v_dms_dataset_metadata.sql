@@ -6,7 +6,7 @@ CREATE VIEW cap.v_dms_dataset_metadata AS
  SELECT ds.dataset,
     ds.dataset_id,
     dstypename.dataset_type AS type,
-    ds.folder_name AS folder,
+    ds.folder_name AS directory,
     instname.instrument_class,
     instname.instrument AS instrument_name,
     instname.capture_method AS method,
