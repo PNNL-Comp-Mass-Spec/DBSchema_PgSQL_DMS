@@ -1,4 +1,4 @@
---
+
 CREATE OR REPLACE PROCEDURE public.add_update_dataset
 (
     _datasetName text,
@@ -33,10 +33,11 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new dataset entry to DMS database
-**
-**      This is called from the Dataset Entry page (https://dms2.pnl.gov/dataset/create) with _mode = 'add_trigger'
-**      It is also called from the Spreadsheet Loader with _mode as 'add, 'check_update', or 'check_add'
+**      This procedure is called from both web pages and from other procedures
+**      - The Dataset Entry page (https://dms2.pnl.gov/dataset/create) calls it with @mode = 'add_trigger'
+**      - Dataset Detail Report pages call it with @mode = 'update'
+**      - Spreadsheet Loader (https://dms2.pnl.gov/upload/main) calls it with with @mode as 'add, 'check_update', or 'check_add'
+**      - It is also called with @mode = 'add' when the Data Import Manager (DIM) calls add_new_dataset while processing dataset trigger files
 **
 **  Arguments:
 **    _datasetName              Dataset name
@@ -168,6 +169,7 @@ AS $$
 **                         - Use calling user name for the dataset creator user
 **          08/02/2023 mem - Prevent adding a dataset for an inactive instrument
 **          08/03/2023 mem - Allow creation of datasets for instruments in group 'Data_Folders' (specifically, the DMS_Pipeline_Data instrument)
+**          10/24/2023 mem - Use update_cart_parameters to store Cart Config ID in T_Requested_Run
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -1251,14 +1253,14 @@ BEGIN
                 -- If a cart name is specified, update it for the requested run
                 ---------------------------------------------------
 
-                If Not _lcCartName::citext In ('', 'no update') And _requestID > 0 Then
+                If _requestID > 0 And Not _lcCartName::citext In ('', 'no update') Then
 
                     If Coalesce(_message, '') <> '' and Coalesce(_warning, '') = '' Then
                         _warning := _message;
                     End If;
 
                     If _logDebugMessages Then
-                        RAISE INFO '%', 'Call update_cart_parameters';
+                        RAISE INFO '%', 'Call update_cart_parameters with _mode="CartName"'
                     End If;
 
                     CALL public.update_cart_parameters (
@@ -1270,6 +1272,32 @@ BEGIN
 
                     If _returnCode <> '' Then
                         RAISE EXCEPTION 'Update LC cart name failed: dataset % -> %',_datasetName, _message;
+                    End If;
+                End If;
+
+                ---------------------------------------------------
+                -- If _cartConfigID is a positive number, update it for the requested run
+                ---------------------------------------------------
+
+                If _requestID > 0 And _cartConfigID > 0 Then
+
+                    If Coalesce(_message, '') <> '' and Coalesce(_warning, '') = '' Then
+                        _warning := _message;
+                    End If;
+
+                    If _logDebugMessages Then
+                        RAISE INFO '%', 'Call update_cart_parameters with _mode="CartConfigID"'
+                    End If;
+
+                    CALL public.update_cart_parameters (
+                                        'CartConfigID',
+                                        _requestID,
+                                        _newValue   => _cartConfigID::text,
+                                        _message    => _message,        -- Output
+                                        _returnCode => _returnCode);    -- Output
+
+                    If _returnCode <> '' Then
+                        RAISE EXCEPTION 'Update cart config ID failed: dataset % -> %',_datasetName, _message;
                     End If;
                 End If;
 
@@ -1406,6 +1434,26 @@ BEGIN
                         _warningAddon := format('Update LC cart name failed: %s', _warningAddon);
                         _warning := public.append_to_text(_warning, _warningAddon);
                     End If;
+                End If;
+            End If;
+
+            ---------------------------------------------------
+            -- If _cartConfigID is a positive number, update it for the requested run
+            ---------------------------------------------------
+
+            If _requestID > 0 And _cartConfigID > 0 Then
+
+                CALL public.update_cart_parameters (
+                                    'CartConfigID',
+                                    _requestID,
+                                    _newValue   => _cartConfigID::text,
+                                    _message    => _warningAddon,   -- Output
+                                    _returnCode => _returnCode);    -- Output
+
+                If _returnCode <> '' Then
+                    _warningAddon := format('Update cart config ID failed: %s', _warningAddon);
+                    _warning := public.append_to_text(_warning, _warningAddon);
+                    _returnCode := '';
                 End If;
             End If;
 
