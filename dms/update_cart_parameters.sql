@@ -12,7 +12,7 @@ CREATE OR REPLACE PROCEDURE public.update_cart_parameters(IN _mode text, IN _req
 **      This procedure is used by add_update_dataset
 **
 **  Arguments:
-**    _mode         Type of update being performed ('CartName', 'RunStatus', 'RunStart', 'RunFinish', or 'InternalStandard')
+**    _mode         Type of update being performed ('CartName', 'CartConfigID', 'RunStatus', 'RunStart', 'RunFinish', or 'InternalStandard')
 **    _requestID    ID of requested run being updated
 **    _newValue     New value to store in t_requested_run for _requestID (see below for more info)
 **    _message      Output: error message
@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE public.update_cart_parameters(IN _mode text, IN _req
 **      Mode              T_Requested_Run Column      Description
 **      ----------------  -------------------------  -----------------------------------------------------------------------------------------------------------------------------------------------------
 **      CartName          cart_id                    Store the cart ID that corresponds to the cart name specified by _newValue; if the cart name is invalid, the table is not updated
+**      CartConfigID      cart_config_id             Store the cart config id, but only if it corresponds to a row in t_lc_cart_configuration
 **      RunStatus         note                       Store the text specified by _newValue (this mode is not used; every row in t_requested_run has an empty string or null in the "note" column)
 **      RunStart          request_run_start          Store the requested run start time,  using either the timestamp specified by _newValue, or the current time if _newValue is an empty string (or null)
 **      RunFinish         request_run_finish         Store the requested run finish time, using either the timestamp specified by _newValue, or the current time if _newValue is an empty string (or null)
@@ -37,12 +38,14 @@ CREATE OR REPLACE PROCEDURE public.update_cart_parameters(IN _mode text, IN _req
 **          01/09/2017 mem - Update _message when using RAISERROR
 **          01/10/2023 mem - Include previous _message text when updating @message
 **          09/08/2023 mem - Ported to PostgreSQL
+**          10/24/2023 mem - Add mode 'CartConfigID'
 **
 *****************************************************/
 DECLARE
     _dt timestamp;
     _tmp int;
     _cartID int;
+    _cartConfigID int;
     _usageMessage text;
 BEGIN
     _message := '';
@@ -85,13 +88,35 @@ BEGIN
 
             _returnCode := 'U5202';
         Else
-            -- Note: Only update the value if Cart_ID has changed
+            -- Note: Only update the value if the Cart ID has changed
             --
             UPDATE t_requested_run
             SET cart_id = _cartID
             WHERE request_id = _requestID AND
-                  cart_id <> _cartID;
+                  Coalesce(cart_id, 0) <> _cartID;
         End If;
+    End If;
+
+    If _mode::citext = 'CartConfigID' Then
+        ---------------------------------------------------
+        -- Resolve ID for Cart Config ID and update requested run table
+        ---------------------------------------------------
+
+        _cartConfigID = public.try_cast(_newValue, null::int);
+
+        If _cartConfigID Is Null Then
+            _message := format('Cannot update T_Requested_Run since cart config ID is not an integer: %s', Coalesce(_newValue, '??'));
+            _returnCode := 'U5203';
+        ElsIf Not Exists (SELECT Cart_Config_ID FROM T_LC_Cart_Configuration WHERE Cart_Config_ID = _cartConfigID) Then
+            _message := format('Invalid Cart Config ID: %s', _cartConfigID);
+            _returnCode := 'U5204';
+        Else
+            UPDATE t_requested_run
+            SET cart_config_id = _cartConfigID
+            WHERE request_id = _requestID AND
+                  Coalesce(cart_config_id, 0) <> _cartConfigID;
+        End If;
+
     End If;
 
     If _mode::citext = 'RunStatus' Then
