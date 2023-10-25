@@ -12,12 +12,11 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new dataset entry to DMS database from contents of XML.
+**      Adds new dataset entry to DMS database from contents of XML
 **
-**      This is for use by sample automation software associated with the mass spec instrument to
-**      create new datasets automatically following an instrument run.
+**      This procedure is called by the Data Import Manager (DIM) while processing dataset trigger files
 **
-**      This procedure is called by the DataImportManager (DIM)
+**      This procedure extracts the metadata from the XML then calls add_update_dataset
 **
 **      Example XML:
 **

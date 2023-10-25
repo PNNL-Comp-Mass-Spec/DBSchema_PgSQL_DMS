@@ -1183,7 +1183,7 @@ BEGIN
 
                     If _workPackage::citext In ('', 'none', 'na', '(lookup)') Then
                         If _logDebugMessages Then
-                            RAISE INFO '%', 'Call Get_WP_for_EUS_Proposal';
+                            RAISE INFO '%', 'Query Get_WP_for_EUS_Proposal';
                         End If;
 
                         SELECT work_package
@@ -1361,19 +1361,19 @@ BEGIN
             End If;
 
             UPDATE t_dataset
-            SET operator_username = _operatorUsername,
-                comment = _comment,
-                dataset_type_ID = _datasetTypeID,
-                well = _wellNumber,
-                separation_type = _secSep,
-                folder_name = _folderName,
-                exp_id = _experimentID,
-                dataset_rating_id = _ratingID,
-                lc_column_ID = _columnID,
-                wellplate = _wellplateName,
+            SET operator_username    = _operatorUsername,
+                comment              = _comment,
+                dataset_type_ID      = _datasetTypeID,
+                well                 = _wellNumber,
+                separation_type      = _secSep,
+                folder_name          = _folderName,
+                exp_id               = _experimentID,
+                dataset_rating_id    = _ratingID,
+                lc_column_ID         = _columnID,
+                wellplate            = _wellplateName,
                 internal_standard_ID = _intStdID,
-                capture_subfolder = _captureSubfolder,
-                cart_config_id = _cartConfigID
+                capture_subfolder    = _captureSubfolder,
+                cart_config_id       = _cartConfigID
             WHERE dataset_id = _datasetID
 
             -- If _callingUser is defined, Call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
@@ -1422,7 +1422,7 @@ BEGIN
                     _warningAddon := 'Dataset is not associated with a requested run; cannot update the LC Cart Name';
                     _warning := public.append_to_text(_warning, _warningAddon);
                 Else
-                    _warningAddon := '';
+
                     CALL public.update_cart_parameters (
                                         'CartName',
                                         _requestID,
@@ -1433,6 +1433,7 @@ BEGIN
                     If _returnCode <> '' Then
                         _warningAddon := format('Update LC cart name failed: %s', _warningAddon);
                         _warning := public.append_to_text(_warning, _warningAddon);
+                        _returnCode := '';
                     End If;
                 End If;
             End If;
@@ -1459,17 +1460,17 @@ BEGIN
 
             If _requestID > 0 And _eusUsageType <> '' Then
 
-                -- Lookup _batchID, _block, and _runOrder
+                -- Lookup Batch ID, Block, and Run Order
 
                 SELECT batch_id,
                        block,
                        run_order
                 INTO _batchID, _block, _runOrder
                 FROM t_requested_run
-                WHERE request_id = _requestID
+                WHERE request_id = _requestID;
 
-                _batchID := Coalesce(_batchID, 0);
-                _block := Coalesce(_block, 0);
+                _batchID  := Coalesce(_batchID, 0);
+                _block    := Coalesce(_block, 0);
                 _runOrder := Coalesce(_runOrder, 0);
 
                 CALL public.add_update_requested_run (

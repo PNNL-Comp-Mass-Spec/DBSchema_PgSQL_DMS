@@ -1,4 +1,4 @@
---
+
 CREATE OR REPLACE PROCEDURE public.add_analysis_job_group
 (
     _datasetList text,
@@ -506,27 +506,27 @@ BEGIN
         _organismName := Trim(_organismName);
 
         CALL public.validate_analysis_job_parameters (
-                                _toolName => _toolName,
-                                _paramFileName => _paramFileName,               -- Output
-                                _settingsFileName => _settingsFileName,         -- Output
-                                _organismDBName => _organismDBName,             -- Output
-                                _organismName => _organismName,
-                                _protCollNameList => _protCollNameList,         -- Output
-                                _protCollOptionsList => _protCollOptionsList,   -- Output
-                                _ownerUsername => _ownerUsername,               -- Output
-                                _mode => _mode,
-                                _userID => _userID,                             -- Output
-                                _analysisToolID => _analysisToolID,             -- Output
-                                _organismID => _organismID,                     -- Output
-                                _job => 0,
-                                _autoRemoveNotReleasedDatasets => false,
-                                _autoUpdateSettingsFileToCentroided => true,
-                                _allowNewDatasets => false,
-                                _warning => _warning,                           -- Output
-                                _priority => _priority,                         -- Output
-                                _showDebugMessages => false,
-                                _message => _message,                           -- Output
-                                _returnCode => _returnCode);                    -- Output
+                                _toolName => _toolName,                                      _toolname text
+                                _paramFileName => _paramFileName,               -- Output    _paramfilename text     -- Output
+                                _settingsFileName => _settingsFileName,         -- Output    _settingsfilename text     -- Output
+                                _organismDBName => _organismDBName,             -- Output    _organismdbname text     -- Output
+                                _organismName => _organismName,                              _organismname text
+                                _protCollNameList => _protCollNameList,         -- Output    _protcollnamelist text     -- Output
+                                _protCollOptionsList => _protCollOptionsList,   -- Output    _protcolloptionslist text     -- Output
+                                _ownerUsername => _ownerUsername,               -- Output    _ownerusername text     -- Output
+                                _mode => _mode,                                              _mode text
+                                _userID => _userID,                             -- Output    _userid integer     -- Output
+                                _analysisToolID => _analysisToolID,             -- Output    _analysistoolid integer     -- Output
+                                _organismID => _organismID,                     -- Output    _organismid integer     -- Output
+                                _job => 0,                                                   _job integer DEFAULT 0
+                                _autoRemoveNotReleasedDatasets => false,                     _autoremovenotreleaseddatasets boolean DEFAULT
+                                _autoUpdateSettingsFileToCentroided => true,                 _autoupdatesettingsfiletocentroided boolean DEF
+                                _allowNewDatasets => false,                                  _allownewdatasets boolean DEFAULT false
+                                _warning => _warning,                           -- Output    _warning text DEFAULT ''::text     -- Output
+                                _priority => _priority,                         -- Output    _priority integer DEFAULT 3     -- Output
+                                _showDebugMessages => false,                                 _showdebugmessages boolean DEFAULT false
+                                _message => _message,                           -- Output    _message text DEFAULT ''::text     -- Output
+                                _returnCode => _returnCode);                    -- Output    _returncode text DEFAULT ''::text     -- Output
 
 
         If _returnCode <> '' Then

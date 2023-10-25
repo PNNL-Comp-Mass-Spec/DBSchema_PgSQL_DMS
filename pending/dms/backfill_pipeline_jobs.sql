@@ -12,12 +12,12 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Creates jobs in public.t_analysis_job for jobs that were originally
-**      created in sw.t_jobs
+**      Creates jobs in public.t_analysis_job for jobs that were originally created in sw.t_jobs
 **
 **  Arguments:
-**    _jobsToProcess   Set to a positive number to process a finite number of jobs
-**    _startJob        Set to a positive number to start with the given job number (useful if we know that a job was just created in sw.t_jobs)
+**    _infoOnly         When true, preview the jobs that would be backfilled
+**    _jobsToProcess    Set to a positive number to process a finite number of jobs
+**    _startJob         Set to a positive number to start with the given job number (useful if we know that a job was just created in sw.t_jobs)
 **
 **  Auth:   mem
 **  Date:   01/12/2012
@@ -121,7 +121,7 @@ BEGIN
 
     If _infoOnly Then
 
-        -- Preview all of the jobs that would be backfilled
+        -- Preview the jobs that would be backfilled
 
         RAISE INFO '';
 
@@ -299,7 +299,7 @@ BEGIN
             SELECT organism_id
             INTO _organismID
             FROM t_organisms
-            WHERE (organism = 'None');
+            WHERE organism = 'None';
 
             If Not FOUND Then
                 _message := 'organism "None" not found in t_organisms; -- this is unexpected; will set _organismID to 1'
@@ -317,7 +317,7 @@ BEGIN
             -- Validate _jobInfo.Owner; update if not valid
             ---------------------------------------------------
 
-            If Not Exists (SELECT * FROM t_users WHERE username = Coalesce(_jobInfo.Owner, '')) Then
+            If Not Exists (SELECT user_id FROM t_users WHERE username = Coalesce(_jobInfo.Owner, ''))::citext Then
                 _jobInfo.Owner := 'H09090911';
             End If;
 
@@ -325,7 +325,7 @@ BEGIN
             -- Validate _jobInfo.State; update if not valid
             ---------------------------------------------------
 
-            If Not Exists (SELECT * FROM t_analysis_job_state WHERE job_state_id = _jobInfo.State) Then
+            If Not Exists (SELECT job_state_id FROM t_analysis_job_state WHERE job_state_id = _jobInfo.State) Then
                 _message := format('State %s not found in t_analysis_job_state; -- this is unexpected; will set _jobInfo.State to 4', _jobInfo.State)
 
                 If _infoOnly Then
@@ -378,12 +378,12 @@ BEGIN
             _datasetID := -1;
             _datasetComment := '';
 
-            If Coalesce(_jobInfo.Dataset, 'Aggregation') <> 'Aggregation' Then
+            If Coalesce(_jobInfo.Dataset, 'Aggregation')::citext <> 'Aggregation'::citext Then
 
                 SELECT dataset_id
                 INTO _datasetID
                 FROM t_dataset
-                WHERE dataset = _jobInfo.Dataset
+                WHERE dataset = _jobInfo.Dataset;
 
                 If Not FOUND Then
                     _datasetID := -1;
