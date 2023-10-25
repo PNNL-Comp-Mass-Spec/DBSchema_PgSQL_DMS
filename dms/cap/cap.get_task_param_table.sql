@@ -33,6 +33,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_table(_job integer, _dataset text,
 **          06/20/2023 mem - Use citext for columns in the output table
 **          06/21/2023 mem - Store instrument raw_data_type in the parameter table
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          10/25/2023 mem - Use renamed "directory" column in V_DMS_Dataset_Metadata
 **
 *****************************************************/
 DECLARE
@@ -73,48 +74,48 @@ BEGIN
     -- Convert columns of data from V_DMS_Dataset_Metadata into rows added to Tmp_Param_Tab
     ---------------------------------------------------
 
-    INSERT INTO Tmp_Param_Tab ( Section, Name, Value)
+    INSERT INTO Tmp_Param_Tab ( section, name, value)
     SELECT 'JobParameters' AS Section,
            UnpivotQ.Name,
            UnpivotQ.Value
-    FROM ( SELECT Type AS Dataset_Type,
-                  Folder AS Directory,
-                  Method,
-                  Capture_Exclusion_Window::text AS Capture_Exclusion_Window,
-                  timestamp_text(Created) AS Created,
-                  Source_Vol AS Source_Vol,
-                  source_Path AS Source_Path,
-                  Storage_Vol AS Storage_Vol,
-                  Storage_Path AS Storage_Path,
-                  Storage_Vol_External AS Storage_Vol_External,
-                  Archive_Server AS Archive_Server,
-                  Archive_Path AS Archive_Path,
-                  Archive_Network_Share_Path AS Archive_Network_Share_Path,
-                  EUS_Instrument_ID::text AS EUS_Instrument_ID,
-                  EUS_Proposal_ID::text AS EUS_Proposal_ID,
-                  EUS_Operator_ID::text AS EUS_Operator_ID,
-                  Operator_Username
+    FROM ( SELECT type AS dataset_type,
+                  directory,
+                  method,
+                  capture_exclusion_window::text,
+                  timestamp_text(created) AS created,
+                  source_vol,
+                  source_path,
+                  storage_vol,
+                  storage_path,
+                  storage_vol_external,
+                  archive_server,
+                  archive_path,
+                  archive_network_share_path,
+                  eus_instrument_id::text AS eus_instrument_id,
+                  eus_proposal_id::text AS eus_proposal_id,
+                  eus_operator_id::text AS eus_operator_id,
+                  operator_username
            FROM cap.V_DMS_Dataset_Metadata
            WHERE Dataset_ID = _datasetID) AS m
          CROSS JOIN LATERAL (
            VALUES
-                ('Dataset_Type', m.Dataset_Type),
-                ('Directory', m.Directory),
-                ('Method', m.Method),
-                ('Capture_Exclusion_Window', m.Capture_Exclusion_Window),
-                ('Created', m.Created),
-                ('Source_Vol', m.Source_Vol),
-                ('Source_Path', m.Source_Path),
-                ('Storage_Vol', m.Storage_Vol),
-                ('Storage_Path', m.Storage_Path),
-                ('Storage_Vol_External', m.Storage_Vol_External),
-                ('Archive_Server', m.Archive_Server),
-                ('Archive_Path', m.Archive_Path),
-                ('Archive_Network_Share_Path', m.Archive_Network_Share_Path),
-                ('EUS_Instrument_ID', m.EUS_Instrument_ID),
-                ('EUS_Proposal_ID', m.EUS_Proposal_ID),
-                ('EUS_Operator_ID', m.EUS_Operator_ID),
-                ('Operator_Username', m.Operator_Username)
+                ('Dataset_Type', m.dataset_type),
+                ('Directory', m.directory),
+                ('Method', m.method),
+                ('Capture_Exclusion_Window', m.capture_exclusion_window),
+                ('Created', m.created),
+                ('Source_Vol', m.source_vol),
+                ('Source_Path', m.source_path),
+                ('Storage_Vol', m.storage_vol),
+                ('Storage_Path', m.storage_path),
+                ('Storage_Vol_External', m.storage_vol_external),
+                ('Archive_Server', m.archive_server),
+                ('Archive_Path', m.archive_path),
+                ('Archive_Network_Share_Path', m.archive_network_share_path),
+                ('EUS_Instrument_ID', m.eus_instrument_id),
+                ('EUS_Proposal_ID', m.eus_proposal_id),
+                ('EUS_Operator_ID', m.eus_operator_id),
+                ('Operator_Username', m.operator_username)
            ) AS UnpivotQ(Name, Value)
     WHERE Not UnpivotQ.value Is Null;
 
@@ -192,7 +193,7 @@ BEGIN
     VALUES ('JobParameters', 'PerformCalibration', _performCalibrationText);
 
     ---------------------------------------------------
-    -- Lookup the Analysis Transfer directory (e.g. \\proto-6\DMS3_Xfer)
+    -- Lookup the transfer directory (e.g. \\proto-6\DMS3_Xfer)
     -- This directory is used to store metadata.txt files for dataset archive and archive tasks
     -- Those files are used by the ArchiveVerify tool to confirm that files were successfully imported into MyEMSL
     ---------------------------------------------------
