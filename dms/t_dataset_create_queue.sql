@@ -31,7 +31,8 @@ CREATE TABLE public.t_dataset_create_queue (
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     start timestamp without time zone,
     finish timestamp without time zone,
-    completion_code integer
+    completion_code integer,
+    completion_message public.citext
 );
 
 

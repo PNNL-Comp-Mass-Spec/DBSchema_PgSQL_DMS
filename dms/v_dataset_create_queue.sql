@@ -32,7 +32,8 @@ CREATE VIEW public.v_dataset_create_queue AS
     dcq.created,
     dcq.start,
     dcq.finish,
-    dcq.completion_code
+    dcq.completion_code,
+    dcq.completion_message
    FROM (public.t_dataset_create_queue dcq
      JOIN public.t_dataset_create_queue_state qs ON ((dcq.state_id = qs.queue_state_id)));
 
