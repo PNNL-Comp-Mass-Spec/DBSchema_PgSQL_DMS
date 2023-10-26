@@ -6,7 +6,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_dataset
     _operatorUsername text,
     _instrumentName text,
     _msType text,
-    _lcColumnNum text,
+    _lcColumnName text,
     _wellplateName text = 'na',
     _wellNumber text = 'na',
     _secSep text = 'na',
@@ -45,7 +45,7 @@ AS $$
 **    _operatorUsername         Instrument operator username
 **    _instrumentName           Instrument name
 **    _msType                   Dataset Type
-**    _lcColumnNum              LC column name
+**    _lcColumnName             LC column name
 **    _wellplateName            Wellplate name
 **    _wellNumber               Well number
 **    _secSep                   LC Separation type
@@ -275,7 +275,7 @@ BEGIN
         _mode              := Trim(Lower(Coalesce(_mode, '')));
 
         _secSep            := Trim(Coalesce(_secSep, ''));
-        _lcColumnNum       := Trim(Coalesce(_lcColumnNum, ''));
+        _lcColumnName      := Trim(Coalesce(_lcColumnName, ''));
         _datasetName       := Trim(Coalesce(_datasetName, ''));
 
         _experimentName    := Trim(Coalesce(_experimentName, ''));
@@ -297,7 +297,7 @@ BEGIN
             RAISE EXCEPTION 'Separation type must be specified';
         End If;
 
-        If Coalesce(_lcColumnNum, '') = '' Then
+        If Coalesce(_lcColumnName, '') = '' Then
             RAISE EXCEPTION 'LC Column name must be specified';
         End If;
 
@@ -480,10 +480,10 @@ BEGIN
         SELECT lc_column_id
         INTO _columnID
         FROM t_lc_column
-        WHERE lc_column::citext = _lcColumnNum::citext;
+        WHERE lc_column::citext = _lcColumnName::citext;
 
         If Not FOUND Then
-            RAISE EXCEPTION 'Unknown LC column name: %', _lcColumnNum;
+            RAISE EXCEPTION 'Unknown LC column name: %', _lcColumnName;
         End If;
 
         ---------------------------------------------------
