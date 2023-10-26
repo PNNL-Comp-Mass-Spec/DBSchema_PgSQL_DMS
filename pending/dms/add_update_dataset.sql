@@ -170,6 +170,7 @@ AS $$
 **          08/02/2023 mem - Prevent adding a dataset for an inactive instrument
 **          08/03/2023 mem - Allow creation of datasets for instruments in group 'Data_Folders' (specifically, the DMS_Pipeline_Data instrument)
 **          10/24/2023 mem - Use update_cart_parameters to store Cart Config ID in T_Requested_Run
+**          10/26/2023 mem - Call add_new_dataset_to_creation_queue instead of create_xml_dataset_trigger_file
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -1018,37 +1019,36 @@ BEGIN
                 CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
-            CALL public.create_xml_dataset_trigger_file (
-                            _datasetName,
-                            _experimentName,
-                            _instrumentName,
-                            _secSep,
-                            _lcCartName,
-                            _lcColumnNum,
-                            _wellplateName,
-                            _wellNumber,
-                            _msType,
-                            _operatorUsername,
-                            _dsCreatorUsername,
-                            _comment,
-                            _rating,
-                            _requestID,
-                            _workPackage,
-                            _eusUsageType,
-                            _eusProposalID,
-                            _eusUsersList,
-                            _runStart,
-                            _runFinish,
-                            _captureSubfolder,
-                            _lcCartConfig,
+
+            CALL public.add_new_dataset_to_creation_queue (
+                            _datasetName,           -- Dataset name
+                            _experimentName,        -- Experiment name
+                            _instrumentName,        -- Instrument name
+                            _secSep,                -- Separation type
+                            _lcCartName,            -- LC cart
+                            _lcCartConfig,          -- LC cart config
+                            _lcColumnName,          -- LC column
+                            _wellplateName,         -- Wellplate
+                            _wellNumber,            -- Well number
+                            _msType,                -- Datset type
+                            _operatorUsername,      -- Operator username,
+                            _dsCreatorUsername,     -- Dataset creator username
+                            _comment,               -- Comment,
+                            _rating,                -- Interest rating,
+                            _requestID,             -- Requested run ID
+                            _workPackage,           -- Work package,
+                            _eusUsageType,          -- EUS usage type,
+                            _eusProposalID,         -- EUS proposal id,
+                            _eusUsersList,          -- EUS users list,
+                            _captureSubfolder,      -- Capture subfolder,
                             _message => _message,               -- Output
                             _returnCode => _returnCode);        -- Output
 
             If _returnCode <> '' Then
-                -- Create_Xml_Dataset_Trigger_File should have already logged critical errors to t_log_entries
+                -- add_new_dataset_to_creation_queue should have already logged critical errors to t_log_entries
                 -- No need for this procedure to log the message again
                 _logErrors := false;
-                RAISE EXCEPTION 'There was an error while creating the XML Trigger file: %', _message;
+                RAISE EXCEPTION 'Error adding the new dataset to the creation queue: %', _message;
             End If;
         End If;
 
