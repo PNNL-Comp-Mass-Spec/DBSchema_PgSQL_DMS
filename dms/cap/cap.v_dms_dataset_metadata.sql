@@ -15,7 +15,7 @@ CREATE VIEW cap.v_dms_dataset_metadata AS
     edm.eus_instrument_id,
     rr.eus_proposal_id,
     ds.operator_username,
-    COALESCE(eusproposaluserrr.eus_user_id, eususeroperator.eus_person_id) AS eus_operator_id,
+    COALESCE(eusproposaluser.eus_user_id, eususeroperator.eus_person_id) AS eus_operator_id,
     ds.created,
     sourcepath.storage_path AS source_path,
     sourcepath.vol_name_server AS source_vol,
@@ -39,7 +39,7 @@ CREATE VIEW cap.v_dms_dataset_metadata AS
      LEFT JOIN public.t_emsl_dms_instrument_mapping edm ON ((ds.instrument_id = edm.dms_instrument_id)))
      LEFT JOIN public.t_requested_run rr ON ((ds.dataset_id = rr.dataset_id)))
      LEFT JOIN public.v_eus_user_id_lookup eususeroperator ON ((ds.operator_username OPERATOR(public.=) eususeroperator.username)))
-     LEFT JOIN public.v_eus_proposal_user_lookup eusproposaluserrr ON (((rr.eus_proposal_id OPERATOR(public.=) eusproposaluserrr.proposal_id) AND (ds.operator_username OPERATOR(public.=) eusproposaluserrr.username) AND (eusproposaluserrr.valid_eus_id > 0))));
+     LEFT JOIN public.v_eus_proposal_user_lookup eusproposaluser ON (((rr.eus_proposal_id OPERATOR(public.=) eusproposaluser.proposal_id) AND (ds.operator_username OPERATOR(public.=) eusproposaluser.username) AND (eusproposaluser.valid_eus_id > 0))));
 
 
 ALTER TABLE cap.v_dms_dataset_metadata OWNER TO d3l243;
