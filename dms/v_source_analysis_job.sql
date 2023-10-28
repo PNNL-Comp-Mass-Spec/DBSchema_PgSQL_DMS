@@ -17,9 +17,9 @@ CREATE VIEW public.v_source_analysis_job AS
     instclass.raw_data_type,
     ((spath.vol_name_client)::text || 'DMS3_XFER\'::text) AS transfer_folder_path,
     archpath.network_share_path AS archive_folder_path,
-    ((sp.vol_name_client)::text || (sp.storage_path)::text) AS dataset_storage_path,
+    ((spath.vol_name_client)::text || (spath.storage_path)::text) AS dataset_storage_path,
     dsarch.instrument_data_purged
-   FROM (((((((((public.t_analysis_job aj
+   FROM ((((((((public.t_analysis_job aj
      JOIN public.t_dataset ds ON ((aj.dataset_id = ds.dataset_id)))
      JOIN public.t_analysis_tool analysistool ON ((aj.analysis_tool_id = analysistool.analysis_tool_id)))
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
@@ -27,8 +27,7 @@ CREATE VIEW public.v_source_analysis_job AS
      JOIN public.t_experiments e ON ((ds.exp_id = e.exp_id)))
      JOIN public.t_storage_path spath ON ((ds.storage_path_id = spath.storage_path_id)))
      JOIN public.t_dataset_archive dsarch ON ((ds.dataset_id = dsarch.dataset_id)))
-     JOIN public.t_archive_path archpath ON ((dsarch.storage_path_id = archpath.archive_path_id)))
-     JOIN public.t_storage_path sp ON ((ds.storage_path_id = sp.storage_path_id)));
+     JOIN public.t_archive_path archpath ON ((dsarch.storage_path_id = archpath.archive_path_id)));
 
 
 ALTER TABLE public.v_source_analysis_job OWNER TO d3l243;
