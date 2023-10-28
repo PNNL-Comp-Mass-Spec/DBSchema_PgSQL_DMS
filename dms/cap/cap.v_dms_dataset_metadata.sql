@@ -17,6 +17,8 @@ CREATE VIEW cap.v_dms_dataset_metadata AS
     ds.operator_username,
     COALESCE(eusproposaluser.eus_user_id, eususeroperator.eus_person_id) AS eus_operator_id,
     ds.created,
+    ds.acq_time_start,
+    ds.acq_time_end,
     sourcepath.storage_path AS source_path,
     sourcepath.vol_name_server AS source_vol,
     sourcepath.storage_path_id AS source_path_id,
