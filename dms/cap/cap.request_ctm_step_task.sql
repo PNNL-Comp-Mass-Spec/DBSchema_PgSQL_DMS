@@ -110,6 +110,7 @@ CREATE OR REPLACE PROCEDURE cap.request_ctm_step_task(IN _processorname text, IN
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          10/27/2023 mem - Apply a row-level lock to cap.t_task_steps using FOR UPDATE
 **
 *****************************************************/
 DECLARE
@@ -519,7 +520,8 @@ BEGIN
                       CJS.Step = TS.Step
             WHERE TS.State = 2
             ORDER BY Seq
-            LIMIT 1;
+            LIMIT 1
+            FOR UPDATE;         -- Lock the row to prevent other managers from selecting this capture task job
 
             If FOUND Then
                 _jobAssigned := true;
@@ -623,7 +625,7 @@ BEGIN
 
         Else
             ---------------------------------------------------
-            -- No capture task job step found; update _message and _returnCode
+            -- No capture task job steps found; update _message and _returnCode
             ---------------------------------------------------
 
             _message := 'No available capture task jobs';

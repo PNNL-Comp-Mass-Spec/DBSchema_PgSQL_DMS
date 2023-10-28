@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE sw.request_folder_create_task(IN _processorname text
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          10/27/2023 mem - Apply a row-level lock to sw.t_data_folder_create_queue using FOR UPDATE
 **
 *****************************************************/
 DECLARE
@@ -109,7 +110,8 @@ BEGIN
         FROM sw.t_data_folder_create_queue
         WHERE state = 1
         ORDER BY entry_id
-        LIMIT 1;
+        LIMIT 1
+        FOR UPDATE;         -- Lock the row to prevent other threads from selecting this task
 
         If FOUND Then
             _taskAssigned := true;

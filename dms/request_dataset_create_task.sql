@@ -50,6 +50,7 @@ CREATE OR REPLACE PROCEDURE public.request_dataset_create_task(IN _processorname
 **
 **  Auth:   mem
 **          10/25/2023 mem - Initial version
+**          10/27/2023 mem - Apply a row-level lock to t_dataset_create_queue using FOR UPDATE
 **
 *****************************************************/
 DECLARE
@@ -115,7 +116,8 @@ BEGIN
         FROM t_dataset_create_queue
         WHERE state_id = 1
         ORDER BY entry_id
-        LIMIT 1;
+        LIMIT 1
+        FOR UPDATE;         -- Lock the row to prevent other threads from selecting this task
 
         If FOUND Then
             _taskAssigned = true;

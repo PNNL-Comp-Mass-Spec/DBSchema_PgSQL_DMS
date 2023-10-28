@@ -124,6 +124,7 @@ CREATE OR REPLACE PROCEDURE sw.request_step_task_xml(IN _processorname text, INO
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          10/27/2023 mem - Apply a row-level lock to sw.t_job_steps using FOR UPDATE
 **
 *****************************************************/
 DECLARE
@@ -1377,7 +1378,8 @@ BEGIN
             Tmp_CandidateJobSteps CJS ON CJS.job = JS.job AND CJS.step = JS.step
         WHERE JS.state IN (2, 9, 11) And CJS.Association_Type <= _associationTypeIgnoreThreshold
         ORDER BY Seq
-        LIMIT 1;
+        LIMIT 1
+        FOR UPDATE;         -- Lock the row to prevent other managers from selecting this job
 
         If FOUND Then
             _jobAssigned := true;

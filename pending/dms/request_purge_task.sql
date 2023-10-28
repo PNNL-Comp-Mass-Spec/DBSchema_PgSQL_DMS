@@ -299,7 +299,6 @@ BEGIN
 
         _candidateCount := _candidateCount + _matchCount;
 
-
         If Not _infoOnly Then
             If _CandidateCount > 0 Then
                 -- Break out of the For Loop
@@ -317,7 +316,6 @@ BEGIN
 
             CONTINUE;
         End If;
-
 
         ---------------------------------------------------
         -- Count the number of candidates on each volume on each storage server
@@ -482,7 +480,8 @@ BEGIN
                ON DatasetID = dataset_id
         WHERE archive_state_id IN (3, 14, 15)
         ORDER BY Tmp_PurgeableDatasets.EntryID
-        LIMIT 1;
+        LIMIT 1
+        FOR UPDATE;         -- Lock the row to prevent other managers from purging this dataset
 
         If Not FOUND Then
             _message := 'no datasets found';
