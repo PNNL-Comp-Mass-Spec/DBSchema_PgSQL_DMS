@@ -9,8 +9,8 @@ CREATE VIEW public.v_instrument_detail_report AS
     (s.source)::public.citext AS assigned_source,
     instname.storage_path_id,
     (((spath.vol_name_client)::text || (spath.storage_path)::text))::public.citext AS assigned_storage,
-    ap.archive_path AS assigned_archive_path,
-    ap.network_share_path AS archive_share_path,
+    archpath.archive_path AS assigned_archive_path,
+    archpath.network_share_path AS archive_share_path,
     instname.description,
     instname.instrument_class AS class,
     instname.instrument_group,
@@ -57,7 +57,7 @@ CREATE VIEW public.v_instrument_detail_report AS
      JOIN public.t_yes_no scansourceyesno ON ((instname.scan_source_dir = scansourceyesno.flag)))
      JOIN public.t_instrument_group instgroup ON ((instname.instrument_group OPERATOR(public.=) instgroup.instrument_group)))
      JOIN public.t_yes_no trackingyesno ON ((instname.tracking = trackingyesno.flag)))
-     LEFT JOIN public.t_archive_path ap ON (((ap.instrument_id = instname.instrument_id) AND (ap.archive_path_function OPERATOR(public.=) 'active'::public.citext))))
+     LEFT JOIN public.t_archive_path archpath ON (((archpath.instrument_id = instname.instrument_id) AND (archpath.archive_path_function OPERATOR(public.=) 'active'::public.citext))))
      LEFT JOIN ( SELECT instname_1.instrument_id,
             emslinst.eus_instrument_id,
             emslinst.eus_display_name,

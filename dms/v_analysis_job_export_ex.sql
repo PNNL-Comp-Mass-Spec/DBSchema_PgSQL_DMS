@@ -20,7 +20,7 @@ CREATE VIEW public.v_analysis_job_export_ex AS
     aj.protein_collection_list AS proteincollectionlist,
     aj.protein_options_list AS proteinoptions,
     ((dsarch.archive_path)::text || '\'::text) AS storagepathclient,
-    public.combine_paths((sp.vol_name_client)::text, (sp.storage_path)::text) AS storagepathserver,
+    public.combine_paths((spath.vol_name_client)::text, (spath.storage_path)::text) AS storagepathserver,
     ds.folder_name AS datasetfolder,
     aj.results_folder_name AS resultsfolder,
     aj.owner_username AS owner,
@@ -43,7 +43,7 @@ CREATE VIEW public.v_analysis_job_export_ex AS
    FROM (((((((((((public.t_analysis_job aj
      JOIN public.t_dataset ds ON ((aj.dataset_id = ds.dataset_id)))
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
-     JOIN public.t_storage_path sp ON ((ds.storage_path_id = sp.storage_path_id)))
+     JOIN public.t_storage_path spath ON ((ds.storage_path_id = spath.storage_path_id)))
      JOIN public.t_experiments e ON ((ds.exp_id = e.exp_id)))
      JOIN public.t_analysis_tool analysistool ON ((aj.analysis_tool_id = analysistool.analysis_tool_id)))
      JOIN public.t_campaign campaign ON ((e.campaign_id = campaign.campaign_id)))

@@ -8,16 +8,16 @@ CREATE VIEW public.v_archive_check_report AS
     dasn.archive_state,
     da.archive_state_last_affected AS last_affected,
     instname.instrument,
-    sp.machine_name AS storage_server,
-    ap.archive_path,
+    spath.machine_name AS storage_server,
+    archpath.archive_path,
     da.archive_processor,
     da.update_processor,
     da.verification_processor
    FROM (((((public.t_dataset_archive da
      JOIN public.t_dataset_archive_state_name dasn ON ((da.archive_state_id = dasn.archive_state_id)))
      JOIN public.t_dataset ds ON ((da.dataset_id = ds.dataset_id)))
-     JOIN public.t_archive_path ap ON ((da.storage_path_id = ap.archive_path_id)))
-     JOIN public.t_storage_path sp ON ((ds.storage_path_id = sp.storage_path_id)))
+     JOIN public.t_archive_path archpath ON ((da.storage_path_id = archpath.archive_path_id)))
+     JOIN public.t_storage_path spath ON ((ds.storage_path_id = spath.storage_path_id)))
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
   WHERE (da.archive_state_id <> ALL (ARRAY[3, 4, 9, 10, 14, 15]));
 

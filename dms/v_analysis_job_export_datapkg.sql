@@ -7,7 +7,7 @@ CREATE VIEW public.v_analysis_job_export_datapkg AS
     analysistool.analysis_tool AS tool,
     ds.dataset,
     ((dsarch.archive_path)::text || '\'::text) AS archive_storage_path,
-    public.combine_paths((sp.vol_name_client)::text, (sp.storage_path)::text) AS server_storage_path,
+    public.combine_paths((spath.vol_name_client)::text, (spath.storage_path)::text) AS server_storage_path,
     ds.folder_name AS dataset_folder,
     aj.results_folder_name AS results_folder,
     aj.dataset_id,
@@ -33,7 +33,7 @@ CREATE VIEW public.v_analysis_job_export_datapkg AS
      JOIN public.t_dataset ds ON ((aj.dataset_id = ds.dataset_id)))
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
      JOIN public.t_instrument_class instclass ON ((instname.instrument_class OPERATOR(public.=) instclass.instrument_class)))
-     JOIN public.t_storage_path sp ON ((ds.storage_path_id = sp.storage_path_id)))
+     JOIN public.t_storage_path spath ON ((ds.storage_path_id = spath.storage_path_id)))
      JOIN public.t_experiments e ON ((ds.exp_id = e.exp_id)))
      JOIN public.t_analysis_tool analysistool ON ((aj.analysis_tool_id = analysistool.analysis_tool_id)))
      JOIN public.v_organism_export org ON ((e.organism_id = org.organism_id)))

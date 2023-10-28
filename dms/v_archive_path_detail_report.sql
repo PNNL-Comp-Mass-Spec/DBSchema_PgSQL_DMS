@@ -3,16 +3,16 @@
 --
 
 CREATE VIEW public.v_archive_path_detail_report AS
- SELECT tap.archive_path_id AS id,
-    tap.archive_path,
-    tap.archive_server_name AS archive_server,
-    tap.network_share_path,
-    tin.instrument AS instrument_name,
-    tap.note,
-    tap.archive_path_function AS status,
-    tap.archive_url
-   FROM (public.t_archive_path tap
-     JOIN public.t_instrument_name tin ON ((tap.instrument_id = tin.instrument_id)));
+ SELECT archpath.archive_path_id AS id,
+    archpath.archive_path,
+    archpath.archive_server_name AS archive_server,
+    archpath.network_share_path,
+    instname.instrument AS instrument_name,
+    archpath.note,
+    archpath.archive_path_function AS status,
+    archpath.archive_url
+   FROM (public.t_archive_path archpath
+     JOIN public.t_instrument_name instname ON ((archpath.instrument_id = instname.instrument_id)));
 
 
 ALTER TABLE public.v_archive_path_detail_report OWNER TO d3l243;

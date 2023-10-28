@@ -7,7 +7,7 @@ CREATE VIEW public.v_dataset_detail_report_ex AS
     e.experiment,
     og.organism,
     bto.tissue AS experiment_tissue,
-    tin.instrument,
+    instname.instrument,
     ds.separation_type,
     lccart.cart_name AS lc_cart,
     cartconfig.cart_config_name AS lc_cart_config,
@@ -72,7 +72,7 @@ CREATE VIEW public.v_dataset_detail_report_ex AS
    FROM (((((((((((((((ont.v_bto_id_to_name bto
      RIGHT JOIN ((((((((((public.t_dataset ds
      JOIN public.t_dataset_state_name tdsn ON ((ds.dataset_state_id = tdsn.dataset_state_id)))
-     JOIN public.t_instrument_name tin ON ((ds.instrument_id = tin.instrument_id)))
+     JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
      JOIN public.t_dataset_type_name dst ON ((ds.dataset_type_id = dst.dataset_type_id)))
      JOIN public.t_experiments e ON ((ds.exp_id = e.exp_id)))
      JOIN public.t_users u ON ((ds.operator_username OPERATOR(public.=) u.username)))

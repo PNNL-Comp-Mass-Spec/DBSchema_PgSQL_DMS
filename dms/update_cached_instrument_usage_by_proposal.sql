@@ -16,6 +16,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_instrument_usage_by_proposal(IN
 **          02/10/2022 mem - Add new usage type codes added to T_EUS_Usage_Type on 2021-05-26
 **                         - Use the last 12 months for determining usage (previously used last two fiscal years)
 **          01/02/2023 mem - Ported to PostgreSQL
+**          10/28/2023 mem - Update table alias name in queries
 **
 *****************************************************/
 DECLARE
@@ -30,20 +31,20 @@ BEGIN
     BEGIN
 
         MERGE INTO t_cached_instrument_usage_by_proposal AS target
-        USING (SELECT TIN.instrument_group,
+        USING (SELECT InstName.instrument_group,
                       RR.eus_proposal_id,
                       (SUM(TD.acq_length_minutes) / 60.0)::real AS Actual_Hours
                FROM t_dataset AS TD
                     INNER JOIN t_requested_run AS RR
                       ON TD.dataset_id = RR.dataset_id
-                    INNER JOIN t_instrument_name AS TIN
-                      ON TIN.instrument_id = TD.instrument_id
+                    INNER JOIN t_instrument_name AS InstName
+                      ON InstName.instrument_id = TD.instrument_id
                WHERE TD.dataset_rating_id > 1
                      AND RR.eus_usage_type_id IN (16, 19, 20, 21)                          -- User, User_Unknown, User_Onsite, User_Remote
                      AND TD.dataset_state_id = 3                                           -- Complete
                      AND TD.acq_time_start >= CURRENT_TIMESTAMP - Interval '1 year'        -- The last 12 months (previously used >= get_fiscal_year_start(1))
                      AND NOT RR.eus_proposal_id IS NULL
-               GROUP BY TIN.instrument_group, RR.eus_proposal_id
+               GROUP BY InstName.instrument_group, RR.eus_proposal_id
             ) AS Source
         ON (target.instrument_group = source.instrument_group AND target.eus_proposal_id = source.eus_proposal_id)
         WHEN MATCHED AND target.actual_hours IS DISTINCT FROM source.actual_hours THEN
@@ -57,19 +58,19 @@ BEGIN
 
         DELETE FROM t_cached_instrument_usage_by_proposal target
         WHERE NOT EXISTS (SELECT source.instrument_group
-                          FROM (SELECT TIN.instrument_group,
+                          FROM (SELECT InstName.instrument_group,
                                        RR.eus_proposal_id
                                 FROM t_dataset AS TD
                                      INNER JOIN t_requested_run AS RR
                                        ON TD.dataset_id = RR.dataset_id
-                                     INNER JOIN t_instrument_name AS TIN
-                                       ON TIN.instrument_id = TD.instrument_id
+                                     INNER JOIN t_instrument_name AS InstName
+                                       ON InstName.instrument_id = TD.instrument_id
                                 WHERE TD.dataset_rating_id > 1
                                       AND RR.eus_usage_type_id IN (16, 19, 20, 21)                          -- User, User_Unknown, User_Onsite, User_Remote
                                       AND TD.dataset_state_id = 3                                           -- Complete
                                       AND TD.acq_time_start >= CURRENT_TIMESTAMP - Interval '1 year'        -- The last 12 months (previously used >= get_fiscal_year_start(1))
                                       AND NOT RR.eus_proposal_id IS NULL
-                                GROUP BY TIN.instrument_group, RR.eus_proposal_id
+                                GROUP BY InstName.instrument_group, RR.eus_proposal_id
                                ) AS Source
                           WHERE target.instrument_group = source.instrument_group AND
                                 target.eus_proposal_id = source.eus_proposal_id);

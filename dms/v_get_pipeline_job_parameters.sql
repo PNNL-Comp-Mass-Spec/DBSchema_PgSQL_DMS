@@ -23,8 +23,8 @@ CREATE VIEW public.v_get_pipeline_job_parameters AS
     tool.analysis_tool AS tool_name,
     tool.result_type,
     ds.dataset_id,
-    ((sp.vol_name_client)::text || (sp.storage_path)::text) AS dataset_storage_path,
-    ((sp.vol_name_client)::text || (( SELECT t_misc_paths.client
+    ((spath.vol_name_client)::text || (spath.storage_path)::text) AS dataset_storage_path,
+    ((spath.vol_name_client)::text || (( SELECT t_misc_paths.client
            FROM public.t_misc_paths
           WHERE (t_misc_paths.path_function OPERATOR(public.=) 'AnalysisXfer'::public.citext)))::text) AS transfer_folder_path,
     j.results_folder_name,
@@ -35,7 +35,7 @@ CREATE VIEW public.v_get_pipeline_job_parameters AS
    FROM ((((((((((public.t_analysis_job j
      JOIN public.t_dataset ds ON ((j.dataset_id = ds.dataset_id)))
      JOIN public.t_organisms org ON ((j.organism_id = org.organism_id)))
-     JOIN public.t_storage_path sp ON ((ds.storage_path_id = sp.storage_path_id)))
+     JOIN public.t_storage_path spath ON ((ds.storage_path_id = spath.storage_path_id)))
      JOIN public.t_analysis_tool tool ON ((j.analysis_tool_id = tool.analysis_tool_id)))
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
      JOIN public.t_instrument_class instclass ON ((instname.instrument_class OPERATOR(public.=) instclass.instrument_class)))
