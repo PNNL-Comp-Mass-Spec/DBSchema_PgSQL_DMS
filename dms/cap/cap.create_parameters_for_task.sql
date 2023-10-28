@@ -45,6 +45,7 @@ CREATE OR REPLACE FUNCTION cap.create_parameters_for_task(_job integer, _dataset
 **          09/28/2022 mem - Ported to PostgreSQL
 **          04/02/2023 mem - Rename procedure and functions
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          10/28/2023 mem - Add new argument to get_task_param_table query
 **
 *****************************************************/
 DECLARE
@@ -64,7 +65,7 @@ BEGIN
 
     INSERT INTO Tmp_Task_Parameters (Job, Section, Name, Value)
     SELECT Job, Section, Name, Value
-    FROM cap.get_task_param_table(_job, _dataset, _datasetID, _storageServer, _instrument, _instrumentClass, _maxSimultaneousCaptures, _captureSubdirectory);
+    FROM cap.get_task_param_table(_job, _dataset, _datasetID, _storageServer, _instrument, _instrumentClass, _maxSimultaneousCaptures, _captureSubdirectory, _scriptName);
 
     If _scriptName In ('MyEMSLDatasetPush', 'MyEMSLDatasetPushRecursive') Then
         INSERT INTO Tmp_Task_Parameters (Job, Section, Name, Value)

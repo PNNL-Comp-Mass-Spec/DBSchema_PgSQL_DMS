@@ -1,8 +1,8 @@
 --
--- Name: get_task_param_table(integer, text, integer, text, text, text, integer, text); Type: FUNCTION; Schema: cap; Owner: d3l243
+-- Name: get_task_param_table(integer, text, integer, text, text, text, integer, text, text); Type: FUNCTION; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION cap.get_task_param_table(_job integer, _dataset text, _datasetid integer, _storageserver text, _instrument text, _instrumentclass text, _maxsimultaneouscaptures integer, _capturesubdirectory text) RETURNS TABLE(job integer, section public.citext, name public.citext, value public.citext)
+CREATE OR REPLACE FUNCTION cap.get_task_param_table(_job integer, _dataset text, _datasetid integer, _storageserver text, _instrument text, _instrumentclass text, _maxsimultaneouscaptures integer, _capturesubdirectory text, _scriptname text) RETURNS TABLE(job integer, section public.citext, name public.citext, value public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -34,6 +34,8 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_table(_job integer, _dataset text,
 **          06/21/2023 mem - Store instrument raw_data_type in the parameter table
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/25/2023 mem - Use renamed "directory" column in V_DMS_Dataset_Metadata
+**          10/28/2023 mem - Add _scriptName argument
+**                         - Add parameter modifications for script 'LCDatasetCapture'
 **
 *****************************************************/
 DECLARE
@@ -44,6 +46,10 @@ DECLARE
     _storageVolExternal text;
     _transferDirectoryPath text;
     _fileHash text := '';
+
+    _captureMethod text;
+    _sourceVolume text;
+    _sourcePath text;
 BEGIN
     ---------------------------------------------------
     -- Temp table to hold capture task job parameters
@@ -54,6 +60,21 @@ BEGIN
         Name citext,
         Value citext
     );
+
+    ---------------------------------------------------
+    -- Get alternate values to use when the script is 'LCDatasetCapture'
+    ---------------------------------------------------
+
+    If _scriptName::citext = 'LCDatasetCapture' Then
+        SELECT lc_instrument_name,
+               lc_instrument_class,
+               lc_instrument_capture_method,
+               source_vol,
+               source_path
+        INTO _instrument, _instrumentClass, _captureMethod, _sourceVolume, _sourcePath
+        FROM cap.v_dms_dataset_lc_instrument
+        WHERE dataset_id = _datasetID;
+    End If;
 
     ---------------------------------------------------
     -- Locally cached params
@@ -94,7 +115,9 @@ BEGIN
                   eus_instrument_id::text AS eus_instrument_id,
                   eus_proposal_id::text AS eus_proposal_id,
                   eus_operator_id::text AS eus_operator_id,
-                  operator_username
+                  operator_username,
+                  timestamp_text(acq_time_start) AS acq_time_start,
+                  timestamp_text(acq_time_end) AS acq_time_end
            FROM cap.V_DMS_Dataset_Metadata
            WHERE Dataset_ID = _datasetID) AS m
          CROSS JOIN LATERAL (
@@ -115,9 +138,33 @@ BEGIN
                 ('EUS_Instrument_ID', m.eus_instrument_id),
                 ('EUS_Proposal_ID', m.eus_proposal_id),
                 ('EUS_Operator_ID', m.eus_operator_id),
-                ('Operator_Username', m.operator_username)
+                ('Operator_Username', m.operator_username),
+                ('Acq_Time_Start', m.acq_time_start),
+                ('Acq_Time_End', m.acq_time_end)
            ) AS UnpivotQ(Name, Value)
     WHERE Not UnpivotQ.value Is Null;
+
+    ---------------------------------------------------
+    -- Use  alternate values when the script is 'LCDatasetCapture'
+    ---------------------------------------------------
+
+    If _scriptName::citext = 'LCDatasetCapture' Then
+        UPDATE Tmp_Param_Tab P
+        SET Value = P.Value || '\LC'
+        WHERE P.Section = 'JobParameters' AND P.Name = 'Directory';
+
+        UPDATE Tmp_Param_Tab P
+        SET Value = _captureMethod
+        WHERE P.Section = 'JobParameters' AND P.Name = 'Method';
+
+        UPDATE Tmp_Param_Tab P
+        SET Value = _sourceVolume
+        WHERE P.Section = 'JobParameters' AND P.Name = 'Source_Vol';
+
+        UPDATE Tmp_Param_Tab P
+        SET Value = _sourcePath
+        WHERE P.Section = 'JobParameters' AND P.Name = 'Source_Path';
+    End If;
 
     ---------------------------------------------------
     -- Instrument class params from V_DMS_Instrument_Class
@@ -256,5 +303,11 @@ END
 $$;
 
 
-ALTER FUNCTION cap.get_task_param_table(_job integer, _dataset text, _datasetid integer, _storageserver text, _instrument text, _instrumentclass text, _maxsimultaneouscaptures integer, _capturesubdirectory text) OWNER TO d3l243;
+ALTER FUNCTION cap.get_task_param_table(_job integer, _dataset text, _datasetid integer, _storageserver text, _instrument text, _instrumentclass text, _maxsimultaneouscaptures integer, _capturesubdirectory text, _scriptname text) OWNER TO d3l243;
+
+--
+-- Name: FUNCTION get_task_param_table(_job integer, _dataset text, _datasetid integer, _storageserver text, _instrument text, _instrumentclass text, _maxsimultaneouscaptures integer, _capturesubdirectory text, _scriptname text); Type: COMMENT; Schema: cap; Owner: d3l243
+--
+
+COMMENT ON FUNCTION cap.get_task_param_table(_job integer, _dataset text, _datasetid integer, _storageserver text, _instrument text, _instrumentclass text, _maxsimultaneouscaptures integer, _capturesubdirectory text, _scriptname text) IS 'GetTaskParamTable or GetJobParamTable';
 
