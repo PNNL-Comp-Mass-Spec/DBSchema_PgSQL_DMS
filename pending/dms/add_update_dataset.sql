@@ -34,10 +34,10 @@ AS $$
 **
 **  Desc:
 **      This procedure is called from both web pages and from other procedures
-**      - The Dataset Entry page (https://dms2.pnl.gov/dataset/create) calls it with @mode = 'add_trigger'
-**      - Dataset Detail Report pages call it with @mode = 'update'
-**      - Spreadsheet Loader (https://dms2.pnl.gov/upload/main) calls it with with @mode as 'add, 'check_update', or 'check_add'
-**      - It is also called with @mode = 'add' when the Data Import Manager (DIM) calls add_new_dataset while processing dataset trigger files
+**      - The Dataset Entry page (https://dms2.pnl.gov/dataset/create) calls it with _mode = 'add_trigger'
+**      - Dataset Detail Report pages call it with _mode = 'update'
+**      - Spreadsheet Loader (https://dms2.pnl.gov/upload/main) calls it with with _mode as 'add, 'check_update', or 'check_add'
+**      - It is also called with _mode = 'add' when the Data Import Manager (DIM) calls add_new_dataset while processing dataset trigger files
 **
 **  Arguments:
 **    _datasetName              Dataset name
@@ -183,7 +183,7 @@ DECLARE
     _msg text;
     _folderName text;
     _addingDataset boolean := false;
-    _warning text := '';
+    _warning citext := '';
     _warningAddon text;
     _experimentCheck text;
     _debugMsg text;
@@ -1019,7 +1019,6 @@ BEGIN
                 CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
-
             CALL public.add_new_dataset_to_creation_queue (
                             _datasetName,           -- Dataset name
                             _experimentName,        -- Experiment name
@@ -1031,16 +1030,16 @@ BEGIN
                             _wellplateName,         -- Wellplate
                             _wellNumber,            -- Well number
                             _msType,                -- Datset type
-                            _operatorUsername,      -- Operator username,
+                            _operatorUsername,      -- Operator username
                             _dsCreatorUsername,     -- Dataset creator username
-                            _comment,               -- Comment,
-                            _rating,                -- Interest rating,
+                            _comment,               -- Comment
+                            _rating,                -- Interest rating
                             _requestID,             -- Requested run ID
-                            _workPackage,           -- Work package,
-                            _eusUsageType,          -- EUS usage type,
-                            _eusProposalID,         -- EUS proposal id,
-                            _eusUsersList,          -- EUS users list,
-                            _captureSubfolder,      -- Capture subfolder,
+                            _workPackage,           -- Work package
+                            _eusUsageType,          -- EUS usage type
+                            _eusProposalID,         -- EUS proposal id
+                            _eusUsersList,          -- EUS users list
+                            _captureSubfolder,      -- Capture subfolder
                             _message => _message,               -- Output
                             _returnCode => _returnCode);        -- Output
 
@@ -1562,7 +1561,7 @@ BEGIN
         -- Update _message if _warning is not empty
         If Coalesce(_warning, '') <> '' Then
 
-            If _warning like 'Warning:' Then
+            If _warning Like 'Warning:' Then
                 _warningWithPrefix := _warning;
             Else
                 _warningWithPrefix := format('Warning: %s', _warning);
