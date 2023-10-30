@@ -10,8 +10,32 @@ CREATE OR REPLACE PROCEDURE public.add_new_dataset_to_creation_queue(IN _dataset
 **  Desc:
 **      Adds a new dataset creation task to T_Dataset_Create_Queue
 **
-**      The Data Import Manager looks for entries with state 1 in T_Dataset_Create_Queue
+**      The Data Import Manager uses procedure request_dataset_create_task to look for entries with state 1 in T_Dataset_Create_Queue
 **      For each one, it validates that the dataset file(s) are available, then creates the dataset in DMS
+**
+**  Arguments:
+**    _datasetName          Dataset name
+**    _experimentName       Experiment name
+**    _instrumentName       Instrument name
+**    _separationType       Separation type
+**    _lcCartName           LC cart
+**    _lcCartConfig         LC cart config
+**    _lcColumnName         LC column
+**    _wellplateName        Wellplate
+**    _wellNumber           Well number
+**    _datasetType          Datset type
+**    _operatorUsername     Operator username
+**    _dsCreatorUsername    Dataset creator username
+**    _comment              Comment
+**    _interestRating       Interest rating
+**    _requestID            Requested run ID
+**    _workPackage          Work package
+**    _eusUsageType         EUS usage type
+**    _eusProposalID        EUS proposal id
+**    _eusUsersList         EUS users list
+**    _captureSubfolder     Capture subfolder
+**    _message              Output message
+**    _returncode           Return code
 **
 **  Auth:   mem
 **  Date:   10/24/2023 mem - Initial version
