@@ -483,7 +483,7 @@ BEGIN
 
     If _handleSkippedStep And Not _abortReset Then
         -- This step was skipped
-        -- Update sw.t_job_step_dependencies and sw.t_job_steps
+        -- Update sw.t_job_step_dependencies
 
         SELECT target_step
         INTO _newTargetStep
