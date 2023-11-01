@@ -1,42 +1,17 @@
+--
+-- Name: add_update_dataset(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, integer, text, text, text, boolean, text, text, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
 
-CREATE OR REPLACE PROCEDURE public.add_update_dataset
-(
-    _datasetName text,
-    _experimentName text,
-    _operatorUsername text,
-    _instrumentName text,
-    _msType text,
-    _lcColumnName text,
-    _wellplateName text = 'na',
-    _wellNumber text = 'na',
-    _secSep text = 'na',
-    _internalStandards text = 'none',
-    _comment text = '',
-    _rating text = 'Unknown',
-    _lcCartName text,
-    _eusProposalID text = 'na',
-    _eusUsageType text,
-    _eusUsersList text = '',
-    _requestID int = 0,
-    _workPackage text = 'none',
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = '',
-    _aggregationJobDataset boolean = false,
-    _captureSubfolder text = '',
-    _lcCartConfig text = '',
-    _logDebugMessages boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+CREATE OR REPLACE PROCEDURE public.add_update_dataset(IN _datasetname text, IN _experimentname text, IN _operatorusername text, IN _instrumentname text, IN _mstype text, IN _lccolumnname text, IN _wellplatename text DEFAULT 'na'::text, IN _wellnumber text DEFAULT 'na'::text, IN _secsep text DEFAULT 'na'::text, IN _internalstandards text DEFAULT 'none'::text, IN _comment text DEFAULT ''::text, IN _rating text DEFAULT 'Unknown'::text, IN _lccartname text DEFAULT ''::text, IN _eusproposalid text DEFAULT 'na'::text, IN _eususagetype text DEFAULT ''::text, IN _eususerslist text DEFAULT ''::text, IN _requestid integer DEFAULT 0, IN _workpackage text DEFAULT 'none'::text, IN _mode text DEFAULT 'add'::text, IN _callinguser text DEFAULT ''::text, IN _aggregationjobdataset boolean DEFAULT false, IN _capturesubfolder text DEFAULT ''::text, IN _lccartconfig text DEFAULT ''::text, IN _logdebugmessages boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      This procedure is called from both web pages and from other procedures
-**      - The Dataset Entry page (https://dms2.pnl.gov/dataset/create) calls it with _mode = 'add_trigger'
+**      - The Dataset Entry page (https://dms2.pnl.gov/dataset/create) calls it with _mode = 'add_dataset_create_task'
 **      - Dataset Detail Report pages call it with _mode = 'update'
-**      - Spreadsheet Loader (https://dms2.pnl.gov/upload/main) calls it with with _mode as 'add, 'check_update', or 'check_add'
+**      - Spreadsheet Loader (https://dms2.pnl.gov/upload/main) calls it with with _mode as 'add_dataset_create_task, 'check_update', or 'check_add'
 **      - It is also called with _mode = 'add' when the Data Import Manager (DIM) calls add_new_dataset while processing dataset trigger files
 **
 **  Arguments:
@@ -58,12 +33,14 @@ AS $$
 **    _eusUsersList             EUS users list
 **    _requestID                Only valid if _mode is 'add', 'check_add', or 'add_trigger'; ignored if _mode is 'update' or 'check_update'
 **    _workPackage              Only valid if _mode is 'add', 'check_add', or 'add_trigger'
-**    _mode                     Can be 'add', 'update', 'bad', 'check_update', 'check_add', 'add_trigger'
+**    _mode                     Can be 'add', 'update', 'bad', 'check_update', 'check_add', 'add_dataset_create_task'
 **    _callingUser              Username of the calling user
 **    _aggregationJobDataset    Set to true when creating an in-silico dataset to associate with an aggregation job
 **    _captureSubfolder         Only used when _mode is 'add' or 'bad'
 **    _lcCartConfig             LC cart config
-**    _logDebugMessages         If true, log debug messages
+**    _logDebugMessages         When true, log debug messages
+**    _message                  Output message
+**    _returnCode               Return code
 **
 **  Auth:   grk
 **  Date:   02/13/2003
@@ -171,7 +148,8 @@ AS $$
 **          08/03/2023 mem - Allow creation of datasets for instruments in group 'Data_Folders' (specifically, the DMS_Pipeline_Data instrument)
 **          10/24/2023 mem - Use update_cart_parameters to store Cart Config ID in T_Requested_Run
 **          10/26/2023 mem - Call add_new_dataset_to_creation_queue instead of create_xml_dataset_trigger_file
-**          12/15/2023 mem - Ported to PostgreSQL
+**          10/30/2023 mem - Replace mode 'add_trigger' with 'add_dataset_create_task'
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -191,6 +169,9 @@ DECLARE
     _reqRunInstSettings text;
     _reqRunComment text;
     _reqRunInternalStandard text;
+    _workPackageFromRequest text;
+    _wellplateNameFromRequest text;
+    _wellNumberFromRequest text;
     _mrmAttachmentID int;
     _reqRunStatus text;
     _batchID int;
@@ -326,7 +307,7 @@ BEGIN
 
         _msType := Trim(Coalesce(_msType, ''));
 
-        -- Allow _msType to be blank if _mode is 'add' or 'bad' but not if check_add or add_trigger or update
+        -- Allow _msType to be blank if _mode is 'add' or 'bad' but not if check_add or add_dataset_create_task or update
         If _msType = '' And Not _mode::citext In ('add', 'bad') Then
             RAISE EXCEPTION 'Dataset type must be specified';
         End If;
@@ -377,7 +358,7 @@ BEGIN
         -- Determine if we are adding or check_adding a dataset
         ---------------------------------------------------
 
-        If _mode::citext In ('add', 'check_add', 'add_trigger') Then
+        If _mode::citext In ('add', 'check_add', 'add_dataset_create_task', 'add_trigger') Then
             _addingDataset := true;
         Else
             _addingDataset := false;
@@ -514,7 +495,7 @@ BEGIN
         SELECT separation_type_id
         INTO _sepID
         FROM t_secondary_sep
-        WHERE separation_type::citext = _secSep::citext
+        WHERE separation_type::citext = _secSep::citext;
 
         If Not FOUND Then
             RAISE EXCEPTION 'Unknown separation type: %', _secSep;
@@ -627,7 +608,7 @@ BEGIN
                 SELECT Dataset_Type
                 INTO _msType
                 FROM t_dataset_type_name
-                WHERE dataset_type_ID = _datasetTypeID
+                WHERE dataset_type_ID = _datasetTypeID;
             Else
                 RAISE EXCEPTION 'Could not find entry in database for dataset type %', _msType;
             End If;
@@ -660,7 +641,7 @@ BEGIN
             -- However, _mode is 'add', so we will auto-update _msType
             --
             If _msType::citext In ('HMS-MSn', 'HMS-HMSn') And Exists (
-                SELECT IGADST.Dataset_Type;
+                SELECT IGADST.Dataset_Type
                 FROM t_instrument_group ING
                      INNER JOIN t_instrument_name InstName
                        ON ING.instrument_group = InstName.instrument_group
@@ -687,7 +668,7 @@ BEGIN
                 SELECT Dataset_Type
                 INTO _msType
                 FROM t_dataset_type_name
-                WHERE dataset_type_id = _datasetTypeID
+                WHERE dataset_type_id = _datasetTypeID;
 
                 If _msTypeOld::citext = 'GC-MS' And _msType::citext = 'EI-HMS' Then
                     -- This happens for most datasets from instrument GCQE01; do not update the comment
@@ -891,15 +872,15 @@ BEGIN
         _logErrors := true;
 
         ---------------------------------------------------
-        -- Action for add trigger mode
+        -- Action for dataset create task mode
         ---------------------------------------------------
 
-        If _mode = 'add_trigger' Then
+        If _mode = 'add_dataset_create_task' Or _mode = 'add_trigger' Then
 
             If _requestID <> 0 Then
                 ---------------------------------------------------
                 -- Validate that experiments match
-                -- (check code taken from Consume_Scheduled_Run procedure)
+                -- (check code taken from consume_scheduled_run procedure)
                 ---------------------------------------------------
 
                 -- Get experiment ID from dataset;
@@ -938,7 +919,7 @@ BEGIN
 
                 -- RequestID not specified
                 -- Try to determine EUS information using Experiment name
-                -- (Check code taken from Add_Update_Requested_Run procedure)
+                -- (Check code taken from add_update_requested_run procedure)
 
                 ---------------------------------------------------
                 -- Lookup EUS field (only effective for experiments that have associated sample prep requests)
@@ -1167,7 +1148,7 @@ BEGIN
                     End If;
 
                     CALL public.alter_event_log_entry_user ('public', 4, _datasetID, _newDSStateID, _callingUser, _message => _alterEnteredByMessage);
-                    CALL public.alter_event_log_entry_user ('public', 8, _datasetID, _ratingID, _callingUser, _message => _alterEnteredByMessage);
+                    CALL public.alter_event_log_entry_user ('public', 8, _datasetID, _ratingID,     _callingUser, _message => _alterEnteredByMessage);
                 End If;
 
                 ---------------------------------------------------
@@ -1217,9 +1198,6 @@ BEGIN
                                             _eusUsageType => _eusUsageType,
                                             _eusUsersList => _eusUsersList,
                                             _mode => 'add-auto',
-                                            _request => _requestID,         -- Output
-                                            _message => _message,           -- Output
-                                            _returnCode => _returnCode,     -- Output
                                             _secSep => _secSep,
                                             _mrmAttachment => '',
                                             _status => 'Completed',
@@ -1231,15 +1209,18 @@ BEGIN
                                             _stagingLocation => null,
                                             _requestIDForUpdate => null,
                                             _logDebugMessages => _logDebugMessages,
-                                            _resolvedInstrumentInfo => _resolvedInstrumentInfo);    -- Output
+                                            _request => _requestID,                                 -- Output
+                                            _resolvedInstrumentInfo => _resolvedInstrumentInfo,     -- Output
+                                            _message => _message,                                   -- Output
+                                            _returnCode => _returnCode);                            -- Output
 
                     If _returnCode <> '' Then
                         If _eusProposalID = '' And _eusUsageType = '' and _eusUsersList = '' Then
-                            _msg := format('Create AutoReq run request failed: dataset %s; EUS Proposal ID, Usage Type, and Users list cannot all be blank ->%s',
+                            _msg := format('Create AutoReq run request failed: dataset %s; EUS Proposal ID, Usage Type, and Users list cannot all be blank -> %s',
                                             _msType, _message);
                         Else
-                            _msg := format('Create AutoReq run request failed: dataset %s with EUS Proposal ID %s, Usage Type %s, and Users List %s ->%s',
-                                            _datasetName, _eusProposalID, _eusUsageType, _eusUsersList, _message);
+                            _msg := format('Create AutoReq run request failed: dataset %s with Proposal ID "%s", Usage Type "%s", Users List "%s" and Work Package "%s" -> %s',
+                                            _datasetName, _eusProposalID, _eusUsageType, _eusUsersList, _workPackage, _message);
                         End If;
 
                         _logErrors := false;
@@ -1259,7 +1240,7 @@ BEGIN
                     End If;
 
                     If _logDebugMessages Then
-                        RAISE INFO '%', 'Call update_cart_parameters with _mode="CartName"'
+                        RAISE INFO '%', 'Call update_cart_parameters with _mode="CartName"';
                     End If;
 
                     CALL public.update_cart_parameters (
@@ -1285,7 +1266,7 @@ BEGIN
                     End If;
 
                     If _logDebugMessages Then
-                        RAISE INFO '%', 'Call update_cart_parameters with _mode="CartConfigID"'
+                        RAISE INFO '%', 'Call update_cart_parameters with _mode="CartConfigID"';
                     End If;
 
                     CALL public.update_cart_parameters (
@@ -1309,7 +1290,7 @@ BEGIN
                 SELECT dataset_id
                 INTO _datasetID
                 FROM t_dataset
-                WHERE dataset = _datasetName
+                WHERE dataset = _datasetName;
 
                 If Coalesce(_message, '') <> '' and Coalesce(_warning, '') = '' Then
                     _warning := _message;
@@ -1373,7 +1354,7 @@ BEGIN
                 internal_standard_ID = _intStdID,
                 capture_subfolder    = _captureSubfolder,
                 cart_config_id       = _cartConfigID
-            WHERE dataset_id = _datasetID
+            WHERE dataset_id = _datasetID;
 
             -- If _callingUser is defined, Call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 And _ratingID <> Coalesce(_curDSRatingID, -1000) Then
@@ -1388,27 +1369,39 @@ BEGIN
                    RR.work_package,
                    RR.wellplate,
                    RR.well,
-                   comment,
-                   request_internal_standard,
-                   mrm_attachment,
-                   state_name
+                   RR.comment,
+                   RR.request_internal_standard,
+                   RR.mrm_attachment,
+                   RR.state_name
             INTO _requestID,
                  _requestName,
                  _reqRunInstSettings,
-                 _workPackage,
-                 _wellplateName,
-                 _wellNumber,
+                 _workPackageFromRequest,
+                 _wellplateNameFromRequest,
+                 _wellNumberFromRequest,
                  _reqRunComment,
                  _reqRunInternalStandard,
                  _mrmAttachmentID,
                  _reqRunStatus
-            FROM dataset DS
+            FROM t_dataset DS
                  INNER JOIN t_requested_run RR
                    ON DS.dataset_id = RR.dataset_id
-            WHERE DS.dataset_id = _datasetID
+            WHERE DS.dataset_id = _datasetID;
 
             If Not FOUND Then
                 _requestID := 0;
+            Else
+                If Coalesce(_workPackageFromRequest, '') <> '' Then
+                    _workPackage := _workPackageFromRequest;
+                End If;
+
+                If Coalesce(_wellplateName, '') = '' And Coalesce(_wellplateNameFromRequest, '') <> '' Then
+                    _wellplateName := _wellplateNameFromRequest;
+                End If;
+
+                If Coalesce(_wellNumber, '') = '' And Coalesce(_wellNumberFromRequest, '') <> '' Then
+                    _wellNumber := _wellNumberFromRequest;
+                End If;
             End If;
 
             ---------------------------------------------------
@@ -1492,7 +1485,7 @@ BEGIN
                                     _eusUsersList                => _eusUsersList,
                                     _mode                        => 'update',
                                     _secSep                      => _secSep,
-                                    _mrmAttachment               => _mrmAttachmentID,
+                                    _mrmAttachment               => _mrmAttachmentID::text,
                                     _status                      => _reqRunStatus,
                                     _skipTransactionRollback     => true,
                                     _autoPopulateUserListIfBlank => true,   -- Auto populate _eusUsersList if blank since this is an Auto-Request
@@ -1508,8 +1501,8 @@ BEGIN
                                     _returnCode                  => _returnCode);               -- Output
 
                 If _returnCode <> '' Then
-                    RAISE EXCEPTION 'Requested run update error using Proposal ID %, Usage Type %, and Users List % ->%',
-                                    _eusProposalID, _eusUsageType, _eusUsersList, _message;
+                    RAISE EXCEPTION 'Requested run update error using Proposal ID "%", Usage Type "%", Users List "%" and Work Package "%" ->%',
+                                    _eusProposalID, _eusUsageType, _eusUsersList, _workPackage, _message;
                 End If;
             End If;
 
@@ -1527,7 +1520,7 @@ BEGIN
                                     _message     => _message,       -- Output
                                     _returnCode  => _returnCode);   -- Output
 
-                    -- If _callingUser is defined, Call public.alter_event_log_entry_user to alter the entered_by field
+                    -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field
                     -- in t_event_log for any newly created jobs for this dataset
 
                     If char_length(_callingUser) > 0 Then
@@ -1535,7 +1528,7 @@ BEGIN
 
                         CREATE TEMP TABLE Tmp_ID_Update_List (
                             TargetID int NOT NULL
-                        )
+                        );
 
                         INSERT INTO Tmp_ID_Update_List (TargetID)
                         SELECT job
@@ -1543,6 +1536,8 @@ BEGIN
                         WHERE dataset_id = _datasetID;
 
                         CALL public.alter_event_log_entry_user_multi_id ('public', 5, _jobStateID, _callingUser, _message => _alterEnteredByMessage);
+
+                        DROP TABLE Tmp_ID_Update_List;
                     End If;
 
                 End If;
@@ -1576,6 +1571,8 @@ BEGIN
             End If;
         End If;
 
+        RETURN;
+
     EXCEPTION
         WHEN OTHERS THEN
             GET STACKED DIAGNOSTICS
@@ -1603,4 +1600,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_dataset IS 'AddUpdateDataset';
+
+ALTER PROCEDURE public.add_update_dataset(IN _datasetname text, IN _experimentname text, IN _operatorusername text, IN _instrumentname text, IN _mstype text, IN _lccolumnname text, IN _wellplatename text, IN _wellnumber text, IN _secsep text, IN _internalstandards text, IN _comment text, IN _rating text, IN _lccartname text, IN _eusproposalid text, IN _eususagetype text, IN _eususerslist text, IN _requestid integer, IN _workpackage text, IN _mode text, IN _callinguser text, IN _aggregationjobdataset boolean, IN _capturesubfolder text, IN _lccartconfig text, IN _logdebugmessages boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_dataset(IN _datasetname text, IN _experimentname text, IN _operatorusername text, IN _instrumentname text, IN _mstype text, IN _lccolumnname text, IN _wellplatename text, IN _wellnumber text, IN _secsep text, IN _internalstandards text, IN _comment text, IN _rating text, IN _lccartname text, IN _eusproposalid text, IN _eususagetype text, IN _eususerslist text, IN _requestid integer, IN _workpackage text, IN _mode text, IN _callinguser text, IN _aggregationjobdataset boolean, IN _capturesubfolder text, IN _lccartconfig text, IN _logdebugmessages boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_dataset(IN _datasetname text, IN _experimentname text, IN _operatorusername text, IN _instrumentname text, IN _mstype text, IN _lccolumnname text, IN _wellplatename text, IN _wellnumber text, IN _secsep text, IN _internalstandards text, IN _comment text, IN _rating text, IN _lccartname text, IN _eusproposalid text, IN _eususagetype text, IN _eususerslist text, IN _requestid integer, IN _workpackage text, IN _mode text, IN _callinguser text, IN _aggregationjobdataset boolean, IN _capturesubfolder text, IN _lccartconfig text, IN _logdebugmessages boolean, INOUT _message text, INOUT _returncode text) IS 'AddUpdateDataset';
+
