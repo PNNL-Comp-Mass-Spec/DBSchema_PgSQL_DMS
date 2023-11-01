@@ -1,42 +1,10 @@
+--
+-- Name: add_update_requested_run(text, text, text, text, text, text, text, text, text, text, text, integer, integer, integer, text, text, text, text, text, text, text, boolean, boolean, text, text, text, text, integer, boolean, integer, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
 
-CREATE OR REPLACE PROCEDURE public.add_update_requested_run
-(
-    _requestName text,
-    _experimentName text,
-    _requesterUsername text,
-    _instrumentGroup text,
-    _workPackage text,
-    _msType text,
-    _instrumentSettings text = 'na',
-    _wellplateName text = 'na',
-    _wellNumber text = 'na',
-    _internalStandard text = 'na',
-    _comment text = 'na',
-    _batch int = 0,
-    _block int = 0,
-    _runOrder int = 0,
-    _eusProposalID text = 'na',
-    _eusUsageType text,
-    _eusUsersList text = '',
-    _mode text = 'add',
-    _secSep text = 'LC-Formic_100min',
-    _mrmAttachment text,
-    _status text = 'Active',
-    _skipTransactionRollback boolean = false,
-    _autoPopulateUserListIfBlank boolean = false,
-    _callingUser text = '',
-    _vialingConc text = null,
-    _vialingVol text = null,
-    _stagingLocation text = null,
-    _requestIDForUpdate int = null,
-    _logDebugMessages boolean = false,
-    INOUT _request int,
-    INOUT _resolvedInstrumentInfo text = '',
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+CREATE OR REPLACE PROCEDURE public.add_update_requested_run(IN _requestname text, IN _experimentname text, IN _requesterusername text, IN _instrumentgroup text, IN _workpackage text, IN _mstype text, IN _instrumentsettings text DEFAULT 'na'::text, IN _wellplatename text DEFAULT 'na'::text, IN _wellnumber text DEFAULT 'na'::text, IN _internalstandard text DEFAULT 'na'::text, IN _comment text DEFAULT 'na'::text, IN _batch integer DEFAULT 0, IN _block integer DEFAULT 0, IN _runorder integer DEFAULT 0, IN _eusproposalid text DEFAULT 'na'::text, IN _eususagetype text DEFAULT ''::text, IN _eususerslist text DEFAULT ''::text, IN _mode text DEFAULT 'add'::text, IN _secsep text DEFAULT 'LC-Formic_100min'::text, IN _mrmattachment text DEFAULT ''::text, IN _status text DEFAULT 'Active'::text, IN _skiptransactionrollback boolean DEFAULT false, IN _autopopulateuserlistifblank boolean DEFAULT false, IN _callinguser text DEFAULT ''::text, IN _vialingconc text DEFAULT NULL::text, IN _vialingvol text DEFAULT NULL::text, IN _staginglocation text DEFAULT NULL::text, IN _requestidforupdate integer DEFAULT NULL::integer, IN _logdebugmessages boolean DEFAULT false, INOUT _request integer DEFAULT 0, INOUT _resolvedinstrumentinfo text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -47,7 +15,8 @@ AS $$
 **    _experimentName               Experiment name
 **    _requesterUsername            Requester username
 **    _instrumentGroup              Instrument group; could also contain '(lookup)'
-**    _workPackage                  Work package; could also contain '(lookup)'. May contain 'none' for automatically created requested runs (and those will have _autoPopulateUserListIfBlank = true)
+**    _workPackage                  Work package; could also contain '(lookup)'
+***                                 May contain 'none' for automatically created requested runs (and those will have _autoPopulateUserListIfBlank = true)
 **    _msType                       Dataset type
 **    _instrumentSettings           Instrument settings
 **    _wellplateName                Wellplate name; if '(lookup)', will look for a wellplate defined in T_Experiments
@@ -70,26 +39,14 @@ AS $$
 **    _vialingConc                  Vialing concentration
 **    _vialingVol                   Vialing volume
 **    _stagingLocation              Staging location
-**    _requestIDForUpdate           Only used if _mode is 'update' or 'check_update' and only used if not 0 or null. Can be used to rename an existing request
+**    _requestIDForUpdate           Only used if _mode is 'update' or 'check_update' and only used if not 0 or null
+**                                  Can be used to rename an existing request
+**                                  When _mode is 'update' but _requestIdForUpdate is 0, this procedure looks for the requested run by name and state
 **    _logDebugMessages             When true, log debug messages
-**    _request                      ID of the newly created requested run, or of the updated requested run
-**    _resolvedInstrumentInfo
-**    _message
-**    _returnCode
-
-**    _instrumentGroup
-**    _workPackage
-**    _batch
-**    _block
-**    _runOrder
-**    _eusUsersList
-**    _mode
-**    _secSep
-**    _status
-**    _skipTransactionRollback
-**    _autoPopulateUserListIfBlank
-**    _requestIDForUpdate
-**    _resolvedInstrumentInfo        Output parameter that lists the the instrument group, run type, and separation group; used by AddRequestedRuns when previewing updates
+**    _request                      ID of the newly created requested run, or of the updated requested run (which was specified using _requestIDForUpdate)
+**    _resolvedInstrumentInfo       Output parameter that lists the the instrument group, run type, and separation group; used by AddRequestedRuns when previewing updates
+**    _message                      Output message
+**    _returnCode                   Return code
 **
 **  Auth:   grk
 **  Date:   01/11/2002
@@ -101,8 +58,8 @@ AS $$
 **          07/15/2004 grk - Added verification of experiment location aux info
 **          11/26/2004 grk - Changed type of _comment from text to varchar
 **          01/12/2004 grk - Fixed null return on check existing when table is empty
-**          10/12/2005 grk - Added stuff for new work package and proposal fields.
-**          02/21/2006 grk - Added stuff for EUS proposal and user tracking.
+**          10/12/2005 grk - Added stuff for new work package and proposal fields
+**          02/21/2006 grk - Added stuff for EUS proposal and user tracking
 **          11/09/2006 grk - Fixed error message handling (Ticket #318)
 **          01/12/2007 grk - Added verification mode
 **          01/31/2007 grk - Added verification for _requestorPRN (Ticket #371)
@@ -124,7 +81,7 @@ AS $$
 **          02/28/2010 grk - Added add-auto mode
 **          03/02/2010 grk - Added status field to requested run
 **          03/10/2010 grk - Fixed issue with status validation
-**          03/27/2010 grk - Fixed problem creating new requests with 'Completed' status.
+**          03/27/2010 grk - Fixed problem creating new requests with 'Completed' status
 **          04/20/2010 grk - Fixed problem with experiment lookup validation
 **          04/21/2010 grk - Use try-catch for error handling
 **          05/05/2010 mem - Now calling auto_resolve_name_to_username to check if _requestorPRN contains a person's real name rather than their username
@@ -186,7 +143,7 @@ AS $$
 **          12/08/2022 mem - Rename _instrumentName parameter to _instrumentGroup
 **          02/10/2023 mem - Call update_cached_requested_run_batch_stats
 **          10/02/2023 mem - Use _requestID when calling update_cached_requested_run_eus_users
-**          10/10/2023 mem - Ported to PostgreSQL
+**          10/31/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -197,7 +154,7 @@ DECLARE
 
     _msg text;
     _instrumentMatch text;
-    _separationGroup citext;
+    _separationGroup text;
     _defaultPriority int;
     _currentBatch int := 0;
     _debugMsg text;
@@ -218,13 +175,14 @@ DECLARE
     _newUsername text;
     _datasetTypeID int;
     _matchedSeparationGroup citext := '';
+    _matchedInstrumentGroup text := '';
     _mrmAttachmentID int;
     _eusUsageTypeID int;
     _addingItem boolean := false;
     _commaPosition int;
     _locationID int := null;
-    _allowNoneWP boolean := _autoPopulateUserListIfBlank;
-    _requireWP int := 1;
+    _allowNoneWP boolean;
+    _requireWP boolean := true;
     _logMessage text;
     _alterEnteredByMessage text;
 
@@ -378,7 +336,7 @@ BEGIN
                 End If;
 
                 If _oldRequestName <> _requestName::citext Then
-                    If _status <> 'Active' Then
+                    If _oldStatus <> 'Active' Then
                         RAISE EXCEPTION 'Requested run is not active; cannot rename: "%"', _oldRequestName;
                     End If;
 
@@ -413,6 +371,7 @@ BEGIN
                    eus_proposal_id,
                    state_name
             INTO _oldRequestName, _requestID, _oldEusProposalID, _oldStatus
+            FROM t_requested_run
             WHERE request_name = _requestName::citext;
 
             If Not FOUND Then
@@ -436,9 +395,9 @@ BEGIN
         --
         If _requestID = 0 And _mode::citext In ('update', 'check_update') Then
             If _requestIDForUpdate > 0 Then
-                RAISE EXCEPTION 'Cannot update: Requested Run ID "%" is not in the database', _requestIDForUpdate;
+                RAISE EXCEPTION 'Cannot update: requested run ID "%" is not in the database', _requestIDForUpdate;
             Else
-                RAISE EXCEPTION 'Cannot update: Requested Run "%" is not in the database', _requestName;
+                RAISE EXCEPTION 'Cannot update: requested run "%" is not in the database', _requestName;
             End If;
         End If;
 
@@ -479,7 +438,7 @@ BEGIN
         SELECT state_id
         INTO _statusID
         FROM t_requested_run_state_name
-        WHERE state_name = _status::citext
+        WHERE state_name = _status::citext;
 
         If Not FOUND Then
             RAISE EXCEPTION 'Invalid requested run state: %', _status;
@@ -567,11 +526,17 @@ BEGIN
         ---------------------------------------------------
 
         If Not Exists (SELECT instrument_group FROM t_instrument_group WHERE instrument_group = _instrumentGroup::citext) Then
-            -- Try to update instrument group using t_instrument_name
+            -- See if _instrumentGroup is actually an instrument name
             SELECT instrument_group
-            INTO _instrumentGroup
+            INTO _matchedInstrumentGroup
             FROM t_instrument_name
-            WHERE instrument = _instrumentGroup;
+            WHERE instrument = _instrumentGroup::citext;
+
+            If FOUND Then
+                _instrumentGroup = _matchedInstrumentGroup;
+            Else
+                RAISE EXCEPTION 'Could not find entry in database for instrument group "%"', _instrumentGroup;
+            End If;
         End If;
 
         ---------------------------------------------------
@@ -579,20 +544,24 @@ BEGIN
         ---------------------------------------------------
 
         If _logDebugMessages Then
-            _debugMsg := format('validate_instrument_group_and_dataset_type for %s', _msType);
+            _debugMsg := format('Call validate_instrument_group_and_dataset_type for %s', _msType);
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
-
+        -- Note that the following procedure allows _instrumentGroup to be an empty string
         CALL public.validate_instrument_group_and_dataset_type (
                         _datasetType     => _msType,
-                        _instrumentGroup => _instrumentGroup,       -- Output
+                        _instrumentGroup => _instrumentGroup,       -- Input/Output
                         _datasetTypeID   => _datasetTypeID,         -- Output
                         _message         => _msg,                   -- Output
                         _returnCode      => _returnCode);           -- Output
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'validate_instrument_group_and_dataset_type: %', _msg;
+            If Coalesce(_msg, '') = '' Then
+                RAISE EXCEPTION 'validate_instrument_group_and_dataset_type returned error code %', _returnCode;
+            Else
+                RAISE EXCEPTION '%', _msg;
+            End If;
         End If;
 
         ---------------------------------------------------
@@ -608,7 +577,7 @@ BEGIN
         SELECT separation_group
         INTO _matchedSeparationGroup
         FROM t_separation_group
-        WHERE separation_group = _separationGroup;
+        WHERE separation_group = _separationGroup::citext;
 
         If FOUND Then
             _separationGroup := _matchedSeparationGroup;
@@ -618,10 +587,10 @@ BEGIN
             SELECT separation_group
             INTO _matchedSeparationGroup
             FROM t_secondary_sep
-            WHERE separation_type = _separationGroup;
+            WHERE separation_type = _separationGroup::citext;
 
             If Not FOUND Then
-                RAISE EXCEPTION 'Separation group not recognized';
+                RAISE EXCEPTION 'Could not find entry in database for separation group "%"', _separationGroup;
             End If;
 
             If Coalesce(_matchedSeparationGroup, '') <> '' Then
@@ -640,7 +609,7 @@ BEGIN
             SELECT attachment_id
             INTO _mrmAttachmentID
             FROM t_attachments
-            WHERE attachment_name = _mrmAttachment
+            WHERE attachment_name = _mrmAttachment;
         End If;
 
         ---------------------------------------------------
@@ -694,18 +663,18 @@ BEGIN
         End If;
 
         CALL public.validate_eus_usage (
-                        _eusUsageType      => _eusUsageType,       -- Input/Output
-                        _eusProposalID     => _eusProposalID,      -- Input/Output
-                        _eusUsersList      => _eusUsersList,       -- Input/Output
-                        _eusUsageTypeID    => _eusUsageTypeID,     -- Output
+                        _eusUsageType      => _eusUsageType,        -- Input/Output
+                        _eusProposalID     => _eusProposalID,       -- Input/Output
+                        _eusUsersList      => _eusUsersList,        -- Input/Output
+                        _eusUsageTypeID    => _eusUsageTypeID,      -- Output
                         _autoPopulateUserListIfBlank => _autoPopulateUserListIfBlank,
                         _samplePrepRequest => false,
                         _experimentID      => _experimentID,
                         _campaignID        => 0,
                         _addingItem        => _addingItem,
                         _infoOnly          => false,
-                        _message           => _msg,                       -- Output
-                        _returnCode        => _returnCode              -- Output
+                        _message           => _msg,                 -- Output
+                        _returnCode        => _returnCode           -- Output
                     );
 
         If _returnCode <> '' Then
@@ -743,7 +712,7 @@ BEGIN
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
-        CALL public.lookup_wp_from_experiment_sample_prep
+        CALL public.lookup_wp_from_experiment_sample_prep (
                             _experimentName,
                             _workPackage => _workPackage,       -- Input/Output
                             _message => _msg,                   -- Output
@@ -772,7 +741,7 @@ BEGIN
         -- Validate the batch ID
         ---------------------------------------------------
 
-        If Not Exists (Select batch_id FROM t_requested_run_batches Where batch_id = _batch) Then
+        If Not Exists (SELECT batch_id FROM t_requested_run_batches WHERE batch_id = _batch) Then
             If _mode Like '%update%' Then
                 _mode := 'update';
             Else
@@ -791,7 +760,7 @@ BEGIN
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
-        -- Value should be a 0 or a 1
+        -- Value in t_misc_options should be 0 or 1
         -- Cast to text, then cast to boolean
         --
         SELECT public.try_cast(Value::text, false)
@@ -799,7 +768,14 @@ BEGIN
         FROM t_misc_options
         WHERE name = 'RequestedRunRequireWorkpackage';
 
-        If Not _requireWP Then
+        If Not FOUND Then
+            -- Assume that a work package is required
+            _requireWP := true;
+        End If;
+
+        If _requireWP Then
+            _allowNoneWP := _autoPopulateUserListIfBlank;
+        Else
             _allowNoneWP := true;
         End If;
 
@@ -839,7 +815,7 @@ BEGIN
         _logErrors := true;
 
         If _logDebugMessages Then
-            _debugMsg := 'Start a new transaction';
+            _debugMsg := 'Add/update the requested run';
             CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
         End If;
 
@@ -941,7 +917,7 @@ BEGIN
                 -- Add a new row to t_active_requested_run_cached_eus_users
                 CALL public.update_cached_requested_run_eus_users (
                                 _requestID,
-                                _message => _message,           -- Output
+                                _message => _msg,               -- Output
                                 _returnCode => _returnCode);    -- Output
             End If;
 
@@ -1004,7 +980,7 @@ BEGIN
             -- Make sure that t_active_requested_run_cached_eus_users is up-to-date
             CALL public.update_cached_requested_run_eus_users (
                                     _requestID,
-                                    _message => _message,           -- Output
+                                    _message => _msg,               -- Output
                                     _returnCode => _returnCode);    -- Output
 
             If _batch = 0 And _currentBatch <> 0 Then
@@ -1019,10 +995,10 @@ BEGIN
 
         If _batch > 0 Then
             CALL public.update_cached_requested_run_batch_stats (
-                    _batch,
-                    _fullRefresh => false,
-                    _message => _msg,               -- Output
-                    _returnCode => _returnCode);    -- Output
+                            _batch,
+                            _fullRefresh => false,
+                            _message => _msg,               -- Output
+                            _returnCode => _returnCode);    -- Output
 
             If _returnCode <> '' Then
                 _message := public.append_to_text(_message, _msg);
@@ -1067,5 +1043,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_requested_run IS 'AddUpdateRequestedRun';
+
+ALTER PROCEDURE public.add_update_requested_run(IN _requestname text, IN _experimentname text, IN _requesterusername text, IN _instrumentgroup text, IN _workpackage text, IN _mstype text, IN _instrumentsettings text, IN _wellplatename text, IN _wellnumber text, IN _internalstandard text, IN _comment text, IN _batch integer, IN _block integer, IN _runorder integer, IN _eusproposalid text, IN _eususagetype text, IN _eususerslist text, IN _mode text, IN _secsep text, IN _mrmattachment text, IN _status text, IN _skiptransactionrollback boolean, IN _autopopulateuserlistifblank boolean, IN _callinguser text, IN _vialingconc text, IN _vialingvol text, IN _staginglocation text, IN _requestidforupdate integer, IN _logdebugmessages boolean, INOUT _request integer, INOUT _resolvedinstrumentinfo text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_requested_run(IN _requestname text, IN _experimentname text, IN _requesterusername text, IN _instrumentgroup text, IN _workpackage text, IN _mstype text, IN _instrumentsettings text, IN _wellplatename text, IN _wellnumber text, IN _internalstandard text, IN _comment text, IN _batch integer, IN _block integer, IN _runorder integer, IN _eusproposalid text, IN _eususagetype text, IN _eususerslist text, IN _mode text, IN _secsep text, IN _mrmattachment text, IN _status text, IN _skiptransactionrollback boolean, IN _autopopulateuserlistifblank boolean, IN _callinguser text, IN _vialingconc text, IN _vialingvol text, IN _staginglocation text, IN _requestidforupdate integer, IN _logdebugmessages boolean, INOUT _request integer, INOUT _resolvedinstrumentinfo text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_requested_run(IN _requestname text, IN _experimentname text, IN _requesterusername text, IN _instrumentgroup text, IN _workpackage text, IN _mstype text, IN _instrumentsettings text, IN _wellplatename text, IN _wellnumber text, IN _internalstandard text, IN _comment text, IN _batch integer, IN _block integer, IN _runorder integer, IN _eusproposalid text, IN _eususagetype text, IN _eususerslist text, IN _mode text, IN _secsep text, IN _mrmattachment text, IN _status text, IN _skiptransactionrollback boolean, IN _autopopulateuserlistifblank boolean, IN _callinguser text, IN _vialingconc text, IN _vialingvol text, IN _staginglocation text, IN _requestidforupdate integer, IN _logdebugmessages boolean, INOUT _request integer, INOUT _resolvedinstrumentinfo text, INOUT _message text, INOUT _returncode text) IS 'AddUpdateRequestedRun';
 
