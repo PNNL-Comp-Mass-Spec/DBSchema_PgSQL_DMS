@@ -17,6 +17,8 @@ ALTER TABLE public.t_requested_run_queue_state OWNER TO d3l243;
 ALTER TABLE ONLY public.t_requested_run_queue_state
     ADD CONSTRAINT pk_t_requested_run_queue_state PRIMARY KEY (queue_state);
 
+ALTER TABLE public.t_requested_run_queue_state CLUSTER ON pk_t_requested_run_queue_state;
+
 --
 -- Name: TABLE t_requested_run_queue_state; Type: ACL; Schema: public; Owner: d3l243
 --

@@ -17,6 +17,8 @@ ALTER TABLE public.t_email_alert_state OWNER TO d3l243;
 ALTER TABLE ONLY public.t_email_alert_state
     ADD CONSTRAINT pk_t_email_alert_state PRIMARY KEY (alert_state);
 
+ALTER TABLE public.t_email_alert_state CLUSTER ON pk_t_email_alert_state;
+
 --
 -- Name: TABLE t_email_alert_state; Type: ACL; Schema: public; Owner: d3l243
 --

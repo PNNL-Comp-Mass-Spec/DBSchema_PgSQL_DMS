@@ -17,6 +17,8 @@ ALTER TABLE public.t_analysis_job_request_state OWNER TO d3l243;
 ALTER TABLE ONLY public.t_analysis_job_request_state
     ADD CONSTRAINT pk_t_analysis_job_request_state PRIMARY KEY (request_state_id);
 
+ALTER TABLE public.t_analysis_job_request_state CLUSTER ON pk_t_analysis_job_request_state;
+
 --
 -- Name: TABLE t_analysis_job_request_state; Type: ACL; Schema: public; Owner: d3l243
 --

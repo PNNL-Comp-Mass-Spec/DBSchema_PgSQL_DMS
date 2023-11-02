@@ -17,6 +17,8 @@ ALTER TABLE public.t_instrument_state_name OWNER TO d3l243;
 ALTER TABLE ONLY public.t_instrument_state_name
     ADD CONSTRAINT pk_t_instrument_state_id PRIMARY KEY (state_name);
 
+ALTER TABLE public.t_instrument_state_name CLUSTER ON pk_t_instrument_state_id;
+
 --
 -- Name: TABLE t_instrument_state_name; Type: ACL; Schema: public; Owner: d3l243
 --

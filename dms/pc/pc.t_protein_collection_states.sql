@@ -18,6 +18,8 @@ ALTER TABLE pc.t_protein_collection_states OWNER TO d3l243;
 ALTER TABLE ONLY pc.t_protein_collection_states
     ADD CONSTRAINT pk_t_protein_collection_states PRIMARY KEY (collection_state_id);
 
+ALTER TABLE pc.t_protein_collection_states CLUSTER ON pk_t_protein_collection_states;
+
 --
 -- Name: TABLE t_protein_collection_states; Type: ACL; Schema: pc; Owner: d3l243
 --

@@ -17,6 +17,8 @@ ALTER TABLE public.t_myemsl_state OWNER TO d3l243;
 ALTER TABLE ONLY public.t_myemsl_state
     ADD CONSTRAINT pk_t_myemsl_state PRIMARY KEY (myemsl_state);
 
+ALTER TABLE public.t_myemsl_state CLUSTER ON pk_t_myemsl_state;
+
 --
 -- Name: TABLE t_myemsl_state; Type: ACL; Schema: public; Owner: d3l243
 --

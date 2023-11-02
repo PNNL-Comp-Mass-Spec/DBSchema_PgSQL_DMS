@@ -30,6 +30,8 @@ ALTER TABLE public.t_spectral_library_state ALTER COLUMN library_state_id ADD GE
 ALTER TABLE ONLY public.t_spectral_library_state
     ADD CONSTRAINT pk_t_spectral_library_state PRIMARY KEY (library_state_id);
 
+ALTER TABLE public.t_spectral_library_state CLUSTER ON pk_t_spectral_library_state;
+
 --
 -- Name: ix_t_spectral_library_state_library_state; Type: INDEX; Schema: public; Owner: d3l243
 --

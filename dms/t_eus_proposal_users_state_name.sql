@@ -17,6 +17,8 @@ ALTER TABLE public.t_eus_proposal_users_state_name OWNER TO d3l243;
 ALTER TABLE ONLY public.t_eus_proposal_users_state_name
     ADD CONSTRAINT pk_t_eus_proposal_users_state_name PRIMARY KEY (eus_user_state_id);
 
+ALTER TABLE public.t_eus_proposal_users_state_name CLUSTER ON pk_t_eus_proposal_users_state_name;
+
 --
 -- Name: TABLE t_eus_proposal_users_state_name; Type: ACL; Schema: public; Owner: d3l243
 --

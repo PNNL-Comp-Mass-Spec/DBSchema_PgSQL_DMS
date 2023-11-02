@@ -31,6 +31,8 @@ ALTER TABLE pc.t_archived_file_states ALTER COLUMN archived_file_state_id ADD GE
 ALTER TABLE ONLY pc.t_archived_file_states
     ADD CONSTRAINT pk_t_archived_file_states PRIMARY KEY (archived_file_state_id);
 
+ALTER TABLE pc.t_archived_file_states CLUSTER ON pk_t_archived_file_states;
+
 --
 -- Name: TABLE t_archived_file_states; Type: ACL; Schema: pc; Owner: d3l243
 --

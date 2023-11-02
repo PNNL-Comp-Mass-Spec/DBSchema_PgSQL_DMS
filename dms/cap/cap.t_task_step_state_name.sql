@@ -18,6 +18,8 @@ ALTER TABLE cap.t_task_step_state_name OWNER TO d3l243;
 ALTER TABLE ONLY cap.t_task_step_state_name
     ADD CONSTRAINT pk_t_step_state PRIMARY KEY (step_state_id);
 
+ALTER TABLE cap.t_task_step_state_name CLUSTER ON pk_t_step_state;
+
 --
 -- Name: TABLE t_task_step_state_name; Type: ACL; Schema: cap; Owner: d3l243
 --
