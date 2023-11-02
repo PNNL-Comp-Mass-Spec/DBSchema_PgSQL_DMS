@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE cap.move_tasks_to_main_tables(INOUT _message text, I
 **          04/02/2023 mem - Rename procedure and functions
 **          05/12/2023 mem - Rename variables
 **          10/12/2023 mem - Rename debug tables to include "Task" instead of "Job"
+**          11/01/2023 mem - Update Next_Try in T_Task_Steps when adding rows from Tmp_Job_Steps (bcg)
 **
 *****************************************************/
 DECLARE
@@ -103,7 +104,8 @@ BEGIN
             Output_Folder_Name,
             Processor,
             Holdoff_Interval_Minutes,
-            Retry_Count
+            Retry_Count,
+            Next_Try
         )
         SELECT
             Job,
@@ -116,7 +118,8 @@ BEGIN
             Output_Directory_Name,
             Processor,
             Holdoff_Interval_Minutes,
-            Retry_Count
+            Retry_Count,
+            Next_Try
         FROM Tmp_Job_Steps;
         --
         GET DIAGNOSTICS _insertCount = ROW_COUNT;

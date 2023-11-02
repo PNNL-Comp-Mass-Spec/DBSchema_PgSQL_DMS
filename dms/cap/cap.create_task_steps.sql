@@ -168,7 +168,8 @@ BEGIN
         Processor citext NULL,
         Special_Instructions citext NULL,
         Holdoff_Interval_Minutes int NOT NULL,
-        Retry_Count int NOT NULL
+        Retry_Count int NOT NULL,
+        Next_Try timestamp default CURRENT_TIMESTAMP
     );
 
     CREATE INDEX IX_Tmp_Job_Steps_Job_Step ON Tmp_Job_Steps (Job, Step);
