@@ -45,6 +45,7 @@ CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''
 **          08/01/2023 mem - Set _captureTaskJob to true when calling sw.show_tmp_job_steps_and_job_step_dependencies
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          11/01/2023 mem - Add special handling for script 'LCDatasetCapture' to skip step creation when the target dataset does not have an LC instrument defined (bcg)
 **
 *****************************************************/
 DECLARE
@@ -64,6 +65,7 @@ DECLARE
     _scriptXML xml;
     _scriptXML2 xml;
     _tag text;
+    _instrumentName text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -360,6 +362,44 @@ BEGIN
         -- Store the parameters
         INSERT INTO Tmp_Job_Parameters (Job, Parameters)
         VALUES (_jobInfo.Job, _xmlParameters);
+
+        -- If the script is 'LCDatasetCapture' and the instrument name is not defined, set the task state to 'Skipped', add a comment, and don't steps for the task
+        If _scriptName::citext = 'LCDatasetCapture' Then
+
+            -- Examine the XML to extract the value for job parameter "Instrument_Name", for example, 'Agilent_QQQ_04' in :
+            -- <Param Section="JobParameters" Name="Instrument_Name" Value="Agilent_QQQ_04" />
+
+            SELECT XmlQ.value
+            INTO _instrumentName
+            FROM (
+                SELECT xmltable.*
+                FROM ( SELECT ('<params>' || _xmlParameters || '</params>')::xml as rooted_xml
+                     ) Src,
+                     XMLTABLE('//params/Param'
+                              PASSING Src.rooted_xml
+                              COLUMNS section citext PATH '@Section',
+                                      name citext PATH '@Name',
+                                      value citext PATH '@Value')
+                 ) XmlQ
+            WHERE XmlQ.section = 'JobParameters' AND
+                  XmlQ.name = 'Instrument_Name'
+            LIMIT 1;
+
+            If Not FOUND Or Trim(Coalesce(_instrumentName, '')) = '' Then
+                UPDATE T_Tasks
+                SET State = 15, -- Skipped
+                    Comment = 'No instrument name found matching LC cart name'
+                WHERE Job = _job;
+
+                UPDATE Tmp_Jobs
+                SET State = 15
+                WHERE Job = _job;
+
+                -- Process the next job in Tmp_Jobs
+                CONTINUE;
+            End If;
+
+        End If;
 
         -- Create the basic capture task job structure (steps and dependencies)
         -- Details are stored in Tmp_Job_Steps and Tmp_Job_Step_Dependencies
