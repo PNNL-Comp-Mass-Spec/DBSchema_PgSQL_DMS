@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.1
--- Dumped by pg_dump version 15.1
+-- Dumped from database version 15.4
+-- Dumped by pg_dump version 15.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -35,6 +35,7 @@ COPY cap.t_task_state_name (job_state_id, job_state) FROM stdin;
 11	Restore In Progress
 12	Restore Failed
 14	Failed, Ignore Job Step States
+15	Skipped
 20	Resuming
 100	Hold
 101	Ignore
