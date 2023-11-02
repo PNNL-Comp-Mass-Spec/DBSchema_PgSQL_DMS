@@ -16,7 +16,7 @@ CREATE VIEW cap.v_dms_dataset_lc_instrument AS
      JOIN public.t_requested_run rr ON ((ds.dataset_id = rr.dataset_id)))
      JOIN public.t_lc_cart lcc ON ((rr.cart_id = lcc.cart_id)))
      LEFT JOIN public.t_instrument_name instname ON ((lcc.cart_name OPERATOR(public.=) instname.instrument)))
-     JOIN public.t_storage_path spath ON ((instname.source_path_id = spath.storage_path_id)));
+     LEFT JOIN public.t_storage_path spath ON ((instname.source_path_id = spath.storage_path_id)));
 
 
 ALTER TABLE cap.v_dms_dataset_lc_instrument OWNER TO d3l243;
