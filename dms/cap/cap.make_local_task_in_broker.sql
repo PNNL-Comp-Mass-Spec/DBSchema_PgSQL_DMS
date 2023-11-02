@@ -178,7 +178,7 @@ BEGIN
                     _resultsDirectoryName,
                     _message    => _message,        -- Output
                     _returnCode => _returnCode,     -- Output
-                    _debugmode  => _debugmode);
+                    _debugMode  => _debugMode);
 
         If _returnCode <> '' Then
             _msg := format('Error returned by create_steps_for_task: %s', _returnCode);
@@ -250,7 +250,7 @@ BEGIN
             CALL cap.move_tasks_to_main_tables (
                         _message    => _message,        -- Output
                         _returnCode => _returnCode,     -- Output
-                        _debugmode  => false);
+                        _debugMode  => false);
 
         Else
             -- Debug mode is enabled

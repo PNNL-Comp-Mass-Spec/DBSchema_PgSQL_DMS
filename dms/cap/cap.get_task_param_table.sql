@@ -35,7 +35,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_table(_job integer, _dataset text,
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/25/2023 mem - Use renamed "directory" column in V_DMS_Dataset_Metadata
 **          10/28/2023 mem - Add _scriptName argument
-**                         - Add parameter modifications for script 'LCDatasetCapture'
+**                         - Add parameter modifications for script 'LCDatasetCapture' (bcg)
 **
 *****************************************************/
 DECLARE
