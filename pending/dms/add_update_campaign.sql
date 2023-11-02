@@ -78,6 +78,7 @@ AS $$
 **          09/29/2021 mem - Assure that EUS Usage Type is 'USER_ONSITE' if associated with a Resource Owner proposal
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          05/16/2022 mem - Fix potential arithmetic overflow error when parsing _fractionEMSLFunded
+**          11/01/2023 mem - Remove unreachable code when validating campaign name
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -233,14 +234,12 @@ BEGIN
 
         If _mode = 'add' Then
             _badCh := public.validate_chars(_campaignName, '');
-            _badCh := Replace(_badCh, 'space', '');
+
+            -- Campaign names can have spaces, so remove '[space]' from _badCh if present
+            _badCh := Replace(_badCh, '[space]', '');
 
             If _badCh <> '' Then
-                If _badCh = 'space' Then
-                    RAISE EXCEPTION 'Campaign name may not contain spaces';
-                Else
-                    RAISE EXCEPTION 'Campaign name may not contain the character(s) "%"', _badCh;
-                End If;
+                RAISE EXCEPTION 'Campaign name may not contain the character(s) "%"', _badCh;
             End If;
         End If;
 
