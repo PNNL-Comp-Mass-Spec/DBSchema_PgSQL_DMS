@@ -104,9 +104,9 @@ AS $$
 **                         - Move argument _experimentID, making it the first argument
 **                         - Rename the Experiment, Campaign, and Wellplate name arguments
 **          11/26/2022 mem - Rename parameter to _biomaterialList
-**          12/15/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Update warning messages
 **          09/26/2023 mem - Update cached experiment names in t_data_package_experiments
+**          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -247,7 +247,7 @@ BEGIN
         _badCh := public.validate_chars(_experimentName, '');
 
         If _badCh <> '' Then
-            If _badCh = 'space' Then
+            If _badCh = '[space]' Then
                 RAISE EXCEPTION 'Experiment name may not contain spaces';
             Else
                 RAISE EXCEPTION 'Experiment name may not contain the character(s) "%"', _badCh;

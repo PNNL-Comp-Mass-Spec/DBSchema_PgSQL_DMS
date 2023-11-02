@@ -73,7 +73,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run(IN _requestname text
 **          09/06/2007 grk - Factored out instrument name and dataset type validation to ValidateInstrumentAndDatasetType (Ticket #512)
 **          09/06/2007 grk - Added call to Lookup_Instrument_Run_Info_From_Experiment_Sample_Prep (Ticket #512)
 **          09/06/2007 grk - Removed _specialInstructions (http://prismtrac.pnl.gov/trac/ticket/522)
-**          02/13/2008 mem - Now checking for _badCh = 'space' (Ticket #602)
+**          02/13/2008 mem - Now checking for _badCh = '[space]' (Ticket #602)
 **          04/09/2008 grk - Added secondary separation field (Ticket #658)
 **          03/26/2009 grk - Added MRM transition list attachment (Ticket #727)
 **          06/03/2009 grk - Look up work package (Ticket #739)
@@ -144,6 +144,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run(IN _requestname text
 **          02/10/2023 mem - Call update_cached_requested_run_batch_stats
 **          10/02/2023 mem - Use _requestID when calling update_cached_requested_run_eus_users
 **          10/31/2023 mem - Ported to PostgreSQL
+**          11/01/2023 mem - Add missing brackets when checking for '[space]' in the return value from validate_chars()
 **
 *****************************************************/
 DECLARE
@@ -296,7 +297,7 @@ BEGIN
         _badCh := public.validate_chars(_requestName, '');
 
         If _badCh <> '' Then
-            If _badCh = 'space' Then
+            If _badCh = '[space]' Then
                 RAISE EXCEPTION 'Requested run name may not contain spaces';
             Else
                 RAISE EXCEPTION 'Requested run name may not contain the character(s) "%"', _badCh;

@@ -90,10 +90,10 @@ BEGIN
     _badCh := public.validate_chars(_sepTypeName, '');
 
     If _badCh <> '' Then
-        If _badCh = 'space' Then
-            _message := 'Separation Type name may not contain spaces';
+        If _badCh = '[space]' Then
+            _message := 'Separation type name may not contain spaces';
         Else
-            _message := format('Separation Type name may not contain the character(s) "%s"', _badCh);
+            _message := format('Separation type name may not contain the character(s) "%s"', _badCh);
         End If;
 
         RAISE WARNING '%', _message;

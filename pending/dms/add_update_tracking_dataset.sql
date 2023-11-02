@@ -206,7 +206,7 @@ BEGIN
         _badCh := public.validate_chars(_datasetName, '');
 
         If _badCh <> '' Then
-            If _badCh = 'space' Then
+            If _badCh = '[space]' Then
                 RAISE EXCEPTION 'Dataset name may not contain spaces';
             ElsIf char_length(_badCh) = 1 Then
                 RAISE EXCEPTION 'Dataset name may not contain the character %', _badCh;

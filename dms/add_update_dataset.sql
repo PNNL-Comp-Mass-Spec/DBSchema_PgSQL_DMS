@@ -31,9 +31,9 @@ CREATE OR REPLACE PROCEDURE public.add_update_dataset(IN _datasetname text, IN _
 **    _eusProposalID            EUS proposal ID
 **    _eusUsageType             EUS usage type
 **    _eusUsersList             EUS users list
-**    _requestID                Only valid if _mode is 'add', 'check_add', or 'add_trigger'; ignored if _mode is 'update' or 'check_update'
-**    _workPackage              Only valid if _mode is 'add', 'check_add', or 'add_trigger'
-**    _mode                     Can be 'add', 'update', 'bad', 'check_update', 'check_add', 'add_dataset_create_task'
+**    _requestID                Only valid if _mode is 'add', 'check_add', or 'add_dataset_create_task'; ignored if _mode is 'update' or 'check_update'
+**    _workPackage              Only valid if _mode is 'add', 'check_add', or 'add_dataset_create_task'
+**    _mode                     Can be 'add', 'update', 'bad', 'check_update', 'check_add', 'add_dataset_create_task' (deprecated: 'add_trigger')
 **    _callingUser              Username of the calling user
 **    _aggregationJobDataset    Set to true when creating an in-silico dataset to associate with an aggregation job
 **    _captureSubfolder         Only used when _mode is 'add' or 'bad'
@@ -54,9 +54,9 @@ CREATE OR REPLACE PROCEDURE public.add_update_dataset(IN _datasetname text, IN _
 **          07/26/2007 mem - Now checking dataset type (_msType) against Allowed_Dataset_Types in T_Instrument_Class (Ticket #502)
 **          09/06/2007 grk - Removed _specialInstructions (http://prismtrac.pnl.gov/trac/ticket/522)
 **          10/08/2007 jds - Added support for new mode 'add_trigger'.  Validation was taken from other stored procs from the 'add' mode
-**          12/07/2007 mem - Now disallowing updates for datasets with a rating of -10 = Unreviewed (use UpdateDatasetDispositions instead)
+**          12/07/2007 mem - Now disallowing updates for datasets with a rating of -10 = Unreviewed (use update_dataset_dispositions instead)
 **          01/08/2008 mem - Added check for _eusProposalID, _eusUsageType, or _eusUsersList being blank or 'no update' when _mode = 'add' and _requestID is 0
-**          02/13/2008 mem - Now sending _datasetName to function validate_chars and checking for _badCh = 'space' (Ticket #602)
+**          02/13/2008 mem - Now sending _datasetName to function validate_chars and checking for _badCh = '[space]' (Ticket #602)
 **          02/15/2008 mem - Increased size of _folderName to varchar(128) (Ticket #645)
 **          03/25/2008 mem - Added optional parameter _callingUser; if provided, will call alter_event_log_entry_user (Ticket #644)
 **          04/09/2008 mem - Added call to alter_event_log_entry_user to handle dataset rating entries (event log target type 8)
@@ -66,7 +66,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_dataset(IN _datasetname text, IN _
 **          01/14/2010 grk - Assign storage path on creation of dataset
 **          02/28/2010 grk - Added add-auto mode for requested run
 **          03/02/2010 grk - Added status field to requested run
-**          05/05/2010 mem - Now calling auto_resolve_name_to_username to check if _operPRN contains a person's real name rather than their username
+**          05/05/2010 mem - Now calling auto_resolve_name_to_username to check if _operatorUsername contains a person's real name rather than their username
 **          07/27/2010 grk - Use try-catch for error handling
 **          08/26/2010 mem - Now passing _callingUser to schedule_predefined_analysis_jobs
 **          08/27/2010 mem - Now calling Validate_Instrument_Group_and_Dataset_Type to validate the instrument type for the selected instrument's instrument group
@@ -146,10 +146,11 @@ CREATE OR REPLACE PROCEDURE public.add_update_dataset(IN _datasetname text, IN _
 **                         - Use calling user name for the dataset creator user
 **          08/02/2023 mem - Prevent adding a dataset for an inactive instrument
 **          08/03/2023 mem - Allow creation of datasets for instruments in group 'Data_Folders' (specifically, the DMS_Pipeline_Data instrument)
-**          10/24/2023 mem - Use update_cart_parameters to store Cart Config ID in T_Requested_Run
+**          10/24/2023 mem - Use update_cart_parameters to update Cart Config ID in T_Requested_Run
 **          10/26/2023 mem - Call add_new_dataset_to_creation_queue instead of create_xml_dataset_trigger_file
 **          10/30/2023 mem - Replace mode 'add_trigger' with 'add_dataset_create_task'
 **                         - Ported to PostgreSQL
+**          11/01/2023 mem - Add missing brackets when checking for '[space]' in the return value from validate_chars()
 **
 *****************************************************/
 DECLARE
@@ -376,7 +377,7 @@ BEGIN
         _badCh := public.validate_chars(_datasetName, '');
 
         If _badCh <> '' Then
-            If _badCh = 'space' Then
+            If _badCh = '[space]' Then
                 _msg := 'Dataset name may not contain spaces';
             ElsIf char_length(_badCh) = 1 Then
                 _msg := format('Dataset name may not contain the character %s', _badCh);
@@ -919,7 +920,7 @@ BEGIN
 
                 -- RequestID not specified
                 -- Try to determine EUS information using Experiment name
-                -- (Check code taken from add_update_requested_run procedure)
+                -- (Check code taken from Add_Update_Requested_Run procedure)
 
                 ---------------------------------------------------
                 -- Lookup EUS field (only effective for experiments that have associated sample prep requests)

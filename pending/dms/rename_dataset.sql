@@ -135,7 +135,7 @@ BEGIN
     _badCh := public.validate_chars(_datasetNameNew, '');
 
     If _badCh <> '' Then
-        If _badCh = 'space' Then
+        If _badCh = '[space]' Then
             _message := 'New dataset name may not contain spaces';
         ElsIf char_length(_badCh) = 1 Then
             _message := format('New dataset name may not contain the character %s', _badCh);

@@ -54,6 +54,7 @@ CREATE OR REPLACE PROCEDURE public.add_requested_run_fractions(IN _sourcerequest
 **          10/13/2022 mem - Fix bug calling Lookup_EUS_From_Experiment_Sample_Prep
 **          02/10/2023 mem - Call update_cached_requested_run_batch_stats
 **          10/09/2023 mem - Ported to PostgreSQL
+**          11/01/2023 mem - Add missing brackets when checking for '[space]' in the return value from validate_chars()
 **
 *****************************************************/
 DECLARE
@@ -229,7 +230,7 @@ BEGIN
         _badCh := public.validate_chars(_sourceRequestName, '');
 
         If _badCh <> '' Then
-            If _badCh = 'space' Then
+            If _badCh = '[space]' Then
                 RAISE EXCEPTION 'Source requested run name may not contain spaces';
             Else
                 RAISE EXCEPTION 'Source requested run name may not contain the character(s) "%"', _badCh;
