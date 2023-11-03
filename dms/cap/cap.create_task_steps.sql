@@ -46,6 +46,7 @@ CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          11/01/2023 mem - Add special handling for script 'LCDatasetCapture' to skip step creation when the target dataset does not have an LC instrument defined (bcg)
+**          11/02/2023 mem - Delete job parameters from Tmp_Job_Parameters when skipping a capture task job (bcg)
 **
 *****************************************************/
 DECLARE
@@ -394,6 +395,9 @@ BEGIN
 
                 UPDATE Tmp_Jobs
                 SET State = 15
+                WHERE Job = _job;
+
+                DELETE FROM Tmp_Job_Parameters
                 WHERE Job = _job;
 
                 -- Process the next job in Tmp_Jobs
