@@ -1,21 +1,22 @@
 --
--- Name: copy_task_to_history(integer, integer, text, boolean, timestamp without time zone); Type: PROCEDURE; Schema: cap; Owner: d3l243
+-- Name: copy_task_to_history(integer, integer, boolean, timestamp without time zone, text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.copy_task_to_history(IN _job integer, IN _jobstate integer, INOUT _message text DEFAULT ''::text, IN _overridesavetime boolean DEFAULT false, IN _savetimeoverride timestamp without time zone DEFAULT NULL::timestamp without time zone)
+CREATE OR REPLACE PROCEDURE cap.copy_task_to_history(IN _job integer, IN _jobstate integer, IN _overridesavetime boolean DEFAULT false, IN _savetimeoverride timestamp without time zone DEFAULT NULL::timestamp without time zone, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
 **  Desc:
-**      For a given capture task job, copies the job details, steps,
-**      and parameters to the history tables
+**      For a given capture task job, copies the job details, steps, and parameters to the history tables
 **
 **  Arguments:
 **    _job                  Capture task job number
 **    _jobState             Current job state
 **    _overrideSaveTime     Set to true to use _saveTimeOverride for the SaveTime instead of CURRENT_TIMESTAMP
 **    _saveTimeOverride     Timestamp to use when _overrideSaveTime is true
+**    _message              Output message
+**    _returnCode           Return code
 **
 **  Auth:   grk
 **  Date:   09/12/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
@@ -26,12 +27,14 @@ CREATE OR REPLACE PROCEDURE cap.copy_task_to_history(IN _job integer, IN _jobsta
 **          11/04/2016 mem - Return a more detailed error message in _message
 **          10/10/2022 mem - Ported to PostgreSQL
 **          03/07/2023 mem - Use new column name
+**          11/02/2023 mem - Move _message to the end of the argument list and add _returnCode
 **
 *****************************************************/
 DECLARE
     _saveTime timestamp;
 BEGIN
     _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Bail if no candidates found
@@ -41,6 +44,7 @@ BEGIN
         _message := 'Capture task job cannot be 0';
         RAISE WARNING '%', _message;
 
+        _returnCode := 'U5201';
         RETURN;
     End If;
 
@@ -205,11 +209,11 @@ END
 $$;
 
 
-ALTER PROCEDURE cap.copy_task_to_history(IN _job integer, IN _jobstate integer, INOUT _message text, IN _overridesavetime boolean, IN _savetimeoverride timestamp without time zone) OWNER TO d3l243;
+ALTER PROCEDURE cap.copy_task_to_history(IN _job integer, IN _jobstate integer, IN _overridesavetime boolean, IN _savetimeoverride timestamp without time zone, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE copy_task_to_history(IN _job integer, IN _jobstate integer, INOUT _message text, IN _overridesavetime boolean, IN _savetimeoverride timestamp without time zone); Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: PROCEDURE copy_task_to_history(IN _job integer, IN _jobstate integer, IN _overridesavetime boolean, IN _savetimeoverride timestamp without time zone, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.copy_task_to_history(IN _job integer, IN _jobstate integer, INOUT _message text, IN _overridesavetime boolean, IN _savetimeoverride timestamp without time zone) IS 'CopyTaskToHistory or CopyJobToHistory';
+COMMENT ON PROCEDURE cap.copy_task_to_history(IN _job integer, IN _jobstate integer, IN _overridesavetime boolean, IN _savetimeoverride timestamp without time zone, INOUT _message text, INOUT _returncode text) IS 'CopyTaskToHistory or CopyJobToHistory';
 

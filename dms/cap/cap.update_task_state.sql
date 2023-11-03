@@ -471,7 +471,14 @@ BEGIN
                 CALL cap.copy_task_to_history (
                             _jobInfo.Job,
                             _jobInfo.NewState,
-                            _message => _message);      -- Output
+                            _message    => _message,            -- Output
+                            _returnCode => _returnCode);        -- Output
+
+                If Coalesce(_returnCode, '') = '' Then
+                    _message := '';
+                Else
+                    CALL public.post_log_entry ('Error', _message, 'Update_Task_State', 'cap');
+                End If;
             End If;
         End If;
 

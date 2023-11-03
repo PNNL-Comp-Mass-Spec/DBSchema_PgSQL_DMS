@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE cap.remove_old_tasks(IN _intervaldaysforsuccess inte
 **                         - Also look for capture task jobs with state 14 = Failed, Ignore Job Step States
 **          06/22/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**                         - Add argument _returnCode when calling copy_task_to_history
 **
 *****************************************************/
 DECLARE
@@ -196,9 +197,17 @@ BEGIN
                 CALL cap.copy_task_to_history (
                             _jobInfo.JobToAdd,
                             _jobInfo.State,
-                            _message          => _message,  -- Output
                             _overrideSaveTime => true,
-                            _saveTimeOverride => _jobInfo.SaveTimeOverride);
+                            _saveTimeOverride => _jobInfo.SaveTimeOverride,
+                            _message          => _message,          -- Output
+                            _returnCode       => _returnCode);      -- Output
+
+                If Coalesce(_returnCode, '') = '' Then
+                    _message := '';
+                Else
+                    CALL public.post_log_entry ('Error', _message, 'Remove_Old_Tasks', 'cap');
+                End If;
+
             End If;
         END LOOP;
     End If;
