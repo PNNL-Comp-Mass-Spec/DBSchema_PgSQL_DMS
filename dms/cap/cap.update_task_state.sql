@@ -9,32 +9,26 @@ CREATE OR REPLACE PROCEDURE cap.update_task_state(IN _bypassdms boolean DEFAULT 
 **
 **  Desc:
 **      Based on step state, look for capture task jobs that have been completed, or have entered the 'in progress' state.
-**      For each, update state of capture task job locally and dataset in public.t_dataset accordingly
+**      For each, update state of the capture task job locally and the dataset in public.t_dataset accordingly
 **
-**      First step:
-**        Evaluate state of steps for capture task jobs that are in new or busy state,
-**        or in transient state of being resumed or reset, determine what the new
-**        capture task job state should be, and accumulate list of capture task jobs whose new state is different than their
-**        current state.  Only steps for capture task jobs in New or Busy state are considered.
+**      Evaluates state of steps for capture task jobs that have state New, In Progress, Failed, or Resuming,
+**      and determines what the new capture task job state should be
 **
-**      Current                 Current                                     New
-**      Capture Task Job        Capture Task Step                           Capture Task Job
-**      State                   States                                      State
-**      -----                   -------                                     ---------
-**      New or Busy             One or more steps failed                    Failed
+**      Current                    Current                                     New
+**      Capture Task Job           Capture Task Step                           Capture Task Job
+**      State                      States                                      State
+**      -----                      -------                                     ---------
+**      New/In Progress/Resuming   One or more steps failed                    Failed
 **
-**      New or Busy             All steps complete (or skipped)             Complete
+**      New/In Progress/Resuming   All steps skipped                           Skipped
 **
-**      New,Busy,Resuming       One or more steps busy                      In Progress
+**      New/In Progress/Resuming   All steps complete (or skipped)             Complete
 **
-**      Failed                  All steps complete (or skipped)             Complete, though only if max Job Step completion time is greater than Finish time in t_tasks
+**      New/In Progress/Resuming   One or more steps waiting/enabled/running   In Progress
 **
-**      Failed                  All steps waiting/enabled/In Progress       In Progress
+**      Failed                     All steps complete (or skipped)             Complete
 **
-**
-**      Second step:
-**        Go through list of capture task jobs from first step whose current state must be changed and
-**        take action in broker and DMS as noted.
+**      Failed                     All steps waiting/enabled/running           In Progress
 **
 **  Arguments:
 **    _bypassDMS                When true, do not update states in tables in the public schema
@@ -66,6 +60,7 @@ CREATE OR REPLACE PROCEDURE cap.update_task_state(IN _bypassdms boolean DEFAULT 
 **                         - Ported to PostgreSQL
 **          07/11/2023 mem - Use COUNT(TS.step) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
+**          11/01/2023 mem - If all steps for a capture task job have state 'skipped', set the task state to 'Skipped' (bcg)
 **
 *****************************************************/
 DECLARE
@@ -106,6 +101,10 @@ BEGIN
     End If;
 
     _startTime := CURRENT_TIMESTAMP;
+
+    If _infoOnly Then
+        RAISE INFO '';
+    End If;
 
     ---------------------------------------------------
     -- Table to hold state changes
@@ -160,37 +159,36 @@ BEGIN
             T.State As OldState,
             T.Results_Folder_Name,
             T.Storage_Server,
-            CASE
-                WHEN JS_Stats.Failed > 0 THEN 5                     -- New capture task job state: Failed
-                WHEN JS_Stats.FinishedOrSkipped = Total THEN 3      -- New capture task job state: Complete
-                WHEN JS_Stats.StartedFinishedOrSkipped > 0 THEN 2   -- New capture task job state: In Progress
-                ELSE T.State
+            CASE WHEN JS_Stats.Failed > 0 THEN 5                     -- New capture task job state: Failed
+                 WHEN JS_Stats.Skipped = Total THEN 15               -- New capture task job state: Skipped
+                 WHEN JS_Stats.FinishedOrSkipped = Total THEN 3      -- New capture task job state: Complete
+                 WHEN JS_Stats.StartedFinishedOrSkipped > 0 THEN 2   -- New capture task job state: In Progress
+                 ELSE T.State
             END AS NewState,
             T.Dataset,
             T.Script
         FROM
-           (   -- Count the number of steps for each capture task job
-               -- that are in the busy, finished, or failed states
-               -- (for capture task jobs that are in new, in progress, or resuming state)
+           (   -- Count the number of steps for each capture task job that are in specific states
+               -- (for capture task jobs with state new, in progress, failed, or resuming)
                SELECT
                    TS.Job,
                    COUNT(TS.step) AS Total,
-                   SUM(CASE
-                       WHEN TS.State IN (3, 4, 5, 13) THEN 1       -- Skipped, Running, Completed, or Inactive
-                       ELSE 0
+                   SUM(CASE WHEN TS.State IN (3, 4, 5, 13) THEN 1       -- Step state is 3=Skipped, 4=Running, 5=Completed, or 13=Inactive
+                            ELSE 0
                        END) AS StartedFinishedOrSkipped,
-                   SUM(CASE
-                       WHEN TS.State IN (6) THEN 1                 -- Failed
-                       ELSE 0
+                   SUM(CASE WHEN TS.State IN (6) THEN 1                 -- Step state is 6=Failed
+                            ELSE 0
                        END) AS Failed,
-                   SUM(CASE
-                       WHEN TS.State IN (3, 5, 13) THEN 1          -- Skipped, Completed, or Inactive
-                       ELSE 0
-                       END) AS FinishedOrSkipped
+                   SUM(CASE WHEN TS.State IN (3, 5, 13) THEN 1          -- Step state is 3=Skipped, 5=Completed, or 13=Inactive
+                            ELSE 0
+                       END) AS FinishedOrSkipped,
+                   SUM(CASE WHEN TS.State IN (3, 13) THEN 1             -- Step state is 3=Skipped or 13=Inactive
+                            ELSE 0
+                       END) AS Skipped
                FROM cap.t_task_steps TS
                     INNER JOIN cap.t_tasks T
                       ON TS.Job = T.Job
-               WHERE T.State IN (1, 2, 5, 20)     -- Current capture task job state: New, In Progress, Failed, or Resuming
+               WHERE T.State IN (1, 2, 5, 20)     -- Current capture task job state: 1=New, 2=In Progress, 5=Failed, or 20=Resuming
                GROUP BY TS.Job, T.State
            ) AS JS_Stats
            INNER JOIN cap.t_tasks AS T
@@ -203,9 +201,8 @@ BEGIN
     _jobCountToProcess := _matchCount;
 
     ---------------------------------------------------
-    -- Find DatasetArchive and ArchiveUpdate tasks that are
-    -- in progress, but for which DMS thinks that
-    -- the operation has failed
+    -- Find DatasetArchive and ArchiveUpdate tasks that are in progress,
+    -- but for which DMS thinks that the operation has failed
     ---------------------------------------------------
 
     INSERT INTO Tmp_ChangedJobs (
@@ -263,8 +260,8 @@ BEGIN
            Storage_Server
     FROM cap.t_tasks
     WHERE State = 5 AND
-          Job IN ( SELECT Job FROM cap.t_task_steps where state in (2, 3, 4, 5, 13)) AND
-          NOT Job IN (SELECT Job FROM cap.t_task_steps where state = 6) AND
+          Job IN ( SELECT Job FROM cap.t_task_steps WHERE state IN (2, 3, 4, 5, 13)) AND
+          NOT Job IN (SELECT Job FROM cap.t_task_steps WHERE state = 6) AND
           NOT Job In (SELECT Job FROM Tmp_ChangedJobs);
     --
     GET DIAGNOSTICS _matchCount = ROW_COUNT;
@@ -306,47 +303,23 @@ BEGIN
         _curJob := _jobInfo.Job;
 
         ---------------------------------------------------
-        -- Examine the steps for this capture task job to determine actual start/End times
+        -- Examine the steps for this capture task job to determine actual start/end times
         ---------------------------------------------------
 
         _startMin := Null;
         _finishMax := Null;
 
-        -- Note: You can use the following query to update _startMin and _finishMax
-
-        -- However, when a capture task job has some completed steps and some not yet started, this query
-        -- will trigger the warning 'Null value is eliminated by an aggregate or other Set operation'
-        --
-        -- The warning can be safely ignored, but tends to bloat up the Sql Server Agent logs,
-        -- so we are instead populating _startMin and _finishMax separately
-
-        /*
         SELECT MIN(Start),
                MAX(Finish)
         INTO _startMin, _finishMax
         FROM cap.t_task_steps
-        WHERE Job = _job;
-        */
-
-        -- Update _startMin
-        -- Note that If no steps have started yet, _startMin will be Null
-        SELECT MIN(Start)
-        INTO _startMin
-        FROM cap.t_task_steps
-        WHERE Job = _jobInfo.Job AND Not Start Is Null;
-
-        -- Update _finishMax
-        -- Note that If no steps have finished yet, _finishMax will be Null
-        SELECT MAX(Finish)
-        INTO _finishMax
-        FROM cap.t_task_steps
-        WHERE Job = _jobInfo.Job AND Not Finish Is Null;
+        WHERE Job = _jobInfo.Job;
 
         ---------------------------------------------------
         -- Deprecated:
         -- Examine the steps for this capture task job to determine total processing time
         -- Steps with the same Step Tool name are assumed to be steps that can run in parallel;
-        --   therefore, we use a MAX(ProcessingTime) on steps with the same Step Tool name
+        --   therefore, we use MAX(ProcessingTime) on steps with the same Step Tool name
         -- We use ABS(DATEDIFF(HOUR, start, xx)) to avoid overflows produced with
         --   DATEDIFF(SECOND, Start, xx) when Start and Finish are widely different
         ---------------------------------------------------
@@ -380,16 +353,12 @@ BEGIN
 
         If _infoOnly Then
             UPDATE Tmp_ChangedJobs Target
-            SET Start_New =
-                    CASE
-                    WHEN _jobInfo.NewState >= 2 THEN Coalesce(_startMin, CURRENT_TIMESTAMP)  -- Capture task job state is 2 or higher
-                    ELSE Src.Start
-                    END,
-                Finish_New =
-                    CASE
-                    WHEN _jobInfo.NewState IN (3, 5) THEN _finishMax                         -- Capture task job state is 3=Complete or 5=Failed
-                    ELSE Src.Finish
-                    END
+            SET Start_New =  CASE WHEN _jobInfo.NewState >= 2 THEN Coalesce(_startMin, CURRENT_TIMESTAMP)  -- Capture task job state is 2 or higher
+                                  ELSE Src.Start
+                             END,
+                Finish_New = CASE WHEN _jobInfo.NewState IN (3, 5) THEN _finishMax                         -- Capture task job state is 3=Complete or 5=Failed
+                                  ELSE Src.Finish
+                             END
             FROM cap.t_tasks Src
             WHERE Target.Job = _jobInfo.Job AND
                   Target.Job = Src.Job;
@@ -406,22 +375,22 @@ BEGIN
                               ELSE Start
                          END,
                 Finish = CASE WHEN _jobInfo.NewState IN (3, 5)
-                              THEN _finishMax                               -- Capture task job state is 3=Complete or 5=Failed
+                              THEN _finishMax                               -- Capture task job state is 3=Complete, 5=Failed, or 15=Skipped
                               ELSE Finish
                          END
             WHERE Job = _jobInfo.Job;
         End If;
 
         ---------------------------------------------------
-        -- Make changes to DMS if we are enabled to do so
-        -- update_dms_dataset_state will also call cap.update_dms_file_info_XML to push the data into public.T_Dataset_Info
+        -- Make changes to public.t_dataset and/or public.t_dataset_archive if we are enabled to do so
+        -- Procedure update_dms_dataset_state will also call cap.update_dms_file_info_xml to push the data into public.t_dataset_info
         -- If a duplicate dataset is found, update_dms_dataset_state will change this capture task job's state to 14 in t_tasks
         ---------------------------------------------------
 
         If Not _bypassDMS And _jobInfo.Dataset_ID <> 0 Then
 
             If _infoOnly Then
-                RAISE INFO 'Call update_dms_dataset_state Job=%, NewJobStater=%', _jobInfo.Job, _jobInfo.NewState;
+                RAISE INFO 'Call update_dms_dataset_state Job=%, NewJobState=%', _jobInfo.Job, _jobInfo.NewState;
             Else
                 CALL cap.update_dms_dataset_state(
                             _jobInfo.Job,
@@ -466,7 +435,7 @@ BEGIN
         If _jobInfo.NewState In (3, 5) Then
 
             If _infoOnly Then
-                RAISE INFO 'Call copy_task_to_history Job=%, NewState=%', _jobInfo.Job, _jobInfo.NewState;
+                RAISE INFO 'Call copy_task_to_history     Job=%, NewState=%', _jobInfo.Job, _jobInfo.NewState;
             Else
                 CALL cap.copy_task_to_history (
                             _jobInfo.Job,
