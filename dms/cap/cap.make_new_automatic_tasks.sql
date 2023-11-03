@@ -16,6 +16,8 @@ CREATE OR REPLACE PROCEDURE cap.make_new_automatic_tasks(IN _infoonly boolean DE
 **          01/26/2017 mem - Add support for column Enabled in T_Automatic_Jobs
 **          01/29/2021 mem - Remove unused parameters
 **          06/20/2023 mem - Ported to PostgreSQL
+**          11/01/2023 mem - Store 'LC' for Results_Folder_Name for automatic 'ArchiveUpdate' capture task jobs created after an 'LCDatasetCapture' capture task job finishes (bcg)
+**                         - Also exclude existing 'ArchiveUpdate tasks' that do not match the automatic job tasks (bcg)
 **
 *****************************************************/
 DECLARE
@@ -62,10 +64,13 @@ BEGIN
                    ON T.Script = AJ.script_for_completed_job AND
                       AJ.enabled = 1
             WHERE T.State = 3 AND
-                  NOT EXISTS ( SELECT *
-                               FROM cap.t_tasks
-                               WHERE script = script_for_new_job AND
-                                     dataset = T.dataset )
+                  NOT EXISTS ( SELECT CompareQ.job
+                               FROM cap.t_tasks CompareQ
+                               WHERE CompareQ.script = AJ.script_for_new_job AND
+                                     CompareQ.dataset = T.dataset AND
+                                     ( NOT (AJ.script_for_completed_job = 'LCDatasetCapture' AND AJ.script_for_new_job = 'ArchiveUpdate')
+                                       OR CompareQ.results_folder_name = 'LC' )
+                             )
             ORDER BY T.dataset, AJ.script_for_new_job
         LOOP
             _infoData := format(_formatSpecifier,
@@ -81,20 +86,31 @@ BEGIN
         RETURN;
     End If;
 
-    INSERT INTO cap.t_tasks ( Script, Dataset, Dataset_ID, Comment )
+    INSERT INTO cap.t_tasks ( script, dataset, dataset_id, comment, results_folder_name, priority )
     SELECT AJ.script_for_new_job AS Script,
            T.Dataset,
            T.Dataset_ID,
-           format('Created from capture task job %s', T.Job) AS comment
+           format('Created from capture task job %s', T.Job) AS comment,
+           CASE WHEN AJ.script_for_completed_job = 'LCDatasetCapture' AND AJ.script_for_new_job = 'ArchiveUpdate'
+                THEN 'LC'
+                ELSE NULL
+           END AS results_folder,
+           CASE WHEN AJ.script_for_completed_job = 'LCDatasetCapture' OR AJ.script_for_new_job = 'LCDatasetCapture'
+                THEN 5
+                ELSE 4
+           END AS priority
     FROM cap.t_tasks AS T
          INNER JOIN cap.t_automatic_jobs AJ
            ON T.Script = AJ.script_for_completed_job AND
               AJ.enabled = 1
     WHERE T.State = 3 AND
-          NOT EXISTS ( SELECT *
-                       FROM cap.t_tasks
-                       WHERE Script = script_for_new_job AND
-                             Dataset = T.Dataset );
+          NOT EXISTS ( SELECT CompareQ.job
+                       FROM cap.t_tasks CompareQ
+                       WHERE CompareQ.script = AJ.script_for_new_job AND
+                             CompareQ.dataset = T.dataset AND
+                             ( NOT (AJ.script_for_completed_job = 'LCDatasetCapture' AND AJ.script_for_new_job = 'ArchiveUpdate')
+                               OR CompareQ.results_folder_name = 'LC' )
+                     );
 
 END
 $$;
