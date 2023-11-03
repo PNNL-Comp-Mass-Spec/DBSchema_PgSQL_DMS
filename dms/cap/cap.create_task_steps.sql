@@ -365,7 +365,7 @@ BEGIN
         INSERT INTO Tmp_Job_Parameters (Job, Parameters)
         VALUES (_jobInfo.Job, _xmlParameters);
 
-        -- If the script is 'LCDatasetCapture' and the instrument name is not defined, set the task state to 'Skipped', add a comment, and don't steps for the task
+        -- If the script is 'LCDatasetCapture' and the instrument name is not defined, set the task state to 'Skipped', add a comment, and don't create steps for the task
         If _scriptName::citext = 'LCDatasetCapture' Then
 
             -- Examine the XML to extract the value for job parameter "Instrument_Name", for example, 'Agilent_QQQ_04' in :
@@ -408,6 +408,7 @@ BEGIN
 
         -- Create the basic capture task job structure (steps and dependencies)
         -- Details are stored in Tmp_Job_Steps and Tmp_Job_Step_Dependencies
+
         CALL cap.create_steps_for_task (
                     _jobInfo.Job,
                     _scriptXML,
@@ -434,6 +435,15 @@ BEGIN
                      _message   => _message,    -- Output
                      _debugMode => _debugMode);
 
+
+        If _scriptName::citext = 'LCDatasetCapture' Then
+            -- Set a default delayed start for LCDatasetCapture steps; we want to give the 'DatasetArchive' task a chance to run before the 'LCDatasetCapture' task starts
+            -- This can just be bulk-applied to all steps for this capture task job
+            UPDATE Tmp_Job_Steps
+            SET Next_Try = CURRENT_TIMESTAMP + Interval '30 minutes'
+            WHERE Job = _job;
+        End If;
+
         _jobsProcessed := _jobsProcessed + 1;
 
         If extract(epoch FROM clock_timestamp() - _lastLogTime) >= _loopingUpdateInterval Then
@@ -457,7 +467,7 @@ BEGIN
     Else
         If _mode::citext = 'CreateFromImportedJobs' Then
 
-            -- Copy data from the following temp tables to actual database tables:
+            -- Copy data from the following temp tables into actual database tables:
             --     Tmp_Jobs
             --     Tmp_Job_Steps
             --     Tmp_Job_Step_Dependencies
