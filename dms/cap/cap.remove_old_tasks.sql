@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE cap.remove_old_tasks(IN _intervaldaysforsuccess inte
 **                         - Also look for capture task jobs with state 14 = Failed, Ignore Job Step States
 **          06/22/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          11/02/2023 mem - Also remove capture task jobs with state 15 = Skipped
 **                         - Add argument _returnCode when calling copy_task_to_history
 **
 *****************************************************/
@@ -99,13 +100,13 @@ BEGIN
 
         If _infoOnly Then
             RAISE INFO '';
-            RAISE INFO 'Finding capture task jobs with state 3, 4, or 101 and Finish < %', public.timestamp_text(_cutoffDateTimeForSuccess);
+            RAISE INFO 'Finding capture task jobs with state 3, 4, 15, or 101 and Finish < %', public.timestamp_text(_cutoffDateTimeForSuccess);
         End If;
 
         INSERT INTO Tmp_Selected_Jobs (Job, State)
         SELECT Job, State
         FROM cap.t_tasks
-        WHERE State IN (3, 4, 101) And    -- Complete, Inactive, or Ignore
+        WHERE State IN (3, 4, 15, 101) And    -- Complete, Inactive, Skipped, or Ignore
               Coalesce(Finish, Start) < _cutoffDateTimeForSuccess
         ORDER BY job;
 
@@ -137,7 +138,7 @@ BEGIN
 
         If _infoOnly Then
             RAISE INFO '';
-            RAISE INFO 'Finding capture task jobs with state 5 or 14      and Finish < %', public.timestamp_text(_cutoffDateTimeForFail);
+            RAISE INFO 'Finding capture task jobs with state 5 or 14          and Finish < %', public.timestamp_text(_cutoffDateTimeForFail);
         End If;
 
         INSERT INTO Tmp_Selected_Jobs (Job, State)
