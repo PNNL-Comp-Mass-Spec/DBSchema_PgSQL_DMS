@@ -257,7 +257,7 @@ BEGIN
 
                         RAISE WARNING '%', _infoMessage;
                     Else
-                        _infoMessage := 'No capture task jobs in cap.t_tasks has State = 0';
+                        _infoMessage := 'No capture task jobs in cap.t_tasks have State = 0';
                         RAISE INFO '%', _infoMessage;
                     End If;
                 Else
@@ -366,7 +366,7 @@ BEGIN
         VALUES (_jobInfo.Job, _xmlParameters);
 
         -- If the script is 'LCDatasetCapture' and the instrument name is not defined, set the task state to 'Skipped', add a comment, and don't create steps for the task
-        If _scriptName::citext = 'LCDatasetCapture' Then
+        If _jobInfo.Script = 'LCDatasetCapture' Then
 
             -- Examine the XML to extract the value for job parameter "Instrument_Name", for example, 'Agilent_QQQ_04' in :
             -- <Param Section="JobParameters" Name="Instrument_Name" Value="Agilent_QQQ_04" />
@@ -389,16 +389,16 @@ BEGIN
 
             If Not FOUND Or Trim(Coalesce(_instrumentName, '')) = '' Then
                 UPDATE T_Tasks
-                SET State = 15, -- Skipped
+                SET State   = 15,       -- Skipped
                     Comment = 'No instrument name found matching LC cart name'
-                WHERE Job = _job;
+                WHERE Job = _jobInfo.Job;
 
                 UPDATE Tmp_Jobs
                 SET State = 15
-                WHERE Job = _job;
+                WHERE Job = _jobInfo.Job;
 
                 DELETE FROM Tmp_Job_Parameters
-                WHERE Job = _job;
+                WHERE Job = _jobInfo.Job;
 
                 -- Process the next job in Tmp_Jobs
                 CONTINUE;
@@ -436,12 +436,12 @@ BEGIN
                      _debugMode => _debugMode);
 
 
-        If _scriptName::citext = 'LCDatasetCapture' Then
+        If _jobInfo.Script = 'LCDatasetCapture' Then
             -- Set a default delayed start for LCDatasetCapture steps; we want to give the 'DatasetArchive' task a chance to run before the 'LCDatasetCapture' task starts
             -- This can just be bulk-applied to all steps for this capture task job
             UPDATE Tmp_Job_Steps
             SET Next_Try = CURRENT_TIMESTAMP + Interval '30 minutes'
-            WHERE Job = _job;
+            WHERE Job = _jobInfo.Job;
         End If;
 
         _jobsProcessed := _jobsProcessed + 1;
