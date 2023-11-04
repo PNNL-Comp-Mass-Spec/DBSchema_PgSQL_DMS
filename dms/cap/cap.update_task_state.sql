@@ -62,12 +62,11 @@ CREATE OR REPLACE PROCEDURE cap.update_task_state(IN _bypassdms boolean DEFAULT 
 **          09/07/2023 mem - Align assignment statements
 **          11/01/2023 mem - If all steps for a capture task job have state 'skipped', set the task state to 'Skipped' (bcg)
 **          11/04/2023 mem - When _infoOnly is true, update Finish_New for capture task jobs with state 15 (Skipped)
+**                         - Replace While loop with a For loop
 **
 *****************************************************/
 DECLARE
     _matchCount int := 0;
-    _curJob int := 0;
-    _done boolean;
     _jobInfo record;
     _jobCountToProcess int;
     _jobsProcessed int;
@@ -274,14 +273,11 @@ BEGIN
     -- and update local state and DMS state
     ---------------------------------------------------
 
-    _curJob := 0;
-    _done := false;
     _jobsProcessed := 0;
     _lastLogTime := clock_timestamp();
     _script := '';
 
-    WHILE _done = false
-    LOOP
+    FOR _jobInfo IN
         SELECT Job,
                OldState,
                NewState,
@@ -290,19 +286,9 @@ BEGIN
                Dataset_Name,
                Dataset_ID,
                Storage_Server
-        INTO _jobInfo
         FROM Tmp_ChangedJobs
-        WHERE Job > _curJob
         ORDER BY Job
-        LIMIT 1;
-
-        If Not FOUND Then
-            -- Break out of the while loop
-            EXIT;
-        End If;
-
-        _curJob := _jobInfo.Job;
-
+    LOOP
         ---------------------------------------------------
         -- Examine the steps for this capture task job to determine actual start/end times
         ---------------------------------------------------
@@ -405,7 +391,9 @@ BEGIN
                             _message    => _message,      -- Output
                             _returnCode => _returnCode);  -- Output
 
-                If _returnCode <> '' Then
+                If Coalesce(_returnCode, '') = '' Then
+                    _message := '';
+                Else
                     CALL public.post_log_entry ('Error', _message, 'Update_Task_State', 'cap');
                 End If;
             End If;
@@ -464,7 +452,8 @@ BEGIN
         End If;
 
         If _maxJobsToProcess > 0 And _jobsProcessed >= _maxJobsToProcess Then
-            _done := true;
+            -- Break out of the for loop
+            EXIT;
         End If;
 
     END LOOP;
