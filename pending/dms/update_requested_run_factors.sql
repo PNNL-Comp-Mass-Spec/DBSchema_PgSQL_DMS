@@ -2,10 +2,10 @@
 CREATE OR REPLACE PROCEDURE public.update_requested_run_factors
 (
     _factorList text,
+    _infoOnly boolean = false,
     INOUT _message text default '',
     INOUT _returnCode text default ''
-    _callingUser text = '',
-    _infoOnly boolean = false
+    _callingUser text = ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -56,6 +56,8 @@ AS $$
 **  Arguments:
 **    _factorList   XML (see above)
 **    _infoOnly     Set to true to preview the changes that would be made
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   grk
 **  Date:   02/20/2010 grk - Initial release
@@ -79,6 +81,7 @@ AS $$
 **          12/13/2022 mem - Ignore factors named 'Dataset ID'
 **                         - Rename temp table
 **          01/25/2023 mem - Block factors named 'Run_Order'
+**          11/03/2023 mem - Capitalize factor names based on historic usage
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -151,7 +154,7 @@ BEGIN
     CREATE TEMP TABLE Tmp_FactorInfo (
         Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         Identifier citext null,         -- Could be RequestID or DatasetName
-        Factor citext null,
+        Factor citext null,             -- Factor name
         Value citext null,
         DatasetID int null,             -- DatasetID; not always present
         RequestID int null,
@@ -400,7 +403,7 @@ BEGIN
     INTO _badFactorNames
     FROM ( SELECT DISTINCT Factor
            FROM Tmp_FactorInfo
-           WHERE Not Factor::citext In ('Dataset ID')      -- Note that factors named 'Dataset ID' and 'Dataset_ID' are removed later in this procedure
+           WHERE Not Factor In ('Dataset ID')      -- Note that factors named 'Dataset ID' and 'Dataset_ID' are removed later in this procedure
           ) LookupQ
     WHERE Factor SIMILAR TO '%[^0-9A-Za-z_.]%';
 
@@ -449,15 +452,15 @@ BEGIN
     -----------------------------------------------------------
     -- Auto-delete data that cannot be a factor
     -- These column names could be present if the user
-    -- saved the results of a list report (or of http://dms2.pnl.gov/requested_run_factors/param)
+    -- saved the results of a list report (or of https://dms2.pnl.gov/requested_run_factors/param)
     -- to a text file, then edited the data in Excel, then included the extra columns when copying from Excel
     --
-    -- Name is not a valid factor name since it is used to label the Requested Run Name column at http://dms2.pnl.gov/requested_run_factors/param
+    -- Name is not a valid factor name since it is used to label the Requested Run Name column at https://dms2.pnl.gov/requested_run_factors/param
     -----------------------------------------------------------
 
     UPDATE Tmp_FactorInfo
     SET UpdateSkipCode = 2
-    WHERE Factor::citext IN ('Batch_ID', 'BatchID', 'Experiment', 'Dataset', 'Status', 'Request', 'Name');
+    WHERE Factor IN ('Batch_ID', 'BatchID', 'Experiment', 'Dataset', 'Status', 'Request', 'Name');
 
     If FOUND And _infoOnly Then
 
@@ -510,7 +513,7 @@ BEGIN
     INTO _badFactorNames
     FROM ( SELECT DISTINCT Factor
            FROM Tmp_FactorInfo
-           WHERE Factor::citext IN ('Block', 'Run_Order', 'Run Order', 'Type')
+           WHERE Factor IN ('Block', 'Run_Order', 'Run Order', 'Type')
          ) LookupQ;
 
     If Coalesce(_badFactorNames, '') <> '' Then
@@ -537,7 +540,95 @@ BEGIN
     -----------------------------------------------------------
 
     DELETE FROM Tmp_FactorInfo
-    WHERE Factor::citext IN ('Dataset_ID', 'Dataset ID', 'Dataset', 'Experiment')
+    WHERE Factor IN ('Dataset_ID', 'Dataset ID', 'Dataset', 'Experiment')
+
+    -----------------------------------------------------------
+    -- Capitalize factor names based on historic usage
+    --
+    -- Although factor case does not matter (since the Factor column is citext),
+    -- some of the WHERE clauses are shown as lowercase based on observed inconsistencies in case
+    -----------------------------------------------------------
+
+    UPDATE Tmp_FactorInfo SET Factor = 'AbbrName'                     WHERE Factor = 'AbbrName';
+    UPDATE Tmp_FactorInfo SET Factor = 'Age'                          WHERE Factor = 'Age';
+    UPDATE Tmp_FactorInfo SET Factor = 'Alias'                        WHERE Factor = 'Alias';
+    UPDATE Tmp_FactorInfo SET Factor = 'Analysis'                     WHERE Factor = 'analysis';
+    UPDATE Tmp_FactorInfo SET Factor = 'Batch'                        WHERE Factor = 'Batch';
+    UPDATE Tmp_FactorInfo SET Factor = 'Batch_Order_Number'           WHERE Factor = 'Batch_Order_Number';
+    UPDATE Tmp_FactorInfo SET Factor = 'Biol_Rep'                     WHERE Factor = 'Biol_rep';
+    UPDATE Tmp_FactorInfo SET Factor = 'Biological_Rep'               WHERE Factor = 'biological_rep';
+    UPDATE Tmp_FactorInfo SET Factor = 'BioRep'                       WHERE Factor = 'Biorep';
+    UPDATE Tmp_FactorInfo SET Factor = 'BioRepID'                     WHERE Factor = 'BioRepID';
+    UPDATE Tmp_FactorInfo SET Factor = 'Bound'                        WHERE Factor = 'bound';
+    UPDATE Tmp_FactorInfo SET Factor = 'BoxNumber'                    WHERE Factor = 'BoxNumber';
+    UPDATE Tmp_FactorInfo SET Factor = 'Cart'                         WHERE Factor = 'Cart';
+    UPDATE Tmp_FactorInfo SET Factor = 'Cell_Line'                    WHERE Factor = 'cell_line';
+    UPDATE Tmp_FactorInfo SET Factor = 'Cohort'                       WHERE Factor = 'cohort';
+    UPDATE Tmp_FactorInfo SET Factor = 'Column'                       WHERE Factor = 'column';
+    UPDATE Tmp_FactorInfo SET Factor = 'Condition'                    WHERE Factor = 'Condition';
+    UPDATE Tmp_FactorInfo SET Factor = 'Created'                      WHERE Factor = 'Created';
+    UPDATE Tmp_FactorInfo SET Factor = 'Culture'                      WHERE Factor = 'culture'
+    UPDATE Tmp_FactorInfo SET Factor = 'DatasetID'                    WHERE Factor = 'DatasetID';
+    UPDATE Tmp_FactorInfo SET Factor = 'Date'                         WHERE Factor = 'Date';
+    UPDATE Tmp_FactorInfo SET Factor = 'Day'                          WHERE Factor = 'Day';
+    UPDATE Tmp_FactorInfo SET Factor = 'Depletion_Column_ID'          WHERE Factor = 'Depletion_Column_ID';
+    UPDATE Tmp_FactorInfo SET Factor = 'Fraction'                     WHERE Factor = 'fraction';
+    UPDATE Tmp_FactorInfo SET Factor = 'Fraction'                     WHERE Factor = 'Freaction';
+    UPDATE Tmp_FactorInfo SET Factor = 'Gender'                       WHERE Factor = 'Gender';
+    UPDATE Tmp_FactorInfo SET Factor = 'Group'                        WHERE Factor = 'Group';
+    UPDATE Tmp_FactorInfo SET Factor = 'Growth'                       WHERE Factor = 'Growth';
+    UPDATE Tmp_FactorInfo SET Factor = 'Growth_Condition'             WHERE Factor = 'Growth_condition';
+    UPDATE Tmp_FactorInfo SET Factor = 'Institute'                    WHERE Factor = 'Institute';
+    UPDATE Tmp_FactorInfo SET Factor = 'Instrument'                   WHERE Factor = 'Instrument';
+    UPDATE Tmp_FactorInfo SET Factor = 'Job'                          WHERE Factor = 'Job';
+    UPDATE Tmp_FactorInfo SET Factor = 'LC_Column'                    WHERE Factor = 'LC_Column';
+    UPDATE Tmp_FactorInfo SET Factor = 'LCColumnName'                 WHERE Factor = 'LCColumnName';
+    UPDATE Tmp_FactorInfo SET Factor = 'Location'                     WHERE Factor = 'Location';
+    UPDATE Tmp_FactorInfo SET Factor = 'Organism'                     WHERE Factor = 'organism';
+    UPDATE Tmp_FactorInfo SET Factor = 'Patient'                      WHERE Factor = 'Patient';
+    UPDATE Tmp_FactorInfo SET Factor = 'PatientID'                    WHERE Factor = 'PatientID';
+    UPDATE Tmp_FactorInfo SET Factor = 'Plate'                        WHERE Factor = 'Plate';
+    UPDATE Tmp_FactorInfo SET Factor = 'PlateNumber'                  WHERE Factor = 'PlateNumber';
+    UPDATE Tmp_FactorInfo SET Factor = 'PlateWell'                    WHERE Factor = 'PlateWell';
+    UPDATE Tmp_FactorInfo SET Factor = 'Pool'                         WHERE Factor = 'Pool';
+    UPDATE Tmp_FactorInfo SET Factor = 'Post_Depletion_Concentration' WHERE Factor = 'Post_Depletion_Concentration';
+    UPDATE Tmp_FactorInfo SET Factor = 'PrepType'                     WHERE Factor = 'PrepType';
+    UPDATE Tmp_FactorInfo SET Factor = 'Probe'                        WHERE Factor = 'Probe';
+    UPDATE Tmp_FactorInfo SET Factor = 'ProcessRep'                   WHERE Factor = 'ProcessRep';
+    UPDATE Tmp_FactorInfo SET Factor = 'Protocol'                     WHERE Factor = 'Protocol';
+    UPDATE Tmp_FactorInfo SET Factor = 'Rep'                          WHERE Factor = 'Rep';
+    UPDATE Tmp_FactorInfo SET Factor = 'Replicate'                    WHERE Factor = 'replicate';
+    UPDATE Tmp_FactorInfo SET Factor = 'Replicates'                   WHERE Factor = 'Replicates';
+    UPDATE Tmp_FactorInfo SET Factor = 'RepRun'                       WHERE Factor = 'RepRun';
+    UPDATE Tmp_FactorInfo SET Factor = 'Run_Batch'                    WHERE Factor = 'Run_Batch';
+    UPDATE Tmp_FactorInfo SET Factor = 'RunDate'                      WHERE Factor = 'RunDate';
+    UPDATE Tmp_FactorInfo SET Factor = 'RunGroup'                     WHERE Factor = 'RunGroup';
+    UPDATE Tmp_FactorInfo SET Factor = 'Sample'                       WHERE Factor = 'Sample';
+    UPDATE Tmp_FactorInfo SET Factor = 'Sample_ID'                    WHERE Factor = 'Sample_ID';
+    UPDATE Tmp_FactorInfo SET Factor = 'Sample_Number'                WHERE Factor = 'Sample_number';
+    UPDATE Tmp_FactorInfo SET Factor = 'Sample_Type'                  WHERE Factor = 'sample_type';
+    UPDATE Tmp_FactorInfo SET Factor = 'SampleName'                   WHERE Factor = 'SampleName';
+    UPDATE Tmp_FactorInfo SET Factor = 'SampleType'                   WHERE Factor = 'Sampletype';
+    UPDATE Tmp_FactorInfo SET Factor = 'Site'                         WHERE Factor = 'Site';
+    UPDATE Tmp_FactorInfo SET Factor = 'Species'                      WHERE Factor = 'Species';
+    UPDATE Tmp_FactorInfo SET Factor = 'StatGrp'                      WHERE Factor = 'StatGrp';
+    UPDATE Tmp_FactorInfo SET Factor = 'Strain'                       WHERE Factor = 'strain';
+    UPDATE Tmp_FactorInfo SET Factor = 'StudyID'                      WHERE Factor = 'StudyID';
+    UPDATE Tmp_FactorInfo SET Factor = 'SubjectGroup'                 WHERE Factor = 'SubjectGroup';
+    UPDATE Tmp_FactorInfo SET Factor = 'SubjectID'                    WHERE Factor = 'SubjectID';
+    UPDATE Tmp_FactorInfo SET Factor = 'Tech_Rep'                     WHERE Factor = 'Tech_rep';
+    UPDATE Tmp_FactorInfo SET Factor = 'TechRep'                      WHERE Factor = 'Techrep';
+    UPDATE Tmp_FactorInfo SET Factor = 'TechRepID'                    WHERE Factor = 'TechRepID';
+    UPDATE Tmp_FactorInfo SET Factor = 'TechReplicate'                WHERE Factor = 'TechReplicate';
+    UPDATE Tmp_FactorInfo SET Factor = 'Temperature'                  WHERE Factor = 'temperature';
+    UPDATE Tmp_FactorInfo SET Factor = 'Test'                         WHERE Factor = 'test';
+    UPDATE Tmp_FactorInfo SET Factor = 'Time'                         WHERE Factor = 'time';
+    UPDATE Tmp_FactorInfo SET Factor = 'Time_Desc'                    WHERE Factor = 'Time_Desc';
+    UPDATE Tmp_FactorInfo SET Factor = 'TimePoint'                    WHERE Factor = 'Timepoint';
+    UPDATE Tmp_FactorInfo SET Factor = 'Tissue'                       WHERE Factor = 'Tissue';
+    UPDATE Tmp_FactorInfo SET Factor = 'Treatment'                    WHERE Factor = 'treatment';
+    UPDATE Tmp_FactorInfo SET Factor = 'Weight'                       WHERE Factor = 'Weight';
+    UPDATE Tmp_FactorInfo SET Factor = 'Well'                         WHERE Factor = 'Well';
 
     -----------------------------------------------------------
     -- Check for invalid Request IDs in the factors table
