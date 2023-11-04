@@ -246,7 +246,7 @@ BEGIN
     SELECT Perform_Calibration
     INTO _performCalibration
     FROM public.T_Instrument_Name
-    WHERE instrument = _instrument;
+    WHERE instrument = _instrument::citext;
 
     If Coalesce(_performCalibration, 0) = 0 Then
         _performCalibrationText := 'False';
