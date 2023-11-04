@@ -61,6 +61,7 @@ CREATE OR REPLACE PROCEDURE cap.update_task_state(IN _bypassdms boolean DEFAULT 
 **          07/11/2023 mem - Use COUNT(TS.step) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
 **          11/01/2023 mem - If all steps for a capture task job have state 'skipped', set the task state to 'Skipped' (bcg)
+**          11/04/2023 mem - When _infoOnly is true, update Finish_New for capture task jobs with state 15 (Skipped)
 **
 *****************************************************/
 DECLARE
@@ -353,10 +354,12 @@ BEGIN
 
         If _infoOnly Then
             UPDATE Tmp_ChangedJobs Target
-            SET Start_New =  CASE WHEN _jobInfo.NewState >= 2 THEN Coalesce(_startMin, CURRENT_TIMESTAMP)  -- Capture task job state is 2 or higher
+            SET Start_New =  CASE WHEN _jobInfo.NewState >= 2                   -- Capture task job state is 2 or higher
+                                  THEN Coalesce(_startMin, CURRENT_TIMESTAMP)
                                   ELSE Src.Start
                              END,
-                Finish_New = CASE WHEN _jobInfo.NewState IN (3, 5) THEN _finishMax                         -- Capture task job state is 3=Complete or 5=Failed
+                Finish_New = CASE WHEN _jobInfo.NewState IN (3, 5, 15)          -- Capture task job state is 3=Complete, 5=Failed, or 15=Skipped
+                                  THEN _finishMax
                                   ELSE Src.Finish
                              END
             FROM cap.t_tasks Src
@@ -370,12 +373,12 @@ BEGIN
 
             UPDATE cap.t_tasks
             SET State  = _jobInfo.NewState,
-                Start  = CASE WHEN _jobInfo.NewState >= 2
-                              THEN Coalesce(_startMin, CURRENT_TIMESTAMP)   -- Capture task job state is 2 or higher
+                Start  = CASE WHEN _jobInfo.NewState >= 2                   -- Capture task job state is 2 or higher
+                              THEN Coalesce(_startMin, CURRENT_TIMESTAMP)
                               ELSE Start
                          END,
-                Finish = CASE WHEN _jobInfo.NewState IN (3, 5)
-                              THEN _finishMax                               -- Capture task job state is 3=Complete, 5=Failed, or 15=Skipped
+                Finish = CASE WHEN _jobInfo.NewState IN (3, 5, 15)          -- Capture task job state is 3=Complete, 5=Failed, or 15=Skipped
+                              THEN _finishMax
                               ELSE Finish
                          END
             WHERE Job = _jobInfo.Job;
