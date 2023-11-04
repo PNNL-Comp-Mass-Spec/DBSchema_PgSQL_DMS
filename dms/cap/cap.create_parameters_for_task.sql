@@ -45,7 +45,7 @@ CREATE OR REPLACE FUNCTION cap.create_parameters_for_task(_job integer, _dataset
 **          09/28/2022 mem - Ported to PostgreSQL
 **          04/02/2023 mem - Rename procedure and functions
 **          09/08/2023 mem - Adjust capitalization of keywords
-**          10/28/2023 mem - Add new argument to get_task_param_table query
+**          10/28/2023 mem - Include script name when querying get_task_param_table()
 **
 *****************************************************/
 DECLARE

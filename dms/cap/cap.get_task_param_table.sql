@@ -13,6 +13,24 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_table(_job integer, _dataset text,
 **      Data comes from both the procedure arguments and view cap.V_DMS_Dataset_Metadata,
 **      which uses tables in the public schema
 **
+**  Arguments:
+**    _job                      Capture task job number
+**    _dataset                  Dataset name
+**    _datasetID                Dataset ID
+**    _storageServer            Storage server
+**    _instrument               Instrument
+**    _instrumentClass          Instrument class
+**    _maxSimultaneousCaptures  Maximum simultaneous capture tasks
+**    _captureSubdirectory      Capture subdirectory
+**    _scriptName               Capture task script
+**
+**  Example Usage:
+**      SELECT * FROM cap.get_task_param_table(6122256, 'MeOH_Blank_01_met_C18_Pos_14Aug23_Lola-WCSH815142', 1176806,
+**                                             'proto-9', 'QExactP02', 'LTQ_FT', 1, '', 'DatasetCapture');
+**
+**      SELECT * FROM cap.get_task_param_table(6122256, 'MeOH_Blank_01_met_C18_Pos_14Aug23_Lola-WCSH815142', 1176806,
+**                                             'proto-9', 'QExactP02', 'LTQ_FT', 1, '', 'LCDatasetCapture');
+**
 **  Auth:   grk
 **  Date:   09/05/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
 **          01/14/2010 grk - Removed path ID fields
@@ -77,7 +95,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Locally cached params
+    -- Job parameters
     ---------------------------------------------------
 
     INSERT INTO Tmp_Param_Tab ( Section, Name, Value)
@@ -145,7 +163,7 @@ BEGIN
     WHERE Not UnpivotQ.value Is Null;
 
     ---------------------------------------------------
-    -- Use  alternate values when the script is 'LCDatasetCapture'
+    -- Use alternate values when the script is 'LCDatasetCapture'
     ---------------------------------------------------
 
     If _scriptName::citext = 'LCDatasetCapture' Then
@@ -167,7 +185,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Instrument class params from V_DMS_Instrument_Class
+    -- Instrument class parameters from t_instrument_class
     --
     -- This includes all of the DatasetQC parameters, typically including:
     --
@@ -241,7 +259,7 @@ BEGIN
 
     ---------------------------------------------------
     -- Lookup the transfer directory (e.g. \\proto-6\DMS3_Xfer)
-    -- This directory is used to store metadata.txt files for dataset archive and archive tasks
+    -- This directory is used to store metadata.txt files for dataset archive and archive update tasks
     -- Those files are used by the ArchiveVerify tool to confirm that files were successfully imported into MyEMSL
     ---------------------------------------------------
 
