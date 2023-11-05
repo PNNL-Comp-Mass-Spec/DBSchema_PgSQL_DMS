@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE sw.show_tmp_jobs()
 **
 **  Auth:   mem
 **  Date:   11/30/2022 mem - Initial release
+**          11/04/2023 mem - Increase script name column width to 20 characters
 **
 *****************************************************/
 DECLARE
@@ -51,7 +52,7 @@ BEGIN
     -- Show contents of Tmp_Jobs
     --
 
-    _formatSpecifier := '%-10s %-15s %-40s';
+    _formatSpecifier := '%-10s %-20s %-80s';
 
     _infoHead := format(_formatSpecifier,
                         'Job',
@@ -61,8 +62,8 @@ BEGIN
 
     _infoHeadSeparator := format(_formatSpecifier,
                                  '----------',
-                                 '---------------',
-                                 '----------------------------------------'
+                                 '--------------------',
+                                 '--------------------------------------------------------------------------------'
                                 );
 
     RAISE INFO '%', _infoHead;
