@@ -112,7 +112,7 @@ BEGIN
         RETURN;
     End If;
 
-    If Exists (Select * From Tmp_DatasetsToUpdate WHERE InvalidID) Then
+    If Exists (SELECT DatasetID FROM Tmp_DatasetsToUpdate WHERE InvalidID) Then
         SELECT string_agg(DatasetID::text, ', ' ORDER BY DatasetID)
         INTO _unknownIDs
         FROM Tmp_DatasetsToUpdate
@@ -127,7 +127,7 @@ BEGIN
         _message := '';
     End If;
 
-    If Exists (SELECT * FROM Tmp_DatasetsToUpdate WHERE NOT InvalidID AND NOT StateID IN (3, 4)) Then
+    If Exists (SELECT DatasetID FROM Tmp_DatasetsToUpdate WHERE NOT InvalidID AND NOT StateID IN (3, 4)) Then
         SELECT string_agg(DatasetID::text, ', ' ORDER BY DatasetID)
         INTO _idsWrongState
         FROM Tmp_DatasetsToUpdate

@@ -175,7 +175,7 @@ BEGIN
         RAISE INFO 'Populated Tmp_IntStds; Elapsed time: % msec', Round(extract(epoch FROM (clock_timestamp() - _startTime)) * 1000, 3);
     End If;
 
-    If Exists (SELECT * FROM Tmp_IntStds WHERE Enzyme_Contaminant_Collection > 0) Then
+    If Exists (SELECT Internal_Std_Mix_ID FROM Tmp_IntStds WHERE Enzyme_Contaminant_Collection > 0) Then
         --------------------------------------------------------------
         -- Check whether any of the protein collections already have contaminants
         --------------------------------------------------------------

@@ -219,9 +219,9 @@ BEGIN
     -- If table contains DatasetID values, auto-populate the Identifier column with RequestIDs
     -----------------------------------------------------------
 
-    If Exists (SELECT * FROM Tmp_FactorInfo WHERE Not DatasetID IS NULL) Then
+    If Exists (SELECT DatasetID FROM Tmp_FactorInfo WHERE Not DatasetID IS NULL) Then
 
-        If Exists (SELECT * FROM Tmp_FactorInfo WHERE DatasetID IS NULL) Then
+        If Exists (SELECT DatasetID FROM Tmp_FactorInfo WHERE DatasetID IS NULL) Then
             _message := 'Encountered a mix of XML tag attributes; if using the "d" attribute for DatasetID, all entries must have "d" defined';
 
             If _infoOnly Then
@@ -244,7 +244,7 @@ BEGIN
         -- The identifier column now contains RequestID values
         _idType := 'RequestID';
 
-        If Exists (SELECT * FROM Tmp_FactorInfo WHERE Identifier IS NULL) Then
+        If Exists (SELECT Entry_ID FROM Tmp_FactorInfo WHERE Identifier IS NULL) Then
             _message := 'Unable to resolve Dataset ID to Request ID for one or more entries (Dataset ID not found in requested run table)';
 
             -- Construct a list of Dataset IDs that are not present in t_requested_run

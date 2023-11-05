@@ -137,7 +137,7 @@ BEGIN
     FROM t_lc_cart
     WHERE Tmp_BlockingInfo.cart_name = t_lc_cart.cart_name;
 
-    If Exists (SELECT * FROM Tmp_BlockingInfo WHERE cart_id IS NULL) Then
+    If Exists (SELECT request_id FROM Tmp_BlockingInfo WHERE cart_id IS NULL) Then
 
         SELECT cart_name
         INTO _invalidCart
@@ -166,7 +166,7 @@ BEGIN
     FROM t_lc_cart_configuration AS CartConfig
     WHERE Tmp_BlockingInfo.cart_config_name = CartConfig.cart_config_name;
 
-    If Exists (SELECT * FROM Tmp_BlockingInfo WHERE cart_config_name <> '' AND cart_config_id IS NULL) Then
+    If Exists (SELECT request_id FROM Tmp_BlockingInfo WHERE cart_config_name <> '' AND cart_config_id IS NULL) Then
 
         SELECT cart_config_name
         INTO _invalidCartConfig
@@ -196,7 +196,7 @@ BEGIN
     -- Check for locked batches
     -----------------------------------------------------------
 
-    If Exists (SELECT * FROM Tmp_BlockingInfo WHERE locked = 'Yes') Then
+    If Exists (SELECT request_id FROM Tmp_BlockingInfo WHERE locked = 'Yes') Then
 
         SELECT MIN(request),
                MAX(request)

@@ -55,7 +55,7 @@ BEGIN
     -- Don't allow duplicate dataset IDs in the table
     ---------------------------------------------------
 
-    If Exists (SELECT * FROM t_dataset_archive WHERE dataset_id = _datasetID) Then
+    If Exists (SELECT dataset_id FROM t_dataset_archive WHERE dataset_id = _datasetID) Then
         _message := format('Dataset ID %s is already in t_dataset_archive', _datasetID);
         RAISE WARNING '%', _message;
 

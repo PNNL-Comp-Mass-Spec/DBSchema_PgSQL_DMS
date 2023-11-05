@@ -77,7 +77,7 @@ BEGIN
     FROM pc.t_protein_collections PC
     WHERE Tmp_ProteinCollectionList.ProteinCollectionName = PC.collection_name;
 
-    If Exists (SELECT * FROM Tmp_ProteinCollectionList WHERE Not Valid) Then
+    If Exists (SELECT Unique_ID FROM Tmp_ProteinCollectionList WHERE Not Valid) Then
         RAISE INFO '';
         RAISE INFO 'One or more protein collection names not found in pc.t_protein_collections; looking for protein collection IDs';
 
@@ -104,10 +104,10 @@ BEGIN
         End If;
     End If;
 
-    If Exists (SELECT * FROM Tmp_ProteinCollectionList WHERE Not Valid) Then
+    If Exists (SELECT Unique_ID FROM Tmp_ProteinCollectionList WHERE Not Valid) Then
         RAISE INFO '';
 
-        If Not Exists (SELECT * FROM Tmp_ProteinCollectionList WHERE Valid) Then
+        If Not Exists (SELECT Unique_ID FROM Tmp_ProteinCollectionList WHERE Valid) Then
             _message := format('No valid protein collections were specified, aborting (%s)', _proteinCollectionList);
             RAISE INFO '%', _message;
 

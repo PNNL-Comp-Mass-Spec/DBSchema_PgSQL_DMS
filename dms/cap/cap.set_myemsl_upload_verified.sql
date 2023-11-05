@@ -194,7 +194,7 @@ BEGIN
         -- Make sure the Dataset_ID is correct
         ---------------------------------------------------
 
-        If Exists (Select * FROM Tmp_StatusEntryIDsTable WHERE Dataset_ID <> _datasetID) Then
+        If Exists (SELECT Dataset_ID FROM Tmp_StatusEntryIDsTable WHERE Dataset_ID <> _datasetID) Then
             _message := format('One or more Status Nums in _statusNumList do not have Dataset_ID %s in V_MyEMSL_Uploads; see %s and %s', _datasetID, _statusNumList, _statusURIList);
             _returnCode := 'U5209';
 

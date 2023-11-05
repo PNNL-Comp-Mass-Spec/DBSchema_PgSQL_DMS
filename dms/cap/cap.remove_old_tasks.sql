@@ -174,7 +174,7 @@ BEGIN
            ON Tmp_Selected_Jobs.Job = JH.Job
     WHERE JH.Job IS NULL;
 
-    If Exists (SELECT * FROM Tmp_JobsNotInHistory) Then
+    If Exists (SELECT Job FROM Tmp_JobsNotInHistory) Then
 
         If _infoOnly Then
             RAISE INFO '';

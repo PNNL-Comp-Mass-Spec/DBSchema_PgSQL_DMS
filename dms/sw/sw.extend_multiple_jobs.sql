@@ -61,7 +61,7 @@ BEGIN
     -- Warn the user if any invalid jobs are present
     ---------------------------------------------------
 
-    If Exists (SELECT * FROM Tmp_JobsToExtend WHERE Not Valid) Then
+    If Exists (SELECT Job FROM Tmp_JobsToExtend WHERE Not Valid) Then
         FOR _message IN
             SELECT format('Invalid job (either not in sw.t_jobs or in sw.t_jobs_history but does not have state=4): %s', job)
             FROM Tmp_JobsToExtend

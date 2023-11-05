@@ -78,7 +78,7 @@ BEGIN
     -- Bail if capture task job already exists in main tables
     ---------------------------------------------------
 
-    If Exists (SELECT * FROM cap.t_tasks WHERE Job = _job) Then
+    If Exists (SELECT Job FROM cap.t_tasks WHERE Job = _job) Then
         _message := format('Job %s already exists in cap.t_tasks; aborting', _job);
         RAISE WARNING '%', _message;
 
@@ -302,7 +302,7 @@ BEGIN
 
         -- Check whether this capture task job has entries in t_task_step_dependencies_history
         --
-        If Not Exists (Select * From cap.t_task_step_dependencies_history Where Job = _job) Then
+        If Not Exists (SELECT Job FROM cap.t_task_step_dependencies_history WHERE Job = _job) Then
             -- Capture task job did not have cached dependencies
             -- Look for a capture task job that used the same script
 
@@ -414,7 +414,7 @@ BEGIN
     -- Manually create the capture task job parameters if they were not present in t_task_parameters
     ---------------------------------------------------
 
-    If Not Exists (SELECT * FROM cap.t_task_parameters WHERE Job = _newJob) Then
+    If Not Exists (SELECT Job FROM cap.t_task_parameters WHERE Job = _newJob) Then
         If _debugMode Then
             RAISE INFO 'Capture task job % was not found in cap.t_task_parameters_history; re-generating the parameters using cap.update_parameters_for_task', _newJob;
         End If;

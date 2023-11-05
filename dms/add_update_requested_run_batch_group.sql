@@ -100,7 +100,7 @@ BEGIN
         ---------------------------------------------------
 
         If _mode In ('add', Lower('PreviewAdd')) Then
-            If Exists (SELECT * FROM t_requested_run_batch_group WHERE Batch_Group = _name) Then
+            If Exists (SELECT Batch_Group FROM t_requested_run_batch_group WHERE Batch_Group = _name) Then
                 _message := format('Cannot add batch group: "%s" already exists in database', _name);
                 _returnCode := 'U5203';
                 RAISE EXCEPTION '%', _message;
@@ -110,7 +110,7 @@ BEGIN
         -- Cannot update a non-existent entry
         --
         If _mode = 'update' Then
-            If Not Exists (SELECT * FROM t_requested_run_batch_group WHERE Batch_Group_ID = _ID) Then
+            If Not Exists (SELECT Batch_Group_ID FROM t_requested_run_batch_group WHERE Batch_Group_ID = _ID) Then
                 _message = 'Cannot update: entry does not exist in database';
                 _returnCode := 'U5205';
                 RAISE EXCEPTION '%', _message;
@@ -184,7 +184,7 @@ BEGIN
         UPDATE Tmp_BatchIDs
         SET Batch_ID = public.try_cast(Batch_ID_Text, null::int);
 
-        If Exists (Select * FROM Tmp_BatchIDs WHERE Batch_ID Is Null) Then
+        If Exists (SELECT Entry_ID FROM Tmp_BatchIDs WHERE Batch_ID Is Null) Then
 
             SELECT Batch_ID_Text
             INTO _firstInvalid

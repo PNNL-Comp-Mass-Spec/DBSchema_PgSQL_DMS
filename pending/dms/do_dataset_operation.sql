@@ -141,7 +141,7 @@ BEGIN
                 _callingUser := session_user;
             End If;
 
-            If Exists (SELECT * FROM t_predefined_analysis_scheduling_queue WHERE dataset_id = _datasetID AND state = 'New') Then
+            If Exists (SELECT dataset_id FROM t_predefined_analysis_scheduling_queue WHERE dataset_id = _datasetID AND state = 'New') Then
 
                 SELECT MAX(entered)
                 INTO _enteredMax
@@ -187,11 +187,11 @@ BEGIN
             -- Verify that the dataset does not have an active or completed capture job
             ---------------------------------------------------
 
-            If Exists (SELECT * FROM cap.V_Capture_Tasks_Active_Or_Complete WHERE Dataset_ID = _datasetID And State <= 2) Then
+            If Exists (SELECT Dataset_ID FROM cap.V_Capture_Tasks_Active_Or_Complete WHERE Dataset_ID = _datasetID And State <= 2) Then
                 RAISE EXCEPTION 'Dataset "%" is being processed by the capture task pipeline; unable to delete', _datasetName;
             End If;
 
-            If Exists (SELECT * FROM cap.V_Capture_Tasks_Active_Or_Complete WHERE Dataset_ID = _datasetID And State > 2) Then
+            If Exists (SELECT Dataset_ID FROM cap.V_Capture_Tasks_Active_Or_Complete WHERE Dataset_ID = _datasetID And State > 2) Then
                 RAISE EXCEPTION 'Dataset "%" has been processed by the capture task pipeline; unable to delete', _datasetName;
             End If;
 

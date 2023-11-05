@@ -142,7 +142,7 @@ BEGIN
     UPDATE Tmp_Requests
     SET request_id = public.try_cast(Item, null::int);
 
-    If Exists (SELECT * FROM Tmp_Requests WHERE request_id IS NULL) Then
+    If Exists (SELECT Item FROM Tmp_Requests WHERE request_id IS NULL) Then
         _message := 'Found non-integer request IDs';
         _returnCode := 'U5112';
 
@@ -156,7 +156,7 @@ BEGIN
     FROM t_requested_run
     WHERE Tmp_Requests.request_id = t_requested_run.request_id;
 
-    If Exists (SELECT * FROM Tmp_Requests WHERE Status IS NULL) Then
+    If Exists (SELECT Item FROM Tmp_Requests WHERE Status IS NULL) Then
         _message := 'There were invalid request IDs';
         _returnCode := 'U5113';
 
@@ -164,7 +164,7 @@ BEGIN
         RETURN;
     End If;
 
-    If Exists (SELECT * FROM Tmp_Requests WHERE Not Status::citext IN ('Active', 'Inactive')) Then
+    If Exists (SELECT Item FROM Tmp_Requests WHERE Not Status::citext IN ('Active', 'Inactive')) Then
         _message := 'Cannot change requests that are in status other than "Active" or "Inactive"';
         _returnCode := 'U5114';
 
@@ -172,7 +172,7 @@ BEGIN
         RETURN;
     End If;
 
-    If Exists (SELECT * FROM Tmp_Requests WHERE Not Origin::citext In ('user', 'fraction') And _mode::citext <> 'Delete') Then
+    If Exists (SELECT Item FROM Tmp_Requests WHERE Not Origin::citext In ('user', 'fraction') And _mode::citext <> 'Delete') Then
         _message := 'Cannot change requests that were not entered by user';
         _returnCode := 'U5115';
 

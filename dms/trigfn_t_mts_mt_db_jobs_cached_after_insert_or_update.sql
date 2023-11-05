@@ -22,7 +22,7 @@ DECLARE
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
-    If Exists (SELECT * FROM t_analysis_job WHERE job = NEW.job) Then
+    If Exists (SELECT job FROM t_analysis_job WHERE job = NEW.job) Then
         _sortKey := NEW.job;
     Else
         _sortKey := -NEW.job;

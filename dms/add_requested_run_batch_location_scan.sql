@@ -118,7 +118,7 @@ BEGIN
         UPDATE Tmp_BatchIDs
         SET Batch_ID = public.try_cast(BatchIDText, null::int);
 
-        If Exists (SELECT * FROM Tmp_BatchIDs WHERE Batch_ID Is Null) Then
+        If Exists (SELECT BatchIDText FROM Tmp_BatchIDs WHERE Batch_ID Is Null) Then
 
             SELECT BatchIDText
             INTO _firstInvalid

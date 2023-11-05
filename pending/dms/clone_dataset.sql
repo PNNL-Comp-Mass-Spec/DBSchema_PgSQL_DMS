@@ -102,7 +102,7 @@ BEGIN
 
     _datasetNew := format('%s%s', _dataset, _suffix);
 
-    If Exists (SELECT * FROM t_dataset WHERE dataset = _datasetNew) Then
+    If Exists (SELECT dataset_id FROM t_dataset WHERE dataset = _datasetNew) Then
         _message := format('Target dataset already exists: %s', _datasetNew);
         RAISE INFO '%', _message;
         RETURN;

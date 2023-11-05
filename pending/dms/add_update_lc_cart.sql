@@ -103,7 +103,7 @@ BEGIN
     If _mode = 'add' Then
         _id := 0;
 
-        If Exists (SELECT * FROM t_lc_cart WHERE cart_name = _cartName) Then
+        If Exists (SELECT cart_name FROM t_lc_cart WHERE cart_name = _cartName) Then
             _message := format('Cannot Add - Entry already exists for cart "%s"', _cartName);
             RAISE WARNING '%', _message;
 
@@ -113,7 +113,7 @@ BEGIN
     End If;
 
     If _mode = 'update' Then
-        If Not Exists (SELECT * FROM t_lc_cart WHERE cart_id = _id) Then
+        If Not Exists (SELECT cart_id FROM t_lc_cart WHERE cart_id = _id) Then
             _message := format('Cannot update - cart cart_id %s does not exist', _id);
             RAISE WARNING '%', _message;
 
@@ -126,7 +126,7 @@ BEGIN
         FROM t_lc_cart
         WHERE cart_id = _id
 
-        If _cartName <> _currentName And Exists (SELECT * FROM t_lc_cart WHERE cart_name = _cartName) Then
+        If _cartName <> _currentName And Exists (SELECT cart_name FROM t_lc_cart WHERE cart_name = _cartName) Then
             _message := format('Cannot rename - Entry already exists for cart "%s"', _cartName);
             RAISE WARNING '%', _message;
 

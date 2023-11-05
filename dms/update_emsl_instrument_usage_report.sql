@@ -367,7 +367,7 @@ BEGIN
                                      '--------'
                                     );
 
-        If Exists (SELECT * FROM Tmp_DebugReports WHERE Debug_ID = 1) Then
+        If Exists (SELECT Debug_ID FROM Tmp_DebugReports WHERE Debug_ID = 1) Then
 
             RAISE INFO '';
             RAISE INFO '%', _infoHeadStaging;
@@ -420,7 +420,7 @@ BEGIN
         WHERE Tmp_Staging.Dataset_ID = TR.dataset_id AND
               Tmp_Staging.Type = TR.type;
 
-        If Exists (SELECT * FROM Tmp_DebugReports WHERE Debug_ID = 2) Then
+        If Exists (SELECT Debug_ID FROM Tmp_DebugReports WHERE Debug_ID = 2) Then
 
             RAISE INFO '';
             RAISE INFO '%', _infoHeadStaging;
@@ -497,7 +497,7 @@ BEGIN
               WHERE Mark Is Null) SourceQ
         WHERE Tmp_Staging.Staging_ID = SourceQ.Staging_ID;
 
-        If Exists (SELECT * FROM Tmp_DebugReports WHERE Debug_ID = 3) Then
+        If Exists (SELECT Debug_ID FROM Tmp_DebugReports WHERE Debug_ID = 3) Then
 
             RAISE INFO '';
             RAISE INFO '%', _infoHeadStaging;
@@ -590,7 +590,7 @@ BEGIN
 
         END LOOP;
 
-        If Exists (SELECT * FROM Tmp_DebugReports WHERE Debug_ID = 4) Then
+        If Exists (SELECT Debug_ID FROM Tmp_DebugReports WHERE Debug_ID = 4) Then
 
             RAISE INFO '';
             RAISE INFO '%', _infoHeadStaging;
@@ -642,7 +642,7 @@ BEGIN
         SET Start = _bom
         WHERE Type = 'Interval' AND Start < _bom;
 
-        If Exists (SELECT * FROM Tmp_DebugReports WHERE Debug_ID = 5) Then
+        If Exists (SELECT Debug_ID FROM Tmp_DebugReports WHERE Debug_ID = 5) Then
 
             RAISE INFO '';
             RAISE INFO '%', _infoHeadStaging;
@@ -686,7 +686,7 @@ BEGIN
 
         End If;
 
-        If Exists (SELECT * FROM Tmp_DebugReports WHERE Debug_ID = 6) Then
+        If Exists (SELECT Debug_ID FROM Tmp_DebugReports WHERE Debug_ID = 6) Then
 
             RAISE INFO '';
             RAISE INFO 'Rows in t_emsl_instrument_usage_report that would be updated:';

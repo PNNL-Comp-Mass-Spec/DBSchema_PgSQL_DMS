@@ -239,7 +239,7 @@ BEGIN
                                         '------------------------------'
                                        );
 
-    If Not Exists (SELECT * FROM Tmp_IntStds WHERE Enzyme_Contaminant_Collection > 0) Then
+    If Not Exists (SELECT Internal_Std_Mix_ID FROM Tmp_IntStds WHERE Enzyme_Contaminant_Collection > 0) Then
         --------------------------------------------------------------
         -- Nothing was added; no point in looking for protein collections with Includes_Contaminants > 0
         --------------------------------------------------------------

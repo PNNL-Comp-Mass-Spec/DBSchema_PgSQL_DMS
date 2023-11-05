@@ -165,7 +165,7 @@ BEGIN
               Target.subfolder = AttemptQ.subfolder AND
               AttemptQ.Attempts > 1;
 
-        If Exists (SELECT * FROM Tmp_FailedJobs WHERE SkipResetMode = 1) Then
+        If Exists (SELECT Job FROM Tmp_FailedJobs WHERE SkipResetMode = 1) Then
             -- Post a log entry about capture task jobs that we are not resetting
             -- Limit the logging to once every 24 hours
 
@@ -234,7 +234,7 @@ BEGIN
             RAISE INFO '% % out of % candidate capture task jobs', _verb, _maxJobsToReset, _jobCountAtStart;
         End If;
 
-        If Exists (SELECT * FROM Tmp_FailedJobs WHERE SkipResetMode = 0) Then
+        If Exists (SELECT Job FROM Tmp_FailedJobs WHERE SkipResetMode = 0) Then
             -----------------------------------------------------------
             -- Construct a comma-separated list of capture task jobs, then call retry_myemsl_upload
             -----------------------------------------------------------

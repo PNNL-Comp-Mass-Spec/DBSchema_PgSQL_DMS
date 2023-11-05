@@ -338,7 +338,7 @@ BEGIN
         -- Make sure this processor's machine is in sw.t_machines
         ---------------------------------------------------
 
-        If Not Exists (SELECT * FROM sw.t_machines Where machine = _machine) Then
+        If Not Exists (SELECT machine FROM sw.t_machines WHERE machine = _machine) Then
             _message := format('Machine "%s" is not present in sw.t_machines (but is defined in sw.t_local_processors for processor "%s")', _machine, _processorName);
             _returnCode := _jobNotAvailableErrorCode;
             RETURN;
@@ -1223,7 +1223,7 @@ BEGIN
             RAISE INFO '%, Request_Step_Task_XML: Check for jobs with Association_Type 101', public.timestamp_text_immutable(clock_timestamp());
         End If;
 
-        If Exists (SELECT * FROM Tmp_CandidateJobSteps WHERE Association_Type = 101) Then
+        If Exists (SELECT Association_Type FROM Tmp_CandidateJobSteps WHERE Association_Type = 101) Then
             _cpuLoadExceeded := 1;
         End If;
 
@@ -1313,7 +1313,7 @@ BEGIN
         Else
             -- See if any jobs have Association_Type 99
             -- They are assigned to specific processors, but not to this processor
-            If Exists (SELECT * FROM Tmp_CandidateJobSteps WHERE Association_Type = 99) Then
+            If Exists (SELECT Association_Type FROM Tmp_CandidateJobSteps WHERE Association_Type = 99) Then
                 -- Update the state to 103 for jobs associated with another processor, but not this processor
                 UPDATE Tmp_CandidateJobSteps CJS
                 SET Association_Type = 103,

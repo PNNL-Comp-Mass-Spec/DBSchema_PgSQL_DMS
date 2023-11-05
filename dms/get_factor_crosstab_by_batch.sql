@@ -52,7 +52,7 @@ CREATE OR REPLACE PROCEDURE public.get_factor_crosstab_by_batch(IN _batchid inte
 **                    _returnCode   => _returnCode
 **                );
 **
-**          If Exists (SELECT * FROM pg_cursors WHERE name = '_results') Then
+**          If Exists (SELECT name FROM pg_cursors WHERE name = '_results') Then
 **              RAISE INFO 'Cursor has data';
 **
 **              WHILE true

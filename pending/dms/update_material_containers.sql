@@ -125,7 +125,7 @@ BEGIN
         RETURN;
     End If;
 
-    If Exists (Select * From Tmp_Material_Container_List Where Type = 'na') Then
+    If Exists (SELECT ID FROM Tmp_Material_Container_List WHERE Type = 'na') Then
         If Position(',' In _containerList) > 1 Then
             _message := 'Containers of type "na" cannot be updated by the website; contact a DMS admin (see Update_Material_Containers)';
         Else
@@ -264,7 +264,7 @@ BEGIN
 
     If _mode = 'unretire_container' Then
         -- Make sure the container(s) are all Inactive
-        If Exists (SELECT * FROM Tmp_Material_Container_List WHERE Status <> 'Inactive') Then
+        If Exists (SELECT ID FROM Tmp_Material_Container_List WHERE Status <> 'Inactive') Then
             If _numContainers = 1 Then
                 _message := format('Container is already active; cannot unretire %s', _containerList);
             Else

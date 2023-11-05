@@ -58,7 +58,7 @@ BEGIN
     SELECT Table_to_Find, Schema_Name, Table_Name, Table_Exists, Message
     FROM resolve_table_name(_sourceTable);
 
-    If Not Exists (SELECT * FROM Tmp_CandidateTables WHERE Table_Exists) Then
+    If Not Exists (SELECT Table_to_Find FROM Tmp_CandidateTables WHERE Table_Exists) Then
         -- Message will be:
         -- Table not found in any schema: t_tmp_table
         --or

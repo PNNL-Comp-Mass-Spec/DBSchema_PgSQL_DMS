@@ -193,7 +193,7 @@ BEGIN
         UPDATE Tmp_RequestedRuns
         SET Request_ID = public.try_cast(RequestIDText, null::int);
 
-        If Exists (Select * FROM Tmp_RequestedRuns WHERE Request_ID Is Null) Then
+        If Exists (SELECT RequestIDText FROM Tmp_RequestedRuns WHERE Request_ID Is Null) Then
 
             SELECT RequestIDText
             INTO _firstInvalid

@@ -407,7 +407,7 @@ BEGIN
             End If;
         End If;
 
-        If Exists (Select * From Tmp_InstrumentProcessor WHERE Assigned_To_This_Processor > 0) Then
+        If Exists (SELECT Instrument FROM Tmp_InstrumentProcessor WHERE Assigned_To_This_Processor > 0) Then
             _processorLockedToInstrument := true;
 
             If _infoLevel > 1 Then

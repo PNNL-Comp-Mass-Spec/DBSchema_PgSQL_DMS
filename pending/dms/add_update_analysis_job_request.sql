@@ -488,7 +488,7 @@ BEGIN
         -- but the user chose a settings file that is not appropriate for HMS datasets
         ---------------------------------------------------
 
-        If Exists (SELECT * FROM Tmp_DatasetInfo WHERE Dataset_Type LIKE 'hms%' OR Dataset_Type LIKE 'ims-hms%') Then
+        If Exists (SELECT Dataset_Type FROM Tmp_DatasetInfo WHERE Dataset_Type LIKE 'hms%' OR Dataset_Type LIKE 'ims-hms%') Then
             -- Possibly auto-update the settings file
 
             SELECT hms_auto_supersede

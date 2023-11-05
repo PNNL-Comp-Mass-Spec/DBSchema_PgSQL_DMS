@@ -79,13 +79,13 @@ BEGIN
     -- Make sure the parameter file IDs are valid
     -----------------------------------------
 
-    If Not Exists (SELECT * FROM t_param_files WHERE param_file_id = _sourceParamFileID) Then
+    If Not Exists (SELECT param_file_id FROM t_param_files WHERE param_file_id = _sourceParamFileID) Then
         _message := format('Source Param File ID (%s) not found in t_param_files; unable to continue', _sourceParamFileID);
         _returnCode := 'U5201';
         RETURN;
     End If;
 
-    If Not Exists (SELECT * FROM t_param_files WHERE param_file_id = _destParamFileID) Then
+    If Not Exists (SELECT param_file_id FROM t_param_files WHERE param_file_id = _destParamFileID) Then
         _message := format('Destination Param File ID (%s) not found in t_param_files; unable to continue', _destParamFileID);
         _returnCode := 'U5202';
         RETURN;
@@ -95,14 +95,14 @@ BEGIN
     -- Make sure the destination parameter file does not yet have any mass mods defined
     -----------------------------------------
 
-    If Exists (SELECT * FROM t_param_file_mass_mods WHERE param_file_id = _destParamFileID) Then
+    If Exists (SELECT param_file_id FROM t_param_file_mass_mods WHERE param_file_id = _destParamFileID) Then
         _message := format('Destination Param File ID (%s) already has entries in t_param_file_mass_mods; unable to continue', _destParamFileID);
         _returnCode := 'U5203';
         RETURN;
     End If;
 
     If _updateParamEntries Then
-        If Exists (SELECT * FROM t_param_entries WHERE param_file_id = _destParamFileID) Then
+        If Exists (SELECT param_file_id FROM t_param_entries WHERE param_file_id = _destParamFileID) Then
             _message := format('Destination Param File ID (%s) already has entries in t_param_entries; unable to continue', _destParamFileID);
             _returnCode := 'U5204';
             RETURN;
@@ -199,7 +199,7 @@ BEGIN
             RAISE INFO '%', _infoData;
         END LOOP;
 
-        If _updateParamEntries And Exists (SELECT * FROM t_param_entries WHERE param_file_id = _sourceParamFileID)
+        If _updateParamEntries And Exists (SELECT param_file_id FROM t_param_entries WHERE param_file_id = _sourceParamFileID)
 
             RAISE INFO '';
 

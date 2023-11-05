@@ -263,7 +263,7 @@ BEGIN
         -- Only allow updating the state of Cart Config items that are associated with a dataset
         ---------------------------------------------------
 
-        If _ignoreDatasetChecks = 0 And Exists (Select * FROM t_dataset Where cart_config_id = _id) Then
+        If _ignoreDatasetChecks = 0 And Exists (SELECT cart_config_id FROM t_dataset WHERE cart_config_id = _id) Then
 
             SELECT COUNT(dataset_id),
                    MAX(dataset_id)
@@ -308,7 +308,7 @@ BEGIN
     ---------------------------------------------------
 
     If _mode = 'add' Then
-        If Exists (Select * FROM t_lc_cart_configuration Where cart_config_name = _configName) Then
+        If Exists (SELECT cart_config_name FROM t_lc_cart_configuration WHERE cart_config_name = _configName) Then
             _message := format('LC Cart Config already exists; cannot add a new config named %s', _configName);
             RAISE WARNING '%', _message;
 

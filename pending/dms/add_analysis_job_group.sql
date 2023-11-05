@@ -400,7 +400,7 @@ BEGIN
                 _newUsername := SUBSTRING(_newUsername, _slashIndex + 1, char_length(_newUsername));
             End If;
 
-            If Exists (SELECT * FROM t_users Where username = _newUsername) Then
+            If Exists (SELECT username FROM t_users WHERE username = _newUsername) Then
                 _ownerUsername := _newUsername;
             End If;
         End If;

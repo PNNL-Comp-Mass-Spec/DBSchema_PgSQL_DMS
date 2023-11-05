@@ -77,7 +77,7 @@ BEGIN
         RETURN;
     End If;
 
-    If Not Exists (SELECT * FROM t_dataset_scan_types WHERE dataset_id = _datasetID) Then
+    If Not Exists (SELECT dataset_id FROM t_dataset_scan_types WHERE dataset_id = _datasetID) Then
         _message := format('Warning: Scan type info not found in t_dataset_scan_types for dataset %s', _dataset);
         RETURN;
     End If;
@@ -159,7 +159,7 @@ BEGIN
     End If;
 
     If _requiredAction = '' Then
-        If Exists (Select * FROM t_dataset_scan_types WHERE dataset_id = _datasetID And scan_filter = 'IMS') Then
+        If Exists (SELECT dataset_id FROM t_dataset_scan_types WHERE dataset_id = _datasetID And scan_filter = 'IMS') Then
             _hasIMS := true;
         End If;
 

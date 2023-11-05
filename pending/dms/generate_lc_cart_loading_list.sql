@@ -99,7 +99,7 @@ BEGIN
     -- Verify that all requests have column assignments
     ---------------------------------------------------
 
-    If Exists (SELECT * FROM Tmp_XR WHERE col IS NULL) Then
+    If Exists (SELECT request FROM Tmp_XR WHERE col IS NULL) Then
         _message := 'Some requests do not have column assignments';
         RAISE WARNING '%', _message;
 

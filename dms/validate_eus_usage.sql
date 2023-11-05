@@ -108,7 +108,7 @@ BEGIN
     -- Initialize this output to 0
     _eusUsageTypeID := 0;
 
-    If _eusUsageType::citext = '(ignore)' And Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
+    If _eusUsageType::citext = '(ignore)' And Not Exists (SELECT eus_usage_type FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
         _eusUsageType := 'CAP_DEV';
         _eusProposalID := '';
         _eusUsersList := '';
@@ -118,19 +118,19 @@ BEGIN
     -- Auto-fix _eusUsageType if it is an abbreviated form of Cap_Dev, Maintenance, or Broken
     ---------------------------------------------------
 
-    If _eusUsageType::citext Like 'Cap%'   And Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
+    If _eusUsageType::citext Like 'Cap%'   And Not Exists (SELECT eus_usage_type FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
         _eusUsageType := 'CAP_DEV';
     End If;
 
-    If _eusUsageType::citext Like 'Maint%' And Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
+    If _eusUsageType::citext Like 'Maint%' And Not Exists (SELECT eus_usage_type FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
         _eusUsageType := 'MAINTENANCE';
     End If;
 
-    If _eusUsageType::citext Like 'Brok%'  And Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
+    If _eusUsageType::citext Like 'Brok%'  And Not Exists (SELECT eus_usage_type FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
         _eusUsageType := 'BROKEN';
     End If;
 
-    If _eusUsageType::citext Like 'Res%'   And Not Exists (SELECT * FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
+    If _eusUsageType::citext Like 'Res%'   And Not Exists (SELECT eus_usage_type FROM t_eus_usage_type WHERE eus_usage_type = _eusUsageType::citext) Then
         _eusUsageType := 'RESOURCE_OWNER';
     End If;
 
@@ -295,7 +295,7 @@ BEGIN
                     _checkSuperseded := 0;
                 Else
 
-                    If Not Exists (SELECT * FROM t_eus_proposals WHERE proposal_id = _autoSupersedeProposalID) Then
+                    If Not Exists (SELECT proposal_id FROM t_eus_proposals WHERE proposal_id = _autoSupersedeProposalID) Then
                         _logMessage := format('Proposal %s in t_eus_proposals has proposal_id_auto_supersede set to %s, but that proposal does not exist in t_eus_proposals',
                                               Coalesce(_eusProposalID, '??'), Coalesce(_autoSupersedeProposalID, '??'));
 
@@ -317,7 +317,7 @@ BEGIN
                         FROM t_eus_proposals
                         WHERE proposal_id = _autoSupersedeProposalID;
 
-                        If Exists (SELECT * FROM Tmp_Proposal_Stack WHERE Proposal_ID = _autoSupersedeProposalID) Then
+                        If Exists (SELECT Proposal_ID FROM Tmp_Proposal_Stack WHERE Proposal_ID = _autoSupersedeProposalID) Then
                             -- Circular reference
                             If _infoOnly Then
                                 RAISE INFO 'Circular reference found; choosing the one with the highest ID';

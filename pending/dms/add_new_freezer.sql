@@ -65,7 +65,7 @@ BEGIN
     -- Check for existing data
     ---------------------------------------------------
 
-    If Exists (SELECT * FROM t_material_locations WHERE freezer_tag = _newFreezerTag) Then
+    If Exists (SELECT freezer_tag FROM t_material_locations WHERE freezer_tag = _newFreezerTag) Then
         _message := format('Cannot add ''%s'' because it already exists in t_material_locations', _newFreezerTag);
         RAISE WARNING '%', _message;
 
@@ -73,7 +73,7 @@ BEGIN
         RETURN;
     End If;
 
-    If Not Exists (SELECT * FROM t_material_locations WHERE freezer_tag = _sourceFreezerTag) Then
+    If Not Exists (SELECT freezer_tag FROM t_material_locations WHERE freezer_tag = _sourceFreezerTag) Then
         _message := format('Source freezer tag not found in t_material_locations: %s', _sourceFreezerTag);
         RAISE WARNING '%', _message;
 
@@ -81,7 +81,7 @@ BEGIN
         RETURN;
     End If;
 
-    If Not Exists (SELECT * FROM t_material_freezers WHERE freezer_tag = _newFreezerTag) Then
+    If Not Exists (SELECT freezer_tag FROM t_material_freezers WHERE freezer_tag = _newFreezerTag) Then
         _message := format('New freezer tag not found in t_material_freezers: %s', _newFreezerTag);
         RAISE WARNING '%', _message;
 

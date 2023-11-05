@@ -200,11 +200,11 @@ BEGIN
                     _action := 'change param file type';
                 End If;
 
-                If Exists (SELECT * FROM t_analysis_job WHERE param_file_name = _currentName) Then
+                If Exists (SELECT param_file_name FROM t_analysis_job WHERE param_file_name = _currentName) Then
                     RAISE EXCEPTION 'Cannot %: Param File "%" is used by an analysis job', _action, _currentName;
                 End If;
 
-                If Exists (SELECT * FROM t_analysis_job_request WHERE param_file_name = _currentName) Then
+                If Exists (SELECT param_file_name FROM t_analysis_job_request WHERE param_file_name = _currentName) Then
                     RAISE EXCEPTION 'Cannot %: Param File "%" is used by a job request', _action, _currentName;
                 End If;
             End If;
@@ -245,7 +245,7 @@ BEGIN
             If _paramfileMassMods <> '' And (
                 _mode IN ('add', 'previewadd') OR
                 _mode = 'update' And _replaceExistingMassMods = 1 Or
-                _mode = 'update' And _replaceExistingMassMods = 0 AND Not Exists (Select * FROM t_param_file_mass_mods WHERE param_file_id = _paramFileID)) Then
+                _mode = 'update' And _replaceExistingMassMods = 0 AND Not Exists (SELECT param_file_id FROM t_param_file_mass_mods WHERE param_file_id = _paramFileID)) Then
 
                 ---------------------------------------------------
                 -- Validate the mods by calling Store_Param_File_Mass_Mods with @paramFileID = 0
@@ -326,7 +326,7 @@ BEGIN
         End If;
 
         If _paramFileID > 0 And _paramfileMassMods <> '' And _updateMassMods Then
-            If _replaceExistingMassMods = 0 And Exists (Select * FROM t_param_file_mass_mods WHERE param_file_id = _paramFileID) Then
+            If _replaceExistingMassMods = 0 And Exists (SELECT param_file_id FROM t_param_file_mass_mods WHERE param_file_id = _paramFileID) Then
                 _updateMassMods := false;
                 _message := 'Warning: existing mass mods were not updated because _updateMassMods is false';
             End If;

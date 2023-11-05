@@ -321,7 +321,7 @@ BEGIN
             _skipInstrument := false;
 
             If _instrumentInfo.Use_EUS_ID Then
-                If Exists (SELECT * FROM Tmp_EUS_IDs_Processed WHERE EUS_Instrument_ID = _instrumentInfo.EusInstrumentId) Then
+                If Exists (SELECT EUS_Instrument_ID FROM Tmp_EUS_IDs_Processed WHERE EUS_Instrument_ID = _instrumentInfo.EusInstrumentId) Then
                     _skipInstrument := true;
                 Else
                     INSERT INTO Tmp_EUS_IDs_Processed (EUS_Instrument_ID)

@@ -228,7 +228,7 @@ BEGIN
             RETURN;
         End If;
 
-        If Not _replaceExisting And Exists (SELECT * FROM t_param_file_mass_mods WHERE param_file_id = _paramFileID) Then
+        If Not _replaceExisting And Exists (SELECT param_file_id FROM t_param_file_mass_mods WHERE param_file_id = _paramFileID) Then
             _message := format('Param File ID (%s) has existing mods in t_param_file_mass_mods but _replaceExisting = false; unable to continue', _paramFileID);
             _returnCode := 'U5304';
             RETURN;
@@ -532,7 +532,7 @@ BEGIN
                         _residueSymbol := Substring(_rowKey, 1, 1);
                     End If;
 
-                    If Exists (SELECT * FROM Tmp_ModDef WHERE EntryID = 2) Then
+                    If Exists (SELECT EntryID FROM Tmp_ModDef WHERE EntryID = 2) Then
                         UPDATE Tmp_ModDef
                         SET Value = _residueSymbol
                         WHERE EntryID = 2;
@@ -1201,7 +1201,7 @@ BEGIN
         End If;
 
         -- Look for symbols that did not resolve
-        If Exists (SELECT * FROM Tmp_Residues WHERE Residue_ID IS Null) Then
+        If Exists (SELECT Residue_Symbol FROM Tmp_Residues WHERE Residue_ID IS Null) Then
             _msgAddon := '';
 
             SELECT string_agg(Residue_Symbol, ', ' ORDER BY Residue_Symbol)
@@ -1227,7 +1227,7 @@ BEGIN
         -- Check for N-terminal or C-terminal static mods that do not use *
         -----------------------------------------
 
-        If _modTypeSymbol = 'S' And Exists (SELECT * FROM Tmp_Residues WHERE Residue_Symbol IN ('<', '>') AND NOT Terminal_AnyAA) Then
+        If _modTypeSymbol = 'S' And Exists (SELECT Residue_Symbol FROM Tmp_Residues WHERE Residue_Symbol IN ('<', '>') AND NOT Terminal_AnyAA) Then
             -- Auto-switch to tracking as a dynamic mod (required for PHRP)
             _modTypeSymbol := 'D';
         End If;
@@ -1237,7 +1237,7 @@ BEGIN
         -----------------------------------------
 
         If _modTypeSymbol = 'D' Then
-            If Exists (SELECT * FROM Tmp_ModsToStore WHERE Mod_Name = _modName AND Mod_Type_Symbol = 'D') Then
+            If Exists (SELECT Mod_Name FROM Tmp_ModsToStore WHERE Mod_Name = _modName AND Mod_Type_Symbol = 'D') Then
                 -- This DynamicMod entry uses the same mod name as a previous one; re-use it
                 SELECT Local_Symbol_ID
                 INTO _localSymbolIDToStore
@@ -1425,7 +1425,7 @@ BEGIN
     If Not _infoOnly And Not _validateOnly Then
         -- Store the mod defs
 
-        If Exists (SELECT * FROM t_param_file_mass_mods WHERE param_file_id = _paramFileID) Then
+        If Exists (SELECT param_file_id FROM t_param_file_mass_mods WHERE param_file_id = _paramFileID) Then
             DELETE FROM t_param_file_mass_mods
             WHERE param_file_id = _paramFileID;
         End If;

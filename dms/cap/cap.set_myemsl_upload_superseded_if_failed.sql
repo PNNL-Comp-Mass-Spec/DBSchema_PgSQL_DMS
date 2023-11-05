@@ -131,7 +131,7 @@ BEGIN
         WHERE MU.dataset_id = _datasetID AND
               Target.status_num = MU.status_num;
 
-        If Exists (SELECT * FROM Tmp_StatusNumListTable WHERE Not Dataset_ID_Validated) Then
+        If Exists (SELECT Status_Num FROM Tmp_StatusNumListTable WHERE Not Dataset_ID_Validated) Then
             SELECT string_agg(status_num::text, ', ')
             INTO _statusNumMismatches
             FROM Tmp_StatusNumListTable

@@ -250,7 +250,7 @@ BEGIN
             WHERE Coalesce(Value, '') <> ''
 
             -- Look for non-numeric values
-            If Exists (SELECT * FROM Tmp_NEWT_IDs WHERE public.try_cast(NEWT_ID_Text, null::int) IS NULL) Then
+            If Exists (SELECT NEWT_ID_Text FROM Tmp_NEWT_IDs WHERE public.try_cast(NEWT_ID_Text, null::int) IS NULL) Then
                 RAISE EXCEPTION 'Non-numeric NEWT ID values found in the NEWT_ID List: "%"; see http://dms2.pnl.gov/ontology/report/NEWT', _newtIDList;
             End If;
 
@@ -273,14 +273,14 @@ BEGIN
             -- Auto-define _newtIDList using _ncbiTaxonomyID though only if the NEWT table has the ID
             -- (there are numerous organisms that nave an NCBI Taxonomy ID but not a NEWT ID)
             --
-            If Exists (SELECT * FROM ont.V_CV_NEWT WHERE Identifier = _ncbiTaxonomyID::citext Then
+            If Exists (SELECT Identifier FROM ont.V_CV_NEWT WHERE Identifier = _ncbiTaxonomyID::citext Then
                 _newtIDList := _ncbiTaxonomyID::text;
             End If;
         End If;
 
         If Coalesce(_ncbiTaxonomyID, 0) = 0 Then
             _ncbiTaxonomyID := null;
-        ElsIf Not Exists (Select * From ont.V_NCBI_Taxonomy_Cached Where Tax_ID = _ncbiTaxonomyID) Then
+        ElsIf Not Exists (SELECT Tax_ID FROM ont.V_NCBI_Taxonomy_Cached WHERE Tax_ID = _ncbiTaxonomyID) Then
             RAISE EXCEPTION 'Invalid NCBI Taxonomy ID "%"; see http://dms2.pnl.gov/ncbi_taxonomy/report', _ncbiTaxonomyID;
         End If;
 
@@ -415,9 +415,9 @@ BEGIN
             -- Protein collections in pc.V_Collection_Picker are those with state 1, 2, or 3
             -- In contrast, pc.V_Protein_Collections_by_Organism has all protein collections
 
-            If Not Exists (SELECT * FROM pc.V_Collection_Picker WHERE Name = _orgDBName) Then
+            If Not Exists (SELECT Name FROM pc.V_Collection_Picker WHERE Name = _orgDBName) Then
 
-                If Exists (SELECT * FROM pc.V_Protein_Collections_by_Organism WHERE Collection_Name = _orgDBName AND Collection_State_ID = 4) Then
+                If Exists (SELECT Collection_Name FROM pc.V_Protein_Collections_by_Organism WHERE Collection_Name = _orgDBName AND Collection_State_ID = 4) Then
                     RAISE EXCEPTION 'Default protein collection is invalid because it is inactive: ', _orgDBName;
                 Else
                     RAISE EXCEPTION 'Protein collection not found: %', _orgDBName;

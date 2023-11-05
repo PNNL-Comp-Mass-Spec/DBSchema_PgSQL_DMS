@@ -89,7 +89,7 @@ BEGIN
         -- Set the instrument group to _requestedInstrumentGroup for now
         _instrumentGroupToUse := _requestedInstrumentGroup;
 
-        If Not Exists (SELECT * FROM t_instrument_group WHERE instrument_group = _instrumentGroupToUse) Then
+        If Not Exists (SELECT instrument_group FROM t_instrument_group WHERE instrument_group = _instrumentGroupToUse) Then
             -- Try to update instrument group using t_instrument_name
             SELECT instrument_group
             INTO _instrumentGroupToUse
@@ -125,7 +125,7 @@ BEGIN
         ---------------------------------------------------
 
         If _mode In ('add', Lower('PreviewAdd')) Then
-            If Exists (SELECT * FROM t_requested_run_batches WHERE batch = _name) Then
+            If Exists (SELECT batch FROM t_requested_run_batches WHERE batch = _name) Then
                 _message := format('Cannot add batch: "%s" already exists in database', _name);
                 _returnCode := 'U5205';
                 RETURN;
@@ -203,7 +203,7 @@ BEGIN
             _batchGroupOrder := null;
         End If;
 
-        If _batchGroupID > 0 And Not Exists (Select * From T_Requested_Run_Batch_Group Where Batch_Group_ID = _batchGroupID) Then
+        If _batchGroupID > 0 And Not Exists (SELECT Batch_Group_ID FROM T_Requested_Run_Batch_Group WHERE Batch_Group_ID = _batchGroupID) Then
             _message := format('Requested run batch group does not exist: %s', _batchGroupID);
             _returnCode := 'U5210';
             RETURN;

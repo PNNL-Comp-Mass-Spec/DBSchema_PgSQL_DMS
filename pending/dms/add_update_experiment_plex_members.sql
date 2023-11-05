@@ -526,7 +526,7 @@ BEGIN
                     End If;
 
                     If Coalesce(_channelNum, 0) > 0 And Coalesce(_experimentId, 0) > 0 Then
-                        If Exists (SELECT * FROM Tmp_Experiment_Plex_Members WHERE Channel = _channelNum) Then
+                        If Exists (SELECT Channel FROM Tmp_Experiment_Plex_Members WHERE Channel = _channelNum) Then
                             _message := format('Plex Members table has duplicate entries for channel %s', _channelNum);
 
                             If _tagName <> '' Then
@@ -586,7 +586,7 @@ BEGIN
 
             WHILE _channelNum <= 18
             LOOP
-                If Not Exists (SELECT * FROM Tmp_Experiment_Plex_Members WHERE Channel = _channelNum) Then
+                If Not Exists (SELECT Channel FROM Tmp_Experiment_Plex_Members WHERE Channel = _channelNum) Then
 
                     SELECT Trim(Coalesce(ExperimentInfo, '')),
                            Trim(Coalesce(ChannelType, '')),
@@ -749,7 +749,7 @@ BEGIN
             --   StudyName4_TB_Plex11_P_f04
             ---------------------------------------------------
 
-            If Exists (SELECT * From t_experiment_groups WHERE parent_exp_id = _plexExperimentId) Then
+            If Exists (SELECT group_id FROM t_experiment_groups WHERE parent_exp_id = _plexExperimentId) Then
                 ---------------------------------------------------
                 -- Add experiments that are associated with parent experiment _plexExperimentId
                 -- Assure that the parent experiment is not the 'Placeholder' experiment

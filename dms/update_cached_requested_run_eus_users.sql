@@ -57,7 +57,7 @@ BEGIN
                 End If;
             Else
                 -- The request is not active; assure there is no cached entry
-                If Exists (SELECT * FROM t_active_requested_run_cached_eus_users WHERE request_id = _requestID) Then
+                If Exists (SELECT request_id FROM t_active_requested_run_cached_eus_users WHERE request_id = _requestID) Then
                     DELETE FROM t_active_requested_run_cached_eus_users
                     WHERE request_id = _requestID;
                 End If;

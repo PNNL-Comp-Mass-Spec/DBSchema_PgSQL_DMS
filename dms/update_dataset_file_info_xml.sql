@@ -434,7 +434,7 @@ BEGIN
             WHERE DSFiles.dataset_id <> _datasetID And DSFiles.deleted = false And DSFiles.file_size_bytes > 0
             GROUP BY DSFiles.dataset_id;
 
-            If Exists (SELECT * FROM Tmp_DuplicateDatasets WHERE MatchingFileCount >= _instrumentFileCount) Then
+            If Exists (SELECT Dataset_ID FROM Tmp_DuplicateDatasets WHERE MatchingFileCount >= _instrumentFileCount) Then
                 _currentLocation := 'Look for duplicate datasets: set Allow_Duplicates to true in Tmp_DuplicateDatasets';
 
                 UPDATE Tmp_DuplicateDatasets
@@ -443,7 +443,7 @@ BEGIN
                 WHERE Tmp_DuplicateDatasets.dataset_id = Src.dataset_id AND Src.allow_duplicates;
             End If;
 
-            If Exists (SELECT * FROM Tmp_DuplicateDatasets WHERE MatchingFileCount >= _instrumentFileCount And Not Allow_Duplicates) Then
+            If Exists (SELECT Dataset_ID FROM Tmp_DuplicateDatasets WHERE MatchingFileCount >= _instrumentFileCount And Not Allow_Duplicates) Then
 
                 _currentLocation := 'Duplicate dataset found; determine duplicate dataset ID';
 
@@ -488,7 +488,7 @@ BEGIN
                 RETURN;
             End If;
 
-            If Exists (SELECT * FROM Tmp_DuplicateDatasets WHERE MatchingFileCount >= _instrumentFileCount And Allow_Duplicates) Then
+            If Exists (SELECT Dataset_ID FROM Tmp_DuplicateDatasets WHERE MatchingFileCount >= _instrumentFileCount And Allow_Duplicates) Then
 
                 _currentLocation := 'Duplicate dataset found; log warning since Allow_Duplicates is true';
 

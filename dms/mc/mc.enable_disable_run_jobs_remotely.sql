@@ -123,7 +123,7 @@ BEGIN
         _activeStateDescription := 'run jobs locally';
     End If;
 
-    If Exists (Select * From Tmp_ManagerList Where manager_name = 'Default_AnalysisMgr_Params') Then
+    If Exists (SELECT manager_name FROM Tmp_ManagerList WHERE manager_name = 'Default_AnalysisMgr_Params') Then
         Delete From Tmp_ManagerList Where manager_name = 'Default_AnalysisMgr_Params';
 
         _message := 'For safety, not updating RunJobsRemotely for manager Default_AnalysisMgr_Params';
@@ -154,7 +154,7 @@ BEGIN
             _mgrName := _mgrRecord.manager_name;
             _mgrId   := _mgrRecord.mgr_id;
 
-            If Not Exists (SELECT * FROM mc.v_mgr_params Where ParameterName = 'RunJobsRemotely' And ManagerName = _mgrName) Then
+            If Not Exists (SELECT ParameterName FROM mc.v_mgr_params WHERE ParameterName = 'RunJobsRemotely' And ManagerName = _mgrName) Then
 
                 SELECT param_type_id
                 INTO _paramTypeId
@@ -178,7 +178,7 @@ BEGIN
                 End If;
             End If;
 
-            If Not Exists (SELECT * FROM mc.v_mgr_params Where ParameterName = 'RemoteHostName' And ManagerName = _mgrName) Then
+            If Not Exists (SELECT ParameterName FROM mc.v_mgr_params WHERE ParameterName = 'RemoteHostName' And ManagerName = _mgrName) Then
 
                 SELECT param_type_id
                 INTO _paramTypeId

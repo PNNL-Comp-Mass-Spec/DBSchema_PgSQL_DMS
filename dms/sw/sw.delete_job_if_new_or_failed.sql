@@ -117,7 +117,7 @@ BEGIN
             RETURN;
         End If;
 
-        If Exists (SELECT * FROM sw.t_jobs WHERE job = _job) Then
+        If Exists (SELECT job FROM sw.t_jobs WHERE job = _job) Then
             SELECT state
             INTO _jobState
             FROM sw.t_jobs

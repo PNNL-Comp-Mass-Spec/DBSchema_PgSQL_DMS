@@ -45,7 +45,7 @@ CREATE OR REPLACE PROCEDURE dpkg.get_package_dataset_job_tool_crosstab(IN _datap
 **
 **          RAISE INFO '';
 **
-**          If Exists (SELECT * FROM pg_cursors WHERE name = '_results') Then
+**          If Exists (SELECT name FROM pg_cursors WHERE name = '_results') Then
 **              RAISE INFO 'Cursor has data';
 **
 **              WHILE true

@@ -85,7 +85,7 @@ BEGIN
               Coalesce(W.Network_ID, '') <> '';
 
         If Not _infoOnly Then
-            If Exists (SELECT * FROM Tmp_NewUsers WHERE NOT Network_ID Is Null) Then
+            If Exists (SELECT Network_ID FROM Tmp_NewUsers WHERE NOT Network_ID Is Null) Then
 
                 INSERT INTO t_users( username,       -- Network_ID (aka login) goes in the username field
                                      name,

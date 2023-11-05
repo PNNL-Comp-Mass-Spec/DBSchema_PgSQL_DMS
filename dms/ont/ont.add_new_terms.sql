@@ -71,7 +71,7 @@ BEGIN
     ElsIf _ontologyName In ('BTO', 'ENVO', 'MS') Then
         _warningMessage := format('Use function "ont.add_new_%s_terms" to add %s terms', Lower(_ontologyName), _ontologyName);
 
-    ElsIf Not Exists (SELECT * FROM ont.v_term_lineage WHERE ontology = _ontologyName) Then
+    ElsIf Not Exists (SELECT ontology FROM ont.v_term_lineage WHERE ontology = _ontologyName) Then
         _warningMessage := format('Invalid ontology name: %s; not found in ont.v_term_lineage', _ontologyName);
 
     End If;
@@ -101,7 +101,7 @@ BEGIN
     SELECT Table_to_Find, Schema_Name, Table_Name, Table_Exists, Message
     FROM resolve_table_name(format('%s.%s', _targetSchema, _targetTable));
 
-    If Exists (SELECT * FROM Tmp_CandidateTables WHERE Table_Exists) Then
+    If Exists (SELECT Table_to_Find FROM Tmp_CandidateTables WHERE Table_Exists) Then
         -- Make sure the target name is properly capitalized
         SELECT Schema_Name, Table_Name
         INTO _targetSchema, _targetTable

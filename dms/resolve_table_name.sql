@@ -60,7 +60,7 @@ BEGIN
                false As Table_Exists,
                format('Table not found in the given schema: %s', _tableToFind)::citext;
     Else
-        If Exists (SELECT * FROM pg_tables WHERE tablename::citext = _tableToFind::citext) Then
+        If Exists (SELECT tablename FROM pg_tables WHERE tablename::citext = _tableToFind::citext) Then
             RETURN QUERY
             SELECT _tableToFind::citext,
                    schemaname::citext,

@@ -390,7 +390,7 @@ BEGIN
 
         BEGIN
 
-            If Exists (SELECT * FROM Tmp_NewBatchParams WHERE Parameter = 'Run Order') Then
+            If Exists (SELECT Parameter FROM Tmp_NewBatchParams WHERE Parameter = 'Run Order') Then
                 -- If all of the updated requests come from the same batch,
                 -- update last_ordered in t_requested_run_batches
 
@@ -442,7 +442,7 @@ BEGIN
                 End If;
             End If;
 
-            If Exists (SELECT * FROM Tmp_NewBatchParams WHERE Parameter = 'Status') Then
+            If Exists (SELECT Parameter FROM Tmp_NewBatchParams WHERE Parameter = 'Status') Then
 
                 -- Call update_cached_requested_run_eus_users for each entry in Tmp_NewBatchParams
 

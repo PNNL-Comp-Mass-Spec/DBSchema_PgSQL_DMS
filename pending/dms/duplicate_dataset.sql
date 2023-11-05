@@ -91,14 +91,14 @@ BEGIN
         RETURN;
     End If;
 
-    If Not Exists (Select * From t_dataset Where dataset = _sourceDataset) Then
+    If Not Exists (SELECT dataset_id FROM t_dataset WHERE dataset = _sourceDataset) Then
         _message := format('Source dataset not found in t_dataset: %s', _sourceDataset);
         RAISE WARNING '%', _message;
 
         RETURN;
     End If;
 
-    If Exists (Select * From t_dataset Where dataset = _newDataset) Then
+    If Exists (SELECT dataset_id FROM t_dataset WHERE dataset = _newDataset) Then
         _message := format('t_dataset already has dataset: %s', _newDataset);
         RAISE WARNING '%', _message;
 

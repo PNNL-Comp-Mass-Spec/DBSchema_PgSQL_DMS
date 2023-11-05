@@ -73,7 +73,7 @@ BEGIN
 
     If _mode::citext = 'Delete' Then
          -- Assure that the batch group is not used by any batches
-        If Exists (Select * From T_Requested_Run_Batches Where Batch_Group_ID = _batchGroupID) Then
+        If Exists (SELECT Batch_Group_ID FROM T_Requested_Run_Batches WHERE Batch_Group_ID = _batchGroupID) Then
             _message = format('Cannot delete batch group since used by one or more requested run batches: %s', _batchGroupID);
             RAISE EXCEPTION '%', _message USING ERRCODE = 'U5203';
         Else

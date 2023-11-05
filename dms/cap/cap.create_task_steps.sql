@@ -113,19 +113,19 @@ BEGIN
 
     If _debugMode And _existingJob <> 0 Then
 
-        If Exists (SELECT * FROM cap.t_task_steps WHERE job = _existingJob) Then
+        If Exists (SELECT job FROM cap.t_task_steps WHERE job = _existingJob) Then
             _message := format('Job %s already has rows in cap.t_task_steps; aborting', _existingJob);
             RAISE WARNING '%', _message;
             RETURN;
         End If;
 
-        If Exists (SELECT * FROM cap.t_task_step_dependencies WHERE job = _existingJob) Then
+        If Exists (SELECT job FROM cap.t_task_step_dependencies WHERE job = _existingJob) Then
             _message := format('Job %s already has rows in cap.t_task_step_dependencies; aborting', _existingJob);
             RAISE WARNING '%', _message;
             RETURN;
         End If;
 
-        If Exists (SELECT * FROM cap.t_task_parameters WHERE job = _existingJob) Then
+        If Exists (SELECT job FROM cap.t_task_parameters WHERE job = _existingJob) Then
             _message := format('Job %s already has rows in cap.t_task_parameters; aborting', _existingJob);
             RAISE WARNING '%', _message;
             RETURN;
@@ -243,7 +243,7 @@ BEGIN
 
             If _infoOnly Then
                 If _insertCount = 0 Then
-                    If Exists (SELECT * FROM cap.t_tasks WHERE State = 0) Then
+                    If Exists (SELECT job FROM cap.t_tasks WHERE State = 0) Then
                         SELECT COUNT(job)
                         INTO _matchCount
                         FROM cap.t_tasks

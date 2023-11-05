@@ -85,7 +85,7 @@ BEGIN
         ORDER BY ExpID
     LOOP
 
-        INSERT INTO Tmp_DatasetsToUpdate( dataset_id,
+        INSERT INTO Tmp_DatasetsToUpdate( Dataset_ID,
                                           OldExperiment,
                                           NewExperiment,
                                           NewExpID,
@@ -119,7 +119,7 @@ BEGIN
         RETURN;
     End If;
 
-    If Not _infoOnly And Not Exists (Select * From Tmp_DatasetsToUpdate Where Not Ambiguous) Then
+    If Not _infoOnly And Not Exists (SELECT Dataset_ID FROM Tmp_DatasetsToUpdate WHERE Not Ambiguous) Then
         RAISE INFO '%', 'Candidate datasets were found, but they are all ambiguous; see them with _infoOnly=true';
         RETURN;
     End If;
@@ -179,7 +179,7 @@ BEGIN
             RAISE INFO '%', _infoData;
         END LOOP;
 
-        If Exists (SELECT * FROM Tmp_DatasetsToUpdate Where Ambiguous) Then
+        If Exists (SELECT Dataset_ID FROM Tmp_DatasetsToUpdate WHERE Ambiguous) Then
 
             RAISE INFO '';
 

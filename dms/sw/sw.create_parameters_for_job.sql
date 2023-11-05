@@ -72,7 +72,7 @@ BEGIN
     FROM sw.T_Jobs
     WHERE Job = _job;
 
-    If FOUND And _dataPackageID > 0 And Exists (SELECT * FROM sw.T_Job_Parameters WHERE Job = _job) Then
+    If FOUND And _dataPackageID > 0 And Exists (SELECT Job FROM sw.T_Job_Parameters WHERE Job = _job) Then
 
         ---------------------------------------------------
         -- This is a data package based job with existing parameters
@@ -140,7 +140,7 @@ BEGIN
                 CONTINUE;
             End If;
 
-            If Exists (SELECT * FROM Tmp_Job_Parameters_Merged WHERE Section = _section AND Name = _name) Then
+            If Exists (SELECT Section FROM Tmp_Job_Parameters_Merged WHERE Section = _section AND Name = _name) Then
                 UPDATE Tmp_Job_Parameters_Merged
                 SET Value = _value
                 WHERE Section = _section AND Name = _name;

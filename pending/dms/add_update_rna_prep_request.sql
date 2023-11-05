@@ -132,7 +132,7 @@ BEGIN
             -- Validate the instrument name
             ---------------------------------------------------
 
-            If Not Exists (SELECT * FROM t_instrument_name WHERE instrument = _instrumentName) Then
+            If Not Exists (SELECT instrument FROM t_instrument_name WHERE instrument = _instrumentName) Then
                 -- Check whether _instrumentName actually has an instrument group
                 --
                 SELECT instrument
@@ -307,7 +307,7 @@ BEGIN
 
             -- Changes not allowed if in 'closed' state
             --
-            If _currentStateID = 5 And Not Exists (SELECT * FROM V_Operations_Task_Staff_Picklist WHERE username = _callingUser) Then
+            If _currentStateID = 5 And Not Exists (SELECT username FROM V_Operations_Task_Staff_Picklist WHERE username = _callingUser) Then
                 RAISE EXCEPTION 'Changes to entry are not allowed if it is in the "Closed" state';
             End If;
 
@@ -320,7 +320,7 @@ BEGIN
 
             -- Name must be unique
             --
-            If Exists (SELECT * FROM t_sample_prep_request WHERE request_name = _requestName) Then
+            If Exists (SELECT request_name FROM t_sample_prep_request WHERE request_name = _requestName) Then
                 RAISE EXCEPTION 'Cannot add: Request "%" already in database', _requestName;
             End If;
 

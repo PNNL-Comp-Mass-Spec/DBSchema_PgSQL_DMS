@@ -76,7 +76,7 @@ BEGIN
     FROM t_dataset DS
     WHERE Tmp_DatasetsToProcess.dataset_id = DS.dataset_id;
 
-    If Exists (SELECT * FROM Tmp_DatasetsToProcess WHERE Not IsValid) Then
+    If Exists (SELECT Dataset_ID FROM Tmp_DatasetsToProcess WHERE Not IsValid) Then
         RAISE WARNING 'One or more dataset IDs was not present in t_dataset';
     End If;
 

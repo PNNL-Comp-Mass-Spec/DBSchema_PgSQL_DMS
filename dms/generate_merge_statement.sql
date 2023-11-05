@@ -206,7 +206,8 @@ BEGIN
     -- Show a message if the table has an identity column
     ---------------------------------------------------
 
-    If Exists (SELECT * FROM information_schema.columns
+    If Exists (SELECT table_name
+               FROM information_schema.columns
                WHERE table_schema = _sourceSchema AND
                      table_name = _tableName AND
                      is_identity = 'YES') Then

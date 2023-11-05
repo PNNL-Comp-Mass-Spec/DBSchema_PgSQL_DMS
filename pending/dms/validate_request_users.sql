@@ -116,7 +116,7 @@ BEGIN
 
         END LOOP;
 
-        If Exists (SELECT * FROM Tmp_UserInfo WHERE User_ID Is Null) Then
+        If Exists (SELECT EntryID FROM Tmp_UserInfo WHERE User_ID Is Null) Then
 
             SELECT Name_and_Username
             INTO _firstInvalidUser
@@ -129,7 +129,7 @@ BEGIN
             RETURN;
         End If;
 
-        If _nameValidationIteration = 1 And _requireValidRequestedPersonnel And Not Exists (SELECT * FROM Tmp_UserInfo WHERE User_ID > 0) Then
+        If _nameValidationIteration = 1 And _requireValidRequestedPersonnel And Not Exists (SELECT User_ID FROM Tmp_UserInfo WHERE User_ID > 0) Then
             -- Requested personnel person must be a specific person (or list of people)
             _message := format('The Requested Personnel person must be a specific DMS user; "%s" is invalid', _requestedPersonnel);
             _returnCode := 'U5202';
@@ -137,8 +137,8 @@ BEGIN
         End If;
 
         If _nameValidationIteration = 2 And
-           Exists (SELECT * FROM Tmp_UserInfo WHERE User_ID > 0) AND
-           Exists (SELECT * FROM Tmp_UserInfo WHERE Name_and_Username = 'na') THEN
+           Exists (SELECT User_ID FROM Tmp_UserInfo WHERE User_ID > 0) AND
+           Exists (SELECT User_ID FROM Tmp_UserInfo WHERE Name_and_Username = 'na') THEN
 
             -- Auto-remove the 'na' user since an actual person is defined
             DELETE FROM Tmp_UserInfo

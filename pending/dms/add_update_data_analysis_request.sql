@@ -212,7 +212,7 @@ BEGIN
                 _batchDescription := format('batches %s', _batchIDs);
             End If;
 
-            If Not Exists (Select * From t_requested_run_batches WHERE batch_id In (Select batch_id From Tmp_BatchIDs)) Then
+            If Not Exists (SELECT batch_id FROM t_requested_run_batches WHERE batch_id In (Select batch_id From Tmp_BatchIDs)) Then
                 RAISE EXCEPTION 'Could not find entry in database for requested run %', _batchDescription;
             Else
                 _batchDefined := 1;
@@ -220,7 +220,7 @@ BEGIN
         End If;
 
         If _dataPackageID > 0 Then
-            If Not Exists (Select * From dpkg.V_Data_Package_Export WHERE ID = _dataPackageID) Then
+            If Not Exists (SELECT ID FROM dpkg.V_Data_Package_Export WHERE ID = _dataPackageID) Then
                 RAISE EXCEPTION 'Could not find entry in database for data package ID "%"', _dataPackageID;
             Else
                 _dataPackageDefined := 1;
@@ -228,7 +228,7 @@ BEGIN
         End If;
 
         If _experimentGroupID > 0 Then
-            If Not Exists (Select * From t_experiment_groups WHERE group_id = _experimentGroupID) Then
+            If Not Exists (SELECT group_id FROM t_experiment_groups WHERE group_id = _experimentGroupID) Then
                 RAISE EXCEPTION 'Could not find entry in database for experiment group ID "%"', _experimentGroupID;
             Else
                 _experimentGroupDefined := 1;
@@ -615,11 +615,11 @@ BEGIN
         ---------------------------------------------------
 
         If _mode like '%add%' Then
-            If Exists (SELECT * FROM t_data_analysis_request WHERE request_name = _requestName) Then
+            If Exists (SELECT request_name FROM t_data_analysis_request WHERE request_name = _requestName) Then
                 RAISE EXCEPTION 'Cannot add: Request "%" already in database', _requestName;
             End If;
 
-        ElsIf EXISTS (SELECT * FROM t_data_analysis_request WHERE request_name = _requestName AND request_id <> _id) Then
+        ElsIf Exists (SELECT request_name FROM t_data_analysis_request WHERE request_name = _requestName AND request_id <> _id) Then
             RAISE EXCEPTION 'Cannot rename: Request "%" already in database', _requestName;
         End If;
 

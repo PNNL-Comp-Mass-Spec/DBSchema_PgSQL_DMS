@@ -142,7 +142,7 @@ BEGIN
         WHERE manager_name IN (SELECT WarnMsgs.manager_name FROM TmpWarningMessages WarnMsgs WHERE NOT WarnMsgs.message ILIKE 'Note:%');
     End If;
 
-    If Exists (SELECT * FROM TmpManagerList Where manager_name ILike '%Params%') Then
+    If Exists (SELECT manager_name FROM TmpManagerList WHERE manager_name ILike '%Params%') Then
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Will not process managers with "Params" in the name (for safety)',
                manager_name

@@ -169,7 +169,7 @@ BEGIN
         -- Only allow updating the state of Separation Type items that are associated with a dataset
         ---------------------------------------------------
 
-        If _ignoreDatasetChecks = 0 And Exists (Select * FROM t_dataset Where separation_type = _sepTypeName) Then
+        If _ignoreDatasetChecks = 0 And Exists (SELECT separation_type FROM t_dataset WHERE separation_type = _sepTypeName) Then
 
             SELECT COUNT(dataset_id),
                    MAX(dataset_id)
@@ -214,7 +214,7 @@ BEGIN
     ---------------------------------------------------
 
     If _mode = 'add' Then
-        If Exists (Select * FROM t_secondary_sep Where separation_type = _sepTypeName) Then
+        If Exists (SELECT separation_type FROM t_secondary_sep WHERE separation_type = _sepTypeName) Then
             _message := format('Separation Type already exists; cannot add a new separation type named %s', _sepTypeName);
             RAISE WARNING '%', _message;
 

@@ -282,7 +282,7 @@ BEGIN
         FROM t_param_files
         WHERE param_file_name = 'sequest_N14_NE.params';
 
-        If Not Exists (SELECT * FROM Tmp_ParamEntries WHERE Param_File_ID = _paramFileID) Then
+        If Not Exists (SELECT Param_File_ID FROM Tmp_ParamEntries WHERE Param_File_ID = _paramFileID) Then
             INSERT INTO Tmp_ParamEntries ( Param_File_ID,
                                            Entry_Type,
                                            Entry_Specifier,

@@ -59,7 +59,7 @@ BEGIN
         LIMIT 1;
 
         If Not FOUND Then
-            If Exists (SELECT * FROM sw.t_jobs_history WHERE job = _job) Then
+            If Exists (SELECT job FROM sw.t_jobs_history WHERE job = _job) Then
                 _message := 'Error: job not found in sw.t_jobs, but it is present in sw.t_jobs_history. However, the job is not complete (state <> 4). Therefore, the job cannot be extended.';
             Else
                 _message := 'Error: job not found in sw.t_jobs or sw.t_jobs_history.';
