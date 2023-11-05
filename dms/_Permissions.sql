@@ -6,13 +6,6 @@ GRANT SELECT ON SEQUENCE cap.t_log_entries_entry_id_seq TO readaccess;
 GRANT SELECT ON SEQUENCE cap.t_log_entries_entry_id_seq TO writeaccess;
 
 --
--- Name: SEQUENCE t_myemsl_test_uploads_entry_id_seq; Type: ACL; Schema: cap; Owner: d3l243
---
-
-GRANT SELECT ON SEQUENCE cap.t_myemsl_test_uploads_entry_id_seq TO readaccess;
-GRANT SELECT ON SEQUENCE cap.t_myemsl_test_uploads_entry_id_seq TO writeaccess;
-
---
 -- Name: SEQUENCE t_myemsl_upload_resets_entry_id_seq; Type: ACL; Schema: cap; Owner: d3l243
 --
 
