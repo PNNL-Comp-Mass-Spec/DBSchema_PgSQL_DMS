@@ -32,9 +32,9 @@ BEGIN
        Position(chr(9)  In _entityName) > 0 Or              -- Tab
        Not _allowspace And Position(' ' In _entityName) > 0 -- Space
     Then
-        RETURN True;
+        Return true;
     Else
-        RETURN False;
+        Return false;
     End If;
 
 END
