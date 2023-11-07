@@ -45,6 +45,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable boole
 **                         - Update warning messages
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          11/06/2023 mem - Use new column names in view v_mgr_params
 **
 *****************************************************/
 DECLARE
@@ -154,7 +155,7 @@ BEGIN
             _mgrName := _mgrRecord.manager_name;
             _mgrId   := _mgrRecord.mgr_id;
 
-            If Not Exists (SELECT ParameterName FROM mc.v_mgr_params WHERE ParameterName = 'RunJobsRemotely' And ManagerName = _mgrName) Then
+            If Not Exists (SELECT parameter_name FROM mc.v_mgr_params WHERE parameter_name = 'RunJobsRemotely' And manager_name = _mgrName) Then
 
                 SELECT param_type_id
                 INTO _paramTypeId
@@ -178,7 +179,7 @@ BEGIN
                 End If;
             End If;
 
-            If Not Exists (SELECT ParameterName FROM mc.v_mgr_params WHERE ParameterName = 'RemoteHostName' And ManagerName = _mgrName) Then
+            If Not Exists (SELECT parameter_name FROM mc.v_mgr_params WHERE parameter_name = 'RemoteHostName' And manager_name = _mgrName) Then
 
                 SELECT param_type_id
                 INTO _paramTypeId
