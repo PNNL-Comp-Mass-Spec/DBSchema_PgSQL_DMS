@@ -57,7 +57,7 @@ CREATE OR REPLACE PROCEDURE public.get_factor_crosstab_by_factor_id(IN _results 
 **          RAISE INFO 'Crosstab SQL: %', _crossTabSql;
 **          RAISE INFO 'Factor names: %', _factorNameList;
 **
-**          If Exists (SELECT * FROM pg_cursors WHERE name = '_results') Then
+**          If Exists (SELECT name FROM pg_cursors WHERE name = '_results') Then
 **              RAISE INFO 'Cursor has data';
 **
 **              WHILE true
