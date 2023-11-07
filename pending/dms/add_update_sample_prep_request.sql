@@ -253,7 +253,7 @@ BEGIN
             RAISE EXCEPTION 'The reason field is required';
         End If;
 
-        If public.has_whitespace_chars(_requestName, 1) Then
+        If public.has_whitespace_chars(_requestName, _allowspace => true) Then
             -- Auto-replace CR, LF, or tabs with spaces
             If Position(chr(10) In _requestName) > 0 Then
                 _requestName := Replace(_requestName, chr(10), ' ');

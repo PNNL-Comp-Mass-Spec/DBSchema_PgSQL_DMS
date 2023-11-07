@@ -52,6 +52,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_param_file(INOUT _paramfileid inte
 **          09/07/2023 mem - Update warning messages
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          11/06/2023 mem - Move variable assignment closer to usage
+**                         - Pass a boolean to has_whitespace_chars()
 **
 *****************************************************/
 DECLARE
@@ -130,7 +131,7 @@ BEGIN
             RAISE EXCEPTION 'ParamFileType was null';
         End If;
 
-        If public.has_whitespace_chars(_paramFileName, 0) Then
+        If public.has_whitespace_chars(_paramFileName, _allowspace => false) Then
             If Position(chr(9) In _paramFileName) > 0 Then
                 RAISE EXCEPTION 'Parameter file name cannot contain tabs';
             Else

@@ -77,7 +77,7 @@ BEGIN
         RAISE EXCEPTION 'Column name was blank';
     End If;
 
-    If public.has_whitespace_chars(_columnName, 0) Then
+    If public.has_whitespace_chars(_columnName, _allowspace => false) Then
         If Position(chr(9) In _columnName) > 0 Then
             RAISE EXCEPTION 'Column name cannot contain tabs';
         Else

@@ -71,7 +71,7 @@ BEGIN
     _cartState       := Trim(Coalesce(_cartState, ''));
     _mode            := Trim(Lower(Coalesce(_mode, '')));
 
-    If public.has_whitespace_chars(_cartName, 0) Then
+    If public.has_whitespace_chars(_cartName, _allowspace => false) Then
         If Position(chr(9) In _cartName) > 0 Then
             RAISE EXCEPTION 'LC Cart name cannot contain tabs';
         Else

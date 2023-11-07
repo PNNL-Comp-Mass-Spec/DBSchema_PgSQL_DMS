@@ -180,7 +180,7 @@ BEGIN
             RAISE EXCEPTION 'Organism Name must be specified';
         End If;
 
-        If public.has_whitespace_chars(_orgName, 0) Then
+        If public.has_whitespace_chars(_orgName, _allowspace => false) Then
             If Position(chr(9) In _orgName) > 0 Then
                 RAISE EXCEPTION 'Organism name cannot contain tabs';
             Else
