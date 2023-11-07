@@ -51,6 +51,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_param_file(INOUT _paramfileid inte
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          09/07/2023 mem - Update warning messages
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          11/06/2023 mem - Move variable assignment closer to usage
 **
 *****************************************************/
 DECLARE
@@ -66,7 +67,7 @@ DECLARE
     _existingParamFileID int := 0;
     _currentName text := '';
     _currentTypeID int := 0;
-    _action text := 'rename';
+    _action text;
     _delimiter text := '';
     _logMessage text;
 
@@ -198,6 +199,8 @@ BEGIN
 
                 If _paramFileName = _currentName Then
                     _action := 'change param file type';
+                Else
+                    _action := 'rename';
                 End If;
 
                 If Exists (SELECT param_file_name FROM t_analysis_job WHERE param_file_name = _currentName) Then
