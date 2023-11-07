@@ -357,9 +357,9 @@ BEGIN
         -- Get parameters for the capture task job as XML
         --
         _xmlParameters := cap.create_parameters_for_task (_jobInfo.Job, _jobInfo.Dataset, _jobInfo.DatasetID,
-                                                         _jobInfo.Script, _jobInfo.StorageServer,
-                                                         _jobInfo.Instrument, _jobInfo.InstrumentClass,
-                                                         _jobInfo.MaxSimultaneousCaptures, _jobInfo.CaptureSubdirectory);
+                                                          _jobInfo.Script, _jobInfo.StorageServer,
+                                                          _jobInfo.Instrument, _jobInfo.InstrumentClass,
+                                                          _jobInfo.MaxSimultaneousCaptures, _jobInfo.CaptureSubdirectory);
 
         -- Store the parameters
         INSERT INTO Tmp_Job_Parameters (Job, Parameters)

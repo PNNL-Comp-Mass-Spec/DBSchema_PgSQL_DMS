@@ -9,10 +9,10 @@ CREATE OR REPLACE FUNCTION public.has_whitespace_chars(_entityname text, _allows
 **
 **  Desc:
 **      Checks for whitespace characters: CRLF, tab, and space
-**      Allows symbols and letters, including periods, dashes,
-**      and underscores
 **
-**      This function is called by numerous Check Constraints,
+**      Allows symbols and letters, including periods, dashes, and underscores
+**
+**      This function is called by numerous check constraints,
 **      including on tables T_Dataset and T_Experiments
 **
 **  Returns values: false if no problems, true if whitespace characters are present
