@@ -8,10 +8,11 @@ CREATE VIEW public.v_material_containers_entry AS
     ml.location,
     mc.status,
     mc.comment,
-    mc.barcode,
+    c.campaign,
     mc.researcher
-   FROM (public.t_material_containers mc
-     JOIN public.t_material_locations ml ON ((mc.location_id = ml.location_id)));
+   FROM ((public.t_material_containers mc
+     JOIN public.t_material_locations ml ON ((mc.location_id = ml.location_id)))
+     LEFT JOIN public.t_campaign c ON ((mc.campaign_id = c.campaign_id)));
 
 
 ALTER TABLE public.v_material_containers_entry OWNER TO d3l243;

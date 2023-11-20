@@ -12,7 +12,7 @@ CREATE VIEW public.v_material_containers_list_report AS
     containerq.status,
     'New Biomaterial'::public.citext AS action,
     containerq.created,
-    (public.get_material_container_campaign_list(containerq.container_id, containerq.items))::public.citext AS campaigns,
+    containerq.campaign,
     containerq.researcher,
     containerq.container_id AS id
    FROM ( SELECT mc.container,
@@ -22,11 +22,13 @@ CREATE VIEW public.v_material_containers_list_report AS
             mc.comment,
             mc.status,
             mc.created,
+            c.campaign,
             mc.container_id,
             mc.researcher,
             tfa.filecount
-           FROM (((public.t_material_containers mc
+           FROM ((((public.t_material_containers mc
              JOIN public.t_material_locations ml ON ((mc.location_id = ml.location_id)))
+             LEFT JOIN public.t_campaign c ON ((mc.campaign_id = c.campaign_id)))
              LEFT JOIN ( SELECT t_biomaterial.container_id,
                     t_biomaterial.biomaterial_id AS material_id
                    FROM public.t_biomaterial
@@ -46,7 +48,7 @@ CREATE VIEW public.v_material_containers_list_report AS
                    FROM public.t_file_attachment
                   WHERE ((t_file_attachment.entity_type OPERATOR(public.=) 'material_container'::public.citext) AND (t_file_attachment.active > 0))
                   GROUP BY t_file_attachment.entity_id) tfa ON ((tfa.entity_id OPERATOR(public.=) mc.container)))
-          GROUP BY mc.container, mc.type, ml.location, mc.comment, mc.created, mc.status, mc.container_id, mc.researcher, tfa.filecount) containerq;
+          GROUP BY mc.container, mc.type, ml.location, mc.comment, mc.created, c.campaign, mc.status, mc.container_id, mc.researcher, tfa.filecount) containerq;
 
 
 ALTER TABLE public.v_material_containers_list_report OWNER TO d3l243;

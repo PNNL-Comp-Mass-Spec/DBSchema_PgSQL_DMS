@@ -9,9 +9,9 @@ CREATE VIEW public.v_material_containers_detail_report AS
     containerq.items,
     containerq.comment,
     containerq.freezer,
-    public.get_material_container_campaign_list(containerq.container_id, containerq.items) AS campaigns,
-    containerq.barcode,
+    containerq.campaign,
     containerq.created,
+    containerq.container_id AS id,
     containerq.status,
     containerq.researcher,
     containerq.files
@@ -21,13 +21,14 @@ CREATE VIEW public.v_material_containers_detail_report AS
             (count(contentsq.material_id))::integer AS items,
             mc.comment,
             ml.freezer_tag AS freezer,
-            mc.barcode,
+            c.campaign,
             mc.created,
             mc.status,
             mc.researcher,
             tfa.files,
             mc.container_id
-           FROM (((public.t_material_containers mc
+           FROM ((((public.t_material_containers mc
+             LEFT JOIN public.t_campaign c ON ((mc.campaign_id = c.campaign_id)))
              LEFT JOIN ( SELECT t_biomaterial.container_id,
                     t_biomaterial.biomaterial_id AS material_id
                    FROM public.t_biomaterial
@@ -48,7 +49,7 @@ CREATE VIEW public.v_material_containers_detail_report AS
                   WHERE ((t_file_attachment.entity_type OPERATOR(public.=) 'material_container'::public.citext) AND (t_file_attachment.active > 0) AND (t_file_attachment.entity_id OPERATOR(public.<>) ALL (ARRAY['na'::public.citext, 'Staging'::public.citext, 'Met_Staging'::public.citext, '-80_Staging'::public.citext])))
                   GROUP BY t_file_attachment.entity_id) tfa ON ((tfa.entity_id OPERATOR(public.=) mc.container)))
              JOIN public.t_material_locations ml ON ((mc.location_id = ml.location_id)))
-          GROUP BY mc.container, mc.type, ml.location, mc.comment, mc.barcode, mc.created, mc.status, mc.researcher, ml.freezer_tag, tfa.files, mc.container_id) containerq;
+          GROUP BY mc.container, mc.type, ml.location, mc.comment, c.campaign, mc.created, mc.status, mc.researcher, ml.freezer_tag, tfa.files, mc.container_id) containerq;
 
 
 ALTER TABLE public.v_material_containers_detail_report OWNER TO d3l243;
