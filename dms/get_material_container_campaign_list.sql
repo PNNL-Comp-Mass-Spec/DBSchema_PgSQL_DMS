@@ -8,8 +8,10 @@ CREATE OR REPLACE FUNCTION public.get_material_container_campaign_list(_containe
 /****************************************************
 **
 **  Desc:
-**      Builds delimited list of campaigns represented
-**      by items in the given container
+**      Builds delimited list of campaigns represented by items in the given container
+**
+**      This function was previously used by views V_Material_Containers_List_Report and V_Material_Containers_Detail_Report
+**      but is no longer used, since column Campaign_ID was added to table T_Material_Containers in November 2023
 **
 **  Return value: comma-separated list
 **
@@ -28,7 +30,7 @@ DECLARE
     _result text;
 BEGIN
 
-    If Not _count Is Null And _count = 0 Then
+    If Coalesce(_count, 0) = 0 Then
         RETURN '';
     End If;
 
