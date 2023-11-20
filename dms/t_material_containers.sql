@@ -7,8 +7,13 @@ CREATE TABLE public.t_material_containers (
     container public.citext NOT NULL,
     type public.citext NOT NULL,
     comment public.citext,
-    barcode public.citext,
+    rfid_hex_id public.citext GENERATED ALWAYS AS (
+CASE
+    WHEN (container OPERATOR(public.~~) 'MC-%'::public.citext) THEN "left"(upper((encode((container)::bytea, 'hex'::text) || '000000000000000000000000'::text)), 24)
+    ELSE "left"(upper((encode('\x4d432d303030303030'::bytea, 'hex'::text) || '000000000000000000000000'::text)), 24)
+END) STORED,
     location_id integer NOT NULL,
+    campaign_id integer,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     status public.citext DEFAULT 'Active'::public.citext NOT NULL,
     researcher public.citext,
@@ -70,6 +75,13 @@ CREATE INDEX ix_t_material_containers_sort_key ON public.t_material_containers U
 --
 
 CREATE INDEX ix_t_material_containers_status ON public.t_material_containers USING btree (status);
+
+--
+-- Name: t_material_containers fk_t_material_containers_t_campaign; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_material_containers
+    ADD CONSTRAINT fk_t_material_containers_t_campaign FOREIGN KEY (campaign_id) REFERENCES public.t_campaign(campaign_id);
 
 --
 -- Name: t_material_containers fk_t_material_containers_t_material_locations; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
