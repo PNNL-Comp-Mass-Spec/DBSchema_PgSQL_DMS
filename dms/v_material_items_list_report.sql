@@ -12,34 +12,41 @@ CREATE VIEW public.v_material_items_list_report AS
     ml.location,
     contentsq.material_status AS item_status,
     mc.status AS container_status,
-    contentsq.request_id AS prep_request
+    contentsq.request_id AS prep_request,
+    contentsq.campaign
    FROM ((public.t_material_containers mc
-     JOIN ( SELECT t_experiments.experiment AS item,
+     JOIN ( SELECT e.experiment AS item,
             'Experiment'::public.citext AS item_type,
-            t_experiments.container_id,
-            t_experiments.exp_id AS material_id,
-            t_experiments.sample_prep_request_id AS request_id,
-            t_experiments.material_active AS material_status
-           FROM public.t_experiments
+            e.container_id,
+            e.exp_id AS material_id,
+            e.sample_prep_request_id AS request_id,
+            e.material_active AS material_status,
+            c.campaign
+           FROM (public.t_experiments e
+             JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id)))
         UNION
-         SELECT t_biomaterial.biomaterial_name AS item,
+         SELECT b.biomaterial_name AS item,
             'Biomaterial'::public.citext AS item_type,
-            t_biomaterial.container_id,
-            t_biomaterial.biomaterial_id AS material_id,
+            b.container_id,
+            b.biomaterial_id AS material_id,
             NULL::integer AS request_id,
-            t_biomaterial.material_active AS material_status
-           FROM public.t_biomaterial
+            b.material_active AS material_status,
+            c.campaign
+           FROM (public.t_biomaterial b
+             JOIN public.t_campaign c ON ((b.campaign_id = c.campaign_id)))
         UNION
-         SELECT t_reference_compound.compound_name AS item,
+         SELECT rc.compound_name AS item,
             'RefCompound'::public.citext AS item_type,
-            t_reference_compound.container_id,
-            t_reference_compound.compound_id AS material_id,
+            rc.container_id,
+            rc.compound_id AS material_id,
             NULL::integer AS request_id,
                 CASE
-                    WHEN (t_reference_compound.active > 0) THEN 'Active'::public.citext
+                    WHEN (rc.active > 0) THEN 'Active'::public.citext
                     ELSE 'Inactive'::public.citext
-                END AS material_status
-           FROM public.t_reference_compound) contentsq ON ((contentsq.container_id = mc.container_id)))
+                END AS material_status,
+            c.campaign
+           FROM (public.t_reference_compound rc
+             JOIN public.t_campaign c ON ((rc.campaign_id = c.campaign_id)))) contentsq ON ((contentsq.container_id = mc.container_id)))
      JOIN public.t_material_locations ml ON ((mc.location_id = ml.location_id)));
 
 
