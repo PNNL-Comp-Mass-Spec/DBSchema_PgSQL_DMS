@@ -1,28 +1,26 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_material_container
-(
-    INOUT _container text,
-    _type text,
-    _location text,
-    _comment text,
-    _barcode text,
-    _researcher text,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_material_container(text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_material_container(INOUT _container text, IN _type text, IN _location text, IN _comment text, IN _campaignname text, IN _researcher text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Adds new or edits an existing material container
 **
 **  Arguments:
-**    _type         Box, Bag, or Wellplate
-**    _researcher   Supports 'Zink, Erika M (D3P704)' or simply 'D3P704'
-**    _mode         'add', 'update', or 'preview'
+**    _container        Input/Output: Container name; auto-defined if _mode is 'add'
+**    _type             Container type: Box, Bag, Wellplate, or na
+**    _location         Storage location name, e.g. '1521A.2.3.4.3' (must exist in table t_material_locations)
+**    _comment          Comment
+**    _campaignName     Campaign name; if an empty string, will store a null for Campaign_ID
+**    _researcher       Supports 'Zink, Erika M (D3P704)' or simply 'D3P704'
+**    _mode             'add', 'update', or 'preview'
+**    _message          Output: error message, or an empty string if no error
+**    _returnCode       Output: return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   03/20/2008 grk - Initial release
@@ -37,7 +35,8 @@ AS $$
 **          11/11/2019 mem - If _researcher is 'na' or 'none', store an empty string in the Researcher column of T_Material_Containers
 **          07/02/2021 mem - Require that the researcher is a valid DMS user
 **          05/23/2023 mem - Use a Like clause to prevent updating Staging containers
-**          12/15/2023 mem - Ported to PostgreSQL
+**          11/18/2023 mem - Remove procedure argument _barcode and add _campaignName
+**          11/20/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -46,11 +45,14 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
+    _logErrors boolean := true;
+    _currentLocation text := 'Initializing';
     _status text := 'Active';
     _nextContainerID int := 0;
     _matchCount int;
     _researcherUsername text;
-    _userID Int;
+    _userID int;
+    _campaignID int;
     _containerID int := 0;
     _curLocationID int := 0;
     _curType text := '';
@@ -89,22 +91,25 @@ BEGIN
     End If;
 
     BEGIN
-
         ---------------------------------------------------
         -- Validate the inputs
         ---------------------------------------------------
 
-        _container := Trim(Coalesce(_container, ''));
-        _type := Trim(Coalesce(_type, 'Box'));
-        _location := Trim(Coalesce(_location, ''));
-        _comment := Trim(Coalesce(_comment, ''));
-        _barcode := Trim(Coalesce(_barcode, ''));
-        _researcher := Trim(Coalesce(_researcher, ''));
-        _mode := Trim(Lower(Coalesce(_mode, '')));
+        _currentLocation := 'Validate the inputs';
 
-        -- Optionally generate a container name
+        _container    := Trim(Coalesce(_container, ''));
+        _type         := Trim(Coalesce(_type, 'Box'));
+        _location     := Trim(Coalesce(_location, ''));
+        _comment      := Trim(Coalesce(_comment, ''));
+        _campaignName := Trim(Coalesce(_campaignName, ''));
+        _researcher   := Trim(Coalesce(_researcher, ''));
+        _mode         := Trim(Lower(Coalesce(_mode, '')));
 
-        If _container::citext = '(generate name)' Or _mode = 'add' Then
+        ---------------------------------------------------
+        -- Generate a new container name if mode is 'add'
+        ---------------------------------------------------
+
+        If _mode = 'add' Then
 
             SELECT MAX(container_id) + 1
             INTO _nextContainerID
@@ -115,13 +120,13 @@ BEGIN
 
         If char_length(_container) = 0 Then
             _message := 'Container name cannot be empty';
-            _returnCode := 'U5202';
+            _returnCode := 'U5201';
             RETURN;
         End If;
 
-        If _container::citext ='na' Or _container ILike '%Staging%' Then
+        If _container::citext = 'na' Or _container ILike '%Staging%' Then
             _message := format('The "%s" container cannot be updated via the website; contact a DMS admin (see AddUpdateMaterialContainer)', _container);
-            _returnCode := 'U5203';
+            _returnCode := 'U5202';
             RETURN;
         End If;
 
@@ -131,13 +136,13 @@ BEGIN
 
         If Not _type::citext In ('Box', 'Bag', 'Wellplate') Then
             _message := format('Container type must be Box, Bag, or Wellplate, not %s', _type);
-            _returnCode := 'U5204';
+            _returnCode := 'U5203';
             RETURN;
         End If;
 
         If _type::citext = 'na' Then
             _message := 'Containers of type "na" cannot be updated via the website; contact a DMS admin';
-            _returnCode := 'U5205';
+            _returnCode := 'U5204';
             RETURN;
         End If;
 
@@ -145,9 +150,11 @@ BEGIN
         -- Validate the researcher name
         ---------------------------------------------------
 
+        _currentLocation := 'Validate the researcher name';
+
         If _researcher::citext In ('', 'na', 'none') Then
             _message := 'Researcher must be a valid DMS user';
-            _returnCode := 'U5206';
+            _returnCode := 'U5205';
             RETURN;
         End If;
 
@@ -176,15 +183,37 @@ BEGIN
                 _message := format('%s; %s is an ambiguous match to multiple people', _message, _researcher);
             End If;
 
-            _returnCode := 'U5207';
+            _returnCode := 'U5206';
             RETURN;
+        End If;
+
+        ---------------------------------------------------
+        -- Resolve campaign name to ID
+        ---------------------------------------------------
+
+        _currentLocation := 'Resolve campaign name to ID';
+
+        If _campaignName = '' Then
+            _campaignID := null;
+        Else
+            SELECT Campaign_ID
+            INTO _campaignID
+            FROM T_Campaign
+            WHERE Campaign = _campaignName::citext;
+
+            If Not FOUND Then
+                _message := format('Unrecognized campaign name: %s', _campaignName);
+                _returnCode := 'U5207';
+                RETURN;
+            End If;
         End If;
 
         ---------------------------------------------------
         -- Is entry already in database?
         ---------------------------------------------------
 
-        --
+        _currentLocation := 'Check for existing container';
+
         SELECT container_id,
                location_id,
                type,
@@ -193,13 +222,15 @@ BEGIN
         FROM  t_material_containers
         WHERE container = _container::citext;
 
-        If _mode = 'add' and _containerID <> 0 Then
+        If _mode = 'add' And FOUND Then
+            -- This code should never be reached since the container name is auto-generated when _mode is 'add'
+
             _message := format('Cannot add container with same name as existing container: %s', _container);
             _returnCode := 'U5208';
             RETURN;
         End If;
 
-        If _mode::citext In ('update', 'preview') and _containerID = 0 Then
+        If _mode In ('update', 'preview') And _containerID = 0 Then
             _message := format('No entry could be found in database for updating %s', _container);
             _returnCode := 'U5209';
             RETURN;
@@ -209,7 +240,8 @@ BEGIN
         -- Resolve input location name to ID and get limit
         ---------------------------------------------------
 
-        --
+        _currentLocation := 'Resolve location name to ID';
+
         SELECT location_id,
                container_limit
         INTO _locationID, _limit
@@ -227,7 +259,9 @@ BEGIN
         ---------------------------------------------------
 
         If _curLocationID <> _locationID Then
-            --
+
+            _currentLocation := 'Verify that destination location has room for the container';
+
             SELECT COUNT(container_id)
             INTO _cnt
             FROM t_material_containers
@@ -242,14 +276,15 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Resolve current Location id to name
+        -- Resolve current Location ID to name
         ---------------------------------------------------
 
-        --
+        _currentLocation := 'Resolve location ID to name';
+
         SELECT location
         INTO _curLocationName
         FROM t_material_locations
-        WHERE location_id = _curLocationID
+        WHERE location_id = _curLocationID;
 
         ---------------------------------------------------
         -- Action for add mode
@@ -257,18 +292,20 @@ BEGIN
 
         If _mode = 'add' Then
 
-            -- future: accept '<next bag>' or '<next box> and generate container name
+            _currentLocation := 'Add new row to t_material_containers';
 
             INSERT INTO t_material_containers( container,
                                                type,
                                                comment,
-                                               barcode,
+                                               campaign_id,
                                                location_id,
                                                status,
                                                researcher )
-            VALUES (_container, _type, _comment, _barcode, _locationID, _status, _researcher);
+            VALUES (_container, _type, _comment, _campaignID, _locationID, _status, _researcher);
 
-            -- Material movement logging
+            _currentLocation := 'Call post_material_log_entry';
+
+            -- Log the container creation
             --
             CALL public.post_material_log_entry (
                             _type         => 'Container Creation',
@@ -286,18 +323,23 @@ BEGIN
 
         If _mode = 'update' Then
 
-            UPDATE t_material_containers
-            SET type = _type,
-                comment = _comment,
-                barcode = _barcode,
-                location_id = _locationID,
-                status = _status,
-                researcher = _researcher
-            WHERE container = _container;
+            _currentLocation := 'Update row in t_material_containers';
 
-            -- Material movement logging
-            --
+            UPDATE t_material_containers
+            SET type        = _type,
+                comment     = _comment,
+                campaign_id = _campaignID,
+                location_id = _locationID,
+                status      = _status,
+                researcher  = _researcher
+            WHERE container = _container::citext;
+
             If _curLocationName <> _location Then
+
+                _currentLocation := 'Call post_material_log_entry';
+
+                -- Log the container location change
+                --
                 CALL public.post_material_log_entry (
                                 _type         => 'Container Move',
                                 _item         => _container,
@@ -320,7 +362,7 @@ BEGIN
         If _logErrors Then
             _message := local_error_handler (
                             _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                            _callingProcLocation => '', _logError => true);
+                            _callingProcLocation => _currentLocation, _logError => true);
         Else
             _message := _exceptionMessage;
         End If;
@@ -333,4 +375,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_material_container IS 'AddUpdateMaterialContainer';
+
+ALTER PROCEDURE public.add_update_material_container(INOUT _container text, IN _type text, IN _location text, IN _comment text, IN _campaignname text, IN _researcher text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_material_container(INOUT _container text, IN _type text, IN _location text, IN _comment text, IN _campaignname text, IN _researcher text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_material_container(INOUT _container text, IN _type text, IN _location text, IN _comment text, IN _campaignname text, IN _researcher text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateMaterialContainer';
+
