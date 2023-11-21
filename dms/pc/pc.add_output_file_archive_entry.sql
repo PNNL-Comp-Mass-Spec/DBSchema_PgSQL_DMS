@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE pc.add_output_file_archive_entry(IN _proteincollecti
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
+**          11/20/2023 mem - Add missing semicolon before Return statement
 **
 *****************************************************/
 DECLARE
@@ -225,7 +226,7 @@ BEGIN
 
                 ROLLBACK;
 
-                _returnCode = '0'
+                _returnCode := '0';
                 RETURN;
             End If;
 
@@ -235,7 +236,7 @@ BEGIN
 
                 ROLLBACK;
 
-                _returnCode = '0'
+                _returnCode := '0';
                 RETURN;
             End If;
 
@@ -253,7 +254,7 @@ BEGIN
 
                 ROLLBACK;
 
-                _returnCode = '0'
+                _returnCode := '0';
                 RETURN;
             End If;
 

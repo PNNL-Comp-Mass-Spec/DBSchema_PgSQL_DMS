@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE public.update_failed_job_now_in_progress(IN _job int
 **  Auth:   mem
 **  Date:   02/21/2013 mem - Initial version
 **          08/03/2023 mem - Ported to PostgreSQL
+**          11/20/2023 mem - Add missing semicolon before Return statement
 **
 *****************************************************/
 DECLARE
@@ -59,7 +60,7 @@ BEGIN
 
     If Coalesce(_updateCode, 0) <> _updateCodeExpected Then
         _message := 'Invalid Update Code';
-        _returnCode := 'U5202'
+        _returnCode := 'U5202';
         RETURN;
     End If;
 

@@ -69,7 +69,7 @@ BEGIN
 
     If _hostList = '' Then
         _message := '_hostList is empty; unable to continue';
-        _returnCode := 'U5201'
+        _returnCode := 'U5201';
         RETURN;
     End If;
 

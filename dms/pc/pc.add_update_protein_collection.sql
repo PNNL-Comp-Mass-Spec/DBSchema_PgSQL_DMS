@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE pc.add_update_protein_collection(IN _collectionname 
 **          09/07/2023 mem - Align assignment statements
 **                         - Update warning messages
 **          09/11/2023 mem - Adjust capitalization of keywords
+**          11/20/2023 mem - Add missing semicolon before Return statement
 **
 *****************************************************/
 DECLARE
@@ -61,7 +62,7 @@ BEGIN
         RAISE WARNING '%', _message;
 
         -- The Organism Database Handler expects this procedure to return '0' if there is an error
-        _returnCode := '0'
+        _returnCode := '0';
         RETURN;
     End If;
 
@@ -70,7 +71,7 @@ BEGIN
         RAISE WARNING '%', _message;
 
         -- The Organism Database Handler expects this procedure to return '0' if there is an error
-        _returnCode := '0'
+        _returnCode := '0';
         RETURN;
     End If;
 
@@ -81,7 +82,7 @@ BEGIN
         RAISE WARNING '%', _message;
 
         -- The Organism Database Handler expects this procedure to return '0' if there is an error
-        _returnCode := '0'
+        _returnCode := '0';
         RETURN;
     End If;
 
