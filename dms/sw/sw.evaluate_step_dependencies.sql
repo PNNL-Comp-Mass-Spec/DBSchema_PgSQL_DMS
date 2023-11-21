@@ -276,7 +276,7 @@ BEGIN
 
             If Not FOUND Then
                 _message := format('Error getting dependent step filter signature: step %s for job %s not found in sw.t_job_steps', _dependentStep, _job);
-                _returnCode = 'U5431';
+                _returnCode := 'U5431';
 
                 DROP TABLE Tmp_DepTable;
                 RETURN;
@@ -301,7 +301,7 @@ BEGIN
 
             If Not FOUND Then
                 _message := format('Error getting target step state: step %s for job %s not found in sw.t_job_steps', _targetStep, _job);
-                _returnCode = 'U5432';
+                _returnCode := 'U5432';
 
                 DROP TABLE Tmp_DepTable;
                 RETURN;

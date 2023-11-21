@@ -369,7 +369,7 @@ BEGIN
             _message := format('Excessive runtime updating requested run batch stats; %s seconds elapsed overall; %s', _runtimeSeconds, _runtimeMessage);
             CALL post_log_entry ('Error', _message, 'Update_Cached_Requested_Run_Batch_Stats');
         Else
-            _message = format('Overall runtime: %s seconds; %s', Round(_runtimeSeconds, 2), Coalesce(_runtimeMessage, '??'));
+            _message := format('Overall runtime: %s seconds; %s', Round(_runtimeSeconds, 2), Coalesce(_runtimeMessage, '??'));
         End If;
 
     EXCEPTION

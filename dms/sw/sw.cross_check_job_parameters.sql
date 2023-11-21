@@ -70,7 +70,7 @@ BEGIN
     If _message = '' Then
         _message := '';
     ElsIf _message = ';' Then
-    _message := '';
+        _message := '';
     End If;
 
     If _message <> '' Then

@@ -98,7 +98,7 @@ BEGIN
     WHERE request_id = _requestID;
 
     If Not FOUND Then
-        _message = format('ID %s not found in T_Requested_Run; nothing to do', _requestID);
+        _message := format('ID %s not found in T_Requested_Run; nothing to do', _requestID);
         RAISE WARNING '%', _message;
         RETURN;
     End If;

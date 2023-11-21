@@ -43,7 +43,7 @@ BEGIN
 
     If _expID Is Null Then
         _message := 'Experiment ID cannot be null';
-        _returnCode = 'U5061';
+        _returnCode := 'U5061';
     End If;
 
     _updateCachedInfo := Coalesce(_updateCachedInfo, true);
@@ -69,7 +69,7 @@ BEGIN
 
     If char_length(Coalesce(_invalidBiomaterialList, '')) > 0 Then
         _message := format('Invalid biomaterial name(s): %s', _invalidBiomaterialList);
-        _returnCode = 'U5063';
+        _returnCode := 'U5063';
         RETURN;
     End If;
 

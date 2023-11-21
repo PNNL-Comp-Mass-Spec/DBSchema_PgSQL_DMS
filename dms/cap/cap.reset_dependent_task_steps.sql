@@ -113,7 +113,7 @@ BEGIN
                JS_Target.Start > TS.Finish);
 
         If Not FOUND Then
-            _message = format('No job steps were found to reset for %s %s', public.check_plural(_jobCount, 'job', 'jobs'), _jobs);
+            _message := format('No job steps were found to reset for %s %s', public.check_plural(_jobCount, 'job', 'jobs'), _jobs);
 
             DROP TABLE Tmp_Jobs;
             DROP TABLE Tmp_JobStepsToReset;
@@ -175,7 +175,7 @@ BEGIN
                 RAISE INFO '%', _infoData;
             END LOOP;
 
-            _message = format('Would reset %s %s', _stepCount, public.check_plural(_stepCount, 'job step', 'job steps'));
+            _message := format('Would reset %s %s', _stepCount, public.check_plural(_stepCount, 'job step', 'job steps'));
 
             DROP TABLE Tmp_Jobs;
             DROP TABLE Tmp_JobStepsToReset;
@@ -213,7 +213,7 @@ BEGIN
         WHERE T.Job = JR.Job AND
               T.State = 5;
 
-        _message = format('Reset %s %s', _stepCount, public.check_plural(_stepCount, 'job step', 'job steps'));
+        _message := format('Reset %s %s', _stepCount, public.check_plural(_stepCount, 'job step', 'job steps'));
 
 
     EXCEPTION

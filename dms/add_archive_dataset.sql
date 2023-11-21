@@ -78,7 +78,7 @@ BEGIN
     End If;
 
     If _archiveDisabled > 0 Then
-        _message = 'Dataset archiving is disabled in T_Misc_Options';
+        _message := 'Dataset archiving is disabled in T_Misc_Options';
         RAISE INFO '%', _message;
         RETURN;
     End If;

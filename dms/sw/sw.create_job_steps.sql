@@ -457,10 +457,10 @@ BEGIN
             _firstStepScript2 := Position('<Step ' In _scriptXML2::text);
 
             If _closingTagScript1 = 0 Then
-                _message = format('Cannot combine original job script with extension script; could not find "</JobScript>" in the script XML for %s', _jobInfo.ScriptName);
+                _message := format('Cannot combine original job script with extension script; could not find "</JobScript>" in the script XML for %s', _jobInfo.ScriptName);
                 _returnCode := 'U5209';
             ElsIf _firstStepScript2 = 0 Then
-                _message = format('Cannot combine original job script with extension script; could not find "<Step " in the script XML for %s', _extensionScriptName);
+                _message := format('Cannot combine original job script with extension script; could not find "<Step " in the script XML for %s', _extensionScriptName);
                 _returnCode := 'U5210';
             Else
                 _message := '';

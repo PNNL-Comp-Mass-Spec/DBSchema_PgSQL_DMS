@@ -78,7 +78,7 @@ BEGIN
     LIMIT 1;
 
     If Not FOUND Then
-        _message = format('Requested Run Batch ID %s not found in T_Deleted_Requested_Run_Batch; unable to restore', _batchID);
+        _message := format('Requested Run Batch ID %s not found in T_Deleted_Requested_Run_Batch; unable to restore', _batchID);
         RAISE WARNING '%', _message;
         RETURN;
     End If;
@@ -88,13 +88,13 @@ BEGIN
     ---------------------------------------------------
 
     If Exists (SELECT batch_id FROM T_Requested_Run_Batches WHERE batch_id = _batchID) Then
-        _message = format('Requested Run Batch ID %s already exists in T_Requested_Run_Batches; unable to undelete', _batchID);
+        _message := format('Requested Run Batch ID %s already exists in T_Requested_Run_Batches; unable to undelete', _batchID);
         RAISE WARNING '%', _message;
         RETURN;
     End If;
 
     If _infoOnly Then
-        _message = format('Would restore requested run batch ID %s by copying Entry_ID %s from T_Deleted_Requested_Run_Batch to T_Requested_Run_Batches', _batchID, _entryID);
+        _message := format('Would restore requested run batch ID %s by copying Entry_ID %s from T_Deleted_Requested_Run_Batch to T_Requested_Run_Batches', _batchID, _entryID);
         RAISE INFO '%', _message;
         RETURN;
     End If;

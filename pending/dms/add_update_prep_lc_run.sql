@@ -139,7 +139,7 @@ BEGIN
 
             If Coalesce(_invalidIDs, '') <> ''
             Begin
-                _message = format('Invalid sample prep request ID(s): %s', _invalidIDs);
+                _message := format('Invalid sample prep request ID(s): %s', _invalidIDs);
                 RAISE EXCEPTION '%', _message;
             End
         End If;

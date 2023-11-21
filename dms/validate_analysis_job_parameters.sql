@@ -244,7 +244,7 @@ BEGIN
                     RAISE INFO '%', _message;
                 End If;
 
-                _returnCode = 'U5319';
+                _returnCode := 'U5319';
                 RETURN;
             End If;
         End If;
@@ -264,7 +264,7 @@ BEGIN
                 RAISE INFO '%', _message;
             End If;
 
-            _returnCode = 'U5320';
+            _returnCode := 'U5320';
             RETURN;
         End If;
 
@@ -320,7 +320,7 @@ BEGIN
                 RAISE INFO '%', _message;
             End If;
 
-            _returnCode = 'U5323';
+            _returnCode := 'U5323';
             RETURN;
         End If;
 
@@ -339,7 +339,7 @@ BEGIN
                 RAISE INFO '%', _message;
             End If;
 
-            _returnCode = 'U5325';
+            _returnCode := 'U5325';
             RETURN;
         End If;
 
@@ -368,7 +368,7 @@ BEGIN
                 RAISE INFO '%', _message;
             End If;
 
-            _returnCode = 'U5327';
+            _returnCode := 'U5327';
             RETURN;
         End If;
 
@@ -397,7 +397,7 @@ BEGIN
                 RAISE WARNING '%', _message;
             End If;
 
-            _returnCode = 'U5328';
+            _returnCode := 'U5328';
 
             RETURN;
         End If;
@@ -422,7 +422,7 @@ BEGIN
                 RAISE INFO '%', _message;
             End If;
 
-            _returnCode = 'U5329';
+            _returnCode := 'U5329';
             RETURN;
         End If;
 
@@ -433,7 +433,7 @@ BEGIN
                 RAISE INFO '%', _message;
             End If;
 
-            _returnCode = 'U5330';
+            _returnCode := 'U5330';
             RETURN;
         End If;
 
@@ -484,7 +484,7 @@ BEGIN
                         RAISE INFO '%', _message;
                     End If;
 
-                    _returnCode = 'U5331';
+                    _returnCode := 'U5331';
                     RETURN;
                 End If;
             Else
@@ -500,7 +500,7 @@ BEGIN
                     RAISE INFO '%', _message;
                 End If;
 
-                _returnCode = 'U5339';
+                _returnCode := 'U5339';
                 RETURN;
             End If;
         End If;
@@ -525,7 +525,7 @@ BEGIN
                     RAISE INFO '%', _message;
                 End If;
 
-                _returnCode = 'U5338';
+                _returnCode := 'U5338';
             RETURN;
             End If;
 
@@ -557,7 +557,7 @@ BEGIN
                     RAISE INFO '%', _message;
                 End If;
 
-                _returnCode = 'U5332';
+                _returnCode := 'U5332';
                 RETURN;
             End If;
 
@@ -642,7 +642,7 @@ BEGIN
 
                     If Coalesce(_dtaGenerator, '') = '' Then
                         _message := format('Settings file "%s" does not have DtaGenerator defined; unable to verify that centroiding is enabled', _settingsFileName);
-                        _returnCode = 'U5333';
+                        _returnCode := 'U5333';
 
                         If _showDebugMessages Then
                             RAISE INFO '%', _message;
@@ -853,7 +853,7 @@ BEGIN
 
             If Not Exists (SELECT settings_file_id FROM t_settings_files WHERE file_name = _settingsFileName::citext) Then
                 _message := format('Settings file not found: %s', _settingsFileName);
-                _returnCode = 'U5333';
+                _returnCode := 'U5333';
 
                 If _showDebugMessages Then
                     RAISE INFO '%', _message;
@@ -881,7 +881,7 @@ BEGIN
 
             If Not FOUND Or Trim(Lower(Coalesce(_splitFasta, 'false'))) <> 'true' Then
                 _message := format('Search tool %s requires a SplitFasta settings file', _toolName);
-                _returnCode = 'U5335';
+                _returnCode := 'U5335';
 
                 If _showDebugMessages Then
                     RAISE INFO '%', _message;
@@ -909,7 +909,7 @@ BEGIN
 
             If Not FOUND Or public.try_cast(_numberOfClonedSteps, 0) < 1 Then
                 _message := format('Search tool %s requires a SplitFasta settings file', _toolName);
-                _returnCode = 'U5336';
+                _returnCode := 'U5336';
 
                 If _showDebugMessages Then
                     RAISE INFO '%', _message;

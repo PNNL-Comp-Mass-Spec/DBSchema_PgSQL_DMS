@@ -186,7 +186,7 @@ BEGIN
 
         If Coalesce(_datasetID, 0) = 0 Then
             If Coalesce(_message, '') = '' Then
-                _message = 'Procedure get_dataset_details_from_dataset_info_xml returned 0 for dataset ID; unable to continue';
+                _message := 'Procedure get_dataset_details_from_dataset_info_xml returned 0 for dataset ID; unable to continue';
             End If;
 
             _returnCode := '5201';

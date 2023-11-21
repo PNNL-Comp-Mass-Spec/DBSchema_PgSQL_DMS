@@ -111,7 +111,7 @@ BEGIN
         --
         If _mode = 'update' Then
             If Not Exists (SELECT Batch_Group_ID FROM t_requested_run_batch_group WHERE Batch_Group_ID = _ID) Then
-                _message = 'Cannot update: entry does not exist in database';
+                _message := 'Cannot update: entry does not exist in database';
                 _returnCode := 'U5205';
                 RAISE EXCEPTION '%', _message;
             End If;

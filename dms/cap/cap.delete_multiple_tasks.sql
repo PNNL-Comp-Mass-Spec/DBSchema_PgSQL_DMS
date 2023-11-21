@@ -132,7 +132,7 @@ BEGIN
 
         DROP TABLE Tmp_Job_List;
 
-        _message = format('Deleted %s capture task %s', _jobCountDeleted, public.check_plural(_jobCountDeleted, 'job', 'jobs'));
+        _message := format('Deleted %s capture task %s', _jobCountDeleted, public.check_plural(_jobCountDeleted, 'job', 'jobs'));
         RAISE INFO '%', _message;
 
     EXCEPTION

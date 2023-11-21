@@ -37,7 +37,7 @@ BEGIN
         _message := format('Collection_State_ID %s does not exist', _stateID);
         RAISE WARNING '%', _message;
 
-        _returnCode = 'U5201';
+        _returnCode := 'U5201';
         RETURN;
     End If;
 

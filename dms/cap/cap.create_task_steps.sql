@@ -463,7 +463,7 @@ BEGIN
     ---------------------------------------------------
 
     If _infoOnly Then
-        _message = _infoMessage;
+        _message := _infoMessage;
     Else
         If _mode::citext = 'CreateFromImportedJobs' Then
 

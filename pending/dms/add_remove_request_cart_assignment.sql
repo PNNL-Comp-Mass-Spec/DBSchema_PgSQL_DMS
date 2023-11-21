@@ -61,7 +61,7 @@ BEGIN
 
         If Not FOUND Then
             _message := 'Could not resolve cart name to ID';
-            _returnCode := 'U5217'
+            _returnCode := 'U5217';
             RETURN;
         End If;
 
@@ -77,7 +77,7 @@ BEGIN
 
                 CALL post_log_entry ('Error', _message, 'Add_Remove_Request_Cart_Assignment');
 
-                _returnCode := 'U5218'
+                _returnCode := 'U5218';
                 RETURN;
             End If;
         End If;

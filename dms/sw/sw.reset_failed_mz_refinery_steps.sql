@@ -200,7 +200,7 @@ BEGIN
             _baseMsg := format('Mz_Refinery for job %s, step %s, since processor %s crashed', _job, _step, _processor);
 
             If _infoOnly Then
-                _message = format('Would reset %s', _baseMsg);
+                _message := format('Would reset %s', _baseMsg);
 
                 RAISE INFO '';
                 RAISE INFO '%', _message;
@@ -225,7 +225,7 @@ BEGIN
                 CONTINUE;
             End If;
 
-            _message = format('Reset %s', _baseMsg);
+            _message := format('Reset %s', _baseMsg);
 
             CALL public.post_log_entry ('Warning', _message, 'reset_failed_mz_refinery_steps', 'sw');
 

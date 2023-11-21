@@ -173,7 +173,7 @@ BEGIN
                     _returnCode => _returnCode);    -- Output
 
             If _returnCode <> '' Then
-                _message = public.append_to_text (_message, _msg);
+                _message := public.append_to_text (_message, _msg);
             End If;
         End If;
 

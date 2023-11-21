@@ -142,7 +142,7 @@ BEGIN
         _message := 'Could not convert dataset info from text to XML';
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5234'
+        _returnCode := 'U5234';
         RETURN;
     End If;
 

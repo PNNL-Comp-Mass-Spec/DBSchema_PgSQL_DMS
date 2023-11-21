@@ -141,7 +141,7 @@ BEGIN
           target.schema_change_log_id = RankQ.schema_change_log_id;
 
     GET DIAGNOSTICS _updateCount = ROW_COUNT;
-    _message = format('Trimmed function_source for %s %s', _updateCount, public.check_plural(_updateCount, 'row', 'rows'));
+    _message := format('Trimmed function_source for %s %s', _updateCount, public.check_plural(_updateCount, 'row', 'rows'));
 
     If _updateCount > 0 Then
         RAISE INFO '%', _message;
@@ -198,9 +198,9 @@ BEGIN
     GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
     If _deleteCount > 0 Then
-        _message = public.append_to_text(_message,
-                                         format('Condensed %s duplicate %s, having the same object name, object type, and entry time',
-                                                _deleteCount, public.check_plural(_deleteCount, 'row','rows')));
+        _message := public.append_to_text(_message,
+                                          format('Condensed %s duplicate %s, having the same object name, object type, and entry time',
+                                                 _deleteCount, public.check_plural(_deleteCount, 'row','rows')));
 
         -- This will append a row to the result set
         RETURN QUERY

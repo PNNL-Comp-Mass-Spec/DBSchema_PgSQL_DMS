@@ -86,7 +86,7 @@ BEGIN
     LIMIT 1;
 
     If Not FOUND Then
-        _message = format('Requested Run ID %s not found in T_Deleted_Requested_Run; unable to restore', _requestID);
+        _message := format('Requested Run ID %s not found in T_Deleted_Requested_Run; unable to restore', _requestID);
         RAISE WARNING '%', _message;
         RETURN;
     End If;
@@ -96,25 +96,25 @@ BEGIN
     ---------------------------------------------------
 
     If Exists (SELECT request_id FROM T_Requested_Run WHERE request_id = _requestID) Then
-        _message = format('Requested Run ID %s already exists in T_Requested_Run; unable to undelete', _requestID);
+        _message := format('Requested Run ID %s already exists in T_Requested_Run; unable to undelete', _requestID);
         RAISE WARNING '%', _message;
         RETURN;
     End If;
 
     If Exists (Select target_id From T_Factor Where type = 'Run_Request' And target_id = _requestID) Then
-        _message = format('Requested Run ID %s not found in T_Requested_Run, but found in T_Factor; delete from T_Factor then call this procedure again', _requestID);
+        _message := format('Requested Run ID %s not found in T_Requested_Run, but found in T_Factor; delete from T_Factor then call this procedure again', _requestID);
         RAISE WARNING '%', _message;
         RETURN;
     End If;
 
     If Exists (Select Request_ID From T_Requested_Run_EUS_Users Where Request_ID = _requestID) Then
-        _message = format('Requested Run ID %s not found in T_Requested_Run, but found in T_Requested_Run_EUS_Users; delete from T_Requested_Run_EUS_Users then call this procedure again', _requestID);
+        _message := format('Requested Run ID %s not found in T_Requested_Run, but found in T_Requested_Run_EUS_Users; delete from T_Requested_Run_EUS_Users then call this procedure again', _requestID);
         RAISE WARNING '%', _message;
         RETURN;
     End If;
 
     If _infoOnly Then
-        _message = format('Would restore requested run ID %s by copying Entry_ID %s from T_Deleted_Requested_Run to T_Requested_Run', _requestID, _entryID);
+        _message := format('Would restore requested run ID %s by copying Entry_ID %s from T_Deleted_Requested_Run to T_Requested_Run', _requestID, _entryID);
         RAISE INFO '%', _message;
         RETURN;
     End If;

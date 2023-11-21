@@ -63,7 +63,7 @@ BEGIN
     ---------------------------------------------------
 
     If Not Exists (SELECT Batch_Group_ID FROM T_Requested_Run_Batch_Group WHERE Batch_Group_ID = _batchGroupID) Then
-        _message = format('Batch group does not exist: %s', _batchGroupID);
+        _message := format('Batch group does not exist: %s', _batchGroupID);
         RAISE EXCEPTION '%', _message USING ERRCODE = 'U5202';
     End If;
 
@@ -74,7 +74,7 @@ BEGIN
     If _mode::citext = 'Delete' Then
          -- Assure that the batch group is not used by any batches
         If Exists (SELECT Batch_Group_ID FROM T_Requested_Run_Batches WHERE Batch_Group_ID = _batchGroupID) Then
-            _message = format('Cannot delete batch group since used by one or more requested run batches: %s', _batchGroupID);
+            _message := format('Cannot delete batch group since used by one or more requested run batches: %s', _batchGroupID);
             RAISE EXCEPTION '%', _message USING ERRCODE = 'U5203';
         Else
             INSERT INTO T_Deleted_Requested_Run_Batch_Group (Batch_Group_ID, Batch_Group, Description, Owner_User_ID, Created)

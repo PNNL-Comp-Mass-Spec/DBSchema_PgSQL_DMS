@@ -206,7 +206,7 @@ BEGIN
                 --
                 If _actualValue = -1 Then
                     _message := 'Error getting filter signature';
-                    _returnCode = 'U5201';
+                    _returnCode := 'U5201';
 
                     DROP TABLE Tmp_DepTable;
                     RETURN;
@@ -232,7 +232,7 @@ BEGIN
 
                 If Not FOUND Then
                     _message := format('Error getting state for job %s, step %s', _stepInfo.Job, _stepInfo.TargetStep);
-                    _returnCode = 'U5202';
+                    _returnCode := 'U5202';
 
                     RAISE WARNING '%', _message;
 

@@ -209,7 +209,7 @@ BEGIN
                     _returnCode => _returnCode);    -- Output
 
     If Coalesce(_warning, '') <> '' Then
-        _message = public.append_to_text(_message, _warning);
+        _message := public.append_to_text(_message, _warning);
     End If;
 
     DROP TABLE Tmp_JobList;

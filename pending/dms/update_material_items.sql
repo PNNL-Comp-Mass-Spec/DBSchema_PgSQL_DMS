@@ -47,8 +47,8 @@ DECLARE
     _retiredExperiment text := '';
     _moveType text;
 BEGIN
-    _message = '';
-    _returnCode = '';
+    _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Default container to null container
