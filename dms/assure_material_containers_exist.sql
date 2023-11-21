@@ -1,17 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.assure_material_containers_exist
-(
-    INOUT _containerList text,
-    _comment text,
-    _type text = 'Box',
-    _researcher text,
-    _mode text = 'verify_only',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: assure_material_containers_exist(text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.assure_material_containers_exist(INOUT _containerlist text, IN _comment text, IN _type text, IN _campaignname text, IN _researcher text, IN _mode text DEFAULT 'verify_only'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -23,23 +16,27 @@ AS $$
 **    _containerList        Input/Output: Comma-separated list of locations and containers (can be a mix of both)
 **    _comment              Comment
 **    _type                 Container type: 'Box', 'Bag', or 'Wellplate'
+**    _campaignName         Campaign name
 **    _researcher           Researcher name; supports 'Zink, Erika M (D3P704)' or simply 'D3P704'
 **    _mode                 Typically 'add' or 'create'
 **                          However, if _mode is 'verify_only', will populate a temporary table with items in _containerList, then will exit the procedure without making any changes
 **
 **  Returns:
-**    Comma-separated list of container names (via argument _containerList)
+**      Comma-separated list of container names (via argument _containerList)
 **
 **  Auth:   grk
 **  Date:   04/27/2010 grk - Initial release
-**          09/23/2011 grk - Accomodate researcher field in AddUpdateMaterialContainer
+**          09/23/2011 grk - Accomodate researcher field in add_update_material_container
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          05/04/2023 mem - Use TOP 1 when retrieving the next item to process
+**          11/19/2023 mem - Add procedure argument _campaignName
+**          11/20/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _msg text;
+    _entryID int;
     _item text;
     _container text;
 
@@ -60,8 +57,9 @@ BEGIN
         ---------------------------------------------------
 
         CREATE TEMP TABLE Tmp_ContainerItems (
-            Container text NULL,
-            Item text,                  -- Either container name or location name
+            Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+            Container citext NULL,
+            Item citext,                  -- Either container name or location name
             IsContainer boolean,
             IsLocation boolean
         );
@@ -95,7 +93,11 @@ BEGIN
         WHERE Not IsLocation AND Not IsContainer;
 
         If Coalesce(_msg, '') <> '' Then
-            RAISE EXCEPTION 'Item(s) "%" is/are not containers or locations', _msg;
+            If Position(',' IN _msg) > 0 Then
+                RAISE EXCEPTION 'Items "%" are not containers or locations', _msg;
+            Else
+                RAISE EXCEPTION 'Item "%" is not a container or location', _msg;
+            End If;
         Else
             _msg := '';
         End If;
@@ -109,43 +111,35 @@ BEGIN
         -- Make new containers for locations
         ---------------------------------------------------
 
-        WHILE true
-        LOOP
-
-            SELECT Item
-            INTO _item
+        FOR _entryID, _item IN
+            SELECT Entry_ID, Item
             FROM Tmp_ContainerItems
             WHERE IsLocation
-            LIMIT 1;
+            ORDER BY Entry_ID
+        LOOP
+            _container := '(generate name)';
 
-            If Not FOUND Then
-                -- Break out of the while loop
-                EXIT;
-            Else
-                _container := '(generate name)';
+            CALL public.add_update_material_container (
+                            _container    => _container,     -- Output
+                            _type         => _type,
+                            _location     => _item,
+                            _comment      => _comment,
+                            _campaignName => _campaignName,
+                            _researcher   => _researcher,
+                            _mode         => 'add',
+                            _message      => _msg,           -- Output
+                            _returnCode   => _returnCode,    -- Output
+                            _callingUser  => _callingUser);
 
-                CALL public.add_update_material_container (
-                                _container   => _container,     -- Output
-                                _type        => _type,
-                                _location    => _item,
-                                _comment     => _comment,
-                                _barcode     => '',
-                                _researcher  => _researcher,
-                                _mode        => 'add',
-                                _message     => _msg,           -- Output
-                                _returnCode  => _returnCode,    -- Output
-                                _callingUser => _callingUser);
-
-                If _returnCode <> '' Then
-                    RAISE EXCEPTION 'AddUpdateMaterialContainer: %', _msg;
-                End If;
-
-                UPDATE Tmp_ContainerItems
-                SET Container = _container,
-                    IsContainer = true,
-                    IsLocation = false
-                WHERE Item = _item;
+            If _returnCode <> '' Then
+                RAISE EXCEPTION 'Add_update_material_container: %', _msg;
             End If;
+
+            UPDATE Tmp_ContainerItems
+            SET Container = _container,
+                IsContainer = true,
+                IsLocation = false
+            WHERE Entry_ID = _entryID;
         END LOOP;
 
         ---------------------------------------------------
@@ -178,4 +172,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.assure_material_containers_exist IS 'AssureMaterialContainersExist';
+
+ALTER PROCEDURE public.assure_material_containers_exist(INOUT _containerlist text, IN _comment text, IN _type text, IN _campaignname text, IN _researcher text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE assure_material_containers_exist(INOUT _containerlist text, IN _comment text, IN _type text, IN _campaignname text, IN _researcher text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.assure_material_containers_exist(INOUT _containerlist text, IN _comment text, IN _type text, IN _campaignname text, IN _researcher text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AssureMaterialContainersExist';
+
