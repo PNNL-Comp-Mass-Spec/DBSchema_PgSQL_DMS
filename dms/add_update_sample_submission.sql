@@ -1,26 +1,26 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_sample_submission
-(
-    INOUT _id int,
-    _campaign text,
-    _receivedBy text,
-    INOUT _containerList text,
-    _newContainerComment text,
-    _description text,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_sample_submission(integer, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_sample_submission(INOUT _id integer, IN _campaign text, IN _receivedby text, INOUT _containerlist text, IN _newcontainercomment text, IN _description text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Adds new or edits existing item in T_Sample_Submission
 **
 **  Arguments:
-**    _mode   'add' or 'update'
+**    _id                   Input/output: sample submission ID
+**    _campaign             Campaign name
+**    _receivedBy           Username of the person who received the sample
+**    _containerList        Comma-separated list of material container names; use 'na' if no container
+**    _newContainerComment  Comment for new containers created when adding a sample submission item
+**    _description          Sample submission description
+**    _mode                 Mode: 'add' or 'update'
+**    _message              Output message
+**    _returnCode           Return code
+**    _callingUser          Calling user username
 **
 **  Auth:   grk
 **  Date:   04/23/2010
@@ -35,7 +35,9 @@ AS $$
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          08/18/2017 mem - Disable logging certain messages to T_Log_Entries
-**          12/15/2023 mem - Ported to PostgreSQL
+**          11/19/2023 mem - Send campaign name to assure_material_containers_exist
+**          11/21/2023 mem - Ported to PostgreSQL
+**                         - If _containerList is 'na', assure that it is lowercase
 **
 *****************************************************/
 DECLARE
@@ -81,7 +83,6 @@ BEGIN
     End If;
 
     BEGIN
-
         ---------------------------------------------------
         -- Validate the inputs
         ---------------------------------------------------
@@ -98,6 +99,10 @@ BEGIN
             RAISE EXCEPTION 'Container list must be specified';
         End If;
 
+        If _containerList::citext = 'na' Then
+            _containerList := 'na';
+        End If;
+
         _receivedBy := Trim(Coalesce(_receivedBy, ''));
 
         If _receivedBy = '' Then
@@ -107,6 +112,7 @@ BEGIN
         _newContainerComment := Trim(Coalesce(_newContainerComment, ''));
 
         _description := Trim(Coalesce(_description, ''));
+
         If _description = '' Then
             RAISE EXCEPTION 'Description must be specified';
         End If;
@@ -153,10 +159,6 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Define the transaction name
-        ---------------------------------------------------
-
-        ---------------------------------------------------
         -- Action for add mode
         ---------------------------------------------------
 
@@ -170,8 +172,9 @@ BEGIN
 
             CALL public.assure_material_containers_exist (
                             _containerList => _containerListCopy,   -- Input/Output
-                            _comment       => '',
-                            _type          => '',
+                            _comment       => _comment,
+                            _type          => 'Box',
+                            _campaignName  => _campaign,
                             _researcher    => _researcher,
                             _mode          => 'verify_only',
                             _message       => _msg,                 -- Output
@@ -179,20 +182,21 @@ BEGIN
                             _callingUser   => '');
 
             If _returnCode <> '' Then
-                RAISE EXCEPTION 'AssureMaterialContainersExist: %', _msg;
+                RAISE EXCEPTION 'Assure_material_containers_exist: %', _msg;
             End If;
 
             ---------------------------------------------------
             -- Verify that this doesn't duplicate an existing sample submission request
             ---------------------------------------------------
-            _id := -1;
-            --
+
             SELECT submission_id
             INTO _id
             FROM t_sample_submission
-            WHERE campaign_id = _campaignID AND received_by_user_id = _receivedByUserID AND description = _description
+            WHERE campaign_id = _campaignID AND
+                  received_by_user_id = _receivedByUserID AND
+                  description = _description;
 
-            If _id > 0 Then
+            If FOUND Then
                 RAISE EXCEPTION 'New sample submission is duplicate of existing sample submission, ID %; both have identical Campaign, Received By User, and Description', _id;
             End If;
 
@@ -201,7 +205,7 @@ BEGIN
             BEGIN
                 ---------------------------------------------------
                 -- Add the new data
-                --
+                ---------------------------------------------------
 
                 INSERT INTO t_sample_submission (
                     campaign_id,
@@ -221,7 +225,8 @@ BEGIN
 
                 ---------------------------------------------------
                 -- Add containers (as needed)
-                --
+                ---------------------------------------------------
+
                 If _newContainerComment = '' Then
                     _comment := format('(created via sample submission %s)', _id);
                 Else
@@ -229,9 +234,10 @@ BEGIN
                 End If;
 
                 CALL public.assure_material_containers_exist (
-                                _containerList => _containerList,   -- Output
+                                _containerList => _containerList,   -- Input/Output
                                 _comment       => _comment,
                                 _type          => 'Box',
+                                _campaignName  => _campaign,
                                 _researcher    => _researcher,
                                 _mode          => 'create',
                                 _message       => _msg,             -- Output
@@ -239,19 +245,20 @@ BEGIN
                                 _callingUser   => _callingUser);
 
                 If _returnCode <> '' Then
-                    RAISE EXCEPTION 'AssureMaterialContainersExist: %', _message;
+                    RAISE EXCEPTION 'Assure_material_containers_exist: %', _message;
                 End If;
 
                 ---------------------------------------------------
                 -- Update container list for sample submission
-                --
+                ---------------------------------------------------
+
                 UPDATE t_sample_submission
                 SET container_list = _containerList
                 WHERE submission_id = _id;
 
             END;
 
-        End If; -- add mode
+        End If;
 
         ---------------------------------------------------
         -- Action for update mode
@@ -260,15 +267,14 @@ BEGIN
         If _mode = 'update' Then
             _logErrors := true;
 
-            --
             UPDATE t_sample_submission
-            SET campaign_id = _campaignID,
+            SET campaign_id         = _campaignID,
                 received_by_user_id = _receivedByUserID,
-                container_list = _containerList,
-                description = _description
-            WHERE (submission_id = _id)
+                container_list      = _containerList,
+                description         = _description
+            WHERE submission_id = _id;
 
-        End If; -- update mode
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -294,4 +300,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_sample_submission IS 'AddUpdateSampleSubmission';
+
+ALTER PROCEDURE public.add_update_sample_submission(INOUT _id integer, IN _campaign text, IN _receivedby text, INOUT _containerlist text, IN _newcontainercomment text, IN _description text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_sample_submission(INOUT _id integer, IN _campaign text, IN _receivedby text, INOUT _containerlist text, IN _newcontainercomment text, IN _description text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_sample_submission(INOUT _id integer, IN _campaign text, IN _receivedby text, INOUT _containerlist text, IN _newcontainercomment text, IN _description text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateSampleSubmission';
+
