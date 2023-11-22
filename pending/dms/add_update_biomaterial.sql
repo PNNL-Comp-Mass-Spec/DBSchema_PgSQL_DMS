@@ -422,7 +422,7 @@ BEGIN
                 CALL public.post_material_log_entry (
                                 _type         => 'Biomaterial Move',
                                 _item         => _biomaterialName,
-                                _initialState => _curContainerName,    -- Initial State: Old container name
+                                _initialState => _curContainerName,     -- Initial State: Old container name
                                 _finalState   => _container,            -- Final State:   New container name
                                 _callingUser  => _callingUser,
                                 _comment      => 'Biomaterial (Cell Culture) updated');

@@ -9,8 +9,8 @@ CREATE OR REPLACE PROCEDURE public.assure_material_containers_exist(INOUT _conta
 **
 **  Desc:
 **      Examines the list of containers and/or locations in _containerList
+**
 **      For items that are locations, creates a new container by calling add_update_material_container
-**      Returns a consolidated list of container names
 **
 **  Arguments:
 **    _containerList        Input/Output: Comma-separated list of locations and containers (can be a mix of both)
@@ -18,8 +18,8 @@ CREATE OR REPLACE PROCEDURE public.assure_material_containers_exist(INOUT _conta
 **    _type                 Container type: 'Box', 'Bag', or 'Wellplate'
 **    _campaignName         Campaign name
 **    _researcher           Researcher name; supports 'Zink, Erika M (D3P704)' or simply 'D3P704'
-**    _mode                 Typically 'add' or 'create'
-**                          However, if _mode is 'verify_only', will populate a temporary table with items in _containerList, then will exit the procedure without making any changes
+**    _mode                 If 'verify_only', populates a temporary table with items in _containerList, then exits the procedure without making any changes
+**                          Otherwise, creates missing containers (including assuring that each location has a container)
 **
 **  Returns:
 **      Comma-separated list of container names (via argument _containerList)

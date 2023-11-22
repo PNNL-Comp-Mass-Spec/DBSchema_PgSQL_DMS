@@ -17,9 +17,9 @@ CREATE OR REPLACE PROCEDURE public.add_update_material_container(INOUT _containe
 **    _comment          Comment
 **    _campaignName     Campaign name; if an empty string, will store a null for Campaign_ID
 **    _researcher       Supports 'Zink, Erika M (D3P704)' or simply 'D3P704'
-**    _mode             'add', 'update', or 'preview'
-**    _message          Output: error message, or an empty string if no error
-**    _returnCode       Output: return code
+**    _mode             Mode: 'add', 'update', or 'preview'
+**    _message          Output message
+**    _returnCode       Return code
 **    _callingUser      Calling user username
 **
 **  Auth:   grk
