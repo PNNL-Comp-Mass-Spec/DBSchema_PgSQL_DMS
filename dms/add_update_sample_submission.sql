@@ -13,7 +13,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_sample_submission(INOUT _id intege
 **  Arguments:
 **    _id                   Input/output: sample submission ID
 **    _campaign             Campaign name
-**    _receivedBy           Username of the person who received the sample
+**    _receivedBy           Person who received the sample; supports 'Zink, Erika M', 'Zink, Erika M (D3P704)', or 'D3P704'
 **    _containerList        Comma-separated list of material container names; use 'na' if no container
 **    _newContainerComment  Comment for new containers created when adding a sample submission item
 **    _description          Sample submission description
@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_sample_submission(INOUT _id intege
 **          11/19/2023 mem - Send campaign name to assure_material_containers_exist
 **          11/21/2023 mem - Ported to PostgreSQL
 **                         - If _containerList is 'na', assure that it is lowercase
+**          11/22/2023 mem - Allow _receivedBy to be of the form 'Zink, Erika M', 'Zink, Erika M (D3P704)', or 'D3P704'
 **
 *****************************************************/
 DECLARE
@@ -49,8 +50,11 @@ DECLARE
     _msg text := '';
     _logErrors boolean := false;
     _campaignID int;
-    _researcher text;
+
+    _matchCount int;
+    _receivedByUserName text;
     _receivedByUserID int;
+
     _containerListCopy text;
     _comment text;
 
@@ -131,17 +135,38 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Resolve username
+        -- Validate the received by person
         ---------------------------------------------------
 
-        SELECT user_id,
-               name_with_username
-        INTO _receivedByUserID, _researcher
-        FROM t_users
-        WHERE username = _receivedBy;
-        --
-        If Not FOUND Then
-            RAISE EXCEPTION 'Username "%" could not be found', _receivedBy;
+        If _receivedBy::citext In ('', 'na', 'none') Then
+            _message := 'Received by person must be a valid DMS user';
+            _returnCode := 'U5201';
+            RETURN;
+        End If;
+
+        CALL public.auto_resolve_name_to_username (
+                        _receivedBy,
+                        _matchCount       => _matchCount,           -- Output
+                        _matchingUsername => _receivedByUserName,   -- Output
+                        _matchingUserID   => _receivedByUserID);    -- Output
+
+        If _matchCount = 1 Then
+            -- Single match found; update _receivedBy to be only the username, e.g. 'D3P704'
+            _receivedBy := _receivedByUserName;
+
+        Else
+            -- Single match not found
+
+            _message := 'Received by person must be a valid DMS user';
+
+            If _matchCount = 0 Then
+                _message := format('%s; %s is an unknown person', _message, _receivedBy);
+            Else
+                _message := format('%s; %s is an ambiguous match to multiple people', _message, _receivedBy);
+            End If;
+
+            _returnCode := 'U5202';
+            RETURN;
         End If;
 
         _mode := Trim(Lower(Coalesce(_mode, '')));
@@ -175,7 +200,7 @@ BEGIN
                             _comment       => _comment,
                             _type          => 'Box',
                             _campaignName  => _campaign,
-                            _researcher    => _researcher,
+                            _researcher    => _receivedByUserName,
                             _mode          => 'verify_only',
                             _message       => _msg,                 -- Output
                             _returnCode    => _returnCode,          -- Output
@@ -238,7 +263,7 @@ BEGIN
                                 _comment       => _comment,
                                 _type          => 'Box',
                                 _campaignName  => _campaign,
-                                _researcher    => _researcher,
+                                _researcher    => _receivedByUserName,
                                 _mode          => 'create',
                                 _message       => _msg,             -- Output
                                 _returnCode    => _returnCode,      -- Output

@@ -16,7 +16,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_material_container(INOUT _containe
 **    _location         Storage location name, e.g. '1521A.2.3.4.3' (must exist in table t_material_locations)
 **    _comment          Comment
 **    _campaignName     Campaign name; if an empty string, will store a null for Campaign_ID
-**    _researcher       Supports 'Zink, Erika M (D3P704)' or simply 'D3P704'
+**    _researcher       Researcher name; supports 'Zink, Erika M', 'Zink, Erika M (D3P704)', or 'D3P704'
 **    _mode             Mode: 'add', 'update', or 'preview'
 **    _message          Output message
 **    _returnCode       Return code
