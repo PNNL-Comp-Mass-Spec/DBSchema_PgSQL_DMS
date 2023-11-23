@@ -241,7 +241,7 @@ BEGIN
             End If;
 
             -- Update column Usage_ID
-            --
+
             UPDATE Tmp_EUSUsageFilter
             SET Usage_ID = U.ID
             FROM t_eus_usage_type U

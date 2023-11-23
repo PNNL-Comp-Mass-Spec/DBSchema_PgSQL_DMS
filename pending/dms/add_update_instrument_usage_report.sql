@@ -42,6 +42,9 @@ AS $$
 **    _operator     Operator for update (should be an integer representing EUS Person ID; if an empty string, will store NULL for the operator ID)
 **    _comment      Comment for update
 **    _mode         The only supported mode is update
+**    _message      Output message
+**    _returnCode   Return code
+**    _callingUser  Calling user username
 **
 **  Auth:   grk
 **  Date:   03/27/2012

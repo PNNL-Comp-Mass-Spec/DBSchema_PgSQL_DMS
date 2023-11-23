@@ -2,10 +2,10 @@
 CREATE OR REPLACE PROCEDURE public.delete_analysis_job
 (
     _job text,
-    _callingUser text = '',
     _infoOnly boolean = false
     INOUT _message text default '',
     INOUT _returnCode text default ''
+    _callingUser text = '',
 )
 LANGUAGE plpgsql
 AS $$
@@ -13,6 +13,13 @@ AS $$
 **
 **  Desc:
 **      Deletes given analysis job from the analysis job table and all referencing tables
+**
+**  Arguments:
+**    _job              Analysis job to delete
+**    _infoOnly         When true, preview the updates
+**    _message          Output message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   03/06/2001

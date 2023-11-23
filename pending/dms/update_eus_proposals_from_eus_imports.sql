@@ -11,6 +11,8 @@ AS $$
 **  Desc:
 **      Updates EUS proposals in T_EUS_Proposals
 **
+**  Arguments:
+**
 **  Auth:   mem
 **  Date:   03/24/2011 mem - Initial version
 **          03/25/2011 mem - Now automatically setting proposal state_id to 3=Inactive

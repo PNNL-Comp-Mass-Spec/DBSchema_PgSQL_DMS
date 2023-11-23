@@ -25,6 +25,8 @@ AS $$
 **      _blockingList can be empty if _factorList is defined
 **      Conversely, _factorList may be simply '<id type="Request" />' if updating run order and blocking
 **
+**  Arguments:
+**
 **  Auth:   grk
 **  Date:   02/21/2010
 **          09/02/2011 mem - Now calling Post_Usage_Log_Entry

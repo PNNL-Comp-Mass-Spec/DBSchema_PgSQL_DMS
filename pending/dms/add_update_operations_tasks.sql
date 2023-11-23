@@ -26,7 +26,10 @@ AS $$
 **      Adds new or edits existing item in T_Operations_Tasks
 **
 **  Arguments:
-**    _mode   'add' or 'update'
+**    _mode             Mode: 'add' or 'update'
+**    _message          Output message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   09/01/2012

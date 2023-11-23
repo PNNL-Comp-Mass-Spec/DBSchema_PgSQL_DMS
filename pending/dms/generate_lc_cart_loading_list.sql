@@ -3,10 +3,7 @@ CREATE OR REPLACE FUNCTION public.generate_lc_cart_loading_list
 (
     _lcCartName text,
     _blanksFollowingRequests text,
-    _columnsWithLeadingBlanks text,
-    _mode text = '',
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
+    _columnsWithLeadingBlanks text
 )
 RETURNS TABLE
 (
@@ -31,7 +28,7 @@ AS $$
 **  Desc:
 **      Generates a sample loading list for given LC Cart
 **
-**      This procedure is likely unused in 2022, since cart_column in t_requested_run has only had null values since September 2020
+**      This function is likely unused in 2022, since cart_column in t_requested_run has only had null values since September 2020
 **
 **      SELECT Extract(year from Entered) AS RR_Year,
 **             Sum(CASE WHEN NOT Cart_Column IS NULL THEN 1 ELSE 0 END) AS Requests_with_Non_Null_Cart_Col,
@@ -39,6 +36,11 @@ AS $$
 **      FROM T_Requested_Run
 **      GROUP BY RR_Year
 **      ORDER BY RR_Year DESC
+**
+**  Arguments:
+**    _lcCartName
+**    _blanksFollowingRequests
+**    _columnsWithLeadingBlanks
 **
 **  Auth:   grk
 **  Date:   04/09/2007 (Ticket #424)
@@ -64,8 +66,6 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode := '';
-
-    _mode := Trim(Lower(Coalesce(_mode, '')));
 
     ---------------------------------------------------
     -- Create temporary table to hold requested runs
@@ -245,7 +245,7 @@ BEGIN
 
     -- Next bump the sequence field up by adding the column number
     -- This assumes that there are 9 or fewer columns (since the seq values 10 units apart)
-    --
+
     UPDATE Tmp_XS
     SET seq = seq + col;
 
@@ -307,7 +307,7 @@ BEGIN
     ---------------------------------------------------
 
     -- Use Row_Number and a self join to populate the blankSeq column
-    --
+
     UPDATE Tmp_XF
     SET blankSeq = CountQ.BlankSeq
     FROM ( SELECT seq,

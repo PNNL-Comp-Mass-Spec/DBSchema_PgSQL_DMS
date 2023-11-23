@@ -64,6 +64,8 @@ AS $$
 **
 **          SELECT * FROM pnnldata."VW_PUB_BMI_EMPLOYEE" limit 5;
 **
+**  Arguments:
+**
 **  Auth:   mem
 **  Date:   03/25/2013 mem - Initial version
 **          06/07/2013 mem - Removed U_NetID since Username tracks the username
@@ -217,7 +219,7 @@ BEGIN
         WHERE NOT user_id IN (SELECT user_id FROM Tmp_NamesAfterUpdate);
 
         -- Look for conflicts
-        --
+
         UPDATE Tmp_NamesAfterUpdate
         SET Conflict = true
         WHERE NewName IN ( SELECT DupeCheck.NewName

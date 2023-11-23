@@ -13,6 +13,8 @@ AS $$
 **      Delete the specified instrument and associated storage path entries
 **      Only allowed if no datasets exist for the instrument
 **
+**  Arguments:
+**
 **  Auth:   mem
 **  Date:   02/12/2010
 **          08/28/2010 mem - No longer deleting entries in the Instrument_Allowed_Dataset_Type table

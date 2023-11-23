@@ -22,6 +22,8 @@ AS $$
 **    _cartName         Name of the cart to assign (ignored when _mode is 'Remove')
 **    _cartConfigName   Name of the cart config name to assign
 **    _mode             'Add' or 'Remove', depending on whether cart is to be assigned to the request or removed from the request
+**    _message          Output message
+**    _returnCode       Return code
 **
 **  Auth:   grk
 **  Date:   01/16/2008 grk - Initial Release (ticket http://prismtrac.pnl.gov/trac/ticket/715)
@@ -37,6 +39,10 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode := '';
+
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
 
     _requestIDList := Trim(Coalesce(_requestIDList, ''));
 

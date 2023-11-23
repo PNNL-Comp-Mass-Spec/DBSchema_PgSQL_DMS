@@ -11,6 +11,8 @@ AS $$
 **  Desc:
 **      Updates the data in T_MTS_PT_DBs_Cached using MTS
 **
+**  Arguments:
+**
 **  Auth:   mem
 **  Date:   02/05/2010 mem - Initial Version
 **          02/23/2016 mem - Add set XACT_ABORT on

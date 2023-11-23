@@ -2,10 +2,10 @@
 CREATE OR REPLACE PROCEDURE public.delete_new_analysis_job
 (
     _job text,
+    _infoOnly boolean = false,
     INOUT _message text default '',
     INOUT _returnCode text default ''
     _callingUser text = '',
-    _infoOnly boolean = false
 )
 LANGUAGE plpgsql
 AS $$
@@ -13,6 +13,13 @@ AS $$
 **
 **  Desc:
 **      Delete analysis job if it is in 'new' or 'failed' state
+**
+**  Arguments:
+**    _job              Job to delete
+**    _infoOnly         When true, preview the updates
+**    _message          Output message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   03/29/2001

@@ -14,6 +14,8 @@ AS $$
 **  Desc:
 **      Updates column analysis_tool_cached in T_Analysis_Job for 1 or more jobs
 **
+**  Arguments:
+**
 **  Auth:   mem
 **  Date:   04/03/2014 mem - Initial version
 **          12/15/2023 mem - Ported to PostgreSQL

@@ -11,6 +11,8 @@ AS $$
 **  Desc:
 **      Adds analysis job request notification events to notification event table
 **
+**  Arguments:
+**
 **  Auth:   grk
 **  Date:   03/30/2010
 **          12/15/2023 mem - Ported to PostgreSQL

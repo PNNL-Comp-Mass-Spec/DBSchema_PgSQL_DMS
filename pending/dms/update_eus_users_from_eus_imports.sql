@@ -193,7 +193,7 @@ BEGIN
         End If;
 
         -- Set state_id to 3 (unknown association) for rows with state not in (2,4) that are also not in V_NEXUS_Import_Proposal_Participants
-        --
+
         UPDATE t_eus_proposal_users target
         SET state_id = 3,       -- Unknown association; may need to delete
             last_affected = CURRENT_TIMESTAMP

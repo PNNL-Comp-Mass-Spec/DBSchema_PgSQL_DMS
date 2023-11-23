@@ -9,9 +9,9 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Gets next available LocalSymbolID for a given paramFileID
+**      Gets next available LocalSymbolID for a given parameter file ID
 **
-**  Return values: next available local symbol id
+**  Return value: next available local symbol id
 **
 **  Auth:   kja
 **  Date:   08/10/2004
@@ -42,7 +42,7 @@ BEGIN
     End If;
 
     If _paramFileTypeID = 1000 Then
-        -- This is a Sequest parameter file
+        -- This is a SEQUEST parameter file
         -- The order of symbols needs to be
         --   * # @ ^ ~
 

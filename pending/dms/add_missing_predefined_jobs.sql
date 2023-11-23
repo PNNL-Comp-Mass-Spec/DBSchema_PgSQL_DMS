@@ -29,6 +29,7 @@ AS $$
 **
 **  Arguments:
 **    _infoOnly                             False to create jobs, true to preview jobs that would be created
+**    _maxDatasetsToProcess                 Maximum number of datasets to process
 **    _dayCountForRecentDatasets            Will examine datasets created within this many days of the present
 **    _previewOutputType                    Used if _infoOnly is true; options are 'Show Rules' or 'Show Jobs'
 **    _analysisToolNameFilter               Optional: if not blank, only considers predefines and jobs that match the given tool name (can contain wildcards)
@@ -40,6 +41,8 @@ AS $$
 **    _campaignFilter                       Optional: if not blank, filters on the given campaign name
 **    _datasetIDFilterList                  Comma-separated list of Dataset IDs to process
 **    _showDebug                            When true, show additional debug information
+**    _message                              Output message
+**    _returnCode                           Return code
 **
 **  Auth:   mem
 **  Date:   05/23/2008 mem - Ticket #675
@@ -273,7 +276,7 @@ BEGIN
 
     -- Now exclude any datasets that have analysis jobs in t_analysis_job
     -- Filter on _analysisToolNameFilter if not empty
-    --
+
     UPDATE Tmp_DatasetsToProcess DTP
     Set Process_Dataset = false
     FROM ( SELECT AJ.dataset_id AS Dataset_ID
@@ -330,7 +333,7 @@ BEGIN
 
     -- Next, exclude any datasets that have been processed by schedule_predefined_analysis_jobs
     -- This check also compares the dataset's current rating to the rating it had when previously processed
-    --
+
     UPDATE Tmp_DatasetsToProcess DTP
     Set Process_Dataset = false
     FROM t_dataset DS INNER JOIN

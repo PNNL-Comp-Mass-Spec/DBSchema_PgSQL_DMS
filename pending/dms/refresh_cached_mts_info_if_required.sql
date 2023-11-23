@@ -195,7 +195,7 @@ BEGIN
 
         If Not _infoOnly Then
             -- Update the Job stats in t_mts_pt_dbs_cached
-            --
+
             UPDATE t_mts_pt_dbs_cached
             SET msms_jobs = StatsQ.msms_jobs,
                 sic_jobs = StatsQ.sic_jobs
@@ -220,7 +220,7 @@ BEGIN
                    Coalesce(Target.SIC_Jobs, -1)  <> StatsQ.SIC_Jobs);
 
             -- Update the Job stats in t_mts_mt_dbs_cached
-            --
+
             UPDATE t_mts_mt_dbs_cached
             SET msms_jobs = StatsQ.msms_jobs,
                 ms_jobs = StatsQ.ms_jobs

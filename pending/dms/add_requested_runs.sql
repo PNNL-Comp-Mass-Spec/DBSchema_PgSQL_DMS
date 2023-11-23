@@ -38,15 +38,34 @@ AS $$
 **      Adds a group of entries to the requested run table
 **
 **  Arguments:
-**    _experimentGroupID   Specify ExperimentGroupID or ExperimentList, but not both
-**    _requestNameSuffix   Actually used as the request name Suffix
-**    _instrumentGroup     Instrument group; could also contain '(lookup)'
-**    _workPackage         Work Package; could also contain '(lookup)'
-**    _msType              Run type; could also contain '(lookup)'
-**    _eusUsersList        Comma-separated list of EUS user IDs (integers); also supports the form 'Baker, Erin (41136)'
-**    _mode                'add' or 'PreviewAdd'
-**    _separationGroup     Separation group; could also contain '(lookup)'
-**    _batchName           If defined, create a new batch for the newly created requested runs
+**    _experimentGroupID        Specify ExperimentGroupID or ExperimentList, but not both
+**    _experimentList           Comma separated list of experiments
+**    _requestNameSuffix        Actually used as the request name Suffix
+**    _operatorUsername
+**    _instrumentGroup          Instrument group; could alternatively be '(lookup)'
+**    _workPackage              Work Package; could alternatively be '(lookup)'
+**    _msType                   Run type; could alternatively be '(lookup)'
+**    _instrumentSettings
+**    _eusProposalID
+**    _eusUsageType
+**    _eusUsersList             Comma-separated list of EUS user IDs (integers); also supports the form 'Baker, Erin (41136)'
+**    _internalStandard
+**    _comment
+**    _mode                     Mode: 'add' or 'PreviewAdd'
+**    _message                  Output message
+**    _returnCode               Return code
+**    _separationGroup          Separation group; could also contain '(lookup)'
+**    _mrmAttachment
+**    _vialingConc
+**    _vialingVol
+**    _stagingLocation
+**    _batchName                If defined, create a new batch for the newly created requested runs
+**    _batchDescription
+**    _batchCompletionDate
+**    _batchPriority
+**    _batchPriorityJustification
+**    _batchComment
+**    _callingUser
 **
 **  Auth:   grk
 **  Date:   07/22/2005 - Initial version
@@ -140,13 +159,12 @@ BEGIN
             _message := 'Experiment Group ID and Experiment List cannot both be non-blank';
             RAISE EXCEPTION '%', _message;
         End If;
-        --
+
         If _experimentGroupID = '' And _experimentList = '' Then
             _returnCode := 'U5131';
             _message := 'Experiment Group ID and Experiment List cannot both be blank';
             RAISE EXCEPTION '%', _message;
         End If;
-        --
 
         If char_length(_experimentGroupID) > 0 Then
             _experimentGroupIDVal := public.try_cast(_experimentGroupID, null::int);
@@ -157,27 +175,27 @@ BEGIN
                 RAISE EXCEPTION '%', _message;
             End If;
         End If;
-        --
+
         If char_length(_operatorUsername) < 1 Then
             _returnCode := 'U5113';
             RAISE EXCEPTION 'Operator username must be specified';
         End If;
-        --
+
         If char_length(_instrumentGroup) < 1 Then
             _returnCode := 'U5114';
             RAISE EXCEPTION 'Instrument group must be specified';
         End If;
-        --
+
         If char_length(_msType) < 1 Then
             _returnCode := 'U5115';
             RAISE EXCEPTION 'Dataset type must be specified';
         End If;
-        --
+
         If char_length(_workPackage) < 1 Then
             _returnCode := 'U5116';
             RAISE EXCEPTION 'Work package must be specified';
         End If;
-        --
+
         If _returnCode <> '' Then
             RETURN;
         End If;

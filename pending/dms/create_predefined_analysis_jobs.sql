@@ -19,9 +19,15 @@ AS $$
 **      Schedules analysis jobs for dataset according to defaults
 **
 **  Arguments:
+**    _datasetName                  Dataset name
+**    _callingUser                  Calling user username
 **    _analysisToolNameFilter       Optional: if not blank, only considers predefines that match the given tool name (can contain wildcards)
 **    _excludeDatasetsNotReleased   When true, excludes datasets with a rating of -5 (by default we exclude datasets with a rating < 2 and <> -10)
 **    _preventDuplicateJobs         When true, will not create new jobs that duplicate old jobs
+**    _infoOnly                     When true, preview jobs that would be created
+**    _message                      Output message
+**    _returnCode                   Return code
+**    _jobsCreated                  Output: number of jobs created
 **
 **  Auth:   grk
 **  Date:   06/29/2005 grk - Supersedes procedure ScheduleDefaultAnalyses

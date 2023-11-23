@@ -32,19 +32,23 @@ AS $$
 **      Creates a group of new experiments in DMS, linking back to the parent experiment
 **
 **  Arguments:
-**    _parentExperiment   Parent experiment for group (must already exist)
-**    _groupType          Must be 'Fraction'
-**    _suffix             Text to append to the parent experiment name, prior to adding the fraction number
-**    _nameSearch         Text to find in the parent experiment name, to be replaced by _nameReplace
-**    _nameReplace        Replacement text
-**    _groupName          User-defined name for this experiment group (aka fraction group); previously _tab
-**    _description        Purpose of group
-**    _totalCount         Number of new experiments to automatically create
-**    _addUnderscore      When Yes (or 1 or ''), add an underscore before the fraction number; when _suffix is defined, it is helpful to set this to 'No'
-**    _groupID            ID of newly created experiment group
-**    _requestOverride    ID of sample prep request for fractions (if different than parent experiment)
-**    _container          na, 'parent', '-20', or actual container ID
-**    _mode               'add' or 'preview'; when previewing, will show the names of the new fractions
+**    _parentExperiment     Parent experiment for group (must already exist)
+**    _groupType            Must be 'Fraction'
+**    _suffix               Text to append to the parent experiment name, prior to adding the fraction number
+**    _nameSearch           Text to find in the parent experiment name, to be replaced by _nameReplace
+**    _nameReplace          Replacement text
+**    _groupName            User-defined name for this experiment group (aka fraction group); previously _tab
+**    _description          Purpose of group
+**    _totalCount           Number of new experiments to automatically create
+**    _addUnderscore        When Yes (or 1 or ''), add an underscore before the fraction number; when _suffix is defined, it is helpful to set this to 'No'
+**    _groupID              ID of newly created experiment group
+**    _requestOverride      ID of sample prep request for fractions (if different than parent experiment)
+**    _container            na, 'parent', '-20', or actual container ID
+**    _prepLCRunID          Prep LC run ID
+**    _mode                 Mode: 'add' or 'preview'; when previewing, will show the names of the new fractions
+**    _message              Output message
+**    _returnCode           Return code
+**    _callingUser          Calling user username
 **
 **  Auth:   grk
 **  Date:   05/28/2005
@@ -175,7 +179,7 @@ BEGIN
 
         _mode             := Trim(Lower(Coalesce(_mode, '')));
 
-        If Not _mode::citext In ('add', 'preview') Then
+        If Not _mode In ('add', 'preview') Then
             RAISE EXCEPTION 'Invalid mode: should be "add" or "preview", not "%"', _mode;
         End If;
 

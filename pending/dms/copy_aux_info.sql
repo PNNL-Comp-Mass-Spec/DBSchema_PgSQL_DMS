@@ -23,7 +23,7 @@ AS $$
 **    _categoryName         Category name
 **    _subCategoryName      Subcategory name
 **    _sourceEntityName     Source entity name (experiment name, biomaterial name, etc.)
-**    _mode                 copyCategory, copySubcategory, copyAll
+**    _mode                 Moder: 'copyCategory', 'copySubcategory', 'copyAll'
 **
 **  Auth:   grk
 **  Date:   01/27/2003 grk - Initial release
@@ -58,6 +58,7 @@ BEGIN
         RETURN;
     End If;
 
+    _mode := Trim(Lower(Coalesce(_mode, '')));
 
     ---------------------------------------------------
     -- Resolve target name to target ID using the entity's data table, as defined in t_aux_info_target
@@ -113,7 +114,7 @@ BEGIN
     -- to given destination entity
     ---------------------------------------------------
 
-    If _mode::citext = 'copyCategory' Then
+    If _mode = Lower('CopyCategory') Then
 
         -- Delete any existing values
         --
@@ -148,7 +149,7 @@ BEGIN
     -- to given destination entity
     ---------------------------------------------------
 
-    If _mode::citext = 'copySubcategory' Then
+    If _mode = Lower('CopySubcategory') Then
 
         -- Delete any existing values
         --
@@ -184,7 +185,7 @@ BEGIN
     -- to given destination entity
     ---------------------------------------------------
 
-    If _mode::citext = 'copyAll' Then
+    If _mode = Lower('CopyAll') Then
 
         -- Delete any existing values
         --

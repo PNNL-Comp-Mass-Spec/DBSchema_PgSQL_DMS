@@ -17,6 +17,9 @@ AS $$
 **
 **  Arguments:
 **    _mode   'add' or 'update' or 'assure'
+**    _message          Output message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   07/23/2009

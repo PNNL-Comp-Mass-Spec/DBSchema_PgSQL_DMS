@@ -33,9 +33,10 @@ AS $$
 **             JOIN
 **             t_Filter_Set_Criteria_Names FSCN ON
 **             FSC.Criterion_ID = FSCN.Criterion_ID
-**         WHERE (FS.Filter_Set_ID = 184)
+**         WHERE FS.Filter_Set_ID = 184
 **         ORDER BY FSCN.Criterion_Name, FSC.Filter_Criteria_Group_ID
 **
+**  Arguments:
 **
 **  Auth:   mem
 **  Date:   10/02/2009

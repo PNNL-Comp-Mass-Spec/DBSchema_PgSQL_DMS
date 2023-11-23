@@ -35,6 +35,9 @@ AS $$
 **    _eusUsageType         EUS usage type
 **    _eusUsersList         EUS User ID (only a single person is allowed, though long ago multiple people could be listed)
 **    _mode                 Can be 'add', 'update', 'bad', 'check_update', 'check_add'
+**    _message          Output message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   07/03/2012
@@ -193,7 +196,7 @@ BEGIN
         -- Determine if we are adding or check_adding a dataset
         ---------------------------------------------------
 
-        If _mode::citext In ('add', 'check_add') Then
+        If _mode In ('add', 'check_add') Then
             _addingDataset := true;
         Else
             _addingDataset := false;
@@ -235,7 +238,7 @@ BEGIN
         If Not FOUND Then
             -- Cannot update a non-existent entry
             --
-            If _mode::citext In ('update', 'check_update') Then
+            If _mode In ('update', 'check_update') Then
                 RAISE EXCEPTION 'Cannot update: Dataset % is not in database', _datasetName;
             End If;
         Else

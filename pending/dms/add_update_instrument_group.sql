@@ -22,8 +22,18 @@ AS $$
 **      Adds new or edits existing item in T_Instrument_Group
 **
 **  Arguments:
+**    _instrumentGroup
+**    _usage
+**    _comment
+**    _active
+**    _samplePrepVisible
+**    _requestedRunVisible
+**    _allocationTag
 **    _defaultDatasetTypeName   This is allowed to be an empty string
 **    _mode                     'add' or 'update'
+**    _message                  Output message
+**    _returnCode               Return code
+**    _callingUser              Calling user username
 **
 **  Auth:   grk
 **  Date:   08/28/2010 grk - Initial version

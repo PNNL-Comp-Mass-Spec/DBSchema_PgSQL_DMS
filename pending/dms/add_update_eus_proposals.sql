@@ -27,7 +27,9 @@ AS $$
 **    _eusUsersList             Comma-separated list of EUS Users IDs associated with this proposal
 **    _eusProposalType          Proposal type
 **    _autoSupersedeProposalID  EUS Proposal ID to supersede this EUS proposal with if this proposal is closed
-**    _mode                     add or update
+**    _mode                     Mode: 'add' or 'update'
+**    _message                  Output message
+**    _returnCode               Return code
 **
 **  Auth:   jds
 **  Date:   08/15/2006

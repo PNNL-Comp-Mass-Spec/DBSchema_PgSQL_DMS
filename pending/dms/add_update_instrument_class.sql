@@ -24,6 +24,8 @@ AS $$
 **    _params           XML parameters with DatasetQC options (see below)
 **    _comment          Instrument class comment
 **    _mode             The only valid mode is 'update', since 'add' is not allowed in this procedure; instead directly edit table T_Instrument_Class
+**    _message              Output message
+**    _returnCode           Return code
 **
 **  Example value for _params
 **
@@ -136,7 +138,6 @@ BEGIN
         If _mode = 'update' Then
             _logErrors := true;
 
-            --
             UPDATE t_instrument_class
             SET
                 is_purgeable = _isPurgeable,

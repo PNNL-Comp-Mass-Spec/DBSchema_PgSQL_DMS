@@ -121,9 +121,13 @@ AS $$
 **  Arguments:
 **    _plexExperimentIdOrName   Input/output parameter; used by the experiment_plex_members page family when copying an entry and changing the plex Exp_ID.  Accepts name or ID as input, but the output is always ID
 **    _plexMembers              Table of Channel to Exp_ID mapping (see above for examples)
-**    _expIdChannel1            Experiment ID or Experiment Name or ExpID:ExperimentName
-**    _channelType1             Normal, Reference, or Empty
-**    _mode                     'add', 'update', 'check_add', 'check_update', or 'preview'
+**    _expIdChannel 1 ... 18    Channel experiment: Experiment ID, Experiment Name, or ExpID:ExperimentName
+**    _channelType  1 ... 18    Channel type: Normal, Reference, or Empty
+**    _comment      1 ... 18    Channel Comment
+**    _mode                     Mode: 'add', 'update', 'check_add', 'check_update', or 'preview'
+**    _message                  Output message
+**    _returnCode               Return code
+**    _callingUser              Calling user username
 **
 **  Auth:   mem
 **  Date:   11/19/2018 mem - Initial version
@@ -721,7 +725,7 @@ BEGIN
         -- Action for add, update, or preview mode
         ---------------------------------------------------
 
-        If _mode::citext In ('add', 'update', 'preview') Then
+        If _mode In ('add', 'update', 'preview') Then
 
             ---------------------------------------------------
             -- Create a temporary table to hold the experiment IDs that will be updated with the plex info in Tmp_Experiment_Plex_Members

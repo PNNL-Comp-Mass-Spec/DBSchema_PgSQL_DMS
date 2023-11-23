@@ -21,7 +21,17 @@ AS $$
 **      Adds new or updates definition of auxiliary information in database
 **
 **  Arguments:
-**    _mode   'AddTarget', 'AddCategory', 'AddSubcategory', 'AddItem', 'AddAllowedValue'
+**    _mode             Mode: 'AddTarget', 'AddCategory', 'AddSubcategory', 'AddItem', 'AddAllowedValue'
+**    _targetName
+**    _categoryName
+**    _subCategoryName
+**    _itemName
+**    _seq
+**    _param1
+**    _param2
+**    _param3
+**    _message              Output message
+**    _returnCode           Return code
 **
 **  Auth:   grk
 **  Date:   04/19/2002 grk - Initial release
@@ -74,7 +84,13 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
-    If _mode <> 'AddTarget' And _targetName = 'Cell Culture' And Exists (Select * From t_aux_info_target Where target_type_name = 'Biomaterial') Then
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
+    _mode := Trim(Lower(Coalesce(_mode, '')));
+
+    If _mode <> Lower('AddTarget') And _targetName = 'Cell Culture' And Exists (SELECT target_type_id FROM t_aux_info_target WHERE target_type_name = 'Biomaterial') Then
         _targetName := 'Biomaterial';
     End If;
 
@@ -82,7 +98,7 @@ BEGIN
     -- Add Target
     ---------------------------------------------------
 
-    If _mode = 'AddTarget' Then
+    If _mode = Lower('AddTarget') Then
         -- future: verify correctness of
         -- Target_Table, Target_ID_Col, Target_Name_Col
 
@@ -107,13 +123,13 @@ BEGIN
            (target_type_name, target_table, target_id_col, target_name_col)
         VALUES (_targetName, _param1, _param2, _param3);
 
-    End If; -- mode 'AddTarget'
+    End If;
 
     ---------------------------------------------------
     -- Add Category
     ---------------------------------------------------
 
-    If _mode = 'AddCategory' Then
+    If _mode = Lower('AddCategory') Then
         -- Resolve parent target type to ID
         --
         _targetTypeID := 0;
@@ -161,13 +177,13 @@ BEGIN
            (aux_category, target_type_id, sequence)
         VALUES (_categoryName, _targetTypeID, _tmpSeq);
 
-    End If; -- mode 'AddCategory'
+    End If;
 
     ---------------------------------------------------
     -- Add Subcategory
     ---------------------------------------------------
 
-    If _mode = 'AddSubcategory' Then
+    If _mode = Lower('AddSubcategory') Then
         -- Resolve parent category names to ID
         --
         _categoryID := 0;
@@ -218,13 +234,13 @@ BEGIN
            (aux_subcategory, sequence, Aux_Category_ID)
         VALUES (_subcategoryName, _tmpSeq, _categoryID);
 
-    End If; -- mode 'AddSubcategory'
+    End If;
 
     ---------------------------------------------------
     -- Add Item
     ---------------------------------------------------
 
-    If _mode = 'AddItem' Then
+    If _mode = Lower('AddItem') Then
         -- Resolve parent subcategory names to ID
         --
         SELECT t_aux_info_subcategory.aux_subcategory_id
@@ -277,13 +293,13 @@ BEGIN
            (Name, Aux_Subcategory_ID, sequence, data_size, helper_append)
         VALUES (_itemName, _subcategoryID, _tmpSeq, _param1, _param2)
 
-    End If; -- mode 'AddItem'
+    End If;
 
     ---------------------------------------------------
     -- Add Allowed Value
     ---------------------------------------------------
 
-    If _mode = 'AddAllowedValue' Then
+    If _mode = Lower('AddAllowedValue') Then
         -- Resolve parent description names to ID
         --
         _descriptionID := 0;
@@ -331,13 +347,13 @@ BEGIN
            (Aux_Description_ID, value)
         VALUES (_descriptionID, _param1)
 
-    End If; -- mode 'AddAllowedValue'
+    End If;
 
     ---------------------------------------------------
     -- Update Item
     ---------------------------------------------------
 
-    If _mode = 'UpdateItem' Then
+    If _mode = Lower('UpdateItem') Then
         -- Find item ID
         --
         SELECT Item_ID
@@ -369,17 +385,17 @@ BEGIN
         If _seq <> 0 Then
             _sequence := _seq;
         End If;
-        --
+
         If _param1 <> '' Then
             _dataSize := _param1;
         End If;
-        --
+
         If _param2 <> '' Then
             _helperAppend := _param2;
         End If;
 
         -- Update item
-        --
+
         UPDATE t_aux_info_description
         SET
             sequence = _sequence,
@@ -387,7 +403,7 @@ BEGIN
             helper_append = _helperAppend
         WHERE (aux_description_id = _tmpID)
 
-    End If; -- mode 'UpdateItem'
+    End If;
 
 END
 $$;

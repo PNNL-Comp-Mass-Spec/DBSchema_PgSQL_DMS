@@ -15,10 +15,16 @@ AS $$
 **
 **      The calling procedure must create and populate temporary table Tmp_Experiment_to_Biomaterial_Map:
 **
-**          CREATE TEMP TABLE Tmp_Experiment_to_Biomaterial_Map (
-**              Biomaterial_Name text not null,
-**              Biomaterial_ID int null
-**          )
+**      CREATE TEMP TABLE Tmp_Experiment_to_Biomaterial_Map (
+**          Biomaterial_Name text not null,
+**          Biomaterial_ID int null
+**      );
+**
+**  Arguments:
+**    _expID                Experiment ID
+**    _updateCachedInfo     When true, call update_cached_experiment_component_names to update t_cached_experiment_components
+**    _message              Output message
+**    _returnCode           Return code
 **
 **  Auth:   grk
 **  Date:   03/27/2002
@@ -28,7 +34,7 @@ AS $$
 **          03/17/2017 mem - Pass this procedure's name to Parse_Delimited_List
 **          11/29/2017 mem - Remove parameter _cellCultureList and use temporary table Tmp_Experiment_to_Biomaterial_Map instead
 **                           Add parameter _updateCachedInfo
-**          12/15/2023 mem - Ported to PostgreSQL
+**          11/22/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

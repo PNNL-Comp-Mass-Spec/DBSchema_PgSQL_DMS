@@ -12,6 +12,8 @@ AS $$
 **      Updates Purged to be 1 for the jobs in _jobList
 **      This procedure is called by the Space Manager
 **
+**  Arguments:
+**
 **  Auth:   mem
 **  Date:   06/13/2012
 **          12/15/2023 mem - Ported to PostgreSQL

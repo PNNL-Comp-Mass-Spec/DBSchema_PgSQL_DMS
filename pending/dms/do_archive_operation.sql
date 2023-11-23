@@ -13,9 +13,14 @@ AS $$
 **
 **  Desc:
 **      Perform archive operation defined by 'mode'
+**      Used by the Archive Detail Report, e.g. https://dms2.pnl.gov/archive/show/QC_Mam_23_01_R01_22Nov23_Titus_WBEH-23-08-17
 **
 **  Arguments:
-**    _mode   'archivereset' or 'update_req'
+**    _datasetName      Dataset name
+**    _mode             Mode: 'ArchiveReset' or 'update_req'
+**    _message          Output message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   10/06/2004
@@ -63,20 +68,26 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Get datasetID and archive state
+    -- Validate the inputs
     ---------------------------------------------------
 
-    _datasetID := 0;
+    _datasetName := Trim(Coalesce(_datasetName, ''));
+    _mode        := Trim(Lower(Coalesce(_mode, '')));
+
+    ---------------------------------------------------
+    -- Get datasetID and archive state
+    ---------------------------------------------------
 
     SELECT t_dataset.dataset_id,
            t_dataset_archive.archive_state_id
     INTO _datasetID, _archiveStateID
-    FROM t_dataset INNER JOIN
-         t_dataset_archive ON t_dataset.dataset_id = t_dataset_archive.dataset_id
+    FROM t_dataset
+         INNER JOIN t_dataset_archive
+           ON t_dataset.dataset_id = t_dataset_archive.dataset_id
     WHERE dataset = _datasetName;
 
     If Not FOUND Then
-        _msg := format('Could not get Id or archive state for dataset "%s"', _datasetName);
+        _msg := format('Could not get ID or archive state for dataset "%s"', _datasetName);
         RAISE EXCEPTION '%', _msg;
 
         _message := 'message';
@@ -93,7 +104,8 @@ BEGIN
     ---------------------------------------------------
 
     If _mode = 'archivereset' Then
-        -- if archive not in failed state, can't reset it
+
+        -- If archive not in failed state, we can't reset it
         --
         If Not _archiveStateID In (6, 2) -- 'Operation Failed' or 'Archive In Progress' Then
             _msg := format('Archive state for dataset "%s" not in proper state to be reset', _datasetName);
@@ -110,7 +122,7 @@ BEGIN
         _newState := 1;
 
         -- Update archive state of dataset to new
-        --
+
         UPDATE t_dataset_archive
         SET archive_state_id = _newState
         WHERE (dataset_id  = _datasetID)
@@ -121,18 +133,19 @@ BEGIN
         End If;
 
         RETURN;
-    End If; -- mode 'reset_archive'
+    End If;
 
     ---------------------------------------------------
     -- Reset state of failed archive dataset to 'Update Required'
     ---------------------------------------------------
 
     If _mode = 'update_req' Then
+
         -- Change the Archive Update state to 'Update Required'
         _newState := 2;
 
         -- Update archive update state of dataset
-        --
+
         UPDATE t_dataset_archive
         SET archive_update_state_id = _newState
         WHERE (dataset_id  = _datasetID)
@@ -143,7 +156,7 @@ BEGIN
         End If;
 
         RETURN;
-    End If; -- mode 'update_req'
+    End If;
 
     ---------------------------------------------------
     -- Mode was unrecognized

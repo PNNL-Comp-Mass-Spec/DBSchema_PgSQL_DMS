@@ -18,7 +18,7 @@ AS $$
 **      for the processors in the list according to the mode
 **
 **  Arguments:
-**    _mode   'set_membership_enabled', 'add_processors', 'remove_processors',
+**    _mode   Mode: 'set_membership_enabled', 'add_processors', 'remove_processors',
 **
 **  Auth:   grk
 **  Date:   02/13/2007 (Ticket #384)
@@ -111,7 +111,7 @@ BEGIN
     -- Mode set_membership_enabled
     ---------------------------------------------------
 
-    If _mode like 'set_membership_enabled_%' Then
+    If _mode Like 'set_membership_enabled_%' Then
         -- Get membership enabled value for this group
         --
         _localMembership := Replace (_mode, 'set_membership_enabled_' , '' );
@@ -121,14 +121,14 @@ BEGIN
         _nonLocalMembership := _newValue;
 
         -- Set memebership enabled value in this group
-        --
+
         UPDATE t_analysis_job_processor_group_membership
         SET membership_enabled = _localMembership
         WHERE group_id = _pgid AND processor_id IN (SELECT ID FROM Tmp_Processors);
 
         If _nonLocalMembership <> '' Then
             -- Set membership enabled value in groups other than this group
-            --
+
             UPDATE t_analysis_job_processor_group_membership
             SET membership_enabled = _nonLocalMembership
             WHERE group_id <> _pgid AND processor_id IN (SELECT ID FROM Tmp_Processors);

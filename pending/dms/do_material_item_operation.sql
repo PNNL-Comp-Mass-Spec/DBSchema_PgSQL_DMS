@@ -77,7 +77,7 @@ BEGIN
     BEGIN
 
         ---------------------------------------------------
-        -- Verify input values
+        -- Validate the inputs
         ---------------------------------------------------
 
         _name := Trim(Coalesce(_name, ''));
@@ -87,7 +87,7 @@ BEGIN
             RAISE EXCEPTION 'Material item operation mode not defined';
         End If;
 
-        If Not _mode::citext In ('retire_biomaterial', 'retire_experiment') Then
+        If Not _mode In ('retire_biomaterial', 'retire_experiment') Then
             RAISE EXCEPTION 'Material item operation mode must be retire_biomaterial or retire_experiment, not %', _mode;
         End If;
 

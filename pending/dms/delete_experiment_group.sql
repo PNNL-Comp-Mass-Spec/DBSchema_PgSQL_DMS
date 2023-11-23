@@ -12,6 +12,8 @@ AS $$
 **  Desc:
 **      Remove an experiment group (but not the experiments)
 **
+**  Arguments:
+**
 **  Auth:   grk
 **  Date:   07/13/2006
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized

@@ -16,10 +16,10 @@ AS $$
 **      Updates charge code (aka work package) information in T_Charge_Code using external server SQLSRVPROD02, which is accessed via a foreign data wrapper
 **
 **  Arguments:
-**    _infoOnly                 Set to true to preview work package metadata after updates are applied
-**    _updateAll                Set to true to force an update of all rows in T_Charge_Code; by default, filters on charge codes based on Setup_Date and Auth_Amt
+**    _infoOnly                 When true, preview work package metadata that would be applied
+**    _updateAll                When true, force an update of all rows in T_Charge_Code; by default, charge codes are filtered based on Setup_Date and Auth_Amt
 **    _onlyShowChanged          When _infoOnly is true, set this to true to only show new or updated work packages
-**    _explicitChargeCodeList   Comma-separated list of Charge codes (work packages) to add to T_Charge_Code regardless of filters.  When used, other charge codes are ignored
+**    _explicitChargeCodeList   Comma-separated list of charge codes (work packages) to add to T_Charge_Code regardless of filters. When used, other charge codes are ignored
 **
 **  Auth:   mem
 **  Date:   06/04/2013 mem - Initial version
@@ -365,7 +365,7 @@ BEGIN
             WHERE deactivated = 'Y' AND inactive_date_most_recent IS NULL;
 
             -- Set the state to 0 for deactivated work packages
-            --
+
             UPDATE t_charge_code
             SET charge_code_state = 0
             WHERE charge_code_state <> 0 AND
@@ -374,7 +374,7 @@ BEGIN
             -- Look for work packages that have a state of 0 but are no longer deactivated
             -- If created within the last 2 years, or if Inactive_Date_Most_Recent is within the last two years,
             -- change their state back to 1 (Interest Unknown)
-            --
+
             UPDATE t_charge_code
             SET charge_code_state = 1
             WHERE charge_code_state = 0 AND
@@ -508,28 +508,36 @@ BEGIN
         SET Update_Status = 'New CC'
         WHERE Update_Status = ''
 
-        SELECT Update_Status,
-               New.charge_code,
-               Old.resp_username, New.resp_username,
-               Old.resp_hid, New.resp_hid,
-               Old.wbs_title, New.wbs_title,
-               Old.charge_code_title, New.charge_code_title,
-               Old.sub_account, New.sub_account,
-               Old.sub_account_title, New.sub_account_title,
-               Old.setup_date, New.setup_date,
-               Old.sub_account_effective_date, New.sub_account_effective_date,
-               Old.inactive_date, New.inactive_date,
-               Old.sub_account_inactive_date, New.sub_account_inactive_date,
-               Old.deactivated, New.deactivated,
-               Old.auth_amt, New.auth_amt,
-               Old.auth_username, New.auth_username,
-               Old.auth_hid, New.auth_hid
-        FROM Tmp_ChargeCode New Left Outer Join
-             t_charge_code Old
-               ON New.charge_code = Old.charge_code
-        WHERE _infoOnly And Not _onlyShowChanged OR
-              _infoOnly And     _onlyShowChanged AND New.Update_Status NOT LIKE 'Unchanged%'
-        ORDER BY New.Update_Status, New.charge_code;
+        -- ToDo: Show this using RAISE INFO
+
+        FOR EACH _chargeCodeINFO IN
+            SELECT Update_Status,
+                   New.charge_code,
+                   Old.resp_username, New.resp_username,
+                   Old.resp_hid, New.resp_hid,
+                   Old.wbs_title, New.wbs_title,
+                   Old.charge_code_title, New.charge_code_title,
+                   Old.sub_account, New.sub_account,
+                   Old.sub_account_title, New.sub_account_title,
+                   Old.setup_date, New.setup_date,
+                   Old.sub_account_effective_date, New.sub_account_effective_date,
+                   Old.inactive_date, New.inactive_date,
+                   Old.sub_account_inactive_date, New.sub_account_inactive_date,
+                   Old.deactivated, New.deactivated,
+                   Old.auth_amt, New.auth_amt,
+                   Old.auth_username, New.auth_username,
+                   Old.auth_hid, New.auth_hid
+            FROM Tmp_ChargeCode New Left Outer Join
+                 t_charge_code Old
+                   ON New.charge_code = Old.charge_code
+            WHERE _infoOnly And Not _onlyShowChanged OR
+                  _infoOnly And     _onlyShowChanged AND New.Update_Status NOT LIKE 'Unchanged%'
+            ORDER BY New.Update_Status, New.charge_code
+        LOOP
+
+            ...
+
+        END LOOP;
 
     EXCEPTION
         WHEN OTHERS THEN

@@ -16,6 +16,8 @@ AS $$
 **  Desc:
 **      Adds new or edits existing Legacy Organism DB File in T_Organism_DB_File
 **
+**  Arguments:
+**
 **  Auth:   mem
 **  Date:   01/24/2014 mem - Initial version
 **          01/15/2015 mem - Added parameter _fileSizeKB

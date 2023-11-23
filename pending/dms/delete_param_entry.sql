@@ -13,7 +13,9 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Deletes given Sequest Param Entry from the T_Param_Entries
+**      Deletes given SEQUEST Param Entry from the T_Param_Entries
+**
+**  Arguments:
 **
 **  Auth:   kja
 **  Date:   07/22/2004

@@ -30,6 +30,8 @@ AS $$
 **     21tfticr       Host (A)    192.168.30.60
 **     21tvpro        Host (A)    192.168.30.60
 **
+**  Arguments:
+**
 **  Auth:   mem
 **  Date:   12/02/2015 mem - Initial version
 **          11/19/2018 mem - Pass 0 to the _maxRows parameter of parse_delimited_list_ordered
@@ -279,7 +281,7 @@ BEGIN
             VALUES (s.host, s.ip, s.instruments);
 
         -- Remove out-of-date aliases
-        --
+
         UPDATE t_bionet_hosts Target
         SET alias = Null
         WHERE NOT EXISTS (SELECT 1
@@ -290,7 +292,7 @@ BEGIN
               AND Not target.Alias Is Null;
 
         -- Add/update aliases
-        --
+
         UPDATE t_bionet_hosts Target
         SET alias = Src.alias
         FROM ( SELECT Host AS Alias,

@@ -30,9 +30,28 @@ AS $$
 **      Adds new analysis job request to request queue
 **
 **  Arguments:
+**    _datasets
+**    _requestName
+**    _toolName
+**    _paramFileName
+**    _settingsFileName
+**    _protCollNameList
+**    _protCollOptionsList
+**    _organismName
+**    _organismDBName
+**    _requesterUsername
+**    _comment
+**    _specialProcessing
+**    _dataPackageID
+**    _state
+**    _requestID
 **    _organismDBName   Legacy fasta file; typically 'na'
 **    _state            Includes 'new', 'used', and 'inactive' (see T_Analysis_Job_Request_State)
-**    _mode             'add', 'update', 'append', or 'PreviewAdd'
+**    _mode             Mode: 'add', 'update', 'append', or 'PreviewAdd'
+**    _message          Output message
+**    _returnCode       Return code
+_autoRemoveNotReleasedDatasets
+_callingUser
 **
 **  Auth:   grk
 **  Date:   10/9/2003

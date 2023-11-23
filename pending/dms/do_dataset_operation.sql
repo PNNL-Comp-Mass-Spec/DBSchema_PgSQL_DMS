@@ -15,8 +15,11 @@ AS $$
 **      Perform dataset operation defined by 'mode'
 **
 **  Arguments:
-**    _datasetNameOrID   Dataset name or dataset ID
-**    _mode              'delete', 'reset', 'createjobs'; legacy version supported 'burn' and 'delete_all'
+**    _datasetNameOrID  Dataset name or dataset ID
+**    _mode             Mode: 'delete', 'reset', 'createjobs'; legacy version supported 'burn' and 'delete_all'
+**    _message          Output message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   04/08/2002
@@ -98,12 +101,16 @@ BEGIN
     End If;
 
     BEGIN
+        ---------------------------------------------------
+        -- Validate the inputs
+        ---------------------------------------------------
+
+        _candidateDatasetID := public.try_cast(_datasetNameOrID, null::int);
+        _mode               := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
         -- Get datasetID and current state
         ---------------------------------------------------
-
-        _candidateDatasetID := public.try_cast(_datasetNameOrID, null::int);
 
         If Coalesce(_candidateDatasetID, 0) > 0 Then
             SELECT dataset_state_id,
@@ -136,7 +143,7 @@ BEGIN
         -- Schedule the dataset for predefined job processing
         ---------------------------------------------------
 
-        If _mode = 'createjobs' Then
+        If _mode = Lower('Createjobs') Then
             If Coalesce(_callingUser, '') = '' Then
                 _callingUser := session_user;
             End If;

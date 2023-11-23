@@ -34,17 +34,30 @@ AS $$
 **      Adds new or updates existing campaign in database
 **
 **  Arguments:
-**    _campaignName              Campaign name
-**    _projectName               Project name
-**    _progmgrUsername           Project Manager username (required)
-**    _piUsername                Principal Investigator username (required)
-**    _technicalLead             Technical Lead
-**    _samplePreparationStaff    Sample Prep Staff
-**    _datasetAcquisitionStaff   Dataset acquisition staff
-**    _informaticsStaff          Informatics staff
-**    _collaborators             Collaborators
-**    _fractionEMSLFunded        Value between 0 and 1
-**    _mode                      or 'update'
+**    _campaignName                 Campaign name
+**    _projectName                  Project name
+**    _progmgrUsername              Project Manager username (required)
+**    _piUsername                   Principal Investigator username (required)
+**    _technicalLead                Technical Lead
+**    _samplePreparationStaff       Sample Prep Staff
+**    _datasetAcquisitionStaff      Dataset acquisition staff
+**    _informaticsStaff             Informatics staff
+**    _collaborators                Collaborators
+**    _comment
+**    _state
+**    _description
+**    _externalLinks
+**    _eprList
+**    _eusProposalList
+**    _organisms
+**    _experimentPrefixes
+**    _dataReleaseRestrictions
+**    _fractionEMSLFunded           Value between 0 and 1
+**    _eusUsageType
+**    _mode                         Mode: 'add' or 'update'
+**    _message                      Output message
+**    _returnCode                   Return code
+**    _callingUser                  Calling user username
 **
 **  Auth:   grk
 **  Date:   01/08/2002

@@ -20,7 +20,15 @@ AS $$
 **      Adds new or edits existing T_Analysis_Job_Processors
 **
 **  Arguments:
-**    _mode   'add' or 'update'
+**    _id
+**    _state
+**    _processorName
+**    _machine
+**    _notes
+**    _analysisToolsList
+**    _mode         Mode: 'add' or 'update'
+**    _message                  Output message
+**    _returnCode               Return code
 **
 **  Auth:   grk
 **  Date:   02/15/2007 (ticket 389)
@@ -64,6 +72,10 @@ BEGIN
         _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
         RAISE EXCEPTION '%', _message;
     End If;
+
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
 
     _mode := Trim(Lower(Coalesce(_mode, '')));
 

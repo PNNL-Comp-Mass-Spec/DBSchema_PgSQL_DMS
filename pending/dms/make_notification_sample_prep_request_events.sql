@@ -9,8 +9,9 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds sample prep request notification events
-**      to notification event table
+**      Adds sample prep request notification events to notification event table
+**
+**  Arguments:
 **
 **  Auth:   grk
 **  Date:   03/30/2010

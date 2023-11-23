@@ -21,11 +21,11 @@ CREATE OR REPLACE PROCEDURE public.add_update_experiment
     _wellNumber text,
     _alkylation text,
     _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
     _container text = 'na',
     _barcode text = '',
     _tissue text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -38,10 +38,32 @@ AS $$
 **      Note that the Experiment Detail Report web page uses do_material_item_operation to retire an experiment
 **
 **  Arguments:
-**    _experimentId            Input/output; When copying an experiment, this will have the new experiment's ID; this is required if renaming an existing experiment
-**    _experimentName          Experiment name
-**    _referenceCompoundList   Semicolon-separated list of reference compound IDs; supports integers, or names of the form 3311:ANFTSQETQGAGK
-**    _mode                    'add, 'update', 'check_add', 'check_update'
+**    _experimentId             Input/output; When copying an experiment, this will have the new experiment's ID; this is required if renaming an existing experiment
+**    _experimentName           Experiment name
+**    _campaignName
+**    _researcherUsername
+**    _organismName
+**    _reason
+**    _comment
+**    _sampleConcentration
+**    _enzymeName
+**    _labNotebookRef
+**    _labelling
+**    _biomaterialList
+**    _referenceCompoundList    Semicolon-separated list of reference compound IDs; supports integers, or names of the form 3311:ANFTSQETQGAGK
+**    _samplePrepRequest
+**    _internalStandard
+**    _postdigestIntStd
+**    _wellplateName
+**    _wellNumber
+**    _alkylation
+**    _mode                     Mode: 'add, 'update', 'check_add', 'check_update'
+**    _container
+**    _barcode
+**    _tissue
+**    _message                  Output message
+**    _returnCode               Return code
+**    _callingUser              Calling user username
 **
 **  Auth:   grk
 **  Date:   01/08/2002 grk - Initial release
@@ -276,8 +298,9 @@ BEGIN
         -- Is entry already in database?
         ---------------------------------------------------
 
-        If _mode::citext In ('update', 'check_update') And _experimentID > 0 Then
-            Select exp_id,
+        If _mode In ('update', 'check_update') And _experimentID > 0 Then
+
+            SELECT exp_id,
                    experiment,
                    container_id
             INTO _existingExperimentID, _existingExperimentName, _curContainerID
@@ -328,7 +351,7 @@ BEGIN
             FROM t_experiments
             WHERE experiment = _experimentName;
 
-            If _mode::citext In ('update', 'check_update') And Not FOUND Then
+            If _mode In ('update', 'check_update') And Not FOUND Then
                 RAISE EXCEPTION 'Cannot update: Experiment "%" is not in database', _experimentName;
             End If;
 
@@ -338,7 +361,7 @@ BEGIN
 
         -- Cannot create an entry that already exists
         --
-        If _existingExperimentID <> 0 and (_mode::citext In ('add', 'check_add')) Then
+        If _existingExperimentID <> 0 and (_mode In ('add', 'check_add')) Then
             RAISE EXCEPTION 'Cannot add: Experiment "%" already in database; cannot add', _experimentName;
         End If;
 
@@ -399,7 +422,7 @@ BEGIN
         -- Set up and validate wellplate values
         ---------------------------------------------------
 
-        If _mode::citext In ('add', 'check_add') THEN
+        If _mode In ('add', 'check_add') THEN
             _totalCount := 1;
         Else
             _totalCount := 0;
@@ -419,11 +442,11 @@ BEGIN
 
         -- Make sure we do not put two experiments in the same place
         --
-        If Exists (SELECT exp_id FROM t_experiments WHERE wellplate = _wellplateName AND well = _wellNumber) And _mode::citext In ('add', 'check_add') Then
+        If Exists (SELECT exp_id FROM t_experiments WHERE wellplate = _wellplateName AND well = _wellNumber) AND _mode In ('add', 'check_add') Then
             RAISE EXCEPTION 'There is another experiment assigned to the same wellplate and well';
         End If;
 
-        If Exists (SELECT exp_id FROM t_experiments WHERE wellplate = _wellplateName AND well = _wellNumber AND experiment <> _experimentName) And _mode::citext In ('update', 'check_update') Then
+        If Exists (SELECT exp_id FROM t_experiments WHERE wellplate = _wellplateName AND well = _wellNumber AND experiment <> _experimentName) And _mode In ('update', 'check_update') Then
             RAISE EXCEPTION 'There is another experiment assigned to the same wellplate and well';
         End If;
 
@@ -472,7 +495,7 @@ BEGIN
             RAISE EXCEPTION 'Could not find entry in database for predigestion internal standard "%"', _internalStandard;
         End If;
 
-        If (_mode::citext In ('add', 'check_add')) And _internalStandardState <> 'A' Then
+        If (_mode In ('add', 'check_add')) And _internalStandardState <> 'A' Then
             RAISE EXCEPTION 'Predigestion internal standard "%" is not active; this standard cannot be used when creating a new experiment', _internalStandard;
         End If;
 
@@ -491,7 +514,7 @@ BEGIN
             RAISE EXCEPTION 'Could not find entry in database for postdigestion internal standard "%"', _postdigestIntStd;
         End If;
 
-        If (_mode::citext In ('add', 'check_add')) And _internalStandardState <> 'A' Then
+        If (_mode In ('add', 'check_add')) And _internalStandardState <> 'A' Then
             RAISE EXCEPTION 'Postdigestion internal standard "%" is not active; this standard cannot be used when creating a new experiment', _postdigestIntStd;
         End If;
 
@@ -518,7 +541,7 @@ BEGIN
         -- (skip if adding experiment)
         ---------------------------------------------------
 
-        If Not _mode::citext In ('add', 'check_add') Then
+        If Not _mode In ('add', 'check_add') Then
             SELECT container
             INTO _curContainerName
             FROM t_material_containers
@@ -565,7 +588,7 @@ BEGIN
         End If;
 
         -- Verify that biomaterial items exist
-        --
+
         UPDATE tmp_experiment_to_biomaterial_map Src
         SET biomaterial_id = Src.biomaterial_id
         FROM t_biomaterial Src
@@ -617,7 +640,7 @@ BEGIN
 
         -- If any entries still have a null Compound_ID value, try matching via reference compound name
         -- We have numerous reference compounds with identical names, so matches found this way will be ambiguous
-        --
+
         UPDATE Tmp_ExpToRefCompoundMap Src
         SET Compound_ID = Src.Compound_ID
         FROM t_reference_compound Src

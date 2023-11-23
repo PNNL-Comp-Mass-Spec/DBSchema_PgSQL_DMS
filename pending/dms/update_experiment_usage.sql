@@ -14,6 +14,8 @@ AS $$
 **
 **      Last_Used is used by LcmsNetDMSTools when retrieving recent experiments
 **
+**  Arguments:
+**
 **  Auth:   mem
 **  Date:   07/31/2015 mem - Initial version
 **          12/15/2023 mem - Ported to PostgreSQL

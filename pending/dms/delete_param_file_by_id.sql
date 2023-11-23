@@ -12,6 +12,8 @@ AS $$
 **  Desc:
 **      Deletes a parameter file by ID
 **
+**  Arguments:
+**
 **  Auth:   kja
 **  Date:   08/11/2004 kja
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized

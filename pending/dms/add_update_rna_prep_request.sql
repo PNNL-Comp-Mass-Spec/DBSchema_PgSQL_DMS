@@ -35,9 +35,12 @@ AS $$
 **      Adds new or edits existing RNA Prep Request
 **
 **  Arguments:
-**    _eusUserID   Use Null or 0 if no EUS User ID
-**    _state       New, Open, Prep in Progress, Prep Complete, or Closed
-**    _mode        'add' or 'update'
+**    _eusUserID    Use Null or 0 if no EUS User ID
+**    _state        New, Open, Prep in Progress, Prep Complete, or Closed
+**    _mode         Mode: 'add' or 'update'
+**    _message      Output message
+**    _returnCode   Return code
+**    _callingUser  Calling user username
 **
 **  Auth:   mem
 **  Date:   05/19/2014 mem - Initial version
@@ -292,9 +295,7 @@ BEGIN
 
         If _mode = 'update' Then
             -- Cannot update a non-existent entry
-            --
-            _currentStateID := 0;
-            --
+
             SELECT request_type,
                    state_id
             INTO _requestTypeExisting, _currentStateID
@@ -408,7 +409,7 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-            --
+
             UPDATE t_sample_prep_request
             SET
                 request_name = _requestName,

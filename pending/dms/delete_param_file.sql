@@ -10,8 +10,10 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Deletes given Sequest Param file from the T_Param_Files
+**      Deletes given SEQUEST Param file from the T_Param_Files
 **      and all referencing tables
+**
+**  Arguments:
 **
 **  Auth:   kja
 **  Date:   07/22/2004 mem

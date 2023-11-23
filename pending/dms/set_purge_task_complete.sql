@@ -249,7 +249,7 @@ Code 6 (Purged all data except QC folder)
         -- wouldn't be able to tell if the raw instrument file is available
 
         -- Note that trigger trig_u_Dataset_Archive will likely have already updated instrument_data_purged
-        --
+
         UPDATE t_dataset_archive
         SET instrument_data_purged = 1
         WHERE dataset_id = _datasetID AND
@@ -259,7 +259,7 @@ Code 6 (Purged all data except QC folder)
     If _completionState In (4) Then
         -- Make sure QC_Data_Purged is now 1
         -- Note that trigger trig_u_Dataset_Archive will likely have already updated instrument_data_purged
-        --
+
         UPDATE t_dataset_archive
         SET qc_data_purged = 1
         WHERE dataset_id = _datasetID AND

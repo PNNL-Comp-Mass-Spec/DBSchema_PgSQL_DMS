@@ -69,6 +69,8 @@ BEGIN
         _targetName := 'Biomaterial';
     End If;
 
+    _mode := Trim(Lower(Coalesce(_mode, '')));
+
     ---------------------------------------------------
     -- Resolve target name to target table criteria
     ---------------------------------------------------
@@ -207,7 +209,7 @@ BEGIN
     -- to given destination entities
     ---------------------------------------------------
 
-    If _mode::citext = 'copyCategory' Then
+    If _mode = Lower('CopyCategory') Then
 
         -- Delete any existing values
         --
@@ -242,7 +244,7 @@ BEGIN
     -- to given destination entity
     ---------------------------------------------------
 
-    If _mode::citext = 'copySubcategory' Then
+    If _mode = Lower('CopySubcategory') Then
 
         -- Delete any existing values
         --
@@ -280,7 +282,7 @@ BEGIN
     -- to given destination entity
     ---------------------------------------------------
 
-    If _mode::citext = 'copyAll' Then
+    If _mode = Lower('CopyAll') Then
 
         -- Delete any existing values
         --

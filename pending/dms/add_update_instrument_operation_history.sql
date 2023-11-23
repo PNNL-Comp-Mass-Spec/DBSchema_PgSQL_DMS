@@ -18,7 +18,14 @@ AS $$
 **      Adds new or edits existing item in T_Instrument_Operation_History
 **
 **  Arguments:
-**    _mode   'add' or 'update'
+**    _id
+**    _instrument
+**    _postedBy
+**    _note
+**    _mode         Mode: 'add' or 'update'
+**    _message      Output message
+**    _returnCode   Return code
+**    _callingUser  Calling user username
 **
 **  Auth:   grk
 **  Date:   05/20/2010
@@ -89,7 +96,7 @@ BEGIN
 
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
-        If _mode = 'update' and _id is null Then
+        If _mode = 'update' And _id Is Null Then
             RAISE EXCEPTION 'ID cannot be null when updating a note';
         End If;
 
@@ -162,7 +169,7 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-            --
+
             UPDATE t_instrument_operation_history
             SET instrument = _instrument,
                 note = _note

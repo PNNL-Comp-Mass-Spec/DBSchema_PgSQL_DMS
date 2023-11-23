@@ -12,6 +12,8 @@ AS $$
 **  Desc:
 **      Automatically retires (sets inactive) campaigns that have not been used recently
 **
+**  Arguments:
+**
 **  Auth:   mem
 **  Date:   06/11/2022
 **          12/15/2023 mem - Ported to PostgreSQL

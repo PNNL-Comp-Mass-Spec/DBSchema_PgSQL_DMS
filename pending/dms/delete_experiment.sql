@@ -12,9 +12,16 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Deletes given Experiment from the Experiment table
-**      and all referencing tables.  Experiment may not
-**      have any associated datasets or requested runs
+**      Deletes given Experiment from the Experiment table and all referencing tables
+**
+**      The experiment may not have any associated datasets or requested runs
+**
+**  Arguments:
+**    _experimentName   Experiment to delete
+**    _infoOnly         When true, preview the updates
+**    _message          Output message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   05/11/2004

@@ -57,9 +57,12 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
-    _request := Trim(Coalesce(_request, ''));
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
 
-    _mode := Trim(Lower(Coalesce(_mode, '')));
+    _request := Trim(Coalesce(_request, ''));
+    _mode    := Trim(Lower(Coalesce(_mode, '')));
 
     ---------------------------------------------------
     -- Delete analysis job request if it is unused

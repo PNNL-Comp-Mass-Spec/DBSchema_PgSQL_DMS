@@ -22,6 +22,8 @@ AS $$
 **  Desc:
 **      Return a table of existing analysis jobs created from the specified analysis job request
 **
+**  Arguments:
+**
 **  Auth:   grk
 **  Date:   12/05/2005 grk - Initial version
 **          04/07/2006 grk - Eliminated job to request map table

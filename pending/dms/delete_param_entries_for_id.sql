@@ -10,7 +10,9 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Deletes Sequest Param Entries from a given Param File ID
+**      Deletes SEQUEST Param Entries from a given Param File ID
+**
+**  Arguments:
 **
 **  Auth:   kja
 **  Date:   07/22/2004

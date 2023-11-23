@@ -26,6 +26,10 @@ AS $$
 **    _entrySpecifier   For modifications, this is the residues affected for dynamic, static, or isotopic mods; for other entries, will be the name entered into T_Param_Entries (column Entry_Specifier)
 **    _entryValue
 **    _mode             'add' or 'update'
+**    _message          Output message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
+**    _infoOnly
 **
 **  Auth:   kja
 **  Date:   07/22/2004

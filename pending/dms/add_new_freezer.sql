@@ -16,6 +16,13 @@ AS $$
 **
 **      You must first manually add a row to T_Material_Freezers
 **
+**  Arguments:
+**    _sourceFreezerTag
+**    _newFreezerTag
+**    _infoOnly
+**    _message              Output message
+**    _returnCode           Return code
+**
 **  Auth:   mem
 **  Date:   04/22/2015 mem - Initial version
 **          03/31/2016 mem - Switch to using Freezer tags (and remove parameter _newTagBase)

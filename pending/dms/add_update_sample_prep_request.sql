@@ -55,6 +55,9 @@ AS $$
 **    _blockAndRandomizeSamples   'Yes', 'No', or 'na'
 **    _blockAndRandomizeRuns      'Yes' or 'No'
 **    _mode                       'add' or 'update'
+**    _message          Output message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   06/09/2005

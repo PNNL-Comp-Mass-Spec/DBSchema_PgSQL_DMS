@@ -20,6 +20,19 @@ AS $$
 **  Desc:
 **      Adds new or edits existing item in T_Bionet_Hosts
 **
+**  Arguments:
+**    _host
+**    _ip
+**    _alias
+**    _tag
+**    _instruments
+**    _active
+**    _comment
+**    _mode             Mode: 'add' or 'update'
+**    _message          Output message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
+**
 **  Date:   09/08/2016 mem - Initial version
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
@@ -27,9 +40,6 @@ AS $$
 **          10/03/2018 mem - Add _comment
 **                         - Use _logErrors to toggle logging errors caught by the try/catch block
 **          12/15/2023 mem - Ported to PostgreSQL
-**
-**  Arguments:
-**    _mode   'add' or 'update'
 **
 *****************************************************/
 DECLARE

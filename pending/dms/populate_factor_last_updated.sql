@@ -14,6 +14,8 @@ AS $$
 **  Desc:
 **      Populates the Last_Updated column in table T_Factors using T_Factor_Log
 **
+**  Arguments:
+**
 **  Auth:   mem
 **  Date:   10/06/2016 mem - Initial version
 **          12/15/2023 mem - Ported to PostgreSQL
@@ -148,7 +150,7 @@ BEGIN
              ) XmlQ;
 
         -- Look for valid factor update data
-        --
+
         UPDATE Tmp_FactorUpdates
         SET ValidFactor = true
         WHERE Not Coalesce(FactorType, '')::citext IN ('Block', 'Run Order') AND

@@ -84,6 +84,10 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
     -- Set to true to log the contents of _requestList
 
     If _debugEnabled Then
@@ -137,8 +141,9 @@ BEGIN
     -----------------------------------------------------------
     -- Validate the request list
     -----------------------------------------------------------
+
     -- Convert request IDs from text to integer
-    --
+
     UPDATE Tmp_Requests
     SET request_id = public.try_cast(Item, null::int);
 
@@ -172,7 +177,7 @@ BEGIN
         RETURN;
     End If;
 
-    If Exists (SELECT Item FROM Tmp_Requests WHERE Not Origin::citext In ('user', 'fraction') And _mode::citext <> 'Delete') Then
+    If Exists (SELECT Item FROM Tmp_Requests WHERE Not Origin::citext In ('user', 'fraction') And _mode <> 'delete') Then
         _message := 'Cannot change requests that were not entered by user';
         _returnCode := 'U5115';
 
@@ -218,7 +223,7 @@ BEGIN
             SELECT state_id
             INTO _stateID
             FROM t_requested_run_state_name
-            WHERE state_name = _mode;
+            WHERE state_name = _mode::citext;
 
             CALL public.alter_event_log_entry_user_multi_id ('public', 11, _stateID, _callingUser, _message => _alterEnteredByMessage);
         End If;
@@ -273,7 +278,7 @@ BEGIN
     -- Unassign requests
     -----------------------------------------------------------
 
-    If _mode::citext = 'UnassignInstrument' Then
+    If _mode = Lower('UnassignInstrument') Then
 
         UPDATE t_requested_run
         SET queue_state = 1,

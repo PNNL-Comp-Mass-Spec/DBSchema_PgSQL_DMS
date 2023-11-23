@@ -32,23 +32,26 @@ AS $$
 **
 **  Arguments:
 **    _datasetList                  Comma-separated list of dataset names; ignored if _dataPackageID is a positive integer
-**    _priority
-**    _toolName
-**    _paramFileName
-**    _settingsFileName
+**    _priority                     Job priority (1 means highest priority)
+**    _toolName                     Analysis tool name
+**    _paramFileName                Parameter file name
+**    _settingsFileName             Settings file name
 **    _organismDBName               Legacy FASTA name; 'na' if using protein collections
-**    _organismName
-**    _protCollNameList
-**    _protCollOptionsList
-**    _ownerUsername                Will get updated to _callingUser if _callingUser is valid
-**    _comment
-**    _specialProcessing
+**    _organismName                 Organism name
+**    _protCollNameList             Protein collection(s)
+**    _protCollOptionsList          Protein collection options
+**    _ownerUsername                Owner username; will be updated to _callingUser if _callingUser is valid
+**    _comment                      Job comment
+**    _specialProcessing            Special processing parameters
 **    _requestID                    0 if not associated with a request; otherwise, Request ID in T_Analysis_Job_Request
-**    _dataPackageID
+**    _dataPackageID                Data package ID
 **    _associatedProcessorGroup     Processor group name; deprecated in May 2015
-**    _propagationMode              'Export', 'No Export'
+**    _propagationMode              Propagation mode: 'Export', 'No Export'
 **    _removeDatasetsWithJobs       If 'N' or 'No', do not remove datasets with existing jobs (ignored if _dataPackageID is non-zero)
-**    _mode                         'add' or 'preview'
+**    _mode                         Mode: 'add' or 'preview'
+**    _message                      Output message
+**    _returnCode                   Return code
+**    _callingUser                  Calling user username
 **
 **  Auth:   grk
 **  Date:   01/29/2004
@@ -242,7 +245,7 @@ BEGIN
             _dataPackageID := 0;
         End If;
 
-        If Not _mode::citext In ('add', 'preview') Then
+        If Not _mode In ('add', 'preview') Then
             RAISE EXCEPTION 'Invalid mode: should be "add" or "preview", not "%"', _mode;
         End If;
 
@@ -506,27 +509,27 @@ BEGIN
         _organismName := Trim(_organismName);
 
         CALL public.validate_analysis_job_parameters (
-                                _toolName => _toolName,                                      _toolname text
-                                _paramFileName => _paramFileName,               -- Output    _paramfilename text     -- Output
-                                _settingsFileName => _settingsFileName,         -- Output    _settingsfilename text     -- Output
-                                _organismDBName => _organismDBName,             -- Output    _organismdbname text     -- Output
-                                _organismName => _organismName,                              _organismname text
-                                _protCollNameList => _protCollNameList,         -- Output    _protcollnamelist text     -- Output
-                                _protCollOptionsList => _protCollOptionsList,   -- Output    _protcolloptionslist text     -- Output
-                                _ownerUsername => _ownerUsername,               -- Output    _ownerusername text     -- Output
-                                _mode => _mode,                                              _mode text
-                                _userID => _userID,                             -- Output    _userid integer     -- Output
-                                _analysisToolID => _analysisToolID,             -- Output    _analysistoolid integer     -- Output
-                                _organismID => _organismID,                     -- Output    _organismid integer     -- Output
-                                _job => 0,                                                   _job integer DEFAULT 0
-                                _autoRemoveNotReleasedDatasets => false,                     _autoremovenotreleaseddatasets boolean DEFAULT
-                                _autoUpdateSettingsFileToCentroided => true,                 _autoupdatesettingsfiletocentroided boolean DEF
-                                _allowNewDatasets => false,                                  _allownewdatasets boolean DEFAULT false
-                                _warning => _warning,                           -- Output    _warning text DEFAULT ''::text     -- Output
-                                _priority => _priority,                         -- Output    _priority integer DEFAULT 3     -- Output
-                                _showDebugMessages => false,                                 _showdebugmessages boolean DEFAULT false
-                                _message => _message,                           -- Output    _message text DEFAULT ''::text     -- Output
-                                _returnCode => _returnCode);                    -- Output    _returncode text DEFAULT ''::text     -- Output
+                                _toolName => _toolName,
+                                _paramFileName => _paramFileName,               -- Output
+                                _settingsFileName => _settingsFileName,         -- Output
+                                _organismDBName => _organismDBName,             -- Output
+                                _organismName => _organismName,
+                                _protCollNameList => _protCollNameList,         -- Output
+                                _protCollOptionsList => _protCollOptionsList,   -- Output
+                                _ownerUsername => _ownerUsername,               -- Output
+                                _mode => _mode,
+                                _userID => _userID,                             -- Output
+                                _analysisToolID => _analysisToolID,             -- Output
+                                _organismID => _organismID,                     -- Output
+                                _job => 0,
+                                _autoRemoveNotReleasedDatasets => false,
+                                _autoUpdateSettingsFileToCentroided => true,
+                                _allowNewDatasets => false,
+                                _warning => _warning,                           -- Output
+                                _priority => _priority,                         -- Output
+                                _showDebugMessages => false,
+                                _message => _message,                           -- Output
+                                _returnCode => _returnCode);                    -- Output
 
 
         If _returnCode <> '' Then
@@ -744,7 +747,7 @@ BEGIN
                     If _returnCode = '' Then
                         -- Associate the new job with this job request
                         -- Also update settings file, parameter file, protein collection, etc.
-                        --
+
                         UPDATE t_analysis_job
                         SET request_id = _requestID,
                             settings_file_name = _settingsFileName,

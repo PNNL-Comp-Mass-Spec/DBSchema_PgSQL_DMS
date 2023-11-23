@@ -16,13 +16,14 @@ AS $$
 **  Desc:
 **      Adds new or updates existing EUS Users in database
 **
-**      _eusPersonID     EUS Proposal ID
-**      _eusNameFm       EUS Proposal State
-**      _eusSiteStatus   EUS Proposal Title
-**      _hanfordID       Hanford ID
-**
 **  Arguments:
-**    _mode   'add' or 'update'
+**    _eusPersonID      EUS Proposal ID
+**    _eusNameFm        EUS Proposal State
+**    _eusSiteStatus    EUS Proposal Title
+**    _hanfordID        Hanford ID
+**    _mode             Mode: add' or 'update'
+**    _message          Output message
+**    _returnCode       Return code
 **
 **  Auth:   jds
 **  Date:   09/01/2006
@@ -74,7 +75,7 @@ BEGIN
         _message := 'EUS Person ID must be specified';
         RAISE EXCEPTION '%', _message;
     End If;
-    --
+
     If char_length(_eusNameFm) < 1 Then
         _returnCode := 'U5202';
         RAISE EXCEPTION 'EUS Person''s Name must be specified';
@@ -155,7 +156,7 @@ BEGIN
     ---------------------------------------------------
 
     If _mode = 'update' Then
-        --
+
         UPDATE  t_eus_users
         SET
             name_fm = _eusNameFm,

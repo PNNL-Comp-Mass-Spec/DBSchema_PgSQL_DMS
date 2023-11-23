@@ -12,8 +12,15 @@ AS $$
 **
 **  Desc:
 **      Adds a charge code (work package) to T_Charge_Code
+**
 **      Useful when a work package is not auto-adding to the table
 **      (charge codes are auto-added if the owner is a DMS user or DMS guest)
+**
+**  Arguments:
+**    _chargeCodeList   Comma separated list of charge codes (work packages) to add to T_Charge_Code
+**    _infoOnly         When true, preview work package metadata that would be applied
+**    _message          Output message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   08/13/2015 mem - Initial Version

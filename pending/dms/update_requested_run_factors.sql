@@ -52,7 +52,6 @@ AS $$
 **      <r d="214003" f="Factor1" v="Bb" />
 **      <r d="213522" f="Factor2" v="Aa" />
 **
-**
 **  Arguments:
 **    _factorList   XML (see above)
 **    _infoOnly     Set to true to preview the changes that would be made

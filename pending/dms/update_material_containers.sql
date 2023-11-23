@@ -20,6 +20,7 @@ AS $$
 **    _mode             'move_container', 'retire_container', 'retire_container_and_contents', 'unretire_container'
 **    _containerList    Container ID list, e.g. 'MC-6314', 'MC-9750'
 **    _newValue         When mode is 'move_container', this is the new location for the container
+**    _comment          Container comment
 **
 **  Auth:   grk
 **  Date:   03/26/2008     - (ticket http://prismtrac.pnl.gov/trac/ticket/603)

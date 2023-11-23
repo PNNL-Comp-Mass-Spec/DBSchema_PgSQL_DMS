@@ -24,7 +24,7 @@ AS $$
 **
 **  Arguments:
 **    _requestedInstrument   Will typically contain an instrument group, not an instrument name
-**    _mode                  'add' or 'update'
+**    _mode                  Mode: 'add' or 'update'
 **
 **  Auth:   jds
 **  Date:   05/18/2009

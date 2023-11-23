@@ -12,6 +12,8 @@ AS $$
 **  Desc:
 **      Automatically retires (sets inactive) LC columns that have not been used recently
 **
+**  Arguments:
+**
 **  Return values: 0:  success, otherwise, error code
 **
 **  Auth:   mem
@@ -67,7 +69,7 @@ BEGIN
     If _infoOnly Then
 
         -- Populate column Most_Recent_Dataset
-        --
+
         UPDATE Tmp_LCColumns
         SET Most_Recent_Dataset = LookupQ.dataset
         FROM ( SELECT lc_column_ID,

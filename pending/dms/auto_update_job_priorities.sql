@@ -18,6 +18,8 @@ AS $$
 **      and predefined jobs, plus manually created small batches of jobs
 **      will have priority 3
 **
+**  Arguments:
+**
 **  Auth:   mem
 **  Date:   10/04/2017 mem - Initial version
 **          07/29/2022 mem - No longer filter out null parameter file or settings file names since neither column allows null values
@@ -154,7 +156,7 @@ BEGIN
     GROUP BY job;
 
     -- Update the old/new priority columns
-    --
+
     UPDATE Tmp_JobsToUpdate Target
     SET Old_Priority = J.Priority::int
         New_Priority = 4
@@ -162,7 +164,7 @@ BEGIN
     WHERE J.job = Target.job;
 
     -- Ignore any jobs that are already in t_analysis_job_priority_updates
-    --
+
     UPDATE Tmp_JobsToUpdate Target
     SET Ignored = 1
     FROM t_analysis_job_priority_updates JPU

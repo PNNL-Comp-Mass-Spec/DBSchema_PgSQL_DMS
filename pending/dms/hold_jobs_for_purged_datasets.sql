@@ -12,6 +12,8 @@ AS $$
 **  Desc:
 **      Updates the job state to 8=Holding for jobs associated with purged dataset
 **
+**  Arguments:
+**
 **  Auth:   mem
 **  Date:   05/15/2008 (Ticket #670)
 **          05/22/2008 mem - Now updating comment for any jobs that are set to state 8 (Ticket #670)

@@ -21,6 +21,8 @@ AS $$
 **      Allows for moving between freezers, shelves, and racks, but requires that Row and Col remain unchanged
 **      Created in August 2016 to migrate samples from old freezer 1206A to new freezer 1206A, which  has more shelves but fewer racks
 **
+**  Arguments:
+**
 **  Auth:   mem
 **  Date:   08/03/2016
 **          08/27/2018 mem - Rename the view Material Location list report view

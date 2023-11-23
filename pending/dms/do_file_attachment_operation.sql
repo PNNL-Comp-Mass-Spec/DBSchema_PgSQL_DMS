@@ -61,7 +61,11 @@ BEGIN
     End If;
 
     BEGIN
+        ---------------------------------------------------
+        -- Validate the inputs
+        ---------------------------------------------------
 
+        _id   := Coalesce(_id, 0);
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
         If _mode = 'delete' Then

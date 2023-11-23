@@ -16,6 +16,8 @@ AS $$
 **      This procedure will auto-create a new entry in T_Filter_Set_Criteria_Groups
 **      For safety, requires that you provide both the filter set ID and the Group ID to copy
 **
+**  Arguments:
+**
 **  Auth:   mem
 **  Date:   02/17/2009
 **          12/15/2023 mem - Ported to PostgreSQL

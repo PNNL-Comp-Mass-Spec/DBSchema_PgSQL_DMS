@@ -20,8 +20,16 @@ AS $$
 **      Adds new or edits existing Experiment Group
 **
 **  Arguments:
-**    _groupName    User-defined name for this experiment group (previously _tab)
-**    _mode         'add' or 'update'
+**    _id               Input/output: experiment group ID
+**    _groupType
+**    _groupName        User-defined name for this experiment group (previously _tab)
+**    _description
+**    _experimentList
+**    _parentExp
+**    _researcher
+**    _mode             Mode: 'add' or 'update'
+**    _message          Output message
+**    _returnCode       Return code
 **
 **  Auth:   grk
 **  Date:   07/11/2006

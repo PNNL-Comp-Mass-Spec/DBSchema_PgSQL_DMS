@@ -10,6 +10,8 @@ AS $$
 **  Desc:
 **      Sets the purge priority to 2 for datasets acquired on external instruments
 **
+**  Arguments:
+**
 **  Auth:   mem
 **  Date:   04/09/2014
 **          12/15/2023 mem - Ported to PostgreSQL

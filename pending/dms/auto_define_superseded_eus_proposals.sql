@@ -11,6 +11,8 @@ AS $$
 **      Looks for proposals in T_EUS_Proposals with the same name
 **      Auto populates Proposal_ID_AutoSupersede for superseded proposals (if currently null)
 **
+**  Arguments:
+**
 **  Auth:   mem
 **  Date:   08/12/2020 mem - Initial Version
 **          12/15/2023 mem - Ported to PostgreSQL

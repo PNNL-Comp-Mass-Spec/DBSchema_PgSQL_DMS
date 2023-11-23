@@ -16,7 +16,10 @@ AS $$
 **
 **  Arguments:
 **    _biomaterialName  Biomaterial name
-**    _mode             'delete'
+**    _mode             Mode: 'delete'
+**    _message          Output message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   06/17/2002
@@ -59,6 +62,13 @@ BEGIN
         _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
         RAISE EXCEPTION '%', _message;
     End If;
+
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
+    _biomaterialName := Trim(Coalesce(_biomaterialName, ''));
+    _mode            := Trim(Lower(Coalesce(_mode, '')));
 
     ---------------------------------------------------
     -- Get biomaterial ID

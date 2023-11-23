@@ -11,6 +11,8 @@ AS $$
 **      Updates the Last_Online column in T_Bionet_Hosts
 **      by looking for datasets associated with any instrument associated with the given host
 **
+**  Arguments:
+**
 **  Auth:   mem
 **  Date:   12/02/2015 mem - Initial version
 **          09/11/2019 mem - Exclude tracking datasets when finding the most recent dataset for each instrument
@@ -118,7 +120,7 @@ BEGIN
     End If;
 
     -- Update Last_Online
-    --
+
     UPDATE t_bionet_hosts Target
     SET last_online = CASE WHEN Src.MostRecentDataset > Coalesce(Target.last_online, make_date(1970, 1, 1))
                       THEN Src.MostRecentDataset

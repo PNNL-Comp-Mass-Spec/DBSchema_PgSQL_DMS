@@ -27,7 +27,22 @@ AS $$
 **      parameter file and settings file for the specified settings
 **
 **  Arguments:
-**    _datasets   Input/output parameter; comma-separated list of datasets; will be alphabetized after removing duplicates
+**    _requestID            Input/output: analysis job request ID
+**    _requestName
+**    _datasets             Input/output parameter: comma-separated list of datasets; will be alphabetized after removing duplicates
+**    _toolName
+**    _jobTypeName
+**    _protCollNameList
+**    _protCollOptionsList
+**    _dynMetOxEnabled
+**    _statCysAlkEnabled
+**    _dynSTYPhosEnabled
+**    _comment
+**    _ownerUsername
+**    _infoOnly
+**    _message          Output message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   mem
 **  Date:   11/14/2012 mem - Initial version

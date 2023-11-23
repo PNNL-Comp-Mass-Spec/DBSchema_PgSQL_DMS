@@ -11,7 +11,13 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Delete sample prep request
+**      Delete a sample prep request
+**
+**  Arguments:
+**    _requestID        Prep request ID to delete
+**    _message          Output message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   11/10/2005

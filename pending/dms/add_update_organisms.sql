@@ -38,6 +38,9 @@ AS $$
 **    _ncbiTaxonomyID       This is the preferred way to define the taxonomy ID for the organism.  NEWT ID is typically identical to taxonomy ID
 **    _autoDefineTaxonomy   'Yes' or 'No'
 **    _mode                 'add' or 'update'
+**    _message          Output message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   03/07/2006

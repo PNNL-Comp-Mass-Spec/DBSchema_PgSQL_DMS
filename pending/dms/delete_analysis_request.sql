@@ -12,6 +12,8 @@ AS $$
 **  Desc:
 **      Delete the analysis job request if it is not associated with any jobs
 **
+**  Arguments:
+**
 **  Auth:   grk
 **  Date:   10/13/2004
 **          04/07/2006 grk - Eliminated job to request map table

@@ -38,13 +38,23 @@ AS $$
 **        - Experiment group
 **
 **  Arguments:
-**    _batchIDs             Comma-separated list of Requested Run Batch IDs
-**    _dataPackageID        Data Package ID; can be null
-**    _experimentGroupID    Experiment Group ID; can be null
-**    _state                New, On Hold, Analysis in Progress, or Closed
-**    _id                   Input/output: Data Analysis Request ID
-**    _mode                 'add', 'update', or 'previewadd', 'previewupdate'
-**
+**    _batchIDs                     Comma-separated list of Requested Run Batch IDs
+**    _dataPackageID                Data Package ID; can be null
+**    _experimentGroupID            Experiment Group ID; can be null
+**    _workPackage                  Work package
+**    _requestedPersonnel           Requseted personnel
+**    _assignedPersonnel            Assigned personnel
+**    _priority                     Priority (1 is the highest priority)
+**    _reasonForHighPriority        Reason for high priority
+**    _estimatedAnalysisTimeDays    Estimiated analysis time, in days
+**    _state                        State
+**    _stateComment                 State comment
+**    _id                           Input/output: Data Analysis Request ID
+**    _mode                         Mode: 'add', 'update', or 'previewadd', 'previewupdate'
+**    _message                      Output message
+**    _returnCode                   Return code
+**    _callingUser                  Calling user username
+
 **  Auth:   mem
 **  Date:   03/22/2022 mem - Initial version
 **          03/26/2022 mem - Replace parameter _batchID with _batchIDs
@@ -243,7 +253,7 @@ BEGIN
         -- Force values of some properties for add mode
         ---------------------------------------------------
 
-        If _mode like '%add%' Then
+        If _mode Like '%add%' Then
             _state := 'New';
             _assignedPersonnel := 'na';
         End If;
@@ -565,7 +575,7 @@ BEGIN
         -- Is entry already in database?
         ---------------------------------------------------
 
-        If _mode like '%update%' Then
+        If _mode Like '%update%' Then
             -- Cannot update a non-existent entry
             --
             _currentStateID := 0;
@@ -593,7 +603,7 @@ BEGIN
             End If;
         End If;
 
-        If _mode like '%add%' Then
+        If _mode Like '%add%' Then
             -- Make sure the work package is not inactive
             --
 
@@ -614,7 +624,7 @@ BEGIN
         -- Check for name collisions
         ---------------------------------------------------
 
-        If _mode like '%add%' Then
+        If _mode Like '%add%' Then
             If Exists (SELECT request_name FROM t_data_analysis_request WHERE request_name = _requestName) Then
                 RAISE EXCEPTION 'Cannot add: Request "%" already in database', _requestName;
             End If;

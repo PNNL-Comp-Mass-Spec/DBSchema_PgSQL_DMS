@@ -20,7 +20,16 @@ AS $$
 **      Adds new or edits existing item in T_LC_Cart_Config_History
 **
 **  Arguments:
-**    _mode   'add' or 'update'
+**    _id
+**    _cart
+**    _dateOfChange
+**    _postedBy
+**    _description
+**    _note
+**    _mode             Mode: 'add' or 'update'
+**    _message          Output message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   03/09/2011
@@ -108,7 +117,7 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-            --
+
             UPDATE t_lc_cart_config_history
             SET cart = _cart,
                 date_of_change = _entryDate,

@@ -20,6 +20,9 @@ AS $$
 **
 **  Arguments:
 **    _mode   'add' or 'update'
+**    _message          Output message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   mem
 **  Date:   06/12/2017 mem - Initial version

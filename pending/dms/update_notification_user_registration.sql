@@ -26,6 +26,7 @@ AS $$
 **    _samplePrepRequest    'Yes' or 'No'
 **    _datasetNotReleased   'Yes' or 'No'
 **    _datasetReleased      'Yes' or 'No'
+**    _mode                 Unused, but typically 'update'
 **
 **  Auth:   grk
 **  Date:   04/03/2010

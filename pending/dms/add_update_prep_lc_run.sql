@@ -32,6 +32,9 @@ AS $$
 **  Arguments:
 **    _samplePrepRequests  Typically a single sample prep request ID, but can also be a comma-separated list (or blank)
 **    _mode                'add' or 'update'
+**    _message          Output message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   08/04/2009

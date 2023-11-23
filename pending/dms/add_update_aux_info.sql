@@ -15,14 +15,19 @@ LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
-**  Adds new or updates existing auxiliary information in database
+**  Desc:
+**      Adds new or updates existing auxiliary information in database
 **
 **  Arguments:
-**    _targetName         Target type name: Experiment, Biomaterial (previously 'Cell Culture'), Dataset, or SamplePrepRequest
-**    _targetEntityName   Target entity ID or name
-**    _itemNameList       Aux Info names to update; delimiter is !
-**    _itemValueList      Aux Info values; delimiter is !
-**    _mode               add, update, check_add, check_update, or check_only
+**    _targetName           Target type name: Experiment, Biomaterial (previously 'Cell Culture'), Dataset, or SamplePrepRequest
+**    _targetEntityName     Target entity ID or name
+**    _categoryName         Category name
+**    _subCategoryName      Subcategory name
+**    _itemNameList         Aux Info names to update; delimiter is !
+**    _itemValueList        Aux Info values; delimiter is !
+**    _mode                 Mode: 'add', 'update', 'check_add', 'check_update', or 'check_only'
+**    _message              Output message
+**    _returnCode           Return code
 **
 **  Auth:   grk
 **  Date:   03/27/2002 grk - Initial release
@@ -95,16 +100,16 @@ BEGIN
     BEGIN
 
         ---------------------------------------------------
-        -- What mode are we in?
+        -- Validate the inputs
         ---------------------------------------------------
 
         _mode := Trim(Lower(Coalesce(_mode, 'undefined_mode')));
 
-        If _mode::citext In ('check_update', 'check_add') Then
+        If _mode In ('check_update', 'check_add') Then
             _mode := 'check_only';
         End If;
 
-        If Not _mode::citext In ('add', 'update', 'check_only') Then
+        If Not _mode In ('add', 'update', 'check_only') Then
             RAISE EXCEPTION 'Invalid _mode: %', _mode;
         End If;
 

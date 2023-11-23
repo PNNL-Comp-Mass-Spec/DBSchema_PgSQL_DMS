@@ -21,6 +21,12 @@ AS $$
 **          Compound_ID int null
 **      );
 **
+**  Arguments:
+**    _expID                Experiment ID
+**    _updateCachedInfo     When true, call update_cached_experiment_component_names to update t_cached_experiment_components
+**    _message              Output message
+**    _returnCode           Return code
+**
 **  Auth:   mem
 **  Date:   11/29/2017 mem - Initial version
 **          01/04/2018 mem - Update fields in Tmp_ExpToRefCompoundMap, switching from Compound_Name to Compound_IDName
@@ -67,7 +73,7 @@ BEGIN
 
     -- If any entries still have a null Compound_ID value, try matching via reference compound name
     -- We have numerous reference compounds with identical names, so matches found this way will be ambiguous
-    --
+
     UPDATE Tmp_ExpToRefCompoundMap
     SET Compound_ID = Src.Compound_ID
     FROM t_reference_compound Src

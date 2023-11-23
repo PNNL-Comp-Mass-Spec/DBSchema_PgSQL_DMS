@@ -14,6 +14,8 @@ AS $$
 **  Desc:
 **      Updates column state_name_cached in T_Analysis_Job for one or more jobs
 **
+**  Arguments:
+**
 **  Auth:   mem
 **  Date:   12/12/2007 mem - Initial version (Ticket #585)
 **          09/02/2011 mem - Now calling Post_Usage_Log_Entry

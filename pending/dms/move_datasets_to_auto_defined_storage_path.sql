@@ -16,7 +16,7 @@ AS $$
 **
 **      Only valid for Instruments that have Auto_Define_Storage_Path enabled in T_Instrument_Name
 **
-**  Returns: The storage path ID; 0 if an error
+**  Arguments:
 **
 **  Auth:   mem
 **  Date:   05/12/2011 mem - Initial version

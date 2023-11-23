@@ -24,10 +24,27 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Create a job from simplified interface
+**      Used by the MS/MS job wizard to create a new analysis job request
+**      https://dms2.pnl.gov/analysis_job_request_psm/create
 **
 **  Arguments:
-**    _mode   'add', 'preview', or 'debug'
+**    _requestID                Output: ID of the new analysis job request
+**    _requestName              Job request name
+**    _datasets                 Input/output:  comma-separated list of datasets; will be alphabetized after removing duplicates
+**    _comment                  Job request comment
+**    _ownerUsername            Job request owner username
+**    _organismName             Organism name
+**    _protCollNameList         Protein collection(s)
+**    _protCollOptionsList      Protein collection options
+**    _toolName                 Analysis tool name
+**    _jobTypeName              Analysis job type name
+**    _modificationDynMetOx     When 'Yes', look for a parameter file with dynamic oxidized methionine
+**    _modificationStatCysAlk   When 'Yes', look for a parameter file with static alkylated cysteine
+**    _modificationDynSTYPhos   When 'Yes', look for a parameter file with dynamic phosphorylated STY
+**    _mode                     Mode: 'add', 'preview', or 'debug'
+**    _message                  Output message
+**    _returnCode               Return code
+**    _callingUser              Calling user username
 **
 **  Auth:   grk
 **  Date:   11/14/2012 grk - Initial release
@@ -74,9 +91,9 @@ BEGIN
                 _infoOnly := true;
             End If;
 
-            _dynMetOxEnabled   := CASE WHEN _modificationDynMetOx   = 'Yes' Then 1 ELSE 0 END;
-            _statCysAlkEnabled := CASE WHEN _modificationStatCysAlk = 'Yes' Then 1 ELSE 0 END;
-            _dynSTYPhosEnabled := CASE WHEN _modificationDynSTYPhos = 'Yes' Then 1 ELSE 0 END;
+            _dynMetOxEnabled   := CASE WHEN _modificationDynMetOx::citext   = 'Yes' Then 1 ELSE 0 END;
+            _statCysAlkEnabled := CASE WHEN _modificationStatCysAlk::citext = 'Yes' Then 1 ELSE 0 END;
+            _dynSTYPhosEnabled := CASE WHEN _modificationDynSTYPhos::citext = 'Yes' Then 1 ELSE 0 END;
 
             CALL public.create_psm_job_request (
                             _requestID           => _requestID,         -- Output

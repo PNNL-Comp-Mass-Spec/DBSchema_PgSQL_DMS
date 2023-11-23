@@ -19,6 +19,8 @@ AS $$
 **      Additionally, prevents updating entries where the container limit is 100 or more
 **      since those are special locations (typically for staging samples)
 **
+**  Arguments:
+**
 **  Auth:   mem
 **  Date:   08/27/2018 mem - Initial version
 **          12/15/2023 mem - Ported to PostgreSQL

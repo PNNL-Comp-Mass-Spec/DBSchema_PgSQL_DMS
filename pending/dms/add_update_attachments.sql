@@ -22,7 +22,18 @@ AS $$
 **      Adds new or edits existing Attachments
 **
 **  Arguments:
-**    _mode   'add' or 'update'
+**    _id
+**    _attachmentType
+**    _attachmentName
+**    _attachmentDescription
+**    _ownerUsername
+**    _active
+**    _contents
+**    _fileName
+**    _mode             Mode: 'add' or 'update'
+**    _message          Output message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   03/24/2009
@@ -61,6 +72,10 @@ BEGIN
         _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
         RAISE EXCEPTION '%', _message;
     End If;
+
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
 
     _mode := Trim(Lower(Coalesce(_mode, '')));
 

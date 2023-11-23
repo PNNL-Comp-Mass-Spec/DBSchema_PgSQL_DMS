@@ -147,7 +147,7 @@ BEGIN
         End If;
 
         -- Make sure names are capitalized properly
-        --
+
         UPDATE Tmp_UserInfo
         SET Name_and_Username = U.name_with_username
         FROM t_users U

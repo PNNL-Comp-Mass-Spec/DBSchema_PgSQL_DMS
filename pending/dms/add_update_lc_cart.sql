@@ -17,7 +17,13 @@ AS $$
 **      Adds new or edits existing LC Cart
 **
 **  Arguments:
-**    _mode   'add' or 'update'
+**    _id
+**    _cartName
+**    _cartDescription
+**    _cartState
+**    _mode             Mode: 'add' or 'update'
+**    _message          Output message
+**    _returnCode       Return code
 **
 **  Auth:   grk
 **  Date:   02/23/2006

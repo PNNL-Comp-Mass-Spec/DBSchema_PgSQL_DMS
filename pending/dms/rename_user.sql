@@ -14,6 +14,8 @@ AS $$
 **  Desc:
 **      Renames a user in T_Users and other tracking tables
 **
+**  Arguments:
+**
 **  Auth:   10/31/2014 mem - Initial version
 **  Date:   06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized

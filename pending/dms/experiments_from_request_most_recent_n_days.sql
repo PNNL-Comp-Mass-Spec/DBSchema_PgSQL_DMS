@@ -14,6 +14,8 @@ AS $$
 **
 **      Only includes experiments created within the most recent N days, specified by _days
 **
+**  Arguments:
+**
 **  Auth:   mem
 **  Date:   03/26/2013 mem - Initial version
 **          01/30/2017 mem - Switch from DateDiff to DateAdd

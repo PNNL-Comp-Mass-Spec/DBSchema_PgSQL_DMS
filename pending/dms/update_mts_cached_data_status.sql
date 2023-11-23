@@ -80,7 +80,7 @@ BEGIN
         End If;
 
         _currentLocation := 'Update the stats in t_mts_cached_data_status';
-        --
+
         UPDATE t_mts_cached_data_status
         SET refresh_count = CASE WHEN _incrementRefreshCount THEN refresh_count + 1 ELSE refresh_count END,
             insert_count = insert_count + _insertCountNew,

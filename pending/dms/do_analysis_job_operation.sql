@@ -15,8 +15,11 @@ AS $$
 **      Perform analysis job operation defined by 'mode'
 **
 **  Arguments:
-**    _job   Analysis job ID
-**    _mode     'delete', 'reset', 'previewDelete' ; recognizes mode 'reset', but no changes are made (it is a legacy mode)
+**    _job          Analysis job ID
+**    _mode         Mode: 'delete', 'reset', 'previewDelete' ; recognizes mode 'reset', but no changes are made (it is a legacy mode)
+**    _message      Output message
+**    _returnCode   Return code
+**    _callingUser  Calling user username
 **
 **  Auth:   grk
 **  Date:   05/02/2002
@@ -55,7 +58,7 @@ BEGIN
 
     _mode := Trim(Lower(Coalesce(_mode, '')));
 
-    If _mode::citext Like 'preview%' Then
+    If _mode Like 'preview%' Then
         _infoOnly := true;
     End If;
 
@@ -80,12 +83,18 @@ BEGIN
     End If;
 
     BEGIN
+        ---------------------------------------------------
+        -- Validate the inputs
+        ---------------------------------------------------
+
+        _job  := Trim(Coalesce(_job, ''));
+        _mode := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
         -- Delete job if it is in 'new' or 'failed' state
         ---------------------------------------------------
 
-        If _mode::citext in ('delete', 'previewDelete') Then
+        If _mode In ('delete', 'previewdelete') Then
 
             ---------------------------------------------------
             -- Delete the job

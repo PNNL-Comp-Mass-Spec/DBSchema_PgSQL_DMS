@@ -15,6 +15,8 @@ AS $$
 **
 **      Changes will be logged to T_Log_Entries
 **
+**  Arguments:
+**
 **  Auth:   mem
 **  Date:   12/18/2015 mem - Initial version
 **          02/23/2016 mem - Add set XACT_ABORT on

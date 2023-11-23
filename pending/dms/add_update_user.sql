@@ -139,13 +139,13 @@ BEGIN
 
         -- Cannot create an entry that already exists
         --
-        If _userID <> 0 and _mode = 'add' Then
+        If _userID <> 0 And _mode = 'add' Then
             RAISE EXCEPTION 'Cannot add: User "%" already in database ', _username;
         End If;
 
         -- Cannot update a non-existent entry
         --
-        If _userID = 0 and _mode = 'update' Then
+        If _userID = 0 And _mode = 'update' Then
             RAISE EXCEPTION 'Cannot update: User "%" is not in database ', _username;
         End If;
 

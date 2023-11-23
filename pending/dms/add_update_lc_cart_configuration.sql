@@ -42,9 +42,37 @@ AS $$
 **      Adds new or edits existing T_LC_Cart_Configuration entry
 **
 **  Arguments:
-**    _entryUser   User who entered the LC Cart Configuration entry; defaults to _callingUser if empty
-**    _state       Active, Inactive, Invalid, or Override (see comments below)
-**    _mode        or 'update'
+**    _configName
+**    _description
+**    _autosampler
+**    _customValveConfig
+**    _pumps
+**    _primaryInjectionVolume
+**    _primaryMobilePhases
+**    _primaryTrapColumn
+**    _primaryTrapFlowRate
+**    _primaryTrapTime
+**    _primaryTrapMobilePhase
+**    _primaryAnalyticalColumn
+**    _primaryColumnTemperature
+**    _primaryAnalyticalFlowRate
+**    _primaryGradient
+**    _massSpecStartDelay
+**    _upstreamInjectionVolume
+**    _upstreamMobilePhases
+**    _upstreamTrapColumn
+**    _upstreamTrapFlowRate
+**    _upstreamAnalyticalColumn
+**    _upstreamColumnTemperature
+**    _upstreamAnalyticalFlowRate
+**    _upstreamFractionationProfile
+**    _upstreamFractionationDetails
+**    _entryUser                    User who entered the LC Cart Configuration entry; defaults to _callingUser if empty
+**    _state                        State: 'Active', 'Inactive', 'Invalid', or 'Override' (see comments below)
+**    _mode                         Mode: 'add' or 'update'
+**    _message                      Output message
+**    _returnCode                   Return code
+**    _callingUser                  Calling user username
 **
 **  Auth:   mem
 **  Date:   02/02/2017 mem - Initial release
@@ -66,7 +94,7 @@ DECLARE
     _cartName text;
     _cartID int := 0;
     _existingName text := '';
-    _oldState text := '';
+    _oldState citext := '';
     _ignoreDatasetChecks int := 0;
     _existingEntryUser text := '';
     _conflictID int := 0;
@@ -115,13 +143,13 @@ BEGIN
         RETURN;
     End If;
 
-    If Not Exists (Select username From t_users Where username = _callingUser) Then
+    If Not Exists (SELECT username FROM t_users WHERE username = _callingUser) Then
         _callingUser := null;
     ElsIf _entryUser = '' Then
         _entryUser := _callingUser;
     End If;
 
-    If _state = 'Override' and _mode <> 'update' Then
+    If _state::citext = 'Override' And _mode <> 'update' Then
         _message := format('Cart config state must be Active, Inactive, or Invalid when _mode is %s; %s is not allowed', _mode, _state);
     End If;
 
@@ -213,18 +241,16 @@ BEGIN
             RETURN;
         End If;
 
-        If _state = 'Override' Then
-            If Exists ( Then
-                SELECT *;
-            End If;
-                FROM t_users U
-                    INNER JOIN t_user_operations_permissions OpsPerms
-                    ON U.user_id = OpsPerms.user_id
-                    INNER JOIN t_user_operations UserOps
-                    ON OpsPerms.operation_id = UserOps.user_id
-                WHERE U.username = _callingUser AND
-                    UserOps.operation = 'DMS_Infrastructure_Administration')
-            Begin
+        If _state::citext = 'Override' Then
+            If Exists ( SELECT U.user_id
+                        FROM t_users U
+                             INNER JOIN t_user_operations_permissions OpsPerms
+                               ON U.user_id = OpsPerms.user_id
+                             INNER JOIN t_user_operations UserOps
+                               ON OpsPerms.operation_id = UserOps.operation_id
+                         WHERE U.username = _callingUser AND
+                               UserOps.operation = 'DMS_Infrastructure_Administration')
+            Then
                 -- Admin user is updating details for an LC Cart Config that is already associated with datasets
                 -- Use the existing state
                 _state := _oldState;
@@ -282,7 +308,7 @@ BEGIN
                 _datasetDescription := format('%s datasets' _datasetCount);
             End If;
 
-            If _state <> _oldState Then
+            If _state::citext <> _oldState Then
                 UPDATE t_lc_cart_configuration
                 SET cart_config_state = _state
                 WHERE cart_config_id = _id
@@ -390,14 +416,14 @@ BEGIN
         RETURNING cart_config_id
         INTO _id;
 
-    End If; -- add mode
+    End If;
 
     ---------------------------------------------------
     -- Action for update mode
     ---------------------------------------------------
 
     If _mode = 'update' Then
-        --
+
         UPDATE t_lc_cart_configuration
         SET cart_config_name = _configName,
             cart_id = _cartID,
@@ -431,7 +457,7 @@ BEGIN
             updated_by = _callingUser
         WHERE cart_config_id = _id;
 
-    End If; -- update mode
+    End If;
 
 END
 $$;

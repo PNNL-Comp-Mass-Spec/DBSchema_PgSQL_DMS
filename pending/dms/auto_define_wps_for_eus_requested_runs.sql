@@ -18,7 +18,7 @@ AS $$
 **
 **      Preference is given to recently used work packages
 **
-**  Returns: The storage path ID; 0 if an error
+**  Arguments:
 **
 **  Auth:   mem
 **  Date:   01/29/2016 mem - Initial Version

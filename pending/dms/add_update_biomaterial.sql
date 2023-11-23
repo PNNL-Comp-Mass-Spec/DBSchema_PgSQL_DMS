@@ -10,13 +10,13 @@ CREATE OR REPLACE PROCEDURE public.add_update_biomaterial
     _comment text,
     _campaignName text,
     _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
     _container text = 'na',
     _organismList text,
     _mutation text = '',
     _plasmid text = '',
     _cellLine text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -27,12 +27,23 @@ AS $$
 **      Adds new or updates existing biomaterial items in database
 **
 **  Arguments:
-**    _biomaterialName   Name of biomaterial (or peptide sequence if tracking an MRM peptide)
-**    _sourceName        Source that the material came from; can be a person (onsite or offsite) or a company
-**    _contactUsername   Contact for the Source; typically PNNL staff, but can be offsite person
-**    _piUsername        Project lead
-**    _mode              'add', 'update', 'check_add', 'check_update'
-**    _organismList      List of one or more organisms to associate with this biomaterial; stored in T_Biomaterial_Organisms; if null, T_Biomaterial_Organisms is unchanged
+**    _biomaterialName      Name of biomaterial (or peptide sequence if tracking an MRM peptide)
+**    _sourceName           Source that the material came from; can be a person (onsite or offsite) or a company
+**    _contactUsername      Contact for the Source; typically PNNL staff, but can be offsite person
+**    _piUsername           Project lead username
+**    _biomaterialType
+**    _reason
+**    _comment
+**    _campaignName
+**    _mode                 Mode: 'add', 'update', 'check_add', 'check_update'
+**    _container
+**    _organismList         List of one or more organisms to associate with this biomaterial; stored in T_Biomaterial_Organisms. If null, T_Biomaterial_Organisms is unchanged
+**    _mutation
+**    _plasmid
+**    _cellLine
+**    _message              Output message
+**    _returnCode           Return code
+**    _callingUser          Calling user username
 **
 **  Auth:   grk
 **  Date:   03/12/2002
@@ -143,28 +154,28 @@ BEGIN
         If char_length(_contactUsername) < 1 Then
             RAISE EXCEPTION 'Contact Name must be specified';
         End If;
-        --
+
         If char_length(_piUsername) < 1 Then
             RAISE EXCEPTION 'Principle Investigator Username must be specified';
         End If;
-        --
+
         If char_length(_biomaterialName) < 1 Then
             RAISE EXCEPTION 'Biomaterial Name must be specified';
         End If;
-        --
+
         If char_length(_sourceName) < 1 Then
             RAISE EXCEPTION 'Source Name must be specified';
         End If;
-        --
+
         If char_length(_biomaterialType) < 1 Then
             _returnCode := 'U5201';
             RAISE EXCEPTION 'Biomaterial Type must be specified';
         End If;
-        --
+
         If char_length(_reason) < 1 Then
             RAISE EXCEPTION 'Reason must be specified';
         End If;
-        --
+
         If char_length(_campaignName) < 1 Then
             RAISE EXCEPTION 'Campaign Name must be specified';
         End If;

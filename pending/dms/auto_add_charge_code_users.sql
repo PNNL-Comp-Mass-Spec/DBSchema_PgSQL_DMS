@@ -15,6 +15,8 @@ AS $$
 **
 **      Uses external server SQLSRVPROD02, which is accessed via a foreign data wrapper
 **
+**  Arguments:
+**
 **  Auth:   mem
 **  Date:   06/05/2013 mem - Initial Version
 **          06/10/2013 mem - Now storing payroll number in U_Payroll and Network_ID in Username

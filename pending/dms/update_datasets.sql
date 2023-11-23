@@ -20,7 +20,7 @@ AS $$
 **      Updates parameters to new values for datasets in list
 **
 **  Arguments:
-**    _mode   Can be update or preview
+**    _mode   Can be 'update' or 'preview'
 **
 **  Auth:   jds
 **  Date:   09/21/2006
@@ -71,11 +71,17 @@ BEGIN
     _datasetStateUpdated := false;
     _datasetRatingUpdated := false;
 
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
     _state       := Trim(Coalesce(_state, ''));
     _rating      := Trim(Coalesce(_rating, ''));
     _comment     := Trim(Coalesce(_comment, ''));
     _findText    := Trim(Coalesce(_findText, ''));
     _replaceText := Trim(Coalesce(_replaceText, ''));
+
+    _mode        := Trim(Lower(Coalesce(_mode, '')));
 
     If _state::citext In ('', '[no change]') Then
         _state := '[no change]';
@@ -120,7 +126,7 @@ BEGIN
     BEGIN
 
         ---------------------------------------------------
-        -- Validate the inputs
+        -- Validate the dataset list and find/replace text
         ---------------------------------------------------
 
         If _datasetList = '' Then
@@ -134,8 +140,6 @@ BEGIN
             RAISE INFO '%', _msg;
             RAISE EXCEPTION '%', _msg;
         End If;
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
         -- Create temporary tables to hold the list of datasets

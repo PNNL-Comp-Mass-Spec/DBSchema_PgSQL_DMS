@@ -11,6 +11,8 @@ AS $$
 **  Desc:
 **      Adds dataset notification events to notification event table
 **
+**  Arguments:
+**
 **  Auth:   grk
 **  Date:   04/02/2010 grk - Initial Release
 **          04/02/2010 mem - Updated the 'Not Released' check to cover Dataset Rating -9 to 1

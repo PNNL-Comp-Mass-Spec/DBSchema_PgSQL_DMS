@@ -21,7 +21,10 @@ AS $$
 **
 **  Arguments:
 **    _state   Active or Inactive
-**    _mode    or 'update'
+**    _mode    Mode: 'add' or 'update'
+**    _message          Output message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   bcg
 **  Date:   12/19/2019 bcg - Initial release

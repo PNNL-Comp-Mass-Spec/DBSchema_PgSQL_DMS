@@ -11,6 +11,8 @@ AS $$
 **  Desc:
 **      Adds requested run batch notification events to notification event table
 **
+**  Arguments:
+**
 **  Auth:   grk
 **  Date:   03/26/2010
 **          03/30/2010 grk - Added intermediate table

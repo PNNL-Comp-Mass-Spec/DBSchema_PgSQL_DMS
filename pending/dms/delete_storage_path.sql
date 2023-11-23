@@ -14,6 +14,8 @@ AS $$
 **
 **      Storage path may not have any associated datasets.
 **
+**  Arguments:
+**
 **  Auth:   grk
 **  Date:   03/14/2006
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized

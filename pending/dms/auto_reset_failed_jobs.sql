@@ -18,7 +18,11 @@ AS $$
 **
 **  Arguments:
 **    _windowHours      Will look for jobs that failed within _windowHours hours of the present time
+**    _infoOnly         When true, preview updates
 **    _stepToolFilter   Optional Step Tool to filter on (must be an exact match to a tool name in T_Job_Steps)
+**    _message          Output message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   mem
 **  Date:   09/30/2010 mem - Initial Version
