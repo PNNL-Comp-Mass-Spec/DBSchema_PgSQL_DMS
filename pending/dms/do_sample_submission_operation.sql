@@ -17,7 +17,11 @@ AS $$
 **      Note: this procedure has not been used since 2012
 **
 **  Arguments:
-**    _mode   'make_folder'
+**    _id               Sample submission ID
+**    _mode             Mode: 'make_folder'
+**    _message          Output message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   05/07/2010 grk - Initial release

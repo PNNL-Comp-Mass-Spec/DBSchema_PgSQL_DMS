@@ -30,11 +30,27 @@ AS $$
 **      Adds new or edits existing item in T_Prep_LC_Run
 **
 **  Arguments:
-**    _samplePrepRequests  Typically a single sample prep request ID, but can also be a comma-separated list (or blank)
-**    _mode                'add' or 'update'
-**    _message          Output message
-**    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _id                   Input/output: prep LC run ID
+**    _prepRunName
+**    _instrument
+**    _type
+**    _lcColumn
+**    _lcColumn2
+**    _comment
+**    _guardColumn
+**    _operatorUsername
+**    _digestionMethod
+**    _sampleType
+**    _samplePrepRequests
+**    _numberOfRuns
+**    _instrumentPressure
+**    _qualityControl
+**    _datasets
+**    _samplePrepRequests   Typically a single sample prep request ID, but can also be a comma-separated list (or blank)
+**    _mode                 Mode: 'add' or 'update'
+**    _message              Output message
+**    _returnCode           Return code
+**    _callingUser          Calling user username
 **
 **  Auth:   grk
 **  Date:   08/04/2009

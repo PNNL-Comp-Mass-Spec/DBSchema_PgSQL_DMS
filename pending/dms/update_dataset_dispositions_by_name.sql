@@ -19,7 +19,14 @@ AS $$
 **      Accepts list of dataset names
 **
 **  Arguments:
-**    _recycleRequest   yes/no
+**    _datasetList
+**    _rating
+**    _comment
+**    _recycleRequest   'yes' or ' no'
+**    _mode:            Mode: if 'update', update t_dataset and possibly call unconsume_scheduled_run and schedule_predefined_analysis_jobs
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   10/15/2008 grk - Initial release (Ticket #582)

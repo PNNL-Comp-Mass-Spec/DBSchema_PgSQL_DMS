@@ -15,8 +15,11 @@ AS $$
 **      Do an operation on an item, using the item name
 **
 **  Arguments:
-**    _name   Item name (biomaterial name, experiment name, or experiment ID)
-**    _mode   'retire_biomaterial', 'retire_experiment'
+**    _name         Item name (biomaterial name, experiment name, or experiment ID)
+**    _mode         Mode: 'retire_biomaterial', 'retire_experiment'
+**    _message      Output message
+**    _returnCode   Return code
+**    _callingUser  Calling user username
 **
 **  Auth:   grk
 **  Date:   07/23/2008 grk - Initial version (ticket http://prismtrac.pnl.gov/trac/ticket/603)

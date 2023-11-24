@@ -19,6 +19,8 @@ AS $$
 **      Preference is given to recently used work packages
 **
 **  Arguments:
+**    _mostRecentMonths
+**    _infoOnly
 **
 **  Auth:   mem
 **  Date:   01/29/2016 mem - Initial Version

@@ -12,7 +12,7 @@ AS $$
 **      and resets them to 'New'
 **
 **  Arguments:
-**    _interval   Minutes between retries
+**    _interval     Minutes between retries
 **
 **  Auth:   grk
 **  Date:   08/06/2003

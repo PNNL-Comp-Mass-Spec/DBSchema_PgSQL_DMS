@@ -15,7 +15,9 @@ AS $$
 **      in T_Analysis_Job
 **
 **  Arguments:
-**    _minimumTimeIntervalHours   Set this to 0 to force the addition of new data to T_Analysis_Job_Status_History
+**    _minimumTimeIntervalHours     Set this to 0 to force the addition of new data to T_Analysis_Job_Status_History
+**    _message                      Status message
+**    _returnCode                   Return code
 **
 **  Auth:   mem
 **  Date:   03/31/2005

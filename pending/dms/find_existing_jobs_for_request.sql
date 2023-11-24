@@ -23,6 +23,7 @@ AS $$
 **      Return a table of existing analysis jobs created from the specified analysis job request
 **
 **  Arguments:
+**    _requestID    Analysis job request ID
 **
 **  Auth:   grk
 **  Date:   12/05/2005 grk - Initial version

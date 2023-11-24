@@ -2,7 +2,7 @@
 CREATE OR REPLACE PROCEDURE public.add_update_instrument_usage_report
 (
     _seq int,
-    _eMSLInstID int,
+    _emslInstID int,
     _instrument text,
     _type text,
     _start text,
@@ -28,7 +28,8 @@ AS $$
 **      Adds new or edits existing item in T_EMSL_Instrument_Usage_Report
 **
 **  Arguments:
-**    _eMSLInstID   _eMSLInstID
+**    _seq
+**    _emslInstID   _emslInstID
 **    _instrument   Unused (not updatable)
 **    _type         Unused (not updatable)
 **    _start        Unused (not updatable)

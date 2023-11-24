@@ -12,6 +12,7 @@ AS $$
 **      Auto populates Proposal_ID_AutoSupersede for superseded proposals (if currently null)
 **
 **  Arguments:
+**    _infoOnly
 **
 **  Auth:   mem
 **  Date:   08/12/2020 mem - Initial Version

@@ -18,7 +18,13 @@ AS $$
 **      for the processors in the list according to the mode
 **
 **  Arguments:
-**    _mode   Mode: 'set_membership_enabled', 'add_processors', 'remove_processors',
+**    _processorNameList
+**    _processorGroupID
+**    _newValue
+**    _mode                 Mode: 'set_membership_enabled', 'add_processors', 'remove_processors',
+**    _message              Status message
+**    _returnCode           Return code
+**    _callingUser          Calling user username
 **
 **  Auth:   grk
 **  Date:   02/13/2007 (Ticket #384)

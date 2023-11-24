@@ -23,7 +23,9 @@ AS $$
 **    _categoryName         'Lysis Method', 'Denaturing Conditions', etc.; see T_Aux_Info_Category; Note: Ignored if _mode = 'copyAll'
 **    _subCategoryName      'Procedure', 'Reagents', etc.; see T_Aux_Info_Subcategory; Note: Ignored if _mode = 'copyAll'
 **    _sourceEntityID       ID of the source to copy information from
-**    _mode                 'copyCategory', 'copySubcategory', 'copyAll'
+**    _mode                 Mode: 'copyCategory', 'copySubcategory', 'copyAll'
+**    _message              Output message
+**    _returnCode           Return code
 **
 **  Auth:   grk
 **  Date:   01/27/2003

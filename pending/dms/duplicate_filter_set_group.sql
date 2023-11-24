@@ -17,6 +17,11 @@ AS $$
 **      For safety, requires that you provide both the filter set ID and the Group ID to copy
 **
 **  Arguments:
+**    _filterSetID
+**    _filterCriteriaGroupID
+**    _infoOnly
+**    _message                      Output message
+**    _returnCode                   Return code
 **
 **  Auth:   mem
 **  Date:   02/17/2009

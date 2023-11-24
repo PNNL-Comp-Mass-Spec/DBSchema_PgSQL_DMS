@@ -10,11 +10,12 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the MemberCount value for either the
-**      specific experiment group or for all experiment groups
+**      Updates the MemberCount value for either the specific experiment group or for all experiment groups
 **
 **  Arguments:
-**    _groupID   0 to Update all groups
+**    _groupID      Experiment group to update, or 0 to update all groups
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   12/06/2018 mem - Initial version

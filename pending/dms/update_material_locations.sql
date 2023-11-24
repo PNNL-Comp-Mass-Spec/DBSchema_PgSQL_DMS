@@ -2,10 +2,10 @@
 CREATE OR REPLACE PROCEDURE public.update_material_locations
 (
     _locationList text,
+    _infoOnly boolean = false,
     INOUT _message text default '',
     INOUT _returnCode text default '',
-    _callingUser text = '',
-    _infoOnly boolean = false
+    _callingUser text = ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -24,6 +24,9 @@ AS $$
 **  Arguments:
 **    _locationList     Information on material locations to update
 **    _infoOnly         Set to true to preview the changes that would be made
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   06/02/2013 grk - Initial release

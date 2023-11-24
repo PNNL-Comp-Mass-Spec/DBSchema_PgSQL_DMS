@@ -2,10 +2,10 @@
 CREATE OR REPLACE PROCEDURE public.update_instrument_usage_allocations_work
 (
     _fy int,
+    _infoOnly boolean = false,
     INOUT _message text default '',
     INOUT _returnCode text default '',
-    _callingUser text = '',
-    _infoOnly boolean = false
+    _callingUser text = ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -26,10 +26,10 @@ AS $$
 **
 **  Arguments:
 **    _fy               Fiscal year
+**    _infoOnly         When true, preview the changes that would be made
 **    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user
-**    _infoOnly         When true, preview the changes that would be made
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   03/30/2012 mem - Factored out of UpdateInstrumentAllocations

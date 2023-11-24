@@ -14,8 +14,10 @@ AS $$
 **      Perform analysis request operation defined by 'mode'
 **
 **  Arguments:
-**    _request  Analysis job request ID
-**    _mode     'delete'
+**    _request      Analysis job request ID (as text)
+**    _mode         Mode: 'delete'
+**    _message      Output message
+**    _returnCode   Return code
 **
 **  Auth:   grk
 **  Date:   10/13/2004

@@ -22,6 +22,16 @@ AS $$
 **      Created in August 2016 to migrate samples from old freezer 1206A to new freezer 1206A, which  has more shelves but fewer racks
 **
 **  Arguments:
+**    _freezerTagOld
+**    _shelfOld
+**    _rackOld
+**    _freezerTagNew
+**    _shelfNew
+**    _rackNew
+**    _infoOnly
+**    _message          Output message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   mem
 **  Date:   08/03/2016

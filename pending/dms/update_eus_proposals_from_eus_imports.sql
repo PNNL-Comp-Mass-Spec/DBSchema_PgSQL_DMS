@@ -12,6 +12,8 @@ AS $$
 **      Updates EUS proposals in T_EUS_Proposals
 **
 **  Arguments:
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   03/24/2011 mem - Initial version

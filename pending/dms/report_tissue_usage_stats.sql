@@ -17,10 +17,13 @@ AS $$
 **      Generates tissue usage statistics for experiments
 **
 **  Arguments:
-**    _startDate              If _instrumentFilterList is empty, filter on experiment creation date.  If _instrumentFilterList is not empty, filter on dataset date
-**    _campaignIDFilterList   Comma-separated list of campaign IDs
-**    _organismIDFilterList   Comma separate list of organism IDs
-**    _instrumentFilterList   Comma-separated list of instrument names (% and * wild cards are allowed); if empty, dataset stats are not returned
+**    _startDate                If _instrumentFilterList is empty, filter on experiment creation date.  If _instrumentFilterList is not empty, filter on dataset date
+**    _endDate
+**    _campaignIDFilterList     Comma-separated list of campaign IDs
+**    _organismIDFilterList     Comma separate list of organism IDs
+**    _instrumentFilterList     Comma-separated list of instrument names (% and * wild cards are allowed); if empty, dataset stats are not returned
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   mem
 **  Date:   07/23/2019 mem - Initial version

@@ -16,6 +16,9 @@ AS $$
 **      Uses external server SQLSRVPROD02, which is accessed via a foreign data wrapper
 **
 **  Arguments:
+**    _infoOnly
+**    _message          Output message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   06/05/2013 mem - Initial Version

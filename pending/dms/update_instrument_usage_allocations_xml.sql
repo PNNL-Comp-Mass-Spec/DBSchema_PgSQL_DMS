@@ -2,10 +2,10 @@
 CREATE OR REPLACE PROCEDURE public.update_instrument_usage_allocations_xml
 (
     _parameterList text = '',
+    _infoOnly boolean = false,
     INOUT _message text default '',
     INOUT _returnCode text default '',
-    _callingUser text = '',
-    _infoOnly boolean = false
+    _callingUser text = ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -29,8 +29,11 @@ AS $$
 **  <r o="d" p="33200" g="FT" a="14.5" x="Comment"/>
 **
 **  Arguments:
-**    _parameterList   XML specifying allocation hours
-**    _infoOnly        Set to true to preview the changes that would be made
+**    _parameterList    XML specifying allocation hours
+**    _infoOnly         Set to true to preview the changes that would be made
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   03/28/2012 grk - Initial release

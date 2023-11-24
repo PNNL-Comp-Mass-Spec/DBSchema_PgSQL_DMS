@@ -14,6 +14,9 @@ AS $$
 **      Only allowed if no datasets exist for the instrument
 **
 **  Arguments:
+**    _instrumentName
+**    _message          Output message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   02/12/2010

@@ -20,7 +20,10 @@ AS $$
 **    _jobList              Comma-separated list of job numbers
 **    _processorGroupID     Processor group ID
 **    _newValue             Ignore for now, may need in future
-**    _mode                 'add', 'replace', 'remove'
+**    _mode                 Mode: 'add', 'replace', 'remove'
+**    _message              Status message
+**    _returnCode           Return code
+**    _callingUser          Calling user username
 **
 **  Auth:   grk
 **  Date:   02/15/2007 Ticket #386

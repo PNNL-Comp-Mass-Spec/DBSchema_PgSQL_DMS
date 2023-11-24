@@ -26,8 +26,11 @@ AS $$
 **        'BK', 'RO', 'Block', 'Run_Order', 'Run Order', 'Status', 'Instrument', or 'Cart'
 **
 **  Arguments:
-**    _blockingList   XML (see above)
-**    _mode           'update'
+**    _blockingList     XML (see above)
+**    _mode             Mode: 'update'
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   02/09/2010

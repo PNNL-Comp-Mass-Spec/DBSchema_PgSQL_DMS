@@ -26,6 +26,11 @@ AS $$
 **      Conversely, _factorList may be simply '<id type="Request" />' if updating run order and blocking
 **
 **  Arguments:
+**    _blockingList
+**    _factorList
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   02/21/2010

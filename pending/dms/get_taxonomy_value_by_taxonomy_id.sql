@@ -23,15 +23,15 @@ AS $$
 **
 **  Arguments:
 **    _ncbiTaxonomyID       TaxonomyID value to lookup; ignored if _previewResults is true and _previewOrganismID is non-zero (and NCBI_Taxonomy_ID is defined in T_Organisms for the given organism)
-**    _orgDomain            input/output value
-**    _orgKingdom           input/output value
-**    _orgPhylum            input/output value
-**    _orgClass             input/output value
-**    _orgOrder             input/output value
-**    _orgFamily            input/output value
-**    _orgGenus             input/output value
-**    _orgSpecies           input/output value
-**    _orgStrain            input/output value
+**    _orgDomain            Output: domain
+**    _orgKingdom           Output: kingdom
+**    _orgPhylum            Output: phylum
+**    _orgClass             Output: class
+**    _orgOrder             Output: order
+**    _orgFamily            Output: family
+**    _orgGenus             Output: genus
+**    _orgSpecies           Output: species
+**    _orgStrain            Output: strain
 **    _previewResults       True to preview the results
 **    _previewOrganismID    When _previewResults is true, if this is non-zero, retrieves the information for the give organism by ID (provided the organism has NCBI_Taxonomy_ID defined)
 **

@@ -20,8 +20,13 @@ AS $$
 **      Adds new or edits existing T_Secondary_Sep entry
 **
 **  Arguments:
-**    _state   Active or Inactive
-**    _mode    Mode: 'add' or 'update'
+**    _id
+**    _sepTypeName
+**    _sepGroupName
+**    _comment
+**    _sampleType
+**    _state            State: 'Active' or 'Inactive'
+**    _mode             Mode: 'add' or 'update'
 **    _message          Output message
 **    _returnCode       Return code
 **    _callingUser      Calling user username

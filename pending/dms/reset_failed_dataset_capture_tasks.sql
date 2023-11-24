@@ -6,7 +6,7 @@ CREATE OR REPLACE PROCEDURE public.reset_failed_dataset_capture_tasks
     _infoOnly boolean = false,
     INOUT _message text default '',
     INOUT _returnCode text default '',
-    _resetCount int = 0 output
+    INOUT _resetCount int = 0
 )
 LANGUAGE plpgsql
 AS $$
@@ -24,7 +24,8 @@ AS $$
 **    _maxDatasetsToReset   If greater than 0, will limit the number of datasets to reset
 **    _infoOnly             True to preview the datasets that would be reset
 **    _message              Status message
-**    _resetCount           Number of datasets that were reset
+**    _returnCode           Return code
+**    _resetCount           Output: Number of datasets that were reset
 **
 **  Auth:   mem
 **  Date:   10/25/2016 mem - Initial version

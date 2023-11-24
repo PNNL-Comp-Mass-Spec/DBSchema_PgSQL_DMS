@@ -21,14 +21,16 @@ AS $$
 **      Adds new or updates existing User in database
 **
 **  Arguments:
-**    _username            Network login for the user (was traditionally D+Payroll number, but switched to last name plus 3 digits around 2011)
-**    _hanfordIdNum        Hanford ID number for user; cannot be blank
-**    _lastNameFirstName   Cannot be blank (though this field is auto-updated by UpdateUsersFromWarehouse)
-**    _email               Can be blank; will be auto-updated by UpdateUsersFromWarehouse
-**    _userStatus          Active or Inactive (whether or not user is Active in DMS)
-**    _userUpdate          Y or N  (whether or not to auto-update using UpdateUsersFromWarehouse)
-**    _operationsList      List of access permissions for user
-**    _mode                'add' or 'update'
+**    _username             Network login for the user (was traditionally D+Payroll number, but switched to last name plus 3 digits around 2011)
+**    _hanfordIdNum         Hanford ID number for user; cannot be blank
+**    _lastNameFirstName    Cannot be blank (though this field is auto-updated by UpdateUsersFromWarehouse)
+**    _email                Can be blank; will be auto-updated by UpdateUsersFromWarehouse
+**    _userStatus           Active or Inactive (whether or not user is Active in DMS)
+**    _userUpdate           Y or N  (whether or not to auto-update using UpdateUsersFromWarehouse)
+**    _operationsList       List of access permissions for user
+**    _mode                 Mode: 'add' or 'update'
+**    _message              Output message
+**    _returnCode           Return code
 **
 **  Auth:   grk
 **  Date:   01/27/2004

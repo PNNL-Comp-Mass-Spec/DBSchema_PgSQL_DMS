@@ -19,10 +19,15 @@ AS $$
 **      Adds new or edits existing item in T_Separation_Group
 **
 **  Arguments:
-**    _mode   'add' or 'update'
-**    _message          Output message
-**    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _separationGroup
+**    _comment
+**    _active
+**    _samplePrepVisible
+**    _fractionCount
+**    _mode                 Mode: 'add' or 'update'
+**    _message              Output message
+**    _returnCode           Return code
+**    _callingUser          Calling user username
 **
 **  Auth:   mem
 **  Date:   06/12/2017 mem - Initial version

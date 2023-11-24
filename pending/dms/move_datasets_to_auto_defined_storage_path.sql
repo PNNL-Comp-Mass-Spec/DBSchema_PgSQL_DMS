@@ -17,6 +17,10 @@ AS $$
 **      Only valid for Instruments that have Auto_Define_Storage_Path enabled in T_Instrument_Name
 **
 **  Arguments:
+**    _datasetIDLiset
+**    _infoOnly
+**    _message          Output message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   05/12/2011 mem - Initial version

@@ -27,8 +27,6 @@ CREATE OR REPLACE PROCEDURE public.add_update_predefined_analysis
     _nextLevel text,
     INOUT _id int,
     _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
     _separationTypeCriteria text = '',
     _campaignExclCriteria text = '',
     _experimentExclCriteria text = '',
@@ -36,17 +34,54 @@ CREATE OR REPLACE PROCEDURE public.add_update_predefined_analysis
     _datasetTypeCriteria text = '',
     _triggerBeforeDisposition int = 0,
     _propagationMode text='Export',
-    _specialProcessing text = ''
+    _specialProcessing text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds a new default analysis to DB
+**      Add/update a predefined analysis job definition
 **
 **  Arguments:
-**    _mode   'add' or 'update'
+**    _level
+**    _sequence
+**    _instrumentClassCriteria
+**    _campaignNameCriteria
+**    _experimentNameCriteria
+**    _instrumentNameCriteria
+**    _instrumentExclCriteria
+**    _organismNameCriteria
+**    _datasetNameCriteria
+**    _expCommentCriteria
+**    _labellingInclCriteria
+**    _labellingExclCriteria
+**    _analysisToolName
+**    _paramFileName
+**    _settingsFileNam
+**    _organismName
+**    _organismDBName
+**    _protCollNameList
+**    _protCollOptionsList
+**    _priority
+**    _enabled
+**    _description
+**    _creator
+**    _nextLevel
+**    _id                           Input/output: Predefine ID
+**    _mode                         Mode: 'add' or 'update'
+**    _separationTypeCriteria
+**    _campaignExclCriteria
+**    _experimentExclCriteria
+**    _datasetExclCriteria
+**    _datasetTypeCriteria
+**    _triggerBeforeDisposition
+**    _propagationMode
+**    _specialProcessing
+**    _message                      Output message
+**    _returnCode                   Return code
 **
 **  Auth:   grk
 **  Date:   06/21/2005 grk - Superseded AddUpdateDefaultAnalysis

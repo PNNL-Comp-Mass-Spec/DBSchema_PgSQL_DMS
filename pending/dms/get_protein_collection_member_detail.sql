@@ -28,11 +28,12 @@ AS $$
 **      Gets detailed information regarding a single protein in a protein collection
 **
 **      This is called from the Protein Collection Member detail report, for example:
-**      http://dms2.pnl.gov/protein_collection_members/show/13363564
+**      https://dms2.pnl.gov/protein_collection_members/show/13363564
 **
 **  Arguments:
-**    _id     Protein reference_id; this parameter must be named id (see $calling_params->id in Q_model.php on the DMS website)
-**    _mode   Ignored, but required for compatibility reasons
+**    _id           Protein reference_id; this parameter must be named id (see $calling_params->id in Q_model.php on the DMS website)
+**    _mode         Ignored, but required for compatibility reasons
+**    _callingUser  Calling user username
 **
 **  Auth:   mem
 **  Date:   06/27/2016 mem - Initial version

@@ -15,6 +15,8 @@ AS $$
 **      Only includes experiments created within the most recent N days, specified by _days
 **
 **  Arguments:
+**    _requestID    Sample prep request ID
+**    _days         Number of days before today to include
 **
 **  Auth:   mem
 **  Date:   03/26/2013 mem - Initial version

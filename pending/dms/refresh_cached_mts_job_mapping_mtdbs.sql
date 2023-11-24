@@ -15,6 +15,9 @@ AS $$
 **
 **  Arguments:
 **    _jobMinimum   Set to a positive value to limit the jobs examined; when non-zero, jobs outside the range _jobMinimum to _jobMaximum are ignored
+**    _jobMaximum   Set to a positive value to limit the jobs examined; when non-zero, jobs outside the range _jobMinimum to _jobMaximum are ignored
+**    _message      Output message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   04/21/2010 mem - Initial Version

@@ -22,6 +22,8 @@ AS $$
 **    _priority                   Priority
 **    _associatedProcessorGroup   Processor group name; deprecated in May 2015
 **    _propagationMode            'Export' or 'No Export'
+**    _message              Output message
+**    _returnCode           Return code
 **
 **  Auth:   grk
 **  Date:   09/17/2007 grk - Initial version (Ticket #534)

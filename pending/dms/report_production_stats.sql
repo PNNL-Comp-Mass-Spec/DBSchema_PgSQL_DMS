@@ -8,8 +8,6 @@ CREATE OR REPLACE FUNCTION public.report_production_stats
     _eusUsageFilterList text = '',
     _instrumentFilterList text = '',
     _includeProposalType int = 0,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
     _showDebug boolean = false
 )
 RETURNS TABLE (
@@ -57,8 +55,6 @@ AS $$
 **    _eusUsageFilterList       Comma separate list of EUS usage types, from table T_EUS_Usage_Type: CAP_DEV, MAINTENANCE, BROKEN, USER_ONSITE, USER_REMOTE, RESOURCE_OWNER
 **    _instrumentFilterList     Comma-separated list of instrument names (% and * wild cards are allowed)
 **    _includeProposalType      When 1, include proposal type in the results
-**    _message                  Status message
-**    _returnCode               Return code
 **    _showDebug                When true, summarize the contents of Tmp_Datasets
 **
 **  Auth:   grk
@@ -120,8 +116,6 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-    _message := '';
-    _returnCode := '';
 
     BEGIN
 

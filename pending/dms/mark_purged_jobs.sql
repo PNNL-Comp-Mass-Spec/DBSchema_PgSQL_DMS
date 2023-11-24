@@ -10,9 +10,12 @@ AS $$
 **
 **  Desc:
 **      Updates Purged to be 1 for the jobs in _jobList
+**
 **      This procedure is called by the Space Manager
 **
 **  Arguments:
+**    _jobList
+**    _infoOnly
 **
 **  Auth:   mem
 **  Date:   06/13/2012

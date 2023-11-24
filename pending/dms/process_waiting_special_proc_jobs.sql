@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.process_waiting_special_proc_jobs
     _jobsToProcess int = 0,
     INOUT _message text default '',
     INOUT _returnCode text default '',
-    _jobsUpdated int = 0 output
+    INOUT _jobsUpdated int = 0
 )
 LANGUAGE plpgsql
 AS $$
@@ -20,11 +20,14 @@ AS $$
 **      If a match is found, changes the job state to 1 = 'New'
 **
 **  Arguments:
-**    _waitThresholdHours                 Hours between when a job is created and when we'll start posting messages to the error log that the job is waiting too long
-**    _errorMessagePostingIntervalHours   Hours between posting a message to the error log that a job has been waiting more than _waitThresholdHours; used to prevent duplicate messages from being posted every few minutes
-**    _infoOnly                           True to preview the jobs that would be set to state 'New'; will also display any jobs waiting more than _waitThresholdHours
-**    _message                            Status message
-**    _jobsUpdated                        Number of jobs whose state was set to 1
+**    _waitThresholdHours                   Hours between when a job is created and when we'll start posting messages to the error log that the job is waiting too long
+**    _errorMessagePostingIntervalHours     Hours between posting a message to the error log that a job has been waiting more than _waitThresholdHours; used to prevent duplicate messages from being posted every few minutes
+**    _infoOnly                             True to preview the jobs that would be set to state 'New'; will also display any jobs waiting more than _waitThresholdHours
+**    _previewSql                           When true, preview SQL
+**    _jobsToProcess                        Number of jobs to process
+**    _message                              Output message
+**    _returnCode                           Return code
+**    _jobsUpdated                          Output: Number of jobs whose state was set to 1
 **
 **  Auth:   mem
 **  Date:   05/04/2012 mem - Initial version

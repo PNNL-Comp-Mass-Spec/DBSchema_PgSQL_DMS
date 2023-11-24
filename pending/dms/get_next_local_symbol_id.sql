@@ -11,11 +11,12 @@ AS $$
 **  Desc:
 **      Gets next available LocalSymbolID for a given parameter file ID
 **
-**  Return value: next available local symbol id
+**  Arguments:
+**    _paramFileID  Parameter file ID
 **
 **  Auth:   kja
 **  Date:   08/10/2004
-**          10/01/2009 mem - Updated to jump from ID 3 to ID 9 for Sequest param files
+**          10/01/2009 mem - Updated to jump from ID 3 to ID 9 for SEQUEST param files
 **          08/03/2017 mem - Add Set NoCount On
 **          12/15/2023 mem - Ported to PostgreSQL
 **

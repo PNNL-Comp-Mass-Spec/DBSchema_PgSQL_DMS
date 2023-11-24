@@ -21,6 +21,9 @@ AS $$
 **    _updateInterval                 Minimum interval in hours to limit update frequency; Set to 0 to force update now
 **    _dynamicMinimumCountThreshold   When updating every _updateInterval hours, uses the maximum cached ID value in the given T_MTS_%_Cached table to determine the minimum ID number to update; for example, for T_MTS_Analysis_Job_Info_Cached, MinimumJob = MaxJobInTable - _dynamicMinimumCountThreshold; set to 0 to update all items, regardless of ID
 **    _updateIntervalAllItems         Interval (in hours) to update all items, regardless of ID
+**    _infoOnly
+**    _message      Output message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   02/02/2010 mem - Initial Version

@@ -24,6 +24,8 @@ AS $$
 **  Arguments:
 **    _cartAssignmentList   XML (see above)
 **    _mode                 Unused, but likely 'update'
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   grk
 **  Date:   03/10/2010

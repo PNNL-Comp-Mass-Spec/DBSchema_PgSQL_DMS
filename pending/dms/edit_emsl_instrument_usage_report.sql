@@ -24,8 +24,18 @@ AS $$
 **      This procedure appears to be unused in 2017
 **
 **  Arguments:
-**    _operator    Operator for update (should be an integer representing EUS Person ID; if an empty string, will store NULL for the operator ID)
-**    _fieldName   Proposal, Usage, Users, Operator, Comment
+**    _year
+**    _month
+**    _instrument
+**    _type
+**    _usage
+**    _proposal
+**    _users
+**    _operator     Operator for update (should be an integer representing EUS Person ID; if an empty string, will store NULL for the operator ID)
+**    _comment
+**    _fieldName    Field name: 'Proposal', 'Usage', 'Users', 'Operator', 'Comment'
+**    _newValue
+**    _doUpdate     When 0, preview the update
 **
 **  Auth:   grk
 **  Date:   08/31/2012 grk - Initial release

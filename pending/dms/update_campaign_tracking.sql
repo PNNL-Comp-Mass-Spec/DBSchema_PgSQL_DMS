@@ -7,8 +7,6 @@ AS $$
 **  Desc:
 **      Updates summary stats in T_Campaign_Tracking
 **
-**  Arguments:
-**
 **  Auth:   grk
 **  Date:   10/20/2002
 **          11/15/2007 mem - Switched to Truncate Table for improved performance (Ticket:576)
@@ -24,7 +22,6 @@ DECLARE
     _message text;
 BEGIN
     _message := '';
-    _returnCode := '';
 
     ----------------------------------------------------------
     -- Create a temporary table to hold the stats

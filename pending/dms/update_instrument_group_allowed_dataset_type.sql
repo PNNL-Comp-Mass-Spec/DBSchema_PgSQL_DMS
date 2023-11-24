@@ -17,7 +17,13 @@ AS $$
 **      Adds, updates, or deletes allowed dataset type for given instrument group
 **
 **  Arguments:
-**    _mode   'add' or 'update' or 'delete'
+&&    _instrumentGroup
+&&    _datasetType
+&&    _comment
+**    _mode         Mode: 'add' or 'update' or 'delete'
+**    _message      Status message
+**    _returnCode   Return code
+**    _callingUser  Calling user username
 **
 **  Auth:   grk
 **  Date:   09/19/2009 grk - Initial release (Ticket #749, http://prismtrac.pnl.gov/trac/ticket/749)

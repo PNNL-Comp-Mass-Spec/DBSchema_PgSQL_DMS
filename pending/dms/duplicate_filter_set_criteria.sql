@@ -37,6 +37,12 @@ AS $$
 **         ORDER BY FSCN.Criterion_Name, FSC.Filter_Criteria_Group_ID
 **
 **  Arguments:
+**    _sourceFilterSetID
+**    _destFilterSetID
+**    _addMissingFilterCriteria
+**    _infoOnly
+**    _message                      Output message
+**    _returnCode                   Return code
 **
 **  Auth:   mem
 **  Date:   10/02/2009

@@ -16,7 +16,10 @@ AS $$
 **
 **  Arguments:
 **    _name   Container name
-**    _mode   'move_container', 'retire_container', 'retire_container_and_contents', 'unretire_container'
+**    _mode   Mode: 'move_container', 'retire_container', 'retire_container_and_contents', 'unretire_container'
+**    _message          Output message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   07/23/2008 grk - Initial version (ticket http://prismtrac.pnl.gov/trac/ticket/603)

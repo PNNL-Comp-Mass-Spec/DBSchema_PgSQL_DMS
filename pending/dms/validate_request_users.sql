@@ -6,7 +6,8 @@ CREATE OR REPLACE PROCEDURE public.validate_request_users
     INOUT _requestedPersonnel text,
     INOUT _assignedPersonnel text,
     _requireValidRequestedPersonnel boolean = true,
-    _message text Output
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
 )
 LANGUAGE plpgsql
 AS $$
@@ -17,9 +18,13 @@ AS $$
 **      for a Data Analysis Request or Sample Prep Request
 **
 **  Arguments:
+**    _requestName          Request name
 **    _callingProcedure     AddUpdateDataAnalysisRequest or add_update_sample_prep_request
-**    _requestedPersonnel   Input/output parameter
-**    _assignedPersonnel    Input/output parameter
+**    _requestedPersonnel   Input/output: requested personnel
+**    _assignedPersonnel    Input/output: assigned personnel
+**    _requireValidRequestedPersonnel
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   mem
 **  Date:   03/21/2022 mem - Initial version (refactored code from AddUpdateSamplePrepRequest)

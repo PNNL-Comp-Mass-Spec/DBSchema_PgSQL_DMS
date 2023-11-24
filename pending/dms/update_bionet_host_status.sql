@@ -12,6 +12,7 @@ AS $$
 **      by looking for datasets associated with any instrument associated with the given host
 **
 **  Arguments:
+**    _infoOnly
 **
 **  Auth:   mem
 **  Date:   12/02/2015 mem - Initial version

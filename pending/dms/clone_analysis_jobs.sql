@@ -27,10 +27,16 @@ AS $$
 **      If _newProteinCollectionList is not empty, all new jobs will have the same protein collection
 **
 **  Arguments:
-**    _sourceJobs            Comma-separated list of jobs to copy
-**    _supersedeOldJob       When true, change the state of old jobs to 14
-**    _updateOldJobComment   When true, add the new job number to the old job comment
-**    _allowDuplicateJob     When true, allow the new jobs to be duplicates of the old jobs (useful for testing a new version of a tool or updated .UIMF)
+**    _sourceJobs               Comma-separated list of jobs to copy
+**    _newParamFileName
+**    _newSettingsFileName
+**    _newProteinCollectionList
+**    _supersedeOldJob          When true, change the state of old jobs to 14
+**    _updateOldJobComment      When true, add the new job number to the old job comment
+**    _allowDuplicateJob        When true, allow the new jobs to be duplicates of the old jobs (useful for testing a new version of a tool or updated .UIMF)
+**    _infoOnly
+**    _message                  Output message
+**    _returnCode               Return code
 **
 **  Auth:   mem
 **  Date:   07/12/2016 mem - Initial Release

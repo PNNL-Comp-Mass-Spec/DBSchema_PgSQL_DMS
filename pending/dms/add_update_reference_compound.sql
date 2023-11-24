@@ -34,15 +34,27 @@ AS $$
 **      Adds new or updates existing reference compound in database
 **
 **  Arguments:
-**    _compoundName     Reference compound name or peptide sequence
-**    _geneName         Gene or Protein name
-**    _pubChemID        Will be converted to an integer; empty strings are stored as null
-**    _contactUsername  Contact for the Source; typically PNNL staff, but can be offsite person
-**    _supplier         Source that the material came from; can be a person (onsite or offsite) or a company
-**    _purchaseDate     Will be converted to a date
-**    _mass             Will be converted to a float
-**    _active           Can be: Yes, No, Y, N, 1, 0
-**    _mode             Mode: 'add', 'update', 'check_add', 'check_update'
+**    _compoundID           Reference compound ID
+**    _compoundName         Reference compound name or peptide sequence
+**    _description
+**    _compoundTypeName
+**    _geneName             Gene or Protein name
+**    _modifications
+**    _organismName
+**    _pubChemID            Will be converted to an integer; empty strings are stored as null
+**    _campaignName
+**    _containerName
+**    _wellplateName
+**    _wellNumber
+**    _contactUsername      Contact for the Source; typically PNNL staff, but can be offsite person
+**    _supplier             Source that the material came from; can be a person (onsite or offsite) or a company
+**    _productId
+**    _purchaseDate         Will be converted to a date
+**    _purity
+**    _purchaseQuantity
+**    _mass                 Will be converted to a float
+**    _active               Can be: 'Yes', 'No', 'Y', 'N', '1', or '0'
+**    _mode                 Reference compound name or peptide sequenceMode: 'add', 'update', 'check_add', 'check_update'
 **    _message          Output message
 **    _returnCode       Return code
 **    _callingUser      Calling user username

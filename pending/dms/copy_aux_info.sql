@@ -23,7 +23,9 @@ AS $$
 **    _categoryName         Category name
 **    _subCategoryName      Subcategory name
 **    _sourceEntityName     Source entity name (experiment name, biomaterial name, etc.)
-**    _mode                 Moder: 'copyCategory', 'copySubcategory', 'copyAll'
+**    _mode                 Mode: 'copyCategory', 'copySubcategory', 'copyAll'
+**    _message              Output message
+**    _returnCode           Return code
 **
 **  Auth:   grk
 **  Date:   01/27/2003 grk - Initial release

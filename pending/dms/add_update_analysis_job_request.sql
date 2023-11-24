@@ -17,9 +17,9 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job_request
     _state text,
     INOUT _requestID int,
     _mode text = 'add',
+    _autoRemoveNotReleasedDatasets int = 0,     -- Leave this as an integer since used by the website
     INOUT _message text default '',
     INOUT _returnCode text default '',
-    _autoRemoveNotReleasedDatasets int = 0,     -- Leave this as an integer since used by the website
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -48,10 +48,10 @@ AS $$
 **    _organismDBName   Legacy fasta file; typically 'na'
 **    _state            Includes 'new', 'used', and 'inactive' (see T_Analysis_Job_Request_State)
 **    _mode             Mode: 'add', 'update', 'append', or 'PreviewAdd'
+**    _autoRemoveNotReleasedDatasets
 **    _message          Output message
 **    _returnCode       Return code
-_autoRemoveNotReleasedDatasets
-_callingUser
+**    _callingUser
 **
 **  Auth:   grk
 **  Date:   10/9/2003

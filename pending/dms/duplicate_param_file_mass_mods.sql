@@ -19,8 +19,13 @@ AS $$
 **      but does not yet have any entries in T_Param_File_Mass_Mods
 **
 **  Arguments:
+**    _sourceParamFileID
+**    _destParamFileID
 **    _updateParamEntries   When true, updates T_Param_Entries in addition to T_Param_File_Mass_Mods
 **                          However, table T_Param_Entries is only used by SEQUEST parameter files, and SEQUEST was retired in 2019, so this argument is obsolete
+**    _infoOnly
+**    _message              Output message
+**    _returnCode           Return code
 **
 **  Auth:   mem
 **  Date:   05/04/2009

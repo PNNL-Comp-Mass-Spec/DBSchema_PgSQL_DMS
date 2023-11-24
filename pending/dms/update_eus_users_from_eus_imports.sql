@@ -16,6 +16,9 @@ AS $$
 **
 **  Arguments:
 **    _updateUsersOnInactiveProposals   When true, update all proposals in t_eus_proposals, including inactive proposals; however, skips those with state 4 ('no interest')
+**    _message                          Status message
+**    _returnCode                       Return code
+
 **
 **  Auth:   grk
 **  Date:   03/01/2006 grk - Initial version

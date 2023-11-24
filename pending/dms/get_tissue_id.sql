@@ -12,16 +12,14 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Gets TissueID for given Tissue Name or Tissue Id
-**
-**  Return values:
-**      0 if success, error code if a problem
-**      (code 100 means "Entry not found)
+**      Gets Tissue ID for given Tissue Name or Tissue ID
 **
 **  Arguments:
-**    _tissueNameOrID     Tissue Name or Tissue Identifier to find
-**    _tissueIdentifier   Output: Tissue identifier, e.g. BTO:0000131
-**    _tissueName         Output: Human readable tissue name, e.g. plasma
+**    _tissueNameOrID       Tissue Name or Tissue Identifier to find
+**    _tissueIdentifier     Output: Tissue identifier, e.g. BTO:0000131
+**    _tissueName           Output: Human readable tissue name, e.g. plasma
+**    _message              Output message
+**    _returnCode           Return code
 **
 **  Auth:   mem
 **  Date:   09/01/2017 mem - Initial version
@@ -44,12 +42,12 @@ BEGIN
     End If;
 
     If char_length(_tissueNameOrID) > 0 Then
-        If _tissueNameOrID Like 'BTO:%' Then
+        If _tissueNameOrID ILike 'BTO:%' Then
             SELECT Identifier,
                    Tissue
             INTO _tissueIdentifier, _tissueName
             FROM ont.V_BTO_ID_to_Name
-            WHERE Identifier = _tissueNameOrID
+            WHERE Identifier = _tissueNameOrID::citext
 
             If Not FOUND Then
                 _returnCode := 'U5201';
@@ -59,7 +57,7 @@ BEGIN
                    Tissue
             INTO _tissueIdentifier, _tissueName
             FROM ont.V_BTO_ID_to_Name
-            WHERE Tissue = _tissueNameOrID
+            WHERE Tissue = _tissueNameOrID::citext
 
             If Not FOUND Then
                 _returnCode := 'U5202';

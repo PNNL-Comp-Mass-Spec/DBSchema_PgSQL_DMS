@@ -26,9 +26,10 @@ AS $$
 **    _machine
 **    _notes
 **    _analysisToolsList
-**    _mode         Mode: 'add' or 'update'
-**    _message                  Output message
-**    _returnCode               Return code
+**    _mode                 Mode: 'add' or 'update'
+**    _message              Output message
+**    _returnCode           Return code
+**    _callingUser          Calling user username
 **
 **  Auth:   grk
 **  Date:   02/15/2007 (ticket 389)

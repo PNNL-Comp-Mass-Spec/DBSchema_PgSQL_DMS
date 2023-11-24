@@ -2,7 +2,8 @@
 CREATE OR REPLACE FUNCTION public.get_instrument_usage_allocations_for_grid
 (
     _itemList text,
-    _fiscalYear text)
+    _fiscalYear text
+)
 RETURNS TABLE
 (
     ...
@@ -15,7 +16,8 @@ AS $$
 **      Get grid data for editing given usage allocations
 **
 **  Arguments:
-**    _itemList   list of specific proposals (all if blank)
+**    _itemList     Comma separated list of proposal IDs to filter on; if an empty string, include all proposals
+**    _fiscalYear   Fiscal year
 **
 **  Auth:   grk
 **  Date:   01/15/2013
@@ -26,8 +28,8 @@ AS $$
 *****************************************************/
 DECLARE
 BEGIN
-    _fiscalYear := Trim(Coalesce(_fiscalYear, ''));
     _itemList   := Trim(Coalesce(_itemList, ''));
+    _fiscalYear := Trim(Coalesce(_fiscalYear, ''));
 
     -----------------------------------------
     -- Convert item list into temp table
@@ -41,21 +43,21 @@ BEGIN
     SELECT Value
     FROM public.parse_delimited_list(_itemList);
 
-    SELECT  fiscal_year,
-            proposal_id,
-            title,
-            status,
-            general,
-            ft,
-            ims,
-            orb,
-            exa,
-            ltq,
-            gc,
-            qqq,
-            public.timestamp_text(Last_Updated) AS last_updated,
-            fy_proposal
-    FROM    V_Instrument_Allocation_List_Report
+    SELECT fiscal_year,
+           proposal_id,
+           title,
+           status,
+           general,
+           ft,
+           ims,
+           orb,
+           exa,
+           ltq,
+           gc,
+           qqq,
+           public.timestamp_text(Last_Updated) AS last_updated,
+           fy_proposal
+    FROM V_Instrument_Allocation_List_Report
     WHERE Fiscal_Year = _fiscalYear AND
           (char_length(_itemList) = 0 OR Proposal_ID IN (SELECT Item FROM Tmp_Proposals));
 

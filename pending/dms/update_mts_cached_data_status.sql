@@ -19,10 +19,15 @@ AS $$
 **      Updates the data in T_MTS_Cached_Data_Status using MTS
 **
 **  Arguments:
+**    _cachedDataTableName
+**    _incrementRefreshCount
 **    _insertCountNew         Ignored if _incrementRefreshCount is false
 **    _updateCountNew         Ignored if _incrementRefreshCount is false
 **    _deleteCountNew         Ignored if _incrementRefreshCount is false
 **    _fullRefreshPerformed   When true, updates both Last_Refreshed and Last_Full_Refresh; otherwise, just updates Last_Refreshed
+**    _lastRefreshMinimumID
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   02/05/2010 mem - Initial Version

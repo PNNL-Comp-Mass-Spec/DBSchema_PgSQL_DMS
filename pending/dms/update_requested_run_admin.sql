@@ -25,8 +25,11 @@ AS $$
 **        'UnassignInstrument' will change the Queue_State to 1 for requests that have a Queue_State of 2 ("Assigned"); skips any with a Queue_State of 3 ("Analyzed")
 **
 **  Arguments:
-**    _requestList   XML describing list of Requested Run IDs
-**    _mode          'Active', 'Inactive', 'Delete', or 'UnassignInstrument'
+**    _requestList      XML describing list of Requested Run IDs
+**    _mode             Mode: 'Active', 'Inactive', 'Delete', or 'UnassignInstrument'
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   03/09/2010

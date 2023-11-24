@@ -15,7 +15,9 @@ AS $$
 **      in T_Requested_Run
 **
 **  Arguments:
-**    _minimumTimeIntervalHours   Set this to 0 to force the addition of new data to T_Requested_Run_Status_History
+**    _minimumTimeIntervalHours     Set this to 0 to force the addition of new data to T_Requested_Run_Status_History
+**    _message                      Status message
+**    _returnCode                   Return code
 **
 **  Auth:   mem
 **  Date:   09/25/2012 mem - Initial Version

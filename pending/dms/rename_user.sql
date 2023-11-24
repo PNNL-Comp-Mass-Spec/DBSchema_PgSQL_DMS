@@ -3,9 +3,9 @@ CREATE OR REPLACE PROCEDURE public.rename_user
 (
     _oldUserName text = '',
     _newUserName text = '',
+    _infoOnly boolean = true,
     INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _infoOnly boolean = true
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -15,6 +15,11 @@ AS $$
 **      Renames a user in T_Users and other tracking tables
 **
 **  Arguments:
+**    _oldUserName
+**    _newUserName
+*     _infoOnly
+**    _message      Output message
+**    _returnCode   Return code
 **
 **  Auth:   10/31/2014 mem - Initial version
 **  Date:   06/16/2017 mem - Restrict access using VerifySPAuthorized

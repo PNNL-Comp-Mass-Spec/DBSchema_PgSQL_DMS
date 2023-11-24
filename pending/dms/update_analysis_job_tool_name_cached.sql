@@ -3,9 +3,9 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_job_tool_name_cached
 (
     _jobStart int = 0,
     _jobFinish int = 0,
+    _infoOnly boolean = false,
     INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _infoOnly boolean = false
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -15,6 +15,11 @@ AS $$
 **      Updates column analysis_tool_cached in T_Analysis_Job for 1 or more jobs
 **
 **  Arguments:
+**    _jobStart
+**    _jobFinish
+**    _infoOnly
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   mem
 **  Date:   04/03/2014 mem - Initial version

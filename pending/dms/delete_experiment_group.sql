@@ -13,6 +13,9 @@ AS $$
 **      Remove an experiment group (but not the experiments)
 **
 **  Arguments:
+**    _groupID      Experiment group ID
+**    _message      Output message
+**    _returnCode   Return code
 **
 **  Auth:   grk
 **  Date:   07/13/2006

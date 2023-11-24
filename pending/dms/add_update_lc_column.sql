@@ -24,8 +24,20 @@ AS $$
 **      Adds a new entry to LC Column table
 **
 **  Arguments:
-**    _columnNumber   Input/output: Aka column name
-**    _mode           'add' or 'update'
+**    _columnNumber         Input/output: Column name
+**    _packingMfg
+**    _packingType
+**    _particleSize
+**    _particleType
+**    _columnInnerDia
+**    _columnOuterDia
+**    _length
+**    _state
+**    _operatorUsername
+**    _comment
+**    _mode                 Mode: 'add' or 'update'
+**    _message              Output message
+**    _returnCode           Return code
 **
 **  Auth:   grk
 **  Date:   12/09/2003

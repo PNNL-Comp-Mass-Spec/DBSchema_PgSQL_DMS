@@ -35,12 +35,30 @@ AS $$
 **      Adds new or edits existing RNA Prep Request
 **
 **  Arguments:
-**    _eusUserID    Use Null or 0 if no EUS User ID
-**    _state        New, Open, Prep in Progress, Prep Complete, or Closed
-**    _mode         Mode: 'add' or 'update'
-**    _message      Output message
-**    _returnCode   Return code
-**    _callingUser  Calling user username
+**    _requesterUsername
+**    _reason
+**    _organism
+**    _biohazardLevel
+**    _campaign
+**    _numberofSamples
+**    _sampleNameList
+**    _sampleType
+**    _prepMethod
+**    _sampleNamingConvention
+**    _estimatedCompletion
+**    _workPackageNumber
+**    _eusProposalID
+**    _eusUsageType
+**    _eusUserID                        Use Null or 0 if no EUS User ID
+**    _instrumentName
+**    _datasetType
+**    _instrumentAnalysisSpecifications
+**    _state                            State: New, Open, Prep in Progress, Prep Complete, or Closed
+**    _id                               Input/output: RNA prep request ID
+**    _mode                             Mode: 'add' or 'update'
+**    _message                          Output message
+**    _returnCode                       Return code
+**    _callingUser                      Calling user username
 **
 **  Auth:   mem
 **  Date:   05/19/2014 mem - Initial version
@@ -313,7 +331,7 @@ BEGIN
             End If;
 
             If _requestTypeExisting <> _requestType Then
-                RAISE EXCEPTION 'Cannot edit requests of type % with the rna_prep_request page; use http://dms2.pnl.gov/sample_prep_request/report', _requestTypeExisting;
+                RAISE EXCEPTION 'Cannot edit requests of type % with the rna_prep_request page; use https://dms2.pnl.gov/sample_prep_request/report', _requestTypeExisting;
             End If;
         End If;
 

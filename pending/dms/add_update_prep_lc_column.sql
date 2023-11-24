@@ -28,7 +28,21 @@ AS $$
 **      Adds new or edits existing item in T_Prep_LC_Column
 **
 **  Arguments:
-**    _mode   'add' or 'update'
+**    _columnName
+**    _mfgName
+**    _mfgModel
+**    _mfgSerialNumber
+**    _packingMfg
+**    _packingType
+**    _particlesize
+**    _particletype
+**    _columnInnerDia
+**    _columnOuterDia
+**    _length
+**    _state
+**    _operatorUsername
+**    _comment
+**    _mode             Mode: 'add' or 'update'
 **    _message          Output message
 **    _returnCode       Return code
 **    _callingUser      Calling user username

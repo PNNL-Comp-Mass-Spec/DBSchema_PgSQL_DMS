@@ -42,6 +42,7 @@ AS $$
 **      Adds new or edits existing T_LC_Cart_Configuration entry
 **
 **  Arguments:
+**    _id
 **    _configName
 **    _description
 **    _autosampler

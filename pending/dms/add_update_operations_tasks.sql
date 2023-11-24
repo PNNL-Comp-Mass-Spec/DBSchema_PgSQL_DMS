@@ -26,10 +26,22 @@ AS $$
 **      Adds new or edits existing item in T_Operations_Tasks
 **
 **  Arguments:
-**    _mode             Mode: 'add' or 'update'
-**    _message          Output message
-**    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _id                   Input/output: task_id in T_Operations_Tasks
+**    _taskType
+**    _task
+**    _requester
+**    _requestedPersonnel
+**    _assignedPersonnel
+**    _description
+**    _comments
+**    _labName
+**    _status
+**    _priority
+**    _workPackage
+**    _mode                 Mode: 'add' or 'update'
+**    _message              Output message
+**    _returnCode           Return code
+**    _callingUser          Calling user username
 **
 **  Auth:   grk
 **  Date:   09/01/2012
@@ -126,7 +138,7 @@ BEGIN
         WHERE lab_name = _labName;
 
         If Not FOUND Then
-            RAISE EXCEPTION 'Unrecognized lab name';
+            RAISE EXCEPTION 'Unrecognized lab name: %', _labName;
         End If;
 
         ---------------------------------------------------
@@ -135,8 +147,7 @@ BEGIN
 
         If _mode = 'update' Then
             -- Cannot update a non-existent entry
-            --
-            --
+
             SELECT status,
                    closed
             INTO _curStatus, _curClosed

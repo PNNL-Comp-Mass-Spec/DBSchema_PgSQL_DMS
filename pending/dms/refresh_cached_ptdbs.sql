@@ -12,6 +12,8 @@ AS $$
 **      Updates the data in T_MTS_PT_DBs_Cached using MTS
 **
 **  Arguments:
+**    _message      Output message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   02/05/2010 mem - Initial Version

@@ -17,8 +17,12 @@ AS $$
 **      loadings for a given wellplate are valid
 **
 **  Arguments:
-**    _totalCount   Number of consecutive wells to be filled
-**    _wellIndex    index position of wellNum
+**    _wellplateName    Input/output: wellplate name
+**    _wellNumber       Input/output: well number
+**    _totalCount       Number of consecutive wells to be filled
+**    _wellIndex        Output: index position of _wellNumber
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   grk
 **  Date:   07/24/2009
@@ -53,7 +57,7 @@ BEGIN
         _wellNumber := null;
     End If;
 
-    _wellNumber := UPPERO(_wellNumber);
+    _wellNumber := Upper(_wellNumber);
 
     -- Make sure that wellplate and well values are consistent
     -- with each other

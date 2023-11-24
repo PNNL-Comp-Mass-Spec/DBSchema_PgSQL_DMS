@@ -16,6 +16,8 @@ AS $$
 **      Changes will be logged to T_Log_Entries
 **
 **  Arguments:
+**    _searchWindowDays
+**    _infoOnly
 **
 **  Auth:   mem
 **  Date:   12/18/2015 mem - Initial version

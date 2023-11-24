@@ -19,10 +19,10 @@ CREATE OR REPLACE PROCEDURE public.update_instrument_usage_allocations
     _qqq text = '',
     _qqqComment text = '',
     _mode text = 'update',
+    _infoOnly boolean = false,
     INOUT _message text default '',
     INOUT _returnCode text default '',
-    _callingUser text = '',
-    _infoOnly boolean = false
+    _callingUser text = ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -35,8 +35,25 @@ AS $$
 **    _fyProposal   Only used when _mode is 'update'
 **    _fiscalYear   Only used when _mode is 'add'
 **    _proposalID   Only used when _mode is 'add'
-**    _mode         'add' or 'update'
-**    _infoOnly     Set to true to preview the changes that would be made
+**    _ft
+**    _ftComment
+**    _ims
+**    _imsComment
+**    _orb
+**    _orbComment
+**    _exa
+**    _exaComment
+**    _ltq
+**    _ltqComment
+**    _gc
+**    _gcComment
+**    _qqq
+**    _qqqComment
+**    _mode         Mode: 'add' or 'update'
+**    _message      Status message
+**    _infoOnly     When true, preview the changes that would be made
+**    _returnCode   Return code
+**    _callingUser  Calling user username
 **
 **  Auth:   grk
 **  Date:   03/28/2012 grk - Initial release

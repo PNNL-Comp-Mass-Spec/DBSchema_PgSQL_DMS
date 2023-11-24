@@ -15,7 +15,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Update requested EMSL instument usage table from input XML list
+**      Update requested EMSL instrument usage table from input XML list
 **
 **      Example value for _factorList:
 **
@@ -26,7 +26,14 @@ AS $$
 **        <r i="1941" f="Proposal" v="..." />
 **
 **  Arguments:
-**    _operation   'update', 'refresh', 'reload'
+**    _factorList
+**    _operation          Operation: 'update', 'refresh', 'reload'
+**    _year
+**    _month
+**    _instrument
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   10/07/2012

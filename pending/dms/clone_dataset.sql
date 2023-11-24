@@ -19,10 +19,12 @@ AS $$
 **      and we wish to run new analysis jobs against the cloned dataset using DMS
 **
 **  Arguments:
-**    _infoOnly                   Change to false to actually perform the clone; when true, preview items that would be created
-**    _dataset                    Dataset name to clone
-**    _suffix                     Suffix to apply to cloned dataset and requested run
-**    _createDatasetArchiveTask   Set to true to instruct DMS to archive the cloned dataset
+**    _infoOnly                     Change to false to actually perform the clone; when true, preview items that would be created
+**    _dataset                      Dataset name to clone
+**    _suffix                       Suffix to apply to cloned dataset and requested run
+**    _createDatasetArchiveTask     Set to true to instruct DMS to archive the cloned dataset
+**    _message                      Output message
+**    _returnCode                   Return code
 **
 **  Auth:   mem
 **  Date:   02/27/2014

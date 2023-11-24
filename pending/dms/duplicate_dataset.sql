@@ -19,14 +19,15 @@ AS $$
 **      Duplicates a dataset by adding a new row to T_Dataset and calling add_update_requested_run
 **
 **  Arguments:
-**    _sourceDataset         Existing dataset to copy
-**    _newDataset            New dataset name
-**    _newComment            New dataset comment; use source dataset's comment if blank; use a blank comment if '.' or '<blank>' or '<empty>'
-**    _newCaptureSubfolder   Capture subfolder name; use source dataset's capture subfolder if blank
-**    _newOperatorUsername   Operator username
-**    _datasetStateID        1 for a new dataset, which will create a dataset capture job; 3=Complete; 4=Inactive; 13=Holding
-**    _infoOnly              False to create the dataset, true to preview
-**    _message               Output message
+**    _sourceDataset        Existing dataset to copy
+**    _newDataset           New dataset name
+**    _newComment           New dataset comment; use source dataset's comment if blank; use a blank comment if '.' or '<blank>' or '<empty>'
+**    _newCaptureSubfolder  Capture subfolder name; use source dataset's capture subfolder if blank
+**    _newOperatorUsername  Operator username
+**    _datasetStateID       1 for a new dataset, which will create a dataset capture job; 3=Complete; 4=Inactive; 13=Holding
+**    _infoOnly             When true, preview the dataset that would be created
+**    _message              Output message
+**    _returnCode           Return code
 **
 **  Auth:   mem
 **  Date:   12/12/2018 mem - Initial version

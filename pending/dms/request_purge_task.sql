@@ -36,11 +36,12 @@ AS $$
 **    _storageServerName                Storage server to use, for example 'proto-9'; if blank, returns candidates for all storage servers; when blank, _serverDisk is ignored
 **    _serverDisk                       Disk on storage server to use, for example 'g:\'; if blank, returns candidates for all drives on given server (or all servers if _storageServerName is blank)
 **    _excludeStageMD5RequiredDatasets  If true, excludes datasets with StageMD5_Required > 0
-**    _results                          Cursor for retrieving the job parameters
-**    _message                          Output: message (if an error)
-**    _returnCode                       Output: return code (if an error)
+**    _results                          Output: cursor for retrieving the job parameters
+**    _message                          Status message
+**    _returnCode                       Return code
 **    _infoOnly                         When true, preview the first _previewCount candidates
 **    _previewCount                     Number of purge candidates to show when _infoOnly is true; set to -1 to preview the Parameter table that would be returned if a single purge task candidate was chosen from Tmp_PurgeableDatasets
+**    _previewSql                       When true, preview SQL
 **
 **  Use this to view the data returned by the _results cursor
 **

@@ -12,6 +12,8 @@ AS $$
 **      Adds requested run batch notification events to notification event table
 **
 **  Arguments:
+**    _infoOnly
+**    _showDebug
 **
 **  Auth:   grk
 **  Date:   03/26/2010

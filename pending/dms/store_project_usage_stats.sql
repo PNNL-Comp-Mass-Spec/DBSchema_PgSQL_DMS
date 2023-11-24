@@ -18,7 +18,9 @@ AS $$
 **      to auto-update the stats
 **
 **  Arguments:
-**    _endDate   End date/time; if null, uses the current date/time
+**    _windowDays
+**    _endDate      End date/time; if null, uses the current date/time
+**    _infoOnly
 **
 **  Auth:   mem
 **  Date:   12/18/2015 mem - Initial version

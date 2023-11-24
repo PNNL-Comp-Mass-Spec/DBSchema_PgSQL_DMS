@@ -16,6 +16,9 @@ AS $$
 **
 **  Arguments:
 **    _targetDate   Date used to determine the target year and month to examine; if null, will examine the previous month
+**    _infoOnly
+**    _message          Output message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   05/12/2022 mem - Initial version

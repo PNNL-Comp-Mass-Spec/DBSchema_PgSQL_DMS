@@ -13,9 +13,12 @@ AS $$
 **      Caches the names of Instruments that have data in table T_Dataset_QC
 **
 **      Used by the SMAQC website when it constructs the list of available instruments
-**      http://prismsupport.pnl.gov/smaqc/index.php/smaqc/metric/P_2C/inst/VOrbi05/
+**      https://prismsupport.pnl.gov/smaqc/index.php/smaqc/metric/P_2C/inst/VOrbi05/
 **
 **  Arguments:
+**    _infoOnly     When true, preview updates
+**    _message      Output message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   11/04/2015 mem - Initial version

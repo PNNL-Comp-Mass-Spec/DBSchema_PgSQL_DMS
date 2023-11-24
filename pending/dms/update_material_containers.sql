@@ -21,6 +21,9 @@ AS $$
 **    _containerList    Container ID list, e.g. 'MC-6314', 'MC-9750'
 **    _newValue         When mode is 'move_container', this is the new location for the container
 **    _comment          Container comment
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   03/26/2008     - (ticket http://prismtrac.pnl.gov/trac/ticket/603)

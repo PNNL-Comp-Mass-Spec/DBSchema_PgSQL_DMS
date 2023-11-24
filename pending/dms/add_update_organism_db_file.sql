@@ -17,6 +17,13 @@ AS $$
 **      Adds new or edits existing Legacy Organism DB File in T_Organism_DB_File
 **
 **  Arguments:
+**    _fastaFileName
+**    _organismName
+**    _numProteins
+**    _numResidues
+**    _fileSizeKB
+**    _message          Output message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   01/24/2014 mem - Initial version

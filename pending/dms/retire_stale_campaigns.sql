@@ -13,6 +13,9 @@ AS $$
 **      Automatically retires (sets inactive) campaigns that have not been used recently
 **
 **  Arguments:
+**    _infoOnly         When true, preview updates
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   06/11/2022

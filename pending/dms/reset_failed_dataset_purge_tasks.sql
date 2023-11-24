@@ -6,7 +6,7 @@ CREATE OR REPLACE PROCEDURE public.reset_failed_dataset_purge_tasks
     _infoOnly boolean = false,
     INOUT _message text default '',
     INOUT _returnCode text default '',
-    _resetCount int = 0 output
+    INOUT _resetCount int = 0
 )
 LANGUAGE plpgsql
 AS $$
@@ -19,11 +19,12 @@ AS $$
 **        at least _resetHoldoffHours hours before the present
 **
 **  Arguments:
-**    _resetHoldoffHours   Holdoff time to apply to column AS_state_Last_Affected
-**    _maxTasksToReset     If greater than 0, will limit the number of tasks to reset
-**    _infoOnly            True to preview the tasks that would be reset
-**    _message             Status message
-**    _resetCount          Number of tasks reset
+**    _resetHoldoffHours    Holdoff time to apply to column AS_state_Last_Affected
+**    _maxTasksToReset      If greater than 0, will limit the number of tasks to reset
+**    _infoOnly             True to preview the tasks that would be reset
+**    _message              Status message
+**    _returnCode           Return code
+**    _resetCount           Output: Number of tasks reset
 **
 **  Auth:   mem
 **  Date:   07/12/2010 mem - Initial version

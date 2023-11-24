@@ -20,6 +20,8 @@ AS $$
 **  Arguments:
 **    _updateUsersOnInactiveProposals   When true, update_eus_users_from_eus_imports will update all proposals in t_eus_proposals, including inactive proposals
 **                                      However, skips those with state 4 ('no interest')
+**    _message                          Status message
+**    _returnCode                       Return code
 **
 **  Auth:   mem
 **  Date:   03/25/2011 mem - Initial version

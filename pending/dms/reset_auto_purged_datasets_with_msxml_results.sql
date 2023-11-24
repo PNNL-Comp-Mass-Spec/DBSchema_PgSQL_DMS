@@ -22,6 +22,8 @@ AS $$
 **  Arguments:
 **    _infoOnly     True to preview the datasets that would be reset
 **    _resetCount   Number of datasets that were reset
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   01/13/2014 mem - Initial version

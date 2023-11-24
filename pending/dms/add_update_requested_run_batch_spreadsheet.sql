@@ -23,8 +23,17 @@ AS $$
 **      Adds new or edits existing requested run batch
 **
 **  Arguments:
-**    _requestedInstrument   Will typically contain an instrument group, not an instrument name
-**    _mode                  Mode: 'add' or 'update'
+**    _id                           Input/Output: Requested run batch ID
+**    _name
+**    _description
+**    _requestNameList
+**    _ownerUsername
+**    _requestedBatchPriority
+**    _requestedCompletionDate
+**    _justificationHighPriority
+**    _requestedInstrument          Will typically contain an instrument group, not an instrument name
+**    _comment
+**    _mode                         Mode: 'add' or 'update'
 **
 **  Auth:   jds
 **  Date:   05/18/2009

@@ -21,14 +21,17 @@ AS $$
 **      Updates membership of research team for given campaign
 **
 **  Arguments:
-**    _campaignName              Campaign name (required if _researchTeamID is 0)
-**    _progmgrUsername           Project Manager Username (required)
-**    _piUsername                Principal Investigator Username (required)
-**    _technicalLead             Technical Lead
-**    _samplePreparationStaff    Sample Prep Staff
-**    _datasetAcquisitionStaff   Dataset acquisition staff
-**    _informaticsStaff          Informatics staff
-**    _collaborators             Collaborators
+**    _campaignName             Campaign name (required if _researchTeamID is 0)
+**    _progmgrUsername          Project Manager Username (required)
+**    _piUsername               Principal Investigator Username (required)
+**    _technicalLead            Technical Lead
+**    _samplePreparationStaff   Sample Prep Staff
+**    _datasetAcquisitionStaff  Dataset acquisition staff
+**    _informaticsStaff         Informatics staff
+**    _collaborators            Collaborators
+**    _researchTeamID           Output: research team ID
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   grk
 **  Date:   02/05/2010 grk - Initial version

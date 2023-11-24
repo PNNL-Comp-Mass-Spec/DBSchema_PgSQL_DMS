@@ -12,6 +12,8 @@ AS $$
 **      Adds dataset notification events to notification event table
 **
 **  Arguments:
+**    _infoOnly
+**    _showDebug
 **
 **  Auth:   grk
 **  Date:   04/02/2010 grk - Initial Release

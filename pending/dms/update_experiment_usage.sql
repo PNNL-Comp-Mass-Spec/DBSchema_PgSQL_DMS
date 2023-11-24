@@ -15,6 +15,9 @@ AS $$
 **      Last_Used is used by LcmsNetDMSTools when retrieving recent experiments
 **
 **  Arguments:
+**    _infoOnly
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   07/31/2015 mem - Initial version

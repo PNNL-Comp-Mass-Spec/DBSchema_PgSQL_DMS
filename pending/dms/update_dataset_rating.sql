@@ -3,9 +3,9 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_rating
 (
     _datasets text,
     _rating text = 'Unknown',
+    _infoOnly boolean = false,
     INOUT _message text default '',
     INOUT _returnCode text default '',
-    _infoOnly boolean = false,
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -16,8 +16,12 @@ AS $$
 **      Updates the rating for the given datasets by calling procedure Update_Datasets
 **
 **  Arguments:
-**    _datasets   Comma-separated list of datasets
-**    _rating     Typically 'Released' or 'Not Released'
+**    _datasets     Comma-separated list of datasets
+**    _rating       Typically 'Released' or 'Not Released'
+**    _infoOnly
+**    _message      Status message
+**    _returnCode   Return code
+**    _callingUser  Calling user username
 **
 **  Auth:   mem
 **  Date:   10/07/2015 mem - Initial release

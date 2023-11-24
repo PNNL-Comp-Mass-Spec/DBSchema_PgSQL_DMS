@@ -4,9 +4,9 @@ CREATE OR REPLACE PROCEDURE public.rename_dataset
     _datasetNameOld text = '',
     _datasetNameNew text = '',
     _newRequestedRunID int = 0,
+    _infoOnly boolean = true,
     INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _infoOnly boolean = true
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -19,6 +19,12 @@ AS $$
 **      and updates dpkg.t_data_package_datasets
 **
 **  Arguments:
+**    _datasetNameOld
+**    _datasetNameNew
+**    _newRequestedRunID
+**    _infoOnly
+**    _message      Output message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   01/25/2013 mem - Initial version

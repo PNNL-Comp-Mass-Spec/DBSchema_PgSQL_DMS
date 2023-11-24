@@ -18,6 +18,12 @@ AS $$
 **      (which calls Update_Dataset_Interval and Update_EMSL_Instrument_Usage_Report)
 **
 **  Arguments:
+**    _runIntervalId
+**    _daysToProcess
+**    _infoOnly
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   mem
 **  Date:   02/15/2022 mem - Initial version

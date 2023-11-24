@@ -22,6 +22,12 @@ AS $$
 **      of a dataset that was already successfully captured
 **
 **  Arguments:
+**    _datasetName      Dataset name
+**    _newInstrument
+**    _infoOnly
+**    _updateCaptured
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   04/30/2019 mem - Initial Version

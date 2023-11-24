@@ -18,6 +18,8 @@ AS $$
 **    _infoOnly         When true, preview the jobs that would be backfilled
 **    _jobsToProcess    Set to a positive number to process a finite number of jobs
 **    _startJob         Set to a positive number to start with the given job number (useful if we know that a job was just created in sw.t_jobs)
+**    _message          Output message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   01/12/2012

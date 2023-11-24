@@ -22,6 +22,8 @@ AS $$
 **
 **  Arguments:
 **    _campaignIDFilterList     Comma-separated list of campaign IDs
+**    _message                  Output message
+**    _returnCode               Return code
 **
 **  Auth:   mem
 **  Date:   07/22/2019 mem - Initial version

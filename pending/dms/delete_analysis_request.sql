@@ -13,6 +13,9 @@ AS $$
 **      Delete the analysis job request if it is not associated with any jobs
 **
 **  Arguments:
+**    _requestID        Analysis job request ID
+**    _message          Output message
+**    _returnCode       Return code
 **
 **  Auth:   grk
 **  Date:   10/13/2004

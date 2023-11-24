@@ -22,7 +22,18 @@ AS $$
 **      Adds new or edits existing T_Predefined_Analysis_Scheduling_Rules
 **
 **  Arguments:
-**    _mode   'add' or 'update'
+**    _evaluationOrder
+**    _instrumentClass
+**    _instrumentName
+**    _datasetName
+**    _analysisToolName
+**    _priority
+**    _processorGroup
+**    _enabled
+**    _id                   Input/output: scheduling rule ID
+**    _mode                 Mode: 'add' or 'update'
+**    _message              Output message
+**    _returnCode           Return code
 **
 **  Auth:   grk
 **  Date:   06/23/2005

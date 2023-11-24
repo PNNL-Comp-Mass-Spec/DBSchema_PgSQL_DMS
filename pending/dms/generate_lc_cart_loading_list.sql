@@ -35,7 +35,7 @@ AS $$
 **             Sum(CASE WHEN     Cart_Column > 1     THEN 1 ELSE 0 END) AS Requests_with_Cart_Col_Over_One
 **      FROM T_Requested_Run
 **      GROUP BY RR_Year
-**      ORDER BY RR_Year DESC
+**      ORDER BY RR_Year DESC;
 **
 **  Arguments:
 **    _lcCartName

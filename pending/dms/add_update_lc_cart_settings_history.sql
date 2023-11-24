@@ -33,10 +33,29 @@ AS $$
 **      Adds new or edits existing T_LC_Cart_Settings_History
 **
 **  Arguments:
-**    _mode             Mode: 'add' or 'update'
-**    _message          Output message
-**    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _id
+**    _cartName
+**    _valveToColumnExtension
+**    _operatingPressure
+**    _interfaceConfiguration
+**    _valveToColumnExtensionDimensions
+**    _mixerVolume
+**    _sampleLoopVolume
+**    _sampleLoadingTime
+**    _splitFlowRate
+**    _splitColumnDimensions
+**    _purgeFlowRate
+**    _purgeColumnDimensions
+**    _purgeVolume
+**    _acquisitionTime
+**    _solventA
+**    _solventB
+**    _comment
+**    _dateOfChange
+**    _mode                                 Mode: 'add' or 'update'
+**    _message                              Output message
+**    _returnCode                           Return code
+**    _callingUser                          Calling user username
 **
 **  Auth:   grk
 **  Date:   09/29/2008

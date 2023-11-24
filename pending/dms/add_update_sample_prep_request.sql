@@ -47,17 +47,43 @@ AS $$
 **      Adds new or edits existing Sample Prep Request
 **
 **  Arguments:
-**    _eusUserID                  Use Null or 0 if no EUS User ID
-**    _instrumentGroup            Will typically contain an instrument group name; could also contain 'None' or any other text
-**    _state                      New, On Hold, Prep in Progress, Prep Complete, or Closed
-**    _id                         Input/output: Sample prep request ID
-**    _separationGroup            Separation group
-**    _blockAndRandomizeSamples   'Yes', 'No', or 'na'
-**    _blockAndRandomizeRuns      'Yes' or 'No'
-**    _mode                       'add' or 'update'
-**    _message          Output message
-**    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _requestName
+**    _requesterUsername
+**    _reason
+**    _materialContainerList
+**    _organism
+**    _biohazardLevel
+**    _campaign
+**    _numberofSamples
+**    _sampleNameList
+**    _sampleType
+**    _prepMethod
+**    _sampleNamingConvention
+**    _assignedPersonnel
+**    _requestedPersonnel
+**    _estimatedPrepTimeDays
+**    _estimatedMSRuns
+**    _workPackageNumber
+**    _eusProposalID
+**    _eusUsageType
+**    _eusUserID                        Use Null or 0 if no EUS User ID
+**    _instrumentGroup                  Will typically contain an instrument group name; could also contain 'None' or any other text
+**    _datasetType
+**    _instrumentAnalysisSpecifications
+**    _comment
+**    _priority
+**    _state                            New, On Hold, Prep in Progress, Prep Complete, or Closed
+**    _stateComment
+**    _id                               Input/output: Sample prep request ID
+**    _separationGroup                  Separation group
+**    _blockAndRandomizeSamples         'Yes', 'No', or 'na'
+**    _blockAndRandomizeRuns            'Yes' or 'No'
+**    _reasonForHighPriority
+**    _tissue
+**    _mode                             Mode: 'add' or 'update'
+**    _message                          Output message
+**    _returnCode                       Return code
+**    _callingUser                      Calling user username
 **
 **  Auth:   grk
 **  Date:   06/09/2005

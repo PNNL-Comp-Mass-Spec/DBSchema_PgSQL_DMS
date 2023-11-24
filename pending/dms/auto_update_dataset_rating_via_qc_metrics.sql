@@ -19,7 +19,12 @@ AS $$
 **      If one more more entries is found, updates _matchingUsername and _matchingUserID for the first match
 **
 **  Arguments:
-**    _campaignName   Campaign name to filter on; filter uses Like so the name can contain a wild card
+**    _campaignName             Campaign name to filter on; filter uses Like so the name can contain a wild card
+**    _experimentExclusion
+**    _datasetCreatedMinimum
+**    _infoOnly
+**    _message                  Output message
+**    _returnCode               Return code
 **
 **  Auth:   mem
 **  Date:   10/18/2012

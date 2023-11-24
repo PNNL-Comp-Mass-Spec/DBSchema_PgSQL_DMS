@@ -22,7 +22,10 @@ AS $$
 **    _rating           New dataset rating
 **    _comment          Text to append to the dataset comment
 **    _recycleRequest   If 'yes', call unconsume_scheduled_run()
-**    _mode             If 'mode', update t_dataset and possibly call unconsume_scheduled_run and schedule_predefined_analysis_jobs
+**    _mode             Mode: if 'update', update t_dataset and possibly call unconsume_scheduled_run and schedule_predefined_analysis_jobs
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   04/25/2007
@@ -255,7 +258,8 @@ BEGIN
 
             -----------------------------------------------
             -- Recycle request?
-            --
+            -----------------------------------------------
+
             If _recycleRequest = 'yes' Then
                 BEGIN
                     CALL public.unconsume_scheduled_run (

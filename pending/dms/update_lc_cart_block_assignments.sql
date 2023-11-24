@@ -26,6 +26,8 @@ AS $$
 **  Arguments:
 **    _cartAssignmentList   Blocking info XML (see above)
 **    _mode                 Unused, but likely 'update'
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   grk
 **  Date:   02/15/2010

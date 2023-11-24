@@ -18,9 +18,14 @@ AS $$
 **      Makes changes for specified list of material items
 **
 **  Arguments:
-**    _mode       'move_material', 'retire_items'
-**    _itemList   Either list of material IDs with type tag prefixes (e.g. E:8432,E:8434,E:9786), or list of container IDs (integers)
-**    _itemType   'mixed_material' or 'containers'
+**    _mode             Mode: 'move_material' or 'retire_items'
+**    _itemList         Either list of material IDs with type tag prefixes (e.g. E:8432,E:8434,E:9786), or list of container IDs (integers)
+**    _itemType         Item type: 'mixed_material' or 'containers'
+**    _newValue
+**    _comment
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   03/27/2008 grk - Initial release (ticket http://prismtrac.pnl.gov/trac/ticket/603)

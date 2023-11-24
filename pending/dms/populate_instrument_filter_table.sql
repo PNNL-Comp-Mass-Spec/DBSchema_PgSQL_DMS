@@ -20,6 +20,8 @@ AS $$
 **
 **  Arguments:
 **    _instrumentFilterList   Comma-separated list of instrument names (% and * wild cards are allowed)
+**    _message                  Output message
+**    _returnCode               Return code
 **
 **  Auth:   mem
 **  Date:   07/22/2019 mem - Initial version

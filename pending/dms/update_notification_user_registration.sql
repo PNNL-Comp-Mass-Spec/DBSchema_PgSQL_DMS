@@ -21,12 +21,17 @@ AS $$
 **      Sets user registration for notification entities
 **
 **  Arguments:
+**    _username
+**    _name
 **    _requestedRunBatch    'Yes' or 'No'
 **    _analysisJobRequest   'Yes' or 'No'
 **    _samplePrepRequest    'Yes' or 'No'
 **    _datasetNotReleased   'Yes' or 'No'
 **    _datasetReleased      'Yes' or 'No'
 **    _mode                 Unused, but typically 'update'
+**    _message              Status message
+**    _returnCode           Return code
+**    _callingUser          Calling user username
 **
 **  Auth:   grk
 **  Date:   04/03/2010

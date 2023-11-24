@@ -15,6 +15,9 @@ AS $$
 **      Storage path may not have any associated datasets.
 **
 **  Arguments:
+**    _pathID       Storage path ID
+**    _message      Output message
+**    _returnCode   Return code
 **
 **  Auth:   grk
 **  Date:   03/14/2006

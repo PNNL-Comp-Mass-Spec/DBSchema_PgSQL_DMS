@@ -21,7 +21,14 @@ AS $$
 **      This procedure is likely unused in 2022
 **
 **  Arguments:
-**    _parameterFileName    Name of analysis parameter file
+**    _parameterFileName        Name of analysis parameter file
+**    _paramFileID              Output: parameter file ID
+**    _paramFileFound           Output: true if the parameter file exists in t_param_files
+**    _pmTargetSymbolList       Output: comma separated list of modification symbols
+**    _pmMassCorrectionTagList  Output: comma separated list of static and dynamic mod names (mass correction tags)
+**    _npMassCorrectionTagList  Output: comma separated list of isotopic mod names (mass correction tags)
+**    _message                  Output message
+**    _returnCode               Return code
 **
 **  Auth:   grk
 **  Date:   07/24/2004 grk - Initial version
@@ -52,7 +59,7 @@ BEGIN
     SELECT param_file_id
     INTO _paramFileID
     FROM t_param_files
-    WHERE param_file_name = _parameterFileName
+    WHERE param_file_name = _parameterFileName;
 
     If FOUND Then
         _paramFileFound := true;

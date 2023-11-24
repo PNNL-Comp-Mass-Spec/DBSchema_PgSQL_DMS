@@ -13,9 +13,15 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Deletes given SEQUEST Param Entry from the T_Param_Entries
+**      Deletes rows from t_param_entries for a given parameter file ID
 **
 **  Arguments:
+**    _paramFileID
+**    _entrySeqOrder
+**    _entryType
+**    _entrySpecifier
+**    _message          Output message
+**    _returnCode       Return code
 **
 **  Auth:   kja
 **  Date:   07/22/2004

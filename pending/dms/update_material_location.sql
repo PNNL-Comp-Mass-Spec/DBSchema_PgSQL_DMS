@@ -20,6 +20,12 @@ AS $$
 **      since those are special locations (typically for staging samples)
 **
 **  Arguments:
+**    _locationTag
+**    _comment
+**    _status
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   mem
 **  Date:   08/27/2018 mem - Initial version

@@ -15,6 +15,11 @@ AS $$
 **      Populates the Last_Updated column in table T_Factors using T_Factor_Log
 **
 **  Arguments:
+**    _infoOnly
+**    _dateFilterStart
+**    _dateFilterEnd
+**    _message          Output message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   10/06/2016 mem - Initial version

@@ -65,6 +65,9 @@ AS $$
 **          SELECT * FROM pnnldata."VW_PUB_BMI_EMPLOYEE" limit 5;
 **
 **  Arguments:
+**    _infoOnly
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   03/25/2013 mem - Initial version

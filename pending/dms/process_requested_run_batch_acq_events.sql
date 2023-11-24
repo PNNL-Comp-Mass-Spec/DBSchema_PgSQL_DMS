@@ -13,7 +13,9 @@ AS $$
 **      Process 'Requested Run Batch Acq Time Ready' events
 **
 **  Arguments:
-**    _interval   Hours since last run
+**    _interval     Hours since last run
+**    _message      Output message
+**    _returnCode   Return code
 **
 **  Auth:   grk
 **  Dte:    03/29/2010 grk - Initial release

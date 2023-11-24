@@ -57,6 +57,7 @@ AS $$
 **    _infoOnly     Set to true to preview the changes that would be made
 **    _message      Status message
 **    _returnCode   Return code
+**    _callingUser  Calling user username
 **
 **  Auth:   grk
 **  Date:   02/20/2010 grk - Initial release
@@ -502,7 +503,7 @@ BEGIN
     -----------------------------------------------------------
     -- Make sure factor name is not in blacklist
     --
-    -- Note that Javascript code behind http://dms2.pnl.gov/requested_run_factors/param and https://dms2.pnl.gov/requested_run_batch_blocking/grid
+    -- Note that Javascript code behind https://dms2.pnl.gov/requested_run_factors/param and https://dms2.pnl.gov/requested_run_batch_blocking/grid
     -- should auto-remove factors "Block" and "Run_Order" if it is present
     -----------------------------------------------------------
 

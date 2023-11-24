@@ -33,14 +33,29 @@ AS $$
 **      Adds new or edits existing Organisms
 **
 **  Arguments:
+**    _orgName
+**    _orgShortName
+**    _orgStorageLocation
 **    _orgDBName            Default protein collection name (prior to 2012 was default fasta file)
+**    _orgDescription
+**    _orgDomain
+**    _orgKingdom
+**    _orgPhylum
+**    _orgClass
+**    _orgOrder
+**    _orgFamily
+**    _orgGenus
+**    _orgSpecies
+**    _orgStrain
+**    _orgActive
 **    _newtIDList           If blank, this is auto-populated using _ncbiTaxonomyID
 **    _ncbiTaxonomyID       This is the preferred way to define the taxonomy ID for the organism.  NEWT ID is typically identical to taxonomy ID
 **    _autoDefineTaxonomy   'Yes' or 'No'
+**    _id                   Input/Output: Organism ID
 **    _mode                 'add' or 'update'
-**    _message          Output message
-**    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _message              Output message
+**    _returnCode           Return code
+**    _callingUser          Calling user username
 **
 **  Auth:   grk
 **  Date:   03/07/2006
@@ -254,7 +269,7 @@ BEGIN
 
             -- Look for non-numeric values
             If Exists (SELECT NEWT_ID_Text FROM Tmp_NEWT_IDs WHERE public.try_cast(NEWT_ID_Text, null::int) IS NULL) Then
-                RAISE EXCEPTION 'Non-numeric NEWT ID values found in the NEWT_ID List: "%"; see http://dms2.pnl.gov/ontology/report/NEWT', _newtIDList;
+                RAISE EXCEPTION 'Non-numeric NEWT ID values found in the NEWT_ID List: "%"; see https://dms2.pnl.gov/ontology/report/NEWT', _newtIDList;
             End If;
 
             -- Make sure all of the NEWT IDs are Valid
@@ -269,7 +284,7 @@ BEGIN
             WHERE ont.V_CV_NEWT.identifier IS NULL
 
             If char_length(Coalesce(_invalidNEWTIDs, '')) > 0 Then
-                RAISE EXCEPTION 'Invalid NEWT ID(s) "%"; see http://dms2.pnl.gov/ontology/report/NEWT', _invalidNEWTIDs;
+                RAISE EXCEPTION 'Invalid NEWT ID(s) "%"; see https://dms2.pnl.gov/ontology/report/NEWT', _invalidNEWTIDs;
             End If;
 
         Else
@@ -284,7 +299,7 @@ BEGIN
         If Coalesce(_ncbiTaxonomyID, 0) = 0 Then
             _ncbiTaxonomyID := null;
         ElsIf Not Exists (SELECT Tax_ID FROM ont.V_NCBI_Taxonomy_Cached WHERE Tax_ID = _ncbiTaxonomyID) Then
-            RAISE EXCEPTION 'Invalid NCBI Taxonomy ID "%"; see http://dms2.pnl.gov/ncbi_taxonomy/report', _ncbiTaxonomyID;
+            RAISE EXCEPTION 'Invalid NCBI Taxonomy ID "%"; see https://dms2.pnl.gov/ncbi_taxonomy/report', _ncbiTaxonomyID;
         End If;
 
         If _autoDefineTaxonomy Like 'Y%' Then
@@ -302,15 +317,15 @@ BEGIN
 
             CALL public.get_taxonomy_value_by_taxonomy_id (
                             _ncbiTaxonomyID,
-                            _orgDomain => _orgDomain,       -- Output
-                            _orgKingdom => _orgKingdom,     -- Output
-                            _orgPhylum => _orgPhylum,       -- Output
-                            _orgClass => _orgClass,         -- Output
-                            _orgOrder => _orgOrder,         -- Output
-                            _orgFamily => _orgFamily,       -- Output
-                            _orgGenus => _orgGenus,         -- Output
-                            _orgSpecies => _orgSpecies,     -- Output
-                            _orgStrain => _orgStrain,       -- Output
+                            _orgDomain      => _orgDomain,      -- Output
+                            _orgKingdom     => _orgKingdom,     -- Output
+                            _orgPhylum      => _orgPhylum,      -- Output
+                            _orgClass       => _orgClass,       -- Output
+                            _orgOrder       => _orgOrder,       -- Output
+                            _orgFamily      => _orgFamily,      -- Output
+                            _orgGenus       => _orgGenus,       -- Output
+                            _orgSpecies     => _orgSpecies,     -- Output
+                            _orgStrain      => _orgStrain,      -- Output
                             _previewResults => false);
 
         End If;

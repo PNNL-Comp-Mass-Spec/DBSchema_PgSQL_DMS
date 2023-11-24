@@ -7,9 +7,7 @@ CREATE OR REPLACE FUNCTION public.find_duplicate_param_files
     _considerInsignificantParameters boolean = false,
     _checkValidOnly boolean = true,
     _maxFilesToTest int = 0,
-    _previewSql boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
+    _previewSql boolean = false
 )
 RETURNS TABLE
 (
@@ -31,9 +29,13 @@ AS $$
 **      T_Param_File_Mass_Mods to find parameter files that match
 **
 **  Arguments:
-**    _paramFileNameFilter    One or more param file name specifiers, separated by commas (filters can contain % wildcards)
-**    _paramFileTypeList      MSGFPlus, MaxQuant, MSFragger, XTandem, etc.
-**    _ignoreParentMassType   When true, ignore 'ParentMassType' differences in T_Param_Entries
+**    _paramFileNameFilter              One or more param file name specifiers, separated by commas (filters can contain % wildcards)
+**    _paramFileTypeList                MSGFPlus, MaxQuant, MSFragger, XTandem, etc.
+**    _ignoreParentMassType             When true, ignore 'ParentMassType' differences in T_Param_Entries
+**    _considerInsignificantParameters  When true, also compare 'ShowFragmentIons', 'NumberOfDescriptionLines', 'NumberOfOutputLines', and 'NumberOfResultsToProcess'
+**    _checkValidOnly                   When true, ignore parameter files with Valid = 0
+**    _maxFilesToTest                   Maximum number of parameter files to examine
+**    _previewSql                       When true, preview SQL
 **
 **  Auth:   mem
 **  Date:   05/15/2008 mem - Initial version (Ticket:671)
@@ -59,20 +61,18 @@ DECLARE
     _previewData record;
     _infoData text;
 BEGIN
-    _message := '';
-    _returnCode := '';
 
     -----------------------------------------
     -- Validate the inputs
     -----------------------------------------
 
-    _paramFileNameFilter := Trim(Coalesce(_paramFileNameFilter, ''));
-    _paramFileTypeList := Trim(Coalesce(_paramFileTypeList, ''));
-    _ignoreParentMassType := Coalesce(_ignoreParentMassType, true);
+    _paramFileNameFilter             := Trim(Coalesce(_paramFileNameFilter, ''));
+    _paramFileTypeList               := Trim(Coalesce(_paramFileTypeList, ''));
+    _ignoreParentMassType            := Coalesce(_ignoreParentMassType, true);
     _considerInsignificantParameters := Coalesce(_considerInsignificantParameters, false);
-    _checkValidOnly := Coalesce(_checkValidOnly, true);
-    _maxFilesToTest := Coalesce(_maxFilesToTest, 0);
-    _previewSql := Coalesce(_previewSql, false);
+    _checkValidOnly                  := Coalesce(_checkValidOnly, true);
+    _maxFilesToTest                  := Coalesce(_maxFilesToTest, 0);
+    _previewSql                      := Coalesce(_previewSql, false);
 
     If _previewSql Then
         _maxFilesToTest := 1;
@@ -322,9 +322,9 @@ BEGIN
 
         -- Note: If _considerInsignificantParameters is false, the following options will not actually affect the results
         INSERT INTO Tmp_DefaultSequestParamEntries (Entry_Type, Entry_Specifier, Entry_Value, Compare)
-        VALUES ('AdvancedParam', 'ShowFragmentIons', 'False', _considerInsignificantParameters),
+        VALUES ('AdvancedParam', 'ShowFragmentIons',         'False', _considerInsignificantParameters),
                ('AdvancedParam', 'NumberOfDescriptionLines', '3', _considerInsignificantParameters),
-               ('AdvancedParam', 'NumberOfOutputLines', '10', _considerInsignificantParameters),
+               ('AdvancedParam', 'NumberOfOutputLines',      '10', _considerInsignificantParameters),
                ('AdvancedParam', 'NumberOfResultsToProcess', '500', _considerInsignificantParameters);
 
         -----------------------------------------

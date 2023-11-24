@@ -13,6 +13,9 @@ AS $$
 **      Deletes a parameter file by ID
 **
 **  Arguments:
+**    _paramFileID      Parameter file ID
+**    _message          Output message
+**    _returnCode       Return code
 **
 **  Auth:   kja
 **  Date:   08/11/2004 kja

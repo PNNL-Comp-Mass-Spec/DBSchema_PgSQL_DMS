@@ -15,8 +15,6 @@ CREATE OR REPLACE PROCEDURE public.add_requested_runs
     _internalStandard text = 'na',
     _comment text = 'na',
     _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
     _separationGroup text = 'LC-Formic_100min',
     _mrmAttachment text,
     _vialingConc text = null,
@@ -28,6 +26,8 @@ CREATE OR REPLACE PROCEDURE public.add_requested_runs
     _batchPriority text = '',
     _batchPriorityJustification text,
     _batchComment text,
+    INOUT _message text default '',
+    INOUT _returnCode text default '',
     _callingUser text = ''
 )
 LANGUAGE plpgsql
@@ -52,8 +52,6 @@ AS $$
 **    _internalStandard
 **    _comment
 **    _mode                     Mode: 'add' or 'PreviewAdd'
-**    _message                  Output message
-**    _returnCode               Return code
 **    _separationGroup          Separation group; could also contain '(lookup)'
 **    _mrmAttachment
 **    _vialingConc
@@ -65,6 +63,8 @@ AS $$
 **    _batchPriority
 **    _batchPriorityJustification
 **    _batchComment
+**    _message                  Output message
+**    _returnCode               Return code
 **    _callingUser
 **
 **  Auth:   grk

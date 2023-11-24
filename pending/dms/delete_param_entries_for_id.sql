@@ -10,9 +10,12 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Deletes SEQUEST Param Entries from a given Param File ID
+**      Deletes rows from t_param_entries and t_param_file_mass_mods for a given parameter file ID
 **
 **  Arguments:
+**    _paramFileID  Parameter file ID
+**    _message      Output message
+**    _returnCode   Return code
 **
 **  Auth:   kja
 **  Date:   07/22/2004

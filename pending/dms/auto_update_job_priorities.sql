@@ -10,15 +10,15 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Look for groups of jobs with the default priority (3)
-**      and possibly auto-update them to priority 4
+**      Look for groups of jobs with the default priority (3) and possibly auto-update them to priority 4
 **
-**      The reason for doing this is to allow certain managesr
-**      to preferentially process jobs with priorities 1 through 3
-**      and predefined jobs, plus manually created small batches of jobs
-**      will have priority 3
+**      The reason for doing this is to allow certain managers to preferentially process jobs with priorities 1 through 3
+**      and predefined jobs, plus manually created small batches of jobs, which will have priority 3
 **
 **  Arguments:
+**    _infoOnly     When true, preview updates
+**    _message      Output message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   10/04/2017 mem - Initial version

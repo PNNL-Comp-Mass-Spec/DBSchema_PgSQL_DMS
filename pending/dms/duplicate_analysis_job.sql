@@ -18,13 +18,14 @@ AS $$
 **      Duplicates an analysis job by calling Add_Update_Analysis_Job
 **
 **  Arguments:
-**    _job                     Job number to copy
-**    _newComment              New job comment; use old comment if blank
-**    _overrideNoExport        0 for export, 1 for No Export, -1 to leave unchanged
-**    _appendOldJobToComment   If true, append 'Compare to job 0000' to the comment
-**    _newSettingsFile         Use to change the settings file
-**    _infoOnly                False to create the job, true to preview
-**    _message                 Output message
+**    _job                      Job number to copy
+**    _newComment               New job comment; use old comment if blank
+**    _overrideNoExport         0 for export, 1 for No Export, -1 to leave unchanged
+**    _appendOldJobToComment    If true, append 'Compare to job 0000' to the comment
+**    _newSettingsFile          Use to change the settings file
+**    _infoOnly                 When true, preview the job that wouuld be created
+**    _message                  Output message
+**    _returnCode               Return code
 **
 **  Auth:   mem
 **  Date:   01/20/2016 mem - Initial version

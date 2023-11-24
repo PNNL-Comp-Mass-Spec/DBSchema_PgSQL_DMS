@@ -20,7 +20,16 @@ AS $$
 **      Updates parameters to new values for datasets in list
 **
 **  Arguments:
-**    _mode   Can be 'update' or 'preview'
+**    _datasetList
+**    _state
+**    _rating
+**    _comment
+**    _findText
+**    _replaceText
+**    _mode         Mode: 'update' or 'preview'
+**    _message      Status message
+**    _returnCode   Return code
+**    _callingUser  Calling user username
 **
 **  Auth:   jds
 **  Date:   09/21/2006

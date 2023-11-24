@@ -20,7 +20,6 @@ DECLARE
     _message text;
 BEGIN
     _message := '';
-    _returnCode := '';
 
     ----------------------------------------------------------
     -- Create a temporary table to hold the stats

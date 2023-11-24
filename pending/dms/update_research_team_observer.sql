@@ -15,7 +15,11 @@ AS $$
 **      Sets user registration for notification entities
 **
 **  Arguments:
-**    _mode     'add' or 'remove'
+**    _campaignName     Campaign name
+**    _mode             Mode: 'add' or 'remove'
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   04/03/2010

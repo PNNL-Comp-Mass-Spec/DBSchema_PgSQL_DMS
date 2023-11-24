@@ -12,7 +12,7 @@ AS $$
 **      using the NCBI_Taxonomy_ID value defined for each organism
 **
 **  Arguments:
-**    _infoOnly   True to preview results
+**    _infoOnly   When true, preview results
 **
 **  Auth:   mem
 **  Date:   03/02/2016 mem - Initial version
@@ -98,17 +98,17 @@ BEGIN
         _orgStrain := _organismInfo.OldStrain;
 
         CALL public.get_taxonomy_value_by_taxonomy_id (
-                _ncbiTaxonomyID,
-                _orgDomain => _orgDomain,       -- Output
-                _orgKingdom => _orgKingdom,     -- Output
-                _orgPhylum => _orgPhylum,       -- Output
-                _orgClass => _orgClass,         -- Output
-                _orgOrder => _orgOrder,         -- Output
-                _orgFamily => _orgFamily,       -- Output
-                _orgGenus => _orgGenus,         -- Output
-                _orgSpecies => _orgSpecies,     -- Output
-                _orgStrain => _orgStrain,       -- Output
-                _previewResults => false);
+                        _ncbiTaxonomyID,
+                        _orgDomain      => _orgDomain,      -- Output
+                        _orgKingdom     => _orgKingdom,     -- Output
+                        _orgPhylum      => _orgPhylum,      -- Output
+                        _orgClass       => _orgClass,       -- Output
+                        _orgOrder       => _orgOrder,       -- Output
+                        _orgFamily      => _orgFamily,      -- Output
+                        _orgGenus       => _orgGenus,       -- Output
+                        _orgSpecies     => _orgSpecies,     -- Output
+                        _orgStrain      => _orgStrain,      -- Output
+                        _previewResults => false);
 
         If  _orgDomain  <> _organismInfo.OldDomain  Or
             _orgKingdom <> _organismInfo.OldKingdom Or

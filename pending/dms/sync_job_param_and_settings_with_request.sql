@@ -21,8 +21,11 @@ AS $$
 **      request used the same parameter file and settings file
 **
 **  Arguments:
-**    _requestMinimum      Minimum request ID to examine (ignored if _recentRequestDays is positive)
-**    _recentRequestDays   Process requests created within the most recent x days; 0 to use _requestMinimum
+**    _requestMinimum       Minimum request ID to examine (ignored if _recentRequestDays is positive)
+**    _recentRequestDays    Process requests created within the most recent x days; 0 to use _requestMinimum
+**    _infoOnly             When true, preview updates
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   mem
 **  Date:   04/17/2014 mem - Initial version

@@ -3,9 +3,9 @@ CREATE OR REPLACE PROCEDURE public.store_smaqc_results
 (
     _datasetID int = 0,
     _resultsXML xml,
+    _infoOnly boolean = false,
     INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _infoOnly boolean = false
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -36,6 +36,9 @@ AS $$
 **  Arguments:
 **    _datasetID    If this value is 0, will determine the dataset name using the contents of _resultsXML
 **    _resultsXML   XML holding the SMAQC results for a single dataset
+**    _infoOnly     When true, preview updates
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   12/06/2011 mem - Initial version (modelled after UpdateDatasetFileInfoXML)

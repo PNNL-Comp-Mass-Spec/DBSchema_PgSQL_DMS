@@ -2,9 +2,9 @@
 CREATE OR REPLACE PROCEDURE public.create_pending_predefined_analysis_tasks
 (
     _maxDatasetsToProcess int = 0,
+    _infoOnly boolean = false,
     INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _infoOnly boolean = false
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -16,7 +16,10 @@ AS $$
 **      Should be called periodically by a SQL Server Agent job
 **
 **  Arguments:
-**    _maxDatasetsToProcess   Set to a positive number to limit the number of affected datasets
+**    _maxDatasetsToProcess     Set to a positive number to limit the number of affected datasets
+**    _infoOnly                 When true, preview jobs that would be created
+**    _message                  Output message
+**    _returnCode               Return code
 **
 **  Auth:   grk
 **  Date:   08/26/2010 grk - Initial release
@@ -109,7 +112,7 @@ BEGIN
                             _infoOnly                   => _infoOnly,
                             _message                    => _message,        -- Output
                             _returnCode                 => _returnCode,     -- Output
-                            _jobsCreated                => _jobsCreated);    -- Output
+                            _jobsCreated                => _jobsCreated);   -- Output
 
         End If;
 

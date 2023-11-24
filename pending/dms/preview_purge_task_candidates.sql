@@ -17,9 +17,12 @@ AS $$
 **      or on a series of servers (if _storageServerName and/or _storageVol are blank)
 **
 **  Arguments:
-**    _storageServerName   Storage server to use, for example 'proto-9'; if blank, returns candidates for all storage servers; when blank, _storageVol is ignored
-**    _storageVol          Volume on storage server to use, for example 'g:\'; if blank, returns candidates for all drives on given server (or all servers if _storageServerName is blank)
-**    _datasetsPerShare    Number of purge candidates to return for each share on each server
+**    _storageServerName    Storage server to use, for example 'proto-9'; if blank, returns candidates for all storage servers; when blank, _storageVol is ignored
+**    _storageVol           Volume on storage server to use, for example 'g:\'; if blank, returns candidates for all drives on given server (or all servers if _storageServerName is blank)
+**    _datasetsPerShare     Number of purge candidates to return for each share on each server
+**    _previewSql           When true, preview SQL
+**    _message              Output message
+**    _returnCode           Return code
 **
 **  Auth:   mem
 **  Date:   12/30/2010 mem - Initial version
