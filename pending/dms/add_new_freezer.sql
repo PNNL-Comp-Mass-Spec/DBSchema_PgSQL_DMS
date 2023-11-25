@@ -12,14 +12,15 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds a new Freezer to T_Material_Locations
+**      Adds a new freezer's locations to T_Material_Locations by copying
+**      all of the active shelves, racks, rows, and columns in the source freezer
 **
 **      You must first manually add a row to T_Material_Freezers
 **
 **  Arguments:
-**    _sourceFreezerTag
-**    _newFreezerTag
-**    _infoOnly
+**    _sourceFreezerTag     Source freezer tag, e.g. 1208A
+**    _newFreezerTag        New freezer tag,    e.g. 1208F
+**    _infoOnly             When true, preview the shelves that would be created
 **    _message              Output message
 **    _returnCode           Return code
 **
@@ -32,6 +33,7 @@ AS $$
 *****************************************************/
 DECLARE
     _insertCount int := 0;
+    _shelfInfo record;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -133,11 +135,13 @@ BEGIN
            container_limit
     FROM t_material_locations
     WHERE (freezer_tag = _sourceFreezerTag) AND
-          (NOT (location_id IN ( SELECT location_id
-                        FROM t_material_locations
-                        WHERE (freezer_tag = _sourceFreezerTag) AND
-                              (status = 'inactive') AND
-                            (col = 'na') )))
+          (NOT location_id IN ( SELECT location_id
+                                FROM t_material_locations
+                                WHERE freezer_tag = _sourceFreezerTag AND
+                                      status = 'inactive' AND
+                                      col = 'na'
+                               )
+           )
     ORDER BY shelf, rack, row, Col
 
     ---------------------------------------------------
@@ -145,9 +149,29 @@ BEGIN
     ---------------------------------------------------
 
     If _infoOnly Then
-        SELECT *
-        FROM Tmp_T_Material_Locations
-        ORDER BY Shelf, Rack, Row, Col
+        -- Show a summary of each shelf that would be created
+        RAISE INFO ''
+        RAISE INFO 'Shelves that would be created for freezer %', _newFreezerTag;
+
+        FOR EACH _shelfInfo IN
+            SELECT Shelf,
+                   Min(Rack) As Rack_Min, Max(Rack) As Rack_Max,
+                   Min(Row)  As Row_Min,  Max(Row)  As Row_Max,
+                   Min(Col)  As Col_Min,  Max(Col)  As Col_Max
+            FROM t_material_locations
+            WHERE freezer_tag = '1208A' and Rack <> 'na' and Row <> 'na'
+            GROUP BY Shelf
+            ORDER BY Shelf;
+        LOOP
+            RAISE INFO 'Shelf %, rack % to %, row % to %, column % to %',
+                            _shelfInfo.Shelf,
+                            _shelfInfo.Rack_Min,
+                            _shelfInfo.Rack_Max,
+                            _shelfInfo.Row_Min,
+                            _shelfInfo.Row_Max,
+                            _shelfInfo.Col_Min,
+                            _shelfInfo.Col_Max;
+        END LOOP;
     Else
         INSERT INTO t_material_locations( freezer_tag,
                                           shelf,
@@ -172,8 +196,8 @@ BEGIN
         --
         GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-        _message := format('Added %s rows to t_material_locations by copying freezer_tag %s',
-                            _insertCount, _sourceFreezerTag);
+        _message := format('Added %s rows to t_material_locations for freezer %s by copying freezer_tag %s',
+                           _insertCount, _newFreezerTag, _sourceFreezerTag);
 
         CALL post_log_entry ('Normal', _message, 'Add_New_Freezer');
     End If;

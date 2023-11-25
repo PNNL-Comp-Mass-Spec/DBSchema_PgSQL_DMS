@@ -17,11 +17,11 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or updates existing EUS Proposals in database
+**      Adds new or updates existing EUS Proposals
 **
 **  Arguments:
 **    _eusPropID                EUS Proposal ID (aka Project ID)
-**    _eusPropStateID           1=New, 2=Active, 3=Inactive, 4=No Interest
+**    _eusPropStateID           EUS proposal state: 1=New, 2=Active, 3=Inactive, 4=No Interest
 **    _eusPropTitle             EUS Proposal Title (aka Project Title)
 **    _eusPropImpDate           Proposal Import Date
 **    _eusUsersList             Comma-separated list of EUS Users IDs associated with this proposal

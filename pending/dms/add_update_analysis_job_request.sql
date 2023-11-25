@@ -30,28 +30,26 @@ AS $$
 **      Adds new analysis job request to request queue
 **
 **  Arguments:
-**    _datasets
-**    _requestName
-**    _toolName
-**    _paramFileName
-**    _settingsFileName
-**    _protCollNameList
-**    _protCollOptionsList
-**    _organismName
-**    _organismDBName
-**    _requesterUsername
-**    _comment
-**    _specialProcessing
-**    _dataPackageID
-**    _state
-**    _requestID
-**    _organismDBName   Legacy fasta file; typically 'na'
-**    _state            Includes 'new', 'used', and 'inactive' (see T_Analysis_Job_Request_State)
-**    _mode             Mode: 'add', 'update', 'append', or 'PreviewAdd'
-**    _autoRemoveNotReleasedDatasets
-**    _message          Output message
-**    _returnCode       Return code
-**    _callingUser
+**    _datasets                         Comma separated list of datasets
+**    _requestName                      Job request name
+**    _toolName                         Tool name
+**    _paramFileName                    Parameter file name
+**    _settingsFileName                 Settings file name
+**    _protCollNameList                 Comma-separated list of protein collection names
+**    _protCollOptionsList              Protein collection options
+**    _organismName                     Organism name
+**    _organismDBName                   Legacy fasta file; typically 'na'
+**    _requesterUsername                Requester username
+**    _comment                          Job request comment
+**    _specialProcessing                Special processing options; typically ''
+**    _dataPackageID                    Data package ID
+**    _state                            State, typically 'new', 'used', or 'inactive' (see T_Analysis_Job_Request_State)
+**    _requestID                        Input/output: analysis job request ID
+**    _mode                             Mode: 'add', 'update', 'append', or 'PreviewAdd'
+**    _autoRemoveNotReleasedDatasets    When true, remove datasets that are not released
+**    _message                          Output message
+**    _returnCode                       Return code
+**    _callingUser                      Calling user username
 **
 **  Auth:   grk
 **  Date:   10/9/2003

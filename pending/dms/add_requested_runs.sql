@@ -38,34 +38,34 @@ AS $$
 **      Adds a group of entries to the requested run table
 **
 **  Arguments:
-**    _experimentGroupID        Specify ExperimentGroupID or ExperimentList, but not both
-**    _experimentList           Comma separated list of experiments
-**    _requestNameSuffix        Actually used as the request name Suffix
-**    _operatorUsername
-**    _instrumentGroup          Instrument group; could alternatively be '(lookup)'
-**    _workPackage              Work Package; could alternatively be '(lookup)'
-**    _msType                   Run type; could alternatively be '(lookup)'
-**    _instrumentSettings
-**    _eusProposalID
-**    _eusUsageType
-**    _eusUsersList             Comma-separated list of EUS user IDs (integers); also supports the form 'Baker, Erin (41136)'
-**    _internalStandard
-**    _comment
-**    _mode                     Mode: 'add' or 'PreviewAdd'
-**    _separationGroup          Separation group; could also contain '(lookup)'
-**    _mrmAttachment
-**    _vialingConc
-**    _vialingVol
-**    _stagingLocation
-**    _batchName                If defined, create a new batch for the newly created requested runs
-**    _batchDescription
-**    _batchCompletionDate
-**    _batchPriority
-**    _batchPriorityJustification
-**    _batchComment
-**    _message                  Output message
-**    _returnCode               Return code
-**    _callingUser
+**    _experimentGroupID            Specify ExperimentGroupID or ExperimentList, but not both
+**    _experimentList               Comma separated list of experiments
+**    _requestNameSuffix            Actually used as the request name Suffix
+**    _operatorUsername             Operator username
+**    _instrumentGroup              Instrument group; could alternatively be '(lookup)'
+**    _workPackage                  Work Package; could alternatively be '(lookup)'
+**    _msType                       Run type; could alternatively be '(lookup)'
+**    _instrumentSettings           Instrument settings
+**    _eusProposalID                EUS proposal ID
+**    _eusUsageType                 EUS usage type
+**    _eusUsersList                 Comma-separated list of EUS user IDs (integers); also supports the form 'Baker, Erin (41136)'
+**    _internalStandard             Internal standard
+**    _comment                      Requested run comment
+**    _mode                         Mode: 'add' or 'PreviewAdd'
+**    _separationGroup              Separation group; could also contain '(lookup)'
+**    _mrmAttachment                MRM attachment
+**    _vialingConc                  Vialing concentration
+**    _vialingVol                   Vialing volume
+**    _stagingLocation              Staging location
+**    _batchName                    If defined, create a new batch for the newly created requested runs
+**    _batchDescription             Batch description
+**    _batchCompletionDate          Batch completion date
+**    _batchPriority                Batch priority
+**    _batchPriorityJustification   Batch priority justification
+**    _batchComment                 Batch comment
+**    _message                      Output message
+**    _returnCode                   Return code
+**    _callingUser                  Calling user username
 **
 **  Auth:   grk
 **  Date:   07/22/2005 - Initial version

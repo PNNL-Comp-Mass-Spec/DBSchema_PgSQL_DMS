@@ -17,7 +17,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or updates existing parameter file entry in database
+**      Adds new or updates existing parameter file entry
 **
 **  Arguments:
 **    _paramFileID      Name of new param file description

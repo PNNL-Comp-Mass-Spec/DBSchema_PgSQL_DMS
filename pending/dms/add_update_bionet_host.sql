@@ -21,13 +21,13 @@ AS $$
 **      Adds new or edits existing item in T_Bionet_Hosts
 **
 **  Arguments:
-**    _host
-**    _ip
-**    _alias
-**    _tag
-**    _instruments
-**    _active
-**    _comment
+**    _host             Host name
+**    _ip               Host IP
+**    _alias            Alias; empty string or null if not applicable
+**    _tag              Computer property number, e.g. 'WE25477'; empty string or null if undefined
+**    _instruments      Comma-separated list of instrument names
+**    _active           1 if active, 0 if inactive
+**    _comment          Comment
 **    _mode             Mode: 'add' or 'update'
 **    _message          Output message
 **    _returnCode       Return code

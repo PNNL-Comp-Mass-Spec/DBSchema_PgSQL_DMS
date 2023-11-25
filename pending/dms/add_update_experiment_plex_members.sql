@@ -123,7 +123,7 @@ AS $$
 **    _plexMembers              Table of Channel to Exp_ID mapping (see above for examples)
 **    _expIdChannel 1 ... 18    Channel experiment: Experiment ID, Experiment Name, or ExpID:ExperimentName
 **    _channelType  1 ... 18    Channel type: Normal, Reference, or Empty
-**    _comment      1 ... 18    Channel Comment
+**    _comment      1 ... 18    Channel domment
 **    _mode                     Mode: 'add', 'update', 'check_add', 'check_update', or 'preview'
 **    _message                  Output message
 **    _returnCode               Return code

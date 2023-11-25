@@ -19,21 +19,20 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing item in T_File_Attachment
+**      Adds new or edits existing file attachment in T_File_Attachment
 **
-**      Note that _entityType will be the same as the
-**      DMS website page family name of the item the file attachment
-**      is attached to; see the upload method in File_attachment.php
+**      Note that _entityType will be the same as the DMS website page family name of the item
+**      that the file attachment is attached to; see the upload method in File_attachment.php
 **
 **  Arguments:
-**    _id
-**    _fileName
-**    _description
-**    _entityType           Page family name: campaign, experiment, sample_prep_request, lc_cart_configuration, etc.
-**    _entityID             Must be data type varchar since Experiment, Campaign, Cell Culture, and Material Container file attachments are tracked via Experiment Name, Campaign Name, etc.
+**    _id                   File attachment ID
+**    _fileName             File name
+**    _description          Description
+**    _entityType           Page family name: 'campaign', 'experiment', 'sample_prep_request', 'lc_cart_configuration', etc.
+**    _entityID             Must be data type text since Experiment, Campaign, Biomaterial, and Material Container file attachments are tracked via Experiment Name, Campaign Name, etc.
 **    _fileSizeBytes        This file size is actually in KB
-**    _archiveFolderPath    This path is constructed when File_attachment.php or Experiment_File_attachment.php calls function Get_File_Attachment_Path in this database
-**    _fileMimeType         Mime type
+**    _archiveFolderPath    This path is constructed when File_attachment.php or Experiment_File_attachment.php calls function Get_File_Attachment_Path() in this database
+**    _fileMimeType         MIME type
 **    _mode                 Mode: 'add' or 'update'
 **    _message              Output message
 **    _returnCode           Return code

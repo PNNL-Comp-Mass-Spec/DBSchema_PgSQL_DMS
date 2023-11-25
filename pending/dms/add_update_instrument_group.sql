@@ -19,18 +19,18 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing item in T_Instrument_Group
+**      Adds new or edits existing instrument group
 **
 **  Arguments:
-**    _instrumentGroup
-**    _usage
-**    _comment
-**    _active
-**    _samplePrepVisible
-**    _requestedRunVisible
-**    _allocationTag
-**    _defaultDatasetTypeName   This is allowed to be an empty string
-**    _mode                     'add' or 'update'
+**    _instrumentGroup          Instrument group name
+**    _usage                    Instrument group usage, e.g. 'Metabolomics', 'MRM', or 'Research'
+**    _comment                  Group comment
+**    _active                   1 if active, 0 if inactive
+**    _samplePrepVisible        1 if should be included in the sample prep instrument group pick list (samplePrepInstrumentGroupPickList), otherwise 0;     see https://github.com/PNNL-Comp-Mass-Spec/DMS-Website/blob/master/public/model_config/DMS_DB_Sql/dms_chooser.sql#L74
+**    _requestedRunVisible      1 if should be included in the requested run instrument group pick list (requestedRunInstrumentGroupPickList), otherwise 0; see https://github.com/PNNL-Comp-Mass-Spec/DMS-Website/blob/master/public/model_config/DMS_DB_Sql/dms_chooser.sql#L75
+**    _allocationTag            Allocation tag, e.g. 'GC', 'FT', 'ORB', or 'QQQ'
+**    _defaultDatasetTypeName   Default dataset type name; empty string if no default
+**    _mode                     Mode: 'add' or 'update'
 **    _message                  Output message
 **    _returnCode               Return code
 **    _callingUser              Calling user username

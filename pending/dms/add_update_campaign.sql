@@ -31,7 +31,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or updates existing campaign in database
+**      Adds new or updates existing campaign
 **
 **  Arguments:
 **    _campaignName                 Campaign name
@@ -43,17 +43,17 @@ AS $$
 **    _datasetAcquisitionStaff      Dataset acquisition staff
 **    _informaticsStaff             Informatics staff
 **    _collaborators                Collaborators
-**    _comment
-**    _state
-**    _description
-**    _externalLinks
-**    _eprList
-**    _eusProposalList
-**    _organisms
-**    _experimentPrefixes
-**    _dataReleaseRestrictions
-**    _fractionEMSLFunded           Value between 0 and 1
-**    _eusUsageType
+**    _comment                      Comment
+**    _state                        State: 'Active' or 'Inactive'
+**    _description                  Campaign description
+**    _externalLinks                External links, e.g. https://pubmed.ncbi.nlm.nih.gov/32284590/
+**    _eprList                      PNNL project number, e.g. 71275
+**    _eusProposalList              EUS proposal, e.g. 33200
+**    _organisms                    Comma separated list of organisms
+**    _experimentPrefixes           One or more experiment name prefixes
+**    _dataReleaseRestrictions      Data release restriction ID, e.g. 0 for 'Not yet approved for release'; see table t_data_release_restrictions
+**    _fractionEMSLFunded           Fraction EMSL funded; value between 0 and 1
+**    _eusUsageType                 EUS usage type
 **    _mode                         Mode: 'add' or 'update'
 **    _message                      Output message
 **    _returnCode                   Return code
@@ -426,8 +426,7 @@ BEGIN
             ---------------------------------------------------
 
             UPDATE t_campaign
-            SET
-                project = _projectName,
+            SET project = _projectName,
                 comment = _comment,
                 state = _state,
                 description = _description,

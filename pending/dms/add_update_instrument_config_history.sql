@@ -17,15 +17,15 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing T_Instrument_Config_History
+**      Adds new or edits existing instrument config entry
 **
 **  Arguments:
 **    _id               Input/output: entry_id in t_instrument_config_history
-**    _instrument
-**    _dateOfChange
-**    _postedBy
-**    _description
-**    _note
+**    _instrument       Instrument name
+**    _dateOfChange     Entry date
+**    _postedBy         Username of the person associated with the config entry
+**    _description      Description of the task, e.g. 'Cleaned source', 'FT Mass Cal', or 'Liquid Nitrogen Fill'
+**    _note             Detailed notes regarding the task
 **    _mode             Mode: 'add' or 'update'
 **    _message          Output message
 **    _returnCode       Return code

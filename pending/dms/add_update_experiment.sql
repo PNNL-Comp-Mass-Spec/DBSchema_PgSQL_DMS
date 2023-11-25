@@ -38,29 +38,29 @@ AS $$
 **      Note that the Experiment Detail Report web page uses do_material_item_operation to retire an experiment
 **
 **  Arguments:
-**    _experimentId             Input/output; When copying an experiment, this will have the new experiment's ID; this is required if renaming an existing experiment
+**    _experimentId             Input/output: experiment ID; when copying an experiment, this will have the new experiment's ID; this is required if renaming an existing experiment
 **    _experimentName           Experiment name
-**    _campaignName
-**    _researcherUsername
-**    _organismName
-**    _reason
-**    _comment
-**    _sampleConcentration
-**    _enzymeName
-**    _labNotebookRef
-**    _labelling
-**    _biomaterialList
-**    _referenceCompoundList    Semicolon-separated list of reference compound IDs; supports integers, or names of the form 3311:ANFTSQETQGAGK
-**    _samplePrepRequest
-**    _internalStandard
-**    _postdigestIntStd
-**    _wellplateName
-**    _wellNumber
-**    _alkylation
+**    _campaignName             Campaign name
+**    _researcherUsername       Researcher username
+**    _organismName             Organism name
+**    _reason                   Experiment description
+**    _comment                  Additional comments
+**    _sampleConcentration      Sample concentration, e.g. '0.1 ug/ul' or 'na'
+**    _enzymeName               Enzyme name, e.g. 'Trypsin', 'LysC, or 'No_Enzyme'
+**    _labNotebookRef           Lab notebook description or Sharepoint URL
+**    _labelling                Isotopic label name, e.g. 'TMT10' or 'TMT18'; use 'none' if no label or 'Unknown' if undefined
+**    _biomaterialList          Semicolon-separated or comma separated list of biomaterial names; empty string if not applicable
+**    _referenceCompoundList    Semicolon-separated or comma separated list of reference compound IDs; supports integers, or names of the form 3311:ANFTSQETQGAGK
+**    _samplePrepRequest        Sample prep request ID; 0 if no request
+**    _internalStandard         Internal standard name, e.g. 'MP_10_02'; last used in 2013
+**    _postdigestIntStd         Post-digestion internal standard name, e.g. 'ADHYeast_031411'; last used in 2014
+**    _wellplateName            Wellplate name
+**    _wellNumber               Well number
+**    _alkylation               Alkylation: 'Y' or 'N'
 **    _mode                     Mode: 'add, 'update', 'check_add', 'check_update'
-**    _container
-**    _barcode
-**    _tissue
+**    _container                Container name, e.g. 'MC-3375'
+**    _barcode                  Barcode, e.g. '90154017002'; last used in 2019
+**    _tissue                   Tissue name, e.g. 'blood plasma', 'cell culture', 'plant, 'soil', etc.
 **    _message                  Output message
 **    _returnCode               Return code
 **    _callingUser              Calling user username

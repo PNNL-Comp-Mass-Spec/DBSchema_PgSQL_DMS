@@ -2,7 +2,7 @@
 CREATE OR REPLACE PROCEDURE public.add_update_aux_info_definition
 (
     _mode citext = 'UpdateItem',
-    _targetName text = 'Cell Culture',
+    _targetName text = 'Biomaterial',
     _categoryName text = 'Prokaryote',
     _subCategoryName text = 'Starter Culture Conditions',
     _itemName text = 'Date Started',
@@ -18,20 +18,25 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or updates definition of auxiliary information in database
+**      Adds new or updates definition of auxiliary information
 **
 **  Arguments:
-**    _mode             Mode: 'AddTarget', 'AddCategory', 'AddSubcategory', 'AddItem', 'AddAllowedValue'
-**    _targetName
-**    _categoryName
-**    _subCategoryName
-**    _itemName
-**    _seq
-**    _param1
-**    _param2
-**    _param3
+**    _mode                 Mode: 'AddTarget', 'AddCategory', 'AddSubcategory', 'AddItem', 'AddAllowedValue'
+**    _targetName           Target name: Biomaterial, 'Dataset', 'SamplePrepRequest', or 'Experiment'
+**    _categoryName         Category,    e.g. 'Growth Conditions' or 'Lysis Method';   see column aux_category    in t_aux_info_category
+**    _subCategoryName      Subcategory, e.g. 'Alkylation' or 'Centrifugation';        see column aux_subcategory in t_aux_info_subcategory
+**    _itemName             Item name,   e.g. 'Alkylation Agent' or 'Centrifuge Time'; see column aux_description in t_aux_info_description
+**    _seq                  Sequence number, corresponding to column sequence in t_aux_info_description
+**    _param1               See parameter argument usage below
+**    _param2               See below
+**    _param3               See below
 **    _message              Output message
 **    _returnCode           Return code
+**
+**  Parameter argument usage:
+**      When _mode is 'AddTarget' parameters correspond to columns target_table, target_id_col, and target_name_col in table t_aux_info_target
+**      When _mode is 'AddItem', parameters _param1 and _param2 correspond to columns data_size and helper_append in table t_aux_info_description
+**      When _mode is 'AddAllowedValue', parameter _param1 corresponds to column value in table t_aux_info_allowed_values
 **
 **  Auth:   grk
 **  Date:   04/19/2002 grk - Initial release
@@ -119,8 +124,12 @@ BEGIN
 
         -- Insert new target into table
         --
-        INSERT INTO t_aux_info_target
-           (target_type_name, target_table, target_id_col, target_name_col)
+        INSERT INTO t_aux_info_target (
+            target_type_name,
+            target_table,
+            target_id_col,
+            target_name_col
+        )
         VALUES (_targetName, _param1, _param2, _param3);
 
     End If;
@@ -131,14 +140,12 @@ BEGIN
 
     If _mode = Lower('AddCategory') Then
         -- Resolve parent target type to ID
-        --
-        _targetTypeID := 0;
-        --
+
         SELECT target_type_id
         INTO _targetTypeID
         FROM t_aux_info_target
-        WHERE (target_type_name = _targetName)
-        --
+        WHERE target_type_name = _targetName;
+
         If _targetTypeID = 0 Then
             _message := 'Could not resolve parent target type';
             RAISE WARNING '%', _message;
@@ -148,11 +155,12 @@ BEGIN
         End If;
 
         -- Is category already in table?
-        --
+
         SELECT aux_category_id
         INTO _tmpID
         FROM t_aux_info_category
-        WHERE (target_type_id = _targetTypeID) AND (aux_category = _categoryName)
+        WHERE target_type_id = _targetTypeID AND
+              aux_category = _categoryName;
 
         If FOUND Then
             _message := 'Cannot add: category already exists for this target';
@@ -163,18 +171,17 @@ BEGIN
         End If;
 
         -- Calculate new sequence
-        --
+
         SELECT Coalesce(MAX(sequence), 0)
         INTO _tmpSeq
         FROM t_aux_info_category
-        WHERE (target_type_id = _targetTypeID)
+        WHERE target_type_id = _targetTypeID;
 
         _tmpSeq := _tmpSeq + 1;
 
         -- Insert new category for parent target type
-        --
-        INSERT INTO t_aux_info_category
-           (aux_category, target_type_id, sequence)
+
+        INSERT INTO t_aux_info_category (aux_category, target_type_id, sequence)
         VALUES (_categoryName, _targetTypeID, _tmpSeq);
 
     End If;
@@ -185,17 +192,15 @@ BEGIN
 
     If _mode = Lower('AddSubcategory') Then
         -- Resolve parent category names to ID
-        --
-        _categoryID := 0;
-        --
+
         SELECT t_aux_info_category.aux_category_id
         INTO _categoryID
         FROM t_aux_info_target
              INNER JOIN t_aux_info_category
                ON t_aux_info_target.aux_category_id = t_aux_info_category.target_type_id
-        WHERE (t_aux_info_target.target_type_name = _targetName) AND
-              (t_aux_info_category.aux_category = _categoryName)
-           --
+        WHERE t_aux_info_target.target_type_name = _targetName AND
+              t_aux_info_category.aux_category = _categoryName;
+
         If _categoryID = 0 Then
             _message := 'Could not resolve parent category name for given target type';
             RAISE WARNING '%', _message;
@@ -209,7 +214,8 @@ BEGIN
         SELECT aux_subcategory_id
         INTO _tmpID
         FROM t_aux_info_subcategory
-        WHERE (Aux_Category_ID = _categoryID) AND (aux_subcategory = _subcategoryName)
+        WHERE aux_category_id = _categoryID AND
+              aux_subcategory = _subcategoryName;
 
         If FOUND Then
             _message := 'Cannot add: subcategory already exists for this target';
@@ -230,8 +236,7 @@ BEGIN
 
         -- Insert new subcategory for parent category
         --
-        INSERT INTO t_aux_info_subcategory
-           (aux_subcategory, sequence, Aux_Category_ID)
+        INSERT INTO t_aux_info_subcategory (aux_subcategory, sequence, Aux_Category_ID)
         VALUES (_subcategoryName, _tmpSeq, _categoryID);
 
     End If;
@@ -242,7 +247,7 @@ BEGIN
 
     If _mode = Lower('AddItem') Then
         -- Resolve parent subcategory names to ID
-        --
+
         SELECT t_aux_info_subcategory.aux_subcategory_id
         INTO _subcategoryID
         FROM t_aux_info_target
@@ -250,10 +255,10 @@ BEGIN
                ON t_aux_info_target.aux_subcategory_id = t_aux_info_category.target_type_id
              INNER JOIN t_aux_info_subcategory
                ON t_aux_info_category.aux_subcategory_id = t_aux_info_subcategory.aux_category_id
-        WHERE (t_aux_info_target.target_type_name = _targetName) AND
-              (t_aux_info_category.aux_category = _categoryName) AND
-              (t_aux_info_subcategory.aux_subcategory = _subcategoryName)
-        --
+        WHERE t_aux_info_target.target_type_name = _targetName AND
+              t_aux_info_category.aux_category = _categoryName AND
+              t_aux_info_subcategory.aux_subcategory = _subcategoryName;
+
         If Not FOUND Then
             _message := 'Could not resolve parent subcategory for given category and target type';
             RAISE WARNING '%', _message;
@@ -263,11 +268,11 @@ BEGIN
         End If;
 
         -- Is item already in table?
-        --
+
         SELECT aux_description_id
         INTO _tmpID
         FROM t_aux_info_description
-        WHERE Aux_Subcategory_ID = _subcategoryID AND
+        WHERE aux_subcategory_id = _subcategoryID AND
               aux_description = _itemName;
 
         If FOUND Then
@@ -279,19 +284,24 @@ BEGIN
         End If;
 
         -- Calculate new sequence
-        --
+
         SELECT Coalesce(MAX(sequence), 0)
         INTO _tmpSeq
         FROM t_aux_info_description
-        WHERE (Aux_Subcategory_ID = _subcategoryID)
+        WHERE aux_subcategory_id = _subcategoryID;
 
         _tmpSeq := _tmpSeq + 1;
 
         -- Insert new item for parent subcategory
-        --
-        INSERT INTO t_aux_info_description
-           (Name, Aux_Subcategory_ID, sequence, data_size, helper_append)
-        VALUES (_itemName, _subcategoryID, _tmpSeq, _param1, _param2)
+
+        INSERT INTO t_aux_info_description (
+            Name,
+            Aux_Subcategory_ID,
+            sequence,
+            data_size,
+            helper_append
+        )
+        VALUES (_itemName, _subcategoryID, _tmpSeq, _param1, _param2);
 
     End If;
 
@@ -301,9 +311,7 @@ BEGIN
 
     If _mode = Lower('AddAllowedValue') Then
         -- Resolve parent description names to ID
-        --
-        _descriptionID := 0;
-        --
+
         SELECT t_aux_info_description.aux_description_id
         INTO _descriptionID
         FROM t_aux_info_target
@@ -313,10 +321,10 @@ BEGIN
                ON t_aux_info_category.aux_category_id = t_aux_info_subcategory.aux_category_id
              INNER JOIN t_aux_info_description
                ON t_aux_info_subcategory.aux_subcategory_id = t_aux_info_description.aux_subcategory_id
-        WHERE (t_aux_info_target.Target_Type_Name = _targetName) AND
-              (t_aux_info_category.Aux_Category = _categoryName) AND
-              (t_aux_info_subcategory.Aux_Subcategory = _subcategoryName) AND
-              (t_aux_info_description.aux_description = _itemName)
+        WHERE t_aux_info_target.Target_Type_Name = _targetName AND
+              t_aux_info_category.Aux_Category = _categoryName AND
+              t_aux_info_subcategory.Aux_Subcategory = _subcategoryName AND
+              t_aux_info_description.aux_description = _itemName;
 
         If Not FOUND Then
             _message := 'Could not resolve parent description ID for given subcategory, category, and target type';
@@ -327,11 +335,12 @@ BEGIN
         End If;
 
         -- Is item already in table?
-        --
-        SELECT Aux_Description_ID
+
+        SELECT aux_description_id
         INTO _tmpID
         FROM t_aux_info_allowed_values
-        WHERE (Aux_Description_ID = _descriptionID) AND (value = _param1)
+        WHERE aux_description_id = _descriptionID AND
+              value = _param1;
 
         If FOUND Then
             _message := 'Cannot add: allowed value already exists for this target';
@@ -342,9 +351,8 @@ BEGIN
         End If;
 
         -- Insert new allowed value for parent description ID
-        --
-        INSERT INTO t_aux_info_allowed_values
-           (Aux_Description_ID, value)
+
+        INSERT INTO t_aux_info_allowed_values (Aux_Description_ID, value)
         VALUES (_descriptionID, _param1)
 
     End If;
@@ -359,10 +367,10 @@ BEGIN
         SELECT Item_ID
         INTO _tmpID
         FROM V_Aux_Info_Definition
-        WHERE (Target = _targetName) AND
-              (Category = _categoryName) AND
-              (Subcategory = _subcategoryName) AND
-              (Item = _itemName)
+        WHERE Target = _targetName AND
+              Category = _categoryName AND
+              Subcategory = _subcategoryName AND
+              Item = _itemName;
 
         If Not FOUND Then
             _message := 'Cannot resolve item name to ID';
@@ -372,15 +380,14 @@ BEGIN
             RETURN;
         End If;
 
-        -- Get current values of stuff
-        -- so that blank input values can default
-        --
+        -- Get current values of stuff so that blank input values can default
+
         SELECT sequence,
                data_size,
                helper_append
         INTO _sequence, _dataSize, _helperAppend
         FROM t_aux_info_description
-        WHERE (aux_description_id = _tmpID)
+        WHERE aux_description_id = _tmpID;
 
         If _seq <> 0 Then
             _sequence := _seq;
@@ -401,7 +408,7 @@ BEGIN
             sequence = _sequence,
             data_size = _dataSize,
             helper_append = _helperAppend
-        WHERE (aux_description_id = _tmpID)
+        WHERE aux_description_id = _tmpID;
 
     End If;
 

@@ -17,16 +17,16 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing Experiment Group
+**      Adds new or edits existing experiment group
 **
 **  Arguments:
 **    _id               Input/output: experiment group ID
-**    _groupType
-**    _groupName        User-defined name for this experiment group (previously _tab)
-**    _description
-**    _experimentList
-**    _parentExp
-**    _researcher
+**    _groupType        Experiment group type: 'General' or 'Fraction'
+**    _groupName        Experiment group name (previously _tab)
+**    _description      Description
+**    _experimentList   Comma separated list of experiment names
+**    _parentExp        Parent experiment name
+**    _researcher       Researcher username
 **    _mode             Mode: 'add' or 'update'
 **    _message          Output message
 **    _returnCode       Return code
@@ -88,7 +88,6 @@ BEGIN
     -- Resolve parent experiment name to ID
     ---------------------------------------------------
 
-    --
     If _parentExp <> '' Then
 
         SELECT exp_id
@@ -98,11 +97,11 @@ BEGIN
 
     End If;
 
-    If _parentExpID = 0 Then
+    If Coalesce(_parentExpID, 0) = 0 Then
         SELECT exp_id
         INTO _parentExpID
         FROM t_experiments
-        Where experiment = 'Placeholder'
+        WHERE experiment = 'Placeholder'
 
         If Coalesce(_parentExpID, 0) = 0 Then
             _logErrors := true;

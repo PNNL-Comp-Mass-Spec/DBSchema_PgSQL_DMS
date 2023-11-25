@@ -20,12 +20,12 @@ AS $$
 **      Adds new or edits existing T_Analysis_Job_Processors
 **
 **  Arguments:
-**    _id
-**    _state
-**    _processorName
-**    _machine
-**    _notes
-**    _analysisToolsList
+**    _id                   Processor ID
+**    _state                State
+**    _processorName        Processor name
+**    _machine              Machine
+**    _notes                Notes
+**    _analysisToolsList    Comma separated list of analysis tools
 **    _mode                 Mode: 'add' or 'update'
 **    _message              Output message
 **    _returnCode           Return code
@@ -165,7 +165,7 @@ BEGIN
             CALL public.alter_entered_by_user ('public', 't_analysis_job_processors', 'processor_id', _id, _callingUser, _entryDateColumnName => 'last_affected', _message => _alterEnteredByMessage);
         End If;
 
-    End If; -- add mode
+    End If;
 
     ---------------------------------------------------
     -- Action for update mode
@@ -186,7 +186,7 @@ BEGIN
             CALL public.alter_entered_by_user ('public', 't_analysis_job_processors', 'processor_id', _id, _callingUser, _entryDateColumnName => 'last_affected', _message => _alterEnteredByMessage);
         End If;
 
-    End If; -- update mode
+    End If;
 
     ---------------------------------------------------
     -- Action for both modes
@@ -195,13 +195,15 @@ BEGIN
     If _mode = 'add' or _mode = 'update' Then
         ---------------------------------------------------
         -- Remove any references to tools that are not in the list
-        --
+        ---------------------------------------------------
+
         DELETE FROM t_analysis_job_processor_tools
         WHERE processor_id = _id AND NOT tool_id IN (SELECT ToolID FROM Tmp_DatasetInfo);
 
         ---------------------------------------------------
         -- Add references to tools that are in the list, but not in the table
-        --
+        ---------------------------------------------------
+
         INSERT INTO t_analysis_job_processor_tools (tool_id, processor_id)
         SELECT ToolID, _id
         FROM Tmp_DatasetInfo
@@ -217,7 +219,7 @@ BEGIN
             CALL public.alter_entered_by_user ('public', 't_analysis_job_processor_tools', 'processor_id', _id, _callingUser, _message => _alterEnteredByMessage);
         End If;
 
-    End If; -- add or update mode
+    End If;
 
     DROP TABLE TD;
 END

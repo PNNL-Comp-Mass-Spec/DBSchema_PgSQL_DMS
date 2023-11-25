@@ -24,23 +24,23 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or updates existing biomaterial items in database
+**      Adds new or updates existing biomaterial items
 **
 **  Arguments:
 **    _biomaterialName      Name of biomaterial (or peptide sequence if tracking an MRM peptide)
 **    _sourceName           Source that the material came from; can be a person (onsite or offsite) or a company
 **    _contactUsername      Contact for the Source; typically PNNL staff, but can be offsite person
 **    _piUsername           Project lead username
-**    _biomaterialType
-**    _reason
-**    _comment
-**    _campaignName
+**    _biomaterialType      Biomaterial type, e.g. 'Eukaryote', 'Prokaryote', or 'Soil'; see column biomaterial_type in t_biomaterial_type_name
+**    _reason               Biomaterial description
+**    _comment              Biomaterial comment
+**    _campaignName         Campaign name
 **    _mode                 Mode: 'add', 'update', 'check_add', 'check_update'
-**    _container
+**    _container            Container name; use '' or 'na' if no container
 **    _organismList         List of one or more organisms to associate with this biomaterial; stored in T_Biomaterial_Organisms. If null, T_Biomaterial_Organisms is unchanged
-**    _mutation
-**    _plasmid
-**    _cellLine
+**    _mutation             Mutation;  empty string if not applicable
+**    _plasmid              Plasmid;   empty string if not applicable
+**    _cellLine             Cell line; empty string if not applicable
 **    _message              Output message
 **    _returnCode           Return code
 **    _callingUser          Calling user username
@@ -221,10 +221,10 @@ BEGIN
         -- Resolve type name to ID
         ---------------------------------------------------
 
-        SELECT ID
+        SELECT biomaterial_type_id
         INTO _typeID
         FROM t_biomaterial_type_name
-        WHERE Name = _biomaterialType;
+        WHERE biomaterial_type = _biomaterialType;
 
         ---------------------------------------------------
         -- Resolve container name to ID
@@ -361,10 +361,10 @@ BEGIN
 
             -- As a precaution, query T_Biomaterial using Biomaterial name to make sure we have the correct biomaterial ID
 
-            SELECT Biomaterial_ID
+            SELECT biomaterial_id
             INTO _idConfirm
             FROM t_biomaterial
-            WHERE Biomaterial_Name = _biomaterialName;
+            WHERE biomaterial_name = _biomaterialName;
 
             If _biomaterialID <> Coalesce(_idConfirm, _biomaterialID) Then
                 _debugMsg := format('Warning: Inconsistent identity values when adding biomaterial %s: Found ID %s but the INSERT INTO query reported %s',

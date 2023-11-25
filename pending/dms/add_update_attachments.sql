@@ -19,21 +19,37 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing Attachments
+**      Adds new or edits existing MRM transition list attachment
+**
+**      These were last used in 2010
 **
 **  Arguments:
-**    _id
-**    _attachmentType
-**    _attachmentName
-**    _attachmentDescription
-**    _ownerUsername
-**    _active
-**    _contents
-**    _fileName
-**    _mode             Mode: 'add' or 'update'
-**    _message          Output message
-**    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _id                       Attachment ID
+**    _attachmentType           Attachment type, typically 'MRM Transition List'
+**    _attachmentName           Attachment name
+**    _attachmentDescription    Attachment description
+**    _ownerUsername            Owner username
+**    _active                   Active: 'Y' or 'N'
+**    _contents                 Contents
+**    _fileName                 Attachment filename, e.g. abs_VP2P105_MRM_transitions_min3V_set12.csv
+**    _mode                     Mode: 'add' or 'update'
+**    _message                  Output message
+**    _returnCode               Return code
+**    _callingUser              Calling user username
+**
+**  Example value for _contents
+**      PARENT,FRAGMENT,VOLTAGE
+**      922.99,1391.72,27
+**      922.99,1190.64,27
+**      922.99,1077.56,27
+**      922.99,964.48,27
+**      922.99,851.39,27
+**      605.33,933.5,18
+**      605.33,796.44,18
+**      605.33,709.41,18
+**      605.33,638.37,18
+**      605.33,524.33,18
+**      ...
 **
 **  Auth:   grk
 **  Date:   03/24/2009
