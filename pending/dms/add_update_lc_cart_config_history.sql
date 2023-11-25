@@ -17,15 +17,15 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing item in T_LC_Cart_Config_History
+**      Adds new or edits an existing cart config history item
 **
 **  Arguments:
-**    _id
-**    _cart
-**    _dateOfChange
-**    _postedBy
-**    _description
-**    _note
+**    _id               Entry_ID in T_LC_Cart_Config_History
+**    _cart             Cart name
+**    _dateOfChange     Date for the cart config history item
+**    _postedBy         Username of the person associated with the cart config history item
+**    _description      General description of the task, e.g. 'Replaced rotors' or 'Replaced Syringe'
+**    _note             Additional details
 **    _mode             Mode: 'add' or 'update'
 **    _message          Output message
 **    _returnCode       Return code
@@ -37,6 +37,7 @@ AS $$
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/13/2017 mem - Use SCOPE_IDENTITY()
+**          11/25/2023 mem - Validate LC cart name
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -58,6 +59,7 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
+        _cart      := Trim(Coalesce(_cart, ''));
         _entryDate := public.try_cast(_dateOfChange, null, null::timestamp);
         _mode      := Trim(Lower(Coalesce(_mode, '')));
 
@@ -69,22 +71,24 @@ BEGIN
             _postedBy := _callingUser;
         End If;
 
+        If Not Exists (SELECT cart_id FROM t_lc_cart WHERE cart_name = _cart) Then
+            RAISE EXCEPTION 'Unrecognized LC cart name: %', _cart;
+        End If;
+
         ---------------------------------------------------
         -- Is entry already in database? (only applies to updates)
         ---------------------------------------------------
 
         If _mode = 'update' Then
             -- Cannot update a non-existent entry
-            --
-            _tmp := 0;
-            --
+
             SELECT entry_id
             INTO _tmp
             FROM  t_lc_cart_config_history
-            WHERE (entry_id = _id)
+            WHERE entry_id = _id;
 
             If Not FOUND Then
-                RAISE EXCEPTION 'No entry could be found in database for update';
+                RAISE EXCEPTION 'Cart config history ID % not found in database for update', _id;
             End If;
         End If;
 
@@ -110,7 +114,7 @@ BEGIN
             RETURNING entry_id
             INTO _id;
 
-        End If; -- add mode
+        End If;
 
         ---------------------------------------------------
         -- Action for update mode
@@ -124,9 +128,9 @@ BEGIN
                 description = _description,
                 note = _note,
                 entered_by = _postedBy
-            WHERE (entry_id = _id)
+            WHERE entry_id = _id;
 
-        End If; -- update mode
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN

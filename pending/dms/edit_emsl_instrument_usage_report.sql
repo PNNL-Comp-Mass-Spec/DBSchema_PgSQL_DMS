@@ -31,7 +31,7 @@ AS $$
 **    _usage
 **    _proposal
 **    _users
-**    _operator     Operator for update (should be an integer representing EUS Person ID; if an empty string, will store NULL for the operator ID)
+**    _operator     Operator for update, corresponding to person_id in t_eus_users (should be an integer representing EUS Person ID; if an empty string, will store NULL for the operator ID)
 **    _comment
 **    _fieldName    Field name: 'Proposal', 'Usage', 'Users', 'Operator', 'Comment'
 **    _newValue
@@ -46,6 +46,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
+    _operatorID int;
     _instrumentID int := 0;
     _usageTypeID int := 0;
     _newUsageTypeID int := 0;
@@ -70,7 +71,7 @@ BEGIN
     _users      := Trim(Coalesce(_users, ''));
 
     -- Assure that _operator is either an integer or null
-    _operator := public.try_cast(_operator, null::int);
+    _operatorID := public.try_cast(_operator, null::int);
 
     _newValue := Trim(Coalesce(_newValue, ''));
 
@@ -118,7 +119,7 @@ BEGIN
           (_usageTypeID = 0 OR usage_type_id = _usageTypeID) AND
           (_proposal = '' OR proposal = _proposal) AND
           (_users = '' OR users = _users) AND
-          (_operator IS NULL OR operator = _operator);
+          (_operatorID IS NULL OR operator = _operatorID);
 
     ---------------------------------------------------
     -- Display affected items or make change

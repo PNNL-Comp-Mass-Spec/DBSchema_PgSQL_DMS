@@ -14,13 +14,13 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing LC Cart
+**      Adds new or edits an existing LC Cart
 **
 **  Arguments:
-**    _id
-**    _cartName
-**    _cartDescription
-**    _cartState
+**    _id               LC cart ID
+**    _cartName         LC cart name
+**    _cartDescription  Cart description
+**    _cartState        Cart state: 'In Service', 'Out of Service', or 'Retired'
 **    _mode             Mode: 'add' or 'update'
 **    _message          Output message
 **    _returnCode       Return code
@@ -92,7 +92,7 @@ BEGIN
     SELECT cart_state_id
     INTO _cartStateID
     FROM t_lc_cart_state_name
-    WHERE cart_state = _cartState
+    WHERE cart_state = _cartState;
 
     If Not FOUND Then
         _message := 'Could not resolve state name to ID';

@@ -25,11 +25,12 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing item in T_EMSL_Instrument_Usage_Report
+**      Edits an existing instrument usage item
+**      (despite the procedure name, only updates are allowed)
 **
 **  Arguments:
-**    _seq
-**    _emslInstID   _emslInstID
+**    _seq          Row ID; column seq in T_EMSL_Instrument_Usage_Report
+**    _emslInstID   EMSL Instrument ID
 **    _instrument   Unused (not updatable)
 **    _type         Unused (not updatable)
 **    _start        Unused (not updatable)
@@ -37,12 +38,12 @@ AS $$
 **    _year         Unused (not updatable)
 **    _month        Unused (not updatable)
 **    _id           Unused (not updatable)     -- Dataset_ID
-**    _proposal     Proposal for update
-**    _usage        Usage name for update (ONSITE, REMOTE, MAINTENANCE, BROKEN, etc.); corresponds to T_EMSL_Instrument_Usage_Type
-**    _users        Users for update
-**    _operator     Operator for update (should be an integer representing EUS Person ID; if an empty string, will store NULL for the operator ID)
-**    _comment      Comment for update
-**    _mode         The only supported mode is update
+**    _proposal     EUS proposal for updating a usage entry
+**    _usage        Usage type (ONSITE, REMOTE, MAINTENANCE, BROKEN, etc.); corresponds to T_EMSL_Instrument_Usage_Type
+**    _users        EUS user IDs
+**    _operator     Operator ID, corresponding to person_id in t_eus_users (should be an integer representing EUS Person ID; if an empty string, will store NULL for the operator ID)
+**    _comment      Comment
+**    _mode         The only supported mode is 'update'
 **    _message      Output message
 **    _returnCode   Return code
 **    _callingUser  Calling user username
@@ -69,6 +70,7 @@ DECLARE
 
     _matchCount int;
     _usageTypeID int;
+    _operatorID int;
 
     _sqlState text;
     _exceptionMessage text;
@@ -119,7 +121,7 @@ BEGIN
         End If;
 
         -- Assure that _operator is either an integer or null
-        _operator := public.try_cast(_operator, null::int);
+        _operatorID := public.try_cast(_operator, null::int);
 
         -- Assure that _comment does not contain LF or CR
         _comment := Trim(Replace(Replace(_comment, chr(10), ' '), chr(13), ' '));
@@ -151,11 +153,11 @@ BEGIN
         If _mode = 'update' Then
 
             UPDATE t_emsl_instrument_usage_report
-            SET proposal = _proposal,
+            SET proposal      = _proposal,
                 usage_type_id = _usageTypeID,
-                users = _users,
-                operator = _operator,
-                comment = _comment
+                users         = _users,
+                operator      = _operatorID,
+                comment       = _comment
             WHERE seq = _seq;
 
         End If;

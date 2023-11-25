@@ -15,13 +15,13 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing item in T_Instrument_Operation_History
+**      Adds new or edits existing instrument operation entry
 **
 **  Arguments:
-**    _id
-**    _instrument
-**    _postedBy
-**    _note
+**    _id           Input/output: entry_id in t_instrument_operation_history
+**    _instrument   Instrument name
+**    _postedBy     Username of the person associated with the operation entry
+**    _note         Entry description
 **    _mode         Mode: 'add' or 'update'
 **    _message      Output message
 **    _returnCode   Return code
