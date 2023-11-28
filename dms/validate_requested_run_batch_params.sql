@@ -113,7 +113,7 @@ BEGIN
         ---------------------------------------------------
 
         If _requestedBatchPriority = 'High' And Coalesce(_justificationHighPriority, '') = '' Then
-            _message := 'Justification must be entered If high priority is being requested';
+            _message := 'Justification must be entered if high priority is being requested';
             _returnCode := 'U5204';
             RETURN;
         End If;

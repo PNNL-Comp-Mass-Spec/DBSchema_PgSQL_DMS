@@ -109,6 +109,7 @@ AS $$
 **          02/14/2023 mem - Use new parameter names for validate_requested_run_batch_params
 **          02/17/2023 mem - Use new parameter name when calling Add_Update_Requested_RunBatch
 **          02/27/2023 mem - Use new argument name, _requestName
+**          11/27/2023 mem - Do not log errors from validate_requested_run_batch_params() if the return code starts with 'U52' (e.g., 'U5201')
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -202,9 +203,6 @@ BEGIN
 
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
-        -- Validation checks are complete; now enable _logErrors
-        _logErrors := true;
-
         ---------------------------------------------------
         -- Validate the work package
         -- This validation also occurs in Add_Update_Requested_Run but we want to validate it now before we enter the while loop
@@ -223,6 +221,12 @@ BEGIN
         End If;
 
         ---------------------------------------------------
+        -- Validation checks are complete; now enable _logErrors
+        ---------------------------------------------------
+
+        _logErrors := true;
+
+        ---------------------------------------------------
         -- Resolve staging location name to location ID
         ---------------------------------------------------
 
@@ -233,7 +237,7 @@ BEGIN
             WHERE location = _stagingLocation;
 
             If Not FOUND Then
-                RAISE EXCEPTION 'Staging location not recognized';
+                RAISE EXCEPTION 'Staging location not recognized: %', _stagingLocation;
             End If;
 
         End If;
@@ -304,6 +308,12 @@ BEGIN
                             _returnCode                => _returnCode);             -- Output
 
             If _returnCode <> '' Then
+
+                -- Do not log errors to t_log_entries when the return code starts with 'U52', but do raise an exception so the user sees the message
+                If _returnCode Like 'U52%' Then
+                    _logErrors := false;
+                End If;
+
                 RAISE EXCEPTION '%', _message;
             End If;
         Else
