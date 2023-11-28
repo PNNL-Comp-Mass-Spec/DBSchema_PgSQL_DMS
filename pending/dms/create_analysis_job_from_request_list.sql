@@ -17,13 +17,13 @@ AS $$
 **      Creates analysis jobs for a given list of analysis job requests
 **
 **  Arguments:
-**    _mode                       'add' or 'preview'
-**    _jobRequestList             Comma-separated list of analysis job requests
-**    _priority                   Priority
-**    _associatedProcessorGroup   Processor group name; deprecated in May 2015
-**    _propagationMode            'Export' or 'No Export'
-**    _message              Output message
-**    _returnCode           Return code
+**    _mode                     Mode: 'add' or 'preview'
+**    _jobRequestList           Comma-separated list of analysis job requests
+**    _priority                 Priority
+**    _associatedProcessorGroup Processor group name; deprecated in May 2015
+**    _propagationMode          'Export' or 'No Export'
+**    _message                  Output message
+**    _returnCode               Return code
 **
 **  Auth:   grk
 **  Date:   09/17/2007 grk - Initial version (Ticket #534)

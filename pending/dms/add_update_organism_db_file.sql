@@ -14,14 +14,14 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing Legacy Organism DB File in T_Organism_DB_File
+**      Adds new or edits an existing legacy organism DB file in T_Organism_DB_File
 **
 **  Arguments:
-**    _fastaFileName
-**    _organismName
-**    _numProteins
-**    _numResidues
-**    _fileSizeKB
+**    _fastaFileName    FASTA file name, e.g. 'UniProt_Bacteria_100species_TrypPigBov_Bos_Taurus_2021-02-22.fasta'
+**    _organismName     Organism name
+**    _numProteins      Number of proteins in the FASTA file
+**    _numResidues      Total number of residues in the proteins
+**    _fileSizeKB       FASTA file size, in KB
 **    _message          Output message
 **    _returnCode       Return code
 **

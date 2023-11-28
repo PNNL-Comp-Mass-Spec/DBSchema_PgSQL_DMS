@@ -30,29 +30,29 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing Organisms
+**      Adds new or edits an existing organism
 **
 **  Arguments:
-**    _orgName
-**    _orgShortName
-**    _orgStorageLocation
+**    _orgName              Organism name, e.g. 'Homo_sapiens'
+**    _orgShortName         Abbreviated name, e.g. 'H_sapiens'
+**    _orgStorageLocation   Storage location (server share), e.g. '\\gigasax\DMS_Organism_Files\Homo_sapiens\'
 **    _orgDBName            Default protein collection name (prior to 2012 was default fasta file)
-**    _orgDescription
-**    _orgDomain
-**    _orgKingdom
-**    _orgPhylum
-**    _orgClass
-**    _orgOrder
-**    _orgFamily
-**    _orgGenus
-**    _orgSpecies
-**    _orgStrain
-**    _orgActive
+**    _orgDescription       Organism description
+**    _orgDomain            Domain
+**    _orgKingdom           Kingdom
+**    _orgPhylum            Phylum
+**    _orgClass             Class
+**    _orgOrder             Order
+**    _orgFamily            Family
+**    _orgGenus             Genus
+**    _orgSpecies           Species
+**    _orgStrain            Strain
+**    _orgActive            Active flag: '1' means active, '0' means inactive; when inactive, the organism will not appear in certain views
 **    _newtIDList           If blank, this is auto-populated using _ncbiTaxonomyID
-**    _ncbiTaxonomyID       This is the preferred way to define the taxonomy ID for the organism.  NEWT ID is typically identical to taxonomy ID
-**    _autoDefineTaxonomy   'Yes' or 'No'
-**    _id                   Input/Output: Organism ID
-**    _mode                 'add' or 'update'
+**    _ncbiTaxonomyID       NCBI taxonomy ID; this is the preferred way to define the taxonomy ID for the organism. NEWT ID is typically identical to taxonomy ID
+**    _autoDefineTaxonomy   Auto define taxonomy: 'Yes' or 'No'
+**    _id                   Input/Output: Organism ID in t_organisms
+**    _mode                 Mode: 'add' or 'update'
 **    _message              Output message
 **    _returnCode           Return code
 **    _callingUser          Calling user username
@@ -119,6 +119,7 @@ DECLARE
     _autoDefineTaxonomyFlag int;
     _existingOrganismID int := 0;
     _existingOrgName text;
+    _orgActiveID int;
     _logMessage text;
     _alterEnteredByMessage text;
 
@@ -239,9 +240,10 @@ BEGIN
             RAISE EXCEPTION 'Default Protein Collection cannot contain ".fasta"';
         End If;
 
-        _orgActive := Trim(Coalesce(_orgActive, ''));
+        _orgActive   := Trim(Coalesce(_orgActive, ''));
+        _orgActiveID := public.try_cast(_orgActive, -1);
 
-        If char_length(_orgActive) = 0 Or public.try_cast(_orgActive, null::int) Is Null Then
+        If char_length(_orgActive) = 0 Or Or Not Coalesce(_orgActiveID, -1) In (0, 1) Then
             RAISE EXCEPTION 'Organism active state must be 0 or 1';
         End If;
 
@@ -302,7 +304,7 @@ BEGIN
             RAISE EXCEPTION 'Invalid NCBI Taxonomy ID "%"; see https://dms2.pnl.gov/ncbi_taxonomy/report', _ncbiTaxonomyID;
         End If;
 
-        If _autoDefineTaxonomy Like 'Y%' Then
+        If _autoDefineTaxonomy ILike 'Y%' Then
             _autoDefineTaxonomyFlag := 1;
         Else
             _autoDefineTaxonomyFlag := 0;

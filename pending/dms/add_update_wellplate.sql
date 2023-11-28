@@ -13,7 +13,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing item in T_Wellplates
+**      Adds new or edits an existing wellplate
 **
 **  Arguments:
 **    _wellplateName    Wellplate name

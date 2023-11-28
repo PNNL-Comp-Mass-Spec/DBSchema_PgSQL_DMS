@@ -17,16 +17,18 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or updates existing parameter file entry
+**      Adds new or updates an existing parameter file entry
+**
+**      This only applies to SEQUEST parameter files, and SEQUEST was retired in 2019
 **
 **  Arguments:
-**    _paramFileID      Name of new param file description
-**    _entrySeqOrder
-**    _entryType        For modifications, will be 'DynamicModification', 'StaticModification', 'IsotopicModification', or 'TermDynamicModification'; For other parameters, will be the name entered into T_Param_Entries (column Entry_Type)
-**    _entrySpecifier   For modifications, this is the residues affected for dynamic, static, or isotopic mods; for other entries, will be the name entered into T_Param_Entries (column Entry_Specifier)
-**    _entryValue
-**    _mode             'add' or 'update'
-**    _infoOnly
+**    _paramFileID      Name of new parameter file description
+**    _entrySeqOrder    Entry sequence order
+**    _entryType        Entry type; for modifications, will be 'DynamicModification', 'StaticModification', 'IsotopicModification', or 'TermDynamicModification'; for other parameters, will be the name entered into T_Param_Entries, either 'BasicParam' or 'AdvancedParam'
+**    _entrySpecifier   Entry specifier; For modifications, this is the residues affected for dynamic, static, or isotopic mods; for other entries, will be the name entered into T_Param_Entries, column Entry_Specifier, e.g. 'FragmentMassType' or 'PeptideMassTolerance'
+**    _entryValue       Entry value
+**    _mode             Mode: 'add' or 'update'
+**    _infoOnly         When true, preview updates
 **    _message          Output message
 **    _returnCode       Return code
 **    _callingUser      Calling user username
@@ -66,7 +68,6 @@ BEGIN
     If _entrySeqOrder = 0 Then
         _returnCode := 'U5202';
         RAISE EXCEPTION 'EntrySeqOrder cannot be 0';
-
     End If;
 
     If char_length(_entryType) < 1 Then

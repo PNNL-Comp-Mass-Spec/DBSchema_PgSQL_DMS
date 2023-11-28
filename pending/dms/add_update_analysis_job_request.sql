@@ -41,7 +41,7 @@ AS $$
 **    _organismDBName                   Legacy fasta file; typically 'na'
 **    _requesterUsername                Requester username
 **    _comment                          Job request comment
-**    _specialProcessing                Special processing options; typically ''
+**    _specialProcessing                Special processing parameters; typically ''
 **    _dataPackageID                    Data package ID
 **    _state                            State, typically 'new', 'used', or 'inactive' (see T_Analysis_Job_Request_State)
 **    _requestID                        Input/output: analysis job request ID

@@ -21,20 +21,20 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds a new entry to LC Column table
+**      Adds new or edits an existing entry LC column
 **
 **  Arguments:
 **    _columnNumber         Input/output: Column name
-**    _packingMfg
-**    _packingType
-**    _particleSize
-**    _particleType
-**    _columnInnerDia
-**    _columnOuterDia
-**    _length
-**    _state
-**    _operatorUsername
-**    _comment
+**    _packingMfg           Column packing manufacturer
+**    _packingType          Packing type
+**    _particleSize         Particle size
+**    _particleType         Particle type
+**    _columnInnerDia       Column inner diameter
+**    _columnOuterDia       Column outer diameter
+**    _length               Column length
+**    _state                State: 'New', 'Active', or 'Retired'
+**    _operatorUsername     Username of the DMS user to associate with the column
+**    _comment              Comment
 **    _mode                 Mode: 'add' or 'update'
 **    _message              Output message
 **    _returnCode           Return code

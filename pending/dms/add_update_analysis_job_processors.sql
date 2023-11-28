@@ -17,10 +17,10 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing T_Analysis_Job_Processors
+**      Adds new or edits an existing analysis job processor
 **
 **  Arguments:
-**    _id                   Processor ID
+**    _id                   Processor ID in T_Analysis_Job_Processors
 **    _state                State
 **    _processorName        Processor name
 **    _machine              Machine

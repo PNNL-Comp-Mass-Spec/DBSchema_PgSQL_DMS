@@ -25,7 +25,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Edits an existing instrument usage item
+**      Edits an existing instrument usage entry
 **      (despite the procedure name, only updates are allowed)
 **
 **  Arguments:

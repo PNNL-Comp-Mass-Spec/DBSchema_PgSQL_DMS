@@ -19,9 +19,9 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing MRM transition list attachment
+**      Adds new or edits an existing MRM transition list attachment
 **
-**      These were last used in 2010
+**      This procedure is obsolete; MRM transition lists were last used in 2010
 **
 **  Arguments:
 **    _id                       Attachment ID

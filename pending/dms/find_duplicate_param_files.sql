@@ -545,7 +545,7 @@ BEGIN
 
         -----------------------------------------
         -- Look for duplicates in t_param_entries
-        -- At present, this is only applicable to Sequest parameter files
+        -- At present, this is only applicable to SEQUEST parameter files
         -----------------------------------------
 
         If _paramFileInfo.ParamFileType::citext = 'Sequest' Then

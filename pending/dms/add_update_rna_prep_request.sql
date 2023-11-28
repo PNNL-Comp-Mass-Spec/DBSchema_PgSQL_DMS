@@ -32,29 +32,31 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing RNA Prep Request
+**      Adds new or edits an existing RNA prep request
+**
+**      This procedure is obsolete; RNA prep requests were last used in 2014
 **
 **  Arguments:
-**    _requesterUsername
-**    _reason
-**    _organism
-**    _biohazardLevel
-**    _campaign
-**    _numberofSamples
-**    _sampleNameList
-**    _sampleType
-**    _prepMethod
-**    _sampleNamingConvention
-**    _estimatedCompletion
-**    _workPackageNumber
-**    _eusProposalID
-**    _eusUsageType
-**    _eusUserID                        Use Null or 0 if no EUS User ID
-**    _instrumentName
-**    _datasetType
-**    _instrumentAnalysisSpecifications
-**    _state                            State: New, Open, Prep in Progress, Prep Complete, or Closed
-**    _id                               Input/output: RNA prep request ID
+**    _requesterUsername                Requester username
+**    _reason                           Reason
+**    _organism                         Organism
+**    _biohazardLevel                   Biohazard level
+**    _campaign                         Campaign
+**    _numberofSamples                  Number of samples to be created
+**    _sampleNameList                   Sample name list
+**    _sampleType                       Sample type
+**    _prepMethod                       Prep method
+**    _sampleNamingConvention           Sample naming convention
+**    _estimatedCompletion              Estimated completion date (as text)
+**    _workPackageNumber                Work package number
+**    _eusProposalID                    EUS proposal ID
+**    _eusUsageType                     EUS usage type
+**    _eusUserID                        EUS user ID; use Null or 0 if no EUS user
+**    _instrumentName                   Instrument name
+**    _datasetType                      Dataset type
+**    _instrumentAnalysisSpecifications Instrument analysis specifications
+**    _state                            State: 'New', 'Open', 'Prep in Progress', 'Prep Complete', or 'Closed'
+**    _id                               Input/output: RNA prep request ID in t_sample_prep_request
 **    _mode                             Mode: 'add' or 'update'
 **    _message                          Output message
 **    _returnCode                       Return code

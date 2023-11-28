@@ -29,7 +29,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing data analysis request
+**      Adds new or edits an existing data analysis request
 **
 **      The analysis request must be associated with at least one of the following data containers:
 **        - One or more requested run batches

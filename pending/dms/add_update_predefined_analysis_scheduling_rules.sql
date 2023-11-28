@@ -19,18 +19,18 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing T_Predefined_Analysis_Scheduling_Rules
+**      Adds new or edits an existing predefined analysis scheduling rule
 **
 **  Arguments:
-**    _evaluationOrder
-**    _instrumentClass
-**    _instrumentName
-**    _datasetName
-**    _analysisToolName
-**    _priority
-**    _processorGroup
-**    _enabled
-**    _id                   Input/output: scheduling rule ID
+**    _evaluationOrder      Evaluation order
+**    _instrumentClass      Instrument class
+**    _instrumentName       Instrument name
+**    _datasetName          Dataset name
+**    _analysisToolName     Analysis tool name
+**    _priority             Priority
+**    _processorGroup       Processor group
+**    _enabled              Enabled: 1 if enabled, 0 if disabled
+**    _id                   Input/output: scheduling rule ID in T_Predefined_Analysis_Scheduling_Rules
 **    _mode                 Mode: 'add' or 'update'
 **    _message              Output message
 **    _returnCode           Return code

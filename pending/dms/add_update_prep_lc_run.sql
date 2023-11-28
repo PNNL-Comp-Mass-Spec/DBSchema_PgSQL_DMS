@@ -27,26 +27,25 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing item in T_Prep_LC_Run
+**      Adds new or edits an existing prep LC run
 **
 **  Arguments:
-**    _id                   Input/output: prep LC run ID
-**    _prepRunName
-**    _instrument
-**    _type
-**    _lcColumn
-**    _lcColumn2
-**    _comment
-**    _guardColumn
-**    _operatorUsername
-**    _digestionMethod
-**    _sampleType
-**    _samplePrepRequests
-**    _numberOfRuns
-**    _instrumentPressure
-**    _qualityControl
-**    _datasets
+**    _id                   Input/output: prep LC run ID in T_Prep_LC_Run
+**    _prepRunName          Prep LC run name
+**    _instrument           Instrument
+**    _type                 Type
+**    _lcColumn             Primary LC column
+**    _lcColumn2            Secondary LC column; empty string if not applicable
+**    _comment              Comment
+**    _guardColumn          Guard column: 'Yes', 'No', or 'n/a'
+**    _operatorUsername     Username of the DMS user to associate with the prep LC run
+**    _digestionMethod      Digestion method
+**    _sampleType           Sample type
 **    _samplePrepRequests   Typically a single sample prep request ID, but can also be a comma-separated list (or blank)
+**    _numberOfRuns         Number of runs (datasets) to be created
+**    _instrumentPressure   Instrument pressure
+**    _qualityControl       Quality control reagent description
+**    _datasets             Comma separated list of dataset names to associate with this prep LC run
 **    _mode                 Mode: 'add' or 'update'
 **    _message              Output message
 **    _returnCode           Return code

@@ -23,21 +23,21 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing item in T_Operations_Tasks
+**      Adds new or edits an existing operation task entry
 **
 **  Arguments:
 **    _id                   Input/output: task_id in T_Operations_Tasks
-**    _taskType
-**    _task
-**    _requester
-**    _requestedPersonnel
-**    _assignedPersonnel
-**    _description
-**    _comments
-**    _labName
-**    _status
-**    _priority
-**    _workPackage
+**    _taskType             Task type
+**    _task                 Task title, e.g. 'Freezer Clean Out'
+**    _requester            Person requesting the task
+**    _requestedPersonnel   Requested personnel for the task; typically in the form 'Zink, Erika M (D3P704)', but any text is allowed
+**    _assignedPersonnel    Assigned personnel for the task; typically in the form 'Zink, Erika M (D3P704)', but any text is allowed
+**    _description          Task description
+**    _comments             Additional comments
+**    _labName              Lab name, e.g. 'BSF 2222' or 'Undefined; corresponds to a row in t_lab_locations
+**    _status               Status: 'New', 'In Progress', or 'Completed'
+**    _priority             Priority: 'Normal' or 'High'
+**    _workPackage          Work package
 **    _mode                 Mode: 'add' or 'update'
 **    _message              Output message
 **    _returnCode           Return code

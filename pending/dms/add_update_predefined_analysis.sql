@@ -33,7 +33,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_predefined_analysis
     _datasetExclCriteria text = '',
     _datasetTypeCriteria text = '',
     _triggerBeforeDisposition int = 0,
-    _propagationMode text='Export',
+    _propagationMode text = 'Export',
     _specialProcessing text = '',
     INOUT _message text default '',
     INOUT _returnCode text default ''
@@ -43,43 +43,43 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Add/update a predefined analysis job definition
+**      Adds new or updates an existing predefined analysis job definition
 **
 **  Arguments:
-**    _level
-**    _sequence
-**    _instrumentClassCriteria
-**    _campaignNameCriteria
-**    _experimentNameCriteria
-**    _instrumentNameCriteria
-**    _instrumentExclCriteria
-**    _organismNameCriteria
-**    _datasetNameCriteria
-**    _expCommentCriteria
-**    _labellingInclCriteria
-**    _labellingExclCriteria
-**    _analysisToolName
-**    _paramFileName
-**    _settingsFileNam
-**    _organismName
-**    _organismDBName
-**    _protCollNameList
-**    _protCollOptionsList
-**    _priority
-**    _enabled
-**    _description
-**    _creator
-**    _nextLevel
-**    _id                           Input/output: Predefine ID
+**    _level                        Level; datasets are compared to predefines sequentially, by level
+**    _sequence                     Sequence; for each level, predefines are processed sequentially, by sequence
+**    _instrumentClassCriteria      Instrument class criteria
+**    _campaignNameCriteria         Campaign name criteria
+**    _experimentNameCriteria       Experiment name criteria
+**    _instrumentNameCriteria       Instrument name criteria
+**    _instrumentExclCriteria       Instrument excl criteria
+**    _organismNameCriteria         Organism name criteria
+**    _datasetNameCriteria          Dataset name criteria
+**    _expCommentCriteria           Exp comment criteria
+**    _labellingInclCriteria        Labelling inclusion criteria
+**    _labellingExclCriteria        Labelling exclusion criteria
+**    _analysisToolName             Analysis tool name
+**    _paramFileName                Param file name
+**    _settingsFileNam              Settings file nam
+**    _organismName                 Organism name
+**    _organismDBName               Organism database name (legacy FASTA file)
+**    _protCollNameList             Protein collection name list
+**    _protCollOptionsList          Protein collection options list
+**    _priority                     Priority to assign to jobs created from the predefine
+**    _enabled                      Enabled: 1 if enabled, 0 if disabled
+**    _description                  Description
+**    _creator                      Creator
+**    _nextLevel                    Next level to jump to if a dataset matches a predefine
+**    _id                           Input/output: Predefine ID in t_predefined_analysis
 **    _mode                         Mode: 'add' or 'update'
-**    _separationTypeCriteria
-**    _campaignExclCriteria
-**    _experimentExclCriteria
-**    _datasetExclCriteria
-**    _datasetTypeCriteria
-**    _triggerBeforeDisposition
-**    _propagationMode
-**    _specialProcessing
+**    _separationTypeCriteria       Separation type criteria
+**    _campaignExclCriteria         Campaign exclusion criteria
+**    _experimentExclCriteria       Experiment exclusion criteria
+**    _datasetExclCriteria          Dataset exclusion criteria
+**    _datasetTypeCriteria          Dataset type criteria
+**    _triggerBeforeDisposition     Trigger before disposition: 1 means to trigger before datasets are dispositioned; 0 means to trigger after disposition
+**    _propagationMode              Propagation mode: 'Export' or 'No export'
+**    _specialProcessing            Special processing parameters; typically ''
 **    _message                      Output message
 **    _returnCode                   Return code
 **
@@ -206,29 +206,30 @@ BEGIN
         ---------------------------------------------------
 
         _instrumentClassCriteria := Trim(Coalesce(_instrumentClassCriteria, ''));
-        _campaignNameCriteria := Trim(Coalesce(_campaignNameCriteria   , ''));
-        _experimentNameCriteria := Trim(Coalesce(_experimentNameCriteria , ''));
-        _instrumentNameCriteria := Trim(Coalesce(_instrumentNameCriteria , ''));
-        _instrumentExclCriteria := Trim(Coalesce(_instrumentExclCriteria , ''));
-        _organismNameCriteria := Trim(Coalesce(_organismNameCriteria   , ''));
-        _datasetNameCriteria := Trim(Coalesce(_datasetNameCriteria    , ''));
-        _expCommentCriteria := Trim(Coalesce(_expCommentCriteria     , ''));
-        _labellingInclCriteria := Trim(Coalesce(_labellingInclCriteria  , ''));
-        _labellingExclCriteria := Trim(Coalesce(_labellingExclCriteria  , ''));
-        _separationTypeCriteria := Trim(Coalesce(_separationTypeCriteria , ''));
-        _campaignExclCriteria := Trim(Coalesce(_campaignExclCriteria   , ''));
-        _experimentExclCriteria := Trim(Coalesce(_experimentExclCriteria , ''));
-        _datasetExclCriteria := Trim(Coalesce(_datasetExclCriteria    , ''));
-        _datasetTypeCriteria := Trim(Coalesce(_datasetTypeCriteria    , ''));
-        _specialProcessing := Trim(Coalesce(_specialProcessing      , ''));
+        _campaignNameCriteria    := Trim(Coalesce(_campaignNameCriteria   , ''));
+        _experimentNameCriteria  := Trim(Coalesce(_experimentNameCriteria , ''));
+        _instrumentNameCriteria  := Trim(Coalesce(_instrumentNameCriteria , ''));
+        _instrumentExclCriteria  := Trim(Coalesce(_instrumentExclCriteria , ''));
+        _organismNameCriteria    := Trim(Coalesce(_organismNameCriteria   , ''));
+        _datasetNameCriteria     := Trim(Coalesce(_datasetNameCriteria    , ''));
+        _expCommentCriteria      := Trim(Coalesce(_expCommentCriteria     , ''));
+        _labellingInclCriteria   := Trim(Coalesce(_labellingInclCriteria  , ''));
+        _labellingExclCriteria   := Trim(Coalesce(_labellingExclCriteria  , ''));
+        _separationTypeCriteria  := Trim(Coalesce(_separationTypeCriteria , ''));
+        _campaignExclCriteria    := Trim(Coalesce(_campaignExclCriteria   , ''));
+        _experimentExclCriteria  := Trim(Coalesce(_experimentExclCriteria , ''));
+        _datasetExclCriteria     := Trim(Coalesce(_datasetExclCriteria    , ''));
+        _datasetTypeCriteria     := Trim(Coalesce(_datasetTypeCriteria    , ''));
+        _specialProcessing       := Trim(Coalesce(_specialProcessing      , ''));
 
         ---------------------------------------------------
         -- Resolve propagation mode
         ---------------------------------------------------
-        _propMode := CASE Coalesce(_propagationMode, '');
-                            WHEN 'Export' THEN 0
-                            WHEN 'No Export' THEN 1
-                            ELSE 0
+
+        _propMode := CASE Lower(Coalesce(_propagationMode, ''))
+                        WHEN 'export' THEN 0
+                        WHEN 'no export' THEN 1
+                        ELSE 0
                      END;
 
         ---------------------------------------------------

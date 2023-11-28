@@ -18,7 +18,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing item in T_Bionet_Hosts
+**      Adds new or edits an existing bionet host
 **
 **  Arguments:
 **    _host             Host name

@@ -21,7 +21,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing tracking dataset
+**      Adds new or edits an existing tracking dataset
 **
 **  Arguments:
 **    _datasetName          Dataset name

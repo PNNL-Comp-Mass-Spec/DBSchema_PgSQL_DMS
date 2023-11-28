@@ -14,7 +14,7 @@ AS $$
 **      Only allowed if no datasets exist for the instrument
 **
 **  Arguments:
-**    _instrumentName
+**    _instrumentName   Instrument name
 **    _message          Output message
 **    _returnCode       Return code
 **

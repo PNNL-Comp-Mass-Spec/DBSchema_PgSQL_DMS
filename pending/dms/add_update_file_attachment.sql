@@ -19,13 +19,13 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing file attachment in T_File_Attachment
+**      Adds new or edits an existing file attachment
 **
 **      Note that _entityType will be the same as the DMS website page family name of the item
 **      that the file attachment is attached to; see the upload method in File_attachment.php
 **
 **  Arguments:
-**    _id                   File attachment ID
+**    _id                   File attachment ID in T_File_Attachment
 **    _fileName             File name
 **    _description          Description
 **    _entityType           Page family name: 'campaign', 'experiment', 'sample_prep_request', 'lc_cart_configuration', etc.

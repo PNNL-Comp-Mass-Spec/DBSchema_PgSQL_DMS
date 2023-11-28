@@ -39,35 +39,35 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing T_LC_Cart_Configuration entry
+**      Adds new or edits an existing LC cart configuration entry
 **
 **  Arguments:
-**    _id
-**    _configName
-**    _description
-**    _autosampler
-**    _customValveConfig
-**    _pumps
-**    _primaryInjectionVolume
-**    _primaryMobilePhases
-**    _primaryTrapColumn
-**    _primaryTrapFlowRate
-**    _primaryTrapTime
-**    _primaryTrapMobilePhase
-**    _primaryAnalyticalColumn
-**    _primaryColumnTemperature
-**    _primaryAnalyticalFlowRate
-**    _primaryGradient
-**    _massSpecStartDelay
-**    _upstreamInjectionVolume
-**    _upstreamMobilePhases
-**    _upstreamTrapColumn
-**    _upstreamTrapFlowRate
-**    _upstreamAnalyticalColumn
-**    _upstreamColumnTemperature
-**    _upstreamAnalyticalFlowRate
-**    _upstreamFractionationProfile
-**    _upstreamFractionationDetails
+**    _id                           Cart config ID; column cart_config_id in T_LC_Cart_Configuration
+**    _configName                   Cart config name
+**    _description                  Description
+**    _autosampler                  Autosampler name (empty string or null if no autosampler)
+**    _customValveConfig            Custom valve config; 'none' or null if not applicable
+**    _pumps                        Description of the LC pump(s) on the cart
+**    _primaryInjectionVolume       Primary injection volume
+**    _primaryMobilePhases          Primary mobile phases
+**    _primaryTrapColumn            Primary trap column
+**    _primaryTrapFlowRate          Primary trap column flow rate
+**    _primaryTrapTime              Primary trap time
+**    _primaryTrapMobilePhase       Primary trap mobile phase
+**    _primaryAnalyticalColumn      Primary analytical column
+**    _primaryColumnTemperature     Primary column temperature
+**    _primaryAnalyticalFlowRate    Primary analytical flow rate
+**    _primaryGradient              Primary gradient
+**    _massSpecStartDelay           Mass spec start delay
+**    _upstreamInjectionVolume      Upstream injection volume
+**    _upstreamMobilePhases         Upstream mobile phases
+**    _upstreamTrapColumn           Upstream trap column
+**    _upstreamTrapFlowRate         Upstream trap flow rate
+**    _upstreamAnalyticalColumn     Upstream analytical column
+**    _upstreamColumnTemperature    Upstream column temperature
+**    _upstreamAnalyticalFlowRate   Upstream analytical flow rate
+**    _upstreamFractionationProfile Upstream fractionation profile
+**    _upstreamFractionationDetails Upstream fractionation details
 **    _entryUser                    User who entered the LC Cart Configuration entry; defaults to _callingUser if empty
 **    _state                        State: 'Active', 'Inactive', 'Invalid', or 'Override' (see comments below)
 **    _mode                         Mode: 'add' or 'update'

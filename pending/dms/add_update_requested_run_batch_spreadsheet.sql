@@ -20,20 +20,22 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing requested run batch
+**      Adds new or edits an existing requested run batch
 **
 **  Arguments:
-**    _id                           Input/Output: Requested run batch ID
-**    _name
-**    _description
-**    _requestNameList
-**    _ownerUsername
-**    _requestedBatchPriority
-**    _requestedCompletionDate
-**    _justificationHighPriority
+**    _id                           Input/Output: Requested run batch ID in t_requested_run_batches
+**    _name                         Batch name
+**    _description                  Description
+**    _requestNameList              Comma separated list of requested run names
+**    _ownerUsername                Owner username
+**    _requestedBatchPriority       Batch priority: 'Normal' or 'High'
+**    _requestedCompletionDate      Requested completion date (as text)
+**    _justificationHighPriority    Justification for high priority
 **    _requestedInstrument          Will typically contain an instrument group, not an instrument name
-**    _comment
+**    _comment                      Comment
 **    _mode                         Mode: 'add' or 'update'
+**    _message                      Output message
+**    _returnCode                   Return code
 **
 **  Auth:   jds
 **  Date:   05/18/2009
@@ -76,7 +78,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Get list of request ids based on Request name list
+    -- Get list of request ids based on request run names
     ---------------------------------------------------
 
     SELECT string_agg(RR.request_id::text, ', ' ORDER BY RR.request_id)

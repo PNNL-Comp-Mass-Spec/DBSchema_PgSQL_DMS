@@ -31,33 +31,33 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or updates existing reference compound
+**      Adds new or updates an existing reference compound
 **
 **  Arguments:
-**    _compoundID           Reference compound ID
+**    _compoundID           Reference compound ID in t_reference_compound
 **    _compoundName         Reference compound name or peptide sequence
-**    _description
-**    _compoundTypeName
+**    _description          Description
+**    _compoundTypeName     Compound type name: 'Compound', 'Metabolite standards', or 'Protein/peptide standards'
 **    _geneName             Gene or Protein name
-**    _modifications
-**    _organismName
+**    _modifications        Semicolon separated list of modifications, e.g. 'HeavyK@]' or 'Iodacet@9; Iodacet@10; Iodacet@22; HeavyK@]'
+**    _organismName         Organism name
 **    _pubChemID            Will be converted to an integer; empty strings are stored as null
-**    _campaignName
-**    _containerName
-**    _wellplateName
-**    _wellNumber
-**    _contactUsername      Contact for the Source; typically PNNL staff, but can be offsite person
+**    _campaignName         Campaign name
+**    _containerName        Material container name
+**    _wellplateName        Wellplate name
+**    _wellNumber           Well number
+**    _contactUsername      Contact for the source; typically PNNL staff, but can be an offsite person
 **    _supplier             Source that the material came from; can be a person (onsite or offsite) or a company
-**    _productId
-**    _purchaseDate         Will be converted to a date
-**    _purity
-**    _purchaseQuantity
-**    _mass                 Will be converted to a float
+**    _productId            Product ID used by the supplier
+**    _purchaseDate         Purchase date (as text)
+**    _purity               Purity, e.g. 'Pure', 'Crude', or '90.19%'
+**    _purchaseQuantity     Purchase quantity
+**    _mass                 Compound mass (as text)
 **    _active               Can be: 'Yes', 'No', 'Y', 'N', '1', or '0'
-**    _mode                 Reference compound name or peptide sequenceMode: 'add', 'update', 'check_add', 'check_update'
-**    _message          Output message
-**    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _mode                 Mode: 'add', 'update', 'check_add', 'check_update'
+**    _message              Output message
+**    _returnCode           Return code
+**    _callingUser          Calling user username
 **
 **  Auth:   mem
 **  Date:   11/28/2017 mem - Initial version

@@ -17,7 +17,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing experiment group
+**      Adds new or edits an existing experiment group
 **
 **  Arguments:
 **    _id               Input/output: experiment group ID

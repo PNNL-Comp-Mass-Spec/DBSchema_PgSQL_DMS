@@ -21,7 +21,7 @@ AS $$
 **
 **  Where bt is the batch ID, bk is the block number, ct is the cart name, and co is the column number
 **
-**  This procedure was last used in 2012
+**  This procedure is obsolete since blocks are now tracked by block and run_order in t_requested_run; the procedure was last used in 2012
 **
 **  Arguments:
 **    _cartAssignmentList   Blocking info XML (see above)

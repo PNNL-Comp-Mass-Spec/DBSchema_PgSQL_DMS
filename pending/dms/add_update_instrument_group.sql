@@ -19,7 +19,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing instrument group
+**      Adds new or edits an existing instrument group
 **
 **  Arguments:
 **    _instrumentGroup          Instrument group name

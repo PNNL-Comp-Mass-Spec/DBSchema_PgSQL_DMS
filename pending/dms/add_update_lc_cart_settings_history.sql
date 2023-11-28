@@ -30,28 +30,30 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing T_LC_Cart_Settings_History
+**      Adds new or edits an existing LC cart settings history note
+**
+**      This procedure is obsolete; it was last used in 2009
 **
 **  Arguments:
-**    _id
-**    _cartName
-**    _valveToColumnExtension
-**    _operatingPressure
-**    _interfaceConfiguration
-**    _valveToColumnExtensionDimensions
-**    _mixerVolume
-**    _sampleLoopVolume
-**    _sampleLoadingTime
-**    _splitFlowRate
-**    _splitColumnDimensions
-**    _purgeFlowRate
-**    _purgeColumnDimensions
-**    _purgeVolume
-**    _acquisitionTime
-**    _solventA
-**    _solventB
-**    _comment
-**    _dateOfChange
+**    _id                                   Entry_id in t_lc_cart_settings_history
+**    _cartName                             Cart name
+**    _valveToColumnExtension               Valve to column extension
+**    _operatingPressure                    Operating pressure
+**    _interfaceConfiguration               Interface configuration
+**    _valveToColumnExtensionDimensions     Valve to column extension dimensions
+**    _mixerVolume                          Mixer volume
+**    _sampleLoopVolume                     Sample loop volume
+**    _sampleLoadingTime                    Sample loading time
+**    _splitFlowRate                        Split flow rate
+**    _splitColumnDimensions                Split column dimensions
+**    _purgeFlowRate                        Purge flow rate
+**    _purgeColumnDimensions                Purge column dimensions
+**    _purgeVolume                          Purge volume
+**    _acquisitionTime                      Acquisition time
+**    _solventA                             Solvent A
+**    _solventB                             Solvent B
+**    _comment                              Comment
+**    _dateOfChange                         Date of change
 **    _mode                                 Mode: 'add' or 'update'
 **    _message                              Output message
 **    _returnCode                           Return code

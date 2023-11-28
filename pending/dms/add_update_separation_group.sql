@@ -16,7 +16,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing item in T_Separation_Group
+**      Adds new or edits an existing separation group
 **
 **  Arguments:
 **    _separationGroup

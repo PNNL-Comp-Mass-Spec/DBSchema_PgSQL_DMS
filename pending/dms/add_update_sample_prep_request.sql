@@ -44,42 +44,42 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing Sample Prep Request
+**      Adds new or edits an existing sample prep request
 **
 **  Arguments:
-**    _requestName
-**    _requesterUsername
-**    _reason
-**    _materialContainerList
-**    _organism
-**    _biohazardLevel
-**    _campaign
-**    _numberofSamples
-**    _sampleNameList
-**    _sampleType
-**    _prepMethod
-**    _sampleNamingConvention
-**    _assignedPersonnel
-**    _requestedPersonnel
-**    _estimatedPrepTimeDays
-**    _estimatedMSRuns
-**    _workPackageNumber
-**    _eusProposalID
-**    _eusUsageType
-**    _eusUserID                        Use Null or 0 if no EUS User ID
+**    _requestName                      Sample prep request name
+**    _requesterUsername                Requester username
+**    _reason                           Description of the prep request
+**    _materialContainerList            Comma separated list of material container names
+**    _organism                         Organism name
+**    _biohazardLevel                   Biohazard level
+**    _campaign                         Campaign
+**    _numberofSamples                  Number of samples to be created
+**    _sampleNameList                   Sample name description or sample name prefix/prefixes
+**    _sampleType                       Sample type, e.g. 'Cell pellet', 'Peptides', 'Tissue', 'Soil', 'Plasma'
+**    _prepMethod                       Sample prep method, e.g. 'Global Digest', 'MPLEx', 'Solvent Extraction'
+**    _sampleNamingConvention           Sample name prefix
+**    _assignedPersonnel                Assigned personnel, e.g. 'Zink, Erika M (D3P704)' (also supports matching a person's last name using procedure auto_resolve_name_to_username)
+**    _requestedPersonnel               Requested personnel
+**    _estimatedPrepTimeDays            Estimated prep time, in days
+**    _estimatedMSRuns                  Estimated number of mass spec datasets to be generated
+**    _workPackageNumber                Work package number
+**    _eusProposalID                    EUS proposal ID
+**    _eusUsageType                     EUS usage type
+**    _eusUserID                        EUS user ID; use Null or 0 if no EUS user
 **    _instrumentGroup                  Will typically contain an instrument group name; could also contain 'None' or any other text
-**    _datasetType
-**    _instrumentAnalysisSpecifications
-**    _comment
-**    _priority
-**    _state                            New, On Hold, Prep in Progress, Prep Complete, or Closed
-**    _stateComment
-**    _id                               Input/output: Sample prep request ID
-**    _separationGroup                  Separation group
-**    _blockAndRandomizeSamples         'Yes', 'No', or 'na'
-**    _blockAndRandomizeRuns            'Yes' or 'No'
-**    _reasonForHighPriority
-**    _tissue
+**    _datasetType                      Dataset type, e.g. 'GC-MS', 'HMS-HCD-HMSn', or 'MRM'
+**    _instrumentAnalysisSpecifications Instrument analysis notes
+**    _comment                          Prep request comment
+**    _priority                         Priority: 'Normal' or 'High'
+**    _state                            State: 'New', 'On Hold', 'Prep in Progress', 'Prep Complete', or 'Closed'
+**    _stateComment                     State comment
+**    _id                               Input/output: sample prep request ID
+**    _separationGroup                  Separation group name
+**    _blockAndRandomizeSamples         Block and randomize samples: 'Yes', 'No', or 'na'
+**    _blockAndRandomizeRuns            Block and randomize requested runs: 'Yes' or 'No'
+**    _reasonForHighPriority            Reason for requesting high priority
+**    _tissue                           Tissue name, e.g. 'blood plasma', 'cell culture', 'plant, 'soil', etc.
 **    _mode                             Mode: 'add' or 'update'
 **    _message                          Output message
 **    _returnCode                       Return code
@@ -229,9 +229,8 @@ BEGIN
     End If;
 
     _estimatedPrepTimeDays := Coalesce(_estimatedPrepTimeDays, 1);
-
-    _requestedPersonnel := Trim(Coalesce(_requestedPersonnel, ''));
-    _assignedPersonnel := Trim(Coalesce(_assignedPersonnel, 'na'));
+    _requestedPersonnel    := Trim(Coalesce(_requestedPersonnel, ''));
+    _assignedPersonnel     := Trim(Coalesce(_assignedPersonnel, 'na'));
 
     If _assignedPersonnel = '' Then
         _assignedPersonnel := 'na';

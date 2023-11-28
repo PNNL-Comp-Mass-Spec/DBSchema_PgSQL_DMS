@@ -17,7 +17,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits an existing cart config history item
+**      Adds new or edits an existing cart config history entry
 **
 **  Arguments:
 **    _id               Entry_ID in T_LC_Cart_Config_History

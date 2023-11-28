@@ -7,8 +7,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_prep_lc_column
     _mfgSerialNumber text,
     _packingMfg text,
     _packingType text,
-    _particlesize text,
-    _particletype text,
+    _particleSize text,
+    _particleType text,
     _columnInnerDia text,
     _columnOuterDia text,
     _length text,
@@ -25,27 +25,27 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing item in T_Prep_LC_Column
+**      Adds new or edits an existing prep LC column
 **
 **  Arguments:
-**    _columnName
-**    _mfgName
-**    _mfgModel
-**    _mfgSerialNumber
-**    _packingMfg
-**    _packingType
-**    _particlesize
-**    _particletype
-**    _columnInnerDia
-**    _columnOuterDia
-**    _length
-**    _state
-**    _operatorUsername
-**    _comment
-**    _mode             Mode: 'add' or 'update'
-**    _message          Output message
-**    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _columnName           Prep LC column name
+**    _mfgName              Manufacturer name
+**    _mfgModel             Manufacturer model
+**    _mfgSerialNumber      Manufacturer serial number
+**    _packingMfg           Packing manufacturer
+**    _packingType          Packing type
+**    _particleSize         Particle size
+**    _particleType         Particle type
+**    _columnInnerDia       Column inner diameter
+**    _columnOuterDia       Column outer diameter
+**    _length               Column length
+**    _state                State: 'New', 'Active', or 'Retired'
+**    _operatorUsername     Username of the DMS user to associate with the column
+**    _comment              Comment
+**    _mode                 Mode: 'add' or 'update'
+**    _message              Output message
+**    _returnCode           Return code
+**    _callingUser          Calling user username
 **
 **  Auth:   grk
 **  Date:   07/29/2009 grk - Initial version
@@ -158,8 +158,8 @@ BEGIN
             _mfgSerialNumber,
             _packingMfg,
             _packingType,
-            _particlesize,
-            _particletype,
+            _particleSize,
+            _particleType,
             _columnInnerDia,
             _columnOuterDia,
             _length,
@@ -183,8 +183,8 @@ BEGIN
             mfg_serial = _mfgSerialNumber,
             packing_mfg = _packingMfg,
             packing_type = _packingType,
-            particle_size = _particlesize,
-            particle_type = _particletype,
+            particle_size = _particleSize,
+            particle_type = _particleType,
             column_inner_dia = _columnInnerDia,
             column_outer_dia = _columnOuterDia,
             length = _length,

@@ -17,10 +17,10 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing T_Secondary_Sep entry
+**      Adds new or edits an existing separation type
 **
 **  Arguments:
-**    _id
+**    _id               Separation type ID in T_Secondary_Sep entry
 **    _sepTypeName
 **    _sepGroupName
 **    _comment

@@ -24,7 +24,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or updates existing biomaterial items
+**      Adds new or updates an existing biomaterial item
 **
 **  Arguments:
 **    _biomaterialName      Name of biomaterial (or peptide sequence if tracking an MRM peptide)

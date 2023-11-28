@@ -16,7 +16,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or updates existing auxiliary information
+**      Adds new or updates an existing auxiliary information item
 **
 **  Arguments:
 **    _targetName           Target type name: Experiment, Biomaterial (previously 'Cell Culture'), Dataset, or SamplePrepRequest
