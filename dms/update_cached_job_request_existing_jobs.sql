@@ -24,7 +24,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_job_request_existing_jobs(IN _p
 **          07/31/2019 mem - Add option to find existing job requests that match jobs created within the last _jobSearchHours
 **          06/25/2021 mem - Fix bug comparing legacy organism DB name in T_Analysis_Job to T_Analysis_Job_Request_Datasets
 **          09/07/2023 mem - Ported to PostgreSQL
-**          09/08/2023 mem - Include schema name when calling function
+**          09/08/2023 mem - Include schema name when calling function verify_sp_authorized()
 **          09/13/2023 mem - Remove unnecessary delimiter argument when calling append_to_text()
 **
 *****************************************************/

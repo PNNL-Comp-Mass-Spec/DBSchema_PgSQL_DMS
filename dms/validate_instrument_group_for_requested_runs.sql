@@ -20,7 +20,7 @@ CREATE OR REPLACE PROCEDURE public.validate_instrument_group_for_requested_runs(
 **  Date:   01/15/2023 mem - Initial version (code refactored code from UpdateRequestedRunAssignments)
 **          05/31/2023 mem - Use format() for string concatenation
 **          09/07/2023 mem - Align assignment statements
-**          09/08/2023 mem - Include schema name when calling function
+**          09/08/2023 mem - Include schema name when calling function verify_sp_authorized()
 **
 *****************************************************/
 DECLARE

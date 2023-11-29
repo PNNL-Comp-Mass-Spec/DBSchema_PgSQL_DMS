@@ -29,7 +29,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_archive_path(INOUT _archivepathid 
 **          09/07/2023 mem - Align assignment statements
 **                         - Update warning messages
 **          09/08/2023 mem - Adjust capitalization of keywords
-**                         - Include schema name when calling function
+**                         - Include schema name when calling function verify_sp_authorized()
 **
 *****************************************************/
 DECLARE

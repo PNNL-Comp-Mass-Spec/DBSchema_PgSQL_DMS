@@ -14,7 +14,7 @@ CREATE OR REPLACE FUNCTION public.get_myemsl_url_dataset_name(_datasetname text)
 **  Date:   09/12/2013
 **          06/21/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
-**          09/08/2023 mem - Include schema name when calling function
+**          09/08/2023 mem - Include schema name when calling function verify_sp_authorized()
 **
 *****************************************************/
 DECLARE

@@ -31,7 +31,7 @@ CREATE OR REPLACE FUNCTION public.find_existing_jobs_for_job_params(_datasetlist
 **          05/12/2023 mem - Rename variables
 **          09/01/2023 mem - Remove unnecessary cast to citext for string constants
 **          09/07/2023 mem - Align assignment statements
-**          09/08/2023 mem - Include schema name when calling function
+**          09/08/2023 mem - Include schema name when calling function verify_sp_authorized()
 **
 *****************************************************/
 DECLARE

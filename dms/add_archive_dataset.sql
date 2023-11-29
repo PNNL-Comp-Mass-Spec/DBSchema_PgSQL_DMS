@@ -30,7 +30,7 @@ CREATE OR REPLACE PROCEDURE public.add_archive_dataset(IN _datasetid integer, IN
 **          05/19/2023 mem - Remove redundant parentheses
 **          05/30/2023 mem - Use format() for string concatenation
 **          06/15/2023 mem - Leave _returnCode as '' if the dataset already exists in t_dataset_archive
-**          09/08/2023 mem - Include schema name when calling function
+**          09/08/2023 mem - Include schema name when calling function verify_sp_authorized()
 **
 *****************************************************/
 DECLARE

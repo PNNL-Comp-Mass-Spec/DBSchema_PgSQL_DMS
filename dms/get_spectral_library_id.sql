@@ -62,7 +62,7 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **                         - Set _returnCode to 'U5225' if an existing spectral library is not found, and _allowAddNew is false
 **          09/07/2023 mem - Align assignment statements
 **                         - Update warning messages
-**          09/08/2023 mem - Include schema name when calling function
+**          09/08/2023 mem - Include schema name when calling function verify_sp_authorized()
 **          09/11/2023 mem - Adjust capitalization of keywords
 **
 *****************************************************/

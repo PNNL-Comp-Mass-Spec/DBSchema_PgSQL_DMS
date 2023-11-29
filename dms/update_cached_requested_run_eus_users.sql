@@ -25,7 +25,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_requested_run_eus_users(IN _req
 **          03/31/2023 mem - Ported to PostgreSQL
 **          05/07/2023 mem - Remove unused variable
 **          09/08/2023 mem - Adjust capitalization of keywords
-**                         - Include schema name when calling function
+**                         - Include schema name when calling function verify_sp_authorized()
 **
 *****************************************************/
 DECLARE

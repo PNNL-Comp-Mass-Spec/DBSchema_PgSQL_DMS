@@ -16,7 +16,7 @@ CREATE OR REPLACE PROCEDURE public.update_emsl_instrument_usage_report(IN _instr
 **    _eusInstrumentId  EMSL instrument ID to process; use this to process instruments like the 12T or the 15T where there are two instrument entries in DMS, yet they both map to the same EUS_Instrument_ID
 **    _endDate          This is used to determine the target year and month; the day of the month does not really matter
 **    _infoOnly         When true, preview updates
-**    _debugReports     Comma separated list of integers that specify which debug reports to show, for example '1' or '1,2,3'
+**    _debugReports     Comma-separated list of integers that specify which debug reports to show, for example '1' or '1,2,3'
 **                      When debug reports are shown, table T_EMSL_Instrument_Usage_Report is not be updated
 **                      Report types:
 **                        1: Show the initial data in Tmp_Staging
@@ -57,7 +57,7 @@ CREATE OR REPLACE PROCEDURE public.update_emsl_instrument_usage_report(IN _instr
 **                         - Call procedure Update_EMSL_Instrument_Acq_Overlap_Data
 **          07/15/2022 mem - Instrument operator ID is now tracked as an actual integer
 **          08/30/2023 mem - Ported to PostgreSQL
-**          09/08/2023 mem - Include schema name when calling function
+**          09/08/2023 mem - Include schema name when calling function verify_sp_authorized()
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **

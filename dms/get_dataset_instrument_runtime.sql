@@ -35,7 +35,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_instrument_runtime(_startinterval 
 **          05/31/2023 mem - Use format() for string concatenation
 **          07/18/2023 mem - Specify column names when returning data from Tmp_TX
 **          09/08/2023 mem - Adjust capitalization of keywords
-**                         - Include schema name when calling function
+**                         - Include schema name when calling function verify_sp_authorized()
 **
 *****************************************************/
 DECLARE

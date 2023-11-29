@@ -14,7 +14,7 @@ CREATE OR REPLACE PROCEDURE public.update_sample_request_assignments(IN _mode te
 **    _mode         Mode: 'priority', 'state', 'assignment', 'req_assignment', or 'est_completion'
 **                        'delete' is not supported by this procedure; instead use delete_sample_prep_request
 **    _newValue     New value
-**    _reqIDList    Comma separated list of prep request IDs
+**    _reqIDList    Comma-separated list of prep request IDs
 **
 **  Auth:   grk
 **  Date:   06/14/2005

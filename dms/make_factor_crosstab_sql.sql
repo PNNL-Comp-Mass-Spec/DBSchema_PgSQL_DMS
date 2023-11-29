@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION public.make_factor_crosstab_sql(_collist text, _viewn
 **  Desc:
 **      Returns dynamic SQL for a requested run factors crosstab query
 **
-**      The calling function must create and populate temporary table Tmp_RequestIDs
+**      The calling procedure must create and populate temporary table Tmp_RequestIDs
 **          CREATE TEMP TABLE Tmp_RequestIDs (
 **              Request int
 **          );
@@ -24,7 +24,9 @@ CREATE OR REPLACE FUNCTION public.make_factor_crosstab_sql(_collist text, _viewn
 **  Arguments:
 **    _colList      Columns to include in the crosstab, for example: ' ''x'' as sel, batch_id, experiment, dataset, name, status, request'
 **    _viewName     View to use; should be V_Requested_Run_Unified_List or V_Requested_Run_Unified_List_Ex
-**    _sql          Output: crosstab SQL
+**
+**  Returns:
+**      Crosstab SQL
 **
 **  Auth:   grk
 **  Date:   03/22/2010
@@ -101,10 +103,10 @@ BEGIN
                   ON Src.factor_id = I.FactorID
            GROUP BY Src.name) GroupQ;
 
-    -- This will have a comma separated list of factor names, for example: 'BioRep, Sample, Time'
+    -- This will have a comma-separated list of factor names, for example: 'BioRep, Sample, Time'
     _factorNameList := Trim(Coalesce(_factorNameList, ''));
 
-    -- This will have a comma separated list of factor names and the data type to use, for example: 'BioRep text, Sample text, Time text'
+    -- This will have a comma-separated list of factor names and the data type to use, for example: 'BioRep text, Sample text, Time text'
     _factorNameAndTypeList := Trim(Coalesce(_factorNameAndTypeList, ''));
 
     If _factorNameList <> '' Then

@@ -14,7 +14,7 @@ CREATE OR REPLACE PROCEDURE public.post_email_alert(IN _type text, IN _message t
 **    _type                         Typically Normal, Warning, or Error, but can be any text value
 **    _message                      Message to send
 **    _postedBy                     Calling procedure name
-**    _recipients                   Either a semicolon separated list of e-mail addresses, or a keyword to use to query T_Misc_Paths using 'Email_alert_' || _recipients
+**    _recipients                   Either a semicolon-separated list of e-mail addresses, or a keyword to use to query T_Misc_Paths using 'Email_alert_' || _recipients
 **    _postMessageToLogEntries      When true, also post this message to T_Log_Entries
 **    _duplicateEntryHoldoffHours   Set this to a value greater than 0 to prevent duplicate entries being posted within the given number of hours
 **

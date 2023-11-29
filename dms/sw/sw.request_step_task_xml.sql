@@ -35,7 +35,7 @@ CREATE OR REPLACE PROCEDURE sw.request_step_task_xml(IN _processorname text, INO
 **    _parameters               Output: job step parameters (as XML)
 **    _message                  Output message
 **    _infoLevel                Set to 1 to preview the job that would be returned; if 2, show additional messages
-**    _analysisManagerVersion   Used to update T_Local_Processors (ignored if an empty string)
+**    _analysisManagerVersion   Used to update t_local_processors (ignored if an empty string)
 **    _remoteInfo               Provided by managers that stage jobs to run remotely; used to assure that we don't stage too many jobs at once and to assure that we only check remote progress using a manager that has the same remote info as a job step
 **    _jobCountToPreview        The number of jobs to preview when _infoLevel >= 1
 **    _useBigBangQuery          Ignored and always set to true by this procedure (When true, uses a single, large query to find candidate steps, which can be very expensive if there is a large number of active jobs (i.e. over 10,000 active jobs))
@@ -44,14 +44,14 @@ CREATE OR REPLACE PROCEDURE sw.request_step_task_xml(IN _processorname text, INO
 **    _throttleAllStepTools     Only used if _throttleByStartTime is true; when false, will not throttle SEQUEST or Results_Transfer steps
 **
 **  Example usage:
-**    Call sw.request_step_task_xml ('Monroe_Analysis', _infoLevel => 1, _jobCountToPreview => 5);
-**    Call sw.request_step_task_xml ('Monroe_Analysis', _infoLevel => 1, _jobCountToPreview => 5, _throttleByStartTime => true, _maxStepNumToThrottle => 10);
-**    Call sw.request_step_task_xml ('Monroe_Analysis', _infoLevel => 1, _jobCountToPreview => 5);
-**    Call sw.request_step_task_xml ('Monroe_Analysis', _infoLevel => 1, _logSPUsage => true);
-**    Call sw.request_step_task_xml ('Monroe_Analysis', _infoLevel => 0, _analysisManagerVersion => '2.4.8433.27230');
+**    CALL sw.request_step_task_xml ('Monroe_Analysis', _infoLevel => 1, _jobCountToPreview => 5);
+**    CALL sw.request_step_task_xml ('Monroe_Analysis', _infoLevel => 1, _jobCountToPreview => 5, _throttleByStartTime => true, _maxStepNumToThrottle => 10);
+**    CALL sw.request_step_task_xml ('Monroe_Analysis', _infoLevel => 1, _jobCountToPreview => 5);
+**    CALL sw.request_step_task_xml ('Monroe_Analysis', _infoLevel => 1, _logSPUsage => true);
+**    CALL sw.request_step_task_xml ('Monroe_Analysis', _infoLevel => 0, _analysisManagerVersion => '2.4.8433.27230');
 **
 **  Auth:   grk
-**  Date:   08/23/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)
+**  Date:   08/23/2008 grk - Initial version (http://prismtrac.pnl.gov/trac/ticket/666)
 **          12/03/2008 grk - Included processor-tool priority in assignement logic
 **          12/04/2008 mem - Now returning _jobNotAvailableErrorCode if _processorName is not in T_Local_Processors
 **          12/11/2008 mem - Rearranged preference order for job assignment priorities

@@ -83,7 +83,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_local_job_in_broker(INOUT _job integer
 **          07/27/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
-**                         - Include schema name when calling function
+**                         - Include schema name when calling function verify_sp_authorized()
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **
 *****************************************************/

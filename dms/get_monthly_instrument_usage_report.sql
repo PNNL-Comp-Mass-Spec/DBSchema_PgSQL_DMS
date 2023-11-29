@@ -50,7 +50,7 @@ CREATE OR REPLACE FUNCTION public.get_monthly_instrument_usage_report(_instrumen
 **                         - Compute percentage values when _outputFormat is 'rollup'
 **                         - Add missing columns to debug reports
 **          09/08/2023 mem - Adjust capitalization of keywords
-**                         - Include schema name when calling function
+**                         - Include schema name when calling function verify_sp_authorized()
 **
 *****************************************************/
 DECLARE

@@ -23,7 +23,7 @@ CREATE OR REPLACE PROCEDURE public.add_mass_correction_entry(IN _modname text, I
 **          04/02/2020 mem - Expand _modName to varchar(32)
 **          08/27/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Update warning messages
-**          09/08/2023 mem - Include schema name when calling function
+**          09/08/2023 mem - Include schema name when calling function verify_sp_authorized()
 **
 *****************************************************/
 DECLARE
