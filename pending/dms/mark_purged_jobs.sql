@@ -14,11 +14,11 @@ AS $$
 **      This procedure is called by the Space Manager
 **
 **  Arguments:
-**    _jobList
-**    _infoOnly
+**    _jobList      Comma-separated list of job numbers
+**    _infoOnly     When true, preview updates
 **
 **  Auth:   mem
-**  Date:   06/13/2012
+**  Date:   06/13/2012 grk - Initial version
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -37,22 +37,29 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_JobList (
         Job int
-    )
+    );
 
     INSERT INTO Tmp_JobList (Job)
     SELECT Value
-    FROM public.parse_delimited_integer_list(_jobList)
+    FROM public.parse_delimited_integer_list(_jobList);
 
     If _infoOnly Then
         -- Preview the jobs
-        --
-        SELECT J.job AS Job, J.purged AS Job_Purged
-        FROM t_analysis_job J INNER JOIN
-             Tmp_JobList L ON J.job = L.job
-        ORDER BY job
+
+        -- ToDo: Show this info using RAISE INFO
+
+        FOR _jobInfo IN
+            SELECT J.job AS Job, J.purged AS Job_Purged
+            FROM t_analysis_job J INNER JOIN
+                 Tmp_JobList L ON J.job = L.job
+            ORDER BY job
+        LOOP
+            ...
+            RAISE INFO format(...);
+        END LOOP;
     Else
-        -- Update purged
-        --
+        -- Update purged jobs
+
         UPDATE t_analysis_job
         SET purged = 1
         FROM Tmp_JobList JL

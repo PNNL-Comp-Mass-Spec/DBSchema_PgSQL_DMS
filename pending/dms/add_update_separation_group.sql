@@ -19,11 +19,11 @@ AS $$
 **      Adds new or edits an existing separation group
 **
 **  Arguments:
-**    _separationGroup
-**    _comment
-**    _active
-**    _samplePrepVisible
-**    _fractionCount
+**    _separationGroup      Separation group name
+**    _comment              Group comment
+**    _active               Active: 1 means active, 0 means inactive
+**    _samplePrepVisible    When 1, include in the DMS website chooser used when editing a sample prep request
+**    _fractionCount        For separation groups used when fractionating samples, the number of fractions to be generated, e.g. 'LC-MicroHpH-12' has a fraction count of 12
 **    _mode                 Mode: 'add' or 'update'
 **    _message              Output message
 **    _returnCode           Return code

@@ -28,7 +28,7 @@ AS $$
 **    _callingUser      Calling user username
 **
 **  Auth:   grk
-**  Date:   03/27/2008 grk - Initial release (ticket http://prismtrac.pnl.gov/trac/ticket/603)
+**  Date:   03/27/2008 grk - Initial version (ticket http://prismtrac.pnl.gov/trac/ticket/603)
 **          07/24/2008 grk - Added retirement mode
 **          09/14/2016 mem - When retiring a single experiment, will abort and update _message if the experiment is already retired
 **          06/16/2017 mem - Restrict access using verify_sp_authorized

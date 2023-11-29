@@ -21,7 +21,7 @@ AS $$
 **    _endDate
 **    _campaignIDFilterList     Comma-separated list of campaign IDs
 **    _organismIDFilterList     Comma separate list of organism IDs
-**    _instrumentFilterList     Comma-separated list of instrument names (% and * wild cards are allowed); if empty, dataset stats are not returned
+**    _instrumentFilterList     Comma-separated list of instrument names; % and * wildcards are allowed ('*' is auto-changed to '%'); if empty, dataset stats are not returned
 **    _message                  Status message
 **    _returnCode               Return code
 **

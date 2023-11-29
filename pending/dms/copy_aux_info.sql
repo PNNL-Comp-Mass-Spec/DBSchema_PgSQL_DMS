@@ -18,7 +18,7 @@ AS $$
 **      Copies aux info from a source item to a target item
 **
 **  Arguments:
-**    _targetName           Target type name: Experiment, Biomaterial (previously 'Cell Culture'), Dataset, or SamplePrepRequest
+**    _targetName           Target type name: 'Experiment', 'Biomaterial' (previously 'Cell Culture'), 'Dataset', or 'SamplePrepRequest'
 **    _targetEntityName     Target entity ID or name
 **    _categoryName         Category name
 **    _subCategoryName      Subcategory name
@@ -28,7 +28,7 @@ AS $$
 **    _returnCode           Return code
 **
 **  Auth:   grk
-**  Date:   01/27/2003 grk - Initial release
+**  Date:   01/27/2003 grk - Initial version
 **          07/12/2008 grk - Added error check for source
 **          07/06/2022 mem - Use new aux info definition view name
 **          08/15/2022 mem - Use new column name

@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Do an operation on an item, using the item name
+**      Do an operation on an item in a container, using the item name
 **
 **  Arguments:
 **    _name         Item name (biomaterial name, experiment name, or experiment ID)

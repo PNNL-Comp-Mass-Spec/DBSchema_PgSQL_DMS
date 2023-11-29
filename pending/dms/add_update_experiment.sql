@@ -49,8 +49,8 @@ AS $$
 **    _enzymeName               Enzyme name, e.g. 'Trypsin', 'LysC, or 'No_Enzyme'
 **    _labNotebookRef           Lab notebook description or Sharepoint URL
 **    _labelling                Isotopic label name, e.g. 'TMT10' or 'TMT18'; use 'none' if no label or 'Unknown' if undefined
-**    _biomaterialList          Semicolon-separated or comma separated list of biomaterial names; empty string if not applicable
-**    _referenceCompoundList    Semicolon-separated or comma separated list of reference compound IDs; supports integers, or names of the form 3311:ANFTSQETQGAGK
+**    _biomaterialList          Semicolon-separated or comma-separated list of biomaterial names; empty string if not applicable
+**    _referenceCompoundList    Semicolon-separated or comma-separated list of reference compound IDs; supports integers, or names of the form 3311:ANFTSQETQGAGK
 **    _samplePrepRequest        Sample prep request ID; 0 if no request
 **    _internalStandard         Internal standard name, e.g. 'MP_10_02'; last used in 2013
 **    _postdigestIntStd         Post-digestion internal standard name, e.g. 'ADHYeast_031411'; last used in 2014
@@ -66,7 +66,7 @@ AS $$
 **    _callingUser              Calling user username
 **
 **  Auth:   grk
-**  Date:   01/08/2002 grk - Initial release
+**  Date:   01/08/2002 grk - Initial version
 **          08/25/2004 jds - Updated proc to add T_Enzyme table value
 **          06/10/2005 grk - Added handling for sample prep request
 **          10/28/2005 grk - Added handling for internal standard

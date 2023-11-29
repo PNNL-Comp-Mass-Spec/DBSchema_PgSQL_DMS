@@ -26,9 +26,10 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Generates a sample loading list for given LC Cart
+**      Generates a sample loading list for given LC cart
 **
-**      This function is likely unused in 2022, since cart_column in t_requested_run has only had null values since September 2020
+**      This function is likely unused in 2022, since cart_column (cart column ID) in t_requested_run has only had null values since September 2020,
+**      and the function raises a warning and exits if any of the matching requested runs has a null cart column ID value
 **
 **      SELECT Extract(year from Entered) AS RR_Year,
 **             Sum(CASE WHEN NOT Cart_Column IS NULL THEN 1 ELSE 0 END) AS Requests_with_Non_Null_Cart_Col,
@@ -38,9 +39,9 @@ AS $$
 **      ORDER BY RR_Year DESC;
 **
 **  Arguments:
-**    _lcCartName
-**    _blanksFollowingRequests
-**    _columnsWithLeadingBlanks
+**    _lcCartName                   LC cart name
+**    _blanksFollowingRequests      Comma-separated list of request IDs for which a blank dataset should be added after the request ID
+**    _columnsWithLeadingBlanks     Comma-separated list of column IDs for which a leading blank dataset should be added
 **
 **  Auth:   grk
 **  Date:   04/09/2007 (Ticket #424)
@@ -53,13 +54,13 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _col int;
-    _numCols int;
+    _columnNumber int;
+    _columnCount int;
     _maxSamples int;
     _qLen int;
     _padCnt int;
     _c int;
-    _maxOS int;
+    _maxEntryID int;
     _matchCount int;
     _requestCountTotal int;
     _dsTypeForBlanks text;
@@ -68,14 +69,13 @@ BEGIN
     _returnCode := '';
 
     ---------------------------------------------------
-    -- Create temporary table to hold requested runs
-    -- assigned to cart
+    -- Create temporary table to hold requested runs assigned to cart
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_XR (
-        request int NOT NULL,
-        col int NULL,
-        os int PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 2)
+        request_id int NOT NULL,
+        cart_column_id int NULL,
+        entry_id int PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 2)
     );
 
     ---------------------------------------------------
@@ -83,23 +83,23 @@ BEGIN
     -- assigned to this cart
     ---------------------------------------------------
 
-    INSERT INTO Tmp_XR( request, col )
-    SELECT t_requested_run.request_id,
-           t_requested_run.cart_column
-    FROM t_requested_run
-         INNER JOIN t_lc_cart
-           ON t_requested_run.cart_id = t_lc_cart.cart_id
-    WHERE t_lc_cart.cart_name = _lcCartName
-    ORDER BY t_requested_run.priority DESC,
-             t_requested_run.batch_id,
-             t_requested_run.run_order,
-             t_requested_run.request_id
+    INSERT INTO Tmp_XR( request_id, cart_column_id )
+    SELECT RR.request_id,
+           RR.cart_column      -- Cart column ID: null for all requested runs since 2020-09-24
+    FROM t_requested_run RR
+         INNER JOIN t_lc_cart C
+           ON RR.cart_id = C.cart_id
+    WHERE C.cart_name = _lcCartName::citext
+    ORDER BY RR.priority DESC,
+             RR.batch_id,
+             RR.run_order,
+             RR.request_id
 
     ---------------------------------------------------
     -- Verify that all requests have column assignments
     ---------------------------------------------------
 
-    If Exists (SELECT request FROM Tmp_XR WHERE col IS NULL) Then
+    If Exists (SELECT request_id FROM Tmp_XR WHERE cart_column_id IS NULL) Then
         _message := 'Some requests do not have column assignments';
         RAISE WARNING '%', _message;
 
@@ -112,13 +112,14 @@ BEGIN
     -- How many columns need to be used for this cart?
     ---------------------------------------------------
 
-    SELECT COUNT(DISTINCT col)
-    INTO _numCols
+    SELECT COUNT(DISTINCT cart_column_id)
+    INTO _columnCount
     FROM Tmp_XR;
 
     ---------------------------------------------------
     -- Add following blanks to table
     ---------------------------------------------------
+
     -- Use OVERRIDING SYSTEM VALUE to insert an explicit value for the identity column, for example:
     --
     -- INSERT INTO mc.t_log_entries (entry_id, posted_by, posting_time, type, message)
@@ -126,23 +127,21 @@ BEGIN
     -- VALUES (12345, 'Test', CURRENT_TIMESTAMP, 'Test', 'message');
 
     If _blanksFollowingRequests <> '' Then
-        --
-        INSERT INTO Tmp_XR (request, col, os)
+        INSERT INTO Tmp_XR (request_id, cart_column_id, entry_id)
         OVERRIDING SYSTEM VALUE
-        SELECT 0, col, os + 1
+        SELECT 0, cart_column_id, entry_id + 1
         FROM Tmp_XR
-        WHERE request in (SELECT value FROM public.parse_delimited_integer_list(_blanksFollowingRequests))
+        WHERE request_id In (SELECT value FROM public.parse_delimited_integer_list(_blanksFollowingRequests))
     End If;
 
     ---------------------------------------------------
-    -- Add column lead blanks to table
+    -- Add column leading blanks to table
     ---------------------------------------------------
 
     If _columnsWithLeadingBlanks <> '' Then
-        --
-        INSERT INTO Tmp_XR (request, col, os)
+        INSERT INTO Tmp_XR (request_id, cart_column_id, entry_id)
         OVERRIDING SYSTEM VALUE
-        SELECT 0, value, 0 - value
+        SELECT 0, value, -value
         FROM public.parse_delimited_integer_list(_columnsWithLeadingBlanks);
     End If;
 
@@ -153,27 +152,24 @@ BEGIN
     -- How many samples in longest column queue?
     --
 
-    SELECT MAX(T.X)
+    SELECT MAX(CountQ.SampleCount)
     INTO _maxSamples
-    FROM ( SELECT COUNT(request) AS X
+    FROM ( SELECT COUNT(request_id) AS SampleCount
            FROM Tmp_XR
-           GROUP BY col ) T
+           GROUP BY cart_column_id ) CountQ;
 
-    _col := 1;
+    SELECT MAX(entry_id)
+    INTO _maxEntryID
+    FROM Tmp_XR;
 
-    SELECT MAX(os)
-    INTO _maxOS
-    FROM Tmp_XR
-
-    --
-    WHILE _col <= _numCols
+    FOR _columnNumber IN 1 .. _columnCount
     LOOP
-        -- How many samples in col queue?
+        -- How many samples in column queue?
         --
-        SELECT COUNT(request)
+        SELECT COUNT(request_id)
         INTO _qLen
         FROM Tmp_XR
-        WHERE col = _col;
+        WHERE cart_column_id = _columnNumber;
 
         -- Number of blanks to add
         --
@@ -181,81 +177,71 @@ BEGIN
 
         -- Append blanks
         --
-        _c := 0;
-
-        WHILE _c < _padCnt
+        FOR _c IN 1 .. _padCnt
         LOOP
-            INSERT INTO Tmp_XR (request, col, os)
-            VALUES (0, _col, _maxOS + 1)
-            _maxOS := _maxOS + 1;
+            INSERT INTO Tmp_XR (request_id, cart_column_id, entry_id)
+            VALUES (0, _columnNumber, _maxEntryID + 1);
 
-            _c := _c + 1;
+            _maxEntryID := _maxEntryID + 1;
         END LOOP;
 
-        _col := _col + 1;
     END LOOP;
 
     ---------------------------------------------------
-    -- Create temporary table to sequence samples
-    -- for cart
+    -- Create temporary table to sequence samples for cart
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_XS (
-        request int NOT NULL,
-        col int NULL,
+        request_id int NOT NULL,
+        cart_column_id int NULL,
         seq int NULL,
-        os int PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1)
+        entry_id int PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1)
     );
 
     ---------------------------------------------------
-    -- Copy contents of original request table to
-    -- sequence generating table
+    -- Copy contents of original request table to sequence generating table
     ---------------------------------------------------
 
-    INSERT INTO Tmp_XS (request, col)
-    SELECT request, col
-    FROM Tmp_XR
-    ORDER BY Abs(os);
+    INSERT INTO Tmp_XS (request_id, cart_column_id)
+    SELECT Src.cart_column_id, Src.cart_column_id
+    FROM Tmp_XR Src
+    ORDER BY Abs(Src.entry_id);
 
     ---------------------------------------------------
-    -- Sequentially number all the samples for each
-    -- column so that columns rotate
+    -- Sequentially number all the samples for each column so that columns rotate
     ---------------------------------------------------
 
     -- First, number the sequence field (incrementing by 10)
     -- for each request in each set for each cart column
 
-    _col := 1;
-
-    WHILE _col <= _numCols
+    FOR _columnNumber IN 1 .. _columnCount
     LOOP
         -- The following Update query stores values 10, 20, 30, etc. in the seq column (for a given column)
-        -- The Row_Number() function sorts by the identity field "os"
+        -- The Row_Number() function sorts by the identity field "entry_id"
 
         UPDATE Tmp_XS
         SET seq = CountQ.Seq
-        FROM ( SELECT os,
-                      Row_Number() OVER (ORDER BY os) * 10 As Seq
+        FROM ( SELECT entry_id,
+                      Row_Number() OVER (ORDER BY entry_id) * 10 As Seq
                FROM Tmp_XS
-               WHERE col = _col) CountQ
-        WHERE Tmp_XS.os = CountQ.os
+               WHERE cart_column_id = _columnNumber) CountQ
+        WHERE Tmp_XS.entry_id = CountQ.entry_id
 
-        _col := _col + 1;
     END LOOP;
 
     -- Next bump the sequence field up by adding the column number
     -- This assumes that there are 9 or fewer columns (since the seq values 10 units apart)
 
     UPDATE Tmp_XS
-    SET seq = seq + col;
+    SET seq = seq + cart_column_id;
 
     ---------------------------------------------------
     -- Create temporary table to hold the final sequence
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_XF (
-        request int NOT NULL,
-        col int,
+        request_id int NOT NULL,
+        cart_column_id int,
         seq int PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),
         blankSeq int null
     );
@@ -264,10 +250,10 @@ BEGIN
     -- Populate the final sequence table
     ---------------------------------------------------
 
-    INSERT INTO Tmp_XF (request, col)
-    SELECT request, col
-    FROM Tmp_XS
-    ORDER BY seq;
+    INSERT INTO Tmp_XF (request_id, cart_column_id)
+    SELECT Src.request_id, Src.cart_column_id
+    FROM Tmp_XS Src
+    ORDER BY Src.seq;
 
     ---------------------------------------------------
     -- Check whether all of the entries in Tmp_XF have the same dataset type.
@@ -287,7 +273,7 @@ BEGIN
          INNER JOIN t_dataset_type_name DSType
            ON RR.request_type_id = DSType.dataset_type_id
          INNER JOIN Tmp_XF
-           ON RR.request_id = Tmp_XF.request
+           ON RR.request_id = Tmp_XF.request_id
     GROUP BY DSType.Dataset_Type
     ORDER BY COUNT(RR.request_id) DESC
     LIMIT 1;
@@ -296,7 +282,7 @@ BEGIN
     INTO _requestCountTotal
     FROM t_requested_run RR
          INNER JOIN Tmp_XF
-           ON RR.request_id = Tmp_XF.request;
+           ON RR.request_id = Tmp_XF.request_id;
 
     If _matchCount < _requestCountTotal * 0.75 Then
         _dsTypeForBlanks := Null;
@@ -310,11 +296,11 @@ BEGIN
 
     UPDATE Tmp_XF
     SET blankSeq = CountQ.BlankSeq
-    FROM ( SELECT seq,
-                  Row_Number() OVER ( ORDER BY Seq ) AS BlankSeq
-           FROM Tmp_XF
-           WHERE request = 0 ) CountQ
-    WHERE Tmp_XF.request = 0 AND
+    FROM ( SELECT RankSrc.seq,
+                  Row_Number() OVER ( ORDER BY RankSrc.Seq ) AS BlankSeq
+           FROM Tmp_XF RankSrc
+           WHERE RankSrc.request_id = 0 ) CountQ
+    WHERE Tmp_XF.request_id = 0 AND
           Tmp_XF.seq = CountQ.Seq
 
     ---------------------------------------------------
@@ -324,12 +310,12 @@ BEGIN
     RETURN QUERY
     SELECT
         Tmp_XF.seq AS Sequence,
-        (CASE WHEN Tmp_XF.request = 0 THEN format('Blank-%s', Tmp_XF.blankSeq) ELSE RR.request_name END)::citext AS Name,
-        Tmp_XF.request AS Request,
-        Tmp_XF.col AS Column_Number,
+        (CASE WHEN Tmp_XF.request_id = 0 THEN format('Blank-%s', Tmp_XF.blankSeq) ELSE RR.request_name END)::citext AS Name,
+        Tmp_XF.request_id AS Request,
+        Tmp_XF.cart_column_id AS Column_Number,
         E.experiment AS Experiment,
         RR.priority AS Priority,
-        CASE WHEN Tmp_XF.request = 0 THEN _dsTypeForBlanks ELSE DSType.Dataset_Type END AS Type,
+        CASE WHEN Tmp_XF.request_id = 0 THEN _dsTypeForBlanks ELSE DSType.Dataset_Type END AS Type,
         RR.batch_id AS Batch,
         RR.block As Block,
         RR.run_order AS Run_Order,
@@ -344,7 +330,7 @@ BEGIN
          INNER JOIN t_dataset_type_name DSType
            ON RR.request_type_id = DSType.dataset_type_id
          RIGHT OUTER JOIN Tmp_XF
-           ON RR.request_id = Tmp_XF.request
+           ON RR.request_id = Tmp_XF.request_id
     ORDER BY Tmp_XF.seq
 
     DROP TABLE Tmp_XR;

@@ -10,7 +10,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Stores new stats in T_Project_Usage_Stats,
+**      Stores new stats in t_project_usage_stats,
 **      tracking the number of datasets and user-initiated analysis jobs
 **      run within the specified date range
 **

@@ -18,7 +18,7 @@ AS $$
 **  Arguments:
 **    _wellplateName    Wellplate name
 **    _description      Description
-**    _mode             Mode: 'add' or 'update' or 'assure'
+**    _mode             Mode: 'add', 'update', or 'assure'
 **    _message          Output message
 **    _returnCode       Return code
 **    _callingUser      Calling user username

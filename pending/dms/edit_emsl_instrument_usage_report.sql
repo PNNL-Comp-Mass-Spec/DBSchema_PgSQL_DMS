@@ -12,7 +12,9 @@ CREATE OR REPLACE PROCEDURE public.edit_emsl_instrument_usage_report
     _comment text = '',
     _fieldName text = '',
     _newValue text = '',
-    _doUpdate int = 0
+    _doUpdate int = 0,
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -24,21 +26,21 @@ AS $$
 **      This procedure appears to be unused in 2017
 **
 **  Arguments:
-**    _year
-**    _month
-**    _instrument
-**    _type
-**    _usage
-**    _proposal
-**    _users
-**    _operator     Operator for update, corresponding to person_id in t_eus_users (should be an integer representing EUS Person ID; if an empty string, will store NULL for the operator ID)
-**    _comment
+**    _year         Year
+**    _month        Month
+**    _instrument   Instrument name;                     if an empty string, do not filter on instrument name
+**    _type         Usage type: 'Dataset' or 'Interval'; if an empty string, do not filter on usage type
+**    _usage        EUS usage type name;                 if an empty string, do not filter on usage type
+**    _proposal     EUS proposal, e.g. '60045';          if an empty string, do not filter on proposals
+**    _users        EUS user ID, e.g. '52597';           if an empty string, do not filter on user ID; typically only a single user, but can also be a list of users, e.g. '43787, 49612'
+**    _operator     Operator for update, corresponding to person_id in t_eus_users (should be an integer representing EUS Person ID); if an empty string, will store NULL for the operator ID
+**    _comment      Usage comment
 **    _fieldName    Field name: 'Proposal', 'Usage', 'Users', 'Operator', 'Comment'
-**    _newValue
+**    _newValue     Field value
 **    _doUpdate     When 0, preview the update
 **
 **  Auth:   grk
-**  Date:   08/31/2012 grk - Initial release
+**  Date:   08/31/2012 grk - Initial version
 **          09/11/2012 grk - Fixed update SQL
 **          04/11/2017 mem - Replace column Usage with Usage_Type
 **          07/15/2022 mem - Instrument operator ID is now tracked as an actual integer
@@ -57,6 +59,9 @@ DECLARE
     _previewData record;
     _infoData text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
@@ -112,8 +117,8 @@ BEGIN
     INSERT INTO Tmp_InstrumentUsageInfo( seq )
     SELECT seq
     FROM t_emsl_instrument_usage_report
-    WHERE MONTH = _month AND
-          YEAR = _year AND
+    WHERE month = _month AND
+          year = _year AND
           (_instrumentID = 0 OR dms_inst_id = _instrumentID) AND
           (_type = '' OR type = _type) AND
           (_usageTypeID = 0 OR usage_type_id = _usageTypeID) AND

@@ -29,7 +29,7 @@ AS $$
 **      (despite the procedure name, only updates are allowed)
 **
 **  Arguments:
-**    _seq          Row ID; column seq in T_EMSL_Instrument_Usage_Report
+**    _seq          Row ID; column seq in t_emsl_instrument_usage_report
 **    _emslInstID   EMSL Instrument ID
 **    _instrument   Unused (not updatable)
 **    _type         Unused (not updatable)
@@ -39,7 +39,7 @@ AS $$
 **    _month        Unused (not updatable)
 **    _id           Unused (not updatable)     -- Dataset_ID
 **    _proposal     EUS proposal for updating a usage entry
-**    _usage        Usage type (ONSITE, REMOTE, MAINTENANCE, BROKEN, etc.); corresponds to T_EMSL_Instrument_Usage_Type
+**    _usage        Usage type (ONSITE, REMOTE, MAINTENANCE, BROKEN, etc.); corresponds to t_emsl_instrument_usage_type
 **    _users        EUS user IDs
 **    _operator     Operator ID, corresponding to person_id in t_eus_users (should be an integer representing EUS Person ID; if an empty string, will store NULL for the operator ID)
 **    _comment      Comment

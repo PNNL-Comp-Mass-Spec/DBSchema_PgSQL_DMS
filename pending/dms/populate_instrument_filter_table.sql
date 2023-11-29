@@ -19,7 +19,7 @@ AS $$
 **          );
 **
 **  Arguments:
-**    _instrumentFilterList   Comma-separated list of instrument names (% and * wild cards are allowed)
+**    _instrumentFilterList     Comma-separated list of instrument names; % and * wildcards are allowed ('*' is auto-changed to '%')
 **    _message                  Output message
 **    _returnCode               Return code
 **

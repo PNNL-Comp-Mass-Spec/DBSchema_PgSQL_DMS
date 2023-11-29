@@ -3,14 +3,17 @@ CREATE OR REPLACE FUNCTION public.get_next_local_symbol_id
 (
     _paramFileID int
 )
-RETURNS text
+RETURNS int
 LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
 **  Desc:
-**      Gets next available LocalSymbolID for a given parameter file ID
+**      Gets next available local symbol ID for a given parameter file ID
 **
+**  Returns:
+**      Next available local symbol ID (as an integer)
+
 **  Arguments:
 **    _paramFileID  Parameter file ID
 **
@@ -36,7 +39,7 @@ BEGIN
     SELECT MAX(local_symbol_id)
     INTO _localSymbolID
     FROM t_param_file_mass_mods
-    WHERE (param_file_id = _paramFileID)
+    WHERE param_file_id = _paramFileID;
 
     If Not FOUND Or _localSymbolID is null Then
         _localSymbolID := 0;

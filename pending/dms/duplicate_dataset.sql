@@ -16,7 +16,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Duplicates a dataset by adding a new row to T_Dataset and calling add_update_requested_run
+**      Duplicates a dataset by adding a new row to t_dataset and calling add_update_requested_run
 **
 **  Arguments:
 **    _sourceDataset        Existing dataset to copy

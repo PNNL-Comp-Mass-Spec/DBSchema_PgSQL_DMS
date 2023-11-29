@@ -33,7 +33,7 @@ AS $$
 **    _comment              Dataset comment
 **    _eusProposalID        EUS proposal ID
 **    _eusUsageType         EUS usage type
-**    _eusUsersList         EUS User ID (only a single person is allowed, though long ago multiple people could be listed)
+**    _eusUsersList         EUS User ID (only a single person is allowed, though originally multiple people could be listed)
 **    _mode                 Can be 'add', 'update', 'bad', 'check_update', 'check_add'
 **    _message              Output message
 **    _returnCode           Return code

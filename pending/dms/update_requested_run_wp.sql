@@ -19,7 +19,7 @@ AS $$
 **      If _requestIdList is empty, finds active requested runs that use _oldWorkPackage
 **      If _requestIdList is defined, finds all requested runs in the list that use _oldWorkPackage, regardless of the state
 **
-**      Changes will be logged to T_Log_Entries
+**      Changes will be logged to t_log_entries
 **
 **  Arguments:
 **    _oldWorkPackage   Old work package

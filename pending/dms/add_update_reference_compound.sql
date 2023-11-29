@@ -39,7 +39,7 @@ AS $$
 **    _description          Description
 **    _compoundTypeName     Compound type name: 'Compound', 'Metabolite standards', or 'Protein/peptide standards'
 **    _geneName             Gene or Protein name
-**    _modifications        Semicolon separated list of modifications, e.g. 'HeavyK@]' or 'Iodacet@9; Iodacet@10; Iodacet@22; HeavyK@]'
+**    _modifications        Semicolon-separated list of modifications, e.g. 'HeavyK@]' or 'Iodacet@9; Iodacet@10; Iodacet@22; HeavyK@]'
 **    _organismName         Organism name
 **    _pubChemID            Will be converted to an integer; empty strings are stored as null
 **    _campaignName         Campaign name

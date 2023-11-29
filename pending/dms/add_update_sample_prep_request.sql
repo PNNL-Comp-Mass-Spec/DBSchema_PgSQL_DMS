@@ -50,7 +50,7 @@ AS $$
 **    _requestName                      Sample prep request name
 **    _requesterUsername                Requester username
 **    _reason                           Description of the prep request
-**    _materialContainerList            Comma separated list of material container names
+**    _materialContainerList            Comma-separated list of material container names
 **    _organism                         Organism name
 **    _biohazardLevel                   Biohazard level
 **    _campaign                         Campaign

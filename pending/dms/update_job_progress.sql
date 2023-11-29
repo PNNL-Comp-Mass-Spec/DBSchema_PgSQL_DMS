@@ -11,8 +11,9 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates column Progress in table T_Analysis_Job
-**      Note that a progress of -1 is used for failed jobs
+**      Updates column progress in table t_analysis_job
+**
+**      Note that a progress value of -1 is used for failed jobs
 **      Jobs in state 1=New or 8=Holding will have a progress of 0
 **
 **      Set _mostRecentDays and _job to zero to update all jobs

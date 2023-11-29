@@ -24,7 +24,7 @@ AS $$
 **    _groupType        Experiment group type: 'General' or 'Fraction'
 **    _groupName        Experiment group name (previously _tab)
 **    _description      Description
-**    _experimentList   Comma separated list of experiment names
+**    _experimentList   Comma-separated list of experiment names
 **    _parentExp        Parent experiment name
 **    _researcher       Researcher username
 **    _mode             Mode: 'add' or 'update'

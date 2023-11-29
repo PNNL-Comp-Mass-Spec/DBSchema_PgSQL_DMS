@@ -14,7 +14,7 @@ AS $$
 **  Desc:
 **      Stores SHA-1 hash info or file size info for dataset files
 **
-**      By default, only adds new data to T_Dataset_Files; will not replace existing values.
+**      By default, only adds new data to t_dataset_files; will not replace existing values.
 **      Set _updateExisting to 'Force' to forcibly replace existing hash values or change existing file sizes
 **
 **      Filenames cannot contain spaces

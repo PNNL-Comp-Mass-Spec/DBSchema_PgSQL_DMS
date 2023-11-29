@@ -26,7 +26,7 @@ AS $$
 **    _id                           Input/Output: Requested run batch ID in t_requested_run_batches
 **    _name                         Batch name
 **    _description                  Description
-**    _requestNameList              Comma separated list of requested run names
+**    _requestNameList              Comma-separated list of requested run names
 **    _ownerUsername                Owner username
 **    _requestedBatchPriority       Batch priority: 'Normal' or 'High'
 **    _requestedCompletionDate      Requested completion date (as text)

@@ -9,11 +9,10 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the work package for requested runs
-**      from EUS projects by looking for other requested runs
-**      from the same project that have a work package
+**      Updates the work package for requested runs from EUS projects by looking
+**      for other requested runs from the same project that have a work package
 **
-**      Changes will be logged to T_Log_Entries
+**      Changes will be logged to t_log_entries
 **
 **  Arguments:
 **    _searchWindowDays

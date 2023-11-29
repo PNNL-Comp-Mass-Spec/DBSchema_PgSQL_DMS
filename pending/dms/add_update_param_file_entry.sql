@@ -24,8 +24,8 @@ AS $$
 **  Arguments:
 **    _paramFileID      Name of new parameter file description
 **    _entrySeqOrder    Entry sequence order
-**    _entryType        Entry type; for modifications, will be 'DynamicModification', 'StaticModification', 'IsotopicModification', or 'TermDynamicModification'; for other parameters, will be the name entered into T_Param_Entries, either 'BasicParam' or 'AdvancedParam'
-**    _entrySpecifier   Entry specifier; For modifications, this is the residues affected for dynamic, static, or isotopic mods; for other entries, will be the name entered into T_Param_Entries, column Entry_Specifier, e.g. 'FragmentMassType' or 'PeptideMassTolerance'
+**    _entryType        Entry type; for modifications, will be 'DynamicModification', 'StaticModification', 'IsotopicModification', or 'TermDynamicModification'; for other parameters, will be the name entered into t_param_entries, either 'BasicParam' or 'AdvancedParam'
+**    _entrySpecifier   Entry specifier; For modifications, this is the residues affected for dynamic, static, or isotopic mods; for other entries, will be the name entered into t_param_entries, column Entry_Specifier, e.g. 'FragmentMassType' or 'PeptideMassTolerance'
 **    _entryValue       Entry value
 **    _mode             Mode: 'add' or 'update'
 **    _infoOnly         When true, preview updates
@@ -113,7 +113,7 @@ BEGIN
         End If;
 
         If (_entryType = 'DynamicModification') Then
-            _localSymbolID := public.get_next_local_symbol_id(_paramFileID)
+            _localSymbolID := public.get_next_local_symbol_id(_paramFileID);
             _typeSymbol := 'D';
         End If;
 

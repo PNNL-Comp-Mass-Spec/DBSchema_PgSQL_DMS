@@ -9,7 +9,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the data in T_MTS_MT_DBs_Cached using MTS
+**      Updates the data in t_mts_mt_dbs_cached using MTS
 **
 **  Arguments:
 **    _message      Output message

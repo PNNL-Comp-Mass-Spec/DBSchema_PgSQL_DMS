@@ -12,12 +12,12 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Populates the Last_Updated column in table T_Factors using T_Factor_Log
+**      Populates the last_updated column in table t_factors using t_factor_log
 **
 **  Arguments:
-**    _infoOnly
-**    _dateFilterStart
-**    _dateFilterEnd
+**    _infoOnly         When true, preview the updates
+**    _dateFilterStart  Start date to filter rows in t_factor_log; null to process all rows
+**    _dateFilterEnd    End date to filter rows in t_factor_log; null to process all rows
 **    _message          Output message
 **    _returnCode       Return code
 **
@@ -74,8 +74,6 @@ BEGIN
     -----------------------------------------------------------
 
     _infoOnly := Coalesce(_infoOnly, true);
-    _message := '';
-    _returnCode := '';
 
     If _dateFilterStart Is Null And _dateFilterEnd Is Null Then
         _eventIDStart := -1;

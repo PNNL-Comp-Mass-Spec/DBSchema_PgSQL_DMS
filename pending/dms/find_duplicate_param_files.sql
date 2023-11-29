@@ -25,17 +25,19 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Compares the param file entries in T_Param_Entries and
-**      T_Param_File_Mass_Mods to find parameter files that match
+**      Compares the param file entries in t_param_entries and t_param_file_mass_mods to find parameter files that have identical mass mods
 **
 **  Arguments:
-**    _paramFileNameFilter              One or more param file name specifiers, separated by commas (filters can contain % wildcards)
-**    _paramFileTypeList                MSGFPlus, MaxQuant, MSFragger, XTandem, etc.
-**    _ignoreParentMassType             When true, ignore 'ParentMassType' differences in T_Param_Entries
+**    _paramFileNameFilter              One or more parameter file name specifiers, separated by commas (names can contain % as a wildcard)
+**    _paramFileTypeList                Parameter file type: 'MSGFPlus', 'MaxQuant', 'MSFragger', 'XTandem', etc.
+**    _ignoreParentMassType             When true, ignore 'ParentMassType' differences in t_param_entries
 **    _considerInsignificantParameters  When true, also compare 'ShowFragmentIons', 'NumberOfDescriptionLines', 'NumberOfOutputLines', and 'NumberOfResultsToProcess'
 **    _checkValidOnly                   When true, ignore parameter files with Valid = 0
 **    _maxFilesToTest                   Maximum number of parameter files to examine
 **    _previewSql                       When true, preview SQL
+**
+**  Returns:
+**      Table of duplicater parameter files
 **
 **  Auth:   mem
 **  Date:   05/15/2008 mem - Initial version (Ticket:671)

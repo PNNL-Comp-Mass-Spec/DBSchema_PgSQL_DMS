@@ -17,8 +17,8 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Clone a series of related analysis jobs to create new jobs
-**      with a new parameter file, new settings file, and/or new protein collection list
+**      Clone a series of related analysis jobs to create new jobs with a
+**      new parameter file, new settings file, and/or new protein collection list
 **
 **      The source jobs must all have the same parameter file and settings file (this is a safety feature)
 **      The source jobs do not have to use the same protein collection
@@ -27,19 +27,19 @@ AS $$
 **      If _newProteinCollectionList is not empty, all new jobs will have the same protein collection
 **
 **  Arguments:
-**    _sourceJobs               Comma-separated list of jobs to copy
-**    _newParamFileName
-**    _newSettingsFileName
-**    _newProteinCollectionList
-**    _supersedeOldJob          When true, change the state of old jobs to 14
-**    _updateOldJobComment      When true, add the new job number to the old job comment
-**    _allowDuplicateJob        When true, allow the new jobs to be duplicates of the old jobs (useful for testing a new version of a tool or updated .UIMF)
-**    _infoOnly
-**    _message                  Output message
-**    _returnCode               Return code
+**    _sourceJobs                   Comma-separated list of jobs to copy
+**    _newParamFileName             New parameter file to use
+**    _newSettingsFileName          New settings file to use
+**    _newProteinCollectionList     New protein collection to use (if empty, use the same protein collection as teh old job)
+**    _supersedeOldJob              When true, change the state of old jobs to 14
+**    _updateOldJobComment          When true, add the new job number to the old job comment
+**    _allowDuplicateJob            When true, allow the new jobs to be duplicates of the old jobs (useful for testing a new version of a tool or updated .UIMF)
+**    _infoOnly                     When true, preview updates
+**    _message                      Output message
+**    _returnCode                   Return code
 **
 **  Auth:   mem
-**  Date:   07/12/2016 mem - Initial Release
+**  Date:   07/12/2016 mem - Initial version
 **          07/19/2016 mem - Add parameter _allowDuplicateJob
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/12/2018 mem - Send _maxLength to append_to_text

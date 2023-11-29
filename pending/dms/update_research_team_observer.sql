@@ -23,7 +23,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   04/03/2010
-**          04/03/2010 grk - Initial release
+**          04/03/2010 grk - Initial version
 **          04/04/2010 grk - Callable as operatons_sproc
 **          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized

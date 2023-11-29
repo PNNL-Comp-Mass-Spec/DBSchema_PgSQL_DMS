@@ -13,10 +13,9 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Renames a dataset in T_Dataset
+**      Renames a dataset in t_dataset
 **
-**      Also updates associated jobs in cap.t_tasks and sw.t_jobs,
-**      and updates dpkg.t_data_package_datasets
+**      Also updates associated jobs in cap.t_tasks and sw.t_jobs, and updates dpkg.t_data_package_datasets
 **
 **  Arguments:
 **    _datasetNameOld

@@ -10,13 +10,13 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Examines the responsible user for active Charge_Codes with one or more sample prep requests or requested runs
-**      Auto-adds any users who are not in T_User
+**      Examines the responsible user for active charge codes with one or more sample prep requests or requested runs
+**      Auto-adds any users who are not in t_users
 **
 **      Uses external server SQLSRVPROD02, which is accessed via a foreign data wrapper
 **
 **  Arguments:
-**    _infoOnly
+**    _infoOnly         When true, preview updates
 **    _message          Output message
 **    _returnCode       Return code
 **

@@ -23,26 +23,25 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Creates a new analysis job request using the appropriate
-**      parameter file and settings file for the specified settings
+**      Creates a new analysis job request using the appropriate parameter file and settings file for the specified settings
 **
 **  Arguments:
 **    _requestID            Input/output: analysis job request ID
-**    _requestName
-**    _datasets             Input/output parameter: comma-separated list of datasets; will be alphabetized after removing duplicates
-**    _toolName
-**    _jobTypeName
-**    _protCollNameList
-**    _protCollOptionsList
-**    _dynMetOxEnabled
-**    _statCysAlkEnabled
-**    _dynSTYPhosEnabled
-**    _comment
-**    _ownerUsername
-**    _infoOnly
-**    _message          Output message
-**    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _requestName          Job request name
+**    _datasets             Input/output: comma-separated list of dataset names; will be alphabetized after removing duplicates
+**    _toolName             Analysis tool name
+**    _jobTypeName          Job type name: 'Low Res MS1', 'High Res MS1', 'iTRAQ 4-plex', 'iTRAQ 8-plex', 'TMT 6-plex', 'TMT 16-plex', or 'TMT Zero'
+**    _protCollNameList     Comma-separated list of protein collection names
+**    _protCollOptionsList  Protein collection options
+**    _dynMetOxEnabled      When 1, select a parameter file with dynamic oxidized methionine
+**    _statCysAlkEnabled    When 1, select a parameter file with static alkylated cysteine (carbamidomethyl)
+**    _dynSTYPhosEnabled    When 1, select a parameter file with dynamic phosphorylated S, T, and Y
+**    _comment              Job comment
+**    _ownerUsername        Username to associate with the jobs
+**    _infoOnly             When true, preview jobs that would be created
+**    _message              Output message
+**    _returnCode           Return code
+**    _callingUser          Calling user username
 **
 **  Auth:   mem
 **  Date:   11/14/2012 mem - Initial version
@@ -152,7 +151,7 @@ BEGIN
         End If;
 
         If Coalesce(_jobTypeName, '') = '' Then
-            RAISE EXCEPTION 'Job Type Name is empty';
+            RAISE EXCEPTION 'Job type name is empty';
         End If;
 
         If Coalesce(_protCollNameList, '') = '' Then

@@ -35,7 +35,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the PSM stats in T_Analysis_Job_PSM_Stats for the specified analysis job
+**      Updates the PSM stats in t_analysis_job_psm_stats for the specified analysis job
 **
 **  Arguments:
 **    _spectraSearched                      Number of spectra that were searched

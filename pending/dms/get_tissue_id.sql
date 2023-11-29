@@ -12,10 +12,10 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Gets Tissue ID for given Tissue Name or Tissue ID
+**      Gets tissue ID for given tissue name or tissue ID
 **
 **  Arguments:
-**    _tissueNameOrID       Tissue Name or Tissue Identifier to find
+**    _tissueNameOrID       Tissue name or tissue identifier to find
 **    _tissueIdentifier     Output: Tissue identifier, e.g. BTO:0000131
 **    _tissueName           Output: Human readable tissue name, e.g. plasma
 **    _message              Output message

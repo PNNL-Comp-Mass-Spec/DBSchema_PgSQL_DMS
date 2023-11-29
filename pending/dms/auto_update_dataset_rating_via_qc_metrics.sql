@@ -13,16 +13,17 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Looks for Datasets that have low QC metric values
-**      and auto-updates their rating to Not_Released
+**      Looks for 'Released' datasets that have low QC metric values and auto changes their rating to 'Not Released'
 **
-**      If one more more entries is found, updates _matchingUsername and _matchingUserID for the first match
+**      Thresholds:
+**        Number of tryptic peptides, total spectra count,  less than 250
+**        Number of tryptic peptides, unique peptide count, less than 100
 **
 **  Arguments:
-**    _campaignName             Campaign name to filter on; filter uses Like so the name can contain a wild card
-**    _experimentExclusion
-**    _datasetCreatedMinimum
-**    _infoOnly
+**    _campaignName             Campaign name to filter on; supports % as a wildcard
+**    _experimentExclusion      Experiment name to exclude; supports % as a wildcard
+**    _datasetCreatedMinimum    Dataset creation date threshold for selecting datasets to examine
+**    _infoOnly                 When true, preview updates
 **    _message                  Output message
 **    _returnCode               Return code
 **
@@ -64,7 +65,7 @@ BEGIN
     End If;
 
     _datasetCreatedMinimum := Coalesce(_datasetCreatedMinimum, make_date(2000, 1, 1));
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly              := Coalesce(_infoOnly, false);
 
     CREATE TEMP TABLE Tmp_DatasetsToUpdate (
         Dataset_ID int not null
@@ -92,10 +93,10 @@ BEGIN
     WHERE DS.dataset_rating_id = 5 AND
           DQC.p_2a < _thresholdP_2A AND      -- Number of tryptic peptides; total spectra count
           DQC.p_2c < _thresholdP_2C AND      -- Number of tryptic peptides; unique peptide count
-          DSType.Dataset_Type LIKE '%msn%' AND
           DS.created >= _datasetCreatedMinimum AND
-          C.campaign LIKE _campaignName AND
-          NOT E.experiment LIKE _experimentExclusion;
+          DSType.Dataset_Type ILIKE '%msn%' AND
+          C.campaign          ILIKE _campaignName AND
+          NOT E.experiment    ILIKE _experimentExclusion;
 
     If _infoOnly Then
 
@@ -177,10 +178,11 @@ BEGIN
         -- Update the rating
 
         UPDATE DS
-        SET Comment = CASE WHEN Comment = '' THEN ''
+        SET Comment = CASE WHEN Comment = ''
+                           THEN ''
                            ELSE format('%s; Not released: SMAQC P_2C = %s', Comment, DQC.P_2C);
                       END,
-            dataset_rating_id = - 5
+            dataset_rating_id = -5  -- 'Not released'
         FROM t_dataset DS
              INNER JOIN Tmp_DatasetsToUpdate U
                ON DS.dataset_id = U.dataset_id

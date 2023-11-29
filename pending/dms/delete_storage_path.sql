@@ -12,7 +12,7 @@ AS $$
 **  Desc:
 **      Deletes given storage path from the storage path table
 **
-**      Storage path may not have any associated datasets.
+**      Storage path may not have any associated datasets
 **
 **  Arguments:
 **    _pathID       Storage path ID

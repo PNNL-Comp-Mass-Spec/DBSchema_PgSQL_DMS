@@ -15,7 +15,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Duplicates an analysis job by calling Add_Update_Analysis_Job
+**      Duplicates an analysis job by calling add_update_analysis_job
 **
 **  Arguments:
 **    _job                      Job number to copy

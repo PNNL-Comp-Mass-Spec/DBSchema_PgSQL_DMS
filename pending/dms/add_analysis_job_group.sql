@@ -38,12 +38,12 @@ AS $$
 **    _settingsFileName             Settings file name
 **    _organismDBName               Legacy FASTA name; 'na' if using protein collections
 **    _organismName                 Organism name
-**    _protCollNameList             Protein collection(s)
+**    _protCollNameList             Comma-separated list of protein collection names
 **    _protCollOptionsList          Protein collection options
 **    _ownerUsername                Owner username; will be updated to _callingUser if _callingUser is valid
 **    _comment                      Job comment
 **    _specialProcessing            Special processing parameters
-**    _requestID                    0 if not associated with a request; otherwise, Request ID in T_Analysis_Job_Request
+**    _requestID                    0 if not associated with a request; otherwise, request ID in t_analysis_job_request
 **    _dataPackageID                Data package ID
 **    _associatedProcessorGroup     Processor group name; deprecated in May 2015
 **    _propagationMode              Propagation mode: 'Export', 'No Export'

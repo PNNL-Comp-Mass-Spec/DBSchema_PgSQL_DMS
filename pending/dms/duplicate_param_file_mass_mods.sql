@@ -15,20 +15,20 @@ AS $$
 **  Desc:
 **      Copies the mass modification definitions from an existing parameter file to a new parameter file
 **
-**      Requires that the new parameter file exists in T_Param_Files,
-**      but does not yet have any entries in T_Param_File_Mass_Mods
+**      Requires that the new parameter file exists in t_param_files,
+**      but does not yet have any entries in t_param_file_mass_mods
 **
 **  Arguments:
-**    _sourceParamFileID
-**    _destParamFileID
-**    _updateParamEntries   When true, updates T_Param_Entries in addition to T_Param_File_Mass_Mods
-**                          However, table T_Param_Entries is only used by SEQUEST parameter files, and SEQUEST was retired in 2019, so this argument is obsolete
-**    _infoOnly
+**    _sourceParamFileID    Source parameter file ID
+**    _destParamFileID      Destination parameter file ID
+**    _updateParamEntries   When true, updates t_param_entries in addition to t_param_file_mass_mods
+**                          However, table t_param_entries is only used by SEQUEST parameter files, and SEQUEST was retired in 2019, so this argument is obsolete
+**    _infoOnly             When true, preview the modification definitions that would be copied
 **    _message              Output message
 **    _returnCode           Return code
 **
 **  Auth:   mem
-**  Date:   05/04/2009
+**  Date:   05/04/2009 mem - Initial version
 **          07/01/2009 mem - Added parameter _destParamFileID
 **          07/22/2009 mem - Now returning the suggested query for tweaking the newly entered mass mods
 **          11/30/2018 mem - Renamed the Monoisotopic_Mass and Average_Mass columns

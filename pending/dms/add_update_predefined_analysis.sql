@@ -63,8 +63,8 @@ AS $$
 **    _settingsFileNam              Settings file nam
 **    _organismName                 Organism name
 **    _organismDBName               Organism database name (legacy FASTA file)
-**    _protCollNameList             Protein collection name list
-**    _protCollOptionsList          Protein collection options list
+**    _protCollNameList             Comma-separated list of protein collection names
+**    _protCollOptionsList          Protein collection options
 **    _priority                     Priority to assign to jobs created from the predefine
 **    _enabled                      Enabled: 1 if enabled, 0 if disabled
 **    _description                  Description

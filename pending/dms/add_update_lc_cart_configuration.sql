@@ -42,7 +42,7 @@ AS $$
 **      Adds new or edits an existing LC cart configuration entry
 **
 **  Arguments:
-**    _id                           Cart config ID; column cart_config_id in T_LC_Cart_Configuration
+**    _id                           Cart config ID; column cart_config_id in t_lc_cart_configuration
 **    _configName                   Cart config name
 **    _description                  Description
 **    _autosampler                  Autosampler name (empty string or null if no autosampler)
@@ -76,7 +76,7 @@ AS $$
 **    _callingUser                  Calling user username
 **
 **  Auth:   mem
-**  Date:   02/02/2017 mem - Initial release
+**  Date:   02/02/2017 mem - Initial version
 **          02/22/2017 mem - Add several new parameters to match the updated columns in T_LC_Cart_Configuration
 **          02/23/2017 mem - Validate the config name
 **          02/24/2017 mem - Add parameters _primaryTrapTime and _primaryTrapMobilePhase

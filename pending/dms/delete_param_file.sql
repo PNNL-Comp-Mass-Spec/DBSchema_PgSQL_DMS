@@ -10,7 +10,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Deletes given parameter file from the T_Param_Files and all referencing tables
+**      Deletes given parameter file from the t_param_files and all referencing tables
 **
 **  Arguments:
 **    _paramFileName    Parameter file name
@@ -63,7 +63,7 @@ BEGIN
     SELECT param_file_id
     INTO _paramFileID
     FROM t_param_files
-    WHERE param_file_name = _paramFileName;
+    WHERE param_file_name = _paramFileName::citext;
 
     If Not FOUND Then
         _message := format('Param file not found in t_param_files: %s', _paramFileName);

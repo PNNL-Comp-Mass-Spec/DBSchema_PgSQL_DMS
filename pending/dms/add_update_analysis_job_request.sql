@@ -30,7 +30,7 @@ AS $$
 **      Adds new analysis job request to request queue
 **
 **  Arguments:
-**    _datasets                         Comma separated list of datasets
+**    _datasets                         Comma-separated list of datasets
 **    _requestName                      Job request name
 **    _toolName                         Tool name
 **    _paramFileName                    Parameter file name
@@ -43,7 +43,7 @@ AS $$
 **    _comment                          Job request comment
 **    _specialProcessing                Special processing parameters; typically ''
 **    _dataPackageID                    Data package ID
-**    _state                            State, typically 'new', 'used', or 'inactive' (see T_Analysis_Job_Request_State)
+**    _state                            State, typically 'new', 'used', or 'inactive' (see t_analysis_job_request_state)
 **    _requestID                        Input/output: analysis job request ID
 **    _mode                             Mode: 'add', 'update', 'append', or 'PreviewAdd'
 **    _autoRemoveNotReleasedDatasets    When true, remove datasets that are not released

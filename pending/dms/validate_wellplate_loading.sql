@@ -26,7 +26,7 @@ AS $$
 **
 **  Auth:   grk
 **  Date:   07/24/2009
-**          07/24/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/741)
+**          07/24/2009 grk - Initial version (http://prismtrac.pnl.gov/trac/ticket/741)
 **          11/30/2009 grk - Fixed problem with filling last well causing error message
 **          12/01/2009 grk - Modified to skip checking of existing well occupancy if _totalCount = 0
 **          05/16/2022 mem - Show example well numbers

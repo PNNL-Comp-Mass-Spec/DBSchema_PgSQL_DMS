@@ -60,7 +60,7 @@ AS $$
 **    _callingUser  Calling user username
 **
 **  Auth:   grk
-**  Date:   02/20/2010 grk - Initial release
+**  Date:   02/20/2010 grk - Initial version
 **          03/17/2010 grk - Expanded blacklist
 **          03/22/2010 grk - Allow dataset id
 **          09/02/2011 mem - Now calling Post_Usage_Log_Entry

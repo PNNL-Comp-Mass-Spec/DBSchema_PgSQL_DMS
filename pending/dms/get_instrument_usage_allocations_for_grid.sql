@@ -6,22 +6,37 @@ CREATE OR REPLACE FUNCTION public.get_instrument_usage_allocations_for_grid
 )
 RETURNS TABLE
 (
-    ...
+    fiscal_year int4,
+	proposal_id citext,
+	title citext,
+	status citext,
+	general citext,
+	ft float8,
+	ims float8,
+	orb float8,
+	exa float8,
+	ltq float8,
+	gc float8,
+	qqq float8,
+	last_updated text,
+	fy_proposal citext
 )
 LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
 **  Desc:
-**      Get grid data for editing given usage allocations
+**      Get grid data for editing given instrument usage allocations
+**
+**      This function is obsolete since instrument allocation was last tracked in 2012 (see table t_instrument_allocation)
 **
 **  Arguments:
-**    _itemList     Comma separated list of proposal IDs to filter on; if an empty string, include all proposals
+**    _itemList     Comma-separated list of proposal IDs to filter on; if an empty string, include all proposals
 **    _fiscalYear   Fiscal year
 **
 **  Auth:   grk
 **  Date:   01/15/2013
-**          01/15/2013 grk - Initial release
+**          01/15/2013 grk - Initial version
 **          01/16/2013 grk - Single fiscal year
 **          12/15/2023 mem - Ported to PostgreSQL
 **
@@ -43,6 +58,7 @@ BEGIN
     SELECT Value
     FROM public.parse_delimited_list(_itemList);
 
+    RETURN QUERY
     SELECT fiscal_year,
            proposal_id,
            title,

@@ -10,15 +10,14 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Populates temp table Tmp_CampaignFilter
-**      based on the comma-separated campaign IDs in _campaignIDFilterList
+**      Populates temp table Tmp_CampaignFilter based on the comma-separated campaign IDs in _campaignIDFilterList
 **
-**  The calling procedure must create the temporary table:
+**      The calling procedure must create the temporary table:
 **
-**    CREATE TEMP TABLE Tmp_CampaignFilter (
-**        Campaign_ID int NOT NULL,
-**        Fraction_EMSL_Funded numeric NULL
-**    );
+**          CREATE TEMP TABLE Tmp_CampaignFilter (
+**              Campaign_ID int NOT NULL,
+**              Fraction_EMSL_Funded numeric NULL
+**          );
 **
 **  Arguments:
 **    _campaignIDFilterList     Comma-separated list of campaign IDs

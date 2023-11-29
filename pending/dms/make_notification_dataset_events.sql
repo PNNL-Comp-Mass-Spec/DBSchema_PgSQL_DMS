@@ -12,11 +12,11 @@ AS $$
 **      Adds dataset notification events to notification event table
 **
 **  Arguments:
-**    _infoOnly
-**    _showDebug
+**    _infoOnly     When true, show the number of notification events that would be added
+**    _showDebug    When _infoOnly is true, if _showDebug is true, show details on the events that would be added
 **
 **  Auth:   grk
-**  Date:   04/02/2010 grk - Initial Release
+**  Date:   04/02/2010 grk - Initial version
 **          04/02/2010 mem - Updated the 'Not Released' check to cover Dataset Rating -9 to 1
 **                         - Now also looking for 'Released' datasets
 **          11/03/2016 mem - Fix bug that was failing to remove events of type 20 (Dataset Not Released) from T_Notification_Event

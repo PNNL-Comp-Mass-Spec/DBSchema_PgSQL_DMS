@@ -21,12 +21,12 @@ AS $$
 **      This procedure is likely unused in 2022
 **
 **  Arguments:
-**    _parameterFileName        Name of analysis parameter file
+**    _parameterFileName        Name of parameter file
 **    _paramFileID              Output: parameter file ID
 **    _paramFileFound           Output: true if the parameter file exists in t_param_files
-**    _pmTargetSymbolList       Output: comma separated list of modification symbols
-**    _pmMassCorrectionTagList  Output: comma separated list of static and dynamic mod names (mass correction tags)
-**    _npMassCorrectionTagList  Output: comma separated list of isotopic mod names (mass correction tags)
+**    _pmTargetSymbolList       Output: comma-separated list of modification symbols
+**    _pmMassCorrectionTagList  Output: comma-separated list of static and dynamic mod names (mass correction tags)
+**    _npMassCorrectionTagList  Output: comma-separated list of isotopic mod names (mass correction tags)
 **    _message                  Output message
 **    _returnCode               Return code
 **

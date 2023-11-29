@@ -11,19 +11,19 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds a charge code (work package) to T_Charge_Code
+**      Adds a charge code (work package) to t_charge_code
 **
 **      Useful when a work package is not auto-adding to the table
 **      (charge codes are auto-added if the owner is a DMS user or DMS guest)
 **
 **  Arguments:
-**    _chargeCodeList   Comma separated list of charge codes (work packages) to add to T_Charge_Code
+**    _chargeCodeList   Comma-separated list of charge codes (work packages) to add to t_charge_code
 **    _infoOnly         When true, preview work package metadata that would be applied
 **    _message          Output message
 **    _returnCode       Return code
 **
 **  Auth:   mem
-**  Date:   08/13/2015 mem - Initial Version
+**  Date:   08/13/2015 mem - Initial release
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/

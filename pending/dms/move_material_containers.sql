@@ -19,22 +19,22 @@ AS $$
 **  Desc:
 **      Moves containers from one location to another
 **      Allows for moving between freezers, shelves, and racks, but requires that Row and Col remain unchanged
-**      Created in August 2016 to migrate samples from old freezer 1206A to new freezer 1206A, which  has more shelves but fewer racks
+**      Created in August 2016 to migrate samples from old freezer 1206A to new freezer 1206A, which has more shelves but fewer racks
 **
 **  Arguments:
-**    _freezerTagOld
-**    _shelfOld
-**    _rackOld
-**    _freezerTagNew
-**    _shelfNew
-**    _rackNew
-**    _infoOnly
+**    _freezerTagOld    Old freezer tag
+**    _shelfOld         Old shelf
+**    _rackOld          Old rack
+**    _freezerTagNew    New freezer tag
+**    _shelfNew         New shelf
+**    _rackNew          New rack
+**    _infoOnly         When true, re
 **    _message          Output message
 **    _returnCode       Return code
 **    _callingUser      Calling user username
 **
 **  Auth:   mem
-**  Date:   08/03/2016
+**  Date:   08/03/2016 mem - Initial version
 **          08/27/2018 mem - Rename the view Material Location list report view
 **          06/21/2022 mem - Use new column name Container_Limit in view V_Material_Location_List_Report
 **          12/15/2023 mem - Ported to PostgreSQL

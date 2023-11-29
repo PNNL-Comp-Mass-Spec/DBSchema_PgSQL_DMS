@@ -10,7 +10,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Deletes a parameter file by ID
+**      Deletes given parameter file from the t_param_files and all referencing tables
 **
 **  Arguments:
 **    _paramFileID      Parameter file ID

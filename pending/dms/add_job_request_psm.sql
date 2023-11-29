@@ -34,7 +34,7 @@ AS $$
 **    _comment                  Job request comment
 **    _ownerUsername            Job request owner username
 **    _organismName             Organism name
-**    _protCollNameList         Protein collection(s)
+**    _protCollNameList         Comma-separated list of protein collection names
 **    _protCollOptionsList      Protein collection options
 **    _toolName                 Analysis tool name
 **    _jobTypeName              Analysis job type name

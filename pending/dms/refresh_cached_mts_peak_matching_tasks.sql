@@ -11,7 +11,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the data in T_MTS_Peak_Matching_Tasks_Cached using MTS
+**      Updates the data in t_mts_peak_matching_tasks_cached using MTS
 **
 **  Arguments:
 **    _jobMinimum   Set to a positive value to limit the jobs examined; when non-zero, jobs outside the range _jobMinimum to _jobMaximum are ignored

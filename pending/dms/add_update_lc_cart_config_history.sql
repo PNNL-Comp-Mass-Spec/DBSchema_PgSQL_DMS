@@ -20,7 +20,7 @@ AS $$
 **      Adds new or edits an existing cart config history entry
 **
 **  Arguments:
-**    _id               Entry_ID in T_LC_Cart_Config_History
+**    _id               Entry_ID in t_lc_cart_config_history
 **    _cart             Cart name
 **    _dateOfChange     Date for the cart config history item
 **    _postedBy         Username of the person associated with the cart config history item

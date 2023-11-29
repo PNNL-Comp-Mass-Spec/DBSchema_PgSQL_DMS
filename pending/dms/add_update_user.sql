@@ -23,18 +23,18 @@ AS $$
 **  Arguments:
 **    _username             Network login for the user (was traditionally D+Payroll number, but switched to last name plus 3 digits around 2011)
 **    _hanfordIdNum         Hanford ID number for user; cannot be blank
-**    _lastNameFirstName    Cannot be blank (though this field is auto-updated by UpdateUsersFromWarehouse)
-**    _email                Can be blank; will be auto-updated by UpdateUsersFromWarehouse
-**    _userStatus           Active or Inactive (whether or not user is Active in DMS)
-**    _userUpdate           Y or N  (whether or not to auto-update using UpdateUsersFromWarehouse)
-**    _operationsList       List of access permissions for user
+**    _lastNameFirstName    Cannot be blank (though this field is auto-updated by procedure update_users_from_warehouse)
+**    _email                Can be blank; will be auto-updated by update_users_from_warehouse
+**    _userStatus           Status: 'Active' or 'Inactive'; when 'Active', the user is active in DMS
+**    _userUpdate           Update: 'Y' or 'N'; when 'Y', auto-update the user using update_users_from_warehouse()
+**    _operationsList       Comma-separated list of access permissions (aka operation names); see table t_user_operations
 **    _mode                 Mode: 'add' or 'update'
 **    _message              Output message
 **    _returnCode           Return code
 **
 **  Auth:   grk
 **  Date:   01/27/2004
-**          11/03/2006 JDS - Added support for U_Status field, removed _accessList varchar(256)
+**          11/03/2006 jds - Added support for U_Status field, removed _accessList varchar(256)
 **          01/23/2008 grk - Added _userUpdate
 **          10/14/2010 mem - Added _comment
 **          06/01/2012 mem - Added Try/Catch block

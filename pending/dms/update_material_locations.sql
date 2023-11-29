@@ -29,7 +29,7 @@ AS $$
 **    _callingUser      Calling user username
 **
 **  Auth:   grk
-**  Date:   06/02/2013 grk - Initial release
+**  Date:   06/02/2013 grk - Initial version
 **          06/03/2013 grk - Added action attribute to XML
 **          06/06/2013 grk - Added code to update status
 **          02/23/2016 mem - Add set XACT_ABORT on

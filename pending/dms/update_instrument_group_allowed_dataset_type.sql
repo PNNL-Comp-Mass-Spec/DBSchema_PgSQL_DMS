@@ -26,7 +26,7 @@ AS $$
 **    _callingUser  Calling user username
 **
 **  Auth:   grk
-**  Date:   09/19/2009 grk - Initial release (Ticket #749, http://prismtrac.pnl.gov/trac/ticket/749)
+**  Date:   09/19/2009 grk - Initial version (Ticket #749, http://prismtrac.pnl.gov/trac/ticket/749)
 **          02/12/2010 mem - Now making sure _datasetType is properly capitalized
 **          08/28/2010 mem - Updated to work with instrument groups
 **          09/02/2011 mem - Now calling Post_Usage_Log_Entry

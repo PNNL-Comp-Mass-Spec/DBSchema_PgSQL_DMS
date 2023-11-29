@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Perform analysis job operation defined by 'mode'
+**      Perform analysis job operation defined by _mode
 **
 **  Arguments:
 **    _job          Analysis job ID

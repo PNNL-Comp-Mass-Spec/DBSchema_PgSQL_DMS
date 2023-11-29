@@ -25,7 +25,7 @@ AS $$
 **      that the file attachment is attached to; see the upload method in File_attachment.php
 **
 **  Arguments:
-**    _id                   File attachment ID in T_File_Attachment
+**    _id                   File attachment ID in t_file_attachment
 **    _fileName             File name
 **    _description          Description
 **    _entityType           Page family name: 'campaign', 'experiment', 'sample_prep_request', 'lc_cart_configuration', etc.

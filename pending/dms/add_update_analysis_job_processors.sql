@@ -20,12 +20,12 @@ AS $$
 **      Adds new or edits an existing analysis job processor
 **
 **  Arguments:
-**    _id                   Processor ID in T_Analysis_Job_Processors
+**    _id                   Processor ID in t_analysis_job_processors
 **    _state                State
 **    _processorName        Processor name
 **    _machine              Machine
 **    _notes                Notes
-**    _analysisToolsList    Comma separated list of analysis tools
+**    _analysisToolsList    Comma-separated list of analysis tools
 **    _mode                 Mode: 'add' or 'update'
 **    _message              Output message
 **    _returnCode           Return code

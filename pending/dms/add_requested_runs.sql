@@ -39,7 +39,7 @@ AS $$
 **
 **  Arguments:
 **    _experimentGroupID            Specify ExperimentGroupID or ExperimentList, but not both
-**    _experimentList               Comma separated list of experiments
+**    _experimentList               Comma-separated list of experiments
 **    _requestNameSuffix            Actually used as the request name Suffix
 **    _operatorUsername             Operator username
 **    _instrumentGroup              Instrument group; could alternatively be '(lookup)'

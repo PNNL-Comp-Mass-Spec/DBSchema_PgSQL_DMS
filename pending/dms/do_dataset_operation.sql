@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Perform dataset operation defined by 'mode'
+**      Perform dataset operation defined by _mode
 **
 **  Arguments:
 **    _datasetNameOrID  Dataset name or dataset ID

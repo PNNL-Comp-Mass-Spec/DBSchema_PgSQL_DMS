@@ -11,7 +11,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Creates job for new entries in T_Predefined_Analysis_Scheduling_Queue
+**      Creates analysis jobs for new entries in t_predefined_analysis_scheduling_queue
 **
 **      Should be called periodically by a SQL Server Agent job
 **
@@ -22,7 +22,7 @@ AS $$
 **    _returnCode               Return code
 **
 **  Auth:   grk
-**  Date:   08/26/2010 grk - Initial release
+**  Date:   08/26/2010 grk - Initial version
 **          08/26/2010 mem - Added _maxDatasetsToProcess and _infoOnly
 **                         - Now passing _preventDuplicateJobs to CreatePredefinedAnalysisJobs
 **          03/27/2013 mem - Now obtaining Dataset name from T_Dataset

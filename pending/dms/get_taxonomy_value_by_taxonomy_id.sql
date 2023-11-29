@@ -19,10 +19,10 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Looks up taxonomy values for the given TaxonomyID
+**      Looks up taxonomy values for the given NCBI taxonomy ID
 **
 **  Arguments:
-**    _ncbiTaxonomyID       TaxonomyID value to lookup; ignored if _previewResults is true and _previewOrganismID is non-zero (and NCBI_Taxonomy_ID is defined in T_Organisms for the given organism)
+**    _ncbiTaxonomyID       Taxonomy ID value to lookup; ignored if _previewResults is true and _previewOrganismID is non-zero (and ncbi_taxonomy_id is defined in t_organisms for the given organism)
 **    _orgDomain            Output: domain
 **    _orgKingdom           Output: kingdom
 **    _orgPhylum            Output: phylum
@@ -32,7 +32,7 @@ AS $$
 **    _orgGenus             Output: genus
 **    _orgSpecies           Output: species
 **    _orgStrain            Output: strain
-**    _previewResults       True to preview the results
+**    _previewResults       When true, preview the results
 **    _previewOrganismID    When _previewResults is true, if this is non-zero, retrieves the information for the give organism by ID (provided the organism has NCBI_Taxonomy_ID defined)
 **
 **  Auth:   mem
@@ -162,7 +162,7 @@ BEGIN
         ---------------------------------------------------
 
         -- Superkingdom
-        CALL public.update_taxonomy_item_if_defined ('superkingdom',  _value => _newDomain);
+        CALL public.update_taxonomy_item_if_defined ('superkingdom', _value => _newDomain);
 
         -- Subkingdom, Kingdom
         CALL public.update_taxonomy_item_if_defined ('subkingdom', _value => _newKingdom);
@@ -255,27 +255,18 @@ BEGIN
     ---------------------------------------------------
 
     If _previewResults Then
-        SELECT  Case When _previewOrganismID > 0 Then _previewOrganismID Else 0 End AS OrganismID,
-                _organismName AS Organism,
-                _ncbiTaxonomyID AS NCBITaxonomyID,
-                _orgDomain AS Domain,
-                _newDomain AS Domain_New,
-                _orgKingdom AS Kingdom,
-                _newKingdom AS Kingdom_New,
-                _orgPhylum AS Phylum,
-                _newPhylum AS Phylum_New,
-                _orgClass AS Class,
-                _newClass AS Class_New,
-                _orgOrder AS Order,
-                _newOrder AS Order_New,
-                _orgFamily AS Family,
-                _newFamily AS Family_New,
-                _orgGenus AS Genus,
-                _newGenus AS Genus_New,
-                _orgSpecies AS Species,
-                _newSpecies AS Species_New,
-                _orgStrain AS Strain,
-                _newStrain AS Strain_New;
+        RAISE INFO '';
+        RAISE INFO 'Organism ID %: %', CASE WHEN _previewOrganismID > 0 THEN _previewOrganismID ELSE 0 END, _organismName;
+        RAISE INFO 'NCBI Taxonomy ID: %', _ncbiTaxonomyID;
+        RAISE INFO 'Old/new Domain:  % vs. %', _orgDomain,  _newDomain;
+        RAISE INFO 'Old/new Kingdom: % vs. %', _orgKingdom, _newKingdom;
+        RAISE INFO 'Old/new Phylum:  % vs. %', _orgPhylum,  _newPhylum;
+        RAISE INFO 'Old/new Class:   % vs. %', _orgClass,   _newClass;
+        RAISE INFO 'Old/new Order:   % vs. %', _orgOrder,   _newOrder;
+        RAISE INFO 'Old/new Family:  % vs. %', _orgFamily,  _newFamily;
+        RAISE INFO 'Old/new Genus:   % vs. %', _orgGenus,   _newGenus;
+        RAISE INFO 'Old/new Species: % vs. %', _orgSpecies, _newSpecies;
+        RAISE INFO 'Old/new Strain:  % vs. %', _orgStrain,  _newStrain;
     End If;
 
     ---------------------------------------------------

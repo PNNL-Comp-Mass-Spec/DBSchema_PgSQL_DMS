@@ -13,13 +13,16 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Deletes rows from t_param_entries for a given parameter file ID
+**      Deletes a row from t_param_entries for a given parameter file ID and entry details
+**
+**      This only applies to SEQUEST parameter files, and is likely only used
+**      by the SEQUEST Parameter File Editor, which is obsolete
 **
 **  Arguments:
-**    _paramFileID
-**    _entrySeqOrder
-**    _entryType
-**    _entrySpecifier
+**    _paramFileID      Parameter file ID
+**    _entrySeqOrder    Entry sequence order
+**    _entryType        Entry type
+**    _entrySpecifier   Entry specifier name
 **    _message          Output message
 **    _returnCode       Return code
 **
@@ -35,11 +38,6 @@ DECLARE
     _currentProcedure text;
     _nameWithSchema text;
     _authorized boolean;
-
-    _msg text;
-    _paramEntryID int;
-    _result int;
-    _transName text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -65,17 +63,14 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Get ParamFileID
-    ---------------------------------------------------
-
-    _paramEntryID := public.get_param_entry_id(_paramFileID, _entryType, _entrySpecifier, _entrySeqOrder);
-
-    ---------------------------------------------------
-    -- Delete any entries for the parameter file from the entries table
+    -- Delete the matching row
     ---------------------------------------------------
 
     DELETE FROM t_param_entries
-    WHERE param_entry_id = _paramEntryID;
+    WHERE param_file_id = _paramFileID AND
+          entry_type = _entryType::citext AND
+          entry_specifier = _entrySpecifier::citext AND
+          entry_sequence_order = _entrySeqOrder;
 
 END
 $$;

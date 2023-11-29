@@ -16,7 +16,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the data in T_MTS_Cached_Data_Status using MTS
+**      Updates the data in t_mts_cached_data_status using MTS
 **
 **  Arguments:
 **    _cachedDataTableName

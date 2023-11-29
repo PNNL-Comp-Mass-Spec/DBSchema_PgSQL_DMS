@@ -12,13 +12,15 @@ AS $$
 **  Desc:
 **      Process 'Requested Run Batch Acq Time Ready' events
 **
+**      Calls make_automatic_requested_run_factors() for events in t_notification_event with event_type_id = 3 and created within the last _interval hours
+**
 **  Arguments:
-**    _interval     Hours since last run
+**    _interval     Hours since last run; threshold for finding events in t_notification_event to process
 **    _message      Output message
 **    _returnCode   Return code
 **
 **  Auth:   grk
-**  Dte:    03/29/2010 grk - Initial release
+**  Dte:    03/29/2010 grk - Initial version
 **          11/08/2016 mem - Use GetUserLoginWithoutDomain to obtain the user's network login
 **          11/10/2016 mem - Pass '' to GetUserLoginWithoutDomain
 **          12/15/2023 mem - Ported to PostgreSQL
@@ -50,7 +52,7 @@ BEGIN
     );
 
     ---------------------------------------------------
-    -- Event 'Requested Run Batch Acq Time Ready'
+    -- Process new 'Requested Run Batch Acq Time Ready' events
     -- since last time we did this
     ---------------------------------------------------
 

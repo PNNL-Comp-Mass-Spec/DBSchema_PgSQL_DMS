@@ -29,7 +29,7 @@ AS $$
 **    _callingUser      Calling user username
 **
 **  Auth:   grk
-**  Date:   10/15/2008 grk - Initial release (Ticket #582)
+**  Date:   10/15/2008 grk - Initial version (Ticket #582)
 **          08/19/2010 grk - Use try-catch for error handling
 **          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          02/20/2013 mem - Expanded _message to varchar(1024)

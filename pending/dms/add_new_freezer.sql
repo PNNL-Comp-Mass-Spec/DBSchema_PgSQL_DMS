@@ -12,10 +12,10 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds a new freezer's locations to T_Material_Locations by copying
+**      Adds a new freezer's locations to t_material_locations by copying
 **      all of the active shelves, racks, rows, and columns in the source freezer
 **
-**      You must first manually add a row to T_Material_Freezers
+**      You must first manually add a row to t_material_freezers
 **
 **  Arguments:
 **    _sourceFreezerTag     Source freezer tag, e.g. 1208A
@@ -25,7 +25,7 @@ AS $$
 **    _returnCode           Return code
 **
 **  Auth:   mem
-**  Date:   04/22/2015 mem - Initial version
+**  Date:   04/22/2015 mem - Initial release
 **          03/31/2016 mem - Switch to using Freezer tags (and remove parameter _newTagBase)
 **          11/13/2017 mem - Skip computed column Tag when copying data
 **          12/15/2023 mem - Ported to PostgreSQL
@@ -153,7 +153,7 @@ BEGIN
         RAISE INFO ''
         RAISE INFO 'Shelves that would be created for freezer %', _newFreezerTag;
 
-        FOR EACH _shelfInfo IN
+        FOR _shelfInfo IN
             SELECT Shelf,
                    Min(Rack) As Rack_Min, Max(Rack) As Rack_Max,
                    Min(Row)  As Row_Min,  Max(Row)  As Row_Max,
@@ -161,7 +161,7 @@ BEGIN
             FROM t_material_locations
             WHERE freezer_tag = '1208A' and Rack <> 'na' and Row <> 'na'
             GROUP BY Shelf
-            ORDER BY Shelf;
+            ORDER BY Shelf
         LOOP
             RAISE INFO 'Shelf %, rack % to %, row % to %, column % to %',
                             _shelfInfo.Shelf,

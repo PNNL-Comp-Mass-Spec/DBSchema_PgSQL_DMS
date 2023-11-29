@@ -24,8 +24,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Create a monthly usage report for multiple
-**      instruments for given year and month
+**      Create a monthly usage report for multiple instruments for given year and month
 **
 **  Arguments:
 **    _year                 Usage report year
@@ -168,7 +167,7 @@ BEGIN
         LOOP
 
             If _infoOnly Then
-                RAISE INFO 'SELECT * FROM GetMonthlyInstrumentUsageReport (%, 0, %, %, ''report'')', _instrument, _year, _month;
+                RAISE INFO 'SELECT * FROM get_monthly_instrument_usage_report (%, 0, %, %, ''report'')', _instrument, _year, _month;
             End If;
 
             If Not _infoOnly Or _infoOnly And _getUsageReportData Then

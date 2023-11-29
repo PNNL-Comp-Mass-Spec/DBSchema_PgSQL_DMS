@@ -36,7 +36,7 @@ AS $$
 **    _callingUser      Calling user username
 **
 **  Auth:   grk
-**  Date:   03/28/2012 grk - Initial release
+**  Date:   03/28/2012 grk - Initial version
 **          03/30/2012 grk - Added change command capability
 **          03/30/2012 mem - Added support for x="Comment" in the XML
 **                         - Now calling Update_Instrument_Usage_Allocations_Work to apply the updates

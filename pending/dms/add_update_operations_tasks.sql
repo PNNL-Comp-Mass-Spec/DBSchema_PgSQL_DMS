@@ -26,7 +26,7 @@ AS $$
 **      Adds new or edits an existing operation task entry
 **
 **  Arguments:
-**    _id                   Input/output: task_id in T_Operations_Tasks
+**    _id                   Input/output: task_id in t_operations_tasks
 **    _taskType             Task type
 **    _task                 Task title, e.g. 'Freezer Clean Out'
 **    _requester            Person requesting the task

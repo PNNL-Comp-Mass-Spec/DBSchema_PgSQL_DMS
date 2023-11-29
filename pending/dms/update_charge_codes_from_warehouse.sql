@@ -13,13 +13,13 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates charge code (aka work package) information in T_Charge_Code using external server SQLSRVPROD02, which is accessed via a foreign data wrapper
+**      Updates charge code (aka work package) information in t_charge_code using external server SQLSRVPROD02, which is accessed via a foreign data wrapper
 **
 **  Arguments:
 **    _infoOnly                 When true, preview work package metadata that would be applied
-**    _updateAll                When true, force an update of all rows in T_Charge_Code; by default, charge codes are filtered based on Setup_Date and Auth_Amt
+**    _updateAll                When true, force an update of all rows in t_charge_code; by default, charge codes are filtered based on Setup_Date and Auth_Amt
 **    _onlyShowChanged          When _infoOnly is true, set this to true to only show new or updated work packages
-**    _explicitChargeCodeList   Comma-separated list of charge codes (work packages) to add to T_Charge_Code regardless of filters. When used, other charge codes are ignored
+**    _explicitChargeCodeList   Comma-separated list of charge codes (work packages) to add to t_charge_code regardless of filters. When used, other charge codes are ignored
 **    _message                  Status message
 **    _returnCode               Return code
 **
@@ -512,7 +512,7 @@ BEGIN
 
         -- ToDo: Show this using RAISE INFO
 
-        FOR EACH _chargeCodeINFO IN
+        FOR _chargeCodeINFO IN
             SELECT Update_Status,
                    New.charge_code,
                    Old.resp_username, New.resp_username,

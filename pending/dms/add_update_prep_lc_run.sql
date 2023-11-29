@@ -30,7 +30,7 @@ AS $$
 **      Adds new or edits an existing prep LC run
 **
 **  Arguments:
-**    _id                   Input/output: prep LC run ID in T_Prep_LC_Run
+**    _id                   Input/output: prep LC run ID in t_prep_lc_run
 **    _prepRunName          Prep LC run name
 **    _instrument           Instrument
 **    _type                 Type
@@ -45,7 +45,7 @@ AS $$
 **    _numberOfRuns         Number of runs (datasets) to be created
 **    _instrumentPressure   Instrument pressure
 **    _qualityControl       Quality control reagent description
-**    _datasets             Comma separated list of dataset names to associate with this prep LC run
+**    _datasets             Comma-separated list of dataset names to associate with this prep LC run
 **    _mode                 Mode: 'add' or 'update'
 **    _message              Output message
 **    _returnCode           Return code

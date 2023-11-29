@@ -2,25 +2,27 @@
 CREATE OR REPLACE PROCEDURE public.auto_define_wps_for_eus_requested_runs
 (
     _mostRecentMonths int = 12,
-    _infoOnly boolean = true
+    _infoOnly boolean = true,
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
 **  Desc:
-**      Looks for completed requested runs that have
-**      an EUS proposal but for which the work package is 'none'
+**      Looks for completed requested runs that have an EUS proposal, but for which the work package is 'none'
 **
-**      Looks for other uses of that EUS proposal that have
-**      a valid work package. If found, changes the WP
-**      from 'none' to the new work package
+**      Looks for other uses of that EUS proposal that have a valid work package.
+**      If found, changes the WP from 'none' to the new work package
 **
 **      Preference is given to recently used work packages
 **
 **  Arguments:
-**    _mostRecentMonths
-**    _infoOnly
+**    _mostRecentMonths     Number of recent months to examine
+**    _infoOnly             When true, preview updates
+**    _message      Output message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   01/29/2016 mem - Initial Version
@@ -33,7 +35,6 @@ DECLARE
     _continue boolean;
     _workPackage text;
     _monthsSearched int;
-    _message text;
     _requestedRunsToUpdate int;
 
     _formatSpecifier text;
@@ -42,13 +43,15 @@ DECLARE
     _previewData record;
     _infoData text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
 
     _mostRecentMonths := Coalesce(_mostRecentMonths, 12);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly         := Coalesce(_infoOnly, false);
 
     If _mostRecentMonths < 1 Then
         _mostRecentMonths := 1;

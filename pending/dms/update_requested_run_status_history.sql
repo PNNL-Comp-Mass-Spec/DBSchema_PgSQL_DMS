@@ -10,12 +10,11 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates stats in T_Requested_Run_Status_History,
-**      summarizing the number of requested runs in each state
-**      in T_Requested_Run
+**      Updates stats in t_requested_run_status_history,
+**      summarizing the number of requested runs in each state in t_requested_run
 **
 **  Arguments:
-**    _minimumTimeIntervalHours     Set this to 0 to force the addition of new data to T_Requested_Run_Status_History
+**    _minimumTimeIntervalHours     Set this to 0 to force the addition of new data to t_requested_run_status_history
 **    _message                      Status message
 **    _returnCode                   Return code
 **

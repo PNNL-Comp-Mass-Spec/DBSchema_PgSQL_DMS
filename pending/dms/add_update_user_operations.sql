@@ -11,11 +11,11 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the user operations defined for the given user
+**      Updates the access permissions (user operations) defined for the given user
 **
 **  Arguments:
 **    _userID           User ID
-**    _operationsList   Comma-separated separated list of operation names (see table T_User_Operations)
+**    _operationsList   Comma-separated list of access permissions (aka operation names); see table t_user_operations
 **    _message          Output message
 **    _returnCode       Return code
 **

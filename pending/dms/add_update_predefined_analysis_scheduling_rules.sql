@@ -30,7 +30,7 @@ AS $$
 **    _priority             Priority
 **    _processorGroup       Processor group
 **    _enabled              Enabled: 1 if enabled, 0 if disabled
-**    _id                   Input/output: scheduling rule ID in T_Predefined_Analysis_Scheduling_Rules
+**    _id                   Input/output: scheduling rule ID in t_predefined_analysis_scheduling_rules
 **    _mode                 Mode: 'add' or 'update'
 **    _message              Output message
 **    _returnCode           Return code

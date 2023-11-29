@@ -11,7 +11,8 @@ AS $$
 **
 **  Desc:
 **      Delete the specified instrument and associated storage path entries
-**      Only allowed if no datasets exist for the instrument
+**
+**      This is only allowed if no datasets exist for the instrument
 **
 **  Arguments:
 **    _instrumentName   Instrument name

@@ -10,12 +10,12 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the job state to 8=Holding for jobs associated with purged dataset
+**      Updates the job state to 8=Holding for jobs associated with purged datasets
 **
 **  Arguments:
-**    _infoOnly         When true, preview updates
-**    _message          Output message
-**    _returnCode       Return code
+**    _infoOnly     When true, preview updates
+**    _message      Output message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   05/15/2008 (Ticket #670)

@@ -11,7 +11,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Perform analysis request operation defined by 'mode'
+**      Perform analysis request operation defined by _mode
 **
 **  Arguments:
 **    _request      Analysis job request ID (as text)

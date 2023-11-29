@@ -67,7 +67,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or updates existing experiment plex members in T_Experiment_Plex_Members
+**      Adds new or updates existing experiment plex members in t_experiment_plex_members
 **      Can either provide data via _plexMembers or via channel-specific parameters
 **
 **      _plexMembers is a table listing Experiment ID values by channel or by tag

@@ -12,11 +12,11 @@ AS $$
 **      Adds sample prep request notification events to notification event table
 **
 **  Arguments:
-**    _infoOnly
-**    _showDebug
+**    _infoOnly     When true, show the number of notification events that would be added
+**    _showDebug    When _infoOnly is true, if _showDebug is true, show details on the events that would be added
 **
 **  Auth:   grk
-**  Date:   03/30/2010
+**  Date:   03/30/2010 grk - Initial version
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/

@@ -10,7 +10,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Caches the names of Instruments that have data in table T_Dataset_QC
+**      Caches the names of instruments that have data in table t_dataset_qc
 **
 **      Used by the SMAQC website when it constructs the list of available instruments
 **      https://prismsupport.pnl.gov/smaqc/index.php/smaqc/metric/P_2C/inst/VOrbi05/

@@ -11,7 +11,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the entries in T_Bionet_Hosts
+**      Updates the entries in t_bionet_hosts
 **
 **      Export the list of computers from DNS on Gigasax
 **      by right clicking Bionet under "Forward Lookup Zones"

@@ -20,11 +20,11 @@ AS $$
 **      Adds new or edits an existing separation type
 **
 **  Arguments:
-**    _id               Separation type ID in T_Secondary_Sep entry
-**    _sepTypeName
-**    _sepGroupName
-**    _comment
-**    _sampleType
+**    _id               Separation type ID in t_secondary_sep
+**    _sepTypeName      Separation type name
+**    _sepGroupName     Parent separation group name
+**    _comment          Separation type comment
+**    _sampleType       Sample type name: 'Peptides', 'Proteins', 'Metabolites', 'Lipids', 'Glycans', or 'Unknown'
 **    _state            State: 'Active' or 'Inactive'
 **    _mode             Mode: 'add' or 'update'
 **    _message          Output message
@@ -32,7 +32,7 @@ AS $$
 **    _callingUser      Calling user username
 **
 **  Auth:   bcg
-**  Date:   12/19/2019 bcg - Initial release
+**  Date:   12/19/2019 bcg - Initial version
 **          08/11/2021 mem - Determine the next ID to use when adding a new separation type
 **          12/15/2023 mem - Ported to PostgreSQL
 **

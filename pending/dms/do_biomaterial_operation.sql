@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Perform biomaterial (cell culture) operation defined by 'mode'
+**      Perform biomaterial (cell culture) operation defined by _mode
 **
 **  Arguments:
 **    _biomaterialName  Biomaterial name

@@ -53,7 +53,7 @@ AS $$
 **    _productionOnly           When 0 then shows all instruments; otherwise limits the report to production instruments only (operations_role = 'Production')
 **    _campaignIDFilterList     Comma-separated list of campaign IDs
 **    _eusUsageFilterList       Comma separate list of EUS usage types, from table T_EUS_Usage_Type: CAP_DEV, MAINTENANCE, BROKEN, USER_ONSITE, USER_REMOTE, RESOURCE_OWNER
-**    _instrumentFilterList     Comma-separated list of instrument names (% and * wild cards are allowed)
+**    _instrumentFilterList     Comma-separated list of instrument names; % and * wildcards are allowed ('*' is auto-changed to '%')
 **    _includeProposalType      When 1, include proposal type in the results
 **    _showDebug                When true, summarize the contents of Tmp_Datasets
 **
@@ -123,12 +123,12 @@ BEGIN
         -- Validate the inputs
         --------------------------------------------------------------------
 
-        _productionOnly := Coalesce(_productionOnly, 1);
+        _productionOnly       := Coalesce(_productionOnly, 1);
         _campaignIDFilterList := Trim(Coalesce(_campaignIDFilterList, ''));
-        _eusUsageFilterList := Trim(Coalesce(_eusUsageFilterList, ''));
+        _eusUsageFilterList   := Trim(Coalesce(_eusUsageFilterList, ''));
         _instrumentFilterList := Trim(Coalesce(_instrumentFilterList, ''));
-        _includeProposalType := Coalesce(_includeProposalType, 0);
-        _showDebug := Coalesce(_showDebug, false);
+        _includeProposalType  := Coalesce(_includeProposalType, 0);
+        _showDebug            := Coalesce(_showDebug, false);
 
         --------------------------------------------------------------------
         -- Populate a temporary table with the Campaign IDs to filter on

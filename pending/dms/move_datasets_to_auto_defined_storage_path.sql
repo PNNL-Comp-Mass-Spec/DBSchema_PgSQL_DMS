@@ -11,14 +11,14 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the storage and archive locations for one or more datasets to use the
-**      auto-defined storage and archive paths instead of the current storage path
+**      Updates the storage and archive locations for one or more datasets to use
+**      the auto-defined storage and archive paths instead of the current storage path
 **
-**      Only valid for Instruments that have Auto_Define_Storage_Path enabled in T_Instrument_Name
+**      Only valid for instruments that have auto_define_storage_path enabled in t_instrument_name
 **
 **  Arguments:
-**    _datasetIDLiset
-**    _infoOnly
+**    _datasetIDList    Comma-separated list of dataset IDs
+**    _infoOnly         When true, validate the dataset IDs, but do not update the database
 **    _message          Output message
 **    _returnCode       Return code
 **

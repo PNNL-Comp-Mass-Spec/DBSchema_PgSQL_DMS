@@ -31,7 +31,7 @@ AS $$
 **      https://dms2.pnl.gov/protein_collection_members/show/13363564
 **
 **  Arguments:
-**    _id           Protein reference_id; this parameter must be named id (see $calling_params->id in Q_model.php on the DMS website)
+**    _id           Protein reference id, corresponding to reference_id in pc.t_protein_names; this parameter must be named id (see $calling_params->id in Q_model.php on the DMS website)
 **    _mode         Ignored, but required for compatibility reasons
 **    _callingUser  Calling user username
 **

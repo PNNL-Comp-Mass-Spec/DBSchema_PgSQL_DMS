@@ -15,8 +15,8 @@ AS $$
 **  Desc:
 **      Copies the filter set critera
 **
-**      Requires that the new filter set exist in T_Filter_Sets
-**      However, do not make any entries in T_Filter_Set_Criteria_Groups or T_Filter_Set_Criteria
+**      Requires that the new filter set exist in t_filter_sets
+**      However, do not make any entries in t_filter_set_criteria_groups or t_filter_set_criteria
 **
 **      The following query is useful for editing filter sets:
 **
@@ -37,15 +37,15 @@ AS $$
 **         ORDER BY FSCN.Criterion_Name, FSC.Filter_Criteria_Group_ID
 **
 **  Arguments:
-**    _sourceFilterSetID
-**    _destFilterSetID
-**    _addMissingFilterCriteria
-**    _infoOnly
+**    _sourceFilterSetID            Source filter set ID
+**    _destFilterSetID              Destination filter set ID
+**    _addMissingFilterCriteria     When true, add missing filter set criteria
+**    _infoOnly                     When true, preview updates
 **    _message                      Output message
 **    _returnCode                   Return code
 **
 **  Auth:   mem
-**  Date:   10/02/2009
+**  Date:   10/02/2009 mem - Initial version
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/

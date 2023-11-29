@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Delete analysis job if it is in 'new' or 'failed' state
+**      Delete the analysis job if it has state 'New', 'Failed', or 'Special Proc. Waiting'
 **
 **  Arguments:
 **    _job              Job to delete
@@ -84,7 +84,6 @@ BEGIN
     -- Verify that the job exists
     ---------------------------------------------------
 
-    --
     SELECT job_state_id
     INTO _state
     FROM t_analysis_job
@@ -100,7 +99,7 @@ BEGIN
         End If;
     End If;
 
-    -- Verify that analysis job has state 'new', 'failed', or 'Special Proc. Waiting'
+    -- Verify that analysis job has state 'New', 'Failed', or 'Special Proc. Waiting'
     If Not _state In (0, 1, 5, 19) Then
         _message := format('Job "%s" must be in "new" or "failed" state to be deleted by user', _job);
         _returnCode := 'U5202';

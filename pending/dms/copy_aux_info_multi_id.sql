@@ -18,10 +18,10 @@ AS $$
 **      Copies aux info from a source item to multiple targets
 **
 **  Arguments:
-**    _targetName           'Experiment', 'Biomaterial' (previously 'Cell Culture'), 'Dataset', or 'SamplePrepRequest'; see See T_Aux_Info_Target
+**    _targetName           'Experiment', 'Biomaterial' (previously 'Cell Culture'), 'Dataset', or 'SamplePrepRequest'; see See t_aux_info_target
 **    _targetEntityIDList   Comma-separated list of entity IDs; must all be of the same type
-**    _categoryName         'Lysis Method', 'Denaturing Conditions', etc.; see T_Aux_Info_Category; Note: Ignored if _mode = 'copyAll'
-**    _subCategoryName      'Procedure', 'Reagents', etc.; see T_Aux_Info_Subcategory; Note: Ignored if _mode = 'copyAll'
+**    _categoryName         'Lysis Method', 'Denaturing Conditions', etc.; see t_aux_info_category; ignored if _mode = 'copyAll'
+**    _subCategoryName      'Procedure', 'Reagents', etc.; see t_aux_info_subcategory; ignored if _mode = 'copyAll'
 **    _sourceEntityID       ID of the source to copy information from
 **    _mode                 Mode: 'copyCategory', 'copySubcategory', 'copyAll'
 **    _message              Output message

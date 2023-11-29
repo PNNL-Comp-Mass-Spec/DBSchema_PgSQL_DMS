@@ -1,18 +1,22 @@
 --
 CREATE OR REPLACE PROCEDURE public.auto_define_superseded_eus_proposals
 (
-    _infoOnly boolean = true
+    _infoOnly boolean = true,
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
 **  Desc:
-**      Looks for proposals in T_EUS_Proposals with the same name
-**      Auto populates Proposal_ID_AutoSupersede for superseded proposals (if currently null)
+**      Looks for proposals in t_eus_proposals that have the same name
+**      Auto populates proposal_id_autosupersede for superseded proposals (if currently null)
 **
 **  Arguments:
-**    _infoOnly
+**    _infoOnly     When true, preview updates
+**    _message      Output message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   08/12/2020 mem - Initial Version
@@ -21,7 +25,6 @@ AS $$
 *****************************************************/
 DECLARE
     _updateCount int;
-    _message text;
     _proposalList text;
 
     _formatSpecifier text;
@@ -30,6 +33,8 @@ DECLARE
     _previewData record;
     _infoData text;
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Validate the inputs

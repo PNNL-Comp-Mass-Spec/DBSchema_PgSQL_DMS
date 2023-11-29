@@ -21,10 +21,10 @@ AS $$
 **  Arguments:
 **    _instrumentClass  Instrument class name
 **    _isPurgeable      1 if datasets can be purged for this instrument class, 0 if purging is disabled
-**    _rawDataType      Instrument data type; see table T_Instrument_Data_Type_Name
+**    _rawDataType      Instrument data type; see table t_instrument_data_type_name
 **    _params           XML parameters with DatasetQC options (see below)
 **    _comment          Instrument class comment
-**    _mode             The only valid mode is 'update', since 'add' is not allowed in this procedure; instead directly edit table T_Instrument_Class
+**    _mode             The only valid mode is 'update', since 'add' is not allowed in this procedure; instead directly edit table t_instrument_class
 **    _message          Output message
 **    _returnCode       Return code
 **

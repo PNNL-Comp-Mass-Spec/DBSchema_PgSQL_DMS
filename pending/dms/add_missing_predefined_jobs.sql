@@ -23,9 +23,10 @@ AS $$
 **
 **  Desc:
 **      Looks for Datasets that don't have predefined analysis jobs
-**      but possibly should. Calls schedule_predefined_analysis_jobs for each.
+**      but possibly should. Calls schedule_predefined_analysis_jobs for each
+**
 **      This procedure is intended to be run once per day to add missing jobs
-**      for datasets created within the last 30 days (but more than 12 hours ago).
+**      for datasets created within the last 30 days (but more than 12 hours ago)
 **
 **  Arguments:
 **    _infoOnly                             False to create jobs, true to preview jobs that would be created

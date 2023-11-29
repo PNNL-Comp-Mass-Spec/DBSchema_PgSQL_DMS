@@ -12,14 +12,14 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Performs operation given by _mode on entity given by _id
+**      Performs operation given by _mode on file attachment given by _id
 **
 **  Arguments:
-**    _id               File attachment ID
-**    _mode             The only supported mode is 'delete'
-**    _message          Output message
-**    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _id           File attachment ID
+**    _mode         The only supported mode is 'delete'
+**    _message      Output message
+**    _returnCode   Return code
+**    _callingUser  Calling user username
 **
 **  Auth:   grk
 **  Date:   09/05/2012

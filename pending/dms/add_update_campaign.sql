@@ -49,7 +49,7 @@ AS $$
 **    _externalLinks                External links, e.g. https://pubmed.ncbi.nlm.nih.gov/32284590/
 **    _eprList                      PNNL project number, e.g. 71275
 **    _eusProposalList              EUS proposal, e.g. 33200
-**    _organisms                    Comma separated list of organisms
+**    _organisms                    Comma-separated list of organisms
 **    _experimentPrefixes           One or more experiment name prefixes
 **    _dataReleaseRestrictions      Data release restriction ID, e.g. 0 for 'Not yet approved for release'; see table t_data_release_restrictions
 **    _fractionEMSLFunded           Fraction EMSL funded; value between 0 and 1

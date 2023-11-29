@@ -13,18 +13,19 @@ AS $$
 **
 **  Desc:
 **      Copies a given group for a given filter set
-**      This procedure will auto-create a new entry in T_Filter_Set_Criteria_Groups
-**      For safety, requires that you provide both the filter set ID and the Group ID to copy
+**
+**      This procedure will auto-create a new entry in t_filter_set_criteria_groups
+**      For safety, requires both the filter set ID and the group id to copy
 **
 **  Arguments:
-**    _filterSetID
-**    _filterCriteriaGroupID
-**    _infoOnly
-**    _message                      Output message
-**    _returnCode                   Return code
+**    _filterSetID              Filter set ID
+**    _filterCriteriaGroupID    Source criteria group ID
+**    _infoOnly                 When true, preview updates
+**    _message                  Output message
+**    _returnCode               Return code
 **
 **  Auth:   mem
-**  Date:   02/17/2009
+**  Date:   02/17/2009 mem - Initial version
 **          12/15/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/

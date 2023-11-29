@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Renames a user in T_Users and other tracking tables
+**      Renames a user in t_users and other tracking tables
 **
 **  Arguments:
 **    _oldUserName

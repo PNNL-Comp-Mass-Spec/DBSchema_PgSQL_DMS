@@ -14,7 +14,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits an existing legacy organism DB file in T_Organism_DB_File
+**      Adds new or edits an existing legacy organism DB file in t_organism_db_file
 **
 **  Arguments:
 **    _fastaFileName    FASTA file name, e.g. 'UniProt_Bacteria_100species_TrypPigBov_Bos_Taurus_2021-02-22.fasta'

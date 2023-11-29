@@ -10,7 +10,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates user information in T_Users using external server SQLSRVPROD02, which is accessed via a foreign data wrapper
+**      Updates user information in t_users using external server SQLSRVPROD02, which is accessed via a foreign data wrapper
 **
 **      Foreign data wrapper setup steps:
 **

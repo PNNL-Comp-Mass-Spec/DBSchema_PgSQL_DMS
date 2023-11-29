@@ -1,18 +1,21 @@
 --
 CREATE OR REPLACE PROCEDURE public.auto_update_taxonomy_all_organisms
 (
-    _infoOnly boolean = true
+    _infoOnly boolean = true,
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
 /****************************************************
 **
 **  Desc:
-**      Auto-defines the taxonomy for all organisms
-**      using the NCBI_Taxonomy_ID value defined for each organism
+**      Auto-defines the taxonomy for all organisms, using the NCBI_Taxonomy_ID value defined for each organism
 **
 **  Arguments:
-**    _infoOnly   When true, preview results
+**    _infoOnly     When true, preview results
+**    _message      Output message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   03/02/2016 mem - Initial version
@@ -22,6 +25,7 @@ AS $$
 *****************************************************/
 DECLARE
     _organismInfo record;
+    _organism record;
 
     _orgDomain text,
     _orgKingdom text,
@@ -33,6 +37,8 @@ DECLARE
     _orgSpecies text,
     _orgStrain text
 BEGIN
+    _message := '';
+    _returnCode := '';
 
     ---------------------------------------------------
     -- Create a temporary table for previewing the results
@@ -70,15 +76,15 @@ BEGIN
         SELECT ncbi_taxonomy_id AS NcbiTaxonomyID,
                organism AS OrganismName,
                organism_id AS OrganismID,
-               Coalesce(domain, '') AS OldDomain,
+               Coalesce(domain, '')  AS OldDomain,
                Coalesce(kingdom, '') AS OldKingdom,
-               Coalesce(phylum, '') AS OldPhylum,
-               Coalesce(class, '') AS OldClass,
-               Coalesce(order, '') AS OldOrder,
-               Coalesce(family, '') AS OldFamily,
-               Coalesce(genus, '') AS OldGenus,
+               Coalesce(phylum, '')  AS OldPhylum,
+               Coalesce(class, '')   AS OldClass,
+               Coalesce(order, '')   AS OldOrder,
+               Coalesce(family, '')  AS OldFamily,
+               Coalesce(genus, '')   AS OldGenus,
                Coalesce(species, '') AS OldSpecies,
-               Coalesce(strain, '') AS OldStrain
+               Coalesce(strain, '')  AS OldStrain
         FROM t_organisms
         WHERE NOT ncbi_taxonomy_id IS NULL
         ORDER BY organism_id
@@ -87,15 +93,15 @@ BEGIN
         -- Auto-define the taxonomy terms
         ---------------------------------------------------
 
-        _orgDomain := _organismInfo.OldDomain;
+        _orgDomain  := _organismInfo.OldDomain;
         _orgKingdom := _organismInfo.OldKingdom;
-        _orgPhylum := _organismInfo.OldPhylum;
-        _orgClass := _organismInfo.OldClass;
-        _orgOrder := _organismInfo.OldOrder;
-        _orgFamily := _organismInfo.OldFamily;
-        _orgGenus := _organismInfo.OldGenus;
+        _orgPhylum  := _organismInfo.OldPhylum;
+        _orgClass   := _organismInfo.OldClass;
+        _orgOrder   := _organismInfo.OldOrder;
+        _orgFamily  := _organismInfo.OldFamily;
+        _orgGenus   := _organismInfo.OldGenus;
         _orgSpecies := _organismInfo.OldSpecies;
-        _orgStrain := _organismInfo.OldStrain;
+        _orgStrain  := _organismInfo.OldStrain;
 
         CALL public.get_taxonomy_value_by_taxonomy_id (
                         _ncbiTaxonomyID,
@@ -168,9 +174,37 @@ BEGIN
     END LOOP;
 
     If _infoOnly Then
-        SELECT *
-        FROM Tmp_OrganismsToUpdate
-        ORDER BY OrganismID
+
+        -- ToDo: Show this using RAISE INFO
+
+        FOR _organism IN
+            SELECT OrganismID,
+                   OrganismName,
+                   NCBITaxonomyID,
+                   OldDomain,
+                   NewDomain,
+                   OldKingdom,
+                   NewKingdom,
+                   OldPhylum,
+                   NewPhylum,
+                   OldClass,
+                   NewClass,
+                   OldOrder,
+                   NewOrder,
+                   OldFamily,
+                   NewFamily,
+                   OldGenus,
+                   NewGenus,
+                   OldSpecies,
+                   NewSpecies,
+                   OldStrain,
+                   NewStrain
+            FROM Tmp_OrganismsToUpdate
+            ORDER BY OrganismID
+        LOOP
+
+        END LOOP;
+
     End If;
 
     DROP TABLE Tmp_OrganismsToUpdate;

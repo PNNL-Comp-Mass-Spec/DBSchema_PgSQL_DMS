@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Perform archive operation defined by 'mode'
+**      Perform archive operation defined by _mode
 **      Used by the Archive Detail Report, e.g. https://dms2.pnl.gov/archive/show/QC_Mam_23_01_R01_22Nov23_Titus_WBEH-23-08-17
 **
 **  Arguments:

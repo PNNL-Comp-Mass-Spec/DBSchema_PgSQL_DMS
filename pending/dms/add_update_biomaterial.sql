@@ -37,7 +37,7 @@ AS $$
 **    _campaignName         Campaign name
 **    _mode                 Mode: 'add', 'update', 'check_add', 'check_update'
 **    _container            Container name; use '' or 'na' if no container
-**    _organismList         List of one or more organisms to associate with this biomaterial; stored in T_Biomaterial_Organisms. If null, T_Biomaterial_Organisms is unchanged
+**    _organismList         List of one or more organisms to associate with this biomaterial; stored in t_biomaterial_organisms; if null, t_biomaterial_organisms is unchanged
 **    _mutation             Mutation;  empty string if not applicable
 **    _plasmid              Plasmid;   empty string if not applicable
 **    _cellLine             Cell line; empty string if not applicable

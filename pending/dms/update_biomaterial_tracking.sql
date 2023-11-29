@@ -5,7 +5,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates summary stats in T_Biomaterial_Type_Name
+**      Updates summary stats in t_biomaterial_type_name
 **
 **  Arguments:
 **
