@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_instrument_usage_by_proposal(IN
 /****************************************************
 **
 **  Desc:
-**      Updates the data in T_Cached_Instrument_Usage_by_Proposal
+**      Updates data in t_cached_instrument_usage_by_proposal
 **
 **  Auth:   mem
 **  Date:   12/02/2013 mem - Initial Version

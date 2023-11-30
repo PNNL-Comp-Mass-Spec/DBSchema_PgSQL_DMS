@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_requested_run_batch_stats(IN _b
 /****************************************************
 **
 **  Desc:
-**      Updates the data in T_Cached_Requested_Run_Batch_Stats
+**      Updates data in t_cached_requested_run_batch_stats
 **
 **      This table is used by view v_requested_run_batch_list_report
 **      to display information about the requested runs and datasets associated with a requested run batch
@@ -395,4 +395,10 @@ $$;
 
 
 ALTER PROCEDURE public.update_cached_requested_run_batch_stats(IN _batchid integer, IN _fullrefresh boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_cached_requested_run_batch_stats(IN _batchid integer, IN _fullrefresh boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_cached_requested_run_batch_stats(IN _batchid integer, IN _fullrefresh boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateCachedRequestedRunBatchStats';
 

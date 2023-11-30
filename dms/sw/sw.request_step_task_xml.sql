@@ -8,7 +8,8 @@ CREATE OR REPLACE PROCEDURE sw.request_step_task_xml(IN _processorname text, INO
 /****************************************************
 **
 **  Desc:
-**      Looks for analysis job step that is appropriate for the given Analysis manager
+**      Looks for analysis job step that is appropriate for the given analysis manager
+**
 **      If found, step is assigned to caller
 **
 **      Job assignment is based on:

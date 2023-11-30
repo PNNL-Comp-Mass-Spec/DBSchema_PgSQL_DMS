@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_protein_collection_usage(INOUT _messag
 /****************************************************
 **
 **  Desc:
-**      Updates the data in T_Protein_Collection_Usage
+**      Updates data in T_Protein_Collection_Usage
 **
 **  Auth:   mem
 **  Date:   09/11/2012 mem - Initial version

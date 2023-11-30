@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_secondary_sep_usage(INOUT _mess
 /****************************************************
 **
 **  Desc:
-**      Updates the data in t_secondary_sep_usage
+**      Updates data in t_secondary_sep_usage
 **
 **  Auth:   mem
 **  Date:   11/18/2015 mem - Initial Version
