@@ -17,24 +17,25 @@ AS $$
 **
 **  Desc:
 **      Looks for dataset that is best candidate to be purged
+**
 **      If found, dataset archive status is set to 'Purge In Progress'
-**      and information needed for purge task is returned
-**      in the output arguments
+**      and information needed for purge task is returned in the output arguments
 **
-**      Alternatively, if _infoOnly is true, will return the
-**      next _datasetsPerShare datasets that would be purged on the specified server,
-**      or on a series of servers (if _storageServerName and/or _serverDisk are blank)
+**      Alternatively, if _infoOnly is true, will return the next _datasetsPerShare datasets
+**      that would be purged on the specified server, or on a series of servers (if _storageServerName and/or _serverDisk are blank)
 **
-**      Note that PreviewPurgeTaskCandidates calls this procedure with_infoOnly to true
+**      Note that Preview_Purge_Task_Candidates calls this procedure with_infoOnly to true
 **
 **  If DatasetID is returned 0, no available dataset was found
 **
-**  Example syntax for Preview:
-**     SELECT request_purge_task ('proto-9', _serverDisk => 'g:\', _infoOnly => true);
+**  Example syntax for preview:
+**     CALL request_purge_task ('Proto-9', _serverDisk => 'G:\', _infoOnly => true);
+**
+**     CALL preview_purge_task_candidates ('Proto-9', 'G:\');
 **
 **  Arguments:
-**    _storageServerName                Storage server to use, for example 'proto-9'; if blank, returns candidates for all storage servers; when blank, _serverDisk is ignored
-**    _serverDisk                       Disk on storage server to use, for example 'g:\'; if blank, returns candidates for all drives on given server (or all servers if _storageServerName is blank)
+**    _storageServerName                Storage server to use, for example 'Proto-9'; if blank, returns candidates for all storage servers; when blank, _serverDisk is ignored
+**    _serverDisk                       Disk on storage server to use, for example 'G:\'; if blank, returns candidates for all drives on given server (or all servers if _storageServerName is blank)
 **    _excludeStageMD5RequiredDatasets  If true, excludes datasets with StageMD5_Required > 0
 **    _results                          Output: cursor for retrieving the job parameters
 **    _message                          Status message

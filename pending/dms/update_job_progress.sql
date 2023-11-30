@@ -21,7 +21,7 @@ AS $$
 **  Arguments:
 **    _mostRecentDays   Used to select jobs to update; matches jobs created or changed within the given number of days
 **    _job              Specific job number to update; when non-zero, _mostRecentDays is ignored
-**    _infoOnly         True to preview changes as a summary
+**    _infoOnly         When true, preview changes as a summary
 **    _verbose          When _infoOnly is true, set this to true to see details on updated jobs
 **
 **  Auth:   mem

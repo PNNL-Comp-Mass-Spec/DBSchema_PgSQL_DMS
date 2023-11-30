@@ -10,17 +10,15 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Stores new stats in t_project_usage_stats,
-**      tracking the number of datasets and user-initiated analysis jobs
-**      run within the specified date range
+**      Stores new stats in t_project_usage_stats, tracking the number of datasets and
+**      user-initiated analysis jobs created within the specified date range
 **
-**      This procedure is called weekly at 3 am on Friday morning
-**      to auto-update the stats
+**      This procedure is called weekly at 3 am on Friday morning to auto-update the stats
 **
 **  Arguments:
-**    _windowDays
+**    _windowDays   Number of days prior to _endDate (or the current date) to examine
 **    _endDate      End date/time; if null, uses the current date/time
-**    _infoOnly
+**    _infoOnly     When true, preview the new stats
 **
 **  Auth:   mem
 **  Date:   12/18/2015 mem - Initial version
@@ -48,11 +46,12 @@ BEGIN
     -----------------------------------------
 
     _windowDays := Coalesce(_windowDays, 7);
-    If (_windowDays < 1) Then
+
+    If _windowDays < 1 Then
         _windowDays := 1;
     End If;
 
-    _endDate := Coalesce(_endDate, CURRENT_TIMESTAMP);
+    _endDate  := Coalesce(_endDate, CURRENT_TIMESTAMP);
     _infoOnly := Coalesce(_infoOnly, false);
 
     -- Round _endDate backward to the nearest hour

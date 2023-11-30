@@ -19,8 +19,8 @@ AS $$
 **      Calls procedure request_purge_task() using _infoOnly = true
 **
 **  Arguments:
-**    _storageServerName    Storage server to use, for example 'proto-9'; if blank, returns candidates for all storage servers; when blank, _storageVol is ignored
-**    _storageVol           Volume on storage server to use, for example 'g:\'; if blank, returns candidates for all drives on given server (or all servers if _storageServerName is blank)
+**    _storageServerName    Storage server to use, for example 'Proto-9'; if blank, returns candidates for all storage servers; when blank, _storageVol is ignored
+**    _storageVol           Volume on storage server to use, for example 'G:\'; if blank, returns candidates for all drives on given server (or all servers if _storageServerName is blank)
 **    _datasetsPerShare     Number of purge candidates to return for each share on each server
 **    _previewSql           When true, preview SQL
 **    _message              Output message

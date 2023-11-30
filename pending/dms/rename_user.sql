@@ -15,9 +15,9 @@ AS $$
 **      Renames a user in t_users and other tracking tables
 **
 **  Arguments:
-**    _oldUserName
-**    _newUserName
-*     _infoOnly
+**    _oldUserName  Username to change, e.g. 'D3L243'
+**    _newUserName  New username
+*     _infoOnly     When true, preview updates
 **    _message      Output message
 **    _returnCode   Return code
 **
@@ -92,13 +92,13 @@ BEGIN
     -- Examine t_users
     --------------------------------------------
 
-    If Not Exists (SELECT user_id FROM t_users Where username = _oldUserName::citext) Then
+    If Not Exists (SELECT user_id FROM t_users WHERE username = _oldUserName::citext) Then
         _message := format('User %s does not exist in t_users; nothing to do', _oldUserName);
         RAISE WARNING '%', _message;
         RETURN;
     End If;
 
-    If Exists (SELECT user_id FROM t_users Where username = _newUserName::citext) Then
+    If Exists (SELECT user_id FROM t_users WHERE username = _newUserName::citext) Then
         _message := format('Cannot rename %s to %s because the new username already exists in t_users', _oldUserName, _newUserName);
 
         If Substring(_oldUserName::citext, 1, char_length(_newUserName)) = _newUserName::citext Then

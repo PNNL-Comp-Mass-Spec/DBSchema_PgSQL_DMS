@@ -14,13 +14,12 @@ AS $$
 **      Looks for datasets with archive state 14 (Purged Instrument Data (plus auto-purge))
 **      that have potentially unpurged MSXml jobs.
 **
-**      Changes the dataset archive state back to 3=Complete to give the
-**      space manager a chance to purge the .mzXML file
+**      Changes the dataset archive state back to 3=Complete to give the space manager a chance to purge the .mzXML file
 **
-**      This procedure is no longer needed because we use _CacheInfo.txt placholder files
+**      This procedure is no longer needed because we use _CacheInfo.txt placeholder files
 **
 **  Arguments:
-**    _infoOnly     True to preview the datasets that would be reset
+**    _infoOnly     When true, preview the datasets that would be reset
 **    _resetCount   Number of datasets that were reset
 **    _message      Status message
 **    _returnCode   Return code

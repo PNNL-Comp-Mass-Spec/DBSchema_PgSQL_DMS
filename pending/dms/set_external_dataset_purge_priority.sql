@@ -11,6 +11,7 @@ AS $$
 **      Sets the purge priority to 2 for datasets acquired on external instruments
 **
 **  Arguments:
+**    _infoOnly     When true, preview updates
 **
 **  Auth:   mem
 **  Date:   04/09/2014

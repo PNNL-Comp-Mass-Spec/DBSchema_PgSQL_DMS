@@ -14,14 +14,14 @@ AS $$
 **
 **  Desc:
 **      Looks for dataset archive entries with state 8=Purge Failed
-**      Examines the archive_state_last_affected column and
-**        resets any entries that entered the Purge Failed state
-**        at least _resetHoldoffHours hours before the present
+**
+**      Examines the archive_state_last_affected column and resets any entries that entered the Purge Failed state
+**      at least _resetHoldoffHours hours before the present
 **
 **  Arguments:
 **    _resetHoldoffHours    Holdoff time to apply to column AS_state_Last_Affected
 **    _maxTasksToReset      If greater than 0, will limit the number of tasks to reset
-**    _infoOnly             True to preview the tasks that would be reset
+**    _infoOnly             When true, preview the tasks that would be reset
 **    _message              Status message
 **    _returnCode           Return code
 **    _resetCount           Output: Number of tasks reset

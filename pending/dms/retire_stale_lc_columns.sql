@@ -13,8 +13,9 @@ AS $$
 **      Automatically retires (sets inactive) LC columns that have not been used recently
 **
 **  Arguments:
-**
-**  Return values: 0:  success, otherwise, error code
+**    _infoOnly     When true, preview updates
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   01/23/2015

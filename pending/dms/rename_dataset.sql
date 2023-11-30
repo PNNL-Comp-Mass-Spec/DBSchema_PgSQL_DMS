@@ -18,12 +18,12 @@ AS $$
 **      Also updates associated jobs in cap.t_tasks and sw.t_jobs, and updates dpkg.t_data_package_datasets
 **
 **  Arguments:
-**    _datasetNameOld
-**    _datasetNameNew
-**    _newRequestedRunID
-**    _infoOnly
-**    _message      Output message
-**    _returnCode   Return code
+**    _datasetNameOld       Dataset name to change
+**    _datasetNameNew       New dataset name
+**    _newRequestedRunID    New requested run ID; -1 to leave unchanged
+**    _infoOnly             When true, preview updates
+**    _message              Output message
+**    _returnCode           Return code
 **
 **  Auth:   mem
 **  Date:   01/25/2013 mem - Initial version

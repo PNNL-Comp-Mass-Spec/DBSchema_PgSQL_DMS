@@ -18,11 +18,12 @@ AS $$
 **
 **  Desc:
 **      Generates dataset statistics for production instruments
+**
 **      The results returned by the cursor only include column proposal_type if _includeProposalType is greater than 0
 **
 **  Arguments:
-**    _startDate                Start date (will be converted to the first day of the month); if an empty string, will use 2 weeks before _endDate
-**    _endDate                  End date (will be converted to the first day of the next month); if an empty string, will use today as end date
+**    _startDate                Start date; if an empty string, will use 2 weeks before _endDate
+**    _endDate                  End date;   if an empty string, will use today as end date
 **    _productionOnly           When 0 then shows all instruments; otherwise limits the report to production instruments only (operations_role = 'Production')
 **    _campaignIDFilterList     Comma-separated list of campaign IDs
 **    _eusUsageFilterList       Comma separated list of EUS usage types, from table t_eus_usage_type: CAP_DEV, MAINTENANCE, BROKEN, USER_ONSITE, USER_REMOTE, RESOURCE_OWNER

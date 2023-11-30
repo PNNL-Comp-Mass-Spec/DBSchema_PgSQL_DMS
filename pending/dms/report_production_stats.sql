@@ -48,8 +48,8 @@ AS $$
 **      Generates dataset statistics for production instruments
 **
 **  Arguments:
-**    _startDate                Start date (will be converted to the first day of the month); if an empty string, will use 2 weeks before _endDate
-**    _endDate                  End date (will be converted to the first day of the next month); if an empty string, will use today as end date
+**    _startDate                Start date; if an empty string, will use 2 weeks before _endDate
+**    _endDate                  End date;   if an empty string, will use today as end date
 **    _productionOnly           When 0 then shows all instruments; otherwise limits the report to production instruments only (operations_role = 'Production')
 **    _campaignIDFilterList     Comma-separated list of campaign IDs
 **    _eusUsageFilterList       Comma separate list of EUS usage types, from table T_EUS_Usage_Type: CAP_DEV, MAINTENANCE, BROKEN, USER_ONSITE, USER_REMOTE, RESOURCE_OWNER

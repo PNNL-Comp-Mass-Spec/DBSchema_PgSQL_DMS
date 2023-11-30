@@ -13,16 +13,15 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Looks for dataset entries with state=5 (Capture Failed)
-**      and a comment that indicates that we should be able to automatically
-**      retry capture.  For example:
+**      Looks for dataset entries with state=5 (Capture Failed) and a comment that indicates
+**      that we should be able to automatically retry capture; for example:
 **         "Dataset not ready: Exception validating constant folder size"
 **         "Dataset not ready: Exception validating constant file size"
 **
 **  Arguments:
-**    _resetHoldoffHours    Holdoff time to apply to column Last_Affected
+**    _resetHoldoffHours    Holdoff time, in hours, to apply to column last_affected
 **    _maxDatasetsToReset   If greater than 0, will limit the number of datasets to reset
-**    _infoOnly             True to preview the datasets that would be reset
+**    _infoOnly             When true, preview the datasets that would be reset
 **    _message              Status message
 **    _returnCode           Return code
 **    _resetCount           Output: Number of datasets that were reset

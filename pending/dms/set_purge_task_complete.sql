@@ -11,11 +11,25 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Sets archive state of dataset record given by _datasetName
-**      according to given completion code
+**      Sets archive state of dataset record given by _datasetName according to the given completion code
 **
 **  Arguments:
-**    _completionCode   0 = success, 1 = Purge Failed, 2 = Archive Update required, 3 = Stage MD5 file required, 4 = Drive Missing, 5 = Purged Instrument Data (and any other auto-purge items), 6 = Purged all data except QC folder, 7 = Dataset folder missing in archive, 8 = Archive offline, 9 = Preview purge
+**    _datasetName      Dataset name
+**    _completionCode   Completion code
+**    _message          Status message
+**    _returnCode       Return code
+**
+**  Completion codes (as defined in the DMS Space Manager):
+**      0 = Success
+**      1 = Purge failed
+**      2 = Archive update required
+**      3 = Stage MD5 file required (obsolete)
+**      4 = Drive missing
+**      5 = Purged instrument data (and any other auto-purge items)
+**      6 = Purged all data except QC folder
+**      7 = Dataset directory missing in archive
+**      8 = Archive offline
+**      9 = Preview purge
 **
 **  Auth:   grk
 **  Date:   03/04/2003

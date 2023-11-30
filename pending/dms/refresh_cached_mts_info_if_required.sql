@@ -13,16 +13,16 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Calls the various refresh_cached_mts procedures if the last_refreshed date in t_mts_cached_data_status
-**      is over _updateInterval hours before the present
+**      Calls the various refresh_cached_mts procedures if the last_refreshed date
+**      in t_mts_cached_data_status is over _updateInterval hours before the present
 **
 **  Arguments:
-**    _updateInterval                 Minimum interval in hours to limit update frequency; Set to 0 to force update now
-**    _dynamicMinimumCountThreshold   When updating every _updateInterval hours, uses the maximum cached ID value in the given t_mts_%_cached table to determine the minimum ID number to update; for example, for t_mts_analysis_job_info_cached, MinimumJob = MaxJobInTable - _dynamicMinimumCountThreshold; set to 0 to update all items, regardless of ID
-**    _updateIntervalAllItems         Interval (in hours) to update all items, regardless of ID
-**    _infoOnly
-**    _message      Output message
-**    _returnCode   Return code
+**    _updateInterval                   Minimum interval in hours to limit update frequency; set to 0 to force an update now
+**    _dynamicMinimumCountThreshold     When updating every _updateInterval hours, uses the maximum cached ID value in the given t_mts_%_cached table to determine the minimum ID number to update; for example, for t_mts_analysis_job_info_cached, MinimumJob = MaxJobInTable - _dynamicMinimumCountThreshold; set to 0 to update all items, regardless of ID
+**    _updateIntervalAllItems           Interval (in hours) to update all items, regardless of ID
+**    _infoOnly                         When true, preview updates
+**    _message                          Output message
+**    _returnCode                       Return code
 **
 **  Auth:   mem
 **  Date:   02/02/2010 mem - Initial Version
