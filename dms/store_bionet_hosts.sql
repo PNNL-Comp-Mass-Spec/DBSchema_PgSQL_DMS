@@ -60,7 +60,9 @@ CREATE OR REPLACE PROCEDURE public.store_bionet_hosts(IN _hostlist text, IN _inf
 **  Auth:   mem
 **  Date:   12/02/2015 mem - Initial version
 **          11/19/2018 mem - Pass 0 to the _maxRows parameter of parse_delimited_list_ordered
-**          11/29/2023 mem - Ported to PostgreSQL
+**          11/29/2023 mem - Add support for host names from file /var/named/bionet.hosts
+**                         - Ported to PostgreSQL
+**          11/30/2023 mem - Replace for loop with regexp_replace()
 **
 *****************************************************/
 DECLARE
@@ -191,26 +193,13 @@ BEGIN
 
         If Position(chr(10) IN _row) > 0 Then
             -- Rows in file /var/named/bionet.host can have a varying number of columns
-            -- Replace cases of two tabs side-by-side with a single tab
-            -- Do this replacement three times
+            -- Replace cases of two or more adjacent tabs with a single tab
 
-            -- Uncomment to debug
-            -- If _rowNumber < 5 Then
-            --    RAISE INFO 'Checking for adjacent tabs in row %', _rowNumber;
-            -- End If;
+            _row := regexp_replace(_row, '\t+', _tabDelimiter, 'g');
 
-            FOR _i IN 1 .. 3
-            LOOP
-                _row := Replace (_row, chr(10) || chr(10), chr(10));
-            END LOOP;
         ElsIf Position(' ' IN _row) > 0 Then
             -- When tab-delimited text is pasted into DBeaver, it changes the tabs to spaces
             -- Change spaces back to tabs
-
-            -- Uncomment to debug
-            -- If _rowNumber < 5 Then
-            --     RAISE INFO 'Replacing spaces with tabs in row %', _rowNumber;
-            -- End If;
 
             _row := regexp_replace(_row, '[ ]+', _tabDelimiter, 'g');
         End If;
