@@ -8,11 +8,10 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the last_online column in t_bionet_hosts
-**      by looking for datasets associated with any instrument associated with the given host
+**      Updates the last_online column in t_bionet_hosts by looking for datasets associated with any instrument associated with the given host
 **
 **  Arguments:
-**    _infoOnly
+**    _infoOnly     When true, preview updates
 **
 **  Auth:   mem
 **  Date:   12/02/2015 mem - Initial version

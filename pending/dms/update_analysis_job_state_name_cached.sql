@@ -15,11 +15,11 @@ AS $$
 **      Updates column state_name_cached in t_analysis_job for one or more jobs
 **
 **  Arguments:
-**    _jobStart
-**    _jobFinish
-**    _infoOnly
-**    _message              Status message
-**    _returnCode           Return code
+**    _jobStart     First job number
+**    _jobFinish    Last job number; if 0 or a negative number, will use 2147483647
+**    _infoOnly     When true, preview updates
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   12/12/2007 mem - Initial version (Ticket #585)
@@ -45,11 +45,11 @@ BEGIN
     ---------------------------------------------------
     -- Validate the inputs
     ---------------------------------------------------
-    _jobStart := Coalesce(_jobStart, 0);
+    _jobStart  := Coalesce(_jobStart, 0);
     _jobFinish := Coalesce(_jobFinish, 0);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly  := Coalesce(_infoOnly, false);
 
-    If _jobFinish = 0 Then
+    If _jobFinish <= 0 Then
         _jobFinish := 2147483647;
     End If;
 
@@ -102,8 +102,10 @@ BEGIN
                    AJ.State_Name_Cached,
                    AJDAS.Job_State AS New_State_Name_Cached
             FROM t_analysis_job AJ INNER JOIN
-                 V_Analysis_Job_and_Dataset_Archive_State AJDAS ON AJ.job = AJDAS.job
-            WHERE AJ.job IN (Select job From Tmp_JobsToUpdate)
+                 V_Analysis_Job_and_Dataset_Archive_State AJDAS
+                   ON AJ.job = AJDAS.job
+                 INNER JOIN Tmp_JobsToUpdate U
+                   ON AJ.job = U.job
         LOOP
             _infoData := format(_formatSpecifier,
                                 _previewData.Job,
@@ -126,7 +128,7 @@ BEGIN
         RAISE INFO '%', _message;
     Else
 
-        If Exists (Select * From Tmp_JobsToUpdate) Then
+        If Exists (SELECT job FROM Tmp_JobsToUpdate) Then
             ---------------------------------------------------
             -- Update the jobs
             ---------------------------------------------------
@@ -142,7 +144,7 @@ BEGIN
                 _message := '';
             Else
                 _message := format('Updated the cached job state name for %s %s',
-                                    _jobCount, public.check_plural(_jobCount, 'job', 'jobs');
+                                   _jobCount, public.check_plural(_jobCount, 'job', 'jobs');
             End If;
         End If;
 

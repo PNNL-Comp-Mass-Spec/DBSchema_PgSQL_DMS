@@ -12,13 +12,12 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the settings file name and parameter file name
-**      for analysis job requests based on the settings file name
-**      and parameter file name actually used
+**      Updates the settings file name and parameter file name for analysis job requests
+**      based on the settings file name and parameter file name actually used
 **
 **      This helps keep the request and jobs in sync for bookkeeping purposes
-**      Only updates job requests if all of the jobs associated with the
-**      request used the same parameter file and settings file
+**
+**      Only updates job requests if all of the jobs associated with the request used the same parameter file and settings file
 **
 **  Arguments:
 **    _requestMinimum       Minimum request ID to examine (ignored if _recentRequestDays is positive)

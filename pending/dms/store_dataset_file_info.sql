@@ -2,10 +2,10 @@
 CREATE OR REPLACE PROCEDURE public.store_dataset_file_info
 (
     _datasetFileInfo text,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
     _infoOnly boolean = false,
-    _updateExisting text = ''
+    _updateExisting text = '',
+    INOUT _message text default '',
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -14,7 +14,7 @@ AS $$
 **  Desc:
 **      Stores SHA-1 hash info or file size info for dataset files
 **
-**      By default, only adds new data to t_dataset_files; will not replace existing values.
+**      By default, only adds new data to t_dataset_files; will not replace existing values
 **      Set _updateExisting to 'Force' to forcibly replace existing hash values or change existing file sizes
 **
 **      Filenames cannot contain spaces
@@ -57,7 +57,11 @@ AS $$
 **    4979200    DATA.MS    Bet_Se_Pel_M
 **
 **  Arguments:
-**    _datasetFileInfo   hash codes and file names
+**    _datasetFileInfo  Hash codes and file names, formatted using one of the supported formats shown above
+**    _updateExisting   If this is 'Force', updating existing dataset file info
+**    _infoOnly         When true, preview updates
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   04/02/2019 mem - Initial version
@@ -169,7 +173,7 @@ BEGIN
     ---------------------------------------------------
 
     _infoOnly       := Coalesce(_infoOnly, false);
-    _updateExisting := Trim(Coalesce(_updateExisting, ''));
+    _updateExisting := Lower(Trim(Coalesce(_updateExisting, '')));
 
     -----------------------------------------
     -- Split _datasetFileInfo on carriage returns
@@ -375,7 +379,7 @@ BEGIN
 
             -- Updating file size
 
-            If _updateExisting <> 'Force' Then
+            If _updateExisting <> 'force' Then
                 -- Assure that we're not updating an existing file size
                 _existingSize := 0;
 
@@ -401,7 +405,7 @@ BEGIN
 
         If _fileHash <> '' Then
 
-            If _updateExisting <> 'Force' Then
+            If _updateExisting <> 'force' Then
                 -- Assure that we're not updating an existing file size
                 _existingHash := '';
 

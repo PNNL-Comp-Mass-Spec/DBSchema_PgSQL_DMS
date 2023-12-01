@@ -7,8 +7,6 @@ AS $$
 **  Desc:
 **      Updates summary stats in t_biomaterial_type_name
 **
-**  Arguments:
-**
 **  Auth:   grk
 **  Date:   10/20/2002
 **          11/15/2007 mem - Switched to Truncate Table for improved performance (Ticket:576)
@@ -17,9 +15,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _message text;
 BEGIN
-    _message := '';
 
     ----------------------------------------------------------
     -- Create a temporary table to hold the stats
@@ -125,4 +121,4 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_biomaterial_tracking IS 'UpdateCellCultureTracking';
+COMMENT ON PROCEDURE public.update_biomaterial_tracking IS 'UpdateBiomaterialTracking or UpdateCellCultureTracking';

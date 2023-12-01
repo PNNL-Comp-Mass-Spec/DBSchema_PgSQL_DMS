@@ -12,7 +12,8 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Update requested run factors and blocking from input XML lists
+**      Updates requested run factors and blocking using the specified XML
+
 **      Called from https://dms2.pnl.gov/requested_run_batch_blocking/param
 **
 **      Example contents of _blockingList:
@@ -22,12 +23,9 @@ AS $$
 **      Example contents of _factorList:
 **        <id type="Request" /><r i="545496" f="TempFactor" v="a" /><r i="545497" f="TempFactor" v="b" />
 **
-**      _blockingList can be empty if _factorList is defined
-**      Conversely, _factorList may be simply '<id type="Request" />' if updating run order and blocking
-**
 **  Arguments:
-**    _blockingList
-**    _factorList
+**    _blockingList     Block and run order info, as XML (see above); can be empty if _factorList is defined
+**    _factorList       Factor names and values, as XML (see above); can be '<id type="Request" />' if updating run order and blocking
 **    _message          Status message
 **    _returnCode       Return code
 **    _callingUser      Calling user username

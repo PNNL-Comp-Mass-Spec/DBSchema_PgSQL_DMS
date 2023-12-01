@@ -13,16 +13,17 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Change properties of a single material location item
-**      Only allows updating the comment or the active/inactive state
+**      Updates a single material location item
 **
-**      Additionally, prevents updating entries where the container limit is 100 or more
+**      Only allows updating the location comment and state (Active/Inactive)
+**
+**      Additionally, prevents updating entries where the container limit is 100 or more,
 **      since those are special locations (typically for staging samples)
 **
 **  Arguments:
-**    _locationTag
-**    _comment
-**    _status
+**    _locationTag      Location name, e.g. '1206B.1.1.5.1'
+**    _comment          New comment for the location
+**    _status           State: 'Active' or 'Inactive'
 **    _message          Status message
 **    _returnCode       Return code
 **    _callingUser      Calling user username
@@ -43,7 +44,7 @@ DECLARE
     _logMessage text;
     _locationId int;
     _containerLimit int;
-    _oldStatus text;
+    _oldStatus citext;
     _oldComment text;
     _activeContainers int := 0;
 
@@ -82,8 +83,8 @@ BEGIN
         -----------------------------------------------------------
 
         _locationTag := Trim(Coalesce(_locationTag, ''));
-        _comment := Trim(Coalesce(_comment, ''));
-        _status := Trim(Coalesce(_status, ''));
+        _comment     := Trim(Coalesce(_comment, ''));
+        _status      := Trim(Coalesce(_status, ''));
 
         If Coalesce(_callingUser, '') = '' Then
             _callingUser := public.get_user_login_without_domain('');
@@ -98,11 +99,11 @@ BEGIN
         End If;
 
         -- Make sure _status is properly capitalized
-        If _status = 'Active' Then
+        If _status::citext = 'Active' Then
             _status := 'Active';
         End If;
 
-        If _status = 'Inactive' Then
+        If _status::citext = 'Inactive' Then
             _status := 'Inactive';
         End If;
 
@@ -135,7 +136,7 @@ BEGIN
         -- Do not allow a location to be made Inactive if it has active containers
         ---------------------------------------------------
 
-        If _oldStatus = 'Active' And _status ='Inactive' Then
+        If _oldStatus = 'Active' And _status = 'Inactive' Then
 
             SELECT COUNT(ML.location_id)
             INTO _activeContainers

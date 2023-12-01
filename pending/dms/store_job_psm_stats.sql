@@ -26,9 +26,9 @@ CREATE OR REPLACE PROCEDURE public.store_job_psm_stats
     _percentPSMsMissingNTermReporterIon real = 0,
     _percentPSMsMissingReporterIon real = 0,
     _uniqueAcetylPeptidesFDR int = 0,
+    _infoOnly boolean = false,
     INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _infoOnly boolean = false
+    INOUT _returnCode text default ''
 )
 LANGUAGE plpgsql
 AS $$
@@ -38,6 +38,9 @@ AS $$
 **      Updates the PSM stats in t_analysis_job_psm_stats for the specified analysis job
 **
 **  Arguments:
+**    _job                                  Job number
+**    _msgfThreshold                        MS-GF SpecProb or E-Value threshold
+**    _fdrThreshold                         FDR threshold
 **    _spectraSearched                      Number of spectra that were searched
 **    _totalPSMs                            Stats based on _msgfThreshold (Number of identified spectra)
 **    _uniquePeptides                       Stats based on _msgfThreshold
@@ -45,7 +48,7 @@ AS $$
 **    _totalPSMsFDRFilter                   Stats based on _fdrThreshold  (Number of identified spectra)
 **    _uniquePeptidesFDRFilter              Stats based on _fdrThreshold
 **    _uniqueProteinsFDRFilter              Stats based on _fdrThreshold
-**    _msgfThresholdIsEValue                Set to 1 if _msgfThreshold is actually an EValue
+**    _msgfThresholdIsEValue                When 1, _msgfThreshold is actually an E-Value
 **    _percentMSnScansNoPSM                 Percent (between 0 and 100) measuring the percent of MSn scans that did not have a filter passing PSM
 **    _maximumScanGapAdjacentMSn            Maximum number of scans separating two MS2 spectra with search results; large gaps indicates that a processing thread in MSGF+ crashed and the results may be incomplete
 **    _uniquePhosphopeptideCountFDR         Number of Phosphopeptides (any S, T, or Y that is phosphorylated); filtered using _fdrThreshold
@@ -60,6 +63,9 @@ AS $$
 **    _percentPSMsMissingNTermReporterIon   When _dynamicReporterIon is 1, the percent of PSMs that have an N-terminus without TMT; value between 0 and 100
 **    _percentPSMsMissingReporterIon        When _dynamicReporterIon is 1, the percent of PSMs that have an N-terminus or a K without TMT; value between 0 and 100
 **    _uniqueAcetylPeptidesFDR              Number of peptides with any acetylated K; filtered using _fdrThreshold
+**    _infoOnly                             When true, preview updates
+**    _message                              Status message
+**    _returnCode                           Return code
 **
 **  Auth:   mem
 **  Date:   02/21/2012 mem - Initial version

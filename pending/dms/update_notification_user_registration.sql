@@ -20,14 +20,17 @@ AS $$
 **  Desc:
 **      Sets user registration for notification entities
 **
+**      Used by web page https://dms2.pnl.gov/notification/edit/D3L243
+**      See also https://prismwiki.pnl.gov/wiki/DMS_Event_Notification#Notification_Page_Family
+**
 **  Arguments:
-**    _username
-**    _name
-**    _requestedRunBatch    'Yes' or 'No'
-**    _analysisJobRequest   'Yes' or 'No'
-**    _samplePrepRequest    'Yes' or 'No'
-**    _datasetNotReleased   'Yes' or 'No'
-**    _datasetReleased      'Yes' or 'No'
+**    _username             DMS user username
+**    _name                 Person's name (unused)
+**    _requestedRunBatch    'Yes' or 'No', indicating whether the user should be notified of requested runs in a batch starting or finishing (for batches owned by the user)
+**    _analysisJobRequest   'Yes' or 'No', indicating whether the user should be notified of jobs in a job request starting or finishing (for job requests owned by the user)
+**    _samplePrepRequest    'Yes' or 'No', indicating whether the user should be notified of any state changes to sample prep requests owned by the user
+**    _datasetNotReleased   'Yes' or 'No', indicating whether the user should be notified of any datasets (owned by the user) that have their rating set to 'Not released'
+**    _datasetReleased      'Yes' or 'No', indicating whether the user should be notified of any datasets (owned by the user) that have their rating set to 'Released'
 **    _mode                 Unused, but typically 'update'
 **    _message              Status message
 **    _returnCode           Return code

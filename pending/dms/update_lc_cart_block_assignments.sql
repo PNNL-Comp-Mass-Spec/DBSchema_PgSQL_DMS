@@ -11,17 +11,17 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Set LC cart and column assignments for requested run blocks
+**      Updates LC cart and column assignments for requested run blocks
 **
-**  Example XML for _cartAssignmentList
-**      <r bt="3373" bk="1" ct="Earth" co="1" />
-**      <r bt="3373" bk="2" ct="Earth" co="2" />
-**      <r bt="3373" bk="3" ct="Earth" co="3" />
-**      <r bt="3373" bk="4" ct="Earth" co="4" />
+**      This procedure is obsolete since blocks are now tracked by block and run_order in t_requested_run; the procedure was last used in 2012
 **
-**  Where bt is the batch ID, bk is the block number, ct is the cart name, and co is the column number
+**      Example XML for _cartAssignmentList
+**          <r bt="3373" bk="1" ct="Earth" co="1" />
+**          <r bt="3373" bk="2" ct="Earth" co="2" />
+**          <r bt="3373" bk="3" ct="Earth" co="3" />
+**          <r bt="3373" bk="4" ct="Earth" co="4" />
 **
-**  This procedure is obsolete since blocks are now tracked by block and run_order in t_requested_run; the procedure was last used in 2012
+**          Where 'bt' is the batch ID, 'bk' is the block number, 'ct' is the cart name, and 'co' is the column number
 **
 **  Arguments:
 **    _cartAssignmentList   Blocking info XML (see above)

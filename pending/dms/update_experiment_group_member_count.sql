@@ -13,7 +13,7 @@ AS $$
 **      Updates the MemberCount value for either the specific experiment group or for all experiment groups
 **
 **  Arguments:
-**    _groupID      Experiment group to update, or 0 to update all groups
+**    _groupID      Experiment group ID to update; 0 to update all groups
 **    _message      Status message
 **    _returnCode   Return code
 **

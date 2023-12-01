@@ -14,17 +14,16 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Validates the requested personnel and assigned personnel
-**      for a Data Analysis Request or Sample Prep Request
+**      Validates the requested personnel and assigned personnel for a Data Analysis Request or Sample Prep Request
 **
 **  Arguments:
-**    _requestName          Request name
-**    _callingProcedure     AddUpdateDataAnalysisRequest or add_update_sample_prep_request
-**    _requestedPersonnel   Input/output: requested personnel
-**    _assignedPersonnel    Input/output: assigned personnel
-**    _requireValidRequestedPersonnel
-**    _message              Status message
-**    _returnCode           Return code
+**    _requestName                      Request name
+**    _callingProcedure                 add_update_data_analysis_request or add_update_sample_prep_request
+**    _requestedPersonnel               Input/output: semicolon-separated list of requested personnel, in the form 'LastName, FirstName (Username)'
+**    _assignedPersonnel                Input/output: semicolon-separated list of assigned personnel, in the form 'LastName, FirstName (Username)'
+**    _requireValidRequestedPersonnel   When true, require that the personnel are known DMS users
+**    _message                          Status message
+**    _returnCode                       Return code
 **
 **  Auth:   mem
 **  Date:   03/21/2022 mem - Initial version (refactored code from AddUpdateSamplePrepRequest)

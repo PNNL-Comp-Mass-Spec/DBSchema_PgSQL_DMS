@@ -11,7 +11,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates column progress in table t_analysis_job
+**      Updates the progress column in table t_analysis_job
 **
 **      Note that a progress value of -1 is used for failed jobs
 **      Jobs in state 1=New or 8=Holding will have a progress of 0

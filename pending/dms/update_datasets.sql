@@ -17,19 +17,19 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates parameters to new values for datasets in list
+**      Updates dataset state, rating, or comment for the specified list of datasets
 **
 **  Arguments:
-**    _datasetList
-**    _state
-**    _rating
-**    _comment
-**    _findText
-**    _replaceText
-**    _mode         Mode: 'update' or 'preview'
-**    _message      Status message
-**    _returnCode   Return code
-**    _callingUser  Calling user username
+**    _datasetList      Comma-separated list of dataset names
+**    _state            New dataset state name; use '' or '[no change]' to leave unchanged
+**    _rating           New dataset rating;     use '' or '[no change]' to leave unchanged
+**    _comment          New dataset comment;    use '' or '[no change]' to leave unchanged
+**    _findText         Text to find when finding/replacing text in dataset comments;     use '' or '[no change]' to leave unchanged
+**    _replaceText      Replacement text when finding/replacing text in dataset comments; use '' or '[no change]' to leave unchanged
+**    _mode             Mode: 'update' or 'preview'
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   jds
 **  Date:   09/21/2006
@@ -81,38 +81,6 @@ BEGIN
     _datasetRatingUpdated := false;
 
     ---------------------------------------------------
-    -- Validate the inputs
-    ---------------------------------------------------
-
-    _state       := Trim(Coalesce(_state, ''));
-    _rating      := Trim(Coalesce(_rating, ''));
-    _comment     := Trim(Coalesce(_comment, ''));
-    _findText    := Trim(Coalesce(_findText, ''));
-    _replaceText := Trim(Coalesce(_replaceText, ''));
-
-    _mode        := Trim(Lower(Coalesce(_mode, '')));
-
-    If _state::citext In ('', '[no change]') Then
-        _state := '[no change]';
-    End If;
-
-    If _rating::citext In ('', '[no change]') Then
-        _rating := '[no change]';
-    End If;
-
-    If _comment::citext In ('', '[no change]') Then
-        _comment := '[no change]';
-    End If;
-
-    If _findText::citext In ('', '[no change]') Then
-        _findText := '[no change]';
-    End If;
-
-    If _replaceText::citext In ('', '[no change]') Then
-        _replaceText := '[no change]';
-    End If;
-
-    ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------
 
@@ -133,6 +101,39 @@ BEGIN
     End If;
 
     BEGIN
+
+        ---------------------------------------------------
+        -- Validate the inputs
+        ---------------------------------------------------
+
+        _datasetList := Trim(Coalesce(_datasetList, ''));
+        _state       := Trim(Coalesce(_state, ''));
+        _rating      := Trim(Coalesce(_rating, ''));
+        _comment     := Trim(Coalesce(_comment, ''));
+        _findText    := Trim(Coalesce(_findText, ''));
+        _replaceText := Trim(Coalesce(_replaceText, ''));
+
+        _mode        := Trim(Lower(Coalesce(_mode, '')));
+
+        If _state::citext In ('', '[no change]') Then
+            _state := '[no change]';
+        End If;
+
+        If _rating::citext In ('', '[no change]') Then
+            _rating := '[no change]';
+        End If;
+
+        If _comment::citext In ('', '[no change]') Then
+            _comment := '[no change]';
+        End If;
+
+        If _findText::citext In ('', '[no change]') Then
+            _findText := '[no change]';
+        End If;
+
+        If _replaceText::citext In ('', '[no change]') Then
+            _replaceText := '[no change]';
+        End If;
 
         ---------------------------------------------------
         -- Validate the dataset list and find/replace text
@@ -201,11 +202,11 @@ BEGIN
         If _state <> '[no change]' Then
             SELECT Dataset_state_ID
             INTO _stateID
-            FROM  t_dataset_rating_name
-            WHERE dataset_rating = _state;
+            FROM  t_dataset_state_name
+            WHERE dataset_state = _state;
 
             If Not FOUND Then
-                _msg := format('Could not find state %s in t_dataset_rating_name', _state);
+                _msg := format('Could not find state %s in t_dataset_state_name', _state);
                 RAISE EXCEPTION '%', _msg;
             End If;
         End If;
@@ -360,7 +361,6 @@ BEGIN
 
             End If;
 
-            -----------------------------------------------
             If _comment <> '[no change]' Then
                 UPDATE t_dataset
                 SET comment = CASE WHEN comment Is Null THEN _comment
@@ -369,7 +369,6 @@ BEGIN
                 WHERE dataset IN (SELECT Dataset_Name FROM Tmp_DatasetInfo);
             End If;
 
-            -----------------------------------------------
             If _findText <> '[no change]' and _replaceText <> '[no change]' Then
                 UPDATE t_dataset
                 SET comment = Replace(comment, _findText, _replaceText)

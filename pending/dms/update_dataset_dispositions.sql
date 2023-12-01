@@ -21,7 +21,7 @@ AS $$
 **    _datasetIDList    Comma-separated list of dataset IDs
 **    _rating           New dataset rating
 **    _comment          Text to append to the dataset comment
-**    _recycleRequest   If 'yes', call unconsume_scheduled_run()
+**    _recycleRequest   If 'yes', call unconsume_scheduled_run() to recycle the request
 **    _mode             Mode: if 'update', update t_dataset and possibly call unconsume_scheduled_run and schedule_predefined_analysis_jobs
 **    _message          Status message
 **    _returnCode       Return code
@@ -110,10 +110,10 @@ BEGIN
         SELECT dataset_rating_id
         INTO _ratingID
         FROM  t_dataset_rating_name
-        WHERE (dataset_rating = _rating)
+        WHERE dataset_rating = _rating::citext;
 
         If Not FOUND Then
-            RAISE EXCEPTION 'Invalid rating: %', _rating;
+            RAISE EXCEPTION 'Invalid dataset rating: %', _rating;
         End If;
 
         ---------------------------------------------------
@@ -341,7 +341,7 @@ BEGIN
 
         END LOOP;
 
-    End If; -- update mode
+    End If;
 
     ---------------------------------------------------
     -- Log SP usage

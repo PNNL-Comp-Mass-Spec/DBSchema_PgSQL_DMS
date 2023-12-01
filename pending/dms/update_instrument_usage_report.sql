@@ -15,10 +15,9 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Update requested EMSL instrument usage table from input XML list
+**      Updates table t_emsl_instrument_usage_report (which tracks actual instrument usage) using an XML list
 **
-**      Example value for _factorList:
-**
+**      Example XML in _factorList:
 **        <id type="Seq" />
 **        <r i="1939" f="Comment" v="..." />
 **        <r i="1941" f="Comment" v="..." />
@@ -26,8 +25,8 @@ AS $$
 **        <r i="1941" f="Proposal" v="..." />
 **
 **  Arguments:
-**    _factorList
-**    _operation          Operation: 'update', 'refresh', 'reload'
+**    _factorList       XML specifying 'Proposal', 'Operator', 'Comment', 'Users', or 'Usage' items to update
+**    _operation        Operation: 'update', 'refresh', 'reload'
 **    _year
 **    _month
 **    _instrument
@@ -123,7 +122,8 @@ BEGIN
         End If;
     End If;
 
-    _operation := Trim(Coalesce(_operation, ''));
+    _operation := Trim(Lower(Coalesce(_operation, '')));
+
     If char_length(_operation) = 0 Then
         RAISE EXCEPTION 'Operation must be specified';
     End If;
@@ -152,7 +152,7 @@ BEGIN
 
     -- Uncomment to debug
     -- _debugMessage := format('Operation: %s; Instrument: %s; %s-%s; %s', _operation, _instrument, _year, _month, _factorList);
-    -- call post_log_entry ('Debug', _debugMessage, 'Update_Instrument_Usage_Report');
+    -- CALL post_log_entry ('Debug', _debugMessage, 'Update_Instrument_Usage_Report');
 
     -----------------------------------------------------------
     -- Convert _factorList to rooted XML
@@ -176,11 +176,11 @@ BEGIN
         _lockDateReload   := _startOfNextMonth + INTERVAL '60 days'   ; -- Date threshold, afterwhich users can no longer reload this month's data
         _lockDateUpdate   := _startOfNextMonth + INTERVAL '365 days'  ; -- Date threshold, afterwhich users can no longer update this month's data
 
-        If _operation::citext In ('update') And CURRENT_TIMESTAMP > _lockDateUpdate Then
+        If _operation = 'update' And CURRENT_TIMESTAMP > _lockDateUpdate Then
             RAISE EXCEPTION 'Changes are not allowed to instrument usage data over 365 days old';
         End If;
 
-        If Not _operation::citext In ('update') And CURRENT_TIMESTAMP > _lockDateReload Then
+        If _operation <> 'update' And CURRENT_TIMESTAMP > _lockDateReload Then
             RAISE EXCEPTION 'Instrument usage data over 60 days old cannot be reloaded or refreshed';
         End If;
 
@@ -188,7 +188,7 @@ BEGIN
         -- Foundational actions for various operations
         -----------------------------------------------------------
 
-        If _operation::citext In ('update') Then
+        If _operation = 'update' Then
 
             -----------------------------------------------------------
             -- Temp table to hold update items
@@ -232,13 +232,13 @@ BEGIN
 
         End If;
 
-        If _operation::citext In ('reload', 'refresh') Then
+        If _operation In ('reload', 'refresh') Then
 
             -----------------------------------------------------------
             -- Validation
             -----------------------------------------------------------
 
-            If _operation::citext = 'reload' And Coalesce(_instrument, '') = '' Then
+            If _operation = 'reload' And Coalesce(_instrument, '') = '' Then
                 RAISE EXCEPTION 'An instrument must be specified for the reload operation';
             End If;
 
@@ -263,13 +263,13 @@ BEGIN
 
         End If;
 
-        If _operation::citext = 'update' Then
+        If _operation = 'update' Then
             UPDATE t_emsl_instrument_usage_report
             SET comment = Tmp_Factors.Value
             FROM Tmp_Factors
             WHERE t_emsl_instrument_usage_report.Seq = Tmp_Factors.Identifier AND
                   Field = 'Comment';
-3
+
             UPDATE t_emsl_instrument_usage_report
             SET proposal = Tmp_Factors.Value
             FROM Tmp_Factors
@@ -304,7 +304,7 @@ BEGIN
 
         End If;
 
-        If _operation::citext = 'reload' Then
+        If _operation = 'reload' Then
             UPDATE t_emsl_instrument_usage_report
             SET usage_type_id = Null,
                 proposal = '',
@@ -325,7 +325,7 @@ BEGIN
             _operation := 'refresh';
         End If;
 
-        If _operation::citext = 'refresh' Then
+        If _operation = 'refresh' Then
             If char_length(Coalesce(_instrument, '')) > 0 Then
                 CALL public.update_emsl_instrument_usage_report (
                                 _instrument      => _instrument,

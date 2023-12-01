@@ -11,15 +11,16 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Set LC cart and col assignments for requested runs
+**      Updates LC cart and column assignments for requested runs
 **
-**  Example XML for _cartAssignmentList
-**      <r rq="543451" ct="Andromeda" co="1" cg="" />
-**      <r rq="543450" ct="Andromeda" co="2" cg="" />
-**      <r rq="543449" ct="Andromeda" co="1" cg="Tiger_Jup_2D_Peptides_20uL" />
+**      Example XML for _cartAssignmentList
+**          <r rq="543451" ct="Andromeda" co="1" cg="" />
+**          <r rq="543450" ct="Andromeda" co="2" cg="" />
+**          <r rq="543449" ct="Andromeda" co="1" cg="Tiger_Jup_2D_Peptides_20uL" />
 **
-**  Where rq is the request ID, ct is the cart name, co is the column number, and cg is the cart config name
-**  See method saveChangesToDatabase below lc_cart_request_loading in file javascript/lcmd.js
+**      Where 'rq' is the request ID, 'ct' is the cart name, 'co' is the column number, and 'cg' is the cart config name
+**
+**      This procedure is used by function saveChangesToDatabase in file javascript/lcmd.js (below lc_cart_request_loading) on the DMS website
 **
 **  Arguments:
 **    _cartAssignmentList   XML (see above)

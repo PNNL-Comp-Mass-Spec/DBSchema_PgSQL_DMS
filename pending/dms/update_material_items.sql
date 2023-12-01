@@ -15,14 +15,14 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Makes changes for specified list of material items
+**      Moves or retires the specified list of material items
 **
 **  Arguments:
 **    _mode             Mode: 'move_material' or 'retire_items'
 **    _itemList         Either list of material IDs with type tag prefixes (e.g. E:8432,E:8434,E:9786), or list of container IDs (integers)
 **    _itemType         Item type: 'mixed_material' or 'containers'
-**    _newValue
-**    _comment
+**    _newValue         When mode is 'move_material', this tracks the name of the new container for the items
+**    _comment          Comment to store in t_material_log when moving or retiring items
 **    _message          Status message
 **    _returnCode       Return code
 **    _callingUser      Calling user username
@@ -101,9 +101,10 @@ BEGIN
 
     If _mode = 'move_material' Then
 
-        SELECT
-            _contID = container_id,
-            _contStatus = status
+        _container := _newValue;
+
+        SELECT container_id, status
+        INTO _contID, _contStatus
         FROM t_material_containers
         WHERE container = _container;
 
@@ -345,7 +346,7 @@ BEGIN
         _container,
         _callingUser,
         _comment
-    FROM Tmp_Material_Items
+    FROM Tmp_Material_Items;
 
     DROP TABLE Tmp_Material_Items;
 

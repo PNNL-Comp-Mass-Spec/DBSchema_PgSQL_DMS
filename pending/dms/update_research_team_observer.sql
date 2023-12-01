@@ -12,14 +12,14 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Sets user registration for notification entities
+**     Adds or removes user _callingUser as a research team observer on a campaign
 **
 **  Arguments:
 **    _campaignName     Campaign name
 **    _mode             Mode: 'add' or 'remove'
 **    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the user to add/remove
 **
 **  Auth:   grk
 **  Date:   04/03/2010
@@ -110,7 +110,7 @@ BEGIN
     SELECT user_id
     INTO _userID
     FROM t_users
-    WHERE username = _username;
+    WHERE username = _username::citext;
 
     If Not FOUND Then
         _returnCode := 'U5203';
@@ -137,14 +137,14 @@ BEGIN
         DELETE FROM t_research_team_membership
         WHERE team_id = _researchTeamID AND
               role_id = _observerRoleID AND
-              user_id = _userID
+              user_id = _userID;
     End If;
 
     If _membershipExists = 0 And _mode = 'add' Then
       INSERT INTO t_research_team_membership( team_id,
-                                                  role_id,
-                                                  user_id )
-      VALUES(_researchTeamID, _observerRoleID, _userID)
+                                              role_id,
+                                              user_id )
+      VALUES (_researchTeamID, _observerRoleID, _userID);
     End If;
 
     ---------------------------------------------------

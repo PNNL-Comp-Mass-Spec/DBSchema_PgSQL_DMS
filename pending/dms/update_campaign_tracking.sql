@@ -19,9 +19,7 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _message text;
 BEGIN
-    _message := '';
 
     ----------------------------------------------------------
     -- Create a temporary table to hold the stats

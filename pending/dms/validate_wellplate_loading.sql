@@ -13,8 +13,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Checks to see if given set of consecutive well
-**      loadings for a given wellplate are valid
+**      Checks to see if a given set of consecutive well loadings for a given wellplate are valid
 **
 **  Arguments:
 **    _wellplateName    Input/output: wellplate name

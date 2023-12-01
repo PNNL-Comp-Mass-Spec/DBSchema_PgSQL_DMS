@@ -14,11 +14,11 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Makes changes for specified list of containers
+**      Updates specified list of containers
 **
 **  Arguments:
 **    _mode             Mode: 'move_container', 'retire_container', 'retire_container_and_contents', 'unretire_container'
-**    _containerList    Container ID list, e.g. 'MC-6314', 'MC-9750'
+**    _containerList    Comma-separated list of container IDs, e.g. '6314, 9750'
 **    _newValue         When mode is 'move_container', this is the new location for the container
 **    _comment          Container comment
 **    _message          Status message
@@ -111,8 +111,8 @@ BEGIN
            Status,
            Type
     FROM V_Material_Container_Item_Stats
-    WHERE Container_ID IN ( SELECT Value
-                            FROM public.parse_delimited_list(_containerList) );
+    WHERE container_id IN ( SELECT Value
+                         FROM public.parse_delimited_integer_list(_containerList) );
     --
     GET DIAGNOSTICS _numContainers = ROW_COUNT;
 

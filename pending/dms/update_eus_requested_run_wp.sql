@@ -9,14 +9,13 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the work package for requested runs from EUS projects by looking
-**      for other requested runs from the same project that have a work package
+**      Updates the work package for requested runs from EUS projects by looking for other requested runs from the same project that have a work package
 **
 **      Changes will be logged to t_log_entries
 **
 **  Arguments:
-**    _searchWindowDays
-**    _infoOnly
+**    _searchWindowDays     Search window, in days
+**    _infoOnly             When true, preview updates
 **
 **  Auth:   mem
 **  Date:   12/18/2015 mem - Initial version

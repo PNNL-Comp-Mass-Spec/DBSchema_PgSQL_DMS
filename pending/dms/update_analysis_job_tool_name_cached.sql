@@ -15,11 +15,11 @@ AS $$
 **      Updates column analysis_tool_cached in t_analysis_job for one or more jobs
 **
 **  Arguments:
-**    _jobStart
-**    _jobFinish
-**    _infoOnly
-**    _message              Status message
-**    _returnCode           Return code
+**    _jobStart     First job number
+**    _jobFinish    Last job number; if 0 or a negative number, will use 2147483647
+**    _infoOnly     When true, preview updates
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   04/03/2014 mem - Initial version
@@ -43,9 +43,9 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _jobStart := Coalesce(_jobStart, 0);
+    _jobStart  := Coalesce(_jobStart, 0);
     _jobFinish := Coalesce(_jobFinish, 0);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly  := Coalesce(_infoOnly, false);
 
     If _jobFinish = 0 Then
         _jobFinish := 2147483647;
@@ -99,8 +99,7 @@ BEGIN
         If _jobCount = 0 Then
             _message := 'All jobs have up-to-date cached analysis tool names';
         Else
-            _message := format('Found %s %s to update',
-                                _jobCount, public.check_plural(_jobCount, 'job', 'jobs');
+            _message := format('Found %s %s to update', _jobCount, public.check_plural(_jobCount, 'job', 'jobs'));
         End If;
 
         RAISE INFO '%', _message;
@@ -122,8 +121,7 @@ BEGIN
         If _jobCount = 0 Then
             _message := '';
         Else
-            _message := format('Updated the cached analysis tool name for %s %s'
-                                _jobCount, public.check_plural(_jobCount, 'job', 'jobs');
+            _message := format('Updated the cached analysis tool name for %s %s', _jobCount, public.check_plural(_jobCount, 'job', 'jobs'));
         End If;
     End If;
 

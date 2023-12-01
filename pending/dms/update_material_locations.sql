@@ -12,18 +12,18 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Change properties of given set of material locations
+**      Updates the given list of material locations
 **
 **      Example contents of _locationList:
 **        <r n="80B.na.na.na.na" i="425" a="Status" v="Active" />
 **        <r n="80B.2.na.na.na" i="439" a="Status" v="Active" />
 **        <r n="80B.3.3.na.na" i="558" a="Status" v="Active" />
 **
-**      ("n" is location name and "i" is location_id, though this procedure ignores location_id)
+**        ('n' is location name and 'i' is location_id, though this procedure ignores location_id)
 **
 **  Arguments:
 **    _locationList     Information on material locations to update
-**    _infoOnly         Set to true to preview the changes that would be made
+**    _infoOnly         When true, preview the changes that would be made
 **    _message          Status message
 **    _returnCode       Return code
 **    _callingUser      Calling user username
@@ -101,9 +101,9 @@ BEGIN
         -----------------------------------------------------------
 
         CREATE TEMP TABLE Tmp_LocationInfo (
-            Location text,      -- Location name, e.g., 2240B.2.na.na.na
-            ID text NULL,       -- Location ID (ignored)
-            Action text NULL,
+            Location citext,      -- Location name, e.g., 2240B.2.na.na.na
+            ID citext NULL,       -- Location ID (ignored)
+            Action citext NULL,
             Value text NULL,
             Old_Value text NULL
         );
@@ -158,68 +158,69 @@ BEGIN
             WHERE t_material_locations.location = Tmp_LocationInfo.Location AND
                   Tmp_LocationInfo.Action = 'status' AND
                   NOT Tmp_LocationInfo.Value = Coalesce(Tmp_LocationInfo.Old_Value, '');
+
+            DROP TABLE Tmp_LocationInfo;
+            RETURN;
         End If;
 
-        -----------------------------------------------------------
-        If _infoOnly Then
+        RAISE INFO '';
 
-            RAISE INFO '';
+        _formatSpecifier := '%-11s %-25s %-25s %-10s %-15s %-80s %-25s %-10s';
 
-            _formatSpecifier := '%-11s %-25s %-25s %-10s %-15s %-80s %-25s %-10s';
+        _infoHead := format(_formatSpecifier,
+                            'Location_ID',
+                            'Freezer_Tag',
+                            'Location',
+                            'Status',
+                            'Container_Limit',
+                            'Comment',
+                            'RFID_Hex_ID',
+                            'Barcode'
+                           );
 
-            _infoHead := format(_formatSpecifier,
-                                'Location_ID',
-                                'Freezer_Tag',
-                                'Location',
-                                'Status',
-                                'Container_Limit',
-                                'Comment',
-                                'RFID_Hex_ID',
-                                'Barcode'
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '-----------',
+                                     '-------------------------',
+                                     '-------------------------',
+                                     '----------',
+                                     '---------------',
+                                     '--------------------------------------------------------------------------------',
+                                     '-------------------------',
+                                     '----------'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT ML.Location_ID,
+                   ML.Freezer_Tag,
+                   ML.Location,
+                   ML.Status,
+                   ML.Container_Limit,
+                   ML.Comment,
+                   ML.RFID_Hex_ID,
+                   ML.Barcode
+            FROM t_material_locations ML
+                 INNER JOIN Tmp_LocationInfo
+                   ON ML.Location = Tmp_LocationInfo.Location
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.Location_ID,
+                                _previewData.Freezer_Tag,
+                                _previewData.Location,
+                                _previewData.Status,
+                                _previewData.Container_Limit,
+                                _previewData.Comment,
+                                _previewData.RFID_Hex_ID,
+                                _previewData.Barcode
                                );
 
-            _infoHeadSeparator := format(_formatSpecifier,
-                                         '-----------',
-                                         '-------------------------',
-                                         '-------------------------',
-                                         '----------',
-                                         '---------------',
-                                         '--------------------------------------------------------------------------------',
-                                         '-------------------------',
-                                         '----------'
-                                        );
+            RAISE INFO '%', _infoData;
+        END LOOP;
 
-            RAISE INFO '%', _infoHead;
-            RAISE INFO '%', _infoHeadSeparator;
-
-            FOR _previewData IN
-                SELECT ML.Location_ID,
-                       ML.Freezer_Tag,
-                       ML.Location,
-                       ML.Status,
-                       ML.Container_Limit,
-                       ML.Comment,
-                       ML.RFID_Hex_ID,
-                       ML.Barcode
-                FROM t_material_locations ML
-                     INNER JOIN Tmp_LocationInfo
-                       ON ML.Location = Tmp_LocationInfo.Location
-            LOOP
-                _infoData := format(_formatSpecifier,
-                                    _previewData.Location_ID,
-                                    _previewData.Freezer_Tag,
-                                    _previewData.Location,
-                                    _previewData.Status,
-                                    _previewData.Container_Limit,
-                                    _previewData.Comment,
-                                    _previewData.RFID_Hex_ID,
-                                    _previewData.Barcode
-                                   );
-
-                RAISE INFO '%', _infoData;
-            END LOOP;
-
-        End If;
+        DROP TABLE Tmp_LocationInfo;
+        RETURN;
 
     EXCEPTION
         WHEN OTHERS THEN

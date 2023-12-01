@@ -12,25 +12,27 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Update requested instrument usage allocation from input XML list
+**      Updates instrument usage allocation using an XML list
 **
-**  _parameterList will look like this (for setting values):
+**      This procedure is obsolete since instrument allocation was last tracked in 2012 (see table t_instrument_allocation)
 **
-**  <c fiscal_year="2022"/>
-**  <r p="29591" g="FT" a="23.2" x="Comment1"/>
-**  <r p="33200" g="FT" a="102.1" x="Comment2"/>
-**  <r p="34696" g="FT" a="240" />
-**  <r p="34708" g="FT" a="177.7" x="Comment3"/>
+**      Example XML in _parameterList:
 **
-**  or this (for transferring hours between two proposals):
+**      1) Setting values
+**          <c fiscal_year="2022"/>
+**          <r p="29591" g="FT" a="23.2" x="Comment1"/>
+**          <r p="33200" g="FT" a="102.1" x="Comment2"/>
+**          <r p="34696" g="FT" a="240" />
+**          <r p="34708" g="FT" a="177.7" x="Comment3"/>
 **
-**  <c fiscal_year="2022"/>
-**  <r o="i" p="29591" g="FT" a="14.5" x="Comment"/>
-**  <r o="d" p="33200" g="FT" a="14.5" x="Comment"/>
+**     2) Transferring hours between two proposals
+**          <c fiscal_year="2022"/>
+**          <r o="i" p="29591" g="FT" a="14.5" x="Comment"/>
+**          <r o="d" p="33200" g="FT" a="14.5" x="Comment"/>
 **
 **  Arguments:
 **    _parameterList    XML specifying allocation hours
-**    _infoOnly         Set to true to preview the changes that would be made
+**    _infoOnly         When true, preview the changes that would be made
 **    _message          Status message
 **    _returnCode       Return code
 **    _callingUser      Calling user username

@@ -13,14 +13,13 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Determines the instrument associated with the given run interval ID
-**      then calls Update_Dataset_Interval_For_Multiple_Instruments
-**      (which calls Update_Dataset_Interval and Update_EMSL_Instrument_Usage_Report)
+**      Determines the instrument associated with the given run interval ID, then calls update_dataset_interval_for_multiple_instruments(),
+**      which calls update_dataset_interval() and update_emsl_instrument_usage_report()
 **
 **  Arguments:
-**    _runIntervalId
-**    _daysToProcess
-**    _infoOnly
+**    _runIntervalId    Run interval ID, corresponding to dataset_id in t_run_interval
+**    _daysToProcess    Used to determine the date range of datasets to process
+**    _infoOnly         When true, preview updates
 **    _message          Status message
 **    _returnCode       Return code
 **    _callingUser      Calling user username

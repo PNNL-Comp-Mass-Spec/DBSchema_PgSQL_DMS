@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Change run blocking parameters given by lists
+**      Updates run blocking parameters using the specified XML
 **
 **      Example XML for _blockingList
 **        <r i="481295" t="Run_Order" v="1" />
@@ -26,7 +26,7 @@ AS $$
 **        'BK', 'RO', 'Block', 'Run_Order', 'Run Order', 'Status', 'Instrument', or 'Cart'
 **
 **  Arguments:
-**    _blockingList     XML (see above)
+**    _blockingList     Block and run order info, as XML (see above)
 **    _mode             Mode: 'update'
 **    _message          Status message
 **    _returnCode       Return code

@@ -15,7 +15,7 @@ AS $$
 **      - update_eus_users_from_eus_imports
 **      - update_eus_instruments_from_eus_imports
 **
-**      Intended to be manually run on an on-demand basis
+**      Intended to be manually run, as needed
 **
 **  Arguments:
 **    _updateUsersOnInactiveProposals   When true, update_eus_users_from_eus_imports will update all proposals in t_eus_proposals, including inactive proposals

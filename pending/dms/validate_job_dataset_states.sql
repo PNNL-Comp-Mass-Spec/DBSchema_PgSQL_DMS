@@ -11,7 +11,7 @@ AS $$
 **      Validates job and dataset states vs. sw.t_jobs and cap.t_tasks
 **
 **  Arguments:
-**    _infoOnly
+**    _infoOnly     When true, preview updates
 **
 **  Auth:   mem
 **  Date:   11/11/2016 mem - Initial Version

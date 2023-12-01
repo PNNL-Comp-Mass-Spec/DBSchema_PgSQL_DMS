@@ -12,24 +12,23 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Requested run admin operations
-**      Will only update Active and Inactive requests
+**      Requested run admin operations; only updates Active and Inactive requested runs
 **
 **      Example contents of _requestList:
 **        <r i="545499" /><r i="545498" /><r i="545497" /><r i="545496" /><r i="545495" />
 **
-**      Description of the modes
-**        'Active'    sets the requests to the Active state
-**        'Inactive'  sets the requests to the Inactive state
-**        'Delete'    deletes the requests
-**        'UnassignInstrument' will change the Queue_State to 1 for requests that have a Queue_State of 2 ("Assigned"); skips any with a Queue_State of 3 ("Analyzed")
-**
 **  Arguments:
-**    _requestList      XML describing list of Requested Run IDs
+**    _requestList      XML describing Requested Run IDs to update
 **    _mode             Mode: 'Active', 'Inactive', 'Delete', or 'UnassignInstrument'
 **    _message          Status message
 **    _returnCode       Return code
 **    _callingUser      Calling user username
+**
+**  Available modes:
+**      'Active'             sets the requests to the Active state
+**      'Inactive'           sets the requests to the Inactive state
+**      'Delete'             deletes the requests
+**      'UnassignInstrument' changes the queue state to 1 for requests that have a queue state of 2 ("Assigned"); skips any with a queue state of 3 ("Analyzed")
 **
 **  Auth:   grk
 **  Date:   03/09/2010
@@ -208,11 +207,11 @@ BEGIN
     -- Update status
     -----------------------------------------------------------
 
-    If _mode = 'active' Or _mode = 'inactive' Then
+    If _mode IN ('active', 'inactive') Then
         UPDATE t_requested_run
         SET state_name = _mode
         WHERE request_id IN ( SELECT request_id FROM Tmp_Requests ) AND
-              state_name <> 'Completed'
+              state_name <> 'Completed';
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 

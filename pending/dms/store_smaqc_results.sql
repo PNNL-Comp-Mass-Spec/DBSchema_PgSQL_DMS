@@ -13,9 +13,9 @@ AS $$
 **
 **  Desc:
 **      Updates the SMAQC information for the dataset specified by _datasetID
+**
 **      If _datasetID is 0, will use the dataset name defined in _resultsXML
-**      If _datasetID is non-zero, will validate that the Dataset Name in the XML corresponds
-**      to the dataset ID specified by _datasetID
+**      If _datasetID is non-zero, will validate that the dataset name in the XML corresponds to the dataset ID specified by _datasetID
 **
 **      Typical XML file contents:
 **

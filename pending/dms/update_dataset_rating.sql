@@ -13,12 +13,12 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the rating for the given datasets by calling procedure Update_Datasets
+**      Updates the rating for the given datasets by calling procedure update_datasets
 **
 **  Arguments:
-**    _datasets     Comma-separated list of datasets
+**    _datasets     Comma-separated list of dataset names
 **    _rating       Typically 'Released' or 'Not Released'
-**    _infoOnly
+**    _infoOnly     When true, preview updates
 **    _message      Status message
 **    _returnCode   Return code
 **    _callingUser  Calling user username
@@ -39,13 +39,10 @@ DECLARE
 
     _ratingID int;
     _datasetCount int := 0;
-    _mode text := 'update';
+    _mode text;
 BEGIN
     _message := '';
     _returnCode := '';
-
-    _rating   := Trim(Coalesce(_rating, ''));
-    _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -71,7 +68,9 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _mode := Trim(Lower(Coalesce(_mode, '')));
+    _datasets := Trim(Coalesce(_datasets, ''));
+    _rating   := Trim(Coalesce(_rating, ''));
+    _infoOnly := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------
     -- Resolve id for rating
@@ -80,7 +79,7 @@ BEGIN
     _ratingID := public.get_dataset_rating_id(_rating);
 
     If _ratingID = 0 Then
-        _message := format('Could not find entry in database for rating "%s"', _rating);
+        _message := format('Could not find entry in database for dataset rating "%s"', _rating);
         RAISE INFO '%', _message;
         RETURN;
     End If;
@@ -101,10 +100,12 @@ BEGIN
 
     If _infoOnly Then
         _mode := 'preview';
+    Else
+        _mode := 'update';
     End If;
 
     ---------------------------------------------------
-    -- Call procedure Update_Datasets
+    -- Call procedure update_datasets
     ---------------------------------------------------
 
     CALL public.update_datasets (

@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Update requested instrument usage allocation using data in Tmp_Allocation_Operations
+**      Updates requested instrument usage allocation using data in Tmp_Allocation_Operations
 **
 **      CREATE TEMP TABLE Tmp_Allocation_Operations (
 **          Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -23,6 +23,8 @@ AS $$
 **          FY int,
 **          Operation text null     -- 'i' -> increment, 'd' -> decrement, anything else -> set
 **      );
+**
+**      This procedure is obsolete since instrument allocation was last tracked in 2012 (see table t_instrument_allocation)
 **
 **  Arguments:
 **    _fy               Fiscal year
@@ -186,9 +188,9 @@ BEGIN
         INTO _targetEntryID, _enteredBy
         FROM t_instrument_allocation_updates
         WHERE allocation_tag = _allocationInfo.InstGroup AND
-                proposal_id = _allocationInfo.Proposal AND
-                fiscal_year = _fy AND
-                entered BETWEEN _currentTime - INTERVAL '15 seconds' AND _currentTime + INTERVAL '1 second';
+              proposal_id = _allocationInfo.Proposal AND
+              fiscal_year = _fy AND
+              entered BETWEEN _currentTime - INTERVAL '15 seconds' AND _currentTime + INTERVAL '1 second';
 
         If Not FOUND Then
             CONTINUE;

@@ -3,9 +3,9 @@ CREATE OR REPLACE PROCEDURE public.store_dta_ref_mass_error_stats
 (
     _datasetID int = 0,
     _resultsXML xml,
+    _infoOnly boolean = false,
     INOUT _message text default '',
     INOUT _returnCode text default '',
-    _infoOnly boolean = false
 )
 LANGUAGE plpgsql
 AS $$
@@ -13,9 +13,9 @@ AS $$
 **
 **  Desc:
 **      Updates the mass error stats specified by _datasetID
+**
 **      If _datasetID is 0, will use the dataset name defined in _resultsXML
-**      If _datasetID is non-zero, will validate that the Dataset Name in the XML corresponds
-**      to the dataset ID specified by _datasetID
+**      If _datasetID is non-zero, will validate that the dataset name in the XML corresponds to the dataset ID specified by _datasetID
 **
 **      Typical XML file contents:
 **
@@ -31,6 +31,9 @@ AS $$
 **  Arguments:
 **    _datasetID    If this value is 0, will determine the dataset name using the contents of _resultsXML
 **    _resultsXML   XML holding the Mass Error results for a single dataset
+**    _infoOnly     When true, preview updates
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   08/08/2013 mem - Initial version (modelled after StoreSMAQCResults)

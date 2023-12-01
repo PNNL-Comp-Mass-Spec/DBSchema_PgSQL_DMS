@@ -19,13 +19,13 @@ AS $$
 **      Updates data in t_mts_cached_data_status using MTS
 **
 **  Arguments:
-**    _cachedDataTableName
-**    _incrementRefreshCount
-**    _insertCountNew         Ignored if _incrementRefreshCount is false
-**    _updateCountNew         Ignored if _incrementRefreshCount is false
-**    _deleteCountNew         Ignored if _incrementRefreshCount is false
-**    _fullRefreshPerformed   When true, updates both Last_Refreshed and Last_Full_Refresh; otherwise, just updates Last_Refreshed
-**    _lastRefreshMinimumID
+**    _cachedDataTableName      Cached data table name
+**    _incrementRefreshCount    If true, increment the refresh count in t_mts_cached_data_status
+**    _insertCountNew           Ignored if _incrementRefreshCount is false
+**    _updateCountNew           Ignored if _incrementRefreshCount is false
+**    _deleteCountNew           Ignored if _incrementRefreshCount is false
+**    _fullRefreshPerformed     When true, updates both Last_Refreshed and Last_Full_Refresh; otherwise, just updates Last_Refreshed
+**    _lastRefreshMinimumID     Last refresh minimumID
 **    _message          Status message
 **    _returnCode       Return code
 **

@@ -30,8 +30,8 @@ AS $$
 **    _informaticsStaff         Informatics staff
 **    _collaborators            Collaborators
 **    _researchTeamID           Output: research team ID
-**    _message          Status message
-**    _returnCode       Return code
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   grk
 **  Date:   02/05/2010 grk - Initial version

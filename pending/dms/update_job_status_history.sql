@@ -10,8 +10,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Appends new entries to t_analysis_job_status_history,
-**      summarizing the number of analysis jobs in each state in t_analysis_job
+**      Appends new entries to t_analysis_job_status_history, summarizing the number of analysis jobs in each state in t_analysis_job
 **
 **  Arguments:
 **    _minimumTimeIntervalHours     Set this to 0 to force the addition of new data to t_analysis_job_status_history

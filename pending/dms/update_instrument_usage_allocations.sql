@@ -29,26 +29,28 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Update requested instrument usage allocation via specific parameters
+**      Updates instrument usage allocation data by populating a temporary table then calling update_instrument_usage_allocations_work
+**
+**      This procedure is obsolete since instrument allocation was last tracked in 2012 (see table t_instrument_allocation)
 **
 **  Arguments:
 **    _fyProposal   Only used when _mode is 'update'
 **    _fiscalYear   Only used when _mode is 'add'
 **    _proposalID   Only used when _mode is 'add'
-**    _ft
-**    _ftComment
-**    _ims
-**    _imsComment
-**    _orb
-**    _orbComment
-**    _exa
-**    _exaComment
-**    _ltq
-**    _ltqComment
-**    _gc
-**    _gcComment
-**    _qqq
-**    _qqqComment
+**    _ft           FTICR hours
+**    _ftComment    FTICR comment
+**    _ims          IMS hours
+**    _imsComment   IMS comment
+**    _orb          Orbitrap hours
+**    _orbComment   Orbitrap comment
+**    _exa          Exactive hours
+**    _exaComment   Exactive comment
+**    _ltq          LTQ hours
+**    _ltqComment   LTQ comment
+**    _gc           GC hours
+**    _gcComment    GC comment
+**    _qqq          Triple-quad hours
+**    _qqqComment   Triple-quad comments
 **    _mode         Mode: 'add' or 'update'
 **    _message      Status message
 **    _infoOnly     When true, preview the changes that would be made

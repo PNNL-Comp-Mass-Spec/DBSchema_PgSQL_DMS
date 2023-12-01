@@ -14,13 +14,12 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Sets analysis job processor group membership for the specified group
-**      for the processors in the list according to the mode
+**      Updates analysis job processor group membership for the specified group for the processors in the list according to the mode
 **
 **  Arguments:
-**    _processorNameList
-**    _processorGroupID
-**    _newValue
+**    _processorNameList    Comma-separated list of processor names
+**    _processorGroupID     Processor group ID
+**    _newValue             New value: 'Y' or 'N' (only used when _mode is 'set_membership_enabled')
 **    _mode                 Mode: 'set_membership_enabled', 'add_processors', 'remove_processors',
 **    _message              Status message
 **    _returnCode           Return code
@@ -145,9 +144,8 @@ BEGIN
     End If;
 
 /*
-    -- If mode = 'set_membership_enabled', set Membership_Enabled
-    -- column for member processors in _processorNameList
-    -- the the value of _newValue
+    -- If mode is 'set_membership_enabled', set Membership_Enabled column for member processors in _processorNameList to the value of _newValue
+
     If _mode = 'set_membership_enabled' Then
         UPDATE t_analysis_job_processor_group_membership
         SET membership_enabled = _newValue
@@ -156,14 +154,12 @@ BEGIN
     End If;
 */
     ---------------------------------------------------
-
-    -- If mode = 'add_processors', add processors in _processorNameList
-    -- to existing membership of group (be careful not to make duplicates)
+    -- If mode is 'add_processors', add processors in _processorNameList to existing membership of group
+    -- (be careful not to make duplicates)
     ---------------------------------------------------
 
     If _mode = 'add_processors' Then
-        INSERT INTO t_analysis_job_processor_group_membership
-            (processor_id, group_id)
+        INSERT INTO t_analysis_job_processor_group_membership (processor_id, group_id)
         SELECT ID, _pgid
         FROM Tmp_Processors
         WHERE NOT Tmp_Processors.ID IN (
@@ -176,8 +172,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- If mode = 'remove_processors', remove processors in _processorNameList
-    -- from existing membership of group
+    -- If mode is 'remove_processors', remove processors in _processorNameList from existing membership of group
     ---------------------------------------------------
 
     If _mode = 'remove_processors' Then

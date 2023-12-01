@@ -16,8 +16,7 @@ AS $$
 **
 **  Arguments:
 **    _biomaterialName  Biomaterial name, aka cell culture
-**    _organismList     Comma-separated list of organism names.  Should be full organism name, but can also be short names, in which case AutoResolveOrganismName will try to resolve the short name to a full organism name
-**    _locationList     Information on material locations to update
+**    _organismList     Comma-separated list of organism names; should be full organism name, but can also be short names, in which case auto_resolve_organism_name will try to resolve the short name to a full organism name
 **    _infoOnly         Set to true to preview the changes that would be made
 **    _message          Status message
 **    _returnCode       Return code

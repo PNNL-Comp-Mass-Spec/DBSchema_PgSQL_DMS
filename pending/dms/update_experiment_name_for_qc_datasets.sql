@@ -13,7 +13,7 @@ AS $$
 **      Assures that the dataset name associated with QC datasets matches the dataset name
 **
 **  Arguments:
-**    _infoOnly
+**    _infoOnly     When true, preview updates
 **    _message      Status message
 **    _returnCode   Return code
 **

@@ -17,13 +17,13 @@ AS $$
 **      Adds, updates, or deletes allowed dataset type for given instrument group
 **
 **  Arguments:
-&&    _instrumentGroup
-&&    _datasetType
-&&    _comment
-**    _mode         Mode: 'add' or 'update' or 'delete'
-**    _message      Status message
-**    _returnCode   Return code
-**    _callingUser  Calling user username
+**    _instrumentGroup  Instrument group name
+**    _datasetType      Dataset type name
+**    _comment          Comment
+**    _mode             Mode: 'add' or 'update' or 'delete'
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   09/19/2009 grk - Initial version (Ticket #749, http://prismtrac.pnl.gov/trac/ticket/749)
@@ -87,11 +87,11 @@ BEGIN
         -- Validate InstrumentGroup and DatasetType
         ---------------------------------------------------
 
-        If Not Exists ( SELECT * FROM t_instrument_group WHERE instrument_group = _instrumentGroup ) Then
+        If Not Exists ( SELECT instrument_group FROM t_instrument_group WHERE instrument_group = _instrumentGroup::citext ) Then
             RAISE EXCEPTION 'Instrument group "%" is not valid', _instrumentGroup;
         End If;
 
-        If Not Exists ( SELECT * FROM t_dataset_rating_name WHERE Dataset_Type = _datasetType ) Then
+        If Not Exists ( SELECT dataset_type FROM t_dataset_type_name WHERE dataset_type = _datasetType::citext ) Then
             RAISE EXCEPTION 'Dataset type "%" is not valid', _datasetType;
         End If;
 
@@ -101,8 +101,8 @@ BEGIN
 
         SELECT Dataset_Type
         INTO _datasetType
-        FROM t_dataset_rating_name
-        WHERE Dataset_Type = _datasetType;
+        FROM t_dataset_type_name
+        WHERE Dataset_Type = _datasetType::citext;
 
         ---------------------------------------------------
         -- Does an entry already exist?
@@ -110,8 +110,8 @@ BEGIN
 
         If Exists (SELECT instrument_group
                    FROM t_instrument_group_allowed_ds_type
-                   WHERE instrument_group = _instrumentGroup AND
-                         dataset_type = _datasetType)
+                   WHERE instrument_group = _instrumentGroup::citext AND
+                         dataset_type = _datasetType::citext)
         Then
             _itemExists := true;
         Else
@@ -146,8 +146,8 @@ BEGIN
 
             UPDATE t_instrument_group_allowed_ds_type
             SET comment = _comment
-            WHERE instrument_group = _instrumentGroup AND
-                  dataset_type = _datasetType;
+            WHERE instrument_group = _instrumentGroup::citext AND
+                  dataset_type = _datasetType::citext;
 
             _validMode := true;
         End If;
@@ -162,8 +162,8 @@ BEGIN
             End If;
 
             DELETE FROM t_instrument_group_allowed_ds_type
-            WHERE instrument_group = _instrumentGroup AND
-                  dataset_type = _datasetType;
+            WHERE instrument_group = _instrumentGroup::citext AND
+                  dataset_type = _datasetType::citext
 
             _validMode := true;
         End If;

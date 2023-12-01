@@ -15,7 +15,7 @@ AS $$
 **      Column last_used is used by LcmsNetDMSTools when retrieving recent experiments
 **
 **  Arguments:
-**    _infoOnly
+**    _infoOnly     When true, preview updates
 **    _message      Status message
 **    _returnCode   Return code
 **

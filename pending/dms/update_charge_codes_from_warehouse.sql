@@ -13,10 +13,10 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates charge code (aka work package) information in t_charge_code using external server SQLSRVPROD02, which is accessed via a foreign data wrapper
+**      Updates charge codes (aka work packages) in t_charge_code using external server SQLSRVPROD02, which is accessed via a foreign data wrapper
 **
 **  Arguments:
-**    _infoOnly                 When true, preview work package metadata that would be applied
+**    _infoOnly                 When true, preview updates that would be applied
 **    _updateAll                When true, force an update of all rows in t_charge_code; by default, charge codes are filtered based on Setup_Date and Auth_Amt
 **    _onlyShowChanged          When _infoOnly is true, set this to true to only show new or updated work packages
 **    _explicitChargeCodeList   Comma-separated list of charge codes (work packages) to add to t_charge_code regardless of filters. When used, other charge codes are ignored
