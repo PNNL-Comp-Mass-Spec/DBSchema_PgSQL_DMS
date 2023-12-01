@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE pc.update_protein_sequence_info(IN _proteinid intege
 /****************************************************
 **
 **  Desc:
-**      Update an existing protein
+**      Updates an existing protein
 **
 **  Auth:   kja
 **  Date:   10/06/2004

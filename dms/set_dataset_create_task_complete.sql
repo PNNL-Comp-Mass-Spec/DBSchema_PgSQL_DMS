@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.set_dataset_create_task_complete(IN _entryid 
 /****************************************************
 **
 **  Desc:
-**      Update T_Dataset_Create_Queue after completing a dataset creation task
+**      Updates t_dataset_create_queue after completing a dataset creation task
 **
 **  Arguments:
 **    _entryID              Entry_ID to update

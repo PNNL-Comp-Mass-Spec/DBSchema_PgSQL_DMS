@@ -8,7 +8,8 @@ CREATE OR REPLACE PROCEDURE public.auto_update_separation_type(IN _separationtyp
 /****************************************************
 **
 **  Desc:
-**      Update the separation type based on the name and acquisition length
+**      Updates the separation type based on the name and acquisition length
+**
 **      Ignores datasets with an acquisition length under 6 minutes
 **
 **  Arguments:

@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE cap.set_ctm_step_task_complete(IN _job integer, IN _
 /****************************************************
 **
 **  Desc:
-**      Update capture task job step in cap.t_task_steps
+**      Updates the given capture task job step in cap.t_task_steps
 **
 **  Auth:   grk
 **  Date:   09/02/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)

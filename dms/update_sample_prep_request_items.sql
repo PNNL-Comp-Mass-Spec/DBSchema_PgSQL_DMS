@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_sample_prep_request_items(IN _samplepr
 /****************************************************
 **
 **  Desc:
-**      Update T_Sample_Prep_Request_Items, which tracks cached DMS entities associated with the given sample prep request
+**      Updates t_sample_prep_request_items, which tracks cached DMS entities associated with the given sample prep request
 **
 **      This procedure is called by update_all_sample_prep_request_items for active sample prep requests
 **      It is also called for closed sample prep requests where the state was changed within the last year

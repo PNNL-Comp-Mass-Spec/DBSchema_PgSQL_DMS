@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_sample_prep_request_item_count(IN _sam
 /****************************************************
 **
 **  Desc:
-**      Update sample prep request item counts in T_Sample_Prep_Request for the given prep request
+**      Updates sample prep request item counts in t_sample_prep_request for the given prep request
 **
 **      Source data comes from table t_sample_prep_request_items,
 **      which is populated by procedure update_sample_prep_request_items

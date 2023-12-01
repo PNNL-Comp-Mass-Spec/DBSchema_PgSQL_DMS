@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE cap.update_dms_dataset_state(IN _job integer, IN _da
 /****************************************************
 **
 **  Desc:
-**      Update dataset state in public.t_dataset or public.t_dataset_archive
+**      Updates dataset state in public.t_dataset or public.t_dataset_archive
 **
 **  Arguments:
 **    _job                  Capture task job number

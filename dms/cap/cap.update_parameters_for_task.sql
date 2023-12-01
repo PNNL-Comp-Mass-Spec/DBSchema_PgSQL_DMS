@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE cap.update_parameters_for_task(IN _joblist text, INO
 /****************************************************
 **
 **  Desc:
-**      Update parameters for one or more capture task jobs (using values from tables in the public schema)
+**      Updates parameters for one or more capture task jobs (using values from tables in the public schema)
 **
 **      Updates Storage_Server, Instrument, Instrument_Class, etc. in table cap.t_tasks
 **      Re-generates the capture task job parameters, storing in table cap.t_task_parameters

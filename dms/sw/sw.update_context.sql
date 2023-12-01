@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.update_context(IN _bypassdms boolean DEFAULT fals
 /****************************************************
 **
 **  Desc:
-**      Update context under which job steps are assigned
+**      Updates jobs and job steps, including importing new jobs and updating job and step states
 **
 **  Arguments:
 **    _bypassDMS                If false, lookup the bypass mode in sw.t_process_step_control; when _bypassDMS is true, do not import new jobs from public.t_analysis_job and do not synchronize the sw schema tables with the public schema tables

@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE cap.update_capture_task_manager_and_task_status_xml(
 /****************************************************
 **
 **  Desc:
-**      Update processor status in cap.t_processor_status using the concatenated list of XML status messages in _managerStatusXML
+**      Updates processor status in cap.t_processor_status using the concatenated list of XML status messages in _managerStatusXML
 **
 **  Arguments:
 **    _managerStatusXML     Manager status XML

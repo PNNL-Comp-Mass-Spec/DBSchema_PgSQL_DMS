@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.update_manager_and_task_status_xml(IN _managersta
 /****************************************************
 **
 **  Desc:
-**      Update processor status in sw.t_processor_status using the concatenated list of XML status messages in _managerStatusXML
+**      Updates processor status in sw.t_processor_status using the concatenated list of XML status messages in _managerStatusXML
 **
 **  Arguments:
 **    _managerStatusXML     Manager status XML

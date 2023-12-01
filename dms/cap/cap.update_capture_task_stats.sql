@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE cap.update_capture_task_stats(IN _year integer DEFAU
 /****************************************************
 **
 **  Desc:
-**      Update processing statistics in cap.t_capture_task_stats
+**      Updates processing statistics in cap.t_capture_task_stats
 **
 **  Arguments:
 **    _year         Optional year to filter on; use all years if 0

@@ -8,8 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.update_cpu_loading(INOUT _message text DEFAULT ''
 /****************************************************
 **
 **  Desc:
-**      Update local processor list with count of CPUs that are available for new tasks,
-**      given current task assignments
+**      Updates local processor list with count of CPUs that are available for new tasks, given current task assignments
 **
 **      Also updates memory usage
 **

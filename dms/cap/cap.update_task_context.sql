@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE cap.update_task_context(IN _bypassdms boolean DEFAUL
 /****************************************************
 **
 **  Desc:
-**      Update context under which capture task job steps are assigned
+**      Updates capture task jobs and job steps, including importing new capture task jobs and updating job and step states
 **
 **  Arguments:
 **    _bypassDMS               If false, lookup the bypass mode in cap.t_process_step_control; otherwise, do not update states in tables in the public schema
