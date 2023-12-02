@@ -448,8 +448,8 @@ BEGIN
                    RL.Experiment,
                    RL.Dataset,
                    RL.Instrument,
-                   public.format_timestamp(RR.request_run_start)  As Request_Run_Start,
-                   public.format_timestamp(RR.request_run_finish) As Request_Run_Finish
+                   public.timestamp_text(RR.request_run_start)  As Request_Run_Start,
+                   public.timestamp_text(RR.request_run_finish) As Request_Run_Finish
             FROM V_Requested_Run_List_Report_2 RL
                  INNER JOIN t_requested_run RR
                    ON RL.Request = RR.request_id
@@ -515,8 +515,8 @@ BEGIN
                    RL.Experiment,
                    RL.Dataset,
                    RL.Instrument,
-                   public.format_timestamp(RR.request_run_start)  As Request_Run_Start,
-                   public.format_timestamp(RR.request_run_finish) As Request_Run_Finish
+                   public.timestamp_text(RR.request_run_start)  As Request_Run_Start,
+                   public.timestamp_text(RR.request_run_finish) As Request_Run_Finish
             FROM V_Requested_Run_List_Report_2 RL
                  INNER JOIN t_requested_run RR
                    ON RL.Request = RR.request_id
