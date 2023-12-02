@@ -150,7 +150,7 @@ DECLARE
     _logErrors boolean := false;
     _gid int;
     _newUsername text;
-    _slashIndex int;
+    _slashPos int;
     _datasetCountToRemove int := 0;
     _removedDatasetsMsg text := '';
     _removedDatasets text := '';
@@ -394,13 +394,12 @@ BEGIN
         ---------------------------------------------------
 
         If char_length(_callingUser) > 0 Then
+            _slashPos := Position('\' In _callinguser);
 
-            _newUsername := _callinguser;
-
-            _slashIndex := Position('\' In _newUsername);
-
-            If _slashIndex > 0 Then
-                _newUsername := SUBSTRING(_newUsername, _slashIndex + 1, char_length(_newUsername));
+            If _slashPos > 0 Then
+                _newUsername := SUBSTRING(_callinguser, _slashPos + 1, char_length(_callinguser));
+            Else
+                _newUsername := _callinguser;
             End If;
 
             If Exists (SELECT username FROM t_users WHERE username = _newUsername) Then

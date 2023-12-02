@@ -139,6 +139,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list_ordered for a comma-separated list
 **          10/12/2023 mem - Add missing call to format()
+**          12/02/2023 mem - Rename variable
 **
 *****************************************************/
 DECLARE
@@ -150,7 +151,7 @@ DECLARE
     _paramFileTypeNew citext := '';
     _delimiter text := '';
     _xml XML;
-    _charIndex int;
+    _charPos int;
     _rowCount int;
     _row citext;
     _rowKey citext;
@@ -460,9 +461,10 @@ BEGIN
         -- fixed=Carbamidomethyl (C)
 
         -- Remove any text after the comment character, #
-        _charIndex := Position('#' In _row);
-        If _charIndex > 0 Then
-            _row := Substring(_row, 1, _charIndex-1);
+        _charPos := Position('#' In _row);
+
+        If _charPos > 0 Then
+            _row := Substring(_row, 1, _charPos - 1);
         End If;
 
         -- Remove unwanted whitespace characters
@@ -486,9 +488,10 @@ BEGIN
             _rowParsed := true;
 
             If _row SIMILAR TO 'variable[_]mod%' Then
-                _charIndex := Position('=' In _row);
-                If _charIndex > 0 Then
-                    _rowValue := Trim(Substring(_row, _charIndex+1, char_length(_row)));
+                _charPos := Position('=' In _row);
+
+                If _charPos > 0 Then
+                    _rowValue := Trim(Substring(_row, _charPos + 1, char_length(_row)));
 
                     INSERT INTO Tmp_ModDef (EntryID, Value)
                     SELECT Entry_ID, Value
@@ -501,10 +504,11 @@ BEGIN
             End If;
 
             If _row SIMILAR TO 'add[_]%' Then
-                _charIndex := Position('=' In _row);
-                If _charIndex > 0 Then
-                    _rowKey := Trim(Substring(_row, 1, _charIndex-1));
-                    _rowValue := Trim(Substring(_row, _charIndex+1, char_length(_row)));
+                _charPos := Position('=' In _row);
+
+                If _charPos > 0 Then
+                    _rowKey   := Trim(Substring(_row, 1, _charPos - 1));
+                    _rowValue := Trim(Substring(_row, _charPos + 1, char_length(_row)));
 
                     INSERT INTO Tmp_ModDef (EntryID, Value)
                     SELECT Entry_ID, Value
@@ -549,16 +553,16 @@ BEGIN
             _rowParsed := true;
 
             If _row Like 'variable=%' Then
-                _charIndex := Position('=' In _row);
-                _rowValue := Trim(Substring(_row, _charIndex+1, char_length(_row)));
+                _charPos  := Position('=' In _row);
+                _rowValue := Trim(Substring(_row, _charPos + 1, char_length(_row)));
 
                 INSERT INTO Tmp_ModDef (EntryID, Value)
                 VALUES (1, format('DynamicMod=%s', _rowValue));
             End If;
 
             If _row Like 'fixed=%' Then
-                _charIndex := Position('=' In _row);
-                _rowValue := Trim(Substring(_row, _charIndex+1, char_length(_row)));
+                _charPos  := Position('=' In _row);
+                _rowValue := Trim(Substring(_row, _charPos + 1, char_length(_row)));
 
                 INSERT INTO Tmp_ModDef (EntryID, Value)
                 VALUES (1, format('StaticMod=%s', _rowValue));
@@ -611,9 +615,9 @@ BEGIN
         --
         -- Look for an equals sign in _field
 
-        _charIndex := Position('=' In _field);
+        _charPos := Position('=' In _field);
 
-        If _charIndex <= 1 Then
+        If _charPos <= 1 Then
             RAISE INFO '';
             RAISE INFO 'Skipping row since first column does not contain an equals sign: %', _row;
             CONTINUE;
@@ -623,7 +627,7 @@ BEGIN
         -- Determine the ModType
         -----------------------------------------
 
-        _modType := Substring(_field, 1, _charIndex - 1);
+        _modType := Substring(_field, 1, _charPos - 1);
 
         If Not _modType In ('DynamicMod', 'StaticMod') Then
             RAISE INFO '';
@@ -634,7 +638,7 @@ BEGIN
         -- Now that the _modType is known, remove that text from the first field in Tmp_ModDef
         --
         UPDATE Tmp_ModDef
-        SET Value = Substring(Value, _charIndex + 1, 2048)
+        SET Value = Substring(Value, _charPos + 1, 2048)
         WHERE EntryID = 1;
 
         -- Assure that Tmp_ModDef has at least 5 rows for MS-GF+ or TopPIC
@@ -1115,13 +1119,13 @@ BEGIN
         End If; -- MaxQuant
 
         -- Parse each character in _affectedResidues
-        _charIndex := 0;
+        _charPos := 0;
 
-        WHILE _charIndex < char_length(_affectedResidues)
+        WHILE _charPos < char_length(_affectedResidues)
         LOOP
-            _charIndex := _charIndex + 1;
+            _charPos := _charPos + 1;
 
-            _residueSymbol := Substring(_affectedResidues, _charIndex, 1);
+            _residueSymbol := Substring(_affectedResidues, _charPos, 1);
 
             If _terminalMod Then
                 If _paramFileType::citext = 'DiaNN' Then
@@ -1143,7 +1147,7 @@ BEGIN
                 If _paramFileType::citext In ('MSFragger') Then
                     If ascii(_residueSymbol) In (110, 99) Then
                         -- Lowercase n or c indicates peptide N- or C-terminus
-                        If _charIndex = char_length(_affectedResidues) Then
+                        If _charPos = char_length(_affectedResidues) Then
                             _message := format('Lowercase n or c should be followed by a residue or *; see row: %s', _row);
                             _returnCode := 'U5326';
 
@@ -1151,8 +1155,8 @@ BEGIN
                             EXIT;
                         End If;
 
-                        _charIndex := _charIndex + 1;
-                        _residueSymbol := Substring(_affectedResidues, _charIndex, 1);
+                        _charPos := _charPos + 1;
+                        _residueSymbol := Substring(_affectedResidues, _charPos, 1);
                     End If;
                 End If;
 

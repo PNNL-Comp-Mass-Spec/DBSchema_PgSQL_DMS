@@ -55,6 +55,7 @@ CREATE OR REPLACE PROCEDURE public.unconsume_scheduled_run(IN _datasetname text,
 **          10/23/2021 mem - If recycling a request with queue state 3 (Analyzed), change the queue state to 2 (Assigned)
 **          09/16/2023 mem - Ported to PostgreSQL
 **          10/18/2023 mem - Fix typo in format string
+**          12/02/2023 mem - Rename variable
 **
 *****************************************************/
 DECLARE
@@ -71,7 +72,7 @@ DECLARE
     _warningMessage text;
     _comment text;
     _addnlText text;
-    _charIndex int;
+    _charPos int;
     _extracted text;
     _originalRequestStatus citext;
     _originalRequesetDatasetID int;
@@ -198,20 +199,20 @@ BEGIN
                 -- Determine the original request ID
                 -- Use Lower() since Position() uses case sensitive matching, even if the variable is citext
 
-                _charIndex := Position(Lower('by recycling request') In Lower(_requestComment));
+                _charPos := Position(Lower('by recycling request') In Lower(_requestComment));
 
-                If _charIndex > 0 Then
+                If _charPos > 0 Then
 
-                    _extracted := LTrim(SUBSTRING(_requestComment, _charIndex + char_length('by recycling request'), 20));
+                    _extracted := LTrim(SUBSTRING(_requestComment, _charPos + char_length('by recycling request'), 20));
 
                     -- Comment is now of the form: '286793 from dataset'
                     -- Find the space after the number
 
-                    _charIndex := Position(' ' In _extracted);
+                    _charPos := Position(' ' In _extracted);
 
-                    If _charIndex > 0 Then
+                    If _charPos > 0 Then
 
-                        _extracted := Trim(SUBSTRING(_extracted, 1, _charindex));
+                        _extracted := Trim(SUBSTRING(_extracted, 1, _charPos));
 
                         -- Original requested ID has been determined; copy the original request
 

@@ -55,17 +55,18 @@ CREATE OR REPLACE PROCEDURE public.parse_usage_text(INOUT _comment text, INOUT _
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          10/12/2023 mem - Change from http:// to https://
+**          12/02/2023 mem - Rename variable
 **
 *****************************************************/
 DECLARE
     _logErrors boolean := true;
     _commentToSearch citext;
-    _index int;
+    _keywordPos int;
     _startOfValue int := 0;
     _endOfValue Int;
     _val text;
     _curVal text;
-    _keywordStartIndex int := 0;
+    _keywordStartPos int := 0;
     _uniqueID int := 0;
     _usageKey text;
     _keyword text;
@@ -168,14 +169,14 @@ BEGIN
             -- Look for the keyword in _commentToSearch
             ---------------------------------------------------
 
-            _index := Position(_keyword In _commentToSearch);
+            _keywordPos := Position(_keyword In _commentToSearch);
 
             ---------------------------------------------------
             -- If we found a keyword in the text
             -- parse out its values and save that in the usage table
             ---------------------------------------------------
 
-            If _index = 0 Then
+            If _keywordPos = 0 Then
                 If _showDebug Then
                     RAISE INFO '  keyword not found: %', _keyword;
                 End If;
@@ -184,13 +185,13 @@ BEGIN
             End If;
 
             If _showDebug Then
-                RAISE INFO 'Parse keyword % at index %', _keyword, _index;
+                RAISE INFO 'Parse keyword % at char %', _keyword, _keywordPos;
             End If;
 
-            _keywordStartIndex := _index;
+            _keywordStartPos := _keywordPos;
 
-            _startOfValue := _index + char_length(_keyword);
-            _endOfValue := Position(']' In Substring(_commentToSearch, _startOfValue)) + _startOfValue - 1;
+            _startOfValue := _keywordPos + char_length(_keyword);
+            _endOfValue   := Position(']' In Substring(_commentToSearch, _startOfValue)) + _startOfValue - 1;
 
             If _endOfValue = 0 Then
                 _logErrors := false;
@@ -198,7 +199,7 @@ BEGIN
                 RAISE EXCEPTION 'Could not find closing bracket for "%"', _keyword;
             End If;
 
-            _usageText := SUBSTRING(_commentToSearch, _keywordStartIndex + 1, (_endOfValue - _keywordStartIndex) + 1);
+            _usageText := SUBSTRING(_commentToSearch, _keywordStartPos + 1, (_endOfValue - _keywordStartPos) + 1);
             _val       := SUBSTRING(_commentToSearch, _startOfValue, _endOfValue - _startOfValue);
 
             -- Uncomment to debug

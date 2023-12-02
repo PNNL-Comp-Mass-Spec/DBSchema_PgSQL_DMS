@@ -74,9 +74,9 @@ DECLARE
     _setProcessorAutoRecover boolean;
     _settingsFileChanged boolean;
     _retryCount int;
-    _matchIndex int;
-    _matchIndexLast int;
-    _poundIndex int;
+    _matchPos int;
+    _matchPosLast int;
+    _poundPos int;
     _retryText citext;
     _retryCountText citext;
     _resetReason citext;
@@ -216,30 +216,31 @@ BEGIN
             -- Examine the comment to determine if we've retried this job before
             -- Need to find the last instance of '(retry'
 
-            _matchIndexLast := 0;
-            _matchIndex := 999;
+            _matchPosLast := 0;
+            _matchPos := 999;
 
-            WHILE _matchIndex > 0
+            WHILE _matchPos > 0
             LOOP
-                _matchIndex := Position('(retry' In Substring(_comment, _matchIndexLast + 1));
+                _matchPos := Position('(retry' In Substring(_comment, _matchPosLast + 1));
 
-                If _matchIndex > 0 Then
-                    _matchIndexLast := _matchIndex + _matchIndexLast;
+                If _matchPos > 0 Then
+                    _matchPosLast := _matchPos + _matchPosLast;
                 End If;
             END LOOP;
 
-            _matchIndex := _matchIndexLast;
+            _matchPos := _matchPosLast;
 
-            If _matchIndex = 0 Then
+            If _matchPos = 0 Then
                 -- Comment does not contain '(retry'
                 _newComment := _comment;
 
                 If _newComment Like '%;%' Then
                     -- Comment contains a semicolon
                     -- Remove the text after the semicolon
-                    _matchIndex := Position(';' In _newComment);
-                    If _matchIndex > 1 Then
-                        _newComment := Substring(_newComment, 1, _matchIndex-1);
+                    _matchPos := Position(';' In _newComment);
+
+                    If _matchPos > 1 Then
+                        _newComment := Substring(_newComment, 1, _matchPos - 1);
                     Else
                         _newComment := '';
                     End If;
@@ -247,24 +248,25 @@ BEGIN
             Else
                 -- Comment contains '(retry'
 
-                If _matchIndex > 1 Then
-                    _newComment := Substring(_comment, 1, _matchIndex-1);
+                If _matchPos > 1 Then
+                    _newComment := Substring(_comment, 1, _matchPos - 1);
                 Else
                     _newComment := '';
                 End If;
 
                 -- Determine the number of times the job has been retried
                 _retryCount := 1;
-                _retryText := Substring(_comment, _matchIndex, char_length(_comment));
+                _retryText := Substring(_comment, _matchPos, char_length(_comment));
 
                 -- Find the closing parenthesis
-                _matchIndex := Position(')' In _retryText);
-                If _matchIndex > 0 Then
-                    _poundIndex := Position('#' In _retryText);
+                _matchPos := Position(')' In _retryText);
 
-                    If _poundIndex > 0 Then
-                        If _matchIndex - _poundIndex - 1 > 0 Then
-                            _retryCountText := Substring(_retryText, _poundIndex+1, _matchIndex - _poundIndex - 1);
+                If _matchPos > 0 Then
+                    _poundPos := Position('#' In _retryText);
+
+                    If _poundPos > 0 Then
+                        If _matchPos - _poundPos - 1 > 0 Then
+                            _retryCountText := Substring(_retryText, _poundPos + 1, _matchPos - _poundPos - 1);
                             _retryCount := Coalesce(public.try_cast(_retryCountText, null::int), _retryCount);
                         End If;
                     End If;
@@ -317,14 +319,16 @@ BEGIN
                         If _comment Like '%None of the spectra are centroided; unable to process%' Then
                             _skipInfo := 'None of the spectra are centroided';
                         Else
-                            _matchIndex := Position('MSGF+ skipped' In _comment);
-                            If _matchIndex > 0 Then
-                                _skipInfo := Substring(_comment, _matchIndex, char_length(_comment));
+                            _matchPos := Position('MSGF+ skipped' In _comment);
+
+                            If _matchPos > 0 Then
+                                _skipInfo := Substring(_comment, _matchPos, char_length(_comment));
                             Else
 
-                                _matchIndex := Position('MSGF+ will likely skip' In _comment);
-                                If _matchIndex > 0 Then
-                                    _skipInfo := Substring(_comment, _matchIndex, char_length(_comment));
+                                _matchPos := Position('MSGF+ will likely skip' In _comment);
+
+                                If _matchPos > 0 Then
+                                    _skipInfo := Substring(_comment, _matchPos, char_length(_comment));
                                 Else
                                     _skipInfo := 'MSGF+ skipped ??% of the spectra because they did not appear centroided';
                                 End If;

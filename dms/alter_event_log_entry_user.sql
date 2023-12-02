@@ -40,6 +40,7 @@ CREATE OR REPLACE PROCEDURE public.alter_event_log_entry_user(IN _eventlogschema
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          12/02/2023 mem - Rename variable
 **
 *****************************************************/
 DECLARE
@@ -49,7 +50,7 @@ DECLARE
     _entryDescription text := '';
     _eventID int;
     _targetIdMatched int;
-    _matchIndex int;
+    _matchPos int;
     _enteredBy text;
     _enteredByNew text := '';
     _currentTime timestamp := CURRENT_TIMESTAMP;
@@ -157,8 +158,8 @@ BEGIN
         INTO _lookupResults
         USING _targetType, _targetID, _targetState, _entryDateStart, _entryDateEnd;
 
-        _eventID   := _lookupResults.event_id;
-        _enteredBy := _lookupResults.entered_by;
+        _eventID         := _lookupResults.event_id;
+        _enteredBy       := _lookupResults.entered_by;
         _targetIdMatched := _lookupResults.target_id;
     End If;
     --
@@ -172,8 +173,9 @@ BEGIN
     -- Confirm that _enteredBy doesn't already contain _newUser
     -- If it does, there's no need to update it
 
-    _matchIndex := Position(_newUser In _enteredBy);
-    If _matchIndex > 0 Then
+    _matchPos := Position(_newUser In _enteredBy);
+
+    If _matchPos > 0 Then
         _message := format('Entry %s is already attributed to %s: "%s"',
                            _entryDescription, _newUser, _enteredBy);
         RETURN;
@@ -181,13 +183,13 @@ BEGIN
 
     -- Look for a semicolon in _enteredBy
 
-    _matchIndex := Position(';' In _enteredBy);
+    _matchPos := Position(';' In _enteredBy);
 
-    If _matchIndex > 0 Then
+    If _matchPos > 0 Then
         _enteredByNew := format('%s (via %s)%s',
                                 _newUser,
-                                Substring(_enteredBy, 1, _matchIndex-1),
-                                Substring(_enteredBy, _matchIndex, char_length(_enteredBy)));
+                                Substring(_enteredBy, 1, _matchPos - 1),
+                                Substring(_enteredBy, _matchPos, char_length(_enteredBy)));
     Else
         _enteredByNew := format('%s (via %s)', _newUser, _enteredBy);
     End If;

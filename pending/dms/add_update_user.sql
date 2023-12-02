@@ -63,7 +63,7 @@ DECLARE
     _authorized boolean;
 
     _logErrors boolean := false;
-    _charIndex int := 0;
+    _charPos int := 0;
     _userID int := 0;
     _logMessage text;
 
@@ -110,9 +110,10 @@ BEGIN
             _returnCode := 'U5201';
             RAISE EXCEPTION 'Username must be specified';
         Else
-            _charIndex := Position('\' In _username);
-            If _charIndex > 0 Then
-                _username := Substring(_username, _charIndex + 1, char_length(_username));
+            _charPos := Position('\' In _username);
+
+            If _charPos > 0 Then
+                _username := Substring(_username, _charPos + 1, char_length(_username));
             End If;
         End If;
 

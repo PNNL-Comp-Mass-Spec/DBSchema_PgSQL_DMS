@@ -162,7 +162,7 @@ DECLARE
     _entryID int;
     _parseColData false;
     _value text;
-    _charIndex int;
+    _charPos int;
     _plexExperimentName text := '';
     _currentPlexExperimentId Int;
     _targetPlexExperimentCount int := 0;
@@ -610,13 +610,14 @@ BEGIN
                         _experimentIdOrName := Replace(_experimentIdOrName, ' ', ':');
 
                         -- Look for a colon
-                        _charIndex := Position(':' In _experimentIdOrName);
-                        If _charIndex > 1 Then
-                            _experimentId := public.try_cast(Substring(_experimentIdOrName, 1, _charIndex-1), null::int);
+                        _charPos := Position(':' In _experimentIdOrName);
+
+                        If _charPos > 1 Then
+                            _experimentId := public.try_cast(Substring(_experimentIdOrName, 1, _charPos - 1), null::int);
 
                             If _experimentId Is Null Then
                                 _message := format('Could not parse out the experiment ID from %s for channel %s',
-                                                    Substring(_experimentIdOrName, 1, _charIndex-1), _channelNum);
+                                                    Substring(_experimentIdOrName, 1, _charPos - 1), _channelNum);
                                 RAISE EXCEPTION '%', _message;
                             End If;
 

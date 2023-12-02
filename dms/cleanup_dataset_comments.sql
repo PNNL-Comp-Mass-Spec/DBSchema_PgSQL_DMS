@@ -16,6 +16,7 @@ CREATE OR REPLACE PROCEDURE public.cleanup_dataset_comments(IN _datasetids text,
 **          06/16/2023 mem - Ported to PostgreSQL
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
+**          12/02/2023 mem - Rename variable
 **
 *****************************************************/
 DECLARE
@@ -24,7 +25,7 @@ DECLARE
     _idsWrongState text := null;
     _datasetID int;
     _comment text;
-    _matchIndex int;
+    _matchPos int;
     _messageText text;
     _updateCount int;
 
@@ -153,19 +154,19 @@ BEGIN
             FROM Tmp_MessagesToRemove
             ORDER BY MessageID
         LOOP
-            _matchIndex := Position(Lower(format('; %s', _messageText)) In Lower(_comment));
+            _matchPos := Position(Lower(format('; %s', _messageText)) In Lower(_comment));
 
-            If _matchIndex = 0 Then
-                _matchIndex := Position(Lower(_messageText) In Lower(_comment));
+            If _matchPos = 0 Then
+                _matchPos := Position(Lower(_messageText) In Lower(_comment));
             End If;
 
-            If _matchIndex = 1 Then
+            If _matchPos = 1 Then
                 _comment := '';
             End If;
 
-            If _matchIndex > 1 Then
+            If _matchPos > 1 Then
                 -- Match found at the end; remove the error message but keep the initial part of the comment
-                _comment := Trim(Substring(_comment, 1, _matchIndex - 1));
+                _comment := Trim(Substring(_comment, 1, _matchPos - 1));
             End If;
 
             UPDATE Tmp_DatasetsToUpdate

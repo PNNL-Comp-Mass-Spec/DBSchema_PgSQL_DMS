@@ -31,11 +31,12 @@ CREATE OR REPLACE PROCEDURE public.auto_resolve_name_to_username(IN _namesearchs
 **          09/11/2020 mem - Use TrimWhitespaceAndPunctuation to remove trailing whitespace and punctuation
 **          02/14/2023 mem - Ported to PostgreSQL
 **          07/11/2023 mem - Use COUNT(user_id) instead of COUNT(*)
+**          12/02/2023 mem - Rename variables
 **
 *****************************************************/
 DECLARE
-    _charIndexStart int;
-    _charIndexEnd int;
+    _charPosStart int;
+    _charPosEnd int;
 BEGIN
     _matchCount := 0;
 
@@ -52,11 +53,11 @@ BEGIN
         -- Name is of the form 'Last, First (D3P704)' or 'Last, First Middle (D3P704)'
         -- Extract D3P704
 
-        _charIndexStart := Position('(' In _nameSearchSpec);
-        _charIndexEnd   := Position(')' In Substring(_nameSearchSpec, _charIndexStart));
+        _charPosStart := Position('(' In _nameSearchSpec);
+        _charPosEnd   := Position(')' In Substring(_nameSearchSpec, _charPosStart));
 
-        If _charIndexStart > 0 And _charIndexEnd > 2 Then
-            _nameSearchSpec := Substring(_nameSearchSpec, _charIndexStart + 1, _charIndexEnd - 2);
+        If _charPosStart > 0 And _charPosEnd > 2 Then
+            _nameSearchSpec := Substring(_nameSearchSpec, _charPosStart + 1, _charPosEnd - 2);
 
             SELECT username, user_id
             INTO _matchingUsername, _matchingUserID

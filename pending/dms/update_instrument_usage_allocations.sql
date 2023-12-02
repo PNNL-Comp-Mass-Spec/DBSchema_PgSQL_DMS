@@ -79,7 +79,7 @@ DECLARE
     _authorized boolean;
 
     _fy int;
-    _charIndex int;
+    _charPos int;
     _msg2 text;
     _fiscalYearParam text;
     _proposalIDParam text;
@@ -171,30 +171,31 @@ BEGIN
         End If;
 
         If _mode = 'update' Then
-            If _fYProposal = '' Then
-                RAISE EXCEPTION '_fYProposal parameter is empty';
+            If _fyProposal = '' Then
+                RAISE EXCEPTION '_fyProposal parameter is empty';
             End If;
 
-            -- Split _fYProposal into _fiscalYear and _proposalID
-            _charIndex := Position('_' In _fYProposal);
-            If _charIndex <= 1 Or _charIndex = char_length(_fYProposal) Then
-                RAISE EXCEPTION '_fYProposal parameter is not in the correct format';
+            -- Split _fyProposal into _fiscalYear and _proposalID
+            _charPos := Position('_' In _fyProposal);
+
+            If _charPos <= 1 Or _charPos = char_length(_fyProposal) Then
+                RAISE EXCEPTION '_fyProposal parameter is not in the correct format';
             End If;
 
             _fiscalYearParam := _fiscalYear;
             _proposalIDParam := _proposalID;
 
-            _fiscalYear := Substring(_fYProposal, 1, _charIndex-1);
-            _proposalID := Substring(_fYProposal, _charIndex+1, 128);
+            _fiscalYear := Substring(_fyProposal, 1, _charPos - 1);
+            _proposalID := Substring(_fyProposal, _charPos + 1, 128);
 
-            If Not Exists (SELECT fy_proposal FROM t_instrument_allocation WHERE fy_proposal = _fYProposal) Then
-                _msg2 := format('Entry not found, unable to update: %s', _fYProposal);
+            If Not Exists (SELECT fy_proposal FROM t_instrument_allocation WHERE fy_proposal = _fyProposal) Then
+                _msg2 := format('Entry not found, unable to update: %s', _fyProposal);
                 RAISE EXCEPTION '%', _msg2;
             End If;
 
-            If Not Exists (SELECT fy_proposal FROM t_instrument_allocation WHERE fy_proposal = _fYProposal AND proposal_id = _proposalID AND fiscal_year = _fiscalYear) Then
+            If Not Exists (SELECT fy_proposal FROM t_instrument_allocation WHERE fy_proposal = _fyProposal AND proposal_id = _proposalID AND fiscal_year = _fiscalYear) Then
                 _msg2 := format('Mismatch between fy_proposal, FiscalYear, and ProposalID: %s vs. %s vs. %s',
-                                _fYProposal, _fiscalYear, _proposalID);
+                                _fyProposal, _fiscalYear, _proposalID);
                 RAISE EXCEPTION '%', _msg2;
             End If;
 
