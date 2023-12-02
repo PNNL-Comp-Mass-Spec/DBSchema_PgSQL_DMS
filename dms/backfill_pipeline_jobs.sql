@@ -1,14 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.backfill_pipeline_jobs
-(
-    _infoOnly boolean = false,
-    _jobsToProcess int = 0,
-    _startJob int = 0,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: backfill_pipeline_jobs(boolean, integer, integer, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.backfill_pipeline_jobs(IN _infoonly boolean DEFAULT false, IN _jobstoprocess integer DEFAULT 0, IN _startjob integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -42,7 +38,7 @@ AS $$
 **          03/27/2023 mem - Auto change script DiaNN_DataPkg to DiaNN
 **          06/13/2023 mem - Fix bug that used harded coded job number 1914830 instead of _job
 **          08/10/2023 mem - Add user MSDADMIN to T_Users if missing
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/01/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -71,6 +67,12 @@ DECLARE
     _currentLocation text := 'Start';
     _peptideAtlasStagingPathID int := 0;
 
+    _formatSpecifier text;
+    _infoHead text;
+    _infoHeadSeparator text;
+    _previewData record;
+    _infoData text;
+
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -86,7 +88,6 @@ BEGIN
     _infoOnly      := Coalesce(_infoOnly, true);
     _jobsToProcess := Coalesce(_jobsToProcess, 0);
     _startJob      := Coalesce(_startJob, 0);
-    _mode          := Trim(Lower(Coalesce(_mode, '')));
 
     ---------------------------------------------------
     -- Create a temporary table to hold the job details
@@ -107,7 +108,7 @@ BEGIN
         OrganismID int NOT NULL,
         DatasetID int NOT NULL,
         Comment text NULL,
-        Owner text NULL,
+        OwnerUsername text NULL,
         StateID int NOT NULL,
         AssignedProcessorName text NULL,
         ResultsFolderName text NULL,
@@ -115,8 +116,7 @@ BEGIN
         ProteinOptionsList text NOT NULL,
         RequestID int NOT NULL,
         PropagationMode int NOT NULL,
-        ProcessingTimeMinutes real NULL,
-        Purged int NOT NULL
+        ProcessingTimeMinutes real NULL
     );
 
     CREATE INDEX IX_Tmp_Job_Backfill_Details ON Tmp_Job_Backfill_Details (Job);
@@ -127,7 +127,7 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-9s %-8s %-25s %-5s %-80s %-40s %-20s %-20s %-20s %-60s %-30s %-14s %-23s %-11s';
+        _formatSpecifier := '%-9s %-8s %-25s %-5s %-80s %-30s %-20s %-20s %-20s %-60s %-50s %-9s %-23s %-11s';
 
         _infoHead := format(_formatSpecifier,
                             'Job',
@@ -141,7 +141,7 @@ BEGIN
                             'Finish',
                             'Transfer_Folder_Path',
                             'Comment',
-                            'Owner_Username',
+                            'Owner',
                             'Processing_Time_Minutes',
                             'Data_Pkg_ID'
                            );
@@ -152,13 +152,13 @@ BEGIN
                                      '-------------------------',
                                      '-----',
                                      '--------------------------------------------------------------------------------',
-                                     '----------------------------------------',
+                                     '------------------------------',
                                      '--------------------',
                                      '--------------------',
                                      '--------------------',
                                      '------------------------------------------------------------',
-                                     '------------------------------',
-                                     '--------------',
+                                     '--------------------------------------------------',
+                                     '---------',
                                      '-----------------------',
                                      '-----------'
                                     );
@@ -204,9 +204,9 @@ BEGIN
                                 _previewData.Start,
                                 _previewData.Finish,
                                 _previewData.Transfer_Folder_Path,
-                                _previewData.Comment,
+                                Left(_previewData.Comment, 50),
                                 _previewData.Owner_Username,
-                                _previewData.Processing_Time_Minutes,
+                                Round(_previewData.Processing_Time_Minutes, 1),
                                 _previewData.Data_Pkg_ID
                                );
 
@@ -225,14 +225,14 @@ BEGIN
                PJ.Script,
                PJ.State,
                PJ.Dataset,
-               PJ.Results_Folder_Name,
+               PJ.Results_Folder_Name As ResultsFolderName,
                PJ.Imported,
                PJ.Start,
                PJ.Finish,
                PJ.Transfer_Folder_Path As TransferFolderPath,
                PJ.Comment,
-               PJ.Owner,
-               JPT.ProcessingTimeMinutes,
+               PJ.Owner_Username,
+               JPT.Processing_Time_Minutes As ProcessingTimeMinutes,
                PJ.Data_Pkg_ID As DataPackageID
         FROM sw.t_jobs PJ
              INNER JOIN sw.t_scripts S
@@ -274,13 +274,13 @@ BEGIN
             SELECT analysis_tool_id
             INTO _analysisToolID
             FROM t_analysis_tool
-            WHERE (analysis_tool = _jobInfo.Script);
+            WHERE analysis_tool = _jobInfo.Script;
 
             If Not FOUND Then
                 _message := format('Script not found in t_analysis_tool: %s; unable to backfill DMS Pipeline job %s', _jobInfo.Script, _jobStr);
 
                 If _infoOnly Then
-                    RAISE INFO '%', _message;
+                    RAISE WARNING '%', _message;
                 Else
                     CALL post_log_entry ('Error', _message, 'Backfill_Pipeline_Jobs');
                 End If;
@@ -304,10 +304,10 @@ BEGIN
             WHERE organism = 'None';
 
             If Not FOUND Then
-                _message := 'organism "None" not found in t_organisms; -- this is unexpected; will set _organismID to 1'
+                _message := 'organism "None" not found in t_organisms; -- this is unexpected; will set _organismID to 1';
 
                 If _infoOnly Then
-                    RAISE INFO '%', _message;
+                    RAISE WARNING '%', _message;
                 Else
                     CALL post_log_entry ('Error', _message, 'Backfill_Pipeline_Jobs');
                 End If;
@@ -316,11 +316,11 @@ BEGIN
             End If;
 
             ---------------------------------------------------
-            -- Validate _jobInfo.Owner; update if not valid
+            -- Validate _jobInfo.Owner_Username; update if not valid
             ---------------------------------------------------
 
-            If Not Exists (SELECT user_id FROM t_users WHERE username = Coalesce(_jobInfo.Owner, ''))::citext Then
-                _jobInfo.Owner := 'H09090911';
+            If Not Exists (SELECT user_id FROM t_users WHERE username = Coalesce(_jobInfo.Owner_Username, '')::citext) Then
+                _jobInfo.Owner_Username := 'H09090911';
             End If;
 
             ---------------------------------------------------
@@ -328,10 +328,10 @@ BEGIN
             ---------------------------------------------------
 
             If Not Exists (SELECT job_state_id FROM t_analysis_job_state WHERE job_state_id = _jobInfo.State) Then
-                _message := format('State %s not found in t_analysis_job_state; -- this is unexpected; will set _jobInfo.State to 4', _jobInfo.State)
+                _message := format('State %s not found in t_analysis_job_state; -- this is unexpected; will set _jobInfo.State to 4', _jobInfo.State);
 
                 If _infoOnly Then
-                    RAISE INFO '%', _message;
+                    RAISE WARNING '%', _message;
                 Else
                     CALL post_log_entry ('Error', _message, 'Backfill_Pipeline_Jobs');
                 End If;
@@ -343,23 +343,23 @@ BEGIN
             -- Lookup parameter file name and protein collection, if defined
             ------------------------------------------------
 
-            SELECT Param_Value
+            SELECT Trim(Param_Value)
             INTO _parameterFileName
             FROM sw.V_Pipeline_Job_Parameters
-            WHERE job = _job AND
-                  Param_Name = 'ParamFileName';
+            WHERE job = _jobInfo.Job AND
+                  Param_Name::citext = 'ParamFileName';
 
-            SELECT Param_Value
+            SELECT Trim(Param_Value)
             INTO _proteinCollectionList
             FROM sw.V_Pipeline_Job_Parameters
-            WHERE job = _job AND
-                  Param_Name = 'ProteinCollectionList';
+            WHERE job = _jobInfo.Job AND
+                  Param_Name::citext = 'ProteinCollectionList';
 
-            SELECT Param_Value
+            SELECT Trim(Param_Value)
             INTO _legacyFastaFileName
             FROM sw.V_Pipeline_Job_Parameters
-            WHERE job = _job AND
-                  Param_Name = 'LegacyFastaFileName';
+            WHERE job = _jobInfo.Job AND
+                  Param_Name::citext = 'LegacyFastaFileName';
 
             If Coalesce(_parameterFileName, '') = '' Then
                 _parameterFileName := 'na';
@@ -389,7 +389,7 @@ BEGIN
 
                 If Not FOUND Then
                     _datasetID := -1;
-                End If
+                End If;
 
             End If;
 
@@ -439,7 +439,7 @@ BEGIN
 
                     End If;
 
-                    _datasetComment := format('https://dms2.pnl.gov/data_package/show/%s', _jobInfo.DataPackageID)
+                    _datasetComment := format('https://dms2.pnl.gov/data_package/show/%s', _jobInfo.DataPackageID);
 
                 End If;
 
@@ -494,15 +494,14 @@ BEGIN
                     -- Dataset does not exist; create it
                     ------------------------------------------------
 
-                    If Not Exists (SELECT user_id FROM t_users WHERE username = 'MSDADMIN')
-                    Begin
+                    If Not Exists (SELECT user_id FROM t_users WHERE username = 'MSDADMIN') Then
                         -- MSDAdmin user not defined; add it
 
                         _currentLocation := 'Add user MSDADMIN to T_Users';
 
                         INSERT INTO t_users (username, name, hid, status, email, domain, payroll, active, update, comment)
                         VALUES ('MSDADMIN', 'MSDADMIN', 'H0000000', 'Active', NULL, NULL, NULL, 'Y', 'N', '');
-                    End
+                    End If;
 
                     _currentLocation := format('Call add_update_dataset to create dataset %s', _jobInfo.Dataset);
 
@@ -550,7 +549,7 @@ BEGIN
                         End If;
 
                         If _infoOnly Then
-                            RAISE INFO '%', _message;
+                            RAISE WARNING '%', _message;
                         Else
                             CALL post_log_entry ('Error', _message, 'Backfill_Pipeline_Jobs');
                         End If;
@@ -593,12 +592,12 @@ BEGIN
                                     SELECT storage_path_id
                                     INTO _peptideAtlasStagingPathID
                                     FROM t_storage_path
-                                    WHERE (storage_path IN ('PeptideAtlas_Staging', 'PeptideAtlas_Staging\'))
+                                    WHERE (storage_path IN ('PeptideAtlas_Staging', 'PeptideAtlas_Staging\'));
 
                                     If Coalesce(_peptideAtlasStagingPathID, 0) > 0 Then
                                         UPDATE t_dataset
                                         SET storage_path_ID = _peptideAtlasStagingPathID
-                                        WHERE dataset_id = _datasetID
+                                        WHERE dataset_id = _datasetID;
 
                                         _storagePathRelative := _dataPackageFolder;
                                     End If;
@@ -607,7 +606,7 @@ BEGIN
                                 -- Update the Dataset Folder for the newly-created dataset
                                 UPDATE t_dataset
                                 SET folder_name = _storagePathRelative
-                                WHERE dataset_id = _datasetID
+                                WHERE dataset_id = _datasetID;
                             End If;
 
                         End If;
@@ -626,33 +625,33 @@ BEGIN
 
                     INSERT INTO Tmp_Job_Backfill_Details
                             (DataPackageID, Job, BatchID, Priority, Created, Start, Finish, AnalysisToolID,
-                            ParamFileName, SettingsFileName, OrganismDBName, OrganismID, DatasetID, Comment, Owner,
+                            ParamFileName, SettingsFileName, OrganismDBName, OrganismID, DatasetID, Comment, OwnerUsername,
                             StateID, AssignedProcessorName, ResultsFolderName, ProteinCollectionList, ProteinOptionsList,
-                            RequestID, PropagationMode, ProcessingTimeMinutes, Purged)
-                    SELECT _jobInfo.DataPackageID,
-                           _jobInfo.Job,
-                           0,                               -- BatchID
-                           _jobInfo.Priority,               -- Priority
-                           _jobInfo.Imported,               -- Created
-                           _jobInfo.Start,                  -- Start
-                           _jobInfo.Finish,                 -- Finish
-                           _analysisToolID,                 -- AnalysisToolID
-                           _parameterFileName,              -- ParamFileName
-                           'na',                            -- SettingsFileName
-                           _legacyFastaFileName,            -- OrganismDBName
-                           _organismID,                     -- OrganismID
-                           _datasetID,                      -- DatasetID
-                           Coalesce(_jobInfo.Comment, ''),  -- Comment
-                           _jobInfo.Owner,                  -- Owner
-                           _jobInfo.State,                  -- StateID
-                           'Job_Broker',                    -- AssignedProcessorName
-                           _jobInfo.Results_Folder_Name,    -- ResultsFolderName
-                           _proteinCollectionList,          -- ProteinCollectionList
-                           'na',                            -- ProteinOptionsList
-                           1,                               -- RequestID
-                           0,                               -- PropagationMode
-                           _jobInfo.ProcessingTimeMinutes,  -- ProcessingTimeMinutes
-                           0);                              -- Purged
+                            RequestID, PropagationMode, ProcessingTimeMinutes)
+                    VALUES( _jobInfo.DataPackageID,
+                            _jobInfo.Job,
+                            0,                               -- BatchID
+                            _jobInfo.Priority,               -- Priority
+                            _jobInfo.Imported,               -- Created
+                            _jobInfo.Start,                  -- Start
+                            _jobInfo.Finish,                 -- Finish
+                            _analysisToolID,                 -- AnalysisToolID
+                            _parameterFileName,              -- ParamFileName
+                            'na',                            -- SettingsFileName
+                            _legacyFastaFileName,            -- OrganismDBName
+                            _organismID,                     -- OrganismID
+                            _datasetID,                      -- DatasetID
+                            Coalesce(_jobInfo.Comment, ''),  -- Comment
+                            _jobInfo.Owner_Username,         -- Owner username
+                            _jobInfo.State,                  -- StateID
+                            'Job_Broker',                    -- AssignedProcessorName
+                            _jobInfo.ResultsFolderName,      -- ResultsFolderName
+                            _proteinCollectionList,          -- ProteinCollectionList
+                            'na',                            -- ProteinOptionsList
+                            1,                               -- RequestID
+                            0,                               -- PropagationMode
+                            _jobInfo.ProcessingTimeMinutes   -- ProcessingTimeMinutes
+                            );
 
                     If Not _infoOnly Then
                         ------------------------------------------------
@@ -664,11 +663,11 @@ BEGIN
                         INSERT INTO t_analysis_job ( job, batch_id, priority, created, start, finish, analysis_tool_id,
                                                      param_file_name, settings_file_name, organism_db_name, organism_id, dataset_id, comment, owner_username,
                                                      job_state_id, assigned_processor_name, results_folder_name, protein_collection_list, protein_options_list,
-                                                     request_id, propagation_mode, processing_time_minutes, purged )
+                                                     request_id, propagation_mode, processing_time_minutes )
                         SELECT job, BatchID, priority, created, Start, Finish, AnalysisToolID,
-                            ParamFileName, SettingsFileName, OrganismDBName, OrganismID, DatasetID, comment, owner,
-                            StateID, AssignedProcessorName, ResultsFolderName, ProteinCollectionList, ProteinOptionsList,
-                            RequestID, PropagationMode, ProcessingTimeMinutes, purged
+                               ParamFileName, SettingsFileName, OrganismDBName, OrganismID, DatasetID, comment, OwnerUsername,
+                               StateID, AssignedProcessorName, ResultsFolderName, ProteinCollectionList, ProteinOptionsList,
+                               RequestID, PropagationMode, ProcessingTimeMinutes
                         FROM Tmp_Job_Backfill_Details
                         WHERE job = _jobInfo.Job;
 
@@ -706,7 +705,7 @@ BEGIN
         _jobsProcessed := _jobsProcessed + 1;
 
         If _jobsToProcess > 0 And _jobsProcessed >= _jobsToProcess Then
-            -- Break out of the For loop
+            -- Break out of the for loop
             EXIT;
         End If;
 
@@ -717,11 +716,98 @@ BEGIN
         -- Preview the new jobs
         ------------------------------------------------
 
-        -- ToDo: Use RAISE INFO
+        RAISE INFO '';
 
-        SELECT *
-        FROM Tmp_Job_Backfill_Details
-        ORDER BY Job;
+        _formatSpecifier := '%-9s %-9s %-8s %-8s %-20s %-20s %-20s %-14s %-90s %-40s %-40s %-10s %-9s %-50s %-9s %-7s %-21s %-30s %-60s %-40s %-9s %-15s %-21s';
+
+        _infoHead := format(_formatSpecifier,
+                            'DataPkgID',
+                            'Job',
+                            'BatchID',
+                            'Priority',
+                            'Created',
+                            'Start',
+                            'Finish',
+                            'AnalysisToolID',
+                            'ParamFileName',
+                            'SettingsFileName',
+                            'OrganismDBName',
+                            'OrganismID',
+                            'DatasetID',
+                            'Comment',
+                            'Owner',
+                            'StateID',
+                            'AssignedProcessorName',
+                            'ResultsFolderName',
+                            'ProteinCollectionList',
+                            'ProteinOptionsList',
+                            'RequestID',
+                            'PropagationMode',
+                            'ProcessingTimeMinutes'
+                           );
+
+        _infoHeadSeparator := format(_formatSpecifier,
+                                     '---------',
+                                     '---------',
+                                     '--------',
+                                     '--------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '--------------',
+                                     '------------------------------------------------------------------------------------------',
+                                     '----------------------------------------',
+                                     '----------------------------------------',
+                                     '----------',
+                                     '---------',
+                                     '--------------------------------------------------',
+                                     '---------',
+                                     '-------',
+                                     '---------------------',
+                                     '------------------------------',
+                                     '------------------------------------------------------------',
+                                     '----------------------------------------',
+                                     '---------',
+                                     '---------------',
+                                     '---------------------'
+                                    );
+
+        RAISE INFO '%', _infoHead;
+        RAISE INFO '%', _infoHeadSeparator;
+
+        FOR _previewData IN
+            SELECT *
+            FROM Tmp_Job_Backfill_Details
+            ORDER BY Job
+        LOOP
+            _infoData := format(_formatSpecifier,
+                                _previewData.DataPackageID,
+                                _previewData.Job,
+                                _previewData.BatchID,
+                                _previewData.Priority,
+                                public.timestamp_text(_previewData.Created),
+                                public.timestamp_text(_previewData.Start),
+                                public.timestamp_text(_previewData.Finish),
+                                _previewData.AnalysisToolID,
+                                Left(_previewData.ParamFileName, 90),
+                                Left(_previewData.SettingsFileName, 40),
+                                _previewData.OrganismDBName,
+                                _previewData.OrganismID,
+                                _previewData.DatasetID,
+                                Left(_previewData.Comment, 50),
+                                _previewData.OwnerUsername,
+                                _previewData.StateID,
+                                _previewData.AssignedProcessorName,
+                                _previewData.ResultsFolderName,
+                                Left(_previewData.ProteinCollectionList, 60),
+                                Left(_previewData.ProteinOptionsList, 40),
+                                _previewData.RequestID,
+                                _previewData.PropagationMode,
+                                Round(_previewData.ProcessingTimeMinutes::numeric, 1)
+                            );
+
+            RAISE INFO '%', _infoData;
+        END LOOP;
 
         DROP TABLE Tmp_Job_Backfill_Details;
         RETURN;
@@ -753,11 +839,11 @@ BEGIN
               target.finish IS DISTINCT FROM source.finish OR
               target.processing_time_minutes IS DISTINCT FROM source.processing_time_minutes) THEN
             UPDATE SET
-                job_state_id = CASE WHEN Target.job_state_id = 14 Then 14 Else source.State End,
+                job_state_id = CASE WHEN Target.job_state_id = 14 THEN 14 ELSE source.State END,
                 priority = source.priority,
                 start = source.start,
                 finish = source.finish,
-                processing_time_minutes = source.ProcessingTimeMinutes
+                processing_time_minutes = source.processing_time_minutes
         ;
 
         DROP TABLE Tmp_Job_Backfill_Details;
@@ -787,4 +873,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.backfill_pipeline_jobs IS 'BackfillPipelineJobs';
+
+ALTER PROCEDURE public.backfill_pipeline_jobs(IN _infoonly boolean, IN _jobstoprocess integer, IN _startjob integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE backfill_pipeline_jobs(IN _infoonly boolean, IN _jobstoprocess integer, IN _startjob integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.backfill_pipeline_jobs(IN _infoonly boolean, IN _jobstoprocess integer, IN _startjob integer, INOUT _message text, INOUT _returncode text) IS 'BackfillPipelineJobs';
+
