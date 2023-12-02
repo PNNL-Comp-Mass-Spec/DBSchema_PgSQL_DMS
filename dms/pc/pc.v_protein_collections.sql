@@ -16,7 +16,7 @@ CREATE VIEW pc.v_protein_collections AS
    FROM pc.t_protein_collections;
 
 
-ALTER TABLE pc.v_protein_collections OWNER TO d3l243;
+ALTER VIEW pc.v_protein_collections OWNER TO d3l243;
 
 --
 -- Name: TABLE v_protein_collections; Type: ACL; Schema: pc; Owner: d3l243

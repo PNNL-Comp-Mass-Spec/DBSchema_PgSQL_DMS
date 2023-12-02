@@ -60,7 +60,7 @@ UNION
      JOIN public.t_material_locations ml ON ((mc.location_id = ml.location_id)));
 
 
-ALTER TABLE dpkg.v_data_package_all_items_list_report OWNER TO d3l243;
+ALTER VIEW dpkg.v_data_package_all_items_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_data_package_all_items_list_report; Type: ACL; Schema: dpkg; Owner: d3l243

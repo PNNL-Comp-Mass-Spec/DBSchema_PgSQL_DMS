@@ -26,7 +26,7 @@ CREATE VIEW sw.v_pipeline_jobs_active_or_complete AS
   GROUP BY j.job, j.priority, j.script, j.state, jsn.job_state, j.dataset, j.dataset_id, j.storage_server, j.results_folder_name, j.imported, j.start, j.finish;
 
 
-ALTER TABLE sw.v_pipeline_jobs_active_or_complete OWNER TO d3l243;
+ALTER VIEW sw.v_pipeline_jobs_active_or_complete OWNER TO d3l243;
 
 --
 -- Name: TABLE v_pipeline_jobs_active_or_complete; Type: ACL; Schema: sw; Owner: d3l243

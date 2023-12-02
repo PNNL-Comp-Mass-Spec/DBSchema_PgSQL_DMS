@@ -12,7 +12,7 @@ CREATE VIEW mc.v_mgr_work_dir AS
   WHERE (v_param_value.param_name OPERATOR(public.=) 'workdir'::public.citext);
 
 
-ALTER TABLE mc.v_mgr_work_dir OWNER TO d3l243;
+ALTER VIEW mc.v_mgr_work_dir OWNER TO d3l243;
 
 --
 -- Name: VIEW v_mgr_work_dir; Type: COMMENT; Schema: mc; Owner: d3l243

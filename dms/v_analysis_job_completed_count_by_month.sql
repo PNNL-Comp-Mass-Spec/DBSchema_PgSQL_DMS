@@ -10,7 +10,7 @@ CREATE VIEW public.v_analysis_job_completed_count_by_month AS
   GROUP BY (EXTRACT(year FROM j.finish)), (EXTRACT(month FROM j.finish));
 
 
-ALTER TABLE public.v_analysis_job_completed_count_by_month OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_completed_count_by_month OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_job_completed_count_by_month; Type: ACL; Schema: public; Owner: d3l243

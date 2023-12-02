@@ -34,7 +34,7 @@ CREATE VIEW public.v_predefined_analysis_scheduling_queue AS
   GROUP BY sq.item, sq.dataset_id, ds.dataset, sq.calling_user, sq.analysis_tool_name_filter, sq.exclude_datasets_not_released, sq.prevent_duplicate_jobs, sq.state, sq.result_code, sq.message, sq.jobs_created, sq.entered, sq.last_affected;
 
 
-ALTER TABLE public.v_predefined_analysis_scheduling_queue OWNER TO d3l243;
+ALTER VIEW public.v_predefined_analysis_scheduling_queue OWNER TO d3l243;
 
 --
 -- Name: TABLE v_predefined_analysis_scheduling_queue; Type: ACL; Schema: public; Owner: d3l243

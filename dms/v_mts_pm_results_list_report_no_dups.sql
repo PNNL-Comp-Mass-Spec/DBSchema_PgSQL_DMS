@@ -65,7 +65,7 @@ CREATE VIEW public.v_mts_pm_results_list_report_no_dups AS
   WHERE (filterq.finishrank = 1);
 
 
-ALTER TABLE public.v_mts_pm_results_list_report_no_dups OWNER TO d3l243;
+ALTER VIEW public.v_mts_pm_results_list_report_no_dups OWNER TO d3l243;
 
 --
 -- Name: TABLE v_mts_pm_results_list_report_no_dups; Type: ACL; Schema: public; Owner: d3l243

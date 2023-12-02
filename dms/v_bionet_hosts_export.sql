@@ -14,7 +14,7 @@ CREATE VIEW public.v_bionet_hosts_export AS
    FROM public.t_bionet_hosts;
 
 
-ALTER TABLE public.v_bionet_hosts_export OWNER TO d3l243;
+ALTER VIEW public.v_bionet_hosts_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_bionet_hosts_export; Type: ACL; Schema: public; Owner: d3l243

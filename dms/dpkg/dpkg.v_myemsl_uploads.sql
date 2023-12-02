@@ -25,7 +25,7 @@ CREATE VIEW dpkg.v_myemsl_uploads AS
      LEFT JOIN dpkg.t_uri_paths p ON ((mu.status_uri_path_id = p.uri_path_id)));
 
 
-ALTER TABLE dpkg.v_myemsl_uploads OWNER TO d3l243;
+ALTER VIEW dpkg.v_myemsl_uploads OWNER TO d3l243;
 
 --
 -- Name: TABLE v_myemsl_uploads; Type: ACL; Schema: dpkg; Owner: d3l243

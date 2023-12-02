@@ -10,7 +10,7 @@ CREATE VIEW public.v_default_psm_job_tools AS
   WHERE (t_default_psm_job_settings.enabled > 0);
 
 
-ALTER TABLE public.v_default_psm_job_tools OWNER TO d3l243;
+ALTER VIEW public.v_default_psm_job_tools OWNER TO d3l243;
 
 --
 -- Name: TABLE v_default_psm_job_tools; Type: ACL; Schema: public; Owner: d3l243

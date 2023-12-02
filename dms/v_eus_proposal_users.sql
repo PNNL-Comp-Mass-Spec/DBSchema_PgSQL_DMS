@@ -21,7 +21,7 @@ CREATE VIEW public.v_eus_proposal_users AS
   WHERE ((pu.of_dms_interest OPERATOR(public.=) 'Y'::public.citext) AND (pu.state_id <> 5));
 
 
-ALTER TABLE public.v_eus_proposal_users OWNER TO d3l243;
+ALTER VIEW public.v_eus_proposal_users OWNER TO d3l243;
 
 --
 -- Name: TABLE v_eus_proposal_users; Type: ACL; Schema: public; Owner: d3l243

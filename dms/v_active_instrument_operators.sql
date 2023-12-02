@@ -9,7 +9,7 @@ CREATE VIEW public.v_active_instrument_operators AS
    FROM public.v_active_instrument_users;
 
 
-ALTER TABLE public.v_active_instrument_operators OWNER TO d3l243;
+ALTER VIEW public.v_active_instrument_operators OWNER TO d3l243;
 
 --
 -- Name: VIEW v_active_instrument_operators; Type: COMMENT; Schema: public; Owner: d3l243

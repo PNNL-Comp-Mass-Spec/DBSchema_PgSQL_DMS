@@ -33,7 +33,7 @@ CREATE VIEW public.v_analysis_request_jobs_list_report AS
      LEFT JOIN public.v_dataset_folder_paths dfp ON ((j.dataset_id = dfp.dataset_id)));
 
 
-ALTER TABLE public.v_analysis_request_jobs_list_report OWNER TO d3l243;
+ALTER VIEW public.v_analysis_request_jobs_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_request_jobs_list_report; Type: ACL; Schema: public; Owner: d3l243

@@ -50,7 +50,7 @@ UNION
   WHERE ((pj.state = ANY (ARRAY[1, 8])) AND (j.job IS NULL));
 
 
-ALTER TABLE sw.v_jobs_active OWNER TO d3l243;
+ALTER VIEW sw.v_jobs_active OWNER TO d3l243;
 
 --
 -- Name: TABLE v_jobs_active; Type: ACL; Schema: sw; Owner: d3l243

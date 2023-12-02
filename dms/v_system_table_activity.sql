@@ -28,7 +28,7 @@ CREATE VIEW public.v_system_table_activity AS
    FROM pg_stat_user_tables t;
 
 
-ALTER TABLE public.v_system_table_activity OWNER TO d3l243;
+ALTER VIEW public.v_system_table_activity OWNER TO d3l243;
 
 --
 -- Name: VIEW v_system_table_activity; Type: COMMENT; Schema: public; Owner: d3l243

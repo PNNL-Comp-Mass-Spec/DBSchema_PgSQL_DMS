@@ -30,7 +30,7 @@ CREATE VIEW sw.v_peptide_atlas_job_parameters AS
   WHERE (selectionq.rowrank = 1);
 
 
-ALTER TABLE sw.v_peptide_atlas_job_parameters OWNER TO d3l243;
+ALTER VIEW sw.v_peptide_atlas_job_parameters OWNER TO d3l243;
 
 --
 -- Name: TABLE v_peptide_atlas_job_parameters; Type: ACL; Schema: sw; Owner: d3l243

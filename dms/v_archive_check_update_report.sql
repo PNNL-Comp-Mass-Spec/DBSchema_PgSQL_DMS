@@ -25,7 +25,7 @@ CREATE VIEW public.v_archive_check_update_report AS
   WHERE (NOT (da.archive_update_state_id = ANY (ARRAY[4, 6])));
 
 
-ALTER TABLE public.v_archive_check_update_report OWNER TO d3l243;
+ALTER VIEW public.v_archive_check_update_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_archive_check_update_report; Type: ACL; Schema: public; Owner: d3l243

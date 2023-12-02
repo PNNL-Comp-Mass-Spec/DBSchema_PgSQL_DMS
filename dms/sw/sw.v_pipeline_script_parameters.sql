@@ -10,7 +10,7 @@ CREATE VIEW sw.v_pipeline_script_parameters AS
    FROM sw.t_scripts;
 
 
-ALTER TABLE sw.v_pipeline_script_parameters OWNER TO d3l243;
+ALTER VIEW sw.v_pipeline_script_parameters OWNER TO d3l243;
 
 --
 -- Name: VIEW v_pipeline_script_parameters; Type: COMMENT; Schema: sw; Owner: d3l243

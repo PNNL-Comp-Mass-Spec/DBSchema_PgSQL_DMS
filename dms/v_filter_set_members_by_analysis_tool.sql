@@ -21,7 +21,7 @@ CREATE VIEW public.v_filter_set_members_by_analysis_tool AS
      JOIN public.t_analysis_tool tool ON ((fscm.analysis_tool_id = tool.analysis_tool_id)));
 
 
-ALTER TABLE public.v_filter_set_members_by_analysis_tool OWNER TO d3l243;
+ALTER VIEW public.v_filter_set_members_by_analysis_tool OWNER TO d3l243;
 
 --
 -- Name: TABLE v_filter_set_members_by_analysis_tool; Type: ACL; Schema: public; Owner: d3l243

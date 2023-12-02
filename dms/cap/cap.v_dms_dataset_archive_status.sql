@@ -17,7 +17,7 @@ CREATE VIEW cap.v_dms_dataset_archive_status AS
      JOIN public.t_dataset ds ON ((da.dataset_id = ds.dataset_id)));
 
 
-ALTER TABLE cap.v_dms_dataset_archive_status OWNER TO d3l243;
+ALTER VIEW cap.v_dms_dataset_archive_status OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dms_dataset_archive_status; Type: ACL; Schema: cap; Owner: d3l243

@@ -38,7 +38,7 @@ CREATE VIEW sw.v_dms_data_package_aggregation_jobs AS
      LEFT JOIN sw.t_job_steps_history jsh ON (((src.job = jsh.job) AND (jsh.most_recent_entry = 1) AND (jsh.shared_result_version > 0) AND (jsh.state = ANY (ARRAY[3, 5])))));
 
 
-ALTER TABLE sw.v_dms_data_package_aggregation_jobs OWNER TO d3l243;
+ALTER VIEW sw.v_dms_data_package_aggregation_jobs OWNER TO d3l243;
 
 --
 -- Name: VIEW v_dms_data_package_aggregation_jobs; Type: COMMENT; Schema: sw; Owner: d3l243

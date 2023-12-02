@@ -52,7 +52,7 @@ CREATE VIEW public.v_material_containers_detail_report AS
           GROUP BY mc.container, mc.type, ml.location, mc.comment, c.campaign, mc.created, mc.status, mc.researcher, ml.freezer_tag, tfa.files, mc.container_id) containerq;
 
 
-ALTER TABLE public.v_material_containers_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_material_containers_detail_report OWNER TO d3l243;
 
 --
 -- Name: VIEW v_material_containers_detail_report; Type: COMMENT; Schema: public; Owner: d3l243

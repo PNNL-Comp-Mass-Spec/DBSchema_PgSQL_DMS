@@ -14,7 +14,7 @@ CREATE VIEW public.v_data_helper_dataset_lookup AS
      JOIN public.t_archive_path apath ON ((da.storage_path_id = apath.archive_path_id)));
 
 
-ALTER TABLE public.v_data_helper_dataset_lookup OWNER TO d3l243;
+ALTER VIEW public.v_data_helper_dataset_lookup OWNER TO d3l243;
 
 --
 -- Name: TABLE v_data_helper_dataset_lookup; Type: ACL; Schema: public; Owner: d3l243

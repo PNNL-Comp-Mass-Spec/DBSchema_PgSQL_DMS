@@ -15,7 +15,7 @@ CREATE VIEW public.v_material_containers_entry AS
      LEFT JOIN public.t_campaign c ON ((mc.campaign_id = c.campaign_id)));
 
 
-ALTER TABLE public.v_material_containers_entry OWNER TO d3l243;
+ALTER VIEW public.v_material_containers_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_material_containers_entry; Type: ACL; Schema: public; Owner: d3l243

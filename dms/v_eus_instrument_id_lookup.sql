@@ -14,7 +14,7 @@ CREATE VIEW public.v_eus_instrument_id_lookup AS
      JOIN public.t_emsl_instruments emslinst ON ((edm.eus_instrument_id = emslinst.eus_instrument_id)));
 
 
-ALTER TABLE public.v_eus_instrument_id_lookup OWNER TO d3l243;
+ALTER VIEW public.v_eus_instrument_id_lookup OWNER TO d3l243;
 
 --
 -- Name: TABLE v_eus_instrument_id_lookup; Type: ACL; Schema: public; Owner: d3l243

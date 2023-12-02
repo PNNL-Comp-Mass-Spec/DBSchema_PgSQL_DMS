@@ -26,7 +26,7 @@ CREATE VIEW dpkg.v_myemsl_data_package_uploads AS
      LEFT JOIN dpkg.t_uri_paths p ON ((mu.status_uri_path_id = p.uri_path_id)));
 
 
-ALTER TABLE dpkg.v_myemsl_data_package_uploads OWNER TO d3l243;
+ALTER VIEW dpkg.v_myemsl_data_package_uploads OWNER TO d3l243;
 
 --
 -- Name: VIEW v_myemsl_data_package_uploads; Type: COMMENT; Schema: dpkg; Owner: d3l243

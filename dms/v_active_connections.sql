@@ -19,7 +19,7 @@ CREATE VIEW public.v_active_connections AS
   WHERE ((pg_stat_activity.backend_type = 'client backend'::text) OR ((pg_stat_activity.backend_type IS NULL) AND (COALESCE(pg_stat_activity.usename, 'postgres'::name) <> 'postgres'::name)));
 
 
-ALTER TABLE public.v_active_connections OWNER TO d3l243;
+ALTER VIEW public.v_active_connections OWNER TO d3l243;
 
 --
 -- Name: VIEW v_active_connections; Type: COMMENT; Schema: public; Owner: d3l243

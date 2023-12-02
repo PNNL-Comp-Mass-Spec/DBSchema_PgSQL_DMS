@@ -40,7 +40,7 @@ UNION
    FROM dpkg.t_log_entries;
 
 
-ALTER TABLE public.v_log_entries OWNER TO d3l243;
+ALTER VIEW public.v_log_entries OWNER TO d3l243;
 
 --
 -- Name: TABLE v_log_entries; Type: ACL; Schema: public; Owner: d3l243

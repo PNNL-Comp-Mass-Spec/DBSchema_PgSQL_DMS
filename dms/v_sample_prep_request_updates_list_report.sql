@@ -15,7 +15,7 @@ CREATE VIEW public.v_sample_prep_request_updates_list_report AS
      LEFT JOIN public.t_users u ON ((updates.system_account OPERATOR(public.=) u.username)));
 
 
-ALTER TABLE public.v_sample_prep_request_updates_list_report OWNER TO d3l243;
+ALTER VIEW public.v_sample_prep_request_updates_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_sample_prep_request_updates_list_report; Type: ACL; Schema: public; Owner: d3l243

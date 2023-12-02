@@ -64,7 +64,7 @@ CREATE VIEW public.v_analysis_job_backlog_crosstab AS
   GROUP BY pivotq.posting_time;
 
 
-ALTER TABLE public.v_analysis_job_backlog_crosstab OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_backlog_crosstab OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_job_backlog_crosstab; Type: ACL; Schema: public; Owner: d3l243

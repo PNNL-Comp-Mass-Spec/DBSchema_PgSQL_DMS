@@ -45,7 +45,7 @@ CREATE VIEW cap.v_myemsl_uploads2 AS
                   WHERE (t_storage_path.storage_path_function OPERATOR(public.=) 'results_transfer'::public.citext)) transferq ON ((spath.machine_name OPERATOR(public.=) transferq.machine_name)))) tf ON ((mu.dataset_id = tf.dataset_id)));
 
 
-ALTER TABLE cap.v_myemsl_uploads2 OWNER TO d3l243;
+ALTER VIEW cap.v_myemsl_uploads2 OWNER TO d3l243;
 
 --
 -- Name: TABLE v_myemsl_uploads2; Type: ACL; Schema: cap; Owner: d3l243

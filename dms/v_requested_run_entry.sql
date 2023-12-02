@@ -35,7 +35,7 @@ CREATE VIEW public.v_requested_run_entry AS
      LEFT JOIN public.t_material_locations ml ON ((rr.location_id = ml.location_id)));
 
 
-ALTER TABLE public.v_requested_run_entry OWNER TO d3l243;
+ALTER VIEW public.v_requested_run_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_requested_run_entry; Type: ACL; Schema: public; Owner: d3l243

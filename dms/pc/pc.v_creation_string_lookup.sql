@@ -15,7 +15,7 @@ CREATE VIEW pc.v_creation_string_lookup AS
      JOIN pc.t_creation_option_values v ON ((k.keyword_id = v.keyword_id)));
 
 
-ALTER TABLE pc.v_creation_string_lookup OWNER TO d3l243;
+ALTER VIEW pc.v_creation_string_lookup OWNER TO d3l243;
 
 --
 -- Name: TABLE v_creation_string_lookup; Type: ACL; Schema: pc; Owner: d3l243

@@ -65,7 +65,7 @@ CREATE VIEW cap.v_task_steps_stale_and_failed AS
   WHERE (dataq.warning_message <> ''::text);
 
 
-ALTER TABLE cap.v_task_steps_stale_and_failed OWNER TO d3l243;
+ALTER VIEW cap.v_task_steps_stale_and_failed OWNER TO d3l243;
 
 --
 -- Name: TABLE v_task_steps_stale_and_failed; Type: ACL; Schema: cap; Owner: d3l243

@@ -12,7 +12,7 @@ CREATE VIEW public.v_dataset_files_recent AS
   WHERE ((df.allow_duplicates = false) AND (df.deleted = false) AND (ds.created >= (CURRENT_TIMESTAMP - '180 days'::interval)));
 
 
-ALTER TABLE public.v_dataset_files_recent OWNER TO d3l243;
+ALTER VIEW public.v_dataset_files_recent OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_files_recent; Type: ACL; Schema: public; Owner: d3l243

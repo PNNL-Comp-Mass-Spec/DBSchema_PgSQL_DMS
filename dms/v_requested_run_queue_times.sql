@@ -38,7 +38,7 @@ CREATE VIEW public.v_requested_run_queue_times AS
              LEFT JOIN public.t_dataset ds ON ((rr.dataset_id = ds.dataset_id)))) dataq;
 
 
-ALTER TABLE public.v_requested_run_queue_times OWNER TO d3l243;
+ALTER VIEW public.v_requested_run_queue_times OWNER TO d3l243;
 
 --
 -- Name: TABLE v_requested_run_queue_times; Type: ACL; Schema: public; Owner: d3l243

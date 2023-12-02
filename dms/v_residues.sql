@@ -18,7 +18,7 @@ CREATE VIEW public.v_residues AS
    FROM public.t_residues;
 
 
-ALTER TABLE public.v_residues OWNER TO d3l243;
+ALTER VIEW public.v_residues OWNER TO d3l243;
 
 --
 -- Name: TABLE v_residues; Type: ACL; Schema: public; Owner: d3l243

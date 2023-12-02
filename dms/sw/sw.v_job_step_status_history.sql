@@ -20,7 +20,7 @@ CREATE VIEW sw.v_job_step_status_history AS
     ORDER BY Posting_time, State_Name'::text, 'SELECT unnest(''{Waiting, Enabled, Running, Completed, Failed, Holding }''::citext[])'::text) ct(posting_time timestamp without time zone, "Waiting" integer, "Enabled" integer, "Running" integer, "Completed" integer, "Failed" integer, "Holding" integer);
 
 
-ALTER TABLE sw.v_job_step_status_history OWNER TO d3l243;
+ALTER VIEW sw.v_job_step_status_history OWNER TO d3l243;
 
 --
 -- Name: TABLE v_job_step_status_history; Type: ACL; Schema: sw; Owner: d3l243

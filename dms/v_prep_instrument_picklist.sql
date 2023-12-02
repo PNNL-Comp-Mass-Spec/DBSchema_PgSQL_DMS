@@ -9,7 +9,7 @@ CREATE VIEW public.v_prep_instrument_picklist AS
   WHERE ((t_instrument_name.instrument_group OPERATOR(public.=) 'PrepHPLC'::public.citext) AND (t_instrument_name.status OPERATOR(public.=) ANY (ARRAY['Active'::public.citext, 'Offline'::public.citext, 'PrepHPLC'::public.citext])));
 
 
-ALTER TABLE public.v_prep_instrument_picklist OWNER TO d3l243;
+ALTER VIEW public.v_prep_instrument_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_prep_instrument_picklist; Type: ACL; Schema: public; Owner: d3l243

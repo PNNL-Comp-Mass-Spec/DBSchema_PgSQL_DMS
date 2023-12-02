@@ -27,7 +27,7 @@ CREATE VIEW public.v_user_detail_report AS
           WHERE ((NOT (eu.hid IS NULL)) AND (eu.valid = 1))) lookupq ON (((lookupq.hid OPERATOR(public.=) u.hid) AND (lookupq.rowrank = 1))));
 
 
-ALTER TABLE public.v_user_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_user_detail_report OWNER TO d3l243;
 
 --
 -- Name: VIEW v_user_detail_report; Type: COMMENT; Schema: public; Owner: d3l243

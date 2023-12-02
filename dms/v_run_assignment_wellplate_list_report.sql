@@ -23,7 +23,7 @@ CREATE VIEW public.v_run_assignment_wellplate_list_report AS
      LEFT JOIN public.t_wellplates w ON ((countq.wellplate OPERATOR(public.=) w.wellplate)));
 
 
-ALTER TABLE public.v_run_assignment_wellplate_list_report OWNER TO d3l243;
+ALTER VIEW public.v_run_assignment_wellplate_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_run_assignment_wellplate_list_report; Type: ACL; Schema: public; Owner: d3l243

@@ -9,7 +9,7 @@ CREATE VIEW public.v_eus_project_picklist AS
    FROM public.t_eus_proposal_state_name;
 
 
-ALTER TABLE public.v_eus_project_picklist OWNER TO d3l243;
+ALTER VIEW public.v_eus_project_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_eus_project_picklist; Type: ACL; Schema: public; Owner: d3l243

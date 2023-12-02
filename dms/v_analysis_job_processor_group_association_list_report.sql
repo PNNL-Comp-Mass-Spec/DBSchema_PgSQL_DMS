@@ -18,7 +18,7 @@ CREATE VIEW public.v_analysis_job_processor_group_association_list_report AS
   WHERE (j.job_state_id = ANY (ARRAY[1, 2, 3, 8, 9, 10, 11, 16, 17]));
 
 
-ALTER TABLE public.v_analysis_job_processor_group_association_list_report OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_processor_group_association_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_job_processor_group_association_list_report; Type: ACL; Schema: public; Owner: d3l243

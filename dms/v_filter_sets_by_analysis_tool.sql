@@ -16,7 +16,7 @@ CREATE VIEW public.v_filter_sets_by_analysis_tool AS
   GROUP BY fscm.analysis_tool_id, fs.filter_set_id, tool.analysis_tool;
 
 
-ALTER TABLE public.v_filter_sets_by_analysis_tool OWNER TO d3l243;
+ALTER VIEW public.v_filter_sets_by_analysis_tool OWNER TO d3l243;
 
 --
 -- Name: TABLE v_filter_sets_by_analysis_tool; Type: ACL; Schema: public; Owner: d3l243

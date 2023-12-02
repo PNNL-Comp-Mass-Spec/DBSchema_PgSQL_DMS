@@ -16,7 +16,7 @@ CREATE VIEW public.v_separation_type_entry AS
      LEFT JOIN public.t_secondary_sep_sample_type st ON ((ss.sample_type_id = st.sample_type_id)));
 
 
-ALTER TABLE public.v_separation_type_entry OWNER TO d3l243;
+ALTER VIEW public.v_separation_type_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_separation_type_entry; Type: ACL; Schema: public; Owner: d3l243

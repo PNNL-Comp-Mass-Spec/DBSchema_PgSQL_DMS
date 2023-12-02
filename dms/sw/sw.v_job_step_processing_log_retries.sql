@@ -19,7 +19,7 @@ CREATE VIEW sw.v_job_step_processing_log_retries AS
          HAVING (count(*) > 1)) filterq ON (((jsl.job = filterq.job) AND (jsl.step = filterq.step))));
 
 
-ALTER TABLE sw.v_job_step_processing_log_retries OWNER TO d3l243;
+ALTER VIEW sw.v_job_step_processing_log_retries OWNER TO d3l243;
 
 --
 -- Name: VIEW v_job_step_processing_log_retries; Type: COMMENT; Schema: sw; Owner: d3l243

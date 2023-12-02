@@ -9,7 +9,7 @@ CREATE VIEW public.v_instrument_admin_picklist AS
   WHERE (t_instrument_name.status OPERATOR(public.=) ANY (ARRAY['Active'::public.citext, 'Offline'::public.citext, 'Broken'::public.citext]));
 
 
-ALTER TABLE public.v_instrument_admin_picklist OWNER TO d3l243;
+ALTER VIEW public.v_instrument_admin_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_instrument_admin_picklist; Type: ACL; Schema: public; Owner: d3l243

@@ -40,7 +40,7 @@ CREATE VIEW dpkg.v_data_package_aggregation_list_report AS
      LEFT JOIN dpkg.t_data_package_analysis_jobs dpj ON (((dpj.job = jobq.job) AND (dpj.dataset_id = dpd.dataset_id) AND (dpj.data_pkg_id = dpd.data_pkg_id))));
 
 
-ALTER TABLE dpkg.v_data_package_aggregation_list_report OWNER TO d3l243;
+ALTER VIEW dpkg.v_data_package_aggregation_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_data_package_aggregation_list_report; Type: ACL; Schema: dpkg; Owner: d3l243

@@ -16,7 +16,7 @@ CREATE VIEW public.v_eus_proposal_user_lookup AS
      LEFT JOIN public.t_users u ON ((eu.hid OPERATOR(public.=) u.hid)));
 
 
-ALTER TABLE public.v_eus_proposal_user_lookup OWNER TO d3l243;
+ALTER VIEW public.v_eus_proposal_user_lookup OWNER TO d3l243;
 
 --
 -- Name: TABLE v_eus_proposal_user_lookup; Type: ACL; Schema: public; Owner: d3l243

@@ -39,7 +39,7 @@ CREATE VIEW public.v_material_move_items_list_report AS
      JOIN public.t_material_locations ml ON ((mc.location_id = ml.location_id)));
 
 
-ALTER TABLE public.v_material_move_items_list_report OWNER TO d3l243;
+ALTER VIEW public.v_material_move_items_list_report OWNER TO d3l243;
 
 --
 -- Name: VIEW v_material_move_items_list_report; Type: COMMENT; Schema: public; Owner: d3l243

@@ -25,7 +25,7 @@ CREATE VIEW ont.v_ontology_detail_report AS
      JOIN ont.v_term_lineage l ON ((t.term_pk OPERATOR(public.=) l.term_pk)));
 
 
-ALTER TABLE ont.v_ontology_detail_report OWNER TO d3l243;
+ALTER VIEW ont.v_ontology_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_ontology_detail_report; Type: ACL; Schema: ont; Owner: d3l243

@@ -20,7 +20,7 @@ CREATE VIEW public.v_lc_column_list_report AS
      JOIN public.t_lc_column_state_name statename ON ((lc.column_state_id = statename.column_state_id)));
 
 
-ALTER TABLE public.v_lc_column_list_report OWNER TO d3l243;
+ALTER VIEW public.v_lc_column_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_lc_column_list_report; Type: ACL; Schema: public; Owner: d3l243

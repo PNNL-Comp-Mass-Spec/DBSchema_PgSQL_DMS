@@ -8,7 +8,7 @@ CREATE VIEW sw.v_pipeline_script_with_parameters AS
   WHERE ((t_scripts.enabled OPERATOR(public.=) 'Y'::public.citext) AND (t_scripts.pipeline_job_enabled > 0));
 
 
-ALTER TABLE sw.v_pipeline_script_with_parameters OWNER TO d3l243;
+ALTER VIEW sw.v_pipeline_script_with_parameters OWNER TO d3l243;
 
 --
 -- Name: TABLE v_pipeline_script_with_parameters; Type: ACL; Schema: sw; Owner: d3l243

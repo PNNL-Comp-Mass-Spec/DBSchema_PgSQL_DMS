@@ -15,7 +15,7 @@ CREATE VIEW public.v_analysis_job_use_mono_mass AS
      JOIN public.t_dataset_type_name ON ((t_dataset.dataset_type_id = t_dataset_type_name.dataset_type_id)));
 
 
-ALTER TABLE public.v_analysis_job_use_mono_mass OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_use_mono_mass OWNER TO d3l243;
 
 --
 -- Name: VIEW v_analysis_job_use_mono_mass; Type: COMMENT; Schema: public; Owner: d3l243

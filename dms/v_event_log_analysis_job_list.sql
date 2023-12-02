@@ -17,7 +17,7 @@ CREATE VIEW public.v_event_log_analysis_job_list AS
   WHERE ((el.target_type = 5) AND (el.entered >= (CURRENT_TIMESTAMP - '4 days'::interval)));
 
 
-ALTER TABLE public.v_event_log_analysis_job_list OWNER TO d3l243;
+ALTER VIEW public.v_event_log_analysis_job_list OWNER TO d3l243;
 
 --
 -- Name: TABLE v_event_log_analysis_job_list; Type: ACL; Schema: public; Owner: d3l243

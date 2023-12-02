@@ -74,7 +74,7 @@ UNION
   WHERE (v_notification_datasets_by_research_team.entered > (CURRENT_TIMESTAMP - '24:00:00'::interval));
 
 
-ALTER TABLE public.v_notification_by_research_team OWNER TO d3l243;
+ALTER VIEW public.v_notification_by_research_team OWNER TO d3l243;
 
 --
 -- Name: TABLE v_notification_by_research_team; Type: ACL; Schema: public; Owner: d3l243

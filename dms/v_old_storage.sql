@@ -13,7 +13,7 @@ CREATE VIEW public.v_old_storage AS
   WHERE (t_storage_path.storage_path_function OPERATOR(public.=) 'old-storage'::public.citext);
 
 
-ALTER TABLE public.v_old_storage OWNER TO d3l243;
+ALTER VIEW public.v_old_storage OWNER TO d3l243;
 
 --
 -- Name: TABLE v_old_storage; Type: ACL; Schema: public; Owner: d3l243

@@ -8,7 +8,7 @@ CREATE VIEW dpkg.v_osm_package_picklist AS
    FROM dpkg.t_osm_package;
 
 
-ALTER TABLE dpkg.v_osm_package_picklist OWNER TO d3l243;
+ALTER VIEW dpkg.v_osm_package_picklist OWNER TO d3l243;
 
 --
 -- Name: VIEW v_osm_package_picklist; Type: COMMENT; Schema: dpkg; Owner: d3l243

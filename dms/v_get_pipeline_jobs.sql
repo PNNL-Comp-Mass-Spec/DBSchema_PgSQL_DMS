@@ -27,7 +27,7 @@ CREATE VIEW public.v_get_pipeline_jobs AS
   WHERE ((j.job_state_id = ANY (ARRAY[1, 8])) AND (instname.operations_role OPERATOR(public.<>) 'InSilico'::public.citext) AND ((da.archive_state_id = ANY (ARRAY[3, 4, 10, 14, 15])) OR ((da.archive_state_id = 1) AND (da.archive_state_last_affected < (CURRENT_TIMESTAMP - '01:00:00'::interval))) OR ((da.archive_state_id = ANY (ARRAY[2, 6, 9])) AND (da.archive_state_last_affected < (CURRENT_TIMESTAMP - '01:00:00'::interval))) OR ((da.archive_state_id = ANY (ARRAY[7, 8])) AND (da.archive_state_last_affected < (CURRENT_TIMESTAMP - '01:00:00'::interval))) OR (((ds.dataset OPERATOR(public.~~) 'QC_Shew%'::public.citext) OR (COALESCE(archivestatus.archivedisabled, 0) > 0) OR (ds.dataset OPERATOR(public.~~) 'QC_Mam%'::public.citext)) AND (ds.dataset_rating_id >= 1) AND (NOT (da.archive_state_id = ANY (ARRAY[6, 7]))) AND (da.archive_state_last_affected < (CURRENT_TIMESTAMP - '00:15:00'::interval)))));
 
 
-ALTER TABLE public.v_get_pipeline_jobs OWNER TO d3l243;
+ALTER VIEW public.v_get_pipeline_jobs OWNER TO d3l243;
 
 --
 -- Name: VIEW v_get_pipeline_jobs; Type: COMMENT; Schema: public; Owner: d3l243

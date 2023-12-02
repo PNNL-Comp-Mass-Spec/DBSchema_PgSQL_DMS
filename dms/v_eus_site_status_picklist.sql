@@ -9,7 +9,7 @@ CREATE VIEW public.v_eus_site_status_picklist AS
    FROM public.t_eus_site_status;
 
 
-ALTER TABLE public.v_eus_site_status_picklist OWNER TO d3l243;
+ALTER VIEW public.v_eus_site_status_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_eus_site_status_picklist; Type: ACL; Schema: public; Owner: d3l243

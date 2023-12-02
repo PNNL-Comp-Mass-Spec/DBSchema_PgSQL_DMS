@@ -29,7 +29,7 @@ CREATE VIEW public.v_analysis_job_report AS
      JOIN public.t_analysis_job_state js ON ((j.job_state_id = js.job_state_id)));
 
 
-ALTER TABLE public.v_analysis_job_report OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_job_report; Type: ACL; Schema: public; Owner: d3l243

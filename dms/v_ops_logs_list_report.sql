@@ -76,7 +76,7 @@ UNION
   WHERE (NOT (ds.acq_time_start IS NULL));
 
 
-ALTER TABLE public.v_ops_logs_list_report OWNER TO d3l243;
+ALTER VIEW public.v_ops_logs_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_ops_logs_list_report; Type: ACL; Schema: public; Owner: d3l243

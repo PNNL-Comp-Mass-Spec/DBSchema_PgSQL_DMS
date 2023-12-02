@@ -17,7 +17,7 @@ CREATE VIEW public.v_data_package_analysis_jobs AS
      JOIN public.v_mage_analysis_jobs mj ON ((j.job = mj.job)));
 
 
-ALTER TABLE public.v_data_package_analysis_jobs OWNER TO d3l243;
+ALTER VIEW public.v_data_package_analysis_jobs OWNER TO d3l243;
 
 --
 -- Name: TABLE v_data_package_analysis_jobs; Type: ACL; Schema: public; Owner: d3l243

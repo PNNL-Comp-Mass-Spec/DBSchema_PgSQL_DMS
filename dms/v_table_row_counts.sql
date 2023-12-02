@@ -40,7 +40,7 @@ CREATE VIEW public.v_table_row_counts AS
   ORDER BY t.size_bytes DESC;
 
 
-ALTER TABLE public.v_table_row_counts OWNER TO d3l243;
+ALTER VIEW public.v_table_row_counts OWNER TO d3l243;
 
 --
 -- Name: VIEW v_table_row_counts; Type: COMMENT; Schema: public; Owner: d3l243

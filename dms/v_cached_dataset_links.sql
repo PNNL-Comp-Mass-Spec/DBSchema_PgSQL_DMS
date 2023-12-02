@@ -20,7 +20,7 @@ CREATE VIEW public.v_cached_dataset_links AS
      JOIN public.t_dataset d ON ((d.dataset_id = l.dataset_id)));
 
 
-ALTER TABLE public.v_cached_dataset_links OWNER TO d3l243;
+ALTER VIEW public.v_cached_dataset_links OWNER TO d3l243;
 
 --
 -- Name: TABLE v_cached_dataset_links; Type: ACL; Schema: public; Owner: d3l243

@@ -14,7 +14,7 @@ CREATE VIEW public.v_sample_submission_entry AS
      JOIN public.t_users u ON ((ss.received_by_user_id = u.user_id)));
 
 
-ALTER TABLE public.v_sample_submission_entry OWNER TO d3l243;
+ALTER VIEW public.v_sample_submission_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_sample_submission_entry; Type: ACL; Schema: public; Owner: d3l243

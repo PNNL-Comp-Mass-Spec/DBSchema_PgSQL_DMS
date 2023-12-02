@@ -13,7 +13,7 @@ CREATE VIEW cap.v_myemsl_upload_stats_monthly AS
   GROUP BY (EXTRACT(year FROM t_myemsl_uploads.entered)), (EXTRACT(month FROM t_myemsl_uploads.entered));
 
 
-ALTER TABLE cap.v_myemsl_upload_stats_monthly OWNER TO d3l243;
+ALTER VIEW cap.v_myemsl_upload_stats_monthly OWNER TO d3l243;
 
 --
 -- Name: TABLE v_myemsl_upload_stats_monthly; Type: ACL; Schema: cap; Owner: d3l243

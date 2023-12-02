@@ -22,7 +22,7 @@ CREATE VIEW public.v_archive_check_report AS
   WHERE (da.archive_state_id <> ALL (ARRAY[3, 4, 9, 10, 14, 15]));
 
 
-ALTER TABLE public.v_archive_check_report OWNER TO d3l243;
+ALTER VIEW public.v_archive_check_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_archive_check_report; Type: ACL; Schema: public; Owner: d3l243

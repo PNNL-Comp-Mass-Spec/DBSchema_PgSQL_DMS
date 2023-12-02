@@ -32,7 +32,7 @@ CREATE VIEW sw.v_machine_status_last_24_hours AS
           GROUP BY lp.machine) activetoolq ON ((statusq.machine OPERATOR(public.=) activetoolq.machine)));
 
 
-ALTER TABLE sw.v_machine_status_last_24_hours OWNER TO d3l243;
+ALTER VIEW sw.v_machine_status_last_24_hours OWNER TO d3l243;
 
 --
 -- Name: TABLE v_machine_status_last_24_hours; Type: ACL; Schema: sw; Owner: d3l243

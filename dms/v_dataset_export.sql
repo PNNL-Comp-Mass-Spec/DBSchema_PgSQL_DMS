@@ -53,7 +53,7 @@ CREATE VIEW public.v_dataset_export AS
   WHERE (e.experiment OPERATOR(public.<>) 'Tracking'::public.citext);
 
 
-ALTER TABLE public.v_dataset_export OWNER TO d3l243;
+ALTER VIEW public.v_dataset_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_export; Type: ACL; Schema: public; Owner: d3l243

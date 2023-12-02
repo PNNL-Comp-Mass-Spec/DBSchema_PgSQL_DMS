@@ -20,7 +20,7 @@ CREATE VIEW public.v_user_operation_export AS
           GROUP BY opspermissions.user_id) permissionsq ON ((permissionsq.user_id = u.user_id)));
 
 
-ALTER TABLE public.v_user_operation_export OWNER TO d3l243;
+ALTER VIEW public.v_user_operation_export OWNER TO d3l243;
 
 --
 -- Name: VIEW v_user_operation_export; Type: COMMENT; Schema: public; Owner: d3l243

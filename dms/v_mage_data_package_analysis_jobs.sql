@@ -32,7 +32,7 @@ CREATE VIEW public.v_mage_data_package_analysis_jobs AS
      JOIN public.t_dataset_type_name dtn ON ((ds.dataset_type_id = dtn.dataset_type_id)));
 
 
-ALTER TABLE public.v_mage_data_package_analysis_jobs OWNER TO d3l243;
+ALTER VIEW public.v_mage_data_package_analysis_jobs OWNER TO d3l243;
 
 --
 -- Name: TABLE v_mage_data_package_analysis_jobs; Type: ACL; Schema: public; Owner: d3l243

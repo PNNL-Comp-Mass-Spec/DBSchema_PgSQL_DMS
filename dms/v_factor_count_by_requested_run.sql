@@ -16,7 +16,7 @@ CREATE VIEW public.v_factor_count_by_requested_run AS
   GROUP BY factorq.rr_id;
 
 
-ALTER TABLE public.v_factor_count_by_requested_run OWNER TO d3l243;
+ALTER VIEW public.v_factor_count_by_requested_run OWNER TO d3l243;
 
 --
 -- Name: TABLE v_factor_count_by_requested_run; Type: ACL; Schema: public; Owner: d3l243

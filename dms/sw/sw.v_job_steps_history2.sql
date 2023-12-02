@@ -57,7 +57,7 @@ CREATE VIEW sw.v_job_steps_history2 AS
   WHERE (j.most_recent_entry = 1);
 
 
-ALTER TABLE sw.v_job_steps_history2 OWNER TO d3l243;
+ALTER VIEW sw.v_job_steps_history2 OWNER TO d3l243;
 
 --
 -- Name: TABLE v_job_steps_history2; Type: ACL; Schema: sw; Owner: d3l243

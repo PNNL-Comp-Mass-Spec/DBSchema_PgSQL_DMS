@@ -13,7 +13,7 @@ CREATE VIEW public.v_analysis_date_completed AS
      JOIN public.t_analysis_tool t ON ((j.analysis_tool_id = t.analysis_tool_id)));
 
 
-ALTER TABLE public.v_analysis_date_completed OWNER TO d3l243;
+ALTER VIEW public.v_analysis_date_completed OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_date_completed; Type: ACL; Schema: public; Owner: d3l243

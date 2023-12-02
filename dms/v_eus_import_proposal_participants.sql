@@ -13,7 +13,7 @@ CREATE VIEW public.v_eus_import_proposal_participants AS
    FROM eus.vw_proposal_participants;
 
 
-ALTER TABLE public.v_eus_import_proposal_participants OWNER TO d3l243;
+ALTER VIEW public.v_eus_import_proposal_participants OWNER TO d3l243;
 
 --
 -- Name: TABLE v_eus_import_proposal_participants; Type: ACL; Schema: public; Owner: d3l243

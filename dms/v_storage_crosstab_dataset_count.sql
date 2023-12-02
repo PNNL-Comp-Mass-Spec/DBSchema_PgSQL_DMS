@@ -36,7 +36,7 @@ CREATE VIEW public.v_storage_crosstab_dataset_count AS
                      SLIM, TSQ, VelosOrbi, Waters_IMS, Waters_TOF}''::text[])'::text) pivotdata(vol_client public.citext, "21T" integer, "Agilent_GC-MS" integer, agilent_qqq integer, agilent_tof_v2 integer, bruker_ftms integer, eclipse integer, exactive integer, ft_zippedsfolders integer, "GC-QExactive" integer, ims integer, lcq integer, ltq integer, "LTQ-ETD" integer, lumos integer, "MALDI-Imaging" integer, orbitrap integer, qehfx integer, qexactive integer, "QExactive-Imaging" integer, slim integer, tsq integer, velosorbi integer, waters_ims integer, waters_tof integer);
 
 
-ALTER TABLE public.v_storage_crosstab_dataset_count OWNER TO d3l243;
+ALTER VIEW public.v_storage_crosstab_dataset_count OWNER TO d3l243;
 
 --
 -- Name: TABLE v_storage_crosstab_dataset_count; Type: ACL; Schema: public; Owner: d3l243

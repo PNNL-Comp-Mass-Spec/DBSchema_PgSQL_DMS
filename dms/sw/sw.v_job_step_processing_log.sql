@@ -25,7 +25,7 @@ CREATE VIEW sw.v_job_step_processing_log AS
   WHERE ((jse.entered < COALESCE((nextjspl.jobstart)::timestamp with time zone, CURRENT_TIMESTAMP)) AND (jse.target_state <> ALL (ARRAY[0, 1, 2])));
 
 
-ALTER TABLE sw.v_job_step_processing_log OWNER TO d3l243;
+ALTER VIEW sw.v_job_step_processing_log OWNER TO d3l243;
 
 --
 -- Name: TABLE v_job_step_processing_log; Type: ACL; Schema: sw; Owner: d3l243

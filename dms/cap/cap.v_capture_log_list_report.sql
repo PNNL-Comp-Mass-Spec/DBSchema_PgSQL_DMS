@@ -12,7 +12,7 @@ CREATE VIEW cap.v_capture_log_list_report AS
    FROM cap.t_log_entries;
 
 
-ALTER TABLE cap.v_capture_log_list_report OWNER TO d3l243;
+ALTER VIEW cap.v_capture_log_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_capture_log_list_report; Type: ACL; Schema: cap; Owner: d3l243

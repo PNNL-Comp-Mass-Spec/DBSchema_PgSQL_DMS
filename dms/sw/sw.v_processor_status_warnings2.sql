@@ -53,7 +53,7 @@ CREATE VIEW sw.v_processor_status_warnings2 AS
   WHERE (lookupq.startrank = 1);
 
 
-ALTER TABLE sw.v_processor_status_warnings2 OWNER TO d3l243;
+ALTER VIEW sw.v_processor_status_warnings2 OWNER TO d3l243;
 
 --
 -- Name: TABLE v_processor_status_warnings2; Type: ACL; Schema: sw; Owner: d3l243

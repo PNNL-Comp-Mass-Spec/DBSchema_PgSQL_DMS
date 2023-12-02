@@ -17,7 +17,7 @@ CREATE VIEW public.v_lcmsnet_experiment_export AS
      JOIN public.t_organisms org ON ((e.organism_id = org.organism_id)));
 
 
-ALTER TABLE public.v_lcmsnet_experiment_export OWNER TO d3l243;
+ALTER VIEW public.v_lcmsnet_experiment_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_lcmsnet_experiment_export; Type: ACL; Schema: public; Owner: d3l243

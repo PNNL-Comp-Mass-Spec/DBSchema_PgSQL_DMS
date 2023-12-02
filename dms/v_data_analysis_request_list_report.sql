@@ -53,7 +53,7 @@ CREATE VIEW public.v_data_analysis_request_list_report AS
   WHERE (r.state > 0);
 
 
-ALTER TABLE public.v_data_analysis_request_list_report OWNER TO d3l243;
+ALTER VIEW public.v_data_analysis_request_list_report OWNER TO d3l243;
 
 --
 -- Name: VIEW v_data_analysis_request_list_report; Type: COMMENT; Schema: public; Owner: d3l243

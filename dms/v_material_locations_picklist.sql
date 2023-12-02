@@ -21,7 +21,7 @@ CREATE VIEW public.v_material_locations_picklist AS
  HAVING ((ml.container_limit - count(mc.location_id)) > 0);
 
 
-ALTER TABLE public.v_material_locations_picklist OWNER TO d3l243;
+ALTER VIEW public.v_material_locations_picklist OWNER TO d3l243;
 
 --
 -- Name: VIEW v_material_locations_picklist; Type: COMMENT; Schema: public; Owner: d3l243

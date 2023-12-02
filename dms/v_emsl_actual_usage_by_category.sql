@@ -25,7 +25,7 @@ CREATE VIEW public.v_emsl_actual_usage_by_category AS
   GROUP BY (public.get_fiscal_year_text_from_date(filterq.run_date)), filterq.proposal_id, filterq.category;
 
 
-ALTER TABLE public.v_emsl_actual_usage_by_category OWNER TO d3l243;
+ALTER VIEW public.v_emsl_actual_usage_by_category OWNER TO d3l243;
 
 --
 -- Name: TABLE v_emsl_actual_usage_by_category; Type: ACL; Schema: public; Owner: d3l243

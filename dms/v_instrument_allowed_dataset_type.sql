@@ -15,7 +15,7 @@ CREATE VIEW public.v_instrument_allowed_dataset_type AS
      LEFT JOIN public.t_cached_instrument_dataset_type_usage cachedusage ON (((instname.instrument_id = cachedusage.instrument_id) AND (dtn.dataset_type OPERATOR(public.=) cachedusage.dataset_type))));
 
 
-ALTER TABLE public.v_instrument_allowed_dataset_type OWNER TO d3l243;
+ALTER VIEW public.v_instrument_allowed_dataset_type OWNER TO d3l243;
 
 --
 -- Name: TABLE v_instrument_allowed_dataset_type; Type: ACL; Schema: public; Owner: d3l243

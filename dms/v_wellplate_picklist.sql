@@ -12,7 +12,7 @@ CREATE VIEW public.v_wellplate_picklist AS
    FROM public.t_wellplates w;
 
 
-ALTER TABLE public.v_wellplate_picklist OWNER TO d3l243;
+ALTER VIEW public.v_wellplate_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_wellplate_picklist; Type: ACL; Schema: public; Owner: d3l243

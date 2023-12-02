@@ -17,7 +17,7 @@ CREATE VIEW public.v_enzyme_export AS
    FROM public.t_enzymes;
 
 
-ALTER TABLE public.v_enzyme_export OWNER TO d3l243;
+ALTER VIEW public.v_enzyme_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_enzyme_export; Type: ACL; Schema: public; Owner: d3l243

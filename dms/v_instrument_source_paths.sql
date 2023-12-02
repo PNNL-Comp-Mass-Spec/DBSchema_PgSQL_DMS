@@ -12,7 +12,7 @@ CREATE VIEW public.v_instrument_source_paths AS
   WHERE ((instname.status OPERATOR(public.=) 'active'::public.citext) AND (instname.scan_source_dir > 0));
 
 
-ALTER TABLE public.v_instrument_source_paths OWNER TO d3l243;
+ALTER VIEW public.v_instrument_source_paths OWNER TO d3l243;
 
 --
 -- Name: TABLE v_instrument_source_paths; Type: ACL; Schema: public; Owner: d3l243

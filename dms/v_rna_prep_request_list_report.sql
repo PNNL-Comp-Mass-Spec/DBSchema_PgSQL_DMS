@@ -69,7 +69,7 @@ CREATE VIEW public.v_rna_prep_request_list_report AS
   GROUP BY spr.prep_request_id, spr.request_name, spr.created, spr.estimated_completion, ta.attachments, spr.state_id, sn.state_name, spr.reason, spr.number_of_samples, qt.days_in_queue, spr.prep_method, qp.name_with_username, spr.organism, spr.biohazard_level, spr.campaign, spr.work_package, spr.instrument_name, spr.instrument_analysis_specifications, spr.eus_proposal_id, spr.sample_naming_convention, cc.activation_state, cc.activation_state_name;
 
 
-ALTER TABLE public.v_rna_prep_request_list_report OWNER TO d3l243;
+ALTER VIEW public.v_rna_prep_request_list_report OWNER TO d3l243;
 
 --
 -- Name: VIEW v_rna_prep_request_list_report; Type: COMMENT; Schema: public; Owner: d3l243

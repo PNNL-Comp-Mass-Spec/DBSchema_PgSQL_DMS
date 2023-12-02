@@ -12,7 +12,7 @@ CREATE VIEW public.v_run_interval_entry AS
    FROM public.t_run_interval;
 
 
-ALTER TABLE public.v_run_interval_entry OWNER TO d3l243;
+ALTER VIEW public.v_run_interval_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_run_interval_entry; Type: ACL; Schema: public; Owner: d3l243

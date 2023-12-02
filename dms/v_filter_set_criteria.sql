@@ -18,7 +18,7 @@ CREATE VIEW public.v_filter_set_criteria AS
      JOIN public.t_filter_set_criteria_names fscn ON ((fsc.criterion_id = fscn.criterion_id)));
 
 
-ALTER TABLE public.v_filter_set_criteria OWNER TO d3l243;
+ALTER VIEW public.v_filter_set_criteria OWNER TO d3l243;
 
 --
 -- Name: TABLE v_filter_set_criteria; Type: ACL; Schema: public; Owner: d3l243

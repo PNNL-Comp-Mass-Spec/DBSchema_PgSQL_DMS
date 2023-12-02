@@ -14,7 +14,7 @@ CREATE VIEW public.v_statistics_dataset_captures_by_day AS
   GROUP BY (EXTRACT(year FROM ds.created)), (EXTRACT(month FROM ds.created)), (EXTRACT(day FROM ds.created)), ((ds.created)::date);
 
 
-ALTER TABLE public.v_statistics_dataset_captures_by_day OWNER TO d3l243;
+ALTER VIEW public.v_statistics_dataset_captures_by_day OWNER TO d3l243;
 
 --
 -- Name: TABLE v_statistics_dataset_captures_by_day; Type: ACL; Schema: public; Owner: d3l243

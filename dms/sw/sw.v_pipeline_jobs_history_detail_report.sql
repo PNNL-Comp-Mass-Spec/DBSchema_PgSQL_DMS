@@ -35,7 +35,7 @@ CREATE VIEW sw.v_pipeline_jobs_history_detail_report AS
   WHERE (j.most_recent_entry = 1);
 
 
-ALTER TABLE sw.v_pipeline_jobs_history_detail_report OWNER TO d3l243;
+ALTER VIEW sw.v_pipeline_jobs_history_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_pipeline_jobs_history_detail_report; Type: ACL; Schema: sw; Owner: d3l243

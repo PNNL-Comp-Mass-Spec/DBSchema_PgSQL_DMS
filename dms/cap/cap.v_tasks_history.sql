@@ -23,7 +23,7 @@ CREATE VIEW cap.v_tasks_history AS
      LEFT JOIN public.t_instrument_name inst ON ((ds.instrument_id = inst.instrument_id)));
 
 
-ALTER TABLE cap.v_tasks_history OWNER TO d3l243;
+ALTER VIEW cap.v_tasks_history OWNER TO d3l243;
 
 --
 -- Name: TABLE v_tasks_history; Type: ACL; Schema: cap; Owner: d3l243

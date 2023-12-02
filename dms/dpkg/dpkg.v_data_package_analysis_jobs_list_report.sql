@@ -45,7 +45,7 @@ CREATE VIEW dpkg.v_data_package_analysis_jobs_list_report AS
      LEFT JOIN public.t_cached_dataset_folder_paths dfp ON ((ds.dataset_id = dfp.dataset_id)));
 
 
-ALTER TABLE dpkg.v_data_package_analysis_jobs_list_report OWNER TO d3l243;
+ALTER VIEW dpkg.v_data_package_analysis_jobs_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_data_package_analysis_jobs_list_report; Type: ACL; Schema: dpkg; Owner: d3l243

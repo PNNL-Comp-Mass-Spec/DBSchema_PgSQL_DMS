@@ -16,7 +16,7 @@ CREATE VIEW public.v_eus_proposal_users_list_report AS
   WHERE (pu.state_id <> 5);
 
 
-ALTER TABLE public.v_eus_proposal_users_list_report OWNER TO d3l243;
+ALTER VIEW public.v_eus_proposal_users_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_eus_proposal_users_list_report; Type: ACL; Schema: public; Owner: d3l243

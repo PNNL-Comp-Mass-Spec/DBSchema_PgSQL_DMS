@@ -17,7 +17,7 @@ CREATE VIEW public.v_biomaterial_report_ex AS
   GROUP BY r.name, r.source, r.pi, r.type, r.reason, r.comment, r.campaign, r.contact;
 
 
-ALTER TABLE public.v_biomaterial_report_ex OWNER TO d3l243;
+ALTER VIEW public.v_biomaterial_report_ex OWNER TO d3l243;
 
 --
 -- Name: VIEW v_biomaterial_report_ex; Type: COMMENT; Schema: public; Owner: d3l243

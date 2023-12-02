@@ -14,7 +14,7 @@ CREATE VIEW mc.v_mgr_param_defaults AS
      JOIN mc.t_mgr_types mt ON ((mtpm.mgr_type_id = mt.mgr_type_id)));
 
 
-ALTER TABLE mc.v_mgr_param_defaults OWNER TO d3l243;
+ALTER VIEW mc.v_mgr_param_defaults OWNER TO d3l243;
 
 --
 -- Name: TABLE v_mgr_param_defaults; Type: ACL; Schema: mc; Owner: d3l243

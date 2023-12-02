@@ -17,7 +17,7 @@ CREATE VIEW public.v_instrument_group_list_report AS
      LEFT JOIN public.t_dataset_type_name dt ON ((g.default_dataset_type = dt.dataset_type_id)));
 
 
-ALTER TABLE public.v_instrument_group_list_report OWNER TO d3l243;
+ALTER VIEW public.v_instrument_group_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_instrument_group_list_report; Type: ACL; Schema: public; Owner: d3l243

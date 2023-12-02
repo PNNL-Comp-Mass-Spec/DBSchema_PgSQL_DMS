@@ -51,7 +51,7 @@ CREATE VIEW public.v_reporter_ion_observation_rate_list_report AS
      JOIN public.t_instrument_name inst ON ((ds.instrument_id = inst.instrument_id)));
 
 
-ALTER TABLE public.v_reporter_ion_observation_rate_list_report OWNER TO d3l243;
+ALTER VIEW public.v_reporter_ion_observation_rate_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_reporter_ion_observation_rate_list_report; Type: ACL; Schema: public; Owner: d3l243

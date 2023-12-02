@@ -20,7 +20,7 @@ CREATE VIEW public.v_user_list_report_2 AS
      RIGHT JOIN public.t_users u ON ((eu.hid OPERATOR(public.=) u.hid)));
 
 
-ALTER TABLE public.v_user_list_report_2 OWNER TO d3l243;
+ALTER VIEW public.v_user_list_report_2 OWNER TO d3l243;
 
 --
 -- Name: VIEW v_user_list_report_2; Type: COMMENT; Schema: public; Owner: d3l243

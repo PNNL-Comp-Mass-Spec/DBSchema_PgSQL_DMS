@@ -118,7 +118,7 @@ CREATE VIEW public.v_datasets_stale_and_failed AS
   WHERE (unionq.warning_message <> ''::text);
 
 
-ALTER TABLE public.v_datasets_stale_and_failed OWNER TO d3l243;
+ALTER VIEW public.v_datasets_stale_and_failed OWNER TO d3l243;
 
 --
 -- Name: TABLE v_datasets_stale_and_failed; Type: ACL; Schema: public; Owner: d3l243

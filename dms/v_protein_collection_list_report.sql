@@ -74,7 +74,7 @@ CREATE VIEW public.v_protein_collection_list_report AS
   GROUP BY lookupq.protein_collection_id, lookupq.name, lookupq.description, lookupq.organism_name, lookupq.state, lookupq.entries, lookupq.residues, pcu.job_usage_count_last12months, pcu.job_usage_count, pcu.most_recently_used, lookupq.includes_contaminants, lookupq.file_size_mb, lookupq.type, lookupq.source, lookupq.internal_standard_or_contaminant, org.organism_db_name;
 
 
-ALTER TABLE public.v_protein_collection_list_report OWNER TO d3l243;
+ALTER VIEW public.v_protein_collection_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_protein_collection_list_report; Type: ACL; Schema: public; Owner: d3l243

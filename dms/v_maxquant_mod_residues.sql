@@ -16,7 +16,7 @@ CREATE VIEW public.v_maxquant_mod_residues AS
      LEFT JOIN public.t_mass_correction_factors mcf ON ((modinfo.mass_correction_id = mcf.mass_correction_id)));
 
 
-ALTER TABLE public.v_maxquant_mod_residues OWNER TO d3l243;
+ALTER VIEW public.v_maxquant_mod_residues OWNER TO d3l243;
 
 --
 -- Name: TABLE v_maxquant_mod_residues; Type: ACL; Schema: public; Owner: d3l243

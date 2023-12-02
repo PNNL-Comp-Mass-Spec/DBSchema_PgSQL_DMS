@@ -15,7 +15,7 @@ CREATE VIEW public.v_dataset_comments_recent_datasets AS
   WHERE (ds.created >= (CURRENT_TIMESTAMP - '1 year'::interval));
 
 
-ALTER TABLE public.v_dataset_comments_recent_datasets OWNER TO d3l243;
+ALTER VIEW public.v_dataset_comments_recent_datasets OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_comments_recent_datasets; Type: ACL; Schema: public; Owner: d3l243

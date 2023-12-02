@@ -24,7 +24,7 @@ CREATE VIEW public.v_dataset_validation_warnings AS
   WHERE ((ds.created >= '2015-01-01 00:00:00'::timestamp without time zone) AND ((rr.request_id IS NULL) OR (ds.instrument_id IS NULL) OR (ds.lc_column_id IS NULL) OR (ds.dataset_type_id IS NULL) OR (ds.separation_type IS NULL)));
 
 
-ALTER TABLE public.v_dataset_validation_warnings OWNER TO d3l243;
+ALTER VIEW public.v_dataset_validation_warnings OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_validation_warnings; Type: ACL; Schema: public; Owner: d3l243

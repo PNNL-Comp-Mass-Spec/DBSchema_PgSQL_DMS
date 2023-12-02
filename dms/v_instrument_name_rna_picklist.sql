@@ -12,7 +12,7 @@ CREATE VIEW public.v_instrument_name_rna_picklist AS
   WHERE ((instname.operations_role OPERATOR(public.=) 'Transcriptomics'::public.citext) AND (instname.status OPERATOR(public.<>) 'Inactive'::public.citext));
 
 
-ALTER TABLE public.v_instrument_name_rna_picklist OWNER TO d3l243;
+ALTER VIEW public.v_instrument_name_rna_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_instrument_name_rna_picklist; Type: ACL; Schema: public; Owner: d3l243

@@ -10,7 +10,7 @@ CREATE VIEW public.v_separation_group_picklist AS
   WHERE (t_separation_group.active > 0);
 
 
-ALTER TABLE public.v_separation_group_picklist OWNER TO d3l243;
+ALTER VIEW public.v_separation_group_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_separation_group_picklist; Type: ACL; Schema: public; Owner: d3l243

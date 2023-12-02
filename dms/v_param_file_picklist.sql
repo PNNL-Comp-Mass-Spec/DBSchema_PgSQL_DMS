@@ -18,7 +18,7 @@ CREATE VIEW public.v_param_file_picklist AS
   WHERE (pf.valid = 1);
 
 
-ALTER TABLE public.v_param_file_picklist OWNER TO d3l243;
+ALTER VIEW public.v_param_file_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_param_file_picklist; Type: ACL; Schema: public; Owner: d3l243

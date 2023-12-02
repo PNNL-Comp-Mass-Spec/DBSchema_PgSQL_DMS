@@ -42,7 +42,7 @@ CREATE VIEW public.v_sample_prep_request_entry AS
      LEFT JOIN ont.v_bto_id_to_name bto ON ((spr.tissue_id OPERATOR(public.=) bto.identifier)));
 
 
-ALTER TABLE public.v_sample_prep_request_entry OWNER TO d3l243;
+ALTER VIEW public.v_sample_prep_request_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_sample_prep_request_entry; Type: ACL; Schema: public; Owner: d3l243

@@ -14,7 +14,7 @@ CREATE VIEW public.v_freezer_list_report AS
   GROUP BY f.freezer_id, f.freezer, f.freezer_tag, f.comment, ml.status;
 
 
-ALTER TABLE public.v_freezer_list_report OWNER TO d3l243;
+ALTER VIEW public.v_freezer_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_freezer_list_report; Type: ACL; Schema: public; Owner: d3l243

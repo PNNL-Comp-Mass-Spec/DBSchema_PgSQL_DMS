@@ -22,7 +22,7 @@ CREATE VIEW public.v_prep_lc_column_entry AS
    FROM public.t_prep_lc_column prepcolumn;
 
 
-ALTER TABLE public.v_prep_lc_column_entry OWNER TO d3l243;
+ALTER VIEW public.v_prep_lc_column_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_prep_lc_column_entry; Type: ACL; Schema: public; Owner: d3l243

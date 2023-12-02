@@ -44,7 +44,7 @@ UNION
      JOIN public.t_experiments e ON ((egm.exp_id = e.exp_id)));
 
 
-ALTER TABLE public.v_experiment_file_attachment_list_report OWNER TO d3l243;
+ALTER VIEW public.v_experiment_file_attachment_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_experiment_file_attachment_list_report; Type: ACL; Schema: public; Owner: d3l243

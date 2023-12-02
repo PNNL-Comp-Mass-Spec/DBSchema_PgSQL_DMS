@@ -43,7 +43,7 @@ CREATE VIEW cap.v_capture_check_report AS
      JOIN cap.t_task_step_state_name stepstatename ON ((jobsteps.state = stepstatename.step_state_id)));
 
 
-ALTER TABLE cap.v_capture_check_report OWNER TO d3l243;
+ALTER VIEW cap.v_capture_check_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_capture_check_report; Type: ACL; Schema: cap; Owner: d3l243

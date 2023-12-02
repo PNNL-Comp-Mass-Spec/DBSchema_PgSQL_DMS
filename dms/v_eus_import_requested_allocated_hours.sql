@@ -12,7 +12,7 @@ CREATE VIEW public.v_eus_import_requested_allocated_hours AS
    FROM eus.vw_requested_allocated_hours;
 
 
-ALTER TABLE public.v_eus_import_requested_allocated_hours OWNER TO d3l243;
+ALTER VIEW public.v_eus_import_requested_allocated_hours OWNER TO d3l243;
 
 --
 -- Name: TABLE v_eus_import_requested_allocated_hours; Type: ACL; Schema: public; Owner: d3l243

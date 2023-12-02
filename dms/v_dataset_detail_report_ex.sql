@@ -108,7 +108,7 @@ CREATE VIEW public.v_dataset_detail_report_ex AS
      LEFT JOIN public.t_dataset_files df ON (((df.dataset_id = ds.dataset_id) AND (df.file_size_rank = 1))));
 
 
-ALTER TABLE public.v_dataset_detail_report_ex OWNER TO d3l243;
+ALTER VIEW public.v_dataset_detail_report_ex OWNER TO d3l243;
 
 --
 -- Name: VIEW v_dataset_detail_report_ex; Type: COMMENT; Schema: public; Owner: d3l243

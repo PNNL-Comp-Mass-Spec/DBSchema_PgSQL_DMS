@@ -53,7 +53,7 @@ PTR-HMSn, PTR-MSn, PQD-HMSn, PQD-MSn,
 Q1MS, Q3MS, SIM ms, UVPD-HMSn, UVPD-MSn, Zoom-MS}''::text[])'::text) pivotdata(dataset_id integer, dataset public.citext, scan_count_total integer, "HMS" integer, "MS" integer, "CID-HMSn" integer, "CID-MSn" integer, "SA_CID-HMSn" integer, "HCD-HMSn" integer, "HCD-MSn" integer, "SA_HCD-HMSn" integer, "EThcD-HMSn" integer, "ETD-HMSn" integer, "SA_ETD-HMSn" integer, "ETD-MSn" integer, "SA_ETD-MSn" integer, "HMSn" integer, "MSn" integer, "GC-MS" integer, "SRM" integer, "CID-SRM" integer, "MALDI-HMS" integer, "PTR-HMSn" integer, "PTR-MSn" integer, "PQD-HMSn" integer, "PQD-MSn" integer, "Q1MS" integer, "Q3MS" integer, "SIM ms" integer, "UVPD-HMSn" integer, "UVPD-MSn" integer, "Zoom-MS" integer);
 
 
-ALTER TABLE public.v_dataset_scan_type_crosstab OWNER TO d3l243;
+ALTER VIEW public.v_dataset_scan_type_crosstab OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_scan_type_crosstab; Type: ACL; Schema: public; Owner: d3l243

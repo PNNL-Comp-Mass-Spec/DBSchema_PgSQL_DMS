@@ -10,7 +10,7 @@ CREATE VIEW sw.v_local_processor_job_step_exclusion AS
      JOIN sw.t_local_processors lp ON ((jse.processor_id = lp.processor_id)));
 
 
-ALTER TABLE sw.v_local_processor_job_step_exclusion OWNER TO d3l243;
+ALTER VIEW sw.v_local_processor_job_step_exclusion OWNER TO d3l243;
 
 --
 -- Name: TABLE v_local_processor_job_step_exclusion; Type: ACL; Schema: sw; Owner: d3l243

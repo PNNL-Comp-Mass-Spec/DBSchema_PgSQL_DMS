@@ -19,7 +19,7 @@ CREATE VIEW public.v_functions AS
   WHERE (n.nspname <> ALL (ARRAY['pg_catalog'::name, 'information_schema'::name]));
 
 
-ALTER TABLE public.v_functions OWNER TO d3l243;
+ALTER VIEW public.v_functions OWNER TO d3l243;
 
 --
 -- Name: VIEW v_functions; Type: COMMENT; Schema: public; Owner: d3l243

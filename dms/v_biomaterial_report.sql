@@ -18,7 +18,7 @@ CREATE VIEW public.v_biomaterial_report AS
      JOIN public.t_campaign c ON ((b.campaign_id = c.campaign_id)));
 
 
-ALTER TABLE public.v_biomaterial_report OWNER TO d3l243;
+ALTER VIEW public.v_biomaterial_report OWNER TO d3l243;
 
 --
 -- Name: VIEW v_biomaterial_report; Type: COMMENT; Schema: public; Owner: d3l243

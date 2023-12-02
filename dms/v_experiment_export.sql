@@ -39,7 +39,7 @@ CREATE VIEW public.v_experiment_export AS
      LEFT JOIN public.t_cached_experiment_components cec ON ((e.exp_id = cec.exp_id)));
 
 
-ALTER TABLE public.v_experiment_export OWNER TO d3l243;
+ALTER VIEW public.v_experiment_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_experiment_export; Type: ACL; Schema: public; Owner: d3l243

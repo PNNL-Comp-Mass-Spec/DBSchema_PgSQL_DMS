@@ -13,7 +13,7 @@ CREATE VIEW public.v_campaign_report AS
    FROM public.t_campaign;
 
 
-ALTER TABLE public.v_campaign_report OWNER TO d3l243;
+ALTER VIEW public.v_campaign_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_campaign_report; Type: ACL; Schema: public; Owner: d3l243

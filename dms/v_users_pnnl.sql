@@ -24,7 +24,7 @@ CREATE VIEW public.v_users_pnnl AS
      LEFT JOIN public.t_users u ON ((u.hid OPERATOR(public.=) ((('H'::public.citext)::text || ((src."HANFORD_ID")::public.citext)::text))::public.citext)));
 
 
-ALTER TABLE public.v_users_pnnl OWNER TO d3l243;
+ALTER VIEW public.v_users_pnnl OWNER TO d3l243;
 
 --
 -- Name: VIEW v_users_pnnl; Type: COMMENT; Schema: public; Owner: d3l243

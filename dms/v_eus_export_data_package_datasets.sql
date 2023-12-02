@@ -15,7 +15,7 @@ CREATE VIEW public.v_eus_export_data_package_datasets AS
      LEFT JOIN public.t_requested_run rr ON ((rr.dataset_id = d.dataset_id)));
 
 
-ALTER TABLE public.v_eus_export_data_package_datasets OWNER TO d3l243;
+ALTER VIEW public.v_eus_export_data_package_datasets OWNER TO d3l243;
 
 --
 -- Name: TABLE v_eus_export_data_package_datasets; Type: ACL; Schema: public; Owner: d3l243

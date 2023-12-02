@@ -21,7 +21,7 @@ CREATE VIEW sw.v_processor_tool_group_details2 AS
      JOIN sw.v_processor_tool_group_details ptgd ON (((m.proc_tool_group_id = ptgd.group_id) AND (lp.proc_tool_mgr_id = ptgd.mgr_id))));
 
 
-ALTER TABLE sw.v_processor_tool_group_details2 OWNER TO d3l243;
+ALTER VIEW sw.v_processor_tool_group_details2 OWNER TO d3l243;
 
 --
 -- Name: TABLE v_processor_tool_group_details2; Type: ACL; Schema: sw; Owner: d3l243

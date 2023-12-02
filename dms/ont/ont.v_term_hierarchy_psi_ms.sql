@@ -45,7 +45,7 @@ CREATE VIEW ont.v_term_hierarchy_psi_ms AS
    FROM termhierarchy;
 
 
-ALTER TABLE ont.v_term_hierarchy_psi_ms OWNER TO d3l243;
+ALTER VIEW ont.v_term_hierarchy_psi_ms OWNER TO d3l243;
 
 --
 -- Name: VIEW v_term_hierarchy_psi_ms; Type: COMMENT; Schema: ont; Owner: d3l243

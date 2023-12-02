@@ -23,7 +23,7 @@ CREATE VIEW public.v_eus_proposals_helper_list_report AS
   WHERE (p.state_id = ANY (ARRAY[2, 5]));
 
 
-ALTER TABLE public.v_eus_proposals_helper_list_report OWNER TO d3l243;
+ALTER VIEW public.v_eus_proposals_helper_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_eus_proposals_helper_list_report; Type: ACL; Schema: public; Owner: d3l243

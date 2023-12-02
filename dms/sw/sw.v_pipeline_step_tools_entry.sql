@@ -16,7 +16,7 @@ CREATE VIEW sw.v_pipeline_step_tools_entry AS
    FROM sw.t_step_tools;
 
 
-ALTER TABLE sw.v_pipeline_step_tools_entry OWNER TO d3l243;
+ALTER VIEW sw.v_pipeline_step_tools_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_pipeline_step_tools_entry; Type: ACL; Schema: sw; Owner: d3l243

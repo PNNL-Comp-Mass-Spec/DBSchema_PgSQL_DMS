@@ -15,7 +15,7 @@ CREATE VIEW public.v_archive_path_detail_report AS
      JOIN public.t_instrument_name instname ON ((archpath.instrument_id = instname.instrument_id)));
 
 
-ALTER TABLE public.v_archive_path_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_archive_path_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_archive_path_detail_report; Type: ACL; Schema: public; Owner: d3l243

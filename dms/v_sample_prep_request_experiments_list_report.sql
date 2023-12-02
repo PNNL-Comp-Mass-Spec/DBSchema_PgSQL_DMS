@@ -16,7 +16,7 @@ CREATE VIEW public.v_sample_prep_request_experiments_list_report AS
      JOIN public.t_organisms o ON ((e.organism_id = o.organism_id)));
 
 
-ALTER TABLE public.v_sample_prep_request_experiments_list_report OWNER TO d3l243;
+ALTER VIEW public.v_sample_prep_request_experiments_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_sample_prep_request_experiments_list_report; Type: ACL; Schema: public; Owner: d3l243

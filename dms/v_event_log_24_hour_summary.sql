@@ -10,7 +10,7 @@ CREATE VIEW public.v_event_log_24_hour_summary AS
   ORDER BY get_event_log_summary.sortkey, get_event_log_summary.label;
 
 
-ALTER TABLE public.v_event_log_24_hour_summary OWNER TO d3l243;
+ALTER VIEW public.v_event_log_24_hour_summary OWNER TO d3l243;
 
 --
 -- Name: TABLE v_event_log_24_hour_summary; Type: ACL; Schema: public; Owner: d3l243

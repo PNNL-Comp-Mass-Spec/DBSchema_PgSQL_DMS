@@ -29,7 +29,7 @@ CREATE VIEW public.v_biomaterial_list_report_2 AS
      LEFT JOIN public.t_users u_pi ON ((b.pi_username OPERATOR(public.=) u_pi.username)));
 
 
-ALTER TABLE public.v_biomaterial_list_report_2 OWNER TO d3l243;
+ALTER VIEW public.v_biomaterial_list_report_2 OWNER TO d3l243;
 
 --
 -- Name: TABLE v_biomaterial_list_report_2; Type: ACL; Schema: public; Owner: d3l243

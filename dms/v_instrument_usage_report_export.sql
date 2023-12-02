@@ -28,7 +28,7 @@ CREATE VIEW public.v_instrument_usage_report_export AS
   WHERE (instusage.dataset_id_acq_overlap IS NULL);
 
 
-ALTER TABLE public.v_instrument_usage_report_export OWNER TO d3l243;
+ALTER VIEW public.v_instrument_usage_report_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_instrument_usage_report_export; Type: ACL; Schema: public; Owner: d3l243

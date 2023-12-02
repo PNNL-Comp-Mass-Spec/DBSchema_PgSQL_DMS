@@ -19,7 +19,7 @@ CREATE VIEW public.v_storage_summary AS
   GROUP BY slp.vol_client, slp.storage_path, slp.vol_server, instgroup.instrument_group, instname.instrument, slp.datasets;
 
 
-ALTER TABLE public.v_storage_summary OWNER TO d3l243;
+ALTER VIEW public.v_storage_summary OWNER TO d3l243;
 
 --
 -- Name: TABLE v_storage_summary; Type: ACL; Schema: public; Owner: d3l243

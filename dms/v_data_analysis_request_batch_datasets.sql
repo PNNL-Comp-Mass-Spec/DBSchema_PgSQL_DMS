@@ -24,7 +24,7 @@ CREATE VIEW public.v_data_analysis_request_batch_datasets AS
      JOIN public.t_data_analysis_request_batch_ids batchids ON ((r.request_id = batchids.request_id))) ON ((rr.batch_id = batchids.batch_id)));
 
 
-ALTER TABLE public.v_data_analysis_request_batch_datasets OWNER TO d3l243;
+ALTER VIEW public.v_data_analysis_request_batch_datasets OWNER TO d3l243;
 
 --
 -- Name: TABLE v_data_analysis_request_batch_datasets; Type: ACL; Schema: public; Owner: d3l243

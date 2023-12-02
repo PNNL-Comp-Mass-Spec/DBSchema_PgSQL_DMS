@@ -15,7 +15,7 @@ CREATE VIEW public.v_mass_correction_factors_autosuggest AS
   WHERE (abs(t_mass_correction_factors.monoisotopic_mass) > (0)::double precision);
 
 
-ALTER TABLE public.v_mass_correction_factors_autosuggest OWNER TO d3l243;
+ALTER VIEW public.v_mass_correction_factors_autosuggest OWNER TO d3l243;
 
 --
 -- Name: TABLE v_mass_correction_factors_autosuggest; Type: ACL; Schema: public; Owner: d3l243

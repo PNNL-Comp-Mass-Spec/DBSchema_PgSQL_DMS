@@ -23,7 +23,7 @@ CREATE VIEW public.v_prep_lc_run_entry AS
    FROM public.t_prep_lc_run preprun;
 
 
-ALTER TABLE public.v_prep_lc_run_entry OWNER TO d3l243;
+ALTER VIEW public.v_prep_lc_run_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_prep_lc_run_entry; Type: ACL; Schema: public; Owner: d3l243

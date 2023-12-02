@@ -29,7 +29,7 @@ CREATE VIEW cap.v_task_step_processing_log AS
   WHERE ((jse.entered < COALESCE((nextjspl.jobstart)::timestamp with time zone, CURRENT_TIMESTAMP)) AND (jse.target_state <> ALL (ARRAY[0, 1, 2])));
 
 
-ALTER TABLE cap.v_task_step_processing_log OWNER TO d3l243;
+ALTER VIEW cap.v_task_step_processing_log OWNER TO d3l243;
 
 --
 -- Name: TABLE v_task_step_processing_log; Type: ACL; Schema: cap; Owner: d3l243

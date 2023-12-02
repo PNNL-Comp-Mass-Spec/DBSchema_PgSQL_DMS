@@ -18,7 +18,7 @@ CREATE VIEW public.v_dataset_qc_metric_definitions AS
   WHERE (t_dataset_qc_metric_names.ignored = 0);
 
 
-ALTER TABLE public.v_dataset_qc_metric_definitions OWNER TO d3l243;
+ALTER VIEW public.v_dataset_qc_metric_definitions OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_qc_metric_definitions; Type: ACL; Schema: public; Owner: d3l243

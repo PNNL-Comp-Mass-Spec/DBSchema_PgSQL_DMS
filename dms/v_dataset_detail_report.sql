@@ -24,7 +24,7 @@ CREATE VIEW public.v_dataset_detail_report AS
      JOIN public.t_storage_path spath ON ((ds.storage_path_id = spath.storage_path_id)));
 
 
-ALTER TABLE public.v_dataset_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_dataset_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_detail_report; Type: ACL; Schema: public; Owner: d3l243

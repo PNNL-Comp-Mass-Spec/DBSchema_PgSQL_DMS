@@ -19,7 +19,7 @@ CREATE VIEW public.v_internal_standards_composition_report AS
      JOIN public.t_internal_std_composition composition ON ((components.internal_std_component_id = composition.component_id))) ON ((parentmix.parent_mix_id = composition.mix_id)));
 
 
-ALTER TABLE public.v_internal_standards_composition_report OWNER TO d3l243;
+ALTER VIEW public.v_internal_standards_composition_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_internal_standards_composition_report; Type: ACL; Schema: public; Owner: d3l243

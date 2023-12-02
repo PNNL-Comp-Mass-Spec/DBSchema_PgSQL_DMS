@@ -25,7 +25,7 @@ CREATE VIEW public.v_system_locked_object_details AS
      JOIN pg_class c ON ((l.relation = c.oid)));
 
 
-ALTER TABLE public.v_system_locked_object_details OWNER TO d3l243;
+ALTER VIEW public.v_system_locked_object_details OWNER TO d3l243;
 
 --
 -- Name: TABLE v_system_locked_object_details; Type: ACL; Schema: public; Owner: d3l243

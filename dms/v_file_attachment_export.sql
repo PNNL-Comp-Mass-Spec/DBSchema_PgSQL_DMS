@@ -18,7 +18,7 @@ CREATE VIEW public.v_file_attachment_export AS
      JOIN public.t_users u ON ((fa.owner_username OPERATOR(public.=) u.username)));
 
 
-ALTER TABLE public.v_file_attachment_export OWNER TO d3l243;
+ALTER VIEW public.v_file_attachment_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_file_attachment_export; Type: ACL; Schema: public; Owner: d3l243

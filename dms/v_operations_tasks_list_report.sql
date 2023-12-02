@@ -33,7 +33,7 @@ CREATE VIEW public.v_operations_tasks_list_report AS
      LEFT JOIN public.t_users u ON ((opstask.requester OPERATOR(public.=) u.username)));
 
 
-ALTER TABLE public.v_operations_tasks_list_report OWNER TO d3l243;
+ALTER VIEW public.v_operations_tasks_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_operations_tasks_list_report; Type: ACL; Schema: public; Owner: d3l243

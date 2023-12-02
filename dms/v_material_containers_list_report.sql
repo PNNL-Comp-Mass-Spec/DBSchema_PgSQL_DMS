@@ -51,7 +51,7 @@ CREATE VIEW public.v_material_containers_list_report AS
           GROUP BY mc.container, mc.type, ml.location, mc.comment, mc.created, c.campaign, mc.status, mc.container_id, mc.researcher, tfa.filecount) containerq;
 
 
-ALTER TABLE public.v_material_containers_list_report OWNER TO d3l243;
+ALTER VIEW public.v_material_containers_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_material_containers_list_report; Type: ACL; Schema: public; Owner: d3l243

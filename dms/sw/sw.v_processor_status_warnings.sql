@@ -20,7 +20,7 @@ CREATE VIEW sw.v_processor_status_warnings AS
   WHERE ((ps.monitor_processor > 0) AND (((ps.status_date >= (CURRENT_TIMESTAMP - '21 days'::interval)) AND (ps.mgr_status OPERATOR(public.~~) '%Error'::public.citext)) OR (ps.mgr_status OPERATOR(public.~~) 'Disabled%'::public.citext) OR (NOT (staleq.status_state IS NULL))));
 
 
-ALTER TABLE sw.v_processor_status_warnings OWNER TO d3l243;
+ALTER VIEW sw.v_processor_status_warnings OWNER TO d3l243;
 
 --
 -- Name: TABLE v_processor_status_warnings; Type: ACL; Schema: sw; Owner: d3l243

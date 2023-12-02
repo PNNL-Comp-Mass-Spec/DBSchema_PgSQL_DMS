@@ -35,7 +35,7 @@ CREATE VIEW public.v_analysis_job_report_numeric AS
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id))) ON ((dsr.dataset_rating_id = ds.dataset_rating_id)));
 
 
-ALTER TABLE public.v_analysis_job_report_numeric OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_report_numeric OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_job_report_numeric; Type: ACL; Schema: public; Owner: d3l243

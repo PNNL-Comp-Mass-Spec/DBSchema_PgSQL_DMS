@@ -21,7 +21,7 @@ CREATE VIEW public.v_run_factors_export AS
      LEFT JOIN public.t_campaign dscampaign ON ((dsexp.campaign_id = dscampaign.campaign_id)));
 
 
-ALTER TABLE public.v_run_factors_export OWNER TO d3l243;
+ALTER VIEW public.v_run_factors_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_run_factors_export; Type: ACL; Schema: public; Owner: d3l243

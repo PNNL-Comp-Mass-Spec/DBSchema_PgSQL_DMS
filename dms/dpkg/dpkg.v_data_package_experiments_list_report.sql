@@ -33,7 +33,7 @@ CREATE VIEW dpkg.v_data_package_experiments_list_report AS
      LEFT JOIN public.t_cached_experiment_components cec ON ((e.exp_id = cec.exp_id)));
 
 
-ALTER TABLE dpkg.v_data_package_experiments_list_report OWNER TO d3l243;
+ALTER VIEW dpkg.v_data_package_experiments_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_data_package_experiments_list_report; Type: ACL; Schema: dpkg; Owner: d3l243

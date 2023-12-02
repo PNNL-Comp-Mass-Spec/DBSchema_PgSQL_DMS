@@ -138,7 +138,7 @@ CREATE VIEW public.v_experiment_plex_members_tsv_entry AS
               ORDER BY PM.Plex_Exp_ID, PM.Channel'::text, 'SELECT generate_series(1,18)'::text) pivotdata(plex_exp_id integer, "1" public.citext, "2" public.citext, "3" public.citext, "4" public.citext, "5" public.citext, "6" public.citext, "7" public.citext, "8" public.citext, "9" public.citext, "10" public.citext, "11" public.citext, "12" public.citext, "13" public.citext, "14" public.citext, "15" public.citext, "16" public.citext, "17" public.citext, "18" public.citext)) commentpivotq ON ((expidpivotq.plex_exp_id = commentpivotq.plex_exp_id)));
 
 
-ALTER TABLE public.v_experiment_plex_members_tsv_entry OWNER TO d3l243;
+ALTER VIEW public.v_experiment_plex_members_tsv_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_experiment_plex_members_tsv_entry; Type: ACL; Schema: public; Owner: d3l243

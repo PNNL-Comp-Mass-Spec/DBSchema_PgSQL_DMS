@@ -10,7 +10,7 @@ CREATE VIEW public.v_eus_users_entry AS
    FROM public.t_eus_users;
 
 
-ALTER TABLE public.v_eus_users_entry OWNER TO d3l243;
+ALTER VIEW public.v_eus_users_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_eus_users_entry; Type: ACL; Schema: public; Owner: d3l243

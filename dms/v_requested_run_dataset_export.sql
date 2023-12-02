@@ -42,7 +42,7 @@ CREATE VIEW public.v_requested_run_dataset_export AS
      LEFT JOIN public.t_eus_proposal_type ept ON ((eup.proposal_type OPERATOR(public.=) ept.proposal_type)));
 
 
-ALTER TABLE public.v_requested_run_dataset_export OWNER TO d3l243;
+ALTER VIEW public.v_requested_run_dataset_export OWNER TO d3l243;
 
 --
 -- Name: VIEW v_requested_run_dataset_export; Type: COMMENT; Schema: public; Owner: d3l243

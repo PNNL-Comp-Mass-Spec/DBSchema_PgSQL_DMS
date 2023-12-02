@@ -57,7 +57,7 @@ CREATE VIEW public.v_notification_entry AS
           GROUP BY u.username, u.name) t;
 
 
-ALTER TABLE public.v_notification_entry OWNER TO d3l243;
+ALTER VIEW public.v_notification_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_notification_entry; Type: ACL; Schema: public; Owner: d3l243

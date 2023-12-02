@@ -19,7 +19,7 @@ CREATE VIEW public.v_archive_path_list_report AS
   GROUP BY archpath.archive_path_id, instname.instrument, archpath.archive_path, archpath.archive_server_name, archpath.archive_path_function, instname.description, archpath.network_share_path, archpath.archive_url, archpath.created;
 
 
-ALTER TABLE public.v_archive_path_list_report OWNER TO d3l243;
+ALTER VIEW public.v_archive_path_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_archive_path_list_report; Type: ACL; Schema: public; Owner: d3l243

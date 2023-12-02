@@ -10,7 +10,7 @@ CREATE VIEW public.v_wellplate_entry AS
    FROM public.t_wellplates;
 
 
-ALTER TABLE public.v_wellplate_entry OWNER TO d3l243;
+ALTER VIEW public.v_wellplate_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_wellplate_entry; Type: ACL; Schema: public; Owner: d3l243

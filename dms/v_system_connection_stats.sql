@@ -20,7 +20,7 @@ CREATE VIEW public.v_system_connection_stats AS
           GROUP BY ROLLUP(filterq.datname)) countq;
 
 
-ALTER TABLE public.v_system_connection_stats OWNER TO d3l243;
+ALTER VIEW public.v_system_connection_stats OWNER TO d3l243;
 
 --
 -- Name: VIEW v_system_connection_stats; Type: COMMENT; Schema: public; Owner: d3l243

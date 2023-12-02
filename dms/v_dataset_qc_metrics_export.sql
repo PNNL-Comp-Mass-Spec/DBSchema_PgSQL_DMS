@@ -129,7 +129,7 @@ CREATE VIEW public.v_dataset_qc_metrics_export AS
      JOIN public.t_dataset_rating_name drn ON ((ds.dataset_rating_id = drn.dataset_rating_id)));
 
 
-ALTER TABLE public.v_dataset_qc_metrics_export OWNER TO d3l243;
+ALTER VIEW public.v_dataset_qc_metrics_export OWNER TO d3l243;
 
 --
 -- Name: VIEW v_dataset_qc_metrics_export; Type: COMMENT; Schema: public; Owner: d3l243

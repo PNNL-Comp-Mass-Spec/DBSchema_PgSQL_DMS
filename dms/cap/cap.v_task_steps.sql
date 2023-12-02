@@ -92,7 +92,7 @@ CREATE VIEW cap.v_task_steps AS
      LEFT JOIN cap.t_processor_status ps ON ((ts.processor OPERATOR(public.=) ps.processor_name)));
 
 
-ALTER TABLE cap.v_task_steps OWNER TO d3l243;
+ALTER VIEW cap.v_task_steps OWNER TO d3l243;
 
 --
 -- Name: v_task_steps trig_v_task_steps_instead_of_update; Type: TRIGGER; Schema: cap; Owner: d3l243

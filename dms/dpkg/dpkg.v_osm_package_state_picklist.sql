@@ -8,7 +8,7 @@ CREATE VIEW dpkg.v_osm_package_state_picklist AS
    FROM dpkg.t_osm_package_state;
 
 
-ALTER TABLE dpkg.v_osm_package_state_picklist OWNER TO d3l243;
+ALTER VIEW dpkg.v_osm_package_state_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_osm_package_state_picklist; Type: ACL; Schema: dpkg; Owner: d3l243

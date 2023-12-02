@@ -14,7 +14,7 @@ CREATE VIEW ont.v_cv_go AS
    FROM ont.t_cv_go;
 
 
-ALTER TABLE ont.v_cv_go OWNER TO d3l243;
+ALTER VIEW ont.v_cv_go OWNER TO d3l243;
 
 --
 -- Name: TABLE v_cv_go; Type: ACL; Schema: ont; Owner: d3l243

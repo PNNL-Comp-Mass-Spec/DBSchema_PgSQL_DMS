@@ -37,7 +37,7 @@ CREATE VIEW public.v_analysis_job_request_rss AS
   WHERE (lookupq.total_jobs = (lookupq.failed_jobs + lookupq.completed_jobs));
 
 
-ALTER TABLE public.v_analysis_job_request_rss OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_request_rss OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_job_request_rss; Type: ACL; Schema: public; Owner: d3l243

@@ -38,7 +38,7 @@ CREATE VIEW dpkg.v_data_package_export AS
           GROUP BY t_myemsl_uploads.data_pkg_id) uploadq ON ((dp.data_pkg_id = uploadq.data_pkg_id)));
 
 
-ALTER TABLE dpkg.v_data_package_export OWNER TO d3l243;
+ALTER VIEW dpkg.v_data_package_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_data_package_export; Type: ACL; Schema: dpkg; Owner: d3l243

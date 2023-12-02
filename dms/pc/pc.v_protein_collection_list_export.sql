@@ -24,7 +24,7 @@ CREATE VIEW pc.v_protein_collection_list_export AS
      LEFT JOIN pc.t_collection_organism_xref orgxref ON ((pc.protein_collection_id = orgxref.protein_collection_id)));
 
 
-ALTER TABLE pc.v_protein_collection_list_export OWNER TO d3l243;
+ALTER VIEW pc.v_protein_collection_list_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_protein_collection_list_export; Type: ACL; Schema: pc; Owner: d3l243

@@ -17,7 +17,7 @@ CREATE VIEW public.v_entity_rename_log AS
      JOIN public.t_event_target et ON ((erl.target_type = et.target_type_id)));
 
 
-ALTER TABLE public.v_entity_rename_log OWNER TO d3l243;
+ALTER VIEW public.v_entity_rename_log OWNER TO d3l243;
 
 --
 -- Name: TABLE v_entity_rename_log; Type: ACL; Schema: public; Owner: d3l243

@@ -13,7 +13,7 @@ CREATE VIEW public.v_mrm_list_attachment_list_report AS
   WHERE (t_attachments.attachment_type OPERATOR(public.=) 'MRM Transition List'::public.citext);
 
 
-ALTER TABLE public.v_mrm_list_attachment_list_report OWNER TO d3l243;
+ALTER VIEW public.v_mrm_list_attachment_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_mrm_list_attachment_list_report; Type: ACL; Schema: public; Owner: d3l243

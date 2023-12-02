@@ -66,7 +66,7 @@ CREATE VIEW sw.v_job_steps_active AS
           WHERE (((js.state = 6) AND (js.start >= (CURRENT_TIMESTAMP - '21 days'::interval))) OR ((js.state = ANY (ARRAY[1, 2])) AND (j.imported >= (CURRENT_TIMESTAMP - '120 days'::interval))) OR (js.state <> ALL (ARRAY[1, 3, 5, 6])) OR (js.start >= (CURRENT_TIMESTAMP - '1 day'::interval)) OR (NOT (failedjobq.job IS NULL)))) dataq;
 
 
-ALTER TABLE sw.v_job_steps_active OWNER TO d3l243;
+ALTER VIEW sw.v_job_steps_active OWNER TO d3l243;
 
 --
 -- Name: VIEW v_job_steps_active; Type: COMMENT; Schema: sw; Owner: d3l243

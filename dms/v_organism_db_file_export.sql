@@ -18,7 +18,7 @@ CREATE VIEW public.v_organism_db_file_export AS
   WHERE (odf.valid > 0);
 
 
-ALTER TABLE public.v_organism_db_file_export OWNER TO d3l243;
+ALTER VIEW public.v_organism_db_file_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_organism_db_file_export; Type: ACL; Schema: public; Owner: d3l243

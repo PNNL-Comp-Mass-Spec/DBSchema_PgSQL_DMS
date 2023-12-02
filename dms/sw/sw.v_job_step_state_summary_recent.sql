@@ -16,7 +16,7 @@ CREATE VIEW sw.v_job_step_state_summary_recent AS
   GROUP BY js.tool, js.state, ssn.step_state;
 
 
-ALTER TABLE sw.v_job_step_state_summary_recent OWNER TO d3l243;
+ALTER VIEW sw.v_job_step_state_summary_recent OWNER TO d3l243;
 
 --
 -- Name: TABLE v_job_step_state_summary_recent; Type: ACL; Schema: sw; Owner: d3l243

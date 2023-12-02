@@ -12,7 +12,7 @@ CREATE VIEW dpkg.v_osm_package_paths AS
      JOIN dpkg.t_osm_package_storage pkgstorage ON ((osmpackage.path_root = pkgstorage.path_id)));
 
 
-ALTER TABLE dpkg.v_osm_package_paths OWNER TO d3l243;
+ALTER VIEW dpkg.v_osm_package_paths OWNER TO d3l243;
 
 --
 -- Name: TABLE v_osm_package_paths; Type: ACL; Schema: dpkg; Owner: d3l243

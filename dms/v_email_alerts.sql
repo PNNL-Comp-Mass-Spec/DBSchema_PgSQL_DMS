@@ -16,7 +16,7 @@ CREATE VIEW public.v_email_alerts AS
      JOIN public.t_email_alert_state alertstate ON ((alerts.alert_state = alertstate.alert_state)));
 
 
-ALTER TABLE public.v_email_alerts OWNER TO d3l243;
+ALTER VIEW public.v_email_alerts OWNER TO d3l243;
 
 --
 -- Name: TABLE v_email_alerts; Type: ACL; Schema: public; Owner: d3l243

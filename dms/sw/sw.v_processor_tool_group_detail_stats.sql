@@ -19,7 +19,7 @@ CREATE VIEW sw.v_processor_tool_group_detail_stats AS
   GROUP BY ptg.group_id, ptg.group_name, ptg.enabled, ptg.comment, ptgd.tool_name, ptgd.priority, ptgd.enabled;
 
 
-ALTER TABLE sw.v_processor_tool_group_detail_stats OWNER TO d3l243;
+ALTER VIEW sw.v_processor_tool_group_detail_stats OWNER TO d3l243;
 
 --
 -- Name: TABLE v_processor_tool_group_detail_stats; Type: ACL; Schema: sw; Owner: d3l243

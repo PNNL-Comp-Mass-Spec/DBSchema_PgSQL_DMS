@@ -11,7 +11,7 @@ CREATE VIEW public.v_instrument_group_dataset_types_active AS
   WHERE ((instgroup.active = 1) AND (instgroup.requested_run_visible = 1));
 
 
-ALTER TABLE public.v_instrument_group_dataset_types_active OWNER TO d3l243;
+ALTER VIEW public.v_instrument_group_dataset_types_active OWNER TO d3l243;
 
 --
 -- Name: TABLE v_instrument_group_dataset_types_active; Type: ACL; Schema: public; Owner: d3l243

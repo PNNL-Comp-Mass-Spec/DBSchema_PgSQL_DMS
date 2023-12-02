@@ -16,7 +16,7 @@ CREATE VIEW public.v_event_log_archive_list AS
   WHERE ((el.target_type = 6) AND (el.entered >= (CURRENT_TIMESTAMP - '4 days'::interval)));
 
 
-ALTER TABLE public.v_event_log_archive_list OWNER TO d3l243;
+ALTER VIEW public.v_event_log_archive_list OWNER TO d3l243;
 
 --
 -- Name: TABLE v_event_log_archive_list; Type: ACL; Schema: public; Owner: d3l243

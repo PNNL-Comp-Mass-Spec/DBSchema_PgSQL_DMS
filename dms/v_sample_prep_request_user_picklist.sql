@@ -11,7 +11,7 @@ CREATE VIEW public.v_sample_prep_request_user_picklist AS
   WHERE ((u.status OPERATOR(public.=) 'Active'::public.citext) AND (uo.operation OPERATOR(public.=) 'DMS_Sample_Preparation'::public.citext));
 
 
-ALTER TABLE public.v_sample_prep_request_user_picklist OWNER TO d3l243;
+ALTER VIEW public.v_sample_prep_request_user_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_sample_prep_request_user_picklist; Type: ACL; Schema: public; Owner: d3l243

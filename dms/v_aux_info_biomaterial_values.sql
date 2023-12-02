@@ -17,7 +17,7 @@ CREATE VIEW public.v_aux_info_biomaterial_values AS
   WHERE (category.target_type_id = 501);
 
 
-ALTER TABLE public.v_aux_info_biomaterial_values OWNER TO d3l243;
+ALTER VIEW public.v_aux_info_biomaterial_values OWNER TO d3l243;
 
 --
 -- Name: TABLE v_aux_info_biomaterial_values; Type: ACL; Schema: public; Owner: d3l243

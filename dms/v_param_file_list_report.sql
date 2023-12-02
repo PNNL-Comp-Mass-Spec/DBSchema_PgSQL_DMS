@@ -19,7 +19,7 @@ CREATE VIEW public.v_param_file_list_report AS
      JOIN public.t_analysis_tool tool ON ((pft.primary_tool_id = tool.analysis_tool_id)));
 
 
-ALTER TABLE public.v_param_file_list_report OWNER TO d3l243;
+ALTER VIEW public.v_param_file_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_param_file_list_report; Type: ACL; Schema: public; Owner: d3l243

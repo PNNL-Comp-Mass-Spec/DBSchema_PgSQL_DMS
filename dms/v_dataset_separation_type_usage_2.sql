@@ -17,7 +17,7 @@ CREATE VIEW public.v_dataset_separation_type_usage_2 AS
   WHERE (ss.active <> 0);
 
 
-ALTER TABLE public.v_dataset_separation_type_usage_2 OWNER TO d3l243;
+ALTER VIEW public.v_dataset_separation_type_usage_2 OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_separation_type_usage_2; Type: ACL; Schema: public; Owner: d3l243

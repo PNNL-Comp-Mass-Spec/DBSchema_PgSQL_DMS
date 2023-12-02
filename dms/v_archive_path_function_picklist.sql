@@ -7,7 +7,7 @@ CREATE VIEW public.v_archive_path_function_picklist AS
    FROM public.t_archive_path_function;
 
 
-ALTER TABLE public.v_archive_path_function_picklist OWNER TO d3l243;
+ALTER VIEW public.v_archive_path_function_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_archive_path_function_picklist; Type: ACL; Schema: public; Owner: d3l243

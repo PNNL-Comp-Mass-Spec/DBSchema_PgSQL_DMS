@@ -39,7 +39,7 @@ CREATE VIEW public.v_mts_pm_results_list_report AS
      RIGHT JOIN public.t_mts_peak_matching_tasks_cached pm ON ((aj.job = pm.dms_job)));
 
 
-ALTER TABLE public.v_mts_pm_results_list_report OWNER TO d3l243;
+ALTER VIEW public.v_mts_pm_results_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_mts_pm_results_list_report; Type: ACL; Schema: public; Owner: d3l243

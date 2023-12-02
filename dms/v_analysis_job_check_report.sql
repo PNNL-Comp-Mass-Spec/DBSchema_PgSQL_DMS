@@ -36,7 +36,7 @@ CREATE VIEW public.v_analysis_job_check_report AS
   WHERE (j.job_state_id = ANY (ARRAY[2, 3, 5, 19]));
 
 
-ALTER TABLE public.v_analysis_job_check_report OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_check_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_job_check_report; Type: ACL; Schema: public; Owner: d3l243

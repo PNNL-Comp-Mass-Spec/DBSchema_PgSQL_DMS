@@ -20,7 +20,7 @@ CREATE VIEW public.v_tracking_dataset_entry AS
      JOIN public.t_eus_usage_type eut ON ((rr.eus_usage_type_id = eut.eus_usage_type_id)));
 
 
-ALTER TABLE public.v_tracking_dataset_entry OWNER TO d3l243;
+ALTER VIEW public.v_tracking_dataset_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_tracking_dataset_entry; Type: ACL; Schema: public; Owner: d3l243

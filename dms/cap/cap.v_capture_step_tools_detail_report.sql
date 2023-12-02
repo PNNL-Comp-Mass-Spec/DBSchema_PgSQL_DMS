@@ -14,7 +14,7 @@ CREATE VIEW cap.v_capture_step_tools_detail_report AS
    FROM cap.t_step_tools;
 
 
-ALTER TABLE cap.v_capture_step_tools_detail_report OWNER TO d3l243;
+ALTER VIEW cap.v_capture_step_tools_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_capture_step_tools_detail_report; Type: ACL; Schema: cap; Owner: d3l243

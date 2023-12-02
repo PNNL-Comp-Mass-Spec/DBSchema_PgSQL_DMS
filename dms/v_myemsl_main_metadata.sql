@@ -15,7 +15,7 @@ CREATE VIEW public.v_myemsl_main_metadata AS
      LEFT JOIN public.t_emsl_dms_instrument_mapping dmsinstmap ON ((dmsinstmap.dms_instrument_id = ds.instrument_id)));
 
 
-ALTER TABLE public.v_myemsl_main_metadata OWNER TO d3l243;
+ALTER VIEW public.v_myemsl_main_metadata OWNER TO d3l243;
 
 --
 -- Name: TABLE v_myemsl_main_metadata; Type: ACL; Schema: public; Owner: d3l243

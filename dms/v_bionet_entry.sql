@@ -15,7 +15,7 @@ CREATE VIEW public.v_bionet_entry AS
    FROM public.t_bionet_hosts go;
 
 
-ALTER TABLE public.v_bionet_entry OWNER TO d3l243;
+ALTER VIEW public.v_bionet_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_bionet_entry; Type: ACL; Schema: public; Owner: d3l243

@@ -9,7 +9,7 @@ CREATE VIEW public.v_analysis_tool_picklist AS
   WHERE (t_analysis_tool.active > 0);
 
 
-ALTER TABLE public.v_analysis_tool_picklist OWNER TO d3l243;
+ALTER VIEW public.v_analysis_tool_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_tool_picklist; Type: ACL; Schema: public; Owner: d3l243

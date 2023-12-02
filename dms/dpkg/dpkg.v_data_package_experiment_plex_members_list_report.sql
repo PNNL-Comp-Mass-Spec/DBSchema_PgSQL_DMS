@@ -30,7 +30,7 @@ CREATE VIEW dpkg.v_data_package_experiment_plex_members_list_report AS
      LEFT JOIN public.t_sample_labelling_reporter_ions reporterions ON (((plexmembers.channel = reporterions.channel) AND (e.labelling OPERATOR(public.=) reporterions.label))));
 
 
-ALTER TABLE dpkg.v_data_package_experiment_plex_members_list_report OWNER TO d3l243;
+ALTER VIEW dpkg.v_data_package_experiment_plex_members_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_data_package_experiment_plex_members_list_report; Type: ACL; Schema: dpkg; Owner: d3l243

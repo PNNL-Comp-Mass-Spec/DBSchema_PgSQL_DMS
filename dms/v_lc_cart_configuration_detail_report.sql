@@ -44,7 +44,7 @@ CREATE VIEW public.v_lc_cart_configuration_detail_report AS
      LEFT JOIN public.t_users u2 ON ((config.updated_by OPERATOR(public.=) u2.username)));
 
 
-ALTER TABLE public.v_lc_cart_configuration_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_lc_cart_configuration_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_lc_cart_configuration_detail_report; Type: ACL; Schema: public; Owner: d3l243

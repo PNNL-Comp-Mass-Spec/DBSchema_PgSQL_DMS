@@ -26,7 +26,7 @@ CREATE VIEW public.v_requested_run_batch_group_list_report AS
           GROUP BY rrb1.batch_group_id) statsq ON ((bg.batch_group_id = statsq.batch_group_id)));
 
 
-ALTER TABLE public.v_requested_run_batch_group_list_report OWNER TO d3l243;
+ALTER VIEW public.v_requested_run_batch_group_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_requested_run_batch_group_list_report; Type: ACL; Schema: public; Owner: d3l243

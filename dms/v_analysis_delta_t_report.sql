@@ -28,7 +28,7 @@ CREATE VIEW public.v_analysis_delta_t_report AS
      JOIN public.t_analysis_job_state js ON ((j.job_state_id = js.job_state_id)));
 
 
-ALTER TABLE public.v_analysis_delta_t_report OWNER TO d3l243;
+ALTER VIEW public.v_analysis_delta_t_report OWNER TO d3l243;
 
 --
 -- Name: VIEW v_analysis_delta_t_report; Type: COMMENT; Schema: public; Owner: d3l243

@@ -25,7 +25,7 @@ CREATE VIEW public.v_table_index_usage AS
   ORDER BY statsq.idx_usage DESC, statsq.schema_name, statsq.table_name;
 
 
-ALTER TABLE public.v_table_index_usage OWNER TO d3l243;
+ALTER VIEW public.v_table_index_usage OWNER TO d3l243;
 
 --
 -- Name: TABLE v_table_index_usage; Type: ACL; Schema: public; Owner: d3l243

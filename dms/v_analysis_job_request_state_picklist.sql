@@ -9,7 +9,7 @@ CREATE VIEW public.v_analysis_job_request_state_picklist AS
   WHERE (t_analysis_job_request_state.request_state OPERATOR(public.<>) 'na'::public.citext);
 
 
-ALTER TABLE public.v_analysis_job_request_state_picklist OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_request_state_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_job_request_state_picklist; Type: ACL; Schema: public; Owner: d3l243

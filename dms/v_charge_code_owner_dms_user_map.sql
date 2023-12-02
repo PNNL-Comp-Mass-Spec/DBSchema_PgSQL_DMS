@@ -12,7 +12,7 @@ CREATE VIEW public.v_charge_code_owner_dms_user_map AS
   WHERE (u.status OPERATOR(public.<>) 'Obsolete'::public.citext);
 
 
-ALTER TABLE public.v_charge_code_owner_dms_user_map OWNER TO d3l243;
+ALTER VIEW public.v_charge_code_owner_dms_user_map OWNER TO d3l243;
 
 --
 -- Name: TABLE v_charge_code_owner_dms_user_map; Type: ACL; Schema: public; Owner: d3l243

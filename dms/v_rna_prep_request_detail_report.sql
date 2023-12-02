@@ -43,7 +43,7 @@ CREATE VIEW public.v_rna_prep_request_detail_report AS
   WHERE (spr.request_type OPERATOR(public.=) 'RNA'::public.citext);
 
 
-ALTER TABLE public.v_rna_prep_request_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_rna_prep_request_detail_report OWNER TO d3l243;
 
 --
 -- Name: VIEW v_rna_prep_request_detail_report; Type: COMMENT; Schema: public; Owner: d3l243

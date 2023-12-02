@@ -26,7 +26,7 @@ CREATE VIEW ont.v_ncbi_taxonomy_list_report AS
   WHERE (nodenames.name_class OPERATOR(public.=) 'scientific name'::public.citext);
 
 
-ALTER TABLE ont.v_ncbi_taxonomy_list_report OWNER TO d3l243;
+ALTER VIEW ont.v_ncbi_taxonomy_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_ncbi_taxonomy_list_report; Type: ACL; Schema: ont; Owner: d3l243

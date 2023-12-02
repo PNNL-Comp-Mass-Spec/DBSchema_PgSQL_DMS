@@ -12,7 +12,7 @@ CREATE VIEW public.v_assigned_archive_storage AS
   WHERE (t_archive_path.archive_path_function OPERATOR(public.=) 'Active'::public.citext);
 
 
-ALTER TABLE public.v_assigned_archive_storage OWNER TO d3l243;
+ALTER VIEW public.v_assigned_archive_storage OWNER TO d3l243;
 
 --
 -- Name: TABLE v_assigned_archive_storage; Type: ACL; Schema: public; Owner: d3l243

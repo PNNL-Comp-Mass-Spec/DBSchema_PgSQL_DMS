@@ -31,7 +31,7 @@ CREATE VIEW sw.v_job_step_processing_stats AS
      LEFT JOIN sw.t_local_processors lp ON ((jsps.processor OPERATOR(public.=) lp.processor_name)));
 
 
-ALTER TABLE sw.v_job_step_processing_stats OWNER TO d3l243;
+ALTER VIEW sw.v_job_step_processing_stats OWNER TO d3l243;
 
 --
 -- Name: TABLE v_job_step_processing_stats; Type: ACL; Schema: sw; Owner: d3l243

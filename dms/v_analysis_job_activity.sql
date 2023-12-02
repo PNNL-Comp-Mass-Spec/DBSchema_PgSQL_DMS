@@ -41,7 +41,7 @@ CREATE VIEW public.v_analysis_job_activity AS
           GROUP BY j.job, tool.analysis_tool, tool.analysis_tool_id, j.batch_id, ds.dataset, j.param_file_name, j.protein_collection_list, j.protein_options_list, ajr.work_package, j.priority, j.job_state_id, j.created, js.job_state) filterq ON ((ajpga.job = filterq.job)));
 
 
-ALTER TABLE public.v_analysis_job_activity OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_activity OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_job_activity; Type: ACL; Schema: public; Owner: d3l243

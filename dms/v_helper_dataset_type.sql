@@ -10,7 +10,7 @@ CREATE VIEW public.v_helper_dataset_type AS
      JOIN public.t_yes_no ON ((d.active = t_yes_no.flag)));
 
 
-ALTER TABLE public.v_helper_dataset_type OWNER TO d3l243;
+ALTER VIEW public.v_helper_dataset_type OWNER TO d3l243;
 
 --
 -- Name: TABLE v_helper_dataset_type; Type: ACL; Schema: public; Owner: d3l243

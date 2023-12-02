@@ -65,7 +65,7 @@ CREATE VIEW sw.v_job_step_processing_stats2 AS
              JOIN sw.t_job_step_state_name ssn ON ((js.state = ssn.step_state_id))) ON (((jsps.job = js.job) AND (jsps.step = js.step))))) dataq;
 
 
-ALTER TABLE sw.v_job_step_processing_stats2 OWNER TO d3l243;
+ALTER VIEW sw.v_job_step_processing_stats2 OWNER TO d3l243;
 
 --
 -- Name: TABLE v_job_step_processing_stats2; Type: ACL; Schema: sw; Owner: d3l243

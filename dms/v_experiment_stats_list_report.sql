@@ -24,7 +24,7 @@ CREATE VIEW public.v_experiment_stats_list_report AS
   ORDER BY countq.year DESC, countq.month DESC, countq.experiments DESC;
 
 
-ALTER TABLE public.v_experiment_stats_list_report OWNER TO d3l243;
+ALTER VIEW public.v_experiment_stats_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_experiment_stats_list_report; Type: ACL; Schema: public; Owner: d3l243

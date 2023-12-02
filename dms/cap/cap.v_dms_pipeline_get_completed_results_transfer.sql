@@ -15,7 +15,7 @@ CREATE VIEW cap.v_dms_pipeline_get_completed_results_transfer AS
   WHERE ((ts.state = 5) AND (ts.tool OPERATOR(public.=) 'Results_Transfer'::public.citext));
 
 
-ALTER TABLE cap.v_dms_pipeline_get_completed_results_transfer OWNER TO d3l243;
+ALTER VIEW cap.v_dms_pipeline_get_completed_results_transfer OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dms_pipeline_get_completed_results_transfer; Type: ACL; Schema: cap; Owner: d3l243

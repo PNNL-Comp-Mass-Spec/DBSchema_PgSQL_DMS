@@ -10,7 +10,7 @@ CREATE VIEW public.v_internal_standards_predigest_picklist AS
   WHERE ((t_internal_standards.active OPERATOR(public.=) 'A'::public.citext) AND (t_internal_standards.type OPERATOR(public.=) ANY (ARRAY['Predigest'::public.citext, 'All'::public.citext])) AND (t_internal_standards.internal_standard_id > 0));
 
 
-ALTER TABLE public.v_internal_standards_predigest_picklist OWNER TO d3l243;
+ALTER VIEW public.v_internal_standards_predigest_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_internal_standards_predigest_picklist; Type: ACL; Schema: public; Owner: d3l243

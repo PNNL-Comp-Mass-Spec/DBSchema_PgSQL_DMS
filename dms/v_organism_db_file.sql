@@ -24,7 +24,7 @@ CREATE VIEW public.v_organism_db_file AS
           WHERE (t_misc_paths.path_function OPERATOR(public.=) 'DMSOrganismFiles'::public.citext)) mpath);
 
 
-ALTER TABLE public.v_organism_db_file OWNER TO d3l243;
+ALTER VIEW public.v_organism_db_file OWNER TO d3l243;
 
 --
 -- Name: TABLE v_organism_db_file; Type: ACL; Schema: public; Owner: d3l243

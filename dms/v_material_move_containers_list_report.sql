@@ -28,7 +28,7 @@ CREATE VIEW public.v_material_move_containers_list_report AS
   GROUP BY mc.container, mc.type, ml.location, mc.comment, mc.created, mc.status, mc.container_id;
 
 
-ALTER TABLE public.v_material_move_containers_list_report OWNER TO d3l243;
+ALTER VIEW public.v_material_move_containers_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_material_move_containers_list_report; Type: ACL; Schema: public; Owner: d3l243

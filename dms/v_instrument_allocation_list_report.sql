@@ -70,7 +70,7 @@ CREATE VIEW public.v_instrument_allocation_list_report AS
           WHERE (tia.allocation_tag OPERATOR(public.=) 'General'::public.citext)) generalq ON (((generalq.fiscal_year = sumq.fiscal_year) AND (generalq.proposal_id OPERATOR(public.=) sumq.proposal_id))));
 
 
-ALTER TABLE public.v_instrument_allocation_list_report OWNER TO d3l243;
+ALTER VIEW public.v_instrument_allocation_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_instrument_allocation_list_report; Type: ACL; Schema: public; Owner: d3l243

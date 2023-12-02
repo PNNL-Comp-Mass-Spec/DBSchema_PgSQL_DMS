@@ -30,7 +30,7 @@ CREATE VIEW public.v_source_analysis_job AS
      JOIN public.t_archive_path archpath ON ((dsarch.storage_path_id = archpath.archive_path_id)));
 
 
-ALTER TABLE public.v_source_analysis_job OWNER TO d3l243;
+ALTER VIEW public.v_source_analysis_job OWNER TO d3l243;
 
 --
 -- Name: TABLE v_source_analysis_job; Type: ACL; Schema: public; Owner: d3l243

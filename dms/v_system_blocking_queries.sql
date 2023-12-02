@@ -16,7 +16,7 @@ CREATE VIEW public.v_system_blocking_queries AS
      JOIN pg_stat_activity b ON ((b.pid = ANY (pg_blocking_pids(a.pid)))));
 
 
-ALTER TABLE public.v_system_blocking_queries OWNER TO d3l243;
+ALTER VIEW public.v_system_blocking_queries OWNER TO d3l243;
 
 --
 -- Name: TABLE v_system_blocking_queries; Type: ACL; Schema: public; Owner: d3l243

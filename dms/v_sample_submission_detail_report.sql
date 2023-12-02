@@ -15,7 +15,7 @@ CREATE VIEW public.v_sample_submission_detail_report AS
      LEFT JOIN public.t_prep_file_storage pfs ON ((ss.storage_id = pfs.storage_id)));
 
 
-ALTER TABLE public.v_sample_submission_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_sample_submission_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_sample_submission_detail_report; Type: ACL; Schema: public; Owner: d3l243

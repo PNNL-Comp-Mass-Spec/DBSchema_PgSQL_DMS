@@ -40,7 +40,7 @@ CREATE VIEW dpkg.v_data_package_detail_report AS
           GROUP BY v_data_package_campaigns_list_report.id) campaignstats ON ((dp.data_pkg_id = campaignstats.id)));
 
 
-ALTER TABLE dpkg.v_data_package_detail_report OWNER TO d3l243;
+ALTER VIEW dpkg.v_data_package_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_data_package_detail_report; Type: ACL; Schema: dpkg; Owner: d3l243

@@ -21,7 +21,7 @@ CREATE VIEW public.v_analysis_job_processor_group_association_recent AS
   GROUP BY ajpga.job, js.job_state, ds.dataset, tool.analysis_tool, j.param_file_name, j.settings_file_name, ajpga.group_id, ajpg.group_name;
 
 
-ALTER TABLE public.v_analysis_job_processor_group_association_recent OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_processor_group_association_recent OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_job_processor_group_association_recent; Type: ACL; Schema: public; Owner: d3l243

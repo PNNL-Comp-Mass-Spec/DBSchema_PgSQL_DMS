@@ -16,7 +16,7 @@ CREATE VIEW public.v_predefined_job_creation_errors AS
   WHERE ((sq.result_code <> 0) AND (sq.state OPERATOR(public.<>) ALL (ARRAY['ErrorIgnore'::public.citext, 'Skipped'::public.citext])) AND (sq.last_affected >= (CURRENT_TIMESTAMP - '14 days'::interval)));
 
 
-ALTER TABLE public.v_predefined_job_creation_errors OWNER TO d3l243;
+ALTER VIEW public.v_predefined_job_creation_errors OWNER TO d3l243;
 
 --
 -- Name: VIEW v_predefined_job_creation_errors; Type: COMMENT; Schema: public; Owner: d3l243

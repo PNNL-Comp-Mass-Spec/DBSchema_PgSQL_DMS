@@ -32,7 +32,7 @@ CREATE VIEW public.v_project_usage_stats AS
      LEFT JOIN public.t_eus_proposals proposals ON ((stats.proposal_id OPERATOR(public.=) proposals.proposal_id)));
 
 
-ALTER TABLE public.v_project_usage_stats OWNER TO d3l243;
+ALTER VIEW public.v_project_usage_stats OWNER TO d3l243;
 
 --
 -- Name: TABLE v_project_usage_stats; Type: ACL; Schema: public; Owner: d3l243

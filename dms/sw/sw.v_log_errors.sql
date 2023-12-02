@@ -13,7 +13,7 @@ CREATE VIEW sw.v_log_errors AS
   WHERE (t_log_entries.type OPERATOR(public.=) 'error'::public.citext);
 
 
-ALTER TABLE sw.v_log_errors OWNER TO d3l243;
+ALTER VIEW sw.v_log_errors OWNER TO d3l243;
 
 --
 -- Name: TABLE v_log_errors; Type: ACL; Schema: sw; Owner: d3l243

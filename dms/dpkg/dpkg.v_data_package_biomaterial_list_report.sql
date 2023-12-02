@@ -29,7 +29,7 @@ CREATE VIEW dpkg.v_data_package_biomaterial_list_report AS
      LEFT JOIN public.t_users u_pi ON ((b.pi_username OPERATOR(public.=) u_pi.username)));
 
 
-ALTER TABLE dpkg.v_data_package_biomaterial_list_report OWNER TO d3l243;
+ALTER VIEW dpkg.v_data_package_biomaterial_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_data_package_biomaterial_list_report; Type: ACL; Schema: dpkg; Owner: d3l243

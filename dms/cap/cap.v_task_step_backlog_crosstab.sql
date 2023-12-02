@@ -24,7 +24,7 @@ CREATE VIEW cap.v_task_step_backlog_crosstab AS
                      SourceFileRename, ImsDeMultiplex}''::text[])'::text) ct(posting_time timestamp without time zone, "ArchiveStatusCheck" integer, "ArchiveUpdate" integer, "ArchiveVerify" integer, "DatasetArchive" integer, "DatasetCapture" integer, "DatasetInfo" integer, "DatasetIntegrity" integer, "DatasetQuality" integer, "SourceFileRename" integer, "ImsDeMultiplex" integer);
 
 
-ALTER TABLE cap.v_task_step_backlog_crosstab OWNER TO d3l243;
+ALTER VIEW cap.v_task_step_backlog_crosstab OWNER TO d3l243;
 
 --
 -- Name: TABLE v_task_step_backlog_crosstab; Type: ACL; Schema: cap; Owner: d3l243

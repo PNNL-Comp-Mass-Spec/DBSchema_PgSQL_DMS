@@ -10,7 +10,7 @@ CREATE VIEW public.v_biomaterial_date AS
    FROM public.t_biomaterial;
 
 
-ALTER TABLE public.v_biomaterial_date OWNER TO d3l243;
+ALTER VIEW public.v_biomaterial_date OWNER TO d3l243;
 
 --
 -- Name: TABLE v_biomaterial_date; Type: ACL; Schema: public; Owner: d3l243

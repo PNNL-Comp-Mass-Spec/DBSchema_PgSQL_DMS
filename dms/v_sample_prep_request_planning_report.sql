@@ -46,7 +46,7 @@ CREATE VIEW public.v_sample_prep_request_planning_report AS
   GROUP BY spr.prep_request_id, u.name, spr.request_name, spr.created, spr.estimated_prep_time_days, spr.state_comment, spr.priority, sn.state_name, spr.number_of_samples, spr.estimated_ms_runs, qt.days_in_queue, qt.days_in_state, spr.requested_personnel, spr.assigned_personnel, spr.prep_method, spr.instrument_group, spr.campaign, spr.work_package, cc.activation_state_name, spr.state_id, cc.activation_state, spr.assigned_personnel_sort_key;
 
 
-ALTER TABLE public.v_sample_prep_request_planning_report OWNER TO d3l243;
+ALTER VIEW public.v_sample_prep_request_planning_report OWNER TO d3l243;
 
 --
 -- Name: VIEW v_sample_prep_request_planning_report; Type: COMMENT; Schema: public; Owner: d3l243

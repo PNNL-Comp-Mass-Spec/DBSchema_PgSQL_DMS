@@ -20,7 +20,7 @@ CREATE VIEW public.v_instrument_info_lcmsnet AS
   WHERE ((i.instrument OPERATOR(public.!~) similar_to_escape(('SW[_]%'::public.citext)::text)) AND (i.status OPERATOR(public.=) 'active'::public.citext) AND (i.operations_role OPERATOR(public.<>) 'QC'::public.citext));
 
 
-ALTER TABLE public.v_instrument_info_lcmsnet OWNER TO d3l243;
+ALTER VIEW public.v_instrument_info_lcmsnet OWNER TO d3l243;
 
 --
 -- Name: TABLE v_instrument_info_lcmsnet; Type: ACL; Schema: public; Owner: d3l243

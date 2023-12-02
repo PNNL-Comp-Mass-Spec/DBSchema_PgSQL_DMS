@@ -102,7 +102,7 @@ CREATE VIEW public.v_dataset_scans_detail_report AS
   GROUP BY ds.dataset_id, ds.dataset, instname.instrument, dtn.dataset_type, ds.scan_count, dsinfo.elution_time_max, ds.file_size_bytes, dsinfo.scan_types, dsinfo.profile_scan_count_ms, dsinfo.profile_scan_count_msn, dsinfo.centroid_scan_count_ms, dsinfo.centroid_scan_count_msn, dsinfo.scan_count_dia;
 
 
-ALTER TABLE public.v_dataset_scans_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_dataset_scans_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_scans_detail_report; Type: ACL; Schema: public; Owner: d3l243

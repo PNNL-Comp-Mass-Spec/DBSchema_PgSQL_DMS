@@ -43,7 +43,7 @@ CREATE VIEW public.v_run_metadata_export AS
      JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id)));
 
 
-ALTER TABLE public.v_run_metadata_export OWNER TO d3l243;
+ALTER VIEW public.v_run_metadata_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_run_metadata_export; Type: ACL; Schema: public; Owner: d3l243

@@ -10,7 +10,7 @@ CREATE VIEW mc.v_manager_list_report AS
      JOIN mc.t_mgr_types mt ON ((m.mgr_type_id = mt.mgr_type_id)));
 
 
-ALTER TABLE mc.v_manager_list_report OWNER TO d3l243;
+ALTER VIEW mc.v_manager_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_manager_list_report; Type: ACL; Schema: mc; Owner: d3l243

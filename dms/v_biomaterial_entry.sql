@@ -22,7 +22,7 @@ CREATE VIEW public.v_biomaterial_entry AS
      JOIN public.t_material_containers mc ON ((b.container_id = mc.container_id)));
 
 
-ALTER TABLE public.v_biomaterial_entry OWNER TO d3l243;
+ALTER VIEW public.v_biomaterial_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_biomaterial_entry; Type: ACL; Schema: public; Owner: d3l243

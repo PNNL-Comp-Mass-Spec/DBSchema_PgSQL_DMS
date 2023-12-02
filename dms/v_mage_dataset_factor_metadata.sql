@@ -38,7 +38,7 @@ CREATE VIEW public.v_mage_dataset_factor_metadata AS
           WHERE ((rr.request_id = t_factor.target_id) AND (t_factor.type OPERATOR(public.=) 'Run_Request'::public.citext))));
 
 
-ALTER TABLE public.v_mage_dataset_factor_metadata OWNER TO d3l243;
+ALTER VIEW public.v_mage_dataset_factor_metadata OWNER TO d3l243;
 
 --
 -- Name: TABLE v_mage_dataset_factor_metadata; Type: ACL; Schema: public; Owner: d3l243

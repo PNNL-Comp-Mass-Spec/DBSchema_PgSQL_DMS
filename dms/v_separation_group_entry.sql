@@ -11,7 +11,7 @@ CREATE VIEW public.v_separation_group_entry AS
    FROM public.t_separation_group sg;
 
 
-ALTER TABLE public.v_separation_group_entry OWNER TO d3l243;
+ALTER VIEW public.v_separation_group_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_separation_group_entry; Type: ACL; Schema: public; Owner: d3l243

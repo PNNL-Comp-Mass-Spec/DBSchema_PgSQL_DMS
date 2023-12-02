@@ -154,7 +154,7 @@ CREATE VIEW public.v_run_planning_report AS
      LEFT JOIN public.t_cached_requested_run_batch_stats rbs ON ((groupq.batch_id = rbs.batch_id)));
 
 
-ALTER TABLE public.v_run_planning_report OWNER TO d3l243;
+ALTER VIEW public.v_run_planning_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_run_planning_report; Type: ACL; Schema: public; Owner: d3l243

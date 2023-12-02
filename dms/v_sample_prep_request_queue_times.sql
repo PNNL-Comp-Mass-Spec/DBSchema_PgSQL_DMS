@@ -46,7 +46,7 @@ CREATE VIEW public.v_sample_prep_request_queue_times AS
                   GROUP BY t_sample_prep_request_updates.request_id, t_sample_prep_request_updates.end_state_id) stateenteredq ON (((stateenteredq.request_id = spr.prep_request_id) AND (stateenteredq.state_id = spr.state_id))))) outerq;
 
 
-ALTER TABLE public.v_sample_prep_request_queue_times OWNER TO d3l243;
+ALTER VIEW public.v_sample_prep_request_queue_times OWNER TO d3l243;
 
 --
 -- Name: TABLE v_sample_prep_request_queue_times; Type: ACL; Schema: public; Owner: d3l243

@@ -14,7 +14,7 @@ CREATE VIEW public.v_statistics_analysis_jobs_by_day AS
   GROUP BY (EXTRACT(year FROM aj.start)), (EXTRACT(month FROM aj.start)), (EXTRACT(day FROM aj.start)), ((aj.start)::date);
 
 
-ALTER TABLE public.v_statistics_analysis_jobs_by_day OWNER TO d3l243;
+ALTER VIEW public.v_statistics_analysis_jobs_by_day OWNER TO d3l243;
 
 --
 -- Name: TABLE v_statistics_analysis_jobs_by_day; Type: ACL; Schema: public; Owner: d3l243

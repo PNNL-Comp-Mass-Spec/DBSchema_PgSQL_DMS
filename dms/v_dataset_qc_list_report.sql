@@ -37,7 +37,7 @@ CREATE VIEW public.v_dataset_qc_list_report AS
      LEFT JOIN public.t_analysis_job j ON ((ds.decontools_job_for_qc = j.job)));
 
 
-ALTER TABLE public.v_dataset_qc_list_report OWNER TO d3l243;
+ALTER VIEW public.v_dataset_qc_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_qc_list_report; Type: ACL; Schema: public; Owner: d3l243

@@ -11,7 +11,7 @@ CREATE VIEW cap.v_task_step_backlog_history AS
   GROUP BY t_task_step_status_history.step_tool, t_task_step_status_history.posting_time;
 
 
-ALTER TABLE cap.v_task_step_backlog_history OWNER TO d3l243;
+ALTER VIEW cap.v_task_step_backlog_history OWNER TO d3l243;
 
 --
 -- Name: TABLE v_task_step_backlog_history; Type: ACL; Schema: cap; Owner: d3l243

@@ -34,7 +34,7 @@ CREATE VIEW cap.v_capture_job_steps_detail_report AS
      JOIN cap.t_scripts s ON ((t.script OPERATOR(public.=) s.script)));
 
 
-ALTER TABLE cap.v_capture_job_steps_detail_report OWNER TO d3l243;
+ALTER VIEW cap.v_capture_job_steps_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_capture_job_steps_detail_report; Type: ACL; Schema: cap; Owner: d3l243

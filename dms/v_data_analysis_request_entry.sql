@@ -25,7 +25,7 @@ CREATE VIEW public.v_data_analysis_request_entry AS
      JOIN public.t_data_analysis_request_state_name sn ON ((r.state = sn.state_id)));
 
 
-ALTER TABLE public.v_data_analysis_request_entry OWNER TO d3l243;
+ALTER VIEW public.v_data_analysis_request_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_data_analysis_request_entry; Type: ACL; Schema: public; Owner: d3l243

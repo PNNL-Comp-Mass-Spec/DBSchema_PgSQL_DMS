@@ -12,7 +12,7 @@ CREATE VIEW public.v_secondary_sep_export AS
    FROM public.t_secondary_sep;
 
 
-ALTER TABLE public.v_secondary_sep_export OWNER TO d3l243;
+ALTER VIEW public.v_secondary_sep_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_secondary_sep_export; Type: ACL; Schema: public; Owner: d3l243

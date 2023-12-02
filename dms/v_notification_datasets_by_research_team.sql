@@ -36,7 +36,7 @@ CREATE VIEW public.v_notification_datasets_by_research_team AS
   WHERE ((tet.target_entity_type = 4) AND (tet.visible OPERATOR(public.=) 'Y'::public.citext));
 
 
-ALTER TABLE public.v_notification_datasets_by_research_team OWNER TO d3l243;
+ALTER VIEW public.v_notification_datasets_by_research_team OWNER TO d3l243;
 
 --
 -- Name: TABLE v_notification_datasets_by_research_team; Type: ACL; Schema: public; Owner: d3l243

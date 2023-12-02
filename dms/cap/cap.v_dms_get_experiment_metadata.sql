@@ -14,7 +14,7 @@ CREATE VIEW cap.v_dms_get_experiment_metadata AS
   WHERE (ai.target OPERATOR(public.=) 'Experiment'::public.citext);
 
 
-ALTER TABLE cap.v_dms_get_experiment_metadata OWNER TO d3l243;
+ALTER VIEW cap.v_dms_get_experiment_metadata OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dms_get_experiment_metadata; Type: ACL; Schema: cap; Owner: d3l243

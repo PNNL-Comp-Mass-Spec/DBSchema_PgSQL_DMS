@@ -13,7 +13,7 @@ CREATE VIEW pc.v_encrypted_collection_authorizations AS
      LEFT JOIN pc.t_protein_collections pc ON ((eca.protein_collection_id = pc.protein_collection_id)));
 
 
-ALTER TABLE pc.v_encrypted_collection_authorizations OWNER TO d3l243;
+ALTER VIEW pc.v_encrypted_collection_authorizations OWNER TO d3l243;
 
 --
 -- Name: TABLE v_encrypted_collection_authorizations; Type: ACL; Schema: pc; Owner: d3l243

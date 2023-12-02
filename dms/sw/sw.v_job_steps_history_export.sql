@@ -37,7 +37,7 @@ CREATE VIEW sw.v_job_steps_history_export AS
   WHERE (j.most_recent_entry = 1);
 
 
-ALTER TABLE sw.v_job_steps_history_export OWNER TO d3l243;
+ALTER VIEW sw.v_job_steps_history_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_job_steps_history_export; Type: ACL; Schema: sw; Owner: d3l243

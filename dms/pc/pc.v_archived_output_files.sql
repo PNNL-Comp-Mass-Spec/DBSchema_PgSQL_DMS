@@ -19,7 +19,7 @@ CREATE VIEW pc.v_archived_output_files AS
      JOIN pc.t_archived_file_types ft ON ((aof.archived_file_type_id = ft.archived_file_type_id)));
 
 
-ALTER TABLE pc.v_archived_output_files OWNER TO d3l243;
+ALTER VIEW pc.v_archived_output_files OWNER TO d3l243;
 
 --
 -- Name: TABLE v_archived_output_files; Type: ACL; Schema: pc; Owner: d3l243

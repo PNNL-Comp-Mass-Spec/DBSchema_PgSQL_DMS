@@ -12,7 +12,7 @@ CREATE VIEW cap.v_myemsl_job_counts_by_instrument AS
   GROUP BY t_tasks.instrument;
 
 
-ALTER TABLE cap.v_myemsl_job_counts_by_instrument OWNER TO d3l243;
+ALTER VIEW cap.v_myemsl_job_counts_by_instrument OWNER TO d3l243;
 
 --
 -- Name: TABLE v_myemsl_job_counts_by_instrument; Type: ACL; Schema: cap; Owner: d3l243

@@ -51,7 +51,7 @@ CREATE VIEW public.v_data_package_dataset_psm_and_pm_list_report AS
   WHERE (psm.state_id <> ALL (ARRAY[5, 14]));
 
 
-ALTER TABLE public.v_data_package_dataset_psm_and_pm_list_report OWNER TO d3l243;
+ALTER VIEW public.v_data_package_dataset_psm_and_pm_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_data_package_dataset_psm_and_pm_list_report; Type: ACL; Schema: public; Owner: d3l243

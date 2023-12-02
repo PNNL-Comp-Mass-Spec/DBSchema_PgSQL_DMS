@@ -37,7 +37,7 @@ CREATE VIEW public.v_analysis_tool_dataset_type_crosstab AS
                      GC-MS,MALDI-HMS,MRM,MS,MS-MSn}''::text[])'::text) pivotdata(tool_name public.citext, "HMS" integer, "HMS-HMSn" integer, "HMS-MSn" integer, "HMS-CID/ETD-HMSn" integer, "HMS-ETD-HMSn" integer, "HMS-ETD-MSn" integer, "HMS-EThcD-HMSn" integer, "HMS-HCD-CID/ETD-HMSn" integer, "HMS-HCD-CID-HMSn" integer, "HMS-HCD-CID-MSn" integer, "HMS-HCD-ETD-HMSn" integer, "HMS-HCD-ETD-MSn" integer, "HMS-HCD-HMSn" integer, "HMS-HCD-MSn" integer, "IMS-HMS" integer, "IMS-HMS-HMSn" integer, "GC-MS" integer, "MALDI-HMS" integer, "MRM" integer, "MS" integer, "MS-MSn" integer);
 
 
-ALTER TABLE public.v_analysis_tool_dataset_type_crosstab OWNER TO d3l243;
+ALTER VIEW public.v_analysis_tool_dataset_type_crosstab OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_tool_dataset_type_crosstab; Type: ACL; Schema: public; Owner: d3l243

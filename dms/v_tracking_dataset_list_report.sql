@@ -25,7 +25,7 @@ CREATE VIEW public.v_tracking_dataset_list_report AS
   WHERE (dtn.dataset_type OPERATOR(public.=) 'Tracking'::public.citext);
 
 
-ALTER TABLE public.v_tracking_dataset_list_report OWNER TO d3l243;
+ALTER VIEW public.v_tracking_dataset_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_tracking_dataset_list_report; Type: ACL; Schema: public; Owner: d3l243

@@ -22,7 +22,7 @@ CREATE VIEW public.v_requested_run_helper_list_report AS
   WHERE (rr.dataset_id IS NULL);
 
 
-ALTER TABLE public.v_requested_run_helper_list_report OWNER TO d3l243;
+ALTER VIEW public.v_requested_run_helper_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_requested_run_helper_list_report; Type: ACL; Schema: public; Owner: d3l243

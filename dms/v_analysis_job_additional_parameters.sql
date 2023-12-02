@@ -19,7 +19,7 @@ CREATE VIEW public.v_analysis_job_additional_parameters AS
      JOIN public.t_organisms org ON ((j.organism_id = org.organism_id)));
 
 
-ALTER TABLE public.v_analysis_job_additional_parameters OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_additional_parameters OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_job_additional_parameters; Type: ACL; Schema: public; Owner: d3l243

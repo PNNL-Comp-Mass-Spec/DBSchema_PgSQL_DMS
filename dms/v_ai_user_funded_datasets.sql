@@ -15,7 +15,7 @@ CREATE VIEW public.v_ai_user_funded_datasets AS
   WHERE ((ai.target OPERATOR(public.=) 'Experiment'::public.citext) AND (ai.category OPERATOR(public.=) 'Accounting'::public.citext) AND (ai.subcategory OPERATOR(public.=) 'Funding'::public.citext) AND (ai.item OPERATOR(public.=) 'Proposal Number'::public.citext) AND (ai.value OPERATOR(public.<>) ''::public.citext));
 
 
-ALTER TABLE public.v_ai_user_funded_datasets OWNER TO d3l243;
+ALTER VIEW public.v_ai_user_funded_datasets OWNER TO d3l243;
 
 --
 -- Name: TABLE v_ai_user_funded_datasets; Type: ACL; Schema: public; Owner: d3l243

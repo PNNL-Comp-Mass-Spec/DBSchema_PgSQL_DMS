@@ -34,7 +34,7 @@ CREATE VIEW sw.v_pipeline_jobs_detail_report AS
      LEFT JOIN public.t_analysis_job aj ON ((j.job = aj.job)));
 
 
-ALTER TABLE sw.v_pipeline_jobs_detail_report OWNER TO d3l243;
+ALTER VIEW sw.v_pipeline_jobs_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_pipeline_jobs_detail_report; Type: ACL; Schema: sw; Owner: d3l243

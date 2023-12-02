@@ -67,7 +67,7 @@ CREATE VIEW sw.v_pipeline_job_steps_list_report AS
                    FROM sw.t_job_parameters) src) paramq ON ((paramq.job = js.job)));
 
 
-ALTER TABLE sw.v_pipeline_job_steps_list_report OWNER TO d3l243;
+ALTER VIEW sw.v_pipeline_job_steps_list_report OWNER TO d3l243;
 
 --
 -- Name: VIEW v_pipeline_job_steps_list_report; Type: COMMENT; Schema: sw; Owner: d3l243

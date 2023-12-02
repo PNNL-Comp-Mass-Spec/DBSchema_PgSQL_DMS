@@ -22,7 +22,7 @@ CREATE VIEW public.v_acceptable_param_entries AS
      JOIN public.t_analysis_tool tool ON ((paramentries.analysis_tool_id = tool.analysis_tool_id)));
 
 
-ALTER TABLE public.v_acceptable_param_entries OWNER TO d3l243;
+ALTER VIEW public.v_acceptable_param_entries OWNER TO d3l243;
 
 --
 -- Name: TABLE v_acceptable_param_entries; Type: ACL; Schema: public; Owner: d3l243

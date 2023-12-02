@@ -32,7 +32,7 @@ CREATE VIEW public.v_data_analysis_request_queue_times AS
                   GROUP BY t_data_analysis_request_updates.request_id, t_data_analysis_request_updates.new_state_id) stateenteredq ON (((stateenteredq.request_id = r.request_id) AND (stateenteredq.state_id = r.state))))) outerq;
 
 
-ALTER TABLE public.v_data_analysis_request_queue_times OWNER TO d3l243;
+ALTER VIEW public.v_data_analysis_request_queue_times OWNER TO d3l243;
 
 --
 -- Name: TABLE v_data_analysis_request_queue_times; Type: ACL; Schema: public; Owner: d3l243

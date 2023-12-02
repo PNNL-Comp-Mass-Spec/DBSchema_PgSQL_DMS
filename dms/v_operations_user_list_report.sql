@@ -9,7 +9,7 @@ CREATE VIEW public.v_operations_user_list_report AS
    FROM public.t_user_operations;
 
 
-ALTER TABLE public.v_operations_user_list_report OWNER TO d3l243;
+ALTER VIEW public.v_operations_user_list_report OWNER TO d3l243;
 
 --
 -- Name: VIEW v_operations_user_list_report; Type: COMMENT; Schema: public; Owner: d3l243

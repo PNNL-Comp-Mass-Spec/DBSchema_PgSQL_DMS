@@ -14,7 +14,7 @@ CREATE VIEW public.v_emsl_instruments AS
      RIGHT JOIN public.t_emsl_instruments emslinst ON ((instmap.eus_instrument_id = emslinst.eus_instrument_id)));
 
 
-ALTER TABLE public.v_emsl_instruments OWNER TO d3l243;
+ALTER VIEW public.v_emsl_instruments OWNER TO d3l243;
 
 --
 -- Name: TABLE v_emsl_instruments; Type: ACL; Schema: public; Owner: d3l243

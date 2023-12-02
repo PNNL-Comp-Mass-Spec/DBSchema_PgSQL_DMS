@@ -14,7 +14,7 @@ CREATE VIEW public.v_eus_users_list_report AS
      JOIN public.t_eus_site_status ss ON ((u.site_status_id = ss.eus_site_status_id)));
 
 
-ALTER TABLE public.v_eus_users_list_report OWNER TO d3l243;
+ALTER VIEW public.v_eus_users_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_eus_users_list_report; Type: ACL; Schema: public; Owner: d3l243

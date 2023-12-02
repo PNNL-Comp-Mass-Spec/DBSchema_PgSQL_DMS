@@ -52,7 +52,7 @@ CREATE VIEW public.v_analysis_job_list_report_2 AS
      LEFT JOIN ont.v_bto_id_to_name bto ON ((bto.identifier OPERATOR(public.=) e.tissue_id)));
 
 
-ALTER TABLE public.v_analysis_job_list_report_2 OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_list_report_2 OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_job_list_report_2; Type: ACL; Schema: public; Owner: d3l243

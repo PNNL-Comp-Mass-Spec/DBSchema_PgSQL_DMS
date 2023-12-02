@@ -16,7 +16,7 @@ CREATE VIEW dpkg.v_data_package_analysis_jobs_export AS
      JOIN public.t_dataset ds ON ((aj.dataset_id = ds.dataset_id)));
 
 
-ALTER TABLE dpkg.v_data_package_analysis_jobs_export OWNER TO d3l243;
+ALTER VIEW dpkg.v_data_package_analysis_jobs_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_data_package_analysis_jobs_export; Type: ACL; Schema: dpkg; Owner: d3l243

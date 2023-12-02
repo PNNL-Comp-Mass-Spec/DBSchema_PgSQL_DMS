@@ -24,7 +24,7 @@ CREATE VIEW sw.v_job_step_processing_stats_daily AS
   GROUP BY sourceq.theyear, sourceq.themonth, sourceq.theday;
 
 
-ALTER TABLE sw.v_job_step_processing_stats_daily OWNER TO d3l243;
+ALTER VIEW sw.v_job_step_processing_stats_daily OWNER TO d3l243;
 
 --
 -- Name: TABLE v_job_step_processing_stats_daily; Type: ACL; Schema: sw; Owner: d3l243

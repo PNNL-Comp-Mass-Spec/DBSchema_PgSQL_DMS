@@ -38,7 +38,7 @@ CREATE VIEW public.v_param_file_mass_mods AS
      JOIN public.t_param_files pf ON ((pfmm.param_file_id = pf.param_file_id)));
 
 
-ALTER TABLE public.v_param_file_mass_mods OWNER TO d3l243;
+ALTER VIEW public.v_param_file_mass_mods OWNER TO d3l243;
 
 --
 -- Name: TABLE v_param_file_mass_mods; Type: ACL; Schema: public; Owner: d3l243

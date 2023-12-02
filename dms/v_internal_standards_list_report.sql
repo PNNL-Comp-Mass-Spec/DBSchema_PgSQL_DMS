@@ -17,7 +17,7 @@ CREATE VIEW public.v_internal_standards_list_report AS
   GROUP BY istds.name, istds.description, istds.type, istds.active, istds.internal_standard_id, parentmix.name, parentmix.protein_collection_name;
 
 
-ALTER TABLE public.v_internal_standards_list_report OWNER TO d3l243;
+ALTER VIEW public.v_internal_standards_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_internal_standards_list_report; Type: ACL; Schema: public; Owner: d3l243

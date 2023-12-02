@@ -29,7 +29,7 @@ CREATE VIEW pc.v_protein_collections_by_organism AS
      LEFT JOIN pc.t_archived_output_files aof ON ((pc.authentication_hash OPERATOR(public.=) aof.authentication_hash)));
 
 
-ALTER TABLE pc.v_protein_collections_by_organism OWNER TO d3l243;
+ALTER VIEW pc.v_protein_collections_by_organism OWNER TO d3l243;
 
 --
 -- Name: TABLE v_protein_collections_by_organism; Type: ACL; Schema: pc; Owner: d3l243

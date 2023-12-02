@@ -18,7 +18,7 @@ CREATE VIEW sw.v_processor_step_stats AS
   GROUP BY js.processor, (EXTRACT(year FROM js.start)), (EXTRACT(month FROM js.start)), dateq.start_max;
 
 
-ALTER TABLE sw.v_processor_step_stats OWNER TO d3l243;
+ALTER VIEW sw.v_processor_step_stats OWNER TO d3l243;
 
 --
 -- Name: TABLE v_processor_step_stats; Type: ACL; Schema: sw; Owner: d3l243

@@ -22,7 +22,7 @@ CREATE VIEW public.v_lc_cart_config_history_list_report AS
           WHERE (v_file_attachment_stats_by_id.entity_type OPERATOR(public.=) 'lc_cart_config_history'::public.citext)) attachmentstats ON (((tih.entry_id)::text = (attachmentstats.id)::text)));
 
 
-ALTER TABLE public.v_lc_cart_config_history_list_report OWNER TO d3l243;
+ALTER VIEW public.v_lc_cart_config_history_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_lc_cart_config_history_list_report; Type: ACL; Schema: public; Owner: d3l243

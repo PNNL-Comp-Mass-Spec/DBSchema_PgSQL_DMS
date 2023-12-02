@@ -94,7 +94,7 @@ CREATE VIEW cap.v_task_steps2 AS
              LEFT JOIN cap.t_local_processors lp ON ((ts.processor OPERATOR(public.=) lp.processor_name)))) lookupq;
 
 
-ALTER TABLE cap.v_task_steps2 OWNER TO d3l243;
+ALTER VIEW cap.v_task_steps2 OWNER TO d3l243;
 
 --
 -- Name: TABLE v_task_steps2; Type: ACL; Schema: cap; Owner: d3l243

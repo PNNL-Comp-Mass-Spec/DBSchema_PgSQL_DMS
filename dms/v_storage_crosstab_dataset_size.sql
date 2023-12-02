@@ -36,7 +36,7 @@ CREATE VIEW public.v_storage_crosstab_dataset_size AS
                      SLIM, TSQ, VelosOrbi, Waters_IMS, Waters_TOF}''::text[])'::text) pivotdata(vol_client public.citext, "21T" double precision, "Agilent_GC-MS" double precision, agilent_qqq double precision, agilent_tof_v2 double precision, bruker_ftms double precision, eclipse double precision, exactive double precision, ft_zippedsfolders double precision, "GC-QExactive" double precision, ims double precision, lcq double precision, ltq double precision, "LTQ-ETD" double precision, lumos double precision, "MALDI-Imaging" double precision, orbitrap double precision, qehfx double precision, qexactive double precision, "QExactive-Imaging" double precision, slim double precision, tsq double precision, velosorbi double precision, waters_ims double precision, waters_tof double precision);
 
 
-ALTER TABLE public.v_storage_crosstab_dataset_size OWNER TO d3l243;
+ALTER VIEW public.v_storage_crosstab_dataset_size OWNER TO d3l243;
 
 --
 -- Name: TABLE v_storage_crosstab_dataset_size; Type: ACL; Schema: public; Owner: d3l243

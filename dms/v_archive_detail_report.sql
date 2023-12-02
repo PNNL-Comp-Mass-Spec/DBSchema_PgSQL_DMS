@@ -31,7 +31,7 @@ CREATE VIEW public.v_archive_detail_report AS
      JOIN public.t_dataset_archive_update_state_name ausn ON ((da.archive_update_state_id = ausn.archive_update_state_id)));
 
 
-ALTER TABLE public.v_archive_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_archive_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_archive_detail_report; Type: ACL; Schema: public; Owner: d3l243

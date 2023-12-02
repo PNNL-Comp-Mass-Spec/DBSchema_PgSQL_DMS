@@ -35,7 +35,7 @@ CREATE VIEW public.v_lc_cart_configuration_entry AS
      JOIN public.t_lc_cart cart ON ((config.cart_id = cart.cart_id)));
 
 
-ALTER TABLE public.v_lc_cart_configuration_entry OWNER TO d3l243;
+ALTER VIEW public.v_lc_cart_configuration_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_lc_cart_configuration_entry; Type: ACL; Schema: public; Owner: d3l243

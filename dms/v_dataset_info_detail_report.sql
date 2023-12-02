@@ -71,7 +71,7 @@ CREATE VIEW public.v_dataset_info_detail_report AS
      LEFT JOIN public.v_dataset_archive_path dap ON ((ds.dataset_id = dap.dataset_id)));
 
 
-ALTER TABLE public.v_dataset_info_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_dataset_info_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_info_detail_report; Type: ACL; Schema: public; Owner: d3l243

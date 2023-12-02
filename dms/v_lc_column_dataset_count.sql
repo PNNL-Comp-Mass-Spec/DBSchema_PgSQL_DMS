@@ -12,7 +12,7 @@ CREATE VIEW public.v_lc_column_dataset_count AS
   GROUP BY lc.lc_column, statename.column_state;
 
 
-ALTER TABLE public.v_lc_column_dataset_count OWNER TO d3l243;
+ALTER VIEW public.v_lc_column_dataset_count OWNER TO d3l243;
 
 --
 -- Name: TABLE v_lc_column_dataset_count; Type: ACL; Schema: public; Owner: d3l243

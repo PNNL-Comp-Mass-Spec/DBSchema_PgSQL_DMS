@@ -44,7 +44,7 @@ CREATE VIEW public.v_system_locked_objects AS
   GROUP BY psa.pid, psa.datname, psa.usename, psa.application_name, psa.state, psa.query, psa.query_start, psa.xact_start, lt.tables_with_locks, lv.views_with_locks, lst.system_tables_with_locks;
 
 
-ALTER TABLE public.v_system_locked_objects OWNER TO d3l243;
+ALTER VIEW public.v_system_locked_objects OWNER TO d3l243;
 
 --
 -- Name: VIEW v_system_locked_objects; Type: COMMENT; Schema: public; Owner: d3l243

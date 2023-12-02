@@ -44,7 +44,7 @@ CREATE VIEW cap.v_dms_dataset_metadata AS
      LEFT JOIN public.v_eus_proposal_user_lookup eusproposaluser ON (((rr.eus_proposal_id OPERATOR(public.=) eusproposaluser.proposal_id) AND (ds.operator_username OPERATOR(public.=) eusproposaluser.username) AND (eusproposaluser.valid_eus_id > 0))));
 
 
-ALTER TABLE cap.v_dms_dataset_metadata OWNER TO d3l243;
+ALTER VIEW cap.v_dms_dataset_metadata OWNER TO d3l243;
 
 --
 -- Name: VIEW v_dms_dataset_metadata; Type: COMMENT; Schema: cap; Owner: d3l243

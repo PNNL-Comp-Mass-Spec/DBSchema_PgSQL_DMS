@@ -38,7 +38,7 @@ CREATE VIEW cap.v_task_steps_history AS
      LEFT JOIN cap.t_step_tool_versions stv ON ((ts.tool_version_id = stv.tool_version_id)));
 
 
-ALTER TABLE cap.v_task_steps_history OWNER TO d3l243;
+ALTER VIEW cap.v_task_steps_history OWNER TO d3l243;
 
 --
 -- Name: TABLE v_task_steps_history; Type: ACL; Schema: cap; Owner: d3l243

@@ -10,7 +10,7 @@ CREATE VIEW public.v_old_storage_report AS
   WHERE (spath.storage_path_function OPERATOR(public.=) 'old-storage'::public.citext);
 
 
-ALTER TABLE public.v_old_storage_report OWNER TO d3l243;
+ALTER VIEW public.v_old_storage_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_old_storage_report; Type: ACL; Schema: public; Owner: d3l243

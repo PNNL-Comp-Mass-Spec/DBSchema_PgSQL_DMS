@@ -29,7 +29,7 @@ CREATE VIEW public.v_assigned_storage AS
           WHERE (t_storage_path.storage_path_function OPERATOR(public.=) 'raw-storage'::public.citext)) vr ON ((t_instrument_name.storage_path_id = vr.storage_path_id)));
 
 
-ALTER TABLE public.v_assigned_storage OWNER TO d3l243;
+ALTER VIEW public.v_assigned_storage OWNER TO d3l243;
 
 --
 -- Name: TABLE v_assigned_storage; Type: ACL; Schema: public; Owner: d3l243

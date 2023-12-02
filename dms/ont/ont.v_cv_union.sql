@@ -114,7 +114,7 @@ UNION
    FROM ont.t_cv_doid;
 
 
-ALTER TABLE ont.v_cv_union OWNER TO d3l243;
+ALTER VIEW ont.v_cv_union OWNER TO d3l243;
 
 --
 -- Name: TABLE v_cv_union; Type: ACL; Schema: ont; Owner: d3l243

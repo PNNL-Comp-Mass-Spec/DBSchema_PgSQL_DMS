@@ -55,7 +55,7 @@ CREATE VIEW public.v_analysis_job_export_ex AS
   WHERE ((aj.job_state_id = 4) AND ((ds.dataset_rating_id >= 1) OR (ds.dataset_rating_id = '-6'::integer)));
 
 
-ALTER TABLE public.v_analysis_job_export_ex OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_export_ex OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_job_export_ex; Type: ACL; Schema: public; Owner: d3l243

@@ -19,7 +19,7 @@ CREATE VIEW mc.v_managers_by_broadcast_queue_topic AS
           WHERE (pv.param_type_id = 105)) tm ON ((m.mgr_id = tm.mgr_id)));
 
 
-ALTER TABLE mc.v_managers_by_broadcast_queue_topic OWNER TO d3l243;
+ALTER VIEW mc.v_managers_by_broadcast_queue_topic OWNER TO d3l243;
 
 --
 -- Name: TABLE v_managers_by_broadcast_queue_topic; Type: ACL; Schema: mc; Owner: d3l243

@@ -28,7 +28,7 @@ CREATE VIEW public.v_experiment_plex_summary_list_report AS
   GROUP BY plexmembers.plex_exp_id, e.experiment, org.organism, e.labelling, e.created, c.campaign, bto.tissue, e.sample_prep_request_id;
 
 
-ALTER TABLE public.v_experiment_plex_summary_list_report OWNER TO d3l243;
+ALTER VIEW public.v_experiment_plex_summary_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_experiment_plex_summary_list_report; Type: ACL; Schema: public; Owner: d3l243

@@ -11,7 +11,7 @@ CREATE VIEW public.v_dataset_archive_path AS
      JOIN public.t_dataset_archive da ON ((archpath.archive_path_id = da.storage_path_id)));
 
 
-ALTER TABLE public.v_dataset_archive_path OWNER TO d3l243;
+ALTER VIEW public.v_dataset_archive_path OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_archive_path; Type: ACL; Schema: public; Owner: d3l243

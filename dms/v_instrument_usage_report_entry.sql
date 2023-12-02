@@ -22,7 +22,7 @@ CREATE VIEW public.v_instrument_usage_report_entry AS
      LEFT JOIN public.t_emsl_instrument_usage_type instusagetype ON ((instusage.usage_type_id = instusagetype.usage_type_id)));
 
 
-ALTER TABLE public.v_instrument_usage_report_entry OWNER TO d3l243;
+ALTER VIEW public.v_instrument_usage_report_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_instrument_usage_report_entry; Type: ACL; Schema: public; Owner: d3l243

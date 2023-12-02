@@ -70,7 +70,7 @@ CREATE VIEW sw.v_job_steps_stale_and_failed AS
   WHERE ((dataq.warning_message)::text <> ''::text);
 
 
-ALTER TABLE sw.v_job_steps_stale_and_failed OWNER TO d3l243;
+ALTER VIEW sw.v_job_steps_stale_and_failed OWNER TO d3l243;
 
 --
 -- Name: VIEW v_job_steps_stale_and_failed; Type: COMMENT; Schema: sw; Owner: d3l243

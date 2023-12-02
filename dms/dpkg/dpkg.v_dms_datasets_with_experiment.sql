@@ -11,7 +11,7 @@ CREATE VIEW dpkg.v_dms_datasets_with_experiment AS
      JOIN public.t_experiments e ON ((ds.exp_id = e.exp_id)));
 
 
-ALTER TABLE dpkg.v_dms_datasets_with_experiment OWNER TO d3l243;
+ALTER VIEW dpkg.v_dms_datasets_with_experiment OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dms_datasets_with_experiment; Type: ACL; Schema: dpkg; Owner: d3l243

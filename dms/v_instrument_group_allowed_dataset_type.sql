@@ -13,7 +13,7 @@ CREATE VIEW public.v_instrument_group_allowed_dataset_type AS
      JOIN public.t_dataset_type_name dtn ON ((gt.dataset_type OPERATOR(public.=) dtn.dataset_type)));
 
 
-ALTER TABLE public.v_instrument_group_allowed_dataset_type OWNER TO d3l243;
+ALTER VIEW public.v_instrument_group_allowed_dataset_type OWNER TO d3l243;
 
 --
 -- Name: TABLE v_instrument_group_allowed_dataset_type; Type: ACL; Schema: public; Owner: d3l243

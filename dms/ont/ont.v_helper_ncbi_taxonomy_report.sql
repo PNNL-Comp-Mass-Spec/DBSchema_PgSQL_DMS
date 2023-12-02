@@ -19,7 +19,7 @@ CREATE VIEW ont.v_helper_ncbi_taxonomy_report AS
   WHERE ((nodenames.name_class OPERATOR(public.=) 'scientific name'::public.citext) AND (NOT (nodes.rank OPERATOR(public.=) ANY (ARRAY['class'::public.citext, 'infraclass'::public.citext, 'infraorder'::public.citext, 'kingdom'::public.citext, 'order'::public.citext, 'parvorder'::public.citext, 'phylum'::public.citext, 'subclass'::public.citext, 'subkingdom'::public.citext, 'suborder'::public.citext, 'subphylum'::public.citext, 'subtribe'::public.citext, 'superclass'::public.citext, 'superfamily'::public.citext, 'superkingdom'::public.citext, 'superorder'::public.citext, 'superphylum'::public.citext, 'tribe'::public.citext]))));
 
 
-ALTER TABLE ont.v_helper_ncbi_taxonomy_report OWNER TO d3l243;
+ALTER VIEW ont.v_helper_ncbi_taxonomy_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_helper_ncbi_taxonomy_report; Type: ACL; Schema: ont; Owner: d3l243

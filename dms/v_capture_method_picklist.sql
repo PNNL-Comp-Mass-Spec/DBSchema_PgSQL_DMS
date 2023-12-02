@@ -8,7 +8,7 @@ CREATE VIEW public.v_capture_method_picklist AS
   WHERE (t_instrument_name.status OPERATOR(public.=) 'active'::public.citext);
 
 
-ALTER TABLE public.v_capture_method_picklist OWNER TO d3l243;
+ALTER VIEW public.v_capture_method_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_capture_method_picklist; Type: ACL; Schema: public; Owner: d3l243

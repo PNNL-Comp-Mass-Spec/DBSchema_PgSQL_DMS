@@ -10,7 +10,7 @@ CREATE VIEW public.v_export_biomaterial_experiments AS
      JOIN public.t_experiments e ON ((eb.exp_id = e.exp_id)));
 
 
-ALTER TABLE public.v_export_biomaterial_experiments OWNER TO d3l243;
+ALTER VIEW public.v_export_biomaterial_experiments OWNER TO d3l243;
 
 --
 -- Name: TABLE v_export_biomaterial_experiments; Type: ACL; Schema: public; Owner: d3l243

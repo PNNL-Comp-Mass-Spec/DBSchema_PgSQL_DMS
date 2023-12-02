@@ -20,7 +20,7 @@ CREATE VIEW ont.v_unimod_list_report AS
      LEFT JOIN public.v_mass_correction_factors mcf ON ((m.name OPERATOR(public.=) mcf.original_source_name)));
 
 
-ALTER TABLE ont.v_unimod_list_report OWNER TO d3l243;
+ALTER VIEW ont.v_unimod_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_unimod_list_report; Type: ACL; Schema: ont; Owner: d3l243

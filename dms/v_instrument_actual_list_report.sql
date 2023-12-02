@@ -252,7 +252,7 @@ CREATE VIEW public.v_instrument_actual_list_report AS
                   GROUP BY t_instrument_allocation.proposal_id, t_instrument_allocation.fiscal_year) tal ON (((tac.proposal OPERATOR(public.=) tal.proposal_id) AND (tac.fy = tal.fiscal_year))))) usageq ON ((ep.proposal_id OPERATOR(public.=) usageq.proposal_id)));
 
 
-ALTER TABLE public.v_instrument_actual_list_report OWNER TO d3l243;
+ALTER VIEW public.v_instrument_actual_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_instrument_actual_list_report; Type: ACL; Schema: public; Owner: d3l243

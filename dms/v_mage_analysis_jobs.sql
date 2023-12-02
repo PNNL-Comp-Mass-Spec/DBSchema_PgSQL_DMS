@@ -47,7 +47,7 @@ CREATE VIEW public.v_mage_analysis_jobs AS
   WHERE (aj.job_state_id = ANY (ARRAY[4, 7, 14]));
 
 
-ALTER TABLE public.v_mage_analysis_jobs OWNER TO d3l243;
+ALTER VIEW public.v_mage_analysis_jobs OWNER TO d3l243;
 
 --
 -- Name: TABLE v_mage_analysis_jobs; Type: ACL; Schema: public; Owner: d3l243

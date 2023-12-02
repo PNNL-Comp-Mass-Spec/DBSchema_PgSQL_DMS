@@ -17,7 +17,7 @@ CREATE VIEW sw.v_step_dependencies AS
      JOIN sw.t_job_steps js ON (((jsd.job = js.job) AND (jsd.step = js.step))));
 
 
-ALTER TABLE sw.v_step_dependencies OWNER TO d3l243;
+ALTER VIEW sw.v_step_dependencies OWNER TO d3l243;
 
 --
 -- Name: TABLE v_step_dependencies; Type: ACL; Schema: sw; Owner: d3l243

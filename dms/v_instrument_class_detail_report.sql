@@ -11,7 +11,7 @@ CREATE VIEW public.v_instrument_class_detail_report AS
    FROM public.t_instrument_class;
 
 
-ALTER TABLE public.v_instrument_class_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_instrument_class_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_instrument_class_detail_report; Type: ACL; Schema: public; Owner: d3l243

@@ -9,7 +9,7 @@ CREATE VIEW public.v_users AS
    FROM public.t_users;
 
 
-ALTER TABLE public.v_users OWNER TO d3l243;
+ALTER VIEW public.v_users OWNER TO d3l243;
 
 --
 -- Name: TABLE v_users; Type: ACL; Schema: public; Owner: d3l243

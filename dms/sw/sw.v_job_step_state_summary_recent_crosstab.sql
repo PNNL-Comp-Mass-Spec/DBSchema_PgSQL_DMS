@@ -63,7 +63,7 @@ CREATE VIEW sw.v_job_step_state_summary_recent_crosstab AS
                      ThermoPeakDataExporter, TopFD, TopPIC, XTandem}''::citext[])'::text) ct(state integer, state_name public.citext, "Ape" integer, "AScore" integer, "Cyclops" integer, "DataExtractor" integer, "DataExtractorSplitFasta" integer, "Decon2LS_V2" integer, "DTA_Gen" integer, "DTA_Refinery" integer, "Formularity" integer, "IDM" integer, "IDPicker" integer, "LCMSFeatureFinder" integer, "Mage" integer, "MASIC_Finnigan" integer, "MaxqPeak" integer, "MaxqS1" integer, "MaxqS2" integer, "MaxqS3" integer, "MODa" integer, "MODPlus" integer, "MSAlign" integer, "MSAlign_Quant" integer, "MSDeconv" integer, "MSFragger" integer, "MSGF" integer, "MSGFPlus" integer, "MSMSSpectraPreprocessor" integer, "MSPathFinder" integer, "MSXML_Bruker" integer, "MSXML_Gen" integer, "Mz_Refinery" integer, "PBF_Gen" integer, "PepProtProphet" integer, "Phospho_FDR_Aggregator" integer, "PRIDE_Converter" integer, "ProMex" integer, "Results_Cleanup" integer, "Results_Transfer" integer, "Sequest" integer, "SMAQC" integer, "ThermoPeakDataExporter" integer, "TopFD" integer, "TopPIC" integer, "XTandem" integer);
 
 
-ALTER TABLE sw.v_job_step_state_summary_recent_crosstab OWNER TO d3l243;
+ALTER VIEW sw.v_job_step_state_summary_recent_crosstab OWNER TO d3l243;
 
 --
 -- Name: TABLE v_job_step_state_summary_recent_crosstab; Type: ACL; Schema: sw; Owner: d3l243

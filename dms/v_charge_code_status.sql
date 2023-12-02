@@ -13,7 +13,7 @@ CREATE VIEW public.v_charge_code_status AS
      JOIN public.t_charge_code_state ccs ON ((cc.charge_code_state = ccs.charge_code_state)));
 
 
-ALTER TABLE public.v_charge_code_status OWNER TO d3l243;
+ALTER VIEW public.v_charge_code_status OWNER TO d3l243;
 
 --
 -- Name: TABLE v_charge_code_status; Type: ACL; Schema: public; Owner: d3l243

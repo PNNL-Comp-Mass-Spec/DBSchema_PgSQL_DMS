@@ -14,7 +14,7 @@ CREATE VIEW pc.v_missing_archive_entries AS
            FROM pc.t_archived_output_files)));
 
 
-ALTER TABLE pc.v_missing_archive_entries OWNER TO d3l243;
+ALTER VIEW pc.v_missing_archive_entries OWNER TO d3l243;
 
 --
 -- Name: TABLE v_missing_archive_entries; Type: ACL; Schema: pc; Owner: d3l243

@@ -27,7 +27,7 @@ CREATE VIEW public.v_dataset_disposition AS
   WHERE (ds.dataset_rating_id = '-10'::integer);
 
 
-ALTER TABLE public.v_dataset_disposition OWNER TO d3l243;
+ALTER VIEW public.v_dataset_disposition OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_disposition; Type: ACL; Schema: public; Owner: d3l243

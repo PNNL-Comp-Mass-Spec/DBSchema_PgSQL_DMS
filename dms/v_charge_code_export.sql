@@ -19,7 +19,7 @@ CREATE VIEW public.v_charge_code_export AS
      LEFT JOIN public.v_charge_code_owner_dms_user_map dmsuser ON ((cc.charge_code OPERATOR(public.=) dmsuser.charge_code)));
 
 
-ALTER TABLE public.v_charge_code_export OWNER TO d3l243;
+ALTER VIEW public.v_charge_code_export OWNER TO d3l243;
 
 --
 -- Name: VIEW v_charge_code_export; Type: COMMENT; Schema: public; Owner: d3l243

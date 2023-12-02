@@ -22,7 +22,7 @@ CREATE VIEW public.v_purgeable_datasets_nointerest AS
   GROUP BY ds.dataset_id, spath.machine_name, spath.vol_name_server, ds.created, instclass.raw_data_type, da.stagemd5_required, da.purge_priority, da.archive_state_id;
 
 
-ALTER TABLE public.v_purgeable_datasets_nointerest OWNER TO d3l243;
+ALTER VIEW public.v_purgeable_datasets_nointerest OWNER TO d3l243;
 
 --
 -- Name: VIEW v_purgeable_datasets_nointerest; Type: COMMENT; Schema: public; Owner: d3l243

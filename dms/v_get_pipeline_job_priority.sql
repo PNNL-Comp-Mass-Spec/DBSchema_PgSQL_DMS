@@ -9,7 +9,7 @@ CREATE VIEW public.v_get_pipeline_job_priority AS
   WHERE (j.job_state_id = ANY (ARRAY[1, 2, 8]));
 
 
-ALTER TABLE public.v_get_pipeline_job_priority OWNER TO d3l243;
+ALTER VIEW public.v_get_pipeline_job_priority OWNER TO d3l243;
 
 --
 -- Name: VIEW v_get_pipeline_job_priority; Type: COMMENT; Schema: public; Owner: d3l243

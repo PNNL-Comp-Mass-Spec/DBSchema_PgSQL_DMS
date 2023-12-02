@@ -19,7 +19,7 @@ CREATE VIEW cap.v_dms_dataset_lc_instrument AS
      LEFT JOIN public.t_storage_path spath ON ((instname.source_path_id = spath.storage_path_id)));
 
 
-ALTER TABLE cap.v_dms_dataset_lc_instrument OWNER TO d3l243;
+ALTER VIEW cap.v_dms_dataset_lc_instrument OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dms_dataset_lc_instrument; Type: ACL; Schema: cap; Owner: d3l243

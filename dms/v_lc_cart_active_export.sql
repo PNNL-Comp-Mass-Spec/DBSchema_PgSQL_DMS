@@ -13,7 +13,7 @@ CREATE VIEW public.v_lc_cart_active_export AS
   WHERE ((cart.cart_id > 1) AND (NOT (cartstate.cart_state OPERATOR(public.=) 'Retired'::public.citext)));
 
 
-ALTER TABLE public.v_lc_cart_active_export OWNER TO d3l243;
+ALTER VIEW public.v_lc_cart_active_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_lc_cart_active_export; Type: ACL; Schema: public; Owner: d3l243

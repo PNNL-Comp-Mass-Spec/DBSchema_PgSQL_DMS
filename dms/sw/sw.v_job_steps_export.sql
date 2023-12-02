@@ -42,7 +42,7 @@ CREATE VIEW sw.v_job_steps_export AS
      LEFT JOIN sw.t_step_tool_versions stv ON ((js.tool_version_id = stv.tool_version_id)));
 
 
-ALTER TABLE sw.v_job_steps_export OWNER TO d3l243;
+ALTER VIEW sw.v_job_steps_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_job_steps_export; Type: ACL; Schema: sw; Owner: d3l243

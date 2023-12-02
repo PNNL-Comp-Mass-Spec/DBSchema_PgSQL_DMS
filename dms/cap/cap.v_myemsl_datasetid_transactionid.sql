@@ -12,7 +12,7 @@ CREATE VIEW cap.v_myemsl_datasetid_transactionid AS
   WHERE ((NOT (t_myemsl_uploads.status_num IS NULL)) OR (NOT (t_myemsl_uploads.transaction_id IS NULL)));
 
 
-ALTER TABLE cap.v_myemsl_datasetid_transactionid OWNER TO d3l243;
+ALTER VIEW cap.v_myemsl_datasetid_transactionid OWNER TO d3l243;
 
 --
 -- Name: VIEW v_myemsl_datasetid_transactionid; Type: COMMENT; Schema: cap; Owner: d3l243

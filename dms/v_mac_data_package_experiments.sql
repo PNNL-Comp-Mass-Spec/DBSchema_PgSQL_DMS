@@ -13,7 +13,7 @@ CREATE VIEW public.v_mac_data_package_experiments AS
    FROM dpkg.v_data_package_experiments_export dpe;
 
 
-ALTER TABLE public.v_mac_data_package_experiments OWNER TO d3l243;
+ALTER VIEW public.v_mac_data_package_experiments OWNER TO d3l243;
 
 --
 -- Name: TABLE v_mac_data_package_experiments; Type: ACL; Schema: public; Owner: d3l243

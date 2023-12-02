@@ -31,7 +31,7 @@ CREATE VIEW sw.v_dms_data_packages AS
      LEFT JOIN public.t_users u2 ON ((dp.requester OPERATOR(public.=) u2.username)));
 
 
-ALTER TABLE sw.v_dms_data_packages OWNER TO d3l243;
+ALTER VIEW sw.v_dms_data_packages OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dms_data_packages; Type: ACL; Schema: sw; Owner: d3l243

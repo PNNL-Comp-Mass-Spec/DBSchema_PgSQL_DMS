@@ -26,7 +26,7 @@ CREATE VIEW public.v_dataset_archive_ex AS
      JOIN public.t_instrument_class instclass ON ((instname.instrument_class OPERATOR(public.=) instclass.instrument_class)));
 
 
-ALTER TABLE public.v_dataset_archive_ex OWNER TO d3l243;
+ALTER VIEW public.v_dataset_archive_ex OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_archive_ex; Type: ACL; Schema: public; Owner: d3l243

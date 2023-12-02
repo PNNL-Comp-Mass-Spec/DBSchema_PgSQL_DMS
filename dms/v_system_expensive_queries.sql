@@ -14,7 +14,7 @@ CREATE VIEW public.v_system_expensive_queries AS
  LIMIT 500;
 
 
-ALTER TABLE public.v_system_expensive_queries OWNER TO d3l243;
+ALTER VIEW public.v_system_expensive_queries OWNER TO d3l243;
 
 --
 -- Name: VIEW v_system_expensive_queries; Type: COMMENT; Schema: public; Owner: d3l243

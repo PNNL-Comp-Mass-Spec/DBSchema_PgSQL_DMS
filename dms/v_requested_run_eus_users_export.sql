@@ -12,7 +12,7 @@ CREATE VIEW public.v_requested_run_eus_users_export AS
      JOIN public.t_eus_users eususers ON ((rrusers.eus_person_id = eususers.person_id)));
 
 
-ALTER TABLE public.v_requested_run_eus_users_export OWNER TO d3l243;
+ALTER VIEW public.v_requested_run_eus_users_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_requested_run_eus_users_export; Type: ACL; Schema: public; Owner: d3l243

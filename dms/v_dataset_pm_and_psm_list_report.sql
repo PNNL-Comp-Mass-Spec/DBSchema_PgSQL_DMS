@@ -43,7 +43,7 @@ CREATE VIEW public.v_dataset_pm_and_psm_list_report AS
      LEFT JOIN public.v_analysis_job_psm_list_report psm ON (((psm.dataset_id = pm.dataset_id) AND (psm.state_id <> ALL (ARRAY[5, 14])))));
 
 
-ALTER TABLE public.v_dataset_pm_and_psm_list_report OWNER TO d3l243;
+ALTER VIEW public.v_dataset_pm_and_psm_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_pm_and_psm_list_report; Type: ACL; Schema: public; Owner: d3l243

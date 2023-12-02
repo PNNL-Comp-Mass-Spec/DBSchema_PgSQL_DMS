@@ -21,7 +21,7 @@ CREATE VIEW dpkg.v_osm_package_detail_report AS
      LEFT JOIN dpkg.v_osm_package_paths packagepaths ON ((osmpackage.osm_pkg_id = packagepaths.id)));
 
 
-ALTER TABLE dpkg.v_osm_package_detail_report OWNER TO d3l243;
+ALTER VIEW dpkg.v_osm_package_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_osm_package_detail_report; Type: ACL; Schema: dpkg; Owner: d3l243

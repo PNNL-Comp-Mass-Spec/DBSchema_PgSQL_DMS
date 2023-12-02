@@ -14,7 +14,7 @@ CREATE VIEW public.v_mage_dataset_factor_summary AS
   GROUP BY ds.dataset_id, ds.dataset, rr.request_id, rr.request_name;
 
 
-ALTER TABLE public.v_mage_dataset_factor_summary OWNER TO d3l243;
+ALTER VIEW public.v_mage_dataset_factor_summary OWNER TO d3l243;
 
 --
 -- Name: TABLE v_mage_dataset_factor_summary; Type: ACL; Schema: public; Owner: d3l243

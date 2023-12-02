@@ -10,7 +10,7 @@ CREATE VIEW public.v_dataset_type_name_export AS
    FROM public.t_dataset_type_name;
 
 
-ALTER TABLE public.v_dataset_type_name_export OWNER TO d3l243;
+ALTER VIEW public.v_dataset_type_name_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_type_name_export; Type: ACL; Schema: public; Owner: d3l243

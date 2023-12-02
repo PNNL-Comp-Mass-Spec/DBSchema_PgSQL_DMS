@@ -17,7 +17,7 @@ CREATE VIEW public.v_factor_count_by_dataset AS
   GROUP BY factorq.dataset_id;
 
 
-ALTER TABLE public.v_factor_count_by_dataset OWNER TO d3l243;
+ALTER VIEW public.v_factor_count_by_dataset OWNER TO d3l243;
 
 --
 -- Name: TABLE v_factor_count_by_dataset; Type: ACL; Schema: public; Owner: d3l243

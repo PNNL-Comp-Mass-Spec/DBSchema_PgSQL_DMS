@@ -10,7 +10,7 @@ CREATE VIEW sw.v_mac_job_type_picklist AS
   WHERE ((t_scripts.script OPERATOR(public.~) similar_to_escape('MAC[_]%'::text)) AND (t_scripts.enabled OPERATOR(public.=) 'Y'::public.citext) AND (NOT (t_scripts.parameters IS NULL)));
 
 
-ALTER TABLE sw.v_mac_job_type_picklist OWNER TO d3l243;
+ALTER VIEW sw.v_mac_job_type_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_mac_job_type_picklist; Type: ACL; Schema: sw; Owner: d3l243

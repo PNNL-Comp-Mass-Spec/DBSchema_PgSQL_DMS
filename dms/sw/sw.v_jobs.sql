@@ -26,7 +26,7 @@ CREATE VIEW sw.v_jobs AS
      JOIN sw.t_jobs j ON ((j.state = jsn.job_state_id)));
 
 
-ALTER TABLE sw.v_jobs OWNER TO d3l243;
+ALTER VIEW sw.v_jobs OWNER TO d3l243;
 
 --
 -- Name: v_jobs trig_v_jobs_instead_of_update; Type: TRIGGER; Schema: sw; Owner: d3l243

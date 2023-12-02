@@ -29,7 +29,7 @@ CREATE VIEW public.v_predefined_analysis_dataset_info AS
      LEFT JOIN public.t_secondary_sep septype ON ((ds.separation_type OPERATOR(public.=) septype.separation_type)));
 
 
-ALTER TABLE public.v_predefined_analysis_dataset_info OWNER TO d3l243;
+ALTER VIEW public.v_predefined_analysis_dataset_info OWNER TO d3l243;
 
 --
 -- Name: TABLE v_predefined_analysis_dataset_info; Type: ACL; Schema: public; Owner: d3l243

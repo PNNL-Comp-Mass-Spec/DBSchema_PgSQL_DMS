@@ -23,7 +23,7 @@ CREATE VIEW sw.v_job_steps_needing_reset AS
   WHERE ((js.state >= 2) AND (js.state <> 3) AND ((js_target.state = ANY (ARRAY[2, 4])) OR (js_target.start > js.finish)));
 
 
-ALTER TABLE sw.v_job_steps_needing_reset OWNER TO d3l243;
+ALTER VIEW sw.v_job_steps_needing_reset OWNER TO d3l243;
 
 --
 -- Name: TABLE v_job_steps_needing_reset; Type: ACL; Schema: sw; Owner: d3l243

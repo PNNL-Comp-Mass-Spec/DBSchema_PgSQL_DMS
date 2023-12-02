@@ -55,7 +55,7 @@ CREATE VIEW public.v_data_analysis_request_detail_report AS
      LEFT JOIN public.t_eus_proposal_state_name psn ON ((eup.state_id = psn.state_id)));
 
 
-ALTER TABLE public.v_data_analysis_request_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_data_analysis_request_detail_report OWNER TO d3l243;
 
 --
 -- Name: VIEW v_data_analysis_request_detail_report; Type: COMMENT; Schema: public; Owner: d3l243

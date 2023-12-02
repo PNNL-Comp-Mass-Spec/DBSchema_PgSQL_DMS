@@ -24,7 +24,7 @@ CREATE VIEW public.v_experiment_group_members_list_report AS
   GROUP BY e.experiment, e.exp_id, eg.parent_exp_id, e.researcher_username, org.organism, e.reason, e.comment, eg.group_id;
 
 
-ALTER TABLE public.v_experiment_group_members_list_report OWNER TO d3l243;
+ALTER VIEW public.v_experiment_group_members_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_experiment_group_members_list_report; Type: ACL; Schema: public; Owner: d3l243

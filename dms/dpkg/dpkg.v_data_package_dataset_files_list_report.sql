@@ -49,7 +49,7 @@ CREATE VIEW dpkg.v_data_package_dataset_files_list_report AS
           WHERE (t_dataset_files.deleted = false)) df ON ((dpd.dataset_id = df.dataset_id)));
 
 
-ALTER TABLE dpkg.v_data_package_dataset_files_list_report OWNER TO d3l243;
+ALTER VIEW dpkg.v_data_package_dataset_files_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_data_package_dataset_files_list_report; Type: ACL; Schema: dpkg; Owner: d3l243

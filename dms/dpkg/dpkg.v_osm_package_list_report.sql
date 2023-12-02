@@ -18,7 +18,7 @@ CREATE VIEW dpkg.v_osm_package_list_report AS
      LEFT JOIN public.t_users u ON ((u.username OPERATOR(public.=) o.owner_username)));
 
 
-ALTER TABLE dpkg.v_osm_package_list_report OWNER TO d3l243;
+ALTER VIEW dpkg.v_osm_package_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_osm_package_list_report; Type: ACL; Schema: dpkg; Owner: d3l243

@@ -38,7 +38,7 @@ CREATE VIEW public.v_run_tracking_list_report AS
      JOIN public.t_eus_usage_type eut ON ((rr.eus_usage_type_id = eut.eus_usage_type_id)));
 
 
-ALTER TABLE public.v_run_tracking_list_report OWNER TO d3l243;
+ALTER VIEW public.v_run_tracking_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_run_tracking_list_report; Type: ACL; Schema: public; Owner: d3l243

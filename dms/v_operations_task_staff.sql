@@ -10,7 +10,7 @@ CREATE VIEW public.v_operations_task_staff AS
   WHERE ((u.status OPERATOR(public.=) 'Active'::public.citext) AND (o.operation_id = ANY (ARRAY[16, 36])));
 
 
-ALTER TABLE public.v_operations_task_staff OWNER TO d3l243;
+ALTER VIEW public.v_operations_task_staff OWNER TO d3l243;
 
 --
 -- Name: VIEW v_operations_task_staff; Type: COMMENT; Schema: public; Owner: d3l243

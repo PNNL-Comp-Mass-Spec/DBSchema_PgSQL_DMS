@@ -20,7 +20,7 @@ CREATE VIEW public.v_analysis_job_processor_group_membership AS
      JOIN public.t_analysis_job_processor_group ajpg ON ((ajpgm.group_id = ajpg.group_id)));
 
 
-ALTER TABLE public.v_analysis_job_processor_group_membership OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_processor_group_membership OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_job_processor_group_membership; Type: ACL; Schema: public; Owner: d3l243

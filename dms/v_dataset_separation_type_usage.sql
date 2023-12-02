@@ -16,7 +16,7 @@ CREATE VIEW public.v_dataset_separation_type_usage AS
      LEFT JOIN public.t_secondary_sep_usage u ON ((u.separation_type_id = ss.separation_type_id)));
 
 
-ALTER TABLE public.v_dataset_separation_type_usage OWNER TO d3l243;
+ALTER VIEW public.v_dataset_separation_type_usage OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_separation_type_usage; Type: ACL; Schema: public; Owner: d3l243

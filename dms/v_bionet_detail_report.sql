@@ -22,7 +22,7 @@ CREATE VIEW public.v_bionet_detail_report AS
      LEFT JOIN public.t_instrument_name instname ON ((h.instruments OPERATOR(public.=) instname.instrument)));
 
 
-ALTER TABLE public.v_bionet_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_bionet_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_bionet_detail_report; Type: ACL; Schema: public; Owner: d3l243

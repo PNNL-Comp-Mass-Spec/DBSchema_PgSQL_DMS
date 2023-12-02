@@ -48,7 +48,7 @@ CREATE VIEW cap.v_task_steps3 AS
           WHERE (NOT (v_myemsl_uploads.status_uri IS NULL))) myemslstatus ON (((ts.job = myemslstatus.job) AND (myemslstatus.statusrank = 1) AND (ts.tool OPERATOR(public.=) ANY (ARRAY['ArchiveVerify'::public.citext, 'DatasetArchive'::public.citext, 'ArchiveUpdate'::public.citext])))));
 
 
-ALTER TABLE cap.v_task_steps3 OWNER TO d3l243;
+ALTER VIEW cap.v_task_steps3 OWNER TO d3l243;
 
 --
 -- Name: TABLE v_task_steps3; Type: ACL; Schema: cap; Owner: d3l243

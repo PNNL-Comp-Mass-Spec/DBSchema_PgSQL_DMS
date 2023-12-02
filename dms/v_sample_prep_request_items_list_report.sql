@@ -22,7 +22,7 @@ CREATE VIEW public.v_sample_prep_request_items_list_report AS
    FROM public.t_sample_prep_request_items;
 
 
-ALTER TABLE public.v_sample_prep_request_items_list_report OWNER TO d3l243;
+ALTER VIEW public.v_sample_prep_request_items_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_sample_prep_request_items_list_report; Type: ACL; Schema: public; Owner: d3l243

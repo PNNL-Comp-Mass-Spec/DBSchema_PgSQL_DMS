@@ -10,7 +10,7 @@ CREATE VIEW pc.v_protein_collection_authority AS
   GROUP BY pcm.protein_collection_id, pn.annotation_type_id;
 
 
-ALTER TABLE pc.v_protein_collection_authority OWNER TO d3l243;
+ALTER VIEW pc.v_protein_collection_authority OWNER TO d3l243;
 
 --
 -- Name: TABLE v_protein_collection_authority; Type: ACL; Schema: pc; Owner: d3l243

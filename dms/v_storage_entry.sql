@@ -13,7 +13,7 @@ CREATE VIEW public.v_storage_entry AS
    FROM public.t_storage_path;
 
 
-ALTER TABLE public.v_storage_entry OWNER TO d3l243;
+ALTER VIEW public.v_storage_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_storage_entry; Type: ACL; Schema: public; Owner: d3l243

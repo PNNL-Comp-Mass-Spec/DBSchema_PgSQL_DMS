@@ -15,7 +15,7 @@ CREATE VIEW public.v_requested_run_batch_group_detail_report AS
      LEFT JOIN public.t_users u ON ((bg.owner_user_id = u.user_id)));
 
 
-ALTER TABLE public.v_requested_run_batch_group_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_requested_run_batch_group_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_requested_run_batch_group_detail_report; Type: ACL; Schema: public; Owner: d3l243

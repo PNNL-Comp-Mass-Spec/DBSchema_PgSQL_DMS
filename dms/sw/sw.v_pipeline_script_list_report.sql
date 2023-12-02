@@ -15,7 +15,7 @@ CREATE VIEW sw.v_pipeline_script_list_report AS
    FROM sw.t_scripts;
 
 
-ALTER TABLE sw.v_pipeline_script_list_report OWNER TO d3l243;
+ALTER VIEW sw.v_pipeline_script_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_pipeline_script_list_report; Type: ACL; Schema: sw; Owner: d3l243

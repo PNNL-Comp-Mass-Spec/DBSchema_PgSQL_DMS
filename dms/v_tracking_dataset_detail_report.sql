@@ -23,7 +23,7 @@ CREATE VIEW public.v_tracking_dataset_detail_report AS
      LEFT JOIN public.t_users u ON ((ds.operator_username OPERATOR(public.=) u.username)));
 
 
-ALTER TABLE public.v_tracking_dataset_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_tracking_dataset_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_tracking_dataset_detail_report; Type: ACL; Schema: public; Owner: d3l243

@@ -10,7 +10,7 @@ CREATE VIEW mc.v_mgr_params_by_mgr_type AS
      JOIN mc.t_mgr_types mt ON ((mtpm.mgr_type_id = mt.mgr_type_id)));
 
 
-ALTER TABLE mc.v_mgr_params_by_mgr_type OWNER TO d3l243;
+ALTER VIEW mc.v_mgr_params_by_mgr_type OWNER TO d3l243;
 
 --
 -- Name: TABLE v_mgr_params_by_mgr_type; Type: ACL; Schema: mc; Owner: d3l243

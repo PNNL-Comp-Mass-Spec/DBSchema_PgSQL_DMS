@@ -16,7 +16,7 @@ CREATE VIEW public.v_users_export AS
    FROM public.t_users u;
 
 
-ALTER TABLE public.v_users_export OWNER TO d3l243;
+ALTER VIEW public.v_users_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_users_export; Type: ACL; Schema: public; Owner: d3l243

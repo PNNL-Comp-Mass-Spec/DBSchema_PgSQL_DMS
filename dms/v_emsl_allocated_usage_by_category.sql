@@ -17,7 +17,7 @@ CREATE VIEW public.v_emsl_allocated_usage_by_category AS
   GROUP BY instcategory.category, installocation.proposal_id, installocation.fy;
 
 
-ALTER TABLE public.v_emsl_allocated_usage_by_category OWNER TO d3l243;
+ALTER VIEW public.v_emsl_allocated_usage_by_category OWNER TO d3l243;
 
 --
 -- Name: TABLE v_emsl_allocated_usage_by_category; Type: ACL; Schema: public; Owner: d3l243

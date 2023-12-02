@@ -46,7 +46,7 @@ CREATE VIEW public.v_param_file_mass_mod_info AS
      LEFT JOIN public.t_maxquant_mods mqm ON ((mqm.mod_id = pfmm.maxquant_mod_id)));
 
 
-ALTER TABLE public.v_param_file_mass_mod_info OWNER TO d3l243;
+ALTER VIEW public.v_param_file_mass_mod_info OWNER TO d3l243;
 
 --
 -- Name: TABLE v_param_file_mass_mod_info; Type: ACL; Schema: public; Owner: d3l243

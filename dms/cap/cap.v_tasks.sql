@@ -26,7 +26,7 @@ CREATE VIEW cap.v_tasks AS
      JOIN cap.t_task_state_name tsn ON ((t.state = tsn.job_state_id)));
 
 
-ALTER TABLE cap.v_tasks OWNER TO d3l243;
+ALTER VIEW cap.v_tasks OWNER TO d3l243;
 
 --
 -- Name: v_tasks trig_v_tasks_instead_of_update; Type: TRIGGER; Schema: cap; Owner: d3l243

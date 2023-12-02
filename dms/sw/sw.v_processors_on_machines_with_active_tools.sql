@@ -33,7 +33,7 @@ CREATE VIEW sw.v_processors_on_machines_with_active_tools AS
   GROUP BY st.processor_name, st.tool_name, st.priority, st.enabled, st.comment, st.latest_request, st.proc_id, st.processor_state, st.machine, st.total_cpus, st.group_id, st.group_name, st.group_enabled;
 
 
-ALTER TABLE sw.v_processors_on_machines_with_active_tools OWNER TO d3l243;
+ALTER VIEW sw.v_processors_on_machines_with_active_tools OWNER TO d3l243;
 
 --
 -- Name: TABLE v_processors_on_machines_with_active_tools; Type: ACL; Schema: sw; Owner: d3l243

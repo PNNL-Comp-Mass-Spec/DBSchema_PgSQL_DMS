@@ -57,7 +57,7 @@ CREATE VIEW sw.v_job_step_stats AS
   GROUP BY steptoolq.job, j.script, j.dataset, j.start, j.finish, j.state, jsn.job_state;
 
 
-ALTER TABLE sw.v_job_step_stats OWNER TO d3l243;
+ALTER VIEW sw.v_job_step_stats OWNER TO d3l243;
 
 --
 -- Name: TABLE v_job_step_stats; Type: ACL; Schema: sw; Owner: d3l243

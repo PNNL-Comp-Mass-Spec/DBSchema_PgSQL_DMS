@@ -22,7 +22,7 @@ CREATE VIEW public.v_requested_run_unified_list_ex AS
      LEFT JOIN public.t_dataset ds ON ((rr.dataset_id = ds.dataset_id)));
 
 
-ALTER TABLE public.v_requested_run_unified_list_ex OWNER TO d3l243;
+ALTER VIEW public.v_requested_run_unified_list_ex OWNER TO d3l243;
 
 --
 -- Name: VIEW v_requested_run_unified_list_ex; Type: COMMENT; Schema: public; Owner: d3l243

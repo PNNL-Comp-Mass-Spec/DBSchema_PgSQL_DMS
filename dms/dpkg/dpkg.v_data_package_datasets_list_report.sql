@@ -55,7 +55,7 @@ CREATE VIEW dpkg.v_data_package_datasets_list_report AS
           GROUP BY aj.dataset_id) psm ON ((dpd.dataset_id = psm.dataset_id)));
 
 
-ALTER TABLE dpkg.v_data_package_datasets_list_report OWNER TO d3l243;
+ALTER VIEW dpkg.v_data_package_datasets_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_data_package_datasets_list_report; Type: ACL; Schema: dpkg; Owner: d3l243

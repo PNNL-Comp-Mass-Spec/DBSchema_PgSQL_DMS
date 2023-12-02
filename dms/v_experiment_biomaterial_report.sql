@@ -14,7 +14,7 @@ CREATE VIEW public.v_experiment_biomaterial_report AS
      JOIN public.t_biomaterial b ON ((eb.biomaterial_id = b.biomaterial_id)));
 
 
-ALTER TABLE public.v_experiment_biomaterial_report OWNER TO d3l243;
+ALTER VIEW public.v_experiment_biomaterial_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_experiment_biomaterial_report; Type: ACL; Schema: public; Owner: d3l243

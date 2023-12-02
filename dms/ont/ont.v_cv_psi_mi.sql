@@ -14,7 +14,7 @@ CREATE VIEW ont.v_cv_psi_mi AS
    FROM ont.t_cv_mi;
 
 
-ALTER TABLE ont.v_cv_psi_mi OWNER TO d3l243;
+ALTER VIEW ont.v_cv_psi_mi OWNER TO d3l243;
 
 --
 -- Name: TABLE v_cv_psi_mi; Type: ACL; Schema: ont; Owner: d3l243

@@ -9,7 +9,7 @@ CREATE VIEW public.v_internal_standards_picklist AS
   WHERE (t_internal_standards.internal_standard_id > 0);
 
 
-ALTER TABLE public.v_internal_standards_picklist OWNER TO d3l243;
+ALTER VIEW public.v_internal_standards_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_internal_standards_picklist; Type: ACL; Schema: public; Owner: d3l243

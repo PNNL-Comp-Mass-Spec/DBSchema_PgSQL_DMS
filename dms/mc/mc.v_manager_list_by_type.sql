@@ -23,7 +23,7 @@ CREATE VIEW mc.v_manager_list_by_type AS
   WHERE (m.control_from_website > 0);
 
 
-ALTER TABLE mc.v_manager_list_by_type OWNER TO d3l243;
+ALTER VIEW mc.v_manager_list_by_type OWNER TO d3l243;
 
 --
 -- Name: TABLE v_manager_list_by_type; Type: ACL; Schema: mc; Owner: d3l243

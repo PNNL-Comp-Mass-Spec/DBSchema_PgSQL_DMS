@@ -8,7 +8,7 @@ CREATE VIEW ont.v_bto_id_to_name AS
    FROM ont.t_cv_bto_cached_names;
 
 
-ALTER TABLE ont.v_bto_id_to_name OWNER TO d3l243;
+ALTER VIEW ont.v_bto_id_to_name OWNER TO d3l243;
 
 --
 -- Name: TABLE v_bto_id_to_name; Type: ACL; Schema: ont; Owner: d3l243

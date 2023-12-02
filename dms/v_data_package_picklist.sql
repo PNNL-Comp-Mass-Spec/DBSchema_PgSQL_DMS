@@ -9,7 +9,7 @@ CREATE VIEW public.v_data_package_picklist AS
    FROM dpkg.v_data_package_export;
 
 
-ALTER TABLE public.v_data_package_picklist OWNER TO d3l243;
+ALTER VIEW public.v_data_package_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_data_package_picklist; Type: ACL; Schema: public; Owner: d3l243

@@ -37,7 +37,7 @@ CREATE VIEW public.v_dataset_stats_recent_crosstab AS
                      Waters_IMS,Waters_TOF}''::text[])'::text) pivotdata(state integer, dataset_state public.citext, "Agilent_Ion_Trap" integer, "Agilent_TOF_V2" integer, "BrukerFT_BAF" integer, "BrukerMALDI_Imaging_V2" integer, "Data_Folders" integer, "Finnigan_Ion_Trap" integer, "GC_QExactive" integer, "IMS_Agilent_TOF_DotD" integer, "IMS_Agilent_TOF_UIMF" integer, "LTQ_FT" integer, "Triple_Quad" integer, "Waters_IMS" integer, "Waters_TOF" integer);
 
 
-ALTER TABLE public.v_dataset_stats_recent_crosstab OWNER TO d3l243;
+ALTER VIEW public.v_dataset_stats_recent_crosstab OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_stats_recent_crosstab; Type: ACL; Schema: public; Owner: d3l243

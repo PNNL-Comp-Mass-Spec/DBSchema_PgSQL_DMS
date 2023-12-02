@@ -9,7 +9,7 @@ CREATE VIEW public.v_protein_options_seq_direction AS
   WHERE (v_creation_string_lookup.keyword OPERATOR(public.=) 'seq_direction'::public.citext);
 
 
-ALTER TABLE public.v_protein_options_seq_direction OWNER TO d3l243;
+ALTER VIEW public.v_protein_options_seq_direction OWNER TO d3l243;
 
 --
 -- Name: TABLE v_protein_options_seq_direction; Type: ACL; Schema: public; Owner: d3l243

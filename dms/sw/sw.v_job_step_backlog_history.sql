@@ -11,7 +11,7 @@ CREATE VIEW sw.v_job_step_backlog_history AS
   GROUP BY t_job_step_status_history.step_tool, t_job_step_status_history.posting_time;
 
 
-ALTER TABLE sw.v_job_step_backlog_history OWNER TO d3l243;
+ALTER VIEW sw.v_job_step_backlog_history OWNER TO d3l243;
 
 --
 -- Name: TABLE v_job_step_backlog_history; Type: ACL; Schema: sw; Owner: d3l243

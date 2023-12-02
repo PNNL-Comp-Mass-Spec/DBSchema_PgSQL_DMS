@@ -16,7 +16,7 @@ CREATE VIEW public.v_analysis_job_export_storage_path AS
   WHERE (aj.job_state_id = ANY (ARRAY[4, 14]));
 
 
-ALTER TABLE public.v_analysis_job_export_storage_path OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_export_storage_path OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_job_export_storage_path; Type: ACL; Schema: public; Owner: d3l243

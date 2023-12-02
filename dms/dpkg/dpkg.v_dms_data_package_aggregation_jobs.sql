@@ -44,7 +44,7 @@ CREATE VIEW dpkg.v_dms_data_package_aggregation_jobs AS
      JOIN public.v_dataset_archive_path dsarch ON ((ds.dataset_id = dsarch.dataset_id)));
 
 
-ALTER TABLE dpkg.v_dms_data_package_aggregation_jobs OWNER TO d3l243;
+ALTER VIEW dpkg.v_dms_data_package_aggregation_jobs OWNER TO d3l243;
 
 --
 -- Name: VIEW v_dms_data_package_aggregation_jobs; Type: COMMENT; Schema: dpkg; Owner: d3l243

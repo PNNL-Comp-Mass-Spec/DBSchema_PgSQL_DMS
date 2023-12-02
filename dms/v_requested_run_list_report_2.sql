@@ -70,7 +70,7 @@ CREATE VIEW public.v_requested_run_list_report_2 AS
      LEFT JOIN public.t_material_locations ml ON ((rr.location_id = ml.location_id)));
 
 
-ALTER TABLE public.v_requested_run_list_report_2 OWNER TO d3l243;
+ALTER VIEW public.v_requested_run_list_report_2 OWNER TO d3l243;
 
 --
 -- Name: VIEW v_requested_run_list_report_2; Type: COMMENT; Schema: public; Owner: d3l243

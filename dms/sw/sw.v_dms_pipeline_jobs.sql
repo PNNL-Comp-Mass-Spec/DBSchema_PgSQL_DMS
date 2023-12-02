@@ -18,7 +18,7 @@ CREATE VIEW sw.v_dms_pipeline_jobs AS
    FROM public.v_get_pipeline_jobs;
 
 
-ALTER TABLE sw.v_dms_pipeline_jobs OWNER TO d3l243;
+ALTER VIEW sw.v_dms_pipeline_jobs OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dms_pipeline_jobs; Type: ACL; Schema: sw; Owner: d3l243

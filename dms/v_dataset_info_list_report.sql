@@ -45,7 +45,7 @@ CREATE VIEW public.v_dataset_info_list_report AS
      LEFT JOIN public.t_requested_run rr ON ((ds.dataset_id = rr.dataset_id)));
 
 
-ALTER TABLE public.v_dataset_info_list_report OWNER TO d3l243;
+ALTER VIEW public.v_dataset_info_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_info_list_report; Type: ACL; Schema: public; Owner: d3l243

@@ -12,7 +12,7 @@ CREATE VIEW dpkg.v_data_package_dataset_aggregation_list_report AS
   GROUP BY ds.dataset, dpj.data_pkg_id;
 
 
-ALTER TABLE dpkg.v_data_package_dataset_aggregation_list_report OWNER TO d3l243;
+ALTER VIEW dpkg.v_data_package_dataset_aggregation_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_data_package_dataset_aggregation_list_report; Type: ACL; Schema: dpkg; Owner: d3l243

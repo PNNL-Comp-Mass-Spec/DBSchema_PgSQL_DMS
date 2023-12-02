@@ -18,7 +18,7 @@ CREATE VIEW public.v_system_activity AS
   WHERE ((a.backend_type = 'client backend'::text) OR ((a.backend_type IS NULL) AND (COALESCE(a.usename, 'postgres'::name) <> 'postgres'::name)));
 
 
-ALTER TABLE public.v_system_activity OWNER TO d3l243;
+ALTER VIEW public.v_system_activity OWNER TO d3l243;
 
 --
 -- Name: TABLE v_system_activity; Type: ACL; Schema: public; Owner: d3l243

@@ -45,7 +45,7 @@ CREATE VIEW public.v_experiment_plex_members_detail_report AS
   GROUP BY plexmembers.plex_exp_id, e.experiment, u.name_with_username, org.organism, e.reason, e.comment, e.created, c.campaign, bto.tissue, e.labelling, e.alkylation, e.sample_prep_request_id, bto.identifier, dscountq.datasets, dscountq.most_recent_dataset, fc.factor_count, e.exp_id, mc.container, ml.location, e.material_active, e.last_used, e.barcode;
 
 
-ALTER TABLE public.v_experiment_plex_members_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_experiment_plex_members_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_experiment_plex_members_detail_report; Type: ACL; Schema: public; Owner: d3l243

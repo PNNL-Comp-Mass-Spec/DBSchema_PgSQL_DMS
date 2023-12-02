@@ -17,7 +17,7 @@ CREATE VIEW public.v_predefined_analysis_scheduling_rules_detail_report AS
      LEFT JOIN public.t_analysis_job_processor_group ajpg ON ((pasr.processor_group_id = ajpg.group_id)));
 
 
-ALTER TABLE public.v_predefined_analysis_scheduling_rules_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_predefined_analysis_scheduling_rules_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_predefined_analysis_scheduling_rules_detail_report; Type: ACL; Schema: public; Owner: d3l243

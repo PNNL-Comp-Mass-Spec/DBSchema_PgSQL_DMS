@@ -63,7 +63,7 @@ UNION
                     LATERAL XMLTABLE(('//JobScript/Step/Depends_On'::text) PASSING (src.scriptxml) COLUMNS step integer PATH ('../@Number'::text), target_step integer PATH ('@Step_Number'::text), condition_test public.citext PATH ('@Test'::text), test_value public.citext PATH ('@Value'::text), enable_only integer PATH ('@Enable_Only'::text))) xmlq ON ((lookupq.script OPERATOR(public.=) xmlq.script)))) enableonlyq;
 
 
-ALTER TABLE sw.v_script_dot_format OWNER TO d3l243;
+ALTER VIEW sw.v_script_dot_format OWNER TO d3l243;
 
 --
 -- Name: TABLE v_script_dot_format; Type: ACL; Schema: sw; Owner: d3l243

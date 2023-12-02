@@ -15,7 +15,7 @@ CREATE VIEW pc.v_archived_output_file_stats_export AS
   GROUP BY aof.archived_file_id, aof.file_size_bytes, (pc.get_file_name_from_path((aof.archived_file_path)::text));
 
 
-ALTER TABLE pc.v_archived_output_file_stats_export OWNER TO d3l243;
+ALTER VIEW pc.v_archived_output_file_stats_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_archived_output_file_stats_export; Type: ACL; Schema: pc; Owner: d3l243

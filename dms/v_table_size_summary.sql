@@ -51,7 +51,7 @@ CREATE VIEW public.v_table_size_summary AS
   ORDER BY statsq.size_bytes DESC;
 
 
-ALTER TABLE public.v_table_size_summary OWNER TO d3l243;
+ALTER VIEW public.v_table_size_summary OWNER TO d3l243;
 
 --
 -- Name: VIEW v_table_size_summary; Type: COMMENT; Schema: public; Owner: d3l243

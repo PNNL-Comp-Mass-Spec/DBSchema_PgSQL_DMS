@@ -9,7 +9,7 @@ CREATE VIEW cap.v_processor_tool_for_manager AS
    FROM cap.t_processor_tool;
 
 
-ALTER TABLE cap.v_processor_tool_for_manager OWNER TO d3l243;
+ALTER VIEW cap.v_processor_tool_for_manager OWNER TO d3l243;
 
 --
 -- Name: TABLE v_processor_tool_for_manager; Type: ACL; Schema: cap; Owner: d3l243

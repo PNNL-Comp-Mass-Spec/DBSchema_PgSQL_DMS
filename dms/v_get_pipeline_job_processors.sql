@@ -15,7 +15,7 @@ CREATE VIEW public.v_get_pipeline_job_processors AS
   GROUP BY j.job, p.processor_name;
 
 
-ALTER TABLE public.v_get_pipeline_job_processors OWNER TO d3l243;
+ALTER VIEW public.v_get_pipeline_job_processors OWNER TO d3l243;
 
 --
 -- Name: VIEW v_get_pipeline_job_processors; Type: COMMENT; Schema: public; Owner: d3l243

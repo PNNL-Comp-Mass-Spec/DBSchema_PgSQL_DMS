@@ -23,7 +23,7 @@ CREATE VIEW public.v_eus_user_id_lookup AS
           WHERE ((NOT (eu.hid IS NULL)) AND (eu.valid = 1))) lookupq ON (((lookupq.eus_hanford_id OPERATOR(public.=) u.hid) AND (lookupq.rowrank = 1))));
 
 
-ALTER TABLE public.v_eus_user_id_lookup OWNER TO d3l243;
+ALTER VIEW public.v_eus_user_id_lookup OWNER TO d3l243;
 
 --
 -- Name: VIEW v_eus_user_id_lookup; Type: COMMENT; Schema: public; Owner: d3l243

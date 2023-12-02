@@ -10,7 +10,7 @@ CREATE VIEW mc.v_manager_type_report_all AS
      JOIN mc.t_param_value pv ON (((pv.mgr_id = m.mgr_id) AND (m.mgr_type_id = mt.mgr_type_id))));
 
 
-ALTER TABLE mc.v_manager_type_report_all OWNER TO d3l243;
+ALTER VIEW mc.v_manager_type_report_all OWNER TO d3l243;
 
 --
 -- Name: TABLE v_manager_type_report_all; Type: ACL; Schema: mc; Owner: d3l243

@@ -20,7 +20,7 @@ CREATE VIEW public.v_purgeable_datasets_nojob AS
   WHERE ((instclass.is_purgeable > 0) AND (j.dataset_id IS NULL) AND ((da.archive_state_id = 3) OR ((da.archive_state_id = 15) AND (da.purge_policy = 2))) AND (ds.dataset_rating_id <> ALL (ARRAY['-2'::integer, '-10'::integer])) AND ((COALESCE((da.purge_holdoff_date)::timestamp with time zone, CURRENT_TIMESTAMP) <= CURRENT_TIMESTAMP) OR (da.stagemd5_required > 0)) AND ((da.archive_update_state_id = 4) OR ((da.archive_update_state_id = ANY (ARRAY[2, 3, 5])) AND (da.archive_update_state_last_affected < (CURRENT_TIMESTAMP - '60 days'::interval)))));
 
 
-ALTER TABLE public.v_purgeable_datasets_nojob OWNER TO d3l243;
+ALTER VIEW public.v_purgeable_datasets_nojob OWNER TO d3l243;
 
 --
 -- Name: VIEW v_purgeable_datasets_nojob; Type: COMMENT; Schema: public; Owner: d3l243

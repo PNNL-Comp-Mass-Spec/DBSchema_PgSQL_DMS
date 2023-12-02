@@ -18,7 +18,7 @@ CREATE VIEW cap.v_dms_dataset_scans AS
      JOIN public.t_dataset_scan_types dst ON ((ds.dataset_id = dst.dataset_id)));
 
 
-ALTER TABLE cap.v_dms_dataset_scans OWNER TO d3l243;
+ALTER VIEW cap.v_dms_dataset_scans OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dms_dataset_scans; Type: ACL; Schema: cap; Owner: d3l243

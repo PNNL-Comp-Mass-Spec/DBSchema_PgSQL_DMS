@@ -12,7 +12,7 @@ CREATE VIEW cap.v_capture_script_dot_format AS
            FROM cap.get_task_script_dot_format_table((s.script)::text) get_task_script_dot_format_table(script_line, seq)) scriptlines;
 
 
-ALTER TABLE cap.v_capture_script_dot_format OWNER TO d3l243;
+ALTER VIEW cap.v_capture_script_dot_format OWNER TO d3l243;
 
 --
 -- Name: TABLE v_capture_script_dot_format; Type: ACL; Schema: cap; Owner: d3l243

@@ -21,7 +21,7 @@ CREATE VIEW public.v_settings_file_lookup AS
           WHERE (sf.active <> 0)) sourceq;
 
 
-ALTER TABLE public.v_settings_file_lookup OWNER TO d3l243;
+ALTER VIEW public.v_settings_file_lookup OWNER TO d3l243;
 
 --
 -- Name: TABLE v_settings_file_lookup; Type: ACL; Schema: public; Owner: d3l243

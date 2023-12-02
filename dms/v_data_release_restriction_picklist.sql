@@ -8,7 +8,7 @@ CREATE VIEW public.v_data_release_restriction_picklist AS
    FROM public.t_data_release_restrictions;
 
 
-ALTER TABLE public.v_data_release_restriction_picklist OWNER TO d3l243;
+ALTER VIEW public.v_data_release_restriction_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_data_release_restriction_picklist; Type: ACL; Schema: public; Owner: d3l243

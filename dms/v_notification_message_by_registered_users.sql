@@ -21,7 +21,7 @@ CREATE VIEW public.v_notification_message_by_registered_users AS
      JOIN public.v_notification_message_by_research_team vnmrt ON (((tu.username OPERATOR(public.=) vnmrt.username) AND (tner.entity_type_id = vnmrt.entity_type))));
 
 
-ALTER TABLE public.v_notification_message_by_registered_users OWNER TO d3l243;
+ALTER VIEW public.v_notification_message_by_registered_users OWNER TO d3l243;
 
 --
 -- Name: TABLE v_notification_message_by_registered_users; Type: ACL; Schema: public; Owner: d3l243

@@ -19,7 +19,7 @@ CREATE VIEW mc.v_manager_type_report AS
           WHERE (t_mgrs.control_from_website > 0)));
 
 
-ALTER TABLE mc.v_manager_type_report OWNER TO d3l243;
+ALTER VIEW mc.v_manager_type_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_manager_type_report; Type: ACL; Schema: mc; Owner: d3l243

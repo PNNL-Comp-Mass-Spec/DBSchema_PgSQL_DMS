@@ -40,7 +40,7 @@ CREATE VIEW public.v_analysis_job_export_datapkg AS
      JOIN public.v_dataset_archive_path dsarch ON ((ds.dataset_id = dsarch.dataset_id)));
 
 
-ALTER TABLE public.v_analysis_job_export_datapkg OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_export_datapkg OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_job_export_datapkg; Type: ACL; Schema: public; Owner: d3l243

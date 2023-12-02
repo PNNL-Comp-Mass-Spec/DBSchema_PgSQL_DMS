@@ -18,7 +18,7 @@ CREATE VIEW public.v_analysis_tool_report AS
   WHERE (tool.analysis_tool_id > 0);
 
 
-ALTER TABLE public.v_analysis_tool_report OWNER TO d3l243;
+ALTER VIEW public.v_analysis_tool_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_tool_report; Type: ACL; Schema: public; Owner: d3l243

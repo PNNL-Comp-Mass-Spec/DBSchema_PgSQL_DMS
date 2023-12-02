@@ -23,7 +23,7 @@ CREATE VIEW sw.v_pipeline_jobs_list_report AS
      JOIN sw.t_job_state_name jsn ON ((j.state = jsn.job_state_id)));
 
 
-ALTER TABLE sw.v_pipeline_jobs_list_report OWNER TO d3l243;
+ALTER VIEW sw.v_pipeline_jobs_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_pipeline_jobs_list_report; Type: ACL; Schema: sw; Owner: d3l243

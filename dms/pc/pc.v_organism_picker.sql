@@ -36,7 +36,7 @@ CREATE VIEW pc.v_organism_picker AS
      LEFT JOIN pc.v_collection_counts_by_organism_id orgcounts ON ((org.organism_id = orgcounts.organism_id)));
 
 
-ALTER TABLE pc.v_organism_picker OWNER TO d3l243;
+ALTER VIEW pc.v_organism_picker OWNER TO d3l243;
 
 --
 -- Name: TABLE v_organism_picker; Type: ACL; Schema: pc; Owner: d3l243

@@ -52,7 +52,7 @@ CREATE VIEW public.v_requested_run_admin_report AS
      LEFT JOIN public.v_charge_code_status cc ON ((rr.work_package OPERATOR(public.=) cc.charge_code)));
 
 
-ALTER TABLE public.v_requested_run_admin_report OWNER TO d3l243;
+ALTER VIEW public.v_requested_run_admin_report OWNER TO d3l243;
 
 --
 -- Name: VIEW v_requested_run_admin_report; Type: COMMENT; Schema: public; Owner: d3l243

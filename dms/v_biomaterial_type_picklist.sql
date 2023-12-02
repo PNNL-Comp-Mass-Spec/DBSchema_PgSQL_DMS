@@ -8,7 +8,7 @@ CREATE VIEW public.v_biomaterial_type_picklist AS
    FROM public.t_biomaterial_type_name btn;
 
 
-ALTER TABLE public.v_biomaterial_type_picklist OWNER TO d3l243;
+ALTER VIEW public.v_biomaterial_type_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_biomaterial_type_picklist; Type: ACL; Schema: public; Owner: d3l243

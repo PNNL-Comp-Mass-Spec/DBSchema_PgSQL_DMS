@@ -8,7 +8,7 @@ CREATE VIEW public.v_user_status_picklist AS
    FROM public.t_user_status;
 
 
-ALTER TABLE public.v_user_status_picklist OWNER TO d3l243;
+ALTER VIEW public.v_user_status_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_user_status_picklist; Type: ACL; Schema: public; Owner: d3l243

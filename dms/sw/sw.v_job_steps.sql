@@ -129,7 +129,7 @@ CREATE VIEW sw.v_job_steps AS
      LEFT JOIN sw.t_local_processors lp ON ((js.processor OPERATOR(public.=) lp.processor_name)));
 
 
-ALTER TABLE sw.v_job_steps OWNER TO d3l243;
+ALTER VIEW sw.v_job_steps OWNER TO d3l243;
 
 --
 -- Name: VIEW v_job_steps; Type: COMMENT; Schema: sw; Owner: d3l243

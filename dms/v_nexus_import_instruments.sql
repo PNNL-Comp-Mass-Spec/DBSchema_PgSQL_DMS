@@ -12,7 +12,7 @@ CREATE VIEW public.v_nexus_import_instruments AS
    FROM eus.vw_instruments;
 
 
-ALTER TABLE public.v_nexus_import_instruments OWNER TO d3l243;
+ALTER VIEW public.v_nexus_import_instruments OWNER TO d3l243;
 
 --
 -- Name: TABLE v_nexus_import_instruments; Type: ACL; Schema: public; Owner: d3l243

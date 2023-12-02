@@ -18,7 +18,7 @@ CREATE VIEW public.v_event_log_dataset_list AS
   WHERE ((el.target_type = 4) AND (el.entered >= (CURRENT_TIMESTAMP - '4 days'::interval)));
 
 
-ALTER TABLE public.v_event_log_dataset_list OWNER TO d3l243;
+ALTER VIEW public.v_event_log_dataset_list OWNER TO d3l243;
 
 --
 -- Name: TABLE v_event_log_dataset_list; Type: ACL; Schema: public; Owner: d3l243

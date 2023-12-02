@@ -26,7 +26,7 @@ CREATE VIEW public.v_instrument_group_picklist AS
           WHERE (g.active > 0)) lookupq;
 
 
-ALTER TABLE public.v_instrument_group_picklist OWNER TO d3l243;
+ALTER VIEW public.v_instrument_group_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_instrument_group_picklist; Type: ACL; Schema: public; Owner: d3l243

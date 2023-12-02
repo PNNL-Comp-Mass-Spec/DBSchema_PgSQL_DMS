@@ -22,7 +22,7 @@ CREATE VIEW public.v_aux_info_value AS
   WHERE (item.active OPERATOR(public.=) 'Y'::public.citext);
 
 
-ALTER TABLE public.v_aux_info_value OWNER TO d3l243;
+ALTER VIEW public.v_aux_info_value OWNER TO d3l243;
 
 --
 -- Name: TABLE v_aux_info_value; Type: ACL; Schema: public; Owner: d3l243

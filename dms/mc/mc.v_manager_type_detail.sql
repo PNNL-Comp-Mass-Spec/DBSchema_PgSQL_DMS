@@ -8,7 +8,7 @@ CREATE VIEW mc.v_manager_type_detail AS
    FROM mc.t_mgr_types;
 
 
-ALTER TABLE mc.v_manager_type_detail OWNER TO d3l243;
+ALTER VIEW mc.v_manager_type_detail OWNER TO d3l243;
 
 --
 -- Name: TABLE v_manager_type_detail; Type: ACL; Schema: mc; Owner: d3l243

@@ -30,7 +30,7 @@ CREATE VIEW public.v_charge_code_detail_report AS
      LEFT JOIN public.v_charge_code_owner_dms_user_map dmsuser ON ((cc.charge_code OPERATOR(public.=) dmsuser.charge_code)));
 
 
-ALTER TABLE public.v_charge_code_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_charge_code_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_charge_code_detail_report; Type: ACL; Schema: public; Owner: d3l243

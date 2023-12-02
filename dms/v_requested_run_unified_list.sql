@@ -20,7 +20,7 @@ CREATE VIEW public.v_requested_run_unified_list AS
      LEFT JOIN public.t_requested_run_batches rrb ON ((rr.batch_id = rrb.batch_id)));
 
 
-ALTER TABLE public.v_requested_run_unified_list OWNER TO d3l243;
+ALTER VIEW public.v_requested_run_unified_list OWNER TO d3l243;
 
 --
 -- Name: VIEW v_requested_run_unified_list; Type: COMMENT; Schema: public; Owner: d3l243

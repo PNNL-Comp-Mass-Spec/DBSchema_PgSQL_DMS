@@ -19,7 +19,7 @@ CREATE VIEW public.v_material_locations_available_list_report AS
   WHERE ((ml.available > 0) AND (ml.status OPERATOR(public.=) 'Active'::public.citext));
 
 
-ALTER TABLE public.v_material_locations_available_list_report OWNER TO d3l243;
+ALTER VIEW public.v_material_locations_available_list_report OWNER TO d3l243;
 
 --
 -- Name: VIEW v_material_locations_available_list_report; Type: COMMENT; Schema: public; Owner: d3l243

@@ -21,7 +21,7 @@ CREATE VIEW public.v_analysis_job_duration_precise AS
           GROUP BY t_event_log.target_id) endq ON (((startq.job = endq.job) AND (startq.entered < endq.entered))));
 
 
-ALTER TABLE public.v_analysis_job_duration_precise OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_duration_precise OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_job_duration_precise; Type: ACL; Schema: public; Owner: d3l243

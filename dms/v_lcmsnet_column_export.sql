@@ -14,7 +14,7 @@ CREATE VIEW public.v_lcmsnet_column_export AS
      JOIN public.t_lc_column_state_name statename ON ((lc.column_state_id = statename.column_state_id)));
 
 
-ALTER TABLE public.v_lcmsnet_column_export OWNER TO d3l243;
+ALTER VIEW public.v_lcmsnet_column_export OWNER TO d3l243;
 
 --
 -- Name: VIEW v_lcmsnet_column_export; Type: COMMENT; Schema: public; Owner: d3l243

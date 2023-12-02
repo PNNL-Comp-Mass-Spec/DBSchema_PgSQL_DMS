@@ -15,7 +15,7 @@ CREATE VIEW cap.v_dms_get_dataset_definition AS
      LEFT JOIN public.t_storage_path spath ON ((spath.storage_path_id = ds.storage_path_id)));
 
 
-ALTER TABLE cap.v_dms_get_dataset_definition OWNER TO d3l243;
+ALTER VIEW cap.v_dms_get_dataset_definition OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dms_get_dataset_definition; Type: ACL; Schema: cap; Owner: d3l243

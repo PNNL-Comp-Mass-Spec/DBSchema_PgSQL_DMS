@@ -14,7 +14,7 @@ CREATE VIEW ont.v_cv_pride AS
    FROM ont.t_cv_pride;
 
 
-ALTER TABLE ont.v_cv_pride OWNER TO d3l243;
+ALTER VIEW ont.v_cv_pride OWNER TO d3l243;
 
 --
 -- Name: TABLE v_cv_pride; Type: ACL; Schema: ont; Owner: d3l243

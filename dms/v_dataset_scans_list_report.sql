@@ -29,7 +29,7 @@ CREATE VIEW public.v_dataset_scans_list_report AS
      JOIN public.t_dataset_scan_types dst ON ((ds.dataset_id = dst.dataset_id)));
 
 
-ALTER TABLE public.v_dataset_scans_list_report OWNER TO d3l243;
+ALTER VIEW public.v_dataset_scans_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_scans_list_report; Type: ACL; Schema: public; Owner: d3l243

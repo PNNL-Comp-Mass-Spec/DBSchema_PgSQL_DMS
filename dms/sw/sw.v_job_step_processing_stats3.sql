@@ -72,7 +72,7 @@ CREATE VIEW sw.v_job_step_processing_stats3 AS
          HAVING (count(*) > 25)) filterq ON (((dataq.job = filterq.job) AND (dataq.step = filterq.step))));
 
 
-ALTER TABLE sw.v_job_step_processing_stats3 OWNER TO d3l243;
+ALTER VIEW sw.v_job_step_processing_stats3 OWNER TO d3l243;
 
 --
 -- Name: TABLE v_job_step_processing_stats3; Type: ACL; Schema: sw; Owner: d3l243

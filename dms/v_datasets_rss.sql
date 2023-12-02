@@ -23,7 +23,7 @@ CREATE VIEW public.v_datasets_rss AS
           WHERE (ds.created > (CURRENT_TIMESTAMP - '30 days'::interval))) filterq;
 
 
-ALTER TABLE public.v_datasets_rss OWNER TO d3l243;
+ALTER VIEW public.v_datasets_rss OWNER TO d3l243;
 
 --
 -- Name: TABLE v_datasets_rss; Type: ACL; Schema: public; Owner: d3l243

@@ -93,7 +93,7 @@ CREATE VIEW public.v_analysis_job_psm_detail_report AS
      LEFT JOIN public.t_analysis_job_psm_stats_phospho phosphopsm ON ((psm.job = phosphopsm.job)));
 
 
-ALTER TABLE public.v_analysis_job_psm_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_psm_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_job_psm_detail_report; Type: ACL; Schema: public; Owner: d3l243

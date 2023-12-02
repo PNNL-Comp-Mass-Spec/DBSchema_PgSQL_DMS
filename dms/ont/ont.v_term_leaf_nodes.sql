@@ -18,7 +18,7 @@ CREATE VIEW ont.v_term_leaf_nodes AS
   WHERE (v_term.is_leaf = 1);
 
 
-ALTER TABLE ont.v_term_leaf_nodes OWNER TO d3l243;
+ALTER VIEW ont.v_term_leaf_nodes OWNER TO d3l243;
 
 --
 -- Name: TABLE v_term_leaf_nodes; Type: ACL; Schema: ont; Owner: d3l243

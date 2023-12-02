@@ -18,7 +18,7 @@ CREATE VIEW pc.v_protein_collections_list_report AS
      JOIN pc.t_protein_collection_states pcs ON ((pc.collection_state_id = pcs.collection_state_id))) ON ((antype.annotation_type_id = pc.primary_annotation_type_id)));
 
 
-ALTER TABLE pc.v_protein_collections_list_report OWNER TO d3l243;
+ALTER VIEW pc.v_protein_collections_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_protein_collections_list_report; Type: ACL; Schema: pc; Owner: d3l243

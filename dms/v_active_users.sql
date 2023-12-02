@@ -10,7 +10,7 @@ CREATE VIEW public.v_active_users AS
   WHERE (t_users.status OPERATOR(public.=) 'Active'::public.citext);
 
 
-ALTER TABLE public.v_active_users OWNER TO d3l243;
+ALTER VIEW public.v_active_users OWNER TO d3l243;
 
 --
 -- Name: TABLE v_active_users; Type: ACL; Schema: public; Owner: d3l243

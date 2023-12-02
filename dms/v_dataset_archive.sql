@@ -39,7 +39,7 @@ CREATE VIEW public.v_dataset_archive AS
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)));
 
 
-ALTER TABLE public.v_dataset_archive OWNER TO d3l243;
+ALTER VIEW public.v_dataset_archive OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_archive; Type: ACL; Schema: public; Owner: d3l243

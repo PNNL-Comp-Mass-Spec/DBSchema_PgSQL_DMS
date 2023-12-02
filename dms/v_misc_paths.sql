@@ -10,7 +10,7 @@ CREATE VIEW public.v_misc_paths AS
    FROM public.t_misc_paths;
 
 
-ALTER TABLE public.v_misc_paths OWNER TO d3l243;
+ALTER VIEW public.v_misc_paths OWNER TO d3l243;
 
 --
 -- Name: TABLE v_misc_paths; Type: ACL; Schema: public; Owner: d3l243

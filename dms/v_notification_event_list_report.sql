@@ -12,7 +12,7 @@ CREATE VIEW public.v_notification_event_list_report AS
      JOIN public.t_notification_event_type eventtype ON ((ne.event_type_id = eventtype.event_type_id)));
 
 
-ALTER TABLE public.v_notification_event_list_report OWNER TO d3l243;
+ALTER VIEW public.v_notification_event_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_notification_event_list_report; Type: ACL; Schema: public; Owner: d3l243

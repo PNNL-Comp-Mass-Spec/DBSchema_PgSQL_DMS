@@ -75,7 +75,7 @@ CREATE VIEW logdms.v_event_log AS
      LEFT JOIN public.t_analysis_job_request_state ajrs ON (((el.target_state = ajrs.request_state_id) AND (el.target_type = 12))));
 
 
-ALTER TABLE logdms.v_event_log OWNER TO d3l243;
+ALTER VIEW logdms.v_event_log OWNER TO d3l243;
 
 --
 -- Name: TABLE v_event_log; Type: ACL; Schema: logdms; Owner: d3l243

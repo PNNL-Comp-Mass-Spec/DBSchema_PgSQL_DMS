@@ -21,7 +21,7 @@ CREATE VIEW mc.v_all_mgr_params_by_mgr_type AS
      LEFT JOIN mc.t_mgr_type_param_type_map mtpm ON (((tpt.param_id = mtpm.param_type_id) AND (tpt.mgr_type_id = mtpm.mgr_type_id))));
 
 
-ALTER TABLE mc.v_all_mgr_params_by_mgr_type OWNER TO d3l243;
+ALTER VIEW mc.v_all_mgr_params_by_mgr_type OWNER TO d3l243;
 
 --
 -- Name: TABLE v_all_mgr_params_by_mgr_type; Type: ACL; Schema: mc; Owner: d3l243

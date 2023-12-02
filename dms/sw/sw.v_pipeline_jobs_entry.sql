@@ -16,7 +16,7 @@ CREATE VIEW sw.v_pipeline_jobs_entry AS
      JOIN sw.t_job_parameters jp ON ((j.job = jp.job)));
 
 
-ALTER TABLE sw.v_pipeline_jobs_entry OWNER TO d3l243;
+ALTER VIEW sw.v_pipeline_jobs_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_pipeline_jobs_entry; Type: ACL; Schema: sw; Owner: d3l243

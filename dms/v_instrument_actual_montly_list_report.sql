@@ -119,7 +119,7 @@ CREATE VIEW public.v_instrument_actual_montly_list_report AS
           GROUP BY (EXTRACT(year FROM ds.acq_time_start)), (EXTRACT(month FROM ds.acq_time_start)), rr.eus_proposal_id) usageq ON ((ep.proposal_id OPERATOR(public.=) usageq.proposal_id)));
 
 
-ALTER TABLE public.v_instrument_actual_montly_list_report OWNER TO d3l243;
+ALTER VIEW public.v_instrument_actual_montly_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_instrument_actual_montly_list_report; Type: ACL; Schema: public; Owner: d3l243

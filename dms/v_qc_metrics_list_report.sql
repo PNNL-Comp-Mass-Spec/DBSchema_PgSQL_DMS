@@ -38,7 +38,7 @@ CREATE VIEW public.v_qc_metrics_list_report AS
      LEFT JOIN public.t_storage_path spath ON ((spath.storage_path_id = ds.storage_path_id)));
 
 
-ALTER TABLE public.v_qc_metrics_list_report OWNER TO d3l243;
+ALTER VIEW public.v_qc_metrics_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_qc_metrics_list_report; Type: ACL; Schema: public; Owner: d3l243

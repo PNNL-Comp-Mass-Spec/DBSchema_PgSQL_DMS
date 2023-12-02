@@ -37,7 +37,7 @@ CREATE VIEW public.v_dataset_entry AS
      LEFT JOIN public.t_lc_cart_configuration cartconfig ON ((ds.cart_config_id = cartconfig.cart_config_id)));
 
 
-ALTER TABLE public.v_dataset_entry OWNER TO d3l243;
+ALTER VIEW public.v_dataset_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_entry; Type: ACL; Schema: public; Owner: d3l243

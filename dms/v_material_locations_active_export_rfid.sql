@@ -15,7 +15,7 @@ CREATE VIEW public.v_material_locations_active_export_rfid AS
   WHERE (ml.status OPERATOR(public.=) 'active'::public.citext);
 
 
-ALTER TABLE public.v_material_locations_active_export_rfid OWNER TO d3l243;
+ALTER VIEW public.v_material_locations_active_export_rfid OWNER TO d3l243;
 
 --
 -- Name: TABLE v_material_locations_active_export_rfid; Type: ACL; Schema: public; Owner: d3l243

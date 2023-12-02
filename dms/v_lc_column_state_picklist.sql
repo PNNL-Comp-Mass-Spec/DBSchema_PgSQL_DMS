@@ -8,7 +8,7 @@ CREATE VIEW public.v_lc_column_state_picklist AS
    FROM public.t_lc_column_state_name;
 
 
-ALTER TABLE public.v_lc_column_state_picklist OWNER TO d3l243;
+ALTER VIEW public.v_lc_column_state_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_lc_column_state_picklist; Type: ACL; Schema: public; Owner: d3l243

@@ -14,7 +14,7 @@ CREATE VIEW sw.v_stalled_processors AS
   WHERE ((t_local_processors.latest_request >= '2008-12-01 00:00:00'::timestamp without time zone) AND (t_local_processors.latest_request < (CURRENT_TIMESTAMP - '12:00:00'::interval)));
 
 
-ALTER TABLE sw.v_stalled_processors OWNER TO d3l243;
+ALTER VIEW sw.v_stalled_processors OWNER TO d3l243;
 
 --
 -- Name: TABLE v_stalled_processors; Type: ACL; Schema: sw; Owner: d3l243

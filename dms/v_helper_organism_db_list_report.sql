@@ -16,7 +16,7 @@ CREATE VIEW public.v_helper_organism_db_list_report AS
   WHERE ((f.active > 0) AND (f.valid > 0));
 
 
-ALTER TABLE public.v_helper_organism_db_list_report OWNER TO d3l243;
+ALTER VIEW public.v_helper_organism_db_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_helper_organism_db_list_report; Type: ACL; Schema: public; Owner: d3l243

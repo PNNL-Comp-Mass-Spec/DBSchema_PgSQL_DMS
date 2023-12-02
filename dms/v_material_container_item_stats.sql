@@ -31,7 +31,7 @@ CREATE VIEW public.v_material_container_item_stats AS
   GROUP BY mc.container, mc.type, ml.location, mc.comment, mc.created, mc.status, mc.container_id, mc.researcher;
 
 
-ALTER TABLE public.v_material_container_item_stats OWNER TO d3l243;
+ALTER VIEW public.v_material_container_item_stats OWNER TO d3l243;
 
 --
 -- Name: TABLE v_material_container_item_stats; Type: ACL; Schema: public; Owner: d3l243

@@ -69,7 +69,7 @@ CREATE VIEW public.v_instrument_detail_report AS
      LEFT JOIN public.v_instrument_tracked insttracking ON ((instname.instrument OPERATOR(public.=) insttracking.name)));
 
 
-ALTER TABLE public.v_instrument_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_instrument_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_instrument_detail_report; Type: ACL; Schema: public; Owner: d3l243

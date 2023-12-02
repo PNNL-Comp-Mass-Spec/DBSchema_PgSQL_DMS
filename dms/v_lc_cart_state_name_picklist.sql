@@ -9,7 +9,7 @@ CREATE VIEW public.v_lc_cart_state_name_picklist AS
   WHERE (t_lc_cart_state_name.cart_state_id > 1);
 
 
-ALTER TABLE public.v_lc_cart_state_name_picklist OWNER TO d3l243;
+ALTER VIEW public.v_lc_cart_state_name_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_lc_cart_state_name_picklist; Type: ACL; Schema: public; Owner: d3l243

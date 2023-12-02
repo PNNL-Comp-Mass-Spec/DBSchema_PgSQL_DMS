@@ -18,7 +18,7 @@ CREATE VIEW public.v_factor_count_by_req_run_batch AS
   GROUP BY factorq.batch_id;
 
 
-ALTER TABLE public.v_factor_count_by_req_run_batch OWNER TO d3l243;
+ALTER VIEW public.v_factor_count_by_req_run_batch OWNER TO d3l243;
 
 --
 -- Name: TABLE v_factor_count_by_req_run_batch; Type: ACL; Schema: public; Owner: d3l243

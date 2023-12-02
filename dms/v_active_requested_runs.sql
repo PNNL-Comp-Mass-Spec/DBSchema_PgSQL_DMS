@@ -45,7 +45,7 @@ CREATE VIEW public.v_active_requested_runs AS
   WHERE (v_requested_run_list_report_2.status OPERATOR(public.=) 'Active'::public.citext);
 
 
-ALTER TABLE public.v_active_requested_runs OWNER TO d3l243;
+ALTER VIEW public.v_active_requested_runs OWNER TO d3l243;
 
 --
 -- Name: TABLE v_active_requested_runs; Type: ACL; Schema: public; Owner: d3l243

@@ -128,7 +128,7 @@ CREATE VIEW public.v_dataset_qc_metrics AS
      JOIN public.t_dataset_rating_name drn ON ((ds.dataset_rating_id = drn.dataset_rating_id)));
 
 
-ALTER TABLE public.v_dataset_qc_metrics OWNER TO d3l243;
+ALTER VIEW public.v_dataset_qc_metrics OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_qc_metrics; Type: ACL; Schema: public; Owner: d3l243

@@ -37,7 +37,7 @@ CREATE VIEW dpkg.v_dms_data_package_aggregation_datasets AS
      LEFT JOIN ont.t_cv_newt newt ON ((org.ncbi_taxonomy_id = newt.identifier)));
 
 
-ALTER TABLE dpkg.v_dms_data_package_aggregation_datasets OWNER TO d3l243;
+ALTER VIEW dpkg.v_dms_data_package_aggregation_datasets OWNER TO d3l243;
 
 --
 -- Name: VIEW v_dms_data_package_aggregation_datasets; Type: COMMENT; Schema: dpkg; Owner: d3l243

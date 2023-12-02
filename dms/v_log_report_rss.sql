@@ -13,7 +13,7 @@ CREATE VIEW public.v_log_report_rss AS
   WHERE ((v_log_report.type OPERATOR(public.=) 'Error'::public.citext) AND (NOT (v_log_report.message OPERATOR(public.~~) '%Error posting xml%'::public.citext)));
 
 
-ALTER TABLE public.v_log_report_rss OWNER TO d3l243;
+ALTER VIEW public.v_log_report_rss OWNER TO d3l243;
 
 --
 -- Name: TABLE v_log_report_rss; Type: ACL; Schema: public; Owner: d3l243

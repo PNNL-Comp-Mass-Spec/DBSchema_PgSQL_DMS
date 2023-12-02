@@ -38,7 +38,7 @@ CREATE VIEW public.v_dataset_metadata AS
      LEFT JOIN public.t_dataset_archive_state_name dasn ON ((dasn.archive_state_id = da.archive_state_id)));
 
 
-ALTER TABLE public.v_dataset_metadata OWNER TO d3l243;
+ALTER VIEW public.v_dataset_metadata OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_metadata; Type: ACL; Schema: public; Owner: d3l243

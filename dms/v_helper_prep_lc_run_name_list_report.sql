@@ -16,7 +16,7 @@ CREATE VIEW public.v_helper_prep_lc_run_name_list_report AS
  LIMIT 1000;
 
 
-ALTER TABLE public.v_helper_prep_lc_run_name_list_report OWNER TO d3l243;
+ALTER VIEW public.v_helper_prep_lc_run_name_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_helper_prep_lc_run_name_list_report; Type: ACL; Schema: public; Owner: d3l243

@@ -10,7 +10,7 @@ CREATE VIEW public.v_legacy_fasta_file_paths AS
      JOIN public.t_organisms ON ((t_organism_db_file.organism_id = t_organisms.organism_id)));
 
 
-ALTER TABLE public.v_legacy_fasta_file_paths OWNER TO d3l243;
+ALTER VIEW public.v_legacy_fasta_file_paths OWNER TO d3l243;
 
 --
 -- Name: TABLE v_legacy_fasta_file_paths; Type: ACL; Schema: public; Owner: d3l243

@@ -26,7 +26,7 @@ CREATE VIEW public.v_organism_entry AS
      JOIN public.t_yes_no ON ((org.auto_define_taxonomy = t_yes_no.flag)));
 
 
-ALTER TABLE public.v_organism_entry OWNER TO d3l243;
+ALTER VIEW public.v_organism_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_organism_entry; Type: ACL; Schema: public; Owner: d3l243

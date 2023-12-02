@@ -12,7 +12,7 @@ CREATE VIEW sw.v_script_dot_format_use_function AS
            FROM sw.get_task_script_dot_format_table((s.script)::text) get_task_script_dot_format_table(script_line, seq)) scriptlines;
 
 
-ALTER TABLE sw.v_script_dot_format_use_function OWNER TO d3l243;
+ALTER VIEW sw.v_script_dot_format_use_function OWNER TO d3l243;
 
 --
 -- Name: TABLE v_script_dot_format_use_function; Type: ACL; Schema: sw; Owner: d3l243

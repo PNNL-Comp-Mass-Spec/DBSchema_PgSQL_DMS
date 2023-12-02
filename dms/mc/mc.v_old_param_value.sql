@@ -18,7 +18,7 @@ CREATE VIEW mc.v_old_param_value AS
      JOIN mc.t_param_type pt ON ((pv.param_type_id = pt.param_type_id)));
 
 
-ALTER TABLE mc.v_old_param_value OWNER TO d3l243;
+ALTER VIEW mc.v_old_param_value OWNER TO d3l243;
 
 --
 -- Name: TABLE v_old_param_value; Type: ACL; Schema: mc; Owner: d3l243

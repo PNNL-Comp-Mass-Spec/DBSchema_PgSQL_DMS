@@ -53,7 +53,7 @@ CREATE VIEW public.v_eus_export_dataset_metadata AS
   WHERE ((d.dataset_state_id = 3) AND (d.dataset_rating_id <> ALL (ARRAY['-1'::integer, '-2'::integer, '-5'::integer])));
 
 
-ALTER TABLE public.v_eus_export_dataset_metadata OWNER TO d3l243;
+ALTER VIEW public.v_eus_export_dataset_metadata OWNER TO d3l243;
 
 --
 -- Name: TABLE v_eus_export_dataset_metadata; Type: ACL; Schema: public; Owner: d3l243

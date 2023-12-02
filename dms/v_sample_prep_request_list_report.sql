@@ -86,7 +86,7 @@ CREATE VIEW public.v_sample_prep_request_list_report AS
   GROUP BY spr.prep_request_id, spr.request_name, spr.created, spr.estimated_prep_time_days, spr.priority, ta.attachments, spr.state_id, sn.state_name, spr.state_comment, spr.reason, spr.number_of_samples, spr.estimated_ms_runs, qt.days_in_queue, qt.days_in_state, spr.prep_method, spr.requested_personnel, spr.assigned_personnel, qp.name_with_username, spr.organism, spr.biohazard_level, spr.campaign, spr.comment, spr.work_package, spr.instrument_group, spr.instrument_analysis_specifications, spr.separation_group, cc.activation_state, cc.activation_state_name, spr.eus_proposal_id, spr.eus_usage_type, ept.proposal_type_name, bto.tissue, spr.material_container_list;
 
 
-ALTER TABLE public.v_sample_prep_request_list_report OWNER TO d3l243;
+ALTER VIEW public.v_sample_prep_request_list_report OWNER TO d3l243;
 
 --
 -- Name: VIEW v_sample_prep_request_list_report; Type: COMMENT; Schema: public; Owner: d3l243

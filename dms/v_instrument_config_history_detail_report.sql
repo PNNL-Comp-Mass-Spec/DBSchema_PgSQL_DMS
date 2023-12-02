@@ -17,7 +17,7 @@ CREATE VIEW public.v_instrument_config_history_detail_report AS
      LEFT JOIN public.t_users u ON ((h.entered_by OPERATOR(public.=) u.username)));
 
 
-ALTER TABLE public.v_instrument_config_history_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_instrument_config_history_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_instrument_config_history_detail_report; Type: ACL; Schema: public; Owner: d3l243

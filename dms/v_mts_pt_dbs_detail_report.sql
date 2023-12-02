@@ -17,7 +17,7 @@ CREATE VIEW public.v_mts_pt_dbs_detail_report AS
    FROM public.t_mts_pt_dbs_cached ptdbs;
 
 
-ALTER TABLE public.v_mts_pt_dbs_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_mts_pt_dbs_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_mts_pt_dbs_detail_report; Type: ACL; Schema: public; Owner: d3l243

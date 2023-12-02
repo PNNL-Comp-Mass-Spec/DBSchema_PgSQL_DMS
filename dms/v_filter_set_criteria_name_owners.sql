@@ -13,7 +13,7 @@ CREATE VIEW public.v_filter_set_criteria_name_owners AS
      JOIN public.t_analysis_tool ON ((t_filter_set_criteria_name_tool_map.analysis_tool_id = t_analysis_tool.analysis_tool_id)));
 
 
-ALTER TABLE public.v_filter_set_criteria_name_owners OWNER TO d3l243;
+ALTER VIEW public.v_filter_set_criteria_name_owners OWNER TO d3l243;
 
 --
 -- Name: TABLE v_filter_set_criteria_name_owners; Type: ACL; Schema: public; Owner: d3l243

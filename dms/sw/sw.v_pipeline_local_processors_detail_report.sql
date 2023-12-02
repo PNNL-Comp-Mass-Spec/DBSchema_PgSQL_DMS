@@ -13,7 +13,7 @@ CREATE VIEW sw.v_pipeline_local_processors_detail_report AS
    FROM sw.t_local_processors;
 
 
-ALTER TABLE sw.v_pipeline_local_processors_detail_report OWNER TO d3l243;
+ALTER VIEW sw.v_pipeline_local_processors_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_pipeline_local_processors_detail_report; Type: ACL; Schema: sw; Owner: d3l243

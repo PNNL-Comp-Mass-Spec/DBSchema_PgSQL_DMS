@@ -30,7 +30,7 @@ CREATE VIEW public.v_project_usage_stats2 AS
   WHERE (((v_project_usage_stats.year)::numeric = EXTRACT(year FROM CURRENT_TIMESTAMP)) AND ((v_project_usage_stats.week)::numeric >= (EXTRACT(week FROM CURRENT_TIMESTAMP) - (1)::numeric)) AND (NOT ((v_project_usage_stats.usage_type OPERATOR(public.=) ANY (ARRAY['CAP_DEV'::public.citext, 'MAINTENANCE'::public.citext, 'RESOURCE_OWNER'::public.citext])) AND (v_project_usage_stats.project_type OPERATOR(public.=) 'Unknown'::public.citext))));
 
 
-ALTER TABLE public.v_project_usage_stats2 OWNER TO d3l243;
+ALTER VIEW public.v_project_usage_stats2 OWNER TO d3l243;
 
 --
 -- Name: VIEW v_project_usage_stats2; Type: COMMENT; Schema: public; Owner: d3l243

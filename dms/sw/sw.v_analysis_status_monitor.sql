@@ -23,7 +23,7 @@ CREATE VIEW sw.v_analysis_status_monitor AS
      RIGHT JOIN sw.t_processor_status ps ON ((lp.processor_name OPERATOR(public.=) ps.processor_name)));
 
 
-ALTER TABLE sw.v_analysis_status_monitor OWNER TO d3l243;
+ALTER VIEW sw.v_analysis_status_monitor OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_status_monitor; Type: ACL; Schema: sw; Owner: d3l243

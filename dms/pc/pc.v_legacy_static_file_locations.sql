@@ -17,7 +17,7 @@ CREATE VIEW pc.v_legacy_static_file_locations AS
            FROM pc.t_legacy_file_upload_requests) lfur ON ((orgdbinfo.file_name OPERATOR(public.=) lfur.file_name)));
 
 
-ALTER TABLE pc.v_legacy_static_file_locations OWNER TO d3l243;
+ALTER VIEW pc.v_legacy_static_file_locations OWNER TO d3l243;
 
 --
 -- Name: TABLE v_legacy_static_file_locations; Type: ACL; Schema: pc; Owner: d3l243

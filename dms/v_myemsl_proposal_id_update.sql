@@ -13,7 +13,7 @@ CREATE VIEW public.v_myemsl_proposal_id_update AS
      LEFT JOIN public.t_eus_proposals eup ON ((rr.eus_proposal_id OPERATOR(public.=) eup.proposal_id)));
 
 
-ALTER TABLE public.v_myemsl_proposal_id_update OWNER TO d3l243;
+ALTER VIEW public.v_myemsl_proposal_id_update OWNER TO d3l243;
 
 --
 -- Name: VIEW v_myemsl_proposal_id_update; Type: COMMENT; Schema: public; Owner: d3l243

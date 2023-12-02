@@ -17,7 +17,7 @@ CREATE VIEW public.v_dataset_files_list_report AS
   WHERE (df.deleted = false);
 
 
-ALTER TABLE public.v_dataset_files_list_report OWNER TO d3l243;
+ALTER VIEW public.v_dataset_files_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_files_list_report; Type: ACL; Schema: public; Owner: d3l243

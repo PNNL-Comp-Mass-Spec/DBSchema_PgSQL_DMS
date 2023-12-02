@@ -30,7 +30,7 @@ CREATE VIEW public.v_campaign_list_report_2 AS
      LEFT JOIN public.t_campaign_tracking ct ON ((c.campaign_id = ct.campaign_id)));
 
 
-ALTER TABLE public.v_campaign_list_report_2 OWNER TO d3l243;
+ALTER VIEW public.v_campaign_list_report_2 OWNER TO d3l243;
 
 --
 -- Name: TABLE v_campaign_list_report_2; Type: ACL; Schema: public; Owner: d3l243

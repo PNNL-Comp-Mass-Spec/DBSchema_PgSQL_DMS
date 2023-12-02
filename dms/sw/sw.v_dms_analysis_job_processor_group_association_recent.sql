@@ -13,7 +13,7 @@ CREATE VIEW sw.v_dms_analysis_job_processor_group_association_recent AS
    FROM public.v_analysis_job_processor_group_association_recent;
 
 
-ALTER TABLE sw.v_dms_analysis_job_processor_group_association_recent OWNER TO d3l243;
+ALTER VIEW sw.v_dms_analysis_job_processor_group_association_recent OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dms_analysis_job_processor_group_association_recent; Type: ACL; Schema: sw; Owner: d3l243

@@ -33,7 +33,7 @@ CREATE VIEW public.v_analysis_job_request_detail_report AS
           GROUP BY j.request_id) jobsq ON ((ajr.request_id = jobsq.request_id)));
 
 
-ALTER TABLE public.v_analysis_job_request_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_request_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_job_request_detail_report; Type: ACL; Schema: public; Owner: d3l243

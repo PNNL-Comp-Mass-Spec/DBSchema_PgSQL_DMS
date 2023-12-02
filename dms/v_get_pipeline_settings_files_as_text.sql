@@ -14,7 +14,7 @@ CREATE VIEW public.v_get_pipeline_settings_files_as_text AS
    FROM public.t_settings_files;
 
 
-ALTER TABLE public.v_get_pipeline_settings_files_as_text OWNER TO d3l243;
+ALTER VIEW public.v_get_pipeline_settings_files_as_text OWNER TO d3l243;
 
 --
 -- Name: TABLE v_get_pipeline_settings_files_as_text; Type: ACL; Schema: public; Owner: d3l243

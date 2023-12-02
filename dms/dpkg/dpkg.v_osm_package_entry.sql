@@ -16,7 +16,7 @@ CREATE VIEW dpkg.v_osm_package_entry AS
    FROM dpkg.t_osm_package;
 
 
-ALTER TABLE dpkg.v_osm_package_entry OWNER TO d3l243;
+ALTER VIEW dpkg.v_osm_package_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_osm_package_entry; Type: ACL; Schema: dpkg; Owner: d3l243

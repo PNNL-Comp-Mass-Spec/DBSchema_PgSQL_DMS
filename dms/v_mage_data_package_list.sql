@@ -18,7 +18,7 @@ CREATE VIEW public.v_mage_data_package_list AS
    FROM dpkg.v_data_package_export dpe;
 
 
-ALTER TABLE public.v_mage_data_package_list OWNER TO d3l243;
+ALTER VIEW public.v_mage_data_package_list OWNER TO d3l243;
 
 --
 -- Name: TABLE v_mage_data_package_list; Type: ACL; Schema: public; Owner: d3l243

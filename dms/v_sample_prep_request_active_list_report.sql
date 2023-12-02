@@ -57,7 +57,7 @@ CREATE VIEW public.v_sample_prep_request_active_list_report AS
   WHERE ((NOT (spr.state_id = ANY (ARRAY[0, 4, 5]))) AND (spr.request_type OPERATOR(public.=) 'Default'::public.citext));
 
 
-ALTER TABLE public.v_sample_prep_request_active_list_report OWNER TO d3l243;
+ALTER VIEW public.v_sample_prep_request_active_list_report OWNER TO d3l243;
 
 --
 -- Name: VIEW v_sample_prep_request_active_list_report; Type: COMMENT; Schema: public; Owner: d3l243

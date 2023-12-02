@@ -30,7 +30,7 @@ CREATE VIEW public.v_mts_mt_db_jobs AS
      JOIN public.t_analysis_tool tool ON ((j.analysis_tool_id = tool.analysis_tool_id))) ON ((jm.job = j.job)));
 
 
-ALTER TABLE public.v_mts_mt_db_jobs OWNER TO d3l243;
+ALTER VIEW public.v_mts_mt_db_jobs OWNER TO d3l243;
 
 --
 -- Name: TABLE v_mts_mt_db_jobs; Type: ACL; Schema: public; Owner: d3l243

@@ -23,7 +23,7 @@ CREATE VIEW public.v_dataset_purge_stats AS
           GROUP BY instname.instrument, ((('\\'::text || (spath.machine_name)::text) || '\'::text) || (spath.storage_path)::text), (EXTRACT(year FROM ds.created)), (EXTRACT(month FROM ds.created))) lookupq;
 
 
-ALTER TABLE public.v_dataset_purge_stats OWNER TO d3l243;
+ALTER VIEW public.v_dataset_purge_stats OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_purge_stats; Type: ACL; Schema: public; Owner: d3l243

@@ -12,7 +12,7 @@ CREATE VIEW mc.v_manager_update_required AS
   WHERE (pt.param_name OPERATOR(public.=) 'ManagerUpdateRequired'::public.citext);
 
 
-ALTER TABLE mc.v_manager_update_required OWNER TO d3l243;
+ALTER VIEW mc.v_manager_update_required OWNER TO d3l243;
 
 --
 -- Name: TABLE v_manager_update_required; Type: ACL; Schema: mc; Owner: d3l243

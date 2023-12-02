@@ -38,7 +38,7 @@ CREATE VIEW public.v_instrument_entry AS
    FROM public.t_instrument_name;
 
 
-ALTER TABLE public.v_instrument_entry OWNER TO d3l243;
+ALTER VIEW public.v_instrument_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_instrument_entry; Type: ACL; Schema: public; Owner: d3l243

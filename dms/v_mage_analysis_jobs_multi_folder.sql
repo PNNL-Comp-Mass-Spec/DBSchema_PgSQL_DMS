@@ -27,7 +27,7 @@ CREATE VIEW public.v_mage_analysis_jobs_multi_folder AS
      JOIN public.v_dataset_folder_paths dfp ON ((j.dataset_id = dfp.dataset_id)));
 
 
-ALTER TABLE public.v_mage_analysis_jobs_multi_folder OWNER TO d3l243;
+ALTER VIEW public.v_mage_analysis_jobs_multi_folder OWNER TO d3l243;
 
 --
 -- Name: TABLE v_mage_analysis_jobs_multi_folder; Type: ACL; Schema: public; Owner: d3l243

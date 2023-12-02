@@ -11,7 +11,7 @@ CREATE VIEW public.v_log_entry_error_summary AS
   ORDER BY v_log_entry_errors.schema, v_log_entry_errors.posted_by;
 
 
-ALTER TABLE public.v_log_entry_error_summary OWNER TO d3l243;
+ALTER VIEW public.v_log_entry_error_summary OWNER TO d3l243;
 
 --
 -- Name: TABLE v_log_entry_error_summary; Type: ACL; Schema: public; Owner: d3l243

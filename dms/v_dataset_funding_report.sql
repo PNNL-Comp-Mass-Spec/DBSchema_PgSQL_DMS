@@ -46,7 +46,7 @@ CREATE VIEW public.v_dataset_funding_report AS
   WHERE ((ds.dataset_rating_id > 0) AND (ds.dataset_state_id = 3));
 
 
-ALTER TABLE public.v_dataset_funding_report OWNER TO d3l243;
+ALTER VIEW public.v_dataset_funding_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_funding_report; Type: ACL; Schema: public; Owner: d3l243

@@ -64,7 +64,7 @@ UNION
   WHERE (t_log_entries.type OPERATOR(public.=) 'Error'::public.citext);
 
 
-ALTER TABLE public.v_log_entry_errors OWNER TO d3l243;
+ALTER VIEW public.v_log_entry_errors OWNER TO d3l243;
 
 --
 -- Name: TABLE v_log_entry_errors; Type: ACL; Schema: public; Owner: d3l243

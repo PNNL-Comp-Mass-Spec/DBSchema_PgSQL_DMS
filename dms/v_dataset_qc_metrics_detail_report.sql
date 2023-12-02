@@ -252,7 +252,7 @@ CREATE VIEW public.v_dataset_qc_metrics_detail_report AS
              LEFT JOIN public.v_dataset_folder_paths dfp ON ((dqc.dataset_id = dfp.dataset_id)))) dataq;
 
 
-ALTER TABLE public.v_dataset_qc_metrics_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_dataset_qc_metrics_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_qc_metrics_detail_report; Type: ACL; Schema: public; Owner: d3l243

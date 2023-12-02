@@ -10,7 +10,7 @@ CREATE VIEW mc.v_param_id_entry AS
    FROM mc.t_param_type;
 
 
-ALTER TABLE mc.v_param_id_entry OWNER TO d3l243;
+ALTER VIEW mc.v_param_id_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_param_id_entry; Type: ACL; Schema: mc; Owner: d3l243

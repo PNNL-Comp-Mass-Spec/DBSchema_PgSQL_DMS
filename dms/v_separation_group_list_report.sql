@@ -14,7 +14,7 @@ CREATE VIEW public.v_separation_group_list_report AS
   GROUP BY sg.separation_group, sg.comment, sg.active, sg.sample_prep_visible, sg.fraction_count;
 
 
-ALTER TABLE public.v_separation_group_list_report OWNER TO d3l243;
+ALTER VIEW public.v_separation_group_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_separation_group_list_report; Type: ACL; Schema: public; Owner: d3l243

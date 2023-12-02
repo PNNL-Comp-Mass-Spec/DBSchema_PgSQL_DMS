@@ -11,7 +11,7 @@ CREATE VIEW public.v_sample_label_reporter_ions_list_report AS
    FROM public.t_sample_labelling_reporter_ions;
 
 
-ALTER TABLE public.v_sample_label_reporter_ions_list_report OWNER TO d3l243;
+ALTER VIEW public.v_sample_label_reporter_ions_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_sample_label_reporter_ions_list_report; Type: ACL; Schema: public; Owner: d3l243

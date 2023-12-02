@@ -43,7 +43,7 @@ CREATE VIEW sw.v_processor_status_summary AS
           GROUP BY lp.machine) machineq;
 
 
-ALTER TABLE sw.v_processor_status_summary OWNER TO d3l243;
+ALTER VIEW sw.v_processor_status_summary OWNER TO d3l243;
 
 --
 -- Name: TABLE v_processor_status_summary; Type: ACL; Schema: sw; Owner: d3l243

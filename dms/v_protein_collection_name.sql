@@ -53,7 +53,7 @@ CREATE VIEW public.v_protein_collection_name AS
   GROUP BY lookupq.collection_name, lookupq.type, lookupq.description, lookupq.entries, lookupq.organism_name, lookupq.protein_collection_id, lookupq.typesortorder, pcu.most_recently_used, pcu.job_usage_count, pcu.job_usage_count_last12months, org.organism_db_name;
 
 
-ALTER TABLE public.v_protein_collection_name OWNER TO d3l243;
+ALTER VIEW public.v_protein_collection_name OWNER TO d3l243;
 
 --
 -- Name: TABLE v_protein_collection_name; Type: ACL; Schema: public; Owner: d3l243

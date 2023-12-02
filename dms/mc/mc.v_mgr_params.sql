@@ -18,7 +18,7 @@ CREATE VIEW mc.v_mgr_params AS
      JOIN mc.t_param_type pt ON ((pv.param_type_id = pt.param_type_id)));
 
 
-ALTER TABLE mc.v_mgr_params OWNER TO d3l243;
+ALTER VIEW mc.v_mgr_params OWNER TO d3l243;
 
 --
 -- Name: v_mgr_params trig_v_mgr_params_instead_of_update; Type: TRIGGER; Schema: mc; Owner: d3l243

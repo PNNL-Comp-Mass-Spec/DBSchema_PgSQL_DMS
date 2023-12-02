@@ -26,7 +26,7 @@ CREATE VIEW public.v_operations_tasks_detail_report AS
      JOIN public.t_lab_locations l ON ((opstask.lab_id = l.lab_id)));
 
 
-ALTER TABLE public.v_operations_tasks_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_operations_tasks_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_operations_tasks_detail_report; Type: ACL; Schema: public; Owner: d3l243

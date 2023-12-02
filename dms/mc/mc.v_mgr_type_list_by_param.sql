@@ -18,7 +18,7 @@ CREATE VIEW mc.v_mgr_type_list_by_param AS
   GROUP BY groupq.param_name;
 
 
-ALTER TABLE mc.v_mgr_type_list_by_param OWNER TO d3l243;
+ALTER VIEW mc.v_mgr_type_list_by_param OWNER TO d3l243;
 
 --
 -- Name: TABLE v_mgr_type_list_by_param; Type: ACL; Schema: mc; Owner: d3l243

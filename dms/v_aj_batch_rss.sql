@@ -35,7 +35,7 @@ CREATE VIEW public.v_aj_batch_rss AS
   WHERE (statsq.total_jobs = (statsq.failed_jobs + statsq.completed_jobs));
 
 
-ALTER TABLE public.v_aj_batch_rss OWNER TO d3l243;
+ALTER VIEW public.v_aj_batch_rss OWNER TO d3l243;
 
 --
 -- Name: TABLE v_aj_batch_rss; Type: ACL; Schema: public; Owner: d3l243

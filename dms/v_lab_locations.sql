@@ -10,7 +10,7 @@ CREATE VIEW public.v_lab_locations AS
   WHERE (t_lab_locations.lab_active > 0);
 
 
-ALTER TABLE public.v_lab_locations OWNER TO d3l243;
+ALTER VIEW public.v_lab_locations OWNER TO d3l243;
 
 --
 -- Name: TABLE v_lab_locations; Type: ACL; Schema: public; Owner: d3l243

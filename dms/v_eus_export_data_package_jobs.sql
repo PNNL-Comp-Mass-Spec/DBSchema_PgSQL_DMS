@@ -33,7 +33,7 @@ CREATE VIEW public.v_eus_export_data_package_jobs AS
   WHERE (j.job_state_id = 4);
 
 
-ALTER TABLE public.v_eus_export_data_package_jobs OWNER TO d3l243;
+ALTER VIEW public.v_eus_export_data_package_jobs OWNER TO d3l243;
 
 --
 -- Name: TABLE v_eus_export_data_package_jobs; Type: ACL; Schema: public; Owner: d3l243

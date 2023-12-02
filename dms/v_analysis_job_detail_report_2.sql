@@ -99,7 +99,7 @@ CREATE VIEW public.v_analysis_job_detail_report_2 AS
      LEFT JOIN public.t_dataset_archive da ON ((ds.dataset_id = da.dataset_id)));
 
 
-ALTER TABLE public.v_analysis_job_detail_report_2 OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_detail_report_2 OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_job_detail_report_2; Type: ACL; Schema: public; Owner: d3l243

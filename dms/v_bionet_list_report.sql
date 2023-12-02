@@ -19,7 +19,7 @@ CREATE VIEW public.v_bionet_list_report AS
      JOIN public.t_yes_no ON ((h.active = t_yes_no.flag)));
 
 
-ALTER TABLE public.v_bionet_list_report OWNER TO d3l243;
+ALTER VIEW public.v_bionet_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_bionet_list_report; Type: ACL; Schema: public; Owner: d3l243

@@ -33,7 +33,7 @@ CREATE VIEW cap.v_myemsl_uploads AS
      LEFT JOIN public.t_dataset ds ON ((mu.dataset_id = ds.dataset_id)));
 
 
-ALTER TABLE cap.v_myemsl_uploads OWNER TO d3l243;
+ALTER VIEW cap.v_myemsl_uploads OWNER TO d3l243;
 
 --
 -- Name: VIEW v_myemsl_uploads; Type: COMMENT; Schema: cap; Owner: d3l243

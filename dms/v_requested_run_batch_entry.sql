@@ -19,7 +19,7 @@ CREATE VIEW public.v_requested_run_batch_entry AS
      LEFT JOIN public.t_users u ON ((rrb.owner_user_id = u.user_id)));
 
 
-ALTER TABLE public.v_requested_run_batch_entry OWNER TO d3l243;
+ALTER VIEW public.v_requested_run_batch_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_requested_run_batch_entry; Type: ACL; Schema: public; Owner: d3l243

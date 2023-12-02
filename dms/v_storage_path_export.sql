@@ -15,7 +15,7 @@ CREATE VIEW public.v_storage_path_export AS
    FROM public.t_storage_path;
 
 
-ALTER TABLE public.v_storage_path_export OWNER TO d3l243;
+ALTER VIEW public.v_storage_path_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_storage_path_export; Type: ACL; Schema: public; Owner: d3l243

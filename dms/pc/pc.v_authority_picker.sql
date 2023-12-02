@@ -9,7 +9,7 @@ CREATE VIEW pc.v_authority_picker AS
    FROM pc.t_naming_authorities auth;
 
 
-ALTER TABLE pc.v_authority_picker OWNER TO d3l243;
+ALTER VIEW pc.v_authority_picker OWNER TO d3l243;
 
 --
 -- Name: TABLE v_authority_picker; Type: ACL; Schema: pc; Owner: d3l243

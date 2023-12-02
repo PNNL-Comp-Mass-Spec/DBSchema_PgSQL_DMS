@@ -19,7 +19,7 @@ CREATE VIEW public.v_analysis_job_and_dataset_archive_state AS
      LEFT JOIN public.t_dataset_archive_state_name dasn ON ((dasn.archive_state_id = da.archive_state_id)));
 
 
-ALTER TABLE public.v_analysis_job_and_dataset_archive_state OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_and_dataset_archive_state OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_job_and_dataset_archive_state; Type: ACL; Schema: public; Owner: d3l243

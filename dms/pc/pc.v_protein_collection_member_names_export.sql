@@ -15,7 +15,7 @@ CREATE VIEW pc.v_protein_collection_member_names_export AS
      JOIN pc.t_protein_collections pc ON ((pcm.protein_collection_id = pc.protein_collection_id)));
 
 
-ALTER TABLE pc.v_protein_collection_member_names_export OWNER TO d3l243;
+ALTER VIEW pc.v_protein_collection_member_names_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_protein_collection_member_names_export; Type: ACL; Schema: pc; Owner: d3l243

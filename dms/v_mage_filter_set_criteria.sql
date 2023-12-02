@@ -15,7 +15,7 @@ CREATE VIEW public.v_mage_filter_set_criteria AS
      JOIN public.t_filter_set_criteria_names tn ON ((tc.criterion_id = tn.criterion_id)));
 
 
-ALTER TABLE public.v_mage_filter_set_criteria OWNER TO d3l243;
+ALTER VIEW public.v_mage_filter_set_criteria OWNER TO d3l243;
 
 --
 -- Name: TABLE v_mage_filter_set_criteria; Type: ACL; Schema: public; Owner: d3l243

@@ -14,7 +14,7 @@ CREATE VIEW public.v_param_file_type_picklist AS
   WHERE (pft.param_file_type_id > 1);
 
 
-ALTER TABLE public.v_param_file_type_picklist OWNER TO d3l243;
+ALTER VIEW public.v_param_file_type_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_param_file_type_picklist; Type: ACL; Schema: public; Owner: d3l243

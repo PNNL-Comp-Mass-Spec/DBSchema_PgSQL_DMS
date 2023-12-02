@@ -13,7 +13,7 @@ CREATE VIEW public.v_lc_cart_config_history_entry AS
    FROM public.t_lc_cart_config_history;
 
 
-ALTER TABLE public.v_lc_cart_config_history_entry OWNER TO d3l243;
+ALTER VIEW public.v_lc_cart_config_history_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_lc_cart_config_history_entry; Type: ACL; Schema: public; Owner: d3l243

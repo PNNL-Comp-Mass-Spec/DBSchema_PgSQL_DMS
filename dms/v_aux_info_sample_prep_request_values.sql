@@ -17,7 +17,7 @@ CREATE VIEW public.v_aux_info_sample_prep_request_values AS
   WHERE (category.target_type_id = 503);
 
 
-ALTER TABLE public.v_aux_info_sample_prep_request_values OWNER TO d3l243;
+ALTER VIEW public.v_aux_info_sample_prep_request_values OWNER TO d3l243;
 
 --
 -- Name: TABLE v_aux_info_sample_prep_request_values; Type: ACL; Schema: public; Owner: d3l243

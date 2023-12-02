@@ -20,7 +20,7 @@ CREATE VIEW public.v_predefined_analysis_scheduling_queue_list_report AS
      JOIN public.t_dataset d ON ((sq.dataset_id = d.dataset_id)));
 
 
-ALTER TABLE public.v_predefined_analysis_scheduling_queue_list_report OWNER TO d3l243;
+ALTER VIEW public.v_predefined_analysis_scheduling_queue_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_predefined_analysis_scheduling_queue_list_report; Type: ACL; Schema: public; Owner: d3l243

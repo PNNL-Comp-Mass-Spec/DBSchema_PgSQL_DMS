@@ -8,7 +8,7 @@ CREATE VIEW cap.v_capture_machines_list_report AS
    FROM cap.t_machines;
 
 
-ALTER TABLE cap.v_capture_machines_list_report OWNER TO d3l243;
+ALTER VIEW cap.v_capture_machines_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_capture_machines_list_report; Type: ACL; Schema: cap; Owner: d3l243

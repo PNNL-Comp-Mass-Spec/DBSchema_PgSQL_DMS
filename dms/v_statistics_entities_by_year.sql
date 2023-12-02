@@ -78,7 +78,7 @@ CREATE VIEW public.v_statistics_entities_by_year AS
                      analysis_job_step_tool_started, capture_task_step_tool_started}''::text[])'::text) pivotdata(year integer, new_research_campaigns integer, new_organisms integer, prepared_samples integer, requested_instrument_runs integer, datasets integer, analysis_jobs integer, data_packages integer, analysis_job_step_tool_started integer, capture_task_step_tool_started integer);
 
 
-ALTER TABLE public.v_statistics_entities_by_year OWNER TO d3l243;
+ALTER VIEW public.v_statistics_entities_by_year OWNER TO d3l243;
 
 --
 -- Name: VIEW v_statistics_entities_by_year; Type: COMMENT; Schema: public; Owner: d3l243

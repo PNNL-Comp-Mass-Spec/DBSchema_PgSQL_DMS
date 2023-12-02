@@ -37,7 +37,7 @@ CREATE VIEW public.v_organism_export AS
            FROM ont.t_ncbi_taxonomy_cached) ncbi ON ((o.ncbi_taxonomy_id = ncbi.tax_id)));
 
 
-ALTER TABLE public.v_organism_export OWNER TO d3l243;
+ALTER VIEW public.v_organism_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_organism_export; Type: ACL; Schema: public; Owner: d3l243

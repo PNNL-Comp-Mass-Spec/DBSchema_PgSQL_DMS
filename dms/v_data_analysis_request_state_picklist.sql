@@ -10,7 +10,7 @@ CREATE VIEW public.v_data_analysis_request_state_picklist AS
   WHERE (t_data_analysis_request_state_name.active = 1);
 
 
-ALTER TABLE public.v_data_analysis_request_state_picklist OWNER TO d3l243;
+ALTER VIEW public.v_data_analysis_request_state_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_data_analysis_request_state_picklist; Type: ACL; Schema: public; Owner: d3l243

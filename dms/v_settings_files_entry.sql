@@ -14,7 +14,7 @@ CREATE VIEW public.v_settings_files_entry AS
    FROM public.t_settings_files;
 
 
-ALTER TABLE public.v_settings_files_entry OWNER TO d3l243;
+ALTER VIEW public.v_settings_files_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_settings_files_entry; Type: ACL; Schema: public; Owner: d3l243

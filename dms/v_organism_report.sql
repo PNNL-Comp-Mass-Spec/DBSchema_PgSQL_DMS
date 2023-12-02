@@ -10,7 +10,7 @@ CREATE VIEW public.v_organism_report AS
    FROM public.t_organisms;
 
 
-ALTER TABLE public.v_organism_report OWNER TO d3l243;
+ALTER VIEW public.v_organism_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_organism_report; Type: ACL; Schema: public; Owner: d3l243

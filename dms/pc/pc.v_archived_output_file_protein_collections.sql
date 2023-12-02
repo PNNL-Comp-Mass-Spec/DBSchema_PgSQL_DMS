@@ -22,7 +22,7 @@ CREATE VIEW pc.v_archived_output_file_protein_collections AS
      JOIN pc.t_archived_file_states ON ((aof.archived_file_state_id = t_archived_file_states.archived_file_state_id)));
 
 
-ALTER TABLE pc.v_archived_output_file_protein_collections OWNER TO d3l243;
+ALTER VIEW pc.v_archived_output_file_protein_collections OWNER TO d3l243;
 
 --
 -- Name: TABLE v_archived_output_file_protein_collections; Type: ACL; Schema: pc; Owner: d3l243

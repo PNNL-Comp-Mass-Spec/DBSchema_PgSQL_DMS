@@ -26,7 +26,7 @@ CREATE VIEW public.v_mts_mt_dbs_detail_report AS
   GROUP BY mtdbs.mt_db_name, mtdbs.mt_db_id, mtdbs.description, mtdbs.organism, mtdbs.campaign, mtdbs.msms_jobs, mtdbs.ms_jobs, mtdbs.peptide_db, mtdbs.peptide_db_count, mtdbs.server_name, mtdbs.state, mtdbs.state_id, mtdbs.last_affected;
 
 
-ALTER TABLE public.v_mts_mt_dbs_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_mts_mt_dbs_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_mts_mt_dbs_detail_report; Type: ACL; Schema: public; Owner: d3l243

@@ -16,7 +16,7 @@ CREATE VIEW public.v_find_capture_failures_with_user AS
   WHERE (ds.dataset_state_id = 5);
 
 
-ALTER TABLE public.v_find_capture_failures_with_user OWNER TO d3l243;
+ALTER VIEW public.v_find_capture_failures_with_user OWNER TO d3l243;
 
 --
 -- Name: TABLE v_find_capture_failures_with_user; Type: ACL; Schema: public; Owner: d3l243

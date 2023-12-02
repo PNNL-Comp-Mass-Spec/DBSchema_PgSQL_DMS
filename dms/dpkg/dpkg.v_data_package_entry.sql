@@ -20,7 +20,7 @@ CREATE VIEW dpkg.v_data_package_entry AS
    FROM dpkg.t_data_package;
 
 
-ALTER TABLE dpkg.v_data_package_entry OWNER TO d3l243;
+ALTER VIEW dpkg.v_data_package_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_data_package_entry; Type: ACL; Schema: dpkg; Owner: d3l243

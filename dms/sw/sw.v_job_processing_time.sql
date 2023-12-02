@@ -41,7 +41,7 @@ CREATE VIEW sw.v_job_processing_time AS
   GROUP BY steptoolq.job;
 
 
-ALTER TABLE sw.v_job_processing_time OWNER TO d3l243;
+ALTER VIEW sw.v_job_processing_time OWNER TO d3l243;
 
 --
 -- Name: TABLE v_job_processing_time; Type: ACL; Schema: sw; Owner: d3l243

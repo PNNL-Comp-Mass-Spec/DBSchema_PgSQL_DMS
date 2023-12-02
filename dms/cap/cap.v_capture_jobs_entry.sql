@@ -13,7 +13,7 @@ CREATE VIEW cap.v_capture_jobs_entry AS
      JOIN cap.t_task_parameters ON ((t_tasks.job = t_task_parameters.job)));
 
 
-ALTER TABLE cap.v_capture_jobs_entry OWNER TO d3l243;
+ALTER VIEW cap.v_capture_jobs_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_capture_jobs_entry; Type: ACL; Schema: cap; Owner: d3l243

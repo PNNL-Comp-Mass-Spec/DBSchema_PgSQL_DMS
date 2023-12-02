@@ -27,7 +27,7 @@ CREATE VIEW sw.v_dms_data_package_datasets AS
    FROM dpkg.v_dms_data_package_aggregation_datasets dpd;
 
 
-ALTER TABLE sw.v_dms_data_package_datasets OWNER TO d3l243;
+ALTER VIEW sw.v_dms_data_package_datasets OWNER TO d3l243;
 
 --
 -- Name: VIEW v_dms_data_package_datasets; Type: COMMENT; Schema: sw; Owner: d3l243

@@ -20,7 +20,7 @@ CREATE VIEW public.v_mage_data_package_datasets AS
      JOIN dpkg.t_data_package_datasets tpd ON ((vmd.dataset_id = tpd.dataset_id)));
 
 
-ALTER TABLE public.v_mage_data_package_datasets OWNER TO d3l243;
+ALTER VIEW public.v_mage_data_package_datasets OWNER TO d3l243;
 
 --
 -- Name: TABLE v_mage_data_package_datasets; Type: ACL; Schema: public; Owner: d3l243

@@ -18,7 +18,7 @@ CREATE VIEW public.v_system_activity_long_running AS
   WHERE ((now() - a.query_start) > '00:02:00'::interval);
 
 
-ALTER TABLE public.v_system_activity_long_running OWNER TO d3l243;
+ALTER VIEW public.v_system_activity_long_running OWNER TO d3l243;
 
 --
 -- Name: VIEW v_system_activity_long_running; Type: COMMENT; Schema: public; Owner: d3l243

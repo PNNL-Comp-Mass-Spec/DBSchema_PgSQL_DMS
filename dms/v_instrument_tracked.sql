@@ -50,7 +50,7 @@ CREATE VIEW public.v_instrument_tracked AS
           WHERE (((td.status OPERATOR(public.=) 'active'::public.citext) AND (td.operations_role OPERATOR(public.=) 'Production'::public.citext)) OR (td.tracking = 1) OR ((upper((ti.eus_primary_instrument)::text) = ANY (ARRAY['Y'::text, '1'::text])) AND (ti.eus_active_sw OPERATOR(public.=) 'Y'::public.citext)))) filterq;
 
 
-ALTER TABLE public.v_instrument_tracked OWNER TO d3l243;
+ALTER VIEW public.v_instrument_tracked OWNER TO d3l243;
 
 --
 -- Name: TABLE v_instrument_tracked; Type: ACL; Schema: public; Owner: d3l243

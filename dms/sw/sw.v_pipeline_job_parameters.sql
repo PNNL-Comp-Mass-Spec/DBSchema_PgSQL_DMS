@@ -14,7 +14,7 @@ CREATE VIEW sw.v_pipeline_job_parameters AS
      CROSS JOIN LATERAL sw.get_job_param_table_local(j.job) jobparams(job, section, name, value));
 
 
-ALTER TABLE sw.v_pipeline_job_parameters OWNER TO d3l243;
+ALTER VIEW sw.v_pipeline_job_parameters OWNER TO d3l243;
 
 --
 -- Name: TABLE v_pipeline_job_parameters; Type: ACL; Schema: sw; Owner: d3l243

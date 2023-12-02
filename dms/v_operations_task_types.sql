@@ -8,7 +8,7 @@ CREATE VIEW public.v_operations_task_types AS
   WHERE (t_operations_task_type.task_type_active > 0);
 
 
-ALTER TABLE public.v_operations_task_types OWNER TO d3l243;
+ALTER VIEW public.v_operations_task_types OWNER TO d3l243;
 
 --
 -- Name: TABLE v_operations_task_types; Type: ACL; Schema: public; Owner: d3l243

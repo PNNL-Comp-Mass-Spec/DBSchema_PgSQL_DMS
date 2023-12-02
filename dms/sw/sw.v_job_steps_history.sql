@@ -50,7 +50,7 @@ CREATE VIEW sw.v_job_steps_history AS
      LEFT JOIN sw.t_remote_info ri ON ((js.remote_info_id = ri.remote_info_id)));
 
 
-ALTER TABLE sw.v_job_steps_history OWNER TO d3l243;
+ALTER VIEW sw.v_job_steps_history OWNER TO d3l243;
 
 --
 -- Name: TABLE v_job_steps_history; Type: ACL; Schema: sw; Owner: d3l243

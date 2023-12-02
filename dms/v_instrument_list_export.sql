@@ -29,7 +29,7 @@ CREATE VIEW public.v_instrument_list_export AS
      JOIN public.t_instrument_class instclass ON ((inst.instrument_class OPERATOR(public.=) instclass.instrument_class)));
 
 
-ALTER TABLE public.v_instrument_list_export OWNER TO d3l243;
+ALTER VIEW public.v_instrument_list_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_instrument_list_export; Type: ACL; Schema: public; Owner: d3l243

@@ -25,7 +25,7 @@ CREATE VIEW public.v_lc_cart_loading AS
      JOIN public.t_dataset_type_name dtn ON ((rr.request_type_id = dtn.dataset_type_id)));
 
 
-ALTER TABLE public.v_lc_cart_loading OWNER TO d3l243;
+ALTER VIEW public.v_lc_cart_loading OWNER TO d3l243;
 
 --
 -- Name: TABLE v_lc_cart_loading; Type: ACL; Schema: public; Owner: d3l243

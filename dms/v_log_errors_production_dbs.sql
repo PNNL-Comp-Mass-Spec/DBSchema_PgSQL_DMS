@@ -40,7 +40,7 @@ UNION
    FROM dpkg.v_log_errors;
 
 
-ALTER TABLE public.v_log_errors_production_dbs OWNER TO d3l243;
+ALTER VIEW public.v_log_errors_production_dbs OWNER TO d3l243;
 
 --
 -- Name: TABLE v_log_errors_production_dbs; Type: ACL; Schema: public; Owner: d3l243

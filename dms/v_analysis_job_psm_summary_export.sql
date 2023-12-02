@@ -22,7 +22,7 @@ CREATE VIEW public.v_analysis_job_psm_summary_export AS
   GROUP BY j.dataset_id;
 
 
-ALTER TABLE public.v_analysis_job_psm_summary_export OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_psm_summary_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_job_psm_summary_export; Type: ACL; Schema: public; Owner: d3l243

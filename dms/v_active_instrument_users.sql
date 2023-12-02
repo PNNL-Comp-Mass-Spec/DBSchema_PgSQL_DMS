@@ -12,7 +12,7 @@ CREATE VIEW public.v_active_instrument_users AS
   WHERE ((u.status OPERATOR(public.=) 'Active'::public.citext) AND (ops.operation OPERATOR(public.=) ANY (ARRAY['DMS_Instrument_Operation'::public.citext, 'DMS_Infrastructure_Administration'::public.citext, 'DMS_Dataset_Operation'::public.citext])));
 
 
-ALTER TABLE public.v_active_instrument_users OWNER TO d3l243;
+ALTER VIEW public.v_active_instrument_users OWNER TO d3l243;
 
 --
 -- Name: VIEW v_active_instrument_users; Type: COMMENT; Schema: public; Owner: d3l243

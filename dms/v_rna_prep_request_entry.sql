@@ -28,7 +28,7 @@ CREATE VIEW public.v_rna_prep_request_entry AS
      JOIN public.t_sample_prep_request_state_name sn ON ((spr.state_id = sn.state_id)));
 
 
-ALTER TABLE public.v_rna_prep_request_entry OWNER TO d3l243;
+ALTER VIEW public.v_rna_prep_request_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_rna_prep_request_entry; Type: ACL; Schema: public; Owner: d3l243

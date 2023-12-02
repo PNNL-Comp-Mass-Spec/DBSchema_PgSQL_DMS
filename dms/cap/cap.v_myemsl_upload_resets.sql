@@ -21,7 +21,7 @@ CREATE VIEW cap.v_myemsl_upload_resets AS
   WHERE (ts.step = 1);
 
 
-ALTER TABLE cap.v_myemsl_upload_resets OWNER TO d3l243;
+ALTER VIEW cap.v_myemsl_upload_resets OWNER TO d3l243;
 
 --
 -- Name: TABLE v_myemsl_upload_resets; Type: ACL; Schema: cap; Owner: d3l243

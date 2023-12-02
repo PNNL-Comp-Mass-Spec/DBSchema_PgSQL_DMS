@@ -43,7 +43,7 @@ CREATE VIEW public.v_sample_prep_request_assignment AS
   WHERE ((spr.state_id > 0) AND (spr.request_type OPERATOR(public.=) 'Default'::public.citext));
 
 
-ALTER TABLE public.v_sample_prep_request_assignment OWNER TO d3l243;
+ALTER VIEW public.v_sample_prep_request_assignment OWNER TO d3l243;
 
 --
 -- Name: TABLE v_sample_prep_request_assignment; Type: ACL; Schema: public; Owner: d3l243

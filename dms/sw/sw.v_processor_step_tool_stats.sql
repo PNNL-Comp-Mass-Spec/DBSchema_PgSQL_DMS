@@ -20,7 +20,7 @@ CREATE VIEW sw.v_processor_step_tool_stats AS
   GROUP BY js.processor, js.tool, (EXTRACT(year FROM js.start)), (EXTRACT(month FROM js.start)), dateq.start_max;
 
 
-ALTER TABLE sw.v_processor_step_tool_stats OWNER TO d3l243;
+ALTER VIEW sw.v_processor_step_tool_stats OWNER TO d3l243;
 
 --
 -- Name: TABLE v_processor_step_tool_stats; Type: ACL; Schema: sw; Owner: d3l243

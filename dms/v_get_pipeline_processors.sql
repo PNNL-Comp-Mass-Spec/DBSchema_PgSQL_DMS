@@ -15,7 +15,7 @@ CREATE VIEW public.v_get_pipeline_processors AS
   GROUP BY ajp.processor_name, ajp.state, ajp.processor_id, ajp.machine;
 
 
-ALTER TABLE public.v_get_pipeline_processors OWNER TO d3l243;
+ALTER VIEW public.v_get_pipeline_processors OWNER TO d3l243;
 
 --
 -- Name: TABLE v_get_pipeline_processors; Type: ACL; Schema: public; Owner: d3l243

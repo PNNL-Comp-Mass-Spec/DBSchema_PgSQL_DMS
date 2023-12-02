@@ -26,7 +26,7 @@ CREATE VIEW pc.v_event_log AS
      LEFT JOIN pc.t_protein_collection_states pcs ON (((el.target_state = pcs.collection_state_id) AND (el.target_type = 1))));
 
 
-ALTER TABLE pc.v_event_log OWNER TO d3l243;
+ALTER VIEW pc.v_event_log OWNER TO d3l243;
 
 --
 -- Name: TABLE v_event_log; Type: ACL; Schema: pc; Owner: d3l243

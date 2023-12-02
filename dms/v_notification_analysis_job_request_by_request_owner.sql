@@ -27,7 +27,7 @@ CREATE VIEW public.v_notification_analysis_job_request_by_request_owner AS
   WHERE ((tet.target_entity_type = 2) AND (tet.visible OPERATOR(public.=) 'Y'::public.citext) AND (u.active OPERATOR(public.=) 'Y'::public.citext));
 
 
-ALTER TABLE public.v_notification_analysis_job_request_by_request_owner OWNER TO d3l243;
+ALTER VIEW public.v_notification_analysis_job_request_by_request_owner OWNER TO d3l243;
 
 --
 -- Name: TABLE v_notification_analysis_job_request_by_request_owner; Type: ACL; Schema: public; Owner: d3l243

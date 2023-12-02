@@ -18,7 +18,7 @@ CREATE VIEW ont.v_term_categories AS
   WHERE (t.is_leaf = 0);
 
 
-ALTER TABLE ont.v_term_categories OWNER TO d3l243;
+ALTER VIEW ont.v_term_categories OWNER TO d3l243;
 
 --
 -- Name: TABLE v_term_categories; Type: ACL; Schema: ont; Owner: d3l243

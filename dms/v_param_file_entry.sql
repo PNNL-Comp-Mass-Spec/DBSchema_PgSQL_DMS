@@ -13,7 +13,7 @@ CREATE VIEW public.v_param_file_entry AS
      JOIN public.t_param_file_types pft ON ((pf.param_file_type_id = pft.param_file_type_id)));
 
 
-ALTER TABLE public.v_param_file_entry OWNER TO d3l243;
+ALTER VIEW public.v_param_file_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_param_file_entry; Type: ACL; Schema: public; Owner: d3l243

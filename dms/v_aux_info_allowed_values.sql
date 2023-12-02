@@ -15,7 +15,7 @@ CREATE VIEW public.v_aux_info_allowed_values AS
      JOIN public.t_aux_info_allowed_values allowedvals ON ((item.aux_description_id = allowedvals.aux_description_id)));
 
 
-ALTER TABLE public.v_aux_info_allowed_values OWNER TO d3l243;
+ALTER VIEW public.v_aux_info_allowed_values OWNER TO d3l243;
 
 --
 -- Name: TABLE v_aux_info_allowed_values; Type: ACL; Schema: public; Owner: d3l243

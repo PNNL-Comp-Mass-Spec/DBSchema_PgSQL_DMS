@@ -31,7 +31,7 @@ CREATE VIEW public.v_settings_file_picklist AS
           WHERE (sf.active <> 0)) filterq;
 
 
-ALTER TABLE public.v_settings_file_picklist OWNER TO d3l243;
+ALTER VIEW public.v_settings_file_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_settings_file_picklist; Type: ACL; Schema: public; Owner: d3l243

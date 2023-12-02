@@ -19,7 +19,7 @@ CREATE VIEW public.v_eus_export_osm_package_metadata AS
      LEFT JOIN public.t_users u ON ((u.username OPERATOR(public.=) osmpkg.owner_username)));
 
 
-ALTER TABLE public.v_eus_export_osm_package_metadata OWNER TO d3l243;
+ALTER VIEW public.v_eus_export_osm_package_metadata OWNER TO d3l243;
 
 --
 -- Name: TABLE v_eus_export_osm_package_metadata; Type: ACL; Schema: public; Owner: d3l243

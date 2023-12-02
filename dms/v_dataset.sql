@@ -44,7 +44,7 @@ CREATE VIEW public.v_dataset AS
      JOIN public.v_dataset_folder_paths dfp ON ((ds.dataset_id = dfp.dataset_id)));
 
 
-ALTER TABLE public.v_dataset OWNER TO d3l243;
+ALTER VIEW public.v_dataset OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset; Type: ACL; Schema: public; Owner: d3l243

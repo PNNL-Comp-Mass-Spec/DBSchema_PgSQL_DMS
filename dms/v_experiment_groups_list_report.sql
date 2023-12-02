@@ -25,7 +25,7 @@ CREATE VIEW public.v_experiment_groups_list_report AS
      LEFT JOIN public.t_users ON ((eg.researcher_username OPERATOR(public.=) t_users.username)));
 
 
-ALTER TABLE public.v_experiment_groups_list_report OWNER TO d3l243;
+ALTER VIEW public.v_experiment_groups_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_experiment_groups_list_report; Type: ACL; Schema: public; Owner: d3l243

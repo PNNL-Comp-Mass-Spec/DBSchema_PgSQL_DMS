@@ -16,7 +16,7 @@ CREATE VIEW mc.v_manager_type_report_ex AS
           GROUP BY ml.mgr_type_id, ml.manager_type) activemanagersq ON ((mt.mgr_type_id = activemanagersq.mgr_type_id)));
 
 
-ALTER TABLE mc.v_manager_type_report_ex OWNER TO d3l243;
+ALTER VIEW mc.v_manager_type_report_ex OWNER TO d3l243;
 
 --
 -- Name: TABLE v_manager_type_report_ex; Type: ACL; Schema: mc; Owner: d3l243

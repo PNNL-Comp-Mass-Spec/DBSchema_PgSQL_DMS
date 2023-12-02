@@ -14,7 +14,7 @@ CREATE VIEW public.v_analysis_job_processors_list_report AS
    FROM public.t_analysis_job_processors;
 
 
-ALTER TABLE public.v_analysis_job_processors_list_report OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_processors_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_job_processors_list_report; Type: ACL; Schema: public; Owner: d3l243

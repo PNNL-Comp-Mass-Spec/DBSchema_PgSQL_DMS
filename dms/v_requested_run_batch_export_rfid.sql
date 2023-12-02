@@ -27,7 +27,7 @@ CREATE VIEW public.v_requested_run_batch_export_rfid AS
   WHERE (rrb.batch_id > 0);
 
 
-ALTER TABLE public.v_requested_run_batch_export_rfid OWNER TO d3l243;
+ALTER VIEW public.v_requested_run_batch_export_rfid OWNER TO d3l243;
 
 --
 -- Name: VIEW v_requested_run_batch_export_rfid; Type: COMMENT; Schema: public; Owner: d3l243

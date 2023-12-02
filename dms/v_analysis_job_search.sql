@@ -31,7 +31,7 @@ CREATE VIEW public.v_analysis_job_search AS
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)));
 
 
-ALTER TABLE public.v_analysis_job_search OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_search OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_job_search; Type: ACL; Schema: public; Owner: d3l243

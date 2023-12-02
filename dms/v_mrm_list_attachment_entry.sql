@@ -14,7 +14,7 @@ CREATE VIEW public.v_mrm_list_attachment_entry AS
    FROM public.t_attachments;
 
 
-ALTER TABLE public.v_mrm_list_attachment_entry OWNER TO d3l243;
+ALTER VIEW public.v_mrm_list_attachment_entry OWNER TO d3l243;
 
 --
 -- Name: TABLE v_mrm_list_attachment_entry; Type: ACL; Schema: public; Owner: d3l243

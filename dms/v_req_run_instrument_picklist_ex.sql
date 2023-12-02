@@ -12,7 +12,7 @@ UNION
     ''::text AS ex;
 
 
-ALTER TABLE public.v_req_run_instrument_picklist_ex OWNER TO d3l243;
+ALTER VIEW public.v_req_run_instrument_picklist_ex OWNER TO d3l243;
 
 --
 -- Name: TABLE v_req_run_instrument_picklist_ex; Type: ACL; Schema: public; Owner: d3l243

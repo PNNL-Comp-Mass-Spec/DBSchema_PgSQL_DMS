@@ -18,7 +18,7 @@ CREATE VIEW ont.v_term AS
      JOIN ont.t_term t ON ((o.ontology_id = t.ontology_id)));
 
 
-ALTER TABLE ont.v_term OWNER TO d3l243;
+ALTER VIEW ont.v_term OWNER TO d3l243;
 
 --
 -- Name: TABLE v_term; Type: ACL; Schema: ont; Owner: d3l243

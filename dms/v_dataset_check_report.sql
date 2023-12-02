@@ -17,7 +17,7 @@ CREATE VIEW public.v_dataset_check_report AS
   WHERE (ds.created >= (CURRENT_TIMESTAMP - '120 days'::interval));
 
 
-ALTER TABLE public.v_dataset_check_report OWNER TO d3l243;
+ALTER VIEW public.v_dataset_check_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_check_report; Type: ACL; Schema: public; Owner: d3l243

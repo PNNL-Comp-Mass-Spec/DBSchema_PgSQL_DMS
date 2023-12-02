@@ -18,7 +18,7 @@ CREATE VIEW public.v_campaign_list_stale AS
   WHERE ((COALESCE(ct.sample_prep_request_most_recent, '2000-01-01 00:00:00'::timestamp without time zone) <= (CURRENT_TIMESTAMP - '1 year 6 mons'::interval)) AND (COALESCE(ct.experiment_most_recent, '2000-01-01 00:00:00'::timestamp without time zone) <= (CURRENT_TIMESTAMP - '1 year 6 mons'::interval)) AND (COALESCE(ct.run_request_most_recent, '2000-01-01 00:00:00'::timestamp without time zone) <= (CURRENT_TIMESTAMP - '1 year 6 mons'::interval)) AND (COALESCE(ct.dataset_most_recent, '2000-01-01 00:00:00'::timestamp without time zone) <= (CURRENT_TIMESTAMP - '1 year 6 mons'::interval)) AND (COALESCE(ct.job_most_recent, '2000-01-01 00:00:00'::timestamp without time zone) <= (CURRENT_TIMESTAMP - '1 year 6 mons'::interval)) AND (c.created < (CURRENT_TIMESTAMP - '7 years'::interval)));
 
 
-ALTER TABLE public.v_campaign_list_stale OWNER TO d3l243;
+ALTER VIEW public.v_campaign_list_stale OWNER TO d3l243;
 
 --
 -- Name: TABLE v_campaign_list_stale; Type: ACL; Schema: public; Owner: d3l243

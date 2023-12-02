@@ -30,7 +30,7 @@ CREATE VIEW public.v_requested_run_batch_detail_report AS
      LEFT JOIN public.t_cached_requested_run_batch_stats rbs ON ((rrb.batch_id = rbs.batch_id)));
 
 
-ALTER TABLE public.v_requested_run_batch_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_requested_run_batch_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_requested_run_batch_detail_report; Type: ACL; Schema: public; Owner: d3l243

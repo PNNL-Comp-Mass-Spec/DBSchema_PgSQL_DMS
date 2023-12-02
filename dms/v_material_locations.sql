@@ -17,7 +17,7 @@ CREATE VIEW public.v_material_locations AS
    FROM public.t_material_locations;
 
 
-ALTER TABLE public.v_material_locations OWNER TO d3l243;
+ALTER VIEW public.v_material_locations OWNER TO d3l243;
 
 --
 -- Name: TABLE v_material_locations; Type: ACL; Schema: public; Owner: d3l243

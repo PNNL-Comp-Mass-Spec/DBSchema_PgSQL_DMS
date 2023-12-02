@@ -16,7 +16,7 @@ CREATE VIEW public.v_purgeable_datasets_nointerest_norecentjob AS
   WHERE (v_purgeable_datasets_nointerest.most_recent_job < (CURRENT_TIMESTAMP - '60 days'::interval));
 
 
-ALTER TABLE public.v_purgeable_datasets_nointerest_norecentjob OWNER TO d3l243;
+ALTER VIEW public.v_purgeable_datasets_nointerest_norecentjob OWNER TO d3l243;
 
 --
 -- Name: TABLE v_purgeable_datasets_nointerest_norecentjob; Type: ACL; Schema: public; Owner: d3l243

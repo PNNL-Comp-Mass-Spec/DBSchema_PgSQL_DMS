@@ -9,7 +9,7 @@ CREATE VIEW public.v_requested_run_batch_group_picklist AS
    FROM public.t_requested_run_batch_group;
 
 
-ALTER TABLE public.v_requested_run_batch_group_picklist OWNER TO d3l243;
+ALTER VIEW public.v_requested_run_batch_group_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_requested_run_batch_group_picklist; Type: ACL; Schema: public; Owner: d3l243

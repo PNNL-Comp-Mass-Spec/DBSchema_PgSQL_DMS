@@ -12,7 +12,7 @@ CREATE VIEW cap.v_myemsl_upload_stats AS
   GROUP BY ((t_myemsl_uploads.entered)::date);
 
 
-ALTER TABLE cap.v_myemsl_upload_stats OWNER TO d3l243;
+ALTER VIEW cap.v_myemsl_upload_stats OWNER TO d3l243;
 
 --
 -- Name: TABLE v_myemsl_upload_stats; Type: ACL; Schema: cap; Owner: d3l243

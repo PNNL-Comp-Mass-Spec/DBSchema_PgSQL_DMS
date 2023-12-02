@@ -45,7 +45,7 @@ CREATE VIEW public.v_get_pipeline_job_parameters AS
      LEFT JOIN public.t_archive_path archpath ON ((dsarch.storage_path_id = archpath.archive_path_id)));
 
 
-ALTER TABLE public.v_get_pipeline_job_parameters OWNER TO d3l243;
+ALTER VIEW public.v_get_pipeline_job_parameters OWNER TO d3l243;
 
 --
 -- Name: TABLE v_get_pipeline_job_parameters; Type: ACL; Schema: public; Owner: d3l243

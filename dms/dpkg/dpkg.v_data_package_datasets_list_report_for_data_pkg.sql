@@ -48,7 +48,7 @@ CREATE VIEW dpkg.v_data_package_datasets_list_report_for_data_pkg AS
   GROUP BY dpd.data_pkg_id, ds.dataset, dpd.dataset_id, e.experiment, instname.instrument, dpd.package_comment, c.campaign, dsn.dataset_state, ds.created, dsrating.dataset_rating, dl.dataset_folder_path, COALESCE(ds.acq_time_start, rr.request_run_start), COALESCE(ds.acq_time_end, rr.request_run_finish), ds.acq_length_minutes, ds.scan_count, lc.lc_column, ds.separation_type, rr.request_id, dpd.item_added, ds.comment, dtn.dataset_type, rr.eus_proposal_id;
 
 
-ALTER TABLE dpkg.v_data_package_datasets_list_report_for_data_pkg OWNER TO d3l243;
+ALTER VIEW dpkg.v_data_package_datasets_list_report_for_data_pkg OWNER TO d3l243;
 
 --
 -- Name: VIEW v_data_package_datasets_list_report_for_data_pkg; Type: COMMENT; Schema: dpkg; Owner: d3l243

@@ -26,7 +26,7 @@ CREATE VIEW public.v_myemsl_supplemental_metadata AS
      LEFT JOIN public.t_organisms org ON ((e.organism_id = org.organism_id)));
 
 
-ALTER TABLE public.v_myemsl_supplemental_metadata OWNER TO d3l243;
+ALTER VIEW public.v_myemsl_supplemental_metadata OWNER TO d3l243;
 
 --
 -- Name: TABLE v_myemsl_supplemental_metadata; Type: ACL; Schema: public; Owner: d3l243

@@ -76,7 +76,7 @@ CREATE VIEW public.v_requested_run_detail_report AS
      LEFT JOIN public.t_material_locations ml ON ((rr.location_id = ml.location_id)));
 
 
-ALTER TABLE public.v_requested_run_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_requested_run_detail_report OWNER TO d3l243;
 
 --
 -- Name: VIEW v_requested_run_detail_report; Type: COMMENT; Schema: public; Owner: d3l243

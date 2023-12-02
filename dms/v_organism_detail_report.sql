@@ -49,7 +49,7 @@ CREATE VIEW public.v_organism_detail_report AS
   GROUP BY o.organism_id, o.organism, o.genus, o.species, o.strain, o.description, o.short_name, o.domain, o.kingdom, o.phylum, o.class, o."order", o.family, o.newt_id_list, newt.term_name, o.created, o.active, o.storage_location, o.storage_url, o.organism_db_name, fastalookupq.legacy_fasta_files, o.ncbi_taxonomy_id, ncbi.name, ncbi.synonyms, ncbi.synonym_list, t_yes_no.description;
 
 
-ALTER TABLE public.v_organism_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_organism_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_organism_detail_report; Type: ACL; Schema: public; Owner: d3l243

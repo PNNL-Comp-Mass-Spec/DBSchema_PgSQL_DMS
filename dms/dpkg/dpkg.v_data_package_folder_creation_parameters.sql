@@ -13,7 +13,7 @@ CREATE VIEW dpkg.v_data_package_folder_creation_parameters AS
      JOIN dpkg.t_data_package_storage dps ON ((dp.storage_path_id = dps.path_id)));
 
 
-ALTER TABLE dpkg.v_data_package_folder_creation_parameters OWNER TO d3l243;
+ALTER VIEW dpkg.v_data_package_folder_creation_parameters OWNER TO d3l243;
 
 --
 -- Name: TABLE v_data_package_folder_creation_parameters; Type: ACL; Schema: dpkg; Owner: d3l243

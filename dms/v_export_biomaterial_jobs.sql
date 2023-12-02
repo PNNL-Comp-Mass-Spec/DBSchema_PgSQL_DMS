@@ -13,7 +13,7 @@ CREATE VIEW public.v_export_biomaterial_jobs AS
      JOIN public.t_analysis_job j ON ((ds.dataset_id = j.dataset_id)));
 
 
-ALTER TABLE public.v_export_biomaterial_jobs OWNER TO d3l243;
+ALTER VIEW public.v_export_biomaterial_jobs OWNER TO d3l243;
 
 --
 -- Name: TABLE v_export_biomaterial_jobs; Type: ACL; Schema: public; Owner: d3l243

@@ -11,7 +11,7 @@ CREATE VIEW public.v_file_attachment_stats_by_id AS
   GROUP BY t_file_attachment.entity_type, t_file_attachment.entity_id;
 
 
-ALTER TABLE public.v_file_attachment_stats_by_id OWNER TO d3l243;
+ALTER VIEW public.v_file_attachment_stats_by_id OWNER TO d3l243;
 
 --
 -- Name: TABLE v_file_attachment_stats_by_id; Type: ACL; Schema: public; Owner: d3l243

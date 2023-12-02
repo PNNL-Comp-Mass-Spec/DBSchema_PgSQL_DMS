@@ -14,7 +14,7 @@ CREATE VIEW public.v_nexus_import_proposals AS
    FROM eus.vw_proposals;
 
 
-ALTER TABLE public.v_nexus_import_proposals OWNER TO d3l243;
+ALTER VIEW public.v_nexus_import_proposals OWNER TO d3l243;
 
 --
 -- Name: TABLE v_nexus_import_proposals; Type: ACL; Schema: public; Owner: d3l243

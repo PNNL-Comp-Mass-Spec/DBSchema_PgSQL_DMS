@@ -7,7 +7,7 @@ CREATE VIEW public.v_instrument_ops_role_picklist AS
    FROM public.t_instrument_name;
 
 
-ALTER TABLE public.v_instrument_ops_role_picklist OWNER TO d3l243;
+ALTER VIEW public.v_instrument_ops_role_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_instrument_ops_role_picklist; Type: ACL; Schema: public; Owner: d3l243

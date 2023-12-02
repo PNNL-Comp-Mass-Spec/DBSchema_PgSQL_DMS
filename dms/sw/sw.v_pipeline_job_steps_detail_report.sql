@@ -64,7 +64,7 @@ CREATE VIEW sw.v_pipeline_job_steps_detail_report AS
      LEFT JOIN sw.t_remote_info ri ON ((ri.remote_info_id = js.remote_info_id)));
 
 
-ALTER TABLE sw.v_pipeline_job_steps_detail_report OWNER TO d3l243;
+ALTER VIEW sw.v_pipeline_job_steps_detail_report OWNER TO d3l243;
 
 --
 -- Name: VIEW v_pipeline_job_steps_detail_report; Type: COMMENT; Schema: sw; Owner: d3l243

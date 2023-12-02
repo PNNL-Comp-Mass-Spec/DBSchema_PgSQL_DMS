@@ -28,7 +28,7 @@ CREATE VIEW sw.v_failed_job_steps AS
   WHERE (js.state = 6);
 
 
-ALTER TABLE sw.v_failed_job_steps OWNER TO d3l243;
+ALTER VIEW sw.v_failed_job_steps OWNER TO d3l243;
 
 --
 -- Name: TABLE v_failed_job_steps; Type: ACL; Schema: sw; Owner: d3l243

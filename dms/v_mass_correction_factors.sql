@@ -16,7 +16,7 @@ CREATE VIEW public.v_mass_correction_factors AS
    FROM public.t_mass_correction_factors;
 
 
-ALTER TABLE public.v_mass_correction_factors OWNER TO d3l243;
+ALTER VIEW public.v_mass_correction_factors OWNER TO d3l243;
 
 --
 -- Name: TABLE v_mass_correction_factors; Type: ACL; Schema: public; Owner: d3l243

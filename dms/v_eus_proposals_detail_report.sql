@@ -20,7 +20,7 @@ CREATE VIEW public.v_eus_proposals_detail_report AS
      LEFT JOIN public.t_eus_proposal_type ept ON ((eup.proposal_type OPERATOR(public.=) ept.proposal_type)));
 
 
-ALTER TABLE public.v_eus_proposals_detail_report OWNER TO d3l243;
+ALTER VIEW public.v_eus_proposals_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_eus_proposals_detail_report; Type: ACL; Schema: public; Owner: d3l243

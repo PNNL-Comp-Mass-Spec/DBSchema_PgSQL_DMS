@@ -24,7 +24,7 @@ CREATE VIEW public.v_sample_prep_request_picklist AS
   GROUP BY spr.prep_request_id, spr.request_name, spr.created, spr.estimated_completion, spr.priority, spr.state_id, sn.state_name, spr.request_type, spr.reason, spr.number_of_samples, spr.estimated_ms_runs, spr.prep_method, spr.requested_personnel, spr.assigned_personnel, spr.requester_username, spr.organism, spr.biohazard_level, spr.campaign;
 
 
-ALTER TABLE public.v_sample_prep_request_picklist OWNER TO d3l243;
+ALTER VIEW public.v_sample_prep_request_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_sample_prep_request_picklist; Type: ACL; Schema: public; Owner: d3l243

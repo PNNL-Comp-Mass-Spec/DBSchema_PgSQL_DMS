@@ -14,7 +14,7 @@ CREATE VIEW public.v_sample_submission_list_report AS
      JOIN public.t_users u ON ((ss.received_by_user_id = u.user_id)));
 
 
-ALTER TABLE public.v_sample_submission_list_report OWNER TO d3l243;
+ALTER VIEW public.v_sample_submission_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_sample_submission_list_report; Type: ACL; Schema: public; Owner: d3l243

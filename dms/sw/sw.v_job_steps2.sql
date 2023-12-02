@@ -128,7 +128,7 @@ CREATE VIEW sw.v_job_steps2 AS
                    FROM sw.t_job_parameters) src) paramq ON ((paramq.job = dataq.job)));
 
 
-ALTER TABLE sw.v_job_steps2 OWNER TO d3l243;
+ALTER VIEW sw.v_job_steps2 OWNER TO d3l243;
 
 --
 -- Name: TABLE v_job_steps2; Type: ACL; Schema: sw; Owner: d3l243

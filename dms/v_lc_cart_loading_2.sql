@@ -24,7 +24,7 @@ CREATE VIEW public.v_lc_cart_loading_2 AS
   WHERE (rr.state_name OPERATOR(public.=) 'Active'::public.citext);
 
 
-ALTER TABLE public.v_lc_cart_loading_2 OWNER TO d3l243;
+ALTER VIEW public.v_lc_cart_loading_2 OWNER TO d3l243;
 
 --
 -- Name: TABLE v_lc_cart_loading_2; Type: ACL; Schema: public; Owner: d3l243

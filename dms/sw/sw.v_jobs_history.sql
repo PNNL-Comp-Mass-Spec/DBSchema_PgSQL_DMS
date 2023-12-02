@@ -27,7 +27,7 @@ CREATE VIEW sw.v_jobs_history AS
      JOIN sw.t_jobs_history jh ON ((jh.state = jsn.job_state_id)));
 
 
-ALTER TABLE sw.v_jobs_history OWNER TO d3l243;
+ALTER VIEW sw.v_jobs_history OWNER TO d3l243;
 
 --
 -- Name: TABLE v_jobs_history; Type: ACL; Schema: sw; Owner: d3l243

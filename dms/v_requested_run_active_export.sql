@@ -41,7 +41,7 @@ CREATE VIEW public.v_requested_run_active_export AS
   WHERE (rr.state_name OPERATOR(public.=) 'Active'::public.citext);
 
 
-ALTER TABLE public.v_requested_run_active_export OWNER TO d3l243;
+ALTER VIEW public.v_requested_run_active_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_requested_run_active_export; Type: ACL; Schema: public; Owner: d3l243

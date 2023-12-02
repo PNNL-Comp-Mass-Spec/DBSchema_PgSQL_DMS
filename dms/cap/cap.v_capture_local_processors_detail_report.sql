@@ -13,7 +13,7 @@ CREATE VIEW cap.v_capture_local_processors_detail_report AS
    FROM cap.t_local_processors;
 
 
-ALTER TABLE cap.v_capture_local_processors_detail_report OWNER TO d3l243;
+ALTER VIEW cap.v_capture_local_processors_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_capture_local_processors_detail_report; Type: ACL; Schema: cap; Owner: d3l243

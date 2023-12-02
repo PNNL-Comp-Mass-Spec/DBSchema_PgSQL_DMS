@@ -11,7 +11,7 @@ CREATE VIEW public.v_biomaterial_count_by_month AS
   GROUP BY v_biomaterial_date.year, v_biomaterial_date.month;
 
 
-ALTER TABLE public.v_biomaterial_count_by_month OWNER TO d3l243;
+ALTER VIEW public.v_biomaterial_count_by_month OWNER TO d3l243;
 
 --
 -- Name: TABLE v_biomaterial_count_by_month; Type: ACL; Schema: public; Owner: d3l243

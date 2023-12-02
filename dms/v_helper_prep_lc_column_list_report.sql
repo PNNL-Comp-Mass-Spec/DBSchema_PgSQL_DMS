@@ -13,7 +13,7 @@ CREATE VIEW public.v_helper_prep_lc_column_list_report AS
   WHERE (t_prep_lc_column.state OPERATOR(public.=) 'Active'::public.citext);
 
 
-ALTER TABLE public.v_helper_prep_lc_column_list_report OWNER TO d3l243;
+ALTER VIEW public.v_helper_prep_lc_column_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_helper_prep_lc_column_list_report; Type: ACL; Schema: public; Owner: d3l243

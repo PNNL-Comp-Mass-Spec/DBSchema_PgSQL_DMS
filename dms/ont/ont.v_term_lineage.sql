@@ -26,7 +26,7 @@ CREATE VIEW ont.v_term_lineage AS
      JOIN ont.t_term_relationship parentchildrelationship ON ((parent.term_pk OPERATOR(public.=) parentchildrelationship.object_term_pk))) ON ((grandparent_parent_relationship.subject_term_pk OPERATOR(public.=) parent.term_pk))) ON ((child.term_pk OPERATOR(public.=) parentchildrelationship.subject_term_pk)));
 
 
-ALTER TABLE ont.v_term_lineage OWNER TO d3l243;
+ALTER VIEW ont.v_term_lineage OWNER TO d3l243;
 
 --
 -- Name: TABLE v_term_lineage; Type: ACL; Schema: ont; Owner: d3l243

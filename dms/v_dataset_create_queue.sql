@@ -38,7 +38,7 @@ CREATE VIEW public.v_dataset_create_queue AS
      JOIN public.t_dataset_create_queue_state qs ON ((dcq.state_id = qs.queue_state_id)));
 
 
-ALTER TABLE public.v_dataset_create_queue OWNER TO d3l243;
+ALTER VIEW public.v_dataset_create_queue OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_create_queue; Type: ACL; Schema: public; Owner: d3l243

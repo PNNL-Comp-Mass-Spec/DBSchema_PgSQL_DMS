@@ -24,7 +24,7 @@ CREATE VIEW cap.v_capture_jobs_detail_report AS
      JOIN cap.t_task_state_name tsn ON ((t.state = tsn.job_state_id)));
 
 
-ALTER TABLE cap.v_capture_jobs_detail_report OWNER TO d3l243;
+ALTER VIEW cap.v_capture_jobs_detail_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_capture_jobs_detail_report; Type: ACL; Schema: cap; Owner: d3l243

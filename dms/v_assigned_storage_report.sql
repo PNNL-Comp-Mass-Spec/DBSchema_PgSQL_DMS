@@ -21,7 +21,7 @@ CREATE VIEW public.v_assigned_storage_report AS
           WHERE (t_storage_path.storage_path_function OPERATOR(public.=) 'raw-storage'::public.citext)) storage ON ((t_instrument_name.storage_path_id = storage.storage_path_id)));
 
 
-ALTER TABLE public.v_assigned_storage_report OWNER TO d3l243;
+ALTER VIEW public.v_assigned_storage_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_assigned_storage_report; Type: ACL; Schema: public; Owner: d3l243

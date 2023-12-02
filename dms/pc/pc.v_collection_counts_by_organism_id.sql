@@ -9,7 +9,7 @@ CREATE VIEW pc.v_collection_counts_by_organism_id AS
   GROUP BY orgxref.organism_id;
 
 
-ALTER TABLE pc.v_collection_counts_by_organism_id OWNER TO d3l243;
+ALTER VIEW pc.v_collection_counts_by_organism_id OWNER TO d3l243;
 
 --
 -- Name: TABLE v_collection_counts_by_organism_id; Type: ACL; Schema: pc; Owner: d3l243

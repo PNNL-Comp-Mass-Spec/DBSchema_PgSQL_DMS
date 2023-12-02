@@ -21,7 +21,7 @@ CREATE VIEW public.v_helper_charge_code AS
   WHERE (cc.charge_code_state > 0);
 
 
-ALTER TABLE public.v_helper_charge_code OWNER TO d3l243;
+ALTER VIEW public.v_helper_charge_code OWNER TO d3l243;
 
 --
 -- Name: TABLE v_helper_charge_code; Type: ACL; Schema: public; Owner: d3l243

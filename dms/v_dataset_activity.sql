@@ -38,7 +38,7 @@ UNION
   WHERE ((da.archive_update_state_last_affected >= (CURRENT_TIMESTAMP - '14 days'::interval)) AND (da.archive_update_state_id = ANY (ARRAY[3, 5])));
 
 
-ALTER TABLE public.v_dataset_activity OWNER TO d3l243;
+ALTER VIEW public.v_dataset_activity OWNER TO d3l243;
 
 --
 -- Name: TABLE v_dataset_activity; Type: ACL; Schema: public; Owner: d3l243

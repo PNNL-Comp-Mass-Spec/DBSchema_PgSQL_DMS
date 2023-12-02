@@ -32,7 +32,7 @@ CREATE VIEW public.v_table_index_duplicates AS
   ORDER BY duplicateindexq.index_size_bytes DESC;
 
 
-ALTER TABLE public.v_table_index_duplicates OWNER TO d3l243;
+ALTER VIEW public.v_table_index_duplicates OWNER TO d3l243;
 
 --
 -- Name: TABLE v_table_index_duplicates; Type: ACL; Schema: public; Owner: d3l243

@@ -14,7 +14,7 @@ CREATE VIEW dpkg.v_data_package_experiments_export AS
      JOIN public.t_experiments e ON ((e.exp_id = dpe.experiment_id)));
 
 
-ALTER TABLE dpkg.v_data_package_experiments_export OWNER TO d3l243;
+ALTER VIEW dpkg.v_data_package_experiments_export OWNER TO d3l243;
 
 --
 -- Name: TABLE v_data_package_experiments_export; Type: ACL; Schema: dpkg; Owner: d3l243

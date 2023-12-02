@@ -33,7 +33,7 @@ CREATE VIEW public.v_mage_dataset_list AS
      LEFT JOIN public.t_dataset_archive da ON ((ds.dataset_id = da.dataset_id)));
 
 
-ALTER TABLE public.v_mage_dataset_list OWNER TO d3l243;
+ALTER VIEW public.v_mage_dataset_list OWNER TO d3l243;
 
 --
 -- Name: TABLE v_mage_dataset_list; Type: ACL; Schema: public; Owner: d3l243

@@ -45,7 +45,7 @@ CREATE VIEW public.v_filter_set_criteria_crosstab AS
                      MSAlign_PValue, MSAlign_FDR}''::text[])'::text) pivotdata(filter_criteria_group_id integer, filter_set_id integer, filter_set_name public.citext, filter_set_description public.citext, spectrum_count integer, charge integer, high_normalized_score double precision, cleavage_state integer, peptide_length integer, mass double precision, delcn double precision, delcn2 double precision, discriminant_score double precision, net_difference_absolute double precision, discriminant_initial_filter double precision, protein_count integer, terminus_state integer, xtandem_hyperscore double precision, xtandem_logevalue double precision, peptide_prophet_probability double precision, rankscore integer, inspect_mqscore double precision, inspect_totalprmscore double precision, inspect_fscore double precision, inspect_pvalue double precision, msgf_specprob double precision, msgfdb_specprob double precision, msgfdb_pvalue double precision, msgfplus_qvalue double precision, msgfplus_pepqvalue double precision, msalign_pvalue double precision, msalign_fdr double precision);
 
 
-ALTER TABLE public.v_filter_set_criteria_crosstab OWNER TO d3l243;
+ALTER VIEW public.v_filter_set_criteria_crosstab OWNER TO d3l243;
 
 --
 -- Name: TABLE v_filter_set_criteria_crosstab; Type: ACL; Schema: public; Owner: d3l243

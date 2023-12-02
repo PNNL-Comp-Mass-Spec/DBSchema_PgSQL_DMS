@@ -8,7 +8,7 @@ CREATE VIEW public.v_reference_compound_type_name_picklist AS
    FROM public.t_reference_compound_type_name;
 
 
-ALTER TABLE public.v_reference_compound_type_name_picklist OWNER TO d3l243;
+ALTER VIEW public.v_reference_compound_type_name_picklist OWNER TO d3l243;
 
 --
 -- Name: TABLE v_reference_compound_type_name_picklist; Type: ACL; Schema: public; Owner: d3l243

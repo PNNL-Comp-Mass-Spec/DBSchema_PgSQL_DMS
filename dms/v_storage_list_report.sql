@@ -17,7 +17,7 @@ CREATE VIEW public.v_storage_list_report AS
   GROUP BY spath.storage_path_id, spath.storage_path, spath.vol_name_client, spath.vol_name_server, spath.storage_path_function, spath.instrument, spath.description, spath.created;
 
 
-ALTER TABLE public.v_storage_list_report OWNER TO d3l243;
+ALTER VIEW public.v_storage_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_storage_list_report; Type: ACL; Schema: public; Owner: d3l243

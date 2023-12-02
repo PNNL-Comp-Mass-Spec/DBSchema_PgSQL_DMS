@@ -22,7 +22,7 @@ CREATE VIEW public.v_material_location_list_report AS
   GROUP BY ml.location_id, f.freezer, f.freezer_tag, ml.shelf, ml.rack, ml."row", ml.comment, ml.location, ml.col, ml.status, ml.container_limit;
 
 
-ALTER TABLE public.v_material_location_list_report OWNER TO d3l243;
+ALTER VIEW public.v_material_location_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_material_location_list_report; Type: ACL; Schema: public; Owner: d3l243

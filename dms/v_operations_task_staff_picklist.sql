@@ -10,7 +10,7 @@ CREATE VIEW public.v_operations_task_staff_picklist AS
   WHERE ((u.status OPERATOR(public.=) 'Active'::public.citext) AND (o.operation_id = 16));
 
 
-ALTER TABLE public.v_operations_task_staff_picklist OWNER TO d3l243;
+ALTER VIEW public.v_operations_task_staff_picklist OWNER TO d3l243;
 
 --
 -- Name: VIEW v_operations_task_staff_picklist; Type: COMMENT; Schema: public; Owner: d3l243

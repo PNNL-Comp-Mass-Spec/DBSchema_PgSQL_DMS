@@ -12,7 +12,7 @@ CREATE VIEW public.v_filter_set_overview AS
      JOIN public.t_filter_set_types fst ON ((fs.filter_type_id = fst.filter_type_id)));
 
 
-ALTER TABLE public.v_filter_set_overview OWNER TO d3l243;
+ALTER VIEW public.v_filter_set_overview OWNER TO d3l243;
 
 --
 -- Name: TABLE v_filter_set_overview; Type: ACL; Schema: public; Owner: d3l243

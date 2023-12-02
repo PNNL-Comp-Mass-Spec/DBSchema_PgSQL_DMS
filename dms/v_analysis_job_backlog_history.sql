@@ -12,7 +12,7 @@ CREATE VIEW public.v_analysis_job_backlog_history AS
   GROUP BY sh.posting_time, tool.analysis_tool;
 
 
-ALTER TABLE public.v_analysis_job_backlog_history OWNER TO d3l243;
+ALTER VIEW public.v_analysis_job_backlog_history OWNER TO d3l243;
 
 --
 -- Name: TABLE v_analysis_job_backlog_history; Type: ACL; Schema: public; Owner: d3l243

@@ -36,7 +36,7 @@ CREATE VIEW public.v_run_interval_list_report AS
      LEFT JOIN public.v_run_interval_usage u ON ((r.dataset_id = u.id)));
 
 
-ALTER TABLE public.v_run_interval_list_report OWNER TO d3l243;
+ALTER VIEW public.v_run_interval_list_report OWNER TO d3l243;
 
 --
 -- Name: TABLE v_run_interval_list_report; Type: ACL; Schema: public; Owner: d3l243
