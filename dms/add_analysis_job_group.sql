@@ -1,34 +1,14 @@
+--
+-- Name: add_analysis_job_group(text, integer, text, text, text, text, text, text, text, text, text, text, integer, integer, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
 
-CREATE OR REPLACE PROCEDURE public.add_analysis_job_group
-(
-    _datasetList text,
-    _priority int = 2,
-    _toolName text,
-    _paramFileName text,
-    _settingsFileName text,
-    _organismDBName text,
-    _organismName text,
-    _protCollNameList text,
-    _protCollOptionsList text,
-    _ownerUsername text,
-    _comment text = null,
-    _specialProcessing text = null,
-    _requestID int,
-    _dataPackageID int = 0,
-    _associatedProcessorGroup text = '',
-    _propagationMode text = 'Export',
-    _removeDatasetsWithJobs text = 'Y',
-    _mode text,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+CREATE OR REPLACE PROCEDURE public.add_analysis_job_group(IN _datasetlist text, IN _priority integer, IN _toolname text, IN _paramfilename text, IN _settingsfilename text, IN _organismdbname text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _ownerusername text, IN _comment text, IN _specialprocessing text, IN _requestid integer DEFAULT 0, IN _datapackageid integer DEFAULT 0, IN _associatedprocessorgroup text DEFAULT ''::text, IN _propagationmode text DEFAULT 'Export'::text, IN _removedatasetswithjobs text DEFAULT 'Y'::text, IN _mode text DEFAULT 'preview'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new analysis jobs for list of datasets
+**      Creates new analysis jobs for a set of datasets, typically using parameters from an analysis job request
 **
 **  Arguments:
 **    _datasetList                  Comma-separated list of dataset names; ignored if _dataPackageID is a positive integer
@@ -43,7 +23,7 @@ AS $$
 **    _ownerUsername                Owner username; will be updated to _callingUser if _callingUser is valid
 **    _comment                      Job comment
 **    _specialProcessing            Special processing parameters
-**    _requestID                    0 if not associated with a request; otherwise, request ID in t_analysis_job_request
+**    _requestID                    Analysis job request ID; 0 if not associated with a job request; otherwise, request ID in t_analysis_job_request
 **    _dataPackageID                Data package ID
 **    _associatedProcessorGroup     Processor group name; deprecated in May 2015
 **    _propagationMode              Propagation mode: 'Export', 'No Export'
@@ -129,7 +109,7 @@ AS $$
 **                         - Remove dash from DiaNN tool name
 **          07/27/2023 mem - Update message sent to get_new_job_id()
 **          09/06/2023 mem - Remove leading space from messages
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/02/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -149,7 +129,7 @@ DECLARE
     _msgForLog text;
     _logErrors boolean := false;
     _gid int;
-    _newUsername text;
+    _newUsername citext;
     _slashPos int;
     _datasetCountToRemove int := 0;
     _removedDatasetsMsg text := '';
@@ -161,7 +141,7 @@ DECLARE
     _warning text := '';
     _paramFileStoragePath text;
     _createMzMLFilesFlag text := 'False';
-    _msXmlGenerator text := '';
+    _msXmlGenerator citext := '';
     _msXMLOutputType text := '';
     _centroidMSXML text := '';
     _centroidPeakCountToRetain text := '';
@@ -236,13 +216,18 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _requestID     := Coalesce(_requestID, 0);
-        _dataPackageID := Coalesce(_dataPackageID, 0);
         _datasetList   := Trim(Coalesce(_datasetList, ''));
+        _dataPackageID := Coalesce(_dataPackageID, 0);
+        _priority      := Coalesce(_priority, 2);
+        _requestID     := Coalesce(_requestID, 0);
         _mode          := Trim(Lower(Coalesce(_mode, '')));
 
         If _dataPackageID < 0 Then
             _dataPackageID := 0;
+        End If;
+
+        If _priority <= 0 Then
+            _priority := 2;
         End If;
 
         If Not _mode In ('add', 'preview') Then
@@ -255,12 +240,12 @@ BEGIN
 
         If _dataPackageID > 0 Then
             _datasetList := '';
-        ElsIf _datasetList = ''
+        ElsIf _datasetList = '' Then
             _message := format('Dataset list is empty for request %s', _requestID);
             RAISE EXCEPTION '%', _message;
         End If;
 
-        _paramFileName := Trim(Coalesce(_paramFileName, ''));
+        _paramFileName    := Trim(Coalesce(_paramFileName, ''));
         _settingsFileName := Trim(Coalesce(_settingsFileName, ''));
 
         /*
@@ -349,7 +334,7 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Assure that we are not running a decoy search if using MSGFPlus, TopPIC, or MaxQuant (since those tools auto-add decoys)
+        -- Assure that we are not running a decoy search if using MS-GF+, TopPIC, or MaxQuant (since those tools auto-add decoys)
         -- However, if the parameter file contains _NoDecoy in the name, we'll allow _protCollOptionsList to contain Decoy
         ---------------------------------------------------
 
@@ -408,11 +393,10 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- If _removeDatasetsWithJobs is not 'N',
-        -- find datasets from temp table that have existing
-        -- jobs that match criteria from request
+        -- If _removeDatasetsWithJobs is not 'N' or 'No,
+        -- find datasets from temp table that have existing jobs that match criteria from request
         --
-        -- If AJT_orgDbReqd = 0, we ignore organism, protein collection, and organism DB
+        -- If org_db_required = 0, we ignore organism, protein collection, and organism DB
         ---------------------------------------------------
 
         If _dataPackageID = 0 And _removeDatasetsWithJobs::citext Not In ('N', 'No') Then
@@ -433,7 +417,7 @@ BEGIN
                  -- INNER JOIN t_analysis_job_state AJS
                  --  ON AJ.job_state_id = AJS.job_state_id
                  INNER JOIN Tmp_DatasetInfo
-                   ON Tmp_DatasetInfo.dataset = DS.dataset
+                   ON Tmp_DatasetInfo.dataset_name = DS.dataset
             WHERE NOT AJ.job_state_id IN (5) AND
                   AJT.analysis_tool = _toolName::citext AND
                   AJ.param_file_name = _paramFileName::citext AND
@@ -560,13 +544,12 @@ BEGIN
         UPDATE Tmp_DatasetInfo
         SET Dataset_Unreviewed = CASE WHEN DS.dataset_rating_id = -10 THEN 1 ELSE 0 END
         FROM t_dataset DS
-            INNER JOIN Tmp_DatasetInfo
-            ON DS.dataset = Tmp_DatasetInfo.dataset
+        WHERE DS.dataset = Tmp_DatasetInfo.dataset_name;
 
         If _dataPackageID > 0 Then
             If _mode = 'add' Then
                 ---------------------------------------------------
-                -- Make sure the job request is in state 1=new or state 5=new (Review Required)
+                -- Make sure the job request is in state 1 = 'New' or state 5 = 'New (Review Required)'
                 ---------------------------------------------------
 
                 SELECT request_state_id
@@ -625,27 +608,27 @@ BEGIN
                 SELECT Value
                 INTO _msXmlGenerator
                 FROM Tmp_SettingsFile_Values_DataPkgJob
-                WHERE KeyName = 'MSXMLGenerator'
+                WHERE KeyName = 'MSXMLGenerator';
 
                 SELECT Value
                 INTO _msXMLOutputType
                 FROM Tmp_SettingsFile_Values_DataPkgJob
-                WHERE KeyName = 'MSXMLOutputType'
+                WHERE KeyName = 'MSXMLOutputType';
 
                 SELECT Value
                 INTO _centroidMSXML
                 FROM Tmp_SettingsFile_Values_DataPkgJob
-                WHERE KeyName = 'CentroidMSXML'
+                WHERE KeyName = 'CentroidMSXML';
 
                 SELECT Value
                 INTO _centroidPeakCountToRetain
                 FROM Tmp_SettingsFile_Values_DataPkgJob
-                WHERE KeyName = 'CentroidPeakCountToRetain'
+                WHERE KeyName = 'CentroidPeakCountToRetain';
 
                 SELECT Value
                 INTO _cacheFolderRootPath
                 FROM Tmp_SettingsFile_Values_DataPkgJob
-                WHERE KeyName = 'CacheFolderRootPath'
+                WHERE KeyName = 'CacheFolderRootPath';
 
                 If char_length(_msXmlGenerator) > 0 And char_length(_msXMLOutputType) > 0 And _msXmlGenerator <> 'skip' Then
                     _createMzMLFilesFlag := 'True';
@@ -790,7 +773,7 @@ BEGIN
             End If;
 
             If _returnCode = '' Then
-                _message := format('%s %s %s', _message, public.check_plural(_jobCountToBeCreated, 'dataset', 'datasets');
+                _message := format('%s %s %s', _message, public.check_plural(_jobCountToBeCreated, 'dataset', 'datasets'));
             End If;
 
             DROP TABLE Tmp_DatasetInfo;
@@ -815,11 +798,11 @@ BEGIN
             SELECT COUNT(*)
             INTO _numDatasets
             FROM Tmp_DatasetInfo;
-            --
+
             If _numDatasets = 0 Then
                 RAISE EXCEPTION 'No datasets in list to create jobs for request %', _requestID;
             End If;
-            --
+
             If _numDatasets > 1 Then
 
                 -- Create a new batch
@@ -837,7 +820,7 @@ BEGIN
             If _requestID = 0 Then
                 _requestID := 1; -- for the default request
             Else
-                -- Make sure _requestID is in state 1=new or state 5=new (Review Required)
+                -- Make sure _requestID is in state 1 = 'New' or state 5 = 'New (Review Required)'
 
                 SELECT request_state_id
                 INTO _requestStateID
@@ -925,7 +908,7 @@ BEGIN
                 dataset_id,
                 comment,
                 special_processing,
-                owner,
+                owner_username,
                 batch_id,
                 job_state_id,
                 request_id,
@@ -959,6 +942,7 @@ BEGIN
                 -- Added a single job; cache the jobID value
                 _jobID := _jobIDStart;
             End If;
+
             /*
             ---------------------------------------------------
             -- Deprecated in May 2015: create associations with processor group for new
@@ -1038,7 +1022,7 @@ BEGIN
                     INSERT INTO Tmp_ID_Update_List (TargetID)
                     SELECT DISTINCT job
                     FROM t_analysis_job
-                    WHERE batch_id = _batchID
+                    WHERE batch_id = _batchID;
 
                     CALL public.alter_event_log_entry_user_multi_id ('public', 5, _jobStateID, _callingUser, _entryTimeWindowSeconds => 45, _message => _alterEnteredByMessage);
 
@@ -1060,13 +1044,13 @@ BEGIN
             End If;
         Else
             If _mode = 'add' Then
-                _message := 'There were ';
+                _message := 'There were';
             Else
-                _message := 'There would be ';
+                _message := 'There would be';
             End If;
 
             _message := format('%s %s %s created.',
-                                _message,  _jobCountToBeCreated, public.check_plural(_jobCountToBeCreated, 'job', 'jobs');
+                               _message,  _jobCountToBeCreated, public.check_plural(_jobCountToBeCreated, 'job', 'jobs'));
         End If;
 
         If _datasetCountToRemove > 0 Then
@@ -1115,4 +1099,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_analysis_job_group IS 'AddAnalysisJobGroup';
+
+ALTER PROCEDURE public.add_analysis_job_group(IN _datasetlist text, IN _priority integer, IN _toolname text, IN _paramfilename text, IN _settingsfilename text, IN _organismdbname text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _ownerusername text, IN _comment text, IN _specialprocessing text, IN _requestid integer, IN _datapackageid integer, IN _associatedprocessorgroup text, IN _propagationmode text, IN _removedatasetswithjobs text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_analysis_job_group(IN _datasetlist text, IN _priority integer, IN _toolname text, IN _paramfilename text, IN _settingsfilename text, IN _organismdbname text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _ownerusername text, IN _comment text, IN _specialprocessing text, IN _requestid integer, IN _datapackageid integer, IN _associatedprocessorgroup text, IN _propagationmode text, IN _removedatasetswithjobs text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_analysis_job_group(IN _datasetlist text, IN _priority integer, IN _toolname text, IN _paramfilename text, IN _settingsfilename text, IN _organismdbname text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _ownerusername text, IN _comment text, IN _specialprocessing text, IN _requestid integer, IN _datapackageid integer, IN _associatedprocessorgroup text, IN _propagationmode text, IN _removedatasetswithjobs text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddAnalysisJobGroup';
+
