@@ -1,15 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.validate_wellplate_loading
-(
-    INOUT _wellplateName text,
-    INOUT _wellNumber text,
-    _totalCount int,
-    INOUT _wellIndex int,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: validate_wellplate_loading(text, text, integer, integer, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.validate_wellplate_loading(INOUT _wellplatename text, INOUT _wellnumber text, IN _totalcount integer, INOUT _wellindex integer, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -30,7 +25,7 @@ AS $$
 **          12/01/2009 grk - Modified to skip checking of existing well occupancy if _totalCount = 0
 **          05/16/2022 mem - Show example well numbers
 **          11/25/2022 mem - Rename parameter to _wellplate
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/02/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -46,22 +41,23 @@ BEGIN
     -- Normalize wellplate values
     ---------------------------------------------------
 
+    _wellplateName := Trim(Coalesce(_wellplateName, ''));
+    _wellNumber    := Upper(Trim(Coalesce(_wellNumber, '')));
+
     -- Normalize values meaning 'empty' to null
     --
-    If _wellplateName = '' or _wellplateName = 'na' Then
+    If _wellplateName::citext In ('', 'na') Then
         _wellplateName := null;
     End If;
 
-    If _wellNumber = '' r _wellNumber = 'na' Then
+    If _wellNumber::citext In ('', 'na') Then
         _wellNumber := null;
     End If;
-
-    _wellNumber := Upper(_wellNumber);
 
     -- Make sure that wellplate and well values are consistent
     -- with each other
     --
-    If (_wellNumber is null and not _wellplateName is null) Or (not _wellNumber is null and _wellplateName is null) Then
+    If (_wellNumber Is Null And Not _wellplateName Is Null) Or (Not _wellNumber Is Null And _wellplateName is null) Then
         _message := 'Wellplate and well must either both be empty or both be set';
         _returnCode := 'U5142';
         RETURN;
@@ -77,7 +73,7 @@ BEGIN
     --
     If Not _wellNumber Is Null Then
 
-        _wellIndex := public.get_well_index(_wellNumber);
+        _wellIndex := public.get_well_index(_wellNumber::citext);
 
         If _wellIndex = 0 Then
             _message := 'Well number is not valid; should be in the format A4 or C12';
@@ -85,7 +81,8 @@ BEGIN
             RETURN;
         End If;
         --
-        If _wellIndex + _totalCount > 97 -- index is first new well, which understates available space by one Then
+        If _wellIndex + _totalCount > 97 Then
+            -- index is first new well, which understates available space by one
             _message := 'Wellplate capacity would be exceeded';
             _returnCode := 'U5244';
             RETURN;
@@ -96,9 +93,8 @@ BEGIN
     -- Make sure wells are not in current use
     ---------------------------------------------------
 
-    -- Don't bother if we are not adding new item
-
     If _totalCount = 0 Then
+        -- Don't bother since we are not adding a new item
         RETURN;
     End If;
 
@@ -111,8 +107,8 @@ BEGIN
 
     WHILE _count > 0
     LOOP
-        insert into Tmp_Wells (wellIndex)
-        values (_index);
+        INSERT INTO Tmp_Wells (wellIndex)
+        VALUES (_index);
 
         _count := _count - 1;
         _index := _index + 1;
@@ -124,7 +120,7 @@ BEGIN
     SELECT string_agg(well, ', ' ORDER BY well)
     INTO _wellList
     FROM t_experiments
-    WHERE wellplate = _wellplateName AND
+    WHERE wellplate = _wellplateName::citext AND
           public.get_well_index(well) IN (
               SELECT wellIndex
               FROM Tmp_Wells
@@ -143,11 +139,18 @@ BEGIN
         End If;
 
         _returnCode := 'U5145';
-        RETURN;
     End If;
 
     DROP TABLE Tmp_Wells;
 END
 $$;
 
-COMMENT ON PROCEDURE public.validate_wellplate_loading IS 'ValidateWellplateLoading';
+
+ALTER PROCEDURE public.validate_wellplate_loading(INOUT _wellplatename text, INOUT _wellnumber text, IN _totalcount integer, INOUT _wellindex integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE validate_wellplate_loading(INOUT _wellplatename text, INOUT _wellnumber text, IN _totalcount integer, INOUT _wellindex integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.validate_wellplate_loading(INOUT _wellplatename text, INOUT _wellnumber text, IN _totalcount integer, INOUT _wellindex integer, INOUT _message text, INOUT _returncode text) IS 'ValidateWellplateLoading';
+
