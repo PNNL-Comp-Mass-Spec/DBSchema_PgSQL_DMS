@@ -1,15 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_wellplate
-(
-    INOUT _wellplateName text,
-    _description text,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_wellplate(text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_wellplate(INOUT _wellplatename text, IN _description text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -28,7 +23,7 @@ AS $$
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          11/25/2022 mem - Rename parameter to _wellplate
-**          12/15/2024 mem - Ported to PostgreSQL
+**          12/03/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -68,8 +63,12 @@ BEGIN
     -- Optionally generate name
     ---------------------------------------------------
 
-    If _wellplateName = '(generate name)' Then
-        --
+    _wellplateName := Trim(Coalesce(_wellplateName, ''));
+    _description   := Trim(Coalesce(_description, ''));
+    _mode          := Trim(Lower(Coalesce(_mode, '')));
+
+    If Lower(_wellplateName) = '(generate name)' Then
+
         SELECT MAX(wellplate_id) + 1
         INTO _idx
         FROM  t_wellplates;
@@ -81,8 +80,6 @@ BEGIN
         _wellplateName := format('WP-%s', _idx);
     End If;
 
-    _mode := Trim(Lower(Coalesce(_mode, '')));
-
     ---------------------------------------------------
     -- Is entry already in database?
     ---------------------------------------------------
@@ -90,12 +87,12 @@ BEGIN
     SELECT wellplate_id
     INTO _existingID
     FROM  t_wellplates
-    WHERE wellplate = _wellplateName;
+    WHERE wellplate = _wellplateName::citext;
     --
     GET DIAGNOSTICS _existingCount = ROW_COUNT;
 
     ---------------------------------------------------
-    -- In this mode, add new entry if it doesn't exist
+    -- If mode is 'assure', add a new entry if it doesn't exist
     ---------------------------------------------------
 
     If _mode = 'assure' And (_existingCount = 0 Or _existingID = 0) Then
@@ -107,7 +104,7 @@ BEGIN
     ---------------------------------------------------
 
     If _mode = 'update' And (_existingCount = 0 Or _existingID = 0) Then
-        _message := 'No entry could be found in database for update';
+        _message := format('No entry could be found in database for update: %s', _wellplateName);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';
@@ -119,7 +116,7 @@ BEGIN
     ---------------------------------------------------
 
     If _mode = 'add' And _existingID <> 0 Then
-        _message := 'Cannot add duplicate wellplate name';
+        _message := format('Cannot add duplicate wellplate named %s', _wellplateName);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5202';
@@ -138,7 +135,7 @@ BEGIN
         ) VALUES (
             _wellplateName,
             _description
-        )
+        );
 
     End If;
 
@@ -151,11 +148,19 @@ BEGIN
         UPDATE t_wellplates
         SET wellplate = _wellplateName,
             description = _description
-        WHERE wellplate = _wellplateName;
+        WHERE wellplate::citext = _wellplateName;
 
     End If;
 
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_wellplate IS 'AddUpdateWellplate';
+
+ALTER PROCEDURE public.add_update_wellplate(INOUT _wellplatename text, IN _description text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_wellplate(INOUT _wellplatename text, IN _description text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_wellplate(INOUT _wellplatename text, IN _description text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateWellplate';
+

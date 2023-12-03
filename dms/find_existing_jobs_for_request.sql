@@ -1,26 +1,14 @@
 --
-CREATE OR REPLACE FUNCTION public.find_existing_jobs_for_request
-(
-    _requestID int
-)
-RETURNS TABLE
-(
-    Job int,
-    State citext,
-    Priority int,
-    Request int,
-    Created timestamp,
-    Start timestamp,
-    Finish timestamp,
-    Processor citext,
-    Dataset citext
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: find_existing_jobs_for_request(integer); Type: FUNCTION; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE FUNCTION public.find_existing_jobs_for_request(_requestid integer) RETURNS TABLE(job integer, state public.citext, priority integer, request integer, created timestamp without time zone, start timestamp without time zone, finish timestamp without time zone, processor public.citext, dataset public.citext)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Return a table of existing analysis jobs created from the specified analysis job request
+**      Return a table of existing analysis jobs created from the given analysis job request
 **
 **  Arguments:
 **    _requestID    Analysis job request ID
@@ -34,7 +22,7 @@ AS $$
 **          05/28/2015 mem - Removed reference to T_Analysis_Job_Processor_Group
 **          07/30/2019 mem - After obtaining the actual matching jobs using GetRunRequestExistingJobListTab, compare to the cached values in T_Analysis_Job_Request_Existing_Jobs; call Update_Cached_Job_Request_Existing_Jobs if a mismatch
 **          07/31/2019 mem - Use new function name, get_existing_jobs_matching_job_request
-**          12/15/2024 mem - Ported to Postgres
+**          12/03/2023 mem - Ported to Postgres
 **
 *****************************************************/
 DECLARE
@@ -48,16 +36,17 @@ BEGIN
     );
 
     INSERT INTO Tmp_ExistingJobs( Job )
-    SELECT job
-    FROM public.get_existing_jobs_matching_job_request(_requestID );
+    SELECT Src.job
+    FROM public.get_existing_jobs_matching_job_request(_requestID) Src;
     --
     GET DIAGNOSTICS _existingCount = ROW_COUNT;
 
     -- See if t_analysis_job_request_existing_jobs needs to be updated
-    SELECT COUNT(job)
+
+    SELECT COUNT(ExistingJobs.job)
     INTO _cachedCount
-    FROM t_analysis_job_request_existing_jobs
-    WHERE request_id = _requestID;
+    FROM t_analysis_job_request_existing_jobs ExistingJobs
+    WHERE ExistingJobs.request_id = _requestID;
 
     If _cachedCount <> _existingCount Then
         RAISE INFO '%', 'Calling update_cached_job_request_existing_jobs due to differing count';
@@ -113,4 +102,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON FUNCTION public.find_existing_jobs_for_request IS 'FindExistingJobsForRequest';
+
+ALTER FUNCTION public.find_existing_jobs_for_request(_requestid integer) OWNER TO d3l243;
+
+--
+-- Name: FUNCTION find_existing_jobs_for_request(_requestid integer); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON FUNCTION public.find_existing_jobs_for_request(_requestid integer) IS 'FindExistingJobsForRequest';
+

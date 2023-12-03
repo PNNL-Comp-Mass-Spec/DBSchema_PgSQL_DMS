@@ -1,12 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_experiment_group_member_count
-(
-    _groupID int = 0,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_experiment_group_member_count(integer, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_experiment_group_member_count(IN _groupid integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -19,7 +17,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   12/06/2018 mem - Initial version
-**          12/15/2024 mem - Ported to PostgreSQL
+**          12/03/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -51,7 +49,7 @@ BEGIN
             _message := format('Updated member counts for %s %s in t_experiment_groups', _updateCount, public.check_plural(_updateCount, 'group', 'groups'));
             RAISE INFO '%', _message;
         Else
-            _message := 'Member counts were already up-to-date for all groups in t_experiment_groups';
+            _message := 'Member counts are already up-to-date for all groups in t_experiment_groups';
         End If;
     Else
 
@@ -67,9 +65,17 @@ BEGIN
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        _message := format('Experiment group %s now has %s %s', _groupID, _updateCount, public.check_plural(_updateCount, 'member', 'members'));
+        _message := format('Experiment group %s now has %s %s', _groupID, _memberCount, public.check_plural(_memberCount, 'member', 'members'));
     End If;
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_experiment_group_member_count IS 'UpdateExperimentGroupMemberCount';
+
+ALTER PROCEDURE public.update_experiment_group_member_count(IN _groupid integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_experiment_group_member_count(IN _groupid integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_experiment_group_member_count(IN _groupid integer, INOUT _message text, INOUT _returncode text) IS 'UpdateExperimentGroupMemberCount';
+
