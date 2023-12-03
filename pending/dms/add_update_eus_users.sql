@@ -30,7 +30,7 @@ AS $$
 **          03/19/2012 mem - Added _hanfordID
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

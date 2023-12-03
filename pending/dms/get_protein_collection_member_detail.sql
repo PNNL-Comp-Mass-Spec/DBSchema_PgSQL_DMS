@@ -38,7 +38,7 @@ AS $$
 **  Auth:   mem
 **  Date:   06/27/2016 mem - Initial version
 **          08/03/2017 mem - Add Set NoCount On
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

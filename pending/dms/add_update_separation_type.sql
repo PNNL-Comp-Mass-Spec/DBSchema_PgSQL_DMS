@@ -34,7 +34,7 @@ AS $$
 **  Auth:   bcg
 **  Date:   12/19/2019 bcg - Initial version
 **          08/11/2021 mem - Determine the next ID to use when adding a new separation type
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

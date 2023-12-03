@@ -23,7 +23,7 @@ AS $$
 **  Dte:    03/29/2010 grk - Initial version
 **          11/08/2016 mem - Use GetUserLoginWithoutDomain to obtain the user's network login
 **          11/10/2016 mem - Pass '' to GetUserLoginWithoutDomain
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

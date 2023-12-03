@@ -44,7 +44,7 @@ AS $$
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/12/2018 mem - Send _maxLength to append_to_text
 **          07/29/2022 mem - Use Coalesce instead of Coalesce
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

@@ -38,7 +38,7 @@ AS $$
 **          08/22/2004 grk - Added _paramFileID
 **          02/12/2010 mem - Increased size of _paramFileName to varchar(255)
 **          04/02/2020 mem - Remove cast of Mass_Correction_Tag to varchar since no longer char(8)
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

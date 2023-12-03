@@ -68,7 +68,7 @@ AS $$
 **                         - Properly handle float-based dates (resulting from Excel copy / paste-value issues)
 **          12/08/2020 mem - Lookup Username from T_Users using the validated user ID
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

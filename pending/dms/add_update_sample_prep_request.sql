@@ -172,7 +172,7 @@ AS $$
 **          04/18/2022 mem - Replace tabs in prep request names with spaces
 **          08/08/2022 mem - Update StateChanged when the state changes
 **          08/25/2022 mem - Use view V_Operations_Task_Staff when checking if the user can update a closed prep request item
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

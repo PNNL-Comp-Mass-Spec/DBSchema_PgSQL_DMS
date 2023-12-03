@@ -42,7 +42,7 @@ AS $$
 **                         - Rename _eusPropState to _eusPropStateID and make it an int instead of varchar
 **                         - Add Try/Catch error handling
 **                         - Fix merge query bug
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

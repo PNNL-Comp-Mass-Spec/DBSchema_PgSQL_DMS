@@ -49,7 +49,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          06/11/2021 mem - Store integers in Entity_ID_Value
 **          03/27/2022 mem - Assure that Active is 1 when updating an existing file attachment
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

@@ -31,7 +31,7 @@ AS $$
 **                         - Add call to Post_Usage_Log_Entry
 **          08/01/2017 mem - Use THROW if not authorized
 **          01/12/2023 mem - Remove call to CallSendMessage since it was deprecated in 2016
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

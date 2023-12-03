@@ -53,7 +53,7 @@ AS $$
 **          02/10/2022 mem - Remove obsolete payroll field
 **                         - Always add 'H' to _hanfordIdNum if it starts with a number
 **          03/16/2022 mem - Replace tab characters with spaces
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

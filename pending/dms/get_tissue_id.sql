@@ -24,7 +24,7 @@ AS $$
 **  Auth:   mem
 **  Date:   09/01/2017 mem - Initial version
 **          10/09/2017 mem - Auto-change _tissue to '' if 'none', 'na', or 'n/a'
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

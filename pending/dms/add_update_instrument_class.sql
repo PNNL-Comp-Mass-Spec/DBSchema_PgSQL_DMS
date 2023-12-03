@@ -55,7 +55,7 @@ AS $$
 **          12/06/2018 mem - Add try/catch handling and disallow _mode = 'add'
 **          02/01/2023 mem - Rename argument to _isPurgeable and switch from text to int
 **                         - Remove argument _requiresPreparation
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

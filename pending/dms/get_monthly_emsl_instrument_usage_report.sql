@@ -39,7 +39,7 @@ AS $$
 **          05/03/2019 mem - Add support for DMS instruments that share a single eusInstrumentId
 **          02/14/2022 mem - Add new columns to temporary table Tmp_InstrumentUsage (to match data returned by GetMonthlyInstrumentUsageReport)
 **                         - Add _infoOnly parameter
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

@@ -39,7 +39,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          11/17/2020 mem - Fix typo in error message
 **          07/19/2023 mem - Rename request ID list parameter
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

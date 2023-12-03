@@ -32,7 +32,7 @@ AS $$
 **          07/01/2009 mem - Added parameter _destParamFileID
 **          07/22/2009 mem - Now returning the suggested query for tweaking the newly entered mass mods
 **          11/30/2018 mem - Renamed the Monoisotopic_Mass and Average_Mass columns
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

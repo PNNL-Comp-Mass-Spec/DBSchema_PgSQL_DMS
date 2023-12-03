@@ -39,7 +39,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          10/03/2018 mem - Add _comment
 **                         - Use _logErrors to toggle logging errors caught by the try/catch block
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

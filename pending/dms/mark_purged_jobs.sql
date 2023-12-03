@@ -19,7 +19,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   06/13/2012 grk - Initial version
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

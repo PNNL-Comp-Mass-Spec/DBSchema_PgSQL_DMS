@@ -43,7 +43,7 @@ AS $$
 **          10/23/2020 mem - Allow updating 'fraction' based requests
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          05/23/2023 mem - Allow deleting requests of type 'auto' or 'fraction'
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

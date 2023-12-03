@@ -30,7 +30,7 @@ AS $$
 **  Auth:   mem
 **  Date:   10/18/2012
 **          01/16/2014 mem - Added parameter _experimentExclusion
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

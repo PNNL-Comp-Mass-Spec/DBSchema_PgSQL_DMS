@@ -28,7 +28,7 @@ AS $$
 **          02/17/2022 mem - Tabs to spaces
 **          05/19/2023 mem - Add missing Else
 **          05/24/2023 mem - When previewing new users, show charge codes associated with each new user
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

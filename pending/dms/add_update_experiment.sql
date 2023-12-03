@@ -128,7 +128,7 @@ AS $$
 **          11/26/2022 mem - Rename parameter to _biomaterialList
 **          09/07/2023 mem - Update warning messages
 **          09/26/2023 mem - Update cached experiment names in t_data_package_experiments
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

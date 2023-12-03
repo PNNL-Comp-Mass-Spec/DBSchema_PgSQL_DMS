@@ -39,7 +39,7 @@ AS $$
 **          03/25/2008 mem - Added optional parameter _callingUser; if provided, will populate field Entered_By with this name
 **          01/20/2010 mem - Added support for dynamic peptide terminus mods (TermDynamicModification)
 **          06/13/2017 mem - Use SCOPE_IDENTITY()
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

@@ -29,7 +29,7 @@ AS $$
 **  Date:   01/16/2008 grk - Initial Release (ticket http://prismtrac.pnl.gov/trac/ticket/715)
 **          01/28/2009 dac - Added 'output' keyword to _message parameter
 **          02/23/2017 mem - Added parameter _cartConfigName, which is used to populate column cart_config_id
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

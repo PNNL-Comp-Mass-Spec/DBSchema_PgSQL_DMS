@@ -60,7 +60,7 @@ AS $$
 **                         - Add parameter _comment
 **          08/08/2022 mem - Update State_Changed when the state changes
 **          02/13/2023 bcg - Send the correct procedure name to ValidateRequestUsers
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

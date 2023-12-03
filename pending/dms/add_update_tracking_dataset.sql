@@ -59,7 +59,7 @@ AS $$
 **          11/27/2022 mem - Remove query artifact that was used for debugging
 **          12/24/2022 mem - Fix logic error evaluating _runDuration
 **          02/27/2023 mem - Use new argument name, _requestName
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

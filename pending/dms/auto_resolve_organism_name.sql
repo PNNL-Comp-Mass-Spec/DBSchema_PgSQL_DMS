@@ -29,7 +29,7 @@ AS $$
 **  Auth:   mem
 **  Date:   12/02/2016 mem - Initial Version
 **          03/31/2021 mem - Expand _nameSearchSpec and _matchingOrganismName to varchar(128)
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

@@ -56,7 +56,7 @@ AS $$
 **          09/09/2022 mem - Use new argument names when calling Make_New_Archive_Update_Job
 **          06/21/2023 mem - Remove parameter _pushDatasetToMyEMSL in call to cap.make_new_archive_update_task
 **          10/05/2023 mem - Archive path is now agate.emsl.pnl.gov
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

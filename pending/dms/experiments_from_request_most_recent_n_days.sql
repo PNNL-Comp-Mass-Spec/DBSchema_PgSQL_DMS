@@ -23,6 +23,7 @@ AS $$
 **          01/30/2017 mem - Switch from DateDiff to DateAdd
 **          06/17/2022 mem - Ported to PostgreSQL
 **          10/22/2022 mem - Directly pass value to function argument
+**          12/15/2024 mem - Ported to Postgres
 **
 *****************************************************/
 DECLARE

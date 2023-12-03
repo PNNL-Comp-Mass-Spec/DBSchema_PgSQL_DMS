@@ -86,7 +86,7 @@ AS $$
 **          03/03/2017 mem - Add parameter _entryUser
 **          09/17/2018 mem - Update cart config name error message
 **          03/03/2021 mem - Update admin-required message
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

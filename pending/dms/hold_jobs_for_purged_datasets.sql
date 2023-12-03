@@ -20,7 +20,7 @@ AS $$
 **  Auth:   mem
 **  Date:   05/15/2008 (Ticket #670)
 **          05/22/2008 mem - Now updating comment for any jobs that are set to state 8 (Ticket #670)
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

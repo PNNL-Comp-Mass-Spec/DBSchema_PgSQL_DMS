@@ -15,7 +15,7 @@ AS $$
 **          04/15/2015 mem - Added Data_Package_Count
 **          08/29/2018 mem - Added Sample_Submission_Count and Sample_Submission_Most_Recent
 **          08/30/2018 mem - Use merge instead of truncate
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

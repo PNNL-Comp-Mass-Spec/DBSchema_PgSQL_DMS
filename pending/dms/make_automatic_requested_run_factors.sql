@@ -29,7 +29,7 @@ AS $$
 **          11/10/2016 mem - Pass '' to GetUserLoginWithoutDomain
 **          06/10/2022 mem - Exit the procedure if _batchID is 0 or null
 **          03/10/2023 mem - Call update_cached_requested_run_batch_stats to update T_Cached_Requested_Run_Batch_Stats
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

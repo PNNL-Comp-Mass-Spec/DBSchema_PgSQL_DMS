@@ -24,7 +24,7 @@ AS $$
 **          08/28/2010 mem - No longer deleting entries in the Instrument_Allowed_Dataset_Type table
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

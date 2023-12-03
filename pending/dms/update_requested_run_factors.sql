@@ -82,7 +82,7 @@ AS $$
 **                         - Rename temp table
 **          01/25/2023 mem - Block factors named 'Run_Order'
 **          11/03/2023 mem - Capitalize factor names based on historic usage
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

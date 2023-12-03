@@ -20,7 +20,7 @@ AS $$
 **          04/02/2010 mem - Updated the 'Not Released' check to cover Dataset Rating -9 to 1
 **                         - Now also looking for 'Released' datasets
 **          11/03/2016 mem - Fix bug that was failing to remove events of type 20 (Dataset Not Released) from T_Notification_Event
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

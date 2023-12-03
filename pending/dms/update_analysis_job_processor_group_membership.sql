@@ -32,7 +32,7 @@ AS $$
 **          03/28/2008 mem - Added optional parameter _callingUser; if provided, will populate field Entered_By with this name
 **          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          03/30/2015 mem - Tweak warning message grammar
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

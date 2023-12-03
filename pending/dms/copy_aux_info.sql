@@ -33,7 +33,7 @@ AS $$
 **          07/06/2022 mem - Use new aux info definition view name
 **          08/15/2022 mem - Use new column name
 **          11/21/2022 mem - Use new column names in t_aux_info_target
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

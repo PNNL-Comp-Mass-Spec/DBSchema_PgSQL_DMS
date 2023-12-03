@@ -11,7 +11,7 @@ AS $$
 **  Date:   10/20/2002
 **          11/15/2007 mem - Switched to Truncate Table for improved performance (Ticket:576)
 **          08/30/2018 mem - Use merge instead of truncate
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

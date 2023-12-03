@@ -143,7 +143,7 @@ AS $$
 **          11/09/2021 mem - Update _mode to support 'preview'
 **          04/18/2022 mem - Update to support TMT 18 by adding channels 17 and 18
 **          04/20/2022 mem - Fix typo in variable names
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

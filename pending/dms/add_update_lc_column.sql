@@ -50,7 +50,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          11/30/2018 mem - Make _columnNumber an output parameter
 **          03/21/2022 mem - Fix typo in comment and update capitalization of keywords
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

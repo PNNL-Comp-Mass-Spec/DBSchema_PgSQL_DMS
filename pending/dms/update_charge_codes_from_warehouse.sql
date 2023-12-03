@@ -36,7 +36,7 @@ AS $$
 **          02/08/2022 mem - Change tabs to spaces and update comments
 **          07/21/2022 mem - Also examine SubAccount_Inactive_Date when considering changing Charge_Code_State from 0 to 1 for work packages that are no longer Deactivated
 **                         - When _infoOnly and _onlyShowChanged are both true, only show new or updated work packages
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

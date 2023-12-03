@@ -133,7 +133,7 @@ AS $$
 **          06/30/2022 mem - Rename parameter file argument
 **          03/22/2023 mem - Also auto-remove datasets named 'Dataset Name' and 'Dataset_Name' from Tmp_DatasetInfo
 **          03/27/2023 mem - Synchronize protein collection options validation with add_analysis_job_group
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

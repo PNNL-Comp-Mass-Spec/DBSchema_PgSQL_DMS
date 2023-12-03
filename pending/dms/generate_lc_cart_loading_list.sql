@@ -50,7 +50,7 @@ AS $$
 **          07/31/2007 mem - Now returning Dataset Type for each request (Ticket #505)
 **          08/27/2007 grk - Add ability to start columns with a blank (Ticket #517)
 **          09/17/2009 grk - Added check for requests that don't have column assignments
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

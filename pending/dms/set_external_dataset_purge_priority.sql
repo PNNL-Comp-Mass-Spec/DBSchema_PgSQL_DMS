@@ -15,7 +15,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   04/09/2014
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

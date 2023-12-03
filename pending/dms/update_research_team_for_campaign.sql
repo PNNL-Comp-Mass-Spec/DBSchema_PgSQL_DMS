@@ -46,7 +46,7 @@ AS $$
 **          08/22/2017 mem - Validate _campaignName
 **          08/20/2021 mem - Use Select Distinct to avoid duplicates
 **          02/17/2022 mem - Update error message and convert tabs to spaces
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

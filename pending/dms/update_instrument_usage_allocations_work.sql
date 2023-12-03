@@ -38,7 +38,7 @@ AS $$
 **          03/31/2012 mem - Updated Merge statement to not enter new rows if the allocation hours are 0 and comment is empty
 **          11/08/2016 mem - Use GetUserLoginWithoutDomain to obtain the user's network login
 **          11/10/2016 mem - Pass '' to GetUserLoginWithoutDomain
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

@@ -52,7 +52,7 @@ AS $$
 **          09/05/2017 mem - Check for Mz_Refinery reporting Not enough free memory
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          10/05/2023 mem - Switch the archive server path from \\adms to \\agate
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

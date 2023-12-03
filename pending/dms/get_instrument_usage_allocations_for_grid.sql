@@ -38,7 +38,7 @@ AS $$
 **  Date:   01/15/2013
 **          01/15/2013 grk - Initial version
 **          01/16/2013 grk - Single fiscal year
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

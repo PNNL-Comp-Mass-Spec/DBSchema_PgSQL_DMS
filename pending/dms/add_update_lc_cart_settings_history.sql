@@ -63,7 +63,7 @@ AS $$
 **  Date:   09/29/2008
 **          10/21/2008 grk - Added parameters _solventA and _solventB
 **          06/13/2017 mem - Use SCOPE_IDENTITY()
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

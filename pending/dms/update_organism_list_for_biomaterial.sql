@@ -27,7 +27,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          09/06/2018 mem - Fix delete bug in Merge statement
 **          03/31/2021 mem - Expand Organism_Name, _unknownOrganism, and _newOrganismName to varchar(128)
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

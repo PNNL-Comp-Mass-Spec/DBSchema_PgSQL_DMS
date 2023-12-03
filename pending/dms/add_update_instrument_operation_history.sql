@@ -37,7 +37,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          08/02/2017 mem - Assure that the username is properly capitalized
 **          12/08/2020 mem - Lookup Username from T_Users using the validated user ID
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

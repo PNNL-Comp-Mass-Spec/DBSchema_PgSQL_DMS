@@ -29,7 +29,7 @@ AS $$
 **          04/21/2010 mem - Now calling Refresh_Cached_MTS_Job_Mapping_Peptide_DBs and Refresh_Cached_MTS_Job_Mapping_MTDBs
 **          11/21/2012 mem - Now updating job stats in T_MTS_PT_DBs_Cached and T_MTS_MT_DBs_Cached
 **          02/23/2016 mem - Add set XACT_ABORT on
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

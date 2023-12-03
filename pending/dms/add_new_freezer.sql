@@ -28,7 +28,7 @@ AS $$
 **  Date:   04/22/2015 mem - Initial release
 **          03/31/2016 mem - Switch to using Freezer tags (and remove parameter _newTagBase)
 **          11/13/2017 mem - Skip computed column Tag when copying data
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

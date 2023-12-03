@@ -31,7 +31,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          09/25/2019 mem - Allow _name to be an experiment ID, which happens if 'Retire Experiment' is clicked at https://dms2.pnl.gov/experimentid/show/123456
 **          05/24/2022 mem - Validate parameters
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

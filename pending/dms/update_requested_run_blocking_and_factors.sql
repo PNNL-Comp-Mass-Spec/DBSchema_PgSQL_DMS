@@ -38,7 +38,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          03/04/2019 mem - Tabs to spaces
 **          12/13/2022 mem - Log procedure usage even if UpdateRequestedRunBatchParameters returns a non-zero return code
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

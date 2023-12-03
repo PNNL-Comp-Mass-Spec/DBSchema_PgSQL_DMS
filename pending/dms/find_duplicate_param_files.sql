@@ -44,7 +44,7 @@ AS $$
 **          07/11/2014 mem - Optimized execution speed by adding Tmp_MassModCounts
 **                         - Updated default value for _paramFileTypeList
 **          02/28/2023 mem - Use renamed parameter file type, 'MSGFPlus'
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

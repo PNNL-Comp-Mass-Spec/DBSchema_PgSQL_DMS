@@ -29,7 +29,7 @@ AS $$
 **          05/14/2021 mem - Handle null values for actual_start_date
 **          05/24/2021 mem - Add new proposal types to T_EUS_Proposal_Type
 **          05/24/2022 mem - Avoid inserting duplicate proposals into T_EUS_Proposals by filtering on id_rank
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

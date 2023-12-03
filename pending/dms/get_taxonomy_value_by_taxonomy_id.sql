@@ -40,7 +40,7 @@ AS $$
 **          03/03/2016 mem - Auto define Phylum as Community when _nCBITaxonomyID is 48479
 **          03/31/2021 mem - Expand _organismName to varchar(128)
 **          08/08/2022 mem - Use Substring instead of Replace when removing genus name from species name
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

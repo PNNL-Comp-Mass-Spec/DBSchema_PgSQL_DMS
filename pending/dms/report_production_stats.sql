@@ -98,7 +98,7 @@ AS $$
 **          02/25/2023 bcg - Update output table column names to lower-case and no special characters
 **          03/17/2023 mem - Add @includeProposalType
 **          03/20/2023 mem - Treat proposal types 'Capacity' and 'Staff Time' as EMSL funded
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

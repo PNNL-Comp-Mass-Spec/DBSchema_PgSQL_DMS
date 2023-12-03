@@ -110,7 +110,7 @@ AS $$
 **          02/17/2023 mem - Use new parameter name when calling Add_Update_Requested_RunBatch
 **          02/27/2023 mem - Use new argument name, _requestName
 **          11/27/2023 mem - Do not log errors from validate_requested_run_batch_params() if the return code starts with 'U52' (e.g., 'U5201')
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

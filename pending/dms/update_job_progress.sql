@@ -28,7 +28,7 @@ AS $$
 **  Date:   09/01/2016 mem - Initial version
 **          10/30/2017 mem - Consider long-running job steps when computing Runtime_Predicted_Minutes
 **                         - Set progress to 0 for inactive jobs (state 13)
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

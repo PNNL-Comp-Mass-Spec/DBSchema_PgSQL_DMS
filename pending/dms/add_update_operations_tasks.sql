@@ -57,7 +57,7 @@ AS $$
 **                         - Remove parameter _hoursSpent
 **          05/16/2022 mem - Do not log data validation errors
 **          11/18/2022 mem - Rename parameter to _task
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

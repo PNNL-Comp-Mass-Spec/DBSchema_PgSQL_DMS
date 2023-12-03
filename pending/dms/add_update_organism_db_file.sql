@@ -32,7 +32,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          01/31/2020 mem - Add _returnCode, which duplicates the integer returned by this procedure; _returnCode is varchar for compatibility with Postgres error codes
 **          03/31/2021 mem - Expand _organismName to varchar(128)
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

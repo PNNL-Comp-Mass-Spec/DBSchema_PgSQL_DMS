@@ -30,7 +30,7 @@ AS $$
 **          08/19/2016 mem - Call Update_Cached_Dataset_Folder_Paths
 **          09/02/2016 mem - Replace archive\dmsarch with simply dmsarch due to switch from \\aurora.emsl.pnl.gov\archive\dmsarch\ to \\adms.emsl.pnl.gov\dmsarch\
 **          05/28/2023 mem - Remove unnecessary call to Replace()
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

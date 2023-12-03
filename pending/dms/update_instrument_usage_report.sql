@@ -51,7 +51,7 @@ AS $$
 **          09/10/2019 mem - Extended cutoff for 'update' to be 365 days instead of 90 days
 **                         - Changed the cutoff for reload to 60 days
 **          07/15/2022 mem - Instrument operator ID is now tracked as an actual integer
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

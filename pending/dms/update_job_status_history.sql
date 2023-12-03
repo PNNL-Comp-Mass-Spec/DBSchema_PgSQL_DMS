@@ -21,7 +21,7 @@ AS $$
 **  Date:   03/31/2005
 **          05/12/2005 mem - Changed default for _databaseName to be ''
 **          10/20/2022 mem - Removed the _databaseName argument
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

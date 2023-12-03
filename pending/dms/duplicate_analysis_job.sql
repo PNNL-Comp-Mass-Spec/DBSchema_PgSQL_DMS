@@ -33,7 +33,7 @@ AS $$
 **          06/12/2018 mem - Send _maxLength to append_to_text
 **          06/30/2022 mem - Rename parameter file argument
 **          07/01/2022 mem - Rename parameter file column when previewing the new job
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

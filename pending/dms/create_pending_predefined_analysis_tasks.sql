@@ -29,7 +29,7 @@ AS $$
 **          07/21/2016 mem - Fix logic error examining _myError
 **          05/30/2018 mem - Do not create predefined jobs for inactive datasets
 **          03/25/2020 mem - Append a row to T_Predefined_Analysis_Scheduling_Queue_History for each dataset processed
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

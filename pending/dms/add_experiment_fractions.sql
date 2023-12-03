@@ -91,7 +91,7 @@ AS $$
 **          04/12/2022 mem - Do not log data validation errors to T_Log_Entries
 **          11/18/2022 mem - Rename parameter to _groupName
 **          11/25/2022 mem - Rename parameter to _wellplate
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

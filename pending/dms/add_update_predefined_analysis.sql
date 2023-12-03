@@ -114,7 +114,7 @@ AS $$
 **          05/10/2018 mem - Validate the settings file name
 **          12/08/2020 mem - Lookup Username from T_Users using the validated user ID
 **          06/30/2022 mem - Rename parameter file argument
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

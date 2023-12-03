@@ -35,7 +35,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          11/28/2017 mem - Add support for Reference_Compound
 **                         - Only update Container_ID if _mode is 'move_material'
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE

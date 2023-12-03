@@ -68,7 +68,7 @@ AS $$
 **          03/08/2023 mem - Rename parameter to _samplePrepRequests
 **                         - Use new column name Sample_Prep_Requests in T_Prep_LC_Run
 **                         - Update work package(s) in column Sample_Prep_Work_Packages
-**          12/15/2023 mem - Ported to PostgreSQL
+**          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
