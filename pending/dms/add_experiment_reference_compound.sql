@@ -11,7 +11,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds reference compound entries to DB for given experiment
+**      Adds reference compound entries to database for given experiment
 **
 **      The calling procedure must create and populate temporary table Tmp_ExpToRefCompoundMap:
 **

@@ -55,7 +55,7 @@ AS $$
 **    _internalStandard         Internal standard name, e.g. 'MP_10_02'; last used in 2013
 **    _postdigestIntStd         Post-digestion internal standard name, e.g. 'ADHYeast_031411'; last used in 2014
 **    _wellplateName            Wellplate name
-**    _wellNumber               Well number
+**    _wellNumber               Well position (aka well number)
 **    _alkylation               Alkylation: 'Y' or 'N'
 **    _mode                     Mode: 'add, 'update', 'check_add', 'check_update'
 **    _container                Container name, e.g. 'MC-3375'
@@ -427,10 +427,10 @@ BEGIN
         Else
             _totalCount := 0;
         End If;
-        --
+
         CALL public.validate_wellplate_loading (
-                        _wellplateName => _wellplateName,   -- Output
-                        _wellNumber    => _wellNumber,      -- Output
+                        _wellplateName => _wellplateName,   -- Input/Output
+                        _wellPosition  => _wellNumber,      -- Input/Output
                         _totalCount    => _totalCount,
                         _wellIndex     => _wellIndex,       -- Output
                         _message       => _msg,             -- Output

@@ -41,9 +41,14 @@ AS $$
 **    _description          Purpose of group
 **    _totalCount           Number of new experiments to automatically create
 **    _addUnderscore        When Yes (or 1 or ''), add an underscore before the fraction number; when _suffix is defined, it is helpful to set this to 'No'
-**    _groupID              ID of newly created experiment group
-**    _requestOverride      ID of sample prep request for fractions (if different than parent experiment)
-**    _container            na, 'parent', '-20', or actual container ID
+**    _groupID              Output: ID of newly created experiment group
+**    _requestOverride      ID of sample prep request for fractions (if different than parent experiment); use 'parent' to inherit frm the parent experiment
+**    _internalStandard     Internal standard name (or 'parent')
+**    _postdigestIntStd     Post digest internal standard name (or 'parent')
+**    _researcher           Researcher username (or 'parent')
+**    _wellplateName        Input/output: wellplate name
+**    _wellNumber           Input/output: well position (aka well number)
+**    _container            Container name: 'na', 'parent', '-20', or actual container ID
 **    _prepLCRunID          Prep LC run ID
 **    _mode                 Mode: 'add' or 'preview'; when previewing, will show the names of the new fractions
 **    _message              Output message
@@ -276,8 +281,8 @@ BEGIN
         ---------------------------------------------------
 
         CALL public.validate_wellplate_loading (
-                        _wellplateName => _wellplateName,   -- Output
-                        _wellNumber    => _wellNumber,      -- Output
+                        _wellplateName => _wellplateName,   -- Input/Output
+                        _wellPosition  => _wellNumber,      -- Input/Output
                         _totalCount    => _totalCount,
                         _wellIndex     => _wellIndex,       -- Output
                         _message       => _message,         -- Output
@@ -353,11 +358,11 @@ BEGIN
         ---------------------------------------------------
 
         If _internalStandard <> 'parent' Then
-            --
+
             SELECT internal_standard_id
             INTO _tmpID
             FROM t_internal_standards
-            WHERE (name = _internalStandard)
+            WHERE name = _internalStandard;
 
             If Not FOUND Then
                 _logErrors := false;
@@ -390,7 +395,7 @@ BEGIN
         -- Resolve researcher
         ---------------------------------------------------
 
-        If _researcher <> 'parent' Then
+        If _researcher::citext <> 'parent' Then
             _userID := public.get_user_id(_researcher);
 
             If _userID > 0 Then

@@ -11,7 +11,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds biomaterial entries to DB for given experiment
+**      Adds biomaterial entries to database for given experiment
 **
 **      The calling procedure must create and populate temporary table Tmp_Experiment_to_Biomaterial_Map:
 **
