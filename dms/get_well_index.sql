@@ -8,12 +8,12 @@ CREATE OR REPLACE FUNCTION public.get_well_index(_wellposition public.citext) RE
 /****************************************************
 **
 **  Desc:
-**      Given 96 well plate well position (aka well number),
+**      Given a 96 well plate well position (aka well number),
 **      return the index position of the well (value between 1 and 96)
 **
 **      The first row of the plate has wells A1 through A12
 **      The last  row of the plate has wells H1 through H12
-*
+**
 **  Return values: corresponding well index, or 0 if invalid position
 **
 **  Arguments:

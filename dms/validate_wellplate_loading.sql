@@ -2,7 +2,7 @@
 -- Name: validate_wellplate_loading(text, text, integer, integer, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.validate_wellplate_loading(INOUT _wellplatename text, INOUT _wellnumber text, IN _totalcount integer, INOUT _wellindex integer, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.validate_wellplate_loading(INOUT _wellplatename text, INOUT _wellposition text, IN _totalcount integer, INOUT _wellindex integer, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -10,11 +10,15 @@ CREATE OR REPLACE PROCEDURE public.validate_wellplate_loading(INOUT _wellplatena
 **  Desc:
 **      Checks to see if a given set of consecutive well loadings for a given wellplate are valid
 **
+**      Only works for a 96 well plate, where
+**      the first row of the plate has wells A1 through A12 and
+**      the last row  of the plate has wells H1 through H12
+**
 **  Arguments:
 **    _wellplateName    Input/output: wellplate name
-**    _wellNumber       Input/output: well number
+**    _wellPosition     Input/output: well position (aka well number), e.g. 'A4' or 'C12'
 **    _totalCount       Number of consecutive wells to be filled
-**    _wellIndex        Output: index position of _wellNumber
+**    _wellIndex        Output: index position of _wellPosition; will be a value between 1 and 96
 **    _message          Status message
 **    _returnCode       Return code
 **
@@ -42,22 +46,22 @@ BEGIN
     ---------------------------------------------------
 
     _wellplateName := Trim(Coalesce(_wellplateName, ''));
-    _wellNumber    := Upper(Trim(Coalesce(_wellNumber, '')));
+    _wellPosition  := Upper(Trim(Coalesce(_wellPosition, '')));
 
     -- Normalize values meaning 'empty' to null
-    --
+
     If _wellplateName::citext In ('', 'na') Then
         _wellplateName := null;
     End If;
 
-    If _wellNumber::citext In ('', 'na') Then
-        _wellNumber := null;
+    If _wellPosition::citext In ('', 'na') Then
+        _wellPosition := null;
     End If;
 
     -- Make sure that wellplate and well values are consistent
     -- with each other
-    --
-    If (_wellNumber Is Null And Not _wellplateName Is Null) Or (Not _wellNumber Is Null And _wellplateName is null) Then
+
+    If (_wellPosition Is Null And Not _wellplateName Is Null) Or (Not _wellPosition Is Null And _wellplateName is null) Then
         _message := 'Wellplate and well must either both be empty or both be set';
         _returnCode := 'U5142';
         RETURN;
@@ -70,20 +74,22 @@ BEGIN
     _wellIndex := 0;
 
     -- Check for overflow
-    --
-    If Not _wellNumber Is Null Then
 
-        _wellIndex := public.get_well_index(_wellNumber::citext);
+    If Not _wellPosition Is Null Then
+
+        _wellIndex := public.get_well_index(_wellPosition::citext);
 
         If _wellIndex = 0 Then
-            _message := 'Well number is not valid; should be in the format A4 or C12';
+            _message := 'Well position is not valid; should be in the format A4 or C12';
             _returnCode := 'U5243';
             RETURN;
         End If;
-        --
+
+        -- For a 96 well plate, _wellIndex is between 1 and 96
+        -- If _wellIndex is 96 and _totalCount is 1, the sum is 97, which is why the following if statement uses "sum > 97" and not "sum >= 97"
+
         If _wellIndex + _totalCount > 97 Then
-            -- index is first new well, which understates available space by one
-            _message := 'Wellplate capacity would be exceeded';
+            _message := 'Wellplate capacity would be exceeded (assuming a 96 well plate)';
             _returnCode := 'U5244';
             RETURN;
         End If;
@@ -130,7 +136,7 @@ BEGIN
 
         _hits := array_length(string_to_array(_wellList, ','), 1);
 
-        _wellList := SUBSTRING(_wellList, 0, 256);
+        _wellList := substring(_wellList, 0, 256);
 
         If _hits = 1 Then
             _message := format('Well %s on wellplate "%s" is currently filled', _wellList, _wellplateName);
@@ -146,11 +152,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.validate_wellplate_loading(INOUT _wellplatename text, INOUT _wellnumber text, IN _totalcount integer, INOUT _wellindex integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE public.validate_wellplate_loading(INOUT _wellplatename text, INOUT _wellposition text, IN _totalcount integer, INOUT _wellindex integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE validate_wellplate_loading(INOUT _wellplatename text, INOUT _wellnumber text, IN _totalcount integer, INOUT _wellindex integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE validate_wellplate_loading(INOUT _wellplatename text, INOUT _wellposition text, IN _totalcount integer, INOUT _wellindex integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.validate_wellplate_loading(INOUT _wellplatename text, INOUT _wellnumber text, IN _totalcount integer, INOUT _wellindex integer, INOUT _message text, INOUT _returncode text) IS 'ValidateWellplateLoading';
+COMMENT ON PROCEDURE public.validate_wellplate_loading(INOUT _wellplatename text, INOUT _wellposition text, IN _totalcount integer, INOUT _wellindex integer, INOUT _message text, INOUT _returncode text) IS 'ValidateWellplateLoading';
 
