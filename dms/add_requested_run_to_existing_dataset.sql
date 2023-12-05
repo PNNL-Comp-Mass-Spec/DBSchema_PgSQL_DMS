@@ -60,7 +60,7 @@ DECLARE
     _iteration int;
     _experimentName text;
     _instrumentGroup text;
-    _msType text;
+    _datasetType text;
     _comment text;
     _workPackage citext := 'none';
     _requesterUsername text := '';
@@ -191,7 +191,7 @@ BEGIN
                InstName.instrument_group,
                DSType.Dataset_Type,
                SS.separation_type
-        INTO _experimentName, _instrumentGroup, _msType, _secSep
+        INTO _experimentName, _instrumentGroup, _datasetType, _secSep
         FROM t_dataset AS TD
              INNER JOIN t_instrument_name AS InstName
                ON TD.instrument_id = InstName.instrument_id
@@ -301,7 +301,7 @@ BEGIN
                         _requesterUsername           => _requesterUsername,
                         _instrumentGroup             => _instrumentGroup,
                         _workPackage                 => _workPackage,
-                        _msType                      => _msType,                    -- Dataset type
+                        _msType                      => _datasetType,               -- Dataset type
                         _instrumentSettings          => 'na',
                         _wellplateName               => null,
                         _wellNumber                  => null,
