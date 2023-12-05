@@ -1,29 +1,22 @@
 --
-CREATE OR REPLACE PROCEDURE public.copy_aux_info_multi_id
-(
-    _targetName text,
-    _targetEntityIDList text,
-    _categoryName text,
-    _subCategoryName text,
-    _sourceEntityID int,
-    _mode text,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: copy_aux_info_multi_id(text, text, text, text, integer, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.copy_aux_info_multi_id(IN _targetname text, IN _targetentityidlist text, IN _categoryname text, IN _subcategoryname text, IN _sourceentityid integer, IN _mode text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $_$
 /****************************************************
 **
 **  Desc:
 **      Copies aux info from a source item to multiple targets
 **
 **  Arguments:
-**    _targetName           'Experiment', 'Biomaterial' (previously 'Cell Culture'), 'Dataset', or 'SamplePrepRequest'; see See t_aux_info_target
-**    _targetEntityIDList   Comma-separated list of entity IDs; must all be of the same type
-**    _categoryName         'Lysis Method', 'Denaturing Conditions', etc.; see t_aux_info_category; ignored if _mode = 'copyAll'
-**    _subCategoryName      'Procedure', 'Reagents', etc.; see t_aux_info_subcategory; ignored if _mode = 'copyAll'
-**    _sourceEntityID       ID of the source to copy information from
-**    _mode                 Mode: 'copyCategory', 'copySubcategory', 'copyAll'
+**    _targetName           Target type name: 'Experiment', 'Biomaterial' (previously 'Cell Culture'), 'Dataset', or 'SamplePrepRequest'; see t_aux_info_target
+**    _targetEntityIDList   Comma-separated list of entity IDs; must all be of the same target type
+**    _categoryName         Category name, e.g. 'Lysis Method', 'Denaturing Conditions', etc.; see t_aux_info_category;    ignored if _mode is 'CopyAll'
+**    _subCategoryName      Subcategory name, e.g. 'Procedure', 'Reagents', etc.;              see t_aux_info_subcategory; ignored if _mode is 'CopyAll' or 'CopySubcategory'
+**    _sourceEntityID       ID of the source entity to copy information from
+**    _mode                 Mode: 'CopyCategory', 'CopySubcategory', 'CopyAll'
 **    _message              Output message
 **    _returnCode           Return code
 **
@@ -34,7 +27,7 @@ AS $$
 **          07/06/2022 mem - Use new aux info definition view name
 **          08/15/2022 mem - Use new column names
 **          11/21/2022 mem - Use new column names in t_aux_info_target
-**          12/15/2024 mem - Ported to PostgreSQL
+**          12/04/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -55,7 +48,10 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    If Not _mode::citext In ('copyCategory', 'copySubcategory', 'copyAll') Then
+    -- On the DMS website, file app/Views/special/aux_info_entry.php defines the modes as
+    -- 'copyCategory', 'copySubcategory', and 'copyAll'
+
+    If Not _mode::citext In ('CopyCategory', 'CopySubcategory', 'CopyAll') Then
 
         _msg := 'Mode must be copyCategory, copySubcategory, or copyAll';
         RAISE EXCEPTION '%', _msg;
@@ -67,7 +63,7 @@ BEGIN
         RETURN;
     End If;
 
-    If _targetName = 'Cell Culture' And Exists (Select * From t_aux_info_target Where target_type_name = 'Biomaterial') Then
+    If _targetName::citext = 'Cell Culture' And Exists (SELECT target_type_id FROM t_aux_info_target WHERE target_type_name = 'Biomaterial') Then
         _targetName := 'Biomaterial';
     End If;
 
@@ -89,6 +85,7 @@ BEGIN
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5202';
+        RETURN;
     End If;
 
     ---------------------------------------------------
@@ -100,11 +97,11 @@ BEGIN
     _sql := format('SELECT %s FROM %s WHERE %s = $1',
                     quote_ident(_tgtTableIDCol),
                     quote_ident(_tgtTableName),
-                    quote_ident(_tgtTableIDCol);
+                    quote_ident(_tgtTableIDCol));
 
     EXECUTE _sql
     INTO _matchVal
-    USING _sourceEntityID;    -- $1 will be replaced with the text in _targetEntityName
+    USING _sourceEntityID;    -- $1 will be replaced with the text in _sourceEntityID
 
     If _matchVal Is Null Then
         _message := format('Source ID %s not found in %s', _sourceEntityID, _tgtTableName);
@@ -143,7 +140,7 @@ BEGIN
 
     EXECUTE _sql;
 
-    -- Create a list of Entitites that have Valid = false in Tmp_TargetEntities
+    -- Create a list of entitites that have Valid = false in Tmp_TargetEntities
     _idListMaxLength := 200;
 
     SELECT string_agg(EntityID::text, ', ' ORDER BY EntityID)
@@ -186,14 +183,7 @@ BEGIN
     INTO _idList
     FROM Tmp_TargetEntities;
 
-    If Coalesce(_idList, '') <> '' Then
-
-        -- Make sure the list is no longer than _idListMaxLength + 15 characters
-        If char_length(_idList) > _idListMaxLength + 15 Then
-            _idList := Left(_idList, _idListMaxLength + 15);
-        End If;
-    Else
-        -- No entries found
+    If Coalesce(_idList, '') = '' Then
         _message := 'Error: Target ID list was empty (or invalid); unable to continue';
 
         RAISE WARNING '%', _message;
@@ -205,10 +195,8 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Copy existing values in aux info table
-    -- for given target name and category
-    -- from given source target entity
-    -- to given destination entities
+    -- Copy existing values in aux info table for given target name and category
+    -- from given source target entity to given destination entities
     ---------------------------------------------------
 
     If _mode = Lower('CopyCategory') Then
@@ -217,23 +205,23 @@ BEGIN
         --
         DELETE FROM t_aux_info_value
         WHERE target_id IN ( SELECT EntityID FROM Tmp_TargetEntities ) AND
-              Aux_Description_ID IN ( SELECT Item_ID
+              aux_description_id IN ( SELECT Item_ID
                                       FROM V_Aux_Info_Definition
                                       WHERE Target = _targetName AND
                                             Category = _categoryName );
 
         -- Insert new values
         --
-        INSERT INTO t_aux_info_value( target_id,
-                                     Aux_Description_ID,
-                                     value )
+        INSERT INTO t_aux_info_value (target_id,
+                                      aux_description_id,
+                                      value )
         SELECT TE.EntityID AS Target_ID,
-               AI.Aux_Description_ID,
+               AI.aux_description_id,
                AI.value
         FROM t_aux_info_value AI
              CROSS JOIN Tmp_TargetEntities TE
         WHERE AI.target_id = _sourceEntityID AND
-              AI.Aux_Description_ID IN ( SELECT Item_ID
+              AI.aux_description_id IN ( SELECT Item_ID
                                          FROM V_Aux_Info_Definition
                                          WHERE Target = _targetName AND
                                                Category = _categoryName );
@@ -253,7 +241,7 @@ BEGIN
         DELETE FROM t_aux_info_value
         WHERE target_id IN ( SELECT EntityID
                              FROM Tmp_TargetEntities ) AND
-              Aux_Description_ID IN ( SELECT Item_ID
+              aux_description_id IN ( SELECT Item_ID
                                       FROM V_Aux_Info_Definition
                                       WHERE Target = _targetName AND
                                             Category = _categoryName AND
@@ -261,20 +249,20 @@ BEGIN
 
         -- Insert new values
         --
-        INSERT INTO t_aux_info_value( target_id,
-                                     Aux_Description_ID,
-                                     value )
+        INSERT INTO t_aux_info_value (target_id,
+                                      aux_description_id,
+                                      value )
         SELECT TE.EntityID AS Target_ID,
-               AI.Aux_Description_ID,
+               AI.aux_description_id,
                AI.value
         FROM t_aux_info_value AI
              CROSS JOIN Tmp_TargetEntities TE
         WHERE AI.target_id = _sourceEntityID AND
-              AI.Aux_Description_ID IN ( SELECT Item_ID
-                                          FROM V_Aux_Info_Definition
-                                          WHERE Target = _targetName AND
-                                                Category = _categoryName AND
-                                                Subcategory = _subCategoryName );
+              AI.aux_description_id IN ( SELECT Item_ID
+                                         FROM V_Aux_Info_Definition
+                                         WHERE Target = _targetName AND
+                                               Category = _categoryName AND
+                                               Subcategory = _subCategoryName );
     End If;
 
     ---------------------------------------------------
@@ -291,26 +279,34 @@ BEGIN
         DELETE FROM t_aux_info_value
         WHERE target_id IN ( SELECT EntityID
                               FROM Tmp_TargetEntities ) AND
-              Aux_Description_ID IN ( SELECT Item_ID
+              aux_description_id IN ( SELECT Item_ID
                                       FROM V_Aux_Info_Definition
                                       WHERE Target = _targetName );
 
-        INSERT INTO t_aux_info_value( target_id,
-                                      Aux_Description_ID,
+        INSERT INTO t_aux_info_value (target_id,
+                                      aux_description_id,
                                       value )
         SELECT TE.EntityID AS Target_ID,
-               AI.Aux_Description_ID,
+               AI.aux_description_id,
                AI.value
         FROM t_aux_info_value AI
              CROSS JOIN Tmp_TargetEntities TE
         WHERE AI.target_id = _sourceEntityID AND
-              AI.Aux_Description_ID IN ( SELECT Item_ID
+              AI.aux_description_id IN ( SELECT Item_ID
                                          FROM V_Aux_Info_Definition
                                          WHERE Target = _targetName );
     End If;
 
     DROP TABLE Tmp_TargetEntities;
 END
-$$;
+$_$;
 
-COMMENT ON PROCEDURE public.copy_aux_info_multi_id IS 'CopyAuxInfoMultiID';
+
+ALTER PROCEDURE public.copy_aux_info_multi_id(IN _targetname text, IN _targetentityidlist text, IN _categoryname text, IN _subcategoryname text, IN _sourceentityid integer, IN _mode text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE copy_aux_info_multi_id(IN _targetname text, IN _targetentityidlist text, IN _categoryname text, IN _subcategoryname text, IN _sourceentityid integer, IN _mode text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.copy_aux_info_multi_id(IN _targetname text, IN _targetentityidlist text, IN _categoryname text, IN _subcategoryname text, IN _sourceentityid integer, IN _mode text, INOUT _message text, INOUT _returncode text) IS 'CopyAuxInfoMultiID';
+
