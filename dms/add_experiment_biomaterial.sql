@@ -1,13 +1,10 @@
+--
+-- Name: add_experiment_biomaterial(integer, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
 
-CREATE OR REPLACE PROCEDURE public.add_experiment_biomaterial
-(
-    _expID int,
-    _updateCachedInfo boolean = true,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+CREATE OR REPLACE PROCEDURE public.add_experiment_biomaterial(IN _expid integer, IN _updatecachedinfo boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -34,7 +31,7 @@ AS $$
 **          03/17/2017 mem - Pass this procedure's name to Parse_Delimited_List
 **          11/29/2017 mem - Remove parameter _cellCultureList and use temporary table Tmp_Experiment_to_Biomaterial_Map instead
 **                           Add parameter _updateCachedInfo
-**          11/22/2023 mem - Ported to PostgreSQL
+**          12/04/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -57,6 +54,9 @@ BEGIN
     ---------------------------------------------------
     -- Try to resolve any null biomaterial ID values in Tmp_Experiment_to_Biomaterial_Map
     ---------------------------------------------------
+
+    DELETE FROM Tmp_Experiment_to_Biomaterial_Map
+    WHERE Trim(Coalesce(Biomaterial_Name, '')) = '';
 
     UPDATE Tmp_Experiment_to_Biomaterial_Map Target
     SET Biomaterial_ID = Src.Biomaterial_ID
@@ -88,7 +88,7 @@ BEGIN
 
     INSERT INTO t_experiment_biomaterial (Exp_ID, Biomaterial_ID)
     SELECT DISTINCT _expID As Exp_ID, Biomaterial_ID
-    FROM Tmp_Experiment_to_Biomaterial_Map
+    FROM Tmp_Experiment_to_Biomaterial_Map;
 
     ---------------------------------------------------
     -- Optionally update t_cached_experiment_components
@@ -105,4 +105,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_experiment_biomaterial IS 'AddExperimentBiomaterial or AddExperimentCellCulture';
+
+ALTER PROCEDURE public.add_experiment_biomaterial(IN _expid integer, IN _updatecachedinfo boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_experiment_biomaterial(IN _expid integer, IN _updatecachedinfo boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_experiment_biomaterial(IN _expid integer, IN _updatecachedinfo boolean, INOUT _message text, INOUT _returncode text) IS 'AddExperimentBiomaterial or AddExperimentCellCulture';
+

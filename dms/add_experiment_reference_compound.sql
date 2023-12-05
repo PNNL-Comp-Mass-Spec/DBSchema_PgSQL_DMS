@@ -1,13 +1,10 @@
+--
+-- Name: add_experiment_reference_compound(integer, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
 
-CREATE OR REPLACE PROCEDURE public.add_experiment_reference_compound
-(
-    _expID int,
-    _updateCachedInfo boolean = true,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+CREATE OR REPLACE PROCEDURE public.add_experiment_reference_compound(IN _expid integer, IN _updatecachedinfo boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -16,7 +13,7 @@ AS $$
 **      The calling procedure must create and populate temporary table Tmp_ExpToRefCompoundMap:
 **
 **      CREATE TEMP TABLE Tmp_ExpToRefCompoundMap (
-**          Compound_IDName text not null,
+**          Compound_IDName text not null,          -- This holds compound ID as text; if it is originally of the form '3311:ANFTSQETQGAGK', it will be changed to '3311'
 **          Colon_Pos int null,
 **          Compound_ID int null
 **      );
@@ -30,7 +27,7 @@ AS $$
 **  Auth:   mem
 **  Date:   11/29/2017 mem - Initial release
 **          01/04/2018 mem - Update fields in Tmp_ExpToRefCompoundMap, switching from Compound_Name to Compound_IDName
-**          12/15/2024 mem - Ported to PostgreSQL
+**          12/04/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -55,26 +52,29 @@ BEGIN
     -- Try to resolve any null reference compound ID values in Tmp_ExpToRefCompoundMap
     ---------------------------------------------------
 
+    DELETE FROM Tmp_ExpToRefCompoundMap
+    WHERE Trim(Coalesce(Compound_IDName, '')) = '';
+
     -- Make sure column Colon_Pos is populated
     UPDATE Tmp_ExpToRefCompoundMap
     SET Colon_Pos = Position(':' In Compound_IDName)
-    WHERE Colon_Pos Is Null
+    WHERE Colon_Pos Is Null;
 
     -- Update entries in Tmp_ExpToRefCompoundMap to remove extra text that may be present
     -- For example, switch from 3311:ANFTSQETQGAGK to 3311
     UPDATE Tmp_ExpToRefCompoundMap
     SET Compound_IDName = Substring(Compound_IDName, 1, Colon_Pos - 1)
-    WHERE Not Colon_Pos Is Null And Colon_Pos > 0 AND Compound_IDName Like '%:%'
+    WHERE Not Colon_Pos Is Null And Colon_Pos > 0 AND Compound_IDName Like '%:%';
 
     -- Populate the Compound_ID column using any integers in Compound_IDName
     UPDATE Tmp_ExpToRefCompoundMap
     SET Compound_ID = public.try_cast(Compound_IDName, 0)
-    WHERE Compound_ID Is Null
+    WHERE Compound_ID Is Null;
 
     -- If any entries still have a null Compound_ID value, try matching via reference compound name
     -- We have numerous reference compounds with identical names, so matches found this way will be ambiguous
 
-    UPDATE Tmp_ExpToRefCompoundMap
+    UPDATE Tmp_ExpToRefCompoundMap Target
     SET Compound_ID = Src.Compound_ID
     FROM t_reference_compound Src
     WHERE Src.compound_name = Target.Compound_IDName AND
@@ -129,7 +129,7 @@ BEGIN
     ---------------------------------------------------
 
     If _updateCachedInfo Then
-        CALL public.public.update_cached_experiment_component_names (
+        CALL public.update_cached_experiment_component_names (
                         _expID,
                         _infoonly   => false,
                         _message    => _message,        -- Output
@@ -139,4 +139,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_experiment_reference_compound IS 'AddExperimentReferenceCompound';
+
+ALTER PROCEDURE public.add_experiment_reference_compound(IN _expid integer, IN _updatecachedinfo boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_experiment_reference_compound(IN _expid integer, IN _updatecachedinfo boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_experiment_reference_compound(IN _expid integer, IN _updatecachedinfo boolean, INOUT _message text, INOUT _returncode text) IS 'AddExperimentReferenceCompound';
+
