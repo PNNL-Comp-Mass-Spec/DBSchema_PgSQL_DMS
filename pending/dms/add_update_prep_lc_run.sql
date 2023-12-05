@@ -285,7 +285,7 @@ BEGIN
                 _exceptionDetail  = pg_exception_detail,
                 _exceptionContext = pg_exception_context;
 
-        _logMessage := format('%s; Job %s', _exceptionMessage, _job);
+        _logMessage := format('%s; Prep LC run %s, ID %s', _exceptionMessage, _prepRunName, _id);
 
         _message := local_error_handler (
                         _sqlState, _logMessage, _exceptionDetail, _exceptionContext,

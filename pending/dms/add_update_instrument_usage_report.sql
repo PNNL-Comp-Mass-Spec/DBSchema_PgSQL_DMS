@@ -170,7 +170,7 @@ BEGIN
                 _exceptionDetail  = pg_exception_detail,
                 _exceptionContext = pg_exception_context;
 
-        _logMessage := format('%s; Job %s', _exceptionMessage, _job);
+        _logMessage := format('%s; Seq %s, EMSL Instrument ID %s', _exceptionMessage, _seq, _emslInstID);
 
         _message := local_error_handler (
                         _sqlState, _logMessage, _exceptionDetail, _exceptionContext,

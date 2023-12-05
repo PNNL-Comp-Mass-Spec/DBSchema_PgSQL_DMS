@@ -47,6 +47,7 @@ CREATE OR REPLACE PROCEDURE public.add_requested_run_to_existing_dataset(IN _dat
 **          02/27/2023 mem - Use new argument name, _requestName
 **          09/13/2023 mem - Ported to PostgreSQL
 **          10/10/2023 mem - Rearrange argument order when calling add_update_requested_run
+**          12/04/2023 mem - Fix log message bug in the exception handler
 **
 *****************************************************/
 DECLARE
@@ -379,7 +380,7 @@ BEGIN
         If _mode <> 'preview' Then
             -- Log the error
 
-            _logMessage := format('%s; Job %s', _exceptionMessage, _job);
+            _logMessage := format('%s; Dataset_ID %s, Template Request_ID %s', _exceptionMessage, _datasetID, _templateRequestID);
 
             _message := local_error_handler (
                             _sqlState, _logMessage, _exceptionDetail, _exceptionContext,
