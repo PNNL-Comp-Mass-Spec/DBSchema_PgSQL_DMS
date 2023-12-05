@@ -29,11 +29,13 @@ CREATE OR REPLACE PROCEDURE public.add_missing_requested_run(IN _dataset text, I
 **          02/27/2023 mem - Use new argument name, _requestName
 **          09/13/2023 mem - Ported to PostgreSQL
 **          10/10/2023 mem - Rearrange argument order when calling add_update_requested_run
+**          12/04/2023 mem - Fix reference to non-existent variables
 **
 *****************************************************/
 DECLARE
     _datasetInfo record;
     _requestID int;
+    _resolvedInstrumentInfo text;
     _requestName text;
     _workPackage text := 'none';
 BEGIN
@@ -142,7 +144,7 @@ BEGIN
                     _eusUsageType                => _eusUsageType,
                     _eusUsersList                => _eusUsersList,
                     _mode                        => 'add-auto',
-                    _secSep                      => _secSep,            -- Separation group
+                    _secSep                      => _datasetInfo.SecSep,            -- Separation group
                     _mrmAttachment               => '',
                     _status                      => 'Completed',
                     _skipTransactionRollback     => true,
@@ -171,7 +173,7 @@ BEGIN
     End If;
 
     UPDATE t_requested_run
-    SET dataset_id = _datasetID
+    SET dataset_id = _datasetInfo.DatasetID
     WHERE request_id = _requestID;
 
     If Trim(Coalesce(_message, '')) = '' Then

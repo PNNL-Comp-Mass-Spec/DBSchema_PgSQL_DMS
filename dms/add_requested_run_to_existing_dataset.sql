@@ -48,6 +48,7 @@ CREATE OR REPLACE PROCEDURE public.add_requested_run_to_existing_dataset(IN _dat
 **          09/13/2023 mem - Ported to PostgreSQL
 **          10/10/2023 mem - Rearrange argument order when calling add_update_requested_run
 **          12/04/2023 mem - Fix log message bug in the exception handler
+**                         - Fix invalid variable names
 **
 *****************************************************/
 DECLARE
@@ -265,27 +266,27 @@ BEGIN
             _addUpdateMode := 'check-add';
 
             RAISE INFO '';
-            RAISE INFO 'Request_Name: %', requestName;
-            RAISE INFO 'Experiment: %', experimentName;
-            RAISE INFO 'RequesterUsername: %', requesterUsername;
-            RAISE INFO 'InstrumentName: %', instrumentName;
-            RAISE INFO 'WorkPackage: %', workPackage;
-            RAISE INFO 'MsType: %', msType;
-            RAISE INFO 'InstrumentSettings: na';
-            RAISE INFO 'Wellplate: Null';
-            RAISE INFO 'WellNum: Null';
-            RAISE INFO 'InternalStandard: na';
-            RAISE INFO 'Comment: %', comment;
-            RAISE INFO 'EusProposalID: %', eusProposalID;
-            RAISE INFO 'EusUsageType: %', eusUsageType;
-            RAISE INFO 'EusUsersList: %', eusUsersList;
-            RAISE INFO 'Mode: %', addUpdateMode;
-            RAISE INFO 'SecSep: %', secSep;
-            RAISE INFO 'MRMAttachment: ';
-            RAISE INFO 'Status: Completed';
-            RAISE INFO 'SkipTransactionRollback: 1';
-            RAISE INFO 'AutoPopulateUserListIfBlank: 1';
-            RAISE INFO 'CallingUser: %', callingUser;
+            RAISE INFO 'Request Name:        %', _requestName;
+            RAISE INFO 'Experiment:          %', _experimentName;
+            RAISE INFO 'Requester Username:  %', _requesterUsername;
+            RAISE INFO 'Instrument Group:    %', _instrumentGroup;
+            RAISE INFO 'Work Package:        %', _workPackage;
+            RAISE INFO 'Dataset Type:        %', _datasetType;
+            RAISE INFO 'Instrument Settings: na';
+            RAISE INFO 'Wellplate:           Null';
+            RAISE INFO 'WellNum:             Null';
+            RAISE INFO 'Internal Standard:   na';
+            RAISE INFO 'Comment:             %', _comment;
+            RAISE INFO 'EUS Proposal ID:     %', _eusProposalID;
+            RAISE INFO 'EUS Usage Type:      %', _eusUsageType;
+            RAISE INFO 'EUS Users List:      %', _eusUsersList;
+            RAISE INFO 'Mode:                %', _addUpdateMode;
+            RAISE INFO 'Sec Sep:             %', _secSep;
+            RAISE INFO 'MRM Attachment: ';
+            RAISE INFO 'Status:              Completed';
+            RAISE INFO 'Calling User:        %', _callingUser;
+            RAISE INFO 'Skip Transaction Rollback:        true';
+            RAISE INFO 'Auto Populate User List If Blank: true';
             RAISE INFO '';
         Else
             _addUpdateMode := 'add-auto';
