@@ -49,6 +49,7 @@ CREATE OR REPLACE PROCEDURE public.add_requested_run_to_existing_dataset(IN _dat
 **          10/10/2023 mem - Rearrange argument order when calling add_update_requested_run
 **          12/04/2023 mem - Fix log message bug in the exception handler
 **                         - Fix invalid variable names
+**                         - Set _addUpdateMode to 'check_add' when _mode is 'preview'
 **
 *****************************************************/
 DECLARE
@@ -263,7 +264,7 @@ BEGIN
         End If;
 
         If _mode = 'preview' Then
-            _addUpdateMode := 'check-add';
+            _addUpdateMode := 'check_add';
 
             RAISE INFO '';
             RAISE INFO 'Request Name:        %', _requestName;
@@ -335,11 +336,11 @@ BEGIN
             RAISE EXCEPTION '%', _msg;
         End If;
 
-        If _requestID = 0 Then
+        If _requestID = 0 And _mode <> 'preview' Then
             RAISE EXCEPTION 'Add_Update_Requested_Run returned request ID 0';
         End If;
 
-        If _showDebugStatements Then
+        If _showDebugStatements And _mode <> 'preview' Then
             RAISE INFO 'Add_Update_Requested_Run reported that it created Request ID %', _requestID;
         End If;
 
