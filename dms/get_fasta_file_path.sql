@@ -57,7 +57,7 @@ BEGIN
         _fileNamePosition := strpos(_filePath, _fastaFileName);
 
         If _fileNamePosition > 0 Then
-            _filePath := SUBSTRING(_filePath, 1, _fileNamePosition - 1);
+            _filePath := Substring(_filePath, 1, _fileNamePosition - 1);
         Else
             If Coalesce(_organismName, '') <> '' Then
                 SELECT organism_db_path

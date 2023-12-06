@@ -24,7 +24,7 @@ BEGIN
     FROM    t_requested_run RR
     WHERE   RR.state_name = 'Active'
             AND char_length(RR.request_name) <= char_length(_fileName)
-            AND RR.request_name = SUBSTRING(_fileName, 1, char_length(RR.request_name))::citext
+            AND RR.request_name = Substring(_fileName, 1, char_length(RR.request_name))::citext
     ORDER BY char_length(request_name) DESC;
 
 END

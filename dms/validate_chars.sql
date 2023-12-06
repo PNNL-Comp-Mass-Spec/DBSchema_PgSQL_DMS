@@ -43,7 +43,7 @@ BEGIN
 
     WHILE _position <= _stringLength
     LOOP
-        _ch := SUBSTRING(_string, _position, 1);
+        _ch := Substring(_string, _position, 1);
 
         -- On SQL Server, _ch will have a length of 0 if it is a space
         -- On Postgres, Substring retains spaces

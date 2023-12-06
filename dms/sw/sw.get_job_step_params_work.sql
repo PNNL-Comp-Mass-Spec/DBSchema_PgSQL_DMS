@@ -223,7 +223,7 @@ BEGIN
     -- We now use notation like this:
     -- <Param Section="2_Ape" Name="ApeMTSDatabase" Value="MT_R_norvegicus_P748" Step="Yes (2)" />
     --
-    -- Thus, the following uses a series of REPLACE commands to remove text from the Step attribute,
+    -- Thus, the following uses a series of Replace commands to remove text from the Step attribute,
     -- replacing the following three strings with ""
     --   "Yes ("
     --   "No ("
@@ -240,7 +240,7 @@ BEGIN
                     SELECT xmltable.section,
                            xmltable.name,
                            xmltable.value,
-                           REPLACE(REPLACE(REPLACE( Coalesce(xmltable.step, ''), 'Yes (', ''), 'No (', ''), ')', '') AS Step
+                           Replace(Replace(Replace(Coalesce(xmltable.step, ''), 'Yes (', ''), 'No (', ''), ')', '') AS Step
                     FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml As rooted_xml
                            FROM sw.t_job_parameters
                            WHERE sw.t_job_parameters.job = _job ) Src,

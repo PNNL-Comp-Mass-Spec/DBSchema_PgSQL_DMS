@@ -382,7 +382,7 @@ BEGIN
             _slashPos := Position('\' In _callinguser);
 
             If _slashPos > 0 Then
-                _newUsername := SUBSTRING(_callinguser, _slashPos + 1, char_length(_callinguser));
+                _newUsername := Substring(_callinguser, _slashPos + 1, char_length(_callinguser));
             Else
                 _newUsername := _callinguser;
             End If;
@@ -926,7 +926,7 @@ BEGIN
                 _protCollOptionsList,
                 _organismID,
                 Tmp_DatasetInfo.dataset_id,
-                REPLACE(_comment, '#DatasetNum#', Tmp_DatasetInfo.dataset_id::text),
+                Replace(_comment, '#DatasetNum#', Tmp_DatasetInfo.dataset_id::text),
                 _specialProcessing,
                 _ownerUsername,
                 _batchID,

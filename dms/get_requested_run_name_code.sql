@@ -35,7 +35,7 @@ CREATE OR REPLACE FUNCTION public.get_requested_run_name_code(_requestname text,
 BEGIN
     RETURN CASE WHEN Coalesce(_batchID, 0) = 0
                 THEN format('%s_%s_R_%s_%s_%s',
-                            SUBSTRING(_requestName, 1, 3),
+                            Substring(_requestName, 1, 3),
                             to_char(_requestCreated, 'yyyymmdd'),
                             _requesterUsername,
                             Coalesce(_datasetTypeID, 0),
@@ -45,7 +45,7 @@ BEGIN
                                  THEN format('%s_', _batchGroupID)
                                  ELSE ''
                             END,
-                            SUBSTRING(_batchName, 1, 3),
+                            Substring(_batchName, 1, 3),
                             to_char(_batchCreated, 'yyyymmdd'),
                             _batchID,
                             Coalesce(_datasetTypeID, 0),

@@ -13,6 +13,9 @@ CREATE OR REPLACE FUNCTION public.get_well_position(_index integer) RETURNS text
 **
 **  Return values: well position, or empty string if invalid index
 **
+**  Arguments:
+**    _index    One-based well index
+**
 **  Auth:   grk
 **  Date:   07/15/2000
 **          06/23/2022 mem - Ported to PostgreSQL

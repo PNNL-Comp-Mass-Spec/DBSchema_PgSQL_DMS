@@ -35,7 +35,7 @@ CREATE OR REPLACE PROCEDURE dpkg.store_myemsl_upload_stats(IN _datapackageid int
 DECLARE
     _entryID int;
     _charLoc int;
-    _subString text;
+    _substring text;
     _logMsg text := '';
     _invalidFormat boolean;
     _statusURI_PathID int;
@@ -117,15 +117,15 @@ BEGIN
             -- https://ingestdms.my.emsl.pnl.gov/get_state?job_id=
             -- https://ingestdmsdev.my.emsl.pnl.gov/get_state?job_id=
 
-            _statusURI_Path := SUBSTRING(_statusURI, 1, _charLoc + char_length(_getStateToken) - 1);
+            _statusURI_Path := Substring(_statusURI, 1, _charLoc + char_length(_getStateToken) - 1);
 
             -- Extract out the number
-            _subString := SUBSTRING(_statusURI, _charLoc + char_length(_getStateToken), 255);
+            _substring := Substring(_statusURI, _charLoc + char_length(_getStateToken), 255);
 
-            If char_length(Coalesce(_subString, '')) > 0 Then
-                -- _subString should either be an integer, or should start with an integer
+            If char_length(Coalesce(_substring, '')) > 0 Then
+                -- _substring should either be an integer, or should start with an integer
 
-                _statusNum := public.extract_integer(_subString);
+                _statusNum := public.extract_integer(_substring);
 
                 If Not _statusNum Is Null Then
                     -- Integer found
@@ -143,14 +143,14 @@ BEGIN
     Else
         -- Extract out the base path, for example:
         -- https://a4.my.emsl.pnl.gov/myemsl/cgi-bin/status/
-        _statusURI_Path := SUBSTRING(_statusURI, 1, _charLoc + 7);
+        _statusURI_Path := Substring(_statusURI, 1, _charLoc + 7);
 
         -- Extract out the text after /status/, for example:
         -- 644749/xml
-        _subString := SUBSTRING(_statusURI, _charLoc + 8, 255);
+        _substring := Substring(_statusURI, _charLoc + 8, 255);
 
-        -- _subString should start with an integer; extract it
-        _statusNum := public.extract_integer(_subString);
+        -- _substring should start with an integer; extract it
+        _statusNum := public.extract_integer(_substring);
 
         If _statusNum Is Null Then
             _logMsg := format('%s: number not found after /status/ in %s', _logMsg, _statusURI);

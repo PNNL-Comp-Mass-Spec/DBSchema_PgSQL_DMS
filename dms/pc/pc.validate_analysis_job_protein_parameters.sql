@@ -180,7 +180,7 @@ BEGIN
         _extensionPosition := Position('.fasta' In _collectionName);
 
         If _extensionPosition > 0 Then
-            _collectionName := SUBSTRING(_collectionName, 0, _extensionPosition);
+            _collectionName := Substring(_collectionName, 0, _extensionPosition);
         End If;
 
         SELECT protein_collection_id, contents_encrypted

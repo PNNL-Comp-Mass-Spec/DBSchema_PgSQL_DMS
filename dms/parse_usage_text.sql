@@ -126,8 +126,8 @@ BEGIN
         -- Furthermore, start _comment with a comma to allow for exact keyword matches
         ---------------------------------------------------
 
-        _comment := REPLACE(_comment, ', ', ',');
-        _comment := REPLACE(_comment, ' ,', ',');
+        _comment := Replace(_comment, ', ', ',');
+        _comment := Replace(_comment, ' ,', ',');
         _commentToSearch := format(',%s', _comment);
 
         ---------------------------------------------------
@@ -199,8 +199,8 @@ BEGIN
                 RAISE EXCEPTION 'Could not find closing bracket for "%"', _keyword;
             End If;
 
-            _usageText := SUBSTRING(_commentToSearch, _keywordStartPos + 1, (_endOfValue - _keywordStartPos) + 1);
-            _val       := SUBSTRING(_commentToSearch, _startOfValue, _endOfValue - _startOfValue);
+            _usageText := Substring(_commentToSearch, _keywordStartPos + 1, (_endOfValue - _keywordStartPos) + 1);
+            _val       := Substring(_commentToSearch, _startOfValue, _endOfValue - _startOfValue);
 
             -- Uncomment to debug
             -- If _showDebug Then
@@ -211,8 +211,8 @@ BEGIN
             INSERT INTO Tmp_UsageText ( UsageText )
             VALUES (_usageText);
 
-            _val := REPLACE(_val, '%', '');
-            _val := REPLACE(_val, ',', '');
+            _val := Replace(_val, '%', '');
+            _val := Replace(_val, ',', '');
 
             If Not Exists (SELECT * FROM Tmp_NonPercentageKeys WHERE UsageKey = _usageKey) Then
                 If public.try_cast(_val, null::int) Is Null Then
@@ -304,7 +304,7 @@ BEGIN
             SELECT DISTINCT UsageText
             FROM Tmp_UsageText
         LOOP
-            _comment := Trim(REPLACE(_comment, _usageText, ''));
+            _comment := Trim(Replace(_comment, _usageText, ''));
         END LOOP;
 
         _comment := Trim(_comment);

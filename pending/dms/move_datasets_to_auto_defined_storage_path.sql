@@ -175,12 +175,12 @@ BEGIN
 
                 SELECT format('%s %s', OldStorage.Path, NewStorage.Path)
                 INTO _oldAndNewPaths
-                FROM ( SELECT format('\\%s\%s$\%s%s', machine_name, SUBSTRING(vol_name_server, 1, 1), storage_path, _datasetInfo.Dataset) AS Path
+                FROM ( SELECT format('\\%s\%s$\%s%s', machine_name, Substring(vol_name_server, 1, 1), storage_path, _datasetInfo.Dataset) AS Path
                        FROM t_storage_path
                        WHERE storage_path_id = _datasetInfo.StoragePathID
                      ) OldStorage
                      CROSS JOIN
-                     ( SELECT format('\\%s\%s$\%s%s', machine_name, SUBSTRING(vol_name_server, 1, 1), storage_path, _datasetInfo.Dataset) AS Path
+                     ( SELECT format('\\%s\%s$\%s%s', machine_name, Substring(vol_name_server, 1, 1), storage_path, _datasetInfo.Dataset) AS Path
                        FROM t_storage_path
                        WHERE storage_path_id = _storagePathIDNew
                      ) NewStorage;

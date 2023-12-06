@@ -328,7 +328,7 @@ BEGIN
                        format('https://prismsupport.pnl.gov/smaqc/smaqc/metric/P_2C/inst/%s/filterDS/QC_Mam', Inst.instrument)
                 WHEN Experiment SIMILAR TO 'TEDDY[_]DISCOVERY%' THEN
                        format('https://prismsupport.pnl.gov/smaqc/smaqc/metric/qcart/inst/%s/filterDS/TEDDY_DISCOVERY', Inst.instrument)
-                ELSE   format('https://prismsupport.pnl.gov/smaqc/smaqc/metric/MS2_Count/inst/%s/filterDS/%s', Inst.instrument, SUBSTRING(DS.Dataset, 1, 4))
+                ELSE   format('https://prismsupport.pnl.gov/smaqc/smaqc/metric/MS2_Count/inst/%s/filterDS/%s', Inst.instrument, Substring(DS.Dataset, 1, 4))
                 END,
             update_required = 0,
             last_affected = CURRENT_TIMESTAMP
@@ -414,7 +414,7 @@ BEGIN
                                        format('https://prismsupport.pnl.gov/smaqc/smaqc/metric/P_2C/inst/%s/filterDS/QC_Mam', Inst.instrument)
                                 WHEN Experiment SIMILAR TO 'TEDDY[_]DISCOVERY%' THEN
                                        format('https://prismsupport.pnl.gov/smaqc/smaqc/metric/qcart/inst/%s/filterDS/TEDDY_DISCOVERY', Inst.instrument)
-                                ELSE   format('https://prismsupport.pnl.gov/smaqc/smaqc/metric/MS2_Count/inst/%s/filterDS/%s', Inst.instrument, SUBSTRING(DS.Dataset, 1, 4))
+                                ELSE   format('https://prismsupport.pnl.gov/smaqc/smaqc/metric/MS2_Count/inst/%s/filterDS/%s', Inst.instrument, Substring(DS.Dataset, 1, 4))
                            END AS QC_Metric_Stats
                     FROM t_dataset DS
                         INNER JOIN t_cached_dataset_links DL

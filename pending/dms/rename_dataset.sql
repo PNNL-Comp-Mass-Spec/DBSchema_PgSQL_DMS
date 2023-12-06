@@ -306,7 +306,7 @@ BEGIN
         -- Rename any files in t_dataset_files
         If Exists (SELECT dataset_id FROM t_dataset_files WHERE dataset_id = _datasetID) Then
             UPDATE t_dataset_files
-            SET file_path = REPLACE(file_path, _datasetNameOld::citext, _datasetNameNew::citext)
+            SET file_path = Replace(file_path, _datasetNameOld::citext, _datasetNameNew::citext)
             WHERE Dataset_ID = _datasetID;
         End If;
 
@@ -377,7 +377,7 @@ BEGIN
                 SELECT Dataset_File_ID,
                        Dataset_ID,
                        File_Path,
-                       REPLACE(file_path, _datasetNameOld::citext, _datasetNameNew::citext) AS File_Path_New,
+                       Replace(file_path, _datasetNameOld::citext, _datasetNameNew::citext) AS File_Path_New,
                        File_Hash
                 FROM t_dataset_files
                 WHERE dataset_id = _datasetID

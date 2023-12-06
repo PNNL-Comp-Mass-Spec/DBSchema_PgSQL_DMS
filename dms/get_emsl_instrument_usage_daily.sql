@@ -244,7 +244,7 @@ BEGIN
     --
     UPDATE Tmp_T_Report_Accumulation
     SET Comment = CASE WHEN char_length(GroupQ.Comment) > 4090
-                       THEN format('%s ...', SUBSTRING(GroupQ.Comment, 1, 4090))
+                       THEN format('%s ...', Substring(GroupQ.Comment, 1, 4090))
                        ELSE GroupQ.Comment
                   END
     FROM ( SELECT DistinctQ.EMSL_Inst_ID,

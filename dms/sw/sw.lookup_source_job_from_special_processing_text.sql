@@ -133,7 +133,7 @@ BEGIN
                     _whereClause := Replace(_whereClause, '"', '''');
 
                     _startPos := Position('{' In _whereClause);
-                    _endPos := Position('}' In _whereClause);
+                    _endPos   := Position('}' In _whereClause);
 
                     If _startPos > 0 And _endPos > _startPos Then
                         _whereClause := Substring(_whereClause, _startPos + 1, _endPos - _startPos - 1);
@@ -161,9 +161,9 @@ BEGIN
 
                             If _startPos > 0 And _endPos > _startPos Then
 
-                                _part1 := SUBSTRING(_whereClause, 1,             _startPos - 1);
-                                _part2 := SUBSTRING(_whereClause, _startPos,   _endPos - _startPos + 1);
-                                _part3 := SUBSTRING(_whereClause, _endPos + 1, char_length(_whereClause));
+                                _part1 := Substring(_whereClause, 1,           _startPos - 1);
+                                _part2 := Substring(_whereClause, _startPos,   _endPos - _startPos + 1);
+                                _part3 := Substring(_whereClause, _endPos + 1, char_length(_whereClause));
 
                                 -- The DatasetTrimmed directive is now in _part2, for example: $ThisDatasetTrimAfter(_Pos)
                                 -- Parse out the text between the parentheses
@@ -205,9 +205,9 @@ BEGIN
 
                         If _startPos > 0 And _endPos > _startPos Then
 
-                            _part1 := SUBSTRING(_whereClause, 1, _startPos - 1);
-                            _part2 := SUBSTRING(_whereClause, _startPos,   _endPos - _startPos + 1);
-                            _part3 := SUBSTRING(_whereClause, _endPos + 1, char_length(_whereClause));
+                            _part1 := Substring(_whereClause, 1,           _startPos - 1);
+                            _part2 := Substring(_whereClause, _startPos,   _endPos - _startPos + 1);
+                            _part3 := Substring(_whereClause, _endPos + 1, char_length(_whereClause));
 
                             -- The replacement command is now in _part2, for example: $Replace(MyLipidDataset,_Pos,)
                             -- Split this command at the ( and , characters to allow us to perform the replacment
@@ -218,7 +218,7 @@ BEGIN
                             If _startPos > 0 And _endPos > _startPos Then
 
                                 -- We have determined the text to search
-                                _textToSearch := SUBSTRING(_part2, _startPos + 1, _endPos - _startPos - 1);
+                                _textToSearch := Substring(_part2, _startPos + 1, _endPos - _startPos - 1);
 
                                 _startPos := _endPos + 1;
                                 _endPos   := Position(',' In Substring(_part2, _startPos + 1)) + _startPos;
@@ -226,7 +226,7 @@ BEGIN
                                 If _endPos > _startPos Then
 
                                     -- We have determined the text to match
-                                    _textToFind := SUBSTRING(_part2, _startPos, _endPos - _startPos);
+                                    _textToFind := Substring(_part2, _startPos, _endPos - _startPos);
 
                                     _startPos := _endPos + 1;
                                     _endPos   := Position(')' In Substring(_part2, _startPos + 1)) + _startPos;
@@ -238,7 +238,7 @@ BEGIN
 
                                         -- Make sure the text doesn't have any single quotes
                                         -- This would be the case if _specialProcessingText originally contained "$Replace($ThisDataset,"_Pos","")%NEG"}'
-                                        _textToFind := Replace(_textToFind, '''', '');
+                                        _textToFind  := Replace(_textToFind,  '''', '');
                                         _replacement := Replace(_replacement, '''', '');
 
                                         -- RAISE INFO '%, [%], [%], [%]', _part2, _textToSearch, _textToFind, _replacement

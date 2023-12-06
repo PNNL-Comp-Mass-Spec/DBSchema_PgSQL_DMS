@@ -460,7 +460,7 @@ BEGIN
 
                 WHILE _position <= _numCh
                 LOOP
-                    _ch := SUBSTRING(_jobInfo.Dataset, _position, 1);
+                    _ch := Substring(_jobInfo.Dataset, _position, 1);
 
                     If char_length(_ch) > 0 Then
                         If Position(_ch In _validCh) = 0 Then

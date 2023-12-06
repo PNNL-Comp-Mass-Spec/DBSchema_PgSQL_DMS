@@ -203,7 +203,7 @@ BEGIN
 
                 If _charPos > 0 Then
 
-                    _extracted := LTrim(SUBSTRING(_requestComment, _charPos + char_length('by recycling request'), 20));
+                    _extracted := LTrim(Substring(_requestComment, _charPos + char_length('by recycling request'), 20));
 
                     -- Comment is now of the form: '286793 from dataset'
                     -- Find the space after the number
@@ -212,7 +212,7 @@ BEGIN
 
                     If _charPos > 0 Then
 
-                        _extracted := Trim(SUBSTRING(_extracted, 1, _charPos));
+                        _extracted := Trim(Substring(_extracted, 1, _charPos));
 
                         -- Original requested ID has been determined; copy the original request
 

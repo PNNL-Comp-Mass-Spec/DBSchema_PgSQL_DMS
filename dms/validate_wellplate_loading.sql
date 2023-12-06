@@ -136,7 +136,7 @@ BEGIN
 
         _hits := array_length(string_to_array(_wellList, ','), 1);
 
-        _wellList := substring(_wellList, 0, 256);
+        _wellList := Substring(_wellList, 0, 256);
 
         If _hits = 1 Then
             _message := format('Well %s on wellplate "%s" is currently filled', _wellList, _wellplateName);
