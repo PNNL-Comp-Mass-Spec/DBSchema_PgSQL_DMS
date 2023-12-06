@@ -1,35 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_experiment
-(
-    INOUT _experimentId int,
-    _experimentName text,
-    _campaignName text,
-    _researcherUsername text,
-    _organismName text,
-    _reason text = 'na',
-    _comment text = '',
-    _sampleConcentration text = 'na',
-    _enzymeName text = 'Trypsin',
-    _labNotebookRef text = 'na',
-    _labelling text = 'none',
-    _biomaterialList text = '',
-    _referenceCompoundList text = '',
-    _samplePrepRequest int = 0,
-    _internalStandard text,
-    _postdigestIntStd text,
-    _wellplateName text,
-    _wellNumber text,
-    _alkylation text,
-    _mode text = 'add',
-    _container text = 'na',
-    _barcode text = '',
-    _tissue text = '',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_experiment(integer, text, text, text, text, text, text, text, text, text, text, text, text, integer, text, text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_experiment(INOUT _experimentid integer, IN _experimentname text, IN _campaignname text, IN _researcherusername text, IN _organismname text, IN _reason text DEFAULT 'na'::text, IN _comment text DEFAULT ''::text, IN _sampleconcentration text DEFAULT 'na'::text, IN _enzymename text DEFAULT 'Trypsin'::text, IN _labnotebookref text DEFAULT 'na'::text, IN _labelling text DEFAULT 'none'::text, IN _biomateriallist text DEFAULT ''::text, IN _referencecompoundlist text DEFAULT ''::text, IN _samplepreprequest integer DEFAULT 0, IN _internalstandard text DEFAULT ''::text, IN _postdigestintstd text DEFAULT ''::text, IN _wellplatename text DEFAULT ''::text, IN _wellnumber text DEFAULT ''::text, IN _alkylation text DEFAULT ''::text, IN _mode text DEFAULT 'add'::text, IN _container text DEFAULT 'na'::text, IN _barcode text DEFAULT ''::text, IN _tissue text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -128,7 +103,7 @@ AS $$
 **          11/26/2022 mem - Rename parameter to _biomaterialList
 **          09/07/2023 mem - Update warning messages
 **          09/26/2023 mem - Update cached experiment names in t_data_package_experiments
-**          12/15/2024 mem - Ported to PostgreSQL
+**          12/05/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -138,12 +113,13 @@ DECLARE
     _authorized boolean;
 
     _logErrors boolean := false;
+    _dropTempTables boolean := false;
     _invalidBiomaterialList text := null;
     _invalidRefCompoundList text;
     _existingExperimentID int := 0;
-    _existingExperimentName text := '';
-    _existingRequestedRun text := '';
-    _existingDataset text := '';
+    _existingExperimentName citext := '';
+    _existingRequestedRun citext := '';
+    _existingDataset citext := '';
     _curContainerID int := 0;
     _badCh text;
     _tissueIdentifier text;
@@ -157,11 +133,12 @@ DECLARE
     _wellIndex int;
     _enzymeID int := 0;
     _labelID int := 0;
+    _labelName text;
     _internalStandardID int := 0;
-    _internalStandardState char := 'I';
+    _internalStandardState citext := 'I';
     _postdigestIntStdID int := 0;
     _contID int := 0;
-    _curContainerName text := '';
+    _curContainerName citext := '';
     _expIDConfirm int := 0;
     _debugMsg text;
     _stateID int := 1;
@@ -214,31 +191,33 @@ BEGIN
         _labelling             := Trim(Coalesce(_labelling, ''));
         _biomaterialList       := Trim(Coalesce(_biomaterialList, ''));
         _referenceCompoundList := Trim(Coalesce(_referenceCompoundList, ''));
+        _samplePrepRequest     := Coalesce(_samplePrepRequest, 0);
         _internalStandard      := Trim(Coalesce(_internalStandard, ''));
         _postdigestIntStd      := Trim(Coalesce(_postdigestIntStd, ''));
-        _alkylation            := Trim(Coalesce(_alkylation, ''));
+        _alkylation            := Trim(Upper(Coalesce(_alkylation, '')));
         _mode                  := Trim(Lower(Coalesce(_mode, '')));
+        _barcode               := Trim(Coalesce(_barcode, ''));
 
         If char_length(_experimentName) < 1 Then
             RAISE EXCEPTION 'Experiment name must be specified';
         End If;
-        --
+
         If char_length(_campaignName) < 1 Then
             RAISE EXCEPTION 'Campaign name must be specified';
         End If;
-        --
+
         If char_length(_researcherUsername) < 1 Then
             RAISE EXCEPTION 'Researcher Username must be specified';
         End If;
-        --
+
         If char_length(_organismName) < 1 Then
             RAISE EXCEPTION 'Organism name must be specified';
         End If;
-        --
+
         If char_length(_reason) < 1 Then
             RAISE EXCEPTION 'Reason must be specified';
         End If;
-        --
+
         If char_length(_labelling) < 1 Then
             RAISE EXCEPTION 'Labelling must be specified';
         End If;
@@ -287,8 +266,9 @@ BEGIN
         CALL public.get_tissue_id (
                 _tissueNameOrID => _tissue,
                 _tissueIdentifier => _tissueIdentifier,    -- Output
-                _tissueName => _tissueName,                -- Output
-                _returnCode => _returnCode);
+                _tissueName => _tissueName,                -- Output (unused here)
+                _message    => _message,                   -- Output
+                _returnCode => _returnCode);               -- Output
 
         If _returnCode <> '' Then
             RAISE EXCEPTION 'Could not resolve tissue name or id: "%"', _tissue;
@@ -311,15 +291,15 @@ BEGIN
                 RAISE EXCEPTION 'Cannot update: Experiment ID % is not in database', _experimentID;
             End If;
 
-            If _existingExperimentName <> _experimentName Then
+            If _existingExperimentName <> _experimentName::citext Then
                 -- Allow renaming if the experiment is not associated with a dataset or requested run, and if the new name is unique
 
-                If Exists (SELECT Exp_ID FROM T_Experiments WHERE experiment = _experimentName) Then
+                If Exists (SELECT Exp_ID FROM T_Experiments WHERE experiment = _experimentName::citext) Then
                     SELECT exp_id
                     INTO _existingExperimentID
                     FROM t_experiments
-                    WHERE experiment = _experimentName
-                    --
+                    WHERE experiment = _experimentName::citext;
+
                     RAISE EXCEPTION 'Cannot rename: Experiment "%" already exists, with ID %', _experimentName, _existingExperimentID;
                 End If;
 
@@ -327,8 +307,8 @@ BEGIN
                     SELECT dataset
                     INTO _existingDataset
                     FROM t_dataset
-                    WHERE exp_id = _experimentID
-                    --
+                    WHERE exp_id = _experimentID;
+
                     RAISE EXCEPTION 'Cannot rename: Experiment ID % is associated with dataset "%"', _experimentID, _existingDataset;
                 End If;
 
@@ -336,8 +316,8 @@ BEGIN
                     SELECT request_name
                     INTO _existingRequestedRun
                     FROM t_requested_run
-                    WHERE exp_id = _experimentID
-                    --
+                    WHERE exp_id = _experimentID;
+
                     RAISE EXCEPTION 'Cannot rename: Experiment ID % is associated with requested run "%"', _experimentID, _existingRequestedRun;
                 End If;
             End If;
@@ -349,7 +329,7 @@ BEGIN
                    container_id
             INTO _existingExperimentID, _curContainerID
             FROM t_experiments
-            WHERE experiment = _experimentName;
+            WHERE experiment = _experimentName::citext;
 
             If _mode In ('update', 'check_update') And Not FOUND Then
                 RAISE EXCEPTION 'Cannot update: Experiment "%" is not in database', _experimentName;
@@ -360,7 +340,7 @@ BEGIN
         End If;
 
         -- Cannot create an entry that already exists
-        --
+
         If _existingExperimentID <> 0 and (_mode In ('add', 'check_add')) Then
             RAISE EXCEPTION 'Cannot add: Experiment "%" already in database; cannot add', _experimentName;
         End If;
@@ -384,7 +364,6 @@ BEGIN
         If _userID > 0 Then
             -- Function get_user_id() recognizes both a username and the form 'LastName, FirstName (Username)'
             -- Assure that _researcherUsername contains simply the username
-            --
             SELECT username
             INTO _researcherUsername
             FROM t_users
@@ -441,12 +420,12 @@ BEGIN
         End If;
 
         -- Make sure we do not put two experiments in the same place
-        --
-        If Exists (SELECT exp_id FROM t_experiments WHERE wellplate = _wellplateName AND well = _wellNumber) AND _mode In ('add', 'check_add') Then
+
+        If Exists (SELECT exp_id FROM t_experiments WHERE wellplate = _wellplateName::citext AND well = _wellNumber::citext) AND _mode In ('add', 'check_add') Then
             RAISE EXCEPTION 'There is another experiment assigned to the same wellplate and well';
         End If;
 
-        If Exists (SELECT exp_id FROM t_experiments WHERE wellplate = _wellplateName AND well = _wellNumber AND experiment <> _experimentName) And _mode In ('update', 'check_update') Then
+        If Exists (SELECT exp_id FROM t_experiments WHERE wellplate = _wellplateName::citext AND well = _wellNumber::citext AND experiment <> _experimentName::citext) And _mode In ('update', 'check_update') Then
             RAISE EXCEPTION 'There is another experiment assigned to the same wellplate and well';
         End If;
 
@@ -457,10 +436,10 @@ BEGIN
         SELECT enzyme_id
         INTO _enzymeID
         FROM t_enzymes
-        WHERE enzyme_name::citext = _enzymeName::citext;
+        WHERE enzyme_name = _enzymeName::citext;
 
         If Not FOUND Then
-            If _enzymeName = 'na' Then
+            If _enzymeName::citext = 'na' Then
                 RAISE EXCEPTION 'The enzyme cannot be "%"; use No_Enzyme if enzymatic digestion was not used', _enzymeName;
             Else
                 RAISE EXCEPTION 'Could not find entry in database for enzyme "%"', _enzymeName;
@@ -471,13 +450,23 @@ BEGIN
         -- Resolve labelling ID
         ---------------------------------------------------
 
-        SELECT label_id
-        INTO _labelID
+        SELECT label_id, label
+        INTO _labelID, _labelName
         FROM t_sample_labelling
-        WHERE label::citext = _labelling::citext;
+        WHERE label = _labelling::citext;
 
         If Not FOUND Then
             RAISE EXCEPTION 'Could not find entry in database for labelling "%"; use "none" if unlabeled', _labelling;
+        Else
+            _labelling := _labelName;
+        End If;
+
+        ---------------------------------------------------
+        -- Validate the sample prep request ID
+        ---------------------------------------------------
+
+        If _samplePrepRequest > 0 And Not Exists (SELECT prep_request_id FROM t_sample_prep_request WHERE prep_request_id = _samplePrepRequest) Then
+            RAISE EXCEPTION 'Could not find entry in database for sample prep request "%"', _samplePrepRequest;
         End If;
 
         ---------------------------------------------------
@@ -485,12 +474,11 @@ BEGIN
         -- If creating a new experiment, make sure the internal standard is active
         ---------------------------------------------------
 
-        --
         SELECT internal_standard_id, active
         INTO _internalStandardID, _internalStandardState
         FROM t_internal_standards
-        WHERE name::citext = _internalStandard::citext;
-        --
+        WHERE name = _internalStandard::citext;
+
         If Not FOUND Then
             RAISE EXCEPTION 'Could not find entry in database for predigestion internal standard "%"', _internalStandard;
         End If;
@@ -503,18 +491,16 @@ BEGIN
         -- Resolve postdigestion internal standard ID
         ---------------------------------------------------
 
-        _internalStandardState := 'I';
-        --
         SELECT internal_standard_id active
         INTO _postdigestIntStdID, _internalStandardState
         FROM t_internal_standards
-        WHERE name::citext = _postdigestIntStd::citext;
-        --
+        WHERE name = _postdigestIntStd::citext;
+
         If Not FOUND Then
             RAISE EXCEPTION 'Could not find entry in database for postdigestion internal standard "%"', _postdigestIntStd;
         End If;
 
-        If (_mode In ('add', 'check_add')) And _internalStandardState <> 'A' Then
+        If _mode In ('add', 'check_add') And _internalStandardState <> 'A' Then
             RAISE EXCEPTION 'Postdigestion internal standard "%" is not active; this standard cannot be used when creating a new experiment', _postdigestIntStd;
         End If;
 
@@ -530,7 +516,7 @@ BEGIN
         SELECT container_id
         INTO _contID
         FROM t_material_containers
-        WHERE container::citext = _container::citext;
+        WHERE container = _container::citext;
 
         If Not FOUND Then
             RAISE EXCEPTION 'Invalid container name "%"', _container;
@@ -546,21 +532,26 @@ BEGIN
             INTO _curContainerName
             FROM t_material_containers
             WHERE container_id = _curContainerID;
+        End If;
 
         ---------------------------------------------------
         -- Create temporary tables to hold biomaterial and reference compounds associated with the parent experiment
         ---------------------------------------------------
 
+        -- This table is used by procedure add_experiment_biomaterial.sql
         CREATE TEMP TABLE Tmp_Experiment_to_Biomaterial_Map (
-            Biomaterial_Name text not null,
+            Biomaterial_Name citext not null,
             Biomaterial_ID int null
-        )
+        );
 
+        -- This table is used by procedure add_experiment_reference_compound
         CREATE TEMP TABLE Tmp_ExpToRefCompoundMap (
-            Compound_IDName text not null,
+            Compound_IDName citext not null,          -- This holds compound ID as text; if it is originally of the form '3311:ANFTSQETQGAGK', it will be changed to '3311'
             Colon_Pos int null,
             Compound_ID int null
-        )
+        );
+
+        _dropTempTables := true;
 
         ---------------------------------------------------
         -- Resolve biomaterial
@@ -577,27 +568,22 @@ BEGIN
         End If;
 
         -- Get biomaterial names from list argument into table
-        --
-        If _biomaterialList Like '%;%' Then
-            INSERT INTO Tmp_Experiment_to_Biomaterial_Map (Biomaterial_Name)
-            SELECT Value
-            FROM public.parse_delimited_list(_biomaterialList, ';')
-        ElsIf _biomaterialList <> ''
-            INSERT INTO Tmp_Experiment_to_Biomaterial_Map (Biomaterial_Name)
-            VALUES (_biomaterialList)
-        End If;
+
+        INSERT INTO Tmp_Experiment_to_Biomaterial_Map (Biomaterial_Name)
+        SELECT Value
+        FROM public.parse_delimited_list(_biomaterialList, ';');
 
         -- Verify that biomaterial items exist
 
-        UPDATE tmp_experiment_to_biomaterial_map Src
+        UPDATE tmp_experiment_to_biomaterial_map Target
         SET biomaterial_id = Src.biomaterial_id
         FROM t_biomaterial Src
-        WHERE Src.biomaterial_name = Target.biomaterial_name
+        WHERE Src.biomaterial_name = Target.biomaterial_name;
 
         SELECT string_agg(biomaterial_name, ', ' ORDER BY biomaterial_name)
         INTO _invalidBiomaterialList
         FROM tmp_experiment_to_biomaterial_map
-        WHERE biomaterial_id IS NULL
+        WHERE biomaterial_id IS NULL;
 
         If Coalesce(_invalidBiomaterialList, '') <> '' Then
             RAISE EXCEPTION 'Invalid biomaterial name(s): %', _invalidBiomaterialList;
@@ -619,46 +605,48 @@ BEGIN
 
         -- Get names of reference compounds from list argument into table
         --
-        If _referenceCompoundList Like '%;%' Then
-            INSERT INTO Tmp_ExpToRefCompoundMap (Compound_IDName, Colon_Pos)
-            SELECT Value, Position(':' In Value)
-            FROM public.parse_delimited_list(_referenceCompoundList, ';')
-        ElsIf _referenceCompoundList <> ''
-            INSERT INTO Tmp_ExpToRefCompoundMap (Compound_IDName, Colon_Pos)
-            VALUES (_referenceCompoundList, Position(':' In _referenceCompoundList))
-        End If;
+        INSERT INTO Tmp_ExpToRefCompoundMap (Compound_IDName, Colon_Pos)
+        SELECT Value, Position(':' In Value)
+        FROM public.parse_delimited_list(_referenceCompoundList, ';');
 
         -- Update entries in Tmp_ExpToRefCompoundMap to remove extra text that may be present
         -- For example, switch from 3311:ANFTSQETQGAGK to 3311
         UPDATE Tmp_ExpToRefCompoundMap
         SET Compound_IDName = Substring(Compound_IDName, 1, Colon_Pos - 1)
-        WHERE Not Colon_Pos Is Null And Colon_Pos > 0
+        WHERE Not Colon_Pos Is Null And Colon_Pos > 0;
 
         -- Populate the Compound_ID column using any integers in Compound_IDName
         UPDATE Tmp_ExpToRefCompoundMap
-        SET Compound_ID = public.try_cast(Compound_IDName, null::int)
+        SET Compound_ID = public.try_cast(Compound_IDName, null::int);
 
         -- If any entries still have a null Compound_ID value, try matching via reference compound name
         -- We have numerous reference compounds with identical names, so matches found this way will be ambiguous
 
-        UPDATE Tmp_ExpToRefCompoundMap Src
+        UPDATE Tmp_ExpToRefCompoundMap Target
         SET Compound_ID = Src.Compound_ID
         FROM t_reference_compound Src
         WHERE Src.compound_name = Target.Compound_IDName AND
               Target.compound_id IS Null;
 
-        -- Delete any entries to where the name is '(none)'
-        DELETE Tmp_ExpToRefCompoundMap
-        FROM t_reference_compound Src
-        WHERE Src.compound_id = Target.compound_id And
-              Src.compound_name = '(none)';
+        -- Delete any entries where the name is '(none)'
+
+        DELETE FROM Tmp_ExpToRefCompoundMap
+        WHERE Compound_IDName = '(none)';
+
+        -- This is an alternative method for deleting entries,
+        -- joining on compound_id and examining compound_name in t_reference_compound
+        DELETE FROM Tmp_ExpToRefCompoundMap
+        WHERE EXISTS (SELECT Src.compound_id
+                      FROM t_reference_compound Src
+                      WHERE Src.compound_id = Tmp_ExpToRefCompoundMap.compound_id And
+                            Src.compound_name = '(none)');
 
         ---------------------------------------------------
         -- Look for invalid entries in Tmp_ExpToRefCompoundMap
         ---------------------------------------------------
 
         -- First look for entries without a Compound_ID
-        --
+
         _invalidRefCompoundList := null;
 
         SELECT string_agg(Compound_IDName, ', ' ORDER BY Compound_IDName)
@@ -750,10 +738,10 @@ BEGIN
             SELECT exp_id
             INTO _expIDConfirm
             FROM t_experiments
-            WHERE experiment = _experimentName
+            WHERE experiment = _experimentName::citext;
 
             If _experimentID <> Coalesce(_expIDConfirm, _experimentID) Then
-                _debugMsg := format('Warning: Inconsistent identity values when adding experiment %s: Found ID %s but INSERT query reported %s',
+                _debugMsg := format('Warning: Inconsistent identity values when adding experiment %s: found ID %s but INSERT query reported %s',
                                     _experimentName, _expIDConfirm, _experimentID);
 
                 CALL post_log_entry ('Error', _debugMsg, 'Add_Update_Experiment');
@@ -768,7 +756,7 @@ BEGIN
 
             -- Add the experiment to biomaterial mapping
             -- The procedure uses table Tmp_Experiment_to_Biomaterial_Map
-            --
+
             CALL public.add_experiment_biomaterial (
                             _experimentID,
                             _updateCachedInfo => false,
@@ -781,7 +769,7 @@ BEGIN
 
             -- Add the experiment to reference compound mapping
             -- The procedure uses table Tmp_ExpToRefCompoundMap
-            --
+
             CALL public.add_experiment_reference_compound (
                             _experimentID,
                             _updateCachedInfo => true,
@@ -793,7 +781,7 @@ BEGIN
             End If;
 
             -- Material movement logging
-            --
+
             If _curContainerID <> _contID Then
                 CALL public.post_material_log_entry (
                                 _type         => 'Experiment Move',
@@ -804,7 +792,7 @@ BEGIN
                                 _comment      => 'Experiment added');
             End If;
 
-        End If; -- add mode
+        End If;
 
         If _mode = 'update' Then
             ---------------------------------------------------
@@ -831,7 +819,7 @@ BEGIN
                 alkylation = _alkylation,
                 barcode = _barcode,
                 tissue_id = _tissueIdentifier,
-                last_used = Case When organism_id <> _organismID OR
+                last_used = CASE WHEN organism_id <> _organismID OR
                                       reason <> _reason OR
                                       comment <> _comment OR
                                       enzyme_id <> _enzymeID OR
@@ -839,40 +827,40 @@ BEGIN
                                       campaign_id <> _campaignID OR
                                       sample_prep_request_id <> _samplePrepRequest OR
                                       alkylation <> _alkylation
-                                 Then CURRENT_TIMESTAMP::Date
-                                 Else Last_Used
-                            End If;
+                                 THEN CURRENT_TIMESTAMP::Date
+                                 ELSE Last_Used
+                            END
             WHERE Exp_ID = _experimentId;
 
             -- Update the experiment to biomaterial mapping
             -- The procedure uses table Tmp_Experiment_to_Biomaterial_Map
-            --
+
             CALL public.add_experiment_biomaterial (
                             _experimentID,
-                            _updateCachedInfo => false,
+                            _updateCachedInfo => false,         -- This is false here because we call add_experiment_reference_compound below, using _updateCachedInfo => true
                             _message          => _msg,          -- Output
                             _returnCode       => _returnCode);  -- Output
 
-            --
+
             If _returnCode <> '' Then
                 RAISE EXCEPTION 'Could not update experiment biomaterial mapping for experiment "%" :%', _experimentName, _msg;
             End If;
 
             -- Update the experiment to reference compound mapping
             -- The procedure uses table Tmp_ExpToRefCompoundMap
-            --
+
             CALL public.add_experiment_reference_compound (
                             _experimentID,
                             _updateCachedInfo => true,
                             _message          => _msg,          -- Output
                             _returnCode       => _returnCode);  -- Output
-            --
+
             If _returnCode <> '' Then
                 RAISE EXCEPTION 'Could not update experiment reference compound mapping for experiment "%" :%', _experimentName, _msg;
             End If;
 
             -- Material movement logging
-            --
+
             If _curContainerID <> _contID Then
                 CALL public.post_material_log_entry (
                                 _type         => 'Experiment Move',
@@ -883,7 +871,7 @@ BEGIN
                                 _comment      => 'Experiment updated');
             End If;
 
-            If char_length(_existingExperimentName) > 0 And _existingExperimentName <> _experimentName Then
+            If char_length(_existingExperimentName) > 0 And _existingExperimentName <> _experimentName::citext Then
                 _message := format('Renamed experiment from "%s" to "%s"', _existingExperimentName, _experimentName);
 
                 --------------------------------------------
@@ -896,7 +884,14 @@ BEGIN
                       Coalesce(experiment, '') <> _experimentName;
             End If;
 
-        End If; -- update mode
+        End If;
+
+        If _dropTempTables Then
+            DROP TABLE Tmp_Experiment_to_Biomaterial_Map;
+            DROP TABLE Tmp_ExpToRefCompoundMap;
+        End If;
+
+        RETURN;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -921,9 +916,19 @@ BEGIN
         End If;
     END;
 
-    DROP TABLE IF EXISTS Tmp_Experiment_to_Biomaterial_Map;
-    DROP TABLE IF EXISTS Tmp_ExpToRefCompoundMap;
+    If _dropTempTables Then
+        DROP TABLE IF EXISTS Tmp_Experiment_to_Biomaterial_Map;
+        DROP TABLE IF EXISTS Tmp_ExpToRefCompoundMap;
+    End If;
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_experiment IS 'AddUpdateExperiment';
+
+ALTER PROCEDURE public.add_update_experiment(INOUT _experimentid integer, IN _experimentname text, IN _campaignname text, IN _researcherusername text, IN _organismname text, IN _reason text, IN _comment text, IN _sampleconcentration text, IN _enzymename text, IN _labnotebookref text, IN _labelling text, IN _biomateriallist text, IN _referencecompoundlist text, IN _samplepreprequest integer, IN _internalstandard text, IN _postdigestintstd text, IN _wellplatename text, IN _wellnumber text, IN _alkylation text, IN _mode text, IN _container text, IN _barcode text, IN _tissue text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_experiment(INOUT _experimentid integer, IN _experimentname text, IN _campaignname text, IN _researcherusername text, IN _organismname text, IN _reason text, IN _comment text, IN _sampleconcentration text, IN _enzymename text, IN _labnotebookref text, IN _labelling text, IN _biomateriallist text, IN _referencecompoundlist text, IN _samplepreprequest integer, IN _internalstandard text, IN _postdigestintstd text, IN _wellplatename text, IN _wellnumber text, IN _alkylation text, IN _mode text, IN _container text, IN _barcode text, IN _tissue text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_experiment(INOUT _experimentid integer, IN _experimentname text, IN _campaignname text, IN _researcherusername text, IN _organismname text, IN _reason text, IN _comment text, IN _sampleconcentration text, IN _enzymename text, IN _labnotebookref text, IN _labelling text, IN _biomateriallist text, IN _referencecompoundlist text, IN _samplepreprequest integer, IN _internalstandard text, IN _postdigestintstd text, IN _wellplatename text, IN _wellnumber text, IN _alkylation text, IN _mode text, IN _container text, IN _barcode text, IN _tissue text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateExperiment';
+
