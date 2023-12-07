@@ -8,21 +8,36 @@ CREATE OR REPLACE FUNCTION public.get_dataset_scan_type_list(_datasetid integer)
 /****************************************************
 **
 **  Desc:
-**      Builds a delimited list of actual scan types
-**      for the specified dataset
+**      Builds a delimited list of actual scan types for the specified dataset
+**
+**      Scan types are sorted using column sort_key in table t_dataset_scan_type_glossary
+**
+**      To find missing scan types, use the following query:
+**
+**      SELECT format('Need to add scan %s to t_dataset_scan_type_glossary: %s',
+**                    CASE WHEN MissingScanTypes LIKE '%,%' THEN 'types' ELSE 'type' END,
+**                    MissingScanTypes) As Warning
+**      FROM ( SELECT string_agg(T.scan_type, ', ' ORDER BY T.scan_type) AS MissingScanTypes
+**             FROM (
+**                 SELECT DISTINCT scan_type
+**                 FROM t_dataset_scan_types) T
+**                  LEFT OUTER JOIN t_dataset_scan_type_glossary G
+**                        ON T.scan_type = G.scan_type
+**             WHERE G.scan_type Is Null) LookupQ;
 **
 **  Return value: comma-separated list
 **
 **  Auth:   mem
 **  Date:   05/13/2010
 **          06/13/2022 mem - Convert from a table-valued function to a scalar-valued function
-**          06/13/2022 mem - Ported to PostgreSQL
+**                         - Ported to PostgreSQL
+**          12/06/2023 mem - Also sort by scan_type, in case the scan type is not defined in t_dataset_scan_type_glossary
 **
 *****************************************************/
 DECLARE
     _result text;
 BEGIN
-    SELECT string_agg(LookupQ.scan_type, ', ' ORDER BY G.sort_key)
+    SELECT string_agg(LookupQ.scan_type, ', ' ORDER BY G.sort_key, LookupQ.scan_type)
     INTO _result
     FROM ( SELECT DISTINCT scan_type
            FROM t_dataset_scan_types
