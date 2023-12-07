@@ -1,45 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_predefined_analysis
-(
-    _level int,
-    _sequence text,
-    _instrumentClassCriteria text,
-    _campaignNameCriteria text,
-    _experimentNameCriteria text,
-    _instrumentNameCriteria text,
-    _instrumentExclCriteria text,
-    _organismNameCriteria text,
-    _datasetNameCriteria text,
-    _expCommentCriteria text,
-    _labellingInclCriteria text,
-    _labellingExclCriteria text,
-    _analysisToolName text,
-    _paramFileName text,
-    _settingsFileName text,
-    _organismName text,
-    _organismDBName text,
-    _protCollNameList text,
-    _protCollOptionsList text,
-    _priority int,
-    _enabled int,
-    _description text,
-    _creator text,
-    _nextLevel text,
-    INOUT _id int,
-    _mode text = 'add',
-    _separationTypeCriteria text = '',
-    _campaignExclCriteria text = '',
-    _experimentExclCriteria text = '',
-    _datasetExclCriteria text = '',
-    _datasetTypeCriteria text = '',
-    _triggerBeforeDisposition int = 0,
-    _propagationMode text = 'Export',
-    _specialProcessing text = '',
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_predefined_analysis(integer, text, text, integer, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, integer, integer, text, text, text, integer, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_predefined_analysis(IN _level integer, IN _sequence text, IN _nextlevel text, IN _triggerbeforedisposition integer, IN _propagationmode text, IN _instrumentclasscriteria text, IN _instrumentnamecriteria text, IN _instrumentexclcriteria text, IN _campaignnamecriteria text, IN _campaignexclcriteria text, IN _experimentnamecriteria text, IN _experimentexclcriteria text, IN _experimentcommentcriteria text, IN _organismnamecriteria text, IN _datasetnamecriteria text, IN _datasetexclcriteria text, IN _datasettypecriteria text, IN _scantypecriteria text, IN _scantypeexclcriteria text, IN _labellinginclcriteria text, IN _labellingexclcriteria text, IN _separationtypecriteria text, IN _analysistoolname text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _organismdbname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _priority integer, IN _enabled integer, IN _description text, IN _specialprocessing text, IN _creator text, INOUT _id integer, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -48,16 +13,26 @@ AS $$
 **  Arguments:
 **    _level                        Level; datasets are compared to predefines sequentially, by level
 **    _sequence                     Sequence; for each level, predefines are processed sequentially, by sequence
+**    _nextLevel                    Next level to jump to if a dataset matches a predefine
+**    _triggerBeforeDisposition     Trigger before disposition: 1 means to trigger before datasets are dispositioned; 0 means to trigger after disposition
+**    _propagationMode              Propagation mode: 'Export' or 'No export'
 **    _instrumentClassCriteria      Instrument class criteria
-**    _campaignNameCriteria         Campaign name criteria
-**    _experimentNameCriteria       Experiment name criteria
 **    _instrumentNameCriteria       Instrument name criteria
 **    _instrumentExclCriteria       Instrument excl criteria
+**    _campaignNameCriteria         Campaign name criteria
+**    _campaignExclCriteria         Campaign exclusion criteria
+**    _experimentNameCriteria       Experiment name criteria
+**    _experimentExclCriteria       Experiment exclusion criteria
+**    _experimentCommentCriteria    Experiment comment criteria
 **    _organismNameCriteria         Organism name criteria
 **    _datasetNameCriteria          Dataset name criteria
-**    _expCommentCriteria           Exp comment criteria
+**    _datasetExclCriteria          Dataset exclusion criteria
+**    _datasetTypeCriteria          Dataset type criteria
+**    _scanTypeCriteria             Scan type criteria
+**    _scanTypeExclCriteria         Scan type exclusion criteria
 **    _labellingInclCriteria        Labelling inclusion criteria
 **    _labellingExclCriteria        Labelling exclusion criteria
+**    _separationTypeCriteria       Separation type criteria
 **    _analysisToolName             Analysis tool name
 **    _paramFileName                Param file name
 **    _settingsFileNam              Settings file nam
@@ -68,18 +43,10 @@ AS $$
 **    _priority                     Priority to assign to jobs created from the predefine
 **    _enabled                      Enabled: 1 if enabled, 0 if disabled
 **    _description                  Description
-**    _creator                      Creator
-**    _nextLevel                    Next level to jump to if a dataset matches a predefine
+**    _specialProcessing            Special processing parameters; typically ''
+**    _creator                      Username of the DMS user who created the predefine
 **    _id                           Input/output: Predefine ID in t_predefined_analysis
 **    _mode                         Mode: 'add' or 'update'
-**    _separationTypeCriteria       Separation type criteria
-**    _campaignExclCriteria         Campaign exclusion criteria
-**    _experimentExclCriteria       Experiment exclusion criteria
-**    _datasetExclCriteria          Dataset exclusion criteria
-**    _datasetTypeCriteria          Dataset type criteria
-**    _triggerBeforeDisposition     Trigger before disposition: 1 means to trigger before datasets are dispositioned; 0 means to trigger after disposition
-**    _propagationMode              Propagation mode: 'Export' or 'No export'
-**    _specialProcessing            Special processing parameters; typically ''
 **    _message                      Output message
 **    _returnCode                   Return code
 **
@@ -112,9 +79,10 @@ AS $$
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          05/10/2018 mem - Validate the settings file name
-**          12/08/2020 mem - Lookup Username from T_Users using the validated user ID
+**          12/08/2020 mem - Lookup username from T_Users using the validated user ID
 **          06/30/2022 mem - Rename parameter file argument
-**          12/15/2024 mem - Ported to PostgreSQL
+**          12/06/2023 mem - Add support for scan type criteria
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -128,7 +96,7 @@ DECLARE
     _allowedInstClassesForTool text;
 
     _matchCount int;
-
+    _dropTempTable boolean := false;
     _instrument record;
     _analysisToolID int;
     _msg text := '';
@@ -144,6 +112,7 @@ DECLARE
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
+    _logMessage text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -174,27 +143,33 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        If char_length(Coalesce(_analysisToolName,'')) < 1 Then
+        _analysisToolName := Trim(Coalesce(_analysisToolName, ''));
+        _paramFileName    := Trim(Coalesce(_paramFileName   , ''));
+        _settingsFileName := Trim(Coalesce(_settingsFileName, ''));
+        _organismName     := Trim(Coalesce(_organismName    , ''));
+        _organismDBName   := Trim(Coalesce(_organismDBName  , ''));
+
+        If char_length(_analysisToolName) < 1 Then
             _returnCode := 'U5201';
             RAISE EXCEPTION 'Analysis tool name must be specified';
         End If;
 
-        If char_length(Coalesce(_paramFileName,'')) < 1 Then
+        If char_length(_paramFileName) < 1 Then
             _returnCode := 'U5202';
             RAISE EXCEPTION 'Parameter file name must be specified';
         End If;
 
-        If char_length(Coalesce(_settingsFileName,'')) < 1 Then
+        If char_length(_settingsFileName) < 1 Then
             _returnCode := 'U5203';
             RAISE EXCEPTION 'Settings file name must be specified';
         End If;
 
-        If char_length(Coalesce(_organismName,'')) < 1 Then
+        If char_length(_organismName) < 1 Then
             _returnCode := 'U5204';
             RAISE EXCEPTION 'Organism name must be specified; use "(default)" to auto-assign at job creation';
         End If;
 
-        If char_length(Coalesce(_organismDBName,'')) < 1 Then
+        If char_length(_organismDBName) < 1 Then
             _returnCode := 'U5205';
             RAISE EXCEPTION 'Organism DB name must be specified';
         End If;
@@ -205,22 +180,31 @@ BEGIN
         -- Update any null filter criteria
         ---------------------------------------------------
 
-        _instrumentClassCriteria := Trim(Coalesce(_instrumentClassCriteria, ''));
-        _campaignNameCriteria    := Trim(Coalesce(_campaignNameCriteria   , ''));
-        _experimentNameCriteria  := Trim(Coalesce(_experimentNameCriteria , ''));
-        _instrumentNameCriteria  := Trim(Coalesce(_instrumentNameCriteria , ''));
-        _instrumentExclCriteria  := Trim(Coalesce(_instrumentExclCriteria , ''));
-        _organismNameCriteria    := Trim(Coalesce(_organismNameCriteria   , ''));
-        _datasetNameCriteria     := Trim(Coalesce(_datasetNameCriteria    , ''));
-        _expCommentCriteria      := Trim(Coalesce(_expCommentCriteria     , ''));
-        _labellingInclCriteria   := Trim(Coalesce(_labellingInclCriteria  , ''));
-        _labellingExclCriteria   := Trim(Coalesce(_labellingExclCriteria  , ''));
-        _separationTypeCriteria  := Trim(Coalesce(_separationTypeCriteria , ''));
-        _campaignExclCriteria    := Trim(Coalesce(_campaignExclCriteria   , ''));
-        _experimentExclCriteria  := Trim(Coalesce(_experimentExclCriteria , ''));
-        _datasetExclCriteria     := Trim(Coalesce(_datasetExclCriteria    , ''));
-        _datasetTypeCriteria     := Trim(Coalesce(_datasetTypeCriteria    , ''));
-        _specialProcessing       := Trim(Coalesce(_specialProcessing      , ''));
+        _triggerBeforeDisposition  := Coalesce(_triggerBeforeDisposition, 0);
+        _priority                  := Coalesce(_priority, 3);
+        _enabled                   := Coalesce(_enabled, 1);
+
+        _instrumentClassCriteria   := Trim(Coalesce(_instrumentClassCriteria  , ''));
+        _instrumentNameCriteria    := Trim(Coalesce(_instrumentNameCriteria   , ''));
+        _instrumentExclCriteria    := Trim(Coalesce(_instrumentExclCriteria   , ''));
+        _campaignNameCriteria      := Trim(Coalesce(_campaignNameCriteria     , ''));
+        _campaignExclCriteria      := Trim(Coalesce(_campaignExclCriteria     , ''));
+        _experimentNameCriteria    := Trim(Coalesce(_experimentNameCriteria   , ''));
+        _experimentExclCriteria    := Trim(Coalesce(_experimentExclCriteria   , ''));
+        _experimentCommentCriteria := Trim(Coalesce(_experimentCommentCriteria, ''));
+        _datasetNameCriteria       := Trim(Coalesce(_datasetNameCriteria      , ''));
+        _datasetExclCriteria       := Trim(Coalesce(_datasetExclCriteria      , ''));
+        _datasetTypeCriteria       := Trim(Coalesce(_datasetTypeCriteria      , ''));
+        _scanTypeCriteria          := Trim(Coalesce(_scanTypeCriteria         , ''));
+        _scanTypeExclCriteria      := Trim(Coalesce(_scanTypeExclCriteria     , ''));
+        _labellingInclCriteria     := Trim(Coalesce(_labellingInclCriteria    , ''));
+        _labellingExclCriteria     := Trim(Coalesce(_labellingExclCriteria    , ''));
+        _separationTypeCriteria    := Trim(Coalesce(_separationTypeCriteria   , ''));
+        _organismName              := Trim(Coalesce(_organismName             , ''));
+        _protCollNameList          := Trim(Coalesce(_protCollNameList         , ''));
+        _protCollOptionsList       := Trim(Coalesce(_protCollOptionsList      , ''));
+        _description               := Trim(Coalesce(_description              , ''));
+        _specialProcessing         := Trim(Coalesce(_specialProcessing        , ''));
 
         ---------------------------------------------------
         -- Resolve propagation mode
@@ -233,17 +217,33 @@ BEGIN
                      END;
 
         ---------------------------------------------------
-        -- Validate _sequence and _nextLevel
+        -- Validate _level, _sequence, and _nextLevel
         ---------------------------------------------------
 
-        If _sequence <> '' Then
-        _seqVal := _sequence::int;
+        If _level Is Null Then
+            _msg := 'Level cannot be null';
+            RAISE EXCEPTION '%', _msg;
         End If;
 
-        If _nextLevel <> '' Then
-        _nextLevelVal := _nextLevel::int;
-        If _nextLevelVal <= _level Then
-                _msg := 'Next level must be greater than current level';
+        If Trim(Coalesce(_sequence, '')) <> '' Then
+            _seqVal := try_cast(_sequence, null::int);
+
+            If _seqVal Is Null Then
+                _msg := format('Sequence should be an integer (or an empty string), not "%s"', _sequence);
+                RAISE EXCEPTION '%', _msg;
+            End If;
+        End If;
+
+        If Trim(Coalesce(_nextLevel, '')) <> '' Then
+            _nextLevelVal := try_cast(_nextLevel, null::int);
+
+            If _nextLevelVal Is Null Then
+                _msg := format('NextLevel should be an integer (or an empty string), not "%s"', _nextLevel);
+                RAISE EXCEPTION '%', _msg;
+            End If;
+
+            If _nextLevelVal <= _level Then
+                _msg := format('Next level (%s) must be greater than current level (%s)', _nextLevel, _level);
                 RAISE EXCEPTION '%', _msg;
             End If;
         End If;
@@ -255,7 +255,7 @@ BEGIN
         SELECT analysis_tool_id
         INTO _analysisToolID
         FROM t_analysis_tool
-        WHERE (analysis_tool = _analysisToolName)
+        WHERE analysis_tool = _analysisToolName::citext;
 
         If Not FOUND Then
             _msg := format('Analysis tool "%s" not found in t_analysis_tool', _analysisToolName);
@@ -264,21 +264,17 @@ BEGIN
 
         ---------------------------------------------------
         -- If _instrumentClassCriteria or _instrumentNameCriteria or _instrumentExclCriteria are defined,
-        -- determine the associated Dataset Types and make sure they are
-        -- valid for _analysisToolName
+        -- determine the associated Dataset Types and make sure they are valid for _analysisToolName
         ---------------------------------------------------
 
         If char_length(_instrumentClassCriteria) > 0 Or char_length(_instrumentNameCriteria) > 0 Or char_length(_instrumentExclCriteria) > 0 Then
 
-            If Not Exists ( Then
-                SELECT ADT.Dataset_Type;
-            End If;
-                FROM t_analysis_tool_allowed_dataset_type ADT
-                     INNER JOIN t_analysis_tool Tool
-                       ON ADT.analysis_tool_id = Tool.analysis_tool_id
-                WHERE (Tool.analysis_tool = _analysisToolName)
-                )
-            Begin
+            If Not Exists ( SELECT ADT.Dataset_Type
+                            FROM t_analysis_tool_allowed_dataset_type ADT
+                                 INNER JOIN t_analysis_tool Tool
+                                   ON ADT.analysis_tool_id = Tool.analysis_tool_id
+                            WHERE Tool.analysis_tool = _analysisToolName::citext
+                          ) Then
                 _msg := format('Analysis tool "%s" does not have any allowed dataset types; unable to continue', _analysisToolName);
                 RAISE EXCEPTION '%', _msg;
             End If;
@@ -287,7 +283,7 @@ BEGIN
                             FROM t_analysis_tool_allowed_instrument_class AIC
                                  INNER JOIN t_analysis_tool Tool
                                    ON AIC.analysis_tool_id = Tool.analysis_tool_id
-                            WHERE (Tool.analysis_tool = _analysisToolName)
+                            WHERE Tool.analysis_tool = _analysisToolName::citext
                           ) Then
 
                 _msg := format('Analysis tool "%s" does not have any allowed instrument classes; unable to continue', _analysisToolName);
@@ -305,7 +301,9 @@ BEGIN
                 InstrumentName text,
                 InstrumentClass text,
                 InstrumentID int
-            )
+            );
+
+            _dropTempTable := true;
 
             INSERT INTO Tmp_MatchingInstruments( InstrumentName,
                                                  InstrumentClass,
@@ -321,12 +319,12 @@ BEGIN
                       (InstGroupDSType.dataset_type LIKE _datasetTypeCriteria OR _datasetTypeCriteria = '')
             WHERE (InstClass.instrument_class LIKE _instrumentClassCriteria OR _instrumentClassCriteria = '') AND
                   (InstName.instrument LIKE _instrumentNameCriteria OR _instrumentNameCriteria = '') AND
-                  (NOT (InstName.instrument LIKE _instrumentExclCriteria) OR _instrumentExclCriteria = '')
+                  (NOT (InstName.instrument LIKE _instrumentExclCriteria) OR _instrumentExclCriteria = '');
             --
             GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
             If _matchCount = 0 Then
-                _msg := 'Did not match any instruments using the instrument name and class criteria; update not allowed';
+                _msg := 'Did not match any instruments using the instrument name, instrument class, and dataset type criteria; update not allowed';
                 RAISE EXCEPTION '%', _msg;
             End If;
 
@@ -346,20 +344,19 @@ BEGIN
                 FROM Tmp_MatchingInstruments
                 ORDER BY UniqueID
             LOOP
-                If Not Exists (
-                    SELECT *
-                    FROM t_instrument_name InstName
-                         INNER JOIN t_instrument_group_allowed_ds_type IGADT
-                           ON InstName.instrument_group = IGADT.instrument_group
-                         INNER JOIN ( SELECT ADT.dataset_type
-                                      FROM t_analysis_tool_allowed_dataset_type ADT
-                                           INNER JOIN t_analysis_tool Tool
-                                             ON ADT.analysis_tool_id = Tool.analysis_tool_id
-                                      WHERE (Tool.analysis_tool = _analysisToolName)
-                                    ) ToolQ
-                           ON IGADT.dataset_type = ToolQ.dataset_type
-                    WHERE (InstName.instrument = _instrument.InstrumentName)
-                    ) Then
+                If Not Exists ( SELECT instrument_id
+                                FROM t_instrument_name InstName
+                                     INNER JOIN t_instrument_group_allowed_ds_type IGADT
+                                       ON InstName.instrument_group = IGADT.instrument_group
+                                     INNER JOIN ( SELECT ADT.dataset_type
+                                                  FROM t_analysis_tool_allowed_dataset_type ADT
+                                                       INNER JOIN t_analysis_tool Tool
+                                                         ON ADT.analysis_tool_id = Tool.analysis_tool_id
+                                                  WHERE (Tool.analysis_tool = _analysisToolName)
+                                                ) ToolQ
+                                       ON IGADT.dataset_type = ToolQ.dataset_type
+                                WHERE (InstName.instrument = _instrument.InstrumentName)
+                              ) Then
 
                     -- Example criteria that will result in this message: Instrument Criteria=Agilent_TOF%, Tool=AgilentSequest
 
@@ -375,14 +372,13 @@ BEGIN
                     RAISE EXCEPTION '%', _msg;
                 End If;
 
-                If Not Exists (
-                    SELECT AIC.Instrument_Class
-                    FROM t_analysis_tool_allowed_instrument_class AIC
-                        INNER JOIN t_analysis_tool Tool
-                        ON AIC.analysis_tool_id = Tool.analysis_tool_id
-                    WHERE Tool.analysis_tool = _analysisToolName AND
-                        AIC.instrument_class = _instrument.InstrumentClass
-                    ) Then
+                If Not Exists ( SELECT AIC.Instrument_Class
+                                FROM t_analysis_tool_allowed_instrument_class AIC
+                                    INNER JOIN t_analysis_tool Tool
+                                    ON AIC.analysis_tool_id = Tool.analysis_tool_id
+                                WHERE Tool.analysis_tool = _analysisToolName AND
+                                    AIC.instrument_class = _instrument.InstrumentClass
+                              ) Then
 
                     -- Example criteria that will result in this message: Instrument Class=BRUKERFTMS, Tool=XTandem
                     -- 2nd example: Instrument Criteria=Agilent_TOF%, Tool=Decon2LS
@@ -391,7 +387,7 @@ BEGIN
                     INTO _allowedInstClassesForTool
                     FROM public.get_analysis_tool_allowed_instrument_class_list(_analysisToolID);
 
-                    _msg := format('Criteria matched instrument "%s" which is Instrument Class "%s"; however, analysis tool %s allows these instrument classes: "%s"'
+                    _msg := format('Criteria matched instrument "%s" which is Instrument Class "%s"; however, analysis tool %s allows these instrument classes: "%s"',
                                    _instrument.InstrumentName, _instrument.InstrumentClass, _analysisToolName, _allowedInstClassesForTool);
 
                     RAISE EXCEPTION '%', _msg;
@@ -416,8 +412,8 @@ BEGIN
         -- Validate the parameter file name
         ---------------------------------------------------
 
-        If _paramFileName <> 'na' Then
-            If Not Exists (SELECT * FROM t_param_files WHERE param_file_name = _paramFileName) Then
+        If _paramFileName::citext <> 'na' Then
+            If Not Exists (SELECT param_file_id FROM t_param_files WHERE param_file_name = _paramFileName::citext) Then
                 _msg := format('Could not find entry in database for parameter file "%s"', _paramFileName);
                 RAISE EXCEPTION '%', _msg;
             End If;
@@ -427,8 +423,8 @@ BEGIN
         -- Validate the settings file name
         ---------------------------------------------------
 
-        If _settingsFileName <> 'na' Then
-            If Not Exists (SELECT * FROM t_settings_files WHERE file_name = _settingsFileName) Then
+        If _settingsFileName::citext <> 'na' Then
+            If Not Exists (SELECT settings_file_id FROM t_settings_files WHERE file_name = _settingsFileName::citext) Then
                 _msg := format('Could not find entry in database for settings file "%s"', _settingsFileName);
                 RAISE EXCEPTION '%', _msg;
             End If;
@@ -449,7 +445,7 @@ BEGIN
                         _ownerUsername       => _ownerUsername,
                         _message             => _message,               -- Output
                         _returnCode          => _returnCode,            -- Output
-                        _debugMode           => _showDebugMessages);
+                        _debugMode           => false);
 
         If _returnCode <> '' Then
             _msg := _message;
@@ -457,7 +453,7 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- _creator should be a userUsername
+        -- _creator should be a username
         -- Auto-capitalize it or auto-resolve it from a name to a username
         ---------------------------------------------------
 
@@ -504,6 +500,7 @@ BEGIN
             End If;
 
         End If;
+
         ---------------------------------------------------
         -- Action for add mode
         ---------------------------------------------------
@@ -513,18 +510,23 @@ BEGIN
             INSERT INTO t_predefined_analysis (
                 predefine_level,
                 predefine_sequence,
+                next_level,
+                trigger_before_disposition,
+                propagation_mode,
                 instrument_class_criteria,
+                instrument_name_criteria,
+                instrument_excl_criteria,
                 campaign_name_criteria,
                 campaign_excl_criteria,
                 experiment_name_criteria,
                 experiment_excl_criteria,
-                instrument_name_criteria,
-                instrument_excl_criteria,
+                exp_comment_criteria,
                 organism_name_criteria,
                 dataset_name_criteria,
                 dataset_excl_criteria,
                 dataset_type_criteria,
-                exp_comment_criteria,
+                scan_type_criteria,
+                scan_type_excl_criteria,
                 labelling_incl_criteria,
                 labelling_excl_criteria,
                 separation_type_criteria,
@@ -536,29 +538,31 @@ BEGIN
                 protein_collection_list,
                 protein_options_list,
                 priority,
-                special_processing,
                 enabled,
                 description,
+                special_processing,
                 creator,
-                next_level,
-                trigger_before_disposition,
-                propagation_mode,
                 last_affected
             ) VALUES (
                 _level,
                 _seqVal,
+                _nextLevelVal,
+                _triggerBeforeDisposition,
+                _propMode,
                 _instrumentClassCriteria,
+                _instrumentNameCriteria,
+                _instrumentExclCriteria,
                 _campaignNameCriteria,
                 _campaignExclCriteria,
                 _experimentNameCriteria,
                 _experimentExclCriteria,
-                _instrumentNameCriteria,
-                _instrumentExclCriteria,
+                _experimentCommentCriteria,
                 _organismNameCriteria,
                 _datasetNameCriteria,
                 _datasetExclCriteria,
                 _datasetTypeCriteria,
-                _expCommentCriteria,
+                _scanTypeCriteria,
+                _scanTypeExclCriteria,
                 _labellingInclCriteria,
                 _labellingExclCriteria,
                 _separationTypeCriteria,
@@ -570,13 +574,10 @@ BEGIN
                 _protCollNameList,
                 _protCollOptionsList,
                 _priority,
-                _specialProcessing,
                 _enabled,
                 _description,
+                _specialProcessing,
                 _creator,
-                _nextLevelVal,
-                Coalesce(_triggerBeforeDisposition, 0),
-                _propMode,
                 CURRENT_TIMESTAMP
             )
             RETURNING predefine_id
@@ -591,43 +592,50 @@ BEGIN
         If _mode = 'update' Then
 
             UPDATE t_predefined_analysis
-            SET
-                predefine_level = _level,
-                predefine_sequence = _seqVal,
-                instrument_class_criteria = _instrumentClassCriteria,
-                campaign_name_criteria = _campaignNameCriteria,
-                campaign_excl_criteria = _campaignExclCriteria,
-                experiment_name_criteria = _experimentNameCriteria,
-                experiment_excl_criteria = _experimentExclCriteria,
-                instrument_name_criteria = _instrumentNameCriteria,
-                instrument_excl_criteria = _instrumentExclCriteria,
-                organism_name_criteria = _organismNameCriteria,
-                dataset_name_criteria = _datasetNameCriteria,
-                dataset_excl_criteria = _datasetExclCriteria,
-                dataset_type_criteria = _datasetTypeCriteria,
-                exp_comment_criteria = _expCommentCriteria,
-                labelling_incl_criteria = _labellingInclCriteria,
-                labelling_excl_criteria = _labellingExclCriteria,
-                separation_type_criteria = _separationTypeCriteria,
-                analysis_tool_name = _analysisToolName,
-                param_file_name = _paramFileName,
-                settings_file_name = _settingsFileName,
-                organism_id = _organismID,
-                organism_db_name = _organismDBName,
-                protein_collection_list = _protCollNameList,
-                protein_options_list = _protCollOptionsList,
-                priority = _priority,
-                special_processing = _specialProcessing,
-                enabled = _enabled,
-                description = _description,
-                creator = _creator,
-                next_level = _nextLevelVal,
-                trigger_before_disposition = Coalesce(_triggerBeforeDisposition, 0),
-                propagation_mode = _propMode,
-                last_affected = CURRENT_TIMESTAMP
-            WHERE (predefine_id = _id);
+            SET predefine_level            = _level,
+                predefine_sequence         = _seqVal,
+                next_level                 = _nextLevelVal,
+                trigger_before_disposition = _triggerBeforeDisposition,
+                propagation_mode           = _propMode,
+                instrument_class_criteria  = _instrumentClassCriteria,
+                instrument_name_criteria   = _instrumentNameCriteria,
+                instrument_excl_criteria   = _instrumentExclCriteria,
+                campaign_name_criteria     = _campaignNameCriteria,
+                campaign_excl_criteria     = _campaignExclCriteria,
+                experiment_name_criteria   = _experimentNameCriteria,
+                experiment_excl_criteria   = _experimentExclCriteria,
+                exp_comment_criteria       = _experimentCommentCriteria,
+                organism_name_criteria     = _organismNameCriteria,
+                dataset_name_criteria      = _datasetNameCriteria,
+                dataset_excl_criteria      = _datasetExclCriteria,
+                dataset_type_criteria      = _datasetTypeCriteria,
+                scan_type_criteria         = _scanTypeCriteria,
+                scan_type_excl_criteria    = _scanTypeExclCriteria,
+                labelling_incl_criteria    = _labellingInclCriteria,
+                labelling_excl_criteria    = _labellingExclCriteria,
+                separation_type_criteria   = _separationTypeCriteria,
+                analysis_tool_name         = _analysisToolName,
+                param_file_name            = _paramFileName,
+                settings_file_name         = _settingsFileName,
+                organism_id                = _organismID,
+                organism_db_name           = _organismDBName,
+                protein_collection_list    = _protCollNameList,
+                protein_options_list       = _protCollOptionsList,
+                priority                   = _priority,
+                enabled                    = _enabled,
+                description                = _description,
+                special_processing         = _specialProcessing,
+                creator                    = _creator,
+                last_affected              = CURRENT_TIMESTAMP
+            WHERE predefine_id = _id;
 
         End If;
+
+        If _dropTempTable Then
+            DROP TABLE Tmp_MatchingInstruments;
+        End If;
+
+        RETURN;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -637,7 +645,11 @@ BEGIN
                 _exceptionDetail  = pg_exception_detail,
                 _exceptionContext = pg_exception_context;
 
-        _logMessage := format('%s; Job %s', _exceptionMessage, _job);
+        If _id Is Null Then
+            _logMessage := _exceptionMessage;
+        Else
+            _logMessage := format('%s; Predefine ID %s', _exceptionMessage, _id);
+        End If;
 
         _message := local_error_handler (
                         _sqlState, _logMessage, _exceptionDetail, _exceptionContext,
@@ -648,8 +660,18 @@ BEGIN
         End If;
     END;
 
-    DROP TABLE IF EXISTS Tmp_MatchingInstruments;
+    If _dropTempTable Then
+        DROP TABLE IF EXISTS Tmp_MatchingInstruments;
+    End If;
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_predefined_analysis IS 'AddUpdatePredefinedAnalysis';
+
+ALTER PROCEDURE public.add_update_predefined_analysis(IN _level integer, IN _sequence text, IN _nextlevel text, IN _triggerbeforedisposition integer, IN _propagationmode text, IN _instrumentclasscriteria text, IN _instrumentnamecriteria text, IN _instrumentexclcriteria text, IN _campaignnamecriteria text, IN _campaignexclcriteria text, IN _experimentnamecriteria text, IN _experimentexclcriteria text, IN _experimentcommentcriteria text, IN _organismnamecriteria text, IN _datasetnamecriteria text, IN _datasetexclcriteria text, IN _datasettypecriteria text, IN _scantypecriteria text, IN _scantypeexclcriteria text, IN _labellinginclcriteria text, IN _labellingexclcriteria text, IN _separationtypecriteria text, IN _analysistoolname text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _organismdbname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _priority integer, IN _enabled integer, IN _description text, IN _specialprocessing text, IN _creator text, INOUT _id integer, IN _mode text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_predefined_analysis(IN _level integer, IN _sequence text, IN _nextlevel text, IN _triggerbeforedisposition integer, IN _propagationmode text, IN _instrumentclasscriteria text, IN _instrumentnamecriteria text, IN _instrumentexclcriteria text, IN _campaignnamecriteria text, IN _campaignexclcriteria text, IN _experimentnamecriteria text, IN _experimentexclcriteria text, IN _experimentcommentcriteria text, IN _organismnamecriteria text, IN _datasetnamecriteria text, IN _datasetexclcriteria text, IN _datasettypecriteria text, IN _scantypecriteria text, IN _scantypeexclcriteria text, IN _labellinginclcriteria text, IN _labellingexclcriteria text, IN _separationtypecriteria text, IN _analysistoolname text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _organismdbname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _priority integer, IN _enabled integer, IN _description text, IN _specialprocessing text, IN _creator text, INOUT _id integer, IN _mode text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_predefined_analysis(IN _level integer, IN _sequence text, IN _nextlevel text, IN _triggerbeforedisposition integer, IN _propagationmode text, IN _instrumentclasscriteria text, IN _instrumentnamecriteria text, IN _instrumentexclcriteria text, IN _campaignnamecriteria text, IN _campaignexclcriteria text, IN _experimentnamecriteria text, IN _experimentexclcriteria text, IN _experimentcommentcriteria text, IN _organismnamecriteria text, IN _datasetnamecriteria text, IN _datasetexclcriteria text, IN _datasettypecriteria text, IN _scantypecriteria text, IN _scantypeexclcriteria text, IN _labellinginclcriteria text, IN _labellingexclcriteria text, IN _separationtypecriteria text, IN _analysistoolname text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _organismdbname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _priority integer, IN _enabled integer, IN _description text, IN _specialprocessing text, IN _creator text, INOUT _id integer, IN _mode text, INOUT _message text, INOUT _returncode text) IS 'AddUpdatePredefinedAnalysis';
+
