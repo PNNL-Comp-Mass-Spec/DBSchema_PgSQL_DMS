@@ -98,6 +98,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_file_info_xml(IN _datasetid in
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
 **                         - Include schema name when calling function verify_sp_authorized()
+**          12/06/2023 mem - Log an error if a scan type is not present in t_dataset_scan_type_glossary
 **
 *****************************************************/
 DECLARE
@@ -122,6 +123,7 @@ DECLARE
     _duplicateDatasetID int := 0;
     _comparisonDate date;
     _usageMessage text;
+    _missingScanTypes text;
 
     _formatSpecifier text;
     _infoHead text;
@@ -848,6 +850,27 @@ BEGIN
         UPDATE t_dataset_info DI
         SET scan_types = public.get_dataset_scan_type_list(_datasetID)
         WHERE DI.dataset_id = _datasetID;
+
+        -----------------------------------------------
+        -- Look for new scan types not present in t_dataset_scan_type_glossary
+        -----------------------------------------------
+
+        SELECT string_agg(T.scan_type, ', ' ORDER BY T.scan_type)
+        INTO _missingScanTypes
+        FROM t_dataset_scan_types T
+             LEFT OUTER JOIN t_dataset_scan_type_glossary G
+               ON G.scan_type = T.scan_type
+        WHERE dataset_id = _datasetID AND G.scan_type Is Null;
+
+        If Coalesce(_missingScanTypes, '') <> '' Then
+            If _missingScanTypes Like '%,%' Then
+                _msg := format('Scan types "%s" need to be added to table t_dataset_scan_type_glossary', _missingScanTypes);
+            Else
+                _msg := format('Scan type "%s" needs to be added to table t_dataset_scan_type_glossary', _missingScanTypes);
+            End If;
+
+            CALL post_log_entry ('Error', _msg, 'Update_Dataset_File_Info_XML', _duplicateEntryHoldoffHours => 1);
+        End If;
 
         -----------------------------------------------
         -- Add/Update t_dataset_files using a Merge statement
