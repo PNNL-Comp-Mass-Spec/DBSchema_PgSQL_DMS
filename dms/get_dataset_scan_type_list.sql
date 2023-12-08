@@ -10,20 +10,29 @@ CREATE OR REPLACE FUNCTION public.get_dataset_scan_type_list(_datasetid integer)
 **  Desc:
 **      Builds a delimited list of actual scan types for the specified dataset
 **
-**      Scan types are sorted using column sort_key in table t_dataset_scan_type_glossary
+**      Scan types are sorted using column sort_key from table t_dataset_scan_type_glossary
 **
-**      To find missing scan types, use the following query:
+**      To find missing scan types, use either of the following queries:
 **
-**      SELECT format('Need to add scan %s to t_dataset_scan_type_glossary: %s',
-**                    CASE WHEN MissingScanTypes LIKE '%,%' THEN 'types' ELSE 'type' END,
-**                    MissingScanTypes) As Warning
-**      FROM ( SELECT string_agg(T.scan_type, ', ' ORDER BY T.scan_type) AS MissingScanTypes
-**             FROM (
-**                 SELECT DISTINCT scan_type
-**                 FROM t_dataset_scan_types) T
-**                  LEFT OUTER JOIN t_dataset_scan_type_glossary G
-**                        ON T.scan_type = G.scan_type
-**             WHERE G.scan_type Is Null) LookupQ;
+**      SELECT CASE WHEN Coalesce(MissingScanTypes, '') = ''
+**                  THEN 'Table t_dataset_scan_type_glossary is up-to-date'
+**                  ELSE format('Need to add scan %s to t_dataset_scan_type_glossary: %s',
+**                              CASE WHEN MissingScanTypes LIKE '%,%' THEN 'types' ELSE 'type' END,
+**                              MissingScanTypes)
+**             END AS Comment
+**      FROM (SELECT string_agg(T.scan_type, ', ' ORDER BY T.scan_type) AS MissingScanTypes
+**            FROM (SELECT DISTINCT scan_type FROM t_dataset_scan_types) T
+**                 LEFT OUTER JOIN t_dataset_scan_type_glossary G
+**                   ON T.scan_type = G.scan_type
+**            WHERE G.scan_type Is Null) LookupQ;
+**
+**      SELECT T.scan_type
+**      FROM (SELECT DISTINCT scan_type
+**            FROM t_dataset_scan_types) T
+**                 LEFT OUTER JOIN t_dataset_scan_type_glossary G
+**                   ON T.scan_type = G.scan_type
+**      WHERE G.scan_type Is Null
+**      ORDER BY T.scan_type;
 **
 **  Return value: comma-separated list
 **

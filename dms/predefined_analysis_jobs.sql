@@ -154,9 +154,9 @@ BEGIN
 
         RETURN QUERY
         SELECT
-            0,              -- Predefine_ID
-            ''::citext,     -- Dataset
-            0,              -- Priority
+            0,              -- predefine_id
+            ''::citext,     -- dataset
+            0,              -- priority
             ''::citext,     -- analysis_tool_name
             ''::citext,     -- param_file_name
             ''::citext,     -- settings_file_name
@@ -319,9 +319,9 @@ BEGIN
 
         RETURN QUERY
         SELECT
-            0,              -- Predefine_ID
-            ''::citext,     -- Dataset
-            0,              -- Priority
+            0,              -- predefine_id
+            ''::citext,     -- dataset
+            0,              -- priority
             ''::citext,     -- analysis_tool_name
             ''::citext,     -- param_file_name
             ''::citext,     -- settings_file_name

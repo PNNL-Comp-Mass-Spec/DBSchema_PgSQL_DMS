@@ -342,7 +342,7 @@ BEGIN
             Acq_Time_End = _acqTimeEnd;
 
         ---------------------------------------------------
-        -- Extract out the ScanType information
+        -- Extract out the scan type information
         -- There could be multiple scan types defined in the XML
         ---------------------------------------------------
 
