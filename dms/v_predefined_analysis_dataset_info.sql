@@ -16,6 +16,7 @@ CREATE VIEW public.v_predefined_analysis_dataset_info AS
     ds.dataset_rating_id AS rating,
     drn.dataset_rating AS rating_name,
     dstypename.dataset_type,
+    public.get_dataset_scan_type_list(ds.dataset_id) AS scan_types,
     septype.separation_type,
     COALESCE(ds.acq_time_start, ds.created) AS ds_date,
     ds.scan_count

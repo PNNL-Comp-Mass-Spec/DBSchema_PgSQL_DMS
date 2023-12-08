@@ -2,13 +2,14 @@
 -- Name: get_predefined_analysis_rule_table(text, text, boolean); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_predefined_analysis_rule_table(_datasetname text, _analysistoolnamefilter text DEFAULT ''::text, _ignoredatasetrating boolean DEFAULT false) RETURNS TABLE(message public.citext, predefine_id integer, predefine_level integer, predefine_sequence integer, instrument_class_criteria public.citext, campaign_name_criteria public.citext, campaign_excl_criteria public.citext, experiment_name_criteria public.citext, experiment_excl_criteria public.citext, instrument_name_criteria public.citext, instrument_excl_criteria public.citext, organism_name_criteria public.citext, dataset_name_criteria public.citext, dataset_excl_criteria public.citext, dataset_type_criteria public.citext, exp_comment_criteria public.citext, labelling_incl_criteria public.citext, labelling_excl_criteria public.citext, separation_type_criteria public.citext, scan_count_min_criteria integer, scan_count_max_criteria integer, analysis_tool_name public.citext, param_file_name public.citext, settings_file_name public.citext, organism_id integer, organism public.citext, organism_db_name public.citext, protein_collection_list public.citext, protein_options_list public.citext, priority integer, next_level integer, trigger_before_disposition smallint, propagation_mode smallint, special_processing public.citext)
+CREATE OR REPLACE FUNCTION public.get_predefined_analysis_rule_table(_datasetname text, _analysistoolnamefilter text DEFAULT ''::text, _ignoredatasetrating boolean DEFAULT false) RETURNS TABLE(message public.citext, predefine_id integer, predefine_level integer, predefine_sequence integer, instrument_class_criteria public.citext, campaign_name_criteria public.citext, campaign_excl_criteria public.citext, experiment_name_criteria public.citext, experiment_excl_criteria public.citext, instrument_name_criteria public.citext, instrument_excl_criteria public.citext, organism_name_criteria public.citext, dataset_name_criteria public.citext, dataset_excl_criteria public.citext, dataset_type_criteria public.citext, scan_type_criteria public.citext, scan_type_excl_criteria public.citext, exp_comment_criteria public.citext, labelling_incl_criteria public.citext, labelling_excl_criteria public.citext, separation_type_criteria public.citext, scan_count_min_criteria integer, scan_count_max_criteria integer, analysis_tool_name public.citext, param_file_name public.citext, settings_file_name public.citext, organism_id integer, organism public.citext, organism_db_name public.citext, protein_collection_list public.citext, protein_options_list public.citext, priority integer, next_level integer, trigger_before_disposition smallint, propagation_mode smallint, special_processing public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
 **  Desc:
 **     Returns a table of predefined analysis rules for given dataset
+**
 **     If the dataset name is invalid, or if no predefine rules are defined, returns a table with a warning in the message column (other columns will be empty)
 **
 **  Arguments:
@@ -20,6 +21,7 @@ CREATE OR REPLACE FUNCTION public.get_predefined_analysis_rule_table(_datasetnam
 **  Date:   11/08/2022 mem - Initial version (refactored code from evaluate_predefined_analysis_rules)
 **          05/30/2023 mem - Use format() for string concatenation
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          12/07/2023 mem - Add support for scan type inclusion or exclusion
 **
 *****************************************************/
 DECLARE
@@ -41,6 +43,7 @@ BEGIN
         DS.Experiment_Labelling As ExperimentLabelling,
         DS.Dataset,
         DS.Dataset_Type As DatasetType,
+        DS.Scan_Types As ScanTypes,
         DS.Separation_Type As SeparationType,
         DS.Organism,
         DS.Instrument As InstrumentName,
@@ -74,6 +77,8 @@ BEGIN
             PA.dataset_name_criteria,
             PA.dataset_excl_criteria,
             PA.dataset_type_criteria,
+            PA.scan_type_criteria,
+            PA.scan_type_excl_criteria,
             PA.exp_comment_criteria,
             PA.labelling_incl_criteria,
             PA.labelling_excl_criteria,
@@ -103,6 +108,8 @@ BEGIN
             AND ((_predefineInfo.Experiment              SIMILAR TO PA.experiment_name_criteria)  OR PA.experiment_name_criteria = '')
             AND ((_predefineInfo.Dataset                 SIMILAR TO PA.dataset_name_criteria)     OR PA.dataset_name_criteria = '')
             AND ((_predefineInfo.DatasetType             SIMILAR TO PA.dataset_type_criteria)     OR PA.dataset_type_criteria = '')
+            AND ((_predefineInfo.ScanTypes               SIMILAR TO PA.scan_type_criteria)        OR PA.scan_type_criteria = '')
+            AND (NOT (_predefineInfo.ScanTypes           SIMILAR TO PA.scan_type_excl_criteria)   OR PA.scan_type_excl_criteria = '')
             AND ((_predefineInfo.ExperimentComment       SIMILAR TO PA.exp_comment_criteria)      OR PA.exp_comment_criteria = '')
             AND ((_predefineInfo.ExperimentLabelling     SIMILAR TO PA.labelling_incl_criteria)   OR PA.labelling_incl_criteria = '')
             AND (NOT (_predefineInfo.ExperimentLabelling SIMILAR TO PA.labelling_excl_criteria)   OR PA.labelling_excl_criteria = '')
@@ -150,6 +157,8 @@ BEGIN
                ''::citext AS dataset_name_criteria,
                ''::citext AS dataset_excl_criteria,
                ''::citext AS dataset_type_criteria,
+               ''::citext AS scan_type_criteria,
+               ''::citext AS scan_type_excl_criteria,
                ''::citext AS exp_comment_criteria,
                ''::citext AS labelling_incl_criteria,
                ''::citext AS labelling_excl_criteria,
