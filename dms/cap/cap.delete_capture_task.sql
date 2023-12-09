@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE cap.delete_capture_task(IN _job integer, INOUT _mess
 **          04/27/2023 mem - Use boolean for data type name
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
+**          12/08/2023 mem - Select a single column when using If Not Exists()
 **
 *****************************************************/
 DECLARE
@@ -58,7 +59,7 @@ BEGIN
 
     BEGIN
 
-        If Not Exists (SELECT * FROM cap.t_tasks WHERE Job = _job) THEN
+        If Not Exists (SELECT job FROM cap.t_tasks WHERE Job = _job) THEN
             _message := format('Capture task job %s not found in cap.t_tasks', _job);
             RAISE WARNING '%', _message;
             RETURN;

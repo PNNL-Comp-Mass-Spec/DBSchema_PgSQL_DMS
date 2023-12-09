@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE cap.update_myemsl_upload_ingest_stats(IN _datasetid 
 **          07/15/2019 mem - Filter on both Status_Num and Dataset_ID when updating T_MyEMSL_Uploads
 **          01/31/2020 mem - Add _returnCode, which duplicates the integer returned by this procedure; _returnCode is varchar for compatibility with Postgres error codes
 **          06/29/2023 mem - Ported to PostgreSQL
+**          12/08/2023 mem - Select a single column when using If Not Exists()
 **
 *****************************************************/
 DECLARE
@@ -94,7 +95,7 @@ BEGIN
         -- Make sure the _statusNum exists in cap.t_myemsl_uploads
         ---------------------------------------------------
 
-        If Not Exists (SELECT * FROM cap.t_myemsl_uploads WHERE status_num = _statusNum) Then
+        If Not Exists (SELECT status_num FROM cap.t_myemsl_uploads WHERE status_num = _statusNum) Then
             _message := format('status_num %s not found in cap.t_myemsl_uploads', _statusNum);
             _returnCode := 'U5202';
             RETURN;

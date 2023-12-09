@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE public.validate_instrument_group_for_requested_runs(
 **          05/31/2023 mem - Use format() for string concatenation
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Include schema name when calling function verify_sp_authorized()
+**          12/08/2023 mem - Select a single column when using If Not Exists()
 **
 *****************************************************/
 DECLARE
@@ -52,7 +53,7 @@ BEGIN
             RETURN;
         End If;
 
-        If Not Exists (Select * From T_Instrument_Group Where instrument_group = _instrumentGroup::citext) Then
+        If Not Exists (Select instrument_group From T_Instrument_Group Where instrument_group = _instrumentGroup::citext) Then
             _message := format('Invalid instrument group name: %s', _instrumentGroup);
             _returnCode := 'U5202'
 
@@ -118,9 +119,11 @@ BEGIN
             -- Verify that dataset type is valid for given instrument group
             ---------------------------------------------------
 
-            If Not Exists (SELECT *
-                           FROM t_instrument_group_allowed_ds_type
-                           WHERE instrument_group = _instrumentGroup::citext AND dataset_type = _requestInfo.DatasetTypeName) Then
+            If Not Exists ( SELECT instrument_group
+                            FROM t_instrument_group_allowed_ds_type
+                            WHERE instrument_group = _instrumentGroup::citext AND
+                                  dataset_type = _requestInfo.DatasetTypeName
+                          ) Then
 
                 _allowedDatasetTypes := public.get_instrument_group_dataset_type_list(_instrumentGroup::citext, ', ');
 

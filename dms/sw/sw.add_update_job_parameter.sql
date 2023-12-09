@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_job_parameter(IN _job integer, IN _sec
 **          08/08/2023 mem - Fix typo in warning message
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          12/08/2023 mem - Select a single column when using If Not Exists()
 **
 *****************************************************/
 DECLARE
@@ -101,7 +102,7 @@ BEGIN
     If FOUND Then
         _existingParamsFound := true;
     Else
-        If Not Exists (Select * FROM sw.t_jobs WHERE job = _job) Then
+        If Not Exists (SELECT job FROM sw.t_jobs WHERE job = _job) Then
             _message := format('Error: job %s not found in sw.t_job_parameters or sw.t_jobs', _job);
 
             RAISE WARNING '%', _message;

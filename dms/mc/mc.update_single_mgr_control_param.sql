@@ -49,6 +49,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname tex
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **          10/11/2023 mem - Ignore case when resolving parameter name to ID
+**          12/08/2023 mem - Select a single column when using If Not Exists()
 **
 *****************************************************/
 DECLARE
@@ -135,7 +136,7 @@ BEGIN
 
     RAISE INFO 'Inserted % manager IDs into Tmp_MgrIDs', _managerCount;
 
-    If Not Exists (SELECT *
+    If Not Exists (SELECT M.mgr_id
                    FROM mc.t_mgrs M
                           INNER JOIN Tmp_MgrIDs ON M.mgr_id = Tmp_MgrIDs.mgr_id
                    WHERE M.control_from_website > 0) Then

@@ -19,6 +19,7 @@ CREATE OR REPLACE PROCEDURE cap.report_capture_task_manager_idle(IN _managername
 **          01/31/2020 mem - Add _returnCode, which duplicates the integer returned by this procedure; _returnCode is varchar for compatibility with Postgres error codes
 **          06/22/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          12/08/2023 mem - Select a single column when using If Not Exists()
 **
 *****************************************************/
 DECLARE
@@ -77,7 +78,7 @@ BEGIN
             RETURN;
         End If;
 
-        If Not Exists (SELECT * FROM cap.t_local_processors WHERE processor_name = _managerName::citext) Then
+        If Not Exists (SELECT processor_name FROM cap.t_local_processors WHERE processor_name = _managerName::citext) Then
             _message := format('Manager not found in cap.t_local_processors: %s', _managerName);
             _returnCode := 'U5202';
             RETURN;

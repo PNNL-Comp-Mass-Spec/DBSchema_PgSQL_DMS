@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE public.get_dataset_details_from_dataset_info_xml(IN 
 **          10/21/2022 mem - Ported to PostgreSQL
 **          05/31/2023 mem - Combine string literals
 **          06/13/2023 mem - Show a warning if _datasetInfoXML is null
+**          12/08/2023 mem - Select a single column when using If Not Exists()
 **
 *****************************************************/
 DECLARE
@@ -88,7 +89,7 @@ BEGIN
         -- _datasetID is non-zero
 
         -- Validate that _datasetID exists in t_dataset
-        If Not Exists (SELECT * FROM t_dataset WHERE dataset_id = _datasetID) Then
+        If Not Exists (SELECT dataset_id FROM t_dataset WHERE dataset_id = _datasetID) Then
             _message := format('Dataset ID %s not found in table t_dataset by procedure get_dataset_details_from_dataset_info_xml', _datasetID);
             _returnCode := 'U5203';
             RETURN;

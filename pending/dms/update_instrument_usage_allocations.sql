@@ -211,7 +211,7 @@ BEGIN
         End If;
 
         -- Validate _proposalID
-        If Not Exists (SELECT * FROM t_eus_proposals WHERE proposal_id = _proposalID) Then
+        If Not Exists (SELECT proposal_id FROM t_eus_proposals WHERE proposal_id = _proposalID) Then
             _msg2 := format('Invalid EUS ProposalID: %s', _proposalID);
             RAISE EXCEPTION '%', _msg2;
         End If;

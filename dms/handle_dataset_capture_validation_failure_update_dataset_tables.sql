@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE public.handle_dataset_capture_validation_failure_upd
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          06/17/2023 mem - Ported to PostgreSQL, renaming from handle_dataset_capture_validation_failure to handle_dataset_capture_validation_failure_update_dataset_tables
 **          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
+**          12/08/2023 mem - Select a single column when using If Not Exists()
 **
 *****************************************************/
 DECLARE
@@ -127,7 +128,7 @@ BEGIN
         _returnCode := 'U5203';
         RAISE INFO '%', _message;
     Else
-        If Not Exists (SELECT * FROM t_dataset_archive WHERE dataset_id = _datasetID) Then
+        If Not Exists (SELECT dataset_id FROM t_dataset_archive WHERE dataset_id = _datasetID) Then
             -- Add the dataset to t_dataset_archive
             CALL public.add_archive_dataset (
                             _datasetID,

@@ -92,7 +92,7 @@ BEGIN
     -- Validate that the job exists
     -------------------------------------------------------
 
-    If Not Exists (SELECT * FROM t_analysis_job WHERE job = _jobID) Then
+    If Not Exists (SELECT job FROM t_analysis_job WHERE job = _jobID) Then
 
         _message := format('Job not found; nothing to delete: %s', _job);
 

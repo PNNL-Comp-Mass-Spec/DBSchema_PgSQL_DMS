@@ -404,7 +404,7 @@ BEGIN
 
         -- Post this message to the log every 3 days
         If Not Exists (
-           SELECT *
+           SELECT entry_id
            FROM t_log_entries
            WHERE message LIKE 'Capture subfolder is identical to the dataset name%' AND
                  Entered > CURRENT_TIMESTAMP - INTERVAL '3 days' ) Then

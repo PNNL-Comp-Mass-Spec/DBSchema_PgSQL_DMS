@@ -25,6 +25,7 @@ CREATE OR REPLACE FUNCTION cap.enable_disable_ctm_step_tool_for_debugging(_tool 
 **          05/22/2023 mem - Use format() for string concatenation
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          12/08/2023 mem - Select a single column when using If Not Exists()
 **
 *****************************************************/
 DECLARE
@@ -40,7 +41,7 @@ BEGIN
     _debugMode := Coalesce(_debugMode, false);
     _infoOnly  := Coalesce(_infoOnly, false);
 
-    If Not Exists (SELECT * FROM cap.t_processor_tool T WHERE T.tool_name = _tool) Then
+    If Not Exists (SELECT T.tool_name FROM cap.t_processor_tool T WHERE T.tool_name = _tool) Then
         RAISE INFO 'Tool not found: "%"; cannot continue', _tool;
         RETURN;
     End If;

@@ -69,6 +69,7 @@ CREATE OR REPLACE PROCEDURE sw.create_job_steps(INOUT _message text DEFAULT ''::
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          12/08/2023 mem - Select a single column when using If Not Exists()
 **
 *****************************************************/
 DECLARE
@@ -335,7 +336,7 @@ BEGIN
     -- Make sure sw.t_step_tool_versions has the "Unknown" version (ID=1)
     ---------------------------------------------------
 
-    If Not Exists (SELECT * FROM sw.t_step_tool_versions WHERE tool_version_id = 1) Then
+    If Not Exists (SELECT tool_version_id FROM sw.t_step_tool_versions WHERE tool_version_id = 1) Then
 
         INSERT INTO sw.t_step_tool_versions (tool_version_id, tool_version, most_recent_job, last_used, entered)
         OVERRIDING SYSTEM VALUE
@@ -359,7 +360,7 @@ BEGIN
     -- Make sure sw.t_remote_info has the "None" version (ID=1)
     ---------------------------------------------------
 
-    If Not Exists (SELECT * FROM sw.t_remote_info WHERE remote_info_id = 1) Then
+    If Not Exists (SELECT remote_info_id FROM sw.t_remote_info WHERE remote_info_id = 1) Then
 
         INSERT INTO sw.t_remote_info (remote_info_id, remote_info, most_recent_job, last_used, entered, max_running_job_steps)
         OVERRIDING SYSTEM VALUE

@@ -40,6 +40,7 @@ CREATE OR REPLACE PROCEDURE public.evaluate_predefined_analysis_rule(IN _minleve
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/13/2023 mem - Add missing _returnCode variable
+**          12/08/2023 mem - Select a single column when using If Not Exists()
 **
 *****************************************************/
 DECLARE
@@ -64,20 +65,19 @@ BEGIN
     _minLevelNew := _minLevel;
     _predefineID := 0;
 
-    SELECT
-        predefine_id AS PredefineID,
-        analysis_tool_name AS AnalysisToolName,
-        param_file_name AS ParamFileName,
-        settings_file_name AS SettingsFileName,
-        organism AS OrganismName,
-        protein_collection_list AS ProteinCollectionList,
-        protein_options_list AS ProteinOptionsList,
-        organism_db_name AS OrganismDBName,
-        priority AS Priority,
-        next_level AS RuleNextLevel,
-        trigger_before_disposition AS TriggerBeforeDisposition,
-        propagation_mode AS PropagationMode,
-        special_processing AS SpecialProcessing
+    SELECT predefine_id AS PredefineID,
+           analysis_tool_name AS AnalysisToolName,
+           param_file_name AS ParamFileName,
+           settings_file_name AS SettingsFileName,
+           organism AS OrganismName,
+           protein_collection_list AS ProteinCollectionList,
+           protein_options_list AS ProteinOptionsList,
+           organism_db_name AS OrganismDBName,
+           priority AS Priority,
+           next_level AS RuleNextLevel,
+           trigger_before_disposition AS TriggerBeforeDisposition,
+           propagation_mode AS PropagationMode,
+           special_processing AS SpecialProcessing
     INTO _predefineInfo
     FROM Tmp_Criteria
     WHERE predefine_level >= _minLevel
@@ -101,13 +101,12 @@ BEGIN
     -- Validate that _datasetType is appropriate for this analysis tool
     ---------------------------------------------------
 
-    If Not Exists (
-        SELECT *
-        FROM t_analysis_tool_allowed_dataset_type ADT
-             INNER JOIN t_analysis_tool Tool
-               ON ADT.analysis_tool_id = Tool.analysis_tool_id
-        WHERE Tool.analysis_tool = _predefineInfo.AnalysisToolName AND
-              ADT.dataset_type = _datasetType::citext
+    If Not Exists ( SELECT ADT.analysis_tool_id
+                    FROM t_analysis_tool_allowed_dataset_type ADT
+                         INNER JOIN t_analysis_tool Tool
+                           ON ADT.analysis_tool_id = Tool.analysis_tool_id
+                    WHERE Tool.analysis_tool = _predefineInfo.AnalysisToolName AND
+                          ADT.dataset_type = _datasetType::citext
         ) Then
 
         -- Dataset type is not allowed for this tool

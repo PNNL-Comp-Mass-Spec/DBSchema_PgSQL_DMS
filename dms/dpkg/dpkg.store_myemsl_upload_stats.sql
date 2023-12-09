@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE dpkg.store_myemsl_upload_stats(IN _datapackageid int
 **          06/27/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          12/08/2023 mem - Select a single column when using If Not Exists()
 **
 *****************************************************/
 DECLARE
@@ -64,7 +65,7 @@ BEGIN
     -- Make sure _dataPackageID is defined in dpkg.t_data_package
     ---------------------------------------------------
 
-    If Not Exists (SELECT * FROM dpkg.t_data_package WHERE data_pkg_id = _dataPackageID) Then
+    If Not Exists (SELECT data_pkg_id FROM dpkg.t_data_package WHERE data_pkg_id = _dataPackageID) Then
         _message := format('Data Package data_pkg_id not found in dpkg.t_data_package: %s', _dataPackageID);
         If _infoOnly Then
             RAISE INFO '%', _message;

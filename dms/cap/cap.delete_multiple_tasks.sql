@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE cap.delete_multiple_tasks(IN _joblist text, INOUT _m
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
+**          12/08/2023 mem - Select a single column when using If Not Exists()
 **
 *****************************************************/
 DECLARE
@@ -90,7 +91,7 @@ BEGIN
             RETURN;
         End If;
 
-        If Not Exists (SELECT * FROM cap.t_tasks JT INNER JOIN Tmp_Job_List L ON JT.job = L.Job) THEN
+        If Not Exists (SELECT JT.job  FROM cap.t_tasks JT INNER JOIN Tmp_Job_List L ON JT.job = L.Job) THEN
             _message := format('Capture task %s not found in cap.t_tasks: %s',
                                 public.check_plural(_jobCount, 'job', 'jobs'),
                                 _jobList);

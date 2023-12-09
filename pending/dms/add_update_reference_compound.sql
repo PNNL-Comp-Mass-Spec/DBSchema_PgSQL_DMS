@@ -253,7 +253,7 @@ BEGIN
         If _mode In ('update', 'check_update') Then
             -- Confirm the compound exists
             --
-            If Not Exists (SELECT * FROM t_reference_compound WHERE compound_id = _compoundID) Then
+            If Not Exists (SELECT compound_id FROM t_reference_compound WHERE compound_id = _compoundID) Then
                 RAISE EXCEPTION 'Cannot update: Reference compound ID % is not in database ', _compoundID;
             End If;
 

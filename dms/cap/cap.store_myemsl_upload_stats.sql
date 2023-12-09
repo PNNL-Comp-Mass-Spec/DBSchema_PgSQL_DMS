@@ -40,6 +40,7 @@ CREATE OR REPLACE PROCEDURE cap.store_myemsl_upload_stats(IN _job integer, IN _d
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          06/27/2023 mem - Ported to PostgreSQL
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          12/08/2023 mem - Select a single column when using If Not Exists()
 **
 *****************************************************/
 DECLARE
@@ -78,7 +79,7 @@ BEGIN
     -- Make sure _job is defined in t_tasks
     ---------------------------------------------------
 
-    If Not Exists (SELECT * FROM cap.t_tasks WHERE Job = _job) Then
+    If Not Exists (SELECT job FROM cap.t_tasks WHERE job = _job) Then
         _message := format('Job not found in cap.t_tasks: %s', _job);
 
         If _infoOnly Then

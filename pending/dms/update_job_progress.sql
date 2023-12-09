@@ -75,7 +75,7 @@ BEGIN
     -----------------------------------------
 
     If Coalesce(_job, 0) <> 0 Then
-        If Not Exists (SELECT * FROM t_analysis_job WHERE job = _job) Then
+        If Not Exists (SELECT job FROM t_analysis_job WHERE job = _job) Then
             RAISE INFO 'Job not found: %', _job;
             RETURN;
         End If;

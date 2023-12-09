@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION sw.enable_disable_step_tool_for_debugging(_tool text 
 **          08/26/2021 mem - Auto-change _groupName to the default value if an empty string
 **          06/09/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          12/08/2023 mem - Select a single column when using If Not Exists()
 **
 *****************************************************/
 DECLARE
@@ -49,7 +50,7 @@ BEGIN
 
     If Not FOUND Then
         _message := format('Error, group not found: %s', _groupName);
-    ElsIf Not Exists (SELECT * FROM sw.t_processor_tool_group_details PTGD WHERE PTGD.tool_name = _tool::citext) Then
+    ElsIf Not Exists (SELECT PTGD.tool_name FROM sw.t_processor_tool_group_details PTGD WHERE PTGD.tool_name = _tool::citext) Then
         _message := format('Error, tool not found: %s', _tool);
     End If;
 

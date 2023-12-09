@@ -46,6 +46,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _s
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          12/08/2023 mem - Select a single column when using If Not Exists()
 **
 *****************************************************/
 DECLARE
@@ -107,7 +108,7 @@ BEGIN
     If FOUND Then
         _existingParamsFound := true;
     Else
-        If Not Exists (Select * FROM cap.t_tasks WHERE job = _job) Then
+        If Not Exists (SELECT job FROM cap.t_tasks WHERE job = _job) Then
             _message := format('Error: capture task job %s not found in cap.t_task_parameters or cap.t_tasks', _job);
 
             RAISE WARNING '%', _message;
