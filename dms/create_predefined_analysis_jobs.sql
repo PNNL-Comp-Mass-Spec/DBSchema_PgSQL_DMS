@@ -1,18 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.create_predefined_analysis_jobs
-(
-    _datasetName text,
-    _callingUser text = '',
-    _analysisToolNameFilter text = '',
-    _excludeDatasetsNotReleased boolean = true,
-    _preventDuplicateJobs boolean = true,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    INOUT _jobsCreated int = 0
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: create_predefined_analysis_jobs(text, text, text, boolean, boolean, boolean, text, text, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.create_predefined_analysis_jobs(IN _datasetname text, IN _callinguser text DEFAULT ''::text, IN _analysistoolnamefilter text DEFAULT ''::text, IN _excludedatasetsnotreleased boolean DEFAULT true, IN _preventduplicatejobs boolean DEFAULT true, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, INOUT _jobscreated integer DEFAULT 0)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -57,7 +49,7 @@ AS $$
 **          06/14/2022 mem - Send procedure name to post_log_entry
 **          06/30/2022 mem - Rename parameter file column
 **          06/30/2022 mem - Rename parameter file argument
-**          12/15/2024 mem - Ported to PostgreSQL
+**          12/08/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -65,13 +57,13 @@ DECLARE
     _newMessage text;
     _logMessage text;
     _createJob boolean;
-    _jobFailCount int := 0;
-    _jobFailErrorCode text := '';
-    _result int;
+    _jobFailCount int;
+    _jobFailErrorCode text;
     _instrumentClass text;
 
     _jobInfo record;
     _job text;
+    _propagationModeText text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -80,7 +72,10 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode := '';
+
     _jobsCreated := 0;
+    _jobFailCount := 0;
+    _jobFailErrorCode := '';
 
     _analysisToolNameFilter     := Trim(Coalesce(_analysisToolNameFilter, ''));
     _excludeDatasetsNotReleased := Coalesce(_excludeDatasetsNotReleased, true);
@@ -94,21 +89,22 @@ BEGIN
         ---------------------------------------------------
 
         CREATE TEMP TABLE Tmp_JobsToCreate (
-            datasetName text,
-            priority text,
-            analysisToolName text,
-            paramFileName text,
-            settingsFileName text,
-            organismDBName text,
-            organismName text,
-            proteinCollectionList text,
-            proteinOptionsList text,
-            ownerUsername text,
-            comment text,
-            associatedProcessorGroup text,
-            numJobs int,
-            propagationMode int,
-            specialProcessing text,
+            DatasetName text,
+            Priority int,
+            AnalysisToolName text,
+            ParamFileName text,
+            SettingsFileName text,
+            OrganismName text,
+            ProteinCollectionList text,
+            ProteinOptionsList text,
+            OrganismDBName text,
+            OwnerUsername text,
+            Comment text,
+            PropagationMode smallint,
+            SpecialProcessing text,
+            ExistingJobCount int,
+            Message text,
+            Returncode text,
             ID int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY
         );
 
@@ -117,15 +113,15 @@ BEGIN
         ---------------------------------------------------
 
         INSERT INTO Tmp_JobsToCreate (
-                datasetName, priority, analysisToolName, paramFileName, settingsFileName,
-                organismDBName, organismName, proteinCollectionList, proteinOptionsList,
-                ownerUsername, comment, associatedProcessorGroup,
-                numJobs, propagationMode, specialProcessing)
-        SELECT datasetName, priority, analysisToolName, paramFileName, settingsFileName,
-               organismDBName, organismName, proteinCollectionList, proteinOptionsList,
-               ownerUsername, comment, associatedProcessorGroup,
-               numJobs, propagationMode, specialProcessing
-        FROM predefined_analysis_jobs (
+                DatasetName, Priority, AnalysisToolName, ParamFileName, SettingsFileName,
+                OrganismName, ProteinCollectionList, ProteinOptionsList, OrganismDBName,
+                OwnerUsername, Comment, PropagationMode, SpecialProcessing,
+                ExistingJobCount, Message, ReturnCode)
+        SELECT dataset, priority, analysis_tool_name, param_file_name, settings_file_name,
+               organism_name, protein_collection_list, protein_options_list, organism_db_name,
+               owner_username, comment, propagation_mode, special_processing,
+               existing_job_count, message, returncode
+        FROM public.predefined_analysis_jobs (
                     _datasetName,
                     _raiseErrorMessages => false,
                     _excludeDatasetsNotReleased => _excludeDatasetsNotReleased,
@@ -135,7 +131,8 @@ BEGIN
         SELECT message, returncode
         INTO _message, _returnCode
         FROM Tmp_JobsToCreate
-        WHERE _returnCode <> '';
+        WHERE _returnCode <> ''
+        LIMIT 1;
 
         If FOUND Then
             _errorMessage := format('predefined_analysis_jobs returned error code %s', _returnCode);
@@ -149,32 +146,22 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Cycle through the job holding table and
-        -- make jobs for each entry
+        -- Cycle through the job holding table and make jobs for each entry
         ---------------------------------------------------
 
-        _associatedProcessorGroup := '';
-
-        -- Keep track of how many jobs have been scheduled
-        --
-        _jobsCreated := 0;
-
-        _currID := 0;
-
         FOR _jobInfo IN
-            SELECT priority,
-                   analysisToolName,
-                   paramFileName,
-                   settingsFileName,
-                   organismDBName,
-                   organismName,
-                   proteinCollectionList,
-                   proteinOptionsList,
-                   ownerUsername
-                   comment,
-                   associatedProcessorGroup,
-                   propagationMode,
-                   specialProcessing,
+            SELECT Priority,
+                   AnalysisToolName,
+                   ParamFileName,
+                   SettingsFileName,
+                   OrganismName,
+                   ProteinCollectionList,
+                   ProteinOptionsList,
+                   OrganismDBName,
+                   OwnerUsername,
+                   Comment,
+                   PropagationMode,
+                   SpecialProcessing,
                    ID
             FROM Tmp_JobsToCreate
             ORDER BY ID
@@ -182,13 +169,13 @@ BEGIN
 
             If _analysisToolNameFilter = '' Then
                 _createJob := true;
-            ElsIf _analysisToolName Like _analysisToolNameFilter Then
+            ElsIf _jobInfo.AnalysisToolName ILike _analysisToolNameFilter Then
                 _createJob := true;
             Else
                 _createJob := false;
             End If;
 
-            If Coalesce(_propagationMode, 0) = 0 Then
+            If Coalesce(_jobInfo.PropagationMode, 0) = 0 Then
                 _propagationModeText := 'Export';
             Else
                 _propagationModeText := 'No Export';
@@ -200,8 +187,11 @@ BEGIN
 
             If _infoOnly Then
                 RAISE INFO '';
-                RAISE INFO 'Call add_update_analysis_job for dataset % and tool %; param file: %; settings file: %'
-                            _datasetName, _analysisToolName, Coalesce(_paramFileName, ''), Coalesce(_settingsFileName, '');
+                RAISE INFO 'Call add_update_analysis_job for';
+                RAISE INFO '  dataset:       %', _datasetName;
+                RAISE INFO '  tool:          %', _jobInfo.AnalysisToolName;
+                RAISE INFO '  param file:    %', _jobInfo.ParamFileName;
+                RAISE INFO '  settings file: %', _jobInfo.SettingsFileName;
             End If;
 
             ---------------------------------------------------
@@ -209,7 +199,7 @@ BEGIN
             ---------------------------------------------------
 
             CALL public.add_update_analysis_job (
-                            _datasetName                      => _jobInfo.DatasetName,
+                            _datasetName                      => _datasetName,
                             _priority                         => _jobInfo.Priority,
                             _toolName                         => _jobInfo.AnalysisToolName,
                             _paramFileName                    => _jobInfo.ParamFileName,
@@ -220,21 +210,21 @@ BEGIN
                             _organismDBName                   => _jobInfo.OrganismDBName,
                             _ownerUsername                    => _jobInfo.OwnerUsername,
                             _comment                          => _jobInfo.Comment,
-                            _associatedProcessorGroup         => _jobInfo.AssociatedProcessorGroup,
+                            _specialProcessing                => _jobInfo.SpecialProcessing,
+                            _associatedProcessorGroup         => '',                        -- Empty string, since processor groups were deprecated in 2015
                             _propagationMode                  => _propagationModeText,
                             _stateName                        => 'new',
-                            _job                              => _job,              -- Output
+                            _job                              => _job,                      -- Output: new job number, as text
                             _mode                             => 'add',
-                            _message                          => _newMessage,       -- Output
-                            _returnCode                       => _returnCode,       -- Output
+                            _message                          => _newMessage,               -- Output
+                            _returnCode                       => _returnCode,               -- Output
                             _callingUser                      => _callingUser,
                             _preventDuplicateJobs             => _preventDuplicateJobs,
                             _preventDuplicatesIgnoresNoExport => false,
-                            _specialProcessing                => _jobInfo.SpecialProcessing,
                             _specialProcessingWaitUntilReady  => true,
                             _infoOnly                         => _infoOnly);
 
-            -- If there was an error creating the job, store it in _message
+            -- If there was an error creating the job, store it in _message;
             -- otherwise bump the job count
             --
             If _returnCode = '' Then
@@ -254,24 +244,25 @@ BEGIN
             -- ResultCode U5250 means a duplicate job exists; that error can be ignored
             If _returnCode <> 'U5250' Then
 
-                -- Append the _result ID to _message
                 -- Increment _jobFailCount, but keep trying to create the other predefined jobs for this dataset
                 _jobFailCount := _jobFailCount + 1;
+
                 If _jobFailErrorCode = '' Then
                     _jobFailErrorCode := _returnCode;
                 End If;
 
+                -- Append _returnCode to _message
                 _message := format('%s [%s]', _message, _returnCode);
 
                 _logMessage := _newMessage;
 
                 If Position(_datasetName In _logMessage) = 0 Then
-                    _logMessage := format('%s; Dataset %s,', _logMessage, _datasetName)
+                    _logMessage := format('%s; Dataset %s,', _logMessage, _datasetName);
                 Else
                     _logMessage := format('%s;', _logMessage);
                 End If;
 
-                _logMessage := format('%s %s', _logMessage, _analysisToolName);
+                _logMessage := format('%s %s', _logMessage, _jobInfo.AnalysisToolName);
 
                 CALL post_log_entry ('Error', _logMessage, 'Create_Predefined_Analysis_Jobs');
 
@@ -283,7 +274,7 @@ BEGIN
         -- Construct the summary message
         ---------------------------------------------------
 
-        _newMessage := format('Created %s %s', _jobsCreated, public.check_plural(_jobsCreated, 'job', 'jobs');
+        _newMessage := format('Created %s %s', _jobsCreated, public.check_plural(_jobsCreated, 'job', 'jobs'));
 
         If _message <> '' Then
             -- _message might look like this: Dataset rating (-10) does not allow creation of jobs: 47538_Pls_FF_IGT_23_25Aug10_Andromeda_10-07-10
@@ -325,4 +316,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.create_predefined_analysis_jobs IS 'CreatePredefinedAnalysisJobs';
+
+ALTER PROCEDURE public.create_predefined_analysis_jobs(IN _datasetname text, IN _callinguser text, IN _analysistoolnamefilter text, IN _excludedatasetsnotreleased boolean, IN _preventduplicatejobs boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, INOUT _jobscreated integer) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE create_predefined_analysis_jobs(IN _datasetname text, IN _callinguser text, IN _analysistoolnamefilter text, IN _excludedatasetsnotreleased boolean, IN _preventduplicatejobs boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, INOUT _jobscreated integer); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.create_predefined_analysis_jobs(IN _datasetname text, IN _callinguser text, IN _analysistoolnamefilter text, IN _excludedatasetsnotreleased boolean, IN _preventduplicatejobs boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, INOUT _jobscreated integer) IS 'CreatePredefinedAnalysisJobs';
+
