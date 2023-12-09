@@ -1,8 +1,8 @@
 --
--- Name: add_update_task_parameter(integer, text, text, text, boolean, text, text, boolean); Type: PROCEDURE; Schema: cap; Owner: d3l243
+-- Name: add_update_task_parameter(integer, text, text, text, boolean, text, text, boolean, boolean); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _section text, IN _paramname text, IN _value text, IN _deleteparam boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infoonly boolean DEFAULT false)
+CREATE OR REPLACE PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _section text, IN _paramname text, IN _value text, IN _deleteparam boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infoonly boolean DEFAULT false, IN _showdebug boolean DEFAULT false)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _s
 **    _message          Status message
 **    _returnCode       Return code
 **    _infoOnly         When true, preview changes
+**    _showDebug        When true, set _showDebug to true when calling get_current_function_info()
 **
 **  Example usage:
 **
@@ -47,6 +48,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _s
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          12/08/2023 mem - Select a single column when using If Not Exists()
+**                         - Add _showDebug procedure argument
 **
 *****************************************************/
 DECLARE
@@ -55,7 +57,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _showDebug boolean;
     _existingParamsFound boolean = false;
     _xmlParameters xml;
     _results record;
@@ -67,7 +68,11 @@ BEGIN
     -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------
 
-    _showDebug := Coalesce(_infoOnly, false);
+    _showDebug := Coalesce(_showDebug, false);
+
+    If _infoOnly Or _showDebug Then
+        RAISE INFO '';
+    End If;
 
     SELECT schema_name, object_name, name_with_schema
     INTO _currentSchema, _currentProcedure, _nameWithSchema
@@ -166,11 +171,11 @@ END
 $$;
 
 
-ALTER PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _section text, IN _paramname text, IN _value text, IN _deleteparam boolean, INOUT _message text, INOUT _returncode text, IN _infoonly boolean) OWNER TO d3l243;
+ALTER PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _section text, IN _paramname text, IN _value text, IN _deleteparam boolean, INOUT _message text, INOUT _returncode text, IN _infoonly boolean, IN _showdebug boolean) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE add_update_task_parameter(IN _job integer, IN _section text, IN _paramname text, IN _value text, IN _deleteparam boolean, INOUT _message text, INOUT _returncode text, IN _infoonly boolean); Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: PROCEDURE add_update_task_parameter(IN _job integer, IN _section text, IN _paramname text, IN _value text, IN _deleteparam boolean, INOUT _message text, INOUT _returncode text, IN _infoonly boolean, IN _showdebug boolean); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _section text, IN _paramname text, IN _value text, IN _deleteparam boolean, INOUT _message text, INOUT _returncode text, IN _infoonly boolean) IS 'AddUpdateTaskParameter';
+COMMENT ON PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _section text, IN _paramname text, IN _value text, IN _deleteparam boolean, INOUT _message text, INOUT _returncode text, IN _infoonly boolean, IN _showdebug boolean) IS 'AddUpdateTaskParameter';
 
