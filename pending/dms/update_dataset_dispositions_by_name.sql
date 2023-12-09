@@ -21,8 +21,8 @@ AS $$
 **    _datasetList      Comma-separated list of dataset names
 **    _rating           New dataset rating
 **    _comment          Text to append to the dataset comment
-**    _recycleRequest   If 'yes', call unconsume_scheduled_run() to recycle the request; otherwise, must be 'No'
-**    _mode             Mode: if 'update', update t_dataset and possibly call unconsume_scheduled_run and schedule_predefined_analysis_jobs
+**    _recycleRequest   If 'yes', update_dataset_dispositions() will call unconsume_scheduled_run() to recycle the request; otherwise, must be 'No'
+**    _mode             Mode: if 'update', update_dataset_dispositions() will update t_dataset and possibly call unconsume_scheduled_run and schedule_predefined_analysis_jobs
 **    _message          Status message
 **    _returnCode       Return code
 **    _callingUser      Calling user username

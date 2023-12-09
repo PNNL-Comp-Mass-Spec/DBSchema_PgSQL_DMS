@@ -45,7 +45,6 @@ DECLARE
     _tmpID int := 0;
     _typeTag text := '';
     _itemList text,
-    _itemType text,
     _newValue text,
     _comment text
 
@@ -139,14 +138,13 @@ BEGIN
             ---------------------------------------------------
 
             _itemList := format('%s:%s', _typeTag, _tmpID);
-            _itemType := 'mixed_material';
             _newValue := '';
             _comment := '';
 
             CALL public.update_material_items (
                             _mode        => 'retire_items',
                             _itemList    => _itemList,
-                            _itemType    => _itemType,      -- 'mixed_material'
+                            _itemType    => 'mixed_material',
                             _newValue    => _newValue,
                             _comment     => _comment,
                             _message     => _message,       -- Output
