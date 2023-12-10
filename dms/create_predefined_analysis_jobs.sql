@@ -52,6 +52,7 @@ CREATE OR REPLACE PROCEDURE public.create_predefined_analysis_jobs(IN _datasetna
 **          06/30/2022 mem - Rename parameter file argument
 **          12/08/2023 mem - Ported to PostgreSQL
 **          12/09/2023 mem - Add parameter _showDebug
+**                         - Use append_to_text() to append messages
 **
 *****************************************************/
 DECLARE
@@ -259,7 +260,7 @@ BEGIN
             If _message = '' Then
                 _message := _newMessage;
             Else
-                _message := format('%s; %s', _message, _newMessage);
+                _message := append_to_text(_message, _newMessage, _delimiter => '; ');
             End If;
 
             -- ResultCode U5250 means a duplicate job exists; that error can be ignored
@@ -306,7 +307,7 @@ BEGIN
 
             _message := Replace(_message, format('does not allow creation of jobs: %s', _datasetName), 'does not allow creation of jobs');
 
-            _newMessage := format('%s; %s', _newMessage, _message);
+            _newMessage := append_to_text(_newMessage, _message, _delimiter => '; ');
         End If;
 
         _message := _newMessage;

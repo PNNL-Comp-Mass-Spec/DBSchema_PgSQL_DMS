@@ -364,12 +364,12 @@ BEGIN
             If _comment <> '[no change]' Then
                 UPDATE t_dataset
                 SET comment = CASE WHEN comment Is Null THEN _comment
-                                   ELSE format('%s; %s', comment, _comment)
+                                   ELSE append_to_text(comment, _comment, _delimiter => '; ')
                               END
                 WHERE dataset IN (SELECT Dataset_Name FROM Tmp_DatasetInfo);
             End If;
 
-            If _findText <> '[no change]' and _replaceText <> '[no change]' Then
+            If _findText <> '[no change]' And _replaceText <> '[no change]' Then
                 UPDATE t_dataset
                 SET comment = Replace(comment, _findText, _replaceText)
                 WHERE dataset IN (SELECT Dataset_Name FROM Tmp_DatasetInfo);

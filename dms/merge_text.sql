@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION public.merge_text(_text1 text, _text2 text) RETURNS t
 **  Date:   08/03/2007
 **          06/23/2022 mem - Ported to PostgreSQL
 **          05/30/2023 mem - Use format() for string concatenation
+**          12/09/2023 mem - Use append_to_text() to append the strings
 **
 *****************************************************/
 DECLARE
@@ -26,7 +27,7 @@ BEGIN
     If char_length(_text2) > 0 Then
         If _combinedText <> _text2 Then
             If char_length(_combinedText) > 0 Then
-                _combinedText := format('%s; %s', _combinedText, _text2);
+                _combinedText := append_to_text(_combinedText, _text2, _delimiter => '; ');
             Else
                 _combinedText := _text2;
             End If;
