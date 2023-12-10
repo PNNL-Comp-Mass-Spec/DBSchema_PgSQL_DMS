@@ -518,7 +518,7 @@ BEGIN
             CALL cap.update_parameters_for_task (_captureJobNew, _message => _message, _returnCode => _returnCode);
 
             _jobMessage := format('Created capture task job %s for dataset %s by cloning job %s',
-                                    _captureJobNew, _datasetNew, _captureJob
+                                    _captureJobNew, _datasetNew, _captureJob);
 
             CALL post_log_entry ('Normal', _jobMessage, 'Clone_Dataset');
 

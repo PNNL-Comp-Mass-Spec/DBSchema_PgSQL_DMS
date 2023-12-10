@@ -91,15 +91,15 @@ BEGIN
             RAISE INFO 'Process Item %: %', _currentItemID, _currentItem.DatasetName;
         End If;
 
-        If Coalesce(_currentItem.DatasetNam, '') = '' Then
+        If Coalesce(_currentItem.DatasetName, '') = '' Then
             -- Dataset not defined; skip this entry
-            _returnCode := 'U5250';
             _message := 'Invalid entry: dataset name must be specified';
+            _returnCode := 'U5250';
 
         ElsIf _datasetStateId = 4
             -- Dataset state is Inactive
-            _returnCode := 'U5260';
             _message := 'Inactive dataset: will not create predefined jobs';
+            _returnCode := 'U5260';
 
         Else
 
@@ -110,6 +110,7 @@ BEGIN
                             _excludeDatasetsNotReleased => currentItem.ExcludeDatasetsNotReleased,
                             _preventDuplicateJobs       => currentItem.PreventDuplicateJobs,
                             _infoOnly                   => _infoOnly,
+                            _showDebug                  => false,
                             _message                    => _message,        -- Output
                             _returnCode                 => _returnCode,     -- Output
                             _jobsCreated                => _jobsCreated);   -- Output

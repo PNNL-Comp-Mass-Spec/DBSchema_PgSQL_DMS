@@ -539,7 +539,7 @@ BEGIN
         -- Update _message if _warning is not empty
         If Coalesce(_warning, '') <> '' Then
 
-            If _warning like 'Warning:' Then
+            If _warning Like 'Warning:' Then
                 _warningWithPrefix := _warning;
             Else
                 _warningWithPrefix := format('Warning: %s', _warning);
