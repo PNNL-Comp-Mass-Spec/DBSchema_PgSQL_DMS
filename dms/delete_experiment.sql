@@ -1,14 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.delete_experiment
-(
-    _experimentName text,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: delete_experiment(text, boolean, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.delete_experiment(IN _experimentname text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -37,7 +33,7 @@ AS $$
 **                         - Prevent deletion if the experiment is a plex channel in T_Experiment_Plex_Members
 **                         - Add _infoOnly
 **          07/11/2023 mem - Remove duplicate query of T_Requested_Run (unnecessary since T_Requested_Run_History was merged with T_Requested_Run in 2010)
-**          12/15/2024 mem - Ported to PostgreSQL
+**          12/10/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -100,7 +96,7 @@ BEGIN
     WHERE experiment = _experimentName;
 
     If Not FOUND Then
-        _message := format('Could not get Id for Experiment "%s"', _experimentName);
+        _message := format('Experiment does not exist, cannot delete: %s', _experimentName);
         RAISE EXCEPTION '%', _message;
     End If;
 
@@ -182,7 +178,7 @@ BEGIN
         WHERE Exp_ID = _experimentId;
     Else
         DELETE FROM t_experiment_biomaterial
-        WHERE Exp_ID = _experimentId
+        WHERE Exp_ID = _experimentId;
     End If;
 
     ---------------------------------------------------
@@ -207,12 +203,15 @@ BEGIN
             WHERE exp_id = _experimentId;
         Else
             DELETE FROM t_experiment_group_members
-            WHERE exp_id = _experimentId
+            WHERE exp_id = _experimentId;
         End If;
 
         If Not _infoOnly Then
             -- Update MemberCount
-            CALL public.update_experiment_group_member_count (_groupID => _groupID);
+            CALL public.update_experiment_group_member_count (
+                            _groupID    => _groupID,
+                            _message    => _message,        -- Output
+                            _returnCode => _returnCode);    -- Output
         End If;
     End If;
 
@@ -227,6 +226,8 @@ BEGIN
     WHERE experiment = 'Placeholder';
 
     If Not FOUND Then
+        DROP TABLE T_Tmp_Target_Items;
+
         _message := format('Placeholder experiment not found in t_experiments; unable to delete experiment ID %s', _experimentId);
         RAISE EXCEPTION '%', _message;
     End If;
@@ -261,10 +262,11 @@ BEGIN
         WHERE plex_exp_id = _experimentId;
     Else
         DELETE FROM t_experiment_plex_members
-        WHERE plex_exp_id = _experimentId
+        WHERE plex_exp_id = _experimentId;
     End If;
 
     If _infoOnly Then
+        RAISE INFO '';
         RAISE INFO 'Call Delete_Aux_Info for %', _experimentName;
     Else
         ---------------------------------------------------
@@ -284,7 +286,15 @@ BEGIN
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5205';
+
+            DROP TABLE T_Tmp_Target_Items;
             RETURN;
+        End If;
+
+        -- Change _message to an empty string if it is of the form 'Aux info values not found for Experiment "Experiment_Name"'
+
+        If _message ILike 'Aux info values not found%' Then
+            _message := '';
         End If;
     End If;
 
@@ -303,7 +313,7 @@ BEGIN
         WHERE exp_id = _experimentId;
     Else
         DELETE FROM t_experiments
-        WHERE exp_id = _experimentId
+        WHERE exp_id = _experimentId;
     End If;
 
     If _infoOnly Then
@@ -348,15 +358,26 @@ BEGIN
             RAISE INFO '%', _infoData;
         END LOOP;
 
-        DROP TABLE T_Tmp_Target_Items;
-
     ElsIf char_length(_callingUser) > 0 Then
         -- Call alter_event_log_entry_user to alter the entered_by field in t_event_log
 
         CALL public.alter_event_log_entry_user ('public', 3, _experimentId, _stateID, _callingUser, _message => _alterEnteredByMessage);
     End If;
 
+    If Not _infoOnly And Coalesce(_message, '') = '' Then
+        _message := format('Deleted experiment ID %s: %s', _experimentId, _experimentName);
+    End If;
+
+    DROP TABLE T_Tmp_Target_Items;
 END
 $$;
 
-COMMENT ON PROCEDURE public.delete_experiment IS 'DeleteExperiment';
+
+ALTER PROCEDURE public.delete_experiment(IN _experimentname text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE delete_experiment(IN _experimentname text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.delete_experiment(IN _experimentname text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'DeleteExperiment';
+
