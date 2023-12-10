@@ -1,8 +1,8 @@
 --
--- Name: add_update_analysis_job(text, integer, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, boolean, boolean, boolean, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: add_update_analysis_job(text, integer, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, boolean, boolean, boolean, boolean, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.add_update_analysis_job(IN _datasetname text, IN _priority integer, IN _toolname text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _organismdbname text, IN _ownerusername text, IN _comment text, IN _specialprocessing text, IN _associatedprocessorgroup text, IN _propagationmode text, IN _statename text, INOUT _job text DEFAULT '0'::text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text, IN _preventduplicatejobs boolean DEFAULT false, IN _preventduplicatesignoresnoexport boolean DEFAULT true, IN _specialprocessingwaituntilready boolean DEFAULT false, IN _infoonly boolean DEFAULT false)
+CREATE OR REPLACE PROCEDURE public.add_update_analysis_job(IN _datasetname text, IN _priority integer, IN _toolname text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _organismdbname text, IN _ownerusername text, IN _comment text, IN _specialprocessing text, IN _associatedprocessorgroup text, IN _propagationmode text, IN _statename text, INOUT _job text DEFAULT '0'::text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text, IN _preventduplicatejobs boolean DEFAULT false, IN _preventduplicatesignoresnoexport boolean DEFAULT true, IN _specialprocessingwaituntilready boolean DEFAULT false, IN _infoonly boolean DEFAULT false, IN _showdebug boolean DEFAULT false)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job(IN _datasetname text,
 **    _preventDuplicatesIgnoresNoExport     When true, ignores jobs with state 5 or 13, but updates jobs with state 14
 **    _specialProcessingWaitUntilReady      When true, sets the job state to 19="Special Proc. Waiting" when the _specialProcessing parameter is not empty
 **    _infoOnly                             When true, preview updates
+**    _showDebug                            When true, show debug messages
 **
 **  Auth:   grk
 **  Date:   01/10/2002
@@ -105,6 +106,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job(IN _datasetname text,
 **          09/06/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          12/09/2023 mem - Add parameter _showDebug
 **
 *****************************************************/
 DECLARE
@@ -166,6 +168,7 @@ BEGIN
     _preventDuplicateJobs             := Coalesce(_preventDuplicateJobs, false);
     _preventDuplicatesIgnoresNoExport := Coalesce(_preventDuplicatesIgnoresNoExport, true);
     _infoOnly                         := Coalesce(_infoOnly, false);
+    _showDebug                        := Coalesce(_showDebug, false);
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -191,12 +194,20 @@ BEGIN
 
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
+        If _showDebug Then
+            RAISE INFO '';
+        End If;
+
         ---------------------------------------------------
         -- Is entry already in database? (only applies to updates and resets)
         ---------------------------------------------------
 
         If _mode = 'update' Or _mode = 'reset' Then
             _currentLocation := 'Check for non-existent entry';
+
+            If _showDebug Then
+                RAISE INFO '%', _currentLocation;
+            End If;
 
             -- Cannot update a non-existent entry
             --
@@ -224,6 +235,10 @@ BEGIN
 
         _currentLocation := 'Resolve propagation mode';
 
+        If _showDebug Then
+            RAISE INFO '%', _currentLocation;
+        End If;
+
         _propMode := CASE _propagationMode::citext
                          WHEN 'Export' THEN 0
                          WHEN 'No Export' THEN 1
@@ -232,6 +247,10 @@ BEGIN
 
         If _mode = 'update' Then
             _currentLocation := 'Validate settings when _mode is "update"';
+
+            If _showDebug Then
+                RAISE INFO '%', _currentLocation;
+            End If;
 
             -- Changes are typically only allowed to jobs in 'new', 'failed', or 'holding' state
             -- However, we do allow the job comment or export mode to be updated
@@ -329,6 +348,10 @@ BEGIN
         If _mode = 'reset' Then
             _currentLocation := 'Validate settings when _mode is "reset"';
 
+            If _showDebug Then
+                RAISE INFO '%', _currentLocation;
+            End If;
+
             If _organismDBName::citext SIMILAR TO 'ID[_]%' And Not Coalesce(_protCollNameList, '')::citext In ('', 'na') Then
                 -- We are resetting a job that used a protein collection; clear _organismDBName
                 _organismDBName := '';
@@ -340,6 +363,10 @@ BEGIN
         ---------------------------------------------------
 
         _currentLocation := 'Resolve processor group ID';
+
+        If _showDebug Then
+            RAISE INFO '%', _currentLocation;
+        End If;
 
         If _associatedProcessorGroup <> '' Then
             SELECT group_id
@@ -396,6 +423,10 @@ BEGIN
         ---------------------------------------------------
 
         _currentLocation := 'Validate job parameters';
+
+        If _showDebug Then
+            RAISE INFO '%', _currentLocation;
+        End If;
 
         CALL public.validate_analysis_job_parameters (
                                 _toolName                           => _toolName,
@@ -509,6 +540,10 @@ BEGIN
         If _mode = 'add' Then
             _currentLocation := 'Prepare to add a new job';
 
+            If _showDebug Then
+                RAISE INFO '%', _currentLocation;
+            End If;
+
             If _preventDuplicateJobs Then
                 ---------------------------------------------------
                 -- See if an existing, matching job already exists
@@ -516,6 +551,10 @@ BEGIN
                 ---------------------------------------------------
 
                 _currentLocation := 'Check for an existing, matching job';
+
+                If _showDebug Then
+                    RAISE INFO '%', _currentLocation;
+                End If;
 
                 SELECT COUNT(AJ.job),
                        MAX(AJ.job)
@@ -544,17 +583,22 @@ BEGIN
                         ( AJT.org_db_required = 0 )
                       );
 
+                If _showDebug Then
+                    RAISE INFO 'Existing Job Count: %', _existingJobCount;
+                End If;
+
                 If _existingJobCount > 0 Then
                     _message := format('Job not created since duplicate job exists: %s', _existingMatchingJob);
 
-                    If _infoOnly Then
+                    If _infoOnly Or _showDebug Then
                         RAISE INFO '%', _message;
                     End If;
 
                     -- Do not change this error code since procedure create_predefined_analysis_jobs
                     -- checks for error code 'U5250' (previously 52500)
-                    _returnCode := 'U5250'
+                    _returnCode := 'U5250';
 
+                    DROP TABLE Tmp_DatasetInfo;
                     RETURN;
                 End If;
             End If;
@@ -564,6 +608,10 @@ BEGIN
             ---------------------------------------------------
 
             _currentLocation := 'Lookup dataset rating';
+
+            If _showDebug Then
+                RAISE INFO '%', _currentLocation;
+            End If;
 
             If Exists (SELECT dataset_id FROM t_dataset WHERE dataset_id = _datasetID AND dataset_rating_id = -10) Then
                 _datasetUnreviewed := 1;
@@ -577,9 +625,14 @@ BEGIN
 
             _jobID := public.get_new_job_id('Created in t_analysis_job', _infoOnly);
 
+            If _showDebug Then
+                RAISE INFO 'ID for new job: %', _jobID;
+            End If;
+
             If _jobID = 0 Then
                 _msg := 'Failed to get valid new job ID';
-                If _infoOnly Then
+
+                If _infoOnly Or _showDebug Then
                     RAISE INFO '%', _msg;
                 End If;
 
@@ -660,6 +713,10 @@ BEGIN
 
             _currentLocation := 'Add the new job to t_analysis_job';
 
+            If _showDebug Then
+                RAISE INFO '%', _currentLocation;
+            End If;
+
             INSERT INTO t_analysis_job (
                 job,
                 priority,
@@ -723,6 +780,10 @@ BEGIN
         If _mode = 'update' Or _mode = 'reset' Then
             _currentLocation := 'Prepare to update or reset a job';
 
+            If _showDebug Then
+                RAISE INFO '%', _currentLocation;
+            End If;
+
             -- Resolve state ID according to mode and state name
 
             If _mode = 'reset' Then
@@ -748,6 +809,10 @@ BEGIN
             ---------------------------------------------------
 
             _currentLocation := 'Lookup the processor group for the existing job';
+
+            If _showDebug Then
+                RAISE INFO '%', _currentLocation;
+            End If;
 
             -- Is there an existing association between the job
             -- and a processor group?
@@ -830,6 +895,10 @@ BEGIN
 
             _currentLocation := format('Update job %s', _jobID);
 
+            If _showDebug Then
+                RAISE INFO '%', _currentLocation;
+            End If;
+
             UPDATE t_analysis_job
             SET priority = _priority,
                 analysis_tool_id = _analysisToolID,
@@ -862,6 +931,10 @@ BEGIN
             If _gid = 0 Then
                 _currentLocation := format('Remove job %s from t_analysis_job_processor_group_associations', _jobID);
 
+                If _showDebug Then
+                    RAISE INFO '%', _currentLocation;
+                End If;
+
                 DELETE FROM t_analysis_job_processor_group_associations
                 WHERE job = _jobID;
             End If;
@@ -870,6 +943,10 @@ BEGIN
 
             If _gid <> 0 and _pgaAssocID = 0 Then
                 _currentLocation := format('Add job %s to t_analysis_job_processor_group_associations', _jobID);
+
+                If _showDebug Then
+                    RAISE INFO '%', _currentLocation;
+                End If;
 
                 INSERT INTO t_analysis_job_processor_group_associations ( job, group_id )
                 VALUES (_jobID, _gid);
@@ -881,6 +958,10 @@ BEGIN
 
             If _gid <> 0 and _pgaAssocID <> 0 and _pgaAssocID <> _gid Then
                 _currentLocation := format('Update info for job %s in t_analysis_job_processor_group_associations', _jobID);
+
+                If _showDebug Then
+                    RAISE INFO '%', _currentLocation;
+                End If;
 
                 UPDATE t_analysis_job_processor_group_associations
                 SET group_id = _gid,
@@ -932,11 +1013,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.add_update_analysis_job(IN _datasetname text, IN _priority integer, IN _toolname text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _organismdbname text, IN _ownerusername text, IN _comment text, IN _specialprocessing text, IN _associatedprocessorgroup text, IN _propagationmode text, IN _statename text, INOUT _job text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _preventduplicatejobs boolean, IN _preventduplicatesignoresnoexport boolean, IN _specialprocessingwaituntilready boolean, IN _infoonly boolean) OWNER TO d3l243;
+ALTER PROCEDURE public.add_update_analysis_job(IN _datasetname text, IN _priority integer, IN _toolname text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _organismdbname text, IN _ownerusername text, IN _comment text, IN _specialprocessing text, IN _associatedprocessorgroup text, IN _propagationmode text, IN _statename text, INOUT _job text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _preventduplicatejobs boolean, IN _preventduplicatesignoresnoexport boolean, IN _specialprocessingwaituntilready boolean, IN _infoonly boolean, IN _showdebug boolean) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE add_update_analysis_job(IN _datasetname text, IN _priority integer, IN _toolname text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _organismdbname text, IN _ownerusername text, IN _comment text, IN _specialprocessing text, IN _associatedprocessorgroup text, IN _propagationmode text, IN _statename text, INOUT _job text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _preventduplicatejobs boolean, IN _preventduplicatesignoresnoexport boolean, IN _specialprocessingwaituntilready boolean, IN _infoonly boolean); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE add_update_analysis_job(IN _datasetname text, IN _priority integer, IN _toolname text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _organismdbname text, IN _ownerusername text, IN _comment text, IN _specialprocessing text, IN _associatedprocessorgroup text, IN _propagationmode text, IN _statename text, INOUT _job text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _preventduplicatejobs boolean, IN _preventduplicatesignoresnoexport boolean, IN _specialprocessingwaituntilready boolean, IN _infoonly boolean, IN _showdebug boolean); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.add_update_analysis_job(IN _datasetname text, IN _priority integer, IN _toolname text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _organismdbname text, IN _ownerusername text, IN _comment text, IN _specialprocessing text, IN _associatedprocessorgroup text, IN _propagationmode text, IN _statename text, INOUT _job text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _preventduplicatejobs boolean, IN _preventduplicatesignoresnoexport boolean, IN _specialprocessingwaituntilready boolean, IN _infoonly boolean) IS 'AddUpdateAnalysisJob';
+COMMENT ON PROCEDURE public.add_update_analysis_job(IN _datasetname text, IN _priority integer, IN _toolname text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _organismdbname text, IN _ownerusername text, IN _comment text, IN _specialprocessing text, IN _associatedprocessorgroup text, IN _propagationmode text, IN _statename text, INOUT _job text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _preventduplicatejobs boolean, IN _preventduplicatesignoresnoexport boolean, IN _specialprocessingwaituntilready boolean, IN _infoonly boolean, IN _showdebug boolean) IS 'AddUpdateAnalysisJob';
 

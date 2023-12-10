@@ -1,8 +1,8 @@
 --
--- Name: create_predefined_analysis_jobs(text, text, text, boolean, boolean, boolean, text, text, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: create_predefined_analysis_jobs(text, text, text, boolean, boolean, boolean, boolean, text, text, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.create_predefined_analysis_jobs(IN _datasetname text, IN _callinguser text DEFAULT ''::text, IN _analysistoolnamefilter text DEFAULT ''::text, IN _excludedatasetsnotreleased boolean DEFAULT true, IN _preventduplicatejobs boolean DEFAULT true, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, INOUT _jobscreated integer DEFAULT 0)
+CREATE OR REPLACE PROCEDURE public.create_predefined_analysis_jobs(IN _datasetname text, IN _callinguser text DEFAULT ''::text, IN _analysistoolnamefilter text DEFAULT ''::text, IN _excludedatasetsnotreleased boolean DEFAULT true, IN _preventduplicatejobs boolean DEFAULT true, IN _infoonly boolean DEFAULT false, IN _showdebug boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, INOUT _jobscreated integer DEFAULT 0)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -17,6 +17,7 @@ CREATE OR REPLACE PROCEDURE public.create_predefined_analysis_jobs(IN _datasetna
 **    _excludeDatasetsNotReleased   When true, excludes datasets with a rating of -5 (by default we exclude datasets with a rating < 2 and <> -10)
 **    _preventDuplicateJobs         When true, will not create new jobs that duplicate old jobs
 **    _infoOnly                     When true, preview jobs that would be created
+**    _showDebug                    When true, show debug messages
 **    _message                      Output message
 **    _returnCode                   Return code
 **    _jobsCreated                  Output: number of jobs created
@@ -50,12 +51,14 @@ CREATE OR REPLACE PROCEDURE public.create_predefined_analysis_jobs(IN _datasetna
 **          06/30/2022 mem - Rename parameter file column
 **          06/30/2022 mem - Rename parameter file argument
 **          12/08/2023 mem - Ported to PostgreSQL
+**          12/09/2023 mem - Add parameter _showDebug
 **
 *****************************************************/
 DECLARE
     _errorMessage text;
     _newMessage text;
     _logMessage text;
+    _jobCount int;
     _createJob boolean;
     _jobFailCount int;
     _jobFailErrorCode text;
@@ -81,6 +84,7 @@ BEGIN
     _excludeDatasetsNotReleased := Coalesce(_excludeDatasetsNotReleased, true);
     _preventDuplicateJobs       := Coalesce(_preventDuplicateJobs, true);
     _infoOnly                   := Coalesce(_infoOnly, false);
+    _showDebug                  := Coalesce(_showDebug, false);
 
     BEGIN
 
@@ -141,8 +145,20 @@ BEGIN
                 _errorMessage := format('%s; %s', _errorMessage, _message);
             End If;
 
+            If _showDebug Then
+                RAISE WARNING '%', _errorMessage;
+            End If;
+
             _message := _errorMessage;
             RAISE EXCEPTION '%', _message;
+        End If;
+
+        If _showDebug Then
+            SELECT COUNT(*)
+            INTO _jobCount
+            FROM Tmp_JobsToCreate;
+
+            RAISE INFO 'Table Tmp_JobsToCreate has % % for dataset %', _jobCount, check_plural(_jobCount, 'job', 'jobs'), _datasetName;
         End If;
 
         ---------------------------------------------------
@@ -172,6 +188,10 @@ BEGIN
             ElsIf _jobInfo.AnalysisToolName ILike _analysisToolNameFilter Then
                 _createJob := true;
             Else
+                If _showDebug Then
+                    RAISE INFO 'Not creating % job because it does not match tool name filter "%"', _jobInfo.AnalysisToolName, _analysisToolNameFilter;
+                End If;
+
                 _createJob := false;
             End If;
 
@@ -185,7 +205,7 @@ BEGIN
                 CONTINUE;
             End If;
 
-            If _infoOnly Then
+            If _infoOnly Or _showDebug Then
                 RAISE INFO '';
                 RAISE INFO 'Call add_update_analysis_job for';
                 RAISE INFO '  dataset:       %', _datasetName;
@@ -222,7 +242,8 @@ BEGIN
                             _preventDuplicateJobs             => _preventDuplicateJobs,
                             _preventDuplicatesIgnoresNoExport => false,
                             _specialProcessingWaitUntilReady  => true,
-                            _infoOnly                         => _infoOnly);
+                            _infoOnly                         => _infoOnly,
+                            _showDebug                        => _showDebug);
 
             -- If there was an error creating the job, store it in _message;
             -- otherwise bump the job count
@@ -266,6 +287,9 @@ BEGIN
 
                 CALL post_log_entry ('Error', _logMessage, 'Create_Predefined_Analysis_Jobs');
 
+                If _showDebug Then
+                    RAISE WARNING '%', _logMessage;
+                End If;
             End If;
 
         END LOOP;
@@ -295,6 +319,10 @@ BEGIN
             End If;
         End If;
 
+        If _showDebug Then
+            RAISE INFO '%', _message;
+        End If;
+
     EXCEPTION
         WHEN OTHERS THEN
             GET STACKED DIAGNOSTICS
@@ -317,11 +345,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.create_predefined_analysis_jobs(IN _datasetname text, IN _callinguser text, IN _analysistoolnamefilter text, IN _excludedatasetsnotreleased boolean, IN _preventduplicatejobs boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, INOUT _jobscreated integer) OWNER TO d3l243;
+ALTER PROCEDURE public.create_predefined_analysis_jobs(IN _datasetname text, IN _callinguser text, IN _analysistoolnamefilter text, IN _excludedatasetsnotreleased boolean, IN _preventduplicatejobs boolean, IN _infoonly boolean, IN _showdebug boolean, INOUT _message text, INOUT _returncode text, INOUT _jobscreated integer) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE create_predefined_analysis_jobs(IN _datasetname text, IN _callinguser text, IN _analysistoolnamefilter text, IN _excludedatasetsnotreleased boolean, IN _preventduplicatejobs boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, INOUT _jobscreated integer); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE create_predefined_analysis_jobs(IN _datasetname text, IN _callinguser text, IN _analysistoolnamefilter text, IN _excludedatasetsnotreleased boolean, IN _preventduplicatejobs boolean, IN _infoonly boolean, IN _showdebug boolean, INOUT _message text, INOUT _returncode text, INOUT _jobscreated integer); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.create_predefined_analysis_jobs(IN _datasetname text, IN _callinguser text, IN _analysistoolnamefilter text, IN _excludedatasetsnotreleased boolean, IN _preventduplicatejobs boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, INOUT _jobscreated integer) IS 'CreatePredefinedAnalysisJobs';
+COMMENT ON PROCEDURE public.create_predefined_analysis_jobs(IN _datasetname text, IN _callinguser text, IN _analysistoolnamefilter text, IN _excludedatasetsnotreleased boolean, IN _preventduplicatejobs boolean, IN _infoonly boolean, IN _showdebug boolean, INOUT _message text, INOUT _returncode text, INOUT _jobscreated integer) IS 'CreatePredefinedAnalysisJobs';
 
