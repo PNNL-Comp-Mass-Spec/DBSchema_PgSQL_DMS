@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE public.update_material_items(IN _mode text, IN _item
 **          11/28/2017 mem - Add support for Reference_Compound
 **                         - Only update Container_ID if _mode is 'move_material'
 **          12/05/2023 mem - Ported to PostgreSQL
+**          12/10/2023 mem - Change _container to citext
 **
 *****************************************************/
 DECLARE
@@ -37,7 +38,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _container text := 'na';
+    _container citext := 'na';
     _contID int;
     _contStatus citext;
     _badItems text;
