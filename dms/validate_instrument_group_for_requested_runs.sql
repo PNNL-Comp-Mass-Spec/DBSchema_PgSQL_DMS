@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE public.validate_instrument_group_for_requested_runs(
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Include schema name when calling function verify_sp_authorized()
 **          12/08/2023 mem - Select a single column when using If Not Exists()
+**          12/09/2023 mem - Add missing semicolon before Return statement
 **
 *****************************************************/
 DECLARE
@@ -55,7 +56,7 @@ BEGIN
 
         If Not Exists (Select instrument_group From T_Instrument_Group Where instrument_group = _instrumentGroup::citext) Then
             _message := format('Invalid instrument group name: %s', _instrumentGroup);
-            _returnCode := 'U5202'
+            _returnCode := 'U5202';
 
             RETURN;
         End If;

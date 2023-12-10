@@ -332,7 +332,7 @@ BEGIN
         UNION
         SELECT 't_analysis_job_status_history' AS Log_Table_Name, COUNT(*) AS Rows_to_Delete
         FROM t_analysis_job_status_history
-        WHERE posting_time < _logDeleteThreshold
+        WHERE posting_time < _logDeleteThreshold;
 
         RETURN;
     End IF;

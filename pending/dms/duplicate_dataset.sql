@@ -293,7 +293,7 @@ BEGIN
                                _requestedRunInfo.WorkPackage,
                                _requestedRunInfo.DatasetType,
                                _requestedRunInfo.SeparationGroup,
-                               'Automatically created by Dataset entry'
+                               'Automatically created by Dataset entry';
 
         RETURN;
     End If;

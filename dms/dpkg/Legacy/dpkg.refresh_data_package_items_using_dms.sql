@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE dpkg.refresh_data_package_items_using_dms(IN _packag
 **          03/07/2012 grk - Changed data type of _itemList from varchar(max) to text
 **          08/16/2023 mem - Ported to PostgreSQL
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          12/09/2023 mem - Add missing semicolon before Return
 **
 *****************************************************/
 DECLARE
@@ -41,7 +42,7 @@ BEGIN
 
     If Not Exists (SELECT data_pkg_id FROM dpkg.t_data_package WHERE data_pkg_id = _packageID) Then
         _message := format('Data package ID %s not found in dpkg.t_data_package', _packageID);
-        RAISE WARNING '%', _message
+        RAISE WARNING '%', _message;
         RETURN;
     End If;
 

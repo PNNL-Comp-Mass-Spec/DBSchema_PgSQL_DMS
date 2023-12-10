@@ -152,7 +152,7 @@ BEGIN
                _uniqueAcetylPeptidesFDR As Acetyl_Peptides,
                _dynamicReporterIon AS Dynamic_Reporter_Ion,
                _percentPSMsMissingNTermReporterIon AS Percent_PSMs_Missing_NTermReporterIon,
-               _percentPSMsMissingReporterIon AS Percent_PSMs_Missing_ReporterIon
+               _percentPSMsMissingReporterIon AS Percent_PSMs_Missing_ReporterIon;
 
         RETURN;
     End If;

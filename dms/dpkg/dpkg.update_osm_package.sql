@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE dpkg.update_osm_package(IN _osmpackageid integer, IN
 **          05/18/2016 mem - Log errors to T_Log_Entries
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/16/2023 mem - Ported to PostgreSQL
+**          12/09/2023 mem - Add missing semicolon before Return
 **
 *****************************************************/
 DECLARE
@@ -67,7 +68,7 @@ BEGIN
 
         If Not _mode In ( 'delete') Then
             _message := format('The only supported mode is delete; "%s" is invalid', _mode);
-            RAISE WARNING '%', _message
+            RAISE WARNING '%', _message;
             RETURN;
         End If;
 
