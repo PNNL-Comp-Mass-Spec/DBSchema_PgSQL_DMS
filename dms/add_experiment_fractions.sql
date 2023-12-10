@@ -1,46 +1,27 @@
+--
+-- Name: add_experiment_fractions(text, text, text, text, text, text, text, integer, text, integer, text, text, text, text, text, text, text, integer, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
 
-CREATE OR REPLACE PROCEDURE public.add_experiment_fractions
-(
-    _parentExperiment text,
-    _groupType text = 'Fraction',
-    _suffix text = '',
-    _nameSearch  text = '',
-    _nameReplace text = '',
-    _groupName text,
-    _description text,
-    _totalCount int,
-    _addUnderscore text = 'Yes',
-    INOUT _groupID int,
-    _requestOverride text = 'parent',
-    _internalStandard text = 'parent',
-    _postdigestIntStd text = 'parent',
-    _researcher text = 'parent',
-    INOUT _wellplateName text,
-    INOUT _wellNumber text,
-    _container text = 'na',
-    _prepLCRunID int,
-    _mode text,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+CREATE OR REPLACE PROCEDURE public.add_experiment_fractions(IN _parentexperiment text, IN _grouptype text, IN _suffix text, IN _namesearch text, IN _namereplace text, IN _groupname text, IN _description text, IN _totalcount integer, IN _addunderscore text, INOUT _groupid integer, IN _requestoverride text DEFAULT 'parent'::text, IN _internalstandard text DEFAULT 'parent'::text, IN _postdigestintstd text DEFAULT 'parent'::text, IN _researcher text DEFAULT 'parent'::text, INOUT _wellplatename text DEFAULT ''::text, INOUT _wellnumber text DEFAULT ''::text, IN _container text DEFAULT 'na'::text, IN _preplcrunid integer DEFAULT NULL::integer, IN _mode text DEFAULT 'preview'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Creates a group of new experiments in DMS, linking back to the parent experiment
+**      Creates a group of new fraction-based experiments, linking back to the parent experiment
+**
+**      Used by web page https://dms2.pnl.gov/experiment_fraction/create to create experiment fractions
 **
 **  Arguments:
-**    _parentExperiment     Parent experiment for group (must already exist)
+**    _parentExperiment     Parent experiment for group (must already exist); this is the experiment name, not ID
 **    _groupType            Must be 'Fraction'
 **    _suffix               Text to append to the parent experiment name, prior to adding the fraction number
 **    _nameSearch           Text to find in the parent experiment name, to be replaced by _nameReplace
 **    _nameReplace          Replacement text
-**    _groupName            User-defined name for this experiment group (aka fraction group); previously _tab
+**    _groupName            User-defined name for this experiment group (aka fraction group); previously _tab; allowed to be an empty string
 **    _description          Purpose of group
 **    _totalCount           Number of new experiments to automatically create
-**    _addUnderscore        When Yes (or 1 or ''), add an underscore before the fraction number; when _suffix is defined, it is helpful to set this to 'No'
+**    _addUnderscore        When Yes (or 1 or ''), add an underscore before the fraction number; when _suffix is defined, set this to 'No' if you do not want an underscore between the suffix and the fraction number
 **    _groupID              Output: ID of newly created experiment group
 **    _requestOverride      ID of sample prep request for fractions (if different than parent experiment); use 'parent' to inherit frm the parent experiment
 **    _internalStandard     Internal standard name (or 'parent')
@@ -49,7 +30,7 @@ AS $$
 **    _wellplateName        Input/output: wellplate name
 **    _wellNumber           Input/output: well position (aka well number)
 **    _container            Container name: 'na', 'parent', '-20', or actual container ID
-**    _prepLCRunID          Prep LC run ID
+**    _prepLCRunID          Prep LC run ID; allowed to be null
 **    _mode                 Mode: 'add' or 'preview'; when previewing, will show the names of the new fractions
 **    _message              Output message
 **    _returnCode           Return code
@@ -96,7 +77,7 @@ AS $$
 **          04/12/2022 mem - Do not log data validation errors to T_Log_Entries
 **          11/18/2022 mem - Rename parameter to _groupName
 **          11/25/2022 mem - Rename parameter to _wellplate
-**          12/15/2024 mem - Ported to PostgreSQL
+**          12/10/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -105,8 +86,8 @@ DECLARE
     _fractionNumberText text;
     _fullFractionCount int;
     _newExpID int;
-    _startingIndex int := 1      -- Initial index for automatic naming of new experiments;
-    _step int := 1               -- Step interval in index;
+    _startingIndex int := 1;     -- Initial index for automatic naming of new experiments;
+    _step int := 1;              -- Step interval in index;
     _fractionsCreated int := 0;
 
     _parentExperimentInfo record;
@@ -117,12 +98,12 @@ DECLARE
     _logErrors boolean := false;
     _dropTempTables boolean := false;
     _wellIndex int;
-    _note text := 'Created by experiment fraction entry (' + @parentExperiment + ')';
-    _prepRequestTissueID text := Null;
-    _tmpID int := Null;
+    _note text;
+    _prepRequestTissueID text := null;
+    _tmpID int := null;
     _userID int;
-    _newUsername text;
     _matchCount int;
+    _newUsername text;
     _newComment text;
     _newExpName text;
     _expId int;
@@ -145,29 +126,30 @@ BEGIN
         ---------------------------------------------------
 
         If Coalesce(_totalCount, 0) <= 0 Then
-            _message := 'Number of child experments cannot be 0';
+            _message := 'Number of child experiments cannot be 0';
             RAISE EXCEPTION '%', _message;
         End If;
 
         -- Don't allow too many child experiments to be created
-        --
+
         If _totalCount > _maxCount Then
-            _message := format('Cannot create more than %s child experments', _maxCount);
+            _message := format('Cannot create more than %s child experiments', _maxCount);
             RAISE EXCEPTION '%', _message;
         End If;
 
         -- Make sure that we don't overflow our alloted space for digits
-        --
+
         If _startingIndex + (_totalCount * _step) > 999 Then
             _message := 'Automatic numbering parameters will require too many digits';
             RAISE EXCEPTION '%', _message;
         End If;
 
-        _groupType := Trim(Coalesce(_groupType, ''));
+        _parentExperiment := Trim(Coalesce(_parentExperiment, ''));
+        _groupType        := Trim(Coalesce(_groupType, ''));
 
         If char_length(_groupType) = 0 Then
             _groupType := 'Fraction';
-        ElsIf _groupType <> 'Fraction' Then
+        ElsIf _groupType::citext <> 'Fraction' Then
             _message := 'The only supported _groupType is "Fraction"';
             RAISE EXCEPTION '%', _message;
         End If;
@@ -175,6 +157,8 @@ BEGIN
         _suffix           := Trim(Coalesce(_suffix, ''));
         _nameSearch       := Trim(Coalesce(_nameSearch, ''));
         _nameReplace      := Trim(Coalesce(_nameReplace, ''));
+        _groupName        := Trim(Coalesce(_groupName, ''));
+        _description      := Trim(Coalesce(_description, ''));
         _addUnderscore    := Trim(Coalesce(_addUnderscore, 'Yes'));
 
         _requestOverride  := Trim(Coalesce(_requestOverride,  'parent'));
@@ -182,21 +166,26 @@ BEGIN
         _postdigestIntStd := Trim(Coalesce(_postdigestIntStd, 'parent'));
         _researcher       := Trim(Coalesce(_researcher,       'parent'));
 
+        _container        := Trim(Coalesce(_container, ''));
         _mode             := Trim(Lower(Coalesce(_mode, '')));
 
         If Not _mode In ('add', 'preview') Then
             RAISE EXCEPTION 'Invalid mode: should be "add" or "preview", not "%"', _mode;
         End If;
 
+        ---------------------------------------------------
         -- Create temporary tables to hold biomaterial and reference compounds associated with the parent experiment
-        --
+        ---------------------------------------------------
+
+        -- This table is used by procedure add_experiment_biomaterial.sql
         CREATE TEMP TABLE Tmp_Experiment_to_Biomaterial_Map (
-            Biomaterial_Name text not null,
+            Biomaterial_Name citext not null,
             Biomaterial_ID int null
         );
 
+        -- This table is used by procedure add_experiment_reference_compound
         CREATE TEMP TABLE Tmp_ExpToRefCompoundMap (
-            Compound_IDName text not null,
+            Compound_IDName citext not null,          -- This holds compound ID as text; if it is originally of the form '3311:ANFTSQETQGAGK', it will be changed to '3311'
             Colon_Pos int null,
             Compound_ID int null
         );
@@ -223,7 +212,7 @@ BEGIN
                post_digest_internal_std_id AS PostdigestIntStdID,
                container_id AS ParentContainerID,
                alkylation AS Alkylation,
-               tissue_id AS TissueID
+               tissue_id AS TissueID            -- For example, BTO:0001419
         INTO _parentExperimentInfo
         FROM t_experiments
         WHERE experiment = _parentExperiment;
@@ -234,19 +223,19 @@ BEGIN
         End If;
 
         -- Make sure _parentExperiment is capitalized properly
-        _parentExperiment := _baseFractionName;
+        _parentExperiment := _parentExperimentInfo.BaseFractionName;
 
         -- Search/replace, if defined
         If char_length(_nameSearch) > 0 Then
-            _baseFractionName := Replace(_baseFractionName, _nameSearch, _nameReplace);
+            _parentExperimentInfo.BaseFractionName := Replace(_parentExperimentInfo.BaseFractionName, _nameSearch, _nameReplace);
         End If;
 
         -- Append the suffix, if defined
         If char_length(_suffix) > 0 Then
             If Substring(_suffix, 1, 1) In ('_', '-') Then
-                _baseFractionName := format('%s%s', _baseFractionName, _suffix);
+                _parentExperimentInfo.BaseFractionName := format('%s%s', _parentExperimentInfo.BaseFractionName, _suffix);
             Else
-                _baseFractionName := format('%s_%s', _baseFractionName, _suffix);
+                _parentExperimentInfo.BaseFractionName := format('%s_%s', _parentExperimentInfo.BaseFractionName, _suffix);
             End If;
         End If;
 
@@ -261,7 +250,7 @@ BEGIN
         FROM t_experiment_biomaterial ECC
              INNER JOIN t_biomaterial CC
                ON ECC.Biomaterial_ID = CC.Biomaterial_ID
-        WHERE ECC.Exp_ID = _parentExperimentID;
+        WHERE ECC.Exp_ID = _parentExperimentInfo.ParentExperimentID;
 
         ---------------------------------------------------
         -- Cache the reference compound mapping
@@ -274,7 +263,7 @@ BEGIN
         FROM t_experiment_reference_compounds ERC
              INNER JOIN t_reference_compound RC
                ON ERC.compound_id = RC.compound_id
-        WHERE ERC.exp_id = _parentExperimentID;
+        WHERE ERC.exp_id = _parentExperimentInfo.ParentExperimentID;
 
         ---------------------------------------------------
         -- Set up and validate wellplate values
@@ -284,7 +273,7 @@ BEGIN
                         _wellplateName => _wellplateName,   -- Input/Output
                         _wellPosition  => _wellNumber,      -- Input/Output
                         _totalCount    => _totalCount,
-                        _wellIndex     => _wellIndex,       -- Output
+                        _wellIndex     => _wellIndex,       -- Output: value between 1 and 96
                         _message       => _message,         -- Output
                         _returnCode    => _returnCode);     -- Output
 
@@ -306,17 +295,21 @@ BEGIN
                 _wellPlateMode := 'assure';
             End If;
 
+            _note := format('Created by experiment fraction entry (%s)', _parentExperiment);
+
             CALL public.add_update_wellplate (
                             _wellplateName => _wellplateName,   -- Output
                             _note          => _note,
                             _wellPlateMode => _wellPlateMode,
                             _message       => _message,         -- Output
                             _returnCode    => _returnCode,      -- Output
-                            _callingUser   => _callingUser)
+                            _callingUser   => _callingUser);
 
             If _returnCode <> '' Then
-                DROP TABLE Tmp_Experiment_to_Biomaterial_Map;
-                DROP TABLE Tmp_ExpToRefCompoundMap;
+                If _dropTempTables Then
+                    DROP TABLE Tmp_Experiment_to_Biomaterial_Map;
+                    DROP TABLE Tmp_ExpToRefCompoundMap;
+                End If;
 
                 RETURN;
             End If;
@@ -326,21 +319,21 @@ BEGIN
         -- Possibly override prep request ID
         ---------------------------------------------------
 
-        If _requestOverride <> 'parent' Then
+        If Lower(_requestOverride) <> 'parent' Then
 
             -- Try to cast as an integer, but store null if not an integer
-            _samplePrepRequest := public.try_cast(_requestOverride, null::int);
+            _parentExperimentInfo.SamplePrepRequest := public.try_cast(_requestOverride, null::int);
 
-            If _samplePrepRequest Is Null Then
+            If _parentExperimentInfo.SamplePrepRequest Is Null Then
                 _logErrors := false;
                 _message := format('Prep request ID is not an integer: %s', _requestOverride);
                 RAISE EXCEPTION '%', _message;
             End If;
 
-            SELECT tissue_id
+            SELECT tissue_id            -- For example: BTO:0000848
             INTO _prepRequestTissueID
             FROM t_sample_prep_request
-            WHERE prep_request_id = _samplePrepRequest
+            WHERE prep_request_id = _parentExperimentInfo.SamplePrepRequest;
 
             If Not FOUND Then
                 _logErrors := false;
@@ -348,8 +341,8 @@ BEGIN
                 RAISE EXCEPTION '%', _message;
             End If;
 
-            If Coalesce(_tissueID, '') = '' And Coalesce(_prepRequestTissueID, '') <> '' Then
-                _tissueID := _prepRequestTissueID;
+            If Coalesce(_parentExperimentInfo.TissueID, '') = '' And Coalesce(_prepRequestTissueID, '') <> '' Then
+                _parentExperimentInfo.TissueID := _prepRequestTissueID;
             End If;
         End If;
 
@@ -357,45 +350,47 @@ BEGIN
         -- Resolve predigest internal standard ID
         ---------------------------------------------------
 
-        If _internalStandard <> 'parent' Then
+        If Lower(_internalStandard) <> 'parent' Then
 
             SELECT internal_standard_id
             INTO _tmpID
             FROM t_internal_standards
-            WHERE name = _internalStandard;
+            WHERE name = _internalStandard::citext;
 
             If Not FOUND Then
                 _logErrors := false;
                 _message := format('Could not find entry in database for internal standard "%s"', _internalStandard);
                 RAISE EXCEPTION '%', _message;
             End If;
-            _internalStandardID := _tmpID;
+
+            _parentExperimentInfo.InternalStandardID := _tmpID;
         End If;
 
         ---------------------------------------------------
         -- Resolve postdigestion internal standard ID
         ---------------------------------------------------
 
-        If _postdigestIntStd <> 'parent' Then
+        If Lower(_postdigestIntStd) <> 'parent' Then
 
             SELECT internal_standard_id
             INTO _tmpID
             FROM t_internal_standards
-            WHERE (name = _postdigestIntStd)
+            WHERE name = _postdigestIntStd::citext;
 
             If Not FOUND Then
                 _logErrors := false;
                 _message := format('Could not find entry in database for postdigestion internal standard "%s"', _tmpID);
                 RAISE EXCEPTION '%', _message;
             End If;
-            _postdigestIntStdID := _tmpID;
+
+            _parentExperimentInfo.PostdigestIntStdID := _tmpID;
         End If;
 
         ---------------------------------------------------
         -- Resolve researcher
         ---------------------------------------------------
 
-        If _researcher::citext <> 'parent' Then
+        If Lower(_researcher) <> 'parent' Then
             _userID := public.get_user_id(_researcher);
 
             If _userID > 0 Then
@@ -418,7 +413,7 @@ BEGIN
 
                 If _matchCount = 1 Then
                     -- Single match found; update _researcher
-                    _researcher := _newUsername
+                    _researcher := _newUsername;
                 Else
                     _logErrors := false;
                     _message := format('Could not find entry in database for researcher username "%s"', _researcher);
@@ -426,7 +421,7 @@ BEGIN
                 End If;
             End If;
 
-            _researcherUsername := _researcher;
+            _parentExperimentInfo.ResearcherUsername := _researcher;
         End If;
 
         _logErrors := true;
@@ -444,15 +439,15 @@ BEGIN
                 description,
                 prep_lc_run_id,
                 created,
-                researcher,
+                researcher_username,
                 group_name
             ) VALUES (
                 _groupType,
-                _parentExperimentID,
+                _parentExperimentInfo.ParentExperimentID,
                 _description,
                 _prepLCRunID,
                 CURRENT_TIMESTAMP,
-                _researcherUsername,
+                _parentExperimentInfo.ResearcherUsername,
                 _groupName
             )
             RETURNING group_id
@@ -464,12 +459,12 @@ BEGIN
 
             INSERT INTO t_experiment_group_members( group_id,
                                                     exp_id )
-            VALUES (_groupID, _parentExperimentID);
+            VALUES (_groupID, _parentExperimentInfo.ParentExperimentID);
 
         End If;
 
         ---------------------------------------------------
-        -- Insert Fractionated experiment entries
+        -- Insert fractionated experiment entries
         ---------------------------------------------------
 
         _wn := _wellNumber;
@@ -486,7 +481,7 @@ BEGIN
             --
             _fullFractionCount := _startingIndex + _fractionCount;
 
-            If  _fullFractionCount < 10 Then
+            If _fullFractionCount < 10 Then
                 _fractionNumberText := format('0%s', _fullFractionCount);
             Else
                 _fractionNumberText := format('%s',  _fullFractionCount);
@@ -494,7 +489,7 @@ BEGIN
 
             _fractionCount := _fractionCount + _step;
             _newComment := format('(Fraction %s of %s)', _fullfractioncount, _totalcount);
-            _newExpName := format('%s%s%s', _baseFractionName, _nameFractionLinker, _fractionNumberText);
+            _newExpName := format('%s%s%s', _parentExperimentInfo.BaseFractionName, _nameFractionLinker, _fractionNumberText);
             _fractionsCreated := _fractionsCreated + 1;
 
             -- Verify that experiment name is not duplicated in table
@@ -542,23 +537,23 @@ BEGIN
                     tissue_id
                 ) VALUES (
                     _newExpName,
-                    _researcherUsername,
-                    _organismID,
-                    _reason,
+                    _parentExperimentInfo.ResearcherUsername,
+                    _parentExperimentInfo.OrganismID,
+                    _parentExperimentInfo.Reason,
                     _newComment,
                     CURRENT_TIMESTAMP,
                     '? ug/uL',
-                    _labNotebook,
-                    _campaignID,
-                    _labelling,
-                    _enzymeID,
-                    _samplePrepRequest,
-                    _internalStandardID,
-                    _postdigestIntStdID,
+                    _parentExperimentInfo.LabNotebook,
+                    _parentExperimentInfo.CampaignID,
+                    _parentExperimentInfo.Labelling,
+                    _parentExperimentInfo.EnzymeID,
+                    _parentExperimentInfo.SamplePrepRequest,
+                    _parentExperimentInfo.InternalStandardID,
+                    _parentExperimentInfo.PostdigestIntStdID,
                     _wellplateName,
                     _wn,
-                    _alkylation,
-                    _tissueID
+                    _parentExperimentInfo.Alkylation,
+                    _parentExperimentInfo.TissueID
                 )
                 RETURNING exp_id
                 INTO _newExpID;
@@ -573,7 +568,7 @@ BEGIN
                                 _returnCode       => _returnCode);  -- Output
 
                 If _returnCode <> '' Then
-                    RAISE EXCEPTION 'Could not add experiment biomaterial to database for experiment: "%", %', _newExpName, _message);
+                    RAISE EXCEPTION 'Could not add experiment biomaterial to database for experiment: "%", %', _newExpName, _message;
                 End If;
 
                 -- Add the experiment to reference compound mapping
@@ -584,18 +579,17 @@ BEGIN
                                 _updateCachedInfo => true,
                                 _message          => _message,      -- Output
                                 _returnCode       => _returnCode);  -- Output
-                --
+
                 If _returnCode <> '' Then
-                    RAISE EXCEPTION 'Could not add experiment reference compounds to database for experiment: "%", %', _newExpName, _message
+                    RAISE EXCEPTION 'Could not add experiment reference compounds to database for experiment: "%", %', _newExpName, _message;
                 End If;
 
                 ---------------------------------------------------
                 -- Add fractionated experiment reference to experiment group
                 ---------------------------------------------------
 
-                INSERT INTO t_experiment_group_members( group_id,
-                                                        exp_id )
-                VALUES (_groupID, _newExpID);
+                INSERT INTO t_experiment_group_members( group_id, exp_id )
+                VALUES ( _groupID, _newExpID );
 
                 ---------------------------------------------------
                 -- Append Experiment ID to _experimentIDList and _materialIDList
@@ -617,7 +611,10 @@ BEGIN
                 -- Copy experiment plex info, if defined
                 ---------------------------------------------------
 
-                If Exists (SELECT plex_exp_id FROM t_experiment_plex_members WHERE plex_exp_id = _parentExperimentID) Then
+                If Exists (SELECT plex_exp_id
+                           FROM t_experiment_plex_members
+                           WHERE plex_exp_id = _parentExperimentInfo.ParentExperimentID
+                          ) Then
 
                     INSERT INTO t_experiment_plex_members( plex_exp_id,
                                                            channel,
@@ -630,7 +627,7 @@ BEGIN
                            channel_type_id,
                            comment
                     FROM t_experiment_plex_members
-                    WHERE plex_exp_id = _parentExperimentID;
+                    WHERE plex_exp_id = _parentExperimentInfo.ParentExperimentID;
 
                     If char_length(_callingUser) > 0 Then
                         -- Call public.alter_entered_by_user to alter the entered_by field in t_experiment_plex_members_history
@@ -639,6 +636,7 @@ BEGIN
                     End If;
 
                 End If;
+
             End If;
 
             If _mode = 'add' Then
@@ -647,21 +645,24 @@ BEGIN
                 -- Note that the count includes the parent experiment
                 ---------------------------------------------------
 
-                CALL public.update_experiment_group_member_count (_groupID => _groupID);
+                CALL public.update_experiment_group_member_count (
+                                _groupID    => _groupID,
+                                _message    => _message,        -- Output
+                                _returnCode => _returnCode);    -- Output
             End If;
 
             ---------------------------------------------------
             -- Increment well number
             ---------------------------------------------------
 
-            If Not _wn Is Null Then
+            If Coalesce(_wn, '') <> '' Then
                 _wellIndex := _wellIndex + 1;
                 _wn := public.get_well_position(_wellIndex);
             End If;
 
         END LOOP;
 
-        If _mode Like '%Preview%' Then
+        If _mode Like '%preview%' Then
             _message := format('Preview of new fraction names: %s', _fractionNamePreviewList);
         Else
 
@@ -669,11 +670,11 @@ BEGIN
             -- Resolve parent container name
             ---------------------------------------------------
 
-            If _container = 'parent' Then
+            If Lower(_container) = 'parent' Then
                 SELECT container
                 INTO _container
                 FROM t_material_containers
-                WHERE container_id = _parentContainerID;
+                WHERE container_id = _parentExperimentInfo.ParentContainerID;
             End If;
 
             ---------------------------------------------------
@@ -690,7 +691,7 @@ BEGIN
                             _returnCode  => _returnCode,    -- Output
                             _callingUser => _callingUser);
 
-                      If _returnCode <> '' Then
+            If _returnCode <> '' Then
                 RAISE EXCEPTION '%', _message;
             End If;
 
@@ -704,14 +705,20 @@ BEGIN
                             _targetEntityIDList => _experimentIDList,
                             _categoryName       => '',
                             _subCategoryName    => '',
-                            _sourceEntityID     => _parentExperimentID,
+                            _sourceEntityID     => _parentExperimentInfo.ParentExperimentID,
                             _mode               => 'copyAll',
                             _message            => _message,        -- Output
-                            _returnCode         => _returnCode)     -- Output
+                            _returnCode         => _returnCode);    -- Output
 
             If _returnCode <> '' Then
                 _message := format('Error copying Aux Info from parent Experiment to fractionated experiments, code %s', _returnCode);
                 RAISE EXCEPTION '%', _message;
+            End If;
+
+            -- Change _message to an empty string if it is "Switched column name from Experiment_Num to experiment"
+
+            If _message ILike 'Switched column name from%' Then
+                _message := '';
             End If;
 
             If _message = '' Then
@@ -719,6 +726,13 @@ BEGIN
             End If;
 
         End If;
+
+        If _dropTempTables Then
+            DROP TABLE Tmp_Experiment_to_Biomaterial_Map;
+            DROP TABLE Tmp_ExpToRefCompoundMap;
+        End If;
+
+        RETURN;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -746,4 +760,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_experiment_fractions IS 'AddExperimentFractions';
+
+ALTER PROCEDURE public.add_experiment_fractions(IN _parentexperiment text, IN _grouptype text, IN _suffix text, IN _namesearch text, IN _namereplace text, IN _groupname text, IN _description text, IN _totalcount integer, IN _addunderscore text, INOUT _groupid integer, IN _requestoverride text, IN _internalstandard text, IN _postdigestintstd text, IN _researcher text, INOUT _wellplatename text, INOUT _wellnumber text, IN _container text, IN _preplcrunid integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_experiment_fractions(IN _parentexperiment text, IN _grouptype text, IN _suffix text, IN _namesearch text, IN _namereplace text, IN _groupname text, IN _description text, IN _totalcount integer, IN _addunderscore text, INOUT _groupid integer, IN _requestoverride text, IN _internalstandard text, IN _postdigestintstd text, IN _researcher text, INOUT _wellplatename text, INOUT _wellnumber text, IN _container text, IN _preplcrunid integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_experiment_fractions(IN _parentexperiment text, IN _grouptype text, IN _suffix text, IN _namesearch text, IN _namereplace text, IN _groupname text, IN _description text, IN _totalcount integer, IN _addunderscore text, INOUT _groupid integer, IN _requestoverride text, IN _internalstandard text, IN _postdigestintstd text, IN _researcher text, INOUT _wellplatename text, INOUT _wellnumber text, IN _container text, IN _preplcrunid integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddExperimentFractions';
+
