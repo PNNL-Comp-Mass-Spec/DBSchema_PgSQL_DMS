@@ -13,6 +13,14 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_datasets
 **
 **      This procedure is very similar to procedure validate_protein_collection_list_for_dataset_table()
 **
+**  Arguments:
+**    _datasets                 Comma-separated list of dataset names
+**    _protCollNameList         Comma-separated list of protein collection names
+**    _collectionCountAdded     Output: Number of protein collections added
+**    _message                  Status message
+**    _returnCode               Return code
+**    _showDebug                When true, show the protein collections in _protCollNameList and show the internal standards for the datasets in _datasets
+**
 **  Auth:   mem
 **  Date:   11/13/2006 mem - Initial revision (Ticket #320)
 **          02/08/2007 mem - Updated to use T_Internal_Std_Parent_Mixes to determine the protein collections associated with internal standards (Ticket #380)
@@ -32,6 +40,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_datasets
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
+**          12/12/2023 mem - Change columns in temp tables from int to boolean
 **
 *****************************************************/
 DECLARE
@@ -70,13 +79,13 @@ BEGIN
         Protein_Collection_Name citext NOT NULL,
         Dataset_Count int NOT NULL,
         Experiment_Count int NOT NULL,
-        Enzyme_Contaminant_Collection int NOT NULL
+        Enzyme_Contaminant_Collection boolean NOT NULL
     );
 
     CREATE TEMP TABLE Tmp_ProteinCollections (
         RowNumberID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         Protein_Collection_Name citext NOT NULL,
-        Collection_Appended int NOT NULL
+        Collection_Appended boolean NOT NULL
     );
 
     CREATE TEMP TABLE Tmp_ProteinCollectionsToAdd (
@@ -84,7 +93,7 @@ BEGIN
         Protein_Collection_Name citext NOT NULL,
         Dataset_Count int NOT NULL,
         Experiment_Count int NOT NULL,
-        Enzyme_Contaminant_Collection int NOT NULL
+        Enzyme_Contaminant_Collections int NOT NULL
     );
 
     If _showDebug Then
@@ -96,7 +105,7 @@ BEGIN
     --------------------------------------------------------------
 
     INSERT INTO Tmp_ProteinCollections (Protein_Collection_Name, Collection_Appended)
-    SELECT Value, 0 AS Collection_Appended
+    SELECT Value, false AS Collection_Appended
     FROM public.parse_delimited_list(_protCollNameList);
 
     --------------------------------------------------------------
@@ -159,7 +168,7 @@ BEGIN
                   Coalesce(Enz.protein_collection_name, '') AS Protein_Collection_Name,
                   COUNT(DISTINCT DS.dataset) AS Dataset_Count,
                   COUNT(DISTINCT E.exp_id) AS Experiment_Count,
-                  1 AS Enzyme_Contaminant_Collection
+                  true AS Enzyme_Contaminant_Collection
             FROM Tmp_Datasets
                 INNER JOIN t_dataset DS
                     ON Tmp_Datasets.Dataset = DS.dataset
@@ -175,7 +184,7 @@ BEGIN
         RAISE INFO 'Populated Tmp_IntStds; Elapsed time: % msec', Round(extract(epoch FROM (clock_timestamp() - _startTime)) * 1000, 3);
     End If;
 
-    If Exists (SELECT Internal_Std_Mix_ID FROM Tmp_IntStds WHERE Enzyme_Contaminant_Collection > 0) Then
+    If Exists (SELECT Internal_Std_Mix_ID FROM Tmp_IntStds WHERE Enzyme_Contaminant_Collection) Then
         --------------------------------------------------------------
         -- Check whether any of the protein collections already have contaminants
         --------------------------------------------------------------
@@ -199,7 +208,7 @@ BEGIN
             -- Remove the contaminant collections
             --
             DELETE FROM Tmp_IntStds
-            WHERE Enzyme_Contaminant_Collection > 0;
+            WHERE Enzyme_Contaminant_Collection;
         End If;
     End If;
 
@@ -217,7 +226,7 @@ BEGIN
            ISPM.protein_collection_name,
            COUNT(DS.dataset_id) AS Dataset_Count,
            0 AS Experiment_Count,
-           0 AS Enzyme_Contaminant_Collection
+           false AS Enzyme_Contaminant_Collection
     FROM Tmp_Datasets
          INNER JOIN t_dataset DS
            ON Tmp_Datasets.Dataset = DS.dataset
@@ -232,7 +241,7 @@ BEGIN
            ISPM.protein_collection_name,
            0 AS Dataset_Count,
            COUNT(DISTINCT E.exp_id) AS Experiment_Count,
-           0 AS Enzyme_Contaminant_Collection
+           false AS Enzyme_Contaminant_Collection
     FROM Tmp_Datasets
          INNER JOIN t_dataset DS
            ON Tmp_Datasets.dataset = DS.dataset
@@ -249,7 +258,7 @@ BEGIN
            ISPM.protein_collection_name,
            0 AS Dataset_Count,
            COUNT(DISTINCT E.exp_id) AS Experiment_Count,
-           0 AS Enzyme_Contaminant_Collection
+           false AS Enzyme_Contaminant_Collection
     FROM Tmp_Datasets
          INNER JOIN t_dataset DS
            ON Tmp_Datasets.dataset = DS.dataset
@@ -306,11 +315,11 @@ BEGIN
     INSERT INTO Tmp_ProteinCollectionsToAdd( Protein_Collection_Name,
                                              Dataset_Count,
                                              Experiment_Count,
-                                             Enzyme_Contaminant_Collection )
+                                             Enzyme_Contaminant_Collections )
     SELECT I.Protein_Collection_Name,
            SUM(I.Dataset_Count),
            SUM(I.Experiment_Count),
-           SUM(Enzyme_Contaminant_Collection)
+           SUM(CASE WHEN Enzyme_Contaminant_Collection THEN 1 ELSE 0 END)
     FROM Tmp_IntStds I
          LEFT OUTER JOIN Tmp_ProteinCollections PC
            ON I.Protein_Collection_Name = PC.Protein_Collection_Name
@@ -344,10 +353,10 @@ BEGIN
     --
     INSERT INTO Tmp_ProteinCollections (Protein_Collection_Name, Collection_Appended)
     SELECT Protein_Collection_Name,
-           1 AS Collection_Appended
+           true AS Collection_Appended
     FROM Tmp_ProteinCollectionsToAdd
-    GROUP BY Enzyme_Contaminant_Collection, Protein_Collection_Name
-    ORDER BY Enzyme_Contaminant_Collection, Protein_Collection_Name;
+    GROUP BY Enzyme_Contaminant_Collections, Protein_Collection_Name
+    ORDER BY Enzyme_Contaminant_Collections, Protein_Collection_Name;
     --
     GET DIAGNOSTICS _collectionCountAdded = ROW_COUNT;
 
@@ -427,12 +436,12 @@ BEGIN
                Protein_Collection_Name,
                Dataset_Count,
                Experiment_Count,
-               Enzyme_Contaminant_Collection
+               Enzyme_Contaminant_Collections
         FROM Tmp_ProteinCollectionsToAdd
         ORDER BY UniqueID
     LOOP
 
-        If _collectionInfo.Enzyme_Contaminant_Collection <> 0 Then
+        If _collectionInfo.Enzyme_Contaminant_Collections > 0 Then
             _msg := format('Added enzyme contaminant collection %s', _collectionInfo.Protein_Collection_Name);
         Else
             _msg := format('Added protein collection %s since it is present in', _collectionInfo.Protein_Collection_Name);
