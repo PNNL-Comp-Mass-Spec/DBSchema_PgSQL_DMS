@@ -24,29 +24,30 @@ CREATE OR REPLACE PROCEDURE public.validate_analysis_job_parameters(IN _toolname
 **      );
 **
 **  Arguments:
-**    _toolName             Analysis tool name
-**    _paramFileName        Input/Output: Parameter file name
-**    _settingsFileName     Input/Output: Settings file name
-**    _organismDBName       Input/Output: Organism DB name (legacy FASTA file); should be 'na' if using a protein collection list
-**    _organismName         Organism name
-**    _protCollNameList     Input/Output: Comma-separated list of protein collection names
-**                          Procedure validate_protein_collection_params will set _returnCode to 'U5310' and update _message if over 4000 characters long
-**                          - This was previously necessary since the Broker DB (DMS_Pipeline) had a 4000 character limit on analysis job parameter values
-**                          - While not true for PostgreSQL, excessively long protein collection name lists could lead to issues
-**    _protCollOptionsList  Input/Output: Protein collection options list
-**    _ownerUsername        Input/Output: Job owner username
-**    _mode                 Used to tweak the warning if _analysisToolID is not found in T_Analysis_Tool. If _mode is 'Update' or 'PreviewUpdate', _allowNonReleasedDatasets is auto-set to true
-**    _userID               Output: User ID
-**    _analysisToolID       Output: Analysis tool ID
-**    _organismID           Output: Organism ID
-**    _job                  Job number (included in warning message if non-zero)
-**    _autoUpdateSettingsFileToCentroided       When true, auto-update the settings file to a centroided version if any of the datasets in Tmp_DatasetInfo are centroided
-**    _allowNewDatasets     When false, all datasets must have state 3 (Complete); when true, will also allow datasets with state 1 or 2 (New or Capture In Progress)
-**    _warning              Output: Warning
-**    _priority             Input/Output: Job priority (typically 3); this procedure changes it to 4 if _organismDBName is over 400 MB and _priority is less than 4
-**    _showDebugMessages    When true, show debug messages
-**    _message              Output: warning message
-**    _returnCode           Output: return code
+**    _toolName                             Analysis tool name
+**    _paramFileName                        Input/Output: Parameter file name
+**    _settingsFileName                     Input/Output: Settings file name
+**    _organismDBName                       Input/Output: Organism DB name (legacy FASTA file); should be 'na' if using a protein collection list
+**    _organismName                         Organism name
+**    _protCollNameList                     Input/Output: Comma-separated list of protein collection names
+**                                          Procedure validate_protein_collection_params will set _returnCode to 'U5310' and update _message if over 4000 characters long
+**                                          - This was previously necessary since the Broker DB (DMS_Pipeline) had a 4000 character limit on analysis job parameter values
+**                                          - While not true for PostgreSQL, excessively long protein collection name lists could lead to issues
+**    _protCollOptionsList                  Input/Output: Protein collection options list
+**    _ownerUsername                        Input/Output: Job owner username
+**    _mode                                 Used to tweak the warning if _analysisToolID is not found in T_Analysis_Tool. If _mode is 'Update' or 'PreviewUpdate', _allowNonReleasedDatasets is auto-set to true
+**    _userID                               Output: User ID
+**    _analysisToolID                       Output: Analysis tool ID
+**    _organismID                           Output: Organism ID
+**    _job                                  Job number (included in warning message if non-zero)
+**    _autoRemoveNotReleasedDatasets        When true, remove datasets that are not released
+**    _autoUpdateSettingsFileToCentroided   When true, auto-update the settings file to a centroided version if any of the datasets in Tmp_DatasetInfo are centroided
+**    _allowNewDatasets                     When false, all datasets must have state 3 (Complete); when true, will also allow datasets with state 1 or 2 (New or Capture In Progress)
+**    _warning                              Output: Warning
+**    _priority                             Input/Output: Job priority (typically 3); this procedure changes it to 4 if _organismDBName is over 400 MB and _priority is less than 4
+**    _showDebugMessages                    When true, show debug messages
+**    _message                              Output: warning message
+**    _returnCode                           Output: return code
 **
 **  Auth:   grk
 **  Date:   04/04/2006 grk - Supersedes MakeAnalysisJobX
@@ -179,8 +180,6 @@ BEGIN
         End If;
 
         _currentlocation := 'Call validate_analysis_job_request_datasets';
-
-
 
         CALL public.validate_analysis_job_request_datasets (
                     _autoRemoveNotReleasedDatasets => _autoRemoveNotReleasedDatasets,
