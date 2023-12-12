@@ -1,18 +1,16 @@
 --
-CREATE OR REPLACE PROCEDURE public.do_material_item_operation
-(
-    _name text,
-    _mode text,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: do_material_item_operation(text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.do_material_item_operation(IN _name text, IN _mode text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Do an operation on an item in a container, using the item name
+**
+**      The only supported action is to retire an experiment or biomaterial
 **
 **  Arguments:
 **    _name         Item name (biomaterial name, experiment name, or experiment ID)
@@ -31,7 +29,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          09/25/2019 mem - Allow _name to be an experiment ID, which happens if 'Retire Experiment' is clicked at https://dms2.pnl.gov/experimentid/show/123456
 **          05/24/2022 mem - Validate parameters
-**          12/15/2024 mem - Ported to PostgreSQL
+**          12/10/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -44,9 +42,9 @@ DECLARE
     _experimentID int;
     _tmpID int := 0;
     _typeTag text := '';
-    _itemList text,
-    _newValue text,
-    _comment text
+    _itemList text;
+    _newValue text;
+    _comment text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -86,7 +84,7 @@ BEGIN
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
         If _mode = '' Then
-            RAISE EXCEPTION 'Material item operation mode not defined';
+            RAISE EXCEPTION 'Material item operation mode must be defined';
         End If;
 
         If Not _mode In ('retire_biomaterial', 'retire_experiment') Then
@@ -108,7 +106,7 @@ BEGIN
             SELECT Biomaterial_ID
             INTO _tmpID
             FROM t_biomaterial
-            WHERE Biomaterial_Name = _name;
+            WHERE Biomaterial_Name = _name::citext;
         End If;
 
         If _mode = 'retire_experiment' Then
@@ -117,43 +115,46 @@ BEGIN
 
             _experimentID := public.try_cast(_name, null::int);
 
-            If Coalesce(_experimentID, 0) > 0 And Not Exists (SELECT * FROM t_experiments WHERE experiment = _name) Then
+            If Coalesce(_experimentID, 0) > 0 And Not Exists (SELECT exp_id FROM t_experiments WHERE experiment = _name::citext) Then
                 _tmpID := _experimentID;
             Else
                 SELECT exp_id
                 INTO _tmpID
                 FROM t_experiments
-                WHERE experiment = _name;
+                WHERE experiment = _name::citext;
             End If;
         End If;
 
-        If _tmpID = 0 Then
-            RAISE EXCEPTION 'Could not find the material item for mode "%", name "%"', _mode, _name;
-        Else
+        If Coalesce(_tmpID, 0) = 0 Then
+            RAISE EXCEPTION 'Could not find % "%" (mode %)',
+                        CASE WHEN _typeTag = 'B' THEN 'biomaterial' ELSE 'experiment' END,
+                        _name,
+                        _mode;
+        End If;
 
-            _logErrors := true;
 
-            ---------------------------------------------------
-            -- Call the material update function
-            ---------------------------------------------------
+        _logErrors := true;
 
-            _itemList := format('%s:%s', _typeTag, _tmpID);
-            _newValue := '';
-            _comment := '';
+        ---------------------------------------------------
+        -- Retire the experiments using procedure update_material_items
+        ---------------------------------------------------
 
-            CALL public.update_material_items (
-                            _mode        => 'retire_items',
-                            _itemList    => _itemList,
-                            _itemType    => 'mixed_material',
-                            _newValue    => _newValue,
-                            _comment     => _comment,
-                            _message     => _message,       -- Output
-                            _returnCode  => _returnCode,    -- Output
-                            _callingUser => _callingUser);
+        _itemList := format('%s:%s', _typeTag, _tmpID);
+        _newValue := '';
+        _comment := '';
 
-            If _returnCode <> '' Then
-                RAISE EXCEPTION '%', _message;
-            End If;
+        CALL public.update_material_items (
+                        _mode        => 'retire_items',
+                        _itemList    => _itemList,
+                        _itemType    => 'mixed_material',
+                        _newValue    => _newValue,
+                        _comment     => _comment,
+                        _message     => _message,       -- Output
+                        _returnCode  => _returnCode,    -- Output
+                        _callingUser => _callingUser);
+
+        If _returnCode <> '' Then
+            RAISE EXCEPTION '%', _message;
         End If;
 
     EXCEPTION
@@ -180,5 +181,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.do_material_item_operation IS 'DoMaterialItemOperation';
+
+ALTER PROCEDURE public.do_material_item_operation(IN _name text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE do_material_item_operation(IN _name text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.do_material_item_operation(IN _name text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'DoMaterialItemOperation';
 
