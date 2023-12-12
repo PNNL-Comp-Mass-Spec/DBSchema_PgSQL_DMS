@@ -48,6 +48,7 @@ CREATE OR REPLACE PROCEDURE sw.verify_job_parameters(INOUT _jobparam text, IN _s
 **          07/28/2023 mem - Trim leading and trailing whitespace from parameter values
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          12/12/2023 mem - Use new argument name when calling validate_protein_collection_list_for_data_package
 **
 *****************************************************/
 DECLARE
@@ -307,7 +308,7 @@ BEGIN
             ---------------------------------------------------
             -- Validate _protCollNameList
             --
-            -- Note that setting _showMessages to true means that validate_protein_collection_list_for_dataset_table
+            -- Note that setting _listAddedCollections to true means that validate_protein_collection_list_for_dataset_table
             -- will populate _message with an explanatory note if _protCollNameList is updated
             ---------------------------------------------------
 
@@ -315,7 +316,7 @@ BEGIN
                         _dataPackageID,
                         _protCollNameList     => _protCollNameList,         -- Output
                         _collectionCountAdded => _collectionCountAdded,     -- Output
-                        _showMessages         => true,
+                        _listAddedCollections => true,
                         _message              => _message,                  -- Output
                         _returnCode           => _returnCode);              -- Output
         End If;
