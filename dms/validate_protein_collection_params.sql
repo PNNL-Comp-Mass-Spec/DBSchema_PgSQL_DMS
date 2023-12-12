@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_params(IN _toolna
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          12/11/2023 mem - Remove unnecessary _trimWhitespace argument when calling validate_na_parameter
 **
 *****************************************************/
 DECLARE
@@ -56,9 +57,9 @@ BEGIN
     -- Make sure settings for which 'na' is acceptable truly have lowercase 'na' and not 'NA' or 'n/a'
     ---------------------------------------------------
 
-    _organismDBName := public.validate_na_parameter(_organismDBName, 1);
-    _protCollNameList := public.validate_na_parameter(_protCollNameList, 1);
-    _protCollOptionsList := public.validate_na_parameter(_protCollOptionsList, 1);
+    _organismDBName      := public.validate_na_parameter(_organismDBName);
+    _protCollNameList    := public.validate_na_parameter(_protCollNameList);
+    _protCollOptionsList := public.validate_na_parameter(_protCollOptionsList);
 
     If _organismDBName = '' Then
         _organismDBName := 'na';

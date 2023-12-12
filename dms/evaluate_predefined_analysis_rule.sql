@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE public.evaluate_predefined_analysis_rule(IN _minleve
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/13/2023 mem - Add missing _returnCode variable
 **          12/08/2023 mem - Select a single column when using If Not Exists()
+**          12/11/2023 mem - Remove unnecessary _trimWhitespace argument when calling validate_na_parameter
 **
 *****************************************************/
 DECLARE
@@ -198,7 +199,7 @@ BEGIN
 
         _proteinCollectionListValidated := Trim(Coalesce(_predefineInfo.ProteinCollectionList, ''));
 
-        If char_length(_proteinCollectionListValidated) > 0 And public.validate_na_parameter(_proteinCollectionListValidated, 1) <> 'na' Then
+        If char_length(_proteinCollectionListValidated) > 0 And public.validate_na_parameter(_proteinCollectionListValidated) <> 'na' Then
             CALL public.validate_protein_collection_list_for_datasets (
                                 _datasetName,
                                 _protCollNameList     => _proteinCollectionListValidated,   -- Output

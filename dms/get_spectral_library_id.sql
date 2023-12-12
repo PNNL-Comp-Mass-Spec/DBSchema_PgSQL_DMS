@@ -64,6 +64,7 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **                         - Update warning messages
 **          09/08/2023 mem - Include schema name when calling function verify_sp_authorized()
 **          09/11/2023 mem - Adjust capitalization of keywords
+**          12/11/2023 mem - Remove unnecessary _trimWhitespace argument when calling validate_na_parameter
 **
 *****************************************************/
 DECLARE
@@ -161,7 +162,7 @@ BEGIN
         -- Assure that the protein collection list is in the standard format
         ---------------------------------------------------
 
-        If char_length(_proteinCollectionList) > 0 And public.validate_na_parameter(_proteinCollectionList, 1) <> 'na' Then
+        If char_length(_proteinCollectionList) > 0 And public.validate_na_parameter(_proteinCollectionList) <> 'na' Then
             _proteinCollectionList = pc.standardize_protein_collection_list (_proteinCollectionList);
         End If;
 
@@ -177,7 +178,7 @@ BEGIN
         -- If the default name is over 110 characters long, truncate to the first 110 characters and append the SHA-1 hash of the full name.
         ---------------------------------------------------
 
-        If public.validate_na_parameter(_proteinCollectionList, 1) <> 'na' Then
+        If public.validate_na_parameter(_proteinCollectionList) <> 'na' Then
 
             -- Always set _organismDbFile to 'na' when a protein collection list is defined
             _organismDbFile := 'na';
@@ -207,7 +208,7 @@ BEGIN
                 _organism := 'Undefined';
             End If;
 
-        ElsIf public.validate_na_parameter(_organismDbFile, 1) <> 'na' Then
+        ElsIf public.validate_na_parameter(_organismDbFile) <> 'na' Then
 
             -- Always set _proteinCollectionList to 'na' when an organism DB file is defined
             _proteinCollectionList := 'na';

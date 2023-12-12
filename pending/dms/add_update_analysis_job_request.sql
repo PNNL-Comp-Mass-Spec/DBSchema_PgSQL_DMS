@@ -395,7 +395,7 @@ BEGIN
 
         _protCollNameList := Trim(Coalesce(_protCollNameList, ''));
 
-        If char_length(_protCollNameList) > 0 And public.validate_na_parameter(_protCollNameList, 1) <> 'na' Then
+        If char_length(_protCollNameList) > 0 And public.validate_na_parameter(_protCollNameList) <> 'na' Then
             CALL public.validate_protein_collection_list_for_dataset_table (
                                 _protCollNameList => _protCollNameList,             -- Output
                                 _collectionCountAdded => _collectionCountAdded,     -- Output

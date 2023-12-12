@@ -26,6 +26,7 @@ CREATE OR REPLACE FUNCTION public.get_spectral_library_settings_hash(_libraryid 
 **          05/22/2023 mem - Capitalize reserved word
 **          05/30/2023 mem - Use format() for string concatenation
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          12/11/2023 mem - Remove unnecessary _trimWhitespace argument when calling validate_na_parameter
 **
 *****************************************************/
 DECLARE
@@ -102,12 +103,12 @@ BEGIN
     -- Store the options in _settings
     ---------------------------------------------------
 
-    If public.validate_na_parameter(_proteinCollectionList, 1) <> 'na' Then
+    If public.validate_na_parameter(_proteinCollectionList) <> 'na' Then
         _settings := format('%s_na', _proteinCollectionList);
     Else
         _settings := 'na';
 
-        If public.validate_na_parameter(_organismDBFile, 1) <> 'na' Then
+        If public.validate_na_parameter(_organismDBFile) <> 'na' Then
             _settings := format('%s_%s', _settings, _organismDBFile);
         Else
             _settings := format('%s_na', _settings);

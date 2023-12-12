@@ -63,6 +63,7 @@ CREATE OR REPLACE FUNCTION public.get_psm_job_defaults(_datasets text) RETURNS T
 **          09/01/2023 mem - Change column Dataset_Rating_ID to smallint in temp table
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          12/11/2023 mem - Remove unnecessary _trimWhitespace argument when calling validate_na_parameter
 **
 *****************************************************/
 DECLARE
@@ -297,7 +298,7 @@ BEGIN
     FROM t_organisms
     WHERE organism = _organismName AND Coalesce(organism_db_name, 'na') <> 'na';
 
-    If char_length(_protCollNameList) > 0 And public.validate_na_parameter(_protCollNameList, 1) <> 'na' Then
+    If char_length(_protCollNameList) > 0 And public.validate_na_parameter(_protCollNameList) <> 'na' Then
 
         -- Append the default contaminant collections
         CALL public.validate_protein_collection_list_for_datasets (

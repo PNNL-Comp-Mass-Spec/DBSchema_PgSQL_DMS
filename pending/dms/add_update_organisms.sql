@@ -371,17 +371,17 @@ BEGIN
         -- make sure all three are 'na'
         ---------------------------------------------------
 
-        _orgGenus := public.validate_na_parameter(_orgGenus, 1);
-        _orgSpecies := public.validate_na_parameter(_orgSpecies, 1);
-        _orgStrain := public.validate_na_parameter(_orgStrain, 1);
+        _orgGenus   := public.validate_na_parameter(_orgGenus);
+        _orgSpecies := public.validate_na_parameter(_orgSpecies);
+        _orgStrain  := public.validate_na_parameter(_orgStrain);
 
         If _orgGenus::citext   In ('unknown', 'na', 'none') And
            _orgSpecies::citext In ('unknown', 'na', 'none') And
            _orgStrain::citext  In ('unknown', 'na', 'none') Then
 
-            _orgGenus := 'na';
+            _orgGenus   := 'na';
             _orgSpecies := 'na';
-            _orgStrain := 'na';
+            _orgStrain  := 'na';
 
         End If;
 

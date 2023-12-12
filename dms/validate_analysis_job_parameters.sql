@@ -110,6 +110,7 @@ CREATE OR REPLACE PROCEDURE public.validate_analysis_job_parameters(IN _toolname
 **                         - Assure that parameters are not null
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          12/11/2023 mem - Remove unnecessary _trimWhitespace argument when calling validate_na_parameter
 **
 *****************************************************/
 DECLARE
@@ -408,8 +409,8 @@ BEGIN
 
         _currentlocation := 'Check for "na" settings and parameter files';
 
-        _settingsFileName := public.validate_na_parameter(_settingsFileName, _trimWhitespace => 1);
-        _paramFileName    := public.validate_na_parameter(_paramFileName,    _trimWhitespace => 1);
+        _settingsFileName := public.validate_na_parameter(_settingsFileName);
+        _paramFileName    := public.validate_na_parameter(_paramFileName);
 
         ---------------------------------------------------
         -- Check for settings file or parameter file being 'na' when not allowed
