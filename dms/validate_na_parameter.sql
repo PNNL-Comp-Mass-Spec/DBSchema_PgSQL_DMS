@@ -1,8 +1,8 @@
 --
--- Name: validate_na_parameter(text, integer); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: validate_na_parameter(text, boolean); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.validate_na_parameter(_parameter text, _trimwhitespace integer DEFAULT 1) RETURNS text
+CREATE OR REPLACE FUNCTION public.validate_na_parameter(_parameter text, _trimwhitespace boolean DEFAULT true) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -12,7 +12,7 @@ CREATE OR REPLACE FUNCTION public.validate_na_parameter(_parameter text, _trimwh
 **
 **  Arguments:
 **    _parameter        Text to check
-**    _trimWhitespace   When 1, trim whitespace
+**    _trimWhitespace   When true, trim whitespace
 **
 **  Return value: the validated parameter
 **
@@ -21,12 +21,13 @@ CREATE OR REPLACE FUNCTION public.validate_na_parameter(_parameter text, _trimwh
 **          01/14/2009 mem - Expanded _parameter length to 4000 characters (Ticket #714, http://prismtrac.pnl.gov/trac/ticket/714)
 **          06/24/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
+**          12/11/2023 mem - Change _trimWhitespace to a boolean
 **
 *****************************************************/
 BEGIN
     _parameter := Coalesce(_parameter, 'na');
 
-    If Coalesce(_trimWhitespace, 1) <> 0 Then
+    If Coalesce(_trimWhitespace, true) Then
         _parameter := Trim(_parameter);
     End If;
 
@@ -43,11 +44,11 @@ END
 $$;
 
 
-ALTER FUNCTION public.validate_na_parameter(_parameter text, _trimwhitespace integer) OWNER TO d3l243;
+ALTER FUNCTION public.validate_na_parameter(_parameter text, _trimwhitespace boolean) OWNER TO d3l243;
 
 --
--- Name: FUNCTION validate_na_parameter(_parameter text, _trimwhitespace integer); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION validate_na_parameter(_parameter text, _trimwhitespace boolean); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.validate_na_parameter(_parameter text, _trimwhitespace integer) IS 'ValidateNAParameter';
+COMMENT ON FUNCTION public.validate_na_parameter(_parameter text, _trimwhitespace boolean) IS 'ValidateNAParameter';
 
