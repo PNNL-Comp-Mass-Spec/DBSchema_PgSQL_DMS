@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE public.validate_analysis_job_request_datasets(IN _au
 **
 **  Arguments:
 **    _autoRemoveNotReleasedDatasets   When true, automatically removes datasets from Tmp_DatasetInfo if they have an invalid rating
+**    _toolname                        Analysis tool name
 **    _allowNewDatasets                When false, all datasets must have state 3 (Complete); when true, will also allow datasets with state 1 or 2 (New or Capture In Progress)
 **    _allowNonReleasedDatasets        When true, allow datasets to have a rating of 'Not Released'
 **    _showDebugMessages               When true, show message info

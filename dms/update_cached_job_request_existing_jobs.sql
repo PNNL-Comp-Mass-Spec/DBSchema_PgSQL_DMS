@@ -18,6 +18,8 @@ CREATE OR REPLACE PROCEDURE public.update_cached_job_request_existing_jobs(IN _p
 **    _jobSearchHours       When > 0, compare jobs created within this many hours to existing job requests (ignored if _requestID is non-zero)
 **    _modeZeroSearchDays   Number of days to search when _processingMode is 0 (and _requestID and _jobSearchHours are each zero)
 **    _infoOnly             When true, preview changes
+**    _message              Status message
+**    _returncode           Return code
 **
 **  Auth:   mem
 **  Date:   07/30/2019 mem - Initial version
