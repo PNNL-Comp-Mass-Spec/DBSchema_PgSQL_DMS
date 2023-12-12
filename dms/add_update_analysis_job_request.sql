@@ -1,29 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_analysis_job_request
-(
-    _datasets text,
-    _requestName text,
-    _toolName text,
-    _paramFileName text,
-    _settingsFileName text,
-    _protCollNameList text,
-    _protCollOptionsList text,
-    _organismName text,
-    _organismDBName text = 'na',
-    _requesterUsername text,
-    _comment text = null,
-    _specialProcessing text = null,
-    _dataPackageID int = 0,
-    _state text,
-    INOUT _requestID int,
-    _mode text = 'add',
-    _autoRemoveNotReleasedDatasets int = 0,     -- Leave this as an integer since used by the website
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_analysis_job_request(text, text, text, text, text, text, text, text, text, text, text, text, integer, text, integer, text, integer, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_analysis_job_request(IN _datasets text, IN _requestname text, IN _toolname text, IN _paramfilename text, IN _settingsfilename text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _organismname text, IN _organismdbname text, IN _requesterusername text, IN _comment text, IN _specialprocessing text, IN _datapackageid integer, IN _state text, INOUT _requestid integer, IN _mode text DEFAULT 'add'::text, IN _autoremovenotreleaseddatasets integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -46,7 +27,7 @@ AS $$
 **    _state                            State, typically 'new', 'used', or 'inactive' (see t_analysis_job_request_state)
 **    _requestID                        Input/output: analysis job request ID
 **    _mode                             Mode: 'add', 'update', 'append', or 'PreviewAdd'
-**    _autoRemoveNotReleasedDatasets    When true, remove datasets that are not released
+**    _autoRemoveNotReleasedDatasets    When 1, remove datasets that are not released (leave this as an integer since used by the website)
 **    _message                          Output message
 **    _returnCode                       Return code
 **    _callingUser                      Calling user username
@@ -133,7 +114,7 @@ AS $$
 **          06/30/2022 mem - Rename parameter file argument
 **          03/22/2023 mem - Also auto-remove datasets named 'Dataset Name' and 'Dataset_Name' from Tmp_DatasetInfo
 **          03/27/2023 mem - Synchronize protein collection options validation with add_analysis_job_group
-**          12/15/2024 mem - Ported to PostgreSQL
+**          12/12/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -145,11 +126,14 @@ DECLARE
     _datasetCount int := 0;
     _autoSupersedeName text := '';
     _msgToAppend text;
+
     _logErrors boolean := false;
+    _dropDatasetInfoTempTable boolean := false;
+    _dropDatasetListTempTable boolean := false;
+
     _datasetMin text := NULL;
     _datasetMax text := NULL;
     _tmtProDatasets int := 0;
-    _datasetCount int := 0;
     _msg text;
     _hit int;
     _curState int;
@@ -207,6 +191,7 @@ BEGIN
         _dataPackageID     := Coalesce(_dataPackageID, 0);
         _datasets          := Trim(Coalesce(_datasets, ''));
         _mode              := Trim(Lower(Coalesce(_mode, '')));
+        _callingUser       := Trim(Coalesce(_callingUser, ''));
 
         If _requestName = '' Then
             RAISE EXCEPTION 'Cannot add: request name must be specified';
@@ -251,7 +236,7 @@ BEGIN
                 RAISE EXCEPTION 'Cannot update: entry is not in database';
             End If;
 
-            If Exists (Select job From t_analysis_job Where request_id = _requestID) Then
+            If Exists (SELECT job FROM t_analysis_job WHERE request_id = _requestID) Then
                 -- The request has jobs associated with it
 
                 SELECT request_name,
@@ -313,6 +298,8 @@ BEGIN
             Dataset_Rating_ID smallint NULL
         );
 
+        _dropDatasetInfoTempTable := true;
+
         If _dataPackageID > 0 Then
             ---------------------------------------------------
             -- Populate table using the datasets currently associated with the data package
@@ -322,7 +309,7 @@ BEGIN
             INSERT INTO Tmp_DatasetInfo ( Dataset_Name )
             SELECT DISTINCT Dataset
             FROM dpkg.V_Data_Package_Dataset_Export
-            WHERE Data_Package_ID = _dataPackageID
+            WHERE Data_Package_ID = _dataPackageID;
             --
             GET DIAGNOSTICS _datasetCount = ROW_COUNT;
 
@@ -337,7 +324,7 @@ BEGIN
 
             INSERT INTO Tmp_DatasetInfo (Dataset_Name)
             SELECT DISTINCT Value
-            FROM public.parse_delimited_list(_datasets)
+            FROM public.parse_delimited_list(_datasets);
             --
             GET DIAGNOSTICS _datasetCount = ROW_COUNT;
 
@@ -350,7 +337,7 @@ BEGIN
             ---------------------------------------------------
 
             DELETE FROM Tmp_DatasetInfo
-            WHERE Dataset_Name::citext IN ('Dataset', 'Dataset Name', 'Dataset_Name', 'Dataset_Num')
+            WHERE Dataset_Name::citext IN ('Dataset', 'Dataset Name', 'Dataset_Name', 'Dataset_Num');
         End If;
 
         ---------------------------------------------------
@@ -359,7 +346,7 @@ BEGIN
 
         SELECT COUNT(*)
         INTO _datasetCount
-        FROM Tmp_DatasetInfo
+        FROM Tmp_DatasetInfo;
 
         If _datasetCount = 1 Then
             SELECT MIN(Dataset_Name)
@@ -382,6 +369,8 @@ BEGIN
 
         CREATE UNIQUE INDEX IX_Tmp_DatasetList ON Tmp_DatasetList ( Dataset_Name );
 
+        _dropDatasetListTempTable := true;
+
         INSERT INTO Tmp_DatasetList( Dataset_Name )
         SELECT DISTINCT Dataset_Name
         FROM Tmp_DatasetInfo;
@@ -389,20 +378,20 @@ BEGIN
         ---------------------------------------------------
         -- Validate _protCollNameList
         --
-        -- Note that validate_protein_collection_list_for_dataset_table will populate _message with an explanatory note
-        -- if _protCollNameList is updated
+        -- Note that setting _listAddedCollections to true means that validate_protein_collection_list_for_dataset_table
+        -- will populate _message with an explanatory note if _protCollNameList is updated
         ---------------------------------------------------
 
         _protCollNameList := Trim(Coalesce(_protCollNameList, ''));
 
         If char_length(_protCollNameList) > 0 And public.validate_na_parameter(_protCollNameList) <> 'na' Then
             CALL public.validate_protein_collection_list_for_dataset_table (
-                                _protCollNameList => _protCollNameList,             -- Output
+                                _protCollNameList     => _protCollNameList,         -- Output
                                 _collectionCountAdded => _collectionCountAdded,     -- Output
-                                _showMessages => _showMessages,
-                                _message => _message,                               -- Output
-                                _returncode => _returnCode,                         -- Output
-                                _showDebug => false);
+                                _listAddedCollections => true,
+                                _message              => _message,                  -- Output
+                                _returncode           => _returnCode,               -- Output
+                                _showDebug            => false);
 
             If _returnCode <> '' Then
                 DROP TABLE Tmp_DatasetInfo;
@@ -413,36 +402,37 @@ BEGIN
 
         ---------------------------------------------------
         -- Validate job parameters
+        --
         -- Note that validate_analysis_job_parameters calls validate_analysis_job_request_datasets
-        -- and that validate_analysis_job_request_datasets populates Dataset_ID, etc. in Tmp_DatasetInfo
+        -- and validate_analysis_job_request_datasets populates Dataset_ID, etc. in Tmp_DatasetInfo
         ---------------------------------------------------
 
         _priority := 2;
 
         CALL public.validate_analysis_job_parameters (
-                                _toolName => _toolName,
-                                _paramFileName => _paramFileName,               -- Output
-                                _settingsFileName => _settingsFileName,         -- Output
-                                _organismDBName => _organismDBName,             -- Output
-                                _organismName => _organismName,
-                                _protCollNameList => _protCollNameList,         -- Output
-                                _protCollOptionsList => _protCollOptionsList,   -- Output
-                                _ownerUsername => _requesterUsername,           -- Output
-                                _mode => '',                                    -- Blank validation mode to suppress dataset state checking
-                                _userID => _userID,                             -- Output
-                                _analysisToolID => _analysisToolID,             -- Output
-                                _organismID => _organismID,                     -- Output
-                                _job => 0,
-                                _autoRemoveNotReleasedDatasets => CASE WHEN Coalesce(_autoRemoveNotReleasedDatasets, 0) = 0 THEN false ELSE true END,
-                                _autoUpdateSettingsFileToCentroided => false,
-                                _allowNewDatasets => true
-                                _warning => _warning,                           -- Output
-                                _priority => _priority,                         -- Output
-                                _showDebugMessages => false,
-                                _message => _msg,                               -- Output
-                                _returnCode => _returnCode,                     -- Output
-                                );
-        --
+                _toolName                           => _toolName,
+                _paramFileName                      => _paramFileName,         -- Output
+                _settingsFileName                   => _settingsFileName,      -- Output
+                _organismDBName                     => _organismDBName,        -- Output
+                _organismName                       => _organismName,
+                _protCollNameList                   => _protCollNameList,      -- Output
+                _protCollOptionsList                => _protCollOptionsList,   -- Output
+                _ownerUsername                      => _requesterUsername,     -- Output
+                _mode                               => '',                     -- Use an empty string for validation mode to suppress dataset state checking
+                _userID                             => _userID,                -- Output
+                _analysisToolID                     => _analysisToolID,        -- Output
+                _organismID                         => _organismID,            -- Output
+                _job                                => 0,
+                _autoRemoveNotReleasedDatasets      => CASE WHEN Coalesce(_autoRemoveNotReleasedDatasets, 0) = 0 THEN false ELSE true END,
+                _autoUpdateSettingsFileToCentroided => false,
+                _allowNewDatasets                   => true,
+                _warning                            => _warning,                -- Output
+                _priority                           => _priority,               -- Output
+                _showDebugMessages                  => false,
+                _message                            => _msg,                    -- Output
+                _returnCode                         => _returnCode              -- Output
+                );
+
         If _returnCode <> '' Then
             RAISE EXCEPTION '%', _msg;
         End If;
@@ -454,7 +444,7 @@ BEGIN
         SELECT analysis_tool
         INTO _toolName
         FROM t_analysis_tool
-        WHERE analysis_tool = _toolName
+        WHERE analysis_tool = _toolName::citext;
 
         ---------------------------------------------------
         -- Assure that we are not running a decoy search if using MSGFPlus, TopPIC, or MaxQuant (since those tools auto-add decoys)
@@ -533,7 +523,7 @@ BEGIN
         SELECT COUNT(*)
         INTO _qExactiveDSCount
         FROM Tmp_DatasetInfo
-                INNER JOIN t_dataset DS ON Tmp_DatasetInfo.dataset = DS.dataset
+                INNER JOIN t_dataset DS ON Tmp_DatasetInfo.dataset_name = DS.dataset
                 INNER JOIN t_instrument_name InstName ON DS.instrument_id = InstName.instrument_id
                 INNER JOIN t_instrument_group InstGroup ON InstName.instrument_group = InstGroup.instrument_group
         WHERE InstGroup.instrument_group = 'QExactive'
@@ -544,9 +534,11 @@ BEGIN
         SELECT COUNT(Distinct DS.dataset_id)
         INTO _profileModeMSnDatasets
         FROM Tmp_DatasetInfo
-                INNER JOIN t_dataset DS ON Tmp_DatasetInfo.dataset = DS.dataset
-                INNER JOIN t_dataset_info DI ON DS.dataset_id = DI.dataset_id
-        WHERE DI.profile_scan_count_msn > 0
+             INNER JOIN t_dataset DS
+               ON Tmp_DatasetInfo.dataset_name = DS.dataset
+             INNER JOIN t_dataset_info DI
+               ON DS.dataset_id = DI.dataset_id
+        WHERE DI.profile_scan_count_msn > 0;
 
         If _profileModeMSnDatasets > 0 Then
             -- Auto-update the settings file since we have one or more Q Exactive datasets or one or more datasets with profile-mode MS/MS spectra
@@ -570,21 +562,23 @@ BEGIN
         -- Auto-change the settings file if TMTpro samples
         ---------------------------------------------------
 
-        If (_toolName Like 'MSGFPlus%' And _settingsFileName Like '%TMT%') Then
+        If (_toolName ILike 'MSGFPlus%' And _settingsFileName ILike '%TMT%') Then
             SELECT COUNT(Distinct DS.dataset_id)
             INTO _tmtProDatasets
             FROM Tmp_DatasetInfo
-                INNER JOIN t_dataset DS ON Tmp_DatasetInfo.dataset = DS.dataset
-                INNER JOIN t_experiments E ON DS.exp_id = E.exp_id
-            WHERE E.labelling = 'TMT16' OR DS.dataset LIKE '%TMTpro%'
+                INNER JOIN t_dataset DS
+                  ON Tmp_DatasetInfo.dataset_name = DS.dataset
+                INNER JOIN t_experiments E
+                  ON DS.exp_id = E.exp_id
+            WHERE E.labelling = 'TMT16' OR DS.dataset LIKE '%TMTpro%';
 
             If _tmtProDatasets > _datasetCount / 2.0 Then
                 -- At least half of the datasets are 16-plex TMT; auto-update the settings file name, if necessary
-                If _settingsFileName = 'IonTrapDefSettings_MzML_StatCysAlk_6plexTMT.xml' Then
+                If _settingsFileName::citext = 'IonTrapDefSettings_MzML_StatCysAlk_6plexTMT.xml' Then
                     _settingsFileName := 'IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml';
                 End If;
 
-                If _settingsFileName = 'IonTrapDefSettings_MzML_6plexTMT.xml' Then
+                If _settingsFileName::citext = 'IonTrapDefSettings_MzML_6plexTMT.xml' Then
                     _settingsFileName := 'IonTrapDefSettings_MzML_16plexTMT.xml';
                 End If;
             End If;
@@ -594,11 +588,11 @@ BEGIN
         -- If adding/updating a match-between-runs job, require that a data package is defined
         ---------------------------------------------------
 
-        If _toolName Like 'MSFragger%' And _dataPackageID = 0 And (_settingsFileName Like '%MatchBetweenRun%' Or _settingsFileName Like '%MBR%') Then
+        If _toolName ILike 'MSFragger%' And _dataPackageID = 0 And (_settingsFileName ILike '%MatchBetweenRun%' Or _settingsFileName ILike '%MBR%') Then
             RAISE EXCEPTION 'Use a data package to define datasets when performing a match-between-runs search with MSFragger';
         End If;
 
-        If _toolName Like 'MaxQuant%'And _dataPackageID = 0 And (_paramFileName Like '%MatchBetweenRun%' Or _paramFileName Like '%MBR%') Then
+        If _toolName ILike 'MaxQuant%'  And _dataPackageID = 0 And (_paramFileName ILike '%MatchBetweenRun%' Or _paramFileName ILike '%MBR%') Then
             RAISE EXCEPTION 'Use a data package to define datasets when performing a match-between-runs search with MaxQuant';
         End If;
 
@@ -621,10 +615,10 @@ BEGIN
         SELECT request_state_id
         INTO _stateID
         FROM t_analysis_job_request_state
-        WHERE request_state = _state
+        WHERE request_state = _state;
 
-        If _stateID = -1 Then
-            RAISE EXCEPTION 'Could not resolve state name to ID';
+        If Not FOUND Then
+            RAISE EXCEPTION 'Could not resolve state name "%" to ID', _state;
         End If;
 
         _logErrors := true;
@@ -655,8 +649,7 @@ BEGIN
                 data_pkg_id
             )
             VALUES
-            (
-                _requestName,
+            (   _requestName,
                 CURRENT_TIMESTAMP,
                 _toolName,
                 _paramFileName,
@@ -671,7 +664,7 @@ BEGIN
                 _userID,
                 _datasetMin,
                 _datasetMax,
-                Case When _dataPackageId > 0 Then _dataPackageId Else Null End
+                CASE WHEN _dataPackageId > 0 THEN _dataPackageId ELSE Null END
             )
             RETURNING request_id
             INTO _newRequestNum;
@@ -686,23 +679,24 @@ BEGIN
             _requestID := _newRequestNum;
 
             If char_length(_callingUser) > 0 Then
-                -- _callingUser is defined; call public.alter_event_log_entry_user or public.alter_event_log_entry_user_multi_id
+                -- Calling user is defined; call public.alter_event_log_entry_user or public.alter_event_log_entry_user_multi_id
                 -- to alter the entered_by field in t_event_log
-                --
+
                 CALL public.alter_event_log_entry_user ('public', 12, _requestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
-            CALL public.update_cached_job_request_existing_jobs (_processingMode => 0, _requestID => _requestID, _infoOnly => false);
+            CALL public.update_cached_job_request_existing_jobs (
+                    _processingMode => 0,               -- 0 to only add new job requests created within the last 30 days, but ignored if _requestID is non-zero
+                    _requestID      => _requestID,
+                    _infoOnly       => false,
+                    _message        => _message,        -- Output
+                    _returncode     => _returncode);    -- Output
 
-        End If; -- add mode
-
-        ---------------------------------------------------
-        -- Action for add mode
-        ---------------------------------------------------
+        End If;
 
         If _mode::citext = 'PreviewAdd' Then
             _message := format('Would create request "%s" with parameter file "%s" and settings file "%s"',
-                               _requestName, _paramFileName, _settingsFileName;
+                               _requestName, _paramFileName, _settingsFileName);
         End If;
 
         ---------------------------------------------------
@@ -745,15 +739,20 @@ BEGIN
                   NOT EXISTS (SELECT DI.Dataset_ID FROM Tmp_DatasetInfo DI WHERE target.dataset_id = DI.dataset_id);
 
             If char_length(_callingUser) > 0 Then
-                -- _callingUser is defined; call public.alter_event_log_entry_user or public.alter_event_log_entry_user_multi_id
+                -- Calling user is defined; call public.alter_event_log_entry_user or public.alter_event_log_entry_user_multi_id
                 -- to alter the entered_by field in t_event_log
-                --
+
                 CALL public.alter_event_log_entry_user ('public', 12, _requestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
-            CALL public.update_cached_job_request_existing_jobs (_processingMode => 0, _requestID => _requestID, _infoOnly => false);
+            CALL public.update_cached_job_request_existing_jobs (
+                    _processingMode => 0,               -- 0 to only add new job requests created within the last 30 days, but ignored if _requestID is non-zero
+                    _requestID      => _requestID,
+                    _infoOnly       => false,
+                    _message        => _message,        -- Output
+                    _returncode     => _returncode);    -- Output
 
-        End If; -- update mode
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -778,9 +777,23 @@ BEGIN
         End If;
     END;
 
-    DROP TABLE IF EXISTS Tmp_DatasetInfo;
-    DROP TABLE IF EXISTS Tmp_DatasetList;
+    If _dropDatasetInfoTempTable Then
+        DROP TABLE IF EXISTS Tmp_DatasetInfo;
+    End If;
+
+    If _dropDatasetListTempTable Then
+        DROP TABLE IF EXISTS Tmp_DatasetList;
+    End If;
+
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_analysis_job_request IS 'AddUpdateAnalysisJobRequest';
+
+ALTER PROCEDURE public.add_update_analysis_job_request(IN _datasets text, IN _requestname text, IN _toolname text, IN _paramfilename text, IN _settingsfilename text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _organismname text, IN _organismdbname text, IN _requesterusername text, IN _comment text, IN _specialprocessing text, IN _datapackageid integer, IN _state text, INOUT _requestid integer, IN _mode text, IN _autoremovenotreleaseddatasets integer, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_analysis_job_request(IN _datasets text, IN _requestname text, IN _toolname text, IN _paramfilename text, IN _settingsfilename text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _organismname text, IN _organismdbname text, IN _requesterusername text, IN _comment text, IN _specialprocessing text, IN _datapackageid integer, IN _state text, INOUT _requestid integer, IN _mode text, IN _autoremovenotreleaseddatasets integer, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_analysis_job_request(IN _datasets text, IN _requestname text, IN _toolname text, IN _paramfilename text, IN _settingsfilename text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _organismname text, IN _organismdbname text, IN _requesterusername text, IN _comment text, IN _specialprocessing text, IN _datapackageid integer, IN _state text, INOUT _requestid integer, IN _mode text, IN _autoremovenotreleaseddatasets integer, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateAnalysisJobRequest';
+
