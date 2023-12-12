@@ -2,7 +2,7 @@
 -- Name: validate_protein_collection_list_for_dataset_table(text, integer, boolean, text, text, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_dataset_table(INOUT _protcollnamelist text DEFAULT ''::text, INOUT _collectioncountadded integer DEFAULT 0, IN _showmessages boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _showdebug boolean DEFAULT false)
+CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_dataset_table(INOUT _protcollnamelist text DEFAULT ''::text, INOUT _collectioncountadded integer DEFAULT 0, IN _listaddedcollections boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _showdebug boolean DEFAULT false)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -24,7 +24,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_dataset_
 **  Arguments:
 **    _protCollNameList         Comma-separated list of protein collection names
 **    _collectionCountAdded     Output: Number of protein collections added
-**    _showMessages             When true, update _message to list any protein collections that were added
+**    _listAddedCollections     When true, update _message to list any protein collections that were added
 **    _message                  Status message
 **    _returnCode               Return code
 **    _showDebug                When true, show the protein collections in _protCollNameList and show the internal standards for the datasets in Tmp_DatasetList
@@ -47,6 +47,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_dataset_
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
+**          12/12/2023 mem - Rename argument _showMessages to _listAddedCollections
 **
 *****************************************************/
 DECLARE
@@ -77,7 +78,7 @@ BEGIN
 
     _protCollNameList     := Trim(Coalesce(_protCollNameList,''));
     _collectionCountAdded := 0;
-    _showMessages         := Coalesce(_showMessages, true);
+    _listAddedCollections := Coalesce(_listAddedCollections, true);
     _showDebug            := Coalesce(_showDebug, false);
 
     --------------------------------------------------------------
@@ -615,7 +616,7 @@ BEGIN
          INNER JOIN t_experiments E
            ON DS.exp_id = E.exp_id;
 
-    If Not _showMessages Then
+    If Not _listAddedCollections Then
         DROP TABLE Tmp_IntStds;
         DROP TABLE Tmp_ProteinCollections;
         DROP TABLE Tmp_ProteinCollectionsToAdd;
@@ -681,11 +682,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.validate_protein_collection_list_for_dataset_table(INOUT _protcollnamelist text, INOUT _collectioncountadded integer, IN _showmessages boolean, INOUT _message text, INOUT _returncode text, IN _showdebug boolean) OWNER TO d3l243;
+ALTER PROCEDURE public.validate_protein_collection_list_for_dataset_table(INOUT _protcollnamelist text, INOUT _collectioncountadded integer, IN _listaddedcollections boolean, INOUT _message text, INOUT _returncode text, IN _showdebug boolean) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE validate_protein_collection_list_for_dataset_table(INOUT _protcollnamelist text, INOUT _collectioncountadded integer, IN _showmessages boolean, INOUT _message text, INOUT _returncode text, IN _showdebug boolean); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE validate_protein_collection_list_for_dataset_table(INOUT _protcollnamelist text, INOUT _collectioncountadded integer, IN _listaddedcollections boolean, INOUT _message text, INOUT _returncode text, IN _showdebug boolean); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.validate_protein_collection_list_for_dataset_table(INOUT _protcollnamelist text, INOUT _collectioncountadded integer, IN _showmessages boolean, INOUT _message text, INOUT _returncode text, IN _showdebug boolean) IS 'ValidateProteinCollectionListForDatasetTable';
+COMMENT ON PROCEDURE public.validate_protein_collection_list_for_dataset_table(INOUT _protcollnamelist text, INOUT _collectioncountadded integer, IN _listaddedcollections boolean, INOUT _message text, INOUT _returncode text, IN _showdebug boolean) IS 'ValidateProteinCollectionListForDatasetTable';
 

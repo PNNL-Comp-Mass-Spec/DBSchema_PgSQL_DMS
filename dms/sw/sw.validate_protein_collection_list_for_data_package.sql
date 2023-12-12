@@ -2,7 +2,7 @@
 -- Name: validate_protein_collection_list_for_data_package(integer, text, integer, boolean, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE sw.validate_protein_collection_list_for_data_package(IN _datapackageid integer, INOUT _protcollnamelist text DEFAULT ''::text, INOUT _collectioncountadded integer DEFAULT 0, IN _showmessages boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE sw.validate_protein_collection_list_for_data_package(IN _datapackageid integer, INOUT _protcollnamelist text DEFAULT ''::text, INOUT _collectioncountadded integer DEFAULT 0, IN _listaddedcollections boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -14,7 +14,7 @@ CREATE OR REPLACE PROCEDURE sw.validate_protein_collection_list_for_data_package
 **    _dataPackageID            Data package ID
 **    _protCollNameList         Comma-separated list of protein collection names
 **    _collectionCountAdded     Output: Number of protein collections added
-**    _showMessages             When true, update _message to list any protein collections that were added
+**    _listAddedCollections     When true, update _message to list any protein collections that were added
 **    _message                  Status message
 **    _returnCode               Return code
 **
@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE sw.validate_protein_collection_list_for_data_package
 **          07/27/2023 mem - Ported to PostgreSQL
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/03/2023 mem - Obtain dataset name from public.t_dataset since the name in dpkg.t_data_package_datasets is a cached name and could be an old dataset name
+**          12/12/2023 mem - Rename argument _showMessages to _listAddedCollections
 **
 *****************************************************/
 DECLARE
@@ -79,7 +80,7 @@ BEGIN
     CALL public.validate_protein_collection_list_for_dataset_table (
                     _protCollNameList     => _protCollNameList,         -- Output
                     _collectionCountAdded => _collectionCountAdded,     -- Output
-                    _showMessages         => _showMessages,
+                    _listAddedCollections => _listAddedCollections,
                     _message              => _message,                  -- Output
                     _returncode           => _returnCode,               -- Output
                     _showDebug            => false);
@@ -89,11 +90,11 @@ END
 $$;
 
 
-ALTER PROCEDURE sw.validate_protein_collection_list_for_data_package(IN _datapackageid integer, INOUT _protcollnamelist text, INOUT _collectioncountadded integer, IN _showmessages boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE sw.validate_protein_collection_list_for_data_package(IN _datapackageid integer, INOUT _protcollnamelist text, INOUT _collectioncountadded integer, IN _listaddedcollections boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE validate_protein_collection_list_for_data_package(IN _datapackageid integer, INOUT _protcollnamelist text, INOUT _collectioncountadded integer, IN _showmessages boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
+-- Name: PROCEDURE validate_protein_collection_list_for_data_package(IN _datapackageid integer, INOUT _protcollnamelist text, INOUT _collectioncountadded integer, IN _listaddedcollections boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: sw; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE sw.validate_protein_collection_list_for_data_package(IN _datapackageid integer, INOUT _protcollnamelist text, INOUT _collectioncountadded integer, IN _showmessages boolean, INOUT _message text, INOUT _returncode text) IS 'ValidateProteinCollectionListForDataPackage';
+COMMENT ON PROCEDURE sw.validate_protein_collection_list_for_data_package(IN _datapackageid integer, INOUT _protcollnamelist text, INOUT _collectioncountadded integer, IN _listaddedcollections boolean, INOUT _message text, INOUT _returncode text) IS 'ValidateProteinCollectionListForDataPackage';
 
