@@ -1,26 +1,10 @@
+--
+-- Name: add_job_request_psm(integer, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
 
-CREATE OR REPLACE PROCEDURE public.add_job_request_psm
-(
-    INOUT _requestID int,
-    _requestName text,
-    INOUT _datasets text,
-    _comment text,
-    _ownerUsername text,
-    _organismName text,
-    _protCollNameList text,
-    _protCollOptionsList text,
-    _toolName text,
-    _jobTypeName text,
-    _modificationDynMetOx text,
-    _modificationStatCysAlk text,
-    _modificationDynSTYPhos text,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+CREATE OR REPLACE PROCEDURE public.add_job_request_psm(INOUT _requestid integer, IN _requestname text, INOUT _datasets text, IN _comment text, IN _ownerusername text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _toolname text, IN _jobtypename text, IN _modificationdynmetox text, IN _modificationstatcysalk text, IN _modificationdynstyphos text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -33,7 +17,6 @@ AS $$
 **    _datasets                 Input/output:  comma-separated list of datasets; will be alphabetized after removing duplicates
 **    _comment                  Job request comment
 **    _ownerUsername            Job request owner username
-**    _organismName             Organism name
 **    _protCollNameList         Comma-separated list of protein collection names
 **    _protCollOptionsList      Protein collection options
 **    _toolName                 Analysis tool name
@@ -55,12 +38,16 @@ AS $$
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          05/23/2018 mem - Use a non-zero return code when _mode is 'preview'
-**          12/15/2024 mem - Ported to PostgreSQL
+**          12/12/2023 mem - Remove procedure argument _organismName since unused
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _debugMode boolean;
     _infoOnly boolean := false;
+
+    -- These are integers because columns dyn_met_ox, stat_cys_alk, and dyn_sty_phos
+    -- in table t_default_psm_job_parameters are integers
     _dynMetOxEnabled int;
     _statCysAlkEnabled int;
     _dynSTYPhosEnabled int;
@@ -69,13 +56,17 @@ DECLARE
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
+    _logMessage text;
 BEGIN
     _message := '';
     _returnCode := '';
 
     BEGIN
 
-        _mode := Trim(Lower(Coalesce(_mode, '')));
+        _modificationDynMetOx   := Trim(Lower(Coalesce(_modificationDynMetOx,   '')));
+        _modificationStatCysAlk := Trim(Lower(Coalesce(_modificationStatCysAlk, '')));
+        _modificationDynSTYPhos := Trim(Lower(Coalesce(_modificationDynSTYPhos, '')));
+        _mode                   := Trim(Lower(Coalesce(_mode, '')));
 
         If _mode = 'debug' Then
             _message := 'Debug mode; nothing to do';
@@ -91,9 +82,9 @@ BEGIN
                 _infoOnly := true;
             End If;
 
-            _dynMetOxEnabled   := CASE WHEN _modificationDynMetOx::citext   = 'Yes' Then 1 ELSE 0 END;
-            _statCysAlkEnabled := CASE WHEN _modificationStatCysAlk::citext = 'Yes' Then 1 ELSE 0 END;
-            _dynSTYPhosEnabled := CASE WHEN _modificationDynSTYPhos::citext = 'Yes' Then 1 ELSE 0 END;
+            _dynMetOxEnabled   := CASE WHEN _modificationDynMetOx   = 'yes' Then 1 ELSE 0 END;
+            _statCysAlkEnabled := CASE WHEN _modificationStatCysAlk = 'yes' Then 1 ELSE 0 END;
+            _dynSTYPhosEnabled := CASE WHEN _modificationDynSTYPhos = 'yes' Then 1 ELSE 0 END;
 
             CALL public.create_psm_job_request (
                             _requestID           => _requestID,         -- Output
@@ -144,4 +135,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_job_request_psm IS 'AddJobRequestPSM';
+
+ALTER PROCEDURE public.add_job_request_psm(INOUT _requestid integer, IN _requestname text, INOUT _datasets text, IN _comment text, IN _ownerusername text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _toolname text, IN _jobtypename text, IN _modificationdynmetox text, IN _modificationstatcysalk text, IN _modificationdynstyphos text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_job_request_psm(INOUT _requestid integer, IN _requestname text, INOUT _datasets text, IN _comment text, IN _ownerusername text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _toolname text, IN _jobtypename text, IN _modificationdynmetox text, IN _modificationstatcysalk text, IN _modificationdynstyphos text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_job_request_psm(INOUT _requestid integer, IN _requestname text, INOUT _datasets text, IN _comment text, IN _ownerusername text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _toolname text, IN _jobtypename text, IN _modificationdynmetox text, IN _modificationstatcysalk text, IN _modificationdynstyphos text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddJobRequestPSM';
+

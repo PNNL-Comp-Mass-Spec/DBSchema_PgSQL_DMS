@@ -1,29 +1,14 @@
 --
-CREATE OR REPLACE PROCEDURE public.create_psm_job_request
-(
-    INOUT _requestID int,
-    _requestName text,
-    INOUT _datasets text,
-    _toolName text,
-    _jobTypeName text,
-    _protCollNameList text,
-    _protCollOptionsList text,
-    _dynMetOxEnabled int,
-    _statCysAlkEnabled int,
-    _dynSTYPhosEnabled int,
-    _comment text,
-    _ownerUsername text,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: create_psm_job_request(integer, text, text, text, text, text, text, integer, integer, integer, text, text, boolean, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.create_psm_job_request(INOUT _requestid integer, IN _requestname text, INOUT _datasets text, IN _toolname text, IN _jobtypename text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _dynmetoxenabled integer, IN _statcysalkenabled integer, IN _dynstyphosenabled integer, IN _comment text, IN _ownerusername text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Creates a new analysis job request using the appropriate parameter file and settings file for the specified settings
+**      Creates a new analysis job request using the appropriate parameter file and settings file for the given settings
 **
 **  Arguments:
 **    _requestID            Input/output: analysis job request ID
@@ -33,9 +18,9 @@ AS $$
 **    _jobTypeName          Job type name: 'Low Res MS1', 'High Res MS1', 'iTRAQ 4-plex', 'iTRAQ 8-plex', 'TMT 6-plex', 'TMT 16-plex', or 'TMT Zero'
 **    _protCollNameList     Comma-separated list of protein collection names
 **    _protCollOptionsList  Protein collection options
-**    _dynMetOxEnabled      When 1, select a parameter file with dynamic oxidized methionine
-**    _statCysAlkEnabled    When 1, select a parameter file with static alkylated cysteine (carbamidomethyl)
-**    _dynSTYPhosEnabled    When 1, select a parameter file with dynamic phosphorylated S, T, and Y
+**    _dynMetOxEnabled      When 1, select a parameter file with dynamic oxidized methionine;                 leave as an integer because table t_default_psm_job_parameters has integer-based flag columns
+**    _statCysAlkEnabled    When 1, select a parameter file with static alkylated cysteine (carbamidomethyl); leave as an integer
+**    _dynSTYPhosEnabled    When 1, select a parameter file with dynamic phosphorylated S, T, and Y;          leave as an integer
 **    _comment              Job comment
 **    _ownerUsername        Username to associate with the jobs
 **    _infoOnly             When true, preview jobs that would be created
@@ -64,7 +49,7 @@ AS $$
 **          03/19/2021 mem - Remove obsolete parameter from call to Add_Update_Analysis_Job_Request
 **          06/06/2022 mem - Use new argument name when calling Add_Update_Analysis_Job_Request
 **          06/30/2022 mem - Rename parameter file argument
-**          12/15/2024 mem - Ported to PostgreSQL
+**          12/12/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -78,7 +63,8 @@ DECLARE
     _paramFile text;
     _datasetCount int := 0;
     _logErrors boolean := false;
-    _qExactiveDSCount int := 0;
+    _dropTempTable boolean := false;
+    _qexactiveDSCount int := 0;
     _profileModeMSnDatasets int := 0;
     _organismName text := '';
     _mode text := 'add';
@@ -162,19 +148,19 @@ BEGIN
         -- Assure that _jobTypeName, _toolName, and _requestName are valid
         ---------------------------------------------------
 
-        If Not Exists (SELECT job_type_id FROM t_default_psm_job_types WHERE job_type_name = _jobTypeName) Then
+        If Not Exists (SELECT job_type_id FROM t_default_psm_job_types WHERE job_type_name = _jobTypeName::citext) Then
             RAISE EXCEPTION 'Invalid job type name: %', _jobTypeName;
         End If;
 
-        If Not Exists (SELECT entry_id FROM t_default_psm_job_settings WHERE tool_name = _toolName AND enabled > 0) Then
+        If Not Exists (SELECT entry_id FROM t_default_psm_job_settings WHERE tool_name = _toolName::citext AND enabled > 0) Then
             RAISE EXCEPTION 'Invalid analysis tool for creating a defaults-based PSM job: %', _toolName;
         End If;
 
-        If Exists (SELECT request_id FROM t_analysis_job_request WHERE request_name = _requestName) Then
+        If Exists (SELECT request_id FROM t_analysis_job_request WHERE request_name = _requestName::citext) Then
             RAISE EXCEPTION 'Cannot add; analysis job request named "%" already exists', _requestName;
         End If;
 
-        If _toolName::citext Like '%_DTARefinery' And _jobTypeName = 'Low Res MS1' Then
+        If _toolName ILike '%_DTARefinery' And _jobTypeName::citext = 'Low Res MS1' Then
             RAISE EXCEPTION 'DTARefinery cannot be used with datasets that have low resolution MS1 spectra';
         End If;
 
@@ -194,7 +180,9 @@ BEGIN
             Dataset_Rating_ID smallint NULL
         );
 
-        CREATE INDEX IX_TD_DatasetID ON Tmp_DatasetInfo (Dataset_ID)
+        CREATE INDEX IX_TD_DatasetID ON Tmp_DatasetInfo (Dataset_ID);
+
+        _dropTempTable := true;
 
         ---------------------------------------------------
         -- Populate Tmp_DatasetInfo using the dataset list
@@ -203,18 +191,21 @@ BEGIN
 
         INSERT INTO Tmp_DatasetInfo ( Dataset_Name )
         SELECT DISTINCT Value
-        FROM public.parse_delimited_list(_datasets)
+        FROM public.parse_delimited_list(_datasets);
         --
         GET DIAGNOSTICS _datasetCount = ROW_COUNT;
 
         ---------------------------------------------------
         -- Validate the datasets in Tmp_DatasetInfo
+        --
+        -- Procedure validate_analysis_job_request_datasets updates columns Dataset_ID, Instrument_Class, etc. in Tmp_DatasetInfo
         ---------------------------------------------------
 
         CALL public.validate_analysis_job_request_datasets (
                         _autoRemoveNotReleasedDatasets => true,
                         _toolName                      => _toolName,
                         _allowNewDatasets              => true,
+                        _allowNonReleasedDatasets      => false,
                         _message                       => _message,     -- Output
                         _returnCode                    => _returnCode   -- Output
                         );
@@ -237,72 +228,83 @@ BEGIN
         ---------------------------------------------------
 
         -- First determine the settings file
-        --
+
         SELECT settings_file_name
         INTO _settingsFile
         FROM t_default_psm_job_settings
-        WHERE tool_name = _toolName AND
-              job_type_name = _jobTypeName AND
+        WHERE tool_name = _toolName::citext AND
+              job_type_name = _jobTypeName::citext AND
               stat_cys_alk = _statCysAlkEnabled AND
               dyn_sty_phos = _dynSTYPhosEnabled AND
               enabled > 0;
 
-        If Coalesce(_settingsFile, '') = '' Then
+        If Not FOUND Or Coalesce(_settingsFile, '') = '' Then
+            _logErrors := false;
+            _returnCode := 'U5201';
+
             RAISE EXCEPTION 'Tool % with job type % does not have a default settings file defined for Stat Cys Alk % and Dyn STY Phos %',
-                       _toolName, _jobTypeName,
-                       public.tinyint_to_enabled_disabled(_statCysAlkEnabled),
-                       public.tinyint_to_enabled_disabled(_dynSTYPhosEnabled);
+                        _toolName, _jobTypeName,
+                        public.tinyint_to_enabled_disabled(_statCysAlkEnabled),
+                        public.tinyint_to_enabled_disabled(_dynSTYPhosEnabled);
         End If;
 
         -- Count the number of QExactive datasets
-        --
+
         SELECT COUNT(DS.dataset_id)
-        INTO _qExactiveDSCount
+        INTO _qexactiveDSCount
         FROM Tmp_DatasetInfo
-             INNER JOIN t_dataset DS ON Tmp_DatasetInfo.dataset = DS.dataset
-             INNER JOIN t_instrument_name InstName ON DS.instrument_id = InstName.instrument_id
-             INNER JOIN t_instrument_group InstGroup ON InstName.instrument_group = InstGroup.instrument_group
+             INNER JOIN t_dataset DS
+               ON Tmp_DatasetInfo.dataset_name = DS.dataset
+             INNER JOIN t_instrument_name InstName
+               ON DS.instrument_id = InstName.instrument_id
+             INNER JOIN t_instrument_group InstGroup
+               ON InstName.instrument_group = InstGroup.instrument_group
         WHERE InstGroup.instrument_group = 'QExactive';
 
         -- Count the number of datasets with profile mode MS/MS
-        --
+
         SELECT COUNT(DISTINCT DS.dataset_id)
         INTO _profileModeMSnDatasets
         FROM Tmp_DatasetInfo
-           INNER JOIN t_dataset DS ON Tmp_DatasetInfo.dataset = DS.dataset
-             INNER JOIN t_dataset_info DI ON DS.dataset_id = DI.dataset_id
+             INNER JOIN t_dataset DS
+               ON Tmp_DatasetInfo.dataset_name = DS.dataset
+             INNER JOIN t_dataset_info DI
+               ON DS.dataset_id = DI.dataset_id
         WHERE DI.profile_scan_count_msn > 0;
 
-        If _qExactiveDSCount > 0 Or _profileModeMSnDatasets > 0 Then
+        If _qexactiveDSCount > 0 Or _profileModeMSnDatasets > 0 Then
             -- Auto-update the settings file since we have one or more Q Exactive datasets or one or more datasets with profile-mode MS/MS spectra
             _settingsFile := public.auto_update_settings_file_to_centroid(_settingsFile, _toolName);
         End If;
 
         -- Next determine the parameter file
-        --
+
         SELECT parameter_file_name
         INTO _paramFile
         FROM t_default_psm_job_parameters
-        WHERE job_type_name = _jobTypeName AND
-              tool_name = _toolName AND
+        WHERE job_type_name = _jobTypeName::citext AND
+              tool_name = _toolName::citext AND
               dyn_met_ox = _dynMetOxEnabled AND
               stat_cys_alk = _statCysAlkEnabled AND
               dyn_sty_phos = _dynSTYPhosEnabled AND
               enabled > 0;
 
-        If Coalesce(_paramFile, '') = '' And _toolName::citext Like '%_DTARefinery' Then
+        If (Not FOUND Or Coalesce(_paramFile, '') = '') And _toolName ILike '%_DTARefinery' Then
             -- Remove '_DTARefinery' from the end of _toolName and re-query t_default_psm_job_parameters
 
             SELECT parameter_file_name
             INTO _paramFile
             FROM t_default_psm_job_parameters
-            WHERE job_type_name = _jobTypeName AND
-                tool_name = Replace(_toolName::citext, '_DTARefinery', '') AND
-                dyn_met_ox = _dynMetOxEnabled AND
-                stat_cys_alk = _statCysAlkEnabled AND
-                dyn_sty_phos = _dynSTYPhosEnabled AND
-                enabled > 0;
+            WHERE job_type_name = _jobTypeName::citext AND
+                  tool_name = Replace(_toolName::citext, '_DTARefinery', '')::citext AND
+                  dyn_met_ox = _dynMetOxEnabled AND
+                  stat_cys_alk = _statCysAlkEnabled AND
+                  dyn_sty_phos = _dynSTYPhosEnabled AND
+                  enabled > 0;
 
+            If Not FOUND Then
+                _paramFile := '';
+            End If;
         End If;
 
         If Coalesce(_paramFile, '') = '' And _toolName::citext Like '%_MzML' Then
@@ -311,24 +313,27 @@ BEGIN
             SELECT parameter_file_name
             INTO _paramFile
             FROM t_default_psm_job_parameters
-            WHERE job_type_name = _jobTypeName AND
-                tool_name = Replace(_toolName::citext, '_MzML', '') AND
+            WHERE job_type_name = _jobTypeName::citext AND
+                tool_name = Replace(_toolName::citext, '_MzML', '')::citext AND
                 dyn_met_ox = _dynMetOxEnabled AND
                 stat_cys_alk = _statCysAlkEnabled AND
                 dyn_sty_phos = _dynSTYPhosEnabled AND
                 enabled > 0;
 
+            If Not FOUND Then
+                _paramFile := '';
+            End If;
         End If;
 
         If Coalesce(_paramFile, '') = '' Then
+            _logErrors := false;
+            _returnCode := 'U5202';
+
             RAISE EXCEPTION 'Tool % with job type % does not have a default parameter file defined for Dyn Met Ox %, Stat Cys Alk %, and Dyn STY Phos %',
                         _toolName, _jobTypeName,
                         public.tinyint_to_enabled_disabled(_dynMetOxEnabled),
                         public.tinyint_to_enabled_disabled(_statCysAlkEnabled),
                         public.tinyint_to_enabled_disabled(_dynSTYPhosEnabled);
-
-
-
         End If;
 
         ---------------------------------------------------
@@ -349,18 +354,27 @@ BEGIN
         LIMIT 1;
 
         ---------------------------------------------------
-        -- Automatically switch from decoy to forward if using MSGFPlus
-        -- Add_Update_Analysis_Job_Request also does this, but it displays a warning message to the user
-        -- We don't want the warning message to appear when the user is using Create_PSM_Job_Request; instead we silently update things
+        -- Automatically switch from decoy to forward if using MS-GF+
+        --
+        -- Procedure add_update_analysis_job_request also does this, but it displays a warning message to the user
+        -- We don't want the warning message to appear when the user is using this procedure; instead we silently update things
         ---------------------------------------------------
 
-        If _toolName::citext Like 'MSGFPlus%' And _protCollOptionsList::citext Like '%decoy%' And Not _paramFile::citext SIMILAR TO '%[_]NoDecoy%' Then
+        If _toolName ILike 'MSGFPlus%' And _protCollOptionsList ILike '%decoy%' And Not _paramFile::citext SIMILAR TO '%[_]NoDecoy%' Then
             _protCollOptionsList := 'seq_direction=forward,filetype=fasta';
         End If;
 
         If _infoOnly Then
             _mode := Lower('PreviewAdd');
         End If;
+
+        ---------------------------------------------------
+        -- Procedure add_update_analysis_job_request creates a temp table named Tmp_DatasetInfo
+        -- Drop this procedure's instance to avoid an error
+        ---------------------------------------------------
+
+        DROP TABLE Tmp_DatasetInfo;
+        _dropTempTable := false;
 
         ---------------------------------------------------
         -- Now create the analysis job request
@@ -379,6 +393,7 @@ BEGIN
                         _requesterUsername   => _ownerUsername,
                         _comment             => _comment,
                         _specialProcessing   => null,
+                        _dataPackageID       => 0,
                         _state               => 'New',
                         _requestID           => _requestID,         -- Output
                         _mode                => _mode,
@@ -417,8 +432,18 @@ BEGIN
         CALL post_usage_log_entry ('create_psm_job_request', _usageMessage, _minimumUpdateInterval => 2);
     End If;
 
-    DROP TABLE IF EXISTS Tmp_DatasetInfo;
+    If _dropTempTable Then
+        DROP TABLE IF EXISTS Tmp_DatasetInfo;
+    End If;
 END
 $$;
 
-COMMENT ON PROCEDURE public.create_psm_job_request IS 'CreatePSMJobRequest';
+
+ALTER PROCEDURE public.create_psm_job_request(INOUT _requestid integer, IN _requestname text, INOUT _datasets text, IN _toolname text, IN _jobtypename text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _dynmetoxenabled integer, IN _statcysalkenabled integer, IN _dynstyphosenabled integer, IN _comment text, IN _ownerusername text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE create_psm_job_request(INOUT _requestid integer, IN _requestname text, INOUT _datasets text, IN _toolname text, IN _jobtypename text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _dynmetoxenabled integer, IN _statcysalkenabled integer, IN _dynstyphosenabled integer, IN _comment text, IN _ownerusername text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.create_psm_job_request(INOUT _requestid integer, IN _requestname text, INOUT _datasets text, IN _toolname text, IN _jobtypename text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _dynmetoxenabled integer, IN _statcysalkenabled integer, IN _dynstyphosenabled integer, IN _comment text, IN _ownerusername text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'CreatePSMJobRequest';
+
