@@ -53,6 +53,7 @@ CREATE OR REPLACE PROCEDURE public.validate_analysis_job_request_datasets(IN _au
 **          09/05/2023 mem - Swap if statement branches for readability
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          12/13/2023 mem - Update return codes to be 'U6251' through 'U6255'
 **
 *****************************************************/
 DECLARE
@@ -204,7 +205,8 @@ BEGIN
                 RAISE INFO '%', _message;
             End If;
 
-            _returnCode := 'U5201';
+            -- Note that procedure create_pending_predefined_analysis_tasks looks for error code 'U6251' and treats it as a non-critical error
+            _returnCode := 'U6251';
             RETURN;
         End If;
     End If;
@@ -225,7 +227,7 @@ BEGIN
             RAISE INFO '%', _message;
         End If;
 
-        _returnCode := 'U5202';
+        _returnCode := 'U6252';
         RETURN;
     End If;
 
@@ -242,12 +244,13 @@ BEGIN
           (    _allowNewDatasets AND NOT dataset_state_id IN (1,2,3));
 
     If Coalesce(_list, '') <> '' Then
-        _message := format('The following datasets were not in correct state: %s', _list);
+        _message := format('The following datasets were not in the correct state: %s', _list);
         If _showDebugMessages Then
             RAISE INFO '%', _message;
         End If;
 
-        _returnCode := 'U5203';
+        -- Note that procedure create_pending_predefined_analysis_tasks looks for error code 'U6253' and treats it as a non-critical error
+        _returnCode := 'U6253';
         RETURN;
     End If;
 
@@ -266,7 +269,8 @@ BEGIN
             RAISE INFO '%', _message;
         End If;
 
-        _returnCode := 'U5204';
+        -- Note that procedure create_pending_predefined_analysis_tasks looks for error code 'U6254' and treats it as a non-critical error
+        _returnCode := 'U6254';
         RETURN;
     End If;
 
@@ -295,7 +299,7 @@ BEGIN
             RAISE INFO '%', _message;
         End If;
 
-        _returnCode := 'U5205';
+        _returnCode := 'U6255';
         RETURN;
     End If;
 
