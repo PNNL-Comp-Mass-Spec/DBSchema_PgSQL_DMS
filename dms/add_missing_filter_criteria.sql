@@ -1,17 +1,14 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_missing_filter_criteria
-(
-    _filterSetID int,
-    _processGroupsWithNoCurrentCriteriaDefined boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_missing_filter_criteria(integer, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_missing_filter_criteria(IN _filtersetid integer, IN _processgroupswithnocurrentcriteriadefined boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Examines _filterSetID and makes sure all of its groups contain all of the criteria
+**      Examines the given filter set and makes sure all of its groups contain all of the criteria
 **
 **  Arguments:
 **    _filterSetID                                  Filter set ID
@@ -28,7 +25,7 @@ AS $$
 **          12/04/2012 mem - Added MSAlign_PValue and MSAlign_FDR
 **          05/07/2013 mem - Added MSGFPlus_PepQValue
 **                           Renamed MSGFDB_FDR to MSGFPlus_QValue
-**          12/15/2024 mem - Ported to PostgreSQL
+**          12/12/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -47,7 +44,7 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------
 
-    _filterSetID := Coalesce(_filterSetID, 0);
+    _filterSetID                               := Coalesce(_filterSetID, 0);
     _processGroupsWithNoCurrentCriteriaDefined := Coalesce(_processGroupsWithNoCurrentCriteriaDefined, false);
 
     _groupsProcessed := 0;
@@ -62,7 +59,8 @@ BEGIN
             SELECT Filter_Criteria_Group_ID
             INTO _groupID
             FROM t_filter_set_criteria_groups
-            WHERE filter_set_id = _filterSetID AND filter_criteria_group_id > _groupID
+            WHERE filter_set_id = _filterSetID AND
+                  filter_criteria_group_id > _groupID
             GROUP BY filter_criteria_group_id
             ORDER BY filter_criteria_group_id
             LIMIT 1;
@@ -212,9 +210,11 @@ BEGIN
                 _criterionValue := 1;
             End If;
 
-            INSERT INTO t_filter_set_criteria
-                (filter_criteria_group_id, criterion_id, criterion_comparison, Criterion_Value)
-            VALUES (_groupID, _criterionID, _criterionComparison, _criterionValue)
+            INSERT INTO t_filter_set_criteria( filter_criteria_group_id,
+                                               criterion_id,
+                                               criterion_comparison,
+                                               Criterion_Value )
+            VALUES(_groupID, _criterionID, _criterionComparison, _criterionValue);
 
             _criteriaAdded := _criteriaAdded + 1;
         END LOOP;
@@ -225,7 +225,7 @@ BEGIN
     If _groupsProcessed = 0 Then
         _message := format('No groups found for Filter Set ID %s', _filterSetID);
     Else
-        _message := format('Finished processing Filter Set ID %s; Processed %s %s and added %s criteria',
+        _message := format('Finished processing Filter Set ID %s; processed %s %s and added %s criteria',
                             _filterSetID, _groupsProcessed, public.check_plural(_groupsProcessed, 'group', 'groups'), _criteriaAdded);
     End If;
 
@@ -234,4 +234,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_missing_filter_criteria IS 'AddMissingFilterCriteria';
+
+ALTER PROCEDURE public.add_missing_filter_criteria(IN _filtersetid integer, IN _processgroupswithnocurrentcriteriadefined boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_missing_filter_criteria(IN _filtersetid integer, IN _processgroupswithnocurrentcriteriadefined boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_missing_filter_criteria(IN _filtersetid integer, IN _processgroupswithnocurrentcriteriadefined boolean, INOUT _message text, INOUT _returncode text) IS 'AddMissingFilterCriteria';
+
