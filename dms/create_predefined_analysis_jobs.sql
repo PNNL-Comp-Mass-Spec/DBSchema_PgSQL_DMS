@@ -53,6 +53,7 @@ CREATE OR REPLACE PROCEDURE public.create_predefined_analysis_jobs(IN _datasetna
 **          12/08/2023 mem - Ported to PostgreSQL
 **          12/09/2023 mem - Add parameter _showDebug
 **                         - Use append_to_text() to append messages
+**          12/13/2023 mem - Do not log an error for return codes 'U6251', 'U6253', and 'U6254' from add_update_analysis_job
 **
 *****************************************************/
 DECLARE
@@ -263,7 +264,7 @@ BEGIN
                 _message := append_to_text(_message, _newMessage, _delimiter => '; ');
             End If;
 
-            -- ResultCode U5250 means a duplicate job exists; that error can be ignored
+            -- Return code 'U5250' means a duplicate job exists; that error can be ignored
             If _returnCode <> 'U5250' Then
 
                 -- Increment _jobFailCount, but keep trying to create the other predefined jobs for this dataset
@@ -273,20 +274,26 @@ BEGIN
                     _jobFailErrorCode := _returnCode;
                 End If;
 
-                -- Append _returnCode to _message
-                _message := format('%s [%s]', _message, _returnCode);
+                If Position(_returnCode In _message) = 0 Then
+                    -- Append _returnCode to _message
+                    _message := format('%s [%s]', _message, _returnCode);
+                End If;
 
                 _logMessage := _newMessage;
 
                 If Position(_datasetName In _logMessage) = 0 Then
                     _logMessage := format('%s; Dataset %s,', _logMessage, _datasetName);
                 Else
-                    _logMessage := format('%s;', _logMessage);
+                    _logMessage := format('%s', _logMessage);
                 End If;
 
                 _logMessage := format('%s %s', _logMessage, _jobInfo.AnalysisToolName);
 
-                CALL post_log_entry ('Error', _logMessage, 'Create_Predefined_Analysis_Jobs');
+                -- Return codes 'U6251', 'U6253', and 'U6254' are warnings from validate_analysis_job_request_datasets and are non-critical errors
+
+                If Not _returnCode In ('U6251', 'U6253', 'U6254') Then
+                    CALL post_log_entry ('Error', _logMessage, 'Create_Predefined_Analysis_Jobs');
+                End If;
 
                 If _showDebug Then
                     RAISE WARNING '%', _logMessage;
