@@ -594,7 +594,7 @@ BEGIN
                         RAISE INFO '%', _message;
                     End If;
 
-                    -- Do not change this error code since procedure create_predefined_analysis_jobs
+                    -- Do not change this return code since procedure create_predefined_analysis_jobs
                     -- checks for error code 'U5250' (previously 52500)
                     _returnCode := 'U5250';
 

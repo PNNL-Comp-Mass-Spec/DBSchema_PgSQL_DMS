@@ -92,12 +92,14 @@ BEGIN
 
         If Exists (SELECT dataset_id FROM t_predefined_analysis_scheduling_queue WHERE dataset_id = _datasetID AND state = 'New') Then
             If _infoOnly Then
+                RAISE INFO '';
                 RAISE INFO 'Skip dataset since it already has a "New" entry in t_predefined_analysis_scheduling_queue: %', _datasetName;
             End If;
             RETURN;
         End If;
 
         If _infoOnly Then
+            RAISE INFO '';
             RAISE INFO 'Would add a new row to t_predefined_analysis_scheduling_queue for %', _datasetName;
             RETURN;
         End If;
