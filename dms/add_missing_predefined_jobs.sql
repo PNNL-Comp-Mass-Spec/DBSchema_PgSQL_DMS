@@ -1,32 +1,16 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_missing_predefined_jobs
-(
-    _infoOnly boolean = false,
-    _maxDatasetsToProcess int = 0,
-    _dayCountForRecentDatasets int = 30,
-    _previewOutputType text = 'Show Jobs',
-    _analysisToolNameFilter text = '',
-    _excludeDatasetsNotReleased boolean = true,
-    _excludeUnreviewedDatasets boolean = true,
-    _instrumentSkipList text = 'Agilent_GC_MS_01, TSQ_1, TSQ_3',
-    _datasetNameIgnoreExistingJobs text = '',
-    _ignoreJobsCreatedBeforeDisposition boolean = true,
-    _campaignFilter text = '',
-    _datasetIDFilterList text = '',
-    _showDebug boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_missing_predefined_jobs(boolean, integer, integer, text, text, boolean, boolean, text, text, boolean, text, text, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_missing_predefined_jobs(IN _infoonly boolean DEFAULT false, IN _maxdatasetstoprocess integer DEFAULT 0, IN _daycountforrecentdatasets integer DEFAULT 30, IN _previewoutputtype text DEFAULT 'Show Jobs'::text, IN _analysistoolnamefilter text DEFAULT ''::text, IN _excludedatasetsnotreleased boolean DEFAULT true, IN _excludeunrevieweddatasets boolean DEFAULT true, IN _instrumentskiplist text DEFAULT 'Agilent_GC_MS_01, TSQ_1, TSQ_3'::text, IN _datasetnameignoreexistingjobs text DEFAULT ''::text, IN _ignorejobscreatedbeforedisposition boolean DEFAULT true, IN _campaignfilter text DEFAULT ''::text, IN _datasetidfilterlist text DEFAULT ''::text, IN _showdebug boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Looks for Datasets that don't have predefined analysis jobs
-**      but possibly should. Calls schedule_predefined_analysis_jobs for each
+**      Looks for datasets that don't have predefined analysis jobs but possibly should; calls schedule_predefined_analysis_jobs for each
 **
-**      This procedure is intended to be run once per day to add missing jobs
-**      for datasets created within the last 30 days (but more than 12 hours ago)
+**      This procedure is intended to be run once per day to add missing jobs for datasets created within the last 30 days (but more than 12 hours ago)
 **
 **  Arguments:
 **    _infoOnly                             False to create jobs, true to preview jobs that would be created
@@ -36,11 +20,11 @@ AS $$
 **    _analysisToolNameFilter               Optional: if not blank, only considers predefines and jobs that match the given tool name (can contain wildcards)
 **    _excludeDatasetsNotReleased           When true, excludes datasets with a rating of -5, -6, or -7 (we always exclude datasets with a rating of -1, and -2)
 **    _excludeUnreviewedDatasets            When true, excludes datasets with a rating of -10
-**    _instrumentSkipList                   Comma-separated list of instruments to skip
-**    _datasetNameIgnoreExistingJobs        If defined, we'll create predefined jobs for this dataset even if it has existing jobs
+**    _instrumentSkipList                   Optional: comma-separated list of instruments to skip
+**    _datasetNameIgnoreExistingJobs        If defined, create predefined jobs for this dataset even if it has existing jobs
 **    _ignoreJobsCreatedBeforeDisposition   When true, ignore jobs created before the dataset was dispositioned
 **    _campaignFilter                       Optional: if not blank, filters on the given campaign name
-**    _datasetIDFilterList                  Comma-separated list of Dataset IDs to process
+**    _datasetIDFilterList                  Optional: comma-separated list of Dataset IDs to process
 **    _showDebug                            When true, show additional debug information
 **    _message                              Output message
 **    _returnCode                           Return code
@@ -64,7 +48,8 @@ AS $$
 **          03/17/2017 mem - Pass this procedure's name to Parse_Delimited_List
 **          03/25/2020 mem - Add parameter _datasetIDFilterList and add support for _showDebug
 **          11/28/2022 mem - Always log an error if schedule_predefined_analysis_jobs has a non-zero return code
-**          12/15/2024 mem - Ported to PostgreSQL
+**          12/13/2023 mem - Call procedure create_pending_predefined_analysis_tasks to create jobs
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -139,15 +124,15 @@ BEGIN
         Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         Dataset_ID int NOT NULL,
         Process_Dataset boolean
-    )
+    );
 
     CREATE TEMP TABLE Tmp_DSRating_Exclusion_List (
         Rating int
-    )
+    );
 
     CREATE TEMP TABLE Tmp_DatasetID_Filter_List (
         Dataset_ID int
-    )
+    );
 
     -- Populate Tmp_DSRating_Exclusion_List
     INSERT INTO Tmp_DSRating_Exclusion_List (Rating) Values (-1);        -- No Data (Blank/Bad)
@@ -170,9 +155,8 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Find datasets that were created within the last _dayCountForRecentDatasets days
-    -- (but over 12 hours ago) that do not have analysis jobs
-    -- Also excludes datasets with an undesired state or undesired rating
+    -- Find datasets that were created within the last _dayCountForRecentDatasets days (but over 12 hours ago) that do not have any analysis jobs
+    -- Exclude datasets with an undesired state or undesired rating
     -- Optionally only matches analysis tools with names matching _analysisToolNameFilter
     ---------------------------------------------------
 
@@ -180,7 +164,7 @@ BEGIN
     -- that has an active predefined job
     -- Optionally filter on campaign
     --
-    INSERT INTO Tmp_DatasetsToProcess( dataset_id, Process_Dataset )
+    INSERT INTO Tmp_DatasetsToProcess ( Dataset_ID, Process_Dataset )
     SELECT DISTINCT DS.dataset_id, true AS Process_Dataset
     FROM t_dataset DS
          INNER JOIN t_dataset_type_name DSType
@@ -191,21 +175,21 @@ BEGIN
            ON DS.exp_id = E.exp_id
          INNER JOIN t_campaign C
            ON E.campaign_id = C.campaign_id
-    WHERE (NOT DS.dataset_rating_id IN (SELECT Rating FROM Tmp_DSRating_Exclusion_List)) AND
-          (DS.dataset_state_id = 3) AND
-          (_campaignFilter = '' Or C.campaign Like _campaignFilter) AND
-          (NOT DSType.Dataset_Type IN ('tracking')) AND
-          (NOT E.experiment in ('tracking')) AND
-          (DS.created BETWEEN CURRENT_TIMESTAMP - make_interval(days => _dayCountForRecentDatasets) AND
-                              CURRENT_TIMESTAMP - INTERVAL '12 HOURS') AND
+    WHERE NOT DS.dataset_rating_id IN (SELECT Rating FROM Tmp_DSRating_Exclusion_List) AND
+          DS.dataset_state_id = 3 AND
+          (_campaignFilter = '' Or C.campaign ILIKE _campaignFilter) AND
+          NOT DSType.Dataset_Type IN ('tracking') AND
+          NOT E.experiment in ('tracking') AND
+          DS.created BETWEEN CURRENT_TIMESTAMP - make_interval(days => _dayCountForRecentDatasets) AND
+                             CURRENT_TIMESTAMP - INTERVAL '12 HOURS' AND
           InstName.instrument_class IN ( SELECT DISTINCT InstClass.instrument_class
-                                 FROM t_predefined_analysis PA
-                                      INNER JOIN t_instrument_class InstClass
-                                        ON PA.instrument_class_criteria = InstClass.instrument_class
-                                 WHERE (PA.enabled <> 0) AND
-                                       (_analysisToolNameFilter = '' OR
-                                        PA.analysis_tool_name LIKE _analysisToolNameFilter) )
-    ORDER BY DS.dataset_id
+                                         FROM t_predefined_analysis PA
+                                              INNER JOIN t_instrument_class InstClass
+                                                ON PA.instrument_class_criteria = InstClass.instrument_class
+                                         WHERE PA.enabled <> 0 AND
+                                               (_analysisToolNameFilter = '' OR
+                                                PA.analysis_tool_name ILIKE _analysisToolNameFilter) )
+    ORDER BY DS.dataset_id;
 
     _formatSpecifier := '%-15s %-25s %-10s %-20s %-8s %-9s %-7s %-80s %-60s';
 
@@ -233,7 +217,7 @@ BEGIN
                                  '------------------------------------------------------------'
                                 );
 
-    If _infoOnly And _showDebug And Exists (SELECT * FROM Tmp_DatasetID_Filter_List) Then
+    If _infoOnly And _showDebug And Exists (SELECT Dataset_ID FROM Tmp_DatasetID_Filter_List) Then
 
         RAISE INFO '';
         RAISE INFO '%', _infoHead;
@@ -279,18 +263,18 @@ BEGIN
     -- Filter on _analysisToolNameFilter if not empty
 
     UPDATE Tmp_DatasetsToProcess DTP
-    Set Process_Dataset = false
+    SET Process_Dataset = false
     FROM ( SELECT AJ.dataset_id AS Dataset_ID
            FROM t_analysis_job AJ
                 INNER JOIN t_analysis_tool Tool
                   ON AJ.analysis_tool_id = Tool.analysis_tool_id
-           WHERE (_analysisToolNameFilter = '' OR Tool.analysis_tool LIKE _analysisToolNameFilter) AND
+           WHERE (_analysisToolNameFilter = '' OR Tool.analysis_tool ILIKE _analysisToolNameFilter) AND
                  (Not _ignoreJobsCreatedBeforeDisposition OR AJ.dataset_unreviewed = 0 )
           ) JL
     WHERE DTP.dataset_id = JL.dataset_id AND
           DTP.Process_Dataset;
 
-    If _infoOnly And _showDebug And EXISTS (SELECT * FROM Tmp_DatasetID_Filter_List) Then
+    If _infoOnly And _showDebug And EXISTS (SELECT Dataset_ID FROM Tmp_DatasetID_Filter_List) Then
 
         RAISE INFO '';
         RAISE INFO '%', _infoHead;
@@ -336,14 +320,15 @@ BEGIN
     -- This check also compares the dataset's current rating to the rating it had when previously processed
 
     UPDATE Tmp_DatasetsToProcess DTP
-    Set Process_Dataset = false
-    FROM t_dataset DS INNER JOIN
-         t_predefined_analysis_scheduling_queue_history QH
-         ON DS.dataset_id = QH.dataset_id AND DS.dataset_rating_id = QH.dataset_rating_id
-    WHERE DTP.dataset_id =DS.dataset_id AND
+    SET Process_Dataset = false
+    FROM t_dataset DS
+         INNER JOIN t_predefined_analysis_scheduling_queue_history QH
+           ON DS.dataset_id = QH.dataset_id AND
+              DS.dataset_rating_id = QH.dataset_rating_id
+    WHERE DTP.dataset_id = DS.dataset_id AND
           DTP.Process_Dataset;
 
-    If _infoOnly And _showDebug And EXISTS (SELECT * FROM Tmp_DatasetID_Filter_List) Then
+    If _infoOnly And _showDebug And EXISTS (SELECT Dataset_ID FROM Tmp_DatasetID_Filter_List) Then
 
         RAISE INFO '';
         RAISE INFO '%', _infoHead;
@@ -385,10 +370,10 @@ BEGIN
 
     End If;
 
-    If Exists (SELECT * FROM Tmp_DatasetID_Filter_List) Then
+    If Exists (SELECT Dataset_ID FROM Tmp_DatasetID_Filter_List) Then
         -- Exclude datasets not in Tmp_DatasetID_Filter_List
         UPDATE Tmp_DatasetsToProcess
-        Set Process_Dataset = false
+        SET Process_Dataset = false
         WHERE Process_Dataset And
               NOT Dataset_ID IN (SELECT Dataset_ID FROM Tmp_DatasetID_Filter_List);
     End If;
@@ -401,17 +386,25 @@ BEGIN
              INNER JOIN t_instrument_name InstName
                ON InstName.instrument_id = DS.instrument_id
              INNER JOIN public.parse_delimited_list(_instrumentSkipList) AS ExclusionList
-               ON InstName.instrument = ExclusionList.Value;
-        WHERE Tmp_DatasetsToProcess.dataset_id = DS.dataset_id;
+               ON InstName.instrument = ExclusionList.Value::citext
+        WHERE Process_Dataset AND
+              Tmp_DatasetsToProcess.dataset_id = DS.dataset_id;
     End If;
 
-    -- Add dataset _datasetNameIgnoreExistingJobs
+    -- Add dataset _datasetNameIgnoreExistingJobs, if defined
     If _datasetNameIgnoreExistingJobs <> '' Then
-        UPDATE Tmp_DatasetsToProcess
+        UPDATE Tmp_DatasetsToProcess AS Target
         SET Process_Dataset = true
         FROM t_dataset DS
         WHERE Target.dataset_id = DS.dataset_id AND
-              DS.dataset = _datasetNameIgnoreExistingJobs;
+              DS.dataset = _datasetNameIgnoreExistingJobs::citext;
+
+        If Not FOUND Then
+            INSERT INTO Tmp_DatasetsToProcess ( Dataset_ID, Process_Dataset )
+            SELECT DS.dataset_id, true AS Process_Dataset
+            FROM t_dataset DS
+            WHERE DS.dataset = _datasetNameIgnoreExistingJobs::citext;
+        End If;
     End If;
 
     If _infoOnly Then
@@ -466,7 +459,7 @@ BEGIN
                        public.timestamp_text(DS.created) AS Created,
                        DS.dataset_state_id AS StateID,
                        DS.dataset_rating_id AS RatingID,
-                       DTP.Process_Dataset AS Dataset,
+                       DTP.Process_Dataset AS Process,
                        DS.dataset,
                        DS.comment
                 FROM Tmp_DatasetsToProcess DTP
@@ -499,6 +492,7 @@ BEGIN
 
     If Not Exists (SELECT COUNT(*) FROM Tmp_DatasetsToProcess WHERE Process_Dataset) Then
         _message := 'All recent (valid) datasets with potential predefined jobs already have existing analysis jobs';
+
         If _infoOnly Then
             RAISE INFO '%', _message;
         End If;
@@ -543,7 +537,7 @@ BEGIN
 
                 RAISE INFO '';
 
-                _formatSpecifier := '%-80s %-5s %-5s %-5s %-12s %-8s %-18s %-11s %-10s %-10s %-25s %-25s %-20s %-20s %-20s %-25s %-25s %-30s %-30s %-20s %-30s %-30s %-20s %-20s %-20s %-20s %-20s %-15s %-15s %-30s %-30s %-30s %-60s %-30s %-50s %-50s %-8s';
+                _formatSpecifier := '%-80s %-5s %-5s %-5s %-12s %-8s %-18s %-11s %-6s %-13s %-115s %-25s %-25s %-20s %-20s %-25s %-25s %-25s %-25s %-20s %-25s %-30s %-20s %-20s %-20s %-20s %-20s %-20s %-24s %-15s %-15s %-60s %-60s %-30s %-60s %-40s %-50s %-8s %-200s';
 
                 _infoHead := format(_formatSpecifier,
                                     'Dataset',
@@ -565,11 +559,13 @@ BEGIN
                                     'Campaign_Exclusion',
                                     'Experiment_Criteria',
                                     'Experiment_Exclusion',
+                                    'Exp_Comment_Criteria',
                                     'Organism_Criteria',
                                     'Dataset_Criteria',
                                     'Dataset_Exclusion',
                                     'Dataset_Type',
-                                    'Exp_Comment_Criteria',
+                                    'Scan_Type_Criteria',
+                                    'Scan_Type_Exclusion',
                                     'Labelling_Inclusion',
                                     'Labelling_Exclusion',
                                     'Separation_Type_Criteria',
@@ -579,11 +575,12 @@ BEGIN
                                     'Settings_File',
                                     'Organism',
                                     'Protein_Collections',
-                                    'Protein_Options'
-                                    'Organism_DB'
+                                    'Protein_Options',
+                                    'Organism_DB',
+                                    'Priority',
                                     'Special_Processing'
-                                    'Priority'
                                    );
+
 
                 _infoHeadSeparator := format(_formatSpecifier,
                                              '--------------------------------------------------------------------------------',
@@ -594,35 +591,37 @@ BEGIN
                                              '--------',
                                              '------------------',
                                              '-----------',
-                                             '----------',
-                                             '----------',
+                                             '------',
+                                             '-------------',
+                                             '-------------------------------------------------------------------------------------------------------------------',
                                              '-------------------------',
                                              '-------------------------',
                                              '--------------------',
                                              '--------------------',
-                                             '--------------------',
                                              '-------------------------',
                                              '-------------------------',
+                                             '-------------------------',
+                                             '-------------------------',
+                                             '--------------------',
+                                             '-------------------------',
                                              '------------------------------',
-                                             '------------------------------',
-                                             '--------------------',
-                                             '------------------------------',
-                                             '------------------------------',
                                              '--------------------',
                                              '--------------------',
                                              '--------------------',
                                              '--------------------',
                                              '--------------------',
+                                             '--------------------',
+                                             '------------------------',
                                              '---------------',
                                              '---------------',
-                                             '------------------------------',
-                                             '------------------------------',
-                                             '------------------------------',
+                                             '------------------------------------------------------------',
                                              '------------------------------------------------------------',
                                              '------------------------------',
+                                             '------------------------------------------------------------',
+                                             '----------------------------------------',
                                              '--------------------------------------------------',
-                                             '--------------------------------------------------',
-                                             '--------'
+                                             '--------',
+                                             '--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------'
                                             );
 
                 RAISE INFO '%', _infoHead;
@@ -648,11 +647,13 @@ BEGIN
                            Campaign_Exclusion,
                            Experiment_Criteria,
                            Experiment_Exclusion,
+                           Exp_Comment_Criteria,
                            Organism_Criteria,
                            Dataset_Criteria,
                            Dataset_Exclusion,
                            Dataset_Type,
-                           Exp_Comment_Criteria,
+                           Scan_Type_Criteria,
+                           Scan_Type_Exclusion,
                            Labelling_Inclusion,
                            Labelling_Exclusion,
                            Separation_Type_Criteria,
@@ -664,12 +665,12 @@ BEGIN
                            Protein_Collections,
                            Protein_Options,
                            Organism_DB,
-                           Special_Processing,
-                           Priority
+                           Priority,
+                           Special_Processing
                     FROM predefined_analysis_rules (
                                 _datasetName,
                                 _excludeDatasetsNotReleased => _excludeDatasetsNotReleased,
-                                _analysisToolNameFilter => _analysisToolNameFilter);
+                                _analysisToolNameFilter => _analysisToolNameFilter)
                     ORDER BY Step, Level, Seq
                 LOOP
                     _infoData := format(_formatSpecifier,
@@ -692,11 +693,13 @@ BEGIN
                                         _previewData.Campaign_Exclusion,
                                         _previewData.Experiment_Criteria,
                                         _previewData.Experiment_Exclusion,
+                                        _previewData.Exp_Comment_Criteria,
                                         _previewData.Organism_Criteria,
                                         _previewData.Dataset_Criteria,
                                         _previewData.Dataset_Exclusion,
                                         _previewData.Dataset_Type,
-                                        _previewData.Exp_Comment_Criteria,
+                                        _previewData.Scan_Type_Criteria,
+                                        _previewData.Scan_Type_Exclusion,
                                         _previewData.Labelling_Inclusion,
                                         _previewData.Labelling_Exclusion,
                                         _previewData.Separation_Type_Criteria,
@@ -708,8 +711,8 @@ BEGIN
                                         _previewData.Protein_Collections,
                                         _previewData.Protein_Options,
                                         _previewData.Organism_DB,
-                                        _previewData.Special_Processing,
-                                        _previewData.Priority
+                                        _previewData.Priority,
+                                        _previewData.Special_Processing
                                        );
 
                     RAISE INFO '%', _infoData;
@@ -723,7 +726,7 @@ BEGIN
 
                 RAISE INFO '';
 
-                _formatSpecifier := '%-80s %-8s %-25s %-60s %-50s %-60s %-50s %-80s %-30s %-15s %-20s %-26s %-10s %-16s %-20s';
+                _formatSpecifier := '%-80s %-8s %-25s %-60s %-60s %-60s %-50s %-80s %-40s %-15s %-20s %-18s %-16s %-200s';
 
                 _infoHead := format(_formatSpecifier,
                                     'Dataset_Name',
@@ -737,8 +740,7 @@ BEGIN
                                     'Protein_Options_List',
                                     'Owner_Username',
                                     'Comment',
-                                    'Associated_Processor_Group',
-                                    'Num_Jobs',
+                                    'Existing_Job_Count',
                                     'Propagation_Mode',
                                     'Special_Processing'
                                    );
@@ -748,48 +750,46 @@ BEGIN
                                              '--------',
                                              '-------------------------',
                                              '------------------------------------------------------------',
-                                             '--------------------------------------------------',
+                                             '------------------------------------------------------------',
                                              '------------------------------------------------------------',
                                              '--------------------------------------------------',
                                              '--------------------------------------------------------------------------------',
-                                             '------------------------------',
+                                             '----------------------------------------',
                                              '---------------',
                                              '--------------------',
-                                             '--------------------------',
-                                             '----------',
+                                             '------------------',
                                              '----------------',
-                                             '--------------------'
+                                             '--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------'
                                             );
 
                 RAISE INFO '%', _infoHead;
                 RAISE INFO '%', _infoHeadSeparator;
 
                 FOR _previewData IN
-                    SELECT DatasetName,
+                    SELECT Dataset,
                            Priority,
-                           AnalysisToolName,
-                           ParamFileName,
-                           SettingsFileName,
-                           OrganismDBName,
-                           OrganismName,
-                           ProteinCollectionList,
-                           ProteinOptionsList,
-                           OwnerUsername,
+                           Analysis_Tool_Name AS AnalysisToolName,
+                           Param_File_Name AS ParamFileName,
+                           Settings_File_Name AS SettingsFileName,
+                           Organism_DB_Name AS OrganismDBName,
+                           Organism_Name AS OrganismName,
+                           Protein_Collection_List AS ProteinCollectionList,
+                           Protein_Options_List AS ProteinOptionsList,
+                           Owner_Username AS OwnerUsername,
                            Comment,
-                           AssociatedProcessorGroup,
-                           NumJobs,
-                           PropagationMode,
-                           SpecialProcessing
-                    FROM predefined_analysis_jobs (
+                           Existing_Job_Count AS ExistingJobCount,
+                           Propagation_Mode AS PropagationMode,
+                           Special_Processing AS SpecialProcessing
+                    FROM public.predefined_analysis_jobs (
                                 _datasetName,
                                 _raiseErrorMessages => true,
                                 _excludeDatasetsNotReleased => _excludeDatasetsNotReleased,
                                 _createJobsForUnreviewedDatasets => true,
-                                _analysisToolNameFilter => _analysisToolNameFilter);
-                    ORDER BY DatasetName, AnalysisToolName
+                                _analysisToolNameFilter => _analysisToolNameFilter)
+                    ORDER BY Dataset, AnalysisToolName
                 LOOP
                     _infoData := format(_formatSpecifier,
-                                        _previewData.DatasetName,
+                                        _previewData.Dataset,
                                         _previewData.Priority,
                                         _previewData.AnalysisToolName,
                                         _previewData.ParamFileName,
@@ -800,8 +800,7 @@ BEGIN
                                         _previewData.ProteinOptionsList,
                                         _previewData.OwnerUsername,
                                         _previewData.Comment,
-                                        _previewData.AssociatedProcessorGroup,
-                                        _previewData.NumJobs,
+                                        _previewData.ExistingJobCount,
                                         _previewData.PropagationMode,
                                         _previewData.SpecialProcessing
                                        );
@@ -823,44 +822,58 @@ BEGIN
                             _returnCode                 => _returnCode);    -- Output
 
             If _returnCode = '' And Not _infoOnly Then
-                -- See if jobs were actually added by querying t_analysis_job
 
-                _jobCountAdded := 0;
+                -- If the dataset has a row with state "New" in T_Predefined_Analysis_Scheduling_Queue,
+                -- use create_pending_predefined_analysis_tasks to process the predefine rules and possibly create jobs
 
-                SELECT COUNT(job)
-                INTO _jobCountAdded
-                FROM t_analysis_job
-                WHERE dataset_id = _datasetID AND
-                      created >= _startDate;
+                If Exists (SELECT item FROM t_predefined_analysis_scheduling_queue WHERE dataset_id = _datasetID And State = 'New') Then
 
-                If _jobCountAdded > 0 Then
-                    UPDATE t_analysis_job
-                    SET comment = public.append_to_text(comment, '(missed predefine)', _delimiter => ' ')
+                    CALL public.create_pending_predefined_analysis_tasks (
+                                _maxDatasetsToProcess => 0,
+                                _datasetID            => _datasetID,
+                                _infoOnly             => false,
+                                _message              => _message,      -- Output
+                                _returnCode           => _returnCode);  -- Output
+
+                    -- See if jobs were actually added by querying t_analysis_job
+
+                    _jobCountAdded := 0;
+
+                    SELECT COUNT(job)
+                    INTO _jobCountAdded
+                    FROM t_analysis_job
                     WHERE dataset_id = _datasetID AND
                           created >= _startDate;
-                    --
-                    GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-                    If _updateCount <> _jobCountAdded Then
-                        _message := format('Added %s missing predefined analysis job(s) for dataset %s, but updated the comment for %s job(s); mismatch is unexpected',
-                                            _jobCountAdded, _datasetName, _updateCount);
+                    If _jobCountAdded > 0 Then
+                        UPDATE t_analysis_job
+                        SET comment = public.append_to_text(comment, '(missed predefine)', _delimiter => ' ')
+                        WHERE dataset_id = _datasetID AND
+                              created >= _startDate;
+                        --
+                        GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-                        CALL post_log_entry ('Error', _message, 'Add_Missing_Predefined_Jobs');
+                        If _updateCount <> _jobCountAdded Then
+                            _message := format('Added %s missing predefined analysis job(s) for dataset %s, but updated the comment for %s job(s); mismatch is unexpected',
+                                                _jobCountAdded, _datasetName, _updateCount);
+
+                            CALL post_log_entry ('Error', _message, 'Add_Missing_Predefined_Jobs');
+                        End If;
+
+                        _message := format('Added %s missing predefined analysis %s for dataset %s',
+                                            _jobCountAdded,
+                                            public.check_plural(_jobCountAdded, 'job', 'jobs'),
+                                            _datasetName);
+
+                        CALL post_log_entry ('Warning', _message, 'Add_Missing_Predefined_Jobs');
+
+                        _datasetsWithNewJobs := _datasetsWithNewJobs + 1;
                     End If;
-
-                    _message := format('Added %s missing predefined analysis %s for dataset %s',
-                                        _jobCountAdded,
-                                        public.check_plural(_jobCountAdded, 'job', 'jobs'),
-                                        _datasetName);
-
-                    CALL post_log_entry ('Warning', _message, 'Add_Missing_Predefined_Jobs');
-
-                    _datasetsWithNewJobs := _datasetsWithNewJobs + 1;
                 End If;
 
             ElsIf Not _infoOnly Then
                 _message := format('Error calling schedule_predefined_analysis_jobs for dataset %s; return code %s',
-                                    _datasetName, _returnCode);
+                                   _datasetName, _returnCode);
 
                 CALL post_log_entry ('Error', _message, 'Add_Missing_Predefined_Jobs');
 
@@ -883,11 +896,6 @@ BEGIN
                 _returnCode := _sqlState;
             End If;
         END;
-
-        If Not _infoOnly Then
-            -- Commit the newly created jobs
-            COMMIT;
-        End If;
 
         _datasetsProcessed := _datasetsProcessed + 1;
 
@@ -912,7 +920,16 @@ BEGIN
     DROP TABLE IF EXISTS Tmp_DatasetsToProcess;
     DROP TABLE IF EXISTS Tmp_DSRating_Exclusion_List;
     DROP TABLE IF EXISTS Tmp_DatasetID_Filter_List;
+
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_missing_predefined_jobs IS 'AddMissingPredefinedJobs';
+
+ALTER PROCEDURE public.add_missing_predefined_jobs(IN _infoonly boolean, IN _maxdatasetstoprocess integer, IN _daycountforrecentdatasets integer, IN _previewoutputtype text, IN _analysistoolnamefilter text, IN _excludedatasetsnotreleased boolean, IN _excludeunrevieweddatasets boolean, IN _instrumentskiplist text, IN _datasetnameignoreexistingjobs text, IN _ignorejobscreatedbeforedisposition boolean, IN _campaignfilter text, IN _datasetidfilterlist text, IN _showdebug boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_missing_predefined_jobs(IN _infoonly boolean, IN _maxdatasetstoprocess integer, IN _daycountforrecentdatasets integer, IN _previewoutputtype text, IN _analysistoolnamefilter text, IN _excludedatasetsnotreleased boolean, IN _excludeunrevieweddatasets boolean, IN _instrumentskiplist text, IN _datasetnameignoreexistingjobs text, IN _ignorejobscreatedbeforedisposition boolean, IN _campaignfilter text, IN _datasetidfilterlist text, IN _showdebug boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_missing_predefined_jobs(IN _infoonly boolean, IN _maxdatasetstoprocess integer, IN _daycountforrecentdatasets integer, IN _previewoutputtype text, IN _analysistoolnamefilter text, IN _excludedatasetsnotreleased boolean, IN _excludeunrevieweddatasets boolean, IN _instrumentskiplist text, IN _datasetnameignoreexistingjobs text, IN _ignorejobscreatedbeforedisposition boolean, IN _campaignfilter text, IN _datasetidfilterlist text, IN _showdebug boolean, INOUT _message text, INOUT _returncode text) IS 'AddMissingPredefinedJobs';
+
