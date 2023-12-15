@@ -1,14 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_new_freezer
-(
-    _sourceFreezerTag text = '2240B',
-    _newFreezerTag text = '1215A',
-    _infoOnly boolean = true,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_new_freezer(text, text, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_new_freezer(IN _sourcefreezertag text DEFAULT '2240B'::text, IN _newfreezertag text DEFAULT '1215A'::text, IN _infoonly boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -28,7 +24,7 @@ AS $$
 **  Date:   04/22/2015 mem - Initial release
 **          03/31/2016 mem - Switch to using Freezer tags (and remove parameter _newTagBase)
 **          11/13/2017 mem - Skip computed column Tag when copying data
-**          12/15/2024 mem - Ported to PostgreSQL
+**          12/14/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -74,7 +70,7 @@ BEGIN
     -- Check for existing data
     ---------------------------------------------------
 
-    If Exists (SELECT freezer_tag FROM t_material_locations WHERE freezer_tag = _newFreezerTag) Then
+    If Exists (SELECT freezer_tag FROM t_material_locations WHERE freezer_tag = _newFreezerTag::citext) Then
         _message := format('Cannot add ''%s'' because it already exists in t_material_locations', _newFreezerTag);
         RAISE WARNING '%', _message;
 
@@ -82,7 +78,7 @@ BEGIN
         RETURN;
     End If;
 
-    If Not Exists (SELECT freezer_tag FROM t_material_locations WHERE freezer_tag = _sourceFreezerTag) Then
+    If Not Exists (SELECT freezer_tag FROM t_material_locations WHERE freezer_tag = _sourceFreezerTag::citext) Then
         _message := format('Source freezer tag not found in t_material_locations: %s', _sourceFreezerTag);
         RAISE WARNING '%', _message;
 
@@ -90,7 +86,7 @@ BEGIN
         RETURN;
     End If;
 
-    If Not Exists (SELECT freezer_tag FROM t_material_freezers WHERE freezer_tag = _newFreezerTag) Then
+    If Not Exists (SELECT freezer_tag FROM t_material_freezers WHERE freezer_tag = _newFreezerTag::citext) Then
         _message := format('New freezer tag not found in t_material_freezers: %s', _newFreezerTag);
         RAISE WARNING '%', _message;
 
@@ -113,7 +109,7 @@ BEGIN
         Barcode         text NULL,
         Comment         text NULL,
         Container_Limit int NOT NULL
-    )
+    );
 
     INSERT INTO Tmp_T_Material_Locations( freezer_tag,
                                           shelf,
@@ -137,20 +133,20 @@ BEGIN
     WHERE (freezer_tag = _sourceFreezerTag) AND
           (NOT location_id IN ( SELECT location_id
                                 FROM t_material_locations
-                                WHERE freezer_tag = _sourceFreezerTag AND
-                                      status = 'inactive' AND
+                                WHERE freezer_tag = _sourceFreezerTag::citext AND
+                                      status = 'Inactive' AND
                                       col = 'na'
                                )
            )
-    ORDER BY shelf, rack, row, Col
+    ORDER BY shelf, rack, row, col;
 
     ---------------------------------------------------
-    -- Preview or store the rows
+    -- Preview or store the data
     ---------------------------------------------------
 
     If _infoOnly Then
         -- Show a summary of each shelf that would be created
-        RAISE INFO ''
+        RAISE INFO '';
         RAISE INFO 'Shelves that would be created for freezer %', _newFreezerTag;
 
         FOR _shelfInfo IN
@@ -163,7 +159,7 @@ BEGIN
             GROUP BY Shelf
             ORDER BY Shelf
         LOOP
-            RAISE INFO 'Shelf %, rack % to %, row % to %, column % to %',
+            RAISE INFO 'Shelf %, racks % to %, rows % to %, columns % to %',
                             _shelfInfo.Shelf,
                             _shelfInfo.Rack_Min,
                             _shelfInfo.Rack_Max,
@@ -172,35 +168,38 @@ BEGIN
                             _shelfInfo.Col_Min,
                             _shelfInfo.Col_Max;
         END LOOP;
-    Else
-        INSERT INTO t_material_locations( freezer_tag,
-                                          shelf,
-                                          rack,
-                                          row,
-                                          col,
-                                          status,
-                                          barcode,
-                                          comment,
-                                          container_limit )
-        SELECT freezer_tag,
-               shelf,
-               rack,
-               row,
-               col,
-               status,
-               barcode,
-               comment,
-               container_limit
-        FROM Tmp_T_Material_Locations
-        ORDER BY shelf, rack, row, Col
-        --
-        GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
-        _message := format('Added %s rows to t_material_locations for freezer %s by copying freezer_tag %s',
-                           _insertCount, _newFreezerTag, _sourceFreezerTag);
-
-        CALL post_log_entry ('Normal', _message, 'Add_New_Freezer');
+        DROP TABLE Tmp_T_Material_Locations;
+        RETURN;
     End If;
+
+    INSERT INTO t_material_locations( freezer_tag,
+                                      shelf,
+                                      rack,
+                                      row,
+                                      col,
+                                      status,
+                                      barcode,
+                                      comment,
+                                      container_limit )
+    SELECT freezer_tag,
+           shelf,
+           rack,
+           row,
+           col,
+           status,
+           barcode,
+           comment,
+           container_limit
+    FROM Tmp_T_Material_Locations
+    ORDER BY shelf, rack, row, Col;
+    --
+    GET DIAGNOSTICS _insertCount = ROW_COUNT;
+
+    _message := format('Added %s rows to t_material_locations for freezer %s by copying freezer tag %s',
+                       _insertCount, _newFreezerTag, _sourceFreezerTag);
+
+    CALL post_log_entry ('Normal', _message, 'Add_New_Freezer');
 
     ---------------------------------------------------
     -- Done
@@ -210,4 +209,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_new_freezer IS 'AddNewFreezer';
+
+ALTER PROCEDURE public.add_new_freezer(IN _sourcefreezertag text, IN _newfreezertag text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_new_freezer(IN _sourcefreezertag text, IN _newfreezertag text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_new_freezer(IN _sourcefreezertag text, IN _newfreezertag text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'AddNewFreezer';
+
