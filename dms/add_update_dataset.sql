@@ -439,13 +439,13 @@ BEGIN
             -- Cannot update a non-existent entry
             --
             If _mode::citext In ('update', 'check_update') Then
-                RAISE EXCEPTION 'Cannot update: Dataset % is not in database', _datasetName;
+                RAISE EXCEPTION 'Cannot update: Dataset % is not in the database', _datasetName;
             End If;
         Else
             -- Cannot create an entry that already exists
             --
             If _addingDataset Then
-                RAISE EXCEPTION 'Cannot add dataset % since already in database', _datasetName;
+                RAISE EXCEPTION 'Cannot add dataset % since already in the database', _datasetName;
             End If;
 
             -- Do not allow a rating change from 'Unreviewed' to any other rating within this procedure
