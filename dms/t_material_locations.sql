@@ -46,6 +46,12 @@ ALTER TABLE ONLY public.t_material_locations
     ADD CONSTRAINT pk_t_material_locations PRIMARY KEY (location_id);
 
 --
+-- Name: ix_t_material_locations_freezer_tag; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_material_locations_freezer_tag ON public.t_material_locations USING btree (freezer_tag);
+
+--
 -- Name: ix_t_material_locations_id_include_location; Type: INDEX; Schema: public; Owner: d3l243
 --
 
