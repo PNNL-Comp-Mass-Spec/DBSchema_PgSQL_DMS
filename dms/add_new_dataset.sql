@@ -1,22 +1,16 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_new_dataset
-(
-    _xmlDoc text,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _logDebugMessages boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_new_dataset(text, text, text, text, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_new_dataset(IN _xmldoc text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _logdebugmessages boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new dataset entry to DMS database from contents of XML
-**
+**      Adds a new dataset entry to DMS database using metadata in the given XML
 **      This procedure is called by the Data Import Manager (DIM) while processing dataset trigger files
-**
-**      This procedure extracts the metadata from the XML then calls add_update_dataset
+**      This procedure extracts the metadata from the XML then calls add_update_dataset()
 **
 **      Example XML:
 **
@@ -87,7 +81,7 @@ AS $$
 **          08/25/2022 mem - Use new column name in T_Log_Entries
 **          11/25/2022 mem - Rename variable and use new parameter name when calling add_update_dataset
 **          02/27/2023 mem - Show parsed values when mode is 'check_add' or 'check_update'
-**          12/15/2024 mem - Ported to PostgreSQL
+**          12/14/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -107,14 +101,14 @@ DECLARE
     _separationType         text := '';
     _lcCartName             text := '';
     _lcCartConfig           text := '';
-    _lcColumn               text := '';
+    _lcColumnName           text := '';
     _wellplateName          text := '';
     _wellNumber             text := '';
     _datasetType            text := '';
     _operatorUsername       text := '';
     _comment                text := '';
     _interestRating         text := '';     -- Dataset rating name (tracked by column dataset_rating in t_dataset_rating_name)
-    _requestID              int  := 0 ;     -- Request ID; this might get updated by add_update_dataset
+    _requestID              int  := 0 ;     -- Requested run ID; this might get updated by add_update_dataset
     _workPackage            text := '';
     _emslUsageType          text := '';
     _emslProposalID         text := '';
@@ -174,7 +168,7 @@ BEGIN
                           PASSING Src.rooted_xml
                           COLUMNS name citext PATH '@Name',
                                   value citext PATH '@Value')
-             ) XmlQ;
+             ) XmlQ
     WHERE NOT XmlQ.name IS NULL;
 
     If _mode = 'parse_only' Then
@@ -217,115 +211,115 @@ BEGIN
     -- Get arguments from parsed parameters
     ---------------------------------------------------
 
-    SELECT ParamValue
+    SELECT Trim(ParamValue)
     INTO _datasetName
     FROM Tmp_Parameters
     WHERE ParamName = 'Dataset Name';
 
-    SELECT ParamValue
+    SELECT Trim(ParamValue)
     INTO _experimentName
     FROM Tmp_Parameters
     WHERE ParamName = 'Experiment Name';
 
-    SELECT ParamValue
+    SELECT Trim(ParamValue)
     INTO _instrumentName
     FROM Tmp_Parameters
     WHERE ParamName = 'Instrument Name';
 
-    SELECT ParamValue
+    SELECT Trim(ParamValue)
     INTO _captureSubdirectory
     FROM Tmp_Parameters
     WHERE ParamName IN ('Capture Subfolder', 'Capture Subdirectory');
 
-    SELECT ParamValue
+    SELECT Trim(ParamValue)
     INTO _separationType
     FROM Tmp_Parameters
     WHERE ParamName = 'Separation Type';
 
-    SELECT ParamValue
+    SELECT Trim(ParamValue)
     INTO _lcCartName
     FROM Tmp_Parameters
     WHERE ParamName = 'LC Cart Name';
 
-    SELECT ParamValue
+    SELECT Trim(ParamValue)
     INTO _lcCartConfig
     FROM Tmp_Parameters
     WHERE ParamName = 'LC Cart Config';
 
-    SELECT ParamValue
-    INTO _lcColumn
+    SELECT Trim(ParamValue)
+    INTO _lcColumnName
     FROM Tmp_Parameters
     WHERE ParamName = 'LC Column';
 
-    SELECT ParamValue
+    SELECT Trim(ParamValue)
     INTO _wellplateName
     FROM Tmp_Parameters
-    WHERE ParamName = 'Wellplate Number';
+    WHERE ParamName IN ('Wellplate Number', 'Wellplate Name');
 
-    SELECT ParamValue
+    SELECT Trim(ParamValue)
     INTO _wellNumber
     FROM Tmp_Parameters
     WHERE ParamName = 'Well Number';
 
-    SELECT ParamValue
+    SELECT Trim(ParamValue)
     INTO _datasetType
     FROM Tmp_Parameters
     WHERE ParamName = 'Dataset Type';
 
-    SELECT ParamValue
+    SELECT Trim(ParamValue)
     INTO _operatorUsername
     FROM Tmp_Parameters
-    WHERE ParamName IN ('Operator (PRN)', 'Username');
+    WHERE ParamName IN ('Operator (PRN)', 'Operator (Username)');
 
-    SELECT ParamValue
+    SELECT Trim(ParamValue)
     INTO _comment
     FROM Tmp_Parameters
     WHERE ParamName = 'Comment';
 
-    SELECT ParamValue
+    SELECT Trim(ParamValue)
     INTO _interestRating
     FROM Tmp_Parameters
     WHERE ParamName = 'Interest Rating';
 
-    SELECT ParamValue
+    SELECT Trim(ParamValue)
     INTO _requestID
     FROM Tmp_Parameters
     WHERE ParamName = 'Request';
 
-    SELECT ParamValue
+    SELECT Trim(ParamValue)
     INTO _workPackage
     FROM Tmp_Parameters
     WHERE ParamName = 'Work Package';
 
-    SELECT ParamValue
+    SELECT Trim(ParamValue)
     INTO _emslUsageType
     FROM Tmp_Parameters
     WHERE ParamName = 'EMSL Usage Type';
 
-    SELECT ParamValue
+    SELECT Trim(ParamValue)
     INTO _emslProposalID
     FROM Tmp_Parameters
     WHERE ParamName = 'EMSL Proposal ID';
 
-    SELECT ParamValue
+    SELECT Trim(ParamValue)
     INTO _emslUsersList
     FROM Tmp_Parameters
     WHERE ParamName = 'EMSL Users List';
 
-    SELECT ParamValue
+    SELECT Trim(ParamValue)
     INTO _runStart
     FROM Tmp_Parameters
     WHERE ParamName = 'Run Start';
 
-    SELECT ParamValue
+    SELECT Trim(ParamValue)
     INTO _runFinish
     FROM Tmp_Parameters
     WHERE ParamName = 'Run Finish';
 
-    SELECT ParamValue
+    SELECT Trim(ParamValue)
     INTO _datasetCreatorUsername
     FROM Tmp_Parameters
-    WHERE ParamName IN ('DS Creator (PRN)', 'DS Creator');
+    WHERE ParamName IN ('DS Creator (PRN)', 'DS Creator (Username)');
 
     ---------------------------------------------------
     -- Check for QC or Blank datasets
@@ -333,10 +327,11 @@ BEGIN
 
     If public.get_dataset_priority(_datasetName) > 0 Or
        public.get_dataset_priority(_experimentName) > 0 Or
-       (_datasetName Like 'Blank%' And Not _datasetName Like '%-bad')
+       (_datasetName ILike 'Blank%' And Not _datasetName ILike '%-bad')
     Then
         If Not _interestRating::citext In ('Not Released', 'No Interest') And _interestRating Not ILike 'No Data%' Then
-            -- Auto set interest rating to 5
+
+            -- Auto set interest rating to 5 ('Released')
 
             SELECT dataset_rating
             INTO _interestRating
@@ -344,7 +339,10 @@ BEGIN
             WHERE dataset_rating_id = 5;
 
             If Not FOUND Then
-                RAISE WARNING 'Dataset Rating ID 5 should be ''Released'', but ID 5 was not found in t_dataset_rating_name';
+                _logMessage := 'Dataset Rating ID 5 should be "Released", but ID 5 was not found in t_dataset_rating_name';
+                RAISE WARNING '%', _logMessage;
+
+                CALL post_log_entry ('Error', _logMessage, 'Add_New_Dataset');
 
                 _interestRating := 'Released';
             End If;
@@ -357,10 +355,12 @@ BEGIN
     ---------------------------------------------------
 
     If _experimentName = '' Then
-        If _datasetName Like 'Blank%' Then
+        If _datasetName ILike 'Blank%' Then
             _experimentName := 'Blank';
-        ElsIf _datasetName SIMILAR TO 'QC_Shew[_-][0-9][0-9][_-][0-9][0-9]%' Then
+        ElsIf _datasetName::citext SIMILAR TO 'QC_Shew[_-][0-9][0-9][_-][0-9][0-9]%' Then
             _experimentName := Substring(_datasetName, 1, 13);
+        ElsIf _datasetName::citext SIMILAR TO 'QC_Mam[_-][0-9][0-9][_-][0-9][0-9]%' Then
+            _experimentName := Substring(_datasetName, 1, 12);
         End If;
     End If;
 
@@ -369,7 +369,7 @@ BEGIN
     ---------------------------------------------------
 
     If _emslUsageType = '' Then
-        If _datasetName Like 'Blank%' Or _datasetName Like 'QC_Shew%' Then
+        If _datasetName ILike 'Blank%' Or _datasetName ILike 'QC_Shew%' Or _datasetName ILike 'QC_Mam%' Then
             _emslUsageType := 'MAINTENANCE';
         End If;
     End If;
@@ -378,19 +378,18 @@ BEGIN
     -- Establish default parameters
     ---------------------------------------------------
 
-    _internalStandards := 'none';
+    _internalStandards  := 'none';
     _addUpdateTimeStamp := CURRENT_TIMESTAMP;
 
     ---------------------------------------------------
     -- Check for the comment ending in "Buzzard:"
     ---------------------------------------------------
 
-    _comment := Trim(_comment);
-    If _comment Like '%Buzzard:' Then
+    If _comment ILike '%Buzzard:' Then
         _comment := Substring(_comment, 1, char_length(_comment) - 8);
     End If;
 
-    If _captureSubdirectory SIMILAR TO '[A-Z]:\%' Or _captureSubdirectory Like '\\\\%' Then
+    If _captureSubdirectory::citext SIMILAR TO '[A-Z]:\%' Or _captureSubdirectory Like '\\\\%' Then
         _message := format('Capture subfolder is not a relative path for dataset %s; ignoring %s',
                             _datasetName, _captureSubdirectory);
 
@@ -399,7 +398,7 @@ BEGIN
         _captureSubdirectory := '';
     End If;
 
-    If _captureSubdirectory = _datasetName Then
+    If _captureSubdirectory::citext = _datasetName::citext Then
         _message := format('Capture subfolder is identical to the dataset name for %s; changing to an empty string', _datasetName);
 
         -- Post this message to the log every 3 days
@@ -407,8 +406,8 @@ BEGIN
            SELECT entry_id
            FROM t_log_entries
            WHERE message LIKE 'Capture subfolder is identical to the dataset name%' AND
-                 Entered > CURRENT_TIMESTAMP - INTERVAL '3 days' ) Then
-        Begin
+                 Entered > CURRENT_TIMESTAMP - INTERVAL '3 days' )
+        Then
             CALL post_log_entry ('Debug', _message, 'Add_New_Dataset');
         End If;
 
@@ -420,45 +419,48 @@ BEGIN
     ---------------------------------------------------
 
     CALL public.add_update_dataset (
-                    _datasetName,
-                    _experimentName,
-                    _operatorUsername,
-                    _instrumentName,
-                    _datasetType,
-                    _lcColumn,
-                    _wellplateName,
-                    _wellNumber,
-                    _separationType,
-                    _internalStandards,
-                    _comment,
-                    _interestRating,
-                    _lcCartName,
-                    _emslProposalID,
-                    _emslUsageType,
-                    _emslUsersList,
-                    _requestID,
-                    _workPackage,
-                    _mode,
-                    _message          => _message,      -- Output
-                    _returnCode       => _returnCode,   -- Output
-                    _captureSubfolder => _captureSubdirectory,
-                    _lcCartConfig     => _lcCartConfig,
-                    _logDebugMessages => _logDebugMessages);
+            _datasetName           => _datasetName,
+            _experimentName        => _experimentName,
+            _operatorUsername      => _operatorUsername,
+            _instrumentName        => _instrumentName,
+            _msType                => _datasetType,
+            _lcColumnName          => _lcColumnName,
+            _wellplateName         => _wellplateName,
+            _wellNumber            => _wellNumber,
+            _secSep                => _separationType,
+            _internalStandards     => _internalStandards,
+            _comment               => _comment,
+            _rating                => _interestRating,
+            _lcCartName            => _lcCartName,
+            _eusProposalID         => _emslProposalID,
+            _eusUsageType          => _emslUsageType,
+            _eusUsersList          => _emslUsersList,
+            _requestID             => _requestID,
+            _workPackage           => _workPackage,
+            _mode                  => _mode,
+            _callingUser           => session_user,
+            _aggregationJobDataset => false,
+            _captureSubfolder      => _captureSubdirectory,
+            _lcCartConfig          => _lcCartConfig,
+            _logDebugMessages      => _logDebugMessages,
+            _message               => _message,      -- Output
+            _returnCode            => _returnCode    -- Output
+           );
 
     If _returnCode <> '' Then
-        -- Uncomment to log the XML to the T_Log_Entries
+        -- Uncomment to log the XML to T_Log_Entries
         --
         /*
         If _mode = 'add' Then
             _logMessage := format('Error adding new dataset: %s; %s', _message, _xmlDoc);
 
-            CALL post_log_entry ( _type => 'Error',
-                                  _message => _logMessage,
-                                  _postedBy = 'Add_New_Dataset');
+            CALL post_log_entry ('Error', _logMessage, 'Add_New_Dataset');
         End If;
         */
 
+        RAISE INFO '';
         RAISE WARNING '%', _message;
+
         DROP TABLE Tmp_Parameters;
         RETURN;
     End If;
@@ -468,6 +470,7 @@ BEGIN
     ---------------------------------------------------
 
     If _mode = 'check_add' Or _mode = 'check_update' Then
+
         -- Show the parsed values
 
         RAISE INFO '';
@@ -478,7 +481,7 @@ BEGIN
         RAISE INFO 'Separation Type:      %', _separationType;
         RAISE INFO 'LC Cart Name:         %', _lcCartName;
         RAISE INFO 'LC Cart Config:       %', _lcCartConfig;
-        RAISE INFO 'LC Column:            %', _lcColumn;
+        RAISE INFO 'LC Column:            %', _lcColumnName;
         RAISE INFO 'Wellplate Name:       %', _wellplateName;
         RAISE INFO 'WellNumber:           %', _wellNumber;
         RAISE INFO 'Dataset Type:         %', _datasetType;
@@ -488,8 +491,8 @@ BEGIN
         RAISE INFO 'Request ID:           %', _requestID;
         RAISE INFO 'Work Package:         %', _workPackage;
         RAISE INFO 'EMSL UsageType:       %', _emslUsageType;
-        RAISE INFO 'EMSL ProposalID:      %', _emslProposalID;
-        RAISE INFO 'EMSL UsersList:       %', _emslUsersList;
+        RAISE INFO 'EMSL Proposal ID:     %', _emslProposalID;
+        RAISE INFO 'EMSL Users List:      %', _emslUsersList;
         RAISE INFO 'Run Start:            %', _runStart;
         RAISE INFO 'Run Finish:           %', _runFinish;
         RAISE INFO 'DS Creator Username:  %', _datasetCreatorUsername;
@@ -503,43 +506,43 @@ BEGIN
     -- Lookup the current value
     ---------------------------------------------------
 
-    -- First use Dataset Name to lookup the Dataset ID
-    --
+    -- Use dataset name to lookup the dataset ID
+
     SELECT dataset_id
     INTO _datasetId
     FROM t_dataset
     WHERE dataset = _datasetName;
 
     If Not FOUND Then
-        _message := 'Could not resolve dataset ID';
+        _message := format('Could not resolve dataset ID for dataset %s', _datasetName);
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5235'
+        _returnCode := 'U5235';
         DROP TABLE Tmp_Parameters;
         RETURN;
     End If;
 
     ---------------------------------------------------
-    -- Find request associated with dataset
+    -- Find request run associated with the dataset
     ---------------------------------------------------
 
     SELECT request_id
     INTO _existingRequestID
     FROM t_requested_run
-    WHERE dataset_id = _datasetId
+    WHERE dataset_id = _datasetId;
 
     If FOUND Then
         _requestID := _existingRequestID;
     End If;
 
-    If char_length(_datasetCreatorUsername) > 0 Then
+    If _datasetCreatorUsername <> '' Then
 
         ---------------------------------------------------
         -- Update t_event_log to reflect _datasetCreatorUsername creating this dataset
         ---------------------------------------------------
 
         UPDATE t_event_log
-        SET entered_by = format('%s; via %s', _datasetCreatorUsername, entered_by);
+        SET entered_by = format('%s; via %s', _datasetCreatorUsername, entered_by)
         WHERE Target_ID = _datasetId AND
               Target_State = 1 AND
               Target_Type = 4 AND
@@ -548,19 +551,19 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Update the associated request with run start/finish values
+    -- Update the associated requested run with run start/finish values
     ---------------------------------------------------
 
-    If _requestID <> 0 Then
+    If Coalesce(_requestID, 0) <> 0 Then
 
         If _runStart <> '' Then
-            _runStartDate := _runStart::timestamp;
+            _runStartDate := public.try_cast(_runStart, null::timestamp);
         Else
             _runStartDate := Null;
         End If;
 
         If _runFinish <> '' Then
-            _runFinishDate := _runFinish::timestamp;
+            _runFinishDate := public.try_cast(_runFinish, null::timestamp);
         Else
             _runFinishDate := Null;
         End If;
@@ -574,8 +577,7 @@ BEGIN
         End If;
 
         UPDATE t_requested_run
-        SET
-            request_run_start = _runStartDate,
+        SET request_run_start = _runStartDate,
             request_run_finish = _runFinishDate
         WHERE request_id = _requestID;
 
@@ -585,4 +587,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_new_dataset IS 'AddNewDataset';
+
+ALTER PROCEDURE public.add_new_dataset(IN _xmldoc text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _logdebugmessages boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_new_dataset(IN _xmldoc text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _logdebugmessages boolean); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_new_dataset(IN _xmldoc text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _logdebugmessages boolean) IS 'AddNewDataset';
+
