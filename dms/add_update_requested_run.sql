@@ -16,7 +16,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run(IN _requestname text
 **    _requesterUsername            Requester username
 **    _instrumentGroup              Instrument group; could also contain '(lookup)'
 **    _workPackage                  Work package; could also contain '(lookup)'
-***                                 May contain 'none' for automatically created requested runs (and those will have _autoPopulateUserListIfBlank = true)
+**                                  May contain 'none' for automatically created requested runs (and those will have _autoPopulateUserListIfBlank = true)
 **    _msType                       Dataset type
 **    _instrumentSettings           Instrument settings
 **    _wellplateName                Wellplate name; if '(lookup)', will look for a wellplate defined in T_Experiments

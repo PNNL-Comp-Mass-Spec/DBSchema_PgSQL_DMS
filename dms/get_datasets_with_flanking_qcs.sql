@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_datasets_with_flanking_qcs(_startdate time
 /****************************************************
 **  Desc:
 **      Shows the flanking QC datasets for each non-QC dataset with an acquisition time between _startDate and _endDate
-***     Looks for QC datasets acquired within 32 days of the dataset's acquisition start time
+**      Looks for QC datasets acquired within 32 days of the dataset's acquisition start time
 **
 **  Auth:   mem
 **  Date:   07/11/2022 mem - Initial release (based on view V_Datasets_With_Flanking_QCs)
