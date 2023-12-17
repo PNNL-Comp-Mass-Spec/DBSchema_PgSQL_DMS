@@ -13,13 +13,13 @@ CREATE OR REPLACE PROCEDURE public.validate_requested_run_batch_params(IN _batch
 **  Arguments:
 **    _batchID                      Only used when _mode is 'update'
 **    _name                         Batch name
-**    _description                  Description
+**    _description                  Description (unused)
 **    _ownerUsername                Owner username
 **    _requestedBatchPriority       Requested batch priority
 **    _requestedCompletionDate      Requested completion date
 **    _justificationHighPriority    Justification for high priority
 **    _requestedInstrumentGroup     Will typically contain an instrument group, not an instrument name
-**    _comment                      Batch comment
+**    _comment                      Batch comment (unused)
 **    _batchGroupID                 Input/Output: batch group ID
 **    _batchGroupOrder              Input/Output: batch group order
 **    _mode                         'add' or 'update' or 'PreviewAdd'
@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE public.validate_requested_run_batch_params(IN _batch
 **                         - Use citext for _locked
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          12/15/2023 mem - Coalesce nulls to empty strings and update warning messages
 **
 *****************************************************/
 DECLARE
@@ -53,15 +54,21 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
     _message := '';
     _returnCode := '';
 
     BEGIN
-        _name        := Trim(Coalesce(_name, ''));
-        _description := Trim(Coalesce(_description, ''));
+        _name                      := Trim(Coalesce(_name, ''));
+        _description               := Trim(Coalesce(_description, ''));
+        _ownerUsername             := Trim(Coalesce(_ownerUsername, ''));
+        _requestedBatchPriority    := Trim(Coalesce(_requestedBatchPriority, ''));
+        _requestedCompletionDate   := Trim(Coalesce(_requestedCompletionDate, ''));
+        _justificationHighPriority := Trim(Coalesce(_justificationHighPriority, ''));
+        _requestedInstrumentGroup  := Trim(Coalesce(_requestedInstrumentGroup, ''));
+        _comment                   := Trim(Coalesce(_comment, ''));
+        _mode                      := Trim(Lower(Coalesce(_mode, '')));
 
-        If char_length(_name) < 1 Then
+        If _name = '' Then
             _message := 'Must define a batch name';
             _returnCode := 'U5201';
             RETURN;
@@ -71,7 +78,7 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        If char_length(Coalesce(_requestedCompletionDate, '')) > 0 Then
+        If _requestedCompletionDate <> '' Then
             -- IsDate() equivalent
             If public.try_cast(_requestedCompletionDate, null::timestamp) Is Null Then
                 _message := format('Requested completion date is not a valid date: %s', _requestedCompletionDate);
@@ -84,20 +91,18 @@ BEGIN
         -- Determine the Instrument Group
         ---------------------------------------------------
 
-        _requestedInstrumentGroup := Trim(Coalesce(_requestedInstrumentGroup, ''));
-
         -- Set the instrument group to _requestedInstrumentGroup for now
         _instrumentGroupToUse := _requestedInstrumentGroup;
 
-        If Not Exists (SELECT instrument_group FROM t_instrument_group WHERE instrument_group = _instrumentGroupToUse) Then
+        If Not Exists (SELECT instrument_group FROM t_instrument_group WHERE instrument_group = _instrumentGroupToUse::citext) Then
             -- Try to update instrument group using t_instrument_name
             SELECT instrument_group
             INTO _instrumentGroupToUse
             FROM t_instrument_name
-            WHERE instrument = _requestedInstrumentGroup;
+            WHERE instrument = _requestedInstrumentGroup::citext;
 
             If Not FOUND Then
-                If char_length(_requestedInstrumentGroup) = 0 Then
+                If _requestedInstrumentGroup = '' Then
                     _message := 'Invalid Instrument Group: empty string';
                 Else
                     _message := format('Invalid Instrument Group: %s', _requestedInstrumentGroup);
@@ -112,20 +117,18 @@ BEGIN
         -- High priority requires justification
         ---------------------------------------------------
 
-        If _requestedBatchPriority = 'High' And Coalesce(_justificationHighPriority, '') = '' Then
+        If _requestedBatchPriority::citext = 'High' And _justificationHighPriority = '' Then
             _message := 'Justification must be entered if high priority is being requested';
             _returnCode := 'U5204';
             RETURN;
         End If;
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
         -- Is entry already in database?
         ---------------------------------------------------
 
         If _mode In ('add', Lower('PreviewAdd')) Then
-            If Exists (SELECT batch FROM t_requested_run_batches WHERE batch = _name) Then
+            If Exists (SELECT batch FROM t_requested_run_batches WHERE batch = _name::citext) Then
                 _message := format('Cannot add batch: "%s" already exists in database', _name);
                 _returnCode := 'U5205';
                 RETURN;
@@ -148,13 +151,13 @@ BEGIN
             WHERE batch_id = _batchID;
 
             If Not FOUND Then
-                _message := 'Cannot update: entry does not exist in database';
+                _message := format('Cannot update: batch %s does not exist in database', _batchID);
                 _returnCode := 'U5207';
                 RETURN;
             End If;
 
-            If _locked = 'yes' Then
-                _message := 'Cannot update: batch is locked';
+            If _locked = 'Yes' Then
+                _message := format('Cannot update: batch %s is locked', _batchID);
                 _returnCode := 'U5208';
                 RETURN;
             End If;
@@ -169,7 +172,7 @@ BEGIN
         If _userID > 0 Then
             -- Function get_user_id recognizes both a username and the form 'LastName, FirstName (Username)'
             -- Assure that _ownerUsername contains simply the username
-            --
+
             SELECT username
             INTO _ownerUsername
             FROM t_users
@@ -204,7 +207,7 @@ BEGIN
         End If;
 
         If _batchGroupID > 0 And Not Exists (SELECT Batch_Group_ID FROM T_Requested_Run_Batch_Group WHERE Batch_Group_ID = _batchGroupID) Then
-            _message := format('Requested run batch group does not exist: %s', _batchGroupID);
+            _message := format('Requested run batch group %s does not exist', _batchGroupID);
             _returnCode := 'U5210';
             RETURN;
         End If;
