@@ -145,6 +145,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run(IN _requestname text
 **          10/02/2023 mem - Use _requestID when calling update_cached_requested_run_eus_users
 **          10/31/2023 mem - Ported to PostgreSQL
 **          11/01/2023 mem - Add missing brackets when checking for '[space]' in the return value from validate_chars()
+**          12/16/2023 mem - Update error messages
 **
 *****************************************************/
 DECLARE
@@ -251,7 +252,7 @@ BEGIN
         End If;
         --
         If Coalesce(_experimentName, '') = '' Then
-            RAISE EXCEPTION 'Experiment number must be specified';
+            RAISE EXCEPTION 'Experiment name must be specified';
         End If;
         --
         If Coalesce(_requesterUsername, '') = '' Then
@@ -278,11 +279,11 @@ BEGIN
         -- Replace instances of CRLF (or LF) with semicolons
         _comment := public.remove_cr_lf(_comment);
 
-        If _comment like '%experiment_group/show/0000%' Then
+        If _comment Like '%experiment_group/show/0000%' Then
             RAISE EXCEPTION 'Please reference a valid experiment group ID, not 0000';
         End If;
 
-        If _comment like '%experiment_group/show/0%' Then
+        If _comment Like '%experiment_group/show/0%' Then
             RAISE EXCEPTION 'Please reference a valid experiment group ID';
         End If;
 
@@ -412,11 +413,7 @@ BEGIN
             _status := 'Active';
         End If;
 
-        If _mode::citext In ('add', 'check_add') And (Not (_status::citext In ('Active', 'Inactive', 'Completed'))) Then
-            RAISE EXCEPTION 'Status "%" is not valid; must be Active, Inactive, or Completed', _status;
-        End If;
-
-        If _mode::citext In ('update', 'check_update') And (Not (_status::citext In ('Active', 'Inactive', 'Completed'))) Then
+        If _mode::citext In ('add', 'check_add', 'update', 'check_update') And (Not (_status::citext In ('Active', 'Inactive', 'Completed'))) Then
             RAISE EXCEPTION 'Status "%" is not valid; must be Active, Inactive, or Completed', _status;
         End If;
 
@@ -519,7 +516,7 @@ BEGIN
                             _returnCode         => _returnCode);        -- Output
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'Lookup_Instrument_Run_Info_From_Experiment_Sample_Prep: %', _msg;
+            RAISE EXCEPTION '%', _msg;
         End If;
 
         ---------------------------------------------------
@@ -632,7 +629,7 @@ BEGIN
                             _returnCode    => _returnCode);     -- Output
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'lookup_eus_from_experiment_sample_prep: %', _msg;
+            RAISE EXCEPTION '%', _msg;
         End If;
 
         If Coalesce(_msg, '') <> '' Then
@@ -680,7 +677,7 @@ BEGIN
 
         If _returnCode <> '' Then
             _logErrors := false;
-            RAISE EXCEPTION 'validate_eus_usage: %', _msg;
+            RAISE EXCEPTION '%', _msg;
         End If;
 
         If _eusUsageTypeID = 1 Then
@@ -697,7 +694,7 @@ BEGIN
             _message := public.append_to_text('Requested runs can only have a single EUS user associated with them', _message);
 
             If _raiseErrorOnMultipleEUSUsers Then
-                RAISE EXCEPTION 'Validate_EUS_Usage: %', _message;
+                RAISE EXCEPTION '%', _message;
             End If;
 
             -- Only keep the first user
@@ -720,7 +717,7 @@ BEGIN
                             _returnCode => _returnCode);        -- Output
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'lookup_wp_from_experiment_sample_prep: %', _msg;
+            RAISE EXCEPTION '%', _msg;
         End If;
 
         ---------------------------------------------------
@@ -734,7 +731,7 @@ BEGIN
             WHERE location = _stagingLocation;
 
             If Not FOUND Then
-                RAISE EXCEPTION 'Staging location not recognized';
+                RAISE EXCEPTION 'Invalid staging location: %', _stagingLocation;
             End If;
         End If;
 
@@ -791,7 +788,7 @@ BEGIN
                         _returnCode => _returnCode);    -- Output
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'validate_wp: %', _msg;
+            RAISE EXCEPTION '%', _msg;
         End If;
 
         -- Make sure the Work Package is capitalized properly
@@ -826,8 +823,6 @@ BEGIN
 
         If _mode = 'add' Then
 
-            -- Start transaction
-            --
             INSERT INTO t_requested_run
             (
                 request_name,
@@ -906,7 +901,7 @@ BEGIN
                                     _returnCode => _returnCode);        -- Output
 
             If _returnCode <> '' Then
-                RAISE EXCEPTION 'Assign_EUS_Users_To_Requested_Run: %', _msg;
+                RAISE EXCEPTION '%', _msg;
             End If;
 
             If _logDebugMessages Then
@@ -975,7 +970,7 @@ BEGIN
                                     _returnCode => _returnCode);    -- Output
 
             If _returnCode <> '' Then
-                RAISE EXCEPTION 'assign_eus_users_to_requested_run: %', _msg;
+                RAISE EXCEPTION '%', _msg;
             End If;
 
             -- Make sure that t_active_requested_run_cached_eus_users is up-to-date
