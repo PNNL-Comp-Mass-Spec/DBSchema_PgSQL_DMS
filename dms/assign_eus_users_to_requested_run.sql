@@ -32,7 +32,7 @@ DECLARE
     _unknownUserCount int;
     _unknownUsers text;
     _userText text;
-    _logType text := 'Error';
+    _logType text;
     _validateEUSData boolean;
 BEGIN
     _message := '';
@@ -97,7 +97,9 @@ BEGIN
             _validateEUSData := true;
         End If;
 
-        If Not _validateEUSData Then
+        If _validateEUSData Then
+            _logType := 'Error';
+        Else
             -- EUS validation is disabled; log this as a warning
             _logType := 'Warning';
         End If;
