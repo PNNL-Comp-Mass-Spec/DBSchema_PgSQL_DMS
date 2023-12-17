@@ -16,7 +16,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **    _description                  Description
 **    _requestedRunList             Requested run IDs
 **    _ownerUsername                Owner username
-**    _requestedBatchPriority       Batch prioerity
+**    _requestedBatchPriority       Batch priority
 **    _requestedCompletionDate      Requested completion date
 **    _justificationHighPriority    Justification for high priority
 **    _requestedInstrumentGroup     Will typically contain an instrument group, not an instrument name
@@ -24,6 +24,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **    _batchGroupID                 Batch group ID
 **    _batchGroupOrder              Batch group order
 **    _mode                         'add' or 'update' or 'PreviewAdd'
+**    _message                      Output message
+**    _returnCode                   Return code
 **    _raiseExceptions              When true, raise an exception; when false, update _returnCode if an error
 **
 **  Auth:   grk
@@ -70,6 +72,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
 **          10/12/2023 mem - Only drop temp table if actually created
+**          12/15/2023 mem - Fix bug that sent the wrong value to _requestedBatchPriority when calling validate_requested_run_batch_params
 **
 *****************************************************/
 DECLARE
@@ -137,8 +140,8 @@ BEGIN
                         _name                      => _name,
                         _description               => _description,
                         _ownerUsername             => _ownerUsername,
-                        _requestedBatchPriority    => _requestedCompletionDate,
-                        _requestedCompletionDate   => '',
+                        _requestedBatchPriority    => _requestedBatchPriority,
+                        _requestedCompletionDate   => _requestedCompletionDate,
                         _justificationHighPriority => _justificationHighPriority,
                         _requestedInstrumentGroup  => _requestedInstrumentGroup,
                         _comment                   => _comment,
@@ -161,7 +164,7 @@ BEGIN
         _name        := Trim(Replace(Replace(_name, chr(10), ' '), chr(9), ' '));
         _description := Trim(Coalesce(_description, ''));
 
-        If char_length(Coalesce(_requestedCompletionDate, '')) = 0 Then
+        If Trim(Coalesce(_requestedCompletionDate, '')) = '' Then
             _requestedCompletionTimestamp := null;
         Else
             _requestedCompletionTimestamp := public.try_cast(_requestedCompletionDate, null::timestamp);
