@@ -1,50 +1,25 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_requested_runs
-(
-    _experimentGroupID text = '',
-    _experimentList text = '',
-    _requestNameSuffix text = '',
-    _operatorUsername text,
-    _instrumentGroup text,
-    _workPackage text,
-    _msType text,
-    _instrumentSettings text = 'na',
-    _eusProposalID text = 'na',
-    _eusUsageType text,
-    _eusUsersList text = '',
-    _internalStandard text = 'na',
-    _comment text = 'na',
-    _mode text = 'add',
-    _separationGroup text = 'LC-Formic_100min',
-    _mrmAttachment text,
-    _vialingConc text = null,
-    _vialingVol text = null,
-    _stagingLocation text = null,
-    _batchName text = '',
-    _batchDescription text = '',
-    _batchCompletionDate text = '',
-    _batchPriority text = '',
-    _batchPriorityJustification text,
-    _batchComment text,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_requested_runs(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_requested_runs(IN _experimentgroupid text, IN _experimentlist text, IN _requestnamesuffix text, IN _operatorusername text, IN _instrumentgroup text, IN _workpackage text, IN _mstype text, IN _instrumentsettings text DEFAULT 'na'::text, IN _eusproposalid text DEFAULT 'na'::text, IN _eususagetype text DEFAULT ''::text, IN _eususerslist text DEFAULT ''::text, IN _internalstandard text DEFAULT 'na'::text, IN _comment text DEFAULT 'na'::text, IN _mode text DEFAULT 'add'::text, IN _separationgroup text DEFAULT 'LC-Formic_100min'::text, IN _mrmattachment text DEFAULT ''::text, IN _vialingconc text DEFAULT NULL::text, IN _vialingvol text DEFAULT NULL::text, IN _staginglocation text DEFAULT NULL::text, IN _batchname text DEFAULT ''::text, IN _batchdescription text DEFAULT ''::text, IN _batchcompletiondate text DEFAULT ''::text, IN _batchpriority text DEFAULT ''::text, IN _batchpriorityjustification text DEFAULT ''::text, IN _batchcomment text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Adds a group of entries to the requested run table
 **
+**      Note: either specify an experiment group ID or provide a list of experiment names, but not both
+**
 **  Arguments:
-**    _experimentGroupID            Specify ExperimentGroupID or ExperimentList, but not both
-**    _experimentList               Comma-separated list of experiments
-**    _requestNameSuffix            Actually used as the request name Suffix
+**    _experimentGroupID            Experiment group id
+**    _experimentList               Comma-separated list of experiment names
+**    _requestNameSuffix            Actually used as the request name suffix
 **    _operatorUsername             Operator username
 **    _instrumentGroup              Instrument group; could alternatively be '(lookup)'
 **    _workPackage                  Work Package; could alternatively be '(lookup)'
-**    _msType                       Run type; could alternatively be '(lookup)'
+**    _msType                       Dataset type; could alternatively be '(lookup)'
 **    _instrumentSettings           Instrument settings
 **    _eusProposalID                EUS proposal ID
 **    _eusUsageType                 EUS usage type
@@ -70,9 +45,9 @@ AS $$
 **  Auth:   grk
 **  Date:   07/22/2005 - Initial version
 **          07/27/2005 grk - Modified prefix
-**          10/12/2005 grk - Added stuff for new work package and proposal fields.
-**          02/23/2006 grk - Added stuff for EUS proposal and user tracking.
-**          03/24/2006 grk - Added stuff for auto incrementing well numbers.
+**          10/12/2005 grk - Added stuff for new work package and proposal fields
+**          02/23/2006 grk - Added stuff for EUS proposal and user tracking
+**          03/24/2006 grk - Added stuff for auto incrementing well numbers
 **          06/23/2006 grk - Removed instrument name from generated request name
 **          10/12/2006 grk - Fixed trailing suffix in name (Ticket #248)
 **          11/09/2006 grk - Fixed error message handling (Ticket #318)
@@ -88,7 +63,7 @@ AS $$
 **          02/20/2012 mem - Now using a temporary table to track the experiment names for which requested runs need to be created
 **          02/22/2012 mem - Switched to using a table-variable instead of a physical temporary table
 **          06/13/2013 mem - Added _vialingConc and _vialingVol
-                           - Now validating _workPackageNumber against T_Charge_Code
+                           - Now validating _workPackage against T_Charge_Code
 **          06/18/2014 mem - Now passing default to Parse_Delimited_List
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          04/06/2016 mem - Now using Try_Convert to convert from text to int
@@ -110,17 +85,21 @@ AS $$
 **          02/17/2023 mem - Use new parameter name when calling Add_Update_Requested_RunBatch
 **          02/27/2023 mem - Use new argument name, _requestName
 **          11/27/2023 mem - Do not log errors from validate_requested_run_batch_params() if the return code starts with 'U52' (e.g., 'U5201')
-**          12/15/2024 mem - Ported to PostgreSQL
+**          12/16/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _msg text := '';
     _logErrors boolean := false;
+    _dropTempTable boolean := false;
+
     _experimentGroupIDVal int;
     _allowNoneWP boolean := false;
     _locationID int := null;
-    _wellplateName text := '(lookup)';
-    _wellNumber text := '(lookup)';
+    _wellplateName text;
+    _wellNumber text;
+    _batchGroupID int;
+    _batchGroupOrder int;
     _instrumentGroupToUse text;
     _userID int;
     _requestName text;
@@ -128,13 +107,12 @@ DECLARE
     _requestNameLast text := '';
     _request int;
     _experimentName text;
-    _suffix text := Coalesce(@requestNameSuffix, '');
-    _count int := 0;
-    _entryID int := 0;
+    _count int;
+    _entryID int;
     _requestedRunList text := '';
     _requestedRunMode text;
-    _resolvedInstrumentInfo text := '';
-    _resolvedInstrumentInfoCurrent text := '';
+    _resolvedInstrumentInfo text;
+    _resolvedInstrumentInfoCurrent text;
     _batchID int := 0;
 
     _sqlState text;
@@ -151,13 +129,38 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _experimentGroupID := Trim(Coalesce(_experimentGroupID, ''));
-        _experimentList    := Trim(Coalesce(_experimentList, ''));
-        _batchName         := Trim(Coalesce(_batchName, ''));
+        _experimentGroupID  := Trim(Coalesce(_experimentGroupID, ''));
+        _experimentList     := Trim(Coalesce(_experimentList, ''));
+        _requestNameSuffix  := Trim(Coalesce(_requestNameSuffix, ''));
+        _operatorUsername   := Trim(Coalesce(_operatorUsername, ''));
+        _instrumentGroup    := Trim(Coalesce(_instrumentGroup, ''));
+        _workPackage        := Trim(Coalesce(_workPackage, ''));
+        _msType             := Trim(Coalesce(_msType, ''));
+        _instrumentSettings := Trim(Coalesce(_instrumentSettings, 'na'));
+        _eusProposalID      := Trim(Coalesce(_eusProposalID, 'na'));
+        _eusUsageType       := Trim(Coalesce(_eusUsageType, ''));
+        _eusUsersList       := Trim(Coalesce(_eusUsersList, ''));
+        _internalStandard   := Trim(Coalesce(_internalStandard, 'na'));
+        _comment            := Trim(Coalesce(_comment, ''));
+        _mode               := Trim(Lower(Coalesce(_mode, '')));
+        _separationGroup    := Trim(Coalesce(_separationGroup, ''));
+        _mrmAttachment      := Trim(Coalesce(_mrmAttachment, ''));
+
+        -- Leave the following as-is (including possibly null)
+        -- _vialingConc
+        -- _vialingVol
+        -- _stagingLocation
+
+        _batchName                  := Trim(Coalesce(_batchName, ''));
+        _batchDescription           := Trim(Coalesce(_batchDescription, ''));
+        _batchCompletionDate        := Trim(Coalesce(_batchCompletionDate, ''));
+        _batchPriority              := Trim(Coalesce(_batchPriority, 'Normal'));
+        _batchPriorityJustification := Trim(Coalesce(_batchPriorityJustification, ''));
+        _batchComment               := Trim(Coalesce(_batchComment, ''));
 
         If _experimentGroupID <> '' And _experimentList <> '' Then
             _returnCode := 'U5130';
-            _message := 'Experiment Group ID and Experiment List cannot both be non-blank';
+            _message := 'Either provide an experiment group ID or a list of experiment names; not both';
             RAISE EXCEPTION '%', _message;
         End If;
 
@@ -167,7 +170,7 @@ BEGIN
             RAISE EXCEPTION '%', _message;
         End If;
 
-        If char_length(_experimentGroupID) > 0 Then
+        If _experimentGroupID <> '' Then
             _experimentGroupIDVal := public.try_cast(_experimentGroupID, null::int);
 
             If _experimentGroupIDVal Is Null Then
@@ -177,46 +180,40 @@ BEGIN
             End If;
         End If;
 
-        If char_length(_operatorUsername) < 1 Then
+        If _operatorUsername = '' Then
             _returnCode := 'U5113';
             RAISE EXCEPTION 'Operator username must be specified';
         End If;
 
-        If char_length(_instrumentGroup) < 1 Then
+        If _instrumentGroup = '' Then
             _returnCode := 'U5114';
             RAISE EXCEPTION 'Instrument group must be specified';
         End If;
 
-        If char_length(_msType) < 1 Then
+        If _msType = '' Then
             _returnCode := 'U5115';
             RAISE EXCEPTION 'Dataset type must be specified';
         End If;
 
-        If char_length(_workPackage) < 1 Then
+        If _workPackage = '' Then
             _returnCode := 'U5116';
             RAISE EXCEPTION 'Work package must be specified';
         End If;
 
-        If _returnCode <> '' Then
-            RETURN;
-        End If;
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
-
         ---------------------------------------------------
         -- Validate the work package
-        -- This validation also occurs in Add_Update_Requested_Run but we want to validate it now before we enter the while loop
+        -- This validation also occurs in add_update_requested_run() but we want to validate it now before we enter the while loop
         ---------------------------------------------------
 
-        If _workPackage <> '(lookup)' Then
+        If _workPackage::citext <> '(lookup)' Then
             CALL public.validate_wp (
-                            _workPackageNumber,
+                            _workPackage,
                             _allowNoneWP,
                             _message    => _msg,            -- Output
                             _returnCode => _returnCode);    -- Output
 
             If _returnCode <> '' Then
-                RAISE EXCEPTION 'validate_wp: %', _msg;
+                RAISE EXCEPTION 'WP validation error: %', _msg;
             End If;
         End If;
 
@@ -230,11 +227,11 @@ BEGIN
         -- Resolve staging location name to location ID
         ---------------------------------------------------
 
-        If Coalesce(_stagingLocation, '') <> '' Then
+        If Trim(Coalesce(_stagingLocation, '')) <> '' Then
             SELECT location_id
             INTO _locationID
             FROM t_material_locations
-            WHERE location = _stagingLocation;
+            WHERE location = _stagingLocation::citext;
 
             If Not FOUND Then
                 RAISE EXCEPTION 'Staging location not recognized: %', _stagingLocation;
@@ -251,7 +248,9 @@ BEGIN
             EntryID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
             Experiment text,
             RequestID Int null
-        )
+        );
+
+        _dropTempTable := true;
 
         If _experimentGroupID <> '' Then
             ---------------------------------------------------
@@ -268,7 +267,7 @@ BEGIN
                       AND
                       t_experiment_group_members.group_id = t_experiment_groups.group_id
             WHERE (t_experiment_groups.group_id = _experimentGroupIDVal)
-            ORDER BY t_experiments.experiment
+            ORDER BY t_experiments.experiment;
         Else
             ---------------------------------------------------
             -- Parse _experimentList to determine experiment names
@@ -278,15 +277,18 @@ BEGIN
             SELECT Value
             FROM public.parse_delimited_list(_experimentList)
             WHERE char_length(Value) > 0
-            ORDER BY Value
+            ORDER BY Value;
         End If;
 
         ---------------------------------------------------
-        -- Set up wellplate stuff to force lookup
-        -- from experiments
+        -- Store '(lookup)' in wellplate variables
+        -- to obtain wellplate info from experiments
         ---------------------------------------------------
 
-        If char_length(_batchName) > 0 Then
+        _wellplateName := '(lookup)';
+        _wellNumber    := '(lookup)';
+
+        If _batchName <> '' Then
             ---------------------------------------------------
             -- Validate batch fields
             ---------------------------------------------------
@@ -301,6 +303,8 @@ BEGIN
                             _justificationHighPriority => _batchPriorityJustification,
                             _requestedInstrumentGroup  => _instrumentGroup,              -- Will typically contain an instrument group, not an instrument name
                             _comment                   => _batchComment,
+                            _batchGroupID              => _batchGroupID,
+                            _batchGroupOrder           => _batchGroupOrder,
                             _mode                      => _mode,
                             _instrumentGroupToUse      => _instrumentGroupToUse,    -- Output
                             _userID                    => _userID,                  -- Output
@@ -321,12 +325,14 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Step through experiments in Tmp_ExperimentsToProcess and make
-        -- a new requested run for each one
+        -- Step through experiments in Tmp_ExperimentsToProcess
+        -- and make a new requested run for each one
         ---------------------------------------------------
 
-        If _suffix <> '' Then
-            _suffix := format('_%s', _suffix);
+        -- If a suffix is defined, make sure it starts with an underscore
+
+        If _requestNameSuffix <> '' And Position('_' In _requestNameSuffix) <> 1 Then
+            _requestNameSuffix := format('_%s', _requestNameSuffix);
         End If;
 
         If _mode::citext = 'PreviewAdd' Then
@@ -335,13 +341,21 @@ BEGIN
             _requestedRunMode := 'add';
         End If;
 
+        _count := 0;
+        _resolvedInstrumentInfo := '';
+
         FOR _entryID, _experimentName IN
             SELECT EntryID, Experiment
             FROM Tmp_ExperimentsToProcess
             ORDER BY EntryID
         LOOP
             _message := '';
-            _requestName := _experimentName + _suffix;
+
+            If _requestNameSuffix = '' Then
+                _requestName := _experimentName;
+            Else
+                _requestName := format('%s%s', _experimentName, _requestNameSuffix);
+            End If;
 
             If _count = 0 Then
                 _requestNameFirst := _requestName;
@@ -350,34 +364,41 @@ BEGIN
             End If;
 
             CALL public.add_update_requested_run (
-                                    _requestName => _requestName,
-                                    _experimentName => _experimentName,
-                                    _requesterUsername => _operatorUsername,
-                                    _instrumentName => _instrumentGroupToUse,
-                                    _workPackage => _workPackage,
-                                    _msType => _msType,
-                                    _instrumentSettings => _instrumentSettings,
-                                    _wellplateName => _wellplateName,
-                                    _wellNumber => _wellNumber,
-                                    _internalStandard => _internalStandard,
-                                    _comment => _comment,
-                                    _eusProposalID => _eusProposalID,
-                                    _eusUsageType => _eusUsageType,
-                                    _eusUsersList => _eusUsersList,
-                                    _mode => _requestedRunMode,
-                                    _request => _request,           -- Output
-                                    _message => _message,           -- Output
-                                    _returnCode => _returnCode,     -- Output
-                                    _secSep => _separationGroup,
-                                    _mrmAttachment => _mrmAttachment,
-                                    _status => 'Active',
-                                    _callingUser => _callingUser,
-                                    _vialingConc => _vialingConc,
-                                    _vialingVol => _vialingVol,
-                                    _stagingLocation => _stagingLocation,
-                                    _resolvedInstrumentInfo => _resolvedInstrumentInfoCurrent);      -- Output
-            --
-            _message := format('[%s] %s', _experimentName, _message);
+                            _requestName                 => _requestName,
+                            _experimentName              => _experimentName,
+                            _requesterUsername           => _operatorUsername,
+                            _instrumentgroup             => _instrumentGroupToUse,
+                            _workPackage                 => _workPackage,
+                            _msType                      => _msType,
+                            _instrumentSettings          => _instrumentSettings,
+                            _wellplateName               => _wellplateName,
+                            _wellNumber                  => _wellNumber,
+                            _internalStandard            => _internalStandard,
+                            _comment                     => _comment,
+                            _batch                       => 0,
+                            _block                       => 0,
+                            _runorder                    => 0,
+                            _eusProposalID               => _eusProposalID,
+                            _eusUsageType                => _eusUsageType,
+                            _eusUsersList                => _eusUsersList,
+                            _mode                        => _requestedRunMode,       -- This will either be 'add' or 'check_add'
+                            _secSep                      => _separationGroup,
+                            _mrmAttachment               => _mrmAttachment,
+                            _status                      => 'Active',
+                            _skipTransactionRollback     => false,
+                            _autoPopulateUserListIfBlank => false,
+                            _callingUser                 => _callingUser,
+                            _vialingConc                 => _vialingConc,
+                            _vialingVol                  => _vialingVol,
+                            _stagingLocation             => _stagingLocation,
+                            _requestIDForUpdate          => 0,
+                            _logDebugMessages            => false,
+                            _request                     => _request,                       -- Output
+                            _resolvedInstrumentInfo      => _resolvedInstrumentInfoCurrent, -- Output
+                            _message                     => _message,                       -- Output
+                            _returnCode                  => _returnCode);                   -- Output
+
+            _message := format('[%s]: %s', _experimentName, _message);
 
             If _returnCode = '' And _mode = 'add' Then
                 UPDATE Tmp_ExperimentsToProcess
@@ -388,11 +409,11 @@ BEGIN
                     _requestedRunList := format('%s', _request);
                 Else
                     _requestedRunList := format('%s, %s', _requestedRunList, _request);
-                End If
+                End If;
 
             End If;
 
-            If _resolvedInstrumentInfo = '' And _resolvedInstrumentInfoCurrent <> '' Then
+            If _resolvedInstrumentInfo = '' And Coalesce(_resolvedInstrumentInfoCurrent, '') <> '' Then
                 _resolvedInstrumentInfo := _resolvedInstrumentInfoCurrent;
             End If;
 
@@ -402,7 +423,6 @@ BEGIN
             End If;
 
             _count := _count + 1;
-
         END LOOP;
 
         If _mode::citext = 'PreviewAdd' Then
@@ -411,7 +431,7 @@ BEGIN
                                 public.check_plural(_count, 'run', 'runs'),
                                 _requestNameFirst, _requestNameLast);
 
-            If _resolvedInstrumentInfo = '' Then
+            If Coalesce(_resolvedInstrumentInfo, '') = '' Then
                 _message := format('%s with instrument group %s, run type %s, and separation group %s',
                                     _message, _instrumentGroupToUse, _msType, _separationGroup);
             Else
@@ -421,7 +441,7 @@ BEGIN
             _message := format('Number of requested runs created: %s', _count);
         End If;
 
-        If char_length(_batchName) > 0 Then
+        If _batchName <> '' Then
             If _count <= 1 Then
                 _message := public.append_to_text(_message, 'Not creating a batch since did not create multiple requested runs');
             Else
@@ -438,10 +458,12 @@ BEGIN
                                _justificationHighPriority => _batchPriorityJustification,
                                _requestedInstrumentGroup  => _instrumentGroupToUse,
                                _comment                   => _batchComment,
+                               _batchGroupID              => null::integer,
+                               _batchGroupOrder           => null::integer,
                                _mode                      => _mode,
                                _message                   => _msg,              -- Output
                                _returnCode                => _returnCode,       -- Output
-                               _useRaiseError             => false);
+                               _raiseExceptions           => false);
 
                 If _returnCode <> '' Then
                     If Coalesce(_msg, '') = '' Then
@@ -460,6 +482,12 @@ BEGIN
                 _message := public.append_to_text(_message, _msg);
             End If;
         End If;
+
+        If _dropTempTable Then
+            DROP TABLE Tmp_ExperimentsToProcess;
+        End If;
+
+        RETURN;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -482,8 +510,19 @@ BEGIN
         End If;
     END;
 
-    DROP TABLE IF EXISTS Tmp_ExperimentsToProcess;
+    If _dropTempTable Then
+        DROP TABLE IF EXISTS Tmp_ExperimentsToProcess;
+    End If;
+
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_requested_runs IS 'AddRequestedRuns';
+
+ALTER PROCEDURE public.add_requested_runs(IN _experimentgroupid text, IN _experimentlist text, IN _requestnamesuffix text, IN _operatorusername text, IN _instrumentgroup text, IN _workpackage text, IN _mstype text, IN _instrumentsettings text, IN _eusproposalid text, IN _eususagetype text, IN _eususerslist text, IN _internalstandard text, IN _comment text, IN _mode text, IN _separationgroup text, IN _mrmattachment text, IN _vialingconc text, IN _vialingvol text, IN _staginglocation text, IN _batchname text, IN _batchdescription text, IN _batchcompletiondate text, IN _batchpriority text, IN _batchpriorityjustification text, IN _batchcomment text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_requested_runs(IN _experimentgroupid text, IN _experimentlist text, IN _requestnamesuffix text, IN _operatorusername text, IN _instrumentgroup text, IN _workpackage text, IN _mstype text, IN _instrumentsettings text, IN _eusproposalid text, IN _eususagetype text, IN _eususerslist text, IN _internalstandard text, IN _comment text, IN _mode text, IN _separationgroup text, IN _mrmattachment text, IN _vialingconc text, IN _vialingvol text, IN _staginglocation text, IN _batchname text, IN _batchdescription text, IN _batchcompletiondate text, IN _batchpriority text, IN _batchpriorityjustification text, IN _batchcomment text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_requested_runs(IN _experimentgroupid text, IN _experimentlist text, IN _requestnamesuffix text, IN _operatorusername text, IN _instrumentgroup text, IN _workpackage text, IN _mstype text, IN _instrumentsettings text, IN _eusproposalid text, IN _eususagetype text, IN _eususerslist text, IN _internalstandard text, IN _comment text, IN _mode text, IN _separationgroup text, IN _mrmattachment text, IN _vialingconc text, IN _vialingvol text, IN _staginglocation text, IN _batchname text, IN _batchdescription text, IN _batchcompletiondate text, IN _batchpriority text, IN _batchpriorityjustification text, IN _batchcomment text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddRequestedRuns';
+
