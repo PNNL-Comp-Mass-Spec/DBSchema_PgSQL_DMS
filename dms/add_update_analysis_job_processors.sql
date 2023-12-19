@@ -1,19 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_analysis_job_processors
-(
-    INOUT _id int,
-    _state text,
-    _processorName text,
-    _machine text,
-    _notes text,
-    _analysisToolsList text,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_analysis_job_processors(integer, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_analysis_job_processors(INOUT _id integer, IN _state text, IN _processorname text, IN _machine text, IN _notes text, IN _analysistoolslist text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -40,7 +31,7 @@ AS $$
 **          06/13/2017 mem - Use SCOPE_IDENTITY()
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/15/2024 mem - Ported to PostgreSQL
+**          12/18/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -78,22 +69,59 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _mode := Trim(Lower(Coalesce(_mode, '')));
+    _state             := Trim(Upper(Coalesce(_state, '')));
+    _processorName     := Trim(Coalesce(_processorName, ''));
+    _machine           := Trim(Coalesce(_machine, ''));
+    _notes             := Trim(Coalesce(_notes, ''));
+    _analysisToolsList := Trim(Coalesce(_analysisToolsList, ''));
+    _mode              := Trim(Lower(Coalesce(_mode, '')));
+
+    If Not _state IN ('D', 'E') Then
+        _message := 'State must be "D" or "E" (for disabled or enabled)';
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5201';
+        RETURN;
+    End If;
+
+    If _processorName = '' Then
+        _message := 'Processor name cannot be an empty string';
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5202';
+        RETURN;
+    End If;
+
+    If _machine = '' Then
+        _message := 'Machine cannot be an empty string';
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5203';
+        RETURN;
+    End If;
+
+    If Not _mode IN ('add', 'update') Then
+        _message := format('Invalid mode "%s"; the only supported modes are add or update', _mode);
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5204';
+        RETURN;
+    End If;
 
     ---------------------------------------------------
     -- Create temporary table to hold list of analysis tools
     ---------------------------------------------------
 
-    CREATE TEMP TABLE TD (
+    CREATE TEMP TABLE Tmp_AnalysisTools (
         ToolName text,
         ToolID int null
     );
 
     ---------------------------------------------------
-    -- Populate table from dataset list
+    -- Populate table from tool list
     ---------------------------------------------------
 
-    INSERT INTO Tmp_DatasetInfo (ToolName)
+    INSERT INTO Tmp_AnalysisTools (ToolName)
     SELECT DISTINCT Value
     FROM public.parse_delimited_list(_analysisToolsList);
 
@@ -101,43 +129,55 @@ BEGIN
     -- Get tool ID for each tool in temp table
     ---------------------------------------------------
 
-    UPDATE T
-    SET T.ToolID = analysis_tool_id
-    FROM Tmp_DatasetInfo T INNER JOIN
-         t_analysis_tool ON T.ToolName = analysis_tool;
+    UPDATE Tmp_AnalysisTools Target
+    SET ToolID = analysis_tool_id
+    FROM t_analysis_tool AnTool
+    WHERE Target.ToolName = AnTool.analysis_tool;
 
     ---------------------------------------------------
     -- Any invalid tool names?
     ---------------------------------------------------
 
-    If Exists (SELECT COUNT(*) FROM Tmp_DatasetInfo WHERE ToolID Is Null) Then
-        SELECT ToolName
+    If Exists (SELECT ToolName FROM Tmp_AnalysisTools WHERE ToolID Is Null) Then
+        SELECT string_agg(ToolName, ', ' ORDER BY ToolName)
         INTO _message
-        FROM Tmp_DatasetInfo
-        WHERE ToolID is null
-        LIMIT 1;
+        FROM Tmp_AnalysisTools
+        WHERE ToolID Is Null;
 
-        _message := format('Invalid tool name: %s', Coalesce(_message, '??'));
+        _message := format('Invalid tool %s: %s',
+                                CASE WHEN Position(',' IN _message) > 0
+                                     THEN 'names'
+                                     ELSE 'name'
+                                END,
+                                Coalesce(_message, '??'));
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5208';
+        _returnCode := 'U5205';
         RETURN;
     End If;
 
     ---------------------------------------------------
-    -- Is entry already in database? (only applies to updates)
+    -- Is entry already in database?
     ---------------------------------------------------
 
-    If _mode = 'update' Then
-        -- Cannot update a non-existent entry
-        --
-        If Not Exists SELECT processor_id FROM t_analysis_job_processors WHERE processor_id = _id) Then
-            _message := format('Cannot update processor ID %s; existing entry not found in the database', _id);
-             RAISE WARNING '%', _message;
+    If _mode = 'add' And Exists (SELECT processor_id FROM t_analysis_job_processors WHERE processor_name = _processorName::citext) Then
+        _message := format('Cannot add processor %s since it already exists', _processorName);
+         RAISE WARNING '%', _message;
 
-            _returnCode := 'U5207';
-            RETURN;
-        End If;
+        _returnCode := 'U5206';
+
+        DROP TABLE Tmp_AnalysisTools;
+        RETURN;
+    End If;
+
+    If _mode = 'update' And Not Exists (SELECT processor_id FROM t_analysis_job_processors WHERE processor_id = _id) Then
+        _message := format('Cannot update processor ID %s; existing entry not found in the database', _id);
+         RAISE WARNING '%', _message;
+
+        _returnCode := 'U5207';
+
+        DROP TABLE Tmp_AnalysisTools;
+        RETURN;
     End If;
 
     ---------------------------------------------------
@@ -174,12 +214,11 @@ BEGIN
     If _mode = 'update' Then
 
         UPDATE t_analysis_job_processors
-        SET
-            state = _state,
+        SET state          = _state,
             processor_name = _processorName,
-            machine = _machine,
-            notes = _notes
-        WHERE (processor_id = _id)
+            machine        = _machine,
+            notes          = _notes
+        WHERE processor_id = _id;
 
         -- If _callingUser is defined, update entered_by in t_analysis_job_processors
         If char_length(_callingUser) > 0 Then
@@ -193,12 +232,13 @@ BEGIN
     ---------------------------------------------------
 
     If _mode = 'add' or _mode = 'update' Then
+
         ---------------------------------------------------
         -- Remove any references to tools that are not in the list
         ---------------------------------------------------
 
         DELETE FROM t_analysis_job_processor_tools
-        WHERE processor_id = _id AND NOT tool_id IN (SELECT ToolID FROM Tmp_DatasetInfo);
+        WHERE processor_id = _id AND NOT tool_id IN (SELECT ToolID FROM Tmp_AnalysisTools);
 
         ---------------------------------------------------
         -- Add references to tools that are in the list, but not in the table
@@ -206,13 +246,13 @@ BEGIN
 
         INSERT INTO t_analysis_job_processor_tools (tool_id, processor_id)
         SELECT ToolID, _id
-        FROM Tmp_DatasetInfo
+        FROM Tmp_AnalysisTools
         WHERE NOT ToolID IN
             (
                 SELECT tool_id
                 FROM t_analysis_job_processor_tools
-                WHERE (processor_id = _id)
-            )
+                WHERE processor_id = _id
+            );
 
         -- If _callingUser is defined, update entered_by in t_analysis_job_processor_tools
         If char_length(_callingUser) > 0 Then
@@ -221,8 +261,16 @@ BEGIN
 
     End If;
 
-    DROP TABLE TD;
+    DROP TABLE Tmp_AnalysisTools;
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_analysis_job_processors IS 'AddUpdateAnalysisJobProcessors';
+
+ALTER PROCEDURE public.add_update_analysis_job_processors(INOUT _id integer, IN _state text, IN _processorname text, IN _machine text, IN _notes text, IN _analysistoolslist text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_analysis_job_processors(INOUT _id integer, IN _state text, IN _processorname text, IN _machine text, IN _notes text, IN _analysistoolslist text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_analysis_job_processors(INOUT _id integer, IN _state text, IN _processorname text, IN _machine text, IN _notes text, IN _analysistoolslist text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateAnalysisJobProcessors';
+
