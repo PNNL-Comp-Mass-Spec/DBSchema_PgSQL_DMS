@@ -98,7 +98,7 @@ BEGIN
         -- Verify that biomaterial is not used by any experiments
         ---------------------------------------------------
 
-        If Exists (SELECT COUNT(biomaterial_id) FROM t_experiment_biomaterial WHERE biomaterial_id = _biomaterialID) Then
+        If Exists (SELECT biomaterial_id FROM t_experiment_biomaterial WHERE biomaterial_id = _biomaterialID) Then
             _message := 'Cannot delete biomaterial that is referenced by any experiments';
             RAISE WARNING '%', _message;
 
