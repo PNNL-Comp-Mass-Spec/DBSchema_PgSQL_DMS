@@ -1,31 +1,23 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_aux_info
-(
-    _targetName text = '',
-    _targetEntityName text = '',
-    _categoryName text = '',
-    _subCategoryName text = '',
-    _itemNameList text = '',
-    _itemValueList text = '',
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_aux_info(text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_aux_info(IN _targetname text DEFAULT ''::text, IN _targetentityname text DEFAULT ''::text, IN _categoryname text DEFAULT ''::text, IN _subcategoryname text DEFAULT ''::text, IN _itemnamelist text DEFAULT ''::text, IN _itemvaluelist text DEFAULT ''::text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Adds new or updates an existing auxiliary information item
 **
 **  Arguments:
-**    _targetName           Target type name: Experiment, Biomaterial (previously 'Cell Culture'), Dataset, or SamplePrepRequest
+**    _targetName           Target type name: 'Experiment', 'Biomaterial' (previously 'Cell Culture'), 'Dataset', or 'SamplePrepRequest'
 **    _targetEntityName     Target entity ID or name
 **    _categoryName         Category name
 **    _subCategoryName      Subcategory name
-**    _itemNameList         Aux Info names to update; delimiter is !
-**    _itemValueList        Aux Info values; delimiter is !
-**    _mode                 Mode: 'add', 'update', 'check_add', 'check_update', or 'check_only'
+**    _itemNameList         Aux info names to update; delimiter is !
+**    _itemValueList        Aux info values; delimiter is !
+**    _mode                 Mode: 'add', 'update', 'check_add', 'check_update', or 'check_only'; note that 'add' will update an existing value and 'update' will add new values
 **    _message              Output message
 **    _returnCode           Return code
 **
@@ -48,7 +40,7 @@ AS $$
 **          07/06/2022 mem - Use new aux info definition view name
 **          08/15/2022 mem - Use new column name
 **          11/29/2022 mem - Require that _targetEntityName be an integer when _targetName is SamplePrepRequest
-**          12/15/2024 mem - Ported to PostgreSQL
+**          12/19/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -57,15 +49,20 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _targetID int := 0;
+    _targetID int;
     _tgtTableName citext;
     _tgtTableNameCol citext;
     _tgtTableIDCol citext;
-    _sql text;
+
+    _dropTempTables boolean := false;
+
+    _nameCount int;
+    _valueCount int;
     _count int := 0;
-    _entryID int := -1;
-    _descriptionID int;
+
     _inFld text;
+    _entryID int;
+    _descriptionID int;
     _vFld text;
     _tVal text;
 
@@ -113,10 +110,6 @@ BEGIN
             RAISE EXCEPTION 'Invalid _mode: %', _mode;
         End If;
 
-        ---------------------------------------------------
-        -- Validate the inputs
-        ---------------------------------------------------
-
         _targetName       := Trim(Coalesce(_targetName, ''));
         _targetEntityName := Trim(Coalesce(_targetEntityName, ''));
         _categoryName     := Trim(Coalesce(_categoryName, ''));
@@ -126,6 +119,10 @@ BEGIN
 
         If _targetName::citext = 'Cell Culture' And Exists (SELECT target_type_id FROM t_aux_info_target WHERE target_type_name = 'Biomaterial') Then
             _targetName := 'Biomaterial';
+        End If;
+
+        If _targetName::citext = 'Sample Prep Request' Then
+            _targetName := 'SamplePrepRequest';
         End If;
 
         ---------------------------------------------------
@@ -157,6 +154,12 @@ BEGIN
                 RAISE EXCEPTION 'Target type % not found in t_aux_info_target', _targetName;
             End If;
 
+            If _message ILike 'Switched from T_Cell_Culture to t_biomaterial%' Or
+               _message ILike 'Switched column name from%'
+            Then
+                _message := '';
+            End If;
+
             If _mode <> 'check_only' Then
                 ---------------------------------------------------
                 -- Resolve target name and entity name to entity ID
@@ -175,7 +178,7 @@ BEGIN
         -- If list is empty, we are done
         ---------------------------------------------------
 
-        If char_length(_itemNameList) = 0 Then
+        If _itemNameList = '' Then
             RETURN;
         End If;
 
@@ -195,87 +198,103 @@ BEGIN
             ItemValue text
         );
 
+        _dropTempTables := true;
+
         INSERT INTO Tmp_AuxInfoNames (EntryID, ItemName)
         SELECT Entry_ID, Value
         FROM public.parse_delimited_list_ordered(_itemNameList, '!', 0)
-        ORDER BY EntryID;
+        ORDER BY Entry_ID;
 
         INSERT INTO Tmp_AuxInfoValues (EntryID, ItemValue)
         SELECT Entry_ID, Value
         FROM public.parse_delimited_list_ordered(_itemValueList, '!', 0)
-        ORDER BY EntryID;
+        ORDER BY Entry_ID;
+
+        SELECT COUNT(*)
+        INTO _nameCount
+        FROM Tmp_AuxInfoNames;
+
+        SELECT COUNT(*)
+        INTO _valueCount
+        FROM Tmp_AuxInfoValues;
 
         ---------------------------------------------------
         -- Process Tmp_AuxInfoNames
         ---------------------------------------------------
 
-        FOR _inFld IN
-            SELECT ItemName
+        FOR _inFld, _entryID IN
+            SELECT ItemName, EntryID
             FROM Tmp_AuxInfoNames
             ORDER BY EntryID
         LOOP
 
-            If Coalesce(_inFld, '')) = '' Then
+            If Trim(Coalesce(_inFld, '')) = '' Then
                 CONTINUE;
             End If;
 
             _count := _count + 1;
 
             -- Lookup the value for this aux info entry
-            --
-            _vFld := '';
-            --
-            SELECT ItemValue
+
+            SELECT Trim(Coalesce(ItemValue, ''))
             INTO _vFld
             FROM Tmp_AuxInfoValues
             WHERE EntryID = _entryID;
 
+            If Not FOUND Then
+                RAISE EXCEPTION 'Aux info item "%" does not have an associated value (_itemNameList has % % while _itemValueList has % %)',
+                                  _inFld,
+                                  _nameCount,  public.check_plural(_nameCount,  'item', 'items'),
+                                  _valueCount, public.check_plural(_valueCount, 'item', 'items');
+            End If;
+
             -- Resolve item name to aux description ID
-            --
-            _descriptionID := 0;
 
             SELECT Item_ID
             INTO _descriptionID
             FROM V_Aux_Info_Definition
-            WHERE Target = _targetName AND
-                  Category = _categoryName AND
-                  Subcategory = _subCategoryName AND
-                  Item = _inFld;
+            WHERE Target      = _targetName::citext AND
+                  Category    = _categoryName::citext AND
+                  Subcategory = _subCategoryName::citext AND
+                  Item        = _inFld::citext;
 
             If Not FOUND Then
-                RAISE EXCEPTION 'Could not resolve item to ID: "%" for category %, subcategory %', _inFld, _categoryName, _subCategoryName;
+                If _targetName::citext = 'Dataset' And Not Exists (SELECT item_id FROM v_aux_info_definition WHERE target = 'Dataset') Then
+                    RAISE EXCEPTION 'Aux info values are not supported for datasets (every dataset-related aux info definition is inactive)';
+                Else
+                    RAISE EXCEPTION 'Could not resolve item to ID: aux info "%" with category "%" and subcategory "%"', _inFld, _categoryName, _subCategoryName;
+                End If;
             End If;
 
             If _mode <> 'check_only' Then
 
                 -- If value is blank, delete any existing entry from value table
-                --
+
                 If _vFld = '' Then
                     DELETE FROM t_aux_info_value
-                    WHERE Aux_Description_ID = _descriptionID AND target_id = _targetID;
+                    WHERE aux_description_id = _descriptionID AND target_id = _targetID;
                 Else
 
                     -- Does entry exist in value table?
-                    --
+
                     SELECT value
                     INTO _tVal
                     FROM t_aux_info_value
-                    WHERE Aux_Description_ID = _descriptionID AND
+                    WHERE aux_description_id = _descriptionID AND
                           target_id = _targetID;
 
-                    -- If entry exists in value table, update it
-                    -- otherwise insert it
-                    --
+                    -- If entry exists in value table, update it, otherwise insert it
+
                     If FOUND Then
-                        If _tVal <> _vFld Then
+                        If _tVal Is Distinct From _vFld Then
                             UPDATE t_aux_info_value
                             SET value = _vFld
-                            WHERE Aux_Description_ID = _descriptionID AND target_id = _targetID;
+                            WHERE aux_description_id = _descriptionID AND target_id = _targetID;
                         End If;
                     Else
                         INSERT INTO t_aux_info_value( target_id,
-                                                     Aux_Description_ID,
-                                                     value )
+                                                      aux_description_id,
+                                                      value )
                         VALUES (_targetID, _descriptionID, _vFld);
                     End If;
 
@@ -284,6 +303,13 @@ BEGIN
             End If;
 
         END LOOP;
+
+        If _dropTempTables Then
+            DROP TABLE Tmp_AuxInfoNames;
+            DROP TABLE Tmp_AuxInfoValues;
+        End If;
+
+        RETURN;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -305,4 +331,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_aux_info IS 'AddUpdateAuxInfo';
+
+ALTER PROCEDURE public.add_update_aux_info(IN _targetname text, IN _targetentityname text, IN _categoryname text, IN _subcategoryname text, IN _itemnamelist text, IN _itemvaluelist text, IN _mode text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_aux_info(IN _targetname text, IN _targetentityname text, IN _categoryname text, IN _subcategoryname text, IN _itemnamelist text, IN _itemvaluelist text, IN _mode text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_aux_info(IN _targetname text, IN _targetentityname text, IN _categoryname text, IN _subcategoryname text, IN _itemnamelist text, IN _itemvaluelist text, IN _mode text, INOUT _message text, INOUT _returncode text) IS 'AddUpdateAuxInfo';
+
