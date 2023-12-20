@@ -57,8 +57,8 @@ BEGIN
     If _tgtTableName = 't_cell_culture' Then
 
         -- Auto-switch the target table to t_biomaterial if T_Cell_Culture does not exist but t_biomaterial does
-        If Not Exists (Select * From information_schema.tables Where table_name::citext = 'T_Cell_Culture' And table_type::citext = 'BASE TABLE')
-           And Exists (Select * From information_schema.tables Where table_name::citext = 't_biomaterial'  And table_type::citext = 'BASE TABLE') Then
+        If Not Exists (SELECT table_name FROM information_schema.tables WHERE table_name::citext = 'T_Cell_Culture' AND table_type::citext = 'BASE TABLE')
+           And Exists (SELECT table_name FROM information_schema.tables WHERE table_name::citext = 't_biomaterial'  AND table_type::citext = 'BASE TABLE') Then
 
             _tgtTableName    := 't_biomaterial';
             _tgtTableIDCol   := 'biomaterial_id';
