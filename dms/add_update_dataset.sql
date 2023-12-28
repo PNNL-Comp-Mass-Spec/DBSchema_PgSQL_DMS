@@ -151,6 +151,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_dataset(IN _datasetname text, IN _
 **          10/30/2023 mem - Replace mode 'add_trigger' with 'add_dataset_create_task'
 **                         - Ported to PostgreSQL
 **          11/01/2023 mem - Add missing brackets when checking for '[space]' in the return value from validate_chars()
+**          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user_multi_id()
 **
 *****************************************************/
 DECLARE
@@ -219,6 +220,7 @@ DECLARE
     _warningWithPrefix text;
     _logErrors boolean := false;
     _logMessage text;
+    _targetType int;
     _alterEnteredByMessage text;
 
     _sqlState text;
@@ -1143,13 +1145,16 @@ BEGIN
                 End If;
 
                 -- If _callingUser is defined, Call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-                If char_length(_callingUser) > 0 Then
+                If _callingUser <> '' Then
                     If _logDebugMessages Then
                         RAISE INFO '%', 'Call public.alter_event_log_entry_user';
                     End If;
 
-                    CALL public.alter_event_log_entry_user ('public', 4, _datasetID, _newDSStateID, _callingUser, _message => _alterEnteredByMessage);
-                    CALL public.alter_event_log_entry_user ('public', 8, _datasetID, _ratingID,     _callingUser, _message => _alterEnteredByMessage);
+                    _targetType := 4;
+                    CALL public.alter_event_log_entry_user ('public', _targetType, _datasetID, _newDSStateID, _callingUser, _message => _alterEnteredByMessage);
+
+                    _targetType := 8;
+                    CALL public.alter_event_log_entry_user ('public', _targetType, _datasetID, _ratingID,     _callingUser, _message => _alterEnteredByMessage);
                 End If;
 
                 ---------------------------------------------------
@@ -1358,8 +1363,9 @@ BEGIN
             WHERE dataset_id = _datasetID;
 
             -- If _callingUser is defined, Call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-            If char_length(_callingUser) > 0 And _ratingID <> Coalesce(_curDSRatingID, -1000) Then
-                CALL public.alter_event_log_entry_user ('public', 8, _datasetID, _ratingID, _callingUser, _message => _alterEnteredByMessage);
+            If _callingUser <> '' And _ratingID <> Coalesce(_curDSRatingID, -1000) Then
+                _targetType := 8;
+                CALL public.alter_event_log_entry_user ('public', _targetType, _datasetID, _ratingID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             -- Lookup the Requested Run info for this dataset
@@ -1524,7 +1530,7 @@ BEGIN
                     -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field
                     -- in t_event_log for any newly created jobs for this dataset
 
-                    If char_length(_callingUser) > 0 Then
+                    If _callingUser <> '' Then
                         _jobStateID := 1;
 
                         CREATE TEMP TABLE Tmp_ID_Update_List (
@@ -1536,7 +1542,8 @@ BEGIN
                         FROM t_analysis_job
                         WHERE dataset_id = _datasetID;
 
-                        CALL public.alter_event_log_entry_user_multi_id ('public', 5, _jobStateID, _callingUser, _message => _alterEnteredByMessage);
+                        _targetType := 5;
+                        CALL public.alter_event_log_entry_user_multi_id ('public', _targetType, _jobStateID, _callingUser, _message => _alterEnteredByMessage);
 
                         DROP TABLE Tmp_ID_Update_List;
                     End If;

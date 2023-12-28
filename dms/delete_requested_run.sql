@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE public.delete_requested_run(IN _requestid integer DE
 **          07/27/2023 mem - Add schema name parameter when calling alter_event_log_entry_user()
 **                         - Use local variable for the return value of _message from alter_event_log_entry_user()
 **          09/05/2023 mem - Use schema name when calling procedures
+**          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
 **
 *****************************************************/
 DECLARE
@@ -47,6 +48,7 @@ DECLARE
     _stateID int;
     _deletedRequestedRunEntryID int;
     _message2 text;
+    _targetType int;
     _alterEnteredByMessage text;
 BEGIN
     _message := '';
@@ -200,10 +202,11 @@ BEGIN
         WHERE request_id = _requestID;
 
         -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-        If char_length(_callingUser) > 0 Then
+        If _callingUser <> '' Then
+            _targetType := 11;
             _stateID := 0;
 
-            CALL public.alter_event_log_entry_user ('public', 11, _requestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
+            CALL public.alter_event_log_entry_user ('public', _targetType, _requestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
 
             RAISE INFO '%', _alterEnteredByMessage;
         End If;

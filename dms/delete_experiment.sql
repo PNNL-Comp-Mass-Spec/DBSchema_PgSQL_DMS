@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE public.delete_experiment(IN _experimentname text, IN
 **                         - Add _infoOnly
 **          07/11/2023 mem - Remove duplicate query of T_Requested_Run (unnecessary since T_Requested_Run_History was merged with T_Requested_Run in 2010)
 **          12/10/2023 mem - Ported to PostgreSQL
+**          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
 **
 *****************************************************/
 DECLARE
@@ -52,6 +53,7 @@ DECLARE
     _groupID int := 0;
     _stateID int := 0;
     _placeholderExpID int;
+    _targetType int;
     _alterEnteredByMessage text;
 
     _formatSpecifier text;
@@ -358,10 +360,11 @@ BEGIN
             RAISE INFO '%', _infoData;
         END LOOP;
 
-    ElsIf char_length(_callingUser) > 0 Then
+    ElsIf Trim(Coalesce(_callingUser, '')) <> '' Then
         -- Call alter_event_log_entry_user to alter the entered_by field in t_event_log
 
-        CALL public.alter_event_log_entry_user ('public', 3, _experimentId, _stateID, _callingUser, _message => _alterEnteredByMessage);
+        _targetType := 3;
+        CALL public.alter_event_log_entry_user ('public', _targetType, _experimentId, _stateID, _callingUser, _message => _alterEnteredByMessage);
     End If;
 
     If Not _infoOnly And Coalesce(_message, '') = '' Then

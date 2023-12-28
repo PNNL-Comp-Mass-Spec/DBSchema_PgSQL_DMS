@@ -43,6 +43,7 @@ CREATE OR REPLACE PROCEDURE public.delete_dataset(IN _datasetname text, IN _info
 **          11/02/2021 mem - Show the full path to the dataset directory at the console
 **          09/15/2023 mem - Ported to PostgreSQL
 **          09/29/2023 mem - Store the dataset's storage_path_id in _datasetDirectoryPath if V_Dataset_Folder_Paths does not have the dataset
+**          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
 **
 *****************************************************/
 DECLARE
@@ -56,6 +57,7 @@ DECLARE
     _datasetDirectoryPath text := null;
     _requestID int := null;
     _stateID int := 0;
+    _targetType int;
     _alterEnteredByMessage text;
 
     _formatSpecifier text;
@@ -495,8 +497,9 @@ BEGIN
     WHERE dataset_id = _datasetID;
 
     -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-    If char_length(_callingUser) > 0 Then
-        CALL public.alter_event_log_entry_user ('public', 4, _datasetID, _stateID, _callingUser, _message => _alterEnteredByMessage);
+    If Trim(Coalesce(_callingUser, '')) <> '' Then
+        _targetType := 4;
+        CALL public.alter_event_log_entry_user ('public', _targetType, _datasetID, _stateID, _callingUser, _message => _alterEnteredByMessage);
     End If;
 
     RAISE INFO 'Deleted dataset ID %', _datasetID;

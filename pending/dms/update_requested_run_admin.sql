@@ -61,6 +61,7 @@ DECLARE
     _debugEnabled boolean := false;
     _argLength Int;
     _requestID int := -100000;
+    _targetType int;
     _alterEnteredByMessage text;
 BEGIN
     _message := '';
@@ -217,17 +218,18 @@ BEGIN
 
         _usageMessage := format('Updated %s %s', _updateCount, public.check_plural(_updateCount, 'request', 'requests'));
 
-        If char_length(_callingUser) > 0 Then
+        If Trim(Coalesce(_callingUser, '')) <> '' Then
             -- _callingUser is defined; call public.alter_event_log_entry_user_multi_id
             -- to alter the entered_by field in t_event_log
             -- This procedure uses Tmp_ID_Update_List
-            --
+
             SELECT state_id
             INTO _stateID
             FROM t_requested_run_state_name
             WHERE state_name = _mode::citext;
 
-            CALL public.alter_event_log_entry_user_multi_id ('public', 11, _stateID, _callingUser, _message => _alterEnteredByMessage);
+            _targetType := 11;
+            CALL public.alter_event_log_entry_user_multi_id ('public', _targetType, _stateID, _callingUser, _message => _alterEnteredByMessage);
         End If;
 
         -- Call update_cached_requested_run_eus_users for each entry in Tmp_Requests
@@ -258,14 +260,15 @@ BEGIN
 
         _usageMessage := format('Deleted %s %s', _matchCount, public.check_plural(_matchCount, 'request', 'requests'));
 
-        If char_length(_callingUser) > 0 Then
+        If Trim(Coalesce(_callingUser, '')) <> '' Then
             -- _callingUser is defined; call public.alter_event_log_entry_user_multi_id
             -- to alter the entered_by field in t_event_log
             -- This procedure uses Tmp_ID_Update_List
-            --
+
+            _targetType := 11;
             _stateID := 0;
 
-            CALL public.alter_event_log_entry_user_multi_id ('public', 11, _stateID, _callingUser, _message => _alterEnteredByMessage);
+            CALL public.alter_event_log_entry_user_multi_id ('public', _targetType, _stateID, _callingUser, _message => _alterEnteredByMessage);
         End If;
 
         -- Remove any cached EUS user lists

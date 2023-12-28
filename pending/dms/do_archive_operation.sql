@@ -42,6 +42,7 @@ DECLARE
     _datasetID int;
     _archiveStateID int;
     _newState int;
+    _targetType int;
     _alterEnteredByMessage text;
 BEGIN
     _message := '';
@@ -128,8 +129,9 @@ BEGIN
         WHERE (dataset_id  = _datasetID)
 
         -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-        If char_length(_callingUser) > 0 Then
-            CALL public.alter_event_log_entry_user ('public', 6, _datasetID, _newState, _callingUser, _message => _alterEnteredByMessage);
+        If Trim(Coalesce(_callingUser, '')) <> '' Then
+            _targetType := 6;
+            CALL public.alter_event_log_entry_user ('public', _targetType, _datasetID, _newState, _callingUser, _message => _alterEnteredByMessage);
         End If;
 
         RETURN;
@@ -151,8 +153,9 @@ BEGIN
         WHERE (dataset_id  = _datasetID)
 
         -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-        If char_length(_callingUser) > 0 Then
-            CALL public.alter_event_log_entry_user ('public', 7, _datasetID, _newState, _callingUser, _message => _alterEnteredByMessage);
+        If Trim(Coalesce(_callingUser, '')) <> '' Then
+            _targetType := 7;
+            CALL public.alter_event_log_entry_user ('public', _targetType, _datasetID, _newState, _callingUser, _message => _alterEnteredByMessage);
         End If;
 
         RETURN;

@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE public.consume_scheduled_run(IN _datasetid integer, 
 **          11/21/2016 mem - Add parameter _logDebugMessages
 **          05/22/2017 mem - No longer abort the addition if a request already exists named AutoReq_DatasetName
 **          09/13/2023 mem - Ported to PostgreSQL
+**          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
 **
 *****************************************************/
 DECLARE
@@ -48,6 +49,7 @@ DECLARE
     _newAutoRequestID int;
     _stateName text;
     _stateID int;
+    _targetType int;
     _alterEnteredByMessage text;
 BEGIN
     _message := '';
@@ -194,14 +196,15 @@ BEGIN
         WHERE request_id = _requestID;
 
         -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-        If char_length(_callingUser) > 0 Then
+        If Trim(Coalesce(_callingUser, '')) <> '' Then
 
             SELECT state_id
             INTO _stateID
             FROM t_requested_run_state_name
             WHERE state_name = _stateName;
 
-            CALL public.alter_event_log_entry_user ('public', 11, _requestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
+            _targetType := 11;
+            CALL public.alter_event_log_entry_user ('public', _targetType, _requestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
         End If;
 
     END;

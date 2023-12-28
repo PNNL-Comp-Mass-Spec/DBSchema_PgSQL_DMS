@@ -70,6 +70,7 @@ DECLARE
     _elapsedHours numeric;
     _allowReset boolean := false;
     _logMessage text;
+    _targetType int;
     _alterEnteredByMessage text;
 
     _sqlState text;
@@ -291,8 +292,9 @@ BEGIN
             End If;
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-            If char_length(_callingUser) > 0 Then
-                CALL public.alter_event_log_entry_user ('public', 4, _datasetID, _newState, _callingUser, _message => _alterEnteredByMessage);
+            If Trim(Coalesce(_callingUser, '')) <> '' Then
+                _targetType := 4;
+                CALL public.alter_event_log_entry_user ('public', _targetType, _datasetID, _newState, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             _validMode := true;

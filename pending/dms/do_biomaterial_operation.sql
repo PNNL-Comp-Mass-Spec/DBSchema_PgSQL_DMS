@@ -38,6 +38,7 @@ DECLARE
     _result int;
     _biomaterialID int;
     _stateID int;
+    _targetType int;
     _alterEnteredByMessage text;
 BEGIN
     _message := '';
@@ -114,10 +115,11 @@ BEGIN
         WHERE Biomaterial_ID = _biomaterialID
 
         -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-        If char_length(_callingUser) > 0 Then
+        If Trim(Coalesce(_callingUser, '')) <> '' Then
+            _targetType := 2;
             _stateID := 0;
 
-            CALL public.alter_event_log_entry_user ('public', 2, _biomaterialID, _stateID, _callingUser, _message => _alterEnteredByMessage);
+            CALL public.alter_event_log_entry_user ('public', _targetType, _biomaterialID, _stateID, _callingUser, _message => _alterEnteredByMessage);
         End If;
 
         RETURN;

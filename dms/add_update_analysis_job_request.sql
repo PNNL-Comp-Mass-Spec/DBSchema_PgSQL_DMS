@@ -115,6 +115,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job_request(IN _datasets 
 **          03/22/2023 mem - Also auto-remove datasets named 'Dataset Name' and 'Dataset_Name' from Tmp_DatasetInfo
 **          03/27/2023 mem - Synchronize protein collection options validation with add_analysis_job_group
 **          12/12/2023 mem - Ported to PostgreSQL
+**          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
 **
 *****************************************************/
 DECLARE
@@ -149,6 +150,7 @@ DECLARE
     _stateID int := -1;
     _newRequestNum int;
     _logMessage text;
+    _targetType int;
     _alterEnteredByMessage text;
 
     _sqlState text;
@@ -678,11 +680,11 @@ BEGIN
             --
             _requestID := _newRequestNum;
 
-            If char_length(_callingUser) > 0 Then
-                -- Calling user is defined; call public.alter_event_log_entry_user or public.alter_event_log_entry_user_multi_id
-                -- to alter the entered_by field in t_event_log
+            If _callingUser <> '' Then
+                -- Calling user is defined; call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
 
-                CALL public.alter_event_log_entry_user ('public', 12, _requestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
+                _targetType := 12;
+                CALL public.alter_event_log_entry_user ('public', _targetType, _requestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             CALL public.update_cached_job_request_existing_jobs (
@@ -738,11 +740,11 @@ BEGIN
             WHERE target.Request_ID = _requestID AND
                   NOT EXISTS (SELECT DI.Dataset_ID FROM Tmp_DatasetInfo DI WHERE target.dataset_id = DI.dataset_id);
 
-            If char_length(_callingUser) > 0 Then
-                -- Calling user is defined; call public.alter_event_log_entry_user or public.alter_event_log_entry_user_multi_id
-                -- to alter the entered_by field in t_event_log
+            If _callingUser <> '' Then
+                -- Calling user is defined; call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
 
-                CALL public.alter_event_log_entry_user ('public', 12, _requestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
+                _targetType := 12;
+                CALL public.alter_event_log_entry_user ('public', _targetType, _requestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             CALL public.update_cached_job_request_existing_jobs (

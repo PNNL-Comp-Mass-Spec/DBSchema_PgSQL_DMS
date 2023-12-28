@@ -146,6 +146,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run(IN _requestname text
 **          10/31/2023 mem - Ported to PostgreSQL
 **          11/01/2023 mem - Add missing brackets when checking for '[space]' in the return value from validate_chars()
 **          12/16/2023 mem - Update error messages
+**          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
 **
 *****************************************************/
 DECLARE
@@ -186,6 +187,7 @@ DECLARE
     _allowNoneWP boolean;
     _requireWP boolean := true;
     _logMessage text;
+    _targetType int;
     _alterEnteredByMessage text;
 
     _sqlState text;
@@ -883,8 +885,9 @@ BEGIN
             _requestID := _request;
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-            If char_length(_callingUser) > 0 Then
-                CALL public.alter_event_log_entry_user ('public', 11, _requestID, _statusID, _callingUser, _message => _alterEnteredByMessage);
+            If Trim(Coalesce(_callingUser, '')) <> '' Then
+                _targetType := 11;
+                CALL public.alter_event_log_entry_user ('public', _targetType, _requestID, _statusID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             If _logDebugMessages Then
@@ -957,8 +960,9 @@ BEGIN
             WHERE request_id = _requestID;
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-            If char_length(_callingUser) > 0 Then
-                CALL public.alter_event_log_entry_user ('public', 11, _requestID, _statusID, _callingUser, _message => _alterEnteredByMessage);
+            If Trim(Coalesce(_callingUser, '')) <> '' Then
+                _targetType := 11;
+                CALL public.alter_event_log_entry_user ('public', _targetType, _requestID, _statusID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             -- Assign users to the request

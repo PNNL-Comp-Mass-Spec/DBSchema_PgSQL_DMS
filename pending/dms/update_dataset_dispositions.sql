@@ -60,6 +60,7 @@ DECLARE
     _ratingID int;
     _datasetInfo record;
     _usageMessage text;
+    _targetType int;
     _alterEnteredByMessage text;
 
     _sqlState text;
@@ -316,8 +317,9 @@ BEGIN
 
             BEGIN
                 -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-                If char_length(_callingUser) > 0 Then
-                    CALL public.alter_event_log_entry_user ('public', 8, _datasetInfo.DatasetID, _ratingID, _callingUser, _message => _alterEnteredByMessage);
+                If Trim(Coalesce(_callingUser, '')) <> '' Then
+                    _targetType := 8;
+                    CALL public.alter_event_log_entry_user ('public', _targetType, _datasetInfo.DatasetID, _ratingID, _callingUser, _message => _alterEnteredByMessage);
                 End If;
             EXCEPTION
                 WHEN OTHERS THEN

@@ -56,6 +56,7 @@ CREATE OR REPLACE PROCEDURE public.unconsume_scheduled_run(IN _datasetname text,
 **          09/16/2023 mem - Ported to PostgreSQL
 **          10/18/2023 mem - Fix typo in format string
 **          12/02/2023 mem - Rename variable
+**          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
 **
 *****************************************************/
 DECLARE
@@ -79,6 +80,7 @@ DECLARE
     _newStatus text;
     _newQueueState int;
     _stateID int;
+    _targetType int;
     _alterEnteredByMessage text;
 BEGIN
     _message := Coalesce(_message, '');
@@ -337,14 +339,15 @@ BEGIN
         queue_state = _newQueueState
     WHERE request_id = _requestIDOriginal;
 
-    If char_length(_callingUser) > 0 Then
+    If Trim(Coalesce(_callingUser, '')) <> '' Then
 
         SELECT state_id
         INTO _stateID
         FROM t_requested_run_state_name
         WHERE state_name = _newStatus;
 
-        CALL public.alter_event_log_entry_user ('public', 11, _requestIDOriginal, _stateID, _callingUser, _message => _alterEnteredByMessage);
+        _targetType := 11;
+        CALL public.alter_event_log_entry_user ('public', _targetType, _requestIDOriginal, _stateID, _callingUser, _message => _alterEnteredByMessage);
     End If;
 
     ---------------------------------------------------

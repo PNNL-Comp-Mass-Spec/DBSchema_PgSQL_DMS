@@ -61,6 +61,7 @@ DECLARE
     _ratingID int;
     _currentDataset text;
     _usageMessage text;
+    _targetType int;
     _alterEnteredByMessage text;
 
     _formatSpecifier text;
@@ -375,10 +376,9 @@ BEGIN
                 WHERE dataset IN (SELECT Dataset_Name FROM Tmp_DatasetInfo);
             End If;
 
-            If char_length(_callingUser) > 0 And (_datasetStateUpdated Or _datasetRatingUpdated) Then
+            If Trim(Coalesce(_callingUser, '')) <> '' And (_datasetStateUpdated Or _datasetRatingUpdated) Then
                 -- _callingUser is defined; call public.alter_event_log_entry_user_multi_id
                 -- to alter the entered_by field in t_event_log
-                --
 
                 -- Populate a temporary table with the list of Dataset IDs just updated
                 CREATE TEMP TABLE Tmp_ID_Update_List (
@@ -393,11 +393,13 @@ BEGIN
                 WHERE dataset IN (SELECT Dataset_Name FROM Tmp_DatasetInfo);
 
                 If _datasetStateUpdated Then
-                    CALL public.alter_event_log_entry_user_multi_id ('public', 4, _stateID, _callingUser, _message => _alterEnteredByMessage);
+                    _targetType := 4;
+                    CALL public.alter_event_log_entry_user_multi_id ('public', _targetType, _stateID, _callingUser, _message => _alterEnteredByMessage);
                 End If;
 
                 If _datasetRatingUpdated Then
-                    CALL public.alter_event_log_entry_user_multi_id ('public', 8, _ratingID, _callingUser, _message => _alterEnteredByMessage);
+                    _targetType := 8;
+                    CALL public.alter_event_log_entry_user_multi_id ('public', _targetType, _ratingID, _callingUser, _message => _alterEnteredByMessage);
                 End If;
 
                 DROP TABLE Tmp_ID_Update_List;

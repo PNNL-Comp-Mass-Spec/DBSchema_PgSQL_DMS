@@ -95,6 +95,7 @@ DECLARE
     _newUsername text;
     _stateID int := 1;
     _logMessage text;
+    _targetType int;
     _alterEnteredByMessage text;
 
     _sqlState text;
@@ -385,8 +386,9 @@ BEGIN
             INTO _compoundID;
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-            If char_length(_callingUser) > 0 Then
-                CALL public.alter_event_log_entry_user ('public', 13, _compoundID, _stateID, _callingUser, _message => _alterEnteredByMessage);
+            If _callingUser <> '' Then
+                _targetType := 13;
+                CALL public.alter_event_log_entry_user ('public', _targetType, _compoundID, _stateID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             -- Material movement logging

@@ -74,6 +74,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work(IN _state text DEFA
 **          09/08/2023 mem - Adjust capitalization of keywords
 **                         - Use a case insensitive search when finding text to replace
 **          09/13/2023 mem - Remove unnecessary delimiter argument when calling append_to_text()
+**          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user_multi_id()
 **
 *****************************************************/
 DECLARE
@@ -101,6 +102,7 @@ DECLARE
     _invalidJobList text;
     _propMode int;
     _gid int;
+    _targetType int;
     _alterEnteredByMessage text;
 BEGIN
     _message := '';
@@ -637,7 +639,7 @@ BEGIN
     End If;
     */
 
-     If char_length(_callingUser) > 0 And (_alterEventLogRequired Or _alterEnteredByRequired) Then
+     If _callingUser <> '' And (_alterEventLogRequired Or _alterEnteredByRequired) Then
         -- _callingUser is defined and items need to be updated in t_event_log and/or t_analysis_job_processor_group_associations
         --
         -- Populate a temporary table with the list of job IDs just updated
@@ -652,10 +654,10 @@ BEGIN
         FROM Tmp_AnalysisJobs;
 
         If _alterEventLogRequired Then
-            -- Call public.alter_event_log_entry_user_multi_id
-            -- to alter the entered_by field in t_event_log
+            -- Call public.alter_event_log_entry_user_multi_id to alter the entered_by field in t_event_log
 
-            CALL public.alter_event_log_entry_user_multi_id ('public', 5, _stateID, _callingUser, _message => _alterEnteredByMessage);
+            _targetType := 5;
+            CALL public.alter_event_log_entry_user_multi_id ('public', _targetType, _stateID, _callingUser, _message => _alterEnteredByMessage);
         End If;
 
         If _alterEnteredByRequired Then

@@ -107,6 +107,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job(IN _datasetname text,
 **          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          12/09/2023 mem - Add parameter _showDebug
+**          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
 **
 *****************************************************/
 DECLARE
@@ -139,6 +140,7 @@ DECLARE
     _updateStateID int;
     _pgaAssocID int := 0;
     _logMessage text;
+    _targetType int;
     _alterEnteredByMessage text;
 
     _formatSpecifier text;
@@ -758,8 +760,9 @@ BEGIN
             );
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-            If char_length(_callingUser) > 0 Then
-                CALL public.alter_event_log_entry_user ('public', 5, _jobID, _newStateID, _callingUser, _message => _alterEnteredByMessage);
+            If _callingUser <> '' Then
+                _targetType := 5;
+                CALL public.alter_event_log_entry_user ('public', _targetType, _jobID, _newStateID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             -- Associate job with processor group
@@ -919,10 +922,10 @@ BEGIN
             WHERE job = _jobID;
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-            If char_length(_callingUser) > 0 Then
+            If _callingUser <> '' Then
                 _currentLocation := format('Call alter_event_log_entry_user for job %s', _jobID);
-
-                CALL public.alter_event_log_entry_user ('public', 5, _jobID, _updateStateID, _callingUser, _message => _alterEnteredByMessage);
+                _targetType := 5;
+                CALL public.alter_event_log_entry_user ('public', _targetType, _jobID, _updateStateID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             -- Deal with job association with group,
@@ -972,7 +975,7 @@ BEGIN
                 _alterEnteredByRequired := true;
             End If;
 
-            If char_length(_callingUser) > 0 And _alterEnteredByRequired Then
+            If _callingUser <> '' And _alterEnteredByRequired Then
                 _currentLocation := format('Call alter_entered_by_user for job %s', _jobID);
 
                 -- Call public.alter_entered_by_user

@@ -45,6 +45,7 @@ DECLARE
     _currentProcedure text;
     _nameWithSchema text;
     _authorized boolean;
+    _targetType int;
     _alterEnteredByMessage text;
 
     _jobID int;
@@ -154,10 +155,11 @@ BEGIN
     -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
     -------------------------------------------------------
 
-    If char_length(_callingUser) > 0 Then
+    If Trim(Coalesce(_callingUser, '')) <> '' Then
+        _targetType := 5;
         _stateID := 0;
 
-        CALL public.alter_event_log_entry_user ('public', 5, _jobID, _stateID, _callingUser, _message => _alterEnteredByMessage);
+        CALL public.alter_event_log_entry_user ('public', _targetType, _jobID, _stateID, _callingUser, _message => _alterEnteredByMessage);
     End If;
 
     -------------------------------------------------------

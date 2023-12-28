@@ -97,6 +97,8 @@ DECLARE
     _idConfirm int := 0;
     _debugMsg text;
     _stateID int := 1;
+    _targetType int;
+    _stateID int;
     _logMessage text;
     _alterEnteredByMessage text;
 
@@ -377,7 +379,9 @@ BEGIN
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If char_length(_callingUser) > 0 Then
-                CALL public.alter_event_log_entry_user ('public', 2, _biomaterialID, _stateID, _callingUser, _message => _alterEnteredByMessage);
+                _targetType := 2;
+                _stateID := 1;
+                CALL public.alter_event_log_entry_user ('public', _targetType, _biomaterialID, _stateID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             -- Material movement logging

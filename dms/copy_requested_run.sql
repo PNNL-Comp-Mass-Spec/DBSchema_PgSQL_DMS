@@ -44,6 +44,7 @@ CREATE OR REPLACE PROCEDURE public.copy_requested_run(IN _requestid integer, IN 
 **                         - Include an underscore before appending @iteration when generating a unique name for the new requested run
 **                         - Ported to PostgreSQL
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
 **
 *****************************************************/
 DECLARE
@@ -56,6 +57,7 @@ DECLARE
     _callingUserUnconsume text;
     _batchID int;
     _msg text;
+    _targetType int;
     _alterEnteredByMessage text;
 
     _formatSpecifier text;
@@ -381,8 +383,9 @@ BEGIN
         RETURN;
     End If;
 
-    If char_length(_callingUser) > 0 Then
-        CALL public.alter_event_log_entry_user ('public', 11, _newRequestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
+    If _callingUser <> '' Then
+        _targetType := 11;
+        CALL public.alter_event_log_entry_user ('public', _targetType, _newRequestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
     End If;
 
     ------------------------------------------------------------
@@ -391,7 +394,7 @@ BEGIN
 
     -- First define the calling user text
 
-    If char_length(_callingUser) > 0 Then
+    If _callingUser <> '' Then
         _callingUserUnconsume := format('(unconsume for %s)', _callingUser);
     Else
         _callingUserUnconsume := '(unconsume)';

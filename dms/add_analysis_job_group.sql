@@ -110,6 +110,7 @@ CREATE OR REPLACE PROCEDURE public.add_analysis_job_group(IN _datasetlist text, 
 **          07/27/2023 mem - Update message sent to get_new_job_id()
 **          09/06/2023 mem - Remove leading space from messages
 **          12/02/2023 mem - Ported to PostgreSQL
+**          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user_multi_id()
 **
 *****************************************************/
 DECLARE
@@ -180,6 +181,7 @@ DECLARE
     _numDatasets int := 0;
     _createdSettingsFileValuesTable boolean := false;
     _createdNewJobIDsTable boolean := false;
+    _targetType int;
     _alterEnteredByMessage text;
 
     _sqlState text;
@@ -378,7 +380,8 @@ BEGIN
         -- Auto-update _ownerUsername to _callingUser if possible
         ---------------------------------------------------
 
-        If char_length(_callingUser) > 0 Then
+        If Trim(Coalesce(_callingUser, '')) <> '' Then
+            _callinguser := Trim(_callinguser);
             _slashPos := Position('\' In _callinguser);
 
             If _slashPos > 0 Then
@@ -758,11 +761,11 @@ BEGIN
                 SET request_state_id = _requestStateID
                 WHERE request_id = _requestID;
 
-                If char_length(_callingUser) > 0 Then
-                    -- _callingUser is defined; call public.alter_event_log_entry_user or public.alter_event_log_entry_user_multi_id
-                    -- to alter the entered_by field in t_event_log
-                    --
-                    CALL public.alter_event_log_entry_user ('public', 12, _requestID, _requestStateID, _callingUser, _message => _alterEnteredByMessage);
+                If Trim(Coalesce(_callingUser, '')) <> '' Then
+                    -- _callingUser is defined; call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
+
+                    _targetType := 12;
+                    CALL public.alter_event_log_entry_user ('public', _targetType, _requestID, _requestStateID, _callingUser, _message => _alterEnteredByMessage);
                 End If;
 
                 _message := format('Created aggregation job %s for ', _pipelineJob);
@@ -831,18 +834,18 @@ BEGIN
 
                 If _requestStateID In (1, 5) Then
                     -- Mark request as used
-                    --
+
                     _requestStateID := 2;
 
                     UPDATE t_analysis_job_request
                     SET request_state_id = _requestStateID
                     WHERE request_id = _requestID;
 
-                    If char_length(_callingUser) > 0 Then
-                        -- _callingUser is defined; call public.alter_event_log_entry_user or public.alter_event_log_entry_user_multi_id
-                        -- to alter the entered_by field in t_event_log
-                        --
-                        CALL public.alter_event_log_entry_user ('public', 12, _requestID, _requestStateID, _callingUser, _message => _alterEnteredByMessage);
+                    If Trim(Coalesce(_callingUser, '')) <> '' Then
+                        -- _callingUser is defined; call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
+
+                        _targetType := 12;
+                        CALL public.alter_event_log_entry_user ('public', _targetType, _requestID, _requestStateID, _callingUser, _message => _alterEnteredByMessage);
                     End If;
                 Else
                     -- Request ID is non-zero and request is not in state 1 or state 5
@@ -1005,12 +1008,14 @@ BEGIN
 
             End If;
 
-            If char_length(_callingUser) > 0 Then
+            If Trim(Coalesce(_callingUser, '')) <> '' Then
                 -- _callingUser is defined; call public.alter_event_log_entry_user or public.alter_event_log_entry_user_multi_id
                 -- to alter the entered_by field in t_event_log
-                --
+
+                _targetType := 5;
+
                 If _batchID = 0 Then
-                    CALL public.alter_event_log_entry_user ('public', 5, _jobID, _jobStateID, _callingUser, _message => _alterEnteredByMessage);
+                    CALL public.alter_event_log_entry_user ('public', _targetType, _jobID, _jobStateID, _callingUser, _message => _alterEnteredByMessage);
                 Else
                     -- Populate a temporary table with the list of Job IDs just created
                     CREATE TEMP TABLE Tmp_ID_Update_List (
@@ -1024,7 +1029,7 @@ BEGIN
                     FROM t_analysis_job
                     WHERE batch_id = _batchID;
 
-                    CALL public.alter_event_log_entry_user_multi_id ('public', 5, _jobStateID, _callingUser, _entryTimeWindowSeconds => 45, _message => _alterEnteredByMessage);
+                    CALL public.alter_event_log_entry_user_multi_id ('public', _targetType, _jobStateID, _callingUser, _entryTimeWindowSeconds => 45, _message => _alterEnteredByMessage);
 
                     DROP TABLE Tmp_ID_Update_List;
                 End If;

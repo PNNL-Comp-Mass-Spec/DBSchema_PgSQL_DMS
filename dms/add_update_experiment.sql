@@ -104,6 +104,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_experiment(INOUT _experimentid int
 **          09/07/2023 mem - Update warning messages
 **          09/26/2023 mem - Update cached experiment names in t_data_package_experiments
 **          12/05/2023 mem - Ported to PostgreSQL
+**          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
 **
 *****************************************************/
 DECLARE
@@ -144,6 +145,7 @@ DECLARE
     _stateID int := 1;
     _msg text;
     _logMessage text;
+    _targetType int;
     _alterEnteredByMessage text;
 
     _sqlState text;
@@ -750,8 +752,9 @@ BEGIN
             End If;
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-            If char_length(_callingUser) > 0 Then
-                CALL public.alter_event_log_entry_user ('public', 3, _experimentID, _stateID, _callingUser, _message => _alterEnteredByMessage);
+            If Trim(Coalesce(_callingUser, '')) <> '' Then
+                _targetType := 3;
+                CALL public.alter_event_log_entry_user ('public', _targetType, _experimentID, _stateID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             -- Add the experiment to biomaterial mapping

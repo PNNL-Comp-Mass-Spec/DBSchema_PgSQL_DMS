@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_param_work(IN _paramname text, 
 **          07/11/2023 mem - Use COUNT(PV.entry_id) instead of COUNT(*)
 **          07/27/2023 mem - Use local variable for the return value of _message from alter_event_log_entry_user_multi_id
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user_multi_id()
 **
 *****************************************************/
 DECLARE
@@ -37,6 +38,7 @@ DECLARE
     _rowCountUpdated int := 0;
     _paramTypeID int;
     _targetState int;
+    _targetType int;
     _alterEnteredByMessage text;
 BEGIN
     _message := '';
@@ -116,12 +118,11 @@ BEGIN
 
         RAISE INFO '%', _alterEnteredByMessage;
 
-        If _paramName::citext = 'mgractive' or _paramTypeID = 17 Then
+        If _paramName::citext = 'mgractive' Or _paramTypeID = 17 Then
             -- Triggers trig_i_t_param_value and trig_u_t_param_value make an entry in
             -- mc.t_event_log whenever mgractive (param TypeID = 17) is changed
 
-            -- Call alter_event_log_entry_user_multi_id
-            -- to alter the entered_by field in mc.t_event_log
+            -- Call alter_event_log_entry_user_multi_id to alter the entered_by field in mc.t_event_log
 
             If _newValue::citext = 'True' Then
                 _targetState := 1;
@@ -137,7 +138,10 @@ BEGIN
             FROM mc.t_param_value PV
             WHERE PV.entry_id IN (SELECT entry_id FROM Tmp_ParamValueEntriesToUpdate);
 
-            CALL public.alter_event_log_entry_user_multi_id ('mc', 1, _targetState, _callingUser, _message => _alterEnteredByMessage);
+            -- Target type 1 corresponds to the 'mgractive' parameter in table T_Param_Value
+            _targetType := 1;
+
+            CALL public.alter_event_log_entry_user_multi_id ('mc', _targetType, _targetState, _callingUser, _message => _alterEnteredByMessage);
 
             RAISE INFO '%', _alterEnteredByMessage;
         End If;

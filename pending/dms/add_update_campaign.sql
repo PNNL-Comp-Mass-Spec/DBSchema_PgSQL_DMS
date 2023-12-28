@@ -118,6 +118,7 @@ DECLARE
     _idConfirm int := 0;
     _debugMsg text;
     _logMessage text;
+    _targetType int;
     _alterEnteredByMessage text;
 
     _sqlState text;
@@ -407,10 +408,15 @@ BEGIN
             _percentEMSLFunded := (_fractionEMSLFundedToStore * 100)::int;
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-            If char_length(_callingUser) > 0 Then
-                CALL public.alter_event_log_entry_user ('public', 1, _campaignID, _stateID, _callingUser, _message => _alterEnteredByMessage);
-                CALL public.alter_event_log_entry_user ('public', 9, _campaignID, _percentEMSLFunded, _callingUser, _message => _alterEnteredByMessage);
-                CALL public.alter_event_log_entry_user ('public', 10, _campaignID, _dataReleaseRestrictionsID, _callingUser, _message => _alterEnteredByMessage);
+            If Trim(Coalesce(_callingUser, '')) <> '' Then
+                _targetType := 1;
+                CALL public.alter_event_log_entry_user ('public', _targetType, _campaignID, _stateID, _callingUser, _message => _alterEnteredByMessage);
+
+                _targetType := 9;
+                CALL public.alter_event_log_entry_user ('public', _targetType, _campaignID, _percentEMSLFunded, _callingUser, _message => _alterEnteredByMessage);
+
+                _targetType := 10;
+                CALL public.alter_event_log_entry_user ('public', _targetType, _campaignID, _dataReleaseRestrictionsID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
         End If; -- add mode
@@ -464,9 +470,12 @@ BEGIN
             _percentEMSLFunded := (_fractionEMSLFundedToStore * 100)::int
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-            If char_length(_callingUser) > 0 Then
-                CALL public.alter_event_log_entry_user ('public', 9, _campaignID, _percentEMSLFunded, _callingUser, _message => _alterEnteredByMessage);
-                CALL public.alter_event_log_entry_user ('public', 10, _campaignID, _dataReleaseRestrictionsID, _callingUser, _message => _alterEnteredByMessage);
+            If Trim(Coalesce(_callingUser, '')) <> '' Then
+                _targetType := 9;
+                CALL public.alter_event_log_entry_user ('public', _targetType, _campaignID, _percentEMSLFunded, _callingUser, _message => _alterEnteredByMessage);
+
+                _targetType := 10;
+                CALL public.alter_event_log_entry_user ('public', _targetType, _campaignID, _dataReleaseRestrictionsID, _callingUser, _message => _alterEnteredByMessage);
             End If;
         End If; -- update mode
 

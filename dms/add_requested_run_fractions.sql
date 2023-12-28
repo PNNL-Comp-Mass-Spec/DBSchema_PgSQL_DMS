@@ -55,6 +55,7 @@ CREATE OR REPLACE PROCEDURE public.add_requested_run_fractions(IN _sourcerequest
 **          02/10/2023 mem - Call update_cached_requested_run_batch_stats
 **          10/09/2023 mem - Ported to PostgreSQL
 **          11/01/2023 mem - Add missing brackets when checking for '[space]' in the return value from validate_chars()
+**          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
 **
 *****************************************************/
 DECLARE
@@ -104,6 +105,7 @@ DECLARE
     _allowNoneWP boolean := _autoPopulateUserListIfBlank;
     _requireWP boolean := true;
     _logMessage text;
+    _targetType int;
     _alterEnteredByMessage text;
 
     _sqlState text;
@@ -755,8 +757,9 @@ BEGIN
                 WHERE Request_Name = _requestName::citext;
 
                 -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-                If char_length(_callingUser) > 0 Then
-                    CALL public.alter_event_log_entry_user ('public', 11, _requestID, _statusID, _callingUser, _message => _alterEnteredByMessage);
+                If Trim(Coalesce(_callingUser, '')) <> '' Then
+                    _targetType := 11;
+                    CALL public.alter_event_log_entry_user ('public', _targetType, _requestID, _statusID, _callingUser, _message => _alterEnteredByMessage);
                 End If;
 
                 If _logDebugMessages Then

@@ -107,6 +107,7 @@ DECLARE
     _warningWithPrefix text := '';
     _endDate timestamp;
     _startDate timestamp;
+    _targetType int;
     _alterEnteredByMessage text;
 
     _sqlState text;
@@ -368,9 +369,12 @@ BEGIN
 
             -- If _callingUser is defined, call alter_event_log_entry_user to alter the entered_by field in t_event_log
 
-            If char_length(_callingUser) > 0 Then
-                CALL public.alter_event_log_entry_user ('public', 4, _datasetID, _newDSStateID, _callingUser, _message => _alterEnteredByMessage);
-                CALL public.alter_event_log_entry_user ('public', 8, _datasetID, _ratingID, _callingUser, _message => _alterEnteredByMessage);
+            If Trim(Coalesce(_callingUser, '')) <> '' Then
+                _targetType := 4;
+                CALL public.alter_event_log_entry_user ('public', _targetType, _datasetID, _newDSStateID, _callingUser, _message => _alterEnteredByMessage);
+
+                _targetType := 8;
+                CALL public.alter_event_log_entry_user ('public', _targetType, _datasetID, _ratingID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             ---------------------------------------------------
@@ -473,8 +477,9 @@ BEGIN
 
             -- If _callingUser is defined, call alter_event_log_entry_user to alter the entered_by field in t_event_log
 
-            If char_length(_callingUser) > 0 And _ratingID <> Coalesce(_curDSRatingID, -1000) Then
-                CALL public.alter_event_log_entry_user ('public', 8, _datasetID, _ratingID, _callingUser, _message => _alterEnteredByMessage);
+            If Trim(Coalesce(_callingUser, '')) <> '' And _ratingID <> Coalesce(_curDSRatingID, -1000) Then
+                _targetType := 8;
+                CALL public.alter_event_log_entry_user ('public', _targetType, _datasetID, _ratingID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             -- Call Add_Update_Requested_Run if the EUS info has changed
