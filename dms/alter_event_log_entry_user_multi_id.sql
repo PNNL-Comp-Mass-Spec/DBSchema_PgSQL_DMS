@@ -20,7 +20,7 @@ CREATE OR REPLACE PROCEDURE public.alter_event_log_entry_user_multi_id(IN _event
 **
 **  Arguments:
 **    _eventLogSchema           Schema of the t_event_log table to update; if empty or null, assumes "public"
-**    _targetType               Event type; 1=Manager Enable/Disable
+**    _targetType               Target type; 1=Campaign, 2=Biomaterial, 3=Experiment, 4=Dataset, 5=Analysis Job, etc.; see tables public.t_event_target and mc.t_event_target
 **    _targetState              Logged state value to match
 **    _newUser                  New username to add to the entered_by field
 **    _applyTimeFilter          When true, filters by the current date and time; when false, looks for the most recent matching entry
