@@ -8,8 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.synchronize_job_stats_with_job_steps(IN _infoonly
 /****************************************************
 **
 **  Desc:
-**      Makes sure job start and finish times
-**      agree with job step start and finish times
+**      Make sure job start and finish times agree with job step start and finish times
 **
 **  Auth:   mem
 **  Date:   01/22/2010 mem - Initial version

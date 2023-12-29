@@ -8,11 +8,12 @@ CREATE OR REPLACE PROCEDURE cap.force_dataset_archive_job(IN _job integer, INOUT
 /****************************************************
 **
 **  Desc:
-**      Creates a DatasetArchive capture task job in cap.t_tasks
-**      for given DatasetCapture task
+**      Create a DatasetArchive capture task job in cap.t_tasks for given DatasetCapture task
 **
 **  Arguments:
-**    _job  Capture task job to lookup dataset info in cap.t_tasks
+**    _job          Capture task job to lookup dataset info in cap.t_tasks
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   grk
 **  Date:   01/22/2010

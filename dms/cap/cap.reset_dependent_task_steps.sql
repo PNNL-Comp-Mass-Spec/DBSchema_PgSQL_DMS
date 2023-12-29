@@ -8,13 +8,15 @@ CREATE OR REPLACE PROCEDURE cap.reset_dependent_task_steps(IN _jobs text, IN _in
 /****************************************************
 **
 **  Desc:
-**      For the give capture task jobs, resets entries in t_task_steps and t_task_step_dependencies
+**      For the give capture task jobs, reset entries in t_task_steps and t_task_step_dependencies
 **      for steps that are complete, yet depend on a job step that is enabled,
 **      in progress, or completed after the given job step finished
 **
 **  Arguments:
-**    _jobs       Comma-separated list of capture task jobs whose steps should be reset
-**    _infoOnly   True to preview the changes
+**    _jobs         Comma-separated list of capture task jobs whose steps should be reset
+**    _infoOnly     When true, preview the updates
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   05/19/2011 mem - Initial version

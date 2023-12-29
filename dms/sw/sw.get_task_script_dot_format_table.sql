@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION sw.get_task_script_dot_format_table(_script text) RET
 /****************************************************
 **
 **  Desc:
-**      Returns Dot graphic command list (as table) for given script
+**      Return Dot graphic command list (as table) for given script
 **
 **  Example usage:
 **

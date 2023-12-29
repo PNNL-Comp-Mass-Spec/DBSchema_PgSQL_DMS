@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.remove_from_string(_text text, _texttoremove t
 /****************************************************
 **
 **  Desc:
-**      Removes the specified text from the given string, including
+**      Remove the specified text from the given string, including
 **      removing any comma or semicolon delimiter that precedes the text
 **
 **      If _textToRemove ends in a percent sign (wildcard symbol), this function will also remove text

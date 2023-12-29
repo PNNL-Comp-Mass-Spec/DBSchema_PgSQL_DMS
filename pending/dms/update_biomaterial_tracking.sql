@@ -5,7 +5,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates summary stats in t_biomaterial_type_name
+**      Update summary stats in t_biomaterial_type_name
 **
 **  Auth:   grk
 **  Date:   10/20/2002

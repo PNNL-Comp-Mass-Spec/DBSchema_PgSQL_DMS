@@ -17,7 +17,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or updates an existing EUS proposal
+**      Add new or update an existing EUS proposal
 **
 **  Arguments:
 **    _eusPropID                EUS Proposal ID (aka Project ID)

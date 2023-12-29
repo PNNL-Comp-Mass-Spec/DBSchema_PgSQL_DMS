@@ -8,8 +8,8 @@ CREATE OR REPLACE PROCEDURE public.set_archive_update_task_complete(IN _datasetn
 /****************************************************
 **
 **  Desc:
-**      Sets archive update state to 4 (Update Complete) in t_dataset_archive if _completionCode is 0
-**      Otherwise, sets archive update state to 4 (Update Failed)
+**      Set archive update state to 4 (Update Complete) in t_dataset_archive if _completionCode is 0
+**      Otherwise, set archive update state to 4 (Update Failed)
 **
 **  Arguments:
 **    _datasetName          Dataset name

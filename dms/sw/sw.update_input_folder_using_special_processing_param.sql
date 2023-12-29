@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.update_input_folder_using_special_processing_para
 /****************************************************
 **
 **  Desc:
-**      Updates the input folder name using the SourceJob:0000 tag defined for the specified jobs
+**      Update the input folder name using the SourceJob:0000 tag defined for the specified jobs
 **
 **      Only affects job steps that have 'Special="ExtractSourceJobFromComment"' defined in the job script
 **

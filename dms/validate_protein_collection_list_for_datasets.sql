@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_datasets
 /****************************************************
 **
 **  Desc:
-**      Validates that the protein collection names in _protCollNameList include protein collections
+**      Validate that the protein collection names in _protCollNameList include protein collections
 **      for the internal standards associated with the datasets listed in _datasets
 **
 **      This procedure is very similar to procedure validate_protein_collection_list_for_dataset_table()

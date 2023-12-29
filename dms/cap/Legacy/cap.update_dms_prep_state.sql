@@ -8,7 +8,14 @@ CREATE OR REPLACE PROCEDURE cap.update_dms_prep_state(IN _job integer, IN _scrip
 /****************************************************
 **
 **  Desc:
-**      Updates prep LC state in public.set_prep_lc_task_complete
+**      Update prep LC state in public.set_prep_lc_task_complete
+**
+**  Arguments:
+**    _job                  Capture task job number
+**    _script               Script name; must be 'HPLCSequenceCapture'
+**    _newJobStateInBroker  New state for the given job; if 3 or 5, call public.set_prep_lc_task_complete()
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   grk
 **  Date:   05/08/2010 grk - Initial Veresion

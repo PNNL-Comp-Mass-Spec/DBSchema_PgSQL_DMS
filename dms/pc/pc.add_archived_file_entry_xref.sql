@@ -8,12 +8,13 @@ CREATE OR REPLACE PROCEDURE pc.add_archived_file_entry_xref(IN _collectionid int
 /****************************************************
 **
 **  Desc:
-**      Adds an Archived File Entry to pc.t_archived_output_file_collections_xref
-**      for a given Protein Collection ID
+**      Add an archived file entry to pc.t_archived_output_file_collections_xref for a given protein collection ID
 **
 **  Arguments:
-**    _collectionID         Protein collection ID
-**    _archivedFileID       Archived file ID
+**    _collectionID     Protein collection ID
+**    _archivedFileID   Archived file ID
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   kja
 **  Date:   03/17/2006 kja - Initial version

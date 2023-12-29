@@ -14,7 +14,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Changes the work package for requested runs from an old value to a new value
+**      Change the work package for requested runs from an old value to a new value
 **
 **      If _requestIdList is empty, finds active requested runs that use _oldWorkPackage
 **      If _requestIdList is defined, finds all requested runs in the list that use _oldWorkPackage, regardless of the state

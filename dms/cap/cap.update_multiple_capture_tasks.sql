@@ -8,12 +8,15 @@ CREATE OR REPLACE PROCEDURE cap.update_multiple_capture_tasks(IN _joblist text, 
 /****************************************************
 **
 **  Desc:
-**      Updates capture task jobs in list
+**      Update capture task jobs in list
 **
 **  Arguments:
 **    _jobList      Comma-separated list of capture task jobs to update
 **    _action       Action to perform: 'Hold', 'Ignore', 'Release', 'Retry', 'UpdateParameters'
 **    _mode         Mode: 'Update' or 'Preview'
+**    _message      Status message
+**    _returnCode   Return code
+**    _callingUser  Calling user username
 **
 **  Auth:   grk
 **  Date:   01/04/2010 grk - Initial release

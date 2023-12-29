@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION sw.copy_runtime_metadata_from_history(_joblist text, 
 /****************************************************
 **
 **  Desc:
-**      Copies selected pieces of metadata from the history tables to sw.T_Jobs and sw.T_Job_Steps
+**      Copy selected pieces of metadata from the history tables to sw.T_Jobs and sw.T_Job_Steps
 **      Specifically:
 **        Start, Finish, Processor,
 **        Completion_Code, Completion_Message,

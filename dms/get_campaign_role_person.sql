@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_campaign_role_person(_campaignid integer, 
 /****************************************************
 **
 **  Desc:
-**      Returns person for given role for the given campaign
+**      Return person for given role for the given campaign
 **
 **  Return value: person name and username
 **

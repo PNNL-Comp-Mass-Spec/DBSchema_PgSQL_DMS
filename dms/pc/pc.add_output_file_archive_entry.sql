@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE pc.add_output_file_archive_entry(IN _proteincollecti
 /****************************************************
 **
 **  Desc:
-**      Adds a new entry to pc.t_archived_output_files
+**      Add a new entry to pc.t_archived_output_files
 **
 **  Arguments:
 **    _proteinCollectionID          Protein collection ID (of the first protein collection, if combining multiple protein collections)
@@ -23,6 +23,8 @@ CREATE OR REPLACE PROCEDURE pc.add_output_file_archive_entry(IN _proteincollecti
 **                                  For example, 'H_sapiens_UniProt_SPROT_2023-03-01,Tryp_Pig_Bov/seq_direction=forward,filetype=fasta' has SHA-1 hash '11822db6bbfc1cb23c0a728a0b53c3b9d97db1f5'
 **    _showDebug                    When true, show debug messages
 **    _archivedFilePath             Input/Output: archived file path
+**    _message                      Status message
+**    _returnCode                   Return code
 **
 **  This procedure updates the filename to replace 00000 with the file ID in t_archived_output_files (padded using '000000')
 **  For example,  '\\gigasax\DMS_FASTA_File_Archive\Dynamic\Forward\ID_00000_C1CEE570.fasta'

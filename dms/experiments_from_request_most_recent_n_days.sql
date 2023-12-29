@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.experiments_from_request_most_recent_n_days(_r
 /****************************************************
 **
 **  Desc:
-**      Returns count of number of experiments made from given sample prep request
+**      Return count of number of experiments made from given sample prep request
 **
 **      Only includes experiments created within the most recent N days, specified by _days
 **

@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist
 /****************************************************
 **
 **  Desc:
-**      Enables or disables all managers, optionally filtering by manager type ID or manager name
+**      Enable or disable all managers, optionally filtering by manager type ID or manager name
 **
 **  Arguments:
 **    _managerTypeIDList   Optional: comma-separated list of manager type IDs to disable, e.g. '1, 2, 3'
@@ -16,6 +16,8 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist
 **                         Supports the % wildcard; also supports 'all'
 **    _enable              True to enable, false to disable
 **    _infoOnly            When true, show the managers that would be updated
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Example usage:
 **

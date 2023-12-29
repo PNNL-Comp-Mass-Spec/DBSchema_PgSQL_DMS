@@ -21,7 +21,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits an existing entry LC column
+**      Add new or edit an existing entry LC column
 **
 **  Arguments:
 **    _columnNumber         Input/output: Column name

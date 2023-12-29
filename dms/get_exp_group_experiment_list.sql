@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_exp_group_experiment_list(_groupid integer
 /****************************************************
 **
 **  Desc:
-**      Builds delimited list of experiments for given Experiment Group
+**      Build delimited list of experiments for given Experiment Group
 **
 **  Auth:   grk
 **  Date:   07/11/2006

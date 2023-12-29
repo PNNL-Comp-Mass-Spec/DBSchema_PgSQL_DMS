@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_requested_run_batch_location_scan(IN _loc
 /****************************************************
 **
 **  Desc:
-**      Adds a location scan to t_requested_run_batch_location_history for one or more requested run batches
+**      Add a location scan to t_requested_run_batch_location_history for one or more requested run batches
 **
 **  Arguments:
 **    _locationId           Location ID (row in in t_material_locations)

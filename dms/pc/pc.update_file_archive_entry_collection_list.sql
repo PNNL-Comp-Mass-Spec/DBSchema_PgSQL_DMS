@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE pc.update_file_archive_entry_collection_list(IN _arc
 /****************************************************
 **
 **  Desc:
-**      Updates the protein collection list and hash values in pc.t_archived_output_files for the given archived output file
+**      Update the protein collection list and hash values in pc.t_archived_output_files for the given archived output file
 **
 **  Arguments:
 **    _archivedFileEntryID      Archive output file ID
@@ -16,6 +16,8 @@ CREATE OR REPLACE PROCEDURE pc.update_file_archive_entry_collection_list(IN _arc
 **    _crc32Authentication      CRC32 authentication hash (hash of the bytes in the file)
 **    _collectionListHexHash    SHA-1 hash of the protein collection list and creation options (separated by a forward slash)
 **                              For example, 'H_sapiens_UniProt_SPROT_2023-03-01,Tryp_Pig_Bov/seq_direction=forward,filetype=fasta' has SHA-1 hash '11822db6bbfc1cb23c0a728a0b53c3b9d97db1f5'
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   kja
 **  Date:   02/21/2007

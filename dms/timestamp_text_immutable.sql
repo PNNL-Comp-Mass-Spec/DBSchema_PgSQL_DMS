@@ -9,7 +9,7 @@ CREATE OR REPLACE FUNCTION public.timestamp_text_immutable(_currenttime timestam
 /****************************************************
 **
 **  Desc:
-**      Returns a text representation for the value specified by the _currentTime argument
+**      Return a text representation for the value specified by the _currentTime argument
 **      The function is marked as immutable because if _currentTime is null, it returns an empty string
 **
 **      The text will include milliseconds and will not have any spaces
@@ -51,7 +51,7 @@ CREATE OR REPLACE FUNCTION public.timestamp_text_immutable(_currenttime timestam
 /****************************************************
 **
 **  Desc:
-**      Returns a text representation for the value specified by the _currentTime argument
+**      Return a text representation for the value specified by the _currentTime argument
 **      The function is marked as immutable because if _currentTime is null, it returns an empty string
 **
 **      The text will include milliseconds and will not have any spaces

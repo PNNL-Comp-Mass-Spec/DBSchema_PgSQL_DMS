@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job_processors(INOUT _id 
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits an existing analysis job processor
+**      Add new or edit an existing analysis job processor
 **
 **  Arguments:
 **    _id                   Processor ID in t_analysis_job_processors

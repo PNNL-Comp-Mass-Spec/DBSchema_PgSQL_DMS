@@ -8,9 +8,14 @@ CREATE OR REPLACE PROCEDURE mc.ack_manager_update_required(IN _managername text,
 /****************************************************
 **
 **  Desc:
-**      Acknowledges that a manager has seen that parameter 'ManagerUpdateRequired' is True in mc.t_param_value
+**      Acknowledge that a manager has seen that parameter 'ManagerUpdateRequired' is True in mc.t_param_value
 **
 **      This procedure will thus set 'ManagerUpdateRequired' to False for this manager
+**
+**  Arguments:
+**    _managerName      Manager name
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Example usage:
 **

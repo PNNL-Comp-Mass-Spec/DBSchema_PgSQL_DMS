@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_instrument(IN _instrumentid intege
 /****************************************************
 **
 **  Desc:
-**      Edits an existing instrument (the only supported value for _mode is 'update')
+**      Edit an existing instrument (the only supported value for _mode is 'update')
 **      To add a new instrument, use procedure add_new_instrument
 **
 **  Arguments:

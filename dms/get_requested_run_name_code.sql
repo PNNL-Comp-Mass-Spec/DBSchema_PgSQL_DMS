@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_requested_run_name_code(_requestname text,
 /****************************************************
 **
 **  Desc:
-**      Generates the Name Code string for a given requested run
+**      Generate the Name Code string for a given requested run
 **      This string is used when grouping requested runs for run planning purposes
 **
 **      The request name code will be based on the request name, date, requester username, dataset type, and separation type if _batchID = 0

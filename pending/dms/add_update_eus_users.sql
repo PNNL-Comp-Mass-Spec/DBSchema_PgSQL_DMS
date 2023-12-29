@@ -14,7 +14,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or updates an existing EUS user
+**      Add new or update an existing EUS user
 **
 **  Arguments:
 **    _eusPersonID      EUS Proposal ID

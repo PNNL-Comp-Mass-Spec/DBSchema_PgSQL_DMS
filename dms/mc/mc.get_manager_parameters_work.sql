@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE mc.get_manager_parameters_work(IN _managernamelist t
 /****************************************************
 **
 **  Desc:
-**      Populates a temporary table with the parameters for the given analysis manager(s)
+**      Populate a temporary table with the parameters for the given analysis manager(s)
 **      Uses MgrSettingGroupName to lookup parameters from the parent group, if any
 **
 **  Requires that the calling procedure create temporary table Tmp_Mgr_Params
@@ -29,10 +29,14 @@ CREATE OR REPLACE PROCEDURE mc.get_manager_parameters_work(IN _managernamelist t
 **      );
 **
 **  Arguments:
-**    _sortMode   0 means sort by param_type_id then mgr_name,
-**                1 means param_name, then mgr_name,
-**                2 means mgr_name, then param_name,
-**                3 means value then param_name
+**    _managerNameList  Comma-separated list of manager names
+**    _sortMode         Sort Mode:
+**                        0 means sort by param_type_id then mgr_name,
+**                        1 means param_name, then mgr_name,
+**                        2 means mgr_name, then param_name,
+**                        3 means value then param_name
+**    _maxRecursion     Maximum levels of recursion when appending parameters from parent groups (specified by parameter 'Default_AnalysisMgr_Params' with ID 162)
+**    _message          Status message
 **
 **  Auth:   mem
 **  Date:   03/14/2018 mem - Initial version (code refactored from GetManagerParameters)
@@ -64,18 +68,18 @@ BEGIN
     -- Lookup the initial manager parameters
     -----------------------------------------------
 
-    INSERT INTO Tmp_Mgr_Params(  mgr_name,
-                                 param_name,
-                                 entry_id,
-                                 param_type_id,
-                                 value,
-                                 mgr_id,
-                                 comment,
-                                 last_affected,
-                                 entered_by,
-                                 mgr_type_id,
-                                 parent_param_pointer_state,
-                                 source )
+    INSERT INTO Tmp_Mgr_Params( mgr_name,
+                                param_name,
+                                entry_id,
+                                param_type_id,
+                                value,
+                                mgr_id,
+                                comment,
+                                last_affected,
+                                entered_by,
+                                mgr_type_id,
+                                parent_param_pointer_state,
+                                source )
     SELECT mgr_name,
            param_name,
            entry_id,
@@ -95,8 +99,8 @@ BEGIN
     WHERE mgr_name IN (Select value::citext From public.parse_delimited_list(_managerNameList));
 
     -----------------------------------------------
-    -- Append parameters for parent groups, which are
-    -- defined by parameter Default_AnalysisMgr_Params (param_type_id 162)
+    -- Append parameters for parent groups, which are defined by
+    -- parameter Default_AnalysisMgr_Params (param_type_id 162)
     -----------------------------------------------
 
     While Exists (Select * from Tmp_Mgr_Params Where parent_param_pointer_state = 1) And _iterations < _maxRecursion

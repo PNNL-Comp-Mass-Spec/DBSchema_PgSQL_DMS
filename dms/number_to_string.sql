@@ -9,7 +9,7 @@ CREATE OR REPLACE FUNCTION public.number_to_string(_value double precision, _dig
 /****************************************************
 **
 **  Desc:
-**      Converts the number to a string with the specified number of digits after the decimal
+**      Convert the number to a string with the specified number of digits after the decimal
 **
 **  Auth:   mem
 **  Date:   06/14/2022 mem - Initial version
@@ -35,7 +35,7 @@ CREATE OR REPLACE FUNCTION public.number_to_string(_value numeric, _digitsafterd
 /****************************************************
 **
 **  Desc:
-**      Converts the number to a string with the specified number of digits after the decimal
+**      Convert the number to a string with the specified number of digits after the decimal
 **
 **  Auth:   mem
 **  Date:   10/26/2017 mem - Initial version

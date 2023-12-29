@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_group_dataset_type_list(_instru
 /****************************************************
 **
 **  Desc:
-**      Builds delimited list of allowed dataset types
-**      for given instrument group
+**      Build delimited list of allowed dataset types for given instrument group
 **
 **  Auth:   grk
 **  Date:   08/28/2010 grk - Initial version

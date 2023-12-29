@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_next_instrument_dataset(_instrumentid inte
 /****************************************************
 **
 **  Desc:
-**      Returns ID of first dataset that was run on
-**      given instrument after given time
+**      Return ID of first dataset that was run on given instrument after given time
 **
 **  Auth:   grk
 **  Date:   05/16/2011

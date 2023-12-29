@@ -31,7 +31,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or updates an existing campaign
+**      Add new or update an existing campaign
 **
 **  Arguments:
 **    _campaignName                 Campaign name

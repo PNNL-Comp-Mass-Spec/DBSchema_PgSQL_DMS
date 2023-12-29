@@ -8,18 +8,18 @@ CREATE OR REPLACE PROCEDURE public.handle_dataset_capture_validation_failure_upd
 /****************************************************
 **
 **  Desc:
-**      This procedure can be used with datasets that
-**      are successfully captured but fail the dataset integrity check
+**      This procedure can be used with datasets that are successfully captured but fail the dataset integrity check
 **      (.Raw file too small, expected files missing, etc).
 **
-**      The procedure sets the dataset state to 4 (Inactive),
-**      changes the rating to -1 = No Data (Blank/bad),
+**      The procedure sets the dataset state to 4 (Inactive), changes the rating to -1 = No Data (Blank/bad),
 **      and makes sure a dataset archive entry exists
 **
 **  Arguments:
 **    _datasetNameOrID  Dataset name or dataset ID
 **    _comment          Text to append to the comment; if a space, period, semicolon, comma, exclamation mark or caret, will not change the dataset comment
 **    _infoOnly         When true, preview updates
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   04/28/2011 mem - Initial version

@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_experiment_group(INOUT _id integer
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits an existing experiment group
+**      Add new or edit an existing experiment group
 **
 **      Used by web page https://dms2.pnl.gov/experiment_group/create to group together related experiments as a general experiment group
 **      Used by web page https://dms2.pnl.gov/experiment_group/edit to edit both general experiment groups and fraction-based experiment groups

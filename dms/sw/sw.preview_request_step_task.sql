@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION sw.preview_request_step_task(_processorname text, _jo
 /****************************************************
 **
 **  Desc:
-**      Previews the next analysis job step that would be assigned to the given processor
+**      Preview the next analysis job step that would be assigned to the given processor
 **
 **  Arguments:
 **    _processorName        Name of the processor (aka manager) requesting a job

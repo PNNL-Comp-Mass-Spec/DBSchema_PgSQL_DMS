@@ -6,8 +6,9 @@ CREATE OR REPLACE FUNCTION public.combine_paths(_path1 text, _path2 text) RETURN
     LANGUAGE plpgsql IMMUTABLE
     AS $$
 /****************************************************
-**  Appends a directory or file name to a path,
-**  assuring that the two names are separated by a \
+**
+**  Desc:
+**      Append a directory or file name to a path, assuring that the two names are separated by a \
 **
 **  Auth:   mem
 **  Date:   07/03/2006

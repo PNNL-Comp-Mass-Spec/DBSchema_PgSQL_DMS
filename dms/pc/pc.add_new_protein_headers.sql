@@ -8,13 +8,15 @@ CREATE OR REPLACE PROCEDURE pc.add_new_protein_headers(IN _proteinidstart intege
 /****************************************************
 **
 **  Desc:
-**      Populates pc.t_protein_headers with the first 50 residues of each protein
+**      Populate pc.t_protein_headers with the first 50 residues of each protein
 **      in pc.t_proteins that is not yet in pc.t_protein_headers
 **
 **  Arguments:
 **    _proteinIDStart           If 0, then this will be updated to one more than the maximum Protein_ID value in T_Protein_Headers
 **    _maxProteinsToProcess     Set to a value > 0 to limit the number of proteins processed
 **    _infoOnly                 When true, preview the proteins that would be processed
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   mem
 **  Date:   04/08/2008

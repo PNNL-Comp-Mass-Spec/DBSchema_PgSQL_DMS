@@ -8,10 +8,9 @@ CREATE OR REPLACE PROCEDURE sw.add_update_transfer_paths_in_params_using_data_pk
 /****************************************************
 **
 **  Desc:
-**      If a job has a data package ID defined, determines the
-**      appropriate paths for 'CacheFolderPath' and 'TransferFolderPath'
+**      If a job has a data package ID defined, determine the appropriate paths for 'CacheFolderPath' and 'TransferFolderPath'
 **
-**      Updates Tmp_Job_Params to have these paths defined if not yet defined or if different
+**      Update Tmp_Job_Params to have these paths defined if not yet defined or if different
 **      If Tmp_Job_Params is updated, _paramsUpdated will be set to true
 **
 **      The calling procedure must create and populate table Tmp_Job_Params

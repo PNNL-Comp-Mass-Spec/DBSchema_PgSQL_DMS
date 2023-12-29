@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid int
 /****************************************************
 **
 **  Desc:
-**      Duplicates an existing parameter for all managers,
-**      creating new entries using the new param TypeID value
+**      Duplicate an existing parameter for all managers, creating new entries using the new param TypeID value
 **
 **      The new parameter type must already exist in mc.t_param_type
 **

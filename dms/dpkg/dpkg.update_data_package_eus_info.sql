@@ -8,11 +8,13 @@ CREATE OR REPLACE PROCEDURE dpkg.update_data_package_eus_info(IN _datapackagelis
 /****************************************************
 **
 **  Desc:
-**      Updates EUS-related fields in T_Data_Package for one or more data packages
-**      Also updates Instrument_ID
+**      Update EUS-related fields in T_Data_Package for one or more data packages
+**      Also update Instrument_ID
 **
 **  Arguments:
-**    _dataPackageList   Comma-separated list of data package IDs to update; use '' or '0' to update all data packages
+**    _dataPackageList  Comma-separated list of data package IDs to update; use '' or '0' to update all data packages
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   10/18/2016 mem - Initial version

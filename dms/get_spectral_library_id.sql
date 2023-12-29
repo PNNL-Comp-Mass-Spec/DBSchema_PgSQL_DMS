@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 /****************************************************
 **
 **  Desc:
-**      Looks for an existing entry in T_Spectral_Library that matches the specified settings
+**      Look for an existing entry in T_Spectral_Library that matches the specified settings
 **      If found, returns the spectral library ID and state
 **      If not found, and if _allowAddNew = true, adds a new row to T_Spectral_Library
 **

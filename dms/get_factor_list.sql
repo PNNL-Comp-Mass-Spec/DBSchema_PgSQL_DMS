@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_factor_list(_requestid integer) RETURNS te
 /****************************************************
 **
 **  Desc:
-**      Builds a delimited list of factors (as name/value pairs) for given requested run
+**      Build a delimited list of factors (as name/value pairs) for given requested run
 **
 **  Return value: comma-separated list
 **

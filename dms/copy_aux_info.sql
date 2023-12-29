@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.copy_aux_info(IN _targetname text, IN _target
 /****************************************************
 **
 **  Desc:
-**      Copies aux info from a source item to a target item
+**      Copy aux info from a source item to a target item
 **
 **  Arguments:
 **    _targetName           Target type name: 'Experiment', 'Biomaterial' (previously 'Cell Culture'), 'Dataset', or 'SamplePrepRequest'; see t_aux_info_target

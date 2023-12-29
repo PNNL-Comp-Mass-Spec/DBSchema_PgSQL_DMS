@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.backfill_pipeline_jobs(IN _infoonly boolean D
 /****************************************************
 **
 **  Desc:
-**      Creates jobs in public.t_analysis_job for jobs that were originally created in sw.t_jobs
+**      Create jobs in public.t_analysis_job for jobs that were originally created in sw.t_jobs
 **
 **  Arguments:
 **    _infoOnly         When true, preview the jobs that would be backfilled

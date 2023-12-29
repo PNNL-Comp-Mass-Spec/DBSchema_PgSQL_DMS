@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.manage_job_execution(IN _parameters text DEFA
 /****************************************************
 **
 **  Desc:
-**      Uses update_analysis_jobs_work() to update values in table t_analysis_job for jobs in list
+**      Use update_analysis_jobs_work() to update values in table t_analysis_job for jobs in list
 **
 **      Meant to be called by the Job Control Dashboard program
 **

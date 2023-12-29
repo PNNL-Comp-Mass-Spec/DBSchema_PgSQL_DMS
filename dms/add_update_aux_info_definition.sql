@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_aux_info_definition(IN _mode publi
 /****************************************************
 **
 **  Desc:
-**      Adds new or updates existing auxiliary information definition
+**      Add new or update existing auxiliary information definition
 **
 **  Arguments:
 **    _mode                 Mode: 'AddTarget', 'AddCategory', 'AddSubcategory', 'AddItem', 'AddAllowedValue', 'UpdateItem'

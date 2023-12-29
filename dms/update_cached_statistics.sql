@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_statistics(INOUT _message text 
 /****************************************************
 **
 **  Desc:
-**      Updates various cached statistics
+**      Update various cached statistics
 **      - Job_Usage_Count in T_Param_Files
 **      - Job_Usage_Count in T_Settings_Files
 **      - Job_Count in T_Analysis_Job_Request

@@ -10,7 +10,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Populates temp table Tmp_InstrumentFilter based on the comma-separated instrument names in _instrumentFilterList
+**      Populate temp table Tmp_InstrumentFilter based on the comma-separated instrument names in _instrumentFilterList
 **
 **      The calling procedure must create the temporary table:
 **

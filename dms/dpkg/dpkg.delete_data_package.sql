@@ -8,16 +8,18 @@ CREATE OR REPLACE PROCEDURE dpkg.delete_data_package(IN _packageid integer, IN _
 /****************************************************
 **
 **  Desc:
-**      Deletes the data package, including deleting rows in the associated tracking tables:
-**          dpkg.t_data_package_analysis_jobs
-**          dpkg.t_data_package_datasets
-**          dpkg.t_data_package_experiments
-**          dpkg.t_data_package_biomaterial
-**          dpkg.t_data_package_eus_proposals
+**      Delete the data package, including deleting rows in the associated tracking tables:
+**      - dpkg.t_data_package_analysis_jobs
+**      - dpkg.t_data_package_datasets
+**      - dpkg.t_data_package_experiments
+**      - dpkg.t_data_package_biomaterial
+**      - dpkg.t_data_package_eus_proposals
 **
 **  Arguments:
 **    _packageID    Data package ID
 **    _infoOnly     When true, preview the delete
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   04/08/2016 mem - Initial release

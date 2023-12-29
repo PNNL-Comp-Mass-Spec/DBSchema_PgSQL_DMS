@@ -9,11 +9,11 @@ CREATE OR REPLACE FUNCTION public.trim_schema_change_log_source_data(_infolevel 
 **
 **  Desc:
 **      For objects with more than three entries in t_schema_change_log,
-**      trims data in the function_source column for the the entries
+**      trim data in the function_source column for the the entries
 **      older than the first three entries (for each object),
 **      shortening the data to the first 100 characters.
 **
-**      In addition, condenses duplicate log entries, i.e. instances of
+**      In addition, condense duplicate log entries, i.e. instances of
 **      the same object and same command being logged multiple times with the same timestamp.
 **      This was observed when foreign data tables were imported using "IMPORT FOREIGN SCHEMA".
 **

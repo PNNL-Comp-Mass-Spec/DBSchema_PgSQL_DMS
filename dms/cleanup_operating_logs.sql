@@ -15,6 +15,8 @@ CREATE OR REPLACE PROCEDURE public.cleanup_operating_logs(IN _logretentioninterv
 **    _logRetentionIntervalHours        Threshold, in hours, to use when moving move entries from t_log_entries; required to be at least 120
 **    _eventLogRetentionIntervalDays    Threshold, in days, for removing entries from t_event_log; required to be at least 32
 **    _infoOnly                         When true, show the number of log entries that would be removed or moved
+**    _message                          Status message
+**    _returnCode                       Return code
 **
 **  Auth:   mem
 **  Date:   10/04/2011 mem - Initial version

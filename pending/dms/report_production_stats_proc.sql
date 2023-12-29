@@ -17,7 +17,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Generates dataset statistics for production instruments
+**      Generate dataset statistics for production instruments
 **
 **      The results returned by the cursor only include column proposal_type if _includeProposalType is greater than 0
 **

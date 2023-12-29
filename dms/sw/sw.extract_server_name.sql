@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION sw.extract_server_name(_path text) RETURNS text
 /****************************************************
 **
 **  Desc:
-**      Extracts the server name from the given path
+**      Extract the server name from the given path
 **
 **  Auth:   mem
 **  Date:   03/03/2010

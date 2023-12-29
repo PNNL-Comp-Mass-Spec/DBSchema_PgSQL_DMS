@@ -8,10 +8,10 @@ CREATE OR REPLACE FUNCTION public.get_nearest_preceding_log_entry(_seq integer, 
 /****************************************************
 **
 **  Desc:
-**      Examines the given item in t_emsl_instrument_usage_report
+**      Examine the given item in t_emsl_instrument_usage_report
 **
 **      If the usage type is not 'Onsite' and the comment is empty,
-**      looks for the nearest preceeding log message in
+**      look for the nearest preceeding log message in
 **      t_instrument_operation_history and t_instrument_config_history
 **
 **  Return value: nearest preceeding log message

@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION pc.get_annotation_type_id(_annotationname text, _auth
 /****************************************************
 **
 **  Desc:
-**      Gets Annotation Type ID for a given Annotation Name
+**      Get Annotation Type ID for a given Annotation Name
 **
 **  Arguments:
 **      _annotationName     Annotation name to find

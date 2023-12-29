@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.get_tissue_id(IN _tissuenameorid text, INOUT 
 /****************************************************
 **
 **  Desc:
-**      Gets tissue ID for given tissue name or tissue ID
+**      Get tissue ID for given tissue name or tissue ID
 **
 **  Arguments:
 **    _tissueNameOrID       Tissue name or tissue identifier to find

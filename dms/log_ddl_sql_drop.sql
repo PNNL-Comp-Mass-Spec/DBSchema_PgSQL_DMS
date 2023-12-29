@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.log_ddl_sql_drop() RETURNS event_trigger
 /****************************************************
 **
 **  Desc:
-**      Adds log entries to t_schema_change_log regarding the dropped object
+**      Add log entries to t_schema_change_log regarding the dropped object
 **
 **  Auth:   mem
 **  Date:   10/08/2019 mem - Initial version

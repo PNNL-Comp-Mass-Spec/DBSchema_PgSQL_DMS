@@ -11,7 +11,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates LC cart and column assignments for requested run blocks
+**      Update LC cart and column assignments for requested run blocks
 **
 **      This procedure is obsolete since blocks are now tracked by block and run_order in t_requested_run; the procedure was last used in 2012
 **

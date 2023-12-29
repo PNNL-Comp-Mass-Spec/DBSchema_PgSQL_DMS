@@ -14,9 +14,9 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Looks for entries in t_organisms that match _nameSearchSpec
-**      First checks organism then checks short_name
-**      Updates _matchCount with the number of matching entries
+**      Look for entries in t_organisms that match _nameSearchSpec
+**      First check organism then checks short_name
+**      Update _matchCount with the number of matching entries
 **
 **      If one more more entries is found, updates _matchingOrganismName and _matchingOrganismID for the first match
 **
@@ -25,6 +25,8 @@ AS $$
 **    _matchCount             Output: Number of entries in t_organisms that match _nameSearchSpec
 **    _matchingOrganismName   Output: If _nameSearchSpec > 0, the organism name of the first match in t_organisms
 **    _matchingOrganismID     Output: If _nameSearchSpec > 0, the organism ID of the first match
+**    _message                Status message
+**    _returnCode             Return code
 **
 **  Auth:   mem
 **  Date:   12/02/2016 mem - Initial Version

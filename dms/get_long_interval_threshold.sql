@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_long_interval_threshold() RETURNS integer
 /****************************************************
 **
 **  Desc:
-**      Returns threshold value (in minutes) for interval
-**      to be considered a long interval
+**      Return threshold value (in minutes) for interval to be considered a long interval
 **
 **  Auth:   grk
 **  Date:   06/08/2012 grk - Initial release

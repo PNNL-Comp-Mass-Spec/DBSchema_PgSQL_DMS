@@ -7,7 +7,13 @@ CREATE OR REPLACE PROCEDURE mc.disable_archive_dependent_managers(IN _infoonly b
     AS $$
 /****************************************************
 **
-**  Desc:   Disables managers that rely on MyEMSL
+**  Desc:
+**      Disable managers that rely on MyEMSL
+**
+**  Arguments:
+**    _infoOnly         When true, preview updates
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   05/09/2008

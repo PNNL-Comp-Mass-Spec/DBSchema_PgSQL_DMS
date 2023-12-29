@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.append_to_text(_basetext text, _addnltext text
 /****************************************************
 **
 **  Desc:
-**      Appends a new string to an existing string, using the specified delimiter
+**      Append a new string to an existing string, using the specified delimiter
 **
 **  Arguments:
 **    _baseText          Text to append to (can be an empty string)

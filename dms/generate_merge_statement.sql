@@ -7,12 +7,13 @@ CREATE OR REPLACE FUNCTION public.generate_merge_statement(_tablename text, _sou
     AS $$
 /****************************************************
 **
-**  Desc:   Creates a Merge statement for the specified table (which must exist in schema _sourceSchema)
+**  Desc:
+**      Create a Merge statement for the specified table (which must exist in schema _sourceSchema)
 **
-**          Does not actually perform the merge, just generates the code required to do so
-**          Intended for use when you need to add a merge statement to a stored procedure
+**      Does not actually perform the merge, just generates the code required to do so
+**      Intended for use when you need to add a merge statement to a stored procedure
 **
-**          Modeled after code from http://weblogs.sqlteam.com/billg/archive/2011/02/15/generate-merge-statements-FROM-a-table.aspx
+**      Modeled after code from http://weblogs.sqlteam.com/billg/archive/2011/02/15/generate-merge-statements-FROM-a-table.aspx
 **
 **  Arguments:
 **    _tableName            Source table name

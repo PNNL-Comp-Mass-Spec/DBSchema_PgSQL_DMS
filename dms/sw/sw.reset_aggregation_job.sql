@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.reset_aggregation_job(IN _job integer, IN _infoon
 /****************************************************
 **
 **  Desc:
-**      Resets an aggregation job
+**      Reset an aggregation job
 **
 **      Case 1:
 **        If the job is complete (state 4), renames the Output_Folder and resets all steps

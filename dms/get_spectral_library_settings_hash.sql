@@ -8,10 +8,10 @@ CREATE OR REPLACE FUNCTION public.get_spectral_library_settings_hash(_libraryid 
 /****************************************************
 **
 **  Desc:
-**    Computes a SHA-1 hash value using the settings used to create an in-silico digest based spectral library
+**      Compute a SHA-1 hash value using the settings used to create an in-silico digest based spectral library
 **
-**    If the Spectral library ID is non-zero, reads settings from T_Spectral_Library
-**    Otherwise, uses the values provided to the other parameters
+**      If the Spectral library ID is non-zero, reads settings from T_Spectral_Library
+**      Otherwise, uses the values provided to the other parameters
 **
 **  Returns:
 **    Computed hash, or an empty string if an error

@@ -8,9 +8,8 @@ CREATE OR REPLACE FUNCTION sw.extract_tagged_name(_tag text, _text text) RETURNS
 /****************************************************
 **
 **  Desc:
-**      Examines the text provided and looks for a substring
-**      that is preceded by the given tag, and terminated by
-**      a space, semicolon, colon, comma, or forward slash
+**      Examine the text provided and look for a substring that is preceded by the given tag,
+**      and terminated by a space, semicolon, colon, comma, or forward slash
 **      (or to the end of the text if not found)
 **
 **  Return values: substring, or '' if not found

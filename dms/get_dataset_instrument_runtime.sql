@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_instrument_runtime(_startinterval 
 /****************************************************
 **
 **  Desc:
-**      Returns list of datasets and acquisition time information for given instrument
+**      Return list of datasets and acquisition time information for given instrument
 **
 **  Arguments:
 **     _startInterval   Start date (will be converted to the first day of the month)

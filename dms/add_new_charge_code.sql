@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_new_charge_code(IN _chargecodelist text, 
 /****************************************************
 **
 **  Desc:
-**      Adds a charge code (work package) to t_charge_code
+**      Add a charge code (work package) to t_charge_code
 **
 **      Useful when a work package is not auto-adding to the table
 **      (charge codes are auto-added if the owner is a DMS user or DMS guest)

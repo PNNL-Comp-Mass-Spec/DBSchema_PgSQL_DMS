@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE dpkg.add_update_data_package(INOUT _id integer, IN _
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing item in dpkg.t_data_package
+**      Add new or edit existing item in dpkg.t_data_package
 **
 **  Arguments:
 **    _id               Data package ID
@@ -25,7 +25,10 @@ CREATE OR REPLACE PROCEDURE dpkg.add_update_data_package(INOUT _id integer, IN _
 **    _manuscriptDOI    Digital Object Identifier for the manuscript
 **    _prismWikiLink    PRISMWiki page URL
 **    _creationParams   Creation parameters (unused)
-**    _mode             'add' or 'update'
+**    _mode             Mode: 'add' or 'update'
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   05/21/2009 grk

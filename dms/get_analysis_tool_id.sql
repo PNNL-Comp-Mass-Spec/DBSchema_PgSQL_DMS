@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_analysis_tool_id(_toolname text DEFAULT ''
 /****************************************************
 **
 **  Desc:
-**      Gets toolID for given analysis tool name
+**      Get toolID for given analysis tool name
 **
 **  Return values: tool id if found, otherwise 0
 **

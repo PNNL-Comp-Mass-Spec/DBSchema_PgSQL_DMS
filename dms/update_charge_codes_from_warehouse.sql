@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_charge_codes_from_warehouse(IN _infoon
 /****************************************************
 **
 **  Desc:
-**      Updates charge codes (aka work packages) in t_charge_code using external server SQLSRVPROD02, which is accessed via a foreign data wrapper
+**      Update charge codes (aka work packages) in t_charge_code using external server SQLSRVPROD02, which is accessed via a foreign data wrapper
 **
 **  Arguments:
 **    _infoOnly                 When true, preview updates that would be applied

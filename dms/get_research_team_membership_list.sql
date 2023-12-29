@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_research_team_membership_list(_researchtea
 /****************************************************
 **
 **  Desc:
-**      Builds a delimited list of role:person pairs
-**      for the given research team
+**      Build a delimited list of role:person pairs for the given research team
 **
 **  Auth:   grk
 **  Date:   02/03/2010

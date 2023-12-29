@@ -8,7 +8,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Sets the purge priority to 2 for datasets acquired on external instruments
+**      Set the purge priority to 2 for datasets acquired on external instruments
 **
 **  Arguments:
 **    _infoOnly     When true, preview updates

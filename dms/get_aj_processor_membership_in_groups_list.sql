@@ -8,13 +8,13 @@ CREATE OR REPLACE FUNCTION public.get_aj_processor_membership_in_groups_list(_pr
 /****************************************************
 **
 **  Desc:
-**      Builds delimited list of processor group IDs
-**      for given analysis job processor ID
+**      Build delimited list of processor group IDs for given analysis job processor ID
 **
 **  Return value: comma-separated list
 **
 **  Arguments:
-**    _enableDisableFilter   0 means disabled only, 1 means enabled only, anything else means all
+**    _processorid          Processor ID
+**    _enableDisableFilter  Enable/disable filter: 0 means disabled only, 1 means enabled only, anything else means all
 **
 **  Auth:   grk
 **  Date:   02/12/2007

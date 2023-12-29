@@ -23,7 +23,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits an existing operation task entry
+**      Add new or edit an existing operation task entry
 **
 **  Arguments:
 **    _id                   Input/output: task_id in t_operations_tasks

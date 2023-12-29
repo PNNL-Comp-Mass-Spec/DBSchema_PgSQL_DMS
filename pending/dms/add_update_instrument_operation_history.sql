@@ -15,7 +15,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits an existing instrument operation entry
+**      Add new or edit an existing instrument operation entry
 **
 **  Arguments:
 **    _id           Input/output: entry_id in t_instrument_operation_history

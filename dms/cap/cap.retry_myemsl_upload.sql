@@ -9,14 +9,16 @@ CREATE OR REPLACE PROCEDURE cap.retry_myemsl_upload(IN _job integer, IN _infoonl
 /****************************************************
 **
 **  Desc:
-**      Resets the DatasetArchive and ArchiveUpdate steps in t_task_steps for the
+**      Reset the DatasetArchive and ArchiveUpdate steps in t_task_steps for the
 **      given capture task job, but only if its ArchiveVerify step is failed
 **
 **      Calls the overloaded version of this procedure that accepts a comma-separated list of jobs
 **
 **  Arguments:
-**    _job        Capture task job number
-**    _infoOnly   True to preview the changes
+**    _job          Capture task job number
+**    _infoOnly     True to preview the changes
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   06/25/2023 mem - Initial version
@@ -57,7 +59,7 @@ CREATE OR REPLACE PROCEDURE cap.retry_myemsl_upload(IN _jobs text, IN _infoonly 
 /****************************************************
 **
 **  Desc:
-**      Resets the DatasetArchive and ArchiveUpdate steps in t_task_steps for the
+**      Reset the DatasetArchive and ArchiveUpdate steps in t_task_steps for the
 **      specified capture task jobs, but only if the ArchiveVerify step is failed
 **
 **      Useful for capture task jobs with completion message 'error submitting ingest job'

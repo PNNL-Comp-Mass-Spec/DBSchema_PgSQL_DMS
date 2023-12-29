@@ -8,13 +8,15 @@ CREATE OR REPLACE PROCEDURE dpkg.check_for_myemsl_errors(IN _mostrecentdays inte
 /****************************************************
 **
 **  Desc:
-**      Looks for anomalies in dpkg.t_myemsl_uploads
+**      Look for anomalies in dpkg.t_myemsl_uploads
 **
 **  Arguments:
 **    _mostRecentDays   Threshold to use when searching for errors
 **    _startDate        Start date (only used if _mostRecentDays is 0 or negative)
 **    _endDate          End date   (only used if _mostRecentDays is 0 or negative)
 **    _logErrors        When true, log an error message if more than 1% of the uploads failed, or more than 5% of the uploads were duplicates (uplading the same data package more than once)
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   12/10/2013 mem - Initial version

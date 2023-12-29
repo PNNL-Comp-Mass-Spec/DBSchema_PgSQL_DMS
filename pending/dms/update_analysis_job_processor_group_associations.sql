@@ -14,7 +14,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates analysis jobs in the job list to be associated with the given analysis job processor group
+**      Update analysis jobs in the job list to be associated with the given analysis job processor group
 **
 **  Arguments:
 **    _jobList              Comma-separated list of job numbers

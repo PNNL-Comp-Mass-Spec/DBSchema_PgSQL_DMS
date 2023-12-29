@@ -15,7 +15,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates an existing instrument class
+**      Update an existing instrument class
 **      (despite the procedure name, only updates are allowed)
 **
 **  Arguments:

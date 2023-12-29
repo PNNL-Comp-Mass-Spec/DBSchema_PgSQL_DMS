@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE dpkg.add_update_osm_package(INOUT _id integer, IN _n
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing item in sw.t_osm_package
+**      Add new or edit existing item in sw.t_osm_package
 **
 **  Arguments:
 **    _id                       OSM package ID
@@ -21,7 +21,10 @@ CREATE OR REPLACE PROCEDURE dpkg.add_update_osm_package(INOUT _id integer, IN _n
 **    _state                    State ('Active', 'Complete', 'Inactive', or 'Future')
 **    _samplePrepRequestList    Comma-separated list of sample prep request IDs
 **    _userFolderPath           Network share path, e.g. \\protoapps\UserData\Zink\PrepRequest_Summaries\EMSL_Projects\Martin_EUP-47558
-**    _mode                     'add' or 'update'
+**    _mode                     Mode: 'add' or 'update'
+**    _message                  Status message
+**    _returnCode               Return code
+**    _callingUser              Calling user username
 **
 **  Auth:   grk
 **  Date:   10/22/2012 grk - Initial Release

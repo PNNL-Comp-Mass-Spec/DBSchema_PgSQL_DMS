@@ -8,7 +8,13 @@ CREATE OR REPLACE PROCEDURE cap.delete_capture_task(IN _job integer, INOUT _mess
 /****************************************************
 **
 **  Desc:
-**      Deletes the given capture task job from t_tasks and t_task_steps, t_task_step_dependencies, and t_task_parameters
+**      Delete the given capture task job from t_tasks and t_task_steps, t_task_step_dependencies, and t_task_parameters
+**
+**  Arguments:
+**    _job          Capture task job number
+**    _message      Status message
+**    _returnCode   Return code
+**    _callingUser  Calling user username
 **
 **  Auth:   mem
 **  Date:   09/12/2009 mem - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)

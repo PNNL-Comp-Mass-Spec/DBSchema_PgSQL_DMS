@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION public.condense_integer_list_to_ranges(_debugmode boo
 /****************************************************
 **
 **  Desc:
-**      Given a list of integers in a temporary table, condenses
-**      the list into a comma and dash separated list
+**      Given a list of integers in a temporary table, condense the list into a comma and dash separated list
 **
 **      Leverages code from Dwain Camps
 **      https://www.simple-talk.com/sql/database-administration/condensing-a-delimited-list-of-integers-in-sql-server/

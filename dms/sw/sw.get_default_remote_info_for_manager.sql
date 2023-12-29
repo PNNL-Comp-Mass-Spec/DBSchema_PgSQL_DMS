@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.get_default_remote_info_for_manager(IN _managerna
 /****************************************************
 **
 **  Desc:
-**      Gets the default remote info parameters for the given manager
+**      Get the default remote info parameters for the given manager
 **      Retrieves parameters using mc.get_manager_parameters_work, so properly retrieves parent group parameters, if any
 **
 **      If the manager does not have parameters RunJobsRemotely and RemoteHostName defined, returns an empty string

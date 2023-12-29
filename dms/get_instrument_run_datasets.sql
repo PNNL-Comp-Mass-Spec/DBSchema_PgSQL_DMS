@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_run_datasets(_mostrecentweeks i
 /****************************************************
 **
 **  Desc:
-**      Returns list of datasets and acquisition time information for given instrument
+**      Return list of datasets and acquisition time information for given instrument
 **
 **  Auth:   grk
 **  Date:   09/04/2010 grk - Initial release

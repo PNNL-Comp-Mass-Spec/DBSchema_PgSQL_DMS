@@ -15,7 +15,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates table t_emsl_instrument_usage_report (which tracks actual instrument usage) using an XML list
+**      Update table t_emsl_instrument_usage_report (which tracks actual instrument usage) using an XML list
 **
 **      Example XML in _factorList:
 **        <id type="Seq" />

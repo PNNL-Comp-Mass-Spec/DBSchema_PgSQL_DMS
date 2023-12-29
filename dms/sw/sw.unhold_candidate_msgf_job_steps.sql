@@ -8,10 +8,10 @@ CREATE OR REPLACE PROCEDURE sw.unhold_candidate_msgf_job_steps(IN _steptool text
 /****************************************************
 **
 **  Desc:
-**      Examines the number of steps with state 2 and tool _stepTool (default MSGF)
+**      Examine the number of steps with state 2 and tool _stepTool (default MSGF)
 **
 **      If less than _targetCandidates have state 2 (enabled),
-**      updates job steps with state 7 (holding) to have state 2,
+**      update job steps with state 7 (holding) to have state 2,
 **      such that we will have _targetCandidates enabled job steps for the given tool
 **
 **      Only updates jobs where the DataExtractor step has Tool_Version_ID >= 82 and is complete

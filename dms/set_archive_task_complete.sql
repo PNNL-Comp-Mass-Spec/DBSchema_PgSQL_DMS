@@ -8,8 +8,8 @@ CREATE OR REPLACE PROCEDURE public.set_archive_task_complete(IN _datasetname tex
 /****************************************************
 **
 **  Desc:
-**      Sets archive state to 3 (Complete) if _completionCode is 0 or 100
-**      Sets archive state to 6 (Operation Failed) if _completionCode is not 0 or 100
+**      Set archive state to 3 (Complete) if _completionCode is 0 or 100
+**      Set archive state to 6 (Operation Failed) if _completionCode is not 0 or 100
 **
 **  Arguments:
 **    _datasetName      Dataset name

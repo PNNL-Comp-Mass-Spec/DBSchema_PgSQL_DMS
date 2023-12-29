@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_event_log_summary(_startdate timestamp wit
 /****************************************************
 **
 **  Desc:
-**      Summarizes DMS activity, errors, and warnings between the start and end timestamps
+**      Summarize DMS activity, errors, and warnings between the start and end timestamps
 **
 **  Usage:
 **      SELECT *

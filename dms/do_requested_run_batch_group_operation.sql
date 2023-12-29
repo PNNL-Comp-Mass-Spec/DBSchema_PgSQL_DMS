@@ -11,7 +11,10 @@ CREATE OR REPLACE PROCEDURE public.do_requested_run_batch_group_operation(IN _ba
 **      Delete a requested run batch group
 **
 **  Arguments:
-**    _mode   'Delete'
+**    _batchGroupID     Batch group ID
+**    _mode             Mode: 'Delete'
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   03/31/2023 mem - Initial version

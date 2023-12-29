@@ -10,7 +10,7 @@ CREATE OR REPLACE PROCEDURE sw.update_job_state(IN _bypassdms boolean DEFAULT fa
 **  Desc:
 **      Based on step state, look for jobs that have been completed or have entered the 'in progress' state
 **
-**      Updates job states in sw.t_jobs and in public.t_analysis_job accordingly
+**      Update job states in sw.t_jobs and in public.t_analysis_job accordingly
 **
 **      Processing steps:
 **

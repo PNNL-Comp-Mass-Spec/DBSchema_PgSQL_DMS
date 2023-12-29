@@ -8,12 +8,12 @@ CREATE OR REPLACE PROCEDURE public.find_active_requested_run_for_dataset(IN _dat
 /****************************************************
 **
 **  Desc:
-**      Looks for an active requested run for the specified dataset name
+**      Look for an active requested run for the specified dataset name
 **
 **      Steps backward through the name looking for dashes and underscores, looking
 **      for active requested runs that match the dataset name portion
 **
-**      If one and only one match is found, returns that requested run's ID via the output parameter
+**      If one and only one match is found, return that requested run's ID via output parameter _requestID
 **      If multiple matches are found, _requestID will be 0
 **
 **  Arguments:

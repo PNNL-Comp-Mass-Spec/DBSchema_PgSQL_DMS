@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_fiscal_year_text_from_date(_rawdate timest
 /****************************************************
 **
 **  Desc:
-**      Returns Fiscal year for given date
+**      Return Fiscal year for given date
 **
 **  Return value: Fiscal year description, e.g. FY_22
 **

@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_experiment_fractions(IN _parentexperiment
 /****************************************************
 **
 **  Desc:
-**      Creates a group of new fraction-based experiments, linking back to the parent experiment
+**      Create a group of new fraction-based experiments, linking back to the parent experiment
 **
 **      Used by web page https://dms2.pnl.gov/experiment_fraction/create to create experiment fractions
 **

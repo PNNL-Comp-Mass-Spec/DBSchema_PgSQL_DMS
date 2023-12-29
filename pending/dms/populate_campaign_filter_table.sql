@@ -10,7 +10,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Populates temp table Tmp_CampaignFilter based on the comma-separated campaign IDs in _campaignIDFilterList
+**      Populate temp table Tmp_CampaignFilter based on the comma-separated campaign IDs in _campaignIDFilterList
 **
 **      The calling procedure must create the temporary table:
 **

@@ -8,8 +8,8 @@ CREATE OR REPLACE PROCEDURE sw.update_job_step_memory_usage(IN _job integer, IN 
 /****************************************************
 **
 **  Desc:
-**      Examines the job parameters to find entries related to memory usage
-**      Updates updates Memory_Usage_MB in Tmp_Job_Steps
+**      Examine the job parameters to find entries related to memory usage
+**      Update Memory_Usage_MB in Tmp_Job_Steps
 **
 **      The calling procedure must create and populate temporary table Tmp_Job_Steps,
 **      which must include these columns:

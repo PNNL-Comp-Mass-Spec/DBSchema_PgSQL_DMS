@@ -8,13 +8,15 @@ CREATE OR REPLACE PROCEDURE pc.add_annotation_type(IN _name text, IN _descriptio
 /****************************************************
 **
 **  Desc:
-**      Adds an annotation type (for a naming authority) to pc.t_annotation_types
+**      Add an annotation type (for a naming authority) to pc.t_annotation_types
 **
 **  Arguments:
-**    _name             Annotation type name
-**    _description      Description
-**    _example          Example annotation
-**    _authID           Naming authority ID (corresponding to pc.t_naming_authorities)
+**    _name         Annotation type name
+**    _description  Description
+**    _example      Example annotation
+**    _authID       Naming authority ID (corresponding to pc.t_naming_authorities)
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Returns:
 **    _returnCode will have the annotation type ID if a new row was added to t_annotation_types

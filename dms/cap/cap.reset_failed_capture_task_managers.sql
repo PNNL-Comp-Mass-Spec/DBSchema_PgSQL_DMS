@@ -8,10 +8,12 @@ CREATE OR REPLACE PROCEDURE cap.reset_failed_capture_task_managers(IN _infoonly 
 /****************************************************
 **
 **  Desc:
-**      Resets managers that report 'flag file' in cap.V_Processor_Status_Warnings_CTM
+**      Reset managers that report 'flag file' in cap.V_Processor_Status_Warnings_CTM
 **
 **  Arguments:
-**    _infoOnly   True to preview the changes
+**    _infoOnly     When true, preview the managers that would be reset
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   10/20/2016 mem - Ported from DMS_Pipeline

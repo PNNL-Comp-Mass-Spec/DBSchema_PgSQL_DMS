@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_job_parameter(IN _job integer, IN _sec
 /****************************************************
 **
 **  Desc:
-**      Adds or updates an entry in the XML parameters for a given job
+**      Add or update an entry in the XML parameters for a given job
 **      Alternatively, use _deleteParam => true to delete the given parameter
 **
 **  Arguments:

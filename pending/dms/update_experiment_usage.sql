@@ -10,7 +10,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates column last_used in t_experiments
+**      Update column last_used in t_experiments
 **
 **      Column last_used is used by LcmsNetDMSTools when retrieving recent experiments
 **

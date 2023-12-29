@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_table(_job integer, _dataset text,
 /****************************************************
 **
 **  Desc:
-**      Returns the parameters for the given capture task job in Section, Name, Value rows
+**      Return the parameters for the given capture task job in Section, Name, Value rows
 **
 **      Data comes from both the procedure arguments and view cap.V_DMS_Dataset_Metadata,
 **      which uses tables in the public schema

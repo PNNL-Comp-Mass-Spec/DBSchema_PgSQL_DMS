@@ -8,12 +8,14 @@ CREATE OR REPLACE PROCEDURE pc.delete_protein_collection_members(IN _collectioni
 /****************************************************
 **
 **  Desc:
-**      Deletes Protein Collection Member Entries from a given Protein Collection ID
+**      Delete Protein Collection Member Entries for a given Protein Collection ID
 **      Called by the Organism Database Handler when replacing the proteins for an existing protein collection
 **
 **  Arguments:
 **    _collectionID             Protein collection ID
 **    _numProteinsForReLoad     Number of proteins that will be associated with this collection after they are added to the database following this delete
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   kja
 **  Date:   10/07/2004 kja - Initial version

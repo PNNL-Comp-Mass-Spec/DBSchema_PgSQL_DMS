@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_eus_instruments_from_eus_imports(INOUT
 /****************************************************
 **
 **  Desc:
-**      Updates information in T_EMSL_Instruments from EUS
+**      Update information in T_EMSL_Instruments from EUS
 **
 **      Obtains data from nexus-prod-db.emsl.pnl.gov using the postgres_fdw foreign data wrapper
 **

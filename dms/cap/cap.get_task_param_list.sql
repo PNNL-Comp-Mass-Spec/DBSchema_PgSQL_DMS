@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_list(_job integer) RETURNS public.
 /****************************************************
 **
 **  Desc:
-**      Converts XML parameters for given capture task job into text surrounded by HTML tags <pre> and </pre>
+**      Convert XML parameters for given capture task job into text surrounded by HTML tags <pre> and </pre>
 **
 **      Additionally, each parameter will end with <br>,
 **      producing a table-style layout on the Capture Jobs Detail Report

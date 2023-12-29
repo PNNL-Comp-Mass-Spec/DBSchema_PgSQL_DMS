@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_priority(_datasetname text) RETURN
 /****************************************************
 **
 **  Desc:
-**       Determines if the dataset name warrants preferential processing priority
+**       Determine if the dataset name warrants preferential processing priority
 **
 **       This procedure is used by add_new_dataset to auto-release QC_Shew and QC_Mam datasets
 **

@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_new_instrument(IN _instrumentname text, I
 /****************************************************
 **
 **  Desc:
-**      Adds a new instrument to the database and new storage paths to the storage paths table
+**      Add a new instrument to the database and new storage paths to the storage paths table
 **
 **  Arguments:
 **    _instrumentName               Name of new instrument

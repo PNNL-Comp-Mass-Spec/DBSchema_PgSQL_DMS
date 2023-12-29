@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**     Adds or removes user _callingUser as a research team observer on a campaign
+**     Add or remove user _callingUser as a research team observer on a campaign
 **
 **  Arguments:
 **    _campaignName     Campaign name

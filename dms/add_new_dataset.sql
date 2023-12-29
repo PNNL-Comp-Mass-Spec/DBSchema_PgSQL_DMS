@@ -8,7 +8,8 @@ CREATE OR REPLACE PROCEDURE public.add_new_dataset(IN _xmldoc text, IN _mode tex
 /****************************************************
 **
 **  Desc:
-**      Adds a new dataset entry to DMS database using metadata in the given XML
+**      Add a new dataset entry to DMS database using metadata in the given XML
+**
 **      This procedure is called by the Data Import Manager (DIM) while processing dataset trigger files
 **      This procedure extracts the metadata from the XML then calls add_update_dataset()
 **

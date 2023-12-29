@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.check_plural(_count integer DEFAULT 0, _textif
 /****************************************************
 **
 **  Desc:
-**      Returns _textIfOneItem if _count is 1; otherwise, returns _textIfZeroOrMultiple
+**      Return _textIfOneItem if _count is 1; otherwise, returns _textIfZeroOrMultiple
 **
 **  Auth:   mem
 **  Date:   03/05/2013 mem - Initial release

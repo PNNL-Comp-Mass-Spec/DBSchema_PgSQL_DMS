@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.tinyint_to_enabled_disabled(_value integer) RE
 /****************************************************
 **
 **  Desc:
-**      Returns the text 'Disabled' if _value is 0 or null, otherwise returns 'Enabled'
+**      Return the text 'Disabled' if _value is 0 or null, otherwise returns 'Enabled'
 **
 **  Auth:   mem
 **  Date:   11/14/2012 mem - Initial version

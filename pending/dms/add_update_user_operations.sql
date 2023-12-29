@@ -11,7 +11,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the access permissions (user operations) defined for the given user
+**      Update the access permissions (user operations) defined for the given user
 **
 **  Arguments:
 **    _userID           User ID

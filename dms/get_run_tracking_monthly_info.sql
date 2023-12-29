@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_run_tracking_monthly_info(_instrument text
 /****************************************************
 **
 **  Desc:
-**      Returns run tracking information for given instrument
+**      Return run tracking information for given instrument
 **
 **  Arguments:
 **    _instrument   Instrument name

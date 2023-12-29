@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.update_job_parameters(IN _job integer, IN _infoon
 /****************************************************
 **
 **  Desc:
-**      Updates the parameters in T_Job_Parameters for the specified job
+**      Update the parameters in T_Job_Parameters for the specified job
 **
 **      Note: The job parameters come from the public schema tables
 **            (via Create_Parameters_For_Job and then Get_Job_Param_Table),

@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_file_attachment_path(_entitytype public.ci
 /****************************************************
 **
 **  Desc:
-**    Returns storage path for file attachment for the given DMS tracking entity
+**    Return storage path for file attachment for the given DMS tracking entity
 **
 **    _spreadFolder is the folder spreader, used to group items by date to avoid folders with 1000's of subdirectories
 **

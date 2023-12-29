@@ -11,10 +11,10 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Looks for datasets with archive state 14 (Purged Instrument Data (plus auto-purge))
+**      Look for datasets with archive state 14 (Purged Instrument Data (plus auto-purge))
 **      that have potentially unpurged MSXml jobs.
 **
-**      Changes the dataset archive state back to 3=Complete to give the space manager a chance to purge the .mzXML file
+**      Change the dataset archive state back to 3=Complete to give the space manager a chance to purge the .mzXML file
 **
 **      This procedure is no longer needed because we use _CacheInfo.txt placeholder files
 **

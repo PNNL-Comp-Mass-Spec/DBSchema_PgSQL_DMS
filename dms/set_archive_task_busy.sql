@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.set_archive_task_busy(IN _datasetname text, I
 /****************************************************
 **
 **  Desc:
-**      Sets archive state to 2 (Archive In Progress) and sets the archive_processor name to _storageServerName
+**      Set archive state to 2 (Archive In Progress) and set the archive_processor name to _storageServerName
 **
 **  Auth:   grk
 **  Date:   12/15/2009

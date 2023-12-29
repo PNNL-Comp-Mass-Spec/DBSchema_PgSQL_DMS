@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.assign_eus_users_to_requested_run(IN _request
 /****************************************************
 **
 **  Desc:
-**      Associates the given list of EUS users with the given requested run
+**      Associate the given list of EUS users with the given requested run
 **
 **      The calling procedure should call validate_eus_usage before calling this procedure
 **
@@ -18,6 +18,8 @@ CREATE OR REPLACE PROCEDURE public.assign_eus_users_to_requested_run(IN _request
 **  Arguments:
 **    _requestID        Requested run ID
 **    _eusUsersList     Comma-separated list of EUS user IDs (integers)
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   grk
 **  Date:   02/21/2006

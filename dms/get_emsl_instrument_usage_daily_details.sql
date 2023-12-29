@@ -6,8 +6,9 @@ CREATE OR REPLACE FUNCTION public.get_emsl_instrument_usage_daily_details(_year 
     LANGUAGE plpgsql
     AS $$
 /****************************************************
+**
 **  Desc:
-**      Outputs contents of EMSL instrument usage report table as a daily rollup, including rows with Dataset_ID_Acq_Overlap
+**      Output contents of EMSL instrument usage report table as a daily rollup, including rows with Dataset_ID_Acq_Overlap
 **      This function is used by the CodeIgniter instance at http://prismsupport.pnl.gov/dms2ws/
 **
 **      Example URL:

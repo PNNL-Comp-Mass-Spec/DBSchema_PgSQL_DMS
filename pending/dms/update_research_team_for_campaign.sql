@@ -18,7 +18,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates membership of research team for given campaign
+**      Update membership of research team for given campaign
 **
 **  Arguments:
 **    _campaignName             Campaign name (required if _researchTeamID is 0)

@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_interval(IN _instrumentname te
 /****************************************************
 **
 **  Desc:
-**      Updates dataset intervals in public.t_dataset and creates entries for long intervals in public.t_run_interval
+**      Update dataset intervals in public.t_dataset and creates entries for long intervals in public.t_run_interval
 **
 **  Arguments:
 **    _instrumentName       Instrument name

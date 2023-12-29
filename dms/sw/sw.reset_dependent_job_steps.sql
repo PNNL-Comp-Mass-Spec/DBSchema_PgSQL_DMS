@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.reset_dependent_job_steps(IN _jobs text, IN _info
 /****************************************************
 **
 **  Desc:
-**      Resets entries in sw.t_job_steps and sw.t_job_step_dependencies for the given jobs
+**      Reset entries in sw.t_job_steps and sw.t_job_step_dependencies for the given jobs
 **      for any job steps that are complete but depend on a job step that is
 **      enabled, in progress, or completed after the given job step finished
 **

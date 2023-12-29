@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE pc.add_legacy_file_upload_request(IN _legacyfilename
 /****************************************************
 **
 **  Desc:
-**      Adds or updates the legacy FASTA details in pc.t_legacy_file_upload_requests
+**      Add or update the legacy FASTA details in pc.t_legacy_file_upload_requests
 **
 **      New rows are added to pc.t_legacy_file_upload_requests when the Analysis Manager
 **      uses the OrganismDatabaseHandler DLL to obtain standalone (legacy) FASTA files.
@@ -22,6 +22,8 @@ CREATE OR REPLACE PROCEDURE pc.add_legacy_file_upload_request(IN _legacyfilename
 **  Arguments:
 **    _legacyfileName       Legacy FASTA file name
 **    _authenticationHash   SHA-1 hash for the file
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   kja
 **  Date:   01/11/2006

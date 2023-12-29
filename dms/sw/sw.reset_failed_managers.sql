@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.reset_failed_managers(IN _infoonly boolean DEFAUL
 /****************************************************
 **
 **  Desc:
-**      Resets managers with a status message of 'Flag file' posted to sw.t_processor_status within the last 6 hours
+**      Reset managers with a status message of 'Flag file' posted to sw.t_processor_status within the last 6 hours
 **
 **      This procedure is intended to be run on a regular basis by a job scheduler,
 **      though only in cases where we expect managers to fail and we want to auto-reset them on a regular basis

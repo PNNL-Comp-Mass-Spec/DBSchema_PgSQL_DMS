@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.validate_wp(IN _workpackage text, IN _allowno
 /****************************************************
 **
 **  Desc:
-**      Verifies that the given work package exists in T_Charge_Code
+**      Verify that the given work package exists in T_Charge_Code
 **
 **  Arguments:
 **    _workPackage      Work package name

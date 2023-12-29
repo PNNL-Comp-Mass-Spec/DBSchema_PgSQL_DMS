@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_current_function_info(_schemaname text DEF
 /****************************************************
 **
 **  Desc:
-**      Returns information about the calling function or procedure,
-**      including schema name, object name, and argument data types
+**      Return information about the calling function or procedure, including schema name, object name, and argument data types
 **
 **      This function uses "GET DIAGNOSTICS _context = PG_CONTEXT;" to determine the calling object's name
 **

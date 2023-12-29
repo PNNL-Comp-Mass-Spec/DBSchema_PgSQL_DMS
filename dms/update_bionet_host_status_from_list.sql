@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_bionet_host_status_from_list(IN _hostn
 /****************************************************
 **
 **  Desc:
-**      Updates the Last_Online column in T_Bionet_Hosts for the computers in _hostNames
+**      Update the Last_Online column in t_bionet_hosts for the computers in _hostNames
 **
 **  Arguments:
 **    _hostNames        Comma-separated list of computer names; optionally include IP address with each host name using the format Host@IP

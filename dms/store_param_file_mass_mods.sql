@@ -7,7 +7,8 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
     AS $$
 /****************************************************
 **
-**  Stores (or validates) the dynamic and static mods to associate with a given parameter file
+**  Desc:
+**      Store (or validate) the dynamic and static mods to associate with a given parameter file
 **
 **  Format for MS-GF+, MSPathFinder, and mzRefinery:
 **     The mod names listed in the 5th comma-separated column must be UniMod names

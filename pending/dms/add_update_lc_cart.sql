@@ -14,7 +14,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits an existing LC Cart
+**      Add new or edit an existing LC Cart
 **
 **  Arguments:
 **    _id               LC cart ID

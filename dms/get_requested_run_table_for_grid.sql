@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_requested_run_table_for_grid(_itemlist tex
 /****************************************************
 **
 **  Desc:
-**      Returns the info for the requested run IDs in _itemList
+**      Return the info for the requested run IDs in _itemList
 **
 **  Auth:   grk
 **  Date:   01/13/2013

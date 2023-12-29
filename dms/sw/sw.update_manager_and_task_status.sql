@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.update_manager_and_task_status(IN _mgrname text, 
 /****************************************************
 **
 **  Desc:
-**      Logs the current status of the given analysis manager, updating table sw.t_processor_status
+**      Log the current status of the given analysis manager, updating table sw.t_processor_status
 **
 **      Manager status is typically stored in the database using sw.Update_Manager_And_Task_Status_XML,
 **      which is called by the StatusMessageDBUpdater

@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Performs operation given by _mode on file attachment given by _id
+**      Perform operation given by _mode on file attachment given by _id
 **
 **  Arguments:
 **    _id           File attachment ID

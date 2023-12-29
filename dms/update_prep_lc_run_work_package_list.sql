@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_prep_lc_run_work_package_list(IN _prep
 /****************************************************
 **
 **  Desc:
-**      Updates the work package list for a single prep LC run or for all prep LC runs
+**      Update the work package list for a single prep LC run or for all prep LC runs
 **
 **  Arguments:
 **    _prepLCRunID   If 0, update all rows in T_Prep_LC_Run

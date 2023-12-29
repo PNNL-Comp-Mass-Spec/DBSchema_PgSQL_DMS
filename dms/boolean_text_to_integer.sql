@@ -8,8 +8,8 @@ CREATE OR REPLACE FUNCTION public.boolean_text_to_integer(_booleantext text) RET
 /****************************************************
 **
 **  Desc:
-**      Returns 1 if _booleanText is Yes, Y, 1, True, or T
-**      Otherwise, returns 0
+**      Return 1 if _booleanText is Yes, Y, 1, True, or T
+**      Otherwise, return 0
 **
 **  Auth:   mem
 **  Date:   05/28/2019 mem - Initial version

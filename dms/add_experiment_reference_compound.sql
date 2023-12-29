@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_experiment_reference_compound(IN _expid i
 /****************************************************
 **
 **  Desc:
-**      Adds reference compound entries to database for given experiment
+**      Add reference compound entries to database for given experiment
 **
 **      The calling procedure must create and populate temporary table Tmp_ExpToRefCompoundMap:
 **

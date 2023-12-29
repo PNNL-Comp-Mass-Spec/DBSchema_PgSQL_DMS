@@ -7,7 +7,14 @@ CREATE OR REPLACE PROCEDURE pc.update_protein_name_hash(IN _referenceid integer,
     AS $$
 /****************************************************
 **
-**  Desc:   Updates the SHA-1 fingerprint in t_protein_names for the given Protein Reference Entry
+**  Desc:
+**      Update the SHA-1 fingerprint in pc.t_protein_names for the given protein reference entry
+**
+**  Arguments:
+**    _referenceID      Protein reference ID
+**    _sha1Hash         SHA-1 hash
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   kja
 **  Date:   03/13/2006

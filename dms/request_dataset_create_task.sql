@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.request_dataset_create_task(IN _processorname
 /****************************************************
 **
 **  Desc:
-**      Returns first available dataset creation task in T_Dataset_Create_Queue
+**      Return first available dataset creation task in T_Dataset_Create_Queue
 **
 **  Arguments:
 **    _processorName        Name of the processor requesting a dataset creation task

@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.create_pending_predefined_analysis_tasks(IN _
 /****************************************************
 **
 **  Desc:
-**      Creates analysis jobs for new entries in t_predefined_analysis_scheduling_queue
+**      Create analysis jobs for new entries in t_predefined_analysis_scheduling_queue
 **
 **      Should be called periodically by a SQL Server Agent job or a pgAgent/pg_timetable task
 **

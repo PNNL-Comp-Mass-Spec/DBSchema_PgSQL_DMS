@@ -13,7 +13,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Looks for 'Released' datasets that have low QC metric values and auto changes their rating to 'Not Released'
+**      Look for 'Released' datasets that have low QC metric values and auto change their rating to 'Not Released'
 **
 **      Thresholds:
 **        Number of tryptic peptides, total spectra count,  less than 250

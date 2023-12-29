@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.parse_delimited_integer_list(_delimitedlist te
 /****************************************************
 **
 **  Desc:
-**      Parses the text in _delimitedList and returns a table containing the values (as integers)
+**      Parse the text in _delimitedList and return a table containing the values (as integers)
 **
 **      _delimitedList should be of the form 'Value1,Value2'
 **

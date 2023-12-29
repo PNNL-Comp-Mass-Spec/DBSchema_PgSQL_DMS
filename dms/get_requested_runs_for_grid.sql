@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.get_requested_runs_for_grid(IN _itemlist text
 /****************************************************
 **
 **  Desc:
-**      Returns the info for the requested run IDs in _itemList
+**      Return the info for the requested run IDs in _itemList
 **
 **  Arguments:
 **    _itemList          Comma-separated list of requested run IDs

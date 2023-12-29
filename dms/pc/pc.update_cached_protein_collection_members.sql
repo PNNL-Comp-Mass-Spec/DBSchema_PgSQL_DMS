@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE pc.update_cached_protein_collection_members(IN _coll
 /****************************************************
 **
 **  Desc:
-**      Updates the information in pc.t_protein_collection_members_cached,
+**      Update the information in pc.t_protein_collection_members_cached,
 **      which tracks the proteins in each protein collection, including protein name,
 **      the first 64 characters of the protein description, the number of residues,
 **      and the protein's monoisotopic mass
@@ -24,6 +24,8 @@ CREATE OR REPLACE PROCEDURE pc.update_cached_protein_collection_members(IN _coll
 **                              When true and _collectionIdFilter is 0, will update cached members for all protein collections, regardless of collection state (and this could take a long time)
 **    _maxCollectionsToUpdate   Maximum number of protein collections to update
 **    _showDebug                When true, show additional progress messages using RAISE INFO
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   mem
 **  Date:   06/24/2016 mem - Initial release

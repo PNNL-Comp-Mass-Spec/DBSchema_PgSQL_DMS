@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_param_table(_job integer, _settingsfileove
 /****************************************************
 **
 **  Desc:
-**      Returns the parameters for the given job in Section/Name/Value rows
+**      Return the parameters for the given job in Section/Name/Value rows
 **      Data comes from the public schema tables (via view v_get_pipeline_job_parameters)
 **
 **  Arguments:

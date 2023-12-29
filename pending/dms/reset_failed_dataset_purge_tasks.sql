@@ -13,9 +13,9 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Looks for dataset archive entries with state 8=Purge Failed
+**      Look for dataset archive entries with state 8=Purge Failed
 **
-**      Examines the archive_state_last_affected column and resets any entries that entered the Purge Failed state
+**      Examine the archive_state_last_affected column and reset any entries that entered the Purge Failed state
 **      at least _resetHoldoffHours hours before the present
 **
 **  Arguments:

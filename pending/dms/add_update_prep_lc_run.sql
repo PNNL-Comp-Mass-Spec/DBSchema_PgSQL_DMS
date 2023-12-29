@@ -27,7 +27,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits an existing prep LC run
+**      Add new or edit an existing prep LC run
 **
 **  Arguments:
 **    _id                   Input/output: prep LC run ID in t_prep_lc_run

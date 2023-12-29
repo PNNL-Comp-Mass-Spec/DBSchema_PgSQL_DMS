@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_analysis_tool_allowed_instrument_class_lis
 /****************************************************
 **
 **  Desc:
-**      Builds a delimited list of allowed instrument class names
-**      for the given analysis tool
+**      Build a delimited list of allowed instrument class names for the given analysis tool
 **
 **  Return value: comma-separated list
 **

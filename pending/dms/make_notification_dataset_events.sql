@@ -9,7 +9,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds dataset notification events to notification event table
+**      Add dataset notification events to notification event table
 **
 **  Arguments:
 **    _infoOnly     When true, show the number of notification events that would be added

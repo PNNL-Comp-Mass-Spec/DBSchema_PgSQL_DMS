@@ -7,7 +7,13 @@ CREATE OR REPLACE PROCEDURE mc.disable_sequest_clusters(IN _infoonly boolean DEF
     AS $$
 /****************************************************
 **
-**  Desc:   Disables the Sequest Clusters
+**  Desc:
+**      Disable the SEQUEST Clusters
+**
+**  Arguments:
+**    _infoOnly         When true, preview updates
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   07/24/2008

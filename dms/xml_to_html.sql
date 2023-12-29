@@ -8,10 +8,10 @@ CREATE OR REPLACE FUNCTION public.xml_to_html(_xml xml) RETURNS text
 /****************************************************
 **
 **  Desc:
-**      Converts XML to HTML text, surrounded by <pre> and </pre>
+**      Convert XML to HTML text, surrounded by <pre> and </pre>
 **
-**      Adds a linefeed before each XML tag and changes the
-**      less than and greater than signs to &lt; and &gt;
+**      Add a line feed before each XML tag and changes the
+**      less than signs and greater than signs to &lt; and &gt;
 **
 **  Return value: the XML as text
 **

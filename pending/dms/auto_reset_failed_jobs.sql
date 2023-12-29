@@ -13,7 +13,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Looks for recently failed jobs
+**      Look for recently failed jobs
 **      Examines the reason for the failure and will auto-reset under certain conditions
 **
 **  Arguments:

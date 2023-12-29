@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.validate_extension_script_for_job(IN _job integer
 /****************************************************
 **
 **  Desc:
-**      Validates that the given extension script is appropriate for the given job
+**      Validate that the given extension script is appropriate for the given job
 **
 **  Arguments:
 **    _job                      Job number

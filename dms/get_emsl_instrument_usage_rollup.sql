@@ -6,8 +6,9 @@ CREATE OR REPLACE FUNCTION public.get_emsl_instrument_usage_rollup(_year integer
     LANGUAGE plpgsql
     AS $$
 /****************************************************
+**
 **  Desc:
-**      Outputs contents of EMSL instrument usage report table as rollup
+**      Output contents of EMSL instrument usage report table as rollup
 **      This function is used by the CodeIgniter instance at https://prismsupport.pnl.gov/dms2ws/
 **
 **      Example URL:

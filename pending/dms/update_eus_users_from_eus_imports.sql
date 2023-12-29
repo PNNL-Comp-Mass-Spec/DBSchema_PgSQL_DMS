@@ -10,7 +10,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates associated EUS user associations for proposals that are currently active in DMS
+**      Update associated EUS user associations for proposals that are currently active in DMS
 **
 **      Obtains data from nexus-prod-db.emsl.pnl.gov using the postgres_fdw foreign data wrapper
 **

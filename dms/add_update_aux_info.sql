@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_aux_info(IN _targetname text DEFAU
 /****************************************************
 **
 **  Desc:
-**      Adds new or updates an existing auxiliary information item
+**      Add new or update an existing auxiliary information item
 **
 **  Arguments:
 **    _targetName           Target type name: 'Experiment', 'Biomaterial' (previously 'Cell Culture'), 'Dataset', or 'SamplePrepRequest'

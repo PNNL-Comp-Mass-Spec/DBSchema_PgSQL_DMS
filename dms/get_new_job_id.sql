@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_new_job_id(_note text, _infoonly boolean D
 /****************************************************
 **
 **  Desc:
-**      Gets a unique number for making a new job
+**      Get a unique number for making a new job
 **
 **  Example usage:
 **

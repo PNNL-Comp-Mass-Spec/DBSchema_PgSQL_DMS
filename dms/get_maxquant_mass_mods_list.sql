@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_maxquant_mass_mods_list(_paramfileid integ
 /****************************************************
 **
 **  Desc:
-**      Builds a delimited list of Mod names and IDs for the given MaxQuant parameter file
+**      Build a delimited list of Mod names and IDs for the given MaxQuant parameter file
 **
 **  Return value: list of mass mods, delimited by vertical bars and colons
 **

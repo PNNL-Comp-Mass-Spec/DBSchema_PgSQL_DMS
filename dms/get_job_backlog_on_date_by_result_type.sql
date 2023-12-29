@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_job_backlog_on_date_by_result_type(_target
 /****************************************************
 **
 **  Desc:
-**      Returns number of jobs in backlog for given timestamp (date and time)
+**      Return number of jobs in backlog for given timestamp (date and time)
 **      and given result type; wildcards are supported, e.g. '%_Peptide_Hit'
 **
 **  Arguments:

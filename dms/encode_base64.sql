@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.encode_base64(_texttoencode text) RETURNS text
 /****************************************************
 **
 **  Desc:
-**      Encodes the given text using base-64 encoding
+**      Encode the given text using base-64 encoding
 **
 **      From https://stackoverflow.com/a/23699204/1179467
 **

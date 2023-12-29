@@ -8,15 +8,18 @@ CREATE OR REPLACE PROCEDURE cap.set_myemsl_upload_superseded_if_failed(IN _datas
 /****************************************************
 **
 **  Desc:
-**      Marks one or more failed MyEMSL upload tasks as superseded,
+**      Mark one or more failed MyEMSL upload tasks as superseded,
 **      meaning a subsequent upload task successfully uploaded the dataset files
 **
 **      This procedure is called by the ArchiveStatusCheckPlugin if it finds that two
 **      tasks uploaded the same files, the first task failed, but the second task succeeded
 **
 **  Arguments:
-**    _statusNumList          The status numbers in this comma-separated list must match the specified DatasetID (this is a safety check)
-**    _ingestStepsCompleted   Number of ingest steps that were completed for these status nums (assumes that all the status nums completed the same steps)
+**    _datasetID                Dataset ID
+**    _statusNumList            The status numbers in this comma-separated list must match the specified DatasetID (this is a safety check)
+**    _ingestStepsCompleted     Number of ingest steps that were completed for these status nums (assumes that all the status nums completed the same steps)
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   mem
 **  Date:   12/16/2014 mem - Initial version

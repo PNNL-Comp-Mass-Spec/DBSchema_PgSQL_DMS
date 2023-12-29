@@ -29,7 +29,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates instrument usage allocation data by populating a temporary table then calling update_instrument_usage_allocations_work
+**      Update instrument usage allocation data by populating a temporary table then calling update_instrument_usage_allocations_work
 **
 **      This procedure is obsolete since instrument allocation was last tracked in 2012 (see table t_instrument_allocation)
 **

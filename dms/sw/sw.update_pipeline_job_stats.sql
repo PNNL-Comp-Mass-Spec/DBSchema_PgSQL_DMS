@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.update_pipeline_job_stats(IN _infoonly boolean DE
 /****************************************************
 **
 **  Desc:
-**      Updates processing statistics in sw.t_pipeline_job_stats
+**      Update processing statistics in sw.t_pipeline_job_stats
 **
 **  Arguments:
 **    _infoOnly     When true, preview the processing statistics

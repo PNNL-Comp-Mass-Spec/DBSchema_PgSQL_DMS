@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_material_container_campaign_list(_containe
 /****************************************************
 **
 **  Desc:
-**      Builds delimited list of campaigns represented by items in the given container
+**      Build delimited list of campaigns represented by items in the given container
 **
 **      This function was previously used by views V_Material_Containers_List_Report and V_Material_Containers_Detail_Report
 **      but is no longer used, since column Campaign_ID was added to table T_Material_Containers in November 2023

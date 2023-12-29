@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates run blocking parameters using the specified XML
+**      Update run blocking parameters using the specified XML
 **
 **      Example XML for _blockingList
 **        <r i="481295" t="Run_Order" v="1" />

@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_batch_group_member_list(_batchgroupid inte
 /****************************************************
 **
 **  Desc:
-**      Builds a delimited list of batch IDs in a requested run batch group
+**      Build a delimited list of batch IDs in a requested run batch group
 **      Batch IDs are sorted by batch_group_order
 **
 **  Return value: Comma-separated list

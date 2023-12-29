@@ -13,7 +13,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Changes the instrument name of a dataset
+**      Change the instrument name of a dataset
 **
 **      Typically used for datasets that are new and failed capture due to the instrument name being wrong
 **      (e.g. 15T_FTICR instead of 15T_FTICR_Imaging)

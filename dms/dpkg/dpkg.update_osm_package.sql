@@ -8,12 +8,15 @@ CREATE OR REPLACE PROCEDURE dpkg.update_osm_package(IN _osmpackageid integer, IN
 /****************************************************
 **
 **  Desc:
-**      Updates or deletes the given OSM Package
+**      Update or delete the given OSM Package
 **      (the only supported mode is 'delete')
 **
 **  Arguments:
 **    _osmPackageID     OSM Package ID
-**    _mode             'delete'
+**    _mode             Mode: 'delete'
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   07/08/2013 grk - Initial release

@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates requested instrument usage allocation using data in Tmp_Allocation_Operations
+**      Update requested instrument usage allocation using data in Tmp_Allocation_Operations
 **
 **      CREATE TEMP TABLE Tmp_Allocation_Operations (
 **          Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,

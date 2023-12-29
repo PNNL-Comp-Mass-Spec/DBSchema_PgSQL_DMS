@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.delete_experiment(IN _experimentname text, IN
 /****************************************************
 **
 **  Desc:
-**      Deletes given experiment from the experiment table and all referencing tables
+**      Delete given experiment from the experiment table and all referencing tables
 **
 **      The experiment may not have any associated datasets or requested runs
 **

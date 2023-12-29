@@ -27,6 +27,8 @@ CREATE OR REPLACE PROCEDURE cap.make_local_task_in_broker(IN _scriptname text, I
 **                              When _debugMode is true, the capture task job will not be added to cap.t_tasks
 **    _job                      Output: capture task job number
 **    _resultsDirectoryName     Output: results directory name
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   grk
 **  Date:   05/03/2010 grk - Initial release

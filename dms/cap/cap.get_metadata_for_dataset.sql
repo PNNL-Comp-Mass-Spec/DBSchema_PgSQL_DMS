@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION cap.get_metadata_for_dataset(_datasetname text) RETUR
 /****************************************************
 **
 **  Desc:
-**      Returns a table with metadata for the given dataset
+**      Return a table with metadata for the given dataset
 **
 **  Auth:   grk
 **  Date:   10/29/2009 grk - Initial release

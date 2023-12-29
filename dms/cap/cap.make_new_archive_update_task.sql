@@ -8,13 +8,15 @@ CREATE OR REPLACE PROCEDURE cap.make_new_archive_update_task(IN _datasetname tex
 /****************************************************
 **
 **  Desc:
-**      Creates a new archive update task for the specified dataset and results directory
+**      Create a new archive update task for the specified dataset and results directory
 **
 **  Arguments:
 **    _datasetName                  Dataset name
 **    _resultsdirectoryname         Results directory name
 **    _allowBlankResultsDirectory   Set to true if you need to update the dataset file; the downside is that the archive update will involve a byte-to-byte comparison of all data in both the dataset directory and all subdirectories
 **    _infoOnly                     True to preview the capture task job that would be created
+**    _message                      Status message
+**    _returnCode                   Return code
 **
 **  Auth:   mem
 **  Date:   05/07/2010 mem - Initial version

@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates requested run factors and blocking using the specified XML
+**      Update requested run factors and blocking using the specified XML
 
 **      Called from https://dms2.pnl.gov/requested_run_batch_blocking/param
 **

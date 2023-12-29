@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE cap.request_ctm_step_task(IN _processorname text, IN
 /****************************************************
 **
 **  Desc:
-**      Looks for capture task job step that is appropriate for the given Capture task manager
+**      Look for capture task job step that is appropriate for the given Capture task manager
 **      If found, step is assigned to caller
 **
 **      Task assignment is based on:

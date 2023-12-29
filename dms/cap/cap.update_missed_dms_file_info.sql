@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE cap.update_missed_dms_file_info(IN _deletefromtableo
 /****************************************************
 **
 **  Desc:
-**      Calls public.update_dataset_file_info_xml for datasets that have info defined in cap.t_dataset_info_xml,
+**      Call public.update_dataset_file_info_xml for datasets that have info defined in cap.t_dataset_info_xml,
 **      yet the dataset has a null value for File_Info_Last_Modified in public.t_dataset_info
 **
 **  Arguments:

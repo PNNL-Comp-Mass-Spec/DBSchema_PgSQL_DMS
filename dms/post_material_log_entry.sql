@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.post_material_log_entry(IN _type text, IN _it
 /****************************************************
 **
 **  Desc:
-**      Adds new entry to T_Material_Log for an experiment, reference compound, biomaterial item, or material container
+**      Add new entry to T_Material_Log for an experiment, reference compound, biomaterial item, or material container
 **
 **  Arguments:
 **    _type             Type of action: 'Experiment Move', 'Reference Compound Move', 'Biomaterial Move', 'Container Creation', or 'Container Move'

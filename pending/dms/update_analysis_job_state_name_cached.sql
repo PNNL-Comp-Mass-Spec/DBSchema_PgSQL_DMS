@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates column state_name_cached in t_analysis_job for one or more jobs
+**      Update column state_name_cached in t_analysis_job for one or more jobs
 **
 **  Arguments:
 **    _jobStart     First job number

@@ -8,9 +8,18 @@ CREATE OR REPLACE PROCEDURE pc.validate_analysis_job_protein_parameters(IN _orga
 /****************************************************
 **
 **  Desc:
-**    Validate the combination of organism DB file (FASTA) file name, protein collection list, and protein options list
+**      Validate the combination of organism DB file (FASTA) file name, protein collection list, and protein options list
 **
-**    The protein collection list and protein options are updated to a canonical format and returned via the INOUT parameters
+**      The protein collection list and protein options are updated to a canonical format and returned via the INOUT parameters
+**
+**  Arguments:
+**    _organismName         Organism name
+**    _ownerUsername        Protein collection owner (only applies to encrypted protein collections)
+**    _organismDBFileName   Organism DB file name (legacy FASTA file)
+**    _protCollNameList     Input/Output: Comma-separated list of protein collection names
+**    _protCollOptionsList  Input/Output: Protein collection options
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   04/04/2006 grk
 **  Date:   04/11/2006 kja

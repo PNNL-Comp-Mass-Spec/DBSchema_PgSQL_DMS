@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_stats_by_campaign(_mostrecentweeks
 /****************************************************
 **
 **  Desc:
-**      Returns a table summarizing datasets stats,
-**      grouped by campaign, work package, and instrument over the given time frame
+**      Return a table summarizing datasets stats, grouped by campaign, work package, and instrument over the given time frame
 **
 **  Arguments:
 **    _startDate   Ignored if _mostRecentWeeks is non-zero

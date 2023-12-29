@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_step_params_work(_job integer, _step integ
 /****************************************************
 **
 **  Desc:
-**      Returns a table with the parameters for the given job and step
+**      Return a table with the parameters for the given job and step
 **
 **      Data comes from sw.T_Job_Parameters, not from the public schema tables
 **

@@ -8,8 +8,8 @@ CREATE OR REPLACE PROCEDURE public.validate_auto_storage_path_params(IN _autodef
 /****************************************************
 **
 **  Desc:
-**      Validates that the auto storage path parameters are correct
-**      Raises an exception if there is a problem
+**      Validate that the auto storage path parameters are correct
+**      Raise an exception if there is a problem
 **
 **  Arguments:
 **    _autoDefineStoragePath        When true, storage paths are auto-defined for the given instrument

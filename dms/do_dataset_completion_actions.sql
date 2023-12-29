@@ -8,13 +8,15 @@ CREATE OR REPLACE PROCEDURE public.do_dataset_completion_actions(IN _datasetname
 /****************************************************
 **
 **  Desc:
-**      Updates dataset state based on the value of _completionState,
-**      provided the current dataset state is 2 (Capture In Progress)
+**      Update dataset state based on the value of _completionState, provided the current dataset state is 2 (Capture In Progress)
 **
 **      If the new state is 3 (complete), calls add_archive_dataset and schedule_predefined_analysis_jobs
 **
 **  Arguments:
-**    _completionState   3 (complete), 5 (capture failed), 6 (received), 8 (prep. failed), 9 (not ready), 14 (Duplicate Dataset Files)
+**    _datasetName          Dataset name
+**    _completionState      Completion state: 3 (complete), 5 (capture failed), 6 (received), 8 (prep. failed), 9 (not ready), 14 (Duplicate Dataset Files)
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   grk
 **  Date:   11/04/2002

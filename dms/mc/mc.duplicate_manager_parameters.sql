@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameters(_sourcemgrid integer,
 /****************************************************
 **
 **  Desc:
-**      Duplicates the parameters for a given manager
-**      to create new parameters for a new manager
+**      Duplicate the parameters for a given manager to create new parameters for a new manager
 **
 **  Arguments:
 **    _sourceMgrID              Source manager ID

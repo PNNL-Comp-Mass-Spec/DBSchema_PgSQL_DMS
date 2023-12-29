@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION public.experiments_from_request(_requestid integer) R
 /****************************************************
 **
 **  Desc:
-**      Returns count of number of experiments made
-**      from the given sample prep request
+**      Return count of number of experiments made from the given sample prep request
 **
 **
 **  Auth:   grk

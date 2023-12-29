@@ -10,7 +10,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the job state to 8=Holding for jobs associated with purged datasets
+**      Update the job state to 8=Holding for jobs associated with purged datasets
 **
 **  Arguments:
 **    _infoOnly     When true, preview updates

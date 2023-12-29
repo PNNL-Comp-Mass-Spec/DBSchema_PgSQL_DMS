@@ -39,7 +39,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits an existing LC cart configuration entry
+**      Add new or edit an existing LC cart configuration entry
 **
 **  Arguments:
 **    _id                           Cart config ID; column cart_config_id in t_lc_cart_configuration

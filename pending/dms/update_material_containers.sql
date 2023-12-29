@@ -14,7 +14,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates specified list of containers
+**      Update specified list of containers
 **
 **  Arguments:
 **    _mode             Mode: 'move_container', 'retire_container', 'retire_container_and_contents', 'unretire_container'

@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_experiment_component_names(IN _
 /****************************************************
 **
 **  Desc:
-**      Updates T_Cached_Experiment_Components, which tracks the semicolon-separated list
+**      Update T_Cached_Experiment_Components, which tracks the semicolon-separated list
 **      of biomaterial names and reference compound names for each exeriment
 **
 **  Arguments:

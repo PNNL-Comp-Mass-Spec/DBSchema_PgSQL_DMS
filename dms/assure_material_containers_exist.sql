@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.assure_material_containers_exist(INOUT _conta
 /****************************************************
 **
 **  Desc:
-**      Examines the list of containers and/or locations in _containerList
+**      Examine the list of containers and/or locations in _containerList
 **
 **      For items that are locations, creates a new container by calling add_update_material_container
 **
@@ -20,6 +20,9 @@ CREATE OR REPLACE PROCEDURE public.assure_material_containers_exist(INOUT _conta
 **    _researcher           Researcher name; supports 'Zink, Erika M (D3P704)' or simply 'D3P704'
 **    _mode                 If 'verify_only', populates a temporary table with items in _containerList, then exits the procedure without making any changes
 **                          Otherwise, creates missing containers (including assuring that each location has a container)
+**    _message              Status message
+**    _returnCode           Return code
+**    _callingUser          Calling user username
 **
 **  Returns:
 **      Comma-separated list of container names (via argument _containerList)

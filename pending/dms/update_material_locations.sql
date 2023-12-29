@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the given list of material locations
+**      Update the given list of material locations
 **
 **      Example contents of _locationList:
 **        <r n="80B.na.na.na.na" i="425" a="Status" v="Active" />

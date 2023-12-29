@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_terms_default_ontologies(_infoonly boolea
 /****************************************************
 **
 **  Desc:
-**      Adds new ontology terms to the ontology-specific tables for the default ontologies:
+**      Add new ontology terms to the ontology-specific tables for the default ontologies:
 **      CL, GO, MI (PSI_MI), MOD (PSI_Mod), PRIDE, NEWT, and DOID
 **
 **  Usage:

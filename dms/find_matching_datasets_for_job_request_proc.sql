@@ -8,12 +8,14 @@ CREATE OR REPLACE PROCEDURE public.find_matching_datasets_for_job_request_proc(I
 /****************************************************
 **
 **  Desc:
-**      Return list of datasets for given analysis job request,
-**      showing how many jobs exist for each that match the parameters of the request
+**      Return list of datasets for given analysis job request, showing how many jobs exist for each that match the parameters of the request
 **      (regardless of whether or not job is linked to the request)
 **
 **  Arguments:
 **    _requestID        Analysis job request ID
+**    _results          Cursor for obtaining results
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Use this to view the data returned by the _results cursor
 **

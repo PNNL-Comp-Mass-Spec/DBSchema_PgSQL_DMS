@@ -11,8 +11,7 @@ CREATE OR REPLACE PROCEDURE dpkg.store_myemsl_upload_stats(IN _datapackageid int
 **      Store MyEMSL upload stats in dpkg.t_myemsl_uploads
 **
 **  Arguments:
-**    _job                  Capture task job
-**    _datasetID            Dataset ID
+**    _dataPackageID        Data package ID
 **    _subfolder            Subfolder (empty string if uploaded the dataset directory and all subdirectories)
 **    _fileCountNew         Number of new files added
 **    _fileCountUpdated     Number of existing files updated
@@ -20,6 +19,9 @@ CREATE OR REPLACE PROCEDURE dpkg.store_myemsl_upload_stats(IN _datapackageid int
 **    _uploadTimeSeconds    Upload time, in seconds
 **    _statusURI            Status URI
 **    _errorCode            Error code
+**    _message              Status message
+**    _returnCode           Return code
+**    _infoOnly             When true, preview updates
 **
 **  Auth:   mem
 **  Date:   09/25/2013 mem - Initial version

@@ -8,12 +8,14 @@ CREATE OR REPLACE PROCEDURE public.ack_email_alerts(IN _alertids text, IN _infoo
 /****************************************************
 **
 **  Desc:
-**      Updates the state of alerts in T_Email_Alerts
+**      Update the state of alerts in T_Email_Alerts
 **      The DMSEmailManager calls this procedure after e-mailing admins regarding alerts with state 1
 **
 **  Arguments:
 **    _alertIDs     Comma-separated list of alert IDs
 **    _infoOnly     When true, preview updates
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   06/16/2018 mem - Initial Version

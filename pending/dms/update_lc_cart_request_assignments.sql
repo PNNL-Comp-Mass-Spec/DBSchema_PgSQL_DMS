@@ -11,7 +11,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates LC cart and column assignments for requested runs
+**      Update LC cart and column assignments for requested runs
 **
 **      Example XML for _cartAssignmentList
 **          <r rq="543451" ct="Andromeda" co="1" cg="" />

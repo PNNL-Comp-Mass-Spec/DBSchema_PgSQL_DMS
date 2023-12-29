@@ -8,17 +8,19 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable boolean, IN _m
 /****************************************************
 **
 **  Desc:
-**      Enables or disables all managers of the given type
+**      Enable or disable all managers of the given type
 **
 **  Arguments:
-**    _enable            False to disable, true to enable
-**    _managerTypeID     Defined in table T_MgrTypes.  8=Space, 9=DataImport, 11=Analysis Tool Manager, 15=CaptureTaskManager
-**    _managerNameList   Required when _enable is true.  Only managers specified here will be enabled, though you can use 'All' to enable All managers.
-**                       When _enable is false, if this parameter is blank (or All) then all managers of the given type will be disabled
-**                       supports the % wildcard
-**   _infoOnly           When true, show the managers that would be updated
-**   _includeDisabled    By default, this procedure skips managers with control_from_website = 0 in t_mgrs; set _includeDisabled to true to also include them
-**
+**    _enable           False to disable, true to enable
+**    _managerTypeID    Defined in table T_MgrTypes.  8=Space, 9=DataImport, 11=Analysis Tool Manager, 15=CaptureTaskManager
+**    _managerNameList  Required when _enable is true.  Only managers specified here will be enabled, though you can use 'All' to enable All managers.
+**                      When _enable is false, if this parameter is blank (or All) then all managers of the given type will be disabled
+**                      supports the % wildcard
+**    _infoOnly         When true, show the managers that would be updated
+**    _includeDisabled  By default, this procedure skips managers with control_from_website = 0 in t_mgrs; set _includeDisabled to true to also include them
+**    _results          Cursor for obtaining results
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Use this to view the data returned by the _results cursor
 **

@@ -8,11 +8,13 @@ CREATE OR REPLACE PROCEDURE dpkg.make_data_package_storage_folder(IN _id integer
 /****************************************************
 **
 **  Desc:
-*       Requests creation of data storage folder for data package
+**      Request creation of data storage folder for data package
 **
 **  Arguments:
 **    _id           Data package ID
 **    _infoOnly     When true, preview the info that would be added to T_Data_Folder_Create_Queue
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   grk
 **  Date:   06/03/2009

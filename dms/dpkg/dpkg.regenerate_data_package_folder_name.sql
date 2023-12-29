@@ -8,13 +8,16 @@ CREATE OR REPLACE PROCEDURE dpkg.regenerate_data_package_folder_name(IN _datapkg
 /****************************************************
 **
 **  Desc:
-**      Updates the auto-generated data package folder name for a given data package
-**      Also updates the auto-generated wiki name (unless _updateWikiLink is false)
+**      Update the auto-generated data package folder name for a given data package
+**      Also update the auto-generated wiki name (unless _updateWikiLink is false)
 **
 **  Arguments:
 **    _dataPkgID        ID of the data package to update
 **    _infoOnly         When true, preview updated info
 **    _updateWikiLink   When true, update column wiki_page_link in t_data_package
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   mem
 **  Date:   06/09/2009

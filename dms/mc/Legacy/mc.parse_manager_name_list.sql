@@ -8,8 +8,8 @@ CREATE OR REPLACE PROCEDURE mc.parse_manager_name_list(IN _managernamelist text 
 /****************************************************
 **
 **  Desc:
-**      Parses the list of managers in _managerNameList
-**      and populates a temporary table with the manager names
+**      Parse the list of managers in _managerNameList
+**      and populate a temporary table with the manager names
 **
 **      The calling procedure must create a temporary table (the table can contain additional columns)
 **        CREATE TEMP TABLE TmpManagerList (

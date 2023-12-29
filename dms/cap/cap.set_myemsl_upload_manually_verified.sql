@@ -17,7 +17,11 @@ CREATE OR REPLACE PROCEDURE cap.set_myemsl_upload_manually_verified(IN _job inte
 **      yet the files were manually confirmed to have been successfully uploaded (via a separate job)
 **
 **  Arguments:
-**    _statusNumList   Comma-separated list of status_num values; required only if the step tool is ArchiveStatusCheck
+**    _job              Capture task job number
+**    _statusNumList    Comma-separated list of status_num values; required only if the step tool is ArchiveStatusCheck
+**    _infoOnly         When true, preview updates
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   10/03/2013 mem - Initial version

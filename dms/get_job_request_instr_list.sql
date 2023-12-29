@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_job_request_instr_list(_requestid integer)
 /****************************************************
 **
 **  Desc:
-**      Builds a comma-separated list of instruments for the datasets
-**      associated with the given analysis job request
+**      Build a comma-separated list of instruments for the datasets associated with the given analysis job request
 **
 **  Auth:   grk
 **  Date:   11/01/2005 grk - Initial version

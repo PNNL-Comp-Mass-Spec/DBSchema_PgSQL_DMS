@@ -16,7 +16,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits an existing separation group
+**      Add new or edit an existing separation group
 **
 **  Arguments:
 **    _separationGroup      Separation group name

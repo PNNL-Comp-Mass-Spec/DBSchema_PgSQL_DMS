@@ -8,8 +8,8 @@ CREATE OR REPLACE PROCEDURE sw.update_job_in_main_tables(INOUT _message text DEF
 /****************************************************
 **
 **  Desc:
-**      Updates sw.T_Jobs, sw.T_Job_Steps, and sw.T_Job_Parameters using the information in Tmp_Jobs, Tmp_Job_Steps, and Tmp_Job_Parameters
-**      This procedure is only called if procedure sw.create_job_steps() is called with Mode 'UpdateExistingJob'
+**      Update sw.T_Jobs, sw.T_Job_Steps, and sw.T_Job_Parameters using the information in Tmp_Jobs, Tmp_Job_Steps, and Tmp_Job_Parameters
+**      This procedure is only called if procedure sw.create_job_steps() is called with mode 'UpdateExistingJob'
 **
 **      Note: Does not update job steps in state 5 = Complete
 **

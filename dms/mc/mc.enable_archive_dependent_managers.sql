@@ -7,7 +7,13 @@ CREATE OR REPLACE PROCEDURE mc.enable_archive_dependent_managers(IN _infoonly bo
     AS $$
 /****************************************************
 **
-**  Desc:   Enables managers that rely on MyEMSL
+**  Desc:
+**      Enable managers that rely on MyEMSL
+**
+**  Arguments:
+**    _infoOnly         When true, preview updates
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   06/09/2011 mem - Initial Version

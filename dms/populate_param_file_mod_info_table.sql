@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.populate_param_file_mod_info_table(IN _showmo
 /****************************************************
 **
 **  Desc:
-**      Populates temporary table Tmp_ParamFileModResults using the param file IDs in Tmp_ParamFileInfo
+**      Populate temporary table Tmp_ParamFileModResults using the param file IDs in Tmp_ParamFileInfo
 **      Both of these tables must be created by the calling procedure
 **
 **      CREATE TEMP TABLE Tmp_ParamFileInfo (
@@ -23,12 +23,16 @@ CREATE OR REPLACE PROCEDURE public.populate_param_file_mod_info_table(IN _showmo
 **      );
 **
 **  Arguments:
-**    _showModSymbol             Set to 1 to display the modification symbol
-**    _showModName               Set to 1 to display the modification name
-**    _showModMass               Set to 1 to display the modification mass
-**    _massModFilterTextColumn   If text is defined here, the _massModFilterText filter is only applied to column(s) whose name matches this
-**    _massModFilterText         If text is defined here, _massModFilterSql will be populated with SQL to filter the results to only show rows that contain this text in one of the mass mod columns
-**    _previewSql                When true, preview SQL prior to executing it
+**    _showModSymbol                Set to 1 to display the modification symbol
+**    _showModName                  Set to 1 to display the modification name
+**    _showModMass                  Set to 1 to display the modification mass
+**    _useModMassAlternativeName    When 1, use Alternative_Name in t_mass_correction_factors instead of Mass_Correction_Tag
+**    _massModFilterTextColumn      If text is defined here, the _massModFilterText filter is only applied to column(s) whose name matches this
+**    _massModFilterText            If text is defined here, _massModFilterSql will be populated with SQL to filter the results to only show rows that contain this text in one of the mass mod columns
+**    _previewSql                   When true, preview SQL prior to executing it
+**    _massModFilterSql             Output: when _massModFilterText is defined, this will have the SQL for filtering on the given text
+**    _message                      Status message
+**    _returnCode                   Return code
 **
 **  Auth:   mem
 **  Date:   12/08/2006 mem - Initial version (Ticket #342)

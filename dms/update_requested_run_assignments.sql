@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_assignments(IN _mode tex
 /****************************************************
 **
 **  Desc:
-**      Updates the specified requested runs to change priority, instrument group, separation group, dataset type, or assigned instrument
+**      Update the specified requested runs to change priority, instrument group, separation group, dataset type, or assigned instrument
 **
 **      This procedure is called via two mechanisms:
 **

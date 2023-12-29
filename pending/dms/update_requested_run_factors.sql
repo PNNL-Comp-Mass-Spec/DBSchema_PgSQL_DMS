@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates requested run factors from input XML list
+**      Update requested run factors from input XML list
 **
 **      _factorList will look like this if it comes from web page https://dms2.pnl.gov/requested_run_factors/param
 **                                                             or https://dms2.pnl.gov/requested_run_batch_blocking/grid

@@ -7,7 +7,13 @@ CREATE OR REPLACE PROCEDURE mc.disable_analysis_managers(IN _infoonly boolean DE
     AS $$
 /****************************************************
 **
-**  Desc:   Disables all analysis managers
+**  Desc:
+**      Disable all analysis managers
+**
+**  Arguments:
+**    _infoOnly         When true, preview updates
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   05/09/2008

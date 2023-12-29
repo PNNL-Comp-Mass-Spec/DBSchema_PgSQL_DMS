@@ -17,7 +17,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Moves containers from one location to another
+**      Move containers from one location to another
 **      Allows for moving between freezers, shelves, and racks, but requires that Row and Col remain unchanged
 **      Created in August 2016 to migrate samples from old freezer 1206A to new freezer 1206A, which has more shelves but fewer racks
 **

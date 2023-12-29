@@ -8,10 +8,8 @@ CREATE OR REPLACE PROCEDURE public.reconcile_inst_name_table_to_storage_assignme
 /****************************************************
 **
 **  Desc:
-**     This procedures updates the assigned source and storage
-**     path columns in the instrument name table (t_instrument_name)
-**     according to the assignments given in the storage path table
-**     (t_storage_path)
+**     Update the assigned source and storage path columns in the instrument name table (t_instrument_name)
+**     according to the assignments given in the storage path table (t_storage_path)
 **
 **  Auth:   grk
 **  Date:   01/26/2001

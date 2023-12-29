@@ -8,8 +8,8 @@ CREATE OR REPLACE PROCEDURE public.update_all_sample_prep_request_items(IN _days
 /****************************************************
 **
 **  Desc:
-**      Calls update_sample_prep_request_items() for all active sample prep requests, updating table T_Sample_Prep_Request_Items
-**      It also updates items for closed sample prep requests where the state was changed within the last year (customizable using _daysPriorToUpdateClosedRequests)
+**      Call update_sample_prep_request_items() for all active sample prep requests, updating table T_Sample_Prep_Request_Items
+**      Also update items for closed sample prep requests where the state was changed within the last year (customizable using _daysPriorToUpdateClosedRequests)
 **
 **  Arguments:
 **    _daysPriorToUpdateClosedRequests  Update prep requests whose state changed within this number of days before today

@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.cross_check_job_parameters(IN _job integer, INOUT
 /****************************************************
 **
 **  Desc:
-**      Compares the data in Tmp_Job_Steps to existing data in T_Job_Steps to look for incompatibilities
+**      Compare the data in Tmp_Job_Steps to existing data in T_Job_Steps to look for incompatibilities
 **      This procedure is only used if procedure sw.create_job_steps() is called with Mode 'ExtendExistingJob' Or 'UpdateExistingJob'
 **
 **      See procedure sw.create_job_steps() for the table definition of Tmp_Job_Steps

@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION ont.get_taxid_taxonomy_list(_taxonomyid integer, _ext
 /****************************************************
 **
 **  Desc:
-**      Builds a delimited list of taxonomy information
+**      Build a delimited list of taxonomy information
 **
 **  Return value: List of items separated by vertical bars, e.g.
 **                Rank:Name:Tax_ID|Rank:Name:Tax_ID|Rank:Name:Tax_ID|

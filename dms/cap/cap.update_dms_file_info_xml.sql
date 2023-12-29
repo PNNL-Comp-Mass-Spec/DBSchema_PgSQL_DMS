@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE cap.update_dms_file_info_xml(IN _datasetid integer, 
 /****************************************************
 **
 **  Desc:
-**      Calls public.update_dataset_file_info_xml() for the specified DatasetID
+**      Call public.update_dataset_file_info_xml() for the specified DatasetID
 **
 **      Procedure public.update_dataset_file_info_xml uses data in cap.t_dataset_info_xml
 **      to populate several dataset info tables

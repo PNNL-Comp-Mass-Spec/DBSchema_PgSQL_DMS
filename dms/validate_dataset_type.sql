@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.validate_dataset_type(IN _datasetid integer, 
 /****************************************************
 **
 **  Desc:
-**      Validates the dataset type defined in T_Dataset for the given dataset based on the contents of T_Dataset_ScanTypes
+**      Validate the dataset type defined in T_Dataset for the given dataset based on the contents of T_Dataset_ScanTypes
 **
 **  Auth:   mem
 **  Date:   05/13/2010 mem - Initial version

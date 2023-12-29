@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_analysis_job_group(IN _datasetlist text, 
 /****************************************************
 **
 **  Desc:
-**      Creates new analysis jobs for a set of datasets, typically using parameters from an analysis job request
+**      Create new analysis jobs for a set of datasets, typically using parameters from an analysis job request
 **
 **  Arguments:
 **    _datasetList                  Comma-separated list of dataset names; ignored if _dataPackageID is a positive integer

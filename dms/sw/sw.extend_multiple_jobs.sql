@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.extend_multiple_jobs(IN _joblist text, IN _extens
 /****************************************************
 **
 **  Desc:
-**      Applies an extension script to a series of jobs
+**      Apply an extension script to a series of jobs
 **
 **  Arguments:
 **    _jobList                  Comma-separated list of jobs to extend

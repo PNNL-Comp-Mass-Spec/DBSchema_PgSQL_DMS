@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.sync_job_info(IN _bypassdms boolean DEFAULT false
 /****************************************************
 **
 **  Desc:
-**      Synchronizes job info between the sw schema and the public schema tables,
+**      Synchronize job info between the sw schema and the public schema tables,
 **      including updating priorities and assigning processor groups
 **
 **    _bypassDMS    If true, the logic in this procedure is completely bypassed (and thus states are not updated in public.t_analysis_job)

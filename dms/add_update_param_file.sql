@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_param_file(INOUT _paramfileid inte
 /****************************************************
 **
 **  Desc:
-**      Adds new or updates existing parameter file in database
+**      Add new or update existing parameter file in database
 **
 **      When updating an existing parameter file, the name and type can be changed
 **      only if the file is not used with any analysis jobs

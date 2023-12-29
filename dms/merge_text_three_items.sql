@@ -6,8 +6,9 @@ CREATE OR REPLACE FUNCTION public.merge_text_three_items(_text1 text, _text2 tex
     LANGUAGE plpgsql
     AS $$
 /****************************************************
+**
 **  Desc:
-**      Concatenates _text1 and _text2 using a semicolon (but, if identical strings, just use _text1)
+**      Concatenate _text1 and _text2 using a semicolon (but, if identical strings, just use _text1)
 **
 **      Next, concatenates _text3, provided it does not match _text1 or_text2
 **

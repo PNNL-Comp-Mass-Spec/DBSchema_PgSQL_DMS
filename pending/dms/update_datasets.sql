@@ -17,7 +17,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates dataset state, rating, or comment for the specified list of datasets
+**      Update dataset state, rating, or comment for the specified list of datasets
 **
 **  Arguments:
 **    _datasetList      Comma-separated list of dataset names

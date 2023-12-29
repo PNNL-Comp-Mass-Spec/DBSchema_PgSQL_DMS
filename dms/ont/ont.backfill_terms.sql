@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION ont.backfill_terms(_sourcetable public.citext DEFAULT
 /****************************************************
 **
 **  Desc:
-**      Adds new entries to tables ont.t_term and ont.t_term_relationship using the specified T_CV table
+**      Add new entries to tables ont.t_term and ont.t_term_relationship using the specified T_CV table
 **
 **      This is required after adding new information to a t_cv table,
 **      e.g., after adding new BTO terms to ont.t_cv_bto using a .owl file

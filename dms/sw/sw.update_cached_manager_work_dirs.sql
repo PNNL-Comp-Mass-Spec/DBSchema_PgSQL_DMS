@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.update_cached_manager_work_dirs(IN _infoonly bool
 /****************************************************
 **
 **  Desc:
-**      Updates the cached working directory for each manager
+**      Update the cached working directory for each manager
 **
 **  Arguments:
 **    _infoOnly     When true, show the managers that would be updated

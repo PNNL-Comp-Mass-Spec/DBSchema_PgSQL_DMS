@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.consume_scheduled_run(IN _datasetid integer, 
 /****************************************************
 **
 **  Desc:
-**      Associates given requested run with the given dataset
+**      Associate given requested run with the given dataset
 **
 **  Arguments:
 **    _datasetID            Dataset ID

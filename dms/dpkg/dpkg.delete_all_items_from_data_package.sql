@@ -8,16 +8,19 @@ CREATE OR REPLACE PROCEDURE dpkg.delete_all_items_from_data_package(IN _packagei
 /****************************************************
 **
 **  Desc:
-**      Removes all existing items from a data package, deleting rows in the associated tracking tables:
-**          dpkg.t_data_package_analysis_jobs
-**          dpkg.t_data_package_datasets
-**          dpkg.t_data_package_experiments
-**          dpkg.t_data_package_biomaterial
-**          dpkg.t_data_package_eus_proposals
+**      Remove all existing items from a data package, deleting rows in the associated tracking tables:
+**      - dpkg.t_data_package_analysis_jobs
+**      - dpkg.t_data_package_datasets
+**      - dpkg.t_data_package_experiments
+**      - dpkg.t_data_package_biomaterial
+**      - dpkg.t_data_package_eus_proposals
 **
 **  Arguments:
 **    _packageID        Data package ID
-**    _mode             Should be 'delete', but the actual value is ignored
+**    _mode             Mode: should be 'delete', but the actual value is ignored
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   06/10/2009 grk - Initial release

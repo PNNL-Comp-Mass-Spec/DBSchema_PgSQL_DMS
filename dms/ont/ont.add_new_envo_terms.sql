@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_envo_terms(_sourcetable public.citext DEF
 /****************************************************
 **
 **  Desc:
-**      Adds new ENVO terms to t_cv_envo
+**      Add new ENVO terms to t_cv_envo
 **
 **      The source table must have columns:
 **        term_pk

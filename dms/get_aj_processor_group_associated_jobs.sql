@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_aj_processor_group_associated_jobs(_groupi
 /****************************************************
 **
 **  Desc:
-**      Gets jobs associated with given group
+**      Get jobs associated with given group
 **
 **  Return value: comma-separated list
 **

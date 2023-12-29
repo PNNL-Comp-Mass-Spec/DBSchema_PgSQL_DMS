@@ -19,7 +19,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits an existing predefined analysis scheduling rule
+**      Add new or edit an existing predefined analysis scheduling rule
 **
 **  Arguments:
 **    _evaluationOrder      Evaluation order

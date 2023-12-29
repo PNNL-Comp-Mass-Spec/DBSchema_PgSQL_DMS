@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_call_stack(_pgcontext text) RETURNS TABLE(
 /****************************************************
 **
 **  Desc:
-**      Examines the context information from GET DIAGNOSTICS or GET STACKED DIAGNOSTICS to determine the call stack
+**      Examine the context information from GET DIAGNOSTICS or GET STACKED DIAGNOSTICS to determine the call stack
 **      Functions are shown in the order of most recently entered to the initial entry function
 **
 **  Example values for _pgContext:

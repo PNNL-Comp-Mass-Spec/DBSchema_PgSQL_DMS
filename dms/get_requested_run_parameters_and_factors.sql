@@ -8,14 +8,16 @@ CREATE OR REPLACE PROCEDURE public.get_requested_run_parameters_and_factors(IN _
 /****************************************************
 **
 **  Desc:
-**      Returns the run parameters and factors associated with
-**      the requested runs in the input list
+**      Return the run parameters and factors associated with the requested runs in the input list
 **
 **      This is used by http://dms2.pnl.gov/requested_run_batch_blocking/grid
 **
 **  Arguments:
 **    _itemList     Comma-separated list of request IDs
 **    _infoOnly     When true, show the SQL used to display the factors associated with the requested runs in _itemList
+**    _results      Cursor for obtaining results
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Use this to view the data returned by the _results cursor
 **  Note that this will result in an error if no matching items are found

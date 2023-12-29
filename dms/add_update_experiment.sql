@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_experiment(INOUT _experimentid int
 /****************************************************
 **
 **  Desc:
-**      Adds a new experiment to the database
+**      Add a new experiment to the database
 **
 **      Note that the Experiment Detail Report web page uses do_material_item_operation to retire an experiment
 **

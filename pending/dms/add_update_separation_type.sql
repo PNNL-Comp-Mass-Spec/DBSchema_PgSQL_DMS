@@ -17,7 +17,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits an existing separation type
+**      Add new or edit an existing separation type
 **
 **  Arguments:
 **    _id               Separation type ID in t_secondary_sep

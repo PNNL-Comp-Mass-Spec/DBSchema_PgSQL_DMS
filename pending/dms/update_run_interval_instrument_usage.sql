@@ -13,7 +13,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Determines the instrument associated with the given run interval ID, then calls update_dataset_interval_for_multiple_instruments(),
+**      Determine the instrument associated with the given run interval ID, then call update_dataset_interval_for_multiple_instruments(),
 **      which calls update_dataset_interval() and update_emsl_instrument_usage_report()
 **
 **  Arguments:

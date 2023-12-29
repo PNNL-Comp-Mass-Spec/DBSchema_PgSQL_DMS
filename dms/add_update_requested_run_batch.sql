@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing requested run batch
+**      Add new or edit existing requested run batch
 **
 **  Arguments:
 **    _id                           Batch ID to update if _mode is 'update'; otherwise, the ID of the newly created batch

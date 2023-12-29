@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_hplc_run_dataset_list(_hplcrunid integer, 
 /****************************************************
 **
 **  Desc:
-**      Builds delimited list of datasets for given Prep LC run ID
+**      Build delimited list of datasets for given Prep LC run ID
 **
 **  Arguments:
 **    _hplcRunId    Prep LC run ID

@@ -13,7 +13,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Calls the various refresh_cached_mts procedures if the last_refreshed date
+**      Call the various refresh_cached_mts procedures if the last_refreshed date
 **      in t_mts_cached_data_status is over _updateInterval hours before the present
 **
 **  Arguments:

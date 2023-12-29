@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.validate_eus_usage(INOUT _eususagetype text, 
 /****************************************************
 **
 **  Desc:
-**      Verifies that the given usage type, proposal ID, and user list are valid
+**      Verify that the given usage type, proposal ID, and user list are valid
 **
 **      Clears contents of _eusProposalID and _eusUsersList for certain values of _eusUsageType
 **

@@ -7,10 +7,15 @@ CREATE OR REPLACE PROCEDURE cap.delete_old_tasks_from_history(IN _infoonly boole
     AS $$
 /****************************************************
 **
-**  Desc:   Delete capture task jobs over three years old from
-**          t_tasks_history, t_task_steps_history, t_task_step_dependencies_history, and t_task_parameters_history
+**  Desc:
+**      Delete capture task jobs over three years old from
+**      t_tasks_history, t_task_steps_history, t_task_step_dependencies_history, and t_task_parameters_history
 **
-**          However, assure that at least 250,000 capture task jobs are retained
+**      However, assure that at least 250,000 capture task jobs are retained
+**
+**  Arguments:
+**    _infoOnly     When true, preview deletes
+**    _message      Status message
 **
 **  Auth:   mem
 **  Date:   05/29/2022 mem - Initial version

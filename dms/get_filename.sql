@@ -6,8 +6,10 @@ CREATE OR REPLACE FUNCTION public.get_filename(_filepath text) RETURNS text
     LANGUAGE plpgsql IMMUTABLE
     AS $$
 /****************************************************
-**  Examines _filePath to look for a filename
-**  If found, returns the filename, otherwise, returns _filePath
+**
+**  Desc:
+**      Examine _filePath to look for a filename
+**      If found, return the filename, otherwise, return _filePath
 **
 **  Works with both \ and / as path separators
 **

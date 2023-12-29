@@ -8,8 +8,8 @@ CREATE OR REPLACE FUNCTION mc.archive_old_managers_and_params(_mgrlist text, _in
 /****************************************************
 **
 **  Desc:
-**      Moves managers from mc.t_mgrs to mc.t_old_managers and
-**      moves manager parameters from mc.t_param_value to mc.t_param_value_old_managers
+**      Move managers from mc.t_mgrs to mc.t_old_managers and
+**      move manager parameters from mc.t_param_value to mc.t_param_value_old_managers
 **
 **  Arguments:
 **    _mgrList    One or more manager names (comma-separated list); supports wildcards

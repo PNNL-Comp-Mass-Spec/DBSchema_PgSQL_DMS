@@ -11,8 +11,15 @@ CREATE OR REPLACE PROCEDURE cap.handle_dataset_capture_validation_failure(IN _da
 **      This procedure can be used with datasets that are successfully captured but fail the dataset integrity check
 **      (.Raw file too small, expected files missing, etc).
 **
-**      The procedure changes the capture task job state to 101
-**      then calls procedure public.handle_dataset_capture_validation_failure_update_dataset_tables
+**      The procedure changes the capture task job state to 101, then calls procedure
+**      public.handle_dataset_capture_validation_failure_update_dataset_tables
+**
+**  Arguments:
+**    _datasetNameOrID  Dataset name or dataset ID
+**    _comment          Text to append to the dataset comment
+**    _infoonly         When true, preview updates
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   04/28/2011

@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates instrument usage allocation using an XML list
+**      Update instrument usage allocation using an XML list
 **
 **      This procedure is obsolete since instrument allocation was last tracked in 2012 (see table t_instrument_allocation)
 **

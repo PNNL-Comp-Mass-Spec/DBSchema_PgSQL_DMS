@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_sample_request_assignments(IN _mode te
 /****************************************************
 **
 **  Desc:
-**      Changes assignment properties to given new value for list of sample prep requests
+**      Change assignment properties to given new value for list of sample prep requests
 **
 **  Arguments:
 **    _mode         Mode: 'priority', 'state', 'assignment', 'req_assignment', or 'est_completion'

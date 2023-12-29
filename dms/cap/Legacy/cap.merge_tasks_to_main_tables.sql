@@ -8,12 +8,15 @@ CREATE OR REPLACE PROCEDURE cap.merge_tasks_to_main_tables(INOUT _message text D
 /****************************************************
 **
 **  Desc:
-**      Updates t_tasks, t_task_parameters, and t_task_steps
-**      using contents of temporary tables:
-**          Tmp_Jobs
-**          Tmp_Job_Steps
-**          Tmp_Job_Step_Dependencies
-**          Tmp_Job_Parameters
+**      Update t_tasks, t_task_parameters, and t_task_steps using contents of temporary tables:
+**        Tmp_Jobs
+**        Tmp_Job_Steps
+**        Tmp_Job_Step_Dependencies
+**        Tmp_Job_Parameters
+**
+**  Arguments:
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   grk
 **  Date:   02/06/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/720)

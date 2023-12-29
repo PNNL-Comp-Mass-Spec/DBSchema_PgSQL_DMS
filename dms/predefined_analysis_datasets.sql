@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_datasets(_ruleid integer, 
 /****************************************************
 **
 **  Desc:
-**      Shows datasets that satisfy a given predefined analysis rule
+**      Show datasets that satisfy a given predefined analysis rule
 **
 **  Arguments:
 **    _ruleID              Predefined analysis rule ID

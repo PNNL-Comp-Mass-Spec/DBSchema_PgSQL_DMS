@@ -8,8 +8,8 @@ CREATE OR REPLACE FUNCTION public.resolve_table_name(_tabletofind text) RETURNS 
 /****************************************************
 **
 **  Desc:
-**      Looks for the specified table
-**      If _tableToFind does not contain a schema, looks for the named table in any schema
+**      Look for the specified table
+**      If _tableToFind does not contain a schema, look for the named table in any schema
 **
 **      Returns a table that includes the schema and name of any matching table(s)
 **      Names will be properly capitalized if found

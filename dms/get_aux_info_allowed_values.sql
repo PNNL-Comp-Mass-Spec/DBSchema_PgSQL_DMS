@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_aux_info_allowed_values(_id integer) RETUR
 /****************************************************
 **
 **  Desc:
-**      Builds delimited list of allowed values for given aux info item
+**      Build delimited list of allowed values for given aux info item
 **
 **  Return value: list delimited by ' | '
 **

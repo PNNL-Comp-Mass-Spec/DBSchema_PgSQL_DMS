@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE pc.delete_protein_collection(IN _collectionid intege
 /****************************************************
 **
 **  Desc:
-**      Deletes the given protein collection, removing rows from the following tables:
+**      Delete the given protein collection, removing rows from the following tables:
 **        pc.t_archived_output_file_collections_xref
 **        pc.t_archived_output_files
 **        pc.t_annotation_groups
@@ -19,7 +19,9 @@ CREATE OR REPLACE PROCEDURE pc.delete_protein_collection(IN _collectionid intege
 **
 **  Arguments:
 **    _collectionID     Protein collection ID
-
+**    _message          Status message
+**    _returnCode       Return code
+**
 **  Auth:   mem
 **  Date:   06/24/2008
 **          02/23/2016 mem - Add Set XACT_ABORT on

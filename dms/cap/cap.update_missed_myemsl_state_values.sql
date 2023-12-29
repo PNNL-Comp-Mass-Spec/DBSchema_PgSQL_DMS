@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE cap.update_missed_myemsl_state_values(IN _windowdays
 /****************************************************
 **
 **  Desc:
-**      Updates the MyEMSL State values for datasets and/or analysis jobs
+**      Update the MyEMSL State values for datasets and/or analysis jobs
 **      that have entries in cap.t_myemsl_uploads, yet have a MyEMSL_State value of 0
 **
 **      This should normally not be necessary; thus, if any updates are performed,

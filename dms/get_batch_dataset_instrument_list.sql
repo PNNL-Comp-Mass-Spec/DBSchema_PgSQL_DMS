@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_batch_dataset_instrument_list(_batchid int
 /****************************************************
 **
 **  Desc:
-**      Builds delimited list of instruments for the datasets
-**      associated with the given requested run batch
+**      Build delimited list of instruments for the datasets associated with the given requested run batch
 **
 **  Return value: comma-separated list
 **

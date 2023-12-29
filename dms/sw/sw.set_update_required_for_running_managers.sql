@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.set_update_required_for_running_managers(IN _info
 /****************************************************
 **
 **  Desc:
-**      Sets ManagerUpdateRequired to True in mc.t_param_value for currently running managers
+**      Set ManagerUpdateRequired to True in mc.t_param_value for currently running managers
 **
 **  Auth:   mem
 **  Date:   04/17/2014 mem - Initial release

@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE dpkg.set_myemsl_upload_status(IN _entryid integer, I
 /****************************************************
 **
 **  Desc:
-**      Updates the status for an entry in dpkg.t_myemsl_uploads
+**      Update the status for an entry in dpkg.t_myemsl_uploads
 **
 **      Updates column Available if Step 5 is "completed"
 **      Updates column Verified  if Step 6 is "verified"
@@ -20,6 +20,8 @@ CREATE OR REPLACE PROCEDURE dpkg.set_myemsl_upload_status(IN _entryid integer, I
 **    _dataPackageID    Used as a safety check to confirm that we're updating a valid entry
 **    _available        1 if the data was successfully ingested, otherwise 0
 **    _verified         1 if the data was successfully verified, otherwise 0
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   09/25/2013 mem - Initial version

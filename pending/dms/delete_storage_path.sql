@@ -10,7 +10,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Deletes given storage path from the storage path table
+**      Delete given storage path from the storage path table
 **
 **      Storage path may not have any associated datasets
 **

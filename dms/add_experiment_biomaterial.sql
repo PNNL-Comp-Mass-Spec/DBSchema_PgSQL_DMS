@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_experiment_biomaterial(IN _expid integer,
 /****************************************************
 **
 **  Desc:
-**      Adds biomaterial entries to database for given experiment
+**      Add biomaterial entries to database for given experiment
 **
 **      The calling procedure must create and populate temporary table Tmp_Experiment_to_Biomaterial_Map:
 **

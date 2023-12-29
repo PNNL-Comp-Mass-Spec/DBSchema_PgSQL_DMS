@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_ms_terms(_sourcetable public.citext DEFAU
 /****************************************************
 **
 **  Desc:
-**      Adds new PSI-MS terms to t_cv_ms
+**      Add new PSI-MS terms to t_cv_ms
 **
 **      The source table must have columns:
 **        term_pk

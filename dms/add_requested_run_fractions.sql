@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_requested_run_fractions(IN _sourcerequest
 /****************************************************
 **
 **  Desc:
-**      Adds requested runs based on a parent requested run that has separation group LC-NanoHpH-6, LC-NanoSCX-6, or similar
+**      Add requested runs based on a parent requested run that has separation group LC-NanoHpH-6, LC-NanoSCX-6, or similar
 **
 **  Arguments:
 **    _sourceRequestID              Source requested run ID

@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_dataset_instruments(IN _process
 /****************************************************
 **
 **  Desc:
-**      Updates t_cached_dataset_instruments
+**      Update t_cached_dataset_instruments
 **
 **  Arguments:
 **    _processingMode   0 to only add new datasets; 1 to add new datasets and update existing information

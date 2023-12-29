@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.has_whitespace_chars(_entityname text, _allows
 /****************************************************
 **
 **  Desc:
-**      Checks for whitespace characters: CRLF, tab, and space
+**      Check for whitespace characters: CRLF, tab, and space
 **
 **      Allows symbols and letters, including periods, dashes, and underscores
 **

@@ -8,13 +8,12 @@ CREATE OR REPLACE FUNCTION public.get_existing_jobs_matching_job_request(_reques
 /****************************************************
 **
 **  Desc:
-**      Builds delimited list of existing jobs
-**      for the given analysis job request, searching
-**      for the jobs using the analysis tool name, parameter
-**      file name, and settings file name specified by the
-**      analysis request.  For Peptide_Hit tools, also uses
-**      organism DB file name and organism name and
-**      protein collection list and protein options list
+**      Build delimited list of existing jobs for the given analysis job request,
+**      searching for the jobs using the analysis tool name, parameter file name, and
+**      settings file name specified by the analysis request.
+**
+**      For Peptide_Hit tools, also uses organism DB file name, organism name,
+**      protein collection list, and protein options list
 **
 **  Auth:   grk
 **  Date:   12/06/2005 grk - Initial release

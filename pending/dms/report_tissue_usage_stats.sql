@@ -14,7 +14,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Generates tissue usage statistics for experiments
+**      Generate tissue usage statistics for experiments
 **
 **  Arguments:
 **    _startDate                Start date; if an empty string, will use 2 weeks before _endDate

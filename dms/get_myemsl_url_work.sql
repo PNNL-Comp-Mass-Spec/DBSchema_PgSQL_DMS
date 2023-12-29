@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_myemsl_url_work(_keyname text, _value text
 /****************************************************
 **
 **  Desc:
-**      Generates the MyEMSL URL required for viewing items in MyEMSL
+**      Generate the MyEMSL URL required for viewing items in MyEMSL
 **
 **  Auth:   mem
 **  Date:   09/12/2013

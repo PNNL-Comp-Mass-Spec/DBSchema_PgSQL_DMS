@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_batch_group_instrument_group_list(_batchgr
 /****************************************************
 **
 **  Desc:
-**      Builds a delimited list of the instrument groups associated with a requested run batch group
+**      Build a delimited list of the instrument groups associated with a requested run batch group
 **      These are based on instrument group names in t_requested_run_batches
 **
 **  Return value: Comma-separated list

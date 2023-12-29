@@ -19,6 +19,8 @@ CREATE OR REPLACE PROCEDURE cap.remove_old_tasks(IN _intervaldaysforsuccess inte
 **    _maxTasksToRemove         When non-zero, limit the number of tasks deleted to this value (order by job)
 **    _validateJobStepSuccess   When true, do not delete tasks with any Failed, In Progress, or Holding task steps
 **    _infoOnly                 When true, preview the tasks that would be deleted
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   grk
 **  Date:   09/12/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)

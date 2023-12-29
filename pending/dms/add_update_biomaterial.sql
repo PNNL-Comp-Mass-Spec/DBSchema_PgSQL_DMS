@@ -24,12 +24,12 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or updates an existing biomaterial item
+**      Add new or update an existing biomaterial item
 **
 **  Arguments:
 **    _biomaterialName      Name of biomaterial (or peptide sequence if tracking an MRM peptide)
 **    _sourceName           Source that the material came from; can be a person (onsite or offsite) or a company
-**    _contactUsername      Contact for the Source; typically PNNL staff, but can be offsite person
+**    _contactUsername      Contact for the source; typically PNNL staff, but can be an offsite person
 **    _piUsername           Project lead username
 **    _biomaterialType      Biomaterial type, e.g. 'Eukaryote', 'Prokaryote', or 'Soil'; see column biomaterial_type in t_biomaterial_type_name
 **    _reason               Biomaterial description

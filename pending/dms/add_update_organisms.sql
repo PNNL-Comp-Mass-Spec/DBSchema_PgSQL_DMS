@@ -30,7 +30,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits an existing organism
+**      Add new or edit an existing organism
 **
 **  Arguments:
 **    _orgName              Organism name, e.g. 'Homo_sapiens'

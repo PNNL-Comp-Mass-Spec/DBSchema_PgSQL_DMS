@@ -11,7 +11,7 @@ CREATE OR REPLACE PROCEDURE cap.store_myemsl_upload_stats(IN _job integer, IN _d
 **      Store MyEMSL upload stats in cap.t_myemsl_uploads
 **
 **  Arguments:
-**    _job                  Capture task job
+**    _job                  Capture task job number
 **    _datasetID            Dataset ID
 **    _subfolder            Subfolder (empty string if uploaded the dataset directory and all subdirectories)
 **    _fileCountNew         Number of new files added
@@ -23,7 +23,10 @@ CREATE OR REPLACE PROCEDURE cap.store_myemsl_upload_stats(IN _job integer, IN _d
 **    _usedTestInstance     Normally 0, but can be 1 if the test instance was used
 **    _eusInstrumentID      EUS Instrument ID
 **    _eusProposalID        EUS Proposal ID (aka Project ID)
-**    _eusUploaderID        The EUS ID of the instrument operator
+**    _eusUploaderID        EUS ID of the instrument operator
+**    _message              Status message
+**    _returnCode           Return code
+**    _infoOnly             When true, preview updates
 **
 **  Auth:   mem
 **  Date:   03/29/2012 mem - Initial version

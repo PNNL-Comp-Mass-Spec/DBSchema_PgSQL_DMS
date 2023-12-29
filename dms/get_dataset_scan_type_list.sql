@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_scan_type_list(_datasetid integer)
 /****************************************************
 **
 **  Desc:
-**      Builds a delimited list of actual scan types for the specified dataset
+**      Build a delimited list of actual scan types for the specified dataset
 **
 **      Scan types are sorted using column sort_key from table t_dataset_scan_type_glossary
 **

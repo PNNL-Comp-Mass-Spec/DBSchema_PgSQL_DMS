@@ -8,9 +8,9 @@ CREATE OR REPLACE PROCEDURE sw.unhold_candidate_job_steps(IN _steptool text DEFA
 /****************************************************
 **
 **  Desc:
-**      Examines the number of step steps with state 2=Enabled
+**      Examine the number of step steps with state 2=Enabled
 **
-**      If less than _targetCandidates, updates job steps with state 7 to have state 2
+**      If less than _targetCandidates, update job steps with state 7 to have state 2
 **      such that we will have _targetCandidates enabled job steps for the given step tool
 **
 **  Arguments:

@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.store_bionet_hosts(IN _hostlist text, IN _inf
 /****************************************************
 **
 **  Desc:
-**      Updates the entries in t_bionet_hosts
+**      Update the entries in t_bionet_hosts
 **
 **      Prior to 2022, Gigasax was the DNS server for Bionet
 **      - Computers on Bionet could be exported from the DNS management console by right clicking Bionet under "Forward Lookup Zones" and choosing "Export list ..."

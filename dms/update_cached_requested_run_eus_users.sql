@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_requested_run_eus_users(IN _req
 /****************************************************
 **
 **  Desc:
-**      Updates data in t_active_requested_run_cached_eus_users
+**      Update data in t_active_requested_run_cached_eus_users
 **
 **      This table tracks the list of EUS users for each active requested run
 **

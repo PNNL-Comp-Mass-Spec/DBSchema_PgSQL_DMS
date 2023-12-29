@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_next_instrument_dataset_start(_instrumenti
 /****************************************************
 **
 **  Desc:
-**      Returns start time of first dataset that was run
-**      on given instrument after given time
+**      Return start time of first dataset that was run on given instrument after given time
 **
 **  Auth:   grk
 **  Date:   05/16/2011

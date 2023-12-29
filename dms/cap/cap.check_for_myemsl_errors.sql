@@ -7,13 +7,16 @@ CREATE OR REPLACE PROCEDURE cap.check_for_myemsl_errors(IN _mostrecentdays integ
     AS $$
 /****************************************************
 **
-**  Desc:   Looks for anomalies in cap.t_myemsl_uploads
+**  Desc:
+**      Look for anomalies in cap.t_myemsl_uploads
 **
 **  Arguments:
 **    _mostRecentDays   Used to determine the threshold for filtering on the Entered column in t_myemsl_uploads
 **    _startDate        Start date; only used if _mostRecentDays is 0 or negative
 **    _endDate          End date; only used if _mostRecentDays is 0 or negative
-**    _logerrors        When true, if _uploadErrorRate is greater than 0.03 or _duplicateRate is greater than 0.05, log an entry to cap.t_log_entries
+**    _logErrors        When true, if _uploadErrorRate is greater than 0.03 or _duplicateRate is greater than 0.05, log an entry to cap.t_log_entries
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   12/10/2013 mem - Initial version

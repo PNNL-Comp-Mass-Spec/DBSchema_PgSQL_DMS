@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.create_psm_job_request(INOUT _requestid integ
 /****************************************************
 **
 **  Desc:
-**      Creates a new analysis job request using the appropriate parameter file and settings file for the given settings
+**      Create a new analysis job request using the appropriate parameter file and settings file for the given settings
 **
 **  Arguments:
 **    _requestID            Input/output: analysis job request ID

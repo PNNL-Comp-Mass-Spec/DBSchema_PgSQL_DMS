@@ -18,7 +18,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Sets user registration for notification entities
+**      Set user registration for notification entities
 **
 **      Used by web page https://dms2.pnl.gov/notification/edit/D3L243
 **      See also https://prismwiki.pnl.gov/wiki/DMS_Event_Notification#Notification_Page_Family

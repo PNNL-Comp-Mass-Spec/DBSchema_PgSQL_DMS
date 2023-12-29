@@ -8,13 +8,14 @@ CREATE OR REPLACE PROCEDURE mc.report_manager_error_cleanup(IN _managername text
 /****************************************************
 **
 **  Desc:
-**      Reports that the manager tried to auto-cleanup
-**      when there is a flag file or non-empty working directory
+**      Report that the manager tried to auto-cleanup when there is a flag file or non-empty working directory
 **
 **  Arguments:
-**    _managername   Manager name
-**    _state         1 = Cleanup Attempt start, 2 = Cleanup Successful, 3 = Cleanup Failed
-**    _failuremsg    Failure message (only used if _state is 3)
+**    _managerName  Manager name
+**    _state        State: 1 = Cleanup Attempt start, 2 = Cleanup Successful, 3 = Cleanup Failed
+**    _failureMsg   Failure message (only used if _state is 3)
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Example Usage:
 **

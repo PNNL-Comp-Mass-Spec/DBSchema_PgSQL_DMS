@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.set_archive_update_required(IN _datasetname t
 /****************************************************
 **
 **  Desc:
-**      Sets archive update state to 2 (Update Required) in t_dataset_archive for the given dataset
+**      Set archive update state to 2 (Update Required) in t_dataset_archive for the given dataset
 **
 **  Auth:   grk
 **  Date:   12/3/2002

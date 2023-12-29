@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_experiment_group_list(_experimentid intege
 /****************************************************
 **
 **  Desc:
-**      Builds delimited list of experiment group IDs
-**      for a given experiment
+**      Build delimited list of experiment group IDs for a given experiment
 **
 **  Return value: comma-separated list
 **

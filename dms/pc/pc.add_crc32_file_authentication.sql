@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE pc.add_crc32_file_authentication(IN _collectionid in
 /****************************************************
 **
 **  Desc:
-**      Adds a CRC32 fingerprint to a given Protein Collection Entry in in pc.t_protein_collections
+**      Add a CRC32 fingerprint to a given Protein Collection Entry in in pc.t_protein_collections
 **
 **      If both _numProteins and _totalResidueCount are non-zero, also updates num_proteins and num_residues
 **
@@ -17,6 +17,8 @@ CREATE OR REPLACE PROCEDURE pc.add_crc32_file_authentication(IN _collectionid in
 **    _crc32FileHash        CRC-32 file hash
 **    _numProteins          The number of proteins for this protein collection
 **    _totalResidueCount    The number of residues for this protein collection
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   kja
 **  Date:   04/15/2005

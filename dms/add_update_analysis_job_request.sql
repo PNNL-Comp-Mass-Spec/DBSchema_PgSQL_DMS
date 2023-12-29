@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job_request(IN _datasets 
 /****************************************************
 **
 **  Desc:
-**      Adds new analysis job request to request queue
+**      Add new analysis job request to request queue
 **
 **  Arguments:
 **    _datasets                         Comma-separated list of datasets

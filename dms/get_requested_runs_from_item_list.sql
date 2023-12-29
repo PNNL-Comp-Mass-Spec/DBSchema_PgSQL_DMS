@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_requested_runs_from_item_list(_itemlist te
 /****************************************************
 **
 **  Desc:
-**      Returns a table of the requested runs associated with the comma-separated list of request IDs
+**      Return a table of the requested runs associated with the comma-separated list of request IDs
 **
 **  Arguments:
 **    _itemList     Comma-separated list of item IDs

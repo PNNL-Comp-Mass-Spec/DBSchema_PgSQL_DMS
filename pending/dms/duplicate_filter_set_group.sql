@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Copies a given group for a given filter set
+**      Copy a given group for a given filter set
 **
 **      This procedure will auto-create a new entry in t_filter_set_criteria_groups
 **      For safety, requires both the filter set ID and the group id to copy

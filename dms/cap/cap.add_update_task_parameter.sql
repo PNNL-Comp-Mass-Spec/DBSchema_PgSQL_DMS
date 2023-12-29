@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _s
 /****************************************************
 **
 **  Desc:
-**      Adds or updates an entry in the XML parameters for a given capture task job
+**      Add or update an entry in the XML parameters for a given capture task job
 **      Alternatively, use _deleteParam => true to delete the given parameter
 **
 **  Arguments:

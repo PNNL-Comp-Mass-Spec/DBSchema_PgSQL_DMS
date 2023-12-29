@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE pc.add_protein_reference(IN _name text, IN _descript
 /****************************************************
 **
 **  Desc:
-**      Adds a new protein reference entry to pc.t_protein_names
+**      Add a new protein reference entry to pc.t_protein_names
 **
 **  Arguments:
 **    _name                     Protein name
@@ -17,6 +17,8 @@ CREATE OR REPLACE PROCEDURE pc.add_protein_reference(IN _name text, IN _descript
 **    _proteinID                Protein ID (corresponding to pc.t_proteins)
 **    _nameDescHash             Name/description hash
 **    _maxProteinNameLength     Maximum protein name length (default is 32; allowed range is 25 to 125)
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Returns:
 **    _returnCode will have the reference ID of the protein reference added to T_Protein_Names

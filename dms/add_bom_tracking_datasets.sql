@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_bom_tracking_datasets(IN _month text DEFA
 /****************************************************
 **
 **  Desc:
-**      Adds new tracking datasets for the beginning of the month (BOM)
+**      Add new tracking datasets for the beginning of the month (BOM)
 **      for all actively tracked instruments, for the given year and month
 **
 **      If _month is 'next', adds a tracking dataset for the beginning of the next month

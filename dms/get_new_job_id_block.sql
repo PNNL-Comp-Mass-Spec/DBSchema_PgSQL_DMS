@@ -8,8 +8,8 @@ CREATE OR REPLACE FUNCTION public.get_new_job_id_block(_jobcount integer, _note 
 /****************************************************
 **
 **  Desc:
-**    Gets a series of unique numbers for making new analysis jobs
-**    Accomplishes this by appending new rows to table t_analysis_job_id
+**      Get a series of unique numbers for making new analysis jobs
+**      Accomplishes this by appending new rows to table t_analysis_job_id
 **
 **  Example usage:
 **

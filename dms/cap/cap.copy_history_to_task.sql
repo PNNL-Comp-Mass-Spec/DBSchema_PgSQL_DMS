@@ -8,12 +8,14 @@ CREATE OR REPLACE PROCEDURE cap.copy_history_to_task(IN _job integer, IN _assign
 /****************************************************
 **
 **  Desc:
-**      For a given capture task job, copies the job details, steps, and parameters
+**      For a given capture task job, copy the job details, steps, and parameters
 **      from the most recent successful run in the history tables back into the main tables
 **
 **  Arguments:
 **    _job                  Capture task job number
 **    _assignNewJobNumber   Set to true to assign a new capture task job number when copying
+**    _message              Status message
+**    _returnCode           Return code
 **    _debugMode            When true, show debug messages
 **
 **  Auth:   grk

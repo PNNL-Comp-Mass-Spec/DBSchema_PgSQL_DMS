@@ -31,7 +31,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or updates an existing reference compound
+**      Add new or update an existing reference compound
 **
 **  Arguments:
 **    _compoundID           Reference compound ID in t_reference_compound

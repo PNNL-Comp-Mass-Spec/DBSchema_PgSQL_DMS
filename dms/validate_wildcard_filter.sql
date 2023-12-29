@@ -7,8 +7,9 @@ CREATE OR REPLACE FUNCTION public.validate_wildcard_filter(_wildcardfilter text)
     AS $$
 /****************************************************
 **
-**  Desc:   Makes sure that _wildcardFilter contains a percent sign
-**          Adds percent signs at the beginning and end if it does not have them
+**  Desc:
+**      Make sure that _wildcardFilter contains a percent sign
+**      Add percent signs at the beginning and end if it does not have them
 **
 **  Return value: updated wildcard filter
 **

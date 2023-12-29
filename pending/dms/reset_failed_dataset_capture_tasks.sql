@@ -13,7 +13,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Looks for dataset entries with state=5 (Capture Failed) and a comment that indicates
+**      Look for dataset entries with state=5 (Capture Failed) and a comment that indicates
 **      that we should be able to automatically retry capture; for example:
 **         "Dataset not ready: Exception validating constant folder size"
 **         "Dataset not ready: Exception validating constant file size"

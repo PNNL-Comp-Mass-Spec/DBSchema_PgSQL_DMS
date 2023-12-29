@@ -9,7 +9,7 @@ CREATE OR REPLACE FUNCTION public.timestamp_text(_currenttime timestamp without 
 /****************************************************
 **
 **  Desc:
-**      Returns a text representation for the value specified by the _currentTime argument
+**      Return a text representation for the value specified by the _currentTime argument
 **      The time stamp will be in the form: 2020-01-09 15:12:18
 **
 **      There are two timestamp_text functions; this one accepts a timestamp that does not have a timezone
@@ -51,7 +51,7 @@ CREATE OR REPLACE FUNCTION public.timestamp_text(_currenttime timestamp with tim
 /****************************************************
 **
 **  Desc:
-**      Returns a text representation for the value specified by the _currentTime argument
+**      Return a text representation for the value specified by the _currentTime argument
 **      The time stamp will be in the form: 2020-01-09 15:12:18
 **
 **      There are two timestamp_text functions; this one accepts a timestamp with a timezone

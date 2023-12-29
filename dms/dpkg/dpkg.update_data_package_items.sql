@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE dpkg.update_data_package_items(IN _packageid integer
 /****************************************************
 **
 **  Desc:
-**      Updates data package items in list according to command mode
+**      Update data package items in list according to command mode
 **      This procedure is used by web page "DMS Data Package Detail Report" (data_package/show)
 **
 **  Arguments:

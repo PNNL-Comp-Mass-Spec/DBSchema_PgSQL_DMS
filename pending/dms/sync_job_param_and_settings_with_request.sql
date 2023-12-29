@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the settings file name and parameter file name for analysis job requests
+**      Update the settings file name and parameter file name for analysis job requests
 **      based on the settings file name and parameter file name actually used
 **
 **      This helps keep the request and jobs in sync for bookkeeping purposes

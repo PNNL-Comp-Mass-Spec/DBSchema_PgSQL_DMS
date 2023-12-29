@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_experiment_id(_experimentname text DEFAULT
 /****************************************************
 **
 **  Desc:
-**      Gets experiment ID for given experiment name
+**      Get experiment ID for given experiment name
 **
 **  Return values: experiment ID if found, otherwise 0
 **

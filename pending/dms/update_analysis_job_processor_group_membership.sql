@@ -14,7 +14,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates analysis job processor group membership for the specified group for the processors in the list according to the mode
+**      Update analysis job processor group membership for the specified group for the processors in the list according to the mode
 **
 **  Arguments:
 **    _processorNameList    Comma-separated list of processor names

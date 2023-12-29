@@ -8,11 +8,14 @@ CREATE OR REPLACE PROCEDURE public.delete_dataset(IN _datasetname text, IN _info
 /****************************************************
 **
 **  Desc:
-**      Deletes the given dataset from the dataset table and all referencing tables
+**      Delete the given dataset from the dataset table and all referencing tables
 **
 **  Arguments:
 **    _datasetName      Dataset name
 **    _infoOnly         When true, preview deletes
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   grk
 **  Date:   01/26/2001

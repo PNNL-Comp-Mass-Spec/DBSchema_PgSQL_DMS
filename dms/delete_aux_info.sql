@@ -8,11 +8,13 @@ CREATE OR REPLACE PROCEDURE public.delete_aux_info(IN _targettypename text DEFAU
 /****************************************************
 **
 **  Desc:
-**      Deletes existing auxiliary information in database for given target type and identity
+**      Delete existing auxiliary information in database for given target type and identity
 **
 **  Arguments:
 **    _targetTypeName       Target type name: Experiment, Biomaterial, Dataset, or SamplePrepRequest
 **    _targetEntityName     Target entity name (though, for sample prep requests, this is prep request ID)
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   grk
 **  Date:   04/08/2002

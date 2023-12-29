@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.move_material_container(IN _container text, I
 /****************************************************
 **
 **  Desc:
-**      Moves a container to a new location
+**      Move a container to a new location
 **
 **      Optionally provide the old location to assure that the container is only moved
 **      if the old location matches what is currently defined in DMS

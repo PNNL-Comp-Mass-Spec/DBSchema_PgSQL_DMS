@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_material_container(INOUT _containe
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits an existing material container
+**      Add new or edit an existing material container
 **
 **  Arguments:
 **    _container        Input/Output: Container name; auto-defined if _mode is 'add'

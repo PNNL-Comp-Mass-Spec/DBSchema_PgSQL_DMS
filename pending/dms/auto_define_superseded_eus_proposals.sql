@@ -10,8 +10,8 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Looks for proposals in t_eus_proposals that have the same name
-**      Auto populates proposal_id_autosupersede for superseded proposals (if currently null)
+**      Look for proposals in t_eus_proposals that have the same name
+**      Auto populate proposal_id_autosupersede for superseded proposals (if currently null)
 **
 **  Arguments:
 **    _infoOnly     When true, preview updates

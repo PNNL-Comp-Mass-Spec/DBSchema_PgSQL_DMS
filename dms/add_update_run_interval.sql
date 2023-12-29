@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_run_interval(IN _id integer, IN _c
 /****************************************************
 **
 **  Desc:
-**      Edits existing item in t_run_interval
+**      Edit an existing item in t_run_interval
 **      This procedure cannot be used to add rows to t_run_interval
 **
 **  Arguments:

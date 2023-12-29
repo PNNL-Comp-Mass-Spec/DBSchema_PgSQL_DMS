@@ -9,7 +9,7 @@ CREATE OR REPLACE FUNCTION public.months_between(_start timestamp without time z
 /****************************************************
 **
 **  Desc:
-**      Returns the calendar month difference between two timestamps
+**      Return the calendar month difference between two timestamps
 **      (from https://stackoverflow.com/a/51928739/1179467)
 **
 **  Arguments:
@@ -48,7 +48,7 @@ CREATE OR REPLACE FUNCTION public.months_between(_start timestamp without time z
 /****************************************************
 **
 **  Desc:
-**      Returns the calendar month difference between two timestamps
+**      Return the calendar month difference between two timestamps
 **
 **  Arguments:
 **    _start    First timestamp  (as a timestamp without a timezone)

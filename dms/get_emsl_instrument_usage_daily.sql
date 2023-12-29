@@ -6,8 +6,9 @@ CREATE OR REPLACE FUNCTION public.get_emsl_instrument_usage_daily(_year integer,
     LANGUAGE plpgsql
     AS $$
 /****************************************************
+**
 **  Desc:
-**      Outputs contents of EMSL instrument usage report table as a daily rollup
+**      Output contents of EMSL instrument usage report table as a daily rollup
 **      This function is used by the CodeIgniter instance at http://prismsupport.pnl.gov/dms2ws/
 **
 **      Example URL:

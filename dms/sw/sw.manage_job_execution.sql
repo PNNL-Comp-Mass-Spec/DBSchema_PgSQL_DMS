@@ -8,8 +8,8 @@ CREATE OR REPLACE PROCEDURE sw.manage_job_execution(IN _parameters text DEFAULT 
 /****************************************************
 **
 **  Desc:
-**      Updates table sw.t_jobs for jobs in list
-**      Also calls public.manage_job_execution()
+**      Update table sw.t_jobs for jobs in list
+**      Also call public.manage_job_execution()
 **
 **      Meant to be called by the Job Control Dashboard program
 **

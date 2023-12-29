@@ -10,7 +10,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Process 'Requested Run Batch Acq Time Ready' events
+**      Proces 'Requested Run Batch Acq Time Ready' events
 **
 **      Calls make_automatic_requested_run_factors() for events in t_notification_event with event_type_id = 3 and created within the last _interval hours
 **

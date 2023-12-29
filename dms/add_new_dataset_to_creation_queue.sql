@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_new_dataset_to_creation_queue(IN _dataset
 /****************************************************
 **
 **  Desc:
-**      Adds a new dataset creation task to T_Dataset_Create_Queue
+**      Add a new dataset creation task to T_Dataset_Create_Queue
 **
 **      The Data Import Manager uses procedure request_dataset_create_task to look for entries with state 1 in T_Dataset_Create_Queue
 **      For each one, it validates that the dataset file(s) are available, then creates the dataset in DMS

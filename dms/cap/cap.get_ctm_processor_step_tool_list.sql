@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION cap.get_ctm_processor_step_tool_list(_processorname p
 /****************************************************
 **
 **  Desc:
-**      Builds delimited list of step tools for the given processor
+**      Build delimited list of step tools for the given processor
 **
 **  Return value: comma-separated list
 **

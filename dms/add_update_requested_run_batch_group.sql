@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch_group(INOUT _i
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing requested run batch group
+**      Add new or edit existing requested run batch group
 **
 **  Arguments:
 **    _id                       Batch Group ID to update if _mode is 'update'; otherwise, the ID of the newly created batch group
@@ -16,7 +16,9 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch_group(INOUT _i
 **    _description              Description
 **    _requestedRunBatchList    Requested run batch IDs
 **    _ownerUsername            Will typically contain an instrument group, not an instrument name; could also contain '(lookup)'
-**    _mode                     'add' or 'update' or 'PreviewAdd'
+**    _mode                     Mode: 'add', 'update', or 'PreviewAdd'
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   mem
 **  Date:   02/15/2023 - initial version

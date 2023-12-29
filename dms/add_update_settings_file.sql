@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_settings_file(INOUT _settingsfilei
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing entity in T_Settings_Files
+**      Add new or edit existing entity in T_Settings_Files
 **
 **  Arguments:
 **    _settingsFileID           Settings file ID to edit, or the ID of the newly created settings file
@@ -19,7 +19,10 @@ CREATE OR REPLACE PROCEDURE public.add_update_settings_file(INOUT _settingsfilei
 **    _contents                 Settings file contents (XML as text)
 **    _hmsAutoSupersede         Settings file name to use instead of this settings file if the dataset comes from a high res MS instrument
 **    _msgfPlusAutoCentroid     Settings file name to use instead of this settings file if MSGF+ reports that not enough spectra are centroided; see SP AutoResetFailedJobs
-**    _mode                     'add' or 'update'
+**    _mode                     Mode: 'add' or 'update'
+**    _message                  Status message
+**    _returnCode               Return code
+**    _callingUser              Calling user username
 **
 **  Auth:   grk
 **  Date:   08/22/2008

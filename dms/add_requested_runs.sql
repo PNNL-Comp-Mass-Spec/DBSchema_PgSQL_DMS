@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_requested_runs(IN _experimentgroupid text
 /****************************************************
 **
 **  Desc:
-**      Adds a group of entries to the requested run table
+**      Add a group of entries to the requested run table
 **
 **      Note: either specify an experiment group ID or provide a list of experiment names, but not both
 **

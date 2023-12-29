@@ -11,7 +11,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the comments for long intervals to be 'Broken[100%]' for instruments with status 'broken'
+**      Update the comments for long intervals to be 'Broken[100%]' for instruments with status 'broken'
 **      See table t_run_interval
 **
 **  Arguments:

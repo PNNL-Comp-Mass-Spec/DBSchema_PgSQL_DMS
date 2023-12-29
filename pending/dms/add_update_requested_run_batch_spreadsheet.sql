@@ -20,7 +20,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits an existing requested run batch
+**      Add new or edit an existing requested run batch
 **
 **  Arguments:
 **    _id                           Input/Output: Requested run batch ID in t_requested_run_batches

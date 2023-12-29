@@ -14,6 +14,12 @@ CREATE OR REPLACE PROCEDURE cap.report_capture_task_manager_idle(IN _managername
 **      For example, a deadlock error, which can leave a capture task job step in state 4 and
 **      associated with a manager, even though the manager isn't actually running the job step
 **
+**  Arguments:
+**    _managerName      Capture task manager name
+**    _infoOnly         When true, preview updates
+**    _message          Status message
+**    _returnCode       Return code
+**
 **  Auth:   mem
 **  Date:   08/01/2017 mem - Initial release
 **          01/31/2020 mem - Add _returnCode, which duplicates the integer returned by this procedure; _returnCode is varchar for compatibility with Postgres error codes

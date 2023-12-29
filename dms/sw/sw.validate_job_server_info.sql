@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.validate_job_server_info(IN _job integer, IN _use
 /****************************************************
 **
 **  Desc:
-**      Updates columns Transfer_Folder_Path and Storage_Server in sw.t_jobs
+**      Update columns transfer_folder_path and storage_server in sw.t_jobs
 **
 **  Arguments:
 **    _job                  Job number

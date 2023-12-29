@@ -8,8 +8,8 @@ CREATE OR REPLACE PROCEDURE public.alter_event_log_entry_user_multi_id(IN _event
 /****************************************************
 **
 **  Desc:
-**      Calls alter_event_log_entry_user for each entry in temporary table Tmp_ID_Update_List
-**      Updates the user associated with the given event log entries to be _newUser
+**      Call alter_event_log_entry_user for each entry in temporary table Tmp_ID_Update_List
+**      Update the user associated with the given event log entries to be _newUser
 **
 **      The calling procedure must create and populate the temporary table:
 **        CREATE TEMP TABLE Tmp_ID_Update_List (TargetID int NOT NULL);

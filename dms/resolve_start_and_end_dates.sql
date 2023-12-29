@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.resolve_start_and_end_dates(IN _startdate tex
 /****************************************************
 **
 **  Desc:
-**      Examines text arguments _startDate and _endDate to populate output arguments _stDate and _eDate with actual timestamp values
+**      Examine text arguments _startDate and _endDate to populate output arguments _stDate and _eDate with actual timestamp values
 **      - If _startDate is empty, _stDate will be 2 weeks before _eDate
 **      - If _endDate is empty, _eDate will be the end of the current day
 **      - If _endDate is only year, month, and day, _eDate will span thru 23:59:59.999 on the given day

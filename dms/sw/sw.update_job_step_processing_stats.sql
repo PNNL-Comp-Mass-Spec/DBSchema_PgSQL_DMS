@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.update_job_step_processing_stats(IN _minimumtimei
 /****************************************************
 **
 **  Desc:
-**      Appends new entries to sw.T_Job_Step_Processing_Stats, showing details of running job steps
+**      Append new entries to sw.T_Job_Step_Processing_Stats, showing details of running job steps
 **
 **  Arguments:
 **    _minimumTimeIntervalMinutes                   Set this to 0 to force the addition of new data to sw.T_Job_Step_Processing_Stats

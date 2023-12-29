@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION pc.standardize_protein_collection_list(_protcollnamel
 /****************************************************
 **
 **  Desc:
-**      Standardizes the order of protein collection names in a protein
+**      Standardize the order of protein collection names in a protein
 **      collection list, returning them in a canonical order such that
 **      internal standard collections (type 5) are listed first,
 **      contaminants (type 4) are listed last,

@@ -9,7 +9,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates EUS proposals in t_eus_proposals
+**      Update EUS proposals in t_eus_proposals
 **
 **  Arguments:
 **    _message      Status message

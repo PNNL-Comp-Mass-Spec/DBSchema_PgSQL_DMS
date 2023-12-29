@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_job_request_existing_jobs(IN _p
 /****************************************************
 **
 **  Desc:
-**      Updates t_analysis_job_request_existing_jobs
+**      Update t_analysis_job_request_existing_jobs
 **
 **  Arguments:
 **    _processingMode       0 to only add new job requests created within the last 30 days (customizable using _modeZeroSearchDays)

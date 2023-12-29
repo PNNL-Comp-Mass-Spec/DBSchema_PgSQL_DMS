@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.alter_entered_by_user(IN _targettableschema t
 /****************************************************
 **
 **  Desc:
-**      Updates the entered_by column for the specified row in the given table to contain _newUser
+**      Update the entered_by column for the specified row in the given table to contain _newUser
 **
 **  Arguments:
 **    _targetTableSchema        Schema of the table to update; if empty or null, assumes "public"

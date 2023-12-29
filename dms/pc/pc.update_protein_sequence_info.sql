@@ -8,7 +8,18 @@ CREATE OR REPLACE PROCEDURE pc.update_protein_sequence_info(IN _proteinid intege
 /****************************************************
 **
 **  Desc:
-**      Updates an existing protein
+**      Update an existing protein in pc.t_proteins
+**
+**  Arguments:
+**    _proteinid            Protein ID
+**    _sequence             Protein sequence
+**    _length               Number of amino acids in the protein sequence
+**    _molecularFormula     Molecular formula
+**    _monoisotopicMass     Monoisotopic mass
+**    _averageMass          Average mass
+**    _sha1Hash             SHA-1 hash
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   kja
 **  Date:   10/06/2004

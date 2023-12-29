@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_run_tracking_monthly_info_by_id(_eusinstru
 /****************************************************
 **
 **  Desc:
-**      Returns run tracking information for given EUS Instrument ID
+**      Return run tracking information for given EUS Instrument ID
 **      Modeled after Get_Run_Tracking_Monthly_Info
 **
 **  Arguments:

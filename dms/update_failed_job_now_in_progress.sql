@@ -8,10 +8,9 @@ CREATE OR REPLACE PROCEDURE public.update_failed_job_now_in_progress(IN _job int
 /****************************************************
 **
 **  Desc:
-**      Updates job state to 2 for an analysis job that is now in-progress in sw.t_jobs
+**      Update job state to 2 for an analysis job that is now in-progress in sw.t_jobs
 **
-**      Typically used to update jobs listed as Failed in public.t_analysis_job,
-**      but occasionally updates jobs listed as New
+**      Typically used to update jobs listed as Failed in public.t_analysis_job, but occasionally used to update jobs listed as New
 **
 **  Arguments:
 **    _job                  Job number

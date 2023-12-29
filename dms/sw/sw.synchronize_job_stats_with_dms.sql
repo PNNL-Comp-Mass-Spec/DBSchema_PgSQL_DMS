@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.synchronize_job_stats_with_dms(IN _joblisttoproce
 /****************************************************
 **
 **  Desc:
-**      Makes sure the job start/end times defined in sw.t_jobs match those in public.t_analysis_job
+**      Make sure the job start/end times defined in sw.t_jobs match those in public.t_analysis_job
 **      Only processes jobs with a state of 4 or 5 in sw.t_jobs
 **
 **  Arguments:

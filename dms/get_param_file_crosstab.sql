@@ -8,8 +8,7 @@ CREATE OR REPLACE PROCEDURE public.get_param_file_crosstab(IN _analysistoolname 
 /****************************************************
 **
 **  Desc:
-**      Returns a crosstab table displaying modification details
-**      for the parameter file(s) for the given analysis tool
+**      Return a crosstab table displaying modification details for the parameter file(s) for the given analysis tool
 **
 **      Used by web page https://dms2.pnl.gov/get_paramfile_crosstab/param
 **

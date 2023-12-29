@@ -11,7 +11,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates data in t_mts_pt_db_jobs_cached using MTS
+**      Update data in t_mts_pt_db_jobs_cached using MTS
 **
 **  Arguments:
 **    _jobMinimum   Set to a positive value to limit the jobs examined; when non-zero, jobs outside the range _jobMinimum to _jobMaximum are ignored

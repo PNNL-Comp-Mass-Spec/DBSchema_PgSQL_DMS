@@ -8,11 +8,13 @@ CREATE OR REPLACE PROCEDURE pc.add_collection_organism_xref(IN _proteincollectio
 /****************************************************
 **
 **  Desc:
-**      Adds an entry to pc.t_collection_organism_xref
+**      Add an entry to pc.t_collection_organism_xref
 **
 **  Arguments:
-**    _proteinCollectionID      Protein collection ID
-**    _organismID               Organism ID
+**    _proteinCollectionID  Protein collection ID
+**    _organismID           Organism ID
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Returns:
 **    If a row already exists matching _proteinCollectionID and _organismID, _returnCode will have the member_id of that row

@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.get_job_step_input_folder(IN _job integer, IN _jo
 /****************************************************
 **
 **  Desc:
-**      Returns the input folder for a given job and optionally job step or tool name
+**      Return the input folder for a given job and optionally job step or tool name
 **
 **      Class DataPackageFileHandler in the Analysis Manager uses this procedure to determine the input folder for MS-GF+ and MzRefinery.
 **      Use _jobStep and/or _stepToolFilter to specify which job step to target.

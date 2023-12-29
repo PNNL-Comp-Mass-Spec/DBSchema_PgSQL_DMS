@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.validate_instrument_group_and_dataset_type(IN
 /****************************************************
 **
 **  Desc:
-**      Validates the dataset type for the given instrument group
+**      Validate the dataset type for the given instrument group
 **
 **  Arguments:
 **    _datasetType          Dataset type name

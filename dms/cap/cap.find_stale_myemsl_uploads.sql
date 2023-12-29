@@ -8,8 +8,13 @@ CREATE OR REPLACE PROCEDURE cap.find_stale_myemsl_uploads(IN _staleuploaddays in
 /****************************************************
 **
 **  Desc:
-**      Looks for unverified entries added to cap.t_myemsl_uploads over 45 ago (customize with _staleUploadDays)
-**      For any that are found, sets error_code to 101 and posts an entry to cap.t_log_entries
+**      Look for unverified entries added to cap.t_myemsl_uploads over 45 ago (customize with _staleUploadDays)
+**      For any that are found, set error_code to 101 and post an entry to cap.t_log_entries
+**
+**  Arguments:
+**    _staleUploadDays  Threshold for finding stale uploads; minimum 14 days
+**    _infoOnly         When true, preview deletes
+**    _message          Status message
 **
 **  Auth:   mem
 **  Date:   05/20/2019 mem - Initial version

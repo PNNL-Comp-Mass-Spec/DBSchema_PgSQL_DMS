@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 /****************************************************
 **
 **  Desc:
-**      Adds or updates an entry in the XML parameters, returning the updated XML
+**      Add or update an entry in the XML parameters, returning the updated XML
 **      Alternatively, use _deleteParam => true to delete the given parameter
 **      Note that case is ignored when matching section and parameter names in the XML to _section and _paramName
 **

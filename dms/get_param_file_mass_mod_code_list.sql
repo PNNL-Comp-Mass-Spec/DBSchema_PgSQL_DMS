@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_param_file_mass_mod_code_list(_paramfileid
 /****************************************************
 **
 **  Desc:
-**      Returns the mass mods for the given parameter file,
-**      formatted as a comma-separated list of mod codes
+**      Return the mass mods for the given parameter file, formatted as a comma-separated list of mod codes
 **
 **  Auth:   mem
 **  Date:   11/04/2021 mem - Initial version

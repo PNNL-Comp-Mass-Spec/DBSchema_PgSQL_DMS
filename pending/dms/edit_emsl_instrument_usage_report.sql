@@ -21,7 +21,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates selected EMSL instrument usage report items
+**      Update selected EMSL instrument usage report items
 **
 **      This procedure appears to be unused in 2017
 **
@@ -38,6 +38,8 @@ AS $$
 **    _fieldName    Field name: 'Proposal', 'Usage', 'Users', 'Operator', 'Comment'
 **    _newValue     Field value
 **    _doUpdate     When 0, preview the update
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   grk
 **  Date:   08/31/2012 grk - Initial version

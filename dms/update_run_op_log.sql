@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_run_op_log(IN _changes text, INOUT _me
 /****************************************************
 **
 **  Desc:
-**      Updates selected items from instrument run tracking-related entities, updating tables t_requested_run and/or t_run_interval
+**      Update selected items from instrument run tracking-related entities, updating tables t_requested_run and/or t_run_interval
 **
 **      This procedure is used by web page https://dms2.pnl.gov/run_op_logs/grid
 **

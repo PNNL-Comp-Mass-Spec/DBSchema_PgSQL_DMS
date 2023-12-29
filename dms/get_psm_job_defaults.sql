@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_psm_job_defaults(_datasets text) RETURNS T
 /****************************************************
 **
 **  Desc:
-**      Parses the list of datasets to create a table of stats and to suggest
+**      Parse the list of datasets to create a table of stats and to suggest
 **      default search settings for creating an analysis job to search MS/MS data (PSM search)
 **
 **  Arguments:

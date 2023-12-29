@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_myemsl_url_analysis_job(_jobresultsfoldern
 /****************************************************
 **
 **  Desc:
-**      Generates the MyEMSL URL required for viewing items stored for a given analysis job
+**      Generate the MyEMSL URL required for viewing items stored for a given analysis job
 **
 **  Arguments:
 **    _jobResultsFolderName   For example, SIC201309120240_Auto978018

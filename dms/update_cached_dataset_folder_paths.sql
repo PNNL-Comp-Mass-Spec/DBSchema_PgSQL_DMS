@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_dataset_folder_paths(IN _proces
 /****************************************************
 **
 **  Desc:
-**      Updates T_Cached_Dataset_Folder_Paths
+**      Update t_cached_dataset_folder_paths
 **
 **  Arguments:
 **    _processingMode   Processing mode:

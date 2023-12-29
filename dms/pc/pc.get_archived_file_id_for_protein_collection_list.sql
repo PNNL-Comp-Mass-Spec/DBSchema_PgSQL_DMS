@@ -15,8 +15,10 @@ CREATE OR REPLACE PROCEDURE pc.get_archived_file_id_for_protein_collection_list(
 **  Arguments:
 **    _proteinCollectionList    Comma-separated list of protein collection names or protein collection IDs
 **    _creationOptions          Protein collection creation options, e.g. 'seq_direction=forward,filetype=fasta'
-**    _archivedFileID           Output:
-**    _proteinCollectionCount   Output:
+**    _archivedFileID           Output: archived file ID from table pc.t_archived_output_files
+**    _proteinCollectionCount   Output: protein collection count
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   mem
 **  Date:   06/07/2006

@@ -16,6 +16,8 @@ CREATE OR REPLACE PROCEDURE public.auto_update_dataset_separation_type(IN _start
 **    _endDatasetId     Ending dataset ID
 **    _infoOnly         When true, show info messages
 **    _verbose          When _infoOnly is true, set this to true to view additional messages
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   10/09/2020

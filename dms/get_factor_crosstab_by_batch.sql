@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.get_factor_crosstab_by_batch(IN _batchid inte
 /****************************************************
 **
 **  Desc:
-**      Returns the factors associated with the requested runs in the specified batch
+**      Return the factors associated with the requested runs in the specified batch
 **
 **      This is used by https://dms2.pnl.gov/requested_run_batch_blocking/param
 **

@@ -8,10 +8,18 @@ CREATE OR REPLACE PROCEDURE cap.add_update_capture_step_tools(IN _name text, IN 
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing T_Step_Tools
+**      Add new or edit existing step tool in cap.t_step_tools
 **
 **  Arguments:
-**    _mode   'add' or 'update'
+**    _name                         Step tool name
+**    _description                  Description
+**    _bionetRequired               'Y' or 'N' for whether bionet is required
+**    _onlyOnStorageServer          'Y' or 'N' for whether the tool can only be used on the same storage server as the running manager
+**    _instrumentCapacityLimited    'Y' or 'N' indicating whether the number of running instances of a given tool should be limited for a given instrument
+**    _mode                         Mode: 'add' or 'update'
+**    _message                      Status message
+**    _returnCode                   Return code
+**    _callingUser                  Calling user username
 **
 **  Auth:   grk
 **  Date:   09/15/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
@@ -73,7 +81,7 @@ BEGIN
         SELECT step_tool_id
         INTO _stepToolId
         FROM  cap.t_step_tools
-        WHERE step_tool = _name;
+        WHERE step_tool = _name::citext;
         --
         GET DIAGNOSTICS _existingCount = ROW_COUNT;
 
@@ -131,7 +139,7 @@ BEGIN
                 bionet_required = _bionetRequired,
                 only_on_storage_server = _onlyOnStorageServer,
                 instrument_capacity_limited = _instrumentCapacityLimited
-            WHERE step_tool = _name;
+            WHERE step_tool = _name::citext;
 
         End If;
 

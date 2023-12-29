@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.request_folder_create_task(IN _processorname text
 /****************************************************
 **
 **  Desc:
-**      Returns first available entry in sw.t_data_folder_create_queue
+**      Return first available entry in sw.t_data_folder_create_queue
 **
 **  Example XML parameters returned in _parameters:
 **      <root>

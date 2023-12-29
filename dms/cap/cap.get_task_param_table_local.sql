@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_table_local(_job integer) RETURNS 
 /****************************************************
 **
 **  Desc:
-**      Returns a table of the capture task job parameters stored locally
+**      Return a table of the capture task job parameters stored locally
 **      in either cap.t_task_parameters or cap.t_task_parameters_history
 **
 **  Arguments:

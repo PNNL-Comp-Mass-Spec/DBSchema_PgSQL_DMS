@@ -8,8 +8,8 @@ CREATE OR REPLACE FUNCTION mc.unarchive_old_managers_and_params(_mgrlist text, _
 /****************************************************
 **
 **  Desc:
-**      Moves managers from mc.t_old_managers to mc.t_mgrs and
-**      moves manager parameters from mc.t_param_value_old_managers to mc.t_param_value
+**      Move managers from mc.t_old_managers to mc.t_mgrs and
+**      move manager parameters from mc.t_param_value_old_managers to mc.t_param_value
 **
 **      See also procedure mc.archive_old_managers_and_params
 **

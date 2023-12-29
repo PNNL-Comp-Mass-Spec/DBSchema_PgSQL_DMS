@@ -8,13 +8,15 @@ CREATE OR REPLACE PROCEDURE public.get_requested_run_factors_for_edit(IN _itemli
 /****************************************************
 **
 **  Desc:
-**      Returns the factors associated with the requested runs
-**      associated with the items specified by _itemList
+**      Return the factors associated with the requested runs associated with the items specified by _itemList
 **
 **  Arguments:
 **    _itemList     Comma-separated list of item IDs
 **    _itemType     Item type: Batch_ID, Requested_Run_ID, Dataset_Name, Dataset_ID, Experiment_Name, Experiment_ID, or Data_Package_ID
 **    _infoOnly     When true, show the SQL used to display the factors associated with the matching requested runs
+**    _results      Cursor for obtaining results
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Use this to view the data returned by the _results cursor
 **  Note that this will result in an error if no matching items are found

@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_param_history_table_local(_job integer) RE
 /****************************************************
 **
 **  Desc:
-**      Returns a table of the job parameters stored locally in t_job_parameters_history
+**      Return a table of the job parameters stored locally in t_job_parameters_history
 **
 **  Auth:   mem
 **  Date:   01/12/2012

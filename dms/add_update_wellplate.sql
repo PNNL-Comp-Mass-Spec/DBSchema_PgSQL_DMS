@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_wellplate(INOUT _wellplatename tex
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits an existing wellplate
+**      Add new or edit an existing wellplate
 **
 **  Arguments:
 **    _wellplateName    Wellplate name

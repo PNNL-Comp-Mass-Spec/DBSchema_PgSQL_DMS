@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION cap.retry_quameter_for_tasks(_jobs text, _infoonly bo
 /****************************************************
 **
 **  Desc:
-**      Resets failed DatasetQuality steps in t_task_steps for the specified capture task jobs
+**      Reset failed DatasetQuality steps in t_task_steps for the specified capture task jobs
 **
 **      Useful for capture task jobs where Quameter encountered an error
 **

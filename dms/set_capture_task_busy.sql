@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.set_capture_task_busy(IN _datasetname text, I
 /****************************************************
 **
 **  Desc:
-**      Updates dataset state to 2 and updates the prep server name
+**      Update dataset state to 2 and update the prep server name
 **
 **  Arguments:
 **    _datasetName      Dataset name

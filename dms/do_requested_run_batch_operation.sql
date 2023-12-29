@@ -11,8 +11,11 @@ CREATE OR REPLACE PROCEDURE public.do_requested_run_batch_operation(IN _batchid 
 **      Lock, unlock, or delete a requested run batch
 **
 **  Arguments:
-**    _mode   'LockBatch', 'UnlockBatch', 'Lock', 'Unlock', 'Delete'
-**            Supported, but unused modes (as of July 2017): 'FreeMembers', 'GrantHiPri', 'DenyHiPri'
+**    _batchID      Batch ID
+**    _mode         Mode: 'LockBatch', 'UnlockBatch', 'Lock', 'Unlock', 'Delete'
+**                  Supported, but unused modes (as of July 2017): 'FreeMembers', 'GrantHiPri', 'DenyHiPri'
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   grk
 **  Date:   01/12/2006

@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.find_log_entry(IN _entryid text DEFAULT ''::t
 /****************************************************
 **
 **  Desc:
-**      Returns result set of main log satisfying the search parameters
+**      Return result set of main log satisfying the search parameters
 **
 **      This procedure is used by unit tests in class StoredProcedureTests in the PRISM Class Library,
 **      including to verify that data in the _results refcursor is auto-converted to a result set

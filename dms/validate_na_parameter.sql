@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.validate_na_parameter(_parameter text, _trimwh
 /****************************************************
 **
 **  Desc:
-**      Makes sure that the parameter text is 'na' if blank or null, or if it matches 'na' or 'n/a'
+**      Make sure that the parameter text is 'na' if blank or null, or if it matches 'na' or 'n/a'
 **
 **  Arguments:
 **    _parameter        Text to check

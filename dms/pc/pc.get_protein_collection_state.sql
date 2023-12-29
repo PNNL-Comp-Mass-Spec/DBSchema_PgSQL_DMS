@@ -8,9 +8,15 @@ CREATE OR REPLACE PROCEDURE pc.get_protein_collection_state(IN _collectionid int
 /****************************************************
 **
 **  Desc:
-**      Gets Collection State Name for given protein collection ID
+**      Get Collection State Name for given protein collection ID
 **
-**      Sets _stateName to 'Unknown' if the _collectionID does not exist
+**      _stateName will be 'Unknown' if the _collectionID does not exist
+**
+**  Arguments:
+**    _collectionID     Protein collection ID
+**    _statename        Output: protein collection state name (will be 'Unknown' if the protein collection ID is not recognized)
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   kja
 **  Date:   08/04/2005

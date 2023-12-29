@@ -14,7 +14,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Creates analysis jobs for a given list of analysis job requests
+**      Create analysis jobs for a given list of analysis job requests
 **
 **  Arguments:
 **    _mode                     Mode: 'add' or 'preview'

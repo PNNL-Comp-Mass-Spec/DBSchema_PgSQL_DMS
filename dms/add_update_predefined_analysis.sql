@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_predefined_analysis(IN _level inte
 /****************************************************
 **
 **  Desc:
-**      Adds new or updates an existing predefined analysis job definition
+**      Add new or update an existing predefined analysis job definition
 **
 **  Arguments:
 **    _level                        Level; datasets are compared to predefines sequentially, by level

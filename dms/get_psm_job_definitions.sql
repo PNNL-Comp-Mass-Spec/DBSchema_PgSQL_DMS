@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.get_psm_job_definitions(INOUT _datasets text,
 /****************************************************
 **
 **  Desc:
-**      Returns sets of parameters for setting up a PSM-type job request entry page
+**      Return sets of parameters for setting up a PSM-type job request entry page
 **
 **      Used by the analysis_job_request_psm page family
 **

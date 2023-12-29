@@ -8,8 +8,12 @@ CREATE OR REPLACE PROCEDURE cap.synchronize_task_stats_with_task_steps(IN _infoo
 /****************************************************
 **
 **  Desc:
-**      Makes sure the capture task job start and finish times
-**      agree with the capture task job steps for each capture task job
+**      Make sure the capture task job start and finish times agree with the capture task job steps for each capture task job
+**
+**  Arguments:
+**    _infoOnly             When true, preview updates
+**    _completedJobsOnly    When true, only update jobs with state 3 in cap.t_tasks
+**    _message              Status message
 **
 **  Auth:   mem
 **  Date:   01/22/2010 mem - Initial version

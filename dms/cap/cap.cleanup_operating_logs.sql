@@ -7,14 +7,17 @@ CREATE OR REPLACE PROCEDURE cap.cleanup_operating_logs(IN _infoholdoffweeks inte
     AS $$
 /****************************************************
 **
-**  Desc:   Deletes old Info and Warn entries from cap.t_log_entries if they are older than the threshold
+**  Desc:
+**      Delete old Info and Warn entries from cap.t_log_entries if they are older than the threshold
 **
-**          Moves old log entries and event entries to historic log tables if they are older than the threshold
+**      Move old log entries and event entries to historic log tables if they are older than the threshold
 **
 **  Arguments:
 **    _infoHoldoffWeeks             Threshold, in weeks, for deleting old Info and Warn entries (minimum:  1 week)
 **    _logRetentionIntervalDays     Threshold, in days, for moving old log and event entries    (minimum: 14 days)
 **    _infoOnly                     When true, show the number of entries in each table that would be deleted or archived
+**    _message                      Status message
+**    _returnCode                   Return code
 **
 **  Auth:   mem
 **  Date:   10/04/2011 mem - Initial version

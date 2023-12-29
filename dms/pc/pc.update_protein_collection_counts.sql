@@ -8,12 +8,14 @@ CREATE OR REPLACE PROCEDURE pc.update_protein_collection_counts(IN _collectionid
 /****************************************************
 **
 **  Desc:
-**      Updates the protein and residue counts tracked in pc.t_protein_collections for the given protein collection
+**      Update the protein and residue counts tracked in pc.t_protein_collections for the given protein collection
 **
 **  Arguments:
 **    _collectionID     Protein collection ID
 **    _numProteins      Number of proteins
 **    _numResidues      Number of residues
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   09/14/2015 mem - Initial release

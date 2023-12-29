@@ -12,8 +12,7 @@ CREATE OR REPLACE FUNCTION public.get_active_connections() RETURNS TABLE(host_ip
 **
 **      This is similar to view v_active_connections, but does not include the query details (or the application name)
 **
-**      This function was created by a superuser and uses SECURITY DEFINER,
-**      meaning any user can use this function
+**      This function was created by a superuser and uses SECURITY DEFINER, meaning any user can use this function
 **      (since it will run with superuser privileges, even for normal users)
 **
 **  Auth:   mem

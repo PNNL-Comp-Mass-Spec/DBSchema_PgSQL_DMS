@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_exp_biomaterial_list(_experimentname text)
 /****************************************************
 **
 **  Desc:
-**      Builds delimited list of biomaterial items for given experiment
+**      Build delimited list of biomaterial items for given experiment
 **
 **  Return value: semicolon delimited list
 **

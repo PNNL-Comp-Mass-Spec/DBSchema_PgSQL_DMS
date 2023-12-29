@@ -8,13 +8,12 @@ CREATE OR REPLACE FUNCTION public.parse_delimited_list_ordered(_delimitedlist te
 /****************************************************
 **
 **  Desc:
-**      Parses the text in _delimitedList and returns a table
-**      containing the values.  The table includes column entry_id
-**      to allow the calling procedure to sort the data based on the
-**      data order in _delimitedList.  The first row will have entry_id = 1
+**      Parse the text in _delimitedList and return a table containing the values
 **
-**      Note that if two commas in a row are encountered,
-**      the resultant table will contain an empty cell for that row
+**      The table includes column entry_id to allow the calling procedure to sort the data
+**      based on the data order in _delimitedList; The first row will have entry_id = 1
+**
+**      Note that if two commas in a row are encountered, the resultant table will contain an empty cell for that row
 **
 **      If _delimiter is chr(13) or chr(10), will split _delimitedList on CR or LF
 **      In this case, blank lines will not be included in output table

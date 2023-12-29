@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_myemsl_state(IN _datasetid integer, IN
 /****************************************************
 **
 **  Desc:
-**      Updates the MyEMSL state for a given dataset and/or its analysis jobs
+**      Update the MyEMSL state for a given dataset and/or its analysis jobs
 **
 **      If _analysisJobResultsFolder is null or an empty string, updates t_dataset_archive and all rows in t_analysis_job for this dataset
 **      Otherwise, only updates the job in t_analysis_job that matches the dataset and the job results folder

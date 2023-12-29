@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.drop_debug_tables(IN _infoonly boolean DEFAUL
 /****************************************************
 **
 **  Desc:
-**      Removes tables created for debugging purposes by the following procedures
+**      Remove tables created for debugging purposes by the following procedures
 **      - public.predefined_analysis_datasets
 **      - cap.make_local_task_in_broker
 **      - cap.move_tasks_to_main_tables
@@ -17,6 +17,7 @@ CREATE OR REPLACE PROCEDURE public.drop_debug_tables(IN _infoonly boolean DEFAUL
 **
 **  Arguments:
 **    _infoOnly     When true, look for the tables, but do not delete them
+**    _message      Status message
 **
 **  Auth:   mem
 **  Date:   10/12/2023 mem - Initial release

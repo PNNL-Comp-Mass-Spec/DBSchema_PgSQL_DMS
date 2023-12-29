@@ -8,8 +8,8 @@ CREATE OR REPLACE FUNCTION sw.get_remote_info_id(_remoteinfo text DEFAULT ''::te
 /****************************************************
 **
 **  Desc:
-**      Resolves _remoteInfo to the ID in sw.t_remote_info
-**      Adds a new row to sw.t_remote_info if new
+**      Resolve _remoteInfo to the ID in sw.t_remote_info
+**      Add a new row to sw.t_remote_info if new
 **
 **  Return values: RemoteInfoID, or 0 if _remoteInfo is empty
 **

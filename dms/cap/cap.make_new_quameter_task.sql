@@ -8,11 +8,13 @@ CREATE OR REPLACE PROCEDURE cap.make_new_quameter_task(IN _datasetname text, IN 
 /****************************************************
 **
 **  Desc:
-**      Creates a new Quameter capture task job for the specified dataset
+**      Create a new Quameter capture task job for the specified dataset
 **
 **  Arguments:
 **    _datasetName      Dataset name
-**    _infoOnly         True to preview the capture task job that would be created
+**    _infoOnly         When true, preview the capture task job that would be created
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   02/22/2013 mem - Initial version

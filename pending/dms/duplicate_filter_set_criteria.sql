@@ -13,7 +13,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Copies the filter set critera
+**      Copy the filter set critera
 **
 **      Requires that the new filter set exist in t_filter_sets
 **      However, do not make any entries in t_filter_set_criteria_groups or t_filter_set_criteria

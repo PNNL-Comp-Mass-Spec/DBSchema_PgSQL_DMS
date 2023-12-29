@@ -16,8 +16,10 @@ CREATE OR REPLACE PROCEDURE cap.remove_selected_tasks(IN _infoonly boolean DEFAU
 **          );
 **
 **  Arguments:
-**    _infoOnly       When true, don't actually delete, just display the list of capture task jobs that would be deleted
-**    _logDeletions   When true, logs each deleted job number to cap.t_log_entries
+**    _infoOnly         When true, don't actually delete, just display the list of capture task jobs that would be deleted
+**    _logDeletions     When true, logs each deleted job number to cap.t_log_entries
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   grk
 **  Date:   09/12/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)

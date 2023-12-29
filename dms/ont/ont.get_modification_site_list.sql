@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION ont.get_modification_site_list(_unimodid integer, _hi
 /****************************************************
 **
 **  Desc:
-**      Builds delimited list of modification sites for given Unimod ID
+**      Build delimited list of modification sites for given Unimod ID
 **
 **  Arguments:
 **    _unimodID    Unimod ID

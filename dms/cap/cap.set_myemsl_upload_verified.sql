@@ -8,15 +8,18 @@ CREATE OR REPLACE PROCEDURE cap.set_myemsl_upload_verified(IN _datasetid integer
 /****************************************************
 **
 **  Desc:
-**      Marks one or more MyEMSL upload tasks as verified by the MyEMSL ingest process
+**      Mark one or more MyEMSL upload tasks as verified by the MyEMSL ingest process
 **
 **      This procedure should only be called after the MyEMSL Status page includes the text "state": "OK"
 **      For example, see https://ingestdms.my.emsl.pnl.gov/get_state?job_id=2825262
 **
 **  Arguments:
-**    _statusNumList          Comma-separated list of status numbers; these must all match the specified DatasetID and they must match the cap.t_myemsl_uploads entries that the _statusURIList values match
-**    _statusURIList          Comma-separated list of status URIs; these must all match the specified DatasetID using V_MyEMSL_Uploads (this is a safety check)
-**    _ingestStepsCompleted   Number of ingest steps that were completed for these status nums (assumes that all the status nums completed the same steps)
+**    _datasetID                Dataset ID
+**    _statusNumList            Comma-separated list of status numbers; these must all match the specified DatasetID and they must match the cap.t_myemsl_uploads entries that the _statusURIList values match
+**    _statusURIList            Comma-separated list of status URIs; these must all match the specified DatasetID using V_MyEMSL_Uploads (this is a safety check)
+**    _ingestStepsCompleted     Number of ingest steps that were completed for these status nums (assumes that all the status nums completed the same steps)
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   mem
 **  Date:   09/20/2013 mem - Initial version

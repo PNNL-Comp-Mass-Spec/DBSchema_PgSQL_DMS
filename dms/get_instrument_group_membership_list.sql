@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_group_membership_list(_instrume
 /****************************************************
 **
 **  Desc:
-**      Builds delimited list of associated instruments for given instrument group
+**      Build delimited list of associated instruments for given instrument group
 **
 **  Return value: delimited list, using a vertical bar if _activeOnly is 2, otherwise using a comma
 **

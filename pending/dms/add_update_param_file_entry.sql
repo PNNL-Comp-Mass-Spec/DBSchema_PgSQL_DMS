@@ -17,7 +17,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or updates an existing parameter file entry
+**      Add new or update an existing parameter file entry
 **
 **      This only applies to SEQUEST parameter files, and SEQUEST was retired in 2019
 **

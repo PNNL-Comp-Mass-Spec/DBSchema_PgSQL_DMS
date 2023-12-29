@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_organism_id(_organismname text DEFAULT '':
 /****************************************************
 **
 **  Desc:
-**      Gets organismID for given organism name
+**      Get organismID for given organism name
 **
 **  Return values: organismID if found, otherwise 0
 **

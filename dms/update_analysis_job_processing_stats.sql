@@ -8,9 +8,9 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_job_processing_stats(IN _job 
 /****************************************************
 **
 **  Desc:
-**      Updates job state, start, and finish in public.t_analysis_job
+**      Update job state, start, and finish in public.t_analysis_job
 **
-**      Sets archive status of dataset to update required
+**      Set archive status of dataset to update required
 **
 **  Arguments:
 **    _job                      Job Number

@@ -8,14 +8,16 @@ CREATE OR REPLACE PROCEDURE cap.reset_failed_myemsl_uploads(IN _infoonly boolean
 /****************************************************
 **
 **  Desc:
-**      Looks for failed Dataset Archive or Archive Update tasks with known error messages
-**      Resets the capture tasks to try again if _infoOnly is false
+**      Look for failed Dataset Archive or Archive Update tasks with known error messages
+**      Reset the capture tasks to try again if _infoOnly is false
 **
 **  Arguments:
 **    _infoOnly             True to preview the changes
 **    _maxJobsToReset       Maximum number of capture task jobs to reset
 **    _jobListOverride      Comma-separated list of jobs to reset; capture task jobs must have a failed step in t_task_steps
 **    _resetHoldoffMinutes  Holdoff time to apply to column Finish
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   mem
 **  Date:   08/01/2016 mem - Initial version

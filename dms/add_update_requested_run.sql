@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run(IN _requestname text
 /****************************************************
 **
 **  Desc:
-**      Adds or updates a requsted run in t_requested_run
+**      Add or update a requsted run in t_requested_run
 **
 **  Arguments:
 **    _requestName                  Requested run name

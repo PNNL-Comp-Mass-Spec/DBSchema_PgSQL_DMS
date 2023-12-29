@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.format_error_message(_sqlstate text, _exceptio
 /****************************************************
 **
 **  Desc:
-**      Constructs and returns a formatted error message
+**      Construct and return a formatted error message
 **
 **      Call this function after using GET STACKED DIAGNOSTICS
 **

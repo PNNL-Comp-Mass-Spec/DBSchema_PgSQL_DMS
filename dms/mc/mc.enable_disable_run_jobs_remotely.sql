@@ -8,13 +8,15 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable boole
 /****************************************************
 **
 **  Desc:
-**      Enables or disables a manager to run jobs remotely
+**      Enable or disable a manager to run jobs remotely
 **
 **  Arguments:
-**    _enable                  False to disable running jobs remotely, true to enable
-**    _managerNameList         Manager(s) to update; supports % for wildcards
-**    _infoOnly                When true, show the managers that would be updated
-**    _addMgrParamsIfMissing   When true, if manger(s) are missing parameters RunJobsRemotely or RemoteHostName, will auto-add those parameters
+**    _enable                   False to disable running jobs remotely, true to enable
+**    _managerNameList          Manager(s) to update; supports % for wildcards
+**    _infoOnly                 When true, show the managers that would be updated
+**    _addMgrParamsIfMissing    When true, if manger(s) are missing parameters RunJobsRemotely or RemoteHostName, will auto-add those parameters
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Example usage:
 **

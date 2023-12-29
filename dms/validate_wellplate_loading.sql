@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.validate_wellplate_loading(INOUT _wellplatena
 /****************************************************
 **
 **  Desc:
-**      Checks to see if a given set of consecutive well loadings for a given wellplate are valid
+**      Check to see if a given set of consecutive well loadings for a given wellplate are valid
 **
 **      Only works for a 96 well plate, where
 **      the first row of the plate has wells A1 through A12 and

@@ -8,7 +8,12 @@ CREATE OR REPLACE PROCEDURE cap.set_update_required_for_running_capture_task_man
 /****************************************************
 **
 **  Desc:
-**      Sets ManagerUpdateRequired to True in mc.t_param_value for currently running managers
+**      Set ManagerUpdateRequired to True in mc.t_param_value for currently running capture task managers
+**
+**  Arguments:
+**    _infoOnly         When true, preview updates
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   04/17/2014 mem - Initial release

@@ -8,12 +8,14 @@ CREATE OR REPLACE PROCEDURE pc.update_protein_sequence_hash(IN _proteinid intege
 /****************************************************
 **
 **  Desc:
-**      Updates the SHA-1 fingerprint in t_proteins for the given protein
+**      Update the SHA-1 fingerprint in pc.t_proteins for the given protein
 **
 **  Arguments:
-**      _proteinID  Protein ID
-**      _sha1Hash   SHA-1 Hash
-**      _seguid     Unique sequence identifier (SEGUID) checksum (see https://www.nature.com/articles/npre.2007.278.1.pdf and https://pubmed.ncbi.nlm.nih.gov/16858731/)
+**    _proteinID    Protein ID
+**    _sha1Hash     SHA-1 Hash
+**    _seguid       Unique sequence identifier (SEGUID) checksum (see https://www.nature.com/articles/npre.2007.278.1.pdf and https://pubmed.ncbi.nlm.nih.gov/16858731/)
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   kja
 **  Date:   03/13/2006
@@ -31,8 +33,7 @@ BEGIN
     ---------------------------------------------------
 
     UPDATE pc.t_proteins
-    SET
-        sha1_hash = _sha1Hash,
+    SET sha1_hash = _sha1Hash,
         seguid = _seguid
     WHERE protein_id = _proteinID;
 

@@ -15,7 +15,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates datasets in list according to disposition parameters
+**      Update datasets in list according to disposition parameters
 **
 **  Arguments:
 **    _datasetIDList    Comma-separated list of dataset IDs

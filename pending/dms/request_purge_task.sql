@@ -16,7 +16,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Looks for dataset that is best candidate to be purged
+**      Look for dataset that is best candidate to be purged
 **
 **      If found, dataset archive status is set to 'Purge In Progress'
 **      and information needed for purge task is returned in the output arguments

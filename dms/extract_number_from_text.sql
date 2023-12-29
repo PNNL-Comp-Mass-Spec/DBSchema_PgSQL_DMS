@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION public.extract_number_from_text(_searchtext text, _st
 /****************************************************
 **
 **  Desc:
-**      Examines the text provided to return the next
-**      integer value present, starting at _startLoc
+**      Examine the text provided to return the next integer value present, starting at _startLoc
 **
 **  Return values: number found, or 0 if no number found
 **

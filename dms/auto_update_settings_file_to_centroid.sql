@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.auto_update_settings_file_to_centroid(_setting
 /****************************************************
 **
 **  Desc:
-**      Automatically changes the settings file to a version that uses MSConvert to centroid the data
+**      Automatically change the settings file to a version that uses MSConvert to centroid the data
 **      This is useful for QExactive datasets, since DeconMSn seems to do more harm than good with QExactive data
 **      Also useful for Orbitrap datasets with profile-mode MS/MS spectra
 **

@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_experiment_group_member_count(IN _grou
 /****************************************************
 **
 **  Desc:
-**      Updates the MemberCount value for either the specific experiment group or for all experiment groups
+**      Update the MemberCount value for either the specific experiment group or for all experiment groups
 **
 **  Arguments:
 **    _groupID      Experiment group ID to update; 0 to update all groups

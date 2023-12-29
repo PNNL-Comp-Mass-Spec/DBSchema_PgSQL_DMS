@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_attachments(INOUT _id integer, IN 
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits an existing MRM transition list attachment
+**      Add new or edit an existing MRM transition list attachment
 **
 **      This procedure is obsolete; MRM transition lists were last used in 2010
 **      See https://dms2.pnl.gov/mrm_list_attachment/report

@@ -8,12 +8,16 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname tex
 /****************************************************
 **
 **  Desc:
-**      Changes single manager params for set of given managers
+**      Change a single manager parameter for set of given managers
 **
 **  Arguments:
-**    _paramName       The parameter name
-**    _newValue        The new value to assign for this parameter
-**    _managerIDList   manager ID values (numbers, not manager names)
+**    _paramName        The parameter name
+**    _newValue         The new value to assign for this parameter
+**    _managerIDList    Comma-separated list of manager IDs (numbers, not manager names)
+**    _callingUser      Calling user username
+**    _infoOnly         When true, preview updates
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Example usage:
 **

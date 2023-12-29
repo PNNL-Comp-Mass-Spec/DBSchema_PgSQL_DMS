@@ -25,7 +25,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits an existing prep LC column
+**      Add new or edit an existing prep LC column
 **
 **  Arguments:
 **    _columnName           Prep LC column name

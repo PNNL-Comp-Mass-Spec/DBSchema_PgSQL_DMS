@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.get_dataset_details_from_dataset_info_xml(IN 
 /****************************************************
 **
 **  Desc:
-**      Extracts the dataset name from _datasetInfoXML
+**      Extract the dataset name from _datasetInfoXML
 **      If _datasetID is non-zero, validates the dataset ID vs. the dataset name
 **      Otherwise, updates _datasetID based on the dataset name defined in the XML
 **

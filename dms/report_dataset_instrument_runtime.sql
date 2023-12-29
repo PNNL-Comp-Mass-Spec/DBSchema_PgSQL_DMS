@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.report_dataset_instrument_runtime(IN _startda
 /****************************************************
 **
 **  Desc:
-**      Generates dataset runtime and interval statistics for specified instrument
+**      Generate dataset runtime and interval statistics for specified instrument
 **
 **  Arguments:
 **    _startDate        Start date; if an empty string, will use 2 weeks before _endDate

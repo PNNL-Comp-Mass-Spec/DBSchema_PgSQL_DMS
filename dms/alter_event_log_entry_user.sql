@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.alter_event_log_entry_user(IN _eventlogschema
 /****************************************************
 **
 **  Desc:
-**      Updates the user associated with a given event log entry to be _newUser
+**      Update the user associated with a given event log entry to be _newUser
 **
 **  Arguments:
 **    _eventLogSchema           Schema of the t_event_log table to update; if empty or null, assumes "public"

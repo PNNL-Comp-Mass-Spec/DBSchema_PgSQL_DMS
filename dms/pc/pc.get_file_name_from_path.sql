@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION pc.get_file_name_from_path(_filepath text) RETURNS te
 /****************************************************
 **
 **  Desc:
-**      Looks for the final \ in _filePath, then returns the filename after the slash
+**      Look for the final \ in _filePath, then returns the filename after the slash
 **      If no slash in _filePath, or if no text after the slash, returns an empty string
 **
 **  Auth:   mem

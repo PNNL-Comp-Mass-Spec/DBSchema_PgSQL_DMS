@@ -5,7 +5,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates summary stats in t_campaign_tracking
+**      Update summary stats in t_campaign_tracking
 **
 **  Auth:   grk
 **  Date:   10/20/2002

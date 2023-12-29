@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.trim_whitespace(_text text) RETURNS text
 /****************************************************
 **
 **  Desc:
-**      Removes whitespace (including Cr, Lf, and tab) from the start and end of text
+**      Remove whitespace (including Cr, Lf, and tab) from the start and end of text
 **
 **      See also public.trim_whitespace_and_punctuation() which also removes periods, commas, semicolons,
 **      single quotes, and double quotes from the start and end of the text

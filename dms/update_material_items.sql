@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_material_items(IN _mode text, IN _item
 /****************************************************
 **
 **  Desc:
-**      Moves or retires the specified list of material items
+**      Move or retire the specified list of material items
 **
 **  Arguments:
 **    _mode             Mode: 'move_material' or 'retire_items'

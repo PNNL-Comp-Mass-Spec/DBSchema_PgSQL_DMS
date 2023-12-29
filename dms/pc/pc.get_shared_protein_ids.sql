@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION pc.get_shared_protein_ids(_collection_1 integer, _col
 /****************************************************
 **
 **  Desc:
-**      Shows the shared Protein_IDs for two collections
+**      Show the shared Protein_IDs for two collections
 **
 **  Auth:   kja
 **  Date:   04/16/2004 kja - Initial version

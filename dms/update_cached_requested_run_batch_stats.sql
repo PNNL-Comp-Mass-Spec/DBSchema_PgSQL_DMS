@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_requested_run_batch_stats(IN _b
 /****************************************************
 **
 **  Desc:
-**      Updates data in t_cached_requested_run_batch_stats
+**      Update data in t_cached_requested_run_batch_stats
 **
 **      This table is used by view v_requested_run_batch_list_report
 **      to display information about the requested runs and datasets associated with a requested run batch

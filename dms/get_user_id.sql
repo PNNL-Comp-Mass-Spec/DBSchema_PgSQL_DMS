@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_user_id(_username text DEFAULT ''::text) R
 /****************************************************
 **
 **  Desc:
-**      Gets UserID for given user
+**      Get UserID for given user
 **
 **  Arguments:
 **    _username      Username, or user's name with username in parentheses

@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION dpkg.get_myemsl_url_data_package_id(_datapackageid in
 /****************************************************
 **
 **  Desc:
-**      Generates the MyEMSL URL required for viewing items stored for a given data package, by package ID
+**      Generate the MyEMSL URL required for viewing items stored for a given data package, by package ID
 **      KeyName comes from https://my.emsl.pnl.gov/myemsl/api/1/elasticsearch/generic-finder.js
 **
 **  Auth:   mem

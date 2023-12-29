@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.populate_param_file_info_table_sequest(IN _pr
 /****************************************************
 **
 **  Desc:
-**      Updates Tmp_ParamFileInfo to include some additional SEQUEST-specific columns
+**      Update Tmp_ParamFileInfo to include some additional SEQUEST-specific columns
 **      Used by get_param_file_crosstab.sql, which will have created the temporary table using
 **
 **      CREATE TEMP TABLE Tmp_ParamFileInfo (
@@ -19,8 +19,10 @@ CREATE OR REPLACE PROCEDURE public.populate_param_file_info_table_sequest(IN _pr
 **      );
 **
 **  Arguments:
-**    _previewSql                When true, preview SQL prior to executing it
-**    _paramFileInfoColumnList   Output: the list of columns added to Tmp_ParamFileInfo
+**    _previewSql               When true, preview SQL prior to executing it
+**    _paramFileInfoColumnList  Output: the list of columns added to Tmp_ParamFileInfo
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Date:   12/08/2006 mem - Initial version (Ticket #342)
 **          04/06/2016 mem - Now using Try_Convert to convert from text to int

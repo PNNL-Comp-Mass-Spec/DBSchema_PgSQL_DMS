@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job(IN _datasetname text,
 /****************************************************
 **
 **  Desc:
-**      Adds or updates an analysis job in t_analysis_job
+**      Add or update an analysis job in t_analysis_job
 **
 **  Arguments:
 **    _datasetName                  Dataset name

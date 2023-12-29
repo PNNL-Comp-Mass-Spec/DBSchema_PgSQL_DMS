@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION mc.get_manager_parameters(_managernamelist text DEFAU
 /****************************************************
 **
 **  Desc:
-**      Gets the parameters for the given analysis manager(s)
+**      Get the parameters for the given analysis manager(s)
 **
 **      Uses parameter MgrSettingGroupName to lookup parameters from the parent group, if any
 **

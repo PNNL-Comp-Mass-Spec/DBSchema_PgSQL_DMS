@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_exp_ref_compound_list(_experimentname text
 /****************************************************
 **
 **  Desc:
-**      Builds delimited list of reference compounds for given experiment
+**      Build delimited list of reference compounds for given experiment
 **
 **  Return value: semicolon delimited list
 **

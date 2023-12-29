@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_requested_run_eus_users_list(_requestid in
 /****************************************************
 **
 **  Desc:
-**      Builds delimited list of EUS users for given requested run
+**      Build delimited list of EUS users for given requested run
 **
 **  Arguments:
 **    _mode   'I' for comma-separated list of EUS User IDs,       e.g. 36746, 39552

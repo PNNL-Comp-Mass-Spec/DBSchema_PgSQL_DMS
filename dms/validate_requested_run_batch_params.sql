@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.validate_requested_run_batch_params(IN _batch
 /****************************************************
 **
 **  Desc:
-**      Validates values for creating/updating a requested run batch
+**      Validate values for creating/updating a requested run batch
 **
 **  Arguments:
 **    _batchID                      Only used when _mode is 'update'

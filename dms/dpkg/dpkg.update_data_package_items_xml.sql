@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE dpkg.update_data_package_items_xml(IN _paramlistxml 
 /****************************************************
 **
 **  Desc:
-**      Updates data package items in _paramListXML according to the mode
+**      Update data package items in _paramListXML according to the mode
 **      This procedure is used by web page "Data Package Items List Report" (data_package_items/report)
 **
 **      Example contents of _paramListXML

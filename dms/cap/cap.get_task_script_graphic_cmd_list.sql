@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_script_graphic_cmd_list(_script text) RE
 /****************************************************
 **
 **  Desc:
-**      Returns Dot graphic command list (as text) for given script
+**      Return Dot graphic command list (as text) for given script
 **
 **  Return value: semicolon-separated list
 **

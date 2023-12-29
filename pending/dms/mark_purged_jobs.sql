@@ -9,7 +9,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates purged to be 1 for the jobs in _jobList
+**      Update purged to be 1 for the jobs in _jobList
 **
 **      This procedure is called by the Space Manager
 **

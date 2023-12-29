@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION cap.enable_disable_archive_step_tools(_enable boolean
 /****************************************************
 **
 **  Desc:
-**      Enables or disables archive and archive update step tools
+**      Enable or disable archive and archive update step tools
 **
 **  Arguments:
 **    _enable           True to enable the step tools, false to disable

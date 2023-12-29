@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.log_ddl_command_end() RETURNS event_trigger
 /****************************************************
 **
 **  Desc:
-**      Adds log entries to t_schema_change_log regarding DDL updates
+**      Add log entries to t_schema_change_log regarding DDL updates
 **
 **  Auth:   mem
 **  Date:   10/08/2019 mem - Initial version

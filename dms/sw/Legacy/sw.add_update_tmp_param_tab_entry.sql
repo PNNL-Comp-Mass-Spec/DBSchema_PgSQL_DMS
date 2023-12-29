@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_tmp_param_tab_entry(IN _section text, 
 /****************************************************
 **
 **  Desc:
-**      Adds or updates an entry in temp table Tmp_ParamTab
+**      Add or update an entry in temp table Tmp_ParamTab
 **      This procedure was previously called by Get_Job_Param_Table and by legacy procedure Check_Add_Special_Processing_Param
 **
 **      The calling procedure must create table Tmp_ParamTab

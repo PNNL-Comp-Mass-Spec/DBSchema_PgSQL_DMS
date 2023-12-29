@@ -8,9 +8,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_storage(IN _path text, IN _volname
 /****************************************************
 **
 **  Desc:
-**      Adds new or updates existing storage path
-**      (saves current state of storage and instrument
-**      tables in backup tables)
+**      Add new or update existing storage path
+**      (save current state of storage and instrument tables in backup tables)
 **
 **       Mode    Function:                Action
 **               (cur.)    (new)
@@ -43,7 +42,9 @@ CREATE OR REPLACE PROCEDURE public.add_update_storage(IN _path text, IN _volname
 **    _description      Storage description
 **    _urlDomain        Domain name                     pnl.gov
 **    _id               Input/output: Storage path ID (as text)
-**    _mode             'add' or 'update'
+**    _mode             Mode: 'add' or 'update'
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   grk
 **  Date:   04/15/2002

@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.create_predefined_analysis_jobs(IN _datasetna
 /****************************************************
 **
 **  Desc:
-**      Schedules analysis jobs for dataset according to defaults
+**      Schedule analysis jobs for dataset according to defaults
 **
 **  Arguments:
 **    _datasetName                  Dataset name

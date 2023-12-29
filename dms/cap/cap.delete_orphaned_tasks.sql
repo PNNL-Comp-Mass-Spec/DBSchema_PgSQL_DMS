@@ -10,6 +10,10 @@ CREATE OR REPLACE PROCEDURE cap.delete_orphaned_tasks(IN _infoonly boolean DEFAU
 **  Desc:
 **      Delete capture task jobs with state = 0 for datasets that no longer exist in public.t_dataset
 **
+**  Arguments:
+**    _infoOnly     When true, preview deletes
+**    _message      Status message
+**
 **  Auth:   mem
 **  Date:   05/22/2019 mem - Initial version
 **          10/11/2022 mem - Ported to PostgreSQL

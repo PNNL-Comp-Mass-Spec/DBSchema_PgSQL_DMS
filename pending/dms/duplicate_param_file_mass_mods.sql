@@ -13,7 +13,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Copies the mass modification definitions from an existing parameter file to a new parameter file
+**      Copy the mass modification definitions from an existing parameter file to a new parameter file
 **
 **      Requires that the new parameter file exists in t_param_files,
 **      but does not yet have any entries in t_param_file_mass_mods

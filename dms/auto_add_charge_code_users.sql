@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.auto_add_charge_code_users(IN _infoonly boole
 /****************************************************
 **
 **  Desc:
-**      Examines the responsible user for active charge codes with one or more sample prep requests or requested runs
+**      Examine the responsible user for active charge codes with one or more sample prep requests or requested runs
 **      Auto-adds any users who are not in t_users
 **
 **      Uses external server SQLSRVPROD02, which is accessed via a foreign data wrapper

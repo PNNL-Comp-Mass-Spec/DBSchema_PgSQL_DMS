@@ -44,7 +44,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits an existing sample prep request
+**      Add new or edit an existing sample prep request
 **
 **  Arguments:
 **    _requestName                      Sample prep request name

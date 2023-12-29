@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.xml_quote_check(_text text) RETURNS text
 /****************************************************
 **
 **  Desc:
-**      Replaces double quotes, less than, and greater than signs
+**      Replace double quotes, less than signs, and greater than signs
 **      with HTML entity codes to avoid malformed XML
 **        " is changed to &quot;
 **        < is changed to &lt;

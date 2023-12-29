@@ -10,7 +10,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Stores new stats in t_project_usage_stats, tracking the number of datasets and
+**      Store new stats in t_project_usage_stats, tracking the number of datasets and
 **      user-initiated analysis jobs created within the specified date range
 **
 **      This procedure is called weekly at 3 am on Friday morning to auto-update the stats

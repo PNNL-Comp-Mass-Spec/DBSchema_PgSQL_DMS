@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.validate_chars(_string text, _validch text DEF
 /****************************************************
 **
 **  Desc:
-**      Validates that _string only contains characters from valid set
+**      Validate that _string only contains characters from valid set
 **
 **  Return value: The invalid characters, if any are found
 **                Uses '[space]' if a space is found and _validCh does not have a space (and is not an empty string)

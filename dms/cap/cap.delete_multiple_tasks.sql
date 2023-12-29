@@ -8,8 +8,13 @@ CREATE OR REPLACE PROCEDURE cap.delete_multiple_tasks(IN _joblist text, INOUT _m
 /****************************************************
 **
 **  Desc:
-**      Deletes entries from appropriate tables
-**      for all capture task jobs in given list
+**      Delete entries from appropriate tables for all capture task jobs in given list
+**
+**  Arguments:
+**    _jobList      Comma-separated list of capture task job numbers
+**    _message      Status message
+**    _returnCode   Return code
+**    _callingUser  Calling user username
 **
 **  Auth:   grk
 **  Date:   06/03/2010 grk - Initial release

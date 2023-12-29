@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.store_reporter_ion_obs_stats(IN _job integer,
 /****************************************************
 **
 **  Desc:
-**      Updates the reporter ion observation stats in T_Reporter_Ion_Observation_Rates for the specified analysis job
+**      Update the reporter ion observation stats in T_Reporter_Ion_Observation_Rates for the specified analysis job
 **
 **  Arguments:
 **    _reporterIon                Reporter ion name, corresponding to the "label" column in T_Sample_Labelling_Reporter_Ions (e.g. iTRAQ8 or TMT18)

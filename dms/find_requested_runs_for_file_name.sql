@@ -6,8 +6,9 @@ CREATE OR REPLACE FUNCTION public.find_requested_runs_for_file_name(_filename pu
     LANGUAGE plpgsql
     AS $$
 /****************************************************
+**
 **  Desc:
-**      Returns list of active requested runs that match given file name
+**      Return list of active requested runs that match given file name
 **      The entire request name must match the start of the file name
 **
 **  Auth:   grk

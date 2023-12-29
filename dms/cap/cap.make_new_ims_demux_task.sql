@@ -8,12 +8,14 @@ CREATE OR REPLACE PROCEDURE cap.make_new_ims_demux_task(IN _datasetname text, IN
 /****************************************************
 **
 **  Desc:
-**      Creates a new IMSDemultiplex capture task job for the specified dataset
+**      Create a new IMSDemultiplex capture task job for the specified dataset
 **      This would typically be used to repeat the demultiplexing of a dataset
 **
 **  Arguments:
 **    _datasetName      Dataset name
-**    _infoOnly         True to preview the capture task job that would be created
+**    _infoOnly         When true, preview the capture task job that would be created
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   08/29/2012 mem - Initial version

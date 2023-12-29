@@ -8,13 +8,15 @@ CREATE OR REPLACE PROCEDURE public.add_mass_correction_entry(IN _modname text, I
 /****************************************************
 **
 **  Desc:
-**      Adds a new post translational modification to t_mass_correction_factors
+**      Add a new post translational modification to t_mass_correction_factors
 **
 **  Arguments:
 **    _modName          Modification name
 **    _modDescription   Modification description
 **    _modMassChange    Modification mass
 **    _modAffectedAtom  Affected atom (for isotopic mods on N, C, H, O, etc.); use '-' if not an isotopic modification
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   kja
 **  Date:   08/02/2004

@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.reset_not_ready_datasets(IN _interval integer
 /****************************************************
 **
 **  Desc:
-**      Checks all datasets that are in 'Not Ready' state and resets them to 'New'
+**      Check all datasets that are in 'Not Ready' state and reset them to 'New'
 **
 **  Arguments:
 **    _interval     Minutes between retries

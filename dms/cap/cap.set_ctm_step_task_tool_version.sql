@@ -8,9 +8,16 @@ CREATE OR REPLACE PROCEDURE cap.set_ctm_step_task_tool_version(IN _job integer, 
 /****************************************************
 **
 **  Desc:
-**      Records the tool version for the given capture task job step
+**      Record the tool version for the given capture task job step
 **
-**      Looks for an existing entry in T_Step_Tool_Versions; adds a new entry if not defined
+**      Look for an existing entry in T_Step_Tool_Versions; add a new entry if not defined
+**
+**  Arguments:
+**    _job                  Capture task job number
+**    _step                 Step number
+**    _toolVersionInfo      Tool version info
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   mem
 **  Date:   03/12/2012 mem - Initial version (ported from DMS_Pipeline DB)

@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE pc.add_protein_sequence(IN _sequence text, IN _lengt
 /****************************************************
 **
 **  Desc:
-**      Adds a new protein sequence entry to pc.t_proteins
+**      Add a new protein sequence entry to pc.t_proteins
 **
 **  Arguments:
 **    _sequence             Protein sequence
@@ -19,9 +19,11 @@ CREATE OR REPLACE PROCEDURE pc.add_protein_sequence(IN _sequence text, IN _lengt
 **    _sha1Hash             SHA-1 hash of the protein sequence
 **    _isEncrypted          0 if not encrypted, 1 if encrypted
 **    _mode                 The only supported mode is 'add'
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Returns:
-**    If t_proteins already has a protein with the given sequence length and SHA-1 hash, _returnCode will have the protein_id
+**    If pc.t_proteins already has a protein with the given sequence length and SHA-1 hash, _returnCode will have the protein_id
 **    Otherwise, _returnCode will have the protein_id of the row added to t_proteins
 **
 **  Auth:   kja

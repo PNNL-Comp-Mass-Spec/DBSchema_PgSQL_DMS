@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Performs operation given by _mode on entity given by _id
+**      Perform operation given by _mode on entity given by _id
 **
 **      Note: this procedure has not been used since 2012
 **

@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE pc.add_update_encryption_metadata(IN _proteincollect
 /****************************************************
 **
 **  Desc:
-**      Adds encryption metadata for private (encrypted) protein collections,
+**      Add encryption metadata for private (encrypted) protein collections,
 **      adding a new row to two tables: pc.t_encrypted_collection_passphrases and pc.t_passphrase_hashes
 **
 **      Also sets column contents_encrypted to 1 in pc.t_protein_collections
@@ -18,6 +18,8 @@ CREATE OR REPLACE PROCEDURE pc.add_update_encryption_metadata(IN _proteincollect
 **    _encryptionPassphrase     Encryption passphrase
 **    _passphraseSHA1Hash       Passphrase SHA-1 hash
 **    _passphraseID             Output: Passphrase ID of the new row added to pc.t_encrypted_collection_passphrases
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Returns:
 **    _returnCode will have the passphrase ID of the newly added row

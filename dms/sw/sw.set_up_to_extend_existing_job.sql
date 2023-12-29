@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.set_up_to_extend_existing_job(IN _job integer, IN
 /****************************************************
 **
 **  Desc:
-**      Populates temporary table Tmp_Jobs, which must be created by the calling procedure
+**      Populate temporary table Tmp_Jobs, which must be created by the calling procedure
 **
 **      CREATE TEMP TABLE Tmp_Jobs (
 **          Job int NOT NULL,

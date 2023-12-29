@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE cap.update_myemsl_upload_ingest_stats(IN _datasetid 
 /****************************************************
 **
 **  Desc:
-**      Updates column ingest_steps_completed in cap.t_myemsl_uploads for the given MyEMSL ingest task
+**      Update column ingest_steps_completed in cap.t_myemsl_uploads for the given MyEMSL ingest task
 **      If _fatalError is true, sets error_code to -1 if null or 0
 **
 **      This procedure is called by the ArchiveStatusCheckPlugin in the DMS Capture Manager

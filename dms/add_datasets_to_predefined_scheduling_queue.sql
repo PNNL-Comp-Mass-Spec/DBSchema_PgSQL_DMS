@@ -8,14 +8,16 @@ CREATE OR REPLACE PROCEDURE public.add_datasets_to_predefined_scheduling_queue(I
 /****************************************************
 **
 **  Desc:
-**      Adds datasets to public.t_predefined_analysis_scheduling_queue
-**      so that they can be checked against the predefined analysis job rules
+**      Add datasets to public.t_predefined_analysis_scheduling_queue so that they can be checked against the predefined analysis job rules
 **
 **      Useful for processing a set of datasets after creating a new predefine
 **
 **  Arguments:
-**    _datasetIDs   List of dataset IDs (comma, tab, or newline separated)
-**    _infoOnly     When true, preview rows that would be added
+**    _datasetIDs       List of dataset IDs (comma, tab, or newline separated)
+**    _infoOnly         When true, preview rows that would be added
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Calling user username
 **
 **  Auth:   mem
 **  Date:   03/31/2016 mem - Initial Version

@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE pc.add_update_protein_collection(IN _collectionname 
 /****************************************************
 **
 **  Desc:
-**      Adds a new protein collection entry
+**      Add a new protein collection entry to pc.t_protein_collections
 **
 **  Arguments:
 **    _collectionName           Protein collection name (not the original .fasta file name)
@@ -19,7 +19,9 @@ CREATE OR REPLACE PROCEDURE pc.add_update_protein_collection(IN _collectionname 
 **    _primaryAnnotationTypeId  Primary annotation ID
 **    _numProteins              Number of proteins
 **    _numResidues              Number of residues
-**    _mode                     'add' or 'update'
+**    _mode                     Mode: 'add' or 'update'
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Returns:
 **    _returnCode will have the protein collection ID of the added or updated protein collection if no errors

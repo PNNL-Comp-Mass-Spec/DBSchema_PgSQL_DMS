@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_predefined_analysis_rule_table(_datasetnam
 /****************************************************
 **
 **  Desc:
-**     Returns a table of predefined analysis rules for given dataset
+**     Return a table of predefined analysis rules for given dataset
 **
 **     If the dataset name is invalid, or if no predefine rules are defined, returns a table with a warning in the message column (other columns will be empty)
 **

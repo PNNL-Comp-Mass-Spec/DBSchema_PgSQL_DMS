@@ -13,7 +13,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Clones a dataset, including creating a new requested run; does not clone any jobs
+**      Clone a dataset, including creating a new requested run; does not clone any jobs
 **
 **      This procedure is intended to be used in cases where a dataset's files have been manually duplicated on a storage server
 **      and we wish to run new analysis jobs against the cloned dataset using DMS

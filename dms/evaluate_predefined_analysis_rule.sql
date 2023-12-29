@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE public.evaluate_predefined_analysis_rule(IN _minleve
 **    _predefineFound       Output: true if a predefine analysis rule was found
 **    _predefineID          Output: predefine_id of the rule (if found)
 **    _minLevelNew          Output: new rule level to match the next time this procedure is called
+**    _message              Status message
 **
 **  Auth:   mem
 **  Date:   11/08/2022 mem - Initial version

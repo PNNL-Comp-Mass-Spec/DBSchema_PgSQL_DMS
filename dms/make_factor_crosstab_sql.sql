@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.make_factor_crosstab_sql(_collist text, _viewn
 /****************************************************
 **
 **  Desc:
-**      Returns dynamic SQL for a requested run factors crosstab query
+**      Return dynamic SQL for a requested run factors crosstab query
 **
 **      The calling procedure must create and populate temporary table Tmp_RequestIDs
 **          CREATE TEMP TABLE Tmp_RequestIDs (

@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.alter_entered_by_user_multi_id(IN _targettabl
 /****************************************************
 **
 **  Desc:
-**      Calls alter_entered_by_user for each entry in temporary table Tmp_ID_Update_List
+**      Call alter_entered_by_user for each entry in temporary table Tmp_ID_Update_List
 **
 **      The calling procedure must create and populate the temporary table:
 **        CREATE TEMP TABLE Tmp_ID_Update_List (TargetID int NOT NULL);

@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.test_get_function_info(_schemaname text DEFAUL
 /****************************************************
 **
 **  Desc:
-**      Tests using public.get_current_function_info() to auto-determine the schema and name of this function
+**      Test using public.get_current_function_info() to auto-determine the schema and name of this function
 **
 **  Arguments
 **    _schemaName   Schema name to use if the context info does not include a schema name before the object name

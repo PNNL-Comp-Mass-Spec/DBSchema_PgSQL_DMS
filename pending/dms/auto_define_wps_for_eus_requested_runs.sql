@@ -11,10 +11,10 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Looks for completed requested runs that have an EUS proposal, but for which the work package is 'none'
+**      Look for completed requested runs that have an EUS proposal, but for which the work package is 'none'
 **
-**      Looks for other uses of that EUS proposal that have a valid work package.
-**      If found, changes the WP from 'none' to the new work package
+**      Look for other uses of that EUS proposal that have a valid work package.
+**      If found, change the WP from 'none' to the new work package
 **
 **      Preference is given to recently used work packages
 **

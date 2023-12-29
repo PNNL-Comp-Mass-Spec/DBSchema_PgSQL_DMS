@@ -13,7 +13,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Deletes a row from t_param_entries for a given parameter file ID and entry details
+**      Delete a row from t_param_entries for a given parameter file ID and entry details
 **
 **      This only applies to SEQUEST parameter files, and is likely only used
 **      by the SEQUEST Parameter File Editor, which is obsolete

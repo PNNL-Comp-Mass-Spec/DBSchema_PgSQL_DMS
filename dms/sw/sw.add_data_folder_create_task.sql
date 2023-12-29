@@ -8,9 +8,9 @@ CREATE OR REPLACE PROCEDURE sw.add_data_folder_create_task(IN _pathlocalroot tex
 /****************************************************
 **
 **  Desc:
-**      Adds a new entry to T_Data_Folder_Create_Queue
-**      The Package Folder Create Manager (aka PkgFolderCreateManager)
-**      examines this table to look for folders that need to be created
+**      Add a new entry to T_Data_Folder_Create_Queue
+**
+**      The Package Folder Create Manager (aka PkgFolderCreateManager) examines this table to look for folders that need to be created
 **
 **  Arguments:
 **    _pathLocalRoot       Required, for example: F:\DataPkgs

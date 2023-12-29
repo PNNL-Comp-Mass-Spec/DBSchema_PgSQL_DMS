@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_new_freezer(IN _sourcefreezertag text DEF
 /****************************************************
 **
 **  Desc:
-**      Adds a new freezer's locations to t_material_locations by copying
+**      Add a new freezer's locations to t_material_locations by copying
 **      all of the active shelves, racks, rows, and columns in the source freezer
 **
 **      You must first manually add a row to t_material_freezers

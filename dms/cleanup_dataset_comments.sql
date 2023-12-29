@@ -10,6 +10,12 @@ CREATE OR REPLACE PROCEDURE public.cleanup_dataset_comments(IN _datasetids text,
 **  Desc:
 **      Remove error messages from dataset comments, provided the dataset state is Complete or Inactive
 **
+**  Arguments:
+**    _datasetIDs   Comma-separated list of dataset IDs
+**    _message      Status message
+**    _returnCode   Return code
+**    _infoOnly     When true, preview updates
+**
 **  Auth:   mem
 **  Date:   12/16/2017 mem - Initial version
 **          01/02/2018 mem - Check for 'Authentication failure' and "Error: NeedToAbortProcessing"

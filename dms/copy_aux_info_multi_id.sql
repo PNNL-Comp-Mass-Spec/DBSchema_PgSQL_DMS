@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.copy_aux_info_multi_id(IN _targetname text, I
 /****************************************************
 **
 **  Desc:
-**      Copies aux info from a source item to multiple targets
+**      Copy aux info from a source item to multiple targets
 **
 **  Arguments:
 **    _targetName           Target type name: 'Experiment', 'Biomaterial' (previously 'Cell Culture'), 'Dataset', or 'SamplePrepRequest'; see t_aux_info_target

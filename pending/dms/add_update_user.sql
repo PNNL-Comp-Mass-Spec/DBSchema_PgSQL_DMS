@@ -18,7 +18,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or updates an existing DMS user
+**      Add new or update an existing DMS user
 **
 **  Arguments:
 **    _username             Network login for the user (was traditionally D+Payroll number, but switched to last name plus 3 digits around 2011)

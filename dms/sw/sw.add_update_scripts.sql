@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_scripts(IN _script text, IN _descripti
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing scripts in sw.t_scripts
+**      Add new or edit existing scripts in sw.t_scripts
 **
 **  Arguments:
 **    _script               Script name

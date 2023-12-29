@@ -15,9 +15,9 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Examines jobs in t_analysis_job that are in state 19 = 'Special Proc. Waiting'
-**      For each, checks whether the special processing text now matches an existing job
-**      If a match is found, changes the job state to 1 = 'New'
+**      Examine jobs in t_analysis_job that are in state 19 = 'Special Proc. Waiting'
+**      For each, check whether the special processing text now matches an existing job
+**      If a match is found, change the job state to 1 = 'New'
 **
 **  Arguments:
 **    _waitThresholdHours                   Hours between when a job is created and when we'll start posting messages to the error log that the job is waiting too long

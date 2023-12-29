@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.update_actual_cpu_loading(IN _infoonly boolean DE
 /****************************************************
 **
 **  Desc:
-**      Updates Actual_CPU_Load based on T_Processor_Status
+**      Update actual_cpu_load based on t_processor_status
 **      (using Prog_Runner_Core_Usage values pushed by the Analysis Manager)
 **
 **  Auth:   mem

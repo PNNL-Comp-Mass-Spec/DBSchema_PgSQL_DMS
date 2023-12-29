@@ -8,11 +8,13 @@ CREATE OR REPLACE PROCEDURE pc.update_protein_collection_state(IN _proteincollec
 /****************************************************
 **
 **  Desc:
-**      Updates protein collection state in pc.t_protein_collections
+**      Update protein collection state in pc.t_protein_collections
 **
 **  Arguments:
 **    _proteinCollectionID      Protein collection ID
 **    _stateID                  State ID
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   kja
 **  Date:   07/28/2005

@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_aj_processor_analysis_tool_list(_processor
 /****************************************************
 **
 **  Desc:
-**      Builds delimited list of analysis tools
-**      for given analysis job processor ID
+**      Build delimited list of analysis tools for given analysis job processor ID
 **
 **  Return value: comma-separated list
 **

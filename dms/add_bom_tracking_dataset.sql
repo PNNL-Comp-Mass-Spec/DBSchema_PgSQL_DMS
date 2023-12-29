@@ -8,8 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_bom_tracking_dataset(IN _month text DEFAU
 /****************************************************
 **
 **  Desc:
-**      Adds new tracking dataset for the beginning of the month (BOM)
-**      for the given month, year, and instrument
+**      Add new tracking dataset for the beginning of the month (BOM) for the given month, year, and instrument
 **
 **      If _month is 'next', adds a tracking dataset for the beginning of the next month
 **

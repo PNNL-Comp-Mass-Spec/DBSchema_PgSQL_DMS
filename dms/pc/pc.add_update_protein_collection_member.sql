@@ -8,14 +8,16 @@ CREATE OR REPLACE PROCEDURE pc.add_update_protein_collection_member(IN _referenc
 /****************************************************
 **
 **  Desc:
-**      Adds or updates a protein collection member, updating table pc.t_protein_collection_members
+**      Add or update a protein collection member, updating table pc.t_protein_collection_members
 **
 **  Arguments:
 **    _referenceID          Protein reference ID, corresponding to a row in pc.t_protein_names
 **    _proteinID            Protein ID,           corresponding to a row in pc.t_proteins
 **    _proteinCollectionID  Protein collection ID
 **    _sortingIndex         Sorting index
-**    _mode                 'add' to add a new collection member, 'update' to udpate the sorting index of an existing collection member
+**    _mode                 Mode: 'add' to add a new collection member, 'update' to udpate the sorting index of an existing collection member
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Returns:
 **    If _mode is 'add',    _returnCode will be the member_id of the row added to t_protein_collection_members

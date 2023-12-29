@@ -25,7 +25,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Compares the param file entries in t_param_entries and t_param_file_mass_mods to find parameter files that have identical mass mods
+**      Compare the param file entries in t_param_entries and t_param_file_mass_mods to find parameter files that have identical mass mods
 **
 **  Arguments:
 **    _paramFileNameFilter              One or more parameter file name specifiers, separated by commas (names can contain % as a wildcard)

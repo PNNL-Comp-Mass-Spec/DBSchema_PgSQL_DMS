@@ -45,7 +45,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Generates dataset statistics for production instruments
+**      Generate dataset statistics for production instruments
 **
 **  Arguments:
 **    _startDate                Start date; if an empty string, will use 2 weeks before _endDate

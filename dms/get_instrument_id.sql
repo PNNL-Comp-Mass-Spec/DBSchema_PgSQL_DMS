@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_id(_instrumentname text DEFAULT
 /****************************************************
 **
 **  Desc:
-**      Gets InstrumentID for given instrument name
+**      Get InstrumentID for given instrument name
 **
 **  Return values: instrument ID if found, otherwise 0
 **

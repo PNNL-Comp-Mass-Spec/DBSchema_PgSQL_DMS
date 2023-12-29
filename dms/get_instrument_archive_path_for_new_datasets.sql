@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_archive_path_for_new_datasets(_
 /****************************************************
 **
 **  Desc:
-**      Returns the ID for the most appropriate archive path for the initial archive of new datasets uploaded for the given instrument
+**      Return the ID for the most appropriate archive path for the initial archive of new datasets uploaded for the given instrument
 **
 **      If the Instrument has Auto_Define_Storage_Path enabled in T_Instrument_Name,
 **      will auto-define the archive path based on the current year and quarter

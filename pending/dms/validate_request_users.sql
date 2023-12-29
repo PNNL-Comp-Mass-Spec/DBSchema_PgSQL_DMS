@@ -14,7 +14,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Validates the requested personnel and assigned personnel for a Data Analysis Request or Sample Prep Request
+**      Validate the requested personnel and assigned personnel for a Data Analysis Request or Sample Prep Request
 **
 **  Arguments:
 **    _requestName                      Request name

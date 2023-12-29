@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION cap.get_ctm_processor_assigned_instrument_list(_proce
 /****************************************************
 **
 **  Desc:
-**      Builds delimited list of assigned instruments for the given processor
+**      Build delimited list of assigned instruments for the given processor
 **
 **  Return value: comma-separated list
 **

@@ -10,6 +10,11 @@ CREATE OR REPLACE PROCEDURE cap.retry_capture_for_dms_reset_tasks(INOUT _message
 **  Desc:
 **      Retry capture for datasets that failed capture, but for which the dataset state in public.t_dataset is 1=New
 **
+**  Arguments:
+**    _message      Status message
+**    _returnCode   Return code
+**    _infoOnly     When true, preview the updates
+**
 **  Auth:   mem
 **  Date:   05/25/2011 mem - Initial version
 **          08/16/2017 mem - For capture task jobs with error 'Error running OpenChrom', only reset the DatasetIntegrity step

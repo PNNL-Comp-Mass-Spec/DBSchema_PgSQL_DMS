@@ -7,9 +7,8 @@ CREATE OR REPLACE FUNCTION public.get_instrument_dataset_type_list(_instrumentid
     AS $$
 /****************************************************
 **
-**  Desc:Get_Instrument_Group_Dataset_Type_List
-**  Builds delimited list of allowed dataset types
-**  for given instrument ID
+**  Desc:
+**      Build delimited list of allowed dataset types for given instrument ID
 **
 **  Return value: delimited list
 **

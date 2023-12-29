@@ -10,7 +10,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Assures that the dataset name associated with QC datasets matches the dataset name
+**      Assure that the dataset name associated with QC datasets matches the dataset name
 **
 **  Arguments:
 **    _infoOnly     When true, preview updates

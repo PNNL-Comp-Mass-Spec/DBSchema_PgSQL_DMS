@@ -6,8 +6,9 @@ CREATE OR REPLACE FUNCTION public.get_datasets_with_flanking_qcs(_startdate time
     LANGUAGE plpgsql
     AS $$
 /****************************************************
+**
 **  Desc:
-**      Shows the flanking QC datasets for each non-QC dataset with an acquisition time between _startDate and _endDate
+**      Show the flanking QC datasets for each non-QC dataset with an acquisition time between _startDate and _endDate
 **      Looks for QC datasets acquired within 32 days of the dataset's acquisition start time
 **
 **  Auth:   mem

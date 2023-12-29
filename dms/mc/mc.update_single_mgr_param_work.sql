@@ -8,15 +8,17 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_param_work(IN _paramname text, 
 /****************************************************
 **
 **  Desc:
-**      Changes single manager param for the EntryID values
-**      defined in temporary table Tmp_ParamValueEntriesToUpdate (created by the calling procedure)
+**      Change a single manager parameter for the EntryID values defined in temporary table Tmp_ParamValueEntriesToUpdate (created by the calling procedure)
 **
 **  Example table creation code:
 **    CREATE TEMP TABLE Tmp_ParamValueEntriesToUpdate (entry_id int NOT NULL)
 **
 **  Arguments:
-**    _paramName   The parameter name
-**    _newValue    The new value to assign for this parameter
+**    _paramName    The parameter name
+**    _newValue     The new value to assign for this parameter
+**    _callingUser  Calling user username
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   04/16/2009

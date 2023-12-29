@@ -32,7 +32,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits an existing RNA prep request
+**      Add new or edit an existing RNA prep request
 **
 **      This procedure is obsolete; RNA prep requests were last used in 2014
 **

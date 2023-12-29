@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.decode_base64(_encodedtext text) RETURNS text
 /****************************************************
 **
 **  Desc:
-**      Decodes the given text using base-64 encoding
+**      Decode the given text using base-64 encoding
 **
 **      From https://stackoverflow.com/a/69247729/1179467
 **

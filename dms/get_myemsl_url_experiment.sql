@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_myemsl_url_experiment(_experimentname text
 /****************************************************
 **
 **  Desc:
-**      Generates the MyEMSL URL required for viewing items stored for a given experiment
+**      Generate the MyEMSL URL required for viewing items stored for a given experiment
 **
 **  Auth:   mem
 **  Date:   09/12/2013

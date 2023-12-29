@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_capture_scripts(IN _script text, IN _
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing T_Scripts
+**      Add new or edit existing T_Scripts
 **
 **  Arguments:
 **    _script           Capture task script name

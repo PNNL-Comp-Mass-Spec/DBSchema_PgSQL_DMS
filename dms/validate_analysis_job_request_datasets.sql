@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.validate_analysis_job_request_datasets(IN _au
 /****************************************************
 **
 **  Desc:
-**      Validates datasets in temporary table Tmp_DatasetInfo
+**      Validate datasets in temporary table Tmp_DatasetInfo
 **
 **      The calling procedure must create Tmp_DatasetInfo and populate it with the dataset names;
 **      the remaining columns in the table will be populated by this procedure

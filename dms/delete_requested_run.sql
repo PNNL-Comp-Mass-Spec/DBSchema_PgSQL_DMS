@@ -11,8 +11,11 @@ CREATE OR REPLACE PROCEDURE public.delete_requested_run(IN _requestid integer DE
 **      Remove a requested run (and all its dependencies)
 **
 **  Arguments:
-**    _requestID          Requested run ID to delete
-**    _skipDatasetCheck   Set to true to allow deleting a requested run even if it has an associated dataset
+**    _requestID            Requested run ID to delete
+**    _skipDatasetCheck     Set to true to allow deleting a requested run even if it has an associated dataset
+**    _message              Status message
+**    _returnCode           Return code
+**    _callingUser          Calling user username
 **
 **  Auth:   grk
 **  Date:   02/23/2006

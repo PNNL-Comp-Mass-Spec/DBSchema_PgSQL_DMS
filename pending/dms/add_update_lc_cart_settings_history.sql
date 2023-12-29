@@ -30,7 +30,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits an existing LC cart settings history note
+**      Add new or edit an existing LC cart settings history note
 **
 **      This procedure is obsolete; it was last used in 2009
 **

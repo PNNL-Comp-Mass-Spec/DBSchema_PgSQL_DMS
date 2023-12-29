@@ -13,7 +13,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates a single material location item
+**      Update a single material location item
 **
 **      Only allows updating the location comment and state (Active/Inactive)
 **

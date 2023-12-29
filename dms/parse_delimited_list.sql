@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.parse_delimited_list(_delimitedlist text, _del
 /****************************************************
 **
 **  Desc:
-**      Parses the text in _delimitedList and returns a table containing the values
+**      Parse the text in _delimitedList and return a table containing the values
 **
 **      _delimitedList should be of the form 'Value1,Value2'
 **

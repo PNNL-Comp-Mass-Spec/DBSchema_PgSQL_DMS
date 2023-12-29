@@ -8,12 +8,14 @@ CREATE OR REPLACE PROCEDURE pc.add_naming_authority(IN _name text, IN _descripti
 /****************************************************
 **
 **  Desc:
-**      Adds or updates an annotation naming authority in pc.t_naming_authorities
+**      Add or update an annotation naming authority in pc.t_naming_authorities
 **
 **  Arguments:
 **    _name             Authority name
 **    _description      Description
 **    _webAddress       Website URL
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Returns:
 **    _returnCode will have the naming authority ID if a new row was added to pc.t_naming_authorities

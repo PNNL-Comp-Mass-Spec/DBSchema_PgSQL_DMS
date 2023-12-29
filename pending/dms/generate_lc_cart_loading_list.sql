@@ -26,7 +26,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Generates a sample loading list for given LC cart
+**      Generate a sample loading list for given LC cart
 **
 **      This function is likely unused in 2022, since cart_column (cart column ID) in t_requested_run has only had null values since September 2020,
 **      and the function raises a warning and exits if any of the matching requested runs has a null cart column ID value

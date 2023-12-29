@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_params(IN _toolna
 /****************************************************
 **
 **  Desc:
-**      Validates the organism DB and/or protein collection options
+**      Validate the organism DB and/or protein collection options
 **
 **  Arguments:
 **    _toolName             If blank, will assume _orgDbReqd=1

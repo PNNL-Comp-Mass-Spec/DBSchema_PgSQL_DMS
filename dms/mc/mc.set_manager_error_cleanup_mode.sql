@@ -8,17 +8,20 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text D
 /****************************************************
 **
 **  Desc:
-**      Sets ManagerErrorCleanupMode to _cleanupMode for the given list of managers
-**      If _mgrList is blank, then sets it to _cleanupMode for all "Analysis Tool Manager" managers
+**      Set ManagerErrorCleanupMode to _cleanupMode for the given list of managers
+**      If _mgrList is blank, set it to _cleanupMode for all "Analysis Tool Manager" managers
 **
 **  Arguments:
-**    _mgrList       Comma-separated list of manager names; supports wildcards. If blank, selects all managers of type 11 (Analysis Tool Manager)
-**    _cleanupMode   0 = No auto cleanup, 1 = Attempt auto cleanup once, 2 = Auto cleanup always
-**    _showTable     Set to true to show the cleanup mode for the specified managers
+**    _mgrList      Comma-separated list of manager names; supports wildcards. If blank, selects all managers of type 11 (Analysis Tool Manager)
+**    _cleanupMode  Cleanup mode: 0 = No auto cleanup, 1 = Attempt auto cleanup once, 2 = Auto cleanup always
+**    _showTable    Set to true to show the cleanup mode for the specified managers
+**    _infoOnly     When true, preview updates
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Example usage:
 **
-**      CALL mc.set_manager_error_cleanup_mode('Pub-10-1,Pub-11%', 1, _infoonly => true);
+**      CALL mc.set_manager_error_cleanup_mode('Pub-10-1,Pub-11%', 1, _infoOnly => true);
 **
 **  Auth:   mem
 **  Date:   09/10/2009 mem - Initial version

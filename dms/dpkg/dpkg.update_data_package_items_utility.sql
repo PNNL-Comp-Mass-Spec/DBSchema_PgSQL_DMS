@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE dpkg.update_data_package_items_utility(IN _comment t
 /****************************************************
 **
 **  Desc:
-**      Updates data package items in temp table Tmp_DataPackageItems according to the mode
+**      Update data package items in temp table Tmp_DataPackageItems according to the mode
 **
 **      CREATE TEMP TABLE Tmp_DataPackageItems (
 **          DataPackageID int not null,   -- Data package ID

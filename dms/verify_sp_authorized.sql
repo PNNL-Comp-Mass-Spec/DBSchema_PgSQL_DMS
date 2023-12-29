@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 /****************************************************
 **
 **  Desc:
-**      Verifies that a user can use the given procedure
+**      Verify that a user can use the given procedure
 **      Authorization is controlled via table t_sp_authorization (in the target schema)
 **
 **  Arguments:

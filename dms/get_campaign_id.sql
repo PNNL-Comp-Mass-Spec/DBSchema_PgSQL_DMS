@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_campaign_id(_campaignname text DEFAULT '':
 /****************************************************
 **
 **  Desc:
-**      Gets campaignID for given campaign name
+**      Get campaignID for given campaign name
 **
 **  Return values: campaign ID if found, otherwise 0
 **

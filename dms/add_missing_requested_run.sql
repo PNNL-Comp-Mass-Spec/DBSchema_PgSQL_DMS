@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_missing_requested_run(IN _dataset text, I
 /****************************************************
 **
 **  Desc:
-**      Creates a requested run for the given dataset, provided it doesn't already have a requested run
+**      Create a requested run for the given dataset, provided it doesn't already have a requested run
 **
 **      The requested run will be named 'AutoReq_DatasetName'
 **
@@ -18,6 +18,15 @@ CREATE OR REPLACE PROCEDURE public.add_missing_requested_run(IN _dataset text, I
 **
 **      In contrast, this procedure is intended to be run via automation
 **      to add requested runs to existing datasets that don't yet have one
+**
+**  Arguments:
+**    _dataset          Dataset name
+**    _eusProposalID    EUS proposal ID
+**    _eusUsageType     EUS usage type
+**    _eusUsersList     EUS User ID (integer); also supports the form 'Baker, Erin (41136)'. Prior to February 2020, supported a comma-separated list of EUS user IDs
+**    _infoonly         When true, preview updates
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   10/20/1010 mem - Initial version

@@ -8,8 +8,13 @@ CREATE OR REPLACE PROCEDURE public.check_data_integrity(IN _logerrors boolean DE
 /****************************************************
 **
 **  Desc:
-**      Run miscellaneous data integrity checks
+**      Look for datasets that map to multiple requested runs
 **      Intended to be run daily with _logErrors => true
+**
+**  Arguments:
+**    _logErrors    When true, log an error message if one or more datasets is associated with multiple requested runs
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   06/10/2016 mem - Initial Version

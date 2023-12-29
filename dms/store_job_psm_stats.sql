@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.store_job_psm_stats(IN _job integer, IN _msgf
 /****************************************************
 **
 **  Desc:
-**      Updates the PSM stats in t_analysis_job_psm_stats for the specified analysis job
+**      Update the PSM stats in t_analysis_job_psm_stats for the specified analysis job
 **
 **  Arguments:
 **    _job                                  Job number

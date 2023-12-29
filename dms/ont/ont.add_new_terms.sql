@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_terms(_ontologyname public.citext DEFAULT
 /****************************************************
 **
 **  Desc:
-**      Adds new ontology terms to the ontology-specific table
+**      Add new ontology terms to the ontology-specific table
 **      For example, if _ontologyName is 'NEWT', will append data to table ont.t_cv_newt
 **      Does not update existing items
 **

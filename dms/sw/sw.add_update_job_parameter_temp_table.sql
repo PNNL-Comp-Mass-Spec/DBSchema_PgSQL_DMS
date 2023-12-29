@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_job_parameter_temp_table(IN _job integ
 /****************************************************
 **
 **  Desc:
-**      Adds or updates an entry in the XML parameters stored in temporary table Tmp_Job_Parameters for a given job
+**      Add or update an entry in the XML parameters stored in temporary table Tmp_Job_Parameters for a given job
 **      Alternatively, use _deleteParam = true to delete the given parameter
 **
 **      This procedure is nearly identical to sw.add_update_job_parameter(), but add_update_job_parameter() updates table sw.t_job_parameters

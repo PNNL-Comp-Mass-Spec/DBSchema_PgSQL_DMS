@@ -11,7 +11,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the storage and archive locations for one or more datasets to use
+**      Update the storage and archive locations for one or more datasets to use
 **      the auto-defined storage and archive paths instead of the current storage path
 **
 **      Only valid for instruments that have auto_define_storage_path enabled in t_instrument_name

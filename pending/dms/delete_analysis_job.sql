@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Deletes given analysis job from the analysis job table and all referencing tables
+**      Delete given analysis job from the analysis job table and all referencing tables
 **
 **  Arguments:
 **    _job              Analysis job to delete

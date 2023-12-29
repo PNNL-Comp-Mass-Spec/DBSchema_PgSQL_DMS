@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_job_psm_stats(_job integer) RETURNS text
 /****************************************************
 **
 **  Desc:
-**      Builds delimited list of PSM stats for given analysis job
+**      Build delimited list of PSM stats for given analysis job
 **
 **  Auth:   mem
 **  Date:   02/22/2012 mem - Initial version

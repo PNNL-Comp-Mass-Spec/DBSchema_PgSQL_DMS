@@ -8,7 +8,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Validates job and dataset states vs. sw.t_jobs and cap.t_tasks
+**      Validate job and dataset states vs. sw.t_jobs and cap.t_tasks
 **
 **  Arguments:
 **    _infoOnly     When true, preview updates

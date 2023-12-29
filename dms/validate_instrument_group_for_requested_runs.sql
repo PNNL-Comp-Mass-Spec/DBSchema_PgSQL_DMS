@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.validate_instrument_group_for_requested_runs(
 /****************************************************
 **
 **  Desc:
-**      Validates that the specified instrument group is valid for the dataset types defined for the requested runs in _reqRunIDList
+**      Validate that the specified instrument group is valid for the dataset types defined for the requested runs in _reqRunIDList
 **
 **  Arguments:
 **    _reqRunIDList         Comma-separated list of requested run IDs

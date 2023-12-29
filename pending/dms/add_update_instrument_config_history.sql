@@ -17,7 +17,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits an existing instrument config entry
+**      Add new or edit an existing instrument config entry
 **
 **  Arguments:
 **    _id               Input/output: entry_id in t_instrument_config_history

@@ -8,10 +8,11 @@ CREATE OR REPLACE PROCEDURE public.backup_storage_state(INOUT _message text DEFA
 /****************************************************
 **
 **  Desc:
-**      Copies current contents of storage and
-**      instrument tables into their backup tables
+**      Copy current contents of storage and instrument tables into their backup tables
 **
-**  Return values: 0: failure, otherwise, experiment ID
+**  Arguments:
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   grk
 **  Date:   04/18/2002

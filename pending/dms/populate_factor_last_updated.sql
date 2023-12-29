@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Populates the last_updated column in table t_factors using t_factor_log
+**      Populate the last_updated column in table t_factors using t_factor_log
 **
 **  Arguments:
 **    _infoOnly         When true, preview the updates

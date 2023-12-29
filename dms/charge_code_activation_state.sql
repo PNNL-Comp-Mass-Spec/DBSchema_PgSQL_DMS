@@ -7,9 +7,10 @@ CREATE OR REPLACE FUNCTION public.charge_code_activation_state(_deactivated text
     AS $$
 /****************************************************
 **
-**  Desc:   Computes the Activation_State for a charge code, given the specified properties
+**  Desc:
+**      Compute the Activation_State for a charge code, given the specified properties
 **
-**          This function is used by trigger trig_u_Charge_Code to auto-define Activation_State in T_Charge_Code
+**      This function is used by trigger trig_u_Charge_Code to auto-define Activation_State in T_Charge_Code
 **
 **  Arguments:
 **    _deactivated          N or Y; assumed to never be null since not null in T_Charge_State

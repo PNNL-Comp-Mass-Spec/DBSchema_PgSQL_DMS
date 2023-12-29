@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_step_tools(IN _name text, IN _type tex
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing tools in sw.t_step_tools
+**      Add new or edit existing tools in sw.t_step_tools
 **
 **  Arguments:
 **    _name                     Step tool name

@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_batch_group_requested_run_list(_batchgroup
 /****************************************************
 **
 **  Desc:
-**      Builds a delimited list of the requested run IDs in a requested run batch group
+**      Build a delimited list of the requested run IDs in a requested run batch group
 **
 **  Return value: Comma-separated list
 **

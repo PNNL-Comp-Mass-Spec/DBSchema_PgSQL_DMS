@@ -12,7 +12,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates organisms associated with a single biomaterial (cell_culture) item
+**      Update organisms associated with a single biomaterial (cell_culture) item
 **
 **  Arguments:
 **    _biomaterialName  Biomaterial name, aka cell culture

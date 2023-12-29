@@ -10,7 +10,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Deletes rows from t_param_entries and t_param_file_mass_mods for a given parameter file ID
+**      Delete rows from t_param_entries and t_param_file_mass_mods for a given parameter file ID
 **
 **  Arguments:
 **    _paramFileID  Parameter file ID

@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_dataset_
 /****************************************************
 **
 **  Desc:
-**      Validates that the protein collection names in _protCollNameList include protein collections
+**      Validate that the protein collection names in _protCollNameList include protein collections
 **      for the internal standards associated with the datasets listed in temp table Tmp_DatasetList
 **
 **      The calling procedure must create and populate the temporary table

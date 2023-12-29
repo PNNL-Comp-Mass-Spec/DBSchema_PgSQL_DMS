@@ -8,7 +8,13 @@ CREATE OR REPLACE PROCEDURE cap.cache_dataset_info_xml(IN _datasetid integer, IN
 /****************************************************
 **
 **  Desc:
-**      Caches the XML-based dataset info in table cap.t_dataset_info_xml
+**      Cache the XML-based dataset info in table cap.t_dataset_info_xml
+**
+**  Arguments:
+**    _datasetID            Dataset ID
+**    _datasetInfoXML       Dataset info XML
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   mem
 **  Date:   05/03/2010 mem - Initial version

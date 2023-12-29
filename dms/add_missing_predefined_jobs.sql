@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_missing_predefined_jobs(IN _infoonly bool
 /****************************************************
 **
 **  Desc:
-**      Looks for datasets that don't have predefined analysis jobs but possibly should; calls schedule_predefined_analysis_jobs for each
+**      Look for datasets that don't have predefined analysis jobs but possibly should; calls schedule_predefined_analysis_jobs for each
 **
 **      This procedure is intended to be run once per day to add missing jobs for datasets created within the last 30 days (but more than 12 hours ago)
 **

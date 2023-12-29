@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION pc.get_unique_protein_ids(_collection_1 integer, _col
 /****************************************************
 **
 **  Desc:
-**      Shows the Protein_IDs present in collection_1 that are not in collection_2
+**      Show the Protein_IDs present in collection_1 that are not in collection_2
 **
 **  Auth:   kja
 **  Date:   04/16/2004 kja - Initial version

@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_data_analysis_request_batch_list(_dataanal
 /****************************************************
 **
 **  Desc:
-**      Builds delimited list of batch IDs
-**      associated with the given data analysis request
+**      Build delimited list of batch IDs associated with the given data analysis request
 **
 **  Return value: comma-separated list
 **

@@ -11,7 +11,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Sets archive state of dataset record given by _datasetName according to the given completion code
+**      Set archive state of dataset record given by _datasetName according to the given completion code
 **
 **  Arguments:
 **    _datasetName      Dataset name

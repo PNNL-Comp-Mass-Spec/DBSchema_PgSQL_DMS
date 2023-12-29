@@ -8,8 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_batch_requested_run_list(_batchid integer)
 /****************************************************
 **
 **  Desc:
-**      Builds delimited list of requested runs
-**      associated with the given batch
+**      Build delimited list of requested runs associated with the given batch
 **
 **  Return value: Comma-separated list
 **

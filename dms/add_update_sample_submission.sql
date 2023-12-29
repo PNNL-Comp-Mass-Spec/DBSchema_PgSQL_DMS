@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_sample_submission(INOUT _id intege
 /****************************************************
 **
 **  Desc:
-**      Adds new or edits existing item in T_Sample_Submission
+**      Add new or edit existing item in T_Sample_Submission
 **
 **  Arguments:
 **    _id                   Input/output: sample submission ID

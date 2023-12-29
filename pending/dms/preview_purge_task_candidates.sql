@@ -13,7 +13,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Returns the next _datasetsPerShare datasets that would be purged on the specified server,
+**      Return the next _datasetsPerShare datasets that would be purged on the specified server,
 **      or on a series of servers (if _storageServerName and/or _storageVol are blank)
 **
 **      Calls procedure request_purge_task() using _infoOnly = true

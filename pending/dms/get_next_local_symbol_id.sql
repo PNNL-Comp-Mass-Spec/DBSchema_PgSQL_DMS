@@ -9,7 +9,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Gets next available local symbol ID for a given parameter file ID
+**      Get next available local symbol ID for a given parameter file ID
 **
 **  Returns:
 **      Next available local symbol ID (as an integer)

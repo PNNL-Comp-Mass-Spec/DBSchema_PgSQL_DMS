@@ -8,9 +8,8 @@ CREATE OR REPLACE PROCEDURE public.set_capture_task_complete(IN _datasetname tex
 /****************************************************
 **
 **  Desc:
-**      Determines new dataset state based on completion code,
-**      then calls do_dataset_completion_actions, plus also
-**      cleanup_dataset_comments if the new state is 3
+**      Determine new dataset state based on completion code, then callc do_dataset_completion_actions,
+**      plus also cleanup_dataset_comments if the new state is 3
 **
 **  Arguments:
 **    _datasetName      Dataset name

@@ -8,14 +8,16 @@ CREATE OR REPLACE PROCEDURE pc.promote_protein_collection_state(IN _addnewprotei
 /****************************************************
 **
 **  Desc:
-**      Looks for protein collections with a state of 1 in pc.t_protein_collections
-**      For each, looks for analysis jobs in public.t_analysis_job that use the given protein collection
-**      If any jobs are found, updates the protein collection state to 3
+**      Look for protein collections with a state of 1 in pc.t_protein_collections
+**      For each, look for analysis jobs in public.t_analysis_job that use the given protein collection
+**      If any jobs are found, update the protein collection state to 3
 **
 **  Arguments:
 **    _addNewProteinHeaders     When true, call pc.add_new_protein_headers to add new proteins to pc.t_protein_headers
 **    _mostRecentMonths         Used to filter which protein collections will be examined (if 0 or negative, will use 12 instead)
 **    _infoOnly                 When true, preview updates
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   mem
 **  Date:   09/13/2007

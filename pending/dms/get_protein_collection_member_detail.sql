@@ -25,7 +25,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Gets detailed information regarding a single protein in a protein collection
+**      Get detailed information regarding a single protein in a protein collection
 **
 **      This is called from the Protein Collection Member detail report, for example:
 **      https://dms2.pnl.gov/protein_collection_members/show/13363564

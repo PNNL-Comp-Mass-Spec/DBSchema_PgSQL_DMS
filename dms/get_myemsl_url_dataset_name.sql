@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_myemsl_url_dataset_name(_datasetname text)
 /****************************************************
 **
 **  Desc:
-**      Generates the MyEMSL URL required for viewing items stored for a given dataset
+**      Generate the MyEMSL URL required for viewing items stored for a given dataset
 **
 **  Auth:   mem
 **  Date:   09/12/2013

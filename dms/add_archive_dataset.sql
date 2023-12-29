@@ -12,6 +12,8 @@ CREATE OR REPLACE PROCEDURE public.add_archive_dataset(IN _datasetid integer, IN
 **
 **  Arguments:
 **    _datasetID    Dataset ID
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   grk
 **  Date:   01/26/2001

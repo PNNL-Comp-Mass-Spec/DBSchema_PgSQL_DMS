@@ -10,7 +10,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Deletes the given experiment group (but not any associated experiments)
+**      Delete the given experiment group (but not any associated experiments)
 **
 **  Arguments:
 **    _groupID      Experiment group ID

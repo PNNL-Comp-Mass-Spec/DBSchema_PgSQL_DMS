@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_missing_filter_criteria(IN _filtersetid i
 /****************************************************
 **
 **  Desc:
-**      Examines the given filter set and makes sure all of its groups contain all of the criteria
+**      Examine the given filter set and makes sure all of its groups contain all of the criteria
 **
 **  Arguments:
 **    _filterSetID                                  Filter set ID

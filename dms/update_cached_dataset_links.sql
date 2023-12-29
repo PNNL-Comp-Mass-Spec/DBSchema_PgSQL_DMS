@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_dataset_links(IN _processingmod
 /****************************************************
 **
 **  Desc:
-**      Updates t_cached_dataset_links, which is used by the dataset detail report view (v_dataset_detail_report_ex)
+**      Update t_cached_dataset_links, which is used by the dataset detail report view (v_dataset_detail_report_ex)
 **
 **  Arguments:
 **    _processingMode   Processing mode:

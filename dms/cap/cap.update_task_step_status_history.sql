@@ -8,8 +8,7 @@ CREATE OR REPLACE PROCEDURE cap.update_task_step_status_history(IN _minimumtimei
 /****************************************************
 **
 **  Desc:
-**      Appends new entries to cap.t_task_step_status_history,
-**      summarizing the number of capture task job steps in each state
+**      Append new entries to cap.t_task_step_status_history, summarizing the number of capture task job steps in each state
 **
 **  Arguments:
 **    _minimumTimeIntervalMinutes                   Set this to 0 to force the addition of new data to cap.t_task_step_status_history

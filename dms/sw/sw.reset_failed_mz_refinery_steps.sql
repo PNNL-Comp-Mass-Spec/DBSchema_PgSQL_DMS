@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.reset_failed_mz_refinery_steps(IN _infoonly boole
 /****************************************************
 **
 **  Desc:
-**      Resets Mz_Refinery in-progress job steps if a manager reports "flag file exists" in public.t_log_entries
+**      Reset Mz_Refinery in-progress job steps if a manager reports "flag file exists" in public.t_log_entries
 **
 **      This procedure runs on a regular basis to look for cases where the Analysis Manager crashed while running Mz_Refinery (using Java)
 **      In addition to a "flag file" message, there must be an in-progress Mz_Refinery job step reporting a Job Progress of 0 %

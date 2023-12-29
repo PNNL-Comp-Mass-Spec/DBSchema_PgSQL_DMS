@@ -8,11 +8,19 @@ CREATE OR REPLACE PROCEDURE public.add_update_archive_path(INOUT _archivepathid 
 /****************************************************
 **
 **  Desc:
-**      Adds new or updates existing archive paths in database
+**      Add new or update existing archive paths in database
 **
 **  Arguments:
-**    _archivePathID    ID value (as a string)
-**    _mode             'add' or 'update'
+**    _archivePathID        Archive path ID value (as a string)
+**    _archivePath          Archive path,        e.g. /archive/dmsarch/LTQ_Orb_3/2009_2
+**    _archiveServer        Archive server name, e.g. agate.emsl.pnl.gov
+**    _instrumentName       Instrument name
+**    _networkSharePath     Network share path,  e.g. \\agate.emsl.pnl.gov\dmsarch\LTQ_Orb_3\2009_2
+**    _archiveNote          Archive note
+**    _archiveFunction      Archive function: 'Active' or 'Old'
+**    _mode                 Mode: 'add' or 'update'
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   jds
 **  Date:   06/24/2004 jds - Initial release
@@ -98,7 +106,7 @@ BEGIN
     SELECT archive_path_id
     INTO _archiveIdCheck
     FROM t_archive_path
-    WHERE archive_path = _archivePath;
+    WHERE archive_path = _archivePath::citext;
 
     -- Cannot create an entry that already exists
     --

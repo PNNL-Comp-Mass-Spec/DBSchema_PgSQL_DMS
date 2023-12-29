@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work(IN _state text DEFA
 /****************************************************
 **
 **  Desc:
-**      Updates parameters to new values for jobs in temporary table Tmp_AnalysisJobs
+**      Update parameters to new values for jobs in temporary table Tmp_AnalysisJobs
 **
 **      The calling table must create table Tmp_AnalysisJobs
 **

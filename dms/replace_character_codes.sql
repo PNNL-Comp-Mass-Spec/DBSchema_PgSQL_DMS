@@ -8,7 +8,8 @@ CREATE OR REPLACE FUNCTION public.replace_character_codes(_text text) RETURNS te
 /****************************************************
 **
 **  Desc:
-**      Replaces HTML character codes with punctuation marks
+**      Replace HTML character codes with punctuation marks
+**
 **      Uses a case sensitive search for:
 **        &quot;    (double quote)
 **        &#34;     (double quote, via numeric ID)

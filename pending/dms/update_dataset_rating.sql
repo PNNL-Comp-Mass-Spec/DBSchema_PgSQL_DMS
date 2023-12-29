@@ -13,7 +13,7 @@ AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the rating for the given datasets by calling procedure update_datasets
+**      Update the rating for the given datasets by calling procedure update_datasets
 **
 **  Arguments:
 **    _datasets     Comma-separated list of dataset names

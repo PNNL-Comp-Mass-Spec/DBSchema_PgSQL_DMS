@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_requested_run_to_existing_dataset(IN _dat
 /****************************************************
 **
 **  Desc:
-**      Creates a requested run and associates it with the given dataset
+**      Create a requested run and associates it with the given dataset
 **      (throws an exception if an existing requested run already references _datasetID)
 **
 **      Example auto-created requested run names:
@@ -27,6 +27,9 @@ CREATE OR REPLACE PROCEDURE public.add_requested_run_to_existing_dataset(IN _dat
 **    _datasetName          Dataset name
 **    _templateRequestID    Existing requested run to use for looking up some parameters for the new requested run (throws an exception if this is null or 0)
 **    _mode                 Compatibility with web entry page and possible future use; supports 'add', 'add-debug', and 'preview'
+**    _message              Status message
+**    _returnCode           Return code
+**    _callingUser          Calling user username
 **
 **  Auth:   grk
 **  Date:   05/23/2011 grk - Initial release

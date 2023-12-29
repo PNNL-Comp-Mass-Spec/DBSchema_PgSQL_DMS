@@ -8,9 +8,9 @@ CREATE OR REPLACE FUNCTION public.get_fasta_file_path(_fastafilename public.cite
 /****************************************************
 **
 **  Desc:
-**      Returns the appropriate path to the FASTA file based on file Name and organism Name
-**      If the FASTA file name is blank or 'na', returns the legacy path for the given organism
-**      Otherwise, looks for the file in pc.T_Archived_Output_Files
+**      Return the appropriate path to the FASTA file based on file Name and organism Name
+**      If the FASTA file name is blank or 'na', return the legacy path for the given organism
+**      Otherwise, look for the file in pc.T_Archived_Output_Files
 **      or V_Legacy_FASTA_File_Paths
 **
 **  Return values: Path to the directory containing the Fasta file

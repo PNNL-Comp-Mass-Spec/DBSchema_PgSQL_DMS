@@ -8,8 +8,8 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_device_info_xml(IN _datasetid 
 /****************************************************
 **
 **  Desc:
-**      Adds (or updates) information about the device (or devices) for a dataset
-**      Adds new devices to T_Dataset_Device as necessary
+**      Add (or update) information about the device (or devices) for a dataset
+**      Add new devices to T_Dataset_Device as necessary
 **
 **      Device information is provided via XML, using the same format as recognized by update_dataset_file_info_xml, for example:
 **

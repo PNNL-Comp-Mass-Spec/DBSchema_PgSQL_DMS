@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_file_info_xml(IN _datasetid in
 /****************************************************
 **
 **  Desc:
-**      Updates the information for the dataset specified by _datasetID
+**      Update the information for the dataset specified by _datasetID
 **
 **      If _datasetID is 0, will use the dataset name defined in _datasetInfoXML
 **      If _datasetID is non-zero, will validate that the Dataset Name in the XML corresponds to the dataset ID specified by _datasetID

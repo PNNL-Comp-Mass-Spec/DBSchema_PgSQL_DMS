@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.validate_analysis_job_parameters(IN _toolname
 /****************************************************
 **
 **  Desc:
-**      Validates analysis job parameters and returns internal values converted from external values (input arguments)
+**      Validate analysis job parameters and return internal values converted from external values (input arguments)
 **
 **      The calling procedure must create Tmp_DatasetInfo and populate it with the dataset names;
 **      the remaining columns in the table will be populated when this procedure calls validate_analysis_job_request_datasets

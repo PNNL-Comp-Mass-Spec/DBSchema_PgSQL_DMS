@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.auto_resolve_name_to_username(IN _namesearchs
 /****************************************************
 **
 **  Desc:
-**      Looks for entries in t_users that match _nameSearchSpec (supports % as a wildcard)
+**      Look for entries in t_users that match _nameSearchSpec (supports % as a wildcard)
 **      Updates _matchCount with the number of matching entries
 **      If a match is found, also updates _matchingUsername and _matchingUserID with the first match
 **

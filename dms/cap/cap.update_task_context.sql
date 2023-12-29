@@ -8,21 +8,24 @@ CREATE OR REPLACE PROCEDURE cap.update_task_context(IN _bypassdms boolean DEFAUL
 /****************************************************
 **
 **  Desc:
-**      Updates capture task jobs and job steps, including importing new capture task jobs and updating job and step states
+**      Update capture task jobs and job steps, including importing new capture task jobs and updating job and step states
+**
+**      When _infoOnly is false and _debugMode is true, cap.move_tasks_to_main_tables stores the contents of the temporary tables in the following tables
+**        cap.T_Tmp_New_Tasks
+**        cap.T_Tmp_New_Task_Steps
+**        cap.T_Tmp_New_Task_Step_Dependencies
+**        cap.T_Tmp_New_Task_Parameters
 **
 **  Arguments:
-**    _bypassDMS               If false, lookup the bypass mode in cap.t_process_step_control; otherwise, do not update states in tables in the public schema
-**    _maxJobsToProcess        Maximum number of jobs to process
-**    _logIntervalThreshold    If this procedure runs longer than this threshold (in seconds), status messages will be posted to the log
-**    _loggingEnabled          Set to true to immediately enable progress logging; if false, logging will auto-enable if _logIntervalThreshold seconds elapse
-**    _loopingUpdateInterval   Seconds between detailed logging while looping sets of capture task jobs or steps to process
-**    _infoOnly                True to preview changes that would be made
-**    _debugMode               When true, show additional information when calling cap.create_task_steps (which calls cap.create_steps_for_task, cap.finish_task_creation, and cap.move_tasks_to_main_tables)
-**                             Additionally, cap.move_tasks_to_main_tables stores the contents of the temporary tables in the following tables when _infoOnly is false and _debugMode is true
-**                               cap.T_Tmp_New_Tasks
-**                               cap.T_Tmp_New_Task_Steps
-**                               cap.T_Tmp_New_Task_Step_Dependencies
-**                               cap.T_Tmp_New_Task_Parameters
+**    _bypassDMS                If false, lookup the bypass mode in cap.t_process_step_control; otherwise, do not update states in public schema tables
+**    _maxJobsToProcess         Maximum number of jobs to process
+**    _logIntervalThreshold     If this procedure runs longer than this threshold (in seconds), status messages will be posted to the log
+**    _loggingEnabled           Set to true to immediately enable progress logging; if false, logging will auto-enable if _logIntervalThreshold seconds elapse
+**    _loopingUpdateInterval    Seconds between detailed logging while looping sets of capture task jobs or steps to process
+**    _infoOnly                 True to preview changes that would be made
+**    _debugMode                When true, show additional information when calling cap.create_task_steps (which calls cap.create_steps_for_task, cap.finish_task_creation, and cap.move_tasks_to_main_tables)
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   grk
 **  Date:   09/02/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)

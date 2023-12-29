@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_cart_parameters(IN _mode text, IN _req
 /****************************************************
 **
 **  Desc:
-**      Changes cart parameters for given requested run
+**      Change cart parameters for given requested run
 **      This procedure is used by add_update_dataset
 **
 **  Arguments:
