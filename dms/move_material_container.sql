@@ -21,7 +21,7 @@ CREATE OR REPLACE PROCEDURE public.move_material_container(IN _container text, I
 **    _newLocation      New location
 **    _newResearcher    New researcher (optional); supports 'Zink, Erika M', 'Zink, Erika M (D3P704)', or 'D3P704'
 **    _infoOnly         When true, preview updates
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
 **
 **  Auth:   mem

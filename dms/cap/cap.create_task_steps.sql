@@ -8,18 +8,21 @@ CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''
 /****************************************************
 **
 **  Desc:
-**      Make entries in the capture task job steps table and the
-**      job step dependency table for each newly added capture task job,
+**      Make entries in the capture task job steps table and the job step dependency table for each newly added capture task job,
 **      as defined by the script for that job
 **
 **  Arguments:
-**    _message                 Output: status message
-**    _debugMode               When setting this to true, you can optionally specify a capture task job using _existingJob to view the steps that would be created for that job
-**    _mode                    Processing mode; the only supported mode for capture task jobs is 'CreateFromImportedJobs'
-**    _existingJob             Only used if _debugMode is true
-**    _logIntervalThreshold    If this procedure runs longer than this threshold, status messages will be posted to the log
-**    _loggingEnabled          Set to true to immediately enable progress logging; if false, logging will auto-enable if _logIntervalThreshold seconds elapse
-**    _loopingUpdateInterval   Seconds between detailed logging while looping through the dependencies,
+**    _message                  Status message
+**    _returnCode               Return code
+**    _debugMode                When setting this to true, you can optionally specify a capture task job using _existingJob to view the steps that would be created for that job
+**    _mode                     Processing mode; the only supported mode for capture task jobs is 'CreateFromImportedJobs'
+**    _existingJob              Only used if _debugMode is true
+**    _extensionScriptName      Extension script name
+**    _maxJobsToProcess         Maximum number of jobs to process
+**    _logIntervalThreshold     If this procedure runs longer than this threshold, status messages will be posted to the log
+**    _loggingEnabled           Set to true to immediately enable progress logging; if false, logging will auto-enable if _logIntervalThreshold seconds elapse
+**    _loopingUpdateInterval    Seconds between detailed logging while looping through the dependencies,
+**    _infoonly                 When true, preview updates
 **
 **  Auth:   grk
 **  Date:   09/02/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
@@ -349,7 +352,7 @@ BEGIN
             SELECT contents
             INTO _scriptXML2
             FROM cap.t_scripts
-            WHERE script = extensionScriptNameList;
+            WHERE script = _extensionScriptName::citext;
 
             _scriptXML := format('%s%s', _scriptXML, _scriptXML2)::xml;
         End If;

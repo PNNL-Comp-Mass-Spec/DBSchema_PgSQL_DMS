@@ -16,7 +16,7 @@ CREATE OR REPLACE PROCEDURE cap.update_multiple_capture_tasks(IN _joblist text, 
 **    _mode         Mode: 'Update' or 'Preview'
 **    _message      Status message
 **    _returnCode   Return code
-**    _callingUser  Calling user username
+**    _callingUser  Username of the calling user
 **
 **  Auth:   grk
 **  Date:   01/04/2010 grk - Initial release

@@ -22,7 +22,7 @@ AS $$
 **    _datasetNameNew       New dataset name
 **    _newRequestedRunID    New requested run ID; -1 to leave unchanged
 **    _infoOnly             When true, preview updates
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
 **
 **  Auth:   mem

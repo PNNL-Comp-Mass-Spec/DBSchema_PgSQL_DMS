@@ -10,6 +10,12 @@ CREATE OR REPLACE PROCEDURE public.set_archive_update_task_busy(IN _datasetname 
 **  Desc:
 **      Set archive update state to 3 (Update In Progress) in t_dataset_archive for the given dataset
 **
+**  Arguments:
+**    _datasetName          Dataset name
+**    _storageServerName    Storage server name
+**    _message              Status message
+**    _returnCode           Return code
+**
 **  Auth:   grk
 **  Date:   12/15/2009
 **          09/02/2011 mem - Now calling Post_Usage_Log_Entry

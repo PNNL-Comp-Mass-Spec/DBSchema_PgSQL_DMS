@@ -10,6 +10,12 @@ CREATE OR REPLACE PROCEDURE sw.synchronize_job_stats_with_job_steps(IN _infoonly
 **  Desc:
 **      Make sure job start and finish times agree with job step start and finish times
 **
+**  Arguments:
+**    _infoOnly             When true, preview updates
+**    _completedJobsOnly    When true, only updated completed jobs
+**    _message              Status message
+**    _returnCode           Return code
+**
 **  Auth:   mem
 **  Date:   01/22/2010 mem - Initial version
 **          03/10/2014 mem - Fixed logic related to _completedJobsOnly

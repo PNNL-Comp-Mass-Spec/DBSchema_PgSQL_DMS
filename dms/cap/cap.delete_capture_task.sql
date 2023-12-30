@@ -14,7 +14,7 @@ CREATE OR REPLACE PROCEDURE cap.delete_capture_task(IN _job integer, INOUT _mess
 **    _job          Capture task job number
 **    _message      Status message
 **    _returnCode   Return code
-**    _callingUser  Calling user username
+**    _callingUser  Username of the calling user
 **
 **  Auth:   mem
 **  Date:   09/12/2009 mem - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)

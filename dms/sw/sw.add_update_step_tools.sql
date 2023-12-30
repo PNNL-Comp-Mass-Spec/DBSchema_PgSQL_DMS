@@ -21,6 +21,9 @@ CREATE OR REPLACE PROCEDURE sw.add_update_step_tools(IN _name text, IN _type tex
 **    _parameterTemplate        Parameter template XML (as text)
 **    _paramFileStoragePath     Parameter file storage path (network share)
 **    _mode                     Mode: 'add' or 'update'
+**    _message                  Status message
+**    _returnCode               Return code
+**    _callingUser              Username of the calling user
 **
 **  Excerpt from an example parameter template (for Mz_Refinery):
 **

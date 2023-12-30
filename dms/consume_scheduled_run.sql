@@ -13,8 +13,8 @@ CREATE OR REPLACE PROCEDURE public.consume_scheduled_run(IN _datasetid integer, 
 **  Arguments:
 **    _datasetID            Dataset ID
 **    _requestID            Requested run ID
-**    _message              Output: error message
-**    _returnCode           Output: return code
+**    _message              Status message
+**    _returnCode           Return code
 **    _callingUser          Username of the calling user
 **    _logDebugMessages     If true, log debug messages
 **

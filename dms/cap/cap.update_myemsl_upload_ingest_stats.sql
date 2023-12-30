@@ -19,7 +19,7 @@ CREATE OR REPLACE PROCEDURE cap.update_myemsl_upload_ingest_stats(IN _datasetid 
 **    _ingestStepsCompleted     Number of ingest steps that were completed for this entry
 **    _fatalError               True if the ingest failed and the error_code column needs to be set to -1 (if currently 0 or null)
 **    _transactionId            Transaction ID (null or 0 if unknown); between July 2017 and May 2019, transactionId and status_num would always match; since May 2019, transaction_id is always null
-**    _message                  Output message
+**    _message                  Status message
 **    _returnCode               Return code
 **
 **  Auth:   mem

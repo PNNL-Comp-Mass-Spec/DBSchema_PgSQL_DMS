@@ -28,7 +28,7 @@ CREATE OR REPLACE PROCEDURE dpkg.add_update_data_package(INOUT _id integer, IN _
 **    _mode             Mode: 'add' or 'update'
 **    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   grk
 **  Date:   05/21/2009 grk

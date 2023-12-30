@@ -23,7 +23,7 @@ AS $$
 **    _comment          Container comment
 **    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   grk
 **  Date:   03/26/2008     - (ticket http://prismtrac.pnl.gov/trac/ticket/603)

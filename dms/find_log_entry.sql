@@ -22,8 +22,8 @@ CREATE OR REPLACE PROCEDURE public.find_log_entry(IN _entryid text DEFAULT ''::t
 **    _messageText          Text to find in the log message
 **    _results              Output: reference cursor used to return the results
 **    _maxRowCount          Maximum number of results to return (0 to return all results)
-**    _message              Output: message (if an error)
-**    _returnCode           Output: return code (if an error)
+**    _message              Status message (if an error)
+**    _returnCode           Return code (if an error)
 **    _infoLevel            0 to request a task, 1 to preview the capture task job that would be returned; 2 to include details on the available capture tasks
 **
 **

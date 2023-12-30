@@ -18,8 +18,8 @@ CREATE OR REPLACE PROCEDURE dpkg.update_data_package_items(IN _packageid integer
 **                     Allowed values: Job IDs, Dataset Names, Dataset IDs, Experiment Names, Biomaterial Names, or EUSProposal IDs
 **    _mode            'add', 'comment', or 'delete'
 **    _removeParents    When 1 and _mode is 'delete', remove parent datasets and experiments for affected jobs (or experiments for affected datasets)
-**    _message          Output: status message
-**    _returnCode       Output: return code
+**    _message          Status message
+**    _returnCode       Return code
 **    _callingUser      Username of the calling user
 **    _infoOnly         When true, preview updates
 **

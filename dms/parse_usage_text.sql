@@ -24,8 +24,8 @@ CREATE OR REPLACE PROCEDURE public.parse_usage_text(INOUT _comment text, INOUT _
 **  Arguments:
 **    _comment          Input/Output: usage comment; see above for examples (usage keys and values will be removed from this string)
 **    _usageXML         Output: usage information, as XML; will be Null if _validateTotal is true and the percentages do not sum to 100%
-**    _message          Output: status messgae
-**    _returnCode       Output: return code
+**    _message          Status messgae
+**    _returnCode       Return code
 **    _seq              Row ID in table t_emsl_instrument_usage_report or table t_run_interval; used for status messages
 **    _showDebug        When true, show debug messages
 **    _validateTotal    When true, raise an error (and do not update _comment or _usageXML) if the sum of the percentages is not 100

@@ -71,9 +71,9 @@ AS $$
 **    _entryUser                    User who entered the LC Cart Configuration entry; defaults to _callingUser if empty
 **    _state                        State: 'Active', 'Inactive', 'Invalid', or 'Override' (see comments below)
 **    _mode                         Mode: 'add' or 'update'
-**    _message                      Output message
+**    _message                      Status message
 **    _returnCode                   Return code
-**    _callingUser                  Calling user username
+**    _callingUser                  Username of the calling user
 **
 **  Auth:   mem
 **  Date:   02/02/2017 mem - Initial version

@@ -18,6 +18,8 @@ CREATE OR REPLACE PROCEDURE sw.create_steps_for_job(IN _job integer, IN _scriptx
 **    _job                      Job number
 **    _scriptXML                XML loaded from table sw.t_scripts
 **    _resultsDirectoryName     Results directory name
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   grk
 **  Date:   08/23/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)

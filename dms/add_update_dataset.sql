@@ -39,7 +39,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_dataset(IN _datasetname text, IN _
 **    _captureSubfolder         Only used when _mode is 'add' or 'bad'
 **    _lcCartConfig             LC cart config
 **    _logDebugMessages         When true, log debug messages
-**    _message                  Output message
+**    _message                  Status message
 **    _returnCode               Return code
 **
 **  Auth:   grk

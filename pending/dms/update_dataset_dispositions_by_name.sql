@@ -25,7 +25,7 @@ AS $$
 **    _mode             Mode: if 'update', update_dataset_dispositions() will update t_dataset and possibly call unconsume_scheduled_run and schedule_predefined_analysis_jobs
 **    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   grk
 **  Date:   10/15/2008 grk - Initial version (Ticket #582)

@@ -15,9 +15,9 @@ CREATE OR REPLACE PROCEDURE public.do_material_item_operation(IN _name text, IN 
 **  Arguments:
 **    _name         Item name (biomaterial name, experiment name, or experiment ID)
 **    _mode         Mode: 'retire_biomaterial', 'retire_experiment'
-**    _message      Output message
+**    _message      Status message
 **    _returnCode   Return code
-**    _callingUser  Calling user username
+**    _callingUser  Username of the calling user
 **
 **  Auth:   grk
 **  Date:   07/23/2008 grk - Initial version (ticket http://prismtrac.pnl.gov/trac/ticket/603)

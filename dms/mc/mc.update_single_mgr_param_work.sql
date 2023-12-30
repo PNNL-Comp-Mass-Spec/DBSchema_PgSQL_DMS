@@ -16,7 +16,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_param_work(IN _paramname text, 
 **  Arguments:
 **    _paramName    The parameter name
 **    _newValue     The new value to assign for this parameter
-**    _callingUser  Calling user username
+**    _callingUser  Username of the calling user
 **    _message      Status message
 **    _returnCode   Return code
 **

@@ -17,8 +17,10 @@ CREATE OR REPLACE PROCEDURE sw.reset_aggregation_job(IN _job integer, IN _infoon
 **        If the job has one or more failed steps, leaves the Output Folder name unchanged but resets the failed steps
 **
 **  Arguments:
-**    _job        Job that needs to be rerun, including re-generating the shared results
-**    _infoOnly   True to preview the changes
+**    _job          Job that needs to be rerun, including re-generating the shared results
+**    _infoOnly     When true, preview updates
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   03/06/2013 mem - Initial version

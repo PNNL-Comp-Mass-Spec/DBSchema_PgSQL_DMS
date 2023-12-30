@@ -27,7 +27,7 @@ AS $$
 **    _pmTargetSymbolList       Output: comma-separated list of modification symbols
 **    _pmMassCorrectionTagList  Output: comma-separated list of static and dynamic mod names (mass correction tags)
 **    _npMassCorrectionTagList  Output: comma-separated list of isotopic mod names (mass correction tags)
-**    _message                  Output message
+**    _message                  Status message
 **    _returnCode               Return code
 **
 **  Auth:   grk

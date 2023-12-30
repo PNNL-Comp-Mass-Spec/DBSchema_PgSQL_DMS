@@ -43,9 +43,9 @@ AS $$
 **    _operatorUsername     Username of the DMS user to associate with the column
 **    _comment              Comment
 **    _mode                 Mode: 'add' or 'update'
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
-**    _callingUser          Calling user username
+**    _callingUser          Username of the calling user
 **
 **  Auth:   grk
 **  Date:   07/29/2009 grk - Initial version

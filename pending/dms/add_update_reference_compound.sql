@@ -55,9 +55,9 @@ AS $$
 **    _mass                 Compound mass (as text)
 **    _active               Can be: 'Yes', 'No', 'Y', 'N', '1', or '0'
 **    _mode                 Mode: 'add', 'update', 'check_add', 'check_update'
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
-**    _callingUser          Calling user username
+**    _callingUser          Username of the calling user
 **
 **  Auth:   mem
 **  Date:   11/28/2017 mem - Initial version

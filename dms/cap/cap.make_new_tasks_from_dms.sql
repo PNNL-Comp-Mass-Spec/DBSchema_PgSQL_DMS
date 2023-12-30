@@ -11,8 +11,8 @@ CREATE OR REPLACE PROCEDURE cap.make_new_tasks_from_dms(INOUT _message text DEFA
 **      Add dataset capture task jobs for datasets in state New in public.t_dataset
 **
 **  Arguments:
-**    _message              Output: status message
-**    _returnCode           Output: return code
+**    _message              Status message
+**    _returnCode           Return code
 **    _loggingEnabled       Set to true to enable progress logging
 **    _infoOnly             True to preview changes that would be made
 **

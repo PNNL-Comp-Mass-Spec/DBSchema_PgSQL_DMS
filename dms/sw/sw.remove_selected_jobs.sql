@@ -18,6 +18,8 @@ CREATE OR REPLACE PROCEDURE sw.remove_selected_jobs(IN _infoonly boolean DEFAULT
 **
 **  Arguments:
 **    _infoOnly             When true, don't actually delete, just display the list of jobs that would be deleted
+**    _message              Status message
+**    _returnCode           Return code
 **    _logDeletions         When true, logs each deleted job number to sw.t_log_entries (but only if _logToConsoleOnly is false)
 **    _logToConsoleOnly     When _logDeletions is true, optionally set this to true to only show deleted job info in the output console (via RAISE INFO messages)
 **

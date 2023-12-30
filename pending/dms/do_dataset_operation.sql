@@ -17,9 +17,9 @@ AS $$
 **  Arguments:
 **    _datasetNameOrID  Dataset name or dataset ID
 **    _mode             Mode: 'delete', 'reset', 'createjobs'; legacy version supported 'burn' and 'delete_all'
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   grk
 **  Date:   04/08/2002

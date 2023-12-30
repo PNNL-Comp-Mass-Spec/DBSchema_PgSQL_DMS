@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_emsl_instrument_acq_overlap_data(IN _i
 /****************************************************
 **
 **  Desc:
-**      Populate column Dataset_ID_Acq_Overlap in T_EMSL_Instrument_Usage_Report
+**      Populate column dataset_id_acq_overlap in t_emsl_instrument_usage_report
 **      This is used to track datasets with identical acquisition start times
 **
 **  Arguments:
@@ -18,6 +18,8 @@ CREATE OR REPLACE PROCEDURE public.update_emsl_instrument_acq_overlap_data(IN _i
 **    _infoOnly             When true, preview updates
 **    _showStartTimes       When _infoOnly is true, set this to true to also show the contents of Tmp_DatasetStartTimes
 **    _showPendingUpdates   When _infoOnly is true, set this to true to also show Tmp_UpdatesToApply without joining to T_EMSL_Instrument_Usage_Report
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   mem
 **  Date:   03/17/2022 mem - Initial version

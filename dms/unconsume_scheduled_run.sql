@@ -26,6 +26,9 @@ CREATE OR REPLACE PROCEDURE public.unconsume_scheduled_run(IN _datasetname text,
 **    _retainHistory    If true and the requested run associated with the dataset was not auto-created, copy the original requested run to a new one and associate that one with the given dataset
 **                      If false and the requested run was auto-created, delete the requested run
 **                      See the code for other situations
+**    _message          Status message
+**    _returnCode       Return code
+**    _callinguser      Username of the calling user
 **
 **  Auth:   grk
 **  Date:   03/01/2004 grk - Initial release

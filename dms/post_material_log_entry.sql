@@ -16,7 +16,7 @@ CREATE OR REPLACE PROCEDURE public.post_material_log_entry(IN _type text, IN _it
 **    _initialState     Old container name (or, for material containers, old location)
 **    _finalState       New container name (or, for material containers, new location)
 **    _comment          Log comment
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   grk
 **  Date:   03/20/2008

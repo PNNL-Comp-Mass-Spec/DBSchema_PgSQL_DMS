@@ -24,7 +24,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_experiment_group(INOUT _id integer
 **    _parentExp        Parent experiment name; auto-defined as 'Placeholder' by https://dms2.pnl.gov/experiment_group/create
 **    _researcher       Researcher username
 **    _mode             Mode: 'add' or 'update'
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
 **
 **  Auth:   grk

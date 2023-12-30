@@ -16,7 +16,7 @@ AS $$
 **
 **  Arguments:
 **    _instrumentName   Instrument name
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
 **
 **  Auth:   mem

@@ -43,8 +43,8 @@ CREATE OR REPLACE PROCEDURE sw.add_new_jobs(IN _bypassdms boolean DEFAULT false,
 **
 **  Arguments:
 **    _bypassDMS                If true, the logic in this procedure is completely bypassed (and thus new jobs are not imported from public.t_analysis_job)
-**    _message                  Output: status message
-**    _returnCode               Output: return code
+**    _message                  Status message
+**    _returnCode               Return code
 **    _maxJobsToProcess         Maximum number of jobs to process
 **    _logIntervalThreshold     If this procedure runs longer than this threshold, status messages will be posted to the log
 **    _loggingEnabled           Set to true to immediately enable progress logging; if false, logging will auto-enable if _logIntervalThreshold seconds elapse

@@ -18,7 +18,7 @@ CREATE OR REPLACE PROCEDURE public.update_material_items(IN _mode text, IN _item
 **    _comment          Comment to store in t_material_log when moving or retiring items; allowed to be null
 **    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   grk
 **  Date:   03/27/2008 grk - Initial version (ticket http://prismtrac.pnl.gov/trac/ticket/603)

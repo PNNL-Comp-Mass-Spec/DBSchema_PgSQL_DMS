@@ -23,7 +23,7 @@ AS $$
 **    _entrySeqOrder    Entry sequence order
 **    _entryType        Entry type
 **    _entrySpecifier   Entry specifier name
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
 **
 **  Auth:   kja

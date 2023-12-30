@@ -18,7 +18,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_aux_info(IN _targetname text DEFAU
 **    _itemNameList         Aux info names to update; delimiter is !
 **    _itemValueList        Aux info values; delimiter is !
 **    _mode                 Mode: 'add', 'update', 'check_add', 'check_update', or 'check_only'; note that 'add' will update an existing value and 'update' will add new values
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
 **
 **  Auth:   grk

@@ -12,7 +12,7 @@ AS $$
 **      Update data in t_mts_mt_dbs_cached using MTS
 **
 **  Arguments:
-**    _message      Output message
+**    _message      Status message
 **    _returnCode   Return code
 **
 **  Auth:   mem

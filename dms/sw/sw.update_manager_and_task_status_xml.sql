@@ -19,7 +19,7 @@ CREATE OR REPLACE PROCEDURE sw.update_manager_and_task_status_xml(IN _managersta
 **                            3: Ignore _managerStatusXML, use test XML, and update sw.t_processor_status
 **                            4: Ignore _managerStatusXML, use test XML, and preview updates
 **    _logProcessorNames    When true, log the names of updated processors (in sw.t_log_entries)
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
 **
 **  Example XML in _managerStatusXML

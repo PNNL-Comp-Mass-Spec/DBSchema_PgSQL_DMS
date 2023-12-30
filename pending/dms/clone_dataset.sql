@@ -23,7 +23,7 @@ AS $$
 **    _dataset                      Dataset name to clone
 **    _suffix                       Suffix to apply to cloned dataset and requested run
 **    _createDatasetArchiveTask     When true, instruct DMS to archive the cloned dataset
-**    _message                      Output message
+**    _message                      Status message
 **    _returnCode                   Return code
 **
 **  Auth:   mem

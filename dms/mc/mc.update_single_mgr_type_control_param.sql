@@ -14,7 +14,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_type_control_param(IN _paramnam
 **    _paramName            The parameter name to update
 **    _newValue             The new value to assign for this parameter
 **    _managerTypeIDList    Manager type IDs to update (11=Analyis Manager, 15=Capture Task Manager, etc.)
-**    _callingUser          Calling user username
+**    _callingUser          Username of the calling user
 **    _message              Status message
 **    _returnCode           Return code
 **

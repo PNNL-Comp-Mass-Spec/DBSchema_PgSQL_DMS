@@ -46,8 +46,8 @@ CREATE OR REPLACE PROCEDURE public.validate_analysis_job_parameters(IN _toolname
 **    _warning                              Output: Warning
 **    _priority                             Input/Output: Job priority (typically 3); this procedure changes it to 4 if _organismDBName is over 400 MB and _priority is less than 4
 **    _showDebugMessages                    When true, show debug messages
-**    _message                              Output: warning message
-**    _returnCode                           Output: return code
+**    _message                              Warning message
+**    _returnCode                           Return code
 **
 **  Auth:   grk
 **  Date:   04/04/2006 grk - Supersedes MakeAnalysisJobX

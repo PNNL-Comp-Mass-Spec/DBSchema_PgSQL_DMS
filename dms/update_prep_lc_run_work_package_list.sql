@@ -11,7 +11,9 @@ CREATE OR REPLACE PROCEDURE public.update_prep_lc_run_work_package_list(IN _prep
 **      Update the work package list for a single prep LC run or for all prep LC runs
 **
 **  Arguments:
-**    _prepLCRunID   If 0, update all rows in T_Prep_LC_Run
+**    _prepLCRunID      If 0, update all rows in t_prep_lc_run
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   03/09/2023 mem - Initial version

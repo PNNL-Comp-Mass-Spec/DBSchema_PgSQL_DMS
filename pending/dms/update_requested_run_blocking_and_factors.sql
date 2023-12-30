@@ -28,7 +28,7 @@ AS $$
 **    _factorList       Factor names and values, as XML (see above); can be '<id type="Request" />' if updating run order and blocking
 **    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   grk
 **  Date:   02/21/2010

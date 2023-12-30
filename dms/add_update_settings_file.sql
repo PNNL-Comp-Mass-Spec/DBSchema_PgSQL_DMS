@@ -22,7 +22,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_settings_file(INOUT _settingsfilei
 **    _mode                     Mode: 'add' or 'update'
 **    _message                  Status message
 **    _returnCode               Return code
-**    _callingUser              Calling user username
+**    _callingUser              Username of the calling user
 **
 **  Auth:   grk
 **  Date:   08/22/2008

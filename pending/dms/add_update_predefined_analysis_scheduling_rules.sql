@@ -32,7 +32,7 @@ AS $$
 **    _enabled              Enabled: 1 if enabled, 0 if disabled
 **    _id                   Input/output: scheduling rule ID in t_predefined_analysis_scheduling_rules
 **    _mode                 Mode: 'add' or 'update'
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
 **
 **  Auth:   grk

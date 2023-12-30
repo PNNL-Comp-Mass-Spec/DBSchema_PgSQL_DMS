@@ -24,6 +24,12 @@ CREATE OR REPLACE PROCEDURE sw.override_dta_gen_for_external_dta(IN _job integer
 **          Processor citext NULL
 **      );
 **
+**  Arguments:
+**    _job              Analysis job number
+**    _xmlparameters    XML parameters
+**    _message          Status message
+**    _returnCode       Return code
+**
 **  Auth:   grk
 **  Date:   01/28/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/719)
 **          01/30/2009 grk - Modified for extension jobs (http://prismtrac.pnl.gov/trac/ticket/720)

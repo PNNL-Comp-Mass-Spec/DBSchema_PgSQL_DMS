@@ -20,6 +20,8 @@ CREATE OR REPLACE PROCEDURE public.get_factor_crosstab_by_factor_id(IN _results 
 **    _generateSQLOnly  When true, generate the SQL required to return the results, but don't actually return the results
 **    _crossTabSql      Output: Crosstab SQL
 **    _factorNameList   Output: comma-separated list of factor names
+**    _message           Status message
+**    _returnCode        Return code
 **
 **  Use this to view the data returned by the _results cursor
 **  Note that this will result in an error if no matching items are found

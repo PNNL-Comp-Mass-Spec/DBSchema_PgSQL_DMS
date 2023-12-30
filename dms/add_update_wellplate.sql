@@ -14,9 +14,9 @@ CREATE OR REPLACE PROCEDURE public.add_update_wellplate(INOUT _wellplatename tex
 **    _wellplateName    Wellplate name
 **    _description      Description
 **    _mode             Mode: 'add', 'update', or 'assure'
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   grk
 **  Date:   07/23/2009

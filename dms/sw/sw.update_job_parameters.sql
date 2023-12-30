@@ -18,6 +18,8 @@ CREATE OR REPLACE PROCEDURE sw.update_job_parameters(IN _job integer, IN _infoon
 **    _job                      Job number
 **    _infoOnly                 When true, preview updates
 **    _settingsFileOverride     When defined, will use this settings file name instead of the one obtained with public.v_get_pipeline_job_parameters (in Get_Job_Param_Table)
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   mem
 **  Date:   01/24/2009

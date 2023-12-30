@@ -21,7 +21,10 @@ CREATE OR REPLACE PROCEDURE public.update_run_op_log(IN _changes text, INOUT _me
 **      Note that Interval ID is the ID of the dataset directly before the interval
 **
 **  Arguments:
-**    _changes      Defines the updates to be applied, in XML format
+**    _changes      XML defining the updates to be applied
+**    _message      Status message
+**    _returnCode   Return code
+**    _callingUser  Username of the calling user
 **
 **  Auth:   grk
 **  Date:   02/21/2013 grk - Initial release

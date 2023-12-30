@@ -17,7 +17,7 @@ CREATE OR REPLACE PROCEDURE public.copy_aux_info_multi_id(IN _targetname text, I
 **    _subCategoryName      Subcategory name, e.g. 'Procedure', 'Reagents', etc.;              see t_aux_info_subcategory; ignored if _mode is 'CopyAll' or 'CopySubcategory'
 **    _sourceEntityID       ID of the source entity to copy information from
 **    _mode                 Mode: 'CopyCategory', 'CopySubcategory', 'CopyAll'
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
 **
 **  Auth:   grk

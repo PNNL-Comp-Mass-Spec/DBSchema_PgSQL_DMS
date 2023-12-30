@@ -27,9 +27,9 @@ AS $$
 **    _description      Description of the task, e.g. 'Cleaned source', 'FT Mass Cal', or 'Liquid Nitrogen Fill'
 **    _note             Detailed notes regarding the task
 **    _mode             Mode: 'add' or 'update'
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   grk
 **  Date:   09/30/2008

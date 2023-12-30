@@ -8,8 +8,8 @@ CREATE OR REPLACE PROCEDURE public.update_emsl_instrument_usage_report(IN _instr
 /****************************************************
 **
 **  Desc:
-**      Add entries to permanent EMSL monthly usage report (T_EMSL_Instrument_Usage_Report)
-**      for given Instrument and month (as dictated via the _endDate parameter)
+**      Add entries to permanent EMSL monthly usage report (t_emsl_instrument_usage_report)
+**      for given instrument and month (as dictated via the _endDate parameter)
 **
 **  Arguments:
 **    _instrument       Instrument name to process; leave this blank if processing by EMSL instrument ID
@@ -25,6 +25,8 @@ CREATE OR REPLACE PROCEDURE public.update_emsl_instrument_usage_report(IN _instr
 **                        4: Show the rows after removing usage text from comments
 **                        5: Show the rows of type 'Interval'
 **                        6: Show the rows in t_emsl_instrument_usage_report that would be updated
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   grk
 **  Date:   03/21/2012

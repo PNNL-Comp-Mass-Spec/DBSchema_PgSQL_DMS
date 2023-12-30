@@ -14,8 +14,10 @@ CREATE OR REPLACE PROCEDURE public.update_cached_requested_run_batch_stats(IN _b
 **      to display information about the requested runs and datasets associated with a requested run batch
 **
 **  Arguments:
-**    _batchID      Specific requested run batch to update, or 0 to update all active Requested Run Batches
+**    _batchID      Specific requested run batch to update, or 0 to update all active requested run batches
 **    _fullRefresh  When false, only update batches where T_Requested_Run.Updated is later than T_Cached_Requested_Run_Batch_Stats.last_affected; when true, update all
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   02/10/2023 mem - Initial Version

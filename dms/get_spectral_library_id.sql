@@ -38,8 +38,8 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **    _libraryName                  Output: library name
 **    _storagePath                  Output: storage path (server share)
 **    _sourceJobShouldMakeLibrary   Output: true if the calling process should create the spectral library
-**    _message                      Output: message
-**    _returncode                   Output: return code
+**    _message                      Status message
+**    _returnCode                   Return code
 **
 **  Auth:   mem
 **  Date:   03/17/2023 mem - Initial Release

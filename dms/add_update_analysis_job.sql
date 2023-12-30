@@ -11,26 +11,26 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job(IN _datasetname text,
 **      Add or update an analysis job in t_analysis_job
 **
 **  Arguments:
-**    _datasetName                  Dataset name
-**    _priority                     Job priority; suggested default is 3
-**    _toolName                     Analysis tool name
-**    _paramFileName                Parameter file name
-**    _settingsFileName             Settings file name
-**    _organismName                 Organism name
-**    _protCollNameList             Comma-separated list of protein collection names
-**    _protCollOptionsList          Protein collection options list
-**    _organismDBName               Organism DB name (legacy FASTA file); should be 'na' if using a protein collection list
-**    _ownerUsername                Username of the job owner
-**    _comment                      Comment
-**    _specialProcessing            Special processing parameters
-**    _associatedProcessorGroup     Processor group
-**    _propagationMode              Propagation mode, aka export mode; should be 'Export' or 'No Export'
-**    _stateName                    Job state when updating or resetting the job. When _mode is 'add', if this is 'hold' or 'holding', the job will be created and placed in state holding; see also T_Analysis_Job_Request_State
-**    _job                          Input/Output: New job number if adding a job; existing job number if updating or resetting a job (number as text for compatibility with the web page)
-**    _mode                         Mode: typically 'add', 'update', or 'reset'; use 'previewadd' or 'previewupdate' to validate the parameters but not actually make the change (used by the Spreadsheet loader page)
-**    _message                      Output: status message
-**    _returnCode                   Output: return code
-**    _callingUser                  Username of the calling user
+**    _datasetName                          Dataset name
+**    _priority                             Job priority; suggested default is 3
+**    _toolName                             Analysis tool name
+**    _paramFileName                        Parameter file name
+**    _settingsFileName                     Settings file name
+**    _organismName                         Organism name
+**    _protCollNameList                     Comma-separated list of protein collection names
+**    _protCollOptionsList                  Protein collection options list
+**    _organismDBName                       Organism DB name (legacy FASTA file); should be 'na' if using a protein collection list
+**    _ownerUsername                        Username of the job owner
+**    _comment                              Comment
+**    _specialProcessing                    Special processing parameters
+**    _associatedProcessorGroup             Processor group
+**    _propagationMode                      Propagation mode, aka export mode; should be 'Export' or 'No Export'
+**    _stateName                            Job state when updating or resetting the job. When _mode is 'add', if this is 'hold' or 'holding', the job will be created and placed in state holding; see also T_Analysis_Job_Request_State
+**    _job                                  Input/Output: New job number if adding a job; existing job number if updating or resetting a job (number as text for compatibility with the web page)
+**    _mode                                 Mode: typically 'add', 'update', or 'reset'; use 'previewadd' or 'previewupdate' to validate the parameters but not actually make the change (used by the Spreadsheet loader page)
+**    _message                              Status message
+**    _returnCode                           Return code
+**    _callingUser                          Username of the calling user
 **    _preventDuplicateJobs                 Only used if _mode is 'add'; when true, ignores jobs with state 5 (failed), 13 (inactive) or 14 (no export)
 **    _preventDuplicatesIgnoresNoExport     When true, ignores jobs with state 5 or 13, but updates jobs with state 14
 **    _specialProcessingWaitUntilReady      When true, sets the job state to 19="Special Proc. Waiting" when the _specialProcessing parameter is not empty

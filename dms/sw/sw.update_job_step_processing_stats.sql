@@ -13,7 +13,9 @@ CREATE OR REPLACE PROCEDURE sw.update_job_step_processing_stats(IN _minimumtimei
 **  Arguments:
 **    _minimumTimeIntervalMinutes                   Set this to 0 to force the addition of new data to sw.T_Job_Step_Processing_Stats
 **    _minimumTimeIntervalMinutesForIdenticalStats  This controls how often identical stats will get added to the table
-**    _infoOnly                                     When true, preview the data that would be added to the table
+**    _infoOnly                                     When true, preview updates
+**    _message                                      Status message
+**    _returnCode                                   Return code
 **
 **  Auth:   mem
 **  Date:   11/23/2015

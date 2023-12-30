@@ -20,8 +20,8 @@ CREATE OR REPLACE PROCEDURE dpkg.update_data_package_items_utility(IN _comment t
 **    _comment          Comment to use when the mode is 'add' or 'comment'
 **    _mode             'add', 'comment', or 'delete'
 **    _removeParents    When true and _mode is 'delete', remove parent datasets and experiments for affected jobs (or experiments for affected datasets)
-**    _message          Output: status message
-**    _returnCode       Output: return code
+**    _message          Status message
+**    _returnCode       Return code
 **    _callingUser      Username of the calling user
 **    _infoOnly         When true, preview updates
 **

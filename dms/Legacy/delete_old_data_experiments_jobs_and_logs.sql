@@ -31,6 +31,8 @@ AS $$
 **    _logEntryMonthsToRetain   Number of months of logs to retain
 **    _datasetSkipList          List of datasets to skip
 **    _experimentSkipList       List of experiments to skip
+**    _message                   Status message
+**    _returnCode                Return code
 **
 **  Auth:   mem
 **  Date:   02/24/2012 mem - Initial version

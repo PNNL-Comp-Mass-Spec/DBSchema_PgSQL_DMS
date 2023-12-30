@@ -14,8 +14,10 @@ CREATE OR REPLACE PROCEDURE sw.reset_failed_managers(IN _infoonly boolean DEFAUL
 **      though only in cases where we expect managers to fail and we want to auto-reset them on a regular basis
 **
 **  Arguments:
-**    _infoOnly            True to preview the changes
-**    _resetAllWithError   When false, the manager must have Most_Recent_Log_Message = 'Flag file'; when true, also matches managers with Mgr_Status = 'Stopped Error'
+**    _infoOnly             When true, preview updates
+**    _resetAllWithError    When false, the manager must have Most_Recent_Log_Message = 'Flag file'; when true, also matches managers with Mgr_Status = 'Stopped Error'
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   mem
 **  Date:   12/02/2014 mem - Initial version

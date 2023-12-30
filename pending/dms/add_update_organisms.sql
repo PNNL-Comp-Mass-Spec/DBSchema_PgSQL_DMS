@@ -53,9 +53,9 @@ AS $$
 **    _autoDefineTaxonomy   Auto define taxonomy: 'Yes' or 'No'
 **    _id                   Input/Output: Organism ID in t_organisms
 **    _mode                 Mode: 'add' or 'update'
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
-**    _callingUser          Calling user username
+**    _callingUser          Username of the calling user
 **
 **  Auth:   grk
 **  Date:   03/07/2006

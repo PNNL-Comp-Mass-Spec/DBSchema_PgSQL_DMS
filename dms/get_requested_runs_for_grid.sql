@@ -13,9 +13,8 @@ CREATE OR REPLACE PROCEDURE public.get_requested_runs_for_grid(IN _itemlist text
 **  Arguments:
 **    _itemList          Comma-separated list of requested run IDs
 **    _results           Cursor for retrieving the results
-**    _message           Output: message (if an error)
-**    _returnCode        Output: return code (if an error)
-**                       supports the % wildcard
+**    _message           Status message (if an error)
+**    _returnCode        Return code (if an error)
 **
 **  Use this to view the data returned by the _results cursor
 **

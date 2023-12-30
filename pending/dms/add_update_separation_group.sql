@@ -25,9 +25,9 @@ AS $$
 **    _samplePrepVisible    When 1, include in the DMS website chooser used when editing a sample prep request
 **    _fractionCount        For separation groups used when fractionating samples, the number of fractions to be generated, e.g. 'LC-MicroHpH-12' has a fraction count of 12
 **    _mode                 Mode: 'add' or 'update'
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
-**    _callingUser          Calling user username
+**    _callingUser          Username of the calling user
 **
 **  Auth:   mem
 **  Date:   06/12/2017 mem - Initial version

@@ -10,6 +10,10 @@ CREATE OR REPLACE PROCEDURE public.update_cached_instrument_usage_by_proposal(IN
 **  Desc:
 **      Update data in t_cached_instrument_usage_by_proposal
 **
+**  Arguments:
+**    _message      Status message
+**    _returnCode   Return code
+**
 **  Auth:   mem
 **  Date:   12/02/2013 mem - Initial Version
 **          02/23/2016 mem - Add set XACT_ABORT on

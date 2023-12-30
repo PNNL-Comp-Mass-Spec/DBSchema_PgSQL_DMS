@@ -12,12 +12,13 @@ CREATE OR REPLACE PROCEDURE public.update_cached_requested_run_eus_users(IN _req
 **
 **      This table tracks the list of EUS users for each active requested run
 **
-**      We only track active requested runs because V_Requested_Run_Active_Export
-**      only returns active requested runs, and that view is the primary
-**      beneficiary of T_Active_Requested_Run_Cached_EUS_Users
+**      We only track active requested runs because v_requested_run_active_export only returns active requested runs,
+**      and that view is the primary beneficiary of t_active_requested_run_cached_eus_users
 **
 **  Arguments:
-**    _requestID   Specific requested run to update, or 0 to update all active requested runs
+**    _requestID    Specific requested run to update, or 0 to update all active requested runs
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   11/16/2016 mem - Initial Version

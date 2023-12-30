@@ -31,9 +31,9 @@ AS $$
 **    _allocationTag            Allocation tag, e.g. 'GC', 'FT', 'ORB', or 'QQQ'
 **    _defaultDatasetTypeName   Default dataset type name; empty string if no default
 **    _mode                     Mode: 'add' or 'update'
-**    _message                  Output message
+**    _message                  Status message
 **    _returnCode               Return code
-**    _callingUser              Calling user username
+**    _callingUser              Username of the calling user
 **
 **  Auth:   grk
 **  Date:   08/28/2010 grk - Initial version

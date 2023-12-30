@@ -14,6 +14,8 @@ CREATE OR REPLACE PROCEDURE public.update_all_sample_prep_request_items(IN _days
 **  Arguments:
 **    _daysPriorToUpdateClosedRequests  Update prep requests whose state changed within this number of days before today
 **    _prepRequestIDFilterList          Optional commma-separated list of prep request IDs to update; if defined, _daysPriorToUpdateClosedRequests is ignored
+**    _message                          Status message
+**    _returnCode                       Return code
 **
 **  Auth:   grk
 **  Date:   07/05/2013 grk - Initial release

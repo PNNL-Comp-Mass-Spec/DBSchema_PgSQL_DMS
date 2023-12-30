@@ -18,9 +18,9 @@ AS $$
 **  Arguments:
 **    _datasetName      Dataset name
 **    _mode             Mode: 'ArchiveReset' or 'update_req'
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   grk
 **  Date:   10/06/2004

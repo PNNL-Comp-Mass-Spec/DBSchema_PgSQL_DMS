@@ -21,6 +21,11 @@ CREATE OR REPLACE PROCEDURE sw.set_up_to_extend_existing_job(IN _job integer, IN
 **          Results_Directory_Name citext NULL
 **      );
 **
+**  Arguments:
+**    _job          Analysis job number
+**    _message      Status message
+**    _returnCode   Return code
+**
 **  Auth:   grk
 **  Date:   02/03/2009 grk - Initial release  (http://prismtrac.pnl.gov/trac/ticket/720)
 **          07/31/2023 mem - Ported to PostgreSQL

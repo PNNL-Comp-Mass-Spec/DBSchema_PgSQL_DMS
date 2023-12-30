@@ -13,10 +13,12 @@ CREATE OR REPLACE PROCEDURE public.get_psm_job_definitions(INOUT _datasets text,
 **      Used by the analysis_job_request_psm page family
 **
 **  Arguments:
-**    _datasets   Input/output parameter; comma-separated list of datasets; will be alphabetized after removing duplicates
-**    _metadata   Output parameter: table of metadata with columns separated by colons and rows separated by vertical bars
-**    _defaults   Output parameter: default values, as a vertical bar delimited list (using colons between parameter name and value)
-**    _mode       'PSM' (unused)
+**    _datasets     Input/output: comma-separated list of datasets; will be alphabetized after removing duplicates
+**    _metadata     Output: table of metadata with columns separated by colons and rows separated by vertical bars
+**    _defaults     Output: default values, as a vertical bar delimited list (using colons between parameter name and value)
+**    _mode         Mode: 'PSM' (unused)
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Example usage:
 **    CALL get_psm_job_definitions ('QC_Mam_23_01_Run01_FAIMS_Merry_02June23_WBEH-23-05-13',

@@ -17,6 +17,8 @@ CREATE OR REPLACE PROCEDURE sw.unhold_candidate_job_steps(IN _steptool text DEFA
 **    _stepTool                 Step tool name
 **    _targetCandidates         Number of steps that should have state 2
 **    _maxCandidatesPlusJobs    Maximum number of steps that can be enabled or running
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   mem
 **  Date:   12/20/2011 mem - Initial version

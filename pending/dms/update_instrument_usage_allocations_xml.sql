@@ -35,7 +35,7 @@ AS $$
 **    _infoOnly         When true, preview the changes that would be made
 **    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   grk
 **  Date:   03/28/2012 grk - Initial version

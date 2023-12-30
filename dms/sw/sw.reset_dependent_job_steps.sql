@@ -13,8 +13,10 @@ CREATE OR REPLACE PROCEDURE sw.reset_dependent_job_steps(IN _jobs text, IN _info
 **      enabled, in progress, or completed after the given job step finished
 **
 **  Arguments:
-**    _jobs       List of jobs whose steps should be reset
-**    _infoOnly   True to preview the changes
+**    _jobs         Comma-separated list of jobs whose steps should be reset
+**    _infoOnly     When true, preview updates
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   05/19/2011 mem - Initial version

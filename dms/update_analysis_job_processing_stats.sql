@@ -13,18 +13,20 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_job_processing_stats(IN _job 
 **      Set archive status of dataset to update required
 **
 **  Arguments:
-**    _job                      Job Number
+**    _job                      Job number
 **    _newDMSJobState           New job state in public.t_analysis_job
 **    _newBrokerJobState        New job state in sw.t_jobs
-**    _jobStart
-**    _jobFinish
-**    _resultsDirectoryName
-**    _assignedProcessor
-**    _jobCommentAddnl          Additional text to append to the comment (direct append; no separator character is used when appending _jobCommentAddnl)
-**    _organismDBName
-**    _processingTimeMinutes
+**    _jobStart                 Job start time
+**    _jobFinish                Job finish time
+**    _resultsDirectoryName     Results directory name
+**    _assignedProcessor        Assigned processor
+**    _jobCommentAddnl          Additional text to append to the comment
+**    _organismDBName           Organism DB name (FASTA file)
+**    _processingTimeMinutes    Processing time, in minutes
 **    _updateCode               Safety feature to prevent unauthorized job updates
 **    _infoOnly                 When true, preview updates
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   mem
 **  Date:   06/02/2009 mem - Initial version

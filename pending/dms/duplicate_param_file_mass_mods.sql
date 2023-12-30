@@ -24,7 +24,7 @@ AS $$
 **    _updateParamEntries   When true, updates t_param_entries in addition to t_param_file_mass_mods
 **                          However, table t_param_entries is only used by SEQUEST parameter files, and SEQUEST was retired in 2019, so this argument is obsolete
 **    _infoOnly             When true, preview the modification definitions that would be copied
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
 **
 **  Auth:   mem

@@ -13,8 +13,8 @@ CREATE OR REPLACE PROCEDURE public.validate_instrument_group_for_requested_runs(
 **  Arguments:
 **    _reqRunIDList         Comma-separated list of requested run IDs
 **    _instrumentGroup      Instrument group name
-**    _message              Output: Status message if the group is valid; warning message if the instrument group is not valid
-**    _returnCode           Output: Empty string if the instrument group is valid, 'U5205' if the instrument group is not valid for the dataset types
+**    _message              Status message if the group is valid; warning message if the instrument group is not valid
+**    _returnCode           Empty string if the instrument group is valid, 'U5205' if the instrument group is not valid for the dataset types
 **
 **  Auth:   mem
 **  Date:   01/15/2023 mem - Initial version (code refactored code from UpdateRequestedRunAssignments)

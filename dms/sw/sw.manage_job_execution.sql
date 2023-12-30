@@ -33,7 +33,8 @@ CREATE OR REPLACE PROCEDURE sw.manage_job_execution(IN _parameters text DEFAULT 
 **
 **  Arguments
 **    _parameters   XML parameters
-**    _message      Output: status or warning message
+**    _message      Status or warning message
+**    _returnCode   Return code
 **
 **  Auth:   grk
 **  Date:   05/08/2009 grk - Initial release

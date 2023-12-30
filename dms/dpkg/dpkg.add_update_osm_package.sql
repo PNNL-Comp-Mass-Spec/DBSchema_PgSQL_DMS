@@ -24,7 +24,7 @@ CREATE OR REPLACE PROCEDURE dpkg.add_update_osm_package(INOUT _id integer, IN _n
 **    _mode                     Mode: 'add' or 'update'
 **    _message                  Status message
 **    _returnCode               Return code
-**    _callingUser              Calling user username
+**    _callingUser              Username of the calling user
 **
 **  Auth:   grk
 **  Date:   10/22/2012 grk - Initial Release

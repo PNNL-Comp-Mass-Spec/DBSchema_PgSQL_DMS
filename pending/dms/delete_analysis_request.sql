@@ -14,7 +14,7 @@ AS $$
 **
 **  Arguments:
 **    _requestID        Analysis job request ID
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
 **
 **  Auth:   grk

@@ -22,7 +22,7 @@ AS $$
 **    _infoOnly         When true, preview updates
 **    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   mem
 **  Date:   02/15/2022 mem - Initial version

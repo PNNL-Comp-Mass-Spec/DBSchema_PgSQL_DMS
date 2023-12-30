@@ -15,6 +15,8 @@ CREATE OR REPLACE PROCEDURE sw.evaluate_step_dependencies(IN _maxjobstoprocess i
 **    _maxJobsToProcess         Maximum number of jobs to process (0 to process all)
 **    _loopingUpdateInterval    Seconds between detailed logging while looping through the dependencies
 **    _infoOnly                 When true, preview updates
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   grk
 **  Date:   05/06/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)

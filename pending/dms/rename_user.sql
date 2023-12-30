@@ -18,7 +18,7 @@ AS $$
 **    _oldUserName  Username to change, e.g. 'D3L243'
 **    _newUserName  New username
 *     _infoOnly     When true, preview updates
-**    _message      Output message
+**    _message      Status message
 **    _returnCode   Return code
 **
 **  Auth:   10/31/2014 mem - Initial version

@@ -18,9 +18,9 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job_processors(INOUT _id 
 **    _notes                Notes
 **    _analysisToolsList    Comma-separated list of analysis tools
 **    _mode                 Mode: 'add' or 'update'
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
-**    _callingUser          Calling user username
+**    _callingUser          Username of the calling user
 **
 **  Auth:   grk
 **  Date:   02/15/2007 (ticket 389)

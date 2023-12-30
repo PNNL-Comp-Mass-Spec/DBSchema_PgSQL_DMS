@@ -22,9 +22,11 @@ CREATE OR REPLACE PROCEDURE public.validate_requested_run_batch_params(IN _batch
 **    _comment                      Batch comment (unused)
 **    _batchGroupID                 Input/Output: batch group ID
 **    _batchGroupOrder              Input/Output: batch group order
-**    _mode                         'add' or 'update' or 'PreviewAdd'
+**    _mode                         Mode: 'add' or 'update' or 'PreviewAdd'
 **    _instrumentGroupToUse         Output: instrument group to use
 **    _userID                       Output: user ID corresponding to the owner username
+**    _message                      Status message
+**    _returnCode                   Return code
 **
 **  Auth:   mem
 **  Date:   05/29/2021 mem - Refactored code from AddUpdateRequestedRunBatch

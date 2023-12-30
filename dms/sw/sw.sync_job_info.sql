@@ -11,7 +11,10 @@ CREATE OR REPLACE PROCEDURE sw.sync_job_info(IN _bypassdms boolean DEFAULT false
 **      Synchronize job info between the sw schema and the public schema tables,
 **      including updating priorities and assigning processor groups
 **
-**    _bypassDMS    If true, the logic in this procedure is completely bypassed (and thus states are not updated in public.t_analysis_job)
+**  Arguments:
+**    _bypassDMS    When true, the logic in this procedure is completely bypassed (and thus states are not updated in public.t_analysis_job)
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   01/17/2009 mem - Initial version (Ticket #716, http://prismtrac.pnl.gov/trac/ticket/716)

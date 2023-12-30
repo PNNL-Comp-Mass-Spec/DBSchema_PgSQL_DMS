@@ -15,12 +15,15 @@ CREATE OR REPLACE PROCEDURE sw.update_job_param_org_db_info_using_data_pkg(IN _j
 **  Arguments:
 **    _job                  Job Number
 **    _dataPackageID        Data package ID
-**    _deleteIfInvalid      When true, deletes entries for OrganismName, LegacyFastaFileName, ProteinOptions, and ProteinCollectionList if any of these conditions is true:
+**    _deleteIfInvalid      When true, delete entries for OrganismName, LegacyFastaFileName, ProteinOptions, and ProteinCollectionList if any of these conditions is true:
 **                          - Data package ID (_dataPackageID) is 0
 **                          - Data package ID references a non-existent data package,
 **                          - The data package doesn't have any Peptide_Hit jobs (MAC Jobs)
 **    _debugMode            When true, preview the job parameters that would be updated
 **    _scriptNameForDebug   Script name to use if _job is not found in sw.t_jobs
+**    _message              Status message
+**    _returnCode           Return code
+**    _callingUser          Username of the calling user
 **
 **  Auth:   mem
 **  Date:   03/20/2012 mem - Initial version

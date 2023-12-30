@@ -14,6 +14,8 @@ CREATE OR REPLACE PROCEDURE sw.update_step_states(IN _infoonly boolean DEFAULT f
 **    _infoOnly                 When true, preview updates
 **    _maxJobsToProcess         Maximum number of jobs to update
 **    _loopingUpdateInterval    Seconds between detailed logging while looping through the dependencies
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   grk
 **  Date:   05/06/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)

@@ -16,8 +16,8 @@ CREATE OR REPLACE PROCEDURE sw.move_jobs_to_main_tables(INOUT _message text DEFA
 **      To main database tables
 **
 **  Arguments:
-**    _message      Output: status message
-**    _returnCode   Output: return code
+**    _message      Status message
+**    _returnCode   Return code
 **    _debugMode    When true, store the contents of the temp tables in the following tables (auto-created if missing)
 **                    sw.T_Tmp_New_Jobs
 **                    sw.T_Tmp_New_Job_Steps

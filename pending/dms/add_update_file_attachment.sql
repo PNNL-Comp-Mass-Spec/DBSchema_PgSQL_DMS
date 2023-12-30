@@ -34,9 +34,9 @@ AS $$
 **    _archiveFolderPath    This path is constructed when File_attachment.php or Experiment_File_attachment.php calls function Get_File_Attachment_Path() in this database
 **    _fileMimeType         MIME type
 **    _mode                 Mode: 'add' or 'update'
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
-**    _callingUser          Calling user username
+**    _callingUser          Username of the calling user
 **
 **  Auth:   grk
 **  Date:   03/30/2011

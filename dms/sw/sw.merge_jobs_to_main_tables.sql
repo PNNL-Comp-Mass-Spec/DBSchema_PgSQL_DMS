@@ -9,7 +9,12 @@ CREATE OR REPLACE PROCEDURE sw.merge_jobs_to_main_tables(INOUT _message text DEF
 **
 **  Desc:
 **      Merge data in the temp tables into sw.T_Jobs, sw.T_Job_Steps, etc.
-**      This procedure is only called if procedure sw.create_job_steps() is called with Mode 'ExtendExistingJob'
+**      This procedure is only called if procedure sw.create_job_steps() is called with mode 'ExtendExistingJob'
+**
+**  Arguments:
+**    _message      Status message
+**    _returnCode   Return code
+**    _infoOnly     When true, preview updates
 **
 **  Auth:   grk
 **  Date:   02/06/2009 grk - Initial release  (http://prismtrac.pnl.gov/trac/ticket/720)

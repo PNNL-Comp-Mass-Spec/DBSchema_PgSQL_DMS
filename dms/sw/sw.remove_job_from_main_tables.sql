@@ -14,6 +14,8 @@ CREATE OR REPLACE PROCEDURE sw.remove_job_from_main_tables(IN _job integer, IN _
 **    _job                      Job to remove
 **    _infoOnly                 When true, don't actually delete, just dump list of jobs that would have been
 **    _validateJobStepSuccess   When true, remove any jobs that have failed, in progress, or holding job steps
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   mem
 **  Date:   11/19/2010 mem - Initial version

@@ -21,8 +21,8 @@ CREATE OR REPLACE PROCEDURE sw.add_update_local_job_in_broker(INOUT _job integer
 **    _dataPackageID            Data package ID (0 if not applicable)
 **    _resultsDirectoryName     Results directory name
 **    _mode                     'add', 'update', 'reset', or 'previewAdd'
-**    _message                  Output: message
-**    _returnCode               Output: return code
+**    _message                  Status message
+**    _returnCode               Return code
 **    _callingUser              Calling user
 **    _debugMode                When true, display debug messages (the new job will not be actually created)
 **    _logDebugMessages         When true, log debug messages in sw.T_Log_Entries (ignored if _debugMode is false)

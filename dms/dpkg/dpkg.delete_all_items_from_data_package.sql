@@ -20,7 +20,7 @@ CREATE OR REPLACE PROCEDURE dpkg.delete_all_items_from_data_package(IN _packagei
 **    _mode             Mode: should be 'delete', but the actual value is ignored
 **    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   grk
 **  Date:   06/10/2009 grk - Initial release

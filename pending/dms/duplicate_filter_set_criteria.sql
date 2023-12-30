@@ -41,7 +41,7 @@ AS $$
 **    _destFilterSetID              Destination filter set ID
 **    _addMissingFilterCriteria     When true, add missing filter set criteria
 **    _infoOnly                     When true, preview updates
-**    _message                      Output message
+**    _message                      Status message
 **    _returnCode                   Return code
 **
 **  Auth:   mem

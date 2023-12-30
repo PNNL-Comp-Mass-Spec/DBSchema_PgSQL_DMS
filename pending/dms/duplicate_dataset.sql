@@ -26,7 +26,7 @@ AS $$
 **    _newOperatorUsername  Operator username
 **    _datasetStateID       1 for a new dataset, which will create a dataset capture job; 3=Complete; 4=Inactive; 13=Holding
 **    _infoOnly             When true, preview the dataset that would be created
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
 **
 **  Auth:   mem

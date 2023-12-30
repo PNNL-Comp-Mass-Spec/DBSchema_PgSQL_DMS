@@ -19,7 +19,7 @@ CREATE OR REPLACE PROCEDURE public.resolve_start_and_end_dates(IN _startdate tex
 **    _stDate       Output: start date (as a timestamp)
 **    _eDate        Output: end date (as a timestamp)
 **    _message      Status message
-**    _returncode   Return code
+**    _returnCode   Return code
 **
 **  Date:   07/22/2019 mem - Initial version
 **          12/12/2022 mem - Ported to PostgreSQL

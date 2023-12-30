@@ -24,9 +24,9 @@ CREATE OR REPLACE PROCEDURE public.create_psm_job_request(INOUT _requestid integ
 **    _comment              Job comment
 **    _ownerUsername        Username to associate with the jobs
 **    _infoOnly             When true, preview jobs that would be created
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
-**    _callingUser          Calling user username
+**    _callingUser          Username of the calling user
 **
 **  Auth:   mem
 **  Date:   11/14/2012 mem - Initial version

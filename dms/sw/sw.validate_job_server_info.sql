@@ -13,8 +13,8 @@ CREATE OR REPLACE PROCEDURE sw.validate_job_server_info(IN _job integer, IN _use
 **  Arguments:
 **    _job                  Job number
 **    _useJobParameters     When non-zero, preferentially uses sw.t_job_parameters; otherwise, uses the public schema tables
-**    _message              Output: status message
-**    _returnCode           Output: return code
+**    _message              Status message
+**    _returnCode           Return code
 **    _debugMode            When true, show values of variables using RAISE INFO (however, sw.t_jobs will still be updated if required)
 **
 **  Auth:   mem

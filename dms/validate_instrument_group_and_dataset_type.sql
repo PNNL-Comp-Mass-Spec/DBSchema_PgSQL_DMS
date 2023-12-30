@@ -15,6 +15,8 @@ CREATE OR REPLACE PROCEDURE public.validate_instrument_group_and_dataset_type(IN
 **    _instrumentGroup      Instrument group name (allowed to be an empty string)
 **                          This procedure properly capitalizes the group name, updating this argument
 **    _datasetTypeID        Output: dataset type ID
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   mem
 **  Date:   08/27/2010 mem - Initial version

@@ -15,7 +15,7 @@ CREATE OR REPLACE PROCEDURE cap.copy_task_to_history(IN _job integer, IN _jobsta
 **    _jobState             Current job state
 **    _overrideSaveTime     Set to true to use _saveTimeOverride for the SaveTime instead of CURRENT_TIMESTAMP
 **    _saveTimeOverride     Timestamp to use when _overrideSaveTime is true
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
 **
 **  Auth:   grk

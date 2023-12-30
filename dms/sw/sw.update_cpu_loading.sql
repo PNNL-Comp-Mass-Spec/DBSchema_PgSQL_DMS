@@ -9,8 +9,11 @@ CREATE OR REPLACE PROCEDURE sw.update_cpu_loading(INOUT _message text DEFAULT ''
 **
 **  Desc:
 **      Update local processor list with count of CPUs that are available for new tasks, given current task assignments
+**      Also update memory usage
 **
-**      Also updates memory usage
+**  Arguments:
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   grk
 **  Date:   06/03/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)

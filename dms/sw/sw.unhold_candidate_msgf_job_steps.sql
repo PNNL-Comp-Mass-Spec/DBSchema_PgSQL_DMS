@@ -8,9 +8,9 @@ CREATE OR REPLACE PROCEDURE sw.unhold_candidate_msgf_job_steps(IN _steptool text
 /****************************************************
 **
 **  Desc:
-**      Examine the number of steps with state 2 and tool _stepTool (default MSGF)
+**      Examine the number of job steps with state 2 and tool _stepTool (default MSGF)
 **
-**      If less than _targetCandidates have state 2 (enabled),
+**      If less than _targetCandidates steps have state 2 (enabled),
 **      update job steps with state 7 (holding) to have state 2,
 **      such that we will have _targetCandidates enabled job steps for the given tool
 **
@@ -19,6 +19,8 @@ CREATE OR REPLACE PROCEDURE sw.unhold_candidate_msgf_job_steps(IN _steptool text
 **  Arguments:
 **    _stepTool             Step tool name
 **    _targetCandidates     Number of steps that should have state 2
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   mem
 **  Date:   12/20/2011 mem - Initial version

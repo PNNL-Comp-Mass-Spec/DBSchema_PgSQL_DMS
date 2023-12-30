@@ -21,7 +21,7 @@ AS $$
 **  Arguments:
 **    _mostRecentMonths     Number of recent months to examine
 **    _infoOnly             When true, preview updates
-**    _message      Output message
+**    _message      Status message
 **    _returnCode   Return code
 **
 **  Auth:   mem

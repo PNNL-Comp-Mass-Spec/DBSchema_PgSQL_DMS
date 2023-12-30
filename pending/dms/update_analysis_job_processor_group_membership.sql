@@ -23,7 +23,7 @@ AS $$
 **    _mode                 Mode: 'set_membership_enabled', 'add_processors', 'remove_processors',
 **    _message              Status message
 **    _returnCode           Return code
-**    _callingUser          Calling user username
+**    _callingUser          Username of the calling user
 **
 **  Auth:   grk
 **  Date:   02/13/2007 (Ticket #384)

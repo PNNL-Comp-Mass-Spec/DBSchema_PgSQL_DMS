@@ -14,7 +14,7 @@ AS $$
 **
 **  Arguments:
 **    _infoOnly     When true, preview results
-**    _message      Output message
+**    _message      Status message
 **    _returnCode   Return code
 **
 **  Auth:   mem

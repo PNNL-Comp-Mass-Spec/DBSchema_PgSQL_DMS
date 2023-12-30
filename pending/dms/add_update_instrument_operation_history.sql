@@ -23,9 +23,9 @@ AS $$
 **    _postedBy     Username of the person associated with the operation entry
 **    _note         Entry description
 **    _mode         Mode: 'add' or 'update'
-**    _message      Output message
+**    _message      Status message
 **    _returnCode   Return code
-**    _callingUser  Calling user username
+**    _callingUser  Username of the calling user
 **
 **  Auth:   grk
 **  Date:   05/20/2010

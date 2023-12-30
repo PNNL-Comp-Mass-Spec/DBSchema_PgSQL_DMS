@@ -12,7 +12,9 @@ CREATE OR REPLACE PROCEDURE sw.import_processors(IN _bypassdms boolean DEFAULT f
 **      (which references public schema tables t_analysis_job_processors and t_analysis_job_processor_group_membership)
 **
 **  Arguments:
-**    _bypassDMS    If true, the logic in this procedure is completely bypassed
+**    _bypassDMS    When true, the logic in this procedure is completely bypassed
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   grk
 **  Date:   06/03/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)

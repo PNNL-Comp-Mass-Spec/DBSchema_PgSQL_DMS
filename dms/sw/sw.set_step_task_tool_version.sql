@@ -10,6 +10,13 @@ CREATE OR REPLACE PROCEDURE sw.set_step_task_tool_version(IN _job integer, IN _s
 **  Desc:
 **      Adds/updates tool version info in tables sw.t_step_tool_versions and sw.t_job_steps
 **
+**  Arguments:
+**    _job                  Analysis job number
+**    _step                 Step number
+**    _toolVersionInfo      Tool version info
+**    _message              Status message
+**    _returnCode           Return code
+**
 **  Auth:   mem
 **  Date:   07/05/2011 mem - Initial version
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized

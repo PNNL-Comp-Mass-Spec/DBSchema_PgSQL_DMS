@@ -46,7 +46,7 @@ CREATE OR REPLACE PROCEDURE public.add_new_dataset(IN _xmldoc text, IN _mode tex
 **  Arguments:
 **    _xmlDoc               Metadata for the new dataset
 **    _mode                 Processing mode: 'add', 'parse_only', 'update', 'bad', 'check_add', 'check_update'
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
 **    _logDebugMessages     When true, log debug messages to t_log_entries
 **

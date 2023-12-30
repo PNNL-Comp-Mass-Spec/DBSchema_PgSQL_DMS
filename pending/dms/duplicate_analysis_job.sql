@@ -24,7 +24,7 @@ AS $$
 **    _appendOldJobToComment    If true, append 'Compare to job 0000' to the comment
 **    _newSettingsFile          Use to change the settings file
 **    _infoOnly                 When true, preview the job that wouuld be created
-**    _message                  Output message
+**    _message                  Status message
 **    _returnCode               Return code
 **
 **  Auth:   mem

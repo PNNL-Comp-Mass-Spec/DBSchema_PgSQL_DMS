@@ -25,7 +25,7 @@ AS $$
 **    _params           XML parameters with DatasetQC options (see below)
 **    _comment          Instrument class comment
 **    _mode             The only valid mode is 'update', since 'add' is not allowed in this procedure; instead directly edit table t_instrument_class
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
 **
 **  Example value for _params

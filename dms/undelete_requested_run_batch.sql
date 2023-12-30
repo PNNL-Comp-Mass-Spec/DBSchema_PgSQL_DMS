@@ -11,8 +11,11 @@ CREATE OR REPLACE PROCEDURE public.undelete_requested_run_batch(IN _batchid inte
 **      Restore a deleted requested run
 **
 **  Arguments:
-**    _batchID      Requested run batch ID to undelete
-**    _infoOnly     Set to true to preview the restore, false to actually undelete
+**    _batchID          Requested run batch ID to undelete
+**    _infoOnly         When true, preview the restore
+**    _message          Status message
+**    _returnCode       Return code
+**    _callinguser      Username of the calling user
 **
 **  Auth:   mem
 **  Date:   03/31/2023 mem - Initial version

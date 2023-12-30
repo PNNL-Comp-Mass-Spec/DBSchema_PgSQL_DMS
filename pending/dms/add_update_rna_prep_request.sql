@@ -58,9 +58,9 @@ AS $$
 **    _state                            State: 'New', 'Open', 'Prep in Progress', 'Prep Complete', or 'Closed'
 **    _id                               Input/output: RNA prep request ID in t_sample_prep_request
 **    _mode                             Mode: 'add' or 'update'
-**    _message                          Output message
+**    _message                          Status message
 **    _returnCode                       Return code
-**    _callingUser                      Calling user username
+**    _callingUser                      Username of the calling user
 **
 **  Auth:   mem
 **  Date:   05/19/2014 mem - Initial version

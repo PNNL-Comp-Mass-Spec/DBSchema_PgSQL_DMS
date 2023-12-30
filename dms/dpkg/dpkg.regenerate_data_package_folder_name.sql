@@ -17,7 +17,7 @@ CREATE OR REPLACE PROCEDURE dpkg.regenerate_data_package_folder_name(IN _datapkg
 **    _updateWikiLink   When true, update column wiki_page_link in t_data_package
 **    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   mem
 **  Date:   06/09/2009

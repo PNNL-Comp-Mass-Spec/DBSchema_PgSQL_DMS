@@ -17,6 +17,8 @@ CREATE OR REPLACE PROCEDURE public.update_cached_dataset_folder_paths(IN _proces
 **                      2 to process new datasets, those with UpdateRequired=1, and all datasets in DMS (looking for dataset_row_version or storage_path_row_version differing)
 **                      3 to re-process all of the entries in T_Cached_Dataset_Folder_Paths (this is the slowest update and will take ~30 seconds to complete)
 **    _showDebug        When true, show debug info
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   11/14/2013 mem - Initial version

@@ -11,21 +11,24 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs(IN _joblist text, IN _st
 **      Update parameters to new values for jobs in list
 **
 **  Arguments:
-**    _jobList                  Comma-separated list of job numbers
-**    _state                    Job state name
-**    _priority                 Processing priority (1, 2, 3, etc.)
-**    _comment                  Text to append to the comment
-**    _findText                 Text to find in the comment; ignored if '[no change]'
-**    _replaceText              The replacement text when _findText is not '[no change]'
-**    _assignedProcessor        Assigned processor name (obsolete)
-**    _associatedProcessorGroup Processor group; deprecated in May 2015
-**    _propagationMode          Propagation mode ('Export' or 'No Export')
-**    _paramFileName            Parameter file name
-**    _settingsFileName         Settings file name
-**    _organismName             Organism name
-**    _protCollNameList         Protein collection list
-**    _protCollOptionsList      Protein options list
-**    _mode                     'update' or 'reset' to change data; otherwise, will simply validate parameters
+**    _jobList                      Comma-separated list of job numbers
+**    _state                        Job state name
+**    _priority                     Processing priority (1, 2, 3, etc.)
+**    _comment                      Text to append to the comment
+**    _findText                     Text to find in the comment; ignored if '[no change]'
+**    _replaceText                  The replacement text when _findText is not '[no change]'
+**    _assignedProcessor            Assigned processor name (obsolete)
+**    _associatedProcessorGroup     Processor group; deprecated in May 2015
+**    _propagationMode              Propagation mode ('Export' or 'No Export')
+**    _paramFileName                Parameter file name
+**    _settingsFileName             Settings file name
+**    _organismName                 Organism name
+**    _protCollNameList             Protein collection list
+**    _protCollOptionsList          Protein options list
+**    _mode                         Mode: 'update' or 'reset' to change data; otherwise, will simply validate parameters
+**    _message                      Status message
+**    _returnCode                   Return code
+**    _callingUser                  Username of the calling user
 **
 **  Auth:   grk
 **  Date:   04/06/2006

@@ -9,19 +9,22 @@ CREATE OR REPLACE PROCEDURE public.update_cached_statistics(INOUT _message text 
 **
 **  Desc:
 **      Update various cached statistics
-**      - Job_Usage_Count in T_Param_Files
-**      - Job_Usage_Count in T_Settings_Files
-**      - Job_Count in T_Analysis_Job_Request
-**      - Job_Usage_Count in T_Protein_Collection_Usage
-**      - Dataset usage stats in T_Cached_Instrument_Dataset_Type_Usage
-**      - Dataset usage stats in T_Instrument_Group_Allowed_DS_Type
-**      - Dataset usage stats in T_LC_Cart_Configuration
+**      - Job_Usage_Count in t_param_files
+**      - Job_Usage_Count in t_settings_files
+**      - Job_Count in t_analysis_job_request
+**      - Job_Usage_Count in t_protein_collection_usage
+**      - Dataset usage stats in t_cached_instrument_dataset_type_usage
+**      - Dataset usage stats in t_instrument_group_allowed_ds_type
+**      - Dataset usage stats in t_lc_cart_configuration
 **
 **  Arguments:
-**    _previewSql                      When true, preview the SQL used to compile stats for T_General_Statistics (ignored if _updateGeneralStatistics is false)
-**    _updateParamSettingsFileCounts   When true, update cached counts in T_Param_Files, T_Settings_Files, T_Cached_Instrument_Dataset_Type_Usage, T_Instrument_Group_Allowed_DS_Type, and T_LC_Cart_Configuration
-**    _updateGeneralStatistics         When true, update T_General_Statistics
-**    _updateJobRequestStatistics      When true, update T_Analysis_Job_Request
+**    _message                          Status message
+**    _returnCode                       Return code
+**    _previewSql                       When true, preview the SQL used to compile stats for t_general_statistics (ignored if _updateGeneralStatistics is false)
+**    _updateParamSettingsFileCounts    When true, update cached counts in t_param_files, t_settings_files, t_cached_instrument_dataset_type_usage, t_instrument_group_allowed_ds_type, and t_lc_cart_configuration
+**    _updateGeneralStatistics          When true, update t_general_statistics
+**    _updateJobRequestStatistics       When true, update t_analysis_job_request
+**    _showRuntimeStats                 When true, show runtime stats
 **
 **  Auth:   mem
 **  Date:   11/04/2008 mem - Initial version (Ticket: #698)

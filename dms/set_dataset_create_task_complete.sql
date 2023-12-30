@@ -14,7 +14,7 @@ CREATE OR REPLACE PROCEDURE public.set_dataset_create_task_complete(IN _entryid 
 **    _entryID              Entry_ID to update
 **    _completionCode       Completion code; 0 means success; non-zero means failure
 **    _completionMessage    Error message to store in T_Dataset_Create_Queue when @completionCode is non-zero
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
 **
 **  Return values:

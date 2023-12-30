@@ -22,8 +22,8 @@ CREATE OR REPLACE PROCEDURE public.get_dataset_details_from_dataset_info_xml(IN 
 **
 **  Arguments:
 **    _datasetInfoXML   Dataset info, in XML format
-**    _datasetID        Input/output parameter
-**    _datasetName      Output parameter
+**    _datasetID        Input/output: dataset ID
+**    _datasetName      Output: dataset name
 **    _message          Error message, or an empty string if no error
 **    _returnCode       '' if no error, otherwise an error code
 **

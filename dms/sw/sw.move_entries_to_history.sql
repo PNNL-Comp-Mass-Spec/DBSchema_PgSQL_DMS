@@ -13,6 +13,8 @@ CREATE OR REPLACE PROCEDURE sw.move_entries_to_history(IN _intervaldays integer 
 **  Arguments:
 **    _intervalDays     Threshold, in days, to use when moving old entries; required to be at least 32
 **    _infoOnly         When true, show the number of entries that would be moved
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   07/12/2011 mem - Initial version

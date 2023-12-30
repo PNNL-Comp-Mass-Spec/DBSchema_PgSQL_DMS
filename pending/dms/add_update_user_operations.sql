@@ -16,7 +16,7 @@ AS $$
 **  Arguments:
 **    _userID           User ID
 **    _operationsList   Comma-separated list of access permissions (aka operation names); see table t_user_operations
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
 **
 **  Auth:   mem

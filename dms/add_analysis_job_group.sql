@@ -29,9 +29,9 @@ CREATE OR REPLACE PROCEDURE public.add_analysis_job_group(IN _datasetlist text, 
 **    _propagationMode              Propagation mode: 'Export', 'No Export'
 **    _removeDatasetsWithJobs       If 'N' or 'No', do not remove datasets with existing jobs (ignored if _dataPackageID is non-zero)
 **    _mode                         Mode: 'add' or 'preview'
-**    _message                      Output message
+**    _message                      Status message
 **    _returnCode                   Return code
-**    _callingUser                  Calling user username
+**    _callingUser                  Username of the calling user
 **
 **  Auth:   grk
 **  Date:   01/29/2004

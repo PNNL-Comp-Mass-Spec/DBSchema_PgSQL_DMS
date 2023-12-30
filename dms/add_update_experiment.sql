@@ -36,9 +36,9 @@ CREATE OR REPLACE PROCEDURE public.add_update_experiment(INOUT _experimentid int
 **    _container                Container name, e.g. 'MC-3375'
 **    _barcode                  Barcode, e.g. '90154017002'; last used in 2019
 **    _tissue                   Tissue name, e.g. 'blood plasma', 'cell culture', 'plant, 'soil', etc.
-**    _message                  Output message
+**    _message                  Status message
 **    _returnCode               Return code
-**    _callingUser              Calling user username
+**    _callingUser              Username of the calling user
 **
 **  Auth:   grk
 **  Date:   01/08/2002 grk - Initial version

@@ -11,7 +11,8 @@ CREATE OR REPLACE PROCEDURE sw.set_folder_create_task_complete(IN _taskid intege
 **      Update state, finish time, and completion code in sw.t_data_folder_create_queue
 **
 **  Arguments:
-**    _completionCode   0 means success; non-zero means failure
+**    _taskID           Folder create task ID
+**    _completionCode   Completion code: 0 means success; non-zero means failure
 **    _message          Status message
 **    _returnCode       Return code
 **

@@ -16,7 +16,7 @@ CREATE OR REPLACE PROCEDURE cap.retry_myemsl_upload(IN _job integer, IN _infoonl
 **
 **  Arguments:
 **    _job          Capture task job number
-**    _infoOnly     True to preview the changes
+**    _infoOnly     When true, preview updates
 **    _message      Status message
 **    _returnCode   Return code
 **
@@ -66,7 +66,7 @@ CREATE OR REPLACE PROCEDURE cap.retry_myemsl_upload(IN _jobs text, IN _infoonly 
 **
 **  Arguments:
 **    _jobs       Comma-separated list of capture task jobs whose steps should be reset
-**    _infoOnly   True to preview the changes
+**    _infoOnly   When true, preview updates
 **
 **  Auth:   mem
 **  Date:   11/17/2014 mem - Initial version

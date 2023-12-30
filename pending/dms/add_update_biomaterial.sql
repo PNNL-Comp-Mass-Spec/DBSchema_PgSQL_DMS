@@ -41,9 +41,9 @@ AS $$
 **    _mutation             Mutation;  empty string if not applicable
 **    _plasmid              Plasmid;   empty string if not applicable
 **    _cellLine             Cell line; empty string if not applicable
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
-**    _callingUser          Calling user username
+**    _callingUser          Username of the calling user
 **
 **  Auth:   grk
 **  Date:   03/12/2002
@@ -74,7 +74,7 @@ AS $$
 **                         - Remove deprecated parameters that are now tracked in T_Reference_Compound
 **          12/08/2020 mem - Lookup Username from T_Users using the validated user ID
 **          07/08/2022 mem - Rename procedure from Add_Update_Cell_Culture to Add_Update_Biomaterial and update argument names
-**          12/15/2024 mem - Ported to PostgreSQL
+**          12/28/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -85,18 +85,17 @@ DECLARE
 
     _msg text;
     _logErrors boolean := false;
-    _biomaterialID int := 0;
-    _curContainerID int := 0;
-    _campaignID int := 0;
-    _typeID int := 0;
-    _contID int := 0;
-    _curContainerName text := '';
+    _biomaterialID int;
+    _curContainerID int;
+    _campaignID int;
+    _typeID int;
+    _contID int;
+    _curContainerName text;
     _userID int;
     _matchCount int;
     _newUsername text;
-    _idConfirm int := 0;
+    _idConfirm int;
     _debugMsg text;
-    _stateID int := 1;
     _targetType int;
     _stateID int;
     _logMessage text;
@@ -195,14 +194,14 @@ BEGIN
         WHERE Biomaterial_Name = _biomaterialName;
 
         -- Cannot create an entry that already exists
-        --
+
         If FOUND And (_mode = 'add' or _mode = 'check_add') Then
             _msg := format('Cannot add: Biomaterial "%s" already in database ', _biomaterialName);
             RAISE EXCEPTION '%', _msg;
         End If;
 
         -- Cannot update a non-existent entry
-        --
+
         If Not FOUND And (_mode = 'update' or _mode = 'check_update') Then
             _msg := format('Cannot update: Biomaterial "%s" is not in database ', _biomaterialName);
             RAISE EXCEPTION '%', _msg;
@@ -245,7 +244,6 @@ BEGIN
         -- Resolve current container id to name
         ---------------------------------------------------
 
-        --
         SELECT container
         INTO _curContainerName
         FROM t_material_containers
@@ -263,7 +261,7 @@ BEGIN
         If _userID > 0 Then
             -- Function get_user_id() recognizes both a username and the form 'LastName, FirstName (Username)'
             -- Assure that _contactUsername contains simply the username
-            --
+
             SELECT username
             INTO _contactUsername
             FROM t_users
@@ -287,13 +285,13 @@ BEGIN
 
         -- Verify that principal investigator username is valid
         -- and get its id number
-        --
+
         _userID := public.get_user_id(_piUsername);
 
         If _userID > 0 Then
             -- Function get_user_id() recognizes both a username and the form 'LastName, FirstName (Username)'
             -- Assure that _piUsername contains simply the username
-            --
+
             SELECT username
             INTO _piUsername
             FROM t_users
@@ -385,7 +383,7 @@ BEGIN
             End If;
 
             -- Material movement logging
-            --
+
             If _curContainerID <> _contID Then
                 CALL public.post_material_log_entry (
                                 _type         => 'Biomaterial Move',
@@ -412,8 +410,7 @@ BEGIN
         If _mode = 'update' Then
 
             UPDATE t_biomaterial
-            SET
-                source_name         = _sourceName,
+            SET source_name         = _sourceName,
                 contact_username    = _contactUsername,
                 pi_username         = _piUsername,
                 biomaterial_type_id = _typeID,
@@ -424,7 +421,7 @@ BEGIN
                 mutation            = _mutation,
                 plasmid             = _plasmid,
                 cell_line           = _cellLine
-            WHERE biomaterial_name = _biomaterialName
+            WHERE biomaterial_name = _biomaterialName::citext;
 
             If Not FOUND Then
                 _msg := format('Update operation failed: "%s"', _biomaterialName);
@@ -432,7 +429,7 @@ BEGIN
             End If;
 
             -- Material movement logging
-            --
+
             If _curContainerID <> _contID Then
                 CALL public.post_material_log_entry (
                                 _type         => 'Biomaterial Move',

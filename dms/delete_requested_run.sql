@@ -15,7 +15,7 @@ CREATE OR REPLACE PROCEDURE public.delete_requested_run(IN _requestid integer DE
 **    _skipDatasetCheck     Set to true to allow deleting a requested run even if it has an associated dataset
 **    _message              Status message
 **    _returnCode           Return code
-**    _callingUser          Calling user username
+**    _callingUser          Username of the calling user
 **
 **  Auth:   grk
 **  Date:   02/23/2006

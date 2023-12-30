@@ -8,16 +8,17 @@ CREATE OR REPLACE PROCEDURE sw.update_dependent_steps(IN _infoonly boolean DEFAU
 /****************************************************
 **
 **  Desc:
-**      Examine all dependencies for steps in 'Waiting' state
-**      and update the state of steps for which all dependencies have been satisfied
+**      Examine all dependencies for steps in 'Waiting' state and update the state of steps for which all dependencies have been satisfied
 **
-**      The updated state can be affected by conditions on conditional dependencies
-**      and by whether or not the step tool produces shared results
+**      The updated state can be affected by conditional dependencies and by whether or not the step tool produces shared results
 **
 **  Arguments:
 **    _infoOnly                 When true, preview updates
 **    _maxJobsToProcess         Maximum number of jobs to process (0 to process all)
 **    _loopingUpdateInterval    Seconds between detailed logging while looping through the dependencies
+**    _numStepsSkipped          Output: the number of steps whose state was set to 3 (Skipped)
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   grk
 **  Date:   05/06/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)

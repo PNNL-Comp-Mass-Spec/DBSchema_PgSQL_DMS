@@ -22,7 +22,7 @@ AS $$
 **    _eusSiteStatus    EUS Proposal Title
 **    _hanfordID        Hanford ID
 **    _mode             Mode: add' or 'update'
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
 **
 **  Auth:   jds

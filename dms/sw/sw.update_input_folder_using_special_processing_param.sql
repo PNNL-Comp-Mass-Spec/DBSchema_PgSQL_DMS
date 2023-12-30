@@ -14,8 +14,10 @@ CREATE OR REPLACE PROCEDURE sw.update_input_folder_using_special_processing_para
 **
 **  Arguments:
 **    _jobList              Comma-separated list of jobs
-**    _infoOnly             When true, preview the changes; when false, update input_folder_name in t_job_steps
+**    _infoOnly             When true, preview updates; when false, update input_folder_name in t_job_steps
 **    _showResultsMode      When 0, do not show results; when 1, show results if Tmp_Source_Job_Folders is populated; when 2, show results even if Tmp_Source_Job_Folders is not populated
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   mem
 **  Date:   03/21/2011 mem - Initial Version

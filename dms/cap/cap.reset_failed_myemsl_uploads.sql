@@ -12,7 +12,7 @@ CREATE OR REPLACE PROCEDURE cap.reset_failed_myemsl_uploads(IN _infoonly boolean
 **      Reset the capture tasks to try again if _infoOnly is false
 **
 **  Arguments:
-**    _infoOnly             True to preview the changes
+**    _infoOnly             When true, preview updates
 **    _maxJobsToReset       Maximum number of capture task jobs to reset
 **    _jobListOverride      Comma-separated list of jobs to reset; capture task jobs must have a failed step in t_task_steps
 **    _resetHoldoffMinutes  Holdoff time to apply to column Finish

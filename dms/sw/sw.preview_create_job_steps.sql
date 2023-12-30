@@ -10,11 +10,15 @@ CREATE OR REPLACE PROCEDURE sw.preview_create_job_steps(IN _jobtopreview integer
 **  Desc:
 **      Preview the job steps that would be created
 **
-**      If _jobToPreview is 0, previews the steps for any jobs with state = 0 in sw.t_jobs
-**          Generally, there won't be any jobs with a state of 0, since procedure sw.update_context runs once per minute,
-**          and it calls sw.create_job_steps to create steps for any jobs with state = 0, after which the job state is changed to 1
+**      Calling this procedure with _jobToPreview = 0 will typically not show any results, since there usually aren't any jobs with a state of 0,
+**      since procedure sw.update_context runs once per minute, and it calls sw.create_job_steps to create steps for any jobs with state = 0,
+**      after which the job state is changed to 1
 **
-**      If _jobToPreview is non-zero, previews the steps for the given job in sw.t_jobs (regardless of its state)
+**  Arguments:
+**    _jobToPreview     When 0, preview the steps for any jobs with state = 0 in sw.t_jobs;
+**                      When non-zero, preview the steps for the given job in sw.t_jobs (regardless of its state)
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   02/08/2009 mem - Initial version

@@ -12,13 +12,13 @@ CREATE OR REPLACE PROCEDURE public.create_predefined_analysis_jobs(IN _datasetna
 **
 **  Arguments:
 **    _datasetName                  Dataset name
-**    _callingUser                  Calling user username
+**    _callingUser                  Username of the calling user
 **    _analysisToolNameFilter       Optional: if not blank, only considers predefines that match the given tool name (can contain % as a wildcard)
 **    _excludeDatasetsNotReleased   When true, excludes datasets with a rating of -5 (by default we exclude datasets with a rating < 2 and <> -10)
 **    _preventDuplicateJobs         When true, will not create new jobs that duplicate old jobs
 **    _infoOnly                     When true, preview jobs that would be created
 **    _showDebug                    When true, show debug messages
-**    _message                      Output message
+**    _message                      Status message
 **    _returnCode                   Return code
 **    _jobsCreated                  Output: number of jobs created
 **

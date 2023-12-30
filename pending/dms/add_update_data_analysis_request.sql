@@ -50,9 +50,9 @@ AS $$
 **    _stateComment                 State comment
 **    _id                           Input/output: Data Analysis Request ID
 **    _mode                         Mode: 'add', 'update', or 'previewadd', 'previewupdate'
-**    _message                      Output message
+**    _message                      Status message
 **    _returnCode                   Return code
-**    _callingUser                  Calling user username
+**    _callingUser                  Username of the calling user
 
 **  Auth:   mem
 **  Date:   03/22/2022 mem - Initial version

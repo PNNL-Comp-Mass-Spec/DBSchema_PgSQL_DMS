@@ -17,7 +17,7 @@ CREATE OR REPLACE PROCEDURE public.add_new_freezer(IN _sourcefreezertag text DEF
 **    _sourceFreezerTag     Source freezer tag, e.g. 1208A
 **    _newFreezerTag        New freezer tag,    e.g. 1208F
 **    _infoOnly             When true, preview the shelves that would be created
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
 **
 **  Auth:   mem

@@ -26,8 +26,8 @@ CREATE OR REPLACE PROCEDURE sw.lookup_source_job_from_special_processing_param(I
 **      );
 **
 **  Arguments:
-**    _message          Output: status message
-**    _returnCode       Output: return code
+**    _message          Status message
+**    _returnCode       Return code
 **    _previewSql       When true, set _previewSql to true when calling sw.lookup_source_job_from_special_processing_text()
 **    _showDebug        When true, show debug messages
 **

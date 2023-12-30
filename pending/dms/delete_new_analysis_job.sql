@@ -17,9 +17,9 @@ AS $$
 **  Arguments:
 **    _job              Job to delete
 **    _infoOnly         When true, preview the updates
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   grk
 **  Date:   03/29/2001

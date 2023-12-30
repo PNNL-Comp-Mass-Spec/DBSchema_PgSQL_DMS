@@ -19,7 +19,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_job_request_existing_jobs(IN _p
 **    _modeZeroSearchDays   Number of days to search when _processingMode is 0 (and _requestID and _jobSearchHours are each zero)
 **    _infoOnly             When true, preview changes
 **    _message              Status message
-**    _returncode           Return code
+**    _returnCode           Return code
 **
 **  Auth:   mem
 **  Date:   07/30/2019 mem - Initial version

@@ -16,7 +16,7 @@ CREATE OR REPLACE PROCEDURE public.auto_add_charge_code_users(IN _infoonly boole
 **  Arguments:
 **    _infoOnly                     When true, preview updates
 **    _includeInactiveChargeCodes   When true, add users for both active and inactive charge codes
-**    _message                      Output message
+**    _message                      Status message
 **    _returnCode                   Return code
 **
 **  Auth:   mem

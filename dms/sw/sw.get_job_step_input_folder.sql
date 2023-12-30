@@ -25,6 +25,8 @@ CREATE OR REPLACE PROCEDURE sw.get_job_step_input_folder(IN _job integer, IN _jo
 **    _stepToolFilter    Optional filter, like 'Mz_Refinery' or 'MSGFPlus'
 **    _inputFolderName   Output: Matched input folder, or '' if no match
 **    _stepToolMatch     Output: Matched step tool
+**    _message           Status message
+**    _returnCode        Return code
 **
 **  Auth:   mem
 **  Date:   02/02/2017 mem - Initial release

@@ -18,6 +18,8 @@ CREATE OR REPLACE PROCEDURE public.update_failed_job_now_in_progress(IN _job int
 **    _jobStart             Job start time
 **    _updateCode           Safety feature to prevent unauthorized job updates
 **    _infoOnly             When true, preview updates
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   mem
 **  Date:   02/21/2013 mem - Initial version

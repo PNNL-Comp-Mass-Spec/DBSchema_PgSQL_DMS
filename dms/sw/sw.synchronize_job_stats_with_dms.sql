@@ -14,6 +14,8 @@ CREATE OR REPLACE PROCEDURE sw.synchronize_job_stats_with_dms(IN _joblisttoproce
 **  Arguments:
 **    _jobListToProcess     Jobs to process; if blank, will process all jobs in sw.t_jobs
 **    _infoOnly             When true, preview updates
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   mem
 **  Date:   02/27/2010 mem - Initial version

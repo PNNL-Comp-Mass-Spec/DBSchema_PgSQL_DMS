@@ -12,8 +12,8 @@ CREATE OR REPLACE PROCEDURE cap.update_task_step_states(INOUT _message text DEFA
 **      upon completion of target steps that they depend upon
 **
 **  Arguments:
-**    _message                  Output: status message
-**    _returnCode               Output: return code
+**    _message                  Status message
+**    _returnCode               Return code
 **    _infoOnly                 True to preview changes that would be made
 **    _maxJobsToProcess         Maximum number of jobs to process
 **    _loopingUpdateInterval    Seconds between detailed logging while looping through the dependencies

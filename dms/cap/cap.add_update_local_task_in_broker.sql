@@ -16,9 +16,9 @@ CREATE OR REPLACE PROCEDURE cap.add_update_local_task_in_broker(INOUT _job integ
 **    _priority         Processing priority (defaults to 4)
 **    _jobParam         XML parameters for the job; if an empty string, leave the existing parameters unchanged
 **    _comment          Job comment
-**    _mode             'update' or 'reset' ('add' mode is not supported for capture task jobs)
-**    _message          Output: message
-**    _returnCode       Output: return code
+**    _mode             Mode: 'update' or 'reset' ('add' mode is not supported for capture task jobs)
+**    _message          Status message
+**    _returnCode       Return code
 **    _callingUser      Username of the calling user (unused by this procedure)
 **
 **  Example usage:

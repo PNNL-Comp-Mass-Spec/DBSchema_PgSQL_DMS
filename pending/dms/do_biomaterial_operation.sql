@@ -17,9 +17,9 @@ AS $$
 **  Arguments:
 **    _biomaterialName  Biomaterial name
 **    _mode             Mode: 'delete'
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   grk
 **  Date:   06/17/2002

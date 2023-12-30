@@ -11,10 +11,10 @@ CREATE OR REPLACE PROCEDURE public.set_spectral_library_create_task_complete(IN 
 **      Set a spectral library's state to 3 (complete) or 4 (failed), depending on _completionCode
 **
 **  Arguments:
-**    _libraryId                    Spectral library ID
-**    _completionCode               Completion code:  0 means success; non-zero means failure
-**    _message                      Output: message
-**    _returncode                   Output: return code
+**    _libraryId        Spectral library ID
+**    _completionCode   Completion code:  0 means success; non-zero means failure
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   04/03/2023 mem - Initial Release

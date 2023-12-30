@@ -22,7 +22,7 @@ AS $$
 **    _cartDescription  Cart description
 **    _cartState        Cart state: 'In Service', 'Out of Service', or 'Retired'
 **    _mode             Mode: 'add' or 'update'
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
 **
 **  Auth:   grk

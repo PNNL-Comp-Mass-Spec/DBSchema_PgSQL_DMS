@@ -18,7 +18,7 @@ AS $$
 **    _infoOnly         When true, preview the updates
 **    _dateFilterStart  Start date to filter rows in t_factor_log; null to process all rows
 **    _dateFilterEnd    End date to filter rows in t_factor_log; null to process all rows
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
 **
 **  Auth:   mem

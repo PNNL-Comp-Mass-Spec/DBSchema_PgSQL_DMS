@@ -16,7 +16,7 @@ CREATE OR REPLACE PROCEDURE dpkg.update_osm_package(IN _osmpackageid integer, IN
 **    _mode             Mode: 'delete'
 **    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   grk
 **  Date:   07/08/2013 grk - Initial release

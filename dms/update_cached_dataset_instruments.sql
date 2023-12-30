@@ -11,9 +11,11 @@ CREATE OR REPLACE PROCEDURE public.update_cached_dataset_instruments(IN _process
 **      Update t_cached_dataset_instruments
 **
 **  Arguments:
-**    _processingMode   0 to only add new datasets; 1 to add new datasets and update existing information
+**    _processingMode   Processing mode: 0 to only add new datasets; 1 to add new datasets and update existing information
 **    _datasetId        When non-zero, a single dataset ID to add / update
 **    _infoOnly         When true, preview updates
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   04/15/2019 mem - Initial version

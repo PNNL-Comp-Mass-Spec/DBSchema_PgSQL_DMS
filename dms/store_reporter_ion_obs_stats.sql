@@ -11,9 +11,14 @@ CREATE OR REPLACE PROCEDURE public.store_reporter_ion_obs_stats(IN _job integer,
 **      Update the reporter ion observation stats in T_Reporter_Ion_Observation_Rates for the specified analysis job
 **
 **  Arguments:
-**    _reporterIon                Reporter ion name, corresponding to the "label" column in T_Sample_Labelling_Reporter_Ions (e.g. iTRAQ8 or TMT18)
-**    _observationStatsTopNPct    Comma-separated list of observation stats, by channel
-**    _medianIntensitiesTopNPct   Comma-separated list of median intensity values, by channel
+**    _job                          Analysis job number
+**    _reporterIon                  Reporter ion name, corresponding to the "label" column in t_sample_labelling_reporter_ions (e.g. iTRAQ8 or TMT18)
+**    _topNPct                      Percent of data (by decreasing intensity) that was used to compute the stats
+**    _observationStatsTopNPct      Comma-separated list of observation stats, by channel
+**    _medianIntensitiesTopNPct     Comma-separated list of median intensity values, by channel
+**    _message                      Status message
+**    _returnCode                   Return code
+**    _infoOnly                     When true, preview updates
 **
 **  Auth:   mem
 **  Date:   07/30/2020 mem - Initial version

@@ -16,6 +16,9 @@ CREATE OR REPLACE PROCEDURE public.update_sample_prep_request_items(IN _samplepr
 **  Arguments:
 **    _samplePrepRequestID      Sample prep request ID
 **    _mode                     Mode: 'update' or 'debug'
+**    _message                  Status message
+**    _returnCode               Return code
+**    _callingUser              Username of the calling user
 **
 **  Auth:   grk
 **  Date:   07/05/2013 grk - Initial release

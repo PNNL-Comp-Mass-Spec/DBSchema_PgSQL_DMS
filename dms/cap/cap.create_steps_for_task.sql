@@ -17,8 +17,8 @@ CREATE OR REPLACE PROCEDURE cap.create_steps_for_task(IN _job integer, IN _scrip
 **    _job                      Capture task job number
 **    _scriptXML                Capture task script XML
 **    _resultsdirectoryname     Results directory name
-**    _message                  Output: status message
-**    _returnCode               Output: return code
+**    _message                  Status message
+**    _returnCode               Return code
 **    _debugmode                When true, show additional messages
 **
 **  Auth:   grk

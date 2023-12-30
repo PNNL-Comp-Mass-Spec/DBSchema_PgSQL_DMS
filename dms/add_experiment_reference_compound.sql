@@ -21,7 +21,7 @@ CREATE OR REPLACE PROCEDURE public.add_experiment_reference_compound(IN _expid i
 **  Arguments:
 **    _expID                Experiment ID
 **    _updateCachedInfo     When true, call update_cached_experiment_component_names to update t_cached_experiment_components
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
 **
 **  Auth:   mem

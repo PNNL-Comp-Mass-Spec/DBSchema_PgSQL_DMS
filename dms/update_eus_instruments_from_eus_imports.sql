@@ -28,6 +28,10 @@ CREATE OR REPLACE PROCEDURE public.update_eus_instruments_from_eus_imports(INOUT
 **          CREATE SCHEMA IF NOT EXISTS eus;
 **          IMPORT FOREIGN SCHEMA proteomics_views FROM SERVER NEXUS_fdw INTO eus;
 **
+**  Arguments:
+**    _message      Status message
+**    _returnCode   Return code
+**
 **  Auth:   grk
 **  Date:   06/29/2011 grk - Initial version
 **          07/19/2011 grk - Last_Affected

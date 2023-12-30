@@ -13,7 +13,7 @@ CREATE OR REPLACE PROCEDURE public.validate_wp(IN _workpackage text, IN _allowno
 **  Arguments:
 **    _workPackage      Work package name
 **    _allowNoneWP      Set to true to allow _workPackage to be 'none'
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
 **
 **  Auth:   mem

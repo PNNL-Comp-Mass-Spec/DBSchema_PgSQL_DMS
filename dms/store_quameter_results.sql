@@ -33,6 +33,9 @@ CREATE OR REPLACE PROCEDURE public.store_quameter_results(IN _datasetid integer 
 **  Arguments:
 **    _datasetID    If this value is 0, will determine the dataset name using the contents of _resultsXML
 **    _resultsXML   XML holding the Quameter results for a single dataset
+**    _message      Status message
+**    _returnCode   Return code
+**    _infoOnly     When true, preview updates
 **
 **  Auth:   mem
 **  Date:   09/17/2012 mem - Initial version (modelled after StoreSMAQCResults)

@@ -19,7 +19,7 @@ CREATE OR REPLACE PROCEDURE cap.update_capture_task_manager_and_task_status_xml(
 **                            3: Ignore _managerStatusXML, use test XML, and update cap.t_processor_status
 **                            4: Ignore _managerStatusXML, use test XML, and preview updates
 **    _logProcessorNames    When true, log the names of updated processors (in cap.t_log_entries)
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
 **
 **  Example XML in _managerStatusXML

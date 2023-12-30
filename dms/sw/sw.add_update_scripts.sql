@@ -11,15 +11,18 @@ CREATE OR REPLACE PROCEDURE sw.add_update_scripts(IN _script text, IN _descripti
 **      Add new or edit existing scripts in sw.t_scripts
 **
 **  Arguments:
-**    _script               Script name
-**    _description          Script description
-**    _enabled              Enabled: 'Y' or 'N'
-**    _resultsTag           Results tag
-**    _backfillToDMS        Backfill to DMS: 'Y' or 'N'; this should be 'Y' for scripts that have their jobs directly created in sw.t_jobs
-**    _contents             Script step information (XML as text)
-**    _parameters           Script parameters (XML as text); only defined for scripts that have _backfillToDMS = 1
-**    _fields               Fields for wizard (XML as text); this column is obsolete, but still editable (see script MAC_TMT10Plex)
-**    _mode                 Mode: 'add' or 'update'
+**    _script           Script name
+**    _description      Script description
+**    _enabled          Enabled: 'Y' or 'N'
+**    _resultsTag       Results tag
+**    _backfillToDMS    Backfill to DMS: 'Y' or 'N'; this should be 'Y' for scripts that have their jobs directly created in sw.t_jobs
+**    _contents         Script step information (XML as text)
+**    _parameters       Script parameters (XML as text); only defined for scripts that have _backfillToDMS = 1
+**    _fields           Fields for wizard (XML as text); this column is obsolete, but still editable (see script MAC_TMT10Plex)
+**    _mode             Mode: 'add' or 'update'
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Username of the calling user
 **
 **  Example XML for _contents (for the MaxQuant_DataPkg script):
 **      <JobScript Name="MaxQuant">

@@ -35,9 +35,9 @@ AS $$
 **    _eusUsageType         EUS usage type
 **    _eusUsersList         EUS User ID (only a single person is allowed, though originally multiple people could be listed)
 **    _mode                 Can be 'add', 'update', 'bad', 'check_update', 'check_add'
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
-**    _callingUser          Calling user username
+**    _callingUser          Username of the calling user
 **
 **  Auth:   grk
 **  Date:   07/03/2012

@@ -16,7 +16,7 @@ AS $$
 **  Arguments:
 **    _request      Analysis job request ID (as text)
 **    _mode         Mode: 'delete'
-**    _message      Output message
+**    _message      Status message
 **    _returnCode   Return code
 **
 **  Auth:   grk

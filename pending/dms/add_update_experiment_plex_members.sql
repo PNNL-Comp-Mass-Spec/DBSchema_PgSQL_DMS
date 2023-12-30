@@ -119,15 +119,15 @@ AS $$
 **     131, CPTAC_UCEC_C3N-00850, Normal, Aliquot: CPT002781 0003
 **
 **  Arguments:
-**    _plexExperimentIdOrName   Input/output parameter; used by the experiment_plex_members page family when copying an entry and changing the plex Exp_ID.  Accepts name or ID as input, but the output is always ID
+**    _plexExperimentIdOrName   Input/output: used by the experiment_plex_members page family when copying an entry and changing the plex Exp_ID.  Accepts name or ID as input, but the output is always ID
 **    _plexMembers              Table of Channel to Exp_ID mapping (see above for examples)
 **    _expIdChannel 1 ... 18    Channel experiment: Experiment ID, Experiment Name, or ExpID:ExperimentName
 **    _channelType  1 ... 18    Channel type: Normal, Reference, or Empty
 **    _comment      1 ... 18    Channel domment
 **    _mode                     Mode: 'add', 'update', 'check_add', 'check_update', or 'preview'
-**    _message                  Output message
+**    _message                  Status message
 **    _returnCode               Return code
-**    _callingUser              Calling user username
+**    _callingUser              Username of the calling user
 **
 **  Auth:   mem
 **  Date:   11/19/2018 mem - Initial version

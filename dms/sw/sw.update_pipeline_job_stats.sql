@@ -12,6 +12,8 @@ CREATE OR REPLACE PROCEDURE sw.update_pipeline_job_stats(IN _infoonly boolean DE
 **
 **  Arguments:
 **    _infoOnly     When true, preview the processing statistics
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   05/29/2022 mem - Initial version

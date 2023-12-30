@@ -13,6 +13,8 @@ CREATE OR REPLACE PROCEDURE public.set_capture_task_busy(IN _datasetname text, I
 **  Arguments:
 **    _datasetName      Dataset name
 **    _machineName      Capture task machine; always '(broker)' (effective 2010-01-20)
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   grk
 **  Date:   12/15/2009

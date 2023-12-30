@@ -29,7 +29,7 @@ AS $$
 **    _userUpdate           Update: 'Y' or 'N'; when 'Y', auto-update the user using update_users_from_warehouse()
 **    _operationsList       Comma-separated list of access permissions (aka operation names); see table t_user_operations
 **    _mode                 Mode: 'add' or 'update'
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
 **
 **  Auth:   grk

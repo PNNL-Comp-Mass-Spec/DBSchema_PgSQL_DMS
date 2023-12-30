@@ -29,7 +29,7 @@ AS $$
 **    _mode             Mode: 'update' or 'preview'
 **    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   jds
 **  Date:   09/21/2006

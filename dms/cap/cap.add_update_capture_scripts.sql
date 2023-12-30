@@ -17,8 +17,8 @@ CREATE OR REPLACE PROCEDURE cap.add_update_capture_scripts(IN _script text, IN _
 **    _resultsTag       Three letter abbreviation for the script
 **    _contents         Script contents (XML)
 **    _mode             'add' or 'update'
-**    _message          Output: message
-**    _returnCode       Output: return code
+**    _message          Status message
+**    _returnCode       Return code
 **    _callingUser      Username of the calling user
 **
 **  Auth:   grk

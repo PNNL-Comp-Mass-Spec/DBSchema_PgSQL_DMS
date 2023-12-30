@@ -14,7 +14,7 @@ CREATE OR REPLACE PROCEDURE public.get_tissue_id(IN _tissuenameorid text, INOUT 
 **    _tissueNameOrID       Tissue name or tissue identifier to find
 **    _tissueIdentifier     Output: Tissue identifier, e.g. BTO:0000131
 **    _tissueName           Output: Human readable tissue name, e.g. plasma
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
 **
 **  Auth:   mem

@@ -14,7 +14,7 @@ CREATE OR REPLACE PROCEDURE cap.reset_dependent_task_steps(IN _jobs text, IN _in
 **
 **  Arguments:
 **    _jobs         Comma-separated list of capture task jobs whose steps should be reset
-**    _infoOnly     When true, preview the updates
+**    _infoOnly     When true, preview updates
 **    _message      Status message
 **    _returnCode   Return code
 **

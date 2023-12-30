@@ -20,7 +20,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_aux_info_definition(IN _mode publi
 **    _param1               See parameter argument usage below
 **    _param2               See below
 **    _param3               See below
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
 **
 **  Parameter argument usage:

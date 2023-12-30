@@ -13,7 +13,9 @@ CREATE OR REPLACE PROCEDURE public.set_archive_task_complete(IN _datasetname tex
 **
 **  Arguments:
 **    _datasetName      Dataset name
-**    _completionCode   0=success, 1=failed, 100=success (capture broker); Legacy: anything else = no intermediate files
+**    _completionCode   Completion code: 0=success, 1=failed, 100=success (capture broker); Legacy: anything else = no intermediate files
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   grk
 **  Date:   09/26/2002

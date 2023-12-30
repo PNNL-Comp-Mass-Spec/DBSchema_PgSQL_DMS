@@ -21,7 +21,7 @@ AS $$
 **
 **  Arguments:
 **    _campaignIDFilterList     Comma-separated list of campaign IDs
-**    _message                  Output message
+**    _message                  Status message
 **    _returnCode               Return code
 **
 **  Auth:   mem

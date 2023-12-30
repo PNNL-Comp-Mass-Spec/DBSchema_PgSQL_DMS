@@ -9,14 +9,24 @@ CREATE OR REPLACE PROCEDURE sw.set_step_task_complete(IN _job integer, IN _step 
 **
 **  Desc:
 **      Mark job step as complete
-**      Also updates CPU and Memory info tracked by T_Machines
+**      Also update CPU and memory info tracked by t_machines
 **
 **  Arguments:
-**    _remoteInfo        Remote server info for jobs with _completionCode = 25
-**    _remoteTimestamp   Timestamp for the .info file for remotely running jobs (e.g. '20170515_1532' in file Job1449504_Step03_20170515_1532.info)
-**    _remoteStart       Time the remote processor actually started processing the job
-**    _remoteFinish      Time the remote processor actually finished processing the job
-**    _processorName     Name of the processor setting the job as complete
+**    _job                  Analysis job number
+**    _step                 Step number
+**    _completionCode       Completion code
+**    _completionMessage    Completion message
+**    _evaluationCode       Evaluation code
+**    _evaluationMessage    Evaluation message
+**    _organismDBName       Organism DB name (FASTA file name)
+**    _remoteInfo           Remote server info for jobs with _completionCode = 25
+**    _remoteTimestamp      Timestamp for the .info file for remotely running jobs (e.g. '20170515_1532' in file Job1449504_Step03_20170515_1532.info)
+**    _remoteProgress       Percent complete for jobs running remotely
+**    _remoteStart          Time the remote processor actually started processing the job
+**    _remoteFinish         Time the remote processor actually finished processing the job
+**    _processorName        Name of the processor setting the job as complete
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   grk
 **  Date:   05/07/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)

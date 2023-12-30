@@ -29,7 +29,7 @@ CREATE OR REPLACE PROCEDURE public.add_requested_run_to_existing_dataset(IN _dat
 **    _mode                 Compatibility with web entry page and possible future use; supports 'add', 'add-debug', and 'preview'
 **    _message              Status message
 **    _returnCode           Return code
-**    _callingUser          Calling user username
+**    _callingUser          Username of the calling user
 **
 **  Auth:   grk
 **  Date:   05/23/2011 grk - Initial release

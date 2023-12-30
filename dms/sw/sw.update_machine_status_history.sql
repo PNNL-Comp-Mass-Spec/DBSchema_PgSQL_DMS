@@ -14,6 +14,8 @@ CREATE OR REPLACE PROCEDURE sw.update_machine_status_history(IN _minimumtimeinte
 **  Arguments:
 **    _minimumTimeIntervalHours     Set this to 0 to force the addition of new data to T_Analysis_Job_Status_History
 **    _activeProcessWindowHours     Will consider status values posted within the last _activeProcessWindowHours as valid status values
+**    _message                      Status message
+**    _returnCode                   Return code
 **
 **  Auth:   mem
 **  Date:   08/10/2010 mem - Initial version

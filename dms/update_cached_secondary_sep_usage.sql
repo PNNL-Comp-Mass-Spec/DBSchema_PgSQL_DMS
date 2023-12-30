@@ -10,6 +10,10 @@ CREATE OR REPLACE PROCEDURE public.update_cached_secondary_sep_usage(INOUT _mess
 **  Desc:
 **      Update data in t_secondary_sep_usage
 **
+**  Arguments:
+**    _message      Status message
+**    _returnCode   Return code
+**
 **  Auth:   mem
 **  Date:   11/18/2015 mem - Initial Version
 **          02/23/2016 mem - Add set XACT_ABORT on

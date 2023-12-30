@@ -10,6 +10,12 @@ CREATE OR REPLACE PROCEDURE public.set_archive_task_busy(IN _datasetname text, I
 **  Desc:
 **      Set archive state to 2 (Archive In Progress) and set the archive_processor name to _storageServerName
 **
+**  Arguments:
+**    _datasetName          Dataset name
+**    _storageServerName    Storage server name
+**    _message              Status message
+**    _returnCode           Return code
+**
 **  Auth:   grk
 **  Date:   12/15/2009
 **          01/14/2010 grk - Removed path ID fields

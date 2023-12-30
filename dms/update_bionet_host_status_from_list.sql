@@ -14,7 +14,8 @@ CREATE OR REPLACE PROCEDURE public.update_bionet_host_status_from_list(IN _hostn
 **    _hostNames        Comma-separated list of computer names; optionally include IP address with each host name using the format Host@IP
 **    _addMissingHosts  If true, add missing hosts
 **    _infoOnly         When true, preview updates
-**    _message          Output message; when _infoOnly is true, will contain a vertical bar delimited list of host names to add or update
+**    _message          Status message; when _infoOnly is true, will contain a vertical bar delimited list of host names to add or update
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   12/03/2015 mem - Initial version

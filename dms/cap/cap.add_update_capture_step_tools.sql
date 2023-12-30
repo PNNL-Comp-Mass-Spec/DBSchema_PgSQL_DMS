@@ -19,7 +19,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_capture_step_tools(IN _name text, IN 
 **    _mode                         Mode: 'add' or 'update'
 **    _message                      Status message
 **    _returnCode                   Return code
-**    _callingUser                  Calling user username
+**    _callingUser                  Username of the calling user
 **
 **  Auth:   grk
 **  Date:   09/15/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)

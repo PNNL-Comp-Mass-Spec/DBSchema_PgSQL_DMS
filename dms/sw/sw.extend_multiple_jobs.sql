@@ -13,6 +13,14 @@ CREATE OR REPLACE PROCEDURE sw.extend_multiple_jobs(IN _joblist text, IN _extens
 **  Arguments:
 **    _jobList                  Comma-separated list of jobs to extend
 **    _extensionScriptName      Example: MSGFPlus_MzXml_Extend_IDPicker
+**    _message                  Status message
+**    _returnCode               Return code
+**    _infoOnly                 When true, create and populate the temporary tables, but do not add new rows to t_jobs, t_job_steps, etc. When true, auto-sets _debugMode to true
+**    _debugMode                When true, various debug messages will be shown, and the contents of the temporary tables are written to four database tables:
+**                              - sw.T_Tmp_New_Jobs
+**                              - sw.T_Tmp_New_Job_Steps
+**                              - sw.T_Tmp_New_Job_Step_Dependencies
+**                              - sw.T_Tmp_New_Job_Parameters
 **
 **  Auth:   mem
 **  Date:   10/22/2010 mem - Initial version
@@ -116,7 +124,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Loop through the jobs and call create_job_steps for each
+    -- Loop through the jobs and call create_job_steps() for each
     ---------------------------------------------------
 
     FOR _job IN

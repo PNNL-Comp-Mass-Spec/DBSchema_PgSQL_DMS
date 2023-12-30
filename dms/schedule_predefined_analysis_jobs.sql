@@ -17,7 +17,8 @@ CREATE OR REPLACE PROCEDURE public.schedule_predefined_analysis_jobs(IN _dataset
 **    _excludeDatasetsNotReleased   When true, excludes datasets with a rating of -5 or -6 (we always exclude datasets with a rating < 2 but <> -10)
 **    _preventDuplicateJobs         When true, will not create new jobs that duplicate old jobs
 **    _infoOnly                     When true, use RAISE INFO to show a message about whether the dataset will be added to t_predefined_analysis_scheduling_queue or not
-**    _returnCode                   Error code if an exception is caught
+**    _message                      Status message
+**    _returnCode                   Return code
 **
 **  Auth:   grk
 **  Date:   06/29/2005 grk - Supersedes procedure ScheduleDefaultAnalyses

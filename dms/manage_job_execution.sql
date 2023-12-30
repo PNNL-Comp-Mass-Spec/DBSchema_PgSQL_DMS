@@ -33,8 +33,9 @@ CREATE OR REPLACE PROCEDURE public.manage_job_execution(IN _parameters text DEFA
 **      but that procedure no longer supports processor groups, and the value will thus be ignored
 **
 **  Arguments:
-**   _parameters    XML with jobs to update and new values
-**   _message       Output message
+**    _parameters   XML with jobs to update and new values
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   grk
 **  Date:   07/09/2009 grk - Initial release

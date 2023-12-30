@@ -19,7 +19,7 @@ CREATE OR REPLACE PROCEDURE cap.finish_task_creation(IN _job integer, INOUT _mes
 **
 **  Arguments:
 **    _job          Capture task job number
-**    _message      Output: status message
+**    _message      Status message
 **    _debugmode    When true, show additional messages
 **
 **  Auth:   grk

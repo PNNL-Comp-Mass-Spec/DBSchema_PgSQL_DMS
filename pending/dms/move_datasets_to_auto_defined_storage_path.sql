@@ -19,7 +19,7 @@ AS $$
 **  Arguments:
 **    _datasetIDList    Comma-separated list of dataset IDs
 **    _infoOnly         When true, validate the dataset IDs, but do not update the database
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
 **
 **  Auth:   mem

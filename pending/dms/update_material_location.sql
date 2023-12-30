@@ -26,7 +26,7 @@ AS $$
 **    _status           State: 'Active' or 'Inactive'
 **    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   mem
 **  Date:   08/27/2018 mem - Initial version

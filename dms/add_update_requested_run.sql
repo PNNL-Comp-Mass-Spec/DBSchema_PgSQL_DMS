@@ -44,8 +44,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run(IN _requestname text
 **                                  When _mode is 'update' but _requestIdForUpdate is 0, this procedure looks for the requested run by name and state
 **    _logDebugMessages             When true, log debug messages
 **    _request                      ID of the newly created requested run, or of the updated requested run (which was specified using _requestIDForUpdate)
-**    _resolvedInstrumentInfo       Output parameter that lists the the instrument group, run type, and separation group; used by AddRequestedRuns when previewing updates
-**    _message                      Output message
+**    _resolvedInstrumentInfo       Output: lists the the instrument group, run type, and separation group; used by AddRequestedRuns when previewing updates
+**    _message                      Status message
 **    _returnCode                   Return code
 **
 **  Auth:   grk

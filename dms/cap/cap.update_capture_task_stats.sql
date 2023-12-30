@@ -13,7 +13,7 @@ CREATE OR REPLACE PROCEDURE cap.update_capture_task_stats(IN _year integer DEFAU
 **  Arguments:
 **    _year         Optional year to filter on; use all years if 0
 **    _infoOnly     When true, preview updates
-**    _message      Output message
+**    _message      Status message
 **    _returnCode   Return code
 **
 **  Auth:   mem

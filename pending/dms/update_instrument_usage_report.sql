@@ -32,7 +32,7 @@ AS $$
 **    _instrument
 **    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   grk
 **  Date:   10/07/2012

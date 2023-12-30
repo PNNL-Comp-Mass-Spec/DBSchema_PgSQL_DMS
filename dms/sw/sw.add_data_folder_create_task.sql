@@ -13,14 +13,16 @@ CREATE OR REPLACE PROCEDURE sw.add_data_folder_create_task(IN _pathlocalroot tex
 **      The Package Folder Create Manager (aka PkgFolderCreateManager) examines this table to look for folders that need to be created
 **
 **  Arguments:
-**    _pathLocalRoot       Required, for example: F:\DataPkgs
-**    _pathSharedRoot      Required, for example: \\protoapps\DataPkgs\
-**    _folderPath          Required, for example: Public\2011\264_PNWRCE_Dengue_iTRAQ
-**    _sourceTable         Optional, for example: T_Data_Package
-**    _sourceID            Optional, for example: 264
-**    _sourceIDFieldName   Optional, for example: ID
-**    _command             Optional, for example: add
-**    _infoOnly            When true, preview the info that would be added to T_Data_Folder_Create_Queue
+**    _pathLocalRoot        Required, for example: F:\DataPkgs
+**    _pathSharedRoot       Required, for example: \\protoapps\DataPkgs\
+**    _folderPath           Required, for example: Public\2011\264_PNWRCE_Dengue_iTRAQ
+**    _sourceTable          Optional, for example: T_Data_Package
+**    _sourceID             Optional, for example: 264
+**    _sourceIDFieldName    Optional, for example: ID
+**    _command              Optional, for example: add
+**    _infoOnly             When true, preview the info that would be added to T_Data_Folder_Create_Queue
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   mem
 **  Date:   03/17/2011 mem - Initial version

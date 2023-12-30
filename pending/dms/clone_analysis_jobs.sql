@@ -35,7 +35,7 @@ AS $$
 **    _updateOldJobComment          When true, add the new job number to the old job comment
 **    _allowDuplicateJob            When true, allow the new jobs to be duplicates of the old jobs (useful for testing a new version of a tool or updated .UIMF)
 **    _infoOnly                     When true, preview updates
-**    _message                      Output message
+**    _message                      Status message
 **    _returnCode                   Return code
 **
 **  Auth:   mem

@@ -15,8 +15,8 @@ CREATE OR REPLACE PROCEDURE public.update_cart_parameters(IN _mode text, IN _req
 **    _mode         Type of update being performed ('CartName', 'CartConfigID', 'RunStatus', 'RunStart', 'RunFinish', or 'InternalStandard')
 **    _requestID    ID of requested run being updated
 **    _newValue     New value to store in t_requested_run for _requestID (see below for more info)
-**    _message      Output: error message
-**    _returnCode   Output: return code
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Mode descriptions:
 **

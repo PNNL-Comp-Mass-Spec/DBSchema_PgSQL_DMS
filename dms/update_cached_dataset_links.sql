@@ -17,6 +17,8 @@ CREATE OR REPLACE PROCEDURE public.update_cached_dataset_links(IN _processingmod
 **                      2 to process new datasets, those with update_required = 1, and all datasets in DMS (looking for dataset_row_version or storage_path_row_version differing)
 **                      3 to re-process all of the entries in T_Cached_Dataset_Links (this is the slowest update and will take ~20 seconds)
 **    _showDebug        When true, show debug info
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   07/25/2017 mem - Initial version

@@ -12,8 +12,10 @@ CREATE OR REPLACE PROCEDURE public.set_archive_update_task_complete(IN _datasetn
 **      Otherwise, set archive update state to 4 (Update Failed)
 **
 **  Arguments:
-**    _datasetName          Dataset name
-**    _completionCode       Completion code: 0=success, 1=failure, >1 means no intermediate files
+**    _datasetName      Dataset name
+**    _completionCode   Completion code: 0=success, 1=failure, >1 means no intermediate files
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   grk
 **  Date:   12/03/2002

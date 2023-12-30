@@ -22,7 +22,9 @@ CREATE OR REPLACE PROCEDURE sw.delete_old_jobs_from_history(IN _infoonly boolean
 **
 **  Arguments:
 **    _infoOnly     When true, preview the 10 oldest and 10 newest jobs that would be deleted
-
+**    _message      Status message
+**    _returnCode   Return code
+**
 **  Auth:   mem
 **  Date:   05/29/2022 mem - Initial version
 **          08/01/2023 mem - Ported to PostgreSQL

@@ -29,9 +29,9 @@ AS $$
 **    _shelfNew         New shelf
 **    _rackNew          New rack
 **    _infoOnly         When true, re
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   mem
 **  Date:   08/03/2016 mem - Initial version

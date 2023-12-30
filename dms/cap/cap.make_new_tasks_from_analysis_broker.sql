@@ -12,8 +12,8 @@ CREATE OR REPLACE PROCEDURE cap.make_new_tasks_from_analysis_broker(IN _infoonly
 **
 **  Arguments:
 **    _infoOnly                                      True to preview the capture task job that would be created
-**    _message                                       Output: status message
-**    _returnCode                                    Output: return code
+**    _message                                       Status message
+**    _returnCode                                    Return code
 **    _importWindowDays                              Default to 10 (via cap.t_default_sp_params)
 **    _bypassDatasetArchive                          When true, waive the requirement that there be an existing complete dataset archive capture task job in broker; default to true (via cap.t_default_sp_params)
 **    _datasetIDFilterMin                            If non-zero, will be used to filter the candidate datasets

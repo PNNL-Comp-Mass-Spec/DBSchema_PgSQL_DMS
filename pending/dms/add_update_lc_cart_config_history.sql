@@ -27,9 +27,9 @@ AS $$
 **    _description      General description of the task, e.g. 'Replaced rotors' or 'Replaced Syringe'
 **    _note             Additional details
 **    _mode             Mode: 'add' or 'update'
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   grk
 **  Date:   03/09/2011

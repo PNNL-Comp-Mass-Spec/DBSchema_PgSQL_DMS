@@ -27,7 +27,7 @@ CREATE OR REPLACE PROCEDURE sw.create_job_steps(INOUT _message text DEFAULT ''::
 **    _loopingUpdateInterval                Seconds between detailed logging while looping through the dependencies
 **    _infoOnly                             When true, populate the temporary tables, but do not add new rows to t_jobs, t_job_steps, etc. When true, auto-sets _debugMode to true
 **    _debugMode                            When this is true, you can optionally specify a job using _existingJob to view the steps that would be created for that job
-**                                          Also, when this is true, various debug messages will be shown, and the contents of the temporary tables are written to four database tables
+**                                          Also, when this is true, various debug messages will be shown, and the contents of the temporary tables are written to four database tables:
 **                                          - sw.T_Tmp_New_Jobs
 **                                          - sw.T_Tmp_New_Job_Steps
 **                                          - sw.T_Tmp_New_Job_Step_Dependencies

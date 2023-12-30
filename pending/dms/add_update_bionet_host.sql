@@ -29,9 +29,9 @@ AS $$
 **    _active           1 if active, 0 if inactive
 **    _comment          Comment
 **    _mode             Mode: 'add' or 'update'
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Date:   09/08/2016 mem - Initial version
 **          04/12/2017 mem - Log exceptions to T_Log_Entries

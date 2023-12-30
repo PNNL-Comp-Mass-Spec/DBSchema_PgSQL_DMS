@@ -83,7 +83,6 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **        </IsobaricLabelInfo>
 **     </isobaricLabels>
 **
-**
 **  To validate mods without storing them, set _paramFileID to 0 or a negative number
 **
 **  Arguments:
@@ -94,6 +93,8 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **    _replaceExisting      When true, replace existing mass mods; if false, report an error if mass mods are already defined
 **    _validateUnimod       When true, require that the mod names are known Unimod names
 **    _paramFileType        MSGFPlus, DiaNN, TopPIC, MSFragger, or MaxQuant; if empty, will lookup using _paramFileID; if no match (or if _paramFileID is null or 0) assumes MSGFPlus
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   mem
 **  Date:   05/16/2013 mem - Initial version

@@ -19,7 +19,7 @@ CREATE OR REPLACE PROCEDURE mc.parse_manager_name_list(IN _managernamelist text 
 **  Arguments:
 **    _managerNameList          One or more manager names (comma-separated list); supports wildcards
 **    _removeUnknownManagers    When 1, delete manager names that are not defined in _removeUnknownManagers
-**    _message                  Output message
+**    _message                  Status message
 **
 **  Auth:   mem
 **  Date:   05/09/2008

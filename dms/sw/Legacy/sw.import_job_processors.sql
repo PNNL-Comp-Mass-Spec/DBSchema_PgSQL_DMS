@@ -8,9 +8,14 @@ CREATE OR REPLACE PROCEDURE sw.import_job_processors(IN _bypassdms boolean DEFAU
 /****************************************************
 **
 **  Desc:
-**      Get list of jobs and associated processors and count of associated groups that are enabled for general processing
+**      Add/remote processors from sw.t_local_job_processors
 **
-**      This procedure was deprecated in May 2015 since we no longer use sw.import_job_processors
+**      This procedure was deprecated in May 2015 since we no longer use sw.t_local_job_processors
+**
+**  Arguments:
+**    _bypassDMS    When true, the logic in this procedure is completely bypassed (and thus t_local_job_processors is not updated)
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   grk
 **  Date:   05/26/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)

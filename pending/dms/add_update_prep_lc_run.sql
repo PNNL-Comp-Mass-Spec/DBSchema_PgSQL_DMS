@@ -47,9 +47,9 @@ AS $$
 **    _qualityControl       Quality control reagent description
 **    _datasets             Comma-separated list of dataset names to associate with this prep LC run
 **    _mode                 Mode: 'add' or 'update'
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
-**    _callingUser          Calling user username
+**    _callingUser          Username of the calling user
 **
 **  Auth:   grk
 **  Date:   08/04/2009

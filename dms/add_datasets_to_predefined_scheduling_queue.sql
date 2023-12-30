@@ -17,7 +17,7 @@ CREATE OR REPLACE PROCEDURE public.add_datasets_to_predefined_scheduling_queue(I
 **    _infoOnly         When true, preview rows that would be added
 **    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   mem
 **  Date:   03/31/2016 mem - Initial Version

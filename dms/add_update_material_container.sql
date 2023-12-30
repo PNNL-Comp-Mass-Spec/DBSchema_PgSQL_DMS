@@ -18,9 +18,9 @@ CREATE OR REPLACE PROCEDURE public.add_update_material_container(INOUT _containe
 **    _campaignName     Campaign name; if an empty string, will store a null for Campaign_ID
 **    _researcher       Researcher name; supports 'Zink, Erika M', 'Zink, Erika M (D3P704)', or 'D3P704'
 **    _mode             Mode: 'add', 'update', or 'preview'
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   grk
 **  Date:   03/20/2008 grk - Initial release

@@ -38,9 +38,9 @@ CREATE OR REPLACE PROCEDURE public.add_requested_runs(IN _experimentgroupid text
 **    _batchPriority                Batch priority
 **    _batchPriorityJustification   Batch priority justification
 **    _batchComment                 Batch comment
-**    _message                      Output message
+**    _message                      Status message
 **    _returnCode                   Return code
-**    _callingUser                  Calling user username
+**    _callingUser                  Username of the calling user
 **
 **  Auth:   grk
 **  Date:   07/22/2005 - Initial version

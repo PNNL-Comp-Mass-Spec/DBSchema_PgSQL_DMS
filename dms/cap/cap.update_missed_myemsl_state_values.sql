@@ -17,7 +17,7 @@ CREATE OR REPLACE PROCEDURE cap.update_missed_myemsl_state_values(IN _windowdays
 **  Arguments:
 **    _windowDays       Threshold for the entered column in cap.t_myemsl_uploads
 **    _infoOnly         When true, preview updates
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
 **
 **  Auth:   mem

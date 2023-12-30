@@ -13,8 +13,8 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_copy_factors(IN _srcrequ
 **  Arguments:
 **    _srcRequestID     Source requested run ID
 **    _destRequestID    Source requested run ID
-**    _message          Output: status message
-**    _returnCode       Output: Return code
+**    _message          Status message
+**    _returnCode       Return code
 **    _callingUser      Username of the calling user
 **
 **  Auth:   grk

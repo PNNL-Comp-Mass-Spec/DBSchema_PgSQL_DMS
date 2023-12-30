@@ -33,7 +33,7 @@ AS $$
 **  Arguments:
 **    _id           Protein reference id, corresponding to reference_id in pc.t_protein_names; this parameter must be named id (see $calling_params->id in Q_model.php on the DMS website)
 **    _mode         Ignored, but required for compatibility reasons
-**    _callingUser  Calling user username
+**    _callingUser  Username of the calling user
 **
 **  Auth:   mem
 **  Date:   06/27/2016 mem - Initial version

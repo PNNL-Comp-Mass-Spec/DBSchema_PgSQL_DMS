@@ -16,7 +16,7 @@ AS $$
 **
 **  Arguments:
 **    _interval     Hours since last run; threshold for finding events in t_notification_event to process
-**    _message      Output message
+**    _message      Status message
 **    _returnCode   Return code
 **
 **  Auth:   grk

@@ -13,6 +13,10 @@ CREATE OR REPLACE PROCEDURE sw.update_job_in_main_tables(INOUT _message text DEF
 **
 **      Note: Does not update job steps in state 5 = Complete
 **
+**  Arguments:
+**    _message      Status message
+**    _returnCode   Return code
+**
 **  Auth:   mem
 **  Date:   03/11/2009 mem - Initial release (Ticket #725, http://prismtrac.pnl.gov/trac/ticket/725)
 **          03/21/2011 mem - Changed transaction name to match procedure name

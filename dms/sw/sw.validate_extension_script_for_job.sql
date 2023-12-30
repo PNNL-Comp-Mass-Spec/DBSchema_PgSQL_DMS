@@ -13,6 +13,8 @@ CREATE OR REPLACE PROCEDURE sw.validate_extension_script_for_job(IN _job integer
 **  Arguments:
 **    _job                      Job number
 **    _extensionScriptName      Pipeline script name
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   mem
 **  Date:   10/22/2010 mem - Initial version

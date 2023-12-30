@@ -15,9 +15,9 @@ CREATE OR REPLACE PROCEDURE public.delete_experiment(IN _experimentname text, IN
 **  Arguments:
 **    _experimentName   Experiment to delete
 **    _infoOnly         When true, preview the updates
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   grk
 **  Date:   05/11/2004

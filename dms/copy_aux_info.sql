@@ -17,7 +17,7 @@ CREATE OR REPLACE PROCEDURE public.copy_aux_info(IN _targetname text, IN _target
 **    _subCategoryName      Subcategory name, e.g. 'Procedure', 'Reagents', etc.;              see t_aux_info_subcategory
 **    _sourceEntityName     Name (not ID) of the source entity to copy information from; however, for sample prep requests, use prep request ID (integer)
 **    _mode                 Mode: 'CopyCategory', 'CopySubcategory', 'CopyAll'
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
 **
 **  Auth:   grk

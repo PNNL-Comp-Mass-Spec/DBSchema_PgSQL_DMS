@@ -26,7 +26,7 @@ CREATE OR REPLACE PROCEDURE public.add_missing_predefined_jobs(IN _infoonly bool
 **    _campaignFilter                       Optional: if not blank, filters on the given campaign name
 **    _datasetIDFilterList                  Optional: comma-separated list of Dataset IDs to process
 **    _showDebug                            When true, show additional debug information
-**    _message                              Output message
+**    _message                              Status message
 **    _returnCode                           Return code
 **
 **  Auth:   mem

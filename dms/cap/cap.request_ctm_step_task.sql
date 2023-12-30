@@ -26,8 +26,8 @@ CREATE OR REPLACE PROCEDURE cap.request_ctm_step_task(IN _processorname text, IN
 **    _processorName                Capture task manager name
 **    _jobNumber                    Capture task job number assigned; 0 if no job available
 **    _results                      Cursor for retrieving the job parameters
-**    _message                      Output: message (if an error)
-**    _returnCode                   Output: return code (if an error)
+**    _message                      Status message (if an error)
+**    _returnCode                   Return code (if an error)
 **    _infoLevel                    0 to request a task, 1 to preview the capture task job that would be returned; 2 to include details on the available capture tasks
 **    _managerVersion               Capture task manager version (stored in cap.t_local_processors)
 **    _jobCountToPreview            The number of capture task jobs to preview

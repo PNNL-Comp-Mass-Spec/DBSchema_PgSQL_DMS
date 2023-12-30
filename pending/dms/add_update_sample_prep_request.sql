@@ -81,9 +81,9 @@ AS $$
 **    _reasonForHighPriority            Reason for requesting high priority
 **    _tissue                           Tissue name, e.g. 'blood plasma', 'cell culture', 'plant, 'soil', etc.
 **    _mode                             Mode: 'add' or 'update'
-**    _message                          Output message
+**    _message                          Status message
 **    _returnCode                       Return code
-**    _callingUser                      Calling user username
+**    _callingUser                      Username of the calling user
 **
 **  Auth:   grk
 **  Date:   06/09/2005

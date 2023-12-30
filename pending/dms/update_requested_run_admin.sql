@@ -22,7 +22,7 @@ AS $$
 **    _mode             Mode: 'Active', 'Inactive', 'Delete', or 'UnassignInstrument'
 **    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Available modes:
 **      'Active'             sets the requests to the Active state

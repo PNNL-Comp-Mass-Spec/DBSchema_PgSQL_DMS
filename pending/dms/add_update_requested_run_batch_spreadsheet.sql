@@ -34,7 +34,7 @@ AS $$
 **    _requestedInstrument          Will typically contain an instrument group, not an instrument name
 **    _comment                      Comment
 **    _mode                         Mode: 'add' or 'update'
-**    _message                      Output message
+**    _message                      Status message
 **    _returnCode                   Return code
 **
 **  Auth:   jds

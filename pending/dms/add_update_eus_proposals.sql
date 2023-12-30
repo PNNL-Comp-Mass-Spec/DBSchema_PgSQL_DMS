@@ -28,7 +28,7 @@ AS $$
 **    _eusProposalType          Proposal type
 **    _autoSupersedeProposalID  EUS Proposal ID to supersede this EUS proposal with if this proposal is closed
 **    _mode                     Mode: 'add' or 'update'
-**    _message                  Output message
+**    _message                  Status message
 **    _returnCode               Return code
 **
 **  Auth:   jds

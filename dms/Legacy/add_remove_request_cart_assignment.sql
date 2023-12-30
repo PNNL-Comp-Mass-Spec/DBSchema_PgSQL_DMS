@@ -22,7 +22,7 @@ AS $$
 **    _cartName         Name of the cart to assign (ignored when _mode is 'Remove')
 **    _cartConfigName   Name of the cart config name to assign
 **    _mode             Mode: 'Add' or 'Remove', depending on whether cart is to be assigned to the request or removed from the request
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
 **
 **  Auth:   grk

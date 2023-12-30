@@ -18,9 +18,9 @@ CREATE OR REPLACE PROCEDURE public.add_update_sample_submission(INOUT _id intege
 **    _newContainerComment  Comment for new containers created when adding a sample submission item
 **    _description          Sample submission description
 **    _mode                 Mode: 'add' or 'update'
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
-**    _callingUser          Calling user username
+**    _callingUser          Username of the calling user
 **
 **  Auth:   grk
 **  Date:   04/23/2010

@@ -12,8 +12,8 @@ CREATE OR REPLACE PROCEDURE cap.make_new_archive_tasks_from_dms(INOUT _message t
 **      and are not already in cap.t_tasks
 **
 **  Arguments:
-**    _message              Output: status message
-**    _returnCode           Output: return code
+**    _message              Status message
+**    _returnCode           Return code
 **    _loggingEnabled       Set to true to enable progress logging
 **    _infoOnly             True to preview changes that would be made
 **

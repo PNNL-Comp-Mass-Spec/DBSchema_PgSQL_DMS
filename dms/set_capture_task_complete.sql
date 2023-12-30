@@ -8,12 +8,15 @@ CREATE OR REPLACE PROCEDURE public.set_capture_task_complete(IN _datasetname tex
 /****************************************************
 **
 **  Desc:
-**      Determine new dataset state based on completion code, then callc do_dataset_completion_actions,
-**      plus also cleanup_dataset_comments if the new state is 3
+**      Determine new dataset state based on completion code, then calls do_dataset_completion_actions(),
+**      plus also cleanup_dataset_comments() if the new state is 3
 **
 **  Arguments:
 **    _datasetName      Dataset name
-**    _completionCode   0=success, 1=failed, 2=not ready, 100=success (capture broker), 101=Duplicate dataset files (capture broker)
+**    _completionCode   Completeion code: 0=success, 1=failed, 2=not ready, 100=success (capture broker), 101=Duplicate dataset files (capture broker)
+**    _message          Status message
+**    _returnCode       Return code
+**    _failureMessage   Failure message; appended to the dataset comment if _completionState is 5
 **
 **  Auth:   grk
 **  Date:   11/04/2002 grk - Initial release

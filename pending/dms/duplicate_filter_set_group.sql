@@ -21,7 +21,7 @@ AS $$
 **    _filterSetID              Filter set ID
 **    _filterCriteriaGroupID    Source criteria group ID
 **    _infoOnly                 When true, preview updates
-**    _message                  Output message
+**    _message                  Status message
 **    _returnCode               Return code
 **
 **  Auth:   mem

@@ -13,7 +13,9 @@ CREATE OR REPLACE PROCEDURE sw.update_job_step_status_history(IN _minimumtimeint
 **  Arguments:
 **    _minimumTimeIntervalMinutes                   Set this to 0 to force the addition of new data to sw.T_Job_Step_Status_History
 **    _minimumTimeIntervalMinutesForIdenticalStats  This controls how often identical stats will get added to the table
-**    _infoOnly                                     When true, preview the data that would be added to the table
+**    _infoOnly                                     When true, preview updates
+**    _message                                      Status message
+**    _returnCode                                   Return code
 **
 **  Auth:   mem
 **  Date:   12/05/2008

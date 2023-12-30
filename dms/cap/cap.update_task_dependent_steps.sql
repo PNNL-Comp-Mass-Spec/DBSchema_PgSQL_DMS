@@ -17,8 +17,8 @@ CREATE OR REPLACE PROCEDURE cap.update_task_dependent_steps(INOUT _message text 
 **      step tool produces shared results
 **
 **  Arguments:
-**    _message                  Output: status message
-**    _returnCode               Output: return code
+**    _message                  Status message
+**    _returnCode               Return code
 **    _numStepsSkipped          Output: number of skipped steps
 **    _infoOnly                 True to preview changes that would be made
 **    _maxJobsToProcess         Maximum number of jobs to process

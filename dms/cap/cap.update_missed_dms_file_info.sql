@@ -15,7 +15,7 @@ CREATE OR REPLACE PROCEDURE cap.update_missed_dms_file_info(IN _deletefromtableo
 **    _deleteFromTableOnSuccess     When true, delete from cap.t_dataset_info_xml after storing the data in public.t_dataset_info
 **    _replaceExistingData          When true, replace existing data
 **    _datasetIDs                   Comma-separated list of dataset IDs
-**    _message                      Output message
+**    _message                      Status message
 **    _returnCode                   Return code
 **    _infoOnly                     When true, preview updates
 **

@@ -34,8 +34,8 @@ CREATE OR REPLACE PROCEDURE public.add_new_dataset_to_creation_queue(IN _dataset
 **    _eusProposalID        EUS proposal id
 **    _eusUsersList         EUS users list
 **    _captureSubfolder     Capture subfolder
-**    _message              Output message
-**    _returncode           Return code
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   mem
 **  Date:   10/24/2023 mem - Initial version

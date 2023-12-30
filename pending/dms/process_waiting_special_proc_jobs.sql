@@ -25,7 +25,7 @@ AS $$
 **    _infoOnly                             When true, preview the jobs that would be set to state 'New'; will also display any jobs waiting more than _waitThresholdHours
 **    _previewSql                           When true, preview SQL
 **    _jobsToProcess                        Number of jobs to process
-**    _message                              Output message
+**    _message                              Status message
 **    _returnCode                           Return code
 **    _jobsUpdated                          Output: Number of jobs whose state was set to 1
 **

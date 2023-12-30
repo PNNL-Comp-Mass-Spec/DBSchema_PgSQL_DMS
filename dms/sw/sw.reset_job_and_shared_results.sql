@@ -14,7 +14,9 @@ CREATE OR REPLACE PROCEDURE sw.reset_job_and_shared_results(IN _job integer, IN 
 **    _job                      Job that needs to be rerun, including re-generating the shared results
 **    _sharedResultFolderName   If blank, will be auto-determined for the given job
 **    _resetJob                 Will automatically reset the job if true, otherwise, you must manually reset the job
-**    _infoOnly                 True to preview the changes
+**    _infoOnly                 When true, preview updates
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   mem
 **  Date:   06/30/2010 mem - Initial version

@@ -22,7 +22,7 @@ AS $$
 **    _numProteins      Number of proteins in the FASTA file
 **    _numResidues      Total number of residues in the proteins
 **    _fileSizeKB       FASTA file size, in KB
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
 **
 **  Auth:   mem

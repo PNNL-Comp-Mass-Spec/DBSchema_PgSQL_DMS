@@ -13,7 +13,7 @@ CREATE OR REPLACE PROCEDURE cap.update_task_step_status_history(IN _minimumtimei
 **  Arguments:
 **    _minimumTimeIntervalMinutes                   Set this to 0 to force the addition of new data to cap.t_task_step_status_history
 **    _minimumTimeIntervalMinutesForIdenticalStats  This controls how often identical stats will get added to cap.t_task_step_status_history
-**    _message                                      Output message
+**    _message                                      Status message
 **    _returnCode                                   Return code
 **    _infoOnly                                     When true, preview updates
 **

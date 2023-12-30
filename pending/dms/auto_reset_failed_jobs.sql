@@ -20,9 +20,9 @@ AS $$
 **    _windowHours      Look for jobs that failed within this many hours of the present time
 **    _infoOnly         When true, preview updates
 **    _stepToolFilter   Optional step tool to filter on (must be an exact match to a tool name in t_job_steps)
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Calling user username
+**    _callingUser      Username of the calling user
 **
 **  Auth:   mem
 **  Date:   09/30/2010 mem - Initial Version

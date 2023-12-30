@@ -17,9 +17,9 @@ AS $$
 **  Arguments:
 **    _job          Analysis job ID
 **    _mode         Mode: 'delete', 'reset', 'previewDelete' ; recognizes mode 'reset', but no changes are made (it is a legacy mode)
-**    _message      Output message
+**    _message      Status message
 **    _returnCode   Return code
-**    _callingUser  Calling user username
+**    _callingUser  Username of the calling user
 **
 **  Auth:   grk
 **  Date:   05/02/2002

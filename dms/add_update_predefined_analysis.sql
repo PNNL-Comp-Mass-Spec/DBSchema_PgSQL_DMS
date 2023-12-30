@@ -47,7 +47,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_predefined_analysis(IN _level inte
 **    _creator                      Username of the DMS user who created the predefine
 **    _id                           Input/output: Predefine ID in t_predefined_analysis
 **    _mode                         Mode: 'add' or 'update'
-**    _message                      Output message
+**    _message                      Status message
 **    _returnCode                   Return code
 **
 **  Auth:   grk

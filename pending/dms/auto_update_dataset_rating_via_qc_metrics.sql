@@ -24,7 +24,7 @@ AS $$
 **    _experimentExclusion      Experiment name to exclude; supports % as a wildcard
 **    _datasetCreatedMinimum    Dataset creation date threshold for selecting datasets to examine
 **    _infoOnly                 When true, preview updates
-**    _message                  Output message
+**    _message                  Status message
 **    _returnCode               Return code
 **
 **  Auth:   mem

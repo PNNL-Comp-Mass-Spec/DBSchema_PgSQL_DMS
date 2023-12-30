@@ -32,9 +32,9 @@ CREATE OR REPLACE PROCEDURE public.add_experiment_fractions(IN _parentexperiment
 **    _container            Container name: 'na', 'parent', '-20', or actual container ID
 **    _prepLCRunID          Prep LC run ID; allowed to be null
 **    _mode                 Mode: 'add' or 'preview'; when previewing, will show the names of the new fractions
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
-**    _callingUser          Calling user username
+**    _callingUser          Username of the calling user
 **
 **  Auth:   grk
 **  Date:   05/28/2005

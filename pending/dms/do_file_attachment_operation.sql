@@ -17,9 +17,9 @@ AS $$
 **  Arguments:
 **    _id           File attachment ID
 **    _mode         The only supported mode is 'delete'
-**    _message      Output message
+**    _message      Status message
 **    _returnCode   Return code
-**    _callingUser  Calling user username
+**    _callingUser  Username of the calling user
 **
 **  Auth:   grk
 **  Date:   09/05/2012

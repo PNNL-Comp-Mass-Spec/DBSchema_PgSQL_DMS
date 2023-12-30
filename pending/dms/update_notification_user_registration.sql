@@ -34,7 +34,7 @@ AS $$
 **    _mode                 Unused, but typically 'update'
 **    _message              Status message
 **    _returnCode           Return code
-**    _callingUser          Calling user username
+**    _callingUser          Username of the calling user
 **
 **  Auth:   grk
 **  Date:   04/03/2010

@@ -24,7 +24,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **    _batchGroupID                 Batch group ID
 **    _batchGroupOrder              Batch group order
 **    _mode                         'add' or 'update' or 'PreviewAdd'
-**    _message                      Output message
+**    _message                      Status message
 **    _returnCode                   Return code
 **    _raiseExceptions              When true, raise an exception; when false, update _returnCode if an error
 **

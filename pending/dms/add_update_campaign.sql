@@ -55,9 +55,9 @@ AS $$
 **    _fractionEMSLFunded           Fraction EMSL funded; value between 0 and 1
 **    _eusUsageType                 EUS usage type
 **    _mode                         Mode: 'add' or 'update'
-**    _message                      Output message
+**    _message                      Status message
 **    _returnCode                   Return code
-**    _callingUser                  Calling user username
+**    _callingUser                  Username of the calling user
 **
 **  Auth:   grk
 **  Date:   01/08/2002

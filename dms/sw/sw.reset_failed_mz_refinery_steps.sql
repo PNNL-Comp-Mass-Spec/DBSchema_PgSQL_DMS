@@ -13,6 +13,11 @@ CREATE OR REPLACE PROCEDURE sw.reset_failed_mz_refinery_steps(IN _infoonly boole
 **      This procedure runs on a regular basis to look for cases where the Analysis Manager crashed while running Mz_Refinery (using Java)
 **      In addition to a "flag file" message, there must be an in-progress Mz_Refinery job step reporting a Job Progress of 0 %
 **
+**  Arguments:
+**    _infoOnly         When true, preview updates
+**    _message          Status message
+**    _returnCode       Return code
+**
 **  Auth:   mem
 **          08/23/2023 mem - Initial version
 **          08/24/2023 mem - Ported to PostgreSQL

@@ -34,7 +34,8 @@ CREATE OR REPLACE PROCEDURE sw.request_step_task_xml(IN _processorname text, INO
 **    _processorName            Name of the processor (aka manager) requesting a job
 **    _job                      Output: Job number assigned; 0 if no job available
 **    _parameters               Output: job step parameters (as XML)
-**    _message                  Output message
+**    _message                  Status message
+**    _returnCode               Return code
 **    _infoLevel                Set to 1 to preview the job that would be returned; if 2, show additional messages
 **    _analysisManagerVersion   Used to update t_local_processors (ignored if an empty string)
 **    _remoteInfo               Provided by managers that stage jobs to run remotely; used to assure that we don't stage too many jobs at once and to assure that we only check remote progress using a manager that has the same remote info as a job step

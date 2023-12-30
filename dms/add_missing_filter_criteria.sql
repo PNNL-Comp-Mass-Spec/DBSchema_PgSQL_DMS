@@ -13,7 +13,7 @@ CREATE OR REPLACE PROCEDURE public.add_missing_filter_criteria(IN _filtersetid i
 **  Arguments:
 **    _filterSetID                                  Filter set ID
 **    _processGroupsWithNoCurrentCriteriaDefined    When true, process groups without any current criteria
-**    _message                                      Output message
+**    _message                                      Status message
 **    _returnCode                                   Return code
 **
 **  Auth:   mem

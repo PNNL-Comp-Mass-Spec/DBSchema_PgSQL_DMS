@@ -25,9 +25,9 @@ CREATE OR REPLACE PROCEDURE public.add_job_request_psm(INOUT _requestid integer,
 **    _modificationStatCysAlk   When 'Yes', look for a parameter file with static alkylated cysteine
 **    _modificationDynSTYPhos   When 'Yes', look for a parameter file with dynamic phosphorylated STY
 **    _mode                     Mode: 'add', 'preview', or 'debug'
-**    _message                  Output message
+**    _message                  Status message
 **    _returnCode               Return code
-**    _callingUser              Calling user username
+**    _callingUser              Username of the calling user
 **
 **  Auth:   grk
 **  Date:   11/14/2012 grk - Initial release

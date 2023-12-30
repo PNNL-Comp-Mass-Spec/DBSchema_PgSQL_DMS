@@ -24,6 +24,8 @@ CREATE OR REPLACE PROCEDURE sw.add_update_transfer_paths_in_params_using_data_pk
 **  Arguments:
 **    _dataPackageID    If 0 or null, will auto-define using parameter 'DataPackageID' in the Tmp_Job_Params table (in section 'JobParameters')
 **    _paramsUpdated    Output: true if table Tmp_Job_Params was updated
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   06/16/2016 mem - Initial version

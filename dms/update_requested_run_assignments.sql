@@ -20,9 +20,12 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_assignments(IN _mode tex
 **         - See the detail_report_commands and sproc_args sections at https://dms2.pnl.gov/config_db/show_db/requested_run.db
 **
 **  Arguments:
-**    _mode           'priority', 'instrumentGroup', 'instrumentGroupIgnoreType', 'assignedInstrument', 'separationGroup', 'datasetType', or 'delete'
-**    _newValue       New instrument group, assigned instrument, separation group, dataset type, or priority
-**    _reqRunIDList   Comma-separated list of requested run IDs
+**    _mode             Mode: 'priority', 'instrumentGroup', 'instrumentGroupIgnoreType', 'assignedInstrument', 'separationGroup', 'datasetType', or 'delete'
+**    _newValue         New instrument group, assigned instrument, separation group, dataset type, or priority
+**    _reqRunIDList     Comma-separated list of requested run IDs
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Username of the calling user
 **
 **  Auth:   grk
 **  Date:   01/26/2003

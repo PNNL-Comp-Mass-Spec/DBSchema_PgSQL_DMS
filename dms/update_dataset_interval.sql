@@ -15,6 +15,8 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_interval(IN _instrumentname te
 **    _startDate            Start date
 **    _endDate              End date
 **    _infoOnly             When true, preview updates
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   grk
 **  Date:   02/08/2012

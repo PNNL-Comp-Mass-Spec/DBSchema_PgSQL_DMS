@@ -22,7 +22,7 @@ CREATE OR REPLACE PROCEDURE public.assure_material_containers_exist(INOUT _conta
 **                          Otherwise, creates missing containers (including assuring that each location has a container)
 **    _message              Status message
 **    _returnCode           Return code
-**    _callingUser          Calling user username
+**    _callingUser          Username of the calling user
 **
 **  Returns:
 **      Comma-separated list of container names (via argument _containerList)

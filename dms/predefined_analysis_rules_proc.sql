@@ -13,6 +13,9 @@ CREATE OR REPLACE PROCEDURE public.predefined_analysis_rules_proc(IN _datasetnam
 **
 **  Arguments:
 **    _datasetName                      Dataset to evaluate
+**    _results                          Cursor for obtaining results
+**    _message                          Status message
+**    _returnCode                       Return code
 **    _excludeDatasetsNotReleased       When true, excludes datasets with a rating of -5 (by default we exclude datasets with a rating < 2 and <> -10)
 **    _analysisToolNameFilter           If not blank, only considers predefines that match the given tool name (can contain wildcards)
 **

@@ -12,8 +12,8 @@ CREATE OR REPLACE PROCEDURE cap.evaluate_task_step_dependencies(INOUT _message t
 **      and evaluate them
 **
 **  Arguments:
-**    _message                  Output: status message
-**    _returnCode               Output: return code
+**    _message                  Status message
+**    _returnCode               Return code
 **    _maxJobsToProcess         Maximum number of jobs to process (0 to process all)
 **    _loopingUpdateInterval    Seconds between detailed logging while looping through the dependencies
 **    _showDebug                When true, show status messages

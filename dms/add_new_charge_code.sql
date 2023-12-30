@@ -16,7 +16,7 @@ CREATE OR REPLACE PROCEDURE public.add_new_charge_code(IN _chargecodelist text, 
 **  Arguments:
 **    _chargeCodeList   Comma-separated list of charge codes (work packages) to add to t_charge_code
 **    _infoOnly         When true, preview work package metadata that would be applied
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
 **
 **  Auth:   mem

@@ -16,7 +16,7 @@ CREATE OR REPLACE PROCEDURE public.create_pending_predefined_analysis_tasks(IN _
 **    _maxDatasetsToProcess     Set to a positive number to limit the number of affected datasets
 **    _datasetID                When non-zero, only create jobs for the given dataset ID
 **    _infoOnly                 When true, preview jobs that would be created
-**    _message                  Output message
+**    _message                  Status message
 **    _returnCode               Return code
 **
 **  Auth:   grk

@@ -18,8 +18,8 @@ CREATE OR REPLACE PROCEDURE public.copy_requested_run(IN _requestid integer, IN 
 **    _comment                  Requested run comment
 **    _requestNameAppendText    Text appended to the name of the newly created request; append nothing if null or ''
 **    _requestNameOverride      New request name to use; if blank, will be based on the existing request name, but will append _requestNameAppendText
-**    _message                  Output: status message
-**    _returnCode               Output: Return code
+**    _message                  Status message
+**    _returnCode               Return code
 **    _callingUser              Username of the calling user
 **    _infoOnly                 When true, preview the requested run that would be created
 **

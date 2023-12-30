@@ -16,7 +16,7 @@ CREATE OR REPLACE PROCEDURE public.request_dataset_create_task(IN _processorname
 **    _taskCountToPreview   The number of dataset creation tasks to preview when _infoOnly >= 1
 **    _entryID              Output: Entry_ID assigned; 0 if no creation tasks are available
 **    _parameters           Output: Dataset metadata (as XML)
-**    _message              Output message
+**    _message              Status message
 **    _returnCode           Return code
 **
 **  Return values:

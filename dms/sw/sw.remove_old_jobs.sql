@@ -14,8 +14,8 @@ CREATE OR REPLACE PROCEDURE sw.remove_old_jobs(IN _intervaldaysforsuccess intege
 **    _intervalDaysForSuccess   Successful jobs must be this old to be deleted (0 -> no deletion)
 **    _intervalDaysForFail      Failed jobs must be this old to be deleted (0 -> no deletion)
 **    _infoOnly                 When true, preview deletes
-**    _message                  Output: status message
-**    _returnCode               Output: return code
+**    _message                  Status message
+**    _returnCode               Return code
 **    _validateJobStepSuccess   When true, remove any jobs that have failed, in progress, or holding job steps
 **    _jobListOverride          Comma-separated list of jobs to remove from T_Jobs, T_Job_Steps, and T_Job_Parameters
 **    _maxJobsToProcess         Maximum number of jobs to process

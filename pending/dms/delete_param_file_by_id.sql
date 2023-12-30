@@ -14,7 +14,7 @@ AS $$
 **
 **  Arguments:
 **    _paramFileID      Parameter file ID
-**    _message          Output message
+**    _message          Status message
 **    _returnCode       Return code
 **
 **  Auth:   kja

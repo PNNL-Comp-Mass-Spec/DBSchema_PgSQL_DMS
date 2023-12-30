@@ -16,8 +16,8 @@ CREATE OR REPLACE PROCEDURE cap.move_tasks_to_main_tables(INOUT _message text, I
 **      To main database tables
 **
 **  Arguments:
-**    _message      Output: status message
-**    _returnCode   Output: return code
+**    _message      Status message
+**    _returnCode   Return code
 **    _debugMode    When true, store the contents of the temp tables in the following tables (auto-created if missing)
 **                    cap.T_Tmp_New_Tasks
 **                    cap.T_Tmp_New_Task_Steps

@@ -10,6 +10,11 @@ CREATE OR REPLACE PROCEDURE sw.set_update_required_for_running_managers(IN _info
 **  Desc:
 **      Set ManagerUpdateRequired to True in mc.t_param_value for currently running managers
 **
+**  Arguments:
+**    _infoOnly     When true, preview updates
+**    _message      Status message
+**    _returnCode   Return code
+**
 **  Auth:   mem
 **  Date:   04/17/2014 mem - Initial release
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized

@@ -19,11 +19,13 @@ CREATE OR REPLACE PROCEDURE sw.update_context(IN _bypassdms boolean DEFAULT fals
 **    _infoOnly                 True to preview changes that would be made
 **    _infoLevel                When _infoOnly is true, 1 to preview changes, 2 to add new jobs but do not create job steps
 **    _debugMode                When true, show additional information when calling sw.add_new_jobs and sw.create_job_steps (which calls several procedures, including sw.create_steps_for_job, sw.finish_job_creation, and sw.move_jobs_to_main_tables)
-**                              Additionally, sw.move_jobs_to_main_tables stores the contents of the temporary tables in the following tables when _infoOnly is false and _debugMode is true
-**                                sw.T_Tmp_New_Jobs
-**                                sw.T_Tmp_New_Job_Steps
-**                                sw.T_Tmp_New_Job_Step_Dependencies
-**                                sw.T_Tmp_New_Job_Parameters
+**                              Additionally, sw.move_jobs_to_main_tables stores the contents of the temporary tables in the following tables when _infoOnly is false and _debugMode is true:
+**                              - sw.T_Tmp_New_Jobs
+**                              - sw.T_Tmp_New_Job_Steps
+**                              - sw.T_Tmp_New_Job_Step_Dependencies
+**                              - sw.T_Tmp_New_Job_Parameters
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   grk
 **  Date:   05/30/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)

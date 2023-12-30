@@ -16,6 +16,9 @@ CREATE OR REPLACE PROCEDURE public.get_factor_crosstab_by_batch(IN _batchid inte
 **    _batchID          Batch ID
 **    _nameContains     Requested run name filter
 **    _infoOnly         When True, show the SQL used to display the factors associated with the requested runs in the batch
+**    _results          Cursor for obtaining results
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Use this to view the data returned by the _results cursor
 **

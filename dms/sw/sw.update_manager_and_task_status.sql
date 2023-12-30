@@ -50,6 +50,9 @@ CREATE OR REPLACE PROCEDURE sw.update_manager_and_task_status(IN _mgrname text, 
 **    _mostRecentJobInfo        Most recent job info, for example: Job 2191592; MSGFPlus (MSGFPlus_MzML_NoRefine); QC_Mam_23_01_60min_b_Bane_09Jun23_WBEH-23-05-11; 2023-06-09 13:44:02
 **    _spectrumCount            Total number of spectra that need to be processed (or have been generated). For SEQUEST, this is the DTA count
 **
+**    _message                  Status message
+**    _returnCode               Return code
+**
 **  Auth:   mem
 **  Date:   03/24/2009 mem - Initial version
 **          03/26/2009 mem - Added parameter _mostRecentJobInfo

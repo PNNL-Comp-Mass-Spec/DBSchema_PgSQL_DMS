@@ -18,6 +18,8 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_interval_for_multiple_instrume
 **    _infoOnly                     When true, preview updates
 **    _previewProcedureCall         When true, preview calls to update_dataset_interval() and update_emsl_instrument_usage_report() when _infoOnly is true
 **    _instrumentsToProcess         Optional comma-separated list of instruments to process
+**    _message                      Status message
+**    _returnCode                   Return code
 **
 **  Auth:   grk
 **  Date:   02/09/2012 grk - Initial version

@@ -60,9 +60,12 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_file_info_xml(IN _datasetid in
 **      </DatasetInfo>
 **
 **  Arguments:
-**    _datasetID             If this value is 0, will determine the dataset name using the contents of _datasetInfoXML
-**    _datasetInfoXML        XML describing the properties of a single dataset
-**    _validateDatasetType   If true, will call Validate_Dataset_Type after updating T_Dataset_ScanTypes
+**    _datasetID            If this value is 0, determines the dataset name using the contents of _datasetInfoXML
+**    _datasetInfoXML       XML describing the properties of a single dataset
+**    _message              Status message
+**    _returnCode           Return code
+**    _infoOnly             When true, preview updates
+**    _validateDatasetType  If true, will call Validate_Dataset_Type after updating T_Dataset_ScanTypes
 **
 **  Auth:   mem
 **  Date:   05/03/2010 mem - Initial version

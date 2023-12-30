@@ -23,9 +23,9 @@ CREATE OR REPLACE PROCEDURE public.add_update_attachments(INOUT _id integer, IN 
 **    _contents                 Contents (see below)
 **    _fileName                 Attachment filename, e.g. abs_VP2P105_MRM_transitions_min3V_set12.csv
 **    _mode                     Mode: 'add' or 'update'
-**    _message                  Output message
+**    _message                  Status message
 **    _returnCode               Return code
-**    _callingUser              Calling user username
+**    _callingUser              Username of the calling user
 **
 **  Example value for _contents
 **      PARENT,FRAGMENT,VOLTAGE

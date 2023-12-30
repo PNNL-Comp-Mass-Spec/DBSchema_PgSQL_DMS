@@ -28,9 +28,9 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job_request(IN _datasets 
 **    _requestID                        Input/output: analysis job request ID
 **    _mode                             Mode: 'add', 'update', 'append', or 'PreviewAdd'
 **    _autoRemoveNotReleasedDatasets    When 1, remove datasets that are not released (leave this as an integer since used by the website)
-**    _message                          Output message
+**    _message                          Status message
 **    _returnCode                       Return code
-**    _callingUser                      Calling user username
+**    _callingUser                      Username of the calling user
 **
 **  Auth:   grk
 **  Date:   10/9/2003

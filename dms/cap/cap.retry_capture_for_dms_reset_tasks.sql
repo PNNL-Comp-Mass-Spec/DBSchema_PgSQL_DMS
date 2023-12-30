@@ -13,7 +13,7 @@ CREATE OR REPLACE PROCEDURE cap.retry_capture_for_dms_reset_tasks(INOUT _message
 **  Arguments:
 **    _message      Status message
 **    _returnCode   Return code
-**    _infoOnly     When true, preview the updates
+**    _infoOnly     When true, preview updates
 **
 **  Auth:   mem
 **  Date:   05/25/2011 mem - Initial version
