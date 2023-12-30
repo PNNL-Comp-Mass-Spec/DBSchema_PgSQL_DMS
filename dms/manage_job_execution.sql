@@ -51,6 +51,7 @@ CREATE OR REPLACE PROCEDURE public.manage_job_execution(IN _parameters text DEFA
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          09/01/2023 mem - Remove unnecessary cast to citext for string constants
+**          12/29/2023 mem - Use new argument name when calling update_analysis_jobs_work()
 **
 *****************************************************/
 DECLARE
@@ -232,10 +233,10 @@ BEGIN
                     _protCollNameList,
                     _protCollOptionsList,
                     _mode,
-                    _message           => _message,         -- Output
-                    _returnCode        => _returnCode,      -- Output
-                    _callingUser       => _callingUser,
-                    _disableRaiseError => true);
+                    _message     => _message,         -- Output
+                    _returnCode  => _returnCode,      -- Output
+                    _callingUser => _callingUser,
+                    _showErrors  => false);
 
     ---------------------------------------------------
     -- Report success or error

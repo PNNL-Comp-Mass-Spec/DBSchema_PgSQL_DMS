@@ -2,7 +2,7 @@
 -- Name: update_analysis_jobs_work(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work(IN _state text DEFAULT '[no change]'::text, IN _priority text DEFAULT '[no change]'::text, IN _comment text DEFAULT '[no change]'::text, IN _findtext text DEFAULT '[no change]'::text, IN _replacetext text DEFAULT '[no change]'::text, IN _assignedprocessor text DEFAULT '[no change]'::text, IN _associatedprocessorgroup text DEFAULT ''::text, IN _propagationmode text DEFAULT '[no change]'::text, IN _paramfilename text DEFAULT '[no change]'::text, IN _settingsfilename text DEFAULT '[no change]'::text, IN _organismname text DEFAULT '[no change]'::text, IN _protcollnamelist text DEFAULT '[no change]'::text, IN _protcolloptionslist text DEFAULT '[no change]'::text, IN _mode text DEFAULT 'update'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text, IN _disableraiseerror boolean DEFAULT false)
+CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work(IN _state text DEFAULT '[no change]'::text, IN _priority text DEFAULT '[no change]'::text, IN _comment text DEFAULT '[no change]'::text, IN _findtext text DEFAULT '[no change]'::text, IN _replacetext text DEFAULT '[no change]'::text, IN _assignedprocessor text DEFAULT '[no change]'::text, IN _associatedprocessorgroup text DEFAULT ''::text, IN _propagationmode text DEFAULT '[no change]'::text, IN _paramfilename text DEFAULT '[no change]'::text, IN _settingsfilename text DEFAULT '[no change]'::text, IN _organismname text DEFAULT '[no change]'::text, IN _protcollnamelist text DEFAULT '[no change]'::text, IN _protcolloptionslist text DEFAULT '[no change]'::text, IN _mode text DEFAULT 'update'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text, IN _showerrors boolean DEFAULT true)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -57,7 +57,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work(IN _state text DEFA
 **          03/12/2009 grk - Removed [no change] from _associatedProcessorGroup to allow dissasociation of jobs with groups
 **          07/16/2009 mem - Added missing rollback transaction statements when verifying _associatedProcessorGroup
 **          09/16/2009 mem - Extracted code from Update_Analysis_Jobs
-**                         - Added parameter _disableRaiseError
+**                         - Added parameter _disableRaiseError (later renamed to _showErrors)
 **          05/06/2010 mem - Expanded _settingsFileName to varchar(255)
 **          03/30/2015 mem - Tweak warning message grammar
 **          05/28/2015 mem - No longer updating processor group entries (thus _associatedProcessorGroup is ignored)
@@ -79,6 +79,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work(IN _state text DEFA
 **                         - Use a case insensitive search when finding text to replace
 **          09/13/2023 mem - Remove unnecessary delimiter argument when calling append_to_text()
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user_multi_id()
+**          12/29/2023 mem - Rename procedure argument to _showErrors
 **
 *****************************************************/
 DECLARE
@@ -163,7 +164,7 @@ BEGIN
     _protCollOptionsList      := Trim(Coalesce(_protCollOptionsList, _noChangeText));
 
     _callingUser              := Trim(Coalesce(_callingUser, ''));
-    _disableRaiseError        := Coalesce(_disableRaiseError, false);
+    _showErrors               := Coalesce(_showErrors, true);
 
     _mode                     := Trim(Lower(Coalesce(_mode, '')));
 
@@ -174,7 +175,7 @@ BEGIN
     If (_findText::citext = _noChangeText And _replaceText::citext <> _noChangeText) Or (_findText::citext <> _noChangeText And _replaceText::citext = _noChangeText) Then
         _message := format('The Find In Comment and Replace In Comment arguments must either both be defined, or both be "%s"', _noChangeText);
 
-        If Not _disableRaiseError Then
+        If _showErrors Then
             RAISE WARNING '%', _message;
         End If;
 
@@ -219,7 +220,7 @@ BEGIN
         If Not FOUND Then
             _message := format('State name not found: "%s"', _state);
 
-            If Not _disableRaiseError Then
+            If _showErrors Then
                 RAISE WARNING '%', _message;
             End If;
 
@@ -241,7 +242,7 @@ BEGIN
         If Not FOUND Then
             _message := format('Organism name not found: "%s"', _organismName);
 
-            If Not _disableRaiseError Then
+            If _showErrors Then
                 RAISE WARNING '%', _message;
             End If;
 
@@ -582,7 +583,7 @@ BEGIN
 
                 ROLLBACK;
 
-                If Not _disableRaiseError Then
+                If _showErrors Then
                     RAISE EXCEPTION '%', _msg;
                 Else
                     _message := _msg;
@@ -698,11 +699,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.update_analysis_jobs_work(IN _state text, IN _priority text, IN _comment text, IN _findtext text, IN _replacetext text, IN _assignedprocessor text, IN _associatedprocessorgroup text, IN _propagationmode text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _disableraiseerror boolean) OWNER TO d3l243;
+ALTER PROCEDURE public.update_analysis_jobs_work(IN _state text, IN _priority text, IN _comment text, IN _findtext text, IN _replacetext text, IN _assignedprocessor text, IN _associatedprocessorgroup text, IN _propagationmode text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _showerrors boolean) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE update_analysis_jobs_work(IN _state text, IN _priority text, IN _comment text, IN _findtext text, IN _replacetext text, IN _assignedprocessor text, IN _associatedprocessorgroup text, IN _propagationmode text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _disableraiseerror boolean); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE update_analysis_jobs_work(IN _state text, IN _priority text, IN _comment text, IN _findtext text, IN _replacetext text, IN _assignedprocessor text, IN _associatedprocessorgroup text, IN _propagationmode text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _showerrors boolean); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.update_analysis_jobs_work(IN _state text, IN _priority text, IN _comment text, IN _findtext text, IN _replacetext text, IN _assignedprocessor text, IN _associatedprocessorgroup text, IN _propagationmode text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _disableraiseerror boolean) IS 'UpdateAnalysisJobsWork';
+COMMENT ON PROCEDURE public.update_analysis_jobs_work(IN _state text, IN _priority text, IN _comment text, IN _findtext text, IN _replacetext text, IN _assignedprocessor text, IN _associatedprocessorgroup text, IN _propagationmode text, IN _paramfilename text, IN _settingsfilename text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _showerrors boolean) IS 'UpdateAnalysisJobsWork';
 

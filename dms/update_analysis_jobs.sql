@@ -164,7 +164,8 @@ BEGIN
                             _mode,
                             _message     => _msg,           -- Output
                             _returnCode  => _returnCode,    -- Output
-                            _callingUser => _callingUser);
+                            _callingUser => _callingUser,
+                            _showErrors  => true);
 
         If _returnCode <> '' Then
             RAISE EXCEPTION '%', _msg;
