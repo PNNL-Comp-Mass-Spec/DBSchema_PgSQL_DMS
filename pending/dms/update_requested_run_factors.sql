@@ -54,7 +54,7 @@ AS $$
 **
 **  Arguments:
 **    _factorList   XML (see above)
-**    _infoOnly     Set to true to preview the changes that would be made
+**    _infoOnly     When true, preview updates
 **    _message      Status message
 **    _returnCode   Return code
 **    _callingUser  Username of the calling user

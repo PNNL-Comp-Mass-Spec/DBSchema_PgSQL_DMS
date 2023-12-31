@@ -60,7 +60,7 @@ BEGIN
     End If;
 
     If _updateDeconToolsJob Then
-        FOR _iteration IN 1..2
+        FOR _iteration IN 1 .. 2
         LOOP
 
             If _iteration = 1 Then
