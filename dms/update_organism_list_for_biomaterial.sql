@@ -1,23 +1,19 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_organism_list_for_biomaterial
-(
-    _biomaterialName text,
-    _organismList text,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_organism_list_for_biomaterial(text, text, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_organism_list_for_biomaterial(IN _biomaterialname text, IN _organismlist text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Update organisms associated with a single biomaterial (cell_culture) item
+**      Update organisms associated with a single biomaterial (cell culture) item
 **
 **  Arguments:
 **    _biomaterialName  Biomaterial name, aka cell culture
 **    _organismList     Comma-separated list of organism names; should be full organism name, but can also be short names, in which case auto_resolve_organism_name will try to resolve the short name to a full organism name
-**    _infoOnly         Set to true to preview the changes that would be made
+**    _infoOnly         When true, preview updates
 **    _message          Status message
 **    _returnCode       Return code
 **
@@ -27,7 +23,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          09/06/2018 mem - Fix delete bug in Merge statement
 **          03/31/2021 mem - Expand Organism_Name, _unknownOrganism, and _newOrganismName to varchar(128)
-**          12/15/2024 mem - Ported to PostgreSQL
+**          12/30/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -36,14 +32,14 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _biomaterialID int := 0;
+    _biomaterialID int;
     _entryID int;
     _unknownOrganism text;
     _matchCount int;
     _newOrganismName text;
     _newOrganismID int;
-    _list text := '';
-    _usageMessage text := '';
+    _list text;
+    _usageMessage text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -69,13 +65,21 @@ BEGIN
     End If;
 
     ---------------------------------------------------
+    -- Validate the inputs
+    -- If _organismList is null, leave it as-is
+    ---------------------------------------------------
+
+    _biomaterialName := Trim(Coalesce(_biomaterialName, ''));
+    _infoOnly        := Coalesce(_infoOnly, false);
+
+    ---------------------------------------------------
     -- Resolve biomaterial name to ID
     ---------------------------------------------------
 
     SELECT Biomaterial_ID
     INTO _biomaterialID
     FROM t_biomaterial
-    WHERE Biomaterial_Name = _biomaterialName;
+    WHERE Biomaterial_Name = _biomaterialName::citext;
 
     If Not FOUND Then
         _message := format('Cannot update organisms for biomaterial: "%s" does not exist', _biomaterialName);
@@ -86,8 +90,8 @@ BEGIN
     End If;
 
     If _organismList Is Null Then
-        _message := format('Cannot update biomaterial "%s": organism list cannot be null', _biomaterialName);
-        RAISE WARNING '%', _message;
+        _message := format('Not updating organism(s) for biomaterial "%s" since the organism list is null', _biomaterialName);
+        RAISE INFO '%', _message;
 
         -- Leave _returnCode as an empty string
         RETURN;
@@ -96,8 +100,13 @@ BEGIN
     _organismList := Trim(_organismList);
 
     If _organismList = '' Then
+        If _infoOnly Then
+            RAISE INFO 'Empty organism list; would delete any rows with biomaterial_id = % in t_biomaterial_organisms', _biomaterialID;
+            RETURN;
+        End If;
+
         -- Empty organism list; make sure no rows exist in t_biomaterial_organisms for this biomaterial item
-        --
+
         DELETE FROM t_biomaterial_organisms
         WHERE biomaterial_id = _biomaterialID;
 
@@ -147,39 +156,58 @@ BEGIN
         WHERE Organism_ID IS NULL
         ORDER BY EntryID
     LOOP
-        _matchCount := 0;
-
         CALL public.auto_resolve_organism_name (
                         _nameSearchSpec       => _unknownOrganism,
                         _matchCount           => _matchCount,       -- Output
                         _matchingOrganismName => _newOrganismName,  -- Output
-                        _matchingOrganismID   => _newOrganismID);   -- Output
+                        _matchingOrganismID   => _newOrganismID,    -- Output
+                        _message              => _message,          -- Output
+                        _returnCode           => _returnCode);       -- Output
 
         If _matchCount = 1 Then
             -- Single match was found; update Organism_Name and Organism_ID in Tmp_BiomaterialOrganisms
             UPDATE Tmp_BiomaterialOrganisms
             SET Organism_Name = _newOrganismName,
-                Organism_ID = _newOrganismID
+                Organism_ID   = _newOrganismID
             WHERE EntryID = _entryID;
 
         End If;
     END LOOP;
 
     ---------------------------------------------------
-    -- Error if any of the organism names could not be resolved
+    -- Verify that all of the organism names were resolved
     ---------------------------------------------------
 
-    --
-    SELECT string_agg('Organism_Name', ', ' ORDER BY Organism_Name)
+    SELECT string_agg(Organism_Name, ', ' ORDER BY Organism_Name)
     INTO _list
     FROM Tmp_BiomaterialOrganisms
     WHERE Organism_ID IS NULL;
 
     If _list <> '' Then
-        _message := format('Could not resolve the following organism names: %s', _list);
+        If Position(',' IN _list) > 0 Then
+            _message := format('Could not resolve the following organism names: %s', _list);
+        Else
+            _message := format('Could not resolve organism name "%s"', _list);
+        End If;
+
         _returnCode := 'U5203';
         DROP TABLE Tmp_BiomaterialOrganisms;
 
+        RETURN;
+    End If;
+
+    If _infoOnly Then
+        SELECT string_agg(Organism_Name, ', ' ORDER BY Organism_Name)
+        INTO _list
+        FROM Tmp_BiomaterialOrganisms;
+
+        If Position(',' IN _list) > 0 Then
+            RAISE INFO 'Organism names for biomaterial_id %: %', _biomaterialID, _list;
+        Else
+            RAISE INFO 'Organism name for biomaterial_id %: %', _biomaterialID, _list;
+        End If;
+
+        DROP TABLE Tmp_BiomaterialOrganisms;
         RETURN;
     End If;
 
@@ -204,7 +232,7 @@ BEGIN
     WHERE target.Biomaterial_ID = _biomaterialID AND
           NOT EXISTS (SELECT source.organism_id
                       FROM Tmp_BiomaterialOrganisms source
-                      WHERE target.organism_id = source.organism_id;
+                      WHERE target.organism_id = source.organism_id
                      );
 
     ---------------------------------------------------
@@ -226,5 +254,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_organism_list_for_biomaterial IS 'UpdateOrganismListForBiomaterial';
+
+ALTER PROCEDURE public.update_organism_list_for_biomaterial(IN _biomaterialname text, IN _organismlist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_organism_list_for_biomaterial(IN _biomaterialname text, IN _organismlist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_organism_list_for_biomaterial(IN _biomaterialname text, IN _organismlist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateOrganismListForBiomaterial';
 

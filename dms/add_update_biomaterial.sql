@@ -1,26 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_biomaterial
-(
-    _biomaterialName text,
-    _sourceName text,
-    _contactUsername text,
-    _piUsername text,
-    _biomaterialType text,
-    _reason text,
-    _comment text,
-    _campaignName text,
-    _mode text = 'add',
-    _container text = 'na',
-    _organismList text,
-    _mutation text = '',
-    _plasmid text = '',
-    _cellLine text = '',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_biomaterial(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_biomaterial(IN _biomaterialname text, IN _sourcename text, IN _contactusername text, IN _piusername text, IN _biomaterialtype text, IN _reason text, IN _comment text, IN _campaignname text, IN _mode text DEFAULT 'add'::text, IN _container text DEFAULT 'na'::text, IN _organismlist text DEFAULT NULL::text, IN _mutation text DEFAULT ''::text, IN _plasmid text DEFAULT ''::text, IN _cellline text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -74,7 +58,7 @@ AS $$
 **                         - Remove deprecated parameters that are now tracked in T_Reference_Compound
 **          12/08/2020 mem - Lookup Username from T_Users using the validated user ID
 **          07/08/2022 mem - Rename procedure from Add_Update_Cell_Culture to Add_Update_Biomaterial and update argument names
-**          12/28/2023 mem - Ported to PostgreSQL
+**          12/30/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -89,7 +73,7 @@ DECLARE
     _curContainerID int;
     _campaignID int;
     _typeID int;
-    _contID int;
+    _containerID int;
     _curContainerName text;
     _userID int;
     _matchCount int;
@@ -144,7 +128,7 @@ BEGIN
         _campaignName    := Trim(Coalesce(_campaignName, ''));
         _container       := Trim(Coalesce(_container, ''));
 
-        -- Note: leave _organismList null
+        -- Note: leave _organismList as-is if it is null
         -- Procedure Update_Organism_List_For_Biomaterial will leave t_biomaterial_organisms unchanged if _organismList is null
 
         _mutation        := Trim(Coalesce(_mutation, ''));
@@ -191,19 +175,19 @@ BEGIN
                Container_ID
         INTO _biomaterialID, _curContainerID
         FROM t_biomaterial
-        WHERE Biomaterial_Name = _biomaterialName;
+        WHERE Biomaterial_Name = _biomaterialName::citext;
 
         -- Cannot create an entry that already exists
 
         If FOUND And (_mode = 'add' or _mode = 'check_add') Then
-            _msg := format('Cannot add: Biomaterial "%s" already in database ', _biomaterialName);
+            _msg := format('Cannot add: Biomaterial "%s" already in database', _biomaterialName);
             RAISE EXCEPTION '%', _msg;
         End If;
 
         -- Cannot update a non-existent entry
 
         If Not FOUND And (_mode = 'update' or _mode = 'check_update') Then
-            _msg := format('Cannot update: Biomaterial "%s" is not in database ', _biomaterialName);
+            _msg := format('Cannot update: Biomaterial "%s" is not in database', _biomaterialName);
             RAISE EXCEPTION '%', _msg;
         End If;
 
@@ -214,7 +198,7 @@ BEGIN
         _campaignID := public.get_campaign_id(_campaignName);
 
         If _campaignID = 0 Then
-            _msg := format('Could not resolve campaign name "%s" to ID"', _campaignName);
+            _msg := format('Invalid campaign name: "%s"', _campaignName);
             RAISE EXCEPTION '%', _msg;
         End If;
 
@@ -225,7 +209,12 @@ BEGIN
         SELECT biomaterial_type_id
         INTO _typeID
         FROM t_biomaterial_type_name
-        WHERE biomaterial_type = _biomaterialType;
+        WHERE biomaterial_type = _biomaterialType::citext;
+
+        If Not FOUND Then
+            _msg := format('Invalid biomaterial type: "%s"', _biomaterialType);
+            RAISE EXCEPTION '%', _msg;
+        End If;
 
         ---------------------------------------------------
         -- Resolve container name to ID
@@ -236,14 +225,16 @@ BEGIN
         End If;
 
         SELECT container_id
-        INTO _contID
+        INTO _containerID
         FROM t_material_containers
-        WHERE container = _container;
+        WHERE container = _container::citext;
 
-        ---------------------------------------------------
-        -- Resolve current container id to name
-        ---------------------------------------------------
+        If Not FOUND Then
+            _msg := format('Invalid container name: "%s"', _container);
+            RAISE EXCEPTION '%', _msg;
+        End If;
 
+        -- Make sure the container name is properly capitalized
         SELECT container
         INTO _curContainerName
         FROM t_material_containers
@@ -267,7 +258,7 @@ BEGIN
             FROM t_users
             WHERE user_id = _userID;
         Else
-            -- Could not find entry in database for Username _contactUsername
+            -- Could not find entry in database for username _contactUsername
             -- Try to auto-resolve the name
 
             CALL public.auto_resolve_name_to_username (
@@ -350,7 +341,7 @@ BEGIN
                 _reason,
                 _comment,
                 _campaignID,
-                _contID,
+                _containerID,
                 _mutation,
                 _plasmid,
                 _cellLine,
@@ -384,7 +375,7 @@ BEGIN
 
             -- Material movement logging
 
-            If _curContainerID <> _contID Then
+            If _curContainerID <> _containerID Then
                 CALL public.post_material_log_entry (
                                 _type         => 'Biomaterial Move',
                                 _item         => _biomaterialName,
@@ -398,7 +389,12 @@ BEGIN
 
             If Coalesce(_organismList, '') <> '' Then
                 -- Update the associated organism(s)
-                CALL public.update_organism_list_for_biomaterial (_biomaterialName, _organismList, _infoOnly => false, _message => _message);
+                CALL public.update_organism_list_for_biomaterial (
+                                _biomaterialName,
+                                _organismList,
+                                _infoOnly   => false,
+                                _message    => _message,        -- Output
+                                _returnCode => _returnCode );   -- Output
             End If;
 
         End If;
@@ -417,7 +413,7 @@ BEGIN
                 reason              = _reason,
                 comment             = _comment,
                 campaign_id         = _campaignID,
-                container_id        = _contID,
+                container_id        = _containerID,
                 mutation            = _mutation,
                 plasmid             = _plasmid,
                 cell_line           = _cellLine
@@ -430,7 +426,7 @@ BEGIN
 
             -- Material movement logging
 
-            If _curContainerID <> _contID Then
+            If _curContainerID <> _containerID Then
                 CALL public.post_material_log_entry (
                                 _type         => 'Biomaterial Move',
                                 _item         => _biomaterialName,
@@ -446,7 +442,12 @@ BEGIN
 
             _organismList := Trim(Coalesce(_organismList, ''));
 
-            CALL public.update_organism_list_for_biomaterial (_biomaterialName, _organismList, _infoOnly => false, _message => _message);
+            CALL public.update_organism_list_for_biomaterial (
+                            _biomaterialName,
+                            _organismList,
+                            _infoOnly   => false,
+                            _message    => _message,        -- Output
+                            _returnCode => _returnCode );   -- Output
 
         End If;
 
@@ -459,7 +460,7 @@ BEGIN
                 _exceptionContext = pg_exception_context;
 
         If _logErrors Then
-            _logMessage := format('%s; Biomaterial %s', _exceptionMessage, biomaterialName);
+            _logMessage := format('%s; Biomaterial %s', _exceptionMessage, _biomaterialName);
 
             _message := local_error_handler (
                             _sqlState, _logMessage, _exceptionDetail, _exceptionContext,
@@ -476,4 +477,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_biomaterial IS 'AddUpdateBiomaterial';
+
+ALTER PROCEDURE public.add_update_biomaterial(IN _biomaterialname text, IN _sourcename text, IN _contactusername text, IN _piusername text, IN _biomaterialtype text, IN _reason text, IN _comment text, IN _campaignname text, IN _mode text, IN _container text, IN _organismlist text, IN _mutation text, IN _plasmid text, IN _cellline text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_biomaterial(IN _biomaterialname text, IN _sourcename text, IN _contactusername text, IN _piusername text, IN _biomaterialtype text, IN _reason text, IN _comment text, IN _campaignname text, IN _mode text, IN _container text, IN _organismlist text, IN _mutation text, IN _plasmid text, IN _cellline text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_biomaterial(IN _biomaterialname text, IN _sourcename text, IN _contactusername text, IN _piusername text, IN _biomaterialtype text, IN _reason text, IN _comment text, IN _campaignname text, IN _mode text, IN _container text, IN _organismlist text, IN _mutation text, IN _plasmid text, IN _cellline text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateBiomaterial';
+
