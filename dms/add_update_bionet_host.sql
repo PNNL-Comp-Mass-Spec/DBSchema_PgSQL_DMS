@@ -1,20 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_bionet_host
-(
-    _host text,
-    _ip text,
-    _alias text,
-    _tag text,
-    _instruments text,
-    _active int,
-    _comment text,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_bionet_host(text, text, text, text, text, integer, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_bionet_host(IN _host text, IN _ip text, IN _alias text, IN _tag text, IN _instruments text, IN _active integer, IN _comment text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -31,7 +21,7 @@ AS $$
 **    _mode             Mode: 'add' or 'update'
 **    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Username of the calling user
+**    _callingUser      Username of the calling user (unused)
 **
 **  Date:   09/08/2016 mem - Initial version
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
@@ -39,7 +29,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          10/03/2018 mem - Add _comment
 **                         - Use _logErrors to toggle logging errors caught by the try/catch block
-**          12/15/2024 mem - Ported to PostgreSQL
+**          12/31/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -85,51 +75,54 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        If _mode Is Null Or char_length(_mode) < 1 Then
+        _host        := Trim(Coalesce(_host, ''));
+        _ip          := Trim(Coalesce(_ip, ''));
+        _alias       := Trim(Coalesce(_alias, ''));
+        _tag         := Trim(Coalesce(_tag, ''));
+        _instruments := Trim(Coalesce(_instruments, ''));
+        _active      := Coalesce(_active, 1);
+        _comment     := Trim(Coalesce(_comment, ''));
+        _mode        := Trim(Lower(Coalesce(_mode, '')));
+
+        If _mode = '' Then
             _returnCode := 'U5102';
-            RAISE EXCEPTION '_mode must be specified';
+            RAISE EXCEPTION 'Mode must be specified';
         End If;
 
-        If _host Is Null Or char_length(_host) < 1 Then
+        If _host = '' Then
             _returnCode := 'U5103';
-            RAISE EXCEPTION '_host must be specified';
+            RAISE EXCEPTION 'Host must be specified';
         End If;
 
-        _ip := Trim(Coalesce(_ip, ''));
-
-        If char_length(Trim(Coalesce(_alias, ''))) = 0 Then
+        If _alias = '' Then
             _alias := null;
         End If;
 
-        If char_length(Trim(Coalesce(_tag, ''))) = 0 Then
+        If _tag = '' Then
             _tag := null;
         End If;
 
-        If char_length(Trim(Coalesce(_instruments, ''))) = 0 Then
+        If _instruments = '' Then
             _instruments := null;
         End If;
 
-        If char_length(Trim(Coalesce(_comment, ''))) = 0 Then
+        If _comment = '' Then
             _comment := null;
         End If;
-
-        _active := Coalesce(_active, 1);
-        _mode   := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
         -- Is entry already in database?
         ---------------------------------------------------
 
-        If _mode = 'add' And Exists (SELECT * FROM t_bionet_hosts WHERE host = _host) Then
+        If _mode = 'add' And Exists (SELECT host FROM t_bionet_hosts WHERE host = _host::citext) Then
             -- Cannot create an entry that already exists
-            --
-            _msg := format('Cannot add: item "%s" is already in the database', _host);
+            _msg := format('Cannot add: host "%s" already exists', _host);
             RAISE EXCEPTION '%', _msg;
         End If;
 
-        If _mode = 'update' And Not Exists (SELECT * FROM t_bionet_hosts WHERE host = _host) Then
+        If _mode = 'update' And Not Exists (SELECT host FROM t_bionet_hosts WHERE host = _host::citext) Then
             -- Cannot update a non-existent entry
-            _msg := format('Cannot update: item "%s" is not in the database', _host);
+            _msg := format('Cannot update: host "%s" is not in the database', _host);
             RAISE EXCEPTION '%', _msg;
         End If;
 
@@ -162,7 +155,7 @@ BEGIN
                 _comment
             );
 
-        End If; -- add mode
+        End If;
 
         ---------------------------------------------------
         -- Action for update mode
@@ -171,15 +164,16 @@ BEGIN
         If _mode = 'update' Then
 
             UPDATE t_bionet_hosts
-            SET ip = _ip,
-                alias = _alias,
+            SET host        = _host,
+                ip          = _ip,
+                alias       = _alias,
                 instruments = _instruments,
-                active = _active,
-                tag = _tag,
-                comment = _comment
-            WHERE host = _host;
+                active      = _active,
+                tag         = _tag,
+                comment     = _comment
+            WHERE host = _host::citext;
 
-        End If; -- update mode
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -205,4 +199,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_bionet_host IS 'AddUpdateBionetHost';
+
+ALTER PROCEDURE public.add_update_bionet_host(IN _host text, IN _ip text, IN _alias text, IN _tag text, IN _instruments text, IN _active integer, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_bionet_host(IN _host text, IN _ip text, IN _alias text, IN _tag text, IN _instruments text, IN _active integer, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_bionet_host(IN _host text, IN _ip text, IN _alias text, IN _tag text, IN _instruments text, IN _active integer, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateBionetHost';
+
