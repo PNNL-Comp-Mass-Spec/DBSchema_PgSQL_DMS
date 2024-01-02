@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_requested_run_batch_stats(IN _b
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **          07/11/2023 mem - Use COUNT(RR.request_id) and COUNT(RR.dataset_id) instead of COUNT(*)
 **          09/01/2023 mem - Remove unnecessary cast to citext for string constants
+**          01/02/2024 mem - Fix column name bug when joining v_requested_run_queue_times to t_requested_run
 **
 *****************************************************/
 DECLARE
@@ -229,7 +230,7 @@ BEGIN
                                     INNER JOIN Tmp_BatchIDs
                                       ON RR.batch_id = Tmp_BatchIDs.batch_id
                                     INNER JOIN v_requested_run_queue_times AS QT
-                                      ON QT.requested_run_id = RR.batch_id
+                                      ON QT.requested_run_id = RR.request_id
                                     INNER JOIN T_Dataset DS
                                       ON RR.dataset_id = DS.dataset_id
                                     INNER JOIN t_instrument_name InstName
