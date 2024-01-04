@@ -65,6 +65,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_storage(IN _path text, IN _volname
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/12/2023 mem - Prevent adding a second inbox for an instrument
 **                         - Validate machine name vs. t_storage_path_hosts
+**          01/03/2024 mem - Update warning message
 **
 *****************************************************/
 DECLARE
@@ -231,7 +232,7 @@ BEGIN
             WHERE storage_path_id = _spID;
 
             If Not FOUND Then
-                _message := format('Cannot update: Storage path "%s" is not in database ', _spID);
+                _message := format('Cannot update: storage path "%s" does not exist', _spID);
                 RAISE WARNING '%', _message;
 
                 _returnCode := 'U5208';

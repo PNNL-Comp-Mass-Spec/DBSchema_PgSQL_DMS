@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE public.update_organism_list_for_biomaterial(IN _biom
 **          09/06/2018 mem - Fix delete bug in Merge statement
 **          03/31/2021 mem - Expand Organism_Name, _unknownOrganism, and _newOrganismName to varchar(128)
 **          12/30/2023 mem - Ported to PostgreSQL
+**          01/03/2024 mem - Update warning message
 **
 *****************************************************/
 DECLARE
@@ -82,7 +83,7 @@ BEGIN
     WHERE Biomaterial_Name = _biomaterialName::citext;
 
     If Not FOUND Then
-        _message := format('Cannot update organisms for biomaterial: "%s" does not exist', _biomaterialName);
+        _message := format('Cannot update: biomaterial "%s" does not exist', _biomaterialName);
         RAISE WARNING '%', _message;
 
         -- Leave _returnCode as an empty string

@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_experiment_group(INOUT _id integer
 **          12/08/2020 mem - Lookup Username from T_Users using the validated user ID
 **          11/18/2022 mem - Rename parameter to _groupName
 **          12/11/2023 mem - Ported to PostgreSQL
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -144,7 +145,7 @@ BEGIN
         -- Cannot update a non-existent entry
 
         If Not Exists (SELECT group_id FROM t_experiment_groups WHERE group_id = _id) Then
-            _message := format('Cannot update: GroupID %s does not exist in the database', _id);
+            _message := format('Cannot update: experiment group ID %s does not exist', _id);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5204';
@@ -253,7 +254,13 @@ BEGIN
             _researcher := _newUsername;
         Else
             _logErrors := false;
-            _message := format('Could not find entry in database for researcher username "%s"', _researcher);
+
+            If _matchCount = 0 Then
+                _message := format('Invalid researcher username: "%s" does not exist', _researcher);
+            Else
+                _message := format('Invalid researcher username: "%s" matches more than one user', _researcher);
+            End If;
+
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5207';

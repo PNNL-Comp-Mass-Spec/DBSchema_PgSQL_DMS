@@ -85,6 +85,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_local_job_in_broker(INOUT _job integer
 **          09/08/2023 mem - Adjust capitalization of keywords
 **                         - Include schema name when calling function verify_sp_authorized()
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          01/03/2024 mem - Update warning message
 **
 *****************************************************/
 DECLARE
@@ -176,7 +177,7 @@ BEGIN
         WHERE job = _job;
 
         If _mode = 'update' And Not FOUND Then
-            RAISE EXCEPTION 'Cannot update nonexistent job %', _job;
+            RAISE EXCEPTION 'Cannot update: job % does not exist', _job;
         End If;
 
         If _mode = 'update' And _datasetName::citext <> 'Aggregation' Then

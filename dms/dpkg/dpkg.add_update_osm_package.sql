@@ -45,6 +45,7 @@ CREATE OR REPLACE PROCEDURE dpkg.add_update_osm_package(INOUT _id integer, IN _n
 **          09/07/2023 mem - Update warning messages
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/11/2023 mem - Adjust capitalization of keywords
+**          01/03/2024 mem - Update warning message
 **
 *****************************************************/
 DECLARE
@@ -174,7 +175,12 @@ BEGIN
         WHERE Not Valid;
 
         If _badIDs <> '' Then
-            _message := format('Sample prep request IDs "%s" do not exist', _badIDs);
+            If Position(',' In _badIDs) > 0 Then
+                _message := format('Sample prep request IDs do not exist: "%s"', _badIDs);
+            Else
+                _message := format('Sample prep request ID "%s" does not exist', _badIDs);
+            End If;
+
             _returnCode := 'U5108';
 
             DROP TABLE Tmp_PrepRequestItems;

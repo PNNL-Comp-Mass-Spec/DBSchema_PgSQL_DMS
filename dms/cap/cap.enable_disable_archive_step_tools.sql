@@ -28,6 +28,7 @@ CREATE OR REPLACE FUNCTION cap.enable_disable_archive_step_tools(_enable boolean
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -100,11 +101,11 @@ BEGIN
     GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
     If _updateCount = 0 Then
-        RAISE INFO '%', format('Did not find any rows in cap.t_processor_tool with Enabled = %s and Tool_Name = %s',
-                                _oldState, 'DatasetArchive, ArchiveUpdate, ArchiveVerify, or ArchiveStatusCheck');
+        RAISE INFO 'Did not find any rows in cap.t_processor_tool with Enabled = % and Tool_Name = %',
+                   _oldState, 'DatasetArchive, ArchiveUpdate, ArchiveVerify, or ArchiveStatusCheck';
     Else
-        RAISE INFO '%', format('Changed Enabled from %s to %s for %s %s in cap.t_processor_tool',
-                                _oldState, _newState, _updateCount, public.check_plural(_updateCount, 'row', 'rows'));
+        RAISE INFO 'Changed Enabled from % to % for % % in cap.t_processor_tool',
+                   _oldState, _newState, _updateCount, public.check_plural(_updateCount, 'row', 'rows');
     End If;
 
     If _disableComment <> '' Then

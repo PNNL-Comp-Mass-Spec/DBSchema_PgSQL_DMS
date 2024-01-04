@@ -116,6 +116,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job_request(IN _datasets 
 **          03/27/2023 mem - Synchronize protein collection options validation with add_analysis_job_group
 **          12/12/2023 mem - Ported to PostgreSQL
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -219,7 +220,7 @@ BEGIN
         --
         If _mode::citext In ('add', 'PreviewAdd') Then
             If Exists (SELECT request_id FROM t_analysis_job_request WHERE request_name = _requestName::citext) Then
-                RAISE EXCEPTION 'Cannot add: request with same name already in database';
+                RAISE EXCEPTION 'Cannot add: request with same name already exists';
             End If;
         End If;
 
@@ -235,7 +236,7 @@ BEGIN
             WHERE request_id = _requestID;
 
             If Not FOUND Then
-                RAISE EXCEPTION 'Cannot update: entry is not in database';
+                RAISE EXCEPTION 'Cannot update: job request % does not exist', _requestID;
             End If;
 
             If Exists (SELECT job FROM t_analysis_job WHERE request_id = _requestID) Then

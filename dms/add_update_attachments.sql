@@ -48,6 +48,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_attachments(INOUT _id integer, IN 
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          12/19/2023 mem - Ported to PostgreSQL
+**          01/03/2024 mem - Update warning message
 **
 *****************************************************/
 DECLARE
@@ -152,7 +153,7 @@ BEGIN
 
 
     If _mode = 'update' And Not Exists (SELECT attachment_id FROM t_attachments WHERE attachment_id = _id) Then
-        _message := 'No entry could be found in database for update';
+        _message := format('Cannot update attachment "%s" since attachment ID %s does not exist', _attachmentName, _id);
         RAISE EXCEPTION '%', _message;
     End If;
 

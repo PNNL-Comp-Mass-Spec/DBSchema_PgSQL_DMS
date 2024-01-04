@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION public.get_aux_info_target_table_info(_targettypename
 **          03/22/2023 mem - Use lowercase strings in comparisons
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          01/03/2024 mem - Update warning message
 **
 *****************************************************/
 DECLARE
@@ -50,7 +51,7 @@ BEGIN
     WHERE T.target_type_name = _targetTypeName::citext;
 
     If Not FOUND Then
-        RAISE WARNING '%', format('Target type %s not found in t_aux_info_target', _targetTypeName);
+        RAISE WARNING 'Target type % not found in t_aux_info_target', _targetTypeName;
         RETURN;
     End If;
 

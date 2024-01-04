@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE public.validate_instrument_group_and_dataset_type(IN
 **          03/25/2014 mem - Now auto-updating dataset type from HMS-HMSn to HMS-HCD-HMSn for group QExactive
 **          09/07/2023 mem - Ported to PostgreSQL
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          01/03/2024 mem - Update warning message
 **
 *****************************************************/
 DECLARE
@@ -57,7 +58,7 @@ BEGIN
     End If;
 
     If _datasetTypeID = 0 Then
-        _message := format('Could not find entry in database for dataset type "%s"', _datasetType);
+        _message := format('Invalid dataset type: "%s" does not exist', _datasetType);
         _returnCode := 'U5018';
         RETURN;
     End If;

@@ -108,6 +108,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job(IN _datasetname text,
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          12/09/2023 mem - Add parameter _showDebug
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -220,7 +221,7 @@ BEGIN
             WHERE job = public.try_cast(_job, 0);
 
             If Not FOUND Then
-                _msg := format('Cannot update: Analysis Job %s is not in database', _job);
+                _msg := format('Cannot update: analysis job %s does not exist', _job);
 
                 If _infoOnly Then
                     RAISE WARNING '%', _msg;
@@ -337,7 +338,7 @@ BEGIN
                     RETURN;
                 End If;
 
-                _msg := format('Cannot update: Analysis Job %s is not in "new", "holding", or "failed" state', _job);
+                _msg := format('Cannot update: analysis job %s is not in "new", "holding", or "failed" state', _job);
 
                 If _infoOnly Then
                     RAISE WARNING '%', _msg;
@@ -660,7 +661,7 @@ BEGIN
 
                 FOR _previewData IN
 
-                SELECT format('Preview ', _mode) AS Mode,
+                SELECT format('Preview %s', _mode) AS Mode,
                        _jobID AS Job,
                        _priority AS Priority,
                        public.timestamp_text(CURRENT_TIMESTAMP) AS Created,

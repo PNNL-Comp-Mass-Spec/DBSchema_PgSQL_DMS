@@ -45,6 +45,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_step_tools(IN _name text, IN _type tex
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          07/28/2023 mem - Ported to PostgreSQL
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -108,7 +109,7 @@ BEGIN
     -- Cannot update a non-existent entry
     --
     If _mode = 'update' And _existingRowCount = 0 Then
-        _message := format('Could not find step tool "%s" in the database', _name);
+        _message := format('Cannot update: step tool "%s" does not exist', _name);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5202';
@@ -118,7 +119,7 @@ BEGIN
     -- Cannot add an existing entry
     --
     If _mode = 'add' And _existingRowCount > 0 Then
-        _message := format('"%s" already exists in the database', _name);
+        _message := format('Cannot add: step tool "%s" already exists', _name);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5203';

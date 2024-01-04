@@ -85,6 +85,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_scripts(IN _script text, IN _descripti
 **          07/28/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Update warning messages
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -226,7 +227,7 @@ BEGIN
     -- Cannot update a non-existent entry
     --
     If _mode = 'update' And _existingRowCount = 0 Then
-        _message := format('Could not find "%s" in database', _script);
+        _message := format('Cannot update: script "%s" does not exist', _script);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5208';
@@ -236,7 +237,7 @@ BEGIN
     -- Cannot add an existing entry
     --
     If _mode = 'add' And _existingRowCount > 0 Then
-        _message := format('Script "%s" already exists in database', _script);
+        _message := format('Cannot add: script "%s" already exists', _script);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5209';

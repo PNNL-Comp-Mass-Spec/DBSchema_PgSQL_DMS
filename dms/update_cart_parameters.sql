@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE public.update_cart_parameters(IN _mode text, IN _req
 **          01/10/2023 mem - Include previous _message text when updating @message
 **          09/08/2023 mem - Ported to PostgreSQL
 **          10/24/2023 mem - Add mode 'CartConfigID'
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -105,10 +106,10 @@ BEGIN
         _cartConfigID = public.try_cast(_newValue, null::int);
 
         If _cartConfigID Is Null Then
-            _message := format('Cannot update T_Requested_Run since cart config ID is not an integer: %s', Coalesce(_newValue, '??'));
+            _message := format('Cannot save update since cart config ID is not an integer: %s', Coalesce(_newValue, '??'));
             _returnCode := 'U5203';
         ElsIf Not Exists (SELECT Cart_Config_ID FROM T_LC_Cart_Configuration WHERE Cart_Config_ID = _cartConfigID) Then
-            _message := format('Invalid Cart Config ID: %s', _cartConfigID);
+            _message := format('Invalid cart config ID: %s', _cartConfigID);
             _returnCode := 'U5204';
         Else
             UPDATE t_requested_run

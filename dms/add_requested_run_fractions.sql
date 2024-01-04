@@ -56,6 +56,7 @@ CREATE OR REPLACE PROCEDURE public.add_requested_run_fractions(IN _sourcerequest
 **          10/09/2023 mem - Ported to PostgreSQL
 **          11/01/2023 mem - Add missing brackets when checking for '[space]' in the return value from validate_chars()
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -292,7 +293,7 @@ BEGIN
         WHERE exp_id = _experimentID;
 
         If Not FOUND Then
-            RAISE EXCEPTION 'Could not find entry in database for experiment ID %', _experimentID;
+            RAISE EXCEPTION 'Invalid experiment: ID % does not exist', _experimentID;
         End If;
 
         ---------------------------------------------------
@@ -328,7 +329,11 @@ BEGIN
                 -- Single match found; update _requesterUsername
                 _requesterUsername := _newUsername;
             Else
-                RAISE EXCEPTION 'Could not find entry in database for requester username"%"', _requesterUsername;
+                If _matchCount = 0 Then
+                    RAISE EXCEPTION 'Invalid requester username: "%" does not exist', _requesterUsername;
+                Else
+                    RAISE EXCEPTION 'Invalid requester username: "%" matches more than one user', _requesterUsername;
+                End If;
             End If;
         End If;
 
@@ -342,7 +347,7 @@ BEGIN
         WHERE instrument_group = _instrumentGroup::citext;
 
         If Not FOUND Then
-            RAISE EXCEPTION 'Could not find entry in database for instrument group "%"', _instrumentGroup;
+            RAISE EXCEPTION 'Invalid instrument group: "%" does not exist', _instrumentGroup;
         End If;
 
         If Coalesce(_targetInstrumentGroup, '') = '' Then

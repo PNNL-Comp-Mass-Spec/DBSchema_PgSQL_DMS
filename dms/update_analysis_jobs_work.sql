@@ -80,6 +80,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work(IN _state text DEFA
 **          09/13/2023 mem - Remove unnecessary delimiter argument when calling append_to_text()
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user_multi_id()
 **          12/29/2023 mem - Rename procedure argument to _showErrors
+**          01/03/2024 mem - Update warning message
 **
 *****************************************************/
 DECLARE
@@ -193,7 +194,12 @@ BEGIN
     WHERE NOT job IN (SELECT job FROM t_analysis_job);
 
     If Coalesce(_list, '') <> '' Then
-        _message := format('The following jobs were not in the database: "%s"', _list);
+        If Position(',' In _list) > 0 Then
+            _message := format('Cannot update; the following jobs do not exist: %s', _list);
+        Else
+            _message := format('Cannot update: job %s does not exist', _list);
+        End If;
+
         _returnCode := 'U5202';
         RETURN;
     End If;

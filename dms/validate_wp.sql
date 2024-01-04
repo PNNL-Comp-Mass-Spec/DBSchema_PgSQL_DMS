@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE public.validate_wp(IN _workpackage text, IN _allowno
 **  Date:   06/05/2013 mem - Initial Version
 **          09/15/2020 mem - Use 'https://dms2.pnl.gov/' instead of http://
 **          10/02/2023 mem - Ported to PostgreSQL
+**          01/03/2024 mem - Update warning message
 **
 *****************************************************/
 DECLARE
@@ -49,7 +50,7 @@ BEGIN
     End If;
 
     If Not Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackage::citext) Then
-        _message := format('Could not find entry in database for Work Package "%s"; see https://dms2.pnl.gov/helper_charge_code/report', _workPackage);
+        _message := format('Work Package "%s" does not exist; see https://dms2.pnl.gov/helper_charge_code/report', _workPackage);
         _returnCode := 'U5132';
         RETURN;
     End If;

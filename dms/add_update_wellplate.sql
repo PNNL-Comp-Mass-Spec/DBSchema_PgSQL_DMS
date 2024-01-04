@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_wellplate(INOUT _wellplatename tex
 **          08/01/2017 mem - Use THROW if not authorized
 **          11/25/2022 mem - Rename parameter to _wellplate
 **          12/03/2023 mem - Ported to PostgreSQL
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -104,7 +105,7 @@ BEGIN
     ---------------------------------------------------
 
     If _mode = 'update' And (_existingCount = 0 Or _existingID = 0) Then
-        _message := format('No entry could be found in database for update: %s', _wellplateName);
+        _message := format('Cannot update: wellplate "%s" does not exist', _wellplateName);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';
@@ -116,7 +117,7 @@ BEGIN
     ---------------------------------------------------
 
     If _mode = 'add' And _existingID <> 0 Then
-        _message := format('Cannot add duplicate wellplate named %s', _wellplateName);
+        _message := format('Cannot add: wellplate "%s" already exists', _wellplateName);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5202';

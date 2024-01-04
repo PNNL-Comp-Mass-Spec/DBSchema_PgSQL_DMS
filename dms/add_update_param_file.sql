@@ -53,6 +53,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_param_file(INOUT _paramfileid inte
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          11/06/2023 mem - Move variable assignment closer to usage
 **                         - Pass a boolean to has_whitespace_chars()
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -175,13 +176,13 @@ BEGIN
         -- Check for a name conflict when adding
         --
         If _mode Like '%add%' And _existingCount > 0 Then
-            RAISE EXCEPTION 'Cannot add: Param File "%" already exists', _paramFileName;
+            RAISE EXCEPTION 'Cannot add: parameter file "%" already exists', _paramFileName;
         End If;
 
         -- Check for a name conflict when renaming
         --
         If _mode Like '%update%' And _existingCount > 0 And _existingParamFileID <> _paramFileID Then
-            RAISE EXCEPTION 'Cannot rename: Param File "%" already exists', _paramFileName;
+            RAISE EXCEPTION 'Cannot rename: parameter File "%" already exists', _paramFileName;
         End If;
 
         ---------------------------------------------------
@@ -205,11 +206,11 @@ BEGIN
                 End If;
 
                 If Exists (SELECT param_file_name FROM t_analysis_job WHERE param_file_name = _currentName) Then
-                    RAISE EXCEPTION 'Cannot %: Param File "%" is used by an analysis job', _action, _currentName;
+                    RAISE EXCEPTION 'Cannot %: parameter file "%" is used by an analysis job', _action, _currentName;
                 End If;
 
                 If Exists (SELECT param_file_name FROM t_analysis_job_request WHERE param_file_name = _currentName) Then
-                    RAISE EXCEPTION 'Cannot %: Param File "%" is used by a job request', _action, _currentName;
+                    RAISE EXCEPTION 'Cannot %: parameter file "%" is used by a job request', _action, _currentName;
                 End If;
             End If;
         End If;

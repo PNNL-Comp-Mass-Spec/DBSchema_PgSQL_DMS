@@ -147,6 +147,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run(IN _requestname text
 **          11/01/2023 mem - Add missing brackets when checking for '[space]' in the return value from validate_chars()
 **          12/16/2023 mem - Update error messages
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -392,16 +393,16 @@ BEGIN
         -- Cannot create an entry that already exists
         --
         If _requestID <> 0 And _mode::citext In ('add', 'check_add') Then
-            RAISE EXCEPTION 'Cannot add: Requested Run "%" already exists in the database', _requestName;
+            RAISE EXCEPTION 'Cannot add: requested run "%" already exists', _requestName;
         End If;
 
         -- Cannot update a non-existent entry
         --
         If _requestID = 0 And _mode::citext In ('update', 'check_update') Then
             If _requestIDForUpdate > 0 Then
-                RAISE EXCEPTION 'Cannot update: requested run ID "%" is not in the database', _requestIDForUpdate;
+                RAISE EXCEPTION 'Cannot update: requested run ID "%" does not exist', _requestIDForUpdate;
             Else
-                RAISE EXCEPTION 'Cannot update: requested run "%" is not in the database', _requestName;
+                RAISE EXCEPTION 'Cannot update: requested run "%" does not exist', _requestName;
             End If;
         End If;
 
@@ -458,7 +459,7 @@ BEGIN
         WHERE experiment = _experimentName::citext;
 
         If Not FOUND Then
-            RAISE EXCEPTION 'Could not find entry in database for experiment "%"', _experimentName;
+            RAISE EXCEPTION 'Invalid experiment: "%" does not exist', _experimentName;
         End If;
 
         ---------------------------------------------------
@@ -494,7 +495,11 @@ BEGIN
                 -- Single match found; update _requesterUsername
                 _requesterUsername := _newUsername;
             Else
-                RAISE EXCEPTION 'Could not find entry in database for requester username "%"', _requesterUsername;
+                If _matchCount = 0 Then
+                    RAISE EXCEPTION 'Invalid requester username: "%" does not exist', _requesterUsername;
+                Else
+                    RAISE EXCEPTION 'Invalid requester username: "%" matches more than one user', _requesterUsername;
+                End If;
             End If;
         End If;
 
@@ -535,7 +540,7 @@ BEGIN
             If FOUND Then
                 _instrumentGroup = _matchedInstrumentGroup;
             Else
-                RAISE EXCEPTION 'Could not find entry in database for instrument group "%"', _instrumentGroup;
+                RAISE EXCEPTION 'Invalid instrument group: "%" does not exist', _instrumentGroup;
             End If;
         End If;
 
@@ -590,7 +595,7 @@ BEGIN
             WHERE separation_type = _separationGroup::citext;
 
             If Not FOUND Then
-                RAISE EXCEPTION 'Could not find entry in database for separation group "%"', _separationGroup;
+                RAISE EXCEPTION 'Invalid separation group: "%" does not exist', _separationGroup;
             End If;
 
             If Coalesce(_matchedSeparationGroup, '') <> '' Then
@@ -748,7 +753,7 @@ BEGIN
                 _mode := 'add';
             End If;
 
-            RAISE EXCEPTION 'Cannot %: Batch ID "%" is not in the database', _mode, _batch;
+            RAISE EXCEPTION 'Cannot %: batch ID "%" does not exist', _mode, _batch;
         End If;
 
         ---------------------------------------------------

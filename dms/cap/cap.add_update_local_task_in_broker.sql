@@ -58,6 +58,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_local_task_in_broker(INOUT _job integ
 **          08/25/2023 mem - Use Trim() on procedure arguments
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          10/11/2023 mem - Customize the column names included in the status message
+**          01/03/2024 mem - Update warning message
 **
 *****************************************************/
 DECLARE
@@ -128,7 +129,7 @@ BEGIN
 
         If _mode = 'update' And Not Found Then
             _logErrors := false;
-            RAISE EXCEPTION 'Cannot update nonexistent capture task job: %', _job;
+            RAISE EXCEPTION 'Cannot update: capture task job % does not exist', _job;
         End If;
 
         If _mode = 'update' And Not _state In (1, 3, 5, 100) Then -- new, complete, failed, hold

@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE public.update_material_items(IN _mode text, IN _item
 **                         - Only update Container_ID if _mode is 'move_material'
 **          12/05/2023 mem - Ported to PostgreSQL
 **          12/10/2023 mem - Change _container to citext
+**          01/03/2024 mem - Update warning message
 **
 *****************************************************/
 DECLARE
@@ -114,7 +115,7 @@ BEGIN
         WHERE container = _container;
 
         If Not FOUND Then
-            _message := format('Destination container "%s" could not be found in database', _container);
+            _message := format('Destination container "%s" doesnot exist', _container);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5203';

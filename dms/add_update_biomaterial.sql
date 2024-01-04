@@ -59,6 +59,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_biomaterial(IN _biomaterialname te
 **          12/08/2020 mem - Lookup Username from T_Users using the validated user ID
 **          07/08/2022 mem - Rename procedure from Add_Update_Cell_Culture to Add_Update_Biomaterial and update argument names
 **          12/30/2023 mem - Ported to PostgreSQL
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -180,14 +181,14 @@ BEGIN
         -- Cannot create an entry that already exists
 
         If FOUND And (_mode = 'add' or _mode = 'check_add') Then
-            _msg := format('Cannot add: Biomaterial "%s" already in database', _biomaterialName);
+            _msg := format('Cannot add: biomaterial "%s" already exists', _biomaterialName);
             RAISE EXCEPTION '%', _msg;
         End If;
 
         -- Cannot update a non-existent entry
 
         If Not FOUND And (_mode = 'update' or _mode = 'check_update') Then
-            _msg := format('Cannot update: Biomaterial "%s" is not in database', _biomaterialName);
+            _msg := format('Cannot update: biomaterial "%s" does not exist', _biomaterialName);
             RAISE EXCEPTION '%', _msg;
         End If;
 
@@ -305,7 +306,12 @@ BEGIN
                 -- Single match was found; update _piUsername
                 _piUsername := _newUsername;
             Else
-                _msg := format('Could not find entry in database for principal investigator username "%s"', _piUsername);
+                If _matchCount = 0 Then
+                    _msg := format('Invalid principal investigator username: "%s" does not exist', _piUsername);
+                Else
+                    _msg := format('Invalid principal investigator username: "%s" matches more than one user', _piUsername);
+                End If;
+
                 RAISE EXCEPTION '%', _msg;
             End If;
         End If;

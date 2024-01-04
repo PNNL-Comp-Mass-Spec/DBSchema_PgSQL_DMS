@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job_processors(INOUT _id 
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          12/18/2023 mem - Ported to PostgreSQL
+**          01/03/2024 mem - Update warning message
 **
 *****************************************************/
 DECLARE
@@ -145,7 +146,7 @@ BEGIN
         WHERE ToolID Is Null;
 
         _message := format('Invalid tool %s: %s',
-                                CASE WHEN Position(',' IN _message) > 0
+                                CASE WHEN Position(',' In _message) > 0
                                      THEN 'names'
                                      ELSE 'name'
                                 END,
@@ -171,7 +172,7 @@ BEGIN
     End If;
 
     If _mode = 'update' And Not Exists (SELECT processor_id FROM t_analysis_job_processors WHERE processor_id = _id) Then
-        _message := format('Cannot update processor ID %s; existing entry not found in the database', _id);
+        _message := format('Cannot update processor ID %s since it does not exist', _id);
          RAISE WARNING '%', _message;
 
         _returnCode := 'U5207';

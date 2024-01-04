@@ -54,6 +54,7 @@ CREATE OR REPLACE PROCEDURE public.validate_analysis_job_request_datasets(IN _au
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          12/13/2023 mem - Update return codes to be 'U6251' through 'U6255'
+**          01/03/2024 mem - Update warning message
 **
 *****************************************************/
 DECLARE
@@ -221,7 +222,11 @@ BEGIN
     WHERE Dataset_ID IS NULL;
 
     If Coalesce(_list, '') <> '' Then
-        _message := format('The following datasets were not in the database: %s', _list);
+        If Position(',' In _list) > 0 Then
+            _message := format('The following datasets do not exist: %s', _list);
+        Else
+            _message := format('The following dataset does not exist: %s', _list);
+        End If;
 
         If _showDebugMessages Then
             RAISE INFO '%', _message;

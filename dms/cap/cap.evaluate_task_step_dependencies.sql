@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE cap.evaluate_task_step_dependencies(INOUT _message t
 **          07/11/2023 mem - Use COUNT(Job) instead of COUNT(*)
 **          07/26/2023 mem - Move "Not" keyword to before the field name
 **          09/07/2023 mem - Align assignment statements
+**          01/03/2024 mem - Update warning message
 **
 *****************************************************/
 DECLARE
@@ -150,7 +151,7 @@ BEGIN
     _rowCountToProcess := Coalesce(_rowCountToProcess, 0);
 
     If _showDebug Then
-        RAISE INFO '%', format('Found %s %s to process', _rowCountToProcess, public.check_plural(_rowCountToProcess, 'step', 'steps'));
+        RAISE INFO 'Found % % to process', _rowCountToProcess, public.check_plural(_rowCountToProcess, 'step', 'steps');
     End If;
 
     _done := false;

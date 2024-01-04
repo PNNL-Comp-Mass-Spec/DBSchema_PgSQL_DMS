@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_capture_step_tools(IN _name text, IN 
 **          05/23/2023 mem - Use format() for string concatenation
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -90,7 +91,7 @@ BEGIN
         -- Cannot update a non-existent entry
         --
         If _mode = 'update' And _existingCount = 0 Then
-            _message := format('Could not find "%s" in database', _name);
+            _message := format('Cannot update: step tool "%s" does not exist', _name);
             RAISE WARNING '%', _message;
             _returnCode := 'U5201';
             RETURN;
@@ -99,7 +100,7 @@ BEGIN
         -- Cannot add an existing entry
         --
         If _mode = 'add' And _existingCount > 0 Then
-            _message := format('"%s" already exists in database', _name);
+            _message := format('Cannot add: step tool "%s" already exists', _name);
             RAISE WARNING '%', _message;
             _returnCode := 'U5202';
             RETURN;

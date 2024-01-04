@@ -111,6 +111,7 @@ CREATE OR REPLACE PROCEDURE public.add_analysis_job_group(IN _datasetlist text, 
 **          09/06/2023 mem - Remove leading space from messages
 **          12/02/2023 mem - Ported to PostgreSQL
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user_multi_id()
+**          01/03/2024 mem - Update status message
 **
 *****************************************************/
 DECLARE
@@ -768,10 +769,10 @@ BEGIN
                     CALL public.alter_event_log_entry_user ('public', _targetType, _requestID, _requestStateID, _callingUser, _message => _alterEnteredByMessage);
                 End If;
 
-                _message := format('Created aggregation job %s for ', _pipelineJob);
+                _message := format('Created aggregation job %s for', _pipelineJob);
 
             ElsIf _returnCode = '' Then
-                _message := 'Would create an aggregation job for ';
+                _message := 'Would create an aggregation job for';
 
             End If;
 

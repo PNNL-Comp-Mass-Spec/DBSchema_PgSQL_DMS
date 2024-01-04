@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_capture_scripts(IN _script text, IN _
 **          06/21/2023 mem - Assure that _enabled is uppercase
 **          09/07/2023 mem - Update warning messages
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -127,7 +128,7 @@ BEGIN
         -- Cannot update a non-existent entry
         --
         If _mode = 'update' And _existingCount = 0 Then
-            _message := format('Could not find script "%s" in database; cannot update', _script);
+            _message := format('Cannot update: script "%s" does not exist', _script);
             RAISE WARNING '%', _message;
             _returnCode := 'U5204';
             RETURN;
@@ -136,7 +137,7 @@ BEGIN
         -- Cannot add an existing entry
         --
         If _mode = 'add' And _existingCount > 0 Then
-            _message := format('Script "%s" already exists in database; cannot add', _script);
+            _message := format('Cannot add: script "%s" already exists', _script);
             RAISE WARNING '%', _message;
             _returnCode := 'U5205';
             RETURN;

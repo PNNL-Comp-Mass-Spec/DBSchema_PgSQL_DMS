@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE pc.update_cached_protein_collection_members(IN _coll
 **  Auth:   mem
 **  Date:   06/24/2016 mem - Initial release
 **          08/22/2023 mem - Ported to PostgreSQL
+**          01/03/2024 mem - Update status message
 **
 *****************************************************/
 DECLARE
@@ -268,7 +269,7 @@ BEGIN
         End If;
 
         _currentRange := format('%s protein %s (%s to %s)',
-                                _currentRangeCount, public.check_plural(_currentRangeCount, 'collection ', 'collections'),
+                                _currentRangeCount, public.check_plural(_currentRangeCount, 'collection', 'collections'),
                                 _currentRangeStart, _currentRangeEnd);
 
         RAISE INFO 'Processing %', _currentRange;

@@ -61,6 +61,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_instrument(IN _instrumentid intege
 **                         - Do not allow renaming the instrument with this procedure
 **                         - Validate instrument name specified by _instrumentName vs. the instrument name associated with _instrumentID
 **                         - Ported to PostgreSQL
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -77,7 +78,7 @@ DECLARE
     _valAutoDefineStoragePath int;
     _logMessage text;
     _msg text;
-    _existingName text;
+    _existingName citext;
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -135,12 +136,12 @@ BEGIN
             WHERE instrument_id = _instrumentID;
 
             If Not FOUND Then
-                _msg := format('No entry could be found in database for instrument ID %s', _instrumentID);
+                _msg := format('Cannot update: instrument ID %s does not exist', _instrumentID);
                 RAISE EXCEPTION '%', _msg USING ERRCODE = 'U5202';
             End If;
 
-            If _existingName <> _instrumentName Then
-                _msg := format('Instrument ID %s is instrument "%s", which does not match the name specified by _instrumentName ("%s")',
+            If _existingName <> _instrumentName::citext Then
+                _msg := format('Instrument ID %s is instrument "%s", which does not match the specified instrument name ("%s")',
                                 _instrumentID, _existingName, _instrumentName);
                 RAISE EXCEPTION '%', _msg USING ERRCODE = 'U5203';
             End If;

@@ -67,6 +67,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_assignments(IN _mode tex
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/11/2023 mem - Use schema name with try_cast
 **          12/08/2023 mem - Select a single column when using If Not Exists()
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -193,7 +194,7 @@ BEGIN
             If Not FOUND Then
                 _logErrors := false;
                 _returnCode := 'U5202';
-                RAISE EXCEPTION 'Could not find entry in database for instrument group (or instrument) "%"', _newValue;
+                RAISE EXCEPTION 'Invalid instrument group (or instrument): "%" does not exist', _newValue;
             End If;
 
             If _mode::citext = 'instrumentGroup' Then
@@ -234,7 +235,7 @@ BEGIN
                 If Not FOUND Then
                     _logErrors := false;
                     _returnCode := 'U5203';
-                    RAISE EXCEPTION 'Could not find entry in database for instrument "%"', _newValue;
+                    RAISE EXCEPTION 'Invalid instrument: "%" does not exist', _newValue;
                 End If;
 
                 _newQueueState := 2;
@@ -289,7 +290,7 @@ BEGIN
             If Not FOUND Then
                 _logErrors := false;
                 _returnCode := 'U5204';
-                RAISE EXCEPTION 'Could not find entry in database for separation group "%"', _newValue;
+                RAISE EXCEPTION 'Invalid separation group: "%" does not exist', _newValue;
             End If;
 
         End If;
@@ -318,7 +319,7 @@ BEGIN
                 _logErrors := false;
                 _returnCode := 'U5205';
 
-                RAISE EXCEPTION 'Could not find entry in database for dataset type "%"', _newValue;
+                RAISE EXCEPTION 'Invalid dataset type: "%" does not exist', _newValue;
             End If;
 
         End If;
@@ -380,7 +381,7 @@ BEGIN
             If _updateCount = 0 Then
                 _message := 'Can only update the assigned instrument for Active requested runs; all of the selected items are Completed or Inactive';
             Else
-                _message := format('Changed the assigned instrument to %s for %s requested ',
+                _message := format('Changed the assigned instrument to %s for %s requested %s',
                                     _newValue, _updateCount, public.check_plural(_updateCount, 'run', 'runs'));
 
                 SELECT COUNT(*)

@@ -105,6 +105,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_experiment(INOUT _experimentid int
 **          09/26/2023 mem - Update cached experiment names in t_data_package_experiments
 **          12/05/2023 mem - Ported to PostgreSQL
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -290,7 +291,7 @@ BEGIN
             WHERE exp_id = _experimentID;
 
             If Not FOUND Then
-                RAISE EXCEPTION 'Cannot update: Experiment ID % is not in database', _experimentID;
+                RAISE EXCEPTION 'Cannot update: experiment ID % does not exist', _experimentID;
             End If;
 
             If _existingExperimentName <> _experimentName::citext Then
@@ -302,7 +303,7 @@ BEGIN
                     FROM t_experiments
                     WHERE experiment = _experimentName::citext;
 
-                    RAISE EXCEPTION 'Cannot rename: Experiment "%" already exists, with ID %', _experimentName, _existingExperimentID;
+                    RAISE EXCEPTION 'Cannot rename: experiment "%" already exists, with ID %', _experimentName, _existingExperimentID;
                 End If;
 
                 If Exists (SELECT Exp_ID FROM T_Dataset WHERE exp_id = _experimentID) Then
@@ -311,7 +312,7 @@ BEGIN
                     FROM t_dataset
                     WHERE exp_id = _experimentID;
 
-                    RAISE EXCEPTION 'Cannot rename: Experiment ID % is associated with dataset "%"', _experimentID, _existingDataset;
+                    RAISE EXCEPTION 'Cannot rename: experiment ID % is associated with dataset "%"', _experimentID, _existingDataset;
                 End If;
 
                 If Exists (SELECT Exp_ID FROM t_requested_run WHERE exp_id = _experimentID) Then
@@ -320,7 +321,7 @@ BEGIN
                     FROM t_requested_run
                     WHERE exp_id = _experimentID;
 
-                    RAISE EXCEPTION 'Cannot rename: Experiment ID % is associated with requested run "%"', _experimentID, _existingRequestedRun;
+                    RAISE EXCEPTION 'Cannot rename: experiment ID % is associated with requested run "%"', _experimentID, _existingRequestedRun;
                 End If;
             End If;
         Else
@@ -334,7 +335,7 @@ BEGIN
             WHERE experiment = _experimentName::citext;
 
             If _mode In ('update', 'check_update') And Not FOUND Then
-                RAISE EXCEPTION 'Cannot update: Experiment "%" is not in database', _experimentName;
+                RAISE EXCEPTION 'Cannot update: experiment "%" does not exist', _experimentName;
             End If;
 
             -- Assure that _experimentId is up-to-date
@@ -344,7 +345,7 @@ BEGIN
         -- Cannot create an entry that already exists
 
         If _existingExperimentID <> 0 and (_mode In ('add', 'check_add')) Then
-            RAISE EXCEPTION 'Cannot add: Experiment "%" already in database; cannot add', _experimentName;
+            RAISE EXCEPTION 'Cannot add: experiment "%" already exists', _experimentName;
         End If;
 
         ---------------------------------------------------
@@ -354,7 +355,7 @@ BEGIN
         _campaignID := public.get_campaign_id(_campaignName);
 
         If _campaignID = 0 Then
-            RAISE EXCEPTION 'Could not find entry in database for campaign "%"', _campaignName;
+            RAISE EXCEPTION 'Invalid campaign name: "%" does not exist', _campaignName;
         End If;
 
         ---------------------------------------------------
@@ -384,7 +385,11 @@ BEGIN
                 -- Single match found; update _researcherUsername
                 _researcherUsername := _newUsername;
             Else
-                RAISE EXCEPTION 'Could not find entry in database for researcher username "%"', _researcherUsername;
+                If _matchCount = 0 Then
+                    RAISE EXCEPTION 'Invalid researcher username: "%" does not exist', _researcherUsername;
+                Else
+                    RAISE EXCEPTION 'Invalid researcher username: "%" matches more than one user', _researcherUsername;
+                End If;
             End If;
 
         End If;
@@ -396,7 +401,7 @@ BEGIN
         _organismID := public.get_organism_id(_organismName);
 
         If _organismID = 0 Then
-            RAISE EXCEPTION 'Could not find entry in database for organism name "%"', _organismName;
+            RAISE EXCEPTION 'Invalid organism name: "%" does not exist', _organismName;
         End If;
 
         ---------------------------------------------------
@@ -444,7 +449,7 @@ BEGIN
             If _enzymeName::citext = 'na' Then
                 RAISE EXCEPTION 'The enzyme cannot be "%"; use No_Enzyme if enzymatic digestion was not used', _enzymeName;
             Else
-                RAISE EXCEPTION 'Could not find entry in database for enzyme "%"', _enzymeName;
+                RAISE EXCEPTION 'Invalid enzyme: "%" does not exist', _enzymeName;
             End If;
         End If;
 
@@ -458,7 +463,7 @@ BEGIN
         WHERE label = _labelling::citext;
 
         If Not FOUND Then
-            RAISE EXCEPTION 'Could not find entry in database for labelling "%"; use "none" if unlabeled', _labelling;
+            RAISE EXCEPTION '"%" is not a valid label name; use "none" if unlabeled', _labelling;
         Else
             _labelling := _labelName;
         End If;
@@ -468,7 +473,7 @@ BEGIN
         ---------------------------------------------------
 
         If _samplePrepRequest > 0 And Not Exists (SELECT prep_request_id FROM t_sample_prep_request WHERE prep_request_id = _samplePrepRequest) Then
-            RAISE EXCEPTION 'Could not find entry in database for sample prep request "%"', _samplePrepRequest;
+            RAISE EXCEPTION 'Invalid sample prep request ID: % does not exist', _samplePrepRequest;
         End If;
 
         ---------------------------------------------------
@@ -482,7 +487,7 @@ BEGIN
         WHERE name = _internalStandard::citext;
 
         If Not FOUND Then
-            RAISE EXCEPTION 'Could not find entry in database for predigestion internal standard "%"', _internalStandard;
+            RAISE EXCEPTION 'Invalid predigestion internal standard: "%" does not exist', _internalStandard;
         End If;
 
         If (_mode In ('add', 'check_add')) And _internalStandardState <> 'A' Then
@@ -499,7 +504,7 @@ BEGIN
         WHERE name = _postdigestIntStd::citext;
 
         If Not FOUND Then
-            RAISE EXCEPTION 'Could not find entry in database for postdigestion internal standard "%"', _postdigestIntStd;
+            RAISE EXCEPTION 'Invalid postdigestion internal standard: "%" does not exist', _postdigestIntStd;
         End If;
 
         If _mode In ('add', 'check_add') And _internalStandardState <> 'A' Then

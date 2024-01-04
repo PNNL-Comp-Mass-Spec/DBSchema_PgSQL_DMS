@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_archive_path(INOUT _archivepathid 
 **                         - Update warning messages
 **          09/08/2023 mem - Adjust capitalization of keywords
 **                         - Include schema name when calling function verify_sp_authorized()
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -111,7 +112,7 @@ BEGIN
     -- Cannot create an entry that already exists
     --
     If FOUND And _mode = 'add' Then
-        RAISE EXCEPTION 'Cannot add: Archive Path "%" already in database ', _archivePath;
+        RAISE EXCEPTION 'Cannot add: archive path "%" already exists', _archivePath;
     End If;
 
     ---------------------------------------------------
@@ -121,7 +122,7 @@ BEGIN
     _instrumentID := public.get_instrument_id(_instrumentName);
 
     If _instrumentID = 0 Then
-        RAISE EXCEPTION 'Could not find entry in database for instrument "%"', _instrumentName;
+        RAISE EXCEPTION 'Invalid instrument: "%" does not exist', _instrumentName;
     End If;
 
     ---------------------------------------------------

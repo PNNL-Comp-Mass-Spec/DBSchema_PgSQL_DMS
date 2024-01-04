@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_sample_submission(INOUT _id intege
 **          11/21/2023 mem - Ported to PostgreSQL
 **                         - If _containerList is 'na', assure that it is lowercase
 **          11/22/2023 mem - Allow _receivedBy to be of the form 'Zink, Erika M', 'Zink, Erika M (D3P704)', or 'D3P704'
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -160,9 +161,9 @@ BEGIN
             _message := 'Received by person must be a valid DMS user';
 
             If _matchCount = 0 Then
-                _message := format('%s; %s is an unknown person', _message, _receivedBy);
+                _message := format('%s; "%s" does not exist', _message, _receivedBy);
             Else
-                _message := format('%s; %s is an ambiguous match to multiple people', _message, _receivedBy);
+                _message := format('%s; "%s" matches more than one user', _message, _receivedBy);
             End If;
 
             _returnCode := 'U5202';
@@ -179,7 +180,7 @@ BEGIN
             -- Cannot update a non-existent entry
             --
             If Not Exists (SELECT submission_id FROM t_sample_submission WHERE submission_id = _id) Then
-                RAISE EXCEPTION 'No entry could be found in database for update';
+                RAISE EXCEPTION 'Cannot update: sample submission ID % does not exist', _id;
             End If;
         End If;
 

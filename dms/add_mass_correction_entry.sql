@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE public.add_mass_correction_entry(IN _modname text, I
 **          08/27/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Update warning messages
 **          09/08/2023 mem - Include schema name when calling function verify_sp_authorized()
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -75,10 +76,10 @@ BEGIN
     _massCorrectionID := public.get_mass_correction_id(_modMassChange);
 
     -- Cannot create an entry that already exists
-    -- Look for existing modifications with a mass within 0.00006 Da of _modMasschange
+    -- Look for existing modifications with a mass within 0.00006 Da of _modMassChange
 
     If _massCorrectionID <> 0 Then
-        _msg := format('Cannot add: Mass correction "%s" already exists', _modMasschange);
+        _msg := format('Cannot add: mass correction "%s" already exists', _modMassChange);
         RAISE WARNING '%', _msg;
 
         _returnCode := 'U5204';
@@ -92,7 +93,7 @@ BEGIN
     If Exists ( SELECT mass_correction_id
                 FROM t_mass_correction_factors
                 WHERE mass_correction_tag = _modName::citext) Then
-        _msg := format('Cannot add: Mass Correction "%s" already exists', _modName);
+        _msg := format('Cannot add: mass Correction "%s" already exists', _modName);
         RAISE WARNING '%', _msg;
 
         _returnCode := 'U5205';

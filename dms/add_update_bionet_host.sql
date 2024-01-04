@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_bionet_host(IN _host text, IN _ip 
 **          10/03/2018 mem - Add _comment
 **                         - Use _logErrors to toggle logging errors caught by the try/catch block
 **          12/31/2023 mem - Ported to PostgreSQL
+**          01/03/2024 mem - Update warning message
 **
 *****************************************************/
 DECLARE
@@ -122,7 +123,7 @@ BEGIN
 
         If _mode = 'update' And Not Exists (SELECT host FROM t_bionet_hosts WHERE host = _host::citext) Then
             -- Cannot update a non-existent entry
-            _msg := format('Cannot update: host "%s" is not in the database', _host);
+            _msg := format('Cannot update: host "%s" does not exist', _host);
             RAISE EXCEPTION '%', _msg;
         End If;
 

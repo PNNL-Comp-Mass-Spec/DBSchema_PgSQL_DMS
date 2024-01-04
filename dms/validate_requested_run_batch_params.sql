@@ -44,6 +44,7 @@ CREATE OR REPLACE PROCEDURE public.validate_requested_run_batch_params(IN _batch
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          12/15/2023 mem - Coalesce nulls to empty strings and update warning messages
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -131,7 +132,7 @@ BEGIN
 
         If _mode In ('add', Lower('PreviewAdd')) Then
             If Exists (SELECT batch FROM t_requested_run_batches WHERE batch = _name::citext) Then
-                _message := format('Cannot add batch: "%s" already exists in database', _name);
+                _message := format('Cannot add: batch "%s" already exists', _name);
                 _returnCode := 'U5205';
                 RETURN;
             End If;
@@ -153,13 +154,13 @@ BEGIN
             WHERE batch_id = _batchID;
 
             If Not FOUND Then
-                _message := format('Cannot update: batch %s does not exist in database', _batchID);
+                _message := format('Cannot update: batch ID %s does not exist', _batchID);
                 _returnCode := 'U5207';
                 RETURN;
             End If;
 
             If _locked = 'Yes' Then
-                _message := format('Cannot update: batch %s is locked', _batchID);
+                _message := format('Cannot update: batch ID %s is locked', _batchID);
                 _returnCode := 'U5208';
                 RETURN;
             End If;
@@ -193,7 +194,12 @@ BEGIN
                 -- Single match found; update _ownerUsername
                 _ownerUsername := _newUsername;
             Else
-                _message := format('Could not find entry in database for username "%s"', _ownerUsername);
+                If _matchCount = 0 Then
+                    _message := format('Invalid owner username: "%s" does not exist', _ownerUsername);
+                Else
+                    _message := format('Invalid owner username: "%s" matches more than one user', _ownerUsername);
+                End If;
+
                 _returnCode := 'U5209';
                 RETURN;
             End If;

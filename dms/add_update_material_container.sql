@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_material_container(INOUT _containe
 **          05/23/2023 mem - Use a Like clause to prevent updating Staging containers
 **          11/18/2023 mem - Remove procedure argument _barcode and add _campaignName
 **          11/20/2023 mem - Ported to PostgreSQL
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -178,9 +179,9 @@ BEGIN
             _message := 'Researcher must be a valid DMS user';
 
             If _matchCount = 0 Then
-                _message := format('%s; %s is an unknown person', _message, _researcher);
+                _message := format('%s; "%s" does not exist', _message, _researcher);
             Else
-                _message := format('%s; %s is an ambiguous match to multiple people', _message, _researcher);
+                _message := format('%s; "%s" matches more than one user', _message, _researcher);
             End If;
 
             _returnCode := 'U5206';
@@ -231,7 +232,7 @@ BEGIN
         End If;
 
         If _mode In ('update', 'preview') And _containerID = 0 Then
-            _message := format('No entry could be found in database for updating %s', _container);
+            _message := format('Cannot update: container "%s" does not exist', _container);
             _returnCode := 'U5209';
             RETURN;
         End If;

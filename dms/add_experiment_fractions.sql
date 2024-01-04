@@ -78,6 +78,7 @@ CREATE OR REPLACE PROCEDURE public.add_experiment_fractions(IN _parentexperiment
 **          11/18/2022 mem - Rename parameter to _groupName
 **          11/25/2022 mem - Rename parameter to _wellplate
 **          12/10/2023 mem - Ported to PostgreSQL
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -359,7 +360,7 @@ BEGIN
 
             If Not FOUND Then
                 _logErrors := false;
-                _message := format('Could not find entry in database for internal standard "%s"', _internalStandard);
+                _message := format('Invalid internal standard: "%s" does not exist', _internalStandard);
                 RAISE EXCEPTION '%', _message;
             End If;
 
@@ -379,7 +380,7 @@ BEGIN
 
             If Not FOUND Then
                 _logErrors := false;
-                _message := format('Could not find entry in database for postdigestion internal standard "%s"', _tmpID);
+                _message := format('Invalid postdigestion internal standard: "%s" does not exist', _tmpID);
                 RAISE EXCEPTION '%', _message;
             End If;
 
@@ -416,7 +417,13 @@ BEGIN
                     _researcher := _newUsername;
                 Else
                     _logErrors := false;
-                    _message := format('Could not find entry in database for researcher username "%s"', _researcher);
+
+                    If _matchCount = 0 Then
+                        _message := format('Invalid researcher username: "%s" does not exist', _researcher);
+                    Else
+                        _message := format('Invalid researcher username: "%s" matches more than one user', _researcher);
+                    End If;
+
                     RAISE EXCEPTION '%', _message;
                 End If;
             End If;

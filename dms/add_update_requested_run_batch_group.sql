@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch_group(INOUT _i
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list_ordered for a comma-separated list
 **          10/12/2023 mem - Add/update variables
 **                         - Only drop temp table if actually created
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -102,8 +103,8 @@ BEGIN
         ---------------------------------------------------
 
         If _mode In ('add', Lower('PreviewAdd')) Then
-            If Exists (SELECT Batch_Group FROM t_requested_run_batch_group WHERE Batch_Group = _name) Then
-                _message := format('Cannot add batch group: "%s" already exists in database', _name);
+            If Exists (SELECT Batch_Group FROM t_requested_run_batch_group WHERE Batch_Group = _name::citext) Then
+                _message := format('Cannot add: batch group "%s" already exists', _name);
                 _returnCode := 'U5203';
                 RAISE EXCEPTION '%', _message;
             End If;
@@ -112,8 +113,8 @@ BEGIN
         -- Cannot update a non-existent entry
         --
         If _mode = 'update' Then
-            If Not Exists (SELECT Batch_Group_ID FROM t_requested_run_batch_group WHERE Batch_Group_ID = _ID) Then
-                _message := 'Cannot update: entry does not exist in database';
+            If Not Exists (SELECT Batch_Group_ID FROM t_requested_run_batch_group WHERE Batch_Group_ID = _id) Then
+                _message := format('Cannot update: batch group ID %s does not exist', _id);
                 _returnCode := 'U5205';
                 RAISE EXCEPTION '%', _message;
             End If;
@@ -150,7 +151,13 @@ BEGIN
                 _ownerUsername := _newUsername;
             Else
                 _logErrors := false;
-                _message := format('Could not find entry in database for username "%s"', _ownerUsername);
+
+                If _matchCount = 0 Then
+                    _message := format('Invalid owner username: "%s" does not exist', _ownerUsername);
+                Else
+                    _message := format('Invalid owner username: "%s" matches more than one user', _ownerUsername);
+                End If;
+
                 _returnCode := 'U5207';
                 RAISE EXCEPTION '%', _message;
             End If;

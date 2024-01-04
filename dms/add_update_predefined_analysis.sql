@@ -83,6 +83,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_predefined_analysis(IN _level inte
 **          06/30/2022 mem - Rename parameter file argument
 **          12/06/2023 mem - Add support for scan type criteria
 **                         - Ported to PostgreSQL
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -404,7 +405,7 @@ BEGIN
         _organismID := public.get_organism_id(_organismName);
 
         If _organismID = 0 Then
-            _msg := format('Could not find entry in database for organismName "%s"', _organismName);
+            _msg := format('Invalid organism name: "%s" does not exist', _organismName);
             RAISE EXCEPTION '%', _msg;
         End If;
 
@@ -414,7 +415,7 @@ BEGIN
 
         If _paramFileName::citext <> 'na' Then
             If Not Exists (SELECT param_file_id FROM t_param_files WHERE param_file_name = _paramFileName::citext) Then
-                _msg := format('Could not find entry in database for parameter file "%s"', _paramFileName);
+                _msg := format('Invalid parameter file: "%s" does not exist', _paramFileName);
                 RAISE EXCEPTION '%', _msg;
             End If;
         End If;
@@ -425,7 +426,7 @@ BEGIN
 
         If _settingsFileName::citext <> 'na' Then
             If Not Exists (SELECT settings_file_id FROM t_settings_files WHERE file_name = _settingsFileName::citext) Then
-                _msg := format('Could not find entry in database for settings file "%s"', _settingsFileName);
+                _msg := format('Invalid settings file: "%s" does not exist', _settingsFileName);
                 RAISE EXCEPTION '%', _msg;
             End If;
         End If;
@@ -495,7 +496,7 @@ BEGIN
             -- Cannot update a non-existent entry
             --
             If Not Exists (SELECT predefine_id FROM t_predefined_analysis WHERE predefine_id = _id) Then
-                _msg := 'No entry could be found in database for update';
+                _msg := format('Cannot update: predefine ID %s does not exist', _id);
                 RAISE EXCEPTION '%', _msg;
             End If;
 

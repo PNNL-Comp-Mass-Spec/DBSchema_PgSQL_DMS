@@ -349,7 +349,7 @@ BEGIN
 
     If _jobCount > 0 And _deleteJobs Then
     -- <a>
-        _message := format('Deleted %s %s from: ', _jobCount, public.check_plural(_jobCount, 'job', 'jobs'));
+        _message := format('Deleted %s %s from:', _jobCount, public.check_plural(_jobCount, 'job', 'jobs'));
 
         BEGIN
 
@@ -382,7 +382,7 @@ BEGIN
             DELETE FROM t_analysis_job_psm_stats target
             WHERE EXISTS (SELECT J.Job FROM Tmp_JobsToDelete J WHERE target.job = J.job);
             --
-            _message := format('%st_analysis_job_psm_stats, ', _message);
+            _message := format('%s t_analysis_job_psm_stats', _message);
 
             -- Disable the trigger that prevents all rows from being deleted
             ALTER TABLE t_analysis_job DISABLE TRIGGER trig_t_analysis_job_after_delete_all
@@ -392,7 +392,7 @@ BEGIN
             DELETE FROM t_analysis_job target
             WHERE EXISTS (SELECT J.Job FROM Tmp_JobsToDelete J WHERE target.job = J.job);
             --
-            _message := format('%sand t_analysis_job', _message);
+            _message := format('%s and t_analysis_job', _message);
 
             CALL post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
 

@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE sw.copy_history_to_job_multi(IN _joblist text, IN _i
 **          08/02/2023 mem - Move the _message and _returnCode arguments to the end of the argument list
 **          08/08/2023 mem - Fix typo in warning message
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -465,7 +466,7 @@ BEGIN
             -- Update the job parameters in case any parameters have changed (in particular, storage path)
             ---------------------------------------------------
 
-            _currentLocation := format('Call update_job_parameters for job ', _job);
+            _currentLocation := format('Call update_job_parameters for job %s', _job);
 
             CALL sw.update_job_parameters (
                         _job,
@@ -478,7 +479,7 @@ BEGIN
             -- Make sure transfer_folder_path and storage_server are up-to-date in sw.t_jobs
             ---------------------------------------------------
 
-            _currentLocation := format('Call validate_job_server_info for job ', _job);
+            _currentLocation := format('Call validate_job_server_info for job %s', _job);
 
             CALL sw.validate_job_server_info (
                         _job,

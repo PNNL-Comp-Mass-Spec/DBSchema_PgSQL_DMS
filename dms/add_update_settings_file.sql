@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_settings_file(INOUT _settingsfilei
 **          04/11/2022 mem - Check for existing settings file (by name) when _mode is 'add'
 **                         - Check for whitespace in _fileName
 **          08/23/2023 mem - Ported to PostgreSQL
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -132,7 +133,7 @@ BEGIN
         End If;
 
         If Not Exists (SELECT settings_file_id FROM t_settings_files WHERE file_name = _hmsAutoSupersede::citext) Then
-            _message := format('hms_auto_supersede settings file not found in the database: %s', _hmsAutoSupersede);
+            _message := format('hms_auto_supersede settings file does not exist: %s', _hmsAutoSupersede);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5206';
@@ -167,7 +168,7 @@ BEGIN
         End If;
 
         If Not Exists (SELECT settings_file_id FROM t_settings_files WHERE file_name = _msgfPlusAutoCentroid::citext) Then
-            _message := format('MSGFPlus AutoCentroid settings file not found in the database: %s', _msgfPlusAutoCentroid);
+            _message := format('MSGFPlus AutoCentroid settings file does not exist: %s', _msgfPlusAutoCentroid);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5209';
@@ -228,7 +229,7 @@ BEGIN
         -- Cannot update a non-existent entry
         --
         If Not Exists (SELECT settings_file_id FROM t_settings_files WHERE settings_file_id = _settingsFileID) Then
-            _message := format('Settings file settings_file_id %s not found in database; cannot update', _settingsFileID);
+            _message := format('Cannot update: settings file ID %s does not exist', _settingsFileID);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5212';

@@ -152,6 +152,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_dataset(IN _datasetname text, IN _
 **                         - Ported to PostgreSQL
 **          11/01/2023 mem - Add missing brackets when checking for '[space]' in the return value from validate_chars()
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user_multi_id()
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -423,7 +424,7 @@ BEGIN
             _ratingID := public.get_dataset_rating_id(_rating);
 
             If _ratingID = 0 Then
-                RAISE EXCEPTION 'Could not find entry in database for rating %', _rating;
+                RAISE EXCEPTION 'Cannot update: dataset rating "%" does not exist', _rating;
             End If;
         End If;
 
@@ -441,13 +442,13 @@ BEGIN
             -- Cannot update a non-existent entry
             --
             If _mode::citext In ('update', 'check_update') Then
-                RAISE EXCEPTION 'Cannot update: Dataset % is not in the database', _datasetName;
+                RAISE EXCEPTION 'Cannot update: dataset % does not exist', _datasetName;
             End If;
         Else
             -- Cannot create an entry that already exists
             --
             If _addingDataset Then
-                RAISE EXCEPTION 'Cannot add dataset % since already in the database', _datasetName;
+                RAISE EXCEPTION 'Cannot add dataset "%" since it already exists', _datasetName;
             End If;
 
             -- Do not allow a rating change from 'Unreviewed' to any other rating within this procedure
@@ -552,7 +553,7 @@ BEGIN
         End If;
 
         If _experimentID = 0 Then
-            RAISE EXCEPTION 'Could not find entry in database for experiment %', _experimentName;
+            RAISE EXCEPTION 'Invalid experiment: "%" does not exist', _experimentName;
         End If;
 
         ---------------------------------------------------
@@ -562,7 +563,7 @@ BEGIN
         _instrumentID := public.get_instrument_id(_instrumentName);
 
         If _instrumentID = 0 Then
-            RAISE EXCEPTION 'Could not find entry in database for instrument %', _instrumentName;
+            RAISE EXCEPTION 'Invalid instrument: "%" does not exist', _instrumentName;
         End If;
 
         ---------------------------------------------------
@@ -613,7 +614,7 @@ BEGIN
                 FROM t_dataset_type_name
                 WHERE dataset_type_ID = _datasetTypeID;
             Else
-                RAISE EXCEPTION 'Could not find entry in database for dataset type %', _msType;
+                RAISE EXCEPTION 'Invalid dataset type: %', _msType;
             End If;
         End If;
 
@@ -748,7 +749,11 @@ BEGIN
                 -- Single match found; update _operatorUsername
                 _operatorUsername := _newUsername;
             Else
-                RAISE EXCEPTION 'Could not find entry in database for operator username %', _operatorUsername;
+                If _matchCount = 0 Then
+                    RAISE EXCEPTION 'Invalid operator username: "%" does not exist', _operatorUsername;
+                Else
+                    RAISE EXCEPTION 'Invalid operator username: "%" matches more than one user', _operatorUsername;
+                End If;
             End If;
         End If;
 

@@ -112,6 +112,7 @@ CREATE OR REPLACE PROCEDURE public.validate_analysis_job_parameters(IN _toolname
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          12/11/2023 mem - Remove unnecessary _trimWhitespace argument when calling validate_na_parameter
+**          01/03/2024 mem - Update warning messages
 **
 *****************************************************/
 DECLARE
@@ -238,7 +239,11 @@ BEGIN
                 -- Single match was found; update _ownerUsername
                 _ownerUsername := _newUsername;
             Else
-                _message := format('Could not find entry in database for owner username "%s"', _ownerUsername);
+                If _matchCount = 0 Then
+                    _message := format('Invalid owner username: "%s" does not exist', _ownerUsername);
+                Else
+                    _message := format('Invalid owner username: "%s" matches more than one user', _ownerUsername);
+                End If;
 
                 If _showDebugMessages Then
                     RAISE INFO '%', _message;
@@ -258,7 +263,7 @@ BEGIN
         _analysisToolID := public.get_analysis_tool_id(_toolName);
 
         If _analysisToolID = 0 Then
-            _message := format('Could not find entry in database for analysis tool "%s"', _toolName);
+            _message := format('Invalid analysis tool: "%s" does not exist', _toolName);
 
             If _showDebugMessages Then
                 RAISE INFO '%', _message;
@@ -333,7 +338,7 @@ BEGIN
         _organismID := public.get_organism_id(_organismName);
 
         If _organismID = 0 Then
-            _message := format('Could not find entry in database for organism "%s"', _organismName);
+            _message := format('Invalid organism: "%s" does not exist', _organismName);
 
             If _showDebugMessages Then
                 RAISE INFO '%', _message;

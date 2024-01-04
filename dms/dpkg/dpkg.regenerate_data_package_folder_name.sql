@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE dpkg.regenerate_data_package_folder_name(IN _datapkg
 **          10/23/2009 mem - Expanded _currentDataPackageWiki and _newDataPackageWiki to varchar(1024)
 **          08/15/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          01/03/2024 mem - Update warning message
 **
 *****************************************************/
 DECLARE
@@ -66,7 +67,7 @@ BEGIN
     WHERE data_pkg_id = _dataPkgID;
 
     If Not FOUND Then
-        _message := format('No entry could be found in database for data package: %s', _dataPkgID);
+        _message := format('Error: Data package ID %s does not exist', _dataPkgID);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5106';
