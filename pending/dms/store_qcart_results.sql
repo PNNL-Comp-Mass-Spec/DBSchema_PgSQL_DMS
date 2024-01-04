@@ -363,7 +363,7 @@ BEGIN
 
     _message := 'QCART measurement storage successful';
 
-    If char_length(_message) > 0 And _infoOnly Then
+    If Coalesce(_message, '') <> '' And _infoOnly Then
         RAISE INFO '%', _message;
     End If;
 

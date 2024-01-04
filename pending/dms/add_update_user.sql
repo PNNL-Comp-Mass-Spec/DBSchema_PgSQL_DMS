@@ -101,12 +101,13 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _username := Trim(Replace(_username, chr(9), ' '));
-        _lastNameFirstName := Trim(Replace(_lastNameFirstName, chr(9), ' '));
-        _hanfordIdNum := Trim(Replace(_hanfordIdNum, chr(9), ' '));
-        _userStatus := Trim(_userStatus);
+        _username          := Trim(Replace(Coalesce(_username, ''),          chr(9), ' '));
+        _lastNameFirstName := Trim(Replace(Coalesce(_lastNameFirstName, ''), chr(9), ' '));
+        _hanfordIdNum      := Trim(Replace(Coalesce(_hanfordIdNum, ''),      chr(9), ' '));
+        _userStatus        := Trim(Coalesce(_userStatus, ''));
+        _mode              := Trim(Lower(Coalesce(_mode, '')));
 
-        If char_length(_username) < 1 Then
+        If _username = '' Then
             _returnCode := 'U5201';
             RAISE EXCEPTION 'Username must be specified';
         Else
@@ -117,22 +118,20 @@ BEGIN
             End If;
         End If;
 
-        If char_length(_lastNameFirstName) < 1 Then
+        If _lastNameFirstName = '' Then
             _returnCode := 'U5202';
             RAISE EXCEPTION 'Last Name, First Name must be specified';
         End If;
-        --
+
         If char_length(_hanfordIdNum) <= 1 Then
             _returnCode := 'U5203';
             RAISE EXCEPTION 'Hanford ID number cannot be blank or a single character';
         End If;
-        --
-        If char_length(_userStatus) < 1 Then
+
+        If _userStatus = '' Then
             _returnCode := 'U5204';
             RAISE EXCEPTION 'User status must be specified';
         End If;
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
         -- Is entry already in database?
@@ -141,15 +140,15 @@ BEGIN
         _userID := public.get_user_id(_username);
 
         -- Cannot create an entry that already exists
-        --
+
         If _userID <> 0 And _mode = 'add' Then
-            RAISE EXCEPTION 'Cannot add: User "%" already in database ', _username;
+            RAISE EXCEPTION 'Cannot add: user "%" already exists', _username;
         End If;
 
         -- Cannot update a non-existent entry
-        --
+
         If _userID = 0 And _mode = 'update' Then
-            RAISE EXCEPTION 'Cannot update: User "%" is not in database ', _username;
+            RAISE EXCEPTION 'Cannot update: user "%" does not exist', _username;
         End If;
 
         ---------------------------------------------------

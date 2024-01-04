@@ -110,7 +110,7 @@ BEGIN
         WHERE entry_id = _id;
 
         If Not FOUND Then
-            _message := 'No entry could be found in database for update';
+            _message := format('Cannot update: LC cart settings ID %s does not exist', _id);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5201';

@@ -87,7 +87,7 @@ BEGIN
     _instrumentName   := Trim(Coalesce(_instrumentName, ''));
     _datasetName      := Trim(Coalesce(_datasetName, ''));
 
-    If char_length(_processorGroup) > 0 Then
+    If _processorGroup <> '' Then
         -- Validate _processorGroup and determine the ID value
 
         SELECT group_id
@@ -114,7 +114,7 @@ BEGIN
         -- Cannot update a non-existent entry
         --
         If Not Exists (SELECT rule_id FROM t_predefined_analysis_scheduling_rules WHERE rule_id = _id) Then
-            _message := 'No entry could be found in database for update';
+            _message := format('Cannot update: predefine rule ID %s does not exist', _id);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5202';

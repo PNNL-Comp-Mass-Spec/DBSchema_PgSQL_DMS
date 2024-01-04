@@ -105,7 +105,12 @@ BEGIN
     WHERE ID is null;
 
     If _list <> '' Then
-        _message := format('The following processors were not in the database: "%s"', _list);
+        If Position(',' In _list) > 0 Then
+            _message := format('The following processors do not exist: %s', _list);
+        Else
+            _message := format('Processor %s does not exist', _list);
+        End If;
+
         _returnCode := 'U5203';
         RETURN;
     End If;
@@ -184,7 +189,7 @@ BEGIN
 
     -- If _callingUser is defined, update entered_by in t_analysis_job_processor_group
     --
-    If char_length(_callingUser) > 0 And _alterEnteredByRequired Then
+    If Trim(Coalesce(_callingUser, '')) <> '' And _alterEnteredByRequired Then
         -- Call public.alter_entered_by_user for each processor ID in Tmp_Processors
 
         -- If the mode was 'add_processors', this will possibly match some rows that

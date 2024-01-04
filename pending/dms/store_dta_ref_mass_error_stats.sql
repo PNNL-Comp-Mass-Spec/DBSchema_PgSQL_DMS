@@ -381,7 +381,7 @@ BEGIN
 
     _message := 'DTARefinery Mass Error stats successfully stored';
 
-    If char_length(_message) > 0 And _infoOnly Then
+    If Coalesce(_message, '') <> '' And _infoOnly Then
         RAISE INFO '%', _message;
     End If;
 

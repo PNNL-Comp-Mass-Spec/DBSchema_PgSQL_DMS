@@ -152,29 +152,29 @@ BEGIN
             RAISE EXCEPTION 'Compound ID cannot be null';
         End If;
 
-        If char_length(_compoundName) < 1 Then
+        If _compoundName = '' Then
             RAISE EXCEPTION 'Compound Name must be specified';
         End If;
 
         _compoundIdAndName := format('%s: %s', Coalesce(_compoundID, 0), Coalesce(_compoundName, '??'));
 
-        If char_length(_compoundTypeName) < 1 Then
+        If _compoundTypeName = '' Then
             RAISE EXCEPTION 'Compound type name must be specified';
         End If;
 
-        If char_length(_organismName) < 1 Then
+        If _organismName = '' Then
             _organismName := 'None';
         End If;
 
-        If char_length(_campaignName) < 1 Then
+        If _campaignName = '' Then
             RAISE EXCEPTION 'Campaign Name must be specified';
         End If;
 
-        If char_length(_contactUsername) < 1 Then
+        If _contactUsername = '' Then
             RAISE EXCEPTION 'Contact Name must be specified';
         End If;
 
-        If char_length(_supplier) < 1 Then
+        If _supplier = '' Then
             RAISE EXCEPTION 'Supplier must be specified';
         End If;
 
@@ -244,7 +244,7 @@ BEGIN
         _organismID := public.get_organism_id(_organismName);
 
         If _organismID = 0 Then
-            RAISE EXCEPTION 'Could not find entry in database for organism name "%"', _organismName;
+            RAISE EXCEPTION 'Invalid organism name: "%" does not exist', _organismName;
         End If;
 
         ---------------------------------------------------
@@ -255,7 +255,7 @@ BEGIN
             -- Confirm the compound exists
             --
             If Not Exists (SELECT compound_id FROM t_reference_compound WHERE compound_id = _compoundID) Then
-                RAISE EXCEPTION 'Cannot update: Reference compound ID % is not in database ', _compoundID;
+                RAISE EXCEPTION 'Cannot update: reference compound ID % does not exist', _compoundID;
             End If;
 
             SELECT container_id

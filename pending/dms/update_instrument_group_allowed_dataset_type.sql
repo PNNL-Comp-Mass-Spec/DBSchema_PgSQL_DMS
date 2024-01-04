@@ -124,7 +124,7 @@ BEGIN
 
         If _mode = 'add' Then
             If _itemExists Then
-                RAISE EXCEPTION 'Cannot add: Entry "%" already exists for group %', _datasetType, _instrumentGroup;
+                RAISE EXCEPTION 'Cannot add: entry "%" already exists for group %', _datasetType, _instrumentGroup;
             End If;
 
             INSERT INTO t_instrument_group_allowed_ds_type ( instrument_group,
@@ -141,7 +141,7 @@ BEGIN
 
         If _mode = 'update' Then
             If Not _itemExists Then
-                RAISE EXCEPTION 'Cannot Update: Entry "%" does not exist for group %', _datasetType, _instrumentGroup;
+                RAISE EXCEPTION 'Cannot update: entry "%" does not exist for group %', _datasetType, _instrumentGroup;
             End If;
 
             UPDATE t_instrument_group_allowed_ds_type
@@ -158,7 +158,7 @@ BEGIN
 
         If _mode = 'delete' Then
             If Not _itemExists Then
-                RAISE EXCEPTION 'Cannot Delete: Entry "%" does not exist for group %' _datasetType, _instrumentGroup;
+                RAISE EXCEPTION 'Cannot delete: entry "%" does not exist for group %' _datasetType, _instrumentGroup;
             End If;
 
             DELETE FROM t_instrument_group_allowed_ds_type

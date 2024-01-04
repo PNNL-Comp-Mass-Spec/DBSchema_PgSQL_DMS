@@ -88,7 +88,7 @@ BEGIN
 
         CREATE UNIQUE INDEX IX_Tmp_InstrumentFilter ON Tmp_InstrumentFilter (Instrument_ID);
 
-        If char_length(_instrumentFilterList) > 0 Then
+        If _instrumentFilterList <> '' Then
             CALL public.populate_instrument_filter_table (
                             _instrumentFilterList,
                             _message    => _message,        -- Output
@@ -165,7 +165,7 @@ BEGIN
         -- Generate the report
         ---------------------------------------------------
 
-        If char_length(_instrumentFilterList) > 0 Then
+        If _instrumentFilterList <> '' Then
             -- Filter on instrument and use dataset acq times for the date filter
 
             If Not Exists (Select * From Tmp_InstrumentFilter) Then

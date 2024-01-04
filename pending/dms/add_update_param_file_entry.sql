@@ -60,6 +60,14 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
+    _paramFileID    := Coalesce(_paramFileID, 0);
+    _entrySeqOrder  := Coalesce(_entrySeqOrder, 0);
+    _entryType      := Trim(Coalesce(_entryType, ''));
+    _entrySpecifier := Trim(Coalesce(_entrySpecifier, ''));
+    _entryValue     := Trim(Coalesce(_entryValue, ''));
+    _infoOnly       := Coalesce(_infoOnly, false);
+    _mode           := Trim(Lower(Coalesce(_mode, '')));
+
     If _paramFileID = 0 Then
         _returnCode := 'U5201';
         RAISE EXCEPTION 'ParamFileID cannot be 0';
@@ -70,25 +78,21 @@ BEGIN
         RAISE EXCEPTION 'EntrySeqOrder cannot be 0';
     End If;
 
-    If char_length(_entryType) < 1 Then
+    If _entryType = '' Then
         _returnCode := 'U5203';
         RAISE EXCEPTION 'EntryType must be specified';
     End If;
 
-    If char_length(_entrySpecifier) < 1 Then
+    If _entrySpecifier = '' Then
         _returnCode := 'U5204';
         RAISE EXCEPTION 'EntrySpecifier must be specified';
 
     End If;
 
-    If char_length(_entryValue) < 1 Then
+    If _entryValue = '' Then
         _returnCode := 'U5205';
         RAISE EXCEPTION 'EntryValue must be specified';
     End If;
-
-    _infoOnly := Coalesce(_infoOnly, false);
-
-    _mode := Trim(Lower(Coalesce(_mode, '')));
 
     ---------------------------------------------------
     -- Detour if Mass mod
@@ -155,7 +159,8 @@ BEGIN
 
             If (_entryType = 'StaticModification') And _counter < 2 Then
 
-                If char_length(_entrySpecifier) > 1  -- Then the mod is a terminal mod Then
+                If char_length(_entrySpecifier) > 1 Then
+                    -- The mod is a terminal mod
 
                     If _entrySpecifier = 'N_Term_Protein' Then
                         _affectedResidue := '[';
@@ -252,7 +257,7 @@ BEGIN
     -- Cannot update a non-existent entry
     --
     If _mode = 'update' And _existingCount = 0 Then
-        _message := 'Cannot update: Param entry matching the specified parameters is not in the database';
+        _message := 'Cannot update: param entry matching the specified parameters not found in table t_param_entries';
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';
@@ -285,7 +290,7 @@ BEGIN
             INTO _paramEntryID;
 
             -- If _callingUser is defined, update entered_by in t_analysis_job_processor_group
-            If char_length(_callingUser) > 0 Then
+            If Trim(Coalesce(_callingUser, '')) <> '' Then
                 CALL public.alter_entered_by_user ('public', 't_param_entries', 'param_entry_id', _paramEntryID, _callingUser, _message => _alterEnteredByMessage);
             End If;
         End If;
@@ -307,7 +312,7 @@ BEGIN
             WHERE param_entry_id = _paramEntryID;
 
             -- If _callingUser is defined, update entered_by in t_analysis_job_processor_group
-            If char_length(_callingUser) > 0 Then
+            If Trim(Coalesce(_callingUser, '')) <> '' Then
                 CALL public.alter_entered_by_user ('public', 't_param_entries', 'param_entry_id', _paramEntryID, _callingUser, _message => _alterEnteredByMessage);
             End If;
         End If;

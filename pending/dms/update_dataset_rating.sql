@@ -79,7 +79,7 @@ BEGIN
     _ratingID := public.get_dataset_rating_id(_rating);
 
     If _ratingID = 0 Then
-        _message := format('Could not find entry in database for dataset rating "%s"', _rating);
+        _message := format('Invalid dataset rating: "%s" does not exist', _rating);
         RAISE INFO '%', _message;
         RETURN;
     End If;
@@ -89,7 +89,7 @@ BEGIN
     FROM public.parse_delimited_list(_datasets)
 
     If _datasetCount = 0 Then
-        _message := '_datasets cannot be empty';
+        _message := 'Dataset list cannot be empty';
         _returnCode := 'U5201';
         RETURN;
     End If;

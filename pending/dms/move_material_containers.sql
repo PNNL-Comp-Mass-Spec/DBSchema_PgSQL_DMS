@@ -47,8 +47,8 @@ DECLARE
     _numContainers int;
     _containterCount int;
     _containterCountLimit int;
-    _locStatus text;
-    _moveStatus text;
+    _locStatus citext;
+    _moveStatus citext;
 
     _formatSpecifier text;
     _infoHead text;
@@ -74,22 +74,32 @@ BEGIN
     _callingUser   := Trim(Coalesce(_callingUser, ''));
 
     If _freezerTagOld = '' Then
-        _message := '_freezerTagOld cannot be empty';
+        _message := 'Old freezer tag cannot be empty';
         RETURN;
     End If;
 
     If _freezerTagNew = '' Then
-        _message := '_freezerTagNew cannot be empty';
+        _message := 'New freezer tag cannot be empty';
         RETURN;
     End If;
 
-    If _shelfOld <= 0 or _rackOld <= 0 Then
-        _message := '_shelfOld and _rackOld must be positive integers';
+    If _shelfOld <= 0 Then
+        _message := 'Old shelf must be a positive integer';
         RETURN;
     End If;
 
-    If _shelfNew <= 0 or _rackNew <= 0 Then
-        _message := '_shelfNew and _rackNew must be positive integers';
+    If _rackOld <= 0 Then
+        _message := 'Old rack must be a positive integer';
+        RETURN;
+    End If;
+
+    If _shelfNew <= 0 Then
+        _message := 'New shelf must be a positive integer';
+        RETURN;
+    End If;
+
+    If _rackNew <= 0 Then
+        _message := 'New rack must be a positive integer';
         RETURN;
     End If;
 
@@ -239,7 +249,7 @@ BEGIN
         GROUP BY ml.location_id, ml.status, ml.container_limit;
 
         If Not FOUND Then
-            _message := format('Destination location "%s" could not be found in database', _locationTagNew);
+            _message := format('Destination location "%s" does not exist', _locationTagNew);
             ROLLBACK;
 
             DROP TABLE Tmp_ContainersToProcess;

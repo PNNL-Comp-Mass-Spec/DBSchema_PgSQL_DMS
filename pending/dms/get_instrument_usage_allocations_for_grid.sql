@@ -75,7 +75,7 @@ BEGIN
            fy_proposal
     FROM V_Instrument_Allocation_List_Report
     WHERE Fiscal_Year = _fiscalYear AND
-          (char_length(_itemList) = 0 OR Proposal_ID IN (SELECT Item FROM Tmp_Proposals));
+          (_itemList = '' OR Proposal_ID IN (SELECT Item FROM Tmp_Proposals));
 
     DROP TABLE Tmp_Proposals;
 END

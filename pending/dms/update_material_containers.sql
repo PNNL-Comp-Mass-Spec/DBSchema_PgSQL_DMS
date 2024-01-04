@@ -112,7 +112,7 @@ BEGIN
            Type
     FROM V_Material_Container_Item_Stats
     WHERE container_id IN ( SELECT Value
-                         FROM public.parse_delimited_integer_list(_containerList) );
+                            FROM public.parse_delimited_integer_list(_containerList) );
     --
     GET DIAGNOSTICS _numContainers = ROW_COUNT;
 
@@ -129,7 +129,7 @@ BEGIN
         RETURN;
     End If;
 
-    If Exists (SELECT ID FROM Tmp_Material_Container_List WHERE Type = 'na') Then
+    If Exists (SELECT ID FROM Tmp_Material_Container_List WHERE Type = 'na'::citext) Then
         If Position(',' In _containerList) > 1 Then
             _message := 'Containers of type "na" cannot be updated by the website; contact a DMS admin (see Update_Material_Containers)';
         Else
@@ -168,13 +168,11 @@ BEGIN
                ON ml.freezer_tag = f.freezer_tag
              LEFT OUTER JOIN t_material_containers mc
                ON ml.location_id = mc.location_id
-        WHERE ml.location = _location
+        WHERE ml.location = _location::citext
         GROUP BY ml.location_id, ml.container_limit, ml.status;
 
-        WHERE Location = _location
-
         If Not FOUND Then
-            _message := format('Destination location "%s" could not be found in database', _location);
+            _message := format('Cannot move container(s): destination location does not exist: %s', _location);
             _returnCode := 'U5120';
             DROP TABLE Tmp_Material_Container_List;
 

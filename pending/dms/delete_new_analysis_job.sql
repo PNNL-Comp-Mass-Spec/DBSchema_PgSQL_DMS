@@ -90,7 +90,7 @@ BEGIN
     WHERE job = _jobID;
 
     If Not FOUND Then
-        _message := format('Job "%s" not in database', _job);
+        _message := format('Cannot delete: job %s does not exist', _job);
         If _infoOnly Then
             RAISE WARNING '%', _message;
         Else

@@ -169,7 +169,7 @@ BEGIN
 
     CALL sw.delete_job_if_new_or_failed (_jobID, _callingUser, _message => _msg, _infoOnly => _infoOnly);
 
-    If char_length(_msg) > 0 Then
+    If Coalesce(_msg, '') <> '' Then
         public.append_to_text(_message, _msg);
     End If;
 

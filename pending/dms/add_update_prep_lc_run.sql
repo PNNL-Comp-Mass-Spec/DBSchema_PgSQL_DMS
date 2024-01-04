@@ -125,18 +125,18 @@ BEGIN
         End If;
 
         -- Assure that _samplePrepRequests is a comma-separated list of integers (or an empty string)
-        If _samplePrepRequest Like '%;%' Then
-            _samplePrepRequest := Replace(_samplePrepRequest, ';', ',');
+        If _samplePrepRequests Like '%;%' Then
+            _samplePrepRequests := Replace(_samplePrepRequests, ';', ',');
         End If;
 
         CREATE TEMP TABLE Tmp_SamplePrepRequests (
             Prep_Request_ID Int Not Null
         );
 
-        If char_length(_samplePrepRequest) > 0 Then
+        If _samplePrepRequests <> '' Then
             SELECT COUNT(*)
             INTO _itemCount
-            FROM public.parse_delimited_list(_samplePrepRequest)
+            FROM public.parse_delimited_list(_samplePrepRequests);
 
             INSERT INTO Tmp_SamplePrepRequests (Prep_Request_ID)
             SELECT DISTINCT Value
@@ -167,7 +167,7 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' And Not Exists (SELECT prep_run_id FROM t_prep_lc_run WHERE prep_run_id = _id) Then
-            RAISE EXCEPTION 'No entry could be found in database for update';
+            RAISE EXCEPTION 'Cannot update: prep LC run % does not exist', _id;
         End If;
 
         ---------------------------------------------------
@@ -220,7 +220,7 @@ BEGIN
                 _operatorUsername,
                 _digestionMethod,
                 _sampleType,
-                _samplePrepRequest,
+                _samplePrepRequests,
                 _numberOfRuns,
                 _instrumentPressure,
                 _qualityControl
@@ -251,7 +251,7 @@ BEGIN
                 operator_username = _operatorUsername,
                 digestion_method = _digestionMethod,
                 sample_type = _sampleType,
-                sample_prep_request = _samplePrepRequest,
+                sample_prep_request = _samplePrepRequests,
                 number_of_runs = _numberOfRuns,
                 instrument_pressure = _instrumentPressure,
                 quality_control = _qualityControl

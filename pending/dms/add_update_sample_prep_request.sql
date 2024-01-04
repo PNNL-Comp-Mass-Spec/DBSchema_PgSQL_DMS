@@ -189,6 +189,7 @@ DECLARE
     _datasetTypeID int;
     _campaignID int := 0;
     _missingCount int;
+    _invalidNames text;
     _organismID int;
     _tissueIdentifier text;
     _tissueName text;
@@ -388,7 +389,7 @@ BEGIN
         _campaignID := public.get_campaign_id(_campaign);
 
         If _campaignID = 0 Then
-            RAISE EXCEPTION 'Could not find entry in database for campaign "%"', _campaign;
+            RAISE EXCEPTION 'Invalid campaign: "%" does not exist', _campaign;
         End If;
 
         ---------------------------------------------------
@@ -398,7 +399,7 @@ BEGIN
         -- Create temporary table to hold names of material containers as input
         --
         CREATE TEMP TABLE Tmp_MaterialContainers (
-            name text not null
+            name citext not null
         );
 
         -- Get names of material containers from list argument into table
@@ -408,7 +409,6 @@ BEGIN
         FROM public.parse_delimited_list(_materialContainerList);
 
         -- Verify that material containers exist
-        --
 
         SELECT COUNT(*)
         INTO _missingCount
@@ -416,7 +416,17 @@ BEGIN
         WHERE Not name In ( SELECT container FROM t_material_containers );
 
         If _missingCount > 0 Then
-            RAISE EXCEPTION 'One or more material containers was not in database';
+            SELECT string_agg(name, ', ' ORDER BY name)
+            INTO _invalidNames
+            FROM Tmp_MaterialContainers
+            WHERE Not name In ( SELECT container FROM t_material_containers );
+
+            If Position(',' In _invalidNames) > 0 Then
+                RAISE EXCEPTION 'Invalid material containers: "%" do not exist', _invalidNames;
+            Else
+                RAISE EXCEPTION 'Invalid material container: "%" does not exist', _invalidNames;
+            End If;
+
         End If;
 
         ---------------------------------------------------
@@ -426,7 +436,7 @@ BEGIN
         _organismID := public.get_organism_id(_organism);
 
         If _organismID = 0 Then
-            RAISE EXCEPTION 'Could not find entry in database for organism "%"', _organism;
+            RAISE EXCEPTION 'Invalid organism name: "%" does not exist', _organism;
         End If;
 
         ---------------------------------------------------
@@ -487,7 +497,7 @@ BEGIN
         WHERE state_name = _state;
 
         If Not FOUND Then
-            RAISE EXCEPTION 'No entry could be found in database for state "%"', _state;
+            RAISE EXCEPTION 'Invalid sample prep request state name: %', _state;
         End If;
 
         ---------------------------------------------------
@@ -599,7 +609,7 @@ BEGIN
             WHERE prep_request_id = _id;
 
             If Not FOUND Then
-                RAISE EXCEPTION 'No entry could be found in database for update';
+                RAISE EXCEPTION 'Cannot update: prep request ID % does not exist', _id;
             End If;
 
             -- Changes not allowed if in 'closed' state
@@ -641,11 +651,11 @@ BEGIN
 
         If _mode = 'add' Then
             If Exists (SELECT request_id FROM t_sample_prep_request WHERE request_name = _requestName) Then
-                RAISE EXCEPTION 'Cannot add: Request "%" already in database', _requestName;
+                RAISE EXCEPTION 'Cannot add: prep request "%" already exists', _requestName;
             End If;
 
         ElsIf EXISTS (SELECT prep_request_id FROM t_sample_prep_request WHERE request_name = _requestName AND prep_request_id <> _id) Then
-            RAISE EXCEPTION 'Cannot rename: Request "%" already in database', _requestName;
+            RAISE EXCEPTION 'Cannot rename: prep request "%" already exists', _requestName;
         End If;
 
         _logErrors := true;
@@ -729,7 +739,7 @@ BEGIN
             INTO _id;
 
             -- If _callingUser is defined, update system_account in t_sample_prep_request_updates
-            If char_length(_callingUser) > 0 Then
+            If Trim(Coalesce(_callingUser, '')) <> '' Then
                 CALL public.alter_entered_by_user ('public', 't_sample_prep_request_updates', 'request_id', _id, _callingUser,
                                                    _entryDateColumnName => 'date_of_change', _enteredByColumnName => 'system_account', _message => _alterEnteredByMessage);
             End If;
@@ -786,7 +796,7 @@ BEGIN
             WHERE prep_request_id = _id
 
             -- If _callingUser is defined, update system_account in t_sample_prep_request_updates
-            If char_length(_callingUser) > 0 Then
+            If Trim(Coalesce(_callingUser, '')) <> '' Then
                 CALL public.alter_entered_by_user ('public', 't_sample_prep_request_updates', 'request_id', _id, _callingUser,
                                                    _entryDateColumnName => 'date_of_change', _enteredByColumnName => 'system_account', _message => _alterEnteredByMessage);
             End If;

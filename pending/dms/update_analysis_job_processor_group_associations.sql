@@ -104,7 +104,12 @@ BEGIN
     WHERE NOT job IN (SELECT job FROM t_analysis_job);
 
     If _list <> '' Then
-        _message := format('The following jobs were not in the database: %s', _list);
+        If Position(',' In _list) > 0 Then
+            _message := format('The following jobs do not exist: %s', _list);
+        Else
+            _message := format('Job %s does not exist', _list);
+        End If;
+
         _returnCode := 'U5202';
 
         DROP TABLE Tmp_JobList;

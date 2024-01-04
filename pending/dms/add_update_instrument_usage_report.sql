@@ -132,9 +132,9 @@ BEGIN
 
         If _mode = 'update' Then
             -- Cannot update a non-existent entry
-            --
+
             If Not Exists (SELECT dataset_id FROM t_emsl_instrument_usage_report WHERE seq = _seq) Then
-                RAISE EXCEPTION 'No entry could be found in database for update';
+                RAISE EXCEPTION 'Cannot update EMSL instrument usage: dataset ID % does not exist in the instrument usage report table', _seq;
             End If;
         End If;
 

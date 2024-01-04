@@ -94,7 +94,7 @@ DECLARE
     _underscoreLoc int;
     _cartName text;
     _cartID int := 0;
-    _existingName text := '';
+    _existingName citext := '';
     _oldState citext := '';
     _ignoreDatasetChecks int := 0;
     _existingEntryUser text := '';
@@ -235,7 +235,7 @@ BEGIN
         WHERE cart_config_id = _id
 
         If Not FOUND Then
-            _message := 'No entry could be found in database for update';
+            _message := format('Cannot update: cart config ID %s does not exist', _id);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5206';
@@ -265,7 +265,7 @@ BEGIN
             End If;
         End If;
 
-        If _configName <> _existingName Then
+        If _existingName <> _configName::citext Then
 
             SELECT cart_config_id
             INTO _conflictID

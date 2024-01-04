@@ -234,19 +234,19 @@ BEGIN
                dataset_rating_id
         INTO _datasetID, _curDSInstID, _curDSStateID, _curDSRatingID
         FROM t_dataset
-        WHERE dataset = _datasetName;
+        WHERE dataset = _datasetName::citext;
 
         If Not FOUND Then
             -- Cannot update a non-existent entry
-            --
+
             If _mode In ('update', 'check_update') Then
-                RAISE EXCEPTION 'Cannot update: Dataset % is not in database', _datasetName;
+                RAISE EXCEPTION 'Cannot update: dataset "%" does not exist', _datasetName;
             End If;
         Else
             -- Cannot create an entry that already exists
-            --
+
             If _addingDataset Then
-                RAISE EXCEPTION 'Cannot add dataset % since already in database', _datasetName;
+                RAISE EXCEPTION 'Cannot add: dataset "%" already exists', _datasetName;
             End If;
         End If;
 
@@ -257,7 +257,7 @@ BEGIN
         _experimentID := public.get_experiment_id(_experimentName);
 
         If _experimentID = 0 Then
-            RAISE EXCEPTION 'Could not find entry in database for experiment %', _experimentName;
+            RAISE EXCEPTION 'Invalid experiment: "%" does not exist', _experimentName;
         End If;
 
         ---------------------------------------------------
@@ -267,7 +267,7 @@ BEGIN
         _instrumentID := public.get_instrument_id(_instrumentName);
 
         If _instrumentID = 0 Then
-            RAISE EXCEPTION 'Could not find entry in database for instrument %', _instrumentName;
+            RAISE EXCEPTION 'Invalid instrument: "%" does not exist', _instrumentName;
         End If;
 
         ---------------------------------------------------
@@ -297,10 +297,12 @@ BEGIN
             If _matchCount = 1 Then
                 -- Single match found; update _operatorUsername
                 _operatorUsername := _newUsername;
-            ElsIf _matchCount > 1 Then
-                RAISE EXCEPTION 'Operator username % matched more than one user', _operatorUsername;
             Else
-                RAISE EXCEPTION 'Could not find entry in database for operator username %', _operatorUsername;
+                If _matchCount = 0 Then
+                    RAISE EXCEPTION 'Invalid operator username: "%" does not exist', _operatorUsername;
+                Else
+                    RAISE EXCEPTION 'Invalid operator username: "%" matches more than one user', _operatorUsername;
+                End If;
             End If;
         End If;
 

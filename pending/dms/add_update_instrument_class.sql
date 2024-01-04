@@ -102,7 +102,12 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        If char_length(_instrumentClass) < 1 Then
+        _instrumentClass := Trim(Coalesce(_instrumentClass, ''));
+        _rawDataType     := Trim(Coalesce(_rawDataType, ''));
+        _params          := Trim(Coalesce(_params, ''));
+        _mode            := Trim(Lower(Coalesce(_mode, '')));
+
+        If _instrumentClass = '' Then
             RAISE EXCEPTION 'Instrument Class Name must be specified' USING ERRCODE = 'U5201';
         End If;
 
@@ -110,14 +115,11 @@ BEGIN
             RAISE EXCEPTION 'Is Purgeable cannot be null' USING ERRCODE = 'U5202';
         End If;
 
-        If char_length(_rawDataType) < 1 Then
+        If _rawDataType = '' Then
             RAISE EXCEPTION 'Raw Data Type must be specified' USING ERRCODE = 'U5203';
         End If;
 
-        _params := Trim(Coalesce(_params, ''));
-        _mode   := Trim(Lower(Coalesce(_mode, '')));
-
-        If char_length(_params) > 0 Then
+        If _params <> '' Then
             _xmlParams := public.try_cast(_params, null::XML);
             If _xmlParams Is Null Then
                 RAISE EXCEPTION 'Could not convert Params to XML' USING ERRCODE = 'U5205';

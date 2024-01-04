@@ -116,7 +116,7 @@ BEGIN
                 _limitToMaxKnownDMSJobs := true;
             End If;
 
-            If char_length(_cacheTable) > 0 Then
+            If _cacheTable <> '' Then
 
                 _currentLocation := format('Check refresh time for %s', _cacheTable);
 

@@ -65,7 +65,7 @@ BEGIN
 
     _callingUser := Trim(Coalesce(_callingUser, ''));
 
-    If char_length(_callingUser) > 0 Then
+    If Trim(Coalesce(_callingUser, '')) <> '' Then
         _callingUser := public.get_user_login_without_domain('');
     End If;
 
@@ -166,7 +166,7 @@ BEGIN
                 Source.FY);
 
     -- If _callingUser is defined, update entered_by in t_instrument_allocation_updates
-    If char_length(_callingUser) = 0 Then
+    If _callingUser = '' Then
         RETURN;
     End If;
 

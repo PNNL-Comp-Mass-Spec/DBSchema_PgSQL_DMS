@@ -75,22 +75,23 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
+    _blockingList := Trim(Coalesce(_blockingList, ''));
+    _factorList   := Trim(Coalesce(_factorList, ''));
+
     If _debugEnabled Then
 
-        _logMessage := Cast(_blockingList As text);
-        If Coalesce(_logMessage, '') = '' Then
+        If _blockingList = '' Then
             _logMessage := '_blockingList is empty';
         Else
-            _logMessage := format('_blockingList: %s', _logMessage);
+            _logMessage := format('_blockingList: %s', _blockingList);
         End If;
 
         CALL post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Blocking_And_Factors');
 
-        _logMessage := Cast(_factorList As text);
-        If Coalesce(_logMessage, '') = '' Then
+        If _factorList = '' Then
             _logMessage := '_factorList is empty';
         Else
-            _logMessage := format('_factorList: %s', _logMessage);
+            _logMessage := format('_factorList: %s', _factorList);
         End If;
 
         CALL post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Blocking_And_Factors');
@@ -100,7 +101,7 @@ BEGIN
     -- Update the blocking and run order
     -----------------------------------------------------------
 
-    If char_length(_blockingList) > 0 Then
+    If _blockingList <> '' Then
         CALL public.update_requested_run_batch_parameters (
                         _blockingList,
                         _mode        => 'update',

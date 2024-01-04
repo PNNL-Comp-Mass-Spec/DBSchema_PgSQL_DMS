@@ -209,7 +209,12 @@ BEGIN
                 -- Single match found; update _operatorUsername
                 _datasetInfo.OperUsername := _newUsername;
             Else
-                _message := format('Could not find entry in database for operator username %s', _newOperatorUsername);
+                If _matchCount = 0 Then
+                    _message := format('Invalid operator username: "%s" does not exist', _newOperatorUsername);
+                Else
+                    _message := format('Invalid operator username: "%s" matches more than one user', _newOperatorUsername);
+                End If;
+
                 RAISE WARNING '%', _message;
                 RETURN;
             End If;

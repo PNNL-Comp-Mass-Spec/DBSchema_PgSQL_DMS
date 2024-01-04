@@ -694,7 +694,7 @@ BEGIN
         CALL post_usage_log_entry ('store_dataset_file_info', _usageMessage;);
     End If;
 
-    If char_length(_message) > 0 Then
+    If Coalesce(_message, '') <> '' Then
         RAISE INFO '%', _message;
     End If;
 

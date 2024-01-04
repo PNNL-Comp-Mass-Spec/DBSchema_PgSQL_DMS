@@ -43,7 +43,7 @@ DECLARE
     _stateInt integer := 0;
     _badCh text;
     _sampleTypeID integer := 0;
-    _existingName text := '';
+    _existingName citext := '';
     _oldState integer := 0;
     _ignoreDatasetChecks int := 0;
     _conflictID int := 0;
@@ -125,10 +125,10 @@ BEGIN
     SELECT sample_type_id
     INTO _sampleTypeID
     FROM t_secondary_sep_sample_type
-    WHERE name = _sampleType;
+    WHERE name = _sampleType::citext;
 
     If Not FOUND Then
-        _message := 'No matching sample type could be found in the database';
+        _message := format('Invalid sample type: "%s"', _sampleType);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5204';
@@ -149,14 +149,14 @@ BEGIN
         WHERE separation_type_id = _id;
 
         If Not FOUND Then
-            _message := 'No entry could be found in database for update';
+            _message := 'Cannot update: separation type ID % does not exist', _id;
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5205';
             RETURN;
         End If;
 
-        If _sepTypeName <> _existingName Then
+        If _existingName <> _sepTypeName::citext Then
 
             SELECT separation_type_id
             INTO _conflictID

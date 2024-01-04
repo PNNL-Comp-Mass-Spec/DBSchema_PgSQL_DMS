@@ -103,15 +103,6 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    _estimatedAnalysisTimeDays := Coalesce(_estimatedAnalysisTimeDays, 1);
-
-    _requestedPersonnel := Trim(Coalesce(_requestedPersonnel, ''));
-    _assignedPersonnel := Trim(Coalesce(_assignedPersonnel, 'na'));
-
-    If _assignedPersonnel = '' Then
-        _assignedPersonnel := 'na';
-    End If;
-
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
     ---------------------------------------------------
@@ -138,14 +129,24 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _analysisType := Trim(Coalesce(_analysisType, ''));
+        _batchIDs                  := Trim(Coalesce(_batchIDs, ''));
+        _estimatedAnalysisTimeDays := Coalesce(_estimatedAnalysisTimeDays, 1);
+        _requestedPersonnel        := Trim(Coalesce(_requestedPersonnel, ''));
+        _assignedPersonnel         := Trim(Coalesce(_assignedPersonnel, 'na'));
+        _analysisType              := Trim(Coalesce(_analysisType, ''));
+        _state                     := Trim(Coalesce(_state, ''));
+        _mode                      := Trim(Lower(Coalesce(_mode, '')));
 
-        If char_length(Coalesce(_description, '')) < 1 Then
+        If _assignedPersonnel = '' Then
+            _assignedPersonnel := 'na';
+        End If;
+
+        If _description = '' Then
             RAISE EXCEPTION 'The description field is required';
         End If;
 
         If _state::citext In ('New', 'Closed') Then
-            -- Always clear State Comment when the state is new or closed
+            -- Always clear state comment when the state is new or closed
             _stateComment := '';
         End If;
 
@@ -163,8 +164,6 @@ BEGIN
               _allowUpdateEstimatedAnalysisTime := true;
 
         End If;
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
         -- Validate priority
@@ -199,7 +198,7 @@ BEGIN
         _dataPackageID := Coalesce(_dataPackageID, 0);
         _experimentGroupID := Coalesce(_experimentGroupID, 0);
 
-        If char_length(_batchIDs) > 0 Then
+        If _batchIDs <> '' Then
             INSERT INTO Tmp_BatchIDs( Batch_ID )
             SELECT Value
             FROM public.parse_delimited_integer_list(_batchIDs)
@@ -215,14 +214,14 @@ BEGIN
                 End If;
             End If;
 
-            If _insertCount = 1 Then
-                _batchDescription := format('batch %s', _batchIDs);
-            Else
-                _batchDescription := format('batches %s', _batchIDs);
-            End If;
-
             If Not Exists (SELECT batch_id FROM t_requested_run_batches WHERE batch_id In (Select batch_id From Tmp_BatchIDs)) Then
-                RAISE EXCEPTION 'Could not find entry in database for requested run %', _batchDescription;
+                If _insertCount = 1 Then
+                    _batchDescription := format('Invalid requested run batch: %s does not exist', _batchIDs);
+                Else
+                    _batchDescription := format('Batch ID list includes one or more invalid requested run batches: %s', _batchIDs);
+                End If;
+
+                RAISE EXCEPTION 'Requested run %', _batchDescription;
             Else
                 _batchDefined := 1;
             End If;
@@ -230,7 +229,7 @@ BEGIN
 
         If _dataPackageID > 0 Then
             If Not Exists (SELECT ID FROM dpkg.V_Data_Package_Export WHERE ID = _dataPackageID) Then
-                RAISE EXCEPTION 'Could not find entry in database for data package ID "%"', _dataPackageID;
+                RAISE EXCEPTION 'Invalid data package ID: "%" does not exist', _dataPackageID;
             Else
                 _dataPackageDefined := 1;
             End If;
@@ -238,7 +237,7 @@ BEGIN
 
         If _experimentGroupID > 0 Then
             If Not Exists (SELECT group_id FROM t_experiment_groups WHERE group_id = _experimentGroupID) Then
-                RAISE EXCEPTION 'Could not find entry in database for experiment group ID "%"', _experimentGroupID;
+                RAISE EXCEPTION 'Invalid experiment group ID: "%" does not exist', _experimentGroupID;
             Else
                 _experimentGroupDefined := 1;
             End If;
@@ -289,7 +288,7 @@ BEGIN
         WHERE state_name = _state;
 
         If _stateID = 0 Then
-            RAISE EXCEPTION 'No entry could be found in database for state "%"', _state;
+            RAISE EXCEPTION 'Invalid request state: "%" does not exist', _state;
         End If;
 
         ---------------------------------------------------
@@ -586,7 +585,7 @@ BEGIN
             WHERE request_id = _id;
 
             If Not FOUND Then
-                RAISE EXCEPTION 'No entry could be found in database for update';
+                RAISE EXCEPTION 'Cannot update: request ID % does not exist', _id;
             End If;
 
             -- Limit who can make changes if in 'closed' state
@@ -624,12 +623,12 @@ BEGIN
         ---------------------------------------------------
 
         If _mode Like '%add%' Then
-            If Exists (SELECT request_name FROM t_data_analysis_request WHERE request_name = _requestName) Then
-                RAISE EXCEPTION 'Cannot add: Request "%" already in database', _requestName;
+            If Exists (SELECT request_name FROM t_data_analysis_request WHERE request_name = _requestName::citext) Then
+                RAISE EXCEPTION 'Cannot add: request "%" already exists', _requestName;
             End If;
 
         ElsIf Exists (SELECT request_name FROM t_data_analysis_request WHERE request_name = _requestName AND request_id <> _id) Then
-            RAISE EXCEPTION 'Cannot rename: Request "%" already in database', _requestName;
+            RAISE EXCEPTION 'Cannot rename: request "%" already exists', _requestName;
         End If;
 
         _logErrors := true;
@@ -692,7 +691,7 @@ BEGIN
             END;
 
             -- If _callingUser is defined, update entered_by in t_data_analysis_request_updates
-            If char_length(_callingUser) > 0 Then
+            If Trim(Coalesce(_callingUser, '')) <> '' Then
                 CALL public.alter_entered_by_user ('public', 't_data_analysis_request_updates', 'request_id', _id, _callingUser,
                                                    _entryDateColumnName => 'entered', _enteredByColumnName => 'entered_by', _message => _alterEnteredByMessage);
             End If;
@@ -747,7 +746,7 @@ BEGIN
             END;
 
             -- If _callingUser is defined, update entered_by in t_data_analysis_request_updates
-            If char_length(_callingUser) > 0 Then
+            If Trim(Coalesce(_callingUser, '')) <> '' Then
                 CALL public.alter_entered_by_user ('public', 't_data_analysis_request_updates', 'request_id', _id, _callingUser,
                                                    _entryDateColumnName => 'entered', _enteredByColumnName => 'entered_by', _message => _alterEnteredByMessage);
             End If;

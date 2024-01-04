@@ -88,7 +88,7 @@ BEGIN
             WHERE entry_id = _id;
 
             If Not FOUND Then
-                RAISE EXCEPTION 'Cart config history ID % not found in database for update', _id;
+                RAISE EXCEPTION 'Cannot update: cart config history ID % does not exist', _id;
             End If;
         End If;
 

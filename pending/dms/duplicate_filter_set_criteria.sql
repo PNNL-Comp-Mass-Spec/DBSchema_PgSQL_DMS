@@ -214,7 +214,7 @@ BEGIN
 
     _message := format('Duplicated criteria from Filter Set ID %s to Filter Set ID %s', _sourceFilterSetID, _destFilterSetID);
 
-    If char_length(_message) > 0 Then
+    If Coalesce(_message, '') <> '' Then
         RAISE INFO '%', _message;
     End If;
 

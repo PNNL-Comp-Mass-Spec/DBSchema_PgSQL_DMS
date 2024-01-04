@@ -53,7 +53,7 @@ BEGIN
         _cachedDataTableName := Trim(Coalesce(_cachedDataTableName, ''));
 
         -- Abort if _cachedDataTableName is blank
-        If char_length(_cachedDataTableName) = 0 Then
+        If _cachedDataTableName = '' Then
             _message := '_cachedDataTableName not specified; unable to continue';
             RAISE WARNING '%', _message;
             RETURN;

@@ -91,7 +91,7 @@ BEGIN
             -- Insert spaces and <br> tags into the protein sequence
             ---------------------------------------------------
 
-            _sequenceLength := char_length(_proteinCollectionInfo.ProteinSequence;
+            _sequenceLength := char_length(_proteinCollectionInfo.ProteinSequence);
             _formattedSequence := '<pre>';
 
             WHILE _startIndex <= _sequenceLength

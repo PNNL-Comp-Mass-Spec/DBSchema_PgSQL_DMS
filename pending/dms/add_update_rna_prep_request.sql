@@ -196,10 +196,10 @@ BEGIN
         -- Resolve campaign ID
         ---------------------------------------------------
 
-        _campaignID := public.get_campaign_id(_campaignName);
+        _campaignID := public.get_campaign_id(_campaign);
 
         If _campaignID = 0 Then
-            RAISE EXCEPTION 'Could not find entry in database for campaignNum "%"', _campaign;
+            RAISE EXCEPTION 'Invalid campaign: "%" does not exist', _campaign;
         End If;
 
         ---------------------------------------------------
@@ -209,7 +209,7 @@ BEGIN
         _organismID := public.get_organism_id(_organism);
 
         If _organismID = 0 Then
-            RAISE EXCEPTION 'Could not find entry in database for organismName "%"', _organism;
+            RAISE EXCEPTION 'Invalid organism name: "%" does not exist', _organism;
         End If;
 
         ---------------------------------------------------
@@ -238,7 +238,7 @@ BEGIN
         WHERE state_name = _state;
 
         If Not FOUND Then
-            RAISE EXCEPTION 'No entry could be found in database for state "%"', _state;
+            RAISE EXCEPTION 'Invalid sample prep request state: "%"', _state;
         End If;
 
         ---------------------------------------------------
@@ -323,7 +323,7 @@ BEGIN
             WHERE prep_request_id = _id;
 
             If Not FOUND Then
-                RAISE EXCEPTION 'No entry could be found in database for update';
+                RAISE EXCEPTION 'Cannot update: RNA prep request ID % does not exist', _id;
             End If;
 
             -- Changes not allowed if in 'closed' state
@@ -341,8 +341,8 @@ BEGIN
 
             -- Name must be unique
             --
-            If Exists (SELECT request_name FROM t_sample_prep_request WHERE request_name = _requestName) Then
-                RAISE EXCEPTION 'Cannot add: Request "%" already in database', _requestName;
+            If Exists (SELECT request_name FROM t_sample_prep_request WHERE request_name = _requestName::citext) Then
+                RAISE EXCEPTION 'Cannot add: RNA prep request "%" already exists', _requestName;
             End If;
 
             -- Make sure the work package number is not inactive
@@ -417,7 +417,7 @@ BEGIN
             INTO _id;
 
             -- If _callingUser is defined, update system_account in t_sample_prep_request_updates
-            If char_length(_callingUser) > 0 Then
+            If Trim(Coalesce(_callingUser, '')) <> '' Then
                 CALL public.alter_entered_by_user ('public', 't_sample_prep_request_updates', 'request_id', _id, _callingUser,
                                                    _entryDateColumnName => 'date_of_change', _enteredByColumnName => 'system_account', _message => _alterEnteredByMessage);
             End If;
@@ -456,7 +456,7 @@ BEGIN
             WHERE prep_request_id = _id;
 
             -- If _callingUser is defined, update system_account in t_sample_prep_request_updates
-            If char_length(_callingUser) > 0 Then
+            If Trim(Coalesce(_callingUser, '')) <> '' Then
                 CALL public.alter_entered_by_user ('public', 't_sample_prep_request_updates', 'request_id', _id, _callingUser,
                                                    _entryDateColumnName => 'date_of_change', _enteredByColumnName => 'system_account', _message => _alterEnteredByMessage);
             End If;

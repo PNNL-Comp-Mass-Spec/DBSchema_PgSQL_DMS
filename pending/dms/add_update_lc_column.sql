@@ -112,7 +112,7 @@ BEGIN
         SELECT lc_column_id
         INTO _columnID
         FROM t_lc_column
-        WHERE lc_column = _columnNumber;
+        WHERE lc_column = _columnNumber::citext;
         --
         GET DIAGNOSTICS _existingCount = ROW_COUNT;
 
@@ -120,14 +120,14 @@ BEGIN
         --
         If _existingCount > 0 And _mode = 'add' Then
             _logErrors := false;
-            RAISE EXCEPTION 'Cannot add: Specified LC column already in database';
+            RAISE EXCEPTION 'Cannot add: LC column "%" already exists', _columnNumber;
         End If;
 
         -- Cannot update a non-existent entry
-        --
+
         If _existingCount = 0 And _mode = 'update' Then
             _logErrors := false;
-            RAISE EXCEPTION 'Cannot update: Specified LC column is not in database';
+            RAISE EXCEPTION 'Cannot update: LC column "%" does not exist', _columnNumber;
         End If;
 
         ---------------------------------------------------

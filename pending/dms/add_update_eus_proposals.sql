@@ -91,7 +91,13 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        If char_length(_eusPropID) < 1 Then
+        _eusPropID      := Trim(Coalesce(_eusPropID, ''));
+        _eusPropTitle   := Trim(Coalesce(_eusPropTitle, ''));
+        _eusPropImpDate := Trim(Coalesce(_eusPropImpDate, ''));
+        _eusUsersList   := Trim(Coalesce(_eusUsersList, ''));
+        _mode           := Trim(Lower(Coalesce(_mode, '')));
+
+        If _eusPropID = '' Then
             _logErrors := false;
             _msg := 'EUS Proposal ID must be specified';
             RAISE EXCEPTION '%', _msg;
@@ -103,15 +109,15 @@ BEGIN
             RAISE EXCEPTION '%', _msg;
         End If;
 
-        If char_length(_eusPropTitle) < 1 Then
+        _eusPropStateID := Trim(Coalesce(_eusPropStateID, ''));
+
+        If _eusPropTitle = '' Then
             _logErrors := false;
             _msg := 'EUS Proposal Title must be specified';
             RAISE EXCEPTION '%', _msg;
         End If;
 
-        _eusPropImpDate := Trim(Coalesce(_eusPropImpDate, ''));
-
-        If char_length(_eusPropImpDate) < 1 Then
+        If _eusPropImpDate = '' Then
             _eusPropImpDate := public.timestamp_text(CURRENT_TIMESTAMP);
         End If;
 
@@ -122,13 +128,11 @@ BEGIN
             RAISE EXCEPTION '%', _msg;
         End If;
 
-        If _eusPropStateID = 2 and char_length(_eusUsersList) < 1 Then
+        If _eusPropStateID = 2 And _eusUsersList = '' Then
             _logErrors := false;
             _msg := 'An "Active" EUS Proposal must have at least 1 associated EMSL User';
             RAISE EXCEPTION '%', _msg;
         End If;
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
         -- Is entry already in database?
@@ -142,18 +146,18 @@ BEGIN
         GET DIAGNOSTICS _existingCount = ROW_COUNT;
 
         -- Cannot create an entry that already exists
-        --
+
         If _mode = 'add' And _existingCount > 0 Then
             _logErrors := false;
-            _msg := format('Cannot add: EUS Proposal ID "%s" is already in the database', _eusPropID);
+            _msg := format('Cannot add: EUS proposal ID "%s" already exists', _eusPropID);
             RAISE EXCEPTION '%', _msg;
         End If;
 
         -- Cannot update a non-existent entry
-        --
+
         If _mode = 'update' And _existingCount = 0 Then
             _logErrors := false;
-            _msg := format('Cannot update: EUS Proposal ID "%s" is not in the database', _eusPropID);
+            _msg := format('Cannot update: EUS proposal ID "%s" does not exist', _eusPropID);
             RAISE EXCEPTION '%', _msg;
         End If;
 
@@ -162,8 +166,7 @@ BEGIN
             --
             If Not Exists (SELECT proposal_id FROM t_eus_proposals WHERE proposal_id = _autoSupersedeProposalID) Then
                 _logErrors := false;
-                _msg := format('Cannot supersede proposal "%s" with "%s" since the new proposal is not in the database',
-                               _eusPropID, _autoSupersedeProposalID);
+                _msg := format('Cannot supersede proposal "%s" with "%s" since the new proposal does not exist', _eusPropID, _autoSupersedeProposalID);
                 RAISE EXCEPTION '%', _msg;
             End If;
 

@@ -36,10 +36,10 @@ AS $$
 **  Arguments:
 **    _campaignName                 Campaign name
 **    _projectName                  Project name
-**    _progmgrUsername              Project Manager username (required)
-**    _piUsername                   Principal Investigator username (required)
-**    _technicalLead                Technical Lead
-**    _samplePreparationStaff       Sample Prep Staff
+**    _progmgrUsername              Project manager username (required)
+**    _piUsername                   Principal investigator username (required)
+**    _technicalLead                Technical lead
+**    _samplePreparationStaff       Sample prep staff
 **    _datasetAcquisitionStaff      Dataset acquisition staff
 **    _informaticsStaff             Informatics staff
 **    _collaborators                Collaborators
@@ -47,12 +47,12 @@ AS $$
 **    _state                        State: 'Active' or 'Inactive'
 **    _description                  Campaign description
 **    _externalLinks                External links, e.g. https://pubmed.ncbi.nlm.nih.gov/32284590/
-**    _eprList                      PNNL project number, e.g. 71275
-**    _eusProposalList              EUS proposal, e.g. 33200
+**    _eprList                      PNNL project number (as text), e.g. 71275
+**    _eusProposalList              EUS proposal (as text), e.g. 33200
 **    _organisms                    Comma-separated list of organisms
 **    _experimentPrefixes           One or more experiment name prefixes
-**    _dataReleaseRestrictions      Data release restriction ID, e.g. 0 for 'Not yet approved for release'; see table t_data_release_restrictions
-**    _fractionEMSLFunded           Fraction EMSL funded; value between 0 and 1
+**    _dataReleaseRestrictions      Data release restriction ID (as text), e.g. 0 for 'Not yet approved for release'; see table t_data_release_restrictions
+**    _fractionEMSLFunded           Fraction EMSL funded (as text); value between 0 and 1
 **    _eusUsageType                 EUS usage type
 **    _mode                         Mode: 'add' or 'update'
 **    _message                      Status message
@@ -92,7 +92,7 @@ AS $$
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          05/16/2022 mem - Fix potential arithmetic overflow error when parsing _fractionEMSLFunded
 **          11/01/2023 mem - Remove unreachable code when validating campaign name
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/03/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -103,19 +103,18 @@ DECLARE
 
     _msg text;
     _stateID int;
-    _eusUsageTypeID int := 0;
-    _eusUsageTypeEnabled int := 0;
+    _eusUsageTypeID int;
+    _eusUsageTypeEnabled int;
     _proposalType text;
     _percentEMSLFunded int;
-    _fractionEMSLFundedValue real := 0;
-    _fractionEMSLFundedToStore numeric(3,2) := 0;
+    _fractionEMSLFundedValue real;
+    _fractionEMSLFundedToStore numeric(3,2);
     _logErrors boolean := false;
-    _campaignID int := 0;
-    _researchTeamID int := 0;
+    _campaignID int;
+    _researchTeamID int;
     _dataReleaseRestrictionsID int;
     _badCh text;
-    _transName text := 'AddUpdateCampaign';
-    _idConfirm int := 0;
+    _idConfirm int;
     _debugMsg text;
     _logMessage text;
     _targetType int;
@@ -161,43 +160,42 @@ BEGIN
         _piUsername      := Trim(Coalesce(_piUsername, ''));
         _mode            := Trim(Lower(Coalesce(_mode, '')));
 
-        If char_length(_campaignName) < 1 Then
+        If _campaignName = '' Then
             RAISE EXCEPTION 'Campaign name must be specified';
         End If;
 
-        If char_length(_projectName) < 1 Then
-            RAISE EXCEPTION 'Project Number must be specified';
+        If _projectName = '' Then
+            RAISE EXCEPTION 'Project name must be specified';
         End If;
 
-        If char_length(_progmgrUsername) < 1 Then
-            RAISE EXCEPTION 'Project Manager username must be specified';
+        If _progmgrUsername = '' Then
+            RAISE EXCEPTION 'Project manager username must be specified';
         End If;
 
-        If char_length(_piUsername) < 1 Then
-            RAISE EXCEPTION 'Principle Investigator username must be specified';
+        If _piUsername = '' Then
+            RAISE EXCEPTION 'Principle investigator username must be specified';
         End If;
 
         ---------------------------------------------------
         -- Is entry already in database?
         ---------------------------------------------------
 
-        --
         SELECT campaign_id,
                Coalesce(research_team, 0)
         INTO _campaignID, _researchTeamID
         FROM t_campaign
-        WHERE campaign = _campaignName
+        WHERE campaign = _campaignName::citext;
 
         -- Cannot create an entry that already exists
-        --
-        If _campaignID <> 0 and _mode = 'add' Then
-            RAISE EXCEPTION 'Cannot add: Campaign "%" already in database', _campaignName;
+
+        If FOUND And _mode = 'add' Then
+            RAISE EXCEPTION 'Cannot add: campaign "%" already exists', _campaignName;
         End If;
 
         -- Cannot update a non-existent entry
-        --
-        If _campaignID = 0 and _mode = 'update' Then
-            RAISE EXCEPTION 'Cannot update: Campaign "%" is not in database', _campaignName;
+
+        If Not FOUND And _mode = 'update' Then
+            RAISE EXCEPTION 'Cannot update: campaign "%" does not exist', _campaignName;
         End If;
 
         ---------------------------------------------------
@@ -219,6 +217,7 @@ BEGIN
         ---------------------------------------------------
 
         _fractionEMSLFunded := Trim(Coalesce(_fractionEMSLFunded, ''));
+
         If char_length(_fractionEMSLFunded) > 0 Then
             _fractionEMSLFundedValue := public.try_cast(_fractionEMSLFunded, null::real);
 
@@ -271,7 +270,7 @@ BEGIN
                enabled_campaign
         INTO _eusUsageTypeID, _eusUsageTypeEnabled
         FROM t_eus_usage_type
-        WHERE eus_usage_type = _eusUsageType
+        WHERE eus_usage_type = _eusUsageType::citext;
 
         If Not FOUND Then
             RAISE EXCEPTION 'Unrecognized EUS Usage Type: %', _eusUsageType;
@@ -506,3 +505,27 @@ END
 $$;
 
 COMMENT ON PROCEDURE public.add_update_campaign IS 'AddUpdateCampaign';
+
+CALL add_update_campaign (
+    _campaignName            => '',
+    _projectName             => '',
+    _progmgrUsername         => '',
+    _piUsername              => '',
+    _technicalLead           => '',
+    _samplePreparationStaff  => '',
+    _datasetAcquisitionStaff => '',
+    _informaticsStaff        => '',
+    _collaborators           => '',
+    _comment                 => '',
+    _state                   => '',
+    _description             => '',
+    _externalLinks           => '',
+    _eprList                 => '',
+    _eusProposalList         => '',
+    _organisms               => '',
+    _experimentPrefixes      => '',
+    _dataReleaseRestrictions => '',
+    _fractionEMSLFunded      => '0',
+    _eusUsageType            => 'USER_ONSITE',
+    _mode                    => 'add'
+);

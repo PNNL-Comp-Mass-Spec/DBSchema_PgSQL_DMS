@@ -111,12 +111,12 @@ BEGIN
     SELECT prep_column_id
     INTO _existingID
     FROM  t_prep_lc_column
-    WHERE prep_column = _columnName;
+    WHERE prep_column = _columnName::citext;
 
     GET DIAGNOSTICS _existingCount = ROW_COUNT;
 
     If _mode = 'update' And _existingCount = 0 Then
-        _message := 'No entry could be found in database for update';
+        _message := format('Cannot update: prep LC column "%s" does not exist', _columnName);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';
@@ -124,7 +124,7 @@ BEGIN
     End If;
 
     If _mode = 'add' And _existingCount > 0 Then
-        _message := 'Cannot add a duplicate entry';
+        _message := format('Cannot add: prep LC column "%s" already exists', _columnName);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5202';
@@ -191,7 +191,7 @@ BEGIN
             state = _state,
             operator_username = _operatorUsername,
             comment = _comment
-        WHERE prep_column = _columnName;
+        WHERE prep_column = _columnName::citext;
 
     End If;
 

@@ -85,7 +85,7 @@ BEGIN
         _name := Trim(Coalesce(_name, ''));
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
-        If char_length(_name) = 0 Then
+        If _name = '' Then
             _msg := 'Container name cannot be empty';
             RAISE EXCEPTION '%', _msg;
         End If;

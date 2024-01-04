@@ -124,18 +124,18 @@ BEGIN
 
     _operation := Trim(Lower(Coalesce(_operation, '')));
 
-    If char_length(_operation) = 0 Then
+    If _operation = '' Then
         RAISE EXCEPTION 'Operation must be specified';
     End If;
 
     _month := Trim(Coalesce(_month, ''));
-    _year := Trim(Coalesce(_year, ''));
+    _year  := Trim(Coalesce(_year, ''));
 
-    If char_length(_month) = 0 Then
+    If _month = '' Then
         RAISE EXCEPTION 'Month must be specified';
     End If;
 
-    If char_length(_year) = 0 Then
+    If _year = '' Then
         RAISE EXCEPTION 'Year must be specified';
     End If;
 

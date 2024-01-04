@@ -138,9 +138,9 @@ BEGIN
 
         If _mode = 'update' Then
             -- Cannot update a non-existent entry
-            --
+
             If Not Exists (SELECT entry_id FROM t_instrument_operation_history WHERE entry_id = _id) Then
-                RAISE EXCEPTION 'No entry could be found in database for update';
+                RAISE EXCEPTION 'Cannot update: instrument operation history ID % does not exist', _id;
             End If;
         End If;
 
@@ -162,7 +162,7 @@ BEGIN
             RETURNING entry_id
             INTO _id;
 
-        End If; -- add mode
+        End If;
 
         ---------------------------------------------------
         -- Action for update mode
@@ -175,7 +175,7 @@ BEGIN
                 note = _note
             WHERE entry_id = _id;
 
-        End If; -- update mode
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN

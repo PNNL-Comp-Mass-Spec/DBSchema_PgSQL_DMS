@@ -302,7 +302,7 @@ BEGIN
         -- Parse _plexMembers
         ---------------------------------------------------
 
-        If char_length(_plexMembers) > 0 Then
+        If _plexMembers <> '' Then
             -- Split _plexMembers on newline characters
 
             CREATE TEMP TABLE Tmp_RowData (Entry_ID int, Value text);
@@ -424,26 +424,26 @@ BEGIN
                         SELECT Value
                         INTO _channelText
                         FROM Tmp_ColData
-                        WHERE Entry_ID = _channelColNum
+                        WHERE Entry_ID = _channelColNum;
                     End If;
 
                     If _tagColNum > 0 Then
                         SELECT Value
                         INTO _tagName
                         FROM Tmp_ColData
-                        WHERE Entry_ID = _tagColNum
+                        WHERE Entry_ID = _tagColNum;
                     End If;
 
                     SELECT Value
                     INTO _experimentIdOrName
                     FROM Tmp_ColData
-                    WHERE Entry_ID = _experimentIdColNum
+                    WHERE Entry_ID = _experimentIdColNum;
 
                     If _channelTypeColNum > 0 Then
                         SELECT Value
                         INTO _channelTypeName
                         FROM Tmp_ColData
-                        WHERE Entry_ID = _channelTypeColNum
+                        WHERE Entry_ID = _channelTypeColNum;
                     End If;
 
                     If _commentColNum > 0 Then
@@ -453,7 +453,7 @@ BEGIN
                         WHERE Entry_ID = _commentColNum
                     End If;
 
-                    If char_length(_channelText) > 0 Then
+                    If Coalesce(_channelText, '') <> '' Then
                         _channelNum := public.try_cast(_channelText, null::int);
 
                         If _channelNum Is Null Then
@@ -462,7 +462,7 @@ BEGIN
                             RAISE EXCEPTION '%', _message;
                         End If;
                     Else
-                        If char_length(_tagName) > 0 Then
+                        If Coalesce(_tagName, '') <> '' Then
                             If _experimentLabel = 'TMT10' And _tagName = '131' Then
                                 _tagName := '131N';
                             End If;
@@ -507,7 +507,7 @@ BEGIN
                         End If;
                     End If;
 
-                    If char_length(_channelTypeName) > 0 Then
+                    If Coalesce(_channelTypeName, '') <> '' Then
                         SELECT channel_type_id
                         INTO _channelTypeId
                         FROM t_experiment_plex_channel_type_name
@@ -601,7 +601,7 @@ BEGIN
 
                     _experimentId := 0;
 
-                    If char_length(_experimentIdOrName) > 0 Then
+                    If Coalesce(_experimentIdOrName, '') <> '' Then
 
                         -- ExperimentIdText can have Experiment ID, or Experiment Name, or both, separated by a colon, comma, space, or tab
                         -- First assure that the delimiter (if present) is a colon
@@ -642,7 +642,7 @@ BEGIN
                             End If;
                         End If;
 
-                        If char_length(_channelTypeName) = 0 Then
+                        If If Coalesce(_channelTypeName, '') = '' Then
                             _channelTypeId := 1;
                         Else
                             SELECT channel_type_id
@@ -845,7 +845,7 @@ BEGIN
                     WHERE t.plex_exp_id = _currentPlexExperimentId AND
                           NOT t.channel IN (SELECT channel FROM Tmp_Experiment_Plex_Members);
 
-                    If char_length(_callingUser) > 0 Then
+                    If Trim(Coalesce(_callingUser, '')) <> '' Then
                         -- Call public.alter_entered_by_user to alter the entered_by field in t_experiment_plex_members_history
                         --
                         CALL public.alter_entered_by_user ('public', 't_experiment_plex_members_history', 'plex_exp_id', _currentPlexExperimentId, _callingUser, _message => _alterEnteredByMessage);

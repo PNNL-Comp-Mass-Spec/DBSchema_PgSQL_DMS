@@ -392,14 +392,14 @@ BEGIN
 
             If _settingsFileChanged Then
                 -- Note: do not append a semicolon because if the job fails again in the future, the text after the semicolon may get auto-removed
-                If char_length(_newComment) > 0 Then
+                If _newComment <> '' Then
                     _newComment := format('%s, ', _newComment);
                 End If;
 
                 _newComment := format('%sAuto-switched settings file from %s (%s)';
                                       _newComment, _settingsFile, _skipInfo);
             Else
-                If char_length(_newComment) > 0 Then
+                If _newComment <> '' Then
                     _newComment := format('%s ', _newComment);
                 End If;
 

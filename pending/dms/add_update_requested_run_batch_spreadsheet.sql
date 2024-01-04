@@ -88,7 +88,7 @@ BEGIN
            ON R.Value = RR.request_name;
 
     If Coalesce(_requestedRunList, '') = '' Then
-        _message := 'The requests submitted in the list do not exist in the database. Check the requests and try again.';
+        _message := 'One or more requests do not exist. Check the requests and try again.';
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';

@@ -90,7 +90,7 @@ BEGIN
             _callingUser := public.get_user_login_without_domain('');
         End If;
 
-        If char_length(_locationTag) < 1 Then
+        If _locationTag = '' Then
             RAISE EXCEPTION 'Location tag must be specified';
         End If;
 

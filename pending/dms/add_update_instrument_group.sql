@@ -111,8 +111,8 @@ BEGIN
         If _mode = 'update' Then
             -- Cannot update a non-existent entry
             --
-            If Not Exists (SELECT instrument_group FROM t_instrument_group WHERE instrument_group = _instrumentGroup) Then
-                RAISE EXCEPTION 'No entry could be found in database for update';
+            If Not Exists (SELECT instrument_group FROM t_instrument_group WHERE instrument_group = _instrumentGroup::citext) Then
+                RAISE EXCEPTION 'Cannot update: instrument group "%" does not exist';
             End If;
         End If;
 
@@ -154,7 +154,7 @@ BEGIN
                 requested_run_visible = _requestedRunVisible,
                 allocation_tag = _allocationTag,
                 default_dataset_type = CASE WHEN _datasetTypeID > 0 Then _datasetTypeID Else Null End
-            WHERE instrument_group = _instrumentGrou;
+            WHERE instrument_group = _instrumentGroup::citext;
 
         End If;
 

@@ -147,10 +147,10 @@ BEGIN
         WHERE NOT DatasetID IN (SELECT dataset_id FROM t_dataset)
 
         If _list <> '' Then
-            If Position(',' In _list) = 0 Then
-                _message := format('Dataset "%s" was not found in the database', _list);
+            If Position(',' In _list) > 0 Then
+                _message := format('The following datasets do not exist: "%s"', _list);
             Else
-                _message := format('The following datasets were not in the database: "%s"', _list);
+                _message := format('Dataset "%s" does not exist', _list);
             End If;
 
             _returnCode := 'U5201';

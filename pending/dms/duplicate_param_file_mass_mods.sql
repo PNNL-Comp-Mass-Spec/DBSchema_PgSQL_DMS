@@ -350,7 +350,7 @@ BEGIN
         RAISE INFO '%', _infoData;
     END LOOP;
 
-    If char_length(_message) > 0 Then
+    If Coalesce(_message, '') <> '' Then
         RAISE INFO '%', _message;
     End If;
 

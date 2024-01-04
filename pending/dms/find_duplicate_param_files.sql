@@ -80,7 +80,7 @@ BEGIN
         _maxFilesToTest := 1;
     End If;
 
-    If char_length(_paramFileTypeList) = 0 Then
+    If _paramFileTypeList = '' Then
         _message := 'Error: _paramFileTypeList cannot be empty';
         _returnCode := 'U5201';
         RETURN;
@@ -202,7 +202,7 @@ BEGIN
         _sql := format('%s WHERE true', _sql);
     End If;
 
-    If char_length(_paramFileNameFilter) > 0 Then
+    If _paramFileNameFilter <> '' Then
         _sql := format('%s AND (%s)', _sql, public.create_like_clause_from_separated_string(_paramFileNameFilter, 'Param_File_Name', ','));
     End If;
 
@@ -746,7 +746,7 @@ BEGIN
 
     End If;
 
-    If char_length(_message) > 0 Then
+    If Coalesce(_message, '') <> '' Then
         RAISE INFO '%', _message;
     End If;
 

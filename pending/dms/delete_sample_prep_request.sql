@@ -97,7 +97,7 @@ BEGIN
     COMMIT;
 
     -- If _callingUser is defined, update system_account in t_sample_prep_request_updates
-    If char_length(_callingUser) > 0 Then
+    If Trim(Coalesce(_callingUser, '')) <> '' Then
 
         CALL public.alter_entered_by_user (
                 'public', 't_sample_prep_request_updates', 'request_id',

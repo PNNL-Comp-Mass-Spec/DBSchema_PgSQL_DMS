@@ -195,7 +195,8 @@ BEGIN
         End If;
 
         _orgName := Trim(Coalesce(_orgName, ''));
-        If char_length(_orgName) < 1 Then
+
+        If _orgName = '' Then
             RAISE EXCEPTION 'Organism Name must be specified';
         End If;
 
@@ -211,7 +212,7 @@ BEGIN
             RAISE EXCEPTION 'Organism Name cannot contain commas';
         End If;
 
-        If char_length(_orgStorageLocation) = 0 Then
+        If _orgStorageLocation = '' Then
             -- Auto define _orgStorageLocation
 
             SELECT server
@@ -243,7 +244,7 @@ BEGIN
         _orgActive   := Trim(Coalesce(_orgActive, ''));
         _orgActiveID := public.try_cast(_orgActive, -1);
 
-        If char_length(_orgActive) = 0 Or Or Not Coalesce(_orgActiveID, -1) In (0, 1) Then
+        If _orgActive = '' Or Or Not Coalesce(_orgActiveID, -1) In (0, 1) Then
             RAISE EXCEPTION 'Organism active state must be 0 or 1';
         End If;
 
@@ -258,7 +259,7 @@ BEGIN
 
         _newtIDList := Trim(Coalesce(_newtIDList, ''));
 
-        If char_length(_newtIDList) > 0 Then
+        If _newtIDList <> '' Then
             CREATE TEMP TABLE Tmp_NEWT_IDs (
                 NEWT_ID_Text text,
                 NEWT_ID int NULL
@@ -344,7 +345,7 @@ BEGIN
             _existingOrganismID := public.get_organism_id(_orgName);
 
             If _existingOrganismID <> 0 Then
-                RAISE EXCEPTION 'Cannot add: Organism "%" already in database', _orgName;
+                RAISE EXCEPTION 'Cannot add: organism "%" already exists', _orgName;
             End If;
         End If;
 
@@ -358,11 +359,11 @@ BEGIN
             WHERE organism_id = _id;
 
             If Not FOUND Then
-                RAISE EXCEPTION 'Cannot update: Organism "%" is not in database', _orgName;
+                RAISE EXCEPTION 'Cannot update: organism "%" does not exist', _orgName;
             End If;
 
             If _existingOrgName <> _orgName Then
-                RAISE EXCEPTION 'Cannot update: Organism name may not be changed from "%"', _existingOrgName;
+                RAISE EXCEPTION 'Cannot update: organism name may not be changed from "%"', _existingOrgName;
             End If;
         End If;
 
@@ -498,7 +499,7 @@ BEGIN
             INTO _id;
 
             -- If _callingUser is defined, update entered_by in t_organisms_change_history
-            If char_length(_callingUser) > 0 Then
+            If Trim(Coalesce(_callingUser, '')) <> '' Then
                 CALL public.alter_entered_by_user ('public', 't_organisms_change_history', 'organism_id', _id, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
@@ -533,7 +534,7 @@ BEGIN
             WHERE organism_id = _id;
 
             -- If _callingUser is defined, update entered_by in t_organisms_change_history
-            If char_length(_callingUser) > 0 Then
+            If Trim(Coalesce(_callingUser, '')) <> '' Then
                 CALL public.alter_entered_by_user ('public', 't_organisms_change_history', 'organism_id', _id, _callingUser, _message => _alterEnteredByMessage);
             End If;
 

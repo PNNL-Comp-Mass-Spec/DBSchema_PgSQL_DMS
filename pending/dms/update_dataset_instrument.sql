@@ -347,7 +347,7 @@ BEGIN
     -- Done
     ---------------------------------------------------
 
-    If char_length(_message) > 0 Then
+    If Coalesce(_message, '') <> '' Then
         If _returnCode <> '' Then
             RAISE WARNING '%', _message
         Else

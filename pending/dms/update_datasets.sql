@@ -183,7 +183,12 @@ BEGIN
         WHERE NOT Dataset_Name IN ( SELECT dataset FROM t_dataset );
 
         If Coalesce(_list, '') <> '' Then
-            _msg := format('The following datasets were not in the database: "%s"', _list);
+            If Position(',' In _list) > 0 Then
+                _msg := format('The following datasets do not exist: "%s"', _list);
+            Else
+                _msg := format('Dataset "%s" does not exist', _list);
+            End If;
+
             RAISE INFO '%', _msg;
             RAISE EXCEPTION '%', _msg;
         End If;

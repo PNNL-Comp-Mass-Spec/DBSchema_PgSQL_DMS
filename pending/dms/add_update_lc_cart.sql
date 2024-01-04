@@ -110,7 +110,7 @@ BEGIN
         _id := 0;
 
         If Exists (SELECT cart_name FROM t_lc_cart WHERE cart_name = _cartName) Then
-            _message := format('Cannot Add - Entry already exists for cart "%s"', _cartName);
+            _message := format('Cannot add: Entry already exists for cart "%s"', _cartName);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5202';
@@ -120,7 +120,7 @@ BEGIN
 
     If _mode = 'update' Then
         If Not Exists (SELECT cart_id FROM t_lc_cart WHERE cart_id = _id) Then
-            _message := format('Cannot update - cart cart_id %s does not exist', _id);
+            _message := format('Cannot update: cart cart_id "%s" does not exist', _id);
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5203';

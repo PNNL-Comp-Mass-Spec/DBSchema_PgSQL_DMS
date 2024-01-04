@@ -105,11 +105,11 @@ BEGIN
             SELECT attachment_id
             INTO _attachmentID
             FROM  t_file_attachment
-            WHERE (attachment_id = _id)
+            WHERE attachment_id = _id;
 
             -- Cannot update a non-existent entry
             If Not FOUND Then
-                RAISE EXCEPTION 'No entry could be found in database for update';
+                RAISE EXCEPTION 'Cannot update: attachment ID % does not exist', _id;
             End If;
         End If;
 

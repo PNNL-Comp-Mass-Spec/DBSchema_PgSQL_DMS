@@ -155,7 +155,7 @@ BEGIN
             WHERE task_id = _id;
 
             If Not FOUND Then
-                RAISE EXCEPTION 'No entry could be found in database for update';
+                RAISE EXCEPTION 'Cannot update: operations task entry ID % does not exist', _id;
             End If;
 
             If _curStatus::citext In ('Completed', 'Not Implemented') Then
