@@ -141,7 +141,7 @@ BEGIN
         If _requestIdList <> '' Then
 
             -- Find requested runs using _requestIdList
-            --
+
             INSERT INTO Tmp_RequestedRunList( request_id )
             SELECT Value
             FROM public.parse_delimited_list(_requestIdList);
@@ -181,7 +181,6 @@ BEGIN
             End If;
         Else
             -- Find active requested runs that use _oldWorkPackage
-            --
 
             INSERT INTO Tmp_ReqRunsToUpdate( request_id,
                                              request_name,

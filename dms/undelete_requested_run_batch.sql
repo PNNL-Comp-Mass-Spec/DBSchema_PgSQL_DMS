@@ -71,7 +71,7 @@ BEGIN
     End If;
 
     -- Verify that the deleted requested run exists, and lookup the batch ID and EUS person ID
-    --
+
     SELECT Entry_ID,
            Batch_Group_ID
     INTO _entryID, _batchGroupID

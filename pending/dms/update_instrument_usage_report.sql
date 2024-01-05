@@ -225,7 +225,7 @@ BEGIN
             INTO _badFields
             FROM Tmp_Factors
             WHERE NOT Field IN ('Proposal', 'Operator', 'Comment', 'Users', 'Usage');
-            --
+
             If _badFields <> '' Then
                 RAISE EXCEPTION 'The following field(s) are not editable: %', _badFields;
             End If;

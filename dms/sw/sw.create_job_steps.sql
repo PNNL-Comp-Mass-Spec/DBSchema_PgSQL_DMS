@@ -311,7 +311,7 @@ BEGIN
 
     If _mode::citext = 'UpdateExistingJob' Then
         -- Note: as of April 4, 2011, the 'UpdateExistingJob' mode is not used in the 'sw' schema
-        --
+
         If Not Exists (SELECT job FROM sw.t_jobs Where job = _existingJob) Then
             _message := format('Job %s not found in sw.t_jobs; unable to continue', _existingJob);
             _returnCode := 'U5206';
@@ -506,7 +506,7 @@ BEGIN
         End If;
 
         -- Get parameters for the job as XML
-        --
+
         _xmlParameters := sw.create_parameters_for_job (
                                 _jobInfo.Job,
                                 _settingsFileOverride => _extensionScriptSettingsFileOverride,
@@ -546,7 +546,7 @@ BEGIN
         -- For MSXML_Gen and ProMex jobs, _resultsFolderName will be of the form XML202212141459_Auto2113610 or PMX202301141131_Auto2139566
         -- We actually want the results folder to be the shared results directory name (e.g. MSXML_Gen_1_194_863076 or ProMex_1_286_1112666)
         -- This change will be made by finish_job_creation when it looks for Special="Job_Results" in the pipeline script XML, for example
-        --
+
         -- <JobScript Name="ProMex">
         -- <Step Number="1" Tool="PBF_Gen"/>
         -- <Step Number="2" Tool="ProMex" Special="Job_Results">

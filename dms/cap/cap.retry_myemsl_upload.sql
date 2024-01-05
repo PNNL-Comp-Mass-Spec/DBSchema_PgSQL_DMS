@@ -185,7 +185,7 @@ BEGIN
         End If;
 
         -- Construct a comma-separated list of capture task jobs
-        --
+
         SELECT string_agg(job::text, ',' ORDER BY Job)
         INTO _jobList
         FROM Tmp_Archive_Jobs_To_Reset;
@@ -256,7 +256,7 @@ BEGIN
             _logErrors := true;
 
             -- Reset the archive step
-            --
+
             UPDATE cap.t_task_steps TS
             SET state = 2,
                 completion_code = 0,
@@ -268,7 +268,7 @@ BEGIN
                   TS.Tool IN ('ArchiveUpdate', 'DatasetArchive');
 
             -- Reset the state of the dependent steps
-            --
+
             CALL cap.reset_dependent_task_steps (
                         _jobList,
                         _infoOnly   => false,
@@ -276,7 +276,7 @@ BEGIN
                         _returncode => _returncode);    -- Output
 
             -- Reset the retry counts for the ArchiveVerify step
-            --
+
             UPDATE cap.t_task_steps TS
             SET retry_count = 75,
                 next_try = CURRENT_TIMESTAMP + Interval '10 minutes'

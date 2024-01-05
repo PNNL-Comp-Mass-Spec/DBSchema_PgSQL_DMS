@@ -98,7 +98,7 @@ BEGIN
 
     If _mode = 'update' Then
         -- Cannot update a non-existent entry
-        --
+
         If Not Exists (SELECT entry_id FROM  t_instrument_config_history WHERE entry_id = _id) Then
             _message := format('Cannot update: instrument config ID %s does not exist', _id);
             RAISE WARNING '%', _message;

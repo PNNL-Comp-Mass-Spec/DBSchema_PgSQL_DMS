@@ -190,7 +190,7 @@ BEGIN
         If _userID > 0 Then
             -- Function get_user_id recognizes both a username and the form 'LastName, FirstName (Username)'
             -- Assure that _operatorUsername contains simply the username
-            --
+
             SELECT username
             INTO _datasetInfo.OperatorUsername
             FROM t_users

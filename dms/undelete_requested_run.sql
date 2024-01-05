@@ -77,7 +77,7 @@ BEGIN
     End If;
 
     -- Verify that the deleted requested run exists, and lookup the batch ID, EUS person ID, and dataset ID (which may be null)
-    --
+
     SELECT Entry_ID,
            Batch_ID,
            EUS_Person_ID,

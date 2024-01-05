@@ -174,13 +174,13 @@ BEGIN
         GET DIAGNOSTICS _existingCount = ROW_COUNT;
 
         -- Check for a name conflict when adding
-        --
+
         If _mode Like '%add%' And _existingCount > 0 Then
             RAISE EXCEPTION 'Cannot add: parameter file "%" already exists', _paramFileName;
         End If;
 
         -- Check for a name conflict when renaming
-        --
+
         If _mode Like '%update%' And _existingCount > 0 And _existingParamFileID <> _paramFileID Then
             RAISE EXCEPTION 'Cannot rename: parameter File "%" already exists', _paramFileName;
         End If;

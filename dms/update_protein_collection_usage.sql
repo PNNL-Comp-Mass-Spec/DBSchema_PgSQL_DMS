@@ -58,7 +58,7 @@ BEGIN
         ;
 
         -- Delete rows from t_protein_collection_usage that are not in V_Protein_Collections_by_Organism
-        --
+
         DELETE FROM t_protein_collection_usage target
         WHERE NOT EXISTS (SELECT PC.protein_collection_id
                           FROM pc.V_Protein_Collections_by_Organism PC
@@ -72,7 +72,7 @@ BEGIN
         ---------------------------------------------------
 
         -- First add any missing protein collection lists to t_cached_protein_collection_list_map
-        --
+
         INSERT INTO t_cached_protein_collection_list_map( protein_collection_list )
         SELECT target.protein_collection_list
         FROM t_cached_protein_collection_list_map Target
@@ -84,7 +84,7 @@ BEGIN
         ORDER BY target.protein_collection_list;
 
         -- Next add missing rows to t_cached_protein_collection_list_members
-        --
+
         INSERT INTO t_cached_protein_collection_list_members( protein_collection_list_id,
                                                               protein_collection_name )
         SELECT DISTINCT SourceQ.protein_collection_list_id,
@@ -102,7 +102,7 @@ BEGIN
                  ) AS ProteinCollections On True;
 
         -- Update the usage counts in t_protein_collection_usage
-        --
+
         UPDATE t_protein_collection_usage target
         SET job_usage_count_last12months = UsageQ.job_usage_count_last12months,
             job_usage_count = UsageQ.job_usage_count,

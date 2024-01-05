@@ -96,7 +96,6 @@ BEGIN
             RAISE EXCEPTION '%', _msg;
         End If;
 
-        --
         SELECT container_id
         INTO _tmpID
         FROM t_material_containers

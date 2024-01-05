@@ -86,7 +86,7 @@ BEGIN
 
         If Coalesce(_instrumentInfo.AutoDefineStoragePath, 0) = 0 Then
             -- Use the storage path defined in t_instrument_name
-            --
+
             SELECT storage_path_id
             INTO _storagePathID
             FROM t_instrument_name

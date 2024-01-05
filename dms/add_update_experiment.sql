@@ -611,7 +611,7 @@ BEGIN
         End If;
 
         -- Get names of reference compounds from list argument into table
-        --
+
         INSERT INTO Tmp_ExpToRefCompoundMap (Compound_IDName, Colon_Pos)
         SELECT Value, Position(':' In Value)
         FROM public.parse_delimited_list(_referenceCompoundList, ';');
@@ -666,7 +666,7 @@ BEGIN
         End If;
 
         -- Next look for entries with an invalid Compound_ID
-        --
+
         _invalidRefCompoundList := null;
 
         SELECT string_agg(Compound_IDName, ', ' ORDER BY Compound_IDName)

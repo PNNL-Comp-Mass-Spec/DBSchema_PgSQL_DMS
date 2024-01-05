@@ -88,7 +88,7 @@ BEGIN
 
         If _infoOnly Then
             -- Show the dataset IDs and dataset names that would be reset
-            --
+
             SELECT string_agg(DS.dataset_id, ', ' ORDER BY DS.dataset_id),
                    string_agg(DS.dataset,    ', ' ORDER BY DS.dataset_id)
             INTO _datasetIDs, _datasetNames

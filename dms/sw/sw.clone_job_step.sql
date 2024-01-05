@@ -105,12 +105,12 @@ BEGIN
     -- This was obtained from the settings file for the job, but is now stored in _xmlParameters
 
     -- Created rooted XML, as required by xpath
-    --
+
     _rootedXML := ('<params>' || _xmlParameters::text || '</params>')::xml;
 
     -- The following xpath expression finds nodes where the Name attribute is "NumberOfClonedSteps"
     -- then returns the text of the Value attribute
-    --
+
     SELECT unnest(xpath('//params/Param[@Name="NumberOfClonedSteps"]/@Value', _rootedXML))::text
     INTO _valueText
     LIMIT 1;
@@ -135,7 +135,7 @@ BEGIN
 
     -- The following xpath expression finds nodes where the Name attribute is "CloneStepRenumberStart"
     -- then returns the text of the Value attribute
-    --
+
     SELECT unnest(xpath('//params/Param[@Name="CloneStepRenumberStart"]/@Value', _rootedXML))::text
     INTO _valueText
     LIMIT 1;

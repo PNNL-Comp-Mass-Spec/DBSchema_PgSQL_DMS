@@ -50,7 +50,6 @@ BEGIN
     End If;
 
     -- Show contents of Tmp_Jobs
-    --
 
     _formatSpecifier := '%-10s %-20s %-80s';
 

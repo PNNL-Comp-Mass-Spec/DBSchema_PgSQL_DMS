@@ -120,7 +120,7 @@ BEGIN
 
             If Not FOUND Then
                 -- Job not found
-                --
+
                 _warningMessage := format('Job %s not found in sw.t_jobs', _job);
 
                 If _showDebug Then
@@ -130,7 +130,7 @@ BEGIN
             Else
 
                 -- Lookup the Special_Processing parameter for this job
-                --
+
                 SELECT Value
                 INTO _specialProcessingText
                 FROM sw.get_job_param_table_local(_job)
@@ -216,7 +216,7 @@ BEGIN
             End If;
 
             -- Store the results
-            --
+
             UPDATE Tmp_Source_Job_Folders
             SET SourceJob = _sourceJob,
                 SourceJobResultsFolder = _sourceJobResultsFolder,
@@ -228,7 +228,7 @@ BEGIN
             WHERE Entry_ID = _entryID;
 
             -- Clear the warning message
-            --
+
             _warningMessage := '';
             _autoQueryUsed := false;
             _sourceJob2 := 0;
@@ -287,7 +287,7 @@ BEGIN
             If _sourceJob2 > 0 And _warningMessage = '' Then
 
                 -- Lookup the results directory for _sourceJob2
-                --
+
                 SELECT Dataset,
                        public.combine_paths(public.combine_paths(Dataset_Storage_Path, Dataset), Results_Folder),
                        public.combine_paths(public.combine_paths(Archive_Folder_Path, Dataset),  Results_Folder)
@@ -302,7 +302,7 @@ BEGIN
 
             If _sourceJob2 > 0 Or _warningMessage <> '' Then
                 -- Store the results
-                --
+
                 UPDATE Tmp_Source_Job_Folders
                 SET SourceJob2 = _sourceJob2,
                     SourceJob2Dataset = _sourceJob2Dataset,

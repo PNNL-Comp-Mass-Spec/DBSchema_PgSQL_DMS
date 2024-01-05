@@ -276,13 +276,13 @@ BEGIN
         _statusMessageInfo := format('Status info count: %s', _statusInfoCount);
 
         -- Make sure Remote_Manager is defined
-        --
+
         UPDATE Tmp_Processor_Status_Info
         SET Remote_Manager = ''
         WHERE Remote_Manager Is Null;
 
         -- Change the IsNew flag to false for known processors
-        --
+
         UPDATE Tmp_Processor_Status_Info
         SET IsNew = false
         FROM sw.t_processor_status PS
@@ -421,7 +421,7 @@ BEGIN
         -- INTO _hourOffset;
 
         -- Convert from text-based UTC date to local timestamp
-        --
+
         UPDATE Tmp_Processor_Status_Info
         SET Status_Date_Value     = public.try_cast(Status_Date,     null::timestamp),
             Last_Start_Time_Value = public.try_cast(Last_Start_Time, null::timestamp);
@@ -433,7 +433,7 @@ BEGIN
         _currentLocation := 'Update status for existing processors that have Remote_Manager defined';
 
         -- First update managers with a Remote_Manager defined
-        --
+
         UPDATE sw.t_processor_status Target
         SET remote_manager = Src.remote_manager,
             mgr_status = Src.mgr_status,
@@ -456,7 +456,7 @@ BEGIN
         _currentLocation := 'Update status for existing processors that do not contact a remote manager';
 
         -- Next update managers where Remote_Manager is empty
-        --
+
         UPDATE sw.t_processor_status Target
         SET remote_manager = Src.remote_manager,
             mgr_status = Src.mgr_status,
@@ -503,7 +503,7 @@ BEGIN
         _currentLocation := 'Add missing processors';
 
         -- Add managers with a Remote_Manager defined
-        --
+
         INSERT INTO sw.t_processor_status (
             processor_name,
             remote_manager,
@@ -542,7 +542,7 @@ BEGIN
         _statusMessageInfo := format('%s, InsertedA: %s', _statusMessageInfo, _insertCount);
 
         -- Add managers where Remote_Manager is empty
-        --
+
         INSERT INTO sw.t_processor_status (
             processor_name,
             remote_manager,

@@ -135,7 +135,7 @@ BEGIN
 
     If Coalesce(_transferFolderPath, '') <> '' Then
         -- Make sure transfer_folder_path and storage_server are up-to-date in sw.t_jobs
-        --
+
         If Coalesce(_datasetFolderName, '') <> '' Then
             _transferFolderPath := public.combine_paths(_transferFolderPath, _datasetFolderName);
         Else

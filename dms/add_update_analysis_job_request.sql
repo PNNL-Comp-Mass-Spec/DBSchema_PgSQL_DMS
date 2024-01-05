@@ -217,7 +217,7 @@ BEGIN
         ---------------------------------------------------
 
         -- Cannot create an entry with a duplicate name
-        --
+
         If _mode::citext In ('add', 'PreviewAdd') Then
             If Exists (SELECT request_id FROM t_analysis_job_request WHERE request_name = _requestName::citext) Then
                 RAISE EXCEPTION 'Cannot add: request with same name already exists';
@@ -226,7 +226,7 @@ BEGIN
 
         -- Cannot update a non-existent entry
         -- If the entry already exists and has jobs associated with it, only allow for updating the comment field
-        --
+
         If _mode = 'update' Then
 
             SELECT request_id,
@@ -533,7 +533,7 @@ BEGIN
         */
 
         -- Count the number of datasets with profile mode MS/MS
-        --
+
         SELECT COUNT(Distinct DS.dataset_id)
         INTO _profileModeMSnDatasets
         FROM Tmp_DatasetInfo
@@ -678,7 +678,7 @@ BEGIN
             FROM Tmp_DatasetInfo;
 
             -- Return ID of the newly created request
-            --
+
             _requestID := _newRequestNum;
 
             If _callingUser <> '' Then

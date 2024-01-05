@@ -178,7 +178,7 @@ BEGIN
 
         If _mode = 'update' Then
             -- Cannot update a non-existent entry
-            --
+
             If Not Exists (SELECT submission_id FROM t_sample_submission WHERE submission_id = _id) Then
                 RAISE EXCEPTION 'Cannot update: sample submission ID % does not exist', _id;
             End If;

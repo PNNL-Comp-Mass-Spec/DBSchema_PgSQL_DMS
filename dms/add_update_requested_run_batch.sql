@@ -220,7 +220,7 @@ BEGIN
         ---------------------------------------------------
 
         -- Do all requests in list actually exist?
-        --
+
         SELECT COUNT(*)
         INTO _countInvalid
         FROM Tmp_RequestedRuns
@@ -358,7 +358,7 @@ BEGIN
             If _id > 0 Then
                 -- Remove any existing references to the batch
                 -- from requested runs
-                --
+
                 UPDATE t_requested_run
                 SET batch_id = 0
                 WHERE batch_id = _id AND
@@ -368,7 +368,7 @@ BEGIN
             End If;
 
             -- Add reference to this batch to the requests in the list
-            --
+
             UPDATE t_requested_run
             SET batch_id = _id
             WHERE request_id IN (Select request_id from Tmp_RequestedRuns) AND

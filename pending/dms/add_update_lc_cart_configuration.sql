@@ -206,7 +206,6 @@ BEGIN
     -- Resolve cart name to ID
     ---------------------------------------------------
 
-    --
     SELECT cart_id
     INTO _cartID
     FROM  t_lc_cart

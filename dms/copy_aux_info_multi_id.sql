@@ -202,7 +202,7 @@ BEGIN
     If _mode = Lower('CopyCategory') Then
 
         -- Delete any existing values
-        --
+
         DELETE FROM t_aux_info_value
         WHERE target_id IN ( SELECT EntityID FROM Tmp_TargetEntities ) AND
               aux_description_id IN ( SELECT Item_ID
@@ -211,7 +211,7 @@ BEGIN
                                             Category = _categoryName );
 
         -- Insert new values
-        --
+
         INSERT INTO t_aux_info_value (target_id,
                                       aux_description_id,
                                       value )
@@ -237,7 +237,7 @@ BEGIN
     If _mode = Lower('CopySubcategory') Then
 
         -- Delete any existing values
-        --
+
         DELETE FROM t_aux_info_value
         WHERE target_id IN ( SELECT EntityID
                              FROM Tmp_TargetEntities ) AND
@@ -248,7 +248,7 @@ BEGIN
                                             Subcategory = _subCategoryName );
 
         -- Insert new values
-        --
+
         INSERT INTO t_aux_info_value (target_id,
                                       aux_description_id,
                                       value )
@@ -275,7 +275,7 @@ BEGIN
     If _mode = Lower('CopyAll') Then
 
         -- Delete any existing values
-        --
+
         DELETE FROM t_aux_info_value
         WHERE target_id IN ( SELECT EntityID
                               FROM Tmp_TargetEntities ) AND

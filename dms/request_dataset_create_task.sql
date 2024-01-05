@@ -145,7 +145,7 @@ BEGIN
             ---------------------------------------------------
             -- A new dataset creation task was assigned; return parameters in XML format
             ---------------------------------------------------
-            --
+
             SELECT xml_item::text
             INTO _parameters
             FROM ( SELECT
@@ -184,14 +184,14 @@ BEGIN
             ---------------------------------------------------
             -- A new creation task was not found
             ---------------------------------------------------
-            --
+
             _message := 'No available dataset creation tasks';
         End If;
 
         ---------------------------------------------------
         -- Dump candidate tasks if in infoOnly mode
         ---------------------------------------------------
-        --
+
         If _infoOnly Then
 
             -- Preview the next _taskCountToPreview available dataset creation tasks

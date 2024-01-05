@@ -158,7 +158,7 @@ BEGIN
                 CALL post_log_entry ('Warning', _logMessage, 'Consume_Scheduled_Run');
 
                 -- Copy batch and blocking information from the existing request to the new request
-                --
+
                 UPDATE t_requested_run Target
                 SET batch_id = Source.batch_id,
                     blocking_factor = Source.blocking_factor,

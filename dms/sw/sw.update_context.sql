@@ -118,7 +118,7 @@ BEGIN
         ---------------------------------------------------
 
         -- Step 1: Remove jobs deleted from DMS
-        --
+
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
@@ -148,7 +148,7 @@ BEGIN
         End If;
 
         -- Step 2: Add new jobs, hold/resume/reset existing jobs
-        --
+
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
@@ -208,7 +208,7 @@ BEGIN
     BEGIN
 
         -- Step 3: Import Processors
-        --
+
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
@@ -240,7 +240,7 @@ BEGIN
         ---------------------------------------------------
         -- Deprecated in May 2015:
         -- Import Job Processors
-        --
+
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
@@ -267,7 +267,7 @@ BEGIN
         */
 
         -- Step 4: Sync Job Info
-        --
+
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
@@ -319,7 +319,7 @@ BEGIN
     BEGIN
 
         -- Step 5: Create job steps
-        --
+
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
@@ -377,7 +377,7 @@ BEGIN
     BEGIN
 
         -- Step 6: Update step states
-        --
+
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
@@ -431,7 +431,7 @@ BEGIN
     BEGIN
 
         -- Step 7: Update job states
-        --
+
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
@@ -487,7 +487,7 @@ BEGIN
     BEGIN
 
         -- Step 8: Update CPU loading and memory usage
-        --
+
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control
@@ -542,7 +542,7 @@ BEGIN
     BEGIN
 
         -- Step 9: Auto fix failed jobs
-        --
+
         SELECT enabled
         INTO _result
         FROM sw.t_process_step_control

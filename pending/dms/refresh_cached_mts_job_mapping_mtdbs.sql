@@ -55,7 +55,7 @@ BEGIN
 
     -- Make sure we don't have duplicate rows in t_mts_mt_db_jobs_cached
     -- Duplicates were found in October 2011 after deleting several databases from MTS
-    --
+
     DELETE FROM t_mts_mt_db_jobs_cached target
     WHERE target.CachedInfo_ID IN
         (SELECT J.CachedInfo_ID

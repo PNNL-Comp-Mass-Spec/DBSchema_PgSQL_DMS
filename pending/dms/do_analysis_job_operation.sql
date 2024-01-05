@@ -106,7 +106,7 @@ BEGIN
                     _returnCode => _returnCode,     -- Output
                     _callingUser,
                     _infoOnly)
-            --
+
             If _returnCode <> '' Then
                 RAISE EXCEPTION '%', _msg;
             End If;

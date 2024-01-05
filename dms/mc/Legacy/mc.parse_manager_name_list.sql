@@ -37,7 +37,7 @@ BEGIN
     -----------------------------------------------
     -- Validate the inputs
     -----------------------------------------------
-    --
+
     _managerNameList := Coalesce(_managerNameList, '');
     _removeUnknownManagers := Coalesce(_removeUnknownManagers, 1);
     _message := '';
@@ -75,14 +75,14 @@ BEGIN
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     -- Delete the non-wildcard entries from TmpManagerSpecList
-    --
+
     DELETE FROM TmpManagerSpecList target
     WHERE NOT target.manager_name SIMILAR TO '%[%]%' AND NOT manager_name SIMILAR TO '%\[%';
     --
     GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
     -- Parse the entries in TmpManagerSpecList (all should have a wildcard)
-    --
+
     For _managerFilter In
         SELECT manager_name
         FROM TmpManagerSpecList
@@ -106,7 +106,7 @@ BEGIN
     End If;
 
     -- Delete entries from TmpManagerList that are not defined in mc.t_mgrs
-    --
+
     DELETE FROM TmpManagerList
     WHERE NOT manager_name IN (SELECT mgr_name FROM mc.t_mgrs);
     --

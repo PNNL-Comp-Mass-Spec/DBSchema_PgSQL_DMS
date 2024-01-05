@@ -62,7 +62,7 @@ BEGIN
 
     Begin
         _currentLocation := 'Validate the inputs';
-        --
+
         _updateInterval := Coalesce(_updateInterval, 1);
         _dynamicMinimumCountThreshold := Coalesce(_dynamicMinimumCountThreshold, 10000);
         _updateIntervalAllItems := Coalesce(_updateIntervalAllItems, 24);

@@ -96,7 +96,7 @@ BEGIN
     End If;
 
     -- Verify that the request exists and check whether the request is in a batch
-    --
+
     SELECT batch_id
     INTO _batchID
     FROM t_requested_run

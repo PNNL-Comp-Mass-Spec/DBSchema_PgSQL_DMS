@@ -389,7 +389,6 @@ BEGIN
     If _mode = 'update' Then
 
         -- Commit the changes, then call update_cached_requested_run_batch_stats and update_cached_requested_run_eus_users
-        --
         COMMIT;
 
         BEGIN

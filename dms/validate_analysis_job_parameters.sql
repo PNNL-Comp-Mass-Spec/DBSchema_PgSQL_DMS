@@ -216,7 +216,7 @@ BEGIN
         If _userID > 0 Then
             -- Function get_user_id recognizes both a username and the form 'LastName, FirstName (Username)'
             -- Assure that _ownerUsername contains simply the username
-            --
+
             SELECT username
             INTO _ownerUsername
             FROM t_users
@@ -494,7 +494,7 @@ BEGIN
                 End If;
             Else
                 -- Parameter file either does not exist or is inactive
-                --
+
                 If Exists (SELECT param_file_id FROM t_param_files WHERE param_file_name = _paramFileName::citext AND valid = 0) Then
                     _message := format('Parameter file is inactive and cannot be used: "%s"', _paramFileName);
                 Else
@@ -519,7 +519,7 @@ BEGIN
         If _settingsFileName <> 'na' Then
             If Not Exists (SELECT settings_file_id FROM t_settings_files WHERE file_name = _settingsFileName::citext AND active <> 0) Then
                 -- Settings file either does not exist or is inactive
-                --
+
                 If Exists (SELECT settings_file_id FROM t_settings_files WHERE file_name = _settingsFileName::citext AND active = 0) Then
                     _message := format('Settings file is inactive and cannot be used: "%s"', _settingsFileName);
                 Else

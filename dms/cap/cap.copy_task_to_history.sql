@@ -160,7 +160,7 @@ BEGIN
     ---------------------------------------------------
 
     -- First delete any extra steps for this capture task job that are in t_task_step_dependencies_history
-    --
+
     DELETE FROM cap.t_task_step_dependencies_history target
     WHERE EXISTS
         (  SELECT 1
@@ -182,7 +182,7 @@ BEGIN
         );
 
     -- Now add/update the capture task job step dependencies
-    --
+
     INSERT INTO cap.t_task_step_dependencies_history (Job, Step, Target_Step, Condition_Test, Test_Value, Evaluated, Triggered, Enable_Only, Saved)
     SELECT Job,
            Step,

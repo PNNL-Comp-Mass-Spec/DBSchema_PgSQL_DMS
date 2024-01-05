@@ -125,7 +125,7 @@ BEGIN
     CREATE UNIQUE INDEX Tmp_AdditionalExperiments_ExpID ON Tmp_AdditionalExperiments (Exp_ID);
 
     -- Add mapping info for experiments with only one biomaterial
-    --
+
     INSERT INTO Tmp_ExperimentBiomaterial (Exp_ID, Biomaterial_List, Items)
     SELECT ExpBiomaterial.Exp_ID,
            B.Biomaterial_Name,
@@ -140,7 +140,7 @@ BEGIN
            ON ExpBiomaterial.Exp_ID = FilterQ.Exp_ID;
 
     -- Add mapping info for experiments with only one reference compound
-    --
+
     INSERT INTO Tmp_ExperimentRefCompounds (exp_id, Reference_Compound_List, Items)
     SELECT ERC.exp_id,
            RC.id_name,
@@ -155,7 +155,7 @@ BEGIN
            ON ERC.exp_id = FilterQ.exp_id;
 
     -- Add experiments with multiple biomaterial itesm
-    --
+
     TRUNCATE TABLE Tmp_AdditionalExperiments;
 
     INSERT INTO Tmp_AdditionalExperiments (Exp_ID)
@@ -185,7 +185,7 @@ BEGIN
     END LOOP;
 
     -- Add experiments with multiple reference compounds
-    --
+
     TRUNCATE TABLE Tmp_AdditionalExperiments;
 
     INSERT INTO Tmp_AdditionalExperiments (Exp_ID)

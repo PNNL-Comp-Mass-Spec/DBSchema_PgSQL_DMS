@@ -82,7 +82,7 @@ BEGIN
 
     -- Determine the Collection_Type_ID values for the entries in Tmp_Protein_Collections
     -- Additionally, correct any capitalization errors
-    --
+
     UPDATE Tmp_Protein_Collections
     SET Collection_Type_ID = PCT.Collection_Type_ID,
         Collection_Name = PC.collection_name
@@ -91,7 +91,7 @@ BEGIN
     WHERE Tmp_Protein_Collections.Collection_Name = PC.collection_name;
 
     -- Populate _protCollNameListNew with any entries that have Collection_Type_ID = 5
-    --
+
     SELECT string_agg(Collection_Name, ',' ORDER BY Collection_Name)
     INTO _textToAppend
     FROM Tmp_Protein_Collections
@@ -100,7 +100,7 @@ BEGIN
     _protCollNameListNew := public.append_to_text(_protCollNameListNew, _textToAppend, _delimiter => ',');
 
     -- Append any entries with Collection_Type_ID <> 4 and <> 5
-    --
+
     SELECT string_agg(Collection_Name, ',' ORDER BY Collection_Name)
     INTO _textToAppend
     FROM Tmp_Protein_Collections
@@ -109,7 +109,7 @@ BEGIN
      _protCollNameListNew := public.append_to_text(_protCollNameListNew, _textToAppend, _delimiter => ',');
 
     -- Append any entries with Collection_Type_ID = 4
-    --
+
     SELECT string_agg(Collection_Name, ',' ORDER BY Collection_Name)
     INTO _textToAppend
     FROM Tmp_Protein_Collections

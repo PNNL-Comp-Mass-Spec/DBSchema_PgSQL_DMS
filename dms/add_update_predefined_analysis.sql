@@ -463,7 +463,7 @@ BEGIN
         If _userID > 0 Then
             -- Function get_user_id() recognizes both a username and the form 'LastName, FirstName (Username)'
             -- Assure that _creator contains simply the username
-            --
+
             SELECT username
             INTO _creator
             FROM t_users
@@ -494,7 +494,7 @@ BEGIN
 
         If _mode = 'update' Then
             -- Cannot update a non-existent entry
-            --
+
             If Not Exists (SELECT predefine_id FROM t_predefined_analysis WHERE predefine_id = _id) Then
                 _msg := format('Cannot update: predefine ID %s does not exist', _id);
                 RAISE EXCEPTION '%', _msg;

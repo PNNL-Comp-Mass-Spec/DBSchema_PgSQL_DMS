@@ -206,7 +206,7 @@ BEGIN
             _message := format('Did not add contaminants since %s already includes contaminant proteins', _collectionWithContaminants);
 
             -- Remove the contaminant collections
-            --
+
             DELETE FROM Tmp_IntStds
             WHERE Enzyme_Contaminant_Collection;
         End If;
@@ -350,7 +350,7 @@ BEGIN
     -- New collections were added to Tmp_ProteinCollectionsToAdd
     -- Now append them to Tmp_ProteinCollections
     -- Note that we first append collections that did not come from digestion enzymes
-    --
+
     INSERT INTO Tmp_ProteinCollections (Protein_Collection_Name, Collection_Appended)
     SELECT Protein_Collection_Name,
            true AS Collection_Appended
@@ -361,7 +361,7 @@ BEGIN
     GET DIAGNOSTICS _collectionCountAdded = ROW_COUNT;
 
     -- Check for the presence of both Tryp_Pig_Bov and Tryp_Pig in Tmp_ProteinCollections
-    --
+
     SELECT COUNT(*)
     INTO _matchCount
     FROM Tmp_ProteinCollections
@@ -369,7 +369,7 @@ BEGIN
 
     If Coalesce(_matchCount, 0) = 2 Then
         -- The list has two overlapping contaminant collections; remove one of them
-        --
+
         DELETE FROM Tmp_ProteinCollections
         WHERE Protein_Collection_Name = 'Tryp_Pig';
 
@@ -377,7 +377,7 @@ BEGIN
     End If;
 
     -- Check for the presence of both Tryp_Pig_Bov and Human_Contam in Tmp_ProteinCollections
-    --
+
     SELECT COUNT(*)
     INTO _matchCount
     FROM Tmp_ProteinCollections
@@ -385,7 +385,7 @@ BEGIN
 
     If Coalesce(_matchCount, 0) = 2 Then
         -- The list has two overlapping contaminant collections; remove one of them
-        --
+
         DELETE FROM Tmp_ProteinCollections
         WHERE Protein_Collection_Name = 'HumanContam';
 

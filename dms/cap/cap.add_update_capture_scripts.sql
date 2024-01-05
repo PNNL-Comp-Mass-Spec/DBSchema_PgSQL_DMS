@@ -126,7 +126,7 @@ BEGIN
         GET DIAGNOSTICS _existingCount = ROW_COUNT;
 
         -- Cannot update a non-existent entry
-        --
+
         If _mode = 'update' And _existingCount = 0 Then
             _message := format('Cannot update: script "%s" does not exist', _script);
             RAISE WARNING '%', _message;
@@ -135,7 +135,7 @@ BEGIN
         End If;
 
         -- Cannot add an existing entry
-        --
+
         If _mode = 'add' And _existingCount > 0 Then
             _message := format('Cannot add: script "%s" already exists', _script);
             RAISE WARNING '%', _message;
@@ -185,7 +185,7 @@ BEGIN
             If FOUND Then
                 -- When calling alter_entered_by_user, we must associate the _message argument with a local variable, otherwise the following error occurs:
                 -- 'procedure parameter "_message" is an output parameter but corresponding argument is not writable, state 42601'
-                --
+
                 CALL public.alter_entered_by_user ('cap', 't_scripts_history', 'script_id', _scriptId, _callingUser, _message => _alterEnteredByMessage);
 
                 RAISE INFO '%', _alterEnteredByMessage;

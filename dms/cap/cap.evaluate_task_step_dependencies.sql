@@ -147,7 +147,7 @@ BEGIN
     SELECT COUNT(job)
     INTO _rowCountToProcess
     FROM Tmp_DepTable;
-    --
+
     _rowCountToProcess := Coalesce(_rowCountToProcess, 0);
 
     If _showDebug Then
@@ -197,14 +197,14 @@ BEGIN
 
             If _stepInfo.ConditionTest = 'No_Parameters' Then
                 -- get filter signature for dependent step
-                --
+
                 _actualValue := -1;
-                --
+
                 SELECT Signature
                 INTO _actualValue
                 FROM cap.t_task_steps
                 WHERE Job = _stepInfo.Job AND Step = _stepInfo.DependentStep
-                --
+
                 If _actualValue = -1 Then
                     _message := 'Error getting filter signature';
                     _returnCode := 'U5201';
@@ -212,7 +212,7 @@ BEGIN
                     DROP TABLE Tmp_DepTable;
                     RETURN;
                 End If;
-                --
+
                 If _actualValue = 0 Then
                     _triggered := 1;
                 End If;
@@ -225,7 +225,7 @@ BEGIN
             If _stepInfo.ConditionTest = 'Target_Skipped' Then
 
                 -- Get shared result setting for target step
-                --
+
                 SELECT State
                 INTO _actualValue
                 FROM cap.t_task_steps
@@ -253,11 +253,11 @@ BEGIN
 
             -- Skip if completion message of target step
             -- contains test value
-            --
+
             If _stepInfo.ConditionTest = 'Completion_Message_Contains' Then
 
                 -- Get completion message for target step
-                --
+
                 SELECT Completion_Message
                 INTO _targetCompletionMessage
                 FROM cap.t_task_steps

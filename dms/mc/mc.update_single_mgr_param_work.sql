@@ -59,7 +59,7 @@ BEGIN
     _newValue := Trim(Coalesce(_newValue, ''));
 
     -- Lookup the param_type_id for param _paramName
-    --
+
     SELECT param_type_id
     INTO _paramTypeID
     FROM mc.t_param_type
@@ -103,7 +103,7 @@ BEGIN
 
         -- Create a temporary table that will hold the entry_id
         -- values that need to be updated in mc.t_param_value
-        --
+
         CREATE TEMP TABLE Tmp_ID_Update_List (
             TargetID int NOT NULL
         );
@@ -111,7 +111,7 @@ BEGIN
         CREATE UNIQUE INDEX IX_Tmp_ID_Update_List ON Tmp_ID_Update_List (TargetID);
 
         -- Populate Tmp_ID_Update_List with entry_id values for mc.t_param_value, then call alter_entered_by_user_multi_id
-        --
+
         INSERT INTO Tmp_ID_Update_List (TargetID)
         SELECT entry_id
         FROM Tmp_ParamValueEntriesToUpdate;

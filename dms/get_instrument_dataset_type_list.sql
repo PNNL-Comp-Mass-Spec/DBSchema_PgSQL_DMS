@@ -26,7 +26,7 @@ DECLARE
 BEGIN
 
     -- Lookup the instrument group for this instrument
-    --
+
     SELECT instrument_group
     INTO _instrumentGroup
     FROM t_instrument_name

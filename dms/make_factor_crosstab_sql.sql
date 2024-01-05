@@ -125,7 +125,7 @@ BEGIN
                                                format(' %s)', _factorNameAndTypeList);
 
         -- SQL Server equivalent code
-        --
+
         -- _crossTabSql := format(' SELECT PivotResults.target_id, %s', _factorNameList)         ||
         --                        ' FROM (SELECT Src.type, Src.target_id, Src.name, Src.Value'
         --                              ' FROM t_factor Src INNER JOIN Tmp_Factors I ON Src.factor_id = I.FactorID'
@@ -136,7 +136,7 @@ BEGIN
 
 
         -- Example contents of _crossTabSql for PostgreSQL
-        --
+
         -- SELECT Target_ID, "BioRep", "Sample", "Time"
         -- FROM crosstab('SELECT Src.Target_ID, Src.Name, Src.Value
         --                FROM t_factor Src
@@ -150,7 +150,7 @@ BEGIN
         --                        "Time" text)
 
         -- Example contents of _crossTabSql for SQL Server
-        --
+
         -- SELECT PivotResults.Type, PivotResults.TargetID, [BioRep], [Sample], [Time]
         -- FROM (SELECT Src.Type, Src.TargetID, Src.Name, Src.Value
         --       FROM T_Factor Src
@@ -179,7 +179,7 @@ BEGIN
     End If;
 
     -- Example contents of _sql
-    --
+
     -- SELECT 'x' As sel, batch_id, name, status, dataset_id, request, block, run_order, "BioRep", "Sample", "Time"
     -- FROM ( SELECT Src.*
     --       FROM V_Requested_Run_Unified_List Src

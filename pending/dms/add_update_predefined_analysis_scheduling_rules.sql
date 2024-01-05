@@ -112,7 +112,7 @@ BEGIN
 
     If _mode = 'update' Then
         -- Cannot update a non-existent entry
-        --
+
         If Not Exists (SELECT rule_id FROM t_predefined_analysis_scheduling_rules WHERE rule_id = _id) Then
             _message := format('Cannot update: predefine rule ID %s does not exist', _id);
             RAISE WARNING '%', _message;

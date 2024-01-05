@@ -90,7 +90,7 @@ BEGIN
             _returnCode := 'U5202';
         Else
             -- Note: Only update the value if the Cart ID has changed
-            --
+
             UPDATE t_requested_run
             SET cart_id = _cartID
             WHERE request_id = _requestID AND

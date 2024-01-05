@@ -219,7 +219,7 @@ BEGIN
         -- Prior to September 2018, we would also look for biomaterial (cell cultures)
         -- and would close them if _state was 'Closed (containers and material)'
         -- by calling Do_Sample_Prep_Material_Operation
-        --
+
         -- We stopped associating biomaterial (cell cultures) with Sample Prep Requests in June 2017
         -- so simply change the state to Closed
         _state := 'Closed';
@@ -397,13 +397,13 @@ BEGIN
         ---------------------------------------------------
 
         -- Create temporary table to hold names of material containers as input
-        --
+
         CREATE TEMP TABLE Tmp_MaterialContainers (
             name citext not null
         );
 
         -- Get names of material containers from list argument into table
-        --
+
         INSERT INTO Tmp_MaterialContainers (name)
         SELECT Value
         FROM public.parse_delimited_list(_materialContainerList);
@@ -569,7 +569,7 @@ BEGIN
         End If;
 
         -- Make sure the Work Package is capitalized properly
-        --
+
         SELECT charge_code
         INTO _workPackageNumber
         FROM t_charge_code
@@ -598,7 +598,7 @@ BEGIN
 
         If _mode = 'update' Then
             -- Cannot update a non-existent entry
-            --
+
             _currentStateID := 0;
 
             SELECT state_id,
@@ -613,7 +613,7 @@ BEGIN
             End If;
 
             -- Changes not allowed if in 'closed' state
-            --
+
             If _currentStateID = 5 And Not Exists(SELECT username FROM V_Operations_Task_Staff WHERE username = _callingUser) Then
                 RAISE EXCEPTION 'Changes to entry are not allowed if it is in the "Closed" state';
             End If;
@@ -630,7 +630,6 @@ BEGIN
 
         If _mode = 'add' Then
             -- Make sure the work package number is not inactive
-            --
 
             SELECT CCAS.activation_state,
                    CCAS.activation_state_name

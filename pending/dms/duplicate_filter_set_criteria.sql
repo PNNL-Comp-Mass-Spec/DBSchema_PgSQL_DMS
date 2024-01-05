@@ -186,7 +186,7 @@ BEGIN
         VALUES (_destFilterSetID, _filterCriteriaGroupIDNext);
 
         -- Duplicate the criteria for group _groupIDOld (from Filter Set _sourceFilterSetID)
-        --
+
         INSERT INTO t_filter_set_criteria( filter_criteria_group_id,
                                            criterion_id,
                                            criterion_comparison,

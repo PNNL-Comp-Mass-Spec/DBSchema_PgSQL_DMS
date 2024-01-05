@@ -397,7 +397,7 @@ BEGIN
             If _userID > 0 Then
                 -- Function get_user_id() recognizes both a username and the form 'LastName, FirstName (Username)'
                 -- Assure that _researcher contains simply the username
-                --
+
                 SELECT username
                 INTO _researcher
                 FROM t_users
@@ -485,7 +485,7 @@ BEGIN
         WHILE _fractionCount < _totalCount
         LOOP
             -- Build name for new experiment fraction
-            --
+
             _fullFractionCount := _startingIndex + _fractionCount;
 
             If _fullFractionCount < 10 Then
@@ -500,7 +500,7 @@ BEGIN
             _fractionsCreated := _fractionsCreated + 1;
 
             -- Verify that experiment name is not duplicated in table
-            --
+
             _expId := public.get_experiment_id(_newExpName);
 
             If _expId <> 0 Then
@@ -580,7 +580,7 @@ BEGIN
 
                 -- Add the experiment to reference compound mapping
                 -- The procedure uses table Tmp_ExpToRefCompoundMap
-                --
+
                 CALL public.add_experiment_reference_compound (
                                 _newExpID,
                                 _updateCachedInfo => true,
@@ -638,7 +638,7 @@ BEGIN
 
                     If char_length(_callingUser) > 0 Then
                         -- Call public.alter_entered_by_user to alter the entered_by field in t_experiment_plex_members_history
-                        --
+
                         CALL public.alter_entered_by_user ('public', 't_experiment_plex_members_history', 'plex_exp_id', _newExpID, _callingUser, _message => _alterEnteredByMessage);
                     End If;
 

@@ -159,7 +159,7 @@ BEGIN
               Tmp_UserInfo.User_ID <> 0;
 
         -- Regenerate the list of names
-        --
+
         SELECT string_agg(Name_and_Username, '; ' ORDER BY EntryID)
         INTO _cleanNameList
         FROM Tmp_UserInfo;

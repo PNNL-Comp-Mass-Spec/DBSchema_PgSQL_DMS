@@ -61,7 +61,7 @@ BEGIN
 
         -- Find datasets with a complete DatasetCapture task, yet a state of 1 or 2 in public.t_dataset
         -- Exclude datasets that finished within the last 2 hours
-        --
+
         INSERT INTO Tmp_Datasets (dataset_id, State_Old, State_New)
         SELECT DS.dataset_id, DS.dataset_state_id, PipelineQ.NewState
         FROM t_dataset DS
@@ -82,7 +82,7 @@ BEGIN
 
         -- Find jobs complete in sw.t_jobs, yet a state of 1, 2, or 8 in public.t_analysis_job
         -- Exclude jobs that finished within the last 2 hours
-        --
+
         INSERT INTO Tmp_Jobs (job, State_Old, State_New)
         SELECT J.job, J.job_state_id, PipelineQ.NewState
         FROM t_analysis_job J
@@ -209,7 +209,7 @@ BEGIN
             GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
             -- Log the update
-            --
+
             SELECT string_agg(Dataset_ID::text, ',' ORDER BY Dataset_ID)
             INTO _itemList
             FROM Tmp_Datasets;
@@ -234,7 +234,7 @@ BEGIN
             GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
             -- Log the update
-            --
+
             SELECT string_agg(Job::text, ',' ORDER BY Job)
             INTO _itemList
             FROM Tmp_Jobs;

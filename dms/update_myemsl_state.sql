@@ -38,7 +38,7 @@ BEGIN
 
     If Trim(Coalesce(_analysisJobResultsFolder, '')) = '' Then
         -- Update the dataset and all existing jobs
-        --
+
         UPDATE t_dataset_archive
         SET myemsl_state = _myEMSLState
         WHERE dataset_id = _datasetID AND
@@ -52,7 +52,7 @@ BEGIN
 
     Else
         -- Update the job that corresponds to _analysisJobResultsFolder
-        --
+
         UPDATE t_analysis_job
         SET myemsl_state = _myEMSLState
         WHERE dataset_id = _datasetID AND

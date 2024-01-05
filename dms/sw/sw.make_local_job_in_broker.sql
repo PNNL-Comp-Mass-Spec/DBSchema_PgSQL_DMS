@@ -163,7 +163,7 @@ BEGIN
         _currentLocation := 'Get script contents';
 
         -- Get contents of script and tag for results directory name
-        --
+
         SELECT contents, results_tag
         INTO _scriptXML, _tag
         FROM sw.t_scripts
@@ -388,7 +388,7 @@ BEGIN
             _currentLocation := 'Add row to sw.t_jobs';
 
             -- The move_jobs_to_main_tables procedure requires that the job already be in sw.t_jobs
-            --
+
             INSERT INTO sw.t_jobs( job,
                                    priority,
                                    script,

@@ -331,11 +331,11 @@ BEGIN
         If _mode::citext = 'priority' Then
 
             -- Get priority numerical value (use 0 if _newValue is not an integer)
-            --
+
             _pri := public.try_cast(_newValue, 0);
 
             -- If priority is being set to non-zero, clear the note field
-            --
+
             UPDATE t_requested_run RR
             SET priority = _pri,
                 note = CASE WHEN _pri > 0 THEN '' ELSE note END

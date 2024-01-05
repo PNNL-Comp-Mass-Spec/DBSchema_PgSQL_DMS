@@ -684,7 +684,7 @@ BEGIN
 
         EXCEPTION
             -- Error caught; log the error then continue with the next job to backfill
-            --
+
             WHEN OTHERS THEN
                 GET STACKED DIAGNOSTICS
                     _sqlState         = returned_sqlstate,
@@ -851,7 +851,7 @@ BEGIN
 
     EXCEPTION
         -- Error caught; log the error then continue with the next job to backfill
-        --
+
         WHEN OTHERS THEN
             GET STACKED DIAGNOSTICS
                 _sqlState         = returned_sqlstate,

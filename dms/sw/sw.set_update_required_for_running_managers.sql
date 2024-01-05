@@ -77,7 +77,7 @@ BEGIN
     End If;
 
     -- Make a list of the currently running managers
-    --
+
     SELECT string_agg(Processor, ', ' ORDER BY Processor)
     INTO _mgrList
     FROM sw.t_job_steps

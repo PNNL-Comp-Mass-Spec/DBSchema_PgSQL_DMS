@@ -78,7 +78,7 @@ BEGIN
         _message := '';
 
         _currentLocation := 'Make sure _cachedDataTableName exists in t_mts_cached_data_status';
-        --
+
         If Not Exists (SELECT table_name FROM t_mts_cached_data_status WHERE table_name = _cachedDataTableName) Then
             INSERT INTO t_mts_cached_data_status (table_name, refresh_count)
             VALUES (_cachedDataTableName, 0);

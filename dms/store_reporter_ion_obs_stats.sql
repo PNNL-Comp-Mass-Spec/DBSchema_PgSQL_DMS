@@ -187,12 +187,12 @@ BEGIN
 
         -- Append the channel column names to _sqlInsert, for example:
         -- , Channel3, Channel3_Median_Intensity
-        --
+
         _channelName := format('Channel%s', _channel);
         _sqlInsert := format('%s, %s, %s_Median_Intensity', _sqlInsert, _channelName, _channelName);
 
         -- Append the observation rate and median intensity values
-        --
+
         _sqlValues := format('%s, %s, %s', _sqlValues, _observationRateTopNPctText, _medianIntensityText);
 
         -- Store the values (only required if _infoOnly is nonzero)

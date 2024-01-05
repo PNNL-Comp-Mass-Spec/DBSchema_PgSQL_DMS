@@ -91,7 +91,7 @@ BEGIN
 
     If _returnCode = '' And Not _mergeSourceWithTarget Then
         -- Make sure the target manager does not have any parameters
-        --
+
         If Exists (SELECT PV.mgr_id FROM mc.t_param_value PV WHERE PV.mgr_id = _targetMgrID) Then
             _message := format('_targetMgrID %s has existing parameters in mc.t_param_value; aborting since _mergeSourceWithTarget is false', _targetMgrID);
             _returnCode := 'U5205';

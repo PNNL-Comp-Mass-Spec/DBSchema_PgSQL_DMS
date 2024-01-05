@@ -59,7 +59,7 @@ BEGIN
           NOT (PS.prog_runner_core_usage IS NULL);
 
     -- Make sure New_CPU_Load is <= 32767
-    --
+
     UPDATE Tmp_PendingUpdates
     SET New_CPU_Load = 32767
     WHERE New_CPU_Load > 32767;

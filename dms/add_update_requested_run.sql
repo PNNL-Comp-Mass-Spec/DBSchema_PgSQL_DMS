@@ -253,11 +253,11 @@ BEGIN
         If Coalesce(_requestName, '') = '' Then
             RAISE EXCEPTION 'Request name must be specified';
         End If;
-        --
+
         If Coalesce(_experimentName, '') = '' Then
             RAISE EXCEPTION 'Experiment name must be specified';
         End If;
-        --
+
         If Coalesce(_requesterUsername, '') = '' Then
             RAISE EXCEPTION 'Requester username must be specified';
         End If;
@@ -265,11 +265,11 @@ BEGIN
         If Coalesce(_instrumentGroup, '') = '' Then
             RAISE EXCEPTION 'Instrument group must be specified';
         End If;
-        --
+
         If Coalesce(_msType, '') = '' Then
             RAISE EXCEPTION 'Dataset type must be specified';
         End If;
-        --
+
         If Coalesce(_workPackage, '') = '' Then
             RAISE EXCEPTION 'Work package must be specified';
         End If;
@@ -391,13 +391,13 @@ BEGIN
         _oldStatus := Coalesce(_oldStatus, '? request not found ?');
 
         -- Cannot create an entry that already exists
-        --
+
         If _requestID <> 0 And _mode::citext In ('add', 'check_add') Then
             RAISE EXCEPTION 'Cannot add: requested run "%" already exists', _requestName;
         End If;
 
         -- Cannot update a non-existent entry
-        --
+
         If _requestID = 0 And _mode::citext In ('update', 'check_update') Then
             If _requestIDForUpdate > 0 Then
                 RAISE EXCEPTION 'Cannot update: requested run ID "%" does not exist', _requestIDForUpdate;
@@ -588,7 +588,7 @@ BEGIN
             _separationGroup := _matchedSeparationGroup;
         Else
             -- Match not found; try t_secondary_sep
-            --
+
             SELECT separation_group
             INTO _matchedSeparationGroup
             FROM t_secondary_sep
@@ -767,7 +767,7 @@ BEGIN
 
         -- Value in t_misc_options should be 0 or 1
         -- Cast to text, then cast to boolean
-        --
+
         SELECT public.try_cast(Value::text, false)
         INTO _requireWP
         FROM t_misc_options
@@ -799,7 +799,7 @@ BEGIN
         End If;
 
         -- Make sure the Work Package is capitalized properly
-        --
+
         SELECT charge_code
         INTO _workPackage
         FROM t_charge_code
@@ -901,7 +901,7 @@ BEGIN
             End If;
 
             -- Assign users to the request
-            --
+
             CALL public.assign_eus_users_to_requested_run (
                                     _requestID,
                                     _eusUsersList,
@@ -971,7 +971,7 @@ BEGIN
             End If;
 
             -- Assign users to the request
-            --
+
             CALL public.assign_eus_users_to_requested_run (
                                     _requestID,
                                     _eusUsersList,

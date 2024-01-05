@@ -102,7 +102,7 @@ BEGIN
             CALL public.post_log_entry ('Warning', _jobMessage, 'Update_Missed_MyEMSL_State_Values', 'cap');
 
             -- Reset skipped ArchiveVerify steps for the affected datasets
-            --
+
             UPDATE cap.t_task_steps
             SET State = 2
             WHERE job IN ( SELECT M.job
@@ -164,7 +164,7 @@ BEGIN
             CALL public.post_log_entry ('Warning', _message, 'Update_Missed_MyEMSL_State_Values', 'cap');
 
             -- Reset skipped ArchiveVerify steps for the datasets associated with the affected analysis jobs
-            --
+
             UPDATE cap.t_task_steps
             SET State = 2
             FROM cap.t_myemsl_uploads U

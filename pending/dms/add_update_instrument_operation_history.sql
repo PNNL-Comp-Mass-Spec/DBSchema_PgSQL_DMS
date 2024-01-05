@@ -109,7 +109,7 @@ BEGIN
         If _userID > 0 Then
             -- Function get_user_id() recognizes both a username and the form 'LastName, FirstName (Username)'
             -- Assure that _postedBy contains simply the username
-            --
+
             SELECT username
             INTO _postedBy
             FROM t_users

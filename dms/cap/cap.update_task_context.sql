@@ -109,7 +109,7 @@ BEGIN
         ---------------------------------------------------
 
         -- Make New Automatic Tasks
-        --
+
         SELECT enabled
         INTO _result
         FROM cap.t_process_step_control
@@ -135,7 +135,7 @@ BEGIN
         End If;
 
         -- Make New Tasks From Analysis Broker
-        --
+
         SELECT enabled
         INTO _result
         FROM cap.t_process_step_control
@@ -165,7 +165,7 @@ BEGIN
         End If;
 
         -- Make New Tasks From DMS
-        --
+
         SELECT enabled
         INTO _result
         FROM cap.t_process_step_control
@@ -196,7 +196,7 @@ BEGIN
         End If;
 
         -- Make New Archive Tasks From DMS
-        --
+
         SELECT enabled
         INTO _result
         FROM cap.t_process_step_control

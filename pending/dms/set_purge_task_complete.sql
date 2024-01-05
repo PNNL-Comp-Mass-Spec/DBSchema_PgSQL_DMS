@@ -158,19 +158,16 @@ Code 6 (Purged all data except QC folder)
 
     If _completionState < 0 And _completionCode = 0 Then
         -- Success
-        --
         _completionState := 4;      -- Purged
     End If;
 
     If _completionState < 0 And _completionCode = 1 Then
         -- Failed
-        --
         _completionState := 8;      -- Purge failed
     End If;
 
     If _completionState < 0 And _completionCode = 2 Then
         -- Update required
-        --
         _completionState := 3;      -- Complete
         _currentUpdateState := 2;   -- Update Required
         CALL cap.make_new_archive_update_task (_datasetName, _resultsDirectoryName => '', _allowBlankResultsDirectory => true, _message => _message, _returncode => _returncode);
@@ -178,7 +175,7 @@ Code 6 (Purged all data except QC folder)
 
     If _completionState < 0 And _completionCode = 3 Then
         -- MD5 results file is missing; need to have stageMD5 file created by the DatasetPurgeArchiveHelper
-        --
+
         _completionState := 3   ;   -- Complete
     End If;
 
@@ -190,7 +187,7 @@ Code 6 (Purged all data except QC folder)
 
     If _completionState < 0 And _completionCode = 4 Then
         -- Drive Missing
-        --
+
         _message := format('Drive not found for dataset %s', _datasetName);
         CALL post_log_entry ('Error', _message, _postedBy);
         _message := '';
@@ -200,19 +197,19 @@ Code 6 (Purged all data except QC folder)
 
     If _completionState < 0 And _completionCode = 5 Then
         -- Purged Instrument Data and any other auto-purge items
-        --
+
         _completionState := 14   ; -- complete
     End If;
 
     If _completionState < 0 And _completionCode = 6 Then
         -- Purged all data except QC folder
-        --
+
         _completionState := 15   ; -- complete
     End If;
 
     If _completionState < 0 And _completionCode = 7 Then
         -- Dataset folder missing in archive, either in MyEMSL or at \\agate.emsl.pnl.gov\dmsarch
-        --
+
         _message := format('Dataset folder not found in archive or in MyEMSL; most likely a MyEMSL timeout, but could be a permissions error; dataset %s', _datasetName);
         CALL post_log_entry ('Error', _message, _postedBy);
         _message := '';
@@ -222,7 +219,7 @@ Code 6 (Purged all data except QC folder)
 
     If _completionState < 0 And _completionCode = 8 Then
         -- Archive is offline (Aurora is offline): \\agate.emsl.pnl.gov\dmsarch
-        --
+
         _message := format('Archive is offline; cannot purge dataset %s', _datasetName);
         CALL post_log_entry ('Error', _message, _postedBy);
         _message := '';
@@ -232,7 +229,7 @@ Code 6 (Purged all data except QC folder)
 
     If _completionState < 0 And _completionCode = 9 Then
         -- Previewed purge
-        --
+
         _completionState := 3   ; -- complete
     End If;
 

@@ -94,7 +94,7 @@ BEGIN
     ---------------------------------------------------
 
     -- Find most recent successful historic job
-    --
+
     SELECT MAX(saved)
     INTO _dateStamp
     FROM sw.t_jobs_history
@@ -104,7 +104,7 @@ BEGIN
         RAISE INFO 'No successful jobs found in sw.t_jobs_history for job %; will look for a failed job', _job;
 
         -- Find most recent historic job, regardless of job state
-        --
+
         SELECT MAX(saved)
         INTO _dateStamp
         FROM sw.t_jobs_history
@@ -237,7 +237,7 @@ BEGIN
 
         -- Change any waiting, enabled, or running steps to state 7 (holding)
         -- This is a safety feature to avoid job steps from starting inadvertently
-        --
+
         UPDATE sw.t_job_steps
         SET state = 7
         WHERE job = _job AND
@@ -269,7 +269,7 @@ BEGIN
         _currentLocation := format('Insert into sw.t_job_step_dependencies for %s', _jobDateDescription);
 
         -- First delete any extra steps for this job that are in sw.t_job_step_dependencies
-        --
+
         DELETE FROM sw.t_job_step_dependencies target
         WHERE EXISTS
             (  SELECT 1
@@ -292,7 +292,7 @@ BEGIN
 
 
         -- Check whether this job has entries in sw.t_job_step_dependencies_history
-        --
+
         If Not Exists (SELECT job FROM sw.t_job_step_dependencies_history WHERE job = _job) Then
             -- Job did not have cached dependencies
             -- Look for a job that used the same script
@@ -378,7 +378,7 @@ BEGIN
             End If;
 
             -- Now add/update the job step dependencies
-            --
+
             INSERT INTO sw.t_job_step_dependencies (job, Step, Target_Step, condition_test, test_value, evaluated, triggered, enable_only)
             SELECT job,
                    step,

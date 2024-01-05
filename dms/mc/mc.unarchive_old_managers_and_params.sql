@@ -239,7 +239,7 @@ BEGIN
            ON M.mgr_id = Src.mgr_id;
 
     -- Set the manager ID sequence's current value to the maximum manager ID
-    --
+
     SELECT MAX(mc.t_mgrs.mgr_id)
     INTO _newSeqValue
     FROM mc.t_mgrs;
@@ -274,7 +274,7 @@ BEGIN
                          );
 
     -- Set the entry_id sequence's current value to the maximum entry_id
-    --
+
     SELECT MAX(PV.entry_id)
     INTO _newSeqValue
     FROM mc.t_param_value PV;

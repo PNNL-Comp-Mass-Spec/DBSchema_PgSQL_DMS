@@ -61,7 +61,6 @@ BEGIN
     --
     -- Prior to May 2012 we also excluded datasets with archive update state: 3=Update In Progress
     -- However, we now allow jobs to run if a dataset has an archive update job running
-    --
     ---------------------------------------------------
 
     UPDATE sw.t_jobs
@@ -109,7 +108,7 @@ BEGIN
     FROM sw.t_local_job_processors;
 
     -- Use a MERGE Statement to synchronize sw.t_local_job_processors with v_get_pipeline_job_processors
-    --
+
     MERGE INTO sw.t_local_job_processors AS target
     USING ( SELECT job, processor, general_processing
             FROM public.v_get_pipeline_job_processors AS VGP
@@ -154,7 +153,7 @@ BEGIN
     GET DIAGNOSTICS _mergeDeleteCount = ROW_COUNT;
 
     -- Uncomment to see the number of affected rows
-    --
+
     -- If _mergeCount > 0 Or _mergeDeleteCount > 0 Then
     --     _message := format('Added/updated sw.t_local_job_processors; UpdateCount = %s; InsertCount = %s, DeleteCount = %s', _mergeUpdateCount, _mergeInsertCount, _mergeDeleteCount);
     --     RAISE INFO '%', _message;

@@ -167,7 +167,7 @@ BEGIN
 
     -- Get preceeding dataset (latest with starting time preceding this month)
     -- Use "extract(epoch ...) / 60.0" to get the difference in minutes between the two timestamps
-    --
+
     If extract(epoch FROM (_firstStart - _firstDayOfStartingMonth)) / 60.0 > _maxNormalInterval Then
         SELECT TD.dataset_id AS id,
                TD.dataset AS dataset,
@@ -189,7 +189,7 @@ BEGIN
 
         -- If preceeding dataset's end time is before start of month, zero the duration and truncate the interval,
         -- otherwise just truncate the duration
-        --
+
         If _precEnd < _firstDayOfStartingMonth Then
             _preceedingDataset.duration := 0;
             _preceedingDataset."interval" := _initialGap;
@@ -199,7 +199,7 @@ BEGIN
 
         -- Add preceeding dataset record (with truncated duration/interval)
         -- at beginning of results
-        --
+
         INSERT INTO Tmp_TX ( seq,
                              dataset,
                              id,
@@ -229,7 +229,7 @@ BEGIN
     -- truncate duration and set interval to zero
 
     -- Otherwise, if interval hangs over succeeding month, truncate it
-    --
+
     SELECT Tmp_TX.time_start,
            Tmp_TX.time_end,
            Tmp_TX."interval"       -- Interval, in minutes

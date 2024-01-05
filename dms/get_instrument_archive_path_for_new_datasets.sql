@@ -86,7 +86,7 @@ BEGIN
         If FOUND And Coalesce(_instrumentInfo.AutoDefineStoragePath, 0) = 0 Then
 
             -- Use the archive path defined in t_archive_path for _instrumentID
-            --
+
             SELECT archive_path_id
             INTO _archivePathID
             FROM t_archive_path

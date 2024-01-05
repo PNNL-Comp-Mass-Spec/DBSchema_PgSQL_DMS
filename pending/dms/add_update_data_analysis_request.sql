@@ -297,7 +297,7 @@ BEGIN
 
         If _batchDefined > 0 And Coalesce(_workPackage, '')::citext In ('', 'na', 'none') Then
             -- Auto-define using requests in the batch(s)
-            --
+
             SELECT work_package
             INTO _workPackage
             FROM ( SELECT work_package AS Work_Package,
@@ -332,7 +332,7 @@ BEGIN
         End If;
 
         -- Make sure the Work Package is capitalized properly
-        --
+
         SELECT charge_code
         INTO _workPackage
         FROM t_charge_code
@@ -541,7 +541,7 @@ BEGIN
 
         If _batchDefined > 0 And _representativeBatchID Is Null Then
             -- Either _preferredContainer is not 'Batch' or none of the batches has a requested run with a dataset
-            --
+
             SELECT batch_id
             INTO _representativeBatchID
             FROM ( SELECT RR.batch_id As Batch_ID,
@@ -555,7 +555,7 @@ BEGIN
 
             If Not FOUND Then
                 -- None of the batches has any requested runs
-                --
+
                 SELECT Batch_ID
                 INTO _representativeBatchID
                 FROM Tmp_BatchIDs
@@ -575,9 +575,7 @@ BEGIN
 
         If _mode Like '%update%' Then
             -- Cannot update a non-existent entry
-            --
-            _currentStateID := 0;
-            --
+
             SELECT state,
                    assigned_personnel
             INTO _currentStateID, _currentAssignedPersonnel
@@ -589,13 +587,13 @@ BEGIN
             End If;
 
             -- Limit who can make changes if in 'closed' state
-            --
+
             If _currentStateID = 4 And Not Exists (SELECT username FROM V_Data_Analysis_Request_User_Picklist WHERE username = _callingUser) Then
                 RAISE EXCEPTION 'Changes to entry are not allowed if it is in the "Closed" state';
             End If;
 
             -- Don't allow change to 'Analysis in Progress' unless someone has been assigned
-            --
+
             If _state::citext = 'Analysis in Progress' And (_assignedPersonnel = '' Or _assignedPersonnel = 'na') Then
                 RAISE EXCEPTION 'Assigned personnel must be selected when the state is "Analysis in Progress"';
             End If;
@@ -603,7 +601,6 @@ BEGIN
 
         If _mode Like '%add%' Then
             -- Make sure the work package is not inactive
-            --
 
             SELECT CCAS.activation_state,
                    CCAS.activation_state_name
@@ -768,7 +765,7 @@ BEGIN
 
                 -- Delete rows in t_data_analysis_request_batch_ids where t.Request_ID = _id
                 -- but the batch_id is not in Tmp_BatchIDs
-                --
+
                 DELETE FROM t_data_analysis_request_batch_ids t
                 WHERE t.request_id = _id AND
                       NOT t.batch_id IN (SELECT B.Batch_ID FROM Tmp_BatchIDs B);

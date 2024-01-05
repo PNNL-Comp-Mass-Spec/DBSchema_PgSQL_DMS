@@ -358,7 +358,7 @@ BEGIN
         End If;
 
         -- Get parameters for the capture task job as XML
-        --
+
         _xmlParameters := cap.create_parameters_for_task (_jobInfo.Job, _jobInfo.Dataset, _jobInfo.DatasetID,
                                                           _jobInfo.Script, _jobInfo.StorageServer,
                                                           _jobInfo.Instrument, _jobInfo.InstrumentClass,
@@ -500,7 +500,7 @@ BEGIN
 
     If _debugMode Then
         -- Show contents of Tmp_Jobs
-        --
+
         CALL sw.show_tmp_jobs();
     End If;
 

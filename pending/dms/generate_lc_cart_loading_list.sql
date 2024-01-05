@@ -150,7 +150,6 @@ BEGIN
     ---------------------------------------------------
 
     -- How many samples in longest column queue?
-    --
 
     SELECT MAX(CountQ.SampleCount)
     INTO _maxSamples
@@ -165,18 +164,18 @@ BEGIN
     FOR _columnNumber IN 1 .. _columnCount
     LOOP
         -- How many samples in column queue?
-        --
+
         SELECT COUNT(request_id)
         INTO _qLen
         FROM Tmp_XR
         WHERE cart_column_id = _columnNumber;
 
         -- Number of blanks to add
-        --
+
         _padCnt := _maxSamples - _qLen;
 
         -- Append blanks
-        --
+
         FOR _c IN 1 .. _padCnt
         LOOP
             INSERT INTO Tmp_XR (request_id, cart_column_id, entry_id)

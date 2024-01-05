@@ -263,7 +263,7 @@ BEGIN
                 _libraryNameHash := sw.get_sha1_hash(_defaultLibraryName);
 
                 -- Truncate the library name to 110 characters, then append an underscore and the first 8 characters of the hash
-                --
+
                 _defaultLibraryName := Substring(_defaultLibraryName, 1, 110);
 
                 If Right(_defaultLibraryName, 1) <> '_' Then

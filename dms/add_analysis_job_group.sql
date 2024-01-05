@@ -452,7 +452,7 @@ BEGIN
             If _datasetCountToRemove > 0 Then
 
                 -- Remove datasets from list that have existing jobs
-                --
+
                 DELETE FROM Tmp_DatasetInfo
                 WHERE Dataset_Name IN (SELECT Dataset FROM Tmp_MatchingJobDatasets);
                 --
@@ -461,7 +461,7 @@ BEGIN
                 _jobCountToBeCreated := _jobCountToBeCreated - _deleteCount;
 
                 -- Construct message of removed dataset(s)
-                --
+
                 _removedDatasetsMsg := format('Skipped %s %s existing jobs',
                                               _datasetCountToRemove,
                                               public.check_plural(_datasetCountToRemove, 'dataset that has', 'datasets that have'));
@@ -592,7 +592,7 @@ BEGIN
                 _createdSettingsFileValuesTable := true;
 
                 -- Populate the temporary Table by parsing the XML in the contents column of table t_settings_files
-                --
+
                 INSERT INTO Tmp_SettingsFile_Values_DataPkgJob (SectionName, KeyName, Value)
                 SELECT XmlQ.section, XmlQ.name, XmlQ.value
                 FROM (
@@ -650,7 +650,7 @@ BEGIN
                 _resultsDirectoryName = '';
 
                  -- Note that the parameters defined here need to stay in sync with the parameters in the 'SELECT SectionName, KeyName, Value FROM Tmp_SettingsFile_Values_DataPkgJob' query below
-                 --
+
                 _jobParam :=
                    format('<Param Section="JobParameters" Name="CreateMzMLFiles" Value="%s" />',            _createMzMLFilesFlag)       ||
                    format('<Param Section="JobParameters" Name="DatasetName" Value="Aggregation" />')                                   ||
@@ -955,15 +955,15 @@ BEGIN
 
             If _gid <> 0 Then
                 -- if single job was created, get its identity directly
-                --
+
                 If _batchID = 0 And _jobCountToBeCreated = 1 Then
                     INSERT INTO t_analysis_job_processor_group_associations (job, group_id)
                     VALUES (_jobID, _gid);
                 End If;
-                --
+
                 -- if multiple jobs were created, get job identities
                 -- from all jobs using new batch ID
-                --
+
                 If _batchID <> 0 And _jobCountToBeCreated >= 1 Then
                     INSERT INTO t_analysis_job_processor_group_associations (job, group_id)
                     SELECT job, _gid

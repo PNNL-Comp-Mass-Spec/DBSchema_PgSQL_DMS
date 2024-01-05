@@ -56,7 +56,7 @@ BEGIN
     If _debugMode Then
 
         -- Store the contents of the temporary tables in persistent tables
-        --
+
         DROP TABLE IF EXISTS cap.T_Tmp_New_Tasks;
         DROP TABLE IF EXISTS cap.T_Tmp_New_Task_Steps;
         DROP TABLE IF EXISTS cap.T_Tmp_New_Task_Step_Dependencies;

@@ -94,7 +94,7 @@ BEGIN
     End If;
 
     -- Concatenate together the parameters to build up the XML
-    --
+
     _remoteInfoXML := '';
 
     SELECT format('%s<host>%s</host>', _remoteInfoXML, value)

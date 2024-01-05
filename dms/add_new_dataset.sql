@@ -450,7 +450,7 @@ BEGIN
 
     If _returnCode <> '' Then
         -- Uncomment to log the XML to T_Log_Entries
-        --
+
         /*
         If _mode = 'add' Then
             _logMessage := format('Error adding new dataset: %s; %s', _message, _xmlDoc);

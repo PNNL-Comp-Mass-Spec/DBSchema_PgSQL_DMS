@@ -146,7 +146,7 @@ BEGIN
     If Trim(_cleanupMode) = '1' Then
 
         -- Manager is set to auto-cleanup only once; change 'ManagerErrorCleanupMode' to 0
-        --
+
         UPDATE mc.t_param_value
         SET value = '0'
         WHERE entry_id IN (

@@ -49,7 +49,7 @@ BEGIN
     -- Obtain all of the parameters, with one row per parameter, for example:
     --   '<Param Section="JobParameters" Name="Dataset_ID" Value="1016870"/>'
     --   '<Param Section="JobParameters" Name="Storage_Server_Name" Value="proto-4"/>'
-    --
+
     SELECT unnest(xpath('//params/Param', rooted_xml))::text
     FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml as rooted_xml
            FROM cap.t_task_parameters
@@ -58,7 +58,7 @@ BEGIN
 
     -- Obtain a single parameter:
     --   '<Param Section="JobParameters" Name="Storage_Server_Name" Value="proto-4"/>'
-    --
+
     SELECT unnest(xpath('//params/Param[@Name="Storage_Server_Name"]', rooted_xml))::text
     FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml as rooted_xml
            FROM cap.t_task_parameters
@@ -67,7 +67,7 @@ BEGIN
 
     -- Obtain the parameter value:
     --   'proto-4'
-    --
+
     SELECT unnest(xpath('//params/Param[@Name="Storage_Server_Name"]/@Value', rooted_xml))::text
     FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml as rooted_xml
            FROM cap.t_task_parameters

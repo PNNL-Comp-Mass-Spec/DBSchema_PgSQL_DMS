@@ -173,7 +173,7 @@ BEGIN
         End If;
 
         -- Reset evaluated to 0 for the affected steps
-        --
+
         UPDATE sw.t_job_step_dependencies JSD
         SET evaluated = 0, triggered = 0
         FROM Tmp_JobStepsToReset JR
@@ -181,7 +181,7 @@ BEGIN
               JSD.Step = JR.Step;
 
         -- Update the Job Steps to state Waiting
-        --
+
         UPDATE sw.t_job_steps JS
         SET state = 1,                      -- 1=Waiting
             tool_version_id = 1,            -- 1=Unknown

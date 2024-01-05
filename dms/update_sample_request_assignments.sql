@@ -90,7 +90,7 @@ BEGIN
     _updateCount := 0;
 
     -- Process each request in Tmp_RequestsToProcess
-    --
+
     FOR _id IN
         SELECT RequestID
         FROM Tmp_RequestsToProcess
@@ -100,7 +100,7 @@ BEGIN
         _updateCount := _updateCount + 1;
 
         -- Estimated completion date
-        --
+
         If _mode = 'est_completion' Then
             _dt := public.try_cast(_newValue, null::timestamp);
 
@@ -114,7 +114,7 @@ BEGIN
         End If;
 
         -- Priority: must be 'Normal' or 'High'
-        --
+
         If _mode = 'priority' Then
 
             -- Make sure the priority is valid and properly capitalized
@@ -127,14 +127,14 @@ BEGIN
             End If;
 
             -- Set priority
-            --
+
             UPDATE t_sample_prep_request
             SET priority = _newValue
             WHERE prep_request_id = _id;
         End If;
 
         -- The 'assignment' mode is used for web page option 'Assign selected requests to preparer(s)'
-        --
+
         If _mode = 'assignment' Then
             UPDATE t_sample_prep_request
             SET assigned_personnel = _newValue,
@@ -144,7 +144,7 @@ BEGIN
         End If;
 
         -- The 'req_assignment' mode is used for web page option "Assign selected requests to requested personnel"
-        --
+
         If _mode = 'req_assignment' Then
             UPDATE t_sample_prep_request
             SET assigned_personnel = requested_personnel,
@@ -154,7 +154,7 @@ BEGIN
         End If;
 
         -- State (by state name)
-        --
+
         If _mode = 'state' Then
             -- Get state ID
 

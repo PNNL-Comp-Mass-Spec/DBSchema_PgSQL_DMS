@@ -111,7 +111,7 @@ BEGIN
         End If;
 
         -- Cannot update a non-existent entry
-        --
+
         If _mode = 'update' Then
             If Not Exists (SELECT Batch_Group_ID FROM t_requested_run_batch_group WHERE Batch_Group_ID = _id) Then
                 _message := format('Cannot update: batch group ID %s does not exist', _id);
@@ -131,7 +131,7 @@ BEGIN
         If _userID > 0 Then
             -- Function get_user_id recognizes both a username and the form 'LastName, FirstName (Username)'
             -- Assure that _ownerUsername contains simply the username
-            --
+
             SELECT username
             INTO _ownerUsername
             FROM t_users
@@ -316,7 +316,7 @@ BEGIN
             If _id > 0 Then
                 -- Remove any existing references to the batch group
                 -- from requested run batches
-                --
+
                 UPDATE t_requested_run_batches
                 SET Batch_Group_ID = null
                 WHERE Batch_Group_ID = _id AND
@@ -325,7 +325,7 @@ BEGIN
             End If;
 
             -- Add a reference to this batch group to the batches in the list
-            --
+
             UPDATE t_requested_run_batches
             SET Batch_Group_ID = _id,
                 Batch_Group_Order = Src.Batch_Group_Order

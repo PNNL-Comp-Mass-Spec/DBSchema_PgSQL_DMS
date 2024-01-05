@@ -146,7 +146,7 @@ BEGIN
 
         If _mode = 'update' Then
             -- Update capture task job and params
-            --
+
             UPDATE  cap.t_tasks
             SET     priority = _priority ,
                     comment = _comment ,

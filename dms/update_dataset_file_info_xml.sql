@@ -713,13 +713,13 @@ BEGIN
 
         -- First look for any entries in the temporary table
         -- where Acq_Time_Start is Null while Acq_Time_End is defined
-        --
+
         UPDATE Tmp_DSInfoTable
         SET Acq_Time_Start = Acq_Time_End
         WHERE Acq_Time_Start IS NULL AND NOT Acq_Time_End IS NULL;
 
         -- Now look for the reverse case
-        --
+
         UPDATE Tmp_DSInfoTable
         SET Acq_Time_End = Acq_Time_Start
         WHERE Acq_Time_End IS NULL AND NOT Acq_Time_Start IS NULL;
@@ -901,7 +901,7 @@ BEGIN
         _currentLocation := 'Delete extra rows from t_dataset_files';
 
         -- Look for extra files that need to be deleted
-        --
+
         DELETE FROM t_dataset_files target
         WHERE target.Dataset_ID = _datasetID AND
               target.Deleted = false AND

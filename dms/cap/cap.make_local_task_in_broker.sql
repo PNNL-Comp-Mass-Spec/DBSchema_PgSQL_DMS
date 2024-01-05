@@ -131,7 +131,7 @@ BEGIN
         _currentLocation := 'Look for script in cap.t_scripts';
 
         -- Get contents of script and tag for results directory name
-        --
+
         SELECT contents, results_tag
         INTO _scriptXML, _tag
         FROM cap.t_scripts
@@ -221,7 +221,7 @@ BEGIN
             _currentLocation := 'Add row to cap.t_tasks';
 
             -- Move_Tasks_To_Main_Tables procedure assumes that t_tasks table entry is already there
-            --
+
             INSERT INTO cap.t_tasks (
                   Priority,
                   Script,

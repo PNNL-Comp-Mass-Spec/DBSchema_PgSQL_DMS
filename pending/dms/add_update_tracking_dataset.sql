@@ -279,7 +279,7 @@ BEGIN
         If _userID > 0 Then
             -- Function get_user_id() recognizes both a username and the form 'LastName, FirstName (Username)'
             -- Assure that _operatorUsername contains simply the username
-            --
+
             SELECT username
             INTO _operatorUsername
             FROM t_users
@@ -326,7 +326,7 @@ BEGIN
             _newDSStateID := 3;
 
             -- Insert values into a new row
-            --
+
             INSERT INTO t_dataset(
                 dataset,
                 operator_username,

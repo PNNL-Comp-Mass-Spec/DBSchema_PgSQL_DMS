@@ -230,7 +230,7 @@ BEGIN
     INSERT INTO Tmp_SQL (value) VALUES (format('USING (SELECT * FROM %I.%I) AS s', _sourceSchema, _tableName));
 
     -- Lookup the names of the primary key columns
-    --
+
     INSERT INTO Tmp_PrimaryKeyColumns (ColumnName, data_type_id, IsNumberCol, IsDateCol, UndefinedComparison)
     SELECT pg_attribute.attname AS column_name,
            pg_attribute.atttypid AS data_type_id,
@@ -283,7 +283,6 @@ BEGIN
     End If;
 
     -- Use the primary key(s) to define the column(s) to join on
-    --
 
     SELECT string_agg(format('t.%I = s.%I', ColumnName, ColumnName), ' AND ')
     INTO _list
@@ -292,7 +291,7 @@ BEGIN
     INSERT INTO Tmp_SQL (value) VALUES (format('ON (%s)', _list));
 
     -- Find the updatable columns (those that are not primary keys, identity columns, computed columns, or transaction ID columns)
-    --
+
     INSERT INTO Tmp_UpdatableColumns (ColumnName, data_type_id, is_nullable, UndefinedComparison)
     SELECT a.attname AS column_name,
            a.atttypid AS data_type_id,
@@ -366,7 +365,7 @@ BEGIN
         ---------------------------------------------------
 
         -- Compare the non-nullable columns
-        --
+
         SELECT string_agg(format('      t.%I <> s.%I', C.ColumnName, C.ColumnName), ' OR ' || _newLine)
         INTO _whereListA
         FROM Tmp_UpdatableColumns C
@@ -374,7 +373,7 @@ BEGIN
               C.data_type_id <> 142;   -- Exclude XML columns
 
         -- Compare the nullable columns
-        --
+
         SELECT string_agg(format('      t.%I IS DISTINCT FROM s.%I', C.ColumnName, C.ColumnName), ' OR ' || _newLine)
         INTO _whereListB
         FROM Tmp_UpdatableColumns C
@@ -382,7 +381,7 @@ BEGIN
               C.data_type_id <> 142;   -- Exclude XML columns
 
         -- Compare XML columns
-        --
+
         SELECT string_agg(format('      Coalesce(t.%I::text, '''') IS DISTINCT FROM Coalesce(s.%I::text, '''')', C.ColumnName, C.ColumnName), ' OR ' || _newLine)
         INTO _whereListC
         FROM Tmp_UpdatableColumns C
@@ -405,7 +404,6 @@ BEGIN
         INSERT INTO Tmp_SQL (value) VALUES ('     ) THEN');
 
         -- SQL that actually updates the data
-        --
 
         SELECT string_agg(format('        %I = s.%I', ColumnName, ColumnName), ', ' || _newline)
         INTO _list

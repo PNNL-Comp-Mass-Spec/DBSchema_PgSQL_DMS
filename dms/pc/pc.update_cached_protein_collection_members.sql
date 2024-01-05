@@ -98,7 +98,7 @@ BEGIN
 
     If _updateAll Then
         -- Reprocess all of the protein collections
-        --
+
         INSERT INTO Tmp_ProteinCollections( Protein_Collection_ID,
                                             Num_Proteins,
                                             Processed )
@@ -110,7 +110,7 @@ BEGIN
 
     Else
         -- Only add new protein collections
-        --
+
         INSERT INTO Tmp_ProteinCollections( Protein_Collection_ID,
                                             Num_Proteins,
                                             Processed )
@@ -190,7 +190,7 @@ BEGIN
 
         -- Find the next set of collections to process
         -- The goal is to process up to 500,000 proteins
-        --
+
         INSERT INTO Tmp_CurrentIDs( Protein_Collection_ID )
         SELECT PC.Protein_Collection_ID
         FROM Tmp_ProteinCollections PC
@@ -211,7 +211,7 @@ BEGIN
             End If;
 
             -- The next available protein collection has over 500,000 proteins
-            --
+
             INSERT INTO Tmp_CurrentIDs (Protein_Collection_ID)
             SELECT Protein_Collection_ID
             FROM Tmp_ProteinCollections
@@ -232,7 +232,7 @@ BEGIN
 
         If _maxCollectionsToUpdate > 0 Then
             -- Too many candidate collections; delete the extras
-            --
+
             If _showDebug Then
                 RAISE INFO 'Too many collections in the batch; deleting extras';
             End If;
@@ -245,7 +245,7 @@ BEGIN
         End If;
 
         -- Update the processed flag for the candidates
-        --
+
         UPDATE Tmp_ProteinCollections
         SET Processed = true
         FROM Tmp_CurrentIDs C

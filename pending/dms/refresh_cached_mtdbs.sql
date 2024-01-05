@@ -123,7 +123,7 @@ BEGIN
         End If;
 
         -- Delete rows in t_mts_mt_dbs_cached that are not in S_MTS_MT_DBs
-        --
+
         DELETE FROM t_mts_mt_dbs_cached target
         WHERE NOT EXISTS (SELECT source.mt_db_id
                           FROM S_MTS_MT_DBs AS source

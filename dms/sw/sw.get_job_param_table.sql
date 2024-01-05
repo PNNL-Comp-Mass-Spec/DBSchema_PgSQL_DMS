@@ -185,7 +185,7 @@ BEGIN
     ---------------------------------------------------
 
     -- Lookup the settings file name
-    --
+
     SELECT P.Value
     INTO _settingsFileName
     FROM Tmp_Param_Tab P
@@ -200,7 +200,7 @@ BEGIN
     End If;
 
     -- Lookup the analysis tool name
-    --
+
     SELECT P.Value
     INTO _analysisToolName
     FROM Tmp_Param_Tab P
@@ -215,7 +215,7 @@ BEGIN
     End If;
 
     -- Retrieve the settings file contents (as XML)
-    --
+
     SELECT Contents
     INTO _paramXML
     FROM public.t_settings_files

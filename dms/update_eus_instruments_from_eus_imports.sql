@@ -61,7 +61,7 @@ BEGIN
 
     BEGIN
         -- Count the number of rows before the merge
-        --
+
         SELECT COUNT(eus_instrument_id)
         INTO _countOld
         FROM t_emsl_instruments;
@@ -118,7 +118,7 @@ BEGIN
         GET DIAGNOSTICS _mergeCount = ROW_COUNT;
 
         -- Count the number of rows after the merge
-        --
+
         SELECT COUNT(eus_instrument_id)
         INTO _countNew
         FROM t_emsl_instruments;

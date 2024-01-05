@@ -36,7 +36,7 @@ DECLARE
 BEGIN
 
     -- Table for processing runs and intervals for reporting month
-    --
+
     CREATE TEMP TABLE Tmp_T_Working
     (
         Dataset_ID int null,
@@ -63,7 +63,7 @@ BEGIN
     );
 
     -- Intermediate storage for report entries
-    --
+
     CREATE TEMP TABLE Tmp_T_Report_Accumulation
     (
         Start timestamp,
@@ -83,7 +83,7 @@ BEGIN
 
     -- Import entries from EMSL instrument usage table
     -- for given month and year into working table
-    --
+
     INSERT INTO Tmp_T_Working
     ( Dataset_ID,
       EMSL_Inst_ID,
@@ -126,10 +126,9 @@ BEGIN
     -- While loop to pull records out of working table
     -- into accumulation table, allowing for durations that
     -- cross daily boundaries
-    --
+
     WHILE _continue
     LOOP
-
         -- Update working table with end times
 
         UPDATE  Tmp_T_Working AS W
@@ -146,7 +145,7 @@ BEGIN
 
         -- Copy usage records that do not span more than one day
         -- from working table to accumulation table
-        --
+
         INSERT INTO Tmp_T_Report_Accumulation
         ( EMSL_Inst_ID,
           DMS_Instrument,
@@ -182,14 +181,14 @@ BEGIN
 
         -- Remove report entries from working table
         -- whose duration does not cross daily boundary
-        --
+
         DELETE FROM Tmp_T_Working
         WHERE  Remaining_Duration_Seconds < 0;
 
         -- Copy report entries into accumulation table for
         -- remaining durations (cross daily boundaries)
         -- using only duration time contained inside daily boundary
-        --
+
         INSERT INTO Tmp_T_Report_Accumulation
         ( EMSL_Inst_ID,
           DMS_Instrument,
@@ -221,7 +220,7 @@ BEGIN
         FROM Tmp_T_Working W;
 
         -- Update start time and duration of entries in working table
-        --
+
         UPDATE Tmp_T_Working
         SET Run_or_Interval_Start = Beginning_Of_Next_Day,
             Duration_Seconds = Remaining_Duration_Seconds,
@@ -234,7 +233,7 @@ BEGIN
             Remaining_Duration_Seconds = NULL;
 
         -- We are done when there is nothing left to process in working table
-        --
+
         If Not Exists (SELECT * FROM Tmp_T_Working) Then
             _continue := false;
         End If;
@@ -242,7 +241,7 @@ BEGIN
     END LOOP;
 
     -- Rollup comments and update the accumulation table
-    --
+
     UPDATE Tmp_T_Report_Accumulation
     SET Comment = CASE WHEN char_length(GroupQ.Comment) > 4090
                        THEN format('%s ...', Substring(GroupQ.Comment, 1, 4090))
@@ -290,7 +289,7 @@ BEGIN
           Tmp_T_Report_Accumulation.Day = GroupQ.Day;
 
     -- Rollup operators and update the accumulation table
-    --
+
     UPDATE Tmp_T_Report_Accumulation
     SET Operator = GroupQ.Operator
     FROM ( SELECT DistinctQ.EMSL_Inst_ID,

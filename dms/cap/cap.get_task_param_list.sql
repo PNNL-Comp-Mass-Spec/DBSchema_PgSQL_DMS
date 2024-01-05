@@ -48,7 +48,7 @@ BEGIN
     --
     -- The following adds a root node then converts the XML into a table
     -- Next, string_agg() is used to concatenate the fields
-    --
+
     SELECT string_agg(format('Section="%s" Name="%s" Value="%s"', XmlQ.section, XmlQ.name, XmlQ.value), '<br>' ORDER BY XmlQ.section, XmlQ.name)
     INTO _result
     FROM (
@@ -80,14 +80,14 @@ EXCEPTION
                     _logError => true);
 
     -- Use text parsing to convert the XML job parameters
-    --
+
     SELECT format('<pre>%s</pre>', parameters)
     INTO _result
     FROM cap.t_task_parameters
     WHERE job = _job;
 
     -- Replace the XML tags with HTML tags
-    --
+
     _result := Replace(_result, '<Param', '');
     _result := Replace(_result, '/>', '<br>');
 

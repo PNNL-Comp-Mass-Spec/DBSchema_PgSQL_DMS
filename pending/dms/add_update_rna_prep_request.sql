@@ -157,7 +157,7 @@ BEGIN
 
             If Not Exists (SELECT instrument FROM t_instrument_name WHERE instrument = _instrumentName) Then
                 -- Check whether _instrumentName actually has an instrument group
-                --
+
                 SELECT instrument
                 INTO _instrumentName
                 FROM t_instrument_name
@@ -303,7 +303,7 @@ BEGIN
         End If;
 
         -- Make sure the Work Package is capitalized properly
-        --
+
         SELECT charge_code
         INTO _workPackageNumber
         FROM t_charge_code
@@ -327,7 +327,7 @@ BEGIN
             End If;
 
             -- Changes not allowed if in 'closed' state
-            --
+
             If _currentStateID = 5 And Not Exists (SELECT username FROM V_Operations_Task_Staff_Picklist WHERE username = _callingUser) Then
                 RAISE EXCEPTION 'Changes to entry are not allowed if it is in the "Closed" state';
             End If;
@@ -340,13 +340,13 @@ BEGIN
         If _mode = 'add' Then
 
             -- Name must be unique
-            --
+
             If Exists (SELECT request_name FROM t_sample_prep_request WHERE request_name = _requestName::citext) Then
                 RAISE EXCEPTION 'Cannot add: RNA prep request "%" already exists', _requestName;
             End If;
 
             -- Make sure the work package number is not inactive
-            --
+
             SELECT CCAS.activation_state,
                    CCAS.activation_state_name
             INTO _activationState, _activationStateName

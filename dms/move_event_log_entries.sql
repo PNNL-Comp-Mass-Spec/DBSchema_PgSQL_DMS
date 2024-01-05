@@ -57,7 +57,7 @@ BEGIN
     End If;
 
     -- Copy entries into the historic log tables
-    --
+
     INSERT INTO logdms.t_event_log( event_id,
                                     target_type,
                                     target_id,
@@ -77,7 +77,7 @@ BEGIN
     ORDER BY event_id;
 
     -- Remove the old entries from t_event_log
-    --
+
     DELETE FROM public.t_event_log
     WHERE entered < _cutoffDateTime;
 

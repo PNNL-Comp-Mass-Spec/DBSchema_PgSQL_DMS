@@ -255,7 +255,7 @@ BEGIN
     End If;
 
     -- Cannot update a non-existent entry
-    --
+
     If _mode = 'update' And _existingCount = 0 Then
         _message := 'Cannot update: param entry matching the specified parameters not found in table t_param_entries';
         RAISE WARNING '%', _message;

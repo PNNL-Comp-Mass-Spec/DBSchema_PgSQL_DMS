@@ -293,7 +293,7 @@ BEGIN
         Else
             -- Auto-define _newtIDList using _ncbiTaxonomyID though only if the NEWT table has the ID
             -- (there are numerous organisms that nave an NCBI Taxonomy ID but not a NEWT ID)
-            --
+
             If Exists (SELECT Identifier FROM ont.V_CV_NEWT WHERE Identifier = _ncbiTaxonomyID::citext Then
                 _newtIDList := _ncbiTaxonomyID::text;
             End If;
@@ -340,7 +340,7 @@ BEGIN
         ---------------------------------------------------
 
         -- Cannot create an entry that already exists
-        --
+
         If _mode = 'add' Then
             _existingOrganismID := public.get_organism_id(_orgName);
 
@@ -350,7 +350,7 @@ BEGIN
         End If;
 
         -- Cannot update a non-existent entry
-        --
+
         If _mode = 'update' Then
 
             SELECT organism

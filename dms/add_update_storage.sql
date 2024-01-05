@@ -223,7 +223,7 @@ BEGIN
         _spID := public.try_cast(_id, 0);
 
         -- Cannot update a non-existent entry
-        --
+
         If _mode = 'update' Then
             SELECT storage_path_id,
                    storage_path_function
@@ -297,7 +297,7 @@ BEGIN
                 If _storFunction = 'raw-storage' Then
 
                     -- Build list of paths that will be changed
-                    --
+
                     SELECT string_agg(storage_path_id::text, ', ' ORDER BY storage_path_id)
                     INTO _pathIDs
                     FROM t_storage_path
@@ -306,7 +306,7 @@ BEGIN
 
                     -- Set any existing raw-storage paths for instrument
                     -- already in storage table to old-storage
-                    --
+
                     UPDATE t_storage_path
                     SET storage_path_function = 'old-storage'
                     WHERE storage_path_function = 'raw-storage' AND
@@ -324,8 +324,7 @@ BEGIN
                 ---------------------------------------------------
 
                 If _storFunction = 'inbox' Then
-                    _tmpID := 0;
-                    --
+
                     SELECT storage_path_id
                     INTO _tmpID
                     FROM t_storage_path
@@ -392,7 +391,7 @@ BEGIN
             End If;
 
             -- Return storage path ID as text
-            --
+
             _id := _storagePathID;
 
             RETURN;
@@ -434,7 +433,7 @@ BEGIN
             If _storFunction = 'raw-storage' And _oldFunction <> 'raw-storage' Then
 
                 -- Build list of paths that will be changed
-                --
+
                 SELECT string_agg(storage_path_id::text, ', ' ORDER BY storage_path_id)
                 INTO _pathIDs
                 FROM t_storage_path
@@ -443,7 +442,7 @@ BEGIN
 
                 -- Set any existing raw-storage paths for instrument
                 -- already in storage table to old-storage
-                --
+
                 UPDATE t_storage_path
                 SET storage_path_function = 'old-storage'
                 WHERE storage_path_function = 'raw-storage' AND

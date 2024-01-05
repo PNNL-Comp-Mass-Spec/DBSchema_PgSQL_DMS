@@ -77,7 +77,6 @@ BEGIN
     -- Look up number of jobs made from the request
     ---------------------------------------------------
 
-    --
     SELECT COUNT(job)
     INTO _jobCount
     FROM t_analysis_job

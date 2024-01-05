@@ -253,7 +253,7 @@ BEGIN
 
         If _mode In ('update', 'check_update') Then
             -- Confirm the compound exists
-            --
+
             If Not Exists (SELECT compound_id FROM t_reference_compound WHERE compound_id = _compoundID) Then
                 RAISE EXCEPTION 'Cannot update: reference compound ID % does not exist', _compoundID;
             End If;
@@ -279,7 +279,6 @@ BEGIN
         -- Resolve container name to ID
         ---------------------------------------------------
 
-        --
         If Coalesce(_containerName, '') = '' Then
             _containerName := 'na';
         End If;
@@ -303,13 +302,13 @@ BEGIN
         ---------------------------------------------------
 
         -- Verify that Contact Username is valid and resolve its ID
-        --
+
         _userID := public.get_user_id(_contactUsername);
 
         If _userID > 0 Then
             -- Function get_user_id() recognizes both a username and the form 'LastName, FirstName (Username)'
             -- Assure that _contactUsername contains simply the username
-            --
+
             SELECT username
             INTO _contactUsername
             FROM t_users
@@ -392,7 +391,7 @@ BEGIN
             End If;
 
             -- Material movement logging
-            --
+
             If _curContainerID <> _containerID Then
                 CALL public.post_material_log_entry (
                                 _type         => 'Reference Compound Move',
@@ -440,7 +439,7 @@ BEGIN
             End If;
 
             -- Material movement logging
-            --
+
             If _curContainerID <> _containerID Then
                 CALL public.post_material_log_entry (
                                 _type         => 'Reference Compound Move',

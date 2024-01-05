@@ -104,7 +104,7 @@ BEGIN
         End If;
 
         -- Lookup path to results directory for job given by _sourceJob and add it to temp parameters table
-        --
+
         SELECT Archive_Folder_Path AS ArchiveFolderPath,
                Dataset,
                Dataset_Storage_Path AS DatasetStoragePath,

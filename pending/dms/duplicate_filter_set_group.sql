@@ -145,7 +145,7 @@ BEGIN
         VALUES (_filterSetID, _filterCriteriaGroupIDNext);
 
         -- Duplicate the criteria for group _filterCriteriaGroupID (from Filter Set _filterSetID)
-        --
+
         INSERT INTO t_filter_set_criteria
             (filter_criteria_group_id, criterion_id, criterion_comparison, Criterion_Value)
         SELECT _filterCriteriaGroupIDNext AS NewGroupID, Criterion_ID, Criterion_Comparison, Criterion_Value

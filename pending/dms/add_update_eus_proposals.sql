@@ -163,7 +163,7 @@ BEGIN
 
         If char_length(Coalesce(_autoSupersedeProposalID, '')) > 0 Then
             -- Verify that _autoSupersedeProposalID exists
-            --
+
             If Not Exists (SELECT proposal_id FROM t_eus_proposals WHERE proposal_id = _autoSupersedeProposalID) Then
                 _logErrors := false;
                 _msg := format('Cannot supersede proposal "%s" with "%s" since the new proposal does not exist', _eusPropID, _autoSupersedeProposalID);

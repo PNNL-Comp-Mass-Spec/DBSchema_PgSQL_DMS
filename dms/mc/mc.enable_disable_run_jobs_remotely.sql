@@ -104,7 +104,7 @@ BEGIN
     );
 
     -- Populate Tmp_ManagerList using parse_manager_name_list
-    --
+
     INSERT INTO Tmp_ManagerList (manager_name)
     SELECT manager_name
     FROM mc.parse_manager_name_list (_managerNameList, _remove_unknown_managers => 1);
@@ -209,7 +209,7 @@ BEGIN
     End If;
 
     -- Count the number of managers that need to be updated
-    --
+
     SELECT COUNT(PV.entry_id)
     INTO _countToUpdate
     FROM mc.t_param_value PV
@@ -226,7 +226,7 @@ BEGIN
           MT.mgr_type_active > 0;
 
     -- Count the number of managers already in the target state
-    --
+
     SELECT COUNT(PV.entry_id)
     INTO _countUnchanged
     FROM mc.t_param_value PV
@@ -324,7 +324,7 @@ BEGIN
     End If;
 
     -- Update RunJobsRemotely for the managers in Tmp_ManagerList
-    --
+
     UPDATE mc.t_param_value
     SET value = _newValue
     FROM mc.t_param_value PV

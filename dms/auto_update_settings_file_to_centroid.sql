@@ -28,7 +28,7 @@ DECLARE
     _newSettingsFile text := '';
 BEGIN
     -- First look for a match in t_settings_files
-    --
+
     SELECT msgfplus_auto_centroid
     INTO _newSettingsFile
     FROM t_settings_files

@@ -64,7 +64,7 @@ BEGIN
     -- Extract the job step dependencies
     -- Cannot directly use XMLTABLE() since some steps have multiple dependencies
     -- Note that this query uses XPATH to filter on script name
-    --
+
     FOR _scriptStep IN
         SELECT XmlTableA.step, XmlTableA.tool, XmlTableA.parent_steps::text
         FROM cap.t_scripts Src,

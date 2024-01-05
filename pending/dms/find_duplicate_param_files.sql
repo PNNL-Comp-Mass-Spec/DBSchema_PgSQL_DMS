@@ -486,7 +486,7 @@ BEGIN
         -----------------------------------------
 
         -- First, lookup the mod count for this parameter file
-        --
+
         SELECT ModCount
         INTO _modCount
         FROM Tmp_MassModCounts

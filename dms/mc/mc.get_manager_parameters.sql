@@ -73,7 +73,7 @@ BEGIN
                 _message => _message);      -- Output
 
     -- Return the parameters as a result set
-    --
+
     If _sortMode = 0 Then
         RETURN QUERY
         SELECT P.mgr_name, P.param_name, P.entry_id,

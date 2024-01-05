@@ -73,7 +73,7 @@ BEGIN
     End If;
 
     -- Make a list of the currently running managers
-    --
+
     SELECT string_agg(Processor, ', ' ORDER BY Processor)
     INTO _mgrList
     FROM cap.t_task_steps

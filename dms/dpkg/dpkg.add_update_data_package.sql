@@ -205,7 +205,7 @@ BEGIN
 
         If _mode = 'update' Then
             -- Cannot update a non-existent entry
-            --
+
             SELECT data_pkg_id,
                    path_team
             INTO _currentID, _currentTeam

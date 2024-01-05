@@ -186,7 +186,7 @@ BEGIN
         End If;
 
         -- Reset evaluated and triggered to 0 for the affected steps
-        --
+
         UPDATE cap.t_task_step_dependencies TSD
         SET Evaluated = 0,
             Triggered = 0
@@ -195,7 +195,7 @@ BEGIN
               TSD.Step = JR.Step;
 
         -- Update the capture task job steps to state Waiting
-        --
+
         UPDATE cap.t_task_steps TS
         SET State = 1,                    -- 1=Waiting
             Tool_Version_ID = 1,          -- 1=Unknown
@@ -208,7 +208,7 @@ BEGIN
               TS.Step = JR.Step;
 
         -- Change the capture task job state from Failed to In Progress
-        --
+
         UPDATE cap.t_tasks T
         SET State = 2
         FROM Tmp_JobStepsToReset JR

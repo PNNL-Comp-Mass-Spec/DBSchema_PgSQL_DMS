@@ -796,7 +796,7 @@ BEGIN
                   IU.Usage In ('ONSITE', 'REMOTE', 'RESOURCE_OWNER');
 
             -- Output report rows
-            --
+
             RETURN QUERY
             SELECT _instrument::citext AS Instrument,
                    _eusInstrumentId AS EMSL_Inst_ID,

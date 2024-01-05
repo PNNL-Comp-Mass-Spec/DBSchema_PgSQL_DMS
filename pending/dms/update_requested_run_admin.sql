@@ -233,7 +233,7 @@ BEGIN
         End If;
 
         -- Call update_cached_requested_run_eus_users for each entry in Tmp_Requests
-        --
+
         FOR _requestID IN
             SELECT request_id
             FROM Tmp_Requests

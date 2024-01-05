@@ -103,7 +103,7 @@ BEGIN
 
     If _mode = 'update' Then
         -- Cannot update a non-existent entry
-        --
+
         SELECT entry_id
         INTO _tmp
         FROM t_lc_cart_settings_history

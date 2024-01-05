@@ -117,7 +117,7 @@ BEGIN
         GET DIAGNOSTICS _existingCount = ROW_COUNT;
 
         -- Cannot create an entry that already exists
-        --
+
         If _existingCount > 0 And _mode = 'add' Then
             _logErrors := false;
             RAISE EXCEPTION 'Cannot add: LC column "%" already exists', _columnNumber;
@@ -134,7 +134,6 @@ BEGIN
         -- Resolve ID for state
         ---------------------------------------------------
 
-        --
         SELECT column_state_id
         INTO _stateID
         FROM t_lc_column_state_name

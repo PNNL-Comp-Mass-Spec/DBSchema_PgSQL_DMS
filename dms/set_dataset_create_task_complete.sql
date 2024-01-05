@@ -106,7 +106,7 @@ BEGIN
         ---------------------------------------------------
         -- Update the state, finish time, and completion code
         ---------------------------------------------------
-        --
+
         UPDATE t_dataset_create_queue
         SET State_ID           = _stateID,
             Finish             = CURRENT_TIMESTAMP,

@@ -49,7 +49,7 @@ BEGIN
     _currentTargetTable := 't_usage_stat';
 
     -- Update entry for _postedBy in t_usage_stats
-    --
+
     If Not Exists (SELECT posted_by FROM t_usage_stats WHERE posted_by = _postedBy::citext) THEN
         _currentOperation := 'appending to';
 

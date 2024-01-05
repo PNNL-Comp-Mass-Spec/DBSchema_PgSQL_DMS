@@ -37,7 +37,7 @@ DECLARE
     _continue boolean;
 BEGIN
     -- Table for processing runs and intervals for reporting month
-    --
+
     CREATE TEMP TABLE Tmp_T_Working
     (
         Dataset_ID int null,
@@ -66,7 +66,7 @@ BEGIN
     );
 
     -- Intermediate storage for report entries
-    --
+
     CREATE TEMP TABLE Tmp_T_Report_Accumulation
     (
         Start timestamp,
@@ -89,7 +89,7 @@ BEGIN
 
     -- Import entries from EMSL instrument usage table
     -- for given month and year into working table
-    --
+
     INSERT INTO Tmp_T_Working
     ( Dataset_ID,
       EMSL_Inst_ID,
@@ -163,7 +163,7 @@ BEGIN
 
         -- Copy usage records that do not span more than one day
         -- from working table to accumulation table
-        --
+
         INSERT INTO Tmp_T_Report_Accumulation
         ( EMSL_Inst_ID,
           DMS_Instrument,
@@ -204,7 +204,7 @@ BEGIN
               W.Month = W.Month_at_Run_End;
 
         -- Remove the usage records that we just copied into Tmp_T_Report_Accumulation
-        --
+
         DELETE FROM Tmp_T_Working W
         WHERE  W.Day = W.Day_at_Run_End AND
                W.Month = W.Month_at_Run_End;
@@ -212,14 +212,14 @@ BEGIN
         -- Also remove any rows that have a negative value for RemainingDurationSeconds
         -- This will be true for any datasets that were started in the evening on the last day of the month
         -- and were still acquiring data when we reached midnight and entered a new month
-        --
+
         DELETE FROM Tmp_T_Working W
         WHERE  W.Remaining_Duration_Seconds < 0;
 
         -- Copy report entries into accumulation table for
         -- remaining durations (datasets that cross daily boundaries)
         -- using only duration time contained inside the daily boundary
-        --
+
         INSERT INTO Tmp_T_Report_Accumulation
         ( EMSL_Inst_ID,
           DMS_Instrument,
@@ -257,7 +257,7 @@ BEGIN
         FROM Tmp_T_Working W;
 
         -- Update start time and duration of entries in working table
-        --
+
         UPDATE Tmp_T_Working
         SET Run_or_Interval_Start = Beginning_Of_Next_Day,
             Duration_Seconds = Remaining_Duration_Seconds,
@@ -271,7 +271,7 @@ BEGIN
             Remaining_Duration_Seconds = NULL;
 
         -- We are done when there is nothing left to process in working table
-        --
+
         If Not Exists (SELECT * FROM Tmp_T_Working) Then
             _continue := false;
         End If;
@@ -331,7 +331,7 @@ BEGIN
               Tmp_T_Report_Accumulation.Day = GroupQ.Day;
 
     -- Rollup operators and add to the accumulation table
-    --
+
     UPDATE  Tmp_T_Report_Accumulation
     SET     Operator = GroupQ.Operator
     FROM ( SELECT DistinctQ.EMSL_Inst_ID,
@@ -382,7 +382,7 @@ BEGIN
 
     -- First return non-maintenance datasets
     -- Include each dataset as a separate row
-    --
+
     RETURN QUERY
     SELECT  Src.EMSL_Inst_ID,
             Src.DMS_Instrument::citext AS Instrument,
@@ -423,7 +423,7 @@ BEGIN
              MIN(Src.Start) ASC;
 
     -- Next return maintenance datasets, where we report one entry per day
-    --
+
     RETURN QUERY
     SELECT  Src.EMSL_Inst_ID,
             Src.DMS_Instrument::citext AS Instrument,

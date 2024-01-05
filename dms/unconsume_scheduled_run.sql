@@ -280,7 +280,7 @@ BEGIN
         ---------------------------------------------------
 
         -- Warning: The text 'Automatically created by recycling request' is used earlier in this procedure; thus, do not update it here
-        --
+
         _comment := format('Automatically created by recycling request %s from dataset %s on %s',
                             _requestIDOriginal, _datasetID, to_char(CURRENT_TIMESTAMP, 'mm/dd/yyyy'));
 

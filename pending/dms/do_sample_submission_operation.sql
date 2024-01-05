@@ -85,17 +85,15 @@ BEGIN
 
         If _mode = 'make_folder' Then
 
-            ---------------------------------------------------
             -- Get storage path from sample submission
-            --
+
             SELECT Coalesce(storage_id, 0)
             INTO _storagePath
             FROM t_sample_submission
             WHERE submission_id = _id;
 
-            ---------------------------------------------------
             -- If storage path not defined, get valid path ID and update sample submission
-            --
+
             If _storagePath = 0 Then
                 --
                 SELECT storage_id

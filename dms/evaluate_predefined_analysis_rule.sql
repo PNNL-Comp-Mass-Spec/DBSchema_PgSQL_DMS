@@ -135,7 +135,7 @@ BEGIN
 
         -- If there is a next level value for rule,
         -- Set minimum level to it
-        --
+
         If Not _predefineInfo.RuleNextLevel Is Null Then
             _minLevelNew := _predefineInfo.RuleNextLevel;
 

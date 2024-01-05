@@ -341,7 +341,7 @@ BEGIN
               Coalesce(t.Children, 0) <> StatsQ.Children;
 
         -- Change counts to null if no children
-        --
+
         UPDATE ont.t_cv_envo t
         SET children = NULL
         WHERE Not t.identifier in (

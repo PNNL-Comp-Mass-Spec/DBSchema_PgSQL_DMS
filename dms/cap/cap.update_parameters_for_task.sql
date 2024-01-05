@@ -194,7 +194,7 @@ BEGIN
             Max_Simultaneous_Captures int NULL,
             Capture_Subdirectory text NULL
         );
-        --
+
         INSERT INTO Tmp_Jobs (
             Job,
             Priority,
@@ -254,7 +254,7 @@ BEGIN
             ORDER BY Job
         LOOP
             -- Get parameters for the capture task job as XML
-            --
+
             _xmlParameters := cap.create_parameters_for_task (
                                     _jobInfo.Job, _jobInfo.Dataset, _jobInfo.DatasetID,
                                     _jobInfo.Script, _jobInfo.StorageServer,
@@ -306,14 +306,14 @@ BEGIN
 
         Else
             -- Update existing capture task jobs in T_task_Parameters
-            --
+
             UPDATE cap.t_task_parameters Target
             SET Parameters = Source.Parameters
             FROM Tmp_Job_Parameters Source
             WHERE Target.Job = Source.Job;
 
             -- Add any missing capture task jobs
-            --
+
             INSERT INTO cap.t_task_parameters( job,
                                                parameters )
             SELECT Source.Job,

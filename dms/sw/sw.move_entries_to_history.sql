@@ -86,7 +86,7 @@ BEGIN
             ORDER BY event_id;
 
             -- Remove the old entries
-            --
+
             DELETE FROM sw.t_job_events
             WHERE entered < _cutoffDateTime;
         End If;
@@ -152,7 +152,7 @@ BEGIN
             ORDER BY event_id;
 
             -- Remove the old entries
-            --
+
             DELETE FROM sw.t_job_step_events
             WHERE entered < _cutoffDateTime;
         End If;
@@ -215,7 +215,7 @@ BEGIN
             ORDER BY event_id;
 
             -- Remove the old entries
-            --
+
             DELETE FROM sw.t_job_step_processing_log
             WHERE entered < _cutoffDateTime;
         End If;
@@ -278,7 +278,7 @@ BEGIN
             ORDER BY entry_id;
 
             -- Remove the old entries
-            --
+
             DELETE FROM sw.t_log_entries
             WHERE Entered < _cutoffDateTime;
         End If;

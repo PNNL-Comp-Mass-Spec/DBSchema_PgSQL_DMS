@@ -91,7 +91,7 @@ BEGIN
     End If;
 
     -- Update the Enabled column
-    --
+
     UPDATE cap.t_processor_tool ProcTool
     SET enabled = _newState
     FROM Tmp_ToolsToUpdate FilterQ
@@ -110,7 +110,7 @@ BEGIN
 
     If _disableComment <> '' Then
         -- Add or remove _disableComment from the Comment column
-        --
+
         If Not _enable Then
             UPDATE cap.t_processor_tool Proctool
             SET comment = CASE

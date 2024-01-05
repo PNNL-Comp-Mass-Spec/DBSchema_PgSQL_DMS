@@ -217,7 +217,6 @@ BEGIN
     ---------------------------------------------------
 
     If _state <> _noChangeText Then
-        --
         SELECT job_state_id
         INTO _stateID
         FROM  t_analysis_job_state
@@ -262,7 +261,7 @@ BEGIN
     ---------------------------------------------------
 
     _result := 0;
-    --
+
     If _paramFileName <> _noChangeText Then
         SELECT param_file_id
         INTO _result
@@ -575,9 +574,9 @@ BEGIN
 
         ---------------------------------------------------
         -- Resolve processor group ID
-        --
+
         _gid := 0;
-        --
+
         If _associatedProcessorGroup <> '' Then
             SELECT group_id
             INTO _gid
@@ -602,7 +601,7 @@ BEGIN
 
         If _gid = 0 Then
             -- Dissassociate given jobs from group
-            --
+
             DELETE FROM t_analysis_job_processor_group_associations
             WHERE job in (SELECT job FROM Tmp_AnalysisJobs);
             --
@@ -615,7 +614,7 @@ BEGIN
             _action2 := format('%s; remove jobs from processor group', _action2);
         Else
             -- For jobs with existing association, change it
-            --
+
             UPDATE t_analysis_job_processor_group_associations
             SET group_id = _gid,
                 entered = CURRENT_TIMESTAMP,
@@ -630,7 +629,7 @@ BEGIN
             End If;
 
             -- For jobs without existing association, create it
-            --
+
             INSERT INTO t_analysis_job_processor_group_associations (job, group_id)
             SELECT job, _gid FROM Tmp_AnalysisJobs
             WHERE NOT job IN (SELECT job FROM t_analysis_job_processor_group_associations);
@@ -652,7 +651,7 @@ BEGIN
 
      If _callingUser <> '' And (_alterEventLogRequired Or _alterEnteredByRequired) Then
         -- _callingUser is defined and items need to be updated in t_event_log and/or t_analysis_job_processor_group_associations
-        --
+
         -- Populate a temporary table with the list of job IDs just updated
         CREATE TEMP TABLE Tmp_ID_Update_List (
             TargetID int NOT NULL

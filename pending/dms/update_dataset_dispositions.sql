@@ -298,12 +298,12 @@ BEGIN
 
             -----------------------------------------------
             -- Evaluate predefined analyses
-            --
-            -- If rating changes from unreviewed to released and dataset capture is complete
-            --
+            -----------------------------------------------
+
             If _datasetInfo.RatingID = -10 And _ratingID = 5 And _datasetInfo.StateID In (3, 4) Then
-                -- schedule default analyses for this dataset
-                --
+                -- Rating changed from unreviewed to released, so dataset capture is complete
+                -- Schedule default analysis jobs for this dataset
+
                 CALL public.schedule_predefined_analysis_jobs (_datasetInfo.DatasetName, _callingUser, _returnCode => _returnCode);
 
                 If _returnCode <> '' Then

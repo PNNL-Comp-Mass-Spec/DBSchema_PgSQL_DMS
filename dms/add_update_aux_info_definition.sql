@@ -298,7 +298,7 @@ BEGIN
         End If;
 
         -- Is subcategory already in table?
-        --
+
         SELECT aux_subcategory_id
         INTO _tmpID
         FROM t_aux_info_subcategory
@@ -314,7 +314,7 @@ BEGIN
         End If;
 
         -- Calculate new sequence
-        --
+
         SELECT Coalesce(MAX(sequence), 0)
         INTO _tmpSeq
         FROM t_aux_info_subcategory
@@ -323,7 +323,7 @@ BEGIN
         _tmpSeq := _tmpSeq + 1;
 
         -- Insert new subcategory for parent category
-        --
+
         INSERT INTO t_aux_info_subcategory (aux_subcategory, sequence, Aux_Category_ID)
         VALUES (_subcategoryName, _tmpSeq, _categoryID);
 

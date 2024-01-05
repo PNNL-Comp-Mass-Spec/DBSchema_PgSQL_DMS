@@ -216,7 +216,7 @@ BEGIN
 
         If _mode = 'update' Then
             -- Cannot update a non-existent entry
-            --
+
             If Not Exists (SELECT osm_pkg_id FROM dpkg.t_osm_package WHERE osm_pkg_id = _id) Then
                 _message := format('OSM package ID %s does not exist; cannot update', _id);
                 _returnCode := 'U5110';

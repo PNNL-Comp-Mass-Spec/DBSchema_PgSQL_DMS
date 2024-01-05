@@ -56,7 +56,7 @@ BEGIN
     _endDate = _startDate + make_interval(months => _months);
 
     -- Temporary table to hold manager status
-    --
+
     CREATE TEMP TABLE Tmp_ManagerActivity (
         Source citext,
         Status_Date timestamp,
@@ -109,15 +109,13 @@ BEGIN
     End If;
 
     -- Populate temporary table with analysis managers that started a job within the date range
-    --
+
     INSERT INTO Tmp_ManagerActivity(Who, What, Status_Date, Source)
     SELECT format('Analysis: %s', M.processor) AS Who,
            'Idle' AS What,
            M.Most_Recent_Start,
            'Analysis Jobs' AS Source
-    FROM (  -- Get distinct list of analysis managers
-            -- that have been active within the date range
-            --
+    FROM (  -- Get distinct list of analysis managers that have been active within the date range
             SELECT UnionQ.processor, Max(Most_Recent_Start) AS Most_Recent_Start
             FROM ( SELECT processor, Max(Coalesce(Start, make_date(1970, 1, 1))) AS Most_Recent_Start
                    FROM sw.t_job_steps
@@ -133,7 +131,7 @@ BEGIN
         ) M;
 
     -- Update actively running processors
-    --
+
     UPDATE Tmp_ManagerActivity M
     SET Who = T.Who,
         What = T.What,
@@ -154,15 +152,13 @@ BEGIN
 
 
     -- Populate temporary table with capture task managers that started a capture or archive task within the date range
-    --
+
     INSERT INTO Tmp_ManagerActivity(Who, What, Status_Date, Source)
     SELECT format('Capture: %s', M.processor) AS Who,
            'Idle' AS What,
            M.Most_Recent_Start,
            'Capture Tasks' AS Source
-    FROM (  -- Get distinct list of analysis managers
-            -- that have been active within the date range
-            --
+    FROM (  -- Get distinct list of analysis managers that have been active within the date range
             SELECT UnionQ.processor, Max(Most_Recent_Start) AS Most_Recent_Start
             FROM ( SELECT processor, Max(Coalesce(Start, make_date(1970, 1, 1))) AS Most_Recent_Start
                    FROM cap.t_task_steps
@@ -178,7 +174,7 @@ BEGIN
         ) M;
 
     -- Update actively running processors
-    --
+
     UPDATE Tmp_ManagerActivity M
     SET Who = T.Who,
         What = T.What,

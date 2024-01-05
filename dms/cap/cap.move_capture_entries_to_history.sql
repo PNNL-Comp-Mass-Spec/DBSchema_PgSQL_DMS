@@ -92,7 +92,7 @@ BEGIN
               entered_by = EXCLUDED.entered_by;
 
             -- Remove the old entries
-            --
+
             DELETE FROM cap.t_task_events
             WHERE entered < _cutoffDateTime;
             --
@@ -152,7 +152,7 @@ BEGIN
               entered_by = EXCLUDED.entered_by;
 
             -- Remove the old entries
-            --
+
             DELETE FROM cap.t_task_step_events
             WHERE entered < _cutoffDateTime;
             --
@@ -209,7 +209,7 @@ BEGIN
               entered_by = EXCLUDED.entered_by;
 
             -- Remove the old entries
-            --
+
             DELETE FROM cap.t_task_step_processing_log
             WHERE entered < _cutoffDateTime;
             --
@@ -267,7 +267,7 @@ BEGIN
               entered_by = EXCLUDED.entered_by;
 
             -- Remove the old entries
-            --
+
             DELETE FROM cap.t_log_entries
             WHERE entered < _cutoffDateTime;
             --

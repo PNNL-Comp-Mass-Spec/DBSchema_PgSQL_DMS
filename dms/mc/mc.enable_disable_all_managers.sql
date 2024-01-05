@@ -79,14 +79,14 @@ BEGIN
 
     If char_length(_managerTypeIDList) > 0 THEN
         -- Parse _managerTypeIDList
-        --
+
         _mgrTypeIDs := ARRAY (
                         SELECT DISTINCT value
                         FROM public.parse_delimited_integer_list(_managerTypeIDList)
                         ORDER BY Value );
     Else
         -- Populate _mgrTypeIDs with all manager types in mc.t_mgr_types
-        --
+
         _mgrTypeIDs := ARRAY (
                         SELECT DISTINCT mgr_type_id
                         FROM mc.t_mgr_types

@@ -213,7 +213,7 @@ BEGIN
                             _message     => _message,       -- Output
                             _returnCode  => _returnCode,    -- Output
                             _callingUser => _callingUser);
-            --
+
             If _returnCode <> '' Then
                 RAISE EXCEPTION 'Could not delete dataset "%"', _datasetName;
             End If;
@@ -230,7 +230,7 @@ BEGIN
         If _mode = 'reset' Then
 
             -- If dataset not in failed state, can't reset it
-            --
+
             If Not _currentState In (5, 9) -- 'Failed' or 'Not ready' Then
                 _logErrors := false;
                 RAISE EXCEPTION 'Dataset "%" cannot be reset if capture not in failed or in not ready state %', _datasetName, _currentState;
@@ -279,7 +279,7 @@ BEGIN
             End If;
 
             -- Update state of dataset to new
-            --
+
             _newState := 1;         -- "new' state
 
             UPDATE t_dataset

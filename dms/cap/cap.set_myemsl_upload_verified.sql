@@ -212,7 +212,7 @@ BEGIN
         ---------------------------------------------------
 
         -- First update Ingest_Steps_Completed for steps that have already been verified
-        --
+
         UPDATE cap.t_myemsl_uploads
         SET ingest_steps_completed = _ingestStepsCompleted
         WHERE verified = 1 AND
@@ -220,7 +220,7 @@ BEGIN
               (ingest_steps_completed Is Null Or ingest_steps_completed < _ingestStepsCompleted);
 
         -- Now update newly verified steps
-        --
+
         UPDATE cap.t_myemsl_uploads
         SET verified = 1,
             ingest_steps_completed = _ingestStepsCompleted

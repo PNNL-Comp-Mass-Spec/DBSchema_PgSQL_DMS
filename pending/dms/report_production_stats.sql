@@ -202,7 +202,7 @@ BEGIN
             ORDER BY Value;
 
             -- Look for invalid Usage_Name values
-            --
+
             SELECT string_agg(UF.Usage_Name, ',' ORDER BY UF.Usage_Name)
             INTO _valueList
             FROM Tmp_EUSUsageFilter UF
@@ -297,7 +297,7 @@ BEGIN
 
         If _eusUsageFilterList <> '' Then
             -- Filter on the EMSL usage types defined in Tmp_EUSUsageFilter
-            --
+
             INSERT INTO Tmp_Datasets( Dataset_ID,
                                       Campaign_ID,
                                       Request_ID,

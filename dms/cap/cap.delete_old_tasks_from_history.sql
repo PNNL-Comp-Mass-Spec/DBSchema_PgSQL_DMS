@@ -147,7 +147,7 @@ BEGIN
         RAISE INFO '%', _infoHeadSeparator;
 
         -- Show the first 10 jobs in Tmp_JobsToDelete
-        --
+
         FOR _previewData IN
             SELECT Job, timestamp_text(Saved) As Saved, 'Preview delete' As Comment
             FROM Tmp_JobsToDelete
@@ -168,7 +168,7 @@ BEGIN
             RAISE INFO '%', _infoData;
 
             -- Show the last 10 jobs in Tmp_JobsToDelete
-            --
+
             FOR _previewData IN
                 SELECT Job, Saved, 'Preview delete' AS Comment
                 FROM ( SELECT Job, Saved

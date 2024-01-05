@@ -294,7 +294,7 @@ BEGIN
 
         -- Change any waiting, enabled, or running steps to state 7 (holding)
         -- This is a safety feature to avoid job steps from starting inadvertently
-        --
+
         UPDATE sw.t_job_steps Target
         SET state = 7
         FROM Tmp_JobsToCopy Src
@@ -328,7 +328,7 @@ BEGIN
         _currentLocation := format('Insert into sw.t_job_step_dependencies for %s', _jobDateDescription);
 
         -- First delete any extra steps that are in sw.t_job_step_dependencies
-        --
+
         DELETE FROM sw.t_job_step_dependencies target
         WHERE EXISTS
             (  SELECT 1
@@ -354,7 +354,7 @@ BEGIN
         End If;
 
         -- Now add/update the job step dependencies
-        --
+
         INSERT INTO sw.t_job_step_dependencies (job, Step, Target_Step, condition_test, test_value, evaluated, triggered, enable_only)
         SELECT job,
                step,
@@ -387,7 +387,7 @@ BEGIN
         _currentLocation := 'Find jobs that didn''t have cached dependencies';
 
         -- Find jobs that didn't have cached dependencies
-        --
+
         INSERT INTO Tmp_JobsMissingDependencies( job, script )
         SELECT DISTINCT J.job, J.script
         FROM sw.t_jobs J

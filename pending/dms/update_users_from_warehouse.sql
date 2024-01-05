@@ -206,7 +206,7 @@ BEGIN
         CREATE INDEX IX_Tmp_NamesAfterUpdate_Name ON Tmp_NamesAfterUpdate (NewName);
 
         -- Store the names of the users that will be updated
-        --
+
         INSERT INTO Tmp_NamesAfterUpdate (user_id, OldName, NewName, Conflict)
         SELECT U.user_id, U.name, Coalesce(Src.name, U.name) AS NewName, false
         FROM t_users U
@@ -215,7 +215,7 @@ BEGIN
         WHERE Src.UpdateRequired;
 
         -- Append the remaining users
-        --
+
         INSERT INTO Tmp_NamesAfterUpdate (user_id, OldName, NewName, Conflict)
         SELECT user_id, name, name, false
         FROM t_users

@@ -111,7 +111,7 @@ BEGIN
         End If;
 
         -- Construct a comma-separated list of capture task jobs
-        --
+
         SELECT string_agg(JR.Job::text, ', ' ORDER BY JR.Job)
         INTO _jobList
         FROM Tmp_Quameter_Job_Steps_To_Reset JR;
@@ -164,7 +164,7 @@ BEGIN
             _logErrors := true;
 
             -- Reset the DatasetQuality step
-            --
+
             UPDATE cap.t_task_steps TS
             SET state = 2,
                 completion_code = 0,
@@ -176,7 +176,7 @@ BEGIN
                   TS.Step = JR.Step;
 
             -- Reset the state of the dependent steps
-            --
+
             CALL cap.reset_dependent_task_steps (
                         _jobList,
                         _infoOnly   => false,

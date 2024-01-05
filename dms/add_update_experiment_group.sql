@@ -316,13 +316,13 @@ BEGIN
     If _mode IN ('add', 'update') Then
 
         -- Remove any existing group members that are not in the temporary table
-        --
+
         DELETE FROM t_experiment_group_members
         WHERE group_id = _id AND
               NOT exp_id IN ( SELECT exp_id FROM Tmp_Experiments );
 
         -- Add group members from temporary table that are not already members
-        --
+
         INSERT INTO t_experiment_group_members(
             group_id,
             exp_id
@@ -335,7 +335,7 @@ BEGIN
                               WHERE group_id = _id );
 
         -- Update MemberCount
-        --
+
         CALL public.update_experiment_group_member_count (
                         _groupID    => _id,
                         _message    => _message,        -- Output

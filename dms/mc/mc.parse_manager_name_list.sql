@@ -72,7 +72,6 @@ BEGIN
                     );
 
     -- Parse the entries in _managerSpecList that have a wildcard
-    --
 
     _s := format(
             'SELECT ARRAY ('
@@ -106,7 +105,7 @@ BEGIN
     End If;
 
     -- Remove managers from _managerList that are not defined in mc.t_mgrs
-    --
+
     _initialCount := array_length(_managerList, 1);
 
     _managerList := ARRAY (

@@ -227,7 +227,7 @@ BEGIN
         End If;
 
         -- Cannot update a non-existent entry
-        --
+
         If Not Exists (SELECT settings_file_id FROM t_settings_files WHERE settings_file_id = _settingsFileID) Then
             _message := format('Cannot update: settings file ID %s does not exist', _settingsFileID);
             RAISE WARNING '%', _message;

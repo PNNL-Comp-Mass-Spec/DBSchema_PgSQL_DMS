@@ -54,7 +54,6 @@ BEGIN
     End If;
 
     -- Show contents of Tmp_FactorInfo
-    --
 
     _formatSpecifier := '%-10s %-80s %-30s %-45s %-12s %-12s %-14s';
 

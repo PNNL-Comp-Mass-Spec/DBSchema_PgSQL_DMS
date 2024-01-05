@@ -101,7 +101,7 @@ BEGIN
     LOOP
 
         -- Lookup the XML for the specified script
-        --
+
         SELECT contents
         INTO _scriptXML
         FROM sw.t_scripts
@@ -120,7 +120,7 @@ BEGIN
 
         -- Add new rows to Tmp_Source_Job_Folders for any steps in the script
         -- that have Special="ExtractSourceJobFromComment"
-        --
+
         INSERT INTO Tmp_Source_Job_Folders (Job, Step)
         SELECT _job, Step
         FROM (

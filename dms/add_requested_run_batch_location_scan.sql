@@ -143,7 +143,7 @@ BEGIN
         ---------------------------------------------------
 
         -- Do all batch IDs in list actually exist?
-        --
+
         UPDATE Tmp_BatchIDs
         SET Valid = true
         FROM T_Requested_Run_Batches RRB

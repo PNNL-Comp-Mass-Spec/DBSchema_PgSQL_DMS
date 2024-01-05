@@ -128,7 +128,7 @@ BEGIN
              ) XmlQ;
 
         -- Get current status of request (needed for change log updating)
-        --
+
         UPDATE Tmp_RequestedRunUsageInfo
         SET statusID = TRSN.State_ID
         FROM t_requested_run RR
@@ -201,7 +201,7 @@ BEGIN
             End If;
 
             -- Assign users to the request
-            --
+
             CALL public.assign_eus_users_to_requested_run (
                                     _requestID    => _requestID,
                                     _eusUsersList => _eusUsersList,

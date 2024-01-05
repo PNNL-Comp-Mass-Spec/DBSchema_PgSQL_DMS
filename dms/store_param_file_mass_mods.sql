@@ -614,7 +614,7 @@ BEGIN
         -- DynamicMod=O1
         -- DynamicMod=15.9949
         -- DynamicMod=Oxidation (M)
-        --
+
         -- Look for an equals sign in _field
 
         _charPos := Position('=' In _field);
@@ -638,7 +638,7 @@ BEGIN
         End If;
 
         -- Now that the _modType is known, remove that text from the first field in Tmp_ModDef
-        --
+
         UPDATE Tmp_ModDef
         SET Value = Substring(Value, _charPos + 1, 2048)
         WHERE EntryID = 1;
@@ -647,7 +647,7 @@ BEGIN
         -- For DIA-NN, require at least 3 rows
         -- For MSFragger, require at least 2 rows
         -- For MaxQuant, there will just be 1 row, which has the MaxQuant-tracked mod name
-        --
+
         SELECT COUNT(*)
         INTO _rowCount
         FROM Tmp_ModDef;
@@ -775,9 +775,8 @@ BEGIN
                 End If;
 
             Else
-
                 -- DIA-NN parameter file
-                --
+
                 SELECT Trim(Value)
                 INTO _field
                 FROM Tmp_ModDef
@@ -855,7 +854,7 @@ BEGIN
 
             If (_matchCount = 0 Or _massCorrectionID = 0) And Not _validateUnimod Then
                 -- No match, try matching the DMS name (Mass_Correction_Tag)
-                --
+
                 SELECT mass_correction_id
                 INTO _massCorrectionID
                 FROM t_mass_correction_factors
@@ -946,7 +945,7 @@ BEGIN
 
             -- Parse out the affected residue (or residues)
             -- In MS-GF+ and TOPPIC, N- or C-terminal mods use * for any residue at a terminus
-            --
+
             SELECT Trim(Value)
             INTO _field
             FROM Tmp_ModDef

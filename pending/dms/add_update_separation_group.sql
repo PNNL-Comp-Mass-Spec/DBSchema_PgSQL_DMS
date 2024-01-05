@@ -91,7 +91,7 @@ BEGIN
 
         If _mode = 'update' Then
             -- Cannot update a non-existent entry
-            --
+
             If Not Exists (SELECT separation_group FROM t_separation_group WHERE separation_group = _separationGroup) Then
                 RAISE EXCEPTION 'Cannot update: separation group "%" does not exist', _separationGroup;
             End If;

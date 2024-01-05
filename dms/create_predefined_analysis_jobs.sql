@@ -249,7 +249,7 @@ BEGIN
 
             -- If there was an error creating the job, store it in _message;
             -- otherwise bump the job count
-            --
+
             If _returnCode = '' Then
                 If Not _infoOnly Then
                     _jobsCreated := _jobsCreated + 1;

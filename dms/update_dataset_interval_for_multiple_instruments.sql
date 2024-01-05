@@ -360,7 +360,7 @@ BEGIN
             End If;
 
             -- Call Update_EMSL_Instrument_Usage_Report for this month, plus optionally previous months (if _instrumentUsageMonthsToUpdate is greater than 1)
-            --
+
             _currentInstrumentUsageMonth := _instrumentUsageMonth;
 
             FOR _iteration IN 1 .. _instrumentUsageMonthsToUpdate

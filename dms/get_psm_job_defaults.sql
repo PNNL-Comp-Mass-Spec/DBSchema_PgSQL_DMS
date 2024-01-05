@@ -292,7 +292,7 @@ BEGIN
     _protCollOptionsList := 'seq_direction=decoy';
 
     -- Lookup the default protein collection name (if defined)
-    --
+
     SELECT organism_db_name
     INTO _protCollNameList
     FROM t_organisms
@@ -316,11 +316,11 @@ BEGIN
     ---------------------------------------------------
 
     -- Header row
-    --
+
     _metadata := 'Metadata:Description:Datasets|';
 
     -- Dataset Type stats
-    --
+
     SELECT string_agg(format('%s:%s:%s', Dataset_Type, Description, DatasetCount), '|' ORDER BY Dataset_Type)
     INTO _addon
     FROM Tmp_DatasetTypeStats;
@@ -328,7 +328,7 @@ BEGIN
     _metadata := format('%s%s|', _metadata, _addon);
 
     -- Alkylation
-    --
+
     SELECT COUNT(DSInfo.dataset_id),
            SUM(CASE WHEN alkylation = 'Y' THEN 1 ELSE 0 END)
     INTO _datasetCount, _datasetCountAlkylated
@@ -341,7 +341,7 @@ BEGIN
     _metadata := format('%sAlkylated:Sample (experiment) marked As alkylated in DMS:%s|', _metadata, _datasetCountAlkylated);
 
     -- Labeling
-    --
+
     SELECT string_agg(format('Labeling:%s:%s', Labeling, DatasetCount), '|' ORDER BY Labeling)
     INTO _addon
     FROM Tmp_DatasetLabelingStats;
@@ -349,7 +349,7 @@ BEGIN
     _metadata := format('%s%s|', _metadata, _addon);
 
     -- Enzyme
-    --
+
     SELECT string_agg(format('Enzyme:%s:%s', CountQ.enzyme_name, CountQ.Datasets), '|' ORDER BY CountQ.enzyme_name)
     INTO _addon
     FROM (  SELECT Enz.enzyme_name, COUNT(DSInfo.dataset_id) As Datasets
@@ -366,7 +366,7 @@ BEGIN
     _metadata := format('%s%s|', _metadata, _addon);
 
     -- Display the organism names if datasets from multiple organisms are present
-    --
+
     If _organismCount > 1 Then
         SELECT string_agg(format('Organism:%s:%s', OrganismName, DatasetCount), '|' ORDER BY OrganismName)
         INTO _addon
@@ -376,7 +376,7 @@ BEGIN
     End If;
 
     -- Look for phosphorylation
-    --
+
     SELECT COUNT(DSInfo.dataset_id)
     INTO _datasetCountPhospho
     FROM Tmp_DatasetInfo DSInfo
@@ -432,7 +432,7 @@ BEGIN
     End If;
 
     -- Lookup the description for _jobTypeName
-    --
+
     SELECT JT.job_type_description
     INTO _jobTypeDesc
     FROM t_default_psm_job_types JT

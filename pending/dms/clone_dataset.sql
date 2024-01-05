@@ -113,7 +113,7 @@ BEGIN
     BEGIN
 
         -- Lookup the EUS Users for the request associated with the dataset we are cloning
-        --
+
         SELECT string_agg(eus_person_id::text, ',' ORDER BY eus_person_id)
         INTO _eusUsersList
         FROM t_requested_run_eus_users
@@ -123,7 +123,7 @@ BEGIN
 
         -- Lookup the information requred to create a new requested run
         -- Also look up information required for previewing the cloned dataset
-        --
+
         SELECT E.experiment As ExperimentName,
                DS.operator_username As OperatorUsername,
                DS.capture_subfolder As CaptureSubdirectory,
@@ -308,7 +308,7 @@ BEGIN
         WHERE request_name = _requestNameNew AND dataset_id Is Null
 
         -- Possibly create a Dataset Archive task
-        --
+
         If _createDatasetArchiveTask Then
             CALL public.add_archive_dataset (
                             _datasetID  => _datasetIDNew,

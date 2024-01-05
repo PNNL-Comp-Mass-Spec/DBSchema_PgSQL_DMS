@@ -100,7 +100,7 @@ BEGIN
         RAISE INFO 'No successful capture task jobs found in cap.t_tasks_history for capture task job %; will look for a failed capture task job', _job;
 
         -- Find most recent historic capture task job, regardless of job state
-        --
+
         SELECT MAX(Saved)
         INTO _dateStamp
         FROM cap.t_tasks_history
@@ -243,7 +243,7 @@ BEGIN
 
         -- Change any waiting or enabled steps to state 7 (holding)
         -- This is a safety feature to avoid capture task job steps from starting inadvertently
-        --
+
         UPDATE cap.t_task_steps
         SET State = 7
         WHERE Job = _newJob AND
@@ -281,7 +281,7 @@ BEGIN
         _currentLocation := format('Insert into cap.t_task_step_dependencies for %s', _jobDateDescription);
 
         -- First delete any extra steps for this capture task job that are in t_task_step_dependencies
-        --
+
         DELETE FROM cap.t_task_step_dependencies target
         WHERE EXISTS
             (  SELECT 1
@@ -303,7 +303,7 @@ BEGIN
             );
 
         -- Check whether this capture task job has entries in t_task_step_dependencies_history
-        --
+
         If Not Exists (SELECT Job FROM cap.t_task_step_dependencies_history WHERE Job = _job) Then
             -- Capture task job did not have cached dependencies
             -- Look for a capture task job that used the same script
@@ -371,7 +371,7 @@ BEGIN
             End If;
 
             -- Now add/update the capture task job step dependencies
-            --
+
             INSERT INTO cap.t_task_step_dependencies (Job, Step, Target_Step, Condition_Test, Test_Value, Evaluated, Triggered, Enable_Only)
             SELECT _newJob AS Job,
                    Step,

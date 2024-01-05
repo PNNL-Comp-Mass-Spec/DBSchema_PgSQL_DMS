@@ -107,7 +107,7 @@ BEGIN
     If _mode = 'archivereset' Then
 
         -- If archive not in failed state, we can't reset it
-        --
+
         If Not _archiveStateID In (6, 2) -- 'Operation Failed' or 'Archive In Progress' Then
             _msg := format('Archive state for dataset "%s" not in proper state to be reset', _datasetName);
             RAISE EXCEPTION '%', _msg;

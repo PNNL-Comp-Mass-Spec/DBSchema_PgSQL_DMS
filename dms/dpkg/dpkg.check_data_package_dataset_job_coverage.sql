@@ -39,7 +39,7 @@ BEGIN
     End If;
 
     -- Package datasets with no package jobs for given tool
-    --
+
     If _mode = 'NoPackageJobs' Then
         RETURN QUERY
         SELECT DS.dataset,
@@ -60,7 +60,7 @@ BEGIN
     End If;
 
     -- Package datasets with no DMS jobs for given tool
-    --
+
     If _mode = 'NoDMSJobs' Then
         RETURN QUERY
         SELECT DS.dataset,
@@ -79,7 +79,7 @@ BEGIN
     End If;
 
     -- For each dataset, return the number of jobs for the given tool in the data package
-    --
+
     If _mode = 'PackageJobCount' Then
         RETURN QUERY
         SELECT DS.Dataset,

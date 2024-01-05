@@ -30,7 +30,7 @@ DECLARE
     _continue boolean;
 BEGIN
     -- Table for processing runs and intervals for reporting month
-    --
+
     CREATE TEMP TABLE Tmp_T_Working
     (
         Dataset_ID int null,
@@ -54,7 +54,7 @@ BEGIN
     );
 
     -- Intermediate storage for report entries
-    --
+
     CREATE TEMP TABLE Tmp_T_Report_Accumulation
     (
         Start timestamp,
@@ -69,7 +69,7 @@ BEGIN
 
     -- Import entries from EMSL instrument usage table
     -- for given month and year into working table
-    --
+
     INSERT INTO Tmp_T_Working
     ( Dataset_ID,
       EMSL_Inst_ID,
@@ -106,12 +106,11 @@ BEGIN
     -- While loop to pull records out of working table
     -- into accumulation table, allowing for durations that
     -- cross daily boundaries
-    --
+
     WHILE _continue
     LOOP
-
         -- Update working table with end times
-        --
+
         UPDATE  Tmp_T_Working AS W
         SET     Day                   = Extract(day   from W.Run_or_Interval_Start),
                 Run_or_Interval_End   =                    W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds),
@@ -119,14 +118,14 @@ BEGIN
                 Month_at_Run_End      = Extract(month from W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds)),
                 End_Of_Day            = date_trunc('day', W.Run_or_Interval_Start) + Interval '1 day' - Interval '1 millisecond',
                 Beginning_Of_Next_Day = date_trunc('day', W.Run_or_Interval_Start) + Interval '1 day';
-        --
+
         UPDATE  Tmp_T_Working AS W
         SET     Duration_Seconds_In_Current_Day =               extract(epoch FROM (End_Of_Day - W.Run_or_Interval_Start)),
                 Remaining_Duration_Seconds = Duration_Seconds - extract(epoch FROM (End_Of_Day - W.Run_or_Interval_Start));
 
         -- Copy usage records that do not span more than one day
         -- from working table to accumulation table, they are ready for report
-        --
+
         INSERT INTO Tmp_T_Report_Accumulation (
             EMSL_Inst_ID,
             DMS_Instrument,
@@ -152,14 +151,14 @@ BEGIN
 
         -- Remove report entries from working table
         -- whose duration does not cross daily boundary
-        --
+
         DELETE FROM Tmp_T_Working
         WHERE Remaining_Duration_Seconds < 0;
 
         -- Copy report entries into accumulation table for
         -- remaining durations (cross daily boundaries)
         -- using only duration time contained inside daily boundary
-        --
+
         INSERT INTO Tmp_T_Report_Accumulation (
             EMSL_Inst_ID,
             DMS_Instrument,
@@ -182,7 +181,7 @@ BEGIN
         FROM Tmp_T_Working W;
 
         -- Update start time and duration of entries in working table
-        --
+
         UPDATE Tmp_T_Working
         SET Run_or_Interval_Start = Beginning_Of_Next_Day,
             Duration_Seconds = Remaining_Duration_Seconds,
@@ -195,7 +194,7 @@ BEGIN
             Remaining_Duration_Seconds = NULL;
 
         -- We are done when there is nothing left to process in working table
-        --
+
         If Not Exists (SELECT * FROM Tmp_T_Working) Then
             _continue := false;
         End If;

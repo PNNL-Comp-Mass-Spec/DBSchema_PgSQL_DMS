@@ -192,7 +192,7 @@ BEGIN
     ---------------------------------------------------
 
     -- First delete any extra steps for this job that are in sw.t_job_step_dependencies_history
-    --
+
     DELETE FROM sw.t_job_step_dependencies_history target
     WHERE EXISTS
         (  SELECT 1
@@ -214,7 +214,7 @@ BEGIN
         );
 
     -- Now add/update the job step dependencies
-    --
+
     INSERT INTO sw.t_job_step_dependencies_history (job, Step, Target_Step, condition_test, test_value, evaluated, triggered, enable_only, saved)
     SELECT job,
            step,

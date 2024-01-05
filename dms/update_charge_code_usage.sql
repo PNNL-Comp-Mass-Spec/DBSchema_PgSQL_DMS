@@ -39,7 +39,7 @@ BEGIN
         ---------------------------------------------------
 
         -- Look for Charge Codes with a non-zero sample prep usage value, but are no longer associated with a sample prep request
-        --
+
         RETURN QUERY
         SELECT CC.Charge_Code,
                'Has non-zero sample prep usage, but not actually used'::citext AS Usage_Comment,
@@ -64,7 +64,7 @@ BEGIN
                                  StatsQ.Charge_Code = CC.Charge_Code );
 
         -- Look for Charge Codes with a non-zero requested run usage value, but are no longer associated with a requested run
-        --
+
         RETURN QUERY
         SELECT CC.Charge_Code,
                'Has non-zero requested run usage, but not actually used'::citext AS Usage_Comment,
@@ -89,7 +89,7 @@ BEGIN
                                  StatsQ.Charge_Code = CC.Charge_Code );
 
         -- Show usage stats for all work packages
-        --
+
         RETURN QUERY
         SELECT Coalesce(A.charge_code, B.charge_code) AS Charge_Code,
                ''::citext AS Usage_Comment,
@@ -135,7 +135,7 @@ BEGIN
     ---------------------------------------------------
 
     -- Look for Charge Codes with a non-zero sample prep usage value, but are no longer associated with a sample prep request
-    --
+
     UPDATE T_Charge_Code Target
     SET usage_sample_prep = 0
     WHERE Target.usage_sample_prep > 0 AND
@@ -170,7 +170,7 @@ BEGIN
     End If;
 
     -- Look for Charge Codes with a non-zero requested run usage value, but are no longer associated with a requested run
-    --
+
     UPDATE T_Charge_Code Target
     SET Usage_Requested_Run = 0
     WHERE Target.Usage_Requested_Run > 0 AND
@@ -205,7 +205,7 @@ BEGIN
     End If;
 
     -- Update sample prep request usage stats
-    --
+
     UPDATE t_charge_code Target
     SET usage_sample_prep = SPR_Usage
     FROM ( SELECT CC.charge_code,
@@ -248,7 +248,7 @@ BEGIN
     End If;
 
     -- Update requested run usage stats
-    --
+
     UPDATE t_charge_code Target
     SET usage_requested_run = RR_Usage
     FROM ( SELECT CC.charge_code,

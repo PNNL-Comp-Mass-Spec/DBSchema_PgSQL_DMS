@@ -246,7 +246,7 @@ BEGIN
                 If Coalesce(_numCompleted, 0) = 0 Then
 
                     -- How many current matching shared results steps are in which states?
-                    --
+
                     SELECT Coalesce(SUM(CASE WHEN State = 5 THEN 1 ELSE 0 END), 0),
                            Coalesce(SUM(CASE WHEN State in (2,4) THEN 1 ELSE 0 END), 0)
                     INTO _numCompleted, _numPending

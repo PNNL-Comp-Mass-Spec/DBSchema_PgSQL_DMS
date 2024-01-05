@@ -135,7 +135,7 @@ BEGIN
     ---------------------------------------------------
 
     -- Lookup the ResultType for _toolName
-    --
+
     SELECT Coalesce(result_type, 'Unknown')
     INTO _resultType
     FROM  t_analysis_tool

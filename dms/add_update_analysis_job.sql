@@ -213,7 +213,7 @@ BEGIN
             End If;
 
             -- Cannot update a non-existent entry
-            --
+
             SELECT job,
                    job_state_id
             INTO _jobID, _currentStateID

@@ -48,7 +48,7 @@ BEGIN
     --   '<Param Section="JobParameters" Name="DatasetID" Value="1042743"/>'
     --   '<Param Section="JobParameters" Name="DatasetFolderName" Value="QC_Mam_19_01-run02_31May22_Remus_WBEH-22-04-09"/>'
     --   '<Param Section="JobParameters" Name="DatasetStoragePath" Value="\\proto-8\QEHFX03\2022_2\"/>'
-    --
+
     SELECT unnest(xpath('//params/Param', rooted_xml))::text
     FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml as rooted_xml
            FROM sw.t_job_parameters
@@ -57,7 +57,7 @@ BEGIN
 
     -- Obtain a single parameter:
     --   '<Param Section="JobParameters" Name="DatasetStoragePath" Value="\\proto-8\QEHFX03\2022_2\"/>'
-    --
+
     SELECT unnest(xpath('//params/Param[@Name="DatasetStoragePath"]', rooted_xml))::text
     FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml as rooted_xml
            FROM sw.t_job_parameters
@@ -66,7 +66,7 @@ BEGIN
 
     -- Obtain the parameter value:
     --   '\\proto-8\QEHFX03\2022_2\'
-    --
+
     SELECT unnest(xpath('//params/Param[@Name="DatasetStoragePath"]/@Value', rooted_xml))::text
     FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml as rooted_xml
            FROM sw.t_job_parameters

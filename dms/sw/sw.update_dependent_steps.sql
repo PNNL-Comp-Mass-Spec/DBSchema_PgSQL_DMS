@@ -419,7 +419,7 @@ BEGIN
             If _stepInfo.Shared <> 0 And _datasetID > 0 Then
 
                 -- Any standing shared results that match?
-                --
+
                 SELECT COUNT(results_name)
                 INTO _numCompleted
                 FROM sw.t_shared_results
@@ -428,7 +428,7 @@ BEGIN
                 If _numCompleted = 0 Then
                     -- How many current matching shared results steps are in which states?
                     -- A pending step is one that is enabled or running (not failed or holding)
-                    --
+
                     SELECT Coalesce(SUM(CASE WHEN state = 5 THEN 1 ELSE 0 END), 0),
                            Coalesce(SUM(CASE WHEN state IN (2, 4, 9) THEN 1 ELSE 0 END), 0)
                     INTO _numCompleted, _numPending
@@ -450,10 +450,9 @@ BEGIN
                               state = 5;
                     End If;
 
-                    --
                     -- If there were any completed shared results not already in
                     -- standing shared results table, make entry in shared results
-                    --
+
                     If _numCompleted > 0 Then
                         If _infoOnly Then
                             RAISE INFO 'Insert "%" into sw.t_shared_results', _stepInfo.OutputFolderName;
@@ -467,7 +466,7 @@ BEGIN
                 -- Skip this step if another step has already created the shared results
                 -- Otherwise, continue waiting if another step is making the shared results
                 --  (the other step will either succeed or fail, and then this step's action will be re-evaluated)
-                --
+
                 If _numCompleted > 0 Then
                     -- Check for whether this step has been skipped numerous times in the last 12 hours
                     -- If it has, this indicates that the database metadata for this dataset's other jobs indicates that the step can be skipped,

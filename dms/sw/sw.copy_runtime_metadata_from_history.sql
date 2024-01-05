@@ -168,9 +168,8 @@ BEGIN
     -- Find job steps that need to be updated
     ---------------------------------------------------
 
-    ---------------------------------------------------
     -- First look for jobs with a Finish date after the Start date of the corresponding Results_Transfer step
-    --
+
     INSERT INTO Tmp_JobStepsToUpdate( job, step )
     SELECT JS.job, JS.step
     FROM Tmp_Jobs
@@ -186,10 +185,9 @@ BEGIN
               JS.step < FilterQ.step
     WHERE Not JS.tool In ('Results_Transfer', 'Results_Cleanup');
 
-    ---------------------------------------------------
     -- Next Look for job steps that are state 4 or 5 (Running or Complete) with a null Finish date,
     -- but which started after their corresponding Results_Transfer step
-    --
+
     INSERT INTO Tmp_JobStepsToUpdate( job, step )
     SELECT JS.job, JS.step
     FROM Tmp_Jobs
@@ -206,9 +204,8 @@ BEGIN
               JS.step < FilterQ.step
     WHERE Not JS.tool In ('Results_Transfer', 'Results_Cleanup');
 
-    ---------------------------------------------------
     -- Look for PRIDE_Converter job steps
-    --
+
     INSERT INTO Tmp_JobStepsToUpdate( job, step )
     SELECT JS.job, JS.step
     FROM Tmp_Jobs
@@ -216,9 +213,8 @@ BEGIN
            ON Tmp_Jobs.job = JS.job
     WHERE JS.tool = 'PRIDE_Converter';
 
-    ---------------------------------------------------
     -- Update the job list table using Tmp_JobStepsToUpdate
-    --
+
     UPDATE Tmp_Jobs target
     SET Update_Required = true
     WHERE target.Job IN ( SELECT DISTINCT JSU.Job

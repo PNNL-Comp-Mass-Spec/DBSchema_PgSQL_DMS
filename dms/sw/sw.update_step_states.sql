@@ -54,7 +54,7 @@ BEGIN
 
         -- Get unevaluated dependencies for steps that are finished
         -- (skipped or completed)
-        --
+
         CALL sw.evaluate_step_dependencies (
                     _maxJobsToProcess       => _maxJobsToProcess,
                     _loopingUpdateInterval  => _LoopingUpdateInterval,
@@ -65,7 +65,7 @@ BEGIN
 
         -- Examine all dependencies for steps in 'Waiting' state
         -- and set state of steps that have them all satisfied
-        --
+
         CALL sw.update_dependent_steps (
                     _infoOnly              => _infoOnly,
                     _maxJobsToProcess      => _maxJobsToProcess,
@@ -76,7 +76,7 @@ BEGIN
                     );
 
         -- Repeat if any step states were changed (but only If Not _infoOnly)
-        --
+
         If Not (_numStepsSkipped > 0 And Not _infoOnly) Then
             -- Break out of the while loop
             EXIT;

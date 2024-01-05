@@ -307,7 +307,7 @@ BEGIN
             _currentLocation := 'Call post_material_log_entry';
 
             -- Log the container creation
-            --
+
             CALL public.post_material_log_entry (
                             _type         => 'Container Creation',
                             _item         => _container,
@@ -340,7 +340,7 @@ BEGIN
                 _currentLocation := 'Call post_material_log_entry';
 
                 -- Log the container location change
-                --
+
                 CALL public.post_material_log_entry (
                                 _type         => 'Container Move',
                                 _item         => _container,

@@ -72,7 +72,6 @@ BEGIN
         -- Note that report_production_stats() converts:
         --   start date to the first day of the month
         --   end date to the first day of the next month
-        --
         ---------------------------------------------------
 
         If _includeProposalType > 0 Then

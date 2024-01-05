@@ -374,7 +374,7 @@ BEGIN
         -- INTO _hourOffset;
 
         -- Convert from text-based UTC date to local timestamp
-        --
+
         UPDATE Tmp_Processor_Status_Info
         SET Status_Date_Value     = public.try_cast(Status_Date,     null::timestamp),
             Last_Start_Time_Value = public.try_cast(Last_Start_Time, null::timestamp);

@@ -454,7 +454,7 @@ BEGIN
                 If _settingsFileChanged Then
                     -- The settings file for this job has changed, thus we must re-generate the job in the pipeline DB
                     -- Note that deletes auto-cascade from T_Jobs to T_Job_Steps, T_Job_Parameters, and T_Job_Step_Dependencies
-                    --
+
                     DELETE FROM sw.t_jobs
                     WHERE Job = _job
 

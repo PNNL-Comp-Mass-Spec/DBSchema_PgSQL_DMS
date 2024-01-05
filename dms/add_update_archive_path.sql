@@ -110,7 +110,7 @@ BEGIN
     WHERE archive_path = _archivePath::citext;
 
     -- Cannot create an entry that already exists
-    --
+
     If FOUND And _mode = 'add' Then
         RAISE EXCEPTION 'Cannot add: archive path "%" already exists', _archivePath;
     End If;
@@ -130,7 +130,7 @@ BEGIN
     ---------------------------------------------------
 
     -- Do not allow changing 'Active' to non active
-    --
+
     If _archiveFunction::citext <> 'Active' Then
 
         If Exists ( SELECT archive_path_id
@@ -147,7 +147,7 @@ BEGIN
     ---------------------------------------------------
 
     -- Check for active instrument to prevent multiple Active paths for an instrument
-    --
+
     If _archiveFunction::citext = 'Active' And Exists (
             SELECT InstName.instrument_id
             FROM t_instrument_name InstName
@@ -172,7 +172,7 @@ BEGIN
     ---------------------------------------------------
 
     -- Insert new archive path
-    --
+
     If _mode = 'add' Then
 
         INSERT INTO t_archive_path (

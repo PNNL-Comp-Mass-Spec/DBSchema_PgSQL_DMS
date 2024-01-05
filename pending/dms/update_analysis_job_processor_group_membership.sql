@@ -123,11 +123,11 @@ BEGIN
 
     If _mode Like 'set_membership_enabled_%' Then
         -- Get membership enabled value for this group
-        --
+
         _localMembership := Replace (_mode, 'set_membership_enabled_' , '' );
 
         -- Get membership enabled value for groups other than this group
-        --
+
         _nonLocalMembership := _newValue;
 
         -- Set memebership enabled value in this group
@@ -188,7 +188,7 @@ BEGIN
     End If;
 
     -- If _callingUser is defined, update entered_by in t_analysis_job_processor_group
-    --
+
     If Trim(Coalesce(_callingUser, '')) <> '' And _alterEnteredByRequired Then
         -- Call public.alter_entered_by_user for each processor ID in Tmp_Processors
 

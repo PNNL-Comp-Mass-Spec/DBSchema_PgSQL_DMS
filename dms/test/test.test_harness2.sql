@@ -40,7 +40,7 @@ BEGIN
     FROM TmpManagerList M;
 
     -- Calling RETURN query again will append additional rows to the output table
-    --
+
     RETURN query
     SELECT M.mgr_id, M.manager_name, PV.param_type_id, PV.value
     FROM TmpManagerList M

@@ -221,7 +221,6 @@ BEGIN
     -- Error if any username or role did not resolve to ID
     ---------------------------------------------------
 
-    --
     SELECT string_agg(Username, ', ' ORDER BY Username)
     INTO _list
     FROM Tmp_TeamMembers

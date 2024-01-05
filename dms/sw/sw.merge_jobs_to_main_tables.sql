@@ -37,7 +37,7 @@ BEGIN
     If _infoOnly Then
 
         -- Show contents of Tmp_Jobs
-        --
+
         CALL sw.show_tmp_jobs();
 
         RAISE INFO '';

@@ -47,7 +47,7 @@ BEGIN
     End If;
 
     -- Insert new row in job ID table to create unique ID
-    --
+
     INSERT INTO t_analysis_job_id ( note )
     VALUES (Coalesce(_note, ''))
     RETURNING job

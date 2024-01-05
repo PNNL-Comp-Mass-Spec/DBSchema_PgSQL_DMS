@@ -361,7 +361,7 @@ BEGIN
 
                 DELETE FROM t_analysis_job_annotations target
                 WHERE EXISTS (SELECT j.job FROM Tmp_JobsToDelete J WHERE target.job = J.job);
-                --
+
                 _message := format('%sT_Analysis_Job_Annotations, ', _message);
             */
 
@@ -373,7 +373,7 @@ BEGIN
 
                 DELETE FROM t_analysis_job_processor_group_associations target
                 WHERE EXISTS (SELECT j.job FROM Tmp_JobsToDelete J WHERE target.job = J.job);
-                --
+
                 _message := format('%st_analysis_job_processor_group_associations, ', _message);
             */
 
@@ -381,7 +381,7 @@ BEGIN
 
             DELETE FROM t_analysis_job_psm_stats target
             WHERE EXISTS (SELECT J.Job FROM Tmp_JobsToDelete J WHERE target.job = J.job);
-            --
+
             _message := format('%s t_analysis_job_psm_stats', _message);
 
             -- Disable the trigger that prevents all rows from being deleted
@@ -391,7 +391,7 @@ BEGIN
 
             DELETE FROM t_analysis_job target
             WHERE EXISTS (SELECT J.Job FROM Tmp_JobsToDelete J WHERE target.job = J.job);
-            --
+
             _message := format('%s and t_analysis_job', _message);
 
             CALL post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
@@ -428,7 +428,7 @@ BEGIN
             -- DROP INDEX IX_Tmp_T_Analysis_Job_Batch_ID_Include_Job ON t_analysis_job
 
             -- Delete orphaned entries in t_analysis_job_request that are older than _deleteThreshold
-            --
+
             _currentLocation := 'DELETE t_analysis_job_request';
 
             DELETE FROM t_analysis_job_request
@@ -449,7 +449,7 @@ BEGIN
             End If;
 
             -- Delete orphaned entries in t_analysis_job_id that are older than _logDeleteThreshold
-            --
+
             _currentLocation := 'DELETE t_analysis_job_id';
 
             DELETE FROM t_analysis_job_id target
@@ -562,7 +562,7 @@ BEGIN
 
             DELETE FROM t_dataset_qc target
             WHERE EXISTS (SELECT DS.dataset_id FROM Tmp_DatasetsToDelete DS WHERE target.dataset_id = DS.dataset_id);
-            --
+
             _message := format('%s t_dataset_qc,', _message);
 
             /*
@@ -572,7 +572,7 @@ BEGIN
 
                 DELETE FROM t_dataset_annotations target
                 WHERE EXISTS (SELECT DS.dataset_id FROM Tmp_DatasetsToDelete DS WHERE target.dataset_id = DS.dataset_id);
-                --
+
                 _message := format('%sT_Dataset_Annotations, ', _message);
             */
 
@@ -580,48 +580,48 @@ BEGIN
 
             DELETE FROM t_dataset_archive target
             WHERE EXISTS (SELECT DS.dataset_id FROM Tmp_DatasetsToDelete DS WHERE target.dataset_id = DS.dataset_id);
-            --
+
             _message := format('%s t_dataset_archive,', _message);
 
             _currentLocation := 'DELETE t_dataset_info';
 
             DELETE FROM t_dataset_info target
             WHERE EXISTS (SELECT DS.dataset_id FROM Tmp_DatasetsToDelete DS WHERE target.dataset_id = DS.dataset_id);
-            --
+
             _message := format('%s t_dataset_info,', _message);
 
             _currentLocation := 'DELETE t_dataset_storage_move_log';
 
             DELETE FROM t_dataset_storage_move_log target
             WHERE EXISTS (SELECT DS.dataset_id FROM Tmp_DatasetsToDelete DS WHERE target.dataset_id = DS.dataset_id);
-            --
+
             _message := format('%s t_dataset_storage_move_log,', _message);
 
             _currentLocation := 'DELETE t_requested_run';
 
             DELETE FROM t_requested_run target
             WHERE EXISTS (SELECT DS.dataset_id FROM Tmp_DatasetsToDelete DS WHERE target.dataset_id = DS.dataset_id);
-            --
+
             _message := format('%s t_requested_run,', _message);
 
             _currentLocation := 'DELETE t_prep_lc_run_dataset';
 
             DELETE FROM t_prep_lc_run_dataset target
             WHERE EXISTS (SELECT DS.dataset_id FROM Tmp_DatasetsToDelete DS WHERE target.dataset_id = DS.dataset_id);
-            --
+
             _message := format('%s t_prep_lc_run_dataset,', _message);
 
             _currentLocation := 'DELETE t_dataset';
 
             DELETE FROM t_dataset target
             WHERE EXISTS (SELECT DS.dataset_id FROM Tmp_DatasetsToDelete DS WHERE target.dataset_id = DS.dataset_id);
-            --
+
             _message := format('%s and t_dataset', _message);
 
             CALL post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
 
             -- Delete orphaned entries in t_requested_run that are older than _deleteThreshold
-            --
+
             DELETE FROM t_requested_run target
             WHERE target.Created < _deleteThreshold AND
                   target.DatasetID IS NULL;
@@ -636,7 +636,7 @@ BEGIN
             End If;
 
             -- Delete orphaned entries in t_requested_run_batches that are older than _deleteThreshold
-            --
+
             DELETE FROM t_requested_run_batches target
             WHERE target.created < _deleteThreshold AND
                   NOT EXISTS (SELECT RR.batch_ID FROM t_requested_run RR WHERE target.batch_id = RR.batch_id);
@@ -651,7 +651,7 @@ BEGIN
             End If;
 
             -- Delete orphaned entries in t_dataset_scan_types
-            --
+
             DELETE FROM t_dataset_scan_types target
             WHERE NOT EXISTS (SELECT DS.dataset_ID FROM t_dataset DS WHERE target.dataset_id = DS.dataset_id);
             --
@@ -715,14 +715,14 @@ BEGIN
 
             DELETE FROM t_experiment_biomaterial target
             WHERE EXISTS (SELECT E.exp_id FROM Tmp_ExperimentsToDelete E WHERE target.exp_id = E.exp_id);
-            --
+
             _message := format('%s t_experiment_biomaterial,', _message);
 
             _currentLocation := 'DELETE t_experiment_group_members';
 
             DELETE FROM t_experiment_group_members target
             WHERE EXISTS (SELECT E.exp_id FROM Tmp_ExperimentsToDelete E WHERE target.exp_id = E.exp_id);
-            --
+
             _message := format('%s t_experiment_group_members,', _message);
 
             _currentLocation := 'DELETE t_experiment_groups';
@@ -730,14 +730,14 @@ BEGIN
             DELETE FROM t_experiment_groups target
             WHERE EXISTS (SELECT E.exp_id FROM Tmp_ExperimentsToDelete E WHERE target.parent_exp_id = E.exp_id) AND
                   NOT EXISTS (SELECT EGM.group_id FROM t_experiment_group_members EGM WHERE target.group_id = EGM.group_id);
-            --
+
             _message := format('%s t_experiment_groups,', _message);
 
             _currentLocation := 'DELETE t_experiment_reference_compounds';
 
             DELETE FROM t_experiment_reference_compounds target
             WHERE EXISTS (SELECT E.exp_id FROM Tmp_ExperimentsToDelete E WHERE target.exp_id = E.exp_id);
-            --
+
             _message := format('%s t_experiment_biomaterial,', _message);
 
             _currentLocation := 'DELETE t_experiments';
@@ -745,13 +745,13 @@ BEGIN
             DELETE FROM t_experiments target
             WHERE EXISTS (SELECT E.exp_id FROM Tmp_ExperimentsToDelete E WHERE target.exp_id = E.exp_id) AND
                   NOT EXISTS (SELECT EG.parent_exp_id FROM t_experiment_groups EG WHERE target.exp_id = EG.parent_exp_id);
-            --
+
             _message := format('%s and t_experiments', _message);
 
             CALL post_log_entry ('Normal', _message, 'Delete_Old_Data_Experiments_Jobs_And_Logs');
 
             -- Delete orphaned entries in t_experiment_groups
-            --
+
             DELETE FROM t_experiment_groups target
             WHERE target.EG_Created < _deleteThreshold AND
                   NOT EXISTS (SELECT EGM.group_id FROM t_experiment_group_members EGM WHERE target.group_id = EGM.group_id)
@@ -802,7 +802,7 @@ BEGIN
     ---------------------------------------------------
 
     -- Experiments (Target_Type_ID = 500)
-    --
+
     DELETE FROM t_aux_info_value
     WHERE entry_id IN (
         SELECT AIVal.entry_ID
@@ -830,7 +830,7 @@ BEGIN
     End If;
 
     -- Biomaterial (Target_Type_ID = 501)
-    --
+
     DELETE FROM t_aux_info_value
     WHERE entry_id IN (
         SELECT AIVal.entry_id
@@ -860,7 +860,6 @@ BEGIN
     -- Datasets (Target_Type_ID = 502)
     -- Note that although DMS supports Aux_Info for datasets, it has never been used
     -- Thus, we'll skip this query
-    --
 
     -- DELETE FROM t_aux_info_value
     -- WHERE entry_id IN (

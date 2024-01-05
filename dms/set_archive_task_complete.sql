@@ -94,7 +94,7 @@ BEGIN
         -- Task completed successfully
 
         -- Decide what state is next
-        --
+
         If _completionCode = 100 Then
             _archiveStateNew := 3;
         ElsIf _doPrep = 0 Then
@@ -104,7 +104,7 @@ BEGIN
         End If;
 
         -- Update the state
-        --
+
         UPDATE t_dataset_archive
         SET archive_state_id = _archiveStateNew,
             archive_update_state_id = 4,

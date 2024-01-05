@@ -157,7 +157,7 @@ BEGIN
     ------------------------------------------------------------------
 
     -- First reset job steps for capture task jobs in Tmp_Selected_Jobs with ResetFailedStepsOnly = true
-    --
+
     UPDATE cap.t_task_steps
     SET State = 2
     WHERE State = 6 AND

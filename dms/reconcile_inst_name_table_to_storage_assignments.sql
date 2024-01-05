@@ -27,7 +27,7 @@ BEGIN
 
     -- Each instrument should only have one row in t_storage_path with storage_path_function = 'inbox', but manual data entry sometimes introduces duplicates
     -- Use Row_Number() to select the newest row
-    --
+
     UPDATE t_instrument_name
     SET source_path_id = RankQ.storage_path_id
     FROM ( SELECT SPath.instrument, SPath.storage_path_id, Row_Number() Over (Partition By Instrument Order By storage_path_id Desc) as RowNum
@@ -52,7 +52,7 @@ BEGIN
 
     -- Each instrument should only have one row in t_storage_path with storage_path_function = 'raw-storage', but manual data entry sometimes introduces duplicates
     -- Use Row_Number() to select the newest row
-    --
+
     UPDATE t_instrument_name
     SET storage_path_ID = RankQ.storage_path_id
     FROM ( SELECT SPath.instrument, SPath.storage_path_id, Row_Number() Over (Partition By Instrument Order By storage_path_id Desc) as RowNum

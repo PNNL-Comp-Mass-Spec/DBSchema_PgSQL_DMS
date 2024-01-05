@@ -152,7 +152,7 @@ BEGIN
 
         If _mode = 'update' Then
             -- Cannot update a non-existent entry
-            --
+
             If Not Exists (SELECT dataset_id FROM t_run_interval WHERE dataset_id = _id) Then
                 _message := format('Invalid ID: %s; cannot update', _id);
                 RAISE EXCEPTION '%', _message;

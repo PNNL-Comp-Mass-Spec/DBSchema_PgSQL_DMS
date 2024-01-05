@@ -197,13 +197,13 @@ BEGIN
     ---------------------------------------------------
 
     -- Get new instrument ID
-    --
+
     SELECT Coalesce(MAX(instrument_id), 0) + 1
     INTO _instrumentId
     FROM t_instrument_name ;
 
     -- Make entry into instrument table
-    --
+
     INSERT INTO t_instrument_name(
         instrument,
         instrument_id,

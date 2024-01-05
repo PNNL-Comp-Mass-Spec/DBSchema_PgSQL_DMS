@@ -81,7 +81,7 @@ BEGIN
     ----------------------------------------------
 
     -- Active jobs with similar settings (using protein collections)
-    --
+
     INSERT INTO Tmp_ProteinCollectionJobs (ParamFile, SettingsFile, ProteinCollectionList)
     SELECT param_file_name,
            settings_file_name,
@@ -96,7 +96,7 @@ BEGIN
     HAVING COUNT(job) > _activeStepThreshold;
 
     -- Active jobs with similar settings (using organism DBs)
-    --
+
     INSERT INTO Tmp_LegacyOrgDBJobs (ParamFile, SettingsFile, OrganismDBName)
     SELECT param_file_name,
            settings_file_name,
@@ -111,7 +111,7 @@ BEGIN
     HAVING COUNT(job) > _activeStepThreshold;
 
     -- Batches with active, long-running jobs
-    --
+
     INSERT INTO Tmp_Batches(BatchID)
     SELECT J.batch_id
     FROM t_analysis_job J

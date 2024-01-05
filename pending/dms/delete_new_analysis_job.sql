@@ -107,7 +107,7 @@ BEGIN
     End If;
 
     -- Delete the analysis job
-    --
+
     CALL public.delete_analysis_job (
                     _job         => _jobID,
                     _callingUser => _callingUser,

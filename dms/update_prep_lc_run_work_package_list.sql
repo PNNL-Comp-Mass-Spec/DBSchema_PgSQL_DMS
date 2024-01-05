@@ -137,7 +137,7 @@ BEGIN
             End If;
 
             -- Update the table if _wpList differs from the existing value
-            --
+
             UPDATE T_Prep_LC_Run
             SET Sample_Prep_Work_Packages = _wpList
             WHERE prep_run_id = _currentPrepRunID And

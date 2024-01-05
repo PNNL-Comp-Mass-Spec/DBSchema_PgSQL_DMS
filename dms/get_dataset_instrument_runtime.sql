@@ -88,7 +88,7 @@ BEGIN
         _longIntervalsOnly := 0;
         _seqIncrement := 2;
     End If;
-    --
+
     If _options = 'Long Intervals' Then
         _includeAcquisitions := 0;
         _includeIncrements := 1;

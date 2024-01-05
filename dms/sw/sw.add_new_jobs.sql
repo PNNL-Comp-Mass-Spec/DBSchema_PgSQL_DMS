@@ -486,7 +486,7 @@ BEGIN
 
         -- Set local job state to holding for jobs
         -- that are in holding state in public.t_analysis_job
-        --
+
         UPDATE sw.t_jobs
         SET state = 8                            -- 8=Holding
         WHERE sw.t_jobs.state <> 8 AND
@@ -519,7 +519,7 @@ BEGIN
         End If;
 
         -- Update parameters for jobs being resumed or reset (jobs in Tmp_JobsToResumeOrReset)
-        --
+
         _jobsProcessed := 0;
         _lastLogTime := clock_timestamp();
 
@@ -577,7 +577,7 @@ BEGIN
         END LOOP;
 
         -- For failed jobs being reset, truncate the comment at the first semi-colon
-        --
+
         UPDATE Tmp_DMSJobs
         SET Comment = RTrim(Substring(Target.Comment, 1, FilterQ.Matchindex - 1))
         FROM ( SELECT DJ.Job,
@@ -591,7 +591,7 @@ BEGIN
               FilterQ.MatchIndex > 0;
 
         -- Make sure the job comment and special_processing fields are up-to-date in sw.t_jobs
-        --
+
         UPDATE sw.t_jobs J
         SET comment = DJ.comment,
             special_processing = DJ.special_processing

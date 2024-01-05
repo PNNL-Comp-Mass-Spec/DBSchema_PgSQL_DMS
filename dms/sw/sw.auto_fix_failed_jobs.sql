@@ -153,7 +153,7 @@ BEGIN
             -- We will leave these jobs as 'failed' in public.T_Analysis_Job since there are no results to track
 
             -- Change the step state to 3 (Skipped) for all of the steps in this job
-            --
+
             UPDATE sw.t_job_steps Target
             SET state = 3
             FROM Tmp_JobsToFix F
@@ -229,7 +229,7 @@ BEGIN
 
         Else
             -- Change the Propagation Mode to 1 (so that the job will be set to state 14 (No Export)
-            --
+
             UPDATE public.t_analysis_job Target
             SET propagation_mode = 1,
                 job_state_id = 2
@@ -237,14 +237,14 @@ BEGIN
             WHERE Target.job = F.Job;
 
             -- Change the job state back to 'In Progress'
-            --
+
             UPDATE sw.t_jobs Target
             SET state = 2
             FROM Tmp_JobsToFix F
             WHERE Target.Job = F.Job;
 
             -- Change the step state to 3 (Skipped)
-            --
+
             UPDATE sw.t_job_steps Target
             SET state = 3
             FROM Tmp_JobsToFix F
@@ -324,7 +324,7 @@ BEGIN
 
         Else
             -- Clear the completion_message and update the step state
-            --
+
             UPDATE sw.t_job_steps Target
             SET state = 2,
                 completion_message = '',
@@ -353,7 +353,7 @@ BEGIN
             WHERE Target.job = F.Job;
 
             -- Change the job state back to 'In Progress'
-            --
+
             UPDATE sw.t_jobs Target
             SET state = 2
             FROM Tmp_JobsToFix F

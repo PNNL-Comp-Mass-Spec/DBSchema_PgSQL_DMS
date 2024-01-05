@@ -35,7 +35,7 @@ BEGIN
 
     /*
     -- \\proto-3\QEHFX01\2022_1\
-    --
+
     SELECT unnest(xpath('//params/Param[@Name="DatasetStoragePath"]/@Value', rooted_xml))::text
     FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml as rooted_xml
            FROM sw.t_job_parameters_history
@@ -43,7 +43,7 @@ BEGIN
          ) Src;
 
     -- \\proto-3\DMS3_Xfer\
-    --
+
     SELECT ((xpath('//params/Param[@Name = "TransferFolderPath"]/@Value', rooted_xml))[1])::text
     FROM ( SELECT ('<root>' || parameters::text || '</root>')::xml as rooted_xml
            FROM sw.t_job_parameters_history

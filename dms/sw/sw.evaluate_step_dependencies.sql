@@ -266,10 +266,11 @@ BEGIN
         ---------------------------------------------------
         -- Skip if signature of dependent step matches the test value
         -- (usually used with value of '0', which happens when there are no parameters)
-        --
+        ---------------------------------------------------
+
         If _condition_Test = 'No_Parameters' Then
             -- Get filter signature for dependent step
-            --
+
             SELECT signature
             INTO _actualValue
             FROM sw.t_job_steps
@@ -291,10 +292,11 @@ BEGIN
 
         ---------------------------------------------------
         -- Skip if state of target step is skipped
-        --
+        ---------------------------------------------------
+
         If _condition_Test = 'Target_Skipped' Then
             -- Get shared result setting for target step
-            --
+
             SELECT state
             INTO _actualValue
             FROM sw.t_job_steps
@@ -316,10 +318,11 @@ BEGIN
 
         ---------------------------------------------------
         -- Skip if completion message of target step contains test value
-        --
+        ---------------------------------------------------
+
         If _condition_Test = 'Completion_Message_Contains' Then
             -- Get completion message for target step
-            --
+
             SELECT completion_message
             INTO _targetCompletionMessage
             FROM sw.t_job_steps

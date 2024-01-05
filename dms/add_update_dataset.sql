@@ -440,19 +440,19 @@ BEGIN
 
         If Not FOUND Then
             -- Cannot update a non-existent entry
-            --
+
             If _mode::citext In ('update', 'check_update') Then
                 RAISE EXCEPTION 'Cannot update: dataset % does not exist', _datasetName;
             End If;
         Else
             -- Cannot create an entry that already exists
-            --
+
             If _addingDataset Then
                 RAISE EXCEPTION 'Cannot add dataset "%" since it already exists', _datasetName;
             End If;
 
             -- Do not allow a rating change from 'Unreviewed' to any other rating within this procedure
-            --
+
             If _curDSRatingID = -10 And _rating::citext <> 'Unreviewed' Then
                 RAISE EXCEPTION 'Cannot change dataset rating from Unreviewed with this mechanism; use the Dataset Disposition process instead ("https://dms2.pnl.gov/dataset_disposition/search" or SP UpdateDatasetDispositions)';
             End If;
@@ -462,7 +462,6 @@ BEGIN
         -- Resolve ID for LC Column
         ---------------------------------------------------
 
-        --
         SELECT lc_column_id
         INTO _columnID
         FROM t_lc_column
@@ -495,7 +494,6 @@ BEGIN
         -- Resolve ID for _secSep
         ---------------------------------------------------
 
-        --
         SELECT separation_type_id
         INTO _sepID
         FROM t_secondary_sep
@@ -509,7 +507,6 @@ BEGIN
         -- Resolve ID for _internalStandards
         ---------------------------------------------------
 
-        --
         SELECT internal_standard_id
         INTO _intStdID
         FROM t_internal_standards
@@ -601,7 +598,7 @@ BEGIN
         If _datasetTypeID = 0 Then
             -- Could not resolve _msType to a dataset type
             -- If _mode is 'add', we will auto-update _msType to the default
-            --
+
             If _addingDataset And Coalesce(_defaultDatasetTypeID, 0) > 0 Then
                 -- Use the default dataset type
                 _datasetTypeID := _defaultDatasetTypeID;
@@ -643,7 +640,7 @@ BEGIN
 
             -- Dataset type is not valid for this instrument group
             -- However, _mode is 'add', so we will auto-update _msType
-            --
+
             If _msType::citext In ('HMS-MSn', 'HMS-HMSn') And Exists (
                 SELECT IGADST.Dataset_Type
                 FROM t_instrument_group ING
@@ -725,7 +722,7 @@ BEGIN
         If _userID > 0 Then
             -- Function get_user_id() recognizes both a username and the form 'LastName, FirstName (Username)'
             -- Assure that _operatorUsername contains simply the username
-            --
+
             SELECT username
             INTO _operatorUsername
             FROM t_users
@@ -891,19 +888,17 @@ BEGIN
                 -- (check code taken from consume_scheduled_run procedure)
                 ---------------------------------------------------
 
-                -- Get experiment ID from dataset;
-                -- this was already done above
+                -- Get experiment ID from dataset; this was already done above
 
                 -- Get experiment ID from scheduled run
-                --
-                --
+
                 SELECT exp_id
                 INTO _reqExperimentID
                 FROM t_requested_run
                 WHERE request_id = _requestID;
 
                 -- Validate that experiments match
-                --
+
                 If _experimentID <> _reqExperimentID Then
                     _message := format('Experiment for dataset (%s) does not match with the requested run''s experiment (Request %s)', _experimentName, _requestID);
                     RAISE EXCEPTION '%', _message;
@@ -1086,7 +1081,7 @@ BEGIN
                 End If;
 
                 -- Insert values into a new row
-                --
+
                 INSERT INTO t_dataset (
                     dataset,
                     operator_username,
@@ -1374,7 +1369,7 @@ BEGIN
             End If;
 
             -- Lookup the Requested Run info for this dataset
-            --
+
             SELECT RR.request_id,
                    RR.request_name,
                    RR.instrument_setting,

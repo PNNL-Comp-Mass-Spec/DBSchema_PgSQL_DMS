@@ -461,7 +461,7 @@ BEGIN
             DROP TABLE Tmp_NewJobIDs;
         Else
             -- Pretend that the new Jobs will start at job 100,000,000
-            --
+
             _newJobIdStart := 100000000;
         End If;
 

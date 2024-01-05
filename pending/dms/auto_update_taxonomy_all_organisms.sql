@@ -132,7 +132,7 @@ BEGIN
 
             If _infoOnly Then
                 -- Previewing changes; store in Tmp_OrganismsToUpdate
-                --
+
                 INSERT INTO Tmp_OrganismsToUpdate (
                                 OrganismID, OrganismName, NCBITaxonomyID,
                                 OldDomain,  NewDomain,

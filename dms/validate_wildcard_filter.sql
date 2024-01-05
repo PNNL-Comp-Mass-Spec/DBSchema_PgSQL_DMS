@@ -27,7 +27,7 @@ BEGIN
     _wildcardFilter := Trim(Coalesce(_wildcardFilter, ''));
 
     -- Add wildcards if _wildcardFilter doesn't contain a percent sign
-    --
+
     If char_length(_wildcardFilter) > 0 And Position('%' in _wildcardFilter) = 0 Then
         _wildcardFilter := '%' || _wildcardFilter || '%';
     End If;

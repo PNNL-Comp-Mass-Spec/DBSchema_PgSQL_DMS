@@ -349,7 +349,7 @@ BEGIN
                 If Exists (SELECT * FROM Tmp_DatasetSchedulePredefine) And _ratingID >= 2 Then
 
                     -- Schedule Predefines
-                    --
+
                     FOR _currentDataset IN
                         SELECT Dataset_Name
                         FROM Tmp_DatasetSchedulePredefine

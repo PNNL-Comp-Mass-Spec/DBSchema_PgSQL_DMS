@@ -73,7 +73,7 @@ BEGIN
     _debugMode := _infoOnly;
 
     -- Get parameters for the job as XML
-    --
+
     _xmlParameters := sw.create_parameters_for_job (
                             _job,
                             _settingsFileOverride => _settingsFileOverride,
@@ -84,7 +84,7 @@ BEGIN
         RAISE INFO 'Parameters for job %: %', _job, _xmlParameters;
     Else
         -- Update sw.t_job_parameters (or insert a new row if the job isn't present)
-        --
+
         If Exists (SELECT job FROM sw.t_job_parameters WHERE job = _job) Then
             UPDATE sw.t_job_parameters
             SET Parameters = Coalesce(_xmlParameters, Parameters)

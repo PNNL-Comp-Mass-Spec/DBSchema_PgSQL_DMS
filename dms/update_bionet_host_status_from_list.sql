@@ -80,7 +80,7 @@ BEGIN
         GET DIAGNOSTICS _hostCount = ROW_COUNT;
 
         -- Split out IP address
-        --
+
         UPDATE Tmp_Hosts
         SET Host = Substring(FilterQ.HostAndIP, 1, AtSignLoc - 1),
             IP   = Substring(FilterQ.HostAndIP, AtSignLoc + 1, 16)
@@ -92,7 +92,7 @@ BEGIN
         WHERE FilterQ.Entry_ID = Tmp_Hosts.Entry_ID;
 
         -- Remove suffix .bionet if present
-        --
+
         UPDATE Tmp_Hosts
         SET Host = Replace(Host, '.bionet', '')
         WHERE Host LIKE '%.bionet';

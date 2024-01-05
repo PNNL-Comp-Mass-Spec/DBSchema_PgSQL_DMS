@@ -85,7 +85,7 @@ BEGIN
     ---------------------------------------------------
 
     -- First look for entries without a Compound_ID
-    --
+
     SELECT string_agg(Compound_IDName, ', ' Order By Compound_IDName)
     INTO _invalidRefCompoundList
     FROM Tmp_ExpToRefCompoundMap
@@ -98,7 +98,7 @@ BEGIN
     End If;
 
     -- Next look for entries with an invalid Compound_ID
-    --
+
     SELECT string_agg(Compound_IDName, ', ' Order By Compound_IDName)
     INTO _invalidRefCompoundList
     FROM Tmp_ExpToRefCompoundMap Src

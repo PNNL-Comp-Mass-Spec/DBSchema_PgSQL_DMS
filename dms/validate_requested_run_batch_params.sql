@@ -139,7 +139,7 @@ BEGIN
         End If;
 
         -- Cannot update a non-existent entry
-        --
+
         If _mode = 'update' Then
 
             If Coalesce(_batchID, 0) = 0 Then

@@ -186,7 +186,7 @@ BEGIN
 
         If _foundRetrySuccessTasks Then
             -- Silently update any where the retry succeeded
-            --
+
             UPDATE cap.t_myemsl_uploads Uploads
             SET error_code = 101
             FROM Tmp_StaleUploads Stale
@@ -264,7 +264,7 @@ BEGIN
         END LOOP;
 
         -- Update uploads where a successful retry does not exist
-        --
+
         UPDATE cap.t_myemsl_uploads Uploads
         SET error_code = 101
         FROM Tmp_StaleUploads Stale

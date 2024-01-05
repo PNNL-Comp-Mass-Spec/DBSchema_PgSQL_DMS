@@ -199,7 +199,6 @@ BEGIN
     -- Now extract out the SMAQC Measurement information
     ---------------------------------------------------
 
-    --
     INSERT INTO Tmp_Measurements (Name, ValueText)
     SELECT XmlQ.Name, XmlQ.ValueText
     FROM (

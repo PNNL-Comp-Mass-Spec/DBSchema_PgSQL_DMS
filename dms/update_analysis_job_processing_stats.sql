@@ -242,7 +242,7 @@ BEGIN
 
     If _newDMSJobState In (4, 14) Then
         -- Get the dataset ID, dataset name, and tool name
-        --
+
         SELECT DS.dataset_id,
                DS.dataset,
                T.analysis_tool

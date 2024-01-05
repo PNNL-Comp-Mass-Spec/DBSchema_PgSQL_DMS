@@ -37,7 +37,7 @@ DECLARE
 BEGIN
 
     -- Lookup the entries for _requestID in t_analysis_job_request
-    --
+
     SELECT AJR.analysis_tool,
            AJR.param_file_name,
            AJR.settings_file_name,
@@ -69,7 +69,7 @@ BEGIN
 
         -- When looking for existing jobs, if the analysis tool is not a Peptide_Hit tool,
         -- then we ignore OrganismDBName, Organism Name, Protein Collection List, and Protein Options List
-        --
+
         -- If the tool is a Peptide_Hit tool, we only consider Organism Name when searching
         -- against a legacy Fasta file (i.e. when the Protein Collection List is 'na')
 

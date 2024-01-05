@@ -481,7 +481,7 @@ BEGIN
 
         -- The following update query increments _seq after updating each row
         -- This is a SQL server specific syntax
-        --
+
         /*
           UPDATE #STAGING
           Set @seq = Seq = @seq + 1,

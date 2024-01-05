@@ -106,7 +106,7 @@ BEGIN
         ---------------------------------------------------
 
         -- Biomaterial (unused by prep requests since April 2017, but still tracked)
-        --
+
         INSERT INTO Tmp_PrepRequestItems (Prep_Request_ID, Item_ID, Item_Name, Item_Type, Status, Created)
         SELECT SPR.prep_request_id,
                B.Biomaterial_ID AS Item_ID,
@@ -124,7 +124,7 @@ BEGIN
         WHERE SPR.prep_request_id = _samplePrepRequestID;
 
         -- Experiments
-        --
+
         INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
         SELECT SPR.prep_request_id,
                E.exp_id AS Item_ID,
@@ -138,7 +138,7 @@ BEGIN
         WHERE SPR.prep_request_id = _samplePrepRequestID;
 
         -- Experiment groups
-        --
+
         INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
         SELECT DISTINCT SPR.prep_request_id,
                         GM.group_id AS Item_ID,
@@ -156,7 +156,7 @@ BEGIN
         WHERE SPR.prep_request_id = _samplePrepRequestID;
 
         -- Material containers
-        --
+
         INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
         SELECT DISTINCT SPR.prep_request_id,
                         MC.container_id AS Item_ID,
@@ -173,7 +173,7 @@ BEGIN
               MC.container_id > 1;
 
         -- Requested runs
-        --
+
         INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
         SELECT SPR.prep_request_id,
                RR.request_id AS Item_ID,
@@ -189,7 +189,7 @@ BEGIN
         WHERE SPR.prep_request_id = _samplePrepRequestID;
 
         -- Datasets
-        --
+
         INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
         SELECT SPR.prep_request_id,
                DS.dataset_id AS Item_ID,
@@ -207,7 +207,7 @@ BEGIN
         WHERE SPR.prep_request_id = _samplePrepRequestID;
 
         -- HPLC Runs - Reference to sample prep request IDs in comma delimited list in text field
-        --
+
         INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
         SELECT _samplePrepRequestID AS Prep_Request_ID,
                Item_ID,

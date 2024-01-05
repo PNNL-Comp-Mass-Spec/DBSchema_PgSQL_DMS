@@ -89,7 +89,7 @@ BEGIN
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
         -- Cannot update a non-existent entry
-        --
+
         If _mode = 'update' And _existingCount = 0 Then
             _message := format('Cannot update: step tool "%s" does not exist', _name);
             RAISE WARNING '%', _message;
@@ -98,7 +98,7 @@ BEGIN
         End If;
 
         -- Cannot add an existing entry
-        --
+
         If _mode = 'add' And _existingCount > 0 Then
             _message := format('Cannot add: step tool "%s" already exists', _name);
             RAISE WARNING '%', _message;

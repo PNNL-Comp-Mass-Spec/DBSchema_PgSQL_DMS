@@ -135,19 +135,19 @@ BEGIN
         ---------------------------------------------------
 
         -- Store the non-percentage based keys
-        --
+
         INSERT INTO Tmp_NonPercentageKeys (UsageKey)
         SELECT Trim(Value)
         FROM public.parse_delimited_list('Operator, Proposal, PropUser');
 
         -- Add the percentage-based keys to Tmp_UsageInfo
-        --
+
         INSERT INTO Tmp_UsageInfo (UsageKey)
         SELECT Trim(Value)
         FROM public.parse_delimited_list('CapDev, Broken, Maintenance, StaffNotAvailable, OtherNotAvailable, InstrumentAvailable, UserOnsite, UserRemote, ResourceOwner, Onsite, Remote, User');
 
         -- Add the non-percentage-based keys to Tmp_UsageInfo
-        --
+
         INSERT INTO Tmp_UsageInfo (UsageKey)
         SELECT UsageKey
         FROM Tmp_NonPercentageKeys;

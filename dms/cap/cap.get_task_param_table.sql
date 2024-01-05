@@ -198,7 +198,6 @@ BEGIN
     --   LCMS2DPlotMinPointsPerSpectrum, default 2
     --   LCMS2DPlotMinIntensity, default 0
     --   LCMS2DOverviewPlotDivisor, default 10
-    --
     ---------------------------------------------------
 
     SELECT raw_data_type,

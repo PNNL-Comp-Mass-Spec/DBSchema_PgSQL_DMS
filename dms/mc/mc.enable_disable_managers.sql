@@ -187,7 +187,7 @@ BEGIN
         End If;
     Else
         -- Populate Tmp_ManagerList with all managers in mc.t_mgrs (of type _managerTypeID)
-        --
+
         INSERT INTO Tmp_ManagerList (manager_name)
         SELECT mgr_name
         FROM mc.t_mgrs
@@ -205,7 +205,7 @@ BEGIN
     End If;
 
     -- Count the number of managers that need to be updated
-    --
+
     SELECT COUNT(PV.entry_id)
     INTO _countToUpdate
     FROM mc.t_param_value PV
@@ -222,7 +222,7 @@ BEGIN
           MT.mgr_type_active > 0;
 
     -- Count the number of managers already in the target state
-    --
+
     SELECT COUNT(PV.entry_id)
     INTO _countUnchanged
     FROM mc.t_param_value PV
@@ -244,7 +244,7 @@ BEGIN
     -- Store the manager names in an array,
     -- which allows the refcursor to filter by manager name
     -- without using the temporary table
-    --
+
     _mgrNames := ARRAY( SELECT manager_name
                         FROM Tmp_ManagerList
                       );
@@ -377,7 +377,7 @@ BEGIN
     End If;
 
     -- Update mgractive for the managers in the _mgrNames array
-    --
+
     UPDATE mc.t_param_value
     SET value = _newValue
     FROM mc.t_param_value PV

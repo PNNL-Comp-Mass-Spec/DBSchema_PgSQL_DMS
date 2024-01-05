@@ -156,7 +156,7 @@ BEGIN
         CREATE INDEX IX_Tmp_JobsToAddOrDelete ON Tmp_JobsToAddOrDelete (Job, DataPackageID);
 
         -- If working with analysis jobs, populate Tmp_JobsToAddOrDelete with all numeric job entries
-        --
+
         If Exists ( SELECT DataPackageID FROM Tmp_DataPackageItems WHERE ItemType = 'Job' ) Then
             DELETE FROM Tmp_DataPackageItems
             WHERE Trim(Coalesce(Identifier, '')) = '' OR public.try_cast(Identifier, null::int) Is Null;
@@ -247,7 +247,7 @@ BEGIN
 
         -- Add parent items and associated items to list for items in the list
         -- This process cascades up the DMS hierarchy of tracking entities, but not down
-        --
+
         If _mode = 'add' Then
             -- Add datasets to list that are parents of jobs in the list
             -- (and are not already in the list)
@@ -336,7 +336,7 @@ BEGIN
             -- after deleting the jobs and/or datasets in Tmp_DataPackageItems
 
             -- Find parent datasets that will have no jobs remaining once we remove the jobs in Tmp_DataPackageItems
-            --
+
             INSERT INTO Tmp_DataPackageItems (DataPackageID, ItemType, Identifier)
             SELECT ToDelete.DataPackageID, ToDelete.ItemType, ToDelete.Dataset
             FROM (
@@ -371,7 +371,7 @@ BEGIN
             WHERE ToKeep.data_pkg_id IS NULL;
 
             -- Find parent experiments that will have no jobs or datasets remaining once we remove the jobs in Tmp_DataPackageItems
-            --
+
             INSERT INTO Tmp_DataPackageItems (DataPackageID, ItemType, Identifier)
             SELECT ToDelete.DataPackageID, ToDelete.ItemType, ToDelete.Experiment
             FROM (
@@ -445,7 +445,7 @@ BEGIN
                   ToKeep2.data_pkg_id IS NULL;
 
             -- Find parent biomaterial that will have no jobs or datasets remaining once we remove the jobs in Tmp_DataPackageItems
-            --
+
             INSERT INTO Tmp_DataPackageItems (DataPackageID, ItemType, Identifier)
             SELECT ToDelete.DataPackageID, ToDelete.ItemType, ToDelete.Biomaterial_Name
             FROM (

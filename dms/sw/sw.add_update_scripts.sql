@@ -225,7 +225,7 @@ BEGIN
     WHERE script = _script::citext;
 
     -- Cannot update a non-existent entry
-    --
+
     If _mode = 'update' And _existingRowCount = 0 Then
         _message := format('Cannot update: script "%s" does not exist', _script);
         RAISE WARNING '%', _message;
@@ -235,7 +235,7 @@ BEGIN
     End If;
 
     -- Cannot add an existing entry
-    --
+
     If _mode = 'add' And _existingRowCount > 0 Then
         _message := format('Cannot add: script "%s" already exists', _script);
         RAISE WARNING '%', _message;

@@ -110,7 +110,7 @@ BEGIN
 
         If _mode = 'update' Then
             -- Cannot update a non-existent entry
-            --
+
             If Not Exists (SELECT instrument_group FROM t_instrument_group WHERE instrument_group = _instrumentGroup::citext) Then
                 RAISE EXCEPTION 'Cannot update: instrument group "%" does not exist';
             End If;

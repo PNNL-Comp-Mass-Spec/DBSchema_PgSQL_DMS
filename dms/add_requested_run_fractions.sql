@@ -156,15 +156,15 @@ BEGIN
         If Coalesce(_sourceRequestID, 0) = 0 Then
             RAISE EXCEPTION 'Source request ID not provided';
         End If;
-        --
+
         If Coalesce(_requesterUsername, '') = '' Then
             RAISE EXCEPTION 'Requester username must be specified';
         End If;
-        --
+
         If Coalesce(_separationGroup, '') = '' Then
             RAISE EXCEPTION 'Separation group must be specified';
         End If;
-        --
+
         If Coalesce(_workPackage, '') = '' Then
             RAISE EXCEPTION 'Work package must be specified';
         End If;
@@ -310,7 +310,7 @@ BEGIN
         If _userID > 0 Then
             -- Function get_user_id() recognizes both a username and the form 'LastName, FirstName (Username)'
             -- Assure that _requesterUsername contains simply the username
-            --
+
             SELECT username
             INTO _requesterUsername
             FROM t_users
@@ -575,7 +575,7 @@ BEGIN
 
         -- Value should be a 0 or a 1
         -- Cast to text, then cast to boolean
-        --
+
         SELECT public.try_cast(Value::text, false)
         INTO _requireWP
         FROM t_misc_options
@@ -597,7 +597,7 @@ BEGIN
 
 
         -- Make sure the Work Package is capitalized properly
-        --
+
         SELECT charge_code
         INTO _workPackage
         FROM t_charge_code
@@ -773,7 +773,7 @@ BEGIN
                 End If;
 
                 -- Assign users to the request
-                --
+
                 CALL public.assign_eus_users_to_requested_run (
                                         _requestID,
                                         _eusUserID,                     -- Integer, stored as text
@@ -785,7 +785,7 @@ BEGIN
                 End If;
 
                 -- Append the new request ID to _requestIdList
-                --
+
                 If _requestIdList = '' Then
                     _requestIdList := _requestID;
                 Else
@@ -793,7 +793,7 @@ BEGIN
                 End If;
 
                 -- Increment the fraction
-                --
+
                 _fractionNumber := _fractionNumber + 1;
 
             END LOOP;

@@ -240,7 +240,7 @@ BEGIN
         _startTime := CURRENT_TIMESTAMP;
 
         -- Add missing rows to t_cached_instrument_dataset_type_usage
-        --
+
         INSERT INTO t_cached_instrument_dataset_type_usage( instrument_id, dataset_type )
         SELECT Distinct InstName.instrument_id,
                GT.dataset_type AS Dataset_Type
@@ -254,7 +254,7 @@ BEGIN
         ORDER BY instrument_id, dataset_type;
 
         -- Remove extra rows from t_cached_instrument_dataset_type_usage
-        --
+
         DELETE FROM t_cached_instrument_dataset_type_usage
         WHERE entry_id IN ( SELECT CachedData.entry_id
                             FROM t_instrument_group_allowed_ds_type AS GT
@@ -266,7 +266,7 @@ BEGIN
                             WHERE GT.instrument_group IS NULL );
 
         -- Update stats in t_cached_instrument_dataset_type_usage
-        --
+
         UPDATE t_cached_instrument_dataset_type_usage target
         SET dataset_usage_count = StatsQ.DatasetCount,
             dataset_usage_last_year = StatsQ.DatasetCountLastYear

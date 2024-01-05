@@ -261,7 +261,7 @@ BEGIN
         End If;
 
         -- Look for instruments that have an inbox on this host
-        --
+
         SELECT string_agg(Inst.instrument, ', ' ORDER BY Inst.instrument)
         INTO _instruments
         FROM t_storage_path SPath

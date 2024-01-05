@@ -209,7 +209,7 @@ BEGIN
         );
 
         -- Find missing relationships
-        --
+
         INSERT INTO Tmp_RelationshipsToAdd (child_pk, parent_pk)
         SELECT DISTINCT SourceTable.term_pk AS child_pk,
                         ont.t_term.term_pk AS parent_pk
@@ -224,7 +224,6 @@ BEGIN
         ORDER BY SourceTable.term_pk, ont.t_term.term_pk;
 
         -- Determine the smallest ID in table ont.t_term_relationship
-        --
 
         SELECT MIN(term_relationship_id) - 1
         INTO _autoNumberStartID
@@ -246,7 +245,7 @@ BEGIN
             ORDER BY R.Entry_ID;
         Else
             -- Add missing relationships
-            --
+
             INSERT INTO ont.t_term_relationship( term_relationship_id,
                                            subject_term_pk,
                                            predicate_term_pk,
@@ -266,7 +265,7 @@ BEGIN
         End If;
 
         -- Find extra relationships
-        --
+
         INSERT INTO Tmp_RelationshipsToDelete( Relationship_ID )
         SELECT ont.t_term_relationship.term_relationship_id
         FROM ( SELECT DISTINCT SourceTable.identifier,

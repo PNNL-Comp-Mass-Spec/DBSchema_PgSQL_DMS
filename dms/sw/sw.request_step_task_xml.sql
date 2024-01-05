@@ -679,7 +679,7 @@ BEGIN
             _currentLocation := 'Populate Tmp_CandidateJobSteps: Look for Results_Transfer candidates';
 
             -- Look for Results_Transfer candidates
-            --
+
             INSERT INTO Tmp_CandidateJobSteps (
                 Job,
                 Step,
@@ -757,7 +757,7 @@ BEGIN
                 _currentLocation := 'Populate Tmp_CandidateJobSteps: Look for Results_Transfer tasks that need to be handled by another storage server';
 
                 -- Look for results transfer tasks that need to be handled by another storage server
-                --
+
                 INSERT INTO Tmp_CandidateJobSteps (
                     Job,
                     Step,
@@ -1088,7 +1088,7 @@ BEGIN
             ---------------------------------------------------
 
             -- Processor does do general processing
-            --
+
             INSERT INTO Tmp_CandidateJobSteps (
                 Job,
                 Step,
@@ -1251,7 +1251,7 @@ BEGIN
             -- It then looks for storage servers where too many steps have recently started (count >= _maxSimultaneousJobCount)
             -- We then link those results into Tmp_CandidateJobSteps via Storage_Server
             -- If any matches are found, Association_Type is updated to 104 so that the given candidate(s) will be excluded
-            --
+
             UPDATE Tmp_CandidateJobSteps CJS
             SET Association_Type = 104
             FROM ( -- Look for Storage Servers with too many recently started tasks

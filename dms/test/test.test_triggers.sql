@@ -796,7 +796,7 @@ BEGIN
 
     If _campaignsFoundOrCreated Then
         -- Append event log entries for the unit test campaigns
-        --
+
         INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
@@ -822,7 +822,7 @@ BEGIN
     Else
         -- Unit test campaigns not found
         -- Append campaign related event log items from the last 2 hours
-        --
+
         INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
@@ -841,7 +841,7 @@ BEGIN
 
     If _experimentsFoundOrCreated Then
         -- Append event log entries for the unit test experiments
-        --
+
         INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
@@ -866,7 +866,7 @@ BEGIN
     Else
         -- Unit test experiments not found
         -- Append experiment related event log items from the last 2 hours
-        --
+
         INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
@@ -885,7 +885,7 @@ BEGIN
 
     If _datasetsFoundOrCreated Then
         -- Append event log entries for the unit test datasets
-        --
+
         INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
@@ -910,7 +910,7 @@ BEGIN
     Else
         -- Unit test datasets not found
         -- Append dataset related event log items from the last 2 hours
-        --
+
         INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
@@ -929,7 +929,7 @@ BEGIN
 
     If _jobsFoundOrCreated Then
         -- Append event log entries for the unit test jobs
-        --
+
         INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
@@ -956,7 +956,7 @@ BEGIN
     Else
         -- Unit test jobs not found
         -- Append job related event log items from the last 2 hours
-        --
+
         INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
@@ -975,7 +975,7 @@ BEGIN
 
     If _plexMappingFoundOrCreated Then
         -- Append history items for the unit test plex mappings
-        --
+
         INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
@@ -999,7 +999,7 @@ BEGIN
     Else
         -- Unit test plex mapping not found
         -- Append plex member history items from the last 2 hours
-        --
+
         INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
