@@ -82,7 +82,7 @@ BEGIN
     _previewSql             := Coalesce(_previewSql, false);
 
     If _targetType Is Null Or _targetID Is Null Or _targetState Is Null Then
-        _message := '_targetType and _targetID and _targetState must be defined; unable to continue';
+        _message := '_targetType, _targetID, and _targetState must be defined; unable to continue';
         RAISE EXCEPTION '%', _message;
     End If;
 
