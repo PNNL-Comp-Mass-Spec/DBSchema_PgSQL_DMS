@@ -20,7 +20,7 @@ CREATE TABLE public.t_campaign (
     organisms public.citext,
     experiment_prefixes public.citext,
     research_team integer,
-    data_release_restrictions integer DEFAULT 0 NOT NULL,
+    data_release_restriction_id integer DEFAULT 0 NOT NULL,
     fraction_emsl_funded numeric(3,2) DEFAULT 0 NOT NULL,
     eus_usage_type_id smallint DEFAULT 1 NOT NULL,
     CONSTRAINT ck_t_campaign_campaign_name_whitespace CHECK ((public.has_whitespace_chars((campaign)::text, true) = false))
@@ -84,7 +84,7 @@ CREATE TRIGGER trig_t_campaign_after_update AFTER UPDATE ON public.t_campaign RE
 --
 
 ALTER TABLE ONLY public.t_campaign
-    ADD CONSTRAINT fk_t_campaign_t_data_release_restrictions FOREIGN KEY (data_release_restrictions) REFERENCES public.t_data_release_restrictions(release_restriction_id);
+    ADD CONSTRAINT fk_t_campaign_t_data_release_restrictions FOREIGN KEY (data_release_restriction_id) REFERENCES public.t_data_release_restrictions(release_restriction_id);
 
 --
 -- Name: t_campaign fk_t_campaign_t_eus_usage_type; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

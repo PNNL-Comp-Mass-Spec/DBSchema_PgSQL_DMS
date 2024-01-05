@@ -6,7 +6,7 @@ CREATE VIEW public.v_campaign_detail_report_ex AS
  SELECT c.campaign,
     c.project,
     c.state,
-    rr.release_restriction AS data_release_restrictions,
+    drr.release_restriction AS data_release_restriction,
     c.description,
     c.comment,
     public.get_research_team_membership_list(c.research_team) AS team_members,
@@ -38,7 +38,7 @@ CREATE VIEW public.v_campaign_detail_report_ex AS
     ct.data_package_count AS data_packages,
     public.get_campaign_work_package_list((c.campaign)::text) AS work_packages
    FROM ((((public.t_campaign c
-     JOIN public.t_data_release_restrictions rr ON ((c.data_release_restrictions = rr.release_restriction_id)))
+     JOIN public.t_data_release_restrictions drr ON ((c.data_release_restriction_id = drr.release_restriction_id)))
      JOIN public.t_eus_usage_type eut ON ((c.eus_usage_type_id = eut.eus_usage_type_id)))
      LEFT JOIN public.t_research_team rt ON ((c.research_team = rt.team_id)))
      LEFT JOIN public.t_campaign_tracking ct ON ((ct.campaign_id = c.campaign_id)));

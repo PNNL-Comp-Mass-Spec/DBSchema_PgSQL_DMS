@@ -22,9 +22,9 @@ CREATE VIEW public.v_campaign_entry AS
     eut.eus_usage_type,
     c.organisms,
     c.experiment_prefixes,
-    t_data_release_restrictions.release_restriction AS data_release_restrictions
+    t_data_release_restrictions.release_restriction AS data_release_restriction
    FROM (((public.t_campaign c
-     JOIN public.t_data_release_restrictions ON ((c.data_release_restrictions = t_data_release_restrictions.release_restriction_id)))
+     JOIN public.t_data_release_restrictions ON ((c.data_release_restriction_id = t_data_release_restrictions.release_restriction_id)))
      JOIN public.t_eus_usage_type eut ON ((c.eus_usage_type_id = eut.eus_usage_type_id)))
      LEFT JOIN public.t_research_team ON ((c.research_team = t_research_team.team_id)));
 

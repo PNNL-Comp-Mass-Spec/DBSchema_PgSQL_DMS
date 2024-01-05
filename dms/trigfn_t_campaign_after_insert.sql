@@ -13,8 +13,9 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_campaign_after_insert() RETURNS trigg
 **  Auth:   mem
 **  Date:   10/02/2007 mem - Initial version (Ticket #543)
 **          10/31/2007 mem - Added Set NoCount statement (Ticket #569)
-**          12/01/2011 mem - Now updating t_event_log if fraction_emsl_funded > 0 or data_release_restrictions > 0
+**          12/01/2011 mem - Now updating t_event_log if fraction_emsl_funded > 0 or data_release_restriction_id > 0
 **          08/04/2022 mem - Ported to PostgreSQL
+**          01/04/2024 mem - Use new data release restriction column name in t_campaign
 **
 *****************************************************/
 BEGIN
@@ -32,9 +33,9 @@ BEGIN
     ORDER BY inserted.campaign_id;
 
     INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)
-    SELECT 10, inserted.campaign_id, inserted.data_release_restrictions, 0, CURRENT_TIMESTAMP
+    SELECT 10, inserted.campaign_id, inserted.data_release_restriction_id, 0, CURRENT_TIMESTAMP
     FROM inserted
-    WHERE inserted.data_release_restrictions > 0
+    WHERE inserted.data_release_restriction_id > 0
     ORDER BY inserted.campaign_id;
 
     RETURN null;

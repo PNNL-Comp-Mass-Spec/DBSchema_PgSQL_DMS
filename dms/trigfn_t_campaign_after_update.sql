@@ -14,11 +14,12 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_campaign_after_update() RETURNS trigg
 **
 **  Auth:   mem
 **  Date:   07/19/2010 mem - Initial version
-**          12/01/2011 mem - Now updating t_event_log if fraction_emsl_funded or data_release_restrictions changes
+**          12/01/2011 mem - Now updating t_event_log if fraction_emsl_funded or data_release_restriction_id changes
 **          03/23/2012 mem - Now updating t_file_attachment
 **          08/04/2022 mem - Ported to PostgreSQL
 **          08/07/2022 mem - Rename transition tables
 **          05/22/2023 mem - Capitalize reserved word
+**          01/04/2024 mem - Use new data release restriction column name in t_campaign
 **
 *****************************************************/
 BEGIN
@@ -53,12 +54,12 @@ BEGIN
 
     INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)
     SELECT 10, inserted.campaign_id,
-           inserted.data_release_restrictions,
-           deleted.data_release_restrictions,
+           inserted.data_release_restriction_id,
+           deleted.data_release_restriction_id,
            CURRENT_TIMESTAMP
     FROM deleted INNER JOIN
          inserted ON deleted.campaign_id = inserted.campaign_id
-    WHERE inserted.data_release_restrictions <> deleted.data_release_restrictions;   -- Use <> since data_release_restrictions is never null
+    WHERE inserted.data_release_restriction_id <> deleted.data_release_restriction_id;   -- Use <> since data_release_restriction_id is never null
 
     RETURN null;
 END
