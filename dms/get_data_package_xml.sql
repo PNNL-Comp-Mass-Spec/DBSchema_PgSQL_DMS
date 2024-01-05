@@ -50,6 +50,7 @@ CREATE OR REPLACE FUNCTION public.get_data_package_xml(_datapackageid integer, _
 **                         - Coalesce null values to empty strings
 **                         - Indent XML
 **          09/11/2023 mem - Adjust capitalization of keywords
+**          01/04/2024 mem - Remove unnecessary parentheses
 **
 *****************************************************/
 DECLARE
@@ -143,7 +144,7 @@ BEGIN
                WHERE DPE.data_pkg_id = _dataPackageID
             ) AS LookupQ;
 
-        If (Coalesce(_experimentXML::text, '') = '') Then
+        If Coalesce(_experimentXML::text, '') = '' Then
             _result := format('%s  %s%s',
                                 _result,
                                 '</experiments>', _newline);
@@ -183,7 +184,7 @@ BEGIN
             ) AS LookupQ;
 
 
-        If (Coalesce(_datasetXML::text, '') = '') Then
+        If Coalesce(_datasetXML::text, '') = '' Then
             _result := format('%s  %s%s',
                                 _result,
                                 '</datasets>', _newline);
@@ -225,7 +226,7 @@ BEGIN
                WHERE DPJ.data_pkg_id = _dataPackageID
             ) AS LookupQ;
 
-        If (Coalesce(_jobXML::text, '') = '') Then
+        If Coalesce(_jobXML::text, '') = '' Then
             _result := format('%s  %s%s',
                                 _result,
                                 '</jobs>', _newline);
@@ -286,7 +287,7 @@ BEGIN
                WHERE DPD.data_pkg_id = _dataPackageID
             ) AS LookupQ;
 
-        If (Coalesce(_dsPathXML::text, '') <> '') Then
+        If Coalesce(_dsPathXML::text, '') <> '' Then
            _result := format('%s    %s%s', _result, _dsPathXML, _newline);
         End If;
 
@@ -314,7 +315,7 @@ BEGIN
                WHERE DPJ.data_pkg_id = _dataPackageID
             ) AS LookupQ;
 
-        If (Coalesce(_jobPathXML::text, '') = '') Then
+        If Coalesce(_jobPathXML::text, '') = '' Then
             _result := format('%s  %s%s',
                                 _result,
                                 '</paths>', _newline);

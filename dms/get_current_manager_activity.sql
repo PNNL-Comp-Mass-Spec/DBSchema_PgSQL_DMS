@@ -39,6 +39,7 @@ CREATE OR REPLACE FUNCTION public.get_current_manager_activity(_activeonly boole
 **          11/17/2022 mem - Updated to use tables in the capture and pipeline schemas ('cap' and 'sw')
 **          05/30/2023 mem - Use new step tool column name
 **                         - Use format() for string concatenation
+**          01/04/2024 mem - Remove unnecessary parentheses
 **
 *****************************************************/
 DECLARE
@@ -47,7 +48,8 @@ BEGIN
     _activeOnly := Coalesce(_activeOnly, true);
 
     _months := Coalesce(_months, 3);
-    If (_months < 1) Then
+
+    If _months < 1 Then
         _months := 1;
     End If;
 

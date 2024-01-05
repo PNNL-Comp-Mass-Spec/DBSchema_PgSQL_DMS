@@ -404,7 +404,7 @@ BEGIN
                      INNER JOIN t_requested_run RR
                        ON Src.Request_ID = RR.request_id;
 
-                If (_minBatchID > 0 Or _maxBatchID > 0) Then
+                If _minBatchID > 0 Or _maxBatchID > 0 Then
                     If _minBatchID = _maxBatchID Then
                         UPDATE t_requested_run_batches
                         SET last_ordered = CURRENT_TIMESTAMP

@@ -98,25 +98,25 @@ BEGIN
     -- Detour if Mass mod
     ---------------------------------------------------
 
-    If (_entryType::citext In ('DynamicModification', 'StaticModification', 'IsotopicModification', 'TermDynamicModification')) Then
+    If _entryType::citext In ('DynamicModification', 'StaticModification', 'IsotopicModification', 'TermDynamicModification') Then
 
         If _infoOnly Then
             RAISE INFO '_entryType = %', _entryType;
         End If;
 
-        If (_entryType = 'StaticModification') Then
+        If _entryType = 'StaticModification' Then
             _localSymbolID := 0;
             _typeSymbol := 'S';
             _affectedResidue := _entrySpecifier;
         End If;
 
-        If (_entryType = 'IsotopicModification') Then
+        If _entryType = 'IsotopicModification' Then
             _localSymbolID := 0;
             _typeSymbol := 'I';
             _affectedResidueID := 1;
         End If;
 
-        If (_entryType = 'DynamicModification') Then
+        If _entryType = 'DynamicModification' Then
             _localSymbolID := public.get_next_local_symbol_id(_paramFileID);
             _typeSymbol := 'D';
         End If;
@@ -157,7 +157,7 @@ BEGIN
 
             _counter := _counter + 1;
 
-            If (_entryType = 'StaticModification') And _counter < 2 Then
+            If _entryType = 'StaticModification' And _counter < 2 Then
 
                 If char_length(_entrySpecifier) > 1 Then
                     -- The mod is a terminal mod
