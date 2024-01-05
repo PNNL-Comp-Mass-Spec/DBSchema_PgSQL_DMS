@@ -351,7 +351,7 @@ BEGIN
             End If;
         END LOOP;
 
-        If _infoOnly And EXISTS (SELECT * from Tmp_Proposal_Stack) Then
+        If _infoOnly And Exists (SELECT * from Tmp_Proposal_Stack) Then
 
             RAISE INFO '';
 

@@ -274,7 +274,7 @@ BEGIN
     WHERE DTP.dataset_id = JL.dataset_id AND
           DTP.Process_Dataset;
 
-    If _infoOnly And _showDebug And EXISTS (SELECT Dataset_ID FROM Tmp_DatasetID_Filter_List) Then
+    If _infoOnly And _showDebug And Exists (SELECT Dataset_ID FROM Tmp_DatasetID_Filter_List) Then
 
         RAISE INFO '';
         RAISE INFO '%', _infoHead;
@@ -328,7 +328,7 @@ BEGIN
     WHERE DTP.dataset_id = DS.dataset_id AND
           DTP.Process_Dataset;
 
-    If _infoOnly And _showDebug And EXISTS (SELECT Dataset_ID FROM Tmp_DatasetID_Filter_List) Then
+    If _infoOnly And _showDebug And Exists (SELECT Dataset_ID FROM Tmp_DatasetID_Filter_List) Then
 
         RAISE INFO '';
         RAISE INFO '%', _infoHead;
