@@ -148,6 +148,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run(IN _requestname text
 **          12/16/2023 mem - Update error messages
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
 **          01/03/2024 mem - Update warning messages
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -659,7 +660,7 @@ BEGIN
         -- Note that if _eusUsersList contains a list of names in the form 'Baker, Erin (41136)',
         -- validate_eus_usage will change this into a list of EUS user IDs (integers)
 
-        If char_length(_eusUsersList) = 0 And _autoPopulateUserListIfBlank Then
+        If Trim(Coalesce(_eusUsersList)) = '' And _autoPopulateUserListIfBlank Then
             _raiseErrorOnMultipleEUSUsers := false;
         End If;
 

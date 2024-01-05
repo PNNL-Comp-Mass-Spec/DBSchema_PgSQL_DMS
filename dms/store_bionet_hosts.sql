@@ -63,6 +63,7 @@ CREATE OR REPLACE PROCEDURE public.store_bionet_hosts(IN _hostlist text, IN _inf
 **          11/29/2023 mem - Add support for host names from file /var/named/bionet.hosts
 **                         - Ported to PostgreSQL
 **          11/30/2023 mem - Replace for loop with regexp_replace()
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -358,7 +359,7 @@ BEGIN
 
     End If;
 
-    If char_length(_message) > 0 Then
+    If Trim(Coalesce(_message)) <> '' Then
         RAISE INFO '%', _message;
     End If;
 

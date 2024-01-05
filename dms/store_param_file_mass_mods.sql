@@ -142,6 +142,8 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list_ordered for a comma-separated list
 **          10/12/2023 mem - Add missing call to format()
 **          12/02/2023 mem - Rename variable
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
+**                         - Remove unreachable code that previously showed the contents of temp table Tmp_ModDef
 **
 *****************************************************/
 DECLARE
@@ -329,6 +331,7 @@ BEGIN
             DROP TABLE Tmp_Residues;
             DROP TABLE Tmp_ModsToStore;
             DROP TABLE Tmp_MaxQuant_Mods;
+
             RETURN;
         End If;
 
@@ -663,6 +666,7 @@ BEGIN
                 _returnCode := 'U5310';
 
                 If Not _infoOnly Then
+                    -- Break out of the for loop
                     _exitProcedure := true;
                     EXIT;
                 End If;
@@ -676,6 +680,7 @@ BEGIN
                     If Not _infoOnly Then
                         RAISE WARNING '%', _message;
 
+                        -- Break out of the for loop
                         _exitProcedure := true;
                         EXIT;
                     End If;
@@ -724,6 +729,7 @@ BEGIN
                 _message := format('DynamicMod entries must have "opt" in the 3rd column; aborting; see row: %s', _row);
                 _returnCode := 'U5312';
 
+                -- Break out of the for loop
                 _exitProcedure := true;
                 EXIT;
             End If;
@@ -737,6 +743,7 @@ BEGIN
                 _message := format('StaticMod entries must have "fix" in the 3rd column; aborting; see row: %s', _row);
                 _returnCode := 'U5313';
 
+                -- Break out of the for loop
                 _exitProcedure := true;
                 EXIT;
             End If;
@@ -795,6 +802,7 @@ BEGIN
                         _message := format('Mod name "%s" is not in the expected form (e.g. UniMod:35); see row: %s', _field, _row);
                         _returnCode := 'U5314';
 
+                        -- Break out of the for loop
                         _exitProcedure := true;
                         EXIT;
                     Else
@@ -813,6 +821,7 @@ BEGIN
                         _message := format('UniMod ID "%s" is not an integer; see row: %s', _uniModIDText, _row);
                         _returnCode := 'U5315';
 
+                        -- Break out of the for loop
                         _exitProcedure := true;
                         EXIT;
                     End If;
@@ -821,6 +830,7 @@ BEGIN
                         _message := format('Define static Cys Carbamidomethyl using "StaticCysCarbamidomethyl=True", not using "StaticMod=UniMod:4"; see row: %s', _row);
                         _returnCode := 'U5316';
 
+                        -- Break out of the for loop
                         _exitProcedure := true;
                         EXIT;
                     End If;
@@ -834,6 +844,7 @@ BEGIN
                         _message := format('UniMod ID "%s" not found in T_Unimod_Mods; see row: %s', _field, _row);
                         _returnCode := 'U5317';
 
+                        -- Break out of the for loop
                         _exitProcedure := true;
                         EXIT;
                     End If;
@@ -874,6 +885,7 @@ BEGIN
 
                 _returnCode := 'U5318';
 
+                -- Break out of the for loop
                 _exitProcedure := true;
                 EXIT;
             End If;
@@ -894,6 +906,7 @@ BEGIN
 
                 _returnCode := 'U5319';
 
+                -- Break out of the for loop
                 _exitProcedure := true;
                 EXIT;
             End If;
@@ -904,6 +917,7 @@ BEGIN
 
                 _returnCode := 'U5320';
 
+                -- Break out of the for loop
                 _exitProcedure := true;
                 EXIT;
             End If;
@@ -956,6 +970,7 @@ BEGIN
                 _message := format('Use * to match all residues, not the word "any"; see row: %s', _row);
                 _returnCode := 'U5321';
 
+                -- Break out of the for loop
                 _exitProcedure := true;
                 EXIT;
             End If;
@@ -979,6 +994,7 @@ BEGIN
                 _message := format('Mod mass "%s" is not a number; see row: %s', _field, _row);
                 _returnCode := 'U5322';
 
+                -- Break out of the for loop
                 _exitProcedure := true;
                 EXIT;
             End If;
@@ -1001,6 +1017,7 @@ BEGIN
 
                 _returnCode := 'U5323';
 
+                -- Break out of the for loop
                 _exitProcedure := true;
                 EXIT;
             End If;
@@ -1061,6 +1078,7 @@ BEGIN
                 _message := format('MaxQuant modification not found in t_maxquant_mods: %s', _field);
                 _returnCode := 'U5324';
 
+                -- Break out of the for loop
                 _exitProcedure := true;
                 EXIT;
             End If;
@@ -1069,6 +1087,7 @@ BEGIN
                 _message := format('Mass Correction ID not defined for MaxQuant modification "%s"; either update table t_maxquant_mods or delete this mod from the XML', _field);
                 _returnCode := 'U5325';
 
+                -- Break out of the for loop
                 _exitProcedure := true;
                 EXIT;
             End If;
@@ -1168,6 +1187,7 @@ BEGIN
         END LOOP;
 
         If _exitProcedure Then
+            -- Break out of the for loop
             EXIT;
         End If;
 
@@ -1224,6 +1244,7 @@ BEGIN
 
             _returnCode := 'U5327';
 
+            -- Break out of the for loop
             _exitProcedure := true;
             EXIT;
         End If;
@@ -1405,23 +1426,23 @@ BEGIN
                       M.Isobaric_Mod_Ion_Number = LookupQ.Min_Isobaric_Mod_Ion_Number
             ORDER BY M.Entry_ID
         LOOP
-        RAISE INFO '%',
-            format(_formatString,
-                    _modInfo.Entry_ID,
-                    _modInfo.Mod_Name,
-                    _modInfo.Mass_Correction_ID,
-                    _modInfo.Mod_Type_Symbol,
-                    _modInfo.Residue_Symbol,
-                    _modInfo.Residue_ID,
-                    _modInfo.Local_Symbol_ID,
-                    _modInfo.Residue_Desc,
-                    _modInfo.Monoisotopic_Mass,
-                    _modInfo.MaxQuant_Mod_ID,
-                    _modInfo.Isobaric_Mod_Ion_Number,
-                    _modInfo.Param_File_ID,
-                    _modInfo.Isobaric_Mod_Comment,
-                    _modInfo.Param_File
-                   );
+            RAISE INFO '%',
+                format(_formatString,
+                        _modInfo.Entry_ID,
+                        _modInfo.Mod_Name,
+                        _modInfo.Mass_Correction_ID,
+                        _modInfo.Mod_Type_Symbol,
+                        _modInfo.Residue_Symbol,
+                        _modInfo.Residue_ID,
+                        _modInfo.Local_Symbol_ID,
+                        _modInfo.Residue_Desc,
+                        _modInfo.Monoisotopic_Mass,
+                        _modInfo.MaxQuant_Mod_ID,
+                        _modInfo.Isobaric_Mod_Ion_Number,
+                        _modInfo.Param_File_ID,
+                        _modInfo.Isobaric_Mod_Comment,
+                        _modInfo.Param_File
+                       );
 
         END LOOP;
 
@@ -1463,12 +1484,8 @@ BEGIN
     End If;
 
     If _infoOnly Then
-        If char_length(_message) > 0 Then
+        If Trim(Coalesce(_message)) <> '' Then
             RAISE INFO '%', _message;
-        End If;
-
-        If _returnCode <> '' Then
-            SELECT * From Tmp_ModDef;
         End If;
     End If;
 
@@ -1481,7 +1498,6 @@ BEGIN
     DROP TABLE Tmp_Residues;
     DROP TABLE Tmp_ModsToStore;
     DROP TABLE Tmp_MaxQuant_Mods;
-
 END
 $$;
 

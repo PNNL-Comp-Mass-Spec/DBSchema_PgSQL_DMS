@@ -44,6 +44,7 @@ CREATE OR REPLACE PROCEDURE public.alter_entered_by_user_multi_id(IN _targettabl
 **          05/22/2023 mem - Capitalize reserved word
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -61,7 +62,7 @@ BEGIN
 
     _targetTableSchema := Trim(Coalesce(_targetTableSchema, ''));
 
-    If (char_length(_targetTableSchema) = 0) Then
+    If _targetTableSchema = '' Then
         _targetTableSchema := 'public';
     End If;
 
@@ -76,7 +77,7 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
-    If char_length(_newUser) = 0 Then
+    If _newUser = '' Then
         _message := '_newUser is empty; unable to continue';
         RAISE EXCEPTION '%', _message;
     End If;

@@ -50,6 +50,7 @@ CREATE OR REPLACE PROCEDURE public.add_missing_predefined_jobs(IN _infoonly bool
 **          11/28/2022 mem - Always log an error if schedule_predefined_analysis_jobs has a non-zero return code
 **          12/13/2023 mem - Call procedure create_pending_predefined_analysis_tasks to create jobs
 **                         - Ported to PostgreSQL
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -148,7 +149,7 @@ BEGIN
         INSERT INTO Tmp_DSRating_Exclusion_List (Rating) Values (-7);    -- Rerun (Superseded)
     End If;
 
-    If char_length(_datasetIDFilterList) > 0 Then
+    If _datasetIDFilterList <> '' Then
         INSERT INTO Tmp_DatasetID_Filter_List (Dataset_ID)
         SELECT Value
         FROM public.parse_delimited_integer_list(_datasetIDFilterList);

@@ -57,6 +57,7 @@ CREATE OR REPLACE PROCEDURE public.add_requested_run_fractions(IN _sourcerequest
 **          11/01/2023 mem - Add missing brackets when checking for '[space]' in the return value from validate_chars()
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
 **          01/03/2024 mem - Update warning messages
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -484,7 +485,7 @@ BEGIN
         -- Note that if _eusUserID contains a list of names in the form "Baker, Erin (41136)",
         -- Validate_EUS_Usage will change this into a list of EUS user IDs (integers)
 
-        If char_length(_eusUserID) = 0 And _autoPopulateUserListIfBlank Then
+        If Trim(Coalesce(_eusUserID, '')) = '' And _autoPopulateUserListIfBlank Then
             _raiseErrorOnMultipleEUSUsers := false;
         End If;
 

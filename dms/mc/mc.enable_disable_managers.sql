@@ -66,6 +66,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable boolean, IN _m
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -113,7 +114,7 @@ BEGIN
         RETURN;
     End If;
 
-    If _managerTypeID = 0 And char_length(_managerNameList) > 0 And _managerNameList::citext <> 'All' Then
+    If _managerTypeID = 0 And _managerNameList, '' <> '' And _managerNameList::citext <> 'All' Then
         _managerTypeName := 'Any';
     Else
         -- Make sure _managerTypeID is valid
@@ -137,7 +138,7 @@ BEGIN
         End If;
     End If;
 
-    If _enable And char_length(_managerNameList) = 0 Then
+    If _enable And _managerNameList = '' Then
         _message := '_managerNameList must be specified when _enable is true; to update all managers, set _managerNameList to ''All''';
         _returnCode := 'U5204';
         RETURN;
@@ -151,7 +152,7 @@ BEGIN
         manager_name citext NOT NULL
     );
 
-    If char_length(_managerNameList) > 0 And _managerNameList::citext <> 'All' Then
+    If _managerNameList <> '' And _managerNameList::citext <> 'All' Then
         -- Populate Tmp_ManagerList using parse_manager_name_list
 
         INSERT INTO Tmp_ManagerList (manager_name)
@@ -254,7 +255,7 @@ BEGIN
 
     If _countToUpdate = 0 Then
         If _countUnchanged = 0 Then
-            If char_length(_managerNameList) > 0 Then
+            If _managerNameList <> '' Then
                 If _managerTypeID = 0 Then
                     _message := 'None of the managers in _managerNameList was recognized';
                 Else

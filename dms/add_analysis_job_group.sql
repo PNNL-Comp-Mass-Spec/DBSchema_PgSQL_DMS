@@ -112,6 +112,7 @@ CREATE OR REPLACE PROCEDURE public.add_analysis_job_group(IN _datasetlist text, 
 **          12/02/2023 mem - Ported to PostgreSQL
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user_multi_id()
 **          01/03/2024 mem - Update status message
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -634,11 +635,11 @@ BEGIN
                 FROM Tmp_SettingsFile_Values_DataPkgJob
                 WHERE KeyName = 'CacheFolderRootPath';
 
-                If char_length(_msXmlGenerator) > 0 And char_length(_msXMLOutputType) > 0 And _msXmlGenerator <> 'skip' Then
+                If Trim(Coalesce(_msXmlGenerator, '')) <> '' And Trim(Coalesce(_msXMLOutputType, '')) <> '' And _msXmlGenerator <> 'skip' Then
                     _createMzMLFilesFlag := 'True';
                 End If;
 
-                If char_length(_cacheFolderRootPath) = 0 Then
+                If Trim(Coalesce(_cacheFolderRootPath, '')) = '' Then
                     RAISE EXCEPTION '% settings file is missing parameter CacheFolderRootPath', _toolName;
                 End If;
 

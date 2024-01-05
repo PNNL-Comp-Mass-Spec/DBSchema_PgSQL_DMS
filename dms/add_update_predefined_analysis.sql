@@ -84,6 +84,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_predefined_analysis(IN _level inte
 **          12/06/2023 mem - Add support for scan type criteria
 **                         - Ported to PostgreSQL
 **          01/03/2024 mem - Update warning messages
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -268,7 +269,7 @@ BEGIN
         -- determine the associated Dataset Types and make sure they are valid for _analysisToolName
         ---------------------------------------------------
 
-        If char_length(_instrumentClassCriteria) > 0 Or char_length(_instrumentNameCriteria) > 0 Or char_length(_instrumentExclCriteria) > 0 Then
+        If _instrumentClassCriteria <> '' Or _instrumentNameCriteria <> '' Or _instrumentExclCriteria <> '' Then
 
             If Not Exists ( SELECT ADT.Dataset_Type
                             FROM t_analysis_tool_allowed_dataset_type ADT

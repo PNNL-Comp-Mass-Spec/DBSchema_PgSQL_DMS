@@ -51,6 +51,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_interval_for_multiple_instrume
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -183,7 +184,7 @@ BEGIN
 
     BEGIN
 
-        If char_length(_instrumentsToProcess) > 0 Then
+        If _instrumentsToProcess <> '' Then
 
             ---------------------------------------------------
             -- Get filtered list of tracked instruments
@@ -431,7 +432,7 @@ BEGIN
         End If;
     END;
 
-    If _infoOnly and _returnCode <> '' Then
+    If _infoOnly And _returnCode <> '' Then
         RAISE INFO '%', _message;
     End If;
 

@@ -111,6 +111,7 @@ CREATE OR REPLACE PROCEDURE cap.request_ctm_step_task(IN _processorname text, IN
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/27/2023 mem - Apply a row-level lock to cap.t_task_steps using FOR UPDATE
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -241,13 +242,13 @@ BEGIN
 
             UPDATE cap.t_local_processors
             SET latest_request = CURRENT_TIMESTAMP,
-                manager_version = CASE WHEN char_length(_managerVersion) = 0
+                manager_version = CASE WHEN _managerVersion = ''
                                        THEN manager_version
                                        ELSE _managerVersion
                                   END
             WHERE processor_name = _processorName;
 
-            If char_length(_managerVersion) = 0 Then
+            If _managerVersion = '' Then
                 RAISE WARNING 'Manager version is an empty string; updated latest_request in cap.t_local_processors but left manager_version unchanged';
             End If;
         End If;

@@ -153,6 +153,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_dataset(IN _datasetname text, IN _
 **          11/01/2023 mem - Add missing brackets when checking for '[space]' in the return value from validate_chars()
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user_multi_id()
 **          01/03/2024 mem - Update warning messages
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -170,7 +171,7 @@ DECLARE
     _debugMsg text;
     _requestName text;
     _reqRunInstSettings text;
-    _reqRunComment text;
+    _reqRunComment citext;
     _reqRunInternalStandard text;
     _workPackageFromRequest text;
     _wellplateNameFromRequest text;
@@ -864,7 +865,7 @@ BEGIN
             -- Assure that _reqRunComment doesn't have &quot; or &#34; or &amp;
             _reqRunComment := public.replace_character_codes(_reqRunComment);
 
-            If char_length(_reqRunComment) > 0 And (_comment = _reqRunComment Or _comment Like _reqRunComment + '%') Then
+            If Trim(Coalesce(_reqRunComment)) <> '' And (_comment = _reqRunComment Or _comment ILike _reqRunComment || '%') Then
                 If char_length(_comment) = char_length(_reqRunComment) Then
                     _comment := '';
                 Else

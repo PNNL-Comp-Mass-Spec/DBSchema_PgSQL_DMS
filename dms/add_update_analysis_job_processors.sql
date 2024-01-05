@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job_processors(INOUT _id 
 **          08/01/2017 mem - Use THROW if not authorized
 **          12/18/2023 mem - Ported to PostgreSQL
 **          01/03/2024 mem - Update warning message
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -202,7 +203,7 @@ BEGIN
         INTO _id;
 
         -- If _callingUser is defined, update entered_by in t_analysis_job_processors
-        If char_length(_callingUser) > 0 Then
+        If Trim(Coalesce(_callingUser)) <> '' Then
             CALL public.alter_entered_by_user ('public', 't_analysis_job_processors', 'processor_id', _id, _callingUser, _entryDateColumnName => 'last_affected', _message => _alterEnteredByMessage);
         End If;
 
@@ -222,7 +223,7 @@ BEGIN
         WHERE processor_id = _id;
 
         -- If _callingUser is defined, update entered_by in t_analysis_job_processors
-        If char_length(_callingUser) > 0 Then
+        If Trim(Coalesce(_callingUser)) <> '' Then
             CALL public.alter_entered_by_user ('public', 't_analysis_job_processors', 'processor_id', _id, _callingUser, _entryDateColumnName => 'last_affected', _message => _alterEnteredByMessage);
         End If;
 
@@ -256,7 +257,7 @@ BEGIN
             );
 
         -- If _callingUser is defined, update entered_by in t_analysis_job_processor_tools
-        If char_length(_callingUser) > 0 Then
+        If Trim(Coalesce(_callingUser)) <> '' Then
             CALL public.alter_entered_by_user ('public', 't_analysis_job_processor_tools', 'processor_id', _id, _callingUser, _message => _alterEnteredByMessage);
         End If;
 

@@ -31,6 +31,7 @@ CREATE OR REPLACE FUNCTION mc.parse_manager_name_list(_manager_name_list text DE
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -50,7 +51,7 @@ BEGIN
     _manager_name_list       := Trim(Coalesce(_manager_name_list, ''));
     _remove_unknown_managers := Coalesce(_remove_unknown_managers, 1);
 
-    If char_length(_manager_name_list) = 0 Then
+    If _manager_name_list = '' Then
         RETURN;
     End If;
 

@@ -49,6 +49,7 @@ CREATE OR REPLACE PROCEDURE public.store_job_psm_stats(IN _job integer, IN _msgf
 **          07/15/2020 mem - Added _dynamicReporterIon, _percentPSMsMissingNTermReporterIon, and _percentPSMsMissingReporterIon
 **          07/15/2020 mem - Added _uniqueAcetylPeptidesFDR
 **          12/17/2023 mem - Ported to PostgreSQL
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -345,7 +346,7 @@ BEGIN
 
     _message := 'PSM stats storage successful';
 
-    If char_length(_message) > 0 And _infoOnly Then
+    If Trim(Coalesce(_message)) <> '' And _infoOnly Then
         RAISE INFO '%', _message;
     End If;
 

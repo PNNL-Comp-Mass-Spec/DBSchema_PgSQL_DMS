@@ -42,6 +42,7 @@ CREATE OR REPLACE PROCEDURE pc.validate_analysis_job_protein_parameters(IN _orga
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -83,17 +84,17 @@ BEGIN
         RETURN;
     End If;
 
-    If char_length(_organismDBFileName) < 1 And char_length(_protCollNameList) > 0 Then
+    If char_length(_organismDBFileName) < 1 And _protCollNameList <> '' Then
         _organismDBFileName := 'na';
         -- No error needed, just fix it
     End If;
 
-    If char_length(_protCollNameList) < 1 And char_length(_organismDBFileName) > 0 And _organismDBFileName::citext <> 'na' Then
+    If char_length(_protCollNameList) < 1 And _organismDBFileName <> '' And _organismDBFileName::citext <> 'na' Then
         _protCollNameList := 'na';
         -- No error needed, just fix it
     End If;
 
-    If (char_length(_organismDBFileName) = 0 And char_length(_protCollNameList) = 0) Or (_organismDBFileName::citext = 'na' And _protCollNameList::citext = 'na') Then
+    If (_organismDBFileName = '' And _protCollNameList = '') Or (_organismDBFileName::citext = 'na' And _protCollNameList::citext = 'na') Then
         _message := 'Org DB validation failure: Protein collection list and Legacy Fasta (OrgDBName) name cannot both be undefined (or "na")';
         _returnCode := 'U5202';
 
@@ -101,7 +102,7 @@ BEGIN
         RETURN;
     End If;
 
-    If _protCollNameList::citext <> 'na' And char_length(_protCollNameList) > 0 Then
+    If _protCollNameList::citext <> 'na' And _protCollNameList <> '' Then
         -- No error needed, just fix it
         _organismDBFileName := 'na';
     End If;
@@ -373,7 +374,7 @@ BEGIN
                   OptValues.value_string = _optionValue;
 
             If FOUND Then
-                If char_length(_cleanOptions) > 0 Then
+                If _cleanOptions <> '' Then
                     _cleanOptions := format('%s,', _cleanOptions);
                 End If;
 
@@ -397,7 +398,7 @@ BEGIN
         End If;
 
         If Not _keywordFound And _optionItem.IsRequired > 0 Then
-            If char_length(_cleanOptions) > 0 Then
+            If _cleanOptions <> '' Then
                 _cleanOptions := format('%s,', _cleanOptions);
             End If;
 

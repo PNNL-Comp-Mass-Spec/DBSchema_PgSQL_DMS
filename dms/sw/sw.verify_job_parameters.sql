@@ -49,6 +49,7 @@ CREATE OR REPLACE PROCEDURE sw.verify_job_parameters(INOUT _jobparam text, IN _s
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          12/12/2023 mem - Use new argument name when calling validate_protein_collection_list_for_data_package
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -304,7 +305,7 @@ BEGIN
                         _returncode    => _returnCode,  -- Output
                         _debugMode     => _debugMode);
 
-        If _returncode = '' And char_length(_protCollNameList) > 0 And public.validate_na_parameter(_protCollNameList) <> 'na' Then
+        If _returncode = '' And Trim(Coalesce(_protCollNameList, '')) <> '' And public.validate_na_parameter(_protCollNameList) <> 'na' Then
             ---------------------------------------------------
             -- Validate _protCollNameList
             --

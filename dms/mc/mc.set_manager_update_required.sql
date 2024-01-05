@@ -42,6 +42,7 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_update_required(IN _mgrlist text DEFA
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -78,7 +79,7 @@ BEGIN
         mgr_id int NULL
     );
 
-    If char_length(_mgrList) > 0 And _mgrList <> '%' Then
+    If _mgrList <> '' And _mgrList <> '%' Then
         ---------------------------------------------------
         -- Populate Tmp_ManagerList with the managers in _mgrList
         ---------------------------------------------------

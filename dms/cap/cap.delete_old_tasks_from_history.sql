@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE cap.delete_old_tasks_from_history(IN _infoonly boole
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry
 **          05/12/2023 mem - Rename variables
 **          07/11/2023 mem - Use COUNT(Job) instead of COUNT(*)
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -215,7 +216,7 @@ BEGIN
         CALL public.post_log_entry ('Normal', _message, 'Delete_Old_Tasks_From_History', 'cap');
     End If;
 
-    If char_length(_message) > 0 Then
+    If Trim(Coalesce(_message, '')) <> '' Then
         RAISE INFO '%', _message;
     End If;
 

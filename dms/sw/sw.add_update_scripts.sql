@@ -86,6 +86,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_scripts(IN _script text, IN _descripti
 **          09/07/2023 mem - Update warning messages
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          01/03/2024 mem - Update warning messages
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -279,7 +280,7 @@ BEGIN
         INTO _id;
 
         -- If _callingUser is defined, update entered_by in sw.t_scripts_history
-        If char_length(_callingUser) > 0 And Not _id Is Null Then
+        If Trim(Coalesce(_callingUser, '')) <> '' And Not _id Is Null Then
             CALL public.alter_entered_by_user ('sw', 't_scripts_history', 'script_id', _id, _callingUser, _message => _alterEnteredByMessage);
         End If;
 
@@ -303,7 +304,7 @@ BEGIN
         WHERE script = _script;
 
         -- If _callingUser is defined, update entered_by in sw.t_scripts_history
-        If char_length(_callingUser) > 0 Then
+        If Trim(Coalesce(_callingUser, '')) <> '' Then
 
             SELECT script_id
             INTO _id

@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION sw.extract_server_name(_path text) RETURNS text
 **          05/30/2023 mem - Use ElsIf for Else If
 **          07/25/2023 mem - Fix logic bug for server paths
 **          09/11/2023 mem - Adjust capitalization of keywords
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -29,7 +30,7 @@ BEGIN
     -- Initially set _serverName equal to _path
     _serverName := _path;
 
-    If char_length(_path) > 0 Then
+    If _path <> '' Then
         -- Remove any '\' or '/' characters from the front of _path
         _path := Trim(Trim(_path, '\'), '/');
 

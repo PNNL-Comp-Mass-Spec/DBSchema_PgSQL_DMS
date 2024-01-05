@@ -18,6 +18,7 @@ CREATE OR REPLACE FUNCTION public.merge_text_three_items(_text1 text, _text2 tex
 **          05/30/2023 mem - Use format() for string concatenation
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          12/09/2023 mem - Use append_to_text() to append the strings
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -31,7 +32,7 @@ BEGIN
 
     If char_length(_text3) > 0 Then
         If _text1 <> _text3 And _text2 <> _text3 Then
-            If char_length(_combinedText) > 0 Then
+            If _combinedText <> '' Then
                 _combinedText := append_to_text(_combinedText, _text3, _delimiter => '; ');
             Else
                 _combinedText := _text3;

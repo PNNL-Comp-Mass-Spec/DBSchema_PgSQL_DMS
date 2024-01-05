@@ -59,6 +59,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_local_task_in_broker(INOUT _job integ
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          10/11/2023 mem - Customize the column names included in the status message
 **          01/03/2024 mem - Update warning message
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -154,7 +155,7 @@ BEGIN
             WHERE   job = _job;
 
             -- Only update parameters if not an empty string
-            If char_length(_jobParam) = 0 Then
+            If _jobParam = '' Then
                 _updatedColumns := CASE WHEN _reset
                                         THEN 'priority, comment, and state'
                                         ELSE 'priority and comment'

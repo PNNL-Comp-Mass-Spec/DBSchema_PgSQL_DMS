@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE public.get_tissue_id(IN _tissuenameorid text, INOUT 
 **  Date:   09/01/2017 mem - Initial version
 **          10/09/2017 mem - Auto-change _tissue to '' if 'none', 'na', or 'n/a'
 **          12/05/2023 mem - Ported to PostgreSQL
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -38,7 +39,7 @@ BEGIN
         RETURN;
     End If;
 
-    If char_length(_tissueNameOrID) > 0 Then
+    If _tissueNameOrID <> '' Then
         If _tissueNameOrID ILike 'BTO:%' Then
             SELECT Identifier,
                    Tissue

@@ -60,6 +60,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_biomaterial(IN _biomaterialname te
 **          07/08/2022 mem - Rename procedure from Add_Update_Cell_Culture to Add_Update_Biomaterial and update argument names
 **          12/30/2023 mem - Ported to PostgreSQL
 **          01/03/2024 mem - Update warning messages
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -373,7 +374,7 @@ BEGIN
             End If;
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-            If char_length(_callingUser) > 0 Then
+            If Trim(Coalesce(_callingUser)) <> '' Then
                 _targetType := 2;
                 _stateID := 1;
                 CALL public.alter_event_log_entry_user ('public', _targetType, _biomaterialID, _stateID, _callingUser, _message => _alterEnteredByMessage);

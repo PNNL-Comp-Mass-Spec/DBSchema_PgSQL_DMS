@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE public.auto_resolve_name_to_username(IN _namesearchs
 **          02/14/2023 mem - Ported to PostgreSQL
 **          07/11/2023 mem - Use COUNT(user_id) instead of COUNT(*)
 **          12/02/2023 mem - Rename variables
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -43,7 +44,7 @@ BEGIN
     -- Trim leading and trailing whitespace
     _nameSearchSpec := public.trim_whitespace_and_punctuation(Coalesce(_nameSearchSpec, ''));
 
-    If char_length(_nameSearchSpec) = 0 Then
+    If _nameSearchSpec = '' Then
         RETURN;
     End If;
 

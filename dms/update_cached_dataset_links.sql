@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_dataset_links(IN _processingmod
 **          06/03/2023 mem - Link to the SMAQC P_2C metric for QC_Mam datasets
 **          10/06/2023 mem - Update SMAQC metric URLs
 **                         - Ported to PostgreSQL
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -197,7 +198,7 @@ BEGIN
             --
             GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-            If _matchCount > 0 And char_length(_masicDirectoryName) > 0 Then
+            If _matchCount > 0 And Trim(Coalesce(_masicDirectoryName, '')) <> '' Then
                 UPDATE t_cached_dataset_links
                 SET masic_directory_name = _masicDirectoryName
                 WHERE dataset_id = _datasetID;

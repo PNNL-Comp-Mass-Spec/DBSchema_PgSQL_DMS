@@ -106,6 +106,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_experiment(INOUT _experimentid int
 **          12/05/2023 mem - Ported to PostgreSQL
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
 **          01/03/2024 mem - Update warning messages
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -879,7 +880,7 @@ BEGIN
                                 _comment      => 'Experiment updated');
             End If;
 
-            If char_length(_existingExperimentName) > 0 And _existingExperimentName <> _experimentName::citext Then
+            If Trim(Coalesce(_existingExperimentName, '')) <> '' And _existingExperimentName <> _experimentName::citext Then
                 _message := format('Renamed experiment from "%s" to "%s"', _existingExperimentName, _experimentName);
 
                 --------------------------------------------

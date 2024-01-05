@@ -31,6 +31,7 @@ CREATE OR REPLACE FUNCTION sw.consolidate_log_messages(_messagetype text DEFAULT
 **          07/11/2023 mem - Use COUNT(L.entry_id) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -59,7 +60,7 @@ BEGIN
     _changeErrorsToErrorIgnore := Coalesce(_changeErrorsToErrorIgnore, true);
     _infoOnly                  := Coalesce(_infoOnly, false);
 
-    If char_length(_messageType) = 0 Then
+    If _messageType = '' Then
         RAISE WARNING '_messageType cannot be empty';
         RETURN;
     End If;

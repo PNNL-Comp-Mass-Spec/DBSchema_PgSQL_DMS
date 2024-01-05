@@ -61,6 +61,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_device_info_xml(IN _datasetid 
 **                         - Add argument _showDatasetInfoOnPreview
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -356,7 +357,7 @@ BEGIN
     FROM Tmp_DatasetDevicesTable Src
     WHERE NOT Src.device_id IS NULL;
 
-    If char_length(_message) > 0 And _infoOnly Then
+    If Trim(Coalesce(_message, '')) <> '' And _infoOnly Then
         RAISE INFO '%', _message;
     End If;
 

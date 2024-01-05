@@ -65,6 +65,7 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **          09/08/2023 mem - Include schema name when calling function verify_sp_authorized()
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          12/11/2023 mem - Remove unnecessary _trimWhitespace argument when calling validate_na_parameter
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -150,11 +151,11 @@ BEGIN
         _storagePath := '';
         _sourceJobShouldMakeLibrary := false;
 
-        If char_length(_proteinCollectionList) = 0 Then
+        If _proteinCollectionList = '' Then
             _proteinCollectionList := 'na';
         End If;
 
-        If char_length(_organismDbFile) = 0 Then
+        If _organismDbFile = '' Then
             _organismDbFile := 'na';
         End If;
 
@@ -162,7 +163,7 @@ BEGIN
         -- Assure that the protein collection list is in the standard format
         ---------------------------------------------------
 
-        If char_length(_proteinCollectionList) > 0 And public.validate_na_parameter(_proteinCollectionList) <> 'na' Then
+        If Trim(Coalesce(_proteinCollectionList)) <> '' And public.validate_na_parameter(_proteinCollectionList) <> 'na' Then
             _proteinCollectionList = pc.standardize_protein_collection_list (_proteinCollectionList);
         End If;
 
@@ -170,7 +171,7 @@ BEGIN
         -- Remove any spaces in the static and dynamic mods
         ---------------------------------------------------
 
-        _staticMods := Replace(_staticMods, ' ', '');
+        _staticMods  := Replace(_staticMods, ' ', '');
         _dynamicMods := Replace(_dynamicMods, ' ', '');
 
         ---------------------------------------------------

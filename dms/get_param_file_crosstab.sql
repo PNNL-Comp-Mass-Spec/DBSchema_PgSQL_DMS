@@ -51,6 +51,7 @@ CREATE OR REPLACE PROCEDURE public.get_param_file_crosstab(IN _analysistoolname 
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -98,7 +99,7 @@ BEGIN
         RETURN;
     End If;
 
-    If char_length(_parameterFileFilter) > 0 Then
+    If _parameterFileFilter <> '' Then
         If _addWildcardChars And Position('%' In _parameterFileFilter) = 0 Then
             _parameterFileFilter := '%' || _parameterFileFilter || '%';
         End If;
@@ -203,7 +204,7 @@ BEGIN
             'FROM Tmp_ParamFileInfo PFI INNER JOIN '
                  't_param_files PF ON PFI.param_file_id = PF.param_file_id LEFT OUTER JOIN '
                  'Tmp_ParamFileModResults PFMR ON PFI.param_file_id = PFMR.param_file_id ' ||
-                  CASE WHEN char_length(_massModFilterSql) > 0
+                  CASE WHEN Trim(Coalesce(_massModFilterSql, '')) <> ''
                        THEN format('WHERE %s ', _massModFilterSql)
                        ELSE ''
                   END ||

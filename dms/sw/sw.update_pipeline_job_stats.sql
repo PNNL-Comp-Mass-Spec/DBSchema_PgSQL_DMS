@@ -18,6 +18,7 @@ CREATE OR REPLACE PROCEDURE sw.update_pipeline_job_stats(IN _infoonly boolean DE
 **  Auth:   mem
 **  Date:   05/29/2022 mem - Initial version
 **          08/14/2023 mem - Ported to PostgreSQL
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -147,9 +148,7 @@ BEGIN
 
     _message := format('Updated %s %s in sw.t_pipeline_job_stats', _updateCount, public.check_plural(_updateCount, 'row', 'rows'));
 
-    If char_length(_message) > 0 Then
-        RAISE INFO '%', _message;
-    End If;
+    RAISE INFO '%', _message;
 
     DROP TABLE Tmp_Pipeline_Job_Stats;
 END

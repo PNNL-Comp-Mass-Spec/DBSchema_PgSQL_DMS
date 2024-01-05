@@ -30,6 +30,7 @@ CREATE OR REPLACE FUNCTION pc.standardize_protein_collection_list(_protcollnamel
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -78,7 +79,7 @@ BEGIN
 
     -- Make sure no zero-length records are present in Tmp_Protein_Collections
     DELETE FROM Tmp_Protein_Collections
-    WHERE char_length(Collection_Name) = 0;
+    WHERE Trim(Coalesce(Collection_Name, '')) = '';
 
     -- Determine the Collection_Type_ID values for the entries in Tmp_Protein_Collections
     -- Additionally, correct any capitalization errors

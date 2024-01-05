@@ -38,7 +38,7 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------
 
-    _managerNameList := Coalesce(_managerNameList, '');
+    _managerNameList       := Trim(Coalesce(_managerNameList, ''));
     _removeUnknownManagers := Coalesce(_removeUnknownManagers, 1);
     _message := '';
 
@@ -57,7 +57,7 @@ BEGIN
     -- Parse _managerNameList
     -----------------------------------------------
 
-    If char_length(_managerNameList) = 0 Then
+    If _managerNameList = '' Then
         Return;
     End If;
 

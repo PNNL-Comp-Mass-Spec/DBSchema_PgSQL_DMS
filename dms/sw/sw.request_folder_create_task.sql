@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE sw.request_folder_create_task(IN _processorname text
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/27/2023 mem - Apply a row-level lock to sw.t_data_folder_create_queue using FOR UPDATE
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -169,7 +170,7 @@ BEGIN
                WHERE entry_id = _taskID
             ) AS LookupQ;
 
-        If _infoOnly And char_length(_message) = 0 Then
+        If _infoOnly Then
             _message := format('Task %s would be assigned to %s', _taskID, _processorName);
         End If;
     Else
@@ -181,7 +182,6 @@ BEGIN
 
         _returnCode := _taskNotAvailableErrorCode;
         _message := 'No available tasks';
-
     End If;
 
     ---------------------------------------------------

@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE pc.get_archived_file_id_for_protein_collection_list(
 **          08/22/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -45,7 +46,7 @@ BEGIN
     _archivedFileID         := 0;
     _proteinCollectionCount := 0;
 
-    If char_length(_proteinCollectionList) = 0 Then
+    If _proteinCollectionList = '' Then
         _message := 'Warning: Protein collection list is empty';
         RETURN;
     End If;

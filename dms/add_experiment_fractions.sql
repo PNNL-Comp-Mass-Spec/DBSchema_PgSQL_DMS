@@ -79,6 +79,7 @@ CREATE OR REPLACE PROCEDURE public.add_experiment_fractions(IN _parentexperiment
 **          11/25/2022 mem - Rename parameter to _wellplate
 **          12/10/2023 mem - Ported to PostgreSQL
 **          01/03/2024 mem - Update warning messages
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -94,7 +95,7 @@ DECLARE
     _parentExperimentInfo record;
     _experimentIDList text := '';
     _materialIDList text := '';
-    _fractionNamePreviewList text := '';
+    _fractionNamePreviewList text;
     _wellPlateMode text;
     _logErrors boolean := false;
     _dropTempTables boolean := false;
@@ -148,7 +149,7 @@ BEGIN
         _parentExperiment := Trim(Coalesce(_parentExperiment, ''));
         _groupType        := Trim(Coalesce(_groupType, ''));
 
-        If char_length(_groupType) = 0 Then
+        If _groupType = '' Then
             _groupType := 'Fraction';
         ElsIf _groupType::citext <> 'Fraction' Then
             _message := 'The only supported _groupType is "Fraction"';
@@ -227,12 +228,12 @@ BEGIN
         _parentExperiment := _parentExperimentInfo.BaseFractionName;
 
         -- Search/replace, if defined
-        If char_length(_nameSearch) > 0 Then
+        If _nameSearch <> '' Then
             _parentExperimentInfo.BaseFractionName := Replace(_parentExperimentInfo.BaseFractionName, _nameSearch, _nameReplace);
         End If;
 
         -- Append the suffix, if defined
-        If char_length(_suffix) > 0 Then
+        If _suffix <> '' Then
             If Substring(_suffix, 1, 1) In ('_', '-') Then
                 _parentExperimentInfo.BaseFractionName := format('%s%s', _parentExperimentInfo.BaseFractionName, _suffix);
             Else
@@ -482,6 +483,8 @@ BEGIN
             _nameFractionLinker := '_';
         End If;
 
+        _fractionNamePreviewList := '';
+
         WHILE _fractionCount < _totalCount
         LOOP
             -- Build name for new experiment fraction
@@ -510,7 +513,7 @@ BEGIN
             End If;
 
             If _fractionsCreated < 4 Then
-                If char_length(_fractionNamePreviewList) = 0 Then
+                If _fractionNamePreviewList = '' Then
                     _fractionNamePreviewList := _newExpName;
                 Else
                     _fractionNamePreviewList := format('%s, %s', _fractionNamePreviewList, _newExpName);
@@ -602,13 +605,13 @@ BEGIN
                 -- Append Experiment ID to _experimentIDList and _materialIDList
                 ---------------------------------------------------
 
-                If char_length(_experimentIDList) > 0 Then
+                If _experimentIDList <> '' Then
                     _experimentIDList := format('%s,%s', _experimentIDList, _newExpID);
                 Else
                     _experimentIDList := format('%s', _newExpID);
                 End If;
 
-                If char_length(_materialIDList) > 0 Then
+                If _materialIDList <> '' Then
                     _materialIDList := format('%s,E:%s', _materialIDList, _newExpID);
                 Else
                     _materialIDList := format('E:%s', _newExpID);
@@ -636,7 +639,7 @@ BEGIN
                     FROM t_experiment_plex_members
                     WHERE plex_exp_id = _parentExperimentInfo.ParentExperimentID;
 
-                    If char_length(_callingUser) > 0 Then
+                    If Trim(Coalesce(_callingUser)) <> '' Then
                         -- Call public.alter_entered_by_user to alter the entered_by field in t_experiment_plex_members_history
 
                         CALL public.alter_entered_by_user ('public', 't_experiment_plex_members_history', 'plex_exp_id', _newExpID, _callingUser, _message => _alterEnteredByMessage);

@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE public.backfill_pipeline_jobs(IN _infoonly boolean D
 **          06/13/2023 mem - Fix bug that used harded coded job number 1914830 instead of _job
 **          08/10/2023 mem - Add user MSDADMIN to T_Users if missing
 **          12/01/2023 mem - Ported to PostgreSQL
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -462,7 +463,7 @@ BEGIN
                 LOOP
                     _ch := Substring(_jobInfo.Dataset, _position, 1);
 
-                    If char_length(_ch) > 0 Then
+                    If _ch <> '' Then
                         If Position(_ch In _validCh) = 0 Then
                             -- Invalid character
                             _cleanName := format('%s_', _cleanName);

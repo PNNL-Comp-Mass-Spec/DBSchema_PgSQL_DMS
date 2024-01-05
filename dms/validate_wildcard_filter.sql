@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION public.validate_wildcard_filter(_wildcardfilter text)
 **          06/24/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 BEGIN
@@ -28,7 +29,7 @@ BEGIN
 
     -- Add wildcards if _wildcardFilter doesn't contain a percent sign
 
-    If char_length(_wildcardFilter) > 0 And Position('%' in _wildcardFilter) = 0 Then
+    If _wildcardFilter <> '' And Position('%' in _wildcardFilter) = 0 Then
         _wildcardFilter := '%' || _wildcardFilter || '%';
     End If;
 

@@ -67,6 +67,7 @@ CREATE OR REPLACE PROCEDURE sw.update_manager_and_task_status(IN _mgrname text, 
 **                           with string parameters _mgrStatus, _taskStatus, and _taskDetailStatus
 **          08/14/2023 mem - Ported to PostgreSQL
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -93,8 +94,8 @@ BEGIN
     _mostRecentJobInfo      := Trim(Coalesce(_mostRecentJobInfo, ''));
     _spectrumCount          := Coalesce(_spectrumCount, 0);
 
-    If char_length(_mgrName) = 0 Then
-        _message := 'Processor name is empty; unable to continue';
+    If _mgrName = '' Then
+        _message := 'Manager name is empty; unable to continue';
         RETURN;
     End If;
 

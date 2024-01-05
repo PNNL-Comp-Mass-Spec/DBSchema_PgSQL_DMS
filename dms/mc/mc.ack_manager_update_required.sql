@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE mc.ack_manager_update_required(IN _managername text,
 **          05/12/2023 mem - Rename variables
 **          05/22/2023 mem - Use format() for string concatenation
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -55,7 +56,8 @@ BEGIN
     _returnCode := '';
 
     _managerName := Trim(Coalesce(_managerName, ''));
-    If (char_length(_managerName) = 0) Then
+
+    If _managerName = '' Then
         _managerName := '??Undefined_Manager??';
     End If;
 

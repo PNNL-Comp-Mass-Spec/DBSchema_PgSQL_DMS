@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE public.post_material_log_entry(IN _type text, IN _it
 **          03/25/2008 mem - Now validating that _callingUser is not blank
 **          03/26/2008 grk - Added handling for comment
 **          11/20/2023 mem - Ported to PostgreSQL
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -34,7 +35,7 @@ BEGIN
 
     _callingUser := Trim(Coalesce(_callingUser, ''));
 
-    If char_length(_callingUser) = 0 Then
+    If _callingUser = '' Then
         _callingUser := session_user;
     End If;
 

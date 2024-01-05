@@ -27,6 +27,7 @@ CREATE OR REPLACE FUNCTION public.get_spectral_library_settings_hash(_libraryid 
 **          05/30/2023 mem - Use format() for string concatenation
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          12/11/2023 mem - Remove unnecessary _trimWhitespace argument when calling validate_na_parameter
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -86,11 +87,11 @@ BEGIN
         _dynamicMods              := Trim(Coalesce(_dynamicMods, ''));
         _maxDynamicMods           := Coalesce(_maxDynamicMods, 0);
 
-        If char_length(_proteinCollectionList) = 0 Then
+        If _proteinCollectionList = '' Then
             _proteinCollectionList := 'na';
         End If;
 
-        If char_length(_organismDbFile) = 0 Then
+        If _organismDbFile = '' Then
             _organismDbFile := 'na';
         End If;
     End If;

@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE public.alter_event_log_entry_user(IN _eventlogschema
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          12/02/2023 mem - Rename variable
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -71,7 +72,7 @@ BEGIN
 
     _eventLogSchema := Trim(Coalesce(_eventLogSchema, ''));
 
-    If (char_length(_eventLogSchema) = 0) Then
+    If _eventLogSchema = '' Then
         _eventLogSchema := 'public';
     End If;
 
@@ -86,7 +87,7 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
-    If char_length(_newUser) = 0 Then
+    If _newUser = '' Then
         _message := '_newUser is empty; unable to continue';
         RAISE EXCEPTION '%', _message;
     End If;

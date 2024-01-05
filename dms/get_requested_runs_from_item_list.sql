@@ -36,6 +36,7 @@ CREATE OR REPLACE FUNCTION public.get_requested_runs_from_item_list(_itemlist te
 **          09/01/2023 mem - Remove unnecessary cast to citext for string constants
 **          09/07/2023 mem - Update warning messages
 **          09/11/2023 mem - Adjust capitalization of keywords
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -46,14 +47,14 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------
 
-    IF Coalesce(_itemType, '') = '' Then
-        _message := 'Item Type must be specified';
+    If Trim(Coalesce(_itemType, '')) = '' Then
+        _message := 'Item type must be specified';
         RAISE WARNING '%', _message;
         RETURN;
     End If;
 
-    IF char_length(_itemList) = 0 Then
-        _message := 'Item List must be specified';
+    If Trim(Coalesce(_itemList)) = '' Then
+        _message := 'Item list must be specified';
         RAISE WARNING '%', _message;
         RETURN;
     End If;

@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE public.move_material_container(IN _container text, I
 **          12/20/2018 mem - Include container name in warnings
 **          03/02/2022 mem - Compare current container location to _newLocation before validating _oldLocation
 **          11/22/2023 mem - Ported to PostgreSQL
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -90,7 +91,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    If char_length(_container) = 0 Then
+    If _container = '' Then
         _message := 'Container name cannot be empty';
         RAISE WARNING '%', _message;
 
@@ -98,7 +99,7 @@ BEGIN
         RETURN;
     End If;
 
-    If char_length(_newLocation) = 0 Then
+    If _newLocation = '' Then
         _message := 'NewLocation cannot be empty';
         RAISE WARNING '%', _message;
 
@@ -132,7 +133,7 @@ BEGIN
         RETURN;
     End If;
 
-    If _newLocation::citext = _containerInfo.CurrentLocation And (char_length(_newResearcher) = 0 Or _containerInfo.Researcher = _newResearcher::citext) Then
+    If _newLocation::citext = _containerInfo.CurrentLocation And (_newResearcher = '' Or _containerInfo.Researcher = _newResearcher::citext) Then
         _message := format('Container is already at %s (and not changing the researcher name): %s', _newLocation, _container);
         RAISE WARNING '%', _message;
 
@@ -140,7 +141,7 @@ BEGIN
         RETURN;
     End If;
 
-    If char_length(_oldLocation) > 0 And _oldLocation::citext <> _containerInfo.CurrentLocation Then
+    If _oldLocation <> '' And _oldLocation::citext <> _containerInfo.CurrentLocation Then
         _message := format('Current container location does not match the expected location: %s vs. expected %s for %s',
                            _containerInfo.CurrentLocation, _oldLocation, _container);
 
@@ -150,7 +151,7 @@ BEGIN
         RETURN;
     End If;
 
-    If char_length(_newResearcher) > 0 Then
+    If _newResearcher <> '' Then
         _containerInfo.Researcher := _newResearcher;
     End If;
 

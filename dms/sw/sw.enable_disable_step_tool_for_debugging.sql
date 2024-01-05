@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION sw.enable_disable_step_tool_for_debugging(_tool text 
 **          06/09/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          12/08/2023 mem - Select a single column when using If Not Exists()
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -54,7 +55,7 @@ BEGIN
         _message := format('Error, tool not found: %s', _tool);
     End If;
 
-    If char_length(_message) > 0 Then
+    If _message <> '' Then
         RETURN QUERY
         SELECT _message,
                _groupID   As group_id,
@@ -215,7 +216,7 @@ BEGIN
 
     End If;
 
-    If char_length(_message) = 0 Then
+    If _message = '' Then
         RETURN;
     End If;
 

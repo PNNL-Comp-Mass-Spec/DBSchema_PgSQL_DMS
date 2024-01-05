@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_material_container(INOUT _containe
 **          11/18/2023 mem - Remove procedure argument _barcode and add _campaignName
 **          11/20/2023 mem - Ported to PostgreSQL
 **          01/03/2024 mem - Update warning messages
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -119,7 +120,7 @@ BEGIN
             _container := format('MC-%s', _nextContainerID);
         End If;
 
-        If char_length(_container) = 0 Then
+        If _container = '' Then
             _message := 'Container name cannot be empty';
             _returnCode := 'U5201';
             RETURN;

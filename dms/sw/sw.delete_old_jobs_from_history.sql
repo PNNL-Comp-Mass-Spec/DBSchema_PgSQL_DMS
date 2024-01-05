@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE sw.delete_old_jobs_from_history(IN _infoonly boolean
 **  Auth:   mem
 **  Date:   05/29/2022 mem - Initial version
 **          08/01/2023 mem - Ported to PostgreSQL
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -313,7 +314,7 @@ BEGIN
     -- Exit
     ---------------------------------------------------
 
-    If char_length(_message) > 0 Then
+    If Trim(Coalesce(_message, '')) <> '' Then
         RAISE INFO '';
         RAISE INFO '%', _message;
     End If;

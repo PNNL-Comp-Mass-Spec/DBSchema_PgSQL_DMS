@@ -42,6 +42,7 @@ CREATE OR REPLACE PROCEDURE public.alter_entered_by_user(IN _targettableschema t
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          12/02/2023 mem - Rename variable
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -67,7 +68,7 @@ BEGIN
 
     _targetTableSchema := Trim(Coalesce(_targetTableSchema, ''));
 
-    If (char_length(_targetTableSchema) = 0) Then
+    If _targetTableSchema = '' Then
         _targetTableSchema := 'public';
     End If;
 
@@ -82,7 +83,7 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
-    If char_length(_newUser) = 0 Then
+    If _newUser = '' Then
         _message := '_newUser is empty; unable to continue';
         RAISE EXCEPTION '%', _message;
     End If;
@@ -192,7 +193,7 @@ BEGIN
                 _enteredByColumnName,
                 _targetIDColumnName);
 
-        If char_length(_entryDateFilterSqlWithVariables) > 0 Then
+        If _entryDateFilterSqlWithVariables <> '' Then
             If _previewSql Then
                 _s := format('%s AND %s', _s, _entryDateFilterSqlWithValues);
             Else
@@ -228,7 +229,7 @@ BEGIN
                 _targetTableSchema, _targetTableName,
                 _targetIDColumnName);
 
-        If char_length(_entryDateFilterSqlWithVariables) > 0 Then
+        If _entryDateFilterSqlWithVariables <> '' Then
             If _previewSql Then
                 _s := format('%s AND %s', _s, _entryDateFilterSqlWithValues);
             Else

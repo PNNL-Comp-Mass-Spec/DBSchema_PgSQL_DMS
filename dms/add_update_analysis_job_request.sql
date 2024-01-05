@@ -117,6 +117,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job_request(IN _datasets 
 **          12/12/2023 mem - Ported to PostgreSQL
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
 **          01/03/2024 mem - Update warning messages
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -387,7 +388,7 @@ BEGIN
 
         _protCollNameList := Trim(Coalesce(_protCollNameList, ''));
 
-        If char_length(_protCollNameList) > 0 And public.validate_na_parameter(_protCollNameList) <> 'na' Then
+        If _protCollNameList <> '' And public.validate_na_parameter(_protCollNameList) <> 'na' Then
             CALL public.validate_protein_collection_list_for_dataset_table (
                                 _protCollNameList     => _protCollNameList,         -- Output
                                 _collectionCountAdded => _collectionCountAdded,     -- Output

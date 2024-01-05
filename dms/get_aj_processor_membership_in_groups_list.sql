@@ -24,6 +24,7 @@ CREATE OR REPLACE FUNCTION public.get_aj_processor_membership_in_groups_list(_pr
 **          06/17/2022 mem - Ported to PostgreSQL
 **          07/06/2022 mem - Fix concatenation typo
 **          05/30/2023 mem - Use format() for string concatenation
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -64,7 +65,7 @@ BEGIN
     End If;
 
     If Coalesce(_disabledGroups, '') <> '' Then
-        If char_length(_combinedList) > 0 Then
+        If Coalesce(_combinedList, '') <> '' Then
             _combinedList := format('%s%s', _combinedList, '; ');
         End If;
 

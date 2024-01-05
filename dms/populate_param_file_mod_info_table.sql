@@ -43,6 +43,7 @@ CREATE OR REPLACE PROCEDURE public.populate_param_file_mod_info_table(IN _showmo
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -76,7 +77,7 @@ BEGIN
 
     _massModFilterSql := '';
 
-    If char_length(_massModFilterTextColumn) > 0 Then
+    If _massModFilterTextColumn <> '' Then
         _massModFilterComparison := '%' || _massModFilterTextColumn || '%';
     Else
         _massModFilterComparison := '';
@@ -286,16 +287,17 @@ BEGIN
         -- Possibly populate _massModFilterSql
         -----------------------------------------------------------
 
-        If char_length(_massModFilterText) > 0 Then
+        If _massModFilterText <> '' Then
             _addFilter := true;
-            If char_length(_massModFilterComparison) > 0 Then
+
+            If _massModFilterComparison <> '' Then
                 If Not _currentColumn ILIKE _massModFilterComparison Then
                     _addFilter := false;
                 End If;
             End If;
 
             If _addFilter Then
-                If char_length(_massModFilterSql) > 0 Then
+                If _massModFilterSql <> '' Then
                     _massModFilterSql := format('%s OR ', _massModFilterSql);
                 End If;
 

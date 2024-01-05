@@ -102,6 +102,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_file_info_xml(IN _datasetid in
 **          09/08/2023 mem - Adjust capitalization of keywords
 **                         - Include schema name when calling function verify_sp_authorized()
 **          12/06/2023 mem - Log an error if a scan type is not present in t_dataset_scan_type_glossary
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -953,7 +954,7 @@ BEGIN
             End If;
         End If;
 
-        If char_length(_message) > 0 And _infoOnly Then
+        If Trim(Coalesce(_message, '')) <> '' And _infoOnly Then
             RAISE INFO '%', _message;
         End If;
 

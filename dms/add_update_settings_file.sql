@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_settings_file(INOUT _settingsfilei
 **                         - Check for whitespace in _fileName
 **          08/23/2023 mem - Ported to PostgreSQL
 **          01/03/2024 mem - Update warning messages
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -123,7 +124,7 @@ BEGIN
         End If;
     End If;
 
-    If char_length(_hmsAutoSupersede) > 0 Then
+    If _hmsAutoSupersede <> '' Then
         If _hmsAutoSupersede::citext = _fileName::citext Then
             _message := 'The HMS_AutoSupersede file cannot have the same name as this settings file';
             RAISE WARNING '%', _message;
@@ -158,7 +159,7 @@ BEGIN
         _hmsAutoSupersede := null;
     End If;
 
-    If char_length(_msgfPlusAutoCentroid) > 0 Then
+    If _msgfPlusAutoCentroid <> '' Then
         If _msgfPlusAutoCentroid::citext = _fileName::citext Then
             _message := 'The MSGFPlus_AutoCentroid file cannot have the same name as this settings file';
             RAISE WARNING '%', _message;

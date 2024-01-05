@@ -43,6 +43,7 @@ CREATE OR REPLACE PROCEDURE public.evaluate_predefined_analysis_rule(IN _minleve
 **          10/13/2023 mem - Add missing _returnCode variable
 **          12/08/2023 mem - Select a single column when using If Not Exists()
 **          12/11/2023 mem - Remove unnecessary _trimWhitespace argument when calling validate_na_parameter
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -178,7 +179,7 @@ BEGIN
             -- End If;
 
             -- Obsolete:
-            -- If char_length(_associatedProcessorGroup) > 0 Then
+            -- If _associatedProcessorGroup <> '' Then
             --     _ruleEvalNotes := public.append_to_text(_ruleEvalNotes, format('Processor group set to %s', _associatedProcessorGroup));
             -- End If;
 
@@ -200,7 +201,7 @@ BEGIN
 
         _proteinCollectionListValidated := Trim(Coalesce(_predefineInfo.ProteinCollectionList, ''));
 
-        If char_length(_proteinCollectionListValidated) > 0 And public.validate_na_parameter(_proteinCollectionListValidated) <> 'na' Then
+        If _proteinCollectionListValidated <> '' And public.validate_na_parameter(_proteinCollectionListValidated) <> 'na' Then
             CALL public.validate_protein_collection_list_for_datasets (
                                 _datasetName,
                                 _protCollNameList     => _proteinCollectionListValidated,   -- Output

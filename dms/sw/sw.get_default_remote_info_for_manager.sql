@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE sw.get_default_remote_info_for_manager(IN _managerna
 **          05/07/2023 mem - Remove unused variable
 **          05/19/2023 mem - Use format() for string concatenation
 **          06/09/2023 mem - Move to the sw schema
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -85,7 +86,7 @@ BEGIN
                     FROM Tmp_Mgr_Params
                     WHERE mgr_name::citext = _managerName::citext And
                           param_name = 'RemoteHostName' AND
-                          char_length(value) > 0 )  Then
+                          Coalesce(value, '') <> '')  Then
 
         RAISE WARNING 'Manager % does not have RunJobsRemotely=True or does not have RemoteHostName defined', _managerName;
 

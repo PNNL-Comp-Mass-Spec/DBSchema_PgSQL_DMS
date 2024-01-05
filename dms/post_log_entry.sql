@@ -43,6 +43,7 @@ CREATE OR REPLACE PROCEDURE public.post_log_entry(IN _type text, IN _message tex
 **          09/07/2023 mem - Align assignment statements
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -63,7 +64,7 @@ BEGIN
 
     _targetSchema := Trim(Coalesce(_targetSchema, ''));
 
-    If (char_length(_targetSchema) = 0) Then
+    If _targetSchema = '' Then
         _targetSchema := 'public';
     End If;
 

@@ -48,6 +48,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_run_jobs_remotely(IN _enable boole
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          11/06/2023 mem - Use new column names in view v_mgr_params
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -89,7 +90,7 @@ BEGIN
         RETURN;
     End If;
 
-    If char_length(_managerNameList) = 0 Then
+    If _managerNameList = '' Then
         _message := '_managerNameList must be specified';
         _returnCode := 'U5202';
         RETURN;

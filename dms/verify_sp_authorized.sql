@@ -61,6 +61,7 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **          06/12/2023 mem - Ignore prefix 'PNL\' when looking for the login name in t_sp_authorization
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -88,7 +89,7 @@ BEGIN
 
     _targetSchema  := Trim(Coalesce(_targetSchema, ''));
 
-    If char_length(_targetSchema) = 0 Then
+    If _targetSchema = '' Then
         _targetSchema := 'public';
     End If;
 

@@ -51,6 +51,7 @@ CREATE OR REPLACE FUNCTION public.local_error_handler(_sqlstate text, _exception
 **          07/26/2023 mem - Move "Not" keyword to before the field name
 **          09/01/2023 mem - Remove unnecessary cast to citext for string constants
 **          09/07/2023 mem - Align assignment statements
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -78,9 +79,9 @@ BEGIN
         _callingProcName::citext   IN ('<Auto>', '<AutoDetermine>') Or
         _callingProcSchema::citext IN ('<Auto>', '<AutoDetermine>')
        ) AND
-       char_length(_exceptionContext) > 0 Then
+       _exceptionContext <> '' Then
 
-        If char_length(_callingProcSchema) > 0 And
+        If _callingProcSchema <> '' And
            _callingProcSchema::citext IN ('<Auto>', '<AutoDetermine>') Then
             _callingProcSchema := '';
         End If;
@@ -94,8 +95,8 @@ BEGIN
         LIMIT 1;
 
         If FOUND Then
-            If char_length(_schemaName) = 0 Then
-                If char_length(_callingProcSchema) > 0 Then
+            If Trim(Coalesce(_schemaName)) = '' Then
+                If Trim(Coalesce(_callingProcSchema)) <> '' Then
                     _schemaName := _callingProcSchema;
                 Else
                     -- Lookup the schema name, choosing the first schema found if multiple functions match _objectName
@@ -123,7 +124,7 @@ BEGIN
 
     _message := format('Error caught in %s', _callingProcName);
 
-    If char_length(_callingProcLocation) > 0 Then
+    If _callingProcLocation <> '' Then
         _message := format('%s at "%s"', _message, _callingProcLocation);
     End If;
 

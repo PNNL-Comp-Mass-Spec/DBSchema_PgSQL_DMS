@@ -77,6 +77,8 @@ CREATE OR REPLACE PROCEDURE public.find_log_entry(IN _entryid text DEFAULT ''::t
 **          06/05/2023 mem - Add _maxRowCount and rename procedure arguments
 **                         - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
+**                         - Coalesce null strings to ''
 **
 *****************************************************/
 DECLARE
@@ -99,14 +101,20 @@ BEGIN
 
     _entryIDValue        := public.try_cast(_EntryID, null::int);
 
-    _postedByWildcard    := '%' || _PostedBy || '%';
+    _postedBy            := Trim(Coalesce(_postedBy, ''));
+    _postingTimeAfter    := Trim(Coalesce(_postingTimeAfter, ''));
+    _postingTimeBefore   := Trim(Coalesce(_postingTimeBefore, ''));
+    _entryType           := Trim(Coalesce(_entryType, ''));
+    _messagetext         := Trim(Coalesce(_messagetext, ''));
 
-    _earliestPostingTime := public.try_cast(_PostingTimeAfter,  null::timestamp);
-    _latestPostingTime   := public.try_cast(_PostingTimeBefore, null::timestamp);
+    _postedByWildcard    := '%' || _postedBy || '%';
 
-    _typeWildcard        := '%' || _EntryType || '%';
+    _earliestPostingTime := public.try_cast(_postingTimeAfter,  null::timestamp);
+    _latestPostingTime   := public.try_cast(_postingTimeBefore, null::timestamp);
 
-    _messageWildcard     := '%' || _MessageText || '%';
+    _typeWildcard        := '%' || _entryType || '%';
+
+    _messageWildcard     := '%' || _messageText || '%';
 
     _maxRowCount         := Coalesce(_maxRowCount, 0);
 
@@ -120,27 +128,27 @@ BEGIN
         _sqlWhere := format('%s AND (Entry_ID = $1)', _sqlWhere);
     End If;
 
-    If char_length(_PostedBy) > 0 Then
+    If _postedBy <> '' Then
         _sqlWhere := format('%s AND (Posted_By LIKE $2)', _sqlWhere);
     End If;
 
-    If char_length(_PostingTimeAfter) > 0 Then
+    If _postingTimeAfter <> '' Then
         _sqlWhere := format('%s AND (Entered >= $3)', _sqlWhere);
     End If;
 
-    If char_length(_PostingTimeBefore) > 0 Then
+    If _postingTimeBefore <> '' Then
         _sqlWhere := format('%s AND (Entered < $4)', _sqlWhere);
     End If;
 
-    If char_length(_EntryType) > 0 Then
+    If _entryType <> '' Then
         _sqlWhere := format('%s AND (Type LIKE $5)', _sqlWhere);
     End If;
 
-    If char_length(_MessageText) > 0 Then
+    If _messageText <> '' Then
         _sqlWhere := format('%s AND (Message LIKE $6)', _sqlWhere);
     End If;
 
-    If char_length(_sqlWhere) > 0 Then
+    If _sqlWhere <> '' Then
         -- One or more filters are defined
         -- Remove the first AND from the start of _sqlWhere and add the word WHERE
         _sqlWhere := format('WHERE %s', Substring(_sqlWhere, 6, char_length(_sqlWhere) - 5));
@@ -155,7 +163,7 @@ BEGIN
 
     -- RAISE INFO 'Query: %', _sql;
 
-    If char_length(_sqlWhere) > 0 Then
+    If _sqlWhere <> '' Then
 
         _sqlWithFilters := _sql;
 
@@ -163,23 +171,23 @@ BEGIN
             _sqlWithFilters := Replace(_sqlWithFilters, '$1', _entryIDValue::text);
         End If;
 
-        If char_length(_PostedBy) > 0 Then
+        If _postedBy <> '' Then
             _sqlWithFilters := Replace(_sqlWithFilters, '$2', Coalesce('''' || _postedByWildcard || '''', ''));
         End If;
 
-        If char_length(_PostingTimeAfter) > 0 Then
+        If _postingTimeAfter <> '' Then
             _sqlWithFilters := Replace(_sqlWithFilters, '$3', Coalesce('''' || _earliestPostingTime || '''', 'Null'));
         End If;
 
-        If char_length(_PostingTimeBefore) > 0 Then
+        If _postingTimeBefore <> '' Then
             _sqlWithFilters := Replace(_sqlWithFilters, '$4', Coalesce('''' || _latestPostingTime || '''', 'Null'));
         End If;
 
-        If char_length(_EntryType) > 0 Then
+        If _entryType <> '' Then
             _sqlWithFilters := Replace(_sqlWithFilters, '$5', Coalesce('''' || _typeWildcard || '''', ''));
         End If;
 
-        If char_length(_MessageText) > 0 Then
+        If _messageText <> '' Then
             _sqlWithFilters := Replace(_sqlWithFilters, '$6', Coalesce('''' || _messageWildcard || '''', ''));
         End If;
 

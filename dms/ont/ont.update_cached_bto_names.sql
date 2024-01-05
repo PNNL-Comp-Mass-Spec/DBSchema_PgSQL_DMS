@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION ont.update_cached_bto_names(_infoonly boolean DEFAULT
 **          05/12/2023 mem - Rename variables
 **          05/19/2023 mem - Remove redundant parentheses
 **          05/30/2023 mem - Use format() for string concatenation
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -70,7 +71,7 @@ BEGIN
             _rowsUpdated := _rowsUpdated + _deleteCount;
             _message2 := format('Deleted %s extra rows from ont.t_cv_bto_cached_names', _deleteCount);
 
-            If char_length(_message) > 0 Then
+            If Trim(Coalesce(_message, '')) <> '' Then
                 _message := format('%s; %s', _message, _message2);
             Else
                 _message := _message2;

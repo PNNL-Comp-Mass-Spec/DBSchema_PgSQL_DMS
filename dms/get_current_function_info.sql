@@ -51,6 +51,7 @@ CREATE OR REPLACE FUNCTION public.get_current_function_info(_schemaname text DEF
 **          07/26/2023 mem - Move "Not" keyword to before the field name
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/11/2023 mem - Adjust capitalization of keywords
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -175,7 +176,7 @@ BEGIN
 
         End If;
 
-        If char_length(_schemaName) > 0 Then
+        If Trim(Coalesce(_schemaName, '')) <> '' Then
             _objectNameAndSchema := format('%I.%s', _schemaName, _objectName);
         End If;
     End If;

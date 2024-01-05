@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_capture_scripts(IN _script text, IN _
 **          09/07/2023 mem - Update warning messages
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          01/03/2024 mem - Update warning messages
+**          01/04/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -175,7 +176,7 @@ BEGIN
 
         -- If _callingUser is defined, update entered_by in cap.t_scripts_history
         -- If _mode is 'update', a new row is only added to t_scripts_history if results_tag or contents changes for the script
-        If char_length(_callingUser) > 0 Then
+        If Trim(Coalesce(_callingUser, '')) <> '' Then
 
             SELECT script_id
             INTO _scriptId
