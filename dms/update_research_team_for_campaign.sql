@@ -1,35 +1,25 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_research_team_for_campaign
-(
-    _campaignName text,
-    _progmgrUsername text,
-    _piUsername text,
-    _technicalLead text,
-    _samplePreparationStaff text,
-    _datasetAcquisitionStaff text,
-    _informaticsStaff text,
-    _collaborators text,
-    INOUT _researchTeamID int,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_research_team_for_campaign(text, text, text, text, text, text, text, text, integer, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_research_team_for_campaign(IN _campaignname text, IN _progmgrusername text, IN _piusername text, IN _technicallead text, IN _samplepreparationstaff text, IN _datasetacquisitionstaff text, IN _informaticsstaff text, IN _collaborators text, INOUT _researchteamid integer, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Update membership of research team for given campaign
+**      Update membership of research team for given campaign or research team ID
 **
 **  Arguments:
-**    _campaignName             Campaign name (required if _researchTeamID is 0)
+**    _campaignName             Campaign name; required if _researchTeamID is 0, but ignored if _researchTeamID is non-zero
 **    _progmgrUsername          Project Manager Username (required)
 **    _piUsername               Principal Investigator Username (required)
 **    _technicalLead            Technical Lead
 **    _samplePreparationStaff   Sample Prep Staff
 **    _datasetAcquisitionStaff  Dataset acquisition staff
 **    _informaticsStaff         Informatics staff
-**    _collaborators            Collaborators
-**    _researchTeamID           Output: research team ID
+**    _collaborators            Collaborators; can contain any text, since not validated against t_users
+**    _researchTeamID           Research team ID; the calling procedure should set this to 0 when creating a team for a new campaign
 **    _message                  Status message
 **    _returnCode               Return code
 **
@@ -46,7 +36,7 @@ AS $$
 **          08/22/2017 mem - Validate _campaignName
 **          08/20/2021 mem - Use Select Distinct to avoid duplicates
 **          02/17/2022 mem - Update error message and convert tabs to spaces
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/04/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -90,7 +80,8 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _campaignName := Trim(Coalesce(_campaignName, ''));
+    _campaignName   := Trim(Coalesce(_campaignName, ''));
+    _researchTeamID := Coalesce(_researchTeamID, 0);
 
     ---------------------------------------------------
     -- Make new research team if ID is 0
@@ -106,7 +97,7 @@ BEGIN
         INSERT INTO t_research_team( team,
                                      description,
                                      collaborators )
-        ) VALUES (
+        VALUES (
             _campaignName,
             format('Research team for campaign %s', _campaignName),
             _collaborators
@@ -133,12 +124,12 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_TeamMembers (
-        Username text,
-        Role text,
+        Username citext,
+        Role citext,
         Role_ID int null,
         User_ID int null,
         EntryID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY
-    )
+    );
 
     ---------------------------------------------------
     -- Populate temp membership table from lists
@@ -146,27 +137,27 @@ BEGIN
 
     INSERT INTO Tmp_TeamMembers ( Username, Role )
     SELECT DISTINCT Value AS Username, 'Project Mgr' AS Role
-    FROM public.parse_delimited_list(_progmgrUsername) AS member
+    FROM public.parse_delimited_list(_progmgrUsername) AS member;
 
     INSERT INTO Tmp_TeamMembers ( Username, Role )
     SELECT DISTINCT Value AS Username, 'PI' AS Role
-    FROM public.parse_delimited_list(_piUsername) AS member
+    FROM public.parse_delimited_list(_piUsername) AS member;
 
     INSERT INTO Tmp_TeamMembers ( Username, Role )
     SELECT DISTINCT Value AS Username, 'Technical Lead' AS Role
-    FROM public.parse_delimited_list(_technicalLead) AS member
+    FROM public.parse_delimited_list(_technicalLead) AS member;
 
     INSERT INTO Tmp_TeamMembers ( Username, Role )
     SELECT DISTINCT Value AS Username, 'Sample Preparation' AS Role
-    FROM public.parse_delimited_list(_samplePreparationStaff) AS member
+    FROM public.parse_delimited_list(_samplePreparationStaff) AS member;
 
     INSERT INTO Tmp_TeamMembers ( Username, Role )
     SELECT DISTINCT Value AS Username, 'Dataset Acquisition' AS Role
-    FROM public.parse_delimited_list(_datasetAcquisitionStaff) AS member
+    FROM public.parse_delimited_list(_datasetAcquisitionStaff) AS member;
 
     INSERT INTO Tmp_TeamMembers ( Username, Role )
     SELECT DISTINCT Value AS Username, 'Informatics' AS Role
-    FROM public.parse_delimited_list(_informaticsStaff) AS member
+    FROM public.parse_delimited_list(_informaticsStaff) AS member;
 
     ---------------------------------------------------
     -- Resolve user username and role to respective IDs
@@ -178,14 +169,9 @@ BEGIN
     WHERE Tmp_TeamMembers.Username = t_users.username;
 
     UPDATE Tmp_TeamMembers
-    SET role_id = t_research_team_roles.role_id
+    SET Role_ID = t_research_team_roles.role_id
     FROM t_research_team_roles
-    WHERE t_research_team_roles.role = Tmp_TeamMembers.role;
-
-    UPDATE Tmp_TeamMembers
-    SET role_id = t_research_team_roles.role_id
-    FROM t_research_team_roles
-    WHERE t_research_team_roles.role = Tmp_TeamMembers.role;
+    WHERE Tmp_TeamMembers.Role = t_research_team_roles.role;
 
     ---------------------------------------------------
     -- Look for entries in Tmp_TeamMembers where Username did not resolve to a user_id
@@ -194,7 +180,6 @@ BEGIN
 
     FOR _entryID, _unknownUsername IN
         SELECT EntryID, Username
-        INTO _unknownUsername
         FROM Tmp_TeamMembers
         WHERE User_ID IS NULL
         ORDER BY EntryID
@@ -204,7 +189,7 @@ BEGIN
                         _unknownUsername,
                         _matchCount       => _matchCount,   -- Output
                         _matchingUsername => _newUsername,  -- Output
-                        _matchingUserID   => _userID);      -- Output
+                        _matchingUserID   => _newUserID);   -- Output
 
         If _matchCount = 1 Then
             -- Single match was found; update Username in Tmp_TeamMembers
@@ -212,7 +197,6 @@ BEGIN
             SET Username = _newUsername,
                 User_ID = _newUserID
             WHERE EntryID = _entryID;
-
         End If;
 
     END LOOP;
@@ -224,11 +208,18 @@ BEGIN
     SELECT string_agg(Username, ', ' ORDER BY Username)
     INTO _list
     FROM Tmp_TeamMembers
-    WHERE User_ID IS NULL
+    WHERE User_ID IS NULL;
 
     If _list <> '' Then
-        _message := format('Could not resolve following usernames (or last names) to user ID: %s', _list);
+        If Position(',' In _list) > 0 Then
+            _message := format('Could not resolve the following usernames (or last names) to user ID: %s', _list);
+        Else
+            _message := format('Could not resolve username (or last name) to user ID: %s', _list);
+        End If;
+
         _returnCode := 'U5201';
+
+        DROP TABLE Tmp_TeamMembers;
         RETURN;
     End If;
 
@@ -239,8 +230,15 @@ BEGIN
            WHERE Role_ID IS NULL ) LookupQ;
 
     If _list <> '' Then
-        _message := format('Unknown role names: %s', _list);
+        If Position(',' In _list) > 0 Then
+            _message := format('Invalid role names: %s', _list);
+        Else
+            _message := format('Invalid role name: %s', _list);
+        End If;
+
         _returnCode := 'U5202';
+
+        DROP TABLE Tmp_TeamMembers;
         RETURN;
     End If;
 
@@ -268,7 +266,11 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := format('Campaign: %s', _campaignName);
+    If _campaignName = '' Then
+        _usageMessage := format('Team ID %s', _researchTeamID);
+    Else
+        _usageMessage := format('Team ID %s; Campaign: %s', _researchTeamID, _campaignName);
+    End If;
 
     CALL post_usage_log_entry ('update_research_team_for_campaign', _usageMessage);
 
@@ -276,4 +278,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_research_team_for_campaign IS 'UpdateResearchTeamForCampaign';
+
+ALTER PROCEDURE public.update_research_team_for_campaign(IN _campaignname text, IN _progmgrusername text, IN _piusername text, IN _technicallead text, IN _samplepreparationstaff text, IN _datasetacquisitionstaff text, IN _informaticsstaff text, IN _collaborators text, INOUT _researchteamid integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_research_team_for_campaign(IN _campaignname text, IN _progmgrusername text, IN _piusername text, IN _technicallead text, IN _samplepreparationstaff text, IN _datasetacquisitionstaff text, IN _informaticsstaff text, IN _collaborators text, INOUT _researchteamid integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_research_team_for_campaign(IN _campaignname text, IN _progmgrusername text, IN _piusername text, IN _technicallead text, IN _samplepreparationstaff text, IN _datasetacquisitionstaff text, IN _informaticsstaff text, IN _collaborators text, INOUT _researchteamid integer, INOUT _message text, INOUT _returncode text) IS 'UpdateResearchTeamForCampaign';
+

@@ -1,33 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_campaign
-(
-    _campaignName text,
-    _projectName text,
-    _progmgrUsername text,
-    _piUsername text,
-    _technicalLead text,
-    _samplePreparationStaff text,
-    _datasetAcquisitionStaff text,
-    _informaticsStaff text,
-    _collaborators text,
-    _comment text,
-    _state text,
-    _description text,
-    _externalLinks text,
-    _eprList text,
-    _eusProposalList text,
-    _organisms text,
-    _experimentPrefixes text,
-    _dataReleaseRestrictions text,
-    _fractionEMSLFunded text = '0',
-    _eusUsageType text = 'USER_ONSITE',
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_campaign(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_campaign(IN _campaignname text, IN _projectname text, IN _progmgrusername text, IN _piusername text, IN _technicallead text, IN _samplepreparationstaff text, IN _datasetacquisitionstaff text, IN _informaticsstaff text, IN _collaborators text, IN _comment text, IN _state text, IN _description text, IN _externallinks text, IN _eprlist text, IN _eusproposallist text, IN _organisms text, IN _experimentprefixes text, IN _datareleaserestriction text, IN _fractionemslfunded text DEFAULT '0'::text, IN _eususagetype text DEFAULT 'USER_ONSITE'::text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -51,7 +28,7 @@ AS $$
 **    _eusProposalList              EUS proposal (as text), e.g. 33200
 **    _organisms                    Comma-separated list of organisms
 **    _experimentPrefixes           One or more experiment name prefixes
-**    _dataReleaseRestrictions      Data release restriction ID (as text), e.g. 0 for 'Not yet approved for release'; see table t_data_release_restrictions
+**    _dataReleaseRestriction       Data release restriction, e.g. 'Not yet approved for release'; see table t_data_release_restrictions
 **    _fractionEMSLFunded           Fraction EMSL funded (as text); value between 0 and 1
 **    _eusUsageType                 EUS usage type
 **    _mode                         Mode: 'add' or 'update'
@@ -66,7 +43,7 @@ AS $$
 **          02/05/2010 grk - Split team member field
 **          02/07/2010 grk - Added validation for campaign name
 **          02/07/2010 mem - No longer validating _progmgrUsername or _piUsername in this procedure since this is now handled by UpdateResearchTeamForCampaign
-**          03/17/2010 grk - DataReleaseRestrictions (Ticket http://prismtrac.pnl.gov/trac/ticket/758)
+**          03/17/2010 grk - Data release restrictions (Ticket http://prismtrac.pnl.gov/trac/ticket/758)
 **          04/21/2010 grk - Use try-catch for error handling
 **          10/27/2011 mem - Added parameter _fractionEMSLFunded
 **          12/01/2011 mem - Updated _fractionEMSLFunded to be a required value
@@ -92,7 +69,7 @@ AS $$
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          05/16/2022 mem - Fix potential arithmetic overflow error when parsing _fractionEMSLFunded
 **          11/01/2023 mem - Remove unreachable code when validating campaign name
-**          01/03/2024 mem - Ported to PostgreSQL
+**          01/04/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -105,14 +82,14 @@ DECLARE
     _stateID int;
     _eusUsageTypeID int;
     _eusUsageTypeEnabled int;
-    _proposalType text;
+    _proposalType citext;
     _percentEMSLFunded int;
     _fractionEMSLFundedValue real;
     _fractionEMSLFundedToStore numeric(3,2);
     _logErrors boolean := false;
     _campaignID int;
     _researchTeamID int;
-    _dataReleaseRestrictionsID int;
+    _dataReleaseRestrictionID int;
     _badCh text;
     _idConfirm int;
     _debugMsg text;
@@ -158,6 +135,8 @@ BEGIN
         _projectName     := Trim(Coalesce(_projectName, ''));
         _progmgrUsername := Trim(Coalesce(_progmgrUsername, ''));
         _piUsername      := Trim(Coalesce(_piUsername, ''));
+        _state           := Trim(Coalesce(_state, ''));
+        _eusProposalList := Trim(Coalesce(_eusProposalList, ''));
         _mode            := Trim(Lower(Coalesce(_mode, '')));
 
         If _campaignName = '' Then
@@ -174,6 +153,14 @@ BEGIN
 
         If _piUsername = '' Then
             RAISE EXCEPTION 'Principle investigator username must be specified';
+        End If;
+
+        If Lower(_state) = 'active' Then
+            _state := 'Active';
+        ElsIf Lower(_state) = 'inactive' Then
+            _state := 'Inactive';
+        Else
+            RAISE EXCEPTION 'Invalid state "%"; must be Active or Inactive', _state;
         End If;
 
         ---------------------------------------------------
@@ -203,40 +190,39 @@ BEGIN
         ---------------------------------------------------
 
         SELECT release_restriction_id
-        INTO _dataReleaseRestrictionsID
+        INTO _dataReleaseRestrictionID
         FROM t_data_release_restrictions
-        WHERE release_restriction = _dataReleaseRestrictions;
+        WHERE release_restriction = Trim(Coalesce(_dataReleaseRestriction))::citext;
 
         If Not FOUND Then
             RAISE EXCEPTION 'Could not resolve data release restriction; please select a valid entry from the list';
         End If;
 
         ---------------------------------------------------
-        -- Validate Fraction EMSL Funded
+        -- Validate Fraction EMSL funded
         -- If _fractionEMSLFunded is empty we treat it as a Null value
         ---------------------------------------------------
 
         _fractionEMSLFunded := Trim(Coalesce(_fractionEMSLFunded, ''));
 
-        If char_length(_fractionEMSLFunded) > 0 Then
+        If _fractionEMSLFunded <> '' Then
             _fractionEMSLFundedValue := public.try_cast(_fractionEMSLFunded, null::real);
 
             If _fractionEMSLFundedValue Is Null Then
-                RAISE EXCEPTION 'Fraction EMSL Funded must be a number between 0 and 1';
+                RAISE EXCEPTION 'Fraction EMSL funded must be a number between 0 and 1';
             End If;
 
             If _fractionEMSLFundedValue > 1 Then
-                _msg := format('Fraction EMSL Funded must be a number between 0 and 1 (%s is greater than 1)', _fractionEMSLFunded);
+                _msg := format('Fraction EMSL funded must be a number between 0 and 1 (%s is greater than 1)', _fractionEMSLFunded);
                 RAISE EXCEPTION '%', _msg;
             End If;
 
             If _fractionEMSLFundedValue < 0 Then
-                _msg := format('Fraction EMSL Funded must be a number between 0 and 1 (%s is less than 0)', _fractionEMSLFunded);
+                _msg := format('Fraction EMSL funded must be a number between 0 and 1 (%s is less than 0)', _fractionEMSLFunded);
                 RAISE EXCEPTION '%', _msg;
             End If;
 
-            _fractionEMSLFundedToStore := _fractionEMSLFunded::numeric(3,2)
-
+            _fractionEMSLFundedToStore := _fractionEMSLFunded::numeric(3,2);
         Else
             _fractionEMSLFundedToStore := 0;
         End If;
@@ -262,7 +248,7 @@ BEGIN
 
         _eusUsageType := Trim(Coalesce(_eusUsageType, ''));
 
-        If char_length(_eusUsageType) = 0 Then
+        If _eusUsageType = '' Then
             _eusUsageType := 'USER_ONSITE';
         End If;
 
@@ -280,10 +266,10 @@ BEGIN
             RAISE EXCEPTION 'EUS Usage Type is not allowed for campaigns: %', _eusUsageType;
         End If;
 
-        If char_length(Coalesce(_eusProposalList, '')) > 0 Then
+        If _eusProposalList <> '' Then
             If _eusUsageType = 'CAP_DEV' Then
                 -- CAP_DEV should not be used when one or more EUS proposals are defined for a campaign
-                RAISE EXCEPTION ('Please choose usage type USER_ONSITE if this campaign''s samples are for an onsite user or are for a Resource Owner project; choose USER_REMOTE if for an EMSL user';
+                RAISE EXCEPTION 'Please choose usage type USER_ONSITE if this campaign''s samples are for an onsite user or are for a Resource Owner project; choose USER_REMOTE if for an EMSL user';
             End If;
 
             -- If _eusProposalList has a single proposal, get the proposal type then validate _eusUsageType
@@ -291,31 +277,17 @@ BEGIN
             SELECT proposal_type
             INTO _proposalType
             FROM t_eus_proposals
-            WHERE proposal_id = _eusProposalList
+            WHERE proposal_id = _eusProposalList;
 
-            If Coalesce(_proposalType, '') = 'Resource Owner' And _eusUsageType::citext In ('USER_REMOTE', '') Then
+            If FOUND And Coalesce(_proposalType, '') = 'Resource Owner' And _eusUsageType::citext In ('USER_REMOTE', '') Then
                 _eusUsageType := 'USER_ONSITE';
                 _message := 'Auto-updated EUS usage type to USER_ONSITE since this campaign has a Resource Owner project';
 
                 SELECT eus_usage_type_id
                 INTO _eusUsageTypeID
                 FROM t_eus_usage_type
-                WHERE eus_usage_type = _eusUsageType
+                WHERE eus_usage_type = _eusUsageType;
             End If;
-        End If;
-
-        ---------------------------------------------------
-        -- Validate Fraction EMSL Funded
-        ---------------------------------------------------
-
-        If _fractionEMSLFundedToStore > 1 Then
-            _msg := format('Fraction EMSL Funded must be a number between 0 and 1 (%s is greater than 1)', _fractionEMSLFunded);
-            RAISE EXCEPTION '%', _msg;
-        End If;
-
-        If _fractionEMSLFundedToStore < 0 Then
-            _msg := format('Fraction EMSL Funded must be a number between 0 and 1 (%s is less than 0)', _fractionEMSLFunded);
-            RAISE EXCEPTION '%', _msg;
         End If;
 
         _logErrors := true;
@@ -330,18 +302,19 @@ BEGIN
             -- Create research team
             ---------------------------------------------------
 
-            CALL public.update_research_team_for_campaign
-                                _campaignName,
-                                _progmgrUsername,
-                                _piUsername,
-                                _technicalLead,
-                                _samplePreparationStaff,
-                                _datasetAcquisitionStaff,
-                                _informaticsStaff,
-                                _collaborators,
-                                _researchTeamID output,
-                                _msg output
-            --
+            CALL public.update_research_team_for_campaign (
+                                _campaignName            => _campaignName,
+                                _progmgrUsername         => _progmgrUsername,
+                                _piUsername              => _piUsername,
+                                _technicalLead           => _technicalLead,
+                                _samplePreparationStaff  => _samplePreparationStaff,
+                                _datasetAcquisitionStaff => _datasetAcquisitionStaff,
+                                _informaticsStaff        => _informaticsStaff,
+                                _collaborators           => _collaborators,
+                                _researchTeamID          => _researchTeamID,    -- Output: will have the new research team ID
+                                _message                 => _msg,               -- Output
+                                _returnCode              => _returnCode);       -- Output
+
             If _returnCode <> '' Then
                 _message := _msg;
                 RAISE EXCEPTION '%', _message;
@@ -364,7 +337,7 @@ BEGIN
                 experiment_prefixes,
                 created,
                 research_team,
-                data_release_restrictions,
+                data_release_restriction_id,
                 fraction_emsl_funded,
                 eus_usage_type_id
             ) VALUES (
@@ -380,7 +353,7 @@ BEGIN
                 _experimentPrefixes,
                 CURRENT_TIMESTAMP,
                 _researchTeamID,
-                _dataReleaseRestrictionsID,
+                _dataReleaseRestrictionID,
                 _fractionEMSLFundedToStore,
                 _eusUsageTypeID
             )
@@ -388,7 +361,7 @@ BEGIN
             INTO _campaignID;
 
             -- As a precaution, query t_campaign using campaign name to make sure we have the correct campaign ID
-            --
+
             SELECT campaign_id
             INTO _idConfirm
             FROM t_campaign
@@ -415,10 +388,10 @@ BEGIN
                 CALL public.alter_event_log_entry_user ('public', _targetType, _campaignID, _percentEMSLFunded, _callingUser, _message => _alterEnteredByMessage);
 
                 _targetType := 10;
-                CALL public.alter_event_log_entry_user ('public', _targetType, _campaignID, _dataReleaseRestrictionsID, _callingUser, _message => _alterEnteredByMessage);
+                CALL public.alter_event_log_entry_user ('public', _targetType, _campaignID, _dataReleaseRestrictionID, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
-        End If; -- add mode
+        End If;
 
         ---------------------------------------------------
         -- Action for update mode
@@ -431,42 +404,43 @@ BEGIN
             ---------------------------------------------------
 
             UPDATE t_campaign
-            SET project = _projectName,
-                comment = _comment,
-                state = _state,
-                description = _description,
-                external_links = _externalLinks,
-                epr_list = _eprList,
-                eus_proposal_list = _eusProposalList,
-                organisms = _organisms,
-                experiment_prefixes = _experimentPrefixes,
-                data_release_restrictions = _dataReleaseRestrictionsID,
-                fraction_emsl_funded = _fractionEMSLFundedToStore,
-                eus_usage_type_id = _eusUsageTypeID
-            WHERE campaign = _campaignName;
+            SET project                     = _projectName,
+                comment                     = _comment,
+                state                       = _state,
+                description                 = _description,
+                external_links              = _externalLinks,
+                epr_list                    = _eprList,
+                eus_proposal_list           = _eusProposalList,
+                organisms                   = _organisms,
+                experiment_prefixes         = _experimentPrefixes,
+                data_release_restriction_id = _dataReleaseRestrictionID,
+                fraction_emsl_funded        = _fractionEMSLFundedToStore,
+                eus_usage_type_id           = _eusUsageTypeID
+            WHERE campaign = _campaignName::citext;
 
             ---------------------------------------------------
-            -- Update research team membershipe
+            -- Update research team membership
             ---------------------------------------------------
 
             CALL public.update_research_team_for_campaign (
-                                _campaignName,
-                                _progmgrUsername,
-                                _piUsername,
-                                _technicalLead,
-                                _samplePreparationStaff,
-                                _datasetAcquisitionStaff,
-                                _informaticsStaff,
-                                _collaborators,
-                                _researchTeamID => _researchTeamID,     -- Output
-                                _message => _msg);                      -- Output
+                                _campaignName            => _campaignName,
+                                _progmgrUsername         => _progmgrUsername,
+                                _piUsername              => _piUsername,
+                                _technicalLead           => _technicalLead,
+                                _samplePreparationStaff  => _samplePreparationStaff,
+                                _datasetAcquisitionStaff => _datasetAcquisitionStaff,
+                                _informaticsStaff        => _informaticsStaff,
+                                _collaborators           => _collaborators,
+                                _researchTeamID          => _researchTeamID,    -- Existing research team ID
+                                _message                 => _msg,               -- Output
+                                _returnCode              => _returnCode);       -- Output
 
             If _returnCode <> '' Then
                 _message := _msg;
                 RAISE EXCEPTION '%', _message;
             End If;
 
-            _percentEMSLFunded := (_fractionEMSLFundedToStore * 100)::int
+            _percentEMSLFunded := (_fractionEMSLFundedToStore * 100)::int;
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If Trim(Coalesce(_callingUser, '')) <> '' Then
@@ -474,9 +448,9 @@ BEGIN
                 CALL public.alter_event_log_entry_user ('public', _targetType, _campaignID, _percentEMSLFunded, _callingUser, _message => _alterEnteredByMessage);
 
                 _targetType := 10;
-                CALL public.alter_event_log_entry_user ('public', _targetType, _campaignID, _dataReleaseRestrictionsID, _callingUser, _message => _alterEnteredByMessage);
+                CALL public.alter_event_log_entry_user ('public', _targetType, _campaignID, _dataReleaseRestrictionID, _callingUser, _message => _alterEnteredByMessage);
             End If;
-        End If; -- update mode
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -504,28 +478,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_campaign IS 'AddUpdateCampaign';
 
-CALL add_update_campaign (
-    _campaignName            => '',
-    _projectName             => '',
-    _progmgrUsername         => '',
-    _piUsername              => '',
-    _technicalLead           => '',
-    _samplePreparationStaff  => '',
-    _datasetAcquisitionStaff => '',
-    _informaticsStaff        => '',
-    _collaborators           => '',
-    _comment                 => '',
-    _state                   => '',
-    _description             => '',
-    _externalLinks           => '',
-    _eprList                 => '',
-    _eusProposalList         => '',
-    _organisms               => '',
-    _experimentPrefixes      => '',
-    _dataReleaseRestrictions => '',
-    _fractionEMSLFunded      => '0',
-    _eusUsageType            => 'USER_ONSITE',
-    _mode                    => 'add'
-);
+ALTER PROCEDURE public.add_update_campaign(IN _campaignname text, IN _projectname text, IN _progmgrusername text, IN _piusername text, IN _technicallead text, IN _samplepreparationstaff text, IN _datasetacquisitionstaff text, IN _informaticsstaff text, IN _collaborators text, IN _comment text, IN _state text, IN _description text, IN _externallinks text, IN _eprlist text, IN _eusproposallist text, IN _organisms text, IN _experimentprefixes text, IN _datareleaserestriction text, IN _fractionemslfunded text, IN _eususagetype text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_campaign(IN _campaignname text, IN _projectname text, IN _progmgrusername text, IN _piusername text, IN _technicallead text, IN _samplepreparationstaff text, IN _datasetacquisitionstaff text, IN _informaticsstaff text, IN _collaborators text, IN _comment text, IN _state text, IN _description text, IN _externallinks text, IN _eprlist text, IN _eusproposallist text, IN _organisms text, IN _experimentprefixes text, IN _datareleaserestriction text, IN _fractionemslfunded text, IN _eususagetype text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_campaign(IN _campaignname text, IN _projectname text, IN _progmgrusername text, IN _piusername text, IN _technicallead text, IN _samplepreparationstaff text, IN _datasetacquisitionstaff text, IN _informaticsstaff text, IN _collaborators text, IN _comment text, IN _state text, IN _description text, IN _externallinks text, IN _eprlist text, IN _eusproposallist text, IN _organisms text, IN _experimentprefixes text, IN _datareleaserestriction text, IN _fractionemslfunded text, IN _eususagetype text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateCampaign';
+
