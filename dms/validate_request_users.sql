@@ -1,24 +1,16 @@
 --
-CREATE OR REPLACE PROCEDURE public.validate_request_users
-(
-    _requestName text,
-    _callingProcedure text,
-    INOUT _requestedPersonnel text,
-    INOUT _assignedPersonnel text,
-    _requireValidRequestedPersonnel boolean = true,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: validate_request_users(text, text, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.validate_request_users(INOUT _requestedpersonnel text, INOUT _assignedpersonnel text, IN _requirevalidrequestedpersonnel boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Validate the requested personnel and assigned personnel for a Data Analysis Request or Sample Prep Request
 **
 **  Arguments:
-**    _requestName                      Request name
-**    _callingProcedure                 add_update_data_analysis_request or add_update_sample_prep_request
 **    _requestedPersonnel               Input/output: semicolon-separated list of requested personnel, in the form 'LastName, FirstName (Username)'
 **    _assignedPersonnel                Input/output: semicolon-separated list of assigned personnel, in the form 'LastName, FirstName (Username)'
 **    _requireValidRequestedPersonnel   When true, require that the personnel are known DMS users
@@ -27,11 +19,11 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   03/21/2022 mem - Initial version (refactored code from AddUpdateSamplePrepRequest)
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/05/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
-    _nameValidationIteration int := 1;
+    _nameValidationIteration int;
     _userFieldName text := '';
     _cleanNameList text;
     _entryID int := 0;
@@ -39,17 +31,18 @@ DECLARE
     _matchCount int;
     _newUsername text;
     _newUserID int;
-    _firstInvalidUser text := '';
+    _invalidUsers text := '';
 BEGIN
+    _message := '';
+    _returnCode := '';
 
-    _requestName                    := Trim(Coalesce(_requestName, '(unnamed request)'));
-    _callingProcedure               := Trim(Coalesce(_callingProcedure, '(unknown caller)'));
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
     _requestedPersonnel             := Trim(Coalesce(_requestedPersonnel, ''));
     _assignedPersonnel              := Trim(Coalesce(_assignedPersonnel, ''));
     _requireValidRequestedPersonnel := Coalesce(_requireValidRequestedPersonnel, true);
-
-    _message := '';
-    _returnCode := '';
 
     ---------------------------------------------------
     -- Validate requested and assigned personnel
@@ -60,9 +53,9 @@ BEGIN
         EntryID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         Name_and_Username citext NOT NULL,
         User_ID int NULL
-    )
+    );
 
-    WHILE _nameValidationIteration <= 2
+    FOR _nameValidationIteration IN 1 .. 2
     LOOP
 
         DELETE FROM Tmp_UserInfo;
@@ -82,12 +75,12 @@ BEGIN
         End If;
 
         UPDATE Tmp_UserInfo
-        SET User_ID = U.ID
+        SET User_ID = U.user_id
         FROM t_users U
         WHERE Tmp_UserInfo.Name_and_Username = U.name_with_username;
 
         -- Use User_ID of 0 if the name is 'na'
-        -- Set User_ID to 0
+
         UPDATE Tmp_UserInfo
         SET User_ID = 0
         WHERE Name_and_Username IN ('na');
@@ -97,8 +90,8 @@ BEGIN
         -- Try-to auto-resolve using the name and username columns in t_users
         ---------------------------------------------------
 
-        FOR _unknownUser IN
-            SELECT Name_and_Username
+        FOR _entryID, _unknownUser IN
+            SELECT EntryID, Name_and_Username
             FROM Tmp_UserInfo
             WHERE User_ID IS NULL
             ORDER BY EntryID
@@ -108,28 +101,28 @@ BEGIN
                             _unknownUser,
                             _matchCount       => _matchCount,   -- Output
                             _matchingUsername => _newUsername,  -- Output
-                            _matchingUserID   => _userID);      -- Output
+                            _matchingUserID   => _newUserID);   -- Output
 
             If _matchCount = 1 Then
                 -- Single match was found; update User_ID in Tmp_UserInfo
                 UPDATE Tmp_UserInfo
                 SET User_ID = _newUserID
-                WHERE EntryID = _entryID
-
+                WHERE EntryID = _entryID;
             End If;
 
         END LOOP;
 
         If Exists (SELECT EntryID FROM Tmp_UserInfo WHERE User_ID Is Null) Then
 
-            SELECT Name_and_Username
-            INTO _firstInvalidUser
+            SELECT string_agg(Name_and_Username, ', ' ORDER BY Name_and_Username)
+            INTO _invalidUsers
             FROM Tmp_UserInfo
-            WHERE User_ID IS NULL
-            LIMIT 1;
+            WHERE User_ID IS NULL;
 
-            _message := format('Invalid username for %s: "%s"', _userFieldName, _firstInvalidUser);
+            _message := format('Invalid %s username(s): %s', _userFieldName, _invalidUsers);
             _returnCode := 'U5201';
+
+            DROP TABLE Tmp_UserInfo;
             RETURN;
         End If;
 
@@ -137,6 +130,8 @@ BEGIN
             -- Requested personnel person must be a specific person (or list of people)
             _message := format('The Requested Personnel person must be a specific DMS user; "%s" is invalid', _requestedPersonnel);
             _returnCode := 'U5202';
+
+            DROP TABLE Tmp_UserInfo;
             RETURN;
         End If;
 
@@ -170,12 +165,18 @@ BEGIN
             _assignedPersonnel := _cleanNameList;
         End If;
 
-        _nameValidationIteration := _nameValidationIteration + 1;
-
     END LOOP;
 
     DROP TABLE Tmp_UserInfo;
 END
 $$;
 
-COMMENT ON PROCEDURE public.validate_request_users IS 'ValidateRequestUsers';
+
+ALTER PROCEDURE public.validate_request_users(INOUT _requestedpersonnel text, INOUT _assignedpersonnel text, IN _requirevalidrequestedpersonnel boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE validate_request_users(INOUT _requestedpersonnel text, INOUT _assignedpersonnel text, IN _requirevalidrequestedpersonnel boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.validate_request_users(INOUT _requestedpersonnel text, INOUT _assignedpersonnel text, IN _requirevalidrequestedpersonnel boolean, INOUT _message text, INOUT _returncode text) IS 'ValidateRequestUsers';
+
