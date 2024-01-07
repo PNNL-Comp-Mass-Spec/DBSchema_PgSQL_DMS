@@ -63,7 +63,7 @@ AS $$
 **    _requestedPersonnel               Requested personnel
 **    _estimatedPrepTimeDays            Estimated prep time, in days
 **    _estimatedMSRuns                  Estimated number of mass spec datasets to be generated
-**    _workPackageNumber                Work package number
+**    _workPackageNumber                Work package
 **    _eusProposalID                    EUS proposal ID
 **    _eusUsageType                     EUS usage type
 **    _eusUserID                        EUS user ID; use Null or 0 if no EUS user
@@ -72,7 +72,7 @@ AS $$
 **    _instrumentAnalysisSpecifications Instrument analysis notes
 **    _comment                          Prep request comment
 **    _priority                         Priority: 'Normal' or 'High'
-**    _state                            State: 'New', 'On Hold', 'Prep in Progress', 'Prep Complete', or 'Closed'
+**    _state                            State: 'New', 'On Hold', 'Prep in Progress', 'Prep Complete', or 'Closed'; see table t_sample_prep_request_state_name
 **    _stateComment                     State comment
 **    _id                               Input/output: sample prep request ID
 **    _separationGroup                  Separation group name
@@ -172,7 +172,7 @@ AS $$
 **          04/18/2022 mem - Replace tabs in prep request names with spaces
 **          08/08/2022 mem - Update StateChanged when the state changes
 **          08/25/2022 mem - Use view V_Operations_Task_Staff when checking if the user can update a closed prep request item
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/07/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -195,9 +195,8 @@ DECLARE
     _tissueName text;
     _stateID int := 0;
     _eusUsageTypeID int;
-    _eusUsersList text := '';
+    _eusUserIdText text := '';
     _addingItem boolean := false;
-    _allowNoneWP boolean := false;
     _separationGroupAlt text := '';
     _currentAssignedPersonnel text;
     _requestTypeExisting text;
@@ -214,28 +213,6 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode := '';
-
-    If Coalesce(_state, '') = 'Closed (containers and material)' Then
-        -- Prior to September 2018, we would also look for biomaterial (cell cultures)
-        -- and would close them if _state was 'Closed (containers and material)'
-        -- by calling Do_Sample_Prep_Material_Operation
-
-        -- We stopped associating biomaterial (cell cultures) with Sample Prep Requests in June 2017
-        -- so simply change the state to Closed
-        _state := 'Closed';
-    End If;
-
-    If Coalesce(_eusUserID, 0) <= 0 Then
-        _eusUserID := Null;
-    End If;
-
-    _estimatedPrepTimeDays := Coalesce(_estimatedPrepTimeDays, 1);
-    _requestedPersonnel    := Trim(Coalesce(_requestedPersonnel, ''));
-    _assignedPersonnel     := Trim(Coalesce(_assignedPersonnel, 'na'));
-
-    If _assignedPersonnel = '' Then
-        _assignedPersonnel := 'na';
-    End If;
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -263,22 +240,80 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _instrumentGroup := Trim(Coalesce(_instrumentGroup, ''));
-        _datasetType     := Trim(Coalesce(_datasetType, ''));
+        _requestName              := Trim(Coalesce(_requestName, ''));
+        _requesterUsername        := Trim(Coalesce(_requesterUsername, ''));
+        _reason                   := Trim(Coalesce(_reason, ''));
+        _materialContainerList    := Trim(Coalesce(_materialContainerList, ''));
+        _organism                 := Trim(Coalesce(_organism, ''));
+        _biohazardLevel           := Trim(Coalesce(_biohazardLevel, ''));
+        _campaign                 := Trim(Coalesce(_campaign, ''));
+        _numberofSamples          := Coalesce(_numberofSamples, 0);
+        _sampleNameList           := Trim(Coalesce(_sampleNameList, ''));
+        _sampleType               := Trim(Coalesce(_sampleType, ''));
+        _prepMethod               := Trim(Coalesce(_prepMethod, ''));
+        _sampleNamingConvention   := Trim(Coalesce(_sampleNamingConvention, ''));
+        _assignedPersonnel        := Trim(Coalesce(_assignedPersonnel, 'na'));
+        _requestedPersonnel       := Trim(Coalesce(_requestedPersonnel, ''));
+        _estimatedPrepTimeDays    := Coalesce(_estimatedPrepTimeDays, 1);
+        _estimatedMSRuns          := Trim(Coalesce(_estimatedMSRuns, ''));
+        _workPackageNumber        := Trim(Coalesce(_workPackageNumber, ''));
+        _eusProposalID            := Trim(Coalesce(_eusProposalID, ''));
+        _eusUsageType             := Trim(Coalesce(_eusUsageType, ''));
+        _instrumentGroup          := Trim(Coalesce(_instrumentGroup, ''));
+        _datasetType              := Trim(Coalesce(_datasetType, ''));
+        _instrumentAnalysisSpecifications := Trim(Coalesce(_instrumentAnalysisSpecifications, ''));
+        _comment                  := Trim(Coalesce(_comment, ''));
+        _priority                 := Trim(Coalesce(_priority, ''));
+        _state                    := Trim(Coalesce(_state, ''));
+        _stateComment             := Trim(Coalesce(_stateComment, ''));
+        _separationGroup          := Trim(Coalesce(_separationGroup, ''));
+        _blockAndRandomizeSamples := Trim(Coalesce(_blockAndRandomizeSamples, ''));
+        _blockAndRandomizeRuns    := Trim(Coalesce(_blockAndRandomizeRuns, ''));
+        _reasonForHighPriority    := Trim(Coalesce(_reasonForHighPriority, ''));
+        _tissue                   := Trim(Coalesce(_tissue, ''));
+        _callingUser              := Trim(Coalesce(_callingUser, ''));
 
-        If char_length(Coalesce(_estimatedMSRuns, '')) < 1 Then
+        _mode                     := Trim(Lower(Coalesce(_mode, '')));
+
+        If Coalesce(_eusUserID, 0) <= 0 Then
+            _eusUserID := Null;
+        End If;
+
+        If _mode = 'update' And _id Is Null Then
+            RAISE EXCEPTION 'Sample prep request ID must be provided when updating a sample prep request';
+        End If;
+
+        If _mode = 'update' And Coalesce(_id, 0) <= 0 Then
+            RAISE EXCEPTION 'Sample prep request ID must a non-zero integer when updating a sample prep request';
+        End If;
+
+        If _assignedPersonnel = '' Then
+            _assignedPersonnel := 'na';
+        End If;
+
+        If _state::citext = 'Closed (containers and material)' Then
+            -- Prior to September 2018, we would also look for biomaterial (cell cultures)
+            -- and would close them if _state was 'Closed (containers and material)'
+            -- by calling Do_Sample_Prep_Material_Operation
+
+            -- We stopped associating biomaterial (cell cultures) with Sample Prep Requests in June 2017
+            -- so simply change the state to Closed
+            _state := 'Closed';
+        End If;
+
+        If _estimatedMSRuns = '' Then
             RAISE EXCEPTION 'Estimated number of MS runs not specified; it should be 0 or a positive number';
         End If;
 
-        If Not Coalesce(_blockAndRandomizeSamples, '')::citext In ('Yes', 'No', 'NA') Then
+        If Not _blockAndRandomizeSamples::citext In ('Yes', 'No', 'NA') Then
             RAISE EXCEPTION 'Block And Randomize Samples must be Yes, No, or NA';
         End If;
 
-        If Not Coalesce(_blockAndRandomizeRuns, '')::citext In ('Yes', 'No') Then
+        If Not _blockAndRandomizeRuns::citext In ('Yes', 'No') Then
             RAISE EXCEPTION 'Block And Randomize Runs must be Yes or No';
         End If;
 
-        If char_length(Coalesce(_reason, '')) < 1 Then
+        If _reason = '' Then
             RAISE EXCEPTION 'The reason field is required';
         End If;
 
@@ -298,7 +333,7 @@ BEGIN
         End If;
 
         If _state::citext In ('New', 'Closed') Then
-            -- Always clear State Comment when the state is new or closed
+            -- Always clear state comment when the state is new or closed
             _stateComment := '';
         End If;
 
@@ -310,7 +345,8 @@ BEGIN
                            ON UOP.operation_id = UO.operation_id
                     WHERE U.Status = 'Active' AND
                           UO.operation = 'DMS_Sample_Preparation' AND
-                          Username = _callingUser) Then
+                          Username = _callingUser::citext
+                  ) Then
 
               _allowUpdateEstimatedPrepTime := true;
         End If;
@@ -319,19 +355,19 @@ BEGIN
         -- Validate priority
         ---------------------------------------------------
 
-        If _priority <> 'Normal' And Coalesce(_reasonForHighPriority, '') = '' Then
-            RAISE EXCEPTION 'Priority "%" requires justification reason to be provided', _priority;
+        If Not _priority::citext In ('Normal', 'High') Then
+            RAISE EXCEPTION 'Priority must be Normal or High';
         End If;
 
-        If Not _priority::citext In ('Normal', 'High') Then
-            RAISE EXCEPTION 'Priority should be Normal or High';
+        If _priority::citext <> 'Normal' And _reasonForHighPriority = '' Then
+            RAISE EXCEPTION 'Priority "%" requires justification reason to be provided', _priority;
         End If;
 
         ---------------------------------------------------
         -- Validate instrument group and dataset type
         ---------------------------------------------------
 
-        If NOT (_estimatedMSRuns::citext In ('0', 'None')) Then
+        If Not (_estimatedMSRuns::citext In ('0', 'None')) Then
             If _instrumentGroup::citext In ('none', 'na') Then
                 RAISE EXCEPTION 'Estimated runs must be 0 or "none" when instrument group is: %', _instrumentGroup;
             End If;
@@ -340,15 +376,15 @@ BEGIN
                 RAISE EXCEPTION 'Estimated runs must be an integer or "none"';
             End If;
 
-            If Coalesce(_instrumentGroup, '') = '' Then
+            If _instrumentGroup = '' Then
                 RAISE EXCEPTION 'Instrument group cannot be empty since the estimated MS run count is non-zero';
             End If;
 
-            If Coalesce(_datasetType, '') = '' Then
+            If _datasetType = '' Then
                 RAISE EXCEPTION 'Dataset type cannot be empty since the estimated MS run count is non-zero';
             End If;
 
-            If Coalesce(_separationGroup, '') = '' Then
+            If _separationGroup = '' Then
                 RAISE EXCEPTION 'Separation group cannot be empty since the estimated MS run count is non-zero';
             End If;
 
@@ -458,8 +494,6 @@ BEGIN
         -- Force values of some properties for add mode
         ---------------------------------------------------
 
-        _mode := Trim(Lower(Coalesce(_mode, '')));
-
         If _mode = 'add' Then
             _state := 'New';
             _assignedPersonnel := 'na';
@@ -467,17 +501,15 @@ BEGIN
 
         ---------------------------------------------------
         -- Validate requested and assigned personnel
-        -- Names should be in the form 'Last Name, First Name (Username)'
+        -- Names should be in the form 'Last Name, First Name (Username)', but usernames are also supported
         ---------------------------------------------------
 
         CALL public.validate_request_users (
-                        _requestName,
-                        'add_update_sample_prep_request',
                         _requestedPersonnel             => _requestedPersonnel,     -- Input/Output
                         _assignedPersonnel              => _assignedPersonnel,      -- Input/Output
                         _requireValidRequestedPersonnel => true,
                         _message                        => _message,                -- Output
-                        _returnCode                     => _returnCode);
+                        _returnCode                     => _returnCode);            -- Output
 
         If _returnCode <> '' Then
             If Coalesce(_message, '') = '' Then
@@ -494,7 +526,7 @@ BEGIN
         SELECT state_id
         INTO _stateID
         FROM  t_sample_prep_request_state_name
-        WHERE state_name = _state;
+        WHERE state_name = _state::citext;
 
         If Not FOUND Then
             RAISE EXCEPTION 'Invalid sample prep request state name: %', _state;
@@ -503,9 +535,8 @@ BEGIN
         ---------------------------------------------------
         -- Validate EUS type, proposal, and user list
         --
-        -- This procedure accepts a list of EUS User IDs,
-        -- so we convert to a string before calling it,
-        -- then convert back to an integer afterward
+        -- Procedure validate_eus_usage accepts a list of EUS User IDs,
+        -- so we convert to a string before calling it, then convert back to an integer afterward
         ---------------------------------------------------
 
         If _mode = 'add' Then
@@ -513,14 +544,14 @@ BEGIN
         End If;
 
         If Coalesce(_eusUserID, 0) > 0 Then
-            _eusUsersList := _eusUserID;
+            _eusUserIdText := _eusUserID;
             _eusUserID := Null;
         End If;
 
         CALL public.validate_eus_usage (
                         _eusUsageType                => _eusUsageType,      -- Input/Output
                         _eusProposalID               => _eusProposalID,     -- Input/Output
-                        _eusUsersList                => _eusUsersList,      -- Input/Output
+                        _eusUsersList                => _eusUserIdText,     -- Input/Output
                         _eusUsageTypeID              => _eusUsageTypeID,    -- Output
                         _autoPopulateUserListIfBlank => false,
                         _samplePrepRequest           => true,
@@ -540,8 +571,8 @@ BEGIN
             _message := public.append_to_text(_message, _msg);
         End If;
 
-        If char_length(Coalesce(_eusUsersList, '')) > 0 Then
-            _eusUserID := public.try_cast(_eusUsersList, null::int);
+        If Coalesce(_eusUserIdText, '') <> '' Then
+            _eusUserID := public.try_cast(_eusUserIdText, null::int);
 
             If Coalesce(_eusUserID, 0) <= 0 Then
                 _eusUserID := Null;
@@ -554,26 +585,26 @@ BEGIN
 
         CALL public.validate_wp (
                         _workPackageNumber,
-                        _allowNoneWP,
-                        _message    => _msg,            -- Output
-                        _returnCode => _returnCode);    -- Output
+                        _allowNoneWP => false,
+                        _message     => _msg,           -- Output
+                        _returnCode  => _returnCode);   -- Output
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'validate_wp: %', _msg;
+            RAISE EXCEPTION '%', _msg;
         End If;
 
-        If Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackageNumber And deactivated = 'Y') Then
+        If Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackageNumber::citext And deactivated = 'Y') Then
             _message := public.append_to_text(_message, format('Warning: Work Package %s is deactivated', _workPackageNumber));
-        ElsIf Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackageNumber And charge_code_state = 0) Then
+        ElsIf Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackageNumber::citext And charge_code_state = 0) Then
             _message := public.append_to_text(_message, format('Warning: Work Package %s is likely deactivated', _workPackageNumber));
         End If;
 
-        -- Make sure the Work Package is capitalized properly
+        -- Make sure the work package is capitalized properly
 
         SELECT charge_code
         INTO _workPackageNumber
         FROM t_charge_code
-        WHERE charge_code = _workPackageNumber
+        WHERE charge_code = _workPackageNumber::citext;
 
         ---------------------------------------------------
         -- Auto-change separation type to separation group, if applicable
@@ -585,9 +616,9 @@ BEGIN
             INTO _separationGroupAlt
             FROM t_secondary_sep
             WHERE separation_type = _separationGroup AND
-                  active = 1
+                  active = 1;
 
-            If Coalesce(_separationGroupAlt, '') <> '' Then
+            If FOUND Then
                 _separationGroup := _separationGroupAlt;
             End If;
         End If;
@@ -598,8 +629,6 @@ BEGIN
 
         If _mode = 'update' Then
             -- Cannot update a non-existent entry
-
-            _currentStateID := 0;
 
             SELECT state_id,
                    assigned_personnel,
@@ -612,9 +641,10 @@ BEGIN
                 RAISE EXCEPTION 'Cannot update: prep request ID % does not exist', _id;
             End If;
 
-            -- Changes not allowed if in 'closed' state
+            -- Limit who can make changes if in 'closed' state
+            -- Users with permission 'DMS_Sample_Preparation' or 'DMS_Sample_Prep_Request_State' can update closed sample prep requests
 
-            If _currentStateID = 5 And Not Exists(SELECT username FROM V_Operations_Task_Staff WHERE username = _callingUser) Then
+            If _currentStateID = 5 And Not Exists(SELECT username FROM V_Operations_Task_Staff WHERE username = _callingUser::citext) Then
                 RAISE EXCEPTION 'Changes to entry are not allowed if it is in the "Closed" state';
             End If;
 
@@ -629,7 +659,7 @@ BEGIN
         End If;
 
         If _mode = 'add' Then
-            -- Make sure the work package number is not inactive
+            -- Make sure the work package is not inactive
 
             SELECT CCAS.activation_state,
                    CCAS.activation_state_name
@@ -653,7 +683,7 @@ BEGIN
                 RAISE EXCEPTION 'Cannot add: prep request "%" already exists', _requestName;
             End If;
 
-        ElsIf EXISTS (SELECT prep_request_id FROM t_sample_prep_request WHERE request_name = _requestName AND prep_request_id <> _id) Then
+        ElsIf Exists (SELECT prep_request_id FROM t_sample_prep_request WHERE request_name = _requestName AND prep_request_id <> _id) Then
             RAISE EXCEPTION 'Cannot rename: prep request "%" already exists', _requestName;
         End If;
 
@@ -738,7 +768,7 @@ BEGIN
             INTO _id;
 
             -- If _callingUser is defined, update system_account in t_sample_prep_request_updates
-            If Trim(Coalesce(_callingUser, '')) <> '' Then
+            If _callingUser <> '' Then
                 CALL public.alter_entered_by_user ('public', 't_sample_prep_request_updates', 'request_id', _id, _callingUser,
                                                    _entryDateColumnName => 'date_of_change', _enteredByColumnName => 'system_account', _message => _alterEnteredByMessage);
             End If;
@@ -757,45 +787,44 @@ BEGIN
             WHERE prep_request_id = _id;
 
             UPDATE t_sample_prep_request
-            SET
-                request_name = _requestName,
-                requester_username = _requesterUsername,
-                reason = _reason,
-                material_container_list = _materialContainerList,
-                organism = _organism,
-                tissue_id = _tissueIdentifier,
-                biohazard_level = _biohazardLevel,
-                campaign = _campaign,
-                number_of_samples = _numberofSamples,
-                sample_name_list = _sampleNameList,
-                sample_type = _sampleType,
-                prep_method = _prepMethod,
-                sample_naming_convention = _sampleNamingConvention,
-                requested_personnel = _requestedPersonnel,
-                assigned_personnel = _assignedPersonnel,
-                estimated_prep_time_days = Case When _allowUpdateEstimatedPrepTime Then _estimatedPrepTimeDays Else estimated_prep_time_days End,
-                estimated_ms_runs = _estimatedMSRuns,
-                work_package = _workPackageNumber,
-                eus_proposal_id = _eusProposalID,
-                eus_usage_type = _eusUsageType,
-                eus_user_id = _eusUserID,
+            SET request_name                = _requestName,
+                requester_username          = _requesterUsername,
+                reason                      = _reason,
+                material_container_list     = _materialContainerList,
+                organism                    = _organism,
+                tissue_id                   = _tissueIdentifier,
+                biohazard_level             = _biohazardLevel,
+                campaign                    = _campaign,
+                number_of_samples           = _numberofSamples,
+                sample_name_list            = _sampleNameList,
+                sample_type                 = _sampleType,
+                prep_method                 = _prepMethod,
+                sample_naming_convention    = _sampleNamingConvention,
+                requested_personnel         = _requestedPersonnel,
+                assigned_personnel          = _assignedPersonnel,
+                estimated_prep_time_days    = Case When _allowUpdateEstimatedPrepTime Then _estimatedPrepTimeDays Else estimated_prep_time_days End,
+                estimated_ms_runs           = _estimatedMSRuns,
+                work_package                = _workPackageNumber,
+                eus_proposal_id             = _eusProposalID,
+                eus_usage_type              = _eusUsageType,
+                eus_user_id                 = _eusUserID,
                 instrument_analysis_specifications = _instrumentAnalysisSpecifications,
-                comment = _comment,
-                priority = _priority,
-                state_id = _stateID,
-                state_changed = Case When _currentStateID = _stateID Then state_changed Else CURRENT_TIMESTAMP End,
-                state_comment = _stateComment,
-                instrument_group = _instrumentGroup,
-                instrument_name = Null,
-                dataset_type = _datasetType,
-                separation_group = _separationGroup,
+                comment                     = _comment,
+                priority                    = _priority,
+                state_id                    = _stateID,
+                state_changed               = Case When _currentStateID = _stateID Then state_changed Else CURRENT_TIMESTAMP End,
+                state_comment               = _stateComment,
+                instrument_group            = _instrumentGroup,
+                instrument_name             = Null,
+                dataset_type                = _datasetType,
+                separation_group            = _separationGroup,
                 block_and_randomize_samples = _blockAndRandomizeSamples,
-                block_and_randomize_runs = _blockAndRandomizeRuns,
-                reason_for_high_priority = _reasonForHighPriority
+                block_and_randomize_runs    = _blockAndRandomizeRuns,
+                reason_for_high_priority    = _reasonForHighPriority
             WHERE prep_request_id = _id
 
             -- If _callingUser is defined, update system_account in t_sample_prep_request_updates
-            If Trim(Coalesce(_callingUser, '')) <> '' Then
+            If _callingUser <> '' Then
                 CALL public.alter_entered_by_user ('public', 't_sample_prep_request_updates', 'request_id', _id, _callingUser,
                                                    _entryDateColumnName => 'date_of_change', _enteredByColumnName => 'system_account', _message => _alterEnteredByMessage);
             End If;
@@ -807,6 +836,9 @@ BEGIN
 
         End If;
 
+        DROP TABLE Tmp_MaterialContainers;
+        RETURN;
+
     EXCEPTION
         WHEN OTHERS THEN
             GET STACKED DIAGNOSTICS
@@ -816,7 +848,6 @@ BEGIN
                 _exceptionContext = pg_exception_context;
 
         If _logErrors Then
-
             _logMessage := format('%s; Request %s', _exceptionMessage, _requestName);
 
             _message := local_error_handler (

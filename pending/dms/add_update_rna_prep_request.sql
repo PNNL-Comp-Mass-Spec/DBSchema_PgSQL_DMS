@@ -293,7 +293,7 @@ BEGIN
                         _returnCode => _returnCode);    -- Output
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'validate_wp: %', _msg;
+            RAISE EXCEPTION '%', _msg;
         End If;
 
         If Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackageNumber And deactivated = 'Y') Then

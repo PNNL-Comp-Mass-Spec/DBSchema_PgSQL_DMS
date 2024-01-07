@@ -804,7 +804,7 @@ BEGIN
 
                     If _updatedRows = _actualChannelCount Then
                         _actionMessage := format('Would update %s channels for Exp_ID %s', _updatedRows, _currentPlexExperimentId);
-                    ElsIf _updatedRows = 0
+                    ElsIf _updatedRows = 0 Then
                         _actionMessage := format('Would add %s channels for Exp_ID %s', _actualChannelCount, _currentPlexExperimentId);
                     Else
                         _actionMessage := format('Would add/update %s channels for Exp_ID %s', _actualChannelCount, _currentPlexExperimentId);
@@ -860,7 +860,7 @@ BEGIN
                 Else
                     _message := format('Defined experiment plex members for Plex Exp ID %s', _plexExperimentIdOrName);
                 End If;
-            ElsIf _mode = 'preview'
+            ElsIf _mode = 'preview' Then
                 SELECT COUNT(*)
                 INTO _targetPlexExperimentCount
                 FROM Tmp_DatabaseUpdates;
@@ -886,7 +886,7 @@ BEGIN
                     If _targetAddCount = _targetPlexExperimentCount Then
                         -- Adding plex members for all of the target experiments
                         _message := format('Would add %s channels for Exp_IDs %s', _actualChannelCount, _expIdList);
-                    ElsIf _targetUpdateCount = _targetPlexExperimentCount
+                    ElsIf _targetUpdateCount = _targetPlexExperimentCount Then
                         -- Updating plex members for all of the target experiments
                         _message := format('Would update %s channels for Exp_IDs %s', _updatedRows, _expIdList);
                     Else

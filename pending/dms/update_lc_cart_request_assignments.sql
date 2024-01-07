@@ -237,7 +237,7 @@ BEGIN
     If _debugMode Then
         If _requestCountInXML = _deleteCount Then
             _debugMsg := format('All %s requests were unchanged; nothing to do', _requestCountInXML);
-        ElsIf _deleteCount = 0
+        ElsIf _deleteCount = 0 Then
             _debugMsg := format('Will update all %s requests', _requestCountInXML);
         Else
             _debugMsg := format('Will update %s of %s requests', _requestCountInXML - _deleteCount, _requestCountInXML);
