@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE sw.delete_job_if_new_or_failed(IN _job integer, INOU
 **          08/01/2023 mem - Use a 7 day threshold for ignoring running job steps (previously 48 hours)
 **                         - Ported to PostgreSQL
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          01/06/2024 mem - Select a single column when using If Exists ()
 **
 *****************************************************/
 DECLARE
@@ -76,7 +77,7 @@ BEGIN
 
         _skipMessage := '';
 
-        If Exists (SELECT *
+        If Exists (SELECT job
                    FROM sw.t_jobs
                    WHERE job = _job AND
                          state IN (1, 5, 8) AND
@@ -84,8 +85,8 @@ BEGIN
                                   FROM sw.t_job_steps JS
                                   WHERE JS.job = _job AND
                                         JS.state IN (4, 9) AND
-                                        JS.start >= CURRENT_TIMESTAMP - Interval '7 days') )
-        Then
+                                        JS.start >= CURRENT_TIMESTAMP - Interval '7 days')
+                  ) Then
 
             ---------------------------------------------------
             -- Job state is 1, 5, or 8, but it has a running job step that started within the last 7 days
@@ -93,7 +94,7 @@ BEGIN
 
             _skipMessage := 'Job will not be deleted from sw.t_jobs; it has a running job step';
 
-        ElsIf Exists ( SELECT *
+        ElsIf Exists ( SELECT job
                        FROM sw.t_jobs
                        WHERE job = _job AND
                              state IN (1, 5, 8) AND
@@ -101,8 +102,8 @@ BEGIN
                                           FROM sw.t_job_steps JS
                                           WHERE JS.job = _job AND
                                                 JS.state IN (4, 9) AND
-                                                JS.start >= CURRENT_TIMESTAMP - Interval '7 days') )
-        Then
+                                                JS.start >= CURRENT_TIMESTAMP - Interval '7 days')
+                     ) Then
 
             ---------------------------------------------------
             -- Job deletion is allowed since state is 1, 5, or 8 (new, failed, or holding), and no running job steps
