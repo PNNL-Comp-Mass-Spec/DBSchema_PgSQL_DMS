@@ -593,9 +593,8 @@ BEGIN
                         _returnCode => _returnCode);    -- Output
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'validate_wp: %', _msg;
+            RAISE EXCEPTION '%', _msg;
         End If;
-
 
         -- Make sure the Work Package is capitalized properly
 
