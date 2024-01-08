@@ -509,7 +509,7 @@ BEGIN
                     );
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'validate_eus_usage: %', _msg;
+            RAISE EXCEPTION '%', _msg;
         End If;
 
         If Coalesce(_msg, '') <> '' Then
@@ -523,7 +523,7 @@ BEGIN
             _message := public.append_to_text(_msg, _message);
 
             If _raiseErrorOnMultipleEUSUsers Then
-                RAISE EXCEPTION 'Validate_EUS_Usage: %', _message;
+                RAISE EXCEPTION '%', _message;
             End If;
 
             -- Only keep the first user

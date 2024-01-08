@@ -182,7 +182,7 @@ BEGIN
                         );
 
             If _returnCode <> '' Then
-                RAISE EXCEPTION 'Validate_EUS_Usage: %', _msg;
+                RAISE EXCEPTION '%', _msg;
             End If;
 
             -----------------------------------------------------------

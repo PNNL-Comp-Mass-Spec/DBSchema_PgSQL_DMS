@@ -271,7 +271,7 @@ BEGIN
 
         If _returnCode <> '' Then
             _logErrors := false;
-            RAISE EXCEPTION 'validate_eus_usage: %', _msg;
+            RAISE EXCEPTION '%', _msg;
         End If;
 
         If char_length(Coalesce(_eusUsersList, '')) > 0 Then
