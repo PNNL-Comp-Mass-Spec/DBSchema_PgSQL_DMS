@@ -1,46 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_sample_prep_request
-(
-    _requestName text,
-    _requesterUsername text,
-    _reason text,
-    _materialContainerList text,
-    _organism text,
-    _biohazardLevel text,
-    _campaign text,
-    _numberofSamples int,
-    _sampleNameList text,
-    _sampleType text,
-    _prepMethod text,
-    _sampleNamingConvention text,
-    _assignedPersonnel text,
-    _requestedPersonnel text,
-    _estimatedPrepTimeDays int,
-    _estimatedMSRuns text,
-    _workPackageNumber text,
-    _eusProposalID text,
-    _eusUsageType text,
-    _eusUserID int,
-    _instrumentGroup text,
-    _datasetType text,
-    _instrumentAnalysisSpecifications text,
-    _comment text,
-    _priority text,
-    _state text,
-    _stateComment text,
-    INOUT _id int,
-    _separationGroup text,
-    _blockAndRandomizeSamples text,
-    _blockAndRandomizeRuns text,
-    _reasonForHighPriority text,
-    _tissue text = '',
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_sample_prep_request(text, text, text, text, text, text, text, integer, text, text, text, text, text, text, integer, text, text, text, text, integer, text, text, text, text, text, text, text, integer, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_sample_prep_request(IN _requestname text, IN _requesterusername text, IN _reason text, IN _materialcontainerlist text, IN _organism text, IN _biohazardlevel text, IN _campaign text, IN _numberofsamples integer, IN _samplenamelist text, IN _sampletype text, IN _prepmethod text, IN _samplenamingconvention text, IN _assignedpersonnel text, IN _requestedpersonnel text, IN _estimatedpreptimedays integer, IN _estimatedmsruns text, IN _workpackagenumber text, IN _eusproposalid text, IN _eususagetype text, IN _eususerid integer, IN _instrumentgroup text, IN _datasettype text, IN _instrumentanalysisspecifications text, IN _comment text, IN _priority text, IN _state text, IN _statecomment text, INOUT _id integer, IN _separationgroup text, IN _blockandrandomizesamples text, IN _blockandrandomizeruns text, IN _reasonforhighpriority text, IN _tissue text DEFAULT ''::text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -196,7 +160,7 @@ DECLARE
     _stateID int := 0;
     _eusUsageTypeID int;
     _eusUserIdText text := '';
-    _addingItem boolean := false;
+    _addingItem boolean;
     _separationGroupAlt text := '';
     _currentAssignedPersonnel text;
     _requestTypeExisting text;
@@ -317,7 +281,7 @@ BEGIN
             RAISE EXCEPTION 'The reason field is required';
         End If;
 
-        If public.has_whitespace_chars(_requestName, _allowspace => true) Then
+        If public.has_whitespace_chars(_requestName, _allowSpace => true) Then
             -- Auto-replace CR, LF, or tabs with spaces
             If Position(chr(10) In _requestName) > 0 Then
                 _requestName := Replace(_requestName, chr(10), ' ');
@@ -337,7 +301,7 @@ BEGIN
             _stateComment := '';
         End If;
 
-        If Exists ( SELECT U.Username
+        If Exists ( SELECT U.username
                     FROM t_users U
                          INNER JOIN t_user_operations_permissions UOP
                            ON U.user_id = UOP.user_id
@@ -392,13 +356,13 @@ BEGIN
             -- Determine the Instrument Group
             ---------------------------------------------------
 
-            If Not Exists (SELECT instrument_group FROM t_instrument_group WHERE instrument_group = _instrumentGroup) Then
+            If Not Exists (SELECT instrument_group FROM t_instrument_group WHERE instrument_group = _instrumentGroup::citext) Then
                 -- Try to update instrument group using t_instrument_name
                 SELECT instrument_group
                 INTO _instrumentGroup
                 FROM t_instrument_name
-                WHERE instrument = _instrumentGroup AND
-                      status <> 'inactive'
+                WHERE instrument = _instrumentGroup::citext AND
+                      status <> 'inactive';
 
             End If;
 
@@ -484,7 +448,7 @@ BEGIN
                 _tissueIdentifier => _tissueIdentifier,     -- Output
                 _tissueName       => _tissueName,           -- Output
                 _message          => _message,              -- Output
-                _returnCode       => _returnCode);
+                _returnCode       => _returnCode);          -- Output
 
         If _returnCode <> '' Then
             RAISE EXCEPTION 'Could not resolve tissue name or id: "%"', _tissue;
@@ -525,7 +489,7 @@ BEGIN
 
         SELECT state_id
         INTO _stateID
-        FROM  t_sample_prep_request_state_name
+        FROM t_sample_prep_request_state_name
         WHERE state_name = _state::citext;
 
         If Not FOUND Then
@@ -541,6 +505,8 @@ BEGIN
 
         If _mode = 'add' Then
             _addingItem := true;
+        Else
+            _addingItem := false;
         End If;
 
         If Coalesce(_eusUserID, 0) > 0 Then
@@ -564,7 +530,7 @@ BEGIN
                     );
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'validate_eus_usage: %', _msg;
+            RAISE EXCEPTION '%', _msg;
         End If;
 
         If Coalesce(_msg, '') <> '' Then
@@ -610,12 +576,12 @@ BEGIN
         -- Auto-change separation type to separation group, if applicable
         ---------------------------------------------------
 
-        If Not Exists (SELECT separation_group FROM t_separation_group WHERE separation_group = _separationGroup) Then
+        If Not Exists (SELECT separation_group FROM t_separation_group WHERE separation_group = _separationGroup::citext) Then
 
             SELECT separation_group
             INTO _separationGroupAlt
             FROM t_secondary_sep
-            WHERE separation_type = _separationGroup AND
+            WHERE separation_type = _separationGroup::citext AND
                   active = 1;
 
             If FOUND Then
@@ -638,7 +604,7 @@ BEGIN
             WHERE prep_request_id = _id;
 
             If Not FOUND Then
-                RAISE EXCEPTION 'Cannot update: prep request ID % does not exist', _id;
+                RAISE EXCEPTION 'Cannot update: sample prep request ID % does not exist', _id;
             End If;
 
             -- Limit who can make changes if in 'closed' state
@@ -649,11 +615,11 @@ BEGIN
             End If;
 
             -- Don't allow change to 'Prep in Progress' unless someone has been assigned
-            If _state = 'Prep in Progress' And (_assignedPersonnel = '' Or _assignedPersonnel = 'na') Then
+            If _state::citext = 'Prep in Progress' And (_assignedPersonnel = '' Or _assignedPersonnel::citext = 'na') Then
                 RAISE EXCEPTION 'State cannot be changed to "Prep in Progress" unless someone has been assigned';
             End If;
 
-            If _requestTypeExisting <> _requestType Then
+            If _requestTypeExisting::citext <> _requestType::citext Then
                 RAISE EXCEPTION 'Cannot edit requests of type % with the sample_prep_request page; use https://dms2.pnl.gov/rna_prep_request/report', _requestTypeExisting;
             End If;
         End If;
@@ -667,10 +633,10 @@ BEGIN
             FROM t_charge_code CC
                  INNER JOIN t_charge_code_activation_state CCAS
                    ON CC.activation_state = CCAS.activation_state
-            WHERE CC.charge_code = _workPackageNumber;
+            WHERE CC.charge_code = _workPackageNumber::citext;
 
             If _activationState >= 3 Then
-                RAISE EXCEPTION 'Cannot use inactive Work Package "%" for a new sample prep request', _workPackageNumber;
+                RAISE EXCEPTION 'Cannot use inactive work package "%" for a new sample prep request', _workPackageNumber;
             End If;
         End If;
 
@@ -679,11 +645,11 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-            If Exists (SELECT request_id FROM t_sample_prep_request WHERE request_name = _requestName) Then
+            If Exists (SELECT prep_request_id FROM t_sample_prep_request WHERE request_name = _requestName::citext) Then
                 RAISE EXCEPTION 'Cannot add: prep request "%" already exists', _requestName;
             End If;
 
-        ElsIf Exists (SELECT prep_request_id FROM t_sample_prep_request WHERE request_name = _requestName AND prep_request_id <> _id) Then
+        ElsIf Exists (SELECT prep_request_id FROM t_sample_prep_request WHERE request_name = _requestName::citext AND prep_request_id <> _id) Then
             RAISE EXCEPTION 'Cannot rename: prep request "%" already exists', _requestName;
         End If;
 
@@ -744,7 +710,7 @@ BEGIN
                 _sampleNamingConvention,
                 _requestedPersonnel,
                 _assignedPersonnel,
-                Case When _allowUpdateEstimatedPrepTime Then _estimatedPrepTimeDays Else 0 End,
+                CASE WHEN _allowUpdateEstimatedPrepTime THEN _estimatedPrepTimeDays ELSE 0 END,
                 _estimatedMSRuns,
                 _workPackageNumber,
                 _eusUsageType,
@@ -802,7 +768,7 @@ BEGIN
                 sample_naming_convention    = _sampleNamingConvention,
                 requested_personnel         = _requestedPersonnel,
                 assigned_personnel          = _assignedPersonnel,
-                estimated_prep_time_days    = Case When _allowUpdateEstimatedPrepTime Then _estimatedPrepTimeDays Else estimated_prep_time_days End,
+                estimated_prep_time_days    = CASE WHEN _allowUpdateEstimatedPrepTime THEN _estimatedPrepTimeDays ELSE estimated_prep_time_days END,
                 estimated_ms_runs           = _estimatedMSRuns,
                 work_package                = _workPackageNumber,
                 eus_proposal_id             = _eusProposalID,
@@ -812,7 +778,7 @@ BEGIN
                 comment                     = _comment,
                 priority                    = _priority,
                 state_id                    = _stateID,
-                state_changed               = Case When _currentStateID = _stateID Then state_changed Else CURRENT_TIMESTAMP End,
+                state_changed               = CASE WHEN _currentStateID = _stateID THEN state_changed ELSE CURRENT_TIMESTAMP END,
                 state_comment               = _stateComment,
                 instrument_group            = _instrumentGroup,
                 instrument_name             = Null,
@@ -821,7 +787,7 @@ BEGIN
                 block_and_randomize_samples = _blockAndRandomizeSamples,
                 block_and_randomize_runs    = _blockAndRandomizeRuns,
                 reason_for_high_priority    = _reasonForHighPriority
-            WHERE prep_request_id = _id
+            WHERE prep_request_id = _id;
 
             -- If _callingUser is defined, update system_account in t_sample_prep_request_updates
             If _callingUser <> '' Then
@@ -866,4 +832,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_sample_prep_request IS 'AddUpdateSamplePrepRequest';
+
+ALTER PROCEDURE public.add_update_sample_prep_request(IN _requestname text, IN _requesterusername text, IN _reason text, IN _materialcontainerlist text, IN _organism text, IN _biohazardlevel text, IN _campaign text, IN _numberofsamples integer, IN _samplenamelist text, IN _sampletype text, IN _prepmethod text, IN _samplenamingconvention text, IN _assignedpersonnel text, IN _requestedpersonnel text, IN _estimatedpreptimedays integer, IN _estimatedmsruns text, IN _workpackagenumber text, IN _eusproposalid text, IN _eususagetype text, IN _eususerid integer, IN _instrumentgroup text, IN _datasettype text, IN _instrumentanalysisspecifications text, IN _comment text, IN _priority text, IN _state text, IN _statecomment text, INOUT _id integer, IN _separationgroup text, IN _blockandrandomizesamples text, IN _blockandrandomizeruns text, IN _reasonforhighpriority text, IN _tissue text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_sample_prep_request(IN _requestname text, IN _requesterusername text, IN _reason text, IN _materialcontainerlist text, IN _organism text, IN _biohazardlevel text, IN _campaign text, IN _numberofsamples integer, IN _samplenamelist text, IN _sampletype text, IN _prepmethod text, IN _samplenamingconvention text, IN _assignedpersonnel text, IN _requestedpersonnel text, IN _estimatedpreptimedays integer, IN _estimatedmsruns text, IN _workpackagenumber text, IN _eusproposalid text, IN _eususagetype text, IN _eususerid integer, IN _instrumentgroup text, IN _datasettype text, IN _instrumentanalysisspecifications text, IN _comment text, IN _priority text, IN _state text, IN _statecomment text, INOUT _id integer, IN _separationgroup text, IN _blockandrandomizesamples text, IN _blockandrandomizeruns text, IN _reasonforhighpriority text, IN _tissue text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_sample_prep_request(IN _requestname text, IN _requesterusername text, IN _reason text, IN _materialcontainerlist text, IN _organism text, IN _biohazardlevel text, IN _campaign text, IN _numberofsamples integer, IN _samplenamelist text, IN _sampletype text, IN _prepmethod text, IN _samplenamingconvention text, IN _assignedpersonnel text, IN _requestedpersonnel text, IN _estimatedpreptimedays integer, IN _estimatedmsruns text, IN _workpackagenumber text, IN _eusproposalid text, IN _eususagetype text, IN _eususerid integer, IN _instrumentgroup text, IN _datasettype text, IN _instrumentanalysisspecifications text, IN _comment text, IN _priority text, IN _state text, IN _statecomment text, INOUT _id integer, IN _separationgroup text, IN _blockandrandomizesamples text, IN _blockandrandomizeruns text, IN _reasonforhighpriority text, IN _tissue text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateSamplePrepRequest';
+
