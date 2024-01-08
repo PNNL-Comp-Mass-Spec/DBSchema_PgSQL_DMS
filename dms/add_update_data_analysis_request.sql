@@ -46,6 +46,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_data_analysis_request(IN _requestn
 **          08/08/2022 mem - Update State_Changed when the state changes
 **          02/13/2023 bcg - Send the correct procedure name to ValidateRequestUsers
 **          01/06/2024 mem - Ported to PostgreSQL
+**          01/07/2024 mem - Update error message and remove unnecessary Begin/End block
 **
 *****************************************************/
 DECLARE
@@ -668,7 +669,7 @@ BEGIN
             WHERE CC.charge_code = _workPackage::citext;
 
             If _activationState >= 3 Then
-                RAISE EXCEPTION 'Cannot use inactive Work Package "%" for a new Data Analysis Request', _workPackage;
+                RAISE EXCEPTION 'Cannot use inactive work package "%" for a new data analysis request', _workPackageNumber;
             End If;
         End If;
 
@@ -768,37 +769,33 @@ BEGIN
             FROM t_data_analysis_request
             WHERE request_id = _id;
 
-            BEGIN
-
-                UPDATE t_data_analysis_request
-                SET request_name                 = _requestName,
-                    analysis_type                = _analysisType,
-                    requester_username           = _requesterUsername,
-                    description                  = _description,
-                    analysis_specifications      = _analysisSpecifications,
-                    comment                      = _comment,
-                    representative_batch_id      = CASE WHEN _batchDefined           THEN _representativeBatchID ELSE Null END,
-                    data_pkg_id                  = CASE WHEN _dataPackageDefined     THEN _dataPackageID         ELSE Null END,
-                    exp_group_id                 = CASE WHEN _experimentGroupDefined THEN _experimentGroupID     ELSE Null END,
-                    work_package                 = _workPackage,
-                    requested_personnel          = _requestedPersonnel,
-                    assigned_personnel           = _assignedPersonnel,
-                    priority                     = _priority,
-                    reason_for_high_priority     = _reasonForHighPriority,
-                    estimated_analysis_time_days = CASE WHEN _allowUpdateEstimatedAnalysisTime THEN _estimatedAnalysisTimeDays
-                                                   ELSE Estimated_Analysis_Time_Days
-                                                   END,
-                    State                        = _stateID,
-                    State_Changed                = CASE WHEN _currentStateID = _stateID THEN State_Changed ELSE CURRENT_TIMESTAMP END,
-                    Closed                       = CASE WHEN _currentStateID <> 4 AND _stateID = 4 THEN CURRENT_TIMESTAMP ELSE Closed END,
-                    State_Comment                = _stateComment,
-                    Campaign                     = _campaign,
-                    Organism                     = _organism,
-                    EUS_Proposal_ID              = _eusProposalID,
-                    Dataset_Count                = _datasetCount
-                WHERE request_id = _id;
-
-            END;
+            UPDATE t_data_analysis_request
+            SET request_name                 = _requestName,
+                analysis_type                = _analysisType,
+                requester_username           = _requesterUsername,
+                description                  = _description,
+                analysis_specifications      = _analysisSpecifications,
+                comment                      = _comment,
+                representative_batch_id      = CASE WHEN _batchDefined           THEN _representativeBatchID ELSE Null END,
+                data_pkg_id                  = CASE WHEN _dataPackageDefined     THEN _dataPackageID         ELSE Null END,
+                exp_group_id                 = CASE WHEN _experimentGroupDefined THEN _experimentGroupID     ELSE Null END,
+                work_package                 = _workPackage,
+                requested_personnel          = _requestedPersonnel,
+                assigned_personnel           = _assignedPersonnel,
+                priority                     = _priority,
+                reason_for_high_priority     = _reasonForHighPriority,
+                estimated_analysis_time_days = CASE WHEN _allowUpdateEstimatedAnalysisTime THEN _estimatedAnalysisTimeDays
+                                               ELSE Estimated_Analysis_Time_Days
+                                               END,
+                State                        = _stateID,
+                State_Changed                = CASE WHEN _currentStateID = _stateID THEN State_Changed ELSE CURRENT_TIMESTAMP END,
+                Closed                       = CASE WHEN _currentStateID <> 4 AND _stateID = 4 THEN CURRENT_TIMESTAMP ELSE Closed END,
+                State_Comment                = _stateComment,
+                Campaign                     = _campaign,
+                Organism                     = _organism,
+                EUS_Proposal_ID              = _eusProposalID,
+                Dataset_Count                = _datasetCount
+            WHERE request_id = _id;
 
             -- If _callingUser is defined, update entered_by in t_data_analysis_request_updates
             If _callingUser <> '' Then
