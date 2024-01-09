@@ -40,6 +40,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_sample_submission(INOUT _id intege
 **                         - If _containerList is 'na', assure that it is lowercase
 **          11/22/2023 mem - Allow _receivedBy to be of the form 'Zink, Erika M', 'Zink, Erika M (D3P704)', or 'D3P704'
 **          01/03/2024 mem - Update warning messages
+**          01/08/2024 mem - Remove procedure name from error message
 **
 *****************************************************/
 DECLARE
@@ -208,7 +209,7 @@ BEGIN
                             _callingUser   => '');
 
             If _returnCode <> '' Then
-                RAISE EXCEPTION 'Assure_material_containers_exist: %', _msg;
+                RAISE EXCEPTION '%', _msg;
             End If;
 
             ---------------------------------------------------
@@ -271,7 +272,7 @@ BEGIN
                                 _callingUser   => _callingUser);
 
                 If _returnCode <> '' Then
-                    RAISE EXCEPTION 'Assure_material_containers_exist: %', _message;
+                    RAISE EXCEPTION '%', _message;
                 End If;
 
                 ---------------------------------------------------

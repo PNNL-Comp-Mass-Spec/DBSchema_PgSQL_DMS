@@ -107,6 +107,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_experiment(INOUT _experimentid int
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
 **          01/03/2024 mem - Update warning messages
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          01/08/2024 mem - Remove procedure name from error message
 **
 *****************************************************/
 DECLARE
@@ -424,7 +425,7 @@ BEGIN
                         _returnCode    => _returnCode);     -- Output
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'ValidateWellplateLoading: %', _msg;
+            RAISE EXCEPTION '%', _msg;
         End If;
 
         -- Make sure we do not put two experiments in the same place

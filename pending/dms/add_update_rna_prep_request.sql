@@ -188,7 +188,7 @@ BEGIN
                             _returnCode      => _returnCode);       -- Output
 
             If _returnCode <> '' Then
-                RAISE EXCEPTION 'validate_instrument_group_and_dataset_type: %', _msg;
+                RAISE EXCEPTION '%', _msg;
             End If;
         End If;
 

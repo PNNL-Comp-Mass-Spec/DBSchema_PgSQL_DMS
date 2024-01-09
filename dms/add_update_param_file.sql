@@ -54,6 +54,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_param_file(INOUT _paramfileid inte
 **          11/06/2023 mem - Move variable assignment closer to usage
 **                         - Pass a boolean to has_whitespace_chars()
 **          01/03/2024 mem - Update warning messages
+**          01/08/2024 mem - Remove procedure name from error message
 **
 *****************************************************/
 DECLARE
@@ -274,7 +275,7 @@ BEGIN
                     If Coalesce(_message, '') = '' Then
                         RAISE EXCEPTION 'store_param_file_mass_mods returned error code %; unknown error', _returnCode;
                     Else
-                        RAISE EXCEPTION 'store_param_file_mass_mods: %', _message;
+                        RAISE EXCEPTION '%', _message;
                     End If;
 
                 End If;

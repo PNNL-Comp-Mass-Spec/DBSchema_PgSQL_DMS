@@ -113,6 +113,7 @@ CREATE OR REPLACE PROCEDURE public.add_analysis_job_group(IN _datasetlist text, 
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user_multi_id()
 **          01/03/2024 mem - Update status message
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          01/08/2024 mem - Remove procedure name from error message
 **
 *****************************************************/
 DECLARE
@@ -521,7 +522,7 @@ BEGIN
 
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'Validate_Analysis_Job_Parameters: % for request % (code %)', _message, _requestID, _returnCode;
+            RAISE EXCEPTION '% for request % (code %)', _message, _requestID, _returnCode;
         End If;
 
         If Coalesce(_warning, '') <> '' Then

@@ -58,6 +58,7 @@ CREATE OR REPLACE PROCEDURE public.add_requested_run_fractions(IN _sourcerequest
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
 **          01/03/2024 mem - Update warning messages
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          01/08/2024 mem - Remove procedure name from error message
 **
 *****************************************************/
 DECLARE
@@ -389,7 +390,7 @@ BEGIN
                         _returnCode      => _returnCode);               -- Output
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'Validate_Instrument_Group_and_Dataset_Type: %', _msg;
+            RAISE EXCEPTION '%', _msg;
         End If;
 
         ---------------------------------------------------
@@ -462,7 +463,7 @@ BEGIN
                             _returnCode    => _returnCode);     -- Output
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'Lookup_EUS_From_Experiment_Sample_Prep: %', _msg;
+            RAISE EXCEPTION '%', _msg;
         End If;
 
         If Coalesce(_msg, '') <> '' Then
@@ -546,7 +547,7 @@ BEGIN
                             _returnCode  => _returnCode);   -- Output
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'lookup_wp_from_experiment_sample_prep: %', _msg;
+            RAISE EXCEPTION '%', _msg;
         End If;
 
         ---------------------------------------------------
@@ -781,7 +782,7 @@ BEGIN
                                         _returnCode => _returnCode);    -- Output
 
                 If _returnCode <> '' Then
-                    RAISE EXCEPTION 'assign_eus_users_to_requested_run: %', _msg;
+                    RAISE EXCEPTION '%', _msg;
                 End If;
 
                 -- Append the new request ID to _requestIdList

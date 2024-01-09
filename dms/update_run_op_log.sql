@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE public.update_run_op_log(IN _changes text, INOUT _me
 **          05/24/2022 mem - Do not call post_log_entry for errors of the form 'Total percentage (0) does not add up to 100 for ID 1017648'
 **          10/20/2023 mem - Ported to PostgreSQL
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
+**          01/08/2024 mem - Remove procedure name from error message
 **
 *****************************************************/
 DECLARE
@@ -238,7 +239,7 @@ BEGIN
                 _message := public.append_to_text(_message, _msg);
                 _invalidEntries := _invalidEntries + 1;
             ElsIf _returnCode <> '' Then
-                RAISE EXCEPTION 'add_update_run_interval: %', _msg;
+                RAISE EXCEPTION '%', _msg;
             End If;
 
         END LOOP;

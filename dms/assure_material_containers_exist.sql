@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE public.assure_material_containers_exist(INOUT _conta
 **          05/04/2023 mem - Use TOP 1 when retrieving the next item to process
 **          11/19/2023 mem - Add procedure argument _campaignName
 **          11/20/2023 mem - Ported to PostgreSQL
+**          01/08/2024 mem - Remove procedure name from error message
 **
 *****************************************************/
 DECLARE
@@ -135,7 +136,7 @@ BEGIN
                             _callingUser  => _callingUser);
 
             If _returnCode <> '' Then
-                RAISE EXCEPTION 'Add_update_material_container: %', _msg;
+                RAISE EXCEPTION '%', _msg;
             End If;
 
             UPDATE Tmp_ContainerItems

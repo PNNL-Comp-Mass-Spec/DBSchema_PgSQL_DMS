@@ -137,6 +137,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_sample_prep_request(IN _requestnam
 **          08/08/2022 mem - Update StateChanged when the state changes
 **          08/25/2022 mem - Use view V_Operations_Task_Staff when checking if the user can update a closed prep request item
 **          01/07/2024 mem - Ported to PostgreSQL
+**          01/08/2024 mem - Remove procedure name from error message
 **
 *****************************************************/
 DECLARE
@@ -378,7 +379,7 @@ BEGIN
                             _returnCode      => _returnCode);       -- Output
 
             If _returnCode <> '' Then
-                RAISE EXCEPTION 'validate_instrument_group_and_dataset_type: %', _msg;
+                RAISE EXCEPTION '%', _msg;
             End If;
         End If;
 
