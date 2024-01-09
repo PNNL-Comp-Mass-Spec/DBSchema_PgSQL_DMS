@@ -165,7 +165,7 @@ BEGIN
             RETURNING attachment_id
             INTO _id;
 
-        End -- add mode
+        End If;
 
         ---------------------------------------------------
         -- Action for update mode
@@ -189,7 +189,7 @@ BEGIN
                 Active = 1
             WHERE ID = _id;
 
-        End If; -- update mode
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN

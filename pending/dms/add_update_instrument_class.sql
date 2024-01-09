@@ -149,7 +149,7 @@ BEGIN
                 comment = _comment
             WHERE (instrument_class = _instrumentClass)
 
-        End If; -- update mode
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN

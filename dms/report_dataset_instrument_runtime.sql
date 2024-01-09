@@ -69,7 +69,6 @@ BEGIN
             _endDate := (_eDateAlternate::timestamp without time zone)::text;
 
         Else
-            -- IsDate() equivalent
             If public.try_cast(_endDate, null::timestamp) Is Null Then
                 _msg := format('End date "%s" is not a valid date', _endDate);
                 RAISE EXCEPTION '%', _msg;

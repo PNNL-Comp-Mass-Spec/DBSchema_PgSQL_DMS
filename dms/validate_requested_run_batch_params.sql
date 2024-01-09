@@ -82,7 +82,6 @@ BEGIN
         ---------------------------------------------------
 
         If _requestedCompletionDate <> '' Then
-            -- IsDate() equivalent
             If public.try_cast(_requestedCompletionDate, null::timestamp) Is Null Then
                 _message := format('Requested completion date is not a valid date: %s', _requestedCompletionDate);
                 _returnCode := 'U5202';

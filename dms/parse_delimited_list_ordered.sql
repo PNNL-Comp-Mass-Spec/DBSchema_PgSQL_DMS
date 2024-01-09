@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION public.parse_delimited_list_ordered(_delimitedlist te
 **  Desc:
 **      Parse the text in _delimitedList and return a table containing the values
 **
-**      The table includes column entry_id to allow the calling procedure to sort the data
+**      The table includes column entry_id to allow the calling procedure to sort the data,
 **      based on the data order in _delimitedList; The first row will have entry_id = 1
 **
 **      Note that if two commas in a row are encountered, the resultant table will contain an empty cell for that row
@@ -41,8 +41,8 @@ BEGIN
         _delimitedList := Trim(Replace(_delimitedList, chr(10), _delimiter));
     End If;
 
+    -- If _delimiter is not a tab character, replace any tab characters with _delimiter
     If _delimiter <> chr(9) Then
-        -- Replace any tab characters with _delimiter
         If _delimitedList Like '%' || chr(9) || '%' Then
             _delimitedList := Trim(Replace(_delimitedList, chr(9), _delimiter));
         End If;

@@ -133,7 +133,7 @@ BEGIN
         RETURNING entry_id
         INTO _id;
 
-    End If; -- add mode
+    End If;
 
     ---------------------------------------------------
     -- Action for update mode
@@ -149,7 +149,7 @@ BEGIN
             entered_by = _postedBy
         WHERE entry_id = _id;
 
-    End If; -- update mode
+    End If;
 
 END
 $$;

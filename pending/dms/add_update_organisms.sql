@@ -503,7 +503,7 @@ BEGIN
                 CALL public.alter_entered_by_user ('public', 't_organisms_change_history', 'organism_id', _id, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
-        End If; -- add mode
+        End If;
 
         ---------------------------------------------------
         -- Action for update mode
@@ -538,7 +538,7 @@ BEGIN
                 CALL public.alter_entered_by_user ('public', 't_organisms_change_history', 'organism_id', _id, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
-        End If; -- update mode
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN
