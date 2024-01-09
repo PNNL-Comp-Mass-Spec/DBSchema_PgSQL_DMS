@@ -157,7 +157,7 @@ BEGIN
 
         -- Populate a temporary table with the list of items to delete or update
 
-        CREATE TEMPORARY TABLE T_Tmp_Target_Items (
+        CREATE TEMP TABLE T_Tmp_Target_Items (
             Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
             Action text,
             Item_Type text,
