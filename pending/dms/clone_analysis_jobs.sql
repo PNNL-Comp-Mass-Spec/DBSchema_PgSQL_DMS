@@ -30,7 +30,7 @@ AS $$
 **    _sourceJobs                   Comma-separated list of jobs to copy
 **    _newParamFileName             New parameter file to use
 **    _newSettingsFileName          New settings file to use
-**    _newProteinCollectionList     New protein collection to use (if empty, use the same protein collection as teh old job)
+**    _newProteinCollectionList     New protein collection to use (if empty, use the same protein collection as the old job)
 **    _supersedeOldJob              When true, change the state of old jobs to 14
 **    _updateOldJobComment          When true, add the new job number to the old job comment
 **    _allowDuplicateJob            When true, allow the new jobs to be duplicates of the old jobs (useful for testing a new version of a tool or updated .UIMF)
