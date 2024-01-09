@@ -246,7 +246,7 @@ BEGIN
 
         INSERT INTO Tmp_DataColumns (EntryID, Value)
         SELECT Entry_ID, Value
-        FROM public.parse_delimited_list_ordered(_row, _delimiter, 0)
+        FROM public.parse_delimited_list_ordered(_row, _delimiter)
         --
         GET DIAGNOSTICS _colCount = ROW_COUNT;
 

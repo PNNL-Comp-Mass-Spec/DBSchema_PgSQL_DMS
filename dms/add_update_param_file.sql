@@ -55,6 +55,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_param_file(INOUT _paramfileid inte
 **                         - Pass a boolean to has_whitespace_chars()
 **          01/03/2024 mem - Update warning messages
 **          01/08/2024 mem - Remove procedure name from error message
+**                         - Use the default value for _maxRows when calling parse_delimited_list_ordered()
 **
 *****************************************************/
 DECLARE
@@ -237,7 +238,7 @@ BEGIN
 
             INSERT INTO Tmp_Mods_Precheck (EntryID, Value)
             SELECT Entry_ID, Value
-            FROM public.parse_delimited_list_ordered(_paramfileMassMods, _delimiter, 0);
+            FROM public.parse_delimited_list_ordered(_paramfileMassMods, _delimiter);
 
             DELETE FROM Tmp_Mods_Precheck
             WHERE Value Is Null Or Value Like '#%' or Trim(Value) = '';

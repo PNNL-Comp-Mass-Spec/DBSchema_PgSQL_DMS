@@ -64,6 +64,7 @@ CREATE OR REPLACE PROCEDURE public.store_bionet_hosts(IN _hostlist text, IN _inf
 **                         - Ported to PostgreSQL
 **          11/30/2023 mem - Replace for loop with regexp_replace()
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          01/08/2024 mem - Use the default value for _maxRows when calling parse_delimited_list_ordered()
 **
 *****************************************************/
 DECLARE
@@ -210,7 +211,7 @@ BEGIN
 
         INSERT INTO Tmp_DataColumns (EntryID, Value)
         SELECT Entry_ID, Value
-        FROM public.parse_delimited_list_ordered(_row, _tabDelimiter, 0);
+        FROM public.parse_delimited_list_ordered(_row, _tabDelimiter);
         --
         GET DIAGNOSTICS _columnCount = ROW_COUNT;
 

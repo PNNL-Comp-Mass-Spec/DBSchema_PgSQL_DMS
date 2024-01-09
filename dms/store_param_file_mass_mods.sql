@@ -144,6 +144,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **          12/02/2023 mem - Rename variable
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **                         - Remove unreachable code that previously showed the contents of temp table Tmp_ModDef
+**          01/08/2024 mem - Use the default value for _maxRows when calling parse_delimited_list_ordered()
 **
 *****************************************************/
 DECLARE
@@ -395,7 +396,7 @@ BEGIN
 
         INSERT INTO Tmp_Mods (EntryID, Value)
         SELECT Entry_ID, Value
-        FROM public.parse_delimited_list_ordered(_mods, _delimiter, 0);
+        FROM public.parse_delimited_list_ordered(_mods, _delimiter);
 
         If Not Exists (SELECT * FROM Tmp_Mods) Then
             _message := 'Nothing returned when splitting the Mods on CR or LF';
@@ -500,7 +501,7 @@ BEGIN
 
                     INSERT INTO Tmp_ModDef (EntryID, Value)
                     SELECT Entry_ID, Value
-                    FROM public.parse_delimited_list_ordered(_rowValue, ' ', 0);
+                    FROM public.parse_delimited_list_ordered(_rowValue, ' ');
 
                     UPDATE Tmp_ModDef
                     SET Value = format('DynamicMod=%s', Value)
@@ -517,7 +518,7 @@ BEGIN
 
                     INSERT INTO Tmp_ModDef (EntryID, Value)
                     SELECT Entry_ID, Value
-                    FROM public.parse_delimited_list_ordered(_rowValue, ' ', 0);
+                    FROM public.parse_delimited_list_ordered(_rowValue, ' ');
 
                     UPDATE Tmp_ModDef
                     SET Value = format('StaticMod=%s', Value)

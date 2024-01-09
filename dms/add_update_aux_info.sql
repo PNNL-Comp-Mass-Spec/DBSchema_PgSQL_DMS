@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_aux_info(IN _targetname text DEFAU
 **          08/15/2022 mem - Use new column name
 **          11/29/2022 mem - Require that _targetEntityName be an integer when _targetName is SamplePrepRequest
 **          12/19/2023 mem - Ported to PostgreSQL
+**          01/08/2024 mem - Use the default value for _maxRows when calling parse_delimited_list_ordered()
 **
 *****************************************************/
 DECLARE
@@ -202,12 +203,12 @@ BEGIN
 
         INSERT INTO Tmp_AuxInfoNames (EntryID, ItemName)
         SELECT Entry_ID, Value
-        FROM public.parse_delimited_list_ordered(_itemNameList, '!', 0)
+        FROM public.parse_delimited_list_ordered(_itemNameList, '!')
         ORDER BY Entry_ID;
 
         INSERT INTO Tmp_AuxInfoValues (EntryID, ItemValue)
         SELECT Entry_ID, Value
-        FROM public.parse_delimited_list_ordered(_itemValueList, '!', 0)
+        FROM public.parse_delimited_list_ordered(_itemValueList, '!')
         ORDER BY Entry_ID;
 
         SELECT COUNT(*)
