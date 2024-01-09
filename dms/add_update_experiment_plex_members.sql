@@ -1,69 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_experiment_plex_members
-(
-    INOUT _plexExperimentIdOrName text,
-    _plexMembers text,
-    _expIdChannel1 text = '',
-    _expIdChannel2 text = '',
-    _expIdChannel3 text = '',
-    _expIdChannel4 text = '',
-    _expIdChannel5 text = '',
-    _expIdChannel6 text = '',
-    _expIdChannel7 text = '',
-    _expIdChannel8 text = '',
-    _expIdChannel9 text = '',
-    _expIdChannel10 text = '',
-    _expIdChannel11 text = '',
-    _expIdChannel12 text = '',
-    _expIdChannel13 text = '',
-    _expIdChannel14 text = '',
-    _expIdChannel15 text = '',
-    _expIdChannel16 text = '',
-    _expIdChannel17 text = '',
-    _expIdChannel18 text = '',
-    _channelType1 text = '',
-    _channelType2 text = '',
-    _channelType3 text = '',
-    _channelType4 text = '',
-    _channelType5 text = '',
-    _channelType6 text = '',
-    _channelType7 text = '',
-    _channelType8 text = '',
-    _channelType9 text = '',
-    _channelType10 text = '',
-    _channelType11 text = '',
-    _channelType12 text = '',
-    _channelType13 text = '',
-    _channelType14 text = '',
-    _channelType15 text = '',
-    _channelType16 text = '',
-    _channelType17 text = '',
-    _channelType18 text = '',
-    _comment1 text = '',
-    _comment2 text = '',
-    _comment3 text = '',
-    _comment4 text = '',
-    _comment5 text = '',
-    _comment6 text = '',
-    _comment7 text = '',
-    _comment8 text = '',
-    _comment9 text = '',
-    _comment10 text = '',
-    _comment11 text = '',
-    _comment12 text = '',
-    _comment13 text = '',
-    _comment14 text = '',
-    _comment15 text = '',
-    _comment16 text = '',
-    _comment17 text = '',
-    _comment18 text = '',
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_experiment_plex_members(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_experiment_plex_members(INOUT _plexexperimentidorname text, IN _plexmembers text, IN _expidchannel1 text DEFAULT ''::text, IN _expidchannel2 text DEFAULT ''::text, IN _expidchannel3 text DEFAULT ''::text, IN _expidchannel4 text DEFAULT ''::text, IN _expidchannel5 text DEFAULT ''::text, IN _expidchannel6 text DEFAULT ''::text, IN _expidchannel7 text DEFAULT ''::text, IN _expidchannel8 text DEFAULT ''::text, IN _expidchannel9 text DEFAULT ''::text, IN _expidchannel10 text DEFAULT ''::text, IN _expidchannel11 text DEFAULT ''::text, IN _expidchannel12 text DEFAULT ''::text, IN _expidchannel13 text DEFAULT ''::text, IN _expidchannel14 text DEFAULT ''::text, IN _expidchannel15 text DEFAULT ''::text, IN _expidchannel16 text DEFAULT ''::text, IN _expidchannel17 text DEFAULT ''::text, IN _expidchannel18 text DEFAULT ''::text, IN _channeltype1 text DEFAULT ''::text, IN _channeltype2 text DEFAULT ''::text, IN _channeltype3 text DEFAULT ''::text, IN _channeltype4 text DEFAULT ''::text, IN _channeltype5 text DEFAULT ''::text, IN _channeltype6 text DEFAULT ''::text, IN _channeltype7 text DEFAULT ''::text, IN _channeltype8 text DEFAULT ''::text, IN _channeltype9 text DEFAULT ''::text, IN _channeltype10 text DEFAULT ''::text, IN _channeltype11 text DEFAULT ''::text, IN _channeltype12 text DEFAULT ''::text, IN _channeltype13 text DEFAULT ''::text, IN _channeltype14 text DEFAULT ''::text, IN _channeltype15 text DEFAULT ''::text, IN _channeltype16 text DEFAULT ''::text, IN _channeltype17 text DEFAULT ''::text, IN _channeltype18 text DEFAULT ''::text, IN _comment1 text DEFAULT ''::text, IN _comment2 text DEFAULT ''::text, IN _comment3 text DEFAULT ''::text, IN _comment4 text DEFAULT ''::text, IN _comment5 text DEFAULT ''::text, IN _comment6 text DEFAULT ''::text, IN _comment7 text DEFAULT ''::text, IN _comment8 text DEFAULT ''::text, IN _comment9 text DEFAULT ''::text, IN _comment10 text DEFAULT ''::text, IN _comment11 text DEFAULT ''::text, IN _comment12 text DEFAULT ''::text, IN _comment13 text DEFAULT ''::text, IN _comment14 text DEFAULT ''::text, IN _comment15 text DEFAULT ''::text, IN _comment16 text DEFAULT ''::text, IN _comment17 text DEFAULT ''::text, IN _comment18 text DEFAULT ''::text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -71,10 +12,12 @@ AS $$
 **      Can either provide data via _plexMembers or via channel-specific parameters
 **
 **      _plexMembers is a table listing Experiment ID values by channel or by tag
+**      Delimiters in the table are newline characters and commas, though columns can also be separated by tabs
+**
 **      Supported header names: Channel, Tag, Tag_Name, Exp_ID, Experiment, Channel_Type, Comment
 **
 **      If the header row is missing from the table, will attempt to auto-determine the channel
-**      The first two columns are required; Channel Type and Comment are optional
+**      The first two columns (Channel and Exp_ID) are required; Channel Type and Comment are optional
 **
 ** Example 1:
 **     Channel, Exp_ID, Channel Type, Comment
@@ -89,7 +32,6 @@ AS $$
 **     9, 212464, Normal,
 **     10, 212465, Normal,
 **     11, 212466, Reference, This is a pooled reference
-**
 **
 ** Example 2:
 **     Tag, Exp_ID, Channel Type, Comment
@@ -124,7 +66,7 @@ AS $$
 **    _expIdChannel 1 ... 18    Channel experiment: Experiment ID, Experiment Name, or ExpID:ExperimentName
 **    _channelType  1 ... 18    Channel type: Normal, Reference, or Empty
 **    _comment      1 ... 18    Channel domment
-**    _mode                     Mode: 'add', 'update', 'check_add', 'check_update', or 'preview'
+**    _mode                     Mode: 'add', 'update', 'check_add', 'check_update', or 'preview' (modes 'add' and 'update' are equivalent)
 **    _message                  Status message
 **    _returnCode               Return code
 **    _callingUser              Username of the calling user
@@ -143,7 +85,8 @@ AS $$
 **          11/09/2021 mem - Update _mode to support 'preview'
 **          04/18/2022 mem - Update to support TMT 18 by adding channels 17 and 18
 **          04/20/2022 mem - Fix typo in variable names
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/08/2024 mem - Replace tab characters in _plexMembers with commas
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -156,11 +99,11 @@ DECLARE
     _msg text;
     _logErrors boolean := false;
     _plexExperimentId int;
-    _experimentLabel text;
+    _experimentLabel citext;
     _expectedChannelCount int := 0;
     _actualChannelCount int := 0;
     _entryID int;
-    _parseColData false;
+    _parseColData boolean := false;
     _value text;
     _charPos int;
     _plexExperimentName text := '';
@@ -180,16 +123,20 @@ DECLARE
     _commentColNum int := 0;
     _channelNum int;
     _channelText text;
-    _tagName text;
+    _tagName citext;
     _experimentId int;
-    _experimentIdOrName text;
+    _experimentIdOrName citext;
     _channelTypeId int;
-    _channelTypeName text;
+    _channelTypeName citext;
     _plexMemberComment text;
     _invalidExperimentCount int := 0;
     _validValues text;
     _logMessage text;
     _alterEnteredByMessage text;
+
+    _dropChannelDataTables boolean := false;
+    _dropPlexMembersTable boolean := false;
+    _dropExperimentsTable boolean := false;
 
     _sqlState text;
     _exceptionMessage text;
@@ -236,16 +183,16 @@ BEGIN
             SELECT exp_id
             INTO _plexExperimentId
             FROM t_experiments
-            WHERE experiment = _plexExperimentIdOrName;
+            WHERE experiment = _plexExperimentIdOrName::citext;
 
             If Not FOUND Then
-                _message := format('Invalid Experiment Name: %s', _plexExperimentIdOrName);
+                _message := format('Invalid experiment name: %s', _plexExperimentIdOrName);
                 RAISE EXCEPTION '%', _message;
             End If;
         End If;
 
         -- Assure that _plexExperimentIdOrName has Experiment ID
-        _plexExperimentIdOrName := _plexExperimentId;
+        _plexExperimentIdOrName := _plexExperimentId::text;
 
         _plexMembers := Trim(Coalesce(_plexMembers, ''));
         _mode        := Trim(Lower(Coalesce(_mode, 'check_add')));
@@ -258,15 +205,15 @@ BEGIN
         SELECT Trim(labelling)
         INTO _experimentLabel
         FROM t_experiments
-        WHERE exp_id = _plexExperimentId
+        WHERE exp_id = _plexExperimentId;
 
         If Not FOUND Then
-            _message := format('Invalid Plex Experiment ID %s', _plexExperimentIdOrName);
+            _message := format('Invalid experiment ID: %s', _plexExperimentIdOrName);
             RAISE EXCEPTION '%', _message;
         End If;
 
-        If _experimentLabel::citext In ('Unknown', 'None') Then
-            _message := format('Plex Experiment ID %s needs to have its isobaric label properly defined (as TMT10, TMT11, iTRAQ, etc.); it is currently %s',
+        If _experimentLabel In ('Unknown', 'None') Then
+            _message := format('Plex experiment ID %s needs to have its isobaric label properly defined (e.g., TMT10, TMT11, iTRAQ, etc.); it is currently "%s"',
                                 _plexExperimentIdOrName, _experimentLabel);
 
             RAISE EXCEPTION '%', _message;
@@ -286,14 +233,14 @@ BEGIN
             Exp_ID int NOT NULL,
             Channel_Type_ID int NOT NULL,
             Comment text NULL,
-            ValidExperiment int NOT NULL
+            ValidExperiment boolean NOT NULL
         );
 
         CREATE UNIQUE INDEX IX_Tmp_Experiment_Plex_Members On Tmp_Experiment_Plex_Members (Channel);
 
         CREATE TEMP TABLE Tmp_DatabaseUpdates (
             ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-            Message text NOT NULL
+            Message citext NOT NULL
         );
 
         CREATE UNIQUE INDEX IX_Tmp_DatabaseUpdates On Tmp_DatabaseUpdates (ID);
@@ -303,20 +250,26 @@ BEGIN
         ---------------------------------------------------
 
         If _plexMembers <> '' Then
-            -- Split _plexMembers on newline characters
 
             CREATE TEMP TABLE Tmp_RowData (Entry_ID int, Value text);
 
             CREATE TEMP TABLE Tmp_ColData (Entry_ID int, Value text);
 
+            _dropChannelDataTables := true;
+
+            If Position(chr(9) In _plexMembers) Then
+                -- Replace tab characters with commas
+                _plexMembers := Replace(_plexMembers, chr(9), ', ');
+            End If;
+
+            -- Split _plexMembers on newline characters, which are chr(10)
+
             INSERT INTO Tmp_RowData( Entry_ID, Value)
             SELECT Entry_ID, Value
-            FROM public.parse_delimited_list_ordered(_plexMembers, chr(10), 0);
+            FROM public.parse_delimited_list_ordered(_plexMembers, chr(10));
 
-            _entryID := 0;
-
-            FOR _value IN
-                SELECT Value
+            FOR _entryID, _value IN
+                SELECT Entry_ID, Value
                 FROM Tmp_RowData
                 ORDER BY Entry_ID
             LOOP
@@ -326,7 +279,7 @@ BEGIN
 
                 INSERT INTO Tmp_ColData( Entry_ID, Value)
                 SELECT Entry_ID, Value
-                FROM public.parse_delimited_list_ordered(_value, ',', 4);
+                FROM public.parse_delimited_list_ordered(_value, ',', _maxRows => 4);
 
                 If FOUND Then
                     _parseColData := true;
@@ -383,7 +336,7 @@ BEGIN
                     SELECT Entry_ID
                     INTO _commentColNum
                     FROM Tmp_ColData
-                    WHERE Value Like 'Comment%'
+                    WHERE Value::citext Like 'Comment%'
                     ORDER BY Entry_ID
                     LIMIT 1;
 
@@ -392,15 +345,15 @@ BEGIN
                     End If;
 
                     If _headersDefined Then
-                        If _channelColNum = 0 And _tagColNum = 0 Then
+                        If Coalesce(_channelColNum, 0) = 0 And Coalesce(_tagColNum, 0) = 0 Then
                             RAISE EXCEPTION 'Plex Members table must have column header Channel or Tag';
                         End If;
 
-                        If _experimentIdColNum = 0 Then
+                        If Coalesce(_experimentIdColNum, 0) = 0 Then
                             RAISE EXCEPTION 'Plex Members table must have column header Exp_ID or Experiment';
                         End If;
 
-                        DELETE FROM Tmp_ColData
+                        DELETE FROM Tmp_ColData;
                     Else
                         RAISE EXCEPTION 'Plex Members table must start with a row of header names, for example: Tag, Exp_ID, Channel Type, Comment';
                     End If;
@@ -409,141 +362,143 @@ BEGIN
                     _parseColData := false;
                 End If;
 
-                If _parseColData Then
+                If Not _parseColData Then
+                    -- Move on to the next line
+                    CONTINUE;
+                End If;
 
-                    _channelNum := 0;
-                    _channelText := '';
-                    _tagName := '';
-                    _experimentId := 0;
-                    _experimentIdOrName := '';
-                    _channelTypeId := 0;
-                    _channelTypeName := '';
-                    _plexMemberComment := '';
+                _channelNum         := 0;
+                _channelText        := '';
+                _tagName            := '';
+                _experimentId       := 0;
+                _experimentIdOrName := '';
+                _channelTypeId      := 0;
+                _channelTypeName    := '';
+                _plexMemberComment  := '';
 
-                    If _channelColNum > 0 Then
-                        SELECT Value
-                        INTO _channelText
-                        FROM Tmp_ColData
-                        WHERE Entry_ID = _channelColNum;
-                    End If;
-
-                    If _tagColNum > 0 Then
-                        SELECT Value
-                        INTO _tagName
-                        FROM Tmp_ColData
-                        WHERE Entry_ID = _tagColNum;
-                    End If;
-
+                If Coalesce(_channelColNum, 0) > 0 Then
                     SELECT Value
-                    INTO _experimentIdOrName
+                    INTO _channelText
                     FROM Tmp_ColData
-                    WHERE Entry_ID = _experimentIdColNum;
+                    WHERE Entry_ID = _channelColNum;
+                End If;
 
-                    If _channelTypeColNum > 0 Then
-                        SELECT Value
-                        INTO _channelTypeName
-                        FROM Tmp_ColData
-                        WHERE Entry_ID = _channelTypeColNum;
+                If Coalesce(_tagColNum, 0) > 0 Then
+                    SELECT Value
+                    INTO _tagName
+                    FROM Tmp_ColData
+                    WHERE Entry_ID = _tagColNum;
+                End If;
+
+                SELECT Value
+                INTO _experimentIdOrName
+                FROM Tmp_ColData
+                WHERE Entry_ID = _experimentIdColNum;
+
+                If Coalesce(_channelTypeColNum, 0) > 0 Then
+                    SELECT Value
+                    INTO _channelTypeName
+                    FROM Tmp_ColData
+                    WHERE Entry_ID = _channelTypeColNum;
+                End If;
+
+                If Coalesce(_commentColNum, 0) > 0 Then
+                    SELECT Value
+                    INTO _plexMemberComment
+                    FROM Tmp_ColData
+                    WHERE Entry_ID = _commentColNum;
+                End If;
+
+                If Trim(Coalesce(_channelText, '')) <> '' Then
+                    _channelNum := public.try_cast(_channelText, null::int);
+
+                    If _channelNum Is Null Then
+                        _message := format('Could not convert channel number "%s" to an integer in row %s of the Plex Members table', _channelText, _entryID);
+                        RAISE EXCEPTION '%', _message;
                     End If;
+                Else
+                    _tagName := Trim(Coalesce(_tagName, ''));
 
-                    If _commentColNum > 0 Then
-                        SELECT Value
-                        INTO _plexMemberComment
-                        FROM Tmp_ColData
-                        WHERE Entry_ID = _commentColNum
-                    End If;
-
-                    If Coalesce(_channelText, '') <> '' Then
-                        _channelNum := public.try_cast(_channelText, null::int);
-
-                        If _channelNum Is Null Then
-                            _message := format('Could not convert channel number %s to an integer in row %s of the Plex Members table',
-                                                _channelText, _entryID);
-                            RAISE EXCEPTION '%', _message;
+                    If _tagName <> '' Then
+                        If _experimentLabel = 'TMT10' And _tagName = '131' Then
+                            _tagName := '131N';
                         End If;
-                    Else
-                        If Coalesce(_tagName, '') <> '' Then
-                            If _experimentLabel = 'TMT10' And _tagName = '131' Then
-                                _tagName := '131N';
-                            End If;
 
-                            _channelNum := Null;
+                        _channelNum := Null;
 
-                            SELECT channel
-                            INTO _channelNum
-                            FROM t_sample_labelling_reporter_ions
-                            WHERE label = _experimentLabel And (tag_name = _tagName Or masic_name = _tagName)
-                            LIMIT 1;
-
-                            If Not FOUND Then
-                                _message := format('Could not determine the channel number for tag %s and label %s; see https://dms2.pnl.gov/sample_label_reporter_ions/report/%s',
-                                                   _tagName, _experimentLabel, _experimentLabel);
-
-                                RAISE EXCEPTION '%', _message;
-                            End If;
-                        End If;
-                    End If;
-
-                    _experimentId := public.try_cast(_experimentIdOrName, null::int);
-
-                    If _experimentId Is Null Then
-                        -- Not an integer; is it a valid experiment name?
-                        SELECT exp_id
-                        INTO _experimentId
-                        FROM t_experiments
-                        WHERE experiment = _experimentIdOrName;
-
-                        Not FOUND Then
-                            If _tagName = '' Then
-                                _message := format('Experiment not found for channel %s', _channelNum);
-                            Else
-                                _message := format('Experiment not found for tag %s', _tagName);
-                            End If;
-
-                            _message := format('%s (specify an experiment ID or name): %s (see row %s of the Plex Members table)',
-                                               _experimentIdOrName, _entryID);
-
-                            RAISE EXCEPTION '%', _message;
-                        End If;
-                    End If;
-
-                    If Coalesce(_channelTypeName, '') <> '' Then
-                        SELECT channel_type_id
-                        INTO _channelTypeId
-                        FROM t_experiment_plex_channel_type_name
-                        WHERE channel_type_name = _channelTypeName;
+                        SELECT channel
+                        INTO _channelNum
+                        FROM t_sample_labelling_reporter_ions
+                        WHERE label = _experimentLabel And (tag_name = _tagName Or masic_name = _tagName)
+                        LIMIT 1;
 
                         If Not FOUND Then
-                            _message := format('Invalid channel type %s in row %s of the Plex Members table; valid values: ', _channelTypeName, _entryID);
-
-                            SELECT string_agg(channel_type_name, ', ' ORDER BY channel_type_name)
-                            INTO _validValues
-                            FROM t_experiment_plex_channel_type_name;
-
-                            _message := format('%s%s', _message, _validValues);
+                            _message := format('Could not determine the channel number for tag "%s" and label "%s"; see https://dms2.pnl.gov/sample_label_reporter_ions/report/%s',
+                                               _tagName, _experimentLabel, _experimentLabel);
 
                             RAISE EXCEPTION '%', _message;
                         End If;
-                    Else
-                        -- Default to type 'Normal'
-                        _channelTypeId := 1;
                     End If;
+                End If;
 
-                    If Coalesce(_channelNum, 0) > 0 And Coalesce(_experimentId, 0) > 0 Then
-                        If Exists (SELECT Channel FROM Tmp_Experiment_Plex_Members WHERE Channel = _channelNum) Then
-                            _message := format('Plex Members table has duplicate entries for channel %s', _channelNum);
+                _experimentId := public.try_cast(_experimentIdOrName, null::int);
 
-                            If _tagName <> '' Then
-                                _message := format('%s (tag %s)', _message, _tagName);
-                            End If;
+                If _experimentId Is Null Then
+                    -- Not an integer; is it a valid experiment name?
+                    SELECT exp_id
+                    INTO _experimentId
+                    FROM t_experiments
+                    WHERE experiment = _experimentIdOrName;
 
-                            RAISE EXCEPTION '%', _message;
+                    If Not FOUND Then
+                        If _tagName = '' Then
+                            _message := format('Experiment not found for channel %s', _channelNum);
                         Else
-                            INSERT INTO Tmp_Experiment_Plex_Members (Channel, Exp_ID, Channel_Type_ID, Comment, ValidExperiment)
-                            VALUES (_channelNum, _experimentId, _channelTypeId, _plexMemberComment, 0);
+                            _message := format('Experiment not found for tag "%s"', _tagName);
                         End If;
-                    End If;
 
+                        _message := format('%s (specify an experiment ID or name): %s (see row %s of the Plex Members table)', _message, _experimentIdOrName, _entryID);
+                        RAISE EXCEPTION '%', _message;
+                    End If;
+                End If;
+
+                _channelTypeName := Trim(Coalesce(_channelTypeName, ''));
+
+                If _channelTypeName <> '' Then
+                    SELECT channel_type_id
+                    INTO _channelTypeId
+                    FROM t_experiment_plex_channel_type_name
+                    WHERE channel_type_name = _channelTypeName;
+
+                    If Not FOUND Then
+                        _message := format('Invalid channel type "%s" in row %s of the Plex Members table; valid values:', _channelTypeName, _entryID);
+
+                        SELECT string_agg(channel_type_name, ', ' ORDER BY channel_type_name)
+                        INTO _validValues
+                        FROM t_experiment_plex_channel_type_name;
+
+                        _message := format('%s %s', _message, _validValues);
+
+                        RAISE EXCEPTION '%', _message;
+                    End If;
+                Else
+                    -- Default to type 'Normal'
+                    _channelTypeId := 1;
+                End If;
+
+                If Coalesce(_channelNum, 0) > 0 And Coalesce(_experimentId, 0) > 0 Then
+                    If Exists (SELECT Channel FROM Tmp_Experiment_Plex_Members WHERE Channel = _channelNum) Then
+                        _message := format('Plex members table has duplicate entries for channel %s', _channelNum);
+
+                        If _tagName <> '' Then
+                            _message := format('%s (tag "%s")', _message, _tagName);
+                        End If;
+
+                        RAISE EXCEPTION '%', _message;
+                    Else
+                        INSERT INTO Tmp_Experiment_Plex_Members (Channel, Exp_ID, Channel_Type_ID, Comment, ValidExperiment)
+                        VALUES (_channelNum, _experimentId, _channelTypeId, _plexMemberComment, false);
+                    End If;
                 End If;
 
             END LOOP;
@@ -567,6 +522,8 @@ BEGIN
                 Comment text NULL
             );
 
+            _dropPlexMembersTable := true;
+
             INSERT INTO Tmp_Experiment_Plex_Members_From_Params VALUES (1,  _expIdChannel1,  _channelType1,  _comment1);
             INSERT INTO Tmp_Experiment_Plex_Members_From_Params VALUES (2,  _expIdChannel2,  _channelType2,  _comment2);
             INSERT INTO Tmp_Experiment_Plex_Members_From_Params VALUES (3,  _expIdChannel3,  _channelType3,  _comment3);
@@ -586,100 +543,102 @@ BEGIN
             INSERT INTO Tmp_Experiment_Plex_Members_From_Params VALUES (17, _expIdChannel17, _channelType17, _comment17);
             INSERT INTO Tmp_Experiment_Plex_Members_From_Params VALUES (18, _expIdChannel18, _channelType18, _comment18);
 
-            _channelNum := 1;
-
-            WHILE _channelNum <= 18
+            FOR _channelNum IN 1 .. 18
             LOOP
-                If Not Exists (SELECT Channel FROM Tmp_Experiment_Plex_Members WHERE Channel = _channelNum) Then
+                If Exists (SELECT Channel FROM Tmp_Experiment_Plex_Members WHERE Channel = _channelNum) Then
+                    -- The channel was already defined in _plexMembers; ignore the channel-specific parameters
+                    CONTINUE;
+                End If;
 
-                    SELECT Trim(Coalesce(ExperimentInfo, '')),
-                           Trim(Coalesce(ChannelType, '')),
-                           Trim(Coalesce(Comment, ''))
-                    INTO _experimentIdOrName, _channelTypeName, _plexMemberComment
-                    FROM Tmp_Experiment_Plex_Members_From_Params
-                    WHERE Channel = _channelNum;
+                SELECT Trim(Coalesce(ExperimentInfo, '')),
+                       Trim(Coalesce(ChannelType, '')),
+                       Trim(Coalesce(Comment, ''))
+                INTO _experimentIdOrName, _channelTypeName, _plexMemberComment
+                FROM Tmp_Experiment_Plex_Members_From_Params
+                WHERE Channel = _channelNum;
 
-                    _experimentId := 0;
+                _experimentId := 0;
 
-                    If Coalesce(_experimentIdOrName, '') <> '' Then
+                _experimentIdOrName := Trim(Coalesce(_experimentIdOrName, ''));
 
-                        -- ExperimentIdText can have Experiment ID, or Experiment Name, or both, separated by a colon, comma, space, or tab
-                        -- First assure that the delimiter (if present) is a colon
-                        _experimentIdOrName := Replace(_experimentIdOrName, ',', ':');
-                        _experimentIdOrName := Replace(_experimentIdOrName, chr(9), ':');
-                        _experimentIdOrName := Replace(_experimentIdOrName, ' ', ':');
+                If _experimentIdOrName <> '' Then
 
-                        -- Look for a colon
-                        _charPos := Position(':' In _experimentIdOrName);
+                    -- _experimentIdOrName can have Experiment ID, or Experiment Name, or both, separated by a colon, comma, space, or tab
+                    -- First assure that the delimiter (if present) is a colon
+                    _experimentIdOrName := Replace(_experimentIdOrName, ',', ':');
+                    _experimentIdOrName := Replace(_experimentIdOrName, chr(9), ':');
+                    _experimentIdOrName := Replace(_experimentIdOrName, ' ', ':');
 
-                        If _charPos > 1 Then
-                            _experimentId := public.try_cast(Substring(_experimentIdOrName, 1, _charPos - 1), null::int);
+                    -- Look for a colon
+                    _charPos := Position(':' In _experimentIdOrName);
 
-                            If _experimentId Is Null Then
-                                _message := format('Could not parse out the experiment ID from %s for channel %s',
-                                                    Substring(_experimentIdOrName, 1, _charPos - 1), _channelNum);
-                                RAISE EXCEPTION '%', _message;
-                            End If;
+                    If _charPos > 1 Then
+                        _experimentId := public.try_cast(Substring(_experimentIdOrName, 1, _charPos - 1), null::int);
 
-                        Else
-                            -- No colon (or the first character is a colon)
-                            -- First try to match experiment ID
-                            _experimentId := public.try_cast(_experimentIdOrName, null::int);
-
-                            If _experimentId Is Null Then
-                                -- No match; try to match experiment name
-                                SELECT exp_id
-                                INTO _experimentId
-                                FROM t_experiments
-                                WHERE experiment = _experimentIdOrName
-                                --
-                                GET DIAGNOSTICS _matchCount = ROW_COUNT;
-
-                                If _matchCount = 0 Then
-                                    _message := format('Experiment not found for channel %s: %s', _channelNum, _experimentIdOrName);
-                                    RAISE EXCEPTION '%', _message;
-                                End If;
-                            End If;
+                        If _experimentId Is Null Then
+                            _message := format('Could not parse out the experiment ID from "%s" for channel %s',
+                                                Substring(_experimentIdOrName, 1, _charPos - 1), _channelNum);
+                            RAISE EXCEPTION '%', _message;
                         End If;
 
-                        If If Coalesce(_channelTypeName, '') = '' Then
-                            _channelTypeId := 1;
-                        Else
-                            SELECT channel_type_id
-                            INTO _channelTypeId
-                            FROM t_experiment_plex_channel_type_name
-                            WHERE channel_type_name = _channelTypeName;
+                    Else
+                        -- No colon (or the first character is a colon)
+                        -- First try to match experiment ID
+                        _experimentId := public.try_cast(_experimentIdOrName, null::int);
 
-                            If Not FOUND Then
-                                _message := format('Invalid channel type %s for channel %s; valid values: ',
-                                                   _channelTypeName, _channelNum);
+                        If _experimentId Is Null Then
+                            -- No match; try to match experiment name
+                            SELECT exp_id
+                            INTO _experimentId
+                            FROM t_experiments
+                            WHERE experiment = _experimentIdOrName::citext;
+                            --
+                            GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-                                SELECT string_agg(channel_type_name, ', ' ORDER BY channel_type_name)
-                                INTO _validValues
-                                FROM t_experiment_plex_channel_type_name;
-
-                                _message := format('%s%s', _message, _validValues);
-
+                            If _matchCount = 0 Then
+                                _message := format('Experiment not found for channel %s: %s', _channelNum, _experimentIdOrName);
                                 RAISE EXCEPTION '%', _message;
                             End If;
                         End If;
+                    End If;
 
-                        If Coalesce(_experimentId, 0) > 0 Then
-                            INSERT INTO Tmp_Experiment_Plex_Members (Channel, Exp_ID, Channel_Type_ID, Comment, ValidExperiment)
-                            VALUES (_channelNum, _experimentId, _channelTypeId, _plexMemberComment, 0)
+                    _channelTypeName := Trim(Coalesce(_channelTypeName, ''));
+
+                    If _channelTypeName = '' Then
+                        _channelTypeId := 1;
+                    Else
+                        SELECT channel_type_id
+                        INTO _channelTypeId
+                        FROM t_experiment_plex_channel_type_name
+                        WHERE channel_type_name = _channelTypeName;
+
+                        If Not FOUND Then
+                            _message := format('Invalid channel type %s for channel %s; valid values:',
+                                               _channelTypeName, _channelNum);
+
+                            SELECT string_agg(channel_type_name, ', ' ORDER BY channel_type_name)
+                            INTO _validValues
+                            FROM t_experiment_plex_channel_type_name;
+
+                            _message := format('%s %s', _message, _validValues);
+
+                            RAISE EXCEPTION '%', _message;
                         End If;
+                    End If;
 
+                    If Coalesce(_experimentId, 0) > 0 Then
+                        INSERT INTO Tmp_Experiment_Plex_Members (Channel, Exp_ID, Channel_Type_ID, Comment, ValidExperiment)
+                        VALUES (_channelNum, _experimentId, _channelTypeId, _plexMemberComment, false);
                     End If;
 
                 End If;
 
-                _channelNum := _channelNum + 1;
             END LOOP;
 
         End If;
 
         ---------------------------------------------------
-        -- Update the cached actual chanel count
+        -- Update the cached actual channel count
         ---------------------------------------------------
 
         SELECT COUNT(Channel)
@@ -691,30 +650,29 @@ BEGIN
         ---------------------------------------------------
 
         UPDATE Tmp_Experiment_Plex_Members PlexMembers
-        SET ValidExperiment = 1
+        SET ValidExperiment = true
         FROM t_experiments E
         WHERE PlexMembers.exp_id = E.exp_id;
 
         SELECT COUNT(ValidExperiment)
         INTO _invalidExperimentCount
         FROM Tmp_Experiment_Plex_Members
-        WHERE ValidExperiment = 0;
+        WHERE Not ValidExperiment;
 
         If Coalesce(_invalidExperimentCount, 0) > 0 Then
             If _invalidExperimentCount = 1 Then
-                SELECT format('Invalid Experiment ID: %s', Exp_ID)
+                SELECT format('Invalid experiment ID: %s', Exp_ID)
                 INTO _message
                 FROM Tmp_Experiment_Plex_Members
-                WHERE ValidExperiment = 0;
+                WHERE Not ValidExperiment
+                LIMIT 1;
             Else
-                _message := 'Invalid Experiment IDs: ';
-
                 SELECT string_agg(Exp_ID::text, ',' ORDER BY Exp_ID)
                 INTO _message
                 FROM Tmp_Experiment_Plex_Members
-                WHERE ValidExperiment = 0;
+                WHERE Not ValidExperiment;
 
-                _message := format('Invalid Experiment IDs: %s', _message);
+                _message := format('Invalid experiment IDs: %s', _message);
             End If;
 
             RAISE EXCEPTION '%', _message;
@@ -735,6 +693,8 @@ BEGIN
             CREATE TEMP TABLE Tmp_ExperimentsToUpdate (plexExperimentId int Not Null);
 
             CREATE INDEX IX_Tmp_ExperimentsToUpdate On Tmp_ExperimentsToUpdate (plexExperimentId);
+
+            _dropExperimentsTable := true;
 
             INSERT INTO Tmp_ExperimentsToUpdate (plexExperimentId )
             VALUES (_plexExperimentId);
@@ -778,12 +738,9 @@ BEGIN
             -- delete rows in the target table that aren't in the source table
             ---------------------------------------------------
 
-            _currentPlexExperimentId := 0;
-
             FOR _currentPlexExperimentId IN
                 SELECT plexExperimentId
                 FROM Tmp_ExperimentsToUpdate
-                WHERE plexExperimentId > _currentPlexExperimentId
                 ORDER BY plexExperimentId
             LOOP
                 If _expIdList = '' Then
@@ -793,14 +750,13 @@ BEGIN
                 End If;
 
                 If _mode = 'preview' Then
-                    _updatedRows := 0;
 
                     SELECT COUNT(t.plex_exp_id)
                     INTO _updatedRows
                     FROM t_experiment_plex_members t
                          INNER JOIN Tmp_Experiment_Plex_Members s
                            ON t.channel = s.channel
-                    WHERE t.plex_exp_id = _currentPlexExperimentId
+                    WHERE t.plex_exp_id = _currentPlexExperimentId;
 
                     If _updatedRows = _actualChannelCount Then
                         _actionMessage := format('Would update %s channels for Exp_ID %s', _updatedRows, _currentPlexExperimentId);
@@ -813,52 +769,52 @@ BEGIN
                     INSERT INTO Tmp_DatabaseUpdates (Message)
                     VALUES (_actionMessage);
 
-                Else
+                    CONTINUE;
+                End If;
 
-                    MERGE INTO t_experiment_plex_members AS t
-                    USING ( SELECT channel, exp_id, channel_type_id, Comment
-                            FROM Tmp_Experiment_Plex_Members
-                          ) AS s
-                    ON (t.channel = s.channel AND t.plex_exp_id = _currentPlexExperimentId)
-                    WHEN MATCHED AND
-                         (t.exp_id <> s.exp_id OR
-                          t.channel_type_id <> s.channel_type_id OR
-                          t.comment IS DISTINCT FROM s.comment) THEN
-                        UPDATE SET
-                            exp_id = s.exp_id,
-                            channel_type_id = s.channel_type_id,
-                            comment = s.comment
-                    WHEN NOT MATCHED THEN
-                        INSERT (plex_exp_id,
-                                channel,
-                                exp_id,
-                                Channel_Type_ID,
-                                Comment)
-                        VALUES (_currentPlexExperimentId,
-                                s.channel,
-                                s.exp_id,
-                                s.channel_type_id,
-                                s.Comment);
+                MERGE INTO t_experiment_plex_members AS t
+                USING ( SELECT channel, exp_id, channel_type_id, Comment
+                        FROM Tmp_Experiment_Plex_Members
+                      ) AS s
+                ON (t.channel = s.channel AND t.plex_exp_id = _currentPlexExperimentId)
+                WHEN MATCHED AND
+                     (t.exp_id <> s.exp_id OR
+                      t.channel_type_id <> s.channel_type_id OR
+                      t.comment IS DISTINCT FROM s.comment) THEN
+                    UPDATE SET
+                        exp_id = s.exp_id,
+                        channel_type_id = s.channel_type_id,
+                        comment = s.comment
+                WHEN NOT MATCHED THEN
+                    INSERT (plex_exp_id,
+                            channel,
+                            exp_id,
+                            channel_type_id,
+                            comment)
+                    VALUES (_currentPlexExperimentId,
+                            s.channel,
+                            s.exp_id,
+                            s.channel_type_id,
+                            s.comment);
 
-                    -- Delete rows in the target table that aren't in the source table
-                    DELETE FROM t_experiment_plex_members
-                    WHERE t.plex_exp_id = _currentPlexExperimentId AND
-                          NOT t.channel IN (SELECT channel FROM Tmp_Experiment_Plex_Members);
+                -- Delete rows in the target table that aren't in the source table
+                DELETE FROM t_experiment_plex_members t
+                WHERE t.plex_exp_id = _currentPlexExperimentId AND
+                      NOT t.channel IN (SELECT channel FROM Tmp_Experiment_Plex_Members);
 
-                    If Trim(Coalesce(_callingUser, '')) <> '' Then
-                        -- Call public.alter_entered_by_user to alter the entered_by field in t_experiment_plex_members_history
+                If _callingUser <> '' Then
+                    -- Call public.alter_entered_by_user to alter the entered_by field in t_experiment_plex_members_history
 
-                        CALL public.alter_entered_by_user ('public', 't_experiment_plex_members_history', 'plex_exp_id', _currentPlexExperimentId, _callingUser, _message => _alterEnteredByMessage);
-                    End If;
+                    CALL public.alter_entered_by_user ('public', 't_experiment_plex_members_history', 'plex_exp_id', _currentPlexExperimentId, _callingUser, _message => _alterEnteredByMessage);
                 End If;
 
             END LOOP;
 
             If _mode = 'add' Then
                 If _expIdList Like '%,%' Then
-                    _message := format('Defined experiment plex members for Exp_IDs: %s', _expIdList);
+                    _message := format('Defined experiment plex members for Plex Experiment IDs: %s', _expIdList);
                 Else
-                    _message := format('Defined experiment plex members for Plex Exp ID %s', _plexExperimentIdOrName);
+                    _message := format('Defined experiment plex members for Plex Experiment ID %s', _plexExperimentIdOrName);
                 End If;
             ElsIf _mode = 'preview' Then
                 SELECT COUNT(*)
@@ -885,26 +841,28 @@ BEGIN
 
                     If _targetAddCount = _targetPlexExperimentCount Then
                         -- Adding plex members for all of the target experiments
-                        _message := format('Would add %s channels for Exp_IDs %s', _actualChannelCount, _expIdList);
+                        _message := format('Would add %s channels for Experiment IDs %s', _actualChannelCount, _expIdList);
                     ElsIf _targetUpdateCount = _targetPlexExperimentCount Then
                         -- Updating plex members for all of the target experiments
-                        _message := format('Would update %s channels for Exp_IDs %s', _updatedRows, _expIdList);
+                        _message := format('Would update %s channels for Experiment IDs %s', _updatedRows, _expIdList);
                     Else
                         -- Mix of adding and updating plex members
 
                         -- Append the message for the next 6 experiments
 
-                        _entryId := 2;
-                        While _entryID <= _targetPlexExperimentCount And _entryID <= 7
+                        FOR _entryId IN 2 .. 7
                         LOOP
+                            If _entryID > _targetPlexExperimentCount Then
+                                -- Break out of the for loop
+                                EXIT;
+                            End If;
+
                             SELECT Message
                             INTO _msg
                             FROM Tmp_DatabaseUpdates
-                            WHERE ID = _entryID
+                            WHERE ID = _entryID;
 
-                            _message := format('%s, %s', _message, Replace(_msg, 'Would', 'would'));
-
-                            _entryID := _entryID + 1;
+                            _message := format('%s, %s', _message, Replace(_msg, 'Would ', 'would '));
                         END LOOP;
 
                         If _targetPlexExperimentCount > 7 Then
@@ -914,13 +872,31 @@ BEGIN
                             ORDER BY ID DESC
                             LIMIT 1;
 
-                            _message := format('%s ... %s', _message, Replace(_msg, 'Would', 'would'));
+                            _message := format('%s ... %s', _message, Replace(_msg, 'Would ', 'would '));
                         End If;
                     End If;
                 End If;
             End If;
 
         End If;
+
+        DROP TABLE Tmp_Experiment_Plex_Members;
+        DROP TABLE Tmp_DatabaseUpdates;
+
+        If _dropChannelDataTables Then
+            DROP TABLE Tmp_RowData;
+            DROP TABLE Tmp_ColData;
+        End If;
+
+        If _dropPlexMembersTable Then
+            DROP TABLE Tmp_Experiment_Plex_Members_From_Params;
+        End If;
+
+        If _dropExperimentsTable Then
+            DROP TABLE Tmp_ExperimentsToUpdate;
+        End If;
+
+        RETURN;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -954,4 +930,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_experiment_plex_members IS 'AddUpdateExperimentPlexMembers';
+
+ALTER PROCEDURE public.add_update_experiment_plex_members(INOUT _plexexperimentidorname text, IN _plexmembers text, IN _expidchannel1 text, IN _expidchannel2 text, IN _expidchannel3 text, IN _expidchannel4 text, IN _expidchannel5 text, IN _expidchannel6 text, IN _expidchannel7 text, IN _expidchannel8 text, IN _expidchannel9 text, IN _expidchannel10 text, IN _expidchannel11 text, IN _expidchannel12 text, IN _expidchannel13 text, IN _expidchannel14 text, IN _expidchannel15 text, IN _expidchannel16 text, IN _expidchannel17 text, IN _expidchannel18 text, IN _channeltype1 text, IN _channeltype2 text, IN _channeltype3 text, IN _channeltype4 text, IN _channeltype5 text, IN _channeltype6 text, IN _channeltype7 text, IN _channeltype8 text, IN _channeltype9 text, IN _channeltype10 text, IN _channeltype11 text, IN _channeltype12 text, IN _channeltype13 text, IN _channeltype14 text, IN _channeltype15 text, IN _channeltype16 text, IN _channeltype17 text, IN _channeltype18 text, IN _comment1 text, IN _comment2 text, IN _comment3 text, IN _comment4 text, IN _comment5 text, IN _comment6 text, IN _comment7 text, IN _comment8 text, IN _comment9 text, IN _comment10 text, IN _comment11 text, IN _comment12 text, IN _comment13 text, IN _comment14 text, IN _comment15 text, IN _comment16 text, IN _comment17 text, IN _comment18 text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_experiment_plex_members(INOUT _plexexperimentidorname text, IN _plexmembers text, IN _expidchannel1 text, IN _expidchannel2 text, IN _expidchannel3 text, IN _expidchannel4 text, IN _expidchannel5 text, IN _expidchannel6 text, IN _expidchannel7 text, IN _expidchannel8 text, IN _expidchannel9 text, IN _expidchannel10 text, IN _expidchannel11 text, IN _expidchannel12 text, IN _expidchannel13 text, IN _expidchannel14 text, IN _expidchannel15 text, IN _expidchannel16 text, IN _expidchannel17 text, IN _expidchannel18 text, IN _channeltype1 text, IN _channeltype2 text, IN _channeltype3 text, IN _channeltype4 text, IN _channeltype5 text, IN _channeltype6 text, IN _channeltype7 text, IN _channeltype8 text, IN _channeltype9 text, IN _channeltype10 text, IN _channeltype11 text, IN _channeltype12 text, IN _channeltype13 text, IN _channeltype14 text, IN _channeltype15 text, IN _channeltype16 text, IN _channeltype17 text, IN _channeltype18 text, IN _comment1 text, IN _comment2 text, IN _comment3 text, IN _comment4 text, IN _comment5 text, IN _comment6 text, IN _comment7 text, IN _comment8 text, IN _comment9 text, IN _comment10 text, IN _comment11 text, IN _comment12 text, IN _comment13 text, IN _comment14 text, IN _comment15 text, IN _comment16 text, IN _comment17 text, IN _comment18 text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_experiment_plex_members(INOUT _plexexperimentidorname text, IN _plexmembers text, IN _expidchannel1 text, IN _expidchannel2 text, IN _expidchannel3 text, IN _expidchannel4 text, IN _expidchannel5 text, IN _expidchannel6 text, IN _expidchannel7 text, IN _expidchannel8 text, IN _expidchannel9 text, IN _expidchannel10 text, IN _expidchannel11 text, IN _expidchannel12 text, IN _expidchannel13 text, IN _expidchannel14 text, IN _expidchannel15 text, IN _expidchannel16 text, IN _expidchannel17 text, IN _expidchannel18 text, IN _channeltype1 text, IN _channeltype2 text, IN _channeltype3 text, IN _channeltype4 text, IN _channeltype5 text, IN _channeltype6 text, IN _channeltype7 text, IN _channeltype8 text, IN _channeltype9 text, IN _channeltype10 text, IN _channeltype11 text, IN _channeltype12 text, IN _channeltype13 text, IN _channeltype14 text, IN _channeltype15 text, IN _channeltype16 text, IN _channeltype17 text, IN _channeltype18 text, IN _comment1 text, IN _comment2 text, IN _comment3 text, IN _comment4 text, IN _comment5 text, IN _comment6 text, IN _comment7 text, IN _comment8 text, IN _comment9 text, IN _comment10 text, IN _comment11 text, IN _comment12 text, IN _comment13 text, IN _comment14 text, IN _comment15 text, IN _comment16 text, IN _comment17 text, IN _comment18 text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateExperimentPlexMembers';
+
