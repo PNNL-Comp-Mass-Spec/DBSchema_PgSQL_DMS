@@ -1,19 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_eus_proposals
-(
-    _eusPropID text,
-    _eusPropStateID int,
-    _eusPropTitle text,
-    _eusPropImpDate text,
-    _eusUsersList text,
-    _eusProposalType text,
-    _autoSupersedeProposalID text,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_eus_proposals(text, integer, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_eus_proposals(IN _euspropid text, IN _euspropstateid integer, IN _eusproptitle text, IN _euspropimpdate text, IN _eususerslist text, IN _eusproposaltype text, IN _autosupersedeproposalid text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -25,7 +16,7 @@ AS $$
 **    _eusPropTitle             EUS Proposal Title (aka Project Title)
 **    _eusPropImpDate           Proposal Import Date
 **    _eusUsersList             Comma-separated list of EUS Users IDs associated with this proposal
-**    _eusProposalType          Proposal type
+**    _eusProposalType          Proposal type; see table t_eus_proposal_type
 **    _autoSupersedeProposalID  EUS Proposal ID to supersede this EUS proposal with if this proposal is closed
 **    _mode                     Mode: 'add' or 'update'
 **    _message                  Status message
@@ -42,7 +33,8 @@ AS $$
 **                         - Rename _eusPropState to _eusPropStateID and make it an int instead of varchar
 **                         - Add Try/Catch error handling
 **                         - Fix merge query bug
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/08/2024 mem - Update column last_affected
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -52,10 +44,10 @@ DECLARE
     _authorized boolean;
 
     _existingCount int := 0;
-    _msg text;
     _logErrors boolean := true;
     _tempEUSPropID text := '0';
     _proposalUserStateID int;
+    _proposalImportdate timestamp;
 
     _sqlState text;
     _exceptionMessage text;
@@ -91,47 +83,58 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _eusPropID      := Trim(Coalesce(_eusPropID, ''));
-        _eusPropTitle   := Trim(Coalesce(_eusPropTitle, ''));
-        _eusPropImpDate := Trim(Coalesce(_eusPropImpDate, ''));
-        _eusUsersList   := Trim(Coalesce(_eusUsersList, ''));
-        _mode           := Trim(Lower(Coalesce(_mode, '')));
+        _eusPropID               := Trim(Coalesce(_eusPropID, ''));
+        _eusPropTitle            := Trim(Coalesce(_eusPropTitle, ''));
+        _eusPropImpDate          := Trim(Coalesce(_eusPropImpDate, ''));
+        _eusUsersList            := Trim(Coalesce(_eusUsersList, ''));
+        _eusProposalType         := Trim(Coalesce(_eusProposalType, ''));
+        _autoSupersedeProposalID := Trim(Coalesce(_autoSupersedeProposalID, ''));
+        _mode                    := Trim(Lower(Coalesce(_mode, '')));
 
         If _eusPropID = '' Then
             _logErrors := false;
-            _msg := 'EUS Proposal ID must be specified';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'EUS Proposal ID must be specified';
         End If;
 
         If _eusPropStateID Is Null Then
             _logErrors := false;
-            _msg := 'EUS Proposal State cannot be null';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'EUS Proposal State cannot be null';
         End If;
 
-        _eusPropStateID := Trim(Coalesce(_eusPropStateID, ''));
+        If Not Exists (SELECT state_name FROM t_eus_proposal_state_name WHERE state_id = _eusPropStateID) Then
+            _logErrors := false;
+            RAISE EXCEPTION 'Invalid EUS proposal state: %', _eusPropStateID;
+        End If;
 
         If _eusPropTitle = '' Then
             _logErrors := false;
-            _msg := 'EUS Proposal Title must be specified';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'EUS proposal title must be specified';
         End If;
 
         If _eusPropImpDate = '' Then
             _eusPropImpDate := public.timestamp_text(CURRENT_TIMESTAMP);
         End If;
 
-        -- IsDate() equivalent
-        If public.try_cast(_eusPropImpDate, null::timestamp) Is Null Then
+        _proposalImportdate := public.try_cast(_eusPropImpDate, null::timestamp);
+
+        If _proposalImportdate Is Null Then
             _logErrors := false;
-            _msg := 'EUS Proposal Import Date was not specified or is an invalid date';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'EUS proposal import date was not specified or is an invalid date';
         End If;
 
         If _eusPropStateID = 2 And _eusUsersList = '' Then
             _logErrors := false;
-            _msg := 'An "Active" EUS Proposal must have at least 1 associated EMSL User';
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'An "Active" EUS proposal must have at least 1 associated EUS User';
+        End If;
+
+        If _eusProposalType = '' Then
+            _logErrors := false;
+            RAISE EXCEPTION 'EUS proposal type must be specified';
+        End If;
+
+        If Not Exists (SELECT proposal_type FROM t_eus_proposal_type WHERE proposal_type = _eusProposalType::citext) Then
+            _logErrors := false;
+            RAISE EXCEPTION 'Invalid EUS proposal type: %', _eusProposalType;
         End If;
 
         ---------------------------------------------------
@@ -141,7 +144,7 @@ BEGIN
         SELECT proposal_id
         INTO _tempEUSPropID
         FROM t_eus_proposals
-        WHERE proposal_id = _eusPropID;
+        WHERE proposal_id = _eusPropID::citext;
         --
         GET DIAGNOSTICS _existingCount = ROW_COUNT;
 
@@ -149,31 +152,27 @@ BEGIN
 
         If _mode = 'add' And _existingCount > 0 Then
             _logErrors := false;
-            _msg := format('Cannot add: EUS proposal ID "%s" already exists', _eusPropID);
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Cannot add: EUS proposal ID "%" already exists', _eusPropID;
         End If;
 
         -- Cannot update a non-existent entry
 
         If _mode = 'update' And _existingCount = 0 Then
             _logErrors := false;
-            _msg := format('Cannot update: EUS proposal ID "%s" does not exist', _eusPropID);
-            RAISE EXCEPTION '%', _msg;
+            RAISE EXCEPTION 'Cannot update: EUS proposal ID "%" does not exist', _eusPropID;
         End If;
 
-        If char_length(Coalesce(_autoSupersedeProposalID, '')) > 0 Then
+        If _autoSupersedeProposalID <> '' Then
             -- Verify that _autoSupersedeProposalID exists
 
-            If Not Exists (SELECT proposal_id FROM t_eus_proposals WHERE proposal_id = _autoSupersedeProposalID) Then
+            If Not Exists (SELECT proposal_id FROM t_eus_proposals WHERE proposal_id = _autoSupersedeProposalID::citext) Then
                 _logErrors := false;
-                _msg := format('Cannot supersede proposal "%s" with "%s" since the new proposal does not exist', _eusPropID, _autoSupersedeProposalID);
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Cannot supersede proposal "%" with "%" since the new proposal does not exist', _eusPropID, _autoSupersedeProposalID;
             End If;
 
-            If Trim(_autoSupersedeProposalID) = Trim(_eusPropID)) Then
+            If _autoSupersedeProposalID::citext = _eusPropID::citext Then
                 _logErrors := false;
-                _msg := format('Cannot supersede proposal "%s" with itself', _eusPropID);
-                RAISE EXCEPTION '%', _msg;
+                RAISE EXCEPTION 'Cannot supersede proposal "%" with itself', _eusPropID;
             End If;
         End If;
 
@@ -185,7 +184,7 @@ BEGIN
 
             INSERT INTO t_eus_proposals (
                 proposal_id,
-                'title',
+                title,
                 state_id,
                 import_date,
                 proposal_type,
@@ -194,12 +193,12 @@ BEGIN
                 _eusPropID,
                 _eusPropTitle,
                 _eusPropStateID,
-                _eusPropImpDate,
+                _proposalImportdate,
                 _eusProposalType,
                 _autoSupersedeProposalID
             );
 
-        End If; -- add mode
+        End If;
 
         ---------------------------------------------------
         -- Action for update mode
@@ -208,15 +207,15 @@ BEGIN
         If _mode = 'update' Then
 
             UPDATE t_eus_proposals
-            SET
-                'title' = _eusPropTitle,
-                state_id = _eusPropStateID,
-                import_date = _eusPropImpDate,
-                proposal_type = _eusProposalType,
-                proposal_id_auto_supersede = _autoSupersedeProposalID
-            WHERE proposal_id = _eusPropID;
+            SET title                      = _eusPropTitle,
+                state_id                   = _eusPropStateID,
+                import_date                = _proposalImportdate,
+                proposal_type              = _eusProposalType,
+                proposal_id_auto_supersede = _autoSupersedeProposalID,
+                last_affected              = CURRENT_TIMESTAMP
+            WHERE proposal_id = _eusPropID::citext;
 
-        End If; -- update mode
+        End If;
 
         ---------------------------------------------------
         -- Associate users in _eusUsersList with the proposal
@@ -236,8 +235,7 @@ BEGIN
                ON SourceQ.EUS_Person_ID = t_eus_users.person_id;
 
         ---------------------------------------------------
-        -- Add associations between proposal and users
-        -- who are in list, but not in association table
+        -- Add associations between proposal and users who are in list, but not in association table
         ---------------------------------------------------
 
         If _eusPropStateID In (1, 2) Then
@@ -247,7 +245,7 @@ BEGIN
         End If;
 
         MERGE INTO t_eus_proposal_users AS target
-        USING ( SELECT _eusPropID AS Proposal_ID,
+        USING ( SELECT _eusPropID::citext AS Proposal_ID,
                        person_id,
                        'Y' AS Of_DMS_Interest
                 FROM Tmp_EUS_Users
@@ -271,17 +269,21 @@ BEGIN
                     CURRENT_TIMESTAMP);
 
         -- Update rows in t_eus_proposal_users where proposal_id is _eusPropID but the user is not in Tmp_EUS_Users
-        -- If state_id is not 4, set the user's state to 5 and update Last_Affected
+        -- If state_id is not 4, set the user's state to 5 and update last_affected
 
         UPDATE t_eus_proposal_users target
-        SET State_ID = 5,
-            Last_Affected = CURRENT_TIMESTAMP
+        SET state_id = 5,
+            last_affected = CURRENT_TIMESTAMP
         WHERE target.proposal_id = _eusPropID AND
               NOT Coalesce(target.state_id, 0) IN (4) AND
               NOT EXISTS (SELECT U.person_id
                           FROM Tmp_EUS_Users U
-                          WHERE target.proposal_id = U.proposal_id AND
+                          WHERE target.proposal_id = _eusPropID::citext AND
                                 target.person_id = U.person_id);
+
+        DROP TABLE Tmp_EUS_Users;
+        RETURN;
+
     EXCEPTION
         WHEN OTHERS THEN
             GET STACKED DIAGNOSTICS
@@ -307,4 +309,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_eus_proposals IS 'AddUpdateEUSProposals';
+
+ALTER PROCEDURE public.add_update_eus_proposals(IN _euspropid text, IN _euspropstateid integer, IN _eusproptitle text, IN _euspropimpdate text, IN _eususerslist text, IN _eusproposaltype text, IN _autosupersedeproposalid text, IN _mode text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_eus_proposals(IN _euspropid text, IN _euspropstateid integer, IN _eusproptitle text, IN _euspropimpdate text, IN _eususerslist text, IN _eusproposaltype text, IN _autosupersedeproposalid text, IN _mode text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_eus_proposals(IN _euspropid text, IN _euspropstateid integer, IN _eusproptitle text, IN _euspropimpdate text, IN _eususerslist text, IN _eusproposaltype text, IN _autosupersedeproposalid text, IN _mode text, INOUT _message text, INOUT _returncode text) IS 'AddUpdateEUSProposals';
+
