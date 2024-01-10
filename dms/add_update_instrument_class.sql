@@ -1,17 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_instrument_class
-(
-    _instrumentClass text,
-    _isPurgeable int,
-    _rawDataType text,
-    _params text,
-    _comment text,
-    _mode text = 'update',
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_instrument_class(text, integer, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_instrument_class(IN _instrumentclass text, IN _ispurgeable integer, IN _rawdatatype text, IN _params text, IN _comment text, IN _mode text DEFAULT 'update'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -55,7 +48,7 @@ AS $$
 **          12/06/2018 mem - Add try/catch handling and disallow _mode = 'add'
 **          02/01/2023 mem - Rename argument to _isPurgeable and switch from text to int
 **                         - Remove argument _requiresPreparation
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/09/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -105,25 +98,40 @@ BEGIN
         _instrumentClass := Trim(Coalesce(_instrumentClass, ''));
         _rawDataType     := Trim(Coalesce(_rawDataType, ''));
         _params          := Trim(Coalesce(_params, ''));
+        _comment         := Trim(Coalesce(_comment, ''));
         _mode            := Trim(Lower(Coalesce(_mode, '')));
 
         If _instrumentClass = '' Then
-            RAISE EXCEPTION 'Instrument Class Name must be specified' USING ERRCODE = 'U5201';
+            RAISE EXCEPTION 'Instrument class name must be specified' USING ERRCODE = 'U5201';
+        End If;
+
+        If Not Exists (SELECT instrument_class FROM t_instrument_class WHERE instrument_class = _instrumentClass::citext) Then
+            RAISE EXCEPTION 'Unrecognized instrument class: %', _instrumentClass USING ERRCODE = 'U5202';
         End If;
 
         If _isPurgeable Is Null Then
-            RAISE EXCEPTION 'Is Purgeable cannot be null' USING ERRCODE = 'U5202';
+            RAISE EXCEPTION 'Is purgeable cannot be null' USING ERRCODE = 'U5203';
+        End If;
+
+        If Not _isPurgeable In (0, 1) Then
+            RAISE EXCEPTION 'Is purgeable should be 0 or 1' USING ERRCODE = 'U5204';
         End If;
 
         If _rawDataType = '' Then
-            RAISE EXCEPTION 'Raw Data Type must be specified' USING ERRCODE = 'U5203';
+            RAISE EXCEPTION 'Raw data type must be specified' USING ERRCODE = 'U5205';
+        End If;
+
+        If Not Exists (SELECT raw_data_type_id FROM t_instrument_data_type_name WHERE raw_data_type_name = _rawDataType) Then
+            RAISE EXCEPTION 'Unrecognized raw data type: %', _rawDataType USING ERRCODE = 'U5206';
         End If;
 
         If _params <> '' Then
             _xmlParams := public.try_cast(_params, null::XML);
             If _xmlParams Is Null Then
-                RAISE EXCEPTION 'Could not convert Params to XML' USING ERRCODE = 'U5205';
+                RAISE EXCEPTION 'Could not convert params to XML' USING ERRCODE = 'U5207';
             End If;
+        Else
+            _params := null;
         End If;
 
         ---------------------------------------------------
@@ -131,7 +139,7 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-            RAISE EXCEPTION 'The "add" instrument class mode is disabled for this page; instead directly edit table t_instrument_class' USING ERRCODE = 'U5206';
+            RAISE EXCEPTION 'The "add" instrument class mode is disabled for this page; instead directly edit table t_instrument_class' USING ERRCODE = 'U5208';
         End If;
 
         ---------------------------------------------------
@@ -142,12 +150,11 @@ BEGIN
             _logErrors := true;
 
             UPDATE t_instrument_class
-            SET
-                is_purgeable = _isPurgeable,
+            SET is_purgeable  = _isPurgeable,
                 raw_data_type = _rawDataType,
-                params = _xmlParams,
-                comment = _comment
-            WHERE (instrument_class = _instrumentClass)
+                params        = _xmlParams,
+                comment       = _comment
+            WHERE instrument_class = _instrumentClass::citext;
 
         End If;
 
@@ -160,7 +167,11 @@ BEGIN
                 _exceptionContext = pg_exception_context;
 
         If _logErrors Then
-            _logMessage := format('%s; Instrument Class %s', _exceptionMessage, _instrumentClass);
+            If Coalesce(_instrumentClass, '') = '' Then
+                _logMessage := _exceptionMessage;
+            Else
+                _logMessage := format('%s; Instrument Class %s', _exceptionMessage, _instrumentClass);
+            End If;
 
             _message := local_error_handler (
                             _sqlState, _logMessage, _exceptionDetail, _exceptionContext,
@@ -177,4 +188,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_instrument_class IS 'AddUpdateInstrumentClass';
+
+ALTER PROCEDURE public.add_update_instrument_class(IN _instrumentclass text, IN _ispurgeable integer, IN _rawdatatype text, IN _params text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_instrument_class(IN _instrumentclass text, IN _ispurgeable integer, IN _rawdatatype text, IN _params text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_instrument_class(IN _instrumentclass text, IN _ispurgeable integer, IN _rawdatatype text, IN _params text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text) IS 'AddUpdateInstrumentClass';
+

@@ -1,21 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_file_attachment
-(
-    _id int,
-    _fileName text,
-    _description text,
-    _entityType text,
-    _entityID text,
-    _fileSizeBytes text,
-    _archiveFolderPath text,
-    _fileMimeType text,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_file_attachment(integer, text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_file_attachment(IN _id integer, IN _filename text, IN _description text, IN _entitytype text, IN _entityid text, IN _filesizekb text, IN _archivefolderpath text, IN _filemimetype text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -29,8 +18,8 @@ AS $$
 **    _fileName             File name
 **    _description          Description
 **    _entityType           Page family name: 'campaign', 'experiment', 'sample_prep_request', 'lc_cart_configuration', etc.
-**    _entityID             Must be data type text since Experiment, Campaign, Biomaterial, and Material Container file attachments are tracked via Experiment Name, Campaign Name, etc.
-**    _fileSizeBytes        This file size is actually in KB
+**    _entityID             Data type must be text since Experiment, Campaign, Biomaterial, and Material Container file attachments are tracked via Experiment Name, Campaign Name, etc.
+**    _fileSizeKB           File size, in kilobytes
 **    _archiveFolderPath    This path is constructed when File_attachment.php or Experiment_File_attachment.php calls function Get_File_Attachment_Path() in this database
 **    _fileMimeType         MIME type
 **    _mode                 Mode: 'add' or 'update'
@@ -49,7 +38,8 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          06/11/2021 mem - Store integers in Entity_ID_Value
 **          03/27/2022 mem - Assure that Active is 1 when updating an existing file attachment
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/09/2024 mem - Rename file size parameter to @fileSizeKB
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -58,9 +48,11 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
+    _logErrors boolean := false;
     _attachmentID int;
 
     _sqlState text;
+    _logMessage text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
@@ -94,13 +86,52 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _mode := Trim(Lower(Coalesce(_mode, '')));
+        _fileName          := Trim(Coalesce(_fileName, ''));
+        _description       := Trim(Coalesce(_description, ''));
+        _entityType        := Trim(Coalesce(_entityType, ''));
+        _entityID          := Trim(Coalesce(_entityID, ''));
+        _fileSizeKB        := Trim(Coalesce(_fileSizeKB, ''));
+        _archiveFolderPath := Trim(Coalesce(_archiveFolderPath, ''));
+        _fileMimeType      := Trim(Coalesce(_fileMimeType, ''));
+        _callingUser       := Trim(Coalesce(_callingUser, ''));
+        _mode              := Trim(Lower(Coalesce(_mode, '')));
+
+        If Not _mode IN ('add', 'update') Then
+            RAISE EXCEPTION 'Mode should be add or update, not "%"', _mode;
+        End If;
+
+        If _fileName = '' Then
+            RAISE EXCEPTION 'Cannot %: filename must be defined', _mode;
+        End If;
+
+        If _entityType = '' Then
+            RAISE EXCEPTION 'Cannot %: entity type must be defined', _mode;
+        End If;
+
+        If _entityID = '' Then
+            RAISE EXCEPTION 'Cannot %: entity ID must be defined', _mode;
+        End If;
+
+        If _fileSizeKB = '' Then
+            RAISE EXCEPTION 'Cannot %: file size must be defined', _mode;
+        End If;
+
+        If _callingUser = '' Then
+            _callingUser = SESSION_USER;
+        End If;
+
+        _logErrors := true;
 
         ---------------------------------------------------
         -- Is entry already in database? (only applies to updates)
         ---------------------------------------------------
 
         If _mode = 'update' Then
+
+            If _id Is Null Then
+                _logErrors := false;
+                RAISE EXCEPTION 'Cannot update: attachment ID cannot be null';
+            End If;
 
             SELECT attachment_id
             INTO _attachmentID
@@ -114,16 +145,16 @@ BEGIN
         End If;
 
         If _mode = 'add' Then
-            -- When a file attachment is deleted the database record is not deleted
+            -- When a file attachment is deleted, the database record is not deleted
             -- Instead, Active is set to 0
-            -- If a user re-attaches a 'deleted' file to an entity, we need to use 'update' for the _mode
+            -- If a user re-attaches a 'deleted' file to an entity, we need to use 'update' for _mode
 
             SELECT attachment_id
             INTO _attachmentID
             FROM t_file_attachment
-            WHERE entity_type = _entityType AND
-                  entity_id = _entityID AND
-                  file_name = _fileName;
+            WHERE entity_type = _entityType::citext AND
+                  entity_id   = _entityID::citext AND
+                  file_name   = _fileName::citext;
 
             If FOUND Then
                 _mode := 'update';
@@ -143,21 +174,21 @@ BEGIN
                 entity_id,
                 entity_id_value,
                 owner_username,
-                file_size_bytes,
+                file_size_kb,
                 archive_folder_path,
                 file_mime_type,
-                active)
-            VALUES (
+                active
+            ) VALUES (
                 _fileName,
-                Coalesce(_description, ''),
+                _description,
                 _entityType,
                 _entityID,
-                Case When _entityType::citext In ('campaign', 'cell_culture', 'biomaterial', 'experiment', 'material_container')
-                     Then Null
-                     Else public.try_cast(_entityID, null::int)
-                End
+                CASE WHEN _entityType::citext In ('campaign', 'cell_culture', 'biomaterial', 'experiment', 'material_container')
+                     THEN Null
+                     ELSE public.try_cast(_entityID, null::int)
+                END,
                 _callingUser,
-                _fileSizeBytes,
+                _fileSizeKB,
                 _archiveFolderPath,
                 _fileMimeType,
                 1
@@ -174,20 +205,21 @@ BEGIN
         If _mode = 'update' Then
 
             UPDATE t_file_attachment
-            Set description = Coalesce(_description, ''),
-                entity_type = _entityType,
-                entity_id = _entityID,
+            SET description     = _description,
+                entity_type     = _entityType,
+                entity_id       = _entityID,
                 entity_id_value =
-                    Case When _entityType::citext In ('campaign', 'cell_culture', 'biomaterial', 'experiment', 'material_container')
-                         Then Null
-                         Else public.try_cast(_entityID, null::int)
-                    End
-                File_Size_Bytes = _fileSizeBytes,
-                Last_Affected = CURRENT_TIMESTAMP,
+                    CASE WHEN _entityType::citext In ('campaign', 'cell_culture', 'biomaterial', 'experiment', 'material_container')
+                         THEN Null
+                         ELSE public.try_cast(_entityID, null::int)
+                    End,
+                owner_username      = _callingUser,
+                file_size_kb        = _fileSizeKB,
+                Last_Affected       = CURRENT_TIMESTAMP,
                 Archive_Folder_Path = _archiveFolderPath,
-                File_Mime_Type = _fileMimeType,
-                Active = 1
-            WHERE ID = _id;
+                File_Mime_Type      = _fileMimeType,
+                Active              = 1
+            WHERE attachment_id = _id;
 
         End If;
 
@@ -199,11 +231,15 @@ BEGIN
                 _exceptionDetail  = pg_exception_detail,
                 _exceptionContext = pg_exception_context;
 
-        _logMessage := format('%s; Attachment ID %s', _exceptionMessage, _id);
+        If _id Is Null Then
+            _logMessage := _exceptionMessage;
+        Else
+            _logMessage := format('%s; Attachment ID %s', _exceptionMessage, _id);
+        End If;
 
         _message := local_error_handler (
                         _sqlState, _logMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => '', _logError => true);
+                        _callingProcLocation => '', _logError => _logErrors);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
@@ -212,4 +248,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_file_attachment IS 'AddUpdateFileAttachment';
+
+ALTER PROCEDURE public.add_update_file_attachment(IN _id integer, IN _filename text, IN _description text, IN _entitytype text, IN _entityid text, IN _filesizekb text, IN _archivefolderpath text, IN _filemimetype text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_file_attachment(IN _id integer, IN _filename text, IN _description text, IN _entitytype text, IN _entityid text, IN _filesizekb text, IN _archivefolderpath text, IN _filemimetype text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_file_attachment(IN _id integer, IN _filename text, IN _description text, IN _entitytype text, IN _entityid text, IN _filesizekb text, IN _archivefolderpath text, IN _filemimetype text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateFileAttachment';
+
