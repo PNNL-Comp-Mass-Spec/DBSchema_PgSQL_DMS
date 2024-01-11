@@ -21,6 +21,7 @@ SET row_security = off;
 --
 
 COPY public.t_dataset_type_name (dataset_type_id, dataset_type, description, active) FROM stdin;
+55	DIA-HMS-HCD-HMSn	High res MS with DIA HCD HMSn	1
 52	1D-C	NMR analysis	1
 51	1D-H	NMR analysis	1
 53	2D	NMR analysis	1

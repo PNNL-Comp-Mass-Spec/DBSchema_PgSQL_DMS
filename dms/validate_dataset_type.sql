@@ -42,6 +42,7 @@ CREATE OR REPLACE PROCEDURE public.validate_dataset_type(IN _datasetid integer, 
 **                         - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          01/10/2024 mem - Add support for DIA datasets
 **
 *****************************************************/
 DECLARE
@@ -55,6 +56,7 @@ DECLARE
     _newDSTypeID int;
     _hasIMS boolean := false;
     _requiredAction text := '';
+    _logMessage text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -119,6 +121,7 @@ BEGIN
            SUM(CASE WHEN Scan_Type LIKE '%EThcD-MSn'  Then scan_count Else 0 End) AS ActualCountEThcDMSn,
            SUM(CASE WHEN Scan_Type LIKE '%EThcD-HMSn' Then scan_count Else 0 End) AS ActualCountEThcDHMSn,
 
+           SUM(CASE WHEN Scan_Type LIKE 'DIA%' Then scan_count Else 0 End)                                                             AS ActualCountDIA,
            SUM(CASE WHEN Scan_Type LIKE '%SRM' Or Scan_Type LIKE '%MRM' OR Scan_Type SIMILAR TO 'Q[1-3]MS' Then scan_count Else 0 End) AS ActualCountMRM,
            SUM(CASE WHEN Scan_Type LIKE '%PQD%' Then scan_count Else 0 End)                                                            AS ActualCountPQD
     INTO _scanCounts
@@ -130,7 +133,7 @@ BEGIN
         RAISE INFO '';
         RAISE INFO 'Actual scan counts for % (Dataset ID %)', _dataset, _datasetID;
         RAISE INFO '%', format('      MS:  %6s,        HMS: %6s, GCMS: %6s', _scanCounts.ActualCountMS, _scanCounts.ActualCountHMS, _scanCounts.ActualCountGCMS);
-        RAISE INFO '%', format('      MRM: %6s,        PQD: %6s',            _scanCounts.ActualCountMRM, _scanCounts.ActualCountPQD);
+        RAISE INFO '%', format('      MRM: %6s,        PQD: %6s, DIA:  %6s', _scanCounts.ActualCountMRM, _scanCounts.ActualCountPQD, _scanCounts.ActualCountDIA);
         RAISE INFO '%', format('  Any MSn: %6s,   Any HMSn: %6s',            _scanCounts.ActualCountAnyMSn, _scanCounts.ActualCountAnyHMSn);
         RAISE INFO '%', format('  CID MSn: %6s,   CID HMSn: %6s',            _scanCounts.ActualCountCIDMSn, _scanCounts.ActualCountCIDHMSn);
         RAISE INFO '%', format('  ETD MSn: %6s,   ETD HMSn: %6s',            _scanCounts.ActualCountETDMSn, _scanCounts.ActualCountETDHMSn);
@@ -145,10 +148,10 @@ BEGIN
     -----------------------------------------------------------
 
     _datasetTypeAutoGen := '';
-    _newDatasetType := '';
-    _autoDefineDSType := false;
-    _warnMessage := '';
-    _requiredAction := '';
+    _newDatasetType     := '';
+    _autoDefineDSType   := false;
+    _warnMessage        := '';
+    _requiredAction     := '';
 
     If _scanCounts.ActualCountMRM > 0 Then
         -- Auto switch to MRM if not MRM or SRM
@@ -543,6 +546,11 @@ BEGIN
                 If _datasetTypeAutoGen = 'HMS-CID-MSn' Then
                     _datasetTypeAutoGen := 'HMS-MSn';
                 End If;
+
+                If _scanCounts.ActualCountDIA > 0 Then
+                    _datasetTypeAutoGen := format('DIA-%s', _datasetTypeAutoGen);
+                End If;
+
             End If;
 
         End If;
@@ -598,6 +606,11 @@ BEGIN
 
         If Not FOUND Then
             _message := format('Unrecognized dataset type based on actual scan types; need to auto-switch from %s to %s', _currentDatasetType, _newDatasetType);
+
+            If Not _infoOnly Then
+                _logMessage := format('%s for dataset ID %s (%s)', _message, _datasetID, _dataset);
+                CALL post_log_entry ('Error', _logMessage, 'validate_dataset_type', _duplicateEntryHoldoffHours => 1);
+            End If;
         Else
             If _newDatasetType = 'HMS' And _currentDatasetType = 'EI-HMS' Then
                 -- Leave the dataset type as 'EI-HMS'
