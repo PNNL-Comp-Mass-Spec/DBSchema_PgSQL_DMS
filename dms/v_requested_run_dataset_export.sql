@@ -12,7 +12,7 @@ CREATE VIEW public.v_requested_run_dataset_export AS
     rr.batch_id AS batch,
     rr.instrument_group AS requested_inst_group,
     rr.work_package,
-    u.name AS requestor,
+    u.name AS requester,
     c.campaign,
     e.experiment,
     ds.dataset,
@@ -28,7 +28,8 @@ CREATE VIEW public.v_requested_run_dataset_export AS
     eut.eus_usage_type AS eus_usage,
     rr.eus_proposal_id AS rds_eus_proposal_id,
     ept.abbreviation AS eus_proposal_type,
-    rr.updated
+    rr.updated,
+    u.name AS requestor
    FROM ((((((((((public.t_requested_run rr
      JOIN public.t_dataset_type_name dtn ON ((dtn.dataset_type_id = rr.request_type_id)))
      JOIN public.t_users u ON ((rr.requester_username OPERATOR(public.=) u.username)))
