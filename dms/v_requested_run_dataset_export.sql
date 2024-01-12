@@ -28,8 +28,7 @@ CREATE VIEW public.v_requested_run_dataset_export AS
     eut.eus_usage_type AS eus_usage,
     rr.eus_proposal_id AS rds_eus_proposal_id,
     ept.abbreviation AS eus_proposal_type,
-    rr.updated,
-    u.name AS requestor
+    rr.updated
    FROM ((((((((((public.t_requested_run rr
      JOIN public.t_dataset_type_name dtn ON ((dtn.dataset_type_id = rr.request_type_id)))
      JOIN public.t_users u ON ((rr.requester_username OPERATOR(public.=) u.username)))
