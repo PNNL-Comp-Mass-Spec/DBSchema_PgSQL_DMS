@@ -217,8 +217,12 @@ BEGIN
             target_table,
             target_id_col,
             target_name_col
-        )
-        VALUES (_targetName, _param1, _param2, _param3);
+        ) VALUES (
+            _targetName,
+            _param1,
+            _param2,
+            _param3
+        );
 
     End If;
 
@@ -269,8 +273,15 @@ BEGIN
 
         -- Insert new category for parent target type
 
-        INSERT INTO t_aux_info_category (aux_category, target_type_id, sequence)
-        VALUES (_categoryName, _targetTypeID, _tmpSeq);
+        INSERT INTO t_aux_info_category (
+            aux_category,
+            target_type_id,
+            sequence
+        ) VALUES (
+            _categoryName,
+            _targetTypeID,
+            _tmpSeq
+        );
 
     End If;
 
@@ -324,8 +335,15 @@ BEGIN
 
         -- Insert new subcategory for parent category
 
-        INSERT INTO t_aux_info_subcategory (aux_subcategory, sequence, Aux_Category_ID)
-        VALUES (_subcategoryName, _tmpSeq, _categoryID);
+        INSERT INTO t_aux_info_subcategory (
+            aux_subcategory,
+            sequence,
+            aux_category_id
+        ) VALUES (
+            _subcategoryName,
+            _tmpSeq,
+            _categoryID
+        );
 
     End If;
 
@@ -388,8 +406,13 @@ BEGIN
             sequence,
             data_size,
             helper_append
-        )
-        VALUES (_itemName, _subcategoryID, _tmpSeq, _dataSize, _helperAppend);
+        ) VALUES (
+            _itemName,
+            _subcategoryID,
+            _tmpSeq,
+            _dataSize,
+            _helperAppend
+        );
 
     End If;
 
@@ -440,7 +463,7 @@ BEGIN
 
         -- Insert new allowed value for parent description ID
 
-        INSERT INTO t_aux_info_allowed_values (Aux_Description_ID, value)
+        INSERT INTO t_aux_info_allowed_values (aux_description_id, value)
         VALUES (_descriptionID, _param1);
 
     End If;

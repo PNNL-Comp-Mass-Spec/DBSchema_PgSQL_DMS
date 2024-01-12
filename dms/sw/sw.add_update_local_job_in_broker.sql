@@ -279,8 +279,7 @@ BEGIN
                     Value citext
                 );
 
-                INSERT INTO Tmp_Job_Params
-                        (Section, Name, Value)
+                INSERT INTO Tmp_Job_Params (Section, Name, Value)
                 SELECT XmlQ.section, XmlQ.name, XmlQ.value
                 FROM (
                     SELECT xmltable.*

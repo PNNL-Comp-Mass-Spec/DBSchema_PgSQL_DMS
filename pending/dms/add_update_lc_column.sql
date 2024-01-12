@@ -150,8 +150,7 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-            INSERT INTO t_lc_column
-            (
+            INSERT INTO t_lc_column (
                 lc_column,
                 packing_mfg,
                 packing_type,

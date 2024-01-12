@@ -225,7 +225,7 @@ BEGIN
                     _massCorrectionID,
                     _paramFileID,
                     _typeSymbol
-                )
+                );
 
             End If;
 

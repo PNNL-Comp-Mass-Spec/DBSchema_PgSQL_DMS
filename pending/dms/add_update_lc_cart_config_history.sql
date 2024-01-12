@@ -110,8 +110,8 @@ BEGIN
                 note,
                 entered_by
             ) VALUES (
-                 _cart,
-                 _entryDate,
+                _cart,
+                _entryDate,
                 _description,
                 _note,
                 _postedBy

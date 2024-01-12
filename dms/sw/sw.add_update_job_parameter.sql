@@ -155,8 +155,13 @@ BEGIN
             SET parameters = _results.updated_xml
             WHERE job = _job;
         Else
-            INSERT INTO sw.t_job_parameters( job, parameters )
-            VALUES (_job, _results.updated_xml);
+            INSERT INTO sw.t_job_parameters (
+                job,
+                parameters
+            ) VALUES (
+                _job,
+                _results.updated_xml
+            );
         End If;
 
         If _paramName = 'DataPackageID' Then

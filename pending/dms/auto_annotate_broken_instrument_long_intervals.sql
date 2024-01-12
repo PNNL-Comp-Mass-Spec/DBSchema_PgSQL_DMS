@@ -94,7 +94,7 @@ BEGIN
             IntervalID Int
         );
 
-        INSERT INTO Tmp_BrokenInstruments(instrument_id, instrument )
+        INSERT INTO Tmp_BrokenInstruments (instrument_id, instrument)
         SELECT instrument_id, instrument
         FROM t_instrument_name
         WHERE status = 'Broken';
@@ -109,7 +109,7 @@ BEGIN
         LOOP
             DELETE FROM Tmp_IntervalsToUpdate;
 
-            INSERT INTO Tmp_IntervalsToUpdate( IntervalID )
+            INSERT INTO Tmp_IntervalsToUpdate (IntervalID)
             SELECT dataset_id
             FROM t_run_interval
             WHERE instrument = _instrumentName AND

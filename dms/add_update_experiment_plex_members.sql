@@ -264,7 +264,7 @@ BEGIN
 
             -- Split _plexMembers on newline characters, which are chr(10)
 
-            INSERT INTO Tmp_RowData( Entry_ID, Value)
+            INSERT INTO Tmp_RowData (Entry_ID, Value)
             SELECT Entry_ID, Value
             FROM public.parse_delimited_list_ordered(_plexMembers, chr(10));
 
@@ -277,7 +277,7 @@ BEGIN
 
                 -- Note that public.parse_delimited_list_ordered will replace tabs with commas
 
-                INSERT INTO Tmp_ColData( Entry_ID, Value)
+                INSERT INTO Tmp_ColData (Entry_ID, Value)
                 SELECT Entry_ID, Value
                 FROM public.parse_delimited_list_ordered(_value, ',', _maxRows => 4);
 
@@ -720,7 +720,7 @@ BEGIN
                 -- Assure that the parent experiment is not the 'Placeholder' experiment
                 ---------------------------------------------------
 
-                INSERT INTO Tmp_ExperimentsToUpdate ( plexExperimentId )
+                INSERT INTO Tmp_ExperimentsToUpdate (plexExperimentId)
                 SELECT DISTINCT EGM.exp_id
                 FROM t_experiment_groups EG
                      INNER JOIN t_experiment_group_members EGM

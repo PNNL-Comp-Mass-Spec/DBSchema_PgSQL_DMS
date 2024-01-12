@@ -179,7 +179,7 @@ BEGIN
           Dataset_ID int NULL
         )
 
-        INSERT INTO Tmp_Datasets( Dataset )
+        INSERT INTO Tmp_Datasets (Dataset)
         SELECT Value
         FROM public.parse_delimited_list(_datasets)
 
@@ -228,7 +228,10 @@ BEGIN
             RETURNING prep_run_id
             INTO _id;
 
-            INSERT INTO t_prep_lc_run_dataset ( prep_lc_run_id, dataset_id )
+            INSERT INTO t_prep_lc_run_dataset (
+                prep_lc_run_id,
+                dataset_id
+            )
             SELECT _id AS Prep_LC_Run_ID, Dataset_ID
             FROM Tmp_Datasets;
 
@@ -241,25 +244,24 @@ BEGIN
         If _mode = 'update' Then
 
             UPDATE t_prep_lc_run
-            SET prep_run_name = _prepRunName,
-                instrument = _instrument,
-                type = _type,
-                lc_column = _lcColumn,
-                lc_column_2 = _lcColumn2,
-                comment = _comment,
-                guard_column = _guardColumn,
-                operator_username = _operatorUsername,
-                digestion_method = _digestionMethod,
-                sample_type = _sampleType,
+            SET prep_run_name       = _prepRunName,
+                instrument          = _instrument,
+                type                = _type,
+                lc_column           = _lcColumn,
+                lc_column_2         = _lcColumn2,
+                comment             = _comment,
+                guard_column        = _guardColumn,
+                operator_username   = _operatorUsername,
+                digestion_method    = _digestionMethod,
+                sample_type         = _sampleType,
                 sample_prep_request = _samplePrepRequests,
-                number_of_runs = _numberOfRuns,
+                number_of_runs      = _numberOfRuns,
                 instrument_pressure = _instrumentPressure,
-                quality_control = _qualityControl
-            WHERE prep_run_id = _id
+                quality_control     = _qualityControl
+            WHERE prep_run_id = _id;
 
             -- Add new datasets
-            INSERT INTO t_prep_lc_run_dataset
-                    ( prep_lc_run_id, dataset_id )
+            INSERT INTO t_prep_lc_run_dataset (prep_lc_run_id, dataset_id)
             SELECT _id AS Prep_LC_Run_ID, Dataset_ID
             FROM Tmp_Datasets
             WHERE NOT Tmp_Datasets.dataset_id IN (SELECT dataset_id FROM t_prep_lc_run_dataset WHERE prep_lc_run_id = _id)

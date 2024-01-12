@@ -112,7 +112,7 @@ BEGIN
 
     -- Batches with active, long-running jobs
 
-    INSERT INTO Tmp_Batches(BatchID)
+    INSERT INTO Tmp_Batches (BatchID)
     SELECT J.batch_id
     FROM t_analysis_job J
          INNER JOIN sw.V_Job_Steps JS
@@ -267,11 +267,13 @@ BEGIN
     If Not Exists (SELECT * FROM Tmp_JobsToUpdate WHERE Ignored = 0) Then
         _message := 'No candidate jobs were found';
     Else
-        INSERT INTO t_analysis_job_priority_updates( job,
-                                                     old_priority,
-                                                     new_priority,
-                                                     comment,
-                                                     entered )
+        INSERT INTO t_analysis_job_priority_updates (
+            job,
+            old_priority,
+            new_priority,
+            comment,
+            entered
+        )
         SELECT U.job,
                U.old_priority,
                U.new_priority,

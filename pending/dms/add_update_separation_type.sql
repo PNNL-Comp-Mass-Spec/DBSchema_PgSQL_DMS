@@ -241,14 +241,15 @@ BEGIN
         INTO _nextID
         FROM t_secondary_sep;
 
-        INSERT INTO t_secondary_sep( separation_type,
-                                     separation_type_id,
-                                     separation_group,
-                                     comment,
-                                     sample_type_id,
-                                     active,
-                                     created )
-        VALUES (
+        INSERT INTO t_secondary_sep (
+            separation_type,
+            separation_type_id,
+            separation_group,
+            comment,
+            sample_type_id,
+            active,
+            created
+        ) VALUES (
             _sepTypeName,
             _nextID,
             _sepGroupName,
@@ -256,7 +257,7 @@ BEGIN
             _sampleTypeID,
             _stateInt,
             CURRENT_TIMESTAMP
-        )
+        );
 
     End If;
 

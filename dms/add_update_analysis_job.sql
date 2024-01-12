@@ -410,7 +410,7 @@ BEGIN
         -- Add dataset to table
         ---------------------------------------------------
 
-        INSERT INTO Tmp_DatasetInfo ( Dataset_Name )
+        INSERT INTO Tmp_DatasetInfo (Dataset_Name)
         VALUES (_datasetName);
 
         ---------------------------------------------------
@@ -778,8 +778,13 @@ BEGIN
             -- Associate job with processor group
 
             If _gid <> 0 Then
-                INSERT INTO t_analysis_job_processor_group_associations ( job, group_id )
-                VALUES (_jobID, _gid);
+                INSERT INTO t_analysis_job_processor_group_associations (
+                    job,
+                    group_id
+                ) VALUES (
+                    _jobID,
+                    _gid
+                );
             End If;
 
             DROP TABLE Tmp_DatasetInfo;
@@ -962,8 +967,13 @@ BEGIN
                     RAISE INFO '%', _currentLocation;
                 End If;
 
-                INSERT INTO t_analysis_job_processor_group_associations ( job, group_id )
-                VALUES (_jobID, _gid);
+                INSERT INTO t_analysis_job_processor_group_associations (
+                    job,
+                    group_id
+                ) VALUES (
+                    _jobID,
+                    _gid
+                );
 
                 _alterEnteredByRequired := true;
             End If;

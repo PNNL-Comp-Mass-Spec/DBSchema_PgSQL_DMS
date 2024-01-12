@@ -315,7 +315,7 @@ BEGIN
             -- Remove any duplicates that may be present
             ---------------------------------------------------
 
-            INSERT INTO Tmp_DatasetInfo ( Dataset_Name )
+            INSERT INTO Tmp_DatasetInfo (Dataset_Name)
             SELECT DISTINCT Dataset
             FROM dpkg.V_Data_Package_Dataset_Export
             WHERE Data_Package_ID = _dataPackageID;
@@ -376,11 +376,11 @@ BEGIN
             Dataset_Name text Not NULL
         );
 
-        CREATE UNIQUE INDEX IX_Tmp_DatasetList ON Tmp_DatasetList ( Dataset_Name );
+        CREATE UNIQUE INDEX IX_Tmp_DatasetList ON Tmp_DatasetList (Dataset_Name);
 
         _dropDatasetListTempTable := true;
 
-        INSERT INTO Tmp_DatasetList( Dataset_Name )
+        INSERT INTO Tmp_DatasetList (Dataset_Name)
         SELECT DISTINCT Dataset_Name
         FROM Tmp_DatasetInfo;
 
@@ -638,8 +638,7 @@ BEGIN
 
         If _mode = 'add' Then
 
-            INSERT INTO t_analysis_job_request
-            (
+            INSERT INTO t_analysis_job_request (
                 request_name,
                 created,
                 analysis_tool,
@@ -656,9 +655,8 @@ BEGIN
                 dataset_min,
                 dataset_max,
                 data_pkg_id
-            )
-            VALUES
-            (   _requestName,
+            ) VALUES (
+                _requestName,
                 CURRENT_TIMESTAMP,
                 _toolName,
                 _paramFileName,
@@ -678,8 +676,7 @@ BEGIN
             RETURNING request_id
             INTO _newRequestNum;
 
-            INSERT INTO t_analysis_job_request_datasets( request_id,
-                                                         dataset_id )
+            INSERT INTO t_analysis_job_request_datasets (request_id, dataset_id)
             SELECT _newRequestNum, Tmp_DatasetInfo.dataset_id
             FROM Tmp_DatasetInfo;
 

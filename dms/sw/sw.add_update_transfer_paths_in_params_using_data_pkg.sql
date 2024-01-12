@@ -139,7 +139,7 @@ BEGIN
                 DELETE FROM Tmp_Job_Params
                 WHERE Name = 'CacheFolderPath';
 
-                INSERT INTO Tmp_Job_Params ( Section, Name, Value )
+                INSERT INTO Tmp_Job_Params (Section, Name, Value)
                 VALUES ( 'JobParameters', 'CacheFolderPath', _cacheFolderPath );
             End If;
         End If;
@@ -148,14 +148,14 @@ BEGIN
             DELETE FROM Tmp_Job_Params
             WHERE Name = 'TransferFolderPath';
 
-            INSERT INTO Tmp_Job_Params ( Section, Name, Value )
+            INSERT INTO Tmp_Job_Params (Section, Name, Value)
             VALUES ( 'JobParameters', 'TransferFolderPath', _xferPath );
         End If;
 
         DELETE FROM Tmp_Job_Params
         WHERE Name = 'DataPackagePath';
 
-        INSERT INTO Tmp_Job_Params( Section, Name, Value )
+        INSERT INTO Tmp_Job_Params (Section, Name, Value)
         VALUES('JobParameters', 'DataPackagePath', _dataPkgSharePath);
 
         _paramsUpdated := true;

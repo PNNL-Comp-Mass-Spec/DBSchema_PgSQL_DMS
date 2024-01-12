@@ -108,12 +108,19 @@ BEGIN
 
         If _mode = 'add' Then
 
-            INSERT INTO t_separation_group( separation_group,
-                                            comment,
-                                            active,
-                                            sample_prep_visible,
-                                            fraction_count)
-            VALUES (_separationGroup, _comment, _active, _samplePrepVisible, _fractionCount);
+            INSERT INTO t_separation_group (
+                separation_group,
+                comment,
+                active,
+                sample_prep_visible,
+                fraction_count
+            ) VALUES (
+                _separationGroup,
+                _comment,
+                _active,
+                _samplePrepVisible,
+                _fractionCount
+            );
 
         End If;
 

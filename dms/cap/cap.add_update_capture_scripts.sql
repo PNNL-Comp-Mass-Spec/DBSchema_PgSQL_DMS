@@ -158,12 +158,19 @@ BEGIN
 
         If _mode = 'add' Then
 
-            INSERT INTO cap.t_scripts( script,
-                                       description,
-                                       enabled,
-                                       results_tag,
-                                       contents )
-            VALUES(_script, _description, _enabled, _resultsTag, _scriptXML);
+            INSERT INTO cap.t_scripts (
+                script,
+                description,
+                enabled,
+                results_tag,
+                contents
+            ) VALUES (
+                _script,
+                _description,
+                _enabled,
+                _resultsTag,
+                _scriptXML
+            );
 
         End If;
 

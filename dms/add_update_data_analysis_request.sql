@@ -199,7 +199,7 @@ BEGIN
         );
 
         If _batchIDs <> '' Then
-            INSERT INTO Tmp_BatchIDs( Batch_ID )
+            INSERT INTO Tmp_BatchIDs (Batch_ID)
             SELECT Value
             FROM public.parse_delimited_integer_list(_batchIDs)
             WHERE Value <> 0;
@@ -356,7 +356,12 @@ BEGIN
         );
 
         If _batchDefined Then
-            INSERT INTO Tmp_DatasetCountsByContainerType( ContainerType, ContainerID, SortWeight, DatasetCount )
+            INSERT INTO Tmp_DatasetCountsByContainerType (
+                ContainerType,
+                ContainerID,
+                SortWeight,
+                DatasetCount
+            )
             SELECT 'Batch', RR.batch_id, 2 AS SortWeight, COUNT(RR.request_id) AS DatasetCount
             FROM t_requested_run RR
                  INNER JOIN Tmp_BatchIDs
@@ -365,7 +370,12 @@ BEGIN
         End If;
 
         If _dataPackageDefined Then
-            INSERT INTO Tmp_DatasetCountsByContainerType( ContainerType, ContainerID, SortWeight, DatasetCount )
+            INSERT INTO Tmp_DatasetCountsByContainerType (
+                ContainerType,
+                ContainerID,
+                SortWeight,
+                DatasetCount
+            )
             SELECT 'Data Package', _dataPackageID, 1 AS SortWeight, COUNT(DISTINCT DS.Dataset_ID) AS DatasetCount
             FROM dpkg.V_Data_Package_Dataset_Export DataPkgDatasets
                  INNER JOIN t_dataset DS
@@ -374,7 +384,12 @@ BEGIN
         End If;
 
         If _experimentGroupDefined Then
-            INSERT INTO Tmp_DatasetCountsByContainerType( ContainerType, ContainerID, SortWeight, DatasetCount )
+            INSERT INTO Tmp_DatasetCountsByContainerType (
+                ContainerType,
+                ContainerID,
+                SortWeight,
+                DatasetCount
+            )
             SELECT 'Experiment Group', _experimentGroupID, 3 As SortWeight, COUNT(DISTINCT DS.Dataset_ID) AS DatasetCount
             FROM t_experiment_group_members E
                  INNER JOIN t_dataset DS
@@ -752,7 +767,7 @@ BEGIN
             End If;
 
             If _batchDefined Then
-                INSERT INTO t_data_analysis_request_batch_ids( request_id, batch_id )
+                INSERT INTO t_data_analysis_request_batch_ids (request_id, batch_id)
                 SELECT _id, batch_id
                 FROM Tmp_BatchIDs;
             End If;

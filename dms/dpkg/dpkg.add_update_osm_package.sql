@@ -167,7 +167,7 @@ BEGIN
         );
 
         -- Populate table from sample prep request list
-        INSERT INTO Tmp_PrepRequestItems ( Item, Valid)
+        INSERT INTO Tmp_PrepRequestItems (Item, Valid)
         SELECT Value, false
         FROM public.parse_delimited_integer_list(_samplePrepRequestList);
 

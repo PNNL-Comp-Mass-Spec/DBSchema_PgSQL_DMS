@@ -175,8 +175,7 @@ BEGIN
     -- Populate the temporary table
     ---------------------------------------------------
 
-    INSERT INTO Tmp_Experiments ( Experiment,
-                                  Exp_ID )
+    INSERT INTO Tmp_Experiments (Experiment, Exp_ID)
     SELECT Value AS Experiment,
            0 AS Exp_ID
     FROM public.parse_delimited_list(_experimentList);
@@ -283,18 +282,21 @@ BEGIN
 
     If _mode = 'add' Then
 
-        INSERT INTO t_experiment_groups( group_type,
-                                         created,
-                                         description,
-                                         parent_exp_id,
-                                         researcher_username,
-                                         group_name )
-        VALUES(_groupType,
-               CURRENT_TIMESTAMP,
-               _description,
-               _parentExpID,
-               _researcher,
-               _groupName)
+        INSERT INTO t_experiment_groups (
+            group_type,
+            created,
+            description,
+            parent_exp_id,
+            researcher_username,
+            group_name
+        ) VALUES (
+            _groupType,
+            CURRENT_TIMESTAMP,
+            _description,
+            _parentExpID,
+            _researcher,
+            _groupName
+        )
         RETURNING group_id
         INTO _id;
 
@@ -330,7 +332,7 @@ BEGIN
 
         -- Add group members from temporary table that are not already members
 
-        INSERT INTO t_experiment_group_members(
+        INSERT INTO t_experiment_group_members (
             group_id,
             exp_id
         )

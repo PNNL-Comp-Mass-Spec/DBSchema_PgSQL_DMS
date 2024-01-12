@@ -135,7 +135,7 @@ BEGIN
 
         If _mode = 'add' Then
 
-            INSERT INTO t_bionet_hosts(
+            INSERT INTO t_bionet_hosts (
                 host,
                 ip,
                 alias,
@@ -144,8 +144,7 @@ BEGIN
                 active,
                 tag,
                 comment
-            )
-            VALUES (
+            ) VALUES (
                 _host,
                 _ip,
                 _alias,

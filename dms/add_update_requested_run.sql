@@ -831,8 +831,7 @@ BEGIN
 
         If _mode = 'add' Then
 
-            INSERT INTO t_requested_run
-            (
+            INSERT INTO t_requested_run (
                 request_name,
                 requester_username,
                 comment,

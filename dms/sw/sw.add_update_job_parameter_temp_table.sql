@@ -113,7 +113,7 @@ BEGIN
             SET Parameters = _results.updated_xml
             WHERE Job = _job;
         Else
-            INSERT INTO Tmp_Job_Parameters( Job, Parameters )
+            INSERT INTO Tmp_Job_Parameters (Job, Parameters)
             SELECT _job, _results.updated_xml;
         End If;
 

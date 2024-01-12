@@ -259,7 +259,7 @@ BEGIN
 
         If Not FOUND Then
             -- Match not found; Insert a new parameter
-            INSERT INTO Tmp_Task_Parameters(Section, Name, Value, State)
+            INSERT INTO Tmp_Task_Parameters (Section, Name, Value, State)
             VALUES (_section, _paramName, _value, 'Added');
         End If;
 

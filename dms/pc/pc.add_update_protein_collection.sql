@@ -171,11 +171,11 @@ BEGIN
 
     If _mode = 'add' And _collectionID > 0 Then
 
-        INSERT INTO pc.t_annotation_groups(
+        INSERT INTO pc.t_annotation_groups (
             protein_collection_id,
             annotation_group,
-            annotation_type_id )
-        VALUES(
+            annotation_type_id
+        ) VALUES (
             _collectionID,
             0,
             _primaryAnnotationTypeId

@@ -75,9 +75,13 @@ BEGIN
     -- Add passphrase to pc.t_encrypted_collection_passphrases
     ---------------------------------------------------
 
-    INSERT INTO pc.t_encrypted_collection_passphrases( passphrase,
-                                                       protein_collection_id )
-    VALUES(_encryptionPassphrase, _proteinCollectionID)
+    INSERT INTO pc.t_encrypted_collection_passphrases (
+        passphrase,
+        protein_collection_id
+    ) VALUES(
+        _encryptionPassphrase,
+        _proteinCollectionID
+    )
     RETURNING passphrase_id
     INTO _passphraseID;
 

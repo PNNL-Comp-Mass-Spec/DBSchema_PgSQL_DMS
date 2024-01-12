@@ -293,10 +293,15 @@ BEGIN
                             WHERE aux_description_id = _descriptionID AND target_id = _targetID;
                         End If;
                     Else
-                        INSERT INTO t_aux_info_value( target_id,
-                                                      aux_description_id,
-                                                      value )
-                        VALUES (_targetID, _descriptionID, _vFld);
+                        INSERT INTO t_aux_info_value (
+                            target_id,
+                            aux_description_id,
+                            value
+                        ) VALUES (
+                            _targetID,
+                            _descriptionID,
+                            _vFld
+                        );
                     End If;
 
                 End If;

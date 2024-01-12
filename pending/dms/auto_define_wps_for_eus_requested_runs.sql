@@ -76,7 +76,7 @@ BEGIN
     -- last _mostRecentMonths and a work package of 'none'
     ---------------------------------------------------
 
-    INSERT INTO Tmp_ProposalsToCheck( EUSProposal )
+    INSERT INTO Tmp_ProposalsToCheck (EUSProposal)
     SELECT P.proposal_id
     FROM t_eus_proposals P
          INNER JOIN t_requested_run RR
@@ -122,9 +122,11 @@ BEGIN
 
     CREATE INDEX IX_Tmp_RequestedRunsToUpdate ON Tmp_RequestedRunsToUpdate (EUSProposal, RequestedRunID)
 
-    INSERT INTO Tmp_RequestedRunsToUpdate( EUSProposal,
-                                            WorkPackage,
-                                            RequestedRunID )
+    INSERT INTO Tmp_RequestedRunsToUpdate (
+        EUSProposal,
+        WorkPackage,
+        RequestedRunID
+    )
     SELECT C.EUSProposal,
            C.BestWorkPackage,
            RR.request_id

@@ -245,7 +245,7 @@ BEGIN
 
     If _mode = 'add' Then
 
-        INSERT INTO t_settings_files(
+        INSERT INTO t_settings_files (
             analysis_tool,
             file_name,
             description,

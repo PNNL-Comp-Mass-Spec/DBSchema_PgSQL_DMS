@@ -56,7 +56,7 @@ BEGIN
     -- Find proposals that need to be updated
     ---------------------------------------------------
 
-    INSERT INTO Tmp_ProposalsToUpdate( proposal_id, Newest_Proposal_ID )
+    INSERT INTO Tmp_ProposalsToUpdate (proposal_id, Newest_Proposal_ID)
     SELECT EUP.proposal_id,
            RankQ.proposal_id AS Newest_ID
     FROM t_eus_proposals EUP

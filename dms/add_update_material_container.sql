@@ -296,14 +296,23 @@ BEGIN
 
             _currentLocation := 'Add new row to t_material_containers';
 
-            INSERT INTO t_material_containers( container,
-                                               type,
-                                               comment,
-                                               campaign_id,
-                                               location_id,
-                                               status,
-                                               researcher )
-            VALUES (_container, _type, _comment, _campaignID, _locationID, _status, _researcher);
+            INSERT INTO t_material_containers (
+                container,
+                type,
+                comment,
+                campaign_id,
+                location_id,
+                status,
+                researcher
+            ) VALUES (
+                _container,
+                _type,
+                _comment,
+                _campaignID,
+                _locationID,
+                _status,
+                _researcher
+            );
 
             _currentLocation := 'Call post_material_log_entry';
 

@@ -308,9 +308,11 @@ BEGIN
 
             _dropTempTable := true;
 
-            INSERT INTO Tmp_MatchingInstruments( InstrumentName,
-                                                 InstrumentClass,
-                                                 InstrumentID )
+            INSERT INTO Tmp_MatchingInstruments (
+                InstrumentName,
+                InstrumentClass,
+                InstrumentID
+            )
             SELECT DISTINCT InstName.instrument,
                             InstClass.instrument_class,
                             InstName.instrument_id

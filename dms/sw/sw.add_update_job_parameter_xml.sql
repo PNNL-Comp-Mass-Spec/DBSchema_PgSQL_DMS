@@ -275,8 +275,17 @@ BEGIN
 
         If Not FOUND Then
             -- Match not found; Insert a new parameter
-            INSERT INTO Tmp_Job_Params_Updated(Section, Name, Value, State)
-            VALUES (_section, _paramName, _value, 'Added');
+            INSERT INTO Tmp_Job_Params_Updated (
+                Section,
+                Name,
+                Value,
+                State
+            ) VALUES (
+                _section,
+                _paramName,
+                _value,
+                'Added'
+            );
         End If;
 
     Else

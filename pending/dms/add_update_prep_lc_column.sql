@@ -166,7 +166,7 @@ BEGIN
             _state,
             _operatorUsername,
             _comment
-        )
+        );
 
     End If;
 

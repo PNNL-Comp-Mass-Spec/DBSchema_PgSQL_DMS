@@ -161,8 +161,13 @@ BEGIN
             SET parameters = _results.updated_xml
             WHERE job = _job;
         Else
-            INSERT INTO cap.t_task_parameters( job, parameters )
-            VALUES (_job, _results.updated_xml);
+            INSERT INTO cap.t_task_parameters (
+                job,
+                parameters
+            ) VALUES (
+                _job,
+                _results.updated_xml
+            );
         End If;
 
     End If;

@@ -68,7 +68,7 @@ BEGIN
     -- do not exist in t_user_operations
     ---------------------------------------------------
 
-    INSERT INTO Tmp_UserOperations( User_Operation )
+    INSERT INTO Tmp_UserOperations (User_Operation)
     SELECT Value
     FROM public.parse_delimited_list(_operationsList)
     WHERE Value::citext IN ( SELECT Operation FROM t_user_operations );
@@ -77,7 +77,7 @@ BEGIN
     -- Add missing associations between operations and user
     ---------------------------------------------------
 
-    INSERT INTO t_user_operations_permissions( user_id, operation_id )
+    INSERT INTO t_user_operations_permissions (user_id, operation_id)
     SELECT _userID, UO.operation_id
     FROM Tmp_UserOperations NewOps
          INNER JOIN t_user_operations UO
