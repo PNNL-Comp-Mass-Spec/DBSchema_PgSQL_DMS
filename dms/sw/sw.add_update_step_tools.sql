@@ -46,6 +46,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_step_tools(IN _name text, IN _type tex
 **          08/01/2017 mem - Use THROW if not authorized
 **          07/28/2023 mem - Ported to PostgreSQL
 **          01/03/2024 mem - Update warning messages
+**          01/11/2024 mem - Check for an empty step tool name
 **
 *****************************************************/
 DECLARE
@@ -99,6 +100,14 @@ BEGIN
     -- Is entry already in database?
     ---------------------------------------------------
 
+    _name := Trim(Coalesce(_name, ''));
+
+    If _name = '' Then
+        _message := 'Step tool name must be specified';
+        _returnCode := 'U5202';
+        RETURN;
+    End If;
+
     SELECT COUNT(step_tool_id)
     INTO _existingRowCount
     FROM sw.t_step_tools
@@ -112,7 +121,7 @@ BEGIN
         _message := format('Cannot update: step tool "%s" does not exist', _name);
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5202';
+        _returnCode := 'U5203';
         RETURN;
     End If;
 
@@ -122,7 +131,7 @@ BEGIN
         _message := format('Cannot add: step tool "%s" already exists', _name);
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5203';
+        _returnCode := 'U5204';
         RETURN;
     End If;
 

@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_capture_step_tools(IN _name text, IN 
 **          05/31/2023 mem - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          01/03/2024 mem - Update warning messages
+**          01/11/2024 mem - Check for an empty step tool name
 **
 *****************************************************/
 DECLARE
@@ -79,6 +80,15 @@ BEGIN
         -- Is entry already in database?
         ---------------------------------------------------
 
+        _name := Trim(Coalesce(_name, ''));
+        _mode := Trim(Lower(Coalesce(_mode, '')));
+
+        If _name = '' Then
+            _message := 'Step tool name must be specified';
+            _returnCode := 'U5201';
+            RETURN;
+        End If;
+
         SELECT step_tool_id
         INTO _stepToolId
         FROM  cap.t_step_tools
@@ -86,14 +96,12 @@ BEGIN
         --
         GET DIAGNOSTICS _existingCount = ROW_COUNT;
 
-        _mode := Trim(Lower(Coalesce(_mode, '')));
-
         -- Cannot update a non-existent entry
 
         If _mode = 'update' And _existingCount = 0 Then
             _message := format('Cannot update: step tool "%s" does not exist', _name);
             RAISE WARNING '%', _message;
-            _returnCode := 'U5201';
+            _returnCode := 'U5202';
             RETURN;
         End If;
 
@@ -102,7 +110,7 @@ BEGIN
         If _mode = 'add' And _existingCount > 0 Then
             _message := format('Cannot add: step tool "%s" already exists', _name);
             RAISE WARNING '%', _message;
-            _returnCode := 'U5202';
+            _returnCode := 'U5203';
             RETURN;
         End If;
 

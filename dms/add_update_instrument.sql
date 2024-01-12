@@ -62,6 +62,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_instrument(IN _instrumentid intege
 **                         - Validate instrument name specified by _instrumentName vs. the instrument name associated with _instrumentID
 **                         - Ported to PostgreSQL
 **          01/03/2024 mem - Update warning messages
+**          01/11/2024 mem - Show a custom message when _mode is 'update' but _instrumentID is null
 **
 *****************************************************/
 DECLARE
@@ -128,22 +129,29 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-            -- Cannot update a non-existent entry
+            If _instrumentID Is Null Then
+                _message := 'Cannot update: instrument ID cannot be null';
+                RAISE WARNING '%', _message;
+
+                _returnCode := 'U5202';
+                RETURN;
+            End If;
 
             SELECT instrument
             INTO _existingName
             FROM t_instrument_name
             WHERE instrument_id = _instrumentID;
 
+            -- Cannot update a non-existent entry
             If Not FOUND Then
                 _msg := format('Cannot update: instrument ID %s does not exist', _instrumentID);
-                RAISE EXCEPTION '%', _msg USING ERRCODE = 'U5202';
+                RAISE EXCEPTION '%', _msg USING ERRCODE = 'U5203';
             End If;
 
             If _existingName <> _instrumentName::citext Then
                 _msg := format('Instrument ID %s is instrument "%s", which does not match the specified instrument name ("%s")',
                                 _instrumentID, _existingName, _instrumentName);
-                RAISE EXCEPTION '%', _msg USING ERRCODE = 'U5203';
+                RAISE EXCEPTION '%', _msg USING ERRCODE = 'U5204';
             End If;
         End If;
 
@@ -177,7 +185,7 @@ BEGIN
 
         If _mode = 'add' Then
             _logErrors := false;
-            RAISE EXCEPTION 'The "add" instrument mode is disabled for this page; instead, use https://dms2.pnl.gov/new_instrument/create' USING ERRCODE = 'U5204';
+            RAISE EXCEPTION 'The "add" instrument mode is disabled for this page; instead, use https://dms2.pnl.gov/new_instrument/create' USING ERRCODE = 'U5205';
         End If;
 
         ---------------------------------------------------

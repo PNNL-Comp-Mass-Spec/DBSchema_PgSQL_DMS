@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_sample_submission(INOUT _id intege
 **          11/22/2023 mem - Allow _receivedBy to be of the form 'Zink, Erika M', 'Zink, Erika M (D3P704)', or 'D3P704'
 **          01/03/2024 mem - Update warning messages
 **          01/08/2024 mem - Remove procedure name from error message
+**          01/11/2024 mem - Show a custom message when _mode is 'update' but _id is null
 **
 *****************************************************/
 DECLARE
@@ -178,6 +179,14 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
+            If _id Is Null Then
+                _message := 'Cannot update: sample submission ID cannot be null';
+                RAISE WARNING '%', _message;
+
+                _returnCode := 'U5203';
+                RETURN;
+            End If;
+
             -- Cannot update a non-existent entry
 
             If Not Exists (SELECT submission_id FROM t_sample_submission WHERE submission_id = _id) Then

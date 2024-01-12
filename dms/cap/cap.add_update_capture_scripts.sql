@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_capture_scripts(IN _script text, IN _
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          01/03/2024 mem - Update warning messages
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          01/11/2024 mem - Check for an empty script name
 **
 *****************************************************/
 DECLARE
@@ -86,20 +87,27 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
+        _script      := Trim(Coalesce(_script, ''));
         _description := Trim(Coalesce(_description, ''));
         _enabled     := Trim(Upper(Coalesce(_enabled, 'Y')));
         _mode        := Trim(Lower(Coalesce(_mode, '')));
         _callingUser := Trim(Coalesce(_callingUser, ''));
 
+        If _script = '' Then
+            _message := 'Script name must be specified';
+            _returnCode := 'U5201';
+            RETURN;
+        End If;
+
         If _description = '' Then
             _message := 'Description must be specified';
-            _returnCode := 'U5201';
+            _returnCode := 'U5202';
             RETURN;
         End If;
 
         If _mode <> 'add' and _mode <> 'update' Then
             _message := format('Unknown Mode: %s', _mode);
-            _returnCode := 'U5202';
+            _returnCode := 'U5203';
             RETURN;
         End If;
 
@@ -110,7 +118,7 @@ BEGIN
 
             If _scriptXML Is Null Then
                 _message := format('Script contents is not valid XML: %s', _contents);
-                _returnCode := 'U5203';
+                _returnCode := 'U5204';
                 RETURN;
             End If;
         End If;
@@ -131,7 +139,7 @@ BEGIN
         If _mode = 'update' And _existingCount = 0 Then
             _message := format('Cannot update: script "%s" does not exist', _script);
             RAISE WARNING '%', _message;
-            _returnCode := 'U5204';
+            _returnCode := 'U5205';
             RETURN;
         End If;
 
@@ -140,7 +148,7 @@ BEGIN
         If _mode = 'add' And _existingCount > 0 Then
             _message := format('Cannot add: script "%s" already exists', _script);
             RAISE WARNING '%', _message;
-            _returnCode := 'U5205';
+            _returnCode := 'U5206';
             RETURN;
         End If;
 

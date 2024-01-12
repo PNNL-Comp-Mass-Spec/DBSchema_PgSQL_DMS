@@ -85,6 +85,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_predefined_analysis(IN _level inte
 **                         - Ported to PostgreSQL
 **          01/03/2024 mem - Update warning messages
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          01/11/2024 mem - Show a custom message when _mode is 'update' but _id is null
 **
 *****************************************************/
 DECLARE
@@ -494,6 +495,14 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
+            If _id Is Null Then
+                _message := 'Cannot update: predefine ID cannot be null';
+                RAISE WARNING '%', _message;
+
+                _returnCode := 'U5202';
+                RETURN;
+            End If;
+
             -- Cannot update a non-existent entry
 
             If Not Exists (SELECT predefine_id FROM t_predefined_analysis WHERE predefine_id = _id) Then

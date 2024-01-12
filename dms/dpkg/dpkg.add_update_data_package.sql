@@ -56,6 +56,7 @@ CREATE OR REPLACE PROCEDURE dpkg.add_update_data_package(INOUT _id integer, IN _
 **          08/15/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Update warning messages
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          01/11/2024 mem - Show a custom message when _state is an empty string
 **
 *****************************************************/
 DECLARE
@@ -109,6 +110,7 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
+        _state       := Trim(Coalesce(_state, ''));
         _team        := Trim(Coalesce(_team, ''));
         _packageType := Trim(Coalesce(_packageType, ''));
         _description := Trim(Coalesce(_description, ''));
@@ -127,15 +129,21 @@ BEGIN
             RETURN;
         End If;
 
+        If _state = '' Then
+            _message := 'Data package state must be specified';
+            _returnCode := 'U5105';
+            RETURN;
+        End If;
+
         If _team = '' Then
             _message := 'Data package team must be specified';
-            _returnCode := 'U5105';
+            _returnCode := 'U5106';
             RETURN;
         End If;
 
         If _packageType = '' Then
             _message := 'Data package type must be specified';
-            _returnCode := 'U5106';
+            _returnCode := 'U5107';
             RETURN;
         End If;
 
@@ -147,7 +155,7 @@ BEGIN
 
         If Not Found Then
             _message := format('Invalid data package team: %s', _team);
-            _returnCode := 'U5107';
+            _returnCode := 'U5108';
             RETURN;
         Else
             _team := _matchingValue;
@@ -161,7 +169,7 @@ BEGIN
 
         If Not Found Then
             _message := format('Invalid data package type: %s', _packageType);
-            _returnCode := 'U5108';
+            _returnCode := 'U5109';
             RETURN;
         Else
             _packageType := _matchingValue;
@@ -178,7 +186,7 @@ BEGIN
 
         If Not Found Then
             _message := 'Table dpkg.t_data_package_storage does not have an active storage path';
-            _returnCode := 'U5109';
+            _returnCode := 'U5110';
             RETURN;
         End If;
 
@@ -193,7 +201,7 @@ BEGIN
 
         If Not Found Then
             _message := format('Invalid state: %s', _state);
-            _returnCode := 'U5110';
+            _returnCode := 'U5111';
             RETURN;
         Else
             _state := _matchingValue;
@@ -214,7 +222,7 @@ BEGIN
 
             If Not FOUND Then
                 _message := format('Data package ID %s does not exist; cannot update', _id);
-                _returnCode := 'U5111';
+                _returnCode := 'U5112';
                 RETURN;
             End If;
 
@@ -255,7 +263,7 @@ BEGIN
             -- Make sure the data package name doesn't already exist
             If Exists (SELECT package_name FROM dpkg.t_data_package WHERE package_name = _name::citext) Then
                 _message := format('Data package "%s" already exists; cannot create an identically named data package', _name);
-                _returnCode := 'U5112';
+                _returnCode := 'U5113';
                 RETURN;
             End If;
 

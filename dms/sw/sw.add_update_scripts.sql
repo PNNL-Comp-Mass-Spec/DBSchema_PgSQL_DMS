@@ -87,6 +87,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_scripts(IN _script text, IN _descripti
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          01/03/2024 mem - Update warning messages
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          01/11/2024 mem - Check for an empty script name
 **
 *****************************************************/
 DECLARE
@@ -132,6 +133,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
+    _script        := Trim(Coalesce(_script, ''));
     _description   := Trim(Coalesce(_description, ''));
     _enabled       := Trim(Upper(Coalesce(_enabled, 'Y')));
     _backfillToDMS := Trim(Upper(Coalesce(_backfillToDMS, 'Y')));
@@ -150,11 +152,19 @@ BEGIN
         RETURN;
     End If;
 
+    If _script = '' Then
+        _message := 'Script name must be specified';
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5202';
+        RETURN;
+    End If;
+
     If _description = '' Then
         _message := 'Description must be specified';
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5202';
+        _returnCode := 'U5203';
         RETURN;
     End If;
 
@@ -162,7 +172,7 @@ BEGIN
         _message := format('Unknown Mode: %s', _mode);
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5203';
+        _returnCode := 'U5204';
         RETURN;
     End If;
 
@@ -170,7 +180,7 @@ BEGIN
         _message := 'Script contents cannot be an empty string; must be valid XML';
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5204';
+        _returnCode := 'U5205';
         RETURN;
     Else
         _contentsXML := public.try_cast(_contents, null::xml);
@@ -179,7 +189,7 @@ BEGIN
             _message := format('Script contents is not valid XML: ', _contents);
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5205';
+            _returnCode := 'U5206';
             RETURN;
         End If;
     End If;
@@ -191,7 +201,7 @@ BEGIN
             _message := format('Script parameters is not valid XML: ', _parameters);
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5206';
+            _returnCode := 'U5207';
             RETURN;
         End If;
 
@@ -206,15 +216,13 @@ BEGIN
             _message := format('Script fields is not valid XML: ', _fields);
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5207';
+            _returnCode := 'U5208';
             RETURN;
         End If;
 
     Else
         _fieldsXML := null;
     End If;
-
-
 
     ---------------------------------------------------
     -- Is entry already in database?
@@ -231,7 +239,7 @@ BEGIN
         _message := format('Cannot update: script "%s" does not exist', _script);
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5208';
+        _returnCode := 'U5209';
         RETURN;
     End If;
 
@@ -241,7 +249,7 @@ BEGIN
         _message := format('Cannot add: script "%s" already exists', _script);
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5209';
+        _returnCode := 'U5210';
         RETURN;
     End If;
 

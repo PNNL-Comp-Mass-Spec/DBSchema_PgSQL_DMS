@@ -42,6 +42,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_experiment_group(INOUT _id integer
 **          11/18/2022 mem - Rename parameter to _groupName
 **          12/11/2023 mem - Ported to PostgreSQL
 **          01/03/2024 mem - Update warning messages
+**          01/11/2024 mem - Show a custom message when _mode is 'update' but _id is null
 **
 *****************************************************/
 DECLARE
@@ -142,13 +143,19 @@ BEGIN
     ---------------------------------------------------
 
     If _mode = 'update' Then
-        -- Cannot update a non-existent entry
+        If _id Is Null Then
+            _message := 'Cannot update: experiment group ID cannot be null';
+            RAISE WARNING '%', _message;
+
+            _returnCode := 'U5204';
+            RETURN;
+        End If;
 
         If Not Exists (SELECT group_id FROM t_experiment_groups WHERE group_id = _id) Then
             _message := format('Cannot update: experiment group ID %s does not exist', _id);
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5204';
+            _returnCode := 'U5205';
             RETURN;
         End If;
     End If;

@@ -118,6 +118,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job_request(IN _datasets 
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
 **          01/03/2024 mem - Update warning messages
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          01/11/2024 mem - Show a custom message when _mode is 'update' but _requestID is null
 **
 *****************************************************/
 DECLARE
@@ -225,10 +226,13 @@ BEGIN
             End If;
         End If;
 
-        -- Cannot update a non-existent entry
         -- If the entry already exists and has jobs associated with it, only allow for updating the comment field
 
         If _mode = 'update' Then
+            If _requestID Is Null Then
+                _msg := 'Cannot update: request ID parameter cannot be null';
+                RAISE EXCEPTION '%', _msg;
+            End If;
 
             SELECT request_id,
                    request_state_id
@@ -236,6 +240,7 @@ BEGIN
             FROM t_analysis_job_request
             WHERE request_id = _requestID;
 
+            -- Cannot update a non-existent entry
             If Not FOUND Then
                 RAISE EXCEPTION 'Cannot update: job request % does not exist', _requestID;
             End If;

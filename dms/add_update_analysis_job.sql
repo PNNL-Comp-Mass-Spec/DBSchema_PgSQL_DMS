@@ -109,6 +109,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job(IN _datasetname text,
 **          12/09/2023 mem - Add parameter _showDebug
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
 **          01/03/2024 mem - Update warning messages
+**          01/11/2024 mem - Show a custom message when _mode is 'update' or 'reset' but _job is null
 **
 *****************************************************/
 DECLARE
@@ -212,7 +213,15 @@ BEGIN
                 RAISE INFO '%', _currentLocation;
             End If;
 
-            -- Cannot update a non-existent entry
+            If _job Is Null Then
+                _msg := 'Cannot update: analysis job parameter cannot be null';
+
+                If _infoOnly Then
+                    RAISE WARNING '%', _msg;
+                End If;
+
+                RAISE EXCEPTION '%', _msg;
+            End If;
 
             SELECT job,
                    job_state_id
@@ -266,7 +275,7 @@ BEGIN
                        ON J.job_state_id = AJS.job_state_id
                 WHERE J.job = _jobID;
 
-                _msg := format('State for Analysis Job %s cannot be changed from "%s" to "Complete"', _job, _currentStateName);
+                _msg := format('State for analysis job %s cannot be changed from "%s" to "Complete"', _job, _currentStateName);
 
                 If _infoOnly Then
                     RAISE WARNING '%', _msg;
@@ -800,6 +809,7 @@ BEGIN
 
                 If Not FOUND Then
                     _msg := format('State name not recognized: %s', _stateName);
+
                     If _infoOnly Then
                         RAISE INFO '%', _msg;
                     End If;

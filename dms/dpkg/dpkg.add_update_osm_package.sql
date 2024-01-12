@@ -46,6 +46,7 @@ CREATE OR REPLACE PROCEDURE dpkg.add_update_osm_package(INOUT _id integer, IN _n
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          01/03/2024 mem - Update warning message
+**          01/11/2024 mem - Show a custom message when _state is an empty string
 **
 *****************************************************/
 DECLARE
@@ -96,6 +97,7 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
+        _state                 := Trim(Coalesce(_state, ''));
         _packageType           := Trim(Coalesce(_packageType, ''));
         _description           := Trim(Coalesce(_description, ''));
         _comment               := Trim(Coalesce(_comment, ''));
@@ -114,9 +116,15 @@ BEGIN
             RETURN;
         End If;
 
+        If _state = '' Then
+            _message := 'OSM package state must be specified';
+            _returnCode := 'U5105';
+            RETURN;
+        End If;
+
         If _packageType = '' Then
             _message := 'OSM package type must be specified';
-            _returnCode := 'U5105';
+            _returnCode := 'U5106';
             RETURN;
         End If;
 
@@ -128,7 +136,7 @@ BEGIN
 
         If Not Found Then
             _message := format('Invalid OSM package type: %s', _packageType);
-            _returnCode := 'U5106';
+            _returnCode := 'U5107';
             RETURN;
         Else
             _packageType := _matchingValue;
@@ -145,7 +153,7 @@ BEGIN
 
         If Not Found Then
             _message := 'Table dpkg.t_osm_package_storage does not have an active storage path';
-            _returnCode := 'U5107';
+            _returnCode := 'U5108';
             RETURN;
         End If;
 
@@ -181,7 +189,7 @@ BEGIN
                 _message := format('Sample prep request ID "%s" does not exist', _badIDs);
             End If;
 
-            _returnCode := 'U5108';
+            _returnCode := 'U5109';
 
             DROP TABLE Tmp_PrepRequestItems;
             RETURN;
@@ -202,7 +210,7 @@ BEGIN
 
         If Not Found Then
             _message := format('Invalid state: %s', _state);
-            _returnCode := 'U5109';
+            _returnCode := 'U5110';
 
             DROP TABLE Tmp_PrepRequestItems;
             RETURN;
@@ -219,7 +227,7 @@ BEGIN
 
             If Not Exists (SELECT osm_pkg_id FROM dpkg.t_osm_package WHERE osm_pkg_id = _id) Then
                 _message := format('OSM package ID %s does not exist; cannot update', _id);
-                _returnCode := 'U5110';
+                _returnCode := 'U5111';
 
                 DROP TABLE Tmp_PrepRequestItems;
                 RETURN;
@@ -237,7 +245,7 @@ BEGIN
             -- Make sure the data package name doesn't already exist
             If Exists (SELECT osm_package_name FROM dpkg.t_osm_package WHERE osm_package_name = _name) Then
                 _message := format('OSM package "%s" already exists; cannot create an identically named package', _name);
-                _returnCode := 'U5111';
+                _returnCode := 'U5112';
 
                 DROP TABLE Tmp_PrepRequestItems;
                 RETURN;
