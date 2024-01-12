@@ -438,7 +438,7 @@ BEGIN
                dataset_state_id, dataset_rating_id
         INTO _datasetID, _curDSInstID, _curDSStateID, _curDSRatingID
         FROM t_dataset
-        WHERE dataset::citext = _datasetName::citext;
+        WHERE dataset = _datasetName::citext;
 
         If Not FOUND Then
             -- Cannot update a non-existent entry
