@@ -108,6 +108,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_experiment(INOUT _experimentid int
 **          01/03/2024 mem - Update warning messages
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          01/08/2024 mem - Remove procedure name from error message
+**          01/11/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -203,27 +204,27 @@ BEGIN
         _mode                  := Trim(Lower(Coalesce(_mode, '')));
         _barcode               := Trim(Coalesce(_barcode, ''));
 
-        If char_length(_experimentName) < 1 Then
+        If _experimentName = '' Then
             RAISE EXCEPTION 'Experiment name must be specified';
         End If;
 
-        If char_length(_campaignName) < 1 Then
+        If _campaignName = '' Then
             RAISE EXCEPTION 'Campaign name must be specified';
         End If;
 
-        If char_length(_researcherUsername) < 1 Then
+        If _researcherUsername = '' Then
             RAISE EXCEPTION 'Researcher Username must be specified';
         End If;
 
-        If char_length(_organismName) < 1 Then
+        If _organismName = '' Then
             RAISE EXCEPTION 'Organism name must be specified';
         End If;
 
-        If char_length(_reason) < 1 Then
+        If _reason = '' Then
             RAISE EXCEPTION 'Reason must be specified';
         End If;
 
-        If char_length(_labelling) < 1 Then
+        If _labelling = '' Then
             RAISE EXCEPTION 'Labelling must be specified';
         End If;
 

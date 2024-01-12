@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE pc.add_update_protein_collection(IN _collectionname 
 **                         - Update warning messages
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          11/20/2023 mem - Add missing semicolon before Return statement
+**          01/11/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -59,7 +60,7 @@ BEGIN
 
     _mode             := Trim(Lower(Coalesce(_mode, '')));
 
-    If char_length(_collectionName) < 1 Then
+    If _collectionName = '' Then
         _message := '_collectionName must be specified';
         RAISE WARNING '%', _message;
 

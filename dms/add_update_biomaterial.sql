@@ -61,6 +61,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_biomaterial(IN _biomaterialname te
 **          12/30/2023 mem - Ported to PostgreSQL
 **          01/03/2024 mem - Update warning messages
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          01/11/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -138,33 +139,33 @@ BEGIN
         _cellLine        := Trim(Coalesce(_cellLine, ''));
         _callingUser     := Trim(Coalesce(_callingUser, ''));
 
-        If char_length(_contactUsername) < 1 Then
-            RAISE EXCEPTION 'Contact Name must be specified';
+        If _contactUsername = '' Then
+            RAISE EXCEPTION 'Contact name must be specified';
         End If;
 
-        If char_length(_piUsername) < 1 Then
-            RAISE EXCEPTION 'Principle Investigator Username must be specified';
+        If _piUsername = '' Then
+            RAISE EXCEPTION 'Principle investigator username must be specified';
         End If;
 
-        If char_length(_biomaterialName) < 1 Then
-            RAISE EXCEPTION 'Biomaterial Name must be specified';
+        If _biomaterialName = '' Then
+            RAISE EXCEPTION 'Biomaterial name must be specified';
         End If;
 
-        If char_length(_sourceName) < 1 Then
-            RAISE EXCEPTION 'Source Name must be specified';
+        If _sourceName = '' Then
+            RAISE EXCEPTION 'Source name must be specified';
         End If;
 
-        If char_length(_biomaterialType) < 1 Then
+        If _biomaterialType = '' Then
             _returnCode := 'U5201';
-            RAISE EXCEPTION 'Biomaterial Type must be specified';
+            RAISE EXCEPTION 'Biomaterial type must be specified';
         End If;
 
-        If char_length(_reason) < 1 Then
+        If _reason = '' Then
             RAISE EXCEPTION 'Reason must be specified';
         End If;
 
-        If char_length(_campaignName) < 1 Then
-            RAISE EXCEPTION 'Campaign Name must be specified';
+        If _campaignName = '' Then
+            RAISE EXCEPTION 'Campaign name must be specified';
         End If;
 
         _mode := Trim(Lower(Coalesce(_mode, '')));

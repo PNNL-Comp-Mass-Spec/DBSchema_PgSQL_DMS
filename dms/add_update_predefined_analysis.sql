@@ -151,27 +151,27 @@ BEGIN
         _organismName     := Trim(Coalesce(_organismName    , ''));
         _organismDBName   := Trim(Coalesce(_organismDBName  , ''));
 
-        If char_length(_analysisToolName) < 1 Then
+        If _analysisToolName = '' Then
             _returnCode := 'U5201';
             RAISE EXCEPTION 'Analysis tool name must be specified';
         End If;
 
-        If char_length(_paramFileName) < 1 Then
+        If _paramFileName = '' Then
             _returnCode := 'U5202';
             RAISE EXCEPTION 'Parameter file name must be specified';
         End If;
 
-        If char_length(_settingsFileName) < 1 Then
+        If _settingsFileName = '' Then
             _returnCode := 'U5203';
             RAISE EXCEPTION 'Settings file name must be specified';
         End If;
 
-        If char_length(_organismName) < 1 Then
+        If _organismName = '' Then
             _returnCode := 'U5204';
             RAISE EXCEPTION 'Organism name must be specified; use "(default)" to auto-assign at job creation';
         End If;
 
-        If char_length(_organismDBName) < 1 Then
+        If _organismDBName = '' Then
             _returnCode := 'U5205';
             RAISE EXCEPTION 'Organism DB name must be specified';
         End If;

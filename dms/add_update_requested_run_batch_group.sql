@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch_group(INOUT _i
 **          10/12/2023 mem - Add/update variables
 **                         - Only drop temp table if actually created
 **          01/03/2024 mem - Update warning messages
+**          01/11/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -92,7 +93,7 @@ BEGIN
         _ownerUsername         := Trim(Coalesce(_ownerUsername, ''));
         _mode                  := Trim(Lower(Coalesce(_mode, '')));
 
-        If char_length(_name) < 1 Then
+        If _name = '' Then
             _message := 'Must define a batch group name';
             _returnCode := 'U5201';
             RAISE EXCEPTION '%', _message;
@@ -110,9 +111,9 @@ BEGIN
             End If;
         End If;
 
-        -- Cannot update a non-existent entry
-
         If _mode = 'update' Then
+            -- Cannot update a non-existent entry
+
             If Not Exists (SELECT Batch_Group_ID FROM t_requested_run_batch_group WHERE Batch_Group_ID = _id) Then
                 _message := format('Cannot update: batch group ID %s does not exist', _id);
                 _returnCode := 'U5205';

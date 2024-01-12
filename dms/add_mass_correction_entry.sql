@@ -27,6 +27,7 @@ CREATE OR REPLACE PROCEDURE public.add_mass_correction_entry(IN _modname text, I
 **          09/07/2023 mem - Update warning messages
 **          09/08/2023 mem - Include schema name when calling function verify_sp_authorized()
 **          01/03/2024 mem - Update warning messages
+**          01/11/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -45,7 +46,7 @@ BEGIN
     _modMassChange   := Coalesce(_modMassChange, 0);
     _modAffectedAtom := Trim(Coalesce(_modAffectedAtom, '-'));
 
-    If char_length(_modName) < 1 Then
+    If _modName = '' Then
         _message := 'Modification name must be specified';
         RAISE WARNING '%', _message;
 
@@ -53,7 +54,7 @@ BEGIN
         RETURN;
     End If;
 
-    If char_length(_modDescription) < 1 Then
+    If _modDescription = '' Then
         _message := 'Modification description must be specified';
         RAISE WARNING '%', _message;
 

@@ -66,6 +66,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_storage(IN _path text, IN _volname
 **          10/12/2023 mem - Prevent adding a second inbox for an instrument
 **                         - Validate machine name vs. t_storage_path_hosts
 **          01/03/2024 mem - Update warning message
+**          01/11/2024 mem - Check for empty strings instead of using char_length()
 **
 *****************************************************/
 DECLARE
@@ -127,7 +128,7 @@ BEGIN
         _urlDomain      := Trim(Coalesce(_urlDomain, ''));
         _id             := Trim(Coalesce(_id, ''));
 
-        If char_length(_path) < 1 Then
+        If _path = '' Then
             _message := 'Storage path must be specified';
             RAISE WARNING '%', _message;
 
@@ -135,7 +136,7 @@ BEGIN
             RETURN;
         End If;
 
-        If char_length(_instrumentName) < 1 Then
+        If _instrumentName = '' Then
             _message := 'Instrument name must be specified';
             RAISE WARNING '%', _message;
 
