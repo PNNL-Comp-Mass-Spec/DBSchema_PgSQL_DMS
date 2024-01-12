@@ -631,7 +631,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode Like '%update%' Then
-            -- Cannot update a non-existent entry
 
             SELECT state,
                    assigned_personnel
@@ -639,6 +638,7 @@ BEGIN
             FROM  t_data_analysis_request
             WHERE request_id = _id;
 
+            -- Cannot update a non-existent entry
             If Not FOUND Then
                 RAISE EXCEPTION 'Cannot update: request ID % does not exist', _id;
             End If;

@@ -93,12 +93,12 @@ BEGIN
 
         If _eusPropID = '' Then
             _logErrors := false;
-            RAISE EXCEPTION 'EUS Proposal ID must be specified';
+            RAISE EXCEPTION 'EUS proposal ID must be specified';
         End If;
 
         If _eusPropStateID Is Null Then
             _logErrors := false;
-            RAISE EXCEPTION 'EUS Proposal State cannot be null';
+            RAISE EXCEPTION 'EUS proposal state cannot be null';
         End If;
 
         If Not Exists (SELECT state_name FROM t_eus_proposal_state_name WHERE state_id = _eusPropStateID) Then

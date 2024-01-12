@@ -127,7 +127,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-
             If _id Is Null Then
                 _logErrors := false;
                 RAISE EXCEPTION 'Cannot update: attachment ID cannot be null';
