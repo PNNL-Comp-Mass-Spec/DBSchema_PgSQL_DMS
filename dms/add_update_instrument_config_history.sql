@@ -1,19 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_instrument_config_history
-(
-    INOUT _id int,
-    _instrument text,
-    _dateOfChange text,
-    _postedBy text,
-    _description text,
-    _note text,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_instrument_config_history(integer, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_instrument_config_history(INOUT _id integer, IN _instrument text, IN _dateofchange text, IN _postedby text, IN _description text, IN _note text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -39,7 +30,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          11/30/2018 mem - Make _id an output parameter
 **                           Validate _dateOfChange
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/11/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -77,18 +68,43 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    If Trim(Coalesce(_postedBy, '')) = '' Then
+    _instrument   := Trim(Coalesce(_instrument));
+    _dateOfChange := Trim(Coalesce(_dateOfChange));
+    _postedBy     := Trim(Coalesce(_postedBy));
+    _description  := Trim(Coalesce(_description));
+    _note         := Trim(Coalesce(_note));
+    _callingUser  := Trim(Coalesce(_callingUser, ''));
+    _mode         := Trim(Lower(Coalesce(_mode, '')));
+
+    If _instrument = '' Then
+        _message := 'Instrument name must be defined';
+        RAISE WARNING '%', _message;
+        RETURN;
+    End If;
+
+    If _callingUser = '' Then
+        _callingUser := SESSION_USER;
+    End If;
+
+    If _postedBy = '' Then
         _postedBy := _callingUser;
     End If;
 
-    _validatedDate := public.try_cast(_dateOfChange, null, null::timestamp);
-    _mode          := Trim(Lower(Coalesce(_mode, '')));
+    _validatedDate := public.try_cast(_dateOfChange, null::timestamp);
 
     If _validatedDate Is Null Then
-        _message := 'Date Of Change is not a valid date';
+        _message := format('Date of change is not a valid date: "%s"', _dateOfChange);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';
+        RETURN;
+    End If;
+
+    If Not _mode In ('add', 'update') Then
+        _message := format('Mode should be "add" or "update, not "%s"', _mode);
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5202';
         RETURN;
     End If;
 
@@ -97,13 +113,19 @@ BEGIN
     ---------------------------------------------------
 
     If _mode = 'update' Then
-        -- Cannot update a non-existent entry
+        If _id Is Null Then
+            _message := 'Cannot update: instrument config ID cannot be null';
+            RAISE WARNING '%', _message;
 
-        If Not Exists (SELECT entry_id FROM  t_instrument_config_history WHERE entry_id = _id) Then
+            _returnCode := 'U5203';
+            RETURN;
+        End If;
+
+        If Not Exists (SELECT entry_id FROM t_instrument_config_history WHERE entry_id = _id) Then
             _message := format('Cannot update: instrument config ID %s does not exist', _id);
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5202';
+            _returnCode := 'U5204';
             RETURN;
         End If;
 
@@ -154,4 +176,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_instrument_config_history IS 'AddUpdateInstrumentConfigHistory';
+
+ALTER PROCEDURE public.add_update_instrument_config_history(INOUT _id integer, IN _instrument text, IN _dateofchange text, IN _postedby text, IN _description text, IN _note text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_instrument_config_history(INOUT _id integer, IN _instrument text, IN _dateofchange text, IN _postedby text, IN _description text, IN _note text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_instrument_config_history(INOUT _id integer, IN _instrument text, IN _dateofchange text, IN _postedby text, IN _description text, IN _note text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateInstrumentConfigHistory';
+
