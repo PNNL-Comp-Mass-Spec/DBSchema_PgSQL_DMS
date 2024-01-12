@@ -108,6 +108,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
+    _logErrors boolean := false;
     _duplicateTaxologyMsg text;
     _matchCount int;
     _serverNameEndSlash int;
@@ -157,12 +158,25 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
+        _orgName            := Trim(Coalesce(_orgName, ''));
+        _orgShortName       := Trim(Coalesce(_orgShortName, ''));
         _orgStorageLocation := Trim(Coalesce(_orgStorageLocation, ''));
+        _orgDBName          := Trim(Coalesce(_orgDBName, ''));
+        _orgGenus           := Trim(Coalesce(_orgGenus, ''));
+        _orgSpecies         := Trim(Coalesce(_orgSpecies, ''));
+        _orgStrain          := Trim(Coalesce(_orgStrain, ''));
+        _orgActive          := Trim(Coalesce(_orgActive, ''));
+        _newtIDList         := Trim(Coalesce(_newtIDList, ''));
+        _autoDefineTaxonomy := Trim(Coalesce(_autoDefineTaxonomy, 'Yes'));
+        _callingUser        := Trim(Coalesce(_callingUser, ''));
+        _mode               := Trim(Lower(Coalesce(_mode, '')));
 
         If _orgStorageLocation <> '' Then
             If Not _orgStorageLocation Like '\\\\%' Then
-                RAISE EXCEPTION 'Org. Storage Path must start with \\';
+                RAISE EXCEPTION 'Organism storage path must start with \\';
             End If;
+
+            _logErrors := true;
 
             -- Make sure _orgStorageLocation does not End in \FASTA or \FASTA\
             -- That text gets auto-appended via computed column organism_db_path
@@ -192,12 +206,12 @@ BEGIN
 
             End If;
 
+            _logErrors := false;
+
         End If;
 
-        _orgName := Trim(Coalesce(_orgName, ''));
-
         If _orgName = '' Then
-            RAISE EXCEPTION 'Organism Name must be specified';
+            RAISE EXCEPTION 'Organism name must be specified';
         End If;
 
         If public.has_whitespace_chars(_orgName, _allowspace => false) Then
@@ -209,7 +223,7 @@ BEGIN
         End If;
 
         If _orgName Like '%,%' Then
-            RAISE EXCEPTION 'Organism Name cannot contain commas';
+            RAISE EXCEPTION 'Organism name cannot contain commas';
         End If;
 
         If _orgStorageLocation = '' Then
@@ -218,52 +232,42 @@ BEGIN
             SELECT server
             INTO _orgDbPathBase
             FROM t_misc_paths
-            WHERE path_function = 'DMSOrganismFiles'
+            WHERE path_function = 'DMSOrganismFiles';
+
+            If Not Found THEN
+                _logErrors := true;
+                RAISE EXCEPTION 'Path function DMSOrganismFiles not found in table t_misc_paths; cannot auto-define the storage location';
+            End If;
 
             _orgStorageLocation := format('%s\', public.combine_paths(_orgDbPathBase, _orgName));
         End If;
 
-        If char_length(Coalesce(_orgShortName, '')) > 0 Then
-            _orgShortName := Trim(Coalesce(_orgShortName, ''));
 
+        If _orgShortName <> '' Then
             If _orgShortName Like '% %' Then
-                RAISE EXCEPTION 'Organism Short Name cannot contain spaces';
+                RAISE EXCEPTION 'Organism short name cannot contain spaces';
             End If;
 
             If _orgShortName Like '%,%' Then
-                RAISE EXCEPTION 'Organism Short Name cannot contain commas';
+                RAISE EXCEPTION 'Organism short name cannot contain commas';
             End If;
         End If;
 
-        _orgDBName := Trim(Coalesce(_orgDBName, ''));
-
         If _orgDBName ILike '%.fasta' Then
-            RAISE EXCEPTION 'Default Protein Collection cannot contain ".fasta"';
+            RAISE EXCEPTION 'Default protein collection cannot contain ".fasta"';
         End If;
 
-        _orgActive   := Trim(Coalesce(_orgActive, ''));
         _orgActiveID := public.try_cast(_orgActive, -1);
 
-        If _orgActive = '' Or Or Not Coalesce(_orgActiveID, -1) In (0, 1) Then
+        If _orgActive = '' Or Not Coalesce(_orgActiveID, -1) In (0, 1) Then
             RAISE EXCEPTION 'Organism active state must be 0 or 1';
         End If;
-
-        _orgGenus   := Trim(Coalesce(_orgGenus, ''));
-        _orgSpecies := Trim(Coalesce(_orgSpecies, ''));
-        _orgStrain  := Trim(Coalesce(_orgStrain, ''));
-
-        _autoDefineTaxonomy := Trim(Coalesce(_autoDefineTaxonomy, 'Yes'));
-
-        -- Organism ID
-        _id := Coalesce(_id, 0);
-
-        _newtIDList := Trim(Coalesce(_newtIDList, ''));
 
         If _newtIDList <> '' Then
             CREATE TEMP TABLE Tmp_NEWT_IDs (
                 NEWT_ID_Text text,
                 NEWT_ID int NULL
-            )
+            );
 
             INSERT INTO Tmp_NEWT_IDs (NEWT_ID_Text)
             SELECT Value
@@ -277,7 +281,7 @@ BEGIN
 
             -- Make sure all of the NEWT IDs are Valid
             UPDATE Tmp_NEWT_IDs
-            Set NEWT_ID = public.try_cast(NEWT_ID_Text, null::int)
+            SET NEWT_ID = public.try_cast(NEWT_ID_Text, null::int)
 
             SELECT string_agg(Tmp_NEWT_IDs.NEWT_ID_Text, ', ' ORDER BY Tmp_NEWT_IDs.NEWT_ID_Text)
             INTO _invalidNEWTIDs
@@ -294,7 +298,7 @@ BEGIN
             -- Auto-define _newtIDList using _ncbiTaxonomyID though only if the NEWT table has the ID
             -- (there are numerous organisms that nave an NCBI Taxonomy ID but not a NEWT ID)
 
-            If Exists (SELECT Identifier FROM ont.V_CV_NEWT WHERE Identifier = _ncbiTaxonomyID::citext Then
+            If Not _ncbiTaxonomyID Is Null And Exists (SELECT Identifier FROM ont.V_CV_NEWT WHERE Identifier = _ncbiTaxonomyID) Then
                 _newtIDList := _ncbiTaxonomyID::text;
             End If;
         End If;
@@ -312,6 +316,8 @@ BEGIN
         End If;
 
         If _autoDefineTaxonomyFlag = 1 And Coalesce(_ncbiTaxonomyID, 0) > 0 Then
+
+            _logErrors := true;
 
             ---------------------------------------------------
             -- Try to auto-update the taxonomy information
@@ -331,9 +337,8 @@ BEGIN
                             _orgStrain      => _orgStrain,      -- Output
                             _previewResults => false);
 
+            _logErrors := false;
         End If;
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
         -- Is entry already in database?
@@ -352,6 +357,9 @@ BEGIN
         -- Cannot update a non-existent entry
 
         If _mode = 'update' Then
+            If _id Is Null Then
+                RAISE EXCEPTION 'Cannot update: organism ID cannot be null';
+            End If;
 
             SELECT organism
             INTO _existingOrgName
@@ -359,11 +367,11 @@ BEGIN
             WHERE organism_id = _id;
 
             If Not FOUND Then
-                RAISE EXCEPTION 'Cannot update: organism "%" does not exist', _orgName;
+                RAISE EXCEPTION 'Cannot update: organism ID % does not exist', _id;
             End If;
 
             If _existingOrgName <> _orgName Then
-                RAISE EXCEPTION 'Cannot update: organism name may not be changed from "%"', _existingOrgName;
+                RAISE EXCEPTION 'Cannot update: organism name may not be changed from "%"; contact a DMS administrator', _existingOrgName;
             End If;
         End If;
 
@@ -406,7 +414,7 @@ BEGIN
                       Coalesce(species, '') = _orgSpecies::citext AND
                       Coalesce(strain, '')  = _orgStrain::citext;
 
-                If _matchCount <> 0 And Not _orgSpecies Like '%metagenome' Then
+                If _matchCount <> 0 And Not _orgSpecies ILike '%metagenome' Then
                     RAISE EXCEPTION 'Cannot add: %', _duplicateTaxologyMsg;
                 End If;
             End If;
@@ -422,7 +430,7 @@ BEGIN
                       Coalesce(strain, '')  = _orgStrain::citext AND
                       organism_id <> _id;
 
-                If _matchCount <> 0 And Not _orgSpecies Like '%metagenome' Then
+                If _matchCount <> 0 And Not _orgSpecies ILike '%metagenome' Then
                     RAISE EXCEPTION 'Cannot update: %', _duplicateTaxologyMsg;
                 End If;
             End If;
@@ -436,16 +444,18 @@ BEGIN
             -- Protein collections in pc.V_Collection_Picker are those with state 1, 2, or 3
             -- In contrast, pc.V_Protein_Collections_by_Organism has all protein collections
 
-            If Not Exists (SELECT Name FROM pc.V_Collection_Picker WHERE Name = _orgDBName) Then
+            If Not Exists (SELECT Name FROM pc.V_Collection_Picker WHERE Name = _orgDBName::citext) Then
 
-                If Exists (SELECT Collection_Name FROM pc.V_Protein_Collections_by_Organism WHERE Collection_Name = _orgDBName AND Collection_State_ID = 4) Then
-                    RAISE EXCEPTION 'Default protein collection is invalid because it is inactive: ', _orgDBName;
+                If Exists (SELECT Collection_Name FROM pc.V_Protein_Collections_by_Organism WHERE Collection_Name = _orgDBName::citext AND Collection_State_ID = 4) Then
+                    RAISE EXCEPTION 'Default protein collection is invalid because it is inactive: %', _orgDBName;
                 Else
                     RAISE EXCEPTION 'Protein collection not found: %', _orgDBName;
                 End If;
 
             End If;
         End If;
+
+        _logErrors := true;
 
         ---------------------------------------------------
         -- Action for add mode
@@ -499,7 +509,7 @@ BEGIN
             INTO _id;
 
             -- If _callingUser is defined, update entered_by in t_organisms_change_history
-            If Trim(Coalesce(_callingUser, '')) <> '' Then
+            If _callingUser <> '' Then
                 CALL public.alter_entered_by_user ('public', 't_organisms_change_history', 'organism_id', _id, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
@@ -534,7 +544,7 @@ BEGIN
             WHERE organism_id = _id;
 
             -- If _callingUser is defined, update entered_by in t_organisms_change_history
-            If Trim(Coalesce(_callingUser, '')) <> '' Then
+            If _callingUser <> '' Then
                 CALL public.alter_entered_by_user ('public', 't_organisms_change_history', 'organism_id', _id, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
@@ -548,11 +558,15 @@ BEGIN
                 _exceptionDetail  = pg_exception_detail,
                 _exceptionContext = pg_exception_context;
 
-        _logMessage := format('%s; Organism %s', _exceptionMessage, _orgName);
+        If _orgName Is Null Then
+            _logMessage := _exceptionMessage;
+        Else
+            _logMessage := format('%s; Organism %s', _exceptionMessage, _orgName);
+        End If;
 
         _message := local_error_handler (
                         _sqlState, _logMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => '', _logError => true);
+                        _callingProcLocation => '', _logError => _logErrors);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;

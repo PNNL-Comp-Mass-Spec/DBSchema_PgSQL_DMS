@@ -68,11 +68,11 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
+    _logErrors boolean := false;
     _folderName text;
     _addingDataset boolean := false;
-    _warning text;
     _experimentCheck text;
-    _requestID int := 0;
+    _requestID int;
     _requestName text;
     _wellplateName text := NULL;
     _wellNumber text := NULL;
@@ -104,7 +104,6 @@ DECLARE
     _matchCount int;
     _newUsername text;
     _storagePathID int := 0;
-    _warningWithPrefix text := '';
     _endDate timestamp;
     _startDate timestamp;
     _targetType int;
@@ -140,46 +139,56 @@ BEGIN
 
     BEGIN
 
+        ---------------------------------------------------
+        -- Validate the inputs
+        ---------------------------------------------------
+
+        _datasetName      := Trim(Coalesce(_datasetName, ''));
+        _experimentName   := Trim(Coalesce(_experimentName, ''));
+        _operatorUsername := Trim(Coalesce(_operatorUsername, ''));
+        _instrumentName   := Trim(Coalesce(_instrumentName, ''));
+        _runDuration      := Trim(Coalesce(_runDuration, ''));
+        _comment          := Trim(Coalesce(_comment, ''));
+        _eusProposalID    := Trim(Coalesce(_eusProposalID, ''));
+        _eusUsageType     := Trim(Coalesce(_eusUsageType, ''));
+        _eusUsersList     := Trim(Coalesce(_eusUsersList, ''));
+        _callingUser      := Trim(Coalesce(_callingUser, ''));
+        _mode             := Trim(Lower(Coalesce(_mode, '')));
+
+        If _runStart Is Null Then
+            RAISE EXCEPTION 'Run start timestamp cannot be null';
+        End If;
+
+        If _mode = '' Then
+            RAISE EXCEPTION '_mode must be specified';
+        End If;
+
         _refDate  := CURRENT_TIMESTAMP;
         _acqStart := _runStart;
         _acqEnd   := _acqStart + INTERVAL '10 minutes'; -- default;
 
-        If Coalesce(_runDuration, '') <> '' Then
+        If _runDuration <> '' Then
             _acqEnd := _acqStart + make_interval(mins => public.try_cast(_runDuration, 10))
         End If;
 
         _msType        := 'Tracking';
         _datasetTypeID := public.get_dataset_type_id(_msType);
 
-        ---------------------------------------------------
-        -- Validate the inputs
-        ---------------------------------------------------
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
-
-        If _mode = '' Then
-            RAISE EXCEPTION '_mode must be specified';
-        End If;
-
-        If Coalesce(_datasetName, '') = '' Then
+        If _datasetName = '' Then
             RAISE EXCEPTION 'Dataset name must be specified';
         End If;
 
         _folderName := _datasetName;
 
-        If Coalesce(_experimentName, '') = '' Then
+        If _experimentName = '' Then
             RAISE EXCEPTION 'Experiment name must be specified';
         End If;
 
-        If Coalesce(_folderName, '') = '' Then
-            RAISE EXCEPTION 'Folder name must be specified';
-        End If;
-
-        If Coalesce(_operatorUsername, '') = '' Then
+        If _operatorUsername = '' Then
             RAISE EXCEPTION 'Operator username must be specified';
         End If;
 
-        If Coalesce(_instrumentName, '') = '' Then
+        If _instrumentName = '' Then
             RAISE EXCEPTION 'Instrument name must be specified';
         End If;
 
@@ -188,10 +197,6 @@ BEGIN
 
         -- Replace instances of CRLF (or LF) with semicolons
         _comment := public.remove_cr_lf(_comment);
-
-        _eusProposalID := Trim(Coalesce(_eusProposalID, ''));
-        _eusUsageType  := Trim(Coalesce(_eusUsageType, ''));
-        _eusUsersList  := Trim(Coalesce(_eusUsersList, ''));
 
         ---------------------------------------------------
         -- Determine if we are adding or check_adding a dataset
@@ -220,7 +225,7 @@ BEGIN
 
         End If;
 
-        If _datasetName SIMILAR TO '%[.]raw' Or _datasetName SIMILAR TO '%[.]wiff' Or _datasetName SIMILAR TO '%[.]d' Then
+        If Lower(_datasetName) SIMILAR TO '%[.]raw' Or Lower(_datasetName) SIMILAR TO '%[.]wiff' Or Lower(_datasetName) SIMILAR TO '%[.]d' Then
             RAISE EXCEPTION 'Dataset name may not end in .raw, .wiff, or .d';
         End If;
 
@@ -306,6 +311,8 @@ BEGIN
             End If;
         End If;
 
+        _logErrors := true;
+
         ---------------------------------------------------
         -- Action for add mode
         ---------------------------------------------------
@@ -320,14 +327,14 @@ BEGIN
 
             If _storagePathID = 0 Then
                 _storagePathID := 2; -- index of 'none' in table
-                RAISE EXCEPTION 'Valid storage path could not be found';
+                RAISE EXCEPTION 'Valid storage path could not be found for instrument ID % and reference date %', _instrumentID, public.timestamp_text(_refDate);
             End If;
 
             _newDSStateID := 3;
 
             -- Insert values into a new row
 
-            INSERT INTO t_dataset(
+            INSERT INTO t_dataset (
                 dataset,
                 operator_username,
                 comment,
@@ -371,7 +378,7 @@ BEGIN
 
             -- If _callingUser is defined, call alter_event_log_entry_user to alter the entered_by field in t_event_log
 
-            If Trim(Coalesce(_callingUser, '')) <> '' Then
+            If _callingUser <> '' Then
                 _targetType := 4;
                 CALL public.alter_event_log_entry_user ('public', _targetType, _datasetID, _newDSStateID, _callingUser, _message => _alterEnteredByMessage);
 
@@ -383,60 +390,47 @@ BEGIN
             -- Adding a tracking dataset, so need to create a scheduled run
             ---------------------------------------------------
 
-            If _requestID = 0 Then
+            _requestName := format('AutoReq_%s', _datasetName);
 
-                If Coalesce(_message, '') <> '' and Coalesce(_warning, '') = '' Then
-                    _warning := _message;
-                End If;
+            CALL public.add_update_requested_run (
+                                    _requestName => _requestName,
+                                    _experimentName => _experimentName,
+                                    _requesterUsername => _operatorUsername,
+                                    _instrumentName => _instrumentName,
+                                    _workPackage => 'none',
+                                    _msType => _msType,
+                                    _instrumentSettings => 'na',
+                                    _wellplateName => NULL,
+                                    _wellNumber => NULL,
+                                    _internalStandard => 'na',
+                                    _comment => 'Automatically created by Dataset entry',
+                                    _eusProposalID => _eusProposalID,
+                                    _eusUsageType => _eusUsageType,
+                                    _eusUsersList => _eusUsersList,
+                                    _mode => 'add-auto',
+                                    _request => _requestID,         -- Output
+                                    _message => _message,           -- Output
+                                    _returnCode => _returnCode,     -- Output
+                                    _secSep => _secSep,
+                                    _mrmAttachment => '',
+                                    _status => 'Completed',
+                                    _skipTransactionRollback => true,
+                                    _autoPopulateUserListIfBlank => true,        -- Auto populate _eusUsersList if blank since this is an Auto-Request
+                                    _callingUser => _callingUser)
 
-                _requestName := format('AutoReq_%s', _datasetName);
-
-                CALL public.add_update_requested_run (
-                                        _requestName => _requestName,
-                                        _experimentName => _experimentName,
-                                        _requesterUsername => _operatorUsername,
-                                        _instrumentName => _instrumentName,
-                                        _workPackage => 'none',
-                                        _msType => _msType,
-                                        _instrumentSettings => 'na',
-                                        _wellplateName => NULL,
-                                        _wellNumber => NULL,
-                                        _internalStandard => 'na',
-                                        _comment => 'Automatically created by Dataset entry',
-                                        _eusProposalID => _eusProposalID,
-                                        _eusUsageType => _eusUsageType,
-                                        _eusUsersList => _eusUsersList,
-                                        _mode => 'add-auto',
-                                        _request => _requestID,         -- Output
-                                        _message => _message,           -- Output
-                                        _returnCode => _returnCode,     -- Output
-                                        _secSep => _secSep,
-                                        _mrmAttachment => '',
-                                        _status => 'Completed',
-                                        _skipTransactionRollback => true,
-                                        _autoPopulateUserListIfBlank => true,        -- Auto populate _eusUsersList if blank since this is an Auto-Request
-                                        _callingUser => _callingUser)
-
-                If _returnCode <> '' Then
-                    RAISE EXCEPTION 'Create AutoReq run request failed: dataset % with EUS Proposal ID %, Usage Type %, and Users List % -> %',
-                                    _datasetName, _eusProposalID, _eusUsageType, _eusUsersList, _message);
-                End If;
+            If _returnCode <> '' Then
+                RAISE EXCEPTION 'Create AutoReq run request failed: dataset % with EUS Proposal ID %, Usage Type %, and Users List % -> %',
+                                _datasetName, _eusProposalID, _eusUsageType, _eusUsersList, _message);
             End If;
 
             ---------------------------------------------------
             -- Consume the scheduled run
             ---------------------------------------------------
 
-            _datasetID := 0;
-
             SELECT dataset_id
             INTO _datasetID
             FROM t_dataset
-            WHERE dataset = _datasetName
-
-            If Coalesce(_message, '') <> '' and Coalesce(_warning, '') = '' Then
-                _warning := _message;
-            End If;
+            WHERE dataset = _datasetName;
 
             CALL public.consume_scheduled_run (
                             _datasetID,
@@ -467,19 +461,19 @@ BEGIN
         If _mode = 'update' Then
 
             UPDATE t_dataset
-            SET     operator_username = _operatorUsername,
-                    comment = _comment,
-                    instrument_id = _instrumentID,
-                    dataset_type_ID = _datasetTypeID,
-                    folder_name = _folderName,
-                    exp_id = _experimentID,
-                    acq_time_start = _acqStart,
-                    acq_time_end = _acqEnd
-            WHERE dataset = _datasetName
+            SET operator_username = _operatorUsername,
+                comment = _comment,
+                instrument_id = _instrumentID,
+                dataset_type_ID = _datasetTypeID,
+                folder_name = _folderName,
+                exp_id = _experimentID,
+                acq_time_start = _acqStart,
+                acq_time_end = _acqEnd
+            WHERE dataset = _datasetName::citext;
 
             -- If _callingUser is defined, call alter_event_log_entry_user to alter the entered_by field in t_event_log
 
-            If Trim(Coalesce(_callingUser, '')) <> '' And _ratingID <> Coalesce(_curDSRatingID, -1000) Then
+            If _callingUser <> '' And _ratingID <> Coalesce(_curDSRatingID, -1000) Then
                 _targetType := 8;
                 CALL public.alter_event_log_entry_user ('public', _targetType, _datasetID, _ratingID, _callingUser, _message => _alterEnteredByMessage);
             End If;
@@ -543,24 +537,6 @@ BEGIN
 
         End If;
 
-        -- Update _message if _warning is not empty
-        If Coalesce(_warning, '') <> '' Then
-
-            If _warning Like 'Warning:' Then
-                _warningWithPrefix := _warning;
-            Else
-                _warningWithPrefix := format('Warning: %s', _warning);
-            End If;
-
-            If Coalesce(_message, '') = '' Then
-                _message := _warningWithPrefix;
-            ElsIf _message = _warning Then
-                _message := _warningWithPrefix;
-            Else
-                _message := format('%s; %s', _warningWithPrefix, _message);
-            End If;
-        End If;
-
         ---------------------------------------------------
         -- Update interval table
         ---------------------------------------------------
@@ -586,7 +562,7 @@ BEGIN
 
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => '', _logError => true);
+                        _callingProcLocation => '', _logError => _logErrors);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;

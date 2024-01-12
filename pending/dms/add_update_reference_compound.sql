@@ -207,10 +207,10 @@ BEGIN
         If _purchaseDate = '' Then
             _purchaseDateValue := null;
         Else
-            _purchaseDateValue := public.try_cast(_purchaseDate, null, null::timestamp);
+            _purchaseDateValue := public.try_cast(_purchaseDate, null::timestamp);
 
             If _purchaseDateValue Is Null Then
-                _purchaseDateFloat := public.try_cast(_purchaseDate, null, null::float8);
+                _purchaseDateFloat := public.try_cast(_purchaseDate, null::float8);
 
                 If Not _purchaseDateFloat IS NULL Then
                     -- Integer or float based date (likely an Excel conversion artifact)

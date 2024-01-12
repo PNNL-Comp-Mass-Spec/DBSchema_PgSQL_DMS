@@ -83,9 +83,10 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
+    _logErrors boolean := false;
     _msg text;
     _currentStateID int;
-    _requestType text := 'RNA';
+    _requestType citext := 'RNA';
     _instrumentGroup text := '';
     _datasetTypeID int;
     _campaignID int := 0;
@@ -95,7 +96,7 @@ DECLARE
     _eusUsageTypeID int;
     _eusUsersList text := '';
     _allowNoneWP boolean := false;
-    _requestTypeExisting text;
+    _requestTypeExisting citext;
     _activationState int := 10;
     _activationStateName text;
     _alterEnteredByMessage text;
@@ -107,10 +108,6 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode := '';
-
-    If Coalesce(_eusUserID, 0) <= 0 Then
-        _eusUserID := Null;
-    End If;
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -138,9 +135,20 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _instrumentName := Trim(Coalesce(_instrumentName, ''));
-        _datasetType    := Trim(Coalesce(_datasetType, ''));
-        _mode           := Trim(Lower(Coalesce(_mode, '')));
+        _requestName         := Trim(Coalesce(_requestName, ''));
+        _campaign            := Trim(Coalesce(_campaign, ''));
+        _organism            := Trim(Coalesce(_organism, ''));
+        _instrumentName      := Trim(Coalesce(_instrumentName, ''));
+        _datasetType         := Trim(Coalesce(_datasetType, ''));
+        _estimatedCompletion := Trim(Coalesce(_estimatedCompletion, ''));
+        _workPackageNumber   := Trim(Coalesce(_workPackageNumber, ''));
+        _state               := Trim(Coalesce(_state, ''));
+        _callingUser         := Trim(Coalesce(_callingUser, ''));
+        _mode                := Trim(Lower(Coalesce(_mode, '')));
+
+        If Coalesce(_eusUserID, 0) <= 0 Then
+            _eusUserID := Null;
+        End If;
 
         ---------------------------------------------------
         -- Validate dataset type
@@ -196,6 +204,10 @@ BEGIN
         -- Resolve campaign ID
         ---------------------------------------------------
 
+        If _campaign = '' Then
+            RAISE EXCEPTION 'Campaign must be defined';
+        End If;
+
         _campaignID := public.get_campaign_id(_campaign);
 
         If _campaignID = 0 Then
@@ -205,6 +217,10 @@ BEGIN
         ---------------------------------------------------
         -- Resolve organism ID
         ---------------------------------------------------
+
+        If _organism = '' Then
+            RAISE EXCEPTION 'Organism must be defined';
+        End If;
 
         _organismID := public.get_organism_id(_organism);
 
@@ -270,7 +286,6 @@ BEGIN
                     );
 
         If _returnCode <> '' Then
-            _logErrors := false;
             RAISE EXCEPTION '%', _msg;
         End If;
 
@@ -296,9 +311,9 @@ BEGIN
             RAISE EXCEPTION '%', _msg;
         End If;
 
-        If Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackageNumber And deactivated = 'Y') Then
+        If Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackageNumber::citext And deactivated = 'Y') Then
             _message := public.append_to_text(_message, format('Warning: Work Package %s is deactivated', _workPackageNumber));
-        ElsIf Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackageNumber And charge_code_state = 0) Then
+        ElsIf Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackageNumber::citext And charge_code_state = 0) Then
             _message := public.append_to_text(_message, format('Warning: Work Package %s is likely deactivated', _workPackageNumber));
         End If;
 
@@ -307,14 +322,16 @@ BEGIN
         SELECT charge_code
         INTO _workPackageNumber
         FROM t_charge_code
-        WHERE charge_code = _workPackageNumber
+        WHERE charge_code = _workPackageNumber;
 
         ---------------------------------------------------
         -- Is entry already in database?
         ---------------------------------------------------
 
         If _mode = 'update' Then
-            -- Cannot update a non-existent entry
+            If _id Is Null Then
+                RAISE EXCEPTION 'Cannot update: RNA prep request ID cannot be null';
+            End If;
 
             SELECT request_type,
                    state_id
@@ -328,7 +345,7 @@ BEGIN
 
             -- Changes not allowed if in 'closed' state
 
-            If _currentStateID = 5 And Not Exists (SELECT username FROM V_Operations_Task_Staff_Picklist WHERE username = _callingUser) Then
+            If _currentStateID = 5 And Not Exists (SELECT username FROM V_Operations_Task_Staff_Picklist WHERE username = _callingUser::citext) Then
                 RAISE EXCEPTION 'Changes to entry are not allowed if it is in the "Closed" state';
             End If;
 
@@ -353,12 +370,14 @@ BEGIN
             FROM t_charge_code CC
                  INNER JOIN t_charge_code_activation_state CCAS
                    ON CC.activation_state = CCAS.activation_state
-            WHERE CC.charge_code = _workPackageNumber;
+            WHERE CC.charge_code = _workPackageNumber::citext;
 
             If _activationState >= 3 Then
                 RAISE EXCEPTION 'Cannot use inactive Work Package "%" for a new RNA prep request', _workPackageNumber;
             End If;
         End If;
+
+        _logErrors := true;
 
         ---------------------------------------------------
         -- Action for add mode
@@ -417,7 +436,7 @@ BEGIN
             INTO _id;
 
             -- If _callingUser is defined, update system_account in t_sample_prep_request_updates
-            If Trim(Coalesce(_callingUser, '')) <> '' Then
+            If _callingUser <> '' Then
                 CALL public.alter_entered_by_user ('public', 't_sample_prep_request_updates', 'request_id', _id, _callingUser,
                                                    _entryDateColumnName => 'date_of_change', _enteredByColumnName => 'system_account', _message => _alterEnteredByMessage);
             End If;
@@ -431,8 +450,7 @@ BEGIN
         If _mode = 'update' Then
 
             UPDATE t_sample_prep_request
-            SET
-                request_name = _requestName,
+            SET request_name = _requestName,
                 requester_username = _requesterUsername,
                 reason = _reason,
                 organism = _organism,
@@ -456,7 +474,7 @@ BEGIN
             WHERE prep_request_id = _id;
 
             -- If _callingUser is defined, update system_account in t_sample_prep_request_updates
-            If Trim(Coalesce(_callingUser, '')) <> '' Then
+            If _callingUser <> '' Then
                 CALL public.alter_entered_by_user ('public', 't_sample_prep_request_updates', 'request_id', _id, _callingUser,
                                                    _entryDateColumnName => 'date_of_change', _enteredByColumnName => 'system_account', _message => _alterEnteredByMessage);
             End If;

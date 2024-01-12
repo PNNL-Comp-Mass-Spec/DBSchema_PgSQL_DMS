@@ -87,10 +87,10 @@ BEGIN
     SELECT cart_id
     INTO _cartID
     FROM  t_lc_cart
-    WHERE cart_name = _cartName;
+    WHERE cart_name = _cartName::citext;
 
     If Not FOUND Then
-        _message := 'Could not find cart';
+        _message := format('Could not find cart "%s"', _cartName);
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';
@@ -102,7 +102,13 @@ BEGIN
     ---------------------------------------------------
 
     If _mode = 'update' Then
-        -- Cannot update a non-existent entry
+        If _id Is Null Then
+            _message := 'Cannot update: cart settings ID cannot be null';
+            RAISE WARNING '%', _message;
+
+            _returnCode := 'U5202';
+            RETURN;
+        End If;
 
         SELECT entry_id
         INTO _tmp
@@ -113,7 +119,7 @@ BEGIN
             _message := format('Cannot update: LC cart settings ID %s does not exist', _id);
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5201';
+            _returnCode := 'U5203';
             RETURN;
         End If;
 

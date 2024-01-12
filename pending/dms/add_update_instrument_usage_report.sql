@@ -68,6 +68,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
+    _logErrors boolean := false;
     _matchCount int;
     _usageTypeID int;
     _operatorID int;
@@ -131,10 +132,12 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-            -- Cannot update a non-existent entry
+            If _seq Is Null Then
+                RAISE EXCEPTION 'Cannot update: sequence ID cannot be null';
+            End If;
 
             If Not Exists (SELECT dataset_id FROM t_emsl_instrument_usage_report WHERE seq = _seq) Then
-                RAISE EXCEPTION 'Cannot update EMSL instrument usage: dataset ID % does not exist in the instrument usage report table', _seq;
+                RAISE EXCEPTION 'Cannot update EMSL instrument usage: dataset ID % (aka sequence ID) does not exist in the instrument usage report table', _seq;
             End If;
         End If;
 
@@ -145,6 +148,8 @@ BEGIN
         If _mode = 'add' Then
             RAISE EXCEPTION '"Add" mode is not supported';
         End If;
+
+        _logErrors := true;
 
         ---------------------------------------------------
         -- Action for update mode
@@ -170,11 +175,15 @@ BEGIN
                 _exceptionDetail  = pg_exception_detail,
                 _exceptionContext = pg_exception_context;
 
-        _logMessage := format('%s; Seq %s, EMSL Instrument ID %s', _exceptionMessage, _seq, _emslInstID);
+        If _seq Is Null Then
+            _logMessage := format('%s; Null Seq, EMSL Instrument ID %s', _exceptionMessage, _seq, Coalesce(_emslInstID, 0));
+        Else
+            _logMessage := format('%s; Seq %s, EMSL Instrument ID %s', _exceptionMessage, _seq, Coalesce(_emslInstID, 0));
+        End If;
 
         _message := local_error_handler (
                         _sqlState, _logMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => '', _logError => true);
+                        _callingProcLocation => '', _logError => _logErrors);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;

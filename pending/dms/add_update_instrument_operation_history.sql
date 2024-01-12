@@ -130,19 +130,17 @@ BEGIN
             End If;
         End If;
 
-        _logErrors := true;
-
         ---------------------------------------------------
         -- Is entry already in database? (only applies to updates)
         ---------------------------------------------------
 
         If _mode = 'update' Then
-            -- Cannot update a non-existent entry
-
             If Not Exists (SELECT entry_id FROM t_instrument_operation_history WHERE entry_id = _id) Then
                 RAISE EXCEPTION 'Cannot update: instrument operation history ID % does not exist', _id;
             End If;
         End If;
+
+        _logErrors := true;
 
         ---------------------------------------------------
         -- Action for add mode
@@ -186,7 +184,11 @@ BEGIN
                 _exceptionContext = pg_exception_context;
 
         If _logErrors Then
-            _logMessage := format('%s; Instrument %s', _exceptionMessage, _instrument);
+            If _instrument Is Null Then
+                _logMessage := _exceptionMessage;
+            Else
+                _logMessage := format('%s; Instrument %s', _exceptionMessage, _instrument);
+            End If;
 
             _message := local_error_handler (
                             _sqlState, _logMessage, _exceptionDetail, _exceptionContext,

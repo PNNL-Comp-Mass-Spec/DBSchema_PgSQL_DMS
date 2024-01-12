@@ -45,6 +45,7 @@ DECLARE
     _entryDate timestamp;
     _tmp int;
 
+    _logErrors boolean := false;
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -60,7 +61,7 @@ BEGIN
         ---------------------------------------------------
 
         _cart      := Trim(Coalesce(_cart, ''));
-        _entryDate := public.try_cast(_dateOfChange, null, null::timestamp);
+        _entryDate := public.try_cast(_dateOfChange, null::timestamp);
         _mode      := Trim(Lower(Coalesce(_mode, '')));
 
         If _entryDate Is Null Then
@@ -71,7 +72,7 @@ BEGIN
             _postedBy := _callingUser;
         End If;
 
-        If Not Exists (SELECT cart_id FROM t_lc_cart WHERE cart_name = _cart) Then
+        If Not Exists (SELECT cart_id FROM t_lc_cart WHERE cart_name = _cart::citext) Then
             RAISE EXCEPTION 'Unrecognized LC cart name: %', _cart;
         End If;
 
@@ -80,7 +81,9 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-            -- Cannot update a non-existent entry
+            If _id Is Null Then
+                RAISE EXCEPTION 'Cannot update: cart ID cannot be null';
+            End If;
 
             SELECT entry_id
             INTO _tmp
@@ -91,6 +94,8 @@ BEGIN
                 RAISE EXCEPTION 'Cannot update: cart config history ID % does not exist', _id;
             End If;
         End If;
+
+        _logErrors := true;
 
         ---------------------------------------------------
         -- Action for add mode
@@ -140,11 +145,15 @@ BEGIN
                 _exceptionDetail  = pg_exception_detail,
                 _exceptionContext = pg_exception_context;
 
-        _logMessage := format('%s; Cart %s, ID %s', _exceptionMessage, _cart, _id);
+        If _id Is Null Then
+            _logMessage := format('%s; Cart %s, Null Cart ID', _exceptionMessage, Coalesce(_cart, ''));
+        Else
+            _logMessage := format('%s; Cart %s, ID %s', _exceptionMessage, Coalesce(_cart, ''), _id);
+        End If;
 
         _message := local_error_handler (
                         _sqlState, _logMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => '', _logError => true);
+                        _callingProcLocation => '', _logError => _logErrors);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;

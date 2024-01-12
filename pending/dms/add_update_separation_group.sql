@@ -43,6 +43,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
+    _logErrors boolean := false;
     _datasetTypeID int;
 
     _sqlState text;
@@ -90,12 +91,16 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-            -- Cannot update a non-existent entry
+            If _separationGroup Is Null Then
+                RAISE EXCEPTION 'Cannot update: separation group name cannot be null';
+            End If;
 
-            If Not Exists (SELECT separation_group FROM t_separation_group WHERE separation_group = _separationGroup) Then
+            If Not Exists (SELECT separation_group FROM t_separation_group WHERE separation_group = _separationGroup::citext) Then
                 RAISE EXCEPTION 'Cannot update: separation group "%" does not exist', _separationGroup;
             End If;
         End If;
+
+        _logErrors := true;
 
         ---------------------------------------------------
         -- Action for add mode
@@ -108,7 +113,7 @@ BEGIN
                                             active,
                                             sample_prep_visible,
                                             fraction_count)
-            VALUES (_separationGroup, _comment, _active, _samplePrepVisible, _fractionCount)
+            VALUES (_separationGroup, _comment, _active, _samplePrepVisible, _fractionCount);
 
         End If;
 
@@ -123,7 +128,7 @@ BEGIN
                 active = _active,
                 sample_prep_visible = _samplePrepVisible,
                 fraction_count = _fractionCount
-            WHERE separation_group = _separationGroup
+            WHERE separation_group = _separationGroup::citext;
 
         End If;
 
@@ -137,7 +142,7 @@ BEGIN
 
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => '', _logError => true);
+                        _callingProcLocation => '', _logError => _logErrors);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;

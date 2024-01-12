@@ -55,6 +55,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
+    _logErrors boolean := false;
     _datasetTypeID int;
 
     _sqlState text;
@@ -109,12 +110,16 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-            -- Cannot update a non-existent entry
+            If _instrumentGroup Is Null Then
+                RAISE EXCEPTION 'Cannot update: instrument group cannot be null';
+            End If;
 
             If Not Exists (SELECT instrument_group FROM t_instrument_group WHERE instrument_group = _instrumentGroup::citext) Then
                 RAISE EXCEPTION 'Cannot update: instrument group "%" does not exist';
             End If;
         End If;
+
+        _logErrors := true;
 
         ---------------------------------------------------
         -- Action for add mode
@@ -166,11 +171,15 @@ BEGIN
                 _exceptionDetail  = pg_exception_detail,
                 _exceptionContext = pg_exception_context;
 
-        _logMessage := format('%s; Instrument group %s', _exceptionMessage, _instrumentGroup);
+        If _instrumentGroup Is Null Then
+            _logMessage := _exceptionMessage;
+        Else
+            _logMessage := format('%s; Instrument group %s', _exceptionMessage, _instrumentGroup);
+        End If;
 
         _message := local_error_handler (
                         _sqlState, _logMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => '', _logError => true);
+                        _callingProcLocation => '', _logError => _logErrors);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;

@@ -122,10 +122,10 @@ BEGIN
         SELECT task_type_id
         INTO _taskTypeID
         FROM t_operations_task_type
-        WHERE task_type_name = _taskType;
+        WHERE task_type_name = _taskType::citext;
 
         If Not FOUND Then
-            RAISE EXCEPTION 'Unrecognized task type name';
+            RAISE EXCEPTION 'Unrecognized task type name: %', _taskType;
         End If;
 
         ---------------------------------------------------
@@ -146,7 +146,9 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-            -- Cannot update a non-existent entry
+            If _id Is Null Then
+                RAISE EXCEPTION 'Cannot update: operations task ID cannot be null';
+            End If;
 
             SELECT status,
                    closed

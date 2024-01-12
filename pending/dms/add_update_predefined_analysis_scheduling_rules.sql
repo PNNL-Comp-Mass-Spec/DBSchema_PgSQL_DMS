@@ -86,6 +86,7 @@ BEGIN
     _instrumentClass  := Trim(Coalesce(_instrumentClass, ''));
     _instrumentName   := Trim(Coalesce(_instrumentName, ''));
     _datasetName      := Trim(Coalesce(_datasetName, ''));
+    _mode             := Trim(Lower(Coalesce(_mode, '')));
 
     If _processorGroup <> '' Then
         -- Validate _processorGroup and determine the ID value
@@ -104,20 +105,24 @@ BEGIN
         End If;
     End If;
 
-    _mode := Trim(Lower(Coalesce(_mode, '')));
-
     ---------------------------------------------------
     -- Is entry already in database? (only applies to updates)
     ---------------------------------------------------
 
     If _mode = 'update' Then
-        -- Cannot update a non-existent entry
+        If _id Is Null Then
+            _message := 'Cannot update: predefine rule ID cannot be null';
+            RAISE WARNING '%', _message;
+
+            _returnCode := 'U5202';
+            RETURN;
+        End If;
 
         If Not Exists (SELECT rule_id FROM t_predefined_analysis_scheduling_rules WHERE rule_id = _id) Then
             _message := format('Cannot update: predefine rule ID %s does not exist', _id);
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5202';
+            _returnCode := 'U5204';
             RETURN;
         End If;
     End If;

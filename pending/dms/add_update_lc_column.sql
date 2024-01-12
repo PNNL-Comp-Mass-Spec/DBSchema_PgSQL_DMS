@@ -59,9 +59,9 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _logErrors boolean := true;
+    _logErrors boolean := false;
     _existingCount int;
-    _columnID int := -1;
+    _columnID int;
     _stateID int;
 
     _sqlState text;
@@ -98,12 +98,14 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        If char_length(Coalesce(_columnNumber, '')) < 1 Then
+        _columnNumber := Trim(Coalesce(_columnNumber, ''));
+        _state        := Trim(Coalesce(_state, ''));
+        _mode         := Trim(Lower(Coalesce(_mode, '')));
+
+        If _columnNumber = '' Then
             _returnCode := 'U5110';
             RAISE EXCEPTION 'Column name must be specified';
         End If;
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
         -- Is entry already in database?
@@ -119,14 +121,12 @@ BEGIN
         -- Cannot create an entry that already exists
 
         If _existingCount > 0 And _mode = 'add' Then
-            _logErrors := false;
             RAISE EXCEPTION 'Cannot add: LC column "%" already exists', _columnNumber;
         End If;
 
         -- Cannot update a non-existent entry
 
         If _existingCount = 0 And _mode = 'update' Then
-            _logErrors := false;
             RAISE EXCEPTION 'Cannot update: LC column "%" does not exist', _columnNumber;
         End If;
 
@@ -137,12 +137,13 @@ BEGIN
         SELECT column_state_id
         INTO _stateID
         FROM t_lc_column_state_name
-        WHERE column_state = _state
+        WHERE column_state = _state::citext;
 
         If Not FOUND Then
-            _logErrors := false;
             RAISE EXCEPTION 'Invalid column state: %', _state;
         End If;
+
+        _logErrors := true;
 
         ---------------------------------------------------
         -- Action for add mode

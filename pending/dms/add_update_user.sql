@@ -108,8 +108,7 @@ BEGIN
         _mode              := Trim(Lower(Coalesce(_mode, '')));
 
         If _username = '' Then
-            _returnCode := 'U5201';
-            RAISE EXCEPTION 'Username must be specified';
+            RAISE EXCEPTION 'Username must be specified' USING ERRCODE = 'U5201';
         Else
             _charPos := Position('\' In _username);
 
@@ -119,18 +118,15 @@ BEGIN
         End If;
 
         If _lastNameFirstName = '' Then
-            _returnCode := 'U5202';
-            RAISE EXCEPTION 'Last Name, First Name must be specified';
+            RAISE EXCEPTION 'Last Name, First Name must be specified' USING ERRCODE = 'U5202';
         End If;
 
         If char_length(_hanfordIdNum) <= 1 Then
-            _returnCode := 'U5203';
-            RAISE EXCEPTION 'Hanford ID number cannot be blank or a single character';
+            RAISE EXCEPTION 'Hanford ID number cannot be blank or a single character' USING ERRCODE = 'U5203';
         End If;
 
         If _userStatus = '' Then
-            _returnCode := 'U5204';
-            RAISE EXCEPTION 'User status must be specified';
+            RAISE EXCEPTION 'User status must be specified' USING ERRCODE = 'U5204';
         End If;
 
         ---------------------------------------------------
@@ -142,13 +138,13 @@ BEGIN
         -- Cannot create an entry that already exists
 
         If _userID <> 0 And _mode = 'add' Then
-            RAISE EXCEPTION 'Cannot add: user "%" already exists', _username;
+            RAISE EXCEPTION 'Cannot add: user "%" already exists', _username USING ERRCODE = 'U5205';
         End If;
 
         -- Cannot update a non-existent entry
 
         If _userID = 0 And _mode = 'update' Then
-            RAISE EXCEPTION 'Cannot update: user "%" does not exist', _username;
+            RAISE EXCEPTION 'Cannot update: user "%" does not exist', _username USING ERRCODE = 'U5206';
         End If;
 
         ---------------------------------------------------
