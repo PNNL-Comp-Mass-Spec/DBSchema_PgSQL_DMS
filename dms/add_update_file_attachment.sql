@@ -101,19 +101,19 @@ BEGIN
         End If;
 
         If _fileName = '' Then
-            RAISE EXCEPTION 'Cannot %: filename must be defined', _mode;
+            RAISE EXCEPTION 'Cannot %: filename must be specified', _mode;
         End If;
 
         If _entityType = '' Then
-            RAISE EXCEPTION 'Cannot %: entity type must be defined', _mode;
+            RAISE EXCEPTION 'Cannot %: entity type must be specified', _mode;
         End If;
 
         If _entityID = '' Then
-            RAISE EXCEPTION 'Cannot %: entity ID must be defined', _mode;
+            RAISE EXCEPTION 'Cannot %: entity ID must be specified', _mode;
         End If;
 
         If _fileSizeKB = '' Then
-            RAISE EXCEPTION 'Cannot %: file size must be defined', _mode;
+            RAISE EXCEPTION 'Cannot %: file size must be specified', _mode;
         End If;
 
         If _callingUser = '' Then

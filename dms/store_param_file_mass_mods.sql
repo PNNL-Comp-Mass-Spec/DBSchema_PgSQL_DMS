@@ -202,13 +202,13 @@ BEGIN
     _paramFileType   := Trim(Coalesce(_paramFileType, ''));
 
     If _paramFileID Is Null Then
-        _message := 'The Parameter file ID must be defined; unable to continue';
+        _message := 'The parameter file ID must be specified; unable to continue';
         _returnCode := 'U5301';
         RETURN;
     End If;
 
     If Coalesce(_mods, '') = '' Then
-        _message := 'The Mods to parse cannot be empty; unable to continue';
+        _message := 'The mods to parse cannot be empty; unable to continue';
         _returnCode := 'U5302';
         RETURN;
     End If;

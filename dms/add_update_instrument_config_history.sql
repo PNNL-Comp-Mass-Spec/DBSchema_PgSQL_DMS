@@ -77,7 +77,7 @@ BEGIN
     _mode         := Trim(Lower(Coalesce(_mode, '')));
 
     If _instrument = '' Then
-        _message := 'Instrument name must be defined';
+        _message := 'Instrument name must be specified';
         RAISE WARNING '%', _message;
         RETURN;
     End If;

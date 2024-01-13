@@ -90,7 +90,7 @@ BEGIN
     _showPendingUpdates := Coalesce(_showPendingUpdates, false);
 
     If _instrument = '' Then
-        _message := '_instrument must be defined';
+        _message := 'Instrument must be specified';
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';

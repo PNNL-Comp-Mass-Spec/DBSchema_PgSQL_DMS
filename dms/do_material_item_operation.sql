@@ -84,7 +84,7 @@ BEGIN
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
         If _mode = '' Then
-            RAISE EXCEPTION 'Material item operation mode must be defined';
+            RAISE EXCEPTION 'Material item operation mode must be specified';
         End If;
 
         If Not _mode In ('retire_biomaterial', 'retire_experiment') Then

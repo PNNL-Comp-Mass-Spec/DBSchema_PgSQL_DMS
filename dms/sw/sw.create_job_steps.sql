@@ -154,7 +154,7 @@ BEGIN
 
         -- Make sure a valid extension script is defined
         If Coalesce(_extensionScriptName, '') = '' Then
-            _message := 'Error: Parameter _extensionScriptName must be defined when extending an existing job';
+            _message := 'Error: extension script must be specified when extending an existing job';
             _returnCode := 'U5203';
 
             RAISE WARNING '%', _message;
