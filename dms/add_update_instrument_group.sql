@@ -1,21 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_instrument_group
-(
-    _instrumentGroup text,
-    _usage text,
-    _comment text,
-    _active int,
-    _samplePrepVisible int,
-    _requestedRunVisible int,
-    _allocationTag text,
-    _defaultDatasetTypeName text,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_instrument_group(text, text, text, integer, integer, integer, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_instrument_group(IN _instrumentgroup text, IN _usage text, IN _comment text, IN _active integer, IN _sampleprepvisible integer, IN _requestedrunvisible integer, IN _allocationtag text, IN _defaultdatasettypename text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -28,12 +17,12 @@ AS $$
 **    _active                   1 if active, 0 if inactive
 **    _samplePrepVisible        1 if should be included in the sample prep instrument group pick list (samplePrepInstrumentGroupPickList), otherwise 0;     see https://github.com/PNNL-Comp-Mass-Spec/DMS-Website/blob/master/public/model_config/DMS_DB_Sql/dms_chooser.sql#L74
 **    _requestedRunVisible      1 if should be included in the requested run instrument group pick list (requestedRunInstrumentGroupPickList), otherwise 0; see https://github.com/PNNL-Comp-Mass-Spec/DMS-Website/blob/master/public/model_config/DMS_DB_Sql/dms_chooser.sql#L75
-**    _allocationTag            Allocation tag, e.g. 'GC', 'FT', 'ORB', or 'QQQ'
+**    _allocationTag            Allocation tag, e.g. 'GC', 'FT', 'ORB', or 'QQQ'; will store Null if this is an empty string
 **    _defaultDatasetTypeName   Default dataset type name; empty string if no default
 **    _mode                     Mode: 'add' or 'update'
 **    _message                  Status message
 **    _returnCode               Return code
-**    _callingUser              Username of the calling user
+**    _callingUser              Username of the calling user (unused by this procedure)
 **
 **  Auth:   grk
 **  Date:   08/28/2010 grk - Initial version
@@ -46,7 +35,7 @@ AS $$
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          02/18/2021 mem - Added parameter _requestedRunVisible
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/12/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -57,7 +46,9 @@ DECLARE
 
     _logErrors boolean := false;
     _datasetTypeID int;
+    _validatedName text;
 
+    _logMessage text;
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -92,6 +83,8 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
+        _instrumentGroup        := Trim(Coalesce(_instrumentGroup, ''));
+        _usage                  := Trim(Coalesce(_usage, ''));
         _comment                := Trim(Coalesce(_comment, ''));
         _active                 := Coalesce(_active, 0);
         _samplePrepVisible      := Coalesce(_samplePrepVisible, 0);
@@ -99,23 +92,47 @@ BEGIN
         _defaultDatasetTypeName := Trim(Coalesce(_defaultDatasetTypeName, ''));
         _mode                   := Trim(Lower(Coalesce(_mode, '')));
 
+        If _instrumentGroup = '' Then
+            RAISE EXCEPTION 'Instrument group name must be specified';
+        End If;
+
+        If _usage = '' Then
+            RAISE EXCEPTION 'Usage type must be specified';
+        End If;
+
         If _defaultDatasetTypeName <> '' Then
             _datasetTypeID := public.get_dataset_type_id(_defaultDatasetTypeName);
         Else
             _datasetTypeID := 0;
         End If;
 
+        If Trim(Coalesce(_allocationTag, '')) = '' Then
+            _allocationTag = null;
+        Else
+            -- Validate the allocation tag (and capitalize if necessary)
+            SELECT allocation_tag
+            INTO _validatedName
+            FROM t_instrument_group_allocation_tag
+            WHERE allocation_tag = _allocationTag::citext;
+
+            If Not Found Then
+                RAISE EXCEPTION 'Unrecognized allocation tag: %', _allocationTag;
+            End If;
+
+            _allocationTag := _validatedName;
+        End If;
+
         ---------------------------------------------------
         -- Is entry already in database? (only applies to updates)
         ---------------------------------------------------
 
-        If _mode = 'update' Then
-            If _instrumentGroup Is Null Then
-                RAISE EXCEPTION 'Cannot update: instrument group cannot be null';
-            End If;
+        If _mode = 'add' And Exists (SELECT instrument_group FROM t_instrument_group WHERE instrument_group = _instrumentGroup::citext) Then
+            RAISE EXCEPTION 'Cannot add: instrument group "%" already exists', _instrumentGroup;
+        End If;
 
+        If _mode = 'update' Then
             If Not Exists (SELECT instrument_group FROM t_instrument_group WHERE instrument_group = _instrumentGroup::citext) Then
-                RAISE EXCEPTION 'Cannot update: instrument group "%" does not exist';
+                RAISE EXCEPTION 'Cannot update: instrument group "%" does not exist', _instrumentGroup;
             End If;
         End If;
 
@@ -127,21 +144,27 @@ BEGIN
 
         If _mode = 'add' Then
 
-            INSERT INTO t_instrument_group( instrument_group,
-                                            usage,
-                                            comment,
-                                            active,
-                                            sample_prep_visible,
-                                            requested_run_visible,
-                                            allocation_tag,
-                                            default_dataset_type )
-            VALUES (_instrumentGroup, _usage, _comment,
-                    _active, _samplePrepVisible, _requestedRunVisible,
-                    _allocationTag,
-                    CASE
-                        WHEN _datasetTypeID > 0 THEN _datasetTypeID
-                        ELSE NULL
-                    END);
+            INSERT INTO t_instrument_group (
+                instrument_group,
+                usage,
+                comment,
+                active,
+                sample_prep_visible,
+                requested_run_visible,
+                allocation_tag,
+                default_dataset_type
+            ) VALUES (
+                _instrumentGroup,
+                _usage,
+                _comment,
+                _active,
+                _samplePrepVisible,
+                _requestedRunVisible,
+                _allocationTag,
+                CASE WHEN _datasetTypeID > 0 THEN _datasetTypeID
+                     ELSE NULL
+                END
+            );
 
         End If;
 
@@ -152,13 +175,15 @@ BEGIN
         If _mode = 'update' Then
 
             UPDATE t_instrument_group
-            SET usage = _usage,
-                comment = _comment,
-                active = _active,
-                sample_prep_visible = _samplePrepVisible,
+            SET usage                 = _usage,
+                comment               = _comment,
+                active                = _active,
+                sample_prep_visible   = _samplePrepVisible,
                 requested_run_visible = _requestedRunVisible,
-                allocation_tag = _allocationTag,
-                default_dataset_type = CASE WHEN _datasetTypeID > 0 Then _datasetTypeID Else Null End
+                allocation_tag        = _allocationTag,
+                default_dataset_type  = CASE WHEN _datasetTypeID > 0 THEN _datasetTypeID
+                                             ELSE Null
+                                        END
             WHERE instrument_group = _instrumentGroup::citext;
 
         End If;
@@ -189,4 +214,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_instrument_group IS 'AddUpdateInstrumentGroup';
+
+ALTER PROCEDURE public.add_update_instrument_group(IN _instrumentgroup text, IN _usage text, IN _comment text, IN _active integer, IN _sampleprepvisible integer, IN _requestedrunvisible integer, IN _allocationtag text, IN _defaultdatasettypename text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_instrument_group(IN _instrumentgroup text, IN _usage text, IN _comment text, IN _active integer, IN _sampleprepvisible integer, IN _requestedrunvisible integer, IN _allocationtag text, IN _defaultdatasettypename text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_instrument_group(IN _instrumentgroup text, IN _usage text, IN _comment text, IN _active integer, IN _sampleprepvisible integer, IN _requestedrunvisible integer, IN _allocationtag text, IN _defaultdatasettypename text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateInstrumentGroup';
+
