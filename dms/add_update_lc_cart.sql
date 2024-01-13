@@ -1,16 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_lc_cart
-(
-    INOUT _id int,
-    _cartName text,
-    _cartDescription text,
-    _cartState text,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_lc_cart(integer, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_lc_cart(INOUT _id integer, IN _cartname text, IN _cartdescription text, IN _cartstate text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -33,7 +27,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          05/10/2018 mem - Fix bug checking for duplicate carts when adding a new cart
 **          04/11/2022 mem - Check for whitespace in _cartName
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/12/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -43,7 +37,7 @@ DECLARE
     _authorized boolean;
 
     _cartStateID int := 0;
-    _currentName text := '';
+    _currentName citext := '';
 BEGIN
     _message := '';
     _returnCode := '';
@@ -79,10 +73,22 @@ BEGIN
 
     If public.has_whitespace_chars(_cartName, _allowspace => false) Then
         If Position(chr(9) In _cartName) > 0 Then
-            RAISE EXCEPTION 'LC Cart name cannot contain tabs';
+            RAISE EXCEPTION 'LC cart name cannot contain tabs';
         Else
-            RAISE EXCEPTION 'LC Cart name cannot contain spaces';
+            RAISE EXCEPTION 'LC cart name cannot contain spaces';
         End If;
+    End If;
+
+    If _cartName = '' Then
+        RAISE EXCEPTION 'LC cart name must be specified';
+    End If;
+
+    If _cartDescription = '' Then
+        RAISE EXCEPTION 'LC cart description must be specified';
+    End If;
+
+    If _cartState = '' Then
+        RAISE EXCEPTION 'LC cart state must be specified';
     End If;
 
     ---------------------------------------------------
@@ -92,7 +98,7 @@ BEGIN
     SELECT cart_state_id
     INTO _cartStateID
     FROM t_lc_cart_state_name
-    WHERE cart_state = _cartState;
+    WHERE cart_state = _cartState::citext;
 
     If Not FOUND Then
         _message := 'Could not resolve state name to ID';
@@ -109,7 +115,7 @@ BEGIN
     If _mode = 'add' Then
         _id := 0;
 
-        If Exists (SELECT cart_name FROM t_lc_cart WHERE cart_name = _cartName) Then
+        If Exists (SELECT cart_name FROM t_lc_cart WHERE cart_name = _cartName::citext) Then
             _message := format('Cannot add: Entry already exists for cart "%s"', _cartName);
             RAISE WARNING '%', _message;
 
@@ -119,6 +125,10 @@ BEGIN
     End If;
 
     If _mode = 'update' Then
+        If _id Is Null Then
+            RAISE EXCEPTION 'Cannot update: cart ID is null';
+        End If;
+
         If Not Exists (SELECT cart_id FROM t_lc_cart WHERE cart_id = _id) Then
             _message := format('Cannot update: cart cart_id "%s" does not exist', _id);
             RAISE WARNING '%', _message;
@@ -130,9 +140,9 @@ BEGIN
         SELECT cart_name
         INTO _currentName
         FROM t_lc_cart
-        WHERE cart_id = _id
+        WHERE cart_id = _id;
 
-        If _cartName <> _currentName And Exists (SELECT cart_name FROM t_lc_cart WHERE cart_name = _cartName) Then
+        If _cartName::citext <> _currentName And Exists (SELECT cart_name FROM t_lc_cart WHERE cart_name = _cartName::citext) Then
             _message := format('Cannot rename - Entry already exists for cart "%s"', _cartName);
             RAISE WARNING '%', _message;
 
@@ -178,4 +188,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_lc_cart IS 'AddUpdateLCCart';
+
+ALTER PROCEDURE public.add_update_lc_cart(INOUT _id integer, IN _cartname text, IN _cartdescription text, IN _cartstate text, IN _mode text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_lc_cart(INOUT _id integer, IN _cartname text, IN _cartdescription text, IN _cartstate text, IN _mode text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_lc_cart(INOUT _id integer, IN _cartname text, IN _cartdescription text, IN _cartstate text, IN _mode text, INOUT _message text, INOUT _returncode text) IS 'AddUpdateLCCart';
+

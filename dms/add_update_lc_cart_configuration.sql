@@ -1,41 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_lc_cart_configuration
-(
-    _id int,
-    _configName text,
-    _description text,
-    _autosampler text,
-    _customValveConfig text,
-    _pumps text,
-    _primaryInjectionVolume text,
-    _primaryMobilePhases text,
-    _primaryTrapColumn text,
-    _primaryTrapFlowRate text,
-    _primaryTrapTime text,
-    _primaryTrapMobilePhase text,
-    _primaryAnalyticalColumn text,
-    _primaryColumnTemperature text,
-    _primaryAnalyticalFlowRate text,
-    _primaryGradient text,
-    _massSpecStartDelay text,
-    _upstreamInjectionVolume text,
-    _upstreamMobilePhases text,
-    _upstreamTrapColumn text,
-    _upstreamTrapFlowRate text,
-    _upstreamAnalyticalColumn text,
-    _upstreamColumnTemperature text,
-    _upstreamAnalyticalFlowRate text,
-    _upstreamFractionationProfile text,
-    _upstreamFractionationDetails text,
-    _entryUser text = '',
-    _state text = 'Active',
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_lc_cart_configuration(integer, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_lc_cart_configuration(IN _id integer, IN _configname text, IN _description text, IN _autosampler text, IN _customvalveconfig text, IN _pumps text, IN _primaryinjectionvolume text, IN _primarymobilephases text, IN _primarytrapcolumn text, IN _primarytrapflowrate text, IN _primarytraptime text, IN _primarytrapmobilephase text, IN _primaryanalyticalcolumn text, IN _primarycolumntemperature text, IN _primaryanalyticalflowrate text, IN _primarygradient text, IN _massspecstartdelay text, IN _upstreaminjectionvolume text, IN _upstreammobilephases text, IN _upstreamtrapcolumn text, IN _upstreamtrapflowrate text, IN _upstreamanalyticalcolumn text, IN _upstreamcolumntemperature text, IN _upstreamanalyticalflowrate text, IN _upstreamfractionationprofile text, IN _upstreamfractionationdetails text, IN _entryuser text DEFAULT ''::text, IN _state text DEFAULT 'Active'::text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -68,7 +37,7 @@ AS $$
 **    _upstreamAnalyticalFlowRate   Upstream analytical flow rate
 **    _upstreamFractionationProfile Upstream fractionation profile
 **    _upstreamFractionationDetails Upstream fractionation details
-**    _entryUser                    User who entered the LC Cart Configuration entry; defaults to _callingUser if empty
+**    _entryUser                    User who entered the LC cart configuration entry; defaults to _callingUser if empty
 **    _state                        State: 'Active', 'Inactive', 'Invalid', or 'Override' (see comments below)
 **    _mode                         Mode: 'add' or 'update'
 **    _message                      Status message
@@ -86,17 +55,18 @@ AS $$
 **          03/03/2017 mem - Add parameter _entryUser
 **          09/17/2018 mem - Update cart config name error message
 **          03/03/2021 mem - Update admin-required message
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/12/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _badCh text;
     _underscoreLoc int;
-    _cartName text;
+    _cartName citext;
     _cartID int := 0;
+    _validatedName text;
     _existingName citext := '';
     _oldState citext := '';
-    _ignoreDatasetChecks int := 0;
+    _ignoreDatasetChecks boolean := false;
     _existingEntryUser text := '';
     _conflictID int := 0;
     _datasetCount int := 0;
@@ -123,6 +93,14 @@ BEGIN
     _callingUser := Trim(Coalesce(_callingUser, ''));
     _mode        := Trim(Lower(Coalesce(_mode, 'add')));
 
+    If _configName = '' Then
+        _message := format('LC cart configuration name must be specified');
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5201';
+        RETURN;
+    End If;
+
     If _state = '' Then
         _state := 'Active';
     End If;
@@ -140,18 +118,33 @@ BEGIN
         _message := format('Cart config state must be Active, Inactive, or Invalid; %s is not allowed', _state);
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5201';
+        _returnCode := 'U5202';
         RETURN;
     End If;
 
-    If Not Exists (SELECT username FROM t_users WHERE username = _callingUser) Then
+    -- Assure that _state is properly capitalized
+    _state := Upper(Left(_state, 1)) || Lower(substring(_state, 2));
+
+    If _callingUser = '' And _entryUser <> '' Then
+        _callingUser := _entryUser;
+    ElsIf _callingUser = '' Then
+        _callingUser := SESSION_USER;
+    End If;
+
+    If Not Exists (SELECT username FROM t_users WHERE username = _callingUser::citext) Then
         _callingUser := null;
-    ElsIf _entryUser = '' Then
-        _entryUser := _callingUser;
+    End If;
+
+    If _entryUser = '' Then
+        If Coalesce(_callingUser, '') <> '' Then
+            _entryUser := _callingUser;
+        Else
+            _entryUser := SESSION_USER;
+        End If;
     End If;
 
     If _state::citext = 'Override' And _mode <> 'update' Then
-        _message := format('Cart config state must be Active, Inactive, or Invalid when _mode is %s; %s is not allowed', _mode, _state);
+        _message := format('Cart config state must be Active, Inactive, or Invalid when mode is %s; %s is not allowed', _mode, _state);
     End If;
 
     ---------------------------------------------------
@@ -159,31 +152,31 @@ BEGIN
     -- First assure that it does not have invalid characters and is long enough
     ---------------------------------------------------
 
-    _badCh := public.validate_chr(_configName, '');
+    _badCh := public.validate_chars(_configName, '');
 
     If _badCh <> '' Then
         If _badCh = 'space' Then
-            _message := 'LC Cart Configuration name may not contain spaces';
+            _message := 'LC cart configuration name may not contain spaces';
         Else
-            _message := format('LC Cart Configuration name may not contain the character(s) "%s"', _badCh);
+            _message := format('LC cart configuration name may not contain the character(s) "%s"', _badCh);
         End If;
 
-        RAISE WARNING '%', _message;
-
-        _returnCode := 'U5202';
-        RETURN;
-    End If;
-
-    If char_length(_configName) < 6 Then
-        _message := format('LC Cart Configuration name must be at least 6 characters in length; currently %s characters', char_length(_configName));
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5203';
         RETURN;
     End If;
 
+    If char_length(_configName) < 6 Then
+        _message := format('LC cart configuration name must be at least 6 characters in length; currently %s characters', char_length(_configName));
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5204';
+        RETURN;
+    End If;
+
     ---------------------------------------------------
-    -- Next assure that it starts with a valid cart name followed by an underscore, or starts with 'Unknown_'
+    -- Assure that the config name starts with a valid cart name followed by an underscore, or starts with 'Unknown_'
     ---------------------------------------------------
 
     _underscoreLoc := Position('_' In _configName);
@@ -192,11 +185,11 @@ BEGIN
         _message := 'Cart Config name must start with a valid LC cart name, followed by an underscore';
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5204';
+        _returnCode := 'U5205';
         RETURN;
     End If;
 
-    _cartName := Substring(_configName, 1, _underscoreLoc-1);
+    _cartName := Substring(_configName, 1, _underscoreLoc - 1);
 
     If _cartName = 'Unknown' Then
         _cartName := 'No_Cart';
@@ -206,18 +199,20 @@ BEGIN
     -- Resolve cart name to ID
     ---------------------------------------------------
 
-    SELECT cart_id
-    INTO _cartID
+    SELECT cart_id, cart_name
+    INTO _cartID, _validatedName
     FROM  t_lc_cart
-    WHERE cart_name = _cartName
+    WHERE cart_name = _cartName;
 
     If Not FOUND Then
         _message := format('Cart Config name must start with a valid LC cart name, followed by an underscore; unknown cart: %s', _cartName);
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5205';
+        _returnCode := 'U5206';
         RETURN;
     End If;
+
+    _cartName := _validatedName;
 
     ---------------------------------------------------
     -- Is entry already in database? (only applies to updates)
@@ -231,13 +226,13 @@ BEGIN
                entered_by
         INTO _existingName, _oldState, _existingEntryUser
         FROM t_lc_cart_configuration
-        WHERE cart_config_id = _id
+        WHERE cart_config_id = _id;
 
         If Not FOUND Then
             _message := format('Cannot update: cart config ID %s does not exist', _id);
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5206';
+            _returnCode := 'U5207';
             RETURN;
         End If;
 
@@ -248,18 +243,18 @@ BEGIN
                                ON U.user_id = OpsPerms.user_id
                              INNER JOIN t_user_operations UserOps
                                ON OpsPerms.operation_id = UserOps.operation_id
-                         WHERE U.username = _callingUser AND
+                         WHERE U.username = _callingUser::citext AND
                                UserOps.operation = 'DMS_Infrastructure_Administration')
             Then
-                -- Admin user is updating details for an LC Cart Config that is already associated with datasets
+                -- Admin user is updating details for an LC cart config that is already associated with datasets
                 -- Use the existing state
                 _state := _oldState;
-                _ignoreDatasetChecks := 1;
+                _ignoreDatasetChecks := true;
             Else
                 _message := format('Cart config state must be Active, Inactive, or Invalid; %s is not allowed', _state);
                 RAISE WARNING '%', _message;
 
-                _returnCode := 'U5207';
+                _returnCode := 'U5208';
                 RETURN;
             End If;
         End If;
@@ -269,14 +264,14 @@ BEGIN
             SELECT cart_config_id
             INTO _conflictID
             FROM t_lc_cart_configuration
-            WHERE cart_config_name = _configName
+            WHERE cart_config_name = _configName::citext;
 
             If _conflictID > 0 Then
                 _message := format('Cannot rename config from %s to %s because the new name is already in use by ID %s',
                                     _existingName, _configName, _conflictID);
                 RAISE WARNING '%', _message;
 
-                _returnCode := 'U5208';
+                _returnCode := 'U5209';
                 RETURN;
             End If;
         End If;
@@ -286,26 +281,26 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Only allow updating the state of Cart Config items that are associated with a dataset
+        -- Only allow updating the state of cart config items that are associated with a dataset
         ---------------------------------------------------
 
-        If _ignoreDatasetChecks = 0 And Exists (SELECT cart_config_id FROM t_dataset WHERE cart_config_id = _id) Then
+        If Not _ignoreDatasetChecks And Exists (SELECT cart_config_id FROM t_dataset WHERE cart_config_id = _id) Then
 
             SELECT COUNT(dataset_id),
                    MAX(dataset_id)
             INTO _datasetCount, _maxDatasetID
             FROM t_dataset
-            WHERE cart_config_id = _id
+            WHERE cart_config_id = _id;
 
             SELECT dataset
             INTO _datasetName
             FROM t_dataset
-            WHERE dataset_id = _maxDatasetID
+            WHERE dataset_id = _maxDatasetID;
 
             If _datasetCount = 1 Then
                 _datasetDescription := format('dataset %s', _datasetName);
             Else
-                _datasetDescription := format('%s datasets' _datasetCount);
+                _datasetDescription := format('%s datasets', _datasetCount);
             End If;
 
             If _state::citext <> _oldState Then
@@ -318,27 +313,32 @@ BEGIN
                 RETURN;
             End If;
 
-            _message := format('LC cart config ID %s is associated with %s, most recently %s; contact a DMS admin to update the configuration (using special state Override)',
-                                _id, _datasetDescription, _datasetName);
+            If _datasetCount = 1 then
+                _message := format('LC cart config ID %s is associated with dataset %s; contact a DMS admin to update the configuration (using special state Override)',
+                                   _id, _datasetName);
+            Else
+                _message := format('LC cart config ID %s is associated with %s, most recently %s; contact a DMS admin to update the configuration (using special state Override)',
+                                   _id, _datasetDescription, _datasetName);
+            End If;
 
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5209';
+            _returnCode := 'U5210';
             RETURN;
         End If;
 
     End If;
 
     ---------------------------------------------------
-    -- Validate that the LC Cart Config name is unique when creating a new entry
+    -- Validate that the LC cart config name is unique when creating a new entry
     ---------------------------------------------------
 
     If _mode = 'add' Then
-        If Exists (SELECT cart_config_name FROM t_lc_cart_configuration WHERE cart_config_name = _configName) Then
-            _message := format('LC Cart Config already exists; cannot add a new config named %s', _configName);
+        If Exists (SELECT cart_config_name FROM t_lc_cart_configuration WHERE cart_config_name = _configName::citext) Then
+            _message := format('LC cart config already exists; cannot add a new config named %s', _configName);
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5210';
+            _returnCode := 'U5211';
             RETURN;
         End If;
     End If;
@@ -463,4 +463,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_lc_cart_configuration IS 'AddUpdateLCCartConfiguration';
+
+ALTER PROCEDURE public.add_update_lc_cart_configuration(IN _id integer, IN _configname text, IN _description text, IN _autosampler text, IN _customvalveconfig text, IN _pumps text, IN _primaryinjectionvolume text, IN _primarymobilephases text, IN _primarytrapcolumn text, IN _primarytrapflowrate text, IN _primarytraptime text, IN _primarytrapmobilephase text, IN _primaryanalyticalcolumn text, IN _primarycolumntemperature text, IN _primaryanalyticalflowrate text, IN _primarygradient text, IN _massspecstartdelay text, IN _upstreaminjectionvolume text, IN _upstreammobilephases text, IN _upstreamtrapcolumn text, IN _upstreamtrapflowrate text, IN _upstreamanalyticalcolumn text, IN _upstreamcolumntemperature text, IN _upstreamanalyticalflowrate text, IN _upstreamfractionationprofile text, IN _upstreamfractionationdetails text, IN _entryuser text, IN _state text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_lc_cart_configuration(IN _id integer, IN _configname text, IN _description text, IN _autosampler text, IN _customvalveconfig text, IN _pumps text, IN _primaryinjectionvolume text, IN _primarymobilephases text, IN _primarytrapcolumn text, IN _primarytrapflowrate text, IN _primarytraptime text, IN _primarytrapmobilephase text, IN _primaryanalyticalcolumn text, IN _primarycolumntemperature text, IN _primaryanalyticalflowrate text, IN _primarygradient text, IN _massspecstartdelay text, IN _upstreaminjectionvolume text, IN _upstreammobilephases text, IN _upstreamtrapcolumn text, IN _upstreamtrapflowrate text, IN _upstreamanalyticalcolumn text, IN _upstreamcolumntemperature text, IN _upstreamanalyticalflowrate text, IN _upstreamfractionationprofile text, IN _upstreamfractionationdetails text, IN _entryuser text, IN _state text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_lc_cart_configuration(IN _id integer, IN _configname text, IN _description text, IN _autosampler text, IN _customvalveconfig text, IN _pumps text, IN _primaryinjectionvolume text, IN _primarymobilephases text, IN _primarytrapcolumn text, IN _primarytrapflowrate text, IN _primarytraptime text, IN _primarytrapmobilephase text, IN _primaryanalyticalcolumn text, IN _primarycolumntemperature text, IN _primaryanalyticalflowrate text, IN _primarygradient text, IN _massspecstartdelay text, IN _upstreaminjectionvolume text, IN _upstreammobilephases text, IN _upstreamtrapcolumn text, IN _upstreamtrapflowrate text, IN _upstreamanalyticalcolumn text, IN _upstreamcolumntemperature text, IN _upstreamanalyticalflowrate text, IN _upstreamfractionationprofile text, IN _upstreamfractionationdetails text, IN _entryuser text, IN _state text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateLCCartConfiguration';
+
