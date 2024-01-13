@@ -92,7 +92,7 @@ BEGIN
         _datasetName      := Trim(Coalesce(_datasetName, ''));
         _priority         := Coalesce(_priority, 3);
         _comment          := Trim(Coalesce(_comment, ''));
-        _ownerUsername    := Coalesce(_ownerUsername, session_user);
+        _ownerUsername    := Coalesce(_ownerUsername, SESSION_USER);
         _dataPackageID    := Coalesce(_dataPackageID, 0);
         _debugMode        := Coalesce(_debugMode, false);
         _logDebugMessages := Coalesce(_logDebugMessages, false);
@@ -372,7 +372,7 @@ BEGIN
         UPDATE Tmp_Job_Steps
         SET Dependencies = T.dependencies
         FROM ( SELECT Step,
-                     COUNT(*) AS dependencies
+                      COUNT(*) AS dependencies
               FROM Tmp_Job_Step_Dependencies
               WHERE Job = _job
               GROUP BY Step ) AS T

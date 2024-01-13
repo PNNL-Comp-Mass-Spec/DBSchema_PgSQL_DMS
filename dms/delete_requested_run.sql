@@ -61,7 +61,7 @@ BEGIN
     _callingUser := Trim(Coalesce(_callingUser, ''));
 
     _deletedBy = CASE WHEN _callingUser = ''
-                      THEN session_user
+                      THEN SESSION_USER
                       ELSE _callingUser
                  END;
 

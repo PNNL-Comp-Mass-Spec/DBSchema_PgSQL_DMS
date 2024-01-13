@@ -104,7 +104,7 @@ BEGIN
     End If;
 
     If _callingUser = '' Then
-        _callingUser := session_user;
+        _callingUser := SESSION_USER;
     End If;
 
     ---------------------------------------------------

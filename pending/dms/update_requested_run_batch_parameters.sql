@@ -36,7 +36,7 @@ AS $$
 **  Date:   02/09/2010
 **          02/16/2010 grk - Eliminated batchID from arg list
 **          09/02/2011 mem - Now calling Post_Usage_Log_Entry
-**          12/15/2011 mem - Now updating _callingUser to session_user if empty
+**          12/15/2011 mem - Now updating _callingUser to SESSION_USER if empty
 **          03/28/2013 grk - Added handling for cart, instrument
 **          11/07/2016 mem - Add optional logging via post_log_entry
 **          11/08/2016 mem - Use GetUserLoginWithoutDomain to obtain the user's network login

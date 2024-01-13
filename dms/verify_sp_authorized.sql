@@ -115,7 +115,7 @@ BEGIN
 
         If Not FOUND Then
             _message := format('PID %s not found in the table returned by function get_active_connections; will assume access denied for the current user (%s)',
-                               pg_backend_pid(), session_user);
+                               pg_backend_pid(), SESSION_USER);
 
             RETURN QUERY
             SELECT false AS authorized, _procedureName AS procedure_name, _userName AS user_name, host(_clientHostIP) AS host_ip, _message as message;
@@ -123,7 +123,7 @@ BEGIN
             RETURN;
         Elsif Coalesce(_userName, '') = '' Then
             _message := format('Function get_active_connections returned a blank username for PID %s; will assume access denied for the current user (%s)',
-                               pg_backend_pid(), session_user);
+                               pg_backend_pid(), SESSION_USER);
 
             RETURN QUERY
             SELECT false AS authorized, _procedureName AS procedure_name, _userName AS user_name, host(_clientHostIP) AS host_ip, _message as message;
@@ -181,7 +181,7 @@ BEGIN
 
     If _infoOnly Then
         _message := format('Access denied to %s for current user (%s on host IP %s)',
-                            _procedureNameWithSchema, session_user, Coalesce(_clientHostIP::text, 'null'));
+                            _procedureNameWithSchema, SESSION_USER, Coalesce(_clientHostIP::text, 'null'));
 
         RETURN QUERY
         SELECT false, _procedureName, _userName, host(_clientHostIP), _message as message;

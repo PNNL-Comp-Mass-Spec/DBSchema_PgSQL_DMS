@@ -46,7 +46,7 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    _callingUser := session_user;
+    _callingUser := SESSION_USER;
     _slashLoc := Position('\' In _callingUser);
 
     If _slashLoc > 0 Then

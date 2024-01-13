@@ -293,7 +293,7 @@ BEGIN
                                        calling_user )
             VALUES('Request_Step_Task_XML',
                    NULL,
-                   format('%s (Invalid processor: %s)', session_user, _processorName));
+                   format('%s (Invalid processor: %s)', SESSION_USER, _processorName));
 
             RETURN;
         End If;
@@ -322,7 +322,7 @@ BEGIN
                 INSERT INTO sw.t_sp_usage ( posted_by,
                                             processor_id,
                                             calling_user )
-                VALUES ('Request_Step_Task_XML', _processorID, session_user);
+                VALUES ('Request_Step_Task_XML', _processorID, SESSION_USER);
             End If;
 
         End If;

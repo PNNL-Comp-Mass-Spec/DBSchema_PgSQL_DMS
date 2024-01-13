@@ -123,11 +123,11 @@ BEGIN
     SELECT U.username
     INTO _username
     FROM t_users U
-    WHERE U.username = session_user::citext
+    WHERE U.username = SESSION_USER::citext
     LIMIT 1;
 
     If Not FOUND Then
-        RAISE NOTICE 'Warning: Session user % is not in t_users', session_user;
+        RAISE NOTICE 'Warning: Session user % is not in t_users', SESSION_USER;
 
         SELECT O.username
         INTO _username
@@ -282,7 +282,7 @@ BEGIN
         -- Assign placeholder campaign IDs
         UPDATE T_Tmp_Campaigns
         SET campaign_id = RankQ.campaign_id
-        FROM (SELECT campaign_name, row_number() over (order by campaign_name) As campaign_id
+        FROM (SELECT campaign_name, row_number() Over (Order By campaign_name) As campaign_id
               FROM T_Tmp_Campaigns) RankQ
         WHERE T_Tmp_Campaigns.campaign_name = RankQ.campaign_name;
 

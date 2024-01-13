@@ -439,7 +439,7 @@ BEGIN
             _requestID             => _requestID,
             _workPackage           => _workPackage,
             _mode                  => _mode,
-            _callingUser           => session_user,
+            _callingUser           => SESSION_USER,
             _aggregationJobDataset => false,
             _captureSubfolder      => _captureSubdirectory,
             _lcCartConfig          => _lcCartConfig,
@@ -546,8 +546,8 @@ BEGIN
         SET entered_by = format('%s; via %s', _datasetCreatorUsername, entered_by)
         WHERE Target_ID = _datasetId AND
               Target_State = 1 AND
-              Target_Type = 4 AND
-              Entered Between _addUpdateTimeStamp AND _addUpdateTimeStamp + INTERVAL '1 minute';
+              Target_Type  = 4 AND
+              Entered BETWEEN _addUpdateTimeStamp AND _addUpdateTimeStamp + INTERVAL '1 minute';
 
     End If;
 

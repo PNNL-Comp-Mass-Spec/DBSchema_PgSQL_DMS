@@ -146,7 +146,7 @@ BEGIN
 
         If _mode = Lower('Createjobs') Then
             If Coalesce(_callingUser, '') = '' Then
-                _callingUser := session_user;
+                _callingUser := SESSION_USER;
             End If;
 
             If Exists (SELECT dataset_id FROM t_predefined_analysis_scheduling_queue WHERE dataset_id = _datasetID AND state = 'New') Then
@@ -249,7 +249,7 @@ BEGIN
                         _msg := format('Dataset "%s" cannot be reset because it has already been reset once', _datasetName);
 
                         If _callingUser = '' Then
-                            _logMessage := format('%s; user %s', _msg, session_user);
+                            _logMessage := format('%s; user %s', _msg, SESSION_USER);
                         Else
                             _logMessage := format('%s; user %s', _msg, _callingUser);
                         End If;
@@ -260,7 +260,7 @@ BEGIN
                     Else
                         _allowReset := true;
                         If _callingUser = '' Then
-                            _msg := format('%s; user %s', _msg, session_user);
+                            _msg := format('%s; user %s', _msg, SESSION_USER);
                         Else
                             _msg := format('%s; user %s', _msg, _callingUser);
                         End If;

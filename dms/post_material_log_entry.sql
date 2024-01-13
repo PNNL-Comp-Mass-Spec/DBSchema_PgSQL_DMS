@@ -36,7 +36,7 @@ BEGIN
     _callingUser := Trim(Coalesce(_callingUser, ''));
 
     If _callingUser = '' Then
-        _callingUser := session_user;
+        _callingUser := SESSION_USER;
     End If;
 
     ---------------------------------------------------

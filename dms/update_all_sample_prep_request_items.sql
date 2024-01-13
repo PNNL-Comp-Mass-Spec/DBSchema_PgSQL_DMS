@@ -35,7 +35,7 @@ DECLARE
     _authorized boolean;
 
     _itemType text := '';
-    _callingUser text := session_user;
+    _callingUser text := SESSION_USER;
     _currentId int := 0;
 
     _sqlState text;

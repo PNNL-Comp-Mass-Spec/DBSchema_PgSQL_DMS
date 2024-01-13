@@ -101,7 +101,7 @@ BEGIN
         _infoOnly       := Coalesce(_infoOnly, false);
 
         If _callingUser = '' Then
-            _callingUser := session_user;
+            _callingUser := SESSION_USER;
         End If;
 
         If _oldWorkPackage = '' Then
@@ -298,7 +298,7 @@ BEGIN
             ----------------------------------------------------------
 
             UPDATE t_requested_run target
-            Set work_package = _newWorkPackage
+            SET work_package = _newWorkPackage
             FROM Tmp_ReqRunsToUpdate src
             WHERE Target.request_id = Src.request_id;
             --

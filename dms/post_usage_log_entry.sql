@@ -37,7 +37,7 @@ CREATE OR REPLACE PROCEDURE public.post_usage_log_entry(IN _postedby text, IN _m
 DECLARE
     _currentTargetTable text := 'Undefined';
     _currentOperation text := 'initializing';
-    _callingUser citext := session_user;
+    _callingUser citext := SESSION_USER;
     _lastUpdated timestamp;
 
     _sqlState text;

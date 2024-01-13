@@ -988,9 +988,9 @@ BEGIN
                 End If;
 
                 UPDATE t_analysis_job_processor_group_associations
-                SET group_id = _gid,
-                    entered = CURRENT_TIMESTAMP,
-                    entered_by = session_user
+                SET group_id   = _gid,
+                    entered    = CURRENT_TIMESTAMP,
+                    entered_by = SESSION_USER
                 WHERE job = _jobID;
 
                 _alterEnteredByRequired := true;

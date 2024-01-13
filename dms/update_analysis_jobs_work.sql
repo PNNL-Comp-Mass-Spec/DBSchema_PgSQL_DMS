@@ -347,7 +347,7 @@ BEGIN
         If _state <> _noChangeText Then
             UPDATE t_analysis_job
             SET job_state_id = _stateID
-            WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
+            WHERE job In (SELECT job FROM Tmp_AnalysisJobs) AND
                   job_state_id <> _stateID;
             --
             GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
@@ -359,11 +359,11 @@ BEGIN
 
         -----------------------------------------------
         If _priority <> _noChangeText Then
-            _newPriority := cast(_priority as int);
+            _newPriority := Cast(_priority As int);
 
             UPDATE t_analysis_job
             SET priority = _newPriority
-            WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
+            WHERE job In (SELECT job FROM Tmp_AnalysisJobs) AND
                   priority <> _newPriority;
             --
             GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
@@ -387,7 +387,7 @@ BEGIN
         If _findText::citext <> _noChangeText And _replaceText::citext <> _noChangeText Then
             UPDATE t_analysis_job
             SET comment = Replace(comment, _findText::citext, _replaceText::citext)
-            WHERE job in (SELECT job FROM Tmp_AnalysisJobs);
+            WHERE job In (SELECT job FROM Tmp_AnalysisJobs);
             --
             GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
 
@@ -397,8 +397,8 @@ BEGIN
         -----------------------------------------------
         If _assignedProcessor <> _noChangeText Then
             UPDATE t_analysis_job
-            SET assigned_processor_name =  _assignedProcessor
-            WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
+            SET assigned_processor_name = _assignedProcessor
+            WHERE job In (SELECT job FROM Tmp_AnalysisJobs) AND
                   assigned_processor_name <> _assignedProcessor;
             --
             GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
@@ -415,8 +415,8 @@ BEGIN
                          END;
 
             UPDATE t_analysis_job
-            SET propagation_mode =  _propMode
-            WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
+            SET propagation_mode = _propMode
+            WHERE job In (SELECT job FROM Tmp_AnalysisJobs) AND
                   propagation_mode <> _propMode;
             --
             GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
@@ -427,8 +427,8 @@ BEGIN
         -----------------------------------------------
         If _paramFileName <> _noChangeText Then
             UPDATE t_analysis_job
-            SET param_file_name =  _paramFileName
-            WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
+            SET param_file_name = _paramFileName
+            WHERE job In (SELECT job FROM Tmp_AnalysisJobs) AND
                   param_file_name <> _paramFileName;
             --
             GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
@@ -439,8 +439,8 @@ BEGIN
         -----------------------------------------------
         If _settingsFileName <> _noChangeText Then
             UPDATE t_analysis_job
-            SET settings_file_name =  _settingsFileName
-            WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
+            SET settings_file_name = _settingsFileName
+            WHERE job In (SELECT job FROM Tmp_AnalysisJobs) AND
                   settings_file_name <> _settingsFileName;
             --
             GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
@@ -451,8 +451,8 @@ BEGIN
         -----------------------------------------------
         If _organismName <> _noChangeText Then
             UPDATE t_analysis_job
-            SET organism_id =  _orgid
-            WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
+            SET organism_id = _orgid
+            WHERE job In (SELECT job FROM Tmp_AnalysisJobs) AND
                   organism_id <> _orgid;
             --
             GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
@@ -464,7 +464,7 @@ BEGIN
         If _protCollNameList <> _noChangeText Then
             UPDATE t_analysis_job
             SET protein_collection_list = _protCollNameList
-            WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
+            WHERE job In (SELECT job FROM Tmp_AnalysisJobs) AND
                   protein_collection_list <> _protCollNameList;
             --
             GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
@@ -475,8 +475,8 @@ BEGIN
         -----------------------------------------------
         If _protCollOptionsList <> _noChangeText Then
             UPDATE t_analysis_job
-            SET protein_options_list =  _protCollOptionsList
-            WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
+            SET protein_options_list = _protCollOptionsList
+            WHERE job In (SELECT job FROM Tmp_AnalysisJobs) AND
                   protein_options_list <> _protCollOptionsList;
             --
             GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
@@ -553,7 +553,7 @@ BEGIN
         If _findText::citext <> _noChangeText And _replaceText::citext <> _noChangeText Then
             UPDATE t_analysis_job
             SET comment = Replace(comment, _findText::citext, _replaceText::citext)
-            WHERE job in (SELECT job FROM Tmp_AnalysisJobs);
+            WHERE job In (SELECT job FROM Tmp_AnalysisJobs);
 
             If _assignedProcessor <> _noChangeText Then
                 _action2 := format('%s; replaced text in comment', _action2);
@@ -603,7 +603,7 @@ BEGIN
             -- Dissassociate given jobs from group
 
             DELETE FROM t_analysis_job_processor_group_associations
-            WHERE job in (SELECT job FROM Tmp_AnalysisJobs);
+            WHERE job In (SELECT job FROM Tmp_AnalysisJobs);
             --
             GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
@@ -618,8 +618,8 @@ BEGIN
             UPDATE t_analysis_job_processor_group_associations
             SET group_id = _gid,
                 entered = CURRENT_TIMESTAMP,
-                entered_by = session_user
-            WHERE job in (SELECT job FROM Tmp_AnalysisJobs) AND
+                entered_by = SESSION_USER
+            WHERE job In (SELECT job FROM Tmp_AnalysisJobs) AND
                   group_id <> _gid;
             --
             GET DIAGNOSTICS _updateCount = ROW_COUNT;

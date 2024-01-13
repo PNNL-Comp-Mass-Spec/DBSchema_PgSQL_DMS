@@ -988,7 +988,7 @@ BEGIN
             End If;
 
             If _callingUser = '' Then
-                _dsCreatorUsername := session_user;
+                _dsCreatorUsername := SESSION_USER;
             Else
                 _dsCreatorUsername := _callingUser;
             End If;

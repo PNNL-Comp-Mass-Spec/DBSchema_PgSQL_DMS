@@ -118,7 +118,7 @@ BEGIN
         _dynSTYPhosEnabled   := Coalesce(_dynSTYPhosEnabled, 0);
 
         _comment             := Trim(Coalesce(_comment, ''));
-        _ownerUsername       := Trim(Coalesce(_ownerUsername, session_user));
+        _ownerUsername       := Trim(Coalesce(_ownerUsername, SESSION_USER));
         _infoOnly            := Coalesce(_infoOnly, false);
         _callingUser         := Trim(Coalesce(_callingUser, ''));
 

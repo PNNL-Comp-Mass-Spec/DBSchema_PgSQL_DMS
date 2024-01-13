@@ -23,7 +23,7 @@ DECLARE
     _login citext;
 BEGIN
     -- Determine the username of the current session user
-    _login := session_user;
+    _login := SESSION_USER;
 
     -- On SQL Server, _login would include the domain name, e.g. pnl\D3M123 or pnl\pers1234
     -- On Postgres, _login is likely only the username
