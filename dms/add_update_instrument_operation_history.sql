@@ -1,17 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_instrument_operation_history
-(
-    _id int,
-    _instrument text,
-    _postedBy text,
-    _note text,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_instrument_operation_history(integer, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_instrument_operation_history(IN _id integer, IN _instrument text, IN _postedby text, IN _note text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -19,13 +12,13 @@ AS $$
 **
 **  Arguments:
 **    _id           Input/output: entry_id in t_instrument_operation_history
-**    _instrument   Instrument name
-**    _postedBy     Username of the person associated with the operation entry
+**    _instrument   Instrument name (does not have to be a DMS instrument)
+**    _postedBy     Username of the person associated with the operation entry (does not have to be a DMS user)
 **    _note         Entry description
 **    _mode         Mode: 'add' or 'update'
 **    _message      Status message
 **    _returnCode   Return code
-**    _callingUser  Username of the calling user
+**    _callingUser  Username of the calling user (unused by this procedure)
 **
 **  Auth:   grk
 **  Date:   05/20/2010
@@ -37,7 +30,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          08/02/2017 mem - Assure that the username is properly capitalized
 **          12/08/2020 mem - Lookup Username from T_Users using the validated user ID
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/12/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -86,15 +79,22 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        If Trim(Coalesce(_instrument, '')) = '' Then
+        _instrument := Trim(Coalesce(_instrument, ''));
+        _postedBy   := Trim(Coalesce(_postedBy, ''));
+        _note       := Trim(Coalesce(_note, ''));
+        _mode       := Trim(Lower(Coalesce(_mode, '')));
+
+        If _instrument = '' Then
             RAISE EXCEPTION 'Instrument name must be specified';
         End If;
 
-        If _note Is Null Then
-            RAISE EXCEPTION 'Note must be specified';
+        If _note = '' Then
+            RAISE EXCEPTION 'Operations note must be specified';
         End If;
 
-        _mode := Trim(Lower(Coalesce(_mode, '')));
+        If _postedBy = '' Then
+            RAISE EXCEPTION 'Posted by person must be specified';
+        End If;
 
         If _mode = 'update' And _id Is Null Then
             RAISE EXCEPTION 'ID cannot be null when updating a note';
@@ -205,4 +205,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_instrument_operation_history IS 'AddUpdateInstrumentOperationHistory';
+
+ALTER PROCEDURE public.add_update_instrument_operation_history(IN _id integer, IN _instrument text, IN _postedby text, IN _note text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_instrument_operation_history(IN _id integer, IN _instrument text, IN _postedby text, IN _note text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_instrument_operation_history(IN _id integer, IN _instrument text, IN _postedby text, IN _note text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateInstrumentOperationHistory';
+
