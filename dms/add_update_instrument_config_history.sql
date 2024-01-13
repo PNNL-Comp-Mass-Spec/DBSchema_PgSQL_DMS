@@ -164,11 +164,11 @@ BEGIN
     If _mode = 'update' Then
 
         UPDATE t_instrument_config_history
-        SET instrument = _instrument,
+        SET instrument     = _instrument,
             date_of_change = _validatedDate,
-            description = _description,
-            note = _note,
-            entered_by = _postedBy
+            description    = _description,
+            note           = _note,
+            entered_by     = _postedBy
         WHERE entry_id = _id;
 
     End If;

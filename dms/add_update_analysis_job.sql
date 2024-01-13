@@ -303,7 +303,7 @@ BEGIN
 
                     If Not _infoOnly Then
                         UPDATE t_analysis_job
-                        SET comment = _comment,
+                        SET comment          = _comment,
                             propagation_mode = _propMode
                         WHERE job = _jobID;
                     End If;
@@ -919,21 +919,21 @@ BEGIN
             End If;
 
             UPDATE t_analysis_job
-            SET priority = _priority,
-                analysis_tool_id = _analysisToolID,
-                param_file_name = _paramFileName,
-                settings_file_name = _settingsFileName,
-                organism_db_name = _organismDBName,
+            SET priority                = _priority,
+                analysis_tool_id        = _analysisToolID,
+                param_file_name         = _paramFileName,
+                settings_file_name      = _settingsFileName,
+                organism_db_name        = _organismDBName,
                 protein_collection_list = _protCollNameList,
-                protein_options_list = _protCollOptionsList,
-                organism_id = _organismID,
-                dataset_id = _datasetID,
-                comment = _comment,
-                special_processing = _specialProcessing,
-                owner_username = _ownerUsername,
-                job_state_id = _updateStateID,
-                start  = CASE WHEN _mode <> 'reset' THEN start  ELSE NULL End,
-                finish = CASE WHEN _mode <> 'reset' THEN finish ELSE NULL End,
+                protein_options_list    = _protCollOptionsList,
+                organism_id             = _organismID,
+                dataset_id              = _datasetID,
+                comment                 = _comment,
+                special_processing      = _specialProcessing,
+                owner_username          = _ownerUsername,
+                job_state_id            = _updateStateID,
+                start                   = CASE WHEN _mode <> 'reset' THEN start  ELSE Null END,
+                finish                  = CASE WHEN _mode <> 'reset' THEN finish ELSE Null END,
                 propagation_mode = _propMode
             WHERE job = _jobID;
 

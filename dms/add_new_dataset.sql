@@ -544,7 +544,7 @@ BEGIN
 
         UPDATE t_event_log
         SET entered_by = format('%s; via %s', _datasetCreatorUsername, entered_by)
-        WHERE Target_ID = _datasetId AND
+        WHERE Target_ID    = _datasetId AND
               Target_State = 1 AND
               Target_Type  = 4 AND
               Entered BETWEEN _addUpdateTimeStamp AND _addUpdateTimeStamp + INTERVAL '1 minute';
@@ -578,7 +578,7 @@ BEGIN
         End If;
 
         UPDATE t_requested_run
-        SET request_run_start = _runStartDate,
+        SET request_run_start  = _runStartDate,
             request_run_finish = _runFinishDate
         WHERE request_id = _requestID;
 

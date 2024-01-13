@@ -342,8 +342,8 @@ BEGIN
         End If;
 
         UPDATE Tmp_DSInfoTable
-        Set Acq_Time_Start = _acqTimeStart,
-            Acq_Time_End = _acqTimeEnd;
+        SET Acq_Time_Start = _acqTimeStart,
+            Acq_Time_End   = _acqTimeEnd;
 
         ---------------------------------------------------
         -- Extract out the scan type information

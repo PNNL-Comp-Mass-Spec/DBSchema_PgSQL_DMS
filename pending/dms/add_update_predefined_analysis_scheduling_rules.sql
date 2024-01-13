@@ -164,15 +164,14 @@ BEGIN
     If _mode = 'update' Then
 
         UPDATE t_predefined_analysis_scheduling_rules
-        SET
-            evaluation_order = _evaluationOrder,
-            instrument_class = _instrumentClass,
-            instrument_name = _instrumentName,
-            dataset_name = _datasetName,
+        SET evaluation_order   = _evaluationOrder,
+            instrument_class   = _instrumentClass,
+            instrument_name    = _instrumentName,
+            dataset_name       = _datasetName,
             analysis_tool_name = _analysisToolName,
-            priority = _priority,
+            priority           = _priority,
             processor_group_id = _processorGroupID,
-            enabled = _enabled
+            enabled            = _enabled
         WHERE rule_id = _id;
 
     End If;

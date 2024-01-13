@@ -496,22 +496,22 @@ BEGIN
         _stateID := 1;
 
         UPDATE t_analysis_job
-        SET job_state_id = _stateID,
-            start = NULL,
-            finish = NULL,
-            results_folder_name = '',
-            extraction_processor = '',
-            extraction_start = NULL,
-            extraction_finish = NULL,
-            param_file_name = CASE WHEN _paramFileName = _noChangeText             THEN param_file_name ELSE _paramFileName END,
-            settings_file_name = CASE WHEN _settingsFileName = _noChangeText       THEN settings_file_name ELSE _settingsFileName END,
-            protein_collection_list = CASE WHEN _protCollNameList = _noChangeText  THEN protein_collection_list ELSE _protCollNameList END,
-            protein_options_list = CASE WHEN _protCollOptionsList = _noChangeText  THEN protein_options_list ELSE _protCollOptionsList END,
-            organism_id = CASE WHEN _organismName = _noChangeText                  THEN organism_id ELSE _orgid END,
-            priority =  CASE WHEN _priority = _noChangeText                        THEN priority ELSE CAST(_priority AS int) END,
-            comment = format('%s%s', comment, CASE WHEN _comment = _noChangeText   THEN '' ELSE format(' %s', _comment) END),
-            assigned_processor_name = CASE WHEN _assignedProcessor = _noChangeText THEN assigned_processor_name ELSE _assignedProcessor END
-        WHERE job in (SELECT job FROM Tmp_AnalysisJobs);
+        SET job_state_id            = _stateID,
+            start                   = NULL,
+            finish                  = NULL,
+            results_folder_name     = '',
+            extraction_processor    = '',
+            extraction_start        = NULL,
+            extraction_finish       = NULL,
+            param_file_name         = CASE WHEN _paramFileName = _noChangeText                   THEN param_file_name ELSE _paramFileName END,
+            settings_file_name      = CASE WHEN _settingsFileName = _noChangeText                THEN settings_file_name ELSE _settingsFileName END,
+            protein_collection_list = CASE WHEN _protCollNameList = _noChangeText                THEN protein_collection_list ELSE _protCollNameList END,
+            protein_options_list    = CASE WHEN _protCollOptionsList = _noChangeText             THEN protein_options_list ELSE _protCollOptionsList END,
+            organism_id             = CASE WHEN _organismName = _noChangeText                    THEN organism_id ELSE _orgid END,
+            priority                = CASE WHEN _priority = _noChangeText                        THEN priority ELSE CAST(_priority AS int) END,
+            comment                 = format('%s%s', comment, CASE WHEN _comment = _noChangeText THEN '' ELSE format(' %s', _comment) END),
+            assigned_processor_name = CASE WHEN _assignedProcessor = _noChangeText               THEN assigned_processor_name ELSE _assignedProcessor END
+        WHERE job In (SELECT job FROM Tmp_AnalysisJobs);
         --
         GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
 

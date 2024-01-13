@@ -38,7 +38,7 @@ BEGIN
         SELECT 4, NEW.dataset_id, NEW.dataset_state_id, OLD.dataset_state_id, CURRENT_TIMESTAMP;
 
         UPDATE t_dataset
-        Set last_affected = CURRENT_TIMESTAMP
+        SET last_affected = CURRENT_TIMESTAMP
         WHERE t_dataset.dataset_id = NEW.dataset_id;
 
     End If;

@@ -257,7 +257,7 @@ BEGIN
                 If _currentName <> _requestName Or _currentComment <> _comment Then
                     UPDATE t_analysis_job_request
                     SET request_name = _requestName,
-                        comment = _comment
+                        comment      = _comment
                     WHERE request_id = _requestID;
 
                     If _currentName <> _requestName And _currentComment <> _comment Then
@@ -713,21 +713,21 @@ BEGIN
             -- Update the request
 
             UPDATE t_analysis_job_request
-            SET request_name = _requestName,
-                analysis_tool = _toolName,
-                param_file_name = _paramFileName,
-                settings_file_name = _settingsFileName,
-                organism_db_name = _organismDBName,
-                organism_id = _organismID,
+            SET request_name            = _requestName,
+                analysis_tool           = _toolName,
+                param_file_name         = _paramFileName,
+                settings_file_name      = _settingsFileName,
+                organism_db_name        = _organismDBName,
+                organism_id             = _organismID,
                 protein_collection_list = _protCollNameList,
-                protein_options_list = _protCollOptionsList,
-                comment = _comment,
-                special_processing = _specialProcessing,
-                request_state_id = _stateID,
-                user_id = _userID,
-                dataset_min = _datasetMin,
-                dataset_max = _datasetMax,
-                data_pkg_id = CASE WHEN _dataPackageId > 0 THEN _dataPackageId ELSE Null END
+                protein_options_list    = _protCollOptionsList,
+                comment                 = _comment,
+                special_processing      = _specialProcessing,
+                request_state_id        = _stateID,
+                user_id                 = _userID,
+                dataset_min             = _datasetMin,
+                dataset_max             = _datasetMax,
+                data_pkg_id             = CASE WHEN _dataPackageId > 0 THEN _dataPackageId ELSE Null END
             WHERE request_id = _requestID;
 
             MERGE INTO t_analysis_job_request_datasets AS t

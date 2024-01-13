@@ -113,21 +113,23 @@ BEGIN
         WHERE parent_param_pointer_state = 1;
 
         UPDATE Tmp_Mgr_Params
-        Set parent_param_pointer_state = 2
+        SET parent_param_pointer_state = 2
         WHERE parent_param_pointer_state = 1;
 
-        INSERT INTO Tmp_Mgr_Params( mgr_name,
-                                     param_name,
-                                     entry_id,
-                                     param_type_id,
-                                     value,
-                                     mgr_id,
-                                     comment,
-                                     last_affected,
-                                     entered_by,
-                                     mgr_type_id,
-                                     parent_param_pointer_state,
-                                     source )
+        INSERT INTO Tmp_Mgr_Params (
+            mgr_name,
+            param_name,
+            entry_id,
+            param_type_id,
+            value,
+            mgr_id,
+            comment,
+            last_affected,
+            entered_by,
+            mgr_type_id,
+            parent_param_pointer_state,
+            source
+        )
         SELECT ValuesToAppend.mgr_name,
                ValuesToAppend.param_name,
                ValuesToAppend.entry_id,

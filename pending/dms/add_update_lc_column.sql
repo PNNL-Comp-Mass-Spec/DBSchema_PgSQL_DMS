@@ -186,18 +186,17 @@ BEGIN
         If _mode = 'update' Then
 
             UPDATE t_lc_column
-            Set
-                lc_column = _columnNumber,
-                packing_mfg = _packingMfg,
-                packing_type = _packingType,
-                particle_size = _particleSize,
-                particle_type = _particleType,
-                column_inner_dia = _columnInnerDia,
-                column_outer_dia = _columnOuterDia,
-                column_length = _length,
-                column_state_id = _stateID,
+            SET lc_column         = _columnNumber,
+                packing_mfg       = _packingMfg,
+                packing_type      = _packingType,
+                particle_size     = _particleSize,
+                particle_type     = _particleType,
+                column_inner_dia  = _columnInnerDia,
+                column_outer_dia  = _columnOuterDia,
+                column_length     = _length,
+                column_state_id   = _stateID,
                 operator_username = _operatorUsername,
-                comment = _comment
+                comment           = _comment
             WHERE lc_column_id = _columnID;
 
         End If;

@@ -205,7 +205,7 @@ BEGIN
         ---------------------------------------------------
 
         If _campaign = '' Then
-            RAISE EXCEPTION 'Campaign must be defined';
+            RAISE EXCEPTION 'Campaign must be specified';
         End If;
 
         _campaignID := public.get_campaign_id(_campaign);
@@ -219,7 +219,7 @@ BEGIN
         ---------------------------------------------------
 
         If _organism = '' Then
-            RAISE EXCEPTION 'Organism must be defined';
+            RAISE EXCEPTION 'Organism must be specified';
         End If;
 
         _organismID := public.get_organism_id(_organism);
@@ -450,27 +450,27 @@ BEGIN
         If _mode = 'update' Then
 
             UPDATE t_sample_prep_request
-            SET request_name = _requestName,
-                requester_username = _requesterUsername,
-                reason = _reason,
-                organism = _organism,
-                biohazard_level = _biohazardLevel,
-                campaign = _campaign,
-                number_of_samples = _numberofSamples,
-                sample_name_list = _sampleNameList,
-                sample_type = _sampleType,
-                prep_method = _prepMethod,
-                sample_naming_convention = _sampleNamingConvention,
-                estimated_completion = _estimatedCompletionDate,
-                work_package = _workPackageNumber,
-                eus_proposal_id = _eusProposalID,
-                eus_usage_type = _eusUsageType,
-                eus_user_id = _eusUserID,
+            SET request_name                       = _requestName,
+                requester_username                 = _requesterUsername,
+                reason                             = _reason,
+                organism                           = _organism,
+                biohazard_level                    = _biohazardLevel,
+                campaign                           = _campaign,
+                number_of_samples                  = _numberofSamples,
+                sample_name_list                   = _sampleNameList,
+                sample_type                        = _sampleType,
+                prep_method                        = _prepMethod,
+                sample_naming_convention           = _sampleNamingConvention,
+                estimated_completion               = _estimatedCompletionDate,
+                work_package                       = _workPackageNumber,
+                eus_proposal_id                    = _eusProposalID,
+                eus_usage_type                     = _eusUsageType,
+                eus_user_id                        = _eusUserID,
                 instrument_analysis_specifications = _instrumentAnalysisSpecifications,
-                state_id = _stateID,
-                instrument_group = _instrumentGroup,
-                instrument_name = _instrumentName,
-                dataset_type = _datasetType
+                state_id                           = _stateID,
+                instrument_group                   = _instrumentGroup,
+                instrument_name                    = _instrumentName,
+                dataset_type                       = _datasetType
             WHERE prep_request_id = _id;
 
             -- If _callingUser is defined, update system_account in t_sample_prep_request_updates

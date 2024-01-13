@@ -204,14 +204,13 @@ BEGIN
         If _mode = 'update' Then
 
             UPDATE t_file_attachment
-            SET description     = _description,
-                entity_type     = _entityType,
-                entity_id       = _entityID,
-                entity_id_value =
-                    CASE WHEN _entityType::citext In ('campaign', 'cell_culture', 'biomaterial', 'experiment', 'material_container')
-                         THEN Null
-                         ELSE public.try_cast(_entityID, null::int)
-                    End,
+            SET description         = _description,
+                entity_type         = _entityType,
+                entity_id           = _entityID,
+                entity_id_value     = CASE WHEN _entityType::citext In ('campaign', 'cell_culture', 'biomaterial', 'experiment', 'material_container')
+                                           THEN Null
+                                           ELSE public.try_cast(_entityID, null::int)
+                                      END,
                 owner_username      = _callingUser,
                 file_size_kb        = _fileSizeKB,
                 Last_Affected       = CURRENT_TIMESTAMP,

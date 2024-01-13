@@ -302,8 +302,8 @@ BEGIN
         If _mode = 'update' Then
 
             UPDATE t_requested_run_batch_group
-            SET Batch_Group = _name,
-                Description = _description,
+            SET Batch_Group   = _name,
+                Description   = _description,
                 Owner_User_ID = _userID
             WHERE Batch_Group_ID = _id;
 
@@ -328,7 +328,7 @@ BEGIN
             -- Add a reference to this batch group to the batches in the list
 
             UPDATE t_requested_run_batches
-            SET Batch_Group_ID = _id,
+            SET Batch_Group_ID    = _id,
                 Batch_Group_Order = Src.Batch_Group_Order
             FROM Tmp_BatchIDs Src
             WHERE t_requested_run_batches.batch_id = Src.Batch_ID;

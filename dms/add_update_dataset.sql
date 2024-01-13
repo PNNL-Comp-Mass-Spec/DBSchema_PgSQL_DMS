@@ -796,7 +796,8 @@ BEGIN
                 SELECT E.experiment
                 INTO _experimentCheck
                 FROM t_experiments E INNER JOIN
-                    t_requested_run RR ON E.exp_id = RR.exp_id
+                     t_requested_run RR
+                       ON E.exp_id = RR.exp_id
                 WHERE RR.request_id = _requestID;
 
                 If _experimentCheck <> _experimentName Then

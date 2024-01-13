@@ -311,7 +311,7 @@ BEGIN
             If _state::citext <> _oldState Then
                 UPDATE t_lc_cart_configuration
                 SET cart_config_state = _state
-                WHERE cart_config_id = _id
+                WHERE cart_config_id = _id;
 
                 _message := format('Updated state to %s; any other changes were ignored because this cart config is associated with %s',
                                     _state, _datasetDescription);
@@ -426,36 +426,36 @@ BEGIN
     If _mode = 'update' Then
 
         UPDATE t_lc_cart_configuration
-        SET cart_config_name = _configName,
-            cart_id = _cartID,
-            description = _description,
-            autosampler = _autosampler,
-            custom_valve_config = _customValveConfig,
-            pumps = _pumps,
-            primary_injection_volume = _primaryInjectionVolume,
-            primary_mobile_phases = _primaryMobilePhases,
-            primary_trap_column = _primaryTrapColumn,
-            primary_trap_flow_rate = _primaryTrapFlowRate,
-            primary_trap_time = _primaryTrapTime,
-            primary_trap_mobile_phase = _primaryTrapMobilePhase,
-            primary_analytical_column = _primaryAnalyticalColumn,
-            primary_column_temperature = _primaryColumnTemperature,
-            primary_analytical_flow_rate = _primaryAnalyticalFlowRate,
-            primary_gradient = _primaryGradient,
-            mass_spec_start_delay = _massSpecStartDelay,
-            upstream_injection_volume = _upstreamInjectionVolume,
-            upstream_mobile_phases = _upstreamMobilePhases,
-            upstream_trap_column = _upstreamTrapColumn,
-            upstream_trap_flow_rate = _upstreamTrapFlowRate,
-            upstream_analytical_column = _upstreamAnalyticalColumn,
-            upstream_column_temperature = _upstreamColumnTemperature,
-            upstream_analytical_flow_rate = _upstreamAnalyticalFlowRate,
+        SET cart_config_name               = _configName,
+            cart_id                        = _cartID,
+            description                    = _description,
+            autosampler                    = _autosampler,
+            custom_valve_config            = _customValveConfig,
+            pumps                          = _pumps,
+            primary_injection_volume       = _primaryInjectionVolume,
+            primary_mobile_phases          = _primaryMobilePhases,
+            primary_trap_column            = _primaryTrapColumn,
+            primary_trap_flow_rate         = _primaryTrapFlowRate,
+            primary_trap_time              = _primaryTrapTime,
+            primary_trap_mobile_phase      = _primaryTrapMobilePhase,
+            primary_analytical_column      = _primaryAnalyticalColumn,
+            primary_column_temperature     = _primaryColumnTemperature,
+            primary_analytical_flow_rate   = _primaryAnalyticalFlowRate,
+            primary_gradient               = _primaryGradient,
+            mass_spec_start_delay          = _massSpecStartDelay,
+            upstream_injection_volume      = _upstreamInjectionVolume,
+            upstream_mobile_phases         = _upstreamMobilePhases,
+            upstream_trap_column           = _upstreamTrapColumn,
+            upstream_trap_flow_rate        = _upstreamTrapFlowRate,
+            upstream_analytical_column     = _upstreamAnalyticalColumn,
+            upstream_column_temperature    = _upstreamColumnTemperature,
+            upstream_analytical_flow_rate  = _upstreamAnalyticalFlowRate,
             upstream_fractionation_profile = _upstreamFractionationProfile,
             upstream_fractionation_details = _upstreamFractionationDetails,
-            cart_config_state = _state,
-            entered_by = _entryUser,
-            updated = CURRENT_TIMESTAMP,
-            updated_by = _callingUser
+            cart_config_state              = _state,
+            entered_by                     = _entryUser,
+            updated                        = CURRENT_TIMESTAMP,
+            updated_by                     = _callingUser
         WHERE cart_config_id = _id;
 
     End If;

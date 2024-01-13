@@ -810,37 +810,37 @@ BEGIN
             -- Action for update mode
             ---------------------------------------------------
 
-            UPDATE t_experiments Set
-                experiment = _experimentName,
-                researcher_username = _researcherUsername,
-                organism_id = _organismID,
-                reason = _reason,
-                comment = _comment,
-                sample_concentration = _sampleConcentration,
-                enzyme_id = _enzymeID,
-                labelling = _labelling,
-                lab_notebook_ref = _labNotebookRef,
-                campaign_id = _campaignID,
-                sample_prep_request_id = _samplePrepRequest,
-                internal_standard_id = _internalStandardID,
+            UPDATE t_experiments
+            SET experiment                  = _experimentName,
+                researcher_username         = _researcherUsername,
+                organism_id                 = _organismID,
+                reason                      = _reason,
+                comment                     = _comment,
+                sample_concentration        = _sampleConcentration,
+                enzyme_id                   = _enzymeID,
+                labelling                   = _labelling,
+                lab_notebook_ref            = _labNotebookRef,
+                campaign_id                 = _campaignID,
+                sample_prep_request_id      = _samplePrepRequest,
+                internal_standard_id        = _internalStandardID,
                 post_digest_internal_std_id = _postdigestIntStdID,
-                container_id = _contID,
-                wellplate = _wellplateName,
-                well = _wellNumber,
-                alkylation = _alkylation,
-                barcode = _barcode,
-                tissue_id = _tissueIdentifier,
-                last_used = CASE WHEN organism_id <> _organismID OR
-                                      reason <> _reason OR
-                                      comment <> _comment OR
-                                      enzyme_id <> _enzymeID OR
-                                      labelling <> _labelling OR
-                                      campaign_id <> _campaignID OR
-                                      sample_prep_request_id <> _samplePrepRequest OR
-                                      alkylation <> _alkylation
-                                 THEN CURRENT_TIMESTAMP::Date
-                                 ELSE Last_Used
-                            END
+                container_id                = _contID,
+                wellplate                   = _wellplateName,
+                well                        = _wellNumber,
+                alkylation                  = _alkylation,
+                barcode                     = _barcode,
+                tissue_id                   = _tissueIdentifier,
+                last_used                   = CASE WHEN organism_id <> _organismID OR
+                                                        reason <> _reason OR
+                                                        comment <> _comment OR
+                                                        enzyme_id <> _enzymeID OR
+                                                        labelling <> _labelling OR
+                                                        campaign_id <> _campaignID OR
+                                                        sample_prep_request_id <> _samplePrepRequest OR
+                                                        alkylation <> _alkylation
+                                                   THEN CURRENT_TIMESTAMP::Date
+                                                   ELSE Last_Used
+                                              END
             WHERE Exp_ID = _experimentId;
 
             -- Update the experiment to biomaterial mapping

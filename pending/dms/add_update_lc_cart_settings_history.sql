@@ -184,24 +184,24 @@ BEGIN
     If _mode = 'update' Then
 
         UPDATE t_lc_cart_settings_history
-        SET valve_to_column_extension = _valveToColumnExtension,
-            operating_pressure = _operatingPressure,
-            interface_configuration = _interfaceConfiguration,
+        SET valve_to_column_extension            = _valveToColumnExtension,
+            operating_pressure                   = _operatingPressure,
+            interface_configuration              = _interfaceConfiguration,
             valve_to_column_extension_dimensions = _valveToColumnExtensionDimensions,
-            mixer_volume = _mixerVolume,
-            sample_loop_volume = _sampleLoopVolume,
-            sample_loading_time = _sampleLoadingTime,
-            split_flow_rate = _splitFlowRate,
-            split_column_dimensions = _splitColumnDimensions,
-            purge_flow_rate = _purgeFlowRate,
-            purge_column_dimensions = _purgeColumnDimensions,
-            purge_volume = _purgeVolume,
-            acquisition_time = _acquisitionTime,
-            solvent_a = _solventA,
-            solvent_b = _solventB,
-            comment = _comment,
-            date_of_change = _dateOfChange,
-            entered_by = _callingUser
+            mixer_volume                         = _mixerVolume,
+            sample_loop_volume                   = _sampleLoopVolume,
+            sample_loading_time                  = _sampleLoadingTime,
+            split_flow_rate                      = _splitFlowRate,
+            split_column_dimensions              = _splitColumnDimensions,
+            purge_flow_rate                      = _purgeFlowRate,
+            purge_column_dimensions              = _purgeColumnDimensions,
+            purge_volume                         = _purgeVolume,
+            acquisition_time                     = _acquisitionTime,
+            solvent_a                            = _solventA,
+            solvent_b                            = _solventB,
+            comment                              = _comment,
+            date_of_change                       = _dateOfChange,
+            entered_by                           = _callingUser
         WHERE entry_id = _id;
 
     End If;

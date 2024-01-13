@@ -309,11 +309,11 @@ BEGIN
     If _mode = 'update' Then
 
         UPDATE t_experiment_groups
-        SET group_type             = _groupType,
-            description            = _description,
-            parent_exp_id          = _parentExpID,
-            researcher_username    = _researcher,
-            group_name             = _groupName
+        SET group_type          = _groupType,
+            description         = _description,
+            parent_exp_id       = _parentExpID,
+            researcher_username = _researcher,
+            group_name          = _groupName
         WHERE group_id = _id;
 
     End If;

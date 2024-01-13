@@ -412,27 +412,26 @@ BEGIN
         If _mode = 'update' Then
 
             UPDATE t_reference_compound
-            Set
-                compound_name = _compoundName,
-                description = _description,
-                compound_type_id = _compoundTypeID,
-                gene_name = _geneName,
-                organism_id = _organismID,
-                pub_chem_cid = _pubChemIdValue,
-                campaign_id = _campaignID,
-                container_id = _containerID,
-                wellplate_name = _wellplateName,
-                well_number = _wellNumber,
-                contact_username = _contactUsername,
-                supplier = _supplier,
-                product_id = _productID,
-                purchase_date = _purchaseDateValue,
-                purity = _purity,
+            SET compound_name     = _compoundName,
+                description       = _description,
+                compound_type_id  = _compoundTypeID,
+                gene_name         = _geneName,
+                organism_id       = _organismID,
+                pub_chem_cid      = _pubChemIdValue,
+                campaign_id       = _campaignID,
+                container_id      = _containerID,
+                wellplate_name    = _wellplateName,
+                well_number       = _wellNumber,
+                contact_username  = _contactUsername,
+                supplier          = _supplier,
+                product_id        = _productID,
+                purchase_date     = _purchaseDateValue,
+                purity            = _purity,
                 purchase_quantity = _purchaseQuantity,
-                mass = _massValue,
-                modifications = _modifications,
-                active = _activeValue
-            WHERE compound_id = _compoundID
+                mass              = _massValue,
+                modifications     = _modifications,
+                active            = _activeValue
+            WHERE compound_id = _compoundID;
 
             If Not FOUND Then
                 RAISE EXCEPTION 'Update operation failed, ID %', _compoundIdAndName;

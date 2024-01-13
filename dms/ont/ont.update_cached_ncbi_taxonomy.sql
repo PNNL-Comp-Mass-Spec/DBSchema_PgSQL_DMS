@@ -211,7 +211,7 @@ BEGIN
     ---------------------------------------------------
 
     UPDATE ont.t_ncbi_taxonomy_cached
-    Set synonym_list = ''
+    SET synonym_list = ''
     WHERE synonyms = 0 And Coalesce(synonym_list, '') <> '';
     --
     GET DIAGNOSTICS _updateCount = ROW_COUNT;

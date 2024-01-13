@@ -175,7 +175,7 @@ BEGIN
 
         UPDATE t_eus_users
         SET name_fm        = _eusNameFm,
-            site_status_id =  _eusSiteStatusValue,
+            site_status_id = _eusSiteStatusValue,
             hid            = _hanfordID,
             last_affected  = CURRENT_TIMESTAMP
         WHERE person_id = _eusPersonIdValue;

@@ -499,13 +499,13 @@ BEGIN
             ---------------------------------------------------
 
             UPDATE t_storage_path
-            SET storage_path =_path,
-                vol_name_client =_volNameClient,
-                vol_name_server =_volNameServer,
+            SET storage_path          =_path,
+                vol_name_client       =_volNameClient,
+                vol_name_server       =_volNameServer,
                 storage_path_function =_storFunction,
-                instrument =_instrumentName,
-                description =_description,
-                machine_name = _machineName
+                instrument            =_instrumentName,
+                description           =_description,
+                machine_name          = _machineName
             WHERE storage_path_id = _spID;
 
         End If;

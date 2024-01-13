@@ -170,7 +170,7 @@ BEGIN
 
             UPDATE t_instrument_operation_history
             SET instrument = _instrument,
-                note = _note
+                note       = _note
             WHERE entry_id = _id;
 
         End If;

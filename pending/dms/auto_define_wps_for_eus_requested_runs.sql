@@ -104,7 +104,7 @@ BEGIN
         If FOUND And _workPackage <> 'none' Then
             UPDATE Tmp_ProposalsToCheck
             SET BestWorkPackage = _workPackage,
-                MonthsSearched = _monthsSearched
+                MonthsSearched  = _monthsSearched
             WHERE EUSProposal = _eusProposal;
         End If;
     END LOOP;

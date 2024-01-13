@@ -134,38 +134,44 @@ BEGIN
                 -- Previewing changes; store in Tmp_OrganismsToUpdate
 
                 INSERT INTO Tmp_OrganismsToUpdate (
-                                OrganismID, OrganismName, NCBITaxonomyID,
-                                OldDomain,  NewDomain,
-                                OldKingdom, NewKingdom,
-                                OldPhylum,  NewPhylum,
-                                OldClass,   NewClass,
-                                OldOrder,   NewOrder,
-                                OldFamily,  NewFamily,
-                                OldGenus,   NewGenus,
-                                OldSpecies, NewSpecies,
-                                OldStrain,  NewStrain )
-                VALUES ( _organismID, _organismName, _ncbiTaxonomyID,
-                         _organismInfo.OldDomain,  _orgDomain,
-                         _organismInfo.OldKingdom, _orgKingdom,
-                         _organismInfo.OldPhylum,  _orgPhylum,
-                         _organismInfo.OldClass,   _orgClass,
-                         _organismInfo.OldOrder,   _orgOrder,
-                         _organismInfo.OldFamily,  _orgFamily,
-                         _organismInfo.OldGenus,   _orgGenus,
-                         _organismInfo.OldSpecies, _orgSpecies,
-                         _organismInfo.OldStrain,  _orgStrain);
+                    OrganismID,
+                    OrganismName,
+                    NCBITaxonomyID,
+                    OldDomain,  NewDomain,
+                    OldKingdom, NewKingdom,
+                    OldPhylum,  NewPhylum,
+                    OldClass,   NewClass,
+                    OldOrder,   NewOrder,
+                    OldFamily,  NewFamily,
+                    OldGenus,   NewGenus,
+                    OldSpecies, NewSpecies,
+                    OldStrain,  NewStrain
+                ) VALUES (
+                    _organismID,
+                    _organismName,
+                    _ncbiTaxonomyID,
+                    _organismInfo.OldDomain,  _orgDomain,
+                    _organismInfo.OldKingdom, _orgKingdom,
+                    _organismInfo.OldPhylum,  _orgPhylum,
+                    _organismInfo.OldClass,   _orgClass,
+                    _organismInfo.OldOrder,   _orgOrder,
+                    _organismInfo.OldFamily,  _orgFamily,
+                    _organismInfo.OldGenus,   _orgGenus,
+                    _organismInfo.OldSpecies, _orgSpecies,
+                    _organismInfo.OldStrain,  _orgStrain
+                );
             Else
 
                 UPDATE t_organisms
-                SET domain =  _orgDomain,
+                SET domain  = _orgDomain,
                     kingdom = _orgKingdom,
-                    phylum =  _orgPhylum,
-                    class =   _orgClass,
-                    order =   _orgOrder,
-                    family =  _orgFamily,
-                    genus =   _orgGenus,
+                    phylum  = _orgPhylum,
+                    class   = _orgClass,
+                    order   = _orgOrder,
+                    family  = _orgFamily,
+                    genus   = _orgGenus,
                     species = _orgSpecies,
-                    strain =  _orgStrain
+                    strain  = _orgStrain
                 WHERE organism_id = _organismID;
 
             End If;

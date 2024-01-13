@@ -131,10 +131,10 @@ BEGIN
         If _mode = 'update' Then
 
             UPDATE t_separation_group
-            SET comment = _comment,
-                active = _active,
+            SET comment             = _comment,
+                active              = _active,
                 sample_prep_visible = _samplePrepVisible,
-                fraction_count = _fractionCount
+                fraction_count      = _fractionCount
             WHERE separation_group = _separationGroup::citext;
 
         End If;

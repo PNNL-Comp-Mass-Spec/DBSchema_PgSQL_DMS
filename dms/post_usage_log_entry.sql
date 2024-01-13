@@ -59,7 +59,8 @@ BEGIN
         _currentOperation := 'updating';
 
         UPDATE t_usage_stats
-        SET last_posting_time = CURRENT_TIMESTAMP, usage_count = usage_count + 1
+        SET last_posting_time = CURRENT_TIMESTAMP,
+            usage_count       = usage_count + 1
         WHERE posted_by = _postedBy::citext;
     End If;
 

@@ -274,14 +274,14 @@ BEGIN
     If _mode = 'update' Then
 
         UPDATE t_settings_files
-        SET analysis_tool = _analysisTool,
-            file_name = _fileName,
-            description = _description,
-            active = _active,
-            contents = _xmlContents,
-            hms_auto_supersede = _hmsAutoSupersede,
+        SET analysis_tool          = _analysisTool,
+            file_name              = _fileName,
+            description            = _description,
+            active                 = _active,
+            contents               = _xmlContents,
+            hms_auto_supersede     = _hmsAutoSupersede,
             msgfplus_auto_centroid = _msgfPlusAutoCentroid,
-            last_updated = CURRENT_TIMESTAMP
+            last_updated           = CURRENT_TIMESTAMP
         WHERE settings_file_id = _settingsFileID;
 
     End If;

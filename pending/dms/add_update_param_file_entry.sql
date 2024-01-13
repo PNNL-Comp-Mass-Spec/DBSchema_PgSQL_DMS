@@ -308,7 +308,7 @@ BEGIN
 
             UPDATE t_param_entries
             SET entry_specifier = _entrySpecifier,
-                entry_value = _entryValue
+                entry_value     = _entryValue
             WHERE param_entry_id = _paramEntryID;
 
             -- If _callingUser is defined, update entered_by in t_analysis_job_processor_group

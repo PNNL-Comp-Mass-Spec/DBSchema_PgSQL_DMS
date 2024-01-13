@@ -178,19 +178,19 @@ BEGIN
 
         UPDATE t_prep_lc_column
         SET
-            mfg_name = _mfgName,
-            mfg_model = _mfgModel,
-            mfg_serial = _mfgSerialNumber,
-            packing_mfg = _packingMfg,
-            packing_type = _packingType,
-            particle_size = _particleSize,
-            particle_type = _particleType,
-            column_inner_dia = _columnInnerDia,
-            column_outer_dia = _columnOuterDia,
-            length = _length,
-            state = _state,
+            mfg_name          = _mfgName,
+            mfg_model         = _mfgModel,
+            mfg_serial        = _mfgSerialNumber,
+            packing_mfg       = _packingMfg,
+            packing_type      = _packingType,
+            particle_size     = _particleSize,
+            particle_type     = _particleType,
+            column_inner_dia  = _columnInnerDia,
+            column_outer_dia  = _columnOuterDia,
+            length            = _length,
+            state             = _state,
             operator_username = _operatorUsername,
-            comment = _comment
+            comment           = _comment
         WHERE prep_column = _columnName::citext;
 
     End If;

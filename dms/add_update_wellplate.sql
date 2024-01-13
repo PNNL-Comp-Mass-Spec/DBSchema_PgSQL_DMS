@@ -147,7 +147,7 @@ BEGIN
     If _mode = 'update' Then
 
         UPDATE t_wellplates
-        SET wellplate = _wellplateName,
+        SET wellplate   = _wellplateName,
             description = _description
         WHERE wellplate::citext = _wellplateName;
 

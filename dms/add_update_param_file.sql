@@ -321,11 +321,11 @@ BEGIN
         If _mode = 'update' Then
 
             UPDATE t_param_files
-            SET param_file_name = _paramFileName,
+            SET param_file_name        = _paramFileName,
                 param_file_description = _paramFileDesc,
-                param_file_type_id = _paramFileTypeID,
-                valid = _paramFileValid,
-                date_modified = CURRENT_TIMESTAMP
+                param_file_type_id     = _paramFileTypeID,
+                valid                  = _paramFileValid,
+                date_modified          = CURRENT_TIMESTAMP
             WHERE param_file_id = _paramFileID;
 
             _updateMassMods := true;
@@ -362,9 +362,9 @@ BEGIN
         If _mode In ('add', 'update') Then
 
             -- Update the Mod_List field
-            Update t_param_files
-            Set mod_list = public.get_param_file_mass_mod_code_list(param_file_id, 0)
-            Where param_file_id = _paramFileID;
+            UPDATE t_param_files
+            SET mod_list = public.get_param_file_mass_mod_code_list(param_file_id, 0)
+            WHERE param_file_id = _paramFileID;
 
         End If;
 

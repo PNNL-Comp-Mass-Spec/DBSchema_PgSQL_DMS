@@ -1261,13 +1261,13 @@ BEGIN
                            -- Group by storage server
                            -- Only examine steps <= _maxStepNumToThrottle
                            SELECT sw.t_jobs.storage_server,
-                                   COUNT(JS.step) AS Running_Steps_Recently_Started
+                                  COUNT(JS.step) AS Running_Steps_Recently_Started
                            FROM sw.t_job_steps JS
-                               INNER JOIN sw.t_jobs
-                                   ON JS.job = sw.t_jobs.job
+                                INNER JOIN sw.t_jobs
+                                  ON JS.job = sw.t_jobs.job
                            WHERE JS.start >= CURRENT_TIMESTAMP - make_interval(mins => _holdoffWindowMinutes) AND
-                                 JS.step <= _maxStepNumToThrottle AND
-                                 JS.state = 4
+                                 JS.step  <= _maxStepNumToThrottle AND
+                                 JS.state  = 4
                            GROUP BY sw.t_jobs.storage_server
                        ) LookupQ
                    WHERE Running_Steps_Recently_Started >= _maxSimultaneousJobCount
@@ -1287,15 +1287,15 @@ BEGIN
         UPDATE Tmp_CandidateJobSteps CJS
         SET Association_Type = 109
         FROM ( SELECT J.dataset_id,
-                                 LP.machine
-                          FROM sw.t_job_steps JS
-                               INNER JOIN sw.t_jobs J
-                                 ON JS.job = J.job
-                               INNER JOIN sw.t_local_processors LP
-                                 ON JS.processor = LP.processor_name
-                          WHERE JS.state = 4 AND
-                                JS.start >= CURRENT_TIMESTAMP - INTERVAL '10 minutes'
-                         ) RecentStartQ
+                      LP.machine
+               FROM sw.t_job_steps JS
+                    INNER JOIN sw.t_jobs J
+                      ON JS.job = J.job
+                    INNER JOIN sw.t_local_processors LP
+                      ON JS.processor = LP.processor_name
+               WHERE JS.state = 4 AND
+                     JS.start >= CURRENT_TIMESTAMP - INTERVAL '10 minutes'
+             ) RecentStartQ
         WHERE CJS.dataset_id = RecentStartQ.dataset_id AND
               CJS.machine = RecentStartQ.machine;
 

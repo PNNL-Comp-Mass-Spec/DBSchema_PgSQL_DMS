@@ -39,6 +39,7 @@ DECLARE
     _mergeCount int;
     _mergeInsertCount int;
     _mergeUpdateCount int;
+    _mergeDeleteCount int;
     _setUnknownCount int;
     _callingProcName text;
     _currentLocation text := 'Start';
@@ -140,13 +141,13 @@ BEGIN
 
         _currentLocation := 'Update first_name and last_name in t_eus_users';
 
-        Update t_eus_users
-        Set first_name = Ltrim(Substring(name_fm, Position(',' In name_fm) + 1, 128))
-        Where Coalesce(first_name, '') = '' And Position(',' In name_fm) > 1
+        UPDATE t_eus_users
+        SET first_name = Ltrim(Substring(name_fm, Position(',' In name_fm) + 1, 128))
+        WHERE Coalesce(first_name, '') = '' And   Position(',' In name_fm) > 1
 
-        Update t_eus_users
-        Set last_name = Substring(name_fm, 1, Position(',' In name_fm) - 1)
-        Where Coalesce(last_name, '') = '' And Position(',' In name_fm) > 1
+        UPDATE t_eus_users
+        SET last_name = Substring(name_fm, 1,  Position(',' In name_fm) - 1)
+        WHERE Coalesce(last_name, '') = '' And Position(',' In name_fm) > 1
 
         _currentLocation := 'Update t_eus_proposal_users';
 

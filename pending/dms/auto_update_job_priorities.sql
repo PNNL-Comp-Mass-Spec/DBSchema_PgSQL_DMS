@@ -70,7 +70,7 @@ BEGIN
         Job int NOT NULL,
         Old_Priority int NOT NULL,
         New_Priority int NOT NULL,
-        Ignored int NOT NULL,
+        Ignored boolean NOT NULL,
         Source text NULL
     )
 
@@ -129,7 +129,7 @@ BEGIN
     ----------------------------------------------
 
     INSERT INTO Tmp_JobsToUpdate (job, Old_Priority, New_Priority, Ignored, Source)
-    SELECT job, 0 AS Old_Priority, 0 AS New_Priority, 0 AS Ignored, MIN(Source)
+    SELECT job, 0 AS Old_Priority, 0 AS New_Priority, false AS Ignored, MIN(Source)
     FROM (
         SELECT J.job AS Job,
                format('Over %s active job steps, protein collection based', _activeStepThreshold) AS Source
@@ -166,7 +166,7 @@ BEGIN
     -- Ignore any jobs that are already in t_analysis_job_priority_updates
 
     UPDATE Tmp_JobsToUpdate Target
-    SET Ignored = 1
+    SET Ignored = true
     FROM t_analysis_job_priority_updates JPU
     WHERE Target.job = JPU.job;
 
@@ -264,7 +264,7 @@ BEGIN
     -- Update job priorities
     ----------------------------------------------
 
-    If Not Exists (SELECT * FROM Tmp_JobsToUpdate WHERE Ignored = 0) Then
+    If Not Exists (SELECT * FROM Tmp_JobsToUpdate WHERE Not Ignored) Then
         _message := 'No candidate jobs were found';
     Else
         INSERT INTO t_analysis_job_priority_updates (
@@ -280,13 +280,13 @@ BEGIN
                U.Source,
                CURRENT_TIMESTAMP
         FROM Tmp_JobsToUpdate U
-        WHERE U.Ignored = 0
+        WHERE Not U.Ignored;
 
         UPDATE t_analysis_job J
         SET priority = U.New_Priority
         FROM Tmp_JobsToUpdate U
         WHERE J.job = U.Job AND
-              U.Ignored = 0;
+              Not U.Ignored;
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 

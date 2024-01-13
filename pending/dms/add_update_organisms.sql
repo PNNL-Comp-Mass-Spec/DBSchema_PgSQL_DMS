@@ -521,25 +521,24 @@ BEGIN
 
         If _mode = 'update' Then
             UPDATE t_organisms
-            Set
-                organism = _orgName,
-                organism_db_name = _orgDBName,
-                description = _orgDescription,
-                short_name = _orgShortName,
-                storage_location = _orgStorageLocation,
-                storage_url = _orgStorageURL,
-                domain = _orgDomain,
-                kingdom = _orgKingdom,
-                phylum = _orgPhylum,
-                class = _orgClass,
-                order = _orgOrder,
-                family = _orgFamily,
-                genus = _orgGenus,
-                species = _orgSpecies,
-                strain = _orgStrain,
-                active = _orgActive,
-                newt_id_list = _newtIDList,
-                ncbi_taxonomy_id = _ncbiTaxonomyID,
+            SET organism             = _orgName,
+                organism_db_name     = _orgDBName,
+                description          = _orgDescription,
+                short_name           = _orgShortName,
+                storage_location     = _orgStorageLocation,
+                storage_url          = _orgStorageURL,
+                domain               = _orgDomain,
+                kingdom              = _orgKingdom,
+                phylum               = _orgPhylum,
+                class                = _orgClass,
+                order                = _orgOrder,
+                family               = _orgFamily,
+                genus                = _orgGenus,
+                species              = _orgSpecies,
+                strain               = _orgStrain,
+                active               = _orgActive,
+                newt_id_list         = _newtIDList,
+                ncbi_taxonomy_id     = _ncbiTaxonomyID,
                 auto_define_taxonomy = _autoDefineTaxonomyFlag
             WHERE organism_id = _id;
 

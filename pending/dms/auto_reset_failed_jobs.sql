@@ -125,7 +125,7 @@ BEGIN
             NewStepState int null,
             NewComment text null,
             NewSettingsFile text null,
-            ResetJob int not null default 0,
+            ResetJob boolean not null default false,
             RerunAllJobSteps boolean not null default false
         )
 
@@ -418,13 +418,13 @@ BEGIN
                 _newJobState := 1;
 
                 UPDATE Tmp_FailedJobs
-                SET NewJobState = _newJobState,
-                    NewStepState = _stepState,
-                    NewComment = _newComment,
-                    ResetJob = 1,
-                    NewSettingsFile = _newSettingsFile,
+                SET NewJobState      = _newJobState,
+                    NewStepState     = _stepState,
+                    NewComment       = _newComment,
+                    ResetJob         = true,
+                    NewSettingsFile  = _newSettingsFile,
                     RerunAllJobSteps = _settingsFileChanged
-                WHERE Job = _job
+                WHERE Job = _job;
 
                 _resetReason := format('job step failed in the last %s hours', _windowHours);
             End If;
@@ -433,11 +433,11 @@ BEGIN
                 _newJobState := _jobState;
 
                 UPDATE Tmp_FailedJobs
-                SET NewJobState = _newJobState,
+                SET NewJobState  = _newJobState,
                     NewStepState = 2,
-                    NewComment = _newComment,
-                   ResetJob = 1
-                WHERE Job = _job
+                    NewComment   = _newComment,
+                    ResetJob     = true
+                WHERE Job = _job;
 
                 If Not _infoOnly Then
                     -- Reset the step back to state 2=Enabled
@@ -456,19 +456,19 @@ BEGIN
                     -- Note that deletes auto-cascade from T_Jobs to T_Job_Steps, T_Job_Parameters, and T_Job_Step_Dependencies
 
                     DELETE FROM sw.t_jobs
-                    WHERE Job = _job
+                    WHERE Job = _job;
 
                     UPDATE t_analysis_job
                     SET settings_file_name = _newSettingsFile
-                    WHERE job = _job
+                    WHERE job = _job;
 
                 End If;
 
                 -- Update the JobState and comment in t_analysis_job
                 UPDATE t_analysis_job
                 SET job_state_id = _newJobState,
-                    comment = _newComment
-                WHERE job = _job
+                    comment      = _newComment
+                WHERE job = _job;
 
                 _logMessage := format('Auto-reset job %s; %s; %s', _job, _resetReason, _newComment);
 

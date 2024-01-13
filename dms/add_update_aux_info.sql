@@ -290,7 +290,8 @@ BEGIN
                         If _tVal Is Distinct From _vFld Then
                             UPDATE t_aux_info_value
                             SET value = _vFld
-                            WHERE aux_description_id = _descriptionID AND target_id = _targetID;
+                            WHERE aux_description_id = _descriptionID AND
+                                  target_id = _targetID;
                         End If;
                     Else
                         INSERT INTO t_aux_info_value (

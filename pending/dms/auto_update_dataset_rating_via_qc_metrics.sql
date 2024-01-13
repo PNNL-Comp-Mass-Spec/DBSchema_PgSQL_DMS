@@ -177,10 +177,10 @@ BEGIN
     Else
         -- Update the rating
 
-        UPDATE DS
-        SET Comment = CASE WHEN Comment = ''
+        UPDATE t_dataset
+        SET Comment = CASE WHEN DS.Comment = ''
                            THEN ''
-                           ELSE format('%s; Not released: SMAQC P_2C = %s', Comment, DQC.P_2C);
+                           ELSE format('%s; Not released: SMAQC P_2C = %s', DS.Comment, DQC.P_2C)
                       END,
             dataset_rating_id = -5  -- 'Not released'
         FROM t_dataset DS

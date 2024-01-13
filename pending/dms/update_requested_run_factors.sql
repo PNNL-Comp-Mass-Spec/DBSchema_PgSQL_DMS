@@ -546,7 +546,7 @@ BEGIN
     -- Capitalize factor names based on historic usage
     --
     -- Although factor case does not matter (since the Factor column is citext),
-    -- some of the WHERE clauses are shown as lowercase based on observed inconsistencies in case
+    -- some of the WHERE clauses are shown as lowercase based on observed inconsistencies
     -----------------------------------------------------------
 
     UPDATE Tmp_FactorInfo SET Factor = 'AbbrName'                     WHERE Factor = 'AbbrName';
@@ -730,9 +730,9 @@ BEGIN
     SET value = Tmp_FactorInfo.value,
         last_updated = CURRENT_TIMESTAMP
     FROM Tmp_FactorInfo Src
-    WHERE Src.RequestID = Target.TargetID AND
-          Src.Factor = Target.Name AND
-          Target.Type = 'Run_Request' AND
+    WHERE Src.RequestID      = Target.TargetID AND
+          Src.Factor         = Target.Name AND
+          Target.Type        = 'Run_Request' AND
           Src.UpdateSkipCode = 0 AND
           Src.Value <> Target.Value;
 

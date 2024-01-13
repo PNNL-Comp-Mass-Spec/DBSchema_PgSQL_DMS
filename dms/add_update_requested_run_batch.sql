@@ -336,16 +336,16 @@ BEGIN
             End If;
 
             UPDATE t_requested_run_batches
-            SET batch = _name,
-                description = _description,
-                owner_user_id = _userID,
-                requested_batch_priority = _requestedBatchPriority,
-                requested_completion_date = _requestedCompletionTimestamp,
+            SET batch                           = _name,
+                description                     = _description,
+                owner_user_id                   = _userID,
+                requested_batch_priority        = _requestedBatchPriority,
+                requested_completion_date       = _requestedCompletionTimestamp,
                 justification_for_high_priority = _justificationHighPriority,
-                requested_instrument_group = _instrumentGroupToUse,
-                comment = _comment,
-                batch_group_id = _batchGroupID,
-                batch_group_order = _batchGroupOrder
+                requested_instrument_group      = _instrumentGroupToUse,
+                comment                         = _comment,
+                batch_group_id                  = _batchGroupID,
+                batch_group_order               = _batchGroupOrder
             WHERE batch_id = _id;
 
         End If;

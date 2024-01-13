@@ -168,10 +168,10 @@ BEGIN
     If _mode = 'update' Then
 
         UPDATE t_lc_cart
-        SET cart_name = _cartName,
-            cart_state_id = _cartStateID,
+        SET cart_name        = _cartName,
+            cart_state_id    = _cartStateID,
             cart_description = _cartDescription
-        WHERE cart_id = _id
+        WHERE cart_id = _id;
 
     End If;
 

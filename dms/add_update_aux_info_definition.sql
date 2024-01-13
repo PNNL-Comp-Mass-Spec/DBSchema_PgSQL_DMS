@@ -515,8 +515,8 @@ BEGIN
         -- Update item
 
         UPDATE t_aux_info_description
-        SET sequence = _sequence,
-            data_size = _dataSizeCurrent,
+        SET sequence      = _sequence,
+            data_size     = _dataSizeCurrent,
             helper_append = _helperAppendCurrent
         WHERE aux_description_id = _tmpID;
 

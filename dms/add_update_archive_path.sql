@@ -202,12 +202,11 @@ BEGIN
     If _mode = 'update' Then
 
         UPDATE t_archive_path
-        SET
-            archive_path = _archivePath,
-            archive_server_name = _archiveServer,
-            instrument_id = _instrumentID,
-            network_share_path = _networkSharePath,
-            note = _archiveNote,
+        SET archive_path          = _archivePath,
+            archive_server_name   = _archiveServer,
+            instrument_id         = _instrumentID,
+            network_share_path    = _networkSharePath,
+            note                  = _archiveNote,
             archive_path_function = _archiveFunction
         WHERE archive_path_id = _archivePathIDValue;
 

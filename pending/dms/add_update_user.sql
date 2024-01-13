@@ -189,29 +189,28 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-            If _userStatus = 'Inactive' Then
+            If _userStatus::citext = 'Inactive' Then
 
                 UPDATE t_users
-                SET name = _lastNameFirstName,
-                    hid = _hanfordIdNum,
-                    email = _email,
-                    status = _userStatus,
-                    active = 'N',
-                    update = 'N',
+                SET name    = _lastNameFirstName,
+                    hid     = _hanfordIdNum,
+                    email   = _email,
+                    status  = _userStatus,
+                    active  = 'N',
+                    update  = 'N',
                     comment = _comment
-                WHERE username = _username;
+                WHERE username = _username::citext;
 
             Else
 
                 UPDATE t_users
-                SET
-                    name = _lastNameFirstName,
-                    hid = _hanfordIdNum,
-                    email = _email,
-                    status = _userStatus,
-                    update = _userUpdate,
+                SET name    = _lastNameFirstName,
+                    hid     = _hanfordIdNum,
+                    email   = _email,
+                    status  = _userStatus,
+                    update  = _userUpdate,
                     comment = _comment
-                WHERE username = _username;
+                WHERE username = _username::citext;
 
             End If;
         End If;

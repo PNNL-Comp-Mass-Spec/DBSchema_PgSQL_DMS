@@ -128,11 +128,11 @@ BEGIN
         If _mode = 'update' Then
 
             UPDATE t_lc_cart_config_history
-            SET cart = _cart,
+            SET cart           = _cart,
                 date_of_change = _entryDate,
-                description = _description,
-                note = _note,
-                entered_by = _postedBy
+                description    = _description,
+                note           = _note,
+                entered_by     = _postedBy
             WHERE entry_id = _id;
 
         End If;

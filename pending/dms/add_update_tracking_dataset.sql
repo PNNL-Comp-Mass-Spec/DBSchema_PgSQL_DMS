@@ -462,13 +462,13 @@ BEGIN
 
             UPDATE t_dataset
             SET operator_username = _operatorUsername,
-                comment = _comment,
-                instrument_id = _instrumentID,
-                dataset_type_ID = _datasetTypeID,
-                folder_name = _folderName,
-                exp_id = _experimentID,
-                acq_time_start = _acqStart,
-                acq_time_end = _acqEnd
+                comment           = _comment,
+                instrument_id     = _instrumentID,
+                dataset_type_ID   = _datasetTypeID,
+                folder_name       = _folderName,
+                exp_id            = _experimentID,
+                acq_time_start    = _acqStart,
+                acq_time_end      = _acqEnd
             WHERE dataset = _datasetName::citext;
 
             -- If _callingUser is defined, call alter_event_log_entry_user to alter the entered_by field in t_event_log

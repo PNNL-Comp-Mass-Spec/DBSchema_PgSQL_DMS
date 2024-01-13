@@ -232,10 +232,10 @@ BEGIN
         SELECT settings_file_name
         INTO _settingsFile
         FROM t_default_psm_job_settings
-        WHERE tool_name = _toolName::citext AND
+        WHERE tool_name     = _toolName::citext AND
               job_type_name = _jobTypeName::citext AND
-              stat_cys_alk = _statCysAlkEnabled AND
-              dyn_sty_phos = _dynSTYPhosEnabled AND
+              stat_cys_alk  = _statCysAlkEnabled AND
+              dyn_sty_phos  = _dynSTYPhosEnabled AND
               enabled > 0;
 
         If Not FOUND Or Coalesce(_settingsFile, '') = '' Then
@@ -283,10 +283,10 @@ BEGIN
         INTO _paramFile
         FROM t_default_psm_job_parameters
         WHERE job_type_name = _jobTypeName::citext AND
-              tool_name = _toolName::citext AND
-              dyn_met_ox = _dynMetOxEnabled AND
-              stat_cys_alk = _statCysAlkEnabled AND
-              dyn_sty_phos = _dynSTYPhosEnabled AND
+              tool_name     = _toolName::citext AND
+              dyn_met_ox    = _dynMetOxEnabled AND
+              stat_cys_alk  = _statCysAlkEnabled AND
+              dyn_sty_phos  = _dynSTYPhosEnabled AND
               enabled > 0;
 
         If (Not FOUND Or Coalesce(_paramFile, '') = '') And _toolName ILike '%_DTARefinery' Then
@@ -296,10 +296,10 @@ BEGIN
             INTO _paramFile
             FROM t_default_psm_job_parameters
             WHERE job_type_name = _jobTypeName::citext AND
-                  tool_name = Replace(_toolName::citext, '_DTARefinery', '')::citext AND
-                  dyn_met_ox = _dynMetOxEnabled AND
-                  stat_cys_alk = _statCysAlkEnabled AND
-                  dyn_sty_phos = _dynSTYPhosEnabled AND
+                  tool_name     = Replace(_toolName::citext, '_DTARefinery', '')::citext AND
+                  dyn_met_ox    = _dynMetOxEnabled AND
+                  stat_cys_alk  = _statCysAlkEnabled AND
+                  dyn_sty_phos  = _dynSTYPhosEnabled AND
                   enabled > 0;
 
             If Not FOUND Then
@@ -314,11 +314,11 @@ BEGIN
             INTO _paramFile
             FROM t_default_psm_job_parameters
             WHERE job_type_name = _jobTypeName::citext AND
-                tool_name = Replace(_toolName::citext, '_MzML', '')::citext AND
-                dyn_met_ox = _dynMetOxEnabled AND
-                stat_cys_alk = _statCysAlkEnabled AND
-                dyn_sty_phos = _dynSTYPhosEnabled AND
-                enabled > 0;
+                  tool_name     = Replace(_toolName::citext, '_MzML', '')::citext AND
+                  dyn_met_ox    = _dynMetOxEnabled AND
+                  stat_cys_alk  = _statCysAlkEnabled AND
+                  dyn_sty_phos  = _dynSTYPhosEnabled AND
+                  enabled > 0;
 
             If Not FOUND Then
                 _paramFile := '';

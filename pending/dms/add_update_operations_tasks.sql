@@ -213,18 +213,18 @@ BEGIN
         If _mode = 'update' Then
 
             UPDATE t_operations_tasks
-            SET task_type_id = _taskTypeID,
-                task = _task,
-                requester = _requester,
+            SET task_type_id        = _taskTypeID,
+                task                = _task,
+                requester           = _requester,
                 requested_personnel = _requestedPersonnel,
-                assigned_personnel = _assignedPersonnel,
-                description = _description,
-                comments = _comments,
-                lab_id = _labID,
-                status = _status,
-                priority = _priority,
-                work_package = _workPackage,
-                closed = _closed
+                assigned_personnel  = _assignedPersonnel,
+                description         = _description,
+                comments            = _comments,
+                lab_id              = _labID,
+                status              = _status,
+                priority            = _priority,
+                work_package        = _workPackage,
+                closed              = _closed
             WHERE task_id = _id;
 
         End If;

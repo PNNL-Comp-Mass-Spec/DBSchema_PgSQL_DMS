@@ -268,11 +268,11 @@ BEGIN
     If _mode = 'update' Then
 
         UPDATE t_secondary_sep
-        SET separation_type = _sepTypeName,
+        SET separation_type  = _sepTypeName,
             separation_group = _sepGroupName,
-            comment = _comment,
-            sample_type_id = _sampleTypeID,
-            active = _stateInt
+            comment          = _comment,
+            sample_type_id   = _sampleTypeID,
+            active           = _stateInt
         WHERE separation_type_id = _id
 
     End If;
