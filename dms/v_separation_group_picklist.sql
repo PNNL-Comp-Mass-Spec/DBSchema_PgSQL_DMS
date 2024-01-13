@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_separation_group_picklist AS
- SELECT t_separation_group.separation_group,
+ SELECT t_separation_group.separation_group AS sep_group,
     t_separation_group.sample_prep_visible,
     t_separation_group.fraction_count
    FROM public.t_separation_group

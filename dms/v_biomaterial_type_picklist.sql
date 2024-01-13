@@ -4,7 +4,7 @@
 
 CREATE VIEW public.v_biomaterial_type_picklist AS
  SELECT btn.biomaterial_type_id AS id,
-    btn.biomaterial_type
+    btn.biomaterial_type AS name
    FROM public.t_biomaterial_type_name btn;
 
 

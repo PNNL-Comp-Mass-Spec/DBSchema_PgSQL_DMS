@@ -4,7 +4,7 @@
 
 CREATE VIEW public.v_eus_usage_type_picklist AS
  SELECT t_eus_usage_type.eus_usage_type_id AS id,
-    t_eus_usage_type.eus_usage_type,
+    t_eus_usage_type.eus_usage_type AS name,
     t_eus_usage_type.description,
     t_eus_usage_type.enabled_campaign,
     t_eus_usage_type.enabled_prep_request

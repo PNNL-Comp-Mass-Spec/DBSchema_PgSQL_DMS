@@ -4,7 +4,7 @@
 
 CREATE VIEW public.v_emsl_instrument_usage_type_picklist AS
  SELECT t_emsl_instrument_usage_type.usage_type_id AS id,
-    t_emsl_instrument_usage_type.usage_type,
+    t_emsl_instrument_usage_type.usage_type AS name,
     t_emsl_instrument_usage_type.description
    FROM public.t_emsl_instrument_usage_type
   WHERE (t_emsl_instrument_usage_type.enabled > 0);
