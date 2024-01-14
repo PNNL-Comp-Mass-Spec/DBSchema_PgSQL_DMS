@@ -1,32 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_lc_cart_settings_history
-(
-    _id int,
-    _cartName text,
-    _valveToColumnExtension text,
-    _operatingPressure text,
-    _interfaceConfiguration text,
-    _valveToColumnExtensionDimensions text,
-    _mixerVolume text,
-    _sampleLoopVolume text,
-    _sampleLoadingTime text,
-    _splitFlowRate text,
-    _splitColumnDimensions text,
-    _purgeFlowRate text,
-    _purgeColumnDimensions text,
-    _purgeVolume text,
-    _acquisitionTime text,
-    _solventA text,
-    _solventB text,
-    _comment text,
-    _dateOfChange text,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_lc_cart_settings_history(integer, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_lc_cart_settings_history(IN _id integer, IN _cartname text, IN _valvetocolumnextension text, IN _operatingpressure text, IN _interfaceconfiguration text, IN _valvetocolumnextensiondimensions text, IN _mixervolume text, IN _sampleloopvolume text, IN _sampleloadingtime text, IN _splitflowrate text, IN _splitcolumndimensions text, IN _purgeflowrate text, IN _purgecolumndimensions text, IN _purgevolume text, IN _acquisitiontime text, IN _solventa text, IN _solventb text, IN _comment text, IN _dateofchange text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -63,12 +41,12 @@ AS $$
 **  Date:   09/29/2008
 **          10/21/2008 grk - Added parameters _solventA and _solventB
 **          06/13/2017 mem - Use SCOPE_IDENTITY()
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/13/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _cartID int;
-    _tmp int := 0;
+    _parsedDate timestamp;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -77,8 +55,24 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _cartName := Trim(Coalesce(_cartName, ''));
-    _mode     := Trim(Lower(Coalesce(_mode, '')));
+    _cartName    := Trim(Coalesce(_cartName, ''));
+    _callingUser := Trim(Coalesce(_callingUser, ''));
+    _mode        := Trim(Lower(Coalesce(_mode, '')));
+
+    _parsedDate := public.try_cast(_dateOfChange, null::timestamp);
+    _parsedDate := Coalesce(_parsedDate, CURRENT_TIMESTAMP);
+
+    If _cartName = '' Then
+        _message := 'LC cart name must be specified';
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5201';
+        RETURN;
+    End If;
+
+    If _callingUser = '' Then
+        _callingUser = SESSION_USER;
+    End If;
 
     ---------------------------------------------------
     -- Resolve cart name to ID
@@ -93,7 +87,7 @@ BEGIN
         _message := format('Could not find cart "%s"', _cartName);
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5201';
+        _returnCode := 'U5202';
         RETURN;
     End If;
 
@@ -106,20 +100,15 @@ BEGIN
             _message := 'Cannot update: cart settings ID cannot be null';
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5202';
+            _returnCode := 'U5203';
             RETURN;
         End If;
 
-        SELECT entry_id
-        INTO _tmp
-        FROM t_lc_cart_settings_history
-        WHERE entry_id = _id;
-
-        If Not FOUND Then
+        If Not Exists (SELECT entry_id FROM t_lc_cart_settings_history WHERE entry_id = _id) Then
             _message := format('Cannot update: LC cart settings ID %s does not exist', _id);
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5203';
+            _returnCode := 'U5204';
             RETURN;
         End If;
 
@@ -169,7 +158,7 @@ BEGIN
             _solventB,
             _cartID,
             _comment,
-            _dateOfChange,
+            _parsedDate,
             _callingUser
         )
         RETURNING entry_id
@@ -200,7 +189,7 @@ BEGIN
             solvent_a                            = _solventA,
             solvent_b                            = _solventB,
             comment                              = _comment,
-            date_of_change                       = _dateOfChange,
+            date_of_change                       = _parsedDate,
             entered_by                           = _callingUser
         WHERE entry_id = _id;
 
@@ -209,4 +198,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_lc_cart_settings_history IS 'AddUpdateLCCartSettingsHistory';
+
+ALTER PROCEDURE public.add_update_lc_cart_settings_history(IN _id integer, IN _cartname text, IN _valvetocolumnextension text, IN _operatingpressure text, IN _interfaceconfiguration text, IN _valvetocolumnextensiondimensions text, IN _mixervolume text, IN _sampleloopvolume text, IN _sampleloadingtime text, IN _splitflowrate text, IN _splitcolumndimensions text, IN _purgeflowrate text, IN _purgecolumndimensions text, IN _purgevolume text, IN _acquisitiontime text, IN _solventa text, IN _solventb text, IN _comment text, IN _dateofchange text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_lc_cart_settings_history(IN _id integer, IN _cartname text, IN _valvetocolumnextension text, IN _operatingpressure text, IN _interfaceconfiguration text, IN _valvetocolumnextensiondimensions text, IN _mixervolume text, IN _sampleloopvolume text, IN _sampleloadingtime text, IN _splitflowrate text, IN _splitcolumndimensions text, IN _purgeflowrate text, IN _purgecolumndimensions text, IN _purgevolume text, IN _acquisitiontime text, IN _solventa text, IN _solventb text, IN _comment text, IN _dateofchange text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_lc_cart_settings_history(IN _id integer, IN _cartname text, IN _valvetocolumnextension text, IN _operatingpressure text, IN _interfaceconfiguration text, IN _valvetocolumnextensiondimensions text, IN _mixervolume text, IN _sampleloopvolume text, IN _sampleloadingtime text, IN _splitflowrate text, IN _splitcolumndimensions text, IN _purgeflowrate text, IN _purgecolumndimensions text, IN _purgevolume text, IN _acquisitiontime text, IN _solventa text, IN _solventb text, IN _comment text, IN _dateofchange text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateLCCartSettingsHistory';
+
