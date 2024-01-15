@@ -1,43 +1,30 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_lc_column
-(
-    INOUT _columnNumber text,
-    _packingMfg text,
-    _packingType text,
-    _particleSize text,
-    _particleType text,
-    _columnInnerDia text,
-    _columnOuterDia text,
-    _length text,
-    _state  text,
-    _operatorUsername text,
-    _comment text,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_lc_column(text, text, text, text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_lc_column(INOUT _columnname text, IN _packingmfg text, IN _packingtype text, IN _particlesize text, IN _particletype text, IN _columninnerdia text, IN _columnouterdia text, IN _length text, IN _state text, IN _operatorusername text, IN _comment text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Add new or edit an existing entry LC column
+**      Add new or edit an existing LC column
 **
 **  Arguments:
-**    _columnNumber         Input/output: Column name
-**    _packingMfg           Column packing manufacturer
-**    _packingType          Packing type
-**    _particleSize         Particle size
-**    _particleType         Particle type
-**    _columnInnerDia       Column inner diameter
-**    _columnOuterDia       Column outer diameter
-**    _length               Column length
-**    _state                State: 'New', 'Active', or 'Retired'
-**    _operatorUsername     Username of the DMS user to associate with the column
-**    _comment              Comment
-**    _mode                 Mode: 'add' or 'update'
-**    _message              Status message
-**    _returnCode           Return code
+**    _columnName        Input/output: Column name
+**    _packingMfg        Column packing manufacturer
+**    _packingType       Packing type
+**    _particleSize      Particle size
+**    _particleType      Particle type
+**    _columnInnerDia    Column inner diameter
+**    _columnOuterDia    Column outer diameter
+**    _length            Column length
+**    _state             State: 'New', 'Active', or 'Retired'
+**    _operatorUsername  Username of the DMS user to associate with the column
+**    _comment           Comment
+**    _mode              Mode: 'add' or 'update'
+**    _message           Status message
+**    _returnCode        Return code
 **
 **  Auth:   grk
 **  Date:   12/09/2003
@@ -48,9 +35,10 @@ AS $$
 **          05/19/2017 mem - Use _logErrors to toggle logging errors caught by the try/catch block
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          11/30/2018 mem - Make _columnNumber an output parameter
+**          11/30/2018 mem - Make _columnName an output parameter
 **          03/21/2022 mem - Fix typo in comment and update capitalization of keywords
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/14/2024 mem - Rename argument to _columnName
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -98,13 +86,32 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _columnNumber := Trim(Coalesce(_columnNumber, ''));
-        _state        := Trim(Coalesce(_state, ''));
-        _mode         := Trim(Lower(Coalesce(_mode, '')));
+        _columnName       := Trim(Coalesce(_columnName, ''));
+        _packingMfg       := Trim(Coalesce(_packingMfg, ''));
+        _packingType      := Trim(Coalesce(_packingType, ''));
+        _particleSize     := Trim(Coalesce(_particleSize, ''));
+        _particleType     := Trim(Coalesce(_particleType, ''));
+        _columnInnerDia   := Trim(Coalesce(_columnInnerDia, ''));
+        _columnOuterDia   := Trim(Coalesce(_columnOuterDia, ''));
+        _length           := Trim(Coalesce(_length, ''));
+        _state            := Trim(Coalesce(_state, ''));
+        _operatorUsername := Trim(Coalesce(_operatorUsername, ''));
+        _comment          := Trim(Coalesce(_comment, ''));
+        _mode             := Trim(Lower(Coalesce(_mode, '')));
 
-        If _columnNumber = '' Then
+        If _columnName = '' Then
             _returnCode := 'U5110';
             RAISE EXCEPTION 'Column name must be specified';
+        End If;
+
+        If _state = '' Then
+            _returnCode := 'U5111';
+            RAISE EXCEPTION 'State name must be specified';
+        End If;
+
+        If _operatorUsername = '' Then
+            _returnCode := 'U5112';
+            RAISE EXCEPTION 'Operator username must be specified';
         End If;
 
         ---------------------------------------------------
@@ -114,20 +121,20 @@ BEGIN
         SELECT lc_column_id
         INTO _columnID
         FROM t_lc_column
-        WHERE lc_column = _columnNumber::citext;
+        WHERE lc_column = _columnName::citext;
         --
         GET DIAGNOSTICS _existingCount = ROW_COUNT;
 
         -- Cannot create an entry that already exists
 
         If _existingCount > 0 And _mode = 'add' Then
-            RAISE EXCEPTION 'Cannot add: LC column "%" already exists', _columnNumber;
+            RAISE EXCEPTION 'Cannot add: LC column "%" already exists', _columnName;
         End If;
 
         -- Cannot update a non-existent entry
 
         If _existingCount = 0 And _mode = 'update' Then
-            RAISE EXCEPTION 'Cannot update: LC column "%" does not exist', _columnNumber;
+            RAISE EXCEPTION 'Cannot update: LC column "%" does not exist', _columnName;
         End If;
 
         ---------------------------------------------------
@@ -164,7 +171,7 @@ BEGIN
                 comment,
                 created
             ) VALUES (
-                _columnNumber,
+                _columnName,
                 _packingMfg,
                 _packingType,
                 _particleSize,
@@ -186,7 +193,7 @@ BEGIN
         If _mode = 'update' Then
 
             UPDATE t_lc_column
-            SET lc_column         = _columnNumber,
+            SET lc_column         = _columnName,
                 packing_mfg       = _packingMfg,
                 packing_type      = _packingType,
                 particle_size     = _particleSize,
@@ -225,4 +232,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_lc_column IS 'AddUpdateLCColumn';
+
+ALTER PROCEDURE public.add_update_lc_column(INOUT _columnname text, IN _packingmfg text, IN _packingtype text, IN _particlesize text, IN _particletype text, IN _columninnerdia text, IN _columnouterdia text, IN _length text, IN _state text, IN _operatorusername text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_lc_column(INOUT _columnname text, IN _packingmfg text, IN _packingtype text, IN _particlesize text, IN _particletype text, IN _columninnerdia text, IN _columnouterdia text, IN _length text, IN _state text, IN _operatorusername text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_lc_column(INOUT _columnname text, IN _packingmfg text, IN _packingtype text, IN _particlesize text, IN _particletype text, IN _columninnerdia text, IN _columnouterdia text, IN _length text, IN _state text, IN _operatorusername text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text) IS 'AddUpdateLCColumn';
+
