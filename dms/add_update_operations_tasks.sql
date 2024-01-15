@@ -1,29 +1,14 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_operations_tasks
-(
-    INOUT _id int,
-    _taskType text,
-    _task text,
-    _requester text,
-    _requestedPersonnel text,
-    _assignedPersonnel text,
-    _description text,
-    _comments text,
-    _labName text,
-    _status text,
-    _priority text,
-    _workPackage text,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_operations_tasks(integer, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_operations_tasks(INOUT _id integer, IN _tasktype text, IN _task text, IN _requester text, IN _requestedpersonnel text, IN _assignedpersonnel text, IN _description text, IN _comments text, IN _labname text, IN _status text, IN _priority text, IN _workpackage text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Add new or edit an existing operation task entry
+**      Add new or edit an existing operations task entry
 **
 **  Arguments:
 **    _id                   Input/output: task_id in t_operations_tasks
@@ -41,7 +26,7 @@ AS $$
 **    _mode                 Mode: 'add' or 'update'
 **    _message              Status message
 **    _returnCode           Return code
-**    _callingUser          Username of the calling user
+**    _callingUser          Username of the calling user (unused by this procedure)
 **
 **  Auth:   grk
 **  Date:   09/01/2012
@@ -57,7 +42,7 @@ AS $$
 **                         - Remove parameter _hoursSpent
 **          05/16/2022 mem - Do not log data validation errors
 **          11/18/2022 mem - Rename parameter to _task
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/14/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -107,9 +92,34 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _taskType := Trim(Coalesce(_taskType, 'Generic'));
-        _labName  := Trim(Coalesce(_labName, 'Undefined'));
-        _mode     := Trim(Lower(Coalesce(_mode, '')));
+        _taskType           := Trim(Coalesce(_taskType, 'Generic'));
+        _task               := Trim(Coalesce(_task, ''));
+        _requester          := Trim(Coalesce(_requester, ''));
+        _requestedPersonnel := Trim(Coalesce(_requestedPersonnel, ''));
+        _assignedPersonnel  := Trim(Coalesce(_assignedPersonnel, ''));
+        _description        := Trim(Coalesce(_description, ''));
+        _comments           := Trim(Coalesce(_comments, ''));
+        _labName            := Trim(Coalesce(_labName, 'Undefined'));
+        _status             := Trim(Coalesce(_status, ''));
+        _priority           := Trim(Coalesce(_priority, ''));
+        _workPackage        := Trim(Coalesce(_workPackage, ''));
+        _mode               := Trim(Lower(Coalesce(_mode, '')));
+
+        If _taskType = '' Then
+            RAISE EXCEPTION 'Task type must be specified';
+        End If;
+
+        If _requester = '' Then
+            RAISE EXCEPTION 'Requester must be specified';
+        End If;
+
+        If _status = '' Then
+            RAISE EXCEPTION 'Status must be specified';
+        End If;
+
+        If _priority = '' Then
+            RAISE EXCEPTION 'Priority must be specified';
+        End If;
 
         If _status::citext In ('Completed', 'Not Implemented') Then
             _closed := CURRENT_TIMESTAMP;
@@ -135,7 +145,7 @@ BEGIN
         SELECT lab_id
         INTO _labID
         FROM t_lab_locations
-        WHERE lab_name = _labName;
+        WHERE lab_name = _labName::citext;
 
         If Not FOUND Then
             RAISE EXCEPTION 'Unrecognized lab name: %', _labName;
@@ -150,8 +160,7 @@ BEGIN
                 RAISE EXCEPTION 'Cannot update: operations task ID cannot be null';
             End If;
 
-            SELECT status,
-                   closed
+            SELECT status, closed
             INTO _curStatus, _curClosed
             FROM t_operations_tasks
             WHERE task_id = _id;
@@ -253,4 +262,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_operations_tasks IS 'AddUpdateOperationsTasks';
+
+ALTER PROCEDURE public.add_update_operations_tasks(INOUT _id integer, IN _tasktype text, IN _task text, IN _requester text, IN _requestedpersonnel text, IN _assignedpersonnel text, IN _description text, IN _comments text, IN _labname text, IN _status text, IN _priority text, IN _workpackage text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_operations_tasks(INOUT _id integer, IN _tasktype text, IN _task text, IN _requester text, IN _requestedpersonnel text, IN _assignedpersonnel text, IN _description text, IN _comments text, IN _labname text, IN _status text, IN _priority text, IN _workpackage text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_operations_tasks(INOUT _id integer, IN _tasktype text, IN _task text, IN _requester text, IN _requestedpersonnel text, IN _assignedpersonnel text, IN _description text, IN _comments text, IN _labname text, IN _status text, IN _priority text, IN _workpackage text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateOperationsTasks';
+
