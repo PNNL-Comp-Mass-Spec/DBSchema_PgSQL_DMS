@@ -20,12 +20,13 @@ CREATE OR REPLACE PROCEDURE public.update_taxonomy_item_if_defined(IN _rank text
 **      );
 **
 **  Arguments:
-**    _rank    Taxonomy rank
-**    _value   input/output variable: updated if Tmp_TaxonomyInfo contains a value for the given rank
+**    _rank    Taxonomy rank: 'superkingdom', 'kingdom', 'subphylum', 'phylum', etc.
+**    _value   Input/output variable: updated if Tmp_TaxonomyInfo contains a value for the given rank
 **
 **  Auth:   mem
 **  Date:   03/02/2016
 **          10/25/2022 mem - Ported to PostgreSQL
+**          01/15/2024 mem - Trim leading and trailing whitespace
 **
 *****************************************************/
 DECLARE
@@ -36,8 +37,8 @@ BEGIN
     FROM  Tmp_TaxonomyInfo
     WHERE Rank::citext = _rank::citext;
 
-    If FOUND And Coalesce(_taxonomyName, '') <> '' Then
-        _value := _taxonomyName;
+    If FOUND And Trim(Coalesce(_taxonomyName, '')) <> '' Then
+        _value := Trim(_taxonomyName);
     End If;
 END
 $$;
