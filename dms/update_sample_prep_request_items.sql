@@ -125,7 +125,7 @@ BEGIN
 
         -- Experiments
 
-        INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
+        INSERT INTO Tmp_PrepRequestItems (Prep_Request_ID, Item_ID, Item_Name, Item_Type, Status, Created)
         SELECT SPR.prep_request_id,
                E.exp_id AS Item_ID,
                E.experiment AS Item_Name,
@@ -139,7 +139,7 @@ BEGIN
 
         -- Experiment groups
 
-        INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
+        INSERT INTO Tmp_PrepRequestItems (Prep_Request_ID, Item_ID, Item_Name, Item_Type, Status, Created)
         SELECT DISTINCT SPR.prep_request_id,
                         GM.group_id AS Item_ID,
                         G.description AS Item_Name,
@@ -157,7 +157,7 @@ BEGIN
 
         -- Material containers
 
-        INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
+        INSERT INTO Tmp_PrepRequestItems (Prep_Request_ID, Item_ID, Item_Name, Item_Type, Status, Created)
         SELECT DISTINCT SPR.prep_request_id,
                         MC.container_id AS Item_ID,
                         MC.container AS Item_Name,
@@ -174,7 +174,7 @@ BEGIN
 
         -- Requested runs
 
-        INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
+        INSERT INTO Tmp_PrepRequestItems (Prep_Request_ID, Item_ID, Item_Name, Item_Type, Status, Created)
         SELECT SPR.prep_request_id,
                RR.request_id AS Item_ID,
                RR.request_name AS Item_Name,
@@ -190,7 +190,7 @@ BEGIN
 
         -- Datasets
 
-        INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
+        INSERT INTO Tmp_PrepRequestItems (Prep_Request_ID, Item_ID, Item_Name, Item_Type, Status, Created)
         SELECT SPR.prep_request_id,
                DS.dataset_id AS Item_ID,
                DS.dataset AS Item_Name,
@@ -206,9 +206,9 @@ BEGIN
                ON DS.dataset_state_id = DSN.dataset_state_id
         WHERE SPR.prep_request_id = _samplePrepRequestID;
 
-        -- HPLC Runs - Reference to sample prep request IDs in comma delimited list in text field
+        -- HPLC Runs: Reference to sample prep request IDs in comma-separated list in text field
 
-        INSERT INTO Tmp_PrepRequestItems (prep_request_id, Item_ID, Item_Name, Item_Type, Status, Created)
+        INSERT INTO Tmp_PrepRequestItems (Prep_Request_ID, Item_ID, Item_Name, Item_Type, Status, Created)
         SELECT _samplePrepRequestID AS Prep_Request_ID,
                Item_ID,
                Item_Name,
@@ -240,7 +240,7 @@ BEGIN
         -- Mark items that should be deleted from T_Sample_Prep_Request_Items
         ---------------------------------------------------
 
-        INSERT INTO Tmp_PrepRequestItems (prep_request_id, item_id, item_type, Marked)
+        INSERT INTO Tmp_PrepRequestItems (Prep_Request_ID, Item_ID, item_type, Marked)
         SELECT I.prep_request_id,
                I.item_id,
                I.item_type,
@@ -271,30 +271,29 @@ BEGIN
                 status,
                 created
             )
-            SELECT prep_request_id,
-                   item_id,
-                   item_name,
-                   item_type,
-                   status,
-                   created
+            SELECT Prep_Request_ID,
+                   Item_id,
+                   Item_name,
+                   Item_type,
+                   Status,
+                   Created
             FROM Tmp_PrepRequestItems
             WHERE Marked = 'N';
 
-
             ---------------------------------------------------
-            -- Update the Created date and Status for existing items (if not correct)
+            -- Update the created date and status for existing items (if not correct)
             ---------------------------------------------------
 
             UPDATE t_sample_prep_request_items I
             SET created = TPRI.created,
                 status = TPRI.Status
             FROM Tmp_PrepRequestItems TPRI
-            WHERE I.prep_request_id = TPRI.Prep_Request_ID AND
-                  I.item_id         = TPRI.Item_ID AND
-                  I.item_type       = TPRI.Item_Type AND
-                  TPRI.Marked       = 'Y' AND
-                  ( I.Created Is Null And Not TPRI.Created Is Null Or I.Created <> TPRI.Created OR
-                    I.Status Is Null And Not TPRI.Status Is Null Or I.Status <> TPRI.Status);
+            WHERE I.prep_request_id = TPRI.prep_request_id AND
+                  I.item_id         = TPRI.item_id AND
+                  I.item_type       = TPRI.item_type AND
+                  TPRI.marked       = 'Y' AND
+                  ( I.created Is Null And Not TPRI.created Is Null Or I.created <> TPRI.created OR
+                    I.status  Is Null And Not TPRI.status  Is Null Or I.status  <> TPRI.status);
 
             ---------------------------------------------------
             -- Delete extra items from table

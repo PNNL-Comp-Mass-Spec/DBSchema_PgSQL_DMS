@@ -26,7 +26,7 @@ AS $$
 **    _endDate                  End date;   if an empty string, will use today as end date
 **    _productionOnly           When 0 then shows all instruments; otherwise limits the report to production instruments only (operations_role = 'Production')
 **    _campaignIDFilterList     Comma-separated list of campaign IDs
-**    _eusUsageFilterList       Comma separated list of EUS usage types, from table t_eus_usage_type: CAP_DEV, MAINTENANCE, BROKEN, USER_ONSITE, USER_REMOTE, RESOURCE_OWNER
+**    _eusUsageFilterList       Comma-separated list of EUS usage types, from table t_eus_usage_type: CAP_DEV, MAINTENANCE, BROKEN, USER_ONSITE, USER_REMOTE, RESOURCE_OWNER
 **    _instrumentFilterList     Comma-separated list of instrument names% and * wildcards are allowed ('*' is auto-changed to '%')
 **    _includeProposalType      When 1, include proposal type in the results
 **    _results                  Output: cursor for retrieving production stats
