@@ -1,19 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_param_file_entry
-(
-    _paramFileID int,
-    _entrySeqOrder int,
-    _entryType text,
-    _entrySpecifier text,
-    _entryValue text,
-    _mode text = 'add',
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_param_file_entry(integer, integer, text, text, text, text, boolean, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_param_file_entry(IN _paramfileid integer, IN _entryseqorder integer, IN _entrytype text, IN _entryspecifier text, IN _entryvalue text, IN _mode text DEFAULT 'add'::text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -25,8 +16,8 @@ AS $$
 **    _paramFileID      Name of new parameter file description
 **    _entrySeqOrder    Entry sequence order
 **    _entryType        Entry type; for modifications, will be 'DynamicModification', 'StaticModification', 'IsotopicModification', or 'TermDynamicModification'; for other parameters, will be the name entered into t_param_entries, either 'BasicParam' or 'AdvancedParam'
-**    _entrySpecifier   Entry specifier; For modifications, this is the residues affected for dynamic, static, or isotopic mods; for other entries, will be the name entered into t_param_entries, column Entry_Specifier, e.g. 'FragmentMassType' or 'PeptideMassTolerance'
-**    _entryValue       Entry value
+**    _entrySpecifier   Entry specifier; for modifications, this is the residues affected for dynamic, static, or isotopic mods; for other entries, will be the name entered into t_param_entries, column Entry_Specifier, e.g. 'FragmentMassType' or 'PeptideMassTolerance'
+**    _entryValue       Entry value; for modifications, this is the modification mass; for other entries, this is the value associated with the given specifier
 **    _mode             Mode: 'add' or 'update'
 **    _infoOnly         When true, preview updates
 **    _message          Status message
@@ -39,16 +30,17 @@ AS $$
 **          03/25/2008 mem - Added optional parameter _callingUser; if provided, will populate field Entered_By with this name
 **          01/20/2010 mem - Added support for dynamic peptide terminus mods (TermDynamicModification)
 **          06/13/2017 mem - Use SCOPE_IDENTITY()
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _existingCount int := 0;
-    _localSymbolID int;
+    _localSymbolID int := 0;
     _typeSymbol text;
-    _affectedResidue text;
+    _affectedResidue citext;
     _affectedResidueID int;
     _massCorrectionID int;
+    _modMass float8;
     _counter int;
     _paramEntryID int := 0;
     _alterEnteredByMessage text;
@@ -66,6 +58,7 @@ BEGIN
     _entrySpecifier := Trim(Coalesce(_entrySpecifier, ''));
     _entryValue     := Trim(Coalesce(_entryValue, ''));
     _infoOnly       := Coalesce(_infoOnly, false);
+    _callingUser    := Trim(Coalesce(_callingUser, ''));
     _mode           := Trim(Lower(Coalesce(_mode, '')));
 
     If _paramFileID = 0 Then
@@ -86,7 +79,6 @@ BEGIN
     If _entrySpecifier = '' Then
         _returnCode := 'U5204';
         RAISE EXCEPTION 'EntrySpecifier must be specified';
-
     End If;
 
     If _entryValue = '' Then
@@ -100,28 +92,24 @@ BEGIN
 
     If _entryType::citext In ('DynamicModification', 'StaticModification', 'IsotopicModification', 'TermDynamicModification') Then
 
-        If _infoOnly Then
-            RAISE INFO '_entryType = %', _entryType;
-        End If;
-
-        If _entryType = 'StaticModification' Then
+        If _entryType::citext = 'StaticModification' Then
             _localSymbolID := 0;
             _typeSymbol := 'S';
             _affectedResidue := _entrySpecifier;
         End If;
 
-        If _entryType = 'IsotopicModification' Then
+        If _entryType::citext = 'IsotopicModification' Then
             _localSymbolID := 0;
             _typeSymbol := 'I';
             _affectedResidueID := 1;
         End If;
 
-        If _entryType = 'DynamicModification' Then
+        If _entryType::citext = 'DynamicModification' Then
             _localSymbolID := public.get_next_local_symbol_id(_paramFileID);
             _typeSymbol := 'D';
         End If;
 
-        If _entryType = 'TermDynamicModification' Then
+        If _entryType::citext = 'TermDynamicModification' Then
             _localSymbolID := 0;
 
             If _entrySpecifier = '<' Then
@@ -138,26 +126,24 @@ BEGIN
                 _message := format('EntrySpecifier of "%s" is invalid for ModType "TermDynamicModification"; must be < or >', _entrySpecifier);
                 RAISE WARNING '%', _message;
 
-                _returnCode := 'U5201';
+                _returnCode := 'U5206';
                 RETURN;
             End If;
 
         End If;
 
-        _counter := 0;
+        _modMass := public.try_cast(_entryValue, null::float8);
 
-        _massCorrectionID := GetMassCorrectionID(_entryValue);
+        _massCorrectionID := get_mass_correction_id(_modMass);
 
         If _infoOnly Then
             RAISE INFO 'Mod "%" corresponds to _massCorrectionID %', _entryValue, _massCorrectionID;
         End If;
 
-        WHILE _counter < char_length(_entryspecifier)
+        FOR _counter IN 1 .. char_length(_entrySpecifier)
         LOOP
 
-            _counter := _counter + 1;
-
-            If _entryType = 'StaticModification' And _counter < 2 Then
+            If _entryType::citext = 'StaticModification' And _counter < 2 Then
 
                 If char_length(_entrySpecifier) > 1 Then
                     -- The mod is a terminal mod
@@ -188,30 +174,41 @@ BEGIN
                 FROM t_residues
                 WHERE residue_symbol = _affectedResidue;
 
+                If Not FOUND Then
+                    _returnCode := 'U5207';
+                    RAISE EXCEPTION 'Invalid affected residue: %', _affectedResidue;
+                End If;
             Else
-                -- Jump out of the while if this is a static modification or a 'TermDynamicModification'
-                If (_entryType = 'StaticModification' Or _entryType = 'TermDynamicModification') And _counter > 1 Then
-                    break;
+                -- Jump out of the loop if on the second iteration and this is a static modification or a 'TermDynamicModification'
+                If _entryType::citext In ('StaticModification', 'TermDynamicModification') And _counter > 1 Then
+                    -- Break out of the for loop
+                    EXIT;
                 End If;
             End If;
 
-            If _entryType = 'DynamicModification' or _entryType = 'TermDynamicModification' Then
+            If _entryType::citext In ('DynamicModification', 'TermDynamicModification') Then
                 _affectedResidue := Substring(_entrySpecifier, _counter, 1);
 
                 SELECT residue_id
                 INTO _affectedResidueID
                 FROM t_residues
                 WHERE residue_symbol = _affectedResidue;
+
+                If Not FOUND Then
+                    _returnCode := 'U5208';
+                    RAISE EXCEPTION 'Invalid affected residue: %', _affectedResidue;
+                End If;
             End If;
 
             If _infoOnly Then
-                SELECT  _entryType AS EntryType,
-                        _affectedResidue AS AffectedReseidue,
-                        _affectedResidueID AS AffectedResidueID,
-                        _localSymbolID AS LocalSymbolID,
-                        _massCorrectionID AS MassCorrectionID,
-                        _paramFileID AS ParamFileID,
-                        _typeSymbol AS TypeSymbol;
+                RAISE INFO '';
+                RAISE INFO 'Entry type:          %', _entryType;
+                RAISE INFO 'Affected residue:    %', _affectedResidue;
+                RAISE INFO 'Affected residue ID: %', _affectedResidueID;
+                RAISE INFO 'Local symbol ID:     %', _localSymbolID;
+                RAISE INFO 'Mass correction ID:  %', _massCorrectionID;
+                RAISE INFO 'Parameter file ID:   %', _paramFileID;
+                RAISE INFO 'Type symbol:         %', _typeSymbol;
             Else
                 INSERT INTO t_param_file_mass_mods (
                     residue_id,
@@ -260,7 +257,7 @@ BEGIN
         _message := 'Cannot update: param entry matching the specified parameters not found in table t_param_entries';
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5201';
+        _returnCode := 'U5207';
         RETURN;
     End If;
 
@@ -270,8 +267,13 @@ BEGIN
 
     If _mode = 'add' Then
         If _infoOnly Then
-            RAISE INFO 'Mode: %, SeqOrder: %, Type: %, Specifier: %, Value: %, ParamFileID: %',
-                       _mode, _entrySeqOrder, _entryType, _entrySpecifier, _entryValue, _paramFileID;
+            RAISE INFO '';
+            RAISE INFO 'Mode:        %', _mode;
+            RAISE INFO 'SeqOrder:    %', _entrySeqOrder;
+            RAISE INFO 'Type:        %', _entryType;
+            RAISE INFO 'Specifier:   %', _entrySpecifier;
+            RAISE INFO 'Value:       %', _entryValue;
+            RAISE INFO 'ParamFileID: %', _paramFileID;
         Else
             INSERT INTO t_param_entries (
                 entry_sequence_order,
@@ -290,7 +292,7 @@ BEGIN
             INTO _paramEntryID;
 
             -- If _callingUser is defined, update entered_by in t_analysis_job_processor_group
-            If Trim(Coalesce(_callingUser, '')) <> '' Then
+            If _callingUser <> '' Then
                 CALL public.alter_entered_by_user ('public', 't_param_entries', 'param_entry_id', _paramEntryID, _callingUser, _message => _alterEnteredByMessage);
             End If;
         End If;
@@ -312,7 +314,7 @@ BEGIN
             WHERE param_entry_id = _paramEntryID;
 
             -- If _callingUser is defined, update entered_by in t_analysis_job_processor_group
-            If Trim(Coalesce(_callingUser, '')) <> '' Then
+            If _callingUser <> '' Then
                 CALL public.alter_entered_by_user ('public', 't_param_entries', 'param_entry_id', _paramEntryID, _callingUser, _message => _alterEnteredByMessage);
             End If;
         End If;
@@ -322,4 +324,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_param_file_entry IS 'AddUpdateParamFileEntry';
+
+ALTER PROCEDURE public.add_update_param_file_entry(IN _paramfileid integer, IN _entryseqorder integer, IN _entrytype text, IN _entryspecifier text, IN _entryvalue text, IN _mode text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_param_file_entry(IN _paramfileid integer, IN _entryseqorder integer, IN _entrytype text, IN _entryspecifier text, IN _entryvalue text, IN _mode text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_param_file_entry(IN _paramfileid integer, IN _entryseqorder integer, IN _entrytype text, IN _entryspecifier text, IN _entryvalue text, IN _mode text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateParamFileEntry';
+

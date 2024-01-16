@@ -1,27 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_instrument_usage_report
-(
-    _seq int,
-    _emslInstID int,
-    _instrument text,
-    _type text,
-    _start text,
-    _minutes int,
-    _year int,
-    _month int,
-    _id int,
-    _proposal text,
-    _usage text,
-    _users text,
-    _operator text,
-    _comment text,
-    _mode text = 'update',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_instrument_usage_report(integer, integer, text, text, text, integer, integer, integer, integer, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_instrument_usage_report(IN _seq integer, IN _emslinstid integer, IN _instrument text, IN _type text, IN _start text, IN _minutes integer, IN _year integer, IN _month integer, IN _id integer, IN _proposal text, IN _usage text, IN _users text, IN _operator text, IN _comment text, IN _mode text DEFAULT 'update'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -30,23 +13,23 @@ AS $$
 **
 **  Arguments:
 **    _seq          Row ID; column seq in t_emsl_instrument_usage_report
-**    _emslInstID   EMSL Instrument ID
+**    _emslInstID   EMSL Instrument ID (only used when logging an error)
 **    _instrument   Unused (not updatable)
 **    _type         Unused (not updatable)
 **    _start        Unused (not updatable)
 **    _minutes      Unused (not updatable)
 **    _year         Unused (not updatable)
 **    _month        Unused (not updatable)
-**    _id           Unused (not updatable)     -- Dataset_ID
+**    _id           Dataset_ID (only used when logging an error)
 **    _proposal     EUS proposal for updating a usage entry
 **    _usage        Usage type (ONSITE, REMOTE, MAINTENANCE, BROKEN, etc.); corresponds to t_emsl_instrument_usage_type
-**    _users        EUS user IDs
+**    _users        EUS user IDs (comma-separated list)
 **    _operator     Operator ID, corresponding to person_id in t_eus_users (should be an integer representing EUS Person ID; if an empty string, will store NULL for the operator ID)
 **    _comment      Comment
 **    _mode         The only supported mode is 'update'
 **    _message      Status message
 **    _returnCode   Return code
-**    _callingUser  Username of the calling user
+**    _callingUser  Username of the calling user (unused by this procedure)
 **
 **  Auth:   grk
 **  Date:   03/27/2012
@@ -59,7 +42,7 @@ AS $$
 **          01/05/2018 mem - Assure that _comment does not contain LF or CR
 **          04/17/2020 mem - Use Dataset_ID instead of ID
 **          07/15/2022 mem - Instrument operator ID is now tracked as an actual integer
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -73,6 +56,7 @@ DECLARE
     _usageTypeID int;
     _operatorID int;
 
+    _logMessage text;
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -107,13 +91,19 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _mode  := Trim(Lower(Coalesce(_mode, '')));
-        _usage := Trim(Coalesce(_usage, ''));
+        _proposal := Trim(Coalesce(_proposal, ''));
+        _usage    := Trim(Coalesce(_usage, ''));
+        _comment  := Trim(Coalesce(_comment, ''));
+        _mode     := Trim(Lower(Coalesce(_mode, '')));
+
+        If _usage = '' Then
+            RAISE EXCEPTION 'Usage %', _usage;
+        End If;
 
         SELECT usage_type_id
         INTO _usageTypeID
         FROM t_emsl_instrument_usage_type
-        WHERE usage_type = _usage;
+        WHERE usage_type = _usage::citext;
         --
         GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
@@ -137,7 +127,7 @@ BEGIN
             End If;
 
             If Not Exists (SELECT dataset_id FROM t_emsl_instrument_usage_report WHERE seq = _seq) Then
-                RAISE EXCEPTION 'Cannot update EMSL instrument usage: dataset ID % (aka sequence ID) does not exist in the instrument usage report table', _seq;
+                RAISE EXCEPTION 'Cannot update EMSL instrument usage: sequence ID % does not exist in the instrument usage report table', _seq;
             End If;
         End If;
 
@@ -176,9 +166,13 @@ BEGIN
                 _exceptionContext = pg_exception_context;
 
         If _seq Is Null Then
-            _logMessage := format('%s; Null Seq, EMSL Instrument ID %s', _exceptionMessage, _seq, Coalesce(_emslInstID, 0));
+            _logMessage := format('%s; Null Seq, EMSL Instrument ID %s, Dataset ID %s', _exceptionMessage, Coalesce(_emslInstID, 0), Coalesce(_id, 0));
         Else
-            _logMessage := format('%s; Seq %s, EMSL Instrument ID %s', _exceptionMessage, _seq, Coalesce(_emslInstID, 0));
+            If Position(_seq::text In _exceptionMessage) > 0 Then
+                _logMessage := format('%s; EMSL Instrument ID %s, Dataset ID %s', _exceptionMessage, _seq, Coalesce(_emslInstID, 0), Coalesce(_id, 0));
+            Else
+                _logMessage := format('%s; Seq %s, EMSL Instrument ID %s, Dataset ID %s', _exceptionMessage, _seq, Coalesce(_emslInstID, 0), Coalesce(_id, 0));
+            End If;
         End If;
 
         _message := local_error_handler (
@@ -193,4 +187,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_instrument_usage_report IS 'AddUpdateInstrumentUsageReport';
+
+ALTER PROCEDURE public.add_update_instrument_usage_report(IN _seq integer, IN _emslinstid integer, IN _instrument text, IN _type text, IN _start text, IN _minutes integer, IN _year integer, IN _month integer, IN _id integer, IN _proposal text, IN _usage text, IN _users text, IN _operator text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_instrument_usage_report(IN _seq integer, IN _emslinstid integer, IN _instrument text, IN _type text, IN _start text, IN _minutes integer, IN _year integer, IN _month integer, IN _id integer, IN _proposal text, IN _usage text, IN _users text, IN _operator text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_instrument_usage_report(IN _seq integer, IN _emslinstid integer, IN _instrument text, IN _type text, IN _start text, IN _minutes integer, IN _year integer, IN _month integer, IN _id integer, IN _proposal text, IN _usage text, IN _users text, IN _operator text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateInstrumentUsageReport';
+

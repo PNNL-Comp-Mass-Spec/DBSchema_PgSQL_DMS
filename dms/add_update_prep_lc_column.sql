@@ -1,27 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_prep_lc_column
-(
-    _columnName text,
-    _mfgName text,
-    _mfgModel text,
-    _mfgSerialNumber text,
-    _packingMfg text,
-    _packingType text,
-    _particleSize text,
-    _particleType text,
-    _columnInnerDia text,
-    _columnOuterDia text,
-    _length text,
-    _state text,
-    _operatorUsername text,
-    _comment text,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_prep_lc_column(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_prep_lc_column(IN _columnname text, IN _mfgname text, IN _mfgmodel text, IN _mfgserialnumber text, IN _packingmfg text, IN _packingtype text, IN _particlesize text, IN _particletype text, IN _columninnerdia text, IN _columnouterdia text, IN _length text, IN _state text, IN _operatorusername text, IN _comment text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -45,14 +28,14 @@ AS $$
 **    _mode                 Mode: 'add' or 'update'
 **    _message              Status message
 **    _returnCode           Return code
-**    _callingUser          Username of the calling user
+**    _callingUser          Username of the calling user (unused by this procedure)
 **
 **  Auth:   grk
 **  Date:   07/29/2009 grk - Initial version
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          04/11/2022 mem - Check for whitespace in _columnName
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -87,22 +70,40 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
-    _columnName := Trim(Coalesce(_columnName, ''));
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
+    _columnName       := Trim(Coalesce(_columnName, ''));
+    _mfgName          := Trim(Coalesce(_mfgName, ''));
+    _mfgModel         := Trim(Coalesce(_mfgModel, ''));
+    _mfgSerialNumber  := Trim(Coalesce(_mfgSerialNumber, ''));
+    _packingMfg       := Trim(Coalesce(_packingMfg, ''));
+    _packingType      := Trim(Coalesce(_packingType, ''));
+    _particleSize     := Trim(Coalesce(_particleSize, ''));
+    _particleType     := Trim(Coalesce(_particleType, ''));
+    _columnInnerDia   := Trim(Coalesce(_columnInnerDia, ''));
+    _columnOuterDia   := Trim(Coalesce(_columnOuterDia, ''));
+    _length           := Trim(Coalesce(_length, ''));
+    _state            := Trim(Coalesce(_state, ''));
+    _operatorUsername := Trim(Coalesce(_operatorUsername, ''));
+    _comment          := Trim(Coalesce(_comment, ''));
+    _mode             := Trim(Lower(Coalesce(_mode, '')));
 
     If _columnName = '' Then
         _returnCode := 'U5201';
-        RAISE EXCEPTION 'Column name was blank';
+        RAISE EXCEPTION 'Column name must be specified';
     End If;
 
     If public.has_whitespace_chars(_columnName, _allowspace => false) Then
         If Position(chr(9) In _columnName) > 0 Then
+            _returnCode := 'U5202';
             RAISE EXCEPTION 'Column name cannot contain tabs';
         Else
+            _returnCode := 'U5203';
             RAISE EXCEPTION 'Column name cannot contain spaces';
         End If;
     End If;
-
-    _mode := Trim(Lower(Coalesce(_mode, '')));
 
     ---------------------------------------------------
     -- Is entry already in database? (only applies to updates)
@@ -119,7 +120,7 @@ BEGIN
         _message := format('Cannot update: prep LC column "%s" does not exist', _columnName);
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5201';
+        _returnCode := 'U5204';
         RETURN;
     End If;
 
@@ -127,13 +128,14 @@ BEGIN
         _message := format('Cannot add: prep LC column "%s" already exists', _columnName);
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5202';
+        _returnCode := 'U5205';
         RETURN;
     End If;
 
     ---------------------------------------------------
     -- Action for add mode
     ---------------------------------------------------
+
     If _mode = 'add' Then
 
         INSERT INTO t_prep_lc_column (
@@ -177,8 +179,7 @@ BEGIN
     If _mode = 'update' Then
 
         UPDATE t_prep_lc_column
-        SET
-            mfg_name          = _mfgName,
+        SET mfg_name          = _mfgName,
             mfg_model         = _mfgModel,
             mfg_serial        = _mfgSerialNumber,
             packing_mfg       = _packingMfg,
@@ -198,4 +199,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_prep_lc_column IS 'AddUpdatePrepLCColumn';
+
+ALTER PROCEDURE public.add_update_prep_lc_column(IN _columnname text, IN _mfgname text, IN _mfgmodel text, IN _mfgserialnumber text, IN _packingmfg text, IN _packingtype text, IN _particlesize text, IN _particletype text, IN _columninnerdia text, IN _columnouterdia text, IN _length text, IN _state text, IN _operatorusername text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_prep_lc_column(IN _columnname text, IN _mfgname text, IN _mfgmodel text, IN _mfgserialnumber text, IN _packingmfg text, IN _packingtype text, IN _particlesize text, IN _particletype text, IN _columninnerdia text, IN _columnouterdia text, IN _length text, IN _state text, IN _operatorusername text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_prep_lc_column(IN _columnname text, IN _mfgname text, IN _mfgmodel text, IN _mfgserialnumber text, IN _packingmfg text, IN _packingtype text, IN _particlesize text, IN _particletype text, IN _columninnerdia text, IN _columnouterdia text, IN _length text, IN _state text, IN _operatorusername text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdatePrepLCColumn';
+

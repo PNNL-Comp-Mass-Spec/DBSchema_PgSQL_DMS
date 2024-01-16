@@ -1,32 +1,10 @@
+--
+-- Name: add_update_organisms(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, integer, text, integer, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
 
-CREATE OR REPLACE PROCEDURE public.add_update_organisms
-(
-    _orgName text,
-    _orgShortName text,
-    _orgStorageLocation text,
-    _orgDBName text,
-    _orgDescription text,
-    _orgDomain text,
-    _orgKingdom text,
-    _orgPhylum text,
-    _orgClass text,
-    _orgOrder text,
-    _orgFamily text,
-    _orgGenus text,
-    _orgSpecies text,
-    _orgStrain text,
-    _orgActive text,
-    _newtIDList text,
-    _ncbiTaxonomyID int,
-    _autoDefineTaxonomy text,
-    INOUT _id int,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+CREATE OR REPLACE PROCEDURE public.add_update_organisms(IN _orgname text, IN _orgshortname text, IN _orgstoragelocation text, IN _orgdbname text, IN _orgdescription text, IN _orgdomain text, IN _orgkingdom text, IN _orgphylum text, IN _orgclass text, IN _orgorder text, IN _orgfamily text, IN _orggenus text, IN _orgspecies text, IN _orgstrain text, IN _orgactive text, IN _newtidlist text, IN _ncbitaxonomyid integer, IN _autodefinetaxonomy text, INOUT _id integer, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -72,7 +50,7 @@ AS $$
 **          09/25/2012 mem - Expanded _orgName and _orgDBName to varchar(128)
 **          11/20/2012 mem - No longer allowing _orgDBName to contain '.fasta'
 **          05/10/2013 mem - Added _newtIdentifier
-**          05/13/2013 mem - Now validating _newtIdentifier against ont.V_CV_NEWT
+**          05/13/2013 mem - Now validating _newtIdentifier against ont.v_cv_newt
 **          05/24/2013 mem - Added _newtIDList
 **          10/15/2014 mem - Removed _orgDBPath and added validation logic to _orgStorageLocation
 **          06/25/2015 mem - Now validating that the protein collection specified by _orgDBName exists
@@ -98,8 +76,8 @@ AS $$
 **          12/11/2020 mem - Allow duplicate metagenome organisms
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          04/11/2022 mem - Check for whitespace in _orgName
-**          07/27/2022 mem - Switch from FileName to Collection_Name when querying pc.V_Protein_Collections_By_Organism
-**          12/15/2024 mem - Ported to PostgreSQL
+**          07/27/2022 mem - Switch from FileName to Collection_Name when querying pc.v_protein_collections_by_organism
+**          01/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -109,6 +87,7 @@ DECLARE
     _authorized boolean;
 
     _logErrors boolean := false;
+    _dropTempTable boolean := false;
     _duplicateTaxologyMsg text;
     _matchCount int;
     _serverNameEndSlash int;
@@ -119,7 +98,7 @@ DECLARE
     _invalidNEWTIDs text := null;
     _autoDefineTaxonomyFlag int;
     _existingOrganismID int := 0;
-    _existingOrgName text;
+    _existingOrgName citext;
     _orgActiveID int;
     _logMessage text;
     _alterEnteredByMessage text;
@@ -162,6 +141,13 @@ BEGIN
         _orgShortName       := Trim(Coalesce(_orgShortName, ''));
         _orgStorageLocation := Trim(Coalesce(_orgStorageLocation, ''));
         _orgDBName          := Trim(Coalesce(_orgDBName, ''));
+        _orgDescription     := Trim(Coalesce(_orgDescription, ''));
+        _orgDomain          := Trim(Coalesce(_orgDomain, ''));
+        _orgKingdom         := Trim(Coalesce(_orgKingdom, ''));
+        _orgPhylum          := Trim(Coalesce(_orgPhylum, ''));
+        _orgClass           := Trim(Coalesce(_orgDBName, ''));
+        _orgOrder           := Trim(Coalesce(_orgOrder, ''));
+        _orgFamily          := Trim(Coalesce(_orgFamily, ''));
         _orgGenus           := Trim(Coalesce(_orgGenus, ''));
         _orgSpecies         := Trim(Coalesce(_orgSpecies, ''));
         _orgStrain          := Trim(Coalesce(_orgStrain, ''));
@@ -269,10 +255,12 @@ BEGIN
                 NEWT_ID int NULL
             );
 
+            _dropTempTable := true;
+
             INSERT INTO Tmp_NEWT_IDs (NEWT_ID_Text)
             SELECT Value
             FROM public.parse_delimited_list(_newtIDList)
-            WHERE Coalesce(Value, '') <> ''
+            WHERE Coalesce(Value, '') <> '';
 
             -- Look for non-numeric values
             If Exists (SELECT NEWT_ID_Text FROM Tmp_NEWT_IDs WHERE public.try_cast(NEWT_ID_Text, null::int) IS NULL) Then
@@ -281,31 +269,35 @@ BEGIN
 
             -- Make sure all of the NEWT IDs are Valid
             UPDATE Tmp_NEWT_IDs
-            SET NEWT_ID = public.try_cast(NEWT_ID_Text, null::int)
+            SET NEWT_ID = public.try_cast(NEWT_ID_Text, null::int);
 
             SELECT string_agg(Tmp_NEWT_IDs.NEWT_ID_Text, ', ' ORDER BY Tmp_NEWT_IDs.NEWT_ID_Text)
             INTO _invalidNEWTIDs
             FROM Tmp_NEWT_IDs
-                 LEFT OUTER JOIN S_V_CV_NEWT
-                   ON Tmp_NEWT_IDs.NEWT_ID = S_V_CV_NEWT.identifier
-            WHERE ont.V_CV_NEWT.identifier IS NULL
+                 LEFT OUTER JOIN ont.v_cv_newt
+                   ON Tmp_NEWT_IDs.NEWT_ID = ont.v_cv_newt.identifier
+            WHERE ont.v_cv_newt.identifier IS NULL;
 
             If char_length(Coalesce(_invalidNEWTIDs, '')) > 0 Then
                 RAISE EXCEPTION 'Invalid NEWT ID(s) "%"; see https://dms2.pnl.gov/ontology/report/NEWT', _invalidNEWTIDs;
             End If;
 
+            -- Reformat the NEWT ID list
+            SELECT string_agg(Tmp_NEWT_IDs.NEWT_ID_Text, ', ')
+            INTO _newtIDList
+            FROM Tmp_NEWT_IDs;
         Else
             -- Auto-define _newtIDList using _ncbiTaxonomyID though only if the NEWT table has the ID
             -- (there are numerous organisms that nave an NCBI Taxonomy ID but not a NEWT ID)
 
-            If Not _ncbiTaxonomyID Is Null And Exists (SELECT Identifier FROM ont.V_CV_NEWT WHERE Identifier = _ncbiTaxonomyID) Then
+            If Not _ncbiTaxonomyID Is Null And Exists (SELECT identifier FROM ont.v_cv_newt WHERE identifier = _ncbiTaxonomyID) Then
                 _newtIDList := _ncbiTaxonomyID::text;
             End If;
         End If;
 
         If Coalesce(_ncbiTaxonomyID, 0) = 0 Then
             _ncbiTaxonomyID := null;
-        ElsIf Not Exists (SELECT Tax_ID FROM ont.V_NCBI_Taxonomy_Cached WHERE Tax_ID = _ncbiTaxonomyID) Then
+        ElsIf Not Exists (SELECT Tax_ID FROM ont.v_ncbi_taxonomy_cached WHERE tax_id = _ncbiTaxonomyID) Then
             RAISE EXCEPTION 'Invalid NCBI Taxonomy ID "%"; see https://dms2.pnl.gov/ncbi_taxonomy/report', _ncbiTaxonomyID;
         End If;
 
@@ -370,7 +362,7 @@ BEGIN
                 RAISE EXCEPTION 'Cannot update: organism ID % does not exist', _id;
             End If;
 
-            If _existingOrgName <> _orgName Then
+            If _existingOrgName <> _orgName::citext Then
                 RAISE EXCEPTION 'Cannot update: organism name may not be changed from "%"; contact a DMS administrator', _existingOrgName;
             End If;
         End If;
@@ -441,12 +433,12 @@ BEGIN
         ---------------------------------------------------
 
         If _orgDBName <> '' Then
-            -- Protein collections in pc.V_Collection_Picker are those with state 1, 2, or 3
-            -- In contrast, pc.V_Protein_Collections_by_Organism has all protein collections
+            -- Protein collections in pc.v_collection_picker are those with state 1, 2, or 3
+            -- In contrast, pc.v_protein_collections_by_organism has all protein collections
 
-            If Not Exists (SELECT Name FROM pc.V_Collection_Picker WHERE Name = _orgDBName::citext) Then
+            If Not Exists (SELECT name FROM pc.v_collection_picker WHERE name = _orgDBName::citext) Then
 
-                If Exists (SELECT Collection_Name FROM pc.V_Protein_Collections_by_Organism WHERE Collection_Name = _orgDBName::citext AND Collection_State_ID = 4) Then
+                If Exists (SELECT collection_name FROM pc.v_protein_collections_by_organism WHERE collection_name = _orgDBName::citext AND collection_state_id = 4) Then
                     RAISE EXCEPTION 'Default protein collection is invalid because it is inactive: %', _orgDBName;
                 Else
                     RAISE EXCEPTION 'Protein collection not found: %', _orgDBName;
@@ -474,7 +466,7 @@ BEGIN
                 kingdom,
                 phylum,
                 class,
-                order,
+                "order",
                 family,
                 genus,
                 species,
@@ -500,7 +492,7 @@ BEGIN
                 _orgGenus,
                 _orgSpecies,
                 _orgStrain,
-                _orgActive,
+                _orgActiveID,
                 _newtIDList,
                 _ncbiTaxonomyID,
                 _autoDefineTaxonomyFlag
@@ -531,12 +523,12 @@ BEGIN
                 kingdom              = _orgKingdom,
                 phylum               = _orgPhylum,
                 class                = _orgClass,
-                order                = _orgOrder,
+                "order"              = _orgOrder,
                 family               = _orgFamily,
                 genus                = _orgGenus,
                 species              = _orgSpecies,
                 strain               = _orgStrain,
-                active               = _orgActive,
+                active               = _orgActiveID,
                 newt_id_list         = _newtIDList,
                 ncbi_taxonomy_id     = _ncbiTaxonomyID,
                 auto_define_taxonomy = _autoDefineTaxonomyFlag
@@ -549,6 +541,12 @@ BEGIN
 
         End If;
 
+        If _dropTempTable Then
+            DROP TABLE Tmp_NEWT_IDs;
+        End If;
+
+        RETURN;
+
     EXCEPTION
         WHEN OTHERS THEN
             GET STACKED DIAGNOSTICS
@@ -557,7 +555,7 @@ BEGIN
                 _exceptionDetail  = pg_exception_detail,
                 _exceptionContext = pg_exception_context;
 
-        If _orgName Is Null Then
+        If Trim(Coalesce(_orgName, '')) = '' Then
             _logMessage := _exceptionMessage;
         Else
             _logMessage := format('%s; Organism %s', _exceptionMessage, _orgName);
@@ -576,4 +574,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_organisms IS 'AddUpdateOrganisms';
+
+ALTER PROCEDURE public.add_update_organisms(IN _orgname text, IN _orgshortname text, IN _orgstoragelocation text, IN _orgdbname text, IN _orgdescription text, IN _orgdomain text, IN _orgkingdom text, IN _orgphylum text, IN _orgclass text, IN _orgorder text, IN _orgfamily text, IN _orggenus text, IN _orgspecies text, IN _orgstrain text, IN _orgactive text, IN _newtidlist text, IN _ncbitaxonomyid integer, IN _autodefinetaxonomy text, INOUT _id integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_organisms(IN _orgname text, IN _orgshortname text, IN _orgstoragelocation text, IN _orgdbname text, IN _orgdescription text, IN _orgdomain text, IN _orgkingdom text, IN _orgphylum text, IN _orgclass text, IN _orgorder text, IN _orgfamily text, IN _orggenus text, IN _orgspecies text, IN _orgstrain text, IN _orgactive text, IN _newtidlist text, IN _ncbitaxonomyid integer, IN _autodefinetaxonomy text, INOUT _id integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_organisms(IN _orgname text, IN _orgshortname text, IN _orgstoragelocation text, IN _orgdbname text, IN _orgdescription text, IN _orgdomain text, IN _orgkingdom text, IN _orgphylum text, IN _orgclass text, IN _orgorder text, IN _orgfamily text, IN _orggenus text, IN _orgspecies text, IN _orgstrain text, IN _orgactive text, IN _newtidlist text, IN _ncbitaxonomyid integer, IN _autodefinetaxonomy text, INOUT _id integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateOrganisms';
+

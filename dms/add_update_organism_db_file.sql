@@ -1,20 +1,16 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_organism_db_file
-(
-    _fastaFileName text,
-    _organismName text,
-    _numProteins int,
-    _numResidues bigint,
-    _fileSizeKB int = 0,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_organism_db_file(text, text, integer, bigint, integer, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_organism_db_file(IN _fastafilename text, IN _organismname text, IN _numproteins integer, IN _numresidues bigint, IN _filesizekb integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Add new or edit an existing legacy organism DB file in t_organism_db_file
+**
+**      Added/updated files will have an auto-defined description that starts with "Auto-created", and will have active set to 0
 **
 **  Arguments:
 **    _fastaFileName    FASTA file name, e.g. 'UniProt_Bacteria_100species_TrypPigBov_Bos_Taurus_2021-02-22.fasta'
@@ -32,7 +28,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          01/31/2020 mem - Add _returnCode, which duplicates the integer returned by this procedure; _returnCode is varchar for compatibility with Postgres error codes
 **          03/31/2021 mem - Expand _organismName to varchar(128)
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -71,21 +67,23 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    If Trim(Coalesce(_fastaFileName, '')) = '' Then
-        _message := '_fastaFileName must be specified';
+    _fastaFileName := Trim(Coalesce(_fastaFileName, ''));
+    _organismName  := Trim(Coalesce(_organismName, ''));
+    _numProteins   := Coalesce(_numProteins, 0);
+    _numResidues   := Coalesce(_numResidues, 0);
+    _fileSizeKB    := Coalesce(_fileSizeKB, 0);
+
+    If _fastaFileName = '' Then
+        _message := 'FASTA file name must be specified';
         _returnCode := 'U6200';
         RETURN;
     End If;
 
-    If Trim(Coalesce(_organismName, '')) = '' Then
-        _message := '_organismName must be specified';
+    If _organismName = '' Then
+        _message := 'Organism name must be specified';
         _returnCode := 'U6201';
         RETURN;
     End If;
-
-    _numProteins := Coalesce(_numProteins, 0);
-    _numResidues := Coalesce(_numResidues, 0);
-    _fileSizeKB  := Coalesce(_fileSizeKB, 0);
 
     ---------------------------------------------------
     -- Resolve _organismName to _organismID
@@ -94,10 +92,10 @@ BEGIN
     SELECT organism_id
     INTO _organismID
     FROM t_organisms
-    WHERE organism = _organismName;
+    WHERE organism = _organismName::citext;
 
     If Not FOUND Or Coalesce(_organismID, 0) <= 0 Then
-        _message := format('Could not find organism in t_organisms: %s', _organismName);
+        _message := format('Unrecognized organism name: %s', _organismName);
         _returnCode := 'U6202';
         RETURN;
     End If;
@@ -106,13 +104,13 @@ BEGIN
     -- Add/Update t_organism_db_file
     ---------------------------------------------------
 
-    If Exists (SELECT file_name FROM t_organism_db_file WHERE file_name = _fastaFileName) Then
+    If Exists (SELECT file_name FROM t_organism_db_file WHERE file_name = _fastaFileName::citext) Then
         _existingEntry := true;
     End If;
 
     MERGE INTO t_organism_db_file AS target
     USING ( SELECT _fastaFileName AS FileName,
-                _organismID AS Organism_ID,
+                _organismID AS OrganismID,
                 'Auto-created' AS Description,
                 0 AS Active,
                 _numProteins AS NumProteins,
@@ -120,27 +118,27 @@ BEGIN
                 _fileSizeKB AS FileSizeKB,
                 1 AS Valid
           ) AS Source
-    ON (target.file_name = source.file_name)
+    ON (target.file_name = source.FileName)
     WHEN MATCHED THEN
         UPDATE SET
-            organism_id = source.organism_id,
+            organism_id = source.OrganismID,
             description = format('%s; updated %s', source.description, public.timestamp_text(CURRENT_TIMESTAMP)),
             active = source.active,
-            num_proteins = source.num_proteins,
-            num_residues = source.num_residues,
+            num_proteins = source.NumProteins,
+            num_residues = source.NumResidues,
             file_size_kb = source.FileSizeKB,
             valid = source.valid
     WHEN NOT MATCHED THEN
-        INSERT (FileName,
+        INSERT (file_name,
                 organism_id,
                 description,
                 active,
-                NumProteins,
-                NumResidues,
-                File_Size_KB,
-                Valid)
+                num_proteins,
+                num_residues,
+                file_size_kb,
+                valid)
         VALUES (source.FileName,
-                source.organism_id,
+                source.OrganismID,
                 source.description,
                 source.active,
                 source.NumProteins,
@@ -157,4 +155,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_organism_db_file IS 'AddUpdateOrganismDBFile';
+
+ALTER PROCEDURE public.add_update_organism_db_file(IN _fastafilename text, IN _organismname text, IN _numproteins integer, IN _numresidues bigint, IN _filesizekb integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_organism_db_file(IN _fastafilename text, IN _organismname text, IN _numproteins integer, IN _numresidues bigint, IN _filesizekb integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_organism_db_file(IN _fastafilename text, IN _organismname text, IN _numproteins integer, IN _numresidues bigint, IN _filesizekb integer, INOUT _message text, INOUT _returncode text) IS 'AddUpdateOrganismDBFile';
+
