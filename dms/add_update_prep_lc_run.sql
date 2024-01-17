@@ -1,29 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_prep_lc_run
-(
-    INOUT _id int,
-    _prepRunName text,
-    _instrument text,
-    _type text,
-    _lcColumn text,
-    _lcColumn2 text,
-    _comment text,
-    _guardColumn text,
-    _operatorUsername text,
-    _digestionMethod text,
-    _sampleType text,
-    _samplePrepRequests text,
-    _numberOfRuns text,
-    _instrumentPressure text,
-    _qualityControl text,
-    _datasets text,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_prep_lc_run(integer, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_prep_lc_run(INOUT _id integer, IN _preprunname text, IN _instrument text, IN _type text, IN _lccolumn text, IN _lccolumn2 text, IN _comment text, IN _guardcolumn text, IN _operatorusername text, IN _digestionmethod text, IN _sampletype text, IN _samplepreprequests text, IN _numberofruns text, IN _instrumentpressure text, IN _qualitycontrol text, IN _datasets text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -49,15 +30,15 @@ AS $$
 **    _mode                 Mode: 'add' or 'update'
 **    _message              Status message
 **    _returnCode           Return code
-**    _callingUser          Username of the calling user
+**    _callingUser          Username of the calling user (unused by this procedure)
 **
 **  Auth:   grk
 **  Date:   08/04/2009
-**          04/24/2010 grk - Replaced _project with _samplePrepRequest
-**          04/26/2010 grk - _samplePrepRequest can be multiple
-**          05/06/2010 grk - Added storage path
-**          08/25/2011 grk - Added QC field
-**          09/30/2011 grk - Added datasets field
+**          04/24/2010 grk - Replace _project with _samplePrepRequest
+**          04/26/2010 grk - Allow _samplePrepRequest to be a list of IDs
+**          05/06/2010 grk - Add storage path
+**          08/25/2011 grk - Add QC field
+**          09/30/2011 grk - Add datasets field
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          06/13/2017 mem - Use SCOPE_IDENTITY()
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
@@ -68,7 +49,7 @@ AS $$
 **          03/08/2023 mem - Rename parameter to _samplePrepRequests
 **                         - Use new column name Sample_Prep_Requests in T_Prep_LC_Run
 **                         - Update work package(s) in column Sample_Prep_Work_Packages
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/16/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -77,14 +58,17 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _itemCount Int;
-    _integerCount Int;
+    _validatedName text;
+    _itemCount int;
+    _integerCount int;
     _invalidIDs text;
+    _numberOfRunsValue int;
 
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
+    _logMessage text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -115,13 +99,78 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _id := Coalesce(_id, 0);
+        _prepRunName        := Trim(Coalesce(_prepRunName, ''));
+        _instrument         := Trim(Coalesce(_instrument, ''));
+        _type               := Trim(Coalesce(_type, ''));
+        _lcColumn           := Trim(Coalesce(_lcColumn, ''));
+        _lcColumn2          := Trim(Coalesce(_lcColumn2, ''));
+        _comment            := Trim(Coalesce(_comment, ''));
+        _guardColumn        := Trim(Coalesce(_guardColumn, ''));
+        _operatorUsername   := Trim(Coalesce(_operatorUsername, ''));
+        _digestionMethod    := Trim(Coalesce(_digestionMethod, ''));
+        _sampleType         := Trim(Coalesce(_sampleType, ''));
         _samplePrepRequests := Trim(Coalesce(_samplePrepRequests, ''));
-
+        _numberOfRuns       := Trim(Coalesce(_numberOfRuns, ''));
+        _instrumentPressure := Trim(Coalesce(_instrumentPressure, ''));
+        _qualityControl     := Trim(Coalesce(_qualityControl, ''));
+        _datasets           := Trim(Coalesce(_datasets, ''));
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
-        If _mode = 'update' And _id <= 0 Then
-            RAISE EXCEPTION 'Prep LC run ID must be a positive integer';
+        If _mode = 'update' And Coalesce(_id, 0) <= 0 Then
+            RAISE EXCEPTION 'Cannot update: prep LC run ID must be a positive integer';
+        End If;
+
+        If _prepRunName = '' Then
+            RAISE EXCEPTION 'Prep LC run name must be specified';
+        End If;
+
+        If _instrument = '' Then
+            RAISE EXCEPTION 'Instrument name must be specified';
+        End If;
+
+        SELECT instrument
+        INTO _validatedName
+        FROM t_instrument_name
+        WHERE instrument = _instrument::citext;
+
+        If Not Found Then
+            RAISE EXCEPTION 'Unrecognized instrument name: %', _instrument;
+        Else
+            _instrument := _validatedName;
+        End If;
+
+        If _type = '' Then
+            RAISE EXCEPTION 'Run type must be specified';
+        End If;
+
+        If _lcColumn = '' Then
+            RAISE EXCEPTION 'LC column must be specified';
+        End If;
+
+        If _guardColumn::citext In ('Y', 'Yes', '1') Then
+            _guardColumn := 'Yes';
+        ElsIf _guardColumn::citext In ('N', 'No', '0') Then
+            _guardColumn := 'No';
+        ElsIf _guardColumn::citext In ('n/a', 'na') Then
+            _guardColumn := 'n/a';
+        End If;
+
+        If Not _guardColumn::citext In ('Yes', 'No', 'n/a') Then
+            RAISE EXCEPTION 'Guard column must be "Yes", "No", or "n/a"';
+        End If;
+
+        If _operatorUsername = '' Then
+            RAISE EXCEPTION 'Operator username must be specified';
+        End If;
+
+        If _numberOfRuns = '' Then
+            RAISE EXCEPTION 'Number of runs must be specified';
+        End If;
+
+        _numberOfRunsValue := public.try_cast(_numberOfRuns, null::int);
+
+        If _numberOfRunsValue Is Null Then
+            RAISE EXCEPTION 'Number of runs must be an integer';
         End If;
 
         -- Assure that _samplePrepRequests is a comma-separated list of integers (or an empty string)
@@ -149,17 +198,17 @@ BEGIN
                 RAISE EXCEPTION '%', _message;
             End If;
 
-            SELECT _invalidIDs = string_agg(Prep_Request_ID, ',' ORDER BY Prep_Request_ID)
+            SELECT string_agg(NewIDs.Prep_Request_ID::text, ', ' ORDER BY NewIDs.Prep_Request_ID)
+            INTO _invalidIDs
             FROM Tmp_SamplePrepRequests NewIDs
                  LEFT OUTER JOIN t_sample_prep_request SPR
-                   ON NewIDs.Prep_Request_ID = SPR.ID
-            WHERE SPR.ID IS NULL;
+                   ON NewIDs.Prep_Request_ID = SPR.prep_request_id
+            WHERE SPR.prep_request_id IS NULL;
 
-            If Coalesce(_invalidIDs, '') <> ''
-            Begin
+            If Coalesce(_invalidIDs, '') <> '' Then
                 _message := format('Invalid sample prep request ID(s): %s', _invalidIDs);
                 RAISE EXCEPTION '%', _message;
-            End
+            End If;
         End If;
 
         ---------------------------------------------------
@@ -177,16 +226,26 @@ BEGIN
         CREATE TEMP TABLE Tmp_Datasets (
           Dataset text,
           Dataset_ID int NULL
-        )
+        );
 
         INSERT INTO Tmp_Datasets (Dataset)
         SELECT Value
-        FROM public.parse_delimited_list(_datasets)
+        FROM public.parse_delimited_list(_datasets);
 
         UPDATE Tmp_Datasets
-        SET dataset_id = t_dataset.dataset_id
+        SET dataset_id = DS.dataset_id
         FROM t_dataset DS
         WHERE Tmp_Datasets.dataset = DS.dataset;
+
+        SELECT string_agg(Dataset, ', ' ORDER BY Dataset)
+        INTO _invalidIDs
+        FROM Tmp_Datasets NewIDs
+        WHERE Dataset_ID IS NULL;
+
+        If Coalesce(_invalidIDs, '') <> '' Then
+            _message := format('Invalid dataset name(s): %s', _invalidIDs);
+            RAISE EXCEPTION '%', _message;
+        End If;
 
         ---------------------------------------------------
         -- Action for add mode
@@ -205,7 +264,7 @@ BEGIN
                 operator_username,
                 digestion_method,
                 sample_type,
-                sample_prep_request,
+                sample_prep_requests,
                 number_of_runs,
                 instrument_pressure,
                 quality_control
@@ -221,7 +280,7 @@ BEGIN
                 _digestionMethod,
                 _sampleType,
                 _samplePrepRequests,
-                _numberOfRuns,
+                _numberOfRunsValue,
                 _instrumentPressure,
                 _qualityControl
             )
@@ -244,40 +303,46 @@ BEGIN
         If _mode = 'update' Then
 
             UPDATE t_prep_lc_run
-            SET prep_run_name       = _prepRunName,
-                instrument          = _instrument,
-                type                = _type,
-                lc_column           = _lcColumn,
-                lc_column_2         = _lcColumn2,
-                comment             = _comment,
-                guard_column        = _guardColumn,
-                operator_username   = _operatorUsername,
-                digestion_method    = _digestionMethod,
-                sample_type         = _sampleType,
-                sample_prep_request = _samplePrepRequests,
-                number_of_runs      = _numberOfRuns,
-                instrument_pressure = _instrumentPressure,
-                quality_control     = _qualityControl
+            SET prep_run_name        = _prepRunName,
+                instrument           = _instrument,
+                type                 = _type,
+                lc_column            = _lcColumn,
+                lc_column_2          = _lcColumn2,
+                comment              = _comment,
+                guard_column         = _guardColumn,
+                operator_username    = _operatorUsername,
+                digestion_method     = _digestionMethod,
+                sample_type          = _sampleType,
+                sample_prep_requests = _samplePrepRequests,
+                number_of_runs       = _numberOfRunsValue,
+                instrument_pressure  = _instrumentPressure,
+                quality_control      = _qualityControl
             WHERE prep_run_id = _id;
 
             -- Add new datasets
             INSERT INTO t_prep_lc_run_dataset (prep_lc_run_id, dataset_id)
             SELECT _id AS Prep_LC_Run_ID, Dataset_ID
             FROM Tmp_Datasets
-            WHERE NOT Tmp_Datasets.dataset_id IN (SELECT dataset_id FROM t_prep_lc_run_dataset WHERE prep_lc_run_id = _id)
+            WHERE NOT Tmp_Datasets.dataset_id IN (SELECT dataset_id FROM t_prep_lc_run_dataset WHERE prep_lc_run_id = _id);
 
             -- Delete removed datasets
             DELETE FROM t_prep_lc_run_dataset
             WHERE prep_lc_run_id = _id AND
-                  NOT t_prep_lc_run_dataset.dataset_id IN (SELECT dataset_id FROM Tmp_Datasets)
+                  NOT t_prep_lc_run_dataset.dataset_id IN (SELECT dataset_id FROM Tmp_Datasets);
 
         End If;
 
-        -- Update the work package list
+        -- Update the work package list using the sample prep request ID(s)
+
         CALL public.update_prep_lc_run_work_package_list (
                         _prepLCRunID => _id,
                         _message     => _message,       -- Output
                         _returnCode  => _returnCode);   -- Output
+
+        DROP TABLE Tmp_SamplePrepRequests;
+        DROP TABLE Tmp_Datasets;
+
+        RETURN;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -287,7 +352,11 @@ BEGIN
                 _exceptionDetail  = pg_exception_detail,
                 _exceptionContext = pg_exception_context;
 
-        _logMessage := format('%s; Prep LC run %s, ID %s', _exceptionMessage, _prepRunName, _id);
+        If _id Is Null Then
+            _logMessage := format('%s; Prep LC run %s', _exceptionMessage, _prepRunName);
+        Else
+            _logMessage := format('%s; Prep LC run %s, ID %s', _exceptionMessage, _prepRunName, _id);
+        End If;
 
         _message := local_error_handler (
                         _sqlState, _logMessage, _exceptionDetail, _exceptionContext,
@@ -298,8 +367,17 @@ BEGIN
         End If;
     END;
 
+    DROP TABLE IF EXISTS Tmp_SamplePrepRequests;
     DROP TABLE IF EXISTS Tmp_Datasets;
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_prep_lc_run IS 'AddUpdatePrepLCRun';
+
+ALTER PROCEDURE public.add_update_prep_lc_run(INOUT _id integer, IN _preprunname text, IN _instrument text, IN _type text, IN _lccolumn text, IN _lccolumn2 text, IN _comment text, IN _guardcolumn text, IN _operatorusername text, IN _digestionmethod text, IN _sampletype text, IN _samplepreprequests text, IN _numberofruns text, IN _instrumentpressure text, IN _qualitycontrol text, IN _datasets text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_prep_lc_run(INOUT _id integer, IN _preprunname text, IN _instrument text, IN _type text, IN _lccolumn text, IN _lccolumn2 text, IN _comment text, IN _guardcolumn text, IN _operatorusername text, IN _digestionmethod text, IN _sampletype text, IN _samplepreprequests text, IN _numberofruns text, IN _instrumentpressure text, IN _qualitycontrol text, IN _datasets text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_prep_lc_run(INOUT _id integer, IN _preprunname text, IN _instrument text, IN _type text, IN _lccolumn text, IN _lccolumn2 text, IN _comment text, IN _guardcolumn text, IN _operatorusername text, IN _digestionmethod text, IN _sampletype text, IN _samplepreprequests text, IN _numberofruns text, IN _instrumentpressure text, IN _qualitycontrol text, IN _datasets text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdatePrepLCRun';
+

@@ -1,33 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_reference_compound
-(
-    _compoundID int,
-    _compoundName text,
-    _description text,
-    _compoundTypeName text,
-    _geneName text,
-    _modifications text,
-    _organismName text,
-    _pubChemID text,
-    _campaignName text,
-    _containerName text = 'na',
-    _wellplateName text,
-    _wellNumber text,
-    _contactUsername text,
-    _supplier text,
-    _productId text,
-    _purchaseDate text,
-    _purity text,
-    _purchaseQuantity text,
-    _mass text,
-    _active text,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_reference_compound(integer, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_reference_compound(IN _compoundid integer, IN _compoundname text, IN _description text, IN _compoundtypename text, IN _genename text, IN _modifications text, IN _organismname text, IN _pubchemid text, IN _campaignname text, IN _containername text, IN _wellplatename text, IN _wellnumber text, IN _contactusername text, IN _supplier text, IN _productid text, IN _purchasedate text, IN _purity text, IN _purchasequantity text, IN _mass text, IN _active text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -53,7 +30,7 @@ AS $$
 **    _purity               Purity, e.g. 'Pure', 'Crude', or '90.19%'
 **    _purchaseQuantity     Purchase quantity
 **    _mass                 Compound mass (as text)
-**    _active               Can be: 'Yes', 'No', 'Y', 'N', '1', or '0'
+**    _active               Can be: 'Yes', 'No', 'Y', 'N', '1', or '0'; ignored when _mode is 'add'
 **    _mode                 Mode: 'add', 'update', 'check_add', 'check_update'
 **    _message              Status message
 **    _returnCode           Return code
@@ -68,7 +45,7 @@ AS $$
 **                         - Properly handle float-based dates (resulting from Excel copy / paste-value issues)
 **          12/08/2020 mem - Lookup Username from T_Users using the validated user ID
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/16/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -136,15 +113,21 @@ BEGIN
         _description      := Trim(Coalesce(_description, ''));
         _compoundTypeName := Trim(Coalesce(_compoundTypeName, ''));
         _geneName         := Trim(Coalesce(_geneName, ''));
+        _modifications    := Trim(Coalesce(_modifications, ''));
         _organismName     := Trim(Coalesce(_organismName, ''));
         _pubChemID        := Trim(Coalesce(_pubChemID, ''));
         _campaignName     := Trim(Coalesce(_campaignName, ''));
+        _containerName    := Trim(Coalesce(_containerName, ''));
+        _wellplateName    := Trim(Coalesce(_wellplateName, ''));
+        _wellNumber       := Trim(Coalesce(_wellNumber, ''));
         _contactUsername  := Trim(Coalesce(_contactUsername, ''));
         _supplier         := Trim(Coalesce(_supplier, ''));
         _productId        := Trim(Coalesce(_productId, ''));
         _purchaseDate     := Trim(Coalesce(_purchaseDate, ''));
+        _purity           := Trim(Coalesce(_purity, ''));
+        _purchaseQuantity := Trim(Coalesce(_purchaseQuantity, ''));
         _mass             := Trim(Coalesce(_mass, ''));
-        _active           := Trim(Coalesce(_active, '1'));
+        _active           := Trim(Coalesce(_active, 'Yes'));
         _callingUser      := Trim(Coalesce(_callingUser, ''));
         _mode             := Trim(Lower(Coalesce(_mode, '')));
 
@@ -191,14 +174,17 @@ BEGIN
             _massValue := 0;
         Else
             _massValue := public.try_cast(_mass, null::float8);
+
             If _massValue Is Null Then
                 RAISE EXCEPTION 'Error, non-numeric mass: %', _mass;
             End If;
         End If;
 
-        If _active::citext In ('Y', 'Yes', '1') Then
+        If _mode = 'add' Then
             _activeValue := 1;
-        ElsIf _active::citext In ('N', 'No', '0')
+        ElsIf _active::citext In ('Y', 'Yes', '1') Then
+            _activeValue := 1;
+        ElsIf _active::citext In ('N', 'No', '0') Then
             _activeValue := 0;
         Else
             RAISE EXCEPTION 'Active should be Y or N';
@@ -231,7 +217,7 @@ BEGIN
         SELECT compound_type_id
         INTO _compoundTypeID
         FROM t_reference_compound_type_name
-        WHERE compound_type_name = _compoundTypeName;
+        WHERE compound_type_name = _compoundTypeName::citext;
 
         If Not FOUND Then
             RAISE EXCEPTION 'Invalid compound type name';
@@ -252,7 +238,13 @@ BEGIN
         ---------------------------------------------------
 
         If _mode In ('update', 'check_update') Then
-            -- Confirm the compound exists
+            -- Confirm that the compound exists
+
+            If _compoundID Is Null Then
+                RAISE EXCEPTION 'Cannot update: reference compound ID cannot be null';
+            ElsIf _compoundID <= 0 Then
+                RAISE EXCEPTION 'Cannot update: reference compound ID must be a positive integer';
+            End If;
 
             If Not Exists (SELECT compound_id FROM t_reference_compound WHERE compound_id = _compoundID) Then
                 RAISE EXCEPTION 'Cannot update: reference compound ID % does not exist', _compoundID;
@@ -279,14 +271,14 @@ BEGIN
         -- Resolve container name to ID
         ---------------------------------------------------
 
-        If Coalesce(_containerName, '') = '' Then
+        If _containerName = '' Then
             _containerName := 'na';
         End If;
 
         SELECT container_id
         INTO _containerID
         FROM t_material_containers
-        WHERE container = _containerName;
+        WHERE container = _containerName::citext;
 
         ---------------------------------------------------
         -- Resolve current container id to name
@@ -379,7 +371,7 @@ BEGIN
                 _massValue,
                 _modifications,
                 CURRENT_TIMESTAMP,
-                1             -- active
+                _activeValue
             )
             RETURNING compound_id
             INTO _compoundID;
@@ -477,4 +469,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_reference_compound IS 'AddUpdateReferenceCompound';
+
+ALTER PROCEDURE public.add_update_reference_compound(IN _compoundid integer, IN _compoundname text, IN _description text, IN _compoundtypename text, IN _genename text, IN _modifications text, IN _organismname text, IN _pubchemid text, IN _campaignname text, IN _containername text, IN _wellplatename text, IN _wellnumber text, IN _contactusername text, IN _supplier text, IN _productid text, IN _purchasedate text, IN _purity text, IN _purchasequantity text, IN _mass text, IN _active text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_reference_compound(IN _compoundid integer, IN _compoundname text, IN _description text, IN _compoundtypename text, IN _genename text, IN _modifications text, IN _organismname text, IN _pubchemid text, IN _campaignname text, IN _containername text, IN _wellplatename text, IN _wellnumber text, IN _contactusername text, IN _supplier text, IN _productid text, IN _purchasedate text, IN _purity text, IN _purchasequantity text, IN _mass text, IN _active text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_reference_compound(IN _compoundid integer, IN _compoundname text, IN _description text, IN _compoundtypename text, IN _genename text, IN _modifications text, IN _organismname text, IN _pubchemid text, IN _campaignname text, IN _containername text, IN _wellplatename text, IN _wellnumber text, IN _contactusername text, IN _supplier text, IN _productid text, IN _purchasedate text, IN _purity text, IN _purchasequantity text, IN _mass text, IN _active text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateReferenceCompound';
+
