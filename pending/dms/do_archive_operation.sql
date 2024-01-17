@@ -37,7 +37,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _msg text;
     _result int;
     _datasetID int;
     _archiveStateID int;
@@ -88,14 +87,9 @@ BEGIN
     WHERE dataset = _datasetName;
 
     If Not FOUND Then
-        _msg := format('Could not get ID or archive state for dataset "%s"', _datasetName);
-        RAISE EXCEPTION '%', _msg;
-
-        _message := 'message';
-        RAISE WARNING '%', _message;
-
         _returnCode := 'U5201';
-        RETURN;
+        _message := format('Could not get ID or archive state for dataset "%s"', _datasetName);
+        RAISE EXCEPTION '%', _message;
     End If;
 
     _mode := Trim(Lower(Coalesce(_mode, '')));
@@ -109,14 +103,9 @@ BEGIN
         -- If archive not in failed state, we can't reset it
 
         If Not _archiveStateID In (6, 2) -- 'Operation Failed' or 'Archive In Progress' Then
-            _msg := format('Archive state for dataset "%s" not in proper state to be reset', _datasetName);
-            RAISE EXCEPTION '%', _msg;
-
-            _message := 'message';
-            RAISE WARNING '%', _message;
-
             _returnCode := 'U5202';
-            RETURN;
+            _message := format('Archive state for dataset "%s" not in proper state to be reset', _datasetName);
+            RAISE EXCEPTION '%', _message;
         End If;
 
         -- Reset the Archive task to state 'new'

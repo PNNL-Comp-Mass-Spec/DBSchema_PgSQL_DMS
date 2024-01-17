@@ -28,11 +28,11 @@ CREATE OR REPLACE PROCEDURE public.copy_aux_info_multi_id(IN _targetname text, I
 **          08/15/2022 mem - Use new column names
 **          11/21/2022 mem - Use new column names in t_aux_info_target
 **          12/04/2023 mem - Ported to PostgreSQL
+**          01/17/2024 mem - Remove unreachable code
 **
 *****************************************************/
 DECLARE
     _invalidCount int;
-    _msg text;
     _sql text;
     _matchVal int;
     _tgtTableName text;
@@ -52,15 +52,9 @@ BEGIN
     -- 'copyCategory', 'copySubcategory', and 'copyAll'
 
     If Not _mode::citext In ('CopyCategory', 'CopySubcategory', 'CopyAll') Then
-
-        _msg := 'Mode must be copyCategory, copySubcategory, or copyAll';
-        RAISE EXCEPTION '%', _msg;
-
-        _message := 'message';
-        RAISE WARNING '%', _message;
-
         _returnCode := 'U5201';
-        RETURN;
+        _message := 'Mode must be copyCategory, copySubcategory, or copyAll';
+        RAISE EXCEPTION '%', _message;
     End If;
 
     If _targetName::citext = 'Cell Culture' And Exists (SELECT target_type_id FROM t_aux_info_target WHERE target_type_name = 'Biomaterial') Then

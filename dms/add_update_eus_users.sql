@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_eus_users(IN _euspersonid text, IN
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          01/01/2024 mem - Ported to PostgreSQL
+**          01/17/2024 mem - Remove unreachable code
 **
 *****************************************************/
 DECLARE
@@ -36,7 +37,6 @@ DECLARE
     _eusPersonIdValue int;
     _eusSiteStatusValue smallint;
     _existingCount int := 0;
-    _msg text;
     _tempEUSPersonID int;
 BEGIN
     _message := '';
@@ -99,7 +99,7 @@ BEGIN
     _eusSiteStatusValue := public.try_cast(_eusSiteStatus, null::smallint);
 
     If _eusSiteStatusValue Is Null Then
-        _returnCode := 'U5202';
+        _returnCode := 'U5205';
         _message := 'EUS site status must be an integer';
         RAISE EXCEPTION '%', _message;
     End If;
@@ -122,27 +122,17 @@ BEGIN
     -- Cannot create an entry that already exists
 
     If _mode = 'add' And _existingCount > 0 Then
-        _msg := format('Cannot add: EUS Person ID "%s" already exists', _eusPersonID);
-        RAISE EXCEPTION '%', _msg;
-
-        _message := 'message';
-        RAISE WARNING '%', _message;
-
-        _returnCode := 'U5205';
-        RETURN;
+        _returnCode := 'U5206';
+        _message := format('Cannot add: EUS Person ID "%s" already exists', _eusPersonID);
+        RAISE EXCEPTION '%', _message;
     End If;
 
     -- Cannot update a non-existent entry
 
     If _mode = 'update' And _existingCount = 0 Then
-        _msg := format('Cannot update: EUS Person ID "%s" does not exist', _eusPersonID);
-        RAISE EXCEPTION '%', _msg;
-
-        _message := 'message';
-        RAISE WARNING '%', _message;
-
-        _returnCode := 'U5206';
-        RETURN;
+        _returnCode := 'U5207';
+        _message := format('Cannot update: EUS Person ID "%s" does not exist', _eusPersonID);
+        RAISE EXCEPTION '%', _message;
     End If;
 
     ---------------------------------------------------
