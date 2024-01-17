@@ -133,7 +133,14 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _mode := Trim(Lower(Coalesce(_mode, '')));
+        _requestedBatchPriority := Trim(Coalesce(_requestedBatchPriority, ''));
+        _mode                   := Trim(Lower(Coalesce(_mode, '')));
+
+        If _requestedBatchPriority::citext In ('', 'Normal') Then
+            _requestedBatchPriority := 'Normal';
+        ElsIf _requestedBatchPriority::citext = 'High' Then
+            _requestedBatchPriority := 'High';
+        End If;
 
         CALL public.validate_requested_run_batch_params (
                         _batchID                   => _id,

@@ -15,8 +15,8 @@ CREATE OR REPLACE PROCEDURE public.validate_requested_run_batch_params(IN _batch
 **    _name                         Batch name
 **    _description                  Description (unused)
 **    _ownerUsername                Owner username
-**    _requestedBatchPriority       Requested batch priority
-**    _requestedCompletionDate      Requested completion date
+**    _requestedBatchPriority       Requested batch priority: 'Normal' or 'High'
+**    _requestedCompletionDate      Requested completion date (as text)
 **    _justificationHighPriority    Justification for high priority
 **    _requestedInstrumentGroup     Will typically contain an instrument group, not an instrument name
 **    _comment                      Batch comment (unused)
@@ -45,6 +45,7 @@ CREATE OR REPLACE PROCEDURE public.validate_requested_run_batch_params(IN _batch
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          12/15/2023 mem - Coalesce nulls to empty strings and update warning messages
 **          01/03/2024 mem - Update warning messages
+**          01/17/2024 mem - Require that requested priority be Normal or High
 **
 *****************************************************/
 DECLARE
@@ -115,13 +116,19 @@ BEGIN
             End If;
         End If;
 
+        If Not _requestedBatchPriority::citext In ('Normal', 'High') Then
+            _message := 'Requested batch priority should be Normal or High';
+            _returnCode := 'U5204';
+            RETURN;
+        End If;
+
         ---------------------------------------------------
         -- High priority requires justification
         ---------------------------------------------------
 
         If _requestedBatchPriority::citext = 'High' And _justificationHighPriority = '' Then
             _message := 'Justification must be entered if high priority is being requested';
-            _returnCode := 'U5204';
+            _returnCode := 'U5205';
             RETURN;
         End If;
 
@@ -132,7 +139,7 @@ BEGIN
         If _mode In ('add', Lower('PreviewAdd')) Then
             If Exists (SELECT batch FROM t_requested_run_batches WHERE batch = _name::citext) Then
                 _message := format('Cannot add: batch "%s" already exists', _name);
-                _returnCode := 'U5205';
+                _returnCode := 'U5206';
                 RETURN;
             End If;
         End If;
@@ -143,7 +150,7 @@ BEGIN
 
             If Coalesce(_batchID, 0) = 0 Then
                 _message := 'Cannot update batch; ID must non-zero';
-                _returnCode := 'U5206';
+                _returnCode := 'U5207';
                 RETURN;
             End If;
 
@@ -154,13 +161,13 @@ BEGIN
 
             If Not FOUND Then
                 _message := format('Cannot update: batch ID %s does not exist', _batchID);
-                _returnCode := 'U5207';
+                _returnCode := 'U5208';
                 RETURN;
             End If;
 
             If _locked = 'Yes' Then
                 _message := format('Cannot update: batch ID %s is locked', _batchID);
-                _returnCode := 'U5208';
+                _returnCode := 'U5209';
                 RETURN;
             End If;
         End If;
@@ -199,7 +206,7 @@ BEGIN
                     _message := format('Invalid owner username: "%s" matches more than one user', _ownerUsername);
                 End If;
 
-                _returnCode := 'U5209';
+                _returnCode := 'U5210';
                 RETURN;
             End If;
         End If;
@@ -215,7 +222,7 @@ BEGIN
 
         If _batchGroupID > 0 And Not Exists (SELECT Batch_Group_ID FROM T_Requested_Run_Batch_Group WHERE Batch_Group_ID = _batchGroupID) Then
             _message := format('Requested run batch group %s does not exist', _batchGroupID);
-            _returnCode := 'U5210';
+            _returnCode := 'U5211';
             RETURN;
         End If;
 
