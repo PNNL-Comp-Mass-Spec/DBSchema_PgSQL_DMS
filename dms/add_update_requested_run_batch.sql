@@ -8,28 +8,28 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 /****************************************************
 **
 **  Desc:
-**      Add new or edit existing requested run batch
+**      Add new or edit an existing requested run batch, including updating the requested runs that are in the batch
 **
 **  Arguments:
 **    _id                           Batch ID to update if _mode is 'update'; otherwise, the ID of the newly created batch
 **    _name                         Batch name
 **    _description                  Description
-**    _requestedRunList             Requested run IDs
+**    _requestedRunList             Comma-separated (or tab-separated) list of requested run IDs
 **    _ownerUsername                Owner username
-**    _requestedBatchPriority       Batch priority
-**    _requestedCompletionDate      Requested completion date
+**    _requestedBatchPriority       Requested batch priority: 'Normal' or 'High'
+**    _requestedCompletionDate      Requested completion date (as text)
 **    _justificationHighPriority    Justification for high priority
 **    _requestedInstrumentGroup     Will typically contain an instrument group, not an instrument name
 **    _comment                      Batch comment
 **    _batchGroupID                 Batch group ID
 **    _batchGroupOrder              Batch group order
-**    _mode                         'add' or 'update' or 'PreviewAdd'
+**    _mode                         Mode: 'add', 'update', or 'PreviewAdd'
 **    _message                      Status message
 **    _returnCode                   Return code
-**    _raiseExceptions              When true, raise an exception; when false, update _returnCode if an error
+**    _raiseExceptions              When true, raise an exception if an error is encountered; when false, update _message and _returnCode
 **
 **  Auth:   grk
-**  Date:   01/11/2006 - initial version
+**  Date:   01/11/2006 grk - Initial version
 **          09/15/2006 jds - Added _requestedBatchPriority, _actualBathPriority, _requestedCompletionDate, _justificationHighPriority, and _comment
 **          11/04/2006 grk - Added _requestedInstrument
 **          12/03/2009 grk - Checking for presence of _justificationHighPriority If priority is high
@@ -73,6 +73,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
 **          10/12/2023 mem - Only drop temp table if actually created
 **          12/15/2023 mem - Fix bug that sent the wrong value to _requestedBatchPriority when calling validate_requested_run_batch_params
+**          01/17/2024 mem - Drop temp table before exiting procedure
 **
 *****************************************************/
 DECLARE
@@ -218,6 +219,8 @@ BEGIN
                 RAISE EXCEPTION '%', _message;
             Else
                 _returnCode := 'U5208';
+
+                DROP TABLE Tmp_RequestedRuns;
                 RETURN;
             End If;
         End If;
@@ -231,18 +234,14 @@ BEGIN
         SELECT COUNT(*)
         INTO _countInvalid
         FROM Tmp_RequestedRuns
-        WHERE NOT (request_id IN
-        (
-            SELECT request_id
-            FROM t_requested_run)
-        );
+        WHERE NOT request_id IN (SELECT request_id FROM t_requested_run);
 
         If _countInvalid > 0 Then
 
             SELECT string_agg(RequestIDText, ', ' ORDER BY RequestIDText)
             INTO _invalidIDs
             FROM Tmp_RequestedRuns
-            WHERE NOT request_id IN ( SELECT request_id FROM t_requested_run);
+            WHERE NOT request_id IN (SELECT request_id FROM t_requested_run);
 
             _logErrors := false;
             _message := format('Requested run list contains requests that do not exist: %s', _invalidIDs);
@@ -251,6 +250,8 @@ BEGIN
                 RAISE EXCEPTION '%', _message;
             Else
                 _returnCode := 'U5209';
+
+                DROP TABLE Tmp_RequestedRuns;
                 RETURN;
             End If;
         End If;
@@ -369,8 +370,7 @@ BEGIN
                 UPDATE t_requested_run
                 SET batch_id = 0
                 WHERE batch_id = _id AND
-                      NOT request_id IN ( SELECT Request_ID
-                                          FROM Tmp_RequestedRuns );
+                      NOT request_id IN (SELECT Request_ID FROM Tmp_RequestedRuns);
 
             End If;
 
@@ -431,6 +431,10 @@ BEGIN
                             _message     => _message,       -- Output
                             _returncode  => _returncode);   -- Output
 
+            If _returnCode = '' And _message <> '' Then
+                RAISE INFO '%', _message;
+                _message := '';
+            End If;
         End If;
 
     EXCEPTION
