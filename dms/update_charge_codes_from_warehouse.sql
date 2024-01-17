@@ -120,6 +120,9 @@ BEGIN
 
         ----------------------------------------------------------
         -- Obtain charge code info
+        --
+        -- Note that as of January 2024, in the source view, fields RESP_PAY_NO and AUTH_PAY_NO are null for people whose username is over 5 characters long (as has been standard for several years now)
+        -- The Hanford ID (HID) values are defined, but the username is null
         ----------------------------------------------------------
 
         _currentLocation := 'Query opwhse';
