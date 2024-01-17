@@ -393,30 +393,30 @@ BEGIN
             _requestName := format('AutoReq_%s', _datasetName);
 
             CALL public.add_update_requested_run (
-                                    _requestName => _requestName,
-                                    _experimentName => _experimentName,
-                                    _requesterUsername => _operatorUsername,
-                                    _instrumentName => _instrumentName,
-                                    _workPackage => 'none',
-                                    _msType => _msType,
-                                    _instrumentSettings => 'na',
-                                    _wellplateName => NULL,
-                                    _wellNumber => NULL,
-                                    _internalStandard => 'na',
-                                    _comment => 'Automatically created by Dataset entry',
-                                    _eusProposalID => _eusProposalID,
-                                    _eusUsageType => _eusUsageType,
-                                    _eusUsersList => _eusUsersList,
-                                    _mode => 'add-auto',
-                                    _request => _requestID,         -- Output
-                                    _message => _message,           -- Output
-                                    _returnCode => _returnCode,     -- Output
-                                    _secSep => _secSep,
-                                    _mrmAttachment => '',
-                                    _status => 'Completed',
-                                    _skipTransactionRollback => true,
+                                    _requestName                 => _requestName,
+                                    _experimentName              => _experimentName,
+                                    _requesterUsername           => _operatorUsername,
+                                    _instrumentName              => _instrumentName,
+                                    _workPackage                 => 'none',
+                                    _msType                      => _msType,
+                                    _instrumentSettings          => 'na',
+                                    _wellplateName               => Null,
+                                    _wellNumber                  => Null,
+                                    _internalStandard            => 'na',
+                                    _comment                     => 'Automatically created by Dataset entry',
+                                    _eusProposalID               => _eusProposalID,
+                                    _eusUsageType                => _eusUsageType,
+                                    _eusUsersList                => _eusUsersList,
+                                    _mode                        => 'add-auto',
+                                    _request                     => _requestID,         -- Output
+                                    _message                     => _message,           -- Output
+                                    _returnCode                  => _returnCode,     -- Output
+                                    _secSep                      => _secSep,
+                                    _mrmAttachment               => '',
+                                    _status                      => 'Completed',
+                                    _skipTransactionRollback     => true,
                                     _autoPopulateUserListIfBlank => true,        -- Auto populate _eusUsersList if blank since this is an Auto-Request
-                                    _callingUser => _callingUser)
+                                    _callingUser                 => _callingUser)
 
             If _returnCode <> '' Then
                 RAISE EXCEPTION 'Create AutoReq run request failed: dataset % with EUS Proposal ID %, Usage Type %, and Users List % -> %',
@@ -435,9 +435,9 @@ BEGIN
             CALL public.consume_scheduled_run (
                             _datasetID,
                             _requestID,
-                            _message => _message,           -- Output
-                            _returnCode => _returnCode,     -- Output
-                            _callingUser => _callingUser,
+                            _message          => _message,           -- Output
+                            _returnCode       => _returnCode,     -- Output
+                            _callingUser      => _callingUser,
                             _logDebugMessages => false);
 
             If _returnCode <> '' Then
@@ -498,36 +498,36 @@ BEGIN
               Coalesce(_existingEusUser, '') <> _eusUsersList) Then
 
                 CALL public.add_update_requested_run (
-                                        _requestName => _requestName,
-                                        _experimentName => _experimentName,
-                                        _requesterUsername => _operatorUsername,
-                                        _instrumentName => _instrumentName,
-                                        _workPackage => 'none',
-                                        _msType => _msType,
-                                        _instrumentSettings => 'na',
-                                        _wellplateName => NULL,
-                                        _wellNumber => NULL,
-                                        _internalStandard => 'na',
-                                        _comment => 'Automatically created by Dataset entry',
-                                        _eusProposalID => _eusProposalID,
-                                        _eusUsageType => _eusUsageType,
-                                        _eusUsersList => _eusUsersList,
-                                        _mode => 'update',
-                                        _request => _requestID,         -- Output
-                                        _message => _message,           -- Output
-                                        _returnCode => _returnCode,     -- Output
-                                        _secSep => _secSep,
-                                        _mrmAttachment => '',
-                                        _status => 'Completed',
-                                        _skipTransactionRollback => true,
+                                        _requestName                 => _requestName,
+                                        _experimentName              => _experimentName,
+                                        _requesterUsername           => _operatorUsername,
+                                        _instrumentName              => _instrumentName,
+                                        _workPackage                 => 'none',
+                                        _msType                      => _msType,
+                                        _instrumentSettings          => 'na',
+                                        _wellplateName               => NULL,
+                                        _wellNumber                  => NULL,
+                                        _internalStandard            => 'na',
+                                        _comment                     => 'Automatically created by Dataset entry',
+                                        _eusProposalID               => _eusProposalID,
+                                        _eusUsageType                => _eusUsageType,
+                                        _eusUsersList                => _eusUsersList,
+                                        _mode                        => 'update',
+                                        _request                     => _requestID,         -- Output
+                                        _message                     => _message,           -- Output
+                                        _returnCode                  => _returnCode,     -- Output
+                                        _secSep                      => _secSep,
+                                        _mrmAttachment               => '',
+                                        _status                      => 'Completed',
+                                        _skipTransactionRollback     => true,
                                         _autoPopulateUserListIfBlank => true,   -- Auto populate _eusUsersList if blank since this is an Auto-Request
-                                        _callingUser => _callingUser,
-                                        _vialingConc => null,
-                                        _vialingVol => null,
-                                        _stagingLocation => null,
-                                        _requestIDForUpdate => null,
-                                        _logDebugMessages => false,
-                                        _resolvedInstrumentInfo => _resolvedInstrumentInfo);    -- Output
+                                        _callingUser                 => _callingUser,
+                                        _vialingConc                 => null,
+                                        _vialingVol                  => null,
+                                        _stagingLocation             => null,
+                                        _requestIDForUpdate          => null,
+                                        _logDebugMessages            => false,
+                                        _resolvedInstrumentInfo      => _resolvedInstrumentInfo);    -- Output
 
                 If _returnCode <> '' Then
                     RAISE EXCEPTION 'Call to add_update_requested_run failed: dataset % with EUS Proposal ID %, Usage Type %, and Users List % -> %',

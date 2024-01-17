@@ -27,7 +27,7 @@ AS $$
 **    _mode                 Mode: 'add' or 'update'
 **    _message              Status message
 **    _returnCode           Return code
-**    _callingUser          Username of the calling user
+**    _callingUser          Username of the calling user (unused by this procedure)
 **
 **  Auth:   mem
 **  Date:   06/12/2017 mem - Initial version

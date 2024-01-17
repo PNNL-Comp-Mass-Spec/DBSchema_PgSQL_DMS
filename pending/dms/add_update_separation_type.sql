@@ -29,7 +29,7 @@ AS $$
 **    _mode             Mode: 'add' or 'update'
 **    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Username of the calling user
+**    _callingUser      Username of the calling user (unused by this procedure)
 **
 **  Auth:   bcg
 **  Date:   12/19/2019 bcg - Initial version

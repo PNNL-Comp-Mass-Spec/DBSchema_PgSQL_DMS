@@ -22,7 +22,7 @@ AS $$
 **    _stepToolFilter   Optional step tool to filter on (must be an exact match to a tool name in t_job_steps)
 **    _message          Status message
 **    _returnCode       Return code
-**    _callingUser      Username of the calling user
+**    _callingUser      Username of the calling user (unused by this procedure)
 **
 **  Auth:   mem
 **  Date:   09/30/2010 mem - Initial Version
