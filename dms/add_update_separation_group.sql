@@ -1,18 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_separation_group
-(
-    _separationGroup text,
-    _comment text,
-    _active int,
-    _samplePrepVisible int,
-    _fractionCount int,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_separation_group(text, text, integer, integer, integer, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_separation_group(IN _separationgroup text, IN _comment text, IN _active integer, IN _sampleprepvisible integer, IN _fractioncount integer, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -34,7 +26,7 @@ AS $$
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          03/15/2021 mem - Add _fractionCount
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/17/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -80,21 +72,30 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
+        _separationGroup   := Trim(Coalesce(_separationGroup, ''));
         _comment           := Trim(Coalesce(_comment, ''));
         _active            := Coalesce(_active, 0);
         _samplePrepVisible := Coalesce(_samplePrepVisible, 0);
         _fractionCount     := Coalesce(_fractionCount, 0);
         _mode              := Trim(Lower(Coalesce(_mode, '')));
 
-        ---------------------------------------------------
-        -- Is entry already in database? (only applies to updates)
-        ---------------------------------------------------
+        If _separationGroup = '' Then
+            RAISE EXCEPTION 'Separation group name must be defined';
+        End If;
+
+        If _active Not In (0, 1) Then
+            _active := 1;
+        End If;
+
+        If _samplePrepVisible Not In (0, 1) Then
+            _samplePrepVisible := 1;
+        End If;
+
+        If _mode = 'add' And Exists (SELECT separation_group FROM t_separation_group WHERE separation_group = _separationGroup::citext) Then
+            RAISE EXCEPTION 'Cannot add: separation group "%" already exists', _separationGroup;
+        End If;
 
         If _mode = 'update' Then
-            If _separationGroup Is Null Then
-                RAISE EXCEPTION 'Cannot update: separation group name cannot be null';
-            End If;
-
             If Not Exists (SELECT separation_group FROM t_separation_group WHERE separation_group = _separationGroup::citext) Then
                 RAISE EXCEPTION 'Cannot update: separation group "%" does not exist', _separationGroup;
             End If;
@@ -159,4 +160,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_separation_group IS 'AddUpdateSeparationGroup';
+
+ALTER PROCEDURE public.add_update_separation_group(IN _separationgroup text, IN _comment text, IN _active integer, IN _sampleprepvisible integer, IN _fractioncount integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_separation_group(IN _separationgroup text, IN _comment text, IN _active integer, IN _sampleprepvisible integer, IN _fractioncount integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_separation_group(IN _separationgroup text, IN _comment text, IN _active integer, IN _sampleprepvisible integer, IN _fractioncount integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateSeparationGroup';
+
