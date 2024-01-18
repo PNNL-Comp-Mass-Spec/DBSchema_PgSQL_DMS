@@ -18,7 +18,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_sample_prep_request(IN _requestnam
 **    _organism                         Organism name
 **    _biohazardLevel                   Biohazard level
 **    _campaign                         Campaign
-**    _numberofSamples                  Number of samples to be created
+**    _numberOfSamples                  Number of samples to be created
 **    _sampleNameList                   Sample name description or sample name prefix/prefixes
 **    _sampleType                       Sample type, e.g. 'Cell pellet', 'Peptides', 'Tissue', 'Soil', 'Plasma'
 **    _prepMethod                       Sample prep method, e.g. 'Global Digest', 'MPLEx', 'Solvent Extraction'
@@ -138,6 +138,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_sample_prep_request(IN _requestnam
 **          08/25/2022 mem - Use view V_Operations_Task_Staff when checking if the user can update a closed prep request item
 **          01/07/2024 mem - Ported to PostgreSQL
 **          01/08/2024 mem - Remove procedure name from error message
+**          01/17/2024 mem - Only update _instrumentGroup if the value matches an instrument name
+**                         - Verify that _requestName is not an empty string
 **
 *****************************************************/
 DECLARE
@@ -146,6 +148,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
+    _instrumentGroupMatch text;
     _msg text;
     _currentStateID int;
     _requestType text := 'Default';
@@ -212,7 +215,7 @@ BEGIN
         _organism                 := Trim(Coalesce(_organism, ''));
         _biohazardLevel           := Trim(Coalesce(_biohazardLevel, ''));
         _campaign                 := Trim(Coalesce(_campaign, ''));
-        _numberofSamples          := Coalesce(_numberofSamples, 0);
+        _numberOfSamples          := Coalesce(_numberOfSamples, 0);
         _sampleNameList           := Trim(Coalesce(_sampleNameList, ''));
         _sampleType               := Trim(Coalesce(_sampleType, ''));
         _prepMethod               := Trim(Coalesce(_prepMethod, ''));
@@ -280,6 +283,10 @@ BEGIN
 
         If _reason = '' Then
             RAISE EXCEPTION 'The reason field is required';
+        End If;
+
+        If _requestName = '' Then
+            RAISE EXCEPTION 'The prep request must have a name';
         End If;
 
         If public.has_whitespace_chars(_requestName, _allowSpace => true) Then
@@ -360,11 +367,14 @@ BEGIN
             If Not Exists (SELECT instrument_group FROM t_instrument_group WHERE instrument_group = _instrumentGroup::citext) Then
                 -- Try to update instrument group using t_instrument_name
                 SELECT instrument_group
-                INTO _instrumentGroup
+                INTO _instrumentGroupMatch
                 FROM t_instrument_name
                 WHERE instrument = _instrumentGroup::citext AND
                       status <> 'inactive';
 
+                If FOUND Then
+                    _instrumentGroup := _instrumentGroupMatch;
+                End If;
             End If;
 
             ---------------------------------------------------
@@ -386,6 +396,10 @@ BEGIN
         ---------------------------------------------------
         -- Resolve campaign ID
         ---------------------------------------------------
+
+        If _campaign = '' Then
+            RAISE EXCEPTION 'Campaign must be specified';
+        End If;
 
         _campaignID := public.get_campaign_id(_campaign);
 
@@ -433,6 +447,10 @@ BEGIN
         ---------------------------------------------------
         -- Resolve organism ID
         ---------------------------------------------------
+
+        If _organism = '' Then
+            RAISE EXCEPTION 'Organism must be specified';
+        End If;
 
         _organismID := public.get_organism_id(_organism);
 
@@ -611,7 +629,7 @@ BEGIN
             -- Limit who can make changes if in 'closed' state
             -- Users with permission 'DMS_Sample_Preparation' or 'DMS_Sample_Prep_Request_State' can update closed sample prep requests
 
-            If _currentStateID = 5 And Not Exists(SELECT username FROM V_Operations_Task_Staff WHERE username = _callingUser::citext) Then
+            If _currentStateID = 5 And Not Exists (SELECT username FROM V_Operations_Task_Staff WHERE username = _callingUser::citext) Then
                 RAISE EXCEPTION 'Changes to entry are not allowed if it is in the "Closed" state';
             End If;
 
@@ -704,7 +722,7 @@ BEGIN
                 _tissueIdentifier,
                 _biohazardLevel,
                 _campaign,
-                _numberofSamples,
+                _numberOfSamples,
                 _sampleNameList,
                 _sampleType,
                 _prepMethod,
@@ -762,7 +780,7 @@ BEGIN
                 tissue_id                          = _tissueIdentifier,
                 biohazard_level                    = _biohazardLevel,
                 campaign                           = _campaign,
-                number_of_samples                  = _numberofSamples,
+                number_of_samples                  = _numberOfSamples,
                 sample_name_list                   = _sampleNameList,
                 sample_type                        = _sampleType,
                 prep_method                        = _prepMethod,
