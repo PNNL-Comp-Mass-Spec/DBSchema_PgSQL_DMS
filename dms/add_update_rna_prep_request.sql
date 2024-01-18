@@ -1,34 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_rna_prep_request
-(
-    _requestName text,
-    _requesterUsername text,
-    _reason text,
-    _organism text,
-    _biohazardLevel text,
-    _campaign text,
-    _numberofSamples int,
-    _sampleNameList text,
-    _sampleType text,
-    _prepMethod text,
-    _sampleNamingConvention text,
-    _estimatedCompletion text,
-    _workPackageNumber text,
-    _eusProposalID text,
-    _eusUsageType text,
-    _eusUserID int,
-    _instrumentName text,
-    _datasetType text,
-    _instrumentAnalysisSpecifications text,
-    _state text,
-    INOUT _id int,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_rna_prep_request(text, text, text, text, text, text, integer, text, text, text, text, text, text, text, text, integer, text, text, text, text, integer, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_rna_prep_request(IN _requestname text, IN _requesterusername text, IN _reason text, IN _organism text, IN _biohazardlevel text, IN _campaign text, IN _numberofsamples integer, IN _samplenamelist text, IN _sampletype text, IN _prepmethod text, IN _samplenamingconvention text, IN _estimatedcompletion text, IN _workpackagenumber text, IN _eusproposalid text, IN _eususagetype text, IN _eususerid integer, IN _instrumentname text, IN _datasettype text, IN _instrumentanalysisspecifications text, IN _state text, INOUT _id integer, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -42,13 +18,13 @@ AS $$
 **    _organism                         Organism
 **    _biohazardLevel                   Biohazard level
 **    _campaign                         Campaign
-**    _numberofSamples                  Number of samples to be created
+**    _numberOfSamples                  Number of samples to be created
 **    _sampleNameList                   Sample name list
 **    _sampleType                       Sample type
 **    _prepMethod                       Prep method
 **    _sampleNamingConvention           Sample naming convention
 **    _estimatedCompletion              Estimated completion date (as text)
-**    _workPackageNumber                Work package number
+**    _workPackageNumber                Work package
 **    _eusProposalID                    EUS proposal ID
 **    _eusUsageType                     EUS usage type
 **    _eusUserID                        EUS user ID; use Null or 0 if no EUS user
@@ -74,7 +50,7 @@ AS $$
 **          08/22/2018 mem - Change the EUS User parameter from a varchar(1024) to an integer
 **          08/29/2018 mem - Remove parameters _biomaterialList,  _projectNumber, and _numberOfBiomaterialRepsReceived
 **                         - Remove call to Do_Sample_Prep_Material_Operation
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/17/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -84,6 +60,7 @@ DECLARE
     _authorized boolean;
 
     _logErrors boolean := false;
+    _instrumentNameMatch text;
     _msg text;
     _currentStateID int;
     _requestType citext := 'RNA';
@@ -94,11 +71,12 @@ DECLARE
     _estimatedCompletionDate timestamp;
     _stateID int := 0;
     _eusUsageTypeID int;
-    _eusUsersList text := '';
-    _allowNoneWP boolean := false;
-    _requestTypeExisting citext;
+    _eusUserIdText text := '';
+    _addingItem boolean;
+    _requestTypeExisting text;
     _activationState int := 10;
     _activationStateName text;
+    _logMessage text;
     _alterEnteredByMessage text;
 
     _sqlState text;
@@ -135,19 +113,49 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _requestName         := Trim(Coalesce(_requestName, ''));
-        _campaign            := Trim(Coalesce(_campaign, ''));
-        _organism            := Trim(Coalesce(_organism, ''));
-        _instrumentName      := Trim(Coalesce(_instrumentName, ''));
-        _datasetType         := Trim(Coalesce(_datasetType, ''));
-        _estimatedCompletion := Trim(Coalesce(_estimatedCompletion, ''));
-        _workPackageNumber   := Trim(Coalesce(_workPackageNumber, ''));
-        _state               := Trim(Coalesce(_state, ''));
-        _callingUser         := Trim(Coalesce(_callingUser, ''));
-        _mode                := Trim(Lower(Coalesce(_mode, '')));
+        _requestName            := Trim(Coalesce(_requestName, ''));
+        _requesterUsername      := Trim(Coalesce(_requesterUsername, ''));
+        _reason                 := Trim(Coalesce(_reason, ''));
+        _organism               := Trim(Coalesce(_organism, ''));
+        _biohazardLevel         := Trim(Coalesce(_biohazardLevel, ''));
+        _campaign               := Trim(Coalesce(_campaign, ''));
+        _numberOfSamples        := Coalesce(_numberOfSamples, 0);
+        _sampleNameList         := Trim(Coalesce(_sampleNameList, ''));
+        _sampleType             := Trim(Coalesce(_sampleType, ''));
+        _prepMethod             := Trim(Coalesce(_prepMethod, ''));
+        _sampleNamingConvention := Trim(Coalesce(_sampleNamingConvention, ''));
+        _estimatedCompletion    := Trim(Coalesce(_estimatedCompletion, ''));
+        _workPackageNumber      := Trim(Coalesce(_workPackageNumber, ''));
+        _eusProposalID          := Trim(Coalesce(_eusProposalID, ''));
+        _eusUsageType           := Trim(Coalesce(_eusUsageType, ''));
+        _instrumentName         := Trim(Coalesce(_instrumentName, ''));
+        _datasetType            := Trim(Coalesce(_datasetType, ''));
+        _instrumentAnalysisSpecifications := Trim(Coalesce(_instrumentAnalysisSpecifications, ''));
+        _state                  := Trim(Coalesce(_state, ''));
+        _callingUser            := Trim(Coalesce(_callingUser, ''));
+        _mode                   := Trim(Lower(Coalesce(_mode, '')));
 
         If Coalesce(_eusUserID, 0) <= 0 Then
             _eusUserID := Null;
+        End If;
+
+        If _requestName = '' Then
+            RAISE EXCEPTION 'The prep request must have a name';
+        End If;
+
+        If public.has_whitespace_chars(_requestName, _allowSpace => true) Then
+            -- Auto-replace CR, LF, or tabs with spaces
+            If Position(chr(10) In _requestName) > 0 Then
+                _requestName := Replace(_requestName, chr(10), ' ');
+            End If;
+
+            If Position(chr(13) In _requestName) > 0 Then
+            _requestName := Replace(_requestName, chr(13), ' ');
+            End If;
+
+            If Position(chr(9) In _requestName) > 0 Then
+                _requestName := Replace(_requestName, chr(9), ' ');
+            End If;
         End If;
 
         ---------------------------------------------------
@@ -155,23 +163,29 @@ BEGIN
         ---------------------------------------------------
 
         If Not _instrumentName::citext In ('', 'none', 'na') Then
-            If Coalesce(_datasetType, '') = '' Then
+            If _datasetType = '' Then
                 RAISE EXCEPTION 'Dataset type cannot be empty since the Instrument Name is defined';
             End If;
 
             ---------------------------------------------------
             -- Validate the instrument name
+            --
+            -- Note that RNA prep requests are associated with an instrument (and instrument group),
+            -- but sample prep requests are associated with an instrument group (and not a specific instrument)
             ---------------------------------------------------
 
-            If Not Exists (SELECT instrument FROM t_instrument_name WHERE instrument = _instrumentName) Then
+            If Not Exists (SELECT instrument FROM t_instrument_name WHERE instrument = _instrumentName::citext) Then
                 -- Check whether _instrumentName actually has an instrument group
 
                 SELECT instrument
-                INTO _instrumentName
+                INTO _instrumentNameMatch
                 FROM t_instrument_name
-                WHERE instrument_group = _instrumentName AND
-                      status <> 'inactive'
-                LIMIT 1;
+                WHERE instrument_group = _instrumentName::citext AND
+                      status <> 'inactive';
+
+                If FOUND Then
+                    _instrumentName := _instrumentNameMatch;
+                End If;
             End If;
 
             ---------------------------------------------------
@@ -181,8 +195,7 @@ BEGIN
             SELECT instrument_group
             INTO _instrumentGroup
             FROM t_instrument_name
-            WHERE instrument = _instrumentName
-            LIMIT 1;
+            WHERE instrument = _instrumentName;
 
             ---------------------------------------------------
             -- Validate instrument group and dataset type
@@ -250,36 +263,41 @@ BEGIN
 
         SELECT state_id
         INTO _stateID
-        FROM  t_sample_prep_request_state_name
-        WHERE state_name = _state;
+        FROM t_sample_prep_request_state_name
+        WHERE state_name = _state::citext;
 
         If Not FOUND Then
-            RAISE EXCEPTION 'Invalid sample prep request state: "%"', _state;
+            RAISE EXCEPTION 'Invalid sample prep request state name: %', _state;
         End If;
 
         ---------------------------------------------------
         -- Validate EUS type, proposal, and user list
         --
-        -- This procedure accepts a list of EUS User IDs,
-        -- so we convert to a string before calling it,
-        -- then convert back to an integer afterward
+        -- Procedure validate_eus_usage accepts a list of EUS User IDs,
+        -- so we convert to a string before calling it, then convert back to an integer afterward
         ---------------------------------------------------
 
+        If _mode = 'add' Then
+            _addingItem := true;
+        Else
+            _addingItem := false;
+        End If;
+
         If Coalesce(_eusUserID, 0) > 0 Then
-            _eusUsersList := _eusUserID;
+            _eusUserIdText := _eusUserID;
             _eusUserID := Null;
         End If;
 
         CALL public.validate_eus_usage (
                         _eusUsageType                => _eusUsageType,      -- Input/Output
                         _eusProposalID               => _eusProposalID,     -- Input/Output
-                        _eusUsersList                => _eusUsersList,      -- Input/Output
+                        _eusUsersList                => _eusUserIdText,     -- Input/Output
                         _eusUsageTypeID              => _eusUsageTypeID,    -- Output
                         _autoPopulateUserListIfBlank => false,
                         _samplePrepRequest           => false,
                         _experimentID                => 0,
                         _campaignID                  => 0,
-                        _addingItem                  => false,
+                        _addingItem                  => _addingItem,
                         _infoOnly                    => false,
                         _message                     => _msg,               -- Output
                         _returnCode                  => _returnCode         -- Output
@@ -289,8 +307,12 @@ BEGIN
             RAISE EXCEPTION '%', _msg;
         End If;
 
-        If char_length(Coalesce(_eusUsersList, '')) > 0 Then
-            _eusUserID := public.try_cast(_eusUsersList, 0);
+        If Coalesce(_msg, '') <> '' Then
+            _message := public.append_to_text(_message, _msg);
+        End If;
+
+        If Coalesce(_eusUserIdText, '') <> '' Then
+            _eusUserID := public.try_cast(_eusUserIdText, null::int);
 
             If Coalesce(_eusUserID, 0) <= 0 Then
                 _eusUserID := Null;
@@ -303,9 +325,9 @@ BEGIN
 
         CALL public.validate_wp (
                         _workPackageNumber,
-                        _allowNoneWP,
-                        _message    => _msg,            -- Output
-                        _returnCode => _returnCode);    -- Output
+                        _allowNoneWP => false,
+                        _message     => _msg,           -- Output
+                        _returnCode  => _returnCode);   -- Output
 
         If _returnCode <> '' Then
             RAISE EXCEPTION '%', _msg;
@@ -317,12 +339,12 @@ BEGIN
             _message := public.append_to_text(_message, format('Warning: Work Package %s is likely deactivated', _workPackageNumber));
         End If;
 
-        -- Make sure the Work Package is capitalized properly
+        -- Make sure the work package is capitalized properly
 
         SELECT charge_code
         INTO _workPackageNumber
         FROM t_charge_code
-        WHERE charge_code = _workPackageNumber;
+        WHERE charge_code = _workPackageNumber::citext;
 
         ---------------------------------------------------
         -- Is entry already in database?
@@ -343,26 +365,20 @@ BEGIN
                 RAISE EXCEPTION 'Cannot update: RNA prep request ID % does not exist', _id;
             End If;
 
-            -- Changes not allowed if in 'closed' state
+            -- Limit who can make changes if in 'closed' state
+            -- Users with permission 'DMS_Sample_Preparation' or 'DMS_Sample_Prep_Request_State' can update closed sample prep requests
 
-            If _currentStateID = 5 And Not Exists (SELECT username FROM V_Operations_Task_Staff_Picklist WHERE username = _callingUser::citext) Then
+            If _currentStateID = 5 And Not Exists (SELECT username FROM V_Operations_Task_Staff WHERE username = _callingUser::citext) Then
                 RAISE EXCEPTION 'Changes to entry are not allowed if it is in the "Closed" state';
             End If;
 
-            If _requestTypeExisting <> _requestType Then
+            If _requestTypeExisting::citext <> _requestType::citext Then
                 RAISE EXCEPTION 'Cannot edit requests of type % with the rna_prep_request page; use https://dms2.pnl.gov/sample_prep_request/report', _requestTypeExisting;
             End If;
         End If;
 
         If _mode = 'add' Then
-
-            -- Name must be unique
-
-            If Exists (SELECT request_name FROM t_sample_prep_request WHERE request_name = _requestName::citext) Then
-                RAISE EXCEPTION 'Cannot add: RNA prep request "%" already exists', _requestName;
-            End If;
-
-            -- Make sure the work package number is not inactive
+            -- Make sure the work package is not inactive
 
             SELECT CCAS.activation_state,
                    CCAS.activation_state_name
@@ -373,8 +389,21 @@ BEGIN
             WHERE CC.charge_code = _workPackageNumber::citext;
 
             If _activationState >= 3 Then
-                RAISE EXCEPTION 'Cannot use inactive Work Package "%" for a new RNA prep request', _workPackageNumber;
+                RAISE EXCEPTION 'Cannot use inactive work package "%" for a new RNA prep request', _workPackageNumber;
             End If;
+        End If;
+
+        ---------------------------------------------------
+        -- Check for name collisions
+        ---------------------------------------------------
+
+        If _mode = 'add' Then
+            If Exists (SELECT prep_request_id FROM t_sample_prep_request WHERE request_name = _requestName::citext) Then
+                RAISE EXCEPTION 'Cannot add: RNA prep request "%" already exists', _requestName;
+            End If;
+
+        ElsIf Exists (SELECT prep_request_id FROM t_sample_prep_request WHERE request_name = _requestName::citext AND prep_request_id <> _id) Then
+            RAISE EXCEPTION 'Cannot rename: RNA prep request "%" already exists', _requestName;
         End If;
 
         _logErrors := true;
@@ -415,7 +444,7 @@ BEGIN
                 _organism,
                 _biohazardLevel,
                 _campaign,
-                _numberofSamples,
+                _numberOfSamples,
                 _sampleNameList,
                 _sampleType,
                 _prepMethod,
@@ -456,7 +485,7 @@ BEGIN
                 organism                           = _organism,
                 biohazard_level                    = _biohazardLevel,
                 campaign                           = _campaign,
-                number_of_samples                  = _numberofSamples,
+                number_of_samples                  = _numberOfSamples,
                 sample_name_list                   = _sampleNameList,
                 sample_type                        = _sampleType,
                 prep_method                        = _prepMethod,
@@ -490,8 +519,10 @@ BEGIN
                 _exceptionContext = pg_exception_context;
 
         If _logErrors Then
+            _logMessage := format('%s; Request %s', _exceptionMessage, _requestName);
+
             _message := local_error_handler (
-                            _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                            _sqlState, _logMessage, _exceptionDetail, _exceptionContext,
                             _callingProcLocation => '', _logError => true);
         Else
             _message := _exceptionMessage;
@@ -505,4 +536,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_rna_prep_request IS 'AddUpdateRNAPrepRequest';
+
+ALTER PROCEDURE public.add_update_rna_prep_request(IN _requestname text, IN _requesterusername text, IN _reason text, IN _organism text, IN _biohazardlevel text, IN _campaign text, IN _numberofsamples integer, IN _samplenamelist text, IN _sampletype text, IN _prepmethod text, IN _samplenamingconvention text, IN _estimatedcompletion text, IN _workpackagenumber text, IN _eusproposalid text, IN _eususagetype text, IN _eususerid integer, IN _instrumentname text, IN _datasettype text, IN _instrumentanalysisspecifications text, IN _state text, INOUT _id integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_rna_prep_request(IN _requestname text, IN _requesterusername text, IN _reason text, IN _organism text, IN _biohazardlevel text, IN _campaign text, IN _numberofsamples integer, IN _samplenamelist text, IN _sampletype text, IN _prepmethod text, IN _samplenamingconvention text, IN _estimatedcompletion text, IN _workpackagenumber text, IN _eusproposalid text, IN _eususagetype text, IN _eususerid integer, IN _instrumentname text, IN _datasettype text, IN _instrumentanalysisspecifications text, IN _state text, INOUT _id integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_rna_prep_request(IN _requestname text, IN _requesterusername text, IN _reason text, IN _organism text, IN _biohazardlevel text, IN _campaign text, IN _numberofsamples integer, IN _samplenamelist text, IN _sampletype text, IN _prepmethod text, IN _samplenamingconvention text, IN _estimatedcompletion text, IN _workpackagenumber text, IN _eusproposalid text, IN _eususagetype text, IN _eususerid integer, IN _instrumentname text, IN _datasettype text, IN _instrumentanalysisspecifications text, IN _state text, INOUT _id integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateRNAPrepRequest';
+
