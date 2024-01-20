@@ -47,13 +47,6 @@ ALTER TABLE ONLY public.t_requested_run_batch_location_history
     ADD CONSTRAINT fk_t_requested_run_batch_location_history_t_material_locations FOREIGN KEY (location_id) REFERENCES public.t_material_locations(location_id);
 
 --
--- Name: t_requested_run_batch_location_history fk_t_requested_run_batch_location_history_t_requested_run_batch; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
---
-
-ALTER TABLE ONLY public.t_requested_run_batch_location_history
-    ADD CONSTRAINT fk_t_requested_run_batch_location_history_t_requested_run_batch FOREIGN KEY (batch_id) REFERENCES public.t_requested_run_batches(batch_id);
-
---
 -- Name: TABLE t_requested_run_batch_location_history; Type: ACL; Schema: public; Owner: d3l243
 --
 
