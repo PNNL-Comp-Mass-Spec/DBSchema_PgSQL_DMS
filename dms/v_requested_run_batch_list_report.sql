@@ -20,7 +20,7 @@ CREATE VIEW public.v_requested_run_batch_list_report AS
             END
             ELSE ''::public.citext
         END AS instrument,
-    rrb.requested_instrument_group AS inst_group,
+    rbs.instrument_group_first AS inst_group,
     rrb.description,
     t_users.name AS owner,
     rrb.created,

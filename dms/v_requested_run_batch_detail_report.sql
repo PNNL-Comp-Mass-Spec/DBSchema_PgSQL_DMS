@@ -16,7 +16,10 @@ CREATE VIEW public.v_requested_run_batch_detail_report AS
     rrb.requested_completion_date,
     rrb.justification_for_high_priority,
     public.get_batch_dataset_instrument_list(rrb.batch_id) AS instrument_used,
-    rrb.requested_instrument_group AS instrument_group,
+        CASE
+            WHEN (rbs.instrument_group_first = rbs.instrument_group_last) THEN rbs.instrument_group_first
+            ELSE ((rbs.instrument_group_first || ' - '::text) || rbs.instrument_group_last)
+        END AS instrument_group,
     rrb.comment,
         CASE
             WHEN (rbs.separation_group_first = rbs.separation_group_last) THEN rbs.separation_group_first
