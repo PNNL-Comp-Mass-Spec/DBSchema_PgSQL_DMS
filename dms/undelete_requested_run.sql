@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE public.undelete_requested_run(IN _requestid integer,
 **                         - Use procedure name without schema when calling verify_sp_authorized()
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          10/18/2023 mem - Add support for a deleted requested run referencing a non-existent dataset
+**          01/19/2024 mem - Remove reference to deprecated column Requested_Instrument_Group when copying data from T_Deleted_Requested_Run_Batch to T_Requested_Run_Batches
 **
 *****************************************************/
 DECLARE
@@ -203,13 +204,16 @@ BEGIN
                     Batch_ID, Batch, Description, Owner_User_ID, Created, Locked,
                     Last_Ordered, Requested_Batch_Priority, Actual_Batch_Priority,
                     Requested_Completion_Date, Justification_for_High_Priority, Comment,
-                    Requested_Instrument_Group, Batch_Group_ID, Batch_Group_Order
+                    -- Deprecated in January 2024
+                    -- Requested_Instrument_Group,
+                    Batch_Group_ID, Batch_Group_Order
                 )
             OVERRIDING SYSTEM VALUE
             SELECT Batch_ID, Batch, Description, Owner_User_ID, Created, Locked,
                    Last_Ordered, Requested_Batch_Priority, Actual_Batch_Priority,
                    Requested_Completion_Date, Justification_for_High_Priority, Comment,
-                   Requested_Instrument_Group, Batch_Group_ID, Batch_Group_Order
+                   -- Requested_Instrument_Group,
+                   Batch_Group_ID, Batch_Group_Order
             FROM T_Deleted_Requested_Run_Batch
             WHERE Entry_ID = _deletedBatchEntryID;
 
