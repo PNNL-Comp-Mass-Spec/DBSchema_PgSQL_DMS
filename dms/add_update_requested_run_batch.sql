@@ -1,8 +1,8 @@
 --
--- Name: add_update_requested_run_batch(integer, text, text, text, text, text, text, text, text, text, integer, integer, text, text, text, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: add_update_requested_run_batch(integer, text, text, text, text, text, text, text, text, integer, integer, text, text, text, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id integer, IN _name text, IN _description text, IN _requestedrunlist text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _requestedinstrumentgroup text, IN _comment text, IN _batchgroupid integer DEFAULT NULL::integer, IN _batchgrouporder integer DEFAULT NULL::integer, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _raiseexceptions boolean DEFAULT true)
+CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id integer, IN _name text, IN _description text, IN _requestedrunlist text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _comment text, IN _batchgroupid integer DEFAULT NULL::integer, IN _batchgrouporder integer DEFAULT NULL::integer, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _raiseexceptions boolean DEFAULT true)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -19,7 +19,6 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **    _requestedBatchPriority       Requested batch priority: 'Normal' or 'High'
 **    _requestedCompletionDate      Requested completion date (as text)
 **    _justificationHighPriority    Justification for high priority
-**    _requestedInstrumentGroup     Will typically contain an instrument group, not an instrument name
 **    _comment                      Batch comment
 **    _batchGroupID                 Batch group ID
 **    _batchGroupOrder              Batch group order
@@ -74,6 +73,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **          10/12/2023 mem - Only drop temp table if actually created
 **          12/15/2023 mem - Fix bug that sent the wrong value to _requestedBatchPriority when calling validate_requested_run_batch_params
 **          01/17/2024 mem - Drop temp table before exiting procedure
+**          01/19/2024 mem - Remove _requestedInstrumentGroup since we no longer track instrument group at the batch level
 **
 *****************************************************/
 DECLARE
@@ -84,7 +84,6 @@ DECLARE
 
     _logErrors boolean := false;
     _tempTableCreated boolean := false;
-    _instrumentGroupToUse text;
     _userID int := 0;
     _firstInvalid text;
     _count int;
@@ -151,12 +150,14 @@ BEGIN
                         _requestedBatchPriority    => _requestedBatchPriority,
                         _requestedCompletionDate   => _requestedCompletionDate,
                         _justificationHighPriority => _justificationHighPriority,
-                        _requestedInstrumentGroup  => _requestedInstrumentGroup,
+                        -- Deprecated in January 2024
+                        -- _requestedInstrumentGroup => _requestedInstrumentGroup,
                         _comment                   => _comment,
                         _batchGroupID              => _batchGroupID,            -- Input/Output
                         _batchGroupOrder           => _batchGroupOrder,         -- Input/Output
                         _mode                      => _mode,
-                        _instrumentGroupToUse      => _instrumentGroupToUse,    -- Output
+                        -- Deprecated in January 2024
+                        -- _instrumentGroupToUse   => _instrumentGroupToUse,    -- Output
                         _userID                    => _userID,                  -- Output
                         _message                   => _message,                 -- Output
                         _returnCode                => _returnCode);             -- Output
@@ -288,7 +289,8 @@ BEGIN
                 actual_batch_priority,
                 requested_completion_date,
                 justification_for_high_priority,
-                requested_instrument_group,
+                -- Deprecated in January 2024
+                -- requested_instrument_group,
                 comment,
                 batch_group_id,
                 batch_group_order
@@ -301,7 +303,7 @@ BEGIN
                 'Normal',
                 _requestedCompletionTimestamp,
                 _justificationHighPriority,
-                _instrumentGroupToUse,
+                -- _instrumentGroupToUse,
                 _comment,
                 _batchGroupID,
                 _batchGroupOrder
@@ -350,7 +352,8 @@ BEGIN
                 requested_batch_priority        = _requestedBatchPriority,
                 requested_completion_date       = _requestedCompletionTimestamp,
                 justification_for_high_priority = _justificationHighPriority,
-                requested_instrument_group      = _instrumentGroupToUse,
+                -- Deprecated in January 2024
+                -- requested_instrument_group      = _instrumentGroupToUse,
                 comment                         = _comment,
                 batch_group_id                  = _batchGroupID,
                 batch_group_order               = _batchGroupOrder
@@ -465,11 +468,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.add_update_requested_run_batch(INOUT _id integer, IN _name text, IN _description text, IN _requestedrunlist text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _requestedinstrumentgroup text, IN _comment text, IN _batchgroupid integer, IN _batchgrouporder integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _raiseexceptions boolean) OWNER TO d3l243;
+ALTER PROCEDURE public.add_update_requested_run_batch(INOUT _id integer, IN _name text, IN _description text, IN _requestedrunlist text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _comment text, IN _batchgroupid integer, IN _batchgrouporder integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _raiseexceptions boolean) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE add_update_requested_run_batch(INOUT _id integer, IN _name text, IN _description text, IN _requestedrunlist text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _requestedinstrumentgroup text, IN _comment text, IN _batchgroupid integer, IN _batchgrouporder integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _raiseexceptions boolean); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE add_update_requested_run_batch(INOUT _id integer, IN _name text, IN _description text, IN _requestedrunlist text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _comment text, IN _batchgroupid integer, IN _batchgrouporder integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _raiseexceptions boolean); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.add_update_requested_run_batch(INOUT _id integer, IN _name text, IN _description text, IN _requestedrunlist text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _requestedinstrumentgroup text, IN _comment text, IN _batchgroupid integer, IN _batchgrouporder integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _raiseexceptions boolean) IS 'addUpdateRequestedRunBatch';
+COMMENT ON PROCEDURE public.add_update_requested_run_batch(INOUT _id integer, IN _name text, IN _description text, IN _requestedrunlist text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _comment text, IN _batchgroupid integer, IN _batchgrouporder integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _raiseexceptions boolean) IS 'addUpdateRequestedRunBatch';
 

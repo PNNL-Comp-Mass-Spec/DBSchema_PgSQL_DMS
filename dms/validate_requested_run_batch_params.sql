@@ -1,8 +1,8 @@
 --
--- Name: validate_requested_run_batch_params(integer, text, text, text, text, text, text, text, text, integer, integer, text, text, integer, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: validate_requested_run_batch_params(integer, text, text, text, text, text, text, text, integer, integer, text, integer, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.validate_requested_run_batch_params(IN _batchid integer, IN _name text, IN _description text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _requestedinstrumentgroup text, IN _comment text, INOUT _batchgroupid integer DEFAULT NULL::integer, INOUT _batchgrouporder integer DEFAULT NULL::integer, IN _mode text DEFAULT 'add'::text, INOUT _instrumentgrouptouse text DEFAULT ''::text, INOUT _userid integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.validate_requested_run_batch_params(IN _batchid integer, IN _name text, IN _description text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _comment text, INOUT _batchgroupid integer DEFAULT NULL::integer, INOUT _batchgrouporder integer DEFAULT NULL::integer, IN _mode text DEFAULT 'add'::text, INOUT _userid integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -18,12 +18,10 @@ CREATE OR REPLACE PROCEDURE public.validate_requested_run_batch_params(IN _batch
 **    _requestedBatchPriority       Requested batch priority: 'Normal' or 'High'
 **    _requestedCompletionDate      Requested completion date (as text)
 **    _justificationHighPriority    Justification for high priority
-**    _requestedInstrumentGroup     Will typically contain an instrument group, not an instrument name
 **    _comment                      Batch comment (unused)
 **    _batchGroupID                 Input/Output: batch group ID
 **    _batchGroupOrder              Input/Output: batch group order
 **    _mode                         Mode: 'add' or 'update' or 'PreviewAdd'
-**    _instrumentGroupToUse         Output: instrument group to use
 **    _userID                       Output: user ID corresponding to the owner username
 **    _message                      Status message
 **    _returnCode                   Return code
@@ -46,6 +44,7 @@ CREATE OR REPLACE PROCEDURE public.validate_requested_run_batch_params(IN _batch
 **          12/15/2023 mem - Coalesce nulls to empty strings and update warning messages
 **          01/03/2024 mem - Update warning messages
 **          01/17/2024 mem - Require that requested priority be Normal or High
+**          01/19/2024 mem - Remove _requestedInstrumentGroup and _instrumentGroupToUse since we no longer track instrument group at the batch level
 **
 *****************************************************/
 DECLARE
@@ -68,7 +67,6 @@ BEGIN
         _requestedBatchPriority    := Trim(Coalesce(_requestedBatchPriority, ''));
         _requestedCompletionDate   := Trim(Coalesce(_requestedCompletionDate, ''));
         _justificationHighPriority := Trim(Coalesce(_justificationHighPriority, ''));
-        _requestedInstrumentGroup  := Trim(Coalesce(_requestedInstrumentGroup, ''));
         _comment                   := Trim(Coalesce(_comment, ''));
         _mode                      := Trim(Lower(Coalesce(_mode, '')));
 
@@ -86,32 +84,6 @@ BEGIN
             If public.try_cast(_requestedCompletionDate, null::timestamp) Is Null Then
                 _message := format('Requested completion date is not a valid date: %s', _requestedCompletionDate);
                 _returnCode := 'U5202';
-                RETURN;
-            End If;
-        End If;
-
-        ---------------------------------------------------
-        -- Determine the Instrument Group
-        ---------------------------------------------------
-
-        -- Set the instrument group to _requestedInstrumentGroup for now
-        _instrumentGroupToUse := _requestedInstrumentGroup;
-
-        If Not Exists (SELECT instrument_group FROM t_instrument_group WHERE instrument_group = _instrumentGroupToUse::citext) Then
-            -- Try to update instrument group using t_instrument_name
-            SELECT instrument_group
-            INTO _instrumentGroupToUse
-            FROM t_instrument_name
-            WHERE instrument = _requestedInstrumentGroup::citext;
-
-            If Not FOUND Then
-                If _requestedInstrumentGroup = '' Then
-                    _message := 'Invalid Instrument Group: empty string';
-                Else
-                    _message := format('Invalid Instrument Group: %s', _requestedInstrumentGroup);
-                End If;
-
-                _returnCode := 'U5203';
                 RETURN;
             End If;
         End If;
@@ -251,11 +223,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.validate_requested_run_batch_params(IN _batchid integer, IN _name text, IN _description text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _requestedinstrumentgroup text, IN _comment text, INOUT _batchgroupid integer, INOUT _batchgrouporder integer, IN _mode text, INOUT _instrumentgrouptouse text, INOUT _userid integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE public.validate_requested_run_batch_params(IN _batchid integer, IN _name text, IN _description text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _comment text, INOUT _batchgroupid integer, INOUT _batchgrouporder integer, IN _mode text, INOUT _userid integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE validate_requested_run_batch_params(IN _batchid integer, IN _name text, IN _description text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _requestedinstrumentgroup text, IN _comment text, INOUT _batchgroupid integer, INOUT _batchgrouporder integer, IN _mode text, INOUT _instrumentgrouptouse text, INOUT _userid integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE validate_requested_run_batch_params(IN _batchid integer, IN _name text, IN _description text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _comment text, INOUT _batchgroupid integer, INOUT _batchgrouporder integer, IN _mode text, INOUT _userid integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.validate_requested_run_batch_params(IN _batchid integer, IN _name text, IN _description text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _requestedinstrumentgroup text, IN _comment text, INOUT _batchgroupid integer, INOUT _batchgrouporder integer, IN _mode text, INOUT _instrumentgrouptouse text, INOUT _userid integer, INOUT _message text, INOUT _returncode text) IS 'ValidateRequestedRunBatchParams';
+COMMENT ON PROCEDURE public.validate_requested_run_batch_params(IN _batchid integer, IN _name text, IN _description text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _comment text, INOUT _batchgroupid integer, INOUT _batchgrouporder integer, IN _mode text, INOUT _userid integer, INOUT _message text, INOUT _returncode text) IS 'ValidateRequestedRunBatchParams';
 
