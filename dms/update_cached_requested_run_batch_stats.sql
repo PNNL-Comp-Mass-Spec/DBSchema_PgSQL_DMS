@@ -29,6 +29,8 @@ CREATE OR REPLACE PROCEDURE public.update_cached_requested_run_batch_stats(IN _b
 **          07/11/2023 mem - Use COUNT(RR.request_id) and COUNT(RR.dataset_id) instead of COUNT(*)
 **          09/01/2023 mem - Remove unnecessary cast to citext for string constants
 **          01/02/2024 mem - Fix column name bug when joining v_requested_run_queue_times to t_requested_run
+**          01/19/2024 mem - Fix bug that failed to populate column separation_group_last when adding a new batch to t_cached_requested_run_batch_stats
+**                           Populate columns instrument_group_first and instrument_group_last
 **
 *****************************************************/
 DECLARE
@@ -125,6 +127,8 @@ BEGIN
             USING (
                     SELECT BatchQ.batch_id,
                            StatsQ.oldest_request_created,
+                           StatsQ.instrument_group_first,
+                           StatsQ.instrument_group_last,
                            StatsQ.separation_group_first,
                            StatsQ.separation_group_last,
                            ActiveStatsQ.active_requests,
@@ -142,6 +146,8 @@ BEGIN
                          LEFT OUTER JOIN
                          ( SELECT RR.batch_id AS batch_id,
                                   MIN(RR.created) AS oldest_request_created,
+                                  MIN(RR.instrument_group) AS instrument_group_first,
+                                  MAX(RR.instrument_group) AS instrument_group_last,
                                   MIN(RR.separation_group) AS separation_group_first,
                                   MAX(RR.separation_group) AS separation_group_last
                            FROM t_requested_run RR
@@ -164,30 +170,42 @@ BEGIN
                   ) AS s
             ON ( t.batch_id = s.batch_id )
             WHEN MATCHED AND
-                 ( t.separation_group_first IS DISTINCT FROM s.separation_group_first OR
-                   t.separation_group_last  IS DISTINCT FROM s.separation_group_last OR
-                   t.active_requests        IS DISTINCT FROM s.active_requests OR
-                   t.first_active_request   IS DISTINCT FROM s.first_active_request OR
-                   t.last_active_request    IS DISTINCT FROM s.last_active_request OR
+                 ( t.instrument_group_first        IS DISTINCT FROM s.instrument_group_first OR
+                   t.instrument_group_last         IS DISTINCT FROM s.instrument_group_last OR
+                   t.separation_group_first        IS DISTINCT FROM s.separation_group_first OR
+                   t.separation_group_last         IS DISTINCT FROM s.separation_group_last OR
+                   t.active_requests               IS DISTINCT FROM s.active_requests OR
+                   t.first_active_request          IS DISTINCT FROM s.first_active_request OR
+                   t.last_active_request           IS DISTINCT FROM s.last_active_request OR
                    t.oldest_active_request_created IS DISTINCT FROM s.oldest_active_request_created OR
                    t.oldest_request_created        IS DISTINCT FROM s.oldest_request_created OR
                    t.days_in_queue                 IS DISTINCT FROM s.days_in_queue
                  ) THEN
                 UPDATE SET
-                    separation_group_first = s.separation_group_first,
-                    separation_group_last  = s.separation_group_last,
-                    active_requests        = s.active_requests,
-                    first_active_request   = s.first_active_request,
-                    last_active_request    = s.last_active_request,
+                    instrument_group_first        = s.instrument_group_first,
+                    instrument_group_last         = s.instrument_group_last,
+                    separation_group_first        = s.separation_group_first,
+                    separation_group_last         = s.separation_group_last,
+                    active_requests               = s.active_requests,
+                    first_active_request          = s.first_active_request,
+                    last_active_request           = s.last_active_request,
                     oldest_active_request_created = s.oldest_active_request_created,
-                    oldest_request_created = s.oldest_request_created,
-                    days_in_queue          = s.days_in_queue,
-                    last_affected          = statement_timestamp()
+                    oldest_request_created        = s.oldest_request_created,
+                    days_in_queue                 = s.days_in_queue,
+                    last_affected                 = statement_timestamp()
             WHEN NOT MATCHED THEN
-                INSERT ( batch_id, separation_group_first, active_requests, first_active_request, last_active_request,
-                         oldest_active_request_created, oldest_request_created, days_in_queue, last_affected )
-                VALUES ( s.batch_id, s.separation_group_first, s.active_requests, s.first_active_request, s.last_active_request,
-                         s.oldest_active_request_created, s.oldest_request_created, s.days_in_queue, statement_timestamp() )
+                INSERT ( batch_id,
+                         instrument_group_first, instrument_group_last,
+                         separation_group_first, separation_group_last,
+                         active_requests, first_active_request, last_active_request,
+                         oldest_active_request_created, oldest_request_created,
+                         days_in_queue, last_affected )
+                VALUES ( s.batch_id,
+                         s.instrument_group_first, s.instrument_group_last,
+                         s.separation_group_first, s.separation_group_last,
+                         s.active_requests, s.first_active_request, s.last_active_request,
+                         s.oldest_active_request_created, s.oldest_request_created,
+                         s.days_in_queue, statement_timestamp() )
             ;
 
         END;

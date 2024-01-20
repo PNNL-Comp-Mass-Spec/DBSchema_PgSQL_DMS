@@ -5,6 +5,8 @@
 CREATE TABLE public.t_cached_requested_run_batch_stats (
     batch_id integer NOT NULL,
     requests integer,
+    instrument_group_first text,
+    instrument_group_last text,
     separation_group_first text,
     separation_group_last text,
     active_requests integer,
