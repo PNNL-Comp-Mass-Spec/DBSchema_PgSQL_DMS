@@ -1,5 +1,5 @@
 --
--- Name: v_requested_run_batch_list_report; Type: VIEW; Schema: public; Owner: d3l243
+-- Name: v_requested_run_batch_list_report_uncached; Type: VIEW; Schema: public; Owner: d3l243
 --
 
 CREATE VIEW public.v_requested_run_batch_list_report_uncached AS
@@ -15,12 +15,15 @@ CREATE VIEW public.v_requested_run_batch_list_report_uncached AS
         CASE
             WHEN (completed_requests.runs > 0) THEN
             CASE
-                WHEN (completed_requests.instrumentfirst OPERATOR(public.=) completed_requests.instrumentlast) THEN (completed_requests.instrumentfirst)::public.citext
-                ELSE (((completed_requests.instrumentfirst)::public.citext || ' - '::public.citext) || (completed_requests.instrumentlast)::public.citext)
+                WHEN (completed_requests.instrument_first OPERATOR(public.=) completed_requests.instrument_last) THEN (completed_requests.instrument_first)::text
+                ELSE (((completed_requests.instrument_first)::text || (' - '::public.citext)::text) || (completed_requests.instrument_last)::text)
             END
-            ELSE ''::public.citext
+            ELSE (''::public.citext)::text
         END AS instrument,
-    rrb.requested_instrument_group AS inst_group,
+        CASE
+            WHEN (active_req_runs.instrument_group_first OPERATOR(public.=) active_req_runs.instrument_group_last) THEN (active_req_runs.instrument_group_first)::text
+            ELSE (((active_req_runs.instrument_group_first)::text || ' - '::text) || (active_req_runs.instrument_group_last)::text)
+        END AS inst_group,
     rrb.description,
     t_users.name AS owner,
     rrb.created,
@@ -33,8 +36,8 @@ CREATE VIEW public.v_requested_run_batch_list_report_uncached AS
     rrb.justification_for_high_priority,
     rrb.comment,
         CASE
-            WHEN (active_req_runs.separation_group_first OPERATOR(public.=) active_req_runs.separation_group_last) THEN (active_req_runs.separation_group_first)::public.citext
-            ELSE (((active_req_runs.separation_group_first)::public.citext || ' - '::public.citext) || (active_req_runs.separation_group_last)::public.citext)
+            WHEN (active_req_runs.separation_group_first OPERATOR(public.=) active_req_runs.separation_group_last) THEN (active_req_runs.separation_group_first)::text
+            ELSE (((active_req_runs.separation_group_first)::text || (' - '::public.citext)::text) || (active_req_runs.separation_group_last)::text)
         END AS separation_group,
         CASE
             WHEN (active_req_runs.requests IS NULL) THEN 0
@@ -46,6 +49,8 @@ CREATE VIEW public.v_requested_run_batch_list_report_uncached AS
    FROM ((((public.t_requested_run_batches rrb
      LEFT JOIN public.t_users ON ((rrb.owner_user_id = t_users.user_id)))
      LEFT JOIN ( SELECT rr1.batch_id AS batchid,
+            public.min(rr1.instrument_group) AS instrument_group_first,
+            public.max(rr1.instrument_group) AS instrument_group_last,
             public.min(rr1.separation_group) AS separation_group_first,
             public.max(rr1.separation_group) AS separation_group_last,
             count(rr1.request_id) AS requests,
@@ -59,8 +64,8 @@ CREATE VIEW public.v_requested_run_batch_list_report_uncached AS
             count(rr2.request_id) AS runs,
             min(rr2.created) AS oldest_request_created,
             max(qt.days_in_queue) AS max_days_in_queue,
-            public.min(instname.instrument) AS instrumentfirst,
-            public.max(instname.instrument) AS instrumentlast
+            public.min(instname.instrument) AS instrument_first,
+            public.max(instname.instrument) AS instrument_last
            FROM (((public.t_requested_run rr2
              JOIN public.v_requested_run_queue_times qt ON ((qt.requested_run_id = rr2.request_id)))
              JOIN public.t_dataset ds ON ((rr2.dataset_id = ds.dataset_id)))
@@ -71,7 +76,7 @@ CREATE VIEW public.v_requested_run_batch_list_report_uncached AS
             max(qt.days_in_queue) AS days_in_prep_queue,
             sum(
                 CASE
-                    WHEN ((COALESCE(spr.block_and_randomize_runs, ''::public.citext) = 'yes'::public.citext) AND ((COALESCE(rr3.block, 0) = 0) OR (COALESCE(rr3.run_order, 0) = 0))) THEN 1
+                    WHEN ((COALESCE(spr.block_and_randomize_runs, ''::public.citext) OPERATOR(public.=) 'yes'::public.citext) AND ((COALESCE(rr3.block, 0) = 0) OR (COALESCE(rr3.run_order, 0) = 0))) THEN 1
                     ELSE 0
                 END) AS block_missing,
             sum(
@@ -87,7 +92,7 @@ CREATE VIEW public.v_requested_run_batch_list_report_uncached AS
   WHERE (rrb.batch_id > 0);
 
 
-ALTER TABLE public.v_requested_run_batch_list_report_uncached OWNER TO d3l243;
+ALTER VIEW public.v_requested_run_batch_list_report_uncached OWNER TO d3l243;
 
 --
 -- Name: TABLE v_requested_run_batch_list_report_uncached; Type: ACL; Schema: public; Owner: d3l243
