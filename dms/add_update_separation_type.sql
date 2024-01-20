@@ -1,19 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_separation_type
-(
-    _id int,
-    _sepTypeName text,
-    _sepGroupName text,
-    _comment text,
-    _sampleType text,
-    _state text = 'Active',
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_separation_type(integer, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_separation_type(IN _id integer, IN _septypename text, IN _sepgroupname text, IN _comment text, IN _sampletype text, IN _state text DEFAULT 'Active'::text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -34,18 +25,19 @@ AS $$
 **  Auth:   bcg
 **  Date:   12/19/2019 bcg - Initial version
 **          08/11/2021 mem - Determine the next ID to use when adding a new separation type
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/18/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _debugMsg text := '';
     _nextID Int;
-    _stateInt integer := 0;
+    _activeValue integer := 0;
     _badCh text;
+    _matchedValue text;
     _sampleTypeID integer := 0;
     _existingName citext := '';
-    _oldState integer := 0;
-    _ignoreDatasetChecks int := 0;
+    _currentActiveValue integer := 0;
+    _ignoreDatasetChecks boolean := false;
     _conflictID int := 0;
     _datasetCount int;
     _maxDatasetID int;
@@ -59,13 +51,59 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _id          := Coalesce(_id, 0);
-    _sepTypeName := Trim(Coalesce(_sepTypeName, ''));
-    _state       := Trim(Coalesce(_state, 'Active'));
-    _mode        := Trim(Lower(Coalesce(_mode, '')));
+    _id           := Coalesce(_id, 0);
+    _sepTypeName  := Trim(Coalesce(_sepTypeName, ''));
+    _sepGroupName := Trim(Coalesce(_sepGroupName, ''));
+    _comment      := Trim(Coalesce(_comment, ''));
+    _sampleType   := Trim(Coalesce(_sampleType, ''));
+    _state        := Trim(Coalesce(_state, 'Active'));
+    _mode         := Trim(Lower(Coalesce(_mode, '')));
+
+    If _sepTypeName = '' Then
+        _message := 'Separation type name must be specified';
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5201';
+        RETURN;
+    End If;
+
+    If _sepGroupName = '' Then
+        _message := 'Separation group name must be specified';
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5202';
+        RETURN;
+    End If;
+
+    SELECT separation_group
+    INTO _matchedValue
+    FROM t_separation_group
+    WHERE separation_group = _sepGroupName::citext;
+
+    If FOUND Then
+        _sepGroupName := _matchedValue;
+    Else
+        _message := format('Invalid separation group: %s', _sepGroupName);
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5203';
+        RETURN;
+    End If;
+
+    If _sampleType = '' Then
+        _message := 'Sample type must be specified';
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5204';
+        RETURN;
+    End If;
 
     If _state = '' Then
         _state := 'Active';
+    End If;
+
+    If Not _mode::citext In ('Add', 'Update') Then
+        RAISE WARNING 'Mode is not "add" or "update"; no changes will be saved';
     End If;
 
     ---------------------------------------------------
@@ -76,7 +114,7 @@ BEGIN
         _message := format('Separation type state must be Active or Inactive; %s is not allowed', _state);
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5201';
+        _returnCode := 'U5205';
         RETURN;
     End If;
 
@@ -84,10 +122,10 @@ BEGIN
     -- Convert text state to integer
     ---------------------------------------------------
 
-    If _state = 'Active' Then
-        _stateint := 1;
+    If _state::citext = 'Active' Then
+        _activeValue := 1;
     Else
-        _stateint := 0;
+        _activeValue := 0;
     End If;
 
     ---------------------------------------------------
@@ -106,15 +144,15 @@ BEGIN
 
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5202';
+        _returnCode := 'U5206';
         RETURN;
     End If;
 
     If char_length(_sepTypeName) < 6 Then
-        _message := format('Separation Type name must be at least 6 characters in length; currently %s characters', char_length(_sepTypeName));
+        _message := format('Separation type name must be at least 6 characters in length; currently %s characters', char_length(_sepTypeName));
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5203';
+        _returnCode := 'U5207';
         RETURN;
     End If;
 
@@ -131,7 +169,7 @@ BEGIN
         _message := format('Invalid sample type: "%s"', _sampleType);
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5204';
+        _returnCode := 'U5208';
         RETURN;
     End If;
 
@@ -142,17 +180,16 @@ BEGIN
     If _mode = 'update' Then
         -- Lookup the current name and state
 
-        SELECT separation_type,
-                active
-        INTO _existingName, _oldState
+        SELECT separation_type, active
+        INTO _existingName, _currentActiveValue
         FROM t_secondary_sep
         WHERE separation_type_id = _id;
 
         If Not FOUND Then
-            _message := 'Cannot update: separation type ID % does not exist', _id;
+            _message := format('Cannot update: separation type ID %s does not exist', _id);
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5205';
+            _returnCode := 'U5209';
             RETURN;
         End If;
 
@@ -161,29 +198,29 @@ BEGIN
             SELECT separation_type_id
             INTO _conflictID
             FROM t_secondary_sep
-            WHERE separation_type = _sepTypeName;
+            WHERE separation_type = _sepTypeName::citext;
 
             If FOUND Then
                 _message := format('Cannot rename separation type from %s to %s because the new name is already in use by ID %s',
                                     _existingName, _sepTypeName, _conflictID);
                 RAISE WARNING '%', _message;
 
-                _returnCode := 'U5206';
+                _returnCode := 'U5210';
                 RETURN;
             End If;
         End If;
 
         ---------------------------------------------------
-        -- Only allow updating the state of Separation Type items that are associated with a dataset
+        -- If a separation type is associated with one or more datasets, only allow updating the state
         ---------------------------------------------------
 
-        If _ignoreDatasetChecks = 0 And Exists (SELECT separation_type FROM t_dataset WHERE separation_type = _sepTypeName) Then
+        If Not _ignoreDatasetChecks And Exists (SELECT dataset_id FROM t_dataset WHERE separation_type = _existingName) Then
 
             SELECT COUNT(dataset_id),
                    MAX(dataset_id)
             INTO _datasetCount, _maxDatasetID
             FROM t_dataset
-            WHERE separation_type = _id;
+            WHERE separation_type = _existingName::citext;
 
             SELECT dataset
             INTO _datasetName
@@ -196,9 +233,9 @@ BEGIN
                 _datasetDescription := format('%s datasets', _datasetCount);
             End If;
 
-            If _stateInt <> _oldState Then
+            If _activeValue <> _currentActiveValue Then
                 UPDATE t_secondary_sep
-                SET active = _stateInt
+                SET active = _activeValue
                 WHERE separation_type_id = _id;
 
                 _message := format('Updated state to %s; any other changes were ignored because this separation type is associated with %s', _state, _datasetDescription);
@@ -206,27 +243,32 @@ BEGIN
                 RETURN;
             End If;
 
-            _message := format('Separation Type ID %s is associated with %s, most recently %s; contact a DMS admin to update the configuration',
-                                _id, _datasetDescription, _datasetName);
+            If _datasetCount = 1 Then
+                _message := format('Separation Type ID %s is associated with %s; only the state can be updated using the website. Contact a DMS admin to update other metadata',
+                                   _id, _datasetDescription, _datasetName);
+            Else
+                _message := format('Separation Type ID %s is associated with %s; only the state can be updated using the website. Contact a DMS admin to update other metadata',
+                                   _id, _datasetDescription, _datasetName);
+            End If;
 
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5207';
+            _returnCode := 'U5211';
             RETURN;
         End If;
 
     End If;
 
     ---------------------------------------------------
-    -- Validate that the LC Cart Config name is unique when creating a new entry
+    -- Validate that the separation type name is unique when creating a new entry
     ---------------------------------------------------
 
     If _mode = 'add' Then
-        If Exists (SELECT separation_type FROM t_secondary_sep WHERE separation_type = _sepTypeName) Then
-            _message := format('Separation Type already exists; cannot add a new separation type named %s', _sepTypeName);
+        If Exists (SELECT separation_type FROM t_secondary_sep WHERE separation_type = _sepTypeName::citext) Then
+            _message := format('Separation type already exists; cannot add a new separation type named %s', _sepTypeName);
             RAISE WARNING '%', _message;
 
-            _returnCode := 'U5208';
+            _returnCode := 'U5212';
             RETURN;
         End If;
     End If;
@@ -255,7 +297,7 @@ BEGIN
             _sepGroupName,
             _comment,
             _sampleTypeID,
-            _stateInt,
+            _activeValue,
             CURRENT_TIMESTAMP
         );
 
@@ -272,12 +314,23 @@ BEGIN
             separation_group = _sepGroupName,
             comment          = _comment,
             sample_type_id   = _sampleTypeID,
-            active           = _stateInt
-        WHERE separation_type_id = _id
+            active           = _activeValue
+        WHERE separation_type_id = _id;
 
+        If _existingName <> _sepTypeName::citext Then
+            _message := format('Renamed separation type to %s', _sepTypeName);
+        End If;
     End If;
 
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_separation_type IS 'AddUpdateSeparationType';
+
+ALTER PROCEDURE public.add_update_separation_type(IN _id integer, IN _septypename text, IN _sepgroupname text, IN _comment text, IN _sampletype text, IN _state text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_separation_type(IN _id integer, IN _septypename text, IN _sepgroupname text, IN _comment text, IN _sampletype text, IN _state text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_separation_type(IN _id integer, IN _septypename text, IN _sepgroupname text, IN _comment text, IN _sampletype text, IN _state text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateSeparationType';
+
