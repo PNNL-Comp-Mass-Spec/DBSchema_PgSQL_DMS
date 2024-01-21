@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE public.do_requested_run_batch_operation(IN _batchid 
 **          06/11/2023 mem - Add missing variable _nameWithSchema
 **          09/01/2023 mem - Remove unnecessary cast to citext for string constants
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          01/20/2024 mem - Remove reference to deprecated column Requested_Instrument_Group when copying data from T_Requested_Run_Batches to T_Deleted_Requested_Run_Batch
 **
 *****************************************************/
 DECLARE
@@ -164,11 +165,11 @@ BEGIN
             INSERT INTO T_Deleted_Requested_Run_Batch (Batch_ID, Batch, Description, Owner_User_ID, Created, Locked,
                                                        Last_Ordered, Requested_Batch_Priority, Actual_Batch_Priority,
                                                        Requested_Completion_Date, Justification_for_High_Priority, Comment,
-                                                       Requested_Instrument_Group, Batch_Group_ID, Batch_Group_Order)
+                                                       Batch_Group_ID, Batch_Group_Order)
             SELECT Batch_ID, Batch, Description, Owner_User_ID, Created, Locked,
                    Last_Ordered, Requested_Batch_Priority, Actual_Batch_Priority,
                    Requested_Completion_Date, Justification_for_High_Priority, Comment,
-                   Requested_Instrument_Group, Batch_Group_ID, Batch_Group_Order
+                   Batch_Group_ID, Batch_Group_Order
             FROM T_Requested_Run_Batches
             WHERE Batch_ID = _batchID;
 
