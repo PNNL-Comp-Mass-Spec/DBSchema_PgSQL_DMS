@@ -60,6 +60,7 @@ CREATE OR REPLACE PROCEDURE public.unconsume_scheduled_run(IN _datasetname text,
 **          10/18/2023 mem - Fix typo in format string
 **          12/02/2023 mem - Rename variable
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
+**          01/20/2024 mem - Ignore case when resolving dataset name to ID
 **
 *****************************************************/
 DECLARE
@@ -80,7 +81,7 @@ DECLARE
     _extracted text;
     _originalRequestStatus citext;
     _originalRequesetDatasetID int;
-    _newStatus text;
+    _newStatus citext;
     _newQueueState int;
     _stateID int;
     _targetType int;
@@ -103,7 +104,7 @@ BEGIN
     SELECT dataset_id
     INTO _datasetID
     FROM t_dataset
-    WHERE dataset = _datasetName;
+    WHERE dataset = _datasetName::citext;
 
     If Not FOUND Then
         _message := format('Dataset does not exist: "%s"', _datasetName);
