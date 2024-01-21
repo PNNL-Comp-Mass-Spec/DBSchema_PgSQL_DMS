@@ -21,9 +21,9 @@ DECLARE
 BEGIN
     SELECT acq_time_start
     INTO _nextStartTime
-    FROM    t_dataset
-    WHERE   instrument_id = _instrumentID
-            AND acq_time_start > _start
+    FROM t_dataset
+    WHERE instrument_id = _instrumentID AND
+          acq_time_start > _start
     ORDER BY acq_time_start
     LIMIT 1;
 

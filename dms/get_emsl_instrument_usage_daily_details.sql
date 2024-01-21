@@ -127,7 +127,7 @@ BEGIN
            ON InstUsage.dms_inst_id = InstName.instrument_id
          LEFT OUTER JOIN t_emsl_instrument_usage_type InstUsageType
            ON InstUsage.usage_type_id = InstUsageType.usage_type_id
-    WHERE InstUsage.year = _year AND
+    WHERE InstUsage.year  = _year AND
           InstUsage.month = _month;
 
     _continue := true;
@@ -200,60 +200,60 @@ BEGIN
                 W.Operator::text,
                 W.Seq
         FROM Tmp_T_Working W
-        WHERE W.Day = W.Day_at_Run_End AND
+        WHERE W.Day   = W.Day_at_Run_End AND
               W.Month = W.Month_at_Run_End;
 
         -- Remove the usage records that we just copied into Tmp_T_Report_Accumulation
 
         DELETE FROM Tmp_T_Working W
-        WHERE  W.Day = W.Day_at_Run_End AND
-               W.Month = W.Month_at_Run_End;
+        WHERE W.Day   = W.Day_at_Run_End AND
+              W.Month = W.Month_at_Run_End;
 
         -- Also remove any rows that have a negative value for RemainingDurationSeconds
         -- This will be true for any datasets that were started in the evening on the last day of the month
         -- and were still acquiring data when we reached midnight and entered a new month
 
         DELETE FROM Tmp_T_Working W
-        WHERE  W.Remaining_Duration_Seconds < 0;
+        WHERE W.Remaining_Duration_Seconds < 0;
 
         -- Copy report entries into accumulation table for
         -- remaining durations (datasets that cross daily boundaries)
         -- using only duration time contained inside the daily boundary
 
-        INSERT INTO Tmp_T_Report_Accumulation
-        ( EMSL_Inst_ID,
-          DMS_Instrument,
-          Proposal,
-          Usage,
-          Users,
-          Start,
-          Duration_Seconds,
-          Year,
-          Month,
-          Day,
-          Dataset_ID,
-          Type,
-          Dataset_ID_Acq_Overlap,
-          Comment,
-          Operator,
-          Seq
+        INSERT INTO Tmp_T_Report_Accumulation (
+            EMSL_Inst_ID,
+            DMS_Instrument,
+            Proposal,
+            Usage,
+            Users,
+            Start,
+            Duration_Seconds,
+            Year,
+            Month,
+            Day,
+            Dataset_ID,
+            Type,
+            Dataset_ID_Acq_Overlap,
+            Comment,
+            Operator,
+            Seq
         )
-        SELECT  W.EMSL_Inst_ID,
-                W.DMS_Instrument,
-                W.Proposal,
-                W.Usage,
-                W.Users,
-                W.Run_or_Interval_Start,
-                W.Duration_Seconds_In_Current_Day AS Duration_Seconds,
-                W.Year,
-                W.Month,
-                W.Day,
-                W.Dataset_ID,
-                W.Type,
-                W.Dataset_ID_Acq_Overlap,
-                W.Comment,
-                W.Operator::text,
-                W.Seq
+        SELECT W.EMSL_Inst_ID,
+               W.DMS_Instrument,
+               W.Proposal,
+               W.Usage,
+               W.Users,
+               W.Run_or_Interval_Start,
+               W.Duration_Seconds_In_Current_Day AS Duration_Seconds,
+               W.Year,
+               W.Month,
+               W.Day,
+               W.Dataset_ID,
+               W.Type,
+               W.Dataset_ID_Acq_Overlap,
+               W.Comment,
+               W.Operator::text,
+               W.Seq
         FROM Tmp_T_Working W;
 
         -- Update start time and duration of entries in working table
@@ -332,8 +332,8 @@ BEGIN
 
     -- Rollup operators and add to the accumulation table
 
-    UPDATE  Tmp_T_Report_Accumulation
-    SET     Operator = GroupQ.Operator
+    UPDATE Tmp_T_Report_Accumulation
+    SET Operator = GroupQ.Operator
     FROM ( SELECT DistinctQ.EMSL_Inst_ID,
                   DistinctQ.DMS_Instrument,
                   DistinctQ.Type,
@@ -384,23 +384,23 @@ BEGIN
     -- Include each dataset as a separate row
 
     RETURN QUERY
-    SELECT  Src.EMSL_Inst_ID,
-            Src.DMS_Instrument::citext AS Instrument,
-            Src.Type::citext,
-            MIN(Src.Start) AS Start,
-            CEILING(SUM(Src.Duration_Seconds)::float8 / 60)::int AS Minutes,
-            Src.Proposal::citext,
-            Src.Usage::citext,
-            Src.Users::citext,
-            Src.Operator::citext,
-            Src.Comment::citext,
-            Src.Year,
-            Src.Month,
-            Src.Dataset_ID,
-            Src.Dataset_ID_Acq_Overlap,
-            MIN(Src.Seq) as Seq,
-            NULL::timestamp AS Updated,
-            NULL::citext AS UpdatedBy
+    SELECT Src.EMSL_Inst_ID,
+           Src.DMS_Instrument::citext AS Instrument,
+           Src.Type::citext,
+           MIN(Src.Start) AS Start,
+           CEILING(SUM(Src.Duration_Seconds)::float8 / 60)::int AS Minutes,
+           Src.Proposal::citext,
+           Src.Usage::citext,
+           Src.Users::citext,
+           Src.Operator::citext,
+           Src.Comment::citext,
+           Src.Year,
+           Src.Month,
+           Src.Dataset_ID,
+           Src.Dataset_ID_Acq_Overlap,
+           MIN(Src.Seq) as Seq,
+           NULL::timestamp AS Updated,
+           NULL::citext AS UpdatedBy
     FROM Tmp_T_Report_Accumulation Src
     WHERE NOT Src.Usage IN ('AVAILABLE', 'BROKEN', 'MAINTENANCE')
     GROUP BY Src.EMSL_Inst_ID,
@@ -425,23 +425,23 @@ BEGIN
     -- Next return maintenance datasets, where we report one entry per day
 
     RETURN QUERY
-    SELECT  Src.EMSL_Inst_ID,
-            Src.DMS_Instrument::citext AS Instrument,
-            Src.Type::citext,
-            MIN(Src.Start) AS Start,
-            CEILING(SUM(Src.Duration_Seconds)::float8 / 60)::int AS Minutes,
-            Src.Proposal::citext,
-            Src.Usage::citext,
-            Src.Users::citext,
-            Src.Operator::citext,
-            Src.Comment::citext,
-            Src.Year,
-            Src.Month,
-            NULL::int AS Dataset_ID,             -- Store null since we're rolling up multiple rows
-            NULL::int As Dataset_ID_Acq_Overlap,
-            MIN(Src.Seq) as Seq,
-            NULL::timestamp AS Updated,
-            NULL::citext AS UpdatedBy
+    SELECT Src.EMSL_Inst_ID,
+           Src.DMS_Instrument::citext AS Instrument,
+           Src.Type::citext,
+           MIN(Src.Start) AS Start,
+           CEILING(SUM(Src.Duration_Seconds)::float8 / 60)::int AS Minutes,
+           Src.Proposal::citext,
+           Src.Usage::citext,
+           Src.Users::citext,
+           Src.Operator::citext,
+           Src.Comment::citext,
+           Src.Year,
+           Src.Month,
+           NULL::int AS Dataset_ID,             -- Store null since we're rolling up multiple rows
+           NULL::int As Dataset_ID_Acq_Overlap,
+           MIN(Src.Seq) as Seq,
+           NULL::timestamp AS Updated,
+           NULL::citext AS UpdatedBy
     FROM Tmp_T_Report_Accumulation Src
     WHERE Src.Usage IN ('AVAILABLE', 'BROKEN', 'MAINTENANCE')
     GROUP BY Src.EMSL_Inst_ID,

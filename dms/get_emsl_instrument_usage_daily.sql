@@ -176,47 +176,47 @@ BEGIN
                 W.Comment,
                 W.Operator::text
         FROM Tmp_T_Working W
-        WHERE W.Day = W.Day_at_Run_End AND
+        WHERE W.Day   = W.Day_at_Run_End AND
               W.Month = W.Month_at_Run_End;
 
         -- Remove report entries from working table
         -- whose duration does not cross daily boundary
 
         DELETE FROM Tmp_T_Working
-        WHERE  Remaining_Duration_Seconds < 0;
+        WHERE Remaining_Duration_Seconds < 0;
 
         -- Copy report entries into accumulation table for
         -- remaining durations (cross daily boundaries)
         -- using only duration time contained inside daily boundary
 
-        INSERT INTO Tmp_T_Report_Accumulation
-        ( EMSL_Inst_ID,
-          DMS_Instrument,
-          Proposal,
-          Usage,
-          Users,
-          Start,
-          Duration_Seconds,
-          Year,
-          Month,
-          Day,
-          Type,
-          Comment,
-          Operator
+        INSERT INTO Tmp_T_Report_Accumulation(
+            EMSL_Inst_ID,
+            DMS_Instrument,
+            Proposal,
+            Usage,
+            Users,
+            Start,
+            Duration_Seconds,
+            Year,
+            Month,
+            Day,
+            Type,
+            Comment,
+            Operator
         )
-        SELECT  W.EMSL_Inst_ID,
-                W.DMS_Instrument,
-                W.Proposal,
-                W.Usage,
-                W.Users,
-                W.Run_or_Interval_Start,
-                W.Duration_Seconds_In_Current_Day AS Duration_Seconds,
-                W.Year,
-                W.Month,
-                W.Day,
-                W.Type,
-                W.Comment,
-                W.Operator::text
+        SELECT W.EMSL_Inst_ID,
+               W.DMS_Instrument,
+               W.Proposal,
+               W.Usage,
+               W.Users,
+               W.Run_or_Interval_Start,
+               W.Duration_Seconds_In_Current_Day AS Duration_Seconds,
+               W.Year,
+               W.Month,
+               W.Day,
+               W.Type,
+               W.Comment,
+               W.Operator::text
         FROM Tmp_T_Working W;
 
         -- Update start time and duration of entries in working table

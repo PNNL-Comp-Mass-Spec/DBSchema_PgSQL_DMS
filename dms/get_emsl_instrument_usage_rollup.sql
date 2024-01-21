@@ -97,7 +97,7 @@ BEGIN
            ON InstUsage.dms_inst_id = InstName.instrument_id
          LEFT OUTER JOIN t_emsl_instrument_usage_type InstUsageType
            ON InstUsage.usage_type_id = InstUsageType.usage_type_id
-    WHERE InstUsage.year = _year AND
+    WHERE InstUsage.year  = _year AND
           InstUsage.month = _month AND
           InstUsage.dataset_id_acq_overlap Is Null;
 
@@ -137,16 +137,16 @@ BEGIN
             Month,
             Day
         )
-        SELECT  W.EMSL_Inst_ID,
-                W.DMS_Instrument,
-                W.Proposal,
-                W.Usage,
-                W.Run_or_Interval_Start,
-                W.Duration_Seconds,
-                W.Month,
-                W.Day
+        SELECT W.EMSL_Inst_ID,
+               W.DMS_Instrument,
+               W.Proposal,
+               W.Usage,
+               W.Run_or_Interval_Start,
+               W.Duration_Seconds,
+               W.Month,
+               W.Day
         FROM Tmp_T_Working W
-        WHERE W.Day = W.Day_at_Run_End AND
+        WHERE W.Day   = W.Day_at_Run_End AND
               W.Month = W.Month_at_Run_End;
 
         -- Remove report entries from working table

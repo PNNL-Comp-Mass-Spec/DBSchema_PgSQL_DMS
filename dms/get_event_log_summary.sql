@@ -162,7 +162,7 @@ BEGIN
            (format('    Analysis Jobs entered (%s)', Tool.analysis_tool))::citext AS Label, COUNT(J.job)::citext AS Value
     FROM public.t_analysis_job J INNER JOIN
          public.t_analysis_tool Tool ON J.analysis_tool_id = Tool.analysis_tool_id
-    WHERE     J.created Between _startDate And _endDate
+    WHERE J.created Between _startDate And _endDate
     GROUP BY Tool.analysis_tool
     UNION
     SELECT 3.11 As SortKey,

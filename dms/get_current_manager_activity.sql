@@ -152,7 +152,6 @@ BEGIN
          ) T
     WHERE M.Who = T.Who;
 
-
     -- Populate temporary table with capture task managers that started a capture or archive task within the date range
 
     INSERT INTO Tmp_ManagerActivity(Who, What, Status_Date, Source)
