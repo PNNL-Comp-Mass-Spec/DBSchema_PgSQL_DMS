@@ -1,14 +1,13 @@
 --
--- Name: get_proposal_eus_users_list(public.citext, text, integer); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: get_proposal_eus_users_list(text, text, integer); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_proposal_eus_users_list(_proposalid public.citext, _mode text DEFAULT 'I'::text, _maxusers integer DEFAULT 5) RETURNS text
+CREATE OR REPLACE FUNCTION public.get_proposal_eus_users_list(_proposalid text, _mode text DEFAULT 'I'::text, _maxusers integer DEFAULT 5) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
-**  Desc:   Builds delimited list of EUS users for
-**          given proposal
+**  Desc:   Builds delimited list of EUS users for given proposal
 **
 **  Return value: comma or semicolon delimited list
 **
@@ -28,6 +27,7 @@ CREATE OR REPLACE FUNCTION public.get_proposal_eus_users_list(_proposalid public
 **          06/22/2022 mem - Ported to PostgreSQL
 **          05/24/2023 mem - Use format() for string concatenation
 **          05/30/2023 mem - Use ElsIf for Else If
+**          01/20/2024 mem - Change data type of _proposalID to text
 **
 *****************************************************/
 DECLARE
@@ -45,7 +45,7 @@ BEGIN
         FROM t_eus_proposal_users P
              INNER JOIN t_eus_users U
                ON P.person_id = U.person_id
-        WHERE P.proposal_id = _proposalID AND
+        WHERE P.proposal_id = _proposalID::citext AND
               P.state_id <> 5
         LIMIT _maxUsers;
 
@@ -55,7 +55,7 @@ BEGIN
         FROM t_eus_proposal_users P
              INNER JOIN t_eus_users U
                ON P.person_id = U.person_id
-        WHERE P.proposal_id = _proposalID AND
+        WHERE P.proposal_id = _proposalID::citext AND
               P.state_id <> 5
         LIMIT _maxUsers;
 
@@ -65,7 +65,7 @@ BEGIN
         FROM t_eus_proposal_users P
              INNER JOIN t_eus_users U
                ON P.person_id = U.person_id
-        WHERE P.proposal_id = _proposalID AND
+        WHERE P.proposal_id = _proposalID::citext AND
               P.state_id <> 5
         LIMIT _maxUsers;
 
@@ -75,7 +75,7 @@ BEGIN
         FROM t_eus_proposal_users P
              INNER JOIN t_eus_users U
                ON P.person_id = U.person_id
-        WHERE P.proposal_id = _proposalID AND
+        WHERE P.proposal_id = _proposalID::citext AND
               P.state_id <> 5
         LIMIT _maxUsers;
 
@@ -88,11 +88,11 @@ END
 $$;
 
 
-ALTER FUNCTION public.get_proposal_eus_users_list(_proposalid public.citext, _mode text, _maxusers integer) OWNER TO d3l243;
+ALTER FUNCTION public.get_proposal_eus_users_list(_proposalid text, _mode text, _maxusers integer) OWNER TO d3l243;
 
 --
--- Name: FUNCTION get_proposal_eus_users_list(_proposalid public.citext, _mode text, _maxusers integer); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION get_proposal_eus_users_list(_proposalid text, _mode text, _maxusers integer); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.get_proposal_eus_users_list(_proposalid public.citext, _mode text, _maxusers integer) IS 'GetProposalEUSUsersList';
+COMMENT ON FUNCTION public.get_proposal_eus_users_list(_proposalid text, _mode text, _maxusers integer) IS 'GetProposalEUSUsersList';
 

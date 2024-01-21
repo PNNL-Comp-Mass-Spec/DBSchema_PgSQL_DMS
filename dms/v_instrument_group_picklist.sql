@@ -16,7 +16,7 @@ CREATE VIEW public.v_instrument_group_picklist AS
         END AS instrument_group_and_instruments
    FROM ( SELECT g.instrument_group,
             g.usage,
-            (public.get_instrument_group_membership_list(g.instrument_group, 1, 64))::public.citext AS instruments,
+            (public.get_instrument_group_membership_list((g.instrument_group)::text, 1, 64))::public.citext AS instruments,
             g.comment,
             (public.get_instrument_group_dataset_type_list((g.instrument_group)::text, ', '::text))::public.citext AS allowed_dataset_types,
             g.sample_prep_visible,

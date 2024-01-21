@@ -11,7 +11,7 @@ CREATE VIEW public.v_instrument_group_list_report AS
     g.requested_run_visible,
     g.allocation_tag,
     COALESCE(dt.dataset_type, ''::public.citext) AS default_dataset_type,
-    (public.get_instrument_group_membership_list(g.instrument_group, 0, 0))::public.citext AS instruments,
+    (public.get_instrument_group_membership_list((g.instrument_group)::text, 0, 0))::public.citext AS instruments,
     (public.get_instrument_group_dataset_type_list((g.instrument_group)::text, ', '::text))::public.citext AS allowed_dataset_types
    FROM (public.t_instrument_group g
      LEFT JOIN public.t_dataset_type_name dt ON ((g.default_dataset_type = dt.dataset_type_id)));

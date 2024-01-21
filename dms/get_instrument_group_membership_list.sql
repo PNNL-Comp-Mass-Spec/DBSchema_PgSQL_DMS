@@ -1,8 +1,8 @@
 --
--- Name: get_instrument_group_membership_list(public.citext, integer, integer); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: get_instrument_group_membership_list(text, integer, integer); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_instrument_group_membership_list(_instrumentgroup public.citext, _activeonly integer, _maximumlength integer DEFAULT 64) RETURNS text
+CREATE OR REPLACE FUNCTION public.get_instrument_group_membership_list(_instrumentgroup text, _activeonly integer, _maximumlength integer DEFAULT 64) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -29,6 +29,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_group_membership_list(_instrume
 **          02/18/2021 mem - Add _activeOnly=2 which formats the instruments as a vertical bar separated list of instrument name and instrument ID
 **          06/21/2022 mem - Ported to PostgreSQL
 **          05/30/2023 mem - Use format() for string concatenation
+**          01/20/2024 mem - Change the data type of _instrumentGroup to text
 **
 *****************************************************/
 DECLARE
@@ -55,9 +56,9 @@ BEGIN
                 _delimiter ORDER BY instrument)
     INTO _result
     FROM t_instrument_name
-    WHERE instrument_group = _instrumentGroup AND
-            (_activeOnly In (0, 2) Or status <> 'inactive') AND
-            (_activeOnly In (0, 2) Or operations_role <> 'Offsite');
+    WHERE instrument_group = _instrumentGroup::citext AND
+          (_activeOnly In (0, 2) Or status <> 'inactive') AND
+          (_activeOnly In (0, 2) Or operations_role <> 'Offsite');
 
     If _maximumLength > 0 And char_length(_result) > _maximumLength Then
         _result := Rtrim(Substring(_result, 1, _maximumLength - 3));
@@ -74,11 +75,11 @@ END
 $$;
 
 
-ALTER FUNCTION public.get_instrument_group_membership_list(_instrumentgroup public.citext, _activeonly integer, _maximumlength integer) OWNER TO d3l243;
+ALTER FUNCTION public.get_instrument_group_membership_list(_instrumentgroup text, _activeonly integer, _maximumlength integer) OWNER TO d3l243;
 
 --
--- Name: FUNCTION get_instrument_group_membership_list(_instrumentgroup public.citext, _activeonly integer, _maximumlength integer); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION get_instrument_group_membership_list(_instrumentgroup text, _activeonly integer, _maximumlength integer); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.get_instrument_group_membership_list(_instrumentgroup public.citext, _activeonly integer, _maximumlength integer) IS 'GetInstrumentGroupMembershipList';
+COMMENT ON FUNCTION public.get_instrument_group_membership_list(_instrumentgroup text, _activeonly integer, _maximumlength integer) IS 'GetInstrumentGroupMembershipList';
 

@@ -1,8 +1,8 @@
 --
--- Name: get_campaign_role_person_list(integer, public.citext, public.citext); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: get_campaign_role_person_list(integer, text, text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_campaign_role_person_list(_campaignid integer, _role public.citext, _mode public.citext DEFAULT 'USERNAME'::public.citext) RETURNS text
+CREATE OR REPLACE FUNCTION public.get_campaign_role_person_list(_campaignid integer, _role text, _mode text DEFAULT 'USERNAME'::text) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -25,6 +25,7 @@ CREATE OR REPLACE FUNCTION public.get_campaign_role_person_list(_campaignid inte
 **          02/09/2023 mem - Change default value for _mode to 'USERNAME'
 **          05/24/2023 mem - Alias table names
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          01/20/2024 mem - Change data type of _role and _mode to text
 **
 *****************************************************/
 DECLARE
@@ -34,10 +35,10 @@ BEGIN
     If Not _campaignID Is Null And Not _role Is Null Then
         SELECT string_agg(LookupQ.Value, ', ' ORDER BY LookupQ.Value)
         INTO _result
-        FROM (  SELECT CASE WHEN _mode IN ('PRN', 'USERNAME')
+        FROM (  SELECT CASE WHEN _mode::citext IN ('PRN', 'USERNAME')
                             THEN U.username
                             ELSE U.name_with_username
-                       END as Value
+                       END AS Value
                 FROM T_Research_Team_Roles R
                      INNER JOIN T_Research_Team_Membership M
                        ON R.role_id = M.role_id
@@ -46,7 +47,7 @@ BEGIN
                      INNER JOIN T_Campaign C
                        ON M.team_id = C.research_team
                 WHERE C.campaign_id = _campaignID AND
-                      R.role = _role
+                      R.role = _role::citext
              ) LookupQ;
     End If;
 
@@ -55,11 +56,11 @@ END
 $$;
 
 
-ALTER FUNCTION public.get_campaign_role_person_list(_campaignid integer, _role public.citext, _mode public.citext) OWNER TO d3l243;
+ALTER FUNCTION public.get_campaign_role_person_list(_campaignid integer, _role text, _mode text) OWNER TO d3l243;
 
 --
--- Name: FUNCTION get_campaign_role_person_list(_campaignid integer, _role public.citext, _mode public.citext); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION get_campaign_role_person_list(_campaignid integer, _role text, _mode text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.get_campaign_role_person_list(_campaignid integer, _role public.citext, _mode public.citext) IS 'GetCampaignRolePersonList';
+COMMENT ON FUNCTION public.get_campaign_role_person_list(_campaignid integer, _role text, _mode text) IS 'GetCampaignRolePersonList';
 

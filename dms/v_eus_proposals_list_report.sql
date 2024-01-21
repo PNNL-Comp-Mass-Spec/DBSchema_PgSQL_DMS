@@ -5,7 +5,7 @@
 CREATE VIEW public.v_eus_proposals_list_report AS
  SELECT DISTINCT eup.proposal_id AS id,
     s.state_name AS state,
-    (public.get_proposal_eus_users_list(eup.proposal_id, 'N'::text, 125))::public.citext AS users,
+    (public.get_proposal_eus_users_list((eup.proposal_id)::text, 'N'::text, 125))::public.citext AS users,
     eup.title,
     eup.import_date,
     eup.proposal_start_date AS start_date,

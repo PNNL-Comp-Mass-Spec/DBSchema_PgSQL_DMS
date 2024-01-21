@@ -9,7 +9,7 @@ CREATE VIEW public.v_eus_proposals_entry AS
     p.import_date,
     p.proposal_type,
     p.proposal_id_auto_supersede AS superseded_by,
-    public.get_proposal_eus_users_list(p.proposal_id, 'I'::text, 1000) AS eus_users
+    public.get_proposal_eus_users_list((p.proposal_id)::text, 'I'::text, 1000) AS eus_users
    FROM public.t_eus_proposals p;
 
 
