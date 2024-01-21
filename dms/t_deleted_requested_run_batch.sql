@@ -16,7 +16,6 @@ CREATE TABLE public.t_deleted_requested_run_batch (
     requested_completion_date timestamp without time zone,
     justification_for_high_priority public.citext,
     comment public.citext,
-    requested_instrument_group public.citext DEFAULT 'na'::public.citext,
     batch_group_id integer,
     batch_group_order integer,
     deleted timestamp without time zone DEFAULT CURRENT_TIMESTAMP

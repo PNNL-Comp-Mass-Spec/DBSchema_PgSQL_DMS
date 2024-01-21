@@ -15,7 +15,6 @@ CREATE TABLE public.t_requested_run_batches (
     requested_completion_date timestamp without time zone,
     justification_for_high_priority public.citext,
     comment public.citext,
-    requested_instrument_group public.citext DEFAULT 'na'::public.citext NOT NULL,
     batch_group_id integer,
     batch_group_order integer,
     rfid_hex_id public.citext GENERATED ALWAYS AS ("left"((encode(((batch_id)::text)::bytea, 'hex'::text) || '000000000000000000000000'::text), 24)) STORED
