@@ -9,21 +9,22 @@ CREATE VIEW public.v_requested_run_batch_export_rfid AS
     rrb.description,
     requestedrunstats.requests,
     requestedrunstats.active_requests,
-    rrb.requested_instrument_group AS inst_group,
+    (rbs.instrument_group_first)::public.citext AS inst_group,
     rrb.created,
     rrb.rfid_hex_id AS hexid,
     rrb.rfid_hex_id AS hex_id
-   FROM ((public.t_requested_run_batches rrb
+   FROM (((public.t_requested_run_batches rrb
      LEFT JOIN public.t_users ON ((rrb.owner_user_id = t_users.user_id)))
-     LEFT JOIN ( SELECT rr1.batch_id,
-            count(rr1.request_id) AS requests,
+     LEFT JOIN ( SELECT rr.batch_id,
+            count(rr.request_id) AS requests,
             sum(
                 CASE
-                    WHEN (rr1.state_name OPERATOR(public.=) 'Active'::public.citext) THEN 1
+                    WHEN (rr.state_name OPERATOR(public.=) 'Active'::public.citext) THEN 1
                     ELSE 0
                 END) AS active_requests
-           FROM public.t_requested_run rr1
-          GROUP BY rr1.batch_id) requestedrunstats ON ((requestedrunstats.batch_id = rrb.batch_id)))
+           FROM public.t_requested_run rr
+          GROUP BY rr.batch_id) requestedrunstats ON ((requestedrunstats.batch_id = rrb.batch_id)))
+     LEFT JOIN public.t_cached_requested_run_batch_stats rbs ON ((rbs.batch_id = rrb.batch_id)))
   WHERE (rrb.batch_id > 0);
 
 
