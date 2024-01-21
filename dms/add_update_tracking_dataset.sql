@@ -1,33 +1,20 @@
+--
+-- Name: add_update_tracking_dataset(text, text, text, text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
 
-CREATE OR REPLACE PROCEDURE public.add_update_tracking_dataset
-(
-    _datasetName text = 'TrackingDataset1',
-    _experimentName text = 'Placeholder',
-    _operatorUsername text = 'D3J410',
-    _instrumentName text,
-    _runStart text = '2012-06-01'::timestamp,
-    _runDuration text = '10',
-    _comment text = 'na',
-    _eusProposalID text = 'na',
-    _eusUsageType text = 'CAP_DEV',
-    _eusUsersList text = '',
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+CREATE OR REPLACE PROCEDURE public.add_update_tracking_dataset(IN _datasetname text DEFAULT 'TrackingDataset1'::text, IN _experimentname text DEFAULT 'Placeholder'::text, IN _operatorusername text DEFAULT 'D3J410'::text, IN _instrumentname text DEFAULT ''::text, IN _runstart text DEFAULT '2012-06-01 00:00:00'::timestamp without time zone, IN _runduration text DEFAULT '10'::text, IN _comment text DEFAULT 'na'::text, IN _eusproposalid text DEFAULT 'na'::text, IN _eususagetype text DEFAULT 'CAP_DEV'::text, IN _eususerslist text DEFAULT ''::text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Add new or edit an existing tracking dataset
 **
 **  Arguments:
-**    _datasetName          Dataset name
+**    _datasetName          Dataset name, e.g. 12T_FTICR_P_01Nov23
 **    _experimentName       Experiment name
-**    _operatorUsername     Operator username
-**    _instrumentName       Instrument name
+**    _operatorUsername     Operator username, e.g. D3J410
+**    _instrumentName       Instrument name (ignored if mode is 'update' or 'check_update')
 **    _runStart             Acquisition start time
 **    _runDuration          Acquisition length (in minutes, as text)
 **    _comment              Dataset comment
@@ -59,7 +46,8 @@ AS $$
 **          11/27/2022 mem - Remove query artifact that was used for debugging
 **          12/24/2022 mem - Fix logic error evaluating _runDuration
 **          02/27/2023 mem - Use new argument name, _requestName
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/20/2024 mem - Prevent changing an existing tracking dataset's instrument
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -73,6 +61,7 @@ DECLARE
     _addingDataset boolean := false;
     _experimentCheck text;
     _requestID int;
+    _resolvedInstrumentInfo text;
     _requestName text;
     _wellplateName text := NULL;
     _wellNumber text := NULL;
@@ -83,7 +72,7 @@ DECLARE
     _existingEusUser text;
     _columnID int := 0;
     _intStdID int := 0;
-    _ratingID int := 1 -- 'No Interest';
+    _ratingID int := 1; -- 'No Interest'
     _msType text;
     _refDate timestamp;
     _acqStart timestamp;
@@ -98,7 +87,7 @@ DECLARE
     _newDSStateID int;
     _experimentID int;
     _instrumentID int;
-    _instrumentGroup text := '';
+    _instrumentGroup text;
     _defaultDatasetTypeID int;
     _userID int;
     _matchCount int;
@@ -165,10 +154,13 @@ BEGIN
 
         _refDate  := CURRENT_TIMESTAMP;
         _acqStart := _runStart;
-        _acqEnd   := _acqStart + INTERVAL '10 minutes'; -- default;
+        _acqEnd   := _acqStart + INTERVAL '10 minutes';
+
+        -- Tracking datasets are 10 minutes long, by default
+        -- Override the default if _runDuration has an integer
 
         If _runDuration <> '' Then
-            _acqEnd := _acqStart + make_interval(mins => public.try_cast(_runDuration, 10))
+            _acqEnd := _acqStart + make_interval(mins => public.try_cast(_runDuration, 10));
         End If;
 
         _msType        := 'Tracking';
@@ -255,6 +247,14 @@ BEGIN
             End If;
         End If;
 
+        If _mode In ('update', 'check_update') Then
+            -- Leave the instrument name as-is when updating a tracking entry
+            SELECT instrument
+            INTO _instrumentName
+            FROM t_instrument_name
+            WHERE instrument_id = _curDSInstID;
+        End If;
+
         ---------------------------------------------------
         -- Resolve experiment ID
         ---------------------------------------------------
@@ -274,6 +274,11 @@ BEGIN
         If _instrumentID = 0 Then
             RAISE EXCEPTION 'Invalid instrument: "%" does not exist', _instrumentName;
         End If;
+
+        SELECT instrument_group
+        INTO _instrumentGroup
+        FROM t_instrument_name
+        WHERE instrument_id = _instrumentID;
 
         ---------------------------------------------------
         -- Resolve user ID for operator username
@@ -326,13 +331,11 @@ BEGIN
             _storagePathID := public.get_instrument_storage_path_for_new_datasets(_instrumentID, _refDate, _autoSwitchActiveStorage => true, _infoOnly => false);
 
             If _storagePathID = 0 Then
-                _storagePathID := 2; -- index of 'none' in table
+                _storagePathID := 2;    -- index of '(none)' in table t_storage_path
                 RAISE EXCEPTION 'Valid storage path could not be found for instrument ID % and reference date %', _instrumentID, public.timestamp_text(_refDate);
             End If;
 
             _newDSStateID := 3;
-
-            -- Insert values into a new row
 
             INSERT INTO t_dataset (
                 dataset,
@@ -387,40 +390,49 @@ BEGIN
             End If;
 
             ---------------------------------------------------
-            -- Adding a tracking dataset, so need to create a scheduled run
+            -- Adding a tracking dataset, so need to create a requested run
             ---------------------------------------------------
 
             _requestName := format('AutoReq_%s', _datasetName);
 
             CALL public.add_update_requested_run (
-                                    _requestName                 => _requestName,
-                                    _experimentName              => _experimentName,
-                                    _requesterUsername           => _operatorUsername,
-                                    _instrumentName              => _instrumentName,
-                                    _workPackage                 => 'none',
-                                    _msType                      => _msType,
-                                    _instrumentSettings          => 'na',
-                                    _wellplateName               => Null,
-                                    _wellNumber                  => Null,
-                                    _internalStandard            => 'na',
-                                    _comment                     => 'Automatically created by Dataset entry',
-                                    _eusProposalID               => _eusProposalID,
-                                    _eusUsageType                => _eusUsageType,
-                                    _eusUsersList                => _eusUsersList,
-                                    _mode                        => 'add-auto',
-                                    _request                     => _requestID,         -- Output
-                                    _message                     => _message,           -- Output
-                                    _returnCode                  => _returnCode,     -- Output
-                                    _secSep                      => _secSep,
-                                    _mrmAttachment               => '',
-                                    _status                      => 'Completed',
-                                    _skipTransactionRollback     => true,
-                                    _autoPopulateUserListIfBlank => true,        -- Auto populate _eusUsersList if blank since this is an Auto-Request
-                                    _callingUser                 => _callingUser)
+                            _requestName                 => _requestName,
+                            _experimentName              => _experimentName,
+                            _requesterUsername           => _operatorUsername,
+                            _instrumentGroup             => _instrumentGroup,
+                            _workPackage                 => 'none',
+                            _msType                      => _msType,
+                            _instrumentSettings          => 'na',
+                            _wellplateName               => Null,
+                            _wellNumber                  => Null,
+                            _internalStandard            => 'na',
+                            _comment                     => 'Automatically created by Dataset entry',
+                            _batch                       => 0,
+                            _block                       => 0,
+                            _runOrder                    => 0,
+                            _eusProposalID               => _eusProposalID,
+                            _eusUsageType                => _eusUsageType,
+                            _eusUsersList                => _eusUsersList,
+                            _mode                        => 'add-auto',
+                            _secSep                      => _secSep,
+                            _mrmAttachment               => '',
+                            _status                      => 'Completed',
+                            _skipTransactionRollback     => true,
+                            _autoPopulateUserListIfBlank => true,           -- Auto populate _eusUsersList if blank since this is an Auto-Request
+                            _callingUser                 => _callingUser,
+                            _vialingConc                 => Null,
+                            _vialingVol                  => Null,
+                            _stagingLocation             => Null,
+                            _requestIDForUpdate          => Null,
+                            _logDebugMessages            => false,
+                            _request                     => _requestID,                 -- Output
+                            _resolvedInstrumentInfo      => _resolvedInstrumentInfo,    -- Output
+                            _message                     => _message,                   -- Output
+                            _returnCode                  => _returnCode);               -- Output
 
             If _returnCode <> '' Then
-                RAISE EXCEPTION 'Create AutoReq run request failed: dataset % with EUS Proposal ID %, Usage Type %, and Users List % -> %',
-                                _datasetName, _eusProposalID, _eusUsageType, _eusUsersList, _message);
+                RAISE EXCEPTION 'Call to add_update_requested_run failed: dataset % with EUS Proposal ID %, Usage Type %, and Users List % -> %',
+                                _datasetName, _eusProposalID, _eusUsageType, _eusUsersList, _message;
             End If;
 
             ---------------------------------------------------
@@ -430,13 +442,13 @@ BEGIN
             SELECT dataset_id
             INTO _datasetID
             FROM t_dataset
-            WHERE dataset = _datasetName;
+            WHERE dataset = _datasetName::citext;
 
             CALL public.consume_scheduled_run (
                             _datasetID,
                             _requestID,
-                            _message          => _message,           -- Output
-                            _returnCode       => _returnCode,     -- Output
+                            _message          => _message,      -- Output
+                            _returnCode       => _returnCode,   -- Output
                             _callingUser      => _callingUser,
                             _logDebugMessages => false);
 
@@ -463,7 +475,6 @@ BEGIN
             UPDATE t_dataset
             SET operator_username = _operatorUsername,
                 comment           = _comment,
-                instrument_id     = _instrumentID,
                 dataset_type_ID   = _datasetTypeID,
                 folder_name       = _folderName,
                 exp_id            = _experimentID,
@@ -490,7 +501,7 @@ BEGIN
                    ON DS.dataset_id = RR.dataset_id
                  INNER JOIN V_Requested_Run_Detail_Report AS RRD
                    ON RR.request_id = RRD.Request
-            WHERE DS.dataset = _datasetName;
+            WHERE DS.dataset = _datasetName::citext;
 
             If FOUND And (
               Coalesce(_existingEusProposal, '') <> _eusProposalID OR
@@ -498,40 +509,43 @@ BEGIN
               Coalesce(_existingEusUser, '') <> _eusUsersList) Then
 
                 CALL public.add_update_requested_run (
-                                        _requestName                 => _requestName,
-                                        _experimentName              => _experimentName,
-                                        _requesterUsername           => _operatorUsername,
-                                        _instrumentName              => _instrumentName,
-                                        _workPackage                 => 'none',
-                                        _msType                      => _msType,
-                                        _instrumentSettings          => 'na',
-                                        _wellplateName               => NULL,
-                                        _wellNumber                  => NULL,
-                                        _internalStandard            => 'na',
-                                        _comment                     => 'Automatically created by Dataset entry',
-                                        _eusProposalID               => _eusProposalID,
-                                        _eusUsageType                => _eusUsageType,
-                                        _eusUsersList                => _eusUsersList,
-                                        _mode                        => 'update',
-                                        _request                     => _requestID,         -- Output
-                                        _message                     => _message,           -- Output
-                                        _returnCode                  => _returnCode,     -- Output
-                                        _secSep                      => _secSep,
-                                        _mrmAttachment               => '',
-                                        _status                      => 'Completed',
-                                        _skipTransactionRollback     => true,
-                                        _autoPopulateUserListIfBlank => true,   -- Auto populate _eusUsersList if blank since this is an Auto-Request
-                                        _callingUser                 => _callingUser,
-                                        _vialingConc                 => null,
-                                        _vialingVol                  => null,
-                                        _stagingLocation             => null,
-                                        _requestIDForUpdate          => null,
-                                        _logDebugMessages            => false,
-                                        _resolvedInstrumentInfo      => _resolvedInstrumentInfo);    -- Output
+                                _requestName                 => _requestName,
+                                _experimentName              => _experimentName,
+                                _requesterUsername           => _operatorUsername,
+                                _instrumentGroup             => _instrumentGroup,
+                                _workPackage                 => 'none',
+                                _msType                      => _msType,
+                                _instrumentSettings          => 'na',
+                                _wellplateName               => Null,
+                                _wellNumber                  => Null,
+                                _internalStandard            => 'na',
+                                _comment                     => 'Automatically created by Dataset entry',
+                                _batch                       => 0,
+                                _block                       => 0,
+                                _runOrder                    => 0,
+                                _eusProposalID               => _eusProposalID,
+                                _eusUsageType                => _eusUsageType,
+                                _eusUsersList                => _eusUsersList,
+                                _mode                        => 'update',
+                                _secSep                      => _secSep,
+                                _mrmAttachment               => '',
+                                _status                      => 'Completed',
+                                _skipTransactionRollback     => true,
+                                _autoPopulateUserListIfBlank => true,           -- Auto populate _eusUsersList if blank since this is an Auto-Request
+                                _callingUser                 => _callingUser,
+                                _vialingConc                 => Null,
+                                _vialingVol                  => Null,
+                                _stagingLocation             => Null,
+                                _requestIDForUpdate          => Null,
+                                _logDebugMessages            => false,
+                                _request                     => _requestID,                 -- Output
+                                _resolvedInstrumentInfo      => _resolvedInstrumentInfo,    -- Output
+                                _message                     => _message,                   -- Output
+                                _returnCode                  => _returnCode);               -- Output
 
                 If _returnCode <> '' Then
                     RAISE EXCEPTION 'Call to add_update_requested_run failed: dataset % with EUS Proposal ID %, Usage Type %, and Users List % -> %',
-                                    _datasetName, _eusProposalID, _eusUsageType, , _eusUsersList_message;
+                                    _datasetName, _eusProposalID, _eusUsageType, _eusUsersList, _message;
                 End If;
             End If;
 
@@ -550,7 +564,7 @@ BEGIN
                         _endDate,
                         _message => _message,           -- Output
                         _returnCode => _returnCode,     -- Output
-                        _infoOnly => false)
+                        _infoOnly => false);
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -572,4 +586,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_tracking_dataset IS 'AddUpdateTrackingDataset';
+
+ALTER PROCEDURE public.add_update_tracking_dataset(IN _datasetname text, IN _experimentname text, IN _operatorusername text, IN _instrumentname text, IN _runstart text, IN _runduration text, IN _comment text, IN _eusproposalid text, IN _eususagetype text, IN _eususerslist text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_tracking_dataset(IN _datasetname text, IN _experimentname text, IN _operatorusername text, IN _instrumentname text, IN _runstart text, IN _runduration text, IN _comment text, IN _eusproposalid text, IN _eususagetype text, IN _eususerslist text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_tracking_dataset(IN _datasetname text, IN _experimentname text, IN _operatorusername text, IN _instrumentname text, IN _runstart text, IN _runduration text, IN _comment text, IN _eusproposalid text, IN _eususagetype text, IN _eususerslist text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateTrackingDataset';
+
