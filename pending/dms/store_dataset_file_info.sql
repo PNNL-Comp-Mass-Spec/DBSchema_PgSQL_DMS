@@ -323,7 +323,7 @@ BEGIN
         SELECT dataset_id
         INTO _datasetId
         FROM t_dataset
-        WHERE dataset = _datasetName;
+        WHERE dataset = _datasetName::citext;
 
         If Not FOUND Then
             INSERT INTO Tmp_Warnings (Warning, RowText)

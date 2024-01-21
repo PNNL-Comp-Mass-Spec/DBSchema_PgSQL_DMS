@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE public.schedule_predefined_analysis_jobs(IN _dataset
 **                         - Ported to PostgreSQL
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          01/20/2024 mem - Ignore case when resolving dataset name to ID
 **
 *****************************************************/
 DECLARE
@@ -76,7 +77,7 @@ BEGIN
         SELECT dataset_id
         INTO _datasetID
         FROM t_dataset
-        WHERE dataset = _datasetName;
+        WHERE dataset = _datasetName::citext;
 
         If Not FOUND Then
             _message := format('Could not find ID for dataset %s', _datasetName);

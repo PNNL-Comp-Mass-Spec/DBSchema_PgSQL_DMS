@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION public.get_mtdbs_for_peptide_db(_peptidedbname text) 
 **  Auth:   mem
 **  Date:   10/18/2012
 **          06/21/2022 mem - Ported to PostgreSQL
+**          01/20/2024 mem - Ignore case when looking for the given peptide database
 **
 *****************************************************/
 DECLARE
@@ -23,7 +24,7 @@ BEGIN
     SELECT string_agg(mt_db_name, ', ' ORDER BY mt_db_name)
     INTO _result
     FROM t_mts_mt_dbs_cached
-    WHERE peptide_db = _peptideDBName;
+    WHERE peptide_db = _peptideDBName::citext;
 
     RETURN _result;
 END

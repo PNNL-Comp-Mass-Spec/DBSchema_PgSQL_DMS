@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION public.get_campaign_role_person(_campaignid integer, 
 **          12/08/2014 mem - Now using name_with_username to obtain the user's name and username
 **          07/07/2022 mem - Ported to PostgreSQL
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          01/20/2024 mem - Ignore case when filtering by role
 **
 *****************************************************/
 DECLARE
@@ -33,7 +34,7 @@ BEGIN
              INNER JOIN t_campaign
                ON t_research_team_membership.team_id = t_campaign.research_team
         WHERE t_campaign.campaign_id = _campaignID AND
-              t_research_team_roles.role = _role;
+              t_research_team_roles.role = _role::citext;
     End If;
 
     RETURN Coalesce(_person, '');

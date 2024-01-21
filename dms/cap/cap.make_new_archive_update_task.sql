@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE cap.make_new_archive_update_task(IN _datasetname tex
 **          06/20/2023 mem - Ported to PostgreSQL, removing parameters _pushDatasetToMyEMSL and _pushDatasetRecursive
 **          09/07/2023 mem - Align assignment statements
 **                         - Update warning messages
+**          01/20/2024 mem - Ignore case when resolving dataset name to ID
 **
 *****************************************************/
 DECLARE
@@ -107,7 +108,7 @@ BEGIN
         SELECT dataset_id
         INTO _datasetID
         FROM public.t_dataset
-        WHERE dataset = _datasetName;
+        WHERE dataset = _datasetName::citext;
 
         If Not FOUND Then
             _message := format('Dataset not found, unable to continue: %s', _datasetName);

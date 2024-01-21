@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE public.add_missing_requested_run(IN _dataset text, I
 **          09/13/2023 mem - Ported to PostgreSQL
 **          10/10/2023 mem - Rearrange argument order when calling add_update_requested_run
 **          12/04/2023 mem - Fix reference to non-existent variables
+**          01/20/2024 mem - Ignore case when resolving dataset name to ID
 **
 *****************************************************/
 DECLARE
@@ -79,7 +80,7 @@ BEGIN
            ON DS.instrument_id = InstName.instrument_id
          INNER JOIN t_dataset_type_name DTN
            ON DS.dataset_type_id = DTN.dataset_type_id
-    WHERE DS.dataset = _dataset;
+    WHERE DS.dataset = _dataset::citext;
 
     If Not FOUND Then
         _message := format('Error, dataset not found: %s', _dataset);

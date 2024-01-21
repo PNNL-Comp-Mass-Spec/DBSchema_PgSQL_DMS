@@ -59,7 +59,7 @@ BEGIN
     SELECT param_file_id
     INTO _paramFileID
     FROM t_param_files
-    WHERE param_file_name = _parameterFileName;
+    WHERE param_file_name = _parameterFileName::citext;
 
     If FOUND Then
         _paramFileFound := true;
@@ -80,7 +80,7 @@ BEGIN
     FROM ( SELECT Local_Symbol, Mass_Correction_Tag
            FROM V_Param_File_Mass_Mod_Info
            WHERE Mod_Type_Symbol = 'D' AND
-                 Param_File_Name = _parameterFileName
+                 Param_File_Name = _parameterFileName::citext
            GROUP BY Local_Symbol, Mass_Correction_Tag) GroupQ;
 
     -----------------------------------------------------------
@@ -93,7 +93,7 @@ BEGIN
          _pmMassCorrectionTagList
     FROM V_Param_File_Mass_Mod_Info
     WHERE Mod_Type_Symbol IN ('T', 'P', 'S') AND
-          Param_File_Name = _parameterFileName;
+          Param_File_Name = _parameterFileName::citext;
 
     -----------------------------------------------------------
     -- Isotopic mods
@@ -103,7 +103,7 @@ BEGIN
     INTO _npMassCorrectionTagList
     FROM V_Param_File_Mass_Mod_Info
     WHERE Mod_Type_Symbol IN ('I') AND
-          Param_File_Name = _parameterFileName;
+          Param_File_Name = _parameterFileName::citext;
 
 END
 $$;

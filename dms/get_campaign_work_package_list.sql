@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION public.get_campaign_work_package_list(_campaignname t
 **  Auth:   mem
 **  Date:   06/07/2019 mem - Initial version
 **          06/11/2022 mem - Ported to PostgreSQL
+**          01/20/2024 mem - Ignore case when filtering by campaign name
 **
 *****************************************************/
 DECLARE
@@ -30,7 +31,7 @@ BEGIN
                       ON DS.exp_id = E.exp_id
                     INNER JOIN t_campaign C
                       ON E.campaign_id = C.campaign_id
-               WHERE C.campaign = _campaignName
+               WHERE C.campaign = _campaignName::citext
          ) LookupQ;
 
     RETURN Coalesce(_result, '');

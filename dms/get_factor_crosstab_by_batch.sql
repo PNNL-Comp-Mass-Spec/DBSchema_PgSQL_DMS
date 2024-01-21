@@ -85,6 +85,7 @@ CREATE OR REPLACE PROCEDURE public.get_factor_crosstab_by_batch(IN _batchid inte
 **          01/05/2023 mem - Use new column names in V_Requested_Run_Unified_List
 **          01/24/2023 mem - Use lowercase column names in _colList
 **          07/13/2023 mem - Ported to PostgreSQL
+**          01/20/2024 mem - Ignore case when comparing _nameContains to request name
 **
 *****************************************************/
 DECLARE
@@ -153,7 +154,7 @@ BEGIN
                 SELECT 1
                 FROM t_requested_run RR
                 WHERE RR.request_id = Target.Request AND
-                      RR.request_name LIKE '%' || _nameContains || '%'
+                      RR.request_name ILIKE '%' || _nameContains || '%'
             );
 
     End If;

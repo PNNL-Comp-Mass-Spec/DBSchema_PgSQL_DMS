@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE cap.handle_dataset_capture_validation_failure(IN _da
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          06/17/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          01/20/2024 mem - Ignore case when resolving dataset name to ID
 **
 *****************************************************/
 DECLARE
@@ -86,7 +87,7 @@ BEGIN
         SELECT Dataset_ID
         INTO _datasetID
         FROM cap.t_tasks
-        WHERE Dataset = _datasetName AND
+        WHERE Dataset = _datasetName::citext AND
               Script IN ('DatasetCapture', 'IMSDatasetCapture');
 
         If Not FOUND Then

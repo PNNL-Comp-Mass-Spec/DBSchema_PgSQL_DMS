@@ -128,7 +128,7 @@ BEGIN
                    dataset
             INTO _currentState, _currentComment, _datasetID, _datasetName
             FROM t_dataset
-            WHERE dataset = _datasetNameOrID;
+            WHERE dataset = _datasetNameOrID::citext;
         End If;
 
         If Not FOUND Then

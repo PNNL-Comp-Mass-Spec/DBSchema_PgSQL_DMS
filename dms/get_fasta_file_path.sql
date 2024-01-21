@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION public.get_fasta_file_path(_fastafilename public.cite
 **          09/11/2015 mem - Now using synonym S_ProteinSeqs_T_Archived_Output_Files
 **          06/14/2022 mem - Ported to PostgreSQL
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          01/20/2024 mem - Ignore case when filtering by file name or organism name
 **
 *****************************************************/
 DECLARE
@@ -33,24 +34,24 @@ BEGIN
         SELECT organism_db_path
         INTO _filePath
         FROM t_organisms
-        WHERE organism = _organismName
+        WHERE organism = _organismName::citext
         LIMIT 1;
     Else
-        If Not _fastaFileName LIKE '%.fasta' Then
+        If Not _fastaFileName ILIKE '%.fasta' Then
             _fastaFileName := _fastaFileName || '.fasta';
         End If;
 
         SELECT Archived_File_Path
         INTO _filePath
         FROM pc.T_Archived_Output_Files
-        WHERE Archived_File_Path LIKE '%' || _fastaFileName || '%'
+        WHERE Archived_File_Path ILIKE '%' || _fastaFileName || '%'
         LIMIT 1;
 
         If Coalesce(_filePath, '') = '' Then
             SELECT File_Path
             INTO _filePath
             FROM v_legacy_fasta_file_paths
-            WHERE File_Name = _fastaFileName
+            WHERE File_Name = _fastaFileName::citext
             LIMIT 1;
         End If;
 
@@ -63,7 +64,7 @@ BEGIN
                 SELECT organism_db_path
                 INTO _filePath
                 FROM t_organisms
-                WHERE organism = _organismName
+                WHERE organism = _organismName::citext
                 LIMIT 1;
             End If;
 

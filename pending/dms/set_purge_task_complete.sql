@@ -85,7 +85,7 @@ BEGIN
     FROM t_dataset DS
          LEFT OUTER JOIN t_storage_path SPath
            ON DS.storage_path_id = SPath.storage_path_id
-    WHERE DS.dataset = _datasetName;
+    WHERE DS.dataset = _datasetName::citext;
 
     If Not FOUND Then
         _message := format('Dataset %s not found in t_dataset', _datasetName);

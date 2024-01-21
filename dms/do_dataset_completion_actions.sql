@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE public.do_dataset_completion_actions(IN _datasetname
 **          08/01/2017 mem - Use THROW if not authorized
 **          08/08/2018 mem - Add state 14 (Duplicate dataset files)
 **          06/15/2023 mem - Ported to PostgreSQL
+**          01/20/2024 mem - Ignore case when resolving dataset name to ID
 **
 *****************************************************/
 DECLARE
@@ -78,7 +79,7 @@ BEGIN
            dataset_rating_id
     INTO _datasetID, _datasetState, _datasetRating
     FROM t_dataset
-    WHERE dataset = _datasetName;
+    WHERE dataset = _datasetName::citext;
 
     If Not FOUND Then
         _message := format('Dataset not found in t_dataset: %s', _datasetName);

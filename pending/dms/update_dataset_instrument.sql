@@ -83,7 +83,7 @@ BEGIN
            storage_path_ID
     INTO _datasetId, _state, _datasetCreated, _instrumentIdOld, _storagePathIdOld
     FROM t_dataset
-    WHERE dataset = _datasetName
+    WHERE dataset = _datasetName::citext;
 
     If Not FOUND Or Coalesce(_datasetId, 0) = 0 Then
         _message := format('Dataset not found: %s', _datasetName);

@@ -19,6 +19,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_rating_id(_datasetratingname text 
 **  Date:   01/26/2001 grk - Initial version
 **          08/03/2017 mem - Add set nocount on
 **          10/18/2022 mem - Ported to PostgreSQL
+**          01/20/2024 mem - Ignore case when resolving dataset rating name to ID
 **
 *****************************************************/
 DECLARE
@@ -27,7 +28,7 @@ BEGIN
     SELECT dataset_rating_id
     INTO _datasetRatingID
     FROM t_dataset_rating_name
-    WHERE dataset_rating  = _datasetRatingName;
+    WHERE dataset_rating  = _datasetRatingName::citext;
 
     If FOUND Then
         RETURN _datasetRatingID;

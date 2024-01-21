@@ -46,7 +46,7 @@ DECLARE
     _datasetInfo record;
     _datasetIDNew int;
     _datasetNew text;
-    _requestNameNew text;
+    _requestNameNew citext;
     _captureJob int := 0;
     _captureJobNew int := 0;
     _dateStamp timestamp;
@@ -90,7 +90,7 @@ BEGIN
     FROM t_requested_run RR
          INNER JOIN t_dataset DS
            ON RR.dataset_id = DS.dataset_id
-    WHERE DS.dataset = _dataset;
+    WHERE DS.dataset = _dataset::citext;
 
     If Not FOUND Then
         _message := format('Source dataset not found: %s', _dataset);
@@ -104,7 +104,7 @@ BEGIN
 
     _datasetNew := format('%s%s', _dataset, _suffix);
 
-    If Exists (SELECT dataset_id FROM t_dataset WHERE dataset = _datasetNew) Then
+    If Exists (SELECT dataset_id FROM t_dataset WHERE dataset = _datasetNew::citext) Then
         _message := format('Target dataset already exists: %s', _datasetNew);
         RAISE INFO '%', _message;
         RETURN;
@@ -159,7 +159,7 @@ BEGIN
                ON LCCart.cart_id = RR.cart_id
              INNER JOIN t_lc_column LCCol
                ON ds.lc_column_id = LCCol.lc_column_id
-        WHERE DS.dataset = _dataset;
+        WHERE DS.dataset = _dataset::citext;
 
         _requestNameNew := format('AutoReq_%s', _datasetNew);
 
@@ -236,7 +236,7 @@ BEGIN
                file_info_last_modified,
                interval_to_next_ds
         FROM t_dataset
-        WHERE dataset = _dataset
+        WHERE dataset = _dataset::citext
         RETURNING dataset_id
         INTO _datasetIDNew;
 
@@ -305,7 +305,7 @@ BEGIN
 
         UPDATE t_requested_run
         SET dataset_id = _datasetIDNew
-        WHERE request_name = _requestNameNew AND dataset_id Is Null
+        WHERE request_name = _requestNameNew AND dataset_id Is Null;
 
         -- Possibly create a Dataset Archive task
 
@@ -347,7 +347,7 @@ BEGIN
         SELECT MAX(Job)
         INTO _captureJob
         FROM cap.t_tasks
-        WHERE Dataset = _dataset AND Script LIKE '%capture%';
+        WHERE Dataset = _dataset::citext AND Script ILIKE '%capture%';
 
         If Coalesce(_captureJob, 0) = 0 Then
 
@@ -355,8 +355,8 @@ BEGIN
             SELECT Job, Saved
             INTO _captureJob, _dateStamp
             FROM cap.t_tasks_History
-            WHERE Dataset = _dataset AND
-                  Script LIKE '%capture%'
+            WHERE Dataset = _dataset::citext AND
+                  Script ILIKE '%capture%'
             ORDER BY Saved DESC
             LIMIT 1;
 
@@ -446,8 +446,8 @@ BEGIN
                    0 AS Archive_Busy,
                    format('Cloned from dataset %s', _dataset) AS Comment
             FROM cap.t_tasks
-            WHERE Dataset = _dataset AND
-                  Script LIKE '%capture%'
+            WHERE Dataset = _dataset::citext AND
+                  Script ILIKE '%capture%'
             ORDER BY cap.t_tasks.Job Desc
             LIMIT 1
             RETURNING cap.t_tasks.Job

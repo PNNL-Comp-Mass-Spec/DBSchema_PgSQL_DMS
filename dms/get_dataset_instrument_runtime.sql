@@ -36,6 +36,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_instrument_runtime(_startinterval 
 **          07/18/2023 mem - Specify column names when returning data from Tmp_TX
 **          09/08/2023 mem - Adjust capitalization of keywords
 **                         - Include schema name when calling function verify_sp_authorized()
+**          01/20/2024 mem - Ignore case when finding datasets for the given instrument
 **
 *****************************************************/
 DECLARE
@@ -217,7 +218,7 @@ BEGIN
          INNER JOIN t_instrument_name ON t_dataset.instrument_id = t_instrument_name.instrument_id
     WHERE _startInterval <= t_dataset.acq_time_start AND
           t_dataset.acq_time_start <= _endIntervalEOD AND
-          t_instrument_name.instrument = _instrument;
+          t_instrument_name.instrument = _instrument::citext;
 
     ---------------------------------------------------
     -- Optionally set up anchor for end of month

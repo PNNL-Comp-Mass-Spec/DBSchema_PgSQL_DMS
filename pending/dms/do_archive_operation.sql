@@ -84,7 +84,7 @@ BEGIN
     FROM t_dataset
          INNER JOIN t_dataset_archive
            ON t_dataset.dataset_id = t_dataset_archive.dataset_id
-    WHERE dataset = _datasetName;
+    WHERE dataset = _datasetName::citext;
 
     If Not FOUND Then
         _returnCode := 'U5201';

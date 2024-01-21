@@ -155,6 +155,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_dataset(IN _datasetname text, IN _
 **          01/03/2024 mem - Update warning messages
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          01/08/2024 mem - Remove procedure name from error message
+**          01/20/2024 mem - Ignore case when resolving dataset name to ID
 **
 *****************************************************/
 DECLARE
@@ -1136,7 +1137,7 @@ BEGIN
                 SELECT dataset_id
                 INTO _datasetIDConfirm
                 FROM t_dataset
-                WHERE dataset = _datasetName;
+                WHERE dataset = _datasetName::citext;
 
                 If _datasetID <> Coalesce(_datasetIDConfirm, _datasetID) Then
                     _debugMsg := format('Warning: Inconsistent identity values when adding dataset %s: Found ID %s but the INSERT INTO query reported %s',
@@ -1299,7 +1300,7 @@ BEGIN
                 SELECT dataset_id
                 INTO _datasetID
                 FROM t_dataset
-                WHERE dataset = _datasetName;
+                WHERE dataset = _datasetName::citext;
 
                 If Coalesce(_message, '') <> '' and Coalesce(_warning, '') = '' Then
                     _warning := _message;

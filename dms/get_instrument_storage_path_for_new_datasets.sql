@@ -33,6 +33,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_storage_path_for_new_datasets(_
 **          05/22/2023 mem - Use format() for string concatenation
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          10/04/2023 mem - Specify argument names when calling add_update_storage
+**          01/20/2024 mem - Ignore case when looking for matching storage paths
 **
 *****************************************************/
 DECLARE
@@ -140,7 +141,7 @@ BEGIN
         SELECT storage_path_id
         INTO _storagePathID
         FROM t_storage_path
-        WHERE storage_path = _storagePathName AND
+        WHERE storage_path = _storagePathName::citext AND
               vol_name_client = _instrumentInfo.AutoSPVolNameClient AND
               vol_name_server = _instrumentInfo.AutoSPVolNameServer AND
               (storage_path_function = 'raw-storage' OR

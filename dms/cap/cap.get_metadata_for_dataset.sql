@@ -23,6 +23,7 @@ CREATE OR REPLACE FUNCTION cap.get_metadata_for_dataset(_datasetname text) RETUR
 **          02/27/2023 mem - Capitalize XML element names
 **          05/29/2023 mem - Use format() for string concatenation
 **          07/23/2023 mem - Use new alias names for table
+**          01/20/2024 mem - Ignore case when resolving dataset name to ID
 **
 *****************************************************/
 DECLARE
@@ -96,7 +97,7 @@ BEGIN
            ON DS.Dataset_ID = RR.Dataset_ID
          LEFT OUTER JOIN T_LC_Cart_Configuration AS CartConfig
            ON DS.Cart_Config_ID = CartConfig.Cart_Config_ID
-    WHERE DS.Dataset = _datasetName;
+    WHERE DS.Dataset = _datasetName::citext;
 
     If Not FOUND Then
         RETURN QUERY
@@ -151,7 +152,7 @@ BEGIN
            (format('Meta_Aux_Info:%s:%s.%s.%s', M.Target, M.Category, M.Subcategory, M.Item))::text AS Name,
            M.Value::text
     FROM cap.V_DMS_Get_Experiment_Metadata M
-    WHERE Experiment = _datasetInfo.Experiment
+    WHERE Experiment = _datasetInfo.Experiment::citext
     ORDER BY Name;
 
 END

@@ -40,6 +40,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_archive_path_for_new_datasets(_
 **          05/22/2023 mem - Use format() for string concatenation
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          10/05/2023 mem - Archive path is now agate.emsl.pnl.gov
+**          01/20/2024 mem - Change data type of _archivePathName to citext
 **
 *****************************************************/
 DECLARE
@@ -52,7 +53,7 @@ DECLARE
     _currentLocation text;
     _currentYear int;
     _currentQuarter int;
-    _archivePathName text;
+    _archivePathName citext;
     _refDate timestamp;
     _suffix text;
     _networkSharePath text;

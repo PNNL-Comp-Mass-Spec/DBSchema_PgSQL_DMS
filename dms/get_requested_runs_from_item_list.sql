@@ -37,6 +37,7 @@ CREATE OR REPLACE FUNCTION public.get_requested_runs_from_item_list(_itemlist te
 **          09/07/2023 mem - Update warning messages
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          01/20/2024 mem - Use citext for the Item column in temporary table Tmp_Items
 **
 *****************************************************/
 DECLARE
@@ -64,7 +65,7 @@ BEGIN
     -----------------------------------------
 
     CREATE TEMP TABLE Tmp_Items (
-        Item text
+        Item citext
     );
 
     INSERT INTO Tmp_Items (Item)

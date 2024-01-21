@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION public.get_exp_biomaterial_list(_experimentname text)
 **  Date:   02/04/2005
 **          11/29/2017 mem - Expand the return value to varchar(2048) and use Coalesce
 **          06/21/2022 mem - Ported to PostgreSQL
+**          01/20/2024 mem - Ignore case when filtering by experiment name
 **
 *****************************************************/
 DECLARE
@@ -28,7 +29,7 @@ BEGIN
            ON EB.exp_id = E.exp_id
          INNER JOIN t_biomaterial B
            ON EB.biomaterial_id = B.biomaterial_id
-    WHERE E.experiment = _experimentName;
+    WHERE E.experiment = _experimentName::citext;
 
     RETURN Coalesce(_result, '');
 END

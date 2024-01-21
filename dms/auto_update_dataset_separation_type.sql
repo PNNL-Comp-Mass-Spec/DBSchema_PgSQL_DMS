@@ -22,11 +22,12 @@ CREATE OR REPLACE PROCEDURE public.auto_update_dataset_separation_type(IN _start
 **  Auth:   mem
 **  Date:   10/09/2020
 **          06/13/2023 mem - Ported to PostgreSQL
+**          01/20/2024 mem - Change data type to citext for optimal separation type variable
 **
 *****************************************************/
 DECLARE
     _datasetInfo record;
-    _optimalSeparationType text;
+    _optimalSeparationType citext;
     _updateCount int;
     _datasetsProcessed int = 0;
     _datasetsUpdated int = 0;

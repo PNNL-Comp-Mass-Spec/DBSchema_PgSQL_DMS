@@ -66,6 +66,7 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          12/11/2023 mem - Remove unnecessary _trimWhitespace argument when calling validate_na_parameter
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          01/20/2024 mem - Ignore case when determining the organism for a protein collection
 **
 *****************************************************/
 DECLARE
@@ -198,7 +199,7 @@ BEGIN
             SELECT Organism_Name
             INTO _organism
             FROM pc.V_Protein_Collections_by_Organism
-            WHERE collection_name = _proteinCollection
+            WHERE collection_name = _proteinCollection::citext
             ORDER BY Organism_Name
             LIMIT 1;
 
@@ -239,7 +240,7 @@ BEGIN
             FROM T_Organism_DB_File OrgFile
                  INNER JOIN T_Organisms Org
                    ON OrgFile.Organism_ID = Org.Organism_ID
-            WHERE OrgFile.FileName = _organismDbFile;
+            WHERE OrgFile.FileName = _organismDbFile::citext;
 
             If Not FOUND Then
                 _logMessage := format('Legacy FASTA file not found in T_Organism_DB_File; cannot determine the organism for %s', _organismDbFile);
@@ -331,12 +332,12 @@ BEGIN
               _storagePath,
               _existingHash
         FROM T_Spectral_Library
-        WHERE Protein_Collection_List    = _proteinCollectionList And
-              Organism_DB_File           = _organismDbFile And
+        WHERE Protein_Collection_List    = _proteinCollectionList::citext And
+              Organism_DB_File           = _organismDbFile::citext And
               Fragment_Ion_Mz_Min        = _fragmentIonMzMin And
               Fragment_Ion_Mz_Max        = _fragmentIonMzMax And
               Trim_N_Terminal_Met        = _trimNTerminalMet And
-              Cleavage_Specificity       = _cleavageSpecificity And
+              Cleavage_Specificity       = _cleavageSpecificity::citext And
               Missed_Cleavages           = _missedCleavages And
               Peptide_Length_Min         = _peptideLengthMin And
               Peptide_Length_Max         = _peptideLengthMax And
@@ -345,8 +346,8 @@ BEGIN
               Precursor_Charge_Min       = _precursorChargeMin And
               Precursor_Charge_Max       = _precursorChargeMax And
               Static_Cys_Carbamidomethyl = _staticCysCarbamidomethyl And
-              Static_Mods                = _staticMods And
-              Dynamic_Mods               = _dynamicMods And
+              Static_Mods                = _staticMods::citext And
+              Dynamic_Mods               = _dynamicMods::citext And
               Max_Dynamic_Mods           = _maxDynamicMods;
 
         If FOUND Then

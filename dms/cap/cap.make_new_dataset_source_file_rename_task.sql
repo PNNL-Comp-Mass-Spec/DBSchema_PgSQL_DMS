@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE cap.make_new_dataset_source_file_rename_task(IN _dat
 **          09/09/2022 mem - Fix typo in message
 **          06/20/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          01/20/2024 mem - Ignore case when resolving dataset name to ID
 **
 *****************************************************/
 DECLARE
@@ -52,7 +53,7 @@ BEGIN
     SELECT Dataset_ID
     INTO _datasetID
     FROM public.t_dataset
-    WHERE dataset = _datasetName;
+    WHERE dataset = _datasetName::citext;
 
     If Not FOUND Then
         _message := format('Dataset not found, unable to continue: %s', _datasetName);

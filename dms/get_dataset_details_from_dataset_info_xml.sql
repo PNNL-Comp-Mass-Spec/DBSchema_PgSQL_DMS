@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE public.get_dataset_details_from_dataset_info_xml(IN 
 **          05/31/2023 mem - Combine string literals
 **          06/13/2023 mem - Show a warning if _datasetInfoXML is null
 **          12/08/2023 mem - Select a single column when using If Not Exists()
+**          01/20/2024 mem - Ignore case when resolving dataset name to ID
 **
 *****************************************************/
 DECLARE
@@ -78,7 +79,7 @@ BEGIN
         SELECT DS.dataset_id
         INTO _datasetID
         FROM t_dataset DS
-        WHERE DS.dataset = _datasetName;
+        WHERE DS.dataset = _datasetName::citext;
 
         If Not FOUND Then
             _message := format('Dataset "%s" not found in table t_dataset by procedure get_dataset_details_from_dataset_info_xml', _datasetName);
@@ -98,7 +99,7 @@ BEGIN
         SELECT DS.dataset_id
         INTO _datasetIDCheck
         FROM t_dataset DS
-        WHERE DS.dataset = _datasetName;
+        WHERE DS.dataset = _datasetName::citext;
 
         If Not FOUND Then
             _message := format('Dataset "%s" not found in table t_dataset by procedure get_dataset_details_from_dataset_info_xml', _datasetName);

@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE public.add_bom_tracking_dataset(IN _month text DEFAU
 **          08/25/2023 mem - Ported to PostgreSQL
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          10/12/2023 mem - Update call to add_update_tracking_dataset
+**          01/20/2024 mem - Ignore case when looking for an existing dataset by name
 **
 *****************************************************/
 DECLARE
@@ -167,7 +168,7 @@ BEGIN
             RAISE EXCEPTION '%', _message;
         End If;
 
-        If Exists (SELECT dataset_id FROM t_dataset WHERE dataset = _datasetName) Then
+        If Exists (SELECT dataset_id FROM t_dataset WHERE dataset = _datasetName::citext) Then
             _message := format('Dataset already exists: %s', _datasetName);
 
             If _mode = 'debug' Then

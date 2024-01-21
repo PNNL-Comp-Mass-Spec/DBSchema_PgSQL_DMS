@@ -18,6 +18,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_id(_datasetname text DEFAULT ''::t
 **  Date:   01/26/2001 grk - Initial version
 **          08/03/2017 mem - Add Set NoCount On
 **          10/18/2022 mem - Ported to PostgreSQL
+**          01/20/2024 mem - Ignore case when resolving dataset name to ID
 **
 *****************************************************/
 DECLARE
@@ -26,7 +27,7 @@ BEGIN
     SELECT dataset_id
     INTO _datasetID
     FROM t_dataset
-    WHERE dataset = _datasetName;
+    WHERE dataset = _datasetName::citext;
 
     If FOUND Then
         RETURN _datasetID;

@@ -83,6 +83,7 @@ CREATE OR REPLACE PROCEDURE public.add_new_dataset(IN _xmldoc text, IN _mode tex
 **          11/25/2022 mem - Rename variable and use new parameter name when calling add_update_dataset
 **          02/27/2023 mem - Show parsed values when mode is 'check_add' or 'check_update'
 **          12/14/2023 mem - Ported to PostgreSQL
+**          01/20/2024 mem - Ignore case when resolving dataset name to ID
 **
 *****************************************************/
 DECLARE
@@ -512,7 +513,7 @@ BEGIN
     SELECT dataset_id
     INTO _datasetId
     FROM t_dataset
-    WHERE dataset = _datasetName;
+    WHERE dataset = _datasetName::citext;
 
     If Not FOUND Then
         _message := format('Could not resolve dataset ID for dataset %s', _datasetName);

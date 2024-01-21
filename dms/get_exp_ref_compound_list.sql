@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION public.get_exp_ref_compound_list(_experimentname text
 **  Date:   11/29/2017
 **          01/04/2018 mem - Now caching reference compounds using the ID_Name field (which is of the form Compound_ID:Compound_Name)
 **          06/16/2022 mem - Ported to PostgreSQL
+**          01/20/2024 mem - Ignore case when filtering by experiment name
 **
 *****************************************************/
 DECLARE
@@ -28,7 +29,7 @@ BEGIN
            ON ERC.exp_id = E.exp_id
          INNER JOIN t_reference_compound RC
            ON ERC.compound_id = RC.compound_id
-    WHERE E.experiment = _experimentName;
+    WHERE E.experiment = _experimentName::citext;
 
     RETURN Coalesce(_result, '');
 END

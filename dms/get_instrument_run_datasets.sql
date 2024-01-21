@@ -18,6 +18,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_run_datasets(_mostrecentweeks i
 **          05/22/2023 mem - Capitalize reserved word
 **          05/29/2023 mem - Use format() for string concatenation
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          01/20/2024 mem - Ignore case when filtering by instrument name
 **
 *****************************************************/
 DECLARE
@@ -94,7 +95,7 @@ BEGIN
         t_dataset DS
         INNER JOIN t_instrument_name InstName ON DS.instrument_id = InstName.instrument_id
     WHERE DS.acq_time_start > CURRENT_TIMESTAMP - make_interval(weeks => _mostRecentWeeks) AND
-          InstName.instrument = _instrument;
+          InstName.instrument = _instrument::citext;
 
     ---------------------------------------------------
     -- Create inter-run interval rows between dataset rows
