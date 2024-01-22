@@ -1,20 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_user
-(
-    _username text,
-    _hanfordIdNum text,
-    _lastNameFirstName text,
-    _email text,
-    _userStatus text,
-    _userUpdate text,
-    _operationsList text,
-    _comment text = '',
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_user(text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_user(IN _username text, IN _hanfordidnum text, IN _lastnamefirstname text, IN _email text, IN _userstatus text, IN _userupdate text, IN _operationslist text, IN _comment text DEFAULT ''::text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -53,7 +43,7 @@ AS $$
 **          02/10/2022 mem - Remove obsolete payroll field
 **                         - Always add 'H' to _hanfordIdNum if it starts with a number
 **          03/16/2022 mem - Replace tab characters with spaces
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/21/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -99,12 +89,17 @@ BEGIN
 
         ---------------------------------------------------
         -- Validate the inputs
+        -- Replace tab characters with a space (which will be trimmed if it is at the beginning or end of the string)
         ---------------------------------------------------
 
         _username          := Trim(Replace(Coalesce(_username, ''),          chr(9), ' '));
-        _lastNameFirstName := Trim(Replace(Coalesce(_lastNameFirstName, ''), chr(9), ' '));
         _hanfordIdNum      := Trim(Replace(Coalesce(_hanfordIdNum, ''),      chr(9), ' '));
+        _lastNameFirstName := Trim(Replace(Coalesce(_lastNameFirstName, ''), chr(9), ' '));
+        _email             := Trim(Replace(Coalesce(_email, ''),             chr(9), ' '));
         _userStatus        := Trim(Coalesce(_userStatus, ''));
+        _userUpdate        := Trim(Coalesce(_userUpdate, ''));
+        _operationsList    := Trim(Coalesce(_operationsList, ''));
+        _comment           := Trim(Coalesce(_comment, ''));
         _mode              := Trim(Lower(Coalesce(_mode, '')));
 
         If _username = '' Then
@@ -129,6 +124,24 @@ BEGIN
             RAISE EXCEPTION 'User status must be specified' USING ERRCODE = 'U5204';
         End If;
 
+        If _userStatus::citext = 'Active' Then
+            _userStatus := 'Active';
+        ElsIf _userStatus::citext = 'Inactive' Then
+            _userStatus := 'Inactive';
+        ElsIf _userStatus::citext = 'Obsolete' Then
+            _userStatus := 'Obsolete';
+        Else
+            RAISE EXCEPTION 'User status should be Active, Inactive, or Obsolete' USING ERRCODE = 'U5205';
+        End If;
+
+        If _userUpdate::citext In ('Y', 'Yes', '') Then
+            _userUpdate := 'Y';
+        ElsIf _userUpdate::citext In ('N', 'No') Then
+            _userUpdate := 'Y';
+        Else
+            RAISE EXCEPTION 'User update should be Y or N' USING ERRCODE = 'U5206';
+        End If;
+
         ---------------------------------------------------
         -- Is entry already in database?
         ---------------------------------------------------
@@ -138,13 +151,13 @@ BEGIN
         -- Cannot create an entry that already exists
 
         If _userID <> 0 And _mode = 'add' Then
-            RAISE EXCEPTION 'Cannot add: user "%" already exists', _username USING ERRCODE = 'U5205';
+            RAISE EXCEPTION 'Cannot add: user "%" already exists', _username USING ERRCODE = 'U5207';
         End If;
 
         -- Cannot update a non-existent entry
 
         If _userID = 0 And _mode = 'update' Then
-            RAISE EXCEPTION 'Cannot update: user "%" does not exist', _username USING ERRCODE = 'U5206';
+            RAISE EXCEPTION 'Cannot update: user "%" does not exist', _username USING ERRCODE = 'U5208';
         End If;
 
         ---------------------------------------------------
@@ -252,4 +265,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_user IS 'AddUpdateUser';
+
+ALTER PROCEDURE public.add_update_user(IN _username text, IN _hanfordidnum text, IN _lastnamefirstname text, IN _email text, IN _userstatus text, IN _userupdate text, IN _operationslist text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_user(IN _username text, IN _hanfordidnum text, IN _lastnamefirstname text, IN _email text, IN _userstatus text, IN _userupdate text, IN _operationslist text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_user(IN _username text, IN _hanfordidnum text, IN _lastnamefirstname text, IN _email text, IN _userstatus text, IN _userupdate text, IN _operationslist text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text) IS 'AddUpdateUser';
+

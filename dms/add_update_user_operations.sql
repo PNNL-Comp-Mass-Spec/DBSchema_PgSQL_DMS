@@ -1,13 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.add_update_user_operations
-(
-    _userID int,
-    _operationsList text,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: add_update_user_operations(integer, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.add_update_user_operations(IN _userid integer, IN _operationslist text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -23,7 +20,7 @@ AS $$
 **  Date:   06/05/2013 mem - Initial version
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/21/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -56,6 +53,17 @@ BEGIN
     End If;
 
     ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
+    _userID         := Coalesce(_userID, 0);
+    _operationsList := Coalesce(_operationsList, '');
+
+    If _userID <= 0 Then
+        RAISE EXCEPTION 'User ID should be a positive integer';
+    End If;
+
+    ---------------------------------------------------
     -- Add/update operations defined for user
     ---------------------------------------------------
 
@@ -69,9 +77,9 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_UserOperations (User_Operation)
-    SELECT Value
+    SELECT value
     FROM public.parse_delimited_list(_operationsList)
-    WHERE Value::citext IN ( SELECT Operation FROM t_user_operations );
+    WHERE value::citext IN ( SELECT Operation FROM t_user_operations );
 
     ---------------------------------------------------
     -- Add missing associations between operations and user
@@ -91,16 +99,24 @@ BEGIN
     -- Remove extra associations
     ---------------------------------------------------
 
-    DELETE FROM t_user_operations_permissions
+    DELETE FROM t_user_operations_permissions UOP
     WHERE UOP.user_id = _userID AND
           NOT EXISTS ( SELECT UO.operation_id
                        FROM Tmp_UserOperations NewOps
                             INNER JOIN t_user_operations UO
                               ON NewOps.User_Operation = UO.operation
-                       WHERE t_user_operations_permissions.operation_id = UO.operation_id);
+                       WHERE UOP.operation_id = UO.operation_id);
 
     DROP TABLE Tmp_UserOperations;
 END
 $$;
 
-COMMENT ON PROCEDURE public.add_update_user_operations IS 'AddUpdateUserOperations';
+
+ALTER PROCEDURE public.add_update_user_operations(IN _userid integer, IN _operationslist text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE add_update_user_operations(IN _userid integer, IN _operationslist text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.add_update_user_operations(IN _userid integer, IN _operationslist text, INOUT _message text, INOUT _returncode text) IS 'AddUpdateUserOperations';
+
