@@ -46,7 +46,7 @@ CREATE VIEW public.v_analysis_job_psm_detail_report AS
     j.settings_file_name AS settings_file,
     org.organism,
     j.organism_db_name AS organism_db,
-    public.get_fasta_file_path(j.organism_db_name, org.organism) AS organism_db_storage_path,
+    public.get_fasta_file_path((j.organism_db_name)::text, (org.organism)::text) AS organism_db_storage_path,
     j.protein_collection_list,
     j.protein_options_list,
     js.job_state AS state,

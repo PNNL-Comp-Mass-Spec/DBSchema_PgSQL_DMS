@@ -21,7 +21,7 @@ CREATE VIEW public.v_analysis_job_detail_report_2 AS
     bto.tissue AS experiment_tissue,
     joborg.organism AS job_organism,
     j.organism_db_name AS organism_db,
-    public.get_fasta_file_path(j.organism_db_name, joborg.organism) AS organism_db_storage_path,
+    public.get_fasta_file_path((j.organism_db_name)::text, (joborg.organism)::text) AS organism_db_storage_path,
     j.protein_collection_list,
     j.protein_options_list,
         CASE
