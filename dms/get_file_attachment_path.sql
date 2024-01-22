@@ -57,6 +57,7 @@ CREATE OR REPLACE FUNCTION public.get_file_attachment_path(_entitytype text, _en
 **          05/19/2023 mem - Use format() for string concatenation
 **          09/11/2023 mem - Use schema name with try_cast
 **          01/21/2024 mem - Change data type of function arguments to text
+**                         - Fix where clause bug when looking for a sample prep request by name
 **
 *****************************************************/
 DECLARE
@@ -148,7 +149,7 @@ BEGIN
             SELECT prep_request_id::text, created
             INTO _entityID, _created
             FROM t_sample_prep_request
-            WHERE request_name = _idValue;
+            WHERE request_name = _entityID::citext;
 
             If FOUND Then
                 _spreadFolder := format('%s_%s', extract(year from _created), extract(month from _created));
