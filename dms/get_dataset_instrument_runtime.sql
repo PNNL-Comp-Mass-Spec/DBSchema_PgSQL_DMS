@@ -1,8 +1,8 @@
 --
--- Name: get_dataset_instrument_runtime(timestamp without time zone, timestamp without time zone, public.citext, public.citext); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: get_dataset_instrument_runtime(timestamp without time zone, timestamp without time zone, text, text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_dataset_instrument_runtime(_startinterval timestamp without time zone, _endinterval timestamp without time zone, _instrument public.citext DEFAULT 'VOrbiETD04'::public.citext, _options public.citext DEFAULT 'Show All'::public.citext) RETURNS TABLE(seq integer, id integer, dataset public.citext, state public.citext, rating public.citext, duration integer, "interval" integer, time_start timestamp without time zone, time_end timestamp without time zone, request integer, eus_proposal public.citext, eus_usage public.citext, eus_proposal_type public.citext, work_package public.citext, lc_column public.citext, instrument public.citext, campaign_id integer, fraction_emsl_funded numeric, campaign_proposals public.citext)
+CREATE OR REPLACE FUNCTION public.get_dataset_instrument_runtime(_startinterval timestamp without time zone, _endinterval timestamp without time zone, _instrument text DEFAULT 'VOrbiETD04'::text, _options text DEFAULT 'Show All'::text) RETURNS TABLE(seq integer, id integer, dataset public.citext, state public.citext, rating public.citext, duration integer, "interval" integer, time_start timestamp without time zone, time_end timestamp without time zone, request integer, eus_proposal public.citext, eus_usage public.citext, eus_proposal_type public.citext, work_package public.citext, lc_column public.citext, instrument public.citext, campaign_id integer, fraction_emsl_funded numeric, campaign_proposals public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -37,6 +37,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_instrument_runtime(_startinterval 
 **          09/08/2023 mem - Adjust capitalization of keywords
 **                         - Include schema name when calling function verify_sp_authorized()
 **          01/20/2024 mem - Ignore case when finding datasets for the given instrument
+**          01/21/2024 mem - Change data type of function arguments to text
 **
 *****************************************************/
 DECLARE
@@ -66,7 +67,7 @@ BEGIN
 
     _anchorIntervalsToMonth := 1;
 
-    If _options = 'Show All' Then
+    If _options::citext = 'Show All' Then
         _includeAcquisitions := 1;
         _includeIncrements := 1;
         _includeStats := 1;
@@ -74,7 +75,7 @@ BEGIN
         _seqIncrement := 2;
     End If;
 
-    If _options = 'No Intervals' Then
+    If _options::citext = 'No Intervals' Then
         _includeAcquisitions := 1;
         _includeIncrements := 0;
         _includeStats := 0;
@@ -82,7 +83,7 @@ BEGIN
         _seqIncrement := 2;
     End If;
 
-    If _options = 'Intervals Only' Then
+    If _options::citext = 'Intervals Only' Then
         _includeAcquisitions := 0;
         _includeIncrements := 1;
         _includeStats := 0;
@@ -90,7 +91,7 @@ BEGIN
         _seqIncrement := 2;
     End If;
 
-    If _options = 'Long Intervals' Then
+    If _options::citext = 'Long Intervals' Then
         _includeAcquisitions := 0;
         _includeIncrements := 1;
         _includeStats := 0;
@@ -172,6 +173,7 @@ BEGIN
 
     If _anchorIntervalsToMonth = 1 Then
         _seqOffset := 2;
+
         INSERT INTO Tmp_TX
         (
             Seq,
@@ -205,19 +207,20 @@ BEGIN
         instrument,
         "interval"
     )
-    SELECT
-        (_seqIncrement * ((ROW_NUMBER() OVER(ORDER BY t_dataset.acq_time_start ASC)) - 1) + 1) + _seqOffset,
-        t_dataset.dataset_id,
-        t_dataset.dataset,
-        t_dataset.acq_time_start,
-        t_dataset.acq_time_end,
-        t_dataset.acq_length_minutes,
+    SELECT (
+        _seqIncrement * ((ROW_NUMBER() OVER(ORDER BY DS.acq_time_start ASC)) - 1) + 1) + _seqOffset,
+        DS.dataset_id,
+        DS.dataset,
+        DS.acq_time_start,
+        DS.acq_time_end,
+        DS.acq_length_minutes,
         _instrument,
         0
-    FROM t_dataset
-         INNER JOIN t_instrument_name ON t_dataset.instrument_id = t_instrument_name.instrument_id
-    WHERE _startInterval <= t_dataset.acq_time_start AND
-          t_dataset.acq_time_start <= _endIntervalEOD AND
+    FROM t_dataset DS
+         INNER JOIN t_instrument_name
+           ON DS.instrument_id = t_instrument_name.instrument_id
+    WHERE _startInterval    <= DS.acq_time_start AND
+          DS.acq_time_start <= _endIntervalEOD AND
           t_instrument_name.instrument = _instrument::citext;
 
     ---------------------------------------------------
@@ -340,8 +343,7 @@ BEGIN
         ---------------------------------------------------
 
         UPDATE Tmp_TX
-        SET
-            State = DSN.dataset_state ,
+        SET State = DSN.dataset_state ,
             Rating = DRN.dataset_rating ,
             LC_Column = format('C:%s', LC.lc_column),
             Request = RR.request_id ,
@@ -361,16 +363,15 @@ BEGIN
                                   -- 'Capacity', 'Staff Time'
                END,
             Campaign_Proposals = C.eus_proposal_list
-        FROM
-            t_dataset DS INNER JOIN
-            t_experiments E ON DS.exp_id = E.exp_id INNER JOIN
-            t_campaign C ON E.campaign_id = C.campaign_id INNER JOIN
-            t_dataset_state_name DSN ON DS.dataset_state_id = DSN.dataset_state_id INNER JOIN
-            t_dataset_rating_name DRN ON DS.dataset_rating_id = DRN.dataset_rating_id  INNER JOIN
-            t_lc_column LC ON DS.lc_column_id = LC.lc_column_id LEFT OUTER JOIN
-            t_requested_run RR ON DS.dataset_id = RR.dataset_id LEFT OUTER JOIN
-            t_eus_usage_type EUT ON RR.eus_usage_type_id = EUT.eus_usage_type_id LEFT OUTER JOIN
-            t_eus_proposals EUP ON RR.eus_proposal_id = EUP.proposal_id
+        FROM t_dataset DS INNER JOIN
+             t_experiments E ON DS.exp_id = E.exp_id INNER JOIN
+             t_campaign C ON E.campaign_id = C.campaign_id INNER JOIN
+             t_dataset_state_name DSN ON DS.dataset_state_id = DSN.dataset_state_id INNER JOIN
+             t_dataset_rating_name DRN ON DS.dataset_rating_id = DRN.dataset_rating_id  INNER JOIN
+             t_lc_column LC ON DS.lc_column_id = LC.lc_column_id LEFT OUTER JOIN
+             t_requested_run RR ON DS.dataset_id = RR.dataset_id LEFT OUTER JOIN
+             t_eus_usage_type EUT ON RR.eus_usage_type_id = EUT.eus_usage_type_id LEFT OUTER JOIN
+             t_eus_proposals EUP ON RR.eus_proposal_id = EUP.proposal_id
         WHERE DS.Dataset_ID = Tmp_TX.ID;
     End If;
 
@@ -430,11 +431,11 @@ END
 $$;
 
 
-ALTER FUNCTION public.get_dataset_instrument_runtime(_startinterval timestamp without time zone, _endinterval timestamp without time zone, _instrument public.citext, _options public.citext) OWNER TO d3l243;
+ALTER FUNCTION public.get_dataset_instrument_runtime(_startinterval timestamp without time zone, _endinterval timestamp without time zone, _instrument text, _options text) OWNER TO d3l243;
 
 --
--- Name: FUNCTION get_dataset_instrument_runtime(_startinterval timestamp without time zone, _endinterval timestamp without time zone, _instrument public.citext, _options public.citext); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION get_dataset_instrument_runtime(_startinterval timestamp without time zone, _endinterval timestamp without time zone, _instrument text, _options text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.get_dataset_instrument_runtime(_startinterval timestamp without time zone, _endinterval timestamp without time zone, _instrument public.citext, _options public.citext) IS 'GetDatasetInstrumentRuntime';
+COMMENT ON FUNCTION public.get_dataset_instrument_runtime(_startinterval timestamp without time zone, _endinterval timestamp without time zone, _instrument text, _options text) IS 'GetDatasetInstrumentRuntime';
 

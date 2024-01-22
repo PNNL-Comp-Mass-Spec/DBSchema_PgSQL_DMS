@@ -1,8 +1,8 @@
 --
--- Name: get_well_index(public.citext); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: get_well_index(text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_well_index(_wellposition public.citext) RETURNS integer
+CREATE OR REPLACE FUNCTION public.get_well_index(_wellposition text) RETURNS integer
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -24,6 +24,7 @@ CREATE OR REPLACE FUNCTION public.get_well_index(_wellposition public.citext) RE
 **          06/23/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved words
 **          09/11/2023 mem - Use schema name with try_cast
+**          01/21/2024 mem - Change data type of argument _wellPosition to text
 **
 *****************************************************/
 DECLARE
@@ -33,7 +34,9 @@ DECLARE
     _wpCol int;
     _numCols int;
 BEGIN
-    If char_length(Trim(Coalesce(_wellPosition, ''))) < 2 Then
+    _wellPosition := Trim(Coalesce(_wellPosition, ''));
+
+    If char_length(_wellPosition) < 2 Then
         RETURN 0;
     End If;
 
@@ -55,11 +58,11 @@ END
 $$;
 
 
-ALTER FUNCTION public.get_well_index(_wellposition public.citext) OWNER TO d3l243;
+ALTER FUNCTION public.get_well_index(_wellposition text) OWNER TO d3l243;
 
 --
--- Name: FUNCTION get_well_index(_wellposition public.citext); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION get_well_index(_wellposition text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.get_well_index(_wellposition public.citext) IS 'GetWellIndex';
+COMMENT ON FUNCTION public.get_well_index(_wellposition text) IS 'GetWellIndex';
 

@@ -1,8 +1,8 @@
 --
--- Name: get_file_attachment_path(public.citext, public.citext); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: get_file_attachment_path(text, text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_file_attachment_path(_entitytype public.citext, _entityid public.citext) RETURNS text
+CREATE OR REPLACE FUNCTION public.get_file_attachment_path(_entitytype text, _entityid text) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -41,7 +41,8 @@ CREATE OR REPLACE FUNCTION public.get_file_attachment_path(_entitytype public.ci
 **        osm_package/spread/195
 **
 **  Arguments:
-**    _entityID   Entity ID, though for Campaign, Dataset, Experiment, and Sample Prep Request supports both entity ID or entity name
+**    _entityType   Entity type: 'campaign', 'experiment', 'dataset', 'sample_prep_request', 'instrument_operation_history', 'instrument_config_history', 'lc_cart_config_history', 'experiment_group', or 'sample_submission'
+**    _entityID     Entity ID, though for Campaign, Dataset, Experiment, and Sample Prep Request supports both entity ID or entity name
 **
 **  Auth:   grk
 **  Date:   04/16/2011
@@ -55,6 +56,7 @@ CREATE OR REPLACE FUNCTION public.get_file_attachment_path(_entitytype public.ci
 **          12/15/2022 mem - Use extract(year from _variable) and extract(month from _variable) to extract the year and month from timestamps
 **          05/19/2023 mem - Use format() for string concatenation
 **          09/11/2023 mem - Use schema name with try_cast
+**          01/21/2024 mem - Change data type of function arguments to text
 **
 *****************************************************/
 DECLARE
@@ -67,14 +69,14 @@ DECLARE
     _idValue int;
 BEGIN
 
-    If _entityType = 'campaign' Then
+    If _entityType::citext = 'campaign' Then
         _campaignID := public.try_cast(_entityID, true, 0);
 
         If _campaignID Is Null Then
             SELECT campaign_id::text, created
             INTO _entityID, _created
             FROM t_campaign
-            WHERE campaign = _entityID;
+            WHERE campaign = _entityID::citext;
 
             If FOUND Then
                 _spreadFolder := format('%s_%s', extract(year from _created), extract(month from _created));
@@ -91,14 +93,14 @@ BEGIN
         End If;
     End If;
 
-    If _entityType = 'experiment' Then
+    If _entityType::citext = 'experiment' Then
         _experimentID := public.try_cast(_entityID, true, 0);
 
         If _experimentID Is Null Then
             SELECT exp_id::text, created
             INTO _entityID, _created
             FROM t_experiments
-            WHERE experiment = _entityID;
+            WHERE experiment = _entityID::citext;
 
             If FOUND Then
                 _spreadFolder := format('%s_%s', extract(year from _created), extract(month from _created));
@@ -115,14 +117,14 @@ BEGIN
         End If;
     End If;
 
-    If _entityType = 'dataset' Then
+    If _entityType::citext = 'dataset' Then
         _datasetID := public.try_cast(_entityID, true, 0);
 
         If _datasetID Is Null Then
             SELECT dataset_id::text, created
             INTO _entityID, _created
             FROM t_dataset
-            WHERE dataset = _entityID;
+            WHERE dataset = _entityID::citext;
 
             If FOUND Then
                 _spreadFolder := format('%s_%s', extract(year from _created), extract(month from _created));
@@ -139,7 +141,7 @@ BEGIN
         End If;
     End If;
 
-    If _entityType = 'sample_prep_request' Then
+    If _entityType::citext = 'sample_prep_request' Then
         _samplePrepID := public.try_cast(_entityID, true, 0);
 
         If _samplePrepID Is Null Then
@@ -163,7 +165,7 @@ BEGIN
         End If;
     End If;
 
-    If _entityType = 'instrument_operation_history' Then
+    If _entityType::citext = 'instrument_operation_history' Then
         _entityType := 'instrument_operation';
         _idValue := public.try_cast(_entityID, true, 0);
 
@@ -179,7 +181,7 @@ BEGIN
         End If;
     End If;
 
-    If _entityType = 'instrument_config_history' Then
+    If _entityType::citext = 'instrument_config_history' Then
         _entityType := 'instrument_config';
         _idValue := public.try_cast(_entityID, true, 0);
 
@@ -195,7 +197,7 @@ BEGIN
         End If;
     End If;
 
-    If _entityType = 'lc_cart_config_history' Then
+    If _entityType::citext = 'lc_cart_config_history' Then
         _entityType := 'lc_cart_config';
         _idValue := public.try_cast(_entityID, true, 0);
 
@@ -211,7 +213,7 @@ BEGIN
         End If;
     End If;
 
-    If _entityType = 'experiment_group' Then
+    If _entityType::citext = 'experiment_group' Then
         _idValue := public.try_cast(_entityID, true, 0);
 
         If Not _idValue Is Null Then
@@ -226,7 +228,7 @@ BEGIN
         End If;
     End If;
 
-    If _entityType = 'sample_submission' Then
+    If _entityType::citext = 'sample_submission' Then
         _idValue := public.try_cast(_entityID, true, 0);
 
         If Not _idValue Is Null Then
@@ -250,11 +252,11 @@ END
 $$;
 
 
-ALTER FUNCTION public.get_file_attachment_path(_entitytype public.citext, _entityid public.citext) OWNER TO d3l243;
+ALTER FUNCTION public.get_file_attachment_path(_entitytype text, _entityid text) OWNER TO d3l243;
 
 --
--- Name: FUNCTION get_file_attachment_path(_entitytype public.citext, _entityid public.citext); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION get_file_attachment_path(_entitytype text, _entityid text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.get_file_attachment_path(_entitytype public.citext, _entityid public.citext) IS 'GetFileAttachmentPath';
+COMMENT ON FUNCTION public.get_file_attachment_path(_entitytype text, _entityid text) IS 'GetFileAttachmentPath';
 

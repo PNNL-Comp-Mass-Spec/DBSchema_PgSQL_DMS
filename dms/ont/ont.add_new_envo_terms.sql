@@ -1,8 +1,8 @@
 --
--- Name: add_new_envo_terms(public.citext, boolean, boolean); Type: FUNCTION; Schema: ont; Owner: d3l243
+-- Name: add_new_envo_terms(text, boolean, boolean); Type: FUNCTION; Schema: ont; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION ont.add_new_envo_terms(_sourcetable public.citext DEFAULT 'T_Tmp_ENVO'::public.citext, _infoonly boolean DEFAULT true, _previewdeleteextras boolean DEFAULT true) RETURNS TABLE(item_type public.citext, entry_id integer, term_pk public.citext, term_name public.citext, identifier public.citext, is_leaf public.citext, synonyms public.citext, parent_term_id public.citext, parent_term_name public.citext, grandparent_term_id public.citext, grandparent_term_name public.citext, entered timestamp without time zone, updated timestamp without time zone)
+CREATE OR REPLACE FUNCTION ont.add_new_envo_terms(_sourcetable text DEFAULT 'T_Tmp_ENVO'::text, _infoonly boolean DEFAULT true, _previewdeleteextras boolean DEFAULT true) RETURNS TABLE(item_type public.citext, entry_id integer, term_pk public.citext, term_name public.citext, identifier public.citext, is_leaf public.citext, synonyms public.citext, parent_term_id public.citext, parent_term_name public.citext, grandparent_term_id public.citext, grandparent_term_name public.citext, entered timestamp without time zone, updated timestamp without time zone)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -36,6 +36,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_envo_terms(_sourcetable public.citext DEF
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          01/21/2024 mem - Change data type of argument _sourceTable to text
 **
 *****************************************************/
 DECLARE
@@ -407,11 +408,11 @@ END
 $$;
 
 
-ALTER FUNCTION ont.add_new_envo_terms(_sourcetable public.citext, _infoonly boolean, _previewdeleteextras boolean) OWNER TO d3l243;
+ALTER FUNCTION ont.add_new_envo_terms(_sourcetable text, _infoonly boolean, _previewdeleteextras boolean) OWNER TO d3l243;
 
 --
--- Name: FUNCTION add_new_envo_terms(_sourcetable public.citext, _infoonly boolean, _previewdeleteextras boolean); Type: COMMENT; Schema: ont; Owner: d3l243
+-- Name: FUNCTION add_new_envo_terms(_sourcetable text, _infoonly boolean, _previewdeleteextras boolean); Type: COMMENT; Schema: ont; Owner: d3l243
 --
 
-COMMENT ON FUNCTION ont.add_new_envo_terms(_sourcetable public.citext, _infoonly boolean, _previewdeleteextras boolean) IS 'AddNewENVOTerms';
+COMMENT ON FUNCTION ont.add_new_envo_terms(_sourcetable text, _infoonly boolean, _previewdeleteextras boolean) IS 'AddNewENVOTerms';
 

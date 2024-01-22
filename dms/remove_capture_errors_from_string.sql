@@ -1,13 +1,14 @@
 --
--- Name: remove_capture_errors_from_string(public.citext); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: remove_capture_errors_from_string(text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.remove_capture_errors_from_string(_comment public.citext) RETURNS public.citext
+CREATE OR REPLACE FUNCTION public.remove_capture_errors_from_string(_comment text) RETURNS public.citext
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
-**  Desc:   Removes common dataset capture error messages
+**  Desc:
+**      Removes common dataset capture error messages
 **
 **  Return value: Updated comment
 **
@@ -20,6 +21,7 @@ CREATE OR REPLACE FUNCTION public.remove_capture_errors_from_string(_comment pub
 **          11/22/2017 mem - Add "Authentication failure: The user name or password is incorrect."
 **          06/23/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
+**          01/21/2024 mem - Change data type of argument _comment to text
 **
 *****************************************************/
 DECLARE
@@ -42,7 +44,7 @@ BEGIN
 
     FOREACH _textToFind IN ARRAY _commentsToRemove
     LOOP
-        _updatedComment := remove_from_string(_updatedComment, _textToFind);
+        _updatedComment := remove_from_string(_updatedComment, _textToFind, _caseInsensitiveMatching => true);
     END LOOP;
 
     RETURN _updatedComment;
@@ -50,11 +52,11 @@ END
 $$;
 
 
-ALTER FUNCTION public.remove_capture_errors_from_string(_comment public.citext) OWNER TO d3l243;
+ALTER FUNCTION public.remove_capture_errors_from_string(_comment text) OWNER TO d3l243;
 
 --
--- Name: FUNCTION remove_capture_errors_from_string(_comment public.citext); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION remove_capture_errors_from_string(_comment text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.remove_capture_errors_from_string(_comment public.citext) IS 'RemoveCaptureErrorsFromString';
+COMMENT ON FUNCTION public.remove_capture_errors_from_string(_comment text) IS 'RemoveCaptureErrorsFromString';
 

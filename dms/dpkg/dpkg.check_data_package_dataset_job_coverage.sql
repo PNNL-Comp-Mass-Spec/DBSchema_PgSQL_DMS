@@ -1,8 +1,8 @@
 --
--- Name: check_data_package_dataset_job_coverage(integer, public.citext, public.citext); Type: FUNCTION; Schema: dpkg; Owner: d3l243
+-- Name: check_data_package_dataset_job_coverage(integer, text, text); Type: FUNCTION; Schema: dpkg; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION dpkg.check_data_package_dataset_job_coverage(_packageid integer, _tool public.citext, _mode public.citext) RETURNS TABLE(dataset public.citext, job_count integer)
+CREATE OR REPLACE FUNCTION dpkg.check_data_package_dataset_job_coverage(_packageid integer, _tool text, _mode text) RETURNS TABLE(dataset public.citext, job_count integer)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -25,12 +25,13 @@ CREATE OR REPLACE FUNCTION dpkg.check_data_package_dataset_job_coverage(_package
 **          06/25/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
 **          09/28/2023 mem - Obtain dataset names from t_dataset and tool names from t_analysis_tool
+**          01/21/2024 mem - Change data type of function arguments to text
 **
 *****************************************************/
 BEGIN
     _mode := Trim(Coalesce(_mode, ''));
 
-    If Not _mode In ('NoPackageJobs', 'NoDMSJobs', 'PackageJobCount') Then
+    If Not _mode::citext In ('NoPackageJobs', 'NoDMSJobs', 'PackageJobCount') Then
         RETURN QUERY
         SELECT format('Invalid mode "%s"; should be ''NoPackageJobs'', ''NoDMSJobs'', or ''PackageJobCount''', _mode)::citext,
                NULL::int;
@@ -40,7 +41,7 @@ BEGIN
 
     -- Package datasets with no package jobs for given tool
 
-    If _mode = 'NoPackageJobs' Then
+    If _mode::citext = 'NoPackageJobs' Then
         RETURN QUERY
         SELECT DS.dataset,
                NULL::int AS job_count
@@ -52,7 +53,7 @@ BEGIN
                                ON AJ.job = DPJ.job
                              INNER JOIN public.t_analysis_tool T
                                ON AJ.analysis_tool_id = T.analysis_tool_id AND
-                                  T.analysis_tool = _tool
+                                  T.analysis_tool = _tool::citext
                ON DPD.dataset_id = DPJ.dataset_id AND
                   DPD.data_pkg_id = DPJ.data_pkg_id
         WHERE DPD.data_pkg_id = _packageID AND
@@ -61,7 +62,7 @@ BEGIN
 
     -- Package datasets with no DMS jobs for given tool
 
-    If _mode = 'NoDMSJobs' Then
+    If _mode::citext = 'NoDMSJobs' Then
         RETURN QUERY
         SELECT DS.dataset,
                NULL::int AS job_count
@@ -73,14 +74,14 @@ BEGIN
                            FROM public.t_analysis_job AS J
                                 INNER JOIN public.t_analysis_tool Tool
                                   ON J.analysis_tool_id = Tool.analysis_tool_id AND
-                                     Tool.analysis_tool = _tool
+                                     Tool.analysis_tool = _tool::citext
                            WHERE J.dataset_id = DPD.dataset_id
                          );
     End If;
 
     -- For each dataset, return the number of jobs for the given tool in the data package
 
-    If _mode = 'PackageJobCount' Then
+    If _mode::citext = 'PackageJobCount' Then
         RETURN QUERY
         SELECT DS.Dataset,
                SUM(CASE WHEN DPJ.Job IS NULL THEN 0 ELSE 1 END)::int AS job_count
@@ -92,7 +93,7 @@ BEGIN
                                ON AJ.job = DPJ.job
                              INNER JOIN public.t_analysis_tool T
                                ON AJ.analysis_tool_id = T.analysis_tool_id AND
-                                  T.analysis_tool = _tool
+                                  T.analysis_tool = _tool::citext
                ON DPD.dataset_id = DPJ.dataset_id AND
                   DPD.data_pkg_id = DPJ.data_pkg_id
         WHERE DPD.data_pkg_id = _packageID
@@ -102,11 +103,11 @@ END
 $$;
 
 
-ALTER FUNCTION dpkg.check_data_package_dataset_job_coverage(_packageid integer, _tool public.citext, _mode public.citext) OWNER TO d3l243;
+ALTER FUNCTION dpkg.check_data_package_dataset_job_coverage(_packageid integer, _tool text, _mode text) OWNER TO d3l243;
 
 --
--- Name: FUNCTION check_data_package_dataset_job_coverage(_packageid integer, _tool public.citext, _mode public.citext); Type: COMMENT; Schema: dpkg; Owner: d3l243
+-- Name: FUNCTION check_data_package_dataset_job_coverage(_packageid integer, _tool text, _mode text); Type: COMMENT; Schema: dpkg; Owner: d3l243
 --
 
-COMMENT ON FUNCTION dpkg.check_data_package_dataset_job_coverage(_packageid integer, _tool public.citext, _mode public.citext) IS 'CheckDataPackageDatasetJobCoverage';
+COMMENT ON FUNCTION dpkg.check_data_package_dataset_job_coverage(_packageid integer, _tool text, _mode text) IS 'CheckDataPackageDatasetJobCoverage';
 

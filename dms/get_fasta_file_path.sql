@@ -1,8 +1,8 @@
 --
--- Name: get_fasta_file_path(public.citext, public.citext); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: get_fasta_file_path(text, text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_fasta_file_path(_fastafilename public.citext, _organismname public.citext) RETURNS text
+CREATE OR REPLACE FUNCTION public.get_fasta_file_path(_fastafilename text, _organismname text) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION public.get_fasta_file_path(_fastafilename public.cite
 **          06/14/2022 mem - Ported to PostgreSQL
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          01/20/2024 mem - Ignore case when filtering by file name or organism name
+**          01/21/2024 mem - Change data type of function arguments to text
 **
 *****************************************************/
 DECLARE
@@ -30,7 +31,7 @@ DECLARE
 BEGIN
     _filePath := '';
 
-    If Coalesce(_fastaFileName, '') = '' Or _fastaFileName = 'na' Then
+    If Coalesce(_fastaFileName, '') = '' Or _fastaFileName::citext = 'na' Then
         SELECT organism_db_path
         INTO _filePath
         FROM t_organisms
@@ -79,5 +80,5 @@ END
 $$;
 
 
-ALTER FUNCTION public.get_fasta_file_path(_fastafilename public.citext, _organismname public.citext) OWNER TO d3l243;
+ALTER FUNCTION public.get_fasta_file_path(_fastafilename text, _organismname text) OWNER TO d3l243;
 

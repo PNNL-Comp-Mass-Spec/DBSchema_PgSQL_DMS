@@ -1,8 +1,8 @@
 --
--- Name: get_dataset_capture_priority(public.citext, public.citext); Type: FUNCTION; Schema: cap; Owner: d3l243
+-- Name: get_dataset_capture_priority(text, text); Type: FUNCTION; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION cap.get_dataset_capture_priority(_datasetname public.citext, _instrumentgroup public.citext) RETURNS smallint
+CREATE OR REPLACE FUNCTION cap.get_dataset_capture_priority(_datasetname text, _instrumentgroup text) RETURNS smallint
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -23,21 +23,22 @@ CREATE OR REPLACE FUNCTION cap.get_dataset_capture_priority(_datasetname public.
 **          04/02/2023 mem - Rename procedure and functions
 **          05/22/2023 mem - Capitalize reserved word
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          01/21/2024 mem - Change data type of function arguments to text
 **
 *****************************************************/
 DECLARE
     _priority int;
 BEGIN
     -- These dataset names are modeled after those in function public.get_dataset_priority
-    If (_datasetName SIMILAR TO 'QC[_][0-9][0-9]%' Or
-        _datasetName SIMILAR TO 'QC[_-]Shew[_-][0-9][0-9]%' Or
-        _datasetName SIMILAR TO 'QC[_-]ShewIntact%' Or
-        _datasetName SIMILAR TO 'QC[_]Shew[_]TEDDY%' Or
-        _datasetName SIMILAR TO 'QC[_]Mam%' Or
-        _datasetName SIMILAR TO 'QC[_]PP[_]MCF-7%'
-       ) AND NOT _datasetName LIKE '%-bad' Then
+    If (_datasetName::citext SIMILAR TO 'QC[_][0-9][0-9]%' Or
+        _datasetName::citext SIMILAR TO 'QC[_-]Shew[_-][0-9][0-9]%' Or
+        _datasetName::citext SIMILAR TO 'QC[_-]ShewIntact%' Or
+        _datasetName::citext SIMILAR TO 'QC[_]Shew[_]TEDDY%' Or
+        _datasetName::citext SIMILAR TO 'QC[_]Mam%' Or
+        _datasetName::citext SIMILAR TO 'QC[_]PP[_]MCF-7%'
+       ) AND NOT _datasetName ILIKE '%-bad' Then
          _priority := 2;
-    ElsIf _instrumentGroup In ('TSQ', 'Bruker_FTMS', 'MALDI-Imaging') Then
+    ElsIf _instrumentGroup::citext In ('TSQ', 'Bruker_FTMS', 'MALDI-Imaging') Then
         _priority := 6;
     Else
         _priority := 4;
@@ -48,11 +49,11 @@ END
 $$;
 
 
-ALTER FUNCTION cap.get_dataset_capture_priority(_datasetname public.citext, _instrumentgroup public.citext) OWNER TO d3l243;
+ALTER FUNCTION cap.get_dataset_capture_priority(_datasetname text, _instrumentgroup text) OWNER TO d3l243;
 
 --
--- Name: FUNCTION get_dataset_capture_priority(_datasetname public.citext, _instrumentgroup public.citext); Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: FUNCTION get_dataset_capture_priority(_datasetname text, _instrumentgroup text); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON FUNCTION cap.get_dataset_capture_priority(_datasetname public.citext, _instrumentgroup public.citext) IS 'GetDatasetCapturePriority';
+COMMENT ON FUNCTION cap.get_dataset_capture_priority(_datasetname text, _instrumentgroup text) IS 'GetDatasetCapturePriority';
 

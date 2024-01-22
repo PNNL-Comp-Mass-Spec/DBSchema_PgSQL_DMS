@@ -1,8 +1,8 @@
 --
--- Name: add_new_terms(public.citext, boolean, boolean); Type: FUNCTION; Schema: ont; Owner: d3l243
+-- Name: add_new_terms(text, boolean, boolean); Type: FUNCTION; Schema: ont; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION ont.add_new_terms(_ontologyname public.citext DEFAULT 'PSI'::public.citext, _infoonly boolean DEFAULT false, _previewsql boolean DEFAULT false) RETURNS TABLE(term_pk public.citext, term_name public.citext, identifier public.citext, is_leaf public.citext, parent_term_name public.citext, parent_term_id public.citext, grandparent_term_name public.citext, grandparent_term_id public.citext)
+CREATE OR REPLACE FUNCTION ont.add_new_terms(_ontologyname text DEFAULT 'PSI'::text, _infoonly boolean DEFAULT false, _previewsql boolean DEFAULT false) RETURNS TABLE(term_pk public.citext, term_name public.citext, identifier public.citext, is_leaf public.citext, parent_term_name public.citext, parent_term_id public.citext, grandparent_term_name public.citext, grandparent_term_id public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -34,6 +34,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_terms(_ontologyname public.citext DEFAULT
 **          09/01/2023 mem - Remove unnecessary cast to citext for string constants
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          01/21/2024 mem - Change data type of argument _ontologyName to text
 **
 *****************************************************/
 DECLARE
@@ -65,13 +66,13 @@ BEGIN
     -- Do not allow processing of the 'PSI' ontology
     ---------------------------------------------------
 
-    If _ontologyName = 'PSI' Then
+    If _ontologyName::citext = 'PSI' Then
         _warningMessage := 'Ontology PSI is superseded by MS (aka PSI_MS); creation of table T_CV_PSI is not allowed';
 
-    ElsIf _ontologyName In ('BTO', 'ENVO', 'MS') Then
+    ElsIf _ontologyName::citext In ('BTO', 'ENVO', 'MS') Then
         _warningMessage := format('Use function "ont.add_new_%s_terms" to add %s terms', Lower(_ontologyName), _ontologyName);
 
-    ElsIf Not Exists (SELECT ontology FROM ont.v_term_lineage WHERE ontology = _ontologyName) Then
+    ElsIf Not Exists (SELECT ontology FROM ont.v_term_lineage WHERE ontology = _ontologyName::citext) Then
         _warningMessage := format('Invalid ontology name: %s; not found in ont.v_term_lineage', _ontologyName);
 
     End If;
@@ -154,7 +155,7 @@ BEGIN
     -- Construct the Insert Into and Select SQL
     ---------------------------------------------------
 
-    If _ontologyName = 'NEWT' Then
+    If _ontologyName::citext = 'NEWT' Then
         -- NEWT identifiers do not start with NEWT
         -- Query v_newt_terms (which in turn queries V_Term_Lineage)
         -- Insert data into 'ont.t_cv_newt' (defined by _targetTableWithSchema)
@@ -274,11 +275,11 @@ END
 $$;
 
 
-ALTER FUNCTION ont.add_new_terms(_ontologyname public.citext, _infoonly boolean, _previewsql boolean) OWNER TO d3l243;
+ALTER FUNCTION ont.add_new_terms(_ontologyname text, _infoonly boolean, _previewsql boolean) OWNER TO d3l243;
 
 --
--- Name: FUNCTION add_new_terms(_ontologyname public.citext, _infoonly boolean, _previewsql boolean); Type: COMMENT; Schema: ont; Owner: d3l243
+-- Name: FUNCTION add_new_terms(_ontologyname text, _infoonly boolean, _previewsql boolean); Type: COMMENT; Schema: ont; Owner: d3l243
 --
 
-COMMENT ON FUNCTION ont.add_new_terms(_ontologyname public.citext, _infoonly boolean, _previewsql boolean) IS 'AddNewTerms';
+COMMENT ON FUNCTION ont.add_new_terms(_ontologyname text, _infoonly boolean, _previewsql boolean) IS 'AddNewTerms';
 

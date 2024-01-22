@@ -1,8 +1,8 @@
 --
--- Name: backfill_terms(public.citext, public.citext, boolean, boolean); Type: FUNCTION; Schema: ont; Owner: d3l243
+-- Name: backfill_terms(text, text, boolean, boolean); Type: FUNCTION; Schema: ont; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION ont.backfill_terms(_sourcetable public.citext DEFAULT 't_cv_bto'::public.citext, _namespace public.citext DEFAULT 'BrendaTissueOBO'::public.citext, _infoonly boolean DEFAULT true, _previewrelationshipupdates boolean DEFAULT true) RETURNS TABLE(item_type public.citext, term_pk public.citext, term_name public.citext, identifier public.citext, is_leaf public.citext, updated timestamp without time zone)
+CREATE OR REPLACE FUNCTION ont.backfill_terms(_sourcetable text DEFAULT 't_cv_bto'::text, _namespace text DEFAULT 'BrendaTissueOBO'::text, _infoonly boolean DEFAULT true, _previewrelationshipupdates boolean DEFAULT true) RETURNS TABLE(item_type public.citext, term_pk public.citext, term_name public.citext, identifier public.citext, is_leaf public.citext, updated timestamp without time zone)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -40,6 +40,7 @@ CREATE OR REPLACE FUNCTION ont.backfill_terms(_sourcetable public.citext DEFAULT
 **          07/11/2023 mem - Use COUNT(term_pk) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          01/21/2024 mem - Change data type of function arguments to text
 **
 *****************************************************/
 DECLARE
@@ -185,7 +186,7 @@ BEGIN
         ---------------------------------------------------
 
         INSERT INTO ont.t_term (term_pk, ontology_id, term_name, identifier, definition, namespace, is_obsolete, is_root_term, is_leaf)
-        SELECT s.term_pk, _ontologyID, s.term_name, s.identifier, '' as definition, _namespace, 0 as is_obsolete, 0 as i_root_term, Max(s.is_leaf)
+        SELECT s.term_pk, _ontologyID, s.term_name, s.identifier, '' AS definition, _namespace, 0 AS is_obsolete, 0 AS i_root_term, Max(s.is_leaf)
         FROM Tmp_SourceData s
         WHERE s.matches_existing = 0
         GROUP BY s.term_pk, s.term_name, s.identifier;
@@ -367,11 +368,11 @@ END
 $$;
 
 
-ALTER FUNCTION ont.backfill_terms(_sourcetable public.citext, _namespace public.citext, _infoonly boolean, _previewrelationshipupdates boolean) OWNER TO d3l243;
+ALTER FUNCTION ont.backfill_terms(_sourcetable text, _namespace text, _infoonly boolean, _previewrelationshipupdates boolean) OWNER TO d3l243;
 
 --
--- Name: FUNCTION backfill_terms(_sourcetable public.citext, _namespace public.citext, _infoonly boolean, _previewrelationshipupdates boolean); Type: COMMENT; Schema: ont; Owner: d3l243
+-- Name: FUNCTION backfill_terms(_sourcetable text, _namespace text, _infoonly boolean, _previewrelationshipupdates boolean); Type: COMMENT; Schema: ont; Owner: d3l243
 --
 
-COMMENT ON FUNCTION ont.backfill_terms(_sourcetable public.citext, _namespace public.citext, _infoonly boolean, _previewrelationshipupdates boolean) IS 'BackfillTerms';
+COMMENT ON FUNCTION ont.backfill_terms(_sourcetable text, _namespace text, _infoonly boolean, _previewrelationshipupdates boolean) IS 'BackfillTerms';
 

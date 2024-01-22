@@ -1,8 +1,8 @@
 --
--- Name: get_data_package_xml(integer, public.citext); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: get_data_package_xml(integer, text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_data_package_xml(_datapackageid integer, _options public.citext) RETURNS text
+CREATE OR REPLACE FUNCTION public.get_data_package_xml(_datapackageid integer, _options text) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -51,6 +51,7 @@ CREATE OR REPLACE FUNCTION public.get_data_package_xml(_datapackageid integer, _
 **                         - Indent XML
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          01/04/2024 mem - Remove unnecessary parentheses
+**          01/21/2024 mem - Change data type of argument _options to text
 **
 *****************************************************/
 DECLARE
@@ -67,7 +68,8 @@ DECLARE
 BEGIN
 
     _options := Trim(Coalesce(_options, ''));
-    If _options = '' Or _options = 'All' THEN
+
+    If _options::citext IN ('', 'All') THEN
         _includeAll = true;
     Else
         _includeAll = false;
@@ -335,11 +337,11 @@ END
 $$;
 
 
-ALTER FUNCTION public.get_data_package_xml(_datapackageid integer, _options public.citext) OWNER TO d3l243;
+ALTER FUNCTION public.get_data_package_xml(_datapackageid integer, _options text) OWNER TO d3l243;
 
 --
--- Name: FUNCTION get_data_package_xml(_datapackageid integer, _options public.citext); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION get_data_package_xml(_datapackageid integer, _options text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.get_data_package_xml(_datapackageid integer, _options public.citext) IS 'GetDataPackageXML';
+COMMENT ON FUNCTION public.get_data_package_xml(_datapackageid integer, _options text) IS 'GetDataPackageXML';
 
