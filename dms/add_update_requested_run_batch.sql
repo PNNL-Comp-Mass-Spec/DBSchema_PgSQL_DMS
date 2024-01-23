@@ -75,6 +75,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **          01/17/2024 mem - Drop temp table before exiting procedure
 **          01/19/2024 mem - Remove _requestedInstrumentGroup since we no longer track instrument group at the batch level
 **          01/22/2024 mem - Require that requested runs all have the same instrument group
+**                         - If any of the requested runs are already a member of another batch, call update_cached_requested_run_batch_stats() for the old batch ID(s)
 **
 *****************************************************/
 DECLARE
@@ -85,6 +86,7 @@ DECLARE
 
     _logErrors boolean := false;
     _requestedRunTempTableCreated boolean := false;
+    _batchIDsTempTableCreated boolean := false;
     _userID int := 0;
     _firstInvalid text;
     _countValid int;
@@ -307,6 +309,24 @@ BEGIN
             End If;
 
         End If;
+
+        ---------------------------------------------------
+        -- Look for requested runs that are already associated with a different requested run batch
+        ---------------------------------------------------
+
+        CREATE TEMP TABLE Tmp_OldBatchIDs (
+            Batch_ID int Not Null
+        );
+
+        _batchIDsTempTableCreated := true;
+
+        INSERT INTO Tmp_OldBatchIDs (Batch_ID)
+        SELECT DISTINCT RR.batch_id
+        FROM T_Requested_Run RR
+             INNER JOIN Tmp_RequestedRuns TmpRuns
+               ON TmpRuns.Request_ID = RR.request_id
+        WHERE NOT RR.batch_id IN (0, _id);
+
         _logErrors := true;
 
         ---------------------------------------------------
@@ -491,6 +511,23 @@ BEGIN
             End If;
         End If;
 
+        FOR _currentID IN
+            SELECT Batch_ID
+            FROM Tmp_OldBatchIDs
+            ORDER BY Batch_ID
+        LOOP
+            CALL public.update_cached_requested_run_batch_stats (
+                            _currentID,
+                            _fullRefresh => false,
+                            _message     => _message,       -- Output
+                            _returncode  => _returncode);   -- Output
+
+            If _returnCode = '' And _message <> '' Then
+                RAISE INFO '%', _message;
+                _message := '';
+            End If;
+        END LOOP;
+
     EXCEPTION
         WHEN OTHERS THEN
             GET STACKED DIAGNOSTICS
@@ -512,8 +549,12 @@ BEGIN
         End If;
     END;
 
-    If _tempTableCreated Then
+    If _requestedRunTempTableCreated Then
         DROP TABLE IF EXISTS Tmp_RequestedRuns;
+    End If;
+
+    If _batchIDsTempTableCreated Then
+        DROP TABLE IF EXISTS Tmp_OldBatchIDs;
     End If;
 END
 $$;
