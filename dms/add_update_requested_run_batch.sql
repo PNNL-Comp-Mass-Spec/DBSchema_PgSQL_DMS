@@ -74,6 +74,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **          12/15/2023 mem - Fix bug that sent the wrong value to _requestedBatchPriority when calling validate_requested_run_batch_params
 **          01/17/2024 mem - Drop temp table before exiting procedure
 **          01/19/2024 mem - Remove _requestedInstrumentGroup since we no longer track instrument group at the batch level
+**          01/22/2024 mem - Require that requested runs all have the same instrument group
 **
 *****************************************************/
 DECLARE
@@ -83,12 +84,14 @@ DECLARE
     _authorized boolean;
 
     _logErrors boolean := false;
-    _tempTableCreated boolean := false;
+    _requestedRunTempTableCreated boolean := false;
     _userID int := 0;
     _firstInvalid text;
-    _count int;
+    _countValid int;
     _countInvalid int;
     _invalidIDs text := null;
+    _instrumentGroupCount int;
+    _instrumentGroups text;
     _batchIDConfirm int := 0;
     _debugMsg text;
     _existingBatchGroupID int := null;
@@ -96,6 +99,7 @@ DECLARE
     _duplicateBatchID int;
     _duplicateMessage text;
     _requestedCompletionTimestamp timestamp;
+    _currentID int;
 
     _sqlState text;
     _exceptionMessage text;
@@ -188,7 +192,7 @@ BEGIN
             Request_ID int NULL
         );
 
-        _tempTableCreated := true;
+        _requestedRunTempTableCreated := true;
 
         ---------------------------------------------------
         -- Populate temporary table from list
@@ -257,6 +261,52 @@ BEGIN
             End If;
         End If;
 
+        ---------------------------------------------------
+        -- Determine the instrument group(s) associated with the requested runs
+        -- If updating a batch, only consider active requested runs
+        ---------------------------------------------------
+
+        SELECT COUNT(DISTINCT RR.instrument_group)
+        INTO _instrumentGroupCount
+        FROM T_Requested_Run RR
+             INNER JOIN Tmp_RequestedRuns TmpRuns
+               ON TmpRuns.Request_ID = RR.request_id
+        WHERE (RR.state_name = 'Active' And _mode Like '%update%') Or _mode Like 'add%';
+
+        If _instrumentGroupCount > 1 Then
+
+            SELECT string_agg(InstGroup, ', ' ORDER BY InstGroup)
+            INTO _instrumentGroups
+            FROM ( SELECT DISTINCT RR.instrument_group AS InstGroup
+                   FROM T_Requested_Run RR
+                        INNER JOIN Tmp_RequestedRuns TmpRuns
+                          ON TmpRuns.Request_ID = RR.Request_ID
+                   WHERE (RR.state_name = 'Active' And _mode Like '%update%') Or _mode Like 'add%'
+                 ) GroupQ;
+
+            If _mode Like '%update%' Then
+                _message := 'Active requested runs';
+            Else
+                _message := 'Requested runs';
+            End If;
+
+            _message = format('%s in a batch must have the same instrument group; '
+                              'the selected %s requested runs are associated with multiple instrument groups (%s). '
+                              'Update the instrument groups for the requested runs, or create multiple batches',
+                              _message,
+                              CASE WHEN _mode Like '%update%' THEN 'active' ELSE ' ' END,
+                              _instrumentGroups);
+
+            If _raiseExceptions Then
+                RAISE EXCEPTION '%', _message;
+            Else
+                _returnCode := 'U5210';
+
+                DROP TABLE Tmp_RequestedRuns;
+                RETURN;
+            End If;
+
+        End If;
         _logErrors := true;
 
         ---------------------------------------------------
@@ -265,12 +315,13 @@ BEGIN
 
         If _mode::citext = 'PreviewAdd' Then
             SELECT COUNT(*)
-            INTO _count
+            INTO _countValid
             FROM Tmp_RequestedRuns;
 
-            _message := format('Would create batch "%s" with %s requested runs', _name, _count);
+            _message := format('Would create batch "%s" with %s requested runs', _name, _countValid);
 
             DROP TABLE Tmp_RequestedRuns;
+            DROP TABLE Tmp_OldBatchIDs;
             RETURN;
         End If;
 
