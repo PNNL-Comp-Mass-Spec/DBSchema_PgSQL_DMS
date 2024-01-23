@@ -149,6 +149,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run(IN _requestname text
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
 **          01/03/2024 mem - Update warning messages
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          01/22/2024 mem - If the requested run is active and not associated with a batch, do not allow it to be added to a batch that has active requested runs whose instrument group differs from this request's instrument group
+**                         - If the requested run is active and is associated with a batch, do not allow the instrument group to be changed if the batch has other active requests with a different instrument group than this request's instrument group
 **
 *****************************************************/
 DECLARE
@@ -187,6 +189,9 @@ DECLARE
     _commaPosition int;
     _locationID int := null;
     _allowNoneWP boolean;
+    _instrumentGroupCount int;
+    _instrumentGroups text;
+    _currentInstrumentGroup citext;
     _requireWP boolean := true;
     _logMessage text;
     _targetType int;
@@ -333,7 +338,8 @@ BEGIN
                        request_id,
                        eus_proposal_id,
                        state_name
-                INTO _oldRequestName, _requestID, _oldEusProposalID, _oldStatus
+                       batch_id
+                INTO _oldRequestName, _requestID, _oldEusProposalID, _oldStatus, _currentBatch
                 FROM t_requested_run
                 WHERE request_id = _requestIDForUpdate;
 
@@ -356,8 +362,9 @@ BEGIN
                 SELECT request_name,
                        request_id,
                        eus_proposal_id,
-                       state_name
-                INTO _oldRequestName, _requestID, _oldEusProposalID, _oldStatus
+                       state_name,
+                       batch_id
+                INTO _oldRequestName, _requestID, _oldEusProposalID, _oldStatus, _currentBatch
                 FROM t_requested_run
                 WHERE request_name = _requestName::citext AND
                       state_name = _status::citext;
@@ -376,7 +383,8 @@ BEGIN
                    request_id,
                    eus_proposal_id,
                    state_name
-            INTO _oldRequestName, _requestID, _oldEusProposalID, _oldStatus
+                   batch_id
+            INTO _oldRequestName, _requestID, _oldEusProposalID, _oldStatus, _currentBatch
             FROM t_requested_run
             WHERE request_name = _requestName::citext;
 
@@ -816,6 +824,64 @@ BEGIN
 
         _resolvedInstrumentInfo := format('instrument group %s, run type %s, and separation group %s',
                                           _instrumentGroup, _msType, _separationGroup);
+
+        If _batch > 0 And _status::citext = 'Active' Then
+
+            ---------------------------------------------------
+            -- Verify that the instrument group is compatible with the new or existing batch for this requested run
+            ---------------------------------------------------
+
+            SELECT COUNT(DISTINCT InstGroup)
+            INTO _instrumentGroupCount
+            FROM (SELECT DISTINCT RR.instrument_group AS InstGroup
+                  FROM T_Requested_Run RR
+                  WHERE RR.batch_id = _batch AND
+                        RR.state_name = 'Active'
+                  UNION
+                  SELECT _instrumentGroup AS InstGroup
+                 ) UnionQ;
+
+            If _instrumentGroupCount > 1 Then
+                SELECT string_agg(InstGroup, ', ' ORDER BY InstGroup)
+                INTO _instrumentGroups
+                FROM ( SELECT DISTINCT RR.instrument_group AS InstGroup
+                       FROM T_Requested_Run RR
+                       WHERE RR.batch_id = _batch AND
+                             RR.state_name = 'Active'
+                     ) DistinctQ;
+
+                If _mode Like '%update%' Then
+
+                    SELECT instrument_group, batch_id
+                    INTO _currentInstrumentGroup, _currentBatch
+                    FROM T_Requested_Run
+                    WHERE request_id = _requestID;
+
+                    If _currentBatch > 0 And _currentBatch <> _batch Then
+                        _message := format('Changing the batch from %s to %s is not allowed since that would result in a mix of instrument groups for batch %s (which corresponds to %s); '
+                                           'either update the instrument group for all active requests in the batch using https://dms2.pnl.gov/requested_run_admin/report or create a new batch for this requested run',
+                                           _currentBatch, _batch, _batch, _instrumentGroups);
+                    Else
+                        _message := format('Changing the instrument group from %s to %s would result in a mix of instrument groups for batch %s (which corresponds to %s); '
+                                           'either update the instrument group for all active requests in the batch using https://dms2.pnl.gov/requested_run_admin/report or create a new batch for this requested run',
+                                           _currentInstrumentGroup, _instrumentGroup, _batch, _instrumentGroups);
+                    End If;
+                Else
+                    _message := format('Cannot add the new requested run to batch %s since the new requested run has instrument group %s '
+                                       'but the existing active requested runs in the batch have instrument group %s; '
+                                       'a requested run batch cannot have a mix of instrument groups',
+                                       _batch, _instrumentGroup, _instrumentGroups);
+                End If;
+
+                If _mode Like '%update%' Then
+                    _mode := 'update';
+                Else
+                    _mode := 'add';
+                End If;
+
+                RAISE EXCEPTION 'Cannot %: %', _mode, _message;
+            End If;
+        End If;
 
         -- Validation checks are complete; now enable _logErrors
         _logErrors := true;
