@@ -1,8 +1,8 @@
 --
--- Name: add_update_requested_run_batch_spreadsheet(integer, text, text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: add_update_requested_run_batch_spreadsheet(integer, text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch_spreadsheet(INOUT _id integer, IN _name text, IN _description text, IN _requestnamelist text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _requestedinstrumentgroup text, IN _comment text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch_spreadsheet(INOUT _id integer, IN _name text, IN _description text, IN _requestnamelist text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _comment text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -11,6 +11,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch_spreadsheet(IN
 **      Add new or edit an existing requested run batch, including updating the requested runs that are in the batch
 **
 **      This procedure accepts a list of requested run names, which are converted to requested run IDs
+**
+**      The procedure appears to be unused, as of January 2024
 **
 **  Arguments:
 **    _id                           Batch ID to update if _mode is 'update'; otherwise, the ID of the newly created batch
@@ -21,7 +23,6 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch_spreadsheet(IN
 **    _requestedBatchPriority       Batch priority: 'Normal' or 'High'
 **    _requestedCompletionDate      Requested completion date (as text)
 **    _justificationHighPriority    Justification for high priority
-**    _requestedInstrumentGroup     Will typically contain an instrument group, not an instrument name
 **    _comment                      Batch comment
 **    _mode                         Mode: 'add' or 'update'
 **    _message                      Status message
@@ -34,6 +35,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch_spreadsheet(IN
 **          08/01/2017 mem - Use THROW if not authorized
 **          02/17/2023 mem - Use new parameter name when calling Add_Update_Requested_Run_Batch
 **          01/17/2024 mem - Ported to PostgreSQL
+**          01/22/2024 mem - Remove argument _requestedInstrumentGroup since we no longer associate instrument groups with requested run batches
 **
 *****************************************************/
 DECLARE
@@ -125,11 +127,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.add_update_requested_run_batch_spreadsheet(INOUT _id integer, IN _name text, IN _description text, IN _requestnamelist text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _requestedinstrumentgroup text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE public.add_update_requested_run_batch_spreadsheet(INOUT _id integer, IN _name text, IN _description text, IN _requestnamelist text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE add_update_requested_run_batch_spreadsheet(INOUT _id integer, IN _name text, IN _description text, IN _requestnamelist text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _requestedinstrumentgroup text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE add_update_requested_run_batch_spreadsheet(INOUT _id integer, IN _name text, IN _description text, IN _requestnamelist text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.add_update_requested_run_batch_spreadsheet(INOUT _id integer, IN _name text, IN _description text, IN _requestnamelist text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _requestedinstrumentgroup text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text) IS 'AddUpdateRequestedRunBatchSpreadsheet';
+COMMENT ON PROCEDURE public.add_update_requested_run_batch_spreadsheet(INOUT _id integer, IN _name text, IN _description text, IN _requestnamelist text, IN _ownerusername text, IN _requestedbatchpriority text, IN _requestedcompletiondate text, IN _justificationhighpriority text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text) IS 'AddUpdateRequestedRunBatchSpreadsheet';
 
