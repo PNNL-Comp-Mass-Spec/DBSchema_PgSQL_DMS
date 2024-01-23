@@ -151,6 +151,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run(IN _requestname text
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          01/22/2024 mem - If the requested run is active and not associated with a batch, do not allow it to be added to a batch that has active requested runs whose instrument group differs from this request's instrument group
 **                         - If the requested run is active and is associated with a batch, do not allow the instrument group to be changed if the batch has other active requests with a different instrument group than this request's instrument group
+**          01/23/2024 mem - Use a different instrument group warning message if the instrument group is unchanged, but the associated batch already has a mix of instrument groups
 **
 *****************************************************/
 DECLARE
@@ -861,6 +862,10 @@ BEGIN
                         _message := format('Changing the batch from %s to %s is not allowed since that would result in a mix of instrument groups for batch %s (which corresponds to %s); '
                                            'either update the instrument group for all active requests in the batch using https://dms2.pnl.gov/requested_run_admin/report or create a new batch for this requested run',
                                            _currentBatch, _batch, _batch, _instrumentGroups);
+                    ElsIf _currentInstrumentGroup = _instrumentGroup::citext Then
+                        _message := format('Batch %s has a mix of instrument groups (%s); this requested run cannot be updated until the active requested runs in the batch have the same instrument group. '
+                                           'Either update the instrument group for all active requests in the batch using https://dms2.pnl.gov/requested_run_admin/report or create a new batch for this requested run',
+                                           _batch, _instrumentGroups);
                     Else
                         _message := format('Changing the instrument group from %s to %s would result in a mix of instrument groups for batch %s (which corresponds to %s); '
                                            'either update the instrument group for all active requests in the batch using https://dms2.pnl.gov/requested_run_admin/report or create a new batch for this requested run',
