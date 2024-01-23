@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch_spreadsheet(IN
 **          02/17/2023 mem - Use new parameter name when calling Add_Update_Requested_Run_Batch
 **          01/17/2024 mem - Ported to PostgreSQL
 **          01/22/2024 mem - Remove argument _requestedInstrumentGroup since we no longer associate instrument groups with requested run batches
+**                         - Remove deprecated instrument group argument when calling add_update_requested_run_batch()
 **
 *****************************************************/
 DECLARE
@@ -107,7 +108,6 @@ BEGIN
                    _requestedBatchPriority    => _requestedBatchPriority,
                    _requestedCompletionDate   => _requestedCompletionDate,
                    _justificationHighPriority => _justificationHighPriority,
-                   _requestedInstrumentGroup  => _requestedInstrumentGroup,
                    _comment                   => _comment,
                    _batchGroupID              => null,
                    _batchGroupOrder           => null,

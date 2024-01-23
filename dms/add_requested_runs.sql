@@ -86,6 +86,7 @@ CREATE OR REPLACE PROCEDURE public.add_requested_runs(IN _experimentgroupid text
 **          02/27/2023 mem - Use new argument name, _requestName
 **          11/27/2023 mem - Do not log errors from validate_requested_run_batch_params() if the return code starts with 'U52' (e.g., 'U5201')
 **          12/16/2023 mem - Ported to PostgreSQL
+**          01/22/2024 mem - Remove deprecated instrument group arguments when calling validate_requested_run_batch_params() and add_update_requested_run_batch()
 **
 *****************************************************/
 DECLARE
@@ -100,7 +101,6 @@ DECLARE
     _wellNumber text;
     _batchGroupID int;
     _batchGroupOrder int;
-    _instrumentGroupToUse text;
     _userID int;
     _requestName text;
     _requestNameFirst text := '';
@@ -301,12 +301,10 @@ BEGIN
                             _requestedBatchPriority    => _batchPriority,
                             _requestedCompletionDate   => _batchCompletionDate,
                             _justificationHighPriority => _batchPriorityJustification,
-                            _requestedInstrumentGroup  => _instrumentGroup,              -- Will typically contain an instrument group, not an instrument name
                             _comment                   => _batchComment,
                             _batchGroupID              => _batchGroupID,
                             _batchGroupOrder           => _batchGroupOrder,
                             _mode                      => _mode,
-                            _instrumentGroupToUse      => _instrumentGroupToUse,    -- Output
                             _userID                    => _userID,                  -- Output
                             _message                   => _message,                 -- Output
                             _returnCode                => _returnCode);             -- Output
@@ -320,8 +318,6 @@ BEGIN
 
                 RAISE EXCEPTION '%', _message;
             End If;
-        Else
-            _instrumentGroupToUse := _instrumentGroup;
         End If;
 
         ---------------------------------------------------
@@ -367,7 +363,7 @@ BEGIN
                             _requestName                 => _requestName,
                             _experimentName              => _experimentName,
                             _requesterUsername           => _operatorUsername,
-                            _instrumentgroup             => _instrumentGroupToUse,
+                            _instrumentgroup             => _instrumentGroup,
                             _workPackage                 => _workPackage,
                             _msType                      => _msType,
                             _instrumentSettings          => _instrumentSettings,
@@ -433,7 +429,7 @@ BEGIN
 
             If Coalesce(_resolvedInstrumentInfo, '') = '' Then
                 _message := format('%s with instrument group %s, run type %s, and separation group %s',
-                                    _message, _instrumentGroupToUse, _msType, _separationGroup);
+                                    _message, _instrumentGroup, _msType, _separationGroup);
             Else
                 _message := format('%s with %s', _message, _resolvedInstrumentInfo);
             End If;
@@ -456,7 +452,6 @@ BEGIN
                                _requestedBatchPriority    => _batchPriority,
                                _requestedCompletionDate   => _batchCompletionDate,
                                _justificationHighPriority => _batchPriorityJustification,
-                               _requestedInstrumentGroup  => _instrumentGroupToUse,
                                _comment                   => _batchComment,
                                _batchGroupID              => null::integer,
                                _batchGroupOrder           => null::integer,
