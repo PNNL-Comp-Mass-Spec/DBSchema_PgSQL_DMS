@@ -68,6 +68,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_assignments(IN _mode tex
 **          09/11/2023 mem - Use schema name with try_cast
 **          12/08/2023 mem - Select a single column when using If Not Exists()
 **          01/03/2024 mem - Update warning messages
+**          01/23/2024 mem - When updating the instrument group, block the update if it would result in a mix of instrument groups for any of the batches associated with the requested runs
 **
 *****************************************************/
 DECLARE
@@ -83,11 +84,18 @@ DECLARE
     _requestID int;
 
     _newInstrumentGroup citext := '';
+    _instrumentGroupFromInstName citext;
     _newSeparationGroup citext := '';
     _newAssignedInstrumentID int := 0;
     _newQueueState int := 0;
     _newDatasetType citext := '';
     _newDatasetTypeID int := 0;
+
+    _batchID int;
+    _instrumentGroupCount int;
+    _instrumentGroups text;
+    _requestIDs text;
+    _requestedRunDesc text;
 
     _logErrors boolean := false;
     _pri int;
@@ -176,9 +184,13 @@ BEGIN
             If Not Exists (SELECT instrument_group FROM t_instrument_group WHERE instrument_group = _newInstrumentGroup) Then
                 -- Try to update instrument group using t_instrument_name
                 SELECT instrument_group
-                INTO _newInstrumentGroup
+                INTO _instrumentGroupFromInstName
                 FROM t_instrument_name
                 WHERE instrument = _newValue::citext;
+
+                If FOUND Then
+                    _newInstrumentGroup = _instrumentGroupFromInstName;
+                End If;
             End If;
 
             ---------------------------------------------------
@@ -216,6 +228,86 @@ BEGIN
                 End If;
 
             End If;
+
+            ---------------------------------------------------
+            -- Make sure that the instrument group change will not result in a mix of instrument groups for active requested runs that are associated with a batch
+            ---------------------------------------------------
+
+            CREATE TEMP TABLE Tmp_BatchIDs (
+                Batch_ID int
+            );
+
+            INSERT INTO Tmp_BatchIDs (Batch_ID)
+            SELECT DISTINCT RR.batch_id
+            FROM t_requested_run RR
+                 INNER JOIN Tmp_RequestIDs
+                   ON Tmp_RequestIDs.RequestID = RR.request_id
+            WHERE RR.batch_id > 0;
+
+            FOR _batchID IN
+                SELECT Batch_ID
+                FROM Tmp_BatchIDs
+                ORDER BY Batch_ID
+            LOOP
+                SELECT COUNT(DISTINCT InstGroup)
+                INTO _instrumentGroupCount
+                FROM (SELECT DISTINCT RR.instrument_group AS InstGroup
+                      FROM t_requested_run RR
+                           LEFT OUTER JOIN Tmp_RequestIDs
+                             ON Tmp_RequestIDs.RequestID = RR.request_id
+                      WHERE RR.batch_id = _batchID AND
+                            RR.state_name = 'Active' AND
+                            Tmp_RequestIDs.RequestID Is Null
+                      UNION
+                      SELECT _newInstrumentGroup As InstGroup
+                     ) UnionQ;
+
+                If _instrumentGroupCount > 1 Then
+
+                    SELECT string_agg(InstGroup, ', ' ORDER BY InstGroup)
+                    INTO _instrumentGroups
+                    FROM ( SELECT DISTINCT RR.instrument_group AS InstGroup
+                           FROM t_requested_run RR
+                                LEFT OUTER JOIN Tmp_RequestIDs
+                                  ON Tmp_RequestIDs.RequestID = RR.request_id
+                           WHERE RR.batch_id = _batchID AND
+                                 RR.state_name = 'Active' AND
+                                 Tmp_RequestIDs.RequestID Is Null
+                         ) DistinctQ;
+
+                    SELECT string_agg(RR.request_id::text, ', ' ORDER BY RR.request_id)
+                    INTO _requestIDs
+                    FROM t_requested_run RR
+                         INNER JOIN Tmp_RequestIDs
+                           ON Tmp_RequestIDs.RequestID = RR.request_id
+                    WHERE RR.batch_id = _batchID AND
+                          RR.state_name = 'Active';
+
+                    If char_length(_requestIDs) > 100 Then
+                        _requestIDs := Trim(Substring(_requestIDs, 1, 100));
+
+                        If _requestIDs Like '%,' Then
+                            _requestIDs := Trim(Substring(_requestIDs, char_length(_requestIDs) - 1));
+                        End If;
+
+                        _requestIDs := _requestIDs || ' ...';
+                    End If;
+
+                    _requestedRunDesc := format('requested run%s', CASE WHEN _requestIDs LIKE '%,%' THEN 's' ELSE '' END);
+
+                    _message := format('Cannot set the instrument group to %s for %s %s since that would result in a mix of instrument groups for batch %s (which corresponds to %s); '
+                                       'either update the instrument group for all active requests in the batch or create a new batch for the %s',
+                                       _newInstrumentGroup, _requestedRunDesc, _requestIDs, _batchID, _instrumentGroups, _requestedRunDesc);
+
+                    _logErrors := false;
+                    _returnCode := 'U5203';
+                    RAISE EXCEPTION '%', _message;
+
+                End If;
+
+            END LOOP;
+
+            DROP TABLE Tmp_BatchIDs;
         End If;
 
         If _mode::citext = 'assignedInstrument' Then
@@ -234,7 +326,7 @@ BEGIN
 
                 If Not FOUND Then
                     _logErrors := false;
-                    _returnCode := 'U5203';
+                    _returnCode := 'U5204';
                     RAISE EXCEPTION 'Invalid instrument: "%" does not exist', _newValue;
                 End If;
 
@@ -289,7 +381,7 @@ BEGIN
 
             If Not FOUND Then
                 _logErrors := false;
-                _returnCode := 'U5204';
+                _returnCode := 'U5205';
                 RAISE EXCEPTION 'Invalid separation group: "%" does not exist', _newValue;
             End If;
 
@@ -317,8 +409,7 @@ BEGIN
 
             If Not FOUND Then
                 _logErrors := false;
-                _returnCode := 'U5205';
-
+                _returnCode := 'U5206';
                 RAISE EXCEPTION 'Invalid dataset type: "%" does not exist', _newValue;
             End If;
 
@@ -353,7 +444,7 @@ BEGIN
         If _mode::citext In ('instrumentGroup', 'instrumentGroupIgnoreType') Then
 
             UPDATE t_requested_run RR
-            SET    instrument_group = _newInstrumentGroup
+            SET instrument_group = _newInstrumentGroup
             FROM Tmp_RequestIDs
             WHERE RR.request_id = Tmp_RequestIDs.RequestID;
             --
@@ -470,9 +561,6 @@ BEGIN
                 _exceptionContext = pg_exception_context;
 
         If _logErrors Then
-
-            _logMessage = ;
-
             If char_length(_reqRunIDList) < 128 Then
                 _logMessage := format('%s; Requests %s', _exceptionMessage, _reqRunIDList);
             Else
