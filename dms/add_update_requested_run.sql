@@ -863,7 +863,7 @@ BEGIN
                                            'either update the instrument group for all active requests in the batch using https://dms2.pnl.gov/requested_run_admin/report or create a new batch for this requested run',
                                            _currentBatch, _batch, _batch, _instrumentGroups);
                     ElsIf _currentInstrumentGroup = _instrumentGroup::citext Then
-                        _message := format('Batch %s has a mix of instrument groups (%s); this requested run cannot be updated until the active requested runs in the batch have the same instrument group. '
+                        _message := format('Batch %s has a mix of instrument groups (%s); this requested run cannot be updated until the active requested runs in the batch all have the same instrument group. '
                                            'Either update the instrument group for all active requests in the batch using https://dms2.pnl.gov/requested_run_admin/report or create a new batch for this requested run',
                                            _batch, _instrumentGroups);
                     Else
