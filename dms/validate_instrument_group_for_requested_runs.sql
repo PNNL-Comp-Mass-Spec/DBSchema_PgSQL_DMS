@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE public.validate_instrument_group_for_requested_runs(
 **          09/08/2023 mem - Include schema name when calling function verify_sp_authorized()
 **          12/08/2023 mem - Select a single column when using If Not Exists()
 **          12/09/2023 mem - Add missing semicolon before Return statement
+**          01/23/2024 mem - Fix typo in field name
 **
 *****************************************************/
 DECLARE
@@ -134,7 +135,7 @@ BEGIN
                 If _requestInfo.RequestIDCount > 1 Then
                     _message := format('%s; %s conflicting Request IDs, ranging from ID %s to %s', _message, _requestInfo.RequestIDCount, _requestInfo.RequestIDFirst, _requestInfo.RequestIDLast);
                 Else
-                    _message := format('%s; conflicting Request ID is %s', _message, _requestInfo.equestIDFirst);
+                    _message := format('%s; conflicting Request ID is %s', _message, _requestInfo.RequestIDFirst);
                 End If;
 
                 _returnCode := 'U5205'
