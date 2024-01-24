@@ -206,12 +206,12 @@ BEGIN
             ORDER BY Job
         LOOP
 
-            _retryJob := false;
-            _retryCount := ;
+            _retryJob                := false;
+            _retryCount              := 0;
             _setProcessorAutoRecover := false;
-            _settingsFileChanged := false;
-            _newSettingsFile := '';
-            _skipInfo := '';
+            _settingsFileChanged     := false;
+            _newSettingsFile         := '';
+            _skipInfo                := '';
 
             -- Examine the comment to determine if we've retried this job before
             -- Need to find the last instance of '(retry'
