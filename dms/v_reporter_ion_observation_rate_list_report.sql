@@ -3,13 +3,19 @@
 --
 
 CREATE VIEW public.v_reporter_ion_observation_rate_list_report AS
- SELECT obsrate.job,
-    obsrate.dataset_id,
+ SELECT obsrate.dataset_id,
     ds.dataset,
     obsrate.reporter_ion,
     ((((((dfp.dataset_url)::text || '/'::text) || (aj.results_folder_name)::text) || '/'::text) || (ds.dataset)::text) || '_RepIonObsRateHighAbundance.png'::text) AS observation_rate_link,
     ((((((dfp.dataset_url)::text || '/'::text) || (aj.results_folder_name)::text) || '/'::text) || (ds.dataset)::text) || '_RepIonStatsHighAbundance.png'::text) AS intensity_stats_link,
     inst.instrument,
+    ds.acq_length_minutes AS acq_length,
+    COALESCE(ds.acq_time_start, rr.request_run_start) AS acq_start,
+    COALESCE(ds.acq_time_end, rr.request_run_finish) AS acq_end,
+    rr.request_id AS request,
+    rr.batch_id AS batch,
+    obsrate.job,
+    aj.param_file_name AS param_file,
     obsrate.channel1,
     obsrate.channel2,
     obsrate.channel3,
@@ -42,13 +48,13 @@ CREATE VIEW public.v_reporter_ion_observation_rate_list_report AS
     obsrate.channel14_median_intensity AS channel14_intensity,
     obsrate.channel15_median_intensity AS channel15_intensity,
     obsrate.channel16_median_intensity AS channel16_intensity,
-    aj.param_file_name AS param_file,
     obsrate.entered
-   FROM ((((public.t_reporter_ion_observation_rates obsrate
+   FROM (((((public.t_reporter_ion_observation_rates obsrate
      JOIN public.t_analysis_job aj ON ((obsrate.job = aj.job)))
      JOIN public.t_cached_dataset_folder_paths dfp ON ((aj.dataset_id = dfp.dataset_id)))
      JOIN public.t_dataset ds ON ((aj.dataset_id = ds.dataset_id)))
-     JOIN public.t_instrument_name inst ON ((ds.instrument_id = inst.instrument_id)));
+     JOIN public.t_instrument_name inst ON ((ds.instrument_id = inst.instrument_id)))
+     LEFT JOIN public.t_requested_run rr ON ((ds.dataset_id = rr.dataset_id)));
 
 
 ALTER VIEW public.v_reporter_ion_observation_rate_list_report OWNER TO d3l243;
