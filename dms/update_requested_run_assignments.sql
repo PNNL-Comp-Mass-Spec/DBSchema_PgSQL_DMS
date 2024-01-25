@@ -70,6 +70,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_assignments(IN _mode tex
 **          01/03/2024 mem - Update warning messages
 **          01/23/2024 mem - When updating the instrument group, block the update if it would result in a mix of instrument groups for any of the batches associated with the requested runs
 **          01/24/2024 mem - If the assigned instrument conflicts with the instrument group, allow the update if updating every active requested run in a batch
+**                         - For certain modes, call update_cached_requested_run_batch_stats() for the batches associated with the updated requested runs
 **
 *****************************************************/
 DECLARE
@@ -180,7 +181,7 @@ BEGIN
         -- Initial validation checks are complete; now enable _logErrors
         _logErrors := true;
 
-        If _mode::citext In ('instrumentGroup', 'instrumentGroupIgnoreType', 'assignedInstrument') Then
+        If _mode::citext In ('instrumentGroup', 'instrumentGroupIgnoreType', 'assignedInstrument', 'separationGroup') Then
             ---------------------------------------------------
             -- Store the batch IDs in a temporary table
             ---------------------------------------------------
@@ -601,6 +602,35 @@ BEGIN
 
             _message := format('Changed the dataset type to %s for %s requested %s',
                                 _newDatasetType, _updateCount, public.check_plural(_updateCount, 'run', 'runs'));
+        End If;
+
+        If _mode::citext In ('instrumentGroup', 'instrumentGroupIgnoreType', 'assignedInstrument', 'separationGroup') Then
+
+            ---------------------------------------------------
+            -- Update stats in T_Cached_Requested_Run_Batch_Stats
+            ---------------------------------------------------
+
+            If Exists (SELECT Batch_ID FROM Tmp_BatchIDs_for_RequestIDs) Then
+
+                FOR _batchID IN
+                    SELECT Batch_ID
+                    FROM Tmp_BatchIDs_for_RequestIDs
+                    ORDER BY Batch_ID
+                LOOP
+                    CALL public.update_cached_requested_run_batch_stats (
+                                    _batchID,
+                                    _fullRefresh => false,
+                                    _message     => _message,       -- Output
+                                    _returncode  => _returncode);   -- Output
+
+                    If _returnCode = '' And _message <> '' Then
+                        RAISE INFO '%', _message;
+                        _message := '';
+                    End If;
+                END LOOP;
+
+            End If;
+
         End If;
 
         If _mode = 'delete' Then
