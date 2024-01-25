@@ -69,6 +69,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_assignments(IN _mode tex
 **          12/08/2023 mem - Select a single column when using If Not Exists()
 **          01/03/2024 mem - Update warning messages
 **          01/23/2024 mem - When updating the instrument group, block the update if it would result in a mix of instrument groups for any of the batches associated with the requested runs
+**          01/24/2024 mem - If the assigned instrument conflicts with the instrument group, allow the update if updating every active requested run in a batch
 **
 *****************************************************/
 DECLARE
@@ -86,8 +87,11 @@ DECLARE
     _newInstrumentGroup citext := '';
     _instrumentGroupFromInstName citext;
     _newSeparationGroup citext := '';
+
     _newAssignedInstrumentID int := 0;
+    _instGroupForNewAssignedInstrument citext;
     _newQueueState int := 0;
+
     _newDatasetType citext := '';
     _newDatasetTypeID int := 0;
 
@@ -97,6 +101,13 @@ DECLARE
     _requestIDs text;
     _requestedRunDesc text;
 
+    _activeRequestCountForBatch int;
+    _activeRequestCountForUpdate int;
+
+    _batchCountToAllow int;
+    _batchCount int;
+
+    _dropBatchIdTable boolean := false;
     _logErrors boolean := false;
     _pri int;
     _countDeleted int := 0;
@@ -156,7 +167,7 @@ BEGIN
         );
 
         INSERT INTO Tmp_RequestIDs (RequestID)
-        SELECT value
+        SELECT DISTINCT value
         FROM public.parse_delimited_integer_list(_reqRunIDList);
         --
         GET DIAGNOSTICS _requestCount = ROW_COUNT;
@@ -168,6 +179,26 @@ BEGIN
 
         -- Initial validation checks are complete; now enable _logErrors
         _logErrors := true;
+
+        If _mode::citext In ('instrumentGroup', 'instrumentGroupIgnoreType', 'assignedInstrument') Then
+            ---------------------------------------------------
+            -- Store the batch IDs in a temporary table
+            ---------------------------------------------------
+
+            CREATE TEMP TABLE Tmp_BatchIDs_for_RequestIDs (
+                Batch_ID int
+            );
+
+            INSERT INTO Tmp_BatchIDs_for_RequestIDs (Batch_ID)
+            SELECT DISTINCT RR.batch_id
+            FROM t_requested_run RR
+                 INNER JOIN Tmp_RequestIDs
+                   ON Tmp_RequestIDs.RequestID = RR.request_id
+            WHERE RR.batch_id > 0
+            ORDER BY RR.batch_id;
+
+            _dropBatchIdTable := true;
+        End If;
 
         If _mode::citext In ('instrumentGroup', 'instrumentGroupIgnoreType') Then
 
@@ -233,20 +264,9 @@ BEGIN
             -- Make sure that the instrument group change will not result in a mix of instrument groups for active requested runs that are associated with a batch
             ---------------------------------------------------
 
-            CREATE TEMP TABLE Tmp_BatchIDs (
-                Batch_ID int
-            );
-
-            INSERT INTO Tmp_BatchIDs (Batch_ID)
-            SELECT DISTINCT RR.batch_id
-            FROM t_requested_run RR
-                 INNER JOIN Tmp_RequestIDs
-                   ON Tmp_RequestIDs.RequestID = RR.request_id
-            WHERE RR.batch_id > 0;
-
             FOR _batchID IN
                 SELECT Batch_ID
-                FROM Tmp_BatchIDs
+                FROM Tmp_BatchIDs_for_RequestIDs
                 ORDER BY Batch_ID
             LOOP
                 SELECT COUNT(DISTINCT InstGroup)
@@ -307,20 +327,22 @@ BEGIN
 
             END LOOP;
 
-            DROP TABLE Tmp_BatchIDs;
         End If;
 
         If _mode::citext = 'assignedInstrument' Then
+
+            -- Note that only active requested runs can have an instrument assigned to them
+
             If Coalesce(_newValue, '') = '' Then
                 -- Unassign the instrument
                 _newQueueState := 1;
             Else
                 ---------------------------------------------------
-                -- Determine the Instrument ID of the selected instrument
+                -- Determine the Instrument ID and group of the selected instrument
                 ---------------------------------------------------
 
                 SELECT instrument_id, instrument_group
-                INTO _newAssignedInstrumentID, _newInstrumentGroup
+                INTO _newAssignedInstrumentID, _instGroupForNewAssignedInstrument
                 FROM t_instrument_name
                 WHERE instrument = _newValue::citext;
 
@@ -334,18 +356,87 @@ BEGIN
 
                 ---------------------------------------------------
                 -- Make sure the dataset type defined for each of the requested runs
-                -- is appropriate for instrument group _newInstrumentGroup
+                -- is appropriate for the instrument group
                 ---------------------------------------------------
 
                 CALL public.validate_instrument_group_for_requested_runs (
                                     _reqRunIDList,
-                                    _newInstrumentGroup,
+                                    _instGroupForNewAssignedInstrument,
                                     _message    => _message,        -- Output
                                     _returnCode => _returnCode);    -- Output
 
                 If _returnCode <> '' Then
                     _logErrors := false;
                     RAISE EXCEPTION '%', _message;
+                End If;
+
+                ---------------------------------------------------
+                -- Look for any requested runs with an instrument group
+                -- that does not match the instrument group of the assigned instrument
+                ---------------------------------------------------
+
+                SELECT string_agg(RR.request_id::text, ', ' ORDER BY RR.request_id)
+                INTO _requestIDs
+                FROM T_Requested_Run RR
+                     INNER JOIN Tmp_RequestIDs
+                       ON Tmp_RequestIDs.RequestID = RR.request_id
+                WHERE RR.state_name = 'Active' AND
+                      RR.instrument_group <> _instGroupForNewAssignedInstrument;
+
+                If Coalesce(_requestIDs, '') <> '' Then
+                    -- Conflict found between the new instrument's instrument group and the instrument group defined for one or more active requested runs
+                    -- Check whether we are updating all of the active requested runs for each batch
+
+                    SELECT COUNT(*)
+                    INTO _batchCount
+                    FROM Tmp_BatchIDs_for_RequestIDs;
+
+                    _batchCountToAllow := 0;
+
+                    FOR _batchID IN
+                        SELECT Batch_ID
+                        FROM Tmp_BatchIDs_for_RequestIDs
+                        ORDER BY Batch_ID
+                    LOOP
+                        SELECT COUNT(*)
+                        INTO _activeRequestCountForBatch
+                        FROM T_Requested_Run RR
+                        WHERE RR.batch_id = _batchID AND
+                              RR.state_name = 'Active';
+
+                        SELECT COUNT(*)
+                        INTO _activeRequestCountForUpdate
+                        FROM T_Requested_Run RR
+                             INNER JOIN Tmp_RequestIDs
+                               ON Tmp_RequestIDs.RequestID = RR.request_id
+                        WHERE RR.batch_id = _batchID AND
+                              RR.state_name = 'Active';
+
+                        If _activeRequestCountForBatch = _activeRequestCountForUpdate Then
+                            _batchCountToAllow = _batchCountToAllow + 1;
+                        End If;
+                    END LOOP;
+
+                    If _batchCountToAllow <> _batchCount Then
+                        If char_length(_requestIDs) > 100 Then
+                            _requestIDs := Trim(Substring(_requestIDs, 1, 100));
+
+                            If _requestIDs Like '%,' Then
+                                _requestIDs := Trim(Substring(_requestIDs, char_length(_requestIDs) - 1));
+                            End If;
+
+                            _requestIDs := _requestIDs || ' ...';
+                        End If;
+
+                        _requestedRunDesc := format('requested run%s', CASE WHEN _requestIDs LIKE '%,%' THEN 's' ELSE '' END);
+
+                        _message := format('Cannot assign instrument %s to %s %s because its instrument group (%s) differs from the instrument group currently assigned to the %s',
+                                           _newValue, _requestedRunDesc, _requestIDs, _instGroupForNewAssignedInstrument, _requestedRunDesc);
+
+                        _logErrors := false;
+                        _returnCode := 'U5205';
+                        RAISE EXCEPTION '%', _message;
+                    End If;
                 End If;
 
             End If;
@@ -381,7 +472,7 @@ BEGIN
 
             If Not FOUND Then
                 _logErrors := false;
-                _returnCode := 'U5205';
+                _returnCode := 'U5206';
                 RAISE EXCEPTION 'Invalid separation group: "%" does not exist', _newValue;
             End If;
 
@@ -409,7 +500,7 @@ BEGIN
 
             If Not FOUND Then
                 _logErrors := false;
-                _returnCode := 'U5206';
+                _returnCode := 'U5207';
                 RAISE EXCEPTION 'Invalid dataset type: "%" does not exist', _newValue;
             End If;
 
@@ -440,7 +531,6 @@ BEGIN
 
         End If;
 
-        -------------------------------------------------
         If _mode::citext In ('instrumentGroup', 'instrumentGroupIgnoreType') Then
 
             UPDATE t_requested_run RR
@@ -455,14 +545,13 @@ BEGIN
 
         End If;
 
-        ------------------------------------------------
         If _mode::citext = 'assignedInstrument' Then
 
             UPDATE t_requested_run RR
             SET queue_instrument_id = CASE WHEN _newQueueState > 1 THEN _newAssignedInstrumentID ELSE queue_instrument_id END,
                 queue_state = _newQueueState,
                 queue_date = CASE WHEN _newQueueState > 1 THEN CURRENT_TIMESTAMP ELSE queue_date END,
-                instrument_group = CASE WHEN _newQueueState > 1 THEN _newInstrumentGroup ELSE instrument_group END
+                instrument_group = CASE WHEN _newQueueState > 1 THEN _instGroupForNewAssignedInstrument ELSE instrument_group END
             FROM Tmp_RequestIDs
             WHERE RR.request_id = Tmp_RequestIDs.RequestID AND
                   RR.state_name = 'Active';
@@ -488,7 +577,6 @@ BEGIN
             End If;
         End If;
 
-        -------------------------------------------------
         If _mode::citext = 'separationGroup' Then
 
             UPDATE t_requested_run RR
@@ -502,7 +590,6 @@ BEGIN
                                 _newSeparationGroup, _updateCount, public.check_plural(_updateCount, 'run', 'runs'));
         End If;
 
-        -------------------------------------------------
         If _mode::citext = 'datasetType' Then
 
             UPDATE t_requested_run RR
@@ -516,7 +603,6 @@ BEGIN
                                 _newDatasetType, _updateCount, public.check_plural(_updateCount, 'run', 'runs'));
         End If;
 
-        -------------------------------------------------
         If _mode = 'delete' Then
 
             -- Step through the entries in Tmp_RequestIDs and delete each
@@ -589,6 +675,10 @@ BEGIN
     CALL post_usage_log_entry ('update_requested_run_assignments', _usageMessage);
 
     DROP TABLE IF EXISTS Tmp_RequestIDs;
+
+    If _dropBatchIdTable Then
+        DROP TABLE IF EXISTS Tmp_BatchIDs_for_RequestIDs;
+    End If;
 
     If _returnCode <> '' Then
         -- Raise an exception so that the web page will show the error message
