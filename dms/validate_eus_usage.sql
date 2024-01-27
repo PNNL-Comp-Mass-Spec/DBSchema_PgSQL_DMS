@@ -40,7 +40,7 @@ CREATE OR REPLACE PROCEDURE public.validate_eus_usage(INOUT _eususagetype text, 
 **          03/17/2017 mem - Only call Make_Table_From_List if _eusUsersList contains a semicolon
 **          04/10/2017 mem - Auto-change USER_UNKNOWN to CAP_DEV
 **          07/19/2019 mem - Custom error message if _eusUsageType is blank
-**          11/06/2019 mem - Auto-change _eusProposalID if a value is defined for Proposal_ID_AutoSupersede
+**          11/06/2019 mem - Auto-change _eusProposalID if a value is defined for proposal_id_auto_supersede
 **          08/12/2020 mem - Add support for a series of superseded proposals
 **          08/14/2020 mem - Add safety check in case of a circular references (proposal 1 superseded by proposal 2, which is superseded by proposal 1)
 **          08/18/2020 mem - Add missing Else keyword
