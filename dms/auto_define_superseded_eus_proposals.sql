@@ -1,17 +1,15 @@
 --
-CREATE OR REPLACE PROCEDURE public.auto_define_superseded_eus_proposals
-(
-    _infoOnly boolean = true,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: auto_define_superseded_eus_proposals(boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.auto_define_superseded_eus_proposals(IN _infoonly boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Look for proposals in t_eus_proposals that have the same name
-**      Auto populate proposal_id_autosupersede for superseded proposals (if currently null)
+**      Auto populate proposal_id_auto_supersede for superseded proposals (if currently null)
 **
 **  Arguments:
 **    _infoOnly     When true, preview updates
@@ -20,7 +18,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   08/12/2020 mem - Initial Version
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/26/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -56,9 +54,9 @@ BEGIN
     -- Find proposals that need to be updated
     ---------------------------------------------------
 
-    INSERT INTO Tmp_ProposalsToUpdate (proposal_id, Newest_Proposal_ID)
+    INSERT INTO Tmp_ProposalsToUpdate (Proposal_ID, newest_proposal_id)
     SELECT EUP.proposal_id,
-           RankQ.proposal_id AS Newest_ID
+           RankQ.proposal_id AS newest_id
     FROM t_eus_proposals EUP
          INNER JOIN ( SELECT title,
                              COUNT(proposal_id) AS Entries
@@ -73,24 +71,23 @@ BEGIN
            ON EUP.title = RankQ.title AND
               RankQ.StartRank = 1 AND
               EUP.proposal_id <> RankQ.proposal_id
-    WHERE state_id <> 5 AND
+    WHERE EUP.state_id <> 5 AND
           Coalesce(EUP.proposal_id_auto_supersede, '') <> RankQ.proposal_id AND
           EUP.proposal_id_auto_supersede IS NULL
-    ORDER BY EUP.proposal_id
+    ORDER BY EUP.proposal_id;
 
     If _infoOnly Then
 
-        -- Preview the updates
-
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-80s %-15s %-20s %-20s %-23s %-18s %-20s %-20s';
+        _formatSpecifier := '%-10s %-10s %-100s %-8s %-18s %-20s %-20s %-23s %-18s %-26s %-24s';
 
         _infoHead := format(_formatSpecifier,
                             'Proposal',
                             'Numeric',
                             'Title',
-                            'State',
+                            'State_ID',
+                            'State_Name',
                             'Proposal_Start_Date',
                             'Proposal_End_Date',
                             'Proposal_Auto_Supersede',
@@ -102,14 +99,15 @@ BEGIN
         _infoHeadSeparator := format(_formatSpecifier,
                                      '----------',
                                      '----------',
-                                     '--------------------------------------------------------------------------------',
-                                     '---------------',
+                                     '----------------------------------------------------------------------------------------------------',
+                                     '--------',
+                                     '------------------',
                                      '--------------------',
                                      '--------------------',
                                      '-----------------------',
                                      '------------------',
-                                     '--------------------',
-                                     '--------------------'
+                                     '--------------------------',
+                                     '------------------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -118,15 +116,18 @@ BEGIN
         FOR _previewData IN
             SELECT EUP.proposal_id,
                    EUP.numeric_id,
-                   EUP.title,
+                   substring(EUP.title, 1, 100) AS title,
                    EUP.state_id,
+                   PSN.state_name,
                    public.timestamp_text(EUP.proposal_start_date) AS proposal_start_date,
                    public.timestamp_text(EUP.proposal_end_date) AS proposal_end_date,
                    EUP.proposal_id_auto_supersede,
-                   UpdatesQ.Newest_Proposal_ID,
-                   public.timestamp_text(EUP_Newest.proposal_start_date) AS Newest_Proposal_Start_Date,
-                   public.timestamp_text(EUP_Newest.proposal_end_date) AS Newest_Proposal_End_Date
+                   UpdatesQ.newest_proposal_id,
+                   public.timestamp_text(EUP_Newest.proposal_start_date) AS newest_proposal_start_date,
+                   public.timestamp_text(EUP_Newest.proposal_end_date) AS newest_proposal_end_date
             FROM t_eus_proposals EUP
+                 INNER JOIN t_eus_proposal_state_name PSN
+                   ON EUP.state_id = PSN.state_id
                  INNER JOIN Tmp_ProposalsToUpdate UpdatesQ
                    ON EUP.proposal_id = UpdatesQ.proposal_id
                  INNER JOIN t_eus_proposals EUP_Newest
@@ -134,56 +135,68 @@ BEGIN
             ORDER BY EUP.title
         LOOP
             _infoData := format(_formatSpecifier,
-                                _previewData.Proposal,
-                                _previewData.Numeric,
-                                _previewData.Title,
-                                _previewData.State,
-                                _previewData.Proposal_Start_Date,
-                                _previewData.Proposal_End_Date,
-                                _previewData.Proposal_Auto_Supersede,
-                                _previewData.Newest_Proposal_ID,
-                                _previewData.Newest_Proposal_Start_Date,
-                                _previewData.Newest_Proposal_End_Date
+                                _previewData.proposal_id,
+                                _previewData.numeric_id,
+                                _previewData.title,
+                                _previewData.state_id,
+                                _previewData.state_name,
+                                _previewData.proposal_start_date,
+                                _previewData.proposal_end_date,
+                                _previewData.proposal_id_auto_supersede,
+                                _previewData.newest_proposal_id,
+                                _previewData.newest_proposal_start_date,
+                                _previewData.newest_proposal_end_date
                                );
 
             RAISE INFO '%', _infoData;
         END LOOP;
 
-    Else
-        If Not Exists (SELECT * FROM Tmp_ProposalsToUpdate) Then
-            _message := 'No superseded proposals were found; nothing to do';
-        Else
-            ---------------------------------------------------
-            -- Construct a list of the proposals IDs being updated
-            ---------------------------------------------------
-
-            _proposalList := '';
-
-            SELECT string_agg(Proposal_ID, ', ' ORDER BY Proposal_ID)
-            INTO _proposalList
-            FROM Tmp_ProposalsToUpdate;
-
-            ---------------------------------------------------
-            -- Populate Proposal_ID_AutoSupersede
-            ---------------------------------------------------
-
-            UPDATE t_eus_proposals EUP
-            SET proposal_id_auto_supersede = UpdatesQ.Newest_Proposal_ID
-            FROM Tmp_ProposalsToUpdate UpdatesQ
-            WHERE EUP.Proposal_ID = UpdatesQ.Proposal_ID;
-            --
-            GET DIAGNOSTICS _updateCount = ROW_COUNT;
-
-            _message := format('Auto-set proposal_id_auto_supersede for %s proposal(s) in t_eus_proposals: %s', _updateCount, _proposalList);
-
-            CALL post_log_entry ('Normal', _message, 'Auto_Define_Superseded_EUS_Proposals');
-        End If;
-
-        RAISE INFO '%', _message;
+        DROP TABLE Tmp_ProposalsToUpdate;
+        RETURN;
     End If;
+
+    If Not Exists (SELECT * FROM Tmp_ProposalsToUpdate) Then
+        _message := 'No superseded proposals were found; nothing to do';
+        RAISE INFO '%', _message;
+
+        DROP TABLE Tmp_ProposalsToUpdate;
+        RETURN;
+    End If;
+
+    ---------------------------------------------------
+    -- Construct a list of the proposals IDs being updated
+    ---------------------------------------------------
+
+    SELECT string_agg(Proposal_ID, ', ' ORDER BY Proposal_ID)
+    INTO _proposalList
+    FROM Tmp_ProposalsToUpdate;
+
+    ---------------------------------------------------
+    -- Populate proposal_id_auto_supersede
+    ---------------------------------------------------
+
+    UPDATE t_eus_proposals EUP
+    SET proposal_id_auto_supersede = UpdatesQ.Newest_Proposal_ID
+    FROM Tmp_ProposalsToUpdate UpdatesQ
+    WHERE EUP.Proposal_ID = UpdatesQ.Proposal_ID;
+    --
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
+
+    _message := format('Auto-set proposal_id_auto_supersede for %s proposal(s) in t_eus_proposals: %s', _updateCount, _proposalList);
+    RAISE INFO '%', _message;
+
+    CALL post_log_entry ('Normal', _message, 'Auto_Define_Superseded_EUS_Proposals');
 
     DROP TABLE Tmp_ProposalsToUpdate;
 END
 $$;
 
-COMMENT ON PROCEDURE public.auto_define_superseded_eus_proposals IS 'AutoDefineSupersededEUSProposals';
+
+ALTER PROCEDURE public.auto_define_superseded_eus_proposals(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE auto_define_superseded_eus_proposals(IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.auto_define_superseded_eus_proposals(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'AutoDefineSupersededEUSProposals';
+

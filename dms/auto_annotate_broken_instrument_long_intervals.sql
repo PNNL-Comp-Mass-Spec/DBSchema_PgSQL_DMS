@@ -1,13 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.auto_annotate_broken_instrument_long_intervals
-(
-    _targetDate timestamp,
-    _infoOnly boolean = true,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: auto_annotate_broken_instrument_long_intervals(timestamp without time zone, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.auto_annotate_broken_instrument_long_intervals(IN _targetdate timestamp without time zone, IN _infoonly boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -22,7 +19,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   05/12/2022 mem - Initial version
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/26/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -35,10 +32,8 @@ DECLARE
     _targetYear int;
     _monthAndYear text;
     _intervalDescription text;
-    _continue boolean;
-    _updateIntervals boolean;
     _instrumentID int;
-    _instrumentName text;
+    _instrumentName citext;
     _runIntervalID int;
     _invalidUsage int;
 
@@ -76,60 +71,43 @@ BEGIN
 
     BEGIN
 
-        _targetDate := Coalesce(_targetDate, CURRENT_TIMESTAMP - INTERVAL '1 month');
-        _infoOnly := Coalesce(_infoOnly, true);
+        _targetDate  := Coalesce(_targetDate, CURRENT_TIMESTAMP - INTERVAL '1 month');
+        _infoOnly    := Coalesce(_infoOnly, true);
 
         _targetMonth := Extract(month from _targetDate);
-        _targetYear := Extract(year from _targetDate);
+        _targetYear  := Extract(year  from _targetDate);
 
-        -- Populate a string with the target month name and year
+        -- Populate a string with the target month name and year, e.g. January 2024
         _monthAndYear := format('%s %s', Trim(to_char(_targetDate, 'Month')), _targetYear);
-
-        CREATE TEMP TABLE Tmp_BrokenInstruments (
-            Instrument_ID int NOT NULL,
-            Instrument text
-        );
 
         CREATE TEMP TABLE Tmp_IntervalsToUpdate (
             IntervalID Int
         );
 
-        INSERT INTO Tmp_BrokenInstruments (instrument_id, instrument)
-        SELECT instrument_id, instrument
-        FROM t_instrument_name
-        WHERE status = 'Broken';
-
-        _instrumentID := -1;
-        _continue := true;
-
         FOR _instrumentID, _instrumentName IN
-            SELECT Instrument_ID, Instrument
-            FROM Tmp_BrokenInstruments
-            ORDER BY Instrument_ID
+            SELECT instrument_id, instrument
+            FROM t_instrument_name
+            WHERE status = 'Broken'
+            ORDER BY instrument_id
         LOOP
             DELETE FROM Tmp_IntervalsToUpdate;
 
+            -- Note that interval ID is same as dataset ID
             INSERT INTO Tmp_IntervalsToUpdate (IntervalID)
-            SELECT dataset_id
-            FROM t_run_interval
-            WHERE instrument = _instrumentName AND
-                  Extract(month from start) = _targetMonth AND
-                  Extract(year from start) = _targetYear AND
-                  interval > 20000 AND
-                  Coalesce(comment, '') = '';
+            SELECT I.dataset_id
+            FROM t_run_interval I
+            WHERE I.instrument = _instrumentName AND
+                  Extract(month from I.start) = _targetMonth AND
+                  Extract(year  from I.start) = _targetYear AND
+                  I.interval > 20000 AND
+                  Trim(Coalesce(I.comment, '')) = '';
 
             If Not FOUND Then
-                _updateIntervals := false;
-
                 If _infoOnly Then
                     _message := format('No unannotated long intervals were found for instrument %s in %s', _instrumentName, _monthAndYear);
                     RAISE INFO '%', _message;
                 End If;
-            Else
-                _updateIntervals := true;
-            End If;
 
-            If Not _updateIntervals Then
                 CONTINUE;
             End If;
 
@@ -139,7 +117,7 @@ BEGIN
                 ORDER BY IntervalID
             LOOP
                 _intervalDescription := format('interval %s as Broken for instrument %s in %s',
-                                                _runIntervalId, _instrumentName, _monthAndYear);
+                                               _runIntervalId, _instrumentName, _monthAndYear);
 
                 If _infoOnly Then
                     RAISE INFO 'Preview: Call add_update_run_interval to annotate %', _intervalDescription;
@@ -168,6 +146,9 @@ BEGIN
 
         END LOOP;
 
+        DROP TABLE Tmp_IntervalsToUpdate;
+        RETURN;
+
     EXCEPTION
         WHEN OTHERS THEN
             GET STACKED DIAGNOSTICS
@@ -185,9 +166,16 @@ BEGIN
         End If;
     END;
 
-    DROP TABLE IF EXISTS Tmp_BrokenInstruments;
     DROP TABLE IF EXISTS Tmp_IntervalsToUpdate;
 END
 $$;
 
-COMMENT ON PROCEDURE public.auto_annotate_broken_instrument_long_intervals IS 'AutoAnnotateBrokenInstrumentLongIntervals';
+
+ALTER PROCEDURE public.auto_annotate_broken_instrument_long_intervals(IN _targetdate timestamp without time zone, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE auto_annotate_broken_instrument_long_intervals(IN _targetdate timestamp without time zone, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.auto_annotate_broken_instrument_long_intervals(IN _targetdate timestamp without time zone, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'AutoAnnotateBrokenInstrumentLongIntervals';
+

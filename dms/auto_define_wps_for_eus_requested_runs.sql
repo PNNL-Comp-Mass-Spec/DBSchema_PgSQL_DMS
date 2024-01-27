@@ -1,13 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.auto_define_wps_for_eus_requested_runs
-(
-    _mostRecentMonths int = 12,
-    _infoOnly boolean = true,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: auto_define_wps_for_eus_requested_runs(integer, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.auto_define_wps_for_eus_requested_runs(IN _mostrecentmonths integer DEFAULT 12, IN _infoonly boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -21,19 +18,19 @@ AS $$
 **  Arguments:
 **    _mostRecentMonths     Number of recent months to examine
 **    _infoOnly             When true, preview updates
-**    _message      Status message
-**    _returnCode   Return code
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   mem
 **  Date:   01/29/2016 mem - Initial Version
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/26/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _entryID int := 0;
-    _eusProposal text;
+    _eusProposal citext;
     _continue boolean;
-    _workPackage text;
+    _workPackage citext;
     _monthsSearched int;
     _requestedRunsToUpdate int;
 
@@ -67,9 +64,9 @@ BEGIN
         EUSProposal text NOT NULL,
         BestWorkPackage text NULL,
         MonthsSearched int NULL
-    )
+    );
 
-    CREATE INDEX IX_Tmp_ProposalsToCheck ON Tmp_ProposalsToCheck (Entry_ID)
+    CREATE INDEX IX_Tmp_ProposalsToCheck ON Tmp_ProposalsToCheck (Entry_ID);
 
     ---------------------------------------------------
     -- Find proposals with a requested run within the
@@ -81,8 +78,8 @@ BEGIN
     FROM t_eus_proposals P
          INNER JOIN t_requested_run RR
            ON P.proposal_id = RR.eus_proposal_id
-    WHERE Not P.title Like '%P41%' AND
-          Not P.title Like '%NCRR%' AND
+    WHERE Not P.title ILike '%P41%' AND
+          Not P.title ILike '%NCRR%' AND
           Not RR.state_name = 'Active' AND
           RR.work_package = 'none' AND
           RR.entered >= CURRENT_TIMESTAMP - make_interval(months => _mostRecentMonths)
@@ -99,7 +96,7 @@ BEGIN
     LOOP
         SELECT work_package, months_searched
         INTO _workPackage, _monthsSearched
-        FROM public.get_wp_for_eus_proposal(_eusProposalID);
+        FROM public.get_wp_for_eus_proposal(_eusProposal);
 
         If FOUND And _workPackage <> 'none' Then
             UPDATE Tmp_ProposalsToCheck
@@ -117,10 +114,10 @@ BEGIN
     (
         EUSProposal text NOT NULL,
         WorkPackage text NOT NULL,
-        RequestedRunID int not null
-    )
+        RequestedRunID int NOT NULL
+    );
 
-    CREATE INDEX IX_Tmp_RequestedRunsToUpdate ON Tmp_RequestedRunsToUpdate (EUSProposal, RequestedRunID)
+    CREATE INDEX IX_Tmp_RequestedRunsToUpdate ON Tmp_RequestedRunsToUpdate (EUSProposal, RequestedRunID);
 
     INSERT INTO Tmp_RequestedRunsToUpdate (
         EUSProposal,
@@ -138,7 +135,7 @@ BEGIN
     WHERE C.MonthsSearched < _mostRecentMonths * 2 AND
           RR.work_package = 'none' AND
           Not RR.state_name = 'Active'
-    ORDER BY C.EUSProposal
+    ORDER BY C.EUSProposal;
 
     If _infoOnly Then
 
@@ -146,7 +143,7 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-8s %-12s %-17s %-15s %-14s %-18s %-60s';
+        _formatSpecifier := '%-8s %-12s %-17s %-15s %-14s %-18s %-120s';
 
         _infoHead := format(_formatSpecifier,
                             'Entry_ID',
@@ -165,7 +162,7 @@ BEGIN
                                      '---------------',
                                      '--------------',
                                      '------------------',
-                                     '------------------------------------------------------------'
+                                     '------------------------------------------------------------------------------------------------------------------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -192,7 +189,8 @@ BEGIN
                                     )
                             ) FilterQ
                    ON C.EUSProposal = FilterQ.eus_proposal_id
-                   INNER JOIN t_eus_proposals P ON P.proposal_id = C.EUSProposal
+                 INNER JOIN t_eus_proposals P
+                   ON P.proposal_id = C.EUSProposal
             GROUP BY C.Entry_ID, C.EUSProposal, C.BestWorkPackage, C.MonthsSearched, P.title
             ORDER BY SUM(CASE WHEN FilterQ.work_package = 'none' THEN 1 ELSE 0 END) DESC
         LOOP
@@ -214,17 +212,17 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-8s %-12s %-17s %-15s %-60s %-20s %-16s %-12s';
+        _formatSpecifier := '%-8s %-12s %-17s %-15s %-20s %-16s %-18s %-110s';
 
         _infoHead := format(_formatSpecifier,
                             'Entry_ID',
                             'EUS_Proposal',
                             'Best_Work_Package',
                             'Months_Searched',
-                            'Request_Name',
                             'Created',
                             'Requested_Run_ID',
-                            'Work_Package'
+                            'Work_Package',
+                            'Request_Name'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
@@ -232,10 +230,10 @@ BEGIN
                                      '------------',
                                      '-----------------',
                                      '---------------',
-                                     '------------------------------------------------------------',
                                      '--------------------',
                                      '----------------',
-                                     '------------'
+                                     '------------------',
+                                     '--------------------------------------------------------------------------------------------------------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -246,9 +244,9 @@ BEGIN
                    C.EUSProposal,
                    C.BestWorkPackage,
                    C.MonthsSearched,
-                   FilterQ.Request_Name,
+                   FilterQ.request_name,
                    public.timestamp_text(FilterQ.Created) AS Created,
-                   FilterQ.ID AS RequestedRunID,
+                   FilterQ.request_id AS RequestedRunID,
                    CASE
                        WHEN FilterQ.work_package = 'none' THEN format('none --> %s', C.BestWorkPackage)
                        ELSE FilterQ.work_package
@@ -273,15 +271,16 @@ BEGIN
                                 _previewData.EUSProposal,
                                 _previewData.BestWorkPackage,
                                 _previewData.MonthsSearched,
-                                _previewData.Request_Name,
                                 _previewData.Created,
                                 _previewData.RequestedRunID,
-                                _previewData.WorkPackage
+                                _previewData.WorkPackage,
+                                _previewData.Request_Name
                                );
 
             RAISE INFO '%', _infoData;
         END LOOP;
 
+        RAISE INFO '';
     End If;
 
     ---------------------------------------------------
@@ -297,21 +296,23 @@ BEGIN
         ORDER BY EUSProposal
     LOOP
 
-        _message := format('Changed the work package from none to %s for %s requested %s with EUS Proposal %s',
-                            _workPackage, _requestedRunsToUpdate, public.check_plural(_requestedRunsToUpdate, 'run', 'runs'), _eusProposal);
+        _message := format('%s the work package from none to %s for %s requested %s with EUS Proposal %s',
+                           CASE WHEN _infoOnly THEN 'Would change' ELSE 'Changed' END,
+                           _workPackage,
+                           _requestedRunsToUpdate,
+                           public.check_plural(_requestedRunsToUpdate, 'run', 'runs'),
+                           _eusProposal);
 
         If _infoOnly Then
             RAISE INFO '%', _message;
         Else
-
             UPDATE t_requested_run
             SET work_package = _workPackage
             FROM Tmp_RequestedRunsToUpdate U
-            WHERE t_requested_runrequest_id = U.RequestedRunID AND
+            WHERE t_requested_run.request_id = U.RequestedRunID AND
                   U.EUSProposal = _eusProposal;
 
             CALL post_log_entry ('Normal', _message, 'Auto_Define_WPs_For_EUS_Requested_Runs');
-
         End If;
 
     END LOOP;
@@ -321,4 +322,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.auto_define_wps_for_eus_requested_runs IS 'AutoDefineWPsForEUSRequestedRuns';
+
+ALTER PROCEDURE public.auto_define_wps_for_eus_requested_runs(IN _mostrecentmonths integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE auto_define_wps_for_eus_requested_runs(IN _mostrecentmonths integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.auto_define_wps_for_eus_requested_runs(IN _mostrecentmonths integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'AutoDefineWPsForEUSRequestedRuns';
+
