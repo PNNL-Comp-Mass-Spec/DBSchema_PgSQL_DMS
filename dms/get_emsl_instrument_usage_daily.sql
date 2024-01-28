@@ -131,13 +131,13 @@ BEGIN
     LOOP
         -- Update working table with end times
 
-        UPDATE  Tmp_T_Working AS W
-        SET     Day                   = Extract(day   from W.Run_or_Interval_Start),
-                Run_or_Interval_End   =                    W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds),
-                Day_at_Run_End        = Extract(day   from W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds)),
-                Month_at_Run_End      = Extract(month from W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds)),
-                End_Of_Day            = date_trunc('day', W.Run_or_Interval_Start) + Interval '1 day' - Interval '1 millisecond',
-                Beginning_Of_Next_Day = date_trunc('day', W.Run_or_Interval_Start) + Interval '1 day';
+        UPDATE Tmp_T_Working AS W
+        SET Day                   = Extract(day   from W.Run_or_Interval_Start),
+            Run_or_Interval_End   =                    W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds),
+            Day_at_Run_End        = Extract(day   from W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds)),
+            Month_at_Run_End      = Extract(month from W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds)),
+            End_Of_Day            = date_trunc('day', W.Run_or_Interval_Start) + Interval '1 day' - Interval '1 millisecond',
+            Beginning_Of_Next_Day = date_trunc('day', W.Run_or_Interval_Start) + Interval '1 day';
 
         UPDATE  Tmp_T_Working AS W
         SET     Duration_Seconds_In_Current_Day =               extract(epoch FROM (End_Of_Day - W.Run_or_Interval_Start)),
@@ -146,35 +146,35 @@ BEGIN
         -- Copy usage records that do not span more than one day
         -- from working table to accumulation table
 
-        INSERT INTO Tmp_T_Report_Accumulation
-        ( EMSL_Inst_ID,
-          DMS_Instrument,
-          Proposal,
-          Usage,
-          Users,
-          Start,
-          --Minutes,
-          Duration_Seconds,
-          Year,
-          Month,
-          Day,
-          Type,
-          Comment,
-          Operator
+        INSERT INTO Tmp_T_Report_Accumulation (
+            EMSL_Inst_ID,
+            DMS_Instrument,
+            Proposal,
+            Usage,
+            Users,
+            Start,
+            --Minutes,
+            Duration_Seconds,
+            Year,
+            Month,
+            Day,
+            Type,
+            Comment,
+            Operator
         )
-        SELECT  W.EMSL_Inst_ID,
-                W.DMS_Instrument,
-                W.Proposal,
-                W.Usage,
-                W.Users,
-                W.Run_or_Interval_Start,
-                W.Duration_Seconds,
-                W.Year,
-                W.Month,
-                W.Day,
-                W.Type,
-                W.Comment,
-                W.Operator::text
+        SELECT W.EMSL_Inst_ID,
+               W.DMS_Instrument,
+               W.Proposal,
+               W.Usage,
+               W.Users,
+               W.Run_or_Interval_Start,
+               W.Duration_Seconds,
+               W.Year,
+               W.Month,
+               W.Day,
+               W.Type,
+               W.Comment,
+               W.Operator::text
         FROM Tmp_T_Working W
         WHERE W.Day   = W.Day_at_Run_End AND
               W.Month = W.Month_at_Run_End;
@@ -189,7 +189,7 @@ BEGIN
         -- remaining durations (cross daily boundaries)
         -- using only duration time contained inside daily boundary
 
-        INSERT INTO Tmp_T_Report_Accumulation(
+        INSERT INTO Tmp_T_Report_Accumulation (
             EMSL_Inst_ID,
             DMS_Instrument,
             Proposal,
@@ -257,7 +257,7 @@ BEGIN
                   DistinctQ.Month,
                   DistinctQ.Day,
                   string_agg(DistinctQ.Comment, ',' Order By DistinctQ.Comment) AS Comment
-           FROM (Select Distinct Src.EMSL_Inst_ID,
+           FROM (SELECT DISTINCT Src.EMSL_Inst_ID,
                                  Src.DMS_Instrument,
                                  Src.Type,
                                  Src.Proposal,
@@ -302,7 +302,7 @@ BEGIN
                   DistinctQ.Month,
                   DistinctQ.Day,
                   string_agg(DistinctQ.Operator, ',' Order By DistinctQ.Operator) AS Operator
-           FROM (Select Distinct Src.EMSL_Inst_ID,
+           FROM (SELECT DISTINCT Src.EMSL_Inst_ID,
                                  Src.DMS_Instrument,
                                  Src.Type,
                                  Src.Proposal,
@@ -338,22 +338,22 @@ BEGIN
     ----------------------------------------------------
 
     RETURN QUERY
-    SELECT  Src.EMSL_Inst_ID,
-            Src.DMS_Instrument::citext AS Instrument,
-            Src.Type::citext,
-            MIN(Src.Start) AS Start,
-            CEILING(SUM(Src.Duration_Seconds)::float8 / 60)::int AS Minutes,
-            Src.Proposal::citext,
-            Src.Usage::citext,
-            Src.Users::citext,
-            Src.Operator::citext,
-            Src.Comment::citext,
-            Src.Year,
-            Src.Month,
-            NULL::int AS ID,
-            NULL::int AS Seq,
-            NULL::timestamp AS Updated,
-            NULL::citext AS UpdatedBy
+    SELECT Src.EMSL_Inst_ID,
+           Src.DMS_Instrument::citext AS Instrument,
+           Src.Type::citext,
+           MIN(Src.Start) AS Start,
+           CEILING(SUM(Src.Duration_Seconds)::float8 / 60)::int AS Minutes,
+           Src.Proposal::citext,
+           Src.Usage::citext,
+           Src.Users::citext,
+           Src.Operator::citext,
+           Src.Comment::citext,
+           Src.Year,
+           Src.Month,
+           NULL::int AS ID,
+           NULL::int AS Seq,
+           NULL::timestamp AS Updated,
+           NULL::citext AS UpdatedBy
     FROM Tmp_T_Report_Accumulation Src
     GROUP BY Src.EMSL_Inst_ID,
              Src.DMS_Instrument,

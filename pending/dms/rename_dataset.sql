@@ -81,7 +81,7 @@ DECLARE
     _continue boolean;
     _job int;
     _toolBaseName citext;
-    _resultsFolder text;
+    _resultsFolder citext;
     _mzRefineryOutputFolder text;
     _badCh text;
     _jobFileUpdateCount int := 0;
@@ -774,11 +774,12 @@ BEGIN
             _continue := false;
             _resultsFolder := 'QC';
 
-            INSERT INTO Tmp_Extensions (FileSuffix) VALUES
-                ('_BPI_MS.png'),('_BPI_MSn.png'),
-                ('_HighAbu_LCMS.png'),('_HighAbu_LCMS_MSn.png'),
-                ('_LCMS.png'),('_LCMS_MSn.png'),
-                ('_TIC.png'),('_DatasetInfo.xml');
+            INSERT INTO Tmp_Extensions (FileSuffix)
+            VALUES ('_BPI_MS.png'),       ('_BPI_MSn.png'),
+                   ('_HighAbu_LCMS.png'), ('_HighAbu_LCMS_MSn.png'),
+                   ('_LCMS.png'),         ('_LCMS_MSn.png'),
+                   ('_TIC.png'),          ('_DatasetInfo.xml');
+
         Else
             SELECT Tool.tool_base_name,
                    AJE.ResultsFolder
@@ -790,34 +791,34 @@ BEGIN
 
             If FOUND Then
                 If _toolBaseName = 'Decon2LS' Then
-                    INSERT INTO Tmp_Extensions (FileSuffix) VALUES
-                        ('_isos.csv'), ('_scans.csv'),
-                        ('_BPI_MS.png'), ('_HighAbu_LCMS.png'), ('_HighAbu_LCMS_zoom.png'),
-                        ('_LCMS.png'), ('_LCMS_zoom.png'),
-                        ('_TIC.png'), ('_log.txt')
+                    INSERT INTO Tmp_Extensions (FileSuffix)
+                    VALUES ('_isos.csv'),   ('_scans.csv'),
+                           ('_BPI_MS.png'), ('_HighAbu_LCMS.png'), ('_HighAbu_LCMS_zoom.png'),
+                           ('_LCMS.png'),   ('_LCMS_zoom.png'),
+                           ('_TIC.png'),    ('_log.txt')
                 End If;
 
                 If _toolBaseName = 'MASIC' Then
-                    INSERT INTO Tmp_Extensions (FileSuffix) VALUES
-                        ('_MS_scans.csv'), ('_MSMS_scans.csv'),('_MSMethod.txt'),
-                        ('_ScanStats.txt'), ('_ScanStatsConstant.txt'), ('_ScanStatsEx.txt'),
-                        ('_SICstats.txt'),('_DatasetInfo.xml'),('_SICs.zip'),
-                        ('_PeakAreaHistogram.png'),('_PeakWidthHistogram.png'),
-                        ('_RepIonObsRate.png'),
-                        ('_RepIonObsRateHighAbundance.png'),
-                        ('_RepIonStatsHighAbundance.png'),
-                        ('_RepIonObsRate.txt'),('_RepIonStats.txt'),('_ReporterIons.txt')
+                    INSERT INTO Tmp_Extensions (FileSuffix)
+                    VALUES ('_MS_scans.csv'),  ('_MSMS_scans.csv'), ('_MSMethod.txt'),
+                           ('_ScanStats.txt'), ('_ScanStatsConstant.txt'), ('_ScanStatsEx.txt'),
+                           ('_SICstats.txt'),  ('_DatasetInfo.xml'), ('_SICs.zip'),
+                           ('_PeakAreaHistogram.png'), ('_PeakWidthHistogram.png'),
+                           ('_RepIonObsRate.png'),
+                           ('_RepIonObsRateHighAbundance.png'),
+                           ('_RepIonStatsHighAbundance.png'),
+                           ('_RepIonObsRate.txt'), ('_RepIonStats.txt'), ('_ReporterIons.txt')
                 End If;
 
                 If _toolBaseName Like 'MSGFPlus%' Then
-                    INSERT INTO Tmp_Extensions (FileSuffix) VALUES
-                        ('_msgfplus.mzid.gz'),('_msgfplus_fht.txt'), ('_msgfplus_fht_MSGF.txt'),
-                        ('_msgfplus_PepToProtMap.txt'), ('_msgfplus_PepToProtMapMTS.txt'),
-                        ('_msgfplus_syn.txt'), ('_msgfplus_syn_ModDetails.txt'),
-                        ('_msgfplus_syn_ModSummary.txt'),('_msgfplus_syn_MSGF.txt'),
-                        ('_msgfplus_syn_ProteinMods.txt'),('_msgfplus_syn_ResultToSeqMap.txt'),
-                        ('_msgfplus_syn_SeqInfo.txt'),('_msgfplus_syn_SeqToProteinMap.txt'),
-                        ('_ScanType.txt'),('_pepXML.zip')
+                    INSERT INTO Tmp_Extensions (FileSuffix)
+                    VALUES ('_msgfplus.mzid.gz'),             ('_msgfplus_fht.txt'), ('_msgfplus_fht_MSGF.txt'),
+                           ('_msgfplus_PepToProtMap.txt'),    ('_msgfplus_PepToProtMapMTS.txt'),
+                           ('_msgfplus_syn.txt'),             ('_msgfplus_syn_ModDetails.txt'),
+                           ('_msgfplus_syn_ModSummary.txt'),  ('_msgfplus_syn_MSGF.txt'),
+                           ('_msgfplus_syn_ProteinMods.txt'), ('_msgfplus_syn_ResultToSeqMap.txt'),
+                           ('_msgfplus_syn_SeqInfo.txt'),     ('_msgfplus_syn_SeqToProteinMap.txt'),
+                           ('_ScanType.txt'),                 ('_pepXML.zip')
 
                 End If;
             End If;

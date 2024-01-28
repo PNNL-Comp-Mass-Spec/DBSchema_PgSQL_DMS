@@ -140,7 +140,7 @@ BEGIN
 
             UPDATE T_Prep_LC_Run
             SET Sample_Prep_Work_Packages = _wpList
-            WHERE prep_run_id = _currentPrepRunID And
+            WHERE prep_run_id = _currentPrepRunID AND
                 Sample_Prep_Work_Packages IS DISTINCT FROM _wpList;
 
             If _prepLCRunID > 0 Then

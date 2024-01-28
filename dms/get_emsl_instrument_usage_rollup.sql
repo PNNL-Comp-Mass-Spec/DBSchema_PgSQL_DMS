@@ -70,17 +70,17 @@ BEGIN
     -- Import entries from EMSL instrument usage table
     -- for given month and year into working table
 
-    INSERT INTO Tmp_T_Working
-    ( Dataset_ID,
-      EMSL_Inst_ID,
-      DMS_Instrument,
-      Type,
-      Proposal,
-      Usage,
-      Run_or_Interval_Start,
-      Duration_Seconds,
-      Year,
-      Month
+    INSERT INTO Tmp_T_Working (
+        Dataset_ID,
+        EMSL_Inst_ID,
+        DMS_Instrument,
+        Type,
+        Proposal,
+        Usage,
+        Run_or_Interval_Start,
+        Duration_Seconds,
+        Year,
+        Month
     )
     SELECT InstUsage.dataset_id,
            InstUsage.emsl_inst_id,
@@ -111,17 +111,17 @@ BEGIN
     LOOP
         -- Update working table with end times
 
-        UPDATE  Tmp_T_Working AS W
-        SET     Day                   = Extract(day   from W.Run_or_Interval_Start),
-                Run_or_Interval_End   =                    W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds),
-                Day_at_Run_End        = Extract(day   from W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds)),
-                Month_at_Run_End      = Extract(month from W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds)),
-                End_Of_Day            = date_trunc('day', W.Run_or_Interval_Start) + Interval '1 day' - Interval '1 millisecond',
-                Beginning_Of_Next_Day = date_trunc('day', W.Run_or_Interval_Start) + Interval '1 day';
+        UPDATE Tmp_T_Working AS W
+        SET Day                   = Extract(day   from W.Run_or_Interval_Start),
+            Run_or_Interval_End   =                    W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds),
+            Day_at_Run_End        = Extract(day   from W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds)),
+            Month_at_Run_End      = Extract(month from W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds)),
+            End_Of_Day            = date_trunc('day', W.Run_or_Interval_Start) + Interval '1 day' - Interval '1 millisecond',
+            Beginning_Of_Next_Day = date_trunc('day', W.Run_or_Interval_Start) + Interval '1 day';
 
-        UPDATE  Tmp_T_Working AS W
-        SET     Duration_Seconds_In_Current_Day =               extract(epoch FROM (End_Of_Day - W.Run_or_Interval_Start)),
-                Remaining_Duration_Seconds = Duration_Seconds - extract(epoch FROM (End_Of_Day - W.Run_or_Interval_Start));
+        UPDATE Tmp_T_Working AS W
+        SET Duration_Seconds_In_Current_Day =               extract(epoch FROM (End_Of_Day - W.Run_or_Interval_Start)),
+            Remaining_Duration_Seconds = Duration_Seconds - extract(epoch FROM (End_Of_Day - W.Run_or_Interval_Start));
 
         -- Copy usage records that do not span more than one day
         -- from working table to accumulation table, they are ready for report
