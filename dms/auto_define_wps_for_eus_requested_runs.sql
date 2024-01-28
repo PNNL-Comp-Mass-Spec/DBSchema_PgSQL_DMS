@@ -29,7 +29,6 @@ CREATE OR REPLACE PROCEDURE public.auto_define_wps_for_eus_requested_runs(IN _mo
 DECLARE
     _entryID int := 0;
     _eusProposal citext;
-    _continue boolean;
     _workPackage citext;
     _monthsSearched int;
     _requestedRunsToUpdate int;

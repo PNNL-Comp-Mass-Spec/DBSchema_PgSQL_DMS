@@ -50,7 +50,6 @@ DECLARE
     _total int;
     _totalDec numeric(18,3);
     _value text;
-    _continue boolean;
     _startTime timestamp;
     _thresholdOneYear timestamp;
     _statInfo record;

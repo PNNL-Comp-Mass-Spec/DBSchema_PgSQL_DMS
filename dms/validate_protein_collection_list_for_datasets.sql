@@ -46,7 +46,6 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_datasets
 DECLARE
     _msg text;
     _startTime timestamp;
-    _continue boolean;
     _collectionInfo record;
     _matchCount int;
     _collectionWithContaminants text;

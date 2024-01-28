@@ -41,7 +41,6 @@ AS $$
 **
 *****************************************************/
 DECLARE
-    _continue boolean;
     _jobsProcessed int := 0;
     _jobInfo record;
     _readyToProcess boolean;
