@@ -43,6 +43,7 @@ CREATE OR REPLACE PROCEDURE public.validate_dataset_type(IN _datasetid integer, 
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          01/10/2024 mem - Add support for DIA datasets
+**          01/30/2024 mem - Auto-switch from HMS-CID-HMSn to HMS-HMSn
 **
 *****************************************************/
 DECLARE
@@ -545,6 +546,10 @@ BEGIN
 
                 If _datasetTypeAutoGen = 'HMS-CID-MSn' Then
                     _datasetTypeAutoGen := 'HMS-MSn';
+                End If;
+
+                If _datasetTypeAutoGen = 'HMS-CID-HMSn' Then
+                    _datasetTypeAutoGen := 'HMS-HMSn';
                 End If;
 
                 If _scanCounts.ActualCountDIA > 0 Then
