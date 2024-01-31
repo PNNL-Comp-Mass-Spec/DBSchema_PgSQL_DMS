@@ -614,7 +614,7 @@ BEGIN
 
             If Not _infoOnly Then
                 _logMessage := format('%s for dataset ID %s (%s)', _message, _datasetID, _dataset);
-                CALL post_log_entry ('Error', _logMessage, 'validate_dataset_type', _duplicateEntryHoldoffHours => 1);
+                CALL post_log_entry ('Error', _logMessage, 'Validate_Dataset_Type', _duplicateEntryHoldoffHours => 1);
             End If;
         Else
             If _newDatasetType = 'HMS' And _currentDatasetType = 'EI-HMS' Then

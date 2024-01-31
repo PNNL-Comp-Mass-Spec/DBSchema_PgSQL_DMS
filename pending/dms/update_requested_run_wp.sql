@@ -114,7 +114,7 @@ BEGIN
 
         -- Uncomment to debug
         -- _logMessage := 'Updating work package from ' || _OldWorkPackage || ' to ' || _NewWorkPackage || ' for requests: ' || _requestIdList;
-        -- CALL post_log_entry ('Debug', _logMessage, 'update_requested_run_wp');
+        -- CALL post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_WP');
 
         ----------------------------------------------------------
         -- Create some temporary tables

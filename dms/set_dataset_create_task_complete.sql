@@ -123,7 +123,7 @@ BEGIN
                                     _entryID, _completionCode, _completionMessage, _datasetName);
 
             RAISE WARNING '%', _logMessage;
-            CALL post_log_entry ('Error', _logMessage, 'set_dataset_create_task_complete');
+            CALL post_log_entry ('Error', _logMessage, 'Set_Dataset_Create_Task_Complete');
         End If;
 
     EXCEPTION
