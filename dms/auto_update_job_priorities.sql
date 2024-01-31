@@ -1,12 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.auto_update_job_priorities
-(
-    _infoOnly boolean = true,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: auto_update_job_priorities(boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.auto_update_job_priorities(IN _infoonly boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -23,12 +21,12 @@ AS $$
 **  Auth:   mem
 **  Date:   10/04/2017 mem - Initial version
 **          07/29/2022 mem - No longer filter out null parameter file or settings file names since neither column allows null values
-**          12/15/2024 mem - Ported to PostgreSQL
+**          01/30/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
-    _activeStepThreshold int := 25;
-    _longRunningThreshold int := 10;
+    _activeStepThreshold int;
+    _longRunningThreshold int;
     _updateCount int;
 
     _formatSpecifier text;
@@ -54,17 +52,17 @@ BEGIN
         ParamFile text NOT NULL,
         SettingsFile text NOT NULL,
         ProteinCollectionList text NOT NULL
-    )
+    );
 
     CREATE TEMP TABLE Tmp_LegacyOrgDBJobs (
         ParamFile text NOT NULL,
         SettingsFile text NOT NULL,
-        OrganismDBName text NOT NULL,
-    )
+        OrganismDBName text NOT NULL
+    );
 
     CREATE TEMP TABLE Tmp_Batches (
         BatchID int NOT NULL
-    )
+    );
 
     CREATE TEMP TABLE Tmp_JobsToUpdate (
         Job int NOT NULL,
@@ -72,13 +70,16 @@ BEGIN
         New_Priority int NOT NULL,
         Ignored boolean NOT NULL,
         Source text NULL
-    )
+    );
 
-    CREATE INDEX IX_Tmp_DatasetsToUpdate ON Tmp_JobsToUpdate (Job)
+    CREATE INDEX IX_Tmp_DatasetsToUpdate ON Tmp_JobsToUpdate (Job);
 
     ----------------------------------------------
     -- Find candidate jobs to update
     ----------------------------------------------
+
+    _activeStepThreshold  := 25;
+    _longRunningThreshold := 10;
 
     -- Active jobs with similar settings (using protein collections)
 
@@ -119,7 +120,7 @@ BEGIN
            ON J.job = JS.job
     WHERE JS.State = 4 AND
           J.priority = 3 AND
-          JS.RunTime_Minutes > 180 AND
+          JS.runtime_minutes > 180 AND
           batch_id > 0
     GROUP BY J.batch_id
     HAVING COUNT(JS.step) > _longRunningThreshold;
@@ -128,37 +129,37 @@ BEGIN
     -- Add candidate jobs to Tmp_JobsToUpdate
     ----------------------------------------------
 
-    INSERT INTO Tmp_JobsToUpdate (job, Old_Priority, New_Priority, Ignored, Source)
+    INSERT INTO Tmp_JobsToUpdate (Job, Old_Priority, New_Priority, Ignored, Source)
     SELECT job, 0 AS Old_Priority, 0 AS New_Priority, false AS Ignored, MIN(Source)
     FROM (
         SELECT J.job AS Job,
                format('Over %s active job steps, protein collection based', _activeStepThreshold) AS Source
         FROM t_analysis_job J
-                INNER JOIN Tmp_ProteinCollectionJobs Src
-                ON J.param_file_name = Src.ParamFile AND
-                    J.settings_file_name = Src.SettingsFile AND
-                    J.protein_collection_list = Src.ProteinCollectionList
+             INNER JOIN Tmp_ProteinCollectionJobs Src
+               ON J.param_file_name = Src.ParamFile AND
+                  J.settings_file_name = Src.SettingsFile AND
+                  J.protein_collection_list = Src.ProteinCollectionList
         UNION
         SELECT J.job AS Job,
                format('Over %s active job steps, organism DB based', _activeStepThreshold) AS Source
         FROM t_analysis_job J
-                INNER JOIN Tmp_LegacyOrgDBJobs Src
-                ON J.param_file_name = Src.ParamFile AND
-                    J.settings_file_name = Src.SettingsFile AND
-                    J.organism_db_name = Src.OrganismDBName
+             INNER JOIN Tmp_LegacyOrgDBJobs Src
+               ON J.param_file_name = Src.ParamFile AND
+                  J.settings_file_name = Src.SettingsFile AND
+                  J.organism_db_name = Src.OrganismDBName
         UNION
         SELECT J.job AS Job,
                format('Over %s long running job steps (by batch)', _longRunningThreshold) AS Source
         FROM t_analysis_job J
-                INNER JOIN Tmp_Batches Src
-                ON J.batch_id = Src.BatchID
+             INNER JOIN Tmp_Batches Src
+               ON J.batch_id = Src.BatchID
         ) UnionQ
     GROUP BY job;
 
     -- Update the old/new priority columns
 
     UPDATE Tmp_JobsToUpdate Target
-    SET Old_Priority = J.Priority::int
+    SET Old_Priority = J.Priority,
         New_Priority = 4
     FROM t_analysis_job J
     WHERE J.job = Target.job;
@@ -182,7 +183,7 @@ BEGIN
 
             RAISE INFO '';
 
-            _formatSpecifier := '%-80s %-10s %-10s %-10s %-8s %-7s %-60s %-50s %-80s %-50s %-60s';
+            _formatSpecifier := '%-80s %-10s %-10s %-10s %-8s %-7s %-80s %-70s %-80s %-50s %-60s';
 
             _infoHead := format(_formatSpecifier,
                                 'Dataset',
@@ -205,8 +206,8 @@ BEGIN
                                          '----------',
                                          '--------',
                                          '-------',
-                                         '------------------------------------------------------------',
-                                         '--------------------------------------------------',
+                                         '--------------------------------------------------------------------------------',
+                                         '----------------------------------------------------------------------',
                                          '--------------------------------------------------------------------------------',
                                          '--------------------------------------------------',
                                          '------------------------------------------------------------'
@@ -216,16 +217,16 @@ BEGIN
             RAISE INFO '%', _infoHeadSeparator;
 
             FOR _previewData IN
-                SELECT DS.Dataset,
-                       J.Job,
-                       J.request_id AS RequestID,
-                       J.batch_id AS BatchID,
-                       J.priority AS Priority,
-                       U.Ignored,
-                       J.param_file_name,
+                SELECT DS.dataset,
+                       J.job,
+                       J.request_id AS request_id,
+                       J.batch_id AS batch_id,
+                       J.priority AS priority,
+                       U.ignored,
+                       Substring(J.param_file_name, 1, 80) AS param_file_name,
                        J.settings_file_name,
-                       J.protein_collection_list AS ProteinCollectionList,
-                       J.organism_db_name AS OrganismDBName,
+                       Substring(J.protein_collection_list, 1, 80) AS protein_collection_list,
+                       Substring(J.organism_db_name, 1, 50) AS organism_db_name,
                        U.Source
                 FROM t_analysis_job J
                      INNER JOIN Tmp_JobsToUpdate U
@@ -235,17 +236,17 @@ BEGIN
                 ORDER BY J.batch_id, J.job
             LOOP
                 _infoData := format(_formatSpecifier,
-                                    _previewData.Dataset,
-                                    _previewData.Job,
-                                    _previewData.RequestID,
-                                    _previewData.BatchID,
-                                    _previewData.Priority,
-                                    _previewData.Ignored,
-                                    _previewData.Param_File_Name,
-                                    _previewData.Settings_File_Name,
-                                    _previewData.ProteinCollectionList,
-                                    _previewData.OrganismDBName,
-                                    _previewData.Source
+                                    _previewData.dataset,
+                                    _previewData.job,
+                                    _previewData.request_id,
+                                    _previewData.batch_id,
+                                    _previewData.priority,
+                                    _previewData.ignored,
+                                    _previewData.param_file_name,
+                                    _previewData.settings_file_name,
+                                    _previewData.protein_collection_list,
+                                    _previewData.organism_db_name,
+                                    _previewData.source
                                    );
 
                 RAISE INFO '%', _infoData;
@@ -304,4 +305,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.auto_update_job_priorities IS 'AutoUpdateJobPriorities';
+
+ALTER PROCEDURE public.auto_update_job_priorities(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE auto_update_job_priorities(IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.auto_update_job_priorities(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'AutoUpdateJobPriorities';
+
