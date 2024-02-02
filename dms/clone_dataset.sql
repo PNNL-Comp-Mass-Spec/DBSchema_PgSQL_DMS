@@ -1,15 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.clone_dataset
-(
-    _infoOnly boolean = true,
-    _dataset text,
-    _suffix text = '_Test1',
-    _createDatasetArchiveTask boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: clone_dataset(boolean, text, text, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.clone_dataset(IN _infoonly boolean DEFAULT true, IN _dataset text DEFAULT ''::text, IN _suffix text DEFAULT '_Test1'::text, IN _createdatasetarchivetask boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -36,22 +31,24 @@ AS $$
 **          11/25/2022 mem - Update call to Add_Update_Requested_Run to use new parameter name
 **          02/27/2023 mem - Use new argument name, _requestName
 **          03/04/2023 mem - Use new T_Task tables
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/01/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _callingProcName text;
-    _tranClone text := 'Clone';
-    _requestID int := 0;
+    _eusUsersList text;
+    _requestID int;
     _datasetInfo record;
     _datasetIDNew int;
-    _datasetNew text;
+    _datasetNew citext;
     _requestNameNew citext;
-    _captureJob int := 0;
-    _captureJobNew int := 0;
+    _resolvedinstrumentinfo text;
+    _captureJob int;
+    _captureJobNew int;
     _dateStamp timestamp;
+    _actionMessage text;
     _jobMessage text;
-]
+
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -70,14 +67,14 @@ BEGIN
     _createDatasetArchiveTask := Coalesce(_createDatasetArchiveTask, false);
 
     If _dataset = '' Then
-        _message := '_dataset parameter cannot be empty';
-        RAISE INFO '%', _message;
+        _message := 'Dataset name must be specified';
+        RAISE WARNING '%', _message;
         RETURN;
     End If;
 
     If _suffix = '' Then
-        _message := '_suffix parameter cannot be empty';
-        RAISE INFO '%', _message;
+        _message := 'Dataset name suffix must be specified';
+        RAISE WARNING '%', _message;
         RETURN;
     End If;
 
@@ -94,7 +91,7 @@ BEGIN
 
     If Not FOUND Then
         _message := format('Source dataset not found: %s', _dataset);
-        RAISE INFO '%', _message;
+        RAISE WARNING '%', _message;
         RETURN;
     End If;
 
@@ -104,9 +101,9 @@ BEGIN
 
     _datasetNew := format('%s%s', _dataset, _suffix);
 
-    If Exists (SELECT dataset_id FROM t_dataset WHERE dataset = _datasetNew::citext) Then
+    If Exists (SELECT dataset_id FROM t_dataset WHERE dataset = _datasetNew) Then
         _message := format('Target dataset already exists: %s', _datasetNew);
-        RAISE INFO '%', _message;
+        RAISE WARNING '%', _message;
         RETURN;
     End If;
 
@@ -163,30 +160,33 @@ BEGIN
 
         _requestNameNew := format('AutoReq_%s', _datasetNew);
 
-        If _infoOnly Then
+        If Trim(Coalesce(_datasetInfo.WorkPackage, '')) = '' Then
+            _datasetInfo.WorkPackage := 'none';
+        End If;
 
-            -- Preview the new dataset
+        If _infoOnly Then
 
             RAISE INFO '';
 
-            RAISE INFO 'Dataset Name:         %', _datasetNew;
+            -- Preview the new dataset
+
+            RAISE INFO 'New Dataset Name:     %', _datasetNew;
             RAISE INFO 'Experiment Name:      %', _datasetInfo.ExperimentName;
             RAISE INFO 'Instrument Name:      %', _datasetInfo.InstrumentName;
             RAISE INFO 'Capture Subdirectory: %', _datasetInfo.CaptureSubdirectory;
             RAISE INFO 'Separation Type:      %', _datasetInfo.SeparationType;
             RAISE INFO 'Dataset Type:         %', _datasetInfo.DatasetType;
-            RAISE INFO 'Operator Username:    %', _datasetInfo.OperatorUsernamel;
+            RAISE INFO 'Operator Username:    %', _datasetInfo.OperatorUsername;
             RAISE INFO 'Comment:              %', _datasetInfo.Comment;
             RAISE INFO 'Dataset Rating ID:    %', _datasetInfo.DatasetRatingID;
-            RAISE INFO 'Wellplate:            %', _datasetInfo.Wellplate;
-            RAISE INFO 'Well Number:          %', _datasetInfo.WellNum;
+            RAISE INFO 'Wellplate:            %', Coalesce(_datasetInfo.Wellplate, '');
+            RAISE INFO 'Well Number:          %', Coalesce(_datasetInfo.WellNum, '');
             RAISE INFO 'Internal Standard:    %', _datasetInfo.InternalStandard;
 
             RAISE INFO '';
 
             -- Preview the new requested run
 
-            RAISE INFO '';
             RAISE INFO 'New Request Name:     %', _requestNameNew;
             RAISE INFO 'Instrument Settings:  %', _datasetInfo.InstrumentSettings;
             RAISE INFO 'Separation Group:     %', _datasetInfo.SeparationGroup;
@@ -195,7 +195,7 @@ BEGIN
             RAISE INFO 'LC Column:            %', _datasetInfo.LcColumn;
             RAISE INFO 'Work Package:         %', _datasetInfo.WorkPackage;
             RAISE INFO 'EMSL UsageType:       %', _datasetInfo.EusUsageType;
-            RAISE INFO 'EMSL ProposalID:      %', _datasetInfo.EusProposalID;
+            RAISE INFO 'EMSL ProposalID:      %', Coalesce(_datasetInfo.EusProposalID, '');
 
             RETURN;
         End If;
@@ -207,7 +207,7 @@ BEGIN
         -- Add a new row to t_dataset
 
         INSERT INTO t_dataset (dataset, operator_username, comment, created, instrument_id, lc_column_id, dataset_type_id,
-                               wellplate, well, separation_type, dataset_state_id, last_affected, folder_name, storage_path_ID,
+                               wellplate, well, separation_type, dataset_state_id, last_affected, folder_name, storage_path_id,
                                exp_id, internal_standard_id, dataset_rating_id, ds_prep_server_name,
                                acq_time_start, acq_time_end, scan_count, file_size_bytes, file_info_last_modified, interval_to_next_ds
         )
@@ -224,7 +224,7 @@ BEGIN
                dataset_state_id,
                CURRENT_TIMESTAMP AS Last_Affected,
                _datasetNew AS folder_name,
-               storage_path_ID,
+               storage_path_id,
                exp_id,
                internal_standard_ID,
                dataset_rating_id,
@@ -244,37 +244,47 @@ BEGIN
         -- (code is from add_update_dataset)
 
         CALL public.add_update_requested_run (
-                                _requestName => _requestNameNew,
-                                _experimentName => _datasetInfo.ExperimentName,
-                                _requesterUsername =>_datasetInfo.OperatorUsername,
-                                _instrumentName => _datasetInfo.InstrumentName,
-                                _workPackage => _datasetInfo.WorkPackage,
-                                _msType => _datasetInfo.DatasetType,
-                                _instrumentSettings => _datasetInfo.nstrumentSettings,
-                                _wellplateName => _datasetInfo.Wellplate,
-                                _wellNumber => _datasetInfo.WellNum,
-                                _internalStandard => _datasetInfo.InternalStandard,
-                                _comment => _datasetInfo.Comment,
-                                _eusProposalID => _datasetInfo.EusProposalID,
-                                _eusUsageType => _datasetInfo.EusUsageType,
-                                _eusUsersList => _datasetInfo.EusUsersList,
-                                _mode => 'add-auto',
-                                _request => _requestID,         -- Output
-                                _message => _message,           -- Output
-                                _returnCode => _returnCode,     -- Output
-                                _secSep => _datasetInfo.SeparationGroup,
-                                _mrmAttachment => '',
-                                _status => 'Completed',
-                                _skipTransactionRollback => true,
-                                _autoPopulateUserListIfBlank => true,   -- Auto populate _eusUsersList if blank since this is an Auto-Request
-                                _callingUser => '',
-                                _vialingConc => null,
-                                _vialingVol => null,
-                                _stagingLocation => null,
-                                _requestIDForUpdate => null,
-                                _logDebugMessages => false,
-                                _resolvedInstrumentInfo => _resolvedInstrumentInfo);    -- Output
+                                _requestName                 => _requestNameNew,
+                                _experimentName              => _datasetInfo.ExperimentName::text,
+                                _requesterUsername           => _datasetInfo.OperatorUsername::text,
+                                _instrumentGroup             => _datasetInfo.InstrumentName::text,
+                                _workPackage                 => _datasetInfo.WorkPackage::text,
+                                _msType                      => _datasetInfo.DatasetType::text,
+                                _instrumentSettings          => _datasetInfo.InstrumentSettings::text,
+                                _wellplateName               => _datasetInfo.Wellplate::text,
+                                _wellNumber                  => _datasetInfo.WellNum::text,
+                                _internalStandard            => _datasetInfo.InternalStandard::text,
+                                _comment                     => _datasetInfo.Comment::text,
+                                _batch                       => 0,
+                                _block                       => 0,
+                                _runorder                    => 0,
+                                _eusProposalID               => _datasetInfo.EusProposalID::text,
+                                _eusUsageType                => _datasetInfo.EusUsageType::text,
+                                _eusUsersList                => _eusUsersList,
+                                _mode                        => 'add-auto',
+                                _secSep                      => _datasetInfo.SeparationGroup::text,
+                                _mrmAttachment               => '',
+                                _status                      => 'Completed',
+                                _skipTransactionRollback     => true,
+                                _autoPopulateUserListIfBlank => true,   -- True so that _eusUsersList is auto-populated if blank (since this is an Auto-Request)
+                                _callingUser                 => '',
+                                _vialingConc                 => null,
+                                _vialingVol                  => null,
+                                _stagingLocation             => null,
+                                _requestIDForUpdate          => null,
+                                _logDebugMessages            => false,
+                                _request                     => _requestID,                     -- Output
+                                _resolvedInstrumentInfo      => _resolvedInstrumentInfo,        -- Output
+                                _message                     => _message,                       -- Output
+                                _returnCode                  => _returnCode);                   -- Output
 
+        If _returnCode <> '' Then
+            If Trim(Coalesce(_message, '')) = '' Then
+                _message := format('add_update_requested_run returned return code %s when creating requested run %s', _returnCode, _requestNameNew);
+            End If;
+
+            CALL post_log_entry ('Error', _message, 'Clone_Dataset');
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -296,7 +306,9 @@ BEGIN
     If _returnCode <> '' Then
         ROLLBACK;
 
-        CALL post_log_entry ('Error', _message, 'Clone_Dataset');
+        RAISE INFO '';
+        RAISE WARNING '%', _message;
+
         RETURN;
     End If;
 
@@ -314,9 +326,20 @@ BEGIN
                             _datasetID  => _datasetIDNew,
                             _message    => _message,
                             _returnCode => _returnCode);
+
+            If _returnCode <> '' Then
+                If Trim(Coalesce(_message, '')) = '' Then
+                    _message := format('add_archive_dataset returned return code %s when adding dataset ID %s to t_dataset_archive', _returnCode, _datasetIDNew);
+                End If;
+
+                CALL post_log_entry ('Error', _message, 'Clone_Dataset');
+            End If;
+
         Else
-            RAISE INFO 'You should manually create a dataset archive task using: CALL Add_Archive_Dataset %', _datasetIDNew;
+            RAISE INFO '';
+            RAISE INFO 'You should manually create a dataset archive task using: CALL add_archive_dataset (%);', _datasetIDNew;
         End If;
+
     EXCEPTION
         WHEN OTHERS THEN
             GET STACKED DIAGNOSTICS
@@ -334,6 +357,15 @@ BEGIN
         End If;
     END;
 
+    If _returnCode <> '' Then
+        ROLLBACK;
+
+        RAISE INFO '';
+        RAISE WARNING '%', _message;
+
+        RETURN;
+    End If;
+
     -- Commit changes now
     COMMIT;
 
@@ -342,16 +374,19 @@ BEGIN
 
         CALL post_log_entry ('Normal', _message, 'Clone_Dataset');
 
-        -- Create a Capture job for the newly cloned dataset
+        _actionMessage := _message;
+
+        -- Create a capture task job for the newly cloned dataset
 
         SELECT MAX(Job)
         INTO _captureJob
         FROM cap.t_tasks
-        WHERE Dataset = _dataset::citext AND Script ILIKE '%capture%';
+        WHERE Dataset = _dataset::citext AND
+              Script ILIKE '%capture%';
 
         If Coalesce(_captureJob, 0) = 0 Then
 
-            -- Job not found; examine T_Jobs_History
+            -- Job not found; examine t_tasks_history
             SELECT Job, Saved
             INTO _captureJob, _dateStamp
             FROM cap.t_tasks_History
@@ -361,7 +396,7 @@ BEGIN
             LIMIT 1;
 
             If Not FOUND Then
-                RAISE INFO 'Unable to create capture job in cap.t_tasks since source job not found for dataset %', _dataset;
+                RAISE WARNING 'Unable to create capture task job in cap.t_tasks since source job not found for dataset %', _dataset;
                 RETURN;
             End If;
 
@@ -387,7 +422,7 @@ BEGIN
 
                 INSERT INTO cap.t_task_steps ( Job,
                                                Step,
-                                               Step_Tool,
+                                               Tool,
                                                State,
                                                Input_Folder_Name,
                                                Output_Folder_Name,
@@ -405,20 +440,20 @@ BEGIN
                 SELECT _captureJobNew AS Job,
                        Step,
                        tool,
-                       Case When Not State In (3,5,7) Then 7 Else State End As State,
+                       CASE WHEN NOT State IN (3,5,7) THEN 7 ELSE STATE END AS State,
                        Input_Folder_Name,
                        Output_Folder_Name,
                        'In-Silico' AS Processor,
-                       Case When Start Is Null Then Null Else CURRENT_TIMESTAMP End As Start,
-                       Case When Finish Is Null Then Null Else CURRENT_TIMESTAMP End As Finish,
-                       1 As Tool_Version_ID,
-                       0 AS Completion_Code,
+                       CASE WHEN Start  IS Null THEN Null ELSE CURRENT_TIMESTAMP END AS Start,
+                       CASE WHEN Finish IS Null THEN Null ELSE CURRENT_TIMESTAMP END AS Finish,
+                       1  AS Tool_Version_ID,
+                       0  AS Completion_Code,
                        '' AS Completion_Message,
-                       0 AS Evaluation_Code,
+                       0  AS Evaluation_Code,
                        '' AS Evaluation_Message,
-                       0 AS Holdoff_Interval_Minutes,
+                       0  AS Holdoff_Interval_Minutes,
                        CURRENT_TIMESTAMP AS Next_Try,
-                       0 AS Retry_Count
+                       0  AS Retry_Count
                 FROM cap.t_task_steps_history
                 WHERE Job = _captureJob AND
                       Saved = _dateStamp;
@@ -479,22 +514,22 @@ BEGIN
                        Tool,
                        CPU_Load,
                        Dependencies,
-                       Case When Not State In (3,5,7) Then 7 Else State End As State,
+                       CASE WHEN NOT STATE IN (3,5,7) THEN 7 ELSE STATE END AS State,
                        Input_Folder_Name,
                        Output_Folder_Name,
                        'In-Silico' AS Processor,
-                       Case When Start Is Null Then Null Else CURRENT_TIMESTAMP End As Start,
-                       Case When Finish Is Null Then Null Else CURRENT_TIMESTAMP End As Finish,
-                       1 AS Tool_Version_ID,
-                       0 AS Completion_Code,
+                       CASE WHEN Start  IS Null THEN Null ELSE CURRENT_TIMESTAMP END AS Start,
+                       CASE WHEN Finish IS Null THEN Null ELSE CURRENT_TIMESTAMP END AS Finish,
+                       1  AS Tool_Version_ID,
+                       0  AS Completion_Code,
                        '' AS Completion_Message,
-                       0 AS Evaluation_Code,
+                       0  AS Evaluation_Code,
                        '' AS Evaluation_Message,
                        Holdoff_Interval_Minutes,
                        CURRENT_TIMESTAMP AS Next_Try,
                        Retry_Count
                 FROM cap.t_task_steps
-                WHERE Job = _captureJob
+                WHERE Job = _captureJob;
 
                 INSERT INTO cap.t_task_step_dependencies (Job, Step, Target_Step,
                                                           Condition_Test, Test_Value, Evaluated,
@@ -515,15 +550,26 @@ BEGIN
         End If;
 
         If Coalesce(_captureJobNew, 0) > 0 Then
-            CALL cap.update_parameters_for_task (_captureJobNew, _message => _message, _returnCode => _returnCode);
+            CALL cap.update_parameters_for_task (
+                        _joblist    => _captureJobNew::text,
+                        _message    => _message,
+                        _returnCode => _returnCode,
+                        _infoonly   => false);
 
             _jobMessage := format('Created capture task job %s for dataset %s by cloning job %s',
-                                    _captureJobNew, _datasetNew, _captureJob);
+                                  _captureJobNew, _datasetNew, _captureJob);
 
             CALL post_log_entry ('Normal', _jobMessage, 'Clone_Dataset');
 
-            _message := format('%s; %s', _message, _jobMessage);
+            _actionMessage := format('%s; %s', _actionMessage, _jobMessage);
         End If;
+
+        If _actionMessage <> '' Then
+            _message := _actionMessage;
+        End If;
+
+        RAISE INFO '%', _message;
+        RETURN;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -542,7 +588,17 @@ BEGIN
         End If;
     END;
 
+    RAISE INFO '';
+    RAISE WARNING '%', _message;
 END
 $$;
 
-COMMENT ON PROCEDURE public.clone_dataset IS 'CloneDataset';
+
+ALTER PROCEDURE public.clone_dataset(IN _infoonly boolean, IN _dataset text, IN _suffix text, IN _createdatasetarchivetask boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE clone_dataset(IN _infoonly boolean, IN _dataset text, IN _suffix text, IN _createdatasetarchivetask boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.clone_dataset(IN _infoonly boolean, IN _dataset text, IN _suffix text, IN _createdatasetarchivetask boolean, INOUT _message text, INOUT _returncode text) IS 'CloneDataset';
+
