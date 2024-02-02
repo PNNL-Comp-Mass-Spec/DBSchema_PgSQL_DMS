@@ -138,8 +138,8 @@ BEGIN
     FROM t_instrument_name
     WHERE instrument_id = _instrumentID;
 
-    _purgePolicy := Coalesce(_purgePolicy, 0);
-    _purgePriority := Coalesce(_purgePriority, 3);
+    _purgePolicy        := Coalesce(_purgePolicy, 0);
+    _purgePriority      := Coalesce(_purgePriority, 3);
     _purgeHoldoffMonths := Coalesce(_purgeHoldoffMonths, 1);
 
     ---------------------------------------------------
