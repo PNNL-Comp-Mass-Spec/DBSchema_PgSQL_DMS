@@ -1,12 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.delete_experiment_group
-(
-    _groupID int = 0,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: delete_experiment_group(integer, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.delete_experiment_group(IN _groupid integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -21,7 +19,7 @@ AS $$
 **  Date:   07/13/2006
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/02/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -58,6 +56,18 @@ BEGIN
     End If;
 
     ---------------------------------------------------
+    -- Does the experiment group exist?
+    ---------------------------------------------------
+
+    _groupID := Coalesce(_groupID, 0);
+
+    If Not Exists (SELECT group_id FROM t_experiment_groups WHERE group_id = _groupID) Then
+        _message := format('Could not find experiment group %s', _groupID);
+        _returnCode := 'U5201';
+        RETURN;
+    End If;
+
+    ---------------------------------------------------
     -- Delete the items
     ---------------------------------------------------
 
@@ -67,7 +77,17 @@ BEGIN
     DELETE FROM t_experiment_groups
     WHERE group_id = _groupID;
 
+    RAISE INFO '';
+    RAISE INFO 'Deleted experiment group %', _groupID;
 END
 $$;
 
-COMMENT ON PROCEDURE public.delete_experiment_group IS 'DeleteExperimentGroup';
+
+ALTER PROCEDURE public.delete_experiment_group(IN _groupid integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE delete_experiment_group(IN _groupid integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.delete_experiment_group(IN _groupid integer, INOUT _message text, INOUT _returncode text) IS 'DeleteExperimentGroup';
+

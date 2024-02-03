@@ -1,12 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.delete_instrument
-(
-    _instrumentName text,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: delete_instrument(text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.delete_instrument(IN _instrumentname text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -24,7 +22,7 @@ AS $$
 **          08/28/2010 mem - No longer deleting entries in the Instrument_Allowed_Dataset_Type table
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/02/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -60,16 +58,13 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Look up instrument ID for _instrumentName
+    -- Validate the inputs
     ---------------------------------------------------
 
-    SELECT instrument_id
-    INTO _instrumentID
-    FROM t_instrument_name
-    WHERE instrument = _instrumentName;
+    _instrumentName := Trim(Coalesce(_instrumentName, ''));
 
-    If Not FOUND Then
-        _message := format('instrument not found in t_instrument_name: %s', _instrumentName);
+    If _instrumentName = '' Then
+        _message := format('Instrument name not specified');
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';
@@ -77,19 +72,40 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Make sure no datasets exist yet for this instrument
+    -- Look up the instrument ID
+    ---------------------------------------------------
+
+    SELECT instrument_id
+    INTO _instrumentID
+    FROM t_instrument_name
+    WHERE instrument = _instrumentName::citext;
+
+    If Not FOUND Then
+        _message := format('Instrument does not exist: %s', _instrumentName);
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5202';
+        RETURN;
+    End If;
+
+    ---------------------------------------------------
+    -- Make sure no datasets exist for this instrument
     ---------------------------------------------------
 
     SELECT COUNT(dataset_id)
-    INTO _existingCount
+    INTO _datasetCount
     FROM t_dataset
     WHERE instrument_id = _instrumentID;
 
     If _datasetCount > 0 Then
-        _message := format('Instrument %s has %s %s in t_dataset; deletion is not allowed', _instrumentName, _datasetCount, public.check_plural(_datasetCount, 'dataset', 'datasets'));
+        _message := format('Instrument %s has %s %s in t_dataset; deletion is not allowed',
+                           _instrumentName,
+                           _datasetCount,
+                           public.check_plural(_datasetCount, 'dataset', 'datasets'));
+
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5202';
+        _returnCode := 'U5203';
         RETURN;
     End If;
 
@@ -107,8 +123,15 @@ BEGIN
 
     _message := format('Deleted instrument: %s', _instrumentName);
     RAISE INFO '%', _message;
-
 END
 $$;
 
-COMMENT ON PROCEDURE public.delete_instrument IS 'DeleteInstrument';
+
+ALTER PROCEDURE public.delete_instrument(IN _instrumentname text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE delete_instrument(IN _instrumentname text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.delete_instrument(IN _instrumentname text, INOUT _message text, INOUT _returncode text) IS 'DeleteInstrument';
+

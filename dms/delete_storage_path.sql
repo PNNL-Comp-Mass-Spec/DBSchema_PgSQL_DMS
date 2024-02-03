@@ -1,12 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.delete_storage_path
-(
-    _pathID int,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: delete_storage_path(integer, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.delete_storage_path(IN _pathid integer, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -23,7 +21,7 @@ AS $$
 **  Date:   03/14/2006
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/02/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -58,6 +56,20 @@ BEGIN
     End If;
 
     ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
+    If Coalesce(_pathID, 0) <= 0 Then
+        RAISE WARNING 'Storage path ID is not a positive integer; nothing to delete';
+        RETURN;
+    End If;
+
+    If Not Exists (SELECT storage_path_id FROM t_storage_path WHERE storage_path_id = _pathID) Then
+        RAISE WARNING 'Storage path ID % does not exist; nothing to delete', _pathID;
+        RETURN;
+    End If;
+
+    ---------------------------------------------------
     -- Verify no associated datasets
     ---------------------------------------------------
 
@@ -74,7 +86,17 @@ BEGIN
     DELETE FROM t_storage_path
     WHERE storage_path_id = _pathID;
 
+    _message := format('Deleted storage path ID %s', _pathID);
+    RAISE INFO '%', _message;
 END
 $$;
 
-COMMENT ON PROCEDURE public.delete_storage_path IS 'DeleteStoragePath';
+
+ALTER PROCEDURE public.delete_storage_path(IN _pathid integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE delete_storage_path(IN _pathid integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.delete_storage_path(IN _pathid integer, INOUT _message text, INOUT _returncode text) IS 'DeleteStoragePath';
+

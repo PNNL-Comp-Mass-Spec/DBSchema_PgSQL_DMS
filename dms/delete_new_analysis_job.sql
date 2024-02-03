@@ -1,18 +1,14 @@
 --
-CREATE OR REPLACE PROCEDURE public.delete_new_analysis_job
-(
-    _job text,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-    _callingUser text = '',
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: delete_new_analysis_job(text, boolean, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.delete_new_analysis_job(IN _job text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Delete the analysis job if it has state 'New', 'Failed', or 'Special Proc. Waiting'
+**      Delete the analysis job if its state is 'New', 'Failed', or 'Special Proc. Waiting'
 **
 **  Arguments:
 **    _job              Job to delete
@@ -31,7 +27,7 @@ AS $$
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          09/27/2018 mem - Rename _previewMode to _infoOnly
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/02/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -69,10 +65,14 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
     _job   := Trim(Coalesce(_job, ''));
     _jobID := public.try_cast(_job, null::int);
 
-    If _jobID is null Then
+    If _jobID Is Null Then
         _message := format('Job number is not numeric: %s', _job);
         RAISE WARNING '%', _message;
 
@@ -99,7 +99,7 @@ BEGIN
         End If;
     End If;
 
-    -- Verify that analysis job has state 'New', 'Failed', or 'Special Proc. Waiting'
+    -- Verify that analysis job has state '(none)', 'New', 'Failed', or 'Special Proc. Waiting'
     If Not _state In (0, 1, 5, 19) Then
         _message := format('Job "%s" must be in "new" or "failed" state to be deleted by user', _job);
         _returnCode := 'U5202';
@@ -109,13 +109,20 @@ BEGIN
     -- Delete the analysis job
 
     CALL public.delete_analysis_job (
-                    _job         => _jobID,
-                    _callingUser => _callingUser,
-                    _infoOnly    =>_infoOnly,
-                    _message     => _message,
-                    _returnCode  => _returnCode);
-
+                    _job          => _jobID::text,
+                    _infoOnly     => _infoOnly,
+                    _message      => _message,
+                    _returnCode   => _returnCode,
+                    _callingUser  => _callingUser);
 END
 $$;
 
-COMMENT ON PROCEDURE public.delete_new_analysis_job IS 'DeleteNewAnalysisJob';
+
+ALTER PROCEDURE public.delete_new_analysis_job(IN _job text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE delete_new_analysis_job(IN _job text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.delete_new_analysis_job(IN _job text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'DeleteNewAnalysisJob';
+

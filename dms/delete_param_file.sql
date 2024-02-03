@@ -1,12 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.delete_param_file
-(
-    _paramFileName text,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: delete_param_file(text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.delete_param_file(IN _paramfilename text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -22,7 +20,7 @@ AS $$
 **          02/12/2010 mem - Now updating _message when the parameter file is successfully deleted
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/02/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -57,6 +55,20 @@ BEGIN
     End If;
 
     ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
+    _paramFileName := Trim(Coalesce(_paramFileName, ''));
+
+    If _paramFileName = '' Then
+        _message := format('Parameter file name not specified');
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5201';
+        RETURN;
+    End If;
+
+    ---------------------------------------------------
     -- Get ParamFileID
     ---------------------------------------------------
 
@@ -66,10 +78,10 @@ BEGIN
     WHERE param_file_name = _paramFileName::citext;
 
     If Not FOUND Then
-        _message := format('Param file not found in t_param_files: %s', _paramFileName);
+        _message := format('Parameter file does not exist: %s', _paramFileName);
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5201';
+        _returnCode := 'U5202';
         RETURN;
     End If;
 
@@ -78,7 +90,7 @@ BEGIN
                     _message => _message,           -- Output
                     _returnCode => _returnCode);    -- Output
 
-    If _returnCode = '' Then
+    If _returnCode = '' And _message = '' Then
         _message := format('Deleted parameter file %s', _paramFileName);
         RAISE INFO '%', _message;
     End If;
@@ -86,4 +98,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.delete_param_file IS 'DeleteParamFile';
+
+ALTER PROCEDURE public.delete_param_file(IN _paramfilename text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE delete_param_file(IN _paramfilename text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.delete_param_file(IN _paramfilename text, INOUT _message text, INOUT _returncode text) IS 'DeleteParamFile';
+

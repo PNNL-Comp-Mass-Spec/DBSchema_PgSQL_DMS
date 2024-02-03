@@ -1,13 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.delete_sample_prep_request
-(
-    _requestID int,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: delete_sample_prep_request(integer, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.delete_sample_prep_request(IN _requestid integer, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -27,7 +24,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          07/06/2022 mem - Use new aux info definition view name
 **          08/15/2022 mem - Use new column name
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/02/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -61,12 +58,28 @@ BEGIN
     End If;
 
     ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
+    If Coalesce(_requestID, 0) <= 0 Then
+        RAISE WARNING 'Sample prep request ID is not a positive integer; nothing to delete';
+        RETURN;
+    End If;
+
+    If Not Exists (SELECT prep_request_id FROM t_sample_prep_request WHERE prep_request_id = _requestID) Then
+        RAISE WARNING 'Sample prep request ID % does not exist; nothing to delete', _requestID;
+        RETURN;
+    End If;
+
+    _callingUser := Trim(Coalesce(_callingUser, ''));
+
+    ---------------------------------------------------
     -- Remove any references from experiments
     ---------------------------------------------------
 
     UPDATE t_experiments
     SET sample_prep_request_id = 0
-    WHERE (sample_prep_request_id = _requestID)
+    WHERE sample_prep_request_id = _requestID;
 
     ---------------------------------------------------
     -- Delete all entries from auxiliary value table
@@ -74,30 +87,32 @@ BEGIN
     ---------------------------------------------------
 
     DELETE FROM t_aux_info_value
-    WHERE (target_id = _requestID) AND
-    (
-        Aux_Description_ID IN
-        (
-            SELECT Item_ID
-            FROM V_Aux_Info_Definition_with_ID
-            WHERE (Target = 'SamplePrepRequest')
-        )
-    )
+    WHERE target_id = _requestID AND
+          Aux_Description_ID IN (SELECT Item_ID
+                                 FROM V_Aux_Info_Definition_with_ID
+                                 WHERE Target = 'SamplePrepRequest');
+
+    ---------------------------------------------------
+    -- Delete sample prep request items
+    ---------------------------------------------------
+
+    DELETE FROM t_sample_prep_request_items
+    WHERE prep_request_id = _requestID;
 
     ---------------------------------------------------
     -- Delete the sample prep request itself
     ---------------------------------------------------
 
     DELETE FROM t_sample_prep_request
-    WHERE     (prep_request_id = _requestID)
+    WHERE prep_request_id = _requestID;
 
     ---------------------------------------------------
     -- If we got here, commit the changes
     ---------------------------------------------------
+
     COMMIT;
 
-    -- If _callingUser is defined, update system_account in t_sample_prep_request_updates
-    If Trim(Coalesce(_callingUser, '')) <> '' Then
+    If _callingUser <> '' Then
 
         CALL public.alter_entered_by_user (
                 'public', 't_sample_prep_request_updates', 'request_id',
@@ -108,7 +123,18 @@ BEGIN
 
     End If;
 
+    _message := format('Deleted sample prep request ID %s', _requestID);
+    RAISE INFO '%', _message;
+
 END
 $$;
 
-COMMENT ON PROCEDURE public.delete_sample_prep_request IS 'DeleteSamplePrepRequest';
+
+ALTER PROCEDURE public.delete_sample_prep_request(IN _requestid integer, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE delete_sample_prep_request(IN _requestid integer, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.delete_sample_prep_request(IN _requestid integer, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'DeleteSamplePrepRequest';
+

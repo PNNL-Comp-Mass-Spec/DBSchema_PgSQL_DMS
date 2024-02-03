@@ -1,15 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.delete_param_entry
-(
-    _paramFileID int,
-    _entrySeqOrder int,
-    _entryType text,
-    _entrySpecifier text,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: delete_param_entry(integer, integer, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.delete_param_entry(IN _paramfileid integer, IN _entryseqorder integer, IN _entrytype text, IN _entryspecifier text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -30,7 +25,7 @@ AS $$
 **  Date:   07/22/2004
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/02/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -63,6 +58,15 @@ BEGIN
     End If;
 
     ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
+    _entryType      := Trim(Coalesce(_entryType, ''));
+    _entrySpecifier := Trim(Coalesce(_entrySpecifier, ''));
+    _paramFileID    := Coalesce(_paramFileID, 0);
+    _entrySeqOrder  := Coalesce(_entrySeqOrder, 0);
+
+    ---------------------------------------------------
     -- Delete the matching row
     ---------------------------------------------------
 
@@ -75,4 +79,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.delete_param_entry IS 'DeleteParamEntry';
+
+ALTER PROCEDURE public.delete_param_entry(IN _paramfileid integer, IN _entryseqorder integer, IN _entrytype text, IN _entryspecifier text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE delete_param_entry(IN _paramfileid integer, IN _entryseqorder integer, IN _entrytype text, IN _entryspecifier text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.delete_param_entry(IN _paramfileid integer, IN _entryseqorder integer, IN _entrytype text, IN _entryspecifier text, INOUT _message text, INOUT _returncode text) IS 'DeleteParamEntry';
+

@@ -1,16 +1,14 @@
 --
-CREATE OR REPLACE PROCEDURE public.delete_analysis_request
-(
-    _requestID int,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: delete_analysis_request(integer, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.delete_analysis_request(IN _requestid integer, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Delete the analysis job request if it is not associated with any jobs
+**      Delete the given analysis job request if it is not associated with any jobs
 **
 **  Arguments:
 **    _requestID        Analysis job request ID
@@ -23,7 +21,7 @@ AS $$
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          07/30/2019 mem - Delete datasets from T_Analysis_Job_Request_Datasets
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/02/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -32,7 +30,6 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _tempID int := 0;
     _jobCount int := 1;
 BEGIN
     _message := '';
@@ -62,19 +59,16 @@ BEGIN
     -- Does request exist?
     ---------------------------------------------------
 
-    SELECT request_id
-    INTO _tempID
-    FROM t_analysis_job_request
-    WHERE request_id = _requestID;
+    _requestID := Coalesce(_requestID, 0);
 
-    If Not FOUND Then
-        _message := 'Could not find job request';
+    If Not Exists (SELECT request_id FROM t_analysis_job_request WHERE request_id = _requestID) Then
+        _message := format('Could not find analysis job request %s', _requestID);
         _returnCode := 'U5201';
         RETURN;
     End If;
 
     ---------------------------------------------------
-    -- Look up number of jobs made from the request
+    -- Look up the number of jobs made from the request
     ---------------------------------------------------
 
     SELECT COUNT(job)
@@ -83,13 +77,17 @@ BEGIN
     WHERE request_id = _requestID;
 
     If _jobCount <> 0 Then
-        _message := 'Cannot delete an analysis request that has jobs made from it';
+        _message := format('Cannot delete analysis job request %s since it has %s existing %s',
+                           _requestID,
+                           _jobCount,
+                           public.check_plural(_jobCount, 'job', 'jobs'));
+
         _returnCode := 'U5202';
         RETURN;
     End If;
 
     ---------------------------------------------------
-    -- Delete the analysis request
+    -- Delete the analysis job request
     ---------------------------------------------------
 
     DELETE FROM t_analysis_job_request_datasets
@@ -98,7 +96,17 @@ BEGIN
     DELETE FROM t_analysis_job_request
     WHERE request_id = _requestID;
 
+    RAISE INFO '';
+    RAISE INFO 'Deleted analysis job request %', _requestID;
 END
 $$;
 
-COMMENT ON PROCEDURE public.delete_analysis_request IS 'DeleteAnalysisRequest';
+
+ALTER PROCEDURE public.delete_analysis_request(IN _requestid integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE delete_analysis_request(IN _requestid integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.delete_analysis_request(IN _requestid integer, INOUT _message text, INOUT _returncode text) IS 'DeleteAnalysisRequest';
+
