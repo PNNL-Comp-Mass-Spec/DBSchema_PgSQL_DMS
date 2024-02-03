@@ -107,10 +107,22 @@ CREATE INDEX ix_t_analysis_job_last_affected ON public.t_analysis_job USING btre
 CREATE INDEX ix_t_analysis_job_organism_dbname ON public.t_analysis_job USING btree (organism_db_name);
 
 --
+-- Name: ix_t_analysis_job_param_file_name; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_param_file_name ON public.t_analysis_job USING btree (param_file_name);
+
+--
 -- Name: ix_t_analysis_job_request_id; Type: INDEX; Schema: public; Owner: d3l243
 --
 
 CREATE INDEX ix_t_analysis_job_request_id ON public.t_analysis_job USING btree (request_id);
+
+--
+-- Name: ix_t_analysis_job_settings_file_name; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_settings_file_name ON public.t_analysis_job USING btree (settings_file_name);
 
 --
 -- Name: ix_t_analysis_job_started_include_job_state_id_progress; Type: INDEX; Schema: public; Owner: d3l243
