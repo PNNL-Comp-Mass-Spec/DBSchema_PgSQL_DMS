@@ -281,7 +281,7 @@ BEGIN
         RAISE INFO 'Internal standards: %', _message;
     End If;
 
-    -------------------------------------------------------------
+    --------------------------------------------------------------
     -- If Tmp_IntStds contains 'HumanContam' but Tmp_ProteinCollections contains 'Tryp_Pig_Bov',
     -- remove 'HumanContam' from Tmp_IntStds since every protein in 'HumanContam' is also in 'Tryp_Pig_Bov'
     --------------------------------------------------------------

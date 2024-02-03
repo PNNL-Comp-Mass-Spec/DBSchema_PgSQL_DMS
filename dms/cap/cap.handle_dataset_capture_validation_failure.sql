@@ -43,9 +43,9 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    ----------------------------------------
+    -----------------------------------------
     -- Validate the inputs
-    ----------------------------------------
+    -----------------------------------------
 
     _datasetNameOrID := Trim(Coalesce(_datasetNameOrID, ''));
     _comment         := Trim(Coalesce(_comment, ''));
@@ -59,9 +59,9 @@ BEGIN
     _datasetID := Coalesce(public.try_cast(_datasetNameOrID, 0), 0);
 
     If _datasetID <> 0 Then
-        ----------------------------------------
+        -----------------------------------------
         -- Lookup the Dataset Name
-        ----------------------------------------
+        -----------------------------------------
 
         SELECT Dataset
         INTO _datasetName
@@ -78,9 +78,9 @@ BEGIN
         End If;
 
     Else
-        ----------------------------------------
+        -----------------------------------------
         -- Lookup the dataset ID
-        ----------------------------------------
+        -----------------------------------------
 
         _datasetName := _datasetNameOrID;
 

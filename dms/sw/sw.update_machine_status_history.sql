@@ -31,9 +31,9 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    ----------------------------------------
+    -----------------------------------------
     -- Validate the inputs
-    ----------------------------------------
+    -----------------------------------------
 
     _minimumTimeIntervalHours := Coalesce(_minimumTimeIntervalHours, 1);
     _activeProcessWindowHours := Coalesce(_activeProcessWindowHours, 24);
@@ -41,9 +41,9 @@ BEGIN
     If Coalesce(_minimumTimeIntervalHours, 0) <= 0 Then
         _updateTable := true;
     Else
-        ----------------------------------------
+        -----------------------------------------
         -- Lookup how long ago the table was last updated
-        ----------------------------------------
+        -----------------------------------------
 
         SELECT extract(epoch FROM (CURRENT_TIMESTAMP - MAX(posting_time))) / 3600.0
         INTO _timeIntervalLastUpdateHours

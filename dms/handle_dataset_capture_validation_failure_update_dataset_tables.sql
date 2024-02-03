@@ -47,9 +47,9 @@ BEGIN
     _datasetID := 0;
     _existingComment := '';
 
-    ----------------------------------------
+    -----------------------------------------
     -- Validate the inputs
-    ----------------------------------------
+    -----------------------------------------
 
     _datasetNameOrID := Trim(Coalesce(_datasetNameOrID, ''));
     _comment         := Trim(Coalesce(_comment, ''));
@@ -66,9 +66,9 @@ BEGIN
     _datasetID := Coalesce(public.try_cast(_datasetNameOrID, null::int), 0);
 
     If _datasetID > 0 Then
-        ----------------------------------------
+        -----------------------------------------
         -- Lookup the Dataset Name
-        ----------------------------------------
+        -----------------------------------------
 
         SELECT dataset, comment
         INTO _datasetName, _existingComment
@@ -83,9 +83,9 @@ BEGIN
         End If;
 
     Else
-        ----------------------------------------
+        -----------------------------------------
         -- Lookup the dataset ID
-        ----------------------------------------
+        -----------------------------------------
 
         _datasetName := _datasetNameOrID;
 

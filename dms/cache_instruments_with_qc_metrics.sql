@@ -43,9 +43,9 @@ BEGIN
         Instrument_ID int NOT NULL
     );
 
-    ----------------------------------------
+    -----------------------------------------
     -- Cache the instrument IDs for datasets that have data in t_dataset_qc
-    ----------------------------------------
+    -----------------------------------------
 
     INSERT INTO Tmp_Instruments (instrument_id)
     SELECT DISTINCT DS.instrument_id
@@ -93,9 +93,9 @@ BEGIN
         RETURN;
     End If;
 
-    ----------------------------------------
+    -----------------------------------------
     -- Update t_dataset_qc_instruments
-    ----------------------------------------
+    -----------------------------------------
 
     MERGE INTO t_dataset_qc_instruments AS target
     USING ( SELECT Inst.instrument, Inst.instrument_id
