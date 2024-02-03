@@ -1,17 +1,17 @@
 --
-CREATE OR REPLACE PROCEDURE public.do_analysis_request_operation
-(
-    _request text,
-    _mode text,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: do_analysis_request_operation(text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.do_analysis_request_operation(IN _request text, IN _mode text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Perform analysis request operation defined by _mode
+**      Perform analysis job request operation defined by _mode
+**
+**      The only supported mode is 'delete'
+**      The analysis job request can only be deleted if it is not associated with any jobs
 **
 **  Arguments:
 **    _request      Analysis job request ID (as text)
@@ -24,7 +24,7 @@ AS $$
 **          05/05/2005 grk - Removed default mode value
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/03/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -75,7 +75,7 @@ BEGIN
         _requestID := public.try_cast(_request, null::int);
 
         If _requestID Is Null Then
-            RAISE WARNING '_request is not an integer: %', _request;
+            RAISE WARNING 'Request ID is not an integer: %', _request;
 
             _returnCode := 'U5201';
             RETURN;
@@ -88,12 +88,9 @@ BEGIN
 
         If _returnCode <> '' Then
             RAISE WARNING '%', _message;
-
-            _returnCode := 'U5201';
-            RETURN;
         End If;
 
-        RETURN
+        RETURN;
     End If;
 
     ---------------------------------------------------
@@ -108,4 +105,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.do_analysis_request_operation IS 'DoAnalysisRequestOperation';
+
+ALTER PROCEDURE public.do_analysis_request_operation(IN _request text, IN _mode text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE do_analysis_request_operation(IN _request text, IN _mode text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.do_analysis_request_operation(IN _request text, IN _mode text, INOUT _message text, INOUT _returncode text) IS 'DoAnalysisRequestOperation';
+

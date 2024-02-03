@@ -1,18 +1,17 @@
 --
-CREATE OR REPLACE PROCEDURE public.do_analysis_job_operation
-(
-    _job text,
-    _mode text,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: do_analysis_job_operation(text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.do_analysis_job_operation(IN _job text, IN _mode text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Perform analysis job operation defined by _mode
+**
+**      The only supported modes are 'delete' and 'previewDelete'
+**      Jobs can only be deleted if the job state is 'New', 'Failed', or 'Special Proc. Waiting'
 **
 **  Arguments:
 **    _job          Analysis job ID
@@ -33,7 +32,7 @@ AS $$
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          09/27/2018 mem - Rename _previewMode to _infoOnly
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/03/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -43,10 +42,7 @@ DECLARE
     _authorized boolean;
 
     _msg text;
-    _jobID int;
-    _state int;
-    _result int;
-    _infoOnly boolean := false;
+    _infoOnly boolean;
 
     _sqlState text;
     _exceptionMessage text;
@@ -55,12 +51,6 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode := '';
-
-    _mode := Trim(Lower(Coalesce(_mode, '')));
-
-    If _mode Like 'preview%' Then
-        _infoOnly := true;
-    End If;
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -90,47 +80,44 @@ BEGIN
         _job  := Trim(Coalesce(_job, ''));
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
-        ---------------------------------------------------
-        -- Delete job if it is in 'new' or 'failed' state
-        ---------------------------------------------------
+        If _mode Like 'preview%' Then
+            _infoOnly := true;
+        Else
+            _infoOnly := false;
+        End If;
 
         If _mode In ('delete', 'previewdelete') Then
 
             ---------------------------------------------------
-            -- Delete the job
+            -- Delete job if it is in 'new' or 'failed' state
             ---------------------------------------------------
 
             CALL public.delete_new_analysis_job (
-                    _job,
-                    _message => _msg,               -- Output
-                    _returnCode => _returnCode,     -- Output
-                    _callingUser,
-                    _infoOnly)
+                    _job         => _job,
+                    _message     => _msg,           -- Output
+                    _returnCode  => _returnCode,    -- Output
+                    _callingUser => _callingUser,
+                    _infoOnly    => _infoOnly);
 
             If _returnCode <> '' Then
                 RAISE EXCEPTION '%', _msg;
             End If;
 
             RETURN;
-        End If; -- mode 'delete'
-
-        ---------------------------------------------------
-        -- Legacy mode; not supported
-        ---------------------------------------------------
+        End If;
 
         If _mode = 'reset' Then
-            _msg := 'Warning: the reset mode does not do anything in procedure DoAnalysisJobOperation';
-            RAISE EXCEPTION '%', _msg;
+            -- Reset is a legacy, unsupported mode
 
+            RAISE EXCEPTION 'Warning: the reset mode does not do anything in procedure Do_Analysis_Job_Operation';
             RETURN;
-        End If; -- mode 'reset'
+        End If;
 
         ---------------------------------------------------
         -- Mode was unrecognized
         ---------------------------------------------------
 
-        _msg := format('Mode "%s" was unrecognized', _mode);
-        RAISE EXCEPTION '%', _msg;
+        RAISE EXCEPTION 'Mode "%" was unrecognized', _mode;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -152,4 +139,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.do_analysis_job_operation IS 'DoAnalysisJobOperation';
+
+ALTER PROCEDURE public.do_analysis_job_operation(IN _job text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE do_analysis_job_operation(IN _job text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.do_analysis_job_operation(IN _job text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'DoAnalysisJobOperation';
+
