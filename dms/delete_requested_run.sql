@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE public.delete_requested_run(IN _requestid integer DE
 **                         - Use local variable for the return value of _message from alter_event_log_entry_user()
 **          09/05/2023 mem - Use schema name when calling procedures
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
+**          02/04/2024 mem - Remove explicit commit after delete queries
 **
 *****************************************************/
 DECLARE
@@ -213,8 +214,6 @@ BEGIN
 
             RAISE INFO '%', _alterEnteredByMessage;
         End If;
-
-        COMMIT;
     END;
 
     ---------------------------------------------------

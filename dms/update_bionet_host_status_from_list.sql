@@ -23,7 +23,7 @@ CREATE OR REPLACE PROCEDURE public.update_bionet_host_status_from_list(IN _hostn
 **                         - Add support for including IP addresses, for example ltq_orb_3_192.168.30.78
 **          03/17/2017 mem - Pass this procedure's name to Parse_Delimited_List
 **          05/09/2023 mem - Add arguments _message and _returnCode
-**                     mem - Ported to PostgreSQL
+**                         - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
