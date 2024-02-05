@@ -1,8 +1,8 @@
 --
--- Name: delete_dataset(text, boolean, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: delete_dataset(text, boolean, text, text, text, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.delete_dataset(IN _datasetname text, IN _infoonly boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.delete_dataset(IN _datasetname text, IN _infoonly boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text, IN _showdebug boolean DEFAULT false)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -16,6 +16,7 @@ CREATE OR REPLACE PROCEDURE public.delete_dataset(IN _datasetname text, IN _info
 **    _message          Status message
 **    _returnCode       Return code
 **    _callingUser      Username of the calling user
+**    _showDebug        When true, show debug messages
 **
 **  Auth:   grk
 **  Date:   01/26/2001
@@ -47,6 +48,7 @@ CREATE OR REPLACE PROCEDURE public.delete_dataset(IN _datasetname text, IN _info
 **          09/15/2023 mem - Ported to PostgreSQL
 **          09/29/2023 mem - Store the dataset's storage_path_id in _datasetDirectoryPath if V_Dataset_Folder_Paths does not have the dataset
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
+**          02/04/2024 mem - Add parameter _showDebug
 **
 *****************************************************/
 DECLARE
@@ -97,7 +99,13 @@ BEGIN
     ------------------------------------------------
 
     _datasetName := Trim(Coalesce(_datasetName, ''));
+    _callingUser := Trim(Coalesce(_callingUser, ''));
     _infoOnly    := Coalesce(_infoOnly, true);
+    _showDebug   := Coalesce(_showDebug, false);
+
+    If _showDebug Then
+        RAISE INFO '';
+    End If;
 
     If _datasetName = '' Then
         _message := '_datasetName parameter is blank; nothing to delete';
@@ -110,6 +118,10 @@ BEGIN
     ---------------------------------------------------
     -- Get the datasetID and current state
     ---------------------------------------------------
+
+    If _showDebug Then
+        RAISE INFO 'Resolve dataset name to ID: %', _datasetName;
+    End If;
 
     SELECT dataset_state_id,
            dataset_id
@@ -128,6 +140,10 @@ BEGIN
     ---------------------------------------------------
     -- Get the dataset directory path
     ---------------------------------------------------
+
+    If _showDebug Then
+        RAISE INFO 'Determine the dataset directory path';
+    End If;
 
     SELECT Dataset_Folder_Path
     INTO _datasetDirectoryPath
@@ -154,6 +170,10 @@ BEGIN
     End If;
 
     If _infoOnly Then
+
+        If _showDebug Then
+            RAISE INFO 'Preview items to delete';
+        End If;
 
         -- Populate a temporary table with the list of items to delete or update
 
@@ -322,12 +342,20 @@ BEGIN
     -- Delete any entries for the dataset from the archive table
     ---------------------------------------------------
 
+    If _showDebug Then
+        RAISE INFO 'Delete dataset ID % from t_dataset_archive', _datasetID;
+    End If;
+
     DELETE FROM t_dataset_archive
     WHERE dataset_id = _datasetID;
 
     ---------------------------------------------------
     -- Delete any auxiliary info associated with dataset
     ---------------------------------------------------
+
+    If _showDebug Then
+        RAISE INFO 'Call delete_aux_info';
+    End If;
 
     CALL public.delete_aux_info (
                     'Dataset',
@@ -336,10 +364,18 @@ BEGIN
                     _returnCode => _returnCode);    -- Output
 
     If _returnCode <> '' Then
+        If _showDebug Then
+            RAISE INFO 'Return code from delete_aux_info is %; show message %', _returnCode, _message;
+        End If;
+
         _message := format('Delete auxiliary information was unsuccessful for dataset: %s', _message);
         RAISE EXCEPTION '%', _message;
 
         RETURN;
+    Else
+        If _showDebug Then
+            RAISE INFO 'Successful call to delete_aux_info';
+        End If;
     End If;
 
     ---------------------------------------------------
@@ -351,23 +387,44 @@ BEGIN
     FROM t_requested_run
     WHERE dataset_id = _datasetID;
 
+    If _showDebug Then
+        If _requestID Is Null Then
+            RAISE INFO 'Call unconsume_scheduled_run (though the dataset does not have a requested run)';
+        Else
+            RAISE INFO 'Call unconsume_scheduled_run for requested run %', _requestID;
+        End If;
+    End If;
+
     CALL public.unconsume_scheduled_run (
                     _datasetName,
                     _retainHistory => false,
                     _message       => _message,         -- Output
                     _returnCode    => _returnCode,      -- Output
-                    _callingUser   => _callingUser);
+                    _callingUser   => _callingUser,
+                    _showDebug     => _showDebug);
 
     If _returnCode <> '' Then
+        If _showDebug Then
+            RAISE INFO 'Return code from unconsume_scheduled_run is %; show message %', _returnCode, _message;
+        End If;
+
         _message := format('Unconsume operation was unsuccessful for dataset: %s', _message);
         RAISE EXCEPTION '%', _message;
 
         RETURN;
+    Else
+        If _showDebug Then
+            RAISE INFO 'Successful call to unconsume_scheduled_run';
+        End If;
     End If;
 
     _message := '';
 
     If Not _requestID Is Null Then
+
+        If _showDebug Then
+            RAISE INFO 'Show the updated requested run';
+        End If;
 
         RAISE INFO '';
 
@@ -434,12 +491,20 @@ BEGIN
     -- Delete any entries in t_dataset_info
     ---------------------------------------------------
 
+    If _showDebug Then
+        RAISE INFO 'Delete dataset ID % from t_dataset_info', _datasetID;
+    End If;
+
     DELETE FROM t_dataset_info
     WHERE dataset_id = _datasetID;
 
     ---------------------------------------------------
     -- Delete any entries in t_dataset_qc
     ---------------------------------------------------
+
+    If _showDebug Then
+        RAISE INFO 'Delete dataset ID % from t_dataset_qc', _datasetID;
+    End If;
 
     DELETE FROM t_dataset_qc
     WHERE dataset_id = _datasetID;
@@ -448,12 +513,20 @@ BEGIN
     -- Delete any entries in t_dataset_scan_types
     ---------------------------------------------------
 
+    If _showDebug Then
+        RAISE INFO 'Delete dataset ID % from t_dataset_scan_types', _datasetID;
+    End If;
+
     DELETE FROM t_dataset_scan_types
     WHERE dataset_id = _datasetID;
 
     ---------------------------------------------------
     -- Mark entries in t_dataset_files as Deleted
     ---------------------------------------------------
+
+    If _showDebug Then
+        RAISE INFO 'Delete dataset ID % from t_dataset_files', _datasetID;
+    End If;
 
     UPDATE t_dataset_files
     SET deleted = true
@@ -463,6 +536,10 @@ BEGIN
     -- Delete rows in t_cached_dataset_instruments
     ---------------------------------------------------
 
+    If _showDebug Then
+        RAISE INFO 'Delete dataset ID % from t_cached_dataset_instruments', _datasetID;
+    End If;
+
     DELETE from t_cached_dataset_instruments
     WHERE dataset_id = _datasetID;
 
@@ -470,12 +547,20 @@ BEGIN
     -- Delete any failed jobs in cap.t_tasks
     ---------------------------------------------------
 
+    If _showDebug Then
+        RAISE INFO 'Delete dataset ID % from cap.t_tasks (if state is 5)', _datasetID;
+    End If;
+
     DELETE FROM cap.t_tasks
     WHERE Dataset_ID = _datasetID AND State = 5;
 
     ---------------------------------------------------
     -- Update log entries in cap.t_log_entries
     ---------------------------------------------------
+
+    If _showDebug Then
+        RAISE INFO 'Update cap.t_log_entries to change "Error" entries to "ErrorAutoFixed" for dataset %', _datasetName;
+    End If;
 
     UPDATE cap.t_log_entries
     SET type = 'ErrorAutoFixed'
@@ -485,6 +570,10 @@ BEGIN
     ---------------------------------------------------
     -- Remove jobs from cap.t_tasks
     ---------------------------------------------------
+
+    If _showDebug Then
+        RAISE INFO 'Delete dataset ID % from cap.t_tasks if the capture task job is also in cap.t_tasks_History', _datasetID;
+    End If;
 
     DELETE FROM cap.t_tasks Tasks
     WHERE Tasks.Dataset_ID = _datasetID AND
@@ -496,11 +585,20 @@ BEGIN
     -- Delete entry from dataset table
     ---------------------------------------------------
 
+    If _showDebug Then
+        RAISE INFO 'Delete dataset ID % from t_dataset', _datasetID;
+    End If;
+
     DELETE FROM t_dataset
     WHERE dataset_id = _datasetID;
 
     -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-    If Trim(Coalesce(_callingUser, '')) <> '' Then
+    If _callingUser <> '' Then
+
+        If _showDebug Then
+            RAISE INFO 'Call alter_event_log_entry_user for dataset ID % and state %', _datasetID, _stateID;
+        End If;
+
         _targetType := 4;
         CALL public.alter_event_log_entry_user ('public', _targetType, _datasetID, _stateID, _callingUser, _message => _alterEnteredByMessage);
     End If;
@@ -513,11 +611,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.delete_dataset(IN _datasetname text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+ALTER PROCEDURE public.delete_dataset(IN _datasetname text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _showdebug boolean) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE delete_dataset(IN _datasetname text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE delete_dataset(IN _datasetname text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _showdebug boolean); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.delete_dataset(IN _datasetname text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'DeleteDataset';
+COMMENT ON PROCEDURE public.delete_dataset(IN _datasetname text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _showdebug boolean) IS 'DeleteDataset';
 

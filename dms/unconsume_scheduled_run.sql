@@ -1,8 +1,8 @@
 --
--- Name: unconsume_scheduled_run(text, boolean, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: unconsume_scheduled_run(text, boolean, text, text, text, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.unconsume_scheduled_run(IN _datasetname text, IN _retainhistory boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.unconsume_scheduled_run(IN _datasetname text, IN _retainhistory boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text, IN _showdebug boolean DEFAULT false)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE public.unconsume_scheduled_run(IN _datasetname text,
 **    _message          Status message
 **    _returnCode       Return code
 **    _callinguser      Username of the calling user
+**    _showDebug        When true, show debug messages
 **
 **  Auth:   grk
 **  Date:   03/01/2004 grk - Initial release
@@ -61,6 +62,7 @@ CREATE OR REPLACE PROCEDURE public.unconsume_scheduled_run(IN _datasetname text,
 **          12/02/2023 mem - Rename variable
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
 **          01/20/2024 mem - Ignore case when resolving dataset name to ID
+**          02/04/2024 mem - Add parameter _showDebug
 **
 *****************************************************/
 DECLARE
@@ -96,10 +98,16 @@ BEGIN
 
     _datasetName   := Trim(Coalesce(_datasetName, ''));
     _retainHistory := Coalesce(_retainHistory, false);
+    _callingUser   := Trim(Coalesce(_callingUser, ''));
+    _showDebug     := Coalesce(_showDebug, false);
 
     ---------------------------------------------------
     -- Resolve dataset name to ID
     ---------------------------------------------------
+
+    If _showDebug Then
+        RAISE INFO 'Resolve dataset name % to ID', _datasetName;
+    End If;
 
     SELECT dataset_id
     INTO _datasetID
@@ -115,6 +123,10 @@ BEGIN
     ---------------------------------------------------
     -- Look for requested run for dataset
     ---------------------------------------------------
+
+    If _showDebug Then
+        RAISE INFO 'Look for dataset ID % in t_requested_run', _datasetID;
+    End If;
 
     SELECT request_id,
            comment,
@@ -159,9 +171,13 @@ BEGIN
 
     If Not _autoCreatedRequest Then
         ---------------------------------------------------
-        -- Original request was user-entered,
+        -- Original request was user-entered
         -- We will copy it (if commanded to) and set status to 'Completed'
         ---------------------------------------------------
+
+        If _showDebug Then
+            RAISE INFO 'Request ID % was user-entered so it will be recyled; _retainHistory is %', _requestID, _retainHistory;
+        End If;
 
         _requestIDOriginal := _requestID;
         _recycleOriginalRequest := true;
@@ -177,6 +193,10 @@ BEGIN
         ---------------------------------------------------
 
         If Not _retainHistory Then
+            If _showDebug Then
+                RAISE INFO 'Request ID % was an auto-request; call delete_requested_run since _retainHistory is false', _requestID;
+            End If;
+
             CALL public.delete_requested_run (
                                  _requestID,
                                  _skipDatasetCheck => true,
@@ -185,6 +205,9 @@ BEGIN
                                  _callingUser      => _callingUser);
 
             If _returnCode <> '' Then
+                RAISE INFO 'Return code from delete_requested_run is %, message %', _returnCode, _message;
+                RAISE INFO 'Rollback the active transaction';
+
                 ROLLBACK;
                 RETURN;
             End If;
@@ -195,12 +218,19 @@ BEGIN
             -- Examine the request comment to determine if it was a recycled request
             ---------------------------------------------------
 
+            If _showDebug Then
+                RAISE INFO 'Request ID % was an auto-request; look for "Automatically created" in the request comment', _requestID;
+            End If;
+
             If Not _requestComment SIMILAR TO '%Automatically created by recycling request [0-9]%[0-9] from dataset [0-9]%' Then
 
                 _addnlText := format('Not recycling request %s for dataset %s since it is an AutoRequest', _requestID, _datasetName);
                 _message := public.append_to_text(_message, _addnlText);
 
             Else
+                If _showDebug Then
+                    RAISE INFO 'Extract the original request ID from "%"', _requestComment;
+                End If;
 
                 -- Determine the original request ID
                 -- Use Lower() since Position() uses case sensitive matching, even if the variable is citext
@@ -280,6 +310,10 @@ BEGIN
         -- Copy the requested run and associate the dataset with the newly created requested run
         ---------------------------------------------------
 
+        If _showDebug Then
+            RAISE INFO 'Call copy_requested_run for request ID % and dataset ID %', _requestIDOriginal, _datasetID;
+        End If;
+
         -- Warning: The text 'Automatically created by recycling request' is used earlier in this procedure; thus, do not update it here
 
         _comment := format('Automatically created by recycling request %s from dataset %s on %s',
@@ -309,6 +343,10 @@ BEGIN
     ---------------------------------------------------
     -- Recycle the original request
     ---------------------------------------------------
+
+    If _showDebug Then
+        RAISE INFO 'Recycle request ID %', _requestIDOriginal;
+    End If;
 
     -- Create annotation to be appended to comment
 
@@ -343,7 +381,7 @@ BEGIN
         queue_state = _newQueueState
     WHERE request_id = _requestIDOriginal;
 
-    If Trim(Coalesce(_callingUser, '')) <> '' Then
+    If _callingUser <> '' Then
 
         SELECT state_id
         INTO _stateID
@@ -351,12 +389,21 @@ BEGIN
         WHERE state_name = _newStatus;
 
         _targetType := 11;
+
+        If _showDebug Then
+            RAISE INFO 'Call alter_event_log_entry_user for target type % and request ID %', _targetType, _requestIDOriginal;
+        End If;
+
         CALL public.alter_event_log_entry_user ('public', _targetType, _requestIDOriginal, _stateID, _callingUser, _message => _alterEnteredByMessage);
     End If;
 
     ---------------------------------------------------
     -- Make sure that t_active_requested_run_cached_eus_users is up-to-date
     ---------------------------------------------------
+
+    If _showDebug Then
+        RAISE INFO 'Call update_cached_requested_run_eus_users for request ID %', _requestIDOriginal;
+    End If;
 
     CALL public.update_cached_requested_run_eus_users (
                     _requestIDOriginal,
@@ -367,11 +414,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.unconsume_scheduled_run(IN _datasetname text, IN _retainhistory boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+ALTER PROCEDURE public.unconsume_scheduled_run(IN _datasetname text, IN _retainhistory boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _showdebug boolean) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE unconsume_scheduled_run(IN _datasetname text, IN _retainhistory boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE unconsume_scheduled_run(IN _datasetname text, IN _retainhistory boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _showdebug boolean); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.unconsume_scheduled_run(IN _datasetname text, IN _retainhistory boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UnconsumeScheduledRun';
+COMMENT ON PROCEDURE public.unconsume_scheduled_run(IN _datasetname text, IN _retainhistory boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _showdebug boolean) IS 'UnconsumeScheduledRun';
 
