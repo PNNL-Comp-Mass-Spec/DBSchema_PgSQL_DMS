@@ -1,14 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.do_dataset_operation
-(
-    _datasetNameOrID text,
-    _mode text,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: do_dataset_operation(text, text, text, text, text, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.do_dataset_operation(IN _datasetnameorid text, IN _mode text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text, IN _showdebug boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -20,6 +16,7 @@ AS $$
 **    _message          Status message
 **    _returnCode       Return code
 **    _callingUser      Username of the calling user
+**    _showDebug        When true, show debug messages
 **
 **  Auth:   grk
 **  Date:   04/08/2002
@@ -47,7 +44,7 @@ AS $$
 **                         - Rename _datasetName to _datasetNameOrID
 **          09/27/2018 mem - Use named parameter names when calling Delete_Dataset
 **          11/16/2018 mem - Pass _infoOnly to Delete_Dataset
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/04/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -66,6 +63,7 @@ DECLARE
     _logErrors boolean := false;
     _candidateDatasetID int;
     _datasetName text := '';
+    _datasetStateName text;
     _enteredMax timestamp;
     _elapsedHours numeric;
     _allowReset boolean := false;
@@ -106,14 +104,21 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _candidateDatasetID := public.try_cast(_datasetNameOrID, null::int);
+        _datasetNameOrID    := Trim(Coalesce(_datasetNameOrID, ''));
         _mode               := Trim(Lower(Coalesce(_mode, '')));
+        _callingUser        := Trim(Coalesce(_callingUser, ''));
+        _showDebug          := Coalesce(_showDebug, false);
+        _candidateDatasetID := public.try_cast(_datasetNameOrID, null::int);
 
         ---------------------------------------------------
         -- Get datasetID and current state
         ---------------------------------------------------
 
         If Coalesce(_candidateDatasetID, 0) > 0 Then
+            If _showDebug Then
+                RAISE INFO 'Resolve ID % to dataset name and ID', _candidateDatasetID;
+            End If;
+
             SELECT dataset_state_id,
                    comment,
                    dataset_id,
@@ -122,6 +127,10 @@ BEGIN
             FROM t_dataset
             WHERE dataset_id = _candidateDatasetID;
         Else
+            If _showDebug Then
+                RAISE INFO 'Resolve % to dataset name and ID', _datasetName;
+            End If;
+
             SELECT dataset_state_id,
                    comment,
                    dataset_id,
@@ -138,14 +147,16 @@ BEGIN
 
         _logErrors := true;
 
-        _mode := Trim(Lower(Coalesce(_mode, '')));
-
         ---------------------------------------------------
         -- Schedule the dataset for predefined job processing
         ---------------------------------------------------
 
         If _mode = Lower('Createjobs') Then
-            If Coalesce(_callingUser, '') = '' Then
+            If _showDebug Then
+                RAISE INFO 'Add dataset ID % to t_predefined_analysis_scheduling_queue (if appropriate)', _datasetID;
+            End If;
+
+            If _callingUser = '' Then
                 _callingUser := SESSION_USER;
             End If;
 
@@ -156,7 +167,7 @@ BEGIN
                 FROM t_predefined_analysis_scheduling_queue
                 WHERE dataset_id = _datasetID AND state = 'New';
 
-                _elapsedHours := extract(epoch FROM CURRENT_TIMESTAMP - Coalesce(_enteredMax, CURRENT_TIMESTAMP)) / 3600.0
+                _elapsedHours := extract(epoch FROM CURRENT_TIMESTAMP - Coalesce(_enteredMax, CURRENT_TIMESTAMP)) / 3600.0;
 
                 _logErrors := false;
 
@@ -170,21 +181,16 @@ BEGIN
             End If;
 
             INSERT INTO t_predefined_analysis_scheduling_queue (dataset_id, calling_user)
-            VALUES (_datasetID, _callingUser)
+            VALUES (_datasetID, _callingUser);
 
             _validMode := true;
-
         End If;
 
         ---------------------------------------------------
-        -- Delete dataset if it is in 'new' state only
+        -- Delete dataset, but only if it is in 'new' state
         ---------------------------------------------------
 
         If _mode = 'delete' Then
-
-            ---------------------------------------------------
-            -- Verify that dataset is still in 'new' state
-            ---------------------------------------------------
 
             If _currentState <> 1 Then
                 _logErrors := false;
@@ -207,19 +213,32 @@ BEGIN
             -- Delete the dataset
             ---------------------------------------------------
 
+            If _showDebug Then
+                RAISE INFO 'Call delete_dataset for dataset %', _datasetName;
+            End If;
+
             CALL public.delete_dataset (
-                            _datasetName,
+                            _datasetName => _datasetName,
                             _infoOnly    => false,
                             _message     => _message,       -- Output
                             _returnCode  => _returnCode,    -- Output
-                            _callingUser => _callingUser);
+                            _callingUser => _callingUser,
+                            _showDebug   => _showDebug);
 
             If _returnCode <> '' Then
-                RAISE EXCEPTION 'Could not delete dataset "%"', _datasetName;
+                If _showDebug Then
+                    RAISE INFO 'Return code is %; show message %', _returnCode, _message;
+                End If;
+
+                RAISE EXCEPTION 'Could not delete dataset "%"%',
+                                    _datasetName,
+                                    CASE WHEN Coalesce(_message, '') = ''
+                                         THEN ''
+                                         ELSE format(': %s', _message)
+                                    END;
             End If;
 
             _validMode := true;
-
         End If;
 
         ---------------------------------------------------
@@ -229,20 +248,25 @@ BEGIN
 
         If _mode = 'reset' Then
 
-            -- If dataset not in failed state, can't reset it
-
-            If Not _currentState In (5, 9) -- 'Failed' or 'Not ready' Then
+            If Not _currentState In (5, 9) Then     -- 'Failed' or 'Not ready'
                 _logErrors := false;
-                RAISE EXCEPTION 'Dataset "%" cannot be reset if capture not in failed or in not ready state %', _datasetName, _currentState;
+
+                SELECT dataset_state
+                INTO _datasetStateName
+                FROM t_dataset_state_name
+                WHERE dataset_state_id = _currentState;
+
+                RAISE EXCEPTION 'Dataset "%" cannot be reset since capture state ("%") is not "Failed" or "Not Ready"', _datasetName, _datasetStateName;
             End If;
 
             -- Do not allow a reset if the dataset succeeded the first step of capture
-            If Exists (SELECT Job FROM cap.V_Task_Steps WHERE Dataset_ID = _datasetID AND Tool = 'DatasetCapture' AND State IN (1,2,4,5)) Then
+            -- However, do allow a reset if the DatasetIntegrity step failed and we haven't already retried capture of this dataset once
+
+            If Exists (SELECT Job FROM cap.V_Task_Steps WHERE Dataset_ID = _datasetID AND Tool = 'DatasetCapture' AND State IN (1, 2, 4, 5)) Then
 
                 If Exists (SELECT Job FROM cap.V_Task_Steps WHERE Dataset_ID = _datasetID AND Tool = 'DatasetIntegrity' AND State = 6) AND
-                   Exists (SELECT Job FROM cap.V_Task_Steps WHERE Dataset_ID = _datasetID AND Tool = 'DatasetCapture' AND State = 5)
+                   Exists (SELECT Job FROM cap.V_Task_Steps WHERE Dataset_ID = _datasetID AND Tool = 'DatasetCapture'   AND State = 5)
                 Then
-                    -- Do allow a reset if the DatasetIntegrity step failed and if we haven't already retried capture of this dataset once
                     _msg := format('Retrying capture of dataset %s at user request (dataset was captured, but DatasetIntegrity failed)', _datasetName);
 
                     If Exists (SELECT entry_id FROM t_log_entries WHERE message LIKE _msg || '%') Then
@@ -259,6 +283,7 @@ BEGIN
                         _msg := format('%s; please contact a system administrator for further assistance', _msg);
                     Else
                         _allowReset := true;
+
                         If _callingUser = '' Then
                             _msg := format('%s; user %s', _msg, SESSION_USER);
                         Else
@@ -278,37 +303,40 @@ BEGIN
                 End If;
             End If;
 
-            -- Update state of dataset to new
+            -- Update state of dataset to new (1)
 
-            _newState := 1;         -- "new' state
+            _newState := 1;
+
+            If _showDebug Then
+                RAISE INFO 'Update state of dataset % to %', _datasetID, _newState;
+            End If;
 
             UPDATE t_dataset
             SET dataset_state_id = _newState,
-                comment = public.remove_capture_errors_from_string(comment)
-            WHERE dataset_id = _datasetID
+                comment          = public.remove_capture_errors_from_string(comment)
+            WHERE dataset_id = _datasetID;
 
             If Not FOUND Then
                 RAISE EXCEPTION 'Reset was unsuccessful for dataset "%" (t_dataset was not updated)', _datasetName;
             End If;
 
-            -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
             If Trim(Coalesce(_callingUser, '')) <> '' Then
                 _targetType := 4;
                 CALL public.alter_event_log_entry_user ('public', _targetType, _datasetID, _newState, _callingUser, _message => _alterEnteredByMessage);
             End If;
 
             _validMode := true;
-
         End If;
 
-        If Not _validMode Then
-            ---------------------------------------------------
-            -- Mode was unrecognized
-            ---------------------------------------------------
-
-            RAISE EXCEPTION 'Mode "%" was unrecognized', _mode;
+        If _validMode Then
+            RETURN;
         End If;
 
+        ---------------------------------------------------
+        -- Mode was unrecognized
+        ---------------------------------------------------
+
+        RAISE EXCEPTION 'Mode "%" was unrecognized', _mode;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -336,4 +364,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.do_dataset_operation IS 'DoDatasetOperation';
+
+ALTER PROCEDURE public.do_dataset_operation(IN _datasetnameorid text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _showdebug boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE do_dataset_operation(IN _datasetnameorid text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _showdebug boolean); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.do_dataset_operation(IN _datasetnameorid text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _showdebug boolean) IS 'DoDatasetOperation';
+
