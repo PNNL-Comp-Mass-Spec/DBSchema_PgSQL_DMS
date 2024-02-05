@@ -259,7 +259,7 @@ BEGIN
     If Not _infoOnly Then
         RAISE INFO '%', _message;
 
-        CALL post_log_entry ('Normal', _message, 'auto_update_taxonomy_all_organisms');
+        CALL post_log_entry ('Normal', _message, 'Auto_Update_Taxonomy_All_Organisms');
 
         DROP TABLE Tmp_OrganismsToUpdate;
         RETURN;
