@@ -76,6 +76,7 @@ CREATE OR REPLACE PROCEDURE sw.set_step_task_complete(IN _job integer, IN _step 
 **          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          02/08/2024 mem - If _completionCode is 20 and the step tool is DiaNN, set the job step as complete, but skip the subsequent data extraction step
 **
 *****************************************************/
 DECLARE
@@ -251,7 +252,7 @@ BEGIN
 
             -- Note that Formularity and NOMSI jobs that report completion code 20 are handled in AutoFixFailedJobs
 
-            If _jobInfo.StepTool In ('Decon2LS_V2') Then
+            If _jobInfo.StepTool = 'Decon2LS_V2' Then
                 -- Treat 'No_data' results for DeconTools as a completed job step but skip the next step if it is LCMSFeatureFinder
                 _stepState := 5;    -- Complete
 
@@ -262,7 +263,7 @@ BEGIN
                 CALL public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
             End If;
 
-            If _jobInfo.StepTool In ('DataExtractor') Then
+            If _jobInfo.StepTool = 'DataExtractor' Then
                 -- Treat 'No_data' results for the DataExtractor as a completed job step but skip later job steps that match certain tools
                 _stepState := 5;    -- Complete
 
@@ -272,6 +273,18 @@ BEGIN
                 _message := format('Warning, %s has an empty synopsis file (no results above threshold); either it is a bad dataset or analysis parameters are incorrect', _jobStepDescription);
                 CALL public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
             End If;
+
+            If _jobInfo.StepTool = 'DiaNN' Then
+                -- Treat "No_data" results for DiaNN as a completed job step but skip the DataExtractor job step
+                _stepState := 5;    -- Complete
+
+                -- Append to the array that tracks step tools that should be skipped when a job step reports NO_DATA
+                _stepToolsToSkip := array_append(_stepToolsToSkip, 'DataExtractor');
+
+                _message := format('Warning, %s has an empty report.tsv file (no results above threshold); either it is a bad dataset or analysis parameters are incorrect', _jobStepDescription);
+                CALL post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
+            End If;
+
         End If;
 
         If _completionCode = 25 Or  -- RUNNING_REMOTE
