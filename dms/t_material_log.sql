@@ -4,7 +4,7 @@
 
 CREATE TABLE public.t_material_log (
     entry_id integer NOT NULL,
-    date timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     type public.citext NOT NULL,
     item public.citext NOT NULL,
     initial_state public.citext,
@@ -59,16 +59,16 @@ ALTER TABLE ONLY public.t_material_log
     ADD CONSTRAINT pk_t_material_log PRIMARY KEY (entry_id);
 
 --
--- Name: ix_t_material_log_item_type_date; Type: INDEX; Schema: public; Owner: d3l243
+-- Name: ix_t_material_log_item_type_entered; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE INDEX ix_t_material_log_item_type_date ON public.t_material_log USING btree (item_type, date);
+CREATE INDEX ix_t_material_log_item_type_entered ON public.t_material_log USING btree (item_type, entered);
 
 --
--- Name: ix_t_material_log_type_name_cached_date; Type: INDEX; Schema: public; Owner: d3l243
+-- Name: ix_t_material_log_type_name_cached_entered; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE INDEX ix_t_material_log_type_name_cached_date ON public.t_material_log USING btree (type_name_cached, date);
+CREATE INDEX ix_t_material_log_type_name_cached_entered ON public.t_material_log USING btree (type_name_cached, entered);
 
 --
 -- Name: TABLE t_material_log; Type: ACL; Schema: public; Owner: d3l243

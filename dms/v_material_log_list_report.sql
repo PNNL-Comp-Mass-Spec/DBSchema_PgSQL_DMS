@@ -4,7 +4,7 @@
 
 CREATE VIEW public.v_material_log_list_report AS
  SELECT ml.entry_id AS id,
-    ml.date,
+    ml.entered AS date,
     ml.type_name_cached AS type,
     ml.item,
     ml.initial_state AS initial,
