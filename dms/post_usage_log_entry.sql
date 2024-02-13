@@ -46,7 +46,7 @@ DECLARE
     _exceptionContext text;
 BEGIN
 
-    _currentTargetTable := 't_usage_stat';
+    _currentTargetTable := 't_usage_stats';
 
     -- Update entry for _postedBy in t_usage_stats
 
@@ -85,8 +85,7 @@ BEGIN
 
     _currentOperation := 'appending to';
 
-    INSERT INTO t_usage_log
-            (posted_by, posting_time, message, calling_user, usage_count)
+    INSERT INTO t_usage_log (posted_by, posting_time, message, calling_user, usage_count)
     SELECT _postedBy, CURRENT_TIMESTAMP, _message, _callingUser, stats.usage_count
     FROM t_usage_stats stats
     WHERE stats.posted_by = _postedBy::citext;

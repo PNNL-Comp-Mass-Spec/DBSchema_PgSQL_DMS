@@ -311,7 +311,7 @@ BEGIN
 
             _updateMassMods := true;
 
-            raise info 'Added param file % to t_param_files, assigned ID %', _paramFileName, _paramFileID;
+            RAISE INFO 'Added param file % to t_param_files, assigned ID %', _paramFileName, _paramFileID;
         End If;
 
         ---------------------------------------------------
