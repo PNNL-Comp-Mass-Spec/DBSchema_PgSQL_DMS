@@ -1,14 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.do_material_container_operation
-(
-    _name text,
-    _mode text,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: do_material_container_operation(text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.do_material_container_operation(IN _name text, IN _mode text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -31,7 +27,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          05/17/2018 mem - Prevent updating containers of type 'na'
 **          07/07/2022 mem - Include container name when logging error messages from Update_Material_Containers
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/12/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -43,7 +39,7 @@ DECLARE
     _msg text := '';
     _logMessage text;
     _logErrors boolean := false;
-    _tmpID int := 0;
+    _tmpID int;
     _containerList text;
     _newValue text := '';
 
@@ -86,12 +82,12 @@ BEGIN
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
         If _name = '' Then
-            _msg := 'Container name cannot be empty';
+            _msg := 'Container name must be provided';
             RAISE EXCEPTION '%', _msg;
         End If;
 
-        If Exists (SELECT Container FROM V_Material_Container_Item_Stats WHERE Container = _name And Type = 'na') Then
-            _msg := format('Container "%s" cannot be updated by the website; contact a DMS admin (see do_material_container_operation)', _name);
+        If Exists (SELECT Container FROM V_Material_Container_Item_Stats WHERE Container = _name::citext And Type = 'na') Then
+            _msg := format('Container "%s" cannot be updated by the website; contact a DMS admin (see Do_Material_Container_Operation)', _name);
             _logErrors := true;
             RAISE EXCEPTION '%', _msg;
         End If;
@@ -99,14 +95,14 @@ BEGIN
         SELECT container_id
         INTO _tmpID
         FROM t_material_containers
-        WHERE container = _name;
+        WHERE container = _name::citext;
 
         If _tmpID = 0 Then
             _msg := format('Could not find the container named "%s" (mode is %s)', _name, _mode);
             RAISE EXCEPTION '%', _msg;
         Else
 
-            _containerList := _tmpID;
+            _containerList := _tmpID::text;
             _logErrors := true;
 
             CALL public.update_material_containers (
@@ -139,8 +135,6 @@ BEGIN
                 _logMessage := format('%s (container %s)', _exceptionMessage, _name);
             End If;
 
-            _logMessage := format('%s; Dataset %s', _exceptionMessage, _datasetNameOrID);
-
             _message := local_error_handler (
                             _sqlState, _logMessage, _exceptionDetail, _exceptionContext,
                             _callingProcLocation => '', _logError => true);
@@ -156,4 +150,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.do_material_container_operation IS 'DoMaterialContainerOperation';
+
+ALTER PROCEDURE public.do_material_container_operation(IN _name text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE do_material_container_operation(IN _name text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.do_material_container_operation(IN _name text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'DoMaterialContainerOperation';
+

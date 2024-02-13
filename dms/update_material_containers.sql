@@ -1,16 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_material_containers
-(
-    _mode text,
-    _containerList text,
-    _newValue text,
-    _comment text,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_material_containers(text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_material_containers(IN _mode text, IN _containerlist text, IN _newvalue text, IN _comment text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -20,7 +14,7 @@ AS $$
 **    _mode             Mode: 'move_container', 'retire_container', 'retire_container_and_contents', 'unretire_container'
 **    _containerList    Comma-separated list of container IDs, e.g. '6314, 9750'
 **    _newValue         When mode is 'move_container', this is the new location for the container
-**    _comment          Container comment
+**    _comment          Comment to store in t_material_log; if null or an empty string and _mode is 'retire_container_and_contents', the comment will be auto-defined
 **    _message          Status message
 **    _returnCode       Return code
 **    _callingUser      Username of the calling user
@@ -34,7 +28,7 @@ AS $$
 **          08/27/2018 mem - Rename the view Material Location list report view
 **          06/21/2022 mem - Use new column name Container_Limit in view V_Material_Location_List_Report
 **          07/07/2022 mem - Include container name in 'container not empty' message
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/12/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -44,12 +38,12 @@ DECLARE
     _authorized boolean;
 
     _numContainers int;
-    _containerName text := Null;
-    _location text;
-    _locID int;
+    _containerName text;
+    _location citext;
+    _locationID int;
     _containterCount int;
-    _locLimit int;
-    _locStatus text;
+    _containerLimit int;
+    _locStatus citext;
     _nonEmptyContainerCount int := 1;
     _nonEmptyContainers text;
     _moveType text := '??';
@@ -86,6 +80,12 @@ BEGIN
     _newValue      := Trim(Coalesce(_newValue, ''));
     _comment       := Trim(Coalesce(_comment, ''));
 
+    If _containerList = '' Then
+        _message := 'Container ID(s) must be specified';
+        _returnCode := 'U5110';
+        RETURN;
+    End If;
+
     ---------------------------------------------------
     -- Temporary table to hold containers
     ---------------------------------------------------
@@ -95,9 +95,9 @@ BEGIN
         Name text,
         Location text,
         ItemCount int,
-        Status text,
-        Type text
-    )
+        Status citext,
+        Type citext
+    );
 
     ---------------------------------------------------
     -- Populate temporary table from container list
@@ -123,27 +123,27 @@ BEGIN
             _message := format('Invalid Container ID: %s', _containerList);
         End If;
 
-        _returnCode := 'U5110';
-        DROP TABLE Tmp_Material_Container_List;
+        _returnCode := 'U5111';
 
+        DROP TABLE Tmp_Material_Container_List;
         RETURN;
     End If;
 
-    If Exists (SELECT ID FROM Tmp_Material_Container_List WHERE Type = 'na'::citext) Then
+    If Exists (SELECT ID FROM Tmp_Material_Container_List WHERE Type = 'na') Then
         If Position(',' In _containerList) > 1 Then
             _message := 'Containers of type "na" cannot be updated by the website; contact a DMS admin (see Update_Material_Containers)';
         Else
 
             SELECT Name
             INTO _containerName
-            From Tmp_Material_Container_List
+            FROM Tmp_Material_Container_List;
 
             _message := format('Container "%s" cannot be updated by the website; contact a DMS admin (see Update_Material_Containers)', Coalesce(_containerName, _containerList));
         End If;
 
-        _returnCode := 'U5111';
-        DROP TABLE Tmp_Material_Container_List;
+        _returnCode := 'U5112';
 
+        DROP TABLE Tmp_Material_Container_List;
         RETURN;
     End If;
 
@@ -151,58 +151,69 @@ BEGIN
     -- Resolve location to ID (according to mode)
     ---------------------------------------------------
 
-    _location := 'None' -- the null location;
-    _locID    := 1      -- the null location;
+    _location   := 'None';  -- The 'container not in a freezer' location
+    _locationID := 1;       -- The ID of the 'None' location;
 
     If _mode = 'move_container' Then
-
         _location := _newValue;
 
-        SELECT ml.location_id,
-               COUNT(mc.location_id) AS containers,
-               ml.container_limit,
-               ml.status
-        INTO _locID, _containterCount, _locLimit, _locStatus
-        FROM t_material_locations ml
-             INNER JOIN t_material_freezers f
-               ON ml.freezer_tag = f.freezer_tag
-             LEFT OUTER JOIN t_material_containers mc
-               ON ml.location_id = mc.location_id
-        WHERE ml.location = _location::citext
-        GROUP BY ml.location_id, ml.container_limit, ml.status;
-
-        If Not FOUND Then
-            _message := format('Cannot move container(s): destination location does not exist: %s', _location);
+        If _newValue = '' Then
+            _message := 'Cannot move the container(s): destination location not provided';
             _returnCode := 'U5120';
-            DROP TABLE Tmp_Material_Container_List;
 
+            DROP TABLE Tmp_Material_Container_List;
             RETURN;
         End If;
+
+        SELECT location_id
+        INTO _locationID
+        FROM t_material_locations
+        WHERE location = _location::citext;
+
+        If Not FOUND Then
+            _message := format('Cannot move the container(s): destination location does not exist: %s', _location);
+            _returnCode := 'U5121';
+
+            DROP TABLE Tmp_Material_Container_List;
+            RETURN;
+        End If;
+
+        SELECT COUNT(MC.location_id) AS containers,
+               ML.container_limit,
+               ML.status
+        INTO _containterCount, _containerLimit, _locStatus
+        FROM t_material_locations ML
+             INNER JOIN t_material_freezers F
+               ON ML.freezer_tag = F.freezer_tag
+             LEFT OUTER JOIN t_material_containers MC
+               ON ML.location_id = MC.location_id
+        WHERE ML.location_id = _locationID
+        GROUP BY ML.location_id, ML.container_limit, ML.status;
 
         ---------------------------------------------------
         -- Is location suitable?
         ---------------------------------------------------
 
         If _locStatus <> 'Active' Then
-            _message := format('Location "%s" is not in the "Active" state', _location);
-            _returnCode := 'U5121';
-            DROP TABLE Tmp_Material_Container_List;
+            _message := format('Cannot move the container(s): location "%s" must have state "Active", not "%s"', _location, _locStatus);
+            _returnCode := 'U5122';
 
+            DROP TABLE Tmp_Material_Container_List;
             RETURN;
         End If;
 
-        If _containterCount + _numContainers > _locLimit Then
-            _message := format('The maximum container capacity (%s) of location "%s" would be exceeded by the move', _locLimit, _location);
+        If _containterCount + _numContainers > _containerLimit Then
+            _message := format('Cannot move the container(s): the maximum container capacity of location "%s" would exceed the limit (%s)', _location, _containerLimit);
             _returnCode := 'U5123';
-            DROP TABLE Tmp_Material_Container_List;
 
+            DROP TABLE Tmp_Material_Container_List;
             RETURN;
         End If;
 
     End If;
 
     ---------------------------------------------------
-    -- Determine whether or not any containers have contents
+    -- Determine whether any containers have contents
     ---------------------------------------------------
 
     SELECT COUNT(ID)
@@ -211,8 +222,7 @@ BEGIN
     WHERE ItemCount > 0;
 
     ---------------------------------------------------
-    -- For 'plain' container retirement
-    -- container must be empty
+    -- For 'plain' container retirement, container must be empty
     ---------------------------------------------------
 
     If _mode = 'retire_container' And _nonEmptyContainerCount > 0 Then
@@ -228,18 +238,17 @@ BEGIN
         End If;
 
         _returnCode := 'U5124';
-        DROP TABLE Tmp_Material_Container_List;
 
+        DROP TABLE Tmp_Material_Container_List;
         RETURN;
     End If;
 
     ---------------------------------------------------
-    -- For 'contents' container retirement
-    -- retire contents as well
+    -- For 'contents' container retirement, also retire contents
     ---------------------------------------------------
 
-    -- Arrange for containers and their contents to have common comment
-    -- Example comment: CR-2022.08.11_14:23:11
+    -- Arrange for containers and their contents to have a common comment, e.g.
+    -- CR-2024.02.12_15:07:58
 
     If _mode = 'retire_container_and_contents' And _comment = '' Then
         _comment := format('CR-%s', to_char(CURRENT_TIMESTAMP, 'yyyy.mm.dd_hh24:mi:ss'));
@@ -265,17 +274,17 @@ BEGIN
     End If;
 
     If _mode = 'unretire_container' Then
-        -- Make sure the container(s) are all Inactive
+        -- Make sure the container(s) are all inactive
         If Exists (SELECT ID FROM Tmp_Material_Container_List WHERE Status <> 'Inactive') Then
             If _numContainers = 1 Then
                 _message := format('Container is already active; cannot unretire %s', _containerList);
             Else
-                _message := format('All containers must be Inactive in order to unretire them: %s', _containerList);
+                _message := format('All containers must be inactive in order to unretire them: %s', _containerList);
             End If;
 
             _returnCode := 'U5125';
-            DROP TABLE Tmp_Material_Container_List;
 
+            DROP TABLE Tmp_Material_Container_List;
             RETURN;
         End If;
      End If;
@@ -285,15 +294,14 @@ BEGIN
     ---------------------------------------------------
 
     UPDATE t_material_containers
-    Set
-        location_id = _locID,
+    SET location_id = _locationID,
         status = CASE _mode
                     WHEN 'retire_container'              THEN 'Inactive'
                     WHEN 'retire_container_and_contents' THEN 'Inactive'
                     WHEN 'unretire_container'            THEN 'Active'
-                    ELSE Status
-                 End
-    WHERE t_material_containers.ID IN (SELECT ID FROM Tmp_Material_Container_List);
+                    ELSE status
+                 END
+    WHERE t_material_containers.container_id IN (SELECT ID FROM Tmp_Material_Container_List);
 
     ---------------------------------------------------
     -- Set up appropriate label for log
@@ -308,7 +316,11 @@ BEGIN
     ElsIf _mode = 'move_container' Then
         _moveType := 'Container Move';
     Else
-        _moveType := 'Unknown container operation';
+      _message := format('Invalid material container update mode: %s', _mode);
+      _returnCode := 'U5126';
+
+      DROP TABLE Tmp_Material_Container_List;
+      RETURN;
     End If;
 
     ---------------------------------------------------
@@ -338,4 +350,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_material_containers IS 'UpdateMaterialContainers';
+
+ALTER PROCEDURE public.update_material_containers(IN _mode text, IN _containerlist text, IN _newvalue text, IN _comment text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_material_containers(IN _mode text, IN _containerlist text, IN _newvalue text, IN _comment text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_material_containers(IN _mode text, IN _containerlist text, IN _newvalue text, IN _comment text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UpdateMaterialContainers';
+
