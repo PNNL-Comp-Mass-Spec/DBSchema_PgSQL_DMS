@@ -82,7 +82,7 @@ BEGIN
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
         If _name = '' Then
-            _msg := 'Container name must be provided';
+            _msg := 'Container name must be specified';
             RAISE EXCEPTION '%', _msg;
         End If;
 

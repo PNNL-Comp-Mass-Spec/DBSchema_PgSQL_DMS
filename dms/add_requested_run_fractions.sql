@@ -156,7 +156,7 @@ BEGIN
         End If;
 
         If Coalesce(_sourceRequestID, 0) = 0 Then
-            RAISE EXCEPTION 'Source request ID not provided';
+            RAISE EXCEPTION 'Source request ID not specified';
         End If;
 
         If Coalesce(_requesterUsername, '') = '' Then

@@ -158,7 +158,7 @@ BEGIN
         _location := _newValue;
 
         If _newValue = '' Then
-            _message := 'Cannot move the container(s): destination location not provided';
+            _message := 'Cannot move the container(s): destination location not specified';
             _returnCode := 'U5120';
 
             DROP TABLE Tmp_Material_Container_List;

@@ -248,7 +248,7 @@ BEGIN
         End If;
 
         If _mode = 'update' And _id Is Null Then
-            RAISE EXCEPTION 'Sample prep request ID must be provided when updating a sample prep request';
+            RAISE EXCEPTION 'Sample prep request ID must be specified when updating a sample prep request';
         End If;
 
         If _mode = 'update' And Coalesce(_id, 0) <= 0 Then
@@ -332,7 +332,7 @@ BEGIN
         End If;
 
         If _priority::citext <> 'Normal' And _reasonForHighPriority = '' Then
-            RAISE EXCEPTION 'Priority "%" requires justification reason to be provided', _priority;
+            RAISE EXCEPTION 'Priority "%" requires justification reason to be specified', _priority;
         End If;
 
         ---------------------------------------------------

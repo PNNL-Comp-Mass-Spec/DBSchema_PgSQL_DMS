@@ -44,7 +44,7 @@ BEGIN
     End If;
 
     If _workPackage::citext In ('none', 'na', 'n/a', '(none)') Then
-        _message := 'A valid work package must be provided; see https://dms2.pnl.gov/helper_charge_code/report';
+        _message := 'A valid work package must be specified; see https://dms2.pnl.gov/helper_charge_code/report';
         _returnCode := 'U5131';
         RETURN;
     End If;

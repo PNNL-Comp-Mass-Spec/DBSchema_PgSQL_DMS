@@ -178,7 +178,7 @@ BEGIN
         End If;
 
         If _priority::citext <> 'Normal' And _reasonForHighPriority = '' Then
-            RAISE EXCEPTION 'Priority "%" requires justification reason to be provided', _priority;
+            RAISE EXCEPTION 'Priority "%" requires a justification reason to be specified', _priority;
         End If;
 
         ---------------------------------------------------

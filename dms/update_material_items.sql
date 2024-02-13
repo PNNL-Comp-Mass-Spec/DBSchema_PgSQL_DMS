@@ -98,7 +98,7 @@ BEGIN
     ---------------------------------------------------
 
     If _mode = 'move_material' And _newValue = '' Then
-        _message := 'No destination container was provided';
+        _message := 'No destination container was specified';
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';

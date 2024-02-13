@@ -104,7 +104,7 @@ BEGIN
     LIMIT 1;
 
     If FOUND Then
-        _message := format('The only matching job step for the provided filters is a Results_Transfer step: Job %s, Step %s, Input_Folder %s',
+        _message := format('The only matching job step for the specified filters is a Results_Transfer step: Job %s, Step %s, Input_Folder %s',
                             _job, _jobStepMatch, _inputFolderName);
 
         _inputFolderName := '';
@@ -124,7 +124,7 @@ BEGIN
     LIMIT 1;
 
     If FOUND Then
-        _message := format('The only matching job step for the provided filters is a Results_Transfer step: Job %s, Step %s, Input_Folder %s',
+        _message := format('The only matching job step for the specified filters is a Results_Transfer step: Job %s, Step %s, Input_Folder %s',
                             _job, _jobStepMatch, _inputFolderName);
 
         _inputFolderName := '';
