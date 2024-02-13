@@ -1,18 +1,14 @@
 --
-CREATE OR REPLACE PROCEDURE public.do_sample_submission_operation
-(
-    _id int,
-    _mode text,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: do_sample_submission_operation(integer, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.do_sample_submission_operation(IN _id integer, IN _mode text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Perform operation given by _mode on entity given by _id
+**      Perform an operation on a sample submission item
 **
 **      Note: this procedure has not been used since 2012
 **
@@ -31,7 +27,7 @@ AS $$
 **                         - Add call to Post_Usage_Log_Entry
 **          08/01/2017 mem - Use THROW if not authorized
 **          01/12/2023 mem - Remove call to CallSendMessage since it was deprecated in 2016
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/12/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -40,7 +36,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _storagePath int := 0;
+    _storagePathID int;
     _usageMessage text;
 
     _sqlState text;
@@ -76,8 +72,13 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _id   := Coalesce(_id, 0);
-        _mode := Trim(Lower(Coalesce(_mode, '')));
+        _id          := Coalesce(_id, 0);
+        _mode        := Trim(Lower(Coalesce(_mode, '')));
+        _callingUser := Trim(Coalesce(_callingUser, ''));
+
+        If _callingUser = '' Then
+            _callingUser := SESSION_USER;
+        End If;
 
         ---------------------------------------------------
         -- Make the folder for the sample submission
@@ -88,16 +89,20 @@ BEGIN
             -- Get storage path from sample submission
 
             SELECT Coalesce(storage_id, 0)
-            INTO _storagePath
+            INTO _storagePathID
             FROM t_sample_submission
             WHERE submission_id = _id;
 
             -- If storage path not defined, get valid path ID and update sample submission
 
-            If _storagePath = 0 Then
-                --
+            If Not Found Then
+                _message := format('Invalid sample submission ID: %s', _id);
+                _returnCode := 'U5202';
+            End If;
+
+            If Coalesce(_storagePathID, 0) = 0 Then
                 SELECT storage_id
-                INTO _storagePath
+                INTO _storagePathID
                 FROM t_prep_file_storage
                 WHERE state = 'Active' AND
                       purpose = 'Sample_Prep';
@@ -107,16 +112,12 @@ BEGIN
                 End If;
 
                 UPDATE t_sample_submission
-                SET storage_id = _storagePath
+                SET storage_id = _storagePathID
                 WHERE submission_id = _id;
             End If;
-
-            -- CallSendMessage was deprecated in 2016
-            --
-            -- Call call_send_message _id,'sample_submission', _message => _message
-            -- If _returnCode <> '' Then
-            --     RAISE EXCEPTION 'CallSendMessage:%', _message;
-            -- End If;
+        Else
+            _message := format('Unsupported mode for sample submission operation: %s', _mode);
+            _returnCode := 'U5201';
         End If;
 
     EXCEPTION
@@ -141,8 +142,7 @@ BEGIN
     ---------------------------------------------------
 
     If Coalesce(_id, 0) > 0 Then
-        _usageMessage := format('Performed submission operation for submission ID %s; mode %s; user %s',
-                                _id, _mode, Coalesce(_callingUser, '??'));
+        _usageMessage := format('Performed submission operation for submission ID %s; mode %s; user %s', _id, _mode, _callingUser);
 
         CALL post_usage_log_entry ('do_sample_submission_operation', _usageMessage, _minimumUpdateInterval => 2);
     End If;
@@ -150,4 +150,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.do_sample_submission_operation IS 'DoSampleSubmissionOperation';
+
+ALTER PROCEDURE public.do_sample_submission_operation(IN _id integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE do_sample_submission_operation(IN _id integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.do_sample_submission_operation(IN _id integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'DoSampleSubmissionOperation';
+
