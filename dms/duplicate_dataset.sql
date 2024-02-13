@@ -1,25 +1,17 @@
 --
-CREATE OR REPLACE PROCEDURE public.duplicate_dataset
-(
-    _sourceDataset text,
-    _newDataset text,
-    _newComment text = '',
-    _newCaptureSubfolder text = '',
-    _newOperatorUsername text = '',
-    _datasetStateID int = 1,
-    _infoOnly boolean = true,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: duplicate_dataset(text, text, text, text, text, integer, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.duplicate_dataset(IN _sourcedataset text, IN _newdataset text, IN _newcomment text DEFAULT ''::text, IN _newcapturesubfolder text DEFAULT ''::text, IN _newoperatorusername text DEFAULT ''::text, IN _datasetstateid integer DEFAULT 1, IN _infoonly boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Duplicate a dataset by adding a new row to t_dataset and calling add_update_requested_run
 **
 **  Arguments:
-**    _sourceDataset        Existing dataset to copy
+**    _sourceDataset        Source dataset name
 **    _newDataset           New dataset name
 **    _newComment           New dataset comment; use source dataset's comment if blank; use a blank comment if '.' or '<blank>' or '<empty>'
 **    _newCaptureSubfolder  Capture subfolder name; use source dataset's capture subfolder if blank
@@ -38,19 +30,20 @@ AS $$
 **          05/23/2022 mem - Rename _requestorPRN to _requesterPRN when calling Add_Update_Requested_Run
 **          11/25/2022 mem - Rename variable and update call to Add_Update_Requested_Run to use new parameter name
 **          02/27/2023 mem - Use new argument name, _requestName
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/12/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
-    _datasetInfo record
-    _datasetID int := 0;
+    _datasetInfo record;
+    _datasetID int;
     _requestedRunInfo record;
     _requestName text;
-    _eusUsersList text := '';
+    _eusUsersList text;
     _requestID int;
     _userID int;
     _matchCount int;
     _newUsername text;
+    _resolvedInstrumentInfo text;
 
     _formatSpecifierDS text;
     _infoHeadDS text;
@@ -79,58 +72,58 @@ BEGIN
     _infoOnly            := Coalesce(_infoOnly, true);
 
     If _sourceDataset = '' Then
-        _message := '_sourceDataset is empty';
+        _message := 'Source dataset name must be specified';
         RAISE WARNING '%', _message;
 
         RETURN;
     End If;
 
     If _newDataset = '' Then
-        _message := '_newDataset is empty';
+        _message := 'New dataset name must be specified';
         RAISE WARNING '%', _message;
 
         RETURN;
     End If;
 
-    If Not Exists (SELECT dataset_id FROM t_dataset WHERE dataset = _sourceDataset) Then
+    If Not Exists (SELECT dataset_id FROM t_dataset WHERE dataset = _sourceDataset::citext) Then
         _message := format('Source dataset not found in t_dataset: %s', _sourceDataset);
         RAISE WARNING '%', _message;
 
         RETURN;
     End If;
 
-    If Exists (SELECT dataset_id FROM t_dataset WHERE dataset = _newDataset) Then
-        _message := format('t_dataset already has dataset: %s', _newDataset);
+    If Exists (SELECT dataset_id FROM t_dataset WHERE dataset = _newDataset::citext) Then
+        _message := format('Dataset already exists in t_dataset: %s', _newDataset);
         RAISE WARNING '%', _message;
 
         RETURN;
     End If;
 
     ---------------------------------------------------
-    -- Lookup the source dataset info, including Experiment name
+    -- Lookup the source dataset info, including experiment name
     ---------------------------------------------------
 
-    SELECT D.dataset_id AS SourceDatasetId
-           D.operator_username AS OperatorUsername,
-           D.comment AS Comment,
-           D.instrument_id AS InstrumentID,
-           D.dataset_type_ID AS DatasetTypeID,
-           D.well AS WellNum,
-           D.separation_type AS SecSep,
-           D.storage_path_ID AS StoragePathID,
-           D.exp_id AS ExperimentID,
-           D.dataset_rating_id AS RatingID,
-           D.lc_column_ID AS ColumnID,
-           D.wellplate AS Wellplate,
+    SELECT D.dataset_id           AS SourceDatasetId,
+           D.operator_username    AS OperatorUsername,
+           D.comment              AS Comment,
+           D.instrument_id        AS InstrumentID,
+           D.dataset_type_ID      AS DatasetTypeID,
+           D.well                 AS WellNum,
+           D.separation_type      AS SecSep,
+           D.storage_path_ID      AS StoragePathID,
+           D.exp_id               AS ExperimentID,
+           D.dataset_rating_id    AS RatingID,
+           D.lc_column_ID         AS ColumnID,
+           D.wellplate            AS Wellplate,
            D.internal_standard_id AS IntStdID,
-           D.capture_subfolder AS CaptureSubfolder,
-           D.cart_config_id AS CartConfigID,
-           E.experiment AS ExperimentName
+           D.capture_subfolder    AS CaptureSubfolder,
+           D.cart_config_id       AS CartConfigID,
+           E.experiment           AS ExperimentName
     INTO _datasetInfo
     FROM t_dataset D
          INNER JOIN t_experiments E
            ON D.exp_id = E.exp_id
-    WHERE D.dataset = _sourceDataset;
+    WHERE D.dataset = _sourceDataset::citext;
 
     If Not FOUND Then
         _message := format('Dataset not found: %s', _sourceDataset);
@@ -140,10 +133,10 @@ BEGIN
     End If;
 
     If _newComment <> '' Then
-        _datasetInfo.Comment := Trim(_newComment);
-
         If _datasetInfo.Comment::citext In ('.', '<blank>', 'blank', '<empty>', 'empty') Then
             _datasetInfo.Comment := '';
+        Else
+            _datasetInfo.Comment := _newComment;
         End If;
     End If;
 
@@ -155,14 +148,14 @@ BEGIN
     -- Lookup requested run information
     ---------------------------------------------------
 
-    SELECT RR.request_id As SourceDatasetRequestID,
-           RR.instrument_group As InstrumentGroup,
-           RR.work_package As WorkPackage,
-           RR.instrument_setting As InstrumentSettings,
-           DSType.Dataset_Type As DatasetType,
-           RR.separation_group As SeparationGroup,
-           RR.eus_proposal_id As EusProposalID,
-           EUT.eus_usage_type As EusUsageType
+    SELECT RR.request_id         AS SourceDatasetRequestID,
+           RR.instrument_group   AS InstrumentGroup,
+           RR.work_package       AS WorkPackage,
+           RR.instrument_setting AS InstrumentSettings,
+           DSType.Dataset_Type   AS DatasetType,
+           RR.separation_group   AS SeparationGroup,
+           RR.eus_proposal_id    AS EusProposalID,
+           EUT.eus_usage_type    AS EusUsageType
     INTO _requestedRunInfo
     FROM t_requested_run AS RR
          INNER JOIN t_dataset_type_name AS DSType
@@ -172,7 +165,7 @@ BEGIN
     WHERE RR.dataset_id = _datasetInfo.SourceDatasetId;
 
     If Not FOUND Then
-        _message := 'Source dataset does not have a requested run; use AddMissingRequestedRun to add one';
+        _message := 'Source dataset does not have a requested run; use Add_Missing_Requested_Run to add one';
         RAISE WARNING '%', _message;
 
         RETURN;
@@ -207,7 +200,7 @@ BEGIN
 
             If _matchCount = 1 Then
                 -- Single match found; update _operatorUsername
-                _datasetInfo.OperUsername := _newUsername;
+                _datasetInfo.OperatorUsername := _newUsername;
             Else
                 If _matchCount = 0 Then
                     _message := format('Invalid operator username: "%s" does not exist', _newOperatorUsername);
@@ -222,27 +215,28 @@ BEGIN
     End If;
 
     -- Format info for previewing the dataset that would be created, or for showing the newly created dataset
-    _formatSpecifierDS := '%-80s %-60s %-20s %-13s %-13s';
+    _formatSpecifierDS := '%-10s %-80s %-80s %-20s %-13s %-13s';
 
     _infoHeadDS := format(_formatSpecifierDS,
-                        'Dataset',
-                        'Comment',
-                        'Created',
-                        'Instrument_ID',
-                        'Experiment_ID'
-                       );
+                          'Dataset_ID',
+                          'Dataset',
+                          'Comment',
+                          'Created',
+                          'Instrument_ID',
+                          'Experiment_ID'
+                         );
 
     _infoHeadSeparatorDS := format(_formatSpecifierDS,
+                                   '----------',
                                    '--------------------------------------------------------------------------------',
-                                   '------------------------------------------------------------',
+                                   '--------------------------------------------------------------------------------',
                                    '--------------------',
                                    '-------------',
                                    '-------------'
                                   );
 
-
     -- Format info for previewing the requested run that would be created, or for showing the newly created requested run
-    _formatSpecifierRR := '%-10s %-80s %-60s %-10s %-25s %-10s %-12s %-35s, %-30s';
+    _formatSpecifierRR := '%-10s %-80s %-60s %-10s %-25s %-10s %-20s %-35s %-60s';
 
     _infoHeadRR := format(_formatSpecifierRR,
                           'Request_ID',
@@ -263,11 +257,10 @@ BEGIN
                                    '----------',
                                    '-------------------------',
                                    '----------',
-                                   '------------',
+                                   '--------------------',
                                    '-----------------------------------',
-                                   '------------------------------'
+                                   '------------------------------------------------------------'
                                   );
-
 
     _requestName := format('AutoReq_%s', _newDataset);
 
@@ -278,9 +271,10 @@ BEGIN
         RAISE INFO '%', _infoHeadDS;
         RAISE INFO '%', _infoHeadSeparatorDS;
         RAISE INFO '%', format(_formatSpecifierDS,
+                               0,                   -- Dataset_ID
                                _newDataset,
                                _datasetInfo.Comment,
-                               timestamp_text(CURRENT_TIMESTAMP),
+                               public.timestamp_text(CURRENT_TIMESTAMP),
                                _datasetInfo.InstrumentID,
                                _datasetInfo.ExperimentID
                               );
@@ -298,7 +292,7 @@ BEGIN
                                _requestedRunInfo.WorkPackage,
                                _requestedRunInfo.DatasetType,
                                _requestedRunInfo.SeparationGroup,
-                               'Automatically created by Dataset entry';
+                               'Automatically created by Dataset entry');
 
         RETURN;
     End If;
@@ -328,7 +322,7 @@ BEGIN
         cart_config_id
     ) VALUES (
         _newDataset,
-        _datasetInfo.OperUsername,
+        _datasetInfo.OperatorUsername,
         _datasetInfo.Comment,
         CURRENT_TIMESTAMP,
         _datasetInfo.InstrumentID,
@@ -356,10 +350,10 @@ BEGIN
     CALL public.add_update_requested_run (
                     _requestName                 => _requestName,
                     _experimentName              => _datasetInfo.ExperimentName,
-                    _requesterUsername           => _datasetInfo.OperUsername,
+                    _requesterUsername           => _datasetInfo.OperatorUsername,
                     _instrumentGroup             => _requestedRunInfo.InstrumentGroup,
                     _workPackage                 => _requestedRunInfo.WorkPackage,
-                    _msType                      => _requestedRunInfo.MsType,
+                    _msType                      => _requestedRunInfo.DatasetType,
                     _instrumentSettings          => _requestedRunInfo.InstrumentSettings,
                     _wellplateName               => _datasetInfo.Wellplate,
                     _wellNumber                  => _datasetInfo.WellNum,
@@ -388,8 +382,8 @@ BEGIN
                     _message                     => _message,                   -- Output
                     _returnCode                  => _returnCode);               -- Output
 
-        If _returnCode <> '' Then
-            ROLLBACK;
+    If _returnCode <> '' Then
+        ROLLBACK;
 
         _message := format('Create AutoReq run request failed: dataset %s with Proposal ID %s, Usage Type %s, and Users List %s; %s',
                             _newDataset, _requestedRunInfo.EusProposalID, _requestedRunInfo.EusUsageType, _eusUsersList, _message);
@@ -404,10 +398,12 @@ BEGIN
     ---------------------------------------------------
 
     CALL public.consume_scheduled_run (
-                    _datasetID,
-                    _requestID,
-                    _message    => _message,        -- Output
-                    _returnCode => _returnCode);    -- Output
+                    _datasetID         => _datasetID,
+                    _requestID         => _requestID,
+                    _message           => _message,     -- Output
+                    _returnCode        => _returnCode,  -- Output
+                    _callingUser       => '',
+                    _logDebugMessages  => false);
 
     If _returnCode <> '' Then
         ROLLBACK;
@@ -417,8 +413,6 @@ BEGIN
 
         RETURN;
     End If;
-
-    COMMIT;
 
     -- Update t_cached_dataset_instruments
     CALL public.update_cached_dataset_instruments (
@@ -438,14 +432,15 @@ BEGIN
     RAISE INFO '%', _infoHeadSeparatorDS;
 
     FOR _previewData IN
-        SELECT dataset, comment, created, instrument_id, exp_id
+        SELECT dataset_id, dataset, comment, created, instrument_id, exp_id
         FROM t_dataset
         WHERE dataset_id = _datasetID
     LOOP
         _infoData := format(_formatSpecifierDS,
+                            _previewData.dataset_id,
                             _previewData.dataset,
                             _previewData.comment,
-                            _previewData.created,
+                            public.timestamp_text(_previewData.created),
                             _previewData.instrument_id,
                             _previewData.exp_id
                            );
@@ -488,7 +483,7 @@ BEGIN
                             _previewData.work_package,
                             _previewData.dataset_type,
                             _previewData.separation_group,
-                            _previewData.comment
+                            _previewData.comment);
 
         RAISE INFO '%', _infoData;
     END LOOP;
@@ -496,4 +491,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.duplicate_dataset IS 'DuplicateDataset';
+
+ALTER PROCEDURE public.duplicate_dataset(IN _sourcedataset text, IN _newdataset text, IN _newcomment text, IN _newcapturesubfolder text, IN _newoperatorusername text, IN _datasetstateid integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE duplicate_dataset(IN _sourcedataset text, IN _newdataset text, IN _newcomment text, IN _newcapturesubfolder text, IN _newoperatorusername text, IN _datasetstateid integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.duplicate_dataset(IN _sourcedataset text, IN _newdataset text, IN _newcomment text, IN _newcapturesubfolder text, IN _newoperatorusername text, IN _datasetstateid integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'DuplicateDataset';
+

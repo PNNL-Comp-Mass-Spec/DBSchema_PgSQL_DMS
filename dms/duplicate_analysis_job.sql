@@ -1,17 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.duplicate_analysis_job
-(
-    _job int,
-    _newComment text = '',
-    _overrideNoExport int = -1,
-    _appendOldJobToComment boolean = true,
-    _newSettingsFile text = '',
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: duplicate_analysis_job(integer, text, integer, boolean, text, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.duplicate_analysis_job(IN _job integer, IN _newcomment text DEFAULT ''::text, IN _overridenoexport integer DEFAULT '-1'::integer, IN _appendoldjobtocomment boolean DEFAULT true, IN _newsettingsfile text DEFAULT ''::text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -33,7 +26,7 @@ AS $$
 **          06/12/2018 mem - Send _maxLength to append_to_text
 **          06/30/2022 mem - Rename parameter file argument
 **          07/01/2022 mem - Rename parameter file column when previewing the new job
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/12/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -49,15 +42,15 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _job := Coalesce(_job, 0);
-    _newComment := Trim(Coalesce(_newComment, ''));
-    _overrideNoExport := Coalesce(_overrideNoExport, -1);
+    _job                   := Coalesce(_job, 0);
+    _newComment            := Trim(Coalesce(_newComment, ''));
+    _overrideNoExport      := Coalesce(_overrideNoExport, -1);
     _appendOldJobToComment := Coalesce(_appendOldJobToComment, true);
-    _newSettingsFile := Trim(Coalesce(_newSettingsFile, ''));
-    _infoOnly := Coalesce(_infoOnly, false);
+    _newSettingsFile       := Trim(Coalesce(_newSettingsFile, ''));
+    _infoOnly              := Coalesce(_infoOnly, false);
 
     If _job = 0 Then
-        _message := '_job is invalid';
+        _message := 'Source job not specified';
         RAISE WARNING '%', _message;
 
         RETURN;
@@ -67,7 +60,7 @@ BEGIN
     -- Lookup the job values in t_analysis_job
     ---------------------------------------------------
 
-    SELECT DS.dataset AS Dataset
+    SELECT DS.dataset AS Dataset,
            J.priority AS Priority,
            t_analysis_tool.analysis_tool AS ToolName,
            J.param_file_name AS ParamFileName,
@@ -76,7 +69,7 @@ BEGIN
            J.protein_collection_list AS ProtCollNameList,
            J.protein_options_list AS ProtCollOptionsList,
            J.organism_db_name AS OrganismDBName,
-           J.owner AS OwnerUsername,
+           J.owner_username AS OwnerUsername,
            J.comment AS Comment,
            J.special_processing AS SpecialProcessing,
            J.propagation_mode AS PropMode
@@ -91,7 +84,7 @@ BEGIN
     WHERE J.job = _job;
 
     If Not FOUND Then
-        _message := format('Job not found: %s', _job);
+        _message := format('Source job not found: %s', _job);
         RAISE WARNING '%', _message;
 
         RETURN;
@@ -121,10 +114,22 @@ BEGIN
     End If;
 
     If _infoOnly Then
-        RAISE INFO 'Dataset: %, priority: %, tool: %, param file: %, settings file: %', _jobInfo.Dataset, _jobInfo.Priority, _jobInfo.ToolName, _jobInfo.ParamFileName, _jobInfo.SettingsFileName;
-        RAISE INFO 'Organism: %, Protein Collection(s): %, Collection Options: %, Organism DB: %', _jobInfo.OrganismName, _jobInfo.ProtCollNameList, _jobInfo.ProtCollOptionsList, _jobInfo.OrganismDBName;
-        RAISE INFO 'Owner Username: %, Comment: %, Special Processing: %, Propagation Mode: %', _jobInfo.OwnerUsername, _jobInfo.Comment, _jobInfo.SpecialProcessing, _propagationMode;
-    End If;
+        RAISE INFO '';
+        RAISE INFO 'Dataset:               %', _jobInfo.Dataset;
+        RAISE INFO 'Tool:                  %', _jobInfo.ToolName;
+        RAISE INFO 'Priority:              %', _jobInfo.Priority;
+        RAISE INFO 'Param file:            %', _jobInfo.ParamFileName;
+        RAISE INFO 'Settings file:         %', _jobInfo.SettingsFileName;
+        RAISE INFO 'Owner:                 %', _jobInfo.OwnerUsername;
+        RAISE INFO 'Comment:               %', _jobInfo.Comment;
+        RAISE INFO 'Organism:              %', _jobInfo.OrganismName;
+        RAISE INFO 'Protein Collection(s): %', _jobInfo.ProtCollNameList;
+        RAISE INFO 'Collection Options:    %', _jobInfo.ProtCollOptionsList;
+        RAISE INFO 'Organism DB:           %', _jobInfo.OrganismDBName;
+        RAISE INFO 'Special Processing:    %', _jobInfo.SpecialProcessing;
+        RAISE INFO 'Propagation Mode:      %', _propagationMode;
+        RAISE INFO '';
+End If;
 
     -- Call the procedure to create/preview the job creation
 
@@ -155,7 +160,7 @@ BEGIN
     If Not _infoOnly Then
         If _returnCode = '' Then
             _message := format('Duplicated job %s to create job %s', _job, _newJob);
-            Raise Info '%', _message;
+            RAISE INFO '%', _message;
         Else
             If Coalesce(_message, '') = '' Then
                 _message := format('Add_Update_Analysis_Job returned error code = %s', _returnCode);
@@ -169,4 +174,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.duplicate_analysis_job IS 'DuplicateAnalysisJob';
+
+ALTER PROCEDURE public.duplicate_analysis_job(IN _job integer, IN _newcomment text, IN _overridenoexport integer, IN _appendoldjobtocomment boolean, IN _newsettingsfile text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE duplicate_analysis_job(IN _job integer, IN _newcomment text, IN _overridenoexport integer, IN _appendoldjobtocomment boolean, IN _newsettingsfile text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.duplicate_analysis_job(IN _job integer, IN _newcomment text, IN _overridenoexport integer, IN _appendoldjobtocomment boolean, IN _newsettingsfile text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'DuplicateAnalysisJob';
+
