@@ -1,19 +1,14 @@
 --
-CREATE OR REPLACE PROCEDURE public.duplicate_filter_set_criteria
-(
-    _sourceFilterSetID int,
-    _destFilterSetID int,
-    _addMissingFilterCriteria boolean = true,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: duplicate_filter_set_criteria(integer, integer, boolean, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.duplicate_filter_set_criteria(IN _sourcefiltersetid integer, IN _destfiltersetid integer, IN _addmissingfiltercriteria boolean DEFAULT true, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Copy the filter set critera
+**      Copy filter set criteria from an existing filter set to a newly created one
 **
 **      Requires that the new filter set exist in t_filter_sets
 **      However, do not make any entries in t_filter_set_criteria_groups or t_filter_set_criteria
@@ -21,18 +16,17 @@ AS $$
 **      The following query is useful for editing filter sets:
 **
 **         SELECT FS.Filter_Set_ID, FS.Filter_Set_Name,
-**             FS.Filter_Set_Description, FSC.Filter_Criteria_Group_ID,
-**             FSC.Filter_Set_Criteria_ID, FSC.Criterion_ID,
-**             FSCN.Criterion_Name, FSC.Criterion_Comparison,
-**             FSC.Criterion_Value
-**         FROM t_Filter_Sets FS INNER JOIN
-**             t_Filter_Set_Criteria_Groups FSCG ON
-**             FS.Filter_Set_ID = FSCG.Filter_Set_ID INNER JOIN
-**             t_Filter_Set_Criteria FSC ON
-**             FSCG.Filter_Criteria_Group_ID = FSC.Filter_Criteria_Group_ID INNER
-**             JOIN
-**             t_Filter_Set_Criteria_Names FSCN ON
-**             FSC.Criterion_ID = FSCN.Criterion_ID
+**                FS.Filter_Set_Description, FSC.Filter_Criteria_Group_ID,
+**                FSC.Filter_Set_Criteria_ID, FSC.Criterion_ID,
+**                FSCN.Criterion_Name, FSC.Criterion_Comparison,
+**                FSC.Criterion_Value
+**         FROM t_Filter_Sets FS
+**              INNER JOIN t_Filter_Set_Criteria_Groups FSCG
+**                ON FS.Filter_Set_ID = FSCG.Filter_Set_ID
+**              INNER JOIN t_Filter_Set_Criteria FSC
+**                ON FSCG.Filter_Criteria_Group_ID = FSC.Filter_Criteria_Group_ID
+**              INNER JOIN t_Filter_Set_Criteria_Names FSCN
+**                ON FSC.Criterion_ID = FSCN.Criterion_ID
 **         WHERE FS.Filter_Set_ID = 184
 **         ORDER BY FSCN.Criterion_Name, FSC.Filter_Criteria_Group_ID
 **
@@ -46,7 +40,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   10/02/2009 mem - Initial version
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/12/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -68,10 +62,12 @@ BEGIN
     -----------------------------------------
 
     _addMissingFilterCriteria := Coalesce(_addMissingFilterCriteria, true);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly                 := Coalesce(_infoOnly, false);
 
     If _sourceFilterSetID Is Null Or _destFilterSetID Is Null Then
         _message := 'Both the source and target filter set ID must be specified; unable to continue';
+        RAISE WARNING '%', _message;
+
         _returnCode := 'U5201';
         RETURN;
     End If;
@@ -81,7 +77,10 @@ BEGIN
     -----------------------------------------
 
     If Not Exists (SELECT filter_set_id FROM t_filter_sets WHERE filter_set_id = _destFilterSetID ) Then
-        _message := format('Filter Set ID %s was not found in t_filter_sets; make an entry in that table for this filter set before calling this procedure', _destFilterSetID);
+        _message := format('filter set ID %s not found in t_filter_sets; make an entry in that table for this filter set before calling this procedure', _destFilterSetID);
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5202';
         RETURN;
     End If;
 
@@ -90,7 +89,10 @@ BEGIN
     -----------------------------------------
 
     If Exists (SELECT filter_set_id FROM t_filter_set_criteria_groups WHERE filter_set_id = _destFilterSetID ) Then
-        _message := format('Existing groups were found for Filter Set ID %s; this is not allowed', _destFilterSetID);
+        _message := format('Existing groups were found for filter set ID %s; this is not allowed', _destFilterSetID);
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5203';
         RETURN;
     End If;
 
@@ -111,15 +113,20 @@ BEGIN
     ORDER BY filter_criteria_group_id;
 
     If Not FOUND Then
-        _message := format('No groups found for Filter Set ID %s', _sourceFilterSetID);
+        _message := format('No groups found for filter set ID %s', _sourceFilterSetID);
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5203';
+        DROP TABLE Tmp_FilterSetGroups;
         RETURN;
+
     End If;
 
     If _infoOnly Then
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-24s %-12s %-25s %-20s %-20s';
+        _formatSpecifier := '%-24s %-12s %-30s %-20s %-20s';
 
         _infoHead := format(_formatSpecifier,
                             'Filter_Criteria_Group_ID',
@@ -132,7 +139,7 @@ BEGIN
         _infoHeadSeparator := format(_formatSpecifier,
                                      '------------------------',
                                      '------------',
-                                     '-------------------------',
+                                     '------------------------------',
                                      '--------------------',
                                      '--------------------'
                                     );
@@ -164,6 +171,7 @@ BEGIN
             RAISE INFO '%', _infoData;
         END LOOP;
 
+        DROP TABLE Tmp_FilterSetGroups;
         RETURN;
     End If;
 
@@ -180,7 +188,7 @@ BEGIN
         -- Define the next filter_criteria_group_id to insert into t_filter_set_criteria_groups
         SELECT MAX(filter_criteria_group_id) + 1
         INTO _filterCriteriaGroupIDNext
-        FROM t_filter_set_criteria_groups
+        FROM t_filter_set_criteria_groups;
 
         INSERT INTO t_filter_set_criteria_groups (filter_set_id, filter_criteria_group_id)
         VALUES (_destFilterSetID, _filterCriteriaGroupIDNext);
@@ -212,14 +220,19 @@ BEGIN
                         _returnCode   => _returnCode);
     End If;
 
-    _message := format('Duplicated criteria from Filter Set ID %s to Filter Set ID %s', _sourceFilterSetID, _destFilterSetID);
-
-    If Coalesce(_message, '') <> '' Then
-        RAISE INFO '%', _message;
-    End If;
+    _message := format('Duplicated criteria from filter set ID %s to filter set ID %s', _sourceFilterSetID, _destFilterSetID);
+    RAISE INFO '%', _message;
 
     DROP TABLE Tmp_FilterSetGroups;
 END
 $$;
 
-COMMENT ON PROCEDURE public.duplicate_filter_set_criteria IS 'DuplicateFilterSetCriteria';
+
+ALTER PROCEDURE public.duplicate_filter_set_criteria(IN _sourcefiltersetid integer, IN _destfiltersetid integer, IN _addmissingfiltercriteria boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE duplicate_filter_set_criteria(IN _sourcefiltersetid integer, IN _destfiltersetid integer, IN _addmissingfiltercriteria boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.duplicate_filter_set_criteria(IN _sourcefiltersetid integer, IN _destfiltersetid integer, IN _addmissingfiltercriteria boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'DuplicateFilterSetCriteria';
+
