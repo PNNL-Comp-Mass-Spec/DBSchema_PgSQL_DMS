@@ -1,18 +1,14 @@
 --
-CREATE OR REPLACE PROCEDURE public.do_file_attachment_operation
-(
-    _id int,
-    _mode text,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: do_file_attachment_operation(integer, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.do_file_attachment_operation(IN _id integer, IN _mode text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Perform operation given by _mode on file attachment given by _id
+**      Perform an operation on a file attachment
 **
 **  Arguments:
 **    _id           File attachment ID
@@ -27,7 +23,7 @@ AS $$
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/12/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -75,12 +71,26 @@ BEGIN
         If _mode = 'delete' Then
 
             -- 'Delete' the attachment
-            -- In reality, we change active to 0
+            -- In reality, we mark the attachment as inactive
 
             UPDATE t_file_attachment
             SET active = 0
             WHERE attachment_id = _id;
+
+            If FOUND Then
+                RAISE INFO 'Set file attachment ID % to inactive', _id;
+            Else
+                RAISE EXCEPTION 'Invalid file attachment ID: %', _id;
+            End If;
+
+            RETURN;
         End If;
+
+        ---------------------------------------------------
+        -- Mode was unrecognized
+        ---------------------------------------------------
+
+        RAISE EXCEPTION 'Mode "%" was unrecognized', _mode;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -102,4 +112,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.do_file_attachment_operation IS 'DoFileAttachmentOperation';
+
+ALTER PROCEDURE public.do_file_attachment_operation(IN _id integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE do_file_attachment_operation(IN _id integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.do_file_attachment_operation(IN _id integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'DoFileAttachmentOperation';
+
