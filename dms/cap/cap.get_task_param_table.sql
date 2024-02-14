@@ -24,7 +24,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_table(_job integer, _dataset text,
 **    _captureSubdirectory      Capture subdirectory
 **    _scriptName               Capture task script
 **
-**  Example Usage:
+**  Example usage:
 **      SELECT * FROM cap.get_task_param_table(6122256, 'MeOH_Blank_01_met_C18_Pos_14Aug23_Lola-WCSH815142', 1176806,
 **                                             'proto-9', 'QExactP02', 'LTQ_FT', 1, '', 'DatasetCapture');
 **

@@ -18,7 +18,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_type_control_param(IN _paramnam
 **    _message              Status message
 **    _returnCode           Return code
 **
-**  Example Usage:
+**  Example usage:
 **
 **      CALL mc.update_single_mgr_type_control_param('ManagerUpdateRequired', 'False', '11, 15')
 **

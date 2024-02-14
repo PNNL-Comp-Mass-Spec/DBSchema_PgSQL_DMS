@@ -17,7 +17,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_step_params_xml(_job integer, _step intege
 **    _step                 Step number
 **    _jobIsRunningRemote   Request_Step_Task_XML will set this to 1 if the newly started job step was state 9
 **
-**  Example Usage:
+**  Example usage:
 **     SELECT * FROM sw.get_job_step_params_xml(2131747, 1);
 **     SELECT Src::text FROM get_job_step_params_xml(2131747, 1) Src;
 **

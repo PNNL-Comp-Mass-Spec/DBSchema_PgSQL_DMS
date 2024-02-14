@@ -12,8 +12,7 @@ CREATE OR REPLACE FUNCTION test.return_dynamic_sql_results(_startdate timestamp 
 **
 **      Demonstrates use of RETURN QUERY with EXECUTE _sql
 **
-**  Example Usage:
-**
+**  Example usage:
 **      SELECT * FROM test.return_dynamic_sql_results('1/20/2023', '1/23/2023')
 **
 **  Auth:   mem

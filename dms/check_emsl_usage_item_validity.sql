@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION public.check_emsl_usage_item_validity(_seq integer) R
 **  Desc:
 **      Check EMSL usage item validity
 **
-**  Example Usage:
+**  Example usage:
 **      SELECT *
 **      FROM ( SELECT Src.seq,
 **                    check_emsl_usage_item_validity(Src.seq) AS Result
