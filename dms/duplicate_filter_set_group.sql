@@ -1,21 +1,17 @@
 --
-CREATE OR REPLACE PROCEDURE public.duplicate_filter_set_group
-(
-    _filterSetID int,
-    _filterCriteriaGroupID int,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: duplicate_filter_set_group(integer, integer, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.duplicate_filter_set_group(IN _filtersetid integer, IN _filtercriteriagroupid integer, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Copy a given group for a given filter set
 **
 **      This procedure will auto-create a new entry in t_filter_set_criteria_groups
-**      For safety, requires both the filter set ID and the group id to copy
+**      For safety, it requires the caller to specify both the source filter set ID and source group ID
 **
 **  Arguments:
 **    _filterSetID              Filter set ID
@@ -26,7 +22,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   02/17/2009 mem - Initial version
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/13/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -58,7 +54,7 @@ BEGIN
     -----------------------------------------
 
     If Not Exists (SELECT filter_set_id FROM t_filter_sets WHERE filter_set_id = _filterSetID) Then
-        _message := format('Filter Set ID %s was not found in t_filter_sets; unable to continue', _filterSetID);
+        _message := format('Filter Set ID %s not found in t_filter_sets; unable to continue', _filterSetID);
         RETURN;
     End If;
 
@@ -67,7 +63,7 @@ BEGIN
     -----------------------------------------
 
     If Not Exists (SELECT filter_criteria_group_id FROM t_filter_set_criteria_groups WHERE filter_criteria_group_id = _filterCriteriaGroupID) Then
-        _message := format('Filter Criteria Group ID %s was not found in t_filter_set_criteria_groups; unable to continue', _filterCriteriaGroupID);
+        _message := format('Filter Criteria Group ID %s not found in t_filter_set_criteria_groups; unable to continue', _filterCriteriaGroupID);
         RETURN;
     End If;
 
@@ -92,7 +88,7 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s %-10s %-10s';
+        _formatSpecifier := '%-12s %-12s %-30s %-20s %-15s';
 
         _infoHead := format(_formatSpecifier,
                             'New_Group_ID',
@@ -105,9 +101,9 @@ BEGIN
         _infoHeadSeparator := format(_formatSpecifier,
                                      '------------',
                                      '------------',
-                                     '-------------------------',
+                                     '------------------------------',
                                      '--------------------',
-                                     '--------------------'
+                                     '---------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -136,7 +132,9 @@ BEGIN
             RAISE INFO '%', _infoData;
         END LOOP;
 
-	    _message := format('Would duplicate Filter Criteria Group %s for Filter Set ID %s', _filterCriteriaGroupID, _filterSetID);
+        RAISE INFO '';
+
+        _message := format('Would duplicate Filter Criteria Group %s for Filter Set ID %s', _filterCriteriaGroupID, _filterSetID);
     Else
 
         -- Create a new entry in t_filter_set_criteria_groups
@@ -144,22 +142,31 @@ BEGIN
         INSERT INTO t_filter_set_criteria_groups (filter_set_id, filter_criteria_group_id)
         VALUES (_filterSetID, _filterCriteriaGroupIDNext);
 
-        -- Duplicate the criteria for group _filterCriteriaGroupID (from Filter Set _filterSetID)
+        -- Duplicate the criteria for group _filterCriteriaGroupID (from filter set _filterSetID)
 
-        INSERT INTO t_filter_set_criteria
-            (filter_criteria_group_id, criterion_id, criterion_comparison, Criterion_Value)
-        SELECT _filterCriteriaGroupIDNext AS NewGroupID, Criterion_ID, Criterion_Comparison, Criterion_Value
+        INSERT INTO t_filter_set_criteria (filter_criteria_group_id, criterion_id, criterion_comparison, Criterion_Value)
+        SELECT _filterCriteriaGroupIDNext AS NewGroupID,
+               Criterion_ID,
+               Criterion_Comparison,
+               Criterion_Value
         FROM t_filter_set_criteria
         WHERE filter_criteria_group_id = _filterCriteriaGroupID
-        ORDER BY criterion_id
+        ORDER BY criterion_id;
 
-	    _message := format('Duplicated Filter Criteria Group %s for Filter Set ID %s', _filterCriteriaGroupID, _filterSetID);
-
+        _message := format('Duplicated Filter Criteria Group %s for Filter Set ID %s, creating group %s',
+                           _filterCriteriaGroupID, _filterSetID, _filterCriteriaGroupIDNext);
     End If;
 
     RAISE INFO '%', _message;
-
 END
 $$;
 
-COMMENT ON PROCEDURE public.duplicate_filter_set_group IS 'DuplicateFilterSetGroup';
+
+ALTER PROCEDURE public.duplicate_filter_set_group(IN _filtersetid integer, IN _filtercriteriagroupid integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE duplicate_filter_set_group(IN _filtersetid integer, IN _filtercriteriagroupid integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.duplicate_filter_set_group(IN _filtersetid integer, IN _filtercriteriagroupid integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'DuplicateFilterSetGroup';
+
