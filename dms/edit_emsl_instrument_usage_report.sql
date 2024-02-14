@@ -1,23 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.edit_emsl_instrument_usage_report
-(
-    _year int = 2012,
-    _month int = 8,
-    _instrument text = '',
-    _type text = '',
-    _usage text = '',
-    _proposal text = '',
-    _users text = '',
-    _operator text = '',
-    _comment text = '',
-    _fieldName text = '',
-    _newValue text = '',
-    _doUpdate int = 0,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: edit_emsl_instrument_usage_report(integer, integer, text, text, text, text, text, text, text, text, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.edit_emsl_instrument_usage_report(IN _year integer DEFAULT 2012, IN _month integer DEFAULT 8, IN _instrument text DEFAULT ''::text, IN _type text DEFAULT ''::text, IN _usage text DEFAULT ''::text, IN _proposal text DEFAULT ''::text, IN _users text DEFAULT ''::text, IN _operator text DEFAULT ''::text, IN _fieldname text DEFAULT ''::text, IN _newvalue text DEFAULT ''::text, IN _infoonly boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -34,10 +21,9 @@ AS $$
 **    _proposal     EUS proposal, e.g. '60045';          if an empty string, do not filter on proposals
 **    _users        EUS user ID, e.g. '52597';           if an empty string, do not filter on user ID; typically only a single user, but can also be a list of users, e.g. '43787, 49612'
 **    _operator     Operator for update, corresponding to person_id in t_eus_users (should be an integer representing EUS Person ID); if an empty string, will store NULL for the operator ID
-**    _comment      Usage comment
 **    _fieldName    Field name: 'Proposal', 'Usage', 'Users', 'Operator', 'Comment'
 **    _newValue     Field value
-**    _doUpdate     When 0, preview the update
+**    _infoOnly     When true, preview the update
 **    _message      Status message
 **    _returnCode   Return code
 **
@@ -46,7 +32,7 @@ AS $$
 **          09/11/2012 grk - Fixed update SQL
 **          04/11/2017 mem - Replace column Usage with Usage_Type
 **          07/15/2022 mem - Instrument operator ID is now tracked as an actual integer
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/13/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -54,6 +40,7 @@ DECLARE
     _instrumentID int := 0;
     _usageTypeID int := 0;
     _newUsageTypeID int := 0;
+    _updateCount int = 0;
 
     _formatSpecifier text;
     _infoHead text;
@@ -76,6 +63,7 @@ BEGIN
     _usage      := Trim(Coalesce(_usage, ''));
     _proposal   := Trim(Coalesce(_proposal, ''));
     _users      := Trim(Coalesce(_users, ''));
+    _fieldName  := Trim(Coalesce(_fieldName, ''));
 
     -- Assure that _operator is either an integer or null
     _operatorID := public.try_cast(_operator, null::int);
@@ -86,7 +74,7 @@ BEGIN
         SELECT instrument_id
         INTO _instrumentID
         FROM t_instrument_name
-        WHERE instrument = _instrument;
+        WHERE instrument = _instrument::citext;
 
         If _instrumentID = 0 Then
             RAISE EXCEPTION 'Instrument not found: "%"', _instrument;
@@ -97,7 +85,7 @@ BEGIN
         SELECT usage_type_id
         INTO _usageTypeID
         FROM t_emsl_instrument_usage_type
-        WHERE usage_type = _usage;
+        WHERE usage_type = _usage::citext;
 
         If Not FOUND Then
             RAISE EXCEPTION 'Usage type not found: "%"', _usage;
@@ -122,17 +110,26 @@ BEGIN
     WHERE month = _month AND
           year = _year AND
           (_instrumentID = 0 OR dms_inst_id = _instrumentID) AND
-          (_type = '' OR type = _type) AND
+          (_type = '' OR type = _type::citext) AND
           (_usageTypeID = 0 OR usage_type_id = _usageTypeID) AND
-          (_proposal = '' OR proposal = _proposal) AND
-          (_users = '' OR users = _users) AND
+          (_proposal = '' OR proposal = _proposal::citext) AND
+          (_users = '' OR users = _users::citext) AND
           (_operatorID IS NULL OR operator = _operatorID);
+
+    If Not FOUND Then
+        _message = 'Did not find any usage report entries matching the filters';
+        RAISE INFO '';
+        RAISE INFO '%', _message;
+
+        DROP TABLE Tmp_InstrumentUsageInfo;
+        RETURN;
+    End If;
 
     ---------------------------------------------------
     -- Display affected items or make change
     ---------------------------------------------------
 
-    If _doUpdate = 0 Then
+    If _infoOnly Then
 
         RAISE INFO '';
 
@@ -223,53 +220,84 @@ BEGIN
         RETURN;
     End If;
 
-    If _fieldName = 'Proposal' Then
-        UPDATE TD
-        SET proposal = _newValue
-        FROM t_emsl_instrument_usage_report TD INNER JOIN
-             Tmp_InstrumentUsageInfo ON Tmp_InstrumentUsageInfo.seq = TD.seq;
+    If _fieldName::citext = 'Proposal' Then
+        UPDATE t_emsl_instrument_usage_report TD
+        SET proposal = _newValue,
+            updated = CURRENT_TIMESTAMP
+        FROM Tmp_InstrumentUsageInfo
+        WHERE Tmp_InstrumentUsageInfo.seq = TD.seq;
+
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
     End If;
 
-    If _fieldName = 'Usage' And _newValue <> '' Then
+    If _fieldName::citext = 'Usage' And _newValue <> '' Then
         SELECT usage_type_id
         INTO _newUsageTypeID
         FROM t_emsl_instrument_usage_type
-        WHERE usage_type = _newValue;
+        WHERE usage_type = _newValue::citext;
 
         If Not FOUND Then
             RAISE EXCEPTION 'Invalid usage type: "%"', _newValue;
         Else
-            UPDATE TD
-            SET usage_type_id = _newUsageTypeID
-            FROM t_emsl_instrument_usage_report TD INNER JOIN
-                 Tmp_InstrumentUsageInfo ON Tmp_InstrumentUsageInfo.seq = TD.seq;
+            UPDATE t_emsl_instrument_usage_report TD
+            SET usage_type_id = _newUsageTypeID,
+                updated = CURRENT_TIMESTAMP
+            FROM Tmp_InstrumentUsageInfo
+            WHERE Tmp_InstrumentUsageInfo.seq = TD.seq;
+
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
         End If;
     End If;
 
-    If _fieldName = 'Users' Then
-        UPDATE TD
-        SET users = _newValue
-        FROM t_emsl_instrument_usage_report TD INNER JOIN
-             Tmp_InstrumentUsageInfo ON Tmp_InstrumentUsageInfo.seq = TD.seq;
+    If _fieldName::citext = 'Users' Then
+        UPDATE t_emsl_instrument_usage_report TD
+        SET users = _newValue,
+            updated = CURRENT_TIMESTAMP
+        FROM Tmp_InstrumentUsageInfo
+        WHERE Tmp_InstrumentUsageInfo.seq = TD.seq;
+
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
     End If;
 
-    If _fieldName = 'Operator' Then
-        -- Store null if _newValue is not an integer
-        UPDATE TD
-        SET operator = Try__newValue::int
-        FROM t_emsl_instrument_usage_report TD INNER JOIN
-             Tmp_InstrumentUsageInfo ON Tmp_InstrumentUsageInfo.seq = TD.seq;
+    If _fieldName::citext = 'Operator' Then
+        UPDATE t_emsl_instrument_usage_report TD
+        SET operator = public.try_cast(_newValue, null::int),    -- Store null if _newValue is not an integer
+            updated = CURRENT_TIMESTAMP
+        FROM Tmp_InstrumentUsageInfo
+        WHERE Tmp_InstrumentUsageInfo.seq = TD.seq;
+
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
     End If;
 
-    If _fieldName = 'Comment' Then
-        UPDATE TD
-        SET comment = _newValue
-        FROM t_emsl_instrument_usage_report TD INNER JOIN
-             Tmp_InstrumentUsageInfo ON Tmp_InstrumentUsageInfo.seq = TD.seq
+    If _fieldName::citext = 'Comment' Then
+        UPDATE t_emsl_instrument_usage_report TD
+        SET comment = _newValue,
+            updated = CURRENT_TIMESTAMP
+        FROM Tmp_InstrumentUsageInfo
+        WHERE Tmp_InstrumentUsageInfo.seq = TD.seq;
+
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
     End If;
+
+    If _updateCount = 0 Then
+        _message = format('Did not update any rows; invalid target field name: %s', _fieldName);
+    Else
+        _message = format('Updated %s in %s %s', Lower(_fieldName), _updateCount, public.check_plural(_updateCount, 'row', 'rows'));
+    End If;
+
+    RAISE INFO '';
+    RAISE INFO '%', _message;
 
     DROP TABLE Tmp_InstrumentUsageInfo;
 END
 $$;
 
-COMMENT ON PROCEDURE public.edit_emsl_instrument_usage_report IS 'EditEMSLInstrumentUsageReport';
+
+ALTER PROCEDURE public.edit_emsl_instrument_usage_report(IN _year integer, IN _month integer, IN _instrument text, IN _type text, IN _usage text, IN _proposal text, IN _users text, IN _operator text, IN _fieldname text, IN _newvalue text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE edit_emsl_instrument_usage_report(IN _year integer, IN _month integer, IN _instrument text, IN _type text, IN _usage text, IN _proposal text, IN _users text, IN _operator text, IN _fieldname text, IN _newvalue text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.edit_emsl_instrument_usage_report(IN _year integer, IN _month integer, IN _instrument text, IN _type text, IN _usage text, IN _proposal text, IN _users text, IN _operator text, IN _fieldname text, IN _newvalue text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'EditEMSLInstrumentUsageReport';
+
