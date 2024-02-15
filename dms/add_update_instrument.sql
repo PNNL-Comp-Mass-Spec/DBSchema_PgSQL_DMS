@@ -17,7 +17,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_instrument(IN _instrumentid intege
 **    _instrumentClass              Instrument class
 **    _instrumentGroup              Instrument group
 **    _captureMethod                Capture method: 'secfso' for bionet instruments, 'fso' for instruments on the pnl.gov domain
-**    _status                       Instrument status: 'active', 'inactive', or 'offline'
+**    _status                       Instrument status: 'Active', 'Inactive', or 'Offline'
 **    _roomNumber                   Room number, e.g. 'BSF 1217', 'EMSL 1526', or 'Offsite'
 **    _description                  Instrument description
 **    _usage                        Instrument usage (empty string if no specific usage)

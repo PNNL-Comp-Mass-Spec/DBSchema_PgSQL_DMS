@@ -139,7 +139,7 @@ BEGIN
             SELECT U.username
             INTO _username
             FROM t_users U
-            ORDER BY CASE WHEN U.status = 'active' THEN 0 ELSE 1 END, U.user_id
+            ORDER BY CASE WHEN U.status = 'Active' THEN 0 ELSE 1 END, U.user_id
             LIMIT 1;
         End If;
     End If;
@@ -163,7 +163,7 @@ BEGIN
     INTO _instrumentID
     FROM t_instrument_name
     WHERE instrument_group in ('Eclipse', 'QExactive', 'VelosOrbi') AND
-          status = 'active'
+          status = 'Active'
     ORDER BY CASE WHEN instrument LIKE 'External%' THEN 1 ELSE 0 END, instrument_id Desc
     LIMIT 1;
 
@@ -173,7 +173,7 @@ BEGIN
         SELECT MAX(instrument_id)
         INTO _instrumentID
         FROM t_instrument_name
-        WHERE status = 'active';
+        WHERE status = 'Active';
 
         If Not FOUND Then
             SELECT MAX(instrument_id)

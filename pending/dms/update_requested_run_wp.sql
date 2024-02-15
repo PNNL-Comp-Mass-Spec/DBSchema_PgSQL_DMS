@@ -189,7 +189,7 @@ BEGIN
                    request_name,
                    work_package
             FROM t_requested_run
-            WHERE state_name = 'active' AND
+            WHERE state_name = 'Active' AND
                   work_package = _oldWorkPackage;
             --
             GET DIAGNOSTICS _requestCountToUpdate = ROW_COUNT;

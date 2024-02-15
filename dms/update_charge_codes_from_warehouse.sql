@@ -214,7 +214,7 @@ BEGIN
                    CC."RESP_HID" IN (                                               -- Filter on charge codes where the Responsible person is an active DMS user; this includes codes with auth_amt = 0
                           SELECT hid_number
                           FROM t_users
-                          WHERE status = 'active'
+                          WHERE status = 'Active'
                       ) AND
                    CC."CHARGE_CD" NOT LIKE 'R%' AND                                 -- Filter out charge codes that are used for purchasing, not labor
                    CC."CHARGE_CD" NOT LIKE 'V%'

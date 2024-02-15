@@ -579,7 +579,7 @@ BEGIN
             RAISE EXCEPTION 'Instrument group not defined for instrument %; contact a DMS administrator to fix this', _instrumentName;
         End If;
 
-        If Coalesce(_instrumentStatus, '') <> 'active' And _instrumentClass <> 'Data_Folders' Then
+        If Coalesce(_instrumentStatus, '') <> 'Active' And _instrumentClass <> 'Data_Folders' Then
             RAISE EXCEPTION 'Instrument % is not active; new datasets cannot be added for this instrument; contact a DMS administrator if the instrument status should be changed', _instrumentName;
         End If;
 
