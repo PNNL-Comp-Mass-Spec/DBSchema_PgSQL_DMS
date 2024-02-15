@@ -29,6 +29,7 @@ CREATE OR REPLACE FUNCTION public.find_duplicate_param_files(_paramfilenamefilte
 **                         - Updated default value for _paramFileTypeList
 **          02/28/2023 mem - Use renamed parameter file type, 'MSGFPlus'
 **          02/13/2024 mem - Ported to PostgreSQL
+**          02/14/2024 mem - Add missing parentheses to where clause
 **
 *****************************************************/
 DECLARE
@@ -540,7 +541,7 @@ BEGIN
             WHERE PFMM.ModCount = 0 AND
                   PF.param_file_id <> _paramFileInfo.ParamFileID AND
                   PF.param_file_type_id = _paramFileInfo.ParamFileTypeID AND
-                  Not _checkValidOnly OR PF.valid <> 0;
+                  (Not _checkValidOnly OR PF.valid <> 0);
 
             GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
