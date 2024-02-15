@@ -1,44 +1,30 @@
 --
-CREATE OR REPLACE FUNCTION public.get_protein_collection_member_detail
-(
-    _id int,
-    _mode text = 'get',
-    _callingUser text = ''
-)
-RETURNS TABLE (
-    Protein_Collection_ID int,
-    Protein_Name text,
-    Description text,
-    Protein_Sequence text,
-    Monoisotopic_Mass float8,
-    Average_Mass float8,
-    Residue_Count int,
-    Molecular_Formula text,
-    Protein_ID int,
-    Reference_ID int,
-    SHA1_Hash text,
-    Member_ID int,
-    Sorting_Index int
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: get_protein_collection_member_detail(integer, text, text); Type: FUNCTION; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE FUNCTION public.get_protein_collection_member_detail(_id integer, _mode text DEFAULT 'get'::text, _callinguser text DEFAULT ''::text) RETURNS TABLE(protein_collection_id integer, protein_name public.citext, description public.citext, protein_sequence public.citext, monoisotopic_mass double precision, average_mass double precision, residue_count integer, molecular_formula public.citext, protein_id integer, reference_id integer, sha1_hash public.citext, member_id integer, sorting_index integer)
+    LANGUAGE plpgsql
+    AS $_$
 /****************************************************
 **
 **  Desc:
-**      Get detailed information regarding a single protein in a protein collection
+**      Get detailed information regarding a single protein, using its protein reference ID
 **
-**      This is called from the Protein Collection Member detail report, for example:
+**      Each unique combo of protein name and protein sequence has a distinct reference ID
+**      If multiple protein collections have the same protein reference ID, this function only includes one of those protein collection IDs
+**
+**      This function called from the Protein Collection Member detail report, for example:
 **      https://dms2.pnl.gov/protein_collection_members/show/13363564
 **
 **  Arguments:
 **    _id           Protein reference id, corresponding to reference_id in pc.t_protein_names; this parameter must be named id (see $calling_params->id in Q_model.php on the DMS website)
 **    _mode         Ignored, but required for compatibility reasons
-**    _callingUser  Username of the calling user
+**    _callingUser  Username of the calling user (not used by this function)
 **
 **  Auth:   mem
 **  Date:   06/27/2016 mem - Initial version
 **          08/03/2017 mem - Add Set NoCount On
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/14/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -63,27 +49,33 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
+        _id   := Coalesce(_id, 0);
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
         -- Retrieve one row of data
         ---------------------------------------------------
 
-        SELECT Protein_Collection_ID As ProteinCollectionID,
-               Protein_Name As ProteinName,
-               Description As Description,
-               Protein_Sequence As ProteinSequence,
-               Monoisotopic_Mass As MonoisotopicMass,
-               Average_Mass As AverageMass,
-               Residue_Count As ResidueCount,
-               Molecular_Formula As MolecularFormula,
-               Protein_ID As ProteinId,
-               SHA1_Hash As Sha1Hash,
-               Member_ID As MemberId,
-               Sorting_Index As SortingIndex
+        SELECT PCM.Protein_Collection_ID AS ProteinCollectionID,
+               PN.Name                   AS ProteinName,
+               PN.Description            AS Description,
+               P.Sequence                AS ProteinSequence,
+               P.Monoisotopic_Mass       AS MonoisotopicMass,
+               P.Average_Mass            AS AverageMass,
+               P.Length                  AS ResidueCount,
+               P.Molecular_Formula       AS MolecularFormula,
+               P.Protein_ID              AS ProteinId,
+               P.SHA1_Hash               AS Sha1Hash,
+               PCM.Member_ID             AS MemberId,
+               PCM.Sorting_Index         AS SortingIndex
         INTO _proteinCollectionInfo
-        FROM pc.v_protein_collection_members
-        WHERE Reference_ID = _id
+        FROM pc.t_protein_collection_members PCM
+             INNER JOIN pc.t_proteins P
+               ON PCM.Protein_ID = P.Protein_ID
+             INNER JOIN pc.t_protein_names PN
+               ON PCM.Protein_ID = PN.Protein_ID AND
+                  PCM.Original_Reference_ID = PN.Reference_ID
+        WHERE PN.reference_id = _id
         LIMIT 1;
 
         If FOUND Then
@@ -91,7 +83,7 @@ BEGIN
             -- Insert spaces and <br> tags into the protein sequence
             ---------------------------------------------------
 
-            _sequenceLength := char_length(_proteinCollectionInfo.ProteinSequence);
+            _sequenceLength    := char_length(_proteinCollectionInfo.ProteinSequence);
             _formattedSequence := '<pre>';
 
             WHILE _startIndex <= _sequenceLength
@@ -103,7 +95,7 @@ BEGIN
                     If _startIndex + _chunkSize <= _sequenceLength Then
                         _formattedSequence := format('%s%s<br>', _formattedSequence, Substring(_proteinCollectionInfo.ProteinSequence, _startIndex, _chunkSize));
                     Else
-                        _formattedSequence := format('%s%s', _formattedSequence, Substring(_proteinCollectionInfo.ProteinSequence, _startIndex, _chunkSize);
+                        _formattedSequence := format('%s%s', _formattedSequence, Substring(_proteinCollectionInfo.ProteinSequence, _startIndex, _chunkSize));
                     End If;
 
                     _currentLineLength := 0;
@@ -124,7 +116,7 @@ BEGIN
         SELECT _proteinCollectionInfo.ProteinCollectionID,
                _proteinCollectionInfo.ProteinName,
                _proteinCollectionInfo.Description,
-               _formattedSequence,
+               _formattedSequence::citext,
                _proteinCollectionInfo.MonoisotopicMass,
                _proteinCollectionInfo.AverageMass,
                _proteinCollectionInfo.ResidueCount,
@@ -151,6 +143,14 @@ BEGIN
     END;
 
 END
-$$;
+$_$;
 
-COMMENT ON PROCEDURE public.get_protein_collection_member_detail IS 'GetProteinCollectionMemberDetail';
+
+ALTER FUNCTION public.get_protein_collection_member_detail(_id integer, _mode text, _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: FUNCTION get_protein_collection_member_detail(_id integer, _mode text, _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON FUNCTION public.get_protein_collection_member_detail(_id integer, _mode text, _callinguser text) IS 'GetProteinCollectionMemberDetail';
+
