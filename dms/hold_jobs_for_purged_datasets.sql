@@ -1,12 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.hold_jobs_for_purged_datasets
-(
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: hold_jobs_for_purged_datasets(boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.hold_jobs_for_purged_datasets(IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -20,7 +18,7 @@ AS $$
 **  Auth:   mem
 **  Date:   05/15/2008 (Ticket #670)
 **          05/22/2008 mem - Now updating comment for any jobs that are set to state 8 (Ticket #670)
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/14/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -36,7 +34,8 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    _holdMessage := '; holding since dataset purged';
+    _infoOnly    := Coalesce(_infoOnly, false);
+    _holdMessage := 'holding since dataset purged';
 
     CREATE TEMP TABLE Tmp_JobsToUpdate (
         Job int NOT NULL
@@ -47,13 +46,14 @@ BEGIN
     FROM t_analysis_job
     WHERE job_state_id = 1 AND
           dataset_id IN ( SELECT DISTINCT target_id
-                             FROM t_event_log
-                             WHERE target_type = 6 AND
-                                   target_state = 4 );
+                          FROM t_event_log
+                          WHERE target_type = 6 AND
+                                target_state = 4 );
 
     If Not FOUND Then
         If _infoOnly Then
-            RAISE INFO 'No jobs having purged datasets were found with state 1=New';
+            _message := 'No jobs having purged datasets were found with state 1=New';
+            RAISE INFO '%', _message;
         End If;
 
         DROP TABLE Tmp_JobsToUpdate;
@@ -64,14 +64,14 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-20s %-16s %-20s %-15s %-80s %-20s %-80s %-80s';
+        _formatSpecifier := '%-10s %-20s %-16s %-80s %-12s %-80s %-20s %-80s %-80s';
 
         _infoHead := format(_formatSpecifier,
                             'Job',
                             'Created',
                             'Analysis_Tool_ID',
                             'Comment',
-                            'StateID',
+                            'Job_State_ID',
                             'Dataset',
                             'Dataset_Created',
                             'Dataset_Folder_Path',
@@ -82,8 +82,8 @@ BEGIN
                                      '----------',
                                      '--------------------',
                                      '----------------',
-                                     '--------------------',
-                                     '---------------',
+                                     '--------------------------------------------------------------------------------',
+                                     '------------',
                                      '--------------------------------------------------------------------------------',
                                      '--------------------',
                                      '--------------------------------------------------------------------------------',
@@ -97,7 +97,7 @@ BEGIN
             SELECT AJ.job AS Job,
                    public.timestamp_text(AJ.created) AS Created,
                    AJ.analysis_tool_id AS AnalysisToolID,
-                   Coalesce(AJ.comment, '') || _holdMessage AS Comment,
+                   public.append_to_text(AJ.comment, _holdMessage, _delimiter => '; ') AS Comment,
                    AJ.job_state_id AS StateID,
                    DS.dataset AS Dataset,
                    public.timestamp_text(DS.created) AS Dataset_Created,
@@ -128,9 +128,9 @@ BEGIN
         END LOOP;
 
     Else
-        UPDATE t_analysis_job
+        UPDATE t_analysis_job AJ
         SET job_state_id = 8,
-            comment = format('%s%s', comment, _holdMessage)
+            comment = public.append_to_text(AJ.comment, _holdMessage, _delimiter => '; ')
         FROM Tmp_JobsToUpdate JTU
         WHERE JTU.Job = AJ.job AND
               AJ.job_state_id = 1;
@@ -150,4 +150,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.hold_jobs_for_purged_datasets IS 'HoldJobsForPurgedDatasets';
+
+ALTER PROCEDURE public.hold_jobs_for_purged_datasets(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE hold_jobs_for_purged_datasets(IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.hold_jobs_for_purged_datasets(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'HoldJobsForPurgedDatasets';
+
