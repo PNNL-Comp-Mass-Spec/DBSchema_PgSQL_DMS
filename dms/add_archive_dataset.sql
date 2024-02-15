@@ -25,7 +25,7 @@ CREATE OR REPLACE PROCEDURE public.add_archive_dataset(IN _datasetid integer, IN
 **          06/01/2012 mem - Bumped up _holdOffHours to 2 weeks
 **          06/12/2012 mem - Now looking up the Purge_Policy in T_Instrument_Name
 **          08/10/2018 mem - Do not create an archive task for datasets with state 14
-**          12/20/2021 bcg - Look up Purge_Priority and AS_purge_holdoff_date offset in T_Instrument_Name
+**          12/20/2021 bcg - Lookup Purge_Priority and AS_purge_holdoff_date offset in T_Instrument_Name
 **          04/24/2023 mem - Ported to PostgreSQL
 **                         - Do not create an archive task if 'ArchiveDisabled' has a non-zero value in T_Misc_Options
 **          05/10/2023 mem - Capitalize procedure name sent to post_log_entry

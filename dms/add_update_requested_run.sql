@@ -67,7 +67,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run(IN _requestname text
 **          04/25/2007 grk - Get new ID from UDF (Ticket #446)
 **          04/30/2007 grk - Added better name validation (Ticket #450)
 **          07/11/2007 grk - Factored out EUS proposal validation (Ticket #499)
-**          07/11/2007 grk - Modified to look up EUS fields from sample prep request (Ticket #499)
+**          07/11/2007 grk - Modified to Lookup EUS fields from sample prep request (Ticket #499)
 **          07/17/2007 grk - Increased size of comment field (Ticket #500)
 **          07/30/2007 mem - Now checking dataset type (_msType) against Allowed_Dataset_Types in T_Instrument_Class (Ticket #502)
 **          09/06/2007 grk - Factored out instrument name and dataset type validation to ValidateInstrumentAndDatasetType (Ticket #512)
@@ -76,7 +76,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run(IN _requestname text
 **          02/13/2008 mem - Now checking for _badCh = '[space]' (Ticket #602)
 **          04/09/2008 grk - Added secondary separation field (Ticket #658)
 **          03/26/2009 grk - Added MRM transition list attachment (Ticket #727)
-**          06/03/2009 grk - Look up work package (Ticket #739)
+**          06/03/2009 grk - Lookup work package (Ticket #739)
 **          07/27/2009 grk - Added lookup for wellplate and well fields (http://prismtrac.pnl.gov/trac/ticket/741)
 **          02/28/2010 grk - Added add-auto mode
 **          03/02/2010 grk - Added status field to requested run

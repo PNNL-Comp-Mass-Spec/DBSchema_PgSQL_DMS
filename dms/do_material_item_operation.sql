@@ -100,7 +100,7 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'retire_biomaterial' Then
-            -- Look up biomaterial ID from the name
+            -- Resolve biomaterial name to ID
             _typeTag := 'B';
 
             SELECT Biomaterial_ID
@@ -110,7 +110,7 @@ BEGIN
         End If;
 
         If _mode = 'retire_experiment' Then
-            -- Look up experiment ID from the name or ID
+            -- Resolve experiment name to ID
             _typeTag := 'E';
 
             _experimentID := public.try_cast(_name, null::int);

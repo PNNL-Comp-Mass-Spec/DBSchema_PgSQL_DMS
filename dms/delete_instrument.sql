@@ -72,7 +72,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Look up the instrument ID
+    -- Resolve instrument name to ID
     ---------------------------------------------------
 
     SELECT instrument_id

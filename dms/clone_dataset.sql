@@ -119,7 +119,7 @@ BEGIN
         _eusUsersList := Trim(Coalesce(_eusUsersList, ''));
 
         -- Lookup the information requred to create a new requested run
-        -- Also look up information required for previewing the cloned dataset
+        -- Also Lookup information required for previewing the cloned dataset
 
         SELECT E.experiment As ExperimentName,
                DS.operator_username As OperatorUsername,

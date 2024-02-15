@@ -22,7 +22,7 @@ CREATE OR REPLACE FUNCTION cap.preview_request_ctm_step_task(_processorname text
 **  Auth:   mem
 **  Date:   01/06/2011 mem
 **          07/26/2012 mem - Now looking up 'perspective' for the given manager and then passing _serverPerspectiveEnabled into RequestStepTask
-**          06/06/2023 mem - No longer look up "perspective" for the given manager, since the Capture Task Manager
+**          06/06/2023 mem - No longer looking up "perspective" for the given manager, since the Capture Task Manager
 **                           does not customize the value of @serverPerspectiveEnabled when calling request_ctm_step_task
 **          06/07/2023 mem - Renamed parameter _infoOnly to _infoLevel and ported to PostgreSQL
 **

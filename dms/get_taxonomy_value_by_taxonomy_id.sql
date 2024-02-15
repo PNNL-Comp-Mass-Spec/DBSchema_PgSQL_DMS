@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.get_taxonomy_value_by_taxonomy_id(IN _ncbitax
 /****************************************************
 **
 **  Desc:
-**      Look up taxonomy values for the given NCBI taxonomy ID
+**      Lookup taxonomy values for the given NCBI taxonomy ID
 **
 **  Arguments:
 **    _ncbiTaxonomyID       Taxonomy ID value to lookup; ignored if _previewResults is true and _previewOrganismID is non-zero (and ncbi_taxonomy_id is defined in t_organisms for the given organism)

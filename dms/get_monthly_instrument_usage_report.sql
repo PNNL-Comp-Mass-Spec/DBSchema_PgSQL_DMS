@@ -721,7 +721,7 @@ BEGIN
         ---------------------------------------------------
 
         If _eusInstrumentId = 0 Then
-            -- Look up EMSL instrument ID for this instrument (will be null if not an EMSL tracked instrument)
+            -- Determine the EMSL instrument ID for this instrument (will be null if not an EMSL tracked instrument)
             -- Make sure instrument name is properly capitalized
 
             SELECT InstName.instrument, InstMapping.eus_instrument_id
@@ -738,7 +738,7 @@ BEGIN
             End If;
 
         Else
-            -- Look up DMS Instrument Name for this EUSInstrumentID
+            -- Determine the DMS instrument name for this EUSInstrumentID
 
             SELECT InstName.instrument
             INTO _instrument

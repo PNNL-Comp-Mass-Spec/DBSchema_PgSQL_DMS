@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.lookup_wp_from_experiment_sample_prep(IN _exp
 /****************************************************
 **
 **  Desc:
-**      Look up the work package defined for the sample prep request associated with the given experiment (if there is one)
+**      Lookup the work package defined for the sample prep request associated with the given experiment (if there is one)
 **
 **      This procedure is used by add_update_requested_run and the error messages it returns assume that this is the case
 **

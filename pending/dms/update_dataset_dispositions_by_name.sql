@@ -115,7 +115,7 @@ BEGIN
         FROM public.parse_delimited_list(_datasetList);
 
         ---------------------------------------------------
-        -- Look up dataset IDs for datasets
+        -- Resolve dataset name to ID
         ---------------------------------------------------
 
         UPDATE Tmp_DatasetsToUpdate

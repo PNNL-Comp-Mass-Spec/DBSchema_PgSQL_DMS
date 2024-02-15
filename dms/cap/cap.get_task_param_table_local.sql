@@ -77,7 +77,7 @@ BEGIN
     */
 
     ---------------------------------------------------
-    -- Look up the capture task job parameters
+    -- Lookup the capture task job parameters
     ---------------------------------------------------
 
     SELECT Src.parameters

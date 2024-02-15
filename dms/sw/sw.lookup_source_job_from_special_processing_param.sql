@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.lookup_source_job_from_special_processing_param(I
 /****************************************************
 **
 **  Desc:
-**      Look up the source job defined for a new job
+**      Lookup the source job defined for a new job
 **
 **      The calling procedure must create temp table Tmp_Source_Job_Folders
 **

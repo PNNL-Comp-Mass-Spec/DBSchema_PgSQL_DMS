@@ -75,7 +75,7 @@ BEGIN
     */
 
     ---------------------------------------------------
-    -- Look up the job parameters
+    -- Lookup the job parameters
     ---------------------------------------------------
 
     SELECT Src.parameters

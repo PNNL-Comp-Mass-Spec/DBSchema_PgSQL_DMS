@@ -68,7 +68,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Look up the number of jobs made from the request
+    -- Determine the number of jobs made from the request
     ---------------------------------------------------
 
     SELECT COUNT(job)
