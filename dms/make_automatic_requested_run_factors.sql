@@ -1,14 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.make_automatic_requested_run_factors
-(
-    _batchID int,
-    _mode text = 'all',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: make_automatic_requested_run_factors(integer, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.make_automatic_requested_run_factors(IN _batchid integer, IN _mode text DEFAULT 'all'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -29,7 +25,7 @@ AS $$
 **          11/10/2016 mem - Pass '' to GetUserLoginWithoutDomain
 **          06/10/2022 mem - Exit the procedure if _batchID is 0 or null
 **          03/10/2023 mem - Call update_cached_requested_run_batch_stats to update T_Cached_Requested_Run_Batch_Stats
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/14/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -37,6 +33,10 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode := '';
+
+    -----------------------------------------------------------
+    -- Validate the inputs
+    -----------------------------------------------------------
 
     If Coalesce(_batchID, 0) = 0 Then
         _message := 'Batch ID is zero; cannot create automatic factors';
@@ -54,13 +54,13 @@ BEGIN
     );
 
     INSERT INTO Tmp_Requests ( Request )
-    SELECT t_requested_run.request_id
-    FROM t_requested_run
-         INNER JOIN t_dataset
-           ON t_requested_run.dataset_id = t_dataset.dataset_id
-    WHERE t_requested_run.batch_id = _batchID AND
-          NOT t_dataset.acq_time_start IS NULL
-    ORDER BY t_dataset.acq_time_start;
+    SELECT RR.request_id
+    FROM t_requested_run RR
+         INNER JOIN t_dataset DS
+           ON RR.dataset_id = DS.dataset_id
+    WHERE RR.batch_id = _batchID AND
+          NOT DS.acq_time_start IS NULL
+    ORDER BY DS.acq_time_start;
 
     SELECT string_agg(format('<r i="%s" f="Actual_Run_Order" v="%s" />', Request, Actual_Run_Order), '' ORDER BY Request)
     INTO _factorList
@@ -71,10 +71,20 @@ BEGIN
     -----------------------------------------------------------
 
     If Coalesce(_factorList, '') = '' Then
+        If Exists ( SELECT RR.request_id
+                    FROM t_requested_run RR
+                         INNER JOIN t_dataset DS
+                           ON RR.dataset_id = DS.dataset_id
+                    WHERE RR.batch_id = _batchID)
+        Then
+            RAISE INFO 'The datasets for requested runs associated with batch ID % all have null Acq_Time_Start values', _batchID;
+        Else
+            RAISE INFO 'None of the requested runs for batch ID % has an associated dataset', _batchID;
+        End If;
         RETURN;
     End If;
 
-    If _callingUser = '' Then
+    If Trim(Coalesce(_callingUser, '')) = '' Then
         _callingUser := public.get_user_login_without_domain('');
     End If;
 
@@ -89,4 +99,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.make_automatic_requested_run_factors IS 'MakeAutomaticRequestedRunFactors';
+
+ALTER PROCEDURE public.make_automatic_requested_run_factors(IN _batchid integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE make_automatic_requested_run_factors(IN _batchid integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.make_automatic_requested_run_factors(IN _batchid integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'MakeAutomaticRequestedRunFactors';
+

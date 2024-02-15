@@ -1,23 +1,18 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_requested_run_factors
-(
-    _factorList text,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_requested_run_factors(text, boolean, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_requested_run_factors(IN _factorlist text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Update requested run factors from input XML list
 **
-**      _factorList will look like this if it comes from web page https://dms2.pnl.gov/requested_run_factors/param
-**                                                             or https://dms2.pnl.gov/requested_run_batch_blocking/grid
-**
-**      The "type" attribute of the <id> tag defines what the "i" attributes map to
+**      Web pages https://dms2.pnl.gov/requested_run_factors/param and https://dms2.pnl.gov/requested_run_batch_blocking/grid
+**      use this procedure, sending the following for _factorList
+**      - Note that the 'type' attribute of the <id> tag defines what the 'i' attributes map to
 **
 **      <id type="Request" />
 **      <r i="193911" f="Factor1" v="Aa" />
@@ -26,7 +21,7 @@ AS $$
 **      <r i="194113" f="Factor2" v="Bb" />
 **
 **
-**      Second example for web page https://dms2.pnl.gov/requested_run_factors/param
+**      Web page https://dms2.pnl.gov/requested_run_factors/param sends XML like the following:
 **
 **      <id type="Dataset" />
 **      <r i="OpSaliva_009_a_7Mar11_Phoenix_11-01-17" f="Factor1" v="Aa" />
@@ -35,7 +30,7 @@ AS $$
 **      <r i="OpSaliva_009_b_7Mar11_Phoenix_11-01-20" f="Factor2" v="Bb" />
 **
 **
-**      XML coming from procedure Make_Automatic_Requested_Run_Factors will look like the following
+**      XML coming from procedure make_automatic_requested_run_factors will look like the following
 **      - Here, the identifier is RequestID
 **
 **      <r i="1197727" f="Actual_Run_Order" v="1" />
@@ -46,7 +41,7 @@ AS $$
 **
 **
 **      One other supported format uses DatasetID
-**      - If any records contain "d" attributes, the "type" attribute of the <id> tag is ignored
+**      - If any records contain 'd' attributes, the 'type' attribute of the <id> tag is ignored
 **
 **      <r d="214536" f="Factor1" v="Aa" />
 **      <r d="214003" f="Factor1" v="Bb" />
@@ -66,7 +61,7 @@ AS $$
 **          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          12/08/2011 mem - Added additional blacklisted factor names: Experiment, Dataset, Name, and Status
 **          12/09/2011 mem - Now checking for invalid Requested Run IDs
-**          12/15/2011 mem - Added support for the "type" attribute in the <id> tag
+**          12/15/2011 mem - Added support for the 'type' attribute in the <id> tag
 **          09/12/2012 mem - Now auto-removing columns Dataset_ID, Dataset, or Experiment if they are present as factor names
 **          04/06/2016 mem - Now using Try_Convert to convert from text to int
 **          10/06/2016 mem - Populate column Last_Updated in T_Factor
@@ -82,7 +77,7 @@ AS $$
 **                         - Rename temp table
 **          01/25/2023 mem - Block factors named 'Run_Order'
 **          11/03/2023 mem - Capitalize factor names based on historic usage
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/14/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -94,13 +89,14 @@ DECLARE
     _invalidCount int;
     _invalidIDs text;
     _matchCount int;
-    _xml AS xml;
+    _skipCount int;
+    _xml xml;
     _idType citext;
     _idTypeOriginal text;
     _badFactorNames text := '';
     _invalidRequestIDs text := '';
     _changeSummary text := '';
-    _usageMessage text := '';
+    _usageMessage text;
 
     _formatSpecifier text;
     _infoHead text;
@@ -135,14 +131,13 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------------------
 
-    _message := '';
-    _returnCode := '';
+    _factorList  := Trim(Coalesce(_factorList, ''));
+    _callingUser := Trim(Coalesce(_callingUser, ''));
+    _infoOnly    := Coalesce(_infoOnly, false);
 
-    If Coalesce(_callingUser, '') = '' Then
+    If _callingUser = '' Then
         _callingUser := public.get_user_login_without_domain('');
     End If;
-
-    _infoOnly := Coalesce(_infoOnly, false);
 
     -- Uncomment to log the XML for debugging purposes
     -- CALL post_log_entry ('Debug', _factorList, 'Update_Requested_Run_Factors');
@@ -153,7 +148,7 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_FactorInfo (
         Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        Identifier citext null,         -- Could be RequestID or DatasetName
+        Identifier citext null,         -- Can be RequestID or DatasetName
         Factor citext null,             -- Factor name
         Value citext null,
         DatasetID int null,             -- DatasetID; not always present
@@ -238,7 +233,7 @@ BEGIN
         UPDATE Tmp_FactorInfo
         SET Identifier = RR.request_id
         FROM t_requested_run RR
-        WHERE Tmp_FactorInfo.dataset_id = RR.dataset_id AND
+        WHERE Tmp_FactorInfo.DatasetID = RR.dataset_id AND
               Tmp_FactorInfo.Identifier IS NULL;
 
         -- The identifier column now contains RequestID values
@@ -254,7 +249,13 @@ BEGIN
             FROM Tmp_FactorInfo
             WHERE Identifier Is Null;
 
-            _message := format('%s; error with: %s', _message, Coalesce(_invalidIDs, '??'));
+            _message := format('%s; missing dataset %s: %s',
+                               _message,
+                               CASE WHEN _invalidIDs Like '%,%'
+                                    THEN 'IDs'
+                                    ELSE 'ID'
+                               END,
+                               Coalesce(_invalidIDs, '??'));
 
             If _infoOnly Then
                 -- Show the contents of Tmp_FactorInfo
@@ -301,8 +302,13 @@ BEGIN
 
         If Coalesce(_invalidIDs, '') <> '' Then
             -- One or more entries is non-numeric
-            _message := format('Identifier keys must all be integers when Identifier column contains %s; error with: ',
-                                _idTypeOriginal, Coalesce(_invalidIDs, '??'));
+            _message := format('Identifier keys must all be integers when Identifier column contains %s; invalid %s: ',
+                                _idTypeOriginal,
+                                CASE WHEN Position(',' IN _invalidIDs) > 0
+                                    THEN 'IDs'
+                                    ELSE 'ID'
+                                END,
+                                Coalesce(_invalidIDs, '??'));
 
             If _infoOnly Then
                 -- Show the contents of Tmp_FactorInfo
@@ -321,16 +327,16 @@ BEGIN
     -----------------------------------------------------------
 
     If _idType = 'RequestID' Then
-        -- Identifier is Requestid
+        -- Identifier is Request ID
         UPDATE Tmp_FactorInfo
         SET RequestID = public.try_cast(Identifier, 0);
     End If;
 
     If _idType = 'DatasetID' Then
-        -- Identifier is DatasetID
+        -- Identifier is Dataset ID
         UPDATE Tmp_FactorInfo
         SET RequestID = RR.request_id,
-            DatasetID = public.try_cast(Tmp_FactorInfo.Identifier, 0)
+            DatasetID = RR.dataset_id
         FROM t_requested_run RR
         WHERE public.try_cast(Tmp_FactorInfo.Identifier, 0) = RR.dataset_id;
 
@@ -340,7 +346,7 @@ BEGIN
         -- Identifier is Dataset Name
         UPDATE Tmp_FactorInfo
         SET RequestID = RR.request_id,
-            DatasetID = DS.Dataset_ID
+            DatasetID = DS.dataset_id
         FROM t_dataset DS
              INNER JOIN t_requested_run RR
                ON RR.dataset_id = DS.dataset_id
@@ -352,7 +358,7 @@ BEGIN
         -- Identifier is Job
         UPDATE Tmp_FactorInfo
         SET RequestID = RR.request_id,
-            DatasetID = DS.Dataset_ID
+            DatasetID = DS.dataset_id
         FROM t_analysis_job AJ
              INNER JOIN t_dataset DS
                ON DS.dataset_id = AJ.dataset_id
@@ -366,12 +372,13 @@ BEGIN
     -- Check for unresolved requests
     -----------------------------------------------------------
 
-    SELECT COUNT(*)
+    SELECT COUNT(*),
            SUM(CASE WHEN RequestID IS NULL THEN 1 ELSE 0 END)
     INTO _matchCount, _invalidCount
     FROM ( SELECT DISTINCT Identifier,
                            RequestID
-           FROM Tmp_FactorInfo ) InnerQ;
+           FROM Tmp_FactorInfo
+         ) InnerQ;
 
     If _invalidCount > 0 Then
         If _invalidCount = _matchCount And _matchCount = 1 Then
@@ -382,7 +389,7 @@ BEGIN
             _message := format('Unable to determine RequestID for %s of %s factors', _invalidCount, _matchCount);
         End If;
 
-        _message := format('%s; treating the Identifier column As %s', _message, _idType);
+        _message := format('%s; treating the identifier column as %s', _message, _idType);
 
         If _infoOnly Then
             -- Show the contents of Tmp_FactorInfo
@@ -408,10 +415,10 @@ BEGIN
     WHERE Factor SIMILAR TO '%[^0-9A-Za-z_.]%';
 
     If Coalesce(_badFactorNames, '') <> '' Then
-        If char_length(_badFactorNames) < 256 Then
-            _message := format('Unacceptable characters in factor names "%s"', _badFactorNames);
+        If char_length(_badFactorNames) <= 255 Then
+            _message := format('Unacceptable characters in factor names: "%s"', _badFactorNames);
         Else
-            _message := format('Unacceptable characters in factor names "%s ..."', Left(_badFactorNames, 256));
+            _message := format('Unacceptable characters in factor names: "%s ..."', Left(_badFactorNames, 255));
         End If;
 
         If _infoOnly Then
@@ -425,7 +432,7 @@ BEGIN
         RETURN;
     End If;
 
-    _formatSpecifier := '%-8s %-70s %-15s %-15s %-10s %-10s %-14s %-23s';
+    _formatSpecifier := '%-8s %-70s %-25s %-15s %-10s %-10s %-14s %-23s';
 
     _infoHead := format(_formatSpecifier,
                         'Entry_ID',
@@ -441,7 +448,7 @@ BEGIN
     _infoHeadSeparator := format(_formatSpecifier,
                                  '--------',
                                  '----------------------------------------------------------------------',
-                                 '---------------',
+                                 '-------------------------',
                                  '---------------',
                                  '----------',
                                  '----------',
@@ -451,6 +458,7 @@ BEGIN
 
     -----------------------------------------------------------
     -- Auto-delete data that cannot be a factor
+    --
     -- These column names could be present if the user
     -- saved the results of a list report (or of https://dms2.pnl.gov/requested_run_factors/param)
     -- to a text file, then edited the data in Excel, then included the extra columns when copying from Excel
@@ -469,8 +477,7 @@ BEGIN
         RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
-
-            SELECT Entry_ID
+            SELECT Entry_ID,
                    Identifier,
                    Factor,
                    Value,
@@ -478,14 +485,14 @@ BEGIN
                    RequestID AS Request_ID,
                    UpdateSkipCode,
                    CASE WHEN UpdateSkipCode = 2
-                        THEN 'Yes'
-                        ELSE 'No'
-                   END As AutoSkip_Invalid_Factor
+                        THEN 'Invalid factor that will be auto-skipped'
+                        ELSE ''
+                   END As Comment
             FROM Tmp_FactorInfo
             ORDER BY Entry_ID
         LOOP
             _infoData := format(_formatSpecifier,
-                                _previewData.Entry_ID
+                                _previewData.Entry_ID,
                                 _previewData.Identifier,
                                 _previewData.Factor,
                                 _previewData.Value,
@@ -504,7 +511,7 @@ BEGIN
     -- Make sure factor name is not in blacklist
     --
     -- Note that Javascript code behind https://dms2.pnl.gov/requested_run_factors/param and https://dms2.pnl.gov/requested_run_batch_blocking/grid
-    -- should auto-remove factors "Block" and "Run_Order" if it is present
+    -- should auto-remove factors 'Block' and 'Run_Order' if either is present
     -----------------------------------------------------------
 
     _badFactorNames := '';
@@ -535,12 +542,25 @@ BEGIN
         RETURN;
     End If;
 
+    SELECT COUNT(*)
+    INTO _skipCount
+    FROM Tmp_FactorInfo
+    WHERE UpdateSkipCode = 2;
+
+    If _skipCount > 0 And _message = '' Then
+        If _skipCount = 1 Then
+            _message := 'Skipping 1 factor with an invalid name';
+        Else
+            _message := format('Skipping %s factors with invalid names', _skipCount);
+        End If;
+    End If;
+
     -----------------------------------------------------------
     -- Auto-remove standard DMS names from the factor table
     -----------------------------------------------------------
 
     DELETE FROM Tmp_FactorInfo
-    WHERE Factor IN ('Dataset_ID', 'Dataset ID', 'Dataset', 'Experiment')
+    WHERE Factor IN ('Dataset_ID', 'Dataset ID', 'Dataset', 'Experiment');
 
     -----------------------------------------------------------
     -- Capitalize factor names based on historic usage
@@ -567,7 +587,7 @@ BEGIN
     UPDATE Tmp_FactorInfo SET Factor = 'Column'                       WHERE Factor = 'column';
     UPDATE Tmp_FactorInfo SET Factor = 'Condition'                    WHERE Factor = 'Condition';
     UPDATE Tmp_FactorInfo SET Factor = 'Created'                      WHERE Factor = 'Created';
-    UPDATE Tmp_FactorInfo SET Factor = 'Culture'                      WHERE Factor = 'culture'
+    UPDATE Tmp_FactorInfo SET Factor = 'Culture'                      WHERE Factor = 'culture';
     UPDATE Tmp_FactorInfo SET Factor = 'DatasetID'                    WHERE Factor = 'DatasetID';
     UPDATE Tmp_FactorInfo SET Factor = 'Date'                         WHERE Factor = 'Date';
     UPDATE Tmp_FactorInfo SET Factor = 'Day'                          WHERE Factor = 'Day';
@@ -643,7 +663,12 @@ BEGIN
 
     If Coalesce(_invalidRequestIDs, '') <> '' Then
 
-        _message := format('Invalid Requested Run IDs: %s', _invalidRequestIDs);
+        _message := format('Invalid Requested Run %s: %s',
+                           CASE WHEN _invalidRequestIDs Like '%,%'
+                                THEN 'IDs'
+                                ELSE 'ID'
+                           END,
+                           _invalidRequestIDs);
 
         If _infoOnly Then
             -- Show the contents of Tmp_FactorInfo
@@ -667,8 +692,8 @@ BEGIN
                    FROM t_factor
                    WHERE t_factor.type = 'Run_Request' AND
                          Tmp_FactorInfo.RequestID = t_factor.target_id AND
-                         Tmp_FactorInfo.Factor = t_factor.name AND
-                         Tmp_FactorInfo.value = t_factor.value )
+                         Tmp_FactorInfo.Factor    = t_factor.name AND
+                         Tmp_FactorInfo.Value     = t_factor.value );
 
     If _infoOnly Then
 
@@ -677,8 +702,7 @@ BEGIN
         RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
-
-            SELECT Entry_ID
+            SELECT Entry_ID,
                    Identifier,
                    Factor,
                    Value,
@@ -686,14 +710,14 @@ BEGIN
                    RequestID AS Request_ID,
                    UpdateSkipCode,
                    CASE WHEN UpdateSkipCode = 2
-                        THEN 'Yes'
-                        ELSE 'No'
-                   END As AutoSkip_Invalid_Factor
+                        THEN 'Invalid factor that will be auto-skipped'
+                        ELSE ''
+                   END As Comment
             FROM Tmp_FactorInfo
             ORDER BY Entry_ID
         LOOP
             _infoData := format(_formatSpecifier,
-                                _previewData.Entry_ID
+                                _previewData.Entry_ID,
                                 _previewData.Identifier,
                                 _previewData.Factor,
                                 _previewData.Value,
@@ -706,6 +730,7 @@ BEGIN
             RAISE INFO '%', _infoData;
         END LOOP;
 
+        DROP TABLE Tmp_FactorInfo;
         RETURN;
     End If;
 
@@ -718,20 +743,20 @@ BEGIN
           EXISTS ( SELECT 1
                    FROM Tmp_FactorInfo
                    WHERE UpdateSkipCode = 0 AND
-                         Tmp_FactorInfo.RequestID = t_factor.target_id AND
-                         Tmp_FactorInfo.Factor = t_factor.name AND
-                         Trim(Tmp_FactorInfo.value) = '' );
+                         Tmp_FactorInfo.RequestID   = t_factor.target_id AND
+                         Tmp_FactorInfo.Factor      = t_factor.name AND
+                         Trim(Tmp_FactorInfo.Value) = '' );
 
     -----------------------------------------------------------
     -- Update existing items in factors tables
     -----------------------------------------------------------
 
     UPDATE t_factor Target
-    SET value = Tmp_FactorInfo.value,
+    SET value = Src.Value,
         last_updated = CURRENT_TIMESTAMP
     FROM Tmp_FactorInfo Src
-    WHERE Src.RequestID      = Target.TargetID AND
-          Src.Factor         = Target.Name AND
+    WHERE Src.RequestID      = Target.target_id AND
+          Src.Factor         = Target.name AND
           Target.Type        = 'Run_Request' AND
           Src.UpdateSkipCode = 0 AND
           Src.Value <> Target.Value;
@@ -748,16 +773,16 @@ BEGIN
     SELECT 'Run_Request' AS Type,
            RequestID AS TargetID,
            Factor AS FactorName,
-           value,
+           Value,
            CURRENT_TIMESTAMP
     FROM Tmp_FactorInfo
     WHERE UpdateSkipCode = 0 AND
-          Trim(Tmp_FactorInfo.value) <> '' AND
+          Trim(Tmp_FactorInfo.Value) <> '' AND
           NOT EXISTS ( SELECT 1
                        FROM t_factor
                        WHERE Tmp_FactorInfo.RequestID = t_factor.target_id AND
-                             Tmp_FactorInfo.Factor = t_factor.name AND
-                             t_factor.type = 'Run_Request' );
+                             Tmp_FactorInfo.Factor    = t_factor.name AND
+                             t_factor.type            = 'Run_Request' );
 
     -----------------------------------------------------------
     -- Convert changed items to XML for logging
@@ -772,7 +797,7 @@ BEGIN
     -- Log changes
     -----------------------------------------------------------
 
-    If _changeSummary <> '' Then
+    If Coalesce(_changeSummary, '') <> '' Then
         INSERT INTO t_factor_log (changed_by, changes)
         VALUES (_callingUser, _changeSummary);
     End If;
@@ -788,4 +813,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_requested_run_factors IS 'UpdateRequestedRunFactors';
+
+ALTER PROCEDURE public.update_requested_run_factors(IN _factorlist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_requested_run_factors(IN _factorlist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_requested_run_factors(IN _factorlist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UpdateRequestedRunFactors';
+
