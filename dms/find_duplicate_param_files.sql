@@ -30,6 +30,7 @@ CREATE OR REPLACE FUNCTION public.find_duplicate_param_files(_paramfilenamefilte
 **          02/28/2023 mem - Use renamed parameter file type, 'MSGFPlus'
 **          02/13/2024 mem - Ported to PostgreSQL
 **          02/14/2024 mem - Add missing parentheses to where clause
+**                         - Populate Tmp_ParamFiles with all of the parameter files of the given type(s), but if a parameter file name filter is specified (using _paramFileNameFilter) only process those files
 **
 *****************************************************/
 DECLARE
@@ -88,7 +89,8 @@ BEGIN
         Param_File_ID int,
         Param_File_Name citext,
         Param_File_Type_ID int,
-        Param_File_Type citext
+        Param_File_Type citext,
+        Process_File boolean DEFAULT false
     );
 
     CREATE INDEX IX_Tmp_ParamFiles ON Tmp_ParamFiles (Entry_ID);
@@ -188,7 +190,7 @@ BEGIN
         _sql := format('%s WHERE true', _sql);
     End If;
 
-    If _paramFileNameFilter <> '' Then
+    If _paramFileNameFilter <> '' And _previewSql Then
         _sql := format('%s AND (%s)', _sql, public.create_like_clause_from_separated_string(_paramFileNameFilter, 'PF.Param_File_Name', ','));
     End If;
 
@@ -230,7 +232,24 @@ BEGIN
 
         If _showDebug Then
             RAISE INFO '';
-            RAISE INFO 'Found % parameter files matching the filters', _matchCount;
+            RAISE INFO 'Found % parameter files of type % %', _matchCount, _paramFileTypeList, CASE WHEN _checkValidOnly THEN '(with valid = 1)' ELSE '' END;
+        End If;
+
+        If _paramFileNameFilter <> '' And Then
+            _sql := 'UPDATE Tmp_ParamFiles '
+                    'SET Process_File = True ' ||
+                    format('WHERE %s', public.create_like_clause_from_separated_string(_paramFileNameFilter, 'Param_File_Name', ','));
+
+            EXECUTE (_sql);
+            GET DIAGNOSTICS _matchCount = ROW_COUNT;
+
+            If _showDebug Then
+                RAISE INFO '';
+                RAISE INFO '% parameter % name filter "%"', _matchCount, public.check_plural(_matchCount, 'file matches', 'files match'), _paramFileNameFilter;
+            End If;
+        Else
+            UPDATE Tmp_ParamFiles
+            SET Process_File = True;
         End If;
     End If;
 
@@ -250,10 +269,6 @@ BEGIN
     GROUP BY P.param_file_id;
 
     GET DIAGNOSTICS _matchCount = ROW_COUNT;
-
-    If _showDebug Then
-        RAISE INFO 'Determined mass mod counts for % parameter files', _matchCount;
-    End If;
 
     If _paramFileTypeList ILike '%SEQUEST%' Then
 
@@ -506,6 +521,7 @@ BEGIN
                PF.Param_File_Type_ID AS ParamFileTypeID,
                PF.Param_File_Type    AS ParamFileType
         FROM Tmp_ParamFiles PF
+        WHERE PF.Process_File = true
         ORDER BY PF.Entry_ID
     LOOP
 
