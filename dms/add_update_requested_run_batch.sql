@@ -76,6 +76,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **          01/19/2024 mem - Remove _requestedInstrumentGroup since we no longer track instrument group at the batch level
 **          01/22/2024 mem - Require that requested runs all have the same instrument group
 **                         - If any of the requested runs are already a member of another batch, call update_cached_requested_run_batch_stats() for the old batch ID(s)
+**          02/14/2024 mem - Update case statement for error message
 **
 *****************************************************/
 DECLARE
@@ -293,10 +294,10 @@ BEGIN
             End If;
 
             _message = format('%s in a batch must have the same instrument group; '
-                              'the selected %s requested runs are associated with multiple instrument groups (%s). '
+                              'the selected %srequested runs are associated with multiple instrument groups (%s). '
                               'Update the instrument groups for the requested runs, or create multiple batches',
                               _message,
-                              CASE WHEN _mode Like '%update%' THEN 'active' ELSE ' ' END,
+                              CASE WHEN _mode Like '%update%' THEN 'active ' ELSE '' END,
                               _instrumentGroups);
 
             If _raiseExceptions Then
