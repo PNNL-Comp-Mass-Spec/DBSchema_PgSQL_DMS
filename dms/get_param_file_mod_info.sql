@@ -1,22 +1,15 @@
 --
-CREATE OR REPLACE PROCEDURE public.get_param_file_mod_info
-(
-    _parameterFileName text,
-    INOUT _paramFileID int = 0,
-    INOUT _paramFileFound boolean = false,
-    INOUT _pmTargetSymbolList text = '',
-    INOUT _pmMassCorrectionTagList text = '',
-    INOUT _npMassCorrectionTagList text = '',
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: get_param_file_mod_info(text, integer, boolean, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.get_param_file_mod_info(IN _parameterfilename text, INOUT _paramfileid integer DEFAULT 0, INOUT _paramfilefound boolean DEFAULT false, INOUT _pmtargetsymbollist text DEFAULT ''::text, INOUT _pmmasscorrectiontaglist text DEFAULT ''::text, INOUT _npmasscorrectiontaglist text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      For given analysis parameter file, look up potential dynamic and actual static modifications
-**      and return description of each as comma-separated lists
+**      For a given parameter file, lookup potential dynamic and actual static modifications
+**      and return a description of each as comma-separated lists
 **
 **      This procedure is likely unused in 2022
 **
@@ -38,22 +31,27 @@ AS $$
 **          08/22/2004 grk - Added _paramFileID
 **          02/12/2010 mem - Increased size of _paramFileName to varchar(255)
 **          04/02/2020 mem - Remove cast of Mass_Correction_Tag to varchar since no longer char(8)
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/14/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
-    _ln int;
+    _targetSymbols text;
+    _massCorrectionTags text;
 BEGIN
     _message := '';
     _returnCode := '';
 
-    _paramFileID := 0;
-    _pmTargetSymbolList := '';
+    -----------------------------------------------------------
+    -- Validate the inputs and initialize the outputs
+    -----------------------------------------------------------
+
+    _parameterFileName       := Trim(Coalesce(_parameterFileName, ''));
+    _pmTargetSymbolList      := '';
     _pmMassCorrectionTagList := '';
     _npMassCorrectionTagList := '';
 
     -----------------------------------------------------------
-    -- Make sure this parameter file is defined in t_param_files
+    -- Resolve parameter file name to ID
     -----------------------------------------------------------
 
     SELECT param_file_id
@@ -64,6 +62,7 @@ BEGIN
     If FOUND Then
         _paramFileFound := true;
     Else
+        _paramFileID    := 0;
         _paramFileFound := false;
         _message := format('Unknown parameter file name: %s', _parameterFileName);
         RETURN;
@@ -81,7 +80,8 @@ BEGIN
            FROM V_Param_File_Mass_Mod_Info
            WHERE Mod_Type_Symbol = 'D' AND
                  Param_File_Name = _parameterFileName::citext
-           GROUP BY Local_Symbol, Mass_Correction_Tag) GroupQ;
+           GROUP BY Local_Symbol, Mass_Correction_Tag
+         ) GroupQ;
 
     -----------------------------------------------------------
     -- Static mods and terminus mods
@@ -89,11 +89,19 @@ BEGIN
 
     SELECT string_agg(Residue_Symbol,      ',' ORDER BY Residue_Symbol),
            string_agg(Mass_Correction_Tag, ',' ORDER BY Residue_Symbol)
-    INTO _pmTargetSymbolList,
-         _pmMassCorrectionTagList
+    INTO _targetSymbols,
+         _massCorrectionTags
     FROM V_Param_File_Mass_Mod_Info
     WHERE Mod_Type_Symbol IN ('T', 'P', 'S') AND
           Param_File_Name = _parameterFileName::citext;
+
+    If _targetSymbols <> '' Then
+        _pmTargetSymbolList := public.append_to_text(_pmTargetSymbolList, _targetSymbols, _delimiter => ',');
+    End If;
+
+    If _massCorrectionTags <> '' Then
+        _pmMassCorrectionTagList := public.append_to_text(_pmMassCorrectionTagList, _massCorrectionTags, _delimiter => ',');
+    End If;
 
     -----------------------------------------------------------
     -- Isotopic mods
@@ -105,7 +113,26 @@ BEGIN
     WHERE Mod_Type_Symbol IN ('I') AND
           Param_File_Name = _parameterFileName::citext;
 
+    If _pmTargetSymbolList Is Null Then
+        _pmTargetSymbolList := '';
+    End If;
+
+    If _pmMassCorrectionTagList Is Null Then
+        _pmMassCorrectionTagList := '';
+    End If;
+
+    If _npMassCorrectionTagList Is Null Then
+        _npMassCorrectionTagList := '';
+    End If;
 END
 $$;
 
-COMMENT ON PROCEDURE public.get_param_file_mod_info IS 'GetParamFileModInfo';
+
+ALTER PROCEDURE public.get_param_file_mod_info(IN _parameterfilename text, INOUT _paramfileid integer, INOUT _paramfilefound boolean, INOUT _pmtargetsymbollist text, INOUT _pmmasscorrectiontaglist text, INOUT _npmasscorrectiontaglist text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE get_param_file_mod_info(IN _parameterfilename text, INOUT _paramfileid integer, INOUT _paramfilefound boolean, INOUT _pmtargetsymbollist text, INOUT _pmmasscorrectiontaglist text, INOUT _npmasscorrectiontaglist text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.get_param_file_mod_info(IN _parameterfilename text, INOUT _paramfileid integer, INOUT _paramfilefound boolean, INOUT _pmtargetsymbollist text, INOUT _pmmasscorrectiontaglist text, INOUT _npmasscorrectiontaglist text, INOUT _message text, INOUT _returncode text) IS 'GetParamFileModInfo';
+
