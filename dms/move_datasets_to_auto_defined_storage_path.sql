@@ -1,18 +1,15 @@
 --
-CREATE OR REPLACE PROCEDURE public.move_datasets_to_auto_defined_storage_path
-(
-    _datasetIDList text,
-    _infoOnly boolean = true,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: move_datasets_to_auto_defined_storage_path(text, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.move_datasets_to_auto_defined_storage_path(IN _datasetidlist text, IN _infoonly boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $_$
 /****************************************************
 **
 **  Desc:
-**      Update the storage and archive locations for one or more datasets to use
-**      the auto-defined storage and archive paths instead of the current storage path
+**      Update the storage and archive locations for one or more datasets
+**      to use the auto-defined storage and archive paths instead of the current storage path
 **
 **      Only valid for instruments that have auto_define_storage_path enabled in t_instrument_name
 **
@@ -30,7 +27,7 @@ AS $$
 **          08/19/2016 mem - Call Update_Cached_Dataset_Folder_Paths
 **          09/02/2016 mem - Replace archive\dmsarch with simply dmsarch due to switch from \\aurora.emsl.pnl.gov\archive\dmsarch\ to \\adms.emsl.pnl.gov\dmsarch\
 **          05/28/2023 mem - Remove unnecessary call to Replace()
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -41,7 +38,7 @@ DECLARE
     _archivePathID int;
     _archivePathIDNew int;
     _oldAndNewPaths text;
-    _callingProcName text;
+    _moveCount int;
 
     _sqlState text;
     _exceptionMessage text;
@@ -61,7 +58,7 @@ BEGIN
         _infoOnly      := Coalesce(_infoOnly, true);
 
         -----------------------------------------
-        -- Parse the values in _datasetIDList
+        -- Populate a temporary table with the dataset IDs
         -----------------------------------------
 
         CREATE TEMP TABLE Tmp_Datasets (
@@ -73,7 +70,7 @@ BEGIN
 
         INSERT INTO Tmp_Datasets (DatasetID)
         SELECT DISTINCT Value
-        FROM public.parse_delimited_integer_list(_datasetIDList)
+        FROM public.parse_delimited_integer_list(_datasetIDList);
 
         If Not FOUND Then
             _message := 'No values found in _datasetIDList; unable to continue';
@@ -85,13 +82,18 @@ BEGIN
             RETURN;
         End If;
 
-        SELECT string_agg(DatasetID, ', ' ORDER BY DatasetID)
+        SELECT string_agg(DatasetID::text, ', ' ORDER BY DatasetID)
         INTO _invalidDatasetIDs
         FROM Tmp_Datasets
         WHERE NOT EXISTS (SELECT DS.dataset_id FROM t_dataset DS WHERE Tmp_Datasets.DatasetID = DS.dataset_id);
 
-        If _invalidDatasetIDs <> ''
-            _message := format('Invalid dataset ID(s); aborting: %s', _invalidDatasetIDs);
+        If _invalidDatasetIDs <> '' Then
+            _message := format('Invalid dataset %s; aborting: %s',
+                                CASE WHEN _invalidDatasetIDs LIKE '%,%'
+                                     THEN 'IDs'
+                                     ELSE 'ID'
+                                END,
+                                _invalidDatasetIDs);
 
             RAISE WARNING '%', _message;
 
@@ -124,9 +126,13 @@ BEGIN
         -- Remove any instruments that don't have Auto_Define_Storage_Path defined
         -----------------------------------------
 
-        If Exists (SELECT *
-                   FROM Tmp_Datasets DS INNER JOIN t_instrument_name Inst ON Inst.instrument_id = DS.InstrumentID
-                   WHERE Inst.Auto_Define_Storage_Path = 0) Then
+        If Exists (SELECT DatasetID
+                   FROM Tmp_Datasets DS
+                        INNER JOIN t_instrument_name Inst
+                          ON Inst.instrument_id = DS.InstrumentID
+                   WHERE Inst.Auto_Define_Storage_Path = 0)
+        Then
+            RAISE INFO '';
 
             FOR _instrument IN
                 SELECT DISTINCT Inst.instrument
@@ -135,43 +141,50 @@ BEGIN
                        ON Inst.instrument_id = DS.InstrumentID
                 WHERE Inst.auto_define_storage_path = 0
             LOOP
-                RAISE WARNING 'Skipping % since it has auto_define_storage_path = 0 in t_instrument_name', _instrument;
+                RAISE WARNING 'Skipping datasets for % since it has auto_define_storage_path = 0 in t_instrument_name', _instrument;
             END LOOP;
 
             DELETE FROM Tmp_Datasets
-            WHERE DS.InstrumentID IN (SELECT Inst.instrument_id FROM t_instrument_name Inst WHERE Inst.auto_define_storage_path = 0);
+            WHERE InstrumentID IN (SELECT Inst.instrument_id FROM t_instrument_name Inst WHERE Inst.auto_define_storage_path = 0);
 
         End If;
 
+        RAISE INFO '';
+
         -----------------------------------------
-        -- Parse each dataset in _datasetIDList
+        -- Process each dataset
         -----------------------------------------
 
+        _moveCount := 0;
+
         FOR _datasetInfo IN
-            SELECT Tmp_Datasets.DatasetID As DatasetID
-                   Tmp_Datasets.InstrumentID As InstrumentID,
-                   DS.dataset As Dataset,
-                   DS.created As RefDate,
-                   DS.storage_path_ID As StoragePathID
+            SELECT Tmp_Datasets.DatasetID,
+                   Tmp_Datasets.InstrumentID,
+                   DS.Dataset,
+                   DS.created AS RefDate,
+                   DS.storage_path_ID AS StoragePathID
             FROM Tmp_Datasets
                  INNER JOIN t_dataset DS
                    ON Tmp_Datasets.DatasetID = DS.dataset_id
             ORDER BY Tmp_Datasets.DatasetID
         LOOP
 
-            RAISE INFO 'Processing %', _datasetInfo.Dataset;
+            RAISE INFO 'Processing %: %', _datasetInfo.DatasetID, _datasetInfo.Dataset;
 
             -----------------------------------------
             -- Lookup the auto-defined storage path
             -----------------------------------------
 
             _storagePathIDNew := get_instrument_storage_path_for_new_datasets (
-                                    _datasetInfo.InstrumentID,
-                                    _datasetInfo.RefDate,
+                                    _instrumentID            => _datasetInfo.InstrumentID,
+                                    _refDate                 => _datasetInfo.RefDate,
                                     _autoSwitchActiveStorage => false,
-                                    _infoOnly => false);
+                                    _infoOnly                => false);
 
             If _storagePathIDNew <> 0 And _datasetInfo.StoragePathID <> _storagePathIDNew Then
+
+                -- Originally _oldAndNewPaths was of the form 'Move \\Proto-3\H$\Instrument_Name\Dataset_Name \\proto-3\H$\Instrument_Name\2011_2\Dataset_Name'
+                -- But we stopped including "Move" in 2011 since it's implied
 
                 SELECT format('%s %s', OldStorage.Path, NewStorage.Path)
                 INTO _oldAndNewPaths
@@ -185,19 +198,20 @@ BEGIN
                        WHERE storage_path_id = _storagePathIDNew
                      ) NewStorage;
 
-                If Not _infoOnly Then
-
+                If _infoOnly Then
+                    RAISE INFO '  Move %', _oldAndNewPaths;
+                Else
                     UPDATE t_dataset
                     SET storage_path_ID = _storagePathIDNew
                     WHERE dataset_id = _datasetInfo.DatasetID;
 
-                    INSERT INTO t_dataset_storage_move_log (dataset_id, storage_path_old, storage_path_new, MoveCmd)
+                    INSERT INTO t_dataset_storage_move_log (dataset_id, storage_path_old, storage_path_new, move_cmd)
                     VALUES (_datasetInfo.DatasetID, _datasetInfo.StoragePathID, _storagePathIDNew, _oldAndNewPaths);
 
-                Else
-                    RAISE INFO '%', _oldAndNewPaths;
+                    RAISE INFO '  moved storage path from % to %', _datasetInfo.StoragePathID, _storagePathIDNew;
                 End If;
 
+                _moveCount := _moveCount + 1;
             End If;
 
             -----------------------------------------
@@ -210,6 +224,9 @@ BEGIN
             WHERE dataset_id = _datasetInfo.DatasetID;
 
             If Not FOUND Then
+                If _storagePathIDNew <> 0 And _datasetInfo.StoragePathID <> _storagePathIDNew Then
+                    RAISE INFO '';
+                End If;
                 CONTINUE;
             End If;
 
@@ -218,12 +235,15 @@ BEGIN
             -----------------------------------------
 
             _archivePathIDNew := public.get_instrument_archive_path_for_new_datasets (
-                                            _datasetInfo.InstrumentID,
-                                            _datasetInfo.DatasetID,
-                                            _autoSwitchActiveArchive => false,
-                                            _infoOnly => false);
+                                            _instrumentID             => _datasetInfo.InstrumentID,
+                                            _datasetID                => _datasetInfo.DatasetID,
+                                            _autoSwitchActiveArchive  => false,
+                                            _infoOnly                 => false);
 
             If _archivePathIDNew = 0 Or _archivePathID = _archivePathIDNew Then
+                If _storagePathIDNew <> 0 And _datasetInfo.StoragePathID <> _storagePathIDNew Then
+                    RAISE INFO '';
+                End If;
                 CONTINUE;
             End If;
 
@@ -239,22 +259,30 @@ BEGIN
                    WHERE archive_path_id = _archivePathIDNew
                  ) NewArchive;
 
-            If Not _infoOnly Then
-
+            If _infoOnly Then
+                RAISE INFO '  Move %', _oldAndNewPaths;
+            Else
                 UPDATE t_dataset_archive
                 SET storage_path_id = _archivePathIDNew
-                WHERE dataset_id = _datasetInfo.DatasetID
+                WHERE dataset_id = _datasetInfo.DatasetID;
 
-                INSERT INTO t_dataset_storage_move_log (dataset_id, archive_path_old, archive_path_new, MoveCmd)
+                INSERT INTO t_dataset_storage_move_log (dataset_id, archive_path_old, archive_path_new, move_cmd)
                 VALUES (_datasetInfo.DatasetID, _archivePathID, _archivePathIDNew, _oldAndNewPaths);
 
-            Else
-                RAISE INFO '%', _oldAndNewPaths;
+                RAISE INFO '  moved archive path from % to %', _datasetInfo.StoragePathID, _storagePathIDNew;
             End If;
 
+            _moveCount := _moveCount + 1;
+
+            If _storagePathIDNew <> 0 And _datasetInfo.StoragePathID <> _storagePathIDNew OR
+               _archivePathIDNew <> 0 And _archivePathID <> _archivePathIDNew Then
+                RAISE INFO '';
+            End If;
         END LOOP;
 
-        If Not _infoOnly Then
+        If Not _infoOnly And _moveCount > 0 Then
+            RAISE INFO 'Updating cached paths in t_cached_dataset_folder_paths';
+
             UPDATE t_cached_dataset_folder_paths Target
             SET update_required = 1
             FROM Tmp_Datasets Src
@@ -265,7 +293,6 @@ BEGIN
                             _showdebug      => false,
                             _message        => _message,       -- Output
                             _returnCode     => _returnCode);   -- Output
-
         End If;
 
     EXCEPTION
@@ -293,6 +320,14 @@ BEGIN
 
     DROP TABLE IF EXISTS Tmp_Datasets;
 END
-$$;
+$_$;
 
-COMMENT ON PROCEDURE public.move_datasets_to_auto_defined_storage_path IS 'MoveDatasetsToAutoDefinedStoragePath';
+
+ALTER PROCEDURE public.move_datasets_to_auto_defined_storage_path(IN _datasetidlist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE move_datasets_to_auto_defined_storage_path(IN _datasetidlist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.move_datasets_to_auto_defined_storage_path(IN _datasetidlist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'MoveDatasetsToAutoDefinedStoragePath';
+
