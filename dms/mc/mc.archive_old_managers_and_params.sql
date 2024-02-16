@@ -49,6 +49,7 @@ CREATE OR REPLACE FUNCTION mc.archive_old_managers_and_params(_mgrlist text, _in
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          02/15/2024 mem - Rename temporary table
 **
 *****************************************************/
 DECLARE
@@ -67,7 +68,7 @@ BEGIN
     _mgrList  := Trim(Coalesce(_mgrList, ''));
     _infoOnly := Coalesce(_infoOnly, true);
 
-    CREATE TEMP TABLE TmpManagerList (
+    CREATE TEMP TABLE Tmp_ManagerList (
         manager_name citext NOT NULL,
         mgr_id int NULL,
         control_from_web smallint null
@@ -80,15 +81,15 @@ BEGIN
     );
 
     ---------------------------------------------------
-    -- Populate TmpManagerList with the managers in _mgrList
+    -- Populate Tmp_ManagerList with the managers in _mgrList
     -- Setting _remove_unknown_managers to 0 so that this procedure can be called repeatedly without raising an error
     ---------------------------------------------------
 
-    INSERT INTO TmpManagerList (manager_name)
+    INSERT INTO Tmp_ManagerList (manager_name)
     SELECT manager_name
     FROM mc.parse_manager_name_list (_mgrList, _remove_unknown_managers => 0);
 
-    If Not Exists (SELECT * FROM TmpManagerList) Then
+    If Not Exists (SELECT * FROM Tmp_ManagerList) Then
         _message := '_mgrList did not match any managers in mc.t_mgrs: ';
         RAISE INFO 'Warning: %', _message;
 
@@ -106,7 +107,7 @@ BEGIN
                current_timestamp::timestamp as last_affected,
                ''::citext as entered_by;
 
-        DROP TABLE TmpManagerList;
+        DROP TABLE Tmp_ManagerList;
         DROP TABLE TmpWarningMessages;
         RETURN;
     End If;
@@ -115,71 +116,71 @@ BEGIN
     -- Validate the manager names
     ---------------------------------------------------
 
-    UPDATE TmpManagerList
+    UPDATE Tmp_ManagerList
     SET mgr_id = M.mgr_id,
         control_from_web = M.control_from_website
     FROM mc.t_mgrs M
-    WHERE TmpManagerList.Manager_Name = M.mgr_name;
+    WHERE Tmp_ManagerList.Manager_Name = M.mgr_name;
 
-    If Exists (SELECT * FROM TmpManagerList MgrList WHERE MgrList.mgr_id Is Null) Then
+    If Exists (SELECT * FROM Tmp_ManagerList MgrList WHERE MgrList.mgr_id Is Null) Then
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Unknown manager (not in mc.t_mgrs)',
                MgrList.manager_name
-        FROM TmpManagerList MgrList
+        FROM Tmp_ManagerList MgrList
         WHERE MgrList.mgr_id Is Null
         ORDER BY MgrList.manager_name;
     End If;
 
-    If Exists (SELECT * FROM TmpManagerList MgrList WHERE NOT MgrList.mgr_id Is Null And MgrList.control_from_web > 0) Then
+    If Exists (SELECT * FROM Tmp_ManagerList MgrList WHERE NOT MgrList.mgr_id Is Null And MgrList.control_from_web > 0) Then
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Manager has control_from_website=1; cannot archive',
                MgrList.manager_name
-        FROM TmpManagerList  MgrList
+        FROM Tmp_ManagerList  MgrList
         WHERE NOT MgrList.mgr_id IS NULL And MgrList.control_from_web > 0
         ORDER BY MgrList.manager_name;
 
-        DELETE FROM TmpManagerList
+        DELETE FROM Tmp_ManagerList
         WHERE manager_name IN (SELECT WarnMsgs.manager_name FROM TmpWarningMessages WarnMsgs WHERE NOT WarnMsgs.message ILIKE 'Note:%');
     End If;
 
-    If Exists (SELECT manager_name FROM TmpManagerList WHERE manager_name ILike '%Params%') Then
+    If Exists (SELECT manager_name FROM Tmp_ManagerList WHERE manager_name ILike '%Params%') Then
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Will not process managers with "Params" in the name (for safety)',
                manager_name
-        FROM TmpManagerList
+        FROM Tmp_ManagerList
         WHERE manager_name ILike '%Params%'
         ORDER BY manager_name;
 
-        DELETE FROM TmpManagerList
+        DELETE FROM Tmp_ManagerList
         WHERE manager_name IN (SELECT WarnMsgs.manager_name FROM TmpWarningMessages WarnMsgs WHERE NOT WarnMsgs.message ILIKE 'Note:%');
     End If;
 
-    DELETE FROM TmpManagerList
-    WHERE TmpManagerList.mgr_id Is Null OR
-          TmpManagerList.control_from_web > 0;
+    DELETE FROM Tmp_ManagerList
+    WHERE Tmp_ManagerList.mgr_id Is Null OR
+          Tmp_ManagerList.control_from_web > 0;
 
-    If Exists (SELECT * FROM TmpManagerList Src INNER JOIN mc.t_old_managers Target ON Src.mgr_id = Target.mgr_id) Then
+    If Exists (SELECT * FROM Tmp_ManagerList Src INNER JOIN mc.t_old_managers Target ON Src.mgr_id = Target.mgr_id) Then
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Manager already exists in t_old_managers; cannot archive',
                manager_name
-        FROM TmpManagerList Src
+        FROM Tmp_ManagerList Src
              INNER JOIN mc.t_old_managers Target
                ON Src.mgr_id = Target.mgr_id;
 
-        DELETE FROM TmpManagerList
+        DELETE FROM Tmp_ManagerList
         WHERE manager_name IN (SELECT WarnMsgs.manager_name FROM TmpWarningMessages WarnMsgs WHERE NOT WarnMsgs.message ILIKE 'Note:%');
     End If;
 
-    If Exists (SELECT * FROM TmpManagerList Src INNER JOIN mc.t_param_value_old_managers Target ON Src.mgr_id = Target.mgr_id) Then
+    If Exists (SELECT * FROM Tmp_ManagerList Src INNER JOIN mc.t_param_value_old_managers Target ON Src.mgr_id = Target.mgr_id) Then
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Note: manager already has parameters in t_param_value_old_managers; will merge values from t_param_value',
                manager_name
-        FROM TmpManagerList Src
+        FROM Tmp_ManagerList Src
              INNER JOIN mc.t_param_value_old_managers Target
                ON Src.mgr_id = Target.mgr_id;
     End If;
 
-    If _infoOnly Or Not Exists (SELECT * FROM TmpManagerList) Then
+    If _infoOnly Or Not Exists (SELECT * FROM Tmp_ManagerList) Then
         RETURN QUERY
         SELECT ' To be archived' as message,
                Src.manager_name,
@@ -193,7 +194,7 @@ BEGIN
                PV.Comment,
                PV.Last_Affected,
                PV.Entered_By
-        FROM TmpManagerList Src
+        FROM Tmp_ManagerList Src
              LEFT OUTER JOIN mc.v_param_value PV
                ON PV.mgr_id = Src.mgr_id
         UNION
@@ -212,7 +213,7 @@ BEGIN
         FROM TmpWarningMessages WarnMsgs
         ORDER BY message ASC, manager_name, param_name;
 
-        DROP TABLE TmpManagerList;
+        DROP TABLE Tmp_ManagerList;
         DROP TABLE TmpWarningMessages;
         RETURN;
     End If;
@@ -233,7 +234,7 @@ BEGIN
            M.control_from_website,
            M.comment
     FROM mc.t_mgrs M
-         INNER JOIN TmpManagerList Src
+         INNER JOIN Tmp_ManagerList Src
            ON M.mgr_id = Src.mgr_id
       LEFT OUTER JOIN mc.t_old_managers Target
            ON Src.mgr_id = Target.mgr_id
@@ -264,7 +265,7 @@ BEGIN
            PV.last_affected,
            PV.entered_by
     FROM mc.t_param_value PV
-         INNER JOIN TmpManagerList Src
+         INNER JOIN Tmp_ManagerList Src
            ON PV.mgr_id = Src.mgr_id
    ON CONFLICT ON CONSTRAINT pk_t_param_value_old_managers
    DO UPDATE SET
@@ -278,12 +279,12 @@ BEGIN
     RAISE INFO 'Delete from mc.t_param_value';
 
     DELETE FROM mc.t_param_value target
-    WHERE target.mgr_id IN (SELECT MgrList.mgr_id FROM TmpManagerList MgrList);
+    WHERE target.mgr_id IN (SELECT MgrList.mgr_id FROM Tmp_ManagerList MgrList);
 
     RAISE INFO 'Delete from mc.t_mgrs';
 
     DELETE FROM mc.t_mgrs target
-    WHERE target.mgr_id IN (SELECT MgrList.mgr_id FROM TmpManagerList MgrList);
+    WHERE target.mgr_id IN (SELECT MgrList.mgr_id FROM Tmp_ManagerList MgrList);
 
     RAISE INFO 'Delete succeeded; returning results';
 
@@ -300,7 +301,7 @@ BEGIN
            PV.comment,
            PV.last_affected,
            PV.entered_by
-    FROM TmpManagerList Src
+    FROM Tmp_ManagerList Src
          LEFT OUTER JOIN mc.t_old_managers OldMgrs
            ON OldMgrs.mgr_id = Src.mgr_id
          LEFT OUTER JOIN mc.t_param_value_old_managers PV
@@ -309,7 +310,7 @@ BEGIN
          PV.param_type_id = PT.param_type_id
     ORDER BY Src.manager_name, param_name;
 
-    DROP TABLE TmpManagerList;
+    DROP TABLE Tmp_ManagerList;
     DROP TABLE TmpWarningMessages;
 
 EXCEPTION
@@ -339,7 +340,7 @@ EXCEPTION
            current_timestamp::timestamp as last_affected,
            ''::citext as entered_by;
 
-    DROP TABLE IF EXISTS TmpManagerList;
+    DROP TABLE IF EXISTS Tmp_ManagerList;
     DROP TABLE IF EXISTS TmpWarningMessages;
 END
 $$;
