@@ -57,8 +57,7 @@ BEGIN
     -- Populate a temporary table with the dataset names to create jobs for
     ---------------------------------------------------
 
-    CREATE TEMP TABLE Tmp_DatasetsToProcess
-    (
+    CREATE TEMP TABLE Tmp_DatasetsToProcess (
         EntryID int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         Dataset text
     );

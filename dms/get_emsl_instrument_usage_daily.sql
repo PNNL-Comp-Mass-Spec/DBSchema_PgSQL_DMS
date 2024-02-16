@@ -37,8 +37,7 @@ BEGIN
 
     -- Table for processing runs and intervals for reporting month
 
-    CREATE TEMP TABLE Tmp_T_Working
-    (
+    CREATE TEMP TABLE Tmp_T_Working (
         Dataset_ID int null,
         EMSL_Inst_ID int null,
         DMS_Instrument text null,
@@ -64,8 +63,7 @@ BEGIN
 
     -- Intermediate storage for report entries
 
-    CREATE TEMP TABLE Tmp_T_Report_Accumulation
-    (
+    CREATE TEMP TABLE Tmp_T_Report_Accumulation (
         Start timestamp,
         Duration_Seconds int,
         Month int,

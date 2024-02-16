@@ -97,7 +97,7 @@ BEGIN
         -- stored in the data warehouse
         ----------------------------------------------------------
 
-        CREATE TEMP TABLE Tmp_ChargeCode(
+        CREATE TEMP TABLE Tmp_ChargeCode (
             Charge_Code citext NOT NULL,
             Resp_Username text NULL,
             Resp_HID text NULL,

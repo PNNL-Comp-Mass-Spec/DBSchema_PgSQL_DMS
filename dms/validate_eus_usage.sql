@@ -483,8 +483,7 @@ BEGIN
                 */
             End If;
 
-            CREATE TEMP TABLE Tmp_Users
-            (
+            CREATE TEMP TABLE Tmp_Users (
                 Item text
             );
 

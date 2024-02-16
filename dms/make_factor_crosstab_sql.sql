@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION public.make_factor_crosstab_sql(_collist text, _viewn
 **          );
 **
 **      It must also create temp table Tmp_Factors, but this function will populate it
-**          CREATE TEMP TABLE Tmp_Factors
+**          CREATE TEMP TABLE Tmp_Factors (
 **              FactorID int,
 **              FactorName citext NULL
 **          );

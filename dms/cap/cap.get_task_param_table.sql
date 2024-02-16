@@ -73,7 +73,7 @@ BEGIN
     -- Temp table to hold capture task job parameters
     ---------------------------------------------------
 
-    CREATE TEMP TABLE Tmp_Param_Tab(
+    CREATE TEMP TABLE Tmp_Param_Tab (
         Section citext,
         Name citext,
         Value citext

@@ -55,8 +55,7 @@ BEGIN
     -- Create a temporary table to hold the rank data
     ------------------------------------------------
 
-    CREATE TEMP TABLE T_Tmp_SchemaChangeLogRank
-    (
+    CREATE TEMP TABLE T_Tmp_SchemaChangeLogRank (
         schema_change_log_id int,
         version_rank int,
         current_source_length int,

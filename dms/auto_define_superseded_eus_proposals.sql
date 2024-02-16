@@ -44,8 +44,7 @@ BEGIN
     -- Create a temporary table
     ---------------------------------------------------
 
-    CREATE TEMP TABLE Tmp_ProposalsToUpdate
-    (
+    CREATE TEMP TABLE Tmp_ProposalsToUpdate (
         Proposal_ID text NOT NULL,
         Newest_Proposal_ID text NOT NULL
     );

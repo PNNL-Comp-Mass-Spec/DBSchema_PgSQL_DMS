@@ -92,15 +92,13 @@ BEGIN
     -- Populate temporary tables with the data in _observationStatsTopNPct and _medianIntensitiesTopNPct
     -----------------------------------------------
 
-    CREATE TEMP TABLE Tmp_RepIonObsStatsTopNPct
-    (
+    CREATE TEMP TABLE Tmp_RepIonObsStatsTopNPct (
         Channel int Not Null,
         Observation_Rate text,
         Observation_Rate_Value real Null
     );
 
-    CREATE TEMP TABLE Tmp_RepIonIntensities
-    (
+    CREATE TEMP TABLE Tmp_RepIonIntensities (
         Channel int Not Null,
         Median_Intensity text,
         Median_Intensity_Value int Null

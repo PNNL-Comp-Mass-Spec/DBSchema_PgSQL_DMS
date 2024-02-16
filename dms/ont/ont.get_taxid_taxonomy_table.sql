@@ -22,8 +22,7 @@ DECLARE
     _rank citext;
 BEGIN
 
-    CREATE TEMP TABLE Tmp_Taxonomy
-    (
+    CREATE TEMP TABLE Tmp_Taxonomy (
         Rank citext not NULL,
         Name citext NOT NULL,
         Tax_ID int NOT NULL,

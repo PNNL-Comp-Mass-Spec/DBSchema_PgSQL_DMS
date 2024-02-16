@@ -187,14 +187,12 @@ BEGIN
         -- Populate temorary tables using _itemNameList and _itemValueList
         ---------------------------------------------------
 
-        CREATE TEMP TABLE Tmp_AuxInfoNames
-        (
+        CREATE TEMP TABLE Tmp_AuxInfoNames (
             EntryID int,
             ItemName text
         );
 
-        CREATE TEMP TABLE Tmp_AuxInfoValues
-        (
+        CREATE TEMP TABLE Tmp_AuxInfoValues (
             EntryID int,
             ItemValue text
         );

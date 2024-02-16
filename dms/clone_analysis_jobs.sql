@@ -126,7 +126,7 @@ BEGIN
             RowNum int NOT NULL
         );
 
-        CREATE TEMP TABLE Tmp_NewJobInfo(
+        CREATE TEMP TABLE Tmp_NewJobInfo (
             JobId_Old int NOT NULL,
             JobId_New int NOT NULL,
             Batch_ID int NOT NULL,

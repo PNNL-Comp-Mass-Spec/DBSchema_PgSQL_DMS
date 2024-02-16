@@ -77,8 +77,7 @@ BEGIN
     -- Populate a temorary table with the requests to process
     ---------------------------------------------------
 
-    CREATE TEMP TABLE Tmp_RequestsToProcess
-    (
+    CREATE TEMP TABLE Tmp_RequestsToProcess (
         RequestID int
     );
 

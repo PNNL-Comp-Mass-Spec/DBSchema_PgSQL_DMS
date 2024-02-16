@@ -67,7 +67,7 @@ BEGIN
 
     */
 
-    CALL cap.request_ctm_step_task(
+    CALL cap.request_ctm_step_task (
                 _processorName     => _processorName,
                 _jobNumber         => _job,
                 _results           => _results,

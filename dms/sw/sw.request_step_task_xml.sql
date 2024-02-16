@@ -380,8 +380,7 @@ BEGIN
             -- Get list of step tools currently assigned to processor
             ---------------------------------------------------
 
-            CREATE TEMP TABLE Tmp_AvailableProcessorTools
-            (
+            CREATE TEMP TABLE Tmp_AvailableProcessorTools (
                 Processor_Tool_Group text,
                 Tool_Name text,
                 CPU_Load int,

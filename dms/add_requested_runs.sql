@@ -243,8 +243,7 @@ BEGIN
         -- Populate a temporary table with the experiments to process
         ---------------------------------------------------
 
-        CREATE TEMP TABLE Tmp_ExperimentsToProcess
-        (
+        CREATE TEMP TABLE Tmp_ExperimentsToProcess (
             EntryID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
             Experiment text,
             RequestID Int null

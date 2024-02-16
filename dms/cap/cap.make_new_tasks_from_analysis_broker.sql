@@ -53,7 +53,10 @@ BEGIN
     -- Create a temporary table containing defaults for this SP
     ---------------------------------------------------
 
-    CREATE TEMP TABLE Tmp_Default_Params( param_name text, param_value text );
+    CREATE TEMP TABLE Tmp_Default_Params (
+        param_name text,
+        param_value text
+    );
 
     INSERT INTO Tmp_Default_Params( param_name, param_value )
     SELECT param_name, param_value

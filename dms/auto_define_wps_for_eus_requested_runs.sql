@@ -57,8 +57,7 @@ BEGIN
     -- Create a temporary table
     ---------------------------------------------------
 
-    CREATE TEMP TABLE Tmp_ProposalsToCheck
-    (
+    CREATE TEMP TABLE Tmp_ProposalsToCheck (
         Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         EUSProposal text NOT NULL,
         BestWorkPackage text NULL,
@@ -109,8 +108,7 @@ BEGIN
     -- Populate a new temporary table with the requested runs to update
     ---------------------------------------------------
 
-    CREATE TEMP TABLE Tmp_RequestedRunsToUpdate
-    (
+    CREATE TEMP TABLE Tmp_RequestedRunsToUpdate (
         EUSProposal text NOT NULL,
         WorkPackage text NOT NULL,
         RequestedRunID int NOT NULL
