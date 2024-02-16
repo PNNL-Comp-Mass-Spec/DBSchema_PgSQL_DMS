@@ -1,19 +1,14 @@
 --
-CREATE OR REPLACE PROCEDURE public.preview_purge_task_candidates
-(
-    _storageServerName text = '',
-    _storageVol text = '',
-    _datasetsPerShare int = 5,
-    _previewSql boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: preview_purge_task_candidates(text, text, integer, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.preview_purge_task_candidates(IN _storageservername text DEFAULT ''::text, IN _storagevol text DEFAULT ''::text, IN _datasetspershare integer DEFAULT 5, IN _previewsql boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Return the next _datasetsPerShare datasets that would be purged on the specified server,
+**      Display the next _datasetsPerShare datasets that would be purged on the specified server,
 **      or on a series of servers (if _storageServerName and/or _storageVol are blank)
 **
 **      Calls procedure request_purge_task() using _infoOnly = true
@@ -31,10 +26,11 @@ AS $$
 **          01/11/2011 mem - Renamed parameter _serverVol to _serverDisk when calling Request_Purge_Task
 **          02/01/2011 mem - Now passing parameter _excludeStageMD5RequiredDatasets to Request_Purge_Task
 **          06/07/2013 mem - Now auto-updating _storageServerName and _storageVol to match the format required by Request_Purge_Task
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
+    _results refcursor;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -72,6 +68,7 @@ BEGIN
         _storageVol := format('%s\', _storageVol);
     End If;
 
+    RAISE INFO '';
     RAISE INFO 'Server: %', _storageServerName;
     RAISE INFO 'Volume: %', _storageVol;
 
@@ -80,16 +77,26 @@ BEGIN
     --------------------------------------------------
 
     CALL public.request_purge_task (
-                    _storageServerName               => _storageServerName,
-                    _serverDisk                      => _storageVol,
-                    _excludeStageMD5RequiredDatasets => false,
-                    _message                         => _message,           -- Output
-                    _returnCode                      => _returnCode,        -- Output
-                    _infoOnly                        => true,
-                    _previewCount                    => _datasetsPerShare
-                    _previewSql                      => _previewSql);
-
+                _storageServerName               => _storageServerName,
+                _serverDisk                      => _storageVol,
+                _excludeStageMD5RequiredDatasets => false,
+                _results                         => _results,       -- Output
+                _message                         => _message,       -- Output
+                _returnCode                      => _returnCode,    -- Output
+                _infoOnly                        => true,
+                _previewCount                    => _datasetsPerShare,
+                _previewSql                      => _previewSql,
+                _showDebug                      => false
+            );
 END
 $$;
 
-COMMENT ON PROCEDURE public.preview_purge_task_candidates IS 'PreviewPurgeTaskCandidates';
+
+ALTER PROCEDURE public.preview_purge_task_candidates(IN _storageservername text, IN _storagevol text, IN _datasetspershare integer, IN _previewsql boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE preview_purge_task_candidates(IN _storageservername text, IN _storagevol text, IN _datasetspershare integer, IN _previewsql boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.preview_purge_task_candidates(IN _storageservername text, IN _storagevol text, IN _datasetspershare integer, IN _previewsql boolean, INOUT _message text, INOUT _returncode text) IS 'PreviewPurgeTaskCandidates';
+
