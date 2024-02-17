@@ -66,8 +66,8 @@ DECLARE
     _completionState int;
     _result int;
     _instrumentClass text;
-    _currentState As int;
-    _currentUpdateState As int;
+    _currentState int;
+    _currentUpdateState int;
     _postedBy text;
     _usageMessage text;
 BEGIN
