@@ -79,14 +79,14 @@ BEGIN
 
     If _warningMessage <> '' Then
         RETURN QUERY
-        SELECT 'Warning'::citext As term_pk,
-               _warningMessage::citext As term_name,
-               ''::citext As identifier,
-               '0'::citext As is_leaf,
-               ''::citext As parent_term_name,
-               ''::citext As parent_term_id,
-               ''::citext As grandparent_term_name,
-               ''::citext As grandparent_term_id;
+        SELECT 'Warning'::citext AS term_pk,
+               _warningMessage::citext AS term_name,
+               ''::citext AS identifier,
+               '0'::citext AS is_leaf,
+               ''::citext AS parent_term_name,
+               ''::citext AS parent_term_id,
+               ''::citext AS grandparent_term_name,
+               ''::citext AS grandparent_term_id;
 
         RETURN;
     End If;
@@ -259,14 +259,14 @@ BEGIN
         End If;
 
         RETURN QUERY
-        SELECT 'Exception'::citext As term_pk,
-               _errorMessage::citext As term_name,
-               _s::citext As identifier,
-               '0'::citext As is_leaf,
-               ''::citext As parent_term_name,
-               ''::citext As parent_term_id,
-               ''::citext As grandparent_term_name,
-               ''::citext As grandparent_term_id;
+        SELECT 'Exception'::citext AS term_pk,
+               _errorMessage::citext AS term_name,
+               _s::citext AS identifier,
+               '0'::citext AS is_leaf,
+               ''::citext AS parent_term_name,
+               ''::citext AS parent_term_id,
+               ''::citext AS grandparent_term_name,
+               ''::citext AS grandparent_term_id;
 
         RETURN;
     END;

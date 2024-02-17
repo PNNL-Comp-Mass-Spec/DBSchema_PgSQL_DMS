@@ -154,7 +154,7 @@ BEGIN
 
             FOR _previewData IN
                 SELECT job, dataset_id, step, script, tool, state_name,
-                       processor, timestamp_text(start) As start, runtime_minutes, dataset
+                       processor, timestamp_text(start) AS start, runtime_minutes, dataset
                 FROM cap.V_task_Steps
                 WHERE Processor = _managerName::citext AND State = 4
                 ORDER BY Job, Step

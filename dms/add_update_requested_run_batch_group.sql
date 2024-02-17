@@ -242,7 +242,7 @@ BEGIN
         UPDATE Tmp_BatchIDs
         SET Batch_Group_Order = RankQ.Batch_Group_Order
         FROM ( SELECT Batch_ID,
-                      Row_Number() OVER ( ORDER BY Entry_ID ) AS Batch_Group_Order
+                      Row_Number() OVER (ORDER BY Entry_ID) AS Batch_Group_Order
                FROM Tmp_BatchIDs ) RankQ
         WHERE Tmp_BatchIDs.Batch_ID = RankQ.Batch_ID;
         --

@@ -118,7 +118,7 @@ BEGIN
     If _includeInstrument > 0 Then
         _sql := _sql || 'InstName.instrument, ';
     Else
-        _sql := _sql || ''''' As Instrument, ';
+        _sql := _sql || ''''' AS Instrument, ';
     End If;
 
     _sql := _sql ||
@@ -189,7 +189,7 @@ BEGIN
         RETURN QUERY
         SELECT Src.Campaign,
                Src.Work_Package,
-               Src.FractionEMSLFunded * 100 As Pct_EMSL_Funded,
+               Src.FractionEMSLFunded * 100 AS Pct_EMSL_Funded,
                Src.Runtime_Hours,
                Src.Datasets,
                Src.Building,

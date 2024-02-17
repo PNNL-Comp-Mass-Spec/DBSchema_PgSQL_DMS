@@ -179,7 +179,7 @@ BEGIN
                    R.EMSL_Inst_ID,
                    R.DMS_Inst_ID,
                    R.Type,
-                   public.timestamp_text(R.Start) As Start,
+                   public.timestamp_text(R.Start) AS Start,
                    R.Minutes,
                    R.Proposal,
                    R.Usage_Type_ID,

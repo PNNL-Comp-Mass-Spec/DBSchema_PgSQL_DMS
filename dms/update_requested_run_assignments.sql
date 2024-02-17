@@ -280,7 +280,7 @@ BEGIN
                             RR.state_name = 'Active' AND
                             Tmp_RequestIDs.RequestID Is Null
                       UNION
-                      SELECT _newInstrumentGroup As InstGroup
+                      SELECT _newInstrumentGroup AS InstGroup
                      ) UnionQ;
 
                 If _instrumentGroupCount > 1 Then

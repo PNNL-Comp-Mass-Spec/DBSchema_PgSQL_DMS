@@ -176,8 +176,8 @@ BEGIN
             FROM ( SELECT OrderQ.DatasetID,
                           OrderQ.Job,
                           OrderQ.MasicDirectoryName,
-                          Row_Number() OVER ( PARTITION BY OrderQ.DatasetID
-                                              ORDER BY OrderQ.JobStateRank ASC, OrderQ.Job DESC ) AS JobRank
+                          Row_Number() OVER (PARTITION BY OrderQ.DatasetID
+                                             ORDER BY OrderQ.JobStateRank ASC, OrderQ.Job DESC) AS JobRank
                    FROM ( SELECT J.dataset_id AS DatasetID,
                                  J.job AS Job,
                                  J.Results_Folder_Name AS MasicDirectoryName,
@@ -246,8 +246,8 @@ BEGIN
                       FROM ( SELECT OrderQ.DatasetID,
                                     OrderQ.Job,
                                     OrderQ.MasicDirectoryName,
-                                    Row_Number() OVER ( PARTITION BY OrderQ.DatasetID
-                                                        ORDER BY OrderQ.JobStateRank ASC, OrderQ.Job DESC ) AS JobRank
+                                    Row_Number() OVER (PARTITION BY OrderQ.DatasetID
+                                                       ORDER BY OrderQ.JobStateRank ASC, OrderQ.Job DESC) AS JobRank
                              FROM ( SELECT J.dataset_id AS DatasetID,
                                            J.job AS Job,
                                            J.Results_Folder_Name AS MasicDirectoryName,
@@ -386,7 +386,7 @@ BEGIN
             -- If you update this merge statement, be sure to update the query
             ------------------------------------------------
 
-            MERGE INTO t_cached_dataset_links As target
+            MERGE INTO t_cached_dataset_links AS target
             USING ( SELECT DS.dataset_id,
                            DFP.dataset_row_version,
                            DFP.storage_path_row_version,

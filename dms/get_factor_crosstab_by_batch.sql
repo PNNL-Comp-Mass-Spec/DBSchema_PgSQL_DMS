@@ -164,7 +164,7 @@ BEGIN
     -- If the batch has additional factors, they will be shown after the run_order column
     -----------------------------------------
 
-    _colList := ' ''x'' As sel, batch_id, name, status, dataset_id, request, block, run_order';
+    _colList := ' ''x'' AS sel, batch_id, name, status, dataset_id, request, block, run_order';
 
     SELECT make_factor_crosstab_sql ( _colList)
     INTO _sql;

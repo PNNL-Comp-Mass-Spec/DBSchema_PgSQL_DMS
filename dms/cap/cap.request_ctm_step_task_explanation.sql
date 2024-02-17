@@ -108,21 +108,21 @@ BEGIN
     SELECT 'Step tools available to this processor (Tmp_AvailableProcessorTools)' AS Parameter,
            string_agg(format('%s (Priority: %s, Only_on_Storage_Server: %s, Capacity_Limited: %s, Processor_Assignment_Applies: %s)',
                              Tool_Name, Tool_Priority, Only_On_Storage_Server, Instrument_Capacity_Limited, Processor_Assignment_Applies),
-                             '; ') As Value
+                             '; ') AS Value
     FROM Tmp_AvailableProcessorTools;
 
     RETURN QUERY
     SELECT 'Instruments subject to CPU loading restrictions (Tmp_InstrumentLoading)' AS Parameter,
            string_agg(format('%s (Captures_In_Progress: %s, Max_Simultaneous: %s, Capacity: %s)',
                              Instrument, Captures_In_Progress, Max_Simultaneous_Captures, Available_Capacity),
-                             '; ') As Value
+                             '; ') AS Value
     FROM Tmp_InstrumentLoading;
 
     RETURN QUERY
     SELECT 'Instruments assigned to specific processors (Tmp_InstrumentProcessor)' AS Parameter,
            string_agg(format('%s (Assigned_to_this_proc: %s, Assigned_to_any_Proc: %s)',
                              Instrument, Assigned_To_This_Processor, Assigned_To_Any_Processor),
-                             '; ') As Value
+                             '; ') AS Value
     FROM Tmp_InstrumentProcessor;
 
     RETURN QUERY
@@ -136,10 +136,10 @@ BEGIN
          ) CountQ;
 
     RETURN QUERY
-    SELECT format('Candidate Job %s, Step %s, Tool %s, Instrument %s', CJS.Job, CJS.Step, CJS.Tool, T.Instrument) As Parameter,
+    SELECT format('Candidate Job %s, Step %s, Tool %s, Instrument %s', CJS.Job, CJS.Step, CJS.Tool, T.Instrument) AS Parameter,
            format('Candidate: %s, Bionet_OK: %s, Server_OK: %s, Instrument_OK: %s, Assignment_OK: %s, Retry_Holdoff_OK: %s, Dataset: %s',
                   Coalesce(CJS.Candidate, 'N'), CJS.Bionet_OK, CJS.Server_OK,
-                  CJS.Instrument_OK, CJS.Assignment_OK, CJS.Retry_Holdoff_OK, T.Dataset) As Value
+                  CJS.Instrument_OK, CJS.Assignment_OK, CJS.Retry_Holdoff_OK, T.Dataset) AS Value
     FROM Tmp_CandidateJobStepDetails CJS
          INNER JOIN cap.t_tasks T
            ON T.Job = CJS.Job

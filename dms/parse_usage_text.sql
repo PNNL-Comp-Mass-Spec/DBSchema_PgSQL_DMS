@@ -159,7 +159,7 @@ BEGIN
 
         FOR _usageKey, _keyword, _curVal, _uniqueID IN
             SELECT UsageKey,
-                   format(',%s[', UsageKey) As KeyWord,
+                   format(',%s[', UsageKey) AS KeyWord,
                    UsageValue,
                    UniqueID
             FROM Tmp_UsageInfo

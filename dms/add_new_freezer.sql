@@ -151,9 +151,9 @@ BEGIN
 
         FOR _shelfInfo IN
             SELECT Shelf,
-                   Min(Rack) As Rack_Min, Max(Rack) As Rack_Max,
-                   Min(Row)  As Row_Min,  Max(Row)  As Row_Max,
-                   Min(Col)  As Col_Min,  Max(Col)  As Col_Max
+                   Min(Rack) AS Rack_Min, Max(Rack) AS Rack_Max,
+                   Min(Row)  AS Row_Min,  Max(Row)  AS Row_Max,
+                   Min(Col)  AS Col_Min,  Max(Col)  AS Col_Max
             FROM t_material_locations
             WHERE freezer_tag = '1208A' and Rack <> 'na' and Row <> 'na'
             GROUP BY Shelf

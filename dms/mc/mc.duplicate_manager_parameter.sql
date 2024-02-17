@@ -21,9 +21,9 @@ CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid int
 **    _infoOnly                False to perform the update, true to preview
 **
 **  Example usage:
-**    Select * From mc.duplicate_manager_parameter (157, 172, _paramValueSearchText => 'msfileinfoscanner', _paramValueReplaceText => 'AgilentToUimfConverter', _infoOnly => true);
+**    SELECT * FROM mc.duplicate_manager_parameter (157, 172, _paramValueSearchText => 'msfileinfoscanner', _paramValueReplaceText => 'AgilentToUimfConverter', _infoOnly => true);
 **
-**    Select * From mc.duplicate_manager_parameter (179, 182, _paramValueSearchText => 'PbfGen', _paramValueReplaceText => 'ProMex', _infoOnly => true);
+**    SELECT * FROM mc.duplicate_manager_parameter (179, 182, _paramValueSearchText => 'PbfGen', _paramValueReplaceText => 'ProMex', _infoOnly => true);
 **
 **  Auth:   mem
 **  Date:   08/26/2013 mem - Initial release
@@ -89,19 +89,19 @@ BEGIN
     -- Make sure the soure parameter exists
     ---------------------------------------------------
 
-    If _returnCode = '' And Not Exists (Select * From mc.t_param_value PV Where PV.param_type_id = _sourceParamTypeID) Then
+    If _returnCode = '' And Not Exists (SELECT entry_id FROM mc.t_param_value PV WHERE PV.param_type_id = _sourceParamTypeID) Then
         _message := format('_sourceParamTypeID %s not found in mc.t_param_value; unable to continue', _sourceParamTypeID);
         RAISE WARNING '%', _message;
         _returnCode := 'U5203';
     End If;
 
-    If _returnCode = '' And Exists (Select * From mc.t_param_value PV Where PV.param_type_id = _newParamTypeID) Then
+    If _returnCode = '' And Exists (SELECT entry_id FROM mc.t_param_value PV WHERE PV.param_type_id = _newParamTypeID) Then
         _message := format('_newParamTypeID %s already exists in mc.t_param_value; unable to continue', _newParamTypeID);
         RAISE WARNING '%', _message;
         _returnCode := 'U5204';
     End If;
 
-    If _returnCode = '' And Not Exists (Select * From mc.t_param_type PT Where PT.param_type_id = _newParamTypeID) Then
+    If _returnCode = '' And Not Exists (SELECT param_type_id FROM mc.t_param_type PT Where PT.param_type_id = _newParamTypeID) Then
         _message := format('_newParamTypeID %s not found in mc.t_param_type; unable to continue', _newParamTypeID);
         RAISE WARNING '%', _message;
         _returnCode := 'U5205';

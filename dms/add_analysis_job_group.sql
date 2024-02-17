@@ -599,7 +599,7 @@ BEGIN
                 SELECT XmlQ.section, XmlQ.name, XmlQ.value
                 FROM (
                     SELECT xmltable.*
-                    FROM ( SELECT contents As settings
+                    FROM ( SELECT contents AS settings
                            FROM t_settings_files
                            WHERE file_name = _settingsFileName::citext AND analysis_tool = _toolName::citext
                          ) Src,
@@ -890,7 +890,7 @@ BEGIN
             UPDATE Tmp_DatasetInfo
             SET Job = JobQ.ID
             FROM ( SELECT Dataset_ID,
-                          Row_Number() OVER ( ORDER BY Dataset_ID ) + _jobIDStart - 1 AS ID
+                          Row_Number() OVER (ORDER BY Dataset_ID) + _jobIDStart - 1 AS ID
                    FROM Tmp_DatasetInfo
                  ) JobQ
             WHERE Tmp_DatasetInfo.Dataset_ID = JobQ.Dataset_ID;

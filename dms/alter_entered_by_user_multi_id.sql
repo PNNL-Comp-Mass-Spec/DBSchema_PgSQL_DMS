@@ -84,7 +84,7 @@ BEGIN
 
     -- Make sure Tmp_ID_Update_List is not empty
 
-    If Not Exists (Select * From Tmp_ID_Update_List) Then
+    If Not Exists (SELECT TargetID FROM Tmp_ID_Update_List) Then
         _message := 'Tmp_ID_Update_List is empty; nothing to do';
         RETURN;
     End If;

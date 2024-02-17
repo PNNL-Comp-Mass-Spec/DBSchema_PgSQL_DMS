@@ -87,9 +87,9 @@ BEGIN
              XMLAGG(XMLELEMENT(
                     NAME "Param",
                     XMLATTRIBUTES(
-                        section As "Section",
-                        name As "Name",
-                        value As "Value"))
+                        section AS "Section",
+                        name AS "Name",
+                        value AS "Value"))
                     ORDER BY section, name
                    ) AS xml_item
            FROM Tmp_Task_Parameters

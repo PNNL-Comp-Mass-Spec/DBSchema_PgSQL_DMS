@@ -198,8 +198,8 @@ BEGIN
                TaskQ.Step_Tool, TaskQ.Task_Status, TaskQ.Duration_Minutes, TaskQ.Progress, TaskQ.Current_Operation,
                TaskDetailQ.Task_Detail_Status, TaskDetailQ.Job, TaskDetailQ.Job_Step, TaskDetailQ.Dataset,
                TaskDetailQ.Most_Recent_Log_Message, TaskDetailQ.Most_Recent_Job_Info, TaskDetailQ.Spectrum_Count,
-               true As Monitor_Processor,
-               '' As Remote_Status_Location
+               true AS Monitor_Processor,
+               '' AS Remote_Status_Location
         FROM ( SELECT xmltable.*
                FROM Src,
                     XMLTABLE('//StatusInfo/Root/Manager'

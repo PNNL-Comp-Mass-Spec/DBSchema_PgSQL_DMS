@@ -52,7 +52,7 @@ CREATE VIEW sw.v_job_step_state_summary_recent_crosstab AS
    FROM public.crosstab('SELECT State,
            State_Name,
            Step_Tool,
-           Sum(Step_Count) As Steps
+           Sum(Step_Count) AS Steps
     FROM V_Job_Step_State_Summary_Recent
     GROUP BY State, State_Name, Step_Tool
     ORDER BY State, State_Name, Step_Tool'::text, 'SELECT unnest(''{Ape, AScore, Cyclops, DataExtractor, DataExtractorSplitFasta, Decon2LS_V2, DTA_Gen, DTA_Refinery,

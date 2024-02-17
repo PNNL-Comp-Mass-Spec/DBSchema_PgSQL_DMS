@@ -291,7 +291,7 @@ BEGIN
                        EUS_Instrument_ID,
                        Use_EUS_ID
                 FROM Tmp_Instruments
-                ORDER By Instrument
+                ORDER BY Instrument
             LOOP
                 _infoData := format(_formatSpecifier,
                                     _previewData.Entry_ID,

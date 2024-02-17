@@ -98,7 +98,7 @@ BEGIN
         FROM (
             SELECT V.Category,
                    V.Value,
-                   V.Value - ROW_NUMBER() OVER (PARTITION BY V.Category ORDER BY V.Value) AS rn  -- This column represents the 'staggered rows'
+                   V.Value - Row_Number() OVER (PARTITION BY V.Category ORDER BY V.Value) AS rn  -- This column represents the 'staggered rows'
             FROM Tmp_ValuesByCategory V
             WHERE Not V.Value Is Null
             ) RankQ
@@ -108,7 +108,7 @@ BEGIN
     FROM (
         SELECT RangeQ.Category, string_agg(RangeQ.ValueList, ', ' ORDER BY RangeQ.ValueList) ValueList
         FROM (
-            SELECT a.category, CASE WHEN b.StartValue = b.EndValue THEN b.StartValue::text ELSE format('%s-%s', b.StartValue,b.EndValue) END As ValueList
+            SELECT a.category, CASE WHEN b.StartValue = b.EndValue THEN b.StartValue::text ELSE format('%s-%s', b.StartValue,b.EndValue) END AS ValueList
             FROM Tmp_ValueCategories a INNER JOIN Islands b ON a.Category = b.Category
             ORDER BY b.StartValue) RangeQ
         GROUP BY RangeQ.Category) ValueListQ;
@@ -119,7 +119,7 @@ BEGIN
             FROM (
                 SELECT V.Category,
                        V.Value,
-                       V.Value - ROW_NUMBER() OVER (PARTITION BY V.Category ORDER BY V.Value) AS rn
+                       V.Value - Row_Number() OVER (PARTITION BY V.Category ORDER BY V.Value) AS rn
                 FROM Tmp_ValuesByCategory V
                 WHERE Not V.Value Is Null) RankQ
             GROUP BY RankQ.Category, RankQ.rn

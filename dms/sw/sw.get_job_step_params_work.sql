@@ -235,13 +235,13 @@ BEGIN
             SELECT XmlQ.section,
                    XmlQ.name,
                    XmlQ.value,
-                   Coalesce(public.try_cast(XmlQ.Step, null::int), 0) As StepNumber
+                   Coalesce(public.try_cast(XmlQ.Step, null::int), 0) AS StepNumber
             FROM (
                     SELECT xmltable.section,
                            xmltable.name,
                            xmltable.value,
                            Replace(Replace(Replace(Coalesce(xmltable.step, ''), 'Yes (', ''), 'No (', ''), ')', '') AS Step
-                    FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml As rooted_xml
+                    FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml AS rooted_xml
                            FROM sw.t_job_parameters
                            WHERE sw.t_job_parameters.job = _job ) Src,
                                XMLTABLE('//params/Param'

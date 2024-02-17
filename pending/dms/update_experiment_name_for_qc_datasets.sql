@@ -99,7 +99,7 @@ BEGIN
                E.experiment,
                _experiment,
                _currentExpID,
-               false As Ambiguous
+               false AS Ambiguous
         FROM t_dataset DS
              INNER JOIN t_experiments E
                ON DS.exp_id = E.exp_id
@@ -119,7 +119,7 @@ BEGIN
                           GROUP BY DS.Dataset_ID
                           HAVING COUNT(DS.ID) > 1 );
 
-    If Not Exists (Select * From Tmp_DatasetsToUpdate) Then
+    If Not Exists (SELECT ID FROM Tmp_DatasetsToUpdate) Then
         RAISE INFO '%', 'No candidate datasets were found';
         RETURN;
     End If;
@@ -161,12 +161,12 @@ BEGIN
         FOR _previewData IN
             SELECT DS.Dataset_ID,
                    DS.Dataset,
-                   DTU.OldExperiment As Old_Experiment,
-                   DTU.NewExperiment As New_Experiment,
-                   DTU.NewExpID      As New_Experiment_ID
+                   DTU.OldExperiment AS Old_Experiment,
+                   DTU.NewExperiment AS New_Experiment,
+                   DTU.NewExpID      AS New_Experiment_ID
                    public.append_to_text(DS.comment,
                                          format('Switched experiment from %s to %s on %s', DTU.OldExperiment, DTU.NewExperiment, _dateStamp),
-                                         _delimiter => '; ', _maxlength => 512) As Comment
+                                         _delimiter => '; ', _maxlength => 512) AS Comment
             FROM t_dataset DS
                  INNER JOIN Tmp_DatasetsToUpdate DTU
                    ON DS.dataset_id = DTU.dataset_id
@@ -212,8 +212,8 @@ BEGIN
             FOR _previewData IN
                 SELECT DS.Dataset_ID,
                        DS.Dataset,
-                       DTU.OldExperiment As Old_Experiment,
-                       DTU.NewExperiment As New_Experiment,
+                       DTU.OldExperiment AS Old_Experiment,
+                       DTU.NewExperiment AS New_Experiment,
                        'Ambiguous match' AS Comment
                 FROM t_dataset DS
                      INNER JOIN Tmp_DatasetsToUpdate DTU

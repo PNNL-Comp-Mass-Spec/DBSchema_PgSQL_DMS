@@ -120,7 +120,7 @@ BEGIN
 
         RAISE INFO '%', _message;
 
-        If Not Exists (Select * From Tmp_JobsToDelete) Then
+        If Not Exists (SELECT Job FROM Tmp_JobsToDelete) Then
             _message := 'Tmp_JobsToDelete is now empty, so no old jobs to delete; exiting';
             RETURN;
         End If;
@@ -161,10 +161,10 @@ BEGIN
 
         FOR _previewData IN
             SELECT Job,
-                   public.timestamp_text(Saved) As Saved,
-                   'Preview delete' As Comment
-            From Tmp_JobsToDelete
-            ORDER By Job
+                   public.timestamp_text(Saved) AS Saved,
+                   'Preview delete' AS Comment
+            FROM Tmp_JobsToDelete
+            ORDER BY Job
             LIMIT 10
         LOOP
             _infoData := format(_formatSpecifier,
@@ -184,7 +184,7 @@ BEGIN
 
         FOR _previewData IN
             SELECT Job,
-                   public.timestamp_text(Saved) As Saved,
+                   public.timestamp_text(Saved) AS Saved,
                    'Preview delete' AS Comment
             FROM ( SELECT Job, Saved
                    FROM Tmp_JobsToDelete
@@ -234,7 +234,7 @@ BEGIN
                    H.Machine,
                    H.Processor_Count_Active,
                    H.Free_Memory_MB,
-                   'First row to be deleted' As Comment
+                   'First row to be deleted' AS Comment
             FROM sw.t_machine_status_history H
                  INNER JOIN ( SELECT machine,
                                      MIN(entry_id) AS Entry_ID
@@ -242,7 +242,7 @@ BEGIN
                               WHERE entry_id IN
                                        ( SELECT entry_id
                                          FROM ( SELECT entry_id,
-                                                Row_Number() OVER ( PARTITION BY machine ORDER BY entry_id DESC ) AS RowRank
+                                                Row_Number() OVER (PARTITION BY machine ORDER BY entry_id DESC) AS RowRank
                                                 FROM sw.t_machine_status_history ) RankQ
                                          WHERE RowRank > 1000 )
                               GROUP BY machine
@@ -279,7 +279,7 @@ BEGIN
         DELETE FROM sw.t_machine_status_history Target
         WHERE EXISTS ( SELECT 1
                        FROM ( SELECT entry_id,
-                                     Row_Number() OVER ( PARTITION BY machine ORDER BY entry_id DESC ) AS RowRank
+                                     Row_Number() OVER (PARTITION BY machine ORDER BY entry_id DESC) AS RowRank
                               FROM sw.t_machine_status_history ) RankQ
                        WHERE Target.entry_id = RankQ.entry_id AND
                              RowRank > 1000
@@ -289,7 +289,7 @@ BEGIN
         DELETE FROM sw.t_job_step_processing_stats Target
         WHERE EXISTS ( SELECT 1
                        FROM ( SELECT entry_id,
-                                     Row_Number() OVER ( PARTITION BY processor ORDER BY entered DESC ) AS RowRank
+                                     Row_Number() OVER (PARTITION BY processor ORDER BY entered DESC) AS RowRank
                        FROM sw.t_job_step_processing_stats ) RankQ
                        WHERE Target.entry_id = RankQ.entry_id AND
                              RowRank > 500

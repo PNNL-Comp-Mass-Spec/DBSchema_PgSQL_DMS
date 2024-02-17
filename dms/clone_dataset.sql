@@ -121,25 +121,25 @@ BEGIN
         -- Lookup the information requred to create a new requested run
         -- Also Lookup information required for previewing the cloned dataset
 
-        SELECT E.experiment As ExperimentName,
-               DS.operator_username As OperatorUsername,
-               DS.capture_subfolder As CaptureSubdirectory,
-               DS.cart_config_id As LcCartConfigID,
-               DS.dataset_rating_id As DatasetRatingID,
-               DS.separation_type As SeparationType,
-               Inst.instrument As InstrumentName,
-               DSType.Dataset_Type As DatasetType,                         -- Aka _msType
-               RR.instrument_setting As InstrumentSettings,
-               RR.wellplate As Wellplate,
-               RR.well As WellNum,
-               RR.request_internal_standard As InternalStandard,
-               'Automatically created by dataset entry' As Comment,
-               RR.work_package As WorkPackage,
-               EUT.eus_usage_type As EusUsageType,
-               RR.eus_proposal_id As EusProposalID,
-               RR.separation_group As SeparationGroup,
-               lccart.cart_name As LcCartName,
-               lccol.lc_column As LcColumn
+        SELECT E.experiment AS ExperimentName,
+               DS.operator_username AS OperatorUsername,
+               DS.capture_subfolder AS CaptureSubdirectory,
+               DS.cart_config_id AS LcCartConfigID,
+               DS.dataset_rating_id AS DatasetRatingID,
+               DS.separation_type AS SeparationType,
+               Inst.instrument AS InstrumentName,
+               DSType.Dataset_Type AS DatasetType,                         -- Aka _msType
+               RR.instrument_setting AS InstrumentSettings,
+               RR.wellplate AS Wellplate,
+               RR.well AS WellNum,
+               RR.request_internal_standard AS InternalStandard,
+               'Automatically created by dataset entry' AS Comment,
+               RR.work_package AS WorkPackage,
+               EUT.eus_usage_type AS EusUsageType,
+               RR.eus_proposal_id AS EusProposalID,
+               RR.separation_group AS SeparationGroup,
+               lccart.cart_name AS LcCartName,
+               lccol.lc_column AS LcColumn
         INTO _datasetInfo
         FROM t_dataset DS
              INNER JOIN t_requested_run RR
@@ -483,7 +483,7 @@ BEGIN
             FROM cap.t_tasks
             WHERE Dataset = _dataset::citext AND
                   Script ILIKE '%capture%'
-            ORDER BY cap.t_tasks.Job Desc
+            ORDER BY cap.t_tasks.Job DESC
             LIMIT 1
             RETURNING cap.t_tasks.Job
             INTO _captureJobNew;

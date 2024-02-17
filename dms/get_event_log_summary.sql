@@ -63,90 +63,90 @@ BEGIN
     End If;
 
     RETURN QUERY
-    SELECT 0::numeric As SortKey,
+    SELECT 0::numeric AS SortKey,
         (format('DMS ACTIVITY REPORT (%s)', _rangeDescription))::citext AS Label,
         (CASE WHEN _isPreviousHours
              THEN to_char(CURRENT_TIMESTAMP, 'yyyy-mm-dd hh:mi am')
              ELSE _timeRange
-         END)::citext as Value
+         END)::citext AS Value
     UNION
-    SELECT 1.0 As SortKey, 'NEW ENTRIES' AS label, '' AS Value
+    SELECT 1.0 AS SortKey, 'NEW ENTRIES' AS label, '' AS Value
     UNION
-    SELECT 2.0 As SortKey, 'DATASET ACTIVITY' AS label, '' AS Value
+    SELECT 2.0 AS SortKey, 'DATASET ACTIVITY' AS label, '' AS Value
     UNION
-    SELECT 3.0 As SortKey, 'ANALYSIS JOB ACTIVITY' AS label, '' AS Value
+    SELECT 3.0 AS SortKey, 'ANALYSIS JOB ACTIVITY' AS label, '' AS Value
     UNION
-    SELECT 4.0 As SortKey, 'ARCHIVE ACTIVITY' AS label, '' AS Value
+    SELECT 4.0 AS SortKey, 'ARCHIVE ACTIVITY' AS label, '' AS Value
     UNION
-    SELECT 1.1 As SortKey, '  Campaigns entered' AS label, COUNT(campaign_id)::citext AS Value
+    SELECT 1.1 AS SortKey, '  Campaigns entered' AS label, COUNT(campaign_id)::citext AS Value
     FROM public.t_campaign
     WHERE created BETWEEN _startDate And _endDate
     UNION
-    SELECT 1.2 As SortKey, '  Cell Cultures entered' AS Label, COUNT(biomaterial_id)::citext AS Value
+    SELECT 1.2 AS SortKey, '  Cell Cultures entered' AS Label, COUNT(biomaterial_id)::citext AS Value
     FROM public.t_biomaterial
     WHERE created BETWEEN _startDate And _endDate
     UNION
-    SELECT 1.3 As SortKey, '  Experiments entered' AS Label, COUNT(exp_id)::citext AS Value
+    SELECT 1.3 AS SortKey, '  Experiments entered' AS Label, COUNT(exp_id)::citext AS Value
     FROM public.t_experiments
     WHERE created BETWEEN _startDate And _endDate
     UNION
-    SELECT 1.4 As SortKey, '  Datasets entered' AS Label, COUNT(dataset_id)::citext AS Value
+    SELECT 1.4 AS SortKey, '  Datasets entered' AS Label, COUNT(dataset_id)::citext AS Value
     FROM public.t_dataset
     WHERE created BETWEEN _startDate And _endDate
     UNION
-    SELECT 1.5 As SortKey, '  Analysis Jobs entered (total)' AS Label, COUNT(job)::citext AS Value
+    SELECT 1.5 AS SortKey, '  Analysis Jobs entered (total)' AS Label, COUNT(job)::citext AS Value
     FROM public.t_analysis_job
     WHERE created BETWEEN _startDate And _endDate
     UNION
-    SELECT 1.6 As SortKey, '  Analysis Jobs entered (auto)' AS Label, COUNT(job)::citext AS Value
+    SELECT 1.6 AS SortKey, '  Analysis Jobs entered (auto)' AS Label, COUNT(job)::citext AS Value
     FROM public.t_analysis_job
     WHERE created BETWEEN _startDate And _endDate AND (comment LIKE '%Auto predefined%')
     UNION
-    SELECT 2.1 As SortKey, '  Dataset Capture Successful' AS Label, COUNT(event_id)::citext AS Value
+    SELECT 2.1 AS SortKey, '  Dataset Capture Successful' AS Label, COUNT(event_id)::citext AS Value
     FROM public.t_event_log
     WHERE Entered BETWEEN _startDate And _endDate AND (Target_Type = 4) AND (Target_State = 3)
     UNION
-    SELECT 2.2 As SortKey, '  Dataset Received Successful' AS Label, COUNT(event_id)::citext AS Value
+    SELECT 2.2 AS SortKey, '  Dataset Received Successful' AS Label, COUNT(event_id)::citext AS Value
     FROM public.t_event_log
     WHERE Entered BETWEEN _startDate And _endDate AND (Target_Type = 4) AND (Target_State = 6)
     UNION
-    SELECT 5.1 As SortKey, '  Dataset Capture Failed' AS Label, COUNT(event_id)::citext AS Value
+    SELECT 5.1 AS SortKey, '  Dataset Capture Failed' AS Label, COUNT(event_id)::citext AS Value
     FROM public.t_event_log
     WHERE Entered BETWEEN _startDate And _endDate AND (Target_Type = 4) AND (Target_State = 5)
     UNION
-    SELECT 5.2 As SortKey, '  Dataset Prep Failed' AS Label, COUNT(event_id)::citext AS Value
+    SELECT 5.2 AS SortKey, '  Dataset Prep Failed' AS Label, COUNT(event_id)::citext AS Value
     FROM public.t_event_log
     WHERE Entered BETWEEN _startDate And _endDate AND (Target_Type = 4) AND (Target_State = 8)
     UNION
-    SELECT 4.1 As SortKey, '  Dataset Archive Successful' AS Label, COUNT(event_id)::citext AS Value
+    SELECT 4.1 AS SortKey, '  Dataset Archive Successful' AS Label, COUNT(event_id)::citext AS Value
     FROM public.t_event_log
     WHERE Entered BETWEEN _startDate And _endDate AND (Target_Type = 6) AND (Target_State = 3)
     UNION
-    SELECT 4.2 As SortKey, '  Dataset Purge Successful' AS Label, COUNT(event_id)::citext AS Value
+    SELECT 4.2 AS SortKey, '  Dataset Purge Successful' AS Label, COUNT(event_id)::citext AS Value
     FROM public.t_event_log
     WHERE Entered BETWEEN _startDate And _endDate AND (Target_Type = 6) AND (Target_State = 4)
     UNION
-    SELECT 5.7 As SortKey, '  Dataset Archive Fail' AS Label, COUNT(event_id)::citext AS Value
+    SELECT 5.7 AS SortKey, '  Dataset Archive Fail' AS Label, COUNT(event_id)::citext AS Value
     FROM public.t_event_log
     WHERE Entered BETWEEN _startDate And _endDate AND (Target_Type = 6) AND (Target_State = 6)
     UNION
-    SELECT 5.8 As SortKey, '   Dataset Purge Fail' AS Label, COUNT(event_id)::citext AS Value
+    SELECT 5.8 AS SortKey, '   Dataset Purge Fail' AS Label, COUNT(event_id)::citext AS Value
     FROM public.t_event_log
     WHERE Entered BETWEEN _startDate And _endDate AND (Target_Type = 6) AND (Target_State = 8)
     UNION
-    SELECT 3.1 As SortKey, '  Analysis Jobs Successful' AS Label, COUNT(event_id)::citext AS Value
+    SELECT 3.1 AS SortKey, '  Analysis Jobs Successful' AS Label, COUNT(event_id)::citext AS Value
     FROM public.t_event_log
     WHERE Entered Between _startDate And _endDate AND (Target_Type = 5) AND (Target_State = 4)
     UNION
-    SELECT 5.3 As SortKey, '  Analysis Jobs Fail' AS Label, COUNT(event_id)::citext AS Value
+    SELECT 5.3 AS SortKey, '  Analysis Jobs Fail' AS Label, COUNT(event_id)::citext AS Value
     FROM public.t_event_log
     WHERE Entered Between _startDate And _endDate AND (Target_Type = 5) AND (Target_State = 5)
     UNION
-    SELECT 5.4 As SortKey, '  Analysis Jobs Fail (no intermed. files)' AS Label, COUNT(event_id)::citext AS Value
+    SELECT 5.4 AS SortKey, '  Analysis Jobs Fail (no intermed. files)' AS Label, COUNT(event_id)::citext AS Value
     FROM public.t_event_log
     WHERE Entered Between _startDate And _endDate AND (Target_Type = 5) AND (Target_State = 7)
     UNION
-    SELECT 5.0 As SortKey, 'FAILURES' AS Label,
+    SELECT 5.0 AS SortKey, 'FAILURES' AS Label,
            (CASE WHEN COUNT(event_id) > 0 THEN format('Errors Detected: %s', COUNT(event_id)) ELSE '' END)::citext AS Value
     FROM public.t_event_log
     WHERE Entered BETWEEN _startDate AND _endDate AND
@@ -158,14 +158,14 @@ BEGIN
             Target_Type = 5 AND Target_State = 7
           )
     UNION
-    SELECT 1.51 As SortKey,
+    SELECT 1.51 AS SortKey,
            (format('    Analysis Jobs entered (%s)', Tool.analysis_tool))::citext AS Label, COUNT(J.job)::citext AS Value
     FROM public.t_analysis_job J INNER JOIN
          public.t_analysis_tool Tool ON J.analysis_tool_id = Tool.analysis_tool_id
     WHERE J.created Between _startDate And _endDate
     GROUP BY Tool.analysis_tool
     UNION
-    SELECT 3.11 As SortKey,
+    SELECT 3.11 AS SortKey,
            (format('    Analysis Jobs Successful (%s)', Tool.analysis_tool))::citext AS Label, COUNT(EL.event_id)::citext AS Value
     FROM   public.t_event_log EL INNER JOIN
            public.t_analysis_job J ON EL.Target_ID = J.job INNER JOIN
@@ -173,14 +173,14 @@ BEGIN
     WHERE EL.Entered Between _startDate And _endDate AND (EL.Target_Type = 5) AND (EL.Target_State = 4)
     GROUP BY Tool.analysis_tool
     UNION
-    SELECT 1.41 As SortKey,
+    SELECT 1.41 AS SortKey,
            (format('    Datasets entered (%s)', InstName.instrument_class))::citext AS Label, COUNT(DS.dataset_id)::citext AS Value
     FROM public.t_dataset DS INNER JOIN
          public.t_instrument_name InstName ON DS.instrument_id = InstName.Instrument_ID
     WHERE DS.created Between _startDate And _endDate
     GROUP BY InstName.instrument_class
     UNION
-    SELECT 2.11 As SortKey,
+    SELECT 2.11 AS SortKey,
            (format('    Dataset Capture Successful (%s)', InstName.instrument_class))::citext AS Label, COUNT(EL.event_id)::citext AS Value
     FROM public.t_event_log EL INNER JOIN
          public.t_dataset DS ON EL.Target_ID = DS.Dataset_ID INNER JOIN
@@ -188,7 +188,7 @@ BEGIN
     WHERE EL.Entered Between _startDate And _endDate AND (EL.Target_Type = 4) AND (EL.Target_State = 3)
     GROUP BY InstName.instrument_class
     UNION
-    SELECT 6.0 As SortKey, 'LOG ENTRIES' AS Label,
+    SELECT 6.0 AS SortKey, 'LOG ENTRIES' AS Label,
            (CASE WHEN StatsQ.Errors + StatsQ.Warnings > 0
                  THEN format('Errors / Warnings: %s', StatsQ.Errors + StatsQ.Warnings)
                  ELSE ''
@@ -199,11 +199,11 @@ BEGIN
             WHERE entered Between _startDate And _endDate AND type IN ('Error', 'Warning')
          ) StatsQ
     UNION
-    SELECT 6.1 As SortKey, '  Warnings' AS Label, COUNT(entry_id)::citext AS Value
+    SELECT 6.1 AS SortKey, '  Warnings' AS Label, COUNT(entry_id)::citext AS Value
     FROM public.t_log_entries
     WHERE entered Between _startDate And _endDate AND type = 'Warning'
     UNION
-    SELECT 6.2 As SortKey, '  Errors' AS Label, COUNT(entry_id)::citext AS Value
+    SELECT 6.2 AS SortKey, '  Errors' AS Label, COUNT(entry_id)::citext AS Value
     FROM public.t_log_entries
     WHERE entered Between _startDate And _endDate AND type = 'Error'
     ;

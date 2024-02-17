@@ -87,7 +87,7 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_Param_Tab (Section, Name, Value)
-    SELECT 'JobParameters' As Section,
+    SELECT 'JobParameters' AS Section,
            UnpivotQ.Name,
            UnpivotQ.Value
     FROM ( SELECT Dataset AS DatasetName,
@@ -116,7 +116,7 @@ BEGIN
                   Tool_Name AS ToolName,
                   Result_Type AS ResultType
                 FROM public.v_get_pipeline_job_parameters P
-                WHERE P.Job = _job) as m
+                WHERE P.Job = _job) AS m
          CROSS JOIN LATERAL (
            VALUES
                 ('DatasetName', m.DatasetName),
@@ -283,7 +283,7 @@ BEGIN
         SELECT XmlQ.section, XmlQ.name, XmlQ.value
         FROM (
             SELECT xmltable.*
-            FROM ( SELECT _paramXML As params
+            FROM ( SELECT _paramXML AS params
                  ) Src,
                  XMLTABLE('//sections/section/item'
                           PASSING Src.params

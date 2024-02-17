@@ -259,8 +259,8 @@ BEGIN
             FOR _previewData IN
                 SELECT Entry_ID,
                        DMS_Inst_ID AS DMS_Instrument_ID,
-                       ItemType As Item_Type,
-                       public.timestamp_text(StartTime) As Start_Time,
+                       ItemType AS Item_Type,
+                       public.timestamp_text(StartTime) AS Start_Time,
                        Datasets
                 FROM Tmp_DatasetStartTimes
                 ORDER BY Entry_ID
@@ -431,7 +431,7 @@ BEGIN
             FOR _previewData IN
                 SELECT U.Entry_ID,
                        U.DMS_Inst_ID AS DMS_Instrument_ID,
-                       U.ItemType As Item_Type,
+                       U.ItemType AS Item_Type,
                        public.timestamp_text(U.Start) AS Start,
                        U.Dataset_ID,
                        U.Seq,
@@ -492,7 +492,7 @@ BEGIN
         FOR _previewData IN
             SELECT U.Entry_ID,
                    U.DMS_Inst_ID AS DMS_Instrument_ID,
-                   U.ItemType As Item_Type,
+                   U.ItemType AS Item_Type,
                    public.timestamp_text(U.Start) AS Start,
                    InstUsage.Minutes,
                    U.Dataset_ID,

@@ -326,7 +326,7 @@ BEGIN
                             SELECT Proposal_ID
                             INTO _eusProposalID
                             FROM Tmp_Proposal_Stack
-                            ORDER BY Numeric_ID Desc, Proposal_ID Desc
+                            ORDER BY Numeric_ID DESC, Proposal_ID DESC
                             LIMIT 1;
 
                             If _originalProposalID = _eusProposalID Then

@@ -248,7 +248,7 @@ BEGIN
           pg_namespace.nspname = _sourceSchema AND
           pg_class.relname = _tableName;                 -- Alternatively, use pg_class.oid = _tableName::regclass
 
-    If Not Exists (Select * From Tmp_PrimaryKeyColumns) Then
+    If Not Exists (SELECT ColumnName FROM Tmp_PrimaryKeyColumns) Then
         _message := format('Cannot generate a merge statement for %s because it does not have a primary key', _tableName);
 
         DROP TABLE Tmp_PrimaryKeyColumns;

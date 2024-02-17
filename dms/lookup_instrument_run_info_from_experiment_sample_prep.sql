@@ -96,10 +96,10 @@ BEGIN
     -- Lookup instrument fields from sample prep request
     ---------------------------------------------------
 
-    SELECT COALESCE(instrument_group, instrument_name, '') As InstrumentGroup,
-           COALESCE(dataset_type, '') As DatasetType,
-           COALESCE(instrument_analysis_specifications, '') As InstrumentSettings,
-           COALESCE(separation_group, '') As SeparationGroup
+    SELECT COALESCE(instrument_group, instrument_name, '') AS InstrumentGroup,
+           COALESCE(dataset_type, '') AS DatasetType,
+           COALESCE(instrument_analysis_specifications, '') AS InstrumentSettings,
+           COALESCE(separation_group, '') AS SeparationGroup
     INTO _instrumentInfo
     FROM t_sample_prep_request
     WHERE prep_request_id = _prepRequestID;

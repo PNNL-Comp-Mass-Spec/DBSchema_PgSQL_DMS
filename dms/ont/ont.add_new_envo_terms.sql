@@ -66,19 +66,19 @@ BEGIN
         -- Table not found in the given schema: ont.t_tmp_table
 
         RETURN QUERY
-        SELECT 'Warning'::citext as Item_Type,
-               0 As entry_id,
-               ''::citext As term_pk,
-               t.Message As term_name,
-               ''::citext As identifier,
-               '0'::citext As is_leaf,
-               ''::citext As synonyms,
-               ''::citext As parent_term_id,
-               ''::citext As parent_term_name,
-               ''::citext As grandparent_term_id,
-               ''::citext As grandparent_term_name,
-               current_timestamp::timestamp As entered,
-               NULL::timestamp As updated
+        SELECT 'Warning'::citext AS Item_Type,
+               0 AS entry_id,
+               ''::citext AS term_pk,
+               t.Message AS term_name,
+               ''::citext AS identifier,
+               '0'::citext AS is_leaf,
+               ''::citext AS synonyms,
+               ''::citext AS parent_term_id,
+               ''::citext AS parent_term_name,
+               ''::citext AS grandparent_term_id,
+               ''::citext AS grandparent_term_name,
+               current_timestamp::timestamp AS entered,
+               NULL::timestamp AS updated
         FROM Tmp_CandidateTables t;
 
         DROP TABLE Tmp_CandidateTables;
@@ -118,7 +118,7 @@ BEGIN
     _s := ' INSERT INTO Tmp_SourceData'
           ' SELECT term_pk, term_name, identifier, is_leaf, synonyms,'
           '   parent_term_name, parent_term_id,'
-          '   grandparent_term_name, grandparent_term_id, 0 as matches_existing'
+          '   grandparent_term_name, grandparent_term_id, 0 AS matches_existing'
           ' FROM %I.%I'
           ' WHERE parent_term_name <> '''' And term_pk SIMILAR TO ''ENVO%''';
 
@@ -166,7 +166,7 @@ BEGIN
                      d.parent_term_name, d.parent_term_id,
                      d.grandparent_term_name, d.grandparent_term_id
                FROM Tmp_SourceData d
-               WHERE d.matches_existing = 1) as s
+               WHERE d.matches_existing = 1) AS s
         WHERE t.term_pk = s.term_pk AND
               t.parent_term_id = s.parent_term_id AND
               Coalesce(t.grandparent_term_id, '') = Coalesce(s.grandparent_term_id, '') AND
@@ -204,7 +204,7 @@ BEGIN
         ---------------------------------------------------
 
         CREATE TEMP TABLE Tmp_InvalidTermNames (
-            entry_id   int PRIMARY KEY GENERATED ALWAYS As IDENTITY,
+            entry_id   int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
             identifier citext not null,
             term_name  citext not null
         );
@@ -218,7 +218,7 @@ BEGIN
         INSERT INTO Tmp_InvalidTermNames( identifier,
                                           term_name )
         SELECT UniqueQTarget.identifier,
-               UniqueQTarget.term_name As Invalid_Term_Name_to_Delete
+               UniqueQTarget.term_name AS Invalid_Term_Name_to_Delete
         FROM ( SELECT DISTINCT t.identifier, t.term_name FROM ont.t_cv_envo t GROUP BY t.identifier, t.term_name ) UniqueQTarget
              LEFT OUTER JOIN
              ( SELECT DISTINCT Tmp_SourceData.identifier, Tmp_SourceData.term_name FROM Tmp_SourceData ) UniqueQSource
@@ -240,22 +240,22 @@ BEGIN
             RAISE INFO 'No invalid term names were found';
         End If;
 
-        If Exists (Select * From Tmp_InvalidTermNames) Then
+        If Exists (SELECT entry_id FROM Tmp_InvalidTermNames) Then
 
             RETURN QUERY
-            SELECT 'Extra term name to delete'::citext As Item_Type,
+            SELECT 'Extra term name to delete'::citext AS Item_Type,
                    s.entry_id,
-                   ''::citext as term_pk,
+                   ''::citext AS term_pk,
                    s.term_name,
                    s.identifier,
-                   '0'::citext As is_leaf,
-                   ''::citext As synonyms,
-                   ''::citext As parent_term_id,
-                   ''::citext As parent_term_name,
-                   ''::citext As grandparent_term_id,
-                   ''::citext As grandparent_term_name,
-                   current_timestamp::timestamp As entered,
-                   NULL::timestamp As updated
+                   '0'::citext AS is_leaf,
+                   ''::citext AS synonyms,
+                   ''::citext AS parent_term_id,
+                   ''::citext AS parent_term_name,
+                   ''::citext AS grandparent_term_id,
+                   ''::citext AS grandparent_term_name,
+                   current_timestamp::timestamp AS entered,
+                   NULL::timestamp AS updated
             FROM Tmp_InvalidTermNames s;
 
             INSERT INTO Tmp_IDsToDelete (entry_id)
@@ -267,7 +267,7 @@ BEGIN
 
             If _previewDeleteExtras Then
                 RETURN QUERY
-                SELECT 'To be deleted'::citext as Item_Type,
+                SELECT 'To be deleted'::citext AS Item_Type,
                        t.entry_id,
                        t.term_pk,
                        t.term_name,
@@ -306,19 +306,19 @@ BEGIN
                     Else
                         -- Not safe to delete
                         RETURN QUERY
-                        SELECT 'Warning'::citext As Item_Type,
-                               0 As Entry_ID,
-                               'Not deleting since since no entries would remain for this ID' as term_pk,
+                        SELECT 'Warning'::citext AS Item_Type,
+                               0 AS Entry_ID,
+                               'Not deleting since since no entries would remain for this ID' AS term_pk,
                                _invalidTerm.term_name,
                                _invalidTerm.identifier,
-                               '0'::citext As is_leaf,
-                               ''::citext As synonyms,
-                               ''::citext As parent_term_id,
-                               ''::citext As parent_term_name,
-                               ''::citext As grandparent_term_id,
-                               ''::citext As grandparent_term_name,
-                               current_timestamp::timestamp As entered,
-                               null::timestamp As updated;
+                               '0'::citext AS is_leaf,
+                               ''::citext AS synonyms,
+                               ''::citext AS parent_term_id,
+                               ''::citext AS parent_term_name,
+                               ''::citext AS grandparent_term_id,
+                               ''::citext AS grandparent_term_name,
+                               current_timestamp::timestamp AS entered,
+                               null::timestamp AS updated;
 
                     End If;
 
@@ -335,7 +335,7 @@ BEGIN
 
         UPDATE ont.t_cv_envo t
         SET children = StatsQ.children
-        FROM ( SELECT s.parent_term_id, COUNT(s.entry_id) As children
+        FROM ( SELECT s.parent_term_id, COUNT(s.entry_id) AS children
                FROM ont.t_cv_envo s
                GROUP BY s.parent_term_ID ) StatsQ
         WHERE StatsQ.parent_term_id = t.identifier AND
@@ -358,21 +358,21 @@ BEGIN
         ---------------------------------------------------
 
         RETURN QUERY
-        SELECT 'Existing item to update'::citext as Item_Type,
+        SELECT 'Existing item to update'::citext AS Item_Type,
                t.entry_id,
                t.term_pk,
-               (CASE WHEN t.term_name  = s.term_name  THEN t.term_name       ELSE format('%s --> %s', t.term_name,  s.term_name)  END)::citext As term_name,
-               (CASE WHEN t.identifier = s.identifier THEN t.identifier      ELSE format('%s --> %s', t.identifier, s.identifier) END)::citext as identifier,
-               (CASE WHEN t.is_leaf = s.is_leaf THEN format('%s', t.is_leaf) ELSE format('%s --> %s', t.is_leaf, s.is_leaf)       END)::citext As is_leaf,
-               (CASE WHEN t.synonyms = s.synonyms THEN t.synonyms            ELSE format('%s --> %s', t.synonyms, s.synonyms)     END)::citext as synonyms,
+               (CASE WHEN t.term_name  = s.term_name  THEN t.term_name       ELSE format('%s --> %s', t.term_name,  s.term_name)  END)::citext AS term_name,
+               (CASE WHEN t.identifier = s.identifier THEN t.identifier      ELSE format('%s --> %s', t.identifier, s.identifier) END)::citext AS identifier,
+               (CASE WHEN t.is_leaf = s.is_leaf THEN format('%s', t.is_leaf) ELSE format('%s --> %s', t.is_leaf, s.is_leaf)       END)::citext AS is_leaf,
+               (CASE WHEN t.synonyms = s.synonyms THEN t.synonyms            ELSE format('%s --> %s', t.synonyms, s.synonyms)     END)::citext AS synonyms,
                t.parent_term_id::citext,
-               (CASE WHEN t.parent_term_name = s.parent_term_name THEN t.parent_term_name                ELSE format('%s --> %s', t.parent_term_name, s.parent_term_name) END)::citext As parent_term_name,
+               (CASE WHEN t.parent_term_name = s.parent_term_name THEN t.parent_term_name                ELSE format('%s --> %s', t.parent_term_name, s.parent_term_name) END)::citext AS parent_term_name,
                t.grandparent_term_id::citext,
-               (CASE WHEN t.grandparent_term_name = s.grandparent_term_name THEN t.grandparent_term_name ELSE format('%s --> %s', Coalesce(t.grandparent_term_name, 'NULL'), Coalesce(s.grandparent_term_name, 'NULL')) END)::citext As grandparent_term_name,
+               (CASE WHEN t.grandparent_term_name = s.grandparent_term_name THEN t.grandparent_term_name ELSE format('%s --> %s', Coalesce(t.grandparent_term_name, 'NULL'), Coalesce(s.grandparent_term_name, 'NULL')) END)::citext AS grandparent_term_name,
                t.entered::timestamp,
                t.updated::timestamp
-        FROM ont.t_cv_envo As t
-            INNER JOIN Tmp_SourceData As s
+        FROM ont.t_cv_envo AS t
+            INNER JOIN Tmp_SourceData AS s
               ON t.term_pk = s.term_pk AND
                  t.parent_term_id = s.parent_term_id AND
                  Coalesce(t.grandparent_term_id, '') = Coalesce(s.grandparent_term_id, '')
@@ -385,8 +385,8 @@ BEGIN
                 t.grandparent_term_name IS DISTINCT FROM s.grandparent_term_name
               )
         UNION
-        SELECT 'New item to add'::citext as Item_Type,
-               0 As entry_id,
+        SELECT 'New item to add'::citext AS Item_Type,
+               0 AS entry_id,
                s.term_pk,
                s.term_name,
                s.identifier,
@@ -396,8 +396,8 @@ BEGIN
                s.parent_term_name,
                s.grandparent_term_id,
                s.grandparent_term_name,
-               current_timestamp::timestamp As entered,
-               NULL::timestamp As updated
+               current_timestamp::timestamp AS entered,
+               NULL::timestamp AS updated
         FROM Tmp_SourceData s
         WHERE matches_existing = 0;
 

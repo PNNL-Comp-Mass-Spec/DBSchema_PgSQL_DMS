@@ -84,38 +84,38 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_Jobs (Job, Update_Required, Invalid, Mismatch_Results_Transfer)
-    SELECT Value As Job, false, false, false
+    SELECT Value AS Job, false, false, false
     FROM public.parse_delimited_integer_list(_jobList);
 
     If Not Exists (SELECT * FROM Tmp_Jobs) Then
         _message := format('No valid jobs were found: %s', _jobList);
 
         RETURN QUERY
-        SELECT  0 As job,
-                false As update_required,
-                true As invalid,
-                false As Mismatch_Results_Transfer,
-                _message As "comment",
-                format('Jobs: %s', _jobList)::citext As dataset,
+        SELECT  0 AS job,
+                false AS update_required,
+                true AS invalid,
+                false AS Mismatch_Results_Transfer,
+                _message AS "comment",
+                format('Jobs: %s', _jobList)::citext AS dataset,
                 step int,
-                ''::citext As tool,
-                ''::citext As state_name,
-                0::int2 As state,
-                0::int2 As new_state,
-                null::timestamp As "start",
-                null::timestamp As finish,
-                null::timestamp As new_start,
-                null::timestamp As new_finish,
-                ''::citext As input_folder,
-                ''::citext As output_folder,
-                ''::citext As processor,
-                ''::citext As new_processor,
-                0 As tool_version_id,
-                ''::citext As tool_version,
-                0 As completion_code,
-                ''::citext As completion_message,
-                0 As evaluation_code,
-                ''::citext As evaluation_message;
+                ''::citext AS tool,
+                ''::citext AS state_name,
+                0::int2 AS state,
+                0::int2 AS new_state,
+                null::timestamp AS "start",
+                null::timestamp AS finish,
+                null::timestamp AS new_start,
+                null::timestamp AS new_finish,
+                ''::citext AS input_folder,
+                ''::citext AS output_folder,
+                ''::citext AS processor,
+                ''::citext AS new_processor,
+                0 AS tool_version_id,
+                ''::citext AS tool_version,
+                0 AS completion_code,
+                ''::citext AS completion_message,
+                0 AS evaluation_code,
+                ''::citext AS evaluation_message;
 
         DROP TABLE Tmp_Jobs;
         DROP TABLE Tmp_JobStepsToUpdate;
@@ -133,30 +133,30 @@ BEGIN
 
         RETURN QUERY
         SELECT J.job,
-               false As update_required,
+               false AS update_required,
                J.Invalid,
                J.Mismatch_Results_Transfer,
-               _message As "comment",
-               ''::citext As dataset,
+               _message AS "comment",
+               ''::citext AS dataset,
                step int,
-               ''::citext As tool,
-               ''::citext As state_name,
-               0::int2 As state,
-               0::int2 As new_state,
-               null::timestamp As "start",
-               null::timestamp As finish,
-               null::timestamp As new_start,
-               null::timestamp As new_finish,
-               ''::citext As input_folder,
-               ''::citext As output_folder,
-               ''::citext As processor,
-               ''::citext As new_processor,
-               0 As tool_version_id,
-               ''::citext As tool_version,
-               0 As completion_code,
-               ''::citext As completion_message,
-               0 As evaluation_code,
-               ''::citext As evaluation_message
+               ''::citext AS tool,
+               ''::citext AS state_name,
+               0::int2 AS state,
+               0::int2 AS new_state,
+               null::timestamp AS "start",
+               null::timestamp AS finish,
+               null::timestamp AS new_start,
+               null::timestamp AS new_finish,
+               ''::citext AS input_folder,
+               ''::citext AS output_folder,
+               ''::citext AS processor,
+               ''::citext AS new_processor,
+               0 AS tool_version_id,
+               ''::citext AS tool_version,
+               0 AS completion_code,
+               ''::citext AS completion_message,
+               0 AS evaluation_code,
+               ''::citext AS evaluation_message
         FROM Tmp_Jobs J;
 
         DROP TABLE Tmp_Jobs;
@@ -417,7 +417,7 @@ BEGIN
            JS.Tool,
            JS.state_name,
            JS.state,
-           JSH.state As New_State,
+           JSH.state AS New_State,
            JS.start,
            JS.finish,
            JSH.start AS New_Start,

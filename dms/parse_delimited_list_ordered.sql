@@ -53,7 +53,7 @@ BEGIN
     End If;
 
     RETURN QUERY
-    SELECT (Row_Number() OVER ())::int As entry_id, Trim(SplitQ.Value) AS ValueText
+    SELECT (Row_Number() OVER ())::int AS entry_id, Trim(SplitQ.Value) AS ValueText
     FROM ( SELECT regexp_split_to_table(_delimitedList, _delimiter) AS Value
          ) SplitQ
     WHERE COALESCE(Trim(SplitQ.Value), '') <> ''

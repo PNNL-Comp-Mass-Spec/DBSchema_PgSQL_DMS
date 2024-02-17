@@ -122,7 +122,7 @@ BEGIN
                         THEN 'True'
                         ELSE 'False'
                    END AS only_reset_failed,
-                   TS.job, TS.dataset_id, TS.step, TS.tool, TS.state_name, TS.state, timestamp_text(TS.start) As start, TS.dataset
+                   TS.job, TS.dataset_id, TS.step, TS.tool, TS.state_name, TS.state, timestamp_text(TS.start) AS start, TS.dataset
             FROM cap.V_task_Steps TS INNER JOIN Tmp_Selected_Jobs ON TS.Job = Tmp_Selected_Jobs.Job
             ORDER BY TS.Job, TS.Step
         LOOP

@@ -188,7 +188,7 @@ BEGIN
         WHERE Target.Job = T.Job;
 
         FOR _jobInfo IN
-            SELECT Job As JobToAdd,
+            SELECT Job AS JobToAdd,
                    State,
                    JobFinish AS SaveTimeOverride
             FROM Tmp_JobsNotInHistory

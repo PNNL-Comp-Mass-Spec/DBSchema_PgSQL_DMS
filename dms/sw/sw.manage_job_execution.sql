@@ -164,7 +164,7 @@ BEGIN
             ---------------------------------------------------
 
             DELETE FROM sw.t_local_job_processors
-            WHERE Job In (Select Job From Tmp_JobList);
+            WHERE Job In (SELECT Job FROM Tmp_JobList);
             --
             GET DIAGNOSTICS _jobUpdateCount = ROW_COUNT;
 

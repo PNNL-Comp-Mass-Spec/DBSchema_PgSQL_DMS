@@ -369,10 +369,10 @@ BEGIN
             RAISE INFO 'Initial contents of Tmp_Datasets';
 
             FOR _datasetInfo IN
-                SELECT EMSL_Funded As EmslFunded,
-                       COUNT(Dataset_ID) As DatasetCount,
-                       MIN(Dataset_ID) As IdFirst,
-                       MAX(Dataset_ID) As IdLast
+                SELECT EMSL_Funded AS EmslFunded,
+                       COUNT(Dataset_ID) AS DatasetCount,
+                       MIN(Dataset_ID) AS IdFirst,
+                       MAX(Dataset_ID) AS IdLast
                 FROM Tmp_Datasets
                 GROUP BY EMSL_Funded
                 ORDER BY EMSL_Funded
@@ -403,10 +403,10 @@ BEGIN
             RAISE INFO 'After updating EMSL_Funded for work packages with SubAccount containing "Wiley Environmental"';
 
             FOR _datasetInfo IN
-                SELECT EMSL_Funded As EmslFunded,
-                       COUNT(Dataset_ID) As DatasetCount,
-                       MIN(Dataset_ID) As IdFirst,
-                       MAX(Dataset_ID) As IdLast
+                SELECT EMSL_Funded AS EmslFunded,
+                       COUNT(Dataset_ID) AS DatasetCount,
+                       MIN(Dataset_ID) AS IdFirst,
+                       MAX(Dataset_ID) AS IdLast
                 FROM Tmp_Datasets
                 GROUP BY EMSL_Funded
                 ORDER BY EMSL_Funded

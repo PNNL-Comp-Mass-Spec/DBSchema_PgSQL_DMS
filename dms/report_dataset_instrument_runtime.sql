@@ -135,7 +135,7 @@ BEGIN
                    Src.campaign_id,
                    Src.fraction_emsl_funded,
                    Src.campaign_proposals
-            FROM public.get_dataset_instrument_runtime(_stDate, _eDate, _instrumentName::citext, _reportOptions::citext) As Src
+            FROM public.get_dataset_instrument_runtime(_stDate, _eDate, _instrumentName::citext, _reportOptions::citext) AS Src
             ORDER BY Src.Seq;
 
     EXCEPTION

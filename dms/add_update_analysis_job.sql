@@ -687,8 +687,8 @@ BEGIN
                        _ownerUsername AS Owner,
                        _batchID AS BatchID,
                        _newStateID AS StateID,
-                       '' As Start,
-                       '' As Finish,
+                       '' AS Start,
+                       '' AS Finish,
                        _propMode AS PropagationMode,
                        _datasetUnreviewed AS DatasetUnreviewed
                 LOOP
@@ -856,7 +856,7 @@ BEGIN
                     SELECT format('Preview %s', _mode) AS Mode,
                            _jobID AS Job,
                            _priority AS Priority,
-                           public.timestamp_text(Created) As Created,
+                           public.timestamp_text(Created) AS Created,
                            _analysisToolID AS AnalysisToolID,
                            _paramFileName AS ParmFileName,
                            _settingsFileName AS SettingsFileName,

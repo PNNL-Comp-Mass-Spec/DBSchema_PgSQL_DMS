@@ -21,7 +21,7 @@ CREATE OR REPLACE FUNCTION sw.get_task_script_dot_format_table(_script text) RET
 **      FROM sw.t_scripts
 **           JOIN LATERAL (
 **               SELECT * FROM sw.get_task_script_dot_format_table(script)
-**           ) As ScriptLines On true
+**           ) AS ScriptLines On true
 **      ORDER BY script, seq, script_line;
 **
 **
@@ -88,7 +88,7 @@ BEGIN
                                  COLUMNS step int PATH '@Number',
                                          tool text PATH '@Tool',
                                          special_instructions citext PATH '@Special',
-                                         parent_steps XML PATH 'Depends_On') As XmlTableA
+                                         parent_steps XML PATH 'Depends_On') AS XmlTableA
             WHERE Src.script = _script::citext
           ) ScriptQ INNER JOIN
           sw.t_step_tools StepTools ON ScriptQ.tool = StepTools.step_tool
@@ -101,8 +101,8 @@ BEGIN
                   CASE WHEN special_instructions IS NULL                 THEN ''          ELSE format('(%s)', special_instructions) END,
                   CASE WHEN COALESCE(special_instructions, '') = 'Clone' THEN 'trapezium' ELSE 'box' END,
                   CASE WHEN COALESCE(shared_result_version, 0) = 0       THEN ''          ELSE ', style=filled, fillcolor=lightblue, peripheries=2' END)
-             As script_line,
-           0 As seq
+             AS script_line,
+           0 AS seq
     FROM Tmp_ScriptSteps
     ORDER BY step;
 
@@ -121,7 +121,7 @@ BEGIN
                               PASSING t1
                               COLUMNS step int PATH '@Number',
                                       tool text PATH '@Tool',
-                                      parent_steps XML PATH 'Depends_On') As XmlTableA
+                                      parent_steps XML PATH 'Depends_On') AS XmlTableA
         WHERE Src.script = _script::citext
     LOOP
         If Not _scriptStep.parent_steps Is Null Then
@@ -137,9 +137,9 @@ BEGIN
                           _scriptStep.step,
                           CASE WHEN XmlTableA.condition_test IS NULL       THEN ''                ELSE format(' [label="Skip if:%s"]', XmlTableA.condition_test) END,
                           CASE WHEN Coalesce(XmlTableA.enable_only, 0) > 0 THEN ' [style=dotted]' ELSE '' END)
-                     As script_line,
-                   1 As seq
-            FROM ( SELECT ('<root>' || _scriptStep.parent_steps || '</root>')::xml as rooted_xml
+                     AS script_line,
+                   1 AS seq
+            FROM ( SELECT ('<root>' || _scriptStep.parent_steps || '</root>')::xml AS rooted_xml
                  ) Src,
                  XMLTABLE('//root/Depends_On'
                           PASSING Src.rooted_xml
@@ -148,7 +148,7 @@ BEGIN
                                   test_value     citext PATH '@Value',
                                   enable_only    int PATH '@Enable_Only'
 
-                          ) As XmlTableA
+                          ) AS XmlTableA
             ORDER BY XmlTableA.parent_step, _scriptStep.step;
         End If;
 

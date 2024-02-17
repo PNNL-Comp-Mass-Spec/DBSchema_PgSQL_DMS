@@ -128,11 +128,11 @@ BEGIN
     End If;
 
     If Exists (SELECT manager_name FROM Tmp_ManagerList WHERE manager_name = 'Default_AnalysisMgr_Params') Then
-        Delete From Tmp_ManagerList Where manager_name = 'Default_AnalysisMgr_Params';
+        DELETE FROM Tmp_ManagerList WHERE manager_name = 'Default_AnalysisMgr_Params';
 
         _message := 'For safety, not updating RunJobsRemotely for manager Default_AnalysisMgr_Params';
 
-        If Exists (Select * From Tmp_ManagerList) Then
+        If Exists (SELECT manager_name FROM Tmp_ManagerList) Then
             -- Tmp_ManagerList contains other managers; update them
             RAISE INFO '%', _message;
         Else

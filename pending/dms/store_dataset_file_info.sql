@@ -462,7 +462,7 @@ BEGIN
             _updateCount := 0;
 
             FOR _previewData IN
-                SELECT 'Update hash' As Update_Type,
+                SELECT 'Update hash' AS Update_Type,
                        Dataset_ID,
                        InstFilePath,
                        InstFileHash
@@ -493,7 +493,7 @@ BEGIN
             _updateCount := 0;
 
             FOR _previewData IN
-                SELECT 'Update size' As Update_Type,
+                SELECT 'Update size' AS Update_Type,
                        Dataset_ID,
                        InstFilePath,
                        InstFileSize
@@ -549,7 +549,7 @@ BEGIN
     -- Add/Update file size info in t_dataset_files using a Merge statement
     -----------------------------------------------
 
-    MERGE INTO t_dataset_files As target
+    MERGE INTO t_dataset_files AS target
     USING ( SELECT dataset_id, InstFilePath, InstFileSize
             FROM Tmp_SizeUpdates
           ) AS Source

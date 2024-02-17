@@ -143,7 +143,7 @@ BEGIN
                          duration,
                          "interval",
                          instrument )
-    SELECT (_seqIncrement * ((ROW_NUMBER() OVER ( ORDER BY TD.acq_time_start ASC )) - 1) + 1) + _seqOffset AS seq,
+    SELECT (_seqIncrement * ((Row_Number() OVER (ORDER BY TD.acq_time_start ASC)) - 1) + 1) + _seqOffset AS seq,
            TD.dataset_id AS id,
            TD.dataset AS dataset,
            Extract(day FROM TD.acq_time_start) AS day,

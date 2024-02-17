@@ -629,7 +629,7 @@ BEGIN
                 RAISE INFO '%', _infoHeadSeparator;
 
                 FOR _previewData IN
-                    SELECT _datasetName As Dataset,
+                    SELECT _datasetName AS Dataset,
                            Step,
                            Level,
                            Seq,

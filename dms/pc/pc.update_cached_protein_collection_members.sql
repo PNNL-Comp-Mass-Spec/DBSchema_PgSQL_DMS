@@ -313,7 +313,7 @@ BEGIN
                      INNER JOIN pc.t_protein_names ProtName
                        ON PCM.protein_id = ProtName.protein_id AND
                           PCM.reference_id = ProtName.reference_id
-        ) As s
+        ) AS s
         ON ( t.protein_collection_id = s.protein_collection_id AND t.reference_id = s.reference_id)
         WHEN MATCHED AND (
             t.protein_name <> s.protein_name OR

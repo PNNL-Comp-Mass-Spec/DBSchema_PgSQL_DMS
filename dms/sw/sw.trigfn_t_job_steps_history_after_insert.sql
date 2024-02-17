@@ -23,7 +23,7 @@ BEGIN
     FROM ( SELECT H.job,
                   H.step,
                   H.saved,
-                  Row_Number() OVER ( PARTITION BY H.job, H.step ORDER BY H.saved DESC ) AS SaveRank
+                  Row_Number() OVER (PARTITION BY H.job, H.step ORDER BY H.saved DESC) AS SaveRank
            FROM sw.t_job_steps_history H
                 INNER JOIN inserted on H.job = inserted.job and H.step = inserted.step
          ) LookupQ

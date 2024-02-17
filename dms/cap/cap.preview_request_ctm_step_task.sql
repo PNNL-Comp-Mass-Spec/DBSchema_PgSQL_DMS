@@ -80,8 +80,8 @@ BEGIN
 
     If _job > 0 Then
         RETURN QUERY
-        SELECT format('Would assign capture task job %s to processor %s', Job, _processorName) As Parameter,
-               format('Dataset: %s', Dataset) As Value
+        SELECT format('Would assign capture task job %s to processor %s', Job, _processorName) AS Parameter,
+               format('Dataset: %s', Dataset) AS Value
         FROM cap.t_tasks
         WHERE Job = _job;
     ElsIf Coalesce(_message, '') <> '' Then

@@ -167,7 +167,7 @@ BEGIN
                ON JL.Job = JR.Job
         WHERE JR.Job IS NULL;
 
-        If Not Exists (Select * From Tmp_Archive_Jobs_To_Reset) Then
+        If Not Exists (SELECT Job FROM Tmp_Archive_Jobs_To_Reset) Then
             _message := 'None of the capture task job(s) has a failed ArchiveVerify step';
             RAISE INFO '%', _message;
 
@@ -229,8 +229,8 @@ BEGIN
                        TS.Tool,
                        'Step would be reset' AS Message,
                        TS.State,
-                       timestamp_text(TS.Start) As Start,
-                       timestamp_text(TS.Finish) As Finish
+                       timestamp_text(TS.Start) AS Start,
+                       timestamp_text(TS.Finish) AS Finish
                 FROM cap.t_task_Steps TS
                      INNER JOIN Tmp_Archive_Jobs_To_Reset JR
                        ON TS.Job = JR.Job

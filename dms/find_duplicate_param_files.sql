@@ -377,9 +377,9 @@ BEGIN
         -----------------------------------------
 
         FOR _entryInfo IN
-            SELECT PE.Entry_Type As Type,
-                   PE.Entry_Specifier As Specifier,
-                   PE.Entry_Value As Value,
+            SELECT PE.Entry_Type AS Type,
+                   PE.Entry_Specifier AS Specifier,
+                   PE.Entry_Value AS Value,
                    PE.Compare
             FROM Tmp_DefaultSequestParamEntries PE
             ORDER BY PE.Entry_ID

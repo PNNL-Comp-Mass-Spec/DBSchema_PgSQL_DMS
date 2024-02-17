@@ -245,10 +245,10 @@ BEGIN
                    Dataset,
                    Dataset_ID AS DatasetID,
                    Script,
-                   Storage_Server As StorageServer,
+                   Storage_Server AS StorageServer,
                    Instrument,
-                   Instrument_Class as InstrumentClass,
-                   Max_Simultaneous_Captures As MaxSimultaneousCaptures,
+                   Instrument_Class AS InstrumentClass,
+                   Max_Simultaneous_Captures AS MaxSimultaneousCaptures,
                    Capture_Subdirectory AS CaptureSubdirectory
             FROM Tmp_Jobs
             ORDER BY Job

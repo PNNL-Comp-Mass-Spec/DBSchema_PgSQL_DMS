@@ -23,7 +23,7 @@ BEGIN
     SET most_recent_entry = CASE WHEN LookupQ.SaveRank = 1 THEN 1 ELSE 0 END
     FROM ( SELECT H.job,
                   H.saved,
-                  Row_Number() OVER ( PARTITION BY H.job ORDER BY H.saved DESC ) AS SaveRank
+                  Row_Number() OVER (PARTITION BY H.job ORDER BY H.saved DESC) AS SaveRank
            FROM cap.t_task_parameters_history H
                 INNER JOIN inserted on H.job = inserted.job
          ) LookupQ

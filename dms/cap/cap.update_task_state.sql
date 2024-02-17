@@ -156,7 +156,7 @@ BEGIN
         SELECT
             T.Job,
             T.Dataset_ID,
-            T.State As OldState,
+            T.State AS OldState,
             T.Results_Folder_Name,
             T.Storage_Server,
             CASE WHEN JS_Stats.Failed > 0 THEN 5                     -- New capture task job state: Failed
@@ -216,8 +216,8 @@ BEGIN
         Storage_Server
     )
     SELECT T.Job,
-           T.State As OldState,
-           T.State As NewState,
+           T.State AS OldState,
+           T.State AS NewState,
            T.Results_Folder_Name,
            T.Dataset,
            T.Dataset_ID,
@@ -496,7 +496,7 @@ BEGIN
                    Script,
                    Dataset_ID,
                    timestamp_text(Start_New) AS Start_New,
-                   timestamp_text(Finish_New) As Finish_New,
+                   timestamp_text(Finish_New) AS Finish_New,
                    Dataset_Name
             FROM Tmp_ChangedJobs
             ORDER BY Job

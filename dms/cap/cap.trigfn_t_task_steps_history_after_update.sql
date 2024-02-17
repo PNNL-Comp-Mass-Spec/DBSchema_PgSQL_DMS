@@ -24,12 +24,12 @@ BEGIN
         SELECT CountQ.job,
                CountQ.step,
                CountQ.saved,
-               CASE WHEN CountQ.SaveRank = 1 THEN 1 ELSE 0 END As most_recent_entry
+               CASE WHEN CountQ.SaveRank = 1 THEN 1 ELSE 0 END AS most_recent_entry
         FROM (
                 SELECT H.job,
                        H.step,
                        H.saved,
-                       Row_Number() OVER ( PARTITION BY H.job, H.step ORDER BY H.saved DESC ) AS SaveRank
+                       Row_Number() OVER (PARTITION BY H.job, H.step ORDER BY H.saved DESC) AS SaveRank
                 FROM cap.t_task_steps_history H
                 WHERE H.job = NEW.job AND
                       H.step = NEW.step

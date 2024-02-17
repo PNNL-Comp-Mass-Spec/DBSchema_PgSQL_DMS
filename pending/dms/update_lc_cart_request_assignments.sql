@@ -115,7 +115,7 @@ BEGIN
     SELECT XmlQ.request_id, XmlQ.cart, XmlQ.cartConfig, XmlQ.cart_column
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT _xml As rooted_xml
+        FROM ( SELECT _xml AS rooted_xml
              ) Src,
              XMLTABLE('//root/r'
                       PASSING Src.rooted_xml

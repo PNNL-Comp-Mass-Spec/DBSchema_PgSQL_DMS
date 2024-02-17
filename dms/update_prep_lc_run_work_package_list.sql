@@ -129,7 +129,7 @@ BEGIN
                 FROM ( SELECT DISTINCT Work_Package
                        FROM T_Sample_Prep_Request SPR
                             INNER JOIN Tmp_SamplePrepRequests_for_WP_List NewIDs
-                              ON SPR.prep_request_id = NewIDs.prep_request_id) As DistinctQ;
+                              ON SPR.prep_request_id = NewIDs.prep_request_id) AS DistinctQ;
 
                 If Coalesce(_wpList, '') = '' Then
                     _wpList := null;

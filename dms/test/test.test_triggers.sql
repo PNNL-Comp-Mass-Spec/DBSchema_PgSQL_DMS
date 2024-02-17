@@ -164,7 +164,7 @@ BEGIN
     FROM t_instrument_name
     WHERE instrument_group in ('Eclipse', 'QExactive', 'VelosOrbi') AND
           status = 'Active'
-    ORDER BY CASE WHEN instrument LIKE 'External%' THEN 1 ELSE 0 END, instrument_id Desc
+    ORDER BY CASE WHEN instrument LIKE 'External%' THEN 1 ELSE 0 END, instrument_id DESC
     LIMIT 1;
 
     If Not FOUND Then
@@ -226,7 +226,7 @@ BEGIN
             SELECT analysis_tool_id, param_file_type_id, analysis_tool
             INTO _analysisToolInfo
             FROM t_analysis_tool
-            ORDER BY active desc, analysis_tool_id desc
+            ORDER BY active DESC, analysis_tool_id DESC
             Limit 1;
         End If;
 
@@ -282,7 +282,7 @@ BEGIN
         -- Assign placeholder campaign IDs
         UPDATE T_Tmp_Campaigns
         SET campaign_id = RankQ.campaign_id
-        FROM (SELECT campaign_name, row_number() Over (Order By campaign_name) As campaign_id
+        FROM (SELECT campaign_name, Row_Number() OVER (ORDER BY campaign_name) AS campaign_id
               FROM T_Tmp_Campaigns) RankQ
         WHERE T_Tmp_Campaigns.campaign_name = RankQ.campaign_name;
 
@@ -346,7 +346,7 @@ BEGIN
         -- Assign placeholder experiment IDs
         UPDATE T_Tmp_Experiments
         SET experiment_id = RankQ.experiment_id
-        FROM (SELECT experiment_name, row_number() over (order by experiment_name) As experiment_id
+        FROM (SELECT experiment_name, Row_Number() OVER (ORDER BY experiment_name) AS experiment_id
               FROM T_Tmp_Experiments) RankQ
         WHERE T_Tmp_Experiments.experiment_name = RankQ.experiment_name;
 
@@ -410,7 +410,7 @@ BEGIN
         -- Assign placeholder dataset IDs
         UPDATE T_Tmp_Datasets
         SET dataset_id = RankQ.dataset_id
-        FROM (SELECT dataset_name, row_number() over (order by dataset_name) As dataset_id
+        FROM (SELECT dataset_name, Row_Number() OVER (ORDER BY dataset_name) AS dataset_id
               FROM T_Tmp_Datasets) RankQ
         WHERE T_Tmp_Datasets.dataset_name = RankQ.dataset_name;
 
@@ -470,7 +470,7 @@ BEGIN
         -- Assign placeholder job numbers
         UPDATE T_Tmp_Jobs
         SET job = RankQ.job
-        FROM (SELECT dataset_id, row_number() over (order by dataset_id) As job
+        FROM (SELECT dataset_id, Row_Number() OVER (ORDER BY dataset_id) AS job
               FROM T_Tmp_Jobs) RankQ
         WHERE T_Tmp_Jobs.dataset_id = RankQ.dataset_id;
 
@@ -491,7 +491,7 @@ BEGIN
 
     INSERT INTO T_Tmp_Experiment_Plex_Members (plex_exp_id, channel, exp_id, channel_type_id, comment, mapping_defined)
     SELECT _experimentID, RankQ.RowNum - 1, RankQ.experiment_id, 1, 'Unit test plex', false
-    FROM ( SELECT experiment_id, Row_Number() Over (Order By experiment_id) as RowNum
+    FROM ( SELECT experiment_id, Row_Number() OVER (ORDER BY experiment_id) AS RowNum
            FROM T_Tmp_Experiments) RankQ
     WHERE RankQ.RowNum > 1
     ORDER BY RankQ.experiment_id;
@@ -801,12 +801,12 @@ BEGIN
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
             SELECT E.event_id,
-                   'Event Log: ' || Lower(E.target) as item_type,
-                   C.campaign_name as item_name,
-                   E.target_id as item_id,
-                   E.prev_target_state::text || '->' || E.target_state::text || ' (' || Coalesce(E.state_name, 'null') || ')' as action,
-                   'at ' || public.timestamp_text(E.entered) as comment,
-                   Row_Number() Over (partition by target_id, state_name Order By E.event_id desc) as EventLogRank
+                   'Event Log: ' || Lower(E.target) AS item_type,
+                   C.campaign_name AS item_name,
+                   E.target_id AS item_id,
+                   E.prev_target_state::text || '->' || E.target_state::text || ' (' || Coalesce(E.state_name, 'null') || ')' AS action,
+                   'at ' || public.timestamp_text(E.entered) AS comment,
+                   Row_Number() OVER (PARTITION BY target_id, state_name ORDER BY E.event_id DESC) AS EventLogRank
             FROM v_event_log E
                  INNER JOIN T_Tmp_Campaigns C
                    ON E.target_id = C.campaign_id
@@ -827,12 +827,12 @@ BEGIN
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
             SELECT E.event_id,
-                   'Event Log: ' || Lower(E.target) as item_type,
-                   'Campaign ID ' || E.target_id::text as item_name,
-                   E.target_id as item_id,
-                   E.prev_target_state::text || '->' || E.target_state::text || ' (' || Coalesce(E.state_name, 'null') || ')' as action,
-                   'at ' || public.timestamp_text(E.entered) as comment,
-                   Row_Number() Over (partition by E.target_id, Coalesce(E.state_name, '') Order By E.event_id desc) as EventLogRank
+                   'Event Log: ' || Lower(E.target) AS item_type,
+                   'Campaign ID ' || E.target_id::text AS item_name,
+                   E.target_id AS item_id,
+                   E.prev_target_state::text || '->' || E.target_state::text || ' (' || Coalesce(E.state_name, 'null') || ')' AS action,
+                   'at ' || public.timestamp_text(E.entered) AS comment,
+                   Row_Number() OVER (PARTITION BY E.target_id, Coalesce(E.state_name, '') ORDER BY E.event_id DESC) AS EventLogRank
             FROM v_event_log E
             WHERE entered >= CURRENT_TIMESTAMP - Interval '2 hours' and target = 'Campaign') RankQ
         WHERE RankQ.EventLogRank = 1
@@ -846,12 +846,12 @@ BEGIN
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
             SELECT E.event_id,
-                   'Event Log: ' || Lower(E.target) as item_type,
-                   T_Tmp_Experiments.experiment_name as item_name,
-                   E.target_id as item_id,
-                   E.prev_target_state::text || '->' || E.target_state::text || ' (' || Coalesce(E.state_name, 'null') || ')' as action,
-                   'at ' || public.timestamp_text(E.entered) as comment,
-                   Row_Number() Over (partition by target_id, state_name Order By E.event_id desc) as EventLogRank
+                   'Event Log: ' || Lower(E.target) AS item_type,
+                   T_Tmp_Experiments.experiment_name AS item_name,
+                   E.target_id AS item_id,
+                   E.prev_target_state::text || '->' || E.target_state::text || ' (' || Coalesce(E.state_name, 'null') || ')' AS action,
+                   'at ' || public.timestamp_text(E.entered) AS comment,
+                   Row_Number() OVER (PARTITION BY target_id, state_name ORDER BY E.event_id DESC) AS EventLogRank
             FROM v_event_log E
                  INNER JOIN T_Tmp_Experiments
                    ON E.target_id = T_Tmp_Experiments.experiment_id
@@ -871,12 +871,12 @@ BEGIN
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
             SELECT E.event_id,
-                   'Event Log: ' || Lower(E.target) as item_type,
-                   'Experiment ID ' || E.target_id::text as item_name,
-                   E.target_id as item_id,
-                   E.prev_target_state::text || '->' || E.target_state::text || ' (' || Coalesce(E.state_name, 'null') || ')' as action,
-                   'at ' || public.timestamp_text(E.entered) as comment,
-                   Row_Number() Over (partition by E.target_id, Coalesce(E.state_name, '') Order By E.event_id desc) as EventLogRank
+                   'Event Log: ' || Lower(E.target) AS item_type,
+                   'Experiment ID ' || E.target_id::text AS item_name,
+                   E.target_id AS item_id,
+                   E.prev_target_state::text || '->' || E.target_state::text || ' (' || Coalesce(E.state_name, 'null') || ')' AS action,
+                   'at ' || public.timestamp_text(E.entered) AS comment,
+                   Row_Number() OVER (PARTITION BY E.target_id, Coalesce(E.state_name, '') ORDER BY E.event_id DESC) AS EventLogRank
             FROM v_event_log E
             WHERE entered >= CURRENT_TIMESTAMP - Interval '2 hours' and target = 'Experiment') RankQ
         WHERE RankQ.EventLogRank = 1
@@ -890,12 +890,12 @@ BEGIN
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
             SELECT E.event_id,
-                   'Event Log: ' || Lower(E.target) as item_type,
-                   T_Tmp_Datasets.dataset_name as item_name,
-                   E.target_id as item_id,
-                   E.prev_target_state::text || '->' || E.target_state::text || ' (' || Coalesce(E.state_name, 'null') || ')' as action,
-                   'at ' || public.timestamp_text(E.entered) as comment,
-                   Row_Number() Over (partition by target_id, state_name Order By E.event_id desc) as EventLogRank
+                   'Event Log: ' || Lower(E.target) AS item_type,
+                   T_Tmp_Datasets.dataset_name AS item_name,
+                   E.target_id AS item_id,
+                   E.prev_target_state::text || '->' || E.target_state::text || ' (' || Coalesce(E.state_name, 'null') || ')' AS action,
+                   'at ' || public.timestamp_text(E.entered) AS comment,
+                   Row_Number() OVER (PARTITION BY target_id, state_name ORDER BY E.event_id DESC) AS EventLogRank
             FROM v_event_log E
                  INNER JOIN T_Tmp_Datasets
                    ON E.target_id = T_Tmp_Datasets.dataset_id
@@ -915,12 +915,12 @@ BEGIN
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
             SELECT E.event_id,
-                   'Event Log: ' || Lower(E.target) as item_type,
-                   'Dataset ID ' || E.target_id::text as item_name,
-                   E.target_id as item_id,
-                   E.prev_target_state::text || '->' || E.target_state::text || ' (' || Coalesce(E.state_name, 'null') || ')' as action,
-                   'at ' || public.timestamp_text(E.entered) as comment,
-                   Row_Number() Over (partition by E.target_id, Coalesce(E.state_name, '') Order By E.event_id desc) as EventLogRank
+                   'Event Log: ' || Lower(E.target) AS item_type,
+                   'Dataset ID ' || E.target_id::text AS item_name,
+                   E.target_id AS item_id,
+                   E.prev_target_state::text || '->' || E.target_state::text || ' (' || Coalesce(E.state_name, 'null') || ')' AS action,
+                   'at ' || public.timestamp_text(E.entered) AS comment,
+                   Row_Number() OVER (PARTITION BY E.target_id, Coalesce(E.state_name, '') ORDER BY E.event_id DESC) AS EventLogRank
             FROM v_event_log E
             WHERE entered >= CURRENT_TIMESTAMP - Interval '2 hours' and target IN ('Dataset', 'DS Rating')) RankQ
         WHERE RankQ.EventLogRank = 1
@@ -934,12 +934,12 @@ BEGIN
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
             SELECT E.event_id,
-                   'Event Log: ' || Lower(E.target) as item_type,
-                   'Job ID ' || T_Tmp_Jobs.job::text as item_name,
-                   E.target_id as item_id,
-                   E.prev_target_state::text || '->' || E.target_state::text || ' (' || Coalesce(E.state_name, 'null') || ')' as action,
-                   'for dataset ' || Coalesce(T_Tmp_Datasets.dataset_id, 0)::text || ' at ' || public.timestamp_text(E.entered) as comment,
-                   Row_Number() Over (partition by target_id, state_name Order By E.event_id desc) as EventLogRank
+                   'Event Log: ' || Lower(E.target) AS item_type,
+                   'Job ID ' || T_Tmp_Jobs.job::text AS item_name,
+                   E.target_id AS item_id,
+                   E.prev_target_state::text || '->' || E.target_state::text || ' (' || Coalesce(E.state_name, 'null') || ')' AS action,
+                   'for dataset ' || Coalesce(T_Tmp_Datasets.dataset_id, 0)::text || ' at ' || public.timestamp_text(E.entered) AS comment,
+                   Row_Number() OVER (PARTITION BY target_id, state_name ORDER BY E.event_id DESC) AS EventLogRank
             FROM v_event_log E
                  INNER JOIN T_Tmp_Jobs
                    ON E.target_id = T_Tmp_Jobs.job
@@ -961,12 +961,12 @@ BEGIN
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
             SELECT E.event_id,
-                   'Event Log: ' || Lower(E.target) as item_type,
-                   'Job ID ' || E.target_id::text as item_name,
-                   E.target_id as item_id,
-                   E.prev_target_state::text || '->' || E.target_state::text || ' (' || Coalesce(E.state_name, 'null') || ')' as action,
-                   'at ' || public.timestamp_text(E.entered) as comment,
-                   Row_Number() Over (partition by E.target_id, Coalesce(E.state_name, '') Order By E.event_id desc) as EventLogRank
+                   'Event Log: ' || Lower(E.target) AS item_type,
+                   'Job ID ' || E.target_id::text AS item_name,
+                   E.target_id AS item_id,
+                   E.prev_target_state::text || '->' || E.target_state::text || ' (' || Coalesce(E.state_name, 'null') || ')' AS action,
+                   'at ' || public.timestamp_text(E.entered) AS comment,
+                   Row_Number() OVER (PARTITION BY E.target_id, Coalesce(E.state_name, '') ORDER BY E.event_id DESC) AS EventLogRank
             FROM v_event_log E
             WHERE entered >= CURRENT_TIMESTAMP - Interval '2 hours' and target = 'Job') RankQ
         WHERE RankQ.EventLogRank = 1
@@ -980,12 +980,12 @@ BEGIN
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
             SELECT H.entry_id,
-                   'Plex History, plex_exp_id ' || H.plex_exp_id::text as item_type,
-                   'Channel ' || H.channel as item_name,
-                   H.exp_id as item_id,
-                   'State: ' || H.state::text as action,
-                   'at ' || public.timestamp_text(H.entered) as comment,
-                   Row_Number() Over (partition by H.plex_exp_id, H.exp_id, H.state Order By H.entry_id desc) as EventLogRank
+                   'Plex History, plex_exp_id ' || H.plex_exp_id::text AS item_type,
+                   'Channel ' || H.channel AS item_name,
+                   H.exp_id AS item_id,
+                   'State: ' || H.state::text AS action,
+                   'at ' || public.timestamp_text(H.entered) AS comment,
+                   Row_Number() OVER (PARTITION BY H.plex_exp_id, H.exp_id, H.state ORDER BY H.entry_id DESC) AS EventLogRank
             FROM t_experiment_plex_members_history H
             WHERE H.plex_exp_id in (SELECT DISTINCT plex_exp_id FROM T_Tmp_Experiment_Plex_Members) AND
                   H.entered >= _today) RankQ
@@ -1004,12 +1004,12 @@ BEGIN
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
             SELECT H.entry_id,
-                   'Plex History, plex_exp_id ' || H.plex_exp_id::text as item_type,
-                   'Channel ' || H.channel as item_name,
-                   H.exp_id as item_id,
-                   'State: ' || H.state::text as action,
-                   'at ' || public.timestamp_text(H.entered) as comment,
-                   Row_Number() Over (partition by H.plex_exp_id, H.exp_id, H.state Order By H.entry_id desc) as EventLogRank
+                   'Plex History, plex_exp_id ' || H.plex_exp_id::text AS item_type,
+                   'Channel ' || H.channel AS item_name,
+                   H.exp_id AS item_id,
+                   'State: ' || H.state::text AS action,
+                   'at ' || public.timestamp_text(H.entered) AS comment,
+                   Row_Number() OVER (PARTITION BY H.plex_exp_id, H.exp_id, H.state ORDER BY H.entry_id DESC) AS EventLogRank
             FROM t_experiment_plex_members_history H
             WHERE H.entered >= CURRENT_TIMESTAMP - Interval '2 hours') RankQ
         WHERE RankQ.EventLogRank = 1
@@ -1023,12 +1023,12 @@ BEGIN
     INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
     SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
     FROM (  SELECT L.entry_id,
-                   'Rename log: ' || L.target_type as item_type,
-                   L.type_name as item_name,
-                   L.target_id as item_id,
-                   'Rename to ' || new_name as action,
-                   'from || ' || old_name || ' at ' || public.timestamp_text(L.entered) as comment,
-                   Row_Number() Over (partition by L.target_type, L.target_id Order By L.entry_id desc) as EventLogRank
+                   'Rename log: ' || L.target_type AS item_type,
+                   L.type_name AS item_name,
+                   L.target_id AS item_id,
+                   'Rename to ' || new_name AS action,
+                   'from || ' || old_name || ' at ' || public.timestamp_text(L.entered) AS comment,
+                   Row_Number() OVER (PARTITION BY L.target_type, L.target_id ORDER BY L.entry_id DESC) AS EventLogRank
             FROM v_entity_rename_log L
             WHERE entered >= _today) RankQ
     WHERE RankQ.EventLogRank <= 2

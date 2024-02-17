@@ -295,7 +295,7 @@ BEGIN
                   DistinctQ.Year,
                   DistinctQ.Month,
                   DistinctQ.Day,
-                  string_agg(DistinctQ.Comment, ',' Order By DistinctQ.Comment) AS Comment
+                  string_agg(DistinctQ.Comment, ',' ORDER BY DistinctQ.Comment) AS Comment
            FROM (SELECT DISTINCT Src.EMSL_Inst_ID,
                                  Src.DMS_Instrument,
                                  Src.Type,
@@ -341,7 +341,7 @@ BEGIN
                   DistinctQ.Year,
                   DistinctQ.Month,
                   DistinctQ.Day,
-                  string_agg(DistinctQ.Operator, ',' Order By DistinctQ.Operator) AS Operator
+                  string_agg(DistinctQ.Operator, ',' ORDER BY DistinctQ.Operator) AS Operator
            FROM (SELECT DISTINCT Src.EMSL_Inst_ID,
                                  Src.DMS_Instrument,
                                  Src.Type,
@@ -396,7 +396,7 @@ BEGIN
            Src.Month,
            Src.Dataset_ID,
            Src.Dataset_ID_Acq_Overlap,
-           MIN(Src.Seq) as Seq,
+           MIN(Src.Seq) AS Seq,
            NULL::timestamp AS Updated,
            NULL::citext AS UpdatedBy
     FROM Tmp_T_Report_Accumulation Src
@@ -436,8 +436,8 @@ BEGIN
            Src.Year,
            Src.Month,
            NULL::int AS Dataset_ID,             -- Store null since we're rolling up multiple rows
-           NULL::int As Dataset_ID_Acq_Overlap,
-           MIN(Src.Seq) as Seq,
+           NULL::int AS Dataset_ID_Acq_Overlap,
+           MIN(Src.Seq) AS Seq,
            NULL::timestamp AS Updated,
            NULL::citext AS UpdatedBy
     FROM Tmp_T_Report_Accumulation Src

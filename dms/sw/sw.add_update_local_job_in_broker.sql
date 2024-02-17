@@ -283,7 +283,7 @@ BEGIN
                 SELECT XmlQ.section, XmlQ.name, XmlQ.value
                 FROM (
                     SELECT xmltable.*
-                    FROM ( SELECT ('<params>' || _jobParamXML::text || '</params>')::xml As rooted_xml
+                    FROM ( SELECT ('<params>' || _jobParamXML::text || '</params>')::xml AS rooted_xml
                          ) Src,
                          XMLTABLE('//params/Param'
                                   PASSING Src.rooted_xml
@@ -312,9 +312,9 @@ BEGIN
                              XMLAGG(XMLELEMENT(
                                     NAME "Param",
                                     XMLATTRIBUTES(
-                                        Section As "Section",
-                                        Name As "Name",
-                                        Value As "Value"))
+                                        Section AS "Section",
+                                        Name AS "Name",
+                                        Value AS "Value"))
                                     ORDER BY Section, Name
                                    ) AS xml_item
                            FROM Tmp_Job_Params

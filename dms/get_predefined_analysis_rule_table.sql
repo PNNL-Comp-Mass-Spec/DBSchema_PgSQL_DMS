@@ -44,18 +44,18 @@ BEGIN
 
     SELECT DS.Campaign,
            DS.Experiment,
-           DS.Experiment_Comment As ExperimentComment,
-           DS.Experiment_Labelling As ExperimentLabelling,
+           DS.Experiment_Comment AS ExperimentComment,
+           DS.Experiment_Labelling AS ExperimentLabelling,
            DS.Dataset,
-           DS.Dataset_Type As DatasetType,
-           DS.Scan_Types As ScanTypes,
-           DS.Separation_Type As SeparationType,
+           DS.Dataset_Type AS DatasetType,
+           DS.Scan_Types AS ScanTypes,
+           DS.Separation_Type AS SeparationType,
            DS.Organism,
-           DS.Instrument As InstrumentName,
-           DS.Instrument_Class As InstrumentClass,
-           DS.Dataset_Comment As DatasetComment,
+           DS.Instrument AS InstrumentName,
+           DS.Instrument_Class AS InstrumentClass,
+           DS.Dataset_Comment AS DatasetComment,
            DS.Rating,
-           DS.Scan_Count As ScanCount,
+           DS.Scan_Count AS ScanCount,
            DS.ID
     INTO _predefineInfo
     FROM V_Predefined_Analysis_Dataset_Info DS
@@ -66,7 +66,7 @@ BEGIN
     Else
 
         RETURN QUERY
-        SELECT ''::citext As message,
+        SELECT ''::citext AS message,
                PA.predefine_id,
                PA.predefine_level,
                PA.predefine_sequence,

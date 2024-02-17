@@ -124,8 +124,8 @@ BEGIN
                                '---------------');
 
             FOR _eventInfo IN
-                SELECT target_id As TargetID,
-                       event_type_id As EventTypeID
+                SELECT target_id AS TargetID,
+                       event_type_id AS EventTypeID
                 FROM Tmp_NewEvents
                 ORDER BY target_id
             LOOP

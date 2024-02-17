@@ -356,7 +356,7 @@ BEGIN
         SELECT public.trim_whitespace(XmlQ.ScanType), public.try_cast(XmlQ.ScanCount, 0), XmlQ.ScanFilter
         FROM (
             SELECT xmltable.*
-            FROM ( SELECT _datasetInfoXML As rooted_xml
+            FROM ( SELECT _datasetInfoXML AS rooted_xml
                  ) Src,
                  XMLTABLE('//DatasetInfo/ScanTypes/ScanType'
                           PASSING Src.rooted_xml
@@ -376,7 +376,7 @@ BEGIN
         SELECT public.trim_whitespace(XmlQ.InstFilePath), XmlQ.InstFileHash, XmlQ.InstFileHashType, XmlQ.InstFileSize
         FROM (
             SELECT xmltable.*
-            FROM ( SELECT _datasetInfoXML As rooted_xml
+            FROM ( SELECT _datasetInfoXML AS rooted_xml
                  ) Src,
                  XMLTABLE('//DatasetInfo/AcquisitionInfo/InstrumentFiles/InstrumentFile'
                           PASSING Src.rooted_xml
@@ -393,9 +393,9 @@ BEGIN
         UPDATE Tmp_InstrumentFiles
         SET FileSizeRank = RankQ.FileSizeRank
         FROM (
-            SELECT Entry_ID, Row_Number() Over (Order By InstFileSize Desc) As FileSizeRank
+            SELECT Entry_ID, Row_Number() OVER (ORDER BY InstFileSize DESC) AS FileSizeRank
             FROM Tmp_InstrumentFiles
-            ) As RankQ
+            ) AS RankQ
         WHERE Tmp_InstrumentFiles.Entry_ID = RankQ.Entry_ID;
 
         ---------------------------------------------------
@@ -433,7 +433,7 @@ BEGIN
                                                allow_duplicates)
             SELECT DSFiles.dataset_id,
                    COUNT(dataset_file_id) AS MatchingFiles,
-                   false As Allow_Duplicates
+                   false AS Allow_Duplicates
             FROM t_dataset_files DSFiles
                  INNER JOIN Tmp_InstrumentFiles NewDSFiles
                    ON DSFiles.file_hash = NewDSFiles.InstFileHash
@@ -457,7 +457,7 @@ BEGIN
                 INTO _duplicateDatasetID
                 FROM Tmp_DuplicateDatasets
                 WHERE MatchingFileCount >= _instrumentFileCount And Not Allow_Duplicates
-                ORDER BY Dataset_ID Desc
+                ORDER BY Dataset_ID DESC
                 LIMIT 1;
 
                 -- Duplicate dataset found: DatasetID 693058 has the same instrument file as DatasetID 692115; see table t_dataset_files
@@ -502,7 +502,7 @@ BEGIN
                 INTO _duplicateDatasetID
                 FROM Tmp_DuplicateDatasets
                 WHERE MatchingFileCount >= _instrumentFileCount And Allow_Duplicates
-                ORDER BY Dataset_ID Desc
+                ORDER BY Dataset_ID DESC
                 LIMIT 1;
 
                 _duplicateDatasetInfoSuffix := format('has the same instrument file As Dataset ID %s; see table t_dataset_files', _duplicateDatasetID);
@@ -591,15 +591,15 @@ BEGIN
             RAISE INFO '%', _infoHeadSeparator;
 
             FOR _previewData IN
-                SELECT DSInfo.Scan_Count       As ScanCount,
-                       DSInfo.Scan_Count_MS    As ScanCountMS,
-                       DSInfo.Scan_Count_MSn   As ScanCountMSn,
-                       DSInfo.Scan_Count_DIA   As ScanCountDIA,
-                       DSInfo.Acq_Time_Start   As AcqTimeStart,
-                       DSInfo.Acq_Time_Minutes As AcqTimeMinutes,
-                       DSInfo.File_Size_Bytes  As FileSizeBytes,
-                       _separationType         As SeparationType,
-                       _optimalSeparationType  As OptimalSeparationType
+                SELECT DSInfo.Scan_Count       AS ScanCount,
+                       DSInfo.Scan_Count_MS    AS ScanCountMS,
+                       DSInfo.Scan_Count_MSn   AS ScanCountMSn,
+                       DSInfo.Scan_Count_DIA   AS ScanCountDIA,
+                       DSInfo.Acq_Time_Start   AS AcqTimeStart,
+                       DSInfo.Acq_Time_Minutes AS AcqTimeMinutes,
+                       DSInfo.File_Size_Bytes  AS FileSizeBytes,
+                       _separationType         AS SeparationType,
+                       _optimalSeparationType  AS OptimalSeparationType
                 FROM Tmp_DSInfoTable DSInfo
             LOOP
                 _infoData := format(_formatSpecifier,
@@ -673,10 +673,10 @@ BEGIN
             RAISE INFO '%', _infoHeadSeparator;
 
             FOR _previewData IN
-                SELECT InstFileHash As FileHash,
-                       pg_size_pretty(InstFileSize::bigint) As FileSize,
+                SELECT InstFileHash AS FileHash,
+                       pg_size_pretty(InstFileSize::bigint) AS FileSize,
                        FileSizeRank,
-                       InstFilePath As FilePath
+                       InstFilePath AS FilePath
                 FROM Tmp_InstrumentFiles
                 ORDER BY Entry_ID
             LOOP
@@ -882,7 +882,7 @@ BEGIN
 
         _currentLocation := 'Update T_Dataset_Files using a Merge';
 
-        MERGE INTO t_dataset_files As target
+        MERGE INTO t_dataset_files AS target
         USING ( SELECT _datasetID AS Dataset_ID, InstFilePath, InstFileSize, InstFileHash, FileSizeRank
                 FROM Tmp_InstrumentFiles
               ) AS Source

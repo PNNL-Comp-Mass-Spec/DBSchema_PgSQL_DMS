@@ -328,7 +328,7 @@ BEGIN
 
                 INSERT INTO cap.t_task_step_dependencies(Job, Step, Target_Step, Condition_Test, Test_Value,
                                                          Evaluated, Triggered, Enable_Only)
-                SELECT _newJob As Job, Step, Target_Step, Condition_Test, Test_Value, 0 AS Evaluated, 0 AS Triggered, Enable_Only
+                SELECT _newJob AS Job, Step, Target_Step, Condition_Test, Test_Value, 0 AS Evaluated, 0 AS Triggered, Enable_Only
                 FROM cap.t_task_step_dependencies_history H
                 WHERE Job = _similarJob;
                 --

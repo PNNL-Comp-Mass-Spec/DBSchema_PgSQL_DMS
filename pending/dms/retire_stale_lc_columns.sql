@@ -57,7 +57,7 @@ BEGIN
     -----------------------------------------------------------
 
     INSERT INTO Tmp_LCColumns (lc_column_id, Last_Used)
-    SELECT LCCol.lc_column_id, MAX(DS.created) As Last_Used
+    SELECT LCCol.lc_column_id, MAX(DS.created) AS Last_Used
     FROM t_lc_column LCCol
          INNER JOIN t_dataset DS
            ON LCCol.lc_column_id = DS.lc_column_ID
@@ -94,7 +94,7 @@ BEGIN
     -----------------------------------------------------------
 
     INSERT INTO Tmp_LCColumns (lc_column_id, Last_Used)
-    SELECT LCCol.lc_column_id, LCCol.created As Last_Used
+    SELECT LCCol.lc_column_id, LCCol.created AS Last_Used
     FROM t_lc_column LCCol
          LEFT OUTER JOIN t_dataset DS
            ON LCCol.lc_column_id = DS.lc_column_ID
@@ -160,7 +160,7 @@ BEGIN
                    LCCol.LC_Column,
                    Src.Last_Used,
                    Src.Most_Recent_Dataset,
-                   public.timestamp_text(LCCol.Created) As Created,
+                   public.timestamp_text(LCCol.Created) AS Created,
                    LCCol.Comment,
                    LCCol.Packing_Mfg,
                    LCCol.Packing_Type,

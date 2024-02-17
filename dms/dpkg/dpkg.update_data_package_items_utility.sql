@@ -171,7 +171,7 @@ BEGIN
             SELECT DataPackageID,
                    Job
             FROM ( SELECT DataPackageID,
-                          public.try_cast(Identifier, null::int) As Job
+                          public.try_cast(Identifier, null::int) AS Job
                    FROM Tmp_DataPackageItems
                    WHERE ItemType = 'Job' AND
                          NOT DataPackageID IS NULL ) SourceQ
@@ -751,11 +751,11 @@ BEGIN
                 RAISE INFO '%', _infoHeadSeparator;
 
                 FOR _previewData IN
-                    SELECT DISTINCT 'Add Biomaterial to Data Pkg' As Action,
-                                    PkgItems.DataPackageID As Data_Pkg_ID,
-                                    B.ID As Biomaterial_ID,
+                    SELECT DISTINCT 'Add Biomaterial to Data Pkg' AS Action,
+                                    PkgItems.DataPackageID AS Data_Pkg_ID,
+                                    B.ID AS Biomaterial_ID,
                                     B.Type,
-                                    B.Name As Biomaterial,
+                                    B.Name AS Biomaterial,
                                     B.Campaign,
                                     _comment AS Comment
                     FROM Tmp_DataPackageItems PkgItems
@@ -990,11 +990,11 @@ BEGIN
                 RAISE INFO '%', _infoHeadSeparator;
 
                 FOR _previewData IN
-                    SELECT DISTINCT 'Add EUS Proposal to Data Pkg' As Action,
-                                    PkgItems.DataPackageID As Data_Pkg_ID,
+                    SELECT DISTINCT 'Add EUS Proposal to Data Pkg' AS Action,
+                                    PkgItems.DataPackageID AS Data_Pkg_ID,
                                     EUP.Proposal_ID,
-                                    Substring(EUP.Title, 1, 90) As Proposal,
-                                    _comment As Comment
+                                    Substring(EUP.Title, 1, 90) AS Proposal,
+                                    _comment AS Comment
                     FROM Tmp_DataPackageItems PkgItems
                          INNER JOIN public.t_eus_proposals EUP
                            ON PkgItems.Identifier = EUP.proposal_id
@@ -1228,11 +1228,11 @@ BEGIN
                 RAISE INFO '%', _infoHeadSeparator;
 
                 FOR _previewData IN
-                    SELECT DISTINCT 'Add Experiment to Data Pkg' As Action,
-                                    PkgItems.DataPackageID As Data_Pkg_ID,
-                                    E.Exp_ID As Experiment_ID,
+                    SELECT DISTINCT 'Add Experiment to Data Pkg' AS Action,
+                                    PkgItems.DataPackageID AS Data_Pkg_ID,
+                                    E.Exp_ID AS Experiment_ID,
                                     E.Experiment,
-                                    _comment As Comment
+                                    _comment AS Comment
                     FROM Tmp_DataPackageItems PkgItems
                          INNER JOIN public.t_experiments E
                            ON PkgItems.Identifier = E.Experiment
@@ -1489,7 +1489,7 @@ BEGIN
                                     PkgItems.DataPackageID AS Data_Pkg_ID,
                                     DS.Dataset_ID,
                                     DS.Dataset,
-                                    public.timestamp_text(DS.Created) As Created,
+                                    public.timestamp_text(DS.Created) AS Created,
                                     E.Experiment,
                                     InstName.Instrument,
                                     _comment AS Comment
@@ -1761,7 +1761,7 @@ BEGIN
                                     ItemsQ.DataPackageID AS Data_Pkg_ID,
                                     AJ.Job,
                                     T.Analysis_Tool AS Tool,
-                                    public.timestamp_text(AJ.Created) As Created,
+                                    public.timestamp_text(AJ.Created) AS Created,
                                     DS.Dataset,
                                     _comment AS Comment
                     FROM Tmp_JobsToAddOrDelete ItemsQ

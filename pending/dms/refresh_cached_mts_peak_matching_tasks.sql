@@ -248,7 +248,7 @@ BEGIN
                      -PM.refine_mass_cal_ppm_shift AS PPMShift_VIPER,
                      PM.amt_count_10pct_fdr,
                      PM.amt_count_25pct_fdr,
-                     Row_Number() OVER ( PARTITION BY J.dataset_id ORDER BY J.job DESC, PM.md_state, PM.job_finish DESC ) AS TaskRank
+                     Row_Number() OVER (PARTITION BY J.dataset_id ORDER BY J.job DESC, PM.md_state, PM.job_finish DESC) AS TaskRank
               FROM t_mts_peak_matching_tasks_cached PM
                   INNER JOIN t_analysis_job J
                       ON PM.dms_job = J.job

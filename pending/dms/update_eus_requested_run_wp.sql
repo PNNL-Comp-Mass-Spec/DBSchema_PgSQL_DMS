@@ -102,7 +102,7 @@ BEGIN
         SELECT Proposal_ID,
                Work_Package,
                Requests,
-               Row_Number() OVER ( Partition BY proposal_id ORDER BY Requests DESC ) AS Usage_Rank
+               Row_Number() OVER (PARTITION BY proposal_id ORDER BY Requests DESC) AS Usage_Rank
         FROM ( SELECT EUSPro.proposal_id,
                       RR.work_package,
                       COUNT(RR.request_id) AS Requests

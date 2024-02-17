@@ -395,11 +395,11 @@ BEGIN
 
     FOR _jobInfo IN
         SELECT Job,
-               Script As ScriptName,
+               Script AS ScriptName,
                Dataset,
-               Dataset_ID As DatasetID,
+               Dataset_ID AS DatasetID,
                DataPkgID,
-               Coalesce(Results_Directory_Name, '') As ResultsDirectoryName
+               Coalesce(Results_Directory_Name, '') AS ResultsDirectoryName
         FROM Tmp_Jobs
         ORDER BY Job
     LOOP

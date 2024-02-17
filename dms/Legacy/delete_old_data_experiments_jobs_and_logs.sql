@@ -286,7 +286,7 @@ BEGIN
         -- Preview all of the datasets and experiments that would be deleted
         SELECT Dataset_ID, Dataset As Dataset_to_Delete, Created
         FROM Tmp_DatasetsToDelete
-        ORDER BY Dataset_ID Desc
+        ORDER BY Dataset_ID DESC
 
         SELECT E.Exp_ID,
                E.Experiment AS Experiment_to_Delete,

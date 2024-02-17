@@ -195,7 +195,7 @@ BEGIN
             SELECT ScriptSteps.Script,
                    ScriptSteps.Step_Number,
                    ScriptSteps.Step_Tool,
-                   CASE WHEN ConflictQ.Step_Number Is Null THEN 0 ELSE 1 END As Conflict
+                   CASE WHEN ConflictQ.Step_Number Is Null THEN 0 ELSE 1 END AS Conflict
             FROM (
                     SELECT _currentScript AS Script,
                            xmltable.step_number,
@@ -211,7 +211,7 @@ BEGIN
             SELECT  ScriptSteps.Script,
                     ScriptSteps.Step_Number,
                     ScriptSteps.Step_Tool,
-                    CASE WHEN ConflictQ.Step_Number Is Null THEN 0 ELSE 1 END As Conflict
+                    CASE WHEN ConflictQ.Step_Number Is Null THEN 0 ELSE 1 END AS Conflict
             FROM (
                     SELECT _extensionScriptName AS Script,
                            xmltable.step_number,

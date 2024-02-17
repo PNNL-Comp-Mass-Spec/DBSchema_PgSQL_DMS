@@ -76,12 +76,12 @@ BEGIN
         -- Table not found in the given schema: ont.t_tmp_table
 
         RETURN QUERY
-        SELECT 'Warning'::citext as Item_Type,
-               ''::citext As term_pk,
-               t.Message As term_name,
-               ''::citext As identifier,
-               '0'::citext As is_leaf,
-               NULL::timestamp As updated
+        SELECT 'Warning'::citext AS Item_Type,
+               ''::citext AS term_pk,
+               t.Message AS term_name,
+               ''::citext AS identifier,
+               '0'::citext AS is_leaf,
+               NULL::timestamp AS updated
         FROM Tmp_CandidateTables t;
 
         DROP TABLE Tmp_CandidateTables;
@@ -107,7 +107,7 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_SourceData (
-        entry_id int primary key generated always as identity,
+        entry_id int primary key generated always AS identity,
         term_pk citext,
         term_name citext,
         identifier citext,
@@ -169,7 +169,7 @@ BEGIN
         FROM (SELECT d.term_pk, d.term_name, d.identifier, MAX(d.is_leaf) AS is_leaf
                FROM Tmp_SourceData d
                WHERE d.matches_existing = 1
-               GROUP BY d.term_pk, d.term_name, d.identifier ) as s
+               GROUP BY d.term_pk, d.term_name, d.identifier ) AS s
         WHERE t.term_pk = s.term_pk AND
               (
                 t.term_name <> s.term_name OR
@@ -236,12 +236,12 @@ BEGIN
 
         If _previewRelationshipUpdates Then
             RETURN QUERY
-            SELECT 'New relationship'::citext as Item_Type,
-                   R.Child_PK As term_pk,
-                   (format('New_Relationship_ID: %s', _autoNumberStartID - R.Entry_ID))::citext As term_name,
-                   (format('Parent_PK: %s', R.Parent_PK))::citext As identifier,
-                   'Predicate Name: inferred_is_a'::citext As is_leaf,
-                   NULL::timestamp As updated
+            SELECT 'New relationship'::citext AS Item_Type,
+                   R.Child_PK AS term_pk,
+                   (format('New_Relationship_ID: %s', _autoNumberStartID - R.Entry_ID))::citext AS term_name,
+                   (format('Parent_PK: %s', R.Parent_PK))::citext AS identifier,
+                   'Predicate Name: inferred_is_a'::citext AS is_leaf,
+                   NULL::timestamp AS updated
             FROM Tmp_RelationshipsToAdd R
             ORDER BY R.Entry_ID;
         Else
@@ -286,12 +286,12 @@ BEGIN
 
         If _previewRelationshipUpdates Then
             RETURN QUERY
-            SELECT 'Delete relationship'::citext as Item_Type,
-                   R.subject_term_pk As term_pk,
-                   (format('Term_Relationship_ID: ', R.term_relationship_id))::citext As term_name,
-                   (format('Predicate_Term_PK: ', R.predicate_term_pk))::citext As identifier,
-                   (format('Object_Term_PK:', R.object_term_pk))::citext As is_leaf,
-                   NULL::timestamp As updated
+            SELECT 'Delete relationship'::citext AS Item_Type,
+                   R.subject_term_pk AS term_pk,
+                   (format('Term_Relationship_ID: ', R.term_relationship_id))::citext AS term_name,
+                   (format('Predicate_Term_PK: ', R.predicate_term_pk))::citext AS identifier,
+                   (format('Object_Term_PK:', R.object_term_pk))::citext AS is_leaf,
+                   NULL::timestamp AS updated
             FROM ont.t_term_relationship R
             WHERE R.term_relationship_id IN (SELECT Relationship_ID FROM Tmp_RelationshipsToDelete);
         Else
@@ -312,7 +312,7 @@ BEGIN
         ---------------------------------------------------
 
         RETURN QUERY
-        SELECT 'Existing item to update'::citext as Item_Type,
+        SELECT 'Existing item to update'::citext AS Item_Type,
                T.term_pk,
                (CASE WHEN T.term_name = S.term_name   THEN T.term_name       ELSE format('%s --> %s', T.term_name, S.term_name)   END)::citext term_name,
                (CASE WHEN T.identifier = S.identifier THEN T.identifier      ELSE format('%s --> %s', T.identifier, S.identifier) END)::citext identifier,
@@ -331,12 +331,12 @@ BEGIN
               T.identifier <> S.identifier OR
               T.is_leaf <> S.is_leaf
         UNION
-        SELECT 'New item to add'::citext as Item_Type,
+        SELECT 'New item to add'::citext AS Item_Type,
                S.term_pk,
                S.term_name,
                S.identifier,
-               Cast(Max(S.is_leaf) AS citext) as is_leaf,
-               NULL::timestamp As updated
+               Max(S.is_leaf)::citext AS is_leaf,
+               null::timestamp AS updated
         FROM Tmp_SourceData AS S
         WHERE S.matches_existing = 0
         GROUP BY S.term_pk, S.term_name, S.identifier;
@@ -346,7 +346,7 @@ BEGIN
         ---------------------------------------------------
 
         /*
-        SELECT DISTINCT 'Missing parent/child relationship' as Relationship
+        SELECT DISTINCT 'Missing parent/child relationship' AS Relationship
                         SourceTable.identifier AS Child,
                         SourceTable.term_pk AS Child_PK,
                         SourceTable.parent_term_id AS Parent,

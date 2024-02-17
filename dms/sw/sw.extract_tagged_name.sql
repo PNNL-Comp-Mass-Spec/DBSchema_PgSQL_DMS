@@ -56,7 +56,7 @@ BEGIN
                     Position(','  In _result),
                     Position(':'  In _result),
                     Position('/'  In _result)
-               ]) As MatchPosition
+               ]) AS MatchPosition
          ) SearchQ
     WHERE MatchPosition > 0;
 

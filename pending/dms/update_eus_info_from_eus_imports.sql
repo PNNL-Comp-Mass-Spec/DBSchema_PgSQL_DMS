@@ -134,8 +134,8 @@ BEGIN
         RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
-            SELECT Entry_ID As EntryID,
-                   Posted_By As PostedBy,
+            SELECT Entry_ID AS EntryID,
+                   Posted_By AS PostedBy,
                    Entered,
                    Type,
                    Message

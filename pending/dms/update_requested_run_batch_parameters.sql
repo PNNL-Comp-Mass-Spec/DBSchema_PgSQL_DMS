@@ -175,7 +175,7 @@ BEGIN
             SELECT XmlQ.Parameter, XmlQ.RequestID, XmlQ.Value
             FROM (
                 SELECT xmltable.*
-                FROM ( SELECT _xml As rooted_xml
+                FROM ( SELECT _xml AS rooted_xml
                      ) Src,
                      XMLTABLE('//root/r'
                               PASSING Src.rooted_xml

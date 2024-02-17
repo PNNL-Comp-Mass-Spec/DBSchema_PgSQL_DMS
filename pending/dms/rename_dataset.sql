@@ -237,12 +237,12 @@ BEGIN
     _storageServerSharePath := Substring(_datasetFolderPath, 1, char_length(_datasetFolderPath) - _lastSlashReverseText);
 
     -- Lookup acquisition metadata stored in t_requested_run
-    SELECT request_id As OldRequestedRunID,
-           request_run_start As RunStart,
-           request_run_finish As RunFinish,
-           cart_id As CartId,
-           cart_config_id As CartConfigID,
-           cart_column As CartColumn
+    SELECT request_id AS OldRequestedRunID,
+           request_run_start AS RunStart,
+           request_run_finish AS RunFinish,
+           cart_id AS CartId,
+           cart_config_id AS CartConfigID,
+           cart_column AS CartColumn
     INTO _requestedRunInfo
     FROM t_requested_run
     WHERE dataset_id = _datasetID;
@@ -322,7 +322,7 @@ BEGIN
                    DS.created       AS Dataset_Created,
                    DS.exp_id        AS Experiment_ID,
                    E.experiment     AS Experiment,
-                   Case When _datasetAlreadyRenamed Then 'Yes' Else 'No' End As Dataset_Already_Renamed
+                   CASE WHEN _datasetAlreadyRenamed THEN 'Yes' ELSE 'No' END AS Dataset_Already_Renamed
             FROM t_dataset DS
                  INNER JOIN t_experiments AS E
                    ON DS.exp_id = E.exp_id
@@ -448,8 +448,8 @@ BEGIN
                    RL.Experiment,
                    RL.Dataset,
                    RL.Instrument,
-                   public.timestamp_text(RR.request_run_start)  As Request_Run_Start,
-                   public.timestamp_text(RR.request_run_finish) As Request_Run_Finish
+                   public.timestamp_text(RR.request_run_start)  AS Request_Run_Start,
+                   public.timestamp_text(RR.request_run_finish) AS Request_Run_Finish
             FROM V_Requested_Run_List_Report_2 RL
                  INNER JOIN t_requested_run RR
                    ON RL.Request = RR.request_id
@@ -515,8 +515,8 @@ BEGIN
                    RL.Experiment,
                    RL.Dataset,
                    RL.Instrument,
-                   public.timestamp_text(RR.request_run_start)  As Request_Run_Start,
-                   public.timestamp_text(RR.request_run_finish) As Request_Run_Finish
+                   public.timestamp_text(RR.request_run_start)  AS Request_Run_Start,
+                   public.timestamp_text(RR.request_run_finish) AS Request_Run_Finish
             FROM V_Requested_Run_List_Report_2 RL
                  INNER JOIN t_requested_run RR
                    ON RL.Request = RR.request_id
@@ -587,9 +587,9 @@ BEGIN
                Script,
                State,
                Dataset,
-               _datasetNameNew As Dataset_Name_New,
+               _datasetNameNew AS Dataset_Name_New,
                Dataset_ID,
-               public.timestamp_text(Imported) As Imported
+               public.timestamp_text(Imported) AS Imported
         FROM cap.t_tasks
         WHERE Job In (Select Job from Tmp_JobsToUpdate)
     LOOP
@@ -671,7 +671,7 @@ BEGIN
                Script,
                State,
                Dataset,
-               _datasetNameNew As Dataset_Name_New,
+               _datasetNameNew AS Dataset_Name_New,
                Dataset_ID,
                Imported
         FROM sw.t_jobs

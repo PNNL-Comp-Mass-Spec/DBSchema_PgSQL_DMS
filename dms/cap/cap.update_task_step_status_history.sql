@@ -88,7 +88,7 @@ BEGIN
     -----------------------------------------------------
 
     INSERT INTO Tmp_TaskStepStatusHistory (Posting_Time, Step_Tool, State, Step_Count)
-    SELECT CURRENT_TIMESTAMP As Posting_Time, Tool, State, COUNT(job) AS Step_Count
+    SELECT CURRENT_TIMESTAMP AS Posting_Time, Tool, State, COUNT(job) AS Step_Count
     FROM cap.t_task_steps
     GROUP BY Tool, State;
     --
@@ -158,7 +158,7 @@ BEGIN
         RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
-            SELECT timestamp_text(Posting_Time) As Posting_Time, Step_Tool, State, Step_Count
+            SELECT timestamp_text(Posting_Time) AS Posting_Time, Step_Tool, State, Step_Count
             FROM Tmp_TaskStepStatusHistory
             ORDER BY Step_Tool, State
         LOOP

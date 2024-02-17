@@ -117,11 +117,11 @@ BEGIN
                            '--------------------');
 
         FOR _jobRequestInfo IN
-            SELECT Request_ID         As RequestID,
-                   Total_Jobs         As TotalJobs,
-                   Completed_Jobs     As CompletedJobs,
-                   Earliest_Job_Start As JobStartMin,
-                   Latest_Job_Finish  As JobFinishMax
+            SELECT Request_ID         AS RequestID,
+                   Total_Jobs         AS TotalJobs,
+                   Completed_Jobs     AS CompletedJobs,
+                   Earliest_Job_Start AS JobStartMin,
+                   Latest_Job_Finish  AS JobFinishMax
             FROM Tmp_AnalysisJobRequests
             ORDER BY Request_ID
         LOOP
@@ -209,8 +209,8 @@ BEGIN
                                '---------------');
 
             FOR _eventInfo IN
-                SELECT target_id As TargetID,
-                       event_type_id As EventTypeID
+                SELECT target_id AS TargetID,
+                       event_type_id AS EventTypeID
                 FROM Tmp_NewEvents
                 ORDER BY target_id
             LOOP

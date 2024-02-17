@@ -162,7 +162,7 @@ BEGIN
             FROM cap.V_MyEMSL_Uploads Uploads
                  INNER JOIN Tmp_StaleUploads Stale
                    ON Uploads.Entry_ID = Stale.Entry_ID
-            ORDER BY RetrySucceeded Desc, Entry_ID
+            ORDER BY RetrySucceeded DESC, Entry_ID
         LOOP
             _infoData := format(_formatSpecifier,
                                 round(extract(epoch FROM CURRENT_TIMESTAMP - _previewData.Entered) / 86400),  -- Age (days)
@@ -230,12 +230,12 @@ BEGIN
 
                 SELECT Job,
                        SubFolder,
-                       file_count_new As FileCountNew,
-                       file_count_updated As FileCountUpdated,
+                       file_count_new AS FileCountNew,
+                       file_count_updated AS FileCountUpdated,
                        Bytes,
                        Verified,
-                       ingest_steps_completed As IngestStepsCompleted,
-                       error_code As ErrorCode,
+                       ingest_steps_completed AS IngestStepsCompleted,
+                       error_code AS ErrorCode,
                        Entered
                 INTO _uploadInfo
                 FROM cap.t_myemsl_uploads

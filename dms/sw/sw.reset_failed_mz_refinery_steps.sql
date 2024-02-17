@@ -71,7 +71,7 @@ BEGIN
         -----------------------------------------------------------
 
         INSERT INTO Tmp_Managers (Manager_Description, Manager_Name,  Entry_ID_Min)
-        SELECT posted_by, null, MIN(entry_id) As Entry_ID_Min
+        SELECT posted_by, null, MIN(entry_id) AS Entry_ID_Min
         FROM public.t_log_entries
         WHERE entered >= CURRENT_TIMESTAMP - INTERVAL '48 hours' AND
               type = 'Error' AND

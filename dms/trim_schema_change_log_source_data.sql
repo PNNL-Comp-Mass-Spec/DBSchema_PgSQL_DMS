@@ -65,9 +65,9 @@ BEGIN
     INSERT INTO T_Tmp_SchemaChangeLogRank (schema_change_log_id, version_rank, current_source_length)
     SELECT RankQ.schema_change_log_id, RankQ.version_rank, RankQ.current_source_length
     FROM ( SELECT SCL.schema_change_log_id,
-                  char_length(SCL.function_source) as current_source_length,
-                  row_number() OVER ( PARTITION BY SCL.schema_name, SCL.object_name
-                                      ORDER BY SCL.schema_change_log_id DESC ) AS version_rank
+                  char_length(SCL.function_source) AS current_source_length,
+                  Row_Number() OVER (PARTITION BY SCL.schema_name, SCL.object_name
+                                     ORDER BY SCL.schema_change_log_id DESC) AS version_rank
            FROM t_schema_change_log SCL
            WHERE NOT SCL.function_source IS NULL) RankQ;
 
@@ -84,16 +84,16 @@ BEGIN
                RankQ.version_rank,
                SCL.function_name,
                SCL.function_source,
-               char_length(SCL.function_source) as source_length_current,
+               char_length(SCL.function_source) AS source_length_current,
                CASE WHEN RankQ.version_rank > 3 THEN
                         CASE WHEN char_length(SCL.function_source) > 100 THEN 100
                              ELSE char_length(SCL.function_source)
                         END
                     ELSE char_length(SCL.function_source)
-               END As source_length_new
+               END AS source_length_new
         FROM t_schema_change_log SCL
              INNER JOIN
-                (SELECT DISTINCT L.schema_name AS schema_name, L.object_name as object_name
+                (SELECT DISTINCT L.schema_name AS schema_name, L.object_name AS object_name
                  FROM T_Tmp_SchemaChangeLogRank SCLR
                       INNER JOIN t_schema_change_log L
                       ON SCLR.schema_change_log_id = L.schema_change_log_id
@@ -109,24 +109,24 @@ BEGIN
         SELECT COUNT(*)
         INTO _duplicateCount
         FROM ( SELECT RankQ.schema_change_log_id,
-                      row_number() OVER ( PARTITION BY RankQ.schema_name, RankQ.object_name, RankQ.command_tag, RankQ.entered
-                                          ORDER BY RankQ.schema_change_log_id ) AS DupeRank
+                      Row_Number() OVER (PARTITION BY RankQ.schema_name, RankQ.object_name, RankQ.command_tag, RankQ.entered
+                                         ORDER BY RankQ.schema_change_log_id) AS DupeRank
                FROM t_schema_change_log RankQ) FilterQ
         WHERE FilterQ.DupeRank > 1;
 
         If _duplicateCount > 0 Then
             -- This will append a row to the result set
             RETURN QUERY
-            SELECT 0 As schema_change_log_id,
-                   LocalTimestamp As entered,
-                   'Note'::citext As schema_name,
+            SELECT 0 AS schema_change_log_id,
+                   LocalTimestamp AS entered,
+                   'Note'::citext AS schema_name,
                    format('Condensed %s duplicate %s, having the same object name, object type, and entry time',
                           _duplicateCount, public.check_plural(_duplicateCount, 'row', 'rows'))::citext AS object_name,
-                   1 As version_rank,
-                   ''::citext As function_name,
-                   ''::citext As function_source,
-                   0 As source_length_old,
-                   0 As source_length_new;
+                   1 AS version_rank,
+                   ''::citext AS function_name,
+                   ''::citext AS function_source,
+                   0 AS source_length_old,
+                   0 AS source_length_new;
         End If;
 
         DROP TABLE T_Tmp_SchemaChangeLogRank;
@@ -153,11 +153,11 @@ BEGIN
                RankQ.version_rank,
                SCL.function_name,
                SCL.function_source,
-               RankQ.current_source_length as source_length_old,
-               char_length(SCL.function_source) as source_length_new
+               RankQ.current_source_length AS source_length_old,
+               char_length(SCL.function_source) AS source_length_new
         FROM t_schema_change_log SCL
              INNER JOIN
-                (SELECT DISTINCT L.schema_name AS schema_name, L.object_name as object_name
+                (SELECT DISTINCT L.schema_name AS schema_name, L.object_name AS object_name
                  FROM T_Tmp_SchemaChangeLogRank SCLR
                       INNER JOIN t_schema_change_log L
                       ON SCLR.schema_change_log_id = L.schema_change_log_id
@@ -170,15 +170,15 @@ BEGIN
         ORDER BY SCL.schema_name, SCL.object_name, SCL.schema_change_log_id;
     Else
         RETURN QUERY
-        SELECT 0 As schema_change_log_id,
-               LocalTimestamp As entered,
-               'Note'::citext As schema_name,
-               'Did not find any objects that have more than three entries and function source longer than 100 characters'::citext As object_name,
-               1 As version_rank,
-               ''::citext As function_name,
-               ''::citext As function_source,
-               0 As source_length_old,
-               0 As source_length_new;
+        SELECT 0 AS schema_change_log_id,
+               LocalTimestamp AS entered,
+               'Note'::citext AS schema_name,
+               'Did not find any objects that have more than three entries and function source longer than 100 characters'::citext AS object_name,
+               1 AS version_rank,
+               ''::citext AS function_name,
+               ''::citext AS function_source,
+               0 AS source_length_old,
+               0 AS source_length_new;
     End If;
 
     -- When foreign tables are created using "IMPORT FOREIGN SCHEMA", duplicate entries get logged to t_schema_change_log
@@ -189,8 +189,8 @@ BEGIN
     WHERE target.schema_change_log_id IN
           ( SELECT FilterQ.schema_change_log_id
             FROM ( SELECT RankQ.schema_change_log_id,
-                          row_number() OVER ( PARTITION BY RankQ.schema_name, RankQ.object_name, RankQ.command_tag, RankQ.entered
-                                              ORDER BY RankQ.schema_change_log_id ) AS DupeRank
+                          Row_Number() OVER (PARTITION BY RankQ.schema_name, RankQ.object_name, RankQ.command_tag, RankQ.entered
+                                             ORDER BY RankQ.schema_change_log_id) AS DupeRank
                    FROM t_schema_change_log RankQ) FilterQ
             WHERE FilterQ.DupeRank > 1 );
 
@@ -203,15 +203,15 @@ BEGIN
 
         -- This will append a row to the result set
         RETURN QUERY
-        SELECT 0 As schema_change_log_id,
-               LocalTimestamp As entered,
-               'Note'::citext As schema_name,
+        SELECT 0 AS schema_change_log_id,
+               LocalTimestamp AS entered,
+               'Note'::citext AS schema_name,
                format('Condensed %s duplicate s, having the same object name, object type, and entry time', _deleteCount, public.check_plural(_deleteCount, 'row','rows'))::citext AS object_name,
-               1 As version_rank,
-               ''::citext As function_name,
-               ''::citext As function_source,
-               0 As source_length_old,
-               0 As source_length_new;
+               1 AS version_rank,
+               ''::citext AS function_name,
+               ''::citext AS function_source,
+               0 AS source_length_old,
+               0 AS source_length_new;
     End If;
 
     DROP TABLE T_Tmp_SchemaChangeLogRank;

@@ -93,7 +93,7 @@ BEGIN
         FOR _previewData IN
             SELECT Target.Host,
                    public.timestamp_text(Target.Last_Online) AS Last_Online,
-                   Src.MostRecentDataset As Most_Recent_Dataset,
+                   Src.MostRecentDataset AS Most_Recent_Dataset,
                    CASE WHEN Src.MostRecentDataset > Coalesce(Target.Last_Online, make_date(1970, 1, 1))
                         THEN public.timestamp_text(Src.MostRecentDataset)
                         ELSE ''

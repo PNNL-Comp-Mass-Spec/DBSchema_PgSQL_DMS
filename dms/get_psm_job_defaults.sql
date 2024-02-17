@@ -123,18 +123,18 @@ BEGIN
         _message := 'Dataset list is empty';
 
         RETURN QUERY
-        SELECT ''::citext As datasets,
-               ''::citext As metadata,
-               ''::citext As tool_name,
-               ''::citext As job_type_name,
-               ''::citext As job_type_desc,
-               0          As dyn_met_ox_enabled,
-               0          As stat_cys_alk_enabled,
-               0          As dyn_sty_phos_enabled,
-               ''::citext As organism_name,
-               ''::citext As prot_coll_name_list,
-               ''::citext As prot_coll_options_list,
-               _message::citext As error_message;
+        SELECT ''::citext AS datasets,
+               ''::citext AS metadata,
+               ''::citext AS tool_name,
+               ''::citext AS job_type_name,
+               ''::citext AS job_type_desc,
+               0          AS dyn_met_ox_enabled,
+               0          AS stat_cys_alk_enabled,
+               0          AS dyn_sty_phos_enabled,
+               ''::citext AS organism_name,
+               ''::citext AS prot_coll_name_list,
+               ''::citext AS prot_coll_options_list,
+               _message::citext AS error_message;
 
         RETURN;
     End If;
@@ -200,18 +200,18 @@ BEGIN
     If _returnCode <> '' Then
 
         RETURN QUERY
-        SELECT ''::citext As datasets,
-               ''::citext As metadata,
-               ''::citext As tool_name,
-               ''::citext As job_type_name,
-               ''::citext As job_type_desc,
-               0          As dyn_met_ox_enabled,
-               0          As stat_cys_alk_enabled,
-               0          As dyn_sty_phos_enabled,
-               ''::citext As organism_name,
-               ''::citext As prot_coll_name_list,
-               ''::citext As prot_coll_options_list,
-               _message::citext As error_message;
+        SELECT ''::citext AS datasets,
+               ''::citext AS metadata,
+               ''::citext AS tool_name,
+               ''::citext AS job_type_name,
+               ''::citext AS job_type_desc,
+               0          AS dyn_met_ox_enabled,
+               0          AS stat_cys_alk_enabled,
+               0          AS dyn_sty_phos_enabled,
+               ''::citext AS organism_name,
+               ''::citext AS prot_coll_name_list,
+               ''::citext AS prot_coll_options_list,
+               _message::citext AS error_message;
 
         DROP TABLE Tmp_DatasetInfo;
         DROP TABLE Tmp_DatasetTypeStats;
@@ -244,7 +244,7 @@ BEGIN
     SELECT Dataset_Type
     INTO _topDatasetType
     FROM Tmp_DatasetTypeStats
-    ORDER BY DatasetCount Desc
+    ORDER BY DatasetCount DESC
     LIMIT 1;
 
     ---------------------------------------------------
@@ -264,7 +264,7 @@ BEGIN
     SELECT Labeling
     INTO _topLabeling
     FROM Tmp_DatasetLabelingStats
-    ORDER BY DatasetCount Desc
+    ORDER BY DatasetCount DESC
     LIMIT 1;
 
     ---------------------------------------------------
@@ -286,7 +286,7 @@ BEGIN
     SELECT OrganismName
     INTO _organismName
     FROM Tmp_Organisms
-    ORDER BY DatasetCount Desc
+    ORDER BY DatasetCount DESC
     LIMIT 1;
 
     _protCollNameList := '';
@@ -353,7 +353,7 @@ BEGIN
 
     SELECT string_agg(format('Enzyme:%s:%s', CountQ.enzyme_name, CountQ.Datasets), '|' ORDER BY CountQ.enzyme_name)
     INTO _addon
-    FROM (  SELECT Enz.enzyme_name, COUNT(DSInfo.dataset_id) As Datasets
+    FROM (  SELECT Enz.enzyme_name, COUNT(DSInfo.dataset_id) AS Datasets
             FROM Tmp_DatasetInfo DSInfo
                  INNER JOIN t_dataset DS
                    ON DSInfo.dataset_id = DS.dataset_id
@@ -442,18 +442,18 @@ BEGIN
     _jobTypeDesc := Trim(Coalesce(_jobTypeDesc, ''));
 
     RETURN QUERY
-    SELECT _datasets::citext         As datasets,
-           _metadata                 As metadata,
-           _toolName                 As tool_name,
-           _jobTypeName              As job_type_name,
-           _jobTypeDesc              As job_type_desc,
-           _dynMetOxEnabled          As dyn_met_ox_enabled,
-           _statCysAlkEnabled        As stat_cys_alk_enabled,
-           _dynSTYPhosEnabled        As dyn_sty_phos_enabled,
-           _organismName             As organism_name,
-           _protCollNameList::citext As prot_coll_name_list,
-           _protCollOptionsList      As prot_coll_options_list,
-           ''::citext                As error_message;
+    SELECT _datasets::citext         AS datasets,
+           _metadata                 AS metadata,
+           _toolName                 AS tool_name,
+           _jobTypeName              AS job_type_name,
+           _jobTypeDesc              AS job_type_desc,
+           _dynMetOxEnabled          AS dyn_met_ox_enabled,
+           _statCysAlkEnabled        AS stat_cys_alk_enabled,
+           _dynSTYPhosEnabled        AS dyn_sty_phos_enabled,
+           _organismName             AS organism_name,
+           _protCollNameList::citext AS prot_coll_name_list,
+           _protCollOptionsList      AS prot_coll_options_list,
+           ''::citext                AS error_message;
 
     DROP TABLE Tmp_DatasetInfo;
     DROP TABLE Tmp_DatasetTypeStats;
@@ -485,18 +485,18 @@ EXCEPTION
     End If;
 
     RETURN QUERY
-    SELECT _datasets::citext As datasets,
-           ''::citext As metadata,
-           ''::citext As tool_name,
-           ''::citext As job_type_name,
-           ''::citext As job_type_desc,
-           0          As dyn_met_ox_enabled,
-           0          As stat_cys_alk_enabled,
-           0          As dyn_sty_phos_enabled,
-           ''::citext As organism_name,
-           ''::citext As prot_coll_name_list,
-           ''::citext As prot_coll_options_list,
-           _message::citext As error_message;
+    SELECT _datasets::citext AS datasets,
+           ''::citext AS metadata,
+           ''::citext AS tool_name,
+           ''::citext AS job_type_name,
+           ''::citext AS job_type_desc,
+           0          AS dyn_met_ox_enabled,
+           0          AS stat_cys_alk_enabled,
+           0          AS dyn_sty_phos_enabled,
+           ''::citext AS organism_name,
+           ''::citext AS prot_coll_name_list,
+           ''::citext AS prot_coll_options_list,
+           _message::citext AS error_message;
 
 
     DROP TABLE IF EXISTS Tmp_DatasetInfo;

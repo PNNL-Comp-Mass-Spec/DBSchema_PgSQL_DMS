@@ -155,7 +155,7 @@ BEGIN
         _sql := format('%s %s', _sql, _sqlWhere);
     End If;
 
-    _sql := format('%s ORDER BY entry %s', _sql, CASE WHEN _maxRowCount > 0 THEN 'Desc' ELSE 'Asc' END);
+    _sql := format('%s ORDER BY entry %s', _sql, CASE WHEN _maxRowCount > 0 THEN 'DESC' ELSE 'ASC' END);
 
     If _maxRowCount > 0 Then
         _sql := format('%s LIMIT %s', _sql, _maxRowCount);

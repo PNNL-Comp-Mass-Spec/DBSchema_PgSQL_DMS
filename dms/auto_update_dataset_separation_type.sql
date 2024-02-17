@@ -141,7 +141,7 @@ BEGIN
     SET SortID = SortQ.SortID
     FROM ( SELECT SeparationType,
                   UpdatedSeparationType,
-                  ROW_NUMBER() OVER ( ORDER BY SeparationType, UpdatedSeparationType ) AS SortID
+                  Row_Number() OVER (ORDER BY SeparationType, UpdatedSeparationType) AS SortID
            FROM Tmp_UpdateStats
          ) SortQ
     WHERE Tmp_UpdateStats.SeparationType = SortQ.SeparationType AND

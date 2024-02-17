@@ -390,7 +390,7 @@ BEGIN
                 SortWeight,
                 DatasetCount
             )
-            SELECT 'Experiment Group', _experimentGroupID, 3 As SortWeight, COUNT(DISTINCT DS.Dataset_ID) AS DatasetCount
+            SELECT 'Experiment Group', _experimentGroupID, 3 AS SortWeight, COUNT(DISTINCT DS.Dataset_ID) AS DatasetCount
             FROM t_experiment_group_members E
                  INNER JOIN t_dataset DS
                    ON E.exp_id = DS.exp_id
@@ -441,7 +441,7 @@ BEGIN
                        ContainerID,
                        DatasetCount,
                        SortWeight,
-                       CASE WHEN ContainerType = _preferredContainer THEN 'Use for campaign, organism, and EUS proposal lookup' ELSE '' END As Comment
+                       CASE WHEN ContainerType = _preferredContainer THEN 'Use for campaign, organism, and EUS proposal lookup' ELSE '' END AS Comment
                 FROM Tmp_DatasetCountsByContainerType
                 ORDER BY DatasetCount DESC, SortWeight
             LOOP
@@ -612,13 +612,13 @@ BEGIN
 
             SELECT batch_id
             INTO _representativeBatchID
-            FROM ( SELECT RR.batch_id As Batch_ID,
+            FROM ( SELECT RR.batch_id AS Batch_ID,
                           COUNT(RR.request_id) AS Requests
                    FROM t_requested_run RR
                         INNER JOIN Tmp_BatchIDs
                           ON RR.batch_id = Tmp_BatchIDs.batch_id
                    GROUP BY RR.batch_id ) StatsQ
-            ORDER BY Requests Desc
+            ORDER BY Requests DESC
             LIMIT 1;
 
             If Not FOUND Then
@@ -825,7 +825,7 @@ BEGIN
 
             If _batchDefined Then
                 MERGE INTO t_data_analysis_request_batch_ids AS t
-                USING ( SELECT _id As Request_ID, Batch_ID
+                USING ( SELECT _id AS Request_ID, Batch_ID
                         FROM Tmp_BatchIDs
                       ) AS s
                 ON (t.batch_id = s.batch_id AND t.request_id = s.request_id)

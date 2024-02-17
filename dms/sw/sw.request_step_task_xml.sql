@@ -700,7 +700,7 @@ BEGIN
                 JS.State,
                 J.Priority AS Job_Priority,
                 JS.Tool,
-                1 As Tool_Priority,
+                1 AS Tool_Priority,
                 JS.Memory_Usage_MB,
                 J.Storage_Server,
                 J.Dataset_ID,
@@ -778,7 +778,7 @@ BEGIN
                     JS.State,
                     J.Priority AS Job_Priority,
                     JS.Tool,
-                    1 As Tool_Priority,
+                    1 AS Tool_Priority,
                     JS.Memory_Usage_MB,
                     J.Storage_Server,
                     J.Dataset_ID,
@@ -1604,7 +1604,7 @@ BEGIN
 
             RAISE INFO '';
 
-            If Exists (Select * From Tmp_CandidateJobSteps) Then
+            If Exists (SELECT job FROM Tmp_CandidateJobSteps) Then
 
                 _currentLocation := 'Show candidate job steps';
 

@@ -226,15 +226,15 @@ BEGIN
                PJ.Script,
                PJ.State,
                PJ.Dataset,
-               PJ.Results_Folder_Name As ResultsFolderName,
+               PJ.Results_Folder_Name AS ResultsFolderName,
                PJ.Imported,
                PJ.Start,
                PJ.Finish,
-               PJ.Transfer_Folder_Path As TransferFolderPath,
+               PJ.Transfer_Folder_Path AS TransferFolderPath,
                PJ.Comment,
                PJ.Owner_Username,
-               JPT.Processing_Time_Minutes As ProcessingTimeMinutes,
-               PJ.Data_Pkg_ID As DataPackageID
+               JPT.Processing_Time_Minutes AS ProcessingTimeMinutes,
+               PJ.Data_Pkg_ID AS DataPackageID
         FROM sw.t_jobs PJ
              INNER JOIN sw.t_scripts S
                ON PJ.Script = S.Script

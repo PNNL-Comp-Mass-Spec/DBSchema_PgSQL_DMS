@@ -201,8 +201,8 @@ BEGIN
             dataset_usage_last_year = StatsQ.DatasetCountLastYear        -- Usage over the last 12 months
         FROM ( SELECT IGDT.instrument_group,
                       IGDT.dataset_type,
-                      Coalesce(CountQ.DatasetCount, 0) As DatasetCount,
-                      Coalesce(CountQ.DatasetCountLastYear, 0) As DatasetCountLastYear
+                      Coalesce(CountQ.DatasetCount, 0) AS DatasetCount,
+                      Coalesce(CountQ.DatasetCountLastYear, 0) AS DatasetCountLastYear
                FROM t_instrument_group_allowed_ds_type IGDT
                     LEFT OUTER JOIN ( SELECT InstName.instrument_group,
                                              DTN.Dataset_Type,
@@ -271,11 +271,11 @@ BEGIN
             dataset_usage_last_year = StatsQ.DatasetCountLastYear
         FROM ( SELECT IDTU.instrument_id,
                       IDTU.dataset_type,
-                      Coalesce(CountQ.DatasetCount, 0) As DatasetCount,
-                      Coalesce(CountQ.DatasetCountLastYear, 0) As DatasetCountLastYear
+                      Coalesce(CountQ.DatasetCount, 0) AS DatasetCount,
+                      Coalesce(CountQ.DatasetCountLastYear, 0) AS DatasetCountLastYear
                FROM t_cached_instrument_dataset_type_usage IDTU
                     LEFT OUTER JOIN ( SELECT InstName.Instrument_ID,
-                                             DTN.Dataset_Type As Dataset_Type,
+                                             DTN.Dataset_Type AS Dataset_Type,
                                              COUNT(DS.dataset_id) AS DatasetCount,
                                              SUM(CASE
                                                      WHEN DS.Created >= _thresholdOneYear THEN 1

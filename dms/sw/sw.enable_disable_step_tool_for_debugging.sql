@@ -57,15 +57,15 @@ BEGIN
 
     If _message <> '' Then
         RETURN QUERY
-        SELECT _message,
-               _groupID   As group_id,
-               0          As mgr_id,
-               _tool::citext As tool_name,
-               0::int2    As priority,
-               null::int2 As enabled,
-               ''::citext As comment,
-               0::int2    As max_step_cost,
-               0::int2    As max_job_priority,
+        SELECT _message      AS message,
+               _groupID      AS group_id,
+               0             AS mgr_id,
+               _tool::citext AS tool_name,
+               0::int2       AS priority,
+               null::int2    AS enabled,
+               ''::citext    AS comment,
+               0::int2       AS max_step_cost,
+               0::int2       AS max_job_priority,
                current_timestamp::timestamp without time zone;
 
         RETURN;
@@ -100,7 +100,7 @@ BEGIN
             End If;
         Else
             RETURN QUERY
-            SELECT 'Set enabled to 1' As Action,
+            SELECT 'Set enabled to 1' AS Action,
                    PTGD.group_id,
                    PTGD.mgr_id,
                    PTGD.tool_name,
@@ -113,7 +113,7 @@ BEGIN
             FROM sw.t_processor_tool_group_details PTGD
             WHERE PTGD.tool_name = _tool AND PTGD.enabled < 0 AND PTGD.group_id <> _groupID
             UNION
-            SELECT 'Set enabled to 0' As Action,
+            SELECT 'Set enabled to 0' AS Action,
                    PTGD.group_id,
                    PTGD.mgr_id,
                    PTGD.tool_name,
@@ -171,7 +171,7 @@ BEGIN
             End If;
         Else
             RETURN QUERY
-            SELECT 'Set enabled to -1' As Action,
+            SELECT 'Set enabled to -1' AS Action,
                    PTGD.group_id,
                    PTGD.mgr_id,
                    PTGD.tool_name,
@@ -184,7 +184,7 @@ BEGIN
             FROM sw.t_processor_tool_group_details PTGD
             WHERE PTGD.tool_name = _tool AND PTGD.enabled > 0 AND PTGD.group_id <> _groupID
             UNION
-            SELECT 'Set enabled to 1' As Action,
+            SELECT 'Set enabled to 1' AS Action,
                    PTGD.group_id,
                    PTGD.mgr_id,
                    PTGD.tool_name,
@@ -222,14 +222,14 @@ BEGIN
 
     RETURN QUERY
     SELECT _message,
-           _groupID   As group_id,
-           0          As mgr_id,
-           _tool::citext As tool_name,
-           0::int2    As priority,
-           null::int2 As enabled,
-           ''::citext As comment,
-           0::int2    As max_step_cost,
-           0::int2    As max_job_priority,
+           _groupID      AS group_id,
+           0             AS mgr_id,
+           _tool::citext AS tool_name,
+           0::int2       AS priority,
+           null::int2    AS enabled,
+           ''::citext    AS comment,
+           0::int2       AS max_step_cost,
+           0::int2       AS max_job_priority,
            current_timestamp::timestamp without time zone;
 
 END

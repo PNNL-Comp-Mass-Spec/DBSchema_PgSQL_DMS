@@ -83,7 +83,7 @@ BEGIN
 
     INSERT INTO Tmp_MatchingJobDatasets(dataset, Jobs, New, Busy, Complete, Failed, Holding)
     SELECT DS.dataset,
-           COUNT(AJ.job) As Jobs,
+           COUNT(AJ.job) AS Jobs,
            SUM(CASE WHEN AJ.job_state_id IN (1)                           THEN 1 ELSE 0 END) AS New,
            SUM(CASE WHEN AJ.job_state_id IN (2, 3, 9, 10, 11, 16, 17)     THEN 1 ELSE 0 END) AS Busy,
            SUM(CASE WHEN AJ.job_state_id IN (4, 14)                       THEN 1 ELSE 0 END) AS Complete,

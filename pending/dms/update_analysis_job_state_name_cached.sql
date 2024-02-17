@@ -136,7 +136,7 @@ BEGIN
             UPDATE t_analysis_job AJ
             SET state_name_cached = Coalesce(AJDAS.Job_State, '')
             FROM V_Analysis_Job_and_Dataset_Archive_State AJDAS
-            WHERE AJ.job = AJDAS.Job AND AJ.job IN (Select Job From Tmp_JobsToUpdate)
+            WHERE AJ.job = AJDAS.Job AND AJ.job IN (SELECT Job FROM Tmp_JobsToUpdate)
             --
             GET DIAGNOSTICS _jobCount = ROW_COUNT;
 

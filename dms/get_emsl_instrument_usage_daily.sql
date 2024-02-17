@@ -254,7 +254,7 @@ BEGIN
                   DistinctQ.Year,
                   DistinctQ.Month,
                   DistinctQ.Day,
-                  string_agg(DistinctQ.Comment, ',' Order By DistinctQ.Comment) AS Comment
+                  string_agg(DistinctQ.Comment, ',' ORDER BY DistinctQ.Comment) AS Comment
            FROM (SELECT DISTINCT Src.EMSL_Inst_ID,
                                  Src.DMS_Instrument,
                                  Src.Type,
@@ -299,7 +299,7 @@ BEGIN
                   DistinctQ.Year,
                   DistinctQ.Month,
                   DistinctQ.Day,
-                  string_agg(DistinctQ.Operator, ',' Order By DistinctQ.Operator) AS Operator
+                  string_agg(DistinctQ.Operator, ',' ORDER BY DistinctQ.Operator) AS Operator
            FROM (SELECT DISTINCT Src.EMSL_Inst_ID,
                                  Src.DMS_Instrument,
                                  Src.Type,

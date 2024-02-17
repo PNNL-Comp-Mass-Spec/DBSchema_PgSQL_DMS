@@ -144,12 +144,12 @@ BEGIN
            CASE WHEN ST.Uses_All_Cores > 0 AND JS.Actual_CPU_Load = JS.CPU_Load
                 THEN Coalesce(M.Total_CPUs, 1)
                 ELSE Coalesce(JS.Actual_CPU_Load, 1)
-           END As CpuLoad,
-           Coalesce(JS.memory_usage_mb, 0) As MemoryUsageMB,
+           END AS CpuLoad,
+           Coalesce(JS.memory_usage_mb, 0) AS MemoryUsageMB,
            JS.State,
-           JS.processor As JobStepsProcessor,
-           JS.tool As StepTool,
-           JS.retry_count As RetryCount
+           JS.processor AS JobStepsProcessor,
+           JS.tool AS StepTool,
+           JS.retry_count AS RetryCount
     INTO _jobInfo
     FROM sw.t_job_steps JS
          INNER JOIN sw.t_local_processors LP

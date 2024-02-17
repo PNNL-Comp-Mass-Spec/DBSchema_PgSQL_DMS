@@ -216,11 +216,11 @@ BEGIN
                '' AS Status,
                Created
         FROM ( SELECT LCRun.prep_run_id AS Item_ID,
-                      LCRun.comment As Item_Name,
+                      LCRun.comment AS Item_Name,
                       TL.value AS SPR_ID,
                       LCRun.Created
                FROM t_prep_lc_run LCRun
-                    INNER JOIN LATERAL public.parse_delimited_integer_list(LCRun.sample_prep_requests) As TL On true
+                    INNER JOIN LATERAL public.parse_delimited_integer_list(LCRun.sample_prep_requests) AS TL ON true
                WHERE sample_prep_requests LIKE '%' || _samplePrepRequestID::text || '%'
              ) TX
         WHERE TX.SPR_ID = _samplePrepRequestID;

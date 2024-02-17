@@ -23,11 +23,11 @@ BEGIN
     WITH RankQ AS (
         SELECT CountQ.job,
                CountQ.saved,
-               CASE WHEN CountQ.SaveRank = 1 THEN 1 ELSE 0 END As most_recent_entry
+               CASE WHEN CountQ.SaveRank = 1 THEN 1 ELSE 0 END AS most_recent_entry
         FROM (
                 SELECT H.job,
                        H.saved,
-                       Row_Number() OVER ( PARTITION BY H.job ORDER BY H.saved DESC ) AS SaveRank
+                       Row_Number() OVER (PARTITION BY H.job ORDER BY H.saved DESC) AS SaveRank
                 FROM cap.t_tasks_history H
                 WHERE H.Job = NEW.job
              ) CountQ

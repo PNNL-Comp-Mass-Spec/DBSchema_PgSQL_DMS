@@ -193,7 +193,7 @@ BEGIN
                    PV.param_type_id,
                    PV.value,
                    _newValue AS NewValue,
-                   CASE WHEN Coalesce(PV.value, '') <> _newValue THEN 'Changed' ELSE 'Unchanged' END As Status
+                   CASE WHEN Coalesce(PV.value, '') <> _newValue THEN 'Changed' ELSE 'Unchanged' END AS Status
             FROM mc.t_mgrs M
                  INNER JOIN Tmp_MgrIDs
                    ON M.mgr_id = Tmp_MgrIDs.mgr_id

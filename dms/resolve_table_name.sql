@@ -44,7 +44,7 @@ BEGIN
         SELECT _tableToFind::citext,
                schemaname::citext,
                tablename::citext,
-               True As Table_Exists,
+               True AS Table_Exists,
                ''::citext
         FROM pg_tables
         WHERE schemaname::citext = _tableSchema And tablename::citext = _tableName;
@@ -57,7 +57,7 @@ BEGIN
         SELECT _tableToFind::citext,
                _tableSchema,
                _tableName,
-               false As Table_Exists,
+               false AS Table_Exists,
                format('Table not found in the given schema: %s', _tableToFind)::citext;
     Else
         If Exists (SELECT tablename FROM pg_tables WHERE tablename::citext = _tableToFind::citext) Then
@@ -65,7 +65,7 @@ BEGIN
             SELECT _tableToFind::citext,
                    schemaname::citext,
                    tablename::citext,
-                   True As Table_Exists,
+                   True AS Table_Exists,
                    ''::citext
             FROM pg_tables
             WHERE tablename::citext = _tableToFind::citext;
@@ -77,7 +77,7 @@ BEGIN
         SELECT _tableToFind::citext,
                ''::citext,
                _tableToFind::citext,
-               false As Table_Exists,
+               false AS Table_Exists,
                format('Table not found in any schema: %s', _tableToFind)::citext;
     End If;
 

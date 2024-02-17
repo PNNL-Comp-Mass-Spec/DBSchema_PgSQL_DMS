@@ -63,7 +63,7 @@ BEGIN
 
         _storagePathID := 0;
 
-        SELECT auto_define_storage_path As AutoDefineStoragePath,   -- This is stored as an integer in t_instrument_name
+        SELECT auto_define_storage_path AS AutoDefineStoragePath,   -- This is stored as an integer in t_instrument_name
                auto_sp_vol_name_client  AS AutoSPVolNameClient,
                auto_sp_vol_name_server  AS AutoSPVolNameServer,
                auto_sp_path_root        AS AutoSPPathRoot,

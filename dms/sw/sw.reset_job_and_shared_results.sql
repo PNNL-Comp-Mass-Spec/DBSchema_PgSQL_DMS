@@ -208,7 +208,7 @@ BEGIN
                     RAISE INFO '%', _infoHeadSeparator;
 
                     FOR _previewData IN
-                        SELECT 'Remove job from sw.t_jobs, but leave in sw.t_jobs_history' As Message,
+                        SELECT 'Remove job from sw.t_jobs, but leave in sw.t_jobs_history' AS Message,
                                JS.job AS Job_To_Remove_From_T_Jobs,
                                J.state AS Job_State
                         FROM sw.V_Job_Steps JS
@@ -254,9 +254,9 @@ BEGIN
                     RAISE INFO '%', _infoHeadSeparator;
 
                     FOR _previewData IN
-                        SELECT 'Update sw.t_job_steps_history' As Message,
+                        SELECT 'Update sw.t_job_steps_history' AS Message,
                                Output_Folder_Name,
-                               format('%s_BAD', Output_Folder_Name) As Output_Folder_Name_New
+                               format('%s_BAD', Output_Folder_Name) AS Output_Folder_Name_New
                         FROM sw.t_job_steps_history
                         WHERE output_folder_name = _outputFolder AND state = 5
                     LOOP
@@ -336,7 +336,7 @@ BEGIN
 
                 FOR _msg IN
                     SELECT format('Job %s, step %s likely needs to have it''s Output_Folder field renamed to not be %s',
-                                  Job, Step, _outputFolder) As Message
+                                  Job, Step, _outputFolder) AS Message
                     FROM sw.V_Job_Steps
                     WHERE Output_Folder = _outputFolder AND State = 5
                 LOOP

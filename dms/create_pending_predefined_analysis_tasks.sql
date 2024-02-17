@@ -61,15 +61,15 @@ BEGIN
 
     WHILE _continue
     LOOP
-        SELECT SQ.item As ItemID,
-               SQ.dataset_id As DatasetID,
-               DS.dataset As DatasetName,
-               DS.dataset_rating_id As DatasetRatingID,
-               DS.dataset_state_id As DatasetStateId,
-               SQ.calling_user As CallingUser,
-               SQ.analysis_tool_name_filter As AnalysisToolNameFilter,
-               Case When SQ.exclude_datasets_not_released > 0 Then true Else false End As ExcludeDatasetsNotReleased,
-               Case When SQ.prevent_duplicate_jobs > 0 Then true Else false End As PreventDuplicateJobs
+        SELECT SQ.item AS ItemID,
+               SQ.dataset_id AS DatasetID,
+               DS.dataset AS DatasetName,
+               DS.dataset_rating_id AS DatasetRatingID,
+               DS.dataset_state_id AS DatasetStateId,
+               SQ.calling_user AS CallingUser,
+               SQ.analysis_tool_name_filter AS AnalysisToolNameFilter,
+               CASE WHEN SQ.exclude_datasets_not_released > 0 THEN true ELSE false END AS ExcludeDatasetsNotReleased,
+               CASE WHEN SQ.prevent_duplicate_jobs > 0        THEN true ELSE false END AS PreventDuplicateJobs
         INTO _currentItem
         FROM t_predefined_analysis_scheduling_queue SQ
              INNER JOIN t_dataset DS

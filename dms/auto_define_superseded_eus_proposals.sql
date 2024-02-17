@@ -65,7 +65,7 @@ BEGIN
            ON EUP.title = DuplicateQ.title
          INNER JOIN ( SELECT title,
                              proposal_id,
-                             ROW_NUMBER() OVER ( PARTITION BY title ORDER BY proposal_start_date DESC ) AS StartRank
+                             Row_Number() OVER (PARTITION BY title ORDER BY proposal_start_date DESC) AS StartRank
                       FROM t_eus_proposals ) RankQ
            ON EUP.title = RankQ.title AND
               RankQ.StartRank = 1 AND

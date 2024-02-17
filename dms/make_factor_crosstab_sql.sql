@@ -22,7 +22,7 @@ CREATE OR REPLACE FUNCTION public.make_factor_crosstab_sql(_collist text, _viewn
 **          );
 **
 **  Arguments:
-**    _colList      Columns to include in the crosstab, for example: ' ''x'' as sel, batch_id, experiment, dataset, name, status, request'
+**    _colList      Columns to include in the crosstab, for example: ' ''x'' AS sel, batch_id, experiment, dataset, name, status, request'
 **    _viewName     View to use; should be V_Requested_Run_Unified_List or V_Requested_Run_Unified_List_Ex
 **
 **  Returns:
@@ -180,7 +180,7 @@ BEGIN
 
     -- Example contents of _sql
 
-    -- SELECT 'x' As sel, batch_id, name, status, dataset_id, request, block, run_order, "BioRep", "Sample", "Time"
+    -- SELECT 'x' AS sel, batch_id, name, status, dataset_id, request, block, run_order, "BioRep", "Sample", "Time"
     -- FROM ( SELECT Src.*
     --       FROM V_Requested_Run_Unified_List Src
     --       WHERE Src.Request IN (SELECT Request FROM Tmp_RequestIDs)

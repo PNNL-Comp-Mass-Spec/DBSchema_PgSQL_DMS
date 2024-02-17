@@ -102,10 +102,10 @@ BEGIN
         FOR _previewData IN
             SELECT Campaign_ID,
                    Campaign,
-                   public.timestamp_text(Created) As Created,
-                   public.timestamp_text(Most_Recent_Activity) As Most_Recent_Activity,
-                   public.timestamp_text(Most_Recent_Dataset) As Most_Recent_Dataset,
-                   public.timestamp_text(Most_Recent_Analysis_Job) As Most_Recent_Analysis_Job
+                   public.timestamp_text(Created) AS Created,
+                   public.timestamp_text(Most_Recent_Activity) AS Most_Recent_Activity,
+                   public.timestamp_text(Most_Recent_Dataset) AS Most_Recent_Dataset,
+                   public.timestamp_text(Most_Recent_Analysis_Job) AS Most_Recent_Analysis_Job
             FROM Tmp_Campaigns
             ORDER BY Campaign_ID
         LOOP

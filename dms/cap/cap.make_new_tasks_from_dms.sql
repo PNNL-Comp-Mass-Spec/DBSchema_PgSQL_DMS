@@ -135,7 +135,7 @@ BEGIN
                            ELSE 'DatasetCapture'
                        END AS Script,
                        Src.Dataset_ID,
-                       cap.get_dataset_capture_priority(Src.Dataset, Src.Instrument_Group) As Priority,
+                       cap.get_dataset_capture_priority(Src.Dataset, Src.Instrument_Group) AS Priority,
                        Src.Dataset
                 FROM cap.V_DMS_Get_New_Datasets Src
                      LEFT OUTER JOIN cap.t_tasks Target

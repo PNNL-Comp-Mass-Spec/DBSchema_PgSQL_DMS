@@ -199,7 +199,7 @@ BEGIN
     SELECT XmlQ.Identifier, XmlQ.Factor, XmlQ.Value, XmlQ.DatasetID, 0
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT _xml As rooted_xml
+        FROM ( SELECT _xml AS rooted_xml
              ) Src,
              XMLTABLE('//root/r'
                       PASSING Src.rooted_xml
@@ -487,7 +487,7 @@ BEGIN
                    CASE WHEN UpdateSkipCode = 2
                         THEN 'Invalid factor that will be auto-skipped'
                         ELSE ''
-                   END As Comment
+                   END AS Comment
             FROM Tmp_FactorInfo
             ORDER BY Entry_ID
         LOOP
@@ -712,7 +712,7 @@ BEGIN
                    CASE WHEN UpdateSkipCode = 2
                         THEN 'Invalid factor that will be auto-skipped'
                         ELSE ''
-                   END As Comment
+                   END AS Comment
             FROM Tmp_FactorInfo
             ORDER BY Entry_ID
         LOOP

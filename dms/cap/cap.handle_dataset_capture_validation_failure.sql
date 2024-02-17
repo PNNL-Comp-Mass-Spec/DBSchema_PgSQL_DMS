@@ -127,7 +127,7 @@ BEGIN
         WHERE Dataset_ID = _datasetID AND
               Script IN ('DatasetCapture', 'IMSDatasetCapture') AND
               State = 5
-        ORDER BY job desc
+        ORDER BY job DESC
         LIMIT 1;
 
         RAISE INFO '%', _infoMessage;

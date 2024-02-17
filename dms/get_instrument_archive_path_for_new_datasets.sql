@@ -75,11 +75,11 @@ BEGIN
         -- See if this instrument has Auto_Define_Storage_Path enabled
         -----------------------------------------
 
-        SELECT auto_define_storage_path             As AutoDefineStoragePath,    -- This is stored as an integer in t_instrument_name
-               auto_sp_archive_server_name::text    As AutoSPArchiveServerName,
-               auto_sp_archive_path_root            As AutoSPArchivePathRoot,
-               auto_sp_archive_share_path_root      As AutoSPArchiveSharePathRoot,
-               instrument::text                     As InstrumentName
+        SELECT auto_define_storage_path             AS AutoDefineStoragePath,    -- This is stored as an integer in t_instrument_name
+               auto_sp_archive_server_name::text    AS AutoSPArchiveServerName,
+               auto_sp_archive_path_root            AS AutoSPArchivePathRoot,
+               auto_sp_archive_share_path_root      AS AutoSPArchiveSharePathRoot,
+               instrument::text                     AS InstrumentName
         INTO _instrumentInfo
         FROM t_instrument_name
         WHERE instrument_id = _instrumentID;

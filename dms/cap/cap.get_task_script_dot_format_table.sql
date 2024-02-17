@@ -50,14 +50,14 @@ BEGIN
                           PASSING t1
                           COLUMNS step int PATH '@Number',
                                   tool text PATH '@Tool',
-                                  parent_steps XML PATH 'Depends_On') As XmlTableA
+                                  parent_steps XML PATH 'Depends_On') AS XmlTableA
     WHERE Src.script = _script::citext
     ORDER BY XmlTableA.step;
 
     -- Return the script lines that define the script steps
     RETURN QUERY
-    SELECT format('%s [label="%s %s"] [shape=box, color=black];', step, step, tool) as script_line,
-           0 as seq
+    SELECT format('%s [label="%s %s"] [shape=box, color=black];', step, step, tool) AS script_line,
+           0 AS seq
     FROM Tmp_ScriptSteps
     ORDER BY step;
 
@@ -76,7 +76,7 @@ BEGIN
                               PASSING t1
                               COLUMNS step int PATH '@Number',
                                       tool text PATH '@Tool',
-                                      parent_steps XML PATH 'Depends_On') As XmlTableA
+                                      parent_steps XML PATH 'Depends_On') AS XmlTableA
         WHERE Src.script = _script::citext
     LOOP
         If Not _scriptStep.parent_steps Is Null Then
@@ -87,13 +87,13 @@ BEGIN
             -- Use XPath to extract the step numbers
 
             RETURN QUERY
-            SELECT format('%s -> %s;', XmlTableA.parent_step, _scriptStep.step) as script_line,
-                   1 as seq
-            FROM ( SELECT ('<root>' || _scriptStep.parent_steps || '</root>')::xml as rooted_xml
+            SELECT format('%s -> %s;', XmlTableA.parent_step, _scriptStep.step) AS script_line,
+                   1 AS seq
+            FROM ( SELECT ('<root>' || _scriptStep.parent_steps || '</root>')::xml AS rooted_xml
                  ) Src,
                  XMLTABLE('//root/Depends_On'
                           PASSING Src.rooted_xml
-                          COLUMNS parent_step int PATH '@Step_Number') As XmlTableA
+                          COLUMNS parent_step int PATH '@Step_Number') AS XmlTableA
             ORDER BY XmlTableA.parent_step, _scriptStep.step;
         End If;
 

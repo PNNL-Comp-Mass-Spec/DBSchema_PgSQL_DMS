@@ -229,12 +229,12 @@ BEGIN
     ---------------------------------------------------
 
     FOR _containerInfo In
-        SELECT Container_ID As ContainerID,
-               Container As ContainerName,
-               -- Location_ID As LocationIDOld,
-               Location_Tag As LocationTagOld,
-               -- Shelf As ShelfOldText,
-               -- Rack As RackOldText,
+        SELECT Container_ID AS ContainerID,
+               Container AS ContainerName,
+               -- Location_ID AS LocationIDOld,
+               Location_Tag AS LocationTagOld,
+               -- Shelf AS ShelfOldText,
+               -- Rack AS RackOldText,
                Row,
                Col
         FROM Tmp_ContainersToProcess

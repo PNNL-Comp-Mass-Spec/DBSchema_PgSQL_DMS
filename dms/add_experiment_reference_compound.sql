@@ -86,7 +86,7 @@ BEGIN
 
     -- First look for entries without a Compound_ID
 
-    SELECT string_agg(Compound_IDName, ', ' Order By Compound_IDName)
+    SELECT string_agg(Compound_IDName, ', ' ORDER BY Compound_IDName)
     INTO _invalidRefCompoundList
     FROM Tmp_ExpToRefCompoundMap
     WHERE Compound_ID IS NULL;
@@ -99,7 +99,7 @@ BEGIN
 
     -- Next look for entries with an invalid Compound_ID
 
-    SELECT string_agg(Compound_IDName, ', ' Order By Compound_IDName)
+    SELECT string_agg(Compound_IDName, ', ' ORDER BY Compound_IDName)
     INTO _invalidRefCompoundList
     FROM Tmp_ExpToRefCompoundMap Src
          LEFT OUTER JOIN t_reference_compound RC
@@ -121,7 +121,7 @@ BEGIN
     WHERE exp_id = _expID;
 
     INSERT INTO t_experiment_reference_compounds (exp_id, compound_id)
-    SELECT DISTINCT _expID As Exp_ID, Compound_ID
+    SELECT DISTINCT _expID AS Exp_ID, Compound_ID
     FROM Tmp_ExpToRefCompoundMap;
 
     ---------------------------------------------------

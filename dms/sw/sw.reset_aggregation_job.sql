@@ -165,7 +165,7 @@ BEGIN
                 SELECT Job,
                        Step,
                        Output_Folder_Name,
-                       _resultsDirectoryName As Output_Folder_Name_New
+                       _resultsDirectoryName AS Output_Folder_Name_New
                 FROM sw.t_job_steps
                 WHERE job = _job AND (state <> 1 OR input_folder_name ILIKE _folderLikeClause OR Output_Folder_Name ILIKE _folderLikeClause)
                 ORDER BY step

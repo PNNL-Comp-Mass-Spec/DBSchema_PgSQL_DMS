@@ -119,7 +119,7 @@ BEGIN
         End If;
 
         MERGE INTO t_analysis_job_request_existing_jobs AS target
-        USING ( SELECT DISTINCT _requestID As Request_ID, Job
+        USING ( SELECT DISTINCT _requestID AS Request_ID, Job
                 FROM public.get_existing_jobs_matching_job_request(_requestID)
               ) AS source
         ON (target.request_id = source.request_id AND target.job = source.job)
@@ -247,7 +247,7 @@ BEGIN
         LOOP
 
             MERGE INTO t_analysis_job_request_existing_jobs AS target
-            USING ( SELECT DISTINCT _currentRequestId As Request_ID, Job
+            USING ( SELECT DISTINCT _currentRequestId AS Request_ID, Job
                     FROM public.get_existing_jobs_matching_job_request(_currentRequestId)
                   ) AS source
             ON (target.request_id = source.request_id AND target.job = source.job)
@@ -354,7 +354,7 @@ BEGIN
              JOIN LATERAL (
                 SELECT job
                 FROM public.get_existing_jobs_matching_job_request(LookupQ.Request_ID)
-                ) As RequestJobs On true
+                ) AS RequestJobs On true
         ORDER BY LookupQ.request_id, RequestJobs.job;
         --
         GET DIAGNOSTICS _matchCount = ROW_COUNT;
@@ -451,12 +451,12 @@ BEGIN
             -- Add new rows to t_analysis_job_request_existing_jobs
 
             MERGE INTO t_analysis_job_request_existing_jobs AS target
-            USING ( SELECT DISTINCT AJR.request_id As Request_ID, MatchingJobs.Job
+            USING ( SELECT DISTINCT AJR.request_id AS Request_ID, MatchingJobs.Job
                     FROM t_analysis_job_request AJR
                          JOIN LATERAL (
                             SELECT job
                             FROM public.get_existing_jobs_matching_job_request(AJR.Request_ID)
-                            ) As MatchingJobs On true
+                            ) AS MatchingJobs On true
                     WHERE AJR.request_id BETWEEN _requestIdStart AND _requestIdEnd
                   ) AS source
             ON (target.request_id = source.request_id AND target.job = source.job)
@@ -474,12 +474,12 @@ BEGIN
             DELETE FROM t_analysis_job_request_existing_jobs target
             WHERE target.request_id BETWEEN _requestIdStart AND _requestIdEnd
                   AND NOT EXISTS (SELECT source.Job
-                                  FROM ( SELECT DISTINCT AJR.request_id As Request_ID, MatchingJobs.Job
+                                  FROM ( SELECT DISTINCT AJR.request_id AS Request_ID, MatchingJobs.Job
                                          FROM t_analysis_job_request AJR
                                               JOIN LATERAL (
                                                  SELECT job
                                                  FROM public.get_existing_jobs_matching_job_request(AJR.Request_ID)
-                                                 ) As MatchingJobs On true
+                                                 ) AS MatchingJobs On true
                                          WHERE AJR.request_id BETWEEN _requestIdStart AND _requestIdEnd
                                        ) AS source
                                   WHERE target.request_id = source.request_id AND target.job = source.job);

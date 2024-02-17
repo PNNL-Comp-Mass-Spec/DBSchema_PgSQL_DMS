@@ -251,7 +251,7 @@ BEGIN
             -- If you update this merge statement, be sure to update the query
             ------------------------------------------------
 
-            MERGE INTO t_cached_dataset_folder_paths As target
+            MERGE INTO t_cached_dataset_folder_paths AS target
             USING ( SELECT DS.dataset_id,
                            DS.xmin AS XMin_Dataset,
                            SPath.xmin AS XMin_SPath,

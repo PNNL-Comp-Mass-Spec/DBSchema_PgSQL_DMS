@@ -166,9 +166,9 @@ BEGIN
         FOR _previewData IN
             SELECT Target.request_id AS Request_ID,
                    Target.param_file_name AS Param_File_Name,
-                   CASE WHEN Target.param_file_name <> R.ParamFileName THEN R.ParamFileName ELSE '' END As Param_File_Name_New,
+                   CASE WHEN Target.param_file_name <> R.ParamFileName THEN R.ParamFileName ELSE '' END AS Param_File_Name_New,
                    Target.settings_file_name AS Settings_File_Name,
-                   CASE WHEN Target.settings_file_name <> R.SettingsFileName THEN R.SettingsFileName ELSE '' END As Settings_File_Name_New
+                   CASE WHEN Target.settings_file_name <> R.SettingsFileName THEN R.SettingsFileName ELSE '' END AS Settings_File_Name_New
             FROM t_analysis_job_request Target
                  INNER JOIN Tmp_Request_Params R
                    ON Target.request_id = R.RequestID

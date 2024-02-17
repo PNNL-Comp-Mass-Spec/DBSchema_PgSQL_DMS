@@ -376,9 +376,9 @@ BEGIN
             RAISE INFO '%', _infoHeadSeparatorStaging;
 
             FOR _previewData IN
-                SELECT 'Initial data' As State,
+                SELECT 'Initial data' AS State,
                        Staging_ID, EMSL_Inst_ID, Instrument, DMS_Inst_ID, Type,
-                       public.timestamp_text(Start) As Start,
+                       public.timestamp_text(Start) AS Start,
                        Minutes, Usage, Proposal, Users, Operator, Comment,
                        Year, Month, Dataset_ID, Usage_Type_ID, Operator_ID, Mark, Seq
                 FROM Tmp_Staging
@@ -429,9 +429,9 @@ BEGIN
             RAISE INFO '%', _infoHeadSeparatorStaging;
 
             FOR _previewData IN
-                SELECT 'Mark set to 1' As State,
+                SELECT 'Mark set to 1' AS State,
                        Staging_ID, EMSL_Inst_ID, Instrument, DMS_Inst_ID, Type,
-                       public.timestamp_text(Start) As Start,
+                       public.timestamp_text(Start) AS Start,
                        Minutes, Usage, Proposal, Users, Operator, Comment,
                        Year, Month, Dataset_ID, Usage_Type_ID, Operator_ID, Mark, Seq
                 FROM Tmp_Staging
@@ -494,7 +494,7 @@ BEGIN
         SET Seq = SourceQ.New_Seq,
             Mark = 0
         FROM (SELECT Staging_ID,
-                     _seq + row_number() OVER (ORDER BY Dataset_ID, Type) AS New_Seq
+                     _seq + Row_Number() OVER (ORDER BY Dataset_ID, Type) AS New_Seq
               FROM Tmp_Staging
               WHERE Mark Is Null) SourceQ
         WHERE Tmp_Staging.Staging_ID = SourceQ.Staging_ID;
@@ -506,9 +506,9 @@ BEGIN
             RAISE INFO '%', _infoHeadSeparatorStaging;
 
             FOR _previewData IN
-                SELECT 'Mark set to 0' As State,
+                SELECT 'Mark set to 0' AS State,
                        Staging_ID, EMSL_Inst_ID, Instrument, DMS_Inst_ID, Type,
-                       public.timestamp_text(Start) As Start,
+                       public.timestamp_text(Start) AS Start,
                        Minutes, Usage, Proposal, Users, Operator, Comment,
                        Year, Month, Dataset_ID, Usage_Type_ID, Operator_ID, Mark, Seq
                 FROM Tmp_Staging
@@ -599,9 +599,9 @@ BEGIN
             RAISE INFO '%', _infoHeadSeparatorStaging;
 
             FOR _previewData IN
-                SELECT 'Comments cleaned' As State,
+                SELECT 'Comments cleaned' AS State,
                        Staging_ID, EMSL_Inst_ID, Instrument, DMS_Inst_ID, Type,
-                       public.timestamp_text(Start) As Start,
+                       public.timestamp_text(Start) AS Start,
                        Minutes, Usage, Proposal, Users, Operator, Comment,
                        Year, Month, Dataset_ID, Usage_Type_ID, Operator_ID, Mark, Seq
                 FROM Tmp_Staging
@@ -651,9 +651,9 @@ BEGIN
             RAISE INFO '%', _infoHeadSeparatorStaging;
 
             FOR _previewData IN
-                SELECT 'Intervals' As State,
+                SELECT 'Intervals' AS State,
                        Staging_ID, EMSL_Inst_ID, Instrument, DMS_Inst_ID, Type,
-                       public.timestamp_text(Start) As Start,
+                       public.timestamp_text(Start) AS Start,
                        Minutes, Usage, Proposal, Users, Operator, Comment,
                        Year, Month, Dataset_ID, Usage_Type_ID, Operator_ID, Mark, Seq
                 FROM Tmp_Staging
@@ -1013,18 +1013,18 @@ BEGIN
             _previewCount := 0;
 
             FOR _previewData IN
-                SELECT 'Update Row' As Action,
+                SELECT 'Update Row' AS Action,
                         Tmp_Staging.Minutes,
                         public.timestamp_text(Tmp_Staging.Start) AS Start,
-                        CASE WHEN Coalesce(InstUsage.proposal, '') = ''    THEN Tmp_Staging.proposal      ELSE InstUsage.proposal END As Proposal,
-                        CASE WHEN Coalesce(InstUsage.usage_type_id, 0) = 0 THEN Tmp_Staging.usage_type_id ELSE InstUsage.usage_type_id END As Usage_Type_ID,
-                        CASE WHEN Coalesce(InstUsage.users, '') = ''       THEN Tmp_Staging.users         ELSE InstUsage.users END As Users,
-                        CASE WHEN InstUsage.operator Is Null               THEN Tmp_Staging.operator_id   ELSE InstUsage.operator END As Operator,
+                        CASE WHEN Coalesce(InstUsage.proposal, '') = ''    THEN Tmp_Staging.proposal      ELSE InstUsage.proposal END AS Proposal,
+                        CASE WHEN Coalesce(InstUsage.usage_type_id, 0) = 0 THEN Tmp_Staging.usage_type_id ELSE InstUsage.usage_type_id END AS Usage_Type_ID,
+                        CASE WHEN Coalesce(InstUsage.users, '') = ''       THEN Tmp_Staging.users         ELSE InstUsage.users END AS Users,
+                        CASE WHEN InstUsage.operator Is Null               THEN Tmp_Staging.operator_id   ELSE InstUsage.operator END AS Operator,
                         Tmp_Staging.Year,
                         Tmp_Staging.Month,
-                        CASE WHEN Coalesce(InstUsage.comment, '') = '' THEN Tmp_Staging.comment ELSE InstUsage.comment End As Comment,
-                        public.timestamp_text(CURRENT_TIMESTAMP) As Updated,
-                        _callingUser As Calling_User
+                        CASE WHEN Coalesce(InstUsage.comment, '') = '' THEN Tmp_Staging.comment ELSE InstUsage.comment End AS Comment,
+                        public.timestamp_text(CURRENT_TIMESTAMP) AS Updated,
+                        _callingUser AS Calling_User
                 FROM t_emsl_instrument_usage_report InstUsage
                         INNER JOIN Tmp_Staging
                         ON InstUsage.dataset_id = Tmp_Staging.dataset_id AND
@@ -1100,9 +1100,9 @@ BEGIN
             _previewCount := 0;
 
             FOR _previewData IN
-                SELECT 'Insert Row' As State,
+                SELECT 'Insert Row' AS State,
                        Staging_ID, EMSL_Inst_ID, Instrument, DMS_Inst_ID, Type,
-                       public.timestamp_text(Start) As Start,
+                       public.timestamp_text(Start) AS Start,
                        Minutes, Usage, Proposal, Users, Operator, Comment,
                        Year, Month, Dataset_ID, Usage_Type_ID, Operator_ID, Mark, Seq
                 FROM Tmp_Staging
@@ -1208,7 +1208,7 @@ BEGIN
                        InstUsage.EMSL_Inst_ID,
                        InstUsage.DMS_Inst_ID,
                        InstUsage.Type,
-                       public.timestamp_text(InstUsage.start) As Start,
+                       public.timestamp_text(InstUsage.start) AS Start,
                        InstUsage.Minutes,
                        InstUsage.Proposal,
                        InstUsage.Usage_Type_ID,
@@ -1288,7 +1288,7 @@ BEGIN
                        InstUsage.EMSL_Inst_ID,
                        InstUsage.DMS_Inst_ID,
                        InstUsage.Type,
-                       public.timestamp_text(InstUsage.start) As Start,
+                       public.timestamp_text(InstUsage.start) AS Start,
                        InstUsage.Minutes,
                        InstUsage.Proposal,
                        InstUsage.Usage_Type_ID,
@@ -1380,7 +1380,7 @@ BEGIN
             RAISE INFO '%', _infoHeadSeparatorUpdateComment;
 
             FOR _previewData IN
-                SELECT 'Add log reference to comment' As Action,
+                SELECT 'Add log reference to comment' AS Action,
                        InstUsage.Seq,
                        InstName.Instrument,
                        comment AS Old_Comment,

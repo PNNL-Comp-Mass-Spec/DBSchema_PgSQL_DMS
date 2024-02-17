@@ -109,7 +109,7 @@ BEGIN
                        Src.pct_ef_study_specific_by_acqtime,
                        Src.proposal_type,
                        Src.inst
-                FROM report_production_stats(_startDate, _endDate, _productionOnly, _campaignIDFilterList, _eusUsageFilterList, _instrumentFilterList, _includeProposalType) As Src
+                FROM report_production_stats(_startDate, _endDate, _productionOnly, _campaignIDFilterList, _eusUsageFilterList, _instrumentFilterList, _includeProposalType) AS Src
                 ORDER BY Src.instrument;
         Else
             -- Do not include the proposal_type column
@@ -146,7 +146,7 @@ BEGIN
                        Src.pct_ef_study_specific_datasets,
                        Src.pct_ef_study_specific_by_acqtime,
                        Src.inst
-                FROM report_production_stats(_startDate, _endDate, _productionOnly, _campaignIDFilterList, _eusUsageFilterList, _instrumentFilterList, _includeProposalType) As Src
+                FROM report_production_stats(_startDate, _endDate, _productionOnly, _campaignIDFilterList, _eusUsageFilterList, _instrumentFilterList, _includeProposalType) AS Src
                 ORDER BY Src.instrument;
         End If;
 

@@ -141,7 +141,7 @@ BEGIN
             INSERT INTO Tmp_OrganismFilter (organism_id, Organism_Name)
             SELECT organism_id, organism
             FROM t_organisms
-            order BY organism_id
+            ORDER BY organism_id
         End If;
 
         --------------------------------------------------------------------
@@ -168,7 +168,7 @@ BEGIN
         If _instrumentFilterList <> '' Then
             -- Filter on instrument and use dataset acq times for the date filter
 
-            If Not Exists (Select * From Tmp_InstrumentFilter) Then
+            If Not Exists (SELECT Instrument_ID FROM Tmp_InstrumentFilter) Then
                 SELECT '' AS Tissue_ID,
                        '' AS Tissue,
                        0 AS Experiments,

@@ -126,7 +126,7 @@ BEGIN
     SELECT XmlQ.Name, XmlQ.ValueText
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT _resultsXML As rooted_xml
+        FROM ( SELECT _resultsXML AS rooted_xml
              ) Src,
              XMLTABLE('//QCART_Results/Measurements/Measurement'
                       PASSING Src.rooted_xml
@@ -198,7 +198,7 @@ BEGIN
     SET Value = FilterQ.Value
     FROM ( SELECT Name,
                   ValueText,
-                  public.try_cast(ValueText, null::float8) As Value
+                  public.try_cast(ValueText, null::float8) AS Value
            FROM Tmp_Measurements
            WHERE Not public.try_cast(ValueText, null::float8) Is Null
          ) FilterQ
@@ -224,7 +224,7 @@ BEGIN
     SELECT _datasetID,
            ct."QCART",
     FROM crosstab(
-       'SELECT 1 As RowID,
+       'SELECT 1 AS RowID,
                Name,
                Value
         FROM Tmp_Measurements

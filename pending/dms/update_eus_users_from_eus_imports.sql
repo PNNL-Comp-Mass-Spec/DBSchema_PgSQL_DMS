@@ -69,7 +69,7 @@ BEGIN
         FROM t_eus_users;
 
         MERGE INTO t_eus_users AS target
-        USING ( SELECT DISTINCT Source.user_id As Person_ID,
+        USING ( SELECT DISTINCT Source.user_id AS Person_ID,
                                 Source.name_fm,
                                 CASE WHEN hanford_id IS NULL
                                      THEN NULL
@@ -78,7 +78,7 @@ BEGIN
                                 CASE WHEN hanford_id IS NULL
                                      THEN 2        -- Offsite
                                      ELSE 1        -- Onsite
-                                     END As Site_Status,
+                                     END AS Site_Status,
                                 Source.first_name,
                                 Source.last_name
                 FROM V_NEXUS_Import_Proposal_Participants Source
@@ -162,7 +162,7 @@ BEGIN
 
         MERGE INTO t_eus_proposal_users AS target
         USING ( SELECT DISTINCT Source.project_id AS Proposal_ID,
-                                Source.user_id As Person_ID,
+                                Source.user_id AS Person_ID,
                                 'Y' AS Of_DMS_Interest
                 FROM V_NEXUS_Import_Proposal_Participants Source
                      INNER JOIN ( SELECT proposal_id
@@ -203,7 +203,7 @@ BEGIN
         WHERE NOT Coalesce(target.state_id, 0) IN (2, 4) AND
               NOT EXISTS (SELECT source.Person_ID
                           FROM (SELECT DISTINCT Source.project_id AS Proposal_ID,
-                                                Source.user_id As Person_ID
+                                                Source.user_id AS Person_ID
                                 FROM V_NEXUS_Import_Proposal_Participants Source
                                      INNER JOIN ( SELECT proposal_id
                                                   FROM t_eus_proposals

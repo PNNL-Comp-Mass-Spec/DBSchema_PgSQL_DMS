@@ -154,7 +154,7 @@ BEGIN
            FROM ( SELECT data_pkg_id,
                          EUS_Proposal_ID,
                          Proposal_Count,
-                         Row_Number() OVER ( Partition By SourceQ.data_pkg_id ORDER BY Proposal_Count DESC ) AS CountRank
+                         Row_Number() OVER (PARTITION BY SourceQ.data_pkg_id ORDER BY Proposal_Count DESC) AS CountRank
                   FROM ( SELECT DPD.data_pkg_id,
                                 RR.EUS_Proposal_ID,           -- EUS Proposal ID (stored as text since typically an integer, but could be 'EPR56820')
                                 COUNT(RR.EUS_Proposal_ID) AS Proposal_Count
@@ -185,7 +185,7 @@ BEGIN
            FROM ( SELECT data_pkg_id,
                          proposal_id,
                          item_added,
-                         Row_Number() OVER ( Partition By data_pkg_id Order By item_added DESC ) AS IdRank
+                         Row_Number() OVER (PARTITION BY data_pkg_id ORDER BY item_added DESC) AS IdRank
                   FROM dpkg.t_data_package_eus_proposals
                   WHERE data_pkg_id IN ( SELECT Data_Pkg_ID
                                          FROM Tmp_DataPackagesToUpdate
@@ -206,7 +206,7 @@ BEGIN
            FROM ( SELECT data_pkg_id,
                          instrument,
                          InstrumentCount,
-                         Row_Number() OVER ( Partition By SourceQ.data_pkg_id Order By InstrumentCount DESC ) AS CountRank
+                         Row_Number() OVER (PARTITION BY SourceQ.data_pkg_id ORDER BY InstrumentCount DESC) AS CountRank
                   FROM ( SELECT DPD.data_pkg_id,
                                 InstName.Instrument AS Instrument,
                                 COUNT(InstName.Instrument) AS InstrumentCount

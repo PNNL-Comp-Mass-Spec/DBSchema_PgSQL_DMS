@@ -371,7 +371,7 @@ BEGIN
                    public.timestamp_text(Stats.StartDate) AS Start_Date,
                    public.timestamp_text(Stats.EndDate) AS End_Date,
                    Stats.TheYear AS Year,
-                   Stats.WeekOfYear As Week_of_Year,
+                   Stats.WeekOfYear AS Week_of_Year,
                    Stats.Proposal_ID,
                    Stats.Work_Package,
                    Stats.Proposal_Active,

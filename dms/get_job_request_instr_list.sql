@@ -22,7 +22,7 @@ BEGIN
 
     SELECT string_agg(Instrument, ', ' ORDER BY Instrument)
     INTO _list
-    FROM ( SELECT DISTINCT InstName.instrument As Instrument
+    FROM ( SELECT DISTINCT InstName.instrument AS Instrument
            FROM t_analysis_job_request_datasets AJRD
                   INNER JOIN t_dataset DS
                     ON AJRD.dataset_id = DS.dataset_id

@@ -136,7 +136,7 @@ BEGIN
                           );
 
         FOR _batchInfo IN
-            SELECT Batch_ID As BatchID,
+            SELECT Batch_ID AS BatchID,
                    Num_Requests AS NumRequests,
                    Num_Datasets AS NumDatasets,
                    Num_Datasets_With_Start_Time AS NumWithStartTime,
@@ -262,8 +262,8 @@ BEGIN
                                '---------------');
 
             FOR _eventInfo IN
-                SELECT target_id As TargetID,
-                       event_type_id As EventTypeID
+                SELECT target_id AS TargetID,
+                       event_type_id AS EventTypeID
                 FROM Tmp_NewEvents
                 ORDER BY target_id
             LOOP

@@ -109,7 +109,7 @@ BEGIN
         _message := format('Removed %s rows from Tmp_JobsToDelete to assure that %s rows remain in t_tasks_history', _deleteCount, _jobHistoryMinimumCount);
         RAISE INFO '%', _message;
 
-        If Not Exists (Select * From Tmp_JobsToDelete) Then
+        If Not Exists (SELECT Job FROM Tmp_JobsToDelete) Then
             _message := 'Tmp_JobsToDelete is now empty, so no old capture task jobs to delete; exiting';
             RAISE INFO '%', _message;
 
@@ -150,9 +150,9 @@ BEGIN
         -- Show the first 10 jobs in Tmp_JobsToDelete
 
         FOR _previewData IN
-            SELECT Job, timestamp_text(Saved) As Saved, 'Preview delete' As Comment
+            SELECT Job, timestamp_text(Saved) AS Saved, 'Preview delete' AS Comment
             FROM Tmp_JobsToDelete
-            ORDER By Job
+            ORDER BY Job
             LIMIT 10
         LOOP
             _infoData := format(_formatSpecifier,
@@ -191,16 +191,16 @@ BEGIN
 
     Else
         DELETE FROM cap.t_task_steps_history
-        WHERE Job In (Select Job From Tmp_JobsToDelete);
+        WHERE Job In (SELECT Job FROM Tmp_JobsToDelete);
 
         DELETE FROM cap.t_task_step_dependencies_history
-        WHERE Job In (Select Job From Tmp_JobsToDelete);
+        WHERE Job In (SELECT Job FROM Tmp_JobsToDelete);
 
         DELETE FROM cap.t_task_parameters_history
-        WHERE Job In (Select Job From Tmp_JobsToDelete);
+        WHERE Job In (SELECT Job FROM Tmp_JobsToDelete);
 
         DELETE FROM cap.t_tasks_history
-        WHERE Job In (Select Job From Tmp_JobsToDelete);
+        WHERE Job In (SELECT Job FROM Tmp_JobsToDelete);
     End If;
 
     If _infoOnly Then

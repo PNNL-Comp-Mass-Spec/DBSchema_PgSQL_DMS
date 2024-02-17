@@ -70,20 +70,20 @@ BEGIN
         -- Table not found in the given schema: ont.t_tmp_table
 
         RETURN QUERY
-        SELECT 'Warning'::citext as Item_Type,
-               0 As entry_id,
-               ''::citext As term_pk,
-               t.Message As term_name,
-               ''::citext As identifier,
-               '0'::citext As is_leaf,
-               ''::citext As parent_term_id,
-               ''::citext As parent_term_name,
-               ''::citext As parent_term_type,
-               ''::citext As grandparent_term_id,
-               ''::citext As grandparent_term_name,
-               ''::citext As grandparent_term_type,
-               current_timestamp::timestamp As entered,
-               NULL::timestamp As updated
+        SELECT 'Warning'::citext AS Item_Type,
+               0 AS entry_id,
+               ''::citext AS term_pk,
+               t.Message AS term_name,
+               ''::citext AS identifier,
+               '0'::citext AS is_leaf,
+               ''::citext AS parent_term_id,
+               ''::citext AS parent_term_name,
+               ''::citext AS parent_term_type,
+               ''::citext AS grandparent_term_id,
+               ''::citext AS grandparent_term_name,
+               ''::citext AS grandparent_term_type,
+               current_timestamp::timestamp AS entered,
+               NULL::timestamp AS updated
         FROM Tmp_CandidateTables t;
 
         DROP TABLE Tmp_CandidateTables;
@@ -124,7 +124,7 @@ BEGIN
     _s := ' INSERT INTO Tmp_SourceData'
           ' SELECT term_pk, term_name, identifier, is_leaf,'
           '   parent_term_type, parent_term_name, parent_term_id,'
-          '   grandparent_term_type, grandparent_term_name, grandparent_term_id, 0 as matches_existing'
+          '   grandparent_term_type, grandparent_term_name, grandparent_term_id, 0 AS matches_existing'
           ' FROM %I.%I'
           ' WHERE Coalesce(parent_term_name, '''') <> '''' AND '
           '       Not Coalesce(Definition::citext, '''') SIMILAR TO ''Obsolete%%'' AND '
@@ -249,7 +249,7 @@ BEGIN
                      d.parent_term_type, d.parent_term_name, d.parent_term_id,
                      d.grandparent_term_type, d.grandparent_term_name, d.grandparent_term_id
                FROM Tmp_SourceData d
-               WHERE d.matches_existing = 1) as s
+               WHERE d.matches_existing = 1) AS s
         WHERE t.term_pk = s.term_pk AND
               t.parent_term_id = s.parent_term_id AND
               Coalesce(t.grandparent_term_id, '') = Coalesce(s.grandparent_term_id, '') AND
@@ -295,20 +295,20 @@ BEGIN
             RAISE INFO '%', format(_deleteObsolete1, _sourceSchema, _sourceTable);
             RAISE INFO '%', format(_deleteObsolete2, _sourceSchema, _sourceTable);
 
-            _s := ' SELECT ''Obsolete term to delete''::citext as Item_Type,'
-                          ' 0 As entry_id,'
-                          ' s.term_pk::citext As term_pk,'
-                          ' s.term_name::citext As term_name,'
-                          ' s.identifier::citext As identifier,'
-                          ' s.is_leaf::citext As is_leaf,'
-                          ' s.parent_term_id::citext As parent_term_id,'
-                          ' s.parent_term_name::citext As parent_term_name,'
-                          ' s.parent_term_type::citext As parent_term_type,'
-                          ' s.grandparent_term_id::citext As grandparent_term_id,'
-                          ' s.grandparent_term_name::citext As grandparent_term_name,'
-                          ' s.grandparent_term_type::citext As grandparent_term_type,'
-                          ' current_timestamp::timestamp As entered,'
-                          ' NULL::timestamp As updated'
+            _s := ' SELECT ''Obsolete term to delete''::citext AS Item_Type,'
+                          ' 0 AS entry_id,'
+                          ' s.term_pk::citext AS term_pk,'
+                          ' s.term_name::citext AS term_name,'
+                          ' s.identifier::citext AS identifier,'
+                          ' s.is_leaf::citext AS is_leaf,'
+                          ' s.parent_term_id::citext AS parent_term_id,'
+                          ' s.parent_term_name::citext AS parent_term_name,'
+                          ' s.parent_term_type::citext AS parent_term_type,'
+                          ' s.grandparent_term_id::citext AS grandparent_term_id,'
+                          ' s.grandparent_term_name::citext AS grandparent_term_name,'
+                          ' s.grandparent_term_type::citext AS grandparent_term_type,'
+                          ' current_timestamp::timestamp AS entered,'
+                          ' NULL::timestamp AS updated'
                  ' FROM %I.%I s INNER JOIN'
                       ' ont.t_cv_ms t ON s.term_pk = t.term_pk'
                  ' WHERE (s.Definition::citext SIMILAR TO ''Obsolete%%'' OR s.Comment::citext SIMILAR TO ''Obsolete%%'')';
@@ -323,22 +323,22 @@ BEGIN
         ---------------------------------------------------
 
         RETURN QUERY
-        SELECT 'Existing item to update'::citext as Item_Type,
+        SELECT 'Existing item to update'::citext AS Item_Type,
                t.entry_id,
-               t.term_pk::citext As term_pk,
-               (CASE WHEN t.term_name  = s.term_name  THEN t.term_name       ELSE format('%s --> %s', t.term_name,  s.term_name)  END)::citext As term_name,
-               (CASE WHEN t.identifier = s.identifier THEN t.identifier      ELSE format('%s --> %s', t.identifier, s.identifier) END)::citext as identifier,
-               (CASE WHEN t.is_leaf = s.is_leaf THEN format('%s', t.is_leaf) ELSE format('%s --> %s', t.is_leaf, s.is_leaf)       END)::citext As is_leaf,
-               (CASE WHEN t.parent_term_type = s.parent_term_type THEN t.parent_term_type ELSE format('%s --> %s', Coalesce(t.parent_term_type, 'NULL'), Coalesce(s.parent_term_type, 'NULL')) END)::citext As parent_term_type,
-               (CASE WHEN t.parent_term_name = s.parent_term_name THEN t.parent_term_name ELSE format('%s --> %s', t.parent_term_name, s.parent_term_name) END)::citext As parent_term_name,
+               t.term_pk::citext AS term_pk,
+               (CASE WHEN t.term_name  = s.term_name  THEN t.term_name       ELSE format('%s --> %s', t.term_name,  s.term_name)  END)::citext AS term_name,
+               (CASE WHEN t.identifier = s.identifier THEN t.identifier      ELSE format('%s --> %s', t.identifier, s.identifier) END)::citext AS identifier,
+               (CASE WHEN t.is_leaf = s.is_leaf THEN format('%s', t.is_leaf) ELSE format('%s --> %s', t.is_leaf, s.is_leaf)       END)::citext AS is_leaf,
+               (CASE WHEN t.parent_term_type = s.parent_term_type THEN t.parent_term_type ELSE format('%s --> %s', Coalesce(t.parent_term_type, 'NULL'), Coalesce(s.parent_term_type, 'NULL')) END)::citext AS parent_term_type,
+               (CASE WHEN t.parent_term_name = s.parent_term_name THEN t.parent_term_name ELSE format('%s --> %s', t.parent_term_name, s.parent_term_name) END)::citext AS parent_term_name,
                t.parent_term_id::citext,
-               (CASE WHEN t.grandparent_term_type = s.grandparent_term_type THEN t.grandparent_term_type ELSE format('%s --> %s', Coalesce(t.grandparent_term_type, 'NULL'), Coalesce(s.grandparent_term_type, 'NULL')) END)::citext As grandparent_term_type,
-               (CASE WHEN t.grandparent_term_name = s.grandparent_term_name THEN t.grandparent_term_name ELSE format('%s --> %s', Coalesce(t.grandparent_term_name, 'NULL'), Coalesce(s.grandparent_term_name, 'NULL')) END)::citext As grandparent_term_name,
+               (CASE WHEN t.grandparent_term_type = s.grandparent_term_type THEN t.grandparent_term_type ELSE format('%s --> %s', Coalesce(t.grandparent_term_type, 'NULL'), Coalesce(s.grandparent_term_type, 'NULL')) END)::citext AS grandparent_term_type,
+               (CASE WHEN t.grandparent_term_name = s.grandparent_term_name THEN t.grandparent_term_name ELSE format('%s --> %s', Coalesce(t.grandparent_term_name, 'NULL'), Coalesce(s.grandparent_term_name, 'NULL')) END)::citext AS grandparent_term_name,
                t.grandparent_term_id::citext,
                t.entered::timestamp,
                t.updated::timestamp
-        FROM ont.t_cv_ms As t
-            INNER JOIN Tmp_SourceData As s
+        FROM ont.t_cv_ms AS t
+            INNER JOIN Tmp_SourceData AS s
               ON t.term_pk = s.term_pk AND
                  t.parent_term_id = s.parent_term_id AND
                  Coalesce(t.grandparent_term_id, '') = Coalesce(s.grandparent_term_id, '')
@@ -351,8 +351,8 @@ BEGIN
                         NULLIF(s.grandparent_term_name, t.grandparent_term_name)) IS Not Null)
                )
         UNION
-        SELECT 'New item to add'::citext as Item_Type,
-               0 As entry_id,
+        SELECT 'New item to add'::citext AS Item_Type,
+               0 AS entry_id,
                s.term_pk::citext,
                s.term_name::citext,
                s.identifier::citext,
@@ -363,8 +363,8 @@ BEGIN
                s.grandparent_term_type::citext,
                s.grandparent_term_name::citext,
                s.grandparent_term_id::citext,
-               current_timestamp::timestamp As entered,
-               NULL::timestamp As updated
+               current_timestamp::timestamp AS entered,
+               NULL::timestamp AS updated
         FROM Tmp_SourceData s
         WHERE matches_existing = 0;
 

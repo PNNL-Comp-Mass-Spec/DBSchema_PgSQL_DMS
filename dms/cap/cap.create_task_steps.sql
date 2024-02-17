@@ -229,12 +229,12 @@ BEGIN
                 TJ.State,
                 TJ.Dataset,
                 TJ.Dataset_ID,
-                TJ.Results_Folder_Name As Results_Directory_Name,
+                TJ.Results_Folder_Name AS Results_Directory_Name,
                 VDD.Storage_Server_Name,
                 VDD.Instrument_Name,
                 VDD.Instrument_Class,
                 VDD.Max_Simultaneous_Captures,
-                VDD.Capture_Subfolder As Capture_Subdirectory
+                VDD.Capture_Subfolder AS Capture_Subdirectory
             FROM cap.t_tasks TJ
                  INNER JOIN cap.V_DMS_Get_Dataset_Definition AS VDD
                    ON TJ.Dataset_ID = VDD.Dataset_ID
@@ -323,10 +323,10 @@ BEGIN
             Dataset,
             Dataset_ID AS DatasetID,
             Script,
-            Storage_Server As StorageServer,
+            Storage_Server AS StorageServer,
             Instrument,
-            Instrument_Class as InstrumentClass,
-            Max_Simultaneous_Captures As MaxSimultaneousCaptures,
+            Instrument_Class AS InstrumentClass,
+            Max_Simultaneous_Captures AS MaxSimultaneousCaptures,
             Capture_Subdirectory AS CaptureSubdirectory,
             Coalesce(Results_Directory_Name, '') AS ResultsDirectoryName
         FROM Tmp_Jobs
@@ -378,7 +378,7 @@ BEGIN
             INTO _instrumentName
             FROM (
                 SELECT xmltable.*
-                FROM ( SELECT ('<params>' || _xmlParameters || '</params>')::xml as rooted_xml
+                FROM ( SELECT ('<params>' || _xmlParameters || '</params>')::xml AS rooted_xml
                      ) Src,
                      XMLTABLE('//params/Param'
                               PASSING Src.rooted_xml

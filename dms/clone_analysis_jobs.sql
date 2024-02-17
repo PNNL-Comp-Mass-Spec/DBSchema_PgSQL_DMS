@@ -155,7 +155,7 @@ BEGIN
         SELECT Value,
                false AS Valid,
                0 AS StateID,
-               Row_Number() OVER (ORDER BY Value) As RowNum
+               Row_Number() OVER (ORDER BY Value) AS RowNum
         FROM public.parse_delimited_integer_list(_sourceJobs);
 
         If Not Exists (SELECT * FROM Tmp_SourceJobs) Then

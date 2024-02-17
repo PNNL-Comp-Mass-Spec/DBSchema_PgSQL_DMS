@@ -97,7 +97,7 @@ BEGIN
                 SELECT xmltable.section,
                        xmltable.name,
                        xmltable.value
-                FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml as rooted_xml
+                FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml AS rooted_xml
                        FROM sw.t_job_parameters
                        WHERE sw.t_job_parameters.job = _job ) Src,
                      XMLTABLE('//params/Param'
@@ -157,9 +157,9 @@ BEGIN
                  XMLAGG(XMLELEMENT(
                         NAME "Param",
                         XMLATTRIBUTES(
-                            section As "Section",
-                            name As "Name",
-                            value As "Value"))
+                            section AS "Section",
+                            name AS "Name",
+                            value AS "Value"))
                         ORDER BY section, name
                        ) AS xml_item
                FROM Tmp_Job_Parameters_Merged
@@ -179,9 +179,9 @@ BEGIN
                  XMLAGG(XMLELEMENT(
                         NAME "Param",
                         XMLATTRIBUTES(
-                            section As "Section",
-                            name As "Name",
-                            value As "Value"))
+                            section AS "Section",
+                            name AS "Name",
+                            value AS "Value"))
                         ORDER BY section, name
                        ) AS xml_item
                FROM Tmp_Job_Parameters_CPJ

@@ -302,8 +302,8 @@ BEGIN
 
         FOR _previewData IN
             SELECT Host,
-                   NameOrIP As Name_or_IP,
-                   IsAlias As Is_Alias,
+                   NameOrIP AS Name_or_IP,
+                   IsAlias AS Is_Alias,
                    Instruments
             FROM Tmp_Hosts
         LOOP

@@ -116,7 +116,7 @@ BEGIN
         RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
-            SELECT format('Stale: %s days old', Round(extract(epoch FROM CURRENT_TIMESTAMP - Stale.Entered) / 86400)) As Message,
+            SELECT format('Stale: %s days old', Round(extract(epoch FROM CURRENT_TIMESTAMP - Stale.Entered) / 86400)) AS Message,
                    Uploads.Entry_id,
                    Uploads.Data_Pkg_ID,
                    Uploads.Subfolder,

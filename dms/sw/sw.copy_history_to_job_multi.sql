@@ -411,8 +411,8 @@ BEGIN
                    FROM ( SELECT MD.Job,
                                  JobsWithDependencies.Job AS SimilarJob,
                                  JobsWithDependencies.Script,
-                                 Row_Number() OVER ( Partition By MD.Job
-                                                     Order By JobsWithDependencies.Job ) AS SimilarJobRank
+                                 Row_Number() OVER (PARTITION BY MD.Job
+                                                    ORDER BY JobsWithDependencies.Job) AS SimilarJobRank
                           FROM Tmp_JobsMissingDependencies MD
                                INNER JOIN ( SELECT JH.job, JH.script
                                             FROM sw.t_jobs_history JH INNER JOIN

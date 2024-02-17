@@ -80,7 +80,7 @@ CREATE VIEW public.v_experiment_plex_members_tsv_entry AS
             pivotdata."18" AS channel18_expid
            FROM public.crosstab(' SELECT PM.Plex_Exp_ID,
                      PM.Channel,
-                     PM.Exp_ID::text || '': '' || E.Experiment As ChannelExperiment
+                     PM.Exp_ID::text || '': '' || E.Experiment AS ChannelExperiment
               FROM public.t_experiment_plex_members PM
                    INNER JOIN public.t_experiments E
                      On PM.Exp_ID = E.Exp_ID

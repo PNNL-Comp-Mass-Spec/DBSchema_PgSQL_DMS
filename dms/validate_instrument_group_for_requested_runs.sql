@@ -55,7 +55,7 @@ BEGIN
             RETURN;
         End If;
 
-        If Not Exists (Select instrument_group From T_Instrument_Group Where instrument_group = _instrumentGroup::citext) Then
+        If Not Exists (SELECT instrument_group FROM T_Instrument_Group WHERE instrument_group = _instrumentGroup::citext) Then
             _message := format('Invalid instrument group name: %s', _instrumentGroup);
             _returnCode := 'U5202';
 

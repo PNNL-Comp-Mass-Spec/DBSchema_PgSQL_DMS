@@ -101,7 +101,7 @@ BEGIN
     SELECT XmlQ.batch_id, XmlQ.block, XmlQ.cart, XmlQ.col
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT _xml As rooted_xml
+        FROM ( SELECT _xml AS rooted_xml
              ) Src,
              XMLTABLE('//root/r'
                       PASSING Src.rooted_xml

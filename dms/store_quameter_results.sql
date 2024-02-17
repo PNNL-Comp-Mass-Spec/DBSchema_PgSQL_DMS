@@ -174,7 +174,7 @@ BEGIN
     SELECT XmlQ.Name, XmlQ.ValueText
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT _resultsXML As rooted_xml
+        FROM ( SELECT _resultsXML AS rooted_xml
              ) Src,
              XMLTABLE('//Quameter_Results/Measurements/Measurement'
                       PASSING Src.rooted_xml
@@ -255,7 +255,7 @@ BEGIN
     SET Value = FilterQ.Value
     FROM ( SELECT Name,
                   ValueText,
-                  public.try_cast(ValueText, null::float8) As Value
+                  public.try_cast(ValueText, null::float8) AS Value
            FROM Tmp_Measurements
          ) FilterQ
     WHERE Target.Name = FilterQ.Name AND
@@ -299,7 +299,7 @@ BEGIN
            "MS2_PrecZ_1", "MS2_PrecZ_2", "MS2_PrecZ_3", "MS2_PrecZ_4", "MS2_PrecZ_5", "MS2_PrecZ_more",
            "MS2_PrecZ_likely_1", "MS2_PrecZ_likely_multi"
     FROM crosstab(
-       format('SELECT %s As DatasetID, Name, Value
+       format('SELECT %s AS DatasetID, Name, Value
                FROM Tmp_Measurements
                ORDER BY 1,2', _datasetID),
        $$SELECT unnest('{XIC_WideFrac, XIC_FWHM_Q1, XIC_FWHM_Q2, XIC_FWHM_Q3, XIC_Height_Q2, XIC_Height_Q3, XIC_Height_Q4,

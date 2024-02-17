@@ -264,8 +264,8 @@ BEGIN
                    Tool,
                    State_Name,
                    State,
-                   public.timestamp_text(start)  As Start,
-                   public.timestamp_text(finish) As Finish,
+                   public.timestamp_text(start)  AS Start,
+                   public.timestamp_text(finish) AS Finish,
                    Runtime_Minutes,
                    Output_Folder,
                    Instrument

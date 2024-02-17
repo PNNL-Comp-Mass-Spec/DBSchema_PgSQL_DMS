@@ -627,7 +627,7 @@ BEGIN
                     SELECT XmlQ.name, XmlQ.value
                     FROM (
                         SELECT xmltable.*
-                        FROM ( SELECT contents As settings
+                        FROM ( SELECT contents AS settings
                                FROM t_settings_files
                                WHERE file_name = _settingsFileName::citext AND
                                      analysis_tool = _toolName::citext
@@ -899,7 +899,7 @@ BEGIN
             INTO _numberOfClonedSteps
             FROM (
                 SELECT xmltable.*
-                FROM ( SELECT contents as settings
+                FROM ( SELECT contents AS settings
                        FROM t_settings_files
                        WHERE file_name = _settingsFileName::citext
                      ) Src,

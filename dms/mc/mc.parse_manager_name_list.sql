@@ -68,7 +68,7 @@ BEGIN
 
     _managerList := ARRAY (
                         SELECT NameQ.manager_name
-                        FROM ( SELECT unnest( _managerSpecList ) AS manager_name ) As NameQ
+                        FROM ( SELECT unnest( _managerSpecList ) AS manager_name ) AS NameQ
                         WHERE NOT NameQ.manager_name SIMILAR TO '%[%]%' AND NOT NameQ.manager_name SIMILAR TO '%\[%'
                     );
 
@@ -82,7 +82,7 @@ BEGIN
 
     FOR _managerFilter IN
         SELECT NameQ.manager_name
-        FROM ( SELECT unnest( _managerSpecList ) AS manager_name ) As NameQ
+        FROM ( SELECT unnest( _managerSpecList ) AS manager_name ) AS NameQ
         WHERE NameQ.manager_name SIMILAR TO '%[%]%' OR NameQ.manager_name SIMILAR TO '%\[%'
     LOOP
         EXECUTE _s
@@ -111,7 +111,7 @@ BEGIN
 
     _managerList := ARRAY (
                         SELECT mc.t_mgrs.mgr_name
-                        FROM ( SELECT unnest( _managerList ) AS manager_name ) As NameQ
+                        FROM ( SELECT unnest( _managerList ) AS manager_name ) AS NameQ
                              INNER JOIN mc.t_mgrs
                                ON NameQ.manager_name::citext = mc.t_mgrs.mgr_name
                     );

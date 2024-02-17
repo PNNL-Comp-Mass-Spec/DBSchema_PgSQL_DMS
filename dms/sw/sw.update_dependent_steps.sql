@@ -123,9 +123,9 @@ BEGIN
 
     If _infoOnly Then
         SELECT string_agg(CountQ.job::text, ', ' ORDER BY CountQ.Job),
-               SUM(CountQ.Job_Steps) As Job_Steps
+               SUM(CountQ.Job_Steps) AS Job_Steps
         INTO _jobList, _totalSteps
-        FROM ( SELECT JS.job, Count(*) as Job_Steps
+        FROM ( SELECT JS.job, Count(*) AS Job_Steps
                FROM t_job_steps JS INNER JOIN
                     ( SELECT job,
                              step,
@@ -251,7 +251,7 @@ BEGIN
     UPDATE Tmp_Steplist TargetQ
     SET Processing_Order = LookupQ.Processing_Order
     FROM ( SELECT Entry_ID,
-                  Row_Number() OVER ( ORDER BY Priority, Job ) AS Processing_Order
+                  Row_Number() OVER (ORDER BY Priority, Job) AS Processing_Order
            FROM Tmp_Steplist
          ) LookupQ
     WHERE TargetQ.Entry_ID = LookupQ.Entry_ID;
@@ -367,12 +367,12 @@ BEGIN
             Triggered,
             Shared,
             Signature,
-            Output_Folder_Name As OutputFolderName,
+            Output_Folder_Name AS OutputFolderName,
             Processing_Order,
-            Completion_Code As CompletionCode,
-            Completion_Message As CompletionMessage,
-            Evaluation_Code As EvaluationCode,
-            Evaluation_Message As EvaluationMessage
+            Completion_Code AS CompletionCode,
+            Completion_Message AS CompletionMessage,
+            Evaluation_Code AS EvaluationCode,
+            Evaluation_Message AS EvaluationMessage
         FROM Tmp_Steplist
         ORDER BY Processing_Order
     LOOP

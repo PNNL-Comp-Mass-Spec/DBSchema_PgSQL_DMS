@@ -98,7 +98,7 @@ BEGIN
 
         RETURN QUERY
         SELECT format('Warning: predefined rule ID %s does not exist', _ruleID)::citext AS Dataset,
-               0 As Dataset_ID,
+               0 AS Dataset_ID,
                ''::citext AS Instrument_Class,
                ''::citext AS Instrument,
                ''::citext AS Campaign,
@@ -240,7 +240,7 @@ BEGIN
                            THEN ''
                            ELSE format(' (Exclude "%s")', _predefineInfo.DatasetExclCriteria)
                       END)::citext AS Dataset,
-               _datasetCount As Dataset_ID,
+               _datasetCount AS Dataset_ID,
                _predefineInfo.InstrumentClassCriteria::citext AS Instrument_Class,
                format('%s%s',
                       _predefineInfo.InstrumentNameCriteria,
@@ -296,7 +296,7 @@ BEGIN
 
         RETURN QUERY
         SELECT format('Warning: predefined rule ID %s does not have any filter criteria and would thus match every dataset', _ruleID)::citext AS Dataset,
-               0 As Dataset_ID,
+               0 AS Dataset_ID,
                ''::citext AS Instrument_Class,
                ''::citext AS Instrument,
                ''::citext AS Campaign,
@@ -325,7 +325,7 @@ BEGIN
                ' Campaign, Experiment, Organism,'
                ' Experiment_Labelling, Experiment_Comment,'
                ' Dataset_Comment, Dataset_Type, Scan_Types::citext AS Scan_Types,'
-               ' Rating As Dataset_Rating_ID, Rating_Name AS Dataset_Rating,'
+               ' Rating AS Dataset_Rating_ID, Rating_Name AS Dataset_Rating,'
                ' Separation_Type, Scan_Count::citext AS Scan_Count,'                            ||
         format(' ''%s''::citext AS Tool,',                _predefineInfo.AnalysisToolName)      ||
         format(' ''%s''::citext AS Parameter_File,',      _predefineInfo.ParamFileName)         ||

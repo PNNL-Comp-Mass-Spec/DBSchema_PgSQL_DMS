@@ -80,7 +80,7 @@ BEGIN
             INTO _bestJobByDataset
             FROM ( SELECT DS.dataset_id,
                           J.job AS Job,
-                          Row_number() OVER ( PARTITION BY J.dataset_id ORDER BY J.job DESC ) AS JobRank
+                          Row_Number() OVER (PARTITION BY J.dataset_id ORDER BY J.job DESC) AS JobRank
                    FROM t_dataset DS
                         INNER JOIN t_analysis_job J
                           ON J.dataset_id = DS.dataset_id

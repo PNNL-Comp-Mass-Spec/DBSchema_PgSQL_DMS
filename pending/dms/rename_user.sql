@@ -149,7 +149,7 @@ BEGIN
                        HID,
                        Status,
                        Email,
-                       public.timestamp_text(created) As created
+                       public.timestamp_text(created) AS created
                 FROM t_users
                 WHERE username IN (_oldUserName::citext, _newUserName::citext)
                 ORDER BY username
@@ -208,53 +208,53 @@ BEGIN
 
         FOR _previewData IN
             WITH owned_entities (Entity, Entity_ID, Entity_Name, Role, Username, Sort, ItemRank) AS
-            (   SELECT 'Dataset' As Entity,
-                       Dataset_ID As Entity_ID,
-                       Dataset As Entity_Name,
-                       'Operator' As Role,
-                       operator_username As Username,
-                       1 As Sort,
-                       Row_Number() Over (Order By Dataset_ID Desc)
+            (   SELECT 'Dataset' AS Entity,
+                       Dataset_ID AS Entity_ID,
+                       Dataset AS Entity_Name,
+                       'Operator' AS Role,
+                       operator_username AS Username,
+                       1 AS Sort,
+                       Row_Number() OVER (ORDER BY Dataset_ID DESC)
                 FROM t_dataset
                 WHERE operator_username IN (_oldUserName::citext, _newUserName::citext)
                 UNION
-                SELECT 'Experiment' As Entity,
-                       Exp_ID As Entity_ID,
-                       Experiment As Entity_Name,
-                       'Researcher' As Role,
-                       researcher_username As Username,
-                       2 As Sort,
-                       Row_Number() Over (Order By Exp_ID Desc)
+                SELECT 'Experiment' AS Entity,
+                       Exp_ID AS Entity_ID,
+                       Experiment AS Entity_Name,
+                       'Researcher' AS Role,
+                       researcher_username AS Username,
+                       2 AS Sort,
+                       Row_Number() OVER (ORDER BY Exp_ID DESC)
                 FROM t_experiments
                 WHERE researcher_username IN (_oldUserName::citext, _newUserName::citext)
                 UNION
-                SELECT 'Requested Run' As Entity,
-                       Request_ID As Entity_ID,
-                       Request_Name As Entity_Name,
-                       'Requester' As Role,
-                       requester_username As Username,
-                       3 As Sort,
-                       Row_Number() Over (Order By Request_ID Desc)
+                SELECT 'Requested Run' AS Entity,
+                       Request_ID AS Entity_ID,
+                       Request_Name AS Entity_Name,
+                       'Requester' AS Role,
+                       requester_username AS Username,
+                       3 AS Sort,
+                       Row_Number() OVER (ORDER BY Request_ID DESC)
                 FROM t_requested_run
                 WHERE requester_username IN (_oldUserName::citext, _newUserName::citext)
                 UNION
-                SELECT 'Data Package Owner' As Entity,
-                       data_pkg_id As Entity_ID,
-                       package_name As Entity_Name,
-                       'Owner' As Role,
-                       owner_username As Username,
-                       4 As Sort,
-                       Row_Number() Over (Order By data_pkg_id Desc)
+                SELECT 'Data Package Owner' AS Entity,
+                       data_pkg_id AS Entity_ID,
+                       package_name AS Entity_Name,
+                       'Owner' AS Role,
+                       owner_username AS Username,
+                       4 AS Sort,
+                       Row_Number() OVER (ORDER BY data_pkg_id DESC)
                 FROM dpkg.t_data_package
                 WHERE owner_username IN (_oldUserName::citext, _newUserName::citext)
                 UNION
-                SELECT 'Data Package Requester' As Entity,
-                       data_pkg_id As Entity_ID,
-                       package_name As Entity_Name,
-                       'Requester' As Role,
-                       Requester As Username,
-                       5 As Sort,
-                       Row_Number() Over (Order By data_pkg_id Desc)
+                SELECT 'Data Package Requester' AS Entity,
+                       data_pkg_id AS Entity_ID,
+                       package_name AS Entity_Name,
+                       'Requester' AS Role,
+                       Requester AS Username,
+                       5 AS Sort,
+                       Row_Number() OVER (ORDER BY data_pkg_id DESC)
                 FROM dpkg.t_data_package
                 WHERE requester IN (_oldUserName::citext, _newUserName::citext)
             )

@@ -90,12 +90,12 @@ BEGIN
     INTO _xmlParameters
     FROM ( SELECT
              XMLELEMENT(name "sections",
-               XMLAGG(XMLELEMENT(NAME "section", XMLATTRIBUTES(Sections.Section As "name"),
+               XMLAGG(XMLELEMENT(NAME "section", XMLATTRIBUTES(Sections.Section AS "name"),
                  (SELECT XMLAGG(XMLELEMENT(
                                 NAME "item",
                                 XMLATTRIBUTES(
-                                     Src.Name As "key",
-                                     Src.Value As "value")))
+                                     Src.Name AS "key",
+                                     Src.Value AS "value")))
                   FROM Tmp_JobParamsTable Src
                   WHERE Sections.Section = Src.Section))
                )

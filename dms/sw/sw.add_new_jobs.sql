@@ -395,7 +395,7 @@ BEGIN
 
         INSERT INTO sw.t_jobs ( job, priority, script, State, Dataset, Dataset_ID, Transfer_Folder_Path,
                                 comment, special_processing, storage_server, owner_username, Data_Pkg_ID )
-        SELECT DJ.job, DJ.priority, DJ.script, 0 As State, DJ.Dataset, DJ.Dataset_ID, DJ.Transfer_Folder_Path,
+        SELECT DJ.job, DJ.priority, DJ.script, 0 AS State, DJ.Dataset, DJ.Dataset_ID, DJ.Transfer_Folder_Path,
                DJ.comment, DJ.special_processing, sw.extract_server_name(DJ.transfer_folder_path) AS Storage_Server, DJ.Owner_Username, 0 AS Data_Pkg_ID
         FROM Tmp_DMSJobs DJ
              INNER JOIN sw.t_scripts S
@@ -634,7 +634,7 @@ BEGIN
             remote_progress = Null
         WHERE
             state IN (6, 7, 10, 16) AND          -- 6=Failed, 7=Holding, 10=Holding_Staging, 16=Failed_Remote
-            job IN (SELECT job From Tmp_JobsToResumeOrReset);
+            job IN (SELECT job FROM Tmp_JobsToResumeOrReset);
 
         ---------------------------------------------------
         -- Reset the entries in sw.t_job_step_dependencies for any steps with state 1
@@ -647,7 +647,7 @@ BEGIN
         WHERE JSD.job = JS.job AND
             JSD.step = JS.step AND
             JS.state = 1 AND            -- 1=Waiting
-            JS.job IN (SELECT job From Tmp_JobsToResumeOrReset);
+            JS.job IN (SELECT job FROM Tmp_JobsToResumeOrReset);
 
         ---------------------------------------------------
         -- Set job state to 'resuming'
@@ -655,7 +655,7 @@ BEGIN
 
         UPDATE sw.t_jobs
         SET state = 20                  -- 20=Resuming
-        WHERE job IN (SELECT job From Tmp_JobsToResumeOrReset);
+        WHERE job IN (SELECT job FROM Tmp_JobsToResumeOrReset);
 
     End If;
 

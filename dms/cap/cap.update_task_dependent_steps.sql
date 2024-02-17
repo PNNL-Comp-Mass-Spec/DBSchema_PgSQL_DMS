@@ -172,7 +172,7 @@ BEGIN
     UPDATE T_Tmp_Steplist TargetQ
     SET ProcessingOrder = LookupQ.ProcessingOrder
     FROM ( SELECT TS.EntryID,
-                  Row_Number() OVER ( ORDER BY TS.Priority, TS.Job ) AS ProcessingOrder
+                  Row_Number() OVER (ORDER BY TS.Priority, TS.Job) AS ProcessingOrder
            FROM T_Tmp_Steplist TS
          ) LookupQ
     WHERE TargetQ.EntryID = LookupQ.EntryID;

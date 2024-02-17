@@ -58,7 +58,7 @@ BEGIN
     SELECT XmlQ.section, XmlQ.name, XmlQ.value
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT ('<params>' || _jobParamXML::text || '</params>')::xml As rooted_xml ) Src,
+        FROM ( SELECT ('<params>' || _jobParamXML::text || '</params>')::xml AS rooted_xml ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml
                       COLUMNS section citext PATH '@Section',
@@ -169,9 +169,9 @@ BEGIN
                  XMLAGG(XMLELEMENT(
                         NAME "Param",
                         XMLATTRIBUTES(
-                            section As "Section",
-                            name As "Name",
-                            value As "Value"))
+                            section AS "Section",
+                            name AS "Name",
+                            value AS "Value"))
                         ORDER BY section, name
                        ) AS xml_item
                FROM Tmp_Job_Params

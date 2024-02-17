@@ -27,7 +27,7 @@ BEGIN
            FROM t_requested_run_batches RRB
                 LEFT OUTER JOIN t_requested_run RR
                   ON RRB.batch_id = RR.batch_id
-           WHERE RRB.batch_group_id = _batchGroupID) As LookupQ;
+           WHERE RRB.batch_group_id = _batchGroupID) AS LookupQ;
 
     RETURN Coalesce(_result, '');
 END

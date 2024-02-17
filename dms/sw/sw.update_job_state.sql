@@ -196,7 +196,7 @@ BEGIN
         -- and determine what the new state of each job should be
         SELECT J.Job,
                J.State,
-               J.Results_Folder_Name As Results_Directory_Name,
+               J.Results_Folder_Name AS Results_Directory_Name,
                J.Organism_DB_Name,
                CASE
                  WHEN JS_Stats.Failed > 0 THEN 5                                        -- Job Failed

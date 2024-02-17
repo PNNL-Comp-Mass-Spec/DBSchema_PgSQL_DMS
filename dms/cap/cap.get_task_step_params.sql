@@ -116,8 +116,8 @@ BEGIN
                    xmltable.name,
                    xmltable.value,
                    xmltable.step,
-                   Coalesce(public.try_cast(xmltable.step, null::int), 0) As StepNumber
-            FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml As rooted_xml
+                   Coalesce(public.try_cast(xmltable.step, null::int), 0) AS StepNumber
+            FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml AS rooted_xml
                    FROM cap.t_task_parameters
                    WHERE cap.t_task_parameters.job = _job ) Src,
                        XMLTABLE('//params/Param'

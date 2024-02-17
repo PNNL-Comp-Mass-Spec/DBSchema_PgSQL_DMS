@@ -198,19 +198,19 @@ BEGIN
             VALUES (1, 'Error', NULL, 0, 0, '', 0, '', 0, 'Must define _instrument or _eusInstrumentId');
 
             RETURN QUERY
-            SELECT ''::citext As Instrument,
-                   0 As EMSL_Inst_ID,
+            SELECT ''::citext AS Instrument,
+                   0 AS EMSL_Inst_ID,
                    U.Start,
                    U.Type,
-                   U.Duration As Minutes,
-                   null::numeric As Percentage,
+                   U.Duration AS Minutes,
+                   null::numeric AS Percentage,
                    U.Proposal,
                    U.Usage,
                    U.Users,
                    U.Operator,
                    U.Comment,
-                   _yearValue As Year,
-                   _monthValue As Month,
+                   _yearValue AS Year,
+                   _monthValue AS Month,
                    U.Dataset_ID
             FROM Tmp_InstrumentUsage U;
 
@@ -595,7 +595,7 @@ BEGIN
             FOR _previewData IN
                 SELECT U.Dataset_ID,
                        U.Type,
-                       public.timestamp_text(U.Start) As Start,
+                       public.timestamp_text(U.Start) AS Start,
                        U.Duration,
                        U.Interval,
                        U.Proposal,
@@ -683,7 +683,7 @@ BEGIN
             FOR _previewData IN
                 SELECT U.Dataset_ID,
                        U.Type,
-                       public.timestamp_text(U.Start) As Start,
+                       public.timestamp_text(U.Start) AS Start,
                        U.Duration,
                        U.Interval,
                        U.Proposal,
@@ -805,7 +805,7 @@ BEGIN
                    U.Start,
                    U.Type,
                    CASE WHEN U.Type = 'Interval' THEN U.Interval ELSE U.Duration END AS Minutes,
-                   null::numeric As Percentage,
+                   null::numeric AS Percentage,
                    U.Proposal,
                    U.Usage,
                    U.Users,
@@ -834,15 +834,15 @@ BEGIN
                    _eusInstrumentId AS EMSL_Inst_ID,
                    U.Start,
                    U.Type,
-                   U.Duration As Minutes,
-                   null::numeric As Percentage,
+                   U.Duration AS Minutes,
+                   null::numeric AS Percentage,
                    U.Proposal,
                    U.Usage,
                    U.Users,
                    U.Operator,
                    Coalesce(U.Comment, '')::citext AS Comment,
-                   _yearValue As Year,
-                   _monthValue As Month ,
+                   _yearValue AS Year,
+                   _monthValue AS Month ,
                    U.Dataset_ID
             FROM Tmp_InstrumentUsage U
             ORDER BY U.Start;
@@ -870,12 +870,12 @@ BEGIN
                    Round(SumQ.Minutes::numeric / _minutesInMonth * 100.0, 1) AS Percentage,
                    SumQ.Proposal,
                    SumQ.Usage,
-                   ''::citext As Users,
-                   ''::citext As Operator,
-                   ''::citext As Comment,
-                   _yearValue As Year,
-                   _monthValue As Month ,
-                   0 As Dataset_ID
+                   ''::citext AS Users,
+                   ''::citext AS Operator,
+                   ''::citext AS Comment,
+                   _yearValue AS Year,
+                   _monthValue AS Month ,
+                   0 AS Dataset_ID
             FROM ( SELECT MIN(U.Start) AS Start,
                           U.Type,
                           SUM(CASE
@@ -896,7 +896,7 @@ BEGIN
             -- Check grand totals against available
             ---------------------------------------------------
 
-            SELECT MIN(U.Start) As Start,
+            SELECT MIN(U.Start) AS Start,
                    SUM(U.Duration),
                    SUM(U.Interval),
                    (SUM(U.Duration + U.Interval))::numeric / _minutesInMonth * 100.0
@@ -913,21 +913,21 @@ BEGIN
             RETURN QUERY
             SELECT _instrument::citext AS Instrument,
                    _eusInstrumentId AS EMSL_Inst_ID,
-                   _startMin As Start,
+                   _startMin AS Start,
                    'Check'::citext AS Type,
-                   _durationSum + _intervalSum As Minutes,
-                   Round(_percentInUse, 1) As Percentage,
-                   ''::citext As Proposal,
+                   _durationSum + _intervalSum AS Minutes,
+                   Round(_percentInUse, 1) AS Percentage,
+                   ''::citext AS Proposal,
                    format('Duration: %s, Interval: %s, total: %s',
                                _durationSum,
                                _intervalSum,
-                               _durationSum + _intervalSum)::citext As Usage,
-                   ''::citext As Users,
-                   ''::citext As Operator,
-                   ''::citext As Comment,
-                   _yearValue As Year,
-                   _monthValue As Month,
-                   0 As Dataset_ID;
+                               _durationSum + _intervalSum)::citext AS Usage,
+                   ''::citext AS Users,
+                   ''::citext AS Operator,
+                   ''::citext AS Comment,
+                   _yearValue AS Year,
+                   _monthValue AS Month,
+                   0 AS Dataset_ID;
 
         End If;
 

@@ -47,8 +47,8 @@ BEGIN
     If _datasetId > 0 And Not _infoOnly Then
         MERGE INTO t_cached_dataset_instruments AS t
         USING ( SELECT DS.dataset_id,
-                       DS.instrument_id As Instrument_ID,
-                       InstName.instrument As Instrument
+                       DS.instrument_id AS Instrument_ID,
+                       InstName.instrument AS Instrument
                 FROM t_dataset DS
                      INNER JOIN t_instrument_name InstName
                        ON DS.instrument_id = InstName.instrument_id
@@ -104,7 +104,7 @@ BEGIN
                 SELECT DS.Dataset_ID,
                        DS.Instrument_ID,
                        InstName.Instrument,
-                       'Dataset to add to t_cached_dataset_instruments' As Status
+                       'Dataset to add to t_cached_dataset_instruments' AS Status
                 FROM t_dataset DS
                      INNER JOIN t_instrument_name InstName
                        ON DS.instrument_id = InstName.instrument_id
@@ -203,7 +203,7 @@ BEGIN
                    s.instrument_id AS Instrument_ID_New,
                    t.Instrument AS Instrument_Name,
                    s.instrument AS Instrument_Name_New,
-                   'Dataset to update in t_instrument_name' As Status
+                   'Dataset to update in t_instrument_name' AS Status
             FROM t_cached_dataset_instruments t
                  INNER JOIN ( SELECT DS.dataset_id,
                                      DS.instrument_id AS Instrument_ID,
@@ -214,7 +214,7 @@ BEGIN
                    ON t.dataset_id = s.dataset_id
             WHERE (t.instrument_id <> s.instrument_id OR t.instrument <> s.instrument) AND
                   (_datasetId = 0 OR s.dataset_id = _datasetId)
-            ORDER By t.dataset_id
+            ORDER BY t.dataset_id
         LOOP
             _infoData := format(_formatSpecifier,
                                 _previewData.Dataset_ID,
@@ -243,8 +243,8 @@ BEGIN
 
     MERGE INTO t_cached_dataset_instruments AS t
     USING ( SELECT DS.dataset_id,
-                   DS.instrument_id As Instrument_ID,
-                   InstName.instrument As Instrument
+                   DS.instrument_id AS Instrument_ID,
+                   InstName.instrument AS Instrument
             FROM t_dataset DS
                  INNER JOIN t_instrument_name InstName
                    ON DS.instrument_id = InstName.instrument_id

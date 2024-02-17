@@ -26,7 +26,7 @@ BEGIN
         Experiment_Count int NOT NULL,
         Dataset_Count int NOT NULL,
         Job_Count int NOT NULL,
-        CONSTRAINT PK_Tmp_Biomaterial_Stats PRIMARY KEY ( Biomaterial_ID Asc)
+        CONSTRAINT PK_Tmp_Biomaterial_Stats PRIMARY KEY ( Biomaterial_ID ASC)
     )
 
     ----------------------------------------------------------

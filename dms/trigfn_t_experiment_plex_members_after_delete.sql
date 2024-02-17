@@ -31,7 +31,7 @@ BEGIN
     SELECT  plex_exp_id,
             channel,
             exp_id,
-            0 As state,
+            0 AS state,
             CURRENT_TIMESTAMP,
             SESSION_USER
     FROM deleted

@@ -731,7 +731,7 @@ BEGIN
             WHERE request_id = _requestID;
 
             MERGE INTO t_analysis_job_request_datasets AS t
-            USING ( SELECT _requestID As Request_ID, Dataset_ID
+            USING ( SELECT _requestID AS Request_ID, Dataset_ID
                     FROM Tmp_DatasetInfo
                   ) AS s
             ON (t.dataset_id = s.dataset_id AND t.request_id = s.request_id)

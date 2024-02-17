@@ -19,7 +19,7 @@ CREATE OR REPLACE FUNCTION sw.trigfn_t_jobs_history_after_delete() RETURNS trigg
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
 
-    If Not Exists (Select * From deleted) Then
+    If Not Exists (SELECT * FROM deleted) Then
         -- RAISE NOTICE '  no affected rows; exiting';
         RETURN Null;
     End If;
@@ -28,7 +28,7 @@ BEGIN
     SET most_recent_entry = CASE WHEN LookupQ.SaveRank = 1 THEN 1 ELSE 0 END
     FROM ( SELECT H.job,
                   H.saved,
-                  Row_Number() OVER ( PARTITION BY H.job ORDER BY H.saved DESC ) AS SaveRank
+                  Row_Number() OVER (PARTITION BY H.job ORDER BY H.saved DESC) AS SaveRank
            FROM sw.t_jobs_history H
                 INNER JOIN deleted as deletedRows on H.Job = deletedRows.job
          ) LookupQ

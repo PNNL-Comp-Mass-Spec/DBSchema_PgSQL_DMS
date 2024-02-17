@@ -77,7 +77,7 @@ BEGIN
         FROM ( SELECT format('Analysis: %s', Processor) AS Who,
                       format('Processing job %s, step %s, tool %s', job, step, tool) AS What,
                       Start,
-                      Row_Number() OVER (Partition BY Processor ORDER BY Start DESC) AS StartRank
+                      Row_Number() OVER (PARTITION BY Processor ORDER BY Start DESC) AS StartRank
                FROM sw.t_job_steps
                WHERE State = 4
              ) RankQ
@@ -91,7 +91,7 @@ BEGIN
         FROM ( SELECT format('Capture: %s', Processor) AS Who,
                       format('Processing task %s, step %s, tool %s', job, step, tool) AS What,
                       Start,
-                      Row_Number() OVER (Partition BY Processor ORDER BY Start DESC) AS StartRank
+                      Row_Number() OVER (PARTITION BY Processor ORDER BY Start DESC) AS StartRank
                FROM sw.t_job_steps
                WHERE State = 4
              ) RankQ
@@ -144,7 +144,7 @@ BEGIN
            FROM ( SELECT format('Analysis: %s', Processor) AS Who,
                          format('Processing job %s, step %s, tool %s', job, step, tool) AS What,
                          Start,
-                         Row_Number() OVER (Partition BY Processor ORDER BY Start DESC) AS StartRank
+                         Row_Number() OVER (PARTITION BY Processor ORDER BY Start DESC) AS StartRank
                   FROM sw.t_job_steps
                   WHERE State = 4 And Start BETWEEN _startDate AND _endDate
                 ) RankQ
@@ -186,7 +186,7 @@ BEGIN
            FROM ( SELECT format('Capture: %s', Processor) AS Who,
                          format('Processing task %s, step %s, tool %s', job, step, tool) AS What,
                          Start,
-                         Row_Number() OVER (Partition BY Processor ORDER BY Start DESC) AS StartRank
+                         Row_Number() OVER (PARTITION BY Processor ORDER BY Start DESC) AS StartRank
                   FROM cap.t_task_steps
                   WHERE State = 4 And Start BETWEEN _startDate AND _endDate
                 ) RankQ

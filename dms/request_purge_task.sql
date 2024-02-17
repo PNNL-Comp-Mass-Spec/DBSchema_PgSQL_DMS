@@ -305,8 +305,8 @@ BEGIN
                 'FROM (SELECT Src.Dataset_ID, '                                                          ||
                       format('Src.%s, ', _purgeInfo.OrderByCol)                                          ||
                       format('''%s'' AS Source, ', _purgeViewSourceDesc)                                 ||
-                             'Row_Number() OVER ( PARTITION BY Src.storage_server_name, Src.server_vol ' ||
-                                          format('ORDER BY Src.archive_state_id, Src.purge_priority, Src.%s, Src.Dataset_ID ) AS RowNumVal, ', _purgeInfo.OrderByCol) ||
+                             'Row_Number() OVER (PARTITION BY Src.storage_server_name, Src.server_vol ' ||
+                                         format('ORDER BY Src.archive_state_id, Src.purge_priority, Src.%s, Src.Dataset_ID) AS RowNumVal, ', _purgeInfo.OrderByCol) ||
                              'Src.storage_server_name, '
                              'Src.server_vol, '
                              'Src.stage_md5_required, '
@@ -606,29 +606,29 @@ BEGIN
     End If;
 
     Open _results For
-        SELECT 'dataset' As Parameter, _datasetInfo.Dataset::text As Value            -- Yes, the parameter name is lowercase "dataset"
+        SELECT 'dataset' AS Parameter, _datasetInfo.Dataset::text AS Value            -- Yes, the parameter name is lowercase "dataset"
         UNION
-        SELECT 'DatasetID' As Parameter, _datasetInfo.DatasetID::text As Value
+        SELECT 'DatasetID' AS Parameter, _datasetInfo.DatasetID::text AS Value
         UNION
-        SELECT 'Folder' As Parameter, _datasetInfo.Folder::text As Value
+        SELECT 'Folder' AS Parameter, _datasetInfo.Folder::text AS Value
         UNION
-        SELECT 'StorageVol' As Parameter, _datasetInfo.ServerDisk::text As Value
+        SELECT 'StorageVol' AS Parameter, _datasetInfo.ServerDisk::text AS Value
         UNION
-        SELECT 'storagePath' As Parameter, _datasetInfo.StoragePath::text As Value
+        SELECT 'storagePath' AS Parameter, _datasetInfo.StoragePath::text AS Value
         UNION
-        SELECT 'StorageVolExternal' As Parameter, _datasetInfo.ServerDiskExternal::text As Value
+        SELECT 'StorageVolExternal' AS Parameter, _datasetInfo.ServerDiskExternal::text AS Value
         UNION
-        SELECT 'RawDataType' As Parameter, _datasetInfo.RawDataType::text As Value
+        SELECT 'RawDataType' AS Parameter, _datasetInfo.RawDataType::text AS Value
         UNION
-        SELECT 'SambaStoragePath' As Parameter, _datasetInfo.SambaStoragePath::text As Value
+        SELECT 'SambaStoragePath' AS Parameter, _datasetInfo.SambaStoragePath::text AS Value
         UNION
-        SELECT 'Instrument' As Parameter, _datasetInfo.Instrument::text As Value
+        SELECT 'Instrument' AS Parameter, _datasetInfo.Instrument::text AS Value
         UNION
-        SELECT 'DatasetCreated' As Parameter, public.timestamp_text(_datasetInfo.DatasetCreated) As Value
+        SELECT 'DatasetCreated' AS Parameter, public.timestamp_text(_datasetInfo.DatasetCreated) AS Value
         UNION
-        SELECT 'DatasetYearQuarter' As Parameter, _datasetInfo.DatasetYearQuarter::text As Value
+        SELECT 'DatasetYearQuarter' AS Parameter, _datasetInfo.DatasetYearQuarter::text AS Value
         UNION
-        SELECT 'PurgePolicy' As Parameter, _datasetInfo.PurgePolicy::text As Value;
+        SELECT 'PurgePolicy' AS Parameter, _datasetInfo.PurgePolicy::text AS Value;
 
     DROP TABLE Tmp_PurgeableDatasets;
     DROP TABLE Tmp_StorageVolsToSkip;

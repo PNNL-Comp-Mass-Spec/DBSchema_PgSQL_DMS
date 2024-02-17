@@ -105,13 +105,13 @@ BEGIN
         RETURN;
     End If;
 
-    If Exists (Select target_id From T_Factor Where type = 'Run_Request' And target_id = _requestID) Then
+    If Exists (SELECT target_id FROM T_Factor WHERE type = 'Run_Request' AND target_id = _requestID) Then
         _message := format('Requested Run ID %s not found in T_Requested_Run, but found in T_Factor; delete from T_Factor then call this procedure again', _requestID);
         RAISE WARNING '%', _message;
         RETURN;
     End If;
 
-    If Exists (Select Request_ID From T_Requested_Run_EUS_Users Where Request_ID = _requestID) Then
+    If Exists (SELECT Request_ID FROM T_Requested_Run_EUS_Users WHERE Request_ID = _requestID) Then
         _message := format('Requested Run ID %s not found in T_Requested_Run, but found in T_Requested_Run_EUS_Users; delete from T_Requested_Run_EUS_Users then call this procedure again', _requestID);
         RAISE WARNING '%', _message;
         RETURN;
@@ -127,7 +127,7 @@ BEGIN
     -- See if the deleted requested run references a deleted requested run batch
     ---------------------------------------------------
 
-    If _batchID > 0 And Not Exists (Select Batch_ID From T_Requested_Run_Batches Where Batch_ID = _batchID) Then
+    If _batchID > 0 And Not Exists (SELECT Batch_ID FROM T_Requested_Run_Batches WHERE Batch_ID = _batchID) Then
         -- Need to undelete the batch
         SELECT Entry_ID,
                Batch_Group_ID
@@ -149,7 +149,7 @@ BEGIN
         -- See if the deleted requested run batch references a deleted batch group
         ---------------------------------------------------
 
-        If Coalesce(_batchGroupID, 0) > 0 And Not Exists (Select Batch_Group_ID From T_Requested_Run_Batch_Group Where Batch_Group_ID = _batchGroupID) Then
+        If Coalesce(_batchGroupID, 0) > 0 And Not Exists (SELECT Batch_Group_ID FROM T_Requested_Run_Batch_Group WHERE Batch_Group_ID = _batchGroupID) Then
             -- Need to undelete the batch group
             SELECT Entry_ID
             INTO _deletedBatchGroupEntryID

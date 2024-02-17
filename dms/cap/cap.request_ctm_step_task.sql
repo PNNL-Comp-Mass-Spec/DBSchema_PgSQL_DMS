@@ -657,7 +657,7 @@ BEGIN
 
             RAISE INFO '';
 
-            If Exists (Select * From Tmp_CandidateJobSteps) Then
+            If Exists (SELECT Job FROM Tmp_CandidateJobSteps) Then
 
                 _currentLocation := 'Show candidate job steps';
 

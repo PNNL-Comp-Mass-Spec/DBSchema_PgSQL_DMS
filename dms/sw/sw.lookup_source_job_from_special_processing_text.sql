@@ -262,7 +262,7 @@ BEGIN
                     If _whereClause ILike '%ORDER BY%' Then
                         _orderBy := '';
                     Else
-                        _orderBy := 'ORDER BY Job Desc';
+                        _orderBy := 'ORDER BY Job DESC';
                     End If;
 
                     _autoQuerySql := format('SELECT Job FROM public.V_Source_Analysis_Job %s %s LIMIT 1', _whereClause, _orderBy);

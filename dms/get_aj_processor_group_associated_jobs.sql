@@ -37,7 +37,7 @@ BEGIN
         SELECT string_agg(format('%s: %s', CountQ.job_state, CountQ.Jobs), ', ' ORDER BY CountQ.job_state_id)
         INTO _result
         FROM (
-            SELECT AJS.job_state, J.job_state_id, COUNT(AJPGA.job) As Jobs
+            SELECT AJS.job_state, J.job_state_id, COUNT(AJPGA.job) AS Jobs
             FROM t_analysis_job_processor_group_associations AJPGA INNER JOIN
                  t_analysis_job J ON AJPGA.job = J.job INNER JOIN
                  t_analysis_job_state AJS ON J.job_state_id = AJS.job_state_id
@@ -49,7 +49,7 @@ BEGIN
         SELECT string_agg(format('%s: %s', CountQ.job_state, CountQ.Jobs), ', ' ORDER BY CountQ.job_state_id)
         INTO _resultAppend
         FROM (
-            SELECT AJS.job_state, J.job_state_id, COUNT(AJPGA.job) As Jobs
+            SELECT AJS.job_state, J.job_state_id, COUNT(AJPGA.job) AS Jobs
             FROM t_analysis_job_processor_group_associations AJPGA INNER JOIN
                 t_analysis_job J ON AJPGA.job = J.job INNER JOIN
                 t_analysis_job_state AJS ON J.job_state_id = AJS.job_state_id

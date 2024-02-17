@@ -229,18 +229,18 @@ BEGIN
 
         FOR _previewData IN
             SELECT
-                request_id As Source_Request_ID,
-                request_name As Source_Request_Name,
-                _newRequestName As New_Request_Name,
-                _comment As Comment,
+                request_id AS Source_Request_ID,
+                request_name AS Source_Request_Name,
+                _newRequestName AS New_Request_Name,
+                _comment AS Comment,
                 requester_username,
-                public.timestamp_text(created) As created,      -- Pass along the original request's 'created' date into the new entry
+                public.timestamp_text(created) AS created,      -- Pass along the original request's 'created' date into the new entry
                 instrument_group,
                 request_type_id,
                 priority,
                 exp_id,
-                public.timestamp_text(request_run_start) As request_run_start,
-                public.timestamp_text(request_run_finish) As request_run_finish,
+                public.timestamp_text(request_run_start) AS request_run_start,
+                public.timestamp_text(request_run_finish) AS request_run_finish,
                 request_internal_standard,
                 work_package,
                 batch_id,
@@ -253,8 +253,8 @@ BEGIN
                 cart_config_id,
                 cart_column,
                 separation_group,
-                _status As State_Name,
-                'auto' As Origin,
+                _status AS State_Name,
+                'auto' AS Origin,
                 CASE WHEN _datasetID = 0 THEN NULL ELSE _datasetID END AS Dataset_ID
             FROM t_requested_run
             WHERE request_id = _requestID

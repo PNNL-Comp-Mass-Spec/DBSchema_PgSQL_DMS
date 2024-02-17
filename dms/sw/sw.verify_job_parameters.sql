@@ -106,7 +106,7 @@ BEGIN
     SELECT XmlQ.section, XmlQ.name, XmlQ.value, Coalesce(XmlQ.required, 'No') AS Requied
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT ('<params>' || _paramDefinition::text || '</params>')::xml as rooted_xml ) Src,
+        FROM ( SELECT ('<params>' || _paramDefinition::text || '</params>')::xml AS rooted_xml ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml
                       COLUMNS section  citext PATH '@Section',
@@ -131,7 +131,7 @@ BEGIN
     SELECT XmlQ.section, XmlQ.name, XmlQ.value
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT ('<params>' || _jobParamXML::text || '</params>')::xml as rooted_xml ) Src,
+        FROM ( SELECT ('<params>' || _jobParamXML::text || '</params>')::xml AS rooted_xml ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml
                       COLUMNS section citext PATH '@Section',
@@ -347,15 +347,15 @@ BEGIN
                      XMLAGG(XMLELEMENT(
                             NAME "Param",
                             XMLATTRIBUTES(
-                                section As "Section",
-                                name As "Name",
-                                value As "Value"))
+                                section AS "Section",
+                                name AS "Name",
+                                value AS "Value"))
                             ORDER BY section, name
                            ) AS xml_item
                    FROM Tmp_JobParameters
                 ) AS LookupQ;
 
-            _jobParam := CAST(_jobParamXML As text);
+            _jobParam := _jobParamXML::text;
         End If;
     End If;
 

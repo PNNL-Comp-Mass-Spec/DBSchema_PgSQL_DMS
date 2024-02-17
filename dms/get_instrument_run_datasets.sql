@@ -84,7 +84,7 @@ BEGIN
         Instrument
     )
     SELECT
-        2 * ((ROW_NUMBER() OVER(ORDER BY DS.acq_time_start ASC)) - 1) + 1,
+        2 * ((Row_Number() OVER (ORDER BY DS.acq_time_start ASC)) - 1) + 1,
         DS.dataset_id AS ID,
         DS.dataset AS Dataset,
         DS.acq_time_start AS Time_Start,

@@ -287,7 +287,7 @@ BEGIN
         WHERE dataset_id = _datasetID;
 
         INSERT INTO T_Tmp_Target_Items (Action, Item_Type, Item_ID, Item_Name, Comment)
-        SELECT 'To be manually deleted' As Action,
+        SELECT 'To be manually deleted' AS Action,
                'Dataset Directory',
                _datasetID,
                _datasetDirectoryPath,

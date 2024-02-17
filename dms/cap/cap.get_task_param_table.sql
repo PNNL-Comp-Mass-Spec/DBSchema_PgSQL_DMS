@@ -224,7 +224,7 @@ BEGIN
     SELECT XmlQ.section, XmlQ.name, XmlQ.value
     FROM (
         SELECT xmltable.section, xmltable.name, xmltable.value
-        FROM ( SELECT _paramXML As params
+        FROM ( SELECT _paramXML AS params
              ) Src,
              XMLTABLE('//sections/section/item'
                       PASSING Src.params

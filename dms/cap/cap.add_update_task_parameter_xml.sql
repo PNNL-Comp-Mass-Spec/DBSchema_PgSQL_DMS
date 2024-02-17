@@ -196,7 +196,7 @@ BEGIN
     SELECT XmlQ.section, XmlQ.name, XmlQ.value, 'Unchanged'
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT ('<params>' || _xmlParameters || '</params>')::xml As rooted_xml
+        FROM ( SELECT ('<params>' || _xmlParameters || '</params>')::xml AS rooted_xml
              ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml
@@ -229,7 +229,7 @@ BEGIN
         RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
-            SELECT 'Initial Value' As State, Section, Name, Value
+            SELECT 'Initial Value' AS State, Section, Name, Value
             FROM Tmp_Task_Parameters
             ORDER BY Section, Name
         LOOP
@@ -304,14 +304,14 @@ BEGIN
     ---------------------------------------------------
 
     RETURN QUERY
-    SELECT xml_item, true as Success, '' As message
+    SELECT xml_item, true AS Success, '' AS message
     FROM ( SELECT
              XMLAGG(XMLELEMENT(
                     NAME "Param",
                     XMLATTRIBUTES(
-                        section As "Section",
-                        name As "Name",
-                        value As "Value"))
+                        section AS "Section",
+                        name AS "Name",
+                        value AS "Value"))
                     ORDER BY section, name
                    ) AS xml_item
            FROM Tmp_Task_Parameters

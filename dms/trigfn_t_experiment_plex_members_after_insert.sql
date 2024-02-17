@@ -31,7 +31,7 @@ BEGIN
     SELECT  plex_exp_id,
             channel,
             exp_id,
-            1 As state,
+            1 AS state,
             CURRENT_TIMESTAMP,
             SESSION_USER
     FROM inserted

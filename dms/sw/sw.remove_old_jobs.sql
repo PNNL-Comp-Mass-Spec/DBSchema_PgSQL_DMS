@@ -206,9 +206,9 @@ BEGIN
         End If;
 
         FOR _jobInfo IN
-            SELECT Job As JobToAdd,
+            SELECT Job AS JobToAdd,
                    State,
-                   JobFinish As SaveTimeOverride
+                   JobFinish AS SaveTimeOverride
             FROM Tmp_JobsNotInHistory
             WHERE Job > _jobToAdd
             ORDER BY Job

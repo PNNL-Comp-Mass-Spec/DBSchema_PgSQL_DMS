@@ -164,7 +164,7 @@ BEGIN
         RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
-            SELECT 'Tmp_ProteinCollections' As Table_Name,
+            SELECT 'Tmp_ProteinCollections' AS Table_Name,
                    Entry_ID,
                    Protein_Collection_Name,
                    Collection_Appended
@@ -257,13 +257,13 @@ BEGIN
             RAISE INFO '%', _infoHeadSeparatorIntStds;
 
             FOR _previewData IN
-                SELECT 'Tmp_IntStds' As Table_Name,
+                SELECT 'Tmp_IntStds' AS Table_Name,
                        Internal_Std_Mix_ID,
                        Protein_Collection_Name,
                        Dataset_Count,
                        Experiment_Count,
                        Enzyme_Contaminant_Collection,
-                       '' As Comment
+                       '' AS Comment
                 FROM Tmp_IntStds
             LOOP
                 _infoData := format(_formatSpecifierIntStds,
@@ -380,13 +380,13 @@ BEGIN
         RAISE INFO '%', _infoHeadSeparatorIntStds;
 
         FOR _previewData IN
-            SELECT 'Tmp_IntStds' As Table_Name,
+            SELECT 'Tmp_IntStds' AS Table_Name,
                    Internal_Std_Mix_ID,
                    Protein_Collection_Name,
                    Dataset_Count,
                    Experiment_Count,
                    Enzyme_Contaminant_Collection,
-                   '' As Comment
+                   '' AS Comment
             FROM Tmp_IntStds
         LOOP
             _infoData := format(_formatSpecifierIntStds,
@@ -409,10 +409,10 @@ BEGIN
     -- remove 'HumanContam' from Tmp_IntStds since every protein in 'HumanContam' is also in 'Tryp_Pig_Bov'
     --------------------------------------------------------------
 
-    If Exists ( SELECT *
+    If Exists ( SELECT Entry_ID
                 FROM Tmp_ProteinCollections
                 WHERE Protein_Collection_Name = 'Tryp_Pig_Bov' ) AND
-       Exists ( SELECT *
+       Exists ( SELECT Internal_Std_Mix_ID
                 FROM Tmp_IntStds
                 WHERE Protein_Collection_Name = 'HumanContam' ) Then
 
@@ -423,7 +423,7 @@ BEGIN
 
             RAISE INFO '';
 
-            If Exists (SELECT * FROM Tmp_IntStds) Then
+            If Exists (SELECT Internal_Std_Mix_ID FROM Tmp_IntStds) Then
 
                 RAISE INFO 'Removed HumanContam from Tmp_IntStds since Tmp_ProteinCollections has Tryp_Pig_Bov';
                 RAISE INFO '';
@@ -432,13 +432,13 @@ BEGIN
                 RAISE INFO '%', _infoHeadSeparatorIntStds;
 
                 FOR _previewData IN
-                    SELECT 'Tmp_IntStds' As Table_Name,
+                    SELECT 'Tmp_IntStds' AS Table_Name,
                            Internal_Std_Mix_ID,
                            Protein_Collection_Name,
                            Dataset_Count,
                            Experiment_Count,
                            Enzyme_Contaminant_Collection,
-                           'After removing HumanContam' As Comment
+                           'After removing HumanContam' AS Comment
                     FROM Tmp_IntStds
                 LOOP
                     _infoData := format(_formatSpecifierIntStds,
@@ -482,7 +482,7 @@ BEGIN
 
     If _showDebug Then
 
-        If Exists (Select * From Tmp_ProteinCollectionsToAdd) Then
+        If Exists (SELECT UniqueID FROM Tmp_ProteinCollectionsToAdd) Then
 
             RAISE INFO '';
 
@@ -510,7 +510,7 @@ BEGIN
             RAISE INFO '%', _infoHeadSeparator;
 
             FOR _previewData IN
-                SELECT 'Tmp_ProteinCollectionsToAdd' As Table_Name,
+                SELECT 'Tmp_ProteinCollectionsToAdd' AS Table_Name,
                        UniqueID,
                        Protein_Collection_Name,
                        Dataset_Count,
@@ -536,7 +536,7 @@ BEGIN
         End If;
     End If;
 
-    If Not Exists (SELECT * FROM Tmp_ProteinCollectionsToAdd) Then
+    If Not Exists (SELECT UniqueID FROM Tmp_ProteinCollectionsToAdd) Then
         DROP TABLE Tmp_IntStds;
         DROP TABLE Tmp_ProteinCollections;
         DROP TABLE Tmp_ProteinCollectionsToAdd;

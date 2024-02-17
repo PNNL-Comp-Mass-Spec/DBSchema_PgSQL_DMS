@@ -107,7 +107,7 @@ BEGIN
     -- See if the deleted requested run batch references a deleted batch group
     ---------------------------------------------------
 
-    If Coalesce(_batchGroupID, 0) > 0 And Not Exists (Select Batch_Group_ID From T_Requested_Run_Batch_Group Where Batch_Group_ID = _batchGroupID) Then
+    If Coalesce(_batchGroupID, 0) > 0 And Not Exists (SELECT Batch_Group_ID FROM T_Requested_Run_Batch_Group WHERE Batch_Group_ID = _batchGroupID) Then
 
         -- Need to undelete the batch group
         SELECT Entry_ID

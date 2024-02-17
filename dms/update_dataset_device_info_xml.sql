@@ -179,7 +179,7 @@ BEGIN
                xmltable.Device_Serial_Number,
                xmltable.Device_Software_Version,
                public.trim_whitespace(xmltable.Device_Description) AS Device_Description
-        FROM ( SELECT _datasetInfoXML As rooted_xml
+        FROM ( SELECT _datasetInfoXML AS rooted_xml
              ) Src,
              XMLTABLE('//DatasetInfo/AcquisitionInfo/DeviceList/Device'
                       PASSING Src.rooted_xml
@@ -259,7 +259,7 @@ BEGIN
         RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
-            SELECT 'New device' As Info_Message,
+            SELECT 'New device' AS Info_Message,
                    Src.Device_Type,
                    Src.Device_Number,
                    Src.Device_Name,

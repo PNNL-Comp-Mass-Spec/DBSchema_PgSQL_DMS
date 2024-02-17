@@ -68,7 +68,7 @@ BEGIN
             FROM t_requested_run RR
             WHERE RR.eus_proposal_id = _eusProposalID AND
                   RR.work_package <> 'none' AND
-                  RR.entered >= CURRENT_TIMESTAMP - cast(format('%s months', _monthThreshold) as interval)
+                  RR.entered >= CURRENT_TIMESTAMP - CAST(format('%s months', _monthThreshold) AS interval)
             GROUP BY RR.work_package
             ORDER BY COUNT(RR.request_id) DESC
             LIMIT 1;

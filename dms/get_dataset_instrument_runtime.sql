@@ -208,7 +208,7 @@ BEGIN
         "interval"
     )
     SELECT (
-        _seqIncrement * ((ROW_NUMBER() OVER(ORDER BY DS.acq_time_start ASC)) - 1) + 1) + _seqOffset,
+        _seqIncrement * ((Row_Number() OVER (ORDER BY DS.acq_time_start ASC)) - 1) + 1) + _seqOffset,
         DS.dataset_id,
         DS.dataset,
         DS.acq_time_start,
@@ -424,7 +424,7 @@ BEGIN
            Src.campaign_id,
            Src.fraction_emsl_funded,
            Src.campaign_proposals
-    FROM Tmp_TX As Src;
+    FROM Tmp_TX AS Src;
 
     DROP TABLE Tmp_TX;
 END

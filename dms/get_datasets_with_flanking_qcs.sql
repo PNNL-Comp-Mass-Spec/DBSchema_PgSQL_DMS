@@ -43,7 +43,7 @@ BEGIN
                   LookupQ.QC_Dataset,
                   LookupQ.Diff_Hours / 24.0 AS Diff_Days,
                   LookupQ.Subsequent_Run,
-                  row_number() OVER ( PARTITION BY LookupQ.Dataset, LookupQ.Subsequent_Run ORDER BY Abs(LookupQ.Diff_Hours) ) AS Proximity_Rank
+                  Row_Number() OVER (PARTITION BY LookupQ.Dataset, LookupQ.Subsequent_Run ORDER BY Abs(LookupQ.Diff_Hours)) AS Proximity_Rank
            FROM ( SELECT DS.Dataset,
                          COALESCE(DS.Acq_Time_Start, DS.created) AS Acq_Time_Start,
                          DS.LC_Column_ID,

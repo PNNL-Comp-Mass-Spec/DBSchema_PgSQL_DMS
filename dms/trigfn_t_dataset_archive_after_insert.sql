@@ -24,7 +24,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_dataset_archive_after_insert() RETURN
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
-    If Not Exists (Select * From inserted) Then
+    If Not Exists (SELECT * FROM inserted) Then
         RETURN Null;
     End If;
 
