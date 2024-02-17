@@ -19,6 +19,7 @@ CREATE OR REPLACE PROCEDURE sw.lookup_source_job_from_special_processing_text(IN
 **    _autoQueryUsed            Output: true if _specialProcessingText has 'SourceJob:Auto'
 **    _warningMessage           Output: warning message
 **    _returnCode               Return code
+**    _previewSql               When true, show the SQL query used to look for source jobs
 **    _autoQuerySql             Output: the auto-query SQL that was used
 **
 **  Auth:   mem
