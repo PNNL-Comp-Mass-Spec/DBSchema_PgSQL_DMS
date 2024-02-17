@@ -81,6 +81,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work(IN _state text DEFA
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user_multi_id()
 **          12/29/2023 mem - Rename procedure argument to _showErrors
 **          01/03/2024 mem - Update warning message
+**          02/16/2024 mem - Use try_cast() to parse the new priority value
 **
 *****************************************************/
 DECLARE
@@ -359,16 +360,20 @@ BEGIN
 
         -----------------------------------------------
         If _priority <> _noChangeText Then
-            _newPriority := Cast(_priority As int);
+            _newPriority := public.try_cast(_priority, null::int);
 
-            UPDATE t_analysis_job
-            SET priority = _newPriority
-            WHERE job In (SELECT job FROM Tmp_AnalysisJobs) AND
-                  priority <> _newPriority;
-            --
-            GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
+            If _newPriority Is Null Then
+                _action := format('New priority is not numeric; cannot update to %s', _priority);
+            Else
+                UPDATE t_analysis_job
+                SET priority = _newPriority
+                WHERE job IN (SELECT job FROM Tmp_AnalysisJobs) AND
+                      priority <> _newPriority;
+                --
+                GET DIAGNOSTICS _jobCountUpdated = ROW_COUNT;
 
-            _action := format('Update priority to %s', _newPriority);
+                _action := format('Update priority to %s', _newPriority);
+            End If;
         End If;
 
         -----------------------------------------------
@@ -503,13 +508,13 @@ BEGIN
             extraction_processor    = '',
             extraction_start        = NULL,
             extraction_finish       = NULL,
-            param_file_name         = CASE WHEN _paramFileName = _noChangeText                   THEN param_file_name ELSE _paramFileName END,
-            settings_file_name      = CASE WHEN _settingsFileName = _noChangeText                THEN settings_file_name ELSE _settingsFileName END,
+            param_file_name         = CASE WHEN _paramFileName = _noChangeText                   THEN param_file_name         ELSE _paramFileName END,
+            settings_file_name      = CASE WHEN _settingsFileName = _noChangeText                THEN settings_file_name      ELSE _settingsFileName END,
             protein_collection_list = CASE WHEN _protCollNameList = _noChangeText                THEN protein_collection_list ELSE _protCollNameList END,
-            protein_options_list    = CASE WHEN _protCollOptionsList = _noChangeText             THEN protein_options_list ELSE _protCollOptionsList END,
-            organism_id             = CASE WHEN _organismName = _noChangeText                    THEN organism_id ELSE _orgid END,
-            priority                = CASE WHEN _priority = _noChangeText                        THEN priority ELSE CAST(_priority AS int) END,
-            comment                 = format('%s%s', comment, CASE WHEN _comment = _noChangeText THEN '' ELSE format(' %s', _comment) END),
+            protein_options_list    = CASE WHEN _protCollOptionsList = _noChangeText             THEN protein_options_list    ELSE _protCollOptionsList END,
+            organism_id             = CASE WHEN _organismName = _noChangeText                    THEN organism_id             ELSE _orgid END,
+            priority                = CASE WHEN _priority = _noChangeText                        THEN priority                ELSE Coalesce(public.try_cast(_priority, null::int), priority) END,
+            comment                 = format('%s%s', comment, CASE WHEN _comment = _noChangeText THEN ''                      ELSE format(' %s', _comment) END),
             assigned_processor_name = CASE WHEN _assignedProcessor = _noChangeText               THEN assigned_processor_name ELSE _assignedProcessor END
         WHERE job In (SELECT job FROM Tmp_AnalysisJobs);
         --
