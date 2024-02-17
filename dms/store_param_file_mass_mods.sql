@@ -940,22 +940,22 @@ BEGIN
 
             If _location = 'Prot-N-term' Then
                 _terminalMod := true;
-                INSERT INTO Tmp_Residues (Residue_Symbol, Terminal_AnyAA) Values ('[', true);
+                INSERT INTO Tmp_Residues (Residue_Symbol, Terminal_AnyAA) VALUES ('[', true);
             End If;
 
             If _location = 'Prot-C-term' Then
                 _terminalMod := true;
-                INSERT INTO Tmp_Residues (Residue_Symbol, Terminal_AnyAA) Values (']', true);
+                INSERT INTO Tmp_Residues (Residue_Symbol, Terminal_AnyAA) VALUES (']', true);
             End If;
 
             If _location = 'N-term' Then
                 _terminalMod := true;
-                INSERT INTO Tmp_Residues (Residue_Symbol, Terminal_AnyAA) Values ('<', true);
+                INSERT INTO Tmp_Residues (Residue_Symbol, Terminal_AnyAA) VALUES ('<', true);
             End If;
 
             If _location = 'C-term' Then
                 _terminalMod := true;
-                INSERT INTO Tmp_Residues (Residue_Symbol, Terminal_AnyAA) Values ('>', true);
+                INSERT INTO Tmp_Residues (Residue_Symbol, Terminal_AnyAA) VALUES ('>', true);
             End If;
 
             -- Parse out the affected residue (or residues)
@@ -1111,13 +1111,13 @@ BEGIN
             If _location = 'proteinNterm' Then
                 _terminalMod := true;
                 _affectedResidues := '*';
-                INSERT INTO Tmp_Residues (Residue_Symbol, Terminal_AnyAA) Values ('[', true);
+                INSERT INTO Tmp_Residues (Residue_Symbol, Terminal_AnyAA) VALUES ('[', true);
             End If;
 
             If _location = 'proteinCterm' Then
                 _terminalMod := true;
                 _affectedResidues := '*';
-                INSERT INTO Tmp_Residues (Residue_Symbol, Terminal_AnyAA) Values (']', true);
+                INSERT INTO Tmp_Residues (Residue_Symbol, Terminal_AnyAA) VALUES (']', true);
             End If;
 
             If _location in ('anyNterm', 'notNterm') Then
@@ -1126,7 +1126,7 @@ BEGIN
                     _affectedResidues := '<';
                 End If;
 
-                INSERT INTO Tmp_Residues (Residue_Symbol, Terminal_AnyAA) Values (_affectedResidues,  true);
+                INSERT INTO Tmp_Residues (Residue_Symbol, Terminal_AnyAA) VALUES (_affectedResidues,  true);
             End If;
 
             If _location in ('anyCterm', 'notCterm') Then
@@ -1135,7 +1135,7 @@ BEGIN
                     _affectedResidues := '>';
                 End If;
 
-                INSERT INTO Tmp_Residues (Residue_Symbol, Terminal_AnyAA) Values (_affectedResidues, true);
+                INSERT INTO Tmp_Residues (Residue_Symbol, Terminal_AnyAA) VALUES (_affectedResidues, true);
             End If;
         End If; -- MaxQuant
 
@@ -1182,7 +1182,7 @@ BEGIN
                 End If;
 
                 INSERT INTO Tmp_Residues (Residue_Symbol)
-                Values (_residueSymbol);
+                VALUES (_residueSymbol);
             End If;
 
         END LOOP;

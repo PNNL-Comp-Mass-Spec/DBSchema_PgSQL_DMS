@@ -136,17 +136,17 @@ BEGIN
     );
 
     -- Populate Tmp_DSRating_Exclusion_List
-    INSERT INTO Tmp_DSRating_Exclusion_List (Rating) Values (-1);        -- No Data (Blank/Bad)
-    INSERT INTO Tmp_DSRating_Exclusion_List (Rating) Values (-2);        -- Data Files Missing
+    INSERT INTO Tmp_DSRating_Exclusion_List (Rating) VALUES (-1);        -- No Data (Blank/Bad)
+    INSERT INTO Tmp_DSRating_Exclusion_List (Rating) VALUES (-2);        -- Data Files Missing
 
     If _excludeUnreviewedDatasets Then
-        INSERT INTO Tmp_DSRating_Exclusion_List (Rating) Values (-10);        -- Unreviewed
+        INSERT INTO Tmp_DSRating_Exclusion_List (Rating) VALUES (-10);        -- Unreviewed
     End If;
 
     If _excludeDatasetsNotReleased Then
-        INSERT INTO Tmp_DSRating_Exclusion_List (Rating) Values (-5);    -- Not Released
-        INSERT INTO Tmp_DSRating_Exclusion_List (Rating) Values (-6);    -- Rerun (Good Data)
-        INSERT INTO Tmp_DSRating_Exclusion_List (Rating) Values (-7);    -- Rerun (Superseded)
+        INSERT INTO Tmp_DSRating_Exclusion_List (Rating) VALUES (-5);    -- Not Released
+        INSERT INTO Tmp_DSRating_Exclusion_List (Rating) VALUES (-6);    -- Rerun (Good Data)
+        INSERT INTO Tmp_DSRating_Exclusion_List (Rating) VALUES (-7);    -- Rerun (Superseded)
     End If;
 
     If _datasetIDFilterList <> '' Then

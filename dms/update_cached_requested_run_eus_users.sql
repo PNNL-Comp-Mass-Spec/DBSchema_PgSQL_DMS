@@ -55,7 +55,7 @@ BEGIN
                     WHERE request_id = _requestID;
                 Else
                     INSERT INTO t_active_requested_run_cached_eus_users (request_id, user_list)
-                    Values (_requestID, public.get_requested_run_eus_users_list(_requestID, 'V'));
+                    VALUES (_requestID, public.get_requested_run_eus_users_list(_requestID, 'V'));
                 End If;
             Else
                 -- The request is not active; assure there is no cached entry

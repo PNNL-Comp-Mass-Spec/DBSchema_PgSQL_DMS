@@ -69,12 +69,12 @@ BEGIN
 
     If _scriptName In ('MyEMSLDatasetPush', 'MyEMSLDatasetPushRecursive') Then
         INSERT INTO Tmp_Task_Parameters (Job, Section, Name, Value)
-        Values (_job, 'JobParameters', 'PushDatasetToMyEMSL', 'True');
+        VALUES (_job, 'JobParameters', 'PushDatasetToMyEMSL', 'True');
     End If;
 
     If _scriptName = 'MyEMSLDatasetPushRecursive' Then
         INSERT INTO Tmp_Task_Parameters (Job, Section, Name, Value)
-        Values (_job, 'JobParameters', 'PushDatasetRecurse', 'True');
+        VALUES (_job, 'JobParameters', 'PushDatasetRecurse', 'True');
     End If;
 
     ---------------------------------------------------

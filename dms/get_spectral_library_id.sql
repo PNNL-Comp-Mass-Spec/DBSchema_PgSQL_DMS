@@ -535,7 +535,7 @@ BEGIN
             Static_Cys_Carbamidomethyl, Static_Mods, Dynamic_Mods,
             Max_Dynamic_Mods, Settings_Hash
             )
-        Values (
+        VALUES (
                 _libraryName,
                 _libraryStateId,
                 1,              -- In-silico digest of a FASTA file via a DIA-NN analysis job

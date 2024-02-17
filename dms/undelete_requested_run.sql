@@ -244,8 +244,8 @@ BEGIN
         WHERE Entry_ID = _entryID;
 
         If Coalesce(_eusPersonID, 0) > 0 Then
-            Insert Into T_Requested_Run_EUS_Users (Request_id, EUS_Person_ID)
-            Values (_requestID, _eusPersonID);
+            INSERT INTO T_Requested_Run_EUS_Users (Request_id, EUS_Person_ID)
+            VALUES (_requestID, _eusPersonID);
         End If;
 
         ---------------------------------------------------
