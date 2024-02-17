@@ -1401,7 +1401,7 @@ BEGIN
             -- Declare _debugMsg text;
             --  _debugMsg := format('Assigned job %s, step %s; remoteInfoID=%s, jobIsRunningRemote=%s, setting Remote_Start to %s'
             --                      _job, _step, _remoteInfoId, _jobIsRunningRemote,
-            --                      CASE WHEN _remoteInfoId > 1 AND _jobIsRunningRemote = 0 THEN Cast(CURRENT_TIMESTAMP As text)
+            --                      CASE WHEN _remoteInfoId > 1 AND _jobIsRunningRemote = 0 THEN CURRENT_TIMESTAMP::text
             --                           WHEN _remoteInfoId > 1 AND _jobIsRunningRemote = 1 THEN 'existing Remote_Start value'
             --                           ELSE 'Null'
             --                      END

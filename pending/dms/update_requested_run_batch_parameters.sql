@@ -224,8 +224,8 @@ BEGIN
 
             UPDATE Tmp_NewBatchParams
             SET Existing_Value = CASE
-                                     WHEN Tmp_NewBatchParams.Parameter = 'Block'      THEN Cast(block As Text)
-                                     WHEN Tmp_NewBatchParams.Parameter = 'Run Order'  THEN Cast(run_order As text)
+                                     WHEN Tmp_NewBatchParams.Parameter = 'Block'      THEN block::text
+                                     WHEN Tmp_NewBatchParams.Parameter = 'Run Order'  THEN run_order::text
                                      WHEN Tmp_NewBatchParams.Parameter = 'Status'     THEN state_name
                                      WHEN Tmp_NewBatchParams.Parameter = 'Instrument' THEN instrument_group
                                      ELSE ''

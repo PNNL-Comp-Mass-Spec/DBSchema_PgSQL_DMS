@@ -111,7 +111,7 @@ BEGIN
             'SELECT C.Campaign, '
                    'RR.work_package, '
                    'C.Fraction_EMSL_Funded, '
-                   'Cast(Sum(DS.Acq_Length_Minutes) / 60.0 AS numeric(9,1)) AS Runtime_Hours, '
+                   '(Sum(DS.Acq_Length_Minutes) / 60.0)::numeric(9,1) AS Runtime_Hours, '
                    'COUNT(DS.dataset_id) AS Datasets, '
                    'InstName.Building, ';
 

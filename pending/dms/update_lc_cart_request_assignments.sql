@@ -93,7 +93,7 @@ BEGIN
     -- Change this to true to enable debugging
 
     If _debugMode Then
-        _debugMsg := Cast(_cartAssignmentList As text);
+        _debugMsg := _cartAssignmentList::text;
         CALL post_log_entry ('Debug', _debugMsg, 'Update_LC_Cart_Request_Assignments');
     End If;
 

@@ -115,7 +115,7 @@ BEGIN
         RETURN;
     End If;
 
-    _pgid := CAST(_processorGroupID As int);
+    _pgid := public.try_cast(_processorGroupID, null::int);
 
     ---------------------------------------------------
     -- Mode set_membership_enabled

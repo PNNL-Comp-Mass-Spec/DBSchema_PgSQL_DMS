@@ -138,8 +138,8 @@ BEGIN
            MIN(EUSUsers.name_fm) AS Proposal_User,
            MIN(InstName.instrument) AS Instrument_First,
            MAX(InstName.instrument) AS Instrument_Last,
-           Cast(NULL AS text) AS JobTool_First,
-           Cast(NULL AS text) AS JobTool_Last
+           null::text AS JobTool_First,
+           null::text AS JobTool_Last
     FROM t_instrument_name InstName
          INNER JOIN t_dataset DS
                     INNER JOIN t_requested_run RR
@@ -430,7 +430,7 @@ BEGIN
         DELETE FROM t_project_usage_stats
         WHERE the_year = _endDateYear AND
               week_of_year = _endDateWeek AND
-              Cast(end_date AS date) = Cast(_endDate AS date)
+              end_date::date = _endDate::date;
 
         INSERT INTO t_project_usage_stats( start_date,
                                            end_date,

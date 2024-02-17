@@ -137,7 +137,7 @@ BEGIN
     GET DIAGNOSTICS _countUpdated = ROW_COUNT;
 
     If _countUpdated > 0 Then
-        RAISE INFO 'Updated % existing rows', Cast(_countUpdated as varchar(9));
+        RAISE INFO 'Updated % existing rows', _countUpdated;
     Else
         RAISE INFO 'Existing rows are already up-to-date';
     End If;
@@ -161,7 +161,7 @@ BEGIN
     GET DIAGNOSTICS _countAdded = ROW_COUNT;
 
     If _countAdded > 0 Then
-        RAISE INFO 'Added % new taxonomy IDs', Cast(_countAdded as varchar(9));
+        RAISE INFO 'Added % new taxonomy IDs', _countAdded;
     Else
         RAISE INFO 'Did not need to add any new taxonomy IDs';
     End If;
