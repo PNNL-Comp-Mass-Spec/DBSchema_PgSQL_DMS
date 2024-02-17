@@ -307,7 +307,7 @@ BEGIN
             _updateCount := _updateCount + _mergeCount;
 
             If _datasetBatchSize <= 0 Then
-                -- Break out of the While Loop
+                -- Break out of the while loop
                 EXIT;
             End If;
 
@@ -315,7 +315,7 @@ BEGIN
             _datasetIdEnd   := _datasetIdEnd   + _datasetBatchSize;
 
             If _datasetIdStart > _datasetIdMax Then
-                -- Break out of the While Loop
+                -- Break out of the while loop
                 EXIT;
             End If;
         END LOOP;

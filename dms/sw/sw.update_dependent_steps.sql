@@ -604,7 +604,7 @@ BEGIN
             WHERE Processing_Order <= _stepInfo.Processing_Order;
 
             If Coalesce(_jobCount, 0) >= _maxJobsToProcess Then
-                -- Break out of the For Loop
+                -- Break out of the for loop
                 EXIT;
             End If;
         End If;

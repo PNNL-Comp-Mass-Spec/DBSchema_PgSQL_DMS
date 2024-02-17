@@ -357,7 +357,7 @@ BEGIN
                     RAISE INFO 'Found % candidate datasets', _candidateCount;
                 End If;
 
-                -- Break out of the For Loop
+                -- Break out of the for loop
                 EXIT;
             End If;
 
@@ -366,7 +366,7 @@ BEGIN
 
         If _storageServerName <> '' And _serverDisk <> '' Then
             If _candidateCount >= _previewCount Then
-                -- Break out of the For Loop
+                -- Break out of the for loop
                 EXIT;
             End If;
 

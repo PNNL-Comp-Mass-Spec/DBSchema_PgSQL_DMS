@@ -93,7 +93,7 @@ BEGIN
         End If;
 
         If _startPos <= 0 Or _datasetNameLength - _startPos + 1 < 1 Then
-            -- Break out of the While Loop
+            -- Break out of the while loop
             EXIT;
         End If;
 
@@ -135,7 +135,7 @@ BEGIN
                 _requestID := 0;
             End If;
 
-            -- Break out of the While Loop
+            -- Break out of the while loop
             EXIT;
         End If;
 

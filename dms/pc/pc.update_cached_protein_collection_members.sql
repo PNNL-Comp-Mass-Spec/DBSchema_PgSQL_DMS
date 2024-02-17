@@ -389,7 +389,7 @@ BEGIN
                 RAISE INFO 'The maximum number of protein collections to process has been reached: %', _maxCollectionsToUpdate;
             End If;
 
-            -- Break out of the While Loop
+            -- Break out of the while loop
             EXIT;
         End If;
 
