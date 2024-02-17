@@ -191,7 +191,7 @@ BEGIN
     Else
         If _processorName <> '' And _jobInfo.JobStepsProcessor <> _processorName::citext Then
 
-            _message := format('%s is being processed by %s; processor %s is not allowed to mark it As complete',
+            _message := format('%s is being processed by %s; processor %s is not allowed to mark it as complete',
                                 _jobStepDescriptionCapital, _jobInfo.JobStepsProcessor, _processorName);
 
             CALL public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');

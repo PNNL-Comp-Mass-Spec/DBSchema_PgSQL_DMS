@@ -461,7 +461,7 @@ BEGIN
                 LIMIT 1;
 
                 -- Duplicate dataset found: DatasetID 693058 has the same instrument file as DatasetID 692115; see table t_dataset_files
-                _duplicateDatasetInfoSuffix := format('has the same instrument file As Dataset ID %s; to allow this duplicate, set allow_duplicates to true for DatasetID %s in table t_dataset_files',
+                _duplicateDatasetInfoSuffix := format('has the same instrument file as Dataset ID %s; to allow this duplicate, set allow_duplicates to true for DatasetID %s in table t_dataset_files',
                                                       _duplicateDatasetID, _duplicateDatasetID);
 
                 -- The message 'Duplicate dataset found' is used by a SQL Server Agent job that notifies admins hourly if a duplicate dataset is uploaded
@@ -505,7 +505,7 @@ BEGIN
                 ORDER BY Dataset_ID DESC
                 LIMIT 1;
 
-                _duplicateDatasetInfoSuffix := format('has the same instrument file As Dataset ID %s; see table t_dataset_files', _duplicateDatasetID);
+                _duplicateDatasetInfoSuffix := format('has the same instrument file as Dataset ID %s; see table t_dataset_files', _duplicateDatasetID);
 
                 _msg := format('Allowing duplicate dataset to be added since Allow_Duplicates is true: Dataset ID %s %s',
                                 _datasetId, _duplicateDatasetInfoSuffix);

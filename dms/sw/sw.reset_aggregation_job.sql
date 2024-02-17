@@ -100,7 +100,7 @@ BEGIN
     End If;
 
     If _jobState = 5 AND Not Exists (SELECT job FROM sw.t_job_steps WHERE job = _job AND state IN (6,7)) Then
-        _message := format('Job %s is marked As failed (State=5 in sw.t_jobs) yet there are no failed or holding job steps; the job cannot be reset at this time', _job);
+        _message := format('Job %s is marked as failed (State=5 in sw.t_jobs) yet there are no failed or holding job steps; the job cannot be reset at this time', _job);
         RAISE WARNING '%', _message;
         _returnCode := 'U5304';
         RETURN;

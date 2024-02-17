@@ -238,7 +238,7 @@ BEGIN
         WHERE dataset_id = _datasetID;
 
         INSERT INTO T_Tmp_Target_Items (Action, Item_Type, Item_ID, Item_Name, Comment)
-        SELECT 'To be flagged As deleted' AS Action,
+        SELECT 'To be flagged as deleted' AS Action,
                'Dataset File',
                dataset_file_id,
                file_path,

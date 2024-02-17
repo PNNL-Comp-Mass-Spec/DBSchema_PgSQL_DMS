@@ -339,7 +339,7 @@ BEGIN
          INNER JOIN t_experiments E
            ON DS.exp_id = E.exp_id;
 
-    _metadata := format('%sAlkylated:Sample (experiment) marked As alkylated in DMS:%s|', _metadata, _datasetCountAlkylated);
+    _metadata := format('%sAlkylated:Sample (experiment) marked as alkylated in DMS:%s|', _metadata, _datasetCountAlkylated);
 
     -- Labeling
 
