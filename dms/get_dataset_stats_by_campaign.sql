@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_stats_by_campaign(_mostrecentweeks
 **          07/13/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          02/16/2024 mem - Prevent divide by zero errors
 **
 *****************************************************/
 DECLARE
@@ -196,7 +197,10 @@ BEGIN
                Src.Instrument,
                Src.Request_Min,
                Src.Request_Max,
-               (Src.Runtime_Hours / _totalRuntimeHours * 100)::numeric(9,3) AS Pct_Total_Runtime
+               CASE WHEN _totalRuntimeHours > 0
+                    THEN (Src.Runtime_Hours / _totalRuntimeHours * 100)::numeric(9,3)
+                    ELSE 0::numeric(9,3)
+               END AS Pct_Total_Runtime
         FROM Tmp_CampaignDatasetStats Src
         ORDER BY Src.Runtime_Hours DESC;
 
