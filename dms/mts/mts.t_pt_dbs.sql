@@ -32,3 +32,10 @@ ALTER TABLE ONLY mts.t_pt_dbs
 
 CREATE UNIQUE INDEX ix_t_pt_dbs_peptide_db_name ON mts.t_pt_dbs USING btree (peptide_db_name);
 
+--
+-- Name: TABLE t_pt_dbs; Type: ACL; Schema: mts; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE mts.t_pt_dbs TO readaccess;
+GRANT SELECT ON TABLE mts.t_pt_dbs TO writeaccess;
+

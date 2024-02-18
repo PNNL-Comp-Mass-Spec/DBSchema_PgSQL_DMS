@@ -24,3 +24,10 @@ ALTER TABLE ONLY mts.t_mts_servers
 
 CREATE UNIQUE INDEX ix_t_mts_servers_server_name ON mts.t_mts_servers USING btree (server_name);
 
+--
+-- Name: TABLE t_mts_servers; Type: ACL; Schema: mts; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE mts.t_mts_servers TO readaccess;
+GRANT SELECT ON TABLE mts.t_mts_servers TO writeaccess;
+

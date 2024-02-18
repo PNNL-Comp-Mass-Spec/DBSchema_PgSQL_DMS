@@ -33,3 +33,10 @@ ALTER TABLE ONLY mts.t_mt_dbs
 
 CREATE UNIQUE INDEX ix_t_mt_dbs_mt_db_name ON mts.t_mt_dbs USING btree (mt_db_name);
 
+--
+-- Name: TABLE t_mt_dbs; Type: ACL; Schema: mts; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE mts.t_mt_dbs TO readaccess;
+GRANT SELECT ON TABLE mts.t_mt_dbs TO writeaccess;
+

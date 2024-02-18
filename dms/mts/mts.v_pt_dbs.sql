@@ -34,3 +34,10 @@ UNION
 
 ALTER VIEW mts.v_pt_dbs OWNER TO d3l243;
 
+--
+-- Name: TABLE v_pt_dbs; Type: ACL; Schema: mts; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE mts.v_pt_dbs TO readaccess;
+GRANT SELECT ON TABLE mts.v_pt_dbs TO writeaccess;
+

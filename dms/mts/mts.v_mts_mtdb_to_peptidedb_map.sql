@@ -16,3 +16,10 @@ CREATE VIEW mts.v_mts_mtdb_to_peptidedb_map AS
 
 ALTER VIEW mts.v_mts_mtdb_to_peptidedb_map OWNER TO d3l243;
 
+--
+-- Name: TABLE v_mts_mtdb_to_peptidedb_map; Type: ACL; Schema: mts; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE mts.v_mts_mtdb_to_peptidedb_map TO readaccess;
+GRANT SELECT ON TABLE mts.v_mts_mtdb_to_peptidedb_map TO writeaccess;
+
