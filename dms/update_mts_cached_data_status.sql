@@ -1,22 +1,14 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_mts_cached_data_status
-(
-    _cachedDataTableName text,
-    _incrementRefreshCount boolean = false,
-    _insertCountNew int = 0,
-    _updateCountNew int = 0,
-    _deleteCountNew int = 0,
-    _fullRefreshPerformed boolean = false,
-    _lastRefreshMinimumID int = 0,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_mts_cached_data_status(text, boolean, integer, integer, integer, boolean, integer, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_mts_cached_data_status(IN _cacheddatatablename text, IN _incrementrefreshcount boolean DEFAULT false, IN _insertcountnew integer DEFAULT 0, IN _updatecountnew integer DEFAULT 0, IN _deletecountnew integer DEFAULT 0, IN _fullrefreshperformed boolean DEFAULT false, IN _lastrefreshminimumid integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Update data in t_mts_cached_data_status using MTS
+**      Update data in t_mts_cached_data_status
 **
 **  Arguments:
 **    _cachedDataTableName      Cached data table name
@@ -32,7 +24,7 @@ AS $$
 **  Auth:   mem
 **  Date:   02/05/2010 mem - Initial Version
 **          02/23/2016 mem - Add set XACT_ABORT on
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/17/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -50,7 +42,10 @@ BEGIN
     BEGIN
         _currentLocation := 'Validate the inputs';
 
-        _cachedDataTableName := Trim(Coalesce(_cachedDataTableName, ''));
+        _cachedDataTableName   := Trim(Coalesce(_cachedDataTableName, ''));
+        _incrementRefreshCount := Coalesce(_incrementRefreshCount, false);
+        _fullRefreshPerformed  := Coalesce(_fullRefreshPerformed, false);
+        _lastRefreshMinimumID  := Coalesce(_lastRefreshMinimumID, 0);
 
         -- Abort if _cachedDataTableName is blank
         If _cachedDataTableName = '' Then
@@ -58,8 +53,6 @@ BEGIN
             RAISE WARNING '%', _message;
             RETURN;
         End If;
-
-        _incrementRefreshCount := Coalesce(_incrementRefreshCount, false);
 
         If Not _incrementRefreshCount Then
             -- Force the new counts to 0
@@ -73,13 +66,9 @@ BEGIN
             _deleteCountNew := Coalesce(_deleteCountNew, 0);
         End If;
 
-        _fullRefreshPerformed := Coalesce(_fullRefreshPerformed, false);
-        _lastRefreshMinimumID := Coalesce(_lastRefreshMinimumID, 0);
-        _message := '';
-
         _currentLocation := 'Make sure _cachedDataTableName exists in t_mts_cached_data_status';
 
-        If Not Exists (SELECT table_name FROM t_mts_cached_data_status WHERE table_name = _cachedDataTableName) Then
+        If Not Exists (SELECT table_name FROM t_mts_cached_data_status WHERE table_name = _cachedDataTableName::citext) Then
             INSERT INTO t_mts_cached_data_status (table_name, refresh_count)
             VALUES (_cachedDataTableName, 0);
         End If;
@@ -94,7 +83,7 @@ BEGIN
             last_refreshed = CURRENT_TIMESTAMP,
             last_refresh_minimum_id = _lastRefreshMinimumID,
             last_full_refresh = CASE WHEN _fullRefreshPerformed THEN CURRENT_TIMESTAMP ELSE last_full_refresh END
-        WHERE table_name = _cachedDataTableName;
+        WHERE table_name = _cachedDataTableName::citext;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -116,4 +105,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_mts_cached_data_status IS 'UpdateMTSCachedDataStatus';
+
+ALTER PROCEDURE public.update_mts_cached_data_status(IN _cacheddatatablename text, IN _incrementrefreshcount boolean, IN _insertcountnew integer, IN _updatecountnew integer, IN _deletecountnew integer, IN _fullrefreshperformed boolean, IN _lastrefreshminimumid integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_mts_cached_data_status(IN _cacheddatatablename text, IN _incrementrefreshcount boolean, IN _insertcountnew integer, IN _updatecountnew integer, IN _deletecountnew integer, IN _fullrefreshperformed boolean, IN _lastrefreshminimumid integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_mts_cached_data_status(IN _cacheddatatablename text, IN _incrementrefreshcount boolean, IN _insertcountnew integer, IN _updatecountnew integer, IN _deletecountnew integer, IN _fullrefreshperformed boolean, IN _lastrefreshminimumid integer, INOUT _message text, INOUT _returncode text) IS 'UpdateMTSCachedDataStatus';
+

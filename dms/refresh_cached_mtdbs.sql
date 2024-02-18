@@ -1,11 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.refresh_cached_mtdbs
-(
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: refresh_cached_mtdbs(text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.refresh_cached_mtdbs(INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -19,7 +18,7 @@ AS $$
 **  Date:   02/05/2010 mem - Initial Version
 **          10/15/2012 mem - Now updating Peptide_DB and Peptide_DB_Count
 **          02/23/2016 mem - Add set XACT_ABORT on
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/17/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -59,7 +58,7 @@ BEGIN
                         _message               => _message,
                         _returnCode            => _returnCode);
 
-        _currentLocation := 'Update t_mts_mt_dbs_cached by merging data from S_MTS_MT_DB';
+        _currentLocation := 'Update t_mts_mt_dbs_cached by merging data from mts.t_mt_dbs';
 
         SELECT COUNT(mt_db_id)
         INTO _countBeforeMerge
@@ -71,7 +70,7 @@ BEGIN
                        organism, campaign,
                        peptide_db, peptide_db_count,
                        last_affected
-                FROM S_MTS_MT_DBs AS MTSDBInfo
+                FROM mts.V_MTS_MT_DBs AS MTSDBInfo
               ) AS Source
         ON (target.mt_db_id = source.mt_db_id)
         WHEN MATCHED AND
@@ -79,12 +78,12 @@ BEGIN
               target.mt_db_name <> source.mt_db_name OR
               target.state_id <> source.state_id OR
               target.state <> source.state OR
-              Coalesce(target.description,'') <> Coalesce(source.description,'') OR
-              Coalesce(target.organism,'') <> Coalesce(source.organism,'') OR
-              Coalesce(target.campaign,'') <> Coalesce(source.campaign,'') OR
-              Coalesce(target.peptide_db,'') <> Coalesce(source.peptide_db,'') OR
-              Coalesce(target.peptide_db_count, 0) <> Coalesce(source.peptide_db_count, 0) OR
-              Coalesce(target.last_affected ,'')<> Coalesce(source.last_affected,'')) THEN
+              target.description      IS DISTINCT FROM source.description OR
+              target.organism         IS DISTINCT FROM source.organism OR
+              target.campaign         IS DISTINCT FROM source.campaign OR
+              target.peptide_db       IS DISTINCT FROM source.peptide_db OR
+              target.peptide_db_count IS DISTINCT FROM source.peptide_db_count OR
+              target.last_affected    IS DISTINCT FROM source.last_affected) THEN
             UPDATE SET
                 server_name = source.server_name,
                 mt_db_name = source.mt_db_name,
@@ -122,11 +121,11 @@ BEGIN
             _mergeUpdateCount := 0;
         End If;
 
-        -- Delete rows in t_mts_mt_dbs_cached that are not in S_MTS_MT_DBs
+        -- Delete rows in t_mts_mt_dbs_cached that are not in mts.t_mt_dbs
 
         DELETE FROM t_mts_mt_dbs_cached target
         WHERE NOT EXISTS (SELECT source.mt_db_id
-                          FROM S_MTS_MT_DBs AS source
+                          FROM mts.t_mt_dbs AS source
                           WHERE target.mt_db_id = source.mt_db_id );
 
         GET DIAGNOSTICS _mergeDeleteCount = ROW_COUNT;
@@ -164,4 +163,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.refresh_cached_mtdbs IS 'RefreshCachedMTDBs';
+
+ALTER PROCEDURE public.refresh_cached_mtdbs(INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE refresh_cached_mtdbs(INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.refresh_cached_mtdbs(INOUT _message text, INOUT _returncode text) IS 'RefreshCachedMTDBs';
+
