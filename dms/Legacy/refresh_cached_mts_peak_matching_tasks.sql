@@ -1,13 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.refresh_cached_mts_peak_matching_tasks
-(
-    _jobMinimum int = 0,
-    _jobMaximum int = 0,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: refresh_cached_mts_peak_matching_tasks(integer, integer, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.refresh_cached_mts_peak_matching_tasks(IN _jobminimum integer DEFAULT 0, IN _jobmaximum integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -29,7 +26,7 @@ AS $$
 **          08/09/2013 mem - Now populating MassErrorPPM_VIPER and AMTs_10pct_FDR in T_Dataset_QC using Refine_Mass_Cal_PPMShift
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          01/12/2007 mem - Populate AMTs_25pct_FDR to T_Dataset_QC
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/17/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -86,7 +83,7 @@ BEGIN
                         _message               => _message,
                         _returnCode            => _returnCode);
 
-        -- Use a MERGE Statement to synchronize t_mts_peak_matching_tasks_cached with S_MTS_Peak_Matching_Tasks
+        -- Use a MERGE Statement to synchronize t_mts_peak_matching_tasks_cached with mts.t_peak_matching_tasks
 
         SELECT COUNT(cached_info_id)
         INTO _countBeforeMerge
@@ -113,7 +110,7 @@ BEGIN
                               ini_file_name, comparison_mass_tag_count, md_state,
                               RANK() OVER ( PARTITION BY tool_name, task_server, task_database, task_id
                                             ORDER BY mts_job_id DESC ) AS TaskStartRank
-                      FROM S_MTS_Peak_Matching_Tasks AS PMT
+                      FROM mts.t_peak_matching_tasks AS PMT
                       WHERE mts_job_id >= _jobMinimum AND
                             mts_job_id <= _jobMaximum ) SourceQ
                 WHERE TaskStartRank = 1
@@ -216,14 +213,14 @@ BEGIN
             _mergeUpdateCount := 0;
         End If;
 
-        -- If _fullRefreshPerformed is true, delete rows in t_mts_peak_matching_tasks_cached that are not in S_MTS_Analysis_Job_to_MT_DB_Map
+        -- If _fullRefreshPerformed is true, delete rows in t_mts_peak_matching_tasks_cached that are not in mts.t_analysis_job_to_mt_db_map
 
         If _fullRefreshPerformed Then
 
             DELETE FROM t_mts_peak_matching_tasks_cached target
             WHERE NOT EXISTS (SELECT source.mts_job_id
                               FROM (SELECT DISTINCT PMT.mts_job_id, PMT.dms_job
-                                    FROM S_MTS_Peak_Matching_Tasks AS PMT
+                                    FROM mts.t_peak_matching_tasks AS PMT
                                    ) AS Source
                               WHERE target.mts_job_id = source.mts_job_id AND
                                     target.dms_job = source.dms_job);
@@ -295,4 +292,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.refresh_cached_mts_peak_matching_tasks IS 'RefreshCachedMTSPeakMatchingTasks';
+
+ALTER PROCEDURE public.refresh_cached_mts_peak_matching_tasks(IN _jobminimum integer, IN _jobmaximum integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE refresh_cached_mts_peak_matching_tasks(IN _jobminimum integer, IN _jobmaximum integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.refresh_cached_mts_peak_matching_tasks(IN _jobminimum integer, IN _jobmaximum integer, INOUT _message text, INOUT _returncode text) IS 'RefreshCachedMTSPeakMatchingTasks';
+

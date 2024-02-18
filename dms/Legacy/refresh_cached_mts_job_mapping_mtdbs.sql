@@ -1,13 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.refresh_cached_mts_job_mapping_mtdbs
-(
-    _jobMinimum int = 0,
-    _jobMaximum int = 0,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: refresh_cached_mts_job_mapping_mtdbs(integer, integer, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.refresh_cached_mts_job_mapping_mtdbs(IN _jobminimum integer DEFAULT 0, IN _jobmaximum integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -23,7 +20,7 @@ AS $$
 **  Date:   04/21/2010 mem - Initial Version
 **          10/21/2011 mem - Now checking for duplicate rows in T_MTS_MT_DB_Jobs_Cached
 **          02/23/2016 mem - Add set XACT_ABORT on
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/17/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -80,7 +77,7 @@ BEGIN
 
     If _deleteCount > 0 Then
         _message := format('Deleted %s duplicate %s from t_mts_mt_db_jobs_cached; this is unexpected',
-                            _deleteCount, public.check_plural(_deleteCount, 'entry', 'entries');
+                            _deleteCount, public.check_plural(_deleteCount, 'entry', 'entries'));
 
         CALL post_log_entry ('Error', _message, 'Refresh_Cached_MTS_Job_Mapping_MTDBs');
 
@@ -115,7 +112,7 @@ BEGIN
                         _message               => _message,
                         _returnCode            => _returnCode);
 
-        -- Use a MERGE Statement to synchronize t_mts_mt_db_jobs_cached with S_MTS_Analysis_Job_to_MT_DB_Map
+        -- Use a MERGE Statement to synchronize t_mts_mt_db_jobs_cached with mts.t_analysis_job_to_mt_db_map
 
         SELECT COUNT(cached_info_id)
         INTO _countBeforeMerge
@@ -124,7 +121,7 @@ BEGIN
         MERGE INTO t_mts_mt_db_jobs_cached AS target
         USING ( SELECT server_name, db_name AS MT_DB_Name, Job,
                        Coalesce(result_type, '') AS result_type, last_affected, process_state
-                FROM S_MTS_Analysis_Job_to_MT_DB_Map AS MTSJobInfo
+                FROM mts.t_analysis_job_to_mt_db_map AS MTSJobInfo
                 WHERE job >= _jobMinimum AND
                       job <= _jobMaximum
               ) AS Source
@@ -158,7 +155,7 @@ BEGIN
             _mergeUpdateCount := 0;
         End If;
 
-        -- If _fullRefreshPerformed is true, delete rows in t_mts_mt_db_jobs_cached that are not in S_MTS_Analysis_Job_to_MT_DB_Map
+        -- If _fullRefreshPerformed is true, delete rows in t_mts_mt_db_jobs_cached that are not in mts.t_analysis_job_to_mt_db_map
 
         If _fullRefreshPerformed THEN
 
@@ -166,7 +163,7 @@ BEGIN
             WHERE NOT EXISTS (SELECT source.job
                               FROM (SELECT MTSJobInfo.server_name, MTSJobInfo.db_name AS MT_DB_Name, MTSJobInfo.Job,
                                            Coalesce(MTSJobInfo.result_type, '') AS result_type
-                                    FROM S_MTS_Analysis_Job_to_MT_DB_Map AS MTSJobInfo
+                                    FROM mts.t_analysis_job_to_mt_db_map AS MTSJobInfo
                                    ) AS Source
                               WHERE target.server_name = source.server_name AND
                                     target.mt_db_name = source.mt_db_name AND
@@ -211,4 +208,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.refresh_cached_mts_job_mapping_mtdbs IS 'RefreshCachedMTSJobMappingMTDBs';
+
+ALTER PROCEDURE public.refresh_cached_mts_job_mapping_mtdbs(IN _jobminimum integer, IN _jobmaximum integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE refresh_cached_mts_job_mapping_mtdbs(IN _jobminimum integer, IN _jobmaximum integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.refresh_cached_mts_job_mapping_mtdbs(IN _jobminimum integer, IN _jobmaximum integer, INOUT _message text, INOUT _returncode text) IS 'RefreshCachedMTSJobMappingMTDBs';
+
