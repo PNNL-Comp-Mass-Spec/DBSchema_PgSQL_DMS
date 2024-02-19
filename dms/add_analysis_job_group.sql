@@ -115,6 +115,7 @@ CREATE OR REPLACE PROCEDURE public.add_analysis_job_group(IN _datasetlist text, 
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          01/08/2024 mem - Remove procedure name from error message
 **          02/19/2024 mem - Query tables directly instead of using a view
+**                         - Add missing variable to format() call
 **
 *****************************************************/
 DECLARE
@@ -313,6 +314,8 @@ BEGIN
                  INNER JOIN public.t_dataset DS
                    ON DPD.dataset_id = DS.dataset_id
             WHERE DPD.data_pkg_id = _dataPackageID;
+
+            _jobCountToBeCreated := 1;
 
             If Not Found Then
                 _message := 'Data package does not have any datasets associated with it';
@@ -782,7 +785,7 @@ BEGIN
             End If;
 
             If _returnCode = '' Then
-                _message := format('%s %s %s', _message, public.check_plural(_jobCountToBeCreated, 'dataset', 'datasets'));
+                _message := format('%s %s %s', _message, _jobCountToBeCreated, public.check_plural(_jobCountToBeCreated, 'dataset', 'datasets'));
             End If;
 
             DROP TABLE Tmp_DatasetInfo;
