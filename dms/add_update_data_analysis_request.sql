@@ -47,6 +47,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_data_analysis_request(IN _requestn
 **          02/13/2023 bcg - Send the correct procedure name to ValidateRequestUsers
 **          01/06/2024 mem - Ported to PostgreSQL
 **          01/07/2024 mem - Update error message and remove unnecessary Begin/End block
+**          02/19/2024 mem - Query tables directly instead of using a view
 **
 *****************************************************/
 DECLARE
@@ -234,7 +235,7 @@ BEGIN
         End If;
 
         If _dataPackageID > 0 Then
-            If Not Exists (SELECT ID FROM dpkg.V_Data_Package_Export WHERE ID = _dataPackageID) Then
+            If Not Exists (SELECT data_pkg_id FROM dpkg.t_data_package WHERE data_pkg_id = _dataPackageID) Then
                 RAISE EXCEPTION 'Invalid data package ID: "%" does not exist', _dataPackageID;
             Else
                 _dataPackageDefined := true;
@@ -377,10 +378,10 @@ BEGIN
                 DatasetCount
             )
             SELECT 'Data Package', _dataPackageID, 1 AS SortWeight, COUNT(DISTINCT DS.Dataset_ID) AS DatasetCount
-            FROM dpkg.V_Data_Package_Dataset_Export DataPkgDatasets
+            FROM dpkg.t_data_package_datasets DPD
                  INNER JOIN t_dataset DS
-                   ON DataPkgDatasets.dataset_id = DS.dataset_id
-            WHERE DataPkgDatasets.Data_Package_ID = _dataPackageID;
+                   ON DPD.dataset_id = DS.dataset_id
+            WHERE DPD.data_pkg_id = _dataPackageID;
         End If;
 
         If _experimentGroupDefined Then
@@ -511,14 +512,14 @@ BEGIN
             INTO _campaign
             FROM ( SELECT C.campaign AS Campaign,
                           COUNT(E.exp_id) AS Experiments
-                   FROM dpkg.V_Data_Package_Dataset_Export DataPkgDatasets
+                   FROM dpkg.t_data_package_datasets DPD
                         INNER JOIN t_dataset DS
-                          ON DataPkgDatasets.dataset_id = DS.dataset_id
+                          ON DPD.dataset_id = DS.dataset_id
                         INNER JOIN t_experiments E
                           ON DS.exp_id = E.exp_id
                         INNER JOIN t_campaign C
                           ON E.campaign_id = C.campaign_id
-                   WHERE DataPkgDatasets.Data_Package_ID = _dataPackageID
+                   WHERE DPD.data_pkg_id = _dataPackageID
                    GROUP BY C.campaign ) StatsQ
             ORDER BY StatsQ.Experiments DESC
             LIMIT 1;
@@ -527,14 +528,14 @@ BEGIN
             INTO _organism
             FROM ( SELECT Org.organism AS Organism,
                           COUNT(E.organism_id ) AS Organisms
-                   FROM dpkg.V_Data_Package_Dataset_Export DataPkgDatasets
+                   FROM dpkg.t_data_package_datasets DPD
                         INNER JOIN t_dataset DS
-                          ON DataPkgDatasets.dataset_id = DS.dataset_id
+                          ON DPD.dataset_id = DS.dataset_id
                         INNER JOIN t_experiments E
                           ON DS.exp_id = E.exp_id
                         INNER JOIN t_organisms Org
                           ON E.organism_id = Org.organism_id
-                   WHERE DataPkgDatasets.Data_Package_ID = _dataPackageID
+                   WHERE DPD.data_pkg_id = _dataPackageID
                    GROUP BY Org.organism ) StatsQ
             ORDER BY StatsQ.Organisms DESC
             LIMIT 1;
@@ -543,12 +544,12 @@ BEGIN
             INTO _eusProposalID
             FROM ( SELECT RR.eus_proposal_id AS EUS_Proposal_ID,
                           COUNT(RR.request_id) AS Requests
-                   FROM dpkg.V_Data_Package_Dataset_Export DataPkgDatasets
+                   FROM dpkg.t_data_package_datasets DPD
                         INNER JOIN t_dataset DS
-                          ON DataPkgDatasets.dataset_id = DS.dataset_id
+                          ON DPD.dataset_id = DS.dataset_id
                         INNER JOIN t_requested_run RR
                           ON DS.dataset_id = RR.dataset_id
-                   WHERE DataPkgDatasets.Data_Package_ID = _dataPackageID
+                   WHERE DPD.data_pkg_id = _dataPackageID
                    GROUP BY RR.eus_proposal_id ) StatsQ
             ORDER BY StatsQ.Requests DESC
             LIMIT 1;

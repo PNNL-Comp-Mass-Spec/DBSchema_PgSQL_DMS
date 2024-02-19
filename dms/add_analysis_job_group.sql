@@ -114,6 +114,7 @@ CREATE OR REPLACE PROCEDURE public.add_analysis_job_group(IN _datasetlist text, 
 **          01/03/2024 mem - Update status message
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          01/08/2024 mem - Remove procedure name from error message
+**          02/19/2024 mem - Query tables directly instead of using a view
 **
 *****************************************************/
 DECLARE
@@ -307,9 +308,11 @@ BEGIN
             ---------------------------------------------------
 
             INSERT INTO Tmp_DatasetInfo ( Dataset_Name )
-            SELECT DISTINCT Dataset
-            FROM dpkg.v_data_package_dataset_export
-            WHERE Data_Package_ID = _dataPackageID;
+            SELECT DISTINCT DS.dataset
+            FROM dpkg.t_data_package_datasets DPD
+                 INNER JOIN public.t_dataset DS
+                   ON DPD.dataset_id = DS.dataset_id
+            WHERE DPD.data_pkg_id = _dataPackageID;
 
             If Not Found Then
                 _message := 'Data package does not have any datasets associated with it';

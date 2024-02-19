@@ -119,6 +119,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job_request(IN _datasets 
 **          01/03/2024 mem - Update warning messages
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          01/11/2024 mem - Show a custom message when _mode is 'update' but _requestID is null
+**          02/19/2024 mem - Query tables directly instead of using a view
 **
 *****************************************************/
 DECLARE
@@ -316,9 +317,11 @@ BEGIN
             ---------------------------------------------------
 
             INSERT INTO Tmp_DatasetInfo (Dataset_Name)
-            SELECT DISTINCT Dataset
-            FROM dpkg.V_Data_Package_Dataset_Export
-            WHERE Data_Package_ID = _dataPackageID;
+            SELECT DISTINCT DS.dataset
+            FROM dpkg.t_data_package_datasets DPD
+                 INNER JOIN public.t_dataset DS
+                   ON DPD.dataset_id = DS.dataset_id
+            WHERE DPD.data_pkg_id = _dataPackageID;
             --
             GET DIAGNOSTICS _datasetCount = ROW_COUNT;
 

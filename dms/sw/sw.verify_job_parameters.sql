@@ -50,6 +50,7 @@ CREATE OR REPLACE PROCEDURE sw.verify_job_parameters(INOUT _jobparam text, IN _s
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          12/12/2023 mem - Use new argument name when calling validate_protein_collection_list_for_data_package
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          02/19/2024 mem - Query tables directly instead of using a view
 **
 *****************************************************/
 DECLARE
@@ -257,10 +258,12 @@ BEGIN
             RETURN;
         End If;
 
-        SELECT param_file_type, valid
+        SELECT pft.param_file_type, pf.valid
         INTO _paramFileType, _paramFileValid
-        FROM public.V_Param_File_Export
-        WHERE Param_File_Name = _parameterFileName;
+        FROM public.t_param_files pf
+             INNER JOIN public.t_param_file_types pft
+               ON pf.param_file_type_id = pft.param_file_type_id
+        WHERE pf.param_file_name = _parameterFileName::citext;
 
         If Not FOUND Then
             _message := format('Parameter file not found: %s', _parameterFileName);

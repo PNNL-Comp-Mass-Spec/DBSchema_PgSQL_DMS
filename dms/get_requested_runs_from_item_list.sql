@@ -38,6 +38,7 @@ CREATE OR REPLACE FUNCTION public.get_requested_runs_from_item_list(_itemlist te
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          01/20/2024 mem - Use citext for the Item column in temporary table Tmp_Items
+**          02/19/2024 mem - Query table directly instead of using a view
 **
 *****************************************************/
 DECLARE
@@ -173,9 +174,9 @@ BEGIN
         RETURN QUERY
         SELECT DISTINCT RR.request_id
         FROM t_requested_run RR
-             INNER JOIN dpkg.V_Data_Package_Dataset_Export DPDE
-               ON RR.dataset_id = DPDE.dataset_id
-        WHERE DPDE.data_pkg_id IN (SELECT public.try_cast(Item, 0) FROM Tmp_Items);
+             INNER JOIN dpkg.t_data_package_datasets AS DPD
+               ON RR.dataset_id = DPD.dataset_id
+        WHERE DPD.data_pkg_id IN (SELECT public.try_cast(Item, 0) FROM Tmp_Items);
     End If;
 
     DROP TABLE Tmp_Items;
