@@ -65,7 +65,7 @@ ALTER TABLE ONLY public.t_lc_column
 --
 
 ALTER TABLE ONLY public.t_lc_column
-    ADD CONSTRAINT fk_t_lc_column_t_users FOREIGN KEY (operator_username) REFERENCES public.t_users(username);
+    ADD CONSTRAINT fk_t_lc_column_t_users FOREIGN KEY (operator_username) REFERENCES public.t_users(username) ON UPDATE CASCADE;
 
 --
 -- Name: TABLE t_lc_column; Type: ACL; Schema: public; Owner: d3l243

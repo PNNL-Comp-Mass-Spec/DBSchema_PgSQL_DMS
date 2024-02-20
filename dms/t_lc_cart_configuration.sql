@@ -87,14 +87,14 @@ ALTER TABLE ONLY public.t_lc_cart_configuration
 --
 
 ALTER TABLE ONLY public.t_lc_cart_configuration
-    ADD CONSTRAINT fk_t_lc_cart_configuration_t_users_entered_by FOREIGN KEY (entered_by) REFERENCES public.t_users(username);
+    ADD CONSTRAINT fk_t_lc_cart_configuration_t_users_entered_by FOREIGN KEY (entered_by) REFERENCES public.t_users(username) ON UPDATE CASCADE;
 
 --
 -- Name: t_lc_cart_configuration fk_t_lc_cart_configuration_t_users_updated_by; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 
 ALTER TABLE ONLY public.t_lc_cart_configuration
-    ADD CONSTRAINT fk_t_lc_cart_configuration_t_users_updated_by FOREIGN KEY (updated_by) REFERENCES public.t_users(username);
+    ADD CONSTRAINT fk_t_lc_cart_configuration_t_users_updated_by FOREIGN KEY (updated_by) REFERENCES public.t_users(username) ON UPDATE CASCADE;
 
 --
 -- Name: TABLE t_lc_cart_configuration; Type: ACL; Schema: public; Owner: d3l243
