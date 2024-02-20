@@ -24,11 +24,12 @@ CREATE OR REPLACE PROCEDURE public.populate_instrument_filter_table(IN _instrume
 **  Auth:   mem
 **  Date:   07/22/2019 mem - Initial version
 **          02/15/2024 mem - Ported to PostgreSQL
+**          02/19/2024 mem - Use case-insensitive comparisons
 **
 *****************************************************/
 DECLARE
     _msg text;
-    _matchSpec text;
+    _matchSpec citext;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -72,7 +73,7 @@ BEGIN
             SELECT FilterQ.instrument_id
             FROM ( SELECT instrument_id, instrument
                    FROM t_instrument_name
-                   WHERE instrument LIKE _matchSpec ) FilterQ
+                   WHERE instrument iLIKE _matchSpec ) FilterQ
                  LEFT OUTER JOIN Tmp_InstrumentFilter Target
                    ON FilterQ.instrument_id = Target.instrument_id
             WHERE Target.instrument_id IS NULL
