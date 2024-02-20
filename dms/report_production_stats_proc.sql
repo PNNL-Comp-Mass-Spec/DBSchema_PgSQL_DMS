@@ -13,7 +13,7 @@ CREATE OR REPLACE PROCEDURE public.report_production_stats_proc(IN _startdate te
 **      The results returned by the cursor only include column proposal_type if _includeProposalType is greater than 0
 **
 **  Arguments:
-**    _startDate                Start date; if an empty string, uses 2 weeks before _endDate
+**    _startDate                Start date; if an empty string, use 2 weeks before _endDate
 **    _endDate                  End date;   if an empty string, use today as end date
 **    _productionOnly           When 0 then shows all instruments; otherwise limits the report to production instruments only (operations_role = 'Production')
 **    _campaignIDFilterList     Comma-separated list of campaign IDs
@@ -31,7 +31,7 @@ CREATE OR REPLACE PROCEDURE public.report_production_stats_proc(IN _startdate te
 **          CALL public.report_production_stats_proc (
 **                      _startDate            => '2023-01-01',
 **                      _endDate              => '2023-01-30',
-**                      _productionOnly       => 1
+**                      _productionOnly       => 1,
 **                      _campaignIDFilterList => '',
 **                      _eusUsageFilterList   => '',
 **                      _instrumentFilterList => '',
@@ -40,7 +40,7 @@ CREATE OR REPLACE PROCEDURE public.report_production_stats_proc(IN _startdate te
 **          FETCH ALL FROM _results;
 **      END;
 **
-***  Alternatively, use an anonymous code block (though it cannot return query results; it can only store them in a table or display them with RAISE INFO)
+**  Alternatively, use an anonymous code block (though it cannot return query results; it can only store them in a table or display them with RAISE INFO)
 **
 **      DO
 **      LANGUAGE plpgsql

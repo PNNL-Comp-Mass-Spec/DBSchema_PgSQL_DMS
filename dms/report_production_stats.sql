@@ -13,7 +13,7 @@ CREATE OR REPLACE FUNCTION public.report_production_stats(_startdate text, _endd
 **      Used by web page https://dms2.pnl.gov/production_instrument_stats/param
 **
 **  Arguments:
-**    _startDate                Start date; if an empty string, uses 2 weeks before _endDate
+**    _startDate                Start date; if an empty string, use 2 weeks before _endDate
 **    _endDate                  End date;   if an empty string, use today as end date
 **    _productionOnly           When 0 then shows all instruments; otherwise limits the report to production instruments only (operations_role = 'Production'); leave as an integer for compatibility with the website
 **    _campaignIDFilterList     Comma-separated list of campaign IDs

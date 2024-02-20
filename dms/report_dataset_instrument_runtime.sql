@@ -11,8 +11,8 @@ CREATE OR REPLACE PROCEDURE public.report_dataset_instrument_runtime(IN _startda
 **      Generate dataset runtime and interval statistics for specified instrument
 **
 **  Arguments:
-**    _startDate        Start date; if an empty string, will use 2 weeks before _endDate
-**    _endDate          End date; if an empty string, will use today as end date
+**    _startDate        Start date; if an empty string, use 2 weeks before _endDate
+**    _endDate          End date; if an empty string, use today as end date
 **    _instrumentName   Instrument name
 **    _reportOptions    'Show All', 'No Intervals', 'Intervals Only', or 'Long Intervals'
 **    _message          Status message
