@@ -1,20 +1,17 @@
 --
-CREATE OR REPLACE PROCEDURE public.reset_auto_purged_datasets_with_msxml_results
-(
-    _infoOnly boolean = false,
-    INOUT _resetCount int = 0,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: reset_auto_purged_datasets_with_msxml_results(boolean, integer, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.reset_auto_purged_datasets_with_msxml_results(IN _infoonly boolean DEFAULT false, INOUT _resetcount integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Look for datasets with archive state 14 (Purged Instrument Data (plus auto-purge))
-**      that have potentially unpurged MSXml jobs.
+**      Look for datasets with archive state 14 that have potentially unpurged MSXML jobs
+**      State 14 is 'Purged Instrument Data (plus auto-purge)'
 **
-**      Change the dataset archive state back to 3=Complete to give the space manager a chance to purge the .mzXML file
+**      Change the dataset archive state back to 3=Complete to give the space manager a chance to purge the .mzML or .mzXML file
 **
 **      This procedure is no longer needed because we use _CacheInfo.txt placeholder files
 **
@@ -29,7 +26,7 @@ AS $$
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          01/30/2017 mem - Switch from DateDiff to DateAdd
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/20/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -58,8 +55,9 @@ BEGIN
     );
 
     BEGIN
-
+        ------------------------------------------------
         -- Find datasets to update
+        ------------------------------------------------
 
         INSERT INTO Tmp_Datasets (dataset_id)
         SELECT DISTINCT DS.dataset_id
@@ -87,10 +85,12 @@ BEGIN
         End If;
 
         If _infoOnly Then
+            ------------------------------------------------
             -- Show the dataset IDs and dataset names that would be reset
+            ------------------------------------------------
 
-            SELECT string_agg(DS.dataset_id, ', ' ORDER BY DS.dataset_id),
-                   string_agg(DS.dataset,    ', ' ORDER BY DS.dataset_id)
+            SELECT string_agg(DS.dataset_id::text, ', ' ORDER BY DS.dataset_id),
+                   string_agg(DS.dataset,          ', ' ORDER BY DS.dataset_id)
             INTO _datasetIDs, _datasetNames
             FROM t_dataset DS
                  INNER JOIN Tmp_Datasets U
@@ -98,37 +98,58 @@ BEGIN
                  INNER JOIN t_dataset_archive DA
                    ON DS.dataset_id = DA.dataset_id
                  INNER JOIN t_dataset_archive_state_name DASN
-                   ON DA.archive_state_id = DASN.DASN_StateID;
+                   ON DA.archive_state_id = DASN.archive_state_id;
 
             _datasetCount := array_length(string_to_array(_datasetIDs, ','), 1);
 
             _message := format('Would reset %s %s', _datasetCount, public.check_plural(_datasetCount, 'dataset', 'datasets'));
 
+            RAISE INFO '';
             RAISE INFO '%', _message;
-            RAISE INFO 'ID(s):    %', _datasetIDs;
-            RAISE INFO 'Names(s): %', _datasetNames;
-        Else
-            ------------------------------------------------
-            -- Change the dataset archive state back to 3
-            ------------------------------------------------
 
-            UPDATE t_dataset_archive
-            SET archive_state_id = 3
-            FROM Tmp_Datasets U
-            WHERE DA.dataset_id = U.Dataset_ID;
-            --
-            GET DIAGNOSTICS _resetCount = ROW_COUNT;
+            RAISE INFO '';
+            CALL public.show_delimited_text_wrapped (
+                            _delimitedList => format('ID(s):    %s', _datasetIDs),
+                            _delimiter     => ',',
+                            _maxLineLength => 128,
+                            _indentSize    => 10
+            );
 
-            If _resetCount > 0 Then
-                _message := format('Reset dataset archive state from "Purged Instrument Data (plus auto-purge)" to "Complete" for %s dataset(s)', _resetCount);
-            Else
-                _message := 'No candidate datasets were found to reset';
-            End If;
+            RAISE INFO '';
+            CALL public.show_delimited_text_wrapped (
+                            _delimitedList => format('Names(s): %s', _datasetNames),
+                            _delimiter     => ',',
+                            _maxLineLength => 512,
+                            _indentSize    => 10
+            );
 
-            If _resetCount > 0 Then
-                CALL post_log_entry ('Normal', _message, 'Reset_Auto_Purged_Datasets_With_MSXml_Results');
-            End If;
+            DROP TABLE Tmp_Datasets;
+            RETURN;
         End If;
+
+        ------------------------------------------------
+        -- Change the dataset archive state back to 3
+        ------------------------------------------------
+
+        UPDATE t_dataset_archive DA
+        SET archive_state_id = 3
+        FROM Tmp_Datasets U
+        WHERE DA.dataset_id = U.Dataset_ID;
+        --
+        GET DIAGNOSTICS _resetCount = ROW_COUNT;
+
+        If _resetCount > 0 Then
+            _message := format('Reset dataset archive state from "Purged Instrument Data (plus auto-purge)" to "Complete" for %s dataset(s)', _resetCount);
+        Else
+            _message := 'No candidate datasets were found to reset';
+        End If;
+
+        If _resetCount > 0 Then
+            CALL post_log_entry ('Normal', _message, 'Reset_Auto_Purged_Datasets_With_MSXML_Results');
+        End If;
+
+        DROP TABLE Tmp_Datasets;
+        RETURN;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -151,4 +172,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.reset_auto_purged_datasets_with_msxml_results IS 'ResetAutoPurgedDatasetsWithMSXmlResults';
+
+ALTER PROCEDURE public.reset_auto_purged_datasets_with_msxml_results(IN _infoonly boolean, INOUT _resetcount integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE reset_auto_purged_datasets_with_msxml_results(IN _infoonly boolean, INOUT _resetcount integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.reset_auto_purged_datasets_with_msxml_results(IN _infoonly boolean, INOUT _resetcount integer, INOUT _message text, INOUT _returncode text) IS 'ResetAutoPurgedDatasetsWithMSXmlResults';
+
