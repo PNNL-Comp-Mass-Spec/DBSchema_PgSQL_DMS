@@ -11,6 +11,7 @@ CREATE OR REPLACE FUNCTION public.report_production_stats(_startdate text, _endd
 **      Generate dataset statistics for production instruments
 **
 **      Used by web page https://dms2.pnl.gov/production_instrument_stats/param
+**      when it calls report_production_stats_proc
 **
 **  Arguments:
 **    _startDate                Start date; if an empty string, use 2 weeks before _endDate

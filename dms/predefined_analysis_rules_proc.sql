@@ -9,7 +9,8 @@ CREATE OR REPLACE PROCEDURE public.predefined_analysis_rules_proc(IN _datasetnam
 **
 **  Desc:
 **      Get the predefined analysis rules for given dataset
-**      Use a cursor to return the list of rules that would be evaluated
+**
+**      Used by web page https://dms2.pnl.gov/predefined_analysis_rules_preview/param
 **
 **  Arguments:
 **    _datasetName                      Dataset to evaluate

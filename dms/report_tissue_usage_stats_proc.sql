@@ -10,6 +10,8 @@ CREATE OR REPLACE PROCEDURE public.report_tissue_usage_stats_proc(IN _startdate 
 **  Desc:
 **      Generate tissue usage statistics for experiments
 **
+**      Used by web page https://dms2.pnl.gov/tissue_stats/param
+**
 **  Arguments:
 **    _startDate                Start date; if an empty string, use 2 weeks before _endDate
 **    _endDate                  End date;   if an empty string, use today as end date

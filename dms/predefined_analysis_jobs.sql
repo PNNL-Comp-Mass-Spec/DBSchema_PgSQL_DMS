@@ -10,6 +10,9 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs(_datasetname text, _r
 **  Desc:
 **      Evaluate predefined analysis rules for given dataset and return the list of jobs that would be created
 **
+**      Used by web page https://dms2.pnl.gov/predefined_analysis_jobs_preview/param
+**      when it calls predefined_analysis_jobs_proc
+**
 **  Arguments:
 **    _datasetName                      Dataset to evaluate
 **    _raiseErrorMessages               When true, use RAISE WARNING to report warning messages

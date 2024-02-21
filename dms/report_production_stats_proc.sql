@@ -10,6 +10,8 @@ CREATE OR REPLACE PROCEDURE public.report_production_stats_proc(IN _startdate te
 **  Desc:
 **      Generate dataset statistics for production instruments
 **
+**      Used by web page https://dms2.pnl.gov/production_instrument_stats/param
+**
 **      The results returned by the cursor only include column proposal_type if _includeProposalType is greater than 0
 **
 **  Arguments:

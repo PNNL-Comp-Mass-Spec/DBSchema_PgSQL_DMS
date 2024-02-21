@@ -9,7 +9,9 @@ CREATE OR REPLACE PROCEDURE public.find_matching_datasets_for_job_request_proc(I
 **
 **  Desc:
 **      Return list of datasets for given analysis job request, showing how many jobs exist for each that match the parameters of the request
-**      (regardless of whether or not job is linked to the request)
+**      (regardless of whether or not the job is linked to the request)
+**
+**      Used by web page https://dms2.pnl.gov/helper_aj_request_datasets_ckbx/param
 **
 **  Arguments:
 **    _requestID        Analysis job request ID

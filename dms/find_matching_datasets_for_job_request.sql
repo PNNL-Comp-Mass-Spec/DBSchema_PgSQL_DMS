@@ -8,9 +8,11 @@ CREATE OR REPLACE FUNCTION public.find_matching_datasets_for_job_request(_reques
 /****************************************************
 **
 **  Desc:
-**      Return list of datasets for given analysis job request,
-**      showing how many jobs exist for each that match the parameters of the request
+**      Return list of datasets for given analysis job request, showing how many jobs exist for each that match the parameters of the request
 **      (regardless of whether or not the job is linked to the request)
+**
+**      Used by web page https://dms2.pnl.gov/helper_aj_request_datasets_ckbx/param
+**      when it calls find_matching_datasets_for_job_request_proc
 **
 **  Auth:   grk
 **  Date:   01/08/2008 grk - Initial release

@@ -10,6 +10,9 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs_mds(_datasetlist text
 **  Desc:
 **      Evaluate predefined analysis rules for given list of datasets and return the list of jobs that would be created
 **
+**      Used by web page https://dms2.pnl.gov/predefined_analysis_preview_mds/param
+**      when it calls predefined_analysis_jobs_mds
+**
 **  Arguments:
 **    _datasetList                      Comma-separated list of dataset names
 **    _excludeDatasetsNotReleased       When true, excludes datasets with a rating of -5 (by default we exclude datasets with a rating < 2 and <> -10)

@@ -10,6 +10,9 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_rules(_datasetname text, _
 **  Desc:
 **      Return a table listing the predefined analysis rules that would be evaulated for the given dataset
 **
+**      Used by web page https://dms2.pnl.gov/predefined_analysis_rules_preview/param
+**      when it calls predefined_analysis_rules_proc
+**
 **  Arguments:
 **    _datasetName                      Dataset to evaluate
 **    _excludeDatasetsNotReleased       When true, excludes datasets with a rating of -5 (by default we exclude datasets with a rating < 2 and <> -10)

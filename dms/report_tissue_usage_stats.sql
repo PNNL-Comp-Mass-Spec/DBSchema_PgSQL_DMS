@@ -10,6 +10,9 @@ CREATE OR REPLACE FUNCTION public.report_tissue_usage_stats(_startdate text, _en
 **  Desc:
 **      Generate tissue usage statistics for experiments
 **
+**      Used by web page https://dms2.pnl.gov/tissue_stats/param
+**      when it calls report_tissue_usage_stats_proc
+**
 **  Arguments:
 **    _startDate                Start date; if an empty string, use 2 weeks before _endDate
 **    _endDate                  End date;   if an empty string, use today as end date

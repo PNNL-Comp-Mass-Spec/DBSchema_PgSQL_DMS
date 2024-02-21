@@ -9,7 +9,8 @@ CREATE OR REPLACE PROCEDURE public.predefined_analysis_jobs_proc(IN _datasetname
 **
 **  Desc:
 **      Evaluate predefined analysis rules for given dataset
-**      Use a cursor to return the list of jobs that would be created
+**
+**      Used by web page https://dms2.pnl.gov/predefined_analysis_jobs_preview/param
 **
 **  Arguments:
 **    _datasetName                      Dataset to evaluate
