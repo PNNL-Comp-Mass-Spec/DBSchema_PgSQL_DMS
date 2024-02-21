@@ -200,8 +200,8 @@ BEGIN
         SELECT dataset, dataset_id
         INTO _conflictingDataset, _datasetID
         FROM t_dataset
-        WHERE Not acq_time_start IS NULL AND
-              Not acq_time_end IS NULL AND
+        WHERE NOT acq_time_start IS NULL AND
+              NOT acq_time_end IS NULL AND
               _bom BETWEEN acq_time_start AND acq_time_end AND
               instrument_id = _instID;
 

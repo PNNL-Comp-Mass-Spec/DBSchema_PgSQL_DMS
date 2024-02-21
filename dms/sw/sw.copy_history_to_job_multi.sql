@@ -147,7 +147,7 @@ BEGIN
     ---------------------------------------------------
 
     DELETE FROM Tmp_JobsToCopy
-    WHERE DateStamp Is Null;
+    WHERE DateStamp IS NULL;
     --
     GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 

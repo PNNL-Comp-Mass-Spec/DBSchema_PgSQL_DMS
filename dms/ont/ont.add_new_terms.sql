@@ -169,7 +169,7 @@ BEGIN
         _s :=        ' SELECT DISTINCT term_pk, term_name, identifier, is_leaf, parent_term_name, Parent_term_Identifier, ' ||
                                       'grandparent_term_name, grandparent_term_identifier'                                  ||
               format(' FROM %s', _sourceTable)                                                                              ||
-              format(' WHERE NOT parent_term_identifier Is Null AND NOT identifier IN ( SELECT identifier::citext FROM %s )', _targetTableWithSchema);
+              format(' WHERE NOT parent_term_identifier IS NULL AND NOT identifier IN ( SELECT identifier::citext FROM %s )', _targetTableWithSchema);
         */
 
         _s := format('SELECT DISTINCT s.term_pk, s.term_name, s.identifier%s', CASE WHEN _infoOnly Then '::citext, ' Else '::int, ' END)                ||
@@ -177,8 +177,8 @@ BEGIN
               format(' FROM %s s', _sourceTable)                                                                                                        ||
               format('      LEFT OUTER JOIN %s t', _targetTableWithSchema)                                                                              ||
                      '        ON s.identifier::int = t.identifier'
-                     ' WHERE NOT s.parent_term_identifier Is Null AND'
-                     '       t.identifier Is Null';
+                     ' WHERE NOT s.parent_term_identifier IS NULL AND'
+                     '       t.identifier IS NULL';
 
     Else
         -- Other identifiers do start with the ontology name
@@ -196,7 +196,7 @@ BEGIN
                              ' ON s.identifier = t.identifier AND'
                                 ' s.parent_term_identifier = t.parent_term_id AND '
                                 ' Coalesce(s.grandparent_term_identifier, '''') = Coalesce(t.grandparent_term_id, '''')'
-                    ' WHERE t.identifier Is Null;';
+                    ' WHERE t.identifier IS NULL;';
 
     End If;
 

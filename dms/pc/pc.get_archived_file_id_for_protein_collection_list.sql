@@ -80,7 +80,7 @@ BEGIN
     FROM pc.t_protein_collections PC
     WHERE Tmp_ProteinCollectionList.ProteinCollectionName = PC.collection_name;
 
-    If Exists (SELECT Unique_ID FROM Tmp_ProteinCollectionList WHERE Not Valid) Then
+    If Exists (SELECT Unique_ID FROM Tmp_ProteinCollectionList WHERE NOT Valid) Then
         RAISE INFO '';
         RAISE INFO 'One or more protein collection names not found in pc.t_protein_collections; looking for protein collection IDs';
 
@@ -107,7 +107,7 @@ BEGIN
         End If;
     End If;
 
-    If Exists (SELECT Unique_ID FROM Tmp_ProteinCollectionList WHERE Not Valid) Then
+    If Exists (SELECT Unique_ID FROM Tmp_ProteinCollectionList WHERE NOT Valid) Then
         RAISE INFO '';
 
         If Not Exists (SELECT Unique_ID FROM Tmp_ProteinCollectionList WHERE Valid) Then
@@ -122,7 +122,7 @@ BEGIN
         SELECT string_agg(ProteinCollectionName, ', ' ORDER BY ProteinCollectionName)
         INTO _message
         FROM Tmp_ProteinCollectionList
-        WHERE Not Valid;
+        WHERE NOT Valid;
 
         If Position(', ' In _message) > 0 Then
             _message := format('Unrecognized protein collections: %s', _message);
@@ -133,7 +133,7 @@ BEGIN
         RAISE INFO '%', _message;
 
         DELETE FROM Tmp_ProteinCollectionList
-        WHERE Not Valid;
+        WHERE NOT Valid;
 
         SELECT string_agg(ProteinCollectionName, ', ' ORDER BY ProteinCollectionName)
         INTO _proteinCollectionList

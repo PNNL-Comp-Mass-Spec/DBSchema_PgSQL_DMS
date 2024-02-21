@@ -351,7 +351,8 @@ BEGIN
 
         If (_toolName ILike 'MSGFPlus%' Or _toolName ILike 'TopPIC%' Or _toolName ILike 'MaxQuant%' Or _toolName ILike 'DiaNN%') And
            _protCollOptionsList ILike '%decoy%' And
-           Not _paramFileName ILike '%_NoDecoy%' Then
+           Not _paramFileName ILike '%_NoDecoy%'
+        Then
 
             _protCollOptionsList := 'seq_direction=forward,filetype=fasta';
 

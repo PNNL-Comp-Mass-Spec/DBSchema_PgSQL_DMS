@@ -73,7 +73,7 @@ BEGIN
             SELECT FilterQ.instrument_id
             FROM ( SELECT instrument_id, instrument
                    FROM t_instrument_name
-                   WHERE instrument iLIKE _matchSpec ) FilterQ
+                   WHERE instrument ILIKE _matchSpec ) FilterQ
                  LEFT OUTER JOIN Tmp_InstrumentFilter Target
                    ON FilterQ.instrument_id = Target.instrument_id
             WHERE Target.instrument_id IS NULL

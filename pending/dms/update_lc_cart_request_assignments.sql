@@ -129,7 +129,7 @@ BEGIN
 
     UPDATE Tmp_BlockingInfo
     SET cart_config_name = ''
-    WHERE cart_config_name Is Null;
+    WHERE cart_config_name IS NULL;
 
     -----------------------------------------------------------
     -- Resolve cart name to cart ID

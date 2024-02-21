@@ -58,18 +58,18 @@ BEGIN
     -- Make sure column Colon_Pos is populated
     UPDATE Tmp_ExpToRefCompoundMap
     SET Colon_Pos = Position(':' In Compound_IDName)
-    WHERE Colon_Pos Is Null;
+    WHERE Colon_Pos IS NULL;
 
     -- Update entries in Tmp_ExpToRefCompoundMap to remove extra text that may be present
     -- For example, switch from 3311:ANFTSQETQGAGK to 3311
     UPDATE Tmp_ExpToRefCompoundMap
     SET Compound_IDName = Substring(Compound_IDName, 1, Colon_Pos - 1)
-    WHERE Not Colon_Pos Is Null And Colon_Pos > 0 AND Compound_IDName Like '%:%';
+    WHERE NOT Colon_Pos IS NULL AND Colon_Pos > 0 AND Compound_IDName LIKE '%:%';
 
     -- Populate the Compound_ID column using any integers in Compound_IDName
     UPDATE Tmp_ExpToRefCompoundMap
     SET Compound_ID = public.try_cast(Compound_IDName, 0)
-    WHERE Compound_ID Is Null;
+    WHERE Compound_ID IS NULL;
 
     -- If any entries still have a null Compound_ID value, try matching via reference compound name
     -- We have numerous reference compounds with identical names, so matches found this way will be ambiguous

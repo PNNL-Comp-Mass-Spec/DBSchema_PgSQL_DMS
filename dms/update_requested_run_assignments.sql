@@ -278,7 +278,7 @@ BEGIN
                              ON Tmp_RequestIDs.RequestID = RR.request_id
                       WHERE RR.batch_id = _batchID AND
                             RR.state_name = 'Active' AND
-                            Tmp_RequestIDs.RequestID Is Null
+                            Tmp_RequestIDs.RequestID IS NULL
                       UNION
                       SELECT _newInstrumentGroup AS InstGroup
                      ) UnionQ;
@@ -293,7 +293,7 @@ BEGIN
                                   ON Tmp_RequestIDs.RequestID = RR.request_id
                            WHERE RR.batch_id = _batchID AND
                                  RR.state_name = 'Active' AND
-                                 Tmp_RequestIDs.RequestID Is Null
+                                 Tmp_RequestIDs.RequestID IS NULL
                          ) DistinctQ;
 
                     SELECT string_agg(RR.request_id::text, ', ' ORDER BY RR.request_id)

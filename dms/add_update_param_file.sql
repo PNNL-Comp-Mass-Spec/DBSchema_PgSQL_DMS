@@ -241,7 +241,7 @@ BEGIN
             FROM public.parse_delimited_list_ordered(_paramfileMassMods, _delimiter);
 
             DELETE FROM Tmp_Mods_Precheck
-            WHERE Value Is Null Or Value Like '#%' or Trim(Value) = '';
+            WHERE Value IS NULL OR Value LIKE '#%' OR Trim(Value) = '';
 
             If Not Exists (SELECT * FROM Tmp_Mods_Precheck) Then
                 _paramfileMassMods := '';

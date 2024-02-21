@@ -255,7 +255,7 @@ BEGIN
         SELECT SUM(public.try_cast(UsageValue, 0))
         INTO _total
         FROM Tmp_UsageInfo
-        WHERE Not UsageKey IN (SELECT UsageKey FROM Tmp_NonPercentageKeys);
+        WHERE NOT UsageKey IN (SELECT UsageKey FROM Tmp_NonPercentageKeys);
 
         If _validateTotal And _total <> 100 Then
             _logErrors := false;

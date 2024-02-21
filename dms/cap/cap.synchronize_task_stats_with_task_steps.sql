@@ -62,7 +62,7 @@ BEGIN
     FROM cap.t_tasks T
          INNER JOIN cap.t_task_steps TS
            ON T.Job = TS.Job
-    WHERE (T.State = 3 And _completedJobsOnly OR Not _completedJobsOnly) AND
+    WHERE (T.State = 3 AND _completedJobsOnly OR NOT _completedJobsOnly) AND
           T.Finish < TS.Finish
     GROUP BY T.job
     UNION
@@ -70,7 +70,7 @@ BEGIN
     FROM cap.t_tasks T
          INNER JOIN cap.t_task_steps TS
            ON T.Job = TS.Job
-    WHERE (T.State = 3 And _completedJobsOnly OR Not _completedJobsOnly) AND
+    WHERE (T.State = 3 AND _completedJobsOnly OR NOT _completedJobsOnly) AND
           T.Start > TS.Start
     GROUP BY T.Job;
     --

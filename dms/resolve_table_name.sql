@@ -47,7 +47,7 @@ BEGIN
                True AS Table_Exists,
                ''::citext
         FROM pg_tables
-        WHERE schemaname::citext = _tableSchema And tablename::citext = _tableName;
+        WHERE schemaname::citext = _tableSchema AND tablename::citext = _tableName;
 
         If FOUND Then
             RETURN;

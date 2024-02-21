@@ -212,7 +212,7 @@ BEGIN
 
     UPDATE ont.t_ncbi_taxonomy_cached
     SET synonym_list = ''
-    WHERE synonyms = 0 And Coalesce(synonym_list, '') <> '';
+    WHERE synonyms = 0 AND Coalesce(synonym_list, '') <> '';
     --
     GET DIAGNOSTICS _updateCount = ROW_COUNT;
 

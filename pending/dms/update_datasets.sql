@@ -369,7 +369,7 @@ BEGIN
 
             If _comment <> '[no change]' Then
                 UPDATE t_dataset
-                SET comment = CASE WHEN comment Is Null THEN _comment
+                SET comment = CASE WHEN comment IS NULL THEN _comment
                                    ELSE append_to_text(comment, _comment, _delimiter => '; ')
                               END
                 WHERE dataset IN (SELECT Dataset_Name FROM Tmp_DatasetInfo);

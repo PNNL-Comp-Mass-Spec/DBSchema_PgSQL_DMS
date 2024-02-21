@@ -250,7 +250,7 @@ BEGIN
                         SELECT COUNT(job)
                         INTO _matchCount
                         FROM cap.t_tasks
-                        WHERE State = 0 And Dataset_ID > 0;
+                        WHERE State = 0 AND Dataset_ID > 0;
 
                         _infoMessage := format('%s capture task %s in cap.t_tasks %s State = 0, but the Dataset_ID %s not found in view cap.V_DMS_Get_Dataset_Definition',
                                                 _matchCount,

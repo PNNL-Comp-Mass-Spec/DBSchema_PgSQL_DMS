@@ -333,11 +333,11 @@ BEGIN
                                     _previewData.Acq_Time_Start,
                                     _previewData.Interval_to_Next_DS,
                                     _previewData.Long_Interval,
-                                    CASE WHEN Not _previewData.Interval_to_Next_DS Is Null AND
+                                    CASE WHEN Not _previewData.Interval_to_Next_DS IS NULL AND
                                               _previewData.Current_Interval_to_Next_DS Is NULL THEN 'Storing new interval'
                                          WHEN Not _previewData.Interval_to_Next_DS IS DISTINCT FROM _previewData.Current_Interval_to_Next_DS THEN ''   -- Matches existing interval
                                          ELSE
-                                             CASE WHEN Not _previewData.Interval_to_Next_DS Is Null AND
+                                             CASE WHEN Not _previewData.Interval_to_Next_DS IS NULL AND
                                                        _previewData.Current_Interval_to_Next_DS IS DISTINCT FROM _previewData.Interval_to_Next_DS
                                                   THEN format('Updating interval: %s -> %s',
                                                                 _previewData.Current_Interval_to_Next_DS,
@@ -366,7 +366,7 @@ BEGIN
         SET interval_to_next_ds = Tmp_Durations.Interval
         FROM Tmp_Durations
         WHERE target.dataset_id = Tmp_Durations.dataset_id AND
-              Not Tmp_Durations.Interval Is Null AND
+              NOT Tmp_Durations.Interval IS NULL AND
               target.interval_to_next_ds IS DISTINCT FROM Tmp_Durations.Interval;
 
         ---------------------------------------------------

@@ -106,7 +106,7 @@ BEGIN
                num_proteins,
                false AS Processed
         FROM pc.t_protein_collections
-        WHERE Not collection_state_id IN (0, 5);
+        WHERE NOT collection_state_id IN (0, 5);
 
     Else
         -- Only add new protein collections
@@ -215,7 +215,7 @@ BEGIN
             INSERT INTO Tmp_CurrentIDs (Protein_Collection_ID)
             SELECT Protein_Collection_ID
             FROM Tmp_ProteinCollections
-            WHERE Not Processed
+            WHERE NOT Processed
             ORDER BY Protein_Collection_ID
             LIMIT 1;
 
@@ -395,7 +395,7 @@ BEGIN
 
         If Not Exists (SELECT Protein_Collection_ID
                        FROM Tmp_ProteinCollections
-                       WHERE Not Processed) Then
+                       WHERE NOT Processed) Then
 
             If _showDebug Then
                 RAISE INFO '';

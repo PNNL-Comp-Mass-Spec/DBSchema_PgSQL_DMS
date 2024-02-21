@@ -248,7 +248,7 @@ BEGIN
                                  FROM t_instrument_name InstName
                                       INNER JOIN t_emsl_dms_instrument_mapping InstMapping
                                         ON InstName.instrument_id = InstMapping.dms_instrument_id
-                                 WHERE NOT InstMapping.eus_instrument_id Is Null
+                                 WHERE NOT InstMapping.eus_instrument_id IS NULL
                                  GROUP BY InstMapping.eus_instrument_id
                                  HAVING COUNT(InstName.instrument_id) > 1
                                ) LookupQ

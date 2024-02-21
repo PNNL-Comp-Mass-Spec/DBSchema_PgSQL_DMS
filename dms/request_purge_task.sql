@@ -79,7 +79,7 @@ CREATE OR REPLACE PROCEDURE public.request_purge_task(IN _storageservername text
                                '-----------------------------------',
                                '----------------------------------------');
 
-        WHILE Not _results Is Null
+        WHILE NOT _results IS NULL
         LOOP
             FETCH NEXT FROM _results
             INTO _taskParams;

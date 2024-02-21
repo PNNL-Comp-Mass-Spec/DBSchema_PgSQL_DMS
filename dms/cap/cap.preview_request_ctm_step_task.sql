@@ -92,7 +92,7 @@ BEGIN
         SELECT 'cap.request_ctm_step_task did not find a capture task job to process, and _message is empty', '';
     End If;
 
-    WHILE Not _results Is Null
+    WHILE NOT _results IS NULL
     LOOP
         FETCH NEXT FROM _results
         INTO _jobParams;

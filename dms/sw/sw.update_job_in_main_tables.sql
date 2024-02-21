@@ -113,7 +113,7 @@ BEGIN
          LEFT OUTER JOIN sw.t_job_steps JS
            ON JS.job = Src.job AND
               JS.step = Src.step
-    WHERE JS.job Is Null;
+    WHERE JS.job IS NULL;
 
     ---------------------------------------------------
     -- Add step dependencies for job that currently aren't

@@ -131,7 +131,7 @@ BEGIN
         INTO _badItemTypes
         FROM ( SELECT DISTINCT ItemType
                FROM Tmp_DataPackageItems
-               WHERE Not ItemType IN ('Job', 'Dataset', 'Experiment', 'Biomaterial', 'EUSProposal')
+               WHERE NOT ItemType IN ('Job', 'Dataset', 'Experiment', 'Biomaterial', 'EUSProposal')
              ) FilterQ;
 
         If _badItemTypes <> '' Then
@@ -159,7 +159,7 @@ BEGIN
 
         If Exists ( SELECT DataPackageID FROM Tmp_DataPackageItems WHERE ItemType = 'Job' ) Then
             DELETE FROM Tmp_DataPackageItems
-            WHERE Trim(Coalesce(Identifier, '')) = '' OR public.try_cast(Identifier, null::int) Is Null;
+            WHERE Trim(Coalesce(Identifier, '')) = '' OR public.try_cast(Identifier, null::int) IS NULL;
             --
             GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
@@ -182,11 +182,11 @@ BEGIN
             -- Auto-remove .raw and .d from the end of dataset names
             UPDATE Tmp_DataPackageItems
             SET Identifier = Substring(Identifier, 1, char_length(Identifier) - 4)
-            WHERE ItemType = 'Dataset' And Tmp_DataPackageItems.Identifier ILike '%.raw';
+            WHERE ItemType = 'Dataset' AND Tmp_DataPackageItems.Identifier ILIKE '%.raw';
 
             UPDATE Tmp_DataPackageItems
             SET Identifier = Substring(Identifier, 1, char_length(Identifier) - 2)
-            WHERE ItemType = 'Dataset' And Tmp_DataPackageItems.Identifier ILike '%.d';
+            WHERE ItemType = 'Dataset' AND Tmp_DataPackageItems.Identifier ILIKE '%.d';
 
             -- Auto-convert dataset IDs to dataset names
             -- First look for dataset IDs
@@ -229,15 +229,15 @@ BEGIN
                 RAISE WARNING '%', _badItemsWarning;
             End If;
 
-            If Exists (SELECT DataPackageID FROM Tmp_DataPackageItems WHERE ItemType = 'Dataset' And Identifier SIMILAR TO 'DataPackage[_][0-9][0-9]%') Then
+            If Exists (SELECT DataPackageID FROM Tmp_DataPackageItems WHERE ItemType = 'Dataset' AND Identifier SIMILAR TO 'DataPackage[_][0-9][0-9]%') Then
 
                 SELECT string_agg(Identifier, ', ' ORDER BY Identifier)
                 INTO _datasetsRemoved
                 FROM Tmp_DataPackageItems
-                WHERE ItemType = 'Dataset' And Identifier SIMILAR TO 'DataPackage[_][0-9][0-9]%';
+                WHERE ItemType = 'Dataset' AND Identifier SIMILAR TO 'DataPackage[_][0-9][0-9]%';
 
                 DELETE FROM Tmp_DataPackageItems
-                WHERE ItemType = 'Dataset' And Identifier SIMILAR TO 'DataPackage[_][0-9][0-9]%';
+                WHERE ItemType = 'Dataset' AND Identifier SIMILAR TO 'DataPackage[_][0-9][0-9]%';
 
                 _actionMsg := format('Data packages cannot include placeholder data package datasets; removed "%s"', _datasetsRemoved);
                 _message := public.append_to_text(_message, _actionMsg, _delimiter => ', ');

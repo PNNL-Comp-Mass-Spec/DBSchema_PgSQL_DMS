@@ -101,7 +101,7 @@ BEGIN
         SET Manager_Name = LTrim(RTrim(Substring(Manager_Description, CharIndex(':', Manager_Description) + 1, 128)))
         WHERE CharIndex(':', Manager_Description) > 0;
 
-        If Exists (SELECT Entry_ID FROM Tmp_Managers WHERE Manager_Name Is Null) Then
+        If Exists (SELECT Entry_ID FROM Tmp_Managers WHERE Manager_Name IS NULL) Then
             _message := 'Warning: one or more log entries did not have a colon in the manager description; they will be ignored';
 
             RAISE INFO '';

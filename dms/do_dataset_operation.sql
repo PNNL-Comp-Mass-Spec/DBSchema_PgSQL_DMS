@@ -201,11 +201,11 @@ BEGIN
             -- Verify that the dataset does not have an active or completed capture job
             ---------------------------------------------------
 
-            If Exists (SELECT Dataset_ID FROM cap.V_Capture_Tasks_Active_Or_Complete WHERE Dataset_ID = _datasetID And State <= 2) Then
+            If Exists (SELECT Dataset_ID FROM cap.V_Capture_Tasks_Active_Or_Complete WHERE Dataset_ID = _datasetID AND State <= 2) Then
                 RAISE EXCEPTION 'Dataset "%" is being processed by the capture task pipeline; unable to delete', _datasetName;
             End If;
 
-            If Exists (SELECT Dataset_ID FROM cap.V_Capture_Tasks_Active_Or_Complete WHERE Dataset_ID = _datasetID And State > 2) Then
+            If Exists (SELECT Dataset_ID FROM cap.V_Capture_Tasks_Active_Or_Complete WHERE Dataset_ID = _datasetID AND State > 2) Then
                 RAISE EXCEPTION 'Dataset "%" has been processed by the capture task pipeline; unable to delete', _datasetName;
             End If;
 

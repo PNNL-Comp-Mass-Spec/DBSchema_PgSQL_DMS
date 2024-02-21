@@ -375,7 +375,7 @@ BEGIN
         -- Exclude datasets not in Tmp_DatasetID_Filter_List
         UPDATE Tmp_DatasetsToProcess
         SET Process_Dataset = false
-        WHERE Process_Dataset And
+        WHERE Process_Dataset AND
               NOT Dataset_ID IN (SELECT Dataset_ID FROM Tmp_DatasetID_Filter_List);
     End If;
 
@@ -507,7 +507,7 @@ BEGIN
 
     -- Remove any extra datasets from Tmp_DatasetsToProcess
     DELETE FROM Tmp_DatasetsToProcess
-    WHERE Not Process_Dataset;
+    WHERE NOT Process_Dataset;
 
     ---------------------------------------------------
     -- Loop through the datasets in Tmp_DatasetsToProcess
@@ -827,7 +827,7 @@ BEGIN
                 -- If the dataset has a row with state "New" in T_Predefined_Analysis_Scheduling_Queue,
                 -- use create_pending_predefined_analysis_tasks to process the predefine rules and possibly create jobs
 
-                If Exists (SELECT item FROM t_predefined_analysis_scheduling_queue WHERE dataset_id = _datasetID And State = 'New') Then
+                If Exists (SELECT item FROM t_predefined_analysis_scheduling_queue WHERE dataset_id = _datasetID AND State = 'New') Then
 
                     CALL public.create_pending_predefined_analysis_tasks (
                                 _maxDatasetsToProcess => 0,

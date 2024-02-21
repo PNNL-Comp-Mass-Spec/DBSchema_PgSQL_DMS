@@ -78,16 +78,16 @@ BEGIN
 
     If Not Exists ( SELECT value
                     FROM Tmp_Mgr_Params
-                    WHERE mgr_name::citext = _managerName::citext And
+                    WHERE mgr_name::citext = _managerName::citext AND
                           param_name = 'RunJobsRemotely' AND
                           value = 'True' )
        OR
        Not Exists ( SELECT value
                     FROM Tmp_Mgr_Params
-                    WHERE mgr_name::citext = _managerName::citext And
+                    WHERE mgr_name::citext = _managerName::citext AND
                           param_name = 'RemoteHostName' AND
-                          Coalesce(value, '') <> '')  Then
-
+                          Coalesce(value, '') <> '')
+    Then
         RAISE WARNING 'Manager % does not have RunJobsRemotely=True or does not have RemoteHostName defined', _managerName;
 
         DROP TABLE Tmp_Mgr_Params;
@@ -101,45 +101,44 @@ BEGIN
     SELECT format('%s<host>%s</host>', _remoteInfoXML, value)
     INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
-    WHERE param_name = 'RemoteHostName' And mgr_name::citext = _managerName::citext;
+    WHERE param_name = 'RemoteHostName' AND mgr_name::citext = _managerName::citext;
 
     SELECT format('%s<user>%s</user>', _remoteInfoXML, value)
     INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
-    WHERE param_name = 'RemoteHostUser' And mgr_name::citext = _managerName::citext;
+    WHERE param_name = 'RemoteHostUser' AND mgr_name::citext = _managerName::citext;
 
     SELECT format('%s<dmsPrograms>%s</dmsPrograms>', _remoteInfoXML, value)
     INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
-    WHERE param_name = 'RemoteHostDMSProgramsPath' And mgr_name::citext = _managerName::citext;
+    WHERE param_name = 'RemoteHostDMSProgramsPath' AND mgr_name::citext = _managerName::citext;
 
     SELECT format('%s<taskQueue>%s</taskQueue>', _remoteInfoXML, value)
     INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
-    WHERE param_name = 'RemoteTaskQueuePath' And mgr_name::citext = _managerName::citext;
+    WHERE param_name = 'RemoteTaskQueuePath' AND mgr_name::citext = _managerName::citext;
 
     SELECT format('%s<workDir>%s</workDir>', _remoteInfoXML, value)
     INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
-    WHERE param_name = 'RemoteWorkDirPath' And mgr_name::citext = _managerName::citext;
+    WHERE param_name = 'RemoteWorkDirPath' AND mgr_name::citext = _managerName::citext;
 
     SELECT format('%s<orgDB>%s</orgDB>', _remoteInfoXML, value)
     INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
-    WHERE param_name = 'RemoteOrgDBPath' And mgr_name::citext = _managerName::citext;
+    WHERE param_name = 'RemoteOrgDBPath' AND mgr_name::citext = _managerName::citext;
 
     SELECT format('%s<privateKey>%s</privateKey>', _remoteInfoXML, value)
     INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
-    WHERE param_name = 'RemoteHostPrivateKeyFile' And mgr_name::citext = _managerName::citext;
+    WHERE param_name = 'RemoteHostPrivateKeyFile' AND mgr_name::citext = _managerName::citext;
 
     SELECT format('%s<passphrase>%s</passphrase>', _remoteInfoXML, value)
     INTO _remoteInfoXML
     FROM Tmp_Mgr_Params
-    WHERE param_name = 'RemoteHostPassphraseFile' And mgr_name::citext = _managerName::citext;
+    WHERE param_name = 'RemoteHostPassphraseFile' AND mgr_name::citext = _managerName::citext;
 
     DROP TABLE Tmp_Mgr_Params;
-
 END
 $$;
 

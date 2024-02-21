@@ -269,7 +269,7 @@ BEGIN
                           Dataset
                    FROM Tmp_New_Jobs
                    ) LookupQ
-            WHERE Not _infoOnlyShowsNewJobsOnly OR
+            WHERE NOT _infoOnlyShowsNewJobsOnly OR
                   Capture_Task_Needed = 'Yes'
             ORDER BY Dataset_ID
         LOOP

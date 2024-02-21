@@ -431,11 +431,11 @@ BEGIN
 
         -- Make sure we do not put two experiments in the same place
 
-        If Exists (SELECT exp_id FROM t_experiments WHERE wellplate = _wellplateName::citext AND well = _wellNumber::citext) AND _mode In ('add', 'check_add') Then
+        If Exists (SELECT exp_id FROM t_experiments WHERE wellplate = _wellplateName::citext AND well = _wellNumber::citext) AND _mode IN ('add', 'check_add') Then
             RAISE EXCEPTION 'There is another experiment assigned to the same wellplate and well';
         End If;
 
-        If Exists (SELECT exp_id FROM t_experiments WHERE wellplate = _wellplateName::citext AND well = _wellNumber::citext AND experiment <> _experimentName::citext) And _mode In ('update', 'check_update') Then
+        If Exists (SELECT exp_id FROM t_experiments WHERE wellplate = _wellplateName::citext AND well = _wellNumber::citext AND experiment <> _experimentName::citext) AND _mode IN ('update', 'check_update') Then
             RAISE EXCEPTION 'There is another experiment assigned to the same wellplate and well';
         End If;
 
@@ -623,7 +623,7 @@ BEGIN
         -- For example, switch from 3311:ANFTSQETQGAGK to 3311
         UPDATE Tmp_ExpToRefCompoundMap
         SET Compound_IDName = Substring(Compound_IDName, 1, Colon_Pos - 1)
-        WHERE Not Colon_Pos Is Null And Colon_Pos > 0;
+        WHERE NOT Colon_Pos IS NULL AND Colon_Pos > 0;
 
         -- Populate the Compound_ID column using any integers in Compound_IDName
         UPDATE Tmp_ExpToRefCompoundMap
@@ -648,7 +648,7 @@ BEGIN
         DELETE FROM Tmp_ExpToRefCompoundMap
         WHERE EXISTS (SELECT Src.compound_id
                       FROM t_reference_compound Src
-                      WHERE Src.compound_id = Tmp_ExpToRefCompoundMap.compound_id And
+                      WHERE Src.compound_id = Tmp_ExpToRefCompoundMap.compound_id AND
                             Src.compound_name = '(none)');
 
         ---------------------------------------------------

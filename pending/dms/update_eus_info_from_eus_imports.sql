@@ -141,7 +141,7 @@ BEGIN
                    Message
             FROM t_log_entries
             WHERE entry_id > _entryID AND
-                  posted_by ILike 'Update%EUS%'
+                  posted_by ILIKE 'Update%EUS%'
             ORDER BY entry_id
         LOOP
             _infoData := format(_formatSpecifier,

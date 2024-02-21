@@ -145,7 +145,7 @@ BEGIN
                 ('ToolName', m.ToolName),
                 ('ResultType', m.ResultType)
            ) AS UnpivotQ(Name, Value)
-    WHERE Not UnpivotQ.value Is Null;
+    WHERE NOT UnpivotQ.value IS NULL;
 
     ---------------------------------------------------
     -- Simulate section association for step tool
@@ -153,7 +153,7 @@ BEGIN
 
     UPDATE Tmp_Param_Tab target
     SET Section = 'PeptideSearch'
-    WHERE target.Name in ('ParamFileName', 'ParamFileStoragePath', 'OrganismName',  'LegacyFastaFileName',  'ProteinCollectionList',  'ProteinOptions');
+    WHERE target.Name IN ('ParamFileName', 'ParamFileStoragePath', 'OrganismName',  'LegacyFastaFileName',  'ProteinCollectionList',  'ProteinOptions');
 
     ---------------------------------------------------
     -- Possibly override the settings file name

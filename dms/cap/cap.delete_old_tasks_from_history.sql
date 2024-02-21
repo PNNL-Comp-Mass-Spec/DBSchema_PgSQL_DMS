@@ -191,16 +191,16 @@ BEGIN
 
     Else
         DELETE FROM cap.t_task_steps_history
-        WHERE Job In (SELECT Job FROM Tmp_JobsToDelete);
+        WHERE Job IN (SELECT Job FROM Tmp_JobsToDelete);
 
         DELETE FROM cap.t_task_step_dependencies_history
-        WHERE Job In (SELECT Job FROM Tmp_JobsToDelete);
+        WHERE Job IN (SELECT Job FROM Tmp_JobsToDelete);
 
         DELETE FROM cap.t_task_parameters_history
-        WHERE Job In (SELECT Job FROM Tmp_JobsToDelete);
+        WHERE Job IN (SELECT Job FROM Tmp_JobsToDelete);
 
         DELETE FROM cap.t_tasks_history
-        WHERE Job In (SELECT Job FROM Tmp_JobsToDelete);
+        WHERE Job IN (SELECT Job FROM Tmp_JobsToDelete);
     End If;
 
     If _infoOnly Then

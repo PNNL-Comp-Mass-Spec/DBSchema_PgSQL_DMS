@@ -120,7 +120,7 @@ BEGIN
           '   parent_term_name, parent_term_id,'
           '   grandparent_term_name, grandparent_term_id, 0 AS matches_existing'
           ' FROM %I.%I'
-          ' WHERE parent_term_name <> '''' And term_pk SIMILAR TO ''ENVO%''';
+          ' WHERE parent_term_name <> '''' AND term_pk SIMILAR TO ''ENVO%''';
 
     EXECUTE format(_s, _sourceSchema, _sourceTable);
 
@@ -345,11 +345,11 @@ BEGIN
 
         UPDATE ont.t_cv_envo t
         SET children = NULL
-        WHERE Not t.identifier in (
+        WHERE NOT t.identifier IN (
                 SELECT s.parent_term_id
                 FROM ont.t_cv_envo s
                 GROUP BY s.parent_term_ID) AND
-              Not t.Children IS NULL;
+              NOT t.Children IS NULL;
 
     Else
 

@@ -608,8 +608,8 @@ BEGIN
             FROM Tmp_ChargeCode New LEFT OUTER JOIN
                  t_charge_code Old
                    ON New.charge_code = Old.charge_code
-            WHERE _infoOnly And Not _onlyShowChanged OR
-                  _infoOnly And     _onlyShowChanged AND New.Update_Status NOT LIKE 'Unchanged%'
+            WHERE _infoOnly AND NOT _onlyShowChanged OR
+                  _infoOnly AND     _onlyShowChanged AND New.Update_Status NOT LIKE 'Unchanged%'
             ORDER BY New.Update_Status, New.charge_code
         LOOP
             _infoData := format(_formatSpecifier,

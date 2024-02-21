@@ -111,7 +111,7 @@ BEGIN
                '' AS Reset_Comment
         FROM t_dataset
         WHERE dataset_state_id = 5 AND
-              (comment Like '%Authentication failure%password is incorrect%') AND
+              (comment LIKE '%Authentication failure%password is incorrect%') AND
                last_affected < CURRENT_TIMESTAMP - INTERVAL '15 minutes'
         ORDER BY dataset_id
         LIMIT _maxDatasetsToReset;

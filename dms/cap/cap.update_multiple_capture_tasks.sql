@@ -158,13 +158,13 @@ BEGIN
         SELECT COUNT(*)
         INTO _countInvalid
         FROM Tmp_Selected_Jobs
-        WHERE Not Valid;
+        WHERE NOT Valid;
 
         If _countInvalid > 0 Then
             SELECT string_agg(Job::text, ', ' ORDER BY Job)
             INTO _invalidJobList
             FROM Tmp_Selected_Jobs
-            WHERE Not Valid;
+            WHERE NOT Valid;
 
             If _countValid = 0 Then
                 If _countInvalid = 1 Then

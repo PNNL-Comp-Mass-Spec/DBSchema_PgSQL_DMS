@@ -317,7 +317,7 @@ BEGIN
 
         UPDATE t_requested_run
         SET dataset_id = _datasetIDNew
-        WHERE request_name = _requestNameNew AND dataset_id Is Null;
+        WHERE request_name = _requestNameNew AND dataset_id IS NULL;
 
         -- Possibly create a Dataset Archive task
 

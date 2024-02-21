@@ -262,7 +262,7 @@ BEGIN
             -- Tmp_Tasks
             RAISE INFO 'Storing contents of Tmp_Jobs in table cap.t_debug_tmp_tasks';
 
-            If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'cap' And tablename::citext = 't_debug_tmp_tasks') Then
+            If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'cap' AND tablename::citext = 't_debug_tmp_tasks') Then
                 DELETE FROM cap.t_debug_tmp_tasks;
 
                 INSERT INTO cap.t_debug_tmp_tasks( Job, Priority, Script, State, Dataset, Dataset_ID, Results_Directory_Name,
@@ -283,7 +283,7 @@ BEGIN
             -- Tmp_Task_Steps
             RAISE INFO 'Storing contents of Tmp_Job_Steps in table cap.t_debug_tmp_task_steps';
 
-            If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'cap' And tablename::citext = 't_debug_tmp_task_steps') Then
+            If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'cap' AND tablename::citext = 't_debug_tmp_task_steps') Then
                 DELETE FROM cap.t_debug_tmp_task_steps;
 
                 INSERT INTO cap.t_debug_tmp_task_steps (Job, Step, Tool, CPU_Load, Dependencies, Filter_Version, Signature, State,
@@ -304,7 +304,7 @@ BEGIN
             -- Tmp_Task_Step_Dependencies
             RAISE INFO 'Storing contents of Tmp_Job_Step_Dependencies in table cap.t_debug_tmp_task_step_dependencies';
 
-            If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'cap' And tablename::citext = 't_debug_tmp_task_step_dependencies') Then
+            If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'cap' AND tablename::citext = 't_debug_tmp_task_step_dependencies') Then
                 DELETE FROM cap.t_debug_tmp_task_step_dependencies;
 
                 INSERT INTO cap.t_debug_tmp_task_step_dependencies (Job, Step, Target_Step, Condition_Test, Test_Value, Enable_Only)
@@ -319,7 +319,7 @@ BEGIN
             -- Tmp_Task_Parameters
             RAISE INFO 'Storing contents of Tmp_Job_Parameters in table cap.t_debug_tmp_task_parameters';
 
-            If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'cap' And tablename::citext = 't_debug_tmp_task_parameters') Then
+            If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'cap' AND tablename::citext = 't_debug_tmp_task_parameters') Then
                 DELETE FROM cap.t_debug_tmp_task_parameters;
 
                 INSERT INTO cap.t_debug_tmp_task_parameters (Job, Parameters)

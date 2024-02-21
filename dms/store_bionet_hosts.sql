@@ -324,7 +324,7 @@ BEGIN
         MERGE INTO t_bionet_hosts AS t
         USING ( SELECT host, NameOrIP AS IP, Instruments
                 FROM Tmp_Hosts
-                WHERE Not IsAlias
+                WHERE NOT IsAlias
               ) AS s
         ON (t.host = s.host)
         WHEN MATCHED AND
@@ -346,7 +346,7 @@ BEGIN
                           WHERE Src.IsAlias AND
                                 Target.Host = Src.NameOrIP AND
                                 Target.Alias = Src.Host)
-              AND Not target.Alias Is Null;
+              AND NOT target.Alias IS NULL;
 
         -- Add/update aliases
 

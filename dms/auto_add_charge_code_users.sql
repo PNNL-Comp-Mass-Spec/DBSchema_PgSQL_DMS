@@ -101,8 +101,8 @@ BEGIN
         FROM t_charge_code CC
              LEFT OUTER JOIN V_Charge_Code_Owner_DMS_User_Map UMap
                ON CC.charge_code = UMap.charge_code
-        WHERE NOT CC.resp_username Is Null AND
-              NOT CC.resp_hid Is Null AND
+        WHERE NOT CC.resp_username IS NULL AND
+              NOT CC.resp_hid IS NULL AND
               UMap.Username IS NULL AND
               (CC.charge_code_state > 0 OR _includeInactiveChargeCodes) AND
               (CC.usage_sample_prep > 0 OR
@@ -125,8 +125,8 @@ BEGIN
         FROM t_charge_code CC
              LEFT OUTER JOIN V_Charge_Code_Owner_DMS_User_Map UMap
                ON CC.charge_code = UMap.charge_code
-        WHERE CC.resp_username Is Null AND
-              NOT CC.resp_hid Is Null AND
+        WHERE CC.resp_username IS NULL AND
+              NOT CC.resp_hid IS NULL AND
               UMap.Username IS NULL AND
               (CC.charge_code_state > 0 OR _includeInactiveChargeCodes) AND
               (CC.usage_sample_prep > 0 OR
@@ -155,10 +155,10 @@ BEGIN
              LEFT OUTER JOIN Tmp_NewUsers NewUsers
                ON Src.HID = NewUsers.HID
         WHERE Coalesce(Src.Network_ID, '') <> '' AND
-              NewUsers.HID Is Null;
+              NewUsers.HID IS NULL;
 
         If Not _infoOnly Then
-            If Exists (SELECT Network_ID FROM Tmp_NewUsers WHERE NOT Network_ID Is Null) Then
+            If Exists (SELECT Network_ID FROM Tmp_NewUsers WHERE NOT Network_ID IS NULL) Then
 
                 INSERT INTO t_users( username,       -- Network_ID (aka login) goes in the username field
                                      name,
@@ -175,7 +175,7 @@ BEGIN
                        'Y' AS U_update,
                        '' AS U_comment
                 FROM Tmp_NewUsers
-                WHERE NOT Network_ID Is Null
+                WHERE NOT Network_ID IS NULL
                 ORDER BY Network_ID;
                 --
                 GET DIAGNOSTICS _insertCount = ROW_COUNT;
@@ -269,7 +269,7 @@ BEGIN
                    Payroll,
                    Charge_Code_First,
                    Charge_Code_Last,
-                   CASE WHEN Network_ID Is Null
+                   CASE WHEN Network_ID IS NULL
                         THEN 'This person does not have a username and thus will not be added'
                         ELSE ''
                    END AS Comment
@@ -292,7 +292,7 @@ BEGIN
         SELECT COUNT(*)
         INTO _insertCount
         FROM Tmp_NewUsers
-        WHERE NOT Network_ID Is Null;
+        WHERE NOT Network_ID IS NULL;
 
         _message := format('Would add %s new %s', _insertCount, public.check_plural(_insertCount, 'user', 'users'));
 

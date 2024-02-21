@@ -292,7 +292,7 @@ BEGIN
                     SELECT Entry_ID
                     INTO _channelColNum
                     FROM Tmp_ColData
-                    WHERE Value::citext In ('Channel', 'Channel Number')
+                    WHERE Value::citext IN ('Channel', 'Channel Number')
                     ORDER BY Entry_ID
                     LIMIT 1;
 
@@ -302,7 +302,7 @@ BEGIN
                         SELECT Entry_ID
                         INTO _tagColNum
                         FROM Tmp_ColData
-                        WHERE Value::citext In ('Tag', 'Tag_Name', 'Tag Name', 'Masic_Name', 'Masic Name')
+                        WHERE Value::citext IN ('Tag', 'Tag_Name', 'Tag Name', 'Masic_Name', 'Masic Name')
                         ORDER BY Entry_ID
                         LIMIT 1;
 
@@ -314,7 +314,7 @@ BEGIN
                     SELECT Entry_ID
                     INTO _experimentIdColNum
                     FROM Tmp_ColData
-                    WHERE Value::citext In ('Exp_ID', 'Exp ID', 'Experiment_ID', 'Experiment ID', 'Experiment', 'Exp_ID_or_Name', 'Name')
+                    WHERE Value::citext IN ('Exp_ID', 'Exp ID', 'Experiment_ID', 'Experiment ID', 'Experiment', 'Exp_ID_or_Name', 'Name')
                     ORDER BY Entry_ID
                     LIMIT 1;
 
@@ -325,7 +325,7 @@ BEGIN
                     SELECT Entry_ID
                     INTO _channelTypeColNum
                     FROM Tmp_ColData
-                    WHERE Value::citext In ('Channel_Type', 'Channel Type')
+                    WHERE Value::citext IN ('Channel_Type', 'Channel Type')
                     ORDER BY Entry_ID
                     LIMIT 1;
 
@@ -336,7 +336,7 @@ BEGIN
                     SELECT Entry_ID
                     INTO _commentColNum
                     FROM Tmp_ColData
-                    WHERE Value::citext Like 'Comment%'
+                    WHERE Value::citext LIKE 'Comment%'
                     ORDER BY Entry_ID
                     LIMIT 1;
 
@@ -429,7 +429,7 @@ BEGIN
                         SELECT channel
                         INTO _channelNum
                         FROM t_sample_labelling_reporter_ions
-                        WHERE label = _experimentLabel And (tag_name = _tagName Or masic_name = _tagName)
+                        WHERE label = _experimentLabel AND (tag_name = _tagName OR masic_name = _tagName)
                         LIMIT 1;
 
                         If Not FOUND Then
@@ -657,20 +657,20 @@ BEGIN
         SELECT COUNT(ValidExperiment)
         INTO _invalidExperimentCount
         FROM Tmp_Experiment_Plex_Members
-        WHERE Not ValidExperiment;
+        WHERE NOT ValidExperiment;
 
         If Coalesce(_invalidExperimentCount, 0) > 0 Then
             If _invalidExperimentCount = 1 Then
                 SELECT format('Invalid experiment ID: %s', Exp_ID)
                 INTO _message
                 FROM Tmp_Experiment_Plex_Members
-                WHERE Not ValidExperiment
+                WHERE NOT ValidExperiment
                 LIMIT 1;
             Else
                 SELECT string_agg(Exp_ID::text, ',' ORDER BY Exp_ID)
                 INTO _message
                 FROM Tmp_Experiment_Plex_Members
-                WHERE Not ValidExperiment;
+                WHERE NOT ValidExperiment;
 
                 _message := format('Invalid experiment IDs: %s', _message);
             End If;
@@ -824,12 +824,12 @@ BEGIN
                 SELECT COUNT(*)
                 INTO _targetAddCount
                 FROM Tmp_DatabaseUpdates
-                WHERE Message Like 'Would add %';
+                WHERE Message LIKE 'Would add %';
 
                 SELECT COUNT(*)
                 INTO _targetUpdateCount
                 FROM Tmp_DatabaseUpdates
-                WHERE Message like 'Would update %';
+                WHERE Message LIKE 'Would update %';
 
                 SELECT Message
                 INTO _message

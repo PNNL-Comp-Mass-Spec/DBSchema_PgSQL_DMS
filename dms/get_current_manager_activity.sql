@@ -146,7 +146,7 @@ BEGIN
                          Start,
                          Row_Number() OVER (PARTITION BY Processor ORDER BY Start DESC) AS StartRank
                   FROM sw.t_job_steps
-                  WHERE State = 4 And Start BETWEEN _startDate AND _endDate
+                  WHERE State = 4 AND Start BETWEEN _startDate AND _endDate
                 ) RankQ
            WHERE RankQ.StartRank = 1
          ) T
@@ -188,7 +188,7 @@ BEGIN
                          Start,
                          Row_Number() OVER (PARTITION BY Processor ORDER BY Start DESC) AS StartRank
                   FROM cap.t_task_steps
-                  WHERE State = 4 And Start BETWEEN _startDate AND _endDate
+                  WHERE State = 4 AND Start BETWEEN _startDate AND _endDate
                 ) RankQ
            WHERE RankQ.StartRank = 1
          ) T

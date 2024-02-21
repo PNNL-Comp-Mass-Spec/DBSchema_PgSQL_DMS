@@ -672,8 +672,8 @@ BEGIN
                         INNER JOIN sw.t_processor_tool_group_details PTGD
                           ON LP.proc_tool_mgr_id = PTGD.mgr_id AND
                              M.proc_tool_group_id = PTGD.group_id
-                   WHERE LP.Processor_Name = _processorName And
-                         PTGD.enabled > 0 And
+                   WHERE LP.Processor_Name = _processorName AND
+                         PTGD.enabled > 0 AND
                          PTGD.tool_name = 'Results_Transfer') Then
 
             _currentLocation := 'Populate Tmp_CandidateJobSteps: Look for Results_Transfer candidates';
@@ -712,7 +712,7 @@ BEGIN
                         -- It uses public.v_get_analysis_jobs_for_archive_busy to look for jobs that have an archive in progress
                         -- However, if the dataset has been in state 'Archive In Progress' for over 90 minutes, archive_busy will be changed back to 0 (false)
                         THEN 102
-                    WHEN J.Storage_Server Is Null
+                    WHEN J.Storage_Server IS NULL
                         -- Results_Transfer step for job without a specific storage server
                         THEN 6
                     WHEN JS.Next_Try > CURRENT_TIMESTAMP
@@ -745,7 +745,7 @@ BEGIN
                  ) TP
                    ON JS.Tool = 'Results_Transfer' AND
                       TP.machine = Coalesce(J.storage_server, TP.machine)        -- Must use Coalesce here to handle jobs where the storage server is not defined in sw.t_jobs
-            WHERE JS.state = 2 And (CURRENT_TIMESTAMP > JS.next_try Or _infoLevel > 0)
+            WHERE JS.state = 2 AND (CURRENT_TIMESTAMP > JS.next_try OR _infoLevel > 0)
             ORDER BY
                 Association_Type,
                 J.priority,        -- Job_Priority
@@ -817,7 +817,7 @@ BEGIN
                     ) TP
                     ON JS.Tool = 'Results_Transfer' AND
                        TP.machine <> J.storage_server
-                   WHERE JS.state = 2 And (CURRENT_TIMESTAMP > JS.next_try Or _infoLevel > 0)
+                   WHERE JS.state = 2 AND (CURRENT_TIMESTAMP > JS.next_try OR _infoLevel > 0)
                 ORDER BY
                     Association_Type,
                     J.priority,        -- Job_Priority
@@ -965,10 +965,10 @@ BEGIN
                                     PTGD.tool_name <> 'Results_Transfer'        -- Candidate Result_Transfer steps were found above
                  ) TP
                    ON TP.tool_name = JS.tool
-            WHERE (CURRENT_TIMESTAMP > JS.Next_Try Or _infoLevel > 0) AND
+            WHERE (CURRENT_TIMESTAMP > JS.Next_Try OR _infoLevel > 0) AND
                   J.priority <= TP.max_job_priority AND
                   (JS.state In (2, 11) OR _remoteInfoID > 1 And JS.state = 9) AND
-                  NOT EXISTS (SELECT * FROM sw.t_local_processor_job_step_exclusion JSE WHERE JSE.processor_id = TP.processor_id And JSE.step = JS.Step)
+                  NOT EXISTS (SELECT * FROM sw.t_local_processor_job_step_exclusion JSE WHERE JSE.processor_id = TP.processor_id AND JSE.step = JS.Step)
             ORDER BY
                 Association_Type,
                 Tool_Priority,
@@ -1070,7 +1070,7 @@ BEGIN
             --           (JS.state In (2, 11) OR JS.state = 9 AND JS.remote_info_id = _remoteInfoId) AND
             --           TP.memory_available >= JS.memory_usage_mb AND
             --           NOT (tool = 'Results_Transfer' AND J.archive_busy = 1) AND
-            --           NOT EXISTS (SELECT * FROM sw.t_local_processor_job_step_exclusion JSE WHERE JSE.processor_id = TP.processor_id And JSE.step = JS.step) AND
+            --           NOT EXISTS (SELECT * FROM sw.t_local_processor_job_step_exclusion JSE WHERE JSE.processor_id = TP.processor_id AND JSE.step = JS.step) AND
             --           -- Exclusively associated steps ('Exclusive Association', aka Association_Type=1):
             --           -- (Processor_GP = 0 AND Tool_GP = 'N' AND JS.job IN (SELECT job FROM sw.t_local_job_processors WHERE processor = Processor_Name AND general_processing = 0))
             --     ORDER BY
@@ -1173,13 +1173,13 @@ BEGIN
                                     PTGD.tool_name <> 'Results_Transfer'            -- Candidate Result_Transfer steps were found above
                             ) TP
                    ON TP.tool_name = JS.tool
-            WHERE (TP.cpus_available >= CASE WHEN JS.state = 9 Or _remoteInfoID > 1 Then -50 ELSE TP.cpu_load END) AND
+            WHERE (TP.cpus_available >= CASE WHEN JS.state = 9 OR _remoteInfoID > 1 THEN -50 ELSE TP.cpu_load END) AND
                   J.priority <= TP.max_job_priority AND
                   (CURRENT_TIMESTAMP > JS.Next_Try Or _infoLevel > 0) AND
                   (JS.state In (2, 11) OR _remoteInfoID > 1 And JS.state = 9) AND
                   TP.memory_available >= JS.memory_usage_mb AND
                   NOT (tool = 'Results_Transfer' AND J.Archive_Busy = 1) AND
-                  NOT EXISTS (SELECT * FROM sw.t_local_processor_job_step_exclusion JSE WHERE JSE.processor_id = TP.processor_id And JSE.step = JS.Step)
+                  NOT EXISTS (SELECT * FROM sw.t_local_processor_job_step_exclusion JSE WHERE JSE.processor_id = TP.processor_id AND JSE.step = JS.Step)
 
                     -- To improve query speed remove the Case Statement above and uncomment the following series of tests
                     -- AND
@@ -1307,7 +1307,7 @@ BEGIN
 
         UPDATE Tmp_CandidateJobSteps
         SET Association_Type = 20
-        WHERE Association_Type < _associationTypeIgnoreThreshold And Next_Try > CURRENT_TIMESTAMP;
+        WHERE Association_Type < _associationTypeIgnoreThreshold AND Next_Try > CURRENT_TIMESTAMP;
 
         If _infoLevel = 0 Then
             DELETE FROM Tmp_CandidateJobSteps
@@ -1378,7 +1378,7 @@ BEGIN
         FROM
             sw.t_job_steps JS INNER JOIN
             Tmp_CandidateJobSteps CJS ON CJS.job = JS.job AND CJS.step = JS.step
-        WHERE JS.state IN (2, 9, 11) And CJS.Association_Type <= _associationTypeIgnoreThreshold
+        WHERE JS.state IN (2, 9, 11) AND CJS.Association_Type <= _associationTypeIgnoreThreshold
         ORDER BY Seq
         LIMIT 1
         FOR UPDATE;         -- Lock the row to prevent other managers from selecting this job
@@ -1424,11 +1424,11 @@ BEGIN
                                   END,
                 Remote_Start =    CASE WHEN _remoteInfoId > 1 AND _jobIsRunningRemote = 0 THEN CURRENT_TIMESTAMP
                                        WHEN _remoteInfoId > 1 AND _jobIsRunningRemote = 1 THEN Remote_Start
-                                       ELSE NULL
+                                       ELSE Null
                                   END,
                 Remote_Finish =   CASE WHEN _remoteInfoId > 1 AND _jobIsRunningRemote = 0 THEN Null
                                        WHEN _remoteInfoId > 1 AND _jobIsRunningRemote = 1 THEN Remote_Finish
-                                       ELSE NULL
+                                       ELSE Null
                                   END,
                 Remote_Progress = CASE WHEN _remoteInfoId > 1 AND _jobIsRunningRemote = 0 THEN 0
                                        WHEN _remoteInfoId > 1 AND _jobIsRunningRemote = 1 THEN Remote_Progress
@@ -1436,8 +1436,8 @@ BEGIN
                                   END,
                 Completion_Code = 0,
                 Completion_Message = CASE WHEN Coalesce(Completion_Code, 0) > 0 THEN '' ELSE Null END,
-                Evaluation_Code =    CASE WHEN Evaluation_Code Is Null THEN Null ELSE 0 END,
-                Evaluation_Message = CASE WHEN Evaluation_Code Is Null THEN Null ELSE '' END
+                Evaluation_Code =    CASE WHEN Evaluation_Code IS NULL THEN Null ELSE 0 END,
+                Evaluation_Message = CASE WHEN Evaluation_Code IS NULL THEN Null ELSE '' END
             WHERE Job = _job AND
                   Step = _step;
 

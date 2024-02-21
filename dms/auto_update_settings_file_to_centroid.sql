@@ -32,7 +32,7 @@ BEGIN
     SELECT msgfplus_auto_centroid
     INTO _newSettingsFile
     FROM t_settings_files
-    WHERE file_name = _settingsFile And
+    WHERE file_name = _settingsFile AND
           analysis_tool = _toolName;
 
     If Coalesce(_newSettingsFile, '') = '' And _toolName Like 'Sequest%' Then

@@ -116,7 +116,7 @@ BEGIN
         SELECT dataset_id
         INTO _existingDatasetID
         FROM t_requested_run
-        WHERE request_id = _requestID AND Not dataset_id Is Null;
+        WHERE request_id = _requestID AND NOT dataset_id IS NULL;
 
         If FOUND And _existingDatasetID > 0 And _existingDatasetID <> _datasetID Then
 

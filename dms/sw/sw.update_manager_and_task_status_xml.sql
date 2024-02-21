@@ -279,7 +279,7 @@ BEGIN
 
         UPDATE Tmp_Processor_Status_Info
         SET Remote_Manager = ''
-        WHERE Remote_Manager Is Null;
+        WHERE Remote_Manager IS NULL;
 
         -- Change the IsNew flag to false for known processors
 
@@ -490,7 +490,7 @@ BEGIN
                                    ELSE Target.Most_Recent_Job_Info
                                    END
         FROM Tmp_Processor_Status_Info Src
-        WHERE Src.Processor_Name = Target.Processor_Name And Src.Remote_Manager = '';
+        WHERE Src.Processor_Name = Target.Processor_Name AND Src.Remote_Manager = '';
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 

@@ -84,7 +84,7 @@ BEGIN
                 FROM V_NEXUS_Import_Proposal_Participants Source
                      INNER JOIN ( SELECT proposal_id
                                   FROM t_eus_proposals
-                                  WHERE state_id IN (1,2) Or
+                                  WHERE state_id IN (1,2) OR
                                         _updateUsersOnInactiveProposals AND state_id <> 4   -- State for is 'No Interest'
                                  ) DmsEUSProposals
                        ON Source.project_id = DmsEUSProposals.proposal_id
@@ -143,11 +143,11 @@ BEGIN
 
         UPDATE t_eus_users
         SET first_name = Ltrim(Substring(name_fm, Position(',' In name_fm) + 1, 128))
-        WHERE Coalesce(first_name, '') = '' And   Position(',' In name_fm) > 1
+        WHERE Coalesce(first_name, '') = '' AND   Position(',' In name_fm) > 1
 
         UPDATE t_eus_users
         SET last_name = Substring(name_fm, 1,  Position(',' In name_fm) - 1)
-        WHERE Coalesce(last_name, '') = '' And Position(',' In name_fm) > 1
+        WHERE Coalesce(last_name, '') = '' AND Position(',' In name_fm) > 1
 
         _currentLocation := 'Update t_eus_proposal_users';
 

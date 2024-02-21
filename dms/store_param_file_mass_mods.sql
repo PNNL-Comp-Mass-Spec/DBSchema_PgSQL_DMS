@@ -773,8 +773,8 @@ BEGIN
                 SELECT Trim(Value)
                 INTO _modName
                 FROM Tmp_ModDef
-                WHERE _paramFileType::citext = 'MSGFPlus' And EntryID = 5 Or
-                      _paramFileType::citext = 'TopPIC' And EntryID = 1;
+                WHERE _paramFileType::citext = 'MSGFPlus' AND EntryID = 5 OR
+                      _paramFileType::citext = 'TopPIC' AND EntryID = 1;
 
                 -- Auto change Glu->pyro-Glu to Dehydrated
                 -- Both have empirical formula H(-2) O(-1) but DMS can only associate one Unimod name with each unique empirical formula and Dehydrated is associated with H(-2) O(-1)
@@ -898,8 +898,8 @@ BEGIN
             SELECT Trim(Value)
             INTO _location
             FROM Tmp_ModDef
-            WHERE _paramFileType::citext = 'MSGFPlus' And EntryID = 4 Or
-                  _paramFileType::citext = 'TopPIC' And EntryID = 4;
+            WHERE _paramFileType::citext = 'MSGFPlus' AND EntryID = 4 OR
+                  _paramFileType::citext = 'TopPIC' AND EntryID = 4;
 
             If _paramFileType::citext = 'MSGFPlus' And Not _location In ('any', 'N-term', 'C-term', 'Prot-N-term', 'Prot-C-term') Then
                 _message := format('Invalid location "%s"; should be "any", "N-term", "C-term", "Prot-N-term", or "Prot-C-term"; see row: %s',
@@ -927,7 +927,7 @@ BEGIN
                 SELECT Trim(Value)
                 INTO _field
                 FROM Tmp_ModDef
-                WHERE _paramFileType::citext = 'DiaNN' And EntryID = 3;
+                WHERE _paramFileType::citext = 'DiaNN' AND EntryID = 3;
 
                 If _field = '*n' Then
                     _location := 'Prot-N-term';   -- Protein N-terminus
@@ -964,8 +964,8 @@ BEGIN
             SELECT Trim(Value)
             INTO _field
             FROM Tmp_ModDef
-            WHERE EntryID = 2 And _paramFileType::citext In ('MSGFPlus') Or
-                  EntryID = 3 And _paramFileType::citext In ('DiaNN', 'TopPIC');
+            WHERE EntryID = 2 AND _paramFileType::citext IN ('MSGFPlus') OR
+                  EntryID = 3 AND _paramFileType::citext IN ('DiaNN', 'TopPIC');
 
             If _field = 'any' Then
                 _message := format('Use * to match all residues, not the word "any"; see row: %s', _row);
@@ -1233,7 +1233,7 @@ BEGIN
             SELECT string_agg(Residue_Symbol, ', ' ORDER BY Residue_Symbol)
             INTO _msgAddon
             FROM Tmp_Residues
-            WHERE Residue_ID Is Null;
+            WHERE Residue_ID IS NULL;
 
             _matchCount := array_length(string_to_array(_msgAddon, ','), 1);
 
@@ -1330,10 +1330,10 @@ BEGIN
             )
         SELECT _modName AS Mod_Name,
                _massCorrectionID AS MassCorrectionID,
-               CASE WHEN _modTypeSymbol = 'S' And Residue_Symbol IN ('<', '>') Then 'T' Else _modTypeSymbol End AS Mod_Type,
+               CASE WHEN _modTypeSymbol = 'S' AND Residue_Symbol IN ('<', '>') THEN 'T' ELSE _modTypeSymbol END AS Mod_Type,
                Residue_Symbol,
                Residue_ID,
-               _localSymbolIDToStore as Local_Symbol_ID,
+               _localSymbolIDToStore AS Local_Symbol_ID,
                Residue_Desc,
                _modMass,
                _maxQuantModID,

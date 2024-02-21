@@ -172,7 +172,7 @@ BEGIN
     SELECT job,
            step
     FROM sw.t_job_steps
-    WHERE tool In ('Formularity', 'NOMSI') AND
+    WHERE tool IN ('Formularity', 'NOMSI') AND
           state IN (6, 16) AND
           completion_message = 'No peaks found';
 

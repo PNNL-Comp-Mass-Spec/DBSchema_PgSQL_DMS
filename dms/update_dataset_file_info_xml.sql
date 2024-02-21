@@ -364,7 +364,7 @@ BEGIN
                                   ScanCount text PATH '@ScanCount',
                                   ScanFilter text PATH '@ScanFilterText')
              ) XmlQ
-        WHERE Not XmlQ.ScanType IS NULL;
+        WHERE NOT XmlQ.ScanType IS NULL;
 
         ---------------------------------------------------
         -- Now extract out the instrument files
@@ -405,7 +405,7 @@ BEGIN
         SELECT InstFileHashType
         INTO _unrecognizedHashType
         FROM Tmp_InstrumentFiles
-        WHERE Not InstFileHashType In ('SHA1');
+        WHERE NOT InstFileHashType IN ('SHA1');
 
         If FOUND Then
             _msg := format('Unrecognized file hash type: %s; all rows in T_Dataset_File are assumed to be SHA1. Will add the file info anyway, but this hashtype could be problematic elsewhere',
@@ -437,7 +437,7 @@ BEGIN
             FROM t_dataset_files DSFiles
                  INNER JOIN Tmp_InstrumentFiles NewDSFiles
                    ON DSFiles.file_hash = NewDSFiles.InstFileHash
-            WHERE DSFiles.dataset_id <> _datasetID And DSFiles.deleted = false And DSFiles.file_size_bytes > 0
+            WHERE DSFiles.dataset_id <> _datasetID AND DSFiles.deleted = false AND DSFiles.file_size_bytes > 0
             GROUP BY DSFiles.dataset_id;
 
             If Exists (SELECT Dataset_ID FROM Tmp_DuplicateDatasets WHERE MatchingFileCount >= _instrumentFileCount) Then
@@ -449,14 +449,14 @@ BEGIN
                 WHERE Tmp_DuplicateDatasets.dataset_id = Src.dataset_id AND Src.allow_duplicates;
             End If;
 
-            If Exists (SELECT Dataset_ID FROM Tmp_DuplicateDatasets WHERE MatchingFileCount >= _instrumentFileCount And Not Allow_Duplicates) Then
+            If Exists (SELECT Dataset_ID FROM Tmp_DuplicateDatasets WHERE MatchingFileCount >= _instrumentFileCount AND NOT Allow_Duplicates) Then
 
                 _currentLocation := 'Duplicate dataset found; determine duplicate dataset ID';
 
                 SELECT Dataset_ID
                 INTO _duplicateDatasetID
                 FROM Tmp_DuplicateDatasets
-                WHERE MatchingFileCount >= _instrumentFileCount And Not Allow_Duplicates
+                WHERE MatchingFileCount >= _instrumentFileCount AND NOT Allow_Duplicates
                 ORDER BY Dataset_ID DESC
                 LIMIT 1;
 
@@ -494,14 +494,14 @@ BEGIN
                 RETURN;
             End If;
 
-            If Exists (SELECT Dataset_ID FROM Tmp_DuplicateDatasets WHERE MatchingFileCount >= _instrumentFileCount And Allow_Duplicates) Then
+            If Exists (SELECT Dataset_ID FROM Tmp_DuplicateDatasets WHERE MatchingFileCount >= _instrumentFileCount AND Allow_Duplicates) Then
 
                 _currentLocation := 'Duplicate dataset found; log warning since Allow_Duplicates is true';
 
                 SELECT Dataset_ID
                 INTO _duplicateDatasetID
                 FROM Tmp_DuplicateDatasets
-                WHERE MatchingFileCount >= _instrumentFileCount And Allow_Duplicates
+                WHERE MatchingFileCount >= _instrumentFileCount AND Allow_Duplicates
                 ORDER BY Dataset_ID DESC
                 LIMIT 1;
 
@@ -542,7 +542,7 @@ BEGIN
                 SET separation_type = _optimalSeparationType
                 WHERE dataset_id = _datasetID;
 
-                If Not Exists (SELECT entry_id FROM t_log_entries WHERE message LIKE 'Auto-updated separation type%' And Entered >= CURRENT_TIMESTAMP - INTERVAL '2 hours') Then
+                If Not Exists (SELECT entry_id FROM t_log_entries WHERE message LIKE 'Auto-updated separation type%' AND Entered >= CURRENT_TIMESTAMP - INTERVAL '2 hours') Then
                     _msg := format('Auto-updated separation type from %s to %s for dataset %s', _separationType, _optimalSeparationType, _datasetName);
                     CALL post_log_entry ('Normal', _msg, 'Update_Dataset_File_Info_XML');
                 End If;
@@ -864,7 +864,7 @@ BEGIN
         FROM t_dataset_scan_types T
              LEFT OUTER JOIN t_dataset_scan_type_glossary G
                ON G.scan_type = T.scan_type
-        WHERE dataset_id = _datasetID AND G.scan_type Is Null;
+        WHERE dataset_id = _datasetID AND G.scan_type IS NULL;
 
         If Coalesce(_missingScanTypes, '') <> '' Then
             If _missingScanTypes Like '%,%' Then

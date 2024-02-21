@@ -178,7 +178,7 @@ BEGIN
     SELECT MAX(ingest_steps_completed)
     INTO _ingestStepsCompleted
     FROM cap.t_myemsl_uploads
-    WHERE job = _job AND Not ingest_steps_completed Is Null;
+    WHERE job = _job AND NOT ingest_steps_completed IS NULL;
 
     If _infoOnly Then
         RAISE INFO 'Call set_myemsl_upload_verified _datasetID=%, _statusNumList=''%'', _statusURIList=''%'', _ingestStepsCompleted=%)',

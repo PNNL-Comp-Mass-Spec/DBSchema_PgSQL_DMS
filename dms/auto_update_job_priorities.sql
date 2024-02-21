@@ -265,7 +265,7 @@ BEGIN
     -- Update job priorities
     ----------------------------------------------
 
-    If Not Exists (SELECT * FROM Tmp_JobsToUpdate WHERE Not Ignored) Then
+    If Not Exists (SELECT * FROM Tmp_JobsToUpdate WHERE NOT Ignored) Then
         _message := 'No candidate jobs were found';
     Else
         INSERT INTO t_analysis_job_priority_updates (
@@ -281,13 +281,13 @@ BEGIN
                U.Source,
                CURRENT_TIMESTAMP
         FROM Tmp_JobsToUpdate U
-        WHERE Not U.Ignored;
+        WHERE NOT U.Ignored;
 
         UPDATE t_analysis_job J
         SET priority = U.New_Priority
         FROM Tmp_JobsToUpdate U
         WHERE J.job = U.Job AND
-              Not U.Ignored;
+              NOT U.Ignored;
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 

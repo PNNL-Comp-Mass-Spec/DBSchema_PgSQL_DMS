@@ -259,7 +259,7 @@ BEGIN
            FROM Tmp_Measurements
          ) FilterQ
     WHERE Target.Name = FilterQ.Name AND
-          Not FilterQ.Value Is Null;
+          NOT FilterQ.Value IS NULL;
 
     -- Do not allow values to be larger than 1E+37 or smaller than -1E+37
     UPDATE Tmp_Measurements

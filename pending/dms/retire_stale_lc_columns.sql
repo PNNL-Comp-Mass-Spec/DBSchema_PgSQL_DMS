@@ -100,7 +100,7 @@ BEGIN
            ON LCCol.lc_column_id = DS.lc_column_ID
     WHERE LCCol.column_state_id <> 3 AND
           LCCol.created < CURRENT_TIMESTAMP - make_interval(months => _unusedThresholdMonths) AND
-          DS.dataset_id Is Null
+          DS.dataset_id IS NULL
     ORDER BY LCCol.lc_column_id;
 
     -----------------------------------------------------------

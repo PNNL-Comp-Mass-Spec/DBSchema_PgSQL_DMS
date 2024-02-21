@@ -162,7 +162,7 @@ BEGIN
     SELECT instrument_id
     INTO _instrumentID
     FROM t_instrument_name
-    WHERE instrument_group in ('Eclipse', 'QExactive', 'VelosOrbi') AND
+    WHERE instrument_group IN ('Eclipse', 'QExactive', 'VelosOrbi') AND
           status = 'Active'
     ORDER BY CASE WHEN instrument LIKE 'External%' THEN 1 ELSE 0 END, instrument_id DESC
     LIMIT 1;
@@ -208,7 +208,7 @@ BEGIN
     SELECT analysis_tool_id, param_file_type_id, analysis_tool
     INTO _analysisToolInfo
     FROM t_analysis_tool
-    WHERE analysis_tool like 'MSGFPlus%' And Active > 0
+    WHERE analysis_tool LIKE 'MSGFPlus%' AND Active > 0
     ORDER BY analysis_tool_id
     Limit 1;
 
@@ -216,7 +216,7 @@ BEGIN
         SELECT analysis_tool_id, param_file_type_id, analysis_tool
         INTO _analysisToolInfo
         FROM t_analysis_tool
-        WHERE analysis_tool like 'MSGFPlus%'
+        WHERE analysis_tool LIKE 'MSGFPlus%'
         ORDER BY analysis_tool_id
         Limit 1;
 
@@ -516,7 +516,7 @@ BEGIN
         INSERT INTO t_experiment_plex_members (plex_exp_id, channel, exp_id, channel_type_id, comment)
         SELECT PM.plex_exp_id, PM.channel, PM.exp_id, PM.channel_type_id, PM.comment
         FROM T_Tmp_Experiment_Plex_Members PM
-        WHERE Not PM.mapping_defined;
+        WHERE NOT PM.mapping_defined;
 
         _action := 'Created in t_experiment_plex_members';
         _plexMappingFoundOrCreated := true;
@@ -664,7 +664,7 @@ BEGIN
 
         If _jobsFoundOrCreated Then
             DELETE FROM t_analysis_job
-            WHERE job in (select job from T_Tmp_Jobs);
+            WHERE JOB IN (SELECT job FROM T_Tmp_Jobs);
 
             If FOUND Then
                 SELECT COUNT(L.event_id)
@@ -696,7 +696,7 @@ BEGIN
 
         If _datasetsFoundOrCreated Then
             DELETE FROM t_dataset
-            WHERE dataset_id in (select dataset_id from T_Tmp_Datasets);
+            WHERE dataset_id IN (SELECT dataset_id FROM T_Tmp_Datasets);
 
             If FOUND Then
                 SELECT COUNT(L.event_id)
@@ -728,7 +728,7 @@ BEGIN
 
         If _experimentsFoundOrCreated Then
             DELETE FROM t_experiments
-            WHERE exp_id in (select experiment_id from T_Tmp_Experiments);
+            WHERE exp_id IN (SELECT experiment_id FROM T_Tmp_Experiments);
 
             If FOUND Then
                 SELECT COUNT(L.event_id)
@@ -760,7 +760,7 @@ BEGIN
 
         If _campaignsFoundOrCreated Then
             DELETE FROM t_campaign
-            WHERE campaign_id in (select campaign_id from T_Tmp_Campaigns);
+            WHERE campaign_id IN (SELECT campaign_id FROM T_Tmp_Campaigns);
 
             If FOUND Then
                 SELECT COUNT(L.event_id)
@@ -810,7 +810,7 @@ BEGIN
             FROM v_event_log E
                  INNER JOIN T_Tmp_Campaigns C
                    ON E.target_id = C.campaign_id
-            WHERE entered >= _today and target = 'Campaign') RankQ
+            WHERE entered >= _today AND target = 'Campaign') RankQ
         WHERE RankQ.EventLogRank = 1
         ORDER BY RankQ.event_id;
 
@@ -834,7 +834,7 @@ BEGIN
                    'at ' || public.timestamp_text(E.entered) AS comment,
                    Row_Number() OVER (PARTITION BY E.target_id, Coalesce(E.state_name, '') ORDER BY E.event_id DESC) AS EventLogRank
             FROM v_event_log E
-            WHERE entered >= CURRENT_TIMESTAMP - Interval '2 hours' and target = 'Campaign') RankQ
+            WHERE entered >= CURRENT_TIMESTAMP - Interval '2 hours' AND target = 'Campaign') RankQ
         WHERE RankQ.EventLogRank = 1
         ORDER BY RankQ.event_id;
     End If;
@@ -855,7 +855,7 @@ BEGIN
             FROM v_event_log E
                  INNER JOIN T_Tmp_Experiments
                    ON E.target_id = T_Tmp_Experiments.experiment_id
-            WHERE entered >= _today and target = 'Experiment') RankQ
+            WHERE entered >= _today AND target = 'Experiment') RankQ
         WHERE RankQ.EventLogRank = 1
         ORDER BY RankQ.event_id;
 
@@ -878,7 +878,7 @@ BEGIN
                    'at ' || public.timestamp_text(E.entered) AS comment,
                    Row_Number() OVER (PARTITION BY E.target_id, Coalesce(E.state_name, '') ORDER BY E.event_id DESC) AS EventLogRank
             FROM v_event_log E
-            WHERE entered >= CURRENT_TIMESTAMP - Interval '2 hours' and target = 'Experiment') RankQ
+            WHERE entered >= CURRENT_TIMESTAMP - Interval '2 hours' AND target = 'Experiment') RankQ
         WHERE RankQ.EventLogRank = 1
         ORDER BY RankQ.event_id;
     End If;
@@ -899,7 +899,7 @@ BEGIN
             FROM v_event_log E
                  INNER JOIN T_Tmp_Datasets
                    ON E.target_id = T_Tmp_Datasets.dataset_id
-            WHERE entered >= _today and target IN ('Dataset', 'DS Rating')) RankQ
+            WHERE entered >= _today AND target IN ('Dataset', 'DS Rating')) RankQ
         WHERE RankQ.EventLogRank = 1
         ORDER BY RankQ.event_id;
 
@@ -922,7 +922,7 @@ BEGIN
                    'at ' || public.timestamp_text(E.entered) AS comment,
                    Row_Number() OVER (PARTITION BY E.target_id, Coalesce(E.state_name, '') ORDER BY E.event_id DESC) AS EventLogRank
             FROM v_event_log E
-            WHERE entered >= CURRENT_TIMESTAMP - Interval '2 hours' and target IN ('Dataset', 'DS Rating')) RankQ
+            WHERE entered >= CURRENT_TIMESTAMP - Interval '2 hours' AND target IN ('Dataset', 'DS Rating')) RankQ
         WHERE RankQ.EventLogRank = 1
         ORDER BY RankQ.event_id;
     End If;
@@ -945,7 +945,7 @@ BEGIN
                    ON E.target_id = T_Tmp_Jobs.job
                  LEFT OUTER JOIN T_Tmp_Datasets
                    ON T_Tmp_Jobs.dataset_id = T_Tmp_Datasets.dataset_id
-            WHERE entered >= _today and target = 'Job') RankQ
+            WHERE entered >= _today AND target = 'Job') RankQ
         WHERE RankQ.EventLogRank = 1
         ORDER BY RankQ.event_id;
 
@@ -968,7 +968,7 @@ BEGIN
                    'at ' || public.timestamp_text(E.entered) AS comment,
                    Row_Number() OVER (PARTITION BY E.target_id, Coalesce(E.state_name, '') ORDER BY E.event_id DESC) AS EventLogRank
             FROM v_event_log E
-            WHERE entered >= CURRENT_TIMESTAMP - Interval '2 hours' and target = 'Job') RankQ
+            WHERE entered >= CURRENT_TIMESTAMP - Interval '2 hours' AND target = 'Job') RankQ
         WHERE RankQ.EventLogRank = 1
         ORDER BY RankQ.event_id;
     End If;
@@ -987,7 +987,7 @@ BEGIN
                    'at ' || public.timestamp_text(H.entered) AS comment,
                    Row_Number() OVER (PARTITION BY H.plex_exp_id, H.exp_id, H.state ORDER BY H.entry_id DESC) AS EventLogRank
             FROM t_experiment_plex_members_history H
-            WHERE H.plex_exp_id in (SELECT DISTINCT plex_exp_id FROM T_Tmp_Experiment_Plex_Members) AND
+            WHERE H.plex_exp_id IN (SELECT DISTINCT plex_exp_id FROM T_Tmp_Experiment_Plex_Members) AND
                   H.entered >= _today) RankQ
         WHERE RankQ.EventLogRank = 1
         ORDER BY RankQ.entry_id;

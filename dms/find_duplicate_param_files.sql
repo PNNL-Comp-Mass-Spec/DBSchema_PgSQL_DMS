@@ -156,7 +156,7 @@ BEGIN
         SELECT string_agg(PFTF.param_file_type, ', ' ORDER BY PFTF.param_file_type)
         INTO _message
         FROM Tmp_ParamFileTypeFilter PFTF
-        WHERE Not PFTF.Valid;
+        WHERE NOT PFTF.Valid;
 
         If Position(', ' In _message) > 0 Then
             _message := format('Warning: _paramFileTypeList has the following invalid parameter file types: %s', _message);
@@ -167,7 +167,7 @@ BEGIN
         RAISE WARNING '%', _message;
 
         DELETE FROM Tmp_ParamFileTypeFilter
-        WHERE Not Valid;
+        WHERE NOT Valid;
     End If;
 
     -----------------------------------------

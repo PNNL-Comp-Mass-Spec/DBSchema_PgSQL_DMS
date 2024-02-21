@@ -215,7 +215,7 @@ BEGIN
                 End If;
             End If;
 
-            If Not Exists (SELECT batch_id FROM t_requested_run_batches WHERE batch_id In (SELECT batch_id FROM Tmp_BatchIDs)) Then
+            If Not Exists (SELECT batch_id FROM t_requested_run_batches WHERE batch_id IN (SELECT batch_id FROM Tmp_BatchIDs)) Then
                 If _insertCount = 1 Then
                     _batchDescription := format('Invalid requested run batch ID: %s does not exist', _batchIDs);
                 Else
@@ -331,9 +331,9 @@ BEGIN
             RAISE EXCEPTION '%', _msg;
         End If;
 
-        If Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackage::citext And deactivated = 'Y') Then
+        If Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackage::citext AND deactivated = 'Y') Then
             _message := public.append_to_text(_message, format('Warning: Work Package %s is deactivated', _workPackage));
-        ElsIf Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackage::citext And charge_code_state = 0) Then
+        ElsIf Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackage::citext AND charge_code_state = 0) Then
             _message := public.append_to_text(_message, format('Warning: Work Package %s is likely deactivated', _workPackage));
         End If;
 

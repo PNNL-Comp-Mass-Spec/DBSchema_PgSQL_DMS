@@ -496,7 +496,7 @@ BEGIN
         FROM (SELECT Staging_ID,
                      _seq + Row_Number() OVER (ORDER BY Dataset_ID, Type) AS New_Seq
               FROM Tmp_Staging
-              WHERE Mark Is Null) SourceQ
+              WHERE Mark IS NULL) SourceQ
         WHERE Tmp_Staging.Staging_ID = SourceQ.Staging_ID;
 
         If Exists (SELECT Debug_ID FROM Tmp_DebugReports WHERE Debug_ID = 3) Then
@@ -554,7 +554,7 @@ BEGIN
             SELECT Seq,
                    Comment
             FROM Tmp_Staging
-            WHERE Not Seq Is Null
+            WHERE NOT Seq IS NULL
             ORDER BY Seq
         LOOP
             If Coalesce(_cleanedComment, '') = '' Then
@@ -732,7 +732,7 @@ BEGIN
                        CASE WHEN Coalesce(InstUsage.usage_type_id, 0) = 0 THEN Tmp_Staging.usage         ELSE InstUsageType.Usage_Type END AS Usage,
                        CASE WHEN Coalesce(InstUsage.usage_type_id, 0) = 0 THEN Tmp_Staging.usage_type_id ELSE InstUsage.usage_type_id END AS Usage_Type_ID,
                        CASE WHEN Coalesce(InstUsage.users, '') = ''       THEN Tmp_Staging.users         ELSE InstUsage.users END AS Users,
-                       CASE WHEN InstUsage.operator Is Null               THEN Tmp_Staging.Operator_ID   ELSE InstUsage.operator END AS Operator,
+                       CASE WHEN InstUsage.operator IS NULL               THEN Tmp_Staging.Operator_ID   ELSE InstUsage.operator END AS Operator,
                        Tmp_Staging.Year,
                        Tmp_Staging.Month,
                        CASE WHEN Coalesce(InstUsage.comment, '') = '' THEN Tmp_Staging.comment ELSE InstUsage.comment END AS Comment
@@ -959,7 +959,7 @@ BEGIN
                 proposal =      CASE WHEN Coalesce(InstUsage.proposal, '') = ''    THEN Tmp_Staging.proposal      ELSE InstUsage.proposal END,
                 usage_type_id = CASE WHEN Coalesce(InstUsage.usage_type_id, 0) = 0 THEN Tmp_Staging.usage_type_id ELSE InstUsage.usage_type_id END,
                 users =         CASE WHEN Coalesce(InstUsage.users, '') = ''       THEN Tmp_Staging.users         ELSE InstUsage.users END,
-                operator =      CASE WHEN InstUsage.operator Is Null               THEN Tmp_Staging.operator_id   ELSE InstUsage.operator END,
+                operator =      CASE WHEN InstUsage.operator IS NULL               THEN Tmp_Staging.operator_id   ELSE InstUsage.operator END,
                 year = Tmp_Staging.year,
                 month = Tmp_Staging.month,
                 comment = CASE WHEN Coalesce(InstUsage.comment, '') = '' THEN Tmp_Staging.comment ELSE InstUsage.comment END,
@@ -1019,10 +1019,10 @@ BEGIN
                         CASE WHEN Coalesce(InstUsage.proposal, '') = ''    THEN Tmp_Staging.proposal      ELSE InstUsage.proposal END AS Proposal,
                         CASE WHEN Coalesce(InstUsage.usage_type_id, 0) = 0 THEN Tmp_Staging.usage_type_id ELSE InstUsage.usage_type_id END AS Usage_Type_ID,
                         CASE WHEN Coalesce(InstUsage.users, '') = ''       THEN Tmp_Staging.users         ELSE InstUsage.users END AS Users,
-                        CASE WHEN InstUsage.operator Is Null               THEN Tmp_Staging.operator_id   ELSE InstUsage.operator END AS Operator,
+                        CASE WHEN InstUsage.operator IS NULL               THEN Tmp_Staging.operator_id   ELSE InstUsage.operator END AS Operator,
                         Tmp_Staging.Year,
                         Tmp_Staging.Month,
-                        CASE WHEN Coalesce(InstUsage.comment, '') = '' THEN Tmp_Staging.comment ELSE InstUsage.comment End AS Comment,
+                        CASE WHEN Coalesce(InstUsage.comment, '') = '' THEN Tmp_Staging.comment ELSE InstUsage.comment END AS Comment,
                         public.timestamp_text(CURRENT_TIMESTAMP) AS Updated,
                         _callingUser AS Calling_User
                 FROM t_emsl_instrument_usage_report InstUsage

@@ -293,7 +293,7 @@ BEGIN
                        public.combine_paths(public.combine_paths(Archive_Folder_Path, Dataset),  Results_Folder)
                 INTO _sourceJob2Dataset, _sourceJob2FolderPath, _sourceJob2FolderPathArchive
                 FROM public.V_Source_Analysis_Job
-                WHERE Job = _sourceJob2 And Not Results_Folder Is Null;
+                WHERE Job = _sourceJob2 AND NOT Results_Folder IS NULL;
 
                 If Not FOUND Then
                     _warningMessage := format('Source Job #2 %s not found in DMS, or has a null value for Results_Folder', _sourceJob2);

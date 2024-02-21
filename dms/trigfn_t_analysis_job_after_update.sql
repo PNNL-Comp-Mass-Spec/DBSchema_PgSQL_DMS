@@ -41,8 +41,8 @@ BEGIN
     WHERE deleted.job_state_id <> inserted.job_state_id;    -- Use <> since job_state_id is never null
 
     UPDATE t_analysis_job
-    SET last_affected = CASE WHEN NOT inserted.finish Is Null AND inserted.finish >= inserted.start THEN inserted.finish
-                             WHEN NOT inserted.start Is Null  AND inserted.start >= inserted.finish THEN inserted.start
+    SET last_affected = CASE WHEN NOT inserted.finish IS NULL AND inserted.finish >= inserted.start THEN inserted.finish
+                             WHEN NOT inserted.start IS NULL  AND inserted.start >= inserted.finish THEN inserted.start
                              ELSE CURRENT_TIMESTAMP
                         END,
         state_name_cached = COALESCE(AJDAS.job_State, ''),

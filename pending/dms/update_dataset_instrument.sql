@@ -270,7 +270,7 @@ BEGIN
                    Output_Folder,
                    Instrument
             FROM cap.V_Task_Steps
-            WHERE Job = _captureJob And
+            WHERE Job = _captureJob AND
                   Tool = 'DatasetCapture'
         LOOP
             _infoData := format(_formatSpecifier,

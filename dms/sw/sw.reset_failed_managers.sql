@@ -53,8 +53,9 @@ BEGIN
     SELECT Processor_Name,
            Status_Date
     FROM sw.v_processor_status_warnings
-    WHERE (Most_Recent_Log_Message = 'Flag file' Or
-           _resetAllWithError And Mgr_Status = 'Stopped Error') AND
+    WHERE (Most_Recent_Log_Message = 'Flag file' OR
+           _resetAllWithError And Mgr_Status = 'Stopped Error'
+          ) AND
           Status_Date > CURRENT_TIMESTAMP - INTERVAL '6 hours';
 
     If Not FOUND Then

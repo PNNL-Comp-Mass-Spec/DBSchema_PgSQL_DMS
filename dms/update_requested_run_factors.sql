@@ -214,7 +214,7 @@ BEGIN
     -- If table contains DatasetID values, auto-populate the Identifier column with RequestIDs
     -----------------------------------------------------------
 
-    If Exists (SELECT DatasetID FROM Tmp_FactorInfo WHERE Not DatasetID IS NULL) Then
+    If Exists (SELECT DatasetID FROM Tmp_FactorInfo WHERE NOT DatasetID IS NULL) Then
 
         If Exists (SELECT DatasetID FROM Tmp_FactorInfo WHERE DatasetID IS NULL) Then
             _message := 'Encountered a mix of XML tag attributes; if using the "d" attribute for DatasetID, all entries must have "d" defined';
@@ -247,7 +247,7 @@ BEGIN
             SELECT string_agg(DatasetID::text, ', ' ORDER BY DatasetID)
             INTO _invalidIDs
             FROM Tmp_FactorInfo
-            WHERE Identifier Is Null;
+            WHERE Identifier IS NULL;
 
             _message := format('%s; missing dataset %s: %s',
                                _message,
@@ -298,7 +298,7 @@ BEGIN
         SELECT string_agg(Coalesce(Identifier, '<NULL>'), ',' ORDER BY Identifier)
         INTO _invalidIDs
         FROM Tmp_FactorInfo
-        WHERE public.try_cast(Identifier, null::int) Is Null;
+        WHERE public.try_cast(Identifier, null::int) IS NULL;
 
         If Coalesce(_invalidIDs, '') <> '' Then
             -- One or more entries is non-numeric
@@ -410,7 +410,7 @@ BEGIN
     INTO _badFactorNames
     FROM ( SELECT DISTINCT Factor
            FROM Tmp_FactorInfo
-           WHERE Not Factor In ('Dataset ID')      -- Note that factors named 'Dataset ID' and 'Dataset_ID' are removed later in this procedure
+           WHERE NOT Factor IN ('Dataset ID')      -- Note that factors named 'Dataset ID' and 'Dataset_ID' are removed later in this procedure
           ) LookupQ
     WHERE Factor SIMILAR TO '%[^0-9A-Za-z_.]%';
 
@@ -659,12 +659,12 @@ BEGIN
     FROM Tmp_FactorInfo
          LEFT OUTER JOIN t_requested_run RR
            ON Tmp_FactorInfo.RequestID = RR.request_id
-    WHERE Tmp_FactorInfo.UpdateSkipCode = 0 And RR.request_id IS NULL;
+    WHERE Tmp_FactorInfo.UpdateSkipCode = 0 AND RR.request_id IS NULL;
 
     If Coalesce(_invalidRequestIDs, '') <> '' Then
 
         _message := format('Invalid Requested Run %s: %s',
-                           CASE WHEN _invalidRequestIDs Like '%,%'
+                           CASE WHEN _invalidRequestIDs LIKE '%,%'
                                 THEN 'IDs'
                                 ELSE 'ID'
                            END,

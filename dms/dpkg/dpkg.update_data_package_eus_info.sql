@@ -217,7 +217,7 @@ BEGIN
                                 ON DS.instrument_id = InstName.instrument_id
                               INNER JOIN Tmp_DataPackagesToUpdate Src
                                 ON DPD.data_pkg_id = Src.Data_Pkg_ID
-                         WHERE NOT InstName.Instrument Is Null
+                         WHERE NOT InstName.Instrument IS NULL
                          GROUP BY DPD.data_pkg_id, InstName.Instrument
                        ) SourceQ
                 ) RankQ
@@ -246,7 +246,7 @@ BEGIN
     FROM Tmp_DataPackagesToUpdate Src
     WHERE DP.data_pkg_id = Src.Data_Pkg_ID AND
           ( Coalesce(DP.EUS_Proposal_ID, '') <> Src.Best_EUS_Proposal_ID OR
-            Not Src.Best_EUS_Instrument_ID Is Null AND DP.EUS_Instrument_ID IS DISTINCT FROM Src.Best_EUS_Instrument_ID OR
+            Not Src.Best_EUS_Instrument_ID IS NULL AND DP.EUS_Instrument_ID IS DISTINCT FROM Src.Best_EUS_Instrument_ID OR
             Coalesce(DP.Instrument, '') <> Src.Best_Instrument_Name
           );
     --

@@ -75,7 +75,7 @@ BEGIN
                  LEFT OUTER JOIN t_cached_requested_run_batch_stats RBS
                    ON RBS.batch_id = RRB.batch_id
             WHERE RRB.batch_id > 0 AND
-                  RBS.batch_id Is Null;
+                  RBS.batch_id IS NULL;
         Else
             -- Assure that the batch exists in the cache table
             INSERT INTO t_cached_requested_run_batch_stats (batch_id, last_affected)
@@ -83,7 +83,7 @@ BEGIN
             FROM t_requested_run_batches RRB
                  LEFT OUTER JOIN t_cached_requested_run_batch_stats RBS
                    ON RBS.batch_id = RRB.batch_id
-            WHERE RRB.batch_id = _batchID AND RBS.batch_id Is Null;
+            WHERE RRB.batch_id = _batchID AND RBS.batch_id IS NULL;
         End If;
 
         ------------------------------------------------
@@ -113,7 +113,7 @@ BEGIN
                 FROM T_Cached_Requested_Run_Batch_Stats RBS
                      INNER JOIN T_Requested_Run RR
                        ON RBS.batch_id = RR.batch_id
-                WHERE RBS.batch_id > 0 And RR.Updated > RBS.Last_Affected;
+                WHERE RBS.batch_id > 0 AND RR.Updated > RBS.Last_Affected;
             End If;
         End If;
 

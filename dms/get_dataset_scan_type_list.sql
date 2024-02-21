@@ -24,14 +24,14 @@ CREATE OR REPLACE FUNCTION public.get_dataset_scan_type_list(_datasetid integer)
 **            FROM (SELECT DISTINCT scan_type FROM t_dataset_scan_types) T
 **                 LEFT OUTER JOIN t_dataset_scan_type_glossary G
 **                   ON T.scan_type = G.scan_type
-**            WHERE G.scan_type Is Null) LookupQ;
+**            WHERE G.scan_type IS NULL) LookupQ;
 **
 **      SELECT T.scan_type
 **      FROM (SELECT DISTINCT scan_type
 **            FROM t_dataset_scan_types) T
 **                 LEFT OUTER JOIN t_dataset_scan_type_glossary G
 **                   ON T.scan_type = G.scan_type
-**      WHERE G.scan_type Is Null
+**      WHERE G.scan_type IS NULL
 **      ORDER BY T.scan_type;
 **
 **  Return value: comma-separated list

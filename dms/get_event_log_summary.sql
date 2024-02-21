@@ -136,20 +136,20 @@ BEGIN
     UNION
     SELECT 3.1 AS SortKey, '  Analysis Jobs Successful' AS Label, COUNT(event_id)::citext AS Value
     FROM public.t_event_log
-    WHERE Entered Between _startDate And _endDate AND (Target_Type = 5) AND (Target_State = 4)
+    WHERE Entered BETWEEN _startDate And _endDate AND (Target_Type = 5) AND (Target_State = 4)
     UNION
     SELECT 5.3 AS SortKey, '  Analysis Jobs Fail' AS Label, COUNT(event_id)::citext AS Value
     FROM public.t_event_log
-    WHERE Entered Between _startDate And _endDate AND (Target_Type = 5) AND (Target_State = 5)
+    WHERE Entered BETWEEN _startDate And _endDate AND (Target_Type = 5) AND (Target_State = 5)
     UNION
     SELECT 5.4 AS SortKey, '  Analysis Jobs Fail (no intermed. files)' AS Label, COUNT(event_id)::citext AS Value
     FROM public.t_event_log
-    WHERE Entered Between _startDate And _endDate AND (Target_Type = 5) AND (Target_State = 7)
+    WHERE Entered BETWEEN _startDate And _endDate AND (Target_Type = 5) AND (Target_State = 7)
     UNION
     SELECT 5.0 AS SortKey, 'FAILURES' AS Label,
            (CASE WHEN COUNT(event_id) > 0 THEN format('Errors Detected: %s', COUNT(event_id)) ELSE '' END)::citext AS Value
     FROM public.t_event_log
-    WHERE Entered BETWEEN _startDate AND _endDate AND
+    WHERE Entered BETWEEN _startDate And _endDate AND
           ( Target_Type = 4 AND Target_State = 5 OR
             Target_Type = 4 AND Target_State = 8 OR
             Target_Type = 6 AND Target_State = 6 OR
@@ -162,7 +162,7 @@ BEGIN
            (format('    Analysis Jobs entered (%s)', Tool.analysis_tool))::citext AS Label, COUNT(J.job)::citext AS Value
     FROM public.t_analysis_job J INNER JOIN
          public.t_analysis_tool Tool ON J.analysis_tool_id = Tool.analysis_tool_id
-    WHERE J.created Between _startDate And _endDate
+    WHERE J.created BETWEEN _startDate And _endDate
     GROUP BY Tool.analysis_tool
     UNION
     SELECT 3.11 AS SortKey,
@@ -170,14 +170,14 @@ BEGIN
     FROM   public.t_event_log EL INNER JOIN
            public.t_analysis_job J ON EL.Target_ID = J.job INNER JOIN
            public.t_analysis_tool Tool ON J.analysis_tool_id = Tool.analysis_tool_id
-    WHERE EL.Entered Between _startDate And _endDate AND (EL.Target_Type = 5) AND (EL.Target_State = 4)
+    WHERE EL.Entered BETWEEN _startDate And _endDate AND (EL.Target_Type = 5) AND (EL.Target_State = 4)
     GROUP BY Tool.analysis_tool
     UNION
     SELECT 1.41 AS SortKey,
            (format('    Datasets entered (%s)', InstName.instrument_class))::citext AS Label, COUNT(DS.dataset_id)::citext AS Value
     FROM public.t_dataset DS INNER JOIN
          public.t_instrument_name InstName ON DS.instrument_id = InstName.Instrument_ID
-    WHERE DS.created Between _startDate And _endDate
+    WHERE DS.created BETWEEN _startDate And _endDate
     GROUP BY InstName.instrument_class
     UNION
     SELECT 2.11 AS SortKey,
@@ -185,7 +185,7 @@ BEGIN
     FROM public.t_event_log EL INNER JOIN
          public.t_dataset DS ON EL.Target_ID = DS.Dataset_ID INNER JOIN
          public.t_instrument_name InstName ON DS.instrument_id = InstName.Instrument_ID
-    WHERE EL.Entered Between _startDate And _endDate AND (EL.Target_Type = 4) AND (EL.Target_State = 3)
+    WHERE EL.Entered BETWEEN _startDate And _endDate AND (EL.Target_Type = 4) AND (EL.Target_State = 3)
     GROUP BY InstName.instrument_class
     UNION
     SELECT 6.0 AS SortKey, 'LOG ENTRIES' AS Label,
@@ -196,16 +196,16 @@ BEGIN
     FROM (  SELECT SUM(CASE WHEN type = 'Error'   THEN 1 ELSE 0 END) AS Errors,
                    SUM(CASE WHEN type = 'Warning' THEN 1 ELSE 0 END) AS Warnings
             FROM public.t_log_entries
-            WHERE entered Between _startDate And _endDate AND type IN ('Error', 'Warning')
+            WHERE entered BETWEEN _startDate And _endDate AND type IN ('Error', 'Warning')
          ) StatsQ
     UNION
     SELECT 6.1 AS SortKey, '  Warnings' AS Label, COUNT(entry_id)::citext AS Value
     FROM public.t_log_entries
-    WHERE entered Between _startDate And _endDate AND type = 'Warning'
+    WHERE entered BETWEEN _startDate And _endDate AND type = 'Warning'
     UNION
     SELECT 6.2 AS SortKey, '  Errors' AS Label, COUNT(entry_id)::citext AS Value
     FROM public.t_log_entries
-    WHERE entered Between _startDate And _endDate AND type = 'Error'
+    WHERE entered BETWEEN _startDate And _endDate AND type = 'Error'
     ;
 END
 $$;

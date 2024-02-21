@@ -57,7 +57,7 @@ BEGIN
     FROM sw.t_jobs J
          INNER JOIN sw.t_job_steps JS
            ON J.job = JS.job
-    WHERE (J.state = 4 AND _completedJobsOnly OR Not _completedJobsOnly) AND
+    WHERE (J.state = 4 AND _completedJobsOnly OR NOT _completedJobsOnly) AND
           (J.finish < JS.finish OR
            J.finish IS NULL AND NOT JS.finish IS NULL AND J.state > 2)  -- Do not update Finish for jobs that are New or In Progress
     GROUP BY J.job
@@ -66,7 +66,7 @@ BEGIN
     FROM sw.t_jobs J
          INNER JOIN sw.t_job_steps JS
            ON J.job = JS.job
-    WHERE (J.state = 4 AND _completedJobsOnly OR Not _completedJobsOnly) AND
+    WHERE (J.state = 4 AND _completedJobsOnly OR NOT _completedJobsOnly) AND
           (J.start > JS.start OR
            J.start IS NULL AND NOT JS.start IS NULL)
     GROUP BY J.job;

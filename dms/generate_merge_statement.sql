@@ -369,7 +369,7 @@ BEGIN
         SELECT string_agg(format('      t.%I <> s.%I', C.ColumnName, C.ColumnName), ' OR ' || _newLine)
         INTO _whereListA
         FROM Tmp_UpdatableColumns C
-        WHERE Not C.is_nullable AND
+        WHERE NOT C.is_nullable AND
               C.data_type_id <> 142;   -- Exclude XML columns
 
         -- Compare the nullable columns

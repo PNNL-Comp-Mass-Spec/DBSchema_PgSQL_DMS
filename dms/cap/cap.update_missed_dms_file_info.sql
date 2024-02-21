@@ -70,8 +70,8 @@ BEGIN
     FROM cap.t_dataset_info_xml DI
          LEFT OUTER JOIN public.t_dataset DS
            ON DI.dataset_id = DS.dataset_id
-    WHERE (DS.File_Info_Last_Modified IS NULL Or _replaceExistingData) And
-          Not DI.ignore;
+    WHERE (DS.File_Info_Last_Modified IS NULL OR _replaceExistingData) AND
+          NOT DI.ignore;
 
     --------------------------------------------
     -- Possibly filter on _datasetIDs
@@ -140,7 +140,7 @@ BEGIN
                        INNER JOIN public.t_dataset DS
                          ON DI.dataset_id = DS.dataset_id AND
                             DI.cache_date > DS.File_Info_Last_Modified
-                  WHERE Not DI.ignore
+                  WHERE NOT DI.ignore
                   ) InnerQ
          ) FilterQ
     WHERE ScanCountNew <> Coalesce(Scan_Count_Old, 0) OR

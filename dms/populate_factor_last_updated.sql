@@ -155,8 +155,8 @@ BEGIN
 
         UPDATE Tmp_FactorUpdates
         SET ValidFactor = true
-        WHERE Not Coalesce(FactorType, '')::citext IN ('Block', 'Run Order') AND
-              Not FactorName Is Null;
+        WHERE NOT Coalesce(FactorType, '')::citext IN ('Block', 'Run Order') AND
+              NOT FactorName IS NULL;
 
         If Not FOUND Then
             CONTINUE;

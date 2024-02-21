@@ -94,7 +94,7 @@ BEGIN
         SELECT string_agg(Item, ', ' ORDER BY Item)
         INTO _msg
         FROM Tmp_ContainerItems
-        WHERE Not IsLocation AND Not IsContainer;
+        WHERE NOT IsLocation AND NOT IsContainer;
 
         If Coalesce(_msg, '') <> '' Then
             If Position(',' IN _msg) > 0 Then

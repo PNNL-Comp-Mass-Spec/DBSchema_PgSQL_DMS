@@ -76,9 +76,9 @@ BEGIN
     FROM t_eus_proposals P
          INNER JOIN t_requested_run RR
            ON P.proposal_id = RR.eus_proposal_id
-    WHERE Not P.title ILike '%P41%' AND
-          Not P.title ILike '%NCRR%' AND
-          Not RR.state_name = 'Active' AND
+    WHERE NOT P.title ILIKE '%P41%' AND
+          NOT P.title ILIKE '%NCRR%' AND
+          NOT RR.state_name = 'Active' AND
           RR.work_package = 'none' AND
           RR.entered >= CURRENT_TIMESTAMP - make_interval(months => _mostRecentMonths)
     GROUP BY P.proposal_id;

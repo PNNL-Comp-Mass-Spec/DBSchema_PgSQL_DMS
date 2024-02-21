@@ -180,7 +180,7 @@ BEGIN
         SELECT string_agg(item::text, ', ' ORDER BY item)
         INTO _badIDs
         FROM Tmp_PrepRequestItems
-        WHERE Not Valid;
+        WHERE NOT Valid;
 
         If _badIDs <> '' Then
             If Position(',' In _badIDs) > 0 Then

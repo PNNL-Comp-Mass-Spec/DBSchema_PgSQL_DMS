@@ -112,7 +112,7 @@ BEGIN
 
         END LOOP;
 
-        If Exists (SELECT EntryID FROM Tmp_UserInfo WHERE User_ID Is Null) Then
+        If Exists (SELECT EntryID FROM Tmp_UserInfo WHERE User_ID IS NULL) Then
 
             SELECT string_agg(Name_and_Username, ', ' ORDER BY Name_and_Username)
             INTO _invalidUsers

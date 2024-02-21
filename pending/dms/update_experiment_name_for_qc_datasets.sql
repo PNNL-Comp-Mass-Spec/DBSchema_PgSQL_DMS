@@ -124,7 +124,7 @@ BEGIN
         RETURN;
     End If;
 
-    If Not _infoOnly And Not Exists (SELECT Dataset_ID FROM Tmp_DatasetsToUpdate WHERE Not Ambiguous) Then
+    If Not _infoOnly And Not Exists (SELECT Dataset_ID FROM Tmp_DatasetsToUpdate WHERE NOT Ambiguous) Then
         RAISE INFO '%', 'Candidate datasets were found, but they are all ambiguous; see them with _infoOnly=true';
         RETURN;
     End If;
@@ -170,7 +170,7 @@ BEGIN
             FROM t_dataset DS
                  INNER JOIN Tmp_DatasetsToUpdate DTU
                    ON DS.dataset_id = DTU.dataset_id
-            WHERE Not DTU.Ambiguous
+            WHERE NOT DTU.Ambiguous
             ORDER BY DTU.NewExperiment, DTU.OldExperiment, dataset_id
         LOOP
             _infoData := format(_formatSpecifier,

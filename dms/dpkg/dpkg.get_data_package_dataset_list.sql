@@ -27,7 +27,7 @@ BEGIN
     FROM dpkg.t_data_package_datasets DPD
          INNER JOIN public.t_dataset DS
            ON DPD.dataset_id = DS.dataset_id
-    WHERE DPD.data_pkg_id = _dataPackageID And
+    WHERE DPD.data_pkg_id = _dataPackageID AND
           char_length(Coalesce(DS.Dataset, '')) > 0;
 
     RETURN _result;

@@ -68,7 +68,7 @@ BEGIN
                          ON DS.instrument_id = QCDatasets.instrument_id AND
                             DS.lc_column_ID = QCDatasets.lc_column_ID AND
                             DS.dataset <> QCDatasets.dataset
-                  WHERE COALESCE(DS.Acq_Time_Start, DS.created) BETWEEN _startDate And _EndDate
+                  WHERE COALESCE(DS.Acq_Time_Start, DS.created) BETWEEN _startDate AND _EndDate
                  ) LookupQ
        ) RankQ
          INNER JOIN public.t_instrument_name InstName

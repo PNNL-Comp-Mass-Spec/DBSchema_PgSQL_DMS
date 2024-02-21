@@ -168,7 +168,7 @@ BEGIN
         SELECT string_agg(IDWithTag, ', ' ORDER BY IDWithTag)
         INTO _badItems
         FROM Tmp_Material_Items
-        WHERE ID Is Null;
+        WHERE ID IS NULL;
 
         If Coalesce(_badItems, '') <> '' Then
             RAISE EXCEPTION 'Item(s) are not in the expected format of "Type:ID": % (example valid values are "B:2000", "E:8432", and "R:3000")', _badItems;
@@ -245,7 +245,7 @@ BEGIN
         SELECT string_agg(Value, ', ' ORDER BY Value)
         INTO _badItems
         FROM public.parse_delimited_list(_itemList)
-        WHERE try_cast(Value, null::int) Is Null;
+        WHERE try_cast(Value, null::int) IS NULL;
 
         If Coalesce(_badItems, '') <> '' Then
             RAISE EXCEPTION 'Invalid container ID(s): %; should be integers, not container names', _badItems;

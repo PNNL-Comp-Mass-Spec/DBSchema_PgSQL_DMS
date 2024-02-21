@@ -177,13 +177,13 @@ BEGIN
            ON Tmp_Jobs.job = JS.job
          INNER JOIN ( SELECT JSR.job, JSR.step, JSR.start, JSR.input_folder_name
                       FROM sw.t_job_steps JSR
-                      WHERE JSR.tool In ('Results_Transfer', 'Results_Cleanup')
+                      WHERE JSR.tool IN ('Results_Transfer', 'Results_Cleanup')
                     ) FilterQ
            ON JS.job = FilterQ.job AND
               JS.output_folder_name = FilterQ.input_folder_name AND
               JS.finish > FilterQ.start AND
               JS.step < FilterQ.step
-    WHERE Not JS.tool In ('Results_Transfer', 'Results_Cleanup');
+    WHERE NOT JS.tool IN ('Results_Transfer', 'Results_Cleanup');
 
     -- Next Look for job steps that are state 4 or 5 (Running or Complete) with a null Finish date,
     -- but which started after their corresponding Results_Transfer step
@@ -195,14 +195,14 @@ BEGIN
            ON Tmp_Jobs.job = JS.job
          INNER JOIN ( SELECT JSR.job, JSR.step, JSR.start, JSR.input_folder_name
                       FROM sw.t_job_steps JSR
-                      WHERE JSR.tool In ('Results_Transfer', 'Results_Cleanup')
+                      WHERE JSR.tool IN ('Results_Transfer', 'Results_Cleanup')
                     ) FilterQ
            ON JS.job = FilterQ.job AND
               JS.output_folder_name = FilterQ.input_folder_name AND
-              JS.finish Is Null AND
+              JS.finish IS NULL AND
               JS.start > FilterQ.start AND
               JS.step < FilterQ.step
-    WHERE Not JS.tool In ('Results_Transfer', 'Results_Cleanup');
+    WHERE NOT JS.tool IN ('Results_Transfer', 'Results_Cleanup');
 
     -- Look for PRIDE_Converter job steps
 
@@ -226,7 +226,7 @@ BEGIN
 
     UPDATE Tmp_Jobs target
     SET Comment = 'Nothing to update; no job steps were started (or completed) after their corresponding Results_Transfer or Results_Cleanup step'
-    WHERE Not target.Update_Required;
+    WHERE NOT target.Update_Required;
 
     ---------------------------------------------------
     -- Look for jobs where the Results_Transfer steps do not match sw.t_job_steps_history
@@ -259,7 +259,7 @@ BEGIN
         UPDATE Tmp_Jobs target
         SET Comment = 'Metadata would be updated'
         FROM Tmp_JobStepsToUpdate JSU
-        WHERE target.Job = JSU.Job AND Not target.Mismatch_Results_Transfer;
+        WHERE target.Job = JSU.Job AND NOT target.Mismatch_Results_Transfer;
     End If;
 
     If Not _infoOnly And Exists (
@@ -267,7 +267,7 @@ BEGIN
         FROM Tmp_Jobs J INNER JOIN
              Tmp_JobStepsToUpdate JSU
                ON J.Job = JSU.Job
-        WHERE Not J.Mismatch_Results_Transfer) Then
+        WHERE NOT J.Mismatch_Results_Transfer) Then
 
         ---------------------------------------------------
         -- Update metadata for the job steps in Tmp_JobStepsToUpdate,
@@ -398,7 +398,7 @@ BEGIN
         UPDATE Tmp_Jobs target
         SET Comment = 'Metadata updated'
         FROM Tmp_JobStepsToUpdate JSU
-        WHERE target.Job = JSU.Job AND Not target.Mismatch_Results_Transfer;
+        WHERE target.Job = JSU.Job AND NOT target.Mismatch_Results_Transfer;
 
     End If;
 

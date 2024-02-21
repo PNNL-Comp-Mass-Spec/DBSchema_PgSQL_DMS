@@ -605,9 +605,9 @@ BEGIN
         WHERE charge_code = _workPackage::citext;
 
         If Not _autoPopulateUserListIfBlank Then
-            If Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackage::citext And deactivated = 'Y') Then
+            If Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackage::citext AND deactivated = 'Y') Then
                 _message := public.append_to_text(_message, format('Warning: Work Package %s is deactivated', _workPackage));
-            ElsIf Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackage::citext And charge_code_state = 0) Then
+            ElsIf Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackage::citext AND charge_code_state = 0) Then
                 _message := public.append_to_text(_message, format('Warning: Work Package %s is likely deactivated', _workPackage));
             End If;
         End If;

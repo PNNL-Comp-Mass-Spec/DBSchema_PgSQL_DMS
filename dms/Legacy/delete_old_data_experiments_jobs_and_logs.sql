@@ -219,7 +219,7 @@ BEGIN
                E.experiment,
                E.created
         FROM t_experiments E
-        WHERE Not E.experiment IN ('Placeholder', 'DMS_Pipeline_Data') AND
+        WHERE NOT E.experiment IN ('Placeholder', 'DMS_Pipeline_Data') AND
               E.created < _deleteThreshold AND
               NOT experiment IN ( SELECT Value
                                   FROM public.parse_delimited_list ( _experimentSkipList, ',')) AND

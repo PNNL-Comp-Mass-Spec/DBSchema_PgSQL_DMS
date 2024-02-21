@@ -134,11 +134,11 @@ BEGIN
         WHERE MU.dataset_id = _datasetID AND
               Target.status_num = MU.status_num;
 
-        If Exists (SELECT Status_Num FROM Tmp_StatusNumListTable WHERE Not Dataset_ID_Validated) Then
+        If Exists (SELECT Status_Num FROM Tmp_StatusNumListTable WHERE NOT Dataset_ID_Validated) Then
             SELECT string_agg(status_num::text, ', ')
             INTO _statusNumMismatches
             FROM Tmp_StatusNumListTable
-            WHERE Not Dataset_ID_Validated;
+            WHERE NOT Dataset_ID_Validated;
 
             _message := format('One or more StatusNums in _statusNumList do not have dataset_id %s in cap.t_myemsl_uploads: %s', _datasetID, _statusNumMismatches);
             _returnCode := 'U5205';

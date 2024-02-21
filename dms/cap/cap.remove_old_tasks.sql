@@ -108,14 +108,14 @@ BEGIN
         INSERT INTO Tmp_Selected_Jobs (Job, State)
         SELECT Job, State
         FROM cap.t_tasks
-        WHERE State IN (3, 4, 15, 101) And    -- Complete, Inactive, Skipped, or Ignore
+        WHERE State IN (3, 4, 15, 101) AND    -- Complete, Inactive, Skipped, or Ignore
               Coalesce(Finish, Start) < _cutoffDateTimeForSuccess
         ORDER BY job;
 
         If _validateJobStepSuccess Then
             -- Remove any capture task jobs that have Running, Failed, or Holding job steps
             DELETE FROM Tmp_Selected_Jobs
-            WHERE Job In (SELECT TS.Job
+            WHERE Job IN (SELECT TS.Job
                           FROM cap.t_task_steps TS
                           WHERE TS.State IN (4, 6, 7) AND
                                 TS.Job = Tmp_Selected_Jobs.Job);

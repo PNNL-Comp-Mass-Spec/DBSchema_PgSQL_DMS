@@ -482,7 +482,7 @@ BEGIN
                  INNER JOIN t_requested_run RR
                    ON RL.Request = RR.request_id
             WHERE RL.Dataset IN (_datasetNameOld::citext, _datasetNameNew::citext) OR
-                  _showRequestedRunsByExperiment And Coalesce(_experiment, '') <> '' AND RL.Name ILike _experiment || '%'
+                  _showRequestedRunsByExperiment And Coalesce(_experiment, '') <> '' AND RL.Name ILIKE _experiment || '%'
             ORDER BY CASE WHEN RL.Dataset = _datasetNameOld::citext THEN '0'
                           WHEN RL.Dataset = _datasetNameNew::citext THEN '1'
                           ELSE '2_' || RL.Name

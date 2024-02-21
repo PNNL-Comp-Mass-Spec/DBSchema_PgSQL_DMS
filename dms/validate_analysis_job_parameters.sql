@@ -388,7 +388,7 @@ BEGIN
         SELECT string_agg(Dataset_Name, ', ' ORDER BY Dataset_Name)
         INTO _datasetList
         FROM Tmp_DatasetInfo
-        WHERE dataset_type::citext <> 'DataFiles' And
+        WHERE dataset_type::citext <> 'DataFiles' AND
               NOT dataset_type::citext IN ( SELECT ADT.dataset_type
                                             FROM t_analysis_tool_allowed_dataset_type ADT
                                                  INNER JOIN t_analysis_tool Tool

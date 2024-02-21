@@ -28,9 +28,9 @@ BEGIN
     INTO _annotationTypeID
     FROM pc.t_annotation_types
     WHERE type_name = _annotationName::citext AND
-          (authority_id = _authorityID OR _authorityID Is Null);
+          (authority_id = _authorityID OR _authorityID IS NULL);
 
-    If Not Found Then
+    If Not FOUND Then
         RETURN null;
     Else
         RETURN _annotationTypeID;

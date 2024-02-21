@@ -342,7 +342,7 @@ BEGIN
            _callingUser,
            _comment
     FROM Tmp_Material_Container_List
-    WHERE Location <> _location Or
+    WHERE Location <> _location OR
           _mode <> 'move_container';
 
     DROP TABLE Tmp_Material_Container_List;

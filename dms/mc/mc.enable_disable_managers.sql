@@ -192,8 +192,8 @@ BEGIN
         INSERT INTO Tmp_ManagerList (manager_name)
         SELECT mgr_name
         FROM mc.t_mgrs
-        WHERE mgr_type_id = _managerTypeID And
-              (control_from_website > 0 Or _includeDisabled);
+        WHERE mgr_type_id = _managerTypeID AND
+              (control_from_website > 0 OR _includeDisabled);
     End If;
 
     -- Set _newValue based on _enable

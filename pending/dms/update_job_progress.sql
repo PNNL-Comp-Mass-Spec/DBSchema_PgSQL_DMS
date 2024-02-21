@@ -116,8 +116,8 @@ BEGIN
 
     UPDATE Tmp_JobsToUpdate
     SET Progress_New = 0,
-        ETA_Minutes = Null
-    WHERE State In (1, 8, 13, 19);
+        ETA_Minutes = null
+    WHERE State IN (1, 8, 13, 19);
 
     -----------------------------------------
     -- Update progress and ETA for completed jobs
@@ -127,7 +127,7 @@ BEGIN
     UPDATE Tmp_JobsToUpdate
     SET Progress_New = 100,
         ETA_Minutes = 0
-    WHERE State In (4, 7, 14);
+    WHERE State IN (4, 7, 14);
 
     -----------------------------------------
     -- Determine the incremental progress for running jobs

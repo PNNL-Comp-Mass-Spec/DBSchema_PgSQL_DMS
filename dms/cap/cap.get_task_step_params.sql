@@ -127,7 +127,7 @@ BEGIN
                                   value citext PATH '@Value',
                                   step citext PATH '@Step')
          ) XmlQ
-    WHERE XmlQ.step Is Null Or XmlQ.StepNumber = _step;
+    WHERE XmlQ.step IS NULL OR XmlQ.StepNumber = _step;
 
     ---------------------------------------------------
     -- Get metadata for dataset if running the Dataset Info plugin or the Dataset Quality plugin

@@ -74,7 +74,7 @@ BEGIN
     SET archive_busy = 1
     FROM ( SELECT AB.Job
            FROM public.v_get_analysis_jobs_for_archive_busy AB ) BusyQ
-    WHERE target.job = BusyQ.Job And archive_busy = 0;
+    WHERE target.job = BusyQ.Job AND archive_busy = 0;
 
     ---------------------------------------------------
     -- Update priorities for jobs and job steps based on the priority defined in public.t_analysis_job
@@ -114,10 +114,10 @@ BEGIN
             FROM public.v_get_pipeline_job_processors AS VGP
             WHERE job IN ( SELECT job
                            FROM sw.t_jobs
-                           WHERE Not state In (4, 7, 14)        -- 4=Complete, 7=No Intermediate Files Created, 14=No Export
+                           WHERE NOT state IN (4, 7, 14)        -- 4=Complete, 7=No Intermediate Files Created, 14=No Export
                          )
           ) AS Source
-    ON (target.job = source.job And
+    ON (target.job = source.job AND
         target.processor = source.processor)
     WHEN MATCHED AND target.general_processing <> source.general_processing THEN
         UPDATE SET general_processing = source.general_processing
@@ -143,10 +143,10 @@ BEGIN
                                FROM public.v_get_pipeline_job_processors AS VGP
                                WHERE job IN ( SELECT job
                                               FROM sw.t_jobs
-                                              WHERE Not state In (4, 7, 14)        -- 4=Complete, 7=No Intermediate Files Created, 14=No Export
+                                              WHERE Not state IN (4, 7, 14)        -- 4=Complete, 7=No Intermediate Files Created, 14=No Export
                                             )
                               ) AS Source
-                        WHERE target.job = source.job And
+                        WHERE target.job = source.job AND
                               target.processor = source.processor
                      );
 

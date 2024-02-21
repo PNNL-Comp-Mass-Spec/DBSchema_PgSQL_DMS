@@ -15,7 +15,7 @@ CREATE OR REPLACE FUNCTION public.check_emsl_usage_item_validity(_seq integer) R
 **      FROM ( SELECT Src.seq,
 **                    check_emsl_usage_item_validity(Src.seq) AS Result
 **             FROM t_emsl_instrument_usage_report Src
-**             WHERE Src.seq Between 600 AND 1000 or
+**             WHERE Src.seq Between 600 AND 1000 OR
 **                   Src.seq Between 574291 AND 599883 ) CheckQ
 **      WHERE char_length(CheckQ.Result) > 0
 **      ORDER BY seq;
@@ -118,7 +118,7 @@ BEGIN
             SELECT COUNT(proposal_id)
             INTO _hits
             FROM t_eus_proposal_users
-            WHERE proposal_id = _instrumentUsage.proposal And person_id = public.try_cast(_instrumentUsage.users, 0);
+            WHERE proposal_id = _instrumentUsage.proposal AND person_id = public.try_cast(_instrumentUsage.users, 0);
         End If;
 
         If _hits = 0 Then

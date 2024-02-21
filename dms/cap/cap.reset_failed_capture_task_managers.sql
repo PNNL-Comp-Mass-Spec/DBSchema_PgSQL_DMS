@@ -46,7 +46,7 @@ BEGIN
     SELECT Processor_Name,
            Status_Date
     FROM cap.V_Processor_Status_Warnings_CTM
-    WHERE Most_Recent_Log_Message Like '%Flag file%' AND
+    WHERE Most_Recent_Log_Message LIKE '%Flag file%' AND
           Status_Date > CURRENT_TIMESTAMP - Interval '6 hours';
 
     If Not Exists (SELECT * FROM Tmp_ManagersToReset) Then

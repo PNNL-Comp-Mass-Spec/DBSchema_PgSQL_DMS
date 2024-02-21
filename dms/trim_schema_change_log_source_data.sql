@@ -73,7 +73,7 @@ BEGIN
 
     UPDATE T_Tmp_SchemaChangeLogRank target
     SET trim_data = true
-    WHERE target.version_rank > 3 And target.current_source_length > 100;
+    WHERE target.version_rank > 3 AND target.current_source_length > 100;
 
     If _infoLevel > 0 Then
         RETURN QUERY
@@ -97,7 +97,7 @@ BEGIN
                  FROM T_Tmp_SchemaChangeLogRank SCLR
                       INNER JOIN t_schema_change_log L
                       ON SCLR.schema_change_log_id = L.schema_change_log_id
-                 WHERE SCLR.trim_data = true Or _infoLevel > 1) FilterQ
+                 WHERE SCLR.trim_data = true OR _infoLevel > 1) FilterQ
                ON SCL.schema_name = FilterQ.schema_name AND
                   SCL.object_name = FilterQ.object_name
              INNER JOIN

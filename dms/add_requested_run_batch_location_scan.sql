@@ -118,12 +118,12 @@ BEGIN
         UPDATE Tmp_BatchIDs
         SET Batch_ID = public.try_cast(BatchIDText, null::int);
 
-        If Exists (SELECT BatchIDText FROM Tmp_BatchIDs WHERE Batch_ID Is Null) Then
+        If Exists (SELECT BatchIDText FROM Tmp_BatchIDs WHERE Batch_ID IS NULL) Then
 
             SELECT BatchIDText
             INTO _firstInvalid
             FROM Tmp_BatchIDs
-            WHERE Batch_ID Is Null
+            WHERE Batch_ID IS NULL
             LIMIT 1;
 
             _logErrors := false;
@@ -152,13 +152,13 @@ BEGIN
         SELECT COUNT(*)
         INTO _matchCount
         FROM Tmp_BatchIDs
-        WHERE Not Valid;
+        WHERE NOT Valid;
 
         If _matchCount > 0 Then
             SELECT string_agg(BatchIDText, ', ' ORDER BY BatchIDText)
             INTO _invalidIDs
             FROM Tmp_BatchIDs
-            WHERE Not Valid;
+            WHERE NOT Valid;
 
             _message := format('Batch ID list contains %s: %s',
                                CASE WHEN Position(',' In _invalidIDs) > 0
@@ -170,7 +170,7 @@ BEGIN
             RAISE WARNING '%', _message;
 
             DELETE FROM Tmp_BatchIDs
-            WHERE Not Valid;
+            WHERE NOT Valid;
 
             If Not Exists (SELECT * FROM Tmp_BatchIDs) Then
                 -- No valid Batch IDs remain

@@ -360,7 +360,7 @@ BEGIN
                Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID
-        WHERE Not Breakdown Is Null;
+        WHERE NOT Breakdown IS NULL;
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Proposal, Usage, Comment)
         SELECT Tmp_LongIntervals.Dataset_ID,
@@ -371,7 +371,7 @@ BEGIN
                Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID
-        WHERE Not Breakdown Is Null;
+        WHERE NOT Breakdown IS NULL;
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Proposal, Usage, Comment)
         SELECT Tmp_LongIntervals.Dataset_ID,
@@ -382,7 +382,7 @@ BEGIN
                Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID
-        WHERE Not Breakdown Is Null;
+        WHERE NOT Breakdown IS NULL;
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Proposal, Usage, Comment)
         SELECT Tmp_LongIntervals.Dataset_ID,
@@ -393,7 +393,7 @@ BEGIN
                Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID
-        WHERE Not Breakdown Is Null;
+        WHERE NOT Breakdown IS NULL;
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Operator, Proposal, Usage, Comment)
         SELECT Tmp_LongIntervals.Dataset_ID,
@@ -405,7 +405,7 @@ BEGIN
                Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID
-        WHERE Not Breakdown Is Null;
+        WHERE NOT Breakdown IS NULL;
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Operator, Proposal, Usage, Comment)
         SELECT Tmp_LongIntervals.Dataset_ID,
@@ -417,7 +417,7 @@ BEGIN
                Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID
-        WHERE Not Breakdown Is Null;
+        WHERE NOT Breakdown IS NULL;
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Proposal, Usage, Comment)
         SELECT Tmp_LongIntervals.Dataset_ID,
@@ -428,7 +428,7 @@ BEGIN
                Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID
-        WHERE Not Breakdown Is Null;
+        WHERE NOT Breakdown IS NULL;
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Proposal, Users, Usage, Comment)
         SELECT Tmp_LongIntervals.Dataset_ID,
@@ -447,7 +447,7 @@ BEGIN
                Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID
-        WHERE Not Breakdown Is Null;
+        WHERE NOT Breakdown IS NULL;
 
         ---------------------------------------------------
         -- Get rid of meaningless apportioned long intervals
@@ -520,7 +520,7 @@ BEGIN
 
         UPDATE Tmp_ApportionedIntervals I
         SET Comment = ''
-        WHERE I.Usage In ('CAP_DEV', 'ONSITE', 'REMOTE');
+        WHERE I.Usage IN ('CAP_DEV', 'ONSITE', 'REMOTE');
 
         ---------------------------------------------------
         -- Add apportioned long intervals to report table
@@ -643,7 +643,7 @@ BEGIN
 
         UPDATE Tmp_InstrumentUsage U
         SET Usage = 'ONSITE'
-        WHERE U.Usage In ('USER', 'USER_ONSITE');
+        WHERE U.Usage IN ('USER', 'USER_ONSITE');
 
         UPDATE Tmp_InstrumentUsage U
         SET Usage = 'REMOTE'

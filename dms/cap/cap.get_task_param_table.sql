@@ -160,7 +160,7 @@ BEGIN
                 ('Acq_Time_Start', m.acq_time_start),
                 ('Acq_Time_End', m.acq_time_end)
            ) AS UnpivotQ(Name, Value)
-    WHERE Not UnpivotQ.value Is Null;
+    WHERE NOT UnpivotQ.value IS NULL;
 
     ---------------------------------------------------
     -- Use alternate values when the script is 'LCDatasetCapture'

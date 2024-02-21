@@ -120,7 +120,7 @@ BEGIN
     FROM ( SELECT DISTINCT public.try_cast(value, null::int) AS value
            FROM public.parse_delimited_list(_targetEntityIDList)
          ) LookupQ
-    WHERE Not LookupQ.Value Is Null;
+    WHERE NOT LookupQ.Value IS NULL;
 
     ---------------------------------------------------
     -- Look for unknown IDs in Tmp_TargetEntities
@@ -140,7 +140,7 @@ BEGIN
     SELECT string_agg(EntityID::text, ', ' ORDER BY EntityID)
     INTO _idList
     FROM Tmp_TargetEntities
-    WHERE Not Valid;
+    WHERE NOT Valid;
 
     If Coalesce(_idList, '') <> '' Then
         -- Unknown entries found; inform the caller
@@ -153,7 +153,7 @@ BEGIN
         SELECT COUNT(*)
         INTO _invalidCount
         FROM Tmp_TargetEntities
-        WHERE Not Valid;
+        WHERE NOT Valid;
 
         If _invalidCount = 1 Then
             _message := format('Error: Target ID %s is not defined in %s; unable to continue', _idList, _tgtTableName);

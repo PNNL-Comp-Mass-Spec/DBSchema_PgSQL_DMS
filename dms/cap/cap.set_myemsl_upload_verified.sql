@@ -217,7 +217,7 @@ BEGIN
         SET ingest_steps_completed = _ingestStepsCompleted
         WHERE verified = 1 AND
               entry_id IN ( SELECT entry_id FROM Tmp_StatusEntryIDsTable ) AND
-              (ingest_steps_completed Is Null Or ingest_steps_completed < _ingestStepsCompleted);
+              (ingest_steps_completed IS NULL OR ingest_steps_completed < _ingestStepsCompleted);
 
         -- Now update newly verified steps
 

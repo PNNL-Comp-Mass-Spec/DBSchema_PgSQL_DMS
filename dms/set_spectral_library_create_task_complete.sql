@@ -107,7 +107,7 @@ BEGIN
         UPDATE T_Spectral_Library
         SET Library_State_ID = _newLibraryState,
             Completion_Code = _completionCode
-        WHERE Library_ID = _libraryId And
+        WHERE Library_ID = _libraryId AND
               Library_State_ID = 2;
 
         If Not FOUND Then

@@ -90,14 +90,14 @@ BEGIN
     SELECT COUNT(*)
     INTO _unknownCount
     FROM Tmp_Datasets
-    WHERE ID Is Null;
+    WHERE ID IS NULL;
 
     If _unknownCount > 0 Then
         If _unknownCount = 1 Then
             SELECT DS.Dataset
             INTO _datasetName
             FROM Tmp_Datasets DS
-            WHERE ID Is Null;
+            WHERE ID IS NULL;
 
             _message := format('Error: "%s" is not a known dataset', _datasetName);
         Else

@@ -488,7 +488,7 @@ BEGIN
             RAISE INFO 'Storing contents of Tmp_Jobs in table sw.t_debug_tmp_jobs';
             _currentLocation := 'Store data in sw.t_debug_tmp_jobs';
 
-            If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'sw' And tablename::citext = 't_debug_tmp_jobs') Then
+            If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'sw' AND tablename::citext = 't_debug_tmp_jobs') Then
                 DELETE FROM sw.t_debug_tmp_jobs;
 
                 INSERT INTO sw.t_debug_tmp_jobs(Job, Priority, Script, State, Dataset, Dataset_ID, Results_Directory_Name)
@@ -504,7 +504,7 @@ BEGIN
             RAISE INFO 'Storing contents of Tmp_Job_Steps in table sw.t_debug_tmp_job_steps';
             _currentLocation := 'Store data in sw.t_debug_tmp_job_steps';
 
-            If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'sw' And tablename::citext = 't_debug_tmp_job_steps') Then
+            If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'sw' AND tablename::citext = 't_debug_tmp_job_steps') Then
                 DELETE FROM sw.t_debug_tmp_job_steps;
 
                 INSERT INTO sw.t_debug_tmp_job_steps (Job, Step, Tool, CPU_Load, Memory_Usage_MB, Dependencies, Shared_Result_Version, Filter_Version, Signature, State,
@@ -523,7 +523,7 @@ BEGIN
             RAISE INFO 'Storing contents of Tmp_Job_Step_Dependencies in table sw.t_debug_tmp_job_step_dependencies';
             _currentLocation := 'Store data in sw.t_debug_tmp_job_step_dependencies';
 
-            If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'sw' And tablename::citext = 't_debug_tmp_job_step_dependencies') Then
+            If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'sw' AND tablename::citext = 't_debug_tmp_job_step_dependencies') Then
                 DELETE FROM sw.t_debug_tmp_job_step_dependencies;
 
                 INSERT INTO sw.t_debug_tmp_job_step_dependencies (Job, Step, Target_Step, Condition_Test, Test_Value, Enable_Only)
@@ -539,7 +539,7 @@ BEGIN
             RAISE INFO 'Storing contents of Tmp_Job_Parameters in table sw.t_debug_tmp_job_parameters';
             _currentLocation := 'Store data in sw.t_debug_tmp_job_parameters';
 
-            If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'sw' And tablename::citext = 't_debug_tmp_job_parameters') Then
+            If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'sw' AND tablename::citext = 't_debug_tmp_job_parameters') Then
                 DELETE FROM sw.t_debug_tmp_job_parameters;
 
                 INSERT INTO sw.t_debug_tmp_job_parameters (Job, Parameters)

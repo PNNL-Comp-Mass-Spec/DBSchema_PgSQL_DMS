@@ -140,11 +140,11 @@ BEGIN
     -- Any invalid tool names?
     ---------------------------------------------------
 
-    If Exists (SELECT ToolName FROM Tmp_AnalysisTools WHERE ToolID Is Null) Then
+    If Exists (SELECT ToolName FROM Tmp_AnalysisTools WHERE ToolID IS NULL) Then
         SELECT string_agg(ToolName, ', ' ORDER BY ToolName)
         INTO _message
         FROM Tmp_AnalysisTools
-        WHERE ToolID Is Null;
+        WHERE ToolID IS NULL;
 
         _message := format('Invalid tool %s: %s',
                                 CASE WHEN Position(',' In _message) > 0

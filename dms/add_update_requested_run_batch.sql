@@ -212,12 +212,12 @@ BEGIN
         UPDATE Tmp_RequestedRuns
         SET Request_ID = public.try_cast(RequestIDText, null::int);
 
-        If Exists (SELECT RequestIDText FROM Tmp_RequestedRuns WHERE Request_ID Is Null) Then
+        If Exists (SELECT RequestIDText FROM Tmp_RequestedRuns WHERE Request_ID IS NULL) Then
 
             SELECT RequestIDText
             INTO _firstInvalid
             FROM Tmp_RequestedRuns
-            WHERE Request_ID Is Null
+            WHERE Request_ID IS NULL
             LIMIT 1;
 
             _logErrors := false;
@@ -274,7 +274,7 @@ BEGIN
         FROM T_Requested_Run RR
              INNER JOIN Tmp_RequestedRuns TmpRuns
                ON TmpRuns.Request_ID = RR.request_id
-        WHERE (RR.state_name = 'Active' And _mode Like '%update%') Or _mode Like 'add%';
+        WHERE (RR.state_name = 'Active' AND _mode LIKE '%update%') OR _mode LIKE 'add%';
 
         If _instrumentGroupCount > 1 Then
 
@@ -284,7 +284,7 @@ BEGIN
                    FROM T_Requested_Run RR
                         INNER JOIN Tmp_RequestedRuns TmpRuns
                           ON TmpRuns.Request_ID = RR.Request_ID
-                   WHERE (RR.state_name = 'Active' And _mode Like '%update%') Or _mode Like 'add%'
+                   WHERE (RR.state_name = 'Active' AND _mode LIKE '%update%') OR _mode LIKE 'add%'
                  ) GroupQ;
 
             If _mode Like '%update%' Then
@@ -297,7 +297,7 @@ BEGIN
                               'the selected %srequested runs are associated with multiple instrument groups (%s). '
                               'Update the instrument groups for the requested runs, or create multiple batches',
                               _message,
-                              CASE WHEN _mode Like '%update%' THEN 'active ' ELSE '' END,
+                              CASE WHEN _mode LIKE '%update%' THEN 'active ' ELSE '' END,
                               _instrumentGroups);
 
             If _raiseExceptions Then

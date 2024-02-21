@@ -64,7 +64,7 @@ BEGIN
     -- From sw.t_local_processors INNER JOIN
     --      public.V_Get_Pipeline_Processors AS VPP
     --        ON sw.t_local_processors.Processor_Name = VPP.Processor_Name
-    -- WHERE Not sw.t_local_processors.Processor_Name IN (SELECT Processor_Name FROM public.V_Get_Pipeline_Processors);
+    -- WHERE NOT sw.t_local_processors.Processor_Name IN (SELECT Processor_Name FROM public.V_Get_Pipeline_Processors);
 
 END
 $$;

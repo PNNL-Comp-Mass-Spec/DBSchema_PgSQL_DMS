@@ -205,7 +205,7 @@ BEGIN
         FROM T_Requested_Run RR
              LEFT OUTER JOIN T_Dataset AS NewDataset
                ON RR.dataset_id = NewDataset.dataset_id
-        WHERE NEW.dataset_id = RR.dataset_id And
+        WHERE NEW.dataset_id = RR.dataset_id AND
               NEW.request_id <> RR.request_id;
 
     End If;

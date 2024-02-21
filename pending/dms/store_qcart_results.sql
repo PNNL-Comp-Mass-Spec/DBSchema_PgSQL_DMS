@@ -200,7 +200,7 @@ BEGIN
                   ValueText,
                   public.try_cast(ValueText, null::float8) AS Value
            FROM Tmp_Measurements
-           WHERE Not public.try_cast(ValueText, null::float8) Is Null
+           WHERE NOT public.try_cast(ValueText, null::float8) IS NULL
          ) FilterQ
     WHERE Target.Name = FilterQ.Name;
 

@@ -121,8 +121,8 @@ BEGIN
         INSERT INTO Tmp_Instruments( instrument )
         SELECT instrument
         FROM t_instrument_name
-        WHERE status = 'Active' And
-              operations_role = 'Production' And
+        WHERE status = 'Active' AND
+              operations_role = 'Production' AND
               NOT instrument IN ( SELECT instrument
                                   FROM Tmp_InstrumentsToProcessByID );
 

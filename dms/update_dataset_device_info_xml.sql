@@ -191,7 +191,7 @@ BEGIN
                               Device_Software_Version citext PATH '@SoftwareVersion',
                               Device_Description citext PATH '.')
          ) XmlQ
-    WHERE Not XmlQ.Device_Type IS NULL;
+    WHERE NOT XmlQ.Device_Type IS NULL;
 
     -- Populate the Device_Number column
     UPDATE Tmp_DatasetDevicesTable

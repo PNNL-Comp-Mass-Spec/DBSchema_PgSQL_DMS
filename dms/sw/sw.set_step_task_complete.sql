@@ -450,8 +450,8 @@ BEGIN
 
             If Exists ( SELECT entry_id
                         FROM sw.t_log_entries
-                        WHERE Message = _message And
-                              type = 'Normal' And
+                        WHERE Message = _message AND
+                              type = 'Normal' AND
                               Entered >= CURRENT_TIMESTAMP - INTERVAL '1 day'
                       ) Then
 

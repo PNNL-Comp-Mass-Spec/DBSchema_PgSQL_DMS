@@ -66,8 +66,8 @@ BEGIN
 
         UPDATE pc.t_protein_collection_members
         SET sorting_index = _sortingIndex
-        WHERE protein_id = _proteinID And
-              original_reference_id = _referenceID And
+        WHERE protein_id = _proteinID AND
+              original_reference_id = _referenceID AND
               protein_collection_id = _proteinCollectionID;
     End If;
 

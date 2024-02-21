@@ -91,7 +91,7 @@ BEGIN
             INSERT INTO Tmp_PrepRequests ( prep_request_id )
             SELECT prep_request_id
             FROM t_sample_prep_request
-            WHERE state_id = 5 And
+            WHERE state_id = 5 AND
                   state_changed >= CURRENT_TIMESTAMP - make_interval(days => _daysPriorToUpdateClosedRequests);
         Else
             INSERT INTO Tmp_PrepRequests ( prep_request_id )

@@ -194,12 +194,12 @@ BEGIN
         UPDATE Tmp_BatchIDs
         SET Batch_ID = public.try_cast(Batch_ID_Text, null::int);
 
-        If Exists (SELECT Entry_ID FROM Tmp_BatchIDs WHERE Batch_ID Is Null) Then
+        If Exists (SELECT Entry_ID FROM Tmp_BatchIDs WHERE Batch_ID IS NULL) Then
 
             SELECT Batch_ID_Text
             INTO _firstInvalid
             FROM Tmp_BatchIDs
-            WHERE Batch_ID Is Null;
+            WHERE Batch_ID IS NULL;
 
             _logErrors := false;
             _message := format('Batch IDs must be integers, not names; first invalid item: %s', _firstInvalid);

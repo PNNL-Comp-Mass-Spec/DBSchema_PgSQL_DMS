@@ -138,7 +138,7 @@ BEGIN
         SELECT string_agg(DatasetID::text, ', ' ORDER BY DatasetID)
         INTO _idsWrongState
         FROM Tmp_DatasetsToUpdate
-        WHERE Not InvalidID AND NOT StateID IN (3, 4);
+        WHERE NOT InvalidID AND NOT StateID IN (3, 4);
 
         _matchCount := array_length(string_to_array(_unknownIDs, ','), 1);
         _message := format('Ignoring Dataset %s not in state 3 or 4 (complete or inactive): %s', public.check_plural(_matchCount, 'ID', 'IDs'), _idsWrongState);
@@ -150,7 +150,7 @@ BEGIN
     FOR _datasetID, _comment IN
         SELECT DatasetID, NewComment
         FROM Tmp_DatasetsToUpdate
-        WHERE Not InvalidID AND
+        WHERE NOT InvalidID AND
               StateID IN (3, 4)
         ORDER BY DatasetID
     LOOP

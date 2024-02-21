@@ -179,7 +179,7 @@ BEGIN
         FROM t_analysis_job J
         WHERE J.job = Tmp_SourceJobs.JobID;
 
-        If Exists (SELECT JobId FROM Tmp_SourceJobs WHERE Not Valid) Then
+        If Exists (SELECT JobId FROM Tmp_SourceJobs WHERE NOT Valid) Then
             _message := 'One or more Job IDs are invalid';
             _invalidJobs := true;
         ElsIf Exists (SELECT JobId FROM Tmp_SourceJobs WHERE NOT StateID IN (4, 14)) Then

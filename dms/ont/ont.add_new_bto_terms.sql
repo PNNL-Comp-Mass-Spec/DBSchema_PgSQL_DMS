@@ -343,11 +343,11 @@ BEGIN
 
         UPDATE ont.t_cv_bto t
         SET children = NULL
-        WHERE Not t.identifier in (
+        WHERE NOT t.identifier IN (
                 SELECT s.parent_term_id
                 FROM ont.t_cv_bto s
                 GROUP BY s.parent_term_ID) AND
-              Not t.Children IS NULL;
+              NOT t.Children IS NULL;
 
     Else
 

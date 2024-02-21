@@ -199,7 +199,7 @@ BEGIN
         WHERE DA.dataset_id = _datasetID;
 
         INSERT INTO T_Tmp_Target_Items (Action, Item_Type, Item_ID, Item_Name, Comment)
-        SELECT CASE WHEN request_name::citext Like 'AutoReq%'
+        SELECT CASE WHEN request_name::citext LIKE 'AutoReq%'
                     THEN 'To be deleted'
                     ELSE 'To be marked active'
                END AS Action,
@@ -253,7 +253,7 @@ BEGIN
                script,
                format('State: %s, Imported: %s', State, public.timestamp_text(imported))
         FROM cap.t_tasks
-        WHERE dataset_id = _datasetID And
+        WHERE dataset_id = _datasetID AND
               State = 5;
 
         INSERT INTO T_Tmp_Target_Items (Action, Item_Type, Item_ID, Item_Name, Comment)
@@ -565,7 +565,7 @@ BEGIN
     UPDATE cap.t_log_entries
     SET type = 'ErrorAutoFixed'
     WHERE type = 'Error' AND
-          message ILike '%' || _datasetName || '%';
+          message ILIKE '%' || _datasetName || '%';
 
     ---------------------------------------------------
     -- Remove jobs from cap.t_tasks

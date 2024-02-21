@@ -172,7 +172,7 @@ BEGIN
         RETURN;
     End If;
 
-    If Exists (SELECT Item FROM Tmp_Requests WHERE Not Status::citext IN ('Active', 'Inactive')) Then
+    If Exists (SELECT Item FROM Tmp_Requests WHERE NOT Status::citext IN ('Active', 'Inactive')) Then
         _message := 'Cannot change requests that are in status other than "Active" or "Inactive"';
         _returnCode := 'U5114';
 
@@ -180,7 +180,7 @@ BEGIN
         RETURN;
     End If;
 
-    If Exists (SELECT Item FROM Tmp_Requests WHERE Not Origin::citext In ('user', 'fraction') And _mode <> 'delete') Then
+    If Exists (SELECT Item FROM Tmp_Requests WHERE NOT Origin::citext IN ('user', 'fraction') AND _mode <> 'delete') Then
         _message := 'Cannot change requests that were not entered by user';
         _returnCode := 'U5115';
 
@@ -201,7 +201,7 @@ BEGIN
     INSERT INTO Tmp_ID_Update_List (TargetID)
     SELECT DISTINCT request_id
     FROM Tmp_Requests
-    WHERE Not request_id Is Null
+    WHERE NOT request_id IS NULL
     ORDER BY request_id;
 
     -----------------------------------------------------------

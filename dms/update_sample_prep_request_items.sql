@@ -292,8 +292,8 @@ BEGIN
                   I.item_id         = TPRI.item_id AND
                   I.item_type       = TPRI.item_type AND
                   TPRI.marked       = 'Y' AND
-                  ( I.created Is Null And Not TPRI.created Is Null Or I.created <> TPRI.created OR
-                    I.status  Is Null And Not TPRI.status  Is Null Or I.status  <> TPRI.status);
+                  ( I.created IS NULL AND NOT TPRI.created IS NULL OR I.created <> TPRI.created OR
+                    I.status  IS NULL AND NOT TPRI.status  IS NULL OR I.status  <> TPRI.status);
 
             ---------------------------------------------------
             -- Delete extra items from table

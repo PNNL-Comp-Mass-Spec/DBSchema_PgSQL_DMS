@@ -65,7 +65,7 @@ CREATE OR REPLACE PROCEDURE cap.request_ctm_step_task(IN _processorname text, IN
 
         _formatSpecifier := '%-22s %-30s';
 
-        WHILE Not _results Is Null
+        WHILE NOT _results IS NULL
         LOOP
             FETCH NEXT FROM _results
             INTO _jobParams;

@@ -228,7 +228,7 @@ BEGIN
            ON T.Dataset_ID = DAS.Dataset_ID
          LEFT OUTER JOIN Tmp_ChangedJobs TargetTable
            ON T.Job = TargetTable.Job
-    WHERE TargetTable.Job Is Null AND
+    WHERE TargetTable.Job IS NULL AND
           ( (T.Script = 'DatasetArchive' AND T.State = 2 AND DAS.Archive_State_ID = 6) OR
             (T.Script = 'ArchiveUpdate'  AND T.State = 2 AND DAS.Archive_Update_State_ID = 5) );
     --

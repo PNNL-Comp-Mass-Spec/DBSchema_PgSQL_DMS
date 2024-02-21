@@ -381,7 +381,7 @@ BEGIN
     SELECT COUNT(DSInfo.dataset_id)
     INTO _datasetCountPhospho
     FROM Tmp_DatasetInfo DSInfo
-    WHERE DSInfo.Dataset_Name LIKE '%Phospho%' Or
+    WHERE DSInfo.Dataset_Name LIKE '%Phospho%' OR
           DSInfo.Dataset_Name LIKE '%NiNTA%';
 
     ---------------------------------------------------

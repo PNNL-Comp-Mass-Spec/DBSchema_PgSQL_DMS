@@ -430,7 +430,7 @@ BEGIN
                     -- Reset the step back to state 2=Enabled
                     UPDATE sw.t_job_steps
                     SET state = 2
-                    WHERE job = _jobInfo.Job And step = _jobInfo.Step;
+                    WHERE job = _jobInfo.Job AND step = _jobInfo.Step;
                 End If;
 
                 _resetReason := 'job step in progress but manager reports "Stopped Error"';

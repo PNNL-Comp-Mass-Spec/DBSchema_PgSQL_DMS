@@ -122,33 +122,33 @@ BEGIN
     FROM mc.t_mgrs M
     WHERE Tmp_ManagerList.Manager_Name = M.mgr_name;
 
-    If Exists (SELECT * FROM Tmp_ManagerList MgrList WHERE MgrList.mgr_id Is Null) Then
+    If Exists (SELECT * FROM Tmp_ManagerList MgrList WHERE MgrList.mgr_id IS NULL) Then
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Unknown manager (not in mc.t_mgrs)',
                MgrList.manager_name
         FROM Tmp_ManagerList MgrList
-        WHERE MgrList.mgr_id Is Null
+        WHERE MgrList.mgr_id IS NULL
         ORDER BY MgrList.manager_name;
     End If;
 
-    If Exists (SELECT * FROM Tmp_ManagerList MgrList WHERE NOT MgrList.mgr_id Is Null And MgrList.control_from_web > 0) Then
+    If Exists (SELECT * FROM Tmp_ManagerList MgrList WHERE NOT MgrList.mgr_id IS NULL AND MgrList.control_from_web > 0) Then
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Manager has control_from_website=1; cannot archive',
                MgrList.manager_name
         FROM Tmp_ManagerList  MgrList
-        WHERE NOT MgrList.mgr_id IS NULL And MgrList.control_from_web > 0
+        WHERE NOT MgrList.mgr_id IS NULL AND MgrList.control_from_web > 0
         ORDER BY MgrList.manager_name;
 
         DELETE FROM Tmp_ManagerList
         WHERE manager_name IN (SELECT WarnMsgs.manager_name FROM TmpWarningMessages WarnMsgs WHERE NOT WarnMsgs.message ILIKE 'Note:%');
     End If;
 
-    If Exists (SELECT manager_name FROM Tmp_ManagerList WHERE manager_name ILike '%Params%') Then
+    If Exists (SELECT manager_name FROM Tmp_ManagerList WHERE manager_name ILIKE '%Params%') Then
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Will not process managers with "Params" in the name (for safety)',
                manager_name
         FROM Tmp_ManagerList
-        WHERE manager_name ILike '%Params%'
+        WHERE manager_name ILIKE '%Params%'
         ORDER BY manager_name;
 
         DELETE FROM Tmp_ManagerList
@@ -156,7 +156,7 @@ BEGIN
     End If;
 
     DELETE FROM Tmp_ManagerList
-    WHERE Tmp_ManagerList.mgr_id Is Null OR
+    WHERE Tmp_ManagerList.mgr_id IS NULL OR
           Tmp_ManagerList.control_from_web > 0;
 
     If Exists (SELECT * FROM Tmp_ManagerList Src INNER JOIN mc.t_old_managers Target ON Src.mgr_id = Target.mgr_id) Then

@@ -113,7 +113,7 @@ BEGIN
     SELECT string_agg(requestID::text, ', ' ORDER BY requestID)
     INTO _invalidList
     FROM Tmp_Requests
-    WHERE Not requestID IN (SELECT request_id FROM t_requested_run);
+    WHERE NOT requestID IN (SELECT request_id FROM t_requested_run);
 
     If Coalesce(_invalidList, '') <> '' Then
         _message := format('The following request IDs are not valid: %s', _invalidList);

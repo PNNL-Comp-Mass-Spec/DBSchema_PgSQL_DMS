@@ -78,7 +78,7 @@ BEGIN
     FROM t_dataset DS
     WHERE Tmp_DatasetsToProcess.dataset_id = DS.dataset_id;
 
-    If Exists (SELECT Dataset_ID FROM Tmp_DatasetsToProcess WHERE Not IsValid) Then
+    If Exists (SELECT Dataset_ID FROM Tmp_DatasetsToProcess WHERE NOT IsValid) Then
         RAISE WARNING 'One or more dataset IDs was not present in t_dataset';
     End If;
 
@@ -177,7 +177,7 @@ BEGIN
            'New' AS State,
            '' AS Message
     FROM Tmp_DatasetsToProcess
-    WHERE IsValid And Not AlreadyWaiting;
+    WHERE IsValid AND NOT AlreadyWaiting;
     --
     GET DIAGNOSTICS _insertCount = ROW_COUNT;
 

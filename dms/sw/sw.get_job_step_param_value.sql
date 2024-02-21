@@ -70,12 +70,12 @@ BEGIN
 
     If _section <> '' Then
         DELETE FROM Tmp_JobParamsTable Target
-        WHERE Not Target.Section ILike _section;
+        WHERE NOT Target.Section ILIKE _section;
     End If;
 
     If _paramName <> '' Then
         DELETE FROM Tmp_JobParamsTable Target
-        WHERE Not Target.Name ILike _paramName;
+        WHERE NOT Target.Name ILIKE _paramName;
     End If;
 
     ---------------------------------------------------

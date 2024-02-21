@@ -263,7 +263,7 @@ BEGIN
 
     UPDATE Tmp_TX
     SET comment_state = 'x'
-    WHERE Tmp_TX.comment_state Is Null;
+    WHERE Tmp_TX.comment_state IS NULL;
 
     RETURN QUERY
     SELECT T.Seq, T.ID, T.Dataset, T.Day, T.Duration, T."interval",

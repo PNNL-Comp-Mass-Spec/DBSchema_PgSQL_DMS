@@ -332,22 +332,22 @@ BEGIN
               _storagePath,
               _existingHash
         FROM T_Spectral_Library
-        WHERE Protein_Collection_List    = _proteinCollectionList::citext And
-              Organism_DB_File           = _organismDbFile::citext And
-              Fragment_Ion_Mz_Min        = _fragmentIonMzMin And
-              Fragment_Ion_Mz_Max        = _fragmentIonMzMax And
-              Trim_N_Terminal_Met        = _trimNTerminalMet And
-              Cleavage_Specificity       = _cleavageSpecificity::citext And
-              Missed_Cleavages           = _missedCleavages And
-              Peptide_Length_Min         = _peptideLengthMin And
-              Peptide_Length_Max         = _peptideLengthMax And
-              Precursor_Mz_Min           = _precursorMzMin And
-              Precursor_Mz_Max           = _precursorMzMax And
-              Precursor_Charge_Min       = _precursorChargeMin And
-              Precursor_Charge_Max       = _precursorChargeMax And
-              Static_Cys_Carbamidomethyl = _staticCysCarbamidomethyl And
-              Static_Mods                = _staticMods::citext And
-              Dynamic_Mods               = _dynamicMods::citext And
+        WHERE Protein_Collection_List    = _proteinCollectionList::citext AND
+              Organism_DB_File           = _organismDbFile::citext AND
+              Fragment_Ion_Mz_Min        = _fragmentIonMzMin AND
+              Fragment_Ion_Mz_Max        = _fragmentIonMzMax AND
+              Trim_N_Terminal_Met        = _trimNTerminalMet AND
+              Cleavage_Specificity       = _cleavageSpecificity::citext AND
+              Missed_Cleavages           = _missedCleavages AND
+              Peptide_Length_Min         = _peptideLengthMin AND
+              Peptide_Length_Max         = _peptideLengthMax AND
+              Precursor_Mz_Min           = _precursorMzMin AND
+              Precursor_Mz_Max           = _precursorMzMax AND
+              Precursor_Charge_Min       = _precursorChargeMin AND
+              Precursor_Charge_Max       = _precursorChargeMax AND
+              Static_Cys_Carbamidomethyl = _staticCysCarbamidomethyl AND
+              Static_Mods                = _staticMods::citext AND
+              Dynamic_Mods               = _dynamicMods::citext AND
               Max_Dynamic_Mods           = _maxDynamicMods;
 
         If FOUND Then

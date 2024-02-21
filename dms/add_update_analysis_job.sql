@@ -870,8 +870,8 @@ BEGIN
                            _ownerUsername AS Owner,
                            batch_id AS BatchID,
                            _updateStateID AS StateID,
-                           CASE WHEN _mode <> 'reset' THEN public.timestamp_text(start)  ELSE '' End AS Start,
-                           CASE WHEN _mode <> 'reset' THEN public.timestamp_text(finish) ELSE '' End AS Finish,
+                           CASE WHEN _mode <> 'reset' THEN public.timestamp_text(start)  ELSE '' END AS Start,
+                           CASE WHEN _mode <> 'reset' THEN public.timestamp_text(finish) ELSE '' END AS Finish,
                            _propMode AS PropagationMode,
                            dataset_unreviewed AS DatasetUnreviewed
                     FROM t_analysis_job

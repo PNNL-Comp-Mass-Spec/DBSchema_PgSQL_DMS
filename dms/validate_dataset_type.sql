@@ -170,7 +170,7 @@ BEGIN
     End If;
 
     If _requiredAction = '' Then
-        If Exists (SELECT dataset_id FROM t_dataset_scan_types WHERE dataset_id = _datasetID And scan_filter = 'IMS') Then
+        If Exists (SELECT dataset_id FROM t_dataset_scan_types WHERE dataset_id = _datasetID AND scan_filter = 'IMS') Then
             _hasIMS := true;
         End If;
 

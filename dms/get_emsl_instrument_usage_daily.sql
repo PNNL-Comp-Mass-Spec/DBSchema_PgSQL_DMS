@@ -117,7 +117,7 @@ BEGIN
            ON InstUsage.usage_type_id = InstUsageType.usage_type_id
     WHERE InstUsage.year = _year AND
           InstUsage.month = _month AND
-          InstUsage.dataset_id_acq_overlap Is Null;
+          InstUsage.dataset_id_acq_overlap IS NULL;
 
     _continue := true;
 

@@ -176,7 +176,7 @@ BEGIN
         FOR _job IN
             SELECT Job
             FROM Tmp_JobsToDelete
-            WHERE Not HasDependencies
+            WHERE NOT HasDependencies
             ORDER BY Job
         LOOP
             SELECT Dataset,

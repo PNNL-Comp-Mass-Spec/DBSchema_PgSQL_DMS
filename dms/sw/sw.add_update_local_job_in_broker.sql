@@ -429,7 +429,7 @@ BEGIN
             SELECT MAX(entry_id)
             INTO _logEntryID
             FROM sw.t_log_entries
-            WHERE Position (_exceptionMessage In message) > 0 AND
+            WHERE Position (_exceptionMessage IN message) > 0 AND
                   ABS( extract(epoch FROM (CURRENT_TIMESTAMP - Entered)) ) < 15;
 
             If FOUND Then

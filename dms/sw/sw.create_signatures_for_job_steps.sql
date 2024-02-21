@@ -194,7 +194,7 @@ BEGIN
         SELECT string_agg(format('%s=%s', JP.Name, JP.Value), ';' ORDER BY JP.Section, JP.Name)
         INTO _settings
         FROM Tmp_Job_Params JP
-        WHERE JP.Section In (
+        WHERE JP.Section IN (
                 SELECT unnest(xpath('//sections/section/@name', rooted_xml))::text
                 FROM ( SELECT ('<sections>' || Parameter_Template::text || '</sections>')::xml AS rooted_xml
                        FROM sw.t_step_tools
@@ -203,7 +203,7 @@ BEGIN
                 )
               AND
               (
-                (JP.Step Is Null) OR
+                (JP.Step IS NULL) OR
                 (JP.Step = _curStep)
               );
 

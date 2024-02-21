@@ -119,21 +119,21 @@ BEGIN
     FROM mc.t_old_managers M
     WHERE Tmp_ManagerList.Manager_Name = M.mgr_name;
 
-    If Exists (SELECT * FROM Tmp_ManagerList MgrList WHERE MgrList.mgr_id Is Null) Then
+    If Exists (SELECT * FROM Tmp_ManagerList MgrList WHERE MgrList.mgr_id IS NULL) Then
         INSERT INTO Tmp_WarningMessages (message, manager_name)
         SELECT 'Unknown manager (not in mc.t_old_managers)',
                MgrList.manager_name
         FROM Tmp_ManagerList MgrList
-        WHERE MgrList.mgr_id Is Null
+        WHERE MgrList.mgr_id IS NULL
         ORDER BY MgrList.manager_name;
     End If;
 
-    If Exists (SELECT * FROM Tmp_ManagerList MgrList WHERE MgrList.manager_name ILike '%Params%') Then
+    If Exists (SELECT * FROM Tmp_ManagerList MgrList WHERE MgrList.manager_name ILIKE '%Params%') Then
         INSERT INTO Tmp_WarningMessages (message, manager_name)
         SELECT 'Will not process managers with "Params" in the name (for safety)',
                MgrList.manager_name
         FROM Tmp_ManagerList MgrList
-        WHERE MgrList.manager_name ILike '%Params%'
+        WHERE MgrList.manager_name ILIKE '%Params%'
         ORDER BY MgrList.manager_name;
 
         DELETE FROM Tmp_ManagerList
@@ -141,7 +141,7 @@ BEGIN
     End If;
 
     DELETE FROM Tmp_ManagerList
-    WHERE Tmp_ManagerList.mgr_id Is Null;
+    WHERE Tmp_ManagerList.mgr_id IS NULL;
 
     If Exists (SELECT * FROM Tmp_ManagerList Src INNER JOIN mc.t_mgrs Target ON Src.Manager_Name = Target.mgr_name) Then
         INSERT INTO Tmp_WarningMessages (message, manager_name)

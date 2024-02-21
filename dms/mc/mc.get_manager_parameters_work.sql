@@ -93,7 +93,7 @@ BEGIN
            CASE
                WHEN param_type_id = 162 THEN 1        -- param_name 'Default_AnalysisMgr_Params'
                ELSE 0
-           End AS parent_param_pointer_state,
+           END AS parent_param_pointer_state,
            mgr_name
     FROM mc.v_param_value
     WHERE mgr_name IN (SELECT value::citext FROM public.parse_delimited_list(_managerNameList));
@@ -143,7 +143,7 @@ BEGIN
                CASE
                    WHEN ValuesToAppend.param_type_id = 162 THEN 1
                    ELSE 0
-               End AS parent_param_pointer_state,
+               END AS parent_param_pointer_state,
                ValuesToAppend.source
         FROM Tmp_Mgr_Params Target
              RIGHT OUTER JOIN ( SELECT FilterQ.mgr_name,

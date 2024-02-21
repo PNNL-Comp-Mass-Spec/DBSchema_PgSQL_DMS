@@ -86,7 +86,7 @@ BEGIN
             RAISE EXCEPTION '%', _msg;
         End If;
 
-        If Exists (SELECT Container FROM V_Material_Container_Item_Stats WHERE Container = _name::citext And Type = 'na') Then
+        If Exists (SELECT Container FROM V_Material_Container_Item_Stats WHERE Container = _name::citext AND Type = 'na') Then
             _msg := format('Container "%s" cannot be updated by the website; contact a DMS admin (see Do_Material_Container_Operation)', _name);
             _logErrors := true;
             RAISE EXCEPTION '%', _msg;

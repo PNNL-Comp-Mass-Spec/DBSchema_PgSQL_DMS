@@ -88,7 +88,7 @@ BEGIN
         UPDATE ont.t_cv_bto
         SET usage_last_12_months = 0,
             usage_all_time = 0
-        WHERE NOT ont.t_cv_bto.Identifier in (SELECT s.Tissue_ID FROM Tmp_UsageStats s) AND
+        WHERE NOT ont.t_cv_bto.Identifier IN (SELECT s.Tissue_ID FROM Tmp_UsageStats s) AND
                   (ont.t_cv_bto.Usage_Last_12_Months > 0 Or ont.t_cv_bto.Usage_All_Time > 0);
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
@@ -121,7 +121,7 @@ BEGIN
         SELECT identifier, s.usage_all_time, s.usage_last_12_months
         FROM ont.t_cv_bto INNER JOIN Tmp_UsageStats s
                ON ont.t_cv_bto.Identifier = s.Tissue_ID
-        WHERE ont.t_cv_bto.Usage_Last_12_Months <> s.Usage_Last_12_Months Or
+        WHERE ont.t_cv_bto.Usage_Last_12_Months <> s.Usage_Last_12_Months OR
               ont.t_cv_bto.Usage_All_Time <> s.Usage_All_Time;
 
         If Not FOUND Then

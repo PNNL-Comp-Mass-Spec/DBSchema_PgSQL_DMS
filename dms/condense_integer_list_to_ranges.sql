@@ -100,7 +100,7 @@ BEGIN
                    V.Value,
                    V.Value - Row_Number() OVER (PARTITION BY V.Category ORDER BY V.Value) AS rn  -- This column represents the 'staggered rows'
             FROM Tmp_ValuesByCategory V
-            WHERE Not V.Value Is Null
+            WHERE NOT V.Value IS NULL
             ) RankQ
         GROUP BY RankQ.Category, RankQ.rn
     )
@@ -121,7 +121,7 @@ BEGIN
                        V.Value,
                        V.Value - Row_Number() OVER (PARTITION BY V.Category ORDER BY V.Value) AS rn
                 FROM Tmp_ValuesByCategory V
-                WHERE Not V.Value Is Null) RankQ
+                WHERE NOT V.Value IS NULL) RankQ
             GROUP BY RankQ.Category, RankQ.rn
             ORDER BY RankQ.Category, RankQ.rn
         LOOP

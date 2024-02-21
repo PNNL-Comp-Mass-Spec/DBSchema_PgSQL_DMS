@@ -62,7 +62,7 @@ BEGIN
     SET Biomaterial_ID = Src.Biomaterial_ID
     FROM t_biomaterial Src
     WHERE Src.Biomaterial_Name = Target.Biomaterial_Name
-          And Target.Biomaterial_ID Is Null;
+          AND Target.Biomaterial_ID IS NULL;
 
     ---------------------------------------------------
     -- Look for invalid entries in Tmp_Experiment_to_Biomaterial_Map

@@ -583,7 +583,7 @@ BEGIN
                      ORDER BY deleted ASC, file_size_bytes DESC
                      ) AS Size_Rank
            FROM t_dataset_files
-           WHERE Dataset_ID In (SELECT Dataset_ID FROM Tmp_UpdatedDatasets)
+           WHERE Dataset_ID IN (SELECT Dataset_ID FROM Tmp_UpdatedDatasets)
          ) SrcQ
     WHERE Target.Dataset_File_ID = SrcQ.Dataset_File_ID;
 
@@ -628,7 +628,7 @@ BEGIN
                    File_Hash,
                    Instrument
             FROM V_Dataset_Files_List_Report
-            WHERE Dataset_ID In (SELECT Dataset_ID FROM Tmp_UpdatedDatasets)
+            WHERE Dataset_ID IN (SELECT Dataset_ID FROM Tmp_UpdatedDatasets)
             ORDER BY Dataset
         LOOP
             _infoData := format(_formatSpecifier,

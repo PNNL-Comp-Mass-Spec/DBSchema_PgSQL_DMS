@@ -54,8 +54,8 @@ BEGIN
     SET experiment = E.Experiment
     FROM public.t_dataset DS INNER JOIN
          public.t_experiments E ON DS.Exp_ID = E.Exp_ID
-    WHERE Target.data_pkg_id = _packageID And
-          Target.dataset_id = DS.Dataset_ID And
+    WHERE Target.data_pkg_id = _packageID AND
+          Target.dataset_id = DS.Dataset_ID AND
           Target.experiment IS DISTINCT FROM E.Experiment;
     --
     GET DIAGNOSTICS _updateCount = ROW_COUNT;

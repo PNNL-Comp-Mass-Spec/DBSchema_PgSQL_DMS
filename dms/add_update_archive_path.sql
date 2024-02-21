@@ -158,7 +158,7 @@ BEGIN
 
         UPDATE t_archive_path
         SET archive_path_function = 'Old'
-        WHERE archive_path_id In (
+        WHERE archive_path_id IN (
                 SELECT ArchPath.archive_path_id
                 FROM t_instrument_name InstName
                      INNER JOIN t_archive_path ArchPath
