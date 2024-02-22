@@ -1,15 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.reset_failed_dataset_purge_tasks
-(
-    _resetHoldoffHours real = 2,
-    _maxTasksToReset int = 0,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    INOUT _resetCount int = 0
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: reset_failed_dataset_purge_tasks(integer, integer, boolean, text, text, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.reset_failed_dataset_purge_tasks(IN _resetholdoffhours integer DEFAULT 2, IN _maxtaskstoreset integer DEFAULT 0, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, INOUT _resetcount integer DEFAULT 0)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -32,7 +27,7 @@ AS $$
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          01/30/2017 mem - Switch from DateDiff to DateAdd
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/21/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -55,8 +50,8 @@ BEGIN
     ------------------------------------------------
 
     _resetHoldoffHours := Coalesce(_resetHoldoffHours, 2);
-    _maxTasksToReset := Coalesce(_maxTasksToReset, 0);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _maxTasksToReset   := Coalesce(_maxTasksToReset, 0);
+    _infoOnly          := Coalesce(_infoOnly, false);
 
     _resetCount := 0;
 
@@ -68,7 +63,7 @@ BEGIN
 
         If _infoOnly Then
             ------------------------------------------------
-            -- Preview all datasets with an Archive State of 8=Purge Failed
+            -- Preview all datasets with an archive state of 8=Purge Failed
             ------------------------------------------------
 
             RAISE INFO '';
@@ -103,7 +98,7 @@ BEGIN
                        DA.Dataset_ID,
                        DA.archive_state_id AS State,
                        public.timestamp_text(DA.archive_state_last_affected) AS Last_Affected
-                FROM  DA
+                FROM t_dataset_archive DA
                      INNER JOIN t_dataset DS
                        ON DA.dataset_id = DS.dataset_id
                      INNER JOIN t_storage_path SPath
@@ -124,29 +119,29 @@ BEGIN
                 RAISE INFO '%', _infoData;
             END LOOP;
 
+            RETURN;
+        End If;
+
+        ------------------------------------------------
+        -- Reset up to _maxTasksToReset archive tasks
+        -- that currently have an archive state of 8
+        ------------------------------------------------
+
+        UPDATE t_dataset_archive target
+        SET archive_state_id = 3
+        WHERE dataset_id IN ( SELECT DA.dataset_id
+                              FROM t_dataset_archive DA
+                              WHERE DA.archive_state_id = 8 AND
+                                    extract(epoch FROM CURRENT_TIMESTAMP - DA.archive_state_Last_Affected) / 60.0 >= _resetHoldoffHours * 60
+                              LIMIT _maxTasksToReset
+                            );
+        --
+        GET DIAGNOSTICS _resetCount = ROW_COUNT;
+
+        If _resetCount > 0 Then
+            _message := format('Reset dataset archive state from "Purge Failed" to "Complete" for %s %s', _resetCount, public.check_plural(_resetCount, 'dataset', 'datasets'));
         Else
-            ------------------------------------------------
-            -- Reset up to _maxTasksToReset archive tasks
-            -- that currently have an archive state of 8
-            ------------------------------------------------
-
-            UPDATE t_dataset_archive
-            SET archive_state_id = 3
-            FROM ( SELECT DA.dataset_id
-                   FROM t_dataset_archive DA
-                   WHERE DA.archive_state_id = 8 AND
-                         extract(epoch FROM CURRENT_TIMESTAMP - DA.archive_state_Last_Affected) / 60.0 >= _resetHoldoffHours * 60
-                   LIMIT _maxTasksToReset
-                 ) LookupQ
-            WHERE t_dataset_archive.dataset_id = LookupQ.dataset_id;
-            --
-            GET DIAGNOSTICS _resetCount = ROW_COUNT;
-
-            If _resetCount > 0 Then
-                _message := format('Reset dataset archive state from "Purge Failed" to "Complete" for %s datasets', _resetCount);
-            Else
-                _message := 'No candidate tasks were found to reset';
-            End If;
+            _message := 'No candidate tasks were found to reset';
         End If;
 
     EXCEPTION
@@ -169,4 +164,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.reset_failed_dataset_purge_tasks IS 'ResetFailedDatasetPurgeTasks';
+
+ALTER PROCEDURE public.reset_failed_dataset_purge_tasks(IN _resetholdoffhours integer, IN _maxtaskstoreset integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, INOUT _resetcount integer) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE reset_failed_dataset_purge_tasks(IN _resetholdoffhours integer, IN _maxtaskstoreset integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, INOUT _resetcount integer); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.reset_failed_dataset_purge_tasks(IN _resetholdoffhours integer, IN _maxtaskstoreset integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, INOUT _resetcount integer) IS 'ResetFailedDatasetPurgeTasks';
+

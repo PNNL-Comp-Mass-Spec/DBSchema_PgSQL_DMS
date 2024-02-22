@@ -1,20 +1,15 @@
 --
-CREATE OR REPLACE PROCEDURE public.reset_failed_dataset_capture_tasks
-(
-    _resetHoldoffHours real = 2,
-    _maxDatasetsToReset int = 0,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    INOUT _resetCount int = 0
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: reset_failed_dataset_capture_tasks(integer, integer, boolean, text, text, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.reset_failed_dataset_capture_tasks(IN _resetholdoffhours integer DEFAULT 2, IN _maxdatasetstoreset integer DEFAULT 0, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, INOUT _resetcount integer DEFAULT 0)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Look for dataset entries with state=5 (Capture Failed) and a comment that indicates
-**      that we should be able to automatically retry capture; for example:
+**      Look for dataset entries with state=5 (Capture Failed) and a comment
+**      stating that we should be able to automatically retry capture; for example:
 **         "Dataset not ready: Exception validating constant folder size"
 **         "Dataset not ready: Exception validating constant file size"
 **
@@ -38,7 +33,7 @@ AS $$
 **          08/16/2017 mem - Look for 'Authentication failure: The user name or password is incorrect'
 **          05/28/2019 mem - Use a holdoff of 15 minutes for authentication errors
 **          08/25/2022 mem - Use new column name in T_Log_Entries
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/21/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -58,14 +53,13 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-
     ------------------------------------------------
     -- Validate the inputs
     ------------------------------------------------
 
-    _resetHoldoffHours := Coalesce(_resetHoldoffHours, 2);
+    _resetHoldoffHours  := Coalesce(_resetHoldoffHours, 2);
     _maxDatasetsToReset := Coalesce(_maxDatasetsToReset, 0);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly           := Coalesce(_infoOnly, false);
 
     _resetCount := 0;
 
@@ -74,7 +68,6 @@ BEGIN
     End If;
 
     BEGIN
-
         ------------------------------------------------
         -- Create a temporary table
         ------------------------------------------------
@@ -83,35 +76,38 @@ BEGIN
             Dataset_ID int not null,
             Dataset text not null,
             Reset_Comment text not null
-        )
+        );
 
         ------------------------------------------------
-        -- Populate a temporary table with datasets
-        -- that have Dataset State 5=Capture Failed
+        -- Populate the temporary table with datasets
+        -- that have dataset state 5=Capture Failed
         -- and a comment containing known errors
         ------------------------------------------------
 
-        INSERT INTO Tmp_Datasets( dataset_id,
-                                  dataset,
+        INSERT INTO Tmp_Datasets( Dataset_ID,
+                                  Dataset,
                                   Reset_Comment )
-        SELECT dataset_id,
-               dataset AS Dataset,
+        SELECT A.dataset_id,
+               A.Dataset,
                '' AS Reset_Comment
-        FROM t_dataset
-        WHERE dataset_state_id = 5 AND
-              (comment LIKE '%Exception validating constant%' OR
-               comment LIKE '%File size changed%' OR
-               comment LIKE '%Folder size changed%' OR
-               comment LIKE '%Error running OpenChrom%') AND
-               last_affected < CURRENT_TIMESTAMP - make_interval(hours => _resetHoldoffHours)
-        LIMIT _maxDatasetsToReset
+        FROM ( SELECT dataset_id,
+                      dataset
+               FROM t_dataset
+               WHERE dataset_state_id = 5 AND
+                     (comment ILIKE '%Exception validating constant%' OR
+                      comment ILIKE '%File size changed%' OR
+                      comment ILIKE '%Folder size changed%' OR
+                      comment ILIKE '%Error running OpenChrom%') AND
+                      last_affected < CURRENT_TIMESTAMP - make_interval(hours => _resetHoldoffHours)
+               LIMIT _maxDatasetsToReset
+             ) A
         UNION
         SELECT dataset_id,
-               dataset AS Dataset,
+               dataset,
                '' AS Reset_Comment
         FROM t_dataset
         WHERE dataset_state_id = 5 AND
-              (comment LIKE '%Authentication failure%password is incorrect%') AND
+              (comment ILIKE '%Authentication failure%password is incorrect%') AND
                last_affected < CURRENT_TIMESTAMP - INTERVAL '15 minutes'
         ORDER BY dataset_id
         LIMIT _maxDatasetsToReset;
@@ -142,7 +138,8 @@ BEGIN
                                     EL.target_state = 1 AND
                                     EL.prev_target_state = 5
                               GROUP BY DS.Dataset_ID
-                              HAVING (COUNT(DS.Dataset_ID) > 4) )
+                              HAVING (COUNT(DS.Dataset_ID) > 4)
+                            );
 
         If _infoOnly Then
 
@@ -152,7 +149,7 @@ BEGIN
 
             RAISE INFO '';
 
-            _formatSpecifier := '%-80s %-10s %-25s %-5s %-20s %-40s %-40s';
+            _formatSpecifier := '%-80s %-10s %-25s %-5s %-20s %-80s %-40s';
 
             _infoHead := format(_formatSpecifier,
                                 'Dataset',
@@ -170,7 +167,7 @@ BEGIN
                                          '-------------------------',
                                          '-----',
                                          '--------------------',
-                                         '----------------------------------------',
+                                         '--------------------------------------------------------------------------------',
                                          '----------------------------------------'
                                         );
 
@@ -178,7 +175,6 @@ BEGIN
             RAISE INFO '%', _infoHeadSeparator;
 
             FOR _previewData IN
-
                 SELECT DS.Dataset,
                        DS.Dataset_id,
                        Inst.Instrument,
@@ -187,10 +183,10 @@ BEGIN
                        DS.Comment,
                        Src.Reset_Comment
                 FROM Tmp_Datasets Src
-                    INNER JOIN t_dataset DS
-                    ON Src.dataset_id = DS.dataset_id
-                    INNER JOIN t_instrument_name Inst
-                    ON DS.instrument_id = Inst.instrument_id
+                     INNER JOIN t_dataset DS
+                       ON Src.dataset_id = DS.dataset_id
+                     INNER JOIN t_instrument_name Inst
+                       ON DS.instrument_id = Inst.instrument_id
                 ORDER BY Inst.instrument, DS.dataset
             LOOP
                 _infoData := format(_formatSpecifier,
@@ -216,7 +212,7 @@ BEGIN
         ------------------------------------------------
 
         INSERT INTO t_log_entries( posted_by,
-                                   Entered,
+                                   entered,
                                    type,
                                    message )
         SELECT 'Reset_Failed_Dataset_Capture_Tasks',
@@ -228,7 +224,7 @@ BEGIN
                ON Logs.message = format('%s %s', DS.Reset_Comment, DS.Dataset) AND
                   posted_by IN ('Reset_Failed_Dataset_Capture_Tasks', 'ResetFailedDatasetCaptureTasks')
         WHERE DS.Reset_Comment <> '' AND
-              Logs.message IS NULL
+              Logs.message IS NULL;
 
         DELETE FROM Tmp_Datasets
         WHERE Reset_Comment <> '';
@@ -237,19 +233,19 @@ BEGIN
         -- Reset the datasets
         ------------------------------------------------
 
-        UPDATE t_dataset
+        UPDATE t_dataset target
         SET dataset_state_id = 1,
-            comment = remove_capture_errors_from_string(comment)
-        FROM Tmp_Datasets Src
-            INNER JOIN t_dataset DS
-            ON Src.dataset_id = DS.dataset_id
+            comment = remove_capture_errors_from_string(target.comment)
+        WHERE EXISTS (SELECT 1
+                      FROM Tmp_Datasets Src
+                      WHERE target.dataset_id = Src.Dataset_ID);
         --
         GET DIAGNOSTICS _resetCount = ROW_COUNT;
 
         If _resetCount > 0 Then
 
-            _message := format('Reset dataset state from "Capture Failed" to "New" for %s %s'
-                                _resetCount, public.check_plural(_resetCount, 'Dataset', 'Datasets'));
+            _message := format('Reset dataset state from "Capture Failed" to "New" for %s %s',
+                               _resetCount, public.check_plural(_resetCount, 'Dataset', 'Datasets'));
 
             CALL post_log_entry ('Normal', _message, 'Reset_Failed_Dataset_Capture_Tasks');
 
@@ -264,9 +260,9 @@ BEGIN
             LOOP
                 UPDATE cap.t_log_entries
                 SET type = 'ErrorAutoFixed'
-                WHERE type = 'error' AND
-                      message LIKE '%' || _datasetName || '%' AND
-                      message LIKE '%exception%' AND
+                WHERE type = 'Error' AND
+                      message ILIKE '%' || _datasetName || '%' AND
+                      message ILIKE '%exception%' AND
                       Entered < CURRENT_TIMESTAMP;
 
             END LOOP;
@@ -293,4 +289,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.reset_failed_dataset_capture_tasks IS 'ResetFailedDatasetCaptureTasks';
+
+ALTER PROCEDURE public.reset_failed_dataset_capture_tasks(IN _resetholdoffhours integer, IN _maxdatasetstoreset integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, INOUT _resetcount integer) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE reset_failed_dataset_capture_tasks(IN _resetholdoffhours integer, IN _maxdatasetstoreset integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, INOUT _resetcount integer); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.reset_failed_dataset_capture_tasks(IN _resetholdoffhours integer, IN _maxdatasetstoreset integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, INOUT _resetcount integer) IS 'ResetFailedDatasetCaptureTasks';
+
