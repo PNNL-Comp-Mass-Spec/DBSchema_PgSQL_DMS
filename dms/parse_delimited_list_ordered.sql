@@ -27,23 +27,43 @@ CREATE OR REPLACE FUNCTION public.parse_delimited_list_ordered(_delimitedlist te
 **  Date:   10/16/2007
 **          03/27/2013 mem - Now replacing Tab characters, carriage returns and line feeds with _delimiter
 **          01/14/2020 mem - Ported to PostgreSQL
-**          06/10/2022 mem - Added parameter _maxRows
+**          02/23/2024 mem - Add special handling if _delimeter is CR, LF, or CRLF
+**                         - Add support for _delimiter being '|' or '||'
 **
 *****************************************************/
+DECLARE
+    _delimiterIsCRorLF boolean := false;
 BEGIN
+    _delimitedList = Coalesce(_delimitedList, '');
 
-    -- Replace any CR or LF characters with _delimiter
-    If _delimitedList Like '%' || chr(13) || '%' Then
+    If Position(chr(13) In _delimiter) > 0 Or
+       Position(chr(10) In _delimiter) > 0
+    Then
+        -- Change all carriage returns to linefeeds, and make the delimiter a linefeed
+        _delimiterIsCRorLF := true;
+
+        _delimiter := chr(10);
         _delimitedList := Trim(Replace(_delimitedList, chr(13), _delimiter));
+    ElsIf Position('|'  In _delimiter) > 0 And
+          Position('\|' In _delimiter) = 0
+    Then
+        -- Escape any vertical bars
+        _delimiter := Trim(Replace(_delimiter, '|', '\|'));
+
     End If;
 
-    If _delimitedList Like '%' || chr(10) || '%' Then
-        _delimitedList := Trim(Replace(_delimitedList, chr(10), _delimiter));
-    End If;
+    If _delimitedList <> '' And Not _delimiterIsCRorLF Then
+        -- Replace any CR or LF characters with _delimiter
+        If Position(chr(13) In _delimiter) > 0 Then
+            _delimitedList := Trim(Replace(_delimitedList, chr(13), _delimiter));
+        End If;
 
-    -- If _delimiter is not a tab character, replace any tab characters with _delimiter
-    If _delimiter <> chr(9) Then
-        If _delimitedList Like '%' || chr(9) || '%' Then
+        If Position(chr(10) In _delimiter) > 0 Then
+            _delimitedList := Trim(Replace(_delimitedList, chr(10), _delimiter));
+        End If;
+
+        -- If _delimiter is a comma or a semicolon, replace any tab characters with _delimiter
+        If Trim(_delimiter) In (',', ';') And Position(chr(9) In _delimitedList) > 0 Then
             _delimitedList := Trim(Replace(_delimitedList, chr(9), _delimiter));
         End If;
     End If;
