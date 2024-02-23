@@ -1,10 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.set_external_dataset_purge_priority
-(
-    _infoOnly boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: set_external_dataset_purge_priority(boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.set_external_dataset_purge_priority(IN _infoonly boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -15,10 +15,12 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   04/09/2014
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/22/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
+    _message text;
+    _updateCount int;
     _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
@@ -30,7 +32,7 @@ BEGIN
     CREATE TEMP TABLE Tmp_DatasetsToUpdate
     (
         Dataset_ID int not null
-    )
+    );
 
     CREATE UNIQUE INDEX IX_Tmp_DatasetsToUpdate ON Tmp_DatasetsToUpdate (Dataset_ID);
 
@@ -51,8 +53,14 @@ BEGIN
           InstName.operations_role = 'Offsite' AND
           DA.purge_holdoff_date < CURRENT_TIMESTAMP - INTERVAL '45 days';
 
-    If _infoOnly Then
+    If Not Exists (SELECT dataset_id FROM Tmp_DatasetsToUpdate) Then
+        _message := 'No applicable datasets were found';
+        RAISE INFO '%', _message;
+        DROP TABLE Tmp_DatasetsToUpdate;
+        RETURN;
+    End If;
 
+    If _infoOnly Then
         RAISE INFO '';
 
         _formatSpecifier := '%-25s %-80s %-20s %-14s %-22s';
@@ -101,15 +109,36 @@ BEGIN
             RAISE INFO '%', _infoData;
         END LOOP;
 
-    Else
-        UPDATE t_dataset_archive
-        SET purge_priority = 2
-        FROM Tmp_DatasetsToUpdate U
-        WHERE DA.dataset_id = U.Dataset_ID;
+        DROP TABLE Tmp_DatasetsToUpdate;
+        RETURN;
+    End If;
+
+    UPDATE t_dataset_archive DA
+    SET purge_priority = 2
+    FROM Tmp_DatasetsToUpdate U
+    WHERE DA.dataset_id = U.Dataset_ID;
+    --
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
+
+    If _updateCount > 0 Then
+        _message := format('Changed the purge priority to 2 for %s %s associated with %s',
+                           _updateCount,
+                           public.check_plural(_updateCount, 'dataset', 'datasets'),
+                           public.check_plural(_updateCount, 'an offsite instrument', 'offsite instruments'));
+
+        RAISE INFO '%', _message;
     End If;
 
     DROP TABLE Tmp_DatasetsToUpdate;
 END
 $$;
 
-COMMENT ON PROCEDURE public.set_external_dataset_purge_priority IS 'SetExternalDatasetPurgePriority';
+
+ALTER PROCEDURE public.set_external_dataset_purge_priority(IN _infoonly boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE set_external_dataset_purge_priority(IN _infoonly boolean); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.set_external_dataset_purge_priority(IN _infoonly boolean) IS 'SetExternalDatasetPurgePriority';
+
