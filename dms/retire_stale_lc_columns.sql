@@ -1,12 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.retire_stale_lc_columns
-(
-    _infoOnly boolean = true,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: retire_stale_lc_columns(boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.retire_stale_lc_columns(IN _infoonly boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -19,13 +17,13 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   01/23/2015
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/22/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _updateCount int;
-    _usedThresholdMonths int := 9;
-    _unusedThresholdMonths int := 24;
+    _usedThresholdMonths int;
+    _unusedThresholdMonths int;
 
     _formatSpecifier text;
     _infoHead text;
@@ -37,35 +35,45 @@ BEGIN
     _returnCode := '';
 
     -----------------------------------------------------------
-    -- Validate the inputs
+    -- Validate the inputs and define the thresholds
     -----------------------------------------------------------
 
     _infoOnly := Coalesce(_infoOnly, true);
+
+    _usedThresholdMonths   := 9;
+    _unusedThresholdMonths := 24;
 
     -----------------------------------------------------------
     -- Create a temporary table to track the columns to retire
     -----------------------------------------------------------
 
     CREATE TEMP TABLE Tmp_LCColumns (
-        ID int not null primary key,
-        Last_Used timestamp not null,
-        Most_Recent_Dataset text null
-    )
+        ID int Not Null primary key,
+        Last_Used timestamp Not Null,
+        Most_Recent_Dataset text Null
+    );
 
     -----------------------------------------------------------
     -- Find LC columns that have been used with a dataset, but not in the last 9 months
     -----------------------------------------------------------
 
-    INSERT INTO Tmp_LCColumns (lc_column_id, Last_Used)
+    INSERT INTO Tmp_LCColumns (ID, Last_Used)
     SELECT LCCol.lc_column_id, MAX(DS.created) AS Last_Used
     FROM t_lc_column LCCol
          INNER JOIN t_dataset DS
            ON LCCol.lc_column_id = DS.lc_column_ID
     WHERE LCCol.column_state_id <> 3 AND
           LCCol.created < CURRENT_TIMESTAMP - make_interval(months => _usedThresholdMonths) AND
-          DS.created < CURRENT_TIMESTAMP - make_interval(months => _usedThresholdMonths)
+          DS.created    < CURRENT_TIMESTAMP - make_interval(months => _usedThresholdMonths)
     GROUP BY LCCol.lc_column_id
     ORDER BY LCCol.lc_column_id;
+
+    If Not FOUND Then
+        _message := 'Did not find any stale LC columns to retire';
+        RAISE INFO '%', _message;
+        DROP TABLE Tmp_LCColumns;
+        RETURN;
+    End If;
 
     If _infoOnly Then
 
@@ -93,7 +101,7 @@ BEGIN
     -- Next find LC columns created at least 2 years ago that have never been used with a dataset
     -----------------------------------------------------------
 
-    INSERT INTO Tmp_LCColumns (lc_column_id, Last_Used)
+    INSERT INTO Tmp_LCColumns (ID, Last_Used)
     SELECT LCCol.lc_column_id, LCCol.created AS Last_Used
     FROM t_lc_column LCCol
          LEFT OUTER JOIN t_dataset DS
@@ -108,9 +116,16 @@ BEGIN
     -----------------------------------------------------------
 
     DELETE FROM Tmp_LCColumns
-    WHERE lc_column_id IN ( SELECT lc_column_id
-                            FROM t_lc_column
-                            WHERE lc_column IN ('unknown', 'No_Column', 'DI', 'Infuse') );
+    WHERE ID IN ( SELECT lc_column_id
+                  FROM t_lc_column
+                  WHERE lc_column IN ('unknown', 'No_Column', 'DI', 'Infuse') );
+
+    If Not Exists (SELECT ID FROM Tmp_LCColumns) Then
+        _message := 'Did not find any stale LC columns to retire (after removing columns that should not be auto-retired)';
+        RAISE INFO '%', _message;
+        DROP TABLE Tmp_LCColumns;
+        RETURN;
+    End If;
 
     If _infoOnly Then
 
@@ -120,13 +135,13 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-12s %-30s %-20s %-80s %-20s %-50s %-25s %-25s %-13s %-13s %-16s %-16s';
+        _formatSpecifier := '%-12s %-30s %-11s %-80s %-11s %-70s %-35s %-25s %-13s %-13s %-16s %-16s';
 
         _infoHead := format(_formatSpecifier,
                             'LC_Column_ID',
                             'LC_Column',
-                            'Src.Last_Used',
-                            'Src.Most_Recent_Dataset',
+                            'Last_Used',
+                            'Most_Recent_Dataset',
                             'Created',
                             'Comment',
                             'Packing_Mfg',
@@ -140,11 +155,11 @@ BEGIN
         _infoHeadSeparator := format(_formatSpecifier,
                                      '------------',
                                      '------------------------------',
-                                     '--------------------',
+                                     '-----------',
                                      '--------------------------------------------------------------------------------',
-                                     '--------------------',
-                                     '--------------------------------------------------',
-                                     '-------------------------',
+                                     '-----------',
+                                     '----------------------------------------------------------------------',
+                                     '-----------------------------------',
                                      '-------------------------',
                                      '-------------',
                                      '-------------',
@@ -158,11 +173,11 @@ BEGIN
         FOR _previewData IN
             SELECT LCCol.LC_Column_ID,
                    LCCol.LC_Column,
-                   Src.Last_Used,
+                   Src.Last_Used::date AS Last_Used,
                    Src.Most_Recent_Dataset,
-                   public.timestamp_text(LCCol.Created) AS Created,
-                   LCCol.Comment,
-                   LCCol.Packing_Mfg,
+                   LCCol.Created::date AS Created,
+                   Left(LCCol.Comment, 70) AS Comment,
+                   Left(LCCol.Packing_Mfg, 35) AS Packing_Mfg,
                    LCCol.Packing_Type,
                    LCCol.Particle_Size,
                    LCCol.Particle_Type,
@@ -170,14 +185,14 @@ BEGIN
                    LCCol.Column_Outer_Dia
             FROM t_lc_column LCCol
                  INNER JOIN Tmp_LCColumns Src
-                   ON LCCol.lc_column_id = Src.lc_column_id
+                   ON LCCol.lc_column_id = Src.ID
             ORDER BY Src.Last_Used, LCCol.lc_column_id
         LOOP
             _infoData := format(_formatSpecifier,
                                 _previewData.LC_Column_ID,
                                 _previewData.LC_Column,
-                                _previewData.Src.Last_Used,
-                                _previewData.Src.Most_Recent_Dataset,
+                                _previewData.Last_Used,
+                                _previewData.Most_Recent_Dataset,
                                 _previewData.Created,
                                 _previewData.Comment,
                                 _previewData.Packing_Mfg,
@@ -191,29 +206,44 @@ BEGIN
             RAISE INFO '%', _infoData;
         END LOOP;
 
-    Else
-        -----------------------------------------------------------
-        -- Change the LC Column state to 3=Retired
-        -----------------------------------------------------------
+        DROP TABLE Tmp_LCColumns;
+        RETURN;
+    End If;
 
-        UPDATE t_lc_column
-        SET column_state_id = 3
-        WHERE lc_column_id IN ( SELECT lc_column_id
-                                FROM Tmp_LCColumns Filter );
-        --
-        GET DIAGNOSTICS _updateCount = ROW_COUNT;
+    -----------------------------------------------------------
+    -- Change the LC Column state to 3=Retired
+    -----------------------------------------------------------
 
-        If _updateCount > 0 Then
-            _message := format('Retired %s %s that have not been used in at last %s months',
-                        _updateCount, public.check_plural(_updateCount, 'LC column', 'LC columns'), _usedThresholdMonths);
+    UPDATE t_lc_column Target
+    SET column_state_id = 3
+    WHERE EXISTS (SELECT 1
+                  FROM Tmp_LCColumns
+                  WHERE Target.lc_column_id = Tmp_LCColumns.ID);
+    --
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-            CALL post_log_entry ('Normal', _message, 'Retire_Stale_LC_Columns');
-        End If;
+    If _updateCount > 0 Then
+        _message := format('Retired %s %s that %s not been used in at last %s months',
+                           _updateCount,
+                           public.check_plural(_updateCount, 'LC column', 'LC columns'),
+                           public.check_plural(_updateCount, 'has', 'have'),
+                           _usedThresholdMonths);
 
+        CALL post_log_entry ('Normal', _message, 'Retire_Stale_LC_Columns');
+
+        RAISE INFO '%', _message;
     End If;
 
     DROP TABLE Tmp_LCColumns;
 END
 $$;
 
-COMMENT ON PROCEDURE public.retire_stale_lc_columns IS 'RetireStaleLCColumns';
+
+ALTER PROCEDURE public.retire_stale_lc_columns(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE retire_stale_lc_columns(IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.retire_stale_lc_columns(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'RetireStaleLCColumns';
+

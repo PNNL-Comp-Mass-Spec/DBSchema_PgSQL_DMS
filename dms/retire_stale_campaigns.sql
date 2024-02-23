@@ -1,12 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.retire_stale_campaigns
-(
-    _infoOnly boolean = true,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: retire_stale_campaigns(boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.retire_stale_campaigns(IN _infoonly boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -19,7 +17,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   06/11/2022
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/22/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -45,16 +43,22 @@ BEGIN
     -----------------------------------------------------------
 
     CREATE TEMP TABLE Tmp_Campaigns (
-        Campaign_ID int not null primary key,
+        Campaign_ID int Not Null primary key,
         Campaign text Not Null,
         Created timestamp Not Null,
         Most_Recent_Activity timestamp Null,
         Most_Recent_Dataset timestamp Null,
         Most_Recent_Analysis_Job timestamp Null
-    )
+    );
 
     -----------------------------------------------------------
-    -- Find LC columns that have been used with a dataset, but not in the last 9 months
+    -- Find campaigns that meet each of these conditions (as defined in the view)
+    --   The campaign was created more than 7 years ago
+    --   Most recent sample prep request updated more than 18 months ago
+    --   Most recent experiment created more than 18 months ago
+    --   Most recent requested run created more than 18 months ago
+    --   Most recent dataset created more than 18 months ago
+    --   Most recent analysis job created started more than 18 months ago
     -----------------------------------------------------------
 
     INSERT INTO Tmp_Campaigns (Campaign_ID, Campaign, Created, Most_Recent_Activity, Most_Recent_Dataset, Most_Recent_Analysis_Job)
@@ -66,7 +70,14 @@ BEGIN
            Most_Recent_Analysis_Job
     FROM V_Campaign_List_Stale
     WHERE State = 'Active'
-    ORDER BY Campaign_ID
+    ORDER BY Campaign_ID;
+
+    If Not FOUND Then
+        _message := 'Did not find any stale campaigns to retire';
+        RAISE INFO '%', _message;
+        DROP TABLE Tmp_Campaigns;
+        RETURN;
+    End If;
 
     If _infoOnly Then
 
@@ -76,7 +87,7 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-11s %-50s %-20s %-20s %-20s %-20s';
+        _formatSpecifier := '%-11s %-50s %-11s %-20s %-20s %-24s';
 
         _infoHead := format(_formatSpecifier,
                             'Campaign_ID',
@@ -90,10 +101,10 @@ BEGIN
         _infoHeadSeparator := format(_formatSpecifier,
                                      '-----------',
                                      '--------------------------------------------------',
+                                     '-----------',
                                      '--------------------',
                                      '--------------------',
-                                     '--------------------',
-                                     '--------------------'
+                                     '------------------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -102,10 +113,10 @@ BEGIN
         FOR _previewData IN
             SELECT Campaign_ID,
                    Campaign,
-                   public.timestamp_text(Created) AS Created,
-                   public.timestamp_text(Most_Recent_Activity) AS Most_Recent_Activity,
-                   public.timestamp_text(Most_Recent_Dataset) AS Most_Recent_Dataset,
-                   public.timestamp_text(Most_Recent_Analysis_Job) AS Most_Recent_Analysis_Job
+                   Created::date                  AS Created,
+                   Most_Recent_Activity::date     AS Most_Recent_Activity,
+                   Most_Recent_Dataset::date      AS Most_Recent_Dataset,
+                   Most_Recent_Analysis_Job::date AS Most_Recent_Analysis_Job
             FROM Tmp_Campaigns
             ORDER BY Campaign_ID
         LOOP
@@ -120,27 +131,45 @@ BEGIN
 
             RAISE INFO '%', _infoData;
         END LOOP;
-    Else
-        -----------------------------------------------------------
-        -- Change the campaign states to 'Inactive'
-        -----------------------------------------------------------
 
-        UPDATE t_campaign
-        SET state = 'Inactive'
-        WHERE campaign_id IN ( SELECT campaign_id FROM Tmp_Campaigns )
-        --
-        GET DIAGNOSTICS _updateCount = ROW_COUNT;
+        DROP TABLE Tmp_Campaigns;
+        RETURN;
+    End If;
 
-        If _updateCount > 0 Then
-            _message := format('Retired %s %s that have not been used in at last 18 months and were created over 7 years ago',
-                                _updateCount, public.check_plural(_updateCount, 'campaigns', 'campaigns'));
+    -----------------------------------------------------------
+    -- Change the campaign states to 'Inactive'
+    -----------------------------------------------------------
 
-            CALL post_log_entry ('Normal', _message, 'Retire_Stale_Campaigns');
-        End If;
+    UPDATE t_campaign Target
+    SET state = 'Inactive'
+    WHERE EXISTS (SELECT 1
+                  FROM Tmp_Campaigns
+                  WHERE Target.campaign_id = Tmp_Campaigns.campaign_id);
+    --
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
+
+    If _updateCount > 0 Then
+        _message := format('Retired %s %s that %s not been used in at last 18 months and %s created over 7 years ago',
+                           _updateCount,
+                           public.check_plural(_updateCount, 'campaign', 'campaigns'),
+                           public.check_plural(_updateCount, 'has', 'have'),
+                           public.check_plural(_updateCount, 'was', 'were'));
+
+        CALL post_log_entry ('Normal', _message, 'Retire_Stale_Campaigns');
+
+        RAISE INFO '%', _message;
     End If;
 
     DROP TABLE Tmp_Campaigns;
 END
 $$;
 
-COMMENT ON PROCEDURE public.retire_stale_campaigns IS 'RetireStaleCampaigns';
+
+ALTER PROCEDURE public.retire_stale_campaigns(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE retire_stale_campaigns(IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.retire_stale_campaigns(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'RetireStaleCampaigns';
+
