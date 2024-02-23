@@ -249,7 +249,7 @@ BEGIN
     End If;
 
     -----------------------------------------------
-    -- Add/Update t_reporter_ion_observation_rates using dynamic SQL
+    -- Add/update t_reporter_ion_observation_rates using dynamic SQL
     -----------------------------------------------
 
     If Exists (SELECT job FROM t_reporter_ion_observation_rates WHERE job = _job) Then

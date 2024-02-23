@@ -773,7 +773,7 @@ BEGIN
         WHERE DS.dataset = NewInfo.Dataset_Name;
 
         -----------------------------------------------
-        -- Add/Update t_dataset_info using a MERGE statement
+        -- Add/update t_dataset_info using a merge statement
         -----------------------------------------------
 
         _currentLocation := 'Update T_Dataset_Info using a Merge';
@@ -830,7 +830,7 @@ BEGIN
                     CURRENT_TIMESTAMP);
 
         -----------------------------------------------
-        -- Cannot use a Merge statement on t_dataset_scan_types
+        -- Cannot use a merge statement on t_dataset_scan_types
         -- since some datasets (e.g. MRM) will have multiple entries
         -- of the same scan type but different scan_filter values
         --
@@ -877,7 +877,7 @@ BEGIN
         End If;
 
         -----------------------------------------------
-        -- Add/Update t_dataset_files using a Merge statement
+        -- Add/update t_dataset_files using a merge statement
         -----------------------------------------------
 
         _currentLocation := 'Update T_Dataset_Files using a Merge';

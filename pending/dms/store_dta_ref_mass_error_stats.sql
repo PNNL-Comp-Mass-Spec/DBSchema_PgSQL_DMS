@@ -352,7 +352,7 @@ BEGIN
     End If;
 
     -----------------------------------------------
-    -- Add/Update t_dataset_qc using a MERGE statement
+    -- Add/update t_dataset_qc using a merge statement
     -----------------------------------------------
 
     MERGE INTO t_dataset_qc AS target

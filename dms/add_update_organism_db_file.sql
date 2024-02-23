@@ -101,7 +101,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Add/Update t_organism_db_file
+    -- Add/update t_organism_db_file
     ---------------------------------------------------
 
     If Exists (SELECT file_name FROM t_organism_db_file WHERE file_name = _fastaFileName::citext) Then

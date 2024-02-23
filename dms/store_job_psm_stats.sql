@@ -202,7 +202,7 @@ BEGIN
     End If;
 
     -----------------------------------------------
-    -- Add/Update t_analysis_job_psm_stats using a MERGE statement
+    -- Add/update t_analysis_job_psm_stats using a merge statement
     -----------------------------------------------
 
     MERGE INTO t_analysis_job_psm_stats AS target
@@ -309,7 +309,7 @@ BEGIN
         WHERE job = _job;
     Else
         -----------------------------------------------
-        -- Add/Update t_analysis_job_psm_stats_phospho using a MERGE statement
+        -- Add/update t_analysis_job_psm_stats_phospho using a merge statement
         -----------------------------------------------
 
         MERGE INTO t_analysis_job_psm_stats_phospho AS target

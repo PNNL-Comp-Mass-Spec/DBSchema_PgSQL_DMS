@@ -20,8 +20,8 @@ CREATE OR REPLACE PROCEDURE sw.sync_job_info(IN _bypassdms boolean DEFAULT false
 **  Date:   01/17/2009 mem - Initial version (Ticket #716, http://prismtrac.pnl.gov/trac/ticket/716)
 **          06/01/2009 mem - Added index to Tmp_JobProcessorInfo (Ticket #738, http://prismtrac.pnl.gov/trac/ticket/738)
 **          06/27/2009 mem - Now only filtering out complete jobs when populating Tmp_JobProcessorInfo (previously, we were also excluding failed jobs)
-**          09/17/2009 mem - Now using a MERGE statement to update sw.t_local_job_processors
-**          07/01/2010 mem - Removed old code that was replaced by the MERGE statement in 9/17/2009
+**          09/17/2009 mem - Now using a merge statement to update sw.t_local_job_processors
+**          07/01/2010 mem - Removed old code that was replaced by the merge statement in 9/17/2009
 **          05/25/2011 mem - Removed priority column from sw.t_job_steps
 **          05/28/2015 mem - No longer updating sw.t_local_job_processors since we have deprecated processor groups
 **          02/15/2016 mem - Re-enabled use of sw.t_local_job_processors
@@ -107,7 +107,7 @@ BEGIN
     INTO _countBeforeMerge
     FROM sw.t_local_job_processors;
 
-    -- Use a MERGE Statement to synchronize sw.t_local_job_processors with v_get_pipeline_job_processors
+    -- Use a merge statement to synchronize sw.t_local_job_processors with v_get_pipeline_job_processors
 
     MERGE INTO sw.t_local_job_processors AS target
     USING ( SELECT job, processor, general_processing
