@@ -1,45 +1,41 @@
 --
-CREATE OR REPLACE PROCEDURE public.store_qcdm_results
-(
-    _datasetID int = 0,
-    _resultsXML xml,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: store_dta_ref_mass_error_stats(integer, xml, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.store_dta_ref_mass_error_stats(IN _datasetid integer DEFAULT 0, IN _resultsxml xml DEFAULT NULL::xml, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $_$
 /****************************************************
 **
 **  Desc:
-**      Update the QCDM information for the dataset specified by _datasetID
+**      Update the mass error stats specified by _datasetID
 **
-**      If _datasetID is 0, will use the dataset name defined in _resultsXML
-**      If _datasetID is non-zero, will validate that the dataset name in the XML corresponds to the dataset ID specified by _datasetID
+**      If _datasetID is 0, use the dataset name defined in _resultsXML
+**      If _datasetID is non-zero, validate that the dataset name in the XML corresponds to the dataset ID specified by _datasetID
 **
 **      Typical XML file contents:
 **
-**      <QCDM_Results>
-**        <Dataset>QC_Shew_13_02_pt1ug_c_29May13_Draco_13-05-16</Dataset>
-**        <SMAQC_Job>949552</SMAQC_Job>
-**        <Quameter_Job>1221129</Quameter_Job>
+**      <DTARef_MassErrorStats>
+**        <Dataset>TCGA_24-1467_29-2432_25-1321_117C_W_PNNL_B1S2_f23</Dataset>
+**        <PSM_Source_Job>927729</PSM_Source_Job>
 **        <Measurements>
-**           <Measurement Name="QCDM">0.12345</Measurement>
+**           <Measurement Name="MassErrorPPM">-2.58</Measurement>
+**           <Measurement Name="MassErrorPPM_Refined">0.01</Measurement>
 **        </Measurements>
-**      </QCDM_Results>
+**      </DTARef_MassErrorStats>
 **
 **  Arguments:
 **    _datasetID    If this value is 0, will determine the dataset name using the contents of _resultsXML
-**    _resultsXML   XML holding the QCDM results for a single dataset
+**    _resultsXML   XML holding the Mass Error results for a single dataset
 **    _infoOnly     When true, preview updates
 **    _message      Status message
 **    _returnCode   Return code
 **
 **  Auth:   mem
-**  Date:   06/04/2013 mem - Initial version (modelled after StoreSMAQCResults)
+**  Date:   08/08/2013 mem - Initial version (modelled after StoreSMAQCResults)
 **          04/06/2016 mem - Now using Try_Convert to convert from text to int
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/22/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -57,14 +53,13 @@ BEGIN
     _returnCode := '';
 
     -----------------------------------------------------------
-    -- Create the table to hold the data
+    -- Create the temporary tables to hold the data
     -----------------------------------------------------------
 
     CREATE TEMP TABLE Tmp_DatasetInfo (
         Dataset_ID int NULL,
-        Dataset_Name text NOT NULL,
-        SMAQC_Job int NULL,                -- Analysis job used to generate the SMAQC results
-        Quameter_Job int NULL            -- Analysis job used to generate the Quameter results
+        Dataset_Name citext NOT NULL,
+        PSM_Source_Job int NULL                -- Analysis job used by DTA_Refinery
     );
 
     CREATE TEMP TABLE Tmp_Measurements (
@@ -75,7 +70,8 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_KnownMetrics (
         Dataset_ID int NOT NULL,
-        QCDM real NULL
+        Mass_Error_PPM real NULL,
+        Mass_Error_PPM_Refined real NULL
     );
 
     ---------------------------------------------------
@@ -83,7 +79,7 @@ BEGIN
     ---------------------------------------------------
 
     _datasetID := Coalesce(_datasetID, 0);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly  := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------
     -- Parse out the dataset name from _resultsXML
@@ -93,10 +89,10 @@ BEGIN
     -- [1] is used to select the first match (there should only be one matching node, but xpath() returns an array)
     ---------------------------------------------------
 
-    _datasetName := (xpath('//QCDM_Results/Dataset/text()', _resultsXML))[1]::text;
+    _datasetName := (xpath('//DTARef_MassErrorStats/Dataset/text()', _resultsXML))[1]::text;
 
     If Coalesce(_datasetName, '') = '' Then
-        _message := 'XML in _resultsXML is not in the expected form; Could not match //QCDM_Results/Dataset';
+        _message := 'XML in _resultsXML is not in the expected form; Could not match //DTARef_MassErrorStats/Dataset';
         RAISE WARNING '%', _message;
 
         DROP TABLE Tmp_DatasetInfo;
@@ -114,13 +110,11 @@ BEGIN
     INSERT INTO Tmp_DatasetInfo (
         Dataset_ID,
         Dataset_Name,
-        SMAQC_Job,
-        Quameter_Job
+        PSM_Source_Job
     )
     SELECT _datasetID AS DatasetID,
            _datasetName AS Dataset,
-           public.try_cast((xpath('//QCDM_Results/SMAQC_Job/text()', _resultsXML))[1]::text, 0) AS SMAQC_Job,
-           public.try_cast((xpath('//QCDM_Results/Quameter_Job/text()', _resultsXML))[1]::text, 0) AS Quameter_Job;
+           public.try_cast((xpath('//DTARef_MassErrorStats/PSM_Source_Job/text()', _resultsXML))[1]::text, 0) AS PSM_Source_Job;
 
     ---------------------------------------------------
     -- Now extract out the Measurement information
@@ -132,7 +126,7 @@ BEGIN
         SELECT xmltable.*
         FROM ( SELECT _resultsXML AS rooted_xml
              ) Src,
-             XMLTABLE('//QCDM_Results/Measurements/Measurement'
+             XMLTABLE('//DTARef_MassErrorStats/Measurements/Measurement'
                       PASSING Src.rooted_xml
                       COLUMNS ValueText text PATH '.',
                               name text PATH '@Name')
@@ -167,8 +161,7 @@ BEGIN
         FROM Tmp_DatasetInfo;
 
     Else
-
-        -- _datasetID was non-zero
+        -- _datasetID is non-zero
         -- Validate the dataset name in Tmp_DatasetInfo against t_dataset
 
         SELECT DS.dataset_id
@@ -177,9 +170,15 @@ BEGIN
              INNER JOIN t_dataset DS
                ON Target.Dataset_Name = DS.dataset;
 
-        If _datasetIDCheck <> _datasetID Then
-            _message := format('Error: dataset ID values for %s do not match; expecting %s but procedure argument _datasetID is %s',
-                                _datasetName, _datasetIDCheck, _datasetID);
+        If Not FOUND Or _datasetIDCheck <> _datasetID Then
+            If Not FOUND Then
+                _message := format('Error: unrecognized dataset name for dataset ID %s: %s',
+                                    _datasetID, _datasetName);
+            Else
+                _message := format('Error: dataset ID values for %s do not match; expecting %s but procedure argument _datasetID is %s',
+                                    _datasetName, _datasetIDCheck, _datasetID);
+            End If;
+
             RAISE WARNING '%', _message;
 
             DROP TABLE Tmp_DatasetInfo;
@@ -196,7 +195,7 @@ BEGIN
     -- If any of the metrics has a non-numeric value, the Value column will remain Null
     -----------------------------------------------
 
-    UPDATE Tmp_Measurements
+    UPDATE Tmp_Measurements Target
     SET Value = FilterQ.Value
     FROM ( SELECT Name,
                   ValueText,
@@ -221,43 +220,41 @@ BEGIN
     -----------------------------------------------
 
     INSERT INTO Tmp_KnownMetrics ( Dataset_ID,
-                                   QCDM
+                                   Mass_Error_PPM,
+                                   Mass_Error_PPM_Refined
                                  )
     SELECT _datasetID,
-           ct."QCDM"
+           ct."MassErrorPPM",
+           ct."MassErrorPPM_Refined"
     FROM crosstab(
        'SELECT 1 AS RowID,
                Name,
                Value
         FROM Tmp_Measurements
         ORDER BY 1,2',
-       $$SELECT unnest('{QCDM}'::text[])$$
+       $$SELECT unnest('{MassErrorPPM, MassErrorPPM_Refined}'::text[])$$
        ) AS ct (RowID int,
-                "QCDM" float8);
+                "MassErrorPPM" float8, "MassErrorPPM_Refined" float8);
 
     If _infoOnly Then
-
         -----------------------------------------------
         -- Preview the data, then exit
         -----------------------------------------------
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-80s %-10s %-12s';
-
+        _formatSpecifier := '%-10s %-80s %-14s';
 
         _infoHead := format(_formatSpecifier,
                             'Dataset_ID',
                             'Dataset_Name',
-                            'SMAQC_Job',
-                            'Quameter_Job'
+                            'PSM_Source_Job'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
                                      '----------',
                                      '--------------------------------------------------------------------------------',
-                                     '----------',
-                                     '------------'
+                                     '--------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -266,15 +263,13 @@ BEGIN
         FOR _previewData IN
             SELECT Dataset_ID,
                    Dataset_Name,
-                   SMAQC_Job,
-                   Quameter_Job
+                   PSM_Source_Job
             FROM Tmp_DatasetInfo
         LOOP
             _infoData := format(_formatSpecifier,
                                 _previewData.Dataset_ID,
                                 _previewData.Dataset_Name,
-                                _previewData.SMAQC_Job,
-                                _previewData.Quameter_Job
+                                _previewData.PSM_Source_Job
                                );
 
             RAISE INFO '%', _infoData;
@@ -282,7 +277,7 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s %-10s';
+        _formatSpecifier := '%-25s %-10s %-10s';
 
         _infoHead := format(_formatSpecifier,
                             'Name',
@@ -291,7 +286,7 @@ BEGIN
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '----------',
+                                     '-------------------------',
                                      '----------',
                                      '----------'
                                     );
@@ -316,16 +311,18 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-10s';
+        _formatSpecifier := '%-10s %-14s %-22s';
 
         _infoHead := format(_formatSpecifier,
                             'Dataset_ID',
-                            'QCDM'
+                            'Mass_Error_PPM',
+                            'Mass_Error_PPM_Refined'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
                                      '----------',
-                                     '----------'
+                                     '--------------',
+                                     '----------------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -333,12 +330,14 @@ BEGIN
 
         FOR _previewData IN
             SELECT Dataset_ID,
-                   QCDM
+                   Mass_Error_PPM,
+                   Mass_Error_PPM_Refined
             FROM Tmp_KnownMetrics
         LOOP
             _infoData := format(_formatSpecifier,
                                 _previewData.Dataset_ID,
-                                _previewData.QCDM
+                                _previewData.Mass_Error_PPM,
+                                _previewData.Mass_Error_PPM_Refined
                                );
 
             RAISE INFO '%', _infoData;
@@ -355,33 +354,31 @@ BEGIN
     -- Add/update t_dataset_qc using a merge statement
     -----------------------------------------------
 
-    MERGE INTO t_dataset_qc AS target
-    USING ( SELECT M.dataset_id,
-                   M.qcdm
+    MERGE INTO t_dataset_qc AS Target
+    USING ( SELECT DI.dataset_id,
+                   DI.psm_source_job,
+                   M.mass_error_ppm,
+                   M.mass_error_ppm_refined
             FROM Tmp_KnownMetrics M INNER JOIN
                  Tmp_DatasetInfo DI ON M.dataset_id = DI.dataset_id
           ) AS Source
-    ON (target.dataset_id = Source.dataset_id)
+    ON (Target.dataset_id = Source.dataset_id)
     WHEN MATCHED THEN
         UPDATE SET
-            QCDM = Source.QCDM,
-            QCDM_Last_Affected = CURRENT_TIMESTAMP
-
+            mass_error_ppm = Source.mass_error_ppm,
+            mass_error_ppm_refined = Source.mass_error_ppm_refined,
+            psm_source_job = Coalesce(Target.PSM_Source_Job, Source.PSM_Source_Job)
     WHEN NOT MATCHED THEN
         INSERT (Dataset_ID,
-                QCDM,
-                QCDM_Last_Affected)
+                psm_source_job,
+                mass_error_ppm,
+                mass_error_ppm_refined)
         VALUES (Source.Dataset_ID,
-                Source.QCDM,
-                CURRENT_TIMESTAMP);
+                Source.PSM_Source_Job,
+                Source.mass_error_ppm,
+                Source.mass_error_ppm_refined);
 
-    _message := 'QCDM measurement storage successful';
-
-    _message := 'QCDM measurement storage skipped (not yet coded)';
-
-    If Coalesce(_message, '') <> '' And _infoOnly Then
-        RAISE INFO '%', _message;
-    End If;
+    _message := 'DTARefinery Mass Error stats successfully stored';
 
     ---------------------------------------------------
     -- Log SP usage
@@ -394,14 +391,21 @@ BEGIN
     End If;
 
     If Not _infoOnly Then
-        CALL post_usage_log_entry ('store_qcdm_results', _usageMessage;);
+        CALL post_usage_log_entry ('store_dta_ref_mass_error_stats', _usageMessage);
     End If;
 
     DROP TABLE Tmp_DatasetInfo;
     DROP TABLE Tmp_Measurements;
     DROP TABLE Tmp_KnownMetrics;
-
 END
-$$;
+$_$;
 
-COMMENT ON PROCEDURE public.store_qcdmresults IS 'StoreQCDMResults';
+
+ALTER PROCEDURE public.store_dta_ref_mass_error_stats(IN _datasetid integer, IN _resultsxml xml, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE store_dta_ref_mass_error_stats(IN _datasetid integer, IN _resultsxml xml, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.store_dta_ref_mass_error_stats(IN _datasetid integer, IN _resultsxml xml, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'StoreDTARefMassErrorStats';
+

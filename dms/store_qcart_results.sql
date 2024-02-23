@@ -1,45 +1,40 @@
 --
-CREATE OR REPLACE PROCEDURE public.store_dta_ref_mass_error_stats
-(
-    _datasetID int = 0,
-    _resultsXML xml,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: store_qcart_results(integer, xml, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.store_qcart_results(IN _datasetid integer DEFAULT 0, IN _resultsxml xml DEFAULT NULL::xml, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $_$
 /****************************************************
 **
 **  Desc:
-**      Update the mass error stats specified by _datasetID
+**      Update the QC-ART information for the dataset specified by _datasetID
 **
-**      If _datasetID is 0, will use the dataset name defined in _resultsXML
-**      If _datasetID is non-zero, will validate that the dataset name in the XML corresponds to the dataset ID specified by _datasetID
+**      If _datasetID is 0, use the dataset name defined in _resultsXML
+**      If _datasetID is non-zero, validate that the dataset name in the XML corresponds to the dataset ID specified by _datasetID
 **
 **      Typical XML file contents:
 **
-**      <DTARef_MassErrorStats>
-**        <Dataset>TCGA_24-1467_29-2432_25-1321_117C_W_PNNL_B1S2_f23</Dataset>
-**        <PSM_Source_Job>927729</PSM_Source_Job>
+**      <QCART_Results>
+**        <Dataset>TEDDY_DISCOVERY_SET_35_14_25Oct15_Frodo_15-08-15</Dataset>
+**        <MASIC_Job>1242856</MASIC_Job>
 **        <Measurements>
-**           <Measurement Name="MassErrorPPM">-2.58</Measurement>
-**           <Measurement Name="MassErrorPPM_Refined">0.01</Measurement>
+**           <Measurement Name="QCART">0.12345</Measurement>
 **        </Measurements>
-**      </DTARef_MassErrorStats>
+**      </QCART_Results>
 **
 **  Arguments:
 **    _datasetID    If this value is 0, will determine the dataset name using the contents of _resultsXML
-**    _resultsXML   XML holding the Mass Error results for a single dataset
+**    _resultsXML   XML holding the QCART results for a single dataset
 **    _infoOnly     When true, preview updates
 **    _message      Status message
 **    _returnCode   Return code
 **
 **  Auth:   mem
-**  Date:   08/08/2013 mem - Initial version (modelled after StoreSMAQCResults)
+**  Date:   11/05/2015 mem - Initial version (modelled after StoreSMAQCResults)
 **          04/06/2016 mem - Now using Try_Convert to convert from text to int
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/22/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -57,13 +52,13 @@ BEGIN
     _returnCode := '';
 
     -----------------------------------------------------------
-    -- Create the temporary tables to hold the data
+    -- Create the tables to hold the data
     -----------------------------------------------------------
 
     CREATE TEMP TABLE Tmp_DatasetInfo (
         Dataset_ID int NULL,
-        Dataset_Name text NOT NULL,
-        PSM_Source_Job int NULL                -- Analysis job used by DTA_Refinery
+        Dataset_Name citext NOT NULL,
+        MASIC_Job int NULL                            -- Analysis job used to generate the MASIC results; not stored in the QC table
     );
 
     CREATE TEMP TABLE Tmp_Measurements (
@@ -74,8 +69,7 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_KnownMetrics (
         Dataset_ID int NOT NULL,
-        Mass_Error_PPM real NULL,
-        Mass_Error_PPM_Refined real NULL
+        QCART real NULL
     );
 
     ---------------------------------------------------
@@ -83,7 +77,7 @@ BEGIN
     ---------------------------------------------------
 
     _datasetID := Coalesce(_datasetID, 0);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly  := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------
     -- Parse out the dataset name from _resultsXML
@@ -93,10 +87,10 @@ BEGIN
     -- [1] is used to select the first match (there should only be one matching node, but xpath() returns an array)
     ---------------------------------------------------
 
-    _datasetName := (xpath('//DTARef_MassErrorStats/Dataset/text()', _resultsXML))[1]::text;
+    _datasetName := (xpath('//QCART_Results/Dataset/text()', _resultsXML))[1]::text;
 
     If Coalesce(_datasetName, '') = '' Then
-        _message := 'XML in _resultsXML is not in the expected form; Could not match //DTARef_MassErrorStats/Dataset';
+        _message := 'XML in _resultsXML is not in the expected form; Could not match //QCART_Results/Dataset';
         RAISE WARNING '%', _message;
 
         DROP TABLE Tmp_DatasetInfo;
@@ -114,11 +108,11 @@ BEGIN
     INSERT INTO Tmp_DatasetInfo (
         Dataset_ID,
         Dataset_Name,
-        PSM_Source_Job
+        MASIC_Job
     )
     SELECT _datasetID AS DatasetID,
            _datasetName AS Dataset,
-           (xpath('//DTARef_MassErrorStats/PSM_Source_Job/text()', _resultsXML))[1]::text AS PSM_Source_Job;
+           public.try_cast((xpath('//QCART_Results/MASIC_Job/text()', _resultsXML))[1]::text, 0) AS MASIC_Job;
 
     ---------------------------------------------------
     -- Now extract out the Measurement information
@@ -130,7 +124,7 @@ BEGIN
         SELECT xmltable.*
         FROM ( SELECT _resultsXML AS rooted_xml
              ) Src,
-             XMLTABLE('//DTARef_MassErrorStats/Measurements/Measurement'
+             XMLTABLE('//QCART_Results/Measurements/Measurement'
                       PASSING Src.rooted_xml
                       COLUMNS ValueText text PATH '.',
                               name text PATH '@Name')
@@ -142,10 +136,10 @@ BEGIN
     ---------------------------------------------------
 
     If _datasetID = 0 Then
-        UPDATE Tmp_DatasetInfo target
+        UPDATE Tmp_DatasetInfo Target
         SET Dataset_ID = DS.Dataset_ID
         FROM t_dataset DS
-        WHERE target.Dataset_Name = DS.dataset;
+        WHERE Target.Dataset_Name = DS.dataset;
 
         If Not FOUND Then
             _message := format('Warning: dataset not found in table t_dataset: %s', _datasetName);
@@ -165,8 +159,7 @@ BEGIN
         FROM Tmp_DatasetInfo;
 
     Else
-
-        -- _datasetID was non-zero
+        -- _datasetID is non-zero
         -- Validate the dataset name in Tmp_DatasetInfo against t_dataset
 
         SELECT DS.dataset_id
@@ -175,9 +168,14 @@ BEGIN
              INNER JOIN t_dataset DS
                ON Target.Dataset_Name = DS.dataset;
 
-        If _datasetIDCheck <> _datasetID Then
-            _message := format('Error: dataset ID values for %s do not match; expecting %s but procedure argument _datasetID is %s',
-                                _datasetName, _datasetIDCheck, _datasetID);
+        If Not FOUND Or _datasetIDCheck <> _datasetID Then
+            If Not FOUND Then
+                _message := format('Error: unrecognized dataset name for dataset ID %s: %s',
+                                    _datasetID, _datasetName);
+            Else
+                _message := format('Error: dataset ID values for %s do not match; expecting %s but procedure argument _datasetID is %s',
+                                    _datasetName, _datasetIDCheck, _datasetID);
+            End If;
 
             RAISE WARNING '%', _message;
 
@@ -220,42 +218,39 @@ BEGIN
     -----------------------------------------------
 
     INSERT INTO Tmp_KnownMetrics ( Dataset_ID,
-                                   Mass_Error_PPM,
-                                   Mass_Error_PPM_Refined
+                                   QCART
                                  )
     SELECT _datasetID,
-           ct."MassErrorPPM",
-           ct."MassErrorPPM_Refined"
+           ct."QCART"
     FROM crosstab(
        'SELECT 1 AS RowID,
                Name,
                Value
         FROM Tmp_Measurements
         ORDER BY 1,2',
-       $$SELECT unnest('{MassErrorPPM, MassErrorPPM_Refined}'::text[])$$
+       $$SELECT unnest('{QCART}'::text[])$$
        ) AS ct (RowID int,
-                "MassErrorPPM" float8, "MassErrorPPM_Refined" float8);
+                "QCART" float8);
 
     If _infoOnly Then
-
         -----------------------------------------------
         -- Preview the data, then exit
         -----------------------------------------------
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-80s %-14s';
+        _formatSpecifier := '%-10s %-80s %-9s';
 
         _infoHead := format(_formatSpecifier,
                             'Dataset_ID',
                             'Dataset_Name',
-                            'PSM_Source_Job'
+                            'MASIC_Job'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
                                      '----------',
                                      '--------------------------------------------------------------------------------',
-                                     '--------------'
+                                     '---------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -264,13 +259,13 @@ BEGIN
         FOR _previewData IN
             SELECT Dataset_ID,
                    Dataset_Name,
-                   PSM_Source_Job
+                   MASIC_Job
             FROM Tmp_DatasetInfo
         LOOP
             _infoData := format(_formatSpecifier,
                                 _previewData.Dataset_ID,
                                 _previewData.Dataset_Name,
-                                _previewData.PSM_Source_Job
+                                _previewData.MASIC_Job
                                );
 
             RAISE INFO '%', _infoData;
@@ -278,7 +273,7 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-25s %-10s %-10s';
+        _formatSpecifier := '%-9s %-9s %-9s';
 
         _infoHead := format(_formatSpecifier,
                             'Name',
@@ -287,9 +282,9 @@ BEGIN
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '-------------------------',
-                                     '----------',
-                                     '----------'
+                                     '---------',
+                                     '---------',
+                                     '---------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -312,18 +307,16 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-14s %-22s';
+        _formatSpecifier := '%-10s %-10s';
 
         _infoHead := format(_formatSpecifier,
                             'Dataset_ID',
-                            'Mass_Error_PPM',
-                            'Mass_Error_PPM_Refined'
+                            'QCART'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
                                      '----------',
-                                     '--------------',
-                                     '----------------------'
+                                     '----------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -331,14 +324,12 @@ BEGIN
 
         FOR _previewData IN
             SELECT Dataset_ID,
-                   Mass_Error_PPM,
-                   Mass_Error_PPM_Refined
+                   QCART
             FROM Tmp_KnownMetrics
         LOOP
             _infoData := format(_formatSpecifier,
                                 _previewData.Dataset_ID,
-                                _previewData.Mass_Error_PPM,
-                                _previewData.Mass_Error_PPM_Refined
+                                _previewData.QCART
                                );
 
             RAISE INFO '%', _infoData;
@@ -356,34 +347,20 @@ BEGIN
     -----------------------------------------------
 
     MERGE INTO t_dataset_qc AS target
-    USING ( SELECT DI.dataset_id,
-                   DI.psm_source_job,
-                   M.mass_error_ppm,
-                   M.mass_error_ppm_refined
+    USING ( SELECT M.dataset_id,
+                   M.qcart
             FROM Tmp_KnownMetrics M INNER JOIN
                  Tmp_DatasetInfo DI ON M.dataset_id = DI.dataset_id
           ) AS Source
     ON (target.dataset_id = Source.dataset_id)
     WHEN MATCHED THEN
         UPDATE SET
-            mass_error_ppm = Source.mass_error_ppm,
-            mass_error_ppm_refined = Source.mass_error_ppm_refined,
-            psm_source_job = Coalesce(target.PSM_Source_Job, Source.PSM_Source_Job)
+            QCART = Source.QCART
     WHEN NOT MATCHED THEN
-        INSERT (Dataset_ID,
-                psm_source_job,
-                mass_error_ppm,
-                mass_error_ppm_refined)
-        VALUES (Source.Dataset_ID,
-                Source.PSM_Source_Job,
-                Source.mass_error_ppm,
-                Source.mass_error_ppm_refined);
+        INSERT (Dataset_ID, QCART)
+        VALUES (Source.Dataset_ID, Source.QCART);
 
-    _message := 'DTARefinery Mass Error stats successfully stored';
-
-    If Coalesce(_message, '') <> '' And _infoOnly Then
-        RAISE INFO '%', _message;
-    End If;
+    _message := 'QCART measurement storage successful';
 
     ---------------------------------------------------
     -- Log SP usage
@@ -396,14 +373,21 @@ BEGIN
     End If;
 
     If Not _infoOnly Then
-        CALL post_usage_log_entry ('store_dta_ref_mass_error_stats', _usageMessage;);
+        CALL post_usage_log_entry ('store_qcart_results', _usageMessage);
     End If;
 
     DROP TABLE Tmp_DatasetInfo;
     DROP TABLE Tmp_Measurements;
     DROP TABLE Tmp_KnownMetrics;
-
 END
-$$;
+$_$;
 
-COMMENT ON PROCEDURE public.store_dta_ref_mass_error_stats IS 'StoreDTARefMassErrorStats';
+
+ALTER PROCEDURE public.store_qcart_results(IN _datasetid integer, IN _resultsxml xml, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE store_qcart_results(IN _datasetid integer, IN _resultsxml xml, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.store_qcart_results(IN _datasetid integer, IN _resultsxml xml, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'StoreQCARTResults';
+

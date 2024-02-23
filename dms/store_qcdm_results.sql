@@ -1,44 +1,41 @@
 --
-CREATE OR REPLACE PROCEDURE public.store_qcart_results
-(
-    _datasetID int = 0,
-    _resultsXML xml,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: store_qcdm_results(integer, xml, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.store_qcdm_results(IN _datasetid integer DEFAULT 0, IN _resultsxml xml DEFAULT NULL::xml, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $_$
 /****************************************************
 **
 **  Desc:
-**      Update the QC-ART information for the dataset specified by _datasetID
+**      Update the QCDM information for the dataset specified by _datasetID
 **
-**      If _datasetID is 0, will use the dataset name defined in _resultsXML
-**      If _datasetID is non-zero, will validate that the dataset name in the XML corresponds to the dataset ID specified by _datasetID
+**      If _datasetID is 0, use the dataset name defined in _resultsXML
+**      If _datasetID is non-zero, validate that the dataset name in the XML corresponds to the dataset ID specified by _datasetID
 **
 **      Typical XML file contents:
 **
-**      <QCART_Results>
-**        <Dataset>TEDDY_DISCOVERY_SET_35_14_25Oct15_Frodo_15-08-15</Dataset>
-**        <MASIC_Job>1242856</MASIC_Job>
+**      <QCDM_Results>
+**        <Dataset>QC_Shew_13_02_pt1ug_c_29May13_Draco_13-05-16</Dataset>
+**        <SMAQC_Job>949552</SMAQC_Job>
+**        <Quameter_Job>1221129</Quameter_Job>
 **        <Measurements>
-**           <Measurement Name="QCART">0.12345</Measurement>
+**           <Measurement Name="QCDM">0.12345</Measurement>
 **        </Measurements>
-**      </QCART_Results>
+**      </QCDM_Results>
 **
 **  Arguments:
 **    _datasetID    If this value is 0, will determine the dataset name using the contents of _resultsXML
-**    _resultsXML   XML holding the QCART results for a single dataset
+**    _resultsXML   XML holding the QCDM results for a single dataset
 **    _infoOnly     When true, preview updates
 **    _message      Status message
 **    _returnCode   Return code
 **
 **  Auth:   mem
-**  Date:   11/05/2015 mem - Initial version (modelled after StoreSMAQCResults)
+**  Date:   06/04/2013 mem - Initial version (modelled after StoreSMAQCResults)
 **          04/06/2016 mem - Now using Try_Convert to convert from text to int
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/22/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -56,13 +53,14 @@ BEGIN
     _returnCode := '';
 
     -----------------------------------------------------------
-    -- Create the tables to hold the data
+    -- Create the table to hold the data
     -----------------------------------------------------------
 
     CREATE TEMP TABLE Tmp_DatasetInfo (
         Dataset_ID int NULL,
-        Dataset_Name text NOT NULL,
-        MASIC_Job int NULL                            -- Analysis job used to generate the MASIC results; not stored in the QC table
+        Dataset_Name citext NOT NULL,
+        SMAQC_Job int NULL,                -- Analysis job used to generate the SMAQC results
+        Quameter_Job int NULL            -- Analysis job used to generate the Quameter results
     );
 
     CREATE TEMP TABLE Tmp_Measurements (
@@ -73,7 +71,7 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_KnownMetrics (
         Dataset_ID int NOT NULL,
-        QCART real NULL
+        QCDM real NULL
     );
 
     ---------------------------------------------------
@@ -81,7 +79,7 @@ BEGIN
     ---------------------------------------------------
 
     _datasetID := Coalesce(_datasetID, 0);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly  := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------
     -- Parse out the dataset name from _resultsXML
@@ -91,10 +89,10 @@ BEGIN
     -- [1] is used to select the first match (there should only be one matching node, but xpath() returns an array)
     ---------------------------------------------------
 
-    _datasetName := (xpath('//QCART_Results/Dataset/text()', _resultsXML))[1]::text;
+    _datasetName := (xpath('//QCDM_Results/Dataset/text()', _resultsXML))[1]::text;
 
     If Coalesce(_datasetName, '') = '' Then
-        _message := 'XML in _resultsXML is not in the expected form; Could not match //QCART_Results/Dataset';
+        _message := 'XML in _resultsXML is not in the expected form; Could not match //QCDM_Results/Dataset';
         RAISE WARNING '%', _message;
 
         DROP TABLE Tmp_DatasetInfo;
@@ -112,11 +110,13 @@ BEGIN
     INSERT INTO Tmp_DatasetInfo (
         Dataset_ID,
         Dataset_Name,
-        MASIC_Job
+        SMAQC_Job,
+        Quameter_Job
     )
     SELECT _datasetID AS DatasetID,
            _datasetName AS Dataset,
-           public.try_cast((xpath('//QCART_Results/MASIC_Job/text()', _resultsXML))[1]::text, 0) AS MASIC_Job;
+           public.try_cast((xpath('//QCDM_Results/SMAQC_Job/text()',    _resultsXML))[1]::text, 0) AS SMAQC_Job,
+           public.try_cast((xpath('//QCDM_Results/Quameter_Job/text()', _resultsXML))[1]::text, 0) AS Quameter_Job;
 
     ---------------------------------------------------
     -- Now extract out the Measurement information
@@ -128,7 +128,7 @@ BEGIN
         SELECT xmltable.*
         FROM ( SELECT _resultsXML AS rooted_xml
              ) Src,
-             XMLTABLE('//QCART_Results/Measurements/Measurement'
+             XMLTABLE('//QCDM_Results/Measurements/Measurement'
                       PASSING Src.rooted_xml
                       COLUMNS ValueText text PATH '.',
                               name text PATH '@Name')
@@ -140,10 +140,10 @@ BEGIN
     ---------------------------------------------------
 
     If _datasetID = 0 Then
-        UPDATE Tmp_DatasetInfo
+        UPDATE Tmp_DatasetInfo Target
         SET Dataset_ID = DS.Dataset_ID
         FROM t_dataset DS
-        WHERE Tmp_DatasetInfo.Dataset_Name = DS.dataset;
+        WHERE Target.Dataset_Name = DS.dataset;
 
         If Not FOUND Then
             _message := format('Warning: dataset not found in table t_dataset: %s', _datasetName);
@@ -155,7 +155,6 @@ BEGIN
 
             _returnCode := 'U5202';
             RETURN;
-
         End If;
 
         -- Update _datasetID
@@ -164,19 +163,23 @@ BEGIN
         FROM Tmp_DatasetInfo;
 
     Else
-
-        -- _datasetID was non-zero
+        -- _datasetID is non-zero
         -- Validate the dataset name in Tmp_DatasetInfo against t_dataset
 
         SELECT DS.dataset_id
         INTO _datasetIDCheck
         FROM Tmp_DatasetInfo Target
              INNER JOIN t_dataset DS
-             ON Target.Dataset_Name = DS.dataset;
+               ON Target.Dataset_Name = DS.dataset;
 
-        If _datasetIDCheck <> _datasetID Then
-            _message := format('Error: dataset ID values for %s do not match; expecting %s but procedure argument _datasetID is %s',
-                                _datasetName, _datasetIDCheck, _datasetID);
+        If Not FOUND Or _datasetIDCheck <> _datasetID Then
+            If Not FOUND Then
+                _message := format('Error: unrecognized dataset name for dataset ID %s: %s',
+                                    _datasetID, _datasetName);
+            Else
+                _message := format('Error: dataset ID values for %s do not match; expecting %s but procedure argument _datasetID is %s',
+                                    _datasetName, _datasetIDCheck, _datasetID);
+            End If;
 
             RAISE WARNING '%', _message;
 
@@ -194,7 +197,7 @@ BEGIN
     -- If any of the metrics has a non-numeric value, the Value column will remain Null
     -----------------------------------------------
 
-    UPDATE Tmp_Measurements
+    UPDATE Tmp_Measurements Target
     SET Value = FilterQ.Value
     FROM ( SELECT Name,
                   ValueText,
@@ -219,19 +222,19 @@ BEGIN
     -----------------------------------------------
 
     INSERT INTO Tmp_KnownMetrics ( Dataset_ID,
-                                   QCART
+                                   QCDM
                                  )
     SELECT _datasetID,
-           ct."QCART",
+           ct."QCDM"
     FROM crosstab(
        'SELECT 1 AS RowID,
                Name,
                Value
         FROM Tmp_Measurements
         ORDER BY 1,2',
-       $$SELECT unnest('{QCART}'::text[])$$
+       $$SELECT unnest('{QCDM}'::text[])$$
        ) AS ct (RowID int,
-                "QCART" float8);
+                "QCDM" float8);
 
     If _infoOnly Then
         -----------------------------------------------
@@ -240,18 +243,20 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-80s %-9s';
+        _formatSpecifier := '%-10s %-80s %-10s %-12s';
 
         _infoHead := format(_formatSpecifier,
                             'Dataset_ID',
                             'Dataset_Name',
-                            'MASIC_Job'
+                            'SMAQC_Job',
+                            'Quameter_Job'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
                                      '----------',
                                      '--------------------------------------------------------------------------------',
-                                     '---------'
+                                     '----------',
+                                     '------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -260,13 +265,15 @@ BEGIN
         FOR _previewData IN
             SELECT Dataset_ID,
                    Dataset_Name,
-                   MASIC_Job
+                   SMAQC_Job,
+                   Quameter_Job
             FROM Tmp_DatasetInfo
         LOOP
             _infoData := format(_formatSpecifier,
                                 _previewData.Dataset_ID,
                                 _previewData.Dataset_Name,
-                                _previewData.MASIC_Job
+                                _previewData.SMAQC_Job,
+                                _previewData.Quameter_Job
                                );
 
             RAISE INFO '%', _infoData;
@@ -274,7 +281,7 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-9s %-9s %-9s';
+        _formatSpecifier := '%-10s %-10s %-10s';
 
         _infoHead := format(_formatSpecifier,
                             'Name',
@@ -283,9 +290,9 @@ BEGIN
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
-                                     '---------',
-                                     '---------',
-                                     '---------'
+                                     '----------',
+                                     '----------',
+                                     '----------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -312,7 +319,7 @@ BEGIN
 
         _infoHead := format(_formatSpecifier,
                             'Dataset_ID',
-                            'QCART'
+                            'QCDM'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
@@ -325,12 +332,12 @@ BEGIN
 
         FOR _previewData IN
             SELECT Dataset_ID,
-                   QCART
+                   QCDM
             FROM Tmp_KnownMetrics
         LOOP
             _infoData := format(_formatSpecifier,
                                 _previewData.Dataset_ID,
-                                _previewData.QCART
+                                _previewData.QCDM
                                );
 
             RAISE INFO '%', _infoData;
@@ -349,23 +356,25 @@ BEGIN
 
     MERGE INTO t_dataset_qc AS target
     USING ( SELECT M.dataset_id,
-                   M.qcart
+                   M.qcdm
             FROM Tmp_KnownMetrics M INNER JOIN
                  Tmp_DatasetInfo DI ON M.dataset_id = DI.dataset_id
           ) AS Source
     ON (target.dataset_id = Source.dataset_id)
     WHEN MATCHED THEN
         UPDATE SET
-            QCART = Source.QCART
+            QCDM = Source.QCDM,
+            QCDM_Last_Affected = CURRENT_TIMESTAMP
+
     WHEN NOT MATCHED THEN
-        INSERT (Dataset_ID, QCART)
-        VALUES (Source.Dataset_ID, Source.QCART);
+        INSERT (Dataset_ID,
+                QCDM,
+                QCDM_Last_Affected)
+        VALUES (Source.Dataset_ID,
+                Source.QCDM,
+                CURRENT_TIMESTAMP);
 
-    _message := 'QCART measurement storage successful';
-
-    If Coalesce(_message, '') <> '' And _infoOnly Then
-        RAISE INFO '%', _message;
-    End If;
+    _message := 'QCDM measurement storage successful';
 
     ---------------------------------------------------
     -- Log SP usage
@@ -378,13 +387,21 @@ BEGIN
     End If;
 
     If Not _infoOnly Then
-        CALL post_usage_log_entry ('store_qcart_results', _usageMessage;);
+        CALL post_usage_log_entry ('store_qcdm_results', _usageMessage);
     End If;
 
     DROP TABLE Tmp_DatasetInfo;
     DROP TABLE Tmp_Measurements;
     DROP TABLE Tmp_KnownMetrics;
 END
-$$;
+$_$;
 
-COMMENT ON PROCEDURE public.store_qcartresults IS 'StoreQCARTResults';
+
+ALTER PROCEDURE public.store_qcdm_results(IN _datasetid integer, IN _resultsxml xml, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE store_qcdm_results(IN _datasetid integer, IN _resultsxml xml, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.store_qcdm_results(IN _datasetid integer, IN _resultsxml xml, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'StoreQCDMResults';
+

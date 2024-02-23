@@ -1,21 +1,17 @@
 --
-CREATE OR REPLACE PROCEDURE public.store_smaqc_results
-(
-    _datasetID int = 0,
-    _resultsXML xml,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: store_smaqc_results(integer, xml, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.store_smaqc_results(IN _datasetid integer DEFAULT 0, IN _resultsxml xml DEFAULT NULL::xml, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $_$
 /****************************************************
 **
 **  Desc:
 **      Update the SMAQC information for the dataset specified by _datasetID
 **
-**      If _datasetID is 0, will use the dataset name defined in _resultsXML
-**      If _datasetID is non-zero, will validate that the dataset name in the XML corresponds to the dataset ID specified by _datasetID
+**      If _datasetID is 0, use the dataset name defined in _resultsXML
+**      If _datasetID is non-zero, validate that the dataset name in the XML corresponds to the dataset ID specified by _datasetID
 **
 **      Typical XML file contents:
 **
@@ -54,10 +50,10 @@ AS $$
 **          01/08/2014 mem - Added Phos_2A and Phos_2C
 **          10/07/2015 mem - Added Keratin_2A, Keratin_2C, P_4A, P_4B
 **          02/03/2016 mem - Added Trypsin_2A and Trypsin_2C
-**          02/08/2016 mem - Added MS2_RepIon_All, MS2_RepIon_1Missing, MS2_RepIon_2Missing, MS2_RepIon_3Missing
+**          02/08/2016 mem - Added MS2_Rep_Ion_All, MS2_Rep_Ion_1Missing, MS2_Rep_Ion_2Missing, MS2_Rep_Ion_3Missing
 **          04/06/2016 mem - Now using Try_Convert to convert from text to int
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/22/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -81,8 +77,8 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_DatasetInfo (
         Dataset_ID int NULL,
-        Dataset_Name text NOT NULL,
-        Job int NULL,                   -- Analysis job used to generate the SMAQC results
+        Dataset_Name citext NOT NULL,
+        SMAQC_Job int NULL,             -- Analysis job used to generate the SMAQC results
         PSM_Source_Job int NULL         -- MS_GF+ or X!Tandem job whose results were used by SMAQDC
     );
 
@@ -145,10 +141,10 @@ BEGIN
         P_4B real NULL,
         Trypsin_2A real NULL,
         Trypsin_2C real NULL,
-        MS2_RepIon_All real NULL,
-        MS2_RepIon_1Missing real NULL,
-        MS2_RepIon_2Missing real NULL,
-        MS2_RepIon_3Missing real NULL
+        MS2_Rep_Ion_All real NULL,
+        MS2_Rep_Ion_1Missing real NULL,
+        MS2_Rep_Ion_2Missing real NULL,
+        MS2_Rep_Ion_3Missing real NULL
     );
 
     ---------------------------------------------------
@@ -156,7 +152,7 @@ BEGIN
     ---------------------------------------------------
 
     _datasetID := Coalesce(_datasetID, 0);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _infoOnly  := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------
     -- Parse out the dataset name from _resultsXML
@@ -187,12 +183,12 @@ BEGIN
     INSERT INTO Tmp_DatasetInfo (
         Dataset_ID,
         Dataset_Name,
-        Job,
+        SMAQC_Job,
         PSM_Source_Job
     )
     SELECT _datasetID AS DatasetID,
            _datasetName AS Dataset,
-           public.try_cast((xpath('//SMAQC_Results/Job/text()', _resultsXML))[1]::text, 0) AS Job,
+           public.try_cast((xpath('//SMAQC_Results/Job/text()',            _resultsXML))[1]::text, 0) AS SMAQC_Job,
            public.try_cast((xpath('//SMAQC_Results/PSM_Source_Job/text()', _resultsXML))[1]::text, 0) AS PSM_Source_Job;
 
     ---------------------------------------------------
@@ -221,10 +217,8 @@ BEGIN
         SET Dataset_ID = DS.Dataset_ID
         FROM t_dataset DS
         WHERE Target.Dataset_Name = DS.dataset;
-        --
-        GET DIAGNOSTICS __updateCount = ROW_COUNT;
 
-        If __updateCount = 0 Then
+        If Not FOUND Then
             _message := format('Warning: dataset not found in table t_dataset: %s', _datasetName);
             RAISE WARNING '%', _message;
 
@@ -242,8 +236,7 @@ BEGIN
         FROM Tmp_DatasetInfo;
 
     Else
-
-        -- _datasetID was non-zero
+        -- _datasetID is non-zero
         -- Validate the dataset name in Tmp_DatasetInfo against t_dataset
 
         SELECT DS.dataset_id
@@ -252,9 +245,15 @@ BEGIN
              INNER JOIN t_dataset DS
                ON Target.Dataset_Name = DS.dataset;
 
-        If _datasetIDCheck <> _datasetID Then
-            _message := format('Error: dataset ID values for %s do not match; expecting %s but procedure argument _datasetID is %s',
-                                _datasetName, _datasetIDCheck, _datasetID);
+        If Not FOUND Or _datasetIDCheck <> _datasetID Then
+            If Not FOUND Then
+                _message := format('Error: unrecognized dataset name for dataset ID %s: %s',
+                                    _datasetID, _datasetName);
+            Else
+                _message := format('Error: dataset ID values for %s do not match; expecting %s but procedure argument _datasetID is %s',
+                                    _datasetName, _datasetIDCheck, _datasetID);
+            End If;
+
             RAISE WARNING '%', _message;
 
             DROP TABLE Tmp_DatasetInfo;
@@ -271,7 +270,7 @@ BEGIN
     -- If any of the metrics has a non-numeric value, the Value column will remain Null
     -----------------------------------------------
 
-    UPDATE Tmp_Measurements
+    UPDATE Tmp_Measurements Target
     SET Value = FilterQ.Value
     FROM ( SELECT Name,
                   ValueText,
@@ -303,7 +302,7 @@ BEGIN
                                    MS2_1, MS2_2, MS2_3, MS2_4A, MS2_4B, MS2_4C, MS2_4D,
                                    P_1A, P_1B, P_2A, P_2B, P_2C, P_3, Phos_2A, Phos_2C,
                                    Keratin_2A, Keratin_2C, P_4A, P_4B, Trypsin_2A, Trypsin_2C,
-                                   MS2_RepIon_All, MS2_RepIon_1Missing, MS2_RepIon_2Missing, MS2_RepIon_3Missing
+                                   MS2_Rep_Ion_All, MS2_Rep_Ion_1Missing, MS2_Rep_Ion_2Missing, MS2_Rep_Ion_3Missing
                                  )
     SELECT _datasetID,
            ct."C_1A", ct."C_1B", ct."C_2A", ct."C_2B", ct."C_3A", ct."C_3B", ct."C_4A", ct."C_4B", ct."C_4C",
@@ -339,7 +338,6 @@ BEGIN
                 "MS2_RepIon_All" float8, "MS2_RepIon_1Missing" float8, "MS2_RepIon_2Missing" float8, "MS2_RepIon_3Missing" float8);
 
     If _infoOnly Then
-
         -----------------------------------------------
         -- Preview the data, then exit
         -----------------------------------------------
@@ -351,7 +349,7 @@ BEGIN
         _infoHead := format(_formatSpecifier,
                             'Dataset_ID',
                             'Dataset_Name',
-                            'Job',
+                            'SMAQC_Job',
                             'PSM_Source_Job'
                            );
 
@@ -368,14 +366,14 @@ BEGIN
         FOR _previewData IN
             SELECT Dataset_ID,
                    Dataset_Name,
-                   Job,
+                   SMAQC_Job,
                    PSM_Source_Job
             FROM Tmp_DatasetInfo
         LOOP
             _infoData := format(_formatSpecifier,
                                 _previewData.Dataset_ID,
                                 _previewData.Dataset_Name,
-                                _previewData.Job,
+                                _previewData.SMAQC_Job,
                                 _previewData.PSM_Source_Job
                                );
 
@@ -418,7 +416,7 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-4s %-4s %-4s %-4s %-4s %-4s %-4s %-4s %-4s %-5s %-5s %-5s %-5s %-5s %-5s %-5s %-5s %-4s %-5s %-5s %-5s %-5s %-6s %-6s %-6s %-6s %-6s %-6s %-6s %-6s %-5s %-5s %-5s %-6s %-6s %-6s %-6s %-4s %-4s %-4s %-4s %-4s %-3s %-7s %-7s %-10s %-10s %-4s %-4s %-10s %-10s %-14s %-19s %-19s %-19s';
+        _formatSpecifier := '%-10s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-10s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s %-10s %-10s %-8s %-8s %-10s %-10s %-15s %-20s %-20s %-20s';
 
         _infoHead := format(_formatSpecifier,
                             'Dataset_ID',
@@ -473,69 +471,69 @@ BEGIN
                             'P_4B',
                             'Trypsin_2A',
                             'Trypsin_2C',
-                            'MS2_RepIon_All',
-                            'MS2_RepIon_1Missing',
-                            'MS2_RepIon_2Missing',
-                            'MS2_RepIon_3Missing'
+                            'MS2_Rep_Ion_All',
+                            'MS2_Rep_Ion_1Missing',
+                            'MS2_Rep_Ion_2Missing',
+                            'MS2_Rep_Ion_3Missing'
                            );
 
         _infoHeadSeparator := format(_formatSpecifier,
                                      '----------',
-                                     '----',
-                                     '----',
-                                     '----',
-                                     '----',
-                                     '----',
-                                     '----',
-                                     '----',
-                                     '----',
-                                     '----',
-                                     '-----',
-                                     '-----',
-                                     '-----',
-                                     '-----',
-                                     '-----',
-                                     '-----',
-                                     '-----',
-                                     '-----',
-                                     '----',
-                                     '-----',
-                                     '-----',
-                                     '-----',
-                                     '-----',
-                                     '------',
-                                     '------',
-                                     '------',
-                                     '------',
-                                     '------'
-                                     '------',
-                                     '------',
-                                     '------',
-                                     '-----',
-                                     '-----',
-                                     '-----'
-                                     '------',
-                                     '------'
-                                     '------',
-                                     '------'
-                                     '----',
-                                     '----',
-                                     '----',
-                                     '----',
-                                     '----',
-                                     '---',
-                                     '-------',
-                                     '-------'
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '----------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
+                                     '--------',
                                      '----------',
                                      '----------',
-                                     '----',
-                                     '----',
+                                     '--------',
+                                     '--------',
                                      '----------',
                                      '----------',
-                                     '--------------',
-                                     '-------------------'
-                                     '-------------------',
-                                     '-------------------',
+                                     '---------------',
+                                     '--------------------',
+                                     '--------------------',
+                                     '--------------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -550,7 +548,7 @@ BEGIN
                    MS2_1, MS2_2, MS2_3, MS2_4A, MS2_4B, MS2_4C, MS2_4D,
                    P_1A, P_1B, P_2A, P_2B, P_2C, P_3, Phos_2A, Phos_2C,
                    Keratin_2A, Keratin_2C, P_4A, P_4B, Trypsin_2A, Trypsin_2C,
-                   MS2_RepIon_All, MS2_RepIon_1Missing, MS2_RepIon_2Missing, MS2_RepIon_3Missing
+                   MS2_Rep_Ion_All, MS2_Rep_Ion_1Missing, MS2_Rep_Ion_2Missing, MS2_Rep_Ion_3Missing
             FROM Tmp_KnownMetrics
         LOOP
             _infoData := format(_formatSpecifier,
@@ -606,10 +604,10 @@ BEGIN
                                 _previewData.P_4B,
                                 _previewData.Trypsin_2A,
                                 _previewData.Trypsin_2C,
-                                _previewData.MS2_RepIon_All,
-                                _previewData.MS2_RepIon_1Missing,
-                                _previewData.MS2_RepIon_2Missing,
-                                _previewData.MS2_RepIon_3Missing
+                                _previewData.MS2_Rep_Ion_All,
+                                _previewData.MS2_Rep_Ion_1Missing,
+                                _previewData.MS2_Rep_Ion_2Missing,
+                                _previewData.MS2_Rep_Ion_3Missing
                                );
 
             RAISE INFO '%', _infoData;
@@ -628,7 +626,7 @@ BEGIN
 
     MERGE INTO t_dataset_qc AS target
     USING ( SELECT M.dataset_id,
-                   DI.Job,
+                   DI.SMAQC_Job,
                    DI.psm_source_job,
                    c_1a, c_1b, c_2a, C_2B, C_3A, C_3B, C_4A, C_4B, C_4C,
                    ds_1a, ds_1b, ds_2a, DS_2B, DS_3A, DS_3B,
@@ -637,7 +635,7 @@ BEGIN
                    ms2_1, ms2_2, ms2_3, MS2_4A, MS2_4B, MS2_4C, MS2_4D,
                    p_1a, p_1b, p_2a, P_2B, P_2C, P_3, Phos_2A, Phos_2C,
                    keratin_2a, keratin_2c, p_4a, P_4B, Trypsin_2A, Trypsin_2C,
-                   ms2_rep_ion_all, ms2_rep_ion_1missing, ms2_rep_ion_2missing, MS2_RepIon_3Missing
+                   ms2_rep_ion_all, ms2_rep_ion_1missing, ms2_rep_ion_2missing, MS2_rep_ion_3Missing
             FROM Tmp_KnownMetrics M INNER JOIN
                  Tmp_DatasetInfo DI ON M.dataset_id = DI.dataset_id
           ) AS Source
@@ -656,8 +654,8 @@ BEGIN
             Keratin_2A = Source.Keratin_2A, Keratin_2C = Source.Keratin_2C,
             P_4A = Source.P_4A, P_4B = Source.P_4B,
             Trypsin_2A = Source.Trypsin_2A, Trypsin_2C = Source.Trypsin_2C,
-            MS2_RepIon_All = Source.MS2_RepIon_All, MS2_RepIon_1Missing = Source.MS2_RepIon_1Missing,
-            MS2_RepIon_2Missing = Source.MS2_RepIon_2Missing, MS2_RepIon_3Missing = Source.MS2_RepIon_3Missing,
+            MS2_Rep_Ion_All = Source.MS2_Rep_Ion_All, MS2_Rep_Ion_1Missing = Source.MS2_Rep_Ion_1Missing,
+            MS2_Rep_Ion_2Missing = Source.MS2_Rep_Ion_2Missing, MS2_Rep_Ion_3Missing = Source.MS2_Rep_Ion_3Missing,
             mass_error_ppm = Coalesce(Target.mass_error_ppm, Source.MS1_5C),
             Last_Affected = CURRENT_TIMESTAMP
 
@@ -672,7 +670,7 @@ BEGIN
                 MS2_1, MS2_2, MS2_3, MS2_4A, MS2_4B, MS2_4C, MS2_4D,
                 P_1A, P_1B, P_2A, P_2B, P_2C, P_3, Phos_2A, Phos_2C,
                 Keratin_2A, Keratin_2C, P_4A, P_4B, Trypsin_2A, Trypsin_2C,
-                MS2_RepIon_All, MS2_RepIon_1Missing, MS2_RepIon_2Missing, MS2_RepIon_3Missing,
+                MS2_Rep_Ion_All, MS2_Rep_Ion_1Missing, MS2_Rep_Ion_2Missing, MS2_Rep_Ion_3Missing,
                 mass_error_ppm,
                 Last_Affected)
         VALUES (Source.Dataset_ID,
@@ -688,15 +686,11 @@ BEGIN
                 Source.Keratin_2A, Source.Keratin_2C,
                 Source.P_4A, Source.P_4B,
                 Source.Trypsin_2A, Source.Trypsin_2C,
-                Source.MS2_RepIon_All, Source.MS2_RepIon_1Missing, Source.MS2_RepIon_2Missing, Source.MS2_RepIon_3Missing,
+                Source.MS2_Rep_Ion_All, Source.MS2_Rep_Ion_1Missing, Source.MS2_Rep_Ion_2Missing, Source.MS2_Rep_Ion_3Missing,
                 Source.MS1_5C,  -- Store MS1_5C in mass_error_ppm; if DTA_Refinery is run in the future, mass_error_ppm will get auto-updated to the pre-refinement value computed by DTA_Refinery
                 CURRENT_TIMESTAMP);
 
     _message := 'SMAQC measurement storage successful';
-
-    If Coalesce(_message, '') <> '' And _infoOnly Then
-        RAISE INFO '%', _message;
-    End If;
 
     ---------------------------------------------------
     -- Log SP usage
@@ -709,13 +703,21 @@ BEGIN
     End If;
 
     If Not _infoOnly Then
-        CALL post_usage_log_entry ('store_smaqc_results', _usageMessage;);
+        CALL post_usage_log_entry ('store_smaqc_results', _usageMessage);
     End If;
 
     DROP TABLE Tmp_DatasetInfo;
     DROP TABLE Tmp_Measurements;
     DROP TABLE Tmp_KnownMetrics;
 END
-$$;
+$_$;
 
-COMMENT ON PROCEDURE public.store_smaqcresults IS 'StoreSMAQCResults';
+
+ALTER PROCEDURE public.store_smaqc_results(IN _datasetid integer, IN _resultsxml xml, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE store_smaqc_results(IN _datasetid integer, IN _resultsxml xml, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.store_smaqc_results(IN _datasetid integer, IN _resultsxml xml, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'StoreSMAQCResults';
+
