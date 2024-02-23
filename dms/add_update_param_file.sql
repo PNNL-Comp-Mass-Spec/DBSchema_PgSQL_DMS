@@ -243,7 +243,7 @@ BEGIN
             DELETE FROM Tmp_Mods_Precheck
             WHERE Value IS NULL OR Value LIKE '#%' OR Trim(Value) = '';
 
-            If Not Exists (SELECT * FROM Tmp_Mods_Precheck) Then
+            If Not Exists (SELECT EntryID FROM Tmp_Mods_Precheck) Then
                 _paramfileMassMods := '';
             End If;
 
