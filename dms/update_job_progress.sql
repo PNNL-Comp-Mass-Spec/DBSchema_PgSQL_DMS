@@ -1,17 +1,15 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_job_progress
-(
-    _mostRecentDays int = 32,
-    _job int = 0,
-    _infoOnly boolean = false
-    _verbose boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_job_progress(integer, integer, boolean, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_job_progress(IN _mostrecentdays integer DEFAULT 32, IN _job integer DEFAULT 0, IN _infoonly boolean DEFAULT false, IN _verbose boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Update the progress column in table t_analysis_job
+**      This procedure is intended to be called on an ad-hoc basis to updated progress values for one or more jobs
 **
 **      Note that a progress value of -1 is used for failed jobs
 **      Jobs in state 1=New or 8=Holding will have a progress of 0
@@ -23,12 +21,14 @@ AS $$
 **    _job              Specific job number to update; when non-zero, _mostRecentDays is ignored
 **    _infoOnly         When true, preview changes as a summary
 **    _verbose          When _infoOnly is true, set this to true to see details on updated jobs
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   09/01/2016 mem - Initial version
 **          10/30/2017 mem - Consider long-running job steps when computing Runtime_Predicted_Minutes
 **                         - Set progress to 0 for inactive jobs (state 13)
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/23/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -40,19 +40,22 @@ DECLARE
     _previewData record;
     _infoData text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     -----------------------------------------
     -- Validate the inputs
     -----------------------------------------
 
-    _job := Coalesce(_job, 0);
+    _job            := Coalesce(_job, 0);
     _mostRecentDays := Coalesce(_mostRecentDays, 0);
-    _infoOnly := Coalesce(_infoOnly, false);
-    _verbose := Coalesce(_verbose, false);
+    _infoOnly       := Coalesce(_infoOnly, false);
+    _verbose        := Coalesce(_verbose, false);
 
     _dateThreshold = CURRENT_TIMESTAMP - make_interval(days => _mostRecentDays);
 
     -----------------------------------------
-    -- Create some temporary tables
+    -- Create a temporary table to track the jobs to update
     -----------------------------------------
 
     CREATE TEMP TABLE Tmp_JobsToUpdate (
@@ -74,34 +77,37 @@ BEGIN
     -- Find the jobs to update
     -----------------------------------------
 
-    If Coalesce(_job, 0) <> 0 Then
-        If Not Exists (SELECT job FROM t_analysis_job WHERE job = _job) Then
+    If _job <> 0 Then
+        INSERT INTO Tmp_JobsToUpdate (Job, State, Progress_Old)
+        SELECT job, job_state_id, progress
+        FROM t_analysis_job
+        WHERE job = _job;
+
+        If Not FOUND Then
             RAISE INFO 'Job not found: %', _job;
+
+            DROP TABLE Tmp_JobsToUpdate;
             RETURN;
         End If;
 
-        INSERT INTO Tmp_JobsToUpdate (job, State, Progress_Old)
-        SELECT job, job_state_id, progress
-        FROM t_analysis_job
-        WHERE job = _job
     Else
         If _mostRecentDays <= 0 Then
-            INSERT INTO Tmp_JobsToUpdate (job, State, Progress_Old)
+            INSERT INTO Tmp_JobsToUpdate (Job, State, Progress_Old)
             SELECT job, job_state_id, progress
-            FROM t_analysis_job
-        Else
+            FROM t_analysis_job;
 
-            INSERT INTO Tmp_JobsToUpdate (job, State, Progress_Old)
+        Else
+            INSERT INTO Tmp_JobsToUpdate (Job, State, Progress_Old)
             SELECT job, job_state_id, progress
             FROM t_analysis_job
             WHERE created >= _dateThreshold OR
-                  start >= _dateThreshold
+                  start   >= _dateThreshold;
         End If;
     End If;
 
     -----------------------------------------
     -- Update progress and ETA for failed jobs
-    -- This logic is also used by trigger trigfn_t_analysis_job_after_update
+    -- This logic is also used by trigger trig_t_analysis_job_after_update
     -----------------------------------------
 
     UPDATE Tmp_JobsToUpdate
@@ -111,7 +117,7 @@ BEGIN
 
     -----------------------------------------
     -- Update progress and ETA for new, holding, inactive, or Special Proc. Waiting jobs
-    -- This logic is also used by trigger trigfn_t_analysis_job_after_update
+    -- This logic is also used by trigger trig_t_analysis_job_after_update
     -----------------------------------------
 
     UPDATE Tmp_JobsToUpdate
@@ -121,7 +127,7 @@ BEGIN
 
     -----------------------------------------
     -- Update progress and ETA for completed jobs
-    -- This logic is also used by trigger trigfn_t_analysis_job_after_update
+    -- This logic is also used by trigger trig_t_analysis_job_after_update
     -----------------------------------------
 
     UPDATE Tmp_JobsToUpdate
@@ -134,9 +140,9 @@ BEGIN
     -----------------------------------------
 
     UPDATE Tmp_JobsToUpdate Target
-    SET Progress_New = Source.Progress_Overall,
-        Steps = Source.Steps,
-        Steps_Completed = Source.Steps_Completed,
+    SET Progress_New            = Source.Progress_Overall,
+        Steps                   = Source.Steps,
+        Steps_Completed         = Source.Steps_Completed,
         Current_Runtime_Minutes = Source.Total_Runtime_Minutes
     FROM ( SELECT ProgressQ.Job,
                   ProgressQ.Steps,
@@ -150,7 +156,7 @@ BEGIN
                                   ELSE JS.Job_Progress * Tools.Avg_Runtime_Minutes
                              END) AS WeightedProgressSum,
                          SUM(RunTime_Minutes) AS Total_Runtime_Minutes
-                  FROM sw.V_Job_Steps JS
+                  FROM sw.v_job_steps JS
                        INNER JOIN sw.t_step_tools Tools
                          ON JS.Tool = Tools.step_tool
                        INNER JOIN ( SELECT Job
@@ -161,7 +167,7 @@ BEGIN
                 ) ProgressQ
                 INNER JOIN ( SELECT JS.Job,
                                     SUM(Tools.Avg_Runtime_Minutes) AS WeightSum
-                             FROM sw.V_Job_Steps JS
+                             FROM sw.v_job_steps JS
                                   INNER JOIN sw.t_step_tools Tools
                                     ON JS.Tool = Tools.step_tool
                                   INNER JOIN ( SELECT Job
@@ -204,7 +210,7 @@ BEGIN
                        END
     FROM ( SELECT JS.Job,
                   MAX(JS.RunTime_Predicted_Hours * 60) AS RunTime_Predicted_Minutes
-           FROM sw.V_Job_Steps JS
+           FROM sw.v_job_steps JS
                 INNER JOIN ( SELECT Job
                              FROM Tmp_JobsToUpdate
                              WHERE State = 2 ) JTU
@@ -218,7 +224,7 @@ BEGIN
 
     -----------------------------------------
     -- Compute the approximate time remaining for the job to finish
-    -- We tack on 0.5 minutes for each uncompleted step, to account for the state machine aspect of sw.t_jobs and sw.t_job_steps
+    -- We add 0.5 minutes for each uncompleted step, to account for the state machine aspect of sw.t_jobs and sw.t_job_steps
     -----------------------------------------
 
     UPDATE Tmp_JobsToUpdate
@@ -283,7 +289,6 @@ BEGIN
             END LOOP;
 
         Else
-
             -- Show all rows in Tmp_JobsToUpdate
 
             _formatSpecifier := '%-9s %-5s %-12s %-15s %-5s %-15s %-23s %-25s %-11s %-16s';
@@ -364,14 +369,22 @@ BEGIN
     SET progress = Src.Progress_New,
         eta_minutes = Src.eta_minutes
     FROM Tmp_JobsToUpdate Src
-
     WHERE Target.job = Src.Job AND
           (Target.Progress IS NULL AND NOT Src.Progress_New IS NULL OR
            Coalesce(Target.Progress, 0) <> Coalesce(Src.Progress_New, 0) OR
-           Target.job_state_id IN (4,7,14) AND (Target.Progress IS NULL Or Target.ETA_Minutes IS NULL));
+           Target.job_state_id IN (4, 7, 14) AND (Target.Progress IS NULL Or Target.ETA_Minutes IS NULL)
+          );
 
     DROP TABLE Tmp_JobsToUpdate;
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_job_progress IS 'UpdateJobProgress';
+
+ALTER PROCEDURE public.update_job_progress(IN _mostrecentdays integer, IN _job integer, IN _infoonly boolean, IN _verbose boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_job_progress(IN _mostrecentdays integer, IN _job integer, IN _infoonly boolean, IN _verbose boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_job_progress(IN _mostrecentdays integer, IN _job integer, IN _infoonly boolean, IN _verbose boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateJobProgress';
+
