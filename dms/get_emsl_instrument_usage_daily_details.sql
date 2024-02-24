@@ -39,29 +39,29 @@ BEGIN
     -- Table for processing runs and intervals for reporting month
 
     CREATE TEMP TABLE Tmp_T_Working (
-        Dataset_ID int null,
-        EMSL_Inst_ID int null,
-        DMS_Instrument text null,
-        Type text null,             -- Dataset or Interval
-        Proposal text null,
-        Users citext null,
-        Usage text null,
-        Run_or_Interval_Start timestamp null,
-        Run_or_Interval_End timestamp null,
-        End_Of_Day timestamp null,
-        Year int null,
-        Month int null,
-        Day int null,
-        Day_at_Run_End int null,
-        Month_at_Run_End int null,
-        Beginning_Of_Next_Day timestamp null,
-        Duration_Seconds int null,
-        Duration_Seconds_In_Current_Day int null,
-        Remaining_Duration_Seconds int null,
-        Dataset_ID_Acq_Overlap int null,
-        Comment text null,
-        Operator int null,
-        Seq int null
+        Dataset_ID int NULL,
+        EMSL_Inst_ID int NULL,
+        DMS_Instrument text NULL,
+        Type text NULL,             -- Dataset or Interval
+        Proposal text NULL,
+        Users citext NULL,
+        Usage text NULL,
+        Run_or_Interval_Start timestamp NULL,
+        Run_or_Interval_End timestamp NULL,
+        End_Of_Day timestamp NULL,
+        Year int NULL,
+        Month int NULL,
+        Day int NULL,
+        Day_at_Run_End int NULL,
+        Month_at_Run_End int NULL,
+        Beginning_Of_Next_Day timestamp NULL,
+        Duration_Seconds int NULL,
+        Duration_Seconds_In_Current_Day int NULL,
+        Remaining_Duration_Seconds int NULL,
+        Dataset_ID_Acq_Overlap int NULL,
+        Comment text NULL,
+        Operator int NULL,
+        Seq int NULL
     );
 
     -- Intermediate storage for report entries
@@ -76,13 +76,13 @@ BEGIN
         DMS_Instrument citext,
         Proposal citext,
         Usage citext,
-        Year int null,
+        Year int NULL,
         Type citext,
-        Users citext null,
-        Operator citext null,        -- Could be a comma-separated list of Operator IDs
-        Dataset_ID_Acq_Overlap int null,
-        Comment citext null,
-        Seq int null
+        Users citext NULL,
+        Operator citext NULL,        -- Could be a comma-separated list of Operator IDs
+        Dataset_ID_Acq_Overlap int NULL,
+        Comment citext NULL,
+        Seq int NULL
     );
 
     -- Import entries from EMSL instrument usage table
@@ -155,9 +155,9 @@ BEGIN
             End_Of_Day            = date_trunc('day', W.Run_or_Interval_Start) + Interval '1 day' - Interval '1 millisecond',
             Beginning_Of_Next_Day = date_trunc('day', W.Run_or_Interval_Start) + Interval '1 day';
 
-        UPDATE  Tmp_T_Working AS W
-        SET     Duration_Seconds_In_Current_Day =               extract(epoch FROM (End_Of_Day - W.Run_or_Interval_Start)),
-                Remaining_Duration_Seconds = Duration_Seconds - extract(epoch FROM (End_Of_Day - W.Run_or_Interval_Start));
+        UPDATE Tmp_T_Working AS W
+        SET Duration_Seconds_In_Current_Day =               Extract(epoch from (End_Of_Day - W.Run_or_Interval_Start)),
+            Remaining_Duration_Seconds = Duration_Seconds - Extract(epoch from (End_Of_Day - W.Run_or_Interval_Start));
 
         -- Copy usage records that do not span more than one day
         -- from working table to accumulation table

@@ -115,7 +115,7 @@ BEGIN
 
         INSERT INTO Tmp_Update_Stats( Task, Runtime_Seconds )
         SELECT 'Update job counts in t_param_files',
-               extract(epoch FROM (clock_timestamp() - _startTime));
+               Extract(epoch from (clock_timestamp() - _startTime));
 
         ------------------------------------------------
         -- Update Usage Counts for Settings Files
@@ -153,7 +153,7 @@ BEGIN
 
         INSERT INTO Tmp_Update_Stats( Task, Runtime_Seconds )
         SELECT 'Update job counts in t_settings_files',
-               extract(epoch FROM (clock_timestamp() - _startTime));
+               Extract(epoch from (clock_timestamp() - _startTime));
 
         ------------------------------------------------
         -- Update Usage Counts for LC Cart Configuration items
@@ -188,7 +188,7 @@ BEGIN
 
         INSERT INTO Tmp_Update_Stats( Task, Runtime_Seconds )
         SELECT 'Update dataset counts in t_lc_cart_configuration',
-               extract(epoch FROM (clock_timestamp() - _startTime));
+               Extract(epoch from (clock_timestamp() - _startTime));
 
         ------------------------------------------------
         -- Update Usage Counts for Instrument Groups
@@ -230,7 +230,7 @@ BEGIN
 
         INSERT INTO Tmp_Update_Stats( Task, Runtime_Seconds )
         SELECT 'Update dataset counts in t_instrument_group_allowed_ds_type',
-               extract(epoch FROM (clock_timestamp() - _startTime));
+               Extract(epoch from (clock_timestamp() - _startTime));
 
         ------------------------------------------------
         -- Update Usage Counts for Instruments, by dataset type
@@ -300,7 +300,7 @@ BEGIN
 
         INSERT INTO Tmp_Update_Stats( Task, Runtime_Seconds )
         SELECT 'Update dataset counts in t_cached_instrument_dataset_type_usage',
-               extract(epoch FROM (clock_timestamp() - _startTime));
+               Extract(epoch from (clock_timestamp() - _startTime));
 
         ------------------------------------------------
         -- Update Usage Counts for Protein Collections
@@ -314,7 +314,7 @@ BEGIN
 
         INSERT INTO Tmp_Update_Stats( Task, Runtime_Seconds )
         SELECT 'Update usage counts for protein collections',
-               extract(epoch FROM (clock_timestamp() - _startTime));
+               Extract(epoch from (clock_timestamp() - _startTime));
     End If;
 
     If _updateGeneralStatistics Then
@@ -329,7 +329,7 @@ BEGIN
             Category text NOT NULL,
             Label text NOT NULL,
             SQL text NOT NULL,
-            UseDecimal boolean NOT NULL Default false,
+            UseDecimal boolean NOT NULL DEFAULT false,
             UniqueID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY
         );
 
@@ -416,7 +416,7 @@ BEGIN
 
         INSERT INTO Tmp_Update_Stats( Task, Runtime_Seconds )
         SELECT 'Update values in t_general_statistics',
-               extract(epoch FROM (clock_timestamp() - _startTime));
+               Extract(epoch from (clock_timestamp() - _startTime));
 
     End If;
 
@@ -447,7 +447,7 @@ BEGIN
 
         INSERT INTO Tmp_Update_Stats( Task, Runtime_Seconds )
         SELECT 'Update job counts in t_analysis_job_request',
-               extract(epoch FROM (clock_timestamp() - _startTime));
+               Extract(epoch from (clock_timestamp() - _startTime));
     End If;
 
     If _showRuntimeStats Then

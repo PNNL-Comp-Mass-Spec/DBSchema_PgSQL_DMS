@@ -180,7 +180,7 @@ BEGIN
     WHERE protein_collection_name <> '';
 
     If _showDebug Then
-        RAISE INFO 'Populated Tmp_IntStds; Elapsed time: % msec', Round(extract(epoch FROM (clock_timestamp() - _startTime)) * 1000, 3);
+        RAISE INFO 'Populated Tmp_IntStds; Elapsed time: % msec', Round(Extract(epoch from (clock_timestamp() - _startTime)) * 1000, 3);
     End If;
 
     If Exists (SELECT Internal_Std_Mix_ID FROM Tmp_IntStds WHERE Enzyme_Contaminant_Collection) Then
@@ -272,7 +272,7 @@ BEGIN
     ORDER BY internal_standard_id;
 
     If _showDebug Then
-        RAISE INFO 'Appended to Tmp_IntStds; Elapsed time: % msec',  Round(extract(epoch FROM (clock_timestamp() - _startTime)) * 1000, 3);
+        RAISE INFO 'Appended to Tmp_IntStds; Elapsed time: % msec',  Round(Extract(epoch from (clock_timestamp() - _startTime)) * 1000, 3);
 
         SELECT string_agg(protein_collection_name, ', ' ORDER BY Protein_Collection_Name)
         INTO _message
@@ -328,7 +328,7 @@ BEGIN
     If Not Exists (SELECT * FROM Tmp_ProteinCollectionsToAdd) Then
         If _showDebug Then
             RAISE INFO 'Protein collections validated; nothing to add';
-            RAISE INFO 'Elapsed time: % msec',  Round(extract(epoch FROM (clock_timestamp() - _startTime)) * 1000, 3);
+            RAISE INFO 'Elapsed time: % msec',  Round(Extract(epoch from (clock_timestamp() - _startTime)) * 1000, 3);
         End If;
 
         DROP TABLE Tmp_Datasets;
@@ -471,7 +471,7 @@ BEGIN
 
     END LOOP;
 
-    RAISE INFO 'Exiting; Elapsed time: % msec',  Round(extract(epoch FROM (clock_timestamp() - _startTime)) * 1000, 3);
+    RAISE INFO 'Exiting; Elapsed time: % msec',  Round(Extract(epoch from (clock_timestamp() - _startTime)) * 1000, 3);
 
     DROP TABLE Tmp_Datasets;
     DROP TABLE Tmp_IntStds;

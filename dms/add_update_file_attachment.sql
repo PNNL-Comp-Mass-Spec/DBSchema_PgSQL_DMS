@@ -134,7 +134,7 @@ BEGIN
 
             SELECT attachment_id
             INTO _attachmentID
-            FROM  t_file_attachment
+            FROM t_file_attachment
             WHERE attachment_id = _id;
 
             -- Cannot update a non-existent entry

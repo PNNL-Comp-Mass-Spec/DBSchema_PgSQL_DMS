@@ -80,7 +80,7 @@ BEGIN
 
     SELECT cart_id
     INTO _cartID
-    FROM  t_lc_cart
+    FROM t_lc_cart
     WHERE cart_name = _cartName::citext;
 
     If Not FOUND Then

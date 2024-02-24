@@ -16,12 +16,12 @@ AS $$
 **
 **      CREATE TEMP TABLE Tmp_Allocation_Operations (
 **          Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-**          Allocation text null,
-**          InstGroup text null,
-**          Proposal text null,
-**          Comment text null,
+**          Allocation text NULL,
+**          InstGroup text NULL,
+**          Proposal text NULL,
+**          Comment text NULL,
 **          FY int,
-**          Operation text null     -- 'i' -> increment, 'd' -> decrement, anything else -> set
+**          Operation text NULL     -- 'i' -> increment, 'd' -> decrement, anything else -> set
 **      );
 **
 **      This procedure is obsolete since instrument allocation was last tracked in 2012 (see table t_instrument_allocation)

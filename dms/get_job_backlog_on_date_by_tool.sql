@@ -43,8 +43,8 @@ BEGIN
     SELECT COUNT(job)
     INTO _backlog
     FROM t_analysis_job
-    WHERE extract(epoch FROM (finish - _targetDate)) / 3600.0 >= 0 AND
-          extract(epoch FROM (created - _targetDate)) / 3600.0 <= 0 AND
+    WHERE Extract(epoch from (finish - _targetDate)) / 3600.0 >= 0 AND
+          Extract(epoch from (created - _targetDate)) / 3600.0 <= 0 AND
           job_state_id = 4 AND
           analysis_tool_id = _analysisToolID;
 

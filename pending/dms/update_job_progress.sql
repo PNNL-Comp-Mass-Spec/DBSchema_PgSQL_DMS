@@ -56,16 +56,16 @@ BEGIN
     -----------------------------------------
 
     CREATE TEMP TABLE Tmp_JobsToUpdate (
-        Job int not null,
-        State int not null,
-        Progress_Old real null,     -- Value between 0 and 100
-        Progress_New real null,     -- Value between 0 and 100
-        Steps int null,
-        Steps_Completed int null,
-        Current_Runtime_Minutes real null,
-        Runtime_Predicted_Minutes real null,
-        ETA_Minutes real null
-    )
+        Job int NOT NULL,
+        State int NOT NULL,
+        Progress_Old real NULL,     -- Value between 0 and 100
+        Progress_New real NULL,     -- Value between 0 and 100
+        Steps int NULL,
+        Steps_Completed int NULL,
+        Current_Runtime_Minutes real NULL,
+        Runtime_Predicted_Minutes real NULL,
+        ETA_Minutes real NULL
+    );
 
     CREATE UNIQUE INDEX IX_Tmp_JobsToUpdate_Job ON Tmp_JobsToUpdate (Job);
     CREATE INDEX IX_Tmp_JobsToUpdate_State ON Tmp_JobsToUpdate (State);

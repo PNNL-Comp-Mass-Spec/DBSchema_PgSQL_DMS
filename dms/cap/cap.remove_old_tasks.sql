@@ -52,14 +52,14 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_Selected_Jobs (
         Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        Job int not null,
+        Job int NOT NULL,
         State int
     );
 
     CREATE INDEX IX_Tmp_Selected_Jobs_Job ON Tmp_Selected_Jobs (Job);
 
     CREATE TEMP TABLE Tmp_JobsNotInHistory (
-        Job int not null,
+        Job int NOT NULL,
         State int,
         JobFinish timestamp
     );

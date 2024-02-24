@@ -54,8 +54,8 @@ BEGIN
     End If;
 
     CREATE TEMP TABLE Tmp_JobsToUpdate (
-        Job Int Not Null
-    )
+        Job int NOT NULL
+    );
 
     ---------------------------------------------------
     -- Find jobs that need to be updated

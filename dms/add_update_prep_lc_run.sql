@@ -179,7 +179,7 @@ BEGIN
         End If;
 
         CREATE TEMP TABLE Tmp_SamplePrepRequests (
-            Prep_Request_ID Int Not Null
+            Prep_Request_ID int NOT NULL
         );
 
         If _samplePrepRequests <> '' Then

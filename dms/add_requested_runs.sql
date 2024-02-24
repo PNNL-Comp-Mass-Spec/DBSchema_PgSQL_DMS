@@ -246,7 +246,7 @@ BEGIN
         CREATE TEMP TABLE Tmp_ExperimentsToProcess (
             EntryID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
             Experiment text,
-            RequestID Int null
+            RequestID int NULL
         );
 
         _dropTempTable := true;

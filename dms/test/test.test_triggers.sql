@@ -84,35 +84,35 @@ BEGIN
     );
 
     CREATE TEMP TABLE T_Tmp_Campaigns (
-        campaign_name text not null,
-        campaign_id int null
+        campaign_name text NOT NULL,
+        campaign_id int NULL
     );
 
     CREATE TEMP TABLE T_Tmp_Experiments (
-        campaign_id int not null,
-        experiment_name text not null,
-        experiment_id int null
+        campaign_id int NOT NULL,
+        experiment_name text NOT NULL,
+        experiment_id int NULL
     );
 
     CREATE TEMP TABLE T_Tmp_Datasets (
-        experiment_id int not null,
-        dataset_name text not null,
-        dataset_id int null
+        experiment_id int NOT NULL,
+        dataset_name text NOT NULL,
+        dataset_id int NULL
     );
 
     CREATE TEMP TABLE T_Tmp_Jobs (
-        dataset_id int not null,
-        analysis_tool_id int not null,
-        job int null
+        dataset_id int NOT NULL,
+        analysis_tool_id int NOT NULL,
+        job int NULL
     );
 
     CREATE TEMP TABLE T_Tmp_Experiment_Plex_Members (
-        Plex_Exp_ID int not null,
-        Channel int not null,
-        Exp_ID int not null,
-        Channel_Type_ID int not null,
-        Comment text null,
-        Mapping_Defined boolean not null
+        Plex_Exp_ID int NOT NULL,
+        Channel int NOT NULL,
+        Exp_ID int NOT NULL,
+        Channel_Type_ID int NOT NULL,
+        Comment text NULL,
+        Mapping_Defined boolean NOT NULL
     );
 
     -----------------------------------------------------------------

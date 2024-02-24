@@ -51,7 +51,7 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_JobsToDelete (
-        Job int Not Null,
+        Job int NOT NULL,
         HasDependencies boolean Not null
     );
 

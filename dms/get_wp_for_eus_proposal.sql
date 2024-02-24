@@ -48,7 +48,7 @@ BEGIN
 
     -- This is an estimate to the number of months between today and January 1, 1900
     -- It corresponds to the result of "DateDiff(month, 0, GetDate())" in SQL Server:
-    _allMonthsCount := Round(Extract(day FROM current_timestamp - make_date(1900, 1, 1)) / 30.45);
+    _allMonthsCount := Round(Extract(day from current_timestamp - make_date(1900, 1, 1)) / 30.45);
 
     -----------------------------------------
     -- Find the most commonly used work package for the EUS proposal

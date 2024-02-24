@@ -116,11 +116,11 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_ContainersToProcess (
-        Entry_ID     int PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),
-        Container_ID int NOT NULL,
+        Entry_ID     int  PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),
+        Container_ID int  NOT NULL,
         Container    text NOT NULL,
         Type         text NOT NULL,
-        Location_ID  int NOT NULL,
+        Location_ID  int  NOT NULL,
         Location_Tag text NOT NULL,
         Shelf        text NOT NULL,
         Rack         text NOT NULL,
@@ -129,13 +129,13 @@ BEGIN
     );
 
     CREATE TEMP TABLE Tmp_Move_Status (
-        Container_ID     int NOT NULL,
+        Container_ID     int  NOT NULL,
         Container        text NOT NULL,
         Type             text NOT NULL,
         Location_Old     text NOT NULL,
         Location_Current text NOT NULL,
         Location_New     text NOT NULL,
-        LocationIDNew    int NOT NULL,
+        LocationIDNew    int  NOT NULL,
         Status           text NULL
     );
 

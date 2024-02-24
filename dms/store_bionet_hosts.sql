@@ -111,23 +111,23 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_HostData (
         EntryID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        Value text null
+        Value text NULL
     );
 
     CREATE UNIQUE INDEX IX_Tmp_HostData_EntryID ON Tmp_HostData (EntryID);
 
     CREATE TEMP TABLE Tmp_Hosts (
-        Host citext not null,
-        NameOrIP citext not null,
-        IsAlias boolean not null,
-        Instruments citext null
+        Host citext NOT NULL,
+        NameOrIP citext NOT NULL,
+        IsAlias boolean NOT NULL,
+        Instruments citext NULL
     );
 
     CREATE UNIQUE INDEX IX_Tmp_Hosts ON Tmp_Hosts (Host);
 
     CREATE TEMP TABLE Tmp_DataColumns (
-        EntryID int not null,
-        Value citext null
+        EntryID int NOT NULL,
+        Value citext NULL
     );
 
     CREATE UNIQUE INDEX IX_Tmp_DataColumns_EntryID ON Tmp_DataColumns (EntryID);

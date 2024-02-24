@@ -73,9 +73,9 @@ BEGIN
         ------------------------------------------------
 
         CREATE TEMP TABLE Tmp_Datasets (
-            Dataset_ID int not null,
-            Dataset text not null,
-            Reset_Comment text not null
+            Dataset_ID int NOT NULL,
+            Dataset text NOT NULL,
+            Reset_Comment text NOT NULL
         );
 
         ------------------------------------------------

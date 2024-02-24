@@ -55,7 +55,7 @@ BEGIN
         SeparationType text,
         UpdatedSeparationType text,
         UpdateCount int,
-        SortID int null
+        SortID int NULL
     );
 
     CREATE UNIQUE INDEX IX_TmpUpdateStats ON Tmp_UpdateStats (SeparationType, UpdatedSeparationType);

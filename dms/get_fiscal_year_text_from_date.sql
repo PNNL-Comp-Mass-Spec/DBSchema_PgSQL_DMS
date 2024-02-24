@@ -15,19 +15,19 @@ CREATE OR REPLACE FUNCTION public.get_fiscal_year_text_from_date(_rawdate timest
 **  Auth:   grk
 **  Date:   07/18/2011
 **          06/21/2022 mem - Ported to PostgreSQL
-**          12/15/2022 mem - Use extract(year from _variable) and extract(month from) to extract the year and month from timestamps
+**          12/15/2022 mem - Use Extract(year from _variable) and Extract(month from) to extract the year and month from timestamps
 **          05/30/2023 mem - Use format() for string concatenation
 **
 *****************************************************/
 DECLARE
     _fiscalYear timestamp;
 BEGIN
-    _fiscalYear := CASE WHEN extract(month from _rawDate) > 9
+    _fiscalYear := CASE WHEN Extract(month from _rawDate) > 9
                         THEN _rawDate + Interval '1 year'
                         ELSE _rawDate
                    END;
 
-    RETURN format('FY_%s', Right(extract(year from _fiscalYear)::text, 2));
+    RETURN format('FY_%s', Right(Extract(year from _fiscalYear)::text, 2));
 END
 $$;
 

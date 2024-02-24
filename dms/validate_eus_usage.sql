@@ -259,7 +259,7 @@ BEGIN
         CREATE TEMP TABLE Tmp_Proposal_Stack (
             Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
             Proposal_ID text,
-            Numeric_ID int Not Null
+            Numeric_ID int NOT NULL
         );
 
         _createdProposalStackTable := true;

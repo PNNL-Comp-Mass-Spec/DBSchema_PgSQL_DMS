@@ -142,17 +142,17 @@ BEGIN
     _instrumentUsageMonthsToUpdate := (1 + Round(_daysToProcess / 31.0, 0))::int;
 
     _startDate        := _endDate - make_interval(days => _daysToProcess);
-    _currentYear      := Extract(year from _endDate);
+    _currentYear      := Extract(year  from _endDate);
     _currentMonth     := Extract(month from _endDate);
-    _day              := Extract(day from _endDate);
-    _hour             := Extract(hour from _endDate);
+    _day              := Extract(day   from _endDate);
+    _hour             := Extract(hour  from _endDate);
 
     _prevDate         := _endDate - Interval '1 month';
     _prevMonth        := Extract(month from _prevDate);
-    _prevYear         := Extract(year from _prevDate);
+    _prevYear         := Extract(year  from _prevDate);
 
     _nextMonth        := Extract(month from _endDate + Interval '1 month');
-    _nextYear         := Extract(year from _endDate + Interval '1 month');
+    _nextYear         := Extract(year  from _endDate + Interval '1 month');
 
     _startOfNextMonth := make_date(_nextYear, _nextMonth, 1);
 
@@ -165,8 +165,8 @@ BEGIN
         Instrument citext,
         EMSL_Primary_Instrument citext,          -- This comes from eus_primary_instrument in table t_emsl_instruments and will be '0', '1', 'N', or 'Y'
         Tracked int,
-        EUS_Instrument_ID int Null,
-        Use_EUS_ID boolean Not Null
+        EUS_Instrument_ID int NULL,
+        Use_EUS_ID boolean NOT NULL
     );
 
     CREATE TEMP TABLE Tmp_InstrumentFilter (
@@ -174,7 +174,7 @@ BEGIN
     );
 
     CREATE TEMP TABLE Tmp_EUS_IDs_Processed (
-        EUS_Instrument_ID Int Not Null
+        EUS_Instrument_ID int NOT NULL
     );
 
     ---------------------------------------------------
@@ -369,7 +369,7 @@ BEGIN
                 If _infoOnly Then
                     RAISE INFO 'Call Update_EMSL_Instrument_Usage_Report for Instrument %, target month %-%',
                                 _instrumentInfo.Instrument,
-                                Extract(year from _currentInstrumentUsageMonth),
+                                Extract(year  from _currentInstrumentUsageMonth),
                                 Extract(month from _currentInstrumentUsageMonth);
 
                 End If;

@@ -126,10 +126,10 @@ BEGIN
 
         CREATE TEMP TABLE Tmp_DatasetStartTimes (
             Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-            DMS_Inst_ID int Not Null,
-            ItemType text Not Null,         -- 'Dataset' or 'Interval'
-            StartTime timestamp Not Null,
-            Datasets int Null               -- Number of datasets or number of long intervals with this start time
+            DMS_Inst_ID int NOT NULL,
+            ItemType text NOT NULL,         -- 'Dataset' or 'Interval'
+            StartTime timestamp NOT NULL,
+            Datasets int NULL               -- Number of datasets or number of long intervals with this start time
         );
 
         -- ItemType and Datasets are included here so that they're included in the index, removing the need for a table lookup
@@ -143,14 +143,14 @@ BEGIN
         ---------------------------------------------------
 
         CREATE TEMP TABLE Tmp_UpdatesToApply (
-            Entry_ID Int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-            DMS_Inst_ID int Not Null,
-            ItemType text Not Null,         -- 'Dataset' or 'Interval'
-            Start timestamp Not Null,
-            Dataset_ID int Not Null,
-            Seq Int Not Null,
-            Dataset text Null,
-            Dataset_ID_Acq_Overlap int Null
+            Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+            DMS_Inst_ID int NOT NULL,
+            ItemType text NOT NULL,         -- 'Dataset' or 'Interval'
+            Start timestamp NOT NULL,
+            Dataset_ID int NOT NULL,
+            Seq int NOT NULL,
+            Dataset text NULL,
+            Dataset_ID_Acq_Overlap int NULL
         );
 
         If _infoOnly Then

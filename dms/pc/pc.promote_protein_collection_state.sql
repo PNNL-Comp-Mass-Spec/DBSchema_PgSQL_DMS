@@ -106,7 +106,7 @@ BEGIN
             If _infoOnly Then
                 RAISE INFO '';
                 RAISE INFO '%', _currentLocation;
-            ElseIf extract(epoch FROM (clock_timestamp() - _lastStatusTime)) > 4 Then
+            ElseIf Extract(epoch from (clock_timestamp() - _lastStatusTime)) > 4 Then
                 -- Show a status message since four seconds have elapsed
                 RAISE INFO ' ... processed % / % protein collections', _countProcessed, _countTotal;
                 _lastStatusTime := clock_timestamp();

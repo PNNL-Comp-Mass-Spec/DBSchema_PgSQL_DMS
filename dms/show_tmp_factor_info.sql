@@ -15,11 +15,11 @@ CREATE OR REPLACE PROCEDURE public.show_tmp_factor_info()
 **
 **      CREATE TEMP TABLE Tmp_FactorInfo (
 **          Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-**          Identifier text null,           -- Could be RequestID or DatasetName
-**          Factor text null,
-**          Value text null,
-**          DatasetID int null,             -- DatasetID; not always present
-**          RequestID int null,
+**          Identifier text NULL,           -- Could be RequestID or DatasetName
+**          Factor text NULL,
+**          Value text NULL,
+**          DatasetID int NULL,             -- DatasetID; not always present
+**          RequestID int NULL,
 **          UpdateSkipCode int              -- 0 to update, 1 means unchanged, 2 means invalid factor name
 **      );
 **

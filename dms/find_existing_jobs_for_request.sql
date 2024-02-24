@@ -32,7 +32,7 @@ DECLARE
 BEGIN
 
     CREATE TEMP TABLE Tmp_ExistingJobs (
-        Job Int Not null
+        Job int NOT NULL
     );
 
     INSERT INTO Tmp_ExistingJobs( Job )

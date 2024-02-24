@@ -93,15 +93,15 @@ BEGIN
     -----------------------------------------
 
     CREATE TEMP TABLE Tmp_CampaignDatasetStats (
-        Campaign citext Not Null,
-        Work_Package citext Null,
-        FractionEMSLFunded numeric(3,2) Null,
-        Runtime_Hours numeric(9,1) Not Null,
-        Datasets int Not Null,
-        Building citext Not Null,
-        Instrument citext Not Null,
-        Request_Min int Not Null,
-        Request_Max int Not Null
+        Campaign citext NOT NULL,
+        Work_Package citext NULL,
+        FractionEMSLFunded numeric(3,2) NULL,
+        Runtime_Hours numeric(9,1) NOT NULL,
+        Datasets int NOT NULL,
+        Building citext NOT NULL,
+        Instrument citext NOT NULL,
+        Request_Min int NOT NULL,
+        Request_Max int NOT NULL
     );
 
     -----------------------------------------

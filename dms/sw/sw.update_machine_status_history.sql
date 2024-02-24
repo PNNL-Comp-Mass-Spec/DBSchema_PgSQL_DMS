@@ -45,7 +45,7 @@ BEGIN
         -- Lookup how long ago the table was last updated
         -----------------------------------------
 
-        SELECT extract(epoch FROM (CURRENT_TIMESTAMP - MAX(posting_time))) / 3600.0
+        SELECT Extract(epoch from (CURRENT_TIMESTAMP - MAX(posting_time))) / 3600.0
         INTO _timeIntervalLastUpdateHours
         FROM sw.t_machine_status_history;
 

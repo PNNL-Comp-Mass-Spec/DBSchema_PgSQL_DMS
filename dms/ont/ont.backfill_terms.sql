@@ -107,16 +107,16 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_SourceData (
-        entry_id int primary key generated always AS identity,
+        entry_id int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         term_pk citext,
         term_name citext,
         identifier citext,
         is_leaf int,
         synonyms citext,                    -- Only used if the source is 'ont.t_cv_bto'
-        parent_term_name citext null,
-        parent_term_id citext null,
-        grandparent_term_name citext null,
-        grandparent_term_id citext null,
+        parent_term_name citext NULL,
+        parent_term_id citext NULL,
+        grandparent_term_name citext NULL,
+        grandparent_term_id citext NULL,
         matches_existing int
     );
 
@@ -201,12 +201,12 @@ BEGIN
 
         CREATE TEMP TABLE Tmp_RelationshipsToAdd (
             entry_id int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-            child_pk citext not null,
-            parent_pk citext not null
+            child_pk citext NOT NULL,
+            parent_pk citext NOT NULL
         );
 
         CREATE TEMP TABLE Tmp_RelationshipsToDelete (
-            relationship_id int not null
+            relationship_id int NOT NULL
         );
 
         -- Find missing relationships

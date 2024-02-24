@@ -101,25 +101,25 @@ BEGIN
                Coalesce(A.Charge_Code_Title, B.Charge_Code_Title) AS Charge_Code_Title,
                Coalesce(A.Sub_Account_Title, B.Sub_Account_Title) AS Sub_Account_Title,
                Coalesce(A.Setup_Date,        B.Setup_Date)        AS Setup_Date
-        FROM ( SELECT  CC.charge_code,
-                       CC.Usage_Sample_Prep AS Sample_Prep_Usage_Old,
-                       COUNT(SPR.prep_request_id)::int4 AS Sample_Prep_Usage_New,
-                       CC.WBS_Title,
-                       CC.Charge_Code_Title,
-                       CC.Sub_Account_Title,
-                       CC.Setup_Date
+        FROM ( SELECT CC.charge_code,
+                      CC.Usage_Sample_Prep AS Sample_Prep_Usage_Old,
+                      COUNT(SPR.prep_request_id)::int4 AS Sample_Prep_Usage_New,
+                      CC.WBS_Title,
+                      CC.Charge_Code_Title,
+                      CC.Sub_Account_Title,
+                      CC.Setup_Date
                FROM t_sample_prep_request SPR
                     INNER JOIN t_charge_code CC
                       ON SPR.work_package = CC.charge_code
                GROUP BY CC.charge_code
              ) A
-             FULL OUTER JOIN ( SELECT  CC.charge_code,
-                                       CC.Usage_Requested_Run AS Requested_Run_Usage_Old,
-                                       COUNT(RR.request_id)::int4 AS Requested_Run_Usage_New,
-                                       CC.WBS_Title,
-                                       CC.Charge_Code_Title,
-                                       CC.Sub_Account_Title,
-                                       CC.Setup_Date
+             FULL OUTER JOIN ( SELECT CC.charge_code,
+                                      CC.Usage_Requested_Run AS Requested_Run_Usage_Old,
+                                      COUNT(RR.request_id)::int4 AS Requested_Run_Usage_New,
+                                      CC.WBS_Title,
+                                      CC.Charge_Code_Title,
+                                      CC.Sub_Account_Title,
+                                      CC.Setup_Date
                                FROM t_charge_code CC
                                     INNER JOIN t_requested_run RR
                                       ON CC.charge_code = RR.work_package

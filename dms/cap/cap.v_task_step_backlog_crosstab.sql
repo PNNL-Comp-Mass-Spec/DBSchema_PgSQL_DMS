@@ -18,7 +18,8 @@ CREATE VIEW cap.v_task_step_backlog_crosstab AS
            step_tool,
            backlog_count
     FROM cap.v_task_step_backlog_history
-    ORDER  BY 1,2'::text, 'SELECT unnest(''{ArchiveStatusCheck, ArchiveUpdate, ArchiveVerify,
+    ORDER BY 1,2'::text, 'SELECT unnest(
+                  ''{ArchiveStatusCheck, ArchiveUpdate, ArchiveVerify,
                      DatasetArchive, DatasetCapture, DatasetInfo,
                      DatasetIntegrity, DatasetQuality,
                      SourceFileRename, ImsDeMultiplex}''::text[])'::text) ct(posting_time timestamp without time zone, "ArchiveStatusCheck" integer, "ArchiveUpdate" integer, "ArchiveVerify" integer, "DatasetArchive" integer, "DatasetCapture" integer, "DatasetInfo" integer, "DatasetIntegrity" integer, "DatasetQuality" integer, "SourceFileRename" integer, "ImsDeMultiplex" integer);

@@ -116,15 +116,15 @@ BEGIN
 
         CREATE TEMP TABLE Tmp_Scratch  (
             Dataset text,
-            Total INT
+            Total int
         );
 
         DROP TABLE IF EXISTS Tmp_Datasets;
 
         CREATE TEMP TABLE Tmp_Datasets (
             Dataset text,
-            Jobs INT NULL,
-            ID INT
+            Jobs int NULL,
+            ID int
         );
 
         ---------------------------------------------------

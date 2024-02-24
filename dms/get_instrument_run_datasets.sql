@@ -40,7 +40,7 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_TX (
-        Seq int primary key,
+        Seq int PRIMARY KEY,
         ID int,
         Dataset text,
         State text,
@@ -122,7 +122,7 @@ BEGIN
         _interval := CASE WHEN _startOfNext <= _endOfPrevious
                           THEN 0
                           ELSE Coalesce(
-                            Round(extract(epoch FROM (_startOfNext - _endOfPrevious)) / 60.0)::int
+                            Round(Extract(epoch from (_startOfNext - _endOfPrevious)) / 60.0)::int
                             , 0)
                           END ;
 
@@ -140,7 +140,7 @@ BEGIN
     INTO _earliestStart, _latestFinish
     FROM Tmp_TX;
 
-    _totalMinutes := Round(extract(epoch FROM (_latestFinish - _earliestStart)) / 60.0)::int;
+    _totalMinutes := Round(Extract(epoch from (_latestFinish - _earliestStart)) / 60.0)::int;
 
     SELECT SUM(Coalesce(Tmp_TX.Duration, 0))
     INTO _acquisitionMinutes

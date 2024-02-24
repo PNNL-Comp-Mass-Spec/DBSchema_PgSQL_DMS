@@ -62,7 +62,7 @@ BEGIN
     If Coalesce(_minimumTimeIntervalMinutes, 0) = 0 Or _mostRecentPostingTime Is Null Then
         _updateTable := true;
     Else
-        _timeIntervalLastUpdateMinutes := extract(epoch FROM CURRENT_TIMESTAMP - _mostRecentPostingTime) / 60.0;
+        _timeIntervalLastUpdateMinutes := Extract(epoch from CURRENT_TIMESTAMP - _mostRecentPostingTime) / 60.0;
 
         If _timeIntervalLastUpdateMinutes >= _minimumTimeIntervalMinutes Then
             _updateTable := true;
@@ -119,7 +119,7 @@ BEGIN
         -- Only make new entries to t_task_step_status_history if _minimumTimeIntervalMinutesForIdenticalStats minutes have elapsed
         -----------------------------------------------------
 
-        _timeIntervalIdenticalStatsMinutes := extract(epoch FROM CURRENT_TIMESTAMP - _mostRecentPostingTime) / 60.0;
+        _timeIntervalIdenticalStatsMinutes := Extract(epoch from CURRENT_TIMESTAMP - _mostRecentPostingTime) / 60.0;
 
         If _timeIntervalIdenticalStatsMinutes >= _minimumTimeIntervalMinutesForIdenticalStats Then
             _updateTable := true;

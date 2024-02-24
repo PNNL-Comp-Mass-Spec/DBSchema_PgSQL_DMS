@@ -550,15 +550,15 @@ BEGIN
 
         -- This table is used by procedure add_experiment_biomaterial.sql
         CREATE TEMP TABLE Tmp_Experiment_to_Biomaterial_Map (
-            Biomaterial_Name citext not null,
-            Biomaterial_ID int null
+            Biomaterial_Name citext NOT NULL,
+            Biomaterial_ID int NULL
         );
 
         -- This table is used by procedure add_experiment_reference_compound
         CREATE TEMP TABLE Tmp_ExpToRefCompoundMap (
-            Compound_IDName citext not null,          -- This holds compound ID as text; if it is originally of the form '3311:ANFTSQETQGAGK', it will be changed to '3311'
-            Colon_Pos int null,
-            Compound_ID int null
+            Compound_IDName citext NOT NULL,          -- This holds compound ID as text; if it is originally of the form '3311:ANFTSQETQGAGK', it will be changed to '3311'
+            Colon_Pos int NULL,
+            Compound_ID int NULL
         );
 
         _dropTempTables := true;
@@ -636,7 +636,7 @@ BEGIN
         SET Compound_ID = Src.Compound_ID
         FROM t_reference_compound Src
         WHERE Src.compound_name = Target.Compound_IDName AND
-              Target.compound_id IS Null;
+              Target.compound_id IS NULL;
 
         -- Delete any entries where the name is '(none)'
 

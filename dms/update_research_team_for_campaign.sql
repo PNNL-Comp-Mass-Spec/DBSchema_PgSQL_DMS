@@ -126,8 +126,8 @@ BEGIN
     CREATE TEMP TABLE Tmp_TeamMembers (
         Username citext,
         Role citext,
-        Role_ID int null,
-        User_ID int null,
+        Role_ID int NULL,
+        User_ID int NULL,
         EntryID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY
     );
 

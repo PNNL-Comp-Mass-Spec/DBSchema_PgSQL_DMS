@@ -115,7 +115,7 @@ BEGIN
 
             SELECT MAX(container_id) + 1
             INTO _nextContainerID
-            FROM  t_material_containers;
+            FROM t_material_containers;
 
             _container := format('MC-%s', _nextContainerID);
         End If;
@@ -221,7 +221,7 @@ BEGIN
                type,
                status
         INTO _containerID, _curLocationID, _curType, _curStatus
-        FROM  t_material_containers
+        FROM t_material_containers
         WHERE container = _container::citext;
 
         If _mode = 'add' And FOUND Then

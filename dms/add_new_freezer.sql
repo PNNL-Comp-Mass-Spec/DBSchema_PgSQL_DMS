@@ -192,7 +192,7 @@ BEGIN
            comment,
            container_limit
     FROM Tmp_T_Material_Locations
-    ORDER BY shelf, rack, row, Col;
+    ORDER BY shelf, rack, row, col;
     --
     GET DIAGNOSTICS _insertCount = ROW_COUNT;
 

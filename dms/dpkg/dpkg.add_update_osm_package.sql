@@ -163,7 +163,7 @@ BEGIN
 
         CREATE TEMP TABLE Tmp_PrepRequestItems (
             Item int,
-            Valid boolean not null
+            Valid boolean NOT NULL
         );
 
         -- Populate table from sample prep request list

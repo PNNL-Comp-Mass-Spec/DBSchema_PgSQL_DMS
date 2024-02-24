@@ -118,8 +118,8 @@ BEGIN
                                ON sw.t_jobs.job = JTP.job
                              INNER JOIN sw.V_Job_Processing_Time JobProcTime
                                ON sw.t_jobs.job = JobProcTime.job
-                        WHERE Abs(extract(epoch FROM (sw.t_jobs.start  - Coalesce(Target.start,  _defaultDate))) ) > 1 OR   -- Start or Finish times differ by more than 1 second
-                              Abs(extract(epoch FROM (sw.t_jobs.finish - Coalesce(Target.finish, _defaultDate))) ) > 1 OR
+                        WHERE Abs(Extract(epoch from (sw.t_jobs.start  - Coalesce(Target.start,  _defaultDate))) ) > 1 OR   -- Start or Finish times differ by more than 1 second
+                              Abs(Extract(epoch from (sw.t_jobs.finish - Coalesce(Target.finish, _defaultDate))) ) > 1 OR
                               Abs(Coalesce(Target.processing_time_minutes, 0) - JobProcTime.Processing_Time_Minutes) > 0.1  -- Processing time differs by more than 6 seconds
                       )
         Then
@@ -169,8 +169,8 @@ BEGIN
                    public.timestamp_text(sw.t_jobs.finish) AS Finish_New,
                    Round(Target.processing_time_minutes::numeric, 2) AS Proc_Time_Minutes,
                    Round(JobProcTime.Processing_Time_Minutes::numeric, 2) AS Proc_Time_Minutes_New,
-                   Round(Abs(extract(epoch FROM (sw.t_jobs.start  - target.start))  ), 1) AS Start_Diff_Seconds,
-                   Round(Abs(extract(epoch FROM (sw.t_jobs.finish - target.Finish)) ), 1) AS Finish_Diff_Seconds,
+                   Round(Abs(Extract(epoch from (sw.t_jobs.start  - target.start))  ), 1) AS Start_Diff_Seconds,
+                   Round(Abs(Extract(epoch from (sw.t_jobs.finish - target.Finish)) ), 1) AS Finish_Diff_Seconds,
                    Round(Abs(Coalesce(Target.processing_time_minutes, 0) - JobProcTime.Processing_Time_Minutes)::numeric, 2) AS Proc_Time_Diff_Minutes
             FROM sw.t_jobs
                  INNER JOIN public.t_analysis_job Target
@@ -179,8 +179,8 @@ BEGIN
                    ON sw.t_jobs.job = JTP.job
                  INNER JOIN sw.V_Job_Processing_Time JobProcTime
                    ON sw.t_jobs.job = JobProcTime.job
-            WHERE Abs(extract(epoch FROM (sw.t_jobs.start  - Coalesce(Target.start,  _defaultDate))) ) > 1 OR   -- Start or Finish times differ by more than 1 second
-                  Abs(extract(epoch FROM (sw.t_jobs.finish - Coalesce(Target.finish, _defaultDate))) ) > 1 OR
+            WHERE Abs(Extract(epoch from (sw.t_jobs.start  - Coalesce(Target.start,  _defaultDate))) ) > 1 OR   -- Start or Finish times differ by more than 1 second
+                  Abs(Extract(epoch from (sw.t_jobs.finish - Coalesce(Target.finish, _defaultDate))) ) > 1 OR
                   Abs(Coalesce(Target.processing_time_minutes, 0) - JobProcTime.Processing_Time_Minutes) > 0.1    -- Processing time differs by more than 6 seconds
             ORDER BY sw.t_jobs.job
         LOOP
@@ -214,8 +214,8 @@ BEGIN
          INNER JOIN sw.V_Job_Processing_Time JobProcTime
            ON J.job = JobProcTime.job
     WHERE J.job = Target.job AND
-          (Abs(extract(epoch FROM (J.start  - Coalesce(Target.start,  _defaultDate))) ) > 1 OR   -- Start or Finish times differ by more than 1 second
-           Abs(extract(epoch FROM (J.finish - Coalesce(Target.finish, _defaultDate))) ) > 1 OR
+          (Abs(Extract(epoch from (J.start  - Coalesce(Target.start,  _defaultDate))) ) > 1 OR   -- Start or Finish times differ by more than 1 second
+           Abs(Extract(epoch from (J.finish - Coalesce(Target.finish, _defaultDate))) ) > 1 OR
            Abs(Coalesce(Target.processing_time_minutes, 0) - JobProcTime.Processing_Time_Minutes) > 0.1 -- Processing time differs by more than 6 seconds
           );
     --

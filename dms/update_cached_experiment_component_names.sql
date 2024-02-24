@@ -103,19 +103,19 @@ BEGIN
     ------------------------------------------------
 
     CREATE TEMP TABLE Tmp_ExperimentBiomaterial (
-        Exp_ID int not null,
-        Biomaterial_List text null,
-        Items int null
+        Exp_ID int NOT NULL,
+        Biomaterial_List text NULL,
+        Items int NULL
     );
 
     CREATE TEMP TABLE Tmp_ExperimentRefCompounds (
-        Exp_ID int not null,
-        Reference_Compound_List text null,
-        Items int null
+        Exp_ID int NOT NULL,
+        Reference_Compound_List text NULL,
+        Items int NULL
     );
 
     CREATE TEMP TABLE Tmp_AdditionalExperiments (
-        Exp_ID int not null
+        Exp_ID int NOT NULL
     );
 
     CREATE UNIQUE INDEX Tmp_ExperimentBiomaterial_ExpID ON Tmp_ExperimentBiomaterial (Exp_ID);

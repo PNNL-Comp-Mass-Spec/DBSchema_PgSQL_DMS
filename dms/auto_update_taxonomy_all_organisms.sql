@@ -58,9 +58,9 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_OrganismsToUpdate (
-        Organism_ID int not null,
-        Organism_Name text not null,
-        NCBI_Taxonomy_ID int not null,
+        Organism_ID int NOT NULL,
+        Organism_Name text NOT NULL,
+        NCBI_Taxonomy_ID int NOT NULL,
         Old_Domain  text,
         New_Domain  text,
         Old_Kingdom text,

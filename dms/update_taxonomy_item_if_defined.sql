@@ -14,9 +14,9 @@ CREATE OR REPLACE PROCEDURE public.update_taxonomy_item_if_defined(IN _rank text
 **  The calling procedure must create table Tmp_TaxonomyInfo
 **
 **      CREATE TEMP TABLE Tmp_TaxonomyInfo (
-**          Entry_ID int not null,
-**          Rank text not null,
-**          Name text not null
+**          Entry_ID int NOT NULL,
+**          Rank text NOT NULL,
+**          Name text NOT NULL
 **      );
 **
 **  Arguments:
@@ -34,7 +34,7 @@ DECLARE
 BEGIN
     SELECT Name
     INTO _taxonomyName
-    FROM  Tmp_TaxonomyInfo
+    FROM Tmp_TaxonomyInfo
     WHERE Rank::citext = _rank::citext;
 
     If FOUND And Trim(Coalesce(_taxonomyName, '')) <> '' Then

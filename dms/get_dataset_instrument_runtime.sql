@@ -112,7 +112,7 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_TX (
-        Seq int primary key,
+        Seq int PRIMARY KEY,
         ID int,
         Dataset citext,
         State citext,
@@ -129,7 +129,7 @@ BEGIN
         LC_Column citext,
         Instrument citext,
         Campaign_ID int,
-        Fraction_EMSL_Funded numeric(3, 2),
+        Fraction_EMSL_Funded numeric(3,2),
         Campaign_Proposals citext
     );
 
@@ -273,7 +273,7 @@ BEGIN
         _interval := Coalesce(
                         CASE WHEN _startOfNext <= _endOfPrevious
                              THEN 0
-                             ELSE round(extract(epoch FROM (_startOfNext - _endOfPrevious)) / 60.0)::int
+                             ELSE Round(Extract(epoch from (_startOfNext - _endOfPrevious)) / 60.0)::int
                         END, 0);
 
         UPDATE Tmp_TX
@@ -309,7 +309,7 @@ BEGIN
             SELECT MIN(Time_Start) INTO _earliestStart FROM Tmp_TX;
             SELECT MAX(Time_End)   INTO _latestFinish  FROM Tmp_TX;
 
-            _totalMinutes := round(extract(epoch FROM (_latestFinish - _earliestStart)) / 60.0)::int;
+            _totalMinutes := Round(Extract(epoch from (_latestFinish - _earliestStart)) / 60.0)::int;
 
             SELECT SUM(Coalesce(Duration, 0))
             INTO _acquisitionMinutes
@@ -367,7 +367,7 @@ BEGIN
              t_experiments E ON DS.exp_id = E.exp_id INNER JOIN
              t_campaign C ON E.campaign_id = C.campaign_id INNER JOIN
              t_dataset_state_name DSN ON DS.dataset_state_id = DSN.dataset_state_id INNER JOIN
-             t_dataset_rating_name DRN ON DS.dataset_rating_id = DRN.dataset_rating_id  INNER JOIN
+             t_dataset_rating_name DRN ON DS.dataset_rating_id = DRN.dataset_rating_id INNER JOIN
              t_lc_column LC ON DS.lc_column_id = LC.lc_column_id LEFT OUTER JOIN
              t_requested_run RR ON DS.dataset_id = RR.dataset_id LEFT OUTER JOIN
              t_eus_usage_type EUT ON RR.eus_usage_type_id = EUT.eus_usage_type_id LEFT OUTER JOIN

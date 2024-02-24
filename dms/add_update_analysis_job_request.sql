@@ -376,7 +376,7 @@ BEGIN
         ---------------------------------------------------
 
         CREATE TEMP TABLE Tmp_DatasetList (
-            Dataset_Name text Not NULL
+            Dataset_Name text NOT NULL
         );
 
         CREATE UNIQUE INDEX IX_Tmp_DatasetList ON Tmp_DatasetList (Dataset_Name);

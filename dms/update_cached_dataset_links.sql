@@ -486,7 +486,7 @@ BEGIN
         -- CALL post_log_entry ('Debug', _message, 'Update_Cached_Dataset_Links');
     End If;
 
-    _runtimeSeconds := Round(extract(epoch FROM (clock_timestamp() - _startTime)), 3);
+    _runtimeSeconds := Round(Extract(epoch from (clock_timestamp() - _startTime)), 3);
 
     If _showDebug Or _runtimeSeconds > 5 Then
         RAISE INFO 'Processing time: % seconds', _runtimeSeconds;

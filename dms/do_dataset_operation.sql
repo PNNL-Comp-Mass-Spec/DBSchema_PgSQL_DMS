@@ -167,7 +167,7 @@ BEGIN
                 FROM t_predefined_analysis_scheduling_queue
                 WHERE dataset_id = _datasetID AND state = 'New';
 
-                _elapsedHours := extract(epoch FROM CURRENT_TIMESTAMP - Coalesce(_enteredMax, CURRENT_TIMESTAMP)) / 3600.0;
+                _elapsedHours := Extract(epoch from CURRENT_TIMESTAMP - Coalesce(_enteredMax, CURRENT_TIMESTAMP)) / 3600.0;
 
                 _logErrors := false;
 

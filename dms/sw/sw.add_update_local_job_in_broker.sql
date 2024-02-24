@@ -226,7 +226,7 @@ BEGIN
             _ownerUsername := public.get_user_login_without_domain(_callingUser);
         End If;
 
-        If _mode::citext in ('add', 'previewAdd') Then
+        If _mode::citext In ('add', 'previewAdd') Then
             ---------------------------------------------------
             -- Is data package set up correctly for the job?
             ---------------------------------------------------
@@ -381,7 +381,7 @@ BEGIN
         -- Add mode
         ---------------------------------------------------
 
-        If _mode::citext in ('add', 'previewAdd') Then
+        If _mode::citext In ('add', 'previewAdd') Then
 
             _jobParamXML := _jobParam::XML;
 
@@ -430,7 +430,7 @@ BEGIN
             INTO _logEntryID
             FROM sw.t_log_entries
             WHERE Position (_exceptionMessage IN message) > 0 AND
-                  ABS( extract(epoch FROM (CURRENT_TIMESTAMP - Entered)) ) < 15;
+                  Abs( Extract(epoch from (CURRENT_TIMESTAMP - Entered)) ) < 15;
 
             If FOUND Then
                 CALL public.alter_entered_by_user ('sw', 't_log_entries', 'entry_id', _logEntryID, _callingUser, _entryDateColumnName => 'entered', _message => _alterEnteredByMessage);

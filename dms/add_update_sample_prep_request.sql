@@ -170,7 +170,7 @@ DECLARE
     _requestTypeExisting text;
     _activationState int := 10;
     _activationStateName text;
-    _currentEstimatedPrepTimeDays Int;
+    _currentEstimatedPrepTimeDays int;
     _logMessage text;
     _alterEnteredByMessage text;
 
@@ -414,7 +414,7 @@ BEGIN
         -- Create temporary table to hold names of material containers as input
 
         CREATE TEMP TABLE Tmp_MaterialContainers (
-            name citext not null
+            name citext NOT NULL
         );
 
         -- Get names of material containers from list argument into table
@@ -619,7 +619,7 @@ BEGIN
                    assigned_personnel,
                    request_type
             INTO _currentStateID, _currentAssignedPersonnel, _requestTypeExisting
-            FROM  t_sample_prep_request
+            FROM t_sample_prep_request
             WHERE prep_request_id = _id;
 
             If Not FOUND Then

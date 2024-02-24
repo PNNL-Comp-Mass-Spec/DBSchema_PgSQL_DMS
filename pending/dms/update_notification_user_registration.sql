@@ -100,7 +100,7 @@ BEGIN
     ---------------------------------------------------
     -- Populate a temporary table with Entity Type IDs and Entity Type Params
     ---------------------------------------------------
-    CREATE TEMP TABLE Tmp_NotificationOptions
+    CREATE TEMP TABLE Tmp_NotificationOptions (
         EntityTypeID int,
         NotifyUser text
     );

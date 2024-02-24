@@ -208,10 +208,10 @@ BEGIN
                                           step_tool   citext PATH '@Tool')
                 ) ScriptSteps LEFT OUTER JOIN ConflictQ ON ScriptSteps.step_number = ConflictQ.step_number
             UNION
-            SELECT  ScriptSteps.Script,
-                    ScriptSteps.Step_Number,
-                    ScriptSteps.Step_Tool,
-                    CASE WHEN ConflictQ.Step_Number IS NULL THEN 0 ELSE 1 END AS Conflict
+            SELECT ScriptSteps.Script,
+                   ScriptSteps.Step_Number,
+                   ScriptSteps.Step_Tool,
+                   CASE WHEN ConflictQ.Step_Number IS NULL THEN 0 ELSE 1 END AS Conflict
             FROM (
                     SELECT _extensionScriptName AS Script,
                            xmltable.step_number,

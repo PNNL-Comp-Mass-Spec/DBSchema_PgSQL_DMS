@@ -131,7 +131,7 @@ BEGIN
             _result := 1;
         End If;
 
-        If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
+        If _loggingEnabled Or Extract(epoch from clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := format('%s remove_dms_deleted_jobs', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
@@ -161,7 +161,7 @@ BEGIN
             _result := 1;
         End If;
 
-        If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
+        If _loggingEnabled Or Extract(epoch from clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := format('%s add_new_jobs', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
@@ -221,7 +221,7 @@ BEGIN
             _result := 1;
         End If;
 
-        If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
+        If _loggingEnabled Or Extract(epoch from clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := format('%s import_processors', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
@@ -253,7 +253,7 @@ BEGIN
             _result := 1;
         End If;
 
-        If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
+        If _loggingEnabled Or Extract(epoch from clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := format('%s import_job_processors', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
@@ -280,7 +280,7 @@ BEGIN
             _result := 1;
         End If;
 
-        If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
+        If _loggingEnabled Or Extract(epoch from clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := format('%s sync_job_info', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
@@ -332,7 +332,7 @@ BEGIN
             _result := 1;
         End If;
 
-        If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
+        If _loggingEnabled Or Extract(epoch from clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := format('%s create_job_steps', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
@@ -390,7 +390,7 @@ BEGIN
             _result := 1;
         End If;
 
-        If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
+        If _loggingEnabled Or Extract(epoch from clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := format('%s update_step_states', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
@@ -444,7 +444,7 @@ BEGIN
             _result := 1;
         End If;
 
-        If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
+        If _loggingEnabled Or Extract(epoch from clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := format('%s update_job_state', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
@@ -500,7 +500,7 @@ BEGIN
             _result := 1;
         End If;
 
-        If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
+        If _loggingEnabled Or Extract(epoch from clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := format('%s update_cpu_loading', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
@@ -555,7 +555,7 @@ BEGIN
             _result := 1;
         End If;
 
-        If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
+        If _loggingEnabled Or Extract(epoch from clock_timestamp() - _startTime) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := format('%s auto_fix_failed_jobs', _action);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Context', 'sw');
@@ -591,7 +591,7 @@ BEGIN
     COMMIT;
 
     If _loggingEnabled Then
-        _statusMessage := format('Update context complete: %s seconds elapsed', extract(epoch FROM clock_timestamp() - _startTime));
+        _statusMessage := format('Update context complete: %s seconds elapsed', Extract(epoch from clock_timestamp() - _startTime));
         CALL public.post_log_entry ('Normal', _statusMessage, 'Update_Context', 'sw');
     End If;
 

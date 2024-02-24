@@ -55,7 +55,7 @@ BEGIN
     --------------------------------------------
 
     CREATE TEMP TABLE Tmp_DatasetsToProcess (
-        Dataset_ID int not null
+        Dataset_ID int NOT NULL
     );
 
     CREATE INDEX IX_Tmp_DatasetsToProcess ON Tmp_DatasetsToProcess (Dataset_ID);

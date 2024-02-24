@@ -24,8 +24,8 @@ DECLARE
     _startDateText text;
     _endDateText text;
 BEGIN
-    _startDateText := make_date(extract(year from _startDate)::int, extract(month from _startDate)::int, extract (day from _startDate)::int)::text;
-    _endDateText := make_date(extract(year from _endDate)::int, extract(month from _endDate)::int, extract (day from _endDate)::int)::text;
+    _startDateText := make_date(Extract(year from _startDate)::int, Extract(month from _startDate)::int, Extract (day from _startDate)::int)::text;
+    _endDateText   := make_date(Extract(year from _endDate)::int,   Extract(month from _endDate)::int,   Extract (day from _endDate)::int)::text;
 
     _sql := format('SELECT the_date FROM generate_series (''%s''::timestamp, ''%s''::timestamp, make_interval(hours => %s)) AS the_date', _startDate::text, _endDate::text, _hourInterval);
 

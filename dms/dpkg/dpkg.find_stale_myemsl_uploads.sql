@@ -25,8 +25,8 @@ CREATE OR REPLACE PROCEDURE dpkg.find_stale_myemsl_uploads(IN _staleuploaddays i
 *****************************************************/
 DECLARE
     _updateCount int;
-    _entryID Int;
-    _dataPackageID Int;
+    _entryID int;
+    _dataPackageID int;
     _entryIDList text;
     _dataPackageList text;
 
@@ -56,8 +56,8 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_StaleUploads (
-        Entry_ID Int Not Null,
-        Data_Pkg_ID Int Not Null,
+        Entry_ID int NOT NULL,
+        Data_Pkg_ID int NOT NULL,
         Entered timestamp
     );
 
@@ -116,7 +116,7 @@ BEGIN
         RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
-            SELECT format('Stale: %s days old', Round(extract(epoch FROM CURRENT_TIMESTAMP - Stale.Entered) / 86400)) AS Message,
+            SELECT format('Stale: %s days old', Round(Extract(epoch from CURRENT_TIMESTAMP - Stale.Entered) / 86400)) AS Message,
                    Uploads.Entry_id,
                    Uploads.Data_Pkg_ID,
                    Uploads.Subfolder,

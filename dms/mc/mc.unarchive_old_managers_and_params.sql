@@ -67,7 +67,7 @@ BEGIN
     CREATE TEMP TABLE Tmp_ManagerList (
         manager_name citext NOT NULL,
         mgr_id int NULL,
-        control_from_web smallint null
+        control_from_web smallint NULL
     );
 
     CREATE TEMP TABLE Tmp_WarningMessages (

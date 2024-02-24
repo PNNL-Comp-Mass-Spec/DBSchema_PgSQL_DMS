@@ -31,7 +31,7 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_DatasetsToUpdate
     (
-        Dataset_ID int not null
+        Dataset_ID int NOT NULL
     );
 
     CREATE UNIQUE INDEX IX_Tmp_DatasetsToUpdate ON Tmp_DatasetsToUpdate (Dataset_ID);

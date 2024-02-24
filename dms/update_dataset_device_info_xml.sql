@@ -110,13 +110,13 @@ BEGIN
     CREATE TEMP TABLE Tmp_DatasetDevicesTable (
         Device_Type citext,
         Device_Number_Text citext,
-        Device_Number int Null,
+        Device_Number int NULL,
         Device_Name citext,
         Device_Model citext,
         Device_Serial_Number citext,
         Device_Software_Version citext,
         Device_Description citext,
-        Device_ID int null
+        Device_ID int NULL
     );
 
     ---------------------------------------------------

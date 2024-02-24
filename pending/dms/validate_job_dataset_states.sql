@@ -42,15 +42,15 @@ BEGIN
         _infoOnly := Coalesce(_infoOnly, false);
 
         CREATE TEMP TABLE Tmp_Datasets (
-            Dataset_ID int not null,
-            State_Old int not null,
-            State_New int not null
+            Dataset_ID int NOT NULL,
+            State_Old int NOT NULL,
+            State_New int NOT NULL
         );
 
         CREATE TEMP TABLE Tmp_Jobs (
-            Job int not null,
-            State_Old int not null,
-            State_New int not null
+            Job int NOT NULL,
+            State_Old int NOT NULL,
+            State_New int NOT NULL
         );
 
         ---------------------------------------------------

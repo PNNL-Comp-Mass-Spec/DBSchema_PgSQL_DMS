@@ -62,7 +62,7 @@ BEGIN
     End If;
 
     CREATE TEMP TABLE Tmp_DatasetsToUpdate (
-        Dataset_ID int Not Null
+        Dataset_ID int NOT NULL
     );
 
     CREATE INDEX IX_Tmp_DatasetsToUpdate ON Tmp_DatasetsToUpdate (Dataset_ID);

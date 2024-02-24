@@ -67,7 +67,7 @@ BEGIN
     If Not FOUND Or _minimumTimeIntervalMinutes <= 0 Then
         _updateTable := true;
     Else
-        _timeIntervalLastUpdateMinutes := extract(epoch FROM (CURRENT_TIMESTAMP - _mostRecentPostingTime)) / 60.0;
+        _timeIntervalLastUpdateMinutes := Extract(epoch from (CURRENT_TIMESTAMP - _mostRecentPostingTime)) / 60.0;
 
         If _timeIntervalLastUpdateMinutes >= _minimumTimeIntervalMinutes Then
             _updateTable := true;
@@ -125,7 +125,7 @@ BEGIN
         -- Only make new entries to sw.t_job_step_status_history if _minimumTimeIntervalMinutesForIdenticalStats minutes have elapsed
         -----------------------------------------------------
 
-        _timeIntervalIdenticalStatsMinutes := extract(epoch FROM (CURRENT_TIMESTAMP - _mostRecentPostingTime)) / 60.0;
+        _timeIntervalIdenticalStatsMinutes := Extract(epoch from (CURRENT_TIMESTAMP - _mostRecentPostingTime)) / 60.0;
 
         If _timeIntervalIdenticalStatsMinutes >= _minimumTimeIntervalMinutesForIdenticalStats Then
             _updateTable := true;

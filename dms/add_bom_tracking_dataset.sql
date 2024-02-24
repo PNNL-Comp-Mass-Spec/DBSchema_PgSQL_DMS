@@ -100,7 +100,7 @@ BEGIN
         _now := CURRENT_TIMESTAMP;
 
         If _month = '' Or _month = 'next' Then
-            _mn := Extract(month From _now)::text;
+            _mn := Extract(month from _now)::text;
         Else
             _mn := public.try_cast(_month, null::int);
 
@@ -117,7 +117,7 @@ BEGIN
         End If;
 
         If _year = '' Or _month = 'next' Then
-            _yr := Extract(year From _now)::text;
+            _yr := Extract(year FROM _now)::text;
         Else
             _yr := public.try_cast(_year, null::int);
 

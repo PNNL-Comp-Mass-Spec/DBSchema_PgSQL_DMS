@@ -34,8 +34,8 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_MachineStats (
         Machine text NOT NULL,
-        CPUs_Used int null,
-        Memory_Used int null
+        CPUs_Used int NULL,
+        Memory_Used int NULL
     );
 
     ---------------------------------------------------

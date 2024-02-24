@@ -13,7 +13,7 @@ CREATE OR REPLACE PROCEDURE mc.parse_manager_name_list(IN _managernamelist text 
 **
 **      The calling procedure must create a temporary table (the table can contain additional columns)
 **        CREATE TEMP TABLE TmpManagerList (
-**          manager_name text NOT NULL
+**            manager_name text NOT NULL
 **        )
 **
 **  Arguments:
@@ -102,7 +102,7 @@ BEGIN
     End Loop;
 
     If _removeUnknownManagers = 0 Then
-        Return;
+        RETURN;
     End If;
 
     -- Delete entries from TmpManagerList that are not defined in mc.t_mgrs

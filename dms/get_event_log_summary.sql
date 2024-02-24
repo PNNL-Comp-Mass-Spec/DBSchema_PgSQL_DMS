@@ -34,10 +34,10 @@ BEGIN
     _startDate := Coalesce(_startDate, CURRENT_TIMESTAMP - Interval '24 hours');
     _endDate := Coalesce(_endDate, _startDate + Interval '24 hours');
 
-    _hoursInRange := Round(extract(epoch FROM _endDate - _startDate) / 3600.0)::int;
-    _daysInRange  := Round(extract(epoch FROM _endDate - _startDate) / 86400.0)::int;
+    _hoursInRange := Round(Extract(epoch from _endDate - _startDate) / 3600.0)::int;
+    _daysInRange  := Round(Extract(epoch from _endDate - _startDate) / 86400.0)::int;
 
-    If Abs(extract(epoch FROM CURRENT_TIMESTAMP - _endDate)) < 5 Then
+    If Abs(Extract(epoch from CURRENT_TIMESTAMP - _endDate)) < 5 Then
         _isPreviousHours := true;
         _timeRange = '';
 

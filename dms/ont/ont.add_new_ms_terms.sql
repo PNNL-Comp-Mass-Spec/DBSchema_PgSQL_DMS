@@ -111,14 +111,14 @@ BEGIN
         term_name citext,
         identifier citext,
         is_leaf int,
-        parent_term_type citext null,
-        parent_term_name citext null,
-        parent_term_id citext null,
-        grandparent_term_type citext null,
-        grandparent_term_name citext null,
-        grandparent_term_id citext null,
+        parent_term_type citext NULL,
+        parent_term_name citext NULL,
+        parent_term_id citext NULL,
+        grandparent_term_type citext NULL,
+        grandparent_term_name citext NULL,
+        grandparent_term_id citext NULL,
         matches_existing int,
-        entry_id int primary key generated always as identity
+        entry_id int PRIMARY KEY GENERATED ALWAYS AS IDENTITY
     );
 
     _s := ' INSERT INTO Tmp_SourceData'

@@ -111,7 +111,7 @@ BEGIN
 
     SELECT prep_column_id
     INTO _existingID
-    FROM  t_prep_lc_column
+    FROM t_prep_lc_column
     WHERE prep_column = _columnName::citext;
 
     GET DIAGNOSTICS _existingCount = ROW_COUNT;

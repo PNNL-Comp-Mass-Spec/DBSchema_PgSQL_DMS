@@ -116,7 +116,7 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_AnalysisTools (
         ToolName citext,
-        ToolID int null
+        ToolID int NULL
     );
 
     ---------------------------------------------------

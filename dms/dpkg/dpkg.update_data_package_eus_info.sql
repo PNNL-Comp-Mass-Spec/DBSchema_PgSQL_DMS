@@ -74,7 +74,7 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_DataPackagesToUpdate (
-        Data_Pkg_ID int not NULL,
+        Data_Pkg_ID int NOT NULL,
         Best_EUS_Proposal_ID text NULL,
         Best_Instrument_Name text NULL,
         Best_EUS_Instrument_ID int NULL

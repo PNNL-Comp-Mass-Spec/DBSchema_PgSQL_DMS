@@ -316,7 +316,7 @@ BEGIN
         ---------------------------------------------------
 
         CREATE TEMP TABLE Tmp_OldBatchIDs (
-            Batch_ID int Not Null
+            Batch_ID int NOT NULL
         );
 
         _batchIDsTempTableCreated := true;

@@ -185,7 +185,7 @@ BEGIN
         Section citext,
         Name citext,
         Value text,
-        State text not null
+        State text NOT NULL
     );
 
     ---------------------------------------------------

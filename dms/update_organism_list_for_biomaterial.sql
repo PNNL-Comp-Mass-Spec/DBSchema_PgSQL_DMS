@@ -123,8 +123,8 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_BiomaterialOrganisms (
-        Organism_Name text not null,
-        Organism_ID int null,
+        Organism_Name text NOT NULL,
+        Organism_ID int NULL,
         EntryID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY
     );
 

@@ -63,7 +63,7 @@ BEGIN
     If Not FOUND Or _minimumTimeIntervalMinutes <= 0 Then
         _updateTable := true;
     Else
-        _timeIntervalLastUpdateMinutes := extract(epoch FROM (CURRENT_TIMESTAMP - _mostRecentPostingTime)) / 60.0;
+        _timeIntervalLastUpdateMinutes := Extract(epoch from (CURRENT_TIMESTAMP - _mostRecentPostingTime)) / 60.0;
 
         If _timeIntervalLastUpdateMinutes >= _minimumTimeIntervalMinutes Then
             _updateTable := true;
@@ -73,7 +73,7 @@ BEGIN
     End If;
 
     If Not _updateTable And Not _infoOnly Then
-        _message := format('Update skipped since last update was %s minutes ago', round(_timeIntervalLastUpdateMinutes, 1));
+        _message := format('Update skipped since last update was %s minutes ago', Round(_timeIntervalLastUpdateMinutes, 1));
         RETURN;
     End If;
 

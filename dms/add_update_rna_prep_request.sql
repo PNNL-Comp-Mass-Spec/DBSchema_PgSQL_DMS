@@ -358,7 +358,7 @@ BEGIN
             SELECT request_type,
                    state_id
             INTO _requestTypeExisting, _currentStateID
-            FROM  t_sample_prep_request
+            FROM t_sample_prep_request
             WHERE prep_request_id = _id;
 
             If Not FOUND Then

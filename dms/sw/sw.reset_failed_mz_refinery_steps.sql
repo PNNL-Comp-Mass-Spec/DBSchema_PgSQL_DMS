@@ -60,8 +60,8 @@ BEGIN
 
         CREATE TEMP TABLE Tmp_Managers (
             Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-            Manager_Description text Not Null,
-            Manager_Name text Null,
+            Manager_Description text NOT NULL,
+            Manager_Name text NULL,
             Entry_ID_Min int
         );
 

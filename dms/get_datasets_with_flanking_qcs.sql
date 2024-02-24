@@ -49,8 +49,8 @@ BEGIN
                          DS.LC_Column_ID,
                          DS.Instrument_id,
                          QCDatasets.dataset AS QC_Dataset,
-                         extract(epoch FROM (QCDatasets.Acq_Time - COALESCE(DS.Acq_Time_Start, DS.created))) / 3600.0 AS Diff_Hours,
-                         CASE WHEN (extract(epoch FROM QCDatasets.Acq_Time - COALESCE(DS.Acq_Time_Start, DS.created))) < 0
+                         Extract(epoch from (QCDatasets.Acq_Time - COALESCE(DS.Acq_Time_Start, DS.created))) / 3600.0 AS Diff_Hours,
+                         CASE WHEN (Extract(epoch from QCDatasets.Acq_Time - COALESCE(DS.Acq_Time_Start, DS.created))) < 0
                          THEN 0
                          ELSE 1
                          END AS Subsequent_Run

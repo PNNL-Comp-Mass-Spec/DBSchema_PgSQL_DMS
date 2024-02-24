@@ -42,7 +42,7 @@ BEGIN
     CREATE TEMP TABLE Tmp_UsageStats (
         Tissue_ID            citext NOT NULL,
         Usage_All_Time       int NOT NULL,
-        Usage_Last_12_Months int NOT NULL Default 0
+        Usage_Last_12_Months int NOT NULL DEFAULT 0
     );
 
     INSERT INTO Tmp_UsageStats( Tissue_ID,

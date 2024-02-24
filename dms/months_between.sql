@@ -29,8 +29,8 @@ CREATE OR REPLACE FUNCTION public.months_between(_start timestamp without time z
 **
 *****************************************************/
 BEGIN
-    RETURN ((extract('years' from $2)::int - extract('years' from $1)::int) * 12) -
-             extract('month' from $1)::int + extract('month' from $2)::int;
+    RETURN ((Extract('years' from $2)::int - Extract('years' from $1)::int) * 12) -
+             Extract('month' from $1)::int + Extract('month' from $2)::int;
 END
 $_$;
 

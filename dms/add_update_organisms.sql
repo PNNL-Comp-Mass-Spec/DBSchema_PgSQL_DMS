@@ -355,7 +355,7 @@ BEGIN
 
             SELECT organism
             INTO _existingOrgName
-            FROM  t_organisms
+            FROM t_organisms
             WHERE organism_id = _id;
 
             If Not FOUND Then

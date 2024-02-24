@@ -96,9 +96,9 @@ BEGIN
         ---------------------------------------------------
 
         CREATE TEMP TABLE Tmp_DataPackageItems (
-            DataPackageID int not null,   -- Data package ID
-            ItemType   citext null,       -- 'Job', 'Dataset', 'Experiment', 'Biomaterial', or 'EUSProposal'
-            Identifier citext null        -- Job ID, Dataset Name or ID, Experiment Name, Biomaterial Name, or EUSProposal ID
+            DataPackageID int NOT NULL,   -- Data package ID
+            ItemType   citext NULL,       -- 'Job', 'Dataset', 'Experiment', 'Biomaterial', or 'EUSProposal'
+            Identifier citext NULL        -- Job ID, Dataset Name or ID, Experiment Name, Biomaterial Name, or EUSProposal ID
         );
 
         _xml := public.try_cast(_paramListXML, null::xml);

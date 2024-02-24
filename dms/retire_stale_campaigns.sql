@@ -43,12 +43,12 @@ BEGIN
     -----------------------------------------------------------
 
     CREATE TEMP TABLE Tmp_Campaigns (
-        Campaign_ID int Not Null primary key,
-        Campaign text Not Null,
-        Created timestamp Not Null,
-        Most_Recent_Activity timestamp Null,
-        Most_Recent_Dataset timestamp Null,
-        Most_Recent_Analysis_Job timestamp Null
+        Campaign_ID int NOT NULL PRIMARY KEY,
+        Campaign text NOT NULL,
+        Created timestamp NOT NULL,
+        Most_Recent_Activity timestamp NULL,
+        Most_Recent_Dataset timestamp NULL,
+        Most_Recent_Analysis_Job timestamp NULL
     );
 
     -----------------------------------------------------------

@@ -47,7 +47,7 @@ DECLARE
     _jobsProcessed int := 0;
     _peptideAtlasStagingTask int := 0;
     _analysisToolID int;
-    _organismID Int;
+    _organismID int;
     _parameterFileName text;
     _proteinCollectionList text;
     _legacyFastaFileName text;

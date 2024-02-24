@@ -220,7 +220,7 @@ BEGIN
     If _state <> _noChangeText Then
         SELECT job_state_id
         INTO _stateID
-        FROM  t_analysis_job_state
+        FROM t_analysis_job_state
         WHERE job_state = _state;
 
         If Not FOUND Then

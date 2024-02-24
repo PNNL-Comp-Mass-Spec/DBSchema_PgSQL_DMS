@@ -94,7 +94,7 @@ BEGIN
     );
 
     INSERT INTO Tmp_TagNamesTable(TagName)
-    Values ('SourceJob'),
+    VALUES ('SourceJob'),
            ('Job2'),
            ('Job3'),
            ('Job4');
@@ -104,10 +104,10 @@ BEGIN
     ------------------------------------------------
 
     CREATE TEMP TABLE Tmp_JobsWaiting (
-        Job int not null,
-        Last_Affected timestamp null,
-        ReadyToProcess boolean null,
-        Message text null
+        Job int NOT NULL,
+        Last_Affected timestamp NULL,
+        ReadyToProcess boolean NULL,
+        Message text NULL
     );
 
     BEGIN
@@ -134,7 +134,7 @@ BEGIN
             -- Process _jobInfo.SpecialProcessingText to look for the tags in Tmp_TagNamesTable
             _lookForTag := true;
 
-            _hoursSinceStateLastChanged := extract(epoch FROM CURRENT_TIMESTAMP - _jobInfo.LastAffected) / 3600.0;
+            _hoursSinceStateLastChanged := Extract(epoch from CURRENT_TIMESTAMP - _jobInfo.LastAffected) / 3600.0;
 
             If _jobInfo.DatasetState = 4 Or _jobInfo.DatasetRating In (-2, -1) Then
 

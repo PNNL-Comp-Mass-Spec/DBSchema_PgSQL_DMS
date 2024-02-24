@@ -110,7 +110,7 @@ BEGIN
             Inactive_Date timestamp NULL,
             Sub_Account_Inactive_Date timestamp NULL,
             Deactivated text NOT NULL,
-            Auth_Amt numeric(12, 0) NOT NULL,
+            Auth_Amt numeric(12,0) NOT NULL,
             Auth_Username text NULL,
             Auth_HID text NULL,
             Update_Status text NULL

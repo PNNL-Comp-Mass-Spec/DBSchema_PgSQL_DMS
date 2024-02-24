@@ -68,9 +68,9 @@ BEGIN
         DatasetID int,
         InvalidID boolean,
         StateID int,
-        ExistingComment text null,
-        NewComment text null,
-        UpdateRequired boolean null
+        ExistingComment text NULL,
+        NewComment text NULL,
+        UpdateRequired boolean NULL
     );
 
     CREATE INDEX IX_Tmp_DatasetsToUpdate_DatasetID ON Tmp_DatasetsToUpdate (DatasetID);

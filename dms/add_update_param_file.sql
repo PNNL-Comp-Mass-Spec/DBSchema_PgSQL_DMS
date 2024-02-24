@@ -233,7 +233,7 @@ BEGIN
 
             CREATE TEMP TABLE Tmp_Mods_Precheck (
                 EntryID int NOT NULL,
-                Value text null
+                Value text NULL
             );
 
             INSERT INTO Tmp_Mods_Precheck (EntryID, Value)

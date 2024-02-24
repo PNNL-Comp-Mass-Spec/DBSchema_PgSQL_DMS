@@ -382,7 +382,7 @@ BEGIN
 
         _rowsProcessed := _rowsProcessed + 1;
 
-        If extract(epoch FROM (clock_timestamp() - _lastLogTime)) >= _loopingUpdateInterval Then
+        If Extract(epoch from (clock_timestamp() - _lastLogTime)) >= _loopingUpdateInterval Then
 
             _statusMessage := format('... Evaluating step dependencies: %s / %s', _rowsProcessed, _rowCountToProcess);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Evaluate_Step_Dependencies', 'sw');

@@ -130,9 +130,9 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_TaxonomyInfo (
-        Entry_ID int not null,
-        Rank text not null,
-        Name text not null
+        Entry_ID int NOT NULL,
+        Rank text NOT NULL,
+        Name text NOT NULL
     );
 
     ---------------------------------------------------

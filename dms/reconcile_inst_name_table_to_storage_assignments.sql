@@ -40,7 +40,7 @@ BEGIN
     GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
     If _updateCount > 0 Then
-        RAISE INFO 'Updated source_path_id  for % % based on "inbox" rows in t_storage_path',
+        RAISE INFO 'Updated source_path_id for % % based on "inbox" rows in t_storage_path',
                     _updateCount, public.check_plural(_updateCount, 'instrument', 'instruments');
     Else
         RAISE INFO 'Source_path_id values are already up-to-date in t_instrument_name';

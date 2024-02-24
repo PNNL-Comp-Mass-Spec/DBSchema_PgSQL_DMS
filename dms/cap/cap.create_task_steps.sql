@@ -109,7 +109,7 @@ BEGIN
         _loopingUpdateInterval := 2;
     End If;
 
-    If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
+    If _loggingEnabled Or Extract(epoch from clock_timestamp() - _startTime) >= _logIntervalThreshold Then
         _statusMessage := 'Entering';
         CALL public.post_log_entry ('Progress', _statusMessage, 'Create_Task_Steps', 'cap');
     End If;
@@ -449,7 +449,7 @@ BEGIN
 
         _jobsProcessed := _jobsProcessed + 1;
 
-        If extract(epoch FROM clock_timestamp() - _lastLogTime) >= _loopingUpdateInterval Then
+        If Extract(epoch from clock_timestamp() - _lastLogTime) >= _loopingUpdateInterval Then
             -- Make sure _loggingEnabled is true
             _loggingEnabled := true;
 
@@ -483,7 +483,7 @@ BEGIN
         End If;
     End If;
 
-    If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
+    If _loggingEnabled Or Extract(epoch from clock_timestamp() - _startTime) >= _logIntervalThreshold Then
         _loggingEnabled := true;
         _statusMessage := 'Create task steps complete';
         CALL public.post_log_entry ('Progress', _statusMessage, 'Create_Task_Steps', 'cap');
@@ -493,7 +493,7 @@ BEGIN
     -- Exit
     ---------------------------------------------------
 
-    If _loggingEnabled Or extract(epoch FROM clock_timestamp() - _startTime) >= _logIntervalThreshold Then
+    If _loggingEnabled Or Extract(epoch from clock_timestamp() - _startTime) >= _logIntervalThreshold Then
         _statusMessage := 'Exiting';
         CALL public.post_log_entry ('Progress', _statusMessage, 'Create_Task_Steps', 'cap');
     End If;

@@ -132,7 +132,7 @@ BEGIN
         WHERE dataset_id IN ( SELECT DA.dataset_id
                               FROM t_dataset_archive DA
                               WHERE DA.archive_state_id = 8 AND
-                                    extract(epoch FROM CURRENT_TIMESTAMP - DA.archive_state_Last_Affected) / 60.0 >= _resetHoldoffHours * 60
+                                    Extract(epoch from CURRENT_TIMESTAMP - DA.archive_state_Last_Affected) / 60.0 >= _resetHoldoffHours * 60
                               LIMIT _maxTasksToReset
                             );
         --

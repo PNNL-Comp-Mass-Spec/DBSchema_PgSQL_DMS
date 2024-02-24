@@ -417,7 +417,7 @@ BEGIN
 
         -- Old: Compute the difference for our time zone vs. UTC, in hours
         --
-        -- SELECT Abs(extract( timezone from CURRENT_TIMESTAMP) / 3600)
+        -- SELECT Abs(Extract(timezone from CURRENT_TIMESTAMP) / 3600)
         -- INTO _hourOffset;
 
         -- Convert from text-based UTC date to local timestamp

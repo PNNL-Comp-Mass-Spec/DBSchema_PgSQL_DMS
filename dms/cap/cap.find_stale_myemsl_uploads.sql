@@ -68,10 +68,10 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_StaleUploads (
-        Entry_ID int Not Null,
-        Job int Not Null,
-        Dataset_ID int Not Null,
-        Subdirectory text Not Null,
+        Entry_ID int NOT NULL,
+        Job int NOT NULL,
+        Dataset_ID int NOT NULL,
+        Subdirectory text NOT NULL,
         Entered timestamp,
         RetrySucceeded boolean
     );
@@ -165,7 +165,7 @@ BEGIN
             ORDER BY RetrySucceeded DESC, Entry_ID
         LOOP
             _infoData := format(_formatSpecifier,
-                                round(extract(epoch FROM CURRENT_TIMESTAMP - _previewData.Entered) / 86400),  -- Age (days)
+                                Round(Extract(epoch from CURRENT_TIMESTAMP - _previewData.Entered) / 86400),  -- Age (days)
                                 CASE WHEN _previewData.RetrySucceeded THEN 'Yes' ELSE 'No' END,
                                 _previewData.entry_id,
                                 _previewData.job,

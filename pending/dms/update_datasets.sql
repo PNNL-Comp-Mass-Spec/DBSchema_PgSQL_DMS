@@ -208,7 +208,7 @@ BEGIN
         If _state <> '[no change]' Then
             SELECT Dataset_state_ID
             INTO _stateID
-            FROM  t_dataset_state_name
+            FROM t_dataset_state_name
             WHERE dataset_state = _state;
 
             If Not FOUND Then
@@ -226,7 +226,7 @@ BEGIN
         If _rating <> '[no change]' Then
             SELECT dataset_rating_id
             INTO _ratingID
-            FROM  t_dataset_rating_name
+            FROM t_dataset_rating_name
             WHERE dataset_rating = _rating::citext;
 
             If Not FOUND Then

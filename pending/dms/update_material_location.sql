@@ -116,7 +116,7 @@ BEGIN
                container_limit,
                status
         INTO _locationId, _oldComment, _containerLimit, _oldStatus
-        FROM  t_material_locations
+        FROM t_material_locations
         WHERE location = _locationTag;
 
         If Not FOUND Then

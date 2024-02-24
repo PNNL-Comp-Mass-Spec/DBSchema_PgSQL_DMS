@@ -109,7 +109,7 @@ BEGIN
         cart_id int NULL,
         cart_config_id int NULL,
         locked citext NULL
-    )
+    );
 
     INSERT INTO Tmp_BlockingInfo ( request_id, cart_name, cart_config_name, cart_column)
     SELECT XmlQ.request_id, XmlQ.cart, XmlQ.cartConfig, XmlQ.cart_column

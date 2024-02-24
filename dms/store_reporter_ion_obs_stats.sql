@@ -93,15 +93,15 @@ BEGIN
     -----------------------------------------------
 
     CREATE TEMP TABLE Tmp_RepIonObsStatsTopNPct (
-        Channel int Not Null,
+        Channel int NOT NULL,
         Observation_Rate text,
-        Observation_Rate_Value real Null
+        Observation_Rate_Value real NULL
     );
 
     CREATE TEMP TABLE Tmp_RepIonIntensities (
-        Channel int Not Null,
+        Channel int NOT NULL,
         Median_Intensity text,
-        Median_Intensity_Value int Null
+        Median_Intensity_Value int NULL
     );
 
     INSERT INTO Tmp_RepIonObsStatsTopNPct (Channel, Observation_Rate)

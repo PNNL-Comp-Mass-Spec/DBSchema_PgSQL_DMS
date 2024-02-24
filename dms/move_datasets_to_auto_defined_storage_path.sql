@@ -62,8 +62,8 @@ BEGIN
         -----------------------------------------
 
         CREATE TEMP TABLE Tmp_Datasets (
-            DatasetID int not null,
-            InstrumentID int null
+            DatasetID int NOT NULL,
+            InstrumentID int NULL
         );
 
         CREATE INDEX IX_Tmp_Datasets ON Tmp_Datasets (DatasetID);

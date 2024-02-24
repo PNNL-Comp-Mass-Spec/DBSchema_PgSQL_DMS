@@ -46,8 +46,8 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_JobsToUpdate (
         Job int,
-        StartNew timestamp Null,
-        FinishNew timestamp Null
+        StartNew timestamp NULL,
+        FinishNew timestamp NULL
     );
 
     CREATE UNIQUE INDEX IX_Tmp_JobsToUpdate ON Tmp_JobsToUpdate (Job);

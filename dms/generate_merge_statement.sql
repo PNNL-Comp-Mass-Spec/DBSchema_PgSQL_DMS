@@ -111,9 +111,9 @@ BEGIN
     CREATE TEMP TABLE Tmp_Types (
         data_type_id int NOT NULL,
         data_type_name text NOT NULL,
-        IsNumber boolean NOT NULL default false,                -- True if a number or boolean
-        IsTimestamp boolean NOT NULL default false,
-        UndefinedComparison boolean NOT NULL default false);    -- True if this procedure does not have logic for comparing two values of this type
+        IsNumber boolean NOT NULL DEFAULT false,                -- True if a number or boolean
+        IsTimestamp boolean NOT NULL DEFAULT false,
+        UndefinedComparison boolean NOT NULL DEFAULT false);    -- True if this procedure does not have logic for comparing two values of this type
 
     CREATE TEMP TABLE Tmp_SQL (
         entry_id int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -124,7 +124,7 @@ BEGIN
     -- Query to see data type IDs and names (excludes arrays, geometry, ranges, and other system types):
     --
     -- SELECT "oid", typname, typlen, typcategory, typispreferred, typrelid, typnotnull
-    -- FROM  pg_catalog.pg_type
+    -- FROM pg_catalog.pg_type
     -- WHERE typnamespace = 11 AND
     --       NOT typcategory In ('A', 'C', 'G', 'P', 'R', 'X')
     -- ORDER BY typcategory, oid;
@@ -302,11 +302,11 @@ BEGIN
          INNER JOIN pg_catalog.pg_namespace ON pg_namespace.oid = pg_class.relnamespace
          INNER JOIN Tmp_Types T ON a.atttypid = T.data_type_id
     WHERE a.attnum > 0 AND
-          NOT a.attisdropped  AND
+          NOT a.attisdropped AND
           pg_namespace.nspname = _sourceSchema AND
           pg_class.relname = _tableName AND
           NOT a.attname IN ( SELECT ColumnName FROM Tmp_PrimaryKeyColumns) AND
-          a.attidentity = ''  AND               -- Excluded identity columns
+          a.attidentity  = '' AND               -- Exclude identity columns
           a.attgenerated = '' AND               -- Exclude generated (computed) columns
           NOT a.atttypid IN (26, 27, 28, 29);   -- Exclude object identifiers, including transaction ID columns (xid)
 
@@ -426,7 +426,7 @@ BEGIN
          INNER JOIN pg_catalog.pg_class ON pg_class.oid = a.attrelid
          INNER JOIN pg_catalog.pg_namespace ON pg_namespace.oid = pg_class.relnamespace
     WHERE a.attnum > 0 AND
-          NOT a.attisdropped  AND
+          NOT a.attisdropped AND
           pg_namespace.nspname = _sourceSchema AND
           pg_class.relname = _tableName AND
           a.attgenerated = '' AND               -- Exclude generated (computed) columns

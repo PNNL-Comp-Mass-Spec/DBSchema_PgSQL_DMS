@@ -244,10 +244,10 @@ BEGIN
             RETURNING job
             INTO _job;
 
-            UPDATE Tmp_Jobs                   SET Job = _job;
-            UPDATE Tmp_Job_Steps              SET Job = _job;
-            UPDATE Tmp_Job_Step_Dependencies  SET Job = _job;
-            UPDATE Tmp_Job_Parameters         SET Job = _job;
+            UPDATE Tmp_Jobs                  SET Job = _job;
+            UPDATE Tmp_Job_Steps             SET Job = _job;
+            UPDATE Tmp_Job_Step_Dependencies SET Job = _job;
+            UPDATE Tmp_Job_Parameters        SET Job = _job;
 
             CALL cap.move_tasks_to_main_tables (
                         _message    => _message,        -- Output

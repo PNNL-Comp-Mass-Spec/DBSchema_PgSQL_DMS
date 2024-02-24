@@ -209,7 +209,7 @@ BEGIN
                    PV.param_type_id,
                    PV.value,
                    '' AS NewValue,
-                   'Skipping: control_from_website is 0 in mc.t_mgrs' AS  Status
+                   'Skipping: control_from_website is 0 in mc.t_mgrs' AS Status
             FROM mc.t_mgrs M
                  INNER JOIN Tmp_MgrIDs
                    ON M.mgr_id = Tmp_MgrIDs.mgr_id

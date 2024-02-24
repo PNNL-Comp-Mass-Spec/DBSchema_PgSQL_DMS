@@ -169,7 +169,7 @@ BEGIN
         FROM Tmp_Processors
         WHERE NOT Tmp_Processors.ID IN (
                         SELECT processor_id
-                        FROM  t_analysis_job_processor_group_membership
+                        FROM t_analysis_job_processor_group_membership
                         WHERE group_id = _pgid
                     );
 
@@ -184,7 +184,7 @@ BEGIN
         DELETE FROM t_analysis_job_processor_group_membership
         WHERE
             group_id = _pgid AND
-            (processor_id IN (SELECT ID FROM  Tmp_Processors))
+            (processor_id IN (SELECT ID FROM Tmp_Processors))
     End If;
 
     -- If _callingUser is defined, update entered_by in t_analysis_job_processor_group

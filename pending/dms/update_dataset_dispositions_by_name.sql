@@ -98,13 +98,13 @@ BEGIN
         _mode := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
-        -- Temp table  for holding dataset names and IDs
+        -- Temp table for holding dataset names and IDs
         ---------------------------------------------------
 
-        CREATE TEMP TABLE Tmp_DatasetsToUpdate
+        CREATE TEMP TABLE Tmp_DatasetsToUpdate (
             DatasetID text,
             DatasetName text
-        )
+        );
 
         --------------------------------------------------
         -- Add datasets from input list to table

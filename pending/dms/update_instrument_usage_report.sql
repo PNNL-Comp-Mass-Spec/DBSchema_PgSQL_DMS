@@ -195,10 +195,10 @@ BEGIN
             -----------------------------------------------------------
 
             CREATE TEMP TABLE Tmp_Factors (
-                Identifier int null,
-                Field citext null,
-                Value text null,
-            )
+                Identifier int NULL,
+                Field citext NULL,
+                Value text NULL,
+            );
 
             -----------------------------------------------------------
             -- Populate temp table with new parameters
@@ -254,7 +254,8 @@ BEGIN
                 CREATE TEMP TABLE Tmp_Instruments (
                     Seq int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
                     Instrument text
-                )
+                );
+
                 INSERT INTO Tmp_Instruments (Instrument)
                 SELECT Name
                 FROM V_Instrument_Tracked

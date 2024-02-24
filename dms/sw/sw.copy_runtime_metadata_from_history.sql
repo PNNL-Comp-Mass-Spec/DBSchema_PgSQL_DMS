@@ -67,16 +67,16 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_Jobs (
-        Job int not null,
-        Update_Required boolean not null,
-        Invalid boolean not null,                   -- Will be set to True if the job does not exist in sw.t_jobs
-        Mismatch_Results_Transfer boolean not null, -- Will be set to true if the job has a results_Transfer step that has a different start/finish value in sw.t_job_steps vs. sw.t_job_steps_history
-        Comment citext null
+        Job int NOT NULL,
+        Update_Required boolean NOT NULL,
+        Invalid boolean NOT NULL,                   -- Will be set to True if the job does not exist in sw.t_jobs
+        Mismatch_Results_Transfer boolean NOT NULL, -- Will be set to true if the job has a results_Transfer step that has a different start/finish value in sw.t_job_steps vs. sw.t_job_steps_history
+        Comment citext NULL
     );
 
     CREATE TEMP TABLE Tmp_JobStepsToUpdate (
-        Job int not null,
-        Step int not null
+        Job int NOT NULL,
+        Step int NOT NULL
     );
 
     ---------------------------------------------------

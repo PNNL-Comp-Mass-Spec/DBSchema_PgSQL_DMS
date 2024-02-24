@@ -48,9 +48,9 @@ BEGIN
     -----------------------------------------------------------
 
     CREATE TEMP TABLE Tmp_LCColumns (
-        ID int Not Null primary key,
-        Last_Used timestamp Not Null,
-        Most_Recent_Dataset text Null
+        ID int NOT NULL PRIMARY KEY,
+        Last_Used timestamp NOT NULL,
+        Most_Recent_Dataset text NULL
     );
 
     -----------------------------------------------------------

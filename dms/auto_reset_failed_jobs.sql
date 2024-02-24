@@ -106,15 +106,15 @@ BEGIN
             Step_State int NOT NULL,
             Processor text NOT NULL,
             Comment text NOT NULL,
-            Job_Finish timestamp Null,
+            Job_Finish timestamp NULL,
             Settings_File text NOT NULL,
             Analysis_Tool text NOT NULL,
-            New_Job_State int null,
-            New_Step_State int null,
-            New_Comment text null,
-            New_Settings_File text null,
-            Reset_Job boolean not null default false,
-            Rerun_All_Job_Steps boolean not null default false
+            New_Job_State int NULL,
+            New_Step_State int NULL,
+            New_Comment text NULL,
+            New_Settings_File text NULL,
+            Reset_Job boolean NOT NULL DEFAULT false,
+            Rerun_All_Job_Steps boolean NOT NULL DEFAULT false
         );
 
         ---------------------------------------------------

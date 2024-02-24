@@ -63,7 +63,7 @@ DECLARE
     _datasetFolderPath text;
     _storageServerSharePath text;
     _lastSlashReverseText int;
-    _newExperimentID Int;
+    _newExperimentID int;
     _newExperiment text;
     _requestedRunInfo record;
     _requestedRunState text;
@@ -581,7 +581,7 @@ BEGIN
     --------------------------------------------
 
     CREATE TEMP TABLE Tmp_JobsToUpdate (
-         Job int not null
+         Job int NOT NULL
     );
 
     --------------------------------------------

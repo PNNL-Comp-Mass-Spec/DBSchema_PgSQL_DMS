@@ -68,7 +68,7 @@ CREATE OR REPLACE FUNCTION public.report_production_stats(_startdate text, _endd
 **
 *****************************************************/
 DECLARE
-    _result Int;
+    _result int;
     _daysInRange numeric;
     _stDate timestamp;
     _eDate timestamp;
@@ -249,7 +249,7 @@ BEGIN
         -- Compute the number of days to be examined
         --------------------------------------------------------------------
 
-        _daysInRange := Round(extract(epoch FROM _eDate - _stDate) / 86400);
+        _daysInRange := Round(Extract(epoch from _eDate - _stDate) / 86400);
 
         --------------------------------------------------------------------
         -- Populate a temporary table with the datasets to use

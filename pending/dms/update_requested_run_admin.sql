@@ -59,7 +59,7 @@ DECLARE
     _stateID int := 0;
     _logMessage text;
     _debugEnabled boolean := false;
-    _argLength Int;
+    _argLength int;
     _requestID int := -100000;
     _targetType int;
     _alterEnteredByMessage text;

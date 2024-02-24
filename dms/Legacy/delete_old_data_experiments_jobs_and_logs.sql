@@ -161,24 +161,24 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_DatasetsToDelete (
-        Dataset_ID int not null,
-        Dataset text not null,
-        Created timestamp null
+        Dataset_ID int NOT NULL,
+        Dataset text NOT NULL,
+        Created timestamp NULL
     );
 
     CREATE INDEX IX_Tmp_DatasetsToDelete ON Tmp_DatasetsToDelete (Dataset_ID);
 
     CREATE TEMP TABLE Tmp_ExperimentsToDelete (
-        Exp_ID int not null,
-        Experiment text not null,
-        EX_created timestamp null
+        Exp_ID int NOT NULL,
+        Experiment text NOT NULL,
+        EX_created timestamp NULL
     );
 
     CREATE INDEX IX_Tmp_ExperimentsToDelete ON Tmp_ExperimentsToDelete (Exp_ID);
 
     CREATE TEMP TABLE Tmp_JobsToDelete (
-        Job int not null,
-        Created timestamp null
+        Job int NOT NULL,
+        Created timestamp NULL
     );
 
     CREATE INDEX IX_Tmp_JobsToDelete ON Tmp_JobsToDelete (Job);

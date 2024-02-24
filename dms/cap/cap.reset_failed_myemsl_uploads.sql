@@ -80,7 +80,7 @@ BEGIN
             Dataset_ID int,
             Subfolder text NULL,
             Error_Message text NULL,
-            SkipResetMode int Null,
+            SkipResetMode int NULL,
             SkipReason text NULL
         );
 

@@ -72,7 +72,7 @@ BEGIN
 
         SELECT MAX(wellplate_id) + 1
         INTO _idx
-        FROM  t_wellplates;
+        FROM t_wellplates;
 
         If Coalesce(_idx, 0) < 1000 Then
             _idx := 1000;
@@ -87,7 +87,7 @@ BEGIN
 
     SELECT wellplate_id
     INTO _existingID
-    FROM  t_wellplates
+    FROM t_wellplates
     WHERE wellplate = _wellplateName::citext;
     --
     GET DIAGNOSTICS _existingCount = ROW_COUNT;

@@ -11,7 +11,7 @@ CREATE OR REPLACE PROCEDURE cap.remove_selected_tasks(IN _infoonly boolean DEFAU
 **      Delete capture task jobs in temp table Tmp_Selected_Jobs (populated by the caller)
 **
 **          CREATE TEMP TABLE Tmp_Selected_Jobs (
-**              Job int not null,
+**              Job int NOT NULL,
 **              State int
 **          );
 **

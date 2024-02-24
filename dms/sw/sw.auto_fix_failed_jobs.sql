@@ -35,8 +35,8 @@ BEGIN
     _returnCode := '';
 
     CREATE TEMP TABLE Tmp_JobsToFix (
-        Job int not null,
-        Step int not null
+        Job int NOT NULL,
+        Step int NOT NULL
     );
 
     CREATE INDEX IX_Tmp_JobsToFix_Job ON Tmp_JobsToFix (Job, Step);

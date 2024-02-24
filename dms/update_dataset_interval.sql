@@ -172,7 +172,7 @@ BEGIN
                    InstName.instrument,
                    DS.acq_time_start,
                    DS.acq_time_end,
-                   extract(epoch FROM DS.acq_time_end - DS.acq_time_start) / 60.0   -- Length, in minutes
+                   Extract(epoch from DS.acq_time_end - DS.acq_time_start) / 60.0   -- Length, in minutes
             FROM t_dataset DS
                  INNER JOIN t_instrument_name InstName
                    ON DS.instrument_id = InstName.instrument_id
@@ -198,7 +198,7 @@ BEGIN
                    InstName.instrument,
                    DS.acq_time_start,
                    DS.acq_time_end,
-                   extract(epoch FROM DS.acq_time_end - DS.acq_time_start) / 60.0  -- Length, in minutes
+                   Extract(epoch from DS.acq_time_end - DS.acq_time_start) / 60.0  -- Length, in minutes
             FROM t_dataset DS
                  INNER JOIN t_instrument_name InstName
                    ON DS.instrument_id = InstName.instrument_id
@@ -254,7 +254,7 @@ BEGIN
             -- Thus, use "epoch from _start - _end" since _start is after _end
 
             _interval := CASE WHEN _start <= _end THEN 0
-                              ELSE Coalesce(extract(epoch FROM _start - _end) / 60.0, 0)  -- Length, in minutes
+                              ELSE Coalesce(Extract(epoch from _start - _end) / 60.0, 0)  -- Length, in minutes
                          END;
 
             -- Update the durations table, provided start and end times are not null

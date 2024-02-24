@@ -62,8 +62,8 @@ BEGIN
         -----------------------------------------
 
         CREATE TEMP TABLE Tmp_Hosts (
-            Host citext not null,        -- Could have Host and IP, encoded as Host@IP
-            IP text null,
+            Host citext NOT NULL,        -- Could have Host and IP, encoded as Host@IP
+            IP text NULL,
             Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY
         );
 

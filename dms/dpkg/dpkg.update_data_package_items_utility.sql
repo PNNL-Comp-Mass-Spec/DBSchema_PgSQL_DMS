@@ -11,9 +11,9 @@ CREATE OR REPLACE PROCEDURE dpkg.update_data_package_items_utility(IN _comment t
 **      Update data package items in temp table Tmp_DataPackageItems according to the mode
 **
 **      CREATE TEMP TABLE Tmp_DataPackageItems (
-**          DataPackageID int not null,   -- Data package ID
-**          ItemType   citext null,       -- 'Job', 'Dataset', 'Experiment', 'Biomaterial', or 'EUSProposal'
-**          Identifier citext null        -- Job ID, Dataset Name or ID, Experiment Name, Biomaterial Name, or EUSProposal ID
+**          DataPackageID int NOT NULL,   -- Data package ID
+**          ItemType   citext NULL,       -- 'Job', 'Dataset', 'Experiment', 'Biomaterial', or 'EUSProposal'
+**          Identifier citext NULL        -- Job ID, Dataset Name or ID, Experiment Name, Biomaterial Name, or EUSProposal ID
 **      );
 **
 **  Arguments:
@@ -149,8 +149,8 @@ BEGIN
         );
 
         CREATE TEMP TABLE Tmp_JobsToAddOrDelete (
-            DataPackageID int not null,            -- Data package ID
-            Job int not null
+            DataPackageID int NOT NULL,            -- Data package ID
+            Job int NOT NULL
         );
 
         CREATE INDEX IX_Tmp_JobsToAddOrDelete ON Tmp_JobsToAddOrDelete (Job, DataPackageID);
@@ -265,7 +265,7 @@ BEGIN
             WHERE NOT EXISTS ( SELECT DataPackageID
                                FROM Tmp_DataPackageItems PkgItems
                                WHERE PkgItems.ItemType = 'Dataset' AND
-                                     PkgItems.Identifier = DS.Dataset  AND
+                                     PkgItems.Identifier = DS.Dataset AND
                                      PkgItems.DataPackageID = TJ.DataPackageID ) AND
                   NOT DS.Dataset SIMILAR TO 'DataPackage[_][0-9][0-9]%';
 
@@ -667,7 +667,7 @@ BEGIN
                            ON B.biomaterial_type_id = BTN.biomaterial_type_id
                          INNER JOIN Tmp_DataPackageItems PkgItems
                            ON PkgItems.DataPackageID = DPB.data_pkg_id AND
-                              PkgItems.Identifier =  B.biomaterial_name AND
+                              PkgItems.Identifier = B.biomaterial_name AND
                               PkgItems.ItemType = 'Biomaterial'
                     ORDER BY DPB.Data_Pkg_ID, DPB.Biomaterial_ID
                 LOOP

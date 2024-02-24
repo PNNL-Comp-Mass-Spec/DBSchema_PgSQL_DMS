@@ -75,7 +75,7 @@ DECLARE
     _delimiter text;
     _entryID int;
     _charIndex int;
-    _colCount Int;
+    _colCount int;
     _lastPeriodLoc int;
     _row text;
     _fileHashOrSize text;
@@ -204,7 +204,7 @@ BEGIN
     );
 
     CREATE TEMP TABLE Tmp_UpdatedDatasets (
-        Dataset_ID Int NOT NULL
+        Dataset_ID int NOT NULL
     );
 
     -----------------------------------------

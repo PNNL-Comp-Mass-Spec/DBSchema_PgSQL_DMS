@@ -13,8 +13,8 @@ CREATE OR REPLACE PROCEDURE public.add_experiment_biomaterial(IN _expid integer,
 **      The calling procedure must create and populate temporary table Tmp_Experiment_to_Biomaterial_Map:
 **
 **      CREATE TEMP TABLE Tmp_Experiment_to_Biomaterial_Map (
-**          Biomaterial_Name text not null,
-**          Biomaterial_ID int null
+**          Biomaterial_Name text NOT NULL,
+**          Biomaterial_ID int NULL
 **      );
 **
 **  Arguments:

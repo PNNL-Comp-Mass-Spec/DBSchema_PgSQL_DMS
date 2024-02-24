@@ -209,7 +209,7 @@ BEGIN
             Scan_Count int NULL,
             Scan_Count_MS int NULL,
             Scan_Count_MSn int NULL,
-            Scan_Count_DIA int Null,
+            Scan_Count_DIA int NULL,
             Elution_Time_Max numeric NULL,
             Acq_Time_Minutes numeric NULL,
             Acq_Time_Start timestamp NULL,
@@ -729,7 +729,7 @@ BEGIN
         -- Check for Acq_Time_End being more than 7 days after Acq_Time_Start
         -----------------------------------------------
 
-        SELECT extract(epoch FROM Acq_Time_End - Acq_Time_Start) / 60.0
+        SELECT Extract(epoch from Acq_Time_End - Acq_Time_Start) / 60.0
                Acq_Time_Start,
                Acq_Time_End
         INTO _acqLengthMinutes, _acqTimeStart, _acqTimeEnd

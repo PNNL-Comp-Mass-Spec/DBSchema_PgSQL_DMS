@@ -52,8 +52,8 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_QCExperiments (
-        ExpID int Not Null,
-        Experiment text Not Null
+        ExpID int NOT NULL,
+        Experiment text NOT NULL
     );
 
     CREATE UNIQUE INDEX IX_Tmp_QCExperiments ON Tmp_QCExperiments(ExpID);
@@ -61,10 +61,10 @@ BEGIN
     CREATE TEMP TABLE Tmp_DatasetsToUpdate (
         ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         Dataset_ID int,
-        OldExperiment text Not Null,
-        NewExperiment text Not Null,
-        NewExpID int Not Null,
-        Ambiguous boolean Not Null
+        OldExperiment text NOT NULL,
+        NewExperiment text NOT NULL,
+        NewExpID int NOT NULL,
+        Ambiguous boolean NOT NULL
     );
 
     CREATE UNIQUE INDEX IX_Tmp_DatasetsToUpdate ON Tmp_DatasetsToUpdate(Dataset_ID, ID);

@@ -37,10 +37,10 @@ BEGIN
     -----------------------------------------
 
     CREATE TEMP TABLE Tmp_Hosts (
-        Host text not null,
-        Instrument text not null,
-        MostRecentDataset timestamp not null
-    )
+        Host text NOT NULL,
+        Instrument text NOT NULL,
+        MostRecentDataset timestamp NOT NULL
+    );
 
     CREATE UNIQUE INDEX IX_Tmp_Hosts ON Tmp_Hosts (Host, Instrument);
 

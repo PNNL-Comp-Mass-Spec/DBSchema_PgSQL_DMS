@@ -68,7 +68,7 @@ DECLARE
     _experimentGroupDefined boolean := false;
     _stateID int := 0;
     _campaign text;
-    _organism  text;
+    _organism text;
     _datasetCount int := 0;
     _eusProposalID text;
     _containerID int;
@@ -77,7 +77,7 @@ DECLARE
     _currentAssignedPersonnel text;
     _activationState int := 10;
     _activationStateName text;
-    _currentEstimatedAnalysisTimeDays Int;
+    _currentEstimatedAnalysisTimeDays int;
     _logMessage text;
     _alterEnteredByMessage text;
 
@@ -196,7 +196,7 @@ BEGIN
         ---------------------------------------------------
 
         CREATE TEMP TABLE Tmp_BatchIDs (
-            Batch_ID Int Not Null
+            Batch_ID int NOT NULL
         );
 
         If _batchIDs <> '' Then
@@ -289,7 +289,7 @@ BEGIN
 
         SELECT state_id
         INTO _stateID
-        FROM  t_data_analysis_request_state_name
+        FROM t_data_analysis_request_state_name
         WHERE state_name = _state::citext;
 
         If Not FOUND Then
@@ -351,7 +351,7 @@ BEGIN
 
         CREATE TEMP TABLE Tmp_DatasetCountsByContainerType (
             ContainerType text NOT NULL,
-            ContainerID   Int NOT NULL,
+            ContainerID   int NOT NULL,
             DatasetCount  int NOT NULL,
             SortWeight    int NOT NULL
         );
@@ -651,7 +651,7 @@ BEGIN
             SELECT state,
                    assigned_personnel
             INTO _currentStateID, _currentAssignedPersonnel
-            FROM  t_data_analysis_request
+            FROM t_data_analysis_request
             WHERE request_id = _id;
 
             -- Cannot update a non-existent entry

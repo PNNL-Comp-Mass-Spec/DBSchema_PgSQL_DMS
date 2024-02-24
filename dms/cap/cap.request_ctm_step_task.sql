@@ -396,7 +396,7 @@ BEGIN
         If _processorAssignmentCount = 0 And _serverPerspectiveEnabled <> 0 Then
             -- The capture task managers running on the Proto-x servers have perspective = 'server'
             -- During dataset capture, if perspective='server', the manager will use dataset paths of the form E:\Exact04\2012_1
-            --   In contrast, CTM's with  perspective='client' will use dataset paths of the form \\proto-5\Exact04\2012_1
+            --   In contrast, CTM's with perspective='client' will use dataset paths of the form \\proto-5\Exact04\2012_1
             -- Therefore, capture tasks that occur on the Proto-x servers should be limited to instruments whose data is stored on the same server as the CTM
             --   This is accomplished via one or more mapping rows in table cap.t_processor_instrument
             -- If a capture task manager running on a Proto-x server has the DatasetCapture tool enabled, yet does not have an entry in cap.t_processor_instrument,

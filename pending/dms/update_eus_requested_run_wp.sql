@@ -73,20 +73,20 @@ BEGIN
         ----------------------------------------------------------
 
         CREATE TEMP TABLE Tmp_WPInfo (
-            Proposal_ID text not null,
-            Work_Package text not null,
-            Requests int not null,
-            Usage_Rank int not null
+            Proposal_ID text NOT NULL,
+            Work_Package text NOT NULL,
+            Requests int NOT NULL,
+            Usage_Rank int NOT NULL
         );
 
         CREATE INDEX IX_Tmp_WPInfo ON Tmp_WPInfo (Proposal_ID, Work_Package);
 
         CREATE TEMP TABLE Tmp_ReqRunsToUpdate (
             Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-            Request_ID int not null,
-            Proposal_ID text not null,
-            Work_Package text not null,
-            Message text null
+            Request_ID int NOT NULL,
+            Proposal_ID text NOT NULL,
+            Work_Package text NOT NULL,
+            Message text NULL
         );
 
         CREATE INDEX IX_Tmp_ReqRunsToUpdate ON Tmp_ReqRunsToUpdate (request_id);

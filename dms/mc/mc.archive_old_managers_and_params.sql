@@ -71,7 +71,7 @@ BEGIN
     CREATE TEMP TABLE Tmp_ManagerList (
         manager_name citext NOT NULL,
         mgr_id int NULL,
-        control_from_web smallint null
+        control_from_web smallint NULL
     );
 
     CREATE TEMP TABLE TmpWarningMessages (
@@ -135,7 +135,7 @@ BEGIN
         INSERT INTO TmpWarningMessages (message, manager_name)
         SELECT 'Manager has control_from_website=1; cannot archive',
                MgrList.manager_name
-        FROM Tmp_ManagerList  MgrList
+        FROM Tmp_ManagerList MgrList
         WHERE NOT MgrList.mgr_id IS NULL AND MgrList.control_from_web > 0
         ORDER BY MgrList.manager_name;
 

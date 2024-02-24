@@ -63,7 +63,7 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_Archived_Output_File_IDs (
         Archived_File_ID int NOT NULL,
-        Valid_Member_Count int NOT NULL Default 0
+        Valid_Member_Count int NOT NULL DEFAULT 0
     );
 
     -----------------------------------------------------

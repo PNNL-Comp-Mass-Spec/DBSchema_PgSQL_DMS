@@ -271,14 +271,14 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_Mods (
         EntryID int NOT NULL,
-        Value text null
+        Value text NULL
     );
 
     CREATE UNIQUE INDEX IX_Tmp_Mods ON Tmp_Mods (EntryID);
 
     CREATE TEMP TABLE Tmp_ModDef (
         EntryID int NOT NULL,
-        Value text null
+        Value text NULL
     );
 
     CREATE UNIQUE INDEX IX_Tmp_ModDef ON Tmp_ModDef (EntryID);
@@ -301,10 +301,10 @@ BEGIN
         Residue_Symbol text NULL,
         Residue_ID int NULL,
         Local_Symbol_ID int NULL,
-        Residue_Desc text Null,
+        Residue_Desc text NULL,
         Monoisotopic_Mass real NULL,
-        MaxQuant_Mod_ID int Null,
-        Isobaric_Mod_Ion_Number Int Null
+        MaxQuant_Mod_ID int NULL,
+        Isobaric_Mod_Ion_Number int NULL
     );
 
     CREATE UNIQUE INDEX IX_Tmp_ModsToStore ON Tmp_ModsToStore (Entry_ID);
@@ -674,7 +674,7 @@ BEGIN
             Else
                 -- MS-GF+ uses 'StaticMod=None' and 'DynamicMod=None' to indicate no static or dynamic mods
                 -- TopPIC uses 'StaticMod=None' and 'DynamicMod=Defaults' to indicate no static or dynamic mods
-                If Not _field::citext in ('StaticMod=None', 'DynamicMod=None', 'DynamicMod=Defaults') Then
+                If Not _field::citext In ('StaticMod=None', 'DynamicMod=None', 'DynamicMod=Defaults') Then
                     _message := format('Aborting since row has %s comma-separated columns (should have 5 columns): %s', _rowCount, _row);
                     _returnCode := 'U5311';
 
@@ -1120,7 +1120,7 @@ BEGIN
                 INSERT INTO Tmp_Residues (Residue_Symbol, Terminal_AnyAA) VALUES (']', true);
             End If;
 
-            If _location in ('anyNterm', 'notNterm') Then
+            If _location In ('anyNterm', 'notNterm') Then
                 _terminalMod := true;
                 If Coalesce(_affectedResidues, '') = '' Or Not _affectedResidues SIMILAR TO '[A-Z]' Then
                     _affectedResidues := '<';
@@ -1129,7 +1129,7 @@ BEGIN
                 INSERT INTO Tmp_Residues (Residue_Symbol, Terminal_AnyAA) VALUES (_affectedResidues,  true);
             End If;
 
-            If _location in ('anyCterm', 'notCterm') Then
+            If _location In ('anyCterm', 'notCterm') Then
                 _terminalMod := true;
                 If Coalesce(_affectedResidues, '') = '' Or Not _affectedResidues SIMILAR TO '[A-Z]' Then
                     _affectedResidues := '>';

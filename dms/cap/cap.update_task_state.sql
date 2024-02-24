@@ -119,8 +119,8 @@ BEGIN
         Dataset_ID int,
         Script citext,
         Storage_Server citext,
-        Start_New timestamp null,
-        Finish_New timestamp null
+        Start_New timestamp NULL,
+        Finish_New timestamp NULL
     );
 
     CREATE INDEX IX_Tmp_ChangedJobs_Job ON Tmp_ChangedJobs (Job);
@@ -444,7 +444,7 @@ BEGIN
 
         _jobsProcessed := _jobsProcessed + 1;
 
-        If extract(epoch FROM clock_timestamp() - _lastLogTime) >= _loopingUpdateInterval Then
+        If Extract(epoch from clock_timestamp() - _lastLogTime) >= _loopingUpdateInterval Then
             _statusMessage := format('... Updating capture task job state: %s / %s', _jobsProcessed, _jobCountToProcess);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Task_State', 'cap');
 

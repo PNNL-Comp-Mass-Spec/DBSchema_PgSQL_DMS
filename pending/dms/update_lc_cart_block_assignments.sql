@@ -91,11 +91,11 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_BlockingInfo (
         batch_id int,
-        block   int,
-        cart    text,
+        block    int,
+        cart     text,
         cart_id  int NULL,
-        col     int
-    )
+        col      int
+    );
 
     INSERT INTO Tmp_BlockingInfo (batch_id, block, cart, col)
     SELECT XmlQ.batch_id, XmlQ.block, XmlQ.cart, XmlQ.col
@@ -133,9 +133,9 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_RequestsInBlock (
         request_id int,
-        cart_id  int,
-        col     int
-    )
+        cart_id    int,
+        col        int
+    );
 
     INSERT INTO Tmp_RequestsInBlock( request_id,
                                      cart_id,

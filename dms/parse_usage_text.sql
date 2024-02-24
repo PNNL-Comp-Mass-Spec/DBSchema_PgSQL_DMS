@@ -63,7 +63,7 @@ DECLARE
     _commentToSearch citext;
     _keywordPos int;
     _startOfValue int := 0;
-    _endOfValue Int;
+    _endOfValue int;
     _val text;
     _curVal text;
     _keywordStartPos int := 0;

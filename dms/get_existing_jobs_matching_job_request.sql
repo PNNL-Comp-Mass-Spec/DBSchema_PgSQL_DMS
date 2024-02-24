@@ -53,7 +53,7 @@ BEGIN
     WHERE AJR.request_id = _requestID;
 
     CREATE TEMP TABLE Tmp_Jobs (
-        job int primary key not null
+        job int PRIMARY KEY NOT NULL
     );
 
     If FOUND Then
@@ -62,7 +62,7 @@ BEGIN
 
         SELECT result_type
         INTO _resultType
-        FROM  t_analysis_tool
+        FROM t_analysis_tool
         WHERE analysis_tool = _requestInfo.analysis_tool;
 
         _resultType := Coalesce(_resultType, 'Unknown');

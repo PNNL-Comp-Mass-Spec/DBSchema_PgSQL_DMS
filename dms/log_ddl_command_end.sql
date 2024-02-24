@@ -24,7 +24,7 @@ DECLARE
     _exceptionContext text;
 BEGIN
 
-    If Exists (SELECT schema_name FROM pg_event_trigger_ddl_commands() WHERE NOT schema_name in ('pg_temp', 'pg_toast')) Then
+    If Exists (SELECT schema_name FROM pg_event_trigger_ddl_commands() WHERE NOT schema_name IN ('pg_temp', 'pg_toast')) Then
 
         INSERT INTO public.t_schema_change_log (entered, login_name, client_addr, command_tag, object_type, schema_name, object_name, function_name, function_source)
         SELECT now(),

@@ -231,7 +231,7 @@ BEGIN
         request_id int NOT NULL,
         cart_column_id int,
         seq int PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),
-        blankSeq int null
+        blankSeq int NULL
     );
 
     ---------------------------------------------------

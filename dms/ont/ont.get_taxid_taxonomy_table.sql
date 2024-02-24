@@ -23,7 +23,7 @@ DECLARE
 BEGIN
 
     CREATE TEMP TABLE Tmp_Taxonomy (
-        Rank citext not NULL,
+        Rank citext NOT NULL,
         Name citext NOT NULL,
         Tax_ID int NOT NULL,
         Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY

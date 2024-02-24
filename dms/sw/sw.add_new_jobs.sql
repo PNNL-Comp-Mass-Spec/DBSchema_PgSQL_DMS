@@ -258,7 +258,7 @@ BEGIN
     -- Find jobs to reset
     ---------------------------------------------------
 
-    If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
+    If _loggingEnabled Or Extract(epoch from (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
         _loggingEnabled := true;
         _statusMessage := 'Finding jobs to reset';
         CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
@@ -381,7 +381,7 @@ BEGIN
         -- Import new jobs
         ---------------------------------------------------
 
-        If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
+        If _loggingEnabled Or Extract(epoch from (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := 'Adding new jobs to sw.t_jobs';
             CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
@@ -419,7 +419,7 @@ BEGIN
     -- and set the job state to 'resuming'
     ---------------------------------------------------
 
-    If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
+    If _loggingEnabled Or Extract(epoch from (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
         _loggingEnabled := true;
         _statusMessage := 'Finding jobs to Resume';
         CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
@@ -478,7 +478,7 @@ BEGIN
         -- Find jobs to suspend
         ---------------------------------------------------
 
-        If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
+        If _loggingEnabled Or Extract(epoch from (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := 'Finding jobs to Suspend (Hold)';
             CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
@@ -512,7 +512,7 @@ BEGIN
 
         CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
 
-        If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
+        If _loggingEnabled Or Extract(epoch from (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := 'Updating parameters for resumed jobs';
             CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
@@ -564,7 +564,7 @@ BEGIN
 
             _jobsProcessed := _jobsProcessed + 1;
 
-            If extract(epoch FROM (clock_timestamp() - _lastLogTime)) >= _loopingUpdateInterval Then
+            If Extract(epoch from (clock_timestamp() - _lastLogTime)) >= _loopingUpdateInterval Then
                 -- Make sure _loggingEnabled is true
                 _loggingEnabled := true;
 
@@ -612,7 +612,7 @@ BEGIN
             CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
         End If;
 
-        If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
+        If _loggingEnabled Or Extract(epoch from (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
             _loggingEnabled := true;
             _statusMessage := 'Updating sw.t_job_steps, sw.t_job_step_dependencies, and sw.t_jobs for resumed jobs';
             CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
@@ -659,7 +659,7 @@ BEGIN
 
     End If;
 
-    If _loggingEnabled Or extract(epoch FROM (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
+    If _loggingEnabled Or Extract(epoch from (clock_timestamp() - _startTime)) >= _logIntervalThreshold Then
         _loggingEnabled := true;
         _statusMessage := 'AddNewJobs Complete';
         CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');

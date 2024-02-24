@@ -138,7 +138,7 @@ BEGIN
 
     SELECT Coalesce(result_type, 'Unknown')
     INTO _resultType
-    FROM  t_analysis_tool
+    FROM t_analysis_tool
     WHERE analysis_tool = _toolName;
 
     If Not FOUND Then

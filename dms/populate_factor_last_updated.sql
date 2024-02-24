@@ -46,19 +46,19 @@ BEGIN
     -----------------------------------------------------------
 
     CREATE TEMP TABLE Tmp_FactorUpdates (
-        RequestID int not null,
-        FactorType text null,
-        FactorName text null,
-        FactorValue text null,
-        ValidFactor boolean not null
+        RequestID int NOT NULL,
+        FactorType text NULL,
+        FactorName text NULL,
+        FactorValue text NULL,
+        ValidFactor boolean NOT NULL
     );
 
     CREATE INDEX IX_Tmp_FactorUpdates ON Tmp_FactorUpdates (RequestID);
 
     CREATE TEMP TABLE Tmp_FactorLastUpdated (
-        RequestID int not null,
-        FactorName text not null,
-        Last_Updated timestamp not null
+        RequestID int NOT NULL,
+        FactorName text NOT NULL,
+        Last_Updated timestamp NOT NULL
     );
 
     CREATE INDEX IX_Tmp_FactorLastUpdated ON Tmp_FactorLastUpdated (RequestID, FactorName);
@@ -257,7 +257,7 @@ BEGIN
                                     _previewData.Value,
                                     public.timestamp_text(_previewData.Last_Updated_Old),
                                     public.timestamp_text(_previewData.Last_Updated_New),
-                                    Round(extract(epoch FROM _previewData.Last_Updated_Old - _previewData.Last_Updated_New) / 3600.0 / 24.0, 2)
+                                    Round(Extract(epoch from _previewData.Last_Updated_Old - _previewData.Last_Updated_New) / 3600.0 / 24.0, 2)
                                    );
 
                 RAISE INFO '%', _infoData;

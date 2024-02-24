@@ -27,7 +27,7 @@ BEGIN
         Dataset_Count int NOT NULL,
         Job_Count int NOT NULL,
         CONSTRAINT PK_Tmp_Biomaterial_Stats PRIMARY KEY ( Biomaterial_ID ASC)
-    )
+    );
 
     ----------------------------------------------------------
     -- Make entry in results table for each biomaterial

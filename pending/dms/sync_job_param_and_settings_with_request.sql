@@ -80,14 +80,16 @@ BEGIN
     -----------------------------------------------------------
 
     CREATE TEMP TABLE Tmp_RequestIDs (
-        RequestID int NOT NULL)
+        RequestID int NOT NULL
+    );
 
     CREATE UNIQUE INDEX IX_Tmp_RequestIDs ON Tmp_RequestIDs(RequestID);
 
     CREATE TEMP TABLE Tmp_Request_Params (
         RequestID int NOT NULL,
-        ParamFileName text not null,
-        SettingsFileName text not null)
+        ParamFileName text NOT NULL,
+        SettingsFileName text NOT NULL
+    );
 
     CREATE UNIQUE INDEX IX_Tmp_Request_Params ON Tmp_Request_Params(RequestID);
 

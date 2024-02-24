@@ -91,7 +91,7 @@ BEGIN
 
         SELECT step_tool_id
         INTO _stepToolId
-        FROM  cap.t_step_tools
+        FROM cap.t_step_tools
         WHERE step_tool = _name::citext;
         --
         GET DIAGNOSTICS _existingCount = ROW_COUNT;

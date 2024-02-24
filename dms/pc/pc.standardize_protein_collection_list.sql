@@ -68,7 +68,7 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_Protein_Collections (
         Unique_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        Collection_Name text COLLATE general_ci_ai NOT Null,
+        Collection_Name text COLLATE general_ci_ai NOT NULL,
         Collection_Type_ID int NOT NULL DEFAULT 1
     );
 

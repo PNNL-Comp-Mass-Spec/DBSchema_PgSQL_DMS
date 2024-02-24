@@ -36,7 +36,7 @@ BEGIN
         _updateTable := true;
     Else
 
-        SELECT extract(epoch FROM CURRENT_TIMESTAMP - MAX(posting_time)) / 60.0
+        SELECT Extract(epoch from CURRENT_TIMESTAMP - MAX(posting_time)) / 60.0
         INTO _timeIntervalLastUpdateHours
         FROM t_analysis_job_status_history
 

@@ -148,11 +148,11 @@ BEGIN
         If _mode = 'update' Then
             -- Update capture task job and params
 
-            UPDATE  cap.t_tasks
-            SET     priority = _priority ,
-                    comment = _comment ,
-                    state = CASE WHEN _reset THEN 20 ELSE state END -- 20=Resuming (update_task_state will handle final task state update)
-            WHERE   job = _job;
+            UPDATE cap.t_tasks
+            SET priority = _priority ,
+                comment = _comment ,
+                state = CASE WHEN _reset THEN 20 ELSE state END -- 20=Resuming (update_task_state will handle final task state update)
+            WHERE job = _job;
 
             -- Only update parameters if not an empty string
             If _jobParam = '' Then
@@ -163,9 +163,9 @@ BEGIN
 
                 _message := format('Updated %s for capture task job %s; did not update parameters since _jobParam is empty', _updatedColumns, _job);
             Else
-                UPDATE  cap.t_task_parameters
-                SET     parameters = _jobParam::XML
-                WHERE   job = _job;
+                UPDATE cap.t_task_parameters
+                SET parameters = _jobParam::XML
+                WHERE job = _job;
 
                 _updatedColumns := CASE WHEN _reset
                                         THEN 'priority, comment, state, and parameters'

@@ -59,7 +59,7 @@ BEGIN
         schema_change_log_id int,
         version_rank int,
         current_source_length int,
-        trim_data boolean Null
+        trim_data boolean NULL
     );
 
     INSERT INTO T_Tmp_SchemaChangeLogRank (schema_change_log_id, version_rank, current_source_length)

@@ -170,10 +170,10 @@ BEGIN
         ---------------------------------------------------
 
         CREATE TEMP TABLE Tmp_BatchIDs (
-            Entry_ID Int Not Null,
-            Batch_ID_Text text Null,
-            Batch_ID int Null,
-            Batch_Group_Order Int Null
+            Entry_ID int NOT NULL,
+            Batch_ID_Text text NULL,
+            Batch_ID int NULL,
+            Batch_Group_Order int NULL
         );
 
         _tempTableCreated := true;

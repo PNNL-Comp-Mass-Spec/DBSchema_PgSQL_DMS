@@ -507,7 +507,7 @@ BEGIN
 
             _jobsRefreshed := _jobsRefreshed + 1;
 
-            If extract(epoch FROM (clock_timestamp() - _lastStatusTime)) >= 15 Then
+            If Extract(epoch from (clock_timestamp() - _lastStatusTime)) >= 15 Then
                 _lastStatusTime := clock_timestamp();
                 _progressMsg := format('Updating job parameters and storage info for copied jobs: %s / %s', _jobsRefreshed, _jobsCopied);
                 CALL public.post_log_entry ('Progress', _progressMsg, 'Copy_History_To_Job_Multi', 'sw');

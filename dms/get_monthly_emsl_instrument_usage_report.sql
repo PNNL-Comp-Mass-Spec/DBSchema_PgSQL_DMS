@@ -62,7 +62,7 @@ BEGIN
         Proposal citext NULL,
         Usage citext NULL,
         Users citext NULL,
-        Operator citext Null,
+        Operator citext NULL,
         Comment citext NULL,
         Year int,
         Month int,

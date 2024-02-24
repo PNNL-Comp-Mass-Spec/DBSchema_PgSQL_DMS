@@ -30,10 +30,10 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_PendingUpdates (
-        Processor_Name text not null,
-        Job int not null,
-        Step int not null,
-        New_CPU_Load int not null
+        Processor_Name text NOT NULL,
+        Job int NOT NULL,
+        Step int NOT NULL,
+        New_CPU_Load int NOT NULL
     );
 
     ---------------------------------------------------

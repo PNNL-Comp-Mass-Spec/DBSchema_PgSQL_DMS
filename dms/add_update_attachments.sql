@@ -146,7 +146,7 @@ BEGIN
     -- Is entry already in database? (only applies to updates)
     ---------------------------------------------------
 
-    If _mode = 'add' And  Exists (SELECT attachment_id FROM t_attachments WHERE attachment_name = _attachmentName) Then
+    If _mode = 'add' And Exists (SELECT attachment_id FROM t_attachments WHERE attachment_name = _attachmentName) Then
         _message := format('Cannot add a new attachment named "%s" since one with that name already exists', _attachmentName);
         RAISE EXCEPTION '%', _message;
     End If;

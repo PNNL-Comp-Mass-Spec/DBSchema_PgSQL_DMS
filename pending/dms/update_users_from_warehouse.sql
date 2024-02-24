@@ -108,7 +108,7 @@ BEGIN
         ----------------------------------------------------------
 
         CREATE TEMP TABLE Tmp_UserInfo (
-            ID int not null,                 -- User ID
+            ID int NOT NULL,                 -- User ID
             Name text NULL,                  -- Last Name, First Name
             Email text NULL,                 -- E-mail
             Domain text NULL,                -- PNL
@@ -116,7 +116,7 @@ BEGIN
             PNNL_Payroll text NULL,          -- Payroll number
             Active text NOT NULL,            -- Y if an active login; N if a former staff member
             UpdateRequired boolean NOT NULL  -- Initially false; this procedure will set this to true for staff that need to be updated
-        )
+        );
 
         CREATE INDEX IX_Tmp_UserInfo_ID ON Tmp_UserInfo (ID);
 
@@ -195,11 +195,11 @@ BEGIN
         ----------------------------------------------------------
 
         CREATE TEMP TABLE Tmp_NamesAfterUpdate (
-            ID int not null,
+            ID int NOT NULL,
             OldName text NULL,
             NewName text NULL,
             Conflict boolean NOT NULL
-        )
+        );
 
         CREATE INDEX IX_Tmp_NamesAfterUpdate_ID ON Tmp_NamesAfterUpdate (ID);
 

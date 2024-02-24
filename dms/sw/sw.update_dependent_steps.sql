@@ -591,7 +591,7 @@ BEGIN
 
         _rowsProcessed := _rowsProcessed + 1;
 
-        If extract(epoch FROM (clock_timestamp() - _lastLogTime)) >= _loopingUpdateInterval Then
+        If Extract(epoch from (clock_timestamp() - _lastLogTime)) >= _loopingUpdateInterval Then
             _statusMessage := format('... Updating dependent steps: %s / %s', _rowsProcessed, _rowCountToProcess);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Dependent_Steps', 'sw');
             _lastLogTime := clock_timestamp();

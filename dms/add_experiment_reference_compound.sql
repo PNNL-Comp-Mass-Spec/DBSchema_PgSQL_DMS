@@ -13,9 +13,9 @@ CREATE OR REPLACE PROCEDURE public.add_experiment_reference_compound(IN _expid i
 **      The calling procedure must create and populate temporary table Tmp_ExpToRefCompoundMap:
 **
 **      CREATE TEMP TABLE Tmp_ExpToRefCompoundMap (
-**          Compound_IDName text not null,          -- This holds compound ID as text; if it is originally of the form '3311:ANFTSQETQGAGK', it will be changed to '3311'
-**          Colon_Pos int null,
-**          Compound_ID int null
+**          Compound_IDName text NOT NULL,          -- This holds compound ID as text; if it is originally of the form '3311:ANFTSQETQGAGK', it will be changed to '3311'
+**          Colon_Pos int NULL,
+**          Compound_ID int NULL
 **      );
 **
 **  Arguments:
@@ -78,7 +78,7 @@ BEGIN
     SET Compound_ID = Src.Compound_ID
     FROM t_reference_compound Src
     WHERE Src.compound_name = Target.Compound_IDName AND
-          Target.compound_id IS Null;
+          Target.compound_id IS NULL;
 
     ---------------------------------------------------
     -- Look for invalid entries in Tmp_ExpToRefCompoundMap

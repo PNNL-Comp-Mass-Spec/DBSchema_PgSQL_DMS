@@ -74,14 +74,14 @@ BEGIN
         _targetDate  := Coalesce(_targetDate, CURRENT_TIMESTAMP - INTERVAL '1 month');
         _infoOnly    := Coalesce(_infoOnly, true);
 
-        _targetMonth := Extract(month from _targetDate);
-        _targetYear  := Extract(year  from _targetDate);
+        _targetMonth := extract(month from _targetDate);
+        _targetYear  := extract(year  from _targetDate);
 
         -- Populate a string with the target month name and year, e.g. January 2024
         _monthAndYear := format('%s %s', Trim(to_char(_targetDate, 'Month')), _targetYear);
 
         CREATE TEMP TABLE Tmp_IntervalsToUpdate (
-            IntervalID Int
+            IntervalID int
         );
 
         FOR _instrumentID, _instrumentName IN

@@ -107,7 +107,7 @@ DECLARE
     _value text;
     _charPos int;
     _plexExperimentName text := '';
-    _currentPlexExperimentId Int;
+    _currentPlexExperimentId int;
     _targetPlexExperimentCount int := 0;
     _targetAddCount int := 0;
     _targetUpdateCount int := 0;
@@ -690,7 +690,7 @@ BEGIN
             -- Create a temporary table to hold the experiment IDs that will be updated with the plex info in Tmp_Experiment_Plex_Members
             ---------------------------------------------------
 
-            CREATE TEMP TABLE Tmp_ExperimentsToUpdate (plexExperimentId int Not Null);
+            CREATE TEMP TABLE Tmp_ExperimentsToUpdate (plexExperimentId int NOT NULL);
 
             CREATE INDEX IX_Tmp_ExperimentsToUpdate On Tmp_ExperimentsToUpdate (plexExperimentId);
 

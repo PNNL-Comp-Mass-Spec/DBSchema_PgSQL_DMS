@@ -110,7 +110,7 @@ BEGIN
 
         SELECT dataset_rating_id
         INTO _ratingID
-        FROM  t_dataset_rating_name
+        FROM t_dataset_rating_name
         WHERE dataset_rating = _rating::citext;
 
         If Not FOUND Then

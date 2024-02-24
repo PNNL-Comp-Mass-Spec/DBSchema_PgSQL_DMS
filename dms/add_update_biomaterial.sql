@@ -247,7 +247,7 @@ BEGIN
         -- Resolve Usernames to user IDs
         ---------------------------------------------------
 
-        -- Verify that Owner Username  is valid
+        -- Verify that Owner Username is valid
         -- and get its id number
 
         _userID := public.get_user_id(_contactUsername);

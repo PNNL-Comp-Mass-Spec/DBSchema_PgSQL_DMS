@@ -91,7 +91,7 @@ BEGIN
         ------------------------------------------------
 
         CREATE TEMP TABLE Tmp_BatchIDs (
-            batch_id int not Null
+            batch_id int NOT NULL
         );
 
         CREATE UNIQUE INDEX IX_Tmp_BatchIDs On Tmp_BatchIDs (batch_id);
@@ -137,7 +137,7 @@ BEGIN
                            ActiveStatsQ.oldest_active_request_created,
                            CASE
                                WHEN ActiveStatsQ.active_requests = 0 THEN public.get_requested_run_batch_max_days_in_queue(StatsQ.batch_id)
-                               ELSE ROUND(EXTRACT(epoch FROM
+                               ELSE ROUND(Extract(epoch from
                                             (statement_timestamp() - (COALESCE(ActiveStatsQ.oldest_active_request_created, StatsQ.oldest_request_created)))) / (86400)::numeric)
                            END AS days_in_queue
                     FROM ( SELECT batch_id
@@ -210,7 +210,7 @@ BEGIN
 
         END;
 
-        _runtimeStep1 := (1000 * extract(epoch FROM (clock_timestamp() - _startTime)))::int;
+        _runtimeStep1 := (1000 * Extract(epoch from (clock_timestamp() - _startTime)))::int;
 
         ------------------------------------------------
         -- Step 2: Update completed requested run stats
@@ -291,7 +291,7 @@ BEGIN
 
         Drop Table Tmp_RequestedRunStats;
 
-        _runtimeStep2 := (1000 * extract(epoch FROM (clock_timestamp() - _startTime)))::int - _runtimeStep1;
+        _runtimeStep2 := (1000 * Extract(epoch from (clock_timestamp() - _startTime)))::int - _runtimeStep1;
 
         ------------------------------------------------
         -- Step 3: Update requested run count and sample prep queue stats
@@ -376,10 +376,10 @@ BEGIN
 
         DROP TABLE Tmp_RequestedRunExperimentStats;
 
-        _runtimeStep3 := (1000 * extract(epoch FROM (clock_timestamp() - _startTime)))::int - _runtimeStep1 - _runtimeStep2;
+        _runtimeStep3 := (1000 * Extract(epoch from (clock_timestamp() - _startTime)))::int - _runtimeStep1 - _runtimeStep2;
 
         -- Overall runtime, in seconds
-        _runtimeSeconds := (extract(epoch FROM (clock_timestamp() - _startTime)))::numeric;
+        _runtimeSeconds := (Extract(epoch from (clock_timestamp() - _startTime)))::numeric;
 
         _runtimeMessage := format('Step 1: %s seconds; Step 2: %s seconds; Step 3: %s seconds',
                                     Round(_runtimeStep1 / 1000.0, 2),

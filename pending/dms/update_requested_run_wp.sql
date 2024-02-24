@@ -121,15 +121,15 @@ BEGIN
         ----------------------------------------------------------
 
         CREATE TEMP TABLE Tmp_ReqRunsToUpdate (
-            request_id int not null,
-            Request_Name text not null,
-            work_package text not null
+            request_id int NOT NULL,
+            Request_Name text NOT NULL,
+            work_package text NOT NULL
         )
 
         CREATE INDEX IX_Tmp_ReqRunsToUpdate ON Tmp_ReqRunsToUpdate (request_id);
 
         CREATE TEMP TABLE Tmp_RequestedRunList (
-            request_id int not null
+            request_id int NOT NULL
         )
 
         CREATE INDEX IX_Tmp_RequestedRunList ON Tmp_RequestedRunList (request_id);

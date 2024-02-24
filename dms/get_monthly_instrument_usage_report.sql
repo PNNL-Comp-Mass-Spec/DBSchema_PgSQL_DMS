@@ -55,8 +55,8 @@ CREATE OR REPLACE FUNCTION public.get_monthly_instrument_usage_report(_instrumen
 *****************************************************/
 DECLARE
     _logErrors boolean := false;
-    _monthValue Int;
-    _yearValue Int;
+    _monthValue int;
+    _yearValue int;
     _processByEUS boolean := false;
     _currentMonthStart timestamp;
     _nextMonth timestamp;
@@ -156,7 +156,7 @@ BEGIN
         _currentMonthStart := make_date(_yearValue, _monthValue, 1)::timestamp;
         _nextMonth := _currentMonthStart + Interval '1 month';  -- Beginning of the next month after _currentMonthStart
 
-        _daysInMonth := Extract(day FROM _nextMonth - _currentMonthStart);
+        _daysInMonth := Extract(day from _nextMonth - _currentMonthStart);
         _minutesInMonth := _daysInMonth * 1440;
 
         _logErrors := true;

@@ -201,7 +201,7 @@ BEGIN
 
     SELECT cart_id, cart_name
     INTO _cartID, _validatedName
-    FROM  t_lc_cart
+    FROM t_lc_cart
     WHERE cart_name = _cartName;
 
     If Not FOUND Then

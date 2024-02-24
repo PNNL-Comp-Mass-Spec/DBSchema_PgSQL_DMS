@@ -96,7 +96,7 @@ BEGIN
             RETURN;
         End If;
 
-        If Not Exists (SELECT JT.job  FROM cap.t_tasks JT INNER JOIN Tmp_Job_List L ON JT.job = L.Job) THEN
+        If Not Exists (SELECT JT.job FROM cap.t_tasks JT INNER JOIN Tmp_Job_List L ON JT.job = L.Job) THEN
             _message := format('Capture task %s not found in cap.t_tasks: %s',
                                 public.check_plural(_jobCount, 'job', 'jobs'),
                                 _jobList);

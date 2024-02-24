@@ -213,7 +213,7 @@ DECLARE
     _requestMatchCount int;
     _reqExperimentID int := 0;
     _cartID int := 0;
-    _eusUsageTypeID Int;
+    _eusUsageTypeID int;
     _dsCreatorUsername text;
     _runStart text;
     _runFinish text;

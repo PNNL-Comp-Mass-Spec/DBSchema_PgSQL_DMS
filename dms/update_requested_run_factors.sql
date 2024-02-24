@@ -148,11 +148,11 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_FactorInfo (
         Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        Identifier citext null,         -- Can be RequestID or DatasetName
-        Factor citext null,             -- Factor name
-        Value citext null,
-        DatasetID int null,             -- DatasetID; not always present
-        RequestID int null,
+        Identifier citext NULL,         -- Can be RequestID or DatasetName
+        Factor citext NULL,             -- Factor name
+        Value citext NULL,
+        DatasetID int NULL,             -- DatasetID; not always present
+        RequestID int NULL,
         UpdateSkipCode int              -- 0 to update, 1 means unchanged, 2 means invalid factor name
     );
 

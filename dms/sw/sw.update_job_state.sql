@@ -477,7 +477,7 @@ BEGIN
 
         _jobsProcessed := _jobsProcessed + 1;
 
-        If extract(epoch FROM (clock_timestamp() - _lastLogTime)) >= _loopingUpdateInterval Then
+        If Extract(epoch from (clock_timestamp() - _lastLogTime)) >= _loopingUpdateInterval Then
             _statusMessage := format('... Updating job state: %s / %s', _jobsProcessed, _jobCountToProcess);
             CALL public.post_log_entry ('Progress', _statusMessage, 'Update_Job_State', 'sw');
             _lastLogTime := clock_timestamp();
@@ -549,8 +549,8 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_JobsToReset (
-        Job int not null,
-        NewState int not null
+        Job int NOT NULL,
+        NewState int NOT NULL
     );
 
     -- Look for jobs that are listed as Failed in public.t_analysis_job, but are in-progress in sw.t_jobs

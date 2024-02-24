@@ -95,8 +95,8 @@ BEGIN
         ---------------------------------------------------
 
         CREATE TEMP TABLE Tmp_StatusNumListTable (
-            Status_Num int Not Null,
-            Dataset_ID_Validated boolean Not Null
+            Status_Num int NOT NULL,
+            Dataset_ID_Validated boolean NOT NULL
         );
 
         INSERT INTO Tmp_StatusNumListTable (Status_Num, Dataset_ID_Validated)

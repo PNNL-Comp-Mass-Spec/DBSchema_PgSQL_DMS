@@ -127,7 +127,7 @@ BEGIN
 
         _countUpdated := _countUpdated + 1;
         If _countUpdated % 5 = 0 Then
-            _elapsedSeconds := extract(epoch FROM (clock_timestamp() - _startTime));
+            _elapsedSeconds := extract(epoch from (clock_timestamp() - _startTime));
 
             If _elapsedSeconds * 2 > _entryTimeWindowSecondsCurrent Then
                 _entryTimeWindowSecondsCurrent := _elapsedSeconds * 4;
