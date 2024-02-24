@@ -1,17 +1,14 @@
 --
-CREATE OR REPLACE PROCEDURE public.set_purge_task_complete
-(
-    _datasetName text,
-    _completionCode int = 0,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: set_purge_task_complete(text, integer, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.set_purge_task_complete(IN _datasetname text, IN _completioncode integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Set archive state of dataset record given by _datasetName according to the given completion code
+**      Set archive state for the dataset based on the purge task completion code
 **
 **  Arguments:
 **    _datasetName      Dataset name
@@ -56,7 +53,7 @@ AS $$
 **          09/09/2022 mem - Use new argument names when calling Make_New_Archive_Update_Job
 **          06/21/2023 mem - Remove parameter _pushDatasetToMyEMSL in call to cap.make_new_archive_update_task
 **          10/05/2023 mem - Archive path is now agate.emsl.pnl.gov
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/23/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -64,7 +61,6 @@ DECLARE
     _storageServerName text;
     _datasetState int;
     _completionState int;
-    _result int;
     _instrumentClass text;
     _currentState int;
     _currentUpdateState int;
@@ -89,6 +85,8 @@ BEGIN
 
     If Not FOUND Then
         _message := format('Dataset %s not found in t_dataset', _datasetName);
+        RAISE WARNING '%', _message;
+
         _returnCode := 'U5201';
         RETURN;
     End If;
@@ -105,18 +103,22 @@ BEGIN
 
     If Not FOUND Then
         _message := format('Dataset ID %s not found in t_dataset_archive for dataset %s', _datasetID, _datasetName);
+        RAISE WARNING '%', _message;
+
         _returnCode := 'U5202';
         RETURN;
     End If;
 
     If _currentState <> 7 Then
         _message := format('Current archive state is incorrect for dataset %s; expecting 7 but actually %s', _datasetName, _currentState);
+        RAISE WARNING '%', _message;
+
         _returnCode := 'U5203';
         RETURN;
     End If;
 
     ---------------------------------------------------
-    -- Choose archive state and archive update  state
+    -- Choose archive state and archive update state
     -- based upon completion code
     ---------------------------------------------------
 /*
@@ -154,112 +156,106 @@ Code 6 (Purged all data except QC folder)
 
 */
 
-    _completionState := -1;
-
-    If _completionState < 0 And _completionCode = 0 Then
-        -- Success
-        _completionState := 4;      -- Purged
-    End If;
-
-    If _completionState < 0 And _completionCode = 1 Then
-        -- Failed
-        _completionState := 8;      -- Purge failed
-    End If;
-
-    If _completionState < 0 And _completionCode = 2 Then
-        -- Update required
-        _completionState := 3;      -- Complete
-        _currentUpdateState := 2;   -- Update Required
-        CALL cap.make_new_archive_update_task (_datasetName, _resultsDirectoryName => '', _allowBlankResultsDirectory => true, _message => _message, _returncode => _returncode);
-    End If;
-
-    If _completionState < 0 And _completionCode = 3 Then
-        -- MD5 results file is missing; need to have stageMD5 file created by the DatasetPurgeArchiveHelper
-
-        _completionState := 3   ;   -- Complete
-    End If;
-
     If Coalesce(_storageServerName, '') = '' Then
         _storageServerName := '??';
     End If;
 
     _postedBy := format('Set_Purge_Task_Complete: %s', _storageServerName);
 
-    If _completionState < 0 And _completionCode = 4 Then
+    _completionState := -1;
+
+    If _completionCode = 0 Then
+        -- Success
+        _completionState := 4;      -- Purged
+
+    ElsIf _completionCode = 1 Then
+        -- Failed
+        _completionState := 8;      -- Purge failed
+
+    ElsIf _completionCode = 2 Then
+        -- Update required
+        _completionState := 3;      -- Complete
+        _currentUpdateState := 2;   -- Update Required
+        CALL cap.make_new_archive_update_task (
+                    _datasetName,
+                    _resultsDirectoryName => '',
+                    _allowBlankResultsDirectory => true,
+                    _message => _message,
+                    _returncode => _returncode);
+
+    ElsIf _completionCode = 3 Then
+        -- MD5 results file is missing; need to have stageMD5 file created by the DatasetPurgeArchiveHelper
+
+        _completionState := 3;   -- Complete
+
+    ElsIf _completionCode = 4 Then
         -- Drive Missing
 
         _message := format('Drive not found for dataset %s', _datasetName);
         CALL post_log_entry ('Error', _message, _postedBy);
-        _message := '';
 
-        _completionState := 3   ; -- complete
-    End If;
+        _completionState := 3; -- Complete
 
-    If _completionState < 0 And _completionCode = 5 Then
-        -- Purged Instrument Data and any other auto-purge items
+    ElsIf _completionCode = 5 Then
+        -- Purged Instrument Data (plus auto-purge)
+        _completionState := 14; -- Purged instrument data; corresponds to Purge_Policy=0
 
-        _completionState := 14   ; -- complete
-    End If;
-
-    If _completionState < 0 And _completionCode = 6 Then
+    ElsIf _completionCode = 6 Then
         -- Purged all data except QC folder
+        _completionState := 15; -- Purged all data except QC; corresponds to Purge_Policy=1
 
-        _completionState := 15   ; -- complete
-    End If;
-
-    If _completionState < 0 And _completionCode = 7 Then
+    ElsIf _completionCode = 7 Then
         -- Dataset folder missing in archive, either in MyEMSL or at \\agate.emsl.pnl.gov\dmsarch
 
         _message := format('Dataset folder not found in archive or in MyEMSL; most likely a MyEMSL timeout, but could be a permissions error; dataset %s', _datasetName);
         CALL post_log_entry ('Error', _message, _postedBy);
-        _message := '';
 
-        _completionState := 3   ; -- complete
-    End If;
+        _completionState := 3; -- Complete
 
-    If _completionState < 0 And _completionCode = 8 Then
+    ElsIf _completionCode = 8 Then
         -- Archive is offline (Aurora is offline): \\agate.emsl.pnl.gov\dmsarch
 
         _message := format('Archive is offline; cannot purge dataset %s', _datasetName);
         CALL post_log_entry ('Error', _message, _postedBy);
-        _message := '';
 
-        _completionState := 3   ; -- complete
-    End If;
+        _completionState := 3; -- Complete
 
-    If _completionState < 0 And _completionCode = 9 Then
+    ElsIf _completionCode = 9 Then
         -- Previewed purge
+        _message := format('Previewed purge of dataset %s', _datasetName);
+        _completionState := 3; -- Complete
 
-        _completionState := 3   ; -- complete
-    End If;
+    Else
+        _message := format('Completion code %s was not recognized for dataset %s', _completionCode, _datasetName);
+        RAISE WARNING '%', _message;
 
-    If _completionState < 0 And
-        _message := 'Completion code was not recognized';
+        CALL post_log_entry ('Error', _message, _postedBy);
+
         RETURN;
     End If;
 
     UPDATE t_dataset_archive
-    SET archive_state_id = _completionState,
+    SET archive_state_id        = _completionState,
         archive_update_state_id = _currentUpdateState,
         purge_holdoff_date = CASE WHEN _currentUpdateState = 2   THEN CURRENT_TIMESTAMP + INTERVAL '24 hours'
-                                  WHEN _completionCode IN (2,3)  THEN CURRENT_TIMESTAMP + INTERVAL '90 minutes'
+                                  WHEN _completionCode IN (2, 3) THEN CURRENT_TIMESTAMP + INTERVAL '90 minutes'
                                   WHEN _completionCode = 7       THEN CURRENT_TIMESTAMP + INTERVAL '48 hours'
-                                  ELSE AS_purge_holdoff_date
+                                  ELSE purge_holdoff_date
                              END,
-        stagemd5_required = CASE WHEN _completionCode = 3
-                                 THEN 1
-                                 ELSE AS_StageMD5_Required
-                            END
+        stagemd5_required  = CASE WHEN _completionCode = 3
+                                  THEN 1
+                                  ELSE stagemd5_required
+                             END
     WHERE dataset_id = _datasetID;
 
-    If _completionState in (4, 14) Then
+    If _completionState In (4, 14) Then
         -- Dataset was purged; update instrument_data_purged to be 1
 
         -- This field is useful because, if an analysis job is run on a purged dataset,
         -- archive_state_id will change back to 3=Complete, and we therefore
         -- wouldn't be able to tell if the raw instrument file is available
 
-        -- Note that trigger trig_u_Dataset_Archive will likely have already updated instrument_data_purged
+        -- Note that trigger trig_t_dataset_archive_after_update will likely have already updated instrument_data_purged
 
         UPDATE t_dataset_archive
         SET instrument_data_purged = 1
@@ -269,7 +265,7 @@ Code 6 (Purged all data except QC folder)
 
     If _completionState In (4) Then
         -- Make sure QC_Data_Purged is now 1
-        -- Note that trigger trig_u_Dataset_Archive will likely have already updated instrument_data_purged
+        -- Note that trigger trig_t_dataset_archive_after_update will likely have already updated instrument_data_purged
 
         UPDATE t_dataset_archive
         SET qc_data_purged = 1
@@ -282,7 +278,6 @@ Code 6 (Purged all data except QC folder)
         UPDATE t_analysis_job
         SET purged = 1
         WHERE dataset_id = _datasetID AND purged = 0;
-
     End If;
 
     ---------------------------------------------------
@@ -292,12 +287,15 @@ Code 6 (Purged all data except QC folder)
     _usageMessage := format('Dataset: %s', _datasetName);
     CALL post_usage_log_entry ('set_purge_task_complete', _usageMessage);
 
-    If _message <> '' Then
-        RAISE WARNING '%', _message;
-    End If;
-
 END
 $$;
 
-COMMENT ON PROCEDURE public.set_purge_task_complete IS 'SetPurgeTaskComplete';
+
+ALTER PROCEDURE public.set_purge_task_complete(IN _datasetname text, IN _completioncode integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE set_purge_task_complete(IN _datasetname text, IN _completioncode integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.set_purge_task_complete(IN _datasetname text, IN _completioncode integer, INOUT _message text, INOUT _returncode text) IS 'SetPurgeTaskComplete';
 
