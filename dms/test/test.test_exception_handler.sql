@@ -23,7 +23,7 @@ CREATE OR REPLACE FUNCTION test.test_exception_handler(_divisor text, _useerrorh
 **      SELECT test.test_exception_handler('apple', false);
 **      SELECT test.test_exception_handler('apple', true);
 **
-**      SELECT * FROM public.t_log_entries WHERE entered > CURRENT_TIMESTAMP - Interval '1 hour';
+**      SELECT * FROM public.t_log_entries WHERE entered > CURRENT_TIMESTAMP - INTERVAL '1 hour';
 **
 **  Auth:   mem
 **  Date:   08/24/2022 mem - Initial version

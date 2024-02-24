@@ -21,11 +21,11 @@ DECLARE
     _qcEndDate timestamp;
 BEGIN
 
-    _startDate := Coalesce(_startDate, CURRENT_TIMESTAMP - Interval '7 days');
-    _endDate := Coalesce(_endDate, _startDate + Interval '1 day');
+    _startDate := Coalesce(_startDate, CURRENT_TIMESTAMP - INTERVAL '7 days');
+    _endDate := Coalesce(_endDate, _startDate + INTERVAL '1 day');
 
-    _qcStartDate := _startDate - Interval '32 days';
-    _qcEndDate := _endDate + Interval '32 days';
+    _qcStartDate := _startDate - INTERVAL '32 days';
+    _qcEndDate := _endDate + INTERVAL '32 days';
 
     RETURN QUERY
     SELECT RankQ.Dataset,

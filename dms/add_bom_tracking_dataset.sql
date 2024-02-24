@@ -137,7 +137,7 @@ BEGIN
         _bom := make_date(_yr, _mn, 1)::timestamp;
 
         If _month = 'next' Then
-            _bom := _bom + Interval '1 month';  -- Beginning of the next month after _bom
+            _bom := _bom + INTERVAL '1 month';  -- Beginning of the next month after _bom
         End If;
 
         _runStart := _bom;

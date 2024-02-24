@@ -23,7 +23,7 @@ DECLARE
     _fiscalYear timestamp;
 BEGIN
     _fiscalYear := CASE WHEN Extract(month from _rawDate) > 9
-                        THEN _rawDate + Interval '1 year'
+                        THEN _rawDate + INTERVAL '1 year'
                         ELSE _rawDate
                    END;
 

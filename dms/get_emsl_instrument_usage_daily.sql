@@ -134,8 +134,8 @@ BEGIN
             Run_or_Interval_End   =                    W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds),
             Day_at_Run_End        = Extract(day   from W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds)),
             Month_at_Run_End      = Extract(month from W.Run_or_Interval_Start + make_interval(secs => W.Duration_Seconds)),
-            End_Of_Day            = date_trunc('day', W.Run_or_Interval_Start) + Interval '1 day' - Interval '1 millisecond',
-            Beginning_Of_Next_Day = date_trunc('day', W.Run_or_Interval_Start) + Interval '1 day';
+            End_Of_Day            = date_trunc('day', W.Run_or_Interval_Start) + INTERVAL '1 day' - INTERVAL '1 millisecond',
+            Beginning_Of_Next_Day = date_trunc('day', W.Run_or_Interval_Start) + INTERVAL '1 day';
 
         UPDATE Tmp_T_Working AS W
         SET Duration_Seconds_In_Current_Day =               Extract(epoch from (End_Of_Day - W.Run_or_Interval_Start)),

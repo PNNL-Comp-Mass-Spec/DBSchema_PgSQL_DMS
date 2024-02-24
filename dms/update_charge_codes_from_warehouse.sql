@@ -204,7 +204,7 @@ BEGIN
             FROM pnnldata."VW_PUB_CHARGE_CODE" CC
                  LEFT OUTER JOIN pnnldata."VW_PUB_CHARGE_CODE_TRAIL" CT
                    ON Upper(CC."CHARGE_CD") = Upper(CT."CHARGE_CD")
-            WHERE (CC."SETUP_DATE" >= CURRENT_TIMESTAMP - Interval '10 years' AND   -- Filter out charge codes created over 10 years ago
+            WHERE (CC."SETUP_DATE" >= CURRENT_TIMESTAMP - INTERVAL '10 years' AND   -- Filter out charge codes created over 10 years ago
                    CC."AUTH_AMT" > 0 AND                                            -- Ignore charge codes with an authorization amount of $0
                    CC."CHARGE_CD" NOT LIKE 'R%' AND                                 -- Filter out charge codes that are used for purchasing, not labor
                    CC."CHARGE_CD" NOT LIKE 'V%'

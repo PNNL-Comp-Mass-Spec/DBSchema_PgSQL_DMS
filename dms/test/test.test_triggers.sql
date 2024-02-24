@@ -642,7 +642,7 @@ BEGIN
                        ON H.plex_exp_id = PM.plex_exp_id AND
                           H.exp_id = PM.exp_id
                 WHERE state = 0 AND
-                      entered >= CURRENT_TIMESTAMP - Interval '30 seconds';
+                      entered >= CURRENT_TIMESTAMP - INTERVAL '30 seconds';
 
                 If FOUND Then
                     INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
@@ -674,7 +674,7 @@ BEGIN
                        ON L.target_id = T_Tmp_Jobs.job AND
                           L.target = 'Job'
                 WHERE L.target_state = 0 AND
-                      entered >= CURRENT_TIMESTAMP - Interval '30 seconds';
+                      entered >= CURRENT_TIMESTAMP - INTERVAL '30 seconds';
 
                 If FOUND Then
                     INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
@@ -706,7 +706,7 @@ BEGIN
                        ON L.target_id = T_Tmp_Datasets.dataset_id AND
                           L.target = 'Dataset'
                 WHERE L.target_state = 0 AND
-                      entered >= CURRENT_TIMESTAMP - Interval '30 seconds';
+                      entered >= CURRENT_TIMESTAMP - INTERVAL '30 seconds';
 
                 If FOUND Then
                     INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
@@ -738,7 +738,7 @@ BEGIN
                        ON L.target_id = T_Tmp_Experiments.experiment_id AND
                           L.target = 'Experiment'
                 WHERE L.target_state = 0 AND
-                      entered >= CURRENT_TIMESTAMP - Interval '30 seconds';
+                      entered >= CURRENT_TIMESTAMP - INTERVAL '30 seconds';
 
                 If FOUND Then
                     INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
@@ -770,7 +770,7 @@ BEGIN
                        ON L.target_id = T_Tmp_Campaigns.campaign_id AND
                           L.target = 'Campaign'
                 WHERE L.target_state = 0 AND
-                      entered >= CURRENT_TIMESTAMP - Interval '30 seconds';
+                      entered >= CURRENT_TIMESTAMP - INTERVAL '30 seconds';
 
                 If FOUND Then
                     INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
@@ -834,7 +834,7 @@ BEGIN
                    'at ' || public.timestamp_text(E.entered) AS comment,
                    Row_Number() OVER (PARTITION BY E.target_id, Coalesce(E.state_name, '') ORDER BY E.event_id DESC) AS EventLogRank
             FROM v_event_log E
-            WHERE entered >= CURRENT_TIMESTAMP - Interval '2 hours' AND target = 'Campaign') RankQ
+            WHERE entered >= CURRENT_TIMESTAMP - INTERVAL '2 hours' AND target = 'Campaign') RankQ
         WHERE RankQ.EventLogRank = 1
         ORDER BY RankQ.event_id;
     End If;
@@ -878,7 +878,7 @@ BEGIN
                    'at ' || public.timestamp_text(E.entered) AS comment,
                    Row_Number() OVER (PARTITION BY E.target_id, Coalesce(E.state_name, '') ORDER BY E.event_id DESC) AS EventLogRank
             FROM v_event_log E
-            WHERE entered >= CURRENT_TIMESTAMP - Interval '2 hours' AND target = 'Experiment') RankQ
+            WHERE entered >= CURRENT_TIMESTAMP - INTERVAL '2 hours' AND target = 'Experiment') RankQ
         WHERE RankQ.EventLogRank = 1
         ORDER BY RankQ.event_id;
     End If;
@@ -922,7 +922,7 @@ BEGIN
                    'at ' || public.timestamp_text(E.entered) AS comment,
                    Row_Number() OVER (PARTITION BY E.target_id, Coalesce(E.state_name, '') ORDER BY E.event_id DESC) AS EventLogRank
             FROM v_event_log E
-            WHERE entered >= CURRENT_TIMESTAMP - Interval '2 hours' AND target IN ('Dataset', 'DS Rating')) RankQ
+            WHERE entered >= CURRENT_TIMESTAMP - INTERVAL '2 hours' AND target IN ('Dataset', 'DS Rating')) RankQ
         WHERE RankQ.EventLogRank = 1
         ORDER BY RankQ.event_id;
     End If;
@@ -968,7 +968,7 @@ BEGIN
                    'at ' || public.timestamp_text(E.entered) AS comment,
                    Row_Number() OVER (PARTITION BY E.target_id, Coalesce(E.state_name, '') ORDER BY E.event_id DESC) AS EventLogRank
             FROM v_event_log E
-            WHERE entered >= CURRENT_TIMESTAMP - Interval '2 hours' AND target = 'Job') RankQ
+            WHERE entered >= CURRENT_TIMESTAMP - INTERVAL '2 hours' AND target = 'Job') RankQ
         WHERE RankQ.EventLogRank = 1
         ORDER BY RankQ.event_id;
     End If;
@@ -1011,7 +1011,7 @@ BEGIN
                    'at ' || public.timestamp_text(H.entered) AS comment,
                    Row_Number() OVER (PARTITION BY H.plex_exp_id, H.exp_id, H.state ORDER BY H.entry_id DESC) AS EventLogRank
             FROM t_experiment_plex_members_history H
-            WHERE H.entered >= CURRENT_TIMESTAMP - Interval '2 hours') RankQ
+            WHERE H.entered >= CURRENT_TIMESTAMP - INTERVAL '2 hours') RankQ
         WHERE RankQ.EventLogRank = 1
         ORDER BY RankQ.entry_id;
     End If;

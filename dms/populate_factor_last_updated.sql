@@ -92,7 +92,7 @@ BEGIN
 
         RAISE INFO 'Processing factor_log entries between % and %',
                         public.timestamp_text(_dateFilterStart),
-                        public.timestamp_text(_dateFilterEnd + Interval '86399.999 seconds');
+                        public.timestamp_text(_dateFilterEnd + INTERVAL '86399.999 seconds');
 
         SELECT MIN(event_id) - 1
         INTO _eventIDStart

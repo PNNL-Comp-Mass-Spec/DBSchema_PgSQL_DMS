@@ -65,7 +65,7 @@ BEGIN
     -- Define the date threshold by subtracting three years from January 1 of this year
     ---------------------------------------------------
 
-    _dateThreshold := make_date(Extract(year from CURRENT_TIMESTAMP)::int, 1, 1) - Interval '3 years';
+    _dateThreshold := make_date(Extract(year from CURRENT_TIMESTAMP)::int, 1, 1) - INTERVAL '3 years';
 
     ---------------------------------------------------
     -- Find capture task jobs to delete

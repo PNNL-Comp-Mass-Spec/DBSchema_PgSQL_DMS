@@ -737,7 +737,7 @@ BEGIN
 
         If _acqLengthMinutes > 10080 Then
             UPDATE Tmp_DSInfoTable
-            SET Acq_Time_End = Acq_Time_Start + Interval '1 hour';
+            SET Acq_Time_End = Acq_Time_Start + INTERVAL '1 hour';
 
             _message := format(
                 'Acquisition length for dataset %s is over 7 days; '

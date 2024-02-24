@@ -105,7 +105,7 @@ BEGIN
     ---------------------------------------------------
 
     _firstDayOfStartingMonth := date_trunc('month', _startInterval);
-    _firstDayOfTrailingMonth := date_trunc('month', _endInterval) + Interval '1 month';
+    _firstDayOfTrailingMonth := date_trunc('month', _endInterval) + INTERVAL '1 month';
 
     ---------------------------------------------------
     -- Create table to hold the intervals
@@ -165,7 +165,7 @@ BEGIN
     -- on the end day
     ---------------------------------------------------
 
-    _endIntervalEOD := date_trunc('day', _endInterval) + Interval '86399.999 seconds';
+    _endIntervalEOD := date_trunc('day', _endInterval) + INTERVAL '86399.999 seconds';
 
     ---------------------------------------------------
     -- Optionally set up anchor for start of month
@@ -188,7 +188,7 @@ BEGIN
             1, 0, 'Anchor', _firstDayOfStartingMonth, _firstDayOfStartingMonth, 0, _instrument, 0
         );
     Else
-        _endIntervalEOD := _endInterval + Interval '1 day';
+        _endIntervalEOD := _endInterval + INTERVAL '1 day';
     End If;
 
     ---------------------------------------------------

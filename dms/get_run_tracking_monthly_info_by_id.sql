@@ -114,7 +114,7 @@ BEGIN
     ---------------------------------------------------
 
     _firstDayOfStartingMonth := make_date(_year, _month, 1);
-    _firstDayOfTrailingMonth := _firstDayOfStartingMonth + Interval '1 month';
+    _firstDayOfTrailingMonth := _firstDayOfStartingMonth + INTERVAL '1 month';
 
     ---------------------------------------------------
     -- Get datasets whose start time falls within month
@@ -181,7 +181,7 @@ BEGIN
                ON TD.instrument_id = InstMapping.dms_instrument_id
         WHERE InstMapping.eus_instrument_id = _eusInstrumentId AND
               TD.acq_time_start < _firstDayOfStartingMonth AND
-              TD.acq_time_start > _firstDayOfStartingMonth - Interval '90 days'
+              TD.acq_time_start > _firstDayOfStartingMonth - INTERVAL '90 days'
         ORDER BY TD.acq_time_start DESC
         LIMIT 1;
 

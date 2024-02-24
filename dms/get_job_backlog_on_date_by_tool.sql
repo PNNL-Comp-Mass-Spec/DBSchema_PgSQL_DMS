@@ -25,7 +25,7 @@ CREATE OR REPLACE FUNCTION public.get_job_backlog_on_date_by_tool(_targetdate ti
 **    ORDER BY SampleTime;
 **
 **    SELECT Day, get_job_backlog_on_date_by_tool(Day::timestamp, 69)
-**    FROM generate_series('2022-01-01'::date, '2022-01-30'::date, Interval '1 day') as Day
+**    FROM generate_series('2022-01-01'::date, '2022-01-30'::date, INTERVAL '1 day') as Day
 **    ORDER BY Day;
 **
 **  Auth:   grk

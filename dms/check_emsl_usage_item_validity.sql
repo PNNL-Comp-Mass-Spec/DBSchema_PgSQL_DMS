@@ -90,7 +90,7 @@ BEGIN
 
     SELECT proposal_id as proposalID,
            proposal_start_date as proposalStartDate,
-           proposal_end_date + Interval '1 day' as proposalEndDate
+           proposal_end_date + INTERVAL '1 day' as proposalEndDate
     INTO _proposalInfo
     FROM t_eus_proposals
     WHERE proposal_id = _instrumentUsage.proposal;

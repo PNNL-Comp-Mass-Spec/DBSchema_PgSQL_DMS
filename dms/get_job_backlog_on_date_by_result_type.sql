@@ -25,7 +25,7 @@ CREATE OR REPLACE FUNCTION public.get_job_backlog_on_date_by_result_type(_target
 **    ORDER BY sample_time;
 **
 **    SELECT day::date, get_job_backlog_on_date_by_result_type(day::timestamp, '%_Peptide_Hit')
-**    FROM generate_series('2022-01-01'::date, '2022-01-30'::date, Interval '1 day') AS day
+**    FROM generate_series('2022-01-01'::date, '2022-01-30'::date, INTERVAL '1 day') AS day
 **    ORDER BY day;
 **
 **  Auth:   grk

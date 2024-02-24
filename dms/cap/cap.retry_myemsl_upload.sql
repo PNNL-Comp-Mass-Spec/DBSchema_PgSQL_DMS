@@ -279,7 +279,7 @@ BEGIN
 
             UPDATE cap.t_task_steps TS
             SET retry_count = 75,
-                next_try = CURRENT_TIMESTAMP + Interval '10 minutes'
+                next_try = CURRENT_TIMESTAMP + INTERVAL '10 minutes'
             FROM Tmp_Archive_Jobs_To_Reset JR
             WHERE TS.job = JR.Job AND
                   TS.Tool = 'ArchiveVerify';

@@ -18,7 +18,7 @@ CREATE OR REPLACE FUNCTION test.test_exception_handler_nested(_divisor text, _us
 **      SELECT test.test_exception_handler_nested('apple', false);
 **      SELECT test.test_exception_handler_nested('apple', true);
 **
-**      SELECT * FROM public.t_log_entries WHERE entered > CURRENT_TIMESTAMP - Interval '1 hour';
+**      SELECT * FROM public.t_log_entries WHERE entered > CURRENT_TIMESTAMP - INTERVAL '1 hour';
 **
 **  Auth:   mem
 **  Date:   08/24/2022 mem - Initial version

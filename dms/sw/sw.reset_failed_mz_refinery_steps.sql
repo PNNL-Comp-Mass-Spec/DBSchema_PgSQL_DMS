@@ -132,7 +132,7 @@ BEGIN
                ON M.Manager_Name = Status.Processor_Name
         WHERE JS.State = 4 AND
               JS.Tool = 'Mz_Refinery' AND
-              JS.Start < CURRENT_TIMESTAMP - Interval '15 minutes' AND
+              JS.Start < CURRENT_TIMESTAMP - INTERVAL '15 minutes' AND
               Status.Progress < 0.1;
 
         If Not FOUND Then

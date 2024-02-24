@@ -63,7 +63,7 @@ BEGIN
          LEFT OUTER JOIN public.T_Dataset DS
            ON T.Dataset_ID = DS.Dataset_ID
     WHERE T.State = 0 AND
-          T.Imported < CURRENT_TIMESTAMP - Interval '5 days' AND
+          T.Imported < CURRENT_TIMESTAMP - INTERVAL '5 days' AND
           DS.Dataset_ID IS NULL;
     --
     GET DIAGNOSTICS _jobCount = ROW_COUNT;
