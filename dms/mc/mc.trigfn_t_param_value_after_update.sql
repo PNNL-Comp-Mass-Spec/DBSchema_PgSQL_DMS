@@ -26,11 +26,13 @@ BEGIN
         entered_by = SESSION_USER
     WHERE mc.t_param_value.entry_id = NEW.entry_id;
 
-    -- Add a new row to t_event_log
-    INSERT INTO mc.t_event_log( target_type,
-                                target_id,
-                                target_state,
-                                prev_target_state )
+    -- Add a new row to mc.t_event_log
+    INSERT INTO mc.t_event_log (
+        target_type,
+        target_id,
+        target_state,
+        prev_target_state
+    )
     SELECT 1 AS target_type,
            NEW.mgr_id,
            CASE NEW.value

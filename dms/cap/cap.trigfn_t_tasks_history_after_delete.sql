@@ -19,7 +19,7 @@ CREATE OR REPLACE FUNCTION cap.trigfn_t_tasks_history_after_delete() RETURNS tri
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
 
-    If Not Exists (SELECT * FROM deleted) Then
+    If Not Exists (SELECT job FROM deleted) Then
         -- RAISE NOTICE '  no affected rows; exiting';
         RETURN Null;
     End If;
@@ -30,7 +30,8 @@ BEGIN
                   H.saved,
                   Row_Number() OVER (PARTITION BY H.job ORDER BY H.saved DESC) AS SaveRank
            FROM cap.t_tasks_history H
-                INNER JOIN deleted as deletedRows on H.Job = deletedRows.job
+                INNER JOIN deleted AS deletedRows
+                  ON H.Job = deletedRows.job
          ) LookupQ
     WHERE LookupQ.job = cap.t_tasks_history.job AND
           LookupQ.saved = cap.t_tasks_history.saved;

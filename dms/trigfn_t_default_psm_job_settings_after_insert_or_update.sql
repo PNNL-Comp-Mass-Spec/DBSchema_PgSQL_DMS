@@ -33,7 +33,7 @@ BEGIN
     End If;
 
     -- Make sure the settings file is valid
-    If Not Exists (SELECT * FROM t_settings_files WHERE file_name = NEW.settings_file_name) Then
+    If Not Exists (SELECT settings_file_id FROM t_settings_files WHERE file_name = NEW.settings_file_name) Then
         RAISE EXCEPTION 'Settings file % is not defined in t_settings_files (entry_id % in t_default_psm_job_settings)',
               NEW.settings_file_name, NEW.entry_id
               USING HINT = 'See trigger function trigfn_inserted_t_default_psm_job_settings_after_insert_or_update';
@@ -44,7 +44,7 @@ BEGIN
     -- Make sure the settings file is valid for the given tool
 
     If Not Exists (
-        SELECT *
+        SELECT SF.settings_file_id
         FROM t_settings_files SF
         WHERE SF.file_name = NEW.settings_file_name AND
               SF.analysis_tool = NEW.tool_name

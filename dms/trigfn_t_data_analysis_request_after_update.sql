@@ -26,12 +26,15 @@ BEGIN
 
     If OLD.state <> NEW.state Or
        OLD.state = NEW.state And
-       Not _username IN ('postgres', 'msdadmin') Then
+       Not _username IN ('postgres', 'msdadmin')
+    Then
 
-        INSERT INTO t_data_analysis_request_updates( request_id,
-                                                     entered_by,
-                                                     old_state_id,
-                                                     new_state_id )
+        INSERT INTO t_data_analysis_request_updates (
+            request_id,
+            entered_by,
+            old_state_id,
+            new_state_id
+        )
         SELECT NEW.request_id,
                _username,
                OLD.state,

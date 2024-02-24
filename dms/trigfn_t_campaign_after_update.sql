@@ -25,40 +25,62 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_campaign_after_update() RETURNS trigg
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
-    If Not Exists (SELECT * FROM inserted) Then
+    If Not Exists (SELECT campaign_id FROM inserted) Then
         RETURN Null;
     End If;
 
-    INSERT INTO t_entity_rename_log (target_type, target_id, old_name, new_name, entered)
+    INSERT INTO t_entity_rename_log (
+        target_type,
+        target_id,
+        old_name,
+        new_name,
+        entered
+    )
     SELECT 1, inserted.campaign_id, deleted.campaign, inserted.campaign, CURRENT_TIMESTAMP
-    FROM deleted INNER JOIN
-         inserted ON deleted.campaign_id = inserted.campaign_id
+    FROM deleted
+         INNER JOIN inserted
+           ON deleted.campaign_id = inserted.campaign_id
     WHERE deleted.campaign <> inserted.campaign;   -- Use <> since campaign is never null
 
     UPDATE t_file_attachment
     SET entity_id = inserted.campaign
-    FROM deleted INNER JOIN
-         inserted ON deleted.campaign_id = inserted.campaign_id
+    FROM deleted
+         INNER JOIN inserted
+           ON deleted.campaign_id = inserted.campaign_id
     WHERE deleted.campaign <> inserted.campaign AND
           t_file_attachment.Entity_Type = 'campaign' AND
           t_file_attachment.entity_id = deleted.campaign;
 
-    INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)
+    INSERT INTO t_event_log (
+        target_type,
+        target_id,
+        target_state,
+        prev_target_state,
+        entered
+    )
     SELECT 9, inserted.campaign_id,
            (inserted.fraction_emsl_funded * 100)::int,
            (deleted.fraction_emsl_funded * 100)::int,
            CURRENT_TIMESTAMP
-    FROM deleted INNER JOIN
-         inserted ON deleted.campaign_id = inserted.campaign_id
+    FROM deleted
+         INNER JOIN inserted
+           ON deleted.campaign_id = inserted.campaign_id
     WHERE inserted.fraction_emsl_funded <> deleted.fraction_emsl_funded;              -- Use <> since fraction_emsl_funded is never null
 
-    INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)
+    INSERT INTO t_event_log (
+        target_type,
+        target_id,
+        target_state,
+        prev_target_state,
+        entered
+    )
     SELECT 10, inserted.campaign_id,
            inserted.data_release_restriction_id,
            deleted.data_release_restriction_id,
            CURRENT_TIMESTAMP
-    FROM deleted INNER JOIN
-         inserted ON deleted.campaign_id = inserted.campaign_id
+    FROM deleted
+         INNER JOIN inserted
+           ON deleted.campaign_id = inserted.campaign_id
     WHERE inserted.data_release_restriction_id <> deleted.data_release_restriction_id;   -- Use <> since data_release_restriction_id is never null
 
     RETURN null;

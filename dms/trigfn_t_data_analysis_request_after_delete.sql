@@ -20,10 +20,12 @@ BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
     -- Add entries to t_data_analysis_request_updates for each entry deleted from t_data_analysis_request
-    INSERT INTO t_data_analysis_request_updates( request_id,
-                                                 entered_by,
-                                                 old_state_id,
-                                                 new_state_id )
+    INSERT INTO t_data_analysis_request_updates (
+        request_id,
+        entered_by,
+        old_state_id,
+        new_state_id
+    )
     SELECT deleted.request_id,
            format('%s; %s', public.get_user_login_without_domain(''), COALESCE(deleted.Request_Name, 'Unknown Request')),
            deleted.state,

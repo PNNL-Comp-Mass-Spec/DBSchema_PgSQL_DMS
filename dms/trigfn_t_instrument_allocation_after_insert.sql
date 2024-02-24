@@ -18,13 +18,15 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_instrument_allocation_after_insert() 
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
-    INSERT INTO t_instrument_allocation_updates( allocation_tag,
-                                                 proposal_id,
-                                                 fiscal_year,
-                                                 allocated_hours_old,
-                                                 allocated_hours_new,
-                                                 comment,
-                                                 entered)
+    INSERT INTO t_instrument_allocation_updates (
+        allocation_tag,
+        proposal_id,
+        fiscal_year,
+        allocated_hours_old,
+        allocated_hours_new,
+        comment,
+        entered
+    )
     SELECT allocation_tag,
            proposal_id,
            fiscal_year,

@@ -34,10 +34,17 @@ BEGIN
         RETURN Null;
     End If;
 
-    INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)
+    INSERT INTO t_event_log (
+        target_type,
+        target_id,
+        target_state,
+        prev_target_state,
+        entered
+    )
     SELECT 5, inserted.job, inserted.job_state_id, deleted.job_state_id, CURRENT_TIMESTAMP
-    FROM deleted INNER JOIN
-         inserted ON deleted.job = inserted.job
+    FROM deleted
+         INNER JOIN inserted
+           ON deleted.job = inserted.job
     WHERE deleted.job_state_id <> inserted.job_state_id;    -- Use <> since job_state_id is never null
 
     UPDATE t_analysis_job

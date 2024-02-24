@@ -33,7 +33,7 @@ BEGIN
     End If;
 
     -- Make sure the parameter file is valid
-    If Not Exists (SELECT * FROM t_param_files WHERE param_file_name = NEW.parameter_file_name) Then
+    If Not Exists (SELECT param_file_id FROM t_param_files WHERE param_file_name = NEW.parameter_file_name) Then
         RAISE EXCEPTION 'Parameter file % is not defined in t_param_files (entry_id % in t_default_psm_job_parameters)',
               NEW.parameter_file_name, NEW.entry_id
               USING HINT = 'See trigger function trigfn_t_default_psm_job_parameters_after_insert_or_update';
@@ -44,7 +44,7 @@ BEGIN
     -- Make sure the parameter file is valid for the given tool
 
     If Not Exists (
-        SELECT *
+        SELECT PF.param_file_id
         FROM t_param_files PF
              INNER JOIN t_param_file_types PFT
                ON PFT.param_file_type_id = PF.param_file_type_id

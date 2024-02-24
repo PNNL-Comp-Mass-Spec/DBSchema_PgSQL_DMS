@@ -39,7 +39,13 @@ BEGIN
     -- Use <> since archive_state_id is never null
     If OLD.archive_state_id <> NEW.archive_state_id Then
 
-        INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)
+        INSERT INTO t_event_log (
+            target_type,
+            target_id,
+            target_state,
+            prev_target_state,
+            entered
+        )
         SELECT 6, NEW.dataset_id, NEW.archive_state_id, OLD.archive_state_id, CURRENT_TIMESTAMP;
 
         UPDATE t_dataset_archive
@@ -63,7 +69,13 @@ BEGIN
     -- Use IS DISTINCT FROM since archive_update_state_id can be null
     If OLD.archive_update_state_id IS DISTINCT FROM NEW.archive_update_state_id Then
 
-        INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)
+        INSERT INTO t_event_log (
+            target_type,
+            target_id,
+            target_state,
+            prev_target_state,
+            entered
+        )
         SELECT 7, NEW.dataset_id, NEW.archive_update_state_id, OLD.archive_update_state_id, CURRENT_TIMESTAMP;
 
         UPDATE t_dataset_archive
@@ -75,7 +87,8 @@ BEGIN
     -- Use <> with archive_state_id since never null
     -- In contrast, archive_update_state_id could be null
     If OLD.archive_state_id <> NEW.archive_state_id Or
-       OLD.archive_update_state_id IS DISTINCT FROM NEW.archive_update_state_id Then
+       OLD.archive_update_state_id IS DISTINCT FROM NEW.archive_update_state_id
+    Then
 
         UPDATE t_analysis_job
         SET state_name_cached = COALESCE(AJDAS.job_state, '')
@@ -100,7 +113,8 @@ BEGIN
        OLD.storage_path_id <> NEW.storage_path_id Or
        OLD.instrument_data_purged <> NEW.instrument_data_purged Or
        OLD.qc_data_purged <> NEW.qc_data_purged Or
-       OLD.myemsl_state <> NEW.myemsl_state Then
+       OLD.myemsl_state <> NEW.myemsl_state
+    Then
 
         UPDATE t_cached_dataset_links
         SET update_required = 1

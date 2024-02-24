@@ -21,18 +21,19 @@ BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
     INSERT INTO t_mass_correction_factors_change_history (
-                mass_correction_id, mass_correction_tag, description,
-                monoisotopic_mass, average_mass,
-                affected_atom, original_source, original_source_name,
-                alternative_name, empirical_formula,
-                monoisotopic_mass_change, average_mass_change,
-                entered, entered_by)
-    SELECT  mass_correction_id, mass_correction_tag, description,
-            monoisotopic_mass, average_mass,
-            affected_atom, original_source, original_source_name,
-            alternative_name, empirical_formula,
-            0 as monoisotopic_mass_change, 0 as average_mass_change,
-            CURRENT_TIMESTAMP, SESSION_USER
+        mass_correction_id, mass_correction_tag, description,
+        monoisotopic_mass, average_mass,
+        affected_atom, original_source, original_source_name,
+        alternative_name, empirical_formula,
+        monoisotopic_mass_change, average_mass_change,
+        entered, entered_by
+    )
+    SELECT mass_correction_id, mass_correction_tag, description,
+           monoisotopic_mass, average_mass,
+           affected_atom, original_source, original_source_name,
+           alternative_name, empirical_formula,
+           0 as monoisotopic_mass_change, 0 as average_mass_change,
+           CURRENT_TIMESTAMP, SESSION_USER
     FROM inserted;
 
     RETURN null;

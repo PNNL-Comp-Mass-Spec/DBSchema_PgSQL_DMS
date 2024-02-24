@@ -97,7 +97,13 @@ BEGIN
         FROM t_requested_run_state_name
         WHERE state_name = NEW.state_name;
 
-        INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)
+        INSERT INTO t_event_log (
+            target_type,
+            target_id,
+            target_state,
+            prev_target_state,
+            entered
+        )
         SELECT 11 AS target_type,
                NEW.request_id,
                _stateIdNew,
@@ -116,7 +122,13 @@ BEGIN
         FROM t_requested_run_state_name
         WHERE state_name = NEW.state_name;
 
-        INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)
+        INSERT INTO t_event_log (
+            target_type,
+            target_id,
+            target_state,
+            prev_target_state,
+            entered
+        )
         SELECT 11 AS target_type,
                NEW.request_id,
                _stateIdNew,
@@ -138,7 +150,12 @@ BEGIN
         -- Use <> since request_name is never null
         If OLD.request_name <> NEW.request_name Then
 
-            INSERT INTO T_Entity_Rename_Log ( target_type, target_id, old_name, new_name )
+            INSERT INTO T_Entity_Rename_Log (
+                target_type,
+                target_id,
+                old_name,
+                new_name
+            )
             VALUES (11,
                     NEW.request_id,
                     OLD.request_name,
@@ -159,7 +176,12 @@ BEGIN
             FROM t_dataset
             WHERE dataset_id = NEW.dataset_id;
 
-            INSERT INTO T_Entity_Rename_Log ( target_type, Target_ID, Old_Name, New_Name )
+            INSERT INTO T_Entity_Rename_Log (
+                target_type,
+                target_id,
+                old_name,
+                new_name
+            )
             VALUES (14,
                     NEW.request_id,
                     format('%s: %s', OLD.dataset_id, COALESCE(_datasetNameOld, '??')),
@@ -183,7 +205,12 @@ BEGIN
             FROM t_experiments
             WHERE exp_id = NEW.exp_id;
 
-            INSERT INTO t_entity_rename_log ( target_type, target_id, old_name, new_name )
+            INSERT INTO t_entity_rename_log (
+                target_type,
+                target_id,
+                old_name,
+                new_name
+            )
             VALUES (15,
                     NEW.request_id,
                     format('%s: %s', OLD.exp_id, _experimentNameOld),
@@ -197,7 +224,12 @@ BEGIN
     If TG_OP = 'INSERT' Or Not NEW.dataset_id Is Null And OLD.dataset_id IS DISTINCT FROM NEW.dataset_id Then
 
         -- Check whether another requested run already has the new Dataset ID
-        INSERT INTO T_Entity_Rename_Log ( target_type, Target_ID, Old_Name, New_Name )
+        INSERT INTO t_entity_rename_log (
+            target_type,
+            target_id,
+            old_name,
+            new_name
+        )
         SELECT 14 AS target_type,
                NEW.request_id,
                format('Dataset ID %s is already referenced by Request ID %s', NEW.dataset_id, RR.request_id),

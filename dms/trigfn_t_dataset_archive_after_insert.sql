@@ -24,16 +24,28 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_dataset_archive_after_insert() RETURN
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
-    If Not Exists (SELECT * FROM inserted) Then
+    If Not Exists (SELECT dataset_id FROM inserted) Then
         RETURN Null;
     End If;
 
-    INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)
+    INSERT INTO t_event_log (
+        target_type,
+        target_id,
+        target_state,
+        prev_target_state,
+        entered
+    )
     SELECT 6, inserted.dataset_id, inserted.archive_state_id, 0, CURRENT_TIMESTAMP
     FROM inserted
     ORDER BY inserted.dataset_id;
 
-    INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)
+    INSERT INTO t_event_log (
+        target_type,
+        target_id,
+        target_state,
+        prev_target_state,
+        entered
+    )
     SELECT 7, inserted.dataset_id, inserted.archive_update_state_id, 0, CURRENT_TIMESTAMP
     FROM inserted
     ORDER BY inserted.dataset_id;

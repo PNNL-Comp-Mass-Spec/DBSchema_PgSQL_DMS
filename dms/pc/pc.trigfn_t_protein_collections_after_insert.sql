@@ -17,11 +17,13 @@ CREATE OR REPLACE FUNCTION pc.trigfn_t_protein_collections_after_insert() RETURN
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
 
-    -- Add a new row to t_event_log
-    INSERT INTO pc.t_event_log( target_type,
-                                target_id,
-                                target_state,
-                                prev_target_state )
+    -- Add a new row to pc.t_event_log
+    INSERT INTO pc.t_event_log (
+        target_type,
+        target_id,
+        target_state,
+        prev_target_state
+    )
     SELECT 1 AS target_type,
            inserted.protein_collection_id,
            inserted.collection_state_id AS target_state,

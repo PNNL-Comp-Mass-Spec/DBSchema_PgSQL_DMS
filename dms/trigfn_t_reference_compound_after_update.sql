@@ -23,7 +23,13 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_reference_compound_after_update() RET
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
-    INSERT INTO t_entity_rename_log (target_type, target_id, old_name, new_name, entered)
+    INSERT INTO t_entity_rename_log (
+        target_type,
+        target_id,
+        old_name,
+        new_name,
+        entered
+    )
     SELECT 13, NEW.compound_id,
            format('%s (modifications %s, Gene %s)', OLD.compound_name, COALESCE(OLD.modifications, ''), COALESCE(OLD.gene_name, '')),
            format('%s (modifications %s, Gene %s)', NEW.compound_name, COALESCE(NEW.modifications, ''), COALESCE(NEW.gene_name, '')),

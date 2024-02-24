@@ -42,7 +42,7 @@ BEGIN
     End If;
 
     If _validateSettingsFile Then
-        If Not Exists (SELECT * FROM t_settings_files WHERE file_name = NEW.settings_file_name) Then
+        If Not Exists (SELECT settings_file_id FROM t_settings_files WHERE file_name = NEW.settings_file_name) Then
             RAISE EXCEPTION 'Settings file % is not defined in t_settings_files (job % in t_analysis_job)',
                   NEW.settings_file_name, NEW.job
                   USING HINT = 'See trigger function trigfn_t_analysis_job_after_insert_or_update_validate';

@@ -42,11 +42,13 @@ BEGIN
         RETURN null;
     End If;
 
-    -- Add a new row to t_event_log
-    INSERT INTO pc.t_event_log( target_type,
-                                target_id,
-                                target_state,
-                                prev_target_state )
+    -- Add a new row to pc.t_event_log
+    INSERT INTO pc.t_event_log (
+        target_type,
+        target_id,
+        target_state,
+        prev_target_state
+    )
     SELECT 1 AS target_type,
            deleted.protein_collection_id,
            0 AS target_state,

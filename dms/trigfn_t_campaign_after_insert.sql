@@ -21,18 +21,36 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_campaign_after_insert() RETURNS trigg
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
-    INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)
+    INSERT INTO t_event_log (
+        target_type,
+        target_id,
+        target_state,
+        prev_target_state,
+        entered
+    )
     SELECT 1, inserted.campaign_id, 1, 0, CURRENT_TIMESTAMP
     FROM inserted
     ORDER BY inserted.campaign_id;
 
-    INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)
+    INSERT INTO t_event_log (
+        target_type,
+        target_id,
+        target_state,
+        prev_target_state,
+        entered
+    )
     SELECT 9, inserted.campaign_id, (inserted.fraction_emsl_funded * 100)::int, 0, CURRENT_TIMESTAMP
     FROM inserted
     WHERE inserted.fraction_emsl_funded > 0
     ORDER BY inserted.campaign_id;
 
-    INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)
+    INSERT INTO t_event_log (
+        target_type,
+        target_id,
+        target_state,
+        prev_target_state,
+        entered
+    )
     SELECT 10, inserted.campaign_id, inserted.data_release_restriction_id, 0, CURRENT_TIMESTAMP
     FROM inserted
     WHERE inserted.data_release_restriction_id > 0

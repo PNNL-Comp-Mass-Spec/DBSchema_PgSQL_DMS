@@ -19,7 +19,7 @@ CREATE OR REPLACE FUNCTION sw.trigfn_t_job_parameters_history_after_delete() RET
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
 
-    If Not Exists (SELECT * FROM deleted) Then
+    If Not Exists (SELECT job FROM deleted) Then
         -- RAISE NOTICE '  no affected rows; exiting';
         RETURN Null;
     End If;
@@ -30,7 +30,8 @@ BEGIN
                   H.saved,
                   Row_Number() OVER (PARTITION BY H.job ORDER BY H.saved DESC) AS SaveRank
            FROM sw.t_job_parameters_history H
-                INNER JOIN deleted as deletedRows on H.job = deletedRows.job
+                INNER JOIN deleted AS deletedRows
+                  ON H.job = deletedRows.job
          ) LookupQ
     WHERE LookupQ.job = sw.t_job_parameters_history.job AND
           LookupQ.saved = sw.t_job_parameters_history.saved;

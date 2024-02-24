@@ -36,7 +36,7 @@ BEGIN
         If Not NEW.hms_auto_supersede Is null Then
 
             -- Make sure the settings file exists
-            If Not Exists (SELECT * FROM t_settings_files WHERE file_name = NEW.hms_auto_supersede) Then
+            If Not Exists (SELECT settings_file_id FROM t_settings_files WHERE file_name = NEW.hms_auto_supersede) Then
                 RAISE EXCEPTION 'Settings file % is not defined in t_settings_files (referenced by hms_auto_supersede for settings_file_id % in t_settings_files)',
                       NEW.hms_auto_supersede, NEW.settings_file_id
                       USING HINT = 'See trigger function trigfn_t_settings_files_after_update';
@@ -46,7 +46,7 @@ BEGIN
 
             -- Make sure the settings file is valid for the given tool
             If Not Exists (
-                SELECT *
+                SELECT settings_file_id
                 FROM t_settings_files
                 WHERE file_name = NEW.hms_auto_supersede AND
                       analysis_tool = NEW.analysis_tool
@@ -64,7 +64,7 @@ BEGIN
         If Not NEW.msgfplus_auto_centroid Is null Then
 
             -- Make sure the settings file exists
-            If Not Exists (SELECT * FROM t_settings_files WHERE file_name = NEW.msgfplus_auto_centroid) Then
+            If Not Exists (SELECT settings_file_id FROM t_settings_files WHERE file_name = NEW.msgfplus_auto_centroid) Then
                 RAISE EXCEPTION 'Settings file % is not defined in t_settings_files (referenced by msgfplus_auto_centroid for settings_file_id % in t_settings_files)',
                       NEW.msgfplus_auto_centroid, NEW.settings_file_id
                       USING HINT = 'See trigger function trigfn_t_settings_files_after_update';
@@ -74,7 +74,7 @@ BEGIN
 
             -- Make sure the settings file is valid for the given tool
             If Not Exists (
-                SELECT *
+                SELECT settings_file_id
                 FROM t_settings_files
                 WHERE file_name = NEW.msgfplus_auto_centroid AND
                       analysis_tool = NEW.analysis_tool

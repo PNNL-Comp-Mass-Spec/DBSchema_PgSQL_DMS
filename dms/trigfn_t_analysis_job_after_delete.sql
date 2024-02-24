@@ -45,15 +45,14 @@ BEGIN
     WHERE OLD.dataset_id = dataset_id;
 
     -- Add an entry to t_event_log for the deleted job
-    INSERT INTO t_event_log
-        (
-            target_type,
-            target_id,
-            target_state,
-            prev_target_state,
-            entered,
-            entered_by
-        )
+    INSERT INTO t_event_log (
+        target_type,
+        target_id,
+        target_state,
+        prev_target_state,
+        entered,
+        entered_by
+    )
     SELECT 5 AS target_type,
            OLD.job AS target_id,
            0 AS target_state,

@@ -17,9 +17,12 @@ CREATE OR REPLACE FUNCTION cap.trigfn_t_tasks_after_insert() RETURNS trigger
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
 
-    INSERT INTO cap.t_task_events
-        (job, target_state, prev_target_state)
-    SELECT inserted.job, inserted.State as New_State, 0 as Old_State
+    INSERT INTO cap.t_task_events (
+        job,
+        target_state,
+        prev_target_state
+    )
+    SELECT inserted.job, inserted.State AS New_State, 0 AS Old_State
     FROM inserted
     WHERE inserted.State <> 0
     ORDER BY inserted.job;

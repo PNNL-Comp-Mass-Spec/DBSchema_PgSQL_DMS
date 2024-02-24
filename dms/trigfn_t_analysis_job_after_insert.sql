@@ -22,7 +22,13 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_analysis_job_after_insert() RETURNS t
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
-    INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)
+    INSERT INTO t_event_log (
+        target_type,
+        target_id,
+        target_state,
+        prev_target_state,
+        entered
+    )
     SELECT 5, inserted.job, inserted.job_state_id, 0, CURRENT_TIMESTAMP
     FROM inserted
     ORDER BY inserted.job;
@@ -31,8 +37,10 @@ BEGIN
     SET state_name_cached = COALESCE(AJDAS.job_State, ''),
         analysis_tool_cached = COALESCE(Tool.analysis_tool, '')
     FROM inserted INNER JOIN
-         V_Analysis_Job_and_Dataset_Archive_State AJDAS ON inserted.job = AJDAS.job INNER JOIN
-         t_analysis_tool Tool ON inserted.analysis_tool_id = Tool.analysis_tool_id
+         V_Analysis_Job_and_Dataset_Archive_State AJDAS
+           ON inserted.job = AJDAS.job
+         INNER JOIN t_analysis_tool Tool
+           ON inserted.analysis_tool_id = Tool.analysis_tool_id
     WHERE t_analysis_job.job = inserted.job;
 
     RETURN null;

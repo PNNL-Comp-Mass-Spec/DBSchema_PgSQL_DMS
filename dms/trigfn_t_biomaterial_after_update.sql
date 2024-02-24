@@ -21,16 +21,24 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_biomaterial_after_update() RETURNS tr
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
-    INSERT INTO t_entity_rename_log (target_type, target_id, old_name, new_name, entered)
+    INSERT INTO t_entity_rename_log (
+        target_type,
+        target_id,
+        old_name,
+        new_name,
+        entered
+    )
     SELECT 2, inserted.biomaterial_id, deleted.biomaterial_Name, inserted.biomaterial_Name, CURRENT_TIMESTAMP
-    FROM deleted INNER JOIN
-         inserted ON deleted.biomaterial_ID = inserted.biomaterial_ID
+    FROM deleted
+         INNER JOIN inserted
+           ON deleted.biomaterial_ID = inserted.biomaterial_ID
     WHERE deleted.biomaterial_name <> inserted.biomaterial_name;        -- Use <> since biomaterial_name is never null
 
     UPDATE t_file_attachment
     SET entity_id = inserted.biomaterial_Name
-    FROM deleted INNER JOIN
-         inserted ON deleted.biomaterial_ID = inserted.biomaterial_ID
+    FROM deleted
+         INNER JOIN inserted
+           ON deleted.biomaterial_ID = inserted.biomaterial_ID
     WHERE deleted.biomaterial_name <> inserted.biomaterial_name AND     -- Use <> since biomaterial_name is never null
           t_file_attachment.Entity_Type = 'cell_culture' AND            -- Use "cell_culture" here for historical reasons
           t_file_attachment.entity_id = deleted.biomaterial_Name;

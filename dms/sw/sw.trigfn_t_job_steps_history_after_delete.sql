@@ -19,7 +19,7 @@ CREATE OR REPLACE FUNCTION sw.trigfn_t_job_steps_history_after_delete() RETURNS 
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
 
-    If Not Exists (SELECT * FROM deleted) Then
+    If Not Exists (SELECT job FROM deleted) Then
         -- RAISE NOTICE '  no affected rows; exiting';
         RETURN Null;
     End If;
@@ -31,7 +31,8 @@ BEGIN
                   H.saved,
                   Row_Number() OVER (PARTITION BY H.job, H.step ORDER BY H.saved DESC) AS SaveRank
            FROM sw.t_job_Steps_History H
-                INNER JOIN deleted as deletedRows on H.Job = deletedRows.job
+                INNER JOIN deleted AS deletedRows
+                  ON H.Job = deletedRows.job
          ) LookupQ
     WHERE LookupQ.job = sw.t_job_Steps_History.job AND
           LookupQ.step = sw.t_job_Steps_History.step AND

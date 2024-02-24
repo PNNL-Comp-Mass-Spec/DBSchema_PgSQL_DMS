@@ -34,7 +34,13 @@ BEGIN
     -- Use <> since dataset_state_id is never null
     If OLD.dataset_state_id <> NEW.dataset_state_id Then
 
-        INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)
+        INSERT INTO t_event_log (
+            target_type,
+            target_id,
+            target_state,
+            prev_target_state,
+            entered
+        )
         SELECT 4, NEW.dataset_id, NEW.dataset_state_id, OLD.dataset_state_id, CURRENT_TIMESTAMP;
 
         UPDATE t_dataset
@@ -46,7 +52,13 @@ BEGIN
     -- Use <> since dataset_rating_id is never null
     If OLD.dataset_rating_id <> NEW.dataset_rating_id Then
 
-        INSERT INTO t_event_log (target_type, target_id, target_state, prev_target_state, entered)
+        INSERT INTO t_event_log (
+            target_type,
+            target_id,
+            target_state,
+            prev_target_state,
+            entered
+        )
         SELECT 8, NEW.dataset_id, NEW.dataset_rating_id, OLD.dataset_rating_id, CURRENT_TIMESTAMP;
 
     End If;
@@ -54,7 +66,13 @@ BEGIN
     -- Use <> since dataset name is never null
     If OLD.dataset <> NEW.dataset Then
 
-        INSERT INTO t_entity_rename_log (target_type, target_id, old_name, new_name, entered)
+        INSERT INTO t_entity_rename_log (
+            target_type,
+            target_id,
+            old_name,
+            new_name,
+            entered
+        )
         SELECT 4, NEW.dataset_id, OLD.dataset, NEW.dataset, CURRENT_TIMESTAMP;
 
     End If;

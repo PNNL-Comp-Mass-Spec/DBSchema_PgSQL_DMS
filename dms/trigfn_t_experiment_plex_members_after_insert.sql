@@ -19,21 +19,20 @@ BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
     -- Add entries to t_experiment_plex_members_history for each mapping added to t_experiment_plex_members
-    INSERT INTO t_experiment_plex_members_history
-        (
-            plex_exp_id,
-            channel,
-            exp_id,
-            state,
-            entered,
-            entered_by
-        )
-    SELECT  plex_exp_id,
-            channel,
-            exp_id,
-            1 AS state,
-            CURRENT_TIMESTAMP,
-            SESSION_USER
+    INSERT INTO t_experiment_plex_members_history (
+        plex_exp_id,
+        channel,
+        exp_id,
+        state,
+        entered,
+        entered_by
+    )
+    SELECT plex_exp_id,
+           channel,
+           exp_id,
+           1 AS state,
+           CURRENT_TIMESTAMP,
+           SESSION_USER
     FROM inserted
     ORDER BY plex_exp_id, channel;
 

@@ -19,11 +19,13 @@ CREATE OR REPLACE FUNCTION mc.trigfn_t_param_value_after_insert() RETURNS trigge
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
 
-    -- Add a new row to t_event_log
-    INSERT INTO mc.t_event_log( target_type,
-                                target_id,
-                                target_state,
-                                prev_target_state )
+    -- Add a new row to mc.t_event_log
+    INSERT INTO mc.t_event_log (
+        target_type,
+        target_id,
+        target_state,
+        prev_target_state
+    )
     SELECT 1 AS target_type,
            inserted.mgr_id,
            CASE inserted.value
