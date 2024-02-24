@@ -121,7 +121,7 @@ BEGIN
         RAISE INFO '%', _alterEnteredByMessage;
 
         If _paramName::citext = 'mgractive' Or _paramTypeID = 17 Then
-            -- Triggers trig_i_t_param_value and trig_u_t_param_value make an entry in
+            -- Triggers mc.trig_t_param_value_after_insert and mc.trig_t_param_value_after_update make an entry in
             -- mc.t_event_log whenever mgractive (param TypeID = 17) is changed
 
             -- Call alter_event_log_entry_user_multi_id to alter the entered_by field in mc.t_event_log

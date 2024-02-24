@@ -101,7 +101,7 @@ BEGIN
 
     -----------------------------------------
     -- Update progress and ETA for failed jobs
-    -- This logic is also used by trigger trig_u_AnalysisJob
+    -- This logic is also used by trigger trigfn_t_analysis_job_after_update
     -----------------------------------------
 
     UPDATE Tmp_JobsToUpdate
@@ -111,7 +111,7 @@ BEGIN
 
     -----------------------------------------
     -- Update progress and ETA for new, holding, inactive, or Special Proc. Waiting jobs
-    -- This logic is also used by trigger trig_u_AnalysisJob
+    -- This logic is also used by trigger trigfn_t_analysis_job_after_update
     -----------------------------------------
 
     UPDATE Tmp_JobsToUpdate
@@ -121,7 +121,7 @@ BEGIN
 
     -----------------------------------------
     -- Update progress and ETA for completed jobs
-    -- This logic is also used by trigger trig_u_AnalysisJob
+    -- This logic is also used by trigger trigfn_t_analysis_job_after_update
     -----------------------------------------
 
     UPDATE Tmp_JobsToUpdate

@@ -120,11 +120,11 @@ BEGIN
         -- Find datasets that need to be updated
         --
         -- Notes regarding t_cached_dataset_folder_paths
-        --   Trigger trig_u_Dataset_Folder_Paths will set update_required to 1 when a row is changed in t_dataset_folder_paths
+        --   Trigger trig_t_cached_dataset_folder_paths_after_update will set update_required to 1 when a row is changed in t_cached_dataset_folder_paths
         --
         -- Notes regarding t_dataset_archive
-        --   Trigger trig_i_Dataset_Archive will set update_required to 1 when a dataset is added to t_dataset_archive
-        --   Trigger trig_u_Dataset_Archive will set update_required to 1 when any of the following columns is updated:
+        --   Trigger trig_t_dataset_archive_after_insert will set update_required to 1 when a dataset is added to t_dataset_archive
+        --   Trigger trig_t_dataset_archive_after_update will set update_required to 1 when any of the following columns is updated:
         --     archive_state_id, storage_path_id, instrument_data_purged, myemsl_state, qc_data_purged
         ------------------------------------------------
 
