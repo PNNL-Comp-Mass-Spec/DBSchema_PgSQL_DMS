@@ -1,14 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_instrument_usage_allocations_xml
-(
-    _parameterList text = '',
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_instrument_usage_allocations_xml(text, boolean, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_instrument_usage_allocations_xml(IN _parameterlist text DEFAULT ''::text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -30,6 +26,13 @@ AS $$
 **          <r o="i" p="29591" g="FT" a="14.5" x="Comment"/>
 **          <r o="d" p="33200" g="FT" a="14.5" x="Comment"/>
 **
+**      Abbreviations:
+**        o: Operation, where operation "i" means increment, "d" means decrement, and anything else means set
+**        p: Proposal
+**        g: Instrument Group
+**        a: Allocation
+**        x: Comment
+**
 **  Arguments:
 **    _parameterList    XML specifying allocation hours
 **    _infoOnly         When true, preview the changes that would be made
@@ -46,7 +49,7 @@ AS $$
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/24/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -56,9 +59,12 @@ DECLARE
     _authorized boolean;
 
     _fiscalYear text;
+    _currentYear int;
     _fy int;
     _msg2 text;
-    _xml AS xml;
+    _xml xml;
+    _updateCount int;
+    _rowNumber int;
 
     _sqlState text;
     _exceptionMessage text;
@@ -94,26 +100,28 @@ BEGIN
         -- Validate the inputs
         -----------------------------------------------------------
 
-        _infoOnly := Coalesce(_infoOnly, false);
+        _parameterList := Trim(Coalesce(_parameterList, ''));
+        _infoOnly      := Coalesce(_infoOnly, false);
 
         -----------------------------------------------------------
-        -- Temp table to hold operations
+        -- Temporary table to hold operations
         -----------------------------------------------------------
 
         CREATE TEMP TABLE Tmp_Allocation_Operations (
-            Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+            Entry_ID   int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
             Allocation text NULL,
-            InstGroup text NULL,
-            Proposal text NULL,
-            Comment text NULL,
-            FY int,
-            Operation text NULL -- 'i' -> increment, 'd' -> decrement, anything else -> set
-        )
+            InstGroup  text NULL,
+            Proposal   text NULL,
+            Comment    text NULL,
+            FY         int NOT NULL,
+            Operation  text NULL -- 'i' -> increment, 'd' -> decrement, anything else -> set
+        );
 
         -----------------------------------------------------------
-        -- Copy _parameterList text variable into the XML variable
+        -- Convert _parameterList into rooted XML
         -----------------------------------------------------------
-        _xml := _parameterList;
+
+        _xml := public.try_cast(format('<root>%s</root>', _parameterList), null::xml);
 
         -----------------------------------------------------------
         -- Resolve fiscal year
@@ -121,29 +129,47 @@ BEGIN
         --   <c fiscal_year="2022"/>
         -----------------------------------------------------------
 
-        _fiscalYear := (xpath('//c/@fiscal_year', _xml))[1]::text;
+        _currentYear := Extract(year from CURRENT_TIMESTAMP);
+        _fiscalYear  := (xpath('//c/@fiscal_year', _xml))[1]::text;
 
-        _fy := public.try_cast(_fiscalYear, Extract(year from CURRENT_TIMESTAMP));
-
-        If _fy Is Null Then
-            _fy := Extract(year from CURRENT_TIMESTAMP);
-        End If;
+        _fy := Coalesce(public.try_cast(_fiscalYear, _currentYear), _currentYear);
 
         -----------------------------------------------------------
         -- Populate operations table from input parameters
         -- Example XML to parse:
         --   <r o="i" p="29591" g="FT" a="14.5" x="Comment"/>
+        --   <r o="d" p="33200" g="FT" a="14.5" x="Comment"/>
         -----------------------------------------------------------
 
-        INSERT INTO Tmp_Allocation_Operations
-            (Operation, Proposal, InstGroup, Allocation, Comment, FY)
-        SELECT
-            Coalesce((xpath('//r/@o', _xml))[1]::text, '') AS Operation,    -- If missing from the XML, the merge will treat this as 'Set'
-            (xpath('//r/@p', _xml))[1]::text AS Proposal,
-            (xpath('//r/@g', _xml))[1]::text AS InstGroup,
-            (xpath('//r/@a', _xml))[1]::text AS Allocation,
-            Coalesce((xpath('//r/@x', _xml))[1]::text, '') AS Comment,
-            _fy AS FY;
+        -- Count the number of instances of '<r ' in the XML
+        SELECT COUNT(*)
+        INTO _updateCount
+        FROM ( SELECT (regexp_matches(_parameterList, '<r ', 'g'))[1]
+             ) MatchQ;
+
+        If Coalesce(_updateCount, 0) < 1 Then
+            _updateCount := 1;
+        End If;
+
+        FOR _rowNumber IN 1 .. _updateCount
+        LOOP
+            INSERT INTO Tmp_Allocation_Operations (
+                Operation,
+                Proposal,
+                InstGroup,
+                Allocation,
+                Comment,
+                FY
+            )
+            SELECT
+                Coalesce((xpath('//r/@o', _xml))[_rowNumber]::text, '') AS Operation,    -- If missing from the XML, the merge will treat this as 'Set'
+                         (xpath('//r/@p', _xml))[_rowNumber]::text      AS Proposal,
+                         (xpath('//r/@g', _xml))[_rowNumber]::text      AS InstGroup,
+                         (xpath('//r/@a', _xml))[_rowNumber]::text      AS Allocation,
+                Coalesce((xpath('//r/@x', _xml))[_rowNumber]::text, '') AS Comment,
+                _fy AS FY;
+
+        END LOOP;
 
         -----------------------------------------------------------
         -- Call update_instrument_usage_allocations_work to perform the work
@@ -155,6 +181,9 @@ BEGIN
                         _returnCode  => _returnCode,
                         _callingUser => _callingUser,
                         _infoOnly    => _infoOnly);
+
+        DROP TABLE Tmp_Allocation_Operations;
+        RETURN;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -177,4 +206,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_instrument_usage_allocations_xml IS 'UpdateInstrumentUsageAllocationsXML';
+
+ALTER PROCEDURE public.update_instrument_usage_allocations_xml(IN _parameterlist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_instrument_usage_allocations_xml(IN _parameterlist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_instrument_usage_allocations_xml(IN _parameterlist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UpdateInstrumentUsageAllocationsXML';
+
