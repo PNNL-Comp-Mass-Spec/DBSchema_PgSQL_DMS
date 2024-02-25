@@ -1,12 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.store_project_usage_stats
-(
-    _windowDays int = 7,
-    _endDate timestamp = null,
-    _infoOnly boolean = true
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: store_project_usage_stats(integer, timestamp without time zone, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.store_project_usage_stats(IN _windowdays integer DEFAULT 7, IN _enddate timestamp without time zone DEFAULT NULL::timestamp without time zone, IN _infoonly boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -19,6 +17,8 @@ AS $$
 **    _windowDays   Number of days prior to _endDate (or the current date) to examine
 **    _endDate      End date/time; if null, uses the current date/time
 **    _infoOnly     When true, preview the new stats
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   12/18/2015 mem - Initial version
@@ -27,7 +27,7 @@ AS $$
 **          08/02/2018 mem - T_Sample_Prep_Request now tracks EUS User ID as an integer
 **          05/16/2022 mem - Add renamed proposal type 'Resource Owner'
 **          05/18/2022 mem - Add Capacity, Partner, and Staff Time proposal types
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/24/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -41,18 +41,20 @@ DECLARE
     _previewData record;
     _infoData text;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     -----------------------------------------
     -- Validate the inputs
     -----------------------------------------
 
     _windowDays := Coalesce(_windowDays, 7);
+    _endDate    := Coalesce(_endDate, CURRENT_TIMESTAMP);
+    _infoOnly   := Coalesce(_infoOnly, false);
 
     If _windowDays < 1 Then
         _windowDays := 1;
     End If;
-
-    _endDate  := Coalesce(_endDate, CURRENT_TIMESTAMP);
-    _infoOnly := Coalesce(_infoOnly, false);
 
     -- Round _endDate backward to the nearest hour
     _endDate := date_trunc('hour', _endDate);
@@ -68,57 +70,60 @@ BEGIN
 
     CREATE TEMP TABLE Tmp_Project_Usage_Stats(
         Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        StartDate timestamp NOT NULL,
-        EndDate timestamp NOT NULL,
-        TheYear int NOT NULL,
-        WeekOfYear int NOT NULL,
+        Start_Date timestamp NOT NULL,
+        End_Date timestamp NOT NULL,
+        The_Year int NOT NULL,
+        Week_Of_Year int NOT NULL,
         Proposal_ID text NULL,
-        work_package text NULL,
+        Work_Package text NULL,
         Proposal_Active int NOT NULL,
         Project_Type_ID int NOT NULL,
         Samples int NOT NULL,
         Datasets int NOT NULL,
         Jobs int NOT NULL,
-        EUS_UsageType int NOT NULL,
+        EUS_Usage_Type_ID int NOT NULL,
         Proposal_Type text NULL,
         Proposal_User text NULL,
         Instrument_First text NULL,
         Instrument_Last text NULL,
-        JobTool_First text NULL,
-        JobTool_Last text NULL,
-    )
+        Job_Tool_First text NULL,
+        Job_Tool_Last text NULL
+    );
 
     -----------------------------------------
     -- Find datasets run within the date range
     -----------------------------------------
 
-    INSERT INTO Tmp_Project_Usage_Stats( StartDate,
-                                         EndDate,
-                                         TheYear,
-                                         WeekOfYear,
-                                         Proposal_ID,
-                                         work_package,
-                                         Proposal_Active,
-                                         Project_Type_ID,
-                                         Samples,
-                                         Datasets,
-                                         Jobs,
-                                         EUS_UsageType,
-                                         Proposal_Type,
-                                         Proposal_User,
-                                         Instrument_First,
-                                         Instrument_Last,
-                                         JobTool_First,
-                                         JobTool_Last )
-    SELECT _startdate AS StartDate,
-           _endDate AS EndDate,
-           _endDateYear AS TheYear,
-           _endDateWeek AS WeekOfYear,
+    INSERT INTO Tmp_Project_Usage_Stats (
+        Start_Date,
+        End_Date,
+        The_Year,
+        Week_Of_Year,
+        Proposal_ID,
+        work_package,
+        Proposal_Active,
+        Project_Type_ID,
+        Samples,
+        Datasets,
+        Jobs,
+        EUS_Usage_Type_ID,
+        Proposal_Type,
+        Proposal_User,
+        Instrument_First,
+        Instrument_Last,
+        Job_Tool_First,
+        Job_Tool_Last
+    )
+    SELECT _startdate   AS Start_Date,
+           _endDate     AS End_Date,
+           _endDateYear AS The_Year,
+           _endDateWeek AS Week_Of_Year,
            EUSPro.Proposal_ID,
            RR.work_package,
            CASE
                WHEN CURRENT_TIMESTAMP >= EUSPro.Proposal_Start_Date AND
-                    CURRENT_TIMESTAMP <= EUSPro.Proposal_End_Date THEN 1
+                    CURRENT_TIMESTAMP <= EUSPro.Proposal_End_Date
+               THEN 1
                ELSE 0
            END AS Proposal_Active,
            CASE
@@ -133,18 +138,18 @@ BEGIN
            0 AS Samples,
            COUNT(DS.dataset_id) AS Datasets,
            0 AS Jobs,
-           RR.eus_usage_type_id AS EUS_UsageType,
+           RR.eus_usage_type_id,
            EUSPro.proposal_type,
            MIN(EUSUsers.name_fm) AS Proposal_User,
            MIN(InstName.instrument) AS Instrument_First,
            MAX(InstName.instrument) AS Instrument_Last,
-           null::text AS JobTool_First,
-           null::text AS JobTool_Last
+           null::text AS Job_Tool_First,
+           null::text AS Job_Tool_Last
     FROM t_instrument_name InstName
          INNER JOIN t_dataset DS
-                    INNER JOIN t_requested_run RR
-                      ON DS.dataset_id = RR.dataset_id
            ON InstName.instrument_id = DS.instrument_id
+         INNER JOIN t_requested_run RR
+           ON DS.dataset_id = RR.dataset_id
          LEFT OUTER JOIN t_eus_users EUSUsers
                          INNER JOIN t_requested_run_eus_users RRUsers
                            ON EUSUsers.person_id = RRUsers.eus_person_id
@@ -154,7 +159,7 @@ BEGIN
     WHERE DS.created BETWEEN _startDate AND _endDate
     GROUP BY EUSPro.proposal_id, RR.work_package, RR.eus_usage_type_id, EUSPro.Proposal_Type,
              EUSPro.proposal_start_date, EUSPro.proposal_end_date
-    ORDER BY COUNT(DS.dataset_id) DESC
+    ORDER BY COUNT(DS.dataset_id) DESC;
 
     -----------------------------------------
     -- Find user-initiated analysis jobs started within the date range
@@ -162,15 +167,16 @@ BEGIN
     -----------------------------------------
 
     MERGE INTO Tmp_Project_Usage_Stats AS t
-    USING ( SELECT _startdate AS StartDate,
-                   _endDate AS EndDate,
-                   _endDateYear AS TheYear,
-                   _endDateWeek AS WeekOfYear,
+    USING ( SELECT _startdate AS Start_Date,
+                   _endDate AS End_Date,
+                   _endDateYear AS The_Year,
+                   _endDateWeek AS Week_Of_Year,
                    EUSPro.Proposal_ID,
                    RR.work_package,
                    CASE
                        WHEN CURRENT_TIMESTAMP >= EUSPro.Proposal_Start_Date AND
-                            CURRENT_TIMESTAMP <= EUSPro.Proposal_End_Date THEN 1
+                            CURRENT_TIMESTAMP <= EUSPro.Proposal_End_Date
+                       THEN 1
                        ELSE 0
                    END AS Proposal_Active,
                    CASE
@@ -185,26 +191,26 @@ BEGIN
                    0 AS Samples,
                    0 AS Datasets,
                    COUNT(J.job) AS Jobs,
-                   RR.eus_usage_type_id AS EUS_UsageType,
+                   RR.eus_usage_type_id,
                    EUSPro.proposal_type,
                    MIN(EUSUsers.name_fm) AS Proposal_User,
                    MIN(InstName.instrument) AS Instrument_First,
                    MAX(InstName.instrument) AS Instrument_Last,
-                   MIN(AnTool.analysis_tool) AS JobTool_First,
-                   MAX(AnTool.analysis_tool) AS JobTool_Last
+                   MIN(AnTool.analysis_tool) AS Job_Tool_First,
+                   MAX(AnTool.analysis_tool) AS Job_Tool_Last
              FROM t_instrument_name InstName
                   INNER JOIN t_dataset DS
-                             INNER JOIN t_requested_run RR
-                               ON DS.dataset_id = RR.dataset_id
-                             INNER JOIN t_analysis_job J
-                               ON J.dataset_id = DS.dataset_id AND
-                                  J.start BETWEEN _startDate AND _endDate
-                             INNER JOIN t_analysis_job_request AJR
-                               ON AJR.request_id = J.request_id AND
-                                  AJR.request_id > 1
-                             INNER JOIN t_analysis_tool AnTool
-                               ON J.analysis_tool_id = AnTool.analysis_tool_id
                     ON InstName.instrument_id = DS.instrument_id
+                  INNER JOIN t_requested_run RR
+                    ON DS.dataset_id = RR.dataset_id
+                  INNER JOIN t_analysis_job J
+                    ON J.dataset_id = DS.dataset_id AND
+                       J.start BETWEEN _startDate AND _endDate
+                  INNER JOIN t_analysis_job_request AJR
+                    ON AJR.request_id = J.request_id AND
+                       AJR.request_id > 1
+                  INNER JOIN t_analysis_tool AnTool
+                    ON J.analysis_tool_id = AnTool.analysis_tool_id
                   LEFT OUTER JOIN t_eus_users EUSUsers
                                   INNER JOIN t_requested_run_eus_users RRUsers
                                     ON EUSUsers.person_id = RRUsers.eus_person_id
@@ -214,28 +220,28 @@ BEGIN
              GROUP BY EUSPro.Proposal_ID, RR.work_package, RR.eus_usage_type_id, EUSPro.Proposal_Type,
                       EUSPro.proposal_start_date, EUSPro.proposal_end_date
           ) AS s
-    ON (t.TheYear = s.TheYear AND
-        t.WeekOfYear = s.WeekOfYear AND
-        Coalesce(t.proposal_id, 0) = Coalesce(s.proposal_id, 0) AND
+    ON (t.The_Year = s.The_Year AND
+        t.Week_Of_Year = s.Week_Of_Year AND
+        t.proposal_id = s.proposal_id AND
         t.work_package = s.work_package AND
-        t.EUS_UsageType = s.EUS_UsageType AND
+        t.eus_usage_type_id = s.eus_usage_type_id AND
         Coalesce(t.Proposal_User, '') = Coalesce(s.Proposal_User, ''))
     WHEN MATCHED AND t.Jobs IS DISTINCT FROM s.Jobs THEN
         UPDATE SET
-            Jobs = s.Jobs,
-            JobTool_First = s.JobTool_First,
-            JobTool_Last = s.JobTool_Last
+            Jobs           = s.Jobs,
+            Job_Tool_First = s.Job_Tool_First,
+            Job_Tool_Last  = s.Job_Tool_Last
     WHEN NOT MATCHED THEN
-        INSERT (StartDate, EndDate, TheYear, WeekOfYear, proposal_id,
-                work_package, Proposal_Active, Project_Type_ID,
-                Samples, datasets, Jobs, EUS_UsageType, proposal_type, Proposal_User,
-                Instrument_First, Instrument_Last,
-                JobTool_First, JobTool_Last)
-        VALUES (s.StartDate, s.EndDate, s.TheYear, s.WeekOfYear, s.proposal_id,
-                s.work_package, s.Proposal_Active, s.Project_Type_ID,
-                s.Samples, s.datasets, s.Jobs, s.EUS_UsageType, s.proposal_type, s.Proposal_User,
+        INSERT (start_date, end_date, the_year, week_of_year, proposal_id,
+                work_package, proposal_active, project_type_id,
+                samples, datasets, jobs, eus_usage_type_id, proposal_type, proposal_user,
+                instrument_first, instrument_last,
+                job_tool_first, job_tool_last)
+        VALUES (s.Start_Date, s.End_Date, s.The_Year, s.Week_Of_Year, s.Proposal_ID,
+                s.Work_Package, s.Proposal_Active, s.Project_Type_ID,
+                s.Samples, s.Datasets, s.Jobs, s.EUS_Usage_Type_ID, s.Proposal_Type, s.Proposal_User,
                 s.Instrument_First, s.Instrument_Last,
-                s.JobTool_First, s.JobTool_Last);
+                s.Job_Tool_First, s.Job_Tool_Last);
 
     -----------------------------------------
     -- Find experiments (samples) prepared within the date range
@@ -243,15 +249,16 @@ BEGIN
     -----------------------------------------
 
     MERGE INTO Tmp_Project_Usage_Stats AS t
-    USING ( SELECT _startdate AS StartDate,
-                   _endDate AS EndDate,
-                   _endDateYear AS TheYear,
-                   _endDateWeek AS WeekOfYear,
+    USING ( SELECT _startdate AS Start_Date,
+                   _endDate AS End_Date,
+                   _endDateYear AS The_Year,
+                   _endDateWeek AS Week_Of_Year,
                    EUSPro.Proposal_ID,
-                   SPR.Work_Package_Number,
+                   SPR.Work_Package,
                    CASE
                        WHEN CURRENT_TIMESTAMP >= EUSPro.Proposal_Start_Date AND
-                            CURRENT_TIMESTAMP <= EUSPro.Proposal_End_Date THEN 1
+                            CURRENT_TIMESTAMP <= EUSPro.Proposal_End_Date
+                       THEN 1
                        ELSE 0
                    END AS Proposal_Active,
                    CASE
@@ -266,13 +273,13 @@ BEGIN
                    COUNT(DISTINCT exp_id) AS Samples,
                    0 AS Datasets,
                    0 AS Jobs,
-                   UsageType.prep_request_id AS EUS_UsageType,
+                   UsageType.eus_usage_type_id,
                    EUSPro.proposal_type,
                    MIN(EUSUsers.name_fm) AS Proposal_User,
                    '' AS Instrument_First,
                    '' AS Instrument_Last,
-                   '' AS JobTool_First,
-                   '' AS JobTool_Last
+                   '' AS Job_Tool_First,
+                   '' AS Job_Tool_Last
             FROM t_sample_prep_request SPR
                  INNER JOIN t_eus_proposals EUSPro
                    ON SPR.eus_proposal_id = EUSPro.proposal_id
@@ -284,34 +291,34 @@ BEGIN
                    ON SPR.eus_user_id = EUSUsers.person_id
             WHERE t_experiments.created BETWEEN _startDate and _endDate
             GROUP BY EUSPro.proposal_id, SPR.work_package, EUSPro.proposal_start_date, EUSPro.Proposal_End_Date,
-                     EUSPro.proposal_type, SPR.eus_user_id, UsageType.prep_request_id
+                     EUSPro.proposal_type, SPR.eus_user_id, UsageType.eus_usage_type_id
          ) AS s
-    ON (t.TheYear = s.TheYear AND
-        t.WeekOfYear = s.WeekOfYear AND
-        Coalesce(t.proposal_id, 0) = Coalesce(s.proposal_id, 0) AND
+    ON (t.The_Year = s.The_Year AND
+        t.Week_Of_Year = s.Week_Of_Year AND
+        t.proposal_id = s.proposal_id AND
         t.work_package = s.work_package AND
-        t.eus_usage_type = s.eus_usage_type AND
+        t.eus_usage_type_ID = s.eus_usage_type_ID AND
         Coalesce(t.Proposal_User, '') = Coalesce(s.Proposal_User, ''))
     WHEN MATCHED AND t.Samples IS DISTINCT FROM s.Samples THEN
         UPDATE SET
             Samples = s.Samples
     WHEN NOT MATCHED THEN
-        INSERT(StartDate, EndDate, TheYear, WeekOfYear, proposal_id,
-              work_package, Proposal_Active, Project_Type_ID,
-              Samples, Datasets, Jobs, eus_usage_type, proposal_type, Proposal_User,
-              Instrument_First, Instrument_Last,
-              JobTool_First, JobTool_Last)
-        VALUES(s.StartDate, s.EndDate, s.TheYear, s.WeekOfYear, s.proposal_id,
-               s.work_package, s.Proposal_Active, s.Project_Type_ID,
-               s.Samples, s.Datasets, s.Jobs, s.eus_usage_type, s.proposal_type, s.Proposal_User,
-               s.Instrument_First, s.Instrument_Last,
-               s.JobTool_First, s.JobTool_Last);
+        INSERT (start_date, end_date, the_year, week_of_year, proposal_id,
+                work_package, proposal_active, project_type_id,
+                samples, datasets, jobs, eus_usage_type_id, proposal_type, proposal_user,
+                instrument_first, instrument_last,
+                job_tool_first, job_tool_last)
+        VALUES (s.Start_Date, s.End_Date, s.The_Year, s.Week_Of_Year, s.Proposal_ID,
+                s.Work_Package, s.Proposal_Active, s.Project_Type_ID,
+                s.Samples, s.Datasets, s.Jobs, s.EUS_Usage_Type_ID, s.Proposal_Type, s.Proposal_User,
+                s.Instrument_First, s.Instrument_Last,
+                s.Job_Tool_First, s.Job_Tool_Last);
 
     If _infoOnly Then
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-20s %-20s %-4s %-12s %-11s %-12s %-15s %-17s %-8s %-8s %-8s %-10s %-13s %-13s %-60s %-25s %-25s %-25s %-25s %-14s %-14s';
+        _formatSpecifier := '%-10s %-20s %-20s %-5s %-12s %-11s %-12s %-15s %-19s %-8s %-8s %-8s %-15s %-35s %-35s %-80s %-25s %-25s %-35s %-35s %-14s %-14s';
 
         _infoHead := format(_formatSpecifier,
                             'Entry_ID',
@@ -332,8 +339,8 @@ BEGIN
                             'Proposal_Title',
                             'Instrument_First',
                             'Instrument_Last',
-                            'JobTool_First',
-                            'JobTool_Last',
+                            'Job_Tool_First',
+                            'Job_Tool_Last',
                             'Proposal_Start',
                             'Proposal_End'
                            );
@@ -342,23 +349,23 @@ BEGIN
                                      '----------',
                                      '--------------------',
                                      '--------------------',
-                                     '----',
+                                     '-----',
                                      '------------',
                                      '-----------',
                                      '------------',
                                      '---------------',
-                                     '-----------------',
+                                     '-------------------',
                                      '--------',
                                      '--------',
                                      '--------',
-                                     '----------',
-                                     '-------------',
-                                     '-------------',
-                                     '------------------------------------------------------------',
+                                     '---------------',
+                                     '-----------------------------------',
+                                     '-----------------------------------',
+                                     '--------------------------------------------------------------------------------',
                                      '-------------------------',
                                      '-------------------------',
-                                     '-------------------------',
-                                     '-------------------------',
+                                     '-----------------------------------',
+                                     '-----------------------------------',
                                      '--------------',
                                      '--------------'
                                     );
@@ -368,10 +375,10 @@ BEGIN
 
         FOR _previewData IN
             SELECT Stats.Entry_ID,
-                   public.timestamp_text(Stats.StartDate) AS Start_Date,
-                   public.timestamp_text(Stats.EndDate) AS End_Date,
-                   Stats.TheYear AS Year,
-                   Stats.WeekOfYear AS Week_of_Year,
+                   public.timestamp_text(Stats.Start_Date) AS Start_Date,
+                   public.timestamp_text(Stats.End_Date) AS End_Date,
+                   Stats.The_Year,
+                   Stats.Week_Of_Year,
                    Stats.Proposal_ID,
                    Stats.Work_Package,
                    Stats.Proposal_Active,
@@ -382,18 +389,18 @@ BEGIN
                    EUSUsage.eus_usage_type AS Usage_Type,
                    Stats.Proposal_Type,
                    Stats.Proposal_User,
-                   Proposals.title AS Proposal_Title,
+                   Left(Replace(Proposals.title, E'\n', ' '), 79) AS Proposal_Title,
                    Stats.Instrument_First,
                    Stats.Instrument_Last,
-                   Stats.JobTool_First,
-                   Stats.JobTool_Last,
+                   Stats.Job_Tool_First,
+                   Stats.Job_Tool_Last,
                    Proposals.proposal_start_date::date AS Proposal_Start,
                    Proposals.proposal_end_date::date   AS Proposal_End
             FROM Tmp_Project_Usage_Stats Stats
                  INNER JOIN t_project_usage_types ProjectTypes
                    ON Stats.project_type_id = ProjectTypes.project_type_id
                  INNER JOIN t_eus_usage_type EUSUsage
-                   ON Stats.EUS_UsageType = EUSUsage.eus_usage_type_id
+                   ON Stats.EUS_Usage_Type_ID = EUSUsage.eus_usage_type_id
                  LEFT OUTER JOIN t_eus_proposals Proposals
                    ON Stats.proposal_id = Proposals.proposal_id
             ORDER BY Datasets DESC, Jobs DESC, Samples DESC
@@ -402,7 +409,7 @@ BEGIN
                                 _previewData.Entry_ID,
                                 _previewData.Start_Date,
                                 _previewData.End_Date,
-                                _previewData.Year,
+                                _previewData.The_Year,
                                 _previewData.Week_of_Year,
                                 _previewData.Proposal_ID,
                                 _previewData.Work_Package,
@@ -417,8 +424,8 @@ BEGIN
                                 _previewData.Proposal_Title,
                                 _previewData.Instrument_First,
                                 _previewData.Instrument_Last,
-                                _previewData.JobTool_First,
-                                _previewData.JobTool_Last,
+                                _previewData.Job_Tool_First,
+                                _previewData.Job_Tool_Last,
                                 _previewData.Proposal_Start,
                                 _previewData.Proposal_End
                                );
@@ -426,55 +433,66 @@ BEGIN
             RAISE INFO '%', _infoData;
         END LOOP;
 
-    Else
-        DELETE FROM t_project_usage_stats
-        WHERE the_year = _endDateYear AND
-              week_of_year = _endDateWeek AND
-              end_date::date = _endDate::date;
-
-        INSERT INTO t_project_usage_stats( start_date,
-                                           end_date,
-                                           the_year,
-                                           week_of_year,
-                                           proposal_id,
-                                           work_package,
-                                           proposal_active,
-                                           project_type_id,
-                                           samples,
-                                           datasets,
-                                           jobs,
-                                           eus_usage_type_id,
-                                           proposal_type,
-                                           proposal_user,
-                                           instrument_first,
-                                           instrument_last,
-                                           job_tool_first,
-                                           job_tool_last )
-        SELECT start_date,
-               end_date,
-               the_year,
-               week_of_year,
-               proposal_id,
-               work_package,
-               proposal_active,
-               project_type_id,
-               samples,
-               datasets,
-               jobs,
-               eus_usage_type_id,
-               proposal_type,
-               proposal_user,
-               instrument_first,
-               instrument_last,
-               job_tool_first,
-               job_tool_last
-        FROM Tmp_Project_Usage_Stats
-        ORDER BY datasets DESC, jobs DESC
-
+        DROP TABLE Tmp_Project_Usage_Stats;
+        RETURN;
     End If;
 
-    DROP TABLE Tmp_Project_Usage_Stats(
+    DELETE FROM t_project_usage_stats
+    WHERE the_year       = _endDateYear AND
+          week_of_year   = _endDateWeek AND
+          end_date::date = _endDate::date;
+
+    INSERT INTO t_project_usage_stats (
+        start_date,
+        end_date,
+        the_year,
+        week_of_year,
+        proposal_id,
+        work_package,
+        proposal_active,
+        project_type_id,
+        samples,
+        datasets,
+        jobs,
+        eus_usage_type_id,
+        proposal_type,
+        proposal_user,
+        instrument_first,
+        instrument_last,
+        job_tool_first,
+        job_tool_last
+    )
+    SELECT start_date,
+           end_date,
+           the_year,
+           week_of_year,
+           proposal_id,
+           work_package,
+           proposal_active,
+           project_type_id,
+           samples,
+           datasets,
+           jobs,
+           eus_usage_type_id,
+           proposal_type,
+           proposal_user,
+           instrument_first,
+           instrument_last,
+           job_tool_first,
+           job_tool_last
+    FROM Tmp_Project_Usage_Stats
+    ORDER BY datasets DESC, jobs DESC;
+
+    DROP TABLE Tmp_Project_Usage_Stats;
 END
 $$;
 
-COMMENT ON PROCEDURE public.store_project_usage_stats IS 'StoreProjectUsageStats';
+
+ALTER PROCEDURE public.store_project_usage_stats(IN _windowdays integer, IN _enddate timestamp without time zone, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE store_project_usage_stats(IN _windowdays integer, IN _enddate timestamp without time zone, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.store_project_usage_stats(IN _windowdays integer, IN _enddate timestamp without time zone, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'StoreProjectUsageStats';
+
