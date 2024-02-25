@@ -29,7 +29,7 @@ CREATE OR REPLACE PROCEDURE sw.merge_jobs_to_main_tables(INOUT _message text DEF
 *****************************************************/
 DECLARE
     _job int;
-    _jobParamXML XML;
+    _jobParamXML xml;
 BEGIN
     _message := '';
     _returnCode := '';

@@ -96,7 +96,7 @@ DECLARE
 
     _id int := 0;
     _state int := 0;
-    _jobParamXML XML;
+    _jobParamXML xml;
     _result int := 0;
     _tool text := '';
     _msg text := '';

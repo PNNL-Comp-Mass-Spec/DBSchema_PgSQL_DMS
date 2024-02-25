@@ -155,7 +155,7 @@ DECLARE
     _paramFileTypeID int := 0;
     _paramFileTypeNew citext := '';
     _delimiter text := '';
-    _xml XML;
+    _xmlMods xml;
     _charPos int;
     _rowCount int;
     _row citext;
@@ -321,9 +321,9 @@ BEGIN
         -- Convert _mods to rooted XML
         ---------------------------------------------------
 
-        _xml := public.try_cast('<root>' || _mods || '</root>', null::xml);
+        _xmlMods := public.try_cast('<root>' || _mods || '</root>', null::xml);
 
-        If _xml Is Null Then
+        If _xmlMods Is Null Then
             _message := 'Modification list is not valid XML';
             _returnCode := 'U5305';
 
@@ -341,29 +341,29 @@ BEGIN
 
         INSERT INTO Tmp_MaxQuant_Mods (ModType, ModName)
         SELECT 'fixed' AS ModType,
-               unnest(xpath('//root/fixedModifications/string/text()', _xml))::text;
+               unnest(xpath('//root/fixedModifications/string/text()', _xmlMods))::text;
 
         INSERT INTO Tmp_MaxQuant_Mods (ModType, ModName)
         SELECT 'fixed' AS ModType,
-               unnest(xpath('//root/MaxQuantParams/parameterGroups/parameterGroup/fixedModifications/string/text()', _xml))::text;
+               unnest(xpath('//root/MaxQuantParams/parameterGroups/parameterGroup/fixedModifications/string/text()', _xmlMods))::text;
 
         INSERT INTO Tmp_MaxQuant_Mods (ModType, ModName)
         SELECT 'variable' AS ModType,
-               unnest(xpath('//root/variableModifications/string/text()', _xml));
+               unnest(xpath('//root/variableModifications/string/text()', _xmlMods));
 
         INSERT INTO Tmp_MaxQuant_Mods (ModType, ModName)
         SELECT 'variable' AS ModType,
-               unnest(xpath('//root/MaxQuantParams/parameterGroups/parameterGroup/variableModifications/string/text()', _xml))::text;
+               unnest(xpath('//root/MaxQuantParams/parameterGroups/parameterGroup/variableModifications/string/text()', _xmlMods))::text;
 
         If Position('IsobaricLabelInfo' In _mods) > 0 Then
             -- Reporter ions are defined (e.g. TMT or iTRAQ)
             -- Treat these as fixed mods
             INSERT INTO Tmp_MaxQuant_Mods (ModType, ModName)
             SELECT 'fixed' AS ModType,
-                   unnest(xpath('//root/isobaricLabels/IsobaricLabelInfo/internalLabel/text()', _xml))::text
+                   unnest(xpath('//root/isobaricLabels/IsobaricLabelInfo/internalLabel/text()', _xmlMods))::text
             UNION
             SELECT 'fixed' AS ModType,
-                   unnest(xpath('//root/isobaricLabels/IsobaricLabelInfo/terminalLabel/text()', _xml))::text;
+                   unnest(xpath('//root/isobaricLabels/IsobaricLabelInfo/terminalLabel/text()', _xmlMods))::text;
         End If;
 
         If Not Exists (SELECT * FROM Tmp_MaxQuant_Mods) Then

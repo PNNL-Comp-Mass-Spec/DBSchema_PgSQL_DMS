@@ -755,7 +755,7 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Output capture task job parameters as resultset
+        -- Output capture task job parameters as result set
         ---------------------------------------------------
 
         Open _results For

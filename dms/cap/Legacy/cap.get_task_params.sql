@@ -18,7 +18,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_params(_job integer) RETURNS TABLE(secti
 **
 *****************************************************/
 DECLARE
-    _xmlParameters XML;
+    _xmlParameters xml;
     _uploadInfo record;
     _stepParamSectionName text := 'StepParameters';
 BEGIN

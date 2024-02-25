@@ -59,13 +59,13 @@ DECLARE
     _includeAll boolean;
     _result text;
     _newline text := chr(10);
-    _paramXML XML;
-    _experimentXML XML;
-    _datasetXML XML;
-    _jobXML XML;
-    _dpPathXML XML;
-    _dsPathXML XML;
-    _jobPathXML XML;
+    _paramXML xml;
+    _experimentXML xml;
+    _datasetXML xml;
+    _jobXML xml;
+    _dpPathXML xml;
+    _dsPathXML xml;
+    _jobPathXML xml;
 BEGIN
 
     _options := Trim(Coalesce(_options, ''));

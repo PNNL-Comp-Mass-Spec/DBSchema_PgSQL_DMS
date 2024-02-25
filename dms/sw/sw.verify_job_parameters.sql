@@ -65,7 +65,7 @@ DECLARE
     _collectionCountAdded int;
     _scriptBaseName citext := '';
     _paramDefinition xml;
-    _jobParamXML XML;
+    _jobParamXML xml;
     _missingParameters text := '';
 BEGIN
     _message := Trim(Coalesce(_message, ''));

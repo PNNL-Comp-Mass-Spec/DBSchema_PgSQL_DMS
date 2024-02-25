@@ -57,7 +57,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_table(_job integer, _dataset text,
 **
 *****************************************************/
 DECLARE
-    _paramXML XML;
+    _paramXML xml;
     _rawDataType text;
     _performCalibration int;
     _performCalibrationText text;
@@ -303,7 +303,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Return the parameters as a resultset
+    -- Return the parameters as a result set
     ---------------------------------------------------
 
     RETURN QUERY

@@ -48,7 +48,7 @@ DECLARE
     _authorized boolean;
 
     _logErrors boolean := false;
-    _usageXML XML;
+    _usageXML xml;
     _cleanedComment text;
 
     _sqlState text;
