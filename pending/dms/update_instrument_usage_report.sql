@@ -66,7 +66,7 @@ DECLARE
     _endOfMonth timestamp;
     _lockDateReload timestamp;
     _lockDateUpdate timestamp;
-    _xml AS xml;
+    _xml xml;
     _instrumentID int := 0;
     _monthValue int;
     _yearValue int;

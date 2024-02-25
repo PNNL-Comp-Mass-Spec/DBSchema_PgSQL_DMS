@@ -47,7 +47,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _xml AS xml;
+    _xml xml;
     _debugEnabled boolean := false;
     _logMessage text;
     _usageMessage text := '';

@@ -47,7 +47,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _xml AS xml;
+    _xml xml;
     _usageMessage text;
 
     _formatSpecifier text;

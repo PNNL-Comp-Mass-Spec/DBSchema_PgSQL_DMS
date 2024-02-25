@@ -44,7 +44,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _xml AS xml;
+    _xml xml;
     _debugMode boolean := false;
     _debugMsg text;
     _requestCountInXML int;

@@ -59,7 +59,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _xml AS XML;
+    _blockingXML xml;
     _batchID int := 0;
     _debugEnabled boolean := false;
     _logMessage text;
@@ -160,9 +160,9 @@ BEGIN
             -- Convert _blockingList to rooted XML
             -----------------------------------------------------------
 
-            _xml := public.try_cast('<root>' || _blockingList || '</root>', null::xml);
+            _blockingXML := public.try_cast('<root>' || _blockingList || '</root>', null::xml);
 
-            If _xml Is Null Then
+            If _blockingXML Is Null Then
                 _message := 'Blocking list is not valid XML';
                 RAISE EXCEPTION '%', _message;
             End If;
@@ -175,7 +175,7 @@ BEGIN
             SELECT XmlQ.Parameter, XmlQ.RequestID, XmlQ.Value
             FROM (
                 SELECT xmltable.*
-                FROM ( SELECT _xml AS rooted_xml
+                FROM ( SELECT _blockingXML AS rooted_xml
                      ) Src,
                      XMLTABLE('//root/r'
                               PASSING Src.rooted_xml

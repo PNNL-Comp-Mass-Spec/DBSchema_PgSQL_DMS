@@ -54,7 +54,7 @@ DECLARE
 
     _matchCount int := 0;
     _updateCount int := 0;
-    _xml AS xml;
+    _xml xml;
     _usageMessage text := '';
     _stateID int := 0;
     _logMessage text;

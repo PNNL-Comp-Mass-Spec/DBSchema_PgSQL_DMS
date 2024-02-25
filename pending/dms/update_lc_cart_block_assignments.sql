@@ -45,7 +45,7 @@ DECLARE
     _authorized boolean;
 
     _updateCount int;
-    _xml AS xml;
+    _xml xml;
     _usageMessage text;
 BEGIN
     _message := '';
