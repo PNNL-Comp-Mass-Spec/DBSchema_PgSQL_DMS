@@ -33,7 +33,7 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    _callingUser := public.get_user_login_without_domain();
+    _callingUser := public.get_user_login_without_domain('');
 
     ---------------------------------------------------
     -- Last time we did this
