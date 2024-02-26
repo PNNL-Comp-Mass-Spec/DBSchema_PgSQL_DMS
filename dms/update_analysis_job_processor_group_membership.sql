@@ -1,16 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_analysis_job_processor_group_membership
-(
-    _processorNameList text,
-    _processorGroupID text,
-    _newValue text,
-    _mode text = '',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_analysis_job_processor_group_membership(text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_analysis_job_processor_group_membership(IN _processornamelist text, IN _processorgroupid text, IN _newvalue text, IN _mode text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -18,29 +12,32 @@ AS $$
 **
 **  Arguments:
 **    _processorNameList    Comma-separated list of processor names
-**    _processorGroupID     Processor group ID
-**    _newValue             New value: 'Y' or 'N' (only used when _mode is 'set_membership_enabled')
-**    _mode                 Mode: 'set_membership_enabled', 'add_processors', 'remove_processors',
+**    _processorGroupID     Processor group ID (as text)
+**    _newValue             New membership value for processors not associated with the given processor group
+**                          (only used when _mode is 'set_membership_enabled_y' or 'set_membership_enabled_n')
+**                          Allowed values: 'Y', 'N', or ''
+**    _mode                 Mode: 'set_membership_enabled_y', 'set_membership_enabled_n', 'add_processors', 'remove_processors'
 **    _message              Status message
 **    _returnCode           Return code
 **    _callingUser          Username of the calling user
 **
 **  Auth:   grk
-**  Date:   02/13/2007 (Ticket #384)
+**  Date:   02/13/2007 grk - Ticket #384
 **          02/20/2007 grk - Fixed reference to group ID
 **          02/12/2008 grk - Modified temp table Tmp_Processors to have explicit NULL columns for DMS2 upgrade
 **          03/28/2008 mem - Added optional parameter _callingUser; if provided, will populate field Entered_By with this name
 **          09/02/2011 mem - Now calling Post_Usage_Log_Entry
 **          03/30/2015 mem - Tweak warning message grammar
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/25/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _list text;
     _alterEnteredByRequired boolean := false;
-    _pgid int;
+    _groupID int;
     _localMembership text;
     _nonLocalMembership text;
+    _updateCount int;
     _usageMessage text;
     _alterEnteredByMessage text;
 BEGIN
@@ -51,10 +48,13 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _mode := Trim(Lower(Coalesce(_mode, '')));
+    _processorNameList := Trim(Coalesce(_processorNameList, ''));
+    _processorGroupID  := Trim(Coalesce(_processorGroupID, ''));
+    _newValue          := Trim(Upper(Coalesce(_newValue, '')));
+    _mode              := Trim(Lower(Coalesce(_mode, '')));
 
-    If _processorNameList = '' and _mode <> 'add_processors' Then
-        _message := 'Processor name list was empty';
+    If _processorNameList = '' And _mode <> 'add_processors' Then
+        _message := 'Processor name list must be specified';
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5201';
@@ -62,10 +62,18 @@ BEGIN
     End If;
 
     If _processorGroupID = '' Then
-        _message := 'Processor group name was empty';
+        _message := 'Processor group name must be specified';
         RAISE WARNING '%', _message;
 
         _returnCode := 'U5202';
+        RETURN;
+    End If;
+
+    If Not _mode In ('set_membership_enabled_y', 'set_membership_enabled_n', 'add_processors', 'remove_processors') Then
+        _message := format('"%s" is an invalid mode; it should be "set_membership_enabled_y", "set_membership_enabled_n", "add_processors", or "remove_processors"', _mode);
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5203';
         RETURN;
     End If;
 
@@ -74,7 +82,7 @@ BEGIN
     ---------------------------------------------------
 
     CREATE TEMP TABLE Tmp_Processors (
-        ID int NULL,
+        Processor_ID int NULL,
         Processor_Name text
     );
 
@@ -91,7 +99,7 @@ BEGIN
     ---------------------------------------------------
 
     UPDATE Tmp_Processors
-    SET ID = AJP.ID
+    SET Processor_ID = AJP.processor_id
     FROM t_analysis_job_processors AJP
     WHERE Tmp_Processors.processor_name = AJP.processor_name;
 
@@ -102,7 +110,7 @@ BEGIN
     SELECT string_agg(Processor_Name, ', ' ORDER BY Processor_Name)
     INTO _list
     FROM Tmp_Processors
-    WHERE ID is null;
+    WHERE Processor_ID Is Null;
 
     If _list <> '' Then
         If Position(',' In _list) > 0 Then
@@ -111,37 +119,80 @@ BEGIN
             _message := format('Processor %s does not exist', _list);
         End If;
 
-        _returnCode := 'U5203';
+        RAISE WARNING '%', _message;
+        _returnCode := 'U5204';
+
+        DROP TABLE Tmp_Processors;
         RETURN;
     End If;
 
-    _pgid := public.try_cast(_processorGroupID, null::int);
+    ---------------------------------------------------
+    -- Resolve processor group ID
+    ---------------------------------------------------
+
+    _groupID := public.try_cast(_processorGroupID, 0);
 
     ---------------------------------------------------
     -- Mode set_membership_enabled
     ---------------------------------------------------
 
-    If _mode Like 'set_membership_enabled_%' Then
+    If _mode Like 'set_membership_enabled_%' And _groupID > 0 Then
         -- Get membership enabled value for this group
 
-        _localMembership := Replace (_mode, 'set_membership_enabled_' , '' );
+        _localMembership := Upper(Replace(_mode, 'set_membership_enabled_' , ''));
+
+        If Not _localMembership IN ('Y', 'N') Then
+            _message := format('Invalid mode "%s"; should be either "set_membership_enabled_y" or "set_membership_enabled_n"', _mode);
+
+            RAISE WARNING '%', _message;
+            _returnCode := 'U5205';
+
+            DROP TABLE Tmp_Processors;
+            RETURN;
+        End If;
 
         -- Get membership enabled value for groups other than this group
 
-        _nonLocalMembership := _newValue;
+        _nonLocalMembership := Upper(_newValue);
 
-        -- Set memebership enabled value in this group
+        If Not _nonLocalMembership IN ('Y', 'N', '') Then
+            _message := format('"%s" is an invalid non-local membership value; _newValue should be "Y", "N", or ""', _newValue);
+
+            RAISE WARNING '%', _message;
+            _returnCode := 'U5206';
+
+            DROP TABLE Tmp_Processors;
+            RETURN;
+        End If;
+
+        -- Set membership enabled value in this group
 
         UPDATE t_analysis_job_processor_group_membership
         SET membership_enabled = _localMembership
-        WHERE group_id = _pgid AND processor_id IN (SELECT ID FROM Tmp_Processors);
+        WHERE group_id = _groupID AND processor_id IN (SELECT Processor_ID FROM Tmp_Processors);
+        --
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
+
+        RAISE INFO 'Set membership_enabled to "%" for % % associated with group %',
+                       _localMembership,
+                       _updateCount,
+                       public.check_plural(_updateCount, 'processor', 'processors'),
+                       _groupID;
 
         If _nonLocalMembership <> '' Then
             -- Set membership enabled value in groups other than this group
 
             UPDATE t_analysis_job_processor_group_membership
             SET membership_enabled = _nonLocalMembership
-            WHERE group_id <> _pgid AND processor_id IN (SELECT ID FROM Tmp_Processors);
+            WHERE group_id <> _groupID AND processor_id IN (SELECT Processor_ID FROM Tmp_Processors);
+            --
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
+
+            RAISE INFO 'Set membership_enabled to "%" for groups other than % for % %',
+                           _nonLocalMembership,
+                           _groupID,
+                           _updateCount,
+                           public.check_plural(_updateCount, 'processor', 'processors');
 
         End If;
 
@@ -154,7 +205,7 @@ BEGIN
     If _mode = 'set_membership_enabled' Then
         UPDATE t_analysis_job_processor_group_membership
         SET membership_enabled = _newValue
-        WHERE group_id = _pgid AND processor_id IN (SELECT ID FROM Tmp_Processors)
+        WHERE group_id = _groupID AND processor_id IN (SELECT Processor_ID FROM Tmp_Processors)
 
     End If;
 */
@@ -163,15 +214,22 @@ BEGIN
     -- (be careful not to make duplicates)
     ---------------------------------------------------
 
-    If _mode = 'add_processors' Then
+    If _mode = 'add_processors' And _groupID > 0 Then
         INSERT INTO t_analysis_job_processor_group_membership (processor_id, group_id)
-        SELECT ID, _pgid
+        SELECT Processor_ID, _groupID
         FROM Tmp_Processors
-        WHERE NOT Tmp_Processors.ID IN (
+        WHERE NOT Tmp_Processors.Processor_ID IN (
                         SELECT processor_id
                         FROM t_analysis_job_processor_group_membership
-                        WHERE group_id = _pgid
+                        WHERE group_id = _groupID
                     );
+        --
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
+
+        RAISE INFO 'Associated % % with group %',
+                       _updateCount,
+                       public.check_plural(_updateCount, 'processor', 'processors'),
+                       _groupID;
 
         _alterEnteredByRequired := true;
     End If;
@@ -180,11 +238,17 @@ BEGIN
     -- If mode is 'remove_processors', remove processors in _processorNameList from existing membership of group
     ---------------------------------------------------
 
-    If _mode = 'remove_processors' Then
+    If _mode = 'remove_processors' And _groupID > 0 Then
         DELETE FROM t_analysis_job_processor_group_membership
-        WHERE
-            group_id = _pgid AND
-            (processor_id IN (SELECT ID FROM Tmp_Processors))
+        WHERE group_id = _groupID AND
+              processor_id IN (SELECT Processor_ID FROM Tmp_Processors);
+        --
+        GET DIAGNOSTICS _updateCount = ROW_COUNT;
+
+        RAISE INFO 'Removed % % from group %',
+                       _updateCount,
+                       public.check_plural(_updateCount, 'processor', 'processors'),
+                       _groupID;
     End If;
 
     -- If _callingUser is defined, update entered_by in t_analysis_job_processor_group
@@ -203,7 +267,7 @@ BEGIN
         CREATE INDEX IX_Tmp_ID_Update_List ON Tmp_ID_Update_List (TargetID);
 
         INSERT INTO Tmp_ID_Update_List (TargetID)
-        SELECT ID
+        SELECT Processor_ID
         FROM Tmp_Processors;
 
         CALL public.alter_entered_by_user_multi_id ('public', 't_analysis_job_processor_group_membership', 'processor_id', _callingUser,
@@ -216,11 +280,19 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := format('Processor group: %s', _pgid);
+    _usageMessage := format('Processor group: %s', _groupID);
     CALL post_usage_log_entry ('update_analysis_job_processor_group_membership', _usageMessage);
 
     DROP TABLE Tmp_Processors;
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_analysis_job_processor_group_membership IS 'UpdateAnalysisJobProcessorGroupMembership';
+
+ALTER PROCEDURE public.update_analysis_job_processor_group_membership(IN _processornamelist text, IN _processorgroupid text, IN _newvalue text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_analysis_job_processor_group_membership(IN _processornamelist text, IN _processorgroupid text, IN _newvalue text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_analysis_job_processor_group_membership(IN _processornamelist text, IN _processorgroupid text, IN _newvalue text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UpdateAnalysisJobProcessorGroupMembership';
+
