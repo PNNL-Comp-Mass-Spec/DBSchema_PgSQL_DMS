@@ -1,14 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_analysis_job_tool_name_cached
-(
-    _jobStart int = 0,
-    _jobFinish int = 0,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_analysis_job_tool_name_cached(integer, integer, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_analysis_job_tool_name_cached(IN _jobstart integer DEFAULT 0, IN _jobfinish integer DEFAULT 0, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -23,7 +19,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   04/03/2014 mem - Initial version
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/26/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -55,7 +51,7 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-9s %-20s %-20s';
+        _formatSpecifier := '%-9s %-30s %-30s';
 
         _infoHead := format(_formatSpecifier,
                             'Job',
@@ -65,8 +61,8 @@ BEGIN
 
         _infoHeadSeparator := format(_formatSpecifier,
                                      '---------',
-                                     '--------------------',
-                                     '--------------------'
+                                     '------------------------------',
+                                     '------------------------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -102,6 +98,7 @@ BEGIN
             _message := format('Found %s %s to update', _jobCount, public.check_plural(_jobCount, 'job', 'jobs'));
         End If;
 
+        RAISE INFO '';
         RAISE INFO '%', _message;
     Else
         ---------------------------------------------------
@@ -132,10 +129,18 @@ BEGIN
     _usageMessage := format('%s %s updated', _jobCount, public.check_plural(_jobCount, 'job', 'jobs'));
 
     If Not _infoOnly Then
-        CALL post_usage_log_entry ('update_analysis_job_tool_name_cached', _usageMessage;);
+        CALL post_usage_log_entry ('update_analysis_job_tool_name_cached', _usageMessage);
     End If;
 
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_analysis_job_tool_name_cached IS 'UpdateAnalysisJobToolNameCached';
+
+ALTER PROCEDURE public.update_analysis_job_tool_name_cached(IN _jobstart integer, IN _jobfinish integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_analysis_job_tool_name_cached(IN _jobstart integer, IN _jobfinish integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_analysis_job_tool_name_cached(IN _jobstart integer, IN _jobfinish integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateAnalysisJobToolNameCached';
+
