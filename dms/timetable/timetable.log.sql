@@ -25,5 +25,5 @@ COMMENT ON TABLE timetable.log IS 'Stores log entries of active sessions';
 --
 
 GRANT SELECT ON TABLE timetable.log TO writeaccess;
-GRANT INSERT,DELETE,TRUNCATE,UPDATE ON TABLE timetable.log TO "svc-dms";
+GRANT INSERT,DELETE,TRUNCATE,UPDATE ON TABLE timetable.log TO pgdms;
 

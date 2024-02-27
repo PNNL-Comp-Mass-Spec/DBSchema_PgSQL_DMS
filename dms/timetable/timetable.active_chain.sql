@@ -22,5 +22,5 @@ COMMENT ON TABLE timetable.active_chain IS 'Stores information about active chai
 --
 
 GRANT SELECT ON TABLE timetable.active_chain TO writeaccess;
-GRANT INSERT,DELETE,TRUNCATE,UPDATE ON TABLE timetable.active_chain TO "svc-dms";
+GRANT INSERT,DELETE,TRUNCATE,UPDATE ON TABLE timetable.active_chain TO pgdms;
 

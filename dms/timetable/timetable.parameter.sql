@@ -37,5 +37,5 @@ ALTER TABLE ONLY timetable.parameter
 --
 
 GRANT SELECT ON TABLE timetable.parameter TO writeaccess;
-GRANT INSERT,DELETE,TRUNCATE,UPDATE ON TABLE timetable.parameter TO "svc-dms";
+GRANT INSERT,DELETE,TRUNCATE,UPDATE ON TABLE timetable.parameter TO pgdms;
 

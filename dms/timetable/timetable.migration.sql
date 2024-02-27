@@ -22,5 +22,5 @@ ALTER TABLE ONLY timetable.migration
 --
 
 GRANT SELECT ON TABLE timetable.migration TO writeaccess;
-GRANT INSERT,DELETE,TRUNCATE,UPDATE ON TABLE timetable.migration TO "svc-dms";
+GRANT INSERT,DELETE,TRUNCATE,UPDATE ON TABLE timetable.migration TO pgdms;
 

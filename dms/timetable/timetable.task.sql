@@ -112,5 +112,5 @@ ALTER TABLE ONLY timetable.task
 --
 
 GRANT SELECT ON TABLE timetable.task TO writeaccess;
-GRANT INSERT,DELETE,TRUNCATE,UPDATE ON TABLE timetable.task TO "svc-dms";
+GRANT INSERT,DELETE,TRUNCATE,UPDATE ON TABLE timetable.task TO pgdms;
 

@@ -111,5 +111,5 @@ ALTER TABLE ONLY timetable.chain
 --
 
 GRANT SELECT ON TABLE timetable.chain TO writeaccess;
-GRANT INSERT,DELETE,TRUNCATE,UPDATE ON TABLE timetable.chain TO "svc-dms";
+GRANT INSERT,DELETE,TRUNCATE,UPDATE ON TABLE timetable.chain TO pgdms;
 

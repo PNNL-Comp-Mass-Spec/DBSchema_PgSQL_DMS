@@ -23,5 +23,5 @@ COMMENT ON TABLE timetable.active_session IS 'Stores information about active se
 --
 
 GRANT SELECT ON TABLE timetable.active_session TO writeaccess;
-GRANT INSERT,DELETE,TRUNCATE,UPDATE ON TABLE timetable.active_session TO "svc-dms";
+GRANT INSERT,DELETE,TRUNCATE,UPDATE ON TABLE timetable.active_session TO pgdms;
 

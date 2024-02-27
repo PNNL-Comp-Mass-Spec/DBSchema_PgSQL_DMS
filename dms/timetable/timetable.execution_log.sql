@@ -31,5 +31,5 @@ COMMENT ON TABLE timetable.execution_log IS 'Stores log entries of executed task
 --
 
 GRANT SELECT ON TABLE timetable.execution_log TO writeaccess;
-GRANT INSERT,DELETE,TRUNCATE,UPDATE ON TABLE timetable.execution_log TO "svc-dms";
+GRANT INSERT,DELETE,TRUNCATE,UPDATE ON TABLE timetable.execution_log TO pgdms;
 
