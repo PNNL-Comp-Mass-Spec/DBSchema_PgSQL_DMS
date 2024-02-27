@@ -46,5 +46,5 @@ CREATE TRIGGER trig_t_instrument_allocation_after_update AFTER UPDATE ON public.
 --
 
 GRANT SELECT ON TABLE public.t_instrument_allocation TO readaccess;
-GRANT SELECT ON TABLE public.t_instrument_allocation TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_instrument_allocation TO writeaccess;
 

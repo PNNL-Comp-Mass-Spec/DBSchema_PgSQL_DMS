@@ -47,5 +47,5 @@ CREATE UNIQUE INDEX ix_t_dataset_files_dataset_id_file_path ON public.t_dataset_
 --
 
 GRANT SELECT ON TABLE public.t_dataset_files TO readaccess;
-GRANT SELECT ON TABLE public.t_dataset_files TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_dataset_files TO writeaccess;
 

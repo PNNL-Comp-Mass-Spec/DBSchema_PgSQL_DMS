@@ -48,5 +48,5 @@ CREATE INDEX ix_t_processor_status_monitor_processor ON cap.t_processor_status U
 --
 
 GRANT SELECT ON TABLE cap.t_processor_status TO readaccess;
-GRANT SELECT ON TABLE cap.t_processor_status TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE cap.t_processor_status TO writeaccess;
 

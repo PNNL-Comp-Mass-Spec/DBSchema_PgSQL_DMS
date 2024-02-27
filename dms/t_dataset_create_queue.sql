@@ -82,5 +82,5 @@ ALTER TABLE ONLY public.t_dataset_create_queue
 --
 
 GRANT SELECT ON TABLE public.t_dataset_create_queue TO readaccess;
-GRANT SELECT ON TABLE public.t_dataset_create_queue TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_dataset_create_queue TO writeaccess;
 

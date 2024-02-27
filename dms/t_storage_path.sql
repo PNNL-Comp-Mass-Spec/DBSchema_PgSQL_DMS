@@ -84,5 +84,5 @@ ALTER TABLE ONLY public.t_storage_path
 --
 
 GRANT SELECT ON TABLE public.t_storage_path TO readaccess;
-GRANT SELECT ON TABLE public.t_storage_path TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_storage_path TO writeaccess;
 

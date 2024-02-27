@@ -22,5 +22,5 @@ ALTER TABLE ONLY public.t_analysis_job_request_existing_jobs
 --
 
 GRANT SELECT ON TABLE public.t_analysis_job_request_existing_jobs TO readaccess;
-GRANT SELECT ON TABLE public.t_analysis_job_request_existing_jobs TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_analysis_job_request_existing_jobs TO writeaccess;
 

@@ -36,5 +36,5 @@ ALTER TABLE ONLY public.t_notification_entity_user
 --
 
 GRANT SELECT ON TABLE public.t_notification_entity_user TO readaccess;
-GRANT SELECT ON TABLE public.t_notification_entity_user TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_notification_entity_user TO writeaccess;
 

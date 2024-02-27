@@ -233,5 +233,5 @@ ALTER TABLE ONLY public.t_experiments
 --
 
 GRANT SELECT ON TABLE public.t_experiments TO readaccess;
-GRANT SELECT ON TABLE public.t_experiments TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_experiments TO writeaccess;
 

@@ -51,5 +51,5 @@ CREATE INDEX ix_t_job_step_events_job ON logsw.t_job_step_events USING btree (jo
 -- Name: TABLE t_job_step_events; Type: ACL; Schema: logsw; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE logsw.t_job_step_events TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE logsw.t_job_step_events TO writeaccess;
 

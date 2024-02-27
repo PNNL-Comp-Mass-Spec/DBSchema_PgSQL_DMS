@@ -49,5 +49,5 @@ CREATE INDEX ix_t_term_relationship_subject_term_pk ON ont.t_term_relationship U
 --
 
 GRANT SELECT ON TABLE ont.t_term_relationship TO readaccess;
-GRANT SELECT ON TABLE ont.t_term_relationship TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ont.t_term_relationship TO writeaccess;
 

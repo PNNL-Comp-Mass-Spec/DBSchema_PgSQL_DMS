@@ -51,5 +51,5 @@ ALTER TABLE ONLY public.t_requested_run_batch_location_history
 --
 
 GRANT SELECT ON TABLE public.t_requested_run_batch_location_history TO readaccess;
-GRANT SELECT ON TABLE public.t_requested_run_batch_location_history TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_requested_run_batch_location_history TO writeaccess;
 

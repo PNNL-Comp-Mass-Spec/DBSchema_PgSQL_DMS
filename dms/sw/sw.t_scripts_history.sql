@@ -43,5 +43,5 @@ ALTER TABLE ONLY sw.t_scripts_history
 --
 
 GRANT SELECT ON TABLE sw.t_scripts_history TO readaccess;
-GRANT SELECT ON TABLE sw.t_scripts_history TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sw.t_scripts_history TO writeaccess;
 

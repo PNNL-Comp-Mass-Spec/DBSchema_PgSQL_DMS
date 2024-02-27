@@ -38,5 +38,5 @@ CREATE INDEX ix_t_event_log_target_id ON logdms.t_event_log USING btree (target_
 -- Name: TABLE t_event_log; Type: ACL; Schema: logdms; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE logdms.t_event_log TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE logdms.t_event_log TO writeaccess;
 

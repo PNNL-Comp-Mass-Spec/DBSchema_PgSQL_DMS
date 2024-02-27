@@ -57,5 +57,5 @@ ALTER TABLE ONLY public.t_organism_db_file
 --
 
 GRANT SELECT ON TABLE public.t_organism_db_file TO readaccess;
-GRANT SELECT ON TABLE public.t_organism_db_file TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_organism_db_file TO writeaccess;
 

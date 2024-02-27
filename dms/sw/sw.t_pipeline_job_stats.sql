@@ -24,5 +24,5 @@ ALTER TABLE ONLY sw.t_pipeline_job_stats
 --
 
 GRANT SELECT ON TABLE sw.t_pipeline_job_stats TO readaccess;
-GRANT SELECT ON TABLE sw.t_pipeline_job_stats TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sw.t_pipeline_job_stats TO writeaccess;
 

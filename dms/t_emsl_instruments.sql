@@ -29,5 +29,5 @@ ALTER TABLE ONLY public.t_emsl_instruments
 --
 
 GRANT SELECT ON TABLE public.t_emsl_instruments TO readaccess;
-GRANT SELECT ON TABLE public.t_emsl_instruments TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_emsl_instruments TO writeaccess;
 

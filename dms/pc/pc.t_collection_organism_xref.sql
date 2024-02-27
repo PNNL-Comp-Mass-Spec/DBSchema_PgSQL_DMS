@@ -49,5 +49,5 @@ ALTER TABLE ONLY pc.t_collection_organism_xref
 --
 
 GRANT SELECT ON TABLE pc.t_collection_organism_xref TO readaccess;
-GRANT SELECT ON TABLE pc.t_collection_organism_xref TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE pc.t_collection_organism_xref TO writeaccess;
 

@@ -75,5 +75,5 @@ ALTER TABLE ONLY public.t_material_locations
 --
 
 GRANT SELECT ON TABLE public.t_material_locations TO readaccess;
-GRANT SELECT ON TABLE public.t_material_locations TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_material_locations TO writeaccess;
 

@@ -28,5 +28,5 @@ ALTER TABLE ONLY public.t_mts_cached_data_status
 --
 
 GRANT SELECT ON TABLE public.t_mts_cached_data_status TO readaccess;
-GRANT SELECT ON TABLE public.t_mts_cached_data_status TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_mts_cached_data_status TO writeaccess;
 

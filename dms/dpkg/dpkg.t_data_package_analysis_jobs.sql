@@ -44,5 +44,5 @@ ALTER TABLE ONLY dpkg.t_data_package_analysis_jobs
 --
 
 GRANT SELECT ON TABLE dpkg.t_data_package_analysis_jobs TO readaccess;
-GRANT SELECT ON TABLE dpkg.t_data_package_analysis_jobs TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE dpkg.t_data_package_analysis_jobs TO writeaccess;
 

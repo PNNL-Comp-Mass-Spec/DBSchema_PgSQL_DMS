@@ -86,5 +86,5 @@ CREATE TRIGGER trig_t_tasks_history_after_update AFTER UPDATE ON cap.t_tasks_his
 --
 
 GRANT SELECT ON TABLE cap.t_tasks_history TO readaccess;
-GRANT SELECT ON TABLE cap.t_tasks_history TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE cap.t_tasks_history TO writeaccess;
 

@@ -44,5 +44,5 @@ CREATE INDEX ix_t_machine_status_history ON sw.t_machine_status_history USING bt
 --
 
 GRANT SELECT ON TABLE sw.t_machine_status_history TO readaccess;
-GRANT SELECT ON TABLE sw.t_machine_status_history TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sw.t_machine_status_history TO writeaccess;
 

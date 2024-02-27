@@ -64,5 +64,5 @@ CREATE INDEX ix_t_task_step_processing_log_processor ON logcap.t_task_step_proce
 -- Name: TABLE t_task_step_processing_log; Type: ACL; Schema: logcap; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE logcap.t_task_step_processing_log TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE logcap.t_task_step_processing_log TO writeaccess;
 

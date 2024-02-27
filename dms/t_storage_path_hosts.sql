@@ -24,5 +24,5 @@ ALTER TABLE ONLY public.t_storage_path_hosts
 --
 
 GRANT SELECT ON TABLE public.t_storage_path_hosts TO readaccess;
-GRANT SELECT ON TABLE public.t_storage_path_hosts TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_storage_path_hosts TO writeaccess;
 

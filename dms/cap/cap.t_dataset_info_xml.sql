@@ -24,5 +24,5 @@ ALTER TABLE ONLY cap.t_dataset_info_xml
 --
 
 GRANT SELECT ON TABLE cap.t_dataset_info_xml TO readaccess;
-GRANT SELECT ON TABLE cap.t_dataset_info_xml TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE cap.t_dataset_info_xml TO writeaccess;
 

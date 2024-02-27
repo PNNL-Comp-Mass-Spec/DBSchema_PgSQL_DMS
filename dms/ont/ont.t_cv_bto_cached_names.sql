@@ -48,5 +48,5 @@ CREATE INDEX ix_t_cv_bto_cached_names_term_name ON ont.t_cv_bto_cached_names USI
 --
 
 GRANT SELECT ON TABLE ont.t_cv_bto_cached_names TO readaccess;
-GRANT SELECT ON TABLE ont.t_cv_bto_cached_names TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ont.t_cv_bto_cached_names TO writeaccess;
 

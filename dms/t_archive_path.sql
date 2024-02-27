@@ -67,5 +67,5 @@ ALTER TABLE ONLY public.t_archive_path
 --
 
 GRANT SELECT ON TABLE public.t_archive_path TO readaccess;
-GRANT SELECT ON TABLE public.t_archive_path TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_archive_path TO writeaccess;
 

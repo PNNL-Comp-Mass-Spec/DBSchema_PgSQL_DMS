@@ -83,5 +83,5 @@ ALTER TABLE ONLY public.t_experiment_plex_members
 --
 
 GRANT SELECT ON TABLE public.t_experiment_plex_members TO readaccess;
-GRANT SELECT ON TABLE public.t_experiment_plex_members TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_experiment_plex_members TO writeaccess;
 

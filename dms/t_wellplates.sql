@@ -45,5 +45,5 @@ ALTER TABLE ONLY public.t_wellplates
 --
 
 GRANT SELECT ON TABLE public.t_wellplates TO readaccess;
-GRANT SELECT ON TABLE public.t_wellplates TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_wellplates TO writeaccess;
 

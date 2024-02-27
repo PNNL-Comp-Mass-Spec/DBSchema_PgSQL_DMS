@@ -45,5 +45,5 @@ ALTER TABLE ONLY pc.t_annotation_types
 --
 
 GRANT SELECT ON TABLE pc.t_annotation_types TO readaccess;
-GRANT SELECT ON TABLE pc.t_annotation_types TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE pc.t_annotation_types TO writeaccess;
 

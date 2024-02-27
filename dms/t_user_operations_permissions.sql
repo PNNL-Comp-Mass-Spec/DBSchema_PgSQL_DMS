@@ -36,5 +36,5 @@ ALTER TABLE ONLY public.t_user_operations_permissions
 --
 
 GRANT SELECT ON TABLE public.t_user_operations_permissions TO readaccess;
-GRANT SELECT ON TABLE public.t_user_operations_permissions TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_user_operations_permissions TO writeaccess;
 

@@ -36,5 +36,5 @@ ALTER TABLE ONLY public.t_experiment_biomaterial
 --
 
 GRANT SELECT ON TABLE public.t_experiment_biomaterial TO readaccess;
-GRANT SELECT ON TABLE public.t_experiment_biomaterial TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_experiment_biomaterial TO writeaccess;
 

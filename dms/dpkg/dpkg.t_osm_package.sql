@@ -68,5 +68,5 @@ ALTER TABLE ONLY dpkg.t_osm_package
 --
 
 GRANT SELECT ON TABLE dpkg.t_osm_package TO readaccess;
-GRANT SELECT ON TABLE dpkg.t_osm_package TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE dpkg.t_osm_package TO writeaccess;
 

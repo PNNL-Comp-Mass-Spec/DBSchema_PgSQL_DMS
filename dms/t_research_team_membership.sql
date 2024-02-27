@@ -44,5 +44,5 @@ ALTER TABLE ONLY public.t_research_team_membership
 --
 
 GRANT SELECT ON TABLE public.t_research_team_membership TO readaccess;
-GRANT SELECT ON TABLE public.t_research_team_membership TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_research_team_membership TO writeaccess;
 

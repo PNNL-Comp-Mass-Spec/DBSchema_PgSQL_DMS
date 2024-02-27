@@ -48,5 +48,5 @@ CREATE UNIQUE INDEX ix_t_attachments ON public.t_attachments USING btree (attach
 --
 
 GRANT SELECT ON TABLE public.t_attachments TO readaccess;
-GRANT SELECT ON TABLE public.t_attachments TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_attachments TO writeaccess;
 

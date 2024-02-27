@@ -24,5 +24,5 @@ ALTER TABLE ONLY cap.t_capture_task_stats
 --
 
 GRANT SELECT ON TABLE cap.t_capture_task_stats TO readaccess;
-GRANT SELECT ON TABLE cap.t_capture_task_stats TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE cap.t_capture_task_stats TO writeaccess;
 

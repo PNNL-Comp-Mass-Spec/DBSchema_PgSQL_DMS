@@ -36,5 +36,5 @@ ALTER TABLE ONLY pc.t_archived_output_file_collections_xref
 --
 
 GRANT SELECT ON TABLE pc.t_archived_output_file_collections_xref TO readaccess;
-GRANT SELECT ON TABLE pc.t_archived_output_file_collections_xref TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE pc.t_archived_output_file_collections_xref TO writeaccess;
 

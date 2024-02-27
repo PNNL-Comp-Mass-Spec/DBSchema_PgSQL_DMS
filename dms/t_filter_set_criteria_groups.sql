@@ -29,5 +29,5 @@ ALTER TABLE ONLY public.t_filter_set_criteria_groups
 --
 
 GRANT SELECT ON TABLE public.t_filter_set_criteria_groups TO readaccess;
-GRANT SELECT ON TABLE public.t_filter_set_criteria_groups TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_filter_set_criteria_groups TO writeaccess;
 

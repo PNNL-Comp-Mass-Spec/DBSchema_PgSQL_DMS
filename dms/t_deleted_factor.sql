@@ -56,5 +56,5 @@ ALTER TABLE ONLY public.t_deleted_factor
 --
 
 GRANT SELECT ON TABLE public.t_deleted_factor TO readaccess;
-GRANT SELECT ON TABLE public.t_deleted_factor TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_deleted_factor TO writeaccess;
 

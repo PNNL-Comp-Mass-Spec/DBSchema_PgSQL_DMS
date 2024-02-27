@@ -28,5 +28,5 @@ CREATE INDEX ix_t_analysis_job_request_datasets_dataset_id ON public.t_analysis_
 --
 
 GRANT SELECT ON TABLE public.t_analysis_job_request_datasets TO readaccess;
-GRANT SELECT ON TABLE public.t_analysis_job_request_datasets TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_analysis_job_request_datasets TO writeaccess;
 

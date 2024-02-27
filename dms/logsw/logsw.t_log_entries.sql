@@ -37,5 +37,5 @@ CREATE INDEX ix_t_log_entries_posted_by ON logsw.t_log_entries USING btree (post
 -- Name: TABLE t_log_entries; Type: ACL; Schema: logsw; Owner: d3l243
 --
 
-GRANT SELECT,INSERT ON TABLE logsw.t_log_entries TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE logsw.t_log_entries TO writeaccess;
 

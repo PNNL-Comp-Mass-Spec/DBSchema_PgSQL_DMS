@@ -32,5 +32,5 @@ CREATE INDEX ix_t_ncbi_taxonomy_cached_tax_id_include_name_and_synomyms ON ont.t
 --
 
 GRANT SELECT ON TABLE ont.t_ncbi_taxonomy_cached TO readaccess;
-GRANT SELECT ON TABLE ont.t_ncbi_taxonomy_cached TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ont.t_ncbi_taxonomy_cached TO writeaccess;
 

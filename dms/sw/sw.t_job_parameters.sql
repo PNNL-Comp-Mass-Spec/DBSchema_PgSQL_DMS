@@ -29,5 +29,5 @@ ALTER TABLE ONLY sw.t_job_parameters
 --
 
 GRANT SELECT ON TABLE sw.t_job_parameters TO readaccess;
-GRANT SELECT ON TABLE sw.t_job_parameters TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sw.t_job_parameters TO writeaccess;
 

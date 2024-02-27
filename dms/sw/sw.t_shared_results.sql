@@ -22,5 +22,5 @@ ALTER TABLE ONLY sw.t_shared_results
 --
 
 GRANT SELECT ON TABLE sw.t_shared_results TO readaccess;
-GRANT SELECT ON TABLE sw.t_shared_results TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sw.t_shared_results TO writeaccess;
 

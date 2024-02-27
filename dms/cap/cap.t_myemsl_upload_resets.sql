@@ -57,5 +57,5 @@ CREATE INDEX ix_t_myemsl_upload_resets_job ON cap.t_myemsl_upload_resets USING b
 --
 
 GRANT SELECT ON TABLE cap.t_myemsl_upload_resets TO readaccess;
-GRANT SELECT ON TABLE cap.t_myemsl_upload_resets TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE cap.t_myemsl_upload_resets TO writeaccess;
 

@@ -110,5 +110,5 @@ ALTER TABLE ONLY public.t_analysis_job_request
 --
 
 GRANT SELECT ON TABLE public.t_analysis_job_request TO readaccess;
-GRANT SELECT ON TABLE public.t_analysis_job_request TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_analysis_job_request TO writeaccess;
 

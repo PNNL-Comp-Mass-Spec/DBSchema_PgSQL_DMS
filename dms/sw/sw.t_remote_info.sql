@@ -45,5 +45,5 @@ CREATE UNIQUE INDEX ix_t_remote_info ON sw.t_remote_info USING btree (remote_inf
 --
 
 GRANT SELECT ON TABLE sw.t_remote_info TO readaccess;
-GRANT SELECT ON TABLE sw.t_remote_info TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sw.t_remote_info TO writeaccess;
 

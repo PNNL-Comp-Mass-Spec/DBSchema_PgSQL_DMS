@@ -97,5 +97,5 @@ ALTER TABLE ONLY public.t_data_analysis_request
 --
 
 GRANT SELECT ON TABLE public.t_data_analysis_request TO readaccess;
-GRANT SELECT ON TABLE public.t_data_analysis_request TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_data_analysis_request TO writeaccess;
 

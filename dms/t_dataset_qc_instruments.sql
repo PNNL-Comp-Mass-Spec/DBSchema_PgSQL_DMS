@@ -23,5 +23,5 @@ ALTER TABLE ONLY public.t_dataset_qc_instruments
 --
 
 GRANT SELECT ON TABLE public.t_dataset_qc_instruments TO readaccess;
-GRANT SELECT ON TABLE public.t_dataset_qc_instruments TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_dataset_qc_instruments TO writeaccess;
 

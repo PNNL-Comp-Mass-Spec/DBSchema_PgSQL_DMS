@@ -54,5 +54,5 @@ CREATE INDEX ix_term_ontology_id ON ont.t_term USING btree (ontology_id);
 --
 
 GRANT SELECT ON TABLE ont.t_term TO readaccess;
-GRANT SELECT ON TABLE ont.t_term TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE ont.t_term TO writeaccess;
 

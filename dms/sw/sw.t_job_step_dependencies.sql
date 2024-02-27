@@ -47,5 +47,5 @@ ALTER TABLE ONLY sw.t_job_step_dependencies
 --
 
 GRANT SELECT ON TABLE sw.t_job_step_dependencies TO readaccess;
-GRANT SELECT ON TABLE sw.t_job_step_dependencies TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sw.t_job_step_dependencies TO writeaccess;
 

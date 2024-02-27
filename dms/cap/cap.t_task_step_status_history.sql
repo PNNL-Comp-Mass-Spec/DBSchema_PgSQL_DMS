@@ -50,5 +50,5 @@ CREATE INDEX ix_t_task_step_status_history_step_tool ON cap.t_task_step_status_h
 --
 
 GRANT SELECT ON TABLE cap.t_task_step_status_history TO readaccess;
-GRANT SELECT ON TABLE cap.t_task_step_status_history TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE cap.t_task_step_status_history TO writeaccess;
 

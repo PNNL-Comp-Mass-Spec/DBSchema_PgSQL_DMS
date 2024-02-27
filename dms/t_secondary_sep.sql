@@ -47,5 +47,5 @@ ALTER TABLE ONLY public.t_secondary_sep
 --
 
 GRANT SELECT ON TABLE public.t_secondary_sep TO readaccess;
-GRANT SELECT ON TABLE public.t_secondary_sep TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_secondary_sep TO writeaccess;
 

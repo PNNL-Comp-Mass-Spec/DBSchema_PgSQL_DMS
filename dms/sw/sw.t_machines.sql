@@ -35,5 +35,5 @@ ALTER TABLE ONLY sw.t_machines
 --
 
 GRANT SELECT ON TABLE sw.t_machines TO readaccess;
-GRANT SELECT ON TABLE sw.t_machines TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sw.t_machines TO writeaccess;
 

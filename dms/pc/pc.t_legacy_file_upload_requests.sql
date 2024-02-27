@@ -40,5 +40,5 @@ ALTER TABLE ONLY pc.t_legacy_file_upload_requests
 --
 
 GRANT SELECT ON TABLE pc.t_legacy_file_upload_requests TO readaccess;
-GRANT SELECT ON TABLE pc.t_legacy_file_upload_requests TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE pc.t_legacy_file_upload_requests TO writeaccess;
 

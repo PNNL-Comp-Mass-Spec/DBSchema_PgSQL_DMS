@@ -48,5 +48,5 @@ ALTER TABLE ONLY public.t_email_alerts
 --
 
 GRANT SELECT ON TABLE public.t_email_alerts TO readaccess;
-GRANT SELECT ON TABLE public.t_email_alerts TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_email_alerts TO writeaccess;
 

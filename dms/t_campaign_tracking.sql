@@ -37,5 +37,5 @@ ALTER TABLE ONLY public.t_campaign_tracking
 --
 
 GRANT SELECT ON TABLE public.t_campaign_tracking TO readaccess;
-GRANT SELECT ON TABLE public.t_campaign_tracking TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_campaign_tracking TO writeaccess;
 

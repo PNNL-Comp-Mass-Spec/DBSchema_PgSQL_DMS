@@ -37,5 +37,5 @@ ALTER TABLE ONLY public.t_cached_instrument_usage_by_proposal
 --
 
 GRANT SELECT ON TABLE public.t_cached_instrument_usage_by_proposal TO readaccess;
-GRANT SELECT ON TABLE public.t_cached_instrument_usage_by_proposal TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_cached_instrument_usage_by_proposal TO writeaccess;
 

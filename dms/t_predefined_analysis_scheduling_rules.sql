@@ -50,5 +50,5 @@ ALTER TABLE ONLY public.t_predefined_analysis_scheduling_rules
 --
 
 GRANT SELECT ON TABLE public.t_predefined_analysis_scheduling_rules TO readaccess;
-GRANT SELECT ON TABLE public.t_predefined_analysis_scheduling_rules TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_predefined_analysis_scheduling_rules TO writeaccess;
 

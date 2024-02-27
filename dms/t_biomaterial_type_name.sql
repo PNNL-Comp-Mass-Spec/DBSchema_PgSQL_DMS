@@ -41,5 +41,5 @@ CREATE UNIQUE INDEX ix_t_biomaterial_type_name ON public.t_biomaterial_type_name
 --
 
 GRANT SELECT ON TABLE public.t_biomaterial_type_name TO readaccess;
-GRANT SELECT ON TABLE public.t_biomaterial_type_name TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_biomaterial_type_name TO writeaccess;
 

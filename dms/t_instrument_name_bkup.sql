@@ -29,5 +29,5 @@ ALTER TABLE ONLY public.t_instrument_name_bkup
 --
 
 GRANT SELECT ON TABLE public.t_instrument_name_bkup TO readaccess;
-GRANT SELECT ON TABLE public.t_instrument_name_bkup TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_instrument_name_bkup TO writeaccess;
 

@@ -28,5 +28,5 @@ CREATE INDEX ix_t_protein_headers ON pc.t_protein_headers USING btree (sequence_
 --
 
 GRANT SELECT ON TABLE pc.t_protein_headers TO readaccess;
-GRANT SELECT ON TABLE pc.t_protein_headers TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE pc.t_protein_headers TO writeaccess;
 

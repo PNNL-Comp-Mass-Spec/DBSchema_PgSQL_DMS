@@ -116,5 +116,5 @@ ALTER TABLE ONLY public.t_instrument_name
 --
 
 GRANT SELECT ON TABLE public.t_instrument_name TO readaccess;
-GRANT SELECT ON TABLE public.t_instrument_name TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_instrument_name TO writeaccess;
 

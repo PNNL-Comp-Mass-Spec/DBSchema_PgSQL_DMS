@@ -22,5 +22,5 @@ ALTER TABLE ONLY public.t_cached_protein_collection_list_members
 --
 
 GRANT SELECT ON TABLE public.t_cached_protein_collection_list_members TO readaccess;
-GRANT SELECT ON TABLE public.t_cached_protein_collection_list_members TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_cached_protein_collection_list_members TO writeaccess;
 

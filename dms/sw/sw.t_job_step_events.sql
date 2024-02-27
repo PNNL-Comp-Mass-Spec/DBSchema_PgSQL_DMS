@@ -58,5 +58,5 @@ CREATE INDEX ix_t_job_step_events_job ON sw.t_job_step_events USING btree (job);
 --
 
 GRANT SELECT ON TABLE sw.t_job_step_events TO readaccess;
-GRANT SELECT ON TABLE sw.t_job_step_events TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sw.t_job_step_events TO writeaccess;
 

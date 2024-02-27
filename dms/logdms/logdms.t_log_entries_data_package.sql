@@ -36,5 +36,5 @@ CREATE INDEX ix_t_log_entries_data_package_posted_by ON logdms.t_log_entries_dat
 -- Name: TABLE t_log_entries_data_package; Type: ACL; Schema: logdms; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE logdms.t_log_entries_data_package TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE logdms.t_log_entries_data_package TO writeaccess;
 

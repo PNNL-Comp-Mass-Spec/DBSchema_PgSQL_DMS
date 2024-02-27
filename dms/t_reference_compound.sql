@@ -151,5 +151,5 @@ ALTER TABLE ONLY public.t_reference_compound
 --
 
 GRANT SELECT ON TABLE public.t_reference_compound TO readaccess;
-GRANT SELECT ON TABLE public.t_reference_compound TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_reference_compound TO writeaccess;
 

@@ -28,5 +28,5 @@ ALTER TABLE ONLY public.t_storage_path_bkup
 --
 
 GRANT SELECT ON TABLE public.t_storage_path_bkup TO readaccess;
-GRANT SELECT ON TABLE public.t_storage_path_bkup TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_storage_path_bkup TO writeaccess;
 

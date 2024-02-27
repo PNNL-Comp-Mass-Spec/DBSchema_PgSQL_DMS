@@ -44,5 +44,5 @@ ALTER TABLE ONLY public.t_aux_info_category
 --
 
 GRANT SELECT ON TABLE public.t_aux_info_category TO readaccess;
-GRANT SELECT ON TABLE public.t_aux_info_category TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_aux_info_category TO writeaccess;
 

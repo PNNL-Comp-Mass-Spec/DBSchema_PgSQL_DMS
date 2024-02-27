@@ -61,5 +61,5 @@ ALTER TABLE ONLY public.t_lc_cart_settings_history
 --
 
 GRANT SELECT ON TABLE public.t_lc_cart_settings_history TO readaccess;
-GRANT SELECT ON TABLE public.t_lc_cart_settings_history TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_lc_cart_settings_history TO writeaccess;
 

@@ -34,5 +34,5 @@ ALTER TABLE ONLY public.t_sample_prep_request_items
 --
 
 GRANT SELECT ON TABLE public.t_sample_prep_request_items TO readaccess;
-GRANT SELECT ON TABLE public.t_sample_prep_request_items TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_sample_prep_request_items TO writeaccess;
 

@@ -59,5 +59,5 @@ ALTER TABLE ONLY public.t_entity_rename_log
 --
 
 GRANT SELECT ON TABLE public.t_entity_rename_log TO readaccess;
-GRANT SELECT ON TABLE public.t_entity_rename_log TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_entity_rename_log TO writeaccess;
 

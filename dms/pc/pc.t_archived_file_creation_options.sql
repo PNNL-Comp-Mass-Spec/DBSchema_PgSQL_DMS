@@ -37,5 +37,5 @@ ALTER TABLE ONLY pc.t_archived_file_creation_options
 --
 
 GRANT SELECT ON TABLE pc.t_archived_file_creation_options TO readaccess;
-GRANT SELECT ON TABLE pc.t_archived_file_creation_options TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE pc.t_archived_file_creation_options TO writeaccess;
 

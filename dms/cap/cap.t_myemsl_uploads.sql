@@ -96,5 +96,5 @@ ALTER TABLE ONLY cap.t_myemsl_uploads
 --
 
 GRANT SELECT ON TABLE cap.t_myemsl_uploads TO readaccess;
-GRANT SELECT ON TABLE cap.t_myemsl_uploads TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE cap.t_myemsl_uploads TO writeaccess;
 

@@ -58,5 +58,5 @@ ALTER TABLE ONLY public.t_cached_instrument_dataset_type_usage
 --
 
 GRANT SELECT ON TABLE public.t_cached_instrument_dataset_type_usage TO readaccess;
-GRANT SELECT ON TABLE public.t_cached_instrument_dataset_type_usage TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_cached_instrument_dataset_type_usage TO writeaccess;
 

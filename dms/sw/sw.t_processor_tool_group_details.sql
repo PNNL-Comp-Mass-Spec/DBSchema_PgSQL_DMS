@@ -49,5 +49,5 @@ ALTER TABLE ONLY sw.t_processor_tool_group_details
 --
 
 GRANT SELECT ON TABLE sw.t_processor_tool_group_details TO readaccess;
-GRANT SELECT ON TABLE sw.t_processor_tool_group_details TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sw.t_processor_tool_group_details TO writeaccess;
 

@@ -50,5 +50,5 @@ CREATE INDEX ix_t_predefined_analysis_scheduling_queue_history_rating ON public.
 --
 
 GRANT SELECT ON TABLE public.t_predefined_analysis_scheduling_queue_history TO readaccess;
-GRANT SELECT ON TABLE public.t_predefined_analysis_scheduling_queue_history TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_predefined_analysis_scheduling_queue_history TO writeaccess;
 

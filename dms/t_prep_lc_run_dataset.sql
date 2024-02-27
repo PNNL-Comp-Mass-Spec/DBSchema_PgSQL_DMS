@@ -36,5 +36,5 @@ ALTER TABLE ONLY public.t_prep_lc_run_dataset
 --
 
 GRANT SELECT ON TABLE public.t_prep_lc_run_dataset TO readaccess;
-GRANT SELECT ON TABLE public.t_prep_lc_run_dataset TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_prep_lc_run_dataset TO writeaccess;
 

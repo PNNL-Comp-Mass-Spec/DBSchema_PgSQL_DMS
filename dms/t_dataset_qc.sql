@@ -133,5 +133,5 @@ ALTER TABLE ONLY public.t_dataset_qc
 --
 
 GRANT SELECT ON TABLE public.t_dataset_qc TO readaccess;
-GRANT SELECT ON TABLE public.t_dataset_qc TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_dataset_qc TO writeaccess;
 

@@ -26,5 +26,5 @@ ALTER TABLE ONLY public.t_analysis_job_psm_stats_phospho
 --
 
 GRANT SELECT ON TABLE public.t_analysis_job_psm_stats_phospho TO readaccess;
-GRANT SELECT ON TABLE public.t_analysis_job_psm_stats_phospho TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_analysis_job_psm_stats_phospho TO writeaccess;
 

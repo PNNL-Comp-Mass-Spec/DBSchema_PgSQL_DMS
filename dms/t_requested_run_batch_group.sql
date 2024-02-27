@@ -51,5 +51,5 @@ ALTER TABLE ONLY public.t_requested_run_batch_group
 --
 
 GRANT SELECT ON TABLE public.t_requested_run_batch_group TO readaccess;
-GRANT SELECT ON TABLE public.t_requested_run_batch_group TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_requested_run_batch_group TO writeaccess;
 

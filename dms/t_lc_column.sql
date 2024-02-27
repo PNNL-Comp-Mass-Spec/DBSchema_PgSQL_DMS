@@ -72,5 +72,5 @@ ALTER TABLE ONLY public.t_lc_column
 --
 
 GRANT SELECT ON TABLE public.t_lc_column TO readaccess;
-GRANT SELECT ON TABLE public.t_lc_column TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_lc_column TO writeaccess;
 

@@ -63,5 +63,5 @@ CREATE TRIGGER trig_t_scripts_after_update AFTER UPDATE ON cap.t_scripts FOR EAC
 --
 
 GRANT SELECT ON TABLE cap.t_scripts TO readaccess;
-GRANT SELECT ON TABLE cap.t_scripts TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE cap.t_scripts TO writeaccess;
 

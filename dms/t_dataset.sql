@@ -299,5 +299,5 @@ ALTER TABLE ONLY public.t_dataset
 --
 
 GRANT SELECT ON TABLE public.t_dataset TO readaccess;
-GRANT SELECT ON TABLE public.t_dataset TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_dataset TO writeaccess;
 

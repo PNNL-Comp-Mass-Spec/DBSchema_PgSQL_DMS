@@ -51,7 +51,7 @@ CREATE INDEX ix_t_log_entries_posted_by ON public.t_log_entries USING btree (pos
 --
 
 GRANT SELECT ON TABLE public.t_log_entries TO readaccess;
-GRANT SELECT,INSERT ON TABLE public.t_log_entries TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_log_entries TO writeaccess;
 GRANT INSERT,UPDATE ON TABLE public.t_log_entries TO dmswebuser;
 
 --

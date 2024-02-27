@@ -60,5 +60,5 @@ ALTER TABLE ONLY public.t_param_entries
 --
 
 GRANT SELECT ON TABLE public.t_param_entries TO readaccess;
-GRANT SELECT ON TABLE public.t_param_entries TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_param_entries TO writeaccess;
 

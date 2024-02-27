@@ -33,5 +33,5 @@ ALTER TABLE ONLY public.t_instrument_class
 --
 
 GRANT SELECT ON TABLE public.t_instrument_class TO readaccess;
-GRANT SELECT ON TABLE public.t_instrument_class TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_instrument_class TO writeaccess;
 

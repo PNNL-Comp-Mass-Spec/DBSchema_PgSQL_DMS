@@ -25,5 +25,5 @@ ALTER TABLE ONLY public.t_separation_group
 --
 
 GRANT SELECT ON TABLE public.t_separation_group TO readaccess;
-GRANT SELECT ON TABLE public.t_separation_group TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_separation_group TO writeaccess;
 

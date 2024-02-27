@@ -96,5 +96,5 @@ ALTER TABLE ONLY public.t_organisms
 --
 
 GRANT SELECT ON TABLE public.t_organisms TO readaccess;
-GRANT SELECT ON TABLE public.t_organisms TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_organisms TO writeaccess;
 

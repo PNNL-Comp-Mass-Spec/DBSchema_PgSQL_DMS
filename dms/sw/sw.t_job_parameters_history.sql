@@ -48,5 +48,5 @@ CREATE TRIGGER trig_t_job_parameters_history_after_update AFTER UPDATE ON sw.t_j
 --
 
 GRANT SELECT ON TABLE sw.t_job_parameters_history TO readaccess;
-GRANT SELECT ON TABLE sw.t_job_parameters_history TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sw.t_job_parameters_history TO writeaccess;
 

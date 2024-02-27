@@ -60,5 +60,5 @@ CREATE TRIGGER trig_t_analysis_job_processors_after_update AFTER UPDATE ON publi
 --
 
 GRANT SELECT ON TABLE public.t_analysis_job_processors TO readaccess;
-GRANT SELECT ON TABLE public.t_analysis_job_processors TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_analysis_job_processors TO writeaccess;
 

@@ -71,5 +71,5 @@ ALTER TABLE ONLY dpkg.t_myemsl_uploads
 --
 
 GRANT SELECT ON TABLE dpkg.t_myemsl_uploads TO readaccess;
-GRANT SELECT ON TABLE dpkg.t_myemsl_uploads TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE dpkg.t_myemsl_uploads TO writeaccess;
 

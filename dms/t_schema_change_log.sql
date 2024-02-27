@@ -49,5 +49,5 @@ CREATE INDEX ix_t_schema_change_log_object_name_object_type ON public.t_schema_c
 --
 
 GRANT SELECT,INSERT ON TABLE public.t_schema_change_log TO readaccess;
-GRANT SELECT ON TABLE public.t_schema_change_log TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_schema_change_log TO writeaccess;
 

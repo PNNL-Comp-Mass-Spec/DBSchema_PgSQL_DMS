@@ -71,5 +71,5 @@ CREATE INDEX ix_t_task_step_events_job ON logcap.t_task_step_events USING btree 
 -- Name: TABLE t_task_step_events; Type: ACL; Schema: logcap; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE logcap.t_task_step_events TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE logcap.t_task_step_events TO writeaccess;
 

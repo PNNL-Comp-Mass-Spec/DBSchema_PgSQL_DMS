@@ -58,5 +58,5 @@ CREATE INDEX ix_t_file_attachment_entity_type_active_include_entity_id ON public
 --
 
 GRANT SELECT ON TABLE public.t_file_attachment TO readaccess;
-GRANT SELECT ON TABLE public.t_file_attachment TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_file_attachment TO writeaccess;
 

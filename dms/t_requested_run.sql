@@ -288,5 +288,5 @@ ALTER TABLE ONLY public.t_requested_run
 --
 
 GRANT SELECT ON TABLE public.t_requested_run TO readaccess;
-GRANT SELECT ON TABLE public.t_requested_run TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_requested_run TO writeaccess;
 

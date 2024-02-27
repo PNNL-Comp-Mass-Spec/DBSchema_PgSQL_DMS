@@ -24,5 +24,5 @@ ALTER TABLE ONLY public.t_eus_proposal_type
 --
 
 GRANT SELECT ON TABLE public.t_eus_proposal_type TO readaccess;
-GRANT SELECT ON TABLE public.t_eus_proposal_type TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_eus_proposal_type TO writeaccess;
 

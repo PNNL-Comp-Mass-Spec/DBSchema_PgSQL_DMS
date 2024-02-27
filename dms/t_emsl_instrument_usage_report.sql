@@ -77,5 +77,5 @@ ALTER TABLE ONLY public.t_emsl_instrument_usage_report
 --
 
 GRANT SELECT ON TABLE public.t_emsl_instrument_usage_report TO readaccess;
-GRANT SELECT ON TABLE public.t_emsl_instrument_usage_report TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_emsl_instrument_usage_report TO writeaccess;
 

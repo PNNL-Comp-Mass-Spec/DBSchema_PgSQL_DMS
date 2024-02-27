@@ -49,5 +49,5 @@ ALTER TABLE ONLY public.t_deleted_requested_run_batch
 --
 
 GRANT SELECT ON TABLE public.t_deleted_requested_run_batch TO readaccess;
-GRANT SELECT ON TABLE public.t_deleted_requested_run_batch TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_deleted_requested_run_batch TO writeaccess;
 

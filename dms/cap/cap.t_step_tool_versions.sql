@@ -44,5 +44,5 @@ CREATE UNIQUE INDEX ix_t_step_tool_versions ON cap.t_step_tool_versions USING bt
 --
 
 GRANT SELECT ON TABLE cap.t_step_tool_versions TO readaccess;
-GRANT SELECT ON TABLE cap.t_step_tool_versions TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE cap.t_step_tool_versions TO writeaccess;
 

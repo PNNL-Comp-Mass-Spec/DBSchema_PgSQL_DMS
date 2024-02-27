@@ -77,5 +77,5 @@ CREATE TRIGGER trig_t_mts_mt_db_jobs_cached_after_update AFTER UPDATE ON public.
 --
 
 GRANT SELECT ON TABLE public.t_mts_mt_db_jobs_cached TO readaccess;
-GRANT SELECT ON TABLE public.t_mts_mt_db_jobs_cached TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_mts_mt_db_jobs_cached TO writeaccess;
 

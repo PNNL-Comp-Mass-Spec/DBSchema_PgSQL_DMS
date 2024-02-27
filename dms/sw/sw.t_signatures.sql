@@ -44,5 +44,5 @@ CREATE UNIQUE INDEX ix_t_signatures ON sw.t_signatures USING btree (pattern);
 --
 
 GRANT SELECT ON TABLE sw.t_signatures TO readaccess;
-GRANT SELECT ON TABLE sw.t_signatures TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sw.t_signatures TO writeaccess;
 

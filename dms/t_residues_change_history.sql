@@ -48,5 +48,5 @@ ALTER TABLE ONLY public.t_residues_change_history
 --
 
 GRANT SELECT ON TABLE public.t_residues_change_history TO readaccess;
-GRANT SELECT ON TABLE public.t_residues_change_history TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_residues_change_history TO writeaccess;
 

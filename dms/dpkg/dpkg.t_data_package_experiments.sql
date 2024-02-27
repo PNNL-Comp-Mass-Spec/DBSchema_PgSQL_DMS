@@ -32,5 +32,5 @@ ALTER TABLE ONLY dpkg.t_data_package_experiments
 --
 
 GRANT SELECT ON TABLE dpkg.t_data_package_experiments TO readaccess;
-GRANT SELECT ON TABLE dpkg.t_data_package_experiments TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE dpkg.t_data_package_experiments TO writeaccess;
 

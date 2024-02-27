@@ -44,5 +44,5 @@ CREATE INDEX ix_t_job_step_processing_log_processor ON logsw.t_job_step_processi
 -- Name: TABLE t_job_step_processing_log; Type: ACL; Schema: logsw; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE logsw.t_job_step_processing_log TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE logsw.t_job_step_processing_log TO writeaccess;
 

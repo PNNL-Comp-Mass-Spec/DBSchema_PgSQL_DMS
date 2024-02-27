@@ -46,5 +46,5 @@ CREATE INDEX ix_t_instrument_config_history_instrument_entered ON public.t_instr
 --
 
 GRANT SELECT ON TABLE public.t_instrument_config_history TO readaccess;
-GRANT SELECT ON TABLE public.t_instrument_config_history TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_instrument_config_history TO writeaccess;
 

@@ -69,5 +69,5 @@ ALTER TABLE ONLY public.t_experiment_groups
 --
 
 GRANT SELECT ON TABLE public.t_experiment_groups TO readaccess;
-GRANT SELECT ON TABLE public.t_experiment_groups TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_experiment_groups TO writeaccess;
 

@@ -37,5 +37,5 @@ CREATE INDEX ix_t_log_entries_posted_by ON logcap.t_log_entries USING btree (pos
 -- Name: TABLE t_log_entries; Type: ACL; Schema: logcap; Owner: d3l243
 --
 
-GRANT SELECT,INSERT ON TABLE logcap.t_log_entries TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE logcap.t_log_entries TO writeaccess;
 
