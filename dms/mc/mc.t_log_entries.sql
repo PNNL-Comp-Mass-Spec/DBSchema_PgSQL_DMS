@@ -48,9 +48,3 @@ GRANT SELECT ON TABLE mc.t_log_entries TO readaccess;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE mc.t_log_entries TO writeaccess;
 GRANT INSERT,UPDATE ON TABLE mc.t_log_entries TO dmswebuser;
 
---
--- Name: COLUMN t_log_entries.entered_by; Type: ACL; Schema: mc; Owner: d3l243
---
-
-GRANT UPDATE(entered_by) ON TABLE mc.t_log_entries TO writeaccess;
-

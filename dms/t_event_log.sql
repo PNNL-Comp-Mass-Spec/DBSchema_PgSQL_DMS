@@ -78,4 +78,5 @@ ALTER TABLE ONLY public.t_event_log
 
 GRANT SELECT ON TABLE public.t_event_log TO readaccess;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_event_log TO writeaccess;
+GRANT INSERT,UPDATE ON TABLE public.t_event_log TO dmswebuser;
 
