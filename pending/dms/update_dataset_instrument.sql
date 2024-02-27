@@ -31,6 +31,7 @@ AS $$
 **  Auth:   mem
 **  Date:   04/30/2019 mem - Initial Version
 **          08/02/2023 mem - Add call to update_cached_dataset_instruments
+**          02/27/2024 mem - Call update_cached_dataset_folder_paths
 **          12/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -329,6 +330,16 @@ BEGIN
         WHERE dataset_id = _datasetId
 
     End If;
+
+    UPDATE t_cached_dataset_folder_paths
+    SET update_required = 1
+    WHERE dataset_id = _datasetId;
+
+    CALL update_cached_dataset_folder_paths (
+            _processingMode => 0,
+            _showDebug      => false,
+            _message        => _message,
+            _returnCode     => _returnCode);
 
     _message := format('Changed instrument from %s to %s for dataset %s, Dataset_ID %s; Storage path ID changed from %s to %s';
                         _instrumentNameOld, _instrumentNameNew, _datasetName, _datasetId, _storagePathIdOld, _storagePathIdNew);
