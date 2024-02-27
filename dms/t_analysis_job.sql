@@ -46,6 +46,12 @@ CREATE TABLE public.t_analysis_job (
 ALTER TABLE public.t_analysis_job OWNER TO d3l243;
 
 --
+-- Name: COLUMN t_analysis_job.param_file_name; Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON COLUMN public.t_analysis_job.param_file_name IS 'Parameter file name';
+
+--
 -- Name: t_analysis_job pk_t_analysis_job; Type: CONSTRAINT; Schema: public; Owner: d3l243
 --
 
