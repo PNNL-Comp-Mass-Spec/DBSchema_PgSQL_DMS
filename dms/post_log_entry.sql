@@ -44,9 +44,11 @@ CREATE OR REPLACE PROCEDURE public.post_log_entry(IN _type text, IN _message tex
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          02/27/2024 mem - Log messages to t_log_entries_local when the target schema is 'logdms', 'logcap', or 'logsw'
 **
 *****************************************************/
 DECLARE
+    _targetTable text;
     _targetTableWithSchema text;
     _logTableFound boolean;
     _minimumPostingTime timestamp;
@@ -62,13 +64,17 @@ BEGIN
     -- Validate the inputs
     ------------------------------------------------
 
-    _targetSchema := Trim(Coalesce(_targetSchema, ''));
+    _targetSchema := Trim(Lower(Coalesce(_targetSchema, '')));
+    _targetTable  := 't_log_entries';
 
     If _targetSchema = '' Then
         _targetSchema := 'public';
+    ElsIf _targetSchema IN ('logdms', 'logcap', 'logsw') Then
+        -- Post log entries to logsw.t_log_entries_local, logdms.t_log_entries_local, or logcap.t_log_entries_local
+        _targetTable := 't_log_entries_local';
     End If;
 
-    _targetTableWithSchema := format('%I.%I', _targetSchema, 't_log_entries');
+    _targetTableWithSchema := format('%I.%I', _targetSchema, _targetTable);
 
     SELECT table_exists
     INTO _logTableFound
