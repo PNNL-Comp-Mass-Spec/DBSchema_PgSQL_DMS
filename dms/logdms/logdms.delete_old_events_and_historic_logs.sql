@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE logdms.delete_old_events_and_historic_logs(IN _infoo
 **          08/26/2022 mem - Use new column name in T_Log_Entries
 **          02/21/2023 bcg - Rename procedure and parameters to a case-insensitive match to postgres
 **          02/27/2024 mem - Ported to PostgreSQL
+**          02/28/2024 mem - Create temporary tables, not permanent tables
 **
 *****************************************************/
 DECLARE
@@ -69,19 +70,19 @@ BEGIN
         -- Create temp tables to hold the IDs of the items to delete
         ---------------------------------------------------
 
-        CREATE TABLE Tmp_EventLogIDs (
+        CREATE TEMP TABLE Tmp_EventLogIDs (
             Event_ID int NOT NULL,
             Entered  timestamp NOT NULL,
             PRIMARY KEY ( Event_ID )
         );
 
-        CREATE TABLE Tmp_HistoricLogIDs (
+        CREATE TEMP TABLE Tmp_HistoricLogIDs (
             Entry_ID int NOT NULL,
             Entered  timestamp NOT NULL,
             PRIMARY KEY ( Entry_ID, Entered )
         );
 
-        CREATE TABLE Tmp_EventsToDelete (
+        CREATE TEMP TABLE Tmp_EventsToDelete (
             Event_ID int NOT NULL,
             Target_Type int NULL,
             Target_ID int NULL,
@@ -91,7 +92,7 @@ BEGIN
             PRIMARY KEY ( Event_ID)
         );
 
-        CREATE TABLE Tmp_LogEntriesToDelete (
+        CREATE TEMP TABLE Tmp_LogEntriesToDelete (
             Entry_ID  int NOT NULL,
             Posted_By citext NULL,
             Entered   timestamp NOT NULL,

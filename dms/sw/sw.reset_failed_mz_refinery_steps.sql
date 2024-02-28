@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE sw.reset_failed_mz_refinery_steps(IN _infoonly boole
 **          08/23/2023 mem - Initial version
 **          08/24/2023 mem - Ported to PostgreSQL
 **          10/12/2023 mem - Add missing call to format()
+**          02/28/2024 mem - Use a temporary table for Tmp_Job_Steps_to_Reset
 **
 *****************************************************/
 DECLARE
@@ -112,7 +113,7 @@ BEGIN
         -- Look for job steps to reset
         -----------------------------------------------------------
 
-        CREATE TABLE Tmp_Job_Steps_to_Reset (
+        CREATE TEMP TABLE Tmp_Job_Steps_to_Reset (
             Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
             Job int,
             Step int,
