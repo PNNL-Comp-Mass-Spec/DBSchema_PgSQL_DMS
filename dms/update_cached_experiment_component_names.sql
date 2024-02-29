@@ -9,7 +9,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_experiment_component_names(IN _
 **
 **  Desc:
 **      Update t_cached_experiment_components, which tracks the semicolon-separated list
-**      of biomaterial names and reference compound names for each exeriment
+**      of biomaterial names and reference compound names for each experiment
 **
 **  Arguments:
 **    _expID        Set to 0 to process all experiments, or a positive number to only process the given experiment
