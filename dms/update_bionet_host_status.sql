@@ -1,22 +1,24 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_bionet_host_status
-(
-    _infoOnly boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_bionet_host_status(boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_bionet_host_status(IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Update the last_online column in t_bionet_hosts by looking for datasets associated with any instrument associated with the given host
+**      Update last_online in t_bionet_hosts by looking for datasets associated with any instrument associated with the given host
 **
 **  Arguments:
 **    _infoOnly     When true, preview updates
+**    _message      Status message
+**    _returnCode   Return code
 **
 **  Auth:   mem
 **  Date:   12/02/2015 mem - Initial version
 **          09/11/2019 mem - Exclude tracking datasets when finding the most recent dataset for each instrument
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/28/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -25,7 +27,12 @@ DECLARE
     _infoHeadSeparator text;
     _previewData record;
     _infoData text;
+
+    _updateCount int;
 BEGIN
+    _message := '';
+    _returnCode := '';
+
     -----------------------------------------
     -- Validate the inputs
     -----------------------------------------
@@ -49,8 +56,8 @@ BEGIN
     -----------------------------------------
 
     INSERT INTO Tmp_Hosts( host,
-                            instrument,
-                            MostRecentDataset )
+                           instrument,
+                           MostRecentDataset )
     SELECT BionetHosts.host,
            Inst.instrument,
            MAX(DS.created) AS MostRecentDataset
@@ -71,7 +78,7 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-20s %-20s %-20s %-20s';
+        _formatSpecifier := '%-20s %-17s %-20s %-16s';
 
         _infoHead := format(_formatSpecifier,
                             'Host',
@@ -82,9 +89,9 @@ BEGIN
 
         _infoHeadSeparator := format(_formatSpecifier,
                                      '--------------------',
+                                     '-----------------',
                                      '--------------------',
-                                     '--------------------',
-                                     '--------------------'
+                                     '----------------'
                                     );
 
         RAISE INFO '%', _infoHead;
@@ -93,7 +100,7 @@ BEGIN
         FOR _previewData IN
             SELECT Target.Host,
                    public.timestamp_text(Target.Last_Online) AS Last_Online,
-                   Src.MostRecentDataset AS Most_Recent_Dataset,
+                   public.timestamp_text(Src.MostRecentDataset) AS Most_Recent_Dataset,
                    CASE WHEN Src.MostRecentDataset > Coalesce(Target.Last_Online, make_date(1970, 1, 1))
                         THEN public.timestamp_text(Src.MostRecentDataset)
                         ELSE ''
@@ -104,12 +111,13 @@ BEGIN
                               FROM Tmp_Hosts
                               GROUP BY host ) Src
                    ON Target.host = Src.host
+            ORDER BY Target.Host
         LOOP
             _infoData := format(_formatSpecifier,
                                 _previewData.Host,
-                                _previewData.Last_Online,
-                                _previewData.Most_Recent_Dataset,
-                                _previewData.New_Last_Online
+                                Left(_previewData.Last_Online, 16),
+                                Left(_previewData.Most_Recent_Dataset, 16),
+                                Left(_previewData.New_Last_Online, 16)
                                );
 
             RAISE INFO '%', _infoData;
@@ -119,7 +127,7 @@ BEGIN
         RETURN;
     End If;
 
-    -- Update Last_Online
+    -- Update last_online
 
     UPDATE t_bionet_hosts Target
     SET last_online = CASE WHEN Src.MostRecentDataset > Coalesce(Target.last_online, make_date(1970, 1, 1))
@@ -131,9 +139,22 @@ BEGIN
            FROM Tmp_Hosts
            GROUP BY Host ) Src
     WHERE Target.Host = Src.Host;
+    --
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
+
+    _message := format('Updated %s %s in t_bionet_hosts', _updateCount, public.check_plural(_updateCount, 'host', 'hosts'));
+    RAISE INFO '%', _message;
 
     DROP TABLE Tmp_Hosts;
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_bionet_host_status IS 'UpdateBionetHostStatus';
+
+ALTER PROCEDURE public.update_bionet_host_status(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_bionet_host_status(IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_bionet_host_status(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateBionetHostStatus';
+
