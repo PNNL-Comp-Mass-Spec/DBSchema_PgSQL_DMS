@@ -27,8 +27,9 @@ CREATE OR REPLACE FUNCTION public.condense_integer_list_to_ranges(_debugmode boo
 **             ('Job', 101),
 **             ('Job', 102),
 **             ('Job', 114),
+**             ('Job', null),
 **             ('Job', 115),
-**             ('Job', 118);
+**             ('Job', 118),
 **             ('Dataset', 500),
 **             ('Dataset', 505),
 **             ('Dataset', 506),
@@ -50,10 +51,12 @@ CREATE OR REPLACE FUNCTION public.condense_integer_list_to_ranges(_debugmode boo
 **          12/29/2022 mem - Ported to PostgreSQL
 **          06/07/2023 mem - Add Order By to string_agg()
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          03/01/2024 mem - Add support for duplicate values
 **
 *****************************************************/
 DECLARE
     _categoryRange record;
+    _previousCategory text;
 BEGIN
     ----------------------------------------------------
     -- Validate the inputs
@@ -95,13 +98,14 @@ BEGIN
     RETURN QUERY
     WITH Islands AS (
         SELECT RankQ.Category, MIN(RankQ.Value) AS StartValue, MAX(RankQ.Value) AS EndValue
-        FROM (
-            SELECT V.Category,
-                   V.Value,
-                   V.Value - Row_Number() OVER (PARTITION BY V.Category ORDER BY V.Value) AS rn  -- This column represents the 'staggered rows'
-            FROM Tmp_ValuesByCategory V
-            WHERE NOT V.Value IS NULL
-            ) RankQ
+        FROM (SELECT V.Category,
+                     V.Value,
+                     V.Value - Row_Number() OVER (PARTITION BY V.Category ORDER BY V.Value) AS rn  -- This column represents the 'staggered rows'
+              FROM (SELECT DISTINCT VC.Category, VC.Value
+                    FROM Tmp_ValuesByCategory VC
+                   ) V
+              WHERE NOT V.Value IS NULL
+             ) RankQ
         GROUP BY RankQ.Category, RankQ.rn
     )
     SELECT ValueListQ.Category, ValueListQ.ValueList
@@ -114,17 +118,26 @@ BEGIN
         GROUP BY RangeQ.Category) ValueListQ;
 
     If _debugMode Then
+        _previousCategory := '';
+
         FOR _categoryRange IN
             SELECT RankQ.Category, MIN(RankQ.Value) AS StartValue, MAX(RankQ.Value) AS EndValue
-            FROM (
-                SELECT V.Category,
-                       V.Value,
-                       V.Value - Row_Number() OVER (PARTITION BY V.Category ORDER BY V.Value) AS rn
-                FROM Tmp_ValuesByCategory V
-                WHERE NOT V.Value IS NULL) RankQ
+            FROM (SELECT V.Category,
+                         V.Value,
+                         V.Value - Row_Number() OVER (PARTITION BY V.Category ORDER BY V.Value) AS rn
+                  FROM (SELECT DISTINCT VC.Category, VC.Value
+                        FROM Tmp_ValuesByCategory VC
+                       ) V
+                  WHERE NOT V.Value IS NULL
+                 ) RankQ
             GROUP BY RankQ.Category, RankQ.rn
             ORDER BY RankQ.Category, RankQ.rn
         LOOP
+            If _previousCategory <> _categoryRange.Category Then
+                RAISE INFO '';
+                _previousCategory :=  _categoryRange.Category;
+            End If;
+
             RAISE INFO 'Category %, values % to %', _categoryRange.Category, _categoryRange.StartValue, _categoryRange.EndValue;
         END LOOP;
 
