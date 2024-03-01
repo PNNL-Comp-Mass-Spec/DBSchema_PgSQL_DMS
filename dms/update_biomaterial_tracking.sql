@@ -157,7 +157,7 @@ BEGIN
                             format('updated %s %s', _rowsUpdated, public.check_plural(_rowsUpdated, 'row', 'rows')));
     End If;
 
-    -- Delete rows in T_Biomaterial_Type_Name that are not in Tmp_Biomaterial_Stats
+    -- Delete rows in t_biomaterial_type_name that are not in Tmp_Biomaterial_Stats
 
     DELETE FROM t_biomaterial_tracking target
     WHERE NOT EXISTS (SELECT 1
