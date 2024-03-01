@@ -54,7 +54,7 @@ CREATE VIEW cap.v_task_steps AS
             t.dataset,
             t.dataset_id,
             ts_1.step,
-            s.script,
+            t.script,
             ts_1.tool,
             ssn.step_state AS state_name,
             ts_1.state,
@@ -82,10 +82,9 @@ CREATE VIEW cap.v_task_steps AS
             dfp.dataset_folder_path,
             t.capture_subfolder,
             t.state AS job_state
-           FROM (((((cap.t_task_steps ts_1
+           FROM ((((cap.t_task_steps ts_1
              JOIN cap.t_task_step_state_name ssn ON ((ts_1.state = ssn.step_state_id)))
              JOIN cap.t_tasks t ON ((ts_1.job = t.job)))
-             JOIN cap.t_scripts s ON ((t.script OPERATOR(public.=) s.script)))
              LEFT JOIN public.t_cached_dataset_folder_paths dfp ON ((t.dataset_id = dfp.dataset_id)))
              LEFT JOIN cap.t_step_tool_versions stv ON ((ts_1.tool_version_id = stv.tool_version_id)))
           WHERE (t.state <> 101)) ts

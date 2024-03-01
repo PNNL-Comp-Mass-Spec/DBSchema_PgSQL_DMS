@@ -79,7 +79,7 @@ CREATE VIEW sw.v_job_steps AS
             j.dataset_id,
             j.data_pkg_id,
             jobsteps.step,
-            s.script,
+            j.script,
             jobsteps.tool,
             ssn.step_state AS state_name,
             jobsteps.state,
@@ -119,10 +119,9 @@ CREATE VIEW sw.v_job_steps AS
             j.transfer_folder_path,
             jobsteps.tool_version_id,
             stv.tool_version
-           FROM (((((sw.t_job_steps jobsteps
+           FROM ((((sw.t_job_steps jobsteps
              JOIN sw.t_job_step_state_name ssn ON ((jobsteps.state = ssn.step_state_id)))
              JOIN sw.t_jobs j ON ((jobsteps.job = j.job)))
-             JOIN sw.t_scripts s ON ((j.script OPERATOR(public.=) s.script)))
              LEFT JOIN sw.t_step_tool_versions stv ON ((jobsteps.tool_version_id = stv.tool_version_id)))
              LEFT JOIN sw.t_remote_info ri ON ((jobsteps.remote_info_id = ri.remote_info_id)))) js
      LEFT JOIN sw.t_processor_status ps ON ((js.processor OPERATOR(public.=) ps.processor_name)))
