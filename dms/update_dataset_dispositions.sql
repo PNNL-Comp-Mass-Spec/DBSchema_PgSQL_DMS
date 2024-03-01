@@ -1,17 +1,10 @@
+--
+-- Name: update_dataset_dispositions(text, text, text, text, text, text, text, text, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
 
-CREATE OR REPLACE PROCEDURE public.update_dataset_dispositions
-(
-    _datasetIDList text,
-    _rating text = '',
-    _comment text = '',
-    _recycleRequest text = '',
-    _mode text = 'update',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+CREATE OR REPLACE PROCEDURE public.update_dataset_dispositions(IN _datasetidlist text, IN _rating text DEFAULT ''::text, IN _comment text DEFAULT ''::text, IN _recyclerequest text DEFAULT ''::text, IN _mode text DEFAULT 'update'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text, IN _showdebug boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -19,16 +12,17 @@ AS $$
 **
 **  Arguments:
 **    _datasetIDList    Comma-separated list of dataset IDs
-**    _rating           New dataset rating
+**    _rating           New dataset rating, e.g. 'Released' or 'No Interest'
 **    _comment          Text to append to the dataset comment
 **    _recycleRequest   If 'yes', call unconsume_scheduled_run() to recycle the request
-**    _mode             Mode: if 'update', update t_dataset and possibly call unconsume_scheduled_run and schedule_predefined_analysis_jobs
+**    _mode             Mode: if 'update', update t_dataset and possibly call unconsume_scheduled_run() and schedule_predefined_analysis_jobs()
 **    _message          Status message
 **    _returnCode       Return code
 **    _callingUser      Username of the calling user
+**    _showDebug        When true, show debug messages
 **
 **  Auth:   grk
-**  Date:   04/25/2007
+**  Date:   04/25/2007 grk - Initial version
 **          06/26/2007 grk - Fix problem with multiple datasets (Ticket #495)
 **          08/22/2007 mem - Disallow setting datasets to rating 5 (Released) when their state is 5 (Capture Failed); Ticket #524
 **          03/25/2008 mem - Added optional parameter _callingUser; if provided, will call alter_event_log_entry_user (Ticket #644)
@@ -46,7 +40,7 @@ AS $$
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          10/23/2021 mem - Use a semicolon when appending to an existing dataset comment
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/29/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -92,17 +86,20 @@ BEGIN
     End If;
 
     BEGIN
-
         ---------------------------------------------------
         -- Validate the inputs
         ---------------------------------------------------
 
+        _datasetIDList  := Trim(Coalesce(_datasetIDList, ''));
+        _rating         := Trim(Coalesce(_rating, ''));
+        _comment        := Trim(Coalesce(_comment, ''));
+        _recycleRequest := Trim(Lower(Coalesce(_recycleRequest, '')));
+        _mode           := Trim(Lower(Coalesce(_mode, '')));
+        _showDebug      := Coalesce(_showDebug, false);
+
         If _datasetIDList = '' Then
             RAISE EXCEPTION 'Dataset list is empty';
         End If;
-
-        _recycleRequest := Trim(Lower(Coalesce(_recycleRequest, '')));
-        _mode           := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
         -- Resolve rating name
@@ -144,7 +141,7 @@ BEGIN
         SELECT string_agg(DatasetID::text, ', ' ORDER BY DatasetID)
         INTO _list
         FROM Tmp_DatasetInfo
-        WHERE NOT DatasetID IN (SELECT dataset_id FROM t_dataset)
+        WHERE NOT DatasetID IN (SELECT dataset_id FROM t_dataset);
 
         If _list <> '' Then
             If Position(',' In _list) > 0 Then
@@ -163,20 +160,19 @@ BEGIN
         INTO _datasetCount
         FROM Tmp_DatasetInfo;
 
-        _message := format('Number of affected datasets: %s', _datasetCount)
+        _message := format('Number of affected datasets: %s', _datasetCount);
 
         ---------------------------------------------------
         -- Get information for datasets in list
         ---------------------------------------------------
 
-        UPDATE M
-        SET M.RatingID = T.dataset_rating_id,
-            M.DatasetName = T.dataset,
-            M.StateID = dataset_state_id,
-            M.Comment = Comment
-        FROM Tmp_DatasetInfo M
-             INNER JOIN t_dataset T
-               ON T.dataset_id = M.DatasetID;
+        UPDATE Tmp_DatasetInfo
+        SET RatingID    = DS.dataset_rating_id,
+            DatasetName = DS.dataset,
+            StateID     = DS.dataset_state_id,
+            Comment     = DS.Comment
+        FROM t_dataset DS
+        WHERE Tmp_DatasetInfo.DatasetID = DS.Dataset_ID;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -202,15 +198,15 @@ BEGIN
     If _mode = 'update' Then
 
         FOR _datasetInfo IN
-            SELECT
-                D.DatasetID,
-                D.DatasetName,
-                D.RatingID,
-                D.StateID,
-                D.Comment,
-                DSN.dataset_state AS DatasetStateName
-            FROM Tmp_DatasetInfo AS D INNER JOIN
-                 t_dataset_state_name DSN ON DS.StateID = DSN.dataset_state_id
+            SELECT D.DatasetID,
+                   D.DatasetName,
+                   D.RatingID,
+                   D.StateID,
+                   D.Comment,
+                   DSN.dataset_state AS DatasetStateName
+            FROM Tmp_DatasetInfo AS D
+                 INNER JOIN t_dataset_state_name DSN
+                   ON D.StateID = DSN.dataset_state_id
             ORDER BY D.DatasetID
         LOOP
 
@@ -241,15 +237,19 @@ BEGIN
                 EXIT;
             END;
 
-            If _datasetInfo.Comment <> '' And _comment <> '' Then
+            If Trim(_datasetInfo.Comment) <> '' And _comment <> '' Then
                 -- Append the new comment only if it is not already present
                 If Position(_comment In _datasetInfo.Comment) = 0 Then
                     _datasetInfo.Comment := format('%s; %s', _datasetInfo.Comment, _comment);
                 End If;
 
-            ElsIf _datasetInfo.Comment = '' And _comment <> '' Then
+            ElsIf _comment <> '' Then
                 _datasetInfo.Comment := _comment;
+            End If;
 
+            If _showDebug Then
+                RAISE INFO '';
+                RAISE INFO 'Update dataset ID % to have rating % and comment "%"', _datasetInfo.DatasetID, _ratingID, _datasetInfo.Comment;
             End If;
 
             UPDATE t_dataset
@@ -263,15 +263,24 @@ BEGIN
 
             If _recycleRequest = 'yes' Then
                 BEGIN
+                    If _showDebug Then
+                        RAISE INFO '';
+                        RAISE INFO 'Call unconsume_scheduled_run() for dataset %', _datasetInfo.DatasetName;
+                        RAISE INFO '';
+                    End If;
+
                     CALL public.unconsume_scheduled_run (
-                            _datasetInfo.DatasetName,
+                            _datasetName   => _datasetInfo.DatasetName,
                             _retainHistory => true,
-                            _message => _message,           -- Output
-                            _returnCode => _returnCode,     -- Output
-                            _callingUser => _callingUser);
+                            _message       => _message,         -- Output
+                            _returnCode    => _returnCode,      -- Output
+                            _callingUser   => _callingUser,
+                            _showDebug     => _showDebug);
 
                     If _returnCode <> '' Then
                         RAISE EXCEPTION '%', _message;
+                    ElsIf _message <> '' Then
+                        RAISE INFO '%', _message;
                     End If;
 
                     _message := '';
@@ -304,13 +313,29 @@ BEGIN
                 -- Rating changed from unreviewed to released, so dataset capture is complete
                 -- Schedule default analysis jobs for this dataset
 
-                CALL public.schedule_predefined_analysis_jobs (_datasetInfo.DatasetName, _callingUser, _returnCode => _returnCode);
+                If _showDebug Then
+                    RAISE INFO '';
+                    RAISE INFO 'Call schedule_predefined_analysis_jobs() for dataset %', _datasetInfo.DatasetName;
+                End If;
+
+                CALL public.schedule_predefined_analysis_jobs (
+                                _datasetName                => _datasetInfo.DatasetName,
+                                _callingUser                => _callingUser,
+                                _analysisToolNameFilter     => '',
+                                _excludeDatasetsNotReleased => true,
+                                _preventDuplicateJobs       => true,
+                                _infoOnly                   => false,
+                                _message                    => _message,
+                                _returnCode                 => _returnCode);
 
                 If _returnCode <> '' Then
                     ROLLBACK;
 
                     DROP TABLE Tmp_DatasetInfo;
                     RETURN;
+                ElsIf _message <> '' Then
+                    RAISE INFO '';
+                    RAISE INFO '%', _message;
                 End If;
 
             End If;
@@ -349,11 +374,19 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := format('%s %s updated', _datasetCount, public.check_plural(_datasetCount, 'dataset', 'datasets');
+    _usageMessage := format('%s %s updated', _datasetCount, public.check_plural(_datasetCount, 'dataset', 'datasets'));
     CALL post_usage_log_entry ('update_dataset_dispositions', _usageMessage);
 
     DROP TABLE IF EXISTS Tmp_DatasetInfo;
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_dataset_dispositions IS 'UpdateDatasetDispositions';
+
+ALTER PROCEDURE public.update_dataset_dispositions(IN _datasetidlist text, IN _rating text, IN _comment text, IN _recyclerequest text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _showdebug boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_dataset_dispositions(IN _datasetidlist text, IN _rating text, IN _comment text, IN _recyclerequest text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _showdebug boolean); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_dataset_dispositions(IN _datasetidlist text, IN _rating text, IN _comment text, IN _recyclerequest text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _showdebug boolean) IS 'UpdateDatasetDispositions';
+

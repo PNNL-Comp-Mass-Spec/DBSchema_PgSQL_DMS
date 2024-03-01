@@ -1,17 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_dataset_dispositions_by_name
-(
-    _datasetList text,
-    _rating text = '',
-    _comment text = '',
-    _recycleRequest text = '',
-    _mode text = 'update',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_dataset_dispositions_by_name(text, text, text, text, text, text, text, text, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_dataset_dispositions_by_name(IN _datasetlist text, IN _rating text DEFAULT ''::text, IN _comment text DEFAULT ''::text, IN _recyclerequest text DEFAULT ''::text, IN _mode text DEFAULT 'update'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text, IN _showdebug boolean DEFAULT false)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -19,13 +12,14 @@ AS $$
 **
 **  Arguments:
 **    _datasetList      Comma-separated list of dataset names
-**    _rating           New dataset rating
+**    _rating           New dataset rating, e.g. 'Released' or 'No Interest'
 **    _comment          Text to append to the dataset comment
 **    _recycleRequest   If 'yes', update_dataset_dispositions() will call unconsume_scheduled_run() to recycle the request; otherwise, must be 'No'
-**    _mode             Mode: if 'update', update_dataset_dispositions() will update t_dataset and possibly call unconsume_scheduled_run and schedule_predefined_analysis_jobs
+**    _mode             Mode: if 'update', update_dataset_dispositions() will update t_dataset and possibly call unconsume_scheduled_run() and schedule_predefined_analysis_jobs()
 **    _message          Status message
 **    _returnCode       Return code
 **    _callingUser      Username of the calling user
+**    _showDebug        When true, show debug messages
 **
 **  Auth:   grk
 **  Date:   10/15/2008 grk - Initial version (Ticket #582)
@@ -38,7 +32,7 @@ AS $$
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          09/03/2018 mem - Use _logErrors to toggle logging errors caught by the try/catch block
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/29/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -49,7 +43,8 @@ DECLARE
 
     _datasetCount int := 0;
     _logErrors boolean := false;
-    _datasetIDList text := '';
+    _invalidDatasets text;
+    _datasetIDList text;
     _usageMessage text;
 
     _sqlState text;
@@ -86,24 +81,25 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
+        _datasetList    := Trim(Coalesce(_datasetList, ''));
         _rating         := Trim(Coalesce(_rating, ''));
-        _recycleRequest := Trim(Lower(Coalesce(_recycleRequest, '')));
         _comment        := Trim(Coalesce(_comment, ''));
+        _recycleRequest := Trim(Lower(Coalesce(_recycleRequest, '')));
+        _mode           := Trim(Lower(Coalesce(_mode, '')));
+        _showDebug      := Coalesce(_showDebug, false);
 
         If Not _recycleRequest::citext In ('yes', 'no') Then
             _message := format('RecycleRequest must be Yes or No (currently "%s")', _recycleRequest);
             RAISE EXCEPTION '%', _message;
         End If;
 
-        _mode := Trim(Lower(Coalesce(_mode, '')));
-
         ---------------------------------------------------
         -- Temp table for holding dataset names and IDs
         ---------------------------------------------------
 
         CREATE TEMP TABLE Tmp_DatasetsToUpdate (
-            DatasetID text,
-            DatasetName text
+            DatasetID int,
+            DatasetName citext
         );
 
         --------------------------------------------------
@@ -119,7 +115,7 @@ BEGIN
         ---------------------------------------------------
 
         UPDATE Tmp_DatasetsToUpdate
-        SET DatasetID = DS.Dataset_ID::text
+        SET DatasetID = DS.Dataset_ID
         FROM t_dataset DS
         WHERE DS.dataset = DatasetName;
 
@@ -128,12 +124,17 @@ BEGIN
         ---------------------------------------------------
 
         SELECT string_agg(DatasetName, ', ' ORDER BY DatasetName)
-        INTO _datasetIDList
+        INTO _invalidDatasets
         FROM Tmp_DatasetsToUpdate
         WHERE DatasetID IS NULL;
 
-        If Coalesce(_datasetIDList, '') <> '' Then
-            _message := format('Datasets not found: %s', _datasetIDList);
+        If Coalesce(_invalidDatasets, '') <> '' Then
+            If Position(',' In _invalidDatasets) > 0 Then
+                _message := format('Unrecognized datasets: %s', _invalidDatasets);
+            Else
+                _message := format('Unrecognized dataset: %s', _invalidDatasets);
+            End If;
+
             RAISE EXCEPTION '%', _message;
         End If;
 
@@ -141,7 +142,7 @@ BEGIN
         -- Make list of dataset IDs
         ---------------------------------------------------
 
-        SELECT string_agg(DatasetID::text, ', ' ORDER BY DatasetID);
+        SELECT string_agg(DatasetID::text, ', ' ORDER BY DatasetID)
         INTO _datasetIDList
         FROM Tmp_DatasetsToUpdate;
 
@@ -156,14 +157,15 @@ BEGIN
         ---------------------------------------------------
 
         CALL public.update_dataset_dispositions (
-                        _datasetIDList,
-                        _rating,
-                        _comment,
-                        _recycleRequest,
-                        _mode,
-                        _message => _message,           -- Output
-                        _returnCode => _returnCode,     -- Output
-                        _callingUser);
+                        _datasetIDList  => _datasetIDList,
+                        _rating         => _rating,
+                        _comment        => _comment,
+                        _recycleRequest => _recycleRequest,
+                        _mode           => _mode,
+                        _message        => _message,            -- Output
+                        _returnCode     => _returnCode,         -- Output
+                        _callingUser    => _callingUser,
+                        _showDebug      => _showDebug);
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -190,11 +192,19 @@ BEGIN
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := format('%s %s updated', _datasetCount, public.check_plural(_datasetCount, 'dataset', 'datasets');
+    _usageMessage := format('%s %s updated', _datasetCount, public.check_plural(_datasetCount, 'dataset', 'datasets'));
     CALL post_usage_log_entry ('update_dataset_dispositions_by_name', _usageMessage);
 
     DROP TABLE IF EXISTS Tmp_DatasetsToUpdate;
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_dataset_dispositions_by_name IS 'UpdateDatasetDispositionsByName';
+
+ALTER PROCEDURE public.update_dataset_dispositions_by_name(IN _datasetlist text, IN _rating text, IN _comment text, IN _recyclerequest text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _showdebug boolean) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_dataset_dispositions_by_name(IN _datasetlist text, IN _rating text, IN _comment text, IN _recyclerequest text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _showdebug boolean); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_dataset_dispositions_by_name(IN _datasetlist text, IN _rating text, IN _comment text, IN _recyclerequest text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text, IN _showdebug boolean) IS 'UpdateDatasetDispositionsByName';
+
