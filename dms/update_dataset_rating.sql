@@ -1,19 +1,14 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_dataset_rating
-(
-    _datasets text,
-    _rating text = 'Unknown',
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_dataset_rating(text, text, boolean, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_dataset_rating(IN _datasets text, IN _rating text DEFAULT 'Unknown'::text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Update the rating for the given datasets by calling procedure update_datasets
+**      Update the rating for the given datasets by calling procedure update_datasets()
 **
 **  Arguments:
 **    _datasets     Comma-separated list of dataset names
@@ -28,7 +23,7 @@ AS $$
 **          03/17/2017 mem - Pass this procedure's name to Parse_Delimited_List
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/15/2024 mem - Ported to PostgreSQL
+**          03/01/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -79,18 +74,22 @@ BEGIN
     _ratingID := public.get_dataset_rating_id(_rating);
 
     If _ratingID = 0 Then
-        _message := format('Invalid dataset rating: "%s" does not exist', _rating);
+        _message := format('Invalid dataset rating: %s', _rating);
         RAISE INFO '%', _message;
+
+        _returnCode := 'U5201';
         RETURN;
     End If;
 
     SELECT COUNT (DISTINCT Value)
     INTO _datasetCount
-    FROM public.parse_delimited_list(_datasets)
+    FROM public.parse_delimited_list(_datasets);
 
     If _datasetCount = 0 Then
         _message := 'Dataset list cannot be empty';
-        _returnCode := 'U5201';
+        RAISE INFO '%', _message;
+
+        _returnCode := 'U5202';
         RETURN;
     End If;
 
@@ -112,6 +111,9 @@ BEGIN
         _datasetList => _datasets,
         _state       => '',
         _rating      => _rating,
+        _comment     => '',
+        _findText    => '',
+        _replaceText => '',
         _mode        => _mode,
         _message     => _message,       -- Output
         _returnCode  => _returnCode,    -- Output
@@ -119,7 +121,7 @@ BEGIN
 
     If _returnCode = '' And Not _infoOnly Then
         If _datasetCount = 1 Then
-            _message := format('Changed the rating to "%s" for dataset %s', _rating _datasets);
+            _message := format('Changed the rating to "%s" for dataset %s', _rating, _datasets);
             RAISE INFO '%', _message;
         Else
             _message := format('Changed the rating to "%s" for %s datasets', _rating, _datasetCount);
@@ -130,4 +132,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_dataset_rating IS 'UpdateDatasetRating';
+
+ALTER PROCEDURE public.update_dataset_rating(IN _datasets text, IN _rating text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_dataset_rating(IN _datasets text, IN _rating text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_dataset_rating(IN _datasets text, IN _rating text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UpdateDatasetRating';
+
