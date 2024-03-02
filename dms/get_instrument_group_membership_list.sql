@@ -61,7 +61,7 @@ BEGIN
           (_activeOnly In (0, 2) Or operations_role <> 'Offsite');
 
     If _maximumLength > 0 And char_length(_result) > _maximumLength Then
-        _result := Rtrim(Substring(_result, 1, _maximumLength - 3));
+        _result := RTrim(Substring(_result, 1, _maximumLength - 3));
 
         If _result Like '%,' Then
             _result := format('%s ...', Substring(_result, 1, char_length(_result) - 1));
