@@ -1,12 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_eus_users_from_eus_imports
-(
-    _updateUsersOnInactiveProposals boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_eus_users_from_eus_imports(boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_eus_users_from_eus_imports(IN _updateusersoninactiveproposals boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -30,7 +28,9 @@ AS $$
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          05/12/2021 mem - Use new NEXUS-based views
 **                         - Add option to update EUS Users for Inactive proposals
-**          12/15/2024 mem - Ported to PostgreSQL
+**          03/01/2024 mem - Only change state_id to 3 in T_EUS_Proposal_Users if state_id is not 2, 3, 4, or 5 (previously not 2 or 4)
+**                           This change was made to avoid state_id changing from 5 to 3, then from 3 back to 5 every time this procedure is called
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -69,16 +69,16 @@ BEGIN
         FROM t_eus_users;
 
         MERGE INTO t_eus_users AS target
-        USING ( SELECT DISTINCT Source.user_id AS Person_ID,
+        USING ( SELECT DISTINCT Source.user_id AS person_id,
                                 Source.name_fm,
                                 CASE WHEN hanford_id IS NULL
                                      THEN NULL
                                      ELSE format('H%s', hanford_id)
-                                     END AS HID,
+                                     END AS hid,
                                 CASE WHEN hanford_id IS NULL
                                      THEN 2        -- Offsite
                                      ELSE 1        -- Onsite
-                                     END AS Site_Status,
+                                     END AS site_status_id,
                                 Source.first_name,
                                 Source.last_name
                 FROM V_NEXUS_Import_Proposal_Participants Source
@@ -89,24 +89,24 @@ BEGIN
                                  ) DmsEUSProposals
                        ON Source.project_id = DmsEUSProposals.proposal_id
             ) AS Source
-        ON (target.Person_ID = Source.Person_ID)
+        ON (target.person_id = Source.person_id)
         WHEN MATCHED AND
-             (target.NAME_FM     <> Source.name_fm OR
-              target.HID         IS DISTINCT FROM Source.HID AND NOT Source.HID is null OR
-              target.Site_Status <> Source.Site_Status OR
-              target.First_Name  IS DISTINCT FROM Source.first_name AND NOT Source.first_name is null OR
-              target.Last_Name   IS DISTINCT FROM Source.last_name  AND NOT Source.last_name is null) THEN
+             (target.name_fm        <> Source.name_fm OR
+              target.hid            IS DISTINCT FROM Source.hid AND NOT Source.hid IS NULL OR
+              target.site_status_id <> Source.site_status_id OR
+              target.first_name     IS DISTINCT FROM Source.first_name AND NOT Source.first_name IS NULL OR
+              target.last_name      IS DISTINCT FROM Source.last_name  AND NOT Source.last_name IS NULL) THEN
             UPDATE SET
-                NAME_FM = Source.name_fm,
-                HID = Coalesce(Source.HID, target.HID),
-                Site_Status = Source.Site_Status,
-                First_Name = Source.first_name,
-                Last_Name = Source.last_name,
-                last_affected = CURRENT_TIMESTAMP
+                name_fm        = Source.name_fm,
+                hid            = Coalesce(Source.hid, target.hid),
+                site_status_id = Source.site_status_id,
+                first_name     = Source.first_name,
+                last_name      = Source.last_name,
+                last_affected  = CURRENT_TIMESTAMP
         WHEN NOT MATCHED THEN
-            INSERT (Person_ID, NAME_FM, HID, Site_Status,
-                    First_Name, Last_Name, last_affected)
-            VALUES (Source.Person_ID, Source.name_fm, Source.HID, Source.Site_Status,
+            INSERT (person_id, name_fm, hid, site_status_id,
+                    first_name, last_name, last_affected)
+            VALUES (Source.person_id, Source.name_fm, Source.hid, Source.site_status_id,
                     Source.first_name, Source.last_name, CURRENT_TIMESTAMP);
 
         GET DIAGNOSTICS _mergeCount = ROW_COUNT;
@@ -128,13 +128,14 @@ BEGIN
 
         If _mergeInsertCount > 0 Or _mergeUpdateCount > 0 Or _mergeDeleteCount > 0 Then
             _message := format('Updated t_eus_users: %s added; %s updated%s',
-                                _mergeInsertCount,
-                                _mergeUpdateCount,
-                                CASE WHEN _mergeDeleteCount > 0
-                                THEN format('; %s deleted', _mergeDeleteCount)
-                                ELSE ''
-                                END);
+                               _mergeInsertCount,
+                               _mergeUpdateCount,
+                               CASE WHEN _mergeDeleteCount > 0
+                                    THEN format('; %s deleted', _mergeDeleteCount)
+                                    ELSE ''
+                               END);
 
+            RAISE INFO '%', _message;
             CALL post_log_entry ('Normal', _message, 'Update_EUS_Users_From_EUS_Imports');
             _message := '';
         End If;
@@ -142,12 +143,12 @@ BEGIN
         _currentLocation := 'Update first_name and last_name in t_eus_users';
 
         UPDATE t_eus_users
-        SET first_name = Ltrim(Substring(name_fm, Position(',' In name_fm) + 1, 128))
-        WHERE Coalesce(first_name, '') = '' AND   Position(',' In name_fm) > 1
+        SET first_name = LTrim(Substring(name_fm, Position(',' In name_fm) + 1, 128))
+        WHERE Coalesce(first_name, '') = '' AND   Position(',' In name_fm) > 1;
 
         UPDATE t_eus_users
         SET last_name = Substring(name_fm, 1,  Position(',' In name_fm) - 1)
-        WHERE Coalesce(last_name, '') = '' AND Position(',' In name_fm) > 1
+        WHERE Coalesce(last_name, '') = '' AND Position(',' In name_fm) > 1;
 
         _currentLocation := 'Update t_eus_proposal_users';
 
@@ -161,9 +162,9 @@ BEGIN
         FROM t_eus_proposal_users;
 
         MERGE INTO t_eus_proposal_users AS target
-        USING ( SELECT DISTINCT Source.project_id AS Proposal_ID,
-                                Source.user_id AS Person_ID,
-                                'Y' AS Of_DMS_Interest
+        USING ( SELECT DISTINCT Source.project_id AS proposal_id,
+                                Source.user_id AS person_id,
+                                'Y' AS of_dms_interest
                 FROM V_NEXUS_Import_Proposal_Participants Source
                      INNER JOIN ( SELECT proposal_id
                                   FROM t_eus_proposals
@@ -178,7 +179,7 @@ BEGIN
                 state_id = 1,
                 last_affected = CURRENT_TIMESTAMP
         WHEN NOT MATCHED THEN
-            INSERT (proposal_id, person_id, of_dms_interest, State_ID, Last_Affected)
+            INSERT (proposal_id, person_id, of_dms_interest, state_id, last_affected)
             VALUES (Source.proposal_id, Source.person_id, Source.of_dms_interest, 1, CURRENT_TIMESTAMP);
 
         GET DIAGNOSTICS _mergeCount = ROW_COUNT;
@@ -195,19 +196,19 @@ BEGIN
             _mergeUpdateCount := 0;
         End If;
 
-        -- Set state_id to 3 (unknown association) for rows with state not in (2,4) that are also not in V_NEXUS_Import_Proposal_Participants
+        -- Set state_id to 3 (unknown association) for rows with state not in (2, 3, 4, 5) that are also not in V_NEXUS_Import_Proposal_Participants
 
         UPDATE t_eus_proposal_users target
         SET state_id = 3,       -- Unknown association; may need to delete
             last_affected = CURRENT_TIMESTAMP
-        WHERE NOT Coalesce(target.state_id, 0) IN (2, 4) AND
+        WHERE NOT Coalesce(target.state_id, 0) IN (2, 3, 4, 5) AND
               NOT EXISTS (SELECT source.Person_ID
-                          FROM (SELECT DISTINCT Source.project_id AS Proposal_ID,
-                                                Source.user_id AS Person_ID
+                          FROM (SELECT DISTINCT Source.project_id AS proposal_id,
+                                                Source.user_id AS person_id
                                 FROM V_NEXUS_Import_Proposal_Participants Source
-                                     INNER JOIN ( SELECT proposal_id
-                                                  FROM t_eus_proposals
-                                                  WHERE state_id IN (1, 2)
+                                     INNER JOIN (SELECT proposal_id
+                                                 FROM t_eus_proposals
+                                                 WHERE state_id IN (1, 2)
                                                 ) DmsEUSProposals
                                        ON Source.project_id = DmsEUSProposals.proposal_id
                           ) AS Source
@@ -243,15 +244,18 @@ BEGIN
 
         If _mergeInsertCount > 0 Or _mergeUpdateCount > 0 Or _setUnknownCount > 0 Then
             _message := format('Updated t_eus_proposal_users: %s added; %s updated%s',
-                                _mergeInsertCount,
-                                _mergeUpdateCount,
-                                CASE WHEN _setUnknownCount > 0
-                                THEN format('; %s set to "unknown association"', _setUnknownCount)
-                                ELSE ''
-                                END);
+                               _mergeInsertCount,
+                               _mergeUpdateCount,
+                               CASE WHEN _setUnknownCount > 0
+                                    THEN format('; %s set to "unknown association"', _setUnknownCount)
+                                    ELSE ''
+                               END);
 
+            RAISE INFO '%', _message;
             CALL post_log_entry ('Normal', _message, 'Update_EUS_Users_From_EUS_Imports');
             _message := '';
+        Else
+            RAISE INFO 'Table t_eus_proposal_users is up-to-date';
         End If;
 
     EXCEPTION
@@ -280,4 +284,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_eus_users_from_eus_imports IS 'UpdateEUSUsersFromEUSImports';
+
+ALTER PROCEDURE public.update_eus_users_from_eus_imports(IN _updateusersoninactiveproposals boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_eus_users_from_eus_imports(IN _updateusersoninactiveproposals boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_eus_users_from_eus_imports(IN _updateusersoninactiveproposals boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateEUSUsersFromEUSImports';
+

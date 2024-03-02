@@ -1,11 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_eus_proposals_from_eus_imports
-(
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_eus_proposals_from_eus_imports(text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_eus_proposals_from_eus_imports(INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -29,7 +28,7 @@ AS $$
 **          05/14/2021 mem - Handle null values for actual_start_date
 **          05/24/2021 mem - Add new proposal types to T_EUS_Proposal_Type
 **          05/24/2022 mem - Avoid inserting duplicate proposals into T_EUS_Proposals by filtering on id_rank
-**          12/15/2024 mem - Ported to PostgreSQL
+**          03/01/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -75,29 +74,29 @@ BEGIN
                 FROM V_NEXUS_Import_Proposals
                 WHERE id_rank = 1
               ) AS Source
-        ON (target.Proposal_ID = source.project_id)
+        ON (target.proposal_id = source.project_id)
         WHEN MATCHED AND
-             (target.Title <> source.Title OR
-              target.Proposal_Type <> source.Proposal_Type OR
-              Coalesce(target.Proposal_Start_Date, make_date(2000, 1, 1)) <> source.Proposal_Start_Date OR
-              Coalesce(target.Proposal_End_Date, make_date(2000, 1, 1)) <> source.Proposal_End_Date OR
-              source.Active = 1 AND NOT target.State_ID IN (2, 4) OR
-              source.Active = 0 AND     target.State_ID IN (1, 2)) THEN
+             (target.title         <> source.title OR
+              target.proposal_type <> source.proposal_type OR
+              Coalesce(target.proposal_start_date, make_date(2000, 1, 1)) <> source.proposal_start_date OR
+              Coalesce(target.proposal_end_date,   make_date(2000, 1, 1)) <> source.proposal_end_date OR
+              source.active = 1 AND NOT target.state_id IN (2, 4) OR
+              source.active = 0 AND     target.state_id IN (1, 2)) THEN
             UPDATE SET
-                Title = source.Title,
-                Proposal_Type = source.Proposal_Type,
-                Proposal_Start_Date = source.Proposal_Start_Date,
-                Proposal_End_Date = source.Proposal_End_Date,
-                State_ID = CASE WHEN State_ID IN (4, 5)
+                title               = source.title,
+                proposal_type       = source.proposal_type,
+                proposal_start_date = source.proposal_start_date,
+                proposal_end_date   = source.proposal_end_date,
+                state_id = CASE WHEN state_id IN (4, 5)
                                 THEN target.State_ID
-                                ELSE CASE WHEN Active = 1 THEN 2 ELSE 3 END
+                                ELSE CASE WHEN active = 1 THEN 2 ELSE 3 END
                            END,
-                Last_Affected = CURRENT_TIMESTAMP
+                last_affected = CURRENT_TIMESTAMP
         WHEN NOT MATCHED THEN
-            INSERT (Proposal_ID, Title, State_ID, Import_Date,
-                    Proposal_Type, Proposal_Start_Date, Proposal_End_Date, Last_Affected)
-            VALUES (source.project_id, source.Title, 2, CURRENT_TIMESTAMP,
-                    source.Proposal_Type, source.Proposal_Start_Date, source.Proposal_End_Date, CURRENT_TIMESTAMP);
+            INSERT (proposal_id, title, state_id, import_date,
+                    proposal_type, proposal_start_date, proposal_end_date, last_affected)
+            VALUES (source.project_id, source.title, 2, CURRENT_TIMESTAMP,
+                    source.proposal_type, source.proposal_start_date, source.proposal_end_date, CURRENT_TIMESTAMP);
 
         GET DIAGNOSTICS _mergeCount = ROW_COUNT;
 
@@ -118,8 +117,8 @@ BEGIN
         UPDATE t_eus_proposals target
         SET State_ID = 3        -- Auto-change state to Inactive
         WHERE target.State_ID IN (1, 2) AND
-              NOT EXISTS (SELECT project_id
-                          FROM V_NEXUS_Import_Proposals
+              NOT EXISTS (SELECT 1
+                          FROM V_NEXUS_Import_Proposals source
                           WHERE target.Proposal_ID = source.project_id);
 
         GET DIAGNOSTICS _setInactiveCount = ROW_COUNT;
@@ -131,17 +130,20 @@ BEGIN
                 _message := format('%s; %s set to inactive', _message, _setInactiveCount);
             End If;
 
+            RAISE INFO '%', _message;
             CALL post_log_entry ('Normal', _message, 'Update_EUS_Proposals_From_EUS_Imports');
             _message := '';
+        Else
+            RAISE INFO 'Table t_eus_proposals is up-to-date';
         End If;
 
         ---------------------------------------------------
         -- Add new proposal types to t_eus_proposal_type
         ---------------------------------------------------
 
-        INSERT INTO t_eus_proposal_type( proposal_type,
+        INSERT INTO t_eus_proposal_type (proposal_type,
                                          proposal_type_name,
-                                         abbreviation )
+                                         abbreviation)
         SELECT DISTINCT EUP.proposal_type,
                         EUP.proposal_type,
                         Replace(EUP.proposal_type, ' ', '')
@@ -149,15 +151,18 @@ BEGIN
              LEFT OUTER JOIN t_eus_proposal_type EPT
                ON EUP.proposal_type = EPT.proposal_type
         WHERE NOT EUP.proposal_type IS NULL AND
-              EPT.proposal_type_name IS NULL
+              EPT.proposal_type_name IS NULL;
         --
         GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
         If _matchCount > 0 Then
             _message := format('Added %s new proposal %s to t_eus_proposal_type', _matchCount, public.check_plural(_matchCount, 'type', 'types'));
 
+            RAISE INFO '%', _message;
             CALL post_log_entry ('Normal', _message, 'Update_EUS_Proposals_From_EUS_Imports');
             _message := '';
+        Else
+            RAISE INFO 'Table t_eus_proposal_type is up-to-date';
         End If;
 
     EXCEPTION
@@ -186,4 +191,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_eus_proposals_from_eus_imports IS 'UpdateEUSProposalsFromEUSImports';
+
+ALTER PROCEDURE public.update_eus_proposals_from_eus_imports(INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_eus_proposals_from_eus_imports(INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_eus_proposals_from_eus_imports(INOUT _message text, INOUT _returncode text) IS 'UpdateEUSProposalsFromEUSImports';
+
