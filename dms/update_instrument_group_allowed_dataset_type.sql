@@ -1,16 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_instrument_group_allowed_dataset_type
-(
-    _instrumentGroup text,
-    _datasetType text,
-    _comment text,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_instrument_group_allowed_dataset_type(text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_instrument_group_allowed_dataset_type(IN _instrumentgroup text, IN _datasettype text, IN _comment text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -20,7 +14,7 @@ AS $$
 **    _instrumentGroup  Instrument group name
 **    _datasetType      Dataset type name
 **    _comment          Comment
-**    _mode             Mode: 'add' or 'update' or 'delete'
+**    _mode             Mode: 'add', 'update', or 'delete'
 **    _message          Status message
 **    _returnCode       Return code
 **    _callingUser      Username of the calling user
@@ -34,7 +28,7 @@ AS $$
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/15/2024 mem - Ported to PostgreSQL
+**          03/01/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -44,7 +38,7 @@ DECLARE
     _authorized boolean;
 
     _validMode boolean := false;
-    _itemExists text;
+    _itemExists boolean;
     _usageMessage text;
 
     _sqlState text;
@@ -81,28 +75,31 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _mode := Trim(Lower(Coalesce(_mode, '')));
+        _instrumentGroup := Trim(Coalesce(_instrumentGroup, ''));
+        _datasetType     := Trim(Coalesce(_datasetType, ''));
+        _comment         := Trim(Coalesce(_comment, ''));
+        _mode            := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
         -- Validate InstrumentGroup and DatasetType
         ---------------------------------------------------
 
         If Not Exists ( SELECT instrument_group FROM t_instrument_group WHERE instrument_group = _instrumentGroup::citext ) Then
-            RAISE EXCEPTION 'Instrument group "%" is not valid', _instrumentGroup;
+            RAISE EXCEPTION 'Invalid instrument group: %', _instrumentGroup;
         End If;
 
         If Not Exists ( SELECT dataset_type FROM t_dataset_type_name WHERE dataset_type = _datasetType::citext ) Then
-            RAISE EXCEPTION 'Dataset type "%" is not valid', _datasetType;
+            RAISE EXCEPTION 'Invalid dataset type: %', _datasetType;
         End If;
 
         ---------------------------------------------------
         -- Make sure _datasetType is properly capitalized
         ---------------------------------------------------
 
-        SELECT Dataset_Type
+        SELECT dataset_type
         INTO _datasetType
         FROM t_dataset_type_name
-        WHERE Dataset_Type = _datasetType::citext;
+        WHERE dataset_type = _datasetType::citext;
 
         ---------------------------------------------------
         -- Does an entry already exist?
@@ -158,12 +155,12 @@ BEGIN
 
         If _mode = 'delete' Then
             If Not _itemExists Then
-                RAISE EXCEPTION 'Cannot delete: entry "%" does not exist for group %' _datasetType, _instrumentGroup;
+                RAISE EXCEPTION 'Cannot delete: entry "%" does not exist for group %', _datasetType, _instrumentGroup;
             End If;
 
             DELETE FROM t_instrument_group_allowed_ds_type
             WHERE instrument_group = _instrumentGroup::citext AND
-                  dataset_type = _datasetType::citext
+                  dataset_type = _datasetType::citext;
 
             _validMode := true;
         End If;
@@ -173,7 +170,7 @@ BEGIN
             -- Unrecognized mode
             ---------------------------------------------------
 
-            RAISE EXCEPTION 'Unrecognized Mode: %', _mode;
+            RAISE EXCEPTION 'Unrecognized mode: %', _mode;
         End If;
 
     EXCEPTION
@@ -203,4 +200,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_instrument_group_allowed_dataset_type IS 'UpdateInstrumentGroupAllowedDatasetType';
+
+ALTER PROCEDURE public.update_instrument_group_allowed_dataset_type(IN _instrumentgroup text, IN _datasettype text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_instrument_group_allowed_dataset_type(IN _instrumentgroup text, IN _datasettype text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_instrument_group_allowed_dataset_type(IN _instrumentgroup text, IN _datasettype text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UpdateInstrumentGroupAllowedDatasetType';
+
