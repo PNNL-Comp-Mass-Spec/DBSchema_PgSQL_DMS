@@ -1,16 +1,14 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_experiment_name_for_qc_datasets
-(
-    _infoOnly boolean = true,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_experiment_name_for_qc_datasets(boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_experiment_name_for_qc_datasets(IN _infoonly boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
-**      Assure that the dataset name associated with QC datasets matches the dataset name
+**      Assure that the experiment name associated with QC datasets matches the dataset name
 **
 **  Arguments:
 **    _infoOnly     When true, preview updates
@@ -19,15 +17,14 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   08/09/2018 mem - Initial version
-**          12/15/2024 mem - Ported to PostgreSQL
+**          03/01/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
     _updateCount int := 0;
     _dateStamp text;
-    _currentExpID int := 0;
+    _expID int;
     _experiment text;
-    _msg text;
 
     _formatSpecifier text;
     _infoHead text;
@@ -45,7 +42,7 @@ BEGIN
     _infoOnly := Coalesce(_infoOnly, true);
 
     -- Format the date in the form 2022-10-25
-    _dateStamp := to_char(CURRENT_TIMESTAMP, 'YYYY-MM-DD')
+    _dateStamp := to_char(CURRENT_TIMESTAMP, 'YYYY-MM-DD');
 
     ---------------------------------------------------
     -- Create some temporary tables
@@ -74,7 +71,7 @@ BEGIN
     -- This list is modelled after the list in UDF GetDatasetPriority
     ---------------------------------------------------
 
-    INSERT INTO Tmp_QCExperiments (ExpID, experiment )
+    INSERT INTO Tmp_QCExperiments (ExpID, Experiment )
     SELECT exp_id, experiment
     FROM t_experiments
     WHERE (experiment SIMILAR TO 'QC[_-]Shew[_-][0-9][0-9][_-][0-9][0-9]' OR
@@ -82,10 +79,10 @@ BEGIN
            experiment SIMILAR TO 'QC[_]Shew[_]TEDDY%' OR
            experiment SIMILAR TO 'QC[_]Mam%' OR
            experiment SIMILAR TO 'QC[_]PP[_]MCF-7%'
-              ) AND created >= make_date(2018, 1, 1)
+              ) AND created >= make_date(2018, 1, 1);
 
-    FOR _experiment IN
-        SELECT Experiment
+    FOR _expID, _experiment IN
+        SELECT ExpID, Experiment
         FROM Tmp_QCExperiments
         ORDER BY ExpID
     LOOP
@@ -98,14 +95,14 @@ BEGIN
         SELECT DS.dataset_id,
                E.experiment,
                _experiment,
-               _currentExpID,
+               _expID,
                false AS Ambiguous
         FROM t_dataset DS
              INNER JOIN t_experiments E
                ON DS.exp_id = E.exp_id
-        WHERE dataset LIKE _experiment || '%' AND
+        WHERE DS.dataset LIKE _experiment || '%' AND
               E.experiment <> _experiment AND
-              Not E.experiment In ('QC_Shew_16_01_AutoPhospho', 'EMSL_48364_Chacon_Testing', 'UVPD_MW_Dependence')
+              NOT E.experiment IN ('QC_Shew_16_01_AutoPhospho', 'EMSL_48364_Chacon_Testing', 'UVPD_MW_Dependence');
     END LOOP;
 
     ---------------------------------------------------
@@ -114,10 +111,11 @@ BEGIN
 
     UPDATE Tmp_DatasetsToUpdate
     SET Ambiguous = true
-    WHERE Dataset_ID IN ( SELECT DS.Dataset_ID
-                          FROM Tmp_DatasetsToUpdate DS
-                          GROUP BY DS.Dataset_ID
-                          HAVING COUNT(DS.ID) > 1 );
+    WHERE EXISTS ( SELECT DS.Dataset_ID
+                   FROM Tmp_DatasetsToUpdate DS
+                   GROUP BY DS.Dataset_ID
+                   HAVING COUNT(DS.ID) > 1 AND
+                          DS.Dataset_ID = Tmp_DatasetsToUpdate.Dataset_ID);
 
     If Not Exists (SELECT ID FROM Tmp_DatasetsToUpdate) Then
         RAISE INFO '%', 'No candidate datasets were found';
@@ -125,7 +123,7 @@ BEGIN
     End If;
 
     If Not _infoOnly And Not Exists (SELECT Dataset_ID FROM Tmp_DatasetsToUpdate WHERE NOT Ambiguous) Then
-        RAISE INFO '%', 'Candidate datasets were found, but they are all ambiguous; see them with _infoOnly=true';
+        RAISE INFO '%', 'Candidate datasets were found, but they are all ambiguous; see them using _infoOnly => true';
         RETURN;
     End If;
 
@@ -137,7 +135,7 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-10s %-80s %-60s %-60s %-17s';
+        _formatSpecifier := '%-10s %-80s %-20s %-20s %-17s';
 
         _infoHead := format(_formatSpecifier,
                             'Dataset_ID',
@@ -150,8 +148,8 @@ BEGIN
         _infoHeadSeparator := format(_formatSpecifier,
                                      '----------',
                                      '--------------------------------------------------------------------------------',
-                                     '------------------------------------------------------------',
-                                     '------------------------------------------------------------',
+                                     '--------------------',
+                                     '--------------------',
                                      '-----------------'
                                     );
 
@@ -163,10 +161,10 @@ BEGIN
                    DS.Dataset,
                    DTU.OldExperiment AS Old_Experiment,
                    DTU.NewExperiment AS New_Experiment,
-                   DTU.NewExpID      AS New_Experiment_ID
+                   DTU.NewExpID      AS New_Experiment_ID,
                    public.append_to_text(DS.comment,
                                          format('Switched experiment from %s to %s on %s', DTU.OldExperiment, DTU.NewExperiment, _dateStamp),
-                                         _delimiter => '; ', _maxlength => 512) AS Comment
+                                         _delimiter => '; ', _maxlength => 1024) AS Comment
             FROM t_dataset DS
                  INNER JOIN Tmp_DatasetsToUpdate DTU
                    ON DS.dataset_id = DTU.dataset_id
@@ -188,7 +186,7 @@ BEGIN
 
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-80s %-60s %-60s %-20s';
+            _formatSpecifier := '%-10s %-80s %-20s %-20s %-20s';
 
             _infoHead := format(_formatSpecifier,
                                 'Dataset_ID',
@@ -201,8 +199,8 @@ BEGIN
             _infoHeadSeparator := format(_formatSpecifier,
                                          '----------',
                                          '--------------------------------------------------------------------------------',
-                                         '------------------------------------------------------------',
-                                         '------------------------------------------------------------',
+                                         '--------------------',
+                                         '--------------------',
                                          '--------------------'
                                         );
 
@@ -232,30 +230,41 @@ BEGIN
             END LOOP;
 
         End If;
-    Else
 
-        ---------------------------------------------------
-        -- Update the experiments associated with the datasets
-        ---------------------------------------------------
-
-        UPDATE t_dataset
-        SET exp_id = DTU.NewExpID,
-            comment = public.append_to_text(DS.comment,
-                                            format('Switched experiment from %s to %s on %s', DTU.OldExperiment, DTU.NewExperiment, _dateStamp),
-                                            _delimiter => '; ', _maxlength => 512)
-        FROM Tmp_DatasetsToUpdate DTU
-        WHERE t_dataset.Dataset_ID = DTU.Dataset_ID;
-        --
-        GET DIAGNOSTICS _updateCount = ROW_COUNT;
-
-        _msg := format('Updated the experiment name for %s %s', _updateCount, public.check_plural(_updateCount, 'QC dataset', 'QC datasets'));
-        CALL post_log_entry ('Normal', _msg, 'Update_Experiment_Name_For_QC_Datasets');
-
+        DROP TABLE Tmp_QCExperiments;
+        DROP TABLE Tmp_DatasetsToUpdate;
+        RETURN;
     End If;
+
+    ---------------------------------------------------
+    -- Update the experiments associated with the datasets
+    ---------------------------------------------------
+
+    UPDATE t_dataset
+    SET exp_id = DTU.NewExpID,
+        comment = public.append_to_text(comment,
+                                        format('Switched experiment from %s to %s on %s', DTU.OldExperiment, DTU.NewExperiment, _dateStamp),
+                                        _delimiter => '; ', _maxlength => 1024)
+    FROM Tmp_DatasetsToUpdate DTU
+    WHERE t_dataset.dataset_id = DTU.dataset_id;
+    --
+    GET DIAGNOSTICS _updateCount = ROW_COUNT;
+
+    _message := format('Updated the experiment name for %s %s', _updateCount, public.check_plural(_updateCount, 'QC dataset', 'QC datasets'));
+    CALL post_log_entry ('Normal', _message, 'Update_Experiment_Name_For_QC_Datasets');
+    RAISE INFO '%', _message;
 
     DROP TABLE Tmp_QCExperiments;
     DROP TABLE Tmp_DatasetsToUpdate;
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_experiment_name_for_qc_datasets IS 'UpdateExperimentNameForQCDatasets';
+
+ALTER PROCEDURE public.update_experiment_name_for_qc_datasets(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_experiment_name_for_qc_datasets(IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_experiment_name_for_qc_datasets(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateExperimentNameForQCDatasets';
+
