@@ -1,31 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_instrument_usage_allocations
-(
-    _fyProposal text,
-    _fiscalYear text,
-    _proposalID text,
-    _ft text = '',
-    _ftComment text = '',
-    _ims text = '',
-    _imsComment text = '',
-    _orb text = '',
-    _orbComment text = '',
-    _exa text = '',
-    _exaComment text = '',
-    _ltq text = '',
-    _ltqComment text = '',
-    _gc text = '',
-    _gcComment text = '',
-    _qqq text = '',
-    _qqqComment text = '',
-    _mode text = 'update',
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_instrument_usage_allocations(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, boolean, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_instrument_usage_allocations(IN _fyproposal text, IN _fiscalyear text, IN _proposalid text, IN _ft text DEFAULT ''::text, IN _ftcomment text DEFAULT ''::text, IN _ims text DEFAULT ''::text, IN _imscomment text DEFAULT ''::text, IN _orb text DEFAULT ''::text, IN _orbcomment text DEFAULT ''::text, IN _exa text DEFAULT ''::text, IN _exacomment text DEFAULT ''::text, IN _ltq text DEFAULT ''::text, IN _ltqcomment text DEFAULT ''::text, IN _gc text DEFAULT ''::text, IN _gccomment text DEFAULT ''::text, IN _qqq text DEFAULT ''::text, IN _qqqcomment text DEFAULT ''::text, IN _mode text DEFAULT 'update'::text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -69,7 +48,7 @@ AS $$
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
-**          12/15/2024 mem - Ported to PostgreSQL
+**          03/01/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -90,7 +69,7 @@ DECLARE
     _exaHours real;
     _ltqHours real;
     _gcHours real;
-    _qqqHours real:
+    _qqqHours real;
 
     _sqlState text;
     _exceptionMessage text;
@@ -121,7 +100,6 @@ BEGIN
     End If;
 
     BEGIN
-
         -----------------------------------------------------------
         -- Validate the inputs
         -----------------------------------------------------------
@@ -150,21 +128,28 @@ BEGIN
         _mode       := Trim(Lower(Coalesce(_mode, '')));
 
         If Not _mode In ('add', 'update') Then
-            _msg2 := format('Invalid mode: %s', Coalesce(_mode, '??'));
+            _msg2 := format('Invalid mode: %s', _mode);
+            RAISE EXCEPTION '%', _msg2;
+        End If;
+
+        _fy := public.try_cast(_fiscalYear, null::int);
+
+        If _fy Is Null Or _fy = 0 Then
+            _msg2 := format('Fiscal year is not numeric: %s', _fiscalYear);
             RAISE EXCEPTION '%', _msg2;
         End If;
 
         If _mode = 'add' Then
             If _fiscalYear = '' Then
-                RAISE EXCEPTION 'Fiscal Year is empty; cannot add';
+                RAISE EXCEPTION 'Fiscal Year is undefined; cannot add';
             End If;
 
             If _proposalID = '' Then
-                RAISE EXCEPTION 'Proposal ID is empty; cannot add';
+                RAISE EXCEPTION 'Proposal ID is undefined; cannot add';
             End If;
 
-            If Exists (SELECT proposal_id FROM t_instrument_allocation WHERE proposal_id = _proposalID AND fiscal_year = _fiscalYear) Then
-                _msg2 := format('Existing entry already exists, cannot add: %s_%s', _fiscalYear, _proposalID);
+            If Exists (SELECT proposal_id FROM t_instrument_allocation WHERE proposal_id = _proposalID AND fiscal_year = _fy) Then
+                _msg2 := format('Existing entry already exists, cannot add: %s_%s', _fy, _proposalID);
                 RAISE EXCEPTION '%', _msg2;
             End If;
 
@@ -172,14 +157,14 @@ BEGIN
 
         If _mode = 'update' Then
             If _fyProposal = '' Then
-                RAISE EXCEPTION '_fyProposal parameter is empty';
+                RAISE EXCEPTION '_fyProposal parameter is undefined';
             End If;
 
             -- Split _fyProposal into _fiscalYear and _proposalID
             _charPos := Position('_' In _fyProposal);
 
             If _charPos <= 1 Or _charPos = char_length(_fyProposal) Then
-                RAISE EXCEPTION '_fyProposal parameter is not in the correct format';
+                RAISE EXCEPTION '_fyProposal parameter is not in the correct format, e.g. 2012_33200';
             End If;
 
             _fiscalYearParam := _fiscalYear;
@@ -193,19 +178,19 @@ BEGIN
                 RAISE EXCEPTION '%', _msg2;
             End If;
 
-            If Not Exists (SELECT fy_proposal FROM t_instrument_allocation WHERE fy_proposal = _fyProposal AND proposal_id = _proposalID AND fiscal_year = _fiscalYear) Then
-                _msg2 := format('Mismatch between fy_proposal, FiscalYear, and ProposalID: %s vs. %s vs. %s',
+            If Not Exists (SELECT fy_proposal FROM t_instrument_allocation WHERE fy_proposal = _fyProposal AND proposal_id = _proposalID AND fiscal_year = _fy) Then
+                _msg2 := format('Mismatch between fy_proposal, fiscal year, and proposal ID: %s vs. %s vs. %s',
                                 _fyProposal, _fiscalYear, _proposalID);
                 RAISE EXCEPTION '%', _msg2;
             End If;
 
             If Coalesce(_fiscalYearParam, '') <> '' And _fiscalYearParam <> _fiscalYear Then
-                _msg2 := format('Cannot change FiscalYear when updating: %s vs. %s', _fiscalYear, _fiscalYearParam);
+                _msg2 := format('Cannot change fiscal year when updating: %s vs. %s', _fiscalYear, _fiscalYearParam);
                 RAISE EXCEPTION '%', _msg2;
             End If;
 
             If Coalesce(_proposalIDParam, '') <> '' And _proposalIDParam <> _proposalID Then
-                _msg2 := format('Cannot change ProposalID when updating: %s vs. %s', _proposalID, _proposalIDParam);
+                _msg2 := format('Cannot change proposal ID when updating: %s vs. %s', _proposalID, _proposalIDParam);
                 RAISE EXCEPTION '%', _msg2;
             End If;
         End If;
@@ -228,19 +213,13 @@ BEGIN
             Comment text NULL,
             FY int,
             Operation text NULL     -- 'i' -> increment, 'd' -> decrement, anything else -> set
-        )
-
-        _fy := public.try_cast(_fiscalYear, null::int);
-        If _fy Is Null Or _fy = 0 Then
-            _msg2 := format('Fiscal year is not numeric: %s', _fiscalYear);
-            RAISE EXCEPTION '%', _msg2;
-        End If;
+        );
 
         If _ft <> '' Then
             _ftHours := public.try_cast(_ft, null::real);
 
             If _ftHours Is Null Then
-                _msg2 := format('FT hours is not numeric: %s', _ft);
+                _msg2 := format('FTICR hours is not numeric: %s', _ft);
                 RAISE EXCEPTION '%', _msg2;
             Else
                 INSERT INTO Tmp_Allocation_Operations (Operation, Proposal, InstGroup, Allocation, Comment, FY)
@@ -352,4 +331,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_instrument_usage_allocations IS 'UpdateInstrumentUsageAllocations';
+
+ALTER PROCEDURE public.update_instrument_usage_allocations(IN _fyproposal text, IN _fiscalyear text, IN _proposalid text, IN _ft text, IN _ftcomment text, IN _ims text, IN _imscomment text, IN _orb text, IN _orbcomment text, IN _exa text, IN _exacomment text, IN _ltq text, IN _ltqcomment text, IN _gc text, IN _gccomment text, IN _qqq text, IN _qqqcomment text, IN _mode text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_instrument_usage_allocations(IN _fyproposal text, IN _fiscalyear text, IN _proposalid text, IN _ft text, IN _ftcomment text, IN _ims text, IN _imscomment text, IN _orb text, IN _orbcomment text, IN _exa text, IN _exacomment text, IN _ltq text, IN _ltqcomment text, IN _gc text, IN _gccomment text, IN _qqq text, IN _qqqcomment text, IN _mode text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_instrument_usage_allocations(IN _fyproposal text, IN _fiscalyear text, IN _proposalid text, IN _ft text, IN _ftcomment text, IN _ims text, IN _imscomment text, IN _orb text, IN _orbcomment text, IN _exa text, IN _exacomment text, IN _ltq text, IN _ltqcomment text, IN _gc text, IN _gccomment text, IN _qqq text, IN _qqqcomment text, IN _mode text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UpdateInstrumentUsageAllocations';
+
