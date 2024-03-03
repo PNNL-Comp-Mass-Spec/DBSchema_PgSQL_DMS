@@ -1,21 +1,24 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_instrument_usage_report
-(
-    _factorList text,
-    _operation text,
-    _year text,
-    _month text,
-    _instrument text,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_instrument_usage_report(text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_instrument_usage_report(IN _factorlist text, IN _operation text, IN _year text, IN _month text, IN _instrument text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Update table t_emsl_instrument_usage_report (which tracks actual instrument usage) using an XML list
+**
+**      When _operation is 'update':
+**        Update one or more existing rows in t_emsl_instrument_usage_report, using the info in _factorList
+**
+**      When _operation is 'reload':
+**        Clear all of the instrument usage data for the given year and month (optionally filtering on instrument)
+**        Next, call update_dataset_interval() and update_emsl_instrument_usage_report()
+**
+**      When _operation is 'refresh':
+**        Call update_emsl_instrument_usage_report() for the given year and month (optionally filtering on instrument)
 **
 **      Example XML in _factorList:
 **        <id type="Seq" />
@@ -24,12 +27,17 @@ AS $$
 **        <r i="2058" f="Proposal" v="..." />
 **        <r i="1941" f="Proposal" v="..." />
 **
+**      In the XML:
+**        "i" specifies the sequence ID in table t_emsl_instrument_usage_report
+**        "f" is the field to update: 'Proposal', 'Operator', 'Comment', 'Users', or 'Usage' (operator is EUS user ID of the instrument operator)
+**        "v" is the value to store
+**
 **  Arguments:
-**    _factorList       XML specifying 'Proposal', 'Operator', 'Comment', 'Users', or 'Usage' items to update
+**    _factorList       When _operation is 'update', XML specifying 'Proposal', 'Operator', 'Comment', 'Users', or 'Usage' items to update
 **    _operation        Operation: 'update', 'refresh', 'reload'
-**    _year
-**    _month
-**    _instrument
+**    _year             Year to filter t_emsl_instrument_usage_report on when operation is 'refresh' or 'reload'
+**    _month            Month to filter t_emsl_instrument_usage_report on when operation is 'refresh' or 'reload'
+**    _instrument       Instrument to filter t_emsl_instrument_usage_report on when operation is 'refresh' or 'reload'; process all instruments if an empty string
 **    _message          Status message
 **    _returnCode       Return code
 **    _callingUser      Username of the calling user
@@ -51,7 +59,9 @@ AS $$
 **          09/10/2019 mem - Extended cutoff for 'update' to be 365 days instead of 90 days
 **                         - Changed the cutoff for reload to 60 days
 **          07/15/2022 mem - Instrument operator ID is now tracked as an actual integer
-**          12/15/2024 mem - Ported to PostgreSQL
+**          03/02/2024 mem - Trim leading and trailing whitespace from Field and Value text parsed from the XML
+**                         - Allow _year and _month to be undefined if _operation is 'update'
+**                         - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -60,7 +70,8 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _msg text;
+    _reloadThresholdDays int = 60;      -- Defaults to 60
+    _updateThresholdDays int = 365;     -- Defaults to 365
     _startOfMonth timestamp;
     _startOfNextMonth timestamp;
     _endOfMonth timestamp;
@@ -68,10 +79,15 @@ DECLARE
     _lockDateUpdate timestamp;
     _xml xml;
     _instrumentID int := 0;
-    _monthValue int;
     _yearValue int;
-    _badFields text := '';
+    _monthValue int;
+    _badFields text;
+    _msg text;
     _currentInstrument text;
+
+    _dropFactorsTable boolean := false;
+    _dropInstrumentsTable boolean := false;
+    _logErrors boolean := true;
 
     _sqlState text;
     _exceptionMessage text;
@@ -105,49 +121,62 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    If Coalesce(_callingUser, '') = '' Then
+    _factorList  := Trim(Coalesce(_factorList, ''));
+    _operation   := Trim(Lower(Coalesce(_operation, '')));
+    _year        := Trim(Coalesce(_year, ''));
+    _month       := Trim(Coalesce(_month, ''));
+    _instrument  := Trim(Coalesce(_instrument, ''));
+    _callingUser := Trim(Coalesce(_callingUser, ''));
+
+    If _callingUser = '' Then
         _callingUser := public.get_user_login_without_domain('');
     End If;
-
-    _instrument := Trim(Coalesce(_instrument, ''));
 
     If _instrument <> '' Then
         SELECT instrument_id
         INTO _instrumentID
         FROM t_instrument_name
-        WHERE instrument = _instrument;
+        WHERE instrument = _instrument::citext;
 
         If Not FOUND Then
-            RAISE EXCEPTION 'Instrument not found: "%"', _instrument;
+            RAISE EXCEPTION 'Invalid instrument: "%"', _instrument;
         End If;
     End If;
-
-    _operation := Trim(Lower(Coalesce(_operation, '')));
 
     If _operation = '' Then
         RAISE EXCEPTION 'Operation must be specified';
     End If;
 
-    _month := Trim(Coalesce(_month, ''));
-    _year  := Trim(Coalesce(_year, ''));
+    If _operation = 'update' Then
+        -- _year and _month  are effectively ignored when _operation is 'update'
+        -- However, make sure that they are defined so that _startOfMonth can be initialized (even though it also is not used when _operation is 'update')
 
-    If _month = '' Then
-        RAISE EXCEPTION 'Month must be specified';
+        If _year = '' Then
+            _year := Extract(year from current_timestamp)::text;
+        End If;
+
+        If _month = '' Then
+            _month := Extract(month from current_timestamp)::text;
+        End If;
+    Else
+        If _year = '' Then
+            RAISE EXCEPTION 'Year must be specified';
+        End If;
+
+        If _month = '' Then
+            RAISE EXCEPTION 'Month must be specified';
+        End If;
     End If;
 
-    If _year = '' Then
-        RAISE EXCEPTION 'Year must be specified';
-    End If;
-
-    _monthValue := public.try_cast(_month, null::int);
     _yearValue  := public.try_cast(_year, null::int);
-
-    If _monthValue Is Null Then
-        RAISE EXCEPTION 'Month must be an integer, not: "%"', _month;
-    End If;
+    _monthValue := public.try_cast(_month, null::int);
 
     If _yearValue Is Null Then
-        RAISE EXCEPTION 'Year must be an integer, not: "%"', _year;
+        RAISE EXCEPTION 'Year must be an integer, not "%"', _year;
+    End If;
+
+    If _monthValue Is Null Then
+        RAISE EXCEPTION 'Month must be an integer, not "%"', _month;
     End If;
 
     -- Uncomment to debug
@@ -168,20 +197,23 @@ BEGIN
     BEGIN
 
         ---------------------------------------------------
-        -- Get boundary dates
+        -- Define boundary dates
         ---------------------------------------------------
-        _startOfMonth     := make_date(_year, _month, 1)              ; -- Beginning of the month that we are updating
-        _startOfNextMonth := _startOfMonth     + INTERVAL '1 month'   ; -- Beginning of the next month after _startOfMonth
-        _endOfMonth       := _startOfNextMonth - INTERVAL '1 msec'    ; -- End of the month that we are editing
-        _lockDateReload   := _startOfNextMonth + INTERVAL '60 days'   ; -- Date threshold, afterwhich users can no longer reload this month's data
-        _lockDateUpdate   := _startOfNextMonth + INTERVAL '365 days'  ; -- Date threshold, afterwhich users can no longer update this month's data
+
+        _startOfMonth     := make_date(_yearValue, _monthValue, 1)                          ; -- Beginning of the month that we are updating
+        _startOfNextMonth := _startOfMonth     + INTERVAL '1 month'                         ; -- Beginning of the next month after _startOfMonth
+        _endOfMonth       := _startOfNextMonth - INTERVAL '1 msec'                          ; -- End of the month that we are editing
+        _lockDateReload   := _startOfNextMonth + make_interval(days => _reloadThresholdDays); -- Date threshold, afterwhich users can no longer reload this month's data
+        _lockDateUpdate   := _startOfNextMonth + make_interval(days => _updateThresholdDays); -- Date threshold, afterwhich users can no longer update this month's data
 
         If _operation = 'update' And CURRENT_TIMESTAMP > _lockDateUpdate Then
-            RAISE EXCEPTION 'Changes are not allowed to instrument usage data over 365 days old';
+            _logErrors := false;
+            RAISE EXCEPTION 'Changes are not allowed to instrument usage data over % days old', _updateThresholdDays;
         End If;
 
         If _operation <> 'update' And CURRENT_TIMESTAMP > _lockDateReload Then
-            RAISE EXCEPTION 'Instrument usage data over 60 days old cannot be reloaded or refreshed';
+            _logErrors := false;
+            RAISE EXCEPTION 'Instrument usage data over % days old cannot be reloaded or refreshed', _reloadThresholdDays;
         End If;
 
         -----------------------------------------------------------
@@ -197,15 +229,17 @@ BEGIN
             CREATE TEMP TABLE Tmp_Factors (
                 Identifier int NULL,
                 Field citext NULL,
-                Value text NULL,
+                Value text NULL
             );
+
+            _dropFactorsTable := true;
 
             -----------------------------------------------------------
             -- Populate temp table with new parameters
             -----------------------------------------------------------
 
             INSERT INTO Tmp_Factors (Identifier, Field, Value)
-            SELECT XmlQ.Identifier, XmlQ.Field, XmlQ.Value
+            SELECT XmlQ.Identifier, Trim(XmlQ.Field), Trim(XmlQ.Value)
             FROM (
                 SELECT xmltable.*
                 FROM ( SELECT _xml AS rooted_xml
@@ -227,6 +261,7 @@ BEGIN
             WHERE NOT Field IN ('Proposal', 'Operator', 'Comment', 'Users', 'Usage');
 
             If _badFields <> '' Then
+                _logErrors := false;
                 RAISE EXCEPTION 'The following field(s) are not editable: %', _badFields;
             End If;
 
@@ -238,15 +273,12 @@ BEGIN
             -- Validation
             -----------------------------------------------------------
 
-            If _operation = 'reload' And Coalesce(_instrument, '') = '' Then
+            If _operation = 'reload' And _instrument = '' Then
+                _logErrors := false;
                 RAISE EXCEPTION 'An instrument must be specified for the reload operation';
             End If;
 
-            If Coalesce(_year, '') = '' Or Coalesce(_month, '') = '' Then
-                RAISE EXCEPTION 'A year and month must be specified for this operation';
-            End If;
-
-            If Coalesce(_instrument, '') = '' Then
+            If _instrument = '' Then
                 ---------------------------------------------------
                 -- Get list of EMSL instruments
                 ---------------------------------------------------
@@ -256,41 +288,49 @@ BEGIN
                     Instrument text
                 );
 
+                _dropInstrumentsTable := true;
+
                 INSERT INTO Tmp_Instruments (Instrument)
                 SELECT Name
                 FROM V_Instrument_Tracked
-                WHERE Upper(Coalesce(EUS_Primary_Instrument, '')) IN ('Y', '1')
+                WHERE Upper(Coalesce(EUS_Primary_Instrument, '')) IN ('Y', '1');
             End If;
 
         End If;
 
         If _operation = 'update' Then
+
+            -- Comment
             UPDATE t_emsl_instrument_usage_report
             SET comment = Tmp_Factors.Value
             FROM Tmp_Factors
             WHERE t_emsl_instrument_usage_report.Seq = Tmp_Factors.Identifier AND
                   Field = 'Comment';
 
+            -- EUS Proposal ID (which is typically an integer, but is tracked as text)
             UPDATE t_emsl_instrument_usage_report
             SET proposal = Tmp_Factors.Value
             FROM Tmp_Factors
             WHERE t_emsl_instrument_usage_report.Seq = Tmp_Factors.Identifier AND
-                 Field = 'Proposal';
+                  Field = 'Proposal';
 
+            -- EUS Operator ID
             UPDATE t_emsl_instrument_usage_report
-            SET operator = public.try_cast(Tmp_Factors.Value, null::0)
+            SET operator = public.try_cast(Tmp_Factors.Value, null::int)
             FROM Tmp_Factors
             WHERE t_emsl_instrument_usage_report.Seq = Tmp_Factors.Identifier AND
-                Field = 'Operator';
+                  Field = 'Operator';
 
+            -- EUS User IDs
             UPDATE t_emsl_instrument_usage_report
             SET users = Tmp_Factors.Value
             FROM Tmp_Factors
             WHERE t_emsl_instrument_usage_report.Seq = Tmp_Factors.Identifier AND
                   Field = 'Users';
 
+            -- EUS Usage Type ID
             UPDATE t_emsl_instrument_usage_report
-            SET usage_type_id = InstUsageType.ID
+            SET usage_type_id = InstUsageType.usage_type_id
             FROM Tmp_Factors
                  INNER JOIN t_emsl_instrument_usage_type InstUsageType
                    ON Tmp_Factors.Value = InstUsageType.usage_type
@@ -312,14 +352,15 @@ BEGIN
                 users = '',
                 operator = Null,
                 comment = ''
-            WHERE _year = year AND
-                  _month = month AND
+            WHERE year = _yearValue AND
+                  month = _monthValue AND
                   (_instrument = '' OR dms_inst_id = _instrumentID);
 
             CALL public.update_dataset_interval (
                             _instrumentName => _instrument,
                             _startDate      => _startOfMonth,
                             _endDate        => _endOfMonth,
+                            _infoOnly       => false,
                             _message        => _message,        -- Output
                             _returnCode     => _returnCode);    -- Output
 
@@ -327,7 +368,7 @@ BEGIN
         End If;
 
         If _operation = 'refresh' Then
-            If char_length(Coalesce(_instrument, '')) > 0 Then
+            If _instrument <> '' Then
                 CALL public.update_emsl_instrument_usage_report (
                                 _instrument      => _instrument,
                                 _eusInstrumentId => 0,
@@ -363,6 +404,16 @@ BEGIN
             End If;
         End If;
 
+        If _dropFactorsTable Then
+            DROP TABLE Tmp_Factors;
+        End If;
+
+        If _dropInstrumentsTable Then
+            DROP TABLE Tmp_Instruments;
+        End If;
+
+        RETURN;
+
     EXCEPTION
         WHEN OTHERS THEN
             GET STACKED DIAGNOSTICS
@@ -373,16 +424,30 @@ BEGIN
 
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => '', _logError => true);
+                        _callingProcLocation => '', _logError => _logErrors);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
         End If;
     END;
 
-    DROP TABLE IF EXISTS Tmp_Factors;
-    DROP TABLE IF EXISTS Tmp_Instruments;
+    If _dropFactorsTable Then
+        DROP TABLE IF EXISTS Tmp_Factors;
+    End If;
+
+    If _dropInstrumentsTable Then
+        DROP TABLE IF EXISTS Tmp_Instruments;
+    End If;
+
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_instrument_usage_report IS 'UpdateInstrumentUsageReport';
+
+ALTER PROCEDURE public.update_instrument_usage_report(IN _factorlist text, IN _operation text, IN _year text, IN _month text, IN _instrument text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_instrument_usage_report(IN _factorlist text, IN _operation text, IN _year text, IN _month text, IN _instrument text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_instrument_usage_report(IN _factorlist text, IN _operation text, IN _year text, IN _month text, IN _instrument text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UpdateInstrumentUsageReport';
+
