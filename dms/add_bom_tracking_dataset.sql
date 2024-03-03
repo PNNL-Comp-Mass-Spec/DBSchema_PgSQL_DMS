@@ -117,7 +117,7 @@ BEGIN
         End If;
 
         If _year = '' Or _month = 'next' Then
-            _yr := Extract(year FROM _now)::text;
+            _yr := Extract(year from _now)::text;
         Else
             _yr := public.try_cast(_year, null::int);
 

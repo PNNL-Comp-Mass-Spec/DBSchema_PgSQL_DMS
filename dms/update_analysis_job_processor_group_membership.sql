@@ -110,7 +110,7 @@ BEGIN
     SELECT string_agg(Processor_Name, ', ' ORDER BY Processor_Name)
     INTO _list
     FROM Tmp_Processors
-    WHERE Processor_ID Is Null;
+    WHERE Processor_ID IS NULL;
 
     If _list <> '' Then
         If Position(',' In _list) > 0 Then

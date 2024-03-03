@@ -229,7 +229,7 @@ BEGIN
                                           ON DS.exp_id = E.exp_id
                                       LEFT OUTER JOIN Tmp_DatasetsToDelete DSDelete
                                           ON DS.dataset_id = DSDelete.dataset_id
-                                  WHERE DSDelete.dataset_id Is Null)
+                                  WHERE DSDelete.dataset_id IS NULL)
         GROUP BY E.exp_id,
                 E.experiment,
                 E.created
