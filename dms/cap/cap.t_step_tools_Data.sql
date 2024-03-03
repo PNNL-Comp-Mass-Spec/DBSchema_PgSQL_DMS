@@ -32,7 +32,7 @@ COPY cap.t_step_tools (step_tool_id, step_tool, description, bionet_required, on
 11	ArchiveUpdateTest	Test instance of the ArchiveUpdate tool	N	Y	N	1	10	N
 12	ArchiveVerify	Verify that checksums reported by MyEMSL match those of the ingested data (using https://metadata.my.emsl.pnl.gov/fileinfo/files_for_keyvalue/omics.dms.dataset_id/598409)	N	N	N	10	90	N
 13	ArchiveStatusCheck	Verify that all of the ingest jobs associated with the given dataset are complete (look for task_percent = 100 at https://ingestdms.my.emsl.pnl.gov/get_state?job_id=1300940)	N	N	N	20	90	N
-14	LCDatasetCapture	Copy LC instrument data into dataset LC subfolder on storage server	Y	N	Y	0	0	Y
+14	LCDatasetCapture	Copy LC instrument data into dataset LC subfolder on storage server	Y	N	Y	30	48	Y
 15	LCDatasetInfo	Create QC graphics using MSFileInfoScanner, but do not overwrite the MS dataset info	N	N	N	0	0	N
 \.
 

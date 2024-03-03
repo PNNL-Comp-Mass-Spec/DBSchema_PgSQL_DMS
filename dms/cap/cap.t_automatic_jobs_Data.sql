@@ -21,10 +21,10 @@ SET row_security = off;
 --
 
 COPY cap.t_automatic_jobs (script_for_completed_job, script_for_new_job, enabled) FROM stdin;
-DatasetArchive	SourceFileRename	1
 DatasetArchive	MyEMSLVerify	1
-LCDatasetCapture	ArchiveUpdate	1
+DatasetArchive	SourceFileRename	1
 DatasetCapture	LCDatasetCapture	1
+LCDatasetCapture	ArchiveUpdate	1
 \.
 
 
