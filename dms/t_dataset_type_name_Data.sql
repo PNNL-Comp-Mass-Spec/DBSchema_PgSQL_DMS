@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.5
+-- Dumped from database version 15.6
 -- Dumped by pg_dump version 16.1
 
 SET statement_timeout = 0;
@@ -21,13 +21,14 @@ SET row_security = off;
 --
 
 COPY public.t_dataset_type_name (dataset_type_id, dataset_type, description, active) FROM stdin;
-55	DIA-HMS-HCD-HMSn	High res MS with DIA HCD HMSn	1
-52	1D-C	NMR analysis	1
-51	1D-H	NMR analysis	1
-53	2D	NMR analysis	1
+52	1D-C	NMR analysis	0
+51	1D-H	NMR analysis	0
+53	2D	NMR analysis	0
 32	C60-SIMS-HMS	C60 SIMS HMS	1
+56	CAD	Charged aerosol detector	1
 35	Chip_Seq	DNA Sequencing Reads	1
 27	DataFiles	DMS Pipeline Data or Data Packages	0
+55	DIA-HMS-HCD-HMSn	High res MS with DIA HCD HMSn	1
 41	EI-HMS	GC EI coupled with high res MS	1
 39	GC	GC with FID, ECD, TCD, etc. (no MS)	1
 18	GC-MS	Full scan GC-MS (but not GC QExactive, which is EI-HMS)	1

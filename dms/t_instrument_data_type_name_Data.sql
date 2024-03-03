@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.5
+-- Dumped from database version 15.6
 -- Dumped by pg_dump version 16.1
 
 SET statement_timeout = 0;
@@ -39,6 +39,7 @@ COPY public.t_instrument_data_type_name (raw_data_type_id, raw_data_type_name, i
 17	illumina_folder	1		\N
 18	dot_qgd_files	0	.qgd	\N
 19	bruker_tof_tdf	1	.tdf	.D directory with a .tdf file and a .tdf_bin file
+20	lcmsnet_lcmethod	0	.lcmethod	Method XML file from LCMSNet with runtime timestamps included
 \.
 
 
@@ -46,7 +47,7 @@ COPY public.t_instrument_data_type_name (raw_data_type_id, raw_data_type_name, i
 -- Name: t_instrument_data_type_name_raw_data_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_instrument_data_type_name_raw_data_type_id_seq', 19, true);
+SELECT pg_catalog.setval('public.t_instrument_data_type_name_raw_data_type_id_seq', 20, true);
 
 
 --

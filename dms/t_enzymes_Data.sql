@@ -22,6 +22,7 @@ SET row_security = off;
 
 COPY public.t_enzymes (enzyme_id, enzyme_name, description, p1, p1_exception, p2, p2_exception, cleavage_method, cleavage_offset, sequest_enzyme_index, protein_collection_name, comment) FROM stdin;
 0	na	Not a real value	na	na	na	na	na	0	\N		\N
+1	No_Enzyme	no digestive enzyme was used	na	na	na	na	na	0	0	HumanContam	\N
 10	Trypsin	Standard tryptic digest	KR-	na	KR-	na	Standard	1	1	Tryp_Pig_Bov	\N
 11	GluC	Endoproteinase GluC (aka V8)	ED-	na	ED-	na	Standard	1	12	HumanContam	\N
 12	LysC	Endoproteinase LysC	K-	na	K-	na	Standard	1	13	HumanContam	\N
@@ -43,7 +44,6 @@ COPY public.t_enzymes (enzyme_id, enzyme_name, description, p1, p1_exception, p2
 28	Trypsin_plus_Chymotrypsin	Trypsin and Chymotrypsin	KRFWYL-	na	KRFWYL-	na	Standard	1	\N	Tryp_Pig_Bov	\N
 29	Trypsin_plus_GluC	Trypsin and Endoproteinas GluC	KRED-	na	KRED-	na	Standard	1	\N	Tryp_Pig_Bov	\N
 30	ALP	Alpha-Lytic Protease	TASV	na	TASV	na	Standard	1	\N	HumanContam	\N
-1	No_Enzyme	no digestive enzyme was used	na	na	na	na	na	0	0	HumanContam	\N
 \.
 
 
