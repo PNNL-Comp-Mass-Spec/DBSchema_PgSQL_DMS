@@ -43,6 +43,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_instrument_usage_report(IN _seq in
 **          04/17/2020 mem - Use Dataset_ID instead of ID
 **          07/15/2022 mem - Instrument operator ID is now tracked as an actual integer
 **          01/15/2024 mem - Ported to PostgreSQL
+**          03/02/2024 mem - If _users is not null, trim whitespace
 **
 *****************************************************/
 DECLARE
@@ -116,6 +117,11 @@ BEGIN
 
         -- Assure that _comment does not contain LF or CR
         _comment := Trim(Replace(Replace(_comment, chr(10), ' '), chr(13), ' '));
+
+        -- If _users is not null, trim whitespace
+        If Not _users Is Null Then
+            _users := Trim(_users);
+        End If;
 
         ---------------------------------------------------
         -- Is entry already in database? (only applies to updates)
