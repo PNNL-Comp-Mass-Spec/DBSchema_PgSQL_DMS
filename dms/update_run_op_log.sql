@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE public.update_run_op_log(IN _changes text, INOUT _me
 **          10/20/2023 mem - Ported to PostgreSQL
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
 **          01/08/2024 mem - Remove procedure name from error message
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -116,16 +117,16 @@ BEGIN
         );
 
         INSERT INTO Tmp_RequestedRunUsageInfo (request, usage, proposal, emsl_user)
-        SELECT XmlQ.request, XmlQ.usage, XmlQ.proposal, XmlQ.emsl_user
+        SELECT XmlQ.request, Trim(XmlQ.usage), Trim(XmlQ.proposal), Trim(XmlQ.emsl_user)
         FROM (
             SELECT xmltable.*
             FROM ( SELECT ('<updates>' || _xml::text || '</updates>')::xml as rooted_xml ) Src,
                  XMLTABLE('//updates/run'
                           PASSING Src.rooted_xml
-                          COLUMNS request int PATH '@request',
-                                  usage citext PATH '@usage',
-                                  proposal citext PATH '@proposal',
-                                  emsl_user citext PATH '@user')
+                          COLUMNS request   int  PATH '@request',
+                                  usage     text PATH '@usage',
+                                  proposal  text PATH '@proposal',
+                                  emsl_user text PATH '@user')
              ) XmlQ;
 
         -- Get current status of request (needed for change log updating)
@@ -148,14 +149,14 @@ BEGIN
         );
 
         INSERT INTO Tmp_IntervalUpdates (id, note)
-        SELECT XmlQ.request, XmlQ.note
+        SELECT XmlQ.request, Trim(XmlQ.note)
         FROM (
             SELECT xmltable.*
             FROM ( SELECT ('<updates>' || _xml::text || '</updates>')::xml as rooted_xml ) Src,
                  XMLTABLE('//updates/interval'
                           PASSING Src.rooted_xml
-                          COLUMNS request int PATH '@id',
-                                  note citext PATH '@note')
+                          COLUMNS request int  PATH '@id',
+                                  note    text PATH '@note')
              ) XmlQ;
 
         -----------------------------------------------------------

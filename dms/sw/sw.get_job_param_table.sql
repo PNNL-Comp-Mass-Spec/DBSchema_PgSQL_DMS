@@ -55,6 +55,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_param_table(_job integer, _settingsfileove
 **          06/05/2023 mem - Rename temp table
 **          07/25/2023 mem - Do not show a warning message when _debugMode is true and the settings file is 'na'
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -280,16 +281,16 @@ BEGIN
         ---------------------------------------------------
 
         INSERT INTO Tmp_Param_Tab (Section, Name, Value)
-        SELECT XmlQ.section, XmlQ.name, XmlQ.value
+        SELECT Trim(XmlQ.section), Trim(XmlQ.name), Trim(XmlQ.value)
         FROM (
             SELECT xmltable.*
             FROM ( SELECT _paramXML AS params
                  ) Src,
                  XMLTABLE('//sections/section/item'
                           PASSING Src.params
-                          COLUMNS section citext PATH '../@name',
-                                  name    citext PATH '@key',
-                                  value   citext PATH '@value'
+                          COLUMNS section text PATH '../@name',
+                                  name    text PATH '@key',
+                                  value   text PATH '@value'
                                   )
              ) XmlQ;
         --

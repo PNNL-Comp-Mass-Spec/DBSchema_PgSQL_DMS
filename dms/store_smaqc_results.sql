@@ -54,6 +54,7 @@ CREATE OR REPLACE PROCEDURE public.store_smaqc_results(IN _datasetid integer DEF
 **          04/06/2016 mem - Now using Try_Convert to convert from text to int
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          02/22/2024 mem - Ported to PostgreSQL
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -196,7 +197,7 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_Measurements (Name, ValueText)
-    SELECT XmlQ.Name, XmlQ.ValueText
+    SELECT Trim(XmlQ.Name), Trim(XmlQ.ValueText)
     FROM (
         SELECT xmltable.*
         FROM ( SELECT _resultsXML AS rooted_xml
@@ -204,7 +205,7 @@ BEGIN
              XMLTABLE('//SMAQC_Results/Measurements/Measurement'
                       PASSING Src.rooted_xml
                       COLUMNS ValueText text PATH '.',
-                              name text PATH '@Name')
+                              name      text PATH '@Name')
          ) XmlQ
     WHERE NOT XmlQ.ValueText IS NULL;
 

@@ -47,6 +47,7 @@ CREATE OR REPLACE PROCEDURE sw.manage_job_execution(IN _parameters text DEFAULT 
 **          05/07/2023 mem - Remove unused variable
 **          09/13/2023 mem - Remove unnecessary delimiter argument when calling append_to_text()
 **          10/18/2023 mem - Drop temp table Tmp_JobList before exiting the procedure
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -113,8 +114,7 @@ BEGIN
              ) Src,
              XMLTABLE('//root/jobs/job'
                       PASSING Src.params
-                      COLUMNS job int PATH '.'
-                              )
+                      COLUMNS job int PATH '.')
          ) XmlQ;
 
     ---------------------------------------------------

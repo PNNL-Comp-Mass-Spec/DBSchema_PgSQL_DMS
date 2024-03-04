@@ -86,6 +86,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_local_job_in_broker(INOUT _job integer
 **                         - Include schema name when calling function verify_sp_authorized()
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          01/03/2024 mem - Update warning message
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -280,16 +281,16 @@ BEGIN
                 );
 
                 INSERT INTO Tmp_Job_Params (Section, Name, Value)
-                SELECT XmlQ.section, XmlQ.name, XmlQ.value
+                SELECT Trim(XmlQ.section), Trim(XmlQ.name), Trim(XmlQ.value)
                 FROM (
                     SELECT xmltable.*
                     FROM ( SELECT ('<params>' || _jobParamXML::text || '</params>')::xml AS rooted_xml
                          ) Src,
                          XMLTABLE('//params/Param'
                                   PASSING Src.rooted_xml
-                                  COLUMNS section citext PATH '@Section',
-                                          name citext PATH '@Name',
-                                          value citext PATH '@Value')
+                                  COLUMNS section text PATH '@Section',
+                                          name    text PATH '@Name',
+                                          value   text PATH '@Value')
                      ) XmlQ;
 
                 ---------------------------------------------------

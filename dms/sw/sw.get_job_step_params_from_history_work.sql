@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_step_params_from_history_work(_job integer
 **                         - Add step parameter 'ParamFileStoragePath'
 **                         - Add job parameter 'ToolName' if not present in T_Job_Parameters_History
 **                         - Ported to PostgreSQL
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -184,7 +185,7 @@ BEGIN
     --   ")"
 
     INSERT INTO Tmp_Param_Tab (Section, Name, Value)
-    SELECT ConvertQ.section, ConvertQ.name, ConvertQ.value
+    SELECT Trim(ConvertQ.section), Trim(ConvertQ.name), Trim(ConvertQ.value)
     FROM (
             SELECT XmlQ.section,
                    XmlQ.name,
@@ -202,9 +203,9 @@ BEGIN
                                XMLTABLE('//params/Param'
                                   PASSING Src.rooted_xml
                                   COLUMNS section citext PATH '@Section',
-                                          name citext PATH '@Name',
-                                          value citext PATH '@Value',
-                                          step citext PATH '@Step')
+                                          name    citext PATH '@Name',
+                                          value   citext PATH '@Value',
+                                          step    citext PATH '@Step')
                    ) XmlQ
           ) ConvertQ
     WHERE ConvertQ.Name <> 'DataPackageID' AND

@@ -50,6 +50,7 @@ CREATE OR REPLACE PROCEDURE sw.update_manager_and_task_status_xml(IN _managersta
 **          09/07/2023 mem - Align assignment statements
 **          09/11/2023 mem - Use schema name with try_cast
 **          09/29/2023 mem - Keep track of the current location in the procedure
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -174,30 +175,32 @@ BEGIN
         _currentLocation := 'Populate temp table Tmp_Processor_Status_Info';
 
         WITH Src (StatusXML) AS (SELECT _statusXML)
-        INSERT INTO Tmp_Processor_Status_Info( Processor_Name,
-                                               Remote_Manager,
-                                               Mgr_Status,
-                                               Status_Date,
-                                               Last_Start_Time,
-                                               CPU_Utilization,
-                                               Free_Memory_MB,
-                                               Process_ID,
-                                               Prog_Runner_Process_ID,
-                                               Prog_Runner_Core_Usage,
-                                               Most_Recent_Error_Message,
-                                               Step_Tool,
-                                               Task_Status,
-                                               Duration_Minutes,
-                                               Progress,
-                                               Current_Operation,
-                                               Task_Detail_Status,
-                                               Job,
-                                               Job_Step,
-                                               Dataset,
-                                               Most_Recent_Log_Message,
-                                               Most_Recent_Job_Info,
-                                               Spectrum_Count,
-                                               IsNew )
+        INSERT INTO Tmp_Processor_Status_Info (
+            Processor_Name,
+            Remote_Manager,
+            Mgr_Status,
+            Status_Date,
+            Last_Start_Time,
+            CPU_Utilization,
+            Free_Memory_MB,
+            Process_ID,
+            Prog_Runner_Process_ID,
+            Prog_Runner_Core_Usage,
+            Most_Recent_Error_Message,
+            Step_Tool,
+            Task_Status,
+            Duration_Minutes,
+            Progress,
+            Current_Operation,
+            Task_Detail_Status,
+            Job,
+            Job_Step,
+            Dataset,
+            Most_Recent_Log_Message,
+            Most_Recent_Job_Info,
+            Spectrum_Count,
+            IsNew
+        )
         SELECT ManagerInfoQ.Processor_Name, ManagerInfoQ.Remote_Manager, ManagerInfoQ.Mgr_Status, ManagerInfoQ.Status_Date,
                ManagerInfoQ.Last_Start_Time, ManagerInfoQ.CPU_Utilization,
                ManagerInfoQ.Free_Memory_MB, ManagerInfoQ.Process_ID,
@@ -211,16 +214,16 @@ BEGIN
                FROM Src,
                     XMLTABLE('//StatusInfo/Root/Manager'
                               PASSING Src.StatusXML
-                              COLUMNS Processor_Name            citext PATH 'MgrName',
-                                      Remote_Manager            citext PATH 'RemoteMgrName',
-                                      Mgr_Status                citext PATH 'MgrStatus',
-                                      Status_Date               citext PATH 'LastUpdate',
-                                      Last_Start_Time           citext PATH 'LastStartTime',
-                                      CPU_Utilization           citext PATH 'CPUUtilization',
-                                      Free_Memory_MB            citext PATH 'FreeMemoryMB',
-                                      Process_ID                citext PATH 'ProcessID',
-                                      Prog_Runner_Process_ID    citext PATH 'ProgRunnerProcessID',
-                                      Prog_Runner_Core_Usage    citext PATH 'ProgRunnerCoreUsage'
+                              COLUMNS Processor_Name         citext PATH 'MgrName',
+                                      Remote_Manager         text   PATH 'RemoteMgrName',
+                                      Mgr_Status             text   PATH 'MgrStatus',
+                                      Status_Date            text   PATH 'LastUpdate',
+                                      Last_Start_Time        text   PATH 'LastStartTime',
+                                      CPU_Utilization        text   PATH 'CPUUtilization',
+                                      Free_Memory_MB         text   PATH 'FreeMemoryMB',
+                                      Process_ID             text   PATH 'ProcessID',
+                                      Prog_Runner_Process_ID text   PATH 'ProgRunnerProcessID',
+                                      Prog_Runner_Core_Usage text   PATH 'ProgRunnerCoreUsage'
                             )
              ) ManagerInfoQ
              LEFT OUTER JOIN
@@ -229,8 +232,8 @@ BEGIN
                         XMLTABLE('//StatusInfo/Root/Manager/RecentErrorMessages'
                                  PASSING Src.StatusXML
                                  COLUMNS Processor_Name            citext PATH '../MgrName',
-                                         Status_Date               citext PATH '../LastUpdate',
-                                         Most_Recent_Error_Message citext PATH 'ErrMsg[1]'      -- If there are multiple recent error messages, only select the first one
+                                         Status_Date               text   PATH '../LastUpdate',
+                                         Most_Recent_Error_Message text   PATH 'ErrMsg[1]'      -- If there are multiple recent error messages, only select the first one
                                 )
                  ) RecentErrorMessageQ
                  ON ManagerInfoQ.Processor_Name = RecentErrorMessageQ.Processor_Name AND
@@ -240,13 +243,13 @@ BEGIN
                    FROM Src,
                      XMLTABLE('//StatusInfo/Root/Task'
                               PASSING Src.StatusXML
-                              COLUMNS Processor_Name            citext PATH '../Manager/MgrName',
-                                      Status_Date               citext PATH '../Manager/LastUpdate',
-                                      Step_Tool                 citext PATH 'Tool',
-                                      Task_Status               citext PATH 'Status',
-                                      Duration_Minutes          citext PATH 'DurationMinutes',
-                                      Progress                  citext PATH 'Progress',
-                                      Current_Operation         citext PATH 'CurrentOperation'
+                              COLUMNS Processor_Name    citext PATH '../Manager/MgrName',
+                                      Status_Date       text   PATH '../Manager/LastUpdate',
+                                      Step_Tool         text   PATH 'Tool',
+                                      Task_Status       text   PATH 'Status',
+                                      Duration_Minutes  text   PATH 'DurationMinutes',
+                                      Progress          text   PATH 'Progress',
+                                      Current_Operation text   PATH 'CurrentOperation'
                              )
                  ) TaskQ
                  ON ManagerInfoQ.Processor_Name = TaskQ.Processor_Name AND
@@ -257,14 +260,14 @@ BEGIN
                      XMLTABLE('//StatusInfo/Root/Task/TaskDetails'
                               PASSING Src.StatusXML
                               COLUMNS Processor_Name            citext PATH '../../Manager/MgrName',
-                                      Status_Date               citext PATH '../../Manager/LastUpdate',
-                                      Task_Detail_Status        citext PATH 'Status',
-                                      Job                       citext PATH 'Job',
-                                      Job_Step                  citext PATH 'Step',
-                                      Dataset                   citext PATH 'Dataset',
-                                      Most_Recent_Log_Message   citext PATH 'MostRecentLogMessage',
-                                      Most_Recent_Job_Info      citext PATH 'MostRecentJobInfo',
-                                      Spectrum_Count            citext PATH 'SpectrumCount'
+                                      Status_Date               text   PATH '../../Manager/LastUpdate',
+                                      Task_Detail_Status        text   PATH 'Status',
+                                      Job                       text   PATH 'Job',
+                                      Job_Step                  text   PATH 'Step',
+                                      Dataset                   text   PATH 'Dataset',
+                                      Most_Recent_Log_Message   text   PATH 'MostRecentLogMessage',
+                                      Most_Recent_Job_Info      text   PATH 'MostRecentJobInfo',
+                                      Spectrum_Count            text   PATH 'SpectrumCount'
                               )
                  ) TaskDetailQ
                 ON ManagerInfoQ.Processor_Name = TaskDetailQ.Processor_Name AND

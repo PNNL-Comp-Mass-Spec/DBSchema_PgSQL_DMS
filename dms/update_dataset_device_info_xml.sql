@@ -62,6 +62,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_device_info_xml(IN _datasetid 
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -172,24 +173,24 @@ BEGIN
            XmlQ.Device_Name, XmlQ.Device_Model, XmlQ.Device_Serial_Number,
            XmlQ.Device_Software_Version, XmlQ.Device_Description
     FROM (
-        SELECT xmltable.Device_Type,
-               xmltable.Device_Number_Text,
-               xmltable.Device_Name,
-               xmltable.Device_Model,
-               xmltable.Device_Serial_Number,
-               xmltable.Device_Software_Version,
+        SELECT Trim(xmltable.Device_Type)             AS Device_Type,
+               Trim(xmltable.Device_Number_Text)      AS Device_Number_Text,
+               Trim(xmltable.Device_Name)             AS Device_Name,
+               Trim(xmltable.Device_Model)            AS Device_Model,
+               Trim(xmltable.Device_Serial_Number)    AS Device_Serial_Number,
+               Trim(xmltable.Device_Software_Version) AS Device_Software_Version,
                public.trim_whitespace(xmltable.Device_Description) AS Device_Description
         FROM ( SELECT _datasetInfoXML AS rooted_xml
              ) Src,
              XMLTABLE('//DatasetInfo/AcquisitionInfo/DeviceList/Device'
                       PASSING Src.rooted_xml
-                      COLUMNS Device_Type citext PATH '@Type',
-                              Device_Number_Text citext PATH '@Number',
-                              Device_Name citext PATH '@Name',
-                              Device_Model citext PATH '@Model',
-                              Device_Serial_Number citext PATH '@SerialNumber',
-                              Device_Software_Version citext PATH '@SoftwareVersion',
-                              Device_Description citext PATH '.')
+                      COLUMNS Device_Type             text PATH '@Type',
+                              Device_Number_Text      text PATH '@Number',
+                              Device_Name             text PATH '@Name',
+                              Device_Model            text PATH '@Model',
+                              Device_Serial_Number    text PATH '@SerialNumber',
+                              Device_Software_Version text PATH '@SoftwareVersion',
+                              Device_Description      text PATH '.')
          ) XmlQ
     WHERE NOT XmlQ.Device_Type IS NULL;
 

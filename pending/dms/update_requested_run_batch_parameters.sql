@@ -172,16 +172,16 @@ BEGIN
             -----------------------------------------------------------
 
             INSERT INTO Tmp_NewBatchParams ( Parameter, Request_ID, Value )
-            SELECT XmlQ.Parameter, XmlQ.RequestID, XmlQ.Value
+            SELECT Trim(XmlQ.Parameter), XmlQ.RequestID, Trim(XmlQ.Value)
             FROM (
                 SELECT xmltable.*
                 FROM ( SELECT _blockingXML AS rooted_xml
                      ) Src,
                      XMLTABLE('//root/r'
                               PASSING Src.rooted_xml
-                              COLUMNS Parameter citext PATH '@t',   -- Valid values are 'BK', 'RO', 'Block', 'Run_Order', 'Run Order', 'Status', 'Instrument', or 'Cart'
-                                      RequestID int PATH '@i',
-                                      Value citext PATH '@v')
+                              COLUMNS Parameter text PATH '@t',   -- Valid values are 'BK', 'RO', 'Block', 'Run_Order', 'Run Order', 'Status', 'Instrument', or 'Cart'
+                                      RequestID int  PATH '@i',
+                                      Value     text PATH '@v')
                  ) XmlQ;
 
             -----------------------------------------------------------

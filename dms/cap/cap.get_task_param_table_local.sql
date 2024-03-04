@@ -24,6 +24,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_table_local(_job integer) RETURNS 
 **          04/02/2023 mem - Rename procedure and functions
 **          06/13/2023 mem - Add section name column to the output table
 **                         - Look for the job in cap.t_task_parameters_history if not found in cap.t_task_parameters
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -104,15 +105,15 @@ BEGIN
     ---------------------------------------------------
 
     RETURN QUERY
-    SELECT _job AS Job, XmlQ.section, XmlQ.name, XmlQ.value
+    SELECT _job AS Job, Trim(XmlQ.section)::citext, Trim(XmlQ.name)::citext, Trim(XmlQ.value)::citext
     FROM (
         SELECT xmltable.*
         FROM ( SELECT ('<params>' || _xmlParameters::text || '</params>')::xml as rooted_xml ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml
-                      COLUMNS section citext PATH '@Section',
-                              name citext PATH '@Name',
-                              value citext PATH '@Value')
+                      COLUMNS section text PATH '@Section',
+                              name    text PATH '@Name',
+                              value   text PATH '@Value')
          ) XmlQ;
 
     RETURN;

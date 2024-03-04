@@ -19,7 +19,11 @@ AS $$
 **        <r n="80B.2.na.na.na" i="439" a="Status" v="Active" />
 **        <r n="80B.3.3.na.na" i="558" a="Status" v="Active" />
 **
-**        ('n' is location name and 'i' is location_id, though this procedure ignores location_id)
+**      Where:
+**        'n' is location name
+**        'i' is location_id (ignored by this procedure)
+**        'a' is action      (should always be "Status")
+**        'v' is value       (either "Active" or "Inactive")
 **
 **  Arguments:
 **    _locationList     Information on material locations to update
@@ -102,7 +106,7 @@ BEGIN
 
         CREATE TEMP TABLE Tmp_LocationInfo (
             Location citext,      -- Location name, e.g., 2240B.2.na.na.na
-            ID citext NULL,       -- Location ID (ignored)
+            ID citext NULL,       -- Location ID (ignored by this procedure)
             Action citext NULL,
             Value text NULL,
             Old_Value text NULL
@@ -124,17 +128,17 @@ BEGIN
         -----------------------------------------------------------
 
         INSERT INTO Tmp_LocationInfo (Location, ID, Action, Value)
-        SELECT XmlQ.Location, XmlQ.ID, XmlQ.Action, XmlQ.Value
+        SELECT Trim(XmlQ.Location), Trim(XmlQ.ID), Trim(XmlQ.Action), Trim(XmlQ.Value)
         FROM (
             SELECT xmltable.*
             FROM ( SELECT _xml AS rooted_xml
                  ) Src,
                  XMLTABLE('//root/r'
                           PASSING Src.rooted_xml
-                          COLUMNS Location citext PATH '@n',
-                                  ID citext PATH '@i',
-                                  Action citext PATH '@a',
-                                  Value citext PATH '@v')
+                          COLUMNS Location text PATH '@n',
+                                  ID       text PATH '@i',
+                                  Action   text PATH '@a',
+                                  Value    text PATH '@v')
              ) XmlQ;
 
         -----------------------------------------------------------
@@ -145,7 +149,7 @@ BEGIN
         SET Old_Value = ML.status
         FROM t_material_locations AS ML
         WHERE ML.location = Tmp_LocationInfo.Location AND
-              Tmp_LocationInfo.Action = 'status';
+              Tmp_LocationInfo.Action = 'Status';
 
         -----------------------------------------------------------
         -- Update status values that have changed
@@ -156,7 +160,7 @@ BEGIN
             SET status = Tmp_LocationInfo.Value
             FROM Tmp_LocationInfo
             WHERE t_material_locations.location = Tmp_LocationInfo.Location AND
-                  Tmp_LocationInfo.Action = 'status' AND
+                  Tmp_LocationInfo.Action = 'Status' AND
                   NOT Tmp_LocationInfo.Value = Coalesce(Tmp_LocationInfo.Old_Value, '');
 
             DROP TABLE Tmp_LocationInfo;

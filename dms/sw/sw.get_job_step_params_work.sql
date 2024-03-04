@@ -32,6 +32,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_step_params_work(_job integer, _step integ
 **          06/07/2023 mem - Rename variables and update alias names
 **                         - Ported to PostgreSQL
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -230,7 +231,7 @@ BEGIN
     --   ")"
 
     INSERT INTO Tmp_Param_Tab (Section, Name, Value)
-    SELECT ConvertQ.section, ConvertQ.name, ConvertQ.value
+    SELECT Trim(ConvertQ.section), Trim(ConvertQ.name), Trim(ConvertQ.value)
     FROM (
             SELECT XmlQ.section,
                    XmlQ.name,
@@ -247,9 +248,9 @@ BEGIN
                                XMLTABLE('//params/Param'
                                   PASSING Src.rooted_xml
                                   COLUMNS section citext PATH '@Section',
-                                          name citext PATH '@Name',
-                                          value citext PATH '@Value',
-                                          step citext PATH '@Step')
+                                          name    citext PATH '@Name',
+                                          value   citext PATH '@Value',
+                                          step    citext PATH '@Step')
                    ) XmlQ
           ) ConvertQ
     WHERE ConvertQ.Name <> 'DataPackageID' AND

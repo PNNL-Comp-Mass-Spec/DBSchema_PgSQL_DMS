@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_param_table_local(_job integer) RETURNS TA
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          06/13/2023 mem - Add section name column to the output table
 **                         - Look for the job in sw.t_job_parameters_history if not found in sw.t_job_parameters
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -102,15 +103,16 @@ BEGIN
     ---------------------------------------------------
 
     RETURN QUERY
-    SELECT _job AS Job, XmlQ.section, XmlQ.name, XmlQ.value
+    SELECT _job AS Job, Trim(XmlQ.section)::citext, Trim(XmlQ.name)::citext, Trim(XmlQ.value)::citext
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT ('<params>' || _xmlParameters::text || '</params>')::xml as rooted_xml ) Src,
+        FROM ( SELECT ('<params>' || _xmlParameters::text || '</params>')::xml as rooted_xml
+             ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml
-                      COLUMNS section citext PATH '@Section',
-                              name citext PATH '@Name',
-                              value citext PATH '@Value')
+                      COLUMNS section text PATH '@Section',
+                              name    text PATH '@Name',
+                              value   text PATH '@Value')
          ) XmlQ;
 
     RETURN;

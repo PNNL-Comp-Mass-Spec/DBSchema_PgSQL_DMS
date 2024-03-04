@@ -62,6 +62,7 @@ CREATE OR REPLACE PROCEDURE public.update_instrument_usage_report(IN _factorlist
 **          03/02/2024 mem - Trim leading and trailing whitespace from Field and Value text parsed from the XML
 **                         - Allow _year and _month to be undefined if _operation is 'update'
 **                         - Ported to PostgreSQL
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -246,9 +247,9 @@ BEGIN
                      ) Src,
                      XMLTABLE('//root/r'
                               PASSING Src.rooted_xml
-                              COLUMNS Identifier int PATH '@i',
-                                      Field text PATH '@f',
-                                      Value text PATH '@v')
+                              COLUMNS Identifier int  PATH '@i',
+                                      Field      text PATH '@f',
+                                      Value      text PATH '@v')
                  ) XmlQ;
 
             -----------------------------------------------------------

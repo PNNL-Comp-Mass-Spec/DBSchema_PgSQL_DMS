@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE sw.create_steps_for_job(IN _job integer, IN _scriptx
 **          04/16/2012 grk - Added error checking for missing step tools
 **          09/24/2014 mem - Rename Job in T_Job_Step_Dependencies
 **          07/28/2023 mem - Ported to PostgreSQL
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -47,13 +48,13 @@ BEGIN
 
     SELECT string_agg(XmlQ.Tool, ', ' ORDER BY XmlQ.Tool)
     INTO _missingTools
-    FROM ( SELECT xmltable.tool
+    FROM ( SELECT Trim(xmltable.tool)::citext AS Tool
            FROM ( SELECT _scriptXML AS ScriptXML ) Src,
                 XMLTABLE('//JobScript/Step'
                          PASSING Src.ScriptXML
-                         COLUMNS step int PATH '@Number',
-                                 tool citext PATH '@Tool',
-                                 special_instructions citext PATH '@Special')
+                         COLUMNS step                 int  PATH '@Number',
+                                 tool                 text PATH '@Tool',
+                                 special_instructions text PATH '@Special')
          ) XmlQ
     WHERE NOT XmlQ.tool IN ( SELECT StepTools.step_tool FROM sw.t_step_tools StepTools );
 
@@ -80,28 +81,28 @@ BEGIN
         Output_Directory_Name,
         Special_Instructions
     )
-    SELECT
-        _job AS job,
-        XmlQ.step,
-        XmlQ.tool,
-        ST.cpu_load,
-        ST.memory_usage_mb,
-        ST.shared_result_version,
-        ST.filter_version,
-        0 AS dependencies,
-        1 AS state,
-        _resultsDirectoryName,
-        XmlQ.special_instructions
+    SELECT _job AS job,
+           XmlQ.step,
+           Trim(XmlQ.tool) AS tool,
+           ST.cpu_load,
+           ST.memory_usage_mb,
+           ST.shared_result_version,
+           ST.filter_version,
+           0 AS dependencies,
+           1 AS state,
+           _resultsDirectoryName,
+           Trim(XmlQ.special_instructions) AS special_instructions
     FROM (
         SELECT xmltable.*
         FROM ( SELECT _scriptXML AS ScriptXML ) Src,
              XMLTABLE('//JobScript/Step'
                       PASSING Src.ScriptXML
-                      COLUMNS step int PATH '@Number',
-                              tool citext PATH '@Tool',
-                              special_instructions citext PATH '@Special')
-         ) XmlQ INNER JOIN
-         sw.t_step_tools ST ON XmlQ.tool = ST.step_tool;
+                      COLUMNS step                 int  PATH '@Number',
+                              tool                 text PATH '@Tool',
+                              special_instructions text PATH '@Special')
+         ) XmlQ
+         INNER JOIN sw.t_step_tools ST
+           ON XmlQ.tool = ST.step_tool;
 
     ---------------------------------------------------
     -- Make set of step dependencies based on scriptXML
@@ -119,8 +120,8 @@ BEGIN
     SELECT
         step,
         target_step,
-        condition_test,
-        test_value,
+        Trim(condition_test) AS condition_test,
+        Trim(test_value) AS test_value,
         Coalesce(public.try_cast(enable_only, 0), 0) AS Enable_Only,
         _job AS Job
     FROM (
@@ -128,11 +129,11 @@ BEGIN
         FROM ( SELECT _scriptXML AS ScriptXML ) Src,
              XMLTABLE('//JobScript/Step/Depends_On'
                       PASSING Src.ScriptXML
-                      COLUMNS step int PATH '../@Number',
-                              target_step int PATH '@Step_Number',
-                              condition_test citext PATH '@Test',
-                              test_value citext PATH '@Value',
-                              enable_only citext PATH '@Enable_Only')
+                      COLUMNS step           int  PATH '../@Number',
+                              target_step    int  PATH '@Step_Number',
+                              condition_test text PATH '@Test',
+                              test_value     text PATH '@Value',
+                              enable_only    text PATH '@Enable_Only')
          ) XmlQ;
 
 END

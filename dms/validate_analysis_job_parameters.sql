@@ -113,6 +113,7 @@ CREATE OR REPLACE PROCEDURE public.validate_analysis_job_parameters(IN _toolname
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          12/11/2023 mem - Remove unnecessary _trimWhitespace argument when calling validate_na_parameter
 **          01/03/2024 mem - Update warning messages
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -624,7 +625,7 @@ BEGIN
                     );
 
                     INSERT INTO Tmp_SettingsFile_Values (KeyName, Value)
-                    SELECT XmlQ.name, XmlQ.value
+                    SELECT Trim(XmlQ.name), Trim(XmlQ.value)
                     FROM (
                         SELECT xmltable.*
                         FROM ( SELECT contents AS settings
@@ -634,9 +635,9 @@ BEGIN
                              ) Src,
                              XMLTABLE('//sections/section/item'
                                       PASSING Src.settings
-                                      COLUMNS section citext PATH '../@name',
-                                              name    citext PATH '@key',
-                                              value   citext PATH '@value'
+                                      COLUMNS section text PATH '../@name',
+                                              name    text PATH '@key',
+                                              value   text PATH '@value'
                                               )
                          ) XmlQ;
 
@@ -870,21 +871,23 @@ BEGIN
             SELECT XmlQ.value
             INTO _splitFasta
             FROM (
-                SELECT xmltable.*
+                SELECT Trim(xmltable.section) AS section,
+                       Trim(xmltable.name)    AS name,
+                       Trim(xmltable.value)   AS value
                 FROM ( SELECT contents AS settings
                        FROM t_settings_files
                        WHERE file_name = _settingsFileName::citext
                      ) Src,
                      XMLTABLE('//sections/section/item'
                               PASSING Src.settings
-                              COLUMNS section citext PATH '../@name',
-                                      name    citext PATH '@key',
-                                      value   citext PATH '@value'
+                              COLUMNS section text PATH '../@name',
+                                      name    text PATH '@key',
+                                      value   text PATH '@value'
                                       )
                  ) XmlQ
             WHERE name::citext = 'SplitFasta';
 
-            If Not FOUND Or Trim(Lower(Coalesce(_splitFasta, 'false'))) <> 'true' Then
+            If Not FOUND Or Lower(Coalesce(_splitFasta, 'false')) <> 'true' Then
                 _message := format('Search tool %s requires a SplitFasta settings file', _toolName);
                 _returnCode := 'U5335';
 
@@ -898,16 +901,18 @@ BEGIN
             SELECT XmlQ.value
             INTO _numberOfClonedSteps
             FROM (
-                SELECT xmltable.*
+                SELECT Trim(xmltable.section) AS section,
+                       Trim(xmltable.name)    AS name,
+                       Trim(xmltable.value)   AS value
                 FROM ( SELECT contents AS settings
                        FROM t_settings_files
                        WHERE file_name = _settingsFileName::citext
                      ) Src,
                      XMLTABLE('//sections/section/item'
                               PASSING Src.settings
-                              COLUMNS section citext PATH '../@name',
-                                      name    citext PATH '@key',
-                                      value   citext PATH '@value'
+                              COLUMNS section text PATH '../@name',
+                                      name    text PATH '@key',
+                                      value   text PATH '@value'
                                       )
                  ) XmlQ
             WHERE name::citext = 'NumberOfClonedSteps';

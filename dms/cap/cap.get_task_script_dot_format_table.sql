@@ -14,6 +14,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_script_dot_format_table(_script text) RE
 **  Date:   06/25/2022 mem - Ported to PostgreSQL by converting V_Script_Dot_Format to a function
 **          08/17/2022 mem - Use case-insensitive comparison for script name
 **          03/07/2023 mem - Rename columns in temporary table
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -40,7 +41,7 @@ BEGIN
     --   </JobScript>
 
     INSERT INTO Tmp_ScriptSteps(step, tool)
-    SELECT XmlTableA.step, XmlTableA.tool   --, t1::text AS ScriptXML
+    SELECT XmlTableA.step, Trim(XmlTableA.tool)   --, t1::text AS ScriptXML
     FROM cap.t_scripts Src,
         LATERAL unnest((
             SELECT
@@ -48,9 +49,9 @@ BEGIN
         )) t1,
         XMLTABLE('//JobScript/Step'
                           PASSING t1
-                          COLUMNS step int PATH '@Number',
-                                  tool text PATH '@Tool',
-                                  parent_steps XML PATH 'Depends_On') AS XmlTableA
+                          COLUMNS step         int  PATH '@Number',
+                                  tool         text PATH '@Tool',
+                                  parent_steps xml  PATH 'Depends_On') AS XmlTableA
     WHERE Src.script = _script::citext
     ORDER BY XmlTableA.step;
 
@@ -66,7 +67,7 @@ BEGIN
     -- Note that this query uses XPATH to filter on script name
 
     FOR _scriptStep IN
-        SELECT XmlTableA.step, XmlTableA.tool, XmlTableA.parent_steps::text
+        SELECT XmlTableA.step, Trim(XmlTableA.tool) AS tool, XmlTableA.parent_steps::text
         FROM cap.t_scripts Src,
             LATERAL unnest((
                 SELECT
@@ -74,9 +75,9 @@ BEGIN
             )) t1,
             XMLTABLE('//JobScript/Step'
                               PASSING t1
-                              COLUMNS step int PATH '@Number',
-                                      tool text PATH '@Tool',
-                                      parent_steps XML PATH 'Depends_On') AS XmlTableA
+                              COLUMNS step         int  PATH '@Number',
+                                      tool         text PATH '@Tool',
+                                      parent_steps xml  PATH 'Depends_On') AS XmlTableA
         WHERE Src.script = _script::citext
     LOOP
         If Not _scriptStep.parent_steps Is Null Then
@@ -87,7 +88,10 @@ BEGIN
             -- Use XPath to extract the step numbers
 
             RETURN QUERY
-            SELECT format('%s -> %s;', XmlTableA.parent_step, _scriptStep.step) AS script_line,
+            SELECT format('%s -> %s;',
+                          XmlTableA.parent_step,
+                          _scriptStep.step
+                   ) AS script_line,
                    1 AS seq
             FROM ( SELECT ('<root>' || _scriptStep.parent_steps || '</root>')::xml AS rooted_xml
                  ) Src,

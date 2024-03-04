@@ -26,6 +26,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_list(_job integer) RETURNS public.
 **          05/22/2023 mem - Capitalize reserved word
 **          05/31/2023 mem - Use format() for string concatenation
 **          09/11/2023 mem - Adjust capitalization of keywords
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -49,7 +50,7 @@ BEGIN
     -- The following adds a root node then converts the XML into a table
     -- Next, string_agg() is used to concatenate the fields
 
-    SELECT string_agg(format('Section="%s" Name="%s" Value="%s"', XmlQ.section, XmlQ.name, XmlQ.value), '<br>' ORDER BY XmlQ.section, XmlQ.name)
+    SELECT string_agg(format('Section="%s" Name="%s" Value="%s"', Trim(XmlQ.section), Trim(XmlQ.name), Trim(XmlQ.value)), '<br>' ORDER BY XmlQ.section, XmlQ.name)
     INTO _result
     FROM (
         SELECT xmltable.*
@@ -60,8 +61,8 @@ BEGIN
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml
                       COLUMNS section text PATH '@Section',
-                              name text PATH '@Name',
-                              value text PATH '@Value')
+                              name    text PATH '@Name',
+                              value   text PATH '@Value')
          ) XmlQ;
 
     RETURN format('<pre>%s<br></pre>', _result);

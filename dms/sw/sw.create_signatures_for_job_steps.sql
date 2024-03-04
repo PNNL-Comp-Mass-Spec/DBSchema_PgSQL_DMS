@@ -40,6 +40,7 @@ CREATE OR REPLACE PROCEDURE sw.create_signatures_for_job_steps(IN _job integer, 
 **          03/02/2022 mem - Rename parameter _datasetID to _datasetOrDataPackageId
 **          04/11/2022 mem - Expand Section and Name to varchar(128)
 **          07/28/2023 mem - Ported to PostgreSQL
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -76,17 +77,17 @@ BEGIN
     );
 
     INSERT INTO Tmp_Job_Params (Job, Step, Section, Name, Value)
-    SELECT XmlQ.job, XmlQ.step, XmlQ.section, XmlQ.name, XmlQ.value
+    SELECT XmlQ.job, XmlQ.step, Trim(XmlQ.section), Trim(XmlQ.name), Trim(XmlQ.value)
     FROM (
         SELECT xmltable.*
         FROM ( SELECT ('<params>' || _xmlParameters::text || '</params>')::xml AS rooted_xml ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml
-                      COLUMNS job int PATH '@Job',
-                              step int PATH '@Step_Number',
-                              section citext PATH '@Section',
-                              name citext PATH '@Name',
-                              value citext PATH '@Value')
+                      COLUMNS job     int  PATH '@Job',
+                              step    int  PATH '@Step_Number',
+                              section text PATH '@Section',
+                              name    text PATH '@Name',
+                              value   text PATH '@Value')
          ) XmlQ;
 
     If _debugMode Then

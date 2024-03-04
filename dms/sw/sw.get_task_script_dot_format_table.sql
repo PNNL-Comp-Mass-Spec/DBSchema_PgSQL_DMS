@@ -42,6 +42,7 @@ CREATE OR REPLACE FUNCTION sw.get_task_script_dot_format_table(_script text) RET
 **          08/17/2022 mem - Use case-insensitive comparison for script name
 **          12/18/2022 mem - Customized for the pipeline jobs schema
 **          05/30/2023 mem - Use format() for string concatenation
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -76,7 +77,7 @@ BEGIN
     --   </JobScript>
 
     INSERT INTO Tmp_ScriptSteps(step, tool, special_instructions, shared_result_version)
-    SELECT ScriptQ.step, ScriptQ.tool, ScriptQ.special_instructions, StepTools.shared_result_version   --, t1::text AS ScriptXML
+    SELECT ScriptQ.step, Trim(ScriptQ.tool), Trim(ScriptQ.special_instructions), StepTools.shared_result_version   --, t1::text AS ScriptXML
     FROM ( SELECT XmlTableA.*
            FROM sw.t_scripts Src,
                LATERAL unnest((
@@ -85,13 +86,14 @@ BEGIN
                )) t1,
                XMLTABLE('//JobScript/Step'
                                  PASSING t1
-                                 COLUMNS step int PATH '@Number',
-                                         tool text PATH '@Tool',
-                                         special_instructions citext PATH '@Special',
-                                         parent_steps XML PATH 'Depends_On') AS XmlTableA
+                                 COLUMNS step                 int    PATH '@Number',
+                                         tool                 citext PATH '@Tool',
+                                         special_instructions text   PATH '@Special',
+                                         parent_steps         xml    PATH 'Depends_On') AS XmlTableA
             WHERE Src.script = _script::citext
-          ) ScriptQ INNER JOIN
-          sw.t_step_tools StepTools ON ScriptQ.tool = StepTools.step_tool
+          ) ScriptQ
+          INNER JOIN sw.t_step_tools StepTools
+            ON ScriptQ.tool = StepTools.step_tool
     ORDER BY ScriptQ.step;
 
     -- Return the script lines that define the script steps
@@ -111,7 +113,7 @@ BEGIN
     -- Note that this query uses XPATH to filter on script name
 
     FOR _scriptStep IN
-        SELECT XmlTableA.step, XmlTableA.tool, XmlTableA.parent_steps::text
+        SELECT XmlTableA.step, Trim(XmlTableA.tool) AS tool, XmlTableA.parent_steps::text
         FROM sw.t_scripts Src,
             LATERAL unnest((
                 SELECT
@@ -119,9 +121,9 @@ BEGIN
             )) t1,
             XMLTABLE('//JobScript/Step'
                               PASSING t1
-                              COLUMNS step int PATH '@Number',
-                                      tool text PATH '@Tool',
-                                      parent_steps XML PATH 'Depends_On') AS XmlTableA
+                              COLUMNS step         int  PATH '@Number',
+                                      tool         text PATH '@Tool',
+                                      parent_steps xml  PATH 'Depends_On') AS XmlTableA
         WHERE Src.script = _script::citext
     LOOP
         If Not _scriptStep.parent_steps Is Null Then
@@ -136,18 +138,17 @@ BEGIN
                           XmlTableA.parent_step,
                           _scriptStep.step,
                           CASE WHEN XmlTableA.condition_test IS NULL       THEN ''                ELSE format(' [label="Skip if:%s"]', XmlTableA.condition_test) END,
-                          CASE WHEN Coalesce(XmlTableA.enable_only, 0) > 0 THEN ' [style=dotted]' ELSE '' END)
-                     AS script_line,
+                          CASE WHEN Coalesce(XmlTableA.enable_only, 0) > 0 THEN ' [style=dotted]' ELSE '' END
+                   ) AS script_line,
                    1 AS seq
             FROM ( SELECT ('<root>' || _scriptStep.parent_steps || '</root>')::xml AS rooted_xml
                  ) Src,
                  XMLTABLE('//root/Depends_On'
                           PASSING Src.rooted_xml
-                          COLUMNS parent_step int PATH '@Step_Number',
-                                  condition_test citext PATH '@Test',
-                                  test_value     citext PATH '@Value',
-                                  enable_only    int PATH '@Enable_Only'
-
+                          COLUMNS parent_step    int  PATH '@Step_Number',
+                                  condition_test text PATH '@Test',
+                                  test_value     text PATH '@Value',
+                                  enable_only    int  PATH '@Enable_Only'
                           ) AS XmlTableA
             ORDER BY XmlTableA.parent_step, _scriptStep.step;
         End If;

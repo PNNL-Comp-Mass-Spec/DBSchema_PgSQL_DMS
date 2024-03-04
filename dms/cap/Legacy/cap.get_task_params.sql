@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_params(_job integer) RETURNS TABLE(secti
 **
 **  Auth:   mem
 **  Date:   06/13/2023 mem - Initial version (based on get_task_step_params)
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -86,10 +87,10 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_Param_Tab (Section, Name, Value, Step)
-    SELECT XmlQ.section,
-           XmlQ.name,
-           XmlQ.value,
-           XmlQ.step
+    SELECT Trim(XmlQ.section),
+           Trim(XmlQ.name),
+           Trim(XmlQ.value),
+           Trim(XmlQ.step)
     FROM (
             SELECT xmltable.section,
                    xmltable.name,
@@ -98,10 +99,10 @@ BEGIN
             FROM ( SELECT ('<params>' || _xmlParameters::text || '</params>')::xml As rooted_xml ) Src,
                        XMLTABLE('//params/Param'
                           PASSING Src.rooted_xml
-                          COLUMNS section citext PATH '@Section',
-                                  name citext PATH '@Name',
-                                  value citext PATH '@Value',
-                                  step citext PATH '@Step')
+                          COLUMNS section text PATH '@Section',
+                                  name    text PATH '@Name',
+                                  value   text PATH '@Value',
+                                  step    text PATH '@Step')
          ) XmlQ;
 
     RETURN QUERY

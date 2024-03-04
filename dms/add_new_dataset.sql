@@ -84,6 +84,7 @@ CREATE OR REPLACE PROCEDURE public.add_new_dataset(IN _xmldoc text, IN _mode tex
 **          02/27/2023 mem - Show parsed values when mode is 'check_add' or 'check_update'
 **          12/14/2023 mem - Ported to PostgreSQL
 **          01/20/2024 mem - Ignore case when resolving dataset name to ID
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -161,15 +162,15 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_Parameters (ParamName, ParamValue)
-    SELECT XmlQ.name, XmlQ.value
+    SELECT Trim(XmlQ.name), Trim(XmlQ.value)
         FROM (
             SELECT xmltable.*
             FROM ( SELECT _xml AS rooted_xml
                  ) Src,
                  XMLTABLE('//Dataset/Parameter'
                           PASSING Src.rooted_xml
-                          COLUMNS name citext PATH '@Name',
-                                  value citext PATH '@Value')
+                          COLUMNS name  text PATH '@Name',
+                                  value text PATH '@Value')
              ) XmlQ
     WHERE NOT XmlQ.name IS NULL;
 

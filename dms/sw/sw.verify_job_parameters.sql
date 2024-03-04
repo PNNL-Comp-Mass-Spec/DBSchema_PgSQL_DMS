@@ -51,6 +51,7 @@ CREATE OR REPLACE PROCEDURE sw.verify_job_parameters(INOUT _jobparam text, IN _s
 **          12/12/2023 mem - Use new argument name when calling validate_protein_collection_list_for_data_package
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          02/19/2024 mem - Query tables directly instead of using a view
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -104,16 +105,16 @@ BEGIN
     );
 
     INSERT INTO Tmp_ParamDefinition (Section, Name, Value, Reqd)
-    SELECT XmlQ.section, XmlQ.name, XmlQ.value, Coalesce(XmlQ.required, 'No') AS Requied
+    SELECT Trim(XmlQ.section), Trim(XmlQ.name), Trim(XmlQ.value), Coalesce(XmlQ.required, 'No') AS Requied
     FROM (
         SELECT xmltable.*
         FROM ( SELECT ('<params>' || _paramDefinition::text || '</params>')::xml AS rooted_xml ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml
-                      COLUMNS section  citext PATH '@Section',
-                              name     citext PATH '@Name',
-                              value    citext PATH '@Value',
-                              required citext PATH '@Reqd')
+                      COLUMNS section  text PATH '@Section',
+                              name     text PATH '@Name',
+                              value    text PATH '@Value',
+                              required text PATH '@Reqd')
          ) XmlQ;
 
     ---------------------------------------------------
@@ -129,15 +130,15 @@ BEGIN
     _jobParamXML := public.try_cast(_jobParam, null::XML);
 
     INSERT INTO Tmp_JobParameters (Section, Name, Value)
-    SELECT XmlQ.section, XmlQ.name, XmlQ.value
+    SELECT Trim(XmlQ.section), Trim(XmlQ.name), Trim(XmlQ.value)
     FROM (
         SELECT xmltable.*
         FROM ( SELECT ('<params>' || _jobParamXML::text || '</params>')::xml AS rooted_xml ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml
-                      COLUMNS section citext PATH '@Section',
-                              name citext PATH '@Name',
-                              value citext PATH '@Value')
+                      COLUMNS section text PATH '@Section',
+                              name    text PATH '@Name',
+                              value   text PATH '@Value')
          ) XmlQ;
 
     ---------------------------------------------------

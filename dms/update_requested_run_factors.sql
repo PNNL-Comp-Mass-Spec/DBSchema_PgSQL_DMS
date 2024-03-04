@@ -78,6 +78,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_factors(IN _factorlist t
 **          01/25/2023 mem - Block factors named 'Run_Order'
 **          11/03/2023 mem - Capitalize factor names based on historic usage
 **          02/14/2024 mem - Ported to PostgreSQL
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -196,7 +197,7 @@ BEGIN
     -----------------------------------------------------------
 
     INSERT INTO Tmp_FactorInfo (Identifier, Factor, Value, DatasetID, UpdateSkipCode)
-    SELECT XmlQ.Identifier, XmlQ.Factor, XmlQ.Value, XmlQ.DatasetID, 0
+    SELECT Trim(XmlQ.Identifier), Trim(XmlQ.Factor), Trim(XmlQ.Value), XmlQ.DatasetID, 0
     FROM (
         SELECT xmltable.*
         FROM ( SELECT _xml AS rooted_xml
@@ -204,9 +205,9 @@ BEGIN
              XMLTABLE('//root/r'
                       PASSING Src.rooted_xml
                       COLUMNS Identifier text PATH '@i',
-                              Factor text PATH '@f',
-                              Value text PATH '@v',
-                              DatasetID int PATH '@d')        -- Not always defined (XML should either have i=RequestID or d=DatasetID)
+                              Factor     text PATH '@f',
+                              Value      text PATH '@v',
+                              DatasetID  int  PATH '@d')        -- Not always defined (XML should either have i=RequestID or d=DatasetID)
          ) XmlQ;
 
 

@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE sw.adjust_params_for_local_job(IN _scriptname text, 
 **          03/22/2023 mem - Rename job parameter to DatasetName
 **          03/24/2023 mem - Capitalize job parameter TransferFolderPath
 **          07/28/2023 mem - Ported to PostgreSQL
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -55,15 +56,15 @@ BEGIN
     );
 
     INSERT INTO Tmp_Job_Params (Section, Name, Value)
-    SELECT XmlQ.section, XmlQ.name, XmlQ.value
+    SELECT Trim(XmlQ.section), Trim(XmlQ.name), Trim(XmlQ.value)
     FROM (
         SELECT xmltable.*
         FROM ( SELECT ('<params>' || _jobParamXML::text || '</params>')::xml AS rooted_xml ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml
-                      COLUMNS section citext PATH '@Section',
-                              name citext PATH '@Name',
-                              value citext PATH '@Value')
+                      COLUMNS section text PATH '@Section',
+                              name    text PATH '@Name',
+                              value   text PATH '@Value')
          ) XmlQ;
 
     ---------------------------------------------------

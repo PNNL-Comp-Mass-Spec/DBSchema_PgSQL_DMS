@@ -50,6 +50,7 @@ CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          11/01/2023 mem - Add special handling for script 'LCDatasetCapture' to skip step creation when the target dataset does not have an LC instrument defined (bcg)
 **          11/02/2023 mem - Delete job parameters from Tmp_Job_Parameters when skipping a capture task job (bcg)
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -377,17 +378,19 @@ BEGIN
             SELECT XmlQ.value
             INTO _instrumentName
             FROM (
-                SELECT xmltable.*
+                SELECT Trim(xmltable.section) AS section,
+                       Trim(xmltable.name)    AS name,
+                       Trim(xmltable.value)   AS value
                 FROM ( SELECT ('<params>' || _xmlParameters || '</params>')::xml AS rooted_xml
                      ) Src,
                      XMLTABLE('//params/Param'
                               PASSING Src.rooted_xml
-                              COLUMNS section citext PATH '@Section',
-                                      name citext PATH '@Name',
-                                      value citext PATH '@Value')
+                              COLUMNS section text PATH '@Section',
+                                      name    text PATH '@Name',
+                                      value   text PATH '@Value')
                  ) XmlQ
             WHERE XmlQ.section = 'JobParameters' AND
-                  XmlQ.name = 'Instrument_Name'
+                  XmlQ.name    = 'Instrument_Name'
             LIMIT 1;
 
             If Not FOUND Or Trim(Coalesce(_instrumentName, '')) = '' Then

@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE dpkg.update_data_package_items_xml(IN _paramlistxml 
 **          04/25/2018 mem - Assure that _removeParents is not null
 **          08/17/2023 mem - Ported to PostgreSQL
 **          09/11/2023 mem - Use schema name with try_cast
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -112,15 +113,15 @@ BEGIN
         End If;
 
         INSERT INTO Tmp_DataPackageItems (DataPackageID, ItemType, Identifier)
-        SELECT XmlQ.Package, XmlQ.ItemType, XmlQ.Identifier
+        SELECT XmlQ.Package, Trim(XmlQ.ItemType), Trim(XmlQ.Identifier)
         FROM (
             SELECT xmltable.*
             FROM ( SELECT ('<items>' || _xml::text || '</items>')::xml as rooted_xml ) Src,
                  XMLTABLE('//items/item'
                           PASSING Src.rooted_xml
-                          COLUMNS Package int PATH '@pkg',
-                                  ItemType citext PATH '@type',
-                                  Identifier citext PATH '@id')
+                          COLUMNS Package    int  PATH '@pkg',
+                                  ItemType   text PATH '@type',
+                                  Identifier text PATH '@id')
              ) XmlQ;
 
         CALL dpkg.update_data_package_items_utility (

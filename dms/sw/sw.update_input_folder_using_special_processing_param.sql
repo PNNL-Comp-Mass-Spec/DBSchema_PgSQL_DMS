@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE sw.update_input_folder_using_special_processing_para
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **          10/11/2023 mem - Set _showDebug to true when calling lookup_source_job_from_special_processing_param and _infoOnly is true
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -128,8 +129,8 @@ BEGIN
             FROM ( SELECT _scriptXML AS ScriptXML ) Src,
                    XMLTABLE('//JobScript/Step'
                           PASSING Src.ScriptXML
-                          COLUMNS step int PATH '@Number',
-                                  tool citext PATH '@Tool',
+                          COLUMNS step                 int    PATH '@Number',
+                                  tool                 text   PATH '@Tool',
                                   special_instructions citext PATH '@Special')
              ) XmlQ
         WHERE Special_Instructions = 'ExtractSourceJobFromComment';

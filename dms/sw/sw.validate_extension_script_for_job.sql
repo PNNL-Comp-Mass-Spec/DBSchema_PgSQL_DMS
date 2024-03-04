@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE sw.validate_extension_script_for_job(IN _job integer
 **  Date:   10/22/2010 mem - Initial version
 **          07/31/2023 mem - Ported to PostgreSQL
 **          08/01/2023 mem - Fix bug that cleared _extensionScriptName if the script did not exist in sw.t_scripts
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -204,8 +205,8 @@ BEGIN
                          ) Src,
                          XMLTABLE('//JobScript/Step'
                                   PASSING Src.rooted_xml
-                                  COLUMNS step_number int PATH '@Number',
-                                          step_tool   citext PATH '@Tool')
+                                  COLUMNS step_number int  PATH '@Number',
+                                          step_tool   text PATH '@Tool')
                 ) ScriptSteps LEFT OUTER JOIN ConflictQ ON ScriptSteps.step_number = ConflictQ.step_number
             UNION
             SELECT ScriptSteps.Script,
@@ -220,8 +221,8 @@ BEGIN
                          ) Src,
                          XMLTABLE('//JobScript/Step'
                                   PASSING Src.rooted_xml
-                                  COLUMNS step_number int PATH '@Number',
-                                          step_tool   citext PATH '@Tool')
+                                  COLUMNS step_number int   PATH '@Number',
+                                          step_tool   text PATH '@Tool')
                 ) ScriptSteps LEFT OUTER JOIN ConflictQ ON ScriptSteps.Step_Number = ConflictQ.Step_Number
             ORDER BY Script, Step_Number
         LOOP

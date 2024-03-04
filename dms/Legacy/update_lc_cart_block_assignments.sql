@@ -108,17 +108,17 @@ BEGIN
         );
 
         INSERT INTO Tmp_BlockingInfo (batch_id, block, cart, col)
-        SELECT XmlQ.batch_id, XmlQ.block, XmlQ.cart, XmlQ.col
+        SELECT XmlQ.batch_id, XmlQ.block, Trim(XmlQ.cart), XmlQ.col
         FROM (
             SELECT xmltable.*
             FROM ( SELECT _xml AS rooted_xml
                  ) Src,
                  XMLTABLE('//root/r'
                           PASSING Src.rooted_xml
-                          COLUMNS batch_id int PATH '@bt',
-                                  block int PATH '@bk',
-                                  cart text PATH '@ct',
-                                  col int PATH '@co')
+                          COLUMNS batch_id int  PATH '@bt',
+                                  block    int  PATH '@bk',
+                                  cart     text PATH '@ct',
+                                  col      int  PATH '@co')
              ) XmlQ;
 
         -----------------------------------------------------------

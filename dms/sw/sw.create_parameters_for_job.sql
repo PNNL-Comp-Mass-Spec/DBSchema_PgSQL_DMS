@@ -41,6 +41,7 @@ CREATE OR REPLACE FUNCTION sw.create_parameters_for_job(_job integer, _settingsf
 **          03/27/2023 mem - Remove step_number column from temp tables since unused
 **          07/31/2023 mem - Rename temporary table to avoid conflicts with calling procedures
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -90,9 +91,9 @@ BEGIN
 
         INSERT INTO Tmp_Job_Parameters_Merged (Job, Section, Name, Value)
         SELECT _job,
-               XmlQ.section,
-               XmlQ.name,
-               XmlQ.value
+               Trim(XmlQ.section),
+               Trim(XmlQ.name),
+               Trim(XmlQ.value)
         FROM (
                 SELECT xmltable.section,
                        xmltable.name,
@@ -102,9 +103,9 @@ BEGIN
                        WHERE sw.t_job_parameters.job = _job ) Src,
                      XMLTABLE('//params/Param'
                               PASSING Src.rooted_xml
-                              COLUMNS section citext PATH '@Section',
-                                      name citext PATH '@Name',
-                                      value citext PATH '@Value')
+                              COLUMNS section text PATH '@Section',
+                                      name    text PATH '@Name',
+                                      value   text PATH '@Value')
              ) XmlQ;
 
         -- Update Tmp_Job_Parameters_Merged using selected rows in Tmp_Job_Parameters_CPJ

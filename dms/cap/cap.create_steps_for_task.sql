@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE cap.create_steps_for_task(IN _job integer, IN _scrip
 **          05/23/2023 mem - Use format() for string concatenation
 **          06/07/2023 mem - Add Order By to string_agg()
 **          06/19/2023 mem - Fix table alias typo
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -51,15 +52,15 @@ BEGIN
 
     SELECT string_agg(XmlQ.tool, ', ' ORDER BY XmlQ.tool)
     INTO _missingTools
-    FROM ( SELECT xmltable.tool
+    FROM ( SELECT Trim(xmltable.tool)::citext AS Tool
            FROM ( SELECT _scriptXML AS ScriptXML ) Src,
                 XMLTABLE('//JobScript/Step'
                          PASSING Src.ScriptXML
-                         COLUMNS step int PATH '@Number',
-                                 tool citext PATH '@Tool',
-                                 special_instructions citext PATH '@Special')
+                         COLUMNS step                 int  PATH '@Number',
+                                 tool                 text PATH '@Tool',
+                                 special_instructions text PATH '@Special')
          ) XmlQ
-    WHERE NOT XmlQ.tool IN ( SELECT ST.step_tool FROM cap.t_step_tools ST );
+    WHERE NOT XmlQ.tool IN (SELECT ST.step_tool FROM cap.t_step_tools ST);
 
     If _missingTools <> '' Then
         _message := format('Step tool(s) %s do not exist in cap.t_step_tools', _missingTools);
@@ -85,12 +86,12 @@ BEGIN
     )
     SELECT _job AS Job,
            XmlQ.step,
-           XmlQ.tool,
+           Trim(XmlQ.tool) AS tool,
     --     CPU_Load,
            0 AS Dependencies,
            1 AS State,
            _resultsDirectoryName,
-           XmlQ.special_instructions,
+           Trim(XmlQ.special_instructions) AS special_instructions,
            ST.holdoff_interval_minutes,
            ST.number_of_retries
     FROM (
@@ -98,11 +99,12 @@ BEGIN
         FROM ( SELECT _scriptXML AS ScriptXML ) Src,
              XMLTABLE('//JobScript/Step'
                       PASSING Src.ScriptXML
-                      COLUMNS step int PATH '@Number',
-                              tool citext PATH '@Tool',
-                              special_instructions citext PATH '@Special')
-         ) XmlQ INNER JOIN
-         cap.t_step_tools ST ON XmlQ.tool = ST.step_tool;
+                      COLUMNS step                 int  PATH '@Number',
+                              tool                 text PATH '@Tool',
+                              special_instructions text PATH '@Special')
+         ) XmlQ
+         INNER JOIN cap.t_step_tools ST
+           ON XmlQ.tool = ST.step_tool;
     --
     GET DIAGNOSTICS _stepCount = ROW_COUNT;
 
@@ -110,8 +112,7 @@ BEGIN
     -- Make set of step dependencies based on scriptXML
     ---------------------------------------------------
 
-    INSERT INTO Tmp_Job_Step_Dependencies
-    (
+    INSERT INTO Tmp_Job_Step_Dependencies (
         Step,
         Target_Step,
         Condition_Test,
@@ -122,8 +123,8 @@ BEGIN
     SELECT
         step,
         target_step,
-        condition_test,
-        test_value,
+        Trim(condition_test) AS condition_test,
+        Trim(test_value) AS test_value,
         Coalesce(public.try_cast(enable_only, 0), 0) AS Enable_Only,
         _job AS Job
     FROM (
@@ -131,11 +132,11 @@ BEGIN
         FROM ( SELECT _scriptXML AS ScriptXML ) Src,
              XMLTABLE('//JobScript/Step/Depends_On'
                       PASSING Src.ScriptXML
-                      COLUMNS step int PATH '../@Number',
-                              target_step int PATH '@Step_Number',
-                              condition_test citext PATH '@Test',
-                              test_value citext PATH '@Value',
-                              enable_only citext PATH '@Enable_Only')
+                      COLUMNS step           int  PATH '../@Number',
+                              target_step    int  PATH '@Step_Number',
+                              condition_test text PATH '@Test',
+                              test_value     text PATH '@Value',
+                              enable_only    text PATH '@Enable_Only')
          ) XmlQ;
     --
     GET DIAGNOSTICS _stepDependencyCount = ROW_COUNT;

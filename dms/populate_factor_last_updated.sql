@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE public.populate_factor_last_updated(IN _infoonly boo
 **  Auth:   mem
 **  Date:   10/06/2016 mem - Initial version
 **          02/15/2024 mem - Ported to PostgreSQL
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -138,16 +139,16 @@ BEGIN
         TRUNCATE TABLE Tmp_FactorUpdates;
 
         INSERT INTO Tmp_FactorUpdates(RequestID, FactorType, FactorName, FactorValue, ValidFactor)
-        SELECT XmlQ.RequestID, XmlQ.FactorType, XmlQ.FactorName, XmlQ.FactorValue, false AS ValidFactor
+        SELECT XmlQ.RequestID, Trim(XmlQ.FactorType), Trim(XmlQ.FactorName), Trim(XmlQ.FactorValue), false AS ValidFactor
         FROM (
             SELECT xmltable.*
             FROM ( SELECT ('<factors>' || _xml || '</factors>')::xml AS rooted_xml
                  ) Src,
                  XMLTABLE('//factors/r'
                           PASSING Src.rooted_xml
-                          COLUMNS RequestID int PATH '@i',
-                                  FactorType text PATH '@t',
-                                  FactorName text PATH '@f',
+                          COLUMNS RequestID   int  PATH '@i',
+                                  FactorType  text PATH '@t',
+                                  FactorName  text PATH '@f',
                                   FactorValue text PATH '@v')
              ) XmlQ;
 

@@ -54,6 +54,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_table(_job integer, _dataset text,
 **          10/25/2023 mem - Use renamed "directory" column in V_DMS_Dataset_Metadata
 **          10/28/2023 mem - Add _scriptName argument
 **                         - Add parameter modifications for script 'LCDatasetCapture' (bcg)
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -221,16 +222,16 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_Param_Tab (Section, Name, Value)
-    SELECT XmlQ.section, XmlQ.name, XmlQ.value
+    SELECT Trim(XmlQ.section), Trim(XmlQ.name), Trim(XmlQ.value)
     FROM (
         SELECT xmltable.section, xmltable.name, xmltable.value
         FROM ( SELECT _paramXML AS params
              ) Src,
              XMLTABLE('//sections/section/item'
                       PASSING Src.params
-                      COLUMNS section citext PATH '../@name',
-                              name    citext PATH '@key',
-                              value   citext PATH '@value'
+                      COLUMNS section text PATH '../@name',
+                              name    text PATH '@key',
+                              value   text PATH '@value'
                               )
          ) XmlQ;
 

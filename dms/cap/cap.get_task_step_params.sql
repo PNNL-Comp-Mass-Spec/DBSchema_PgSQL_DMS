@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_step_params(_job integer, _step integer)
 **          05/17/2019 mem - Switch from folder to directory
 **          06/06/2023 mem - Ported to PostgreSQL
 **          06/20/2023 mem - Use citext for columns in the output table
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -108,9 +109,9 @@ BEGIN
     -- (step number is null) or are locked to the current step
 
     INSERT INTO Tmp_Param_Tab (Section, Name, Value)
-    SELECT XmlQ.section,
-           XmlQ.name,
-           XmlQ.value
+    SELECT Trim(XmlQ.section),
+           Trim(XmlQ.name),
+           Trim(XmlQ.value)
     FROM (
             SELECT xmltable.section,
                    xmltable.name,
@@ -122,10 +123,10 @@ BEGIN
                    WHERE cap.t_task_parameters.job = _job ) Src,
                        XMLTABLE('//params/Param'
                           PASSING Src.rooted_xml
-                          COLUMNS section citext PATH '@Section',
-                                  name citext PATH '@Name',
-                                  value citext PATH '@Value',
-                                  step citext PATH '@Step')
+                          COLUMNS section text PATH '@Section',
+                                  name    text PATH '@Name',
+                                  value   text PATH '@Value',
+                                  step    text PATH '@Step')
          ) XmlQ
     WHERE XmlQ.step IS NULL OR XmlQ.StepNumber = _step;
 

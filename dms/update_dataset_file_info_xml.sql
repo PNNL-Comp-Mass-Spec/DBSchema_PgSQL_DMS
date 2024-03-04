@@ -103,6 +103,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_file_info_xml(IN _datasetid in
 **                         - Include schema name when calling function verify_sp_authorized()
 **          12/06/2023 mem - Log an error if a scan type is not present in t_dataset_scan_type_glossary
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -353,15 +354,15 @@ BEGIN
         _currentLocation := 'Populate Tmp_ScanTypes';
 
         INSERT INTO Tmp_ScanTypes (ScanType, ScanCount, ScanFilter)
-        SELECT public.trim_whitespace(XmlQ.ScanType), public.try_cast(XmlQ.ScanCount, 0), XmlQ.ScanFilter
+        SELECT public.trim_whitespace(XmlQ.ScanType), public.try_cast(XmlQ.ScanCount, 0), Trim(XmlQ.ScanFilter)
         FROM (
             SELECT xmltable.*
             FROM ( SELECT _datasetInfoXML AS rooted_xml
                  ) Src,
                  XMLTABLE('//DatasetInfo/ScanTypes/ScanType'
                           PASSING Src.rooted_xml
-                          COLUMNS ScanType text PATH '.',
-                                  ScanCount text PATH '@ScanCount',
+                          COLUMNS ScanType   text PATH '.',
+                                  ScanCount  text PATH '@ScanCount',
                                   ScanFilter text PATH '@ScanFilterText')
              ) XmlQ
         WHERE NOT XmlQ.ScanType IS NULL;
@@ -373,17 +374,17 @@ BEGIN
         _currentLocation := 'Populate Tmp_InstrumentFiles';
 
         INSERT INTO Tmp_InstrumentFiles (InstFilePath, InstFileHash, InstFileHashType, InstFileSize)
-        SELECT public.trim_whitespace(XmlQ.InstFilePath), XmlQ.InstFileHash, XmlQ.InstFileHashType, XmlQ.InstFileSize
+        SELECT public.trim_whitespace(XmlQ.InstFilePath), Trim(XmlQ.InstFileHash), Trim(XmlQ.InstFileHashType), XmlQ.InstFileSize
         FROM (
             SELECT xmltable.*
             FROM ( SELECT _datasetInfoXML AS rooted_xml
                  ) Src,
                  XMLTABLE('//DatasetInfo/AcquisitionInfo/InstrumentFiles/InstrumentFile'
                           PASSING Src.rooted_xml
-                          COLUMNS InstFilePath text PATH '.',
-                                  InstFileHash text PATH '@Hash',
-                                  InstFileHashType text PATH '@HashType',
-                                  InstFileSize bigint PATH '@Size')
+                          COLUMNS InstFilePath     text   PATH '.',
+                                  InstFileHash     text   PATH '@Hash',
+                                  InstFileHashType text   PATH '@HashType',
+                                  InstFileSize     bigint PATH '@Size')
              ) XmlQ;
 
         ---------------------------------------------------

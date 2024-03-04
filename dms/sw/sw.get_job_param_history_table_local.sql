@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_param_history_table_local(_job integer) RE
 **          08/20/2022 mem - Update warnings shown when an exception occurs
 **          08/24/2022 mem - Use function local_error_handler() to log errors
 **          11/15/2022 mem - Add second example query
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -57,7 +58,7 @@ BEGIN
     ---------------------------------------------------
 
     RETURN QUERY
-    SELECT _job AS Job, XmlQ.name, XmlQ.value
+    SELECT _job AS Job, Trim(XmlQ.name)::citext, Trim(XmlQ.value)::citext
     FROM (
         SELECT xmltable.*
         FROM ( SELECT ('<params>' || JobParams.parameters::text || '</params>')::xml as rooted_xml
@@ -66,9 +67,9 @@ BEGIN
              ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml
-                      COLUMNS section citext PATH '@Section',
-                              name citext PATH '@Name',
-                              value citext PATH '@Value')
+                      COLUMNS section text PATH '@Section',
+                              name    text PATH '@Name',
+                              value   text PATH '@Value')
          ) XmlQ;
 
 EXCEPTION

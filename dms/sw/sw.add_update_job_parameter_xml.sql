@@ -158,6 +158,7 @@ CREATE OR REPLACE FUNCTION sw.add_update_job_parameter_xml(_xmlparameters xml, _
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -209,16 +210,16 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_Job_Params_Updated (Section, Name, Value, State)
-    SELECT XmlQ.section, XmlQ.name, XmlQ.value, 'Unchanged'
+    SELECT Trim(XmlQ.section), Trim(XmlQ.name), Trim(XmlQ.value), 'Unchanged'
     FROM (
         SELECT xmltable.*
         FROM ( SELECT ('<params>' || _xmlParameters || '</params>')::xml AS rooted_xml
              ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml
-                      COLUMNS section citext PATH '@Section',
-                              name citext PATH '@Name',
-                              value citext PATH '@Value')
+                      COLUMNS section text PATH '@Section',
+                              name    text PATH '@Name',
+                              value   text PATH '@Value')
          ) XmlQ;
 
     If _showDebug Then

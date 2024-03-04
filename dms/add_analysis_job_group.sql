@@ -116,6 +116,7 @@ CREATE OR REPLACE PROCEDURE public.add_analysis_job_group(IN _datasetlist text, 
 **          01/08/2024 mem - Remove procedure name from error message
 **          02/19/2024 mem - Query tables directly instead of using a view
 **                         - Add missing variable to format() call
+**          03/03/2024 mem - Trim whitespace when extracting values from XML
 **
 *****************************************************/
 DECLARE
@@ -600,10 +601,10 @@ BEGIN
 
                 _createdSettingsFileValuesTable := true;
 
-                -- Populate the temporary Table by parsing the XML in the contents column of table t_settings_files
+                -- Populate the temporary table by parsing the XML in the contents column of table t_settings_files
 
                 INSERT INTO Tmp_SettingsFile_Values_DataPkgJob (SectionName, KeyName, Value)
-                SELECT XmlQ.section, XmlQ.name, XmlQ.value
+                SELECT Trim(XmlQ.section), Trim(XmlQ.name), Trim(XmlQ.value)
                 FROM (
                     SELECT xmltable.*
                     FROM ( SELECT contents AS settings
@@ -612,9 +613,9 @@ BEGIN
                          ) Src,
                          XMLTABLE('//sections/section/item'
                                   PASSING Src.settings
-                                  COLUMNS section citext PATH '../@name',
-                                          name    citext PATH '@key',
-                                          value   citext PATH '@value'
+                                  COLUMNS section text PATH '../@name',
+                                          name    text PATH '@key',
+                                          value   text PATH '@value'
                                           )
                      ) XmlQ;
 
