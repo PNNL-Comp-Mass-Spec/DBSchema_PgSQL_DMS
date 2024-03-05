@@ -11,9 +11,30 @@ CREATE OR REPLACE FUNCTION public.get_event_log_summary(_startdate timestamp wit
 **      Summarize DMS activity, errors, and warnings between the start and end timestamps
 **
 **  Usage:
+**      -- DMS ACTIVITY REPORT (Previous 24 hours)
 **      SELECT *
-**      FROM public.get_event_log_summary('2023-02-01'::timestamp, '2023-02-08'::timestamp)
-**      ORDER BY SortKey
+**      FROM get_event_log_summary(null, null)
+**      ORDER BY sortkey, label;
+**
+**      -- DMS ACTIVITY REPORT (Previous 24 hours)
+**      SELECT *
+**      FROM get_event_log_summary(null, CURRENT_TIMESTAMP)
+**      ORDER BY sortkey, label;
+**
+**      -- DMS ACTIVITY REPORT (Previous 12 hours)
+**      SELECT *
+**      FROM get_event_log_summary(CURRENT_TIMESTAMP - Interval '12 hours', CURRENT_TIMESTAMP)
+**      ORDER BY sortkey, label;
+**
+**      -- DMS ACTIVITY REPORT (Over 5 days)
+**      SELECT *
+**      FROM get_event_log_summary(CURRENT_TIMESTAMP - Interval '7 days', CURRENT_TIMESTAMP - Interval '2 days')
+**      ORDER BY sortkey, label;
+**
+**      -- DMS ACTIVITY REPORT (Over 60 days)
+**      SELECT *
+**      FROM public.get_event_log_summary('2023-03-01', '2023-04-30')
+**      ORDER BY sortkey, label;
 **
 **  Auth:   mem
 **  Date:   07/12/2022 mem - Initial release (based on view V_Event_Log_24_Hour_Summary)
