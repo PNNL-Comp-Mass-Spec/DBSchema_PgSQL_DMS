@@ -35,7 +35,7 @@ BEGIN
         _updateTable := 1;
     Else
 
-        SELECT Extract(epoch from CURRENT_TIMESTAMP - MAX(posting_time)) / 60.0
+        SELECT Extract(epoch from CURRENT_TIMESTAMP - MAX(posting_time)) / 3600
         INTO _timeIntervalLastUpdateHours
         FROM t_requested_run_status_history
 
