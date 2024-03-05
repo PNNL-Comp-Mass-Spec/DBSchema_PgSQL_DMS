@@ -10,6 +10,11 @@ CREATE OR REPLACE FUNCTION public.get_instrument_run_datasets(_mostrecentweeks i
 **  Desc:
 **      Return list of datasets and acquisition time information for given instrument
 **
+**  Usage:
+**      SELECT *
+**      FROM get_instrument_run_datasets(3, 'eclipse02')
+**      ORDER BY seq ASC;
+**
 **  Auth:   grk
 **  Date:   09/04/2010 grk - Initial release
 **          02/15/2012 mem - Now using T_Dataset.Acq_Length_Minutes
@@ -19,6 +24,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_run_datasets(_mostrecentweeks i
 **          05/29/2023 mem - Use format() for string concatenation
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          01/20/2024 mem - Ignore case when filtering by instrument name
+**          03/04/2024 mem - Include units in the summary state line (seq = 0)
 **
 *****************************************************/
 DECLARE
@@ -119,12 +125,12 @@ BEGIN
         FROM Tmp_TX
         WHERE Tmp_TX.Seq = _index;
 
-        _interval := CASE WHEN _startOfNext <= _endOfPrevious
-                          THEN 0
-                          ELSE Coalesce(
-                            Round(Extract(epoch from (_startOfNext - _endOfPrevious)) / 60.0)::int
-                            , 0)
-                          END ;
+        -- Compute the difference, in minutes, between the end of the previous dataset and the start of the next dataset
+
+        _interval := CASE WHEN _startOfNext > _endOfPrevious
+                          THEN Coalesce(Round(Extract(epoch from (_startOfNext - _endOfPrevious)) / 60)::int, 0)
+                          ELSE 0
+                     END ;
 
         INSERT INTO Tmp_TX ( Seq, ID, Dataset, Time_Start, Time_End, Duration, Instrument )
         VALUES (_index + 1, 0, 'Interval', _endOfPrevious, _startOfNext, _interval, _instrument );
@@ -133,14 +139,14 @@ BEGIN
     END LOOP;
 
     ---------------------------------------------------
-    -- overall time stats
+    -- Overall time stats
     ---------------------------------------------------
 
     SELECT MIN(Tmp_TX.Time_Start), MAX(Tmp_TX.Time_End)
     INTO _earliestStart, _latestFinish
     FROM Tmp_TX;
 
-    _totalMinutes := Round(Extract(epoch from (_latestFinish - _earliestStart)) / 60.0)::int;
+    _totalMinutes := Round(Extract(epoch from (_latestFinish - _earliestStart)) / 60)::int;
 
     SELECT SUM(Coalesce(Tmp_TX.Duration, 0))
     INTO _acquisitionMinutes
@@ -157,10 +163,10 @@ BEGIN
     FROM Tmp_TX
     WHERE Tmp_TX.ID = 0 AND Tmp_TX.Duration >= 10;
 
-    _s := format('total:%s, normal acquisition:%s, long intervals:%s',
-                    _totalMinutes,
-                    Coalesce(_acquisitionMinutes, 0) + Coalesce(_normalIntervalMinutes, 0),
-                    _longIntervalMinutes);
+    _s := format('total: %s minutes, normal acquisition: %s minutes, long intervals: %s minutes',
+                 Coalesce(_totalMinutes, 0),
+                 Coalesce(_acquisitionMinutes, 0) + Coalesce(_normalIntervalMinutes, 0),
+                 Coalesce(_longIntervalMinutes, 0));
 
     INSERT INTO Tmp_TX (Seq, Dataset)
     VALUES (0, _s);
