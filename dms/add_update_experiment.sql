@@ -109,6 +109,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_experiment(INOUT _experimentid int
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          01/08/2024 mem - Remove procedure name from error message
 **          01/11/2024 mem - Check for empty strings instead of using char_length()
+**          03/04/2024 mem - Use CURRENT_DATE to obtain today's date
 **
 *****************************************************/
 DECLARE
@@ -738,7 +739,7 @@ BEGIN
                 _alkylation,
                 _barcode,
                 _tissueIdentifier,
-                CURRENT_TIMESTAMP::Date
+                CURRENT_DATE
             )
             RETURNING exp_id
             INTO _experimentID;
@@ -830,15 +831,15 @@ BEGIN
                 alkylation                  = _alkylation,
                 barcode                     = _barcode,
                 tissue_id                   = _tissueIdentifier,
-                last_used                   = CASE WHEN organism_id <> _organismID OR
-                                                        reason <> _reason OR
-                                                        comment <> _comment OR
-                                                        enzyme_id <> _enzymeID OR
-                                                        labelling <> _labelling OR
-                                                        campaign_id <> _campaignID OR
+                last_used                   = CASE WHEN organism_id            <> _organismID OR
+                                                        reason                 <> _reason OR
+                                                        comment                <> _comment OR
+                                                        enzyme_id              <> _enzymeID OR
+                                                        labelling              <> _labelling OR
+                                                        campaign_id            <> _campaignID OR
                                                         sample_prep_request_id <> _samplePrepRequest OR
-                                                        alkylation <> _alkylation
-                                                   THEN CURRENT_TIMESTAMP::Date
+                                                        alkylation             <> _alkylation
+                                                   THEN CURRENT_DATE
                                                    ELSE Last_Used
                                               END
             WHERE Exp_ID = _experimentId;
