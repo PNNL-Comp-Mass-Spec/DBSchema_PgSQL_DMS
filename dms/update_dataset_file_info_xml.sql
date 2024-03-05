@@ -730,7 +730,7 @@ BEGIN
         -- Check for Acq_Time_End being more than 7 days after Acq_Time_Start
         -----------------------------------------------
 
-        SELECT Extract(epoch from Acq_Time_End - Acq_Time_Start) / 60.0
+        SELECT Extract(epoch from Acq_Time_End - Acq_Time_Start) / 60
                Acq_Time_Start,
                Acq_Time_End
         INTO _acqLengthMinutes, _acqTimeStart, _acqTimeEnd

@@ -13,7 +13,7 @@ CREATE VIEW cap.v_task_steps_history AS
     ts.state,
     ts.start,
     ts.finish,
-    round((EXTRACT(epoch FROM (COALESCE((ts.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (ts.start)::timestamp with time zone)) / 60.0), 1) AS runtime_minutes,
+    round((EXTRACT(epoch FROM (COALESCE((ts.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (ts.start)::timestamp with time zone)) / (60)::numeric), 1) AS runtime_minutes,
     ts.processor,
     ts.input_folder_name AS input_folder,
     ts.output_folder_name AS output_folder,

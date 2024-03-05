@@ -56,7 +56,7 @@ CREATE VIEW public.v_datasets_stale_and_failed AS
          SELECT
                 CASE
                     WHEN ((ds.dataset_state_id = ANY (ARRAY[5, 8, 12])) AND (ds.last_affected >= (CURRENT_TIMESTAMP - '14 days'::interval))) THEN 'Capture failed within the last 14 days'::text
-                    WHEN ((ds.dataset_state_id = ANY (ARRAY[2, 7, 11])) AND ((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (ds.last_affected)::timestamp with time zone)) / 3600.0) >= (12)::numeric)) THEN 'Capture in progress over 12 hours'::text
+                    WHEN ((ds.dataset_state_id = ANY (ARRAY[2, 7, 11])) AND ((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (ds.last_affected)::timestamp with time zone)) / (3600)::numeric) >= (12)::numeric)) THEN 'Capture in progress over 12 hours'::text
                     WHEN ((ds.dataset_state_id = 1) AND (round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (ds.last_affected)::timestamp with time zone)) / (86400)::numeric)) >= (14)::numeric)) THEN 'Uncaptured (new) over 14 days'::text
                     ELSE ''::text
                 END AS warning_message,
@@ -83,7 +83,7 @@ CREATE VIEW public.v_datasets_stale_and_failed AS
          SELECT
                 CASE
                     WHEN ((da.archive_state_id = ANY (ARRAY[6, 8, 13])) AND (da.archive_state_last_affected >= (CURRENT_TIMESTAMP - '14 days'::interval))) THEN 'Archive failed within the last 14 days'::text
-                    WHEN ((da.archive_state_id = ANY (ARRAY[2, 7, 12])) AND ((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (da.archive_state_last_affected)::timestamp with time zone)) / 3600.0) >= (12)::numeric) AND (jobstepstatus.activesteps > jobstepstatus.activearchivestatussteps)) THEN 'Archive in progress over 12 hours'::text
+                    WHEN ((da.archive_state_id = ANY (ARRAY[2, 7, 12])) AND ((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (da.archive_state_last_affected)::timestamp with time zone)) / (3600)::numeric) >= (12)::numeric) AND (jobstepstatus.activesteps > jobstepstatus.activearchivestatussteps)) THEN 'Archive in progress over 12 hours'::text
                     WHEN ((da.archive_state_id = ANY (ARRAY[2, 7, 12])) AND (round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (da.archive_state_last_affected)::timestamp with time zone)) / (86400)::numeric)) >= (5)::numeric)) THEN 'Archive verification in progress over 5 days'::text
                     WHEN ((da.archive_state_id = ANY (ARRAY[1, 11])) AND (round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (da.archive_state_last_affected)::timestamp with time zone)) / (86400)::numeric)) >= (14)::numeric)) THEN 'Archive State New or Verification Required over 14 days'::text
                     ELSE ''::text

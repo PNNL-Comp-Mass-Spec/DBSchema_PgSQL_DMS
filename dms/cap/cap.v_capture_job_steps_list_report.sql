@@ -14,7 +14,7 @@ CREATE VIEW cap.v_capture_job_steps_list_report AS
     ts.processor,
     ts.start,
     ts.finish,
-    round((EXTRACT(epoch FROM (COALESCE((ts.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (ts.start)::timestamp with time zone)) / 60.0), 2) AS runtime_minutes,
+    round((EXTRACT(epoch FROM (COALESCE((ts.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (ts.start)::timestamp with time zone)) / (60)::numeric), 2) AS runtime_minutes,
     ts.state,
     ts.input_folder_name AS input_folder,
     ts.output_folder_name AS output_folder,

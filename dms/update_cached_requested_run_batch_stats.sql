@@ -138,7 +138,7 @@ BEGIN
                            CASE
                                WHEN ActiveStatsQ.active_requests = 0 THEN public.get_requested_run_batch_max_days_in_queue(StatsQ.batch_id)
                                ELSE ROUND(Extract(epoch from
-                                            (statement_timestamp() - (COALESCE(ActiveStatsQ.oldest_active_request_created, StatsQ.oldest_request_created)))) / (86400)::numeric)
+                                            (statement_timestamp() - (COALESCE(ActiveStatsQ.oldest_active_request_created, StatsQ.oldest_request_created)))) / 86400)
                            END AS days_in_queue
                     FROM ( SELECT batch_id
                            FROM Tmp_BatchIDs

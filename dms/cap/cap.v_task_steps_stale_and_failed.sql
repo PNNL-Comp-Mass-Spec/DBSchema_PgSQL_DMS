@@ -21,7 +21,7 @@ CREATE VIEW cap.v_task_steps_stale_and_failed AS
     dataq.evaluation_message
    FROM ( SELECT
                 CASE
-                    WHEN ((ts.state = 4) AND ((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (ts.start)::timestamp with time zone)) / 3600.0) >= (5)::numeric)) THEN 'Job step running over 5 hours'::text
+                    WHEN ((ts.state = 4) AND ((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (ts.start)::timestamp with time zone)) / (3600)::numeric) >= (5)::numeric)) THEN 'Job step running over 5 hours'::text
                     WHEN ((ts.state = 6) AND (ts.start >= (CURRENT_TIMESTAMP - '14 days'::interval)) AND (ts.job_state <> 101)) THEN 'Job step failed within the last 14 days'::text
                     WHEN (NOT (failedjobq.job IS NULL)) THEN 'Overall job state is "failed"'::text
                     ELSE ''::text

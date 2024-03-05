@@ -258,7 +258,7 @@ BEGIN
                                     _previewData.Value,
                                     public.timestamp_text(_previewData.Last_Updated_Old),
                                     public.timestamp_text(_previewData.Last_Updated_New),
-                                    Round(Extract(epoch from _previewData.Last_Updated_Old - _previewData.Last_Updated_New) / 3600.0 / 24.0, 2)
+                                    Round(Extract(epoch from _previewData.Last_Updated_Old - _previewData.Last_Updated_New) / 3600 / 24, 2)     -- Difference, in days
                                    );
 
                 RAISE INFO '%', _infoData;

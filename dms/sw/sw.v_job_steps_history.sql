@@ -13,8 +13,8 @@ CREATE VIEW sw.v_job_steps_history AS
     js.start,
     js.finish,
         CASE
-            WHEN ((js.remote_info_id > 1) AND (NOT (js.remote_start IS NULL))) THEN round((EXTRACT(epoch FROM (COALESCE((js.remote_finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.remote_start)::timestamp with time zone)) / 60.0), 1)
-            WHEN (NOT (js.finish IS NULL)) THEN round((EXTRACT(epoch FROM (COALESCE((js.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.start)::timestamp with time zone)) / 60.0), 1)
+            WHEN ((js.remote_info_id > 1) AND (NOT (js.remote_start IS NULL))) THEN round((EXTRACT(epoch FROM (COALESCE((js.remote_finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.remote_start)::timestamp with time zone)) / (60)::numeric), 1)
+            WHEN (NOT (js.finish IS NULL)) THEN round((EXTRACT(epoch FROM (COALESCE((js.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.start)::timestamp with time zone)) / (60)::numeric), 1)
             ELSE NULL::numeric
         END AS runtime_minutes,
     js.processor,

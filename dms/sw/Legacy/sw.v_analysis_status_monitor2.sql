@@ -33,7 +33,7 @@ CREATE VIEW sw.v_analysis_status_monitor2 AS
     ps.most_recent_log_message,
     ps.most_recent_error_message,
     ps.status_date,
-    round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (ps.status_date)::timestamp with time zone)) / 60.0), 1) AS last_cpu_status_minutes
+    round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (ps.status_date)::timestamp with time zone)) / 60), 1) AS last_cpu_status_minutes
    FROM ((sw.t_local_processors lp
      RIGHT JOIN sw.t_processor_status ps ON ((lp.processor_name OPERATOR(public.=) ps.processor_name)))
      FULL JOIN public.v_analysis_status_monitor asm ON ((ps.processor_name OPERATOR(public.=) asm.name)))

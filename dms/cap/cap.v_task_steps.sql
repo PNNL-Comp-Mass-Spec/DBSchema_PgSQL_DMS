@@ -14,7 +14,7 @@ CREATE VIEW cap.v_task_steps AS
     ts.start,
     ts.finish,
     ts.runtime_minutes,
-    ((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (ps.status_date)::timestamp with time zone)) / 60.0))::integer AS last_cpu_status_minutes,
+    ((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (ps.status_date)::timestamp with time zone)) / (60)::numeric))::integer AS last_cpu_status_minutes,
         CASE
             WHEN (ts.state = 4) THEN ps.progress
             WHEN (ts.state = 5) THEN (100)::real
@@ -60,7 +60,7 @@ CREATE VIEW cap.v_task_steps AS
             ts_1.state,
             ts_1.start,
             ts_1.finish,
-            round((EXTRACT(epoch FROM (COALESCE((ts_1.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (ts_1.start)::timestamp with time zone)) / 60.0), 1) AS runtime_minutes,
+            round((EXTRACT(epoch FROM (COALESCE((ts_1.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (ts_1.start)::timestamp with time zone)) / (60)::numeric), 1) AS runtime_minutes,
             ts_1.processor,
             ts_1.input_folder_name AS input_folder,
             ts_1.output_folder_name AS output_folder,

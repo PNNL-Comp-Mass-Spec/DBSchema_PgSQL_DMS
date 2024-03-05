@@ -6,7 +6,7 @@ CREATE VIEW sw.v_processor_status_warnings AS
  SELECT ps.processor_name,
     COALESCE(ps.mgr_status, 'Unknown_Status'::public.citext) AS mgr_status,
     COALESCE(ps.task_status, 'Unknown_Status'::public.citext) AS task_status,
-    round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (ps.status_date)::timestamp with time zone)) / 3600.0), 2) AS last_status_hours,
+    round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (ps.status_date)::timestamp with time zone)) / (3600)::numeric), 2) AS last_status_hours,
     ps.status_date,
     ps.most_recent_job_info,
     ps.most_recent_log_message,

@@ -23,8 +23,8 @@ CREATE VIEW public.v_analysis_job_check_report AS
     j.batch_id AS batch,
     org.organism,
         CASE
-            WHEN ((j.job_state_id = 2) AND (j.start > (CURRENT_TIMESTAMP - '6 mons'::interval))) THEN (EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (j.start)::timestamp with time zone)) / 3600.0)
-            WHEN (j.job_state_id = 5) THEN (EXTRACT(epoch FROM (j.finish - j.start)) / 3600.0)
+            WHEN ((j.job_state_id = 2) AND (j.start > (CURRENT_TIMESTAMP - '6 mons'::interval))) THEN (EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (j.start)::timestamp with time zone)) / (3600)::numeric)
+            WHEN (j.job_state_id = 5) THEN (EXTRACT(epoch FROM (j.finish - j.start)) / (3600)::numeric)
             ELSE NULL::numeric
         END AS elapsed_hours
    FROM (((((public.t_analysis_job j

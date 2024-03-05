@@ -12,7 +12,7 @@ CREATE VIEW sw.v_pipeline_job_steps_history_list_report AS
     j.dataset,
     js.start,
     js.finish,
-    round((EXTRACT(epoch FROM (COALESCE((js.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.start)::timestamp with time zone)) / 60.0), 2) AS runtime_minutes,
+    round((EXTRACT(epoch FROM (COALESCE((js.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.start)::timestamp with time zone)) / (60)::numeric), 2) AS runtime_minutes,
     js.processor,
     js.state,
         CASE
@@ -20,7 +20,7 @@ CREATE VIEW sw.v_pipeline_job_steps_history_list_report AS
             ELSE 0
         END AS job_progress,
         CASE
-            WHEN (js.state = 5) THEN round(((EXTRACT(epoch FROM (COALESCE((js.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.start)::timestamp with time zone)) / 60.0) / 60.0), 2)
+            WHEN (js.state = 5) THEN round(((EXTRACT(epoch FROM (COALESCE((js.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.start)::timestamp with time zone)) / (60)::numeric) / (60)::numeric), 2)
             ELSE (0)::numeric
         END AS runtime_predicted_hours,
     0 AS last_cpu_status_minutes,

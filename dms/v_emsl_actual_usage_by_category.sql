@@ -11,7 +11,7 @@ CREATE VIEW public.v_emsl_actual_usage_by_category AS
             ds.instrument_id,
             COALESCE(ds.acq_time_end, ds.created) AS run_date,
             instcategory.category,
-            COALESCE((EXTRACT(epoch FROM (ds.acq_time_end - ds.acq_time_start)) / 60.0), (0)::numeric) AS duration
+            COALESCE((EXTRACT(epoch FROM (ds.acq_time_end - ds.acq_time_start)) / (60)::numeric), (0)::numeric) AS duration
            FROM ((public.t_requested_run rr
              JOIN public.t_dataset ds ON ((rr.dataset_id = ds.dataset_id)))
              JOIN ( SELECT instmap.dms_instrument_id,

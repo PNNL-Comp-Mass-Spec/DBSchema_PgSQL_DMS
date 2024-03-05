@@ -20,7 +20,7 @@ CREATE VIEW sw.v_machine_status_last_24_hours AS
            FROM ((sw.t_machine_status_history ms
              JOIN sw.t_machines m ON ((ms.machine OPERATOR(public.=) m.machine)))
              JOIN sw.t_processor_tool_groups ptg ON ((m.proc_tool_group_id = ptg.group_id)))
-          WHERE ((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (ms.posting_time)::timestamp with time zone)) / 3600.0) <= (24)::numeric)
+          WHERE ((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (ms.posting_time)::timestamp with time zone)) / (3600)::numeric) <= (24)::numeric)
           GROUP BY ms.machine, ptg.group_name) statusq
      LEFT JOIN ( SELECT lp.machine,
             count(js.tool) AS jobcount,

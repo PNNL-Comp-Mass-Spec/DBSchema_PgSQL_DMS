@@ -177,9 +177,9 @@ BEGIN
     _maxNormalInterval := public.get_long_interval_threshold();
 
     -- Get preceeding dataset (latest with starting time preceding this month)
-    -- Use "extract(epoch ...) / 60.0" to get the difference in minutes between the two timestamps
+    -- Use "extract(epoch ...) / 60" to get the difference in minutes between the two timestamps
 
-    If Extract(epoch from (_firstStart - _firstDayOfStartingMonth)) / 60.0 > _maxNormalInterval Then
+    If Extract(epoch from (_firstStart - _firstDayOfStartingMonth)) / 60 > _maxNormalInterval Then
         SELECT TD.dataset_id AS id,
                TD.dataset AS dataset,
                TD.acq_time_start AS start,
@@ -194,7 +194,7 @@ BEGIN
         ORDER BY TD.acq_time_start DESC
         LIMIT 1;
 
-        _initialGap := Extract(epoch from (_firstStart - _firstDayOfStartingMonth)) / 60.0;
+        _initialGap := Extract(epoch from (_firstStart - _firstDayOfStartingMonth)) / 60;
 
         -- If preceeding dataset's end time is before start of month, zero the duration and truncate the interval
         -- otherwise just truncate the duration
@@ -203,7 +203,7 @@ BEGIN
             _preceedingDataset.duration := 0;
             _preceedingDataset."interval" := _initialGap;
         Else
-            _preceedingDataset.duration := Extract(epoch from (_precStart - _firstDayOfStartingMonth)) / 60.0;
+            _preceedingDataset.duration := Extract(epoch from (_precStart - _firstDayOfStartingMonth)) / 60;
         End If;
 
         -- Add preceeding dataset record (with truncated duration/interval) at beginning of results
@@ -248,11 +248,11 @@ BEGIN
     If _lastRunEnd > _firstDayOfTrailingMonth Then
         UPDATE Tmp_TX
         SET "interval" = 0,
-            duration = Extract(epoch from (_firstDayOfTrailingMonth - _lastRunStart)) / 60.0
+            duration = Extract(epoch from (_firstDayOfTrailingMonth - _lastRunStart)) / 60      -- Duration, in minutes
         WHERE Tmp_TX.Seq = _lastRunSeq;
     ElsIf _lastRunEnd + make_interval(mins => _lastRunInterval) > _firstDayOfTrailingMonth Then
         UPDATE Tmp_TX
-        SET "interval" = Extract(epoch from (_firstDayOfTrailingMonth - _lastRunEnd)) / 60.0
+        SET "interval" = Extract(epoch from (_firstDayOfTrailingMonth - _lastRunEnd)) / 60      -- Interval, in minutes
         WHERE Tmp_TX.Seq = _lastRunSeq;
     End If;
 

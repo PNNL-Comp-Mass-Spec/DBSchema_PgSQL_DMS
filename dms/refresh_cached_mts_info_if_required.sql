@@ -132,7 +132,7 @@ BEGIN
                     RAISE INFO 'Processing %', _cacheTable;
                 End If;
 
-                _hoursSinceLastRefresh := Extract(epoch from _currentTime - Coalesce(_lastRefreshed, make_date(2000, 1, 1))) / 3600.0;
+                _hoursSinceLastRefresh := Extract(epoch from _currentTime - Coalesce(_lastRefreshed, make_date(2000, 1, 1))) / 3600;
 
                 If _infoOnly Then
                     RAISE INFO 'Hours since last refresh:      % %',
@@ -140,7 +140,7 @@ BEGIN
                                CASE WHEN _hoursSinceLastRefresh >= _updateInterval THEN '-> Partial refresh required' ELSE '' END;
                 End If;
 
-                _hoursSinceLastFullRefresh := Extract(epoch from _currentTime - Coalesce(_lastFullRefresh, make_date(2000, 1, 1))) / 3600.0;
+                _hoursSinceLastFullRefresh := Extract(epoch from _currentTime - Coalesce(_lastFullRefresh, make_date(2000, 1, 1))) / 3600;
 
                 If _infoOnly Then
                     RAISE INFO 'Hours since last full refresh: % %',

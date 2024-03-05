@@ -7,7 +7,7 @@ CREATE VIEW public.v_analysis_job_duration_precise AS
     startq.entered AS job_start,
     endq.entered AS job_finish,
     j.processing_time_minutes AS job_length_minutes,
-    (EXTRACT(epoch FROM (endq.entered - startq.entered)) / 60.0) AS active_queue_time_minutes
+    (EXTRACT(epoch FROM (endq.entered - startq.entered)) / (60)::numeric) AS active_queue_time_minutes
    FROM ((( SELECT t_event_log.target_id AS job,
             max(t_event_log.entered) AS entered
            FROM public.t_event_log

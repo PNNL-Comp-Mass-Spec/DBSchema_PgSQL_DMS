@@ -7,7 +7,7 @@ CREATE VIEW sw.v_processor_status AS
     COALESCE(ps.mgr_status, 'Unknown_Status'::public.citext) AS mgr_status,
     COALESCE(ps.task_status, 'Unknown_Status'::public.citext) AS task_status,
     COALESCE(ps.task_detail_status, 'Unknown_Status'::public.citext) AS task_detail_status,
-    round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (ps.status_date)::timestamp with time zone)) / 60.0), 1) AS last_cpu_status_minutes,
+    round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (ps.status_date)::timestamp with time zone)) / (60)::numeric), 1) AS last_cpu_status_minutes,
     ps.job,
     ps.job_step,
     (ps.progress)::numeric(9,2) AS progress,

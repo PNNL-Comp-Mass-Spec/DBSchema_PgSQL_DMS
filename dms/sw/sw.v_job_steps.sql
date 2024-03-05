@@ -13,7 +13,7 @@ CREATE VIEW sw.v_job_steps AS
     js.start,
     js.finish,
     js.runtime_minutes,
-    ((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (ps.status_date)::timestamp with time zone)) / 60.0))::integer AS last_cpu_status_minutes,
+    ((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (ps.status_date)::timestamp with time zone)) / (60)::numeric))::integer AS last_cpu_status_minutes,
         CASE
             WHEN ((js.state = 9) OR (js.retry_count > 0)) THEN js.remote_progress
             WHEN (js.state = 4) THEN ps.progress
@@ -92,8 +92,8 @@ CREATE VIEW sw.v_job_steps AS
                     ELSE jobsteps.finish
                 END AS finish,
                 CASE
-                    WHEN (((jobsteps.state = 9) OR (jobsteps.retry_count > 0)) AND (NOT (jobsteps.remote_start IS NULL))) THEN round((EXTRACT(epoch FROM (COALESCE((jobsteps.remote_finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (jobsteps.remote_start)::timestamp with time zone)) / 60.0), 1)
-                    ELSE round((EXTRACT(epoch FROM (COALESCE((jobsteps.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (jobsteps.start)::timestamp with time zone)) / 60.0), 1)
+                    WHEN (((jobsteps.state = 9) OR (jobsteps.retry_count > 0)) AND (NOT (jobsteps.remote_start IS NULL))) THEN round((EXTRACT(epoch FROM (COALESCE((jobsteps.remote_finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (jobsteps.remote_start)::timestamp with time zone)) / (60)::numeric), 1)
+                    ELSE round((EXTRACT(epoch FROM (COALESCE((jobsteps.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (jobsteps.start)::timestamp with time zone)) / (60)::numeric), 1)
                 END AS runtime_minutes,
             jobsteps.processor,
             jobsteps.input_folder_name AS input_folder,

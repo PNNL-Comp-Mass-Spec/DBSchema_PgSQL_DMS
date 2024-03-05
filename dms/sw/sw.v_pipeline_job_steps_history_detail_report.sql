@@ -14,7 +14,7 @@ CREATE VIEW sw.v_pipeline_job_steps_history_detail_report AS
     js.state AS state_id,
     js.start,
     js.finish,
-    round((EXTRACT(epoch FROM (COALESCE((js.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.start)::timestamp with time zone)) / 60.0), 2) AS runtime_minutes,
+    round((EXTRACT(epoch FROM (COALESCE((js.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.start)::timestamp with time zone)) / (60)::numeric), 2) AS runtime_minutes,
     js.processor,
     js.input_folder_name AS input_folder,
     js.output_folder_name AS output_folder,

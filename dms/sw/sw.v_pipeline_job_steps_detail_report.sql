@@ -15,8 +15,8 @@ CREATE VIEW sw.v_pipeline_job_steps_detail_report AS
     js.start,
     js.finish,
         CASE
-            WHEN ((js.state = 9) OR (js.remote_info_id > 1)) THEN round((EXTRACT(epoch FROM (COALESCE((js.remote_finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.remote_start)::timestamp with time zone)) / 60.0), 2)
-            ELSE round((EXTRACT(epoch FROM (COALESCE((js.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.start)::timestamp with time zone)) / 60.0), 2)
+            WHEN ((js.state = 9) OR (js.remote_info_id > 1)) THEN round((EXTRACT(epoch FROM (COALESCE((js.remote_finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.remote_start)::timestamp with time zone)) / (60)::numeric), 2)
+            ELSE round((EXTRACT(epoch FROM (COALESCE((js.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.start)::timestamp with time zone)) / (60)::numeric), 2)
         END AS runtime_minutes,
         CASE
             WHEN ((js.state = ANY (ARRAY[4, 9])) AND (js.remote_info_id > 1)) THEN ((round(COALESCE((js.remote_progress)::numeric, (0)::numeric), 2))::text || '% complete'::text)
@@ -26,9 +26,9 @@ CREATE VIEW sw.v_pipeline_job_steps_detail_report AS
         END AS job_progress,
         CASE
             WHEN ((js.state = 4) AND (js.tool OPERATOR(public.=) 'XTandem'::public.citext)) THEN (0)::numeric
-            WHEN (((js.state = 9) OR (js.remote_info_id > 1)) AND (COALESCE(js.remote_progress, (0)::real) > (0)::double precision)) THEN round((((EXTRACT(epoch FROM (COALESCE((js.remote_finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.remote_start)::timestamp with time zone)) / ((js.remote_progress)::numeric / 100.0)) / 60.0) / 60.0), 2)
-            WHEN ((js.state = 4) AND (ps.progress > (0)::double precision)) THEN round((((EXTRACT(epoch FROM (COALESCE((js.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.start)::timestamp with time zone)) / ((ps.progress)::numeric / 100.0)) / 60.0) / 60.0), 2)
-            WHEN (js.state = 5) THEN round(((EXTRACT(epoch FROM (COALESCE((js.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.start)::timestamp with time zone)) / 60.0) / 60.0), 2)
+            WHEN (((js.state = 9) OR (js.remote_info_id > 1)) AND (COALESCE(js.remote_progress, (0)::real) > (0)::double precision)) THEN round((((EXTRACT(epoch FROM (COALESCE((js.remote_finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.remote_start)::timestamp with time zone)) / ((js.remote_progress)::numeric / (100)::numeric)) / (60)::numeric) / (60)::numeric), 2)
+            WHEN ((js.state = 4) AND (ps.progress > (0)::double precision)) THEN round((((EXTRACT(epoch FROM (COALESCE((js.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.start)::timestamp with time zone)) / ((ps.progress)::numeric / (100)::numeric)) / (60)::numeric) / (60)::numeric), 2)
+            WHEN (js.state = 5) THEN round(((EXTRACT(epoch FROM (COALESCE((js.finish)::timestamp with time zone, CURRENT_TIMESTAMP) - (js.start)::timestamp with time zone)) / (60)::numeric) / (60)::numeric), 2)
             ELSE (0)::numeric
         END AS runtime_predicted_hours,
     js.processor,

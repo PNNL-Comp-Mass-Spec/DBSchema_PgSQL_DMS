@@ -134,7 +134,7 @@ BEGIN
             -- Process _jobInfo.SpecialProcessingText to look for the tags in Tmp_TagNamesTable
             _lookForTag := true;
 
-            _hoursSinceStateLastChanged := Extract(epoch from CURRENT_TIMESTAMP - _jobInfo.LastAffected) / 3600.0;
+            _hoursSinceStateLastChanged := Extract(epoch from CURRENT_TIMESTAMP - _jobInfo.LastAffected) / 3600;
 
             If _jobInfo.DatasetState = 4 Or _jobInfo.DatasetRating In (-2, -1) Then
 

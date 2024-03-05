@@ -30,7 +30,7 @@ CREATE VIEW public.v_analysis_job_export_ex AS
     dataset_int_std.name AS dataset_int_std,
     ds.created AS ds_created,
         CASE
-            WHEN ((ds.acq_time_end - ds.acq_time_start) < '90 days'::interval) THEN (EXTRACT(epoch FROM (ds.acq_time_end - ds.acq_time_start)) / 60.0)
+            WHEN ((ds.acq_time_end - ds.acq_time_start) < '90 days'::interval) THEN (EXTRACT(epoch FROM (ds.acq_time_end - ds.acq_time_start)) / (60)::numeric)
             ELSE NULL::numeric
         END AS ds_acq_length,
     e.enzyme_id AS enzymeid,

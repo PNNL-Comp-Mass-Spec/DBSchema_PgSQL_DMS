@@ -63,7 +63,7 @@ BEGIN
     If Not FOUND Or _minimumTimeIntervalMinutes <= 0 Then
         _updateTable := true;
     Else
-        _timeIntervalLastUpdateMinutes := Extract(epoch from (CURRENT_TIMESTAMP - _mostRecentPostingTime)) / 60.0;
+        _timeIntervalLastUpdateMinutes := Extract(epoch from (CURRENT_TIMESTAMP - _mostRecentPostingTime)) / 60;
 
         If _timeIntervalLastUpdateMinutes >= _minimumTimeIntervalMinutes Then
             _updateTable := true;

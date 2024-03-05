@@ -270,6 +270,8 @@ BEGIN
         FROM Tmp_TX
         WHERE Tmp_TX.Seq = _index;
 
+        -- Compute the difference, in minutes, between the end of the previous dataset and the start of the next dataset
+
         _interval := Coalesce(
                         CASE WHEN _startOfNext <= _endOfPrevious
                              THEN 0
@@ -309,7 +311,7 @@ BEGIN
             SELECT MIN(Time_Start) INTO _earliestStart FROM Tmp_TX;
             SELECT MAX(Time_End)   INTO _latestFinish  FROM Tmp_TX;
 
-            _totalMinutes := Round(Extract(epoch from (_latestFinish - _earliestStart)) / 60.0)::int;
+            _totalMinutes := Round(Extract(epoch from (_latestFinish - _earliestStart)) / 60)::int;
 
             SELECT SUM(Coalesce(Duration, 0))
             INTO _acquisitionMinutes
