@@ -51,6 +51,7 @@ CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''
 **          11/01/2023 mem - Add special handling for script 'LCDatasetCapture' to skip step creation when the target dataset does not have an LC instrument defined (bcg)
 **          11/02/2023 mem - Delete job parameters from Tmp_Job_Parameters when skipping a capture task job (bcg)
 **          03/03/2024 mem - Trim whitespace when extracting values from XML
+**          03/04/2024 mem - Customize the warning message shown when tasks exist with state 0 and dataset_id = 0 (or null)
 **
 *****************************************************/
 DECLARE
@@ -253,11 +254,24 @@ BEGIN
                         FROM cap.t_tasks
                         WHERE State = 0 AND Dataset_ID > 0;
 
-                        _infoMessage := format('%s capture task %s in cap.t_tasks %s State = 0, but the Dataset_ID %s not found in view cap.V_DMS_Get_Dataset_Definition',
-                                                _matchCount,
-                                                public.check_plural(_matchCount, 'job', 'jobs'),
-                                                public.check_plural(_matchCount, 'has', 'have'),
-                                                public.check_plural(_matchCount, 'value was', 'values were'));
+                        If _matchCount > 0 Then
+                            _infoMessage := format('%s capture task %s in cap.t_tasks %s State = 0, but the Dataset_ID %s not found in view cap.V_DMS_Get_Dataset_Definition',
+                                                   _matchCount,
+                                                   public.check_plural(_matchCount, 'job', 'jobs'),
+                                                   public.check_plural(_matchCount, 'has', 'have'),
+                                                   public.check_plural(_matchCount, 'value was', 'values were'));
+                        Else
+                            SELECT COUNT(job)
+                            INTO _matchCount
+                            FROM cap.t_tasks
+                            WHERE State = 0 AND Coalesce(Dataset_ID, 0) <= 0;
+
+                            _infoMessage := format('%s capture task %s in cap.t_tasks %s State = 0, but the Dataset_ID %s zero or Null',
+                                                   _matchCount,
+                                                   public.check_plural(_matchCount, 'job', 'jobs'),
+                                                   public.check_plural(_matchCount, 'has', 'have'),
+                                                   public.check_plural(_matchCount, 'value is', 'values are'));
+                        End If;
 
                         RAISE WARNING '%', _infoMessage;
                     Else
@@ -266,7 +280,7 @@ BEGIN
                     End If;
                 Else
                     _infoMessage := format('Found %s capture task %s in cap.t_tasks with State = 0',
-                                            _insertCount, public.check_plural(_insertCount, 'job', 'jobs'));
+                                           _insertCount, public.check_plural(_insertCount, 'job', 'jobs'));
                     RAISE INFO '%', _infoMessage;
                 End If;
             End If;
@@ -274,13 +288,15 @@ BEGIN
         End If;
 
         If _debugMode And _existingJob <> 0 Then
-            INSERT INTO Tmp_Jobs( Job,
-                                  Priority,
-                                  Script,
-                                  State,
-                                  Dataset,
-                                  Dataset_ID,
-                                  Results_Directory_Name )
+            INSERT INTO Tmp_Jobs (
+                Job,
+                Priority,
+                Script,
+                State,
+                Dataset,
+                Dataset_ID,
+                Results_Directory_Name
+            )
             SELECT Job,
                    Priority,
                    Script,
