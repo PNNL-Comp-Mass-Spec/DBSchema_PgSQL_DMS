@@ -403,6 +403,10 @@ BEGIN
         End If;
 
         If _infoLevel = 2 Or _infoLevel >= 4 Then
+            If Exists (SELECT Processor_Name FROM Tmp_Processor_Status_Info) Then
+                RAISE INFO '';
+            End If;
+
             _message := _statusMessageInfo;
             RAISE INFO '%', _message;
 

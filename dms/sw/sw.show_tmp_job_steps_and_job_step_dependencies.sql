@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE sw.show_tmp_job_steps_and_job_step_dependencies(IN _
 **  Date:   11/30/2022 mem - Initial release
 **          06/21/2023 mem - Use Tool for the step tool column in Tmp_Job_Steps
 **          08/01/2023 mem - Add parameter _captureTaskJob, which controls which columns in Tmp_Job_Steps are displayed
+**          03/04/2024 mem - Adjust preview data column widths
 **
 *****************************************************/
 DECLARE
@@ -69,7 +70,7 @@ BEGIN
 
     If _captureTaskJob Then
 
-        _formatSpecifier := '%-10s %-10s %-20s %-8s %-12s %-14s %-9s %-5s %-25s %-25s %-24s';
+        _formatSpecifier := '%-10s %-4s %-20s %-8s %-12s %-14s %-9s %-5s %-30s %-30s %-24s';
 
         _infoHead := format(_formatSpecifier,
                             'Job',
@@ -87,15 +88,15 @@ BEGIN
 
         _infoHeadSeparator := format(_formatSpecifier,
                                      '----------',
-                                     '----------',
+                                     '----',
                                      '--------------------',
                                      '--------',
                                      '------------',
                                      '--------------',
                                      '---------',
                                      '-----',
-                                     '-------------------------',
-                                     '-------------------------',
+                                     '------------------------------',
+                                     '------------------------------',
                                      '------------------------'
                                     );
 
@@ -126,7 +127,7 @@ BEGIN
         END LOOP;
 
     Else
-        _formatSpecifier := '%-10s %-10s %-20s %-8s %-15s %-12s %-21s %-9s %-5s %-25s %-25s';
+        _formatSpecifier := '%-10s %-4s %-20s %-8s %-15s %-12s %-21s %-9s %-5s %-25s %-25s';
 
         _infoHead := format(_formatSpecifier,
                             'Job',
@@ -144,7 +145,7 @@ BEGIN
 
         _infoHeadSeparator := format(_formatSpecifier,
                                      '----------',
-                                     '----------',
+                                     '----',
                                      '--------------------',
                                      '--------',
                                      '---------------',
@@ -188,7 +189,7 @@ BEGIN
 
     RAISE INFO '';
 
-    _formatSpecifier := '%-10s %-10s %-20s';
+    _formatSpecifier := '%-10s %-4s %-11s';
 
     _infoHead := format(_formatSpecifier,
                         'Job',
@@ -198,8 +199,8 @@ BEGIN
 
     _infoHeadSeparator := format(_formatSpecifier,
                                  '----------',
-                                 '----------',
-                                 '--------------------'
+                                 '----',
+                                 '-----------'
                                 );
 
     RAISE INFO '%', _infoHead;
