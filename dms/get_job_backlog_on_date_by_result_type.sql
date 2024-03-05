@@ -38,20 +38,28 @@ CREATE OR REPLACE FUNCTION public.get_job_backlog_on_date_by_result_type(_target
 **          05/22/2023 mem - Capitalize reserved word
 **          07/11/2023 mem - Use COUNT(job) instead of COUNT(*)
 **          01/21/2024 mem - Change data type of argument _resultType to text
+**          03/04/2024 mem - Round intervals down to the nearest hour
 **
 *****************************************************/
 DECLARE
     _backlog integer;
 BEGIN
+    -- Find jobs created before the target timestamp and finished after the target timestamp
+
+    -- Use Floor() to round the intervals down to the nearest integer
+    -- This is consistent with the SQL Server version of this function, which uses DATEDIFF(Hour, Date1, Date2), since DATEDIFF(Hour, ...) rounds down to the nearest hour
+
     SELECT COUNT(job)
     INTO _backlog
     FROM t_analysis_job
-    WHERE Extract(epoch from (finish - _targetDate)) / 3600.0 >= 0 AND
-          Extract(epoch from (created - _targetDate)) / 3600.0 <= 0 AND
+    WHERE created <= _targetDate + Interval '1 hour' AND
+          finish  >= _targetDate - Interval '1 hour' AND
+          Floor(Extract(epoch from (created - _targetDate)) / 3600) <= 0 AND
+          Floor(Extract(epoch from (finish -  _targetDate)) / 3600) >= 0 AND
           job_state_id = 4 AND
-          analysis_tool_id IN ( SELECT analysis_tool_id
-                                FROM t_analysis_tool
-                                WHERE result_type LIKE _resultType::citext );
+          analysis_tool_id IN (SELECT analysis_tool_id
+                               FROM t_analysis_tool
+                               WHERE result_type LIKE _resultType::citext);
 
     RETURN Coalesce(_backlog, 0);
 END

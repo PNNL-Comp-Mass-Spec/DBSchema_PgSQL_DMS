@@ -35,16 +35,24 @@ CREATE OR REPLACE FUNCTION public.get_job_backlog_on_date_by_tool(_targetdate ti
 **                         - Removed argument _processorNameFilter since all jobs are processed by the Job Broker
 **          07/12/2022 mem - Renamed function and added another usage example
 **          07/11/2023 mem - Use COUNT(job) instead of COUNT(*)
+**          03/04/2024 mem - Round intervals down to the nearest hour
 **
 *****************************************************/
 DECLARE
     _backlog integer;
 BEGIN
+    -- Find jobs created before the target timestamp and finished after the target timestamp
+
+    -- Use Floor() to round the intervals down to the nearest integer
+    -- This is consistent with the SQL Server version of this function, which uses DATEDIFF(Hour, Date1, Date2), since DATEDIFF(Hour, ...) rounds down to the nearest hour
+
     SELECT COUNT(job)
     INTO _backlog
     FROM t_analysis_job
-    WHERE Extract(epoch from (finish - _targetDate)) / 3600.0 >= 0 AND
-          Extract(epoch from (created - _targetDate)) / 3600.0 <= 0 AND
+    WHERE created <= _targetDate + Interval '1 hour' AND
+          finish  >= _targetDate - Interval '1 hour' AND
+          Floor(Extract(epoch from (created - _targetDate)) / 3600.0) <= 0 AND
+          Floor(Extract(epoch from (finish -  _targetDate)) / 3600.0) >= 0 AND
           job_state_id = 4 AND
           analysis_tool_id = _analysisToolID;
 
