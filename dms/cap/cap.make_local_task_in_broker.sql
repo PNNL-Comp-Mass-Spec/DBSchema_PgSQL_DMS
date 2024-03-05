@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE cap.make_local_task_in_broker(IN _scriptname text, I
 **          06/19/2023 mem - Ported to PostgreSQL
 **          07/27/2023 mem - Add missing assignment to variable _scriptXML
 **          10/12/2023 mem - Rename debug tables to include "Task" instead of "Job"
+**          03/04/2024 mem - Add column Next_Try to Tmp_Job_Steps and t_debug_tmp_task_steps
 **
 *****************************************************/
 DECLARE
@@ -100,7 +101,8 @@ BEGIN
             Processor text NULL,
             Special_Instructions text NULL,
             Holdoff_Interval_Minutes int NOT NULL,
-            Retry_Count int NOT NULL
+            Retry_Count int NOT NULL,
+            Next_Try timestamp default CURRENT_TIMESTAMP
         );
 
         CREATE TEMP TABLE Tmp_Job_Step_Dependencies (
@@ -288,16 +290,16 @@ BEGIN
 
                 INSERT INTO cap.t_debug_tmp_task_steps (Job, Step, Tool, CPU_Load, Dependencies, Filter_Version, Signature, State,
                                                        Input_Directory_Name, Output_Directory_Name, Processor,
-                                                       Special_Instructions, Holdoff_Interval_Minutes, Retry_Count)
+                                                       Special_Instructions, Holdoff_Interval_Minutes, Retry_Count, Next_Try)
                 SELECT Job, Step, Tool, CPU_Load, Dependencies, Filter_Version, Signature, State,
                        Input_Directory_Name, Output_Directory_Name, Processor,
-                       Special_Instructions, Holdoff_Interval_Minutes, Retry_Count
+                       Special_Instructions, Holdoff_Interval_Minutes, Retry_Count, Next_Try
                 FROM Tmp_Job_Steps;
             Else
                 CREATE TABLE cap.t_debug_tmp_task_steps AS
                 SELECT Job, Step, Tool, CPU_Load, Dependencies, Filter_Version, Signature, State,
                        Input_Directory_Name, Output_Directory_Name, Processor,
-                       Special_Instructions, Holdoff_Interval_Minutes, Retry_Count
+                       Special_Instructions, Holdoff_Interval_Minutes, Retry_Count, Next_Try
                 FROM Tmp_Job_Steps;
             End If;
 
