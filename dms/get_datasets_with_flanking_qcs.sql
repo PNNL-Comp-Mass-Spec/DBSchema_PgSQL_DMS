@@ -11,9 +11,14 @@ CREATE OR REPLACE FUNCTION public.get_datasets_with_flanking_qcs(_startdate time
 **      Show the flanking QC datasets for each non-QC dataset with an acquisition time between _startDate and _endDate
 **      Looks for QC datasets acquired within 32 days of the dataset's acquisition start time
 **
+**  Arguments:
+**     _startDate   Start date (if null, use 7 days before the current date)
+**     _endDate     End date   (if null, use 1 day after the start date)
+**
 **  Auth:   mem
 **  Date:   07/11/2022 mem - Initial release (based on view V_Datasets_With_Flanking_QCs)
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          03/04/2024 mem - Update the end date if it is earlier than the start date
 **
 *****************************************************/
 DECLARE
@@ -21,11 +26,20 @@ DECLARE
     _qcEndDate timestamp;
 BEGIN
 
-    _startDate := Coalesce(_startDate, CURRENT_TIMESTAMP - INTERVAL '7 days');
-    _endDate := Coalesce(_endDate, _startDate + INTERVAL '1 day');
+    _startDate := Coalesce(_startDate, CURRENT_DATE - INTERVAL '7 days');
+    _endDate   := Coalesce(_endDate, _startDate + INTERVAL '1 day');
+
+    If _endDate < _startDate Then
+        RAISE WARNING 'End date % is earlier than start date %; changing end date to %',
+                          Left(public.timestamp_text(_endDate), 16),
+                          Left(public.timestamp_text(_startDate), 16),
+                          Left(public.timestamp_text(_startDate + INTERVAL '1 day'), 16);
+
+        _endDate := _startDate + INTERVAL '1 day';
+    End If;
 
     _qcStartDate := _startDate - INTERVAL '32 days';
-    _qcEndDate := _endDate + INTERVAL '32 days';
+    _qcEndDate   := _endDate   + INTERVAL '32 days';
 
     RETURN QUERY
     SELECT RankQ.Dataset,
@@ -49,8 +63,8 @@ BEGIN
                          DS.LC_Column_ID,
                          DS.Instrument_id,
                          QCDatasets.dataset AS QC_Dataset,
-                         Extract(epoch from (QCDatasets.Acq_Time - COALESCE(DS.Acq_Time_Start, DS.created))) / 3600.0 AS Diff_Hours,
-                         CASE WHEN (Extract(epoch from QCDatasets.Acq_Time - COALESCE(DS.Acq_Time_Start, DS.created))) < 0
+                         Extract(epoch from QCDatasets.Acq_Time - COALESCE(DS.Acq_Time_Start, DS.created)) / 3600 AS Diff_Hours,
+                         CASE WHEN Extract(epoch from QCDatasets.Acq_Time - COALESCE(DS.Acq_Time_Start, DS.created)) < 0
                          THEN 0
                          ELSE 1
                          END AS Subsequent_Run
@@ -69,8 +83,8 @@ BEGIN
                             DS.lc_column_ID = QCDatasets.lc_column_ID AND
                             DS.dataset <> QCDatasets.dataset
                   WHERE COALESCE(DS.Acq_Time_Start, DS.created) BETWEEN _startDate AND _EndDate
-                 ) LookupQ
-       ) RankQ
+                ) LookupQ
+         ) RankQ
          INNER JOIN public.t_instrument_name InstName
            ON InstName.Instrument_ID = RankQ.instrument_id
     WHERE RankQ.Proximity_Rank <= 4
