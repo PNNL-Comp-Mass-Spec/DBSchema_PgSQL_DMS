@@ -1,14 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_material_locations
-(
-    _locationList text,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_material_locations(text, boolean, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_material_locations(IN _locationlist text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -16,8 +12,8 @@ AS $$
 **
 **      Example contents of _locationList:
 **        <r n="80B.na.na.na.na" i="425" a="Status" v="Active" />
-**        <r n="80B.2.na.na.na" i="439" a="Status" v="Active" />
-**        <r n="80B.3.3.na.na" i="558" a="Status" v="Active" />
+**        <r n="80B.2.na.na.na"  i="439" a="Status" v="Active" />
+**        <r n="80B.3.3.na.na"   i="558" a="Status" v="Active" />
 **
 **      Where:
 **        'n' is location name
@@ -42,7 +38,7 @@ AS $$
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/15/2024 mem - Ported to PostgreSQL
+**          03/05/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -51,8 +47,9 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
+    _logErrors boolean := false;
     _xml xml;
-    _usageMessage text;
+    _updateCount int;
 
     _formatSpecifier text;
     _infoHead text;
@@ -89,16 +86,21 @@ BEGIN
     End If;
 
     BEGIN
-
         -----------------------------------------------------------
         -- Validate the inputs
         -----------------------------------------------------------
 
-        If Coalesce(_callingUser, '') = '' Then
+        _locationList := Trim(Coalesce(_locationList, ''));
+        _callingUser  := Trim(Coalesce(_callingUser, ''));
+        _infoOnly     := Coalesce(_infoOnly, false);
+
+        If _callingUser = '' Then
             _callingUser := public.get_user_login_without_domain('');
         End If;
 
-        _infoOnly := Coalesce(_infoOnly, false);
+        If _locationList = '' Then
+            RAISE EXCEPTION 'Location list XML must be specified';
+        End If;
 
         -----------------------------------------------------------
         -- Temp table to hold location info
@@ -122,6 +124,8 @@ BEGIN
             _message := 'Location list is not valid XML';
             RAISE EXCEPTION '%', _message;
         End If;
+
+        _logErrors := true;
 
         -----------------------------------------------------------
         -- Populate temp table with new parameters
@@ -162,6 +166,11 @@ BEGIN
             WHERE t_material_locations.location = Tmp_LocationInfo.Location AND
                   Tmp_LocationInfo.Action = 'Status' AND
                   NOT Tmp_LocationInfo.Value = Coalesce(Tmp_LocationInfo.Old_Value, '');
+            --
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
+
+            _message := format('Updated status for %s material %s', _updateCount, public.check_plural(_updateCount, 'location', 'locations'));
+            RAISE INFO '%', _message;
 
             DROP TABLE Tmp_LocationInfo;
             RETURN;
@@ -169,7 +178,7 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-11s %-25s %-25s %-10s %-15s %-80s %-25s %-10s';
+        _formatSpecifier := '%-11s %-12s %-22s %-10s %-15s %-80s %-25s %-10s';
 
         _infoHead := format(_formatSpecifier,
                             'Location_ID',
@@ -184,8 +193,8 @@ BEGIN
 
         _infoHeadSeparator := format(_formatSpecifier,
                                      '-----------',
-                                     '-------------------------',
-                                     '-------------------------',
+                                     '------------',
+                                     '----------------------',
                                      '----------',
                                      '---------------',
                                      '--------------------------------------------------------------------------------',
@@ -236,7 +245,7 @@ BEGIN
 
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => '', _logError => true);
+                        _callingProcLocation => '', _logError => _logErrors);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
@@ -247,4 +256,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_material_locations IS 'UpdateMaterialLocations';
+
+ALTER PROCEDURE public.update_material_locations(IN _locationlist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_material_locations(IN _locationlist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_material_locations(IN _locationlist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UpdateMaterialLocations';
+

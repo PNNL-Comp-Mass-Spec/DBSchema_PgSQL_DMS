@@ -1,21 +1,16 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_material_location
-(
-    _locationTag text,
-    _comment text,
-    _status text,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_material_location(text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_material_location(IN _locationtag text, IN _comment text, IN _status text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Update a single material location item
 **
-**      Only allows updating the location comment and state (Active/Inactive)
+**      Only allows updating the comment and state ('Active' or 'Inactive')
 **
 **      Additionally, prevents updating entries where the container limit is 100 or more,
 **      since those are special locations (typically for staging samples)
@@ -30,7 +25,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   08/27/2018 mem - Initial version
-**          12/15/2024 mem - Ported to PostgreSQL
+**          03/05/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -77,7 +72,6 @@ BEGIN
     End If;
 
     BEGIN
-
         -----------------------------------------------------------
         -- Validate the inputs
         -----------------------------------------------------------
@@ -85,8 +79,9 @@ BEGIN
         _locationTag := Trim(Coalesce(_locationTag, ''));
         _comment     := Trim(Coalesce(_comment, ''));
         _status      := Trim(Coalesce(_status, ''));
+        _callingUser := Trim(Coalesce(_callingUser, ''));
 
-        If Coalesce(_callingUser, '') = '' Then
+        If _callingUser = '' Then
             _callingUser := public.get_user_login_without_domain('');
         End If;
 
@@ -117,7 +112,7 @@ BEGIN
                status
         INTO _locationId, _oldComment, _containerLimit, _oldStatus
         FROM t_material_locations
-        WHERE location = _locationTag;
+        WHERE location = _locationTag::citext;
 
         If Not FOUND Then
             RAISE EXCEPTION 'Material location tag not found; contact a DMS admin to add new locations';
@@ -169,11 +164,11 @@ BEGIN
             WHERE location_id = _locationId;
 
             _logMessage := format('Material location status changed from %s to %s by %s for material location %s',
-                                   _oldStatus, _status, _callingUser, _locationTag);
+                                  _oldStatus, _status, _callingUser, _locationTag);
 
             CALL post_log_entry ('Normal', _logMessage, 'Update_Material_Location');
 
-            _message := format('Set status to %s', _status);
+            _message := format('Set status to %s for location %s', _status, _locationTag);
         End If;
 
         If _oldComment IS DISTINCT FROM _comment Then
@@ -225,4 +220,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_material_location IS 'UpdateMaterialLocation';
+
+ALTER PROCEDURE public.update_material_location(IN _locationtag text, IN _comment text, IN _status text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_material_location(IN _locationtag text, IN _comment text, IN _status text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_material_location(IN _locationtag text, IN _comment text, IN _status text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UpdateMaterialLocation';
+
