@@ -11,9 +11,10 @@ CREATE OR REPLACE PROCEDURE public.update_material_locations(IN _locationlist te
 **      Update the given list of material locations
 **
 **      Example contents of _locationList:
-**        <r n="80B.na.na.na.na" i="425" a="Status" v="Active" />
-**        <r n="80B.2.na.na.na"  i="439" a="Status" v="Active" />
-**        <r n="80B.3.3.na.na"   i="558" a="Status" v="Active" />
+**        <r n="1206B_Revco.3.4.1.1" i="2553" a="Status" v="Inactive" />
+**        <r n="2240B.4.5.1.1" i="2594" a="Status" v="Active" />
+**        <r n="2240B.4.5.1.2" i="4309" a="Status" v="Active" />
+**        <r n="2240B.4.5.1.3" i="6024" a="Status" v="Active" />
 **
 **      Where:
 **        'n' is location name
