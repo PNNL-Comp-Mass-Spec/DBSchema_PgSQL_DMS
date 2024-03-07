@@ -1,31 +1,28 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_requested_run_blocking_and_factors
-(
-    _blockingList text,
-    _factorList text,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_requested_run_blocking_and_factors(text, text, boolean, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_requested_run_blocking_and_factors(IN _blockinglist text, IN _factorlist text, IN _debugmode boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
 **      Update requested run factors and blocking using the specified XML
-
+**
 **      Called from https://dms2.pnl.gov/requested_run_batch_blocking/param
 **
 **      Example contents of _blockingList:
-**        <r i="545496" t="Run_Order" v="2" /><r i="545496" t="Block" v="2" />
-**        <r i="545497" t="Run_Order" v="1" /><r i="545497" t="Block" v="1" />
+**        <r i="400213" t="Run_Order" v="12" /><r i="400213" t="Block" v="3" />
+**        <r i="400214" t="Run_Order" v="1" /> <r i="400214" t="Block" v="3" />
 **
 **      Example contents of _factorList:
-**        <id type="Request" /><r i="545496" f="TempFactor" v="a" /><r i="545497" f="TempFactor" v="b" />
+**        <id type="Request" /><r i="400213" f="TempFactor" v="a" /><r i="400214" f="TempFactor" v="b" />
 **
 **  Arguments:
 **    _blockingList     Block and run order info, as XML (see above); can be empty if _factorList is defined
 **    _factorList       Factor names and values, as XML (see above); can be '<id type="Request" />' if updating run order and blocking
+**    _debugMode        When true, log the contents of _blockingList and _factorList in t_log_entries
 **    _message          Status message
 **    _returnCode       Return code
 **    _callingUser      Username of the calling user
@@ -38,7 +35,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          03/04/2019 mem - Tabs to spaces
 **          12/13/2022 mem - Log procedure usage even if UpdateRequestedRunBatchParameters returns a non-zero return code
-**          12/15/2024 mem - Ported to PostgreSQL
+**          03/06/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -48,7 +45,6 @@ DECLARE
     _authorized boolean;
 
     _xml xml;
-    _debugEnabled boolean := false;
     _logMessage text;
     _usageMessage text := '';
 BEGIN
@@ -75,15 +71,20 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
+    -----------------------------------------------------------
+    -- Validate the inputs
+    -----------------------------------------------------------
+
     _blockingList := Trim(Coalesce(_blockingList, ''));
     _factorList   := Trim(Coalesce(_factorList, ''));
+    _debugMode    := Coalesce(_debugMode, false);
+    _callingUser  := Trim(Coalesce(_callingUser, ''));
 
-    If _debugEnabled Then
-
+    If _debugMode Then
         If _blockingList = '' Then
             _logMessage := '_blockingList is empty';
         Else
-            _logMessage := format('_blockingList: %s', _blockingList);
+            _logMessage := format('Blocking list: %s', _blockingList);
         End If;
 
         CALL post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Blocking_And_Factors');
@@ -91,7 +92,7 @@ BEGIN
         If _factorList = '' Then
             _logMessage := '_factorList is empty';
         Else
-            _logMessage := format('_factorList: %s', _factorList);
+            _logMessage := format('Factor list: %s', _factorList);
         End If;
 
         CALL post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Blocking_And_Factors');
@@ -103,21 +104,23 @@ BEGIN
 
     If _blockingList <> '' Then
         CALL public.update_requested_run_batch_parameters (
-                        _blockingList,
-                        _mode        => 'update',
-                        _message     => _message,       -- Output
-                        _returnCode  => _returnCode,    -- Output
-                        _callingUser => _callingUser);
+                        _blockingList => _blockingList,
+                        _mode         => 'update',
+                        _debugMode    => false,          -- Set this to false even if _debugMode is true, since the XML has already been logged
+                        _message      => _message,       -- Output
+                        _returnCode   => _returnCode,    -- Output
+                        _callingUser  => _callingUser);
 
     End If;
 
-    If _returnCode = '' Then
-        -----------------------------------------------------------
-        -- Update the factors
-        -----------------------------------------------------------
+    -----------------------------------------------------------
+    -- Update the factors (if an empty return code)
+    -----------------------------------------------------------
 
+    If _returnCode = '' Then
         CALL public.update_requested_run_factors (
-                                _factorList,
+                                _factorList  => _factorList,
+                                _infoOnly    => false,
                                 _message     => _message,       -- Output
                                 _returnCode  => _returnCode,    -- Output
                                 _callingUser => _callingUser);
@@ -133,4 +136,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_requested_run_blocking_and_factors IS 'UpdateRequestedRunBlockingAndFactors';
+
+ALTER PROCEDURE public.update_requested_run_blocking_and_factors(IN _blockinglist text, IN _factorlist text, IN _debugmode boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_requested_run_blocking_and_factors(IN _blockinglist text, IN _factorlist text, IN _debugmode boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_requested_run_blocking_and_factors(IN _blockinglist text, IN _factorlist text, IN _debugmode boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UpdateRequestedRunBlockingAndFactors';
+

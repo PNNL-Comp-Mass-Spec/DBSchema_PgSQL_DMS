@@ -1,16 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_requested_run_wp
-(
-    _oldWorkPackage text,
-    _newWorkPackage text,
-    _requestIdList text = '',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = '',
-    _infoOnly boolean = false
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_requested_run_wp(text, text, text, boolean, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_requested_run_wp(IN _oldworkpackage text, IN _newworkpackage text, IN _requestidlist text DEFAULT ''::text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -25,10 +19,10 @@ AS $$
 **    _oldWorkPackage   Old work package
 **    _newWorkPackage   New work package
 **    _requestIdList    Optional: if blank, finds active requested runs that use _oldWorkPackage; if defined, updates all of the specified requested run IDs if they use _oldWorkPackage (and are active)
+**    _infoOnly         When true, preview updates
 **    _message          Status message
 **    _returnCode       Return code
 **    _callingUser      Calling user
-**    _infoOnly         When true, preview updates
 **
 **  Auth:   mem
 **  Date:   07/01/2014 mem - Initial version
@@ -39,7 +33,7 @@ AS $$
 **          08/01/2017 mem - Use THROW if not authorized
 **          11/17/2020 mem - Fix typo in error message
 **          07/19/2023 mem - Rename request ID list parameter
-**          12/15/2024 mem - Ported to PostgreSQL
+**          03/06/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -48,6 +42,10 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
+    _dropTempTables boolean := false;
+    _logErrors boolean := false;
+
+    _validatedWP text;
     _requestCountToUpdate int;
     _rrCount int;
     _logMessage text;
@@ -96,83 +94,106 @@ BEGIN
 
         _oldWorkPackage := public.trim_whitespace(_oldWorkPackage);
         _newWorkPackage := public.trim_whitespace(_newWorkPackage);
+        _infoOnly       := Coalesce(_infoOnly, false);
         _requestIdList  := Trim(Coalesce(_requestIdList, ''));
         _callingUser    := Trim(Coalesce(_callingUser, ''));
-        _infoOnly       := Coalesce(_infoOnly, false);
 
         If _callingUser = '' Then
             _callingUser := SESSION_USER;
         End If;
 
         If _oldWorkPackage = '' Then
-            RAISE EXCEPTION 'Old work package must be specified';
+            _message := 'Old work package must be specified';
+            RAISE WARNING '%', _message;
+            RAISE EXCEPTION '%', _message;
         End If;
 
         If _newWorkPackage = '' Then
-            RAISE EXCEPTION 'New work package must be specified';
+            _message := 'New work package must be specified';
+            RAISE WARNING '%', _message;
+            RAISE EXCEPTION '%', _message;
         End If;
 
         -- Uncomment to debug
-        -- _logMessage := 'Updating work package from ' || _OldWorkPackage || ' to ' || _NewWorkPackage || ' for requests: ' || _requestIdList;
+        -- _logMessage := 'Updating work package from ' || _oldWorkPackage || ' to ' || _newWorkPackage || ' for requests: ' || _requestIdList;
         -- CALL post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_WP');
+
+        SELECT charge_code
+        INTO _validatedWP
+        FROM t_charge_code
+        WHERE charge_code = _newWorkPackage::citext;
+
+        If Not FOUND Then
+            _message := format('Cannot update, unrecognized work package: %s', _newWorkPackage);
+            RAISE WARNING '%', _message;
+            RAISE EXCEPTION '%', _message;
+        End If;
+
+        _newWorkPackage := _validatedWP;
+
+        _dropTempTables := true;
+        _logErrors := true;
 
         ----------------------------------------------------------
         -- Create some temporary tables
         ----------------------------------------------------------
 
         CREATE TEMP TABLE Tmp_ReqRunsToUpdate (
-            request_id int NOT NULL,
+            Request_ID int NOT NULL,
             Request_Name text NOT NULL,
-            work_package text NOT NULL
-        )
+            Work_Package text NOT NULL
+        );
 
-        CREATE INDEX IX_Tmp_ReqRunsToUpdate ON Tmp_ReqRunsToUpdate (request_id);
+        CREATE INDEX IX_Tmp_ReqRunsToUpdate ON Tmp_ReqRunsToUpdate (Request_ID);
 
         CREATE TEMP TABLE Tmp_RequestedRunList (
-            request_id int NOT NULL
-        )
+            Request_ID int NOT NULL
+        );
 
-        CREATE INDEX IX_Tmp_RequestedRunList ON Tmp_RequestedRunList (request_id);
+        CREATE INDEX IX_Tmp_RequestedRunList ON Tmp_RequestedRunList (Request_ID);
 
         ----------------------------------------------------------
         -- Find the Requested Runs to update
         ----------------------------------------------------------
 
         If _requestIdList <> '' Then
-
             -- Find requested runs using _requestIdList
-
-            INSERT INTO Tmp_RequestedRunList( request_id )
+            INSERT INTO Tmp_RequestedRunList (Request_ID)
             SELECT Value
-            FROM public.parse_delimited_list(_requestIdList);
+            FROM public.parse_delimited_integer_list(_requestIdList);
 
-            SELECT COUNT(request_id)
+            SELECT COUNT(Request_ID)
             INTO _rrCount
             FROM Tmp_RequestedRunList;
 
             If _rrCount = 0 Then
-                RAISE EXCEPTION 'User supplied Requested Run IDs was empty or did not contain integers';
+                _logErrors := false;
+                _message := 'The specified Requested Run ID list is empty or does not have integers';
+                RAISE WARNING '%', _message;
+                RAISE EXCEPTION '%', _message;
             End If;
 
-            INSERT INTO Tmp_ReqRunsToUpdate( request_id,
-                                             request_name,
-                                             work_package )
+            INSERT INTO Tmp_ReqRunsToUpdate (Request_ID,
+                                             Request_Name,
+                                             Work_Package)
             SELECT RR.request_id,
                    RR.request_name,
                    RR.work_package
             FROM t_requested_run RR
                  INNER JOIN Tmp_RequestedRunList Filter
-                   ON RR.request_id = Filter.request_id
+                   ON RR.request_id = Filter.Request_ID
             WHERE RR.work_package = _oldWorkPackage;
             --
             GET DIAGNOSTICS _requestCountToUpdate = ROW_COUNT;
 
             If _requestCountToUpdate = 0 Then
-                _message := format('None of the %s specified requested run IDs uses work package %s', _rrCount, _oldWorkPackage);
-
-                If _infoOnly Then
-                    RAISE INFO '%', _message;
+                If _rrCount = 1 Then
+                    _message := format('Requested run ID %s does not have work package %s; leaving WP unchanged', _requestIdList, _oldWorkPackage);
+                Else
+                    _message := format('None of the %s specified requested run IDs have work package %s; leaving WP unchanged', _rrCount, _oldWorkPackage);
                 End If;
+
+                RAISE INFO '%', _message;
 
                 DROP TABLE Tmp_ReqRunsToUpdate;
                 DROP TABLE Tmp_RequestedRunList;
@@ -181,10 +202,9 @@ BEGIN
             End If;
         Else
             -- Find active requested runs that use _oldWorkPackage
-
-            INSERT INTO Tmp_ReqRunsToUpdate( request_id,
-                                             request_name,
-                                             work_package )
+            INSERT INTO Tmp_ReqRunsToUpdate (Request_ID,
+                                             Request_Name,
+                                             Work_Package)
             SELECT request_id,
                    request_name,
                    work_package
@@ -196,21 +216,17 @@ BEGIN
 
             If _requestCountToUpdate = 0 Then
                 _message := format('Did not find any active requested runs with work package %s', _oldWorkPackage);
-
-                If _infoOnly Then
-                    RAISE INFO '%', _message;
-                End If;
+                RAISE INFO '%', _message;
 
                 DROP TABLE Tmp_ReqRunsToUpdate;
                 DROP TABLE Tmp_RequestedRunList;
 
                 RETURN;
             End If;
-
         End If;
 
         ----------------------------------------------------------
-        -- Generate log message that describes the requested runs that will be updated
+        -- Generate a log message that describes the requested runs that will be updated
         ----------------------------------------------------------
 
         CREATE TEMP TABLE Tmp_ValuesByCategory (
@@ -219,29 +235,29 @@ BEGIN
         );
 
         INSERT INTO Tmp_ValuesByCategory (Category, Value)
-        SELECT 'RR', request_id
+        SELECT 'RR', Request_ID
         FROM Tmp_ReqRunsToUpdate
-        ORDER BY ID;
+        ORDER BY Request_ID;
 
         SELECT ValueList
         INTO _valueList
-        FROM condense_integer_list_to_ranges (_debugMode => false);
+        FROM condense_integer_list_to_ranges (_debugMode => false)
         LIMIT 1;
 
-        If Not _infoOnly Then
-            _logMessage := 'Updated';
+        If _infoOnly Then
+            _logMessage := 'Will change';
         Else
-            _logMessage := 'Will update';
+            _logMessage := 'Changed';
         End If;
 
-        _logMessage := format('%s work package for %s requested %s from %s to %s; user %; IDs %',
-                                _logMessage,
-                                _requestCountToUpdate,
-                                public.check_plural(_requestCountToUpdate, 'run', 'runs'),
-                                _oldWorkPackage,
-                                _newWorkPackage,
-                                _callingUser,
-                                Coalesce(_valueList, '??'));
+        _logMessage := format('%s work package for %s requested %s from %s to %s; user %s; IDs %s',
+                              _logMessage,
+                              _requestCountToUpdate,
+                              public.check_plural(_requestCountToUpdate, 'run', 'runs'),
+                              _oldWorkPackage,
+                              _newWorkPackage,
+                              _callingUser,
+                              Coalesce(_valueList, '??'));
 
         If _infoOnly Then
 
@@ -251,6 +267,7 @@ BEGIN
 
             RAISE INFO '';
             RAISE INFO '%', _logMessage;
+            RAISE INFO '';
 
             _formatSpecifier := '%-10s %-80s %-16s %-16s';
 
@@ -277,7 +294,7 @@ BEGIN
                        Work_Package AS Old_Work_Package,
                        _newWorkPackage AS New_Work_Package
                 FROM Tmp_ReqRunsToUpdate
-                ORDER BY ID
+                ORDER BY Request_ID
             LOOP
                 _infoData := format(_formatSpecifier,
                                     _previewData.Request_ID,
@@ -289,9 +306,11 @@ BEGIN
                 RAISE INFO '%', _infoData;
             END LOOP;
 
-            _message := format('Will update work package for %s requested %s from %s to %s',
-                                _previewCount, public.check_plural(_requestCountToUpdate, 'run', 'runs'), _oldWorkPackage, _newWorkPackage);
-
+            _message := format('Will change work package for %s requested %s from %s to %s',
+                               _requestCountToUpdate,
+                               public.check_plural(_requestCountToUpdate, 'run', 'runs'),
+                               _oldWorkPackage,
+                               _newWorkPackage);
         Else
             ----------------------------------------------------------
             -- Perform the update
@@ -300,16 +319,21 @@ BEGIN
             UPDATE t_requested_run target
             SET work_package = _newWorkPackage
             FROM Tmp_ReqRunsToUpdate src
-            WHERE Target.request_id = Src.request_id;
+            WHERE Target.request_id = Src.Request_ID;
             --
             GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-            _message := format('Updated work package for %s requested %s from %s to %s',
-                                _updateCount, public.check_plural(_updateCount, 'run', 'runs'), _oldWorkPackage, _newWorkPackage);
+            _message := format('Changed work package for %s requested %s from %s to %s',
+                               _updateCount, public.check_plural(_updateCount, 'run', 'runs'), _oldWorkPackage, _newWorkPackage);
 
             CALL post_log_entry ('Normal', _logMessage, 'Update_Requested_Run_WP');
-
         End If;
+
+        DROP TABLE Tmp_ReqRunsToUpdate;
+        DROP TABLE Tmp_RequestedRunList;
+        DROP TABLE Tmp_ValuesByCategory;
+
+        RETURN;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -321,17 +345,27 @@ BEGIN
 
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => '', _logError => true);
+                        _callingProcLocation => '', _logError => _logErrors);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
         End If;
     END;
 
-    DROP TABLE IF EXISTS Tmp_ReqRunsToUpdate;
-    DROP TABLE IF EXISTS Tmp_RequestedRunList;
-    DROP TABLE IF EXISTS Tmp_ValuesByCategory;
+    If _dropTempTables Then
+        DROP TABLE IF EXISTS Tmp_ReqRunsToUpdate;
+        DROP TABLE IF EXISTS Tmp_RequestedRunList;
+        DROP TABLE IF EXISTS Tmp_ValuesByCategory;
+    End If;
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_requested_run_wp IS 'UpdateRequestedRunWP';
+
+ALTER PROCEDURE public.update_requested_run_wp(IN _oldworkpackage text, IN _newworkpackage text, IN _requestidlist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_requested_run_wp(IN _oldworkpackage text, IN _newworkpackage text, IN _requestidlist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_requested_run_wp(IN _oldworkpackage text, IN _newworkpackage text, IN _requestidlist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UpdateRequestedRunWP';
+
