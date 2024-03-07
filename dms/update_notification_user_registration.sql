@@ -1,20 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_notification_user_registration
-(
-    _username text,
-    _name text,
-    _requestedRunBatch text,
-    _analysisJobRequest text,
-    _samplePrepRequest text,
-    _datasetNotReleased text,
-    _datasetReleased text,
-    _mode text = 'update',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_notification_user_registration(text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_notification_user_registration(IN _username text, IN _name text, IN _requestedrunbatch text, IN _analysisjobrequest text, IN _samplepreprequest text, IN _datasetnotreleased text, IN _datasetreleased text, IN _mode text DEFAULT 'update'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -34,7 +24,7 @@ AS $$
 **    _mode                 Unused, but typically 'update'
 **    _message              Status message
 **    _returnCode           Return code
-**    _callingUser          Username of the calling user
+**    _callingUser          Username of the calling user (unused by this procedure)
 **
 **  Auth:   grk
 **  Date:   04/03/2010
@@ -43,7 +33,7 @@ AS $$
 **                         - Added _datasetReleased
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
-**          12/15/2024 mem - Ported to PostgreSQL
+**          03/06/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -81,6 +71,20 @@ BEGIN
     End If;
 
     ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
+    _username           := Trim(Coalesce(_username, ''));
+    _name               := Trim(Coalesce(_name, ''));
+    _requestedRunBatch  := Trim(Coalesce(_requestedRunBatch, ''));
+    _analysisJobRequest := Trim(Coalesce(_analysisJobRequest, ''));
+    _samplePrepRequest  := Trim(Coalesce(_samplePrepRequest, ''));
+    _datasetNotReleased := Trim(Coalesce(_datasetNotReleased, ''));
+    _datasetReleased    := Trim(Coalesce(_datasetReleased, ''));
+    _mode               := Trim(Lower(Coalesce(_mode, '')));
+    _callingUser        := Trim(Coalesce(_callingUser, ''));
+
+    ---------------------------------------------------
     -- Lookup user
     ---------------------------------------------------
 
@@ -100,6 +104,7 @@ BEGIN
     ---------------------------------------------------
     -- Populate a temporary table with Entity Type IDs and Entity Type Params
     ---------------------------------------------------
+
     CREATE TEMP TABLE Tmp_NotificationOptions (
         EntityTypeID int,
         NotifyUser text
@@ -121,15 +126,14 @@ BEGIN
         FROM Tmp_NotificationOptions
         ORDER BY EntityTypeID
     LOOP
-
         If _notifyUser::citext = 'Yes' Then
             If Not Exists ( SELECT user_id
                             FROM t_notification_entity_user
                             WHERE user_id = _userID AND
                                   entity_type_id = _entityTypeID
-                          ) Then
-
-                INSERT INTO t_notification_entity_user( user_id, entity_type_id )
+                          )
+            Then
+                INSERT INTO t_notification_entity_user (user_id, entity_type_id)
                 VALUES(_userID, _entityTypeID);
             End If;
 
@@ -157,4 +161,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_notification_user_registration IS 'UpdateNotificationUserRegistration';
+
+ALTER PROCEDURE public.update_notification_user_registration(IN _username text, IN _name text, IN _requestedrunbatch text, IN _analysisjobrequest text, IN _samplepreprequest text, IN _datasetnotreleased text, IN _datasetreleased text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_notification_user_registration(IN _username text, IN _name text, IN _requestedrunbatch text, IN _analysisjobrequest text, IN _samplepreprequest text, IN _datasetnotreleased text, IN _datasetreleased text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_notification_user_registration(IN _username text, IN _name text, IN _requestedrunbatch text, IN _analysisjobrequest text, IN _samplepreprequest text, IN _datasetnotreleased text, IN _datasetreleased text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UpdateNotificationUserRegistration';
+
