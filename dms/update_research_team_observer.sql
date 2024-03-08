@@ -1,14 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_research_team_observer
-(
-    _campaignName text,
-    _mode text = 'add',
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_research_team_observer(text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_research_team_observer(IN _campaignname text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -29,7 +25,7 @@ AS $$
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          08/20/2021 mem - Reformat queries
-**          12/15/2024 mem - Ported to PostgreSQL
+**          03/07/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -43,7 +39,7 @@ DECLARE
     _campaignID int := 0;
     _researchTeamID int := 0;
     _userID int := 0;
-    _membershipExists int;
+    _membershipExists boolean;
     _usageMessage text := '';
 BEGIN
     _message := '';
@@ -73,38 +69,48 @@ BEGIN
     -- Validate the inputs
     -----------------------------------------------------------
 
-    _mode := Trim(Lower(Coalesce(_mode, '')));
+    _campaignName := Trim(Coalesce(_campaignName, ''));
+    _callingUser  := Trim(Coalesce(_callingUser, ''));
+    _mode         := Trim(Lower(Coalesce(_mode, '')));
 
-    ---------------------------------------------------
-    -- User id
-    ---------------------------------------------------
+    If _campaignName = '' Then
+        _message := 'Campaign name must be specified';
+        RAISE WARNING '%', _message;
 
-    If _callingUser = '' Then
         _returnCode := 'U5201';
-        _message := 'User ID is missing';
         RETURN;
     End If;
 
-    _username := _callingUser;
+    If _callingUser = '' Then
+        _message := 'Username must be specified';
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5202';
+        RETURN;
+    Else
+        _username := _callingUser;
+    End If;
 
     ---------------------------------------------------
-    -- Resolve
+    -- Resolve campaign name to ID
     ---------------------------------------------------
 
     SELECT campaign_id,
            Coalesce(research_team, 0)
     INTO _campaignID, _researchTeamID
     FROM t_campaign
-    WHERE campaign = _campaignName;
+    WHERE campaign = _campaignName::citext;
 
     If Not FOUND Then
-        _returnCode := 'U5202';
-        _message := format('Campaign "%s" is not valid', _campaignName);
+         _message := format('Unrecognized campaign name: %s', _campaignName);
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5203';
         RETURN;
     End If;
 
     ---------------------------------------------------
-    -- Resolve
+    -- Resolve username to ID
     ---------------------------------------------------
 
     SELECT user_id
@@ -113,8 +119,10 @@ BEGIN
     WHERE username = _username::citext;
 
     If Not FOUND Then
-        _returnCode := 'U5203';
-        _message := format('User "%s" is not valid', _username);
+         _message := format('Unrecognized username: %s', _username);
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5204';
         RETURN;
     End If;
 
@@ -122,29 +130,31 @@ BEGIN
     -- Is user already an observer?
     ---------------------------------------------------
 
-    SELECT COUNT(user_id)
-    INTO _membershipExists
-    FROM t_research_team_membership
-    WHERE team_id = _researchTeamID AND
-          role_id = _observerRoleID AND
-          user_id = _userID;
+    If Exists (SELECT user_id
+               FROM t_research_team_membership
+               WHERE team_id = _researchTeamID AND
+                     role_id = _observerRoleID AND
+                     user_id = _userID)
+    Then
+        _membershipExists := true;
+    Else
+        _membershipExists := false;
+    End If;
 
     ---------------------------------------------------
     -- Add / update the user
     ---------------------------------------------------
 
-    If _membershipExists > 0 And _mode = 'remove' Then
+    If _mode = 'add' And Not _membershipExists Then
+        INSERT INTO t_research_team_membership (team_id, role_id, user_id )
+        VALUES (_researchTeamID, _observerRoleID, _userID);
+    End If;
+
+    If _mode = 'remove' And _membershipExists Then
         DELETE FROM t_research_team_membership
         WHERE team_id = _researchTeamID AND
               role_id = _observerRoleID AND
               user_id = _userID;
-    End If;
-
-    If _membershipExists = 0 And _mode = 'add' Then
-      INSERT INTO t_research_team_membership( team_id,
-                                              role_id,
-                                              user_id )
-      VALUES (_researchTeamID, _observerRoleID, _userID);
     End If;
 
     ---------------------------------------------------
@@ -159,4 +169,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_research_team_observer IS 'UpdateResearchTeamObserver';
+
+ALTER PROCEDURE public.update_research_team_observer(IN _campaignname text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_research_team_observer(IN _campaignname text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_research_team_observer(IN _campaignname text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UpdateResearchTeamObserver';
+
