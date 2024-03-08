@@ -1,14 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_requested_run_admin
-(
-    _requestList text,
-    _mode text,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_requested_run_admin(text, text, boolean, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_requested_run_admin(IN _requestlist text, IN _mode text, IN _debugmode boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -18,17 +14,18 @@ AS $$
 **        <r i="545499" /><r i="545498" /><r i="545497" /><r i="545496" /><r i="545495" />
 **
 **  Arguments:
-**    _requestList      XML describing Requested Run IDs to update
+**    _requestList      XML describing requested run IDs to update
 **    _mode             Mode: 'Active', 'Inactive', 'Delete', or 'UnassignInstrument'
+**    _debugMode        When true, log the contents of _requestList in t_log_entries, and also log the number of requested runs updated
 **    _message          Status message
 **    _returnCode       Return code
 **    _callingUser      Username of the calling user
 **
 **  Available modes:
-**      'Active'             sets the requests to the Active state
-**      'Inactive'           sets the requests to the Inactive state
-**      'Delete'             deletes the requests
-**      'UnassignInstrument' changes the queue state to 1 for requests that have a queue state of 2 ("Assigned"); skips any with a queue state of 3 ("Analyzed")
+**      'Active'                Sets the requested runs to the Active state
+**      'Inactive'              Sets the requested runs to the Inactive state
+**      'Delete'                Deletes the requested runs
+**      'UnassignInstrument'    Changes the queue state to 1 for requested runs that have a queue state of 2 ("Assigned"); skips any with a queue state of 3 ("Analyzed")
 **
 **  Auth:   grk
 **  Date:   03/09/2010
@@ -40,10 +37,10 @@ AS $$
 **          07/01/2019 mem - Add additional debug logging
 **          10/20/2020 mem - Add mode 'UnassignInstrument'
 **          10/21/2020 mem - Set Queue_Instrument_ID to null when unassigning
-**          10/23/2020 mem - Allow updating 'fraction' based requests
+**          10/23/2020 mem - Allow updating 'fraction' based requested runs
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
-**          05/23/2023 mem - Allow deleting requests of type 'auto' or 'fraction'
-**          12/15/2024 mem - Ported to PostgreSQL
+**          05/23/2023 mem - Allow deleting requested runs of type 'auto' or 'fraction'
+**          03/07/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -58,7 +55,6 @@ DECLARE
     _usageMessage text := '';
     _stateID int := 0;
     _logMessage text;
-    _debugEnabled boolean := false;
     _argLength int;
     _requestID int := -100000;
     _targetType int;
@@ -91,9 +87,12 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    -- Set to true to log the contents of _requestList
+    _requestList := Trim(Coalesce(_requestList, ''));
+    _mode        := Trim(Lower(Coalesce(_mode, '')));
+    _debugMode   := Coalesce(_debugMode, false);
+    _callingUser := Trim(Coalesce(_callingUser, ''));
 
-    If _debugEnabled Then
+    If _debugMode Then
         _logMessage := _requestList;
         CALL post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Admin');
 
@@ -103,17 +102,15 @@ BEGIN
         CALL post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Admin');
     End If;
 
-    _mode := Trim(Lower(Coalesce(_mode, '')));
-
     -----------------------------------------------------------
-    -- Temp table to hold list of requests
+    -- Temp table to hold requested run IDs
     -----------------------------------------------------------
 
     CREATE TEMP TABLE Tmp_Requests (
-        Item text,              -- Request ID, as text
+        Item text,              -- Requested run ID, as text
         Status citext NULL,
         Origin citext NULL,
-        request_id int NULL
+        Request_ID int NULL
     );
 
     -----------------------------------------------------------
@@ -123,12 +120,12 @@ BEGIN
     _xml := public.try_cast('<root>' || _requestList || '</root>', null::xml);
 
     If _xml Is Null Then
-        _message := 'Request list is not valid XML';
+        _message := 'Requested run ID list is not valid XML';
         RAISE EXCEPTION '%', _message;
     End If;
 
     -----------------------------------------------------------
-    -- Populate temp table with request IDs (storing as text for now)
+    -- Populate temp table with requested run IDs (storing as text for now)
     -----------------------------------------------------------
 
     INSERT INTO Tmp_Requests ( Item )
@@ -136,25 +133,27 @@ BEGIN
     --
     GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-    If _debugEnabled Then
-        _logMessage := format('%s %s inserted into Tmp_Requests', _matchCount, public.check_plural(_matchCount, 'row', 'rows'));
+    If _debugMode Then
+        _logMessage := format('Parsed %s requested run %s from the XML', _matchCount, public.check_plural(_matchCount, 'ID', 'IDs'));
         CALL post_log_entry ('Debug', _logMessage, 'Update_Requested_Run_Admin');
     End If;
 
     -----------------------------------------------------------
-    -- Validate the request list
+    -- Validate the requested run ID list
     -----------------------------------------------------------
 
-    -- Convert request IDs from text to integer
+    -- Convert requested run IDs from text to integer
 
     UPDATE Tmp_Requests
-    SET request_id = public.try_cast(Item, null::int);
+    SET Request_ID = public.try_cast(Item, null::int);
 
-    If Exists (SELECT Item FROM Tmp_Requests WHERE request_id IS NULL) Then
-        _message := 'Found non-integer request IDs';
+    If Exists (SELECT Item FROM Tmp_Requests WHERE Request_ID IS NULL) Then
+        _message := 'Found non-integer requested run IDs';
+        RAISE WARNING '%', _message;
+
         _returnCode := 'U5112';
-
         DROP TABLE Tmp_Requests;
+
         RETURN;
     End If;
 
@@ -162,29 +161,35 @@ BEGIN
     SET Status = t_requested_run.state_name,
         Origin = t_requested_run.origin
     FROM t_requested_run
-    WHERE Tmp_Requests.request_id = t_requested_run.request_id;
+    WHERE Tmp_Requests.Request_ID = t_requested_run.request_id;
 
     If Exists (SELECT Item FROM Tmp_Requests WHERE Status IS NULL) Then
-        _message := 'There were invalid request IDs';
-        _returnCode := 'U5113';
+        _message := 'There were invalid requested run IDs';
+        RAISE WARNING '%', _message;
 
+        _returnCode := 'U5113';
         DROP TABLE Tmp_Requests;
+
         RETURN;
     End If;
 
     If Exists (SELECT Item FROM Tmp_Requests WHERE NOT Status::citext IN ('Active', 'Inactive')) Then
-        _message := 'Cannot change requests that are in status other than "Active" or "Inactive"';
-        _returnCode := 'U5114';
+        _message := 'Cannot change requested runs that are in status other than "Active" or "Inactive"';
+        RAISE WARNING '%', _message;
 
+        _returnCode := 'U5114';
         DROP TABLE Tmp_Requests;
+
         RETURN;
     End If;
 
     If Exists (SELECT Item FROM Tmp_Requests WHERE NOT Origin::citext IN ('user', 'fraction') AND _mode <> 'delete') Then
-        _message := 'Cannot change requests that were not entered by user';
-        _returnCode := 'U5115';
+        _message := 'Cannot change requested runs that were not entered by user';
+        RAISE WARNING '%', _message;
 
+        _returnCode := 'U5115';
         DROP TABLE Tmp_Requests;
+
         RETURN;
     End If;
 
@@ -199,26 +204,29 @@ BEGIN
     CREATE UNIQUE INDEX IX_Tmp_ID_Update_List ON Tmp_ID_Update_List (TargetID);
 
     INSERT INTO Tmp_ID_Update_List (TargetID)
-    SELECT DISTINCT request_id
+    SELECT DISTINCT Request_ID
     FROM Tmp_Requests
-    WHERE NOT request_id IS NULL
-    ORDER BY request_id;
-
-    -----------------------------------------------------------
-    -- Update status
-    -----------------------------------------------------------
+    WHERE NOT Request_ID IS NULL
+    ORDER BY Request_ID;
 
     If _mode IN ('active', 'inactive') Then
+        -----------------------------------------------------------
+        -- Update status
+        -----------------------------------------------------------
+
         UPDATE t_requested_run
-        SET state_name = _mode
-        WHERE request_id IN ( SELECT request_id FROM Tmp_Requests ) AND
+        SET state_name = CASE WHEN _mode = 'active'   THEN 'Active'
+                              WHEN _mode = 'inactive' THEN 'Inactive'
+                              ELSE state_name
+                         END
+        WHERE request_id IN ( SELECT Request_ID FROM Tmp_Requests ) AND
               state_name <> 'Completed';
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        _usageMessage := format('Updated %s %s', _updateCount, public.check_plural(_updateCount, 'request', 'requests'));
+        _usageMessage := format('Updated %s requested %s', _updateCount, public.check_plural(_updateCount, 'run', 'runs'));
 
-        If Trim(Coalesce(_callingUser, '')) <> '' Then
+        If _callingUser <> '' Then
             -- _callingUser is defined; call public.alter_event_log_entry_user_multi_id
             -- to alter the entered_by field in t_event_log
             -- This procedure uses Tmp_ID_Update_List
@@ -240,27 +248,27 @@ BEGIN
             ORDER BY request_id
         LOOP
             CALL public.update_cached_requested_run_eus_users (
-                            _requestID,
-                            _message => _message,           -- Output
+                            _requestID  => _requestID,
+                            _message    => _message,        -- Output
                             _returnCode => _returnCode);    -- Output
         END LOOP;
 
     End If;
 
-    -----------------------------------------------------------
-    -- Delete requests
-    -----------------------------------------------------------
-
     If _mode = 'delete' Then
+        -----------------------------------------------------------
+        -- Delete requested runs
+        -----------------------------------------------------------
+
         DELETE FROM t_requested_run
         WHERE request_id IN ( SELECT request_id FROM Tmp_Requests ) AND
               state_name <> 'Completed';
         --
         GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
-        _usageMessage := format('Deleted %s %s', _matchCount, public.check_plural(_matchCount, 'request', 'requests'));
+        _usageMessage := format('Deleted %s requested %s', _matchCount, public.check_plural(_matchCount, 'run', 'runs'));
 
-        If Trim(Coalesce(_callingUser, '')) <> '' Then
+        If _callingUser <> '' Then
             -- _callingUser is defined; call public.alter_event_log_entry_user_multi_id
             -- to alter the entered_by field in t_event_log
             -- This procedure uses Tmp_ID_Update_List
@@ -273,29 +281,35 @@ BEGIN
 
         -- Remove any cached EUS user lists
         DELETE FROM t_active_requested_run_cached_eus_users
-        WHERE EXISTS ( SELECT request_id
+        WHERE EXISTS ( SELECT Request_ID
                        FROM Tmp_Requests
-                       WHERE request_id = t_active_requested_run_cached_eus_users.request_id);
+                       WHERE Request_ID = t_active_requested_run_cached_eus_users.request_id);
 
     End If;
 
-    -----------------------------------------------------------
-    -- Unassign requests
-    -----------------------------------------------------------
-
     If _mode = Lower('UnassignInstrument') Then
+        -----------------------------------------------------------
+        -- Unassign requested runs
+        -----------------------------------------------------------
 
         UPDATE t_requested_run
         SET queue_state = 1,
-            queue_instrument_id = Null
-        WHERE request_id IN ( SELECT request_id FROM Tmp_Requests ) AND
+            queue_instrument_id = NULL
+        WHERE request_id IN ( SELECT Request_ID FROM Tmp_Requests ) AND
               state_name <> 'Completed' AND
-              (queue_state = 2 OR Not queue_instrument_id Is NULL);
+              (queue_state = 2 OR NOT queue_instrument_id IS NULL);
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
-        _usageMessage := format('Unassigned %s %s from the queued instrument', _updateCount, public.check_plural(_updateCount, 'request', 'requests'));
+        _usageMessage := format('Unassigned %s requested %s from the queued instrument', _updateCount, public.check_plural(_updateCount, 'run', 'runs'));
 
+    End If;
+
+    If _usageMessage = '' Then
+        _usageMessage := format('Unrecognized mode: %s', _mode);
+        RAISE WARNING '%', _usageMessage;
+    Else
+        RAISE INFO '%', _usageMessage;
     End If;
 
     ---------------------------------------------------
@@ -309,5 +323,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_requested_run_admin IS 'UpdateRequestedRunAdmin';
+
+ALTER PROCEDURE public.update_requested_run_admin(IN _requestlist text, IN _mode text, IN _debugmode boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_requested_run_admin(IN _requestlist text, IN _mode text, IN _debugmode boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_requested_run_admin(IN _requestlist text, IN _mode text, IN _debugmode boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UpdateRequestedRunAdmin';
 
