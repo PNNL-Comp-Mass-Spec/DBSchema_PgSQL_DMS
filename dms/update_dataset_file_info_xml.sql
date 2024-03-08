@@ -59,6 +59,21 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_file_info_xml(IN _datasetid in
 **        </TICInfo>
 **      </DatasetInfo>
 **
+**      Bruker datasets that have file chromatography-data.sqlite in the .D directory will also have an EICInfo section
+**
+**      <DatasetInfo>
+**        <EICInfo>
+**          <EICStats Mz="311.17" MaxIntensity="1.2514E+08" MedianIntensity="1.2514E+08" />
+**          <EICStats Mz="239.02" MaxIntensity="3.2411E+08" MedianIntensity="3.2411E+08" />
+**          <EICStats Mz="339.11" MaxIntensity="1.1627E+09" MedianIntensity="1.1627E+09" />
+**          <EICStats Mz="381.12" MaxIntensity="1.253E+09" MedianIntensity="1.253E+09" />
+**          <EICStats Mz="465.14" MaxIntensity="6.0586E+08" MedianIntensity="6.0586E+08" />
+**          <EICStats Mz="589.12" MaxIntensity="1.5189E+08" MedianIntensity="1.5189E+08" />
+**          <EICStats Mz="687.12" MaxIntensity="6.4075E+07" MedianIntensity="6.4075E+07" />
+**          <EICStats Mz="811.10" MaxIntensity="0" MedianIntensity="0" />
+**        </EICInfo>
+**      </DatasetInfo>
+**
 **  Arguments:
 **    _datasetID            If this value is 0, determines the dataset name using the contents of _datasetInfoXML
 **    _datasetInfoXML       XML describing the properties of a single dataset
@@ -104,6 +119,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_file_info_xml(IN _datasetid in
 **          12/06/2023 mem - Log an error if a scan type is not present in t_dataset_scan_type_glossary
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          03/03/2024 mem - Trim whitespace when extracting values from XML
+**          03/07/2024 mem - Add support for Extracted Ion Chromatogram (EIC) data
 **
 *****************************************************/
 DECLARE
@@ -204,7 +220,7 @@ BEGIN
         -- Create temporary tables to hold the data
         -----------------------------------------------------------
 
-        CREATE TEMP TABLE Tmp_DSInfoTable (
+        CREATE TEMP TABLE Tmp_DS_Info (
             Dataset_ID int NULL,
             Dataset_Name text NOT NULL,
             Scan_Count int NULL,
@@ -230,29 +246,35 @@ BEGIN
             Centroid_Scan_Count_MSn int NULL
         );
 
-        CREATE TEMP TABLE Tmp_ScanTypes (
+        CREATE TEMP TABLE Tmp_Scan_Types (
             ScanType text NOT NULL,
             ScanCount int NULL,
             ScanFilter text NULL
         );
 
-        CREATE TEMP TABLE Tmp_InstrumentFiles (
+        CREATE TEMP TABLE Tmp_Instrument_Files (
             Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
             InstFilePath text NOT NULL,     -- Relative file path of the instrument file
             InstFileHash text NULL,
             InstFileHashType text NULL,     -- Should always be SHA1
             InstFileSize bigint NULL,
-            FileSizeRank int NULL      -- File size rank, across all instrument files for this dataset
+            FileSizeRank int NULL           -- File size rank, across all instrument files for this dataset
         );
 
-        CREATE TEMP TABLE Tmp_DuplicateDatasets (
+        CREATE TEMP TABLE Tmp_Duplicate_Datasets (
             Dataset_ID int NOT NULL,
             MatchingFileCount int NOT NULL,
             Allow_Duplicates boolean NOT NULL
         );
 
+        CREATE TEMP TABLE Tmp_EIC_Values (
+            Mz float8 NOT NULL,             -- Double precision float
+            MaxIntensity real NULL,         -- Restricted to -1E+37 to 1E+37 since stored as float4 (aka real)
+            MedianIntensity real NULL
+        );
+
         ---------------------------------------------------
-        -- Parse the contents of _datasetInfoXML to populate Tmp_DSInfoTable
+        -- Parse the contents of _datasetInfoXML to populate Tmp_DS_Info
         -- Columns StartTime and EndTime will be populated below
         --
         -- Extract values using xpath() since XMLTABLE can only extract all of the nodes below a given parent node,
@@ -262,9 +284,9 @@ BEGIN
         -- [1] is used to select the first match, since xpath() returns an array
         ---------------------------------------------------
 
-        _currentLocation := 'Parse _datasetInfoXML and populate Tmp_DSInfoTable';
+        _currentLocation := 'Parse _datasetInfoXML and populate Tmp_DS_Info';
 
-        INSERT INTO Tmp_DSInfoTable (
+        INSERT INTO Tmp_DS_Info (
             Dataset_ID,
             Dataset_Name,
             Scan_Count,
@@ -309,11 +331,12 @@ BEGIN
                public.try_cast((xpath('//DatasetInfo/AcquisitionInfo/CentroidScanCountMS1/text()', _datasetInfoXML))[1]::text, 0) AS Centroid_Scan_Count_MS,
                public.try_cast((xpath('//DatasetInfo/AcquisitionInfo/CentroidScanCountMS2/text()', _datasetInfoXML))[1]::text, 0) AS Centroid_Scan_Count_MSn;
 
+
         ---------------------------------------------------
-        -- Make sure Dataset_ID is up-to-date in Tmp_DSInfoTable
+        -- Make sure Dataset_ID is up-to-date in Tmp_DS_Info
         ---------------------------------------------------
 
-        UPDATE Tmp_DSInfoTable
+        UPDATE Tmp_DS_Info
         SET Dataset_ID = _datasetID;
 
         ---------------------------------------------------
@@ -338,11 +361,11 @@ BEGIN
             If Not _acqTimeStart Is Null Then
                 SELECT _acqTimeStart + make_interval(mins => Acq_Time_Minutes)
                 INTO _acqTimeEnd
-                FROM Tmp_DSInfoTable;
+                FROM Tmp_DS_Info;
             End If;
         End If;
 
-        UPDATE Tmp_DSInfoTable
+        UPDATE Tmp_DS_Info
         SET Acq_Time_Start = _acqTimeStart,
             Acq_Time_End   = _acqTimeEnd;
 
@@ -351,9 +374,9 @@ BEGIN
         -- There could be multiple scan types defined in the XML
         ---------------------------------------------------
 
-        _currentLocation := 'Populate Tmp_ScanTypes';
+        _currentLocation := 'Populate Tmp_Scan_Types';
 
-        INSERT INTO Tmp_ScanTypes (ScanType, ScanCount, ScanFilter)
+        INSERT INTO Tmp_Scan_Types (ScanType, ScanCount, ScanFilter)
         SELECT public.trim_whitespace(XmlQ.ScanType), public.try_cast(XmlQ.ScanCount, 0), Trim(XmlQ.ScanFilter)
         FROM (
             SELECT xmltable.*
@@ -368,12 +391,12 @@ BEGIN
         WHERE NOT XmlQ.ScanType IS NULL;
 
         ---------------------------------------------------
-        -- Now extract out the instrument files
+        -- Extract out the instrument files
         ---------------------------------------------------
 
-        _currentLocation := 'Populate Tmp_InstrumentFiles';
+        _currentLocation := 'Populate Tmp_Instrument_Files';
 
-        INSERT INTO Tmp_InstrumentFiles (InstFilePath, InstFileHash, InstFileHashType, InstFileSize)
+        INSERT INTO Tmp_Instrument_Files (InstFilePath, InstFileHash, InstFileHashType, InstFileSize)
         SELECT public.trim_whitespace(XmlQ.InstFilePath), Trim(XmlQ.InstFileHash), Trim(XmlQ.InstFileHashType), XmlQ.InstFileSize
         FROM (
             SELECT xmltable.*
@@ -388,16 +411,16 @@ BEGIN
              ) XmlQ;
 
         ---------------------------------------------------
-        -- Update FileSizeRank in Tmp_InstrumentFiles
+        -- Update FileSizeRank in Tmp_Instrument_Files
         ---------------------------------------------------
 
-        UPDATE Tmp_InstrumentFiles
+        UPDATE Tmp_Instrument_Files
         SET FileSizeRank = RankQ.FileSizeRank
         FROM (
             SELECT Entry_ID, Row_Number() OVER (ORDER BY InstFileSize DESC) AS FileSizeRank
-            FROM Tmp_InstrumentFiles
+            FROM Tmp_Instrument_Files
             ) AS RankQ
-        WHERE Tmp_InstrumentFiles.Entry_ID = RankQ.Entry_ID;
+        WHERE Tmp_Instrument_Files.Entry_ID = RankQ.Entry_ID;
 
         ---------------------------------------------------
         -- Validate the hash type
@@ -405,7 +428,7 @@ BEGIN
 
         SELECT InstFileHashType
         INTO _unrecognizedHashType
-        FROM Tmp_InstrumentFiles
+        FROM Tmp_Instrument_Files
         WHERE NOT InstFileHashType IN ('SHA1');
 
         If FOUND Then
@@ -424,39 +447,39 @@ BEGIN
 
         SELECT COUNT(*)
         INTO _instrumentFileCount
-        FROM Tmp_InstrumentFiles;
+        FROM Tmp_Instrument_Files;
 
         If _instrumentFileCount > 0 Then
-            _currentLocation := 'Look for duplicate datasets: populate Tmp_DuplicateDatasets';
+            _currentLocation := 'Look for duplicate datasets: populate Tmp_Duplicate_Datasets';
 
-            INSERT INTO Tmp_DuplicateDatasets (dataset_id,
+            INSERT INTO Tmp_Duplicate_Datasets (dataset_id,
                                                MatchingFileCount,
                                                allow_duplicates)
             SELECT DSFiles.dataset_id,
                    COUNT(dataset_file_id) AS MatchingFiles,
                    false AS Allow_Duplicates
             FROM t_dataset_files DSFiles
-                 INNER JOIN Tmp_InstrumentFiles NewDSFiles
+                 INNER JOIN Tmp_Instrument_Files NewDSFiles
                    ON DSFiles.file_hash = NewDSFiles.InstFileHash
             WHERE DSFiles.dataset_id <> _datasetID AND DSFiles.deleted = false AND DSFiles.file_size_bytes > 0
             GROUP BY DSFiles.dataset_id;
 
-            If Exists (SELECT Dataset_ID FROM Tmp_DuplicateDatasets WHERE MatchingFileCount >= _instrumentFileCount) Then
-                _currentLocation := 'Look for duplicate datasets: set Allow_Duplicates to true in Tmp_DuplicateDatasets';
+            If Exists (SELECT Dataset_ID FROM Tmp_Duplicate_Datasets WHERE MatchingFileCount >= _instrumentFileCount) Then
+                _currentLocation := 'Look for duplicate datasets: set Allow_Duplicates to true in Tmp_Duplicate_Datasets';
 
-                UPDATE Tmp_DuplicateDatasets
+                UPDATE Tmp_Duplicate_Datasets
                 SET Allow_Duplicates = true
                 FROM t_dataset_files Src
-                WHERE Tmp_DuplicateDatasets.dataset_id = Src.dataset_id AND Src.allow_duplicates;
+                WHERE Tmp_Duplicate_Datasets.dataset_id = Src.dataset_id AND Src.allow_duplicates;
             End If;
 
-            If Exists (SELECT Dataset_ID FROM Tmp_DuplicateDatasets WHERE MatchingFileCount >= _instrumentFileCount AND NOT Allow_Duplicates) Then
+            If Exists (SELECT Dataset_ID FROM Tmp_Duplicate_Datasets WHERE MatchingFileCount >= _instrumentFileCount AND NOT Allow_Duplicates) Then
 
                 _currentLocation := 'Duplicate dataset found; determine duplicate dataset ID';
 
                 SELECT Dataset_ID
                 INTO _duplicateDatasetID
-                FROM Tmp_DuplicateDatasets
+                FROM Tmp_Duplicate_Datasets
                 WHERE MatchingFileCount >= _instrumentFileCount AND NOT Allow_Duplicates
                 ORDER BY Dataset_ID DESC
                 LIMIT 1;
@@ -488,20 +511,21 @@ BEGIN
 
                 _returnCode := 'U5360';
 
-                DROP TABLE Tmp_DSInfoTable;
-                DROP TABLE Tmp_ScanTypes;
-                DROP TABLE Tmp_InstrumentFiles;
-                DROP TABLE Tmp_DuplicateDatasets;
+                DROP TABLE Tmp_DS_Info;
+                DROP TABLE Tmp_Scan_Types;
+                DROP TABLE Tmp_Instrument_Files;
+                DROP TABLE Tmp_Duplicate_Datasets;
+                DROP TABLE Tmp_EIC_Values;
                 RETURN;
             End If;
 
-            If Exists (SELECT Dataset_ID FROM Tmp_DuplicateDatasets WHERE MatchingFileCount >= _instrumentFileCount AND Allow_Duplicates) Then
+            If Exists (SELECT Dataset_ID FROM Tmp_Duplicate_Datasets WHERE MatchingFileCount >= _instrumentFileCount AND Allow_Duplicates) Then
 
                 _currentLocation := 'Duplicate dataset found; log warning since Allow_Duplicates is true';
 
                 SELECT Dataset_ID
                 INTO _duplicateDatasetID
-                FROM Tmp_DuplicateDatasets
+                FROM Tmp_Duplicate_Datasets
                 WHERE MatchingFileCount >= _instrumentFileCount AND Allow_Duplicates
                 ORDER BY Dataset_ID DESC
                 LIMIT 1;
@@ -514,6 +538,25 @@ BEGIN
                 CALL post_log_entry ('Warning', _msg, 'Update_Dataset_File_Info_XML');
             End If;
         End If;
+
+        ---------------------------------------------------
+        -- Extract out the extracted ion chromatogram data (if present)
+        ---------------------------------------------------
+
+        _currentLocation := 'Populate Tmp_EIC_Values';
+
+        INSERT INTO Tmp_EIC_Values (Mz, MaxIntensity, MedianIntensity)
+        SELECT XmlQ.Mz, XmlQ.MaxIntensity, XmlQ.MedianIntensity
+        FROM (
+            SELECT xmltable.*
+            FROM ( SELECT _datasetInfoXML AS rooted_xml
+                 ) Src,
+                 XMLTABLE('//DatasetInfo/EICInfo/EICStats'
+                          PASSING Src.rooted_xml
+                          COLUMNS Mz              float PATH '@Mz',
+                                  MaxIntensity    real  PATH '@MaxIntensity',
+                                  MedianIntensity real  PATH '@MedianIntensity')
+             ) XmlQ;
 
         -----------------------------------------------
         -- Possibly update the separation type for the dataset
@@ -528,7 +571,7 @@ BEGIN
 
         SELECT Acq_Time_Minutes
         INTO _acqLengthMinutes
-        FROM Tmp_DSInfoTable;
+        FROM Tmp_DS_Info;
 
         If _acqLengthMinutes > 1 And Coalesce(_separationType, '') <> '' Then
             -- Possibly update the separation type
@@ -601,7 +644,7 @@ BEGIN
                        DSInfo.File_Size_Bytes  AS FileSizeBytes,
                        _separationType         AS SeparationType,
                        _optimalSeparationType  AS OptimalSeparationType
-                FROM Tmp_DSInfoTable DSInfo
+                FROM Tmp_DS_Info DSInfo
             LOOP
                 _infoData := format(_formatSpecifier,
                                     _previewData.ScanCount,
@@ -641,7 +684,7 @@ BEGIN
                 SELECT ScanType,
                        ScanCount,
                        ScanFilter
-                FROM Tmp_ScanTypes
+                FROM Tmp_Scan_Types
             LOOP
                 _infoData := format(_formatSpecifier,
                                     _previewData.ScanType,
@@ -678,7 +721,7 @@ BEGIN
                        pg_size_pretty(InstFileSize::bigint) AS FileSize,
                        FileSizeRank,
                        InstFilePath AS FilePath
-                FROM Tmp_InstrumentFiles
+                FROM Tmp_Instrument_Files
                 ORDER BY Entry_ID
             LOOP
                 _infoData := format(_formatSpecifier,
@@ -686,6 +729,47 @@ BEGIN
                                     _previewData.FileSize,
                                     _previewData.FileSizeRank,
                                     _previewData.FilePath
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
+            RAISE INFO '';
+
+            _formatSpecifier := '%-10s %-13s %-16s';
+
+            _infoHead := format(_formatSpecifier,
+                                'EIC m/z',
+                                'Max_Intensity',
+                                'Median_Intensity'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '----------',
+                                         '-------------',
+                                         '----------------'
+                                        );
+
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT Mz,
+                       CASE WHEN Abs(MaxIntensity) < 10000
+                            THEN MaxIntensity::text
+                            ELSE Trim(to_char(MaxIntensity, '9.99EEEE'))
+                       END AS MaxIntensity,
+                       CASE WHEN Abs(MedianIntensity) < 10000
+                            THEN MedianIntensity::text
+                            ELSE Trim(to_char(MedianIntensity, '9.99EEEE'))
+                       END AS MedianIntensity
+                FROM Tmp_EIC_Values
+                ORDER BY Mz
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Mz,
+                                    _previewData.MaxIntensity,
+                                    _previewData.MedianIntensity
                                    );
 
                 RAISE INFO '%', _infoData;
@@ -700,10 +784,11 @@ BEGIN
                             _skipValidation           => true,
                             _showDatasetInfoOnPreview => false);
 
-            DROP TABLE Tmp_DSInfoTable;
-            DROP TABLE Tmp_ScanTypes;
-            DROP TABLE Tmp_InstrumentFiles;
-            DROP TABLE Tmp_DuplicateDatasets;
+            DROP TABLE Tmp_DS_Info;
+            DROP TABLE Tmp_Scan_Types;
+            DROP TABLE Tmp_Instrument_Files;
+            DROP TABLE Tmp_Duplicate_Datasets;
+            DROP TABLE Tmp_EIC_Values;
             RETURN;
         End If;
 
@@ -716,13 +801,13 @@ BEGIN
         -- First look for any entries in the temporary table
         -- where Acq_Time_Start is Null while Acq_Time_End is defined
 
-        UPDATE Tmp_DSInfoTable
+        UPDATE Tmp_DS_Info
         SET Acq_Time_Start = Acq_Time_End
         WHERE Acq_Time_Start IS NULL AND NOT Acq_Time_End IS NULL;
 
         -- Now look for the reverse case
 
-        UPDATE Tmp_DSInfoTable
+        UPDATE Tmp_DS_Info
         SET Acq_Time_End = Acq_Time_Start
         WHERE Acq_Time_End IS NULL AND NOT Acq_Time_Start IS NULL;
 
@@ -734,10 +819,10 @@ BEGIN
                Acq_Time_Start,
                Acq_Time_End
         INTO _acqLengthMinutes, _acqTimeStart, _acqTimeEnd
-        FROM Tmp_DSInfoTable;
+        FROM Tmp_DS_Info;
 
         If _acqLengthMinutes > 10080 Then
-            UPDATE Tmp_DSInfoTable
+            UPDATE Tmp_DS_Info
             SET Acq_Time_End = Acq_Time_Start + INTERVAL '1 hour';
 
             _message := format(
@@ -770,14 +855,14 @@ BEGIN
             scan_count = NewInfo.Scan_Count,
             file_size_bytes = NewInfo.File_Size_Bytes,
             file_info_last_modified = CURRENT_TIMESTAMP
-        FROM Tmp_DSInfoTable NewInfo
+        FROM Tmp_DS_Info NewInfo
         WHERE DS.dataset = NewInfo.Dataset_Name;
 
         -----------------------------------------------
         -- Add/update t_dataset_info using a merge statement
         -----------------------------------------------
 
-        _currentLocation := 'Update T_Dataset_Info using a Merge';
+        _currentLocation := 'Update t_dataset_info using a merge';
 
         MERGE INTO t_dataset_info AS target
         USING ( SELECT dataset_id, scan_count_ms, scan_count_msn,
@@ -788,7 +873,7 @@ BEGIN
                        bpi_median_ms, bpi_median_msn,
                        profile_scan_count_ms, profile_scan_count_msn,
                        centroid_scan_count_ms, centroid_scan_count_msn
-                FROM Tmp_DSInfoTable
+                FROM Tmp_DS_Info
               ) AS Source
         ON (target.dataset_id = Source.dataset_id)
         WHEN MATCHED THEN
@@ -845,7 +930,7 @@ BEGIN
 
         INSERT INTO t_dataset_scan_types (dataset_id, scan_type, scan_count, scan_filter)
         SELECT _datasetID AS Dataset_ID, ScanType, ScanCount, ScanFilter
-        FROM Tmp_ScanTypes
+        FROM Tmp_Scan_Types
         ORDER BY ScanType;
 
         -----------------------------------------------
@@ -881,11 +966,11 @@ BEGIN
         -- Add/update t_dataset_files using a merge statement
         -----------------------------------------------
 
-        _currentLocation := 'Update T_Dataset_Files using a Merge';
+        _currentLocation := 'Update t_dataset_files using a merge';
 
         MERGE INTO t_dataset_files AS target
         USING ( SELECT _datasetID AS Dataset_ID, InstFilePath, InstFileSize, InstFileHash, FileSizeRank
-                FROM Tmp_InstrumentFiles
+                FROM Tmp_Instrument_Files
               ) AS Source
         ON (target.dataset_id = Source.dataset_id And
             target.file_path = Source.InstFilePath And
@@ -907,10 +992,45 @@ BEGIN
         DELETE FROM t_dataset_files target
         WHERE target.Dataset_ID = _datasetID AND
               target.Deleted = false AND
-              NOT EXISTS (SELECT Source.InstFilePath
-                          FROM Tmp_InstrumentFiles Source
+              NOT EXISTS (SELECT 1
+                          FROM Tmp_Instrument_Files Source
                           WHERE target.file_path = Source.InstFilePath AND
                                 Target.file_size_rank = Source.FileSizeRank);
+
+        -----------------------------------------------
+        -- Add/update t_dataset_qc_ions using a merge statement
+        -- There should not be duplicate m/z values in the XML, but the following uses a Group By query just in case
+        -----------------------------------------------
+
+        _currentLocation := 'Update t_dataset_qc_ions using a merge';
+
+        MERGE INTO t_dataset_qc_ions AS target
+        USING ( SELECT _datasetID AS Dataset_ID,
+                       Mz,
+                       Max(MaxIntensity) AS MaxIntensity,
+                       Max(MedianIntensity) AS MedianIntensity
+                FROM Tmp_EIC_Values
+                GROUP BY Mz
+              ) AS Source
+        ON (target.dataset_id = Source.dataset_id And
+            target.mz = Source.Mz)
+        WHEN MATCHED THEN
+            UPDATE SET
+                max_intensity = Source.MaxIntensity,
+                median_intensity = Source.MedianIntensity
+        WHEN NOT MATCHED THEN
+            INSERT (dataset_id, mz, max_intensity, median_intensity)
+            VALUES (Source.Dataset_ID, Source.Mz, Source.MaxIntensity, Source.MedianIntensity);
+
+        _currentLocation := 'Delete extra rows from t_dataset_qc_ions';
+
+        -- Look for extra values that need to be deleted
+
+        DELETE FROM t_dataset_qc_ions target
+        WHERE target.dataset_id = _datasetID AND
+              NOT EXISTS (SELECT 1
+                          FROM Tmp_EIC_Values Source
+                          WHERE target.mz = Source.Mz);
 
         -----------------------------------------------
         -- Possibly validate the dataset type defined for this dataset
@@ -975,10 +1095,11 @@ BEGIN
             CALL post_usage_log_entry ('update_dataset_file_info_xml', _usageMessage);
         End If;
 
-        DROP TABLE Tmp_DSInfoTable;
-        DROP TABLE Tmp_ScanTypes;
-        DROP TABLE Tmp_InstrumentFiles;
-        DROP TABLE Tmp_DuplicateDatasets;
+        DROP TABLE Tmp_DS_Info;
+        DROP TABLE Tmp_Scan_Types;
+        DROP TABLE Tmp_Instrument_Files;
+        DROP TABLE Tmp_Duplicate_Datasets;
+        DROP TABLE Tmp_EIC_Values;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -996,10 +1117,11 @@ BEGIN
             _returnCode := _sqlState;
         End If;
 
-        DROP TABLE IF EXISTS Tmp_DSInfoTable;
-        DROP TABLE IF EXISTS Tmp_ScanTypes;
-        DROP TABLE IF EXISTS Tmp_InstrumentFiles;
-        DROP TABLE IF EXISTS Tmp_DuplicateDatasets;
+        DROP TABLE IF EXISTS Tmp_DS_Info;
+        DROP TABLE IF EXISTS Tmp_Scan_Types;
+        DROP TABLE IF EXISTS Tmp_Instrument_Files;
+        DROP TABLE IF EXISTS Tmp_Duplicate_Datasets;
+        DROP TABLE IF EXISTS Tmp_EIC_Values;
     END;
 
 END
