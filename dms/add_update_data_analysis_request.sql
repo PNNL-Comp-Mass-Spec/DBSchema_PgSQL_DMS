@@ -78,7 +78,6 @@ DECLARE
     _activationState int := 10;
     _activationStateName text;
     _currentEstimatedAnalysisTimeDays int;
-    _logMessage text;
     _alterEnteredByMessage text;
 
     _formatSpecifier text;
@@ -91,6 +90,7 @@ DECLARE
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
+    _logMessage text;
 BEGIN
     _message := '';
     _returnCode := '';

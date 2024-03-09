@@ -77,13 +77,14 @@ DECLARE
     _valTrackUsageWhenInactive int;
     _valScanSourceDir int;
     _valAutoDefineStoragePath int;
-    _logMessage text;
     _msg text;
     _existingName citext;
+
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
+    _logMessage text;
 BEGIN
     _message := '';
     _returnCode := '';

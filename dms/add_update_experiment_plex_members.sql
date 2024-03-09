@@ -131,7 +131,6 @@ DECLARE
     _plexMemberComment text;
     _invalidExperimentCount int := 0;
     _validValues text;
-    _logMessage text;
     _alterEnteredByMessage text;
 
     _dropChannelDataTables boolean := false;
@@ -142,6 +141,7 @@ DECLARE
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
+    _logMessage text;
 BEGIN
     _message := '';
     _returnCode := '';

@@ -85,13 +85,13 @@ DECLARE
     _debugMsg text;
     _targetType int;
     _stateID int;
-    _logMessage text;
     _alterEnteredByMessage text;
 
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
+    _logMessage text;
 BEGIN
     _message := '';
     _returnCode := '';

@@ -29,12 +29,12 @@ CREATE OR REPLACE PROCEDURE public.validate_instrument_group_for_requested_runs(
 DECLARE
     _requestInfo record;
     _allowedDatasetTypes text;
-    _logMessage text;
 
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
+    _logMessage text;
 BEGIN
 
     _message := '';

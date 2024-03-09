@@ -71,7 +71,6 @@ DECLARE
     _matchCount int;
     _newUsername text;
     _stateID int := 1;
-    _logMessage text;
     _targetType int;
     _alterEnteredByMessage text;
 
@@ -79,6 +78,7 @@ DECLARE
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
+    _logMessage text;
 BEGIN
     _message := '';
     _returnCode := '';

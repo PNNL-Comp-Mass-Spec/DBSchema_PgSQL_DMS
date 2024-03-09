@@ -66,11 +66,11 @@ DECLARE
     _previewData record;
     _infoData text;
 
-    _logMessage text;
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
+    _logMessage text;
 BEGIN
     _message := '';
     _returnCode := '';

@@ -37,17 +37,17 @@ DECLARE
     _authorized boolean;
 
     _msg text := '';
-    _logMessage text;
     _logErrors boolean := false;
     _tmpID int;
     _containerList text;
     _newValue text := '';
+    _comment text := '';
 
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
-    _comment text := '';
+    _logMessage text;
 BEGIN
     _message := '';
     _returnCode := '';

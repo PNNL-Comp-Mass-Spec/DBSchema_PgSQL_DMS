@@ -55,12 +55,12 @@ DECLARE
     _logErrors boolean := false;
     _charPos int := 0;
     _userID int := 0;
-    _logMessage text;
 
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
+    _logMessage text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -247,7 +247,6 @@ BEGIN
                 _exceptionContext = pg_exception_context;
 
         If _logErrors Then
-
             _logMessage := format('%s; Username %s', _exceptionMessage, _username);
 
             _message := local_error_handler (

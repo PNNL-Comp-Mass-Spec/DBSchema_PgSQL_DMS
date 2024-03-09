@@ -149,7 +149,6 @@ DECLARE
     _debugMsg text;
     _stateID int := 1;
     _msg text;
-    _logMessage text;
     _targetType int;
     _alterEnteredByMessage text;
 
@@ -157,6 +156,7 @@ DECLARE
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
+    _logMessage text;
 BEGIN
     _message := '';
     _returnCode := '';

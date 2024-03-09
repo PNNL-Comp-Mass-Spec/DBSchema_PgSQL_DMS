@@ -223,7 +223,6 @@ DECLARE
     _jobStateID int;
     _warningWithPrefix text;
     _logErrors boolean := false;
-    _logMessage text;
     _targetType int;
     _alterEnteredByMessage text;
 
@@ -231,6 +230,7 @@ DECLARE
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
+    _logMessage text;
 BEGIN
     _message := '';
     _returnCode := '';

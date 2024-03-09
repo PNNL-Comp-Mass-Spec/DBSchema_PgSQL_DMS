@@ -35,13 +35,13 @@ CREATE OR REPLACE PROCEDURE public.add_update_lc_cart_config_history(IN _id inte
 DECLARE
     _entryDate timestamp;
     _validatedName text;
-
     _logErrors boolean := false;
-    _logMessage text;
+
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
+    _logMessage text;
 BEGIN
     _message := '';
     _returnCode := '';

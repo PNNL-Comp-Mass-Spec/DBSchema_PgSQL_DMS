@@ -100,13 +100,13 @@ DECLARE
     _existingOrganismID int := 0;
     _existingOrgName citext;
     _orgActiveID int;
-    _logMessage text;
     _alterEnteredByMessage text;
 
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
+    _logMessage text;
 BEGIN
     _message := '';
     _returnCode := '';

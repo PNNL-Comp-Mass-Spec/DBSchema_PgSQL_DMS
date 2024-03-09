@@ -141,7 +141,6 @@ DECLARE
     _newStateID int := 1;
     _updateStateID int;
     _pgaAssocID int := 0;
-    _logMessage text;
     _targetType int;
     _alterEnteredByMessage text;
 
@@ -156,6 +155,7 @@ DECLARE
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
+    _logMessage text;
 BEGIN
     _message := '';
     _returnCode := '';

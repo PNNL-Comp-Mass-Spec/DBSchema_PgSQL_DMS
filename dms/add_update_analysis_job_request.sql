@@ -153,7 +153,6 @@ DECLARE
     _profileModeMSnDatasets int := 0;
     _stateID int := -1;
     _newRequestNum int;
-    _logMessage text;
     _targetType int;
     _alterEnteredByMessage text;
 
@@ -161,6 +160,7 @@ DECLARE
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
+    _logMessage text;
 BEGIN
     _message := '';
     _returnCode := '';

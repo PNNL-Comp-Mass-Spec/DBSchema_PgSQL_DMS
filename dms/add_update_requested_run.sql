@@ -194,7 +194,6 @@ DECLARE
     _instrumentGroups text;
     _currentInstrumentGroup citext;
     _requireWP boolean := true;
-    _logMessage text;
     _targetType int;
     _alterEnteredByMessage text;
 
@@ -202,6 +201,7 @@ DECLARE
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
+    _logMessage text;
 BEGIN
     _message := '';
     _returnCode := '';

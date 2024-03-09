@@ -171,13 +171,13 @@ DECLARE
     _activationState int := 10;
     _activationStateName text;
     _currentEstimatedPrepTimeDays int;
-    _logMessage text;
     _alterEnteredByMessage text;
 
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
+    _logMessage text;
 BEGIN
     _message := '';
     _returnCode := '';

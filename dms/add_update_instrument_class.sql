@@ -59,12 +59,12 @@ DECLARE
 
     _xmlParams xml;
     _logErrors boolean := false;
-    _logMessage text;
 
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
+    _logMessage text;
 BEGIN
     _message := '';
     _returnCode := '';
