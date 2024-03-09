@@ -1,12 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_users_from_warehouse
-(
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_users_from_warehouse(boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_users_from_warehouse(IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -32,7 +30,6 @@ AS $$
 **          postgres_fdw   1.1
 **          file_fdw       1.0
 **          tds_fdw        2.0.2
-**
 **
 **          CREATE EXTENSION IF NOT EXISTS tds_fdw;
 **
@@ -76,7 +73,7 @@ AS $$
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          05/14/2016 mem - Add check for duplicate names
 **          08/22/2018 mem - Tabs to spaces
-**          12/15/2024 mem - Ported to PostgreSQL
+**          03/09/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -86,22 +83,22 @@ DECLARE
     _conflictCount int;
     _updateCount int;
     _missingCount int;
-    _sqlState text;
-    _exceptionMessage text;
-    _exceptionDetail text;
-    _exceptionContext text;
 
     _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
     _previewData record;
     _infoData text;
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
 BEGIN
     _message := '';
     _returnCode := '';
 
     BEGIN
-
         ----------------------------------------------------------
         -- Create a temporary table to track the user information
         -- stored in the data warehouse
@@ -109,10 +106,10 @@ BEGIN
 
         CREATE TEMP TABLE Tmp_UserInfo (
             ID int NOT NULL,                 -- User ID
-            Name text NULL,                  -- Last Name, First Name
-            Email text NULL,                 -- E-mail
-            Domain text NULL,                -- PNL
-            Username text NULL,              -- Username on the domain
+            Name citext NULL,                -- Last Name, First Name
+            Email citext NULL,               -- E-mail
+            Domain citext NULL,              -- PNL
+            Username citext NULL,            -- Username on the domain
             PNNL_Payroll text NULL,          -- Payroll number
             Active text NOT NULL,            -- Y if an active login; N if a former staff member
             UpdateRequired boolean NOT NULL  -- Initially false; this procedure will set this to true for staff that need to be updated
@@ -124,56 +121,60 @@ BEGIN
         -- Obtain info for staff
         ----------------------------------------------------------
 
-        INSERT INTO Tmp_UserInfo( user_id,
-                                   name,
-                                   email,
-                                   domain,
-                                   Username,
-                                   PNNL_Payroll,
-                                   active,
-                                   UpdateRequired )
+        INSERT INTO Tmp_UserInfo (
+            ID,
+            Name,
+            Email,
+            Domain,
+            Username,
+            PNNL_Payroll,
+            Active,
+            UpdateRequired
+        )
         SELECT U.user_id,
-               PREFERRED_NAME_FM,
-               INTERNET_EMAIL_ADDRESS,
-               NETWORK_DOMAIN,
-               NETWORK_ID,              -- Username
-               PNNL_PAY_NO,
-               Coalesce(ACTIVE_SW, 'N') AS Active,
+               Src."PREFERRED_NAME_FM",
+               Src."INTERNET_EMAIL_ADDRESS",
+               Src."NETWORK_DOMAIN",
+               Src."NETWORK_ID",              -- Username
+               Src."PNNL_PAY_NO",
+               Coalesce(Src."ACTIVE_SW", 'N') AS Active,
                false AS UpdateRequired
         FROM t_users U
              INNER JOIN pnnldata."VW_PUB_BMI_EMPLOYEE" Src
-               ON U.hid = format('H%s', Src.HANFORD_ID)
+               ON U.hid = format('H%s', Src."HANFORD_ID")
         WHERE U.update = 'Y';
 
         ----------------------------------------------------------
         -- Obtain info for associates
         ----------------------------------------------------------
 
-        INSERT INTO Tmp_UserInfo( user_id,
-                                   name,
-                                   email,
-                                   domain,
-                                   Username,
-                                   PNNL_Payroll,
-                                   active,
-                                   UpdateRequired )
+        INSERT INTO Tmp_UserInfo (
+            ID,
+            Name,
+            Email,
+            Domain,
+            Username,
+            PNNL_Payroll,
+            Active,
+            UpdateRequired
+        )
         SELECT U.user_id,
-               format('%s, %s', Src.last_name, Src.pref_first_name),
-               Src.internet_address,
-               NetworkInfo.NETWORK_DOMAIN,
-               NetworkInfo.NETWORK_ID,          -- Username
+               format('%s, %s', Src."LAST_NAME", Src."PREF_FIRST_NAME"),
+               Src."INTERNET_ADDRESS",
+               NetworkInfo."NETWORK_DOMAIN",
+               NetworkInfo."NETWORK_ID",          -- Username
                NULL AS PNNL_Payroll,
-               Coalesce(Src.pnl_maintained_sw, 'N') AS Active,
+               Coalesce(Src."PNL_MAINTAINED_SW", 'N') AS Active,
                false AS UpdateRequired
         FROM t_users U
              INNER JOIN pnnldata.vw_pub_pnnl_associate Src
-               ON U.hid = format('H%s', Src.HANFORD_ID)
+               ON U.hid = format('H%s', Src."HANFORD_ID")
              LEFT OUTER JOIN pnnldata."VW_PUB_BMI_NT_ACCT_TBL" NetworkInfo
-               ON Src.hanford_id = NetworkInfo.HANFORD_ID
+               ON Src."HANFORD_ID" = NetworkInfo."HANFORD_ID"
              LEFT OUTER JOIN Tmp_UserInfo Target
-               ON U.user_id = Target.user_id
+               ON U.user_id = Target.ID
         WHERE U.update = 'Y' AND
-              Target.user_id IS NULL;
+              Target.ID IS NULL;
 
         ----------------------------------------------------------
         -- Look for users that need to be updated
@@ -182,13 +183,13 @@ BEGIN
         UPDATE Tmp_UserInfo
         SET UpdateRequired = true
         FROM t_users U
-             INNER JOIN Tmp_UserInfo Src
-               ON U.user_id = Src.user_id
-        WHERE Coalesce(U.name, '') <> Coalesce(Src.name, Coalesce(U.name, '')) OR
-              Coalesce(U.email, '') <> Coalesce(Src.email, Coalesce(U.email, '')) OR
-              Coalesce(U.domain, '') <> Coalesce(Src.domain, Coalesce(U.domain, '')) OR
-              Coalesce(U.payroll, '') <> Coalesce(Src.PNNL_Payroll, Coalesce(U.payroll, '')) OR
-              Coalesce(U.active, '') <> Coalesce(Src.active, Coalesce(U.active, ''));
+        WHERE U.user_id = Tmp_UserInfo.ID AND
+              (Coalesce(U.name, '')    <> Coalesce(Tmp_UserInfo.Name,         Coalesce(U.name, '')) OR
+               Coalesce(U.email, '')   <> Coalesce(Tmp_UserInfo.Email,        Coalesce(U.email, '')) OR
+               Coalesce(U.domain, '')  <> Coalesce(Tmp_UserInfo.Domain,       Coalesce(U.domain, '')) OR
+               Coalesce(U.payroll, '') <> Coalesce(Tmp_UserInfo.PNNL_Payroll, Coalesce(U.payroll, '')) OR
+               Coalesce(U.active, '')  <> Coalesce(Tmp_UserInfo.Active,       Coalesce(U.active, ''))
+              );
 
         ----------------------------------------------------------
         -- Look for updates that would result in a name conflict
@@ -207,28 +208,28 @@ BEGIN
 
         -- Store the names of the users that will be updated
 
-        INSERT INTO Tmp_NamesAfterUpdate (user_id, OldName, NewName, Conflict)
-        SELECT U.user_id, U.name, Coalesce(Src.name, U.name) AS NewName, false
+        INSERT INTO Tmp_NamesAfterUpdate (ID, OldName, NewName, Conflict)
+        SELECT U.user_id, U.name, Coalesce(Src.Name, U.name) AS NewName, false
         FROM t_users U
-                INNER JOIN Tmp_UserInfo Src
-                ON U.user_id = Src.user_id
+             INNER JOIN Tmp_UserInfo Src
+               ON U.user_id = Src.ID
         WHERE Src.UpdateRequired;
 
         -- Append the remaining users
 
-        INSERT INTO Tmp_NamesAfterUpdate (user_id, OldName, NewName, Conflict)
+        INSERT INTO Tmp_NamesAfterUpdate (ID, OldName, NewName, Conflict)
         SELECT user_id, name, name, false
         FROM t_users
-        WHERE NOT user_id IN (SELECT user_id FROM Tmp_NamesAfterUpdate);
+        WHERE NOT user_id IN (SELECT ID FROM Tmp_NamesAfterUpdate);
 
         -- Look for conflicts
 
         UPDATE Tmp_NamesAfterUpdate
         SET Conflict = true
-        WHERE NewName IN ( SELECT DupeCheck.NewName
-                           FROM Tmp_NamesAfterUpdate DupeCheck
-                           GROUP BY DupeCheck.NewName
-                           HAVING COUNT(*) > 1 );
+        WHERE NewName IN (SELECT DupeCheck.NewName
+                          FROM Tmp_NamesAfterUpdate DupeCheck
+                          GROUP BY DupeCheck.NewName
+                          HAVING COUNT(*) > 1);
 
         SELECT COUNT(*)
         INTO _conflictCount
@@ -256,34 +257,33 @@ BEGIN
 
         If Not _infoOnly Then
             ----------------------------------------------------------
-            -- Perform the update, skip entries with a potential name conflict
+            -- Perform the update, skipping entries with a potential name conflict
             ----------------------------------------------------------
 
             UPDATE t_users U
-            SET name = CASE WHEN Coalesce(NameConflicts.Conflict, false)
-                            THEN U.name
-                            ELSE Coalesce(Src.Name, U.Name) End,
-                email = Coalesce(Src.email, U.email),
-                domain = Coalesce(Src.domain, U.domain),
-                payroll = Coalesce(Src.PNNL_Payroll, U.payroll),
-                active = Src.active,
+            SET name          = CASE WHEN Coalesce(NameConflicts.Conflict, false)
+                                     THEN U.name
+                                     ELSE Coalesce(Src.Name, U.Name) End,
+                email         = Coalesce(Src.Email, U.email),
+                domain        = Coalesce(Src.Domain, U.domain),
+                payroll       = Coalesce(Src.PNNL_Payroll, U.payroll),
+                active        = Src.Active,
                 last_affected = CURRENT_TIMESTAMP
             FROM Tmp_UserInfo Src
                  LEFT OUTER JOIN Tmp_NamesAfterUpdate NameConflicts
-                   ON U.ID = NameConflicts.ID
-              WHERE U.ID = Src.ID AND U.UpdateRequired;
+                   ON Src.ID = NameConflicts.ID
+            WHERE U.user_id = Src.ID AND Src.UpdateRequired;
             --
             GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
             If _updateCount > 0 Then
-                _message := format('Updated %s %s using the PNNL Data Warehouse', _updateCount, public.check_plural(_updateCount, 'user', 'users');
+                _message := format('Updated %s %s using the PNNL Data Warehouse', _updateCount, public.check_plural(_updateCount, 'user', 'users'));
                 RAISE INFO '%', _message;
 
                 CALL post_log_entry ('Normal', _message, 'Update_Users_From_Warehouse');
             End If;
 
         Else
-
             ----------------------------------------------------------
             -- Preview the updates
             ----------------------------------------------------------
@@ -327,20 +327,20 @@ BEGIN
 
             FOR _previewData IN
                 SELECT U.Name,
-                       Src.name AS Name_New,
+                       Src.Name AS Name_New,
                        U.Email,
-                       Src.email AS Email_New,
+                       Src.Email AS Email_New,
                        U.Domain,
-                       Src.domain AS Domain_New,
+                       Src.Domain AS Domain_New,
                        U.Payroll,
                        Src.PNNL_Payroll AS Payroll_New,
                        U.Username,
                        Src.Username AS Username_New,
                        U.Active,
-                       Src.active AS Active_New
+                       Src.Active AS Active_New
                 FROM t_users U
                      INNER JOIN Tmp_UserInfo Src
-                       ON U.user_id = Src.user_id
+                       ON U.user_id = Src.ID
                 WHERE UpdateRequired
                 ORDER BY U.Name
             LOOP
@@ -374,28 +374,28 @@ BEGIN
         -- Look for users marked for auto-update who were not found in either of the data warehouse views
         ----------------------------------------------------------
 
-        INSERT INTO Tmp_UserProblems (user_id, Warning, Username)
+        INSERT INTO Tmp_UserProblems (ID, Warning, Username)
         SELECT U.user_id,
                'User not found in the Data Warehouse',
                U.username        -- username contains the network login
         FROM t_users U
              LEFT OUTER JOIN Tmp_UserInfo Src
-               ON U.user_id = Src.user_id
+               ON U.user_id = Src.ID
         WHERE U.update = 'Y' AND
-              Src.user_id IS NULL
+              Src.ID IS NULL;
         --
         GET DIAGNOSTICS _missingCount = ROW_COUNT;
 
         If Not _infoOnly And _missingCount > 0 Then
-            _message := format('%s not found in the Data Warehouse', public.check_plural(_missingCount, 'User', 'Users');
+            _message := format('%s not found in the Data Warehouse', public.check_plural(_missingCount, 'User', 'Users'));
 
             SELECT string_agg(Coalesce(U.hid, format('??? Undefined hid for user_id=%s ???', U.user_id)), ', ' ORDER BY U.user_id)
             INTO _addon
             FROM t_users U
-                 INNER JOIN Tmp_UserProblems M
-                    ON U.user_id = M.user_id;
+                 INNER JOIN Tmp_UserProblems P
+                    ON U.user_id = P.ID;
 
-            _message format('%s: %s', _message, _addon);
+            _message = format('%s: %s', _message, _addon);
 
             CALL post_log_entry ('Error', _message, 'Update_Users_From_Warehouse');
 
@@ -406,15 +406,16 @@ BEGIN
         -- Look for users for which t_users.Username does not match Tmp_UserInfo.Username
         ----------------------------------------------------------
 
-        INSERT INTO Tmp_UserProblems (user_id, Warning, Username)
+        INSERT INTO Tmp_UserProblems (ID, Warning, Username)
         SELECT U.user_id,
                'Mismatch between username in DMS and network login in Warehouse',
                Src.Username
-        FROM t_users U INNER JOIN Tmp_UserInfo Src
-               ON U.user_id = Src.user_id
-        WHERE U.update = 'y' AND
+        FROM t_users U
+             INNER JOIN Tmp_UserInfo Src
+               ON U.user_id = Src.ID
+        WHERE U.update = 'Y' AND
               U.username <> Src.Username AND
-              Coalesce(Src.Username, '') <> ''
+              Coalesce(Src.Username, '') <> '';
         --
         GET DIAGNOSTICS _missingCount = ROW_COUNT;
 
@@ -423,12 +424,12 @@ BEGIN
 
             SELECT string_agg(format('%s <> %s',
                                         Coalesce(U.username, format('??? Undefined username for user_id=%s ???', U.user_id)),
-                                        Coalesce(M.Username, '??')),
+                                        Coalesce(P.Username, '??')),
                               ', ' ORDER BY U.user_id)
             INTO _addon
             FROM t_users U
-                 INNER JOIN Tmp_UserProblems M
-                   ON U.user_id = M.user_id;
+                 INNER JOIN Tmp_UserProblems P
+                   ON U.user_id = P.ID;
 
             _message := format('%s: %s', _message, _addon);
 
@@ -437,7 +438,7 @@ BEGIN
             DELETE FROM Tmp_UserProblems;
         End If;
 
-        If _infoOnly And Exists (SELECT * from Tmp_UserProblems) Then
+        If _infoOnly And Exists (SELECT * FROM Tmp_UserProblems) Then
 
             RAISE INFO '';
 
@@ -475,20 +476,20 @@ BEGIN
             RAISE INFO '%', _infoHeadSeparator;
 
             FOR _previewData IN
-                SELECT M.Warning,
+                SELECT P.Warning,
                        U.User_ID,
                        Coalesce(U.hid, format('??? Undefined hid for user_id=%s ???', U.user_id)) AS HID,
-                       Name,
-                       Username,
-                       Status,
-                       Email,
-                       Domain,
-                       M.Username AS Username_Alt,
-                       Active,
-                       public.timestamp_text(Created) AS Created
+                       U.Name,
+                       U.Username,
+                       U.Status,
+                       U.Email,
+                       U.Domain,
+                       P.Username AS Username_Alt,
+                       U.Active,
+                       public.timestamp_text(U.Created) AS Created
                 FROM t_users U
-                     INNER JOIN Tmp_UserProblems M
-                       ON U.user_id = M.user_id
+                     INNER JOIN Tmp_UserProblems P
+                       ON U.user_id = P.ID
                 ORDER BY U.user_id
             LOOP
                 _infoData := format(_formatSpecifier,
@@ -509,6 +510,12 @@ BEGIN
             END LOOP;
 
         End If;
+
+        DROP TABLE Tmp_UserInfo;
+        DROP TABLE Tmp_NamesAfterUpdate;
+        DROP TABLE Tmp_UserProblems;
+
+        RETURN;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -533,4 +540,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_users_from_warehouse IS 'UpdateUsersFromWarehouse';
+
+ALTER PROCEDURE public.update_users_from_warehouse(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_users_from_warehouse(IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_users_from_warehouse(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateUsersFromWarehouse';
+
