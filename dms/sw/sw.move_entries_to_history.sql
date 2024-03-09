@@ -69,12 +69,14 @@ BEGIN
             End If;
 
         Else
-            INSERT INTO logsw.t_job_events( event_id,
-                                            job,
-                                            target_state,
-                                            prev_target_state,
-                                            entered,
-                                            entered_by )
+            INSERT INTO logsw.t_job_events (
+                event_id,
+                job,
+                target_state,
+                prev_target_state,
+                entered,
+                entered_by
+            )
             SELECT event_id,
                    job,
                    target_state,
@@ -133,13 +135,15 @@ BEGIN
             End If;
 
         Else
-            INSERT INTO logsw.t_job_step_events( event_id,
-                                                 job,
-                                                 step,
-                                                 target_state,
-                                                 prev_target_state,
-                                                 entered,
-                                                 entered_by )
+            INSERT INTO logsw.t_job_step_events (
+                event_id,
+                job,
+                step,
+                target_state,
+                prev_target_state,
+                entered,
+                entered_by
+            )
             SELECT event_id,
                    job,
                    step,
@@ -198,12 +202,14 @@ BEGIN
             End If;
 
         Else
-            INSERT INTO logsw.t_job_step_processing_log( event_id,
-                                                         job,
-                                                         step,
-                                                         processor,
-                                                         entered,
-                                                         entered_by )
+            INSERT INTO logsw.t_job_step_processing_log (
+                event_id,
+                job,
+                step,
+                processor,
+                entered,
+                entered_by
+            )
             SELECT event_id,
                    job,
                    step,
@@ -261,15 +267,17 @@ BEGIN
             End If;
 
         Else
-            INSERT INTO logsw.t_log_entries( entry_id,
-                                             posted_by,
-                                             Entered,
-                                             type,
-                                             message,
-                                             entered_by )
+            INSERT INTO logsw.t_log_entries (
+                entry_id,
+                posted_by,
+                entered,
+                type,
+                message,
+                entered_by
+            )
             SELECT entry_id,
                    posted_by,
-                   Entered,
+                   entered,
                    type,
                    message,
                    entered_by

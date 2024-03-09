@@ -193,11 +193,13 @@ BEGIN
         -- RAISE INFO '%: Populate Tmp_IntStds using t_dataset, t_experiments, and t_enzymes', Clock_Timestamp()::time;
     End If;
 
-    INSERT INTO Tmp_IntStds( Internal_Std_Mix_ID,
-                             Protein_Collection_Name,
-                             Dataset_Count,
-                             Experiment_Count,
-                             Enzyme_Contaminant_Collection )
+    INSERT INTO Tmp_IntStds (
+        Internal_Std_Mix_ID,
+        Protein_Collection_Name,
+        Dataset_Count,
+        Experiment_Count,
+        Enzyme_Contaminant_Collection
+    )
     SELECT DISTINCT Internal_Std_Mix_ID,
                     protein_collection_name,
                     Dataset_Count,
@@ -317,11 +319,13 @@ BEGIN
         -- RAISE INFO '%: Add rows to Tmp_IntStds using t_dataset, t_internal_standards, and t_internal_std_parent_mixes', Clock_Timestamp()::time;
     End If;
 
-    INSERT INTO Tmp_IntStds( Internal_Std_Mix_ID,
-                             Protein_Collection_Name,
-                             Dataset_Count,
-                             Experiment_Count,
-                             Enzyme_Contaminant_Collection )
+    INSERT INTO Tmp_IntStds (
+        Internal_Std_Mix_ID,
+        Protein_Collection_Name,
+        Dataset_Count,
+        Experiment_Count,
+        Enzyme_Contaminant_Collection
+    )
     SELECT DSIntStd.internal_standard_id,
            ISPM.protein_collection_name,
            COUNT(DS.dataset_id) AS Dataset_Count,
@@ -466,10 +470,12 @@ BEGIN
     -- Protein_Collection_Name values in Tmp_IntStds
     --------------------------------------------------------------
 
-    INSERT INTO Tmp_ProteinCollectionsToAdd( Protein_Collection_Name,
-                                             Dataset_Count,
-                                             Experiment_Count,
-                                             Enzyme_Contaminant_Collection )
+    INSERT INTO Tmp_ProteinCollectionsToAdd (
+        Protein_Collection_Name,
+        Dataset_Count,
+        Experiment_Count,
+        Enzyme_Contaminant_Collection
+    )
     SELECT I.Protein_Collection_Name,
            SUM(I.Dataset_Count),
            SUM(I.Experiment_Count),

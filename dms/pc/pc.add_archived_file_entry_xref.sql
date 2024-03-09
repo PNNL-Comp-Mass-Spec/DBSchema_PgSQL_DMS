@@ -60,8 +60,7 @@ BEGIN
     -- Action for add mode
     ---------------------------------------------------
 
-    INSERT INTO pc.t_archived_output_file_collections_xref( archived_file_id,
-                                                            protein_collection_id )
+    INSERT INTO pc.t_archived_output_file_collections_xref (archived_file_id, protein_collection_id)
     VALUES(_archivedFileID, _collectionID);
 
 END

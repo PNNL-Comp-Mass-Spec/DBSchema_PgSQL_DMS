@@ -69,7 +69,12 @@ BEGIN
     -- RAISE INFO 'Examining capture tasks and analysis jobs started betwen % and %', _startDate::date, _endDate::date;
 
     If _activeOnly Then
-        INSERT INTO Tmp_ManagerActivity(Who, What, Status_Date, Source)
+        INSERT INTO Tmp_ManagerActivity (
+            Who,
+            What,
+            Status_Date,
+            Source
+        )
         SELECT RankQ.Who,
                RankQ.What,
                RankQ.Start,
@@ -83,7 +88,12 @@ BEGIN
              ) RankQ
         WHERE RankQ.StartRank = 1;
 
-        INSERT INTO Tmp_ManagerActivity(Who, What, Status_Date, Source)
+        INSERT INTO Tmp_ManagerActivity (
+            Who,
+            What,
+            Status_Date,
+            Source
+        )
         SELECT RankQ.Who,
                RankQ.What,
                RankQ.Start,
@@ -112,7 +122,12 @@ BEGIN
 
     -- Populate temporary table with analysis managers that started a job within the date range
 
-    INSERT INTO Tmp_ManagerActivity(Who, What, Status_Date, Source)
+    INSERT INTO Tmp_ManagerActivity (
+        Who,
+        What,
+        Status_Date,
+        Source
+    )
     SELECT format('Analysis: %s', M.processor) AS Who,
            'Idle' AS What,
            M.Most_Recent_Start,
@@ -154,7 +169,12 @@ BEGIN
 
     -- Populate temporary table with capture task managers that started a capture or archive task within the date range
 
-    INSERT INTO Tmp_ManagerActivity(Who, What, Status_Date, Source)
+    INSERT INTO Tmp_ManagerActivity (
+        Who,
+        What,
+        Status_Date,
+        Source
+    )
     SELECT format('Capture: %s', M.processor) AS Who,
            'Idle' AS What,
            M.Most_Recent_Start,

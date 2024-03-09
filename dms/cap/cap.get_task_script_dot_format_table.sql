@@ -40,7 +40,7 @@ BEGIN
     --     </Step>
     --   </JobScript>
 
-    INSERT INTO Tmp_ScriptSteps(step, tool)
+    INSERT INTO Tmp_ScriptSteps (step, tool)
     SELECT XmlTableA.step, Trim(XmlTableA.tool)   --, t1::text AS ScriptXML
     FROM cap.t_scripts Src,
         LATERAL unnest((

@@ -132,7 +132,15 @@ BEGIN
                           ELSE 0
                      END ;
 
-        INSERT INTO Tmp_TX ( Seq, ID, Dataset, Time_Start, Time_End, Duration, Instrument )
+        INSERT INTO Tmp_TX (
+            Seq,
+            ID,
+            Dataset,
+            Time_Start,
+            Time_End,
+            Duration,
+            Instrument
+        )
         VALUES (_index + 1, 0, 'Interval', _endOfPrevious, _startOfNext, _interval, _instrument );
 
         _index := _index + 2;

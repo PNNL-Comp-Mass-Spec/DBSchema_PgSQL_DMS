@@ -76,7 +76,12 @@ BEGIN
     --     </Step>
     --   </JobScript>
 
-    INSERT INTO Tmp_ScriptSteps(step, tool, special_instructions, shared_result_version)
+    INSERT INTO Tmp_ScriptSteps (
+        step,
+        tool,
+        special_instructions,
+        shared_result_version
+    )
     SELECT ScriptQ.step, Trim(ScriptQ.tool), Trim(ScriptQ.special_instructions), StepTools.shared_result_version   --, t1::text AS ScriptXML
     FROM ( SELECT XmlTableA.*
            FROM sw.t_scripts Src,

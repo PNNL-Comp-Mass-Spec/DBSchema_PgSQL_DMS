@@ -76,7 +76,7 @@ BEGIN
     -- Find jobs to delete
     ---------------------------------------------------
 
-    INSERT INTO Tmp_JobsToDelete( job, saved )
+    INSERT INTO Tmp_JobsToDelete (job, saved)
     SELECT job, saved
     FROM sw.t_jobs_history
     WHERE saved < _dateThreshold;

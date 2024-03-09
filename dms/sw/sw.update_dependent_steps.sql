@@ -457,7 +457,7 @@ BEGIN
                         If _infoOnly Then
                             RAISE INFO 'Insert "%" into sw.t_shared_results', _stepInfo.OutputFolderName;
                         Else
-                            INSERT INTO sw.t_shared_results( results_name )
+                            INSERT INTO sw.t_shared_results (results_name)
                             VALUES (_stepInfo.OutputFolderName);
                         End If;
                     End If;

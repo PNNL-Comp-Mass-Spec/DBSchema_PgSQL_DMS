@@ -262,11 +262,13 @@ BEGIN
     -- Copy the mass mod definitions
     -----------------------------------------
 
-    INSERT INTO t_param_file_mass_mods( param_file_id,
-                                        residue_id,
-                                        local_symbol_id,
-                                        mod_type_symbol,
-                                        mass_correction_id )
+    INSERT INTO t_param_file_mass_mods (
+        param_file_id,
+        residue_id,
+        local_symbol_id,
+        mod_type_symbol,
+        mass_correction_id
+    )
     SELECT _destParamFileID AS Param_File_ID,
            residue_id,
            local_symbol_id,
@@ -279,11 +281,13 @@ BEGIN
     _massModsCopied = FOUND;
 
     If _updateParamEntries Then
-        INSERT INTO t_param_entries( entry_sequence_order,
-                                     entry_type,
-                                     entry_specifier,
-                                     entry_value,
-                                     param_file_id )
+        INSERT INTO t_param_entries (
+            entry_sequence_order,
+            entry_type,
+            entry_specifier,
+            entry_value,
+            param_file_id
+        )
         SELECT entry_sequence_order,
                entry_type,
                entry_specifier,

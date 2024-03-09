@@ -152,8 +152,7 @@ BEGIN
 
     _eventType := 4;
 
-    INSERT INTO Tmp_NewEvents( target_id,
-                               event_type_id )
+    INSERT INTO Tmp_NewEvents (target_id, event_type_id)
     SELECT Request_ID,
            _eventType
     FROM Tmp_AnalysisJobRequests
@@ -169,8 +168,7 @@ BEGIN
 
     _eventType := 5;
 
-    INSERT INTO Tmp_NewEvents( target_id,
-                               event_type_id )
+    INSERT INTO Tmp_NewEvents (target_id, event_type_id)
     SELECT Request_ID,
            _eventType
     FROM Tmp_AnalysisJobRequests
@@ -227,8 +225,7 @@ BEGIN
         -- Add new events to table
         ---------------------------------------------------
 
-        INSERT INTO t_notification_event( event_type_id,
-                                          target_id )
+        INSERT INTO t_notification_event (event_type_id, target_id)
         SELECT Tmp_NewEvents.event_type_id,
                Tmp_NewEvents.target_id
         FROM Tmp_NewEvents

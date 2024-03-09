@@ -87,8 +87,7 @@ BEGIN
 
     _eventTypeID := 21; -- 'Dataset Released'
 
-    INSERT INTO Tmp_NewEvents( target_id,
-                               event_type_id )
+    INSERT INTO Tmp_NewEvents (target_id, event_type_id)
     SELECT t_dataset.dataset_id,
            _eventTypeID
     FROM t_dataset
@@ -142,8 +141,7 @@ BEGIN
         -- Add new events to table
         ---------------------------------------------------
 
-        INSERT INTO t_notification_event( event_type_id,
-                                          target_id )
+        INSERT INTO t_notification_event (event_type_id, target_id)
         SELECT Tmp_NewEvents.event_type_id,
                Tmp_NewEvents.target_id
         FROM Tmp_NewEvents

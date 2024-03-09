@@ -211,16 +211,17 @@ BEGIN
     -- Add a new row to dpkg.t_myemsl_uploads
     -----------------------------------------------
 
-    INSERT INTO dpkg.t_myemsl_uploads( data_pkg_id,
-                                       subfolder,
-                                       file_count_new,
-                                       file_count_updated,
-                                       bytes,
-                                       upload_time_seconds,
-                                       status_uri_path_id,
-                                       status_num,
-                                       error_code,
-                                       entered )
+    INSERT INTO dpkg.t_myemsl_uploads (
+        data_pkg_id,
+        subfolder,
+        file_count_new,
+        file_count_updated,
+        bytes,
+        upload_time_seconds,
+        status_uri_path_id,
+        status_num,
+        error_code,
+        entered)
     VALUES( _dataPackageID,
             _subfolder,
             _fileCountNew,

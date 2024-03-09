@@ -35,7 +35,7 @@ BEGIN
         Job int NOT NULL
     );
 
-    INSERT INTO Tmp_ExistingJobs( Job )
+    INSERT INTO Tmp_ExistingJobs (Job)
     SELECT Src.job
     FROM public.get_existing_jobs_matching_job_request(_requestID) Src;
     --

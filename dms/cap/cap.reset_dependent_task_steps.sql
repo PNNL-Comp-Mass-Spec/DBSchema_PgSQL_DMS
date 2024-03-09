@@ -97,7 +97,7 @@ BEGIN
         -- Find steps for the given capture task jobs that need to be reset
         -----------------------------------------------------------
 
-        INSERT INTO Tmp_JobStepsToReset( Job, Step )
+        INSERT INTO Tmp_JobStepsToReset (Job, Step)
         SELECT DISTINCT TS.Job,
                         TS.Step
         FROM cap.t_task_steps TS

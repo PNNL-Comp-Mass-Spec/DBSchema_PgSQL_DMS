@@ -53,7 +53,7 @@ BEGIN
         Actual_Run_Order int PRIMARY KEY GENERATED ALWAYS AS IDENTITY
     );
 
-    INSERT INTO Tmp_Requests ( Request )
+    INSERT INTO Tmp_Requests (Request)
     SELECT RR.request_id
     FROM t_requested_run RR
          INNER JOIN t_dataset DS

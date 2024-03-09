@@ -80,7 +80,11 @@ BEGIN
     ----------------------------------------------------
 
     If _messageFilter = '' Then
-        INSERT INTO Tmp_DuplicateMessages( message, Entry_ID_First, Entry_ID_Last )
+        INSERT INTO Tmp_DuplicateMessages (
+            Message,
+            Entry_ID_First,
+            Entry_ID_Last
+        )
         SELECT L.message, Min(L.entry_id), Max(L.entry_id)
         FROM public.t_log_entries L
         WHERE L.type::citext = _messageType::citext
@@ -89,7 +93,11 @@ BEGIN
     Else
         WHILE _retriesRemaining > 0
         LOOP
-            INSERT INTO Tmp_DuplicateMessages( message, Entry_ID_First, Entry_ID_Last )
+            INSERT INTO Tmp_DuplicateMessages (
+                Message,
+                Entry_ID_First,
+                Entry_ID_Last
+            )
             SELECT L.message, Min(L.entry_id), Max(L.entry_id)
             FROM public.t_log_entries L
             WHERE L.type::citext = _messageType::citext AND

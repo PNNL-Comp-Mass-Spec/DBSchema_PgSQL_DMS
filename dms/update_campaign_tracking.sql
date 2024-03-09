@@ -76,16 +76,18 @@ BEGIN
     -- Make entry in results table for each campaign
     ----------------------------------------------------------
 
-    INSERT INTO Tmp_CampaignStats( campaign_id,
-                                   Most_Recent_Activity,
-                                   Sample_Submission_Count,
-                                   Biomaterial_Count,
-                                   Experiment_Count,
-                                   Dataset_Count,
-                                   Job_Count,
-                                   Run_Request_Count,
-                                   Sample_Prep_Request_Count,
-                                   Data_Package_Count )
+    INSERT INTO Tmp_CampaignStats (
+        Campaign_ID,
+        Most_Recent_Activity,
+        Sample_Submission_Count,
+        Biomaterial_Count,
+        Experiment_Count,
+        Dataset_Count,
+        Job_Count,
+        Run_Request_Count,
+        Sample_Prep_Request_Count,
+        Data_Package_Count
+    )
     SELECT campaign_id,
            created AS Most_Recent_Activity,
            0, 0, 0, 0, 0, 0, 0, 0

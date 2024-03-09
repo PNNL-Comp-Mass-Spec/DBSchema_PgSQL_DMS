@@ -45,8 +45,7 @@ BEGIN
         Usage_Last_12_Months int NOT NULL DEFAULT 0
     );
 
-    INSERT INTO Tmp_UsageStats( Tissue_ID,
-                                Usage_All_Time )
+    INSERT INTO Tmp_UsageStats (Tissue_ID, Usage_All_Time)
     SELECT E.tissue_id,
            COUNT(E.exp_id) AS usage_all_time
     FROM public.T_Experiments E

@@ -146,7 +146,7 @@ BEGIN
     ---------------------------------------------------
 
     If _mode = 'add' And Not _membershipExists Then
-        INSERT INTO t_research_team_membership (team_id, role_id, user_id )
+        INSERT INTO t_research_team_membership (team_id, role_id, user_id)
         VALUES (_researchTeamID, _observerRoleID, _userID);
     End If;
 

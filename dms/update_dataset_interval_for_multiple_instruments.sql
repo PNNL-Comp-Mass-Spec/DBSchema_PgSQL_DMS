@@ -192,15 +192,17 @@ BEGIN
 
             -- Populate Tmp_InstrumentFilter using _instrumentsToProcess
 
-            INSERT INTO Tmp_InstrumentFilter( Instrument )
+            INSERT INTO Tmp_InstrumentFilter (Instrument)
             SELECT Value
             FROM public.parse_delimited_list(_instrumentsToProcess);
 
-            INSERT INTO Tmp_Instruments( Instrument,
-                                         EMSL_Primary_Instrument,
-                                         Tracked,
-                                         EUS_Instrument_ID,
-                                         Use_EUS_ID )
+            INSERT INTO Tmp_Instruments (
+                Instrument,
+                EMSL_Primary_Instrument,
+                Tracked,
+                EUS_Instrument_ID,
+                Use_EUS_ID
+            )
             SELECT InstList.Name,
                    InstList.EUS_Primary_Instrument AS EMSL_Primary_Instrument,
                    InstList.Tracked,
@@ -217,11 +219,13 @@ BEGIN
             -- Get list of tracked instruments
             ---------------------------------------------------
 
-            INSERT INTO Tmp_Instruments( Instrument,
-                                         EMSL_Primary_Instrument,
-                                         Tracked,
-                                         EUS_Instrument_ID,
-                                         Use_EUS_ID )
+            INSERT INTO Tmp_Instruments (
+                Instrument,
+                EMSL_Primary_Instrument,
+                Tracked,
+                EUS_Instrument_ID,
+                Use_EUS_ID
+            )
             SELECT Name,
                    EUS_Primary_Instrument AS EMSL_Primary_Instrument,
                    Tracked,

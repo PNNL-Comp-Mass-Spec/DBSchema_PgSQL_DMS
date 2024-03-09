@@ -55,7 +55,7 @@ BEGIN
     -- Populate temp table
     -----------------------------------------------------------
 
-    INSERT INTO Tmp_Factors ( Request, Factor, Value )
+    INSERT INTO Tmp_Factors (Request, Factor, Value)
     SELECT target_id AS Request,
            name AS Factor,
            value
@@ -95,7 +95,12 @@ BEGIN
     -- Copy from temp table to factors table for _destRequest
     -----------------------------------------------------------
 
-    INSERT INTO t_factor ( type, target_id, name, value )
+    INSERT INTO t_factor (
+        type,
+        target_id,
+        name,
+        value
+    )
     SELECT 'Run_Request' AS Type,
            _destRequestID AS TargetID,
            Factor AS Name,

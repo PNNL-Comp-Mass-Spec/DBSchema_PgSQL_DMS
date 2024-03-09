@@ -130,7 +130,7 @@ BEGIN
             RETURN;
         End If;
 
-        INSERT INTO mc.t_param_value( param_type_id, value, mgr_id, comment )
+        INSERT INTO mc.t_param_value (param_type_id, value, mgr_id, comment)
         SELECT _newParamTypeID AS param_type_id,
                Replace(PV.value::citext, _paramValueSearchText::citext, _paramValueReplaceText::citext) AS value,
                PV.mgr_id,
@@ -152,7 +152,7 @@ BEGIN
             RETURN;
         End If;
 
-        INSERT INTO mc.t_param_value( param_type_id, value, mgr_id, comment )
+        INSERT INTO mc.t_param_value (param_type_id, value, mgr_id, comment)
         SELECT _newParamTypeID AS param_type_id,
                Coalesce(_paramValueOverride, PV.value) AS value,
                PV.mgr_id,

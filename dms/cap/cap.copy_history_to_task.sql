@@ -80,7 +80,7 @@ BEGIN
     -- Bail if capture task job already exists in main tables
     ---------------------------------------------------
 
-    If Exists (SELECT Job FROM cap.t_tasks WHERE Job = _job) Then
+    If Exists (SELECT job FROM cap.t_tasks WHERE job = _job) Then
         _message := format('Job %s already exists in cap.t_tasks; aborting', _job);
         RAISE WARNING '%', _message;
 
@@ -91,20 +91,20 @@ BEGIN
     -- Get capture task job status from most recent completed historic capture task job
     ---------------------------------------------------
 
-    SELECT MAX(Saved)
+    SELECT MAX(saved)
     INTO _dateStamp
     FROM cap.t_tasks_history
-    WHERE Job = _job AND State = 3;
+    WHERE job = _job AND state = 3;
 
     If _dateStamp Is Null Then
         RAISE INFO 'No successful capture task jobs found in cap.t_tasks_history for capture task job %; will look for a failed capture task job', _job;
 
         -- Find most recent historic capture task job, regardless of job state
 
-        SELECT MAX(Saved)
+        SELECT MAX(saved)
         INTO _dateStamp
         FROM cap.t_tasks_history
-        WHERE Job = _job;
+        WHERE job = _job;
 
         If Not FOUND Then
             _message := format('Capture task job not found in t_tasks_history: %s', _job);
@@ -116,11 +116,7 @@ BEGIN
         RAISE INFO 'Match found, saved on %', public.timestamp_text(_dateStamp);
     End If;
 
-    ---------------------------------------------------
-    -- Start transaction
-    ---------------------------------------------------
-
-    Begin
+    BEGIN
 
         _newJob := _job;
         _jobDateDescription := format('capture task job %s and date %s', _job, _dateStamp);
@@ -135,16 +131,18 @@ BEGIN
                 RAISE INFO '%', _currentLocation;
             End If;
 
-            INSERT INTO cap.t_tasks ( Job, Priority, Script, State,
-                                      Dataset, Dataset_ID, Results_Folder_Name,
-                                      Imported, Start, Finish )
+            INSERT INTO cap.t_tasks (
+                job, priority, script, state,
+                dataset, dataset_id, results_folder_name,
+                imported, start, finish
+            )
             OVERRIDING SYSTEM VALUE
-            SELECT Job, Priority, Script, State,
-                   Dataset, Dataset_ID, Results_Folder_Name,
-                   Imported, Start, Finish
+            SELECT job, priority, script, state,
+                   dataset, dataset_id, results_folder_name,
+                   imported, start, finish
             FROM cap.t_tasks_history
-            WHERE Job = _job AND
-                  Saved = _dateStamp;
+            WHERE job = _job AND
+                  saved = _dateStamp;
 
             If Not FOUND Then
                 _message := format('No rows were added to cap.t_tasks from cap.t_tasks_history for %s', _jobDateDescription);
@@ -163,16 +161,18 @@ BEGIN
                 RAISE INFO '%', _currentLocation;
             End If;
 
-            INSERT INTO cap.t_tasks( Priority, Script, State,
-                                     Dataset, Dataset_ID, Results_Folder_Name,
-                                     Imported, Start, Finish )
-            SELECT H.Priority, H.Script, H.State,
-                   H.Dataset, H.Dataset_ID, H.Results_Folder_Name,
-                   CURRENT_TIMESTAMP, H.Start, H.Finish
+            INSERT INTO cap.t_tasks (
+                priority, script, state,
+                dataset, dataset_id, results_folder_name,
+                imported, start, finish
+            )
+            SELECT H.priority, H.script, H.state,
+                   H.dataset, H.dataset_id, H.results_folder_name,
+                   CURRENT_TIMESTAMP, H.start, H.finish
             FROM cap.t_tasks_history H
-            WHERE H.Job = _job AND
-                  H.Saved = _dateStamp
-            RETURNING Job
+            WHERE H.job = _job AND
+                  H.saved = _dateStamp
+            RETURNING job
             INTO _newJob;
 
             If Not FOUND Then
@@ -199,41 +199,39 @@ BEGIN
         _currentLocation := format('Insert into cap.t_task_steps for %s', _jobDateDescription);
 
         INSERT INTO cap.t_task_steps (
-            Job,
-            Step,
-            Tool,
-            State,
-            Input_Folder_Name,
-            Output_Folder_Name,
-            Processor,
-            Start,
-            Finish,
-            Tool_Version_ID,
-            Completion_Code,
-            Completion_Message,
-            Evaluation_Code,
-            Evaluation_Message
+            job,
+            step,
+            tool,
+            state,
+            input_folder_name,
+            output_folder_name,
+            processor,
+            start,
+            finish,
+            tool_version_id,
+            completion_code,
+            completion_message,
+            evaluation_code,
+            evaluation_message
         )
         SELECT
-            _newJob AS Job,
-            Step,
-            Tool,
-            State,
-            Input_Folder_Name,
-            Output_Folder_Name,
-            Processor,
-            Start,
-            Finish,
-            Tool_Version_ID,
-            Completion_Code,
-            Completion_Message,
-            Evaluation_Code,
-            Evaluation_Message
-        FROM
-            cap.t_task_steps_history
-        WHERE
-            Job = _job AND
-            Saved = _dateStamp;
+            _newJob AS job,
+            step,
+            tool,
+            state,
+            input_folder_name,
+            output_folder_name,
+            processor,
+            start,
+            finish,
+            tool_version_id,
+            completion_code,
+            completion_message,
+            evaluation_code,
+            evaluation_message
+        FROM cap.t_task_steps_history
+        WHERE job = _job AND
+              saved = _dateStamp;
         --
         GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
@@ -245,9 +243,9 @@ BEGIN
         -- This is a safety feature to avoid capture task job steps from starting inadvertently
 
         UPDATE cap.t_task_steps
-        SET State = 7
-        WHERE Job = _newJob AND
-              State IN (1, 2);
+        SET state = 7
+        WHERE job = _newJob AND
+              state IN (1, 2);
 
         ---------------------------------------------------
         -- Copy parameters
@@ -256,17 +254,14 @@ BEGIN
         _currentLocation := format('Insert into cap.t_task_parameters for %s', _jobDateDescription);
 
         INSERT INTO cap.t_task_parameters (
-            Job,
-            Parameters
+            job,
+            parameters
         )
-        SELECT
-            _newJob AS Job,
-            Parameters
-        FROM
-            cap.t_task_parameters_history
-        WHERE
-            Job = _job AND
-            Saved = _dateStamp;
+        SELECT _newJob AS job,
+               parameters
+        FROM cap.t_task_parameters_history
+        WHERE job = _job AND
+              saved = _dateStamp;
         --
         GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
@@ -286,51 +281,53 @@ BEGIN
         WHERE EXISTS
             (  SELECT 1
                FROM cap.t_task_step_dependencies TSD
-                    INNER JOIN ( SELECT D.Job,
-                                        D.Step
+                    INNER JOIN ( SELECT D.job,
+                                        D.step
                                  FROM cap.t_task_step_dependencies D
                                       LEFT OUTER JOIN cap.t_task_step_dependencies_history H
-                                        ON D.Job = H.Job AND
-                                           D.Step = H.Step AND
+                                        ON D.job = H.job AND
+                                           D.step = H.step AND
                                            D.Target_Step = H.Target_Step
-                                 WHERE D.Job = _newJob AND
-                                       H.Job IS NULL
+                                 WHERE D.job = _newJob AND
+                                       H.job IS NULL
                                 ) DeleteQ
-                      ON TSD.Job = DeleteQ.Job AND
-                         TSD.Step = DeleteQ.Step
+                      ON TSD.job = DeleteQ.job AND
+                         TSD.step = DeleteQ.step
                 WHERE target.job = TSD.job AND
                       target.step = TSD.step
             );
 
         -- Check whether this capture task job has entries in t_task_step_dependencies_history
 
-        If Not Exists (SELECT Job FROM cap.t_task_step_dependencies_history WHERE Job = _job) Then
+        If Not Exists (SELECT job FROM cap.t_task_step_dependencies_history WHERE job = _job) Then
             -- Capture task job did not have cached dependencies
             -- Look for a capture task job that used the same script
 
-            SELECT MIN(H.Job)
+            SELECT MIN(H.job)
             INTO _similarJob
             FROM cap.t_task_step_dependencies_history H
-                 INNER JOIN ( SELECT Job
+                 INNER JOIN ( SELECT job
                               FROM cap.t_tasks_history
-                              WHERE Job > _job AND
-                                    Script = ( SELECT Script
+                              WHERE job > _job AND
+                                    script = ( SELECT script
                                                FROM cap.t_tasks_history
-                                               WHERE Job = _job AND
-                                                     Most_Recent_Entry = 1 )
+                                               WHERE job = _job AND
+                                                     most_recent_entry = 1 )
                              ) SimilarJobQ
-                   ON H.Job = SimilarJobQ.Job;
+                   ON H.job = SimilarJobQ.job;
 
             If FOUND Then
                 If _debugMode Then
                     RAISE INFO 'Insert Into cap.t_task_step_dependencies using model capture task job %', _similarJob;
                 End If;
 
-                INSERT INTO cap.t_task_step_dependencies(Job, Step, Target_Step, Condition_Test, Test_Value,
-                                                         Evaluated, Triggered, Enable_Only)
-                SELECT _newJob AS Job, Step, Target_Step, Condition_Test, Test_Value, 0 AS Evaluated, 0 AS Triggered, Enable_Only
+                INSERT INTO cap.t_task_step_dependencies (
+                    job, step, target_step, condition_test, test_value,
+                    evaluated, triggered, enable_only
+                )
+                SELECT _newJob AS job, step, target_step, condition_test, test_value, 0 as evaluated, 0 as triggered, enable_only
                 FROM cap.t_task_step_dependencies_history H
-                WHERE Job = _similarJob;
+                WHERE job = _similarJob;
                 --
                 GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
@@ -346,16 +343,23 @@ BEGIN
                     RAISE INFO 'Create default dependencies for capture task job %', _newJob;
                 End If;
 
-                INSERT INTO cap.t_task_step_dependencies( Job, Step, Target_Step, Evaluated, Triggered, Enable_Only )
-                SELECT Job,
-                       Step,
-                       Step - 1 AS Target_Step,
-                       0 AS Evaluated,
-                       0 AS Triggered,
-                       0 AS Enable_Only
+                INSERT INTO cap.t_task_step_dependencies (
+                    job,
+                    step,
+                    target_step,
+                    evaluated,
+                    triggered,
+                    enable_only
+                )
+                SELECT job,
+                       step,
+                       step - 1 as target_step,
+                       0 as evaluated,
+                       0 as triggered,
+                       0 as enable_only
                 FROM cap.t_task_steps
-                WHERE Job = _newJob AND
-                      Step > 1;
+                WHERE job = _newJob AND
+                      step > 1;
                 --
                 GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
@@ -372,24 +376,24 @@ BEGIN
 
             -- Now add/update the capture task job step dependencies
 
-            INSERT INTO cap.t_task_step_dependencies (Job, Step, Target_Step, Condition_Test, Test_Value, Evaluated, Triggered, Enable_Only)
-            SELECT _newJob AS Job,
-                   Step,
-                   Target_Step,
-                   Condition_Test,
-                   Test_Value,
-                   Evaluated,
-                   Triggered,
-                   Enable_Only
+            INSERT INTO cap.t_task_step_dependencies (job, step, target_step, condition_test, test_value, evaluated, triggered, enable_only)
+            SELECT _newJob AS job,
+                   step,
+                   target_step,
+                   condition_test,
+                   test_value,
+                   evaluated,
+                   triggered,
+                   enable_only
             FROM cap.t_task_step_dependencies_history
-            WHERE Job = _job
-            ON CONFLICT (Job, Step, Target_Step)
+            WHERE job = _job
+            ON CONFLICT (job, step, target_step)
             DO UPDATE SET
-                Condition_Test = EXCLUDED.Condition_Test,
-                Test_Value = EXCLUDED.Test_Value,
-                Evaluated = EXCLUDED.Evaluated,
-                Triggered = EXCLUDED.Triggered,
-                Enable_Only = EXCLUDED.Enable_Only;
+                condition_test = EXCLUDED.condition_test,
+                test_value = EXCLUDED.test_value,
+                evaluated = EXCLUDED.evaluated,
+                triggered = EXCLUDED.triggered,
+                enable_only = EXCLUDED.enable_only;
 
         End If;
 
@@ -416,7 +420,7 @@ BEGIN
     -- Manually create the capture task job parameters if they were not present in t_task_parameters
     ---------------------------------------------------
 
-    If Not Exists (SELECT Job FROM cap.t_task_parameters WHERE Job = _newJob) Then
+    If Not Exists (SELECT job FROM cap.t_task_parameters WHERE job = _newJob) Then
         If _debugMode Then
             RAISE INFO 'Capture task job % was not found in cap.t_task_parameters_history; re-generating the parameters using cap.update_parameters_for_task', _newJob;
         End If;
@@ -445,16 +449,16 @@ BEGIN
     ---------------------------------------------------
 
     UPDATE cap.t_task_steps target
-    SET Dependencies = CountQ.dependencies
-    FROM ( SELECT Step,
+    SET dependencies = CountQ.dependencies
+    FROM ( SELECT step,
                   COUNT(job) AS dependencies
            FROM cap.t_task_step_dependencies
-           WHERE Job = _newJob
-           GROUP BY Step
+           WHERE job = _newJob
+           GROUP BY step
          ) CountQ
-    WHERE target.Job = _newJob AND
-          CountQ.Step = target.Step AND
-          CountQ.Dependencies > target.Dependencies;
+    WHERE target.job = _newJob AND
+          CountQ.step = target.step AND
+          CountQ.dependencies > target.dependencies;
 
     If _job = _newJob Then
         _message := format('Copied job %s from the history tables to the active task tables', _job);

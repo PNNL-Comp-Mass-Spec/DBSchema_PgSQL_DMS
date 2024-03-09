@@ -389,17 +389,19 @@ BEGIN
 
             -- The move_jobs_to_main_tables procedure requires that the job already be in sw.t_jobs
 
-            INSERT INTO sw.t_jobs( job,
-                                   priority,
-                                   script,
-                                   state,
-                                   dataset,
-                                   dataset_id,
-                                   transfer_folder_path,
-                                   comment,
-                                   storage_server,
-                                   owner_username,
-                                   data_pkg_id )
+            INSERT INTO sw.t_jobs (
+                job,
+                priority,
+                script,
+                state,
+                dataset,
+                dataset_id,
+                transfer_folder_path,
+                comment,
+                storage_server,
+                owner_username,
+                data_pkg_id
+            )
             SELECT Job,
                    Priority,
                    Script,
@@ -491,7 +493,7 @@ BEGIN
             If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'sw' AND tablename::citext = 't_debug_tmp_jobs') Then
                 DELETE FROM sw.t_debug_tmp_jobs;
 
-                INSERT INTO sw.t_debug_tmp_jobs(Job, Priority, Script, State, Dataset, Dataset_ID, Results_Directory_Name)
+                INSERT INTO sw.t_debug_tmp_jobs (Job, Priority, Script, State, Dataset, Dataset_ID, Results_Directory_Name)
                 SELECT Job, Priority, Script, State, Dataset, Dataset_ID, Results_Directory_Name
                 FROM Tmp_Jobs;
             Else

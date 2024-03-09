@@ -113,7 +113,7 @@ BEGIN
                 target.Job_Usage_Last_Year IS DISTINCT FROM StatsQ.JobCountLastYear
               );
 
-        INSERT INTO Tmp_Update_Stats( Task, Runtime_Seconds )
+        INSERT INTO Tmp_Update_Stats (Task, Runtime_Seconds)
         SELECT 'Update job counts in t_param_files',
                Extract(epoch from (clock_timestamp() - _startTime));
 
@@ -151,7 +151,7 @@ BEGIN
                 target.Job_Usage_Last_Year IS DISTINCT FROM StatsQ.JobCountLastYear
               );
 
-        INSERT INTO Tmp_Update_Stats( Task, Runtime_Seconds )
+        INSERT INTO Tmp_Update_Stats (Task, Runtime_Seconds)
         SELECT 'Update job counts in t_settings_files',
                Extract(epoch from (clock_timestamp() - _startTime));
 
@@ -186,7 +186,7 @@ BEGIN
                 target.dataset_usage_last_year IS DISTINCT FROM StatsQ.DatasetCountLastYear
               );
 
-        INSERT INTO Tmp_Update_Stats( Task, Runtime_Seconds )
+        INSERT INTO Tmp_Update_Stats (Task, Runtime_Seconds)
         SELECT 'Update dataset counts in t_lc_cart_configuration',
                Extract(epoch from (clock_timestamp() - _startTime));
 
@@ -228,7 +228,7 @@ BEGIN
                   target.dataset_usage_last_year IS DISTINCT FROM StatsQ.DatasetCountLastYear
               );
 
-        INSERT INTO Tmp_Update_Stats( Task, Runtime_Seconds )
+        INSERT INTO Tmp_Update_Stats (Task, Runtime_Seconds)
         SELECT 'Update dataset counts in t_instrument_group_allowed_ds_type',
                Extract(epoch from (clock_timestamp() - _startTime));
 
@@ -240,8 +240,11 @@ BEGIN
 
         -- Add missing rows to t_cached_instrument_dataset_type_usage
 
-        INSERT INTO t_cached_instrument_dataset_type_usage( instrument_id, dataset_type )
-        SELECT Distinct InstName.instrument_id,
+        INSERT INTO t_cached_instrument_dataset_type_usage (
+            instrument_id,
+            dataset_type
+        )
+        SELECT DISTINCT InstName.instrument_id,
                GT.dataset_type AS Dataset_Type
         FROM t_instrument_name InstName
              INNER JOIN t_instrument_group_allowed_ds_type GT
@@ -298,7 +301,7 @@ BEGIN
                   target.dataset_usage_last_year IS DISTINCT FROM StatsQ.DatasetCountLastYear
               );
 
-        INSERT INTO Tmp_Update_Stats( Task, Runtime_Seconds )
+        INSERT INTO Tmp_Update_Stats (Task, Runtime_Seconds)
         SELECT 'Update dataset counts in t_cached_instrument_dataset_type_usage',
                Extract(epoch from (clock_timestamp() - _startTime));
 
@@ -312,7 +315,7 @@ BEGIN
                         _message    => _message,        -- Output
                         _returnCode => _returnCode);    -- Output
 
-        INSERT INTO Tmp_Update_Stats( Task, Runtime_Seconds )
+        INSERT INTO Tmp_Update_Stats (Task, Runtime_Seconds)
         SELECT 'Update usage counts for protein collections',
                Extract(epoch from (clock_timestamp() - _startTime));
     End If;
@@ -408,13 +411,18 @@ BEGIN
                       label = _statEntry.Label AND
                       value IS DISTINCT FROM _value;
             Else
-                INSERT INTO t_general_statistics( category, label, value, Last_Affected)
+                INSERT INTO t_general_statistics (
+                    category,
+                    label,
+                    value,
+                    last_affected
+                )
                 VALUES(_statEntry.Category, _statEntry.Label, _value, CURRENT_TIMESTAMP);
             End If;
 
         END LOOP;
 
-        INSERT INTO Tmp_Update_Stats( Task, Runtime_Seconds )
+        INSERT INTO Tmp_Update_Stats (Task, Runtime_Seconds)
         SELECT 'Update values in t_general_statistics',
                Extract(epoch from (clock_timestamp() - _startTime));
 
@@ -445,7 +453,7 @@ BEGIN
         WHERE target.request_id = StatsQ.request_id AND
               target.job_count IS DISTINCT FROM StatsQ.JobCount;
 
-        INSERT INTO Tmp_Update_Stats( Task, Runtime_Seconds )
+        INSERT INTO Tmp_Update_Stats (Task, Runtime_Seconds)
         SELECT 'Update job counts in t_analysis_job_request',
                Extract(epoch from (clock_timestamp() - _startTime));
     End If;

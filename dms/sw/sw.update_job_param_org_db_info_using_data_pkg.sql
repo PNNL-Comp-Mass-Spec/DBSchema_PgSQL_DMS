@@ -139,11 +139,13 @@ BEGIN
         -- Lookup the OrgDB info for jobs associated with data package _dataPackageID
         ---------------------------------------------------
 
-        INSERT INTO Tmp_OrgDBInfo( OrganismName,
-                                   LegacyFastaFileName,
-                                   ProteinCollectionList,
-                                   ProteinOptions,
-                                   UseCount )
+        INSERT INTO Tmp_OrgDBInfo (
+            OrganismName,
+            LegacyFastaFileName,
+            ProteinCollectionList,
+            ProteinOptions,
+            UseCount
+        )
         SELECT Org.Organism,
                CASE
                    WHEN Coalesce(J.Protein_Collection_List, 'na') <> 'na' AND

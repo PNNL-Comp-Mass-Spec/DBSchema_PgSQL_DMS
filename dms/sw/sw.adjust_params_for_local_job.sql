@@ -137,7 +137,7 @@ BEGIN
                            'DatasetFolderName',
                            'InstrumentDataPurged');
 
-            INSERT INTO Tmp_Job_Params ( Section, Name, Value )
+            INSERT INTO Tmp_Job_Params (Section, Name, Value)
             SELECT 'JobParameters', 'DatasetArchivePath', _jobInfo.ArchiveFolderPath
             UNION
             SELECT 'JobParameters', 'DatasetName', _jobInfo.Dataset

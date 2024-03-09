@@ -68,12 +68,14 @@ BEGIN
 
         Else
 
-            INSERT INTO logcap.t_task_events( event_id,
-                                              job,
-                                              target_state,
-                                              prev_target_state,
-                                              entered,
-                                              entered_by )
+            INSERT INTO logcap.t_task_events (
+                event_id,
+                job,
+                target_state,
+                prev_target_state,
+                entered,
+                entered_by
+            )
             SELECT event_id,
                    job,
                    target_state,
@@ -125,13 +127,15 @@ BEGIN
 
         Else
 
-            INSERT INTO logcap.t_task_step_events( event_id,
-                                                   job,
-                                                   step,
-                                                   target_state,
-                                                   prev_target_state,
-                                                   entered,
-                                                   entered_by )
+            INSERT INTO logcap.t_task_step_events (
+                event_id,
+                job,
+                step,
+                target_state,
+                prev_target_state,
+                entered,
+                entered_by
+            )
             SELECT event_id,
                    job,
                    step,
@@ -185,12 +189,14 @@ BEGIN
 
         Else
 
-            INSERT INTO logcap.t_task_step_processing_log( event_id,
-                                                           job,
-                                                           step,
-                                                           processor,
-                                                           entered,
-                                                           entered_by )
+            INSERT INTO logcap.t_task_step_processing_log (
+                event_id,
+                job,
+                step,
+                processor,
+                entered,
+                entered_by
+            )
             SELECT event_id,
                    job,
                    step,
@@ -243,12 +249,14 @@ BEGIN
 
         Else
 
-            INSERT INTO logcap.t_log_entries( entry_id,
-                                              posted_by,
-                                              entered,
-                                              type,
-                                              message,
-                                              entered_by )
+            INSERT INTO logcap.t_log_entries (
+                entry_id,
+                posted_by,
+                entered,
+                type,
+                message,
+                entered_by
+            )
             SELECT entry_id,
                    posted_by,
                    entered,

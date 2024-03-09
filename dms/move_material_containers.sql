@@ -143,7 +143,17 @@ BEGIN
     -- Populate the table
     ---------------------------------------------------
 
-    INSERT INTO Tmp_ContainersToProcess (Container_ID, Container, Type, Location_ID, Location_Tag, Shelf, Rack, Row, Col )
+    INSERT INTO Tmp_ContainersToProcess (
+        Container_ID,
+        Container,
+        Type,
+        Location_ID,
+        Location_Tag,
+        Shelf,
+        Rack,
+        Row,
+        Col
+    )
     SELECT MC.container_id,
            MC.container,
            MC.type,

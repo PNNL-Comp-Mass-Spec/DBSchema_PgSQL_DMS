@@ -55,7 +55,12 @@ BEGIN
     -- Summarize jobs by script, instrument group, and year
     ---------------------------------------------------
 
-    INSERT INTO Tmp_Pipeline_Job_Stats( Script, Instrument_Group, Year, Jobs )
+    INSERT INTO Tmp_Pipeline_Job_Stats (
+        Script,
+        Instrument_Group,
+        Year,
+        Jobs
+    )
     SELECT JH.Script,
            Coalesce(InstName.instrument_group, '') AS Instrument_Group,
            Extract(year from JH.start) AS Year,

@@ -160,13 +160,15 @@ BEGIN
         If Not _infoOnly Then
             If Exists (SELECT Network_ID FROM Tmp_NewUsers WHERE NOT Network_ID IS NULL) Then
 
-                INSERT INTO t_users( username,       -- Network_ID (aka login) goes in the username field
-                                     name,
-                                     hid,
-                                     payroll,        -- payroll number goes in the payroll field; this has been null for new users since 2010
-                                     status,
-                                     update,
-                                     comment )
+                INSERT INTO t_users (
+                    username,       -- Network_ID (aka login) goes in the username field
+                    name,
+                    hid,
+                    payroll,        -- payroll number goes in the payroll field; this has been null for new users since 2010
+                    status,
+                    update,
+                    comment
+                )
                 SELECT Network_ID,
                        LastName_FirstName,
                        format('H%s', hid),

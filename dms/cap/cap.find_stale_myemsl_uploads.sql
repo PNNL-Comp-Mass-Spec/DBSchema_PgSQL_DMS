@@ -76,12 +76,14 @@ BEGIN
         RetrySucceeded boolean
     );
 
-    INSERT INTO Tmp_StaleUploads( entry_id,
-                                   job,
-                                   dataset_id,
-                                   Subdirectory,
-                                   entered,
-                                   RetrySucceeded)
+    INSERT INTO Tmp_StaleUploads (
+        Entry_ID,
+        Job,
+        Dataset_ID,
+        Subdirectory,
+        Entered,
+        RetrySucceeded
+    )
     SELECT entry_id,
            job,
            dataset_id,

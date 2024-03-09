@@ -138,7 +138,13 @@ BEGIN
 
         TRUNCATE TABLE Tmp_FactorUpdates;
 
-        INSERT INTO Tmp_FactorUpdates(RequestID, FactorType, FactorName, FactorValue, ValidFactor)
+        INSERT INTO Tmp_FactorUpdates (
+            RequestID,
+            FactorType,
+            FactorName,
+            FactorValue,
+            ValidFactor
+        )
         SELECT XmlQ.RequestID, Trim(XmlQ.FactorType), Trim(XmlQ.FactorName), Trim(XmlQ.FactorValue), false AS ValidFactor
         FROM (
             SELECT xmltable.*

@@ -309,7 +309,7 @@ BEGIN
             -- Remove any duplicates that may be present
             ---------------------------------------------------
 
-            INSERT INTO Tmp_DatasetInfo ( Dataset_Name )
+            INSERT INTO Tmp_DatasetInfo (Dataset_Name)
             SELECT DISTINCT DS.dataset
             FROM dpkg.t_data_package_datasets DPD
                  INNER JOIN public.t_dataset DS

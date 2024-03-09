@@ -148,7 +148,11 @@ BEGIN
                 Last_Affected = CURRENT_TIMESTAMP
             WHERE Item = _currentItemID;
 
-            INSERT INTO t_predefined_analysis_scheduling_queue_history( dataset_id, dataset_rating_id, jobs_created )
+            INSERT INTO t_predefined_analysis_scheduling_queue_history (
+                dataset_id,
+                dataset_rating_id,
+                jobs_created
+            )
             VALUES (_currentItem.DatasetID, _currentItem.DatasetRatingID, Coalesce(_jobsCreated, 0));
         End If;
 

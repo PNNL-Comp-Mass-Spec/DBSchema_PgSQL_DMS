@@ -208,7 +208,7 @@ BEGIN
             --                 _usageText, _val, _startOfValue, _endOfValue, _commentToSearch;
             -- End If;
 
-            INSERT INTO Tmp_UsageText ( UsageText )
+            INSERT INTO Tmp_UsageText (UsageText)
             VALUES (_usageText);
 
             _val := Replace(_val, '%', '');

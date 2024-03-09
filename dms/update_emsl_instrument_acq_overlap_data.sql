@@ -158,10 +158,12 @@ BEGIN
         End If;
 
         If _year <= 0 Then
-            INSERT INTO Tmp_DatasetStartTimes( DMS_Inst_ID,
-                                               ItemType,
-                                               StartTime,
-                                               Datasets )
+            INSERT INTO Tmp_DatasetStartTimes (
+                DMS_Inst_ID,
+                ItemType,
+                StartTime,
+                Datasets
+            )
             SELECT dms_inst_id,
                    type,
                    start,
@@ -186,10 +188,12 @@ BEGIN
                 _endDate := _startDate + INTERVAL '1 month';
             End If;
 
-            INSERT INTO Tmp_DatasetStartTimes( DMS_Inst_ID,
-                                               ItemType,
-                                               StartTime,
-                                               Datasets )
+            INSERT INTO Tmp_DatasetStartTimes (
+                DMS_Inst_ID,
+                ItemType,
+                StartTime,
+                Datasets
+            )
             SELECT dms_inst_id,
                    type,
                    start,
@@ -344,13 +348,15 @@ BEGIN
                 _updateCountOverall := _updateCountOverall + _updateCount;
             Else
 
-                INSERT INTO Tmp_UpdatesToApply( DMS_Inst_ID,
-                                                ItemType,
-                                                Start,
-                                                Dataset_ID,
-                                                Seq,
-                                                Dataset,
-                                                Dataset_ID_Acq_Overlap )
+                INSERT INTO Tmp_UpdatesToApply (
+                    DMS_Inst_ID,
+                    ItemType,
+                    Start,
+                    Dataset_ID,
+                    Seq,
+                    Dataset,
+                    Dataset_ID_Acq_Overlap
+                )
                 SELECT InstUsage.DMS_Inst_ID,
                        InstUsage.Type,
                        InstUsage.Start,

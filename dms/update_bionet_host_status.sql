@@ -55,9 +55,11 @@ BEGIN
     -- Find the most recent dataset for each instrument associated with an entry in t_bionet_hosts
     -----------------------------------------
 
-    INSERT INTO Tmp_Hosts( host,
-                           instrument,
-                           MostRecentDataset )
+    INSERT INTO Tmp_Hosts (
+        Host,
+        Instrument,
+        MostRecentDataset
+    )
     SELECT BionetHosts.host,
            Inst.instrument,
            MAX(DS.created) AS MostRecentDataset

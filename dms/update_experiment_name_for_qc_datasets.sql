@@ -71,7 +71,7 @@ BEGIN
     -- This list is modelled after the list in UDF GetDatasetPriority
     ---------------------------------------------------
 
-    INSERT INTO Tmp_QCExperiments (ExpID, Experiment )
+    INSERT INTO Tmp_QCExperiments (ExpID, Experiment)
     SELECT exp_id, experiment
     FROM t_experiments
     WHERE (experiment SIMILAR TO 'QC[_-]Shew[_-][0-9][0-9][_-][0-9][0-9]' OR
@@ -87,11 +87,13 @@ BEGIN
         ORDER BY ExpID
     LOOP
 
-        INSERT INTO Tmp_DatasetsToUpdate( Dataset_ID,
-                                          OldExperiment,
-                                          NewExperiment,
-                                          NewExpID,
-                                          Ambiguous )
+        INSERT INTO Tmp_DatasetsToUpdate (
+            Dataset_ID,
+            OldExperiment,
+            NewExperiment,
+            NewExpID,
+            Ambiguous
+        )
         SELECT DS.dataset_id,
                E.experiment,
                _experiment,

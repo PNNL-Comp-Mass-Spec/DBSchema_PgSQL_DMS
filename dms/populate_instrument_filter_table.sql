@@ -37,7 +37,7 @@ BEGIN
     _instrumentFilterList := Trim(Coalesce(_instrumentFilterList, ''));
 
     If _instrumentFilterList = '' Then
-        INSERT INTO Tmp_InstrumentFilter( instrument_id )
+        INSERT INTO Tmp_InstrumentFilter (instrument_id)
         SELECT GroupQ.instrument_id
         FROM ( SELECT Src.instrument_id, Min(Src.instrument) AS instrument
                FROM t_instrument_name Src
@@ -69,7 +69,7 @@ BEGIN
         _matchSpec := Replace(_matchSpec, '*', '%');
 
         If Position('%' In _matchSpec) > 0 Then
-            INSERT INTO Tmp_InstrumentFilter( instrument_id )
+            INSERT INTO Tmp_InstrumentFilter (instrument_id)
             SELECT FilterQ.instrument_id
             FROM ( SELECT instrument_id, instrument
                    FROM t_instrument_name
@@ -79,7 +79,7 @@ BEGIN
             WHERE Target.instrument_id IS NULL
             ORDER BY FilterQ.instrument;
         Else
-            INSERT INTO Tmp_InstrumentFilter( instrument_id )
+            INSERT INTO Tmp_InstrumentFilter (instrument_id)
             SELECT FilterQ.instrument_id
             FROM ( SELECT instrument_id, instrument
                    FROM t_instrument_name

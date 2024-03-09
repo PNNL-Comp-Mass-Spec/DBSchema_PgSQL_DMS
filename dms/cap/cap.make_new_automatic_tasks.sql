@@ -86,7 +86,14 @@ BEGIN
         RETURN;
     End If;
 
-    INSERT INTO cap.t_tasks ( script, dataset, dataset_id, comment, results_folder_name, priority )
+    INSERT INTO cap.t_tasks (
+        script,
+        dataset,
+        dataset_id,
+        comment,
+        results_folder_name,
+        priority
+    )
     SELECT AJ.script_for_new_job AS Script,
            T.Dataset,
            T.Dataset_ID,

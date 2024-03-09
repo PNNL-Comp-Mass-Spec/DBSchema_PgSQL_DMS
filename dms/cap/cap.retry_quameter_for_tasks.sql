@@ -94,7 +94,7 @@ BEGIN
         -- Look for capture task jobs that have a failed DatasetQuality step
         -----------------------------------------------------------
 
-        INSERT INTO Tmp_Quameter_Job_Steps_To_Reset( Job, Step )
+        INSERT INTO Tmp_Quameter_Job_Steps_To_Reset (Job, Step)
         SELECT TS.Job, TS.Step
         FROM cap.t_task_steps TS
              INNER JOIN Tmp_Quameter_Jobs JR

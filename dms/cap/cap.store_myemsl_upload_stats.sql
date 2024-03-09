@@ -229,20 +229,22 @@ BEGIN
         -- Add a new row to cap.t_myemsl_uploads
         -----------------------------------------------
 
-        INSERT INTO cap.t_myemsl_uploads( job,
-                                          dataset_id,
-                                          subfolder,
-                                          file_count_new,
-                                          file_count_updated,
-                                          bytes,
-                                          upload_time_seconds,
-                                          status_uri_path_id,
-                                          status_num,
-                                          eus_instrument_id,
-                                          eus_proposal_id,
-                                          eus_uploader_id,
-                                          error_code,
-                                          entered )
+        INSERT INTO cap.t_myemsl_uploads (
+            job,
+            dataset_id,
+            subfolder,
+            file_count_new,
+            file_count_updated,
+            bytes,
+            upload_time_seconds,
+            status_uri_path_id,
+            status_num,
+            eus_instrument_id,
+            eus_proposal_id,
+            eus_uploader_id,
+            error_code,
+            entered
+        )
         VALUES( _job,
                 _datasetID,
                 _subfolder,
@@ -262,20 +264,22 @@ BEGIN
         -- Add a new row to T_MyEMSL_TestUploads
         -----------------------------------------------
 
-        INSERT INTO cap.t_myemsl_testuploads( Job,
-                                              Dataset_ID,
-                                              Subfolder,
-                                              FileCountNew,
-                                              FileCountUpdated,
-                                              Bytes,
-                                              UploadTimeSeconds,
-                                              StatusURI_PathID,
-                                              Status_Num,
-                                              EUS_InstrumentID,
-                                              EUS_ProposalID,
-                                              EUS_UploaderID,
-                                              ErrorCode,
-                                              Entered )
+        INSERT INTO cap.t_myemsl_testuploads (
+            job,
+            dataset_id,
+            subfolder,
+            filecountnew,
+            filecountupdated,
+            bytes,
+            uploadtimeseconds,
+            statusuri_pathid,
+            status_num,
+            eus_instrumentid,
+            eus_proposalid,
+            eus_uploaderid,
+            errorcode,
+            entered
+        )
         VALUES( _job,
                 _datasetID,
                 _subfolder,

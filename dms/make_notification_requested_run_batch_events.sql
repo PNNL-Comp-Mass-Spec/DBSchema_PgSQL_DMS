@@ -178,8 +178,7 @@ BEGIN
 
     _eventType := 1;
 
-    INSERT INTO Tmp_NewEvents( target_id,
-                               event_type_id )
+    INSERT INTO Tmp_NewEvents (target_id, event_type_id)
     SELECT Batch_ID,
            _eventType
     FROM Tmp_RequestedRunBatches
@@ -200,8 +199,7 @@ BEGIN
 
     _eventType := 2;
 
-    INSERT INTO Tmp_NewEvents( target_id,
-                               event_type_id )
+    INSERT INTO Tmp_NewEvents (target_id, event_type_id)
     SELECT Batch_ID,
            _eventType
     FROM Tmp_RequestedRunBatches
@@ -222,8 +220,7 @@ BEGIN
 
     _eventType := 3;
 
-    INSERT INTO Tmp_NewEvents( target_id,
-                               event_type_id )
+    INSERT INTO Tmp_NewEvents (target_id, event_type_id)
     SELECT Batch_ID,
            _eventType
     FROM Tmp_RequestedRunBatches
@@ -279,8 +276,7 @@ BEGIN
         -- Add new events to table
         ---------------------------------------------------
 
-        INSERT INTO t_notification_event( event_type_id,
-                                          target_id )
+        INSERT INTO t_notification_event (event_type_id, target_id)
         SELECT Tmp_NewEvents.event_type_id,
                Tmp_NewEvents.target_id
         FROM Tmp_NewEvents

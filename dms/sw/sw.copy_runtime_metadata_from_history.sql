@@ -170,7 +170,7 @@ BEGIN
 
     -- First look for jobs with a Finish date after the Start date of the corresponding Results_Transfer step
 
-    INSERT INTO Tmp_JobStepsToUpdate( job, step )
+    INSERT INTO Tmp_JobStepsToUpdate (job, step)
     SELECT JS.job, JS.step
     FROM Tmp_Jobs
          INNER JOIN sw.t_job_steps JS
@@ -188,7 +188,7 @@ BEGIN
     -- Next Look for job steps that are state 4 or 5 (Running or Complete) with a null Finish date,
     -- but which started after their corresponding Results_Transfer step
 
-    INSERT INTO Tmp_JobStepsToUpdate( job, step )
+    INSERT INTO Tmp_JobStepsToUpdate (job, step)
     SELECT JS.job, JS.step
     FROM Tmp_Jobs
          INNER JOIN sw.t_job_steps JS
@@ -206,7 +206,7 @@ BEGIN
 
     -- Look for PRIDE_Converter job steps
 
-    INSERT INTO Tmp_JobStepsToUpdate( job, step )
+    INSERT INTO Tmp_JobStepsToUpdate (job, step)
     SELECT JS.job, JS.step
     FROM Tmp_Jobs
          INNER JOIN sw.t_job_steps JS

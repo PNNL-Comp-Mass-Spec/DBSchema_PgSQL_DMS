@@ -210,11 +210,13 @@ BEGIN
                 _criterionValue := 1;
             End If;
 
-            INSERT INTO t_filter_set_criteria( filter_criteria_group_id,
-                                               criterion_id,
-                                               criterion_comparison,
-                                               Criterion_Value )
-            VALUES(_groupID, _criterionID, _criterionComparison, _criterionValue);
+            INSERT INTO t_filter_set_criteria (
+                filter_criteria_group_id,
+                criterion_id,
+                criterion_comparison,
+                criterion_value
+            )
+            VALUES (_groupID, _criterionID, _criterionComparison, _criterionValue);
 
             _criteriaAdded := _criteriaAdded + 1;
         END LOOP;

@@ -93,15 +93,17 @@ BEGIN
     -- Cache the new stats
     -----------------------------------------------------
 
-    INSERT INTO Tmp_JobStepProcessingStats( Job,
-                                            Step,
-                                            Processor,
-                                            RunTime_Minutes,
-                                            Job_Progress,
-                                            RunTime_Predicted_Hours,
-                                            Prog_Runner_Core_Usage,
-                                            CPU_Load,
-                                            Actual_CPU_Load )
+    INSERT INTO Tmp_JobStepProcessingStats (
+        Job,
+        Step,
+        Processor,
+        RunTime_Minutes,
+        Job_Progress,
+        RunTime_Predicted_Hours,
+        Prog_Runner_Core_Usage,
+        CPU_Load,
+        Actual_CPU_Load
+    )
     SELECT Job,
            Step,
            Processor,
@@ -187,16 +189,18 @@ BEGIN
         RETURN;
     End If;
 
-    INSERT INTO sw.t_job_step_processing_stats( entered,
-                                                job,
-                                                step,
-                                                processor,
-                                                runtime_minutes,
-                                                job_progress,
-                                                runtime_predicted_hours,
-                                                prog_runner_core_usage,
-                                                cpu_load,
-                                                actual_cpu_load )
+    INSERT INTO sw.t_job_step_processing_stats (
+        entered,
+        job,
+        step,
+        processor,
+        runtime_minutes,
+        job_progress,
+        runtime_predicted_hours,
+        prog_runner_core_usage,
+        cpu_load,
+        actual_cpu_load
+    )
     SELECT CURRENT_TIMESTAMP::timestamp Entered,
            job,
            step,

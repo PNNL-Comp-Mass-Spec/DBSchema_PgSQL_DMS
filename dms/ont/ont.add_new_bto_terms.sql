@@ -213,8 +213,7 @@ BEGIN
 
         CREATE INDEX IX_Tmp_IDsToDelete ON Tmp_IDsToDelete (entry_id);
 
-        INSERT INTO Tmp_InvalidTermNames( identifier,
-                                          term_name )
+        INSERT INTO Tmp_InvalidTermNames (identifier, term_name)
         SELECT UniqueQTarget.identifier,
                UniqueQTarget.term_name AS Invalid_Term_Name_to_Delete
         FROM ( SELECT DISTINCT t.identifier, t.term_name FROM ont.t_cv_bto t GROUP BY t.identifier, t.term_name ) UniqueQTarget

@@ -128,7 +128,7 @@ BEGIN
     -- Populate temp table with requested run IDs (storing as text for now)
     -----------------------------------------------------------
 
-    INSERT INTO Tmp_Requests ( Item )
+    INSERT INTO Tmp_Requests (Item)
     SELECT unnest(xpath('//root/r/@i', _xml));
     --
     GET DIAGNOSTICS _matchCount = ROW_COUNT;

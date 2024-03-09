@@ -63,7 +63,7 @@ BEGIN
     -- and were uploaded to MyEMSL within the last _windowDays days
     --------------------------------------------
 
-    INSERT INTO Tmp_IDsToUpdate(EntityID)
+    INSERT INTO Tmp_IDsToUpdate (EntityID)
     SELECT DISTINCT LookupQ.dataset_id
     FROM public.t_dataset_archive DA
          INNER JOIN ( SELECT dataset_id
@@ -123,7 +123,7 @@ BEGIN
     -- and were uploaded to MyEMSL within the last _windowDays days
     --------------------------------------------
 
-    INSERT INTO Tmp_IDsToUpdate(EntityID)
+    INSERT INTO Tmp_IDsToUpdate (EntityID)
     SELECT DISTINCT J.Job
     FROM public.t_analysis_job J
          INNER JOIN ( SELECT dataset_id,

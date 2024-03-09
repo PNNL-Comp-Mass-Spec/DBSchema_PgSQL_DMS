@@ -55,10 +55,12 @@ BEGIN
         -- Pattern not found; add it
         ---------------------------------------------------
 
-        INSERT INTO sw.t_signatures( pattern,
-                                     string,
-                                     entered,
-                                     last_used )
+        INSERT INTO sw.t_signatures (
+            pattern,
+            string,
+            entered,
+            last_used
+        )
         VALUES(_pattern, _settings, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
         RETURNING reference
         INTO _reference;

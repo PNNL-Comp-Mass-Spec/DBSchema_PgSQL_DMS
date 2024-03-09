@@ -195,10 +195,12 @@ BEGIN
 
             RAISE INFO 'Adding missing hosts';
 
-            INSERT INTO t_bionet_hosts( host,
-                                        ip,
-                                        entered,
-                                        last_online )
+            INSERT INTO t_bionet_hosts (
+                host,
+                ip,
+                entered,
+                last_online
+            )
             SELECT Src.host,
                    Src.ip,
                    CURRENT_TIMESTAMP,

@@ -57,7 +57,7 @@ BEGIN
     -- When _completedJobsOnly is true, filter on task state 3 (Complete)
     ---------------------------------------------------
 
-    INSERT INTO Tmp_JobsToUpdate ( Job )
+    INSERT INTO Tmp_JobsToUpdate (Job)
     SELECT T.job
     FROM cap.t_tasks T
          INNER JOIN cap.t_task_steps TS

@@ -117,8 +117,7 @@ BEGIN
     -- Skip unknown EUS users
     ---------------------------------------------------
 
-    INSERT INTO t_requested_run_eus_users( eus_person_id,
-                                           request_id )
+    INSERT INTO t_requested_run_eus_users (eus_person_id, request_id)
     SELECT NewUsers.ID AS EUS_Person_ID,
            _requestID AS Request_ID
     FROM Tmp_UserIDs NewUsers

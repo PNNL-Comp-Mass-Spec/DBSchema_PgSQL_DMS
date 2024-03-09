@@ -57,7 +57,7 @@ BEGIN
 
     CREATE INDEX IX_Tmp_JobsToDelete_Job On Tmp_JobsToDelete (Job);
 
-    INSERT INTO Tmp_JobsToDelete ( Job, HasDependencies )
+    INSERT INTO Tmp_JobsToDelete (Job, HasDependencies)
     SELECT T.Job, false
     FROM cap.t_tasks T
          LEFT OUTER JOIN public.T_Dataset DS

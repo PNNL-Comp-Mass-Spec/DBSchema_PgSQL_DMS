@@ -387,12 +387,12 @@ BEGIN
         If Coalesce(_captureJob, 0) = 0 Then
 
             -- Job not found; examine t_tasks_history
-            SELECT Job, Saved
+            SELECT job, saved
             INTO _captureJob, _dateStamp
             FROM cap.t_tasks_History
-            WHERE Dataset = _dataset::citext AND
-                  Script ILIKE '%capture%'
-            ORDER BY Saved DESC
+            WHERE dataset = _dataset::citext AND
+                  script ILIKE '%capture%'
+            ORDER BY saved DESC
             LIMIT 1;
 
             If Not FOUND Then
@@ -400,148 +400,158 @@ BEGIN
                 RETURN;
             End If;
 
-            INSERT INTO cap.t_tasks (Priority, Script, State,
-                                     Dataset, Dataset_ID, Results_Folder_Name,
-                                     Imported, Start, Finish)
-            SELECT Priority,
-                   Script,
-                   3 AS State,
-                   _datasetNew AS Dataset,
-                   _datasetIDNew AS Dataset_ID,
-                   '' AS Results_Folder_Name,
-                   CURRENT_TIMESTAMP AS Imported,
-                   CURRENT_TIMESTAMP AS Start,
-                   CURRENT_TIMESTAMP AS Finish
+            INSERT INTO cap.t_tasks (
+                priority, script, state,
+                dataset, dataset_id, results_folder_name,
+                imported, start, finish
+            )
+            SELECT priority,
+                   script,
+                   3 as state,
+                   _datasetNew AS dataset,
+                   _datasetIDNew AS dataset_id,
+                   '' AS results_folder_name,
+                   CURRENT_TIMESTAMP AS imported,
+                   CURRENT_TIMESTAMP AS start,
+                   CURRENT_TIMESTAMP AS finish
             FROM cap.t_tasks_History
-            WHERE Job = _captureJob AND
-                  Saved = _dateStamp
-            RETURNING cap.t_tasks.Job
+            WHERE job = _captureJob AND
+                  saved = _dateStamp
+            RETURNING cap.t_tasks.job
             INTO _captureJobNew;
 
             If FOUND Then
 
-                INSERT INTO cap.t_task_steps ( Job,
-                                               Step,
-                                               Tool,
-                                               State,
-                                               Input_Folder_Name,
-                                               Output_Folder_Name,
-                                               Processor,
-                                               Start,
-                                               Finish,
-                                               Tool_Version_ID,
-                                               Completion_Code,
-                                               Completion_Message,
-                                               Evaluation_Code,
-                                               Evaluation_Message,
-                                               Holdoff_Interval_Minutes,
-                                               Next_Try,
-                                               Retry_Count )
+                INSERT INTO cap.t_task_steps (
+                    job,
+                    step,
+                    tool,
+                    state,
+                    input_folder_name,
+                    output_folder_name,
+                    processor,
+                    start,
+                    finish,
+                    tool_version_id,
+                    completion_code,
+                    completion_message,
+                    evaluation_code,
+                    evaluation_message,
+                    holdoff_interval_minutes,
+                    next_try,
+                    retry_count
+                )
                 SELECT _captureJobNew AS Job,
-                       Step,
+                       step,
                        tool,
-                       CASE WHEN NOT State IN (3,5,7) THEN 7 ELSE STATE END AS State,
-                       Input_Folder_Name,
-                       Output_Folder_Name,
-                       'In-Silico' AS Processor,
-                       CASE WHEN Start  IS Null THEN Null ELSE CURRENT_TIMESTAMP END AS Start,
-                       CASE WHEN Finish IS Null THEN Null ELSE CURRENT_TIMESTAMP END AS Finish,
-                       1  AS Tool_Version_ID,
-                       0  AS Completion_Code,
-                       '' AS Completion_Message,
-                       0  AS Evaluation_Code,
-                       '' AS Evaluation_Message,
-                       0  AS Holdoff_Interval_Minutes,
-                       CURRENT_TIMESTAMP AS Next_Try,
-                       0  AS Retry_Count
+                       CASE WHEN NOT state IN (3,5,7) THEN 7 ELSE state END AS state,
+                       input_folder_name,
+                       output_folder_name,
+                       'In-Silico' AS processor,
+                       CASE WHEN start  IS Null THEN Null ELSE CURRENT_TIMESTAMP END AS start,
+                       CASE WHEN finish IS Null THEN Null ELSE CURRENT_TIMESTAMP END AS finish,
+                       1  AS tool_version_id,
+                       0  AS completion_code,
+                       '' AS completion_message,
+                       0  AS evaluation_code,
+                       '' AS evaluation_message,
+                       0  AS holdoff_interval_minutes,
+                       CURRENT_TIMESTAMP AS next_try,
+                       0  AS retry_count
                 FROM cap.t_task_steps_history
-                WHERE Job = _captureJob AND
-                      Saved = _dateStamp;
+                WHERE job = _captureJob AND
+                      saved = _dateStamp;
 
             End If;
 
         Else
 
-            INSERT INTO cap.t_tasks (Priority, Script, State,
-                                     Dataset, Dataset_ID, Storage_Server, Instrument, Instrument_Class,
-                                     Max_Simultaneous_Captures,
-                                     Imported, Start, Finish, Archive_Busy, Comment)
-            SELECT Priority,
-                   Script,
-                   State,
-                   _datasetNew AS Dataset,
-                   _datasetIDNew AS Dataset_ID,
-                   Storage_Server,
-                   Instrument,
-                   Instrument_Class,
-                   Max_Simultaneous_Captures,
-                   CURRENT_TIMESTAMP AS Imported,
-                   CURRENT_TIMESTAMP AS Start,
-                   CURRENT_TIMESTAMP AS Finish,
-                   0 AS Archive_Busy,
-                   format('Cloned from dataset %s', _dataset) AS Comment
+            INSERT INTO cap.t_tasks (
+                priority, script, state,
+                dataset, dataset_id, storage_server, instrument, instrument_class,
+                max_simultaneous_captures,
+                imported, start, finish, archive_busy, comment
+            )
+            SELECT priority,
+                   script,
+                   state,
+                   _datasetNew AS dataset,
+                   _datasetIDNew AS dataset_id,
+                   storage_server,
+                   instrument,
+                   instrument_class,
+                   max_simultaneous_captures,
+                   CURRENT_TIMESTAMP AS imported,
+                   CURRENT_TIMESTAMP AS start,
+                   CURRENT_TIMESTAMP AS finish,
+                   0 AS archive_busy,
+                   format('Cloned from dataset %s', _dataset) AS comment
             FROM cap.t_tasks
-            WHERE Dataset = _dataset::citext AND
-                  Script ILIKE '%capture%'
-            ORDER BY cap.t_tasks.Job DESC
+            WHERE dataset = _dataset::citext AND
+                  script ILIKE '%capture%'
+            ORDER BY cap.t_tasks.job DESC
             LIMIT 1
-            RETURNING cap.t_tasks.Job
+            RETURNING cap.t_tasks.job
             INTO _captureJobNew;
 
             If FOUND Then
 
-                INSERT INTO cap.t_task_steps( Job,
-                                              Step,
-                                              Tool,
-                                              CPU_Load,
-                                              Dependencies,
-                                              State,
-                                              Input_Folder_Name,
-                                              Output_Folder_Name,
-                                              Processor,
-                                              Start,
-                                              Finish,
-                                              Tool_Version_ID,
-                                              Completion_Code,
-                                              Completion_Message,
-                                              Evaluation_Code,
-                                              Evaluation_Message,
-                                              Holdoff_Interval_Minutes,
-                                              Next_Try,
-                                              Retry_Count )
-                SELECT _captureJobNew AS Job,
-                       Step,
-                       Tool,
-                       CPU_Load,
-                       Dependencies,
-                       CASE WHEN NOT STATE IN (3,5,7) THEN 7 ELSE STATE END AS State,
-                       Input_Folder_Name,
-                       Output_Folder_Name,
-                       'In-Silico' AS Processor,
-                       CASE WHEN Start  IS Null THEN Null ELSE CURRENT_TIMESTAMP END AS Start,
-                       CASE WHEN Finish IS Null THEN Null ELSE CURRENT_TIMESTAMP END AS Finish,
-                       1  AS Tool_Version_ID,
-                       0  AS Completion_Code,
-                       '' AS Completion_Message,
-                       0  AS Evaluation_Code,
-                       '' AS Evaluation_Message,
-                       Holdoff_Interval_Minutes,
-                       CURRENT_TIMESTAMP AS Next_Try,
-                       Retry_Count
+                INSERT INTO cap.t_task_steps (
+                    job,
+                    step,
+                    tool,
+                    cpu_load,
+                    dependencies,
+                    state,
+                    input_folder_name,
+                    output_folder_name,
+                    processor,
+                    start,
+                    finish,
+                    tool_version_id,
+                    completion_code,
+                    completion_message,
+                    evaluation_code,
+                    evaluation_message,
+                    holdoff_interval_minutes,
+                    next_try,
+                    retry_count
+                )
+                SELECT _captureJobNew AS job,
+                       step,
+                       tool,
+                       cpu_load,
+                       dependencies,
+                       CASE WHEN NOT state IN (3,5,7) THEN 7 ELSE state END AS state,
+                       input_folder_name,
+                       output_folder_name,
+                       'In-Silico' AS processor,
+                       CASE WHEN start  IS NULL THEN NULL ELSE CURRENT_TIMESTAMP END AS start,
+                       CASE WHEN finish IS NULL THEN NULL ELSE CURRENT_TIMESTAMP END AS finish,
+                       1  AS tool_version_id,
+                       0  AS completion_code,
+                       '' AS completion_message,
+                       0  AS evaluation_code,
+                       '' AS evaluation_message,
+                       holdoff_interval_minutes,
+                       CURRENT_TIMESTAMP AS next_try,
+                       retry_count
                 FROM cap.t_task_steps
-                WHERE Job = _captureJob;
+                WHERE job = _captureJob;
 
-                INSERT INTO cap.t_task_step_dependencies (Job, Step, Target_Step,
-                                                          Condition_Test, Test_Value, Evaluated,
-                                                          Triggered, Enable_Only)
-                SELECT _captureJobNew AS Job,
-                       Step,
-                       Target_Step,
-                       Condition_Test,
-                       Test_Value,
-                       Evaluated,
-                       Triggered,
-                       Enable_Only
+                INSERT INTO cap.t_task_step_dependencies (
+                    job, step, target_step,
+                    condition_test, test_value, evaluated,
+                    triggered, enable_only
+                )
+                SELECT _captureJobNew AS job,
+                       step,
+                       target_step,
+                       condition_test,
+                       test_value,
+                       evaluated,
+                       triggered,
+                       enable_only
                 FROM cap.t_task_step_dependencies
                 WHERE Job = _captureJob;
 

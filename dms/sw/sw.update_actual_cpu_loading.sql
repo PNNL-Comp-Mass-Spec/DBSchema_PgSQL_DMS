@@ -40,10 +40,12 @@ BEGIN
     -- Find managers with an active job step and valid values for Prog_Runner_Process_ID and Prog_Runner_Core_Usage
     ---------------------------------------------------
 
-    INSERT INTO Tmp_PendingUpdates( Processor_Name,
-                                    Job,
-                                    Step,
-                                    New_CPU_Load )
+    INSERT INTO Tmp_PendingUpdates (
+        Processor_Name,
+        Job,
+        Step,
+        New_CPU_Load
+    )
     SELECT PS.processor_name,
            JS.job,
            JS.step,

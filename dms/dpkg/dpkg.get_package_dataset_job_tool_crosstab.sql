@@ -131,7 +131,7 @@ BEGIN
         -- Get list of package datasets
         ---------------------------------------------------
 
-        INSERT INTO Tmp_Datasets( Dataset, ID )
+        INSERT INTO Tmp_Datasets (Dataset, ID)
         SELECT DISTINCT DS.dataset,
                         DPD.data_pkg_id
         FROM dpkg.t_data_package_datasets DPD
@@ -158,7 +158,7 @@ BEGIN
         -- Get list of tools referenced by package jobs
         ---------------------------------------------------
 
-        INSERT INTO Tmp_Tools ( Tool )
+        INSERT INTO Tmp_Tools (Tool)
         SELECT DISTINCT T.analysis_tool
         FROM dpkg.t_data_package_analysis_jobs DPJ
              INNER JOIN public.t_analysis_job AJ
@@ -183,7 +183,7 @@ BEGIN
 
             TRUNCATE TABLE Tmp_Scratch;
 
-            INSERT INTO Tmp_Scratch ( Dataset, Total )
+            INSERT INTO Tmp_Scratch (Dataset, Total)
             SELECT DS.dataset,
                    COUNT(DPJ.job) AS total
             FROM dpkg.t_data_package_analysis_jobs DPJ

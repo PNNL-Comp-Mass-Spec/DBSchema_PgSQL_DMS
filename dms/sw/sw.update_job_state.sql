@@ -179,12 +179,14 @@ BEGIN
     -- and get list of the ones that need be changed
     ---------------------------------------------------
 
-    INSERT INTO Tmp_ChangedJobs( Job,
-                                 NewState,
-                                 Results_Directory_Name,
-                                 Organism_DB_Name,
-                                 Dataset_Name,
-                                 Dataset_ID )
+    INSERT INTO Tmp_ChangedJobs (
+        Job,
+        NewState,
+        Results_Directory_Name,
+        Organism_DB_Name,
+        Dataset_Name,
+        Dataset_ID
+    )
     SELECT Job,
            NewState,
            Results_Directory_Name,
@@ -555,7 +557,7 @@ BEGIN
 
     -- Look for jobs that are listed as Failed in public.t_analysis_job, but are in-progress in sw.t_jobs
 
-    INSERT INTO Tmp_JobsToReset (job, NewState )
+    INSERT INTO Tmp_JobsToReset (job, NewState)
     SELECT DMSJobs.job AS Job,
            J.state AS NewState
     FROM public.t_analysis_job AS DMSJobs
@@ -566,7 +568,7 @@ BEGIN
 
     -- Also look for jobs that are in state New in public.t_analysis_job, but are in-progress in sw.t_jobs
 
-    INSERT INTO Tmp_JobsToReset (job, NewState )
+    INSERT INTO Tmp_JobsToReset (job, NewState)
     SELECT DMSJobs.job AS Job,
            J.state AS NewState
     FROM public.t_analysis_job AS DMSJobs

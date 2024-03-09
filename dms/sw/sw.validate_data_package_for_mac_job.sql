@@ -90,8 +90,10 @@ BEGIN
         -- Populate with package datasets
         ---------------------------------------------------
 
-        INSERT INTO Tmp_DataPackageItems( Dataset_ID,
-                                          Dataset )
+        INSERT INTO Tmp_DataPackageItems (
+            Dataset_ID,
+            Dataset
+        )
         SELECT DISTINCT DS.dataset_id,
                         DS.dataset
         FROM dpkg.t_data_package_datasets AS DPD

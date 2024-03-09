@@ -53,7 +53,7 @@ BEGIN
     WHERE AJR.request_id = _requestID;
 
     CREATE TEMP TABLE Tmp_Jobs (
-        job int PRIMARY KEY NOT NULL
+        Job int PRIMARY KEY NOT NULL
     );
 
     If FOUND Then
@@ -73,7 +73,7 @@ BEGIN
         -- If the tool is a Peptide_Hit tool, we only consider Organism Name when searching
         -- against a legacy Fasta file (i.e. when the Protein Collection List is 'na')
 
-        INSERT INTO Tmp_Jobs( job )
+        INSERT INTO Tmp_Jobs (Job)
         SELECT DISTINCT AJ.job
         FROM ( SELECT dataset_id
                FROM t_analysis_job_request_datasets

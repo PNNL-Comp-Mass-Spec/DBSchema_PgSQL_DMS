@@ -146,14 +146,16 @@ BEGIN
     -- Make entry into archive table
     ---------------------------------------------------
 
-    INSERT INTO t_dataset_archive( dataset_id,
-                                   archive_state_id,
-                                   archive_update_state_id,
-                                   storage_path_id,
-                                   archive_date,
-                                   purge_holdoff_date,
-                                   purge_policy,
-                                   purge_priority )
+    INSERT INTO t_dataset_archive (
+        dataset_id,
+        archive_state_id,
+        archive_update_state_id,
+        storage_path_id,
+        archive_date,
+        purge_holdoff_date,
+        purge_policy,
+        purge_priority
+    )
     VALUES(_datasetID,
            1,
            1,

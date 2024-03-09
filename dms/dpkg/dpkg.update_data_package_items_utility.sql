@@ -167,7 +167,10 @@ BEGIN
                 RAISE INFO 'Warning: deleted % job(s) that were not numeric', _deleteCount;
             End If;
 
-            INSERT INTO Tmp_JobsToAddOrDelete( DataPackageID, Job )
+            INSERT INTO Tmp_JobsToAddOrDelete (
+                DataPackageID,
+                Job
+            )
             SELECT DataPackageID,
                    Job
             FROM ( SELECT DataPackageID,
@@ -190,7 +193,10 @@ BEGIN
 
             -- Auto-convert dataset IDs to dataset names
             -- First look for dataset IDs
-            INSERT INTO Tmp_DatasetIDsToAdd( DataPackageID, DatasetID )
+            INSERT INTO Tmp_DatasetIDsToAdd (
+                DataPackageID,
+                DatasetID
+            )
             SELECT DataPackageID,
                    DatasetID
             FROM ( SELECT DataPackageID,
@@ -202,9 +208,11 @@ BEGIN
 
             If Exists (SELECT DataPackageID FROM Tmp_DatasetIDsToAdd) Then
                 -- Add the dataset names
-                INSERT INTO Tmp_DataPackageItems( DataPackageID,
-                                                  ItemType,
-                                                  Identifier )
+                INSERT INTO Tmp_DataPackageItems (
+                    DataPackageID,
+                    ItemType,
+                    Identifier
+                )
                 SELECT Source.DataPackageID,
                        'Dataset' AS ItemType,
                        DS.Dataset
@@ -251,9 +259,11 @@ BEGIN
         If _mode = 'add' Then
             -- Add datasets to list that are parents of jobs in the list
             -- (and are not already in the list)
-            INSERT INTO Tmp_DataPackageItems( DataPackageID,
-                                              ItemType,
-                                              Identifier )
+            INSERT INTO Tmp_DataPackageItems (
+                DataPackageID,
+                ItemType,
+                Identifier
+            )
             SELECT DISTINCT TJ.DataPackageID,
                             'Dataset',
                             DS.Dataset
@@ -271,9 +281,11 @@ BEGIN
 
             -- Add experiments to list that are parents of datasets in the list
             -- (and are not already in the list)
-            INSERT INTO Tmp_DataPackageItems( DataPackageID,
-                                              ItemType,
-                                              Identifier )
+            INSERT INTO Tmp_DataPackageItems (
+                DataPackageID,
+                ItemType,
+                Identifier
+            )
             SELECT DISTINCT TP.DataPackageID,
                             'Experiment',
                             E.Experiment
@@ -291,9 +303,11 @@ BEGIN
 
             -- Add EUS Proposals to list that are parents of datasets in the list
             -- (and are not already in the list)
-            INSERT INTO Tmp_DataPackageItems( DataPackageID,
-                                              ItemType,
-                                              Identifier )
+            INSERT INTO Tmp_DataPackageItems (
+                DataPackageID,
+                ItemType,
+                Identifier
+            )
             SELECT DISTINCT TP.DataPackageID,
                             'EUSProposal',
                             RR.eus_proposal_id      -- This is typically a number, but is stored as text
@@ -312,9 +326,11 @@ BEGIN
 
             -- Add biomaterial items to list that are associated with experiments in the list
             -- (and are not already in the list)
-            INSERT INTO Tmp_DataPackageItems( DataPackageID,
-                                              ItemType,
-                                              Identifier )
+            INSERT INTO Tmp_DataPackageItems (
+                DataPackageID,
+                ItemType,
+                Identifier
+            )
             SELECT DISTINCT TP.DataPackageID,
                             'Biomaterial',
                             EB.Biomaterial_Name
@@ -779,7 +795,7 @@ BEGIN
 
             Else
                 -- Add new items
-                INSERT INTO dpkg.t_data_package_biomaterial(
+                INSERT INTO dpkg.t_data_package_biomaterial (
                     data_pkg_id,
                     biomaterial_id,
                     package_comment,
@@ -1014,9 +1030,11 @@ BEGIN
 
             Else
                 -- Add new items
-                INSERT INTO dpkg.t_data_package_eus_proposals( data_pkg_id,
-                                                               proposal_id,
-                                                               package_comment )
+                INSERT INTO dpkg.t_data_package_eus_proposals (
+                    data_pkg_id,
+                    proposal_id,
+                    package_comment
+                )
                 SELECT DISTINCT PkgItems.DataPackageID,
                                 EUP.proposal_id,                -- This is typically a number, but is stored as text
                                 _comment
@@ -1252,7 +1270,7 @@ BEGIN
 
             Else
                 -- Add new items
-                INSERT INTO dpkg.t_data_package_experiments(
+                INSERT INTO dpkg.t_data_package_experiments (
                     data_pkg_id,
                     experiment_id,
                     package_comment,
@@ -1519,7 +1537,7 @@ BEGIN
 
             Else
                 -- Add new items
-                INSERT INTO dpkg.t_data_package_datasets(
+                INSERT INTO dpkg.t_data_package_datasets (
                     data_pkg_id,
                     dataset_id,
                     package_comment,
@@ -1788,7 +1806,7 @@ BEGIN
 
             Else
                 -- Add new items
-                INSERT INTO dpkg.t_data_package_analysis_jobs(
+                INSERT INTO dpkg.t_data_package_analysis_jobs (
                     data_pkg_id,
                     job,
                     package_comment,

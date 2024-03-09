@@ -104,7 +104,7 @@ BEGIN
     -- Get keys to affected items
     ---------------------------------------------------
 
-    INSERT INTO Tmp_InstrumentUsageInfo( seq )
+    INSERT INTO Tmp_InstrumentUsageInfo (seq)
     SELECT seq
     FROM t_emsl_instrument_usage_report
     WHERE month = _month AND

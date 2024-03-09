@@ -82,19 +82,19 @@ BEGIN
         If _prepRequestIDFilterList = '' Then
 
             -- Update counts for new and active prep requests
-            INSERT INTO Tmp_PrepRequests ( prep_request_id )
+            INSERT INTO Tmp_PrepRequests (prep_request_id)
             SELECT prep_request_id
             FROM t_sample_prep_request
             WHERE state_id IN (1, 2, 3, 4);
 
             -- Also update counts for closed prep requests where the state changed within the last year
-            INSERT INTO Tmp_PrepRequests ( prep_request_id )
+            INSERT INTO Tmp_PrepRequests (prep_request_id)
             SELECT prep_request_id
             FROM t_sample_prep_request
             WHERE state_id = 5 AND
                   state_changed >= CURRENT_TIMESTAMP - make_interval(days => _daysPriorToUpdateClosedRequests);
         Else
-            INSERT INTO Tmp_PrepRequests ( prep_request_id )
+            INSERT INTO Tmp_PrepRequests (prep_request_id)
             SELECT DISTINCT Value
             FROM public.parse_delimited_integer_list(_prepRequestIDFilterList);
 

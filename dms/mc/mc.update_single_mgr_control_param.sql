@@ -267,9 +267,11 @@ BEGIN
     -- but the query that populates Tmp_ParamValueEntriesToUpdate does filter on that parameter
     ---------------------------------------------------
 
-    INSERT INTO mc.t_param_value( param_type_id,
-                                  value,
-                                  mgr_id )
+    INSERT INTO mc.t_param_value (
+        param_type_id,
+        value,
+        mgr_id
+    )
     SELECT _paramTypeID,
            '##_DummyParamValue_##',
            Tmp_MgrIDs.mgr_id
@@ -286,7 +288,7 @@ BEGIN
     -- Populate Tmp_ParamValueEntriesToUpdate with the entries that need to be updated
     ---------------------------------------------------
 
-    INSERT INTO Tmp_ParamValueEntriesToUpdate( entry_id )
+    INSERT INTO Tmp_ParamValueEntriesToUpdate (entry_id)
     SELECT PV.entry_id
     FROM mc.t_param_value PV
          INNER JOIN mc.t_mgrs M

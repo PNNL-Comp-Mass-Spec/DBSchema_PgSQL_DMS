@@ -240,7 +240,7 @@ BEGIN
     -- Find failed capture task jobs that do not have any failed steps
     ---------------------------------------------------
 
-    INSERT INTO Tmp_ChangedJobs(
+    INSERT INTO Tmp_ChangedJobs (
         Job,
         OldState,
         NewState,
@@ -248,8 +248,8 @@ BEGIN
         Dataset_Name,
         Dataset_ID,
         Script,
-        Storage_Server )
-
+        Storage_Server
+    )
     SELECT Job,
            State AS OldState,
            2 AS NewState,

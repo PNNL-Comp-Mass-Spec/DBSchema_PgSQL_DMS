@@ -129,22 +129,24 @@ BEGIN
 
         If Exists (SELECT Charge_Code FROM Tmp_CCsExplicit) Then
 
-            INSERT INTO Tmp_ChargeCode( Charge_Code,
-                                        Resp_Username,
-                                        Resp_HID,
-                                        WBS_Title,
-                                        Charge_Code_Title,
-                                        Sub_Account,
-                                        Sub_Account_Title,
-                                        Setup_Date,
-                                        Sub_Account_Effective_Date,
-                                        Inactive_Date,
-                                        Sub_Account_Inactive_Date,
-                                        Deactivated,
-                                        Auth_Amt,
-                                        Auth_Username,
-                                        Auth_HID,
-                                        Update_Status)
+            INSERT INTO Tmp_ChargeCode (
+                Charge_Code,
+                Resp_Username,
+                Resp_HID,
+                WBS_Title,
+                Charge_Code_Title,
+                Sub_Account,
+                Sub_Account_Title,
+                Setup_Date,
+                Sub_Account_Effective_Date,
+                Inactive_Date,
+                Sub_Account_Inactive_Date,
+                Deactivated,
+                Auth_Amt,
+                Auth_Username,
+                Auth_HID,
+                Update_Status
+            )
             SELECT CC."CHARGE_CD",
                    CC."RESP_PAY_NO",
                    CC."RESP_HID",
@@ -169,22 +171,24 @@ BEGIN
 
         Else
 
-            INSERT INTO Tmp_ChargeCode( Charge_Code,
-                                        Resp_Username,
-                                        Resp_HID,
-                                        WBS_Title,
-                                        Charge_Code_Title,
-                                        Sub_Account,
-                                        Sub_Account_Title,
-                                        Setup_Date,
-                                        Sub_Account_Effective_Date,
-                                        Inactive_Date,
-                                        Sub_Account_Inactive_Date,
-                                        Deactivated,
-                                        Auth_Amt,
-                                        Auth_Username,
-                                        Auth_HID,
-                                        Update_Status)
+            INSERT INTO Tmp_ChargeCode (
+                Charge_Code,
+                Resp_Username,
+                Resp_HID,
+                WBS_Title,
+                Charge_Code_Title,
+                Sub_Account,
+                Sub_Account_Title,
+                Setup_Date,
+                Sub_Account_Effective_Date,
+                Inactive_Date,
+                Sub_Account_Inactive_Date,
+                Deactivated,
+                Auth_Amt,
+                Auth_Username,
+                Auth_HID,
+                Update_Status
+            )
             SELECT CC."CHARGE_CD",
                    CC."RESP_PAY_NO",
                    CC."RESP_HID",
@@ -405,7 +409,7 @@ BEGIN
             -- Find work packages used within the last 3 years
             ----------------------------------------------------------
 
-            INSERT INTO Tmp_CCsInUseLast3Years ( Charge_Code, Most_Recent_Usage)
+            INSERT INTO Tmp_CCsInUseLast3Years (Charge_Code, Most_Recent_Usage)
             SELECT Charge_Code, MAX(Most_Recent_Usage)
             FROM ( SELECT A.Charge_Code,
                           CASE WHEN A.Most_Recent_SPR >= Coalesce(B.Most_Recent_RR, A.Most_Recent_SPR)

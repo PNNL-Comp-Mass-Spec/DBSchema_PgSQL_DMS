@@ -58,7 +58,7 @@ BEGIN
         param_value text
     );
 
-    INSERT INTO Tmp_Default_Params( param_name, param_value )
+    INSERT INTO Tmp_Default_Params (param_name, param_value)
     SELECT param_name, param_value
     FROM cap.t_default_sp_params
     WHERE sp_name IN ('make_new_tasks_from_analysis_broker', 'MakeNewJobsFromAnalysisBroker');

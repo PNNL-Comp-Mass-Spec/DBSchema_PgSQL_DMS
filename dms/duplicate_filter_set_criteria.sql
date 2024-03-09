@@ -195,14 +195,16 @@ BEGIN
 
         -- Duplicate the criteria for group _groupIDOld (from Filter Set _sourceFilterSetID)
 
-        INSERT INTO t_filter_set_criteria( filter_criteria_group_id,
-                                           criterion_id,
-                                           criterion_comparison,
-                                           Criterion_Value )
+        INSERT INTO t_filter_set_criteria (
+            filter_criteria_group_id,
+            criterion_id,
+            criterion_comparison,
+            criterion_value
+        )
         SELECT _filterCriteriaGroupIDNext AS NewGroupID,
-               Criterion_ID,
-               Criterion_Comparison,
-               Criterion_Value
+               criterion_id,
+               criterion_comparison,
+               criterion_value
         FROM t_filter_set_criteria
         WHERE filter_criteria_group_id = _groupIDOld
         ORDER BY criterion_id;

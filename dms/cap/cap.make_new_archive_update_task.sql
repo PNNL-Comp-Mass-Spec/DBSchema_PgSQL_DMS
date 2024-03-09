@@ -156,12 +156,14 @@ BEGIN
 
         Else
 
-            INSERT INTO cap.t_tasks( Script,
-                                     Dataset,
-                                     Dataset_ID,
-                                     Results_Folder_Name,
-                                     comment,
-                                     Priority )
+            INSERT INTO cap.t_tasks (
+                script,
+                dataset,
+                dataset_id,
+                results_folder_name,
+                comment,
+                priority
+            )
             SELECT _script AS Script,
                    _datasetName AS Dataset,
                    _datasetID AS Dataset_ID,

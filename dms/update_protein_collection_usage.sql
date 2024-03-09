@@ -73,7 +73,7 @@ BEGIN
 
         -- First add any missing protein collection lists to t_cached_protein_collection_list_map
 
-        INSERT INTO t_cached_protein_collection_list_map( protein_collection_list )
+        INSERT INTO t_cached_protein_collection_list_map (protein_collection_list)
         SELECT target.protein_collection_list
         FROM t_cached_protein_collection_list_map Target
              RIGHT OUTER JOIN ( SELECT J.protein_collection_list
@@ -85,8 +85,10 @@ BEGIN
 
         -- Next add missing rows to t_cached_protein_collection_list_members
 
-        INSERT INTO t_cached_protein_collection_list_members( protein_collection_list_id,
-                                                              protein_collection_name )
+        INSERT INTO t_cached_protein_collection_list_members (
+            protein_collection_list_id,
+            protein_collection_name
+        )
         SELECT DISTINCT SourceQ.protein_collection_list_id,
                         ProteinCollections.Value
         FROM ( SELECT DISTINCT PCLMap.protein_collection_list_id,

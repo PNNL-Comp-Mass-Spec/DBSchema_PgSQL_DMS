@@ -94,9 +94,11 @@ BEGIN
             RETURN;
         End If;
 
-        INSERT INTO t_research_team( team,
-                                     description,
-                                     collaborators )
+        INSERT INTO t_research_team (
+            team,
+            description,
+            collaborators
+        )
         VALUES (
             _campaignName,
             format('Research team for campaign %s', _campaignName),
@@ -135,27 +137,27 @@ BEGIN
     -- Populate temp membership table from lists
     ---------------------------------------------------
 
-    INSERT INTO Tmp_TeamMembers ( Username, Role )
+    INSERT INTO Tmp_TeamMembers (Username, Role)
     SELECT DISTINCT Value AS Username, 'Project Mgr' AS Role
     FROM public.parse_delimited_list(_progmgrUsername) AS member;
 
-    INSERT INTO Tmp_TeamMembers ( Username, Role )
+    INSERT INTO Tmp_TeamMembers (Username, Role)
     SELECT DISTINCT Value AS Username, 'PI' AS Role
     FROM public.parse_delimited_list(_piUsername) AS member;
 
-    INSERT INTO Tmp_TeamMembers ( Username, Role )
+    INSERT INTO Tmp_TeamMembers (Username, Role)
     SELECT DISTINCT Value AS Username, 'Technical Lead' AS Role
     FROM public.parse_delimited_list(_technicalLead) AS member;
 
-    INSERT INTO Tmp_TeamMembers ( Username, Role )
+    INSERT INTO Tmp_TeamMembers (Username, Role)
     SELECT DISTINCT Value AS Username, 'Sample Preparation' AS Role
     FROM public.parse_delimited_list(_samplePreparationStaff) AS member;
 
-    INSERT INTO Tmp_TeamMembers ( Username, Role )
+    INSERT INTO Tmp_TeamMembers (Username, Role)
     SELECT DISTINCT Value AS Username, 'Dataset Acquisition' AS Role
     FROM public.parse_delimited_list(_datasetAcquisitionStaff) AS member;
 
-    INSERT INTO Tmp_TeamMembers ( Username, Role )
+    INSERT INTO Tmp_TeamMembers (Username, Role)
     SELECT DISTINCT Value AS Username, 'Informatics' AS Role
     FROM public.parse_delimited_list(_informaticsStaff) AS member;
 
@@ -254,9 +256,10 @@ BEGIN
     -- Replace with new membership
     ---------------------------------------------------
 
-    INSERT INTO t_research_team_membership( team_id,
-                                            role_id,
-                                            user_id )
+    INSERT INTO t_research_team_membership (
+        team_id,
+        role_id,
+        user_id )
     SELECT DISTINCT _researchTeamID,
            Role_ID,
            User_ID

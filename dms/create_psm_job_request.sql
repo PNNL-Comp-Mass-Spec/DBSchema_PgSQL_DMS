@@ -189,7 +189,7 @@ BEGIN
         -- Remove any duplicates that may be present
         ---------------------------------------------------
 
-        INSERT INTO Tmp_DatasetInfo ( Dataset_Name )
+        INSERT INTO Tmp_DatasetInfo (Dataset_Name)
         SELECT DISTINCT Value
         FROM public.parse_delimited_list(_datasets);
         --

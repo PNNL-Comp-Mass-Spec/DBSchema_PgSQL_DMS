@@ -525,22 +525,24 @@ BEGIN
         -- Populate Tmp_NewJobInfo with the new job info
         -----------------------------------------
 
-        INSERT INTO Tmp_NewJobInfo( JobId_Old,
-                                    JobId_New,
-                                    Batch_ID,
-                                    Priority,
-                                    Analysis_tool_ID,
-                                    Param_File_Name,
-                                    Settings_File_Name,
-                                    Organism_DB_Name,
-                                    Organism_ID,
-                                    Dataset_ID,
-                                    Comment,
-                                    Owner_Username,
-                                    Protein_Collection_List,
-                                    Protein_Options_List,
-                                    Request_ID,
-                                    Propagation_Mode )
+        INSERT INTO Tmp_NewJobInfo (
+            JobId_Old,
+            JobId_New,
+            Batch_ID,
+            Priority,
+            Analysis_tool_ID,
+            Param_File_Name,
+            Settings_File_Name,
+            Organism_DB_Name,
+            Organism_ID,
+            Dataset_ID,
+            Comment,
+            Owner_Username,
+            Protein_Collection_List,
+            Protein_Options_List,
+            Request_ID,
+            Propagation_Mode
+        )
         SELECT SrcJobs.JobId,
                _newJobIdStart + SrcJobs.RowNum AS JobId_New,
                0 AS batch_id,

@@ -41,7 +41,7 @@ BEGIN
 
     RETURN QUERY
     WITH InsertQ AS (
-        INSERT INTO t_analysis_job_id ( note )
+        INSERT INTO t_analysis_job_id (note)
         SELECT Coalesce(_note, '') AS Note
         FROM generate_series(1, _jobCount)
         RETURNING t_analysis_job_id.job

@@ -204,7 +204,7 @@ BEGIN
 
     -- Make entry into instrument table
 
-    INSERT INTO t_instrument_name(
+    INSERT INTO t_instrument_name (
         instrument,
         instrument_id,
         instrument_class,
@@ -225,7 +225,8 @@ BEGIN
         auto_sp_archive_server_name,
         auto_sp_archive_path_root,
         auto_sp_archive_share_path_root
-    ) VALUES (
+    )
+    VALUES (
         _instrumentName,
         _instrumentId,
         _instrumentClass,
@@ -265,7 +266,7 @@ BEGIN
             _suffix   := '.pnl.gov';
         End If;
 
-        INSERT INTO t_storage_path_hosts ( machine_name, host_name, dns_suffix, url_prefix)
+        INSERT INTO t_storage_path_hosts (machine_name, host_name, dns_suffix, url_prefix)
         VALUES (_sourceMachineNameToFind, _hostName, _suffix, 'https://');
 
         _logMessage := format('Added machine %s to t_storage_path_hosts with host name %s', _sourceMachineNameToFind, _hostName);

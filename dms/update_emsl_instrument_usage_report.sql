@@ -225,20 +225,21 @@ BEGIN
         -- for the target month (based on _endDate)
         ---------------------------------------------------
 
-        INSERT INTO Tmp_Staging ( Instrument,
-                                  EMSL_Inst_ID,
-                                  Start,
-                                  Type,
-                                  Minutes,
-                                  Usage,
-                                  Proposal,
-                                  Users,
-                                  Operator,
-                                  Comment,
-                                  Year,
-                                  Month,
-                                  Dataset_ID
-                                )
+        INSERT INTO Tmp_Staging (
+            Instrument,
+            EMSL_Inst_ID,
+            Start,
+            Type,
+            Minutes,
+            Usage,
+            Proposal,
+            Users,
+            Operator,
+            Comment,
+            Year,
+            Month,
+            Dataset_ID
+        )
         SELECT Instrument,
                EMSL_Inst_ID,
                Start,
@@ -1077,10 +1078,12 @@ BEGIN
 
         If Not _infoOnly Then
 
-            INSERT INTO t_emsl_instrument_usage_report( emsl_inst_id, dms_inst_id, type,
-                                                        start, minutes, proposal, usage_type_id,
-                                                        users, operator, comment, Year, Month,
-                                                        dataset_id, updated_by, seq )
+            INSERT INTO t_emsl_instrument_usage_report (
+                emsl_inst_id, dms_inst_id, type,
+                start, minutes, proposal, usage_type_id,
+                users, operator, comment, Year, Month,
+                dataset_id, updated_by, seq
+            )
             SELECT emsl_inst_id, dms_inst_id, type,
                    start, minutes, proposal, usage_type_id,
                    users, Operator_ID, comment, year, Month,

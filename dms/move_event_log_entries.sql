@@ -58,13 +58,15 @@ BEGIN
 
     -- Copy entries into the historic log tables
 
-    INSERT INTO logdms.t_event_log( event_id,
-                                    target_type,
-                                    target_id,
-                                    target_state,
-                                    prev_target_state,
-                                    entered,
-                                    entered_by )
+    INSERT INTO logdms.t_event_log (
+        event_id,
+        target_type,
+        target_id,
+        target_state,
+        prev_target_state,
+        entered,
+        entered_by
+    )
     SELECT event_id,
            target_type,
            target_id,

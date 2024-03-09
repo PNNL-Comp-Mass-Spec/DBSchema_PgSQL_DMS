@@ -91,7 +91,7 @@ BEGIN
         -- Find steps for the given jobs that need to be reset
         -----------------------------------------------------------
 
-        INSERT INTO Tmp_JobStepsToReset( job, step )
+        INSERT INTO Tmp_JobStepsToReset (job, step)
         SELECT DISTINCT JS.job,
                         JS.step
         FROM sw.t_job_steps JS

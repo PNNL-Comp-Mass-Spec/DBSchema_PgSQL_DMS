@@ -96,10 +96,12 @@ BEGIN
     -- Action for add mode
     ---------------------------------------------------
 
-    INSERT INTO pc.t_legacy_file_upload_requests( legacy_file_id,
-                                                  legacy_file_name,
-                                                  date_requested,
-                                                  authentication_hash )
+    INSERT INTO pc.t_legacy_file_upload_requests (
+        legacy_file_id,
+        legacy_file_name,
+        date_requested,
+        authentication_hash
+    )
     VALUES(_legacyFileID, _legacyFileName, CURRENT_TIMESTAMP, _authenticationHash)
     RETURNING upload_request_id
     INTO _requestID;

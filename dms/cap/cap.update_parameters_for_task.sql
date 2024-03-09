@@ -314,8 +314,7 @@ BEGIN
 
             -- Add any missing capture task jobs
 
-            INSERT INTO cap.t_task_parameters( job,
-                                               parameters )
+            INSERT INTO cap.t_task_parameters (job, parameters)
             SELECT Source.Job,
                    Source.Parameters
             FROM Tmp_Job_Parameters Source

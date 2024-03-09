@@ -90,7 +90,13 @@ BEGIN
 
     CREATE INDEX IX_Tmp_SourceData ON Tmp_SourceData (tax_id);
 
-    INSERT INTO Tmp_SourceData(tax_id, name, rank,parent_tax_id, synonyms)
+    INSERT INTO Tmp_SourceData (
+        tax_id,
+        name,
+        rank,
+        parent_tax_id,
+        synonyms
+    )
     SELECT Nodes.tax_id,
            NodeNames.name,
            Nodes.rank,

@@ -111,8 +111,7 @@ BEGIN
         -- Add new events to table
         ---------------------------------------------------
 
-        INSERT INTO t_notification_event( event_type_id,
-                                          target_id )
+        INSERT INTO t_notification_event (event_type_id, target_id)
         SELECT Tmp_NewEvents.event_type_id,
                Tmp_NewEvents.target_id
         FROM Tmp_NewEvents

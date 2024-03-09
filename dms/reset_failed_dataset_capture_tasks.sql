@@ -84,9 +84,11 @@ BEGIN
         -- and a comment containing known errors
         ------------------------------------------------
 
-        INSERT INTO Tmp_Datasets( Dataset_ID,
-                                  Dataset,
-                                  Reset_Comment )
+        INSERT INTO Tmp_Datasets (
+            Dataset_ID,
+            Dataset,
+            Reset_Comment
+        )
         SELECT A.dataset_id,
                A.Dataset,
                '' AS Reset_Comment
@@ -211,10 +213,12 @@ BEGIN
         -- then remove those datasets from Tmp_Datasets
         ------------------------------------------------
 
-        INSERT INTO t_log_entries( posted_by,
-                                   entered,
-                                   type,
-                                   message )
+        INSERT INTO t_log_entries (
+            posted_by,
+            entered,
+            type,
+            message
+        )
         SELECT 'Reset_Failed_Dataset_Capture_Tasks',
                CURRENT_TIMESTAMP,
                'Error',

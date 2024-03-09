@@ -74,7 +74,7 @@ BEGIN
     -- If none of the members of this batch has entries in T_Factors, Tmp_Factors will be empty (that's OK)
     -- Factor names in T_Factor should not be empty, but exclude empty strings for safety
 
-    INSERT INTO Tmp_Factors( FactorID, FactorName )
+    INSERT INTO Tmp_Factors (FactorID, FactorName)
     SELECT Src.factor_id, Src.name
     FROM t_factor Src
          INNER JOIN Tmp_RequestIDs

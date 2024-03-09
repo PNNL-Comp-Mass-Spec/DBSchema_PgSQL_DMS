@@ -147,13 +147,15 @@ BEGIN
         -- Add capture task job to temp table
         ---------------------------------------------------
 
-        INSERT INTO Tmp_Jobs( Job,
-                              Priority,
-                              Script,
-                              State,
-                              Dataset,
-                              Dataset_ID,
-                              Results_Directory_Name )
+        INSERT INTO Tmp_Jobs (
+            Job,
+            Priority,
+            Script,
+            State,
+            Dataset,
+            Dataset_ID,
+            Results_Directory_Name
+        )
         VALUES(_job,
                _priority,
                _scriptName,
@@ -267,9 +269,11 @@ BEGIN
             If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'cap' AND tablename::citext = 't_debug_tmp_tasks') Then
                 DELETE FROM cap.t_debug_tmp_tasks;
 
-                INSERT INTO cap.t_debug_tmp_tasks( Job, Priority, Script, State, Dataset, Dataset_ID, Results_Directory_Name,
-                                                  Storage_Server, Instrument, Instrument_Class,
-                                                  Max_Simultaneous_Captures, Capture_Subdirectory )
+                INSERT INTO cap.t_debug_tmp_tasks (
+                    Job, Priority, Script, State, Dataset, Dataset_ID, Results_Directory_Name,
+                    Storage_Server, Instrument, Instrument_Class,
+                    Max_Simultaneous_Captures, Capture_Subdirectory
+                )
                 SELECT Job, Priority, Script, State, Dataset, Dataset_ID, Results_Directory_Name,
                        Storage_Server, Instrument, Instrument_Class,
                        Max_Simultaneous_Captures, Capture_Subdirectory

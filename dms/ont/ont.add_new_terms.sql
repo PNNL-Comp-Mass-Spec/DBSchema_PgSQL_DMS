@@ -162,7 +162,7 @@ BEGIN
 
         _sourceTable := 'ont.v_newt_terms';
 
-        _insertSql := format('INSERT INTO %s ( term_pk, term_name, identifier, is_leaf, parent_term_name, parent_term_id, grandparent_term_name, grandparent_term_id)', _targetTableWithSchema);
+        _insertSql := format('INSERT INTO %s (term_pk, term_name, identifier, is_leaf, parent_term_name, parent_term_id, grandparent_term_name, grandparent_term_id)', _targetTableWithSchema);
 
         /*
          * Old
@@ -186,7 +186,7 @@ BEGIN
 
         _sourceTable := 'ont.v_term_lineage';
 
-        _insertSql := format('INSERT INTO %s ( term_pk, term_name, identifier, is_leaf, parent_term_name, parent_term_id, grandparent_term_name, grandparent_term_id )', _targetTableWithSchema);
+        _insertSql := format('INSERT INTO %s (term_pk, term_name, identifier, is_leaf, parent_term_name, parent_term_id, grandparent_term_name, grandparent_term_id)', _targetTableWithSchema);
 
         _s :=        'SELECT DISTINCT s.term_pk, s.term_name, s.identifier, s.is_leaf, '
                               's.parent_term_name, s.parent_term_Identifier, s.grandparent_term_name, s.grandparent_term_identifier' ||

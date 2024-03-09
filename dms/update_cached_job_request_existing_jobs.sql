@@ -155,7 +155,7 @@ BEGIN
 
         CREATE INDEX IX_TmpRequestsAndExistingJobs ON Tmp_RequestsAndExistingJobs ( Request_ID, Job );
 
-        INSERT INTO Tmp_RequestsAndExistingJobs( request_id, job )
+        INSERT INTO Tmp_RequestsAndExistingJobs (request_id, job)
         SELECT AJR.request_id,
                AJ.job
         FROM t_analysis_job AJ
@@ -340,7 +340,7 @@ BEGIN
         -- Therefore, this query only examines job requests from the last _modeZeroSearchDays days
         ------------------------------------------------
 
-        INSERT INTO t_analysis_job_request_existing_jobs( request_id, job )
+        INSERT INTO t_analysis_job_request_existing_jobs (request_id, job)
         SELECT DISTINCT LookupQ.request_id,
                         RequestJobs.job
         FROM ( SELECT AJR.request_id AS Request_ID

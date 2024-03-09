@@ -383,10 +383,12 @@ BEGIN
         -- Make entries in interval tracking table for long intervals
         ---------------------------------------------------
 
-        INSERT INTO t_run_interval( dataset_id,
-                                    instrument,
-                                    start,
-                                    Interval )
+        INSERT INTO t_run_interval (
+            dataset_id,
+            instrument,
+            start,
+            interval
+        )
         SELECT Tmp_Durations.dataset_id,
                InstName.instrument,
                Tmp_Durations.Time_End,

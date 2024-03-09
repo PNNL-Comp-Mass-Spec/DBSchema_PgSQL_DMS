@@ -61,7 +61,7 @@ BEGIN
     -- since last time we did this
     ---------------------------------------------------
 
-    INSERT INTO Tmp_BatchIDs ( BatchID )
+    INSERT INTO Tmp_BatchIDs (BatchID)
     SELECT target_id
     FROM t_notification_event
     WHERE event_type_id = 3 AND entered > _threshold;

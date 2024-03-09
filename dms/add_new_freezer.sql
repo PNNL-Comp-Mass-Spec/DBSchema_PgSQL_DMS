@@ -111,15 +111,17 @@ BEGIN
         Container_Limit int NOT NULL
     );
 
-    INSERT INTO Tmp_T_Material_Locations( freezer_tag,
-                                          shelf,
-                                          rack,
-                                          row,
-                                          col,
-                                          status,
-                                          barcode,
-                                          comment,
-                                          container_limit )
+    INSERT INTO Tmp_T_Material_Locations (
+        freezer_tag,
+        shelf,
+        rack,
+        row,
+        col,
+        status,
+        barcode,
+        comment,
+        container_limit
+    )
     SELECT _newFreezerTag AS New_Freezer_Tag,
            shelf,
            rack,
@@ -173,15 +175,17 @@ BEGIN
         RETURN;
     End If;
 
-    INSERT INTO t_material_locations( freezer_tag,
-                                      shelf,
-                                      rack,
-                                      row,
-                                      col,
-                                      status,
-                                      barcode,
-                                      comment,
-                                      container_limit )
+    INSERT INTO t_material_locations (
+        freezer_tag,
+        shelf,
+        rack,
+        row,
+        col,
+        status,
+        barcode,
+        comment,
+        container_limit
+    )
     SELECT freezer_tag,
            shelf,
            rack,

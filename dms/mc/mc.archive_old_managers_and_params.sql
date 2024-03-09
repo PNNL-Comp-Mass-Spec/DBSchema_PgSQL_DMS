@@ -220,13 +220,14 @@ BEGIN
 
     RAISE INFO 'Insert into t_old_managers';
 
-    INSERT INTO mc.t_old_managers(
-                               mgr_id,
-                               mgr_name,
-                               mgr_type_id,
-                               param_value_changed,
-                               control_from_website,
-                               comment )
+    INSERT INTO mc.t_old_managers (
+        mgr_id,
+        mgr_name,
+        mgr_type_id,
+        param_value_changed,
+        control_from_website,
+        comment
+    )
     SELECT M.mgr_id,
            M.mgr_name,
            M.mgr_type_id,
@@ -249,14 +250,15 @@ BEGIN
     -- to avoid an ambiguous name error with the entry_id field
     -- returned by this function
 
-    INSERT INTO mc.t_param_value_old_managers(
-             entry_id,
-             param_type_id,
-             value,
-             mgr_id,
-             comment,
-             last_affected,
-             entered_by )
+    INSERT INTO mc.t_param_value_old_managers (
+        entry_id,
+        param_type_id,
+        value,
+        mgr_id,
+        comment,
+        last_affected,
+        entered_by
+    )
     SELECT PV.entry_id,
            PV.param_type_id,
            PV.value,

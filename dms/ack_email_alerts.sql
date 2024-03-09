@@ -50,7 +50,7 @@ BEGIN
         AlertID int NOT NULL
     );
 
-    INSERT INTO Tmp_AlertIDs( AlertID )
+    INSERT INTO Tmp_AlertIDs (AlertID)
     SELECT Value
     FROM public.parse_delimited_integer_list ( _alertIDs );
 

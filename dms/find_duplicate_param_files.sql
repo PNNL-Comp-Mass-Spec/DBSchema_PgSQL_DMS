@@ -257,8 +257,7 @@ BEGIN
     -- Populate Tmp_MassModCounts
     -----------------------------------------
 
-    INSERT INTO Tmp_MassModCounts( Param_File_ID,
-                                   ModCount )
+    INSERT INTO Tmp_MassModCounts (Param_File_ID, ModCount)
     SELECT P.Param_File_ID,
            SUM(CASE WHEN Mod_Entry_ID IS NULL THEN 0
                     ELSE 1
@@ -277,11 +276,13 @@ BEGIN
         -- After this, standardize the entries to allow for rapid comparison
         -----------------------------------------
 
-        INSERT INTO Tmp_ParamEntries( Param_File_ID,
-                                      Entry_Type,
-                                      Entry_Specifier,
-                                      Entry_Value,
-                                      Compare )
+        INSERT INTO Tmp_ParamEntries (
+            Param_File_ID,
+            Entry_Type,
+            Entry_Specifier,
+            Entry_Value,
+            Compare
+        )
         SELECT PE.param_file_id,
                Trim(PE.entry_type),
                Trim(PE.entry_specifier),
@@ -328,11 +329,13 @@ BEGIN
         End If;
 
         If Not Exists (SELECT PE.Param_File_ID FROM Tmp_ParamEntries PE WHERE PE.Param_File_ID = _paramFileID) Then
-            INSERT INTO Tmp_ParamEntries ( Param_File_ID,
-                                           Entry_Type,
-                                           Entry_Specifier,
-                                           Entry_Value,
-                                           Compare )
+            INSERT INTO Tmp_ParamEntries (
+                Param_File_ID,
+                Entry_Type,
+                Entry_Specifier,
+                Entry_Value,
+                Compare
+            )
             VALUES (_paramFileID, 'BasicParam', 'SelectedEnzymeIndex', 0, true);
         End If;
 
@@ -718,7 +721,7 @@ BEGIN
             -- Add their IDs to Tmp_SimilarParamFiles, provided the existing combo does not yet already exist
             -----------------------------------------
 
-            INSERT INTO Tmp_SimilarParamFiles(Param_File_ID_Master, Param_File_ID_Dup)
+            INSERT INTO Tmp_SimilarParamFiles (Param_File_ID_Master, Param_File_ID_Dup)
             SELECT _paramFileInfo.ParamFileID, PED.Param_File_ID
             FROM Tmp_ParamEntryDuplicates PED INNER JOIN
                  Tmp_MassModDuplicates MMD ON PED.Param_File_ID = MMD.Param_File_ID
@@ -749,7 +752,7 @@ BEGIN
             -- Add their IDs to Tmp_SimilarParamFiles, provided the existing combo does not yet already exist
             -----------------------------------------
 
-            INSERT INTO Tmp_SimilarParamFiles(Param_File_ID_Master, Param_File_ID_Dup)
+            INSERT INTO Tmp_SimilarParamFiles (Param_File_ID_Master, Param_File_ID_Dup)
             SELECT _paramFileInfo.ParamFileID, MMD.Param_File_ID
             FROM Tmp_MassModDuplicates MMD
             WHERE NOT EXISTS

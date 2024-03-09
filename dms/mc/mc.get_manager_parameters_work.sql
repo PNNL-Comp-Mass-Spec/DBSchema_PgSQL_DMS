@@ -68,18 +68,20 @@ BEGIN
     -- Lookup the initial manager parameters
     -----------------------------------------------
 
-    INSERT INTO Tmp_Mgr_Params( mgr_name,
-                                param_name,
-                                entry_id,
-                                param_type_id,
-                                value,
-                                mgr_id,
-                                comment,
-                                last_affected,
-                                entered_by,
-                                mgr_type_id,
-                                parent_param_pointer_state,
-                                source )
+    INSERT INTO Tmp_Mgr_Params (
+        mgr_name,
+        param_name,
+        entry_id,
+        param_type_id,
+        value,
+        mgr_id,
+        comment,
+        last_affected,
+        entered_by,
+        mgr_type_id,
+        parent_param_pointer_state,
+        source
+    )
     SELECT mgr_name,
            param_name,
            entry_id,

@@ -165,7 +165,7 @@ BEGIN
     -- that has an active predefined job
     -- Optionally filter on campaign
     --
-    INSERT INTO Tmp_DatasetsToProcess ( Dataset_ID, Process_Dataset )
+    INSERT INTO Tmp_DatasetsToProcess (Dataset_ID, Process_Dataset)
     SELECT DISTINCT DS.dataset_id, true AS Process_Dataset
     FROM t_dataset DS
          INNER JOIN t_dataset_type_name DSType
@@ -401,7 +401,7 @@ BEGIN
               DS.dataset = _datasetNameIgnoreExistingJobs::citext;
 
         If Not FOUND Then
-            INSERT INTO Tmp_DatasetsToProcess ( Dataset_ID, Process_Dataset )
+            INSERT INTO Tmp_DatasetsToProcess (Dataset_ID, Process_Dataset)
             SELECT DS.dataset_id, true AS Process_Dataset
             FROM t_dataset DS
             WHERE DS.dataset = _datasetNameIgnoreExistingJobs::citext;

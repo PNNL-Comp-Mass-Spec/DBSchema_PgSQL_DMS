@@ -88,11 +88,13 @@ BEGIN
         -- Look for failed capture task jobs
         -----------------------------------------------------------
 
-        INSERT INTO Tmp_FailedJobs( Job,
-                                    Dataset_ID,
-                                    Subfolder,
-                                    Error_Message,
-                                    SkipResetMode )
+        INSERT INTO Tmp_FailedJobs (
+            Job,
+            Dataset_ID,
+            Subfolder,
+            Error_Message,
+            SkipResetMode
+        )
         SELECT Job,
                Dataset_ID,
                Coalesce(Output_Folder, Input_Folder),
@@ -113,11 +115,13 @@ BEGIN
         GROUP BY Job, Dataset_ID, Output_Folder, Input_Folder;
 
         If _jobListOverride <> '' Then
-            INSERT INTO Tmp_FailedJobs( Job,
-                                        Dataset_ID,
-                                        Subfolder,
-                                        Error_Message,
-                                        SkipResetMode )
+            INSERT INTO Tmp_FailedJobs (
+                Job,
+                Dataset_ID,
+                Subfolder,
+                Error_Message,
+                SkipResetMode
+            )
             SELECT DISTINCT SrcJobs.Value,
                             TS.Dataset_ID,
                             TS.Output_Folder,

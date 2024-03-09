@@ -61,13 +61,13 @@ BEGIN
         DELETE FROM Tmp_UserInfo;
 
         If _nameValidationIteration = 1 Then
-            INSERT INTO Tmp_UserInfo ( Name_and_Username )
+            INSERT INTO Tmp_UserInfo (Name_and_Username)
             SELECT Value
             FROM public.parse_delimited_list(_requestedPersonnel, ';');
 
             _userFieldName := 'requested personnel';
         Else
-            INSERT INTO Tmp_UserInfo ( Name_and_Username )
+            INSERT INTO Tmp_UserInfo (Name_and_Username)
             SELECT Value
             FROM public.parse_delimited_list(_assignedPersonnel, ';');
 

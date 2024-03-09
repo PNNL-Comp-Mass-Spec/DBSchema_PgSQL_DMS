@@ -58,11 +58,12 @@ BEGIN
     End If;
 
     If _updateTable Then
-
-        INSERT INTO sw.t_machine_status_history( posting_time,
-                                                 machine,
-                                                 processor_count_active,
-                                                 free_memory_mb )
+        INSERT INTO sw.t_machine_status_history (
+            posting_time,
+            machine,
+            processor_count_active,
+            free_memory_mb
+        )
         SELECT CURRENT_TIMESTAMP,
                M.machine,
                COUNT(PS.processor_name) AS Processor_Count_Active,

@@ -106,13 +106,15 @@ BEGIN
             RETURN;
         End If;
 
-        INSERT INTO t_predefined_analysis_scheduling_queue( dataset_id,
-                                                            calling_user,
-                                                            analysis_tool_name_filter,
-                                                            exclude_datasets_not_released,
-                                                            prevent_duplicate_jobs,
-                                                            state,
-                                                            message )
+        INSERT INTO t_predefined_analysis_scheduling_queue (
+            dataset_id,
+            calling_user,
+            analysis_tool_name_filter,
+            exclude_datasets_not_released,
+            prevent_duplicate_jobs,
+            state,
+            message
+        )
         VALUES (_datasetID,
                 _callingUser,
                 _analysisToolNameFilter,

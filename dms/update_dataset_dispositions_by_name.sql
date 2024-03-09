@@ -106,7 +106,7 @@ BEGIN
         -- Add datasets from input list to table
         ---------------------------------------------------
 
-        INSERT INTO Tmp_DatasetsToUpdate( DatasetName )
+        INSERT INTO Tmp_DatasetsToUpdate (DatasetName)
         SELECT Value
         FROM public.parse_delimited_list(_datasetList);
 

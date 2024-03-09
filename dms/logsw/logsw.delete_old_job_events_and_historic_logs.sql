@@ -203,7 +203,7 @@ BEGIN
         -- Find items to delete in logsw.t_job_step_events
         ---------------------------------------------------
 
-        INSERT INTO Tmp_JobStepEventIDs( Event_ID, Entered )
+        INSERT INTO Tmp_JobStepEventIDs (Event_ID, Entered)
         SELECT Event_ID, Entered
         FROM logsw.t_job_step_events
         WHERE entered < _dateThreshold AND
@@ -274,7 +274,7 @@ BEGIN
         -- Find items to delete in logsw.t_job_step_processing_log
         ---------------------------------------------------
 
-        INSERT INTO Tmp_ProcessingLogEventIDs( Event_ID, Entered )
+        INSERT INTO Tmp_ProcessingLogEventIDs (Event_ID, Entered)
         SELECT Event_ID, Entered
         FROM logsw.t_job_step_processing_log
         WHERE entered < _dateThreshold AND

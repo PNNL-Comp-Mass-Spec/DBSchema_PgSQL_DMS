@@ -696,7 +696,7 @@ BEGIN
 
             _dropExperimentsTable := true;
 
-            INSERT INTO Tmp_ExperimentsToUpdate (plexExperimentId )
+            INSERT INTO Tmp_ExperimentsToUpdate (plexExperimentId)
             VALUES (_plexExperimentId);
 
             ---------------------------------------------------

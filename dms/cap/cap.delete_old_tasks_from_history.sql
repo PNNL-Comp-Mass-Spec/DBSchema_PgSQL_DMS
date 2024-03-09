@@ -71,7 +71,7 @@ BEGIN
     -- Find capture task jobs to delete
     ---------------------------------------------------
 
-    INSERT INTO Tmp_JobsToDelete( Job, Saved )
+    INSERT INTO Tmp_JobsToDelete (Job, Saved)
     SELECT Job, Saved
     FROM cap.t_tasks_history
     WHERE Saved < _dateThreshold;

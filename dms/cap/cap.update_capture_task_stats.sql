@@ -63,7 +63,12 @@ BEGIN
     -- Summarize capture task jobs by script, instrument, and year
     ---------------------------------------------------
 
-    INSERT INTO Tmp_Capture_Task_Stats( Script, Instrument, Year, Jobs )
+    INSERT INTO Tmp_Capture_Task_Stats (
+        Script,
+        Instrument,
+        Year,
+        Jobs
+    )
     SELECT JH.Script,
            Coalesce(InstName.Instrument, '') AS Instrument,
            Extract(year from JH.Start) AS Year,

@@ -288,9 +288,7 @@ BEGIN
             _message := format('Processor not defined in sw.t_local_processors: %s', _processorName);
             _returnCode := _jobNotAvailableErrorCode;
 
-            INSERT INTO sw.t_sp_usage( posted_by,
-                                       processor_id,
-                                       calling_user )
+            INSERT INTO sw.t_sp_usage (posted_by, processor_id, calling_user)
             VALUES('Request_Step_Task_XML',
                    NULL,
                    format('%s (Invalid processor: %s)', SESSION_USER, _processorName));
@@ -319,9 +317,11 @@ BEGIN
             End If;
 
             If Not Coalesce(_logSPUsage, false) Then
-                INSERT INTO sw.t_sp_usage ( posted_by,
-                                            processor_id,
-                                            calling_user )
+                INSERT INTO sw.t_sp_usage (
+                    posted_by,
+                    processor_id,
+                    calling_user
+                )
                 VALUES ('Request_Step_Task_XML', _processorID, SESSION_USER);
             End If;
 

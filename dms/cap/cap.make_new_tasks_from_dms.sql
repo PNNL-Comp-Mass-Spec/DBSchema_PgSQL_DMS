@@ -89,23 +89,25 @@ BEGIN
 
         If Not _infoOnly Then
 
-            INSERT INTO cap.t_tasks( Script,
-                                     Comment,
-                                     Dataset,
-                                     Dataset_ID,
-                                     Priority)
+            INSERT INTO cap.t_tasks (
+                script,
+                comment,
+                dataset,
+                dataset_id,
+                priority
+            )
             SELECT CASE
                        WHEN Src.Instrument_Group = 'IMS' THEN 'IMSDatasetCapture'
                        ELSE 'DatasetCapture'
-                   END AS Script,
+                   END AS script,
                    '' AS comment,
-                   Src.Dataset,
-                   Src.Dataset_ID,
-                   cap.get_dataset_capture_priority(Src.Dataset, Src.Instrument_Group)
+                   Src.dataset,
+                   Src.dataset_id,
+                   cap.get_dataset_capture_priority(Src.Dataset, Src.Instrument_Group) AS priority
             FROM cap.V_DMS_Get_New_Datasets Src
                  LEFT OUTER JOIN cap.t_tasks Target
-                   ON Src.Dataset_ID = Target.Dataset_ID
-            WHERE Target.Dataset_ID IS NULL;
+                   ON Src.dataset_id = Target.dataset_id
+            WHERE Target.dataset_id IS NULL;
 
         Else
             RAISE INFO '';

@@ -148,7 +148,7 @@ BEGIN
         -- Look for capture task jobs that have a failed ArchiveVerify step
         -----------------------------------------------------------
 
-        INSERT INTO Tmp_Archive_Jobs_To_Reset( Job )
+        INSERT INTO Tmp_Archive_Jobs_To_Reset (Job)
         SELECT TS.Job
         FROM cap.t_task_steps TS
              INNER JOIN Tmp_Archive_Jobs JL
@@ -160,7 +160,7 @@ BEGIN
         -- Look for capture task jobs that do not have a failed ArchiveVerify step
         -----------------------------------------------------------
 
-        INSERT INTO Tmp_Archive_Jobs_To_Skip( Job )
+        INSERT INTO Tmp_Archive_Jobs_To_Skip (Job)
         SELECT JL.Job
         FROM Tmp_Archive_Jobs JL
              LEFT OUTER JOIN Tmp_Archive_Jobs_To_Reset JR

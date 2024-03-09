@@ -93,7 +93,7 @@ BEGIN
         TagName text
     );
 
-    INSERT INTO Tmp_TagNamesTable(TagName)
+    INSERT INTO Tmp_TagNamesTable (TagName)
     VALUES ('SourceJob'),
            ('Job2'),
            ('Job3'),

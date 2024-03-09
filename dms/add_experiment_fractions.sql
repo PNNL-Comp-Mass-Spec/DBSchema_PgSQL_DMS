@@ -245,8 +245,7 @@ BEGIN
         -- Cache the biomaterial mapping
         ---------------------------------------------------
 
-        INSERT INTO Tmp_Experiment_to_Biomaterial_Map( Biomaterial_Name,
-                                                       Biomaterial_ID )
+        INSERT INTO Tmp_Experiment_to_Biomaterial_Map (Biomaterial_Name, Biomaterial_ID)
         SELECT CC.Biomaterial_Name,
                CC.Biomaterial_ID
         FROM t_experiment_biomaterial ECC
@@ -258,8 +257,7 @@ BEGIN
         -- Cache the reference compound mapping
         ---------------------------------------------------
 
-        INSERT INTO Tmp_ExpToRefCompoundMap( Compound_IDName,
-                                             compound_id )
+        INSERT INTO Tmp_ExpToRefCompoundMap (Compound_IDName, Compound_ID)
         SELECT RC.compound_id::text,
                RC.compound_id
         FROM t_experiment_reference_compounds ERC
@@ -465,8 +463,7 @@ BEGIN
             -- Add parent experiment to reference group
             ---------------------------------------------------
 
-            INSERT INTO t_experiment_group_members( group_id,
-                                                    exp_id )
+            INSERT INTO t_experiment_group_members (group_id, exp_id)
             VALUES (_groupID, _parentExperimentInfo.ParentExperimentID);
 
         End If;
@@ -598,7 +595,7 @@ BEGIN
                 -- Add fractionated experiment reference to experiment group
                 ---------------------------------------------------
 
-                INSERT INTO t_experiment_group_members( group_id, exp_id )
+                INSERT INTO t_experiment_group_members (group_id, exp_id)
                 VALUES ( _groupID, _newExpID );
 
                 ---------------------------------------------------
@@ -626,11 +623,13 @@ BEGIN
                            WHERE plex_exp_id = _parentExperimentInfo.ParentExperimentID
                           ) Then
 
-                    INSERT INTO t_experiment_plex_members( plex_exp_id,
-                                                           channel,
-                                                           exp_id,
-                                                           channel_type_id,
-                                                           comment )
+                    INSERT INTO t_experiment_plex_members (
+                        plex_exp_id,
+                        channel,
+                        exp_id,
+                        channel_type_id,
+                        comment
+                    )
                     SELECT _newExpID AS Plex_Exp_ID,
                            channel,
                            exp_id,

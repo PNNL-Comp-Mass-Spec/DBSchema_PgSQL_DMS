@@ -114,8 +114,7 @@ BEGIN
         Valid boolean
     );
 
-    INSERT INTO Tmp_TargetEntities( EntityID,
-                                    Valid )
+    INSERT INTO Tmp_TargetEntities (EntityID, Valid)
     SELECT LookupQ.value, false AS Valid
     FROM ( SELECT DISTINCT public.try_cast(value, null::int) AS value
            FROM public.parse_delimited_list(_targetEntityIDList)

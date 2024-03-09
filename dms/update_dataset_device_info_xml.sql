@@ -305,13 +305,15 @@ BEGIN
     -- Add new devices
     ---------------------------------------------------
 
-    INSERT INTO t_dataset_device( device_type,
-                                  device_number,
-                                  device_name,
-                                  device_model,
-                                  serial_number,
-                                  software_version,
-                                  device_description )
+    INSERT INTO t_dataset_device (
+        device_type,
+        device_number,
+        device_name,
+        device_model,
+        serial_number,
+        software_version,
+        device_description
+    )
     SELECT Src.device_type,
            Src.device_number,
            Src.device_name,
@@ -352,7 +354,7 @@ BEGIN
     DELETE FROM t_dataset_device_map
     WHERE dataset_id = _datasetID;
 
-    INSERT INTO t_dataset_device_map( dataset_id, device_id )
+    INSERT INTO t_dataset_device_map (dataset_id, device_id)
     SELECT DISTINCT _datasetID,
                     Src.device_id
     FROM Tmp_DatasetDevicesTable Src

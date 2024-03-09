@@ -58,10 +58,12 @@ BEGIN
     -- Make entry in results table for each biomaterial
     ----------------------------------------------------------
 
-    INSERT INTO Tmp_Biomaterial_Stats( Biomaterial_ID,
-                                       Experiment_Count,
-                                       Dataset_Count,
-                                       Job_Count )
+    INSERT INTO Tmp_Biomaterial_Stats (
+        Biomaterial_ID,
+        Experiment_Count,
+        Dataset_Count,
+        Job_Count
+    )
     SELECT Biomaterial_ID, 0, 0, 0
     FROM t_biomaterial;
 

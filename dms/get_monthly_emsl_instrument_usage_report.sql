@@ -97,7 +97,7 @@ BEGIN
         -- because two (or more) DMS Instruments have the same EUS_Instrument_ID
         ---------------------------------------------------
 
-        INSERT INTO Tmp_InstrumentsToProcessByID ( eus_instrument_id, instrument )
+        INSERT INTO Tmp_InstrumentsToProcessByID (eus_instrument_id, instrument)
         SELECT InstMapping.eus_instrument_id,
                InstName.instrument
         FROM t_instrument_name InstName
@@ -118,7 +118,7 @@ BEGIN
         -- Get list of active production instruments
         ---------------------------------------------------
 
-        INSERT INTO Tmp_Instruments( instrument )
+        INSERT INTO Tmp_Instruments (Instrument)
         SELECT instrument
         FROM t_instrument_name
         WHERE status = 'Active' AND

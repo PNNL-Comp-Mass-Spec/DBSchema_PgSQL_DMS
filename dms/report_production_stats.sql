@@ -270,11 +270,13 @@ BEGIN
         If _eusUsageFilterList <> '' Then
             -- Filter on the EMSL usage types defined in Tmp_EUSUsageFilter
 
-            INSERT INTO Tmp_Datasets( Dataset_ID,
-                                      Campaign_ID,
-                                      Request_ID,
-                                      EMSL_Funded,
-                                      Proposal_Type )
+            INSERT INTO Tmp_Datasets (
+                Dataset_ID,
+                Campaign_ID,
+                Request_ID,
+                EMSL_Funded,
+                Proposal_Type
+            )
             SELECT DS.dataset_id,
                    E.campaign_id,
                    RR.request_id,
@@ -305,11 +307,13 @@ BEGIN
             -- Note that this query uses a left outer join against t_requested_run
             -- because datasets acquired before 2006 were not required to have a requested run
 
-            INSERT INTO Tmp_Datasets( Dataset_ID,
-                                      Campaign_ID,
-                                      Request_ID,
-                                      EMSL_Funded,
-                                      Proposal_Type )
+            INSERT INTO Tmp_Datasets (
+                Dataset_ID,
+                Campaign_ID,
+                Request_ID,
+                EMSL_Funded,
+                Proposal_Type
+            )
             SELECT DS.dataset_id,
                    E.campaign_id,
                    RR.request_id,

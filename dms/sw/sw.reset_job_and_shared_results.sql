@@ -97,7 +97,7 @@ BEGIN
             -- Find the shared result folders for this job
             -----------------------------------------------------------
 
-            INSERT INTO Tmp_SharedResultFolders( Output_Folder )
+            INSERT INTO Tmp_SharedResultFolders (Output_Folder)
             SELECT DISTINCT output_folder_name
             FROM sw.t_job_steps
             WHERE job = _job AND
@@ -111,7 +111,7 @@ BEGIN
                   NOT output_folder_name IS NULL;
 
         Else
-            INSERT INTO Tmp_SharedResultFolders( Output_Folder )
+            INSERT INTO Tmp_SharedResultFolders (Output_Folder)
             VALUES (_sharedResultFolderName);
         End If;
 

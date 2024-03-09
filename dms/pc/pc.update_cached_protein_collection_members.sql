@@ -99,9 +99,11 @@ BEGIN
     If _updateAll Then
         -- Reprocess all of the protein collections
 
-        INSERT INTO Tmp_ProteinCollections( Protein_Collection_ID,
-                                            Num_Proteins,
-                                            Processed )
+        INSERT INTO Tmp_ProteinCollections (
+            Protein_Collection_ID,
+            Num_Proteins,
+            Processed
+        )
         SELECT protein_collection_id,
                num_proteins,
                false AS Processed
@@ -111,9 +113,11 @@ BEGIN
     Else
         -- Only add new protein collections
 
-        INSERT INTO Tmp_ProteinCollections( Protein_Collection_ID,
-                                            Num_Proteins,
-                                            Processed )
+        INSERT INTO Tmp_ProteinCollections (
+            Protein_Collection_ID,
+            Num_Proteins,
+            Processed
+        )
         SELECT PC.protein_collection_id,
                PC.num_proteins,
                false AS Processed
@@ -191,7 +195,7 @@ BEGIN
         -- Find the next set of collections to process
         -- The goal is to process up to 500,000 proteins
 
-        INSERT INTO Tmp_CurrentIDs( Protein_Collection_ID )
+        INSERT INTO Tmp_CurrentIDs (Protein_Collection_ID)
         SELECT PC.Protein_Collection_ID
         FROM Tmp_ProteinCollections PC
              INNER JOIN ( SELECT Protein_Collection_ID,
@@ -279,9 +283,11 @@ BEGIN
         -- This is required to avoid a complete table scan of table pc.t_protein_collection_members in the MERGE and DELETE queries below
         ---------------------------------------------------
 
-        INSERT INTO Tmp_ProteinCollectionMembers( Protein_Collection_ID,
-                                                  Reference_ID,
-                                                  Protein_ID )
+        INSERT INTO Tmp_ProteinCollectionMembers (
+            Protein_Collection_ID,
+            Reference_ID,
+            Protein_ID
+        )
         SELECT PCM.protein_collection_id,
                PCM.original_reference_id,
                PCM.protein_id
@@ -413,9 +419,11 @@ BEGIN
     -- Validate the num_proteins value in pc.t_protein_collections
     ---------------------------------------------------
 
-    INSERT INTO Tmp_ProteinCountErrors( protein_collection_id,
-                                        NumProteinsOld,
-                                        NumProteinsNew )
+    INSERT INTO Tmp_ProteinCountErrors (
+        Protein_Collection_ID,
+        NumProteinsOld,
+        NumProteinsNew
+    )
     SELECT PC.protein_collection_id,
            PC.num_proteins,
            StatsQ.NumProteinsNew

@@ -251,7 +251,7 @@ BEGIN
         ** It is more efficient than the larger query below (which uses Row_Number() to rank things)
         ** However, it doesn't run that much faster, and thus, for simplicity, we're always using the larger query
         **
-            _sql :=        'INSERT INTO Tmp_PurgeableDatasets( Dataset_ID, MostRecent, Source, Storage_Server_Name, Server_Vol, Purge_Priority) '
+            _sql :=        'INSERT INTO Tmp_PurgeableDatasets (Dataset_ID, MostRecent, Source, Storage_Server_Name, Server_Vol, Purge_Priority) '
                            'SELECT dataset_id, '                                      ||
                             format('%s, ', _purgeInfo.OrderByCol)                     ||
                             format('''%s'' AS Source, ', _purgeInfo.PurgeViewName)    ||
@@ -295,7 +295,7 @@ BEGIN
         -- (limiting by _storageServerName or _serverDisk if they are defined)
         ---------------------------------------------------
 
-        _sql := 'INSERT INTO Tmp_PurgeableDatasets( Dataset_ID, MostRecent, Source, Storage_Server_Name, Server_Vol, Purge_Priority) '
+        _sql := 'INSERT INTO Tmp_PurgeableDatasets (Dataset_ID, MostRecent, Source, Storage_Server_Name, Server_Vol, Purge_Priority) '
                 'SELECT dataset_id, '                                                                    ||
                 format('%s, ', _purgeInfo.OrderByCol)                                                    ||
                       'Source, '
@@ -378,8 +378,10 @@ BEGIN
         -- Add entries to Tmp_StorageVolsToSkip
         ---------------------------------------------------
 
-        INSERT INTO Tmp_StorageVolsToSkip( Storage_Server_Name,
-                                           Server_Vol )
+        INSERT INTO Tmp_StorageVolsToSkip (
+            Storage_Server_Name,
+            Server_Vol
+        )
         SELECT Src.Storage_Server_Name,
                Src.Server_Vol
         FROM ( SELECT Storage_Server_Name,

@@ -168,7 +168,7 @@ BEGIN
 
     DELETE FROM Tmp_JobsToFix;
 
-    INSERT INTO Tmp_JobsToFix( job, step )
+    INSERT INTO Tmp_JobsToFix (job, step)
     SELECT job,
            step
     FROM sw.t_job_steps

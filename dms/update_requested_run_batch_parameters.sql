@@ -186,7 +186,7 @@ BEGIN
         -- Populate temp table with new parameters
         -----------------------------------------------------------
 
-        INSERT INTO Tmp_NewBatchParams ( Parameter, Request_ID, Value )
+        INSERT INTO Tmp_NewBatchParams (Parameter, Request_ID, Value)
         SELECT Trim(XmlQ.Parameter), XmlQ.RequestID, Trim(XmlQ.Value)
         FROM (
             SELECT xmltable.*

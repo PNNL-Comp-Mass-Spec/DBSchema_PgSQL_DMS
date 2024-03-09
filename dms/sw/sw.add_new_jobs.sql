@@ -180,16 +180,18 @@ BEGIN
     -- excludes jobs that have recently been archived
     ---------------------------------------------------
 
-    INSERT INTO Tmp_DMSJobs( Job,
-                             Priority,
-                             script,
-                             Dataset,
-                             Dataset_ID,
-                             State,
-                             Transfer_Folder_Path,
-                             Comment,
-                             Special_Processing,
-                             Owner_Username )
+    INSERT INTO Tmp_DMSJobs (
+        Job,
+        Priority,
+        script,
+        Dataset,
+        Dataset_ID,
+        State,
+        Transfer_Folder_Path,
+        Comment,
+        Special_Processing,
+        Owner_Username
+    )
     SELECT Job,
            Priority,
            Tool,
@@ -393,8 +395,10 @@ BEGIN
         -- (only take jobs that have script that is currently active)
         ---------------------------------------------------
 
-        INSERT INTO sw.t_jobs ( job, priority, script, State, Dataset, Dataset_ID, Transfer_Folder_Path,
-                                comment, special_processing, storage_server, owner_username, Data_Pkg_ID )
+        INSERT INTO sw.t_jobs (
+            job, priority, script, State, Dataset, Dataset_ID, Transfer_Folder_Path,
+            comment, special_processing, storage_server, owner_username, Data_Pkg_ID
+        )
         SELECT DJ.job, DJ.priority, DJ.script, 0 AS State, DJ.Dataset, DJ.Dataset_ID, DJ.Transfer_Folder_Path,
                DJ.comment, DJ.special_processing, sw.extract_server_name(DJ.transfer_folder_path) AS Storage_Server, DJ.Owner_Username, 0 AS Data_Pkg_ID
         FROM Tmp_DMSJobs DJ

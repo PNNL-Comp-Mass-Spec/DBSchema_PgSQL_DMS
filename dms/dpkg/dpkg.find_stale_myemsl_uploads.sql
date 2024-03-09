@@ -61,9 +61,11 @@ BEGIN
         Entered timestamp
     );
 
-    INSERT INTO Tmp_StaleUploads( entry_id,
-                                  data_pkg_id,
-                                  entered)
+    INSERT INTO Tmp_StaleUploads (
+        entry_id,
+        data_pkg_id,
+        entered
+    )
     SELECT entry_id,
            data_pkg_id,
            entered

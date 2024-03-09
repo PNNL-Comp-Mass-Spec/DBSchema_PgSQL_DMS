@@ -210,12 +210,14 @@ BEGIN
         -- Copy the clone step's dependencies
         ---------------------------------------------------
 
-        INSERT INTO Tmp_Job_Step_Dependencies( Job,
-                                               Step,
-                                               Target_Step,
-                                               Condition_Test,
-                                               Test_Value,
-                                               Enable_Only )
+        INSERT INTO Tmp_Job_Step_Dependencies (
+            Job,
+            Step,
+            Target_Step,
+            Condition_Test,
+            Test_Value,
+            Enable_Only
+        )
         SELECT Job,
                _cloneStep AS Step,
                Target_Step,
@@ -230,12 +232,14 @@ BEGIN
         -- Copy the dependencies that target the clone step
         ---------------------------------------------------
 
-        INSERT INTO Tmp_Job_Step_Dependencies( Job,
-                                               Step,
-                                               Target_Step,
-                                               Condition_Test,
-                                               Test_Value,
-                                               Enable_Only )
+        INSERT INTO Tmp_Job_Step_Dependencies (
+            Job,
+            Step,
+            Target_Step,
+            Condition_Test,
+            Test_Value,
+            Enable_Only
+        )
         SELECT Job,
                Step,
                _cloneStep AS Target_Step,

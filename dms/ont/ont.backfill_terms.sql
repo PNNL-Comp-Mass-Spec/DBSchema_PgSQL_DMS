@@ -120,7 +120,7 @@ BEGIN
         matches_existing int
     );
 
-    _s := ' INSERT INTO Tmp_SourceData( term_pk, term_name, identifier, is_leaf,'            ||
+    _s := ' INSERT INTO Tmp_SourceData (term_pk, term_name, identifier, is_leaf,'            ||
           CASE WHEN _sourceTableWithSchema = 'ont.t_cv_bto' THEN ' synonyms,' ELSE '' END    ||
                                       ' parent_term_name, Parent_term_ID,'                   ||
                                       ' grandparent_term_name, grandparent_term_id, matches_existing )' ||
@@ -247,11 +247,13 @@ BEGIN
         Else
             -- Add missing relationships
 
-            INSERT INTO ont.t_term_relationship( term_relationship_id,
-                                           subject_term_pk,
-                                           predicate_term_pk,
-                                           object_term_pk,
-                                           ontology_id )
+            INSERT INTO ont.t_term_relationship (
+                term_relationship_id,
+                subject_term_pk,
+                predicate_term_pk,
+                object_term_pk,
+                ontology_id
+            )
             SELECT _autoNumberStartID - Entry_ID AS New_Relationship_ID,
                    Child_PK,
                    'inferred_is_a' AS Predicate_Name,
@@ -267,7 +269,7 @@ BEGIN
 
         -- Find extra relationships
 
-        INSERT INTO Tmp_RelationshipsToDelete( Relationship_ID )
+        INSERT INTO Tmp_RelationshipsToDelete (Relationship_ID)
         SELECT ont.t_term_relationship.term_relationship_id
         FROM ( SELECT DISTINCT SourceTable.identifier,
                                SourceTable.term_pk AS Child_PK,

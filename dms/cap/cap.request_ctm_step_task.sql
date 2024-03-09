@@ -270,12 +270,14 @@ BEGIN
 
         _currentLocation := 'Populate Tmp_AvailableProcessorTools';
 
-        INSERT INTO Tmp_AvailableProcessorTools( Tool_Name,
-                                                 Tool_Priority,
-                                                 Only_On_Storage_Server,
-                                                 Instrument_Capacity_Limited,
-                                                 Bionet_OK,
-                                                 Processor_Assignment_Applies )
+        INSERT INTO Tmp_AvailableProcessorTools (
+            Tool_Name,
+            Tool_Priority,
+            Only_On_Storage_Server,
+            Instrument_Capacity_Limited,
+            Bionet_OK,
+            Processor_Assignment_Applies
+        )
         SELECT ProcTool.Tool_Name,
                ProcTool.Priority,
                ST.Only_On_Storage_Server,
@@ -340,10 +342,12 @@ BEGIN
 
         _currentLocation := 'Populate Tmp_InstrumentLoading';
 
-        INSERT INTO Tmp_InstrumentLoading( Instrument,
-                                           Captures_In_Progress,
-                                           Max_Simultaneous_Captures,
-                                           Available_Capacity )
+        INSERT INTO Tmp_InstrumentLoading (
+            Instrument,
+            Captures_In_Progress,
+            Max_Simultaneous_Captures,
+            Available_Capacity
+        )
         SELECT T.Instrument,
                COUNT(TS.job) AS Captures_In_Progress,
                T.Max_Simultaneous_Captures,
@@ -380,9 +384,11 @@ BEGIN
 
         _currentLocation := 'Populate Tmp_InstrumentProcessor';
 
-        INSERT INTO Tmp_InstrumentProcessor( Instrument,
-                                             Assigned_To_This_Processor,
-                                             Assigned_To_Any_Processor )
+        INSERT INTO Tmp_InstrumentProcessor (
+            Instrument,
+            Assigned_To_This_Processor,
+            Assigned_To_Any_Processor
+        )
         SELECT Instrument_Name AS Instrument,
                SUM(CASE
                        WHEN Processor_Name = _processorName::citext THEN 1
@@ -441,11 +447,13 @@ BEGIN
         -- organized by processor, in order of assignment priority
         ---------------------------------------------------
 
-        INSERT INTO Tmp_CandidateJobSteps( Job,
-                                           Step,
-                                           Job_Priority,
-                                           Tool,
-                                           Tool_Priority )
+        INSERT INTO Tmp_CandidateJobSteps (
+            Job,
+            Step,
+            Job_Priority,
+            Tool,
+            Tool_Priority
+        )
         SELECT T.Job,
                TS.Step,
                T.Priority,

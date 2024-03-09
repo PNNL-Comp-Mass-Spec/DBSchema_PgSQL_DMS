@@ -75,7 +75,7 @@ BEGIN
         Holding int
     );
 
-    INSERT INTO Tmp_RequestDatasets(dataset)
+    INSERT INTO Tmp_RequestDatasets (dataset)
     SELECT value
     FROM public.parse_delimited_list(_jobRequestInfo.DatasetList);
 
@@ -83,7 +83,15 @@ BEGIN
     -- Get list of datasets that have jobs that match job parameters from the request
     ---------------------------------------------------
 
-    INSERT INTO Tmp_MatchingJobDatasets(dataset, Jobs, New, Busy, Complete, Failed, Holding)
+    INSERT INTO Tmp_MatchingJobDatasets (
+        Dataset,
+        Jobs,
+        New,
+        Busy,
+        Complete,
+        Failed,
+        Holding
+    )
     SELECT DS.dataset,
            COUNT(AJ.job) AS Jobs,
            SUM(CASE WHEN AJ.job_state_id IN (1)                           THEN 1 ELSE 0 END) AS New,

@@ -157,7 +157,11 @@ BEGIN
 
         -- 'E:8432,E:8434,E:9786' is a list of three experiments, IDs 8432, 8434, and 9786
 
-        INSERT INTO Tmp_Material_Items ( IDWithTag, ID, itemType )
+        INSERT INTO Tmp_Material_Items (
+            IDWithTag,
+            ID,
+            itemType
+        )
         SELECT Value,
                try_cast(Substring(Value, 3, 300), null::int) AS ID,
                Upper(Substring(Value, 1, 1)) AS itemType        -- B for Biomaterial, E for Experiment, R for RefCompound

@@ -52,7 +52,7 @@ BEGIN
     -- When _completedJobsOnly is true, filter on job state 4=Complete
     ---------------------------------------------------
 
-    INSERT INTO Tmp_JobsToUpdate ( job )
+    INSERT INTO Tmp_JobsToUpdate (job)
     SELECT J.job
     FROM sw.t_jobs J
          INNER JOIN sw.t_job_steps JS

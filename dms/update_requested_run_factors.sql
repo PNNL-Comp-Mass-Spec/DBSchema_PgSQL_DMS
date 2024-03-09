@@ -766,11 +766,13 @@ BEGIN
     -- Add new factors
     -----------------------------------------------------------
 
-    INSERT INTO t_factor( type,
-                          target_id,
-                          name,
-                          value,
-                          last_updated )
+    INSERT INTO t_factor (
+        type,
+        target_id,
+        name,
+        value,
+        last_updated
+    )
     SELECT 'Run_Request' AS Type,
            RequestID AS TargetID,
            Factor AS FactorName,

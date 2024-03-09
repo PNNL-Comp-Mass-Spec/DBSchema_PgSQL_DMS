@@ -132,7 +132,7 @@ BEGIN
     -- Parse the comma-separated list of organism names supplied by the user
     ---------------------------------------------------
 
-    INSERT INTO Tmp_BiomaterialOrganisms ( Organism_Name )
+    INSERT INTO Tmp_BiomaterialOrganisms (Organism_Name)
     SELECT Value
     FROM public.parse_delimited_list(_organismList);
 

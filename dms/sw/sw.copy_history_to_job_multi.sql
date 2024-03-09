@@ -175,23 +175,25 @@ BEGIN
 
         _currentLocation := format('Insert into sw.t_jobs from sw.t_jobs_history for %s', _jobDateDescription);
 
-        INSERT INTO sw.t_jobs( job,
-                               priority,
-                               script,
-                               state,
-                               dataset,
-                               dataset_id,
-                               results_folder_name,
-                               organism_db_name,
-                               special_processing,
-                               imported,
-                               start,
-                               finish,
-                               runtime_minutes,
-                               transfer_folder_path,
-                               owner_username,
-                               data_pkg_id,
-                               Comment )
+        INSERT INTO sw.t_jobs (
+            job,
+            priority,
+            script,
+            state,
+            dataset,
+            dataset_id,
+            results_folder_name,
+            organism_db_name,
+            special_processing,
+            imported,
+            start,
+            finish,
+            runtime_minutes,
+            transfer_folder_path,
+            owner_username,
+            data_pkg_id,
+            comment
+        )
         SELECT JH.job,
                JH.priority,
                JH.script,
@@ -234,28 +236,30 @@ BEGIN
 
         _currentLocation := 'Populate sw.t_job_steps';
 
-        INSERT INTO sw.t_job_steps( job,
-                                    step,
-                                    tool,
-                                    cpu_load,
-                                    actual_cpu_load,
-                                    memory_usage_mb,
-                                    shared_result_version,
-                                    signature,
-                                    state,
-                                    input_folder_name,
-                                    output_folder_name,
-                                    processor,
-                                    start,
-                                    finish,
-                                    tool_version_id,
-                                    completion_code,
-                                    completion_message,
-                                    evaluation_code,
-                                    evaluation_message,
-                                    remote_info_id,
-                                    remote_start,
-                                    remote_finish )
+        INSERT INTO sw.t_job_steps (
+            job,
+            step,
+            tool,
+            cpu_load,
+            actual_cpu_load,
+            memory_usage_mb,
+            shared_result_version,
+            signature,
+            state,
+            input_folder_name,
+            output_folder_name,
+            processor,
+            start,
+            finish,
+            tool_version_id,
+            completion_code,
+            completion_message,
+            evaluation_code,
+            evaluation_message,
+            remote_info_id,
+            remote_start,
+            remote_finish
+        )
         SELECT H.job,
                H.step,
                H.tool,
@@ -307,7 +311,7 @@ BEGIN
 
         _currentLocation := format('Insert into sw.t_job_parameters for %s', _jobDateDescription);
 
-        INSERT INTO sw.t_job_parameters( job, parameters )
+        INSERT INTO sw.t_job_parameters (job, parameters)
         SELECT JPH.job,
                JPH.parameters
         FROM sw.t_job_parameters_history JPH
@@ -388,7 +392,7 @@ BEGIN
 
         -- Find jobs that didn't have cached dependencies
 
-        INSERT INTO Tmp_JobsMissingDependencies( job, script )
+        INSERT INTO Tmp_JobsMissingDependencies (job, script)
         SELECT DISTINCT J.job, J.script
         FROM sw.t_jobs J
              INNER JOIN Tmp_JobsToCopy Src
@@ -425,14 +429,16 @@ BEGIN
                  ) AS source
             WHERE Target.job = Source.job;
 
-            INSERT INTO sw.t_job_step_dependencies( job,
-                                                    step,
-                                                    target_step,
-                                                    condition_test,
-                                                    test_value,
-                                                    evaluated,
-                                                    triggered,
-                                                    enable_only )
+            INSERT INTO sw.t_job_step_dependencies (
+                job,
+                step,
+                target_step,
+                condition_test,
+                test_value,
+                evaluated,
+                triggered,
+                enable_only
+            )
             SELECT MD.job,
                    H.step,
                    H.target_step,
