@@ -1,15 +1,10 @@
 --
-CREATE OR REPLACE PROCEDURE public.update_run_interval_instrument_usage
-(
-    _runIntervalId int,
-    _daysToProcess Int = 90,
-    _infoOnly boolean = false,
-    INOUT _message text default '',
-    INOUT _returnCode text default '',
-    _callingUser text = ''
-)
-LANGUAGE plpgsql
-AS $$
+-- Name: update_run_interval_instrument_usage(integer, integer, boolean, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_run_interval_instrument_usage(IN _runintervalid integer, IN _daystoprocess integer DEFAULT 90, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
 /****************************************************
 **
 **  Desc:
@@ -26,7 +21,7 @@ AS $$
 **
 **  Auth:   mem
 **  Date:   02/15/2022 mem - Initial version
-**          12/15/2024 mem - Ported to PostgreSQL
+**          03/07/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
@@ -36,7 +31,7 @@ DECLARE
     _authorized boolean;
 
     _instrumentName text;
-    _logErrors boolean := false;
+    _logErrors boolean := true;
 
     _sqlState text;
     _exceptionMessage text;
@@ -45,19 +40,6 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode := '';
-
-    ---------------------------------------------------
-    -- Validate the inputs
-    ---------------------------------------------------
-
-    _runIntervalId := Coalesce(_runIntervalId, -1);
-    _daysToProcess := Coalesce(_daysToProcess, 90);
-    _infoOnly      := Coalesce(_infoOnly, false);
-    _callingUser   := Trim(Coalesce(_callingUser, ''));
-
-    If _callingUser = '' Then
-        _callingUser := SESSION_USER;
-    End If;
 
     ---------------------------------------------------
     -- Verify that the user can execute this procedure from the given client host
@@ -80,9 +62,24 @@ BEGIN
     End If;
 
     BEGIN
+        ---------------------------------------------------
+        -- Validate the inputs
+        ---------------------------------------------------
+
+        _runIntervalId := Coalesce(_runIntervalId, -1);
+        _daysToProcess := Coalesce(_daysToProcess, 90);
+        _infoOnly      := Coalesce(_infoOnly, false);
+        _callingUser   := Trim(Coalesce(_callingUser, ''));
+
+        If _callingUser = '' Then
+            _callingUser := SESSION_USER;
+        End If;
 
         If _runIntervalId < 0 Then
             _message := format('Invalid run interval ID: %s', _runIntervalId);
+            RAISE WARNING '%', _message;
+
+            _logErrors := false;
             RAISE EXCEPTION '%', _message;
         End If;
 
@@ -94,14 +91,17 @@ BEGIN
 
         If Not FOUND Then
             _message := format('Run Interval ID %s does not exist; cannot determine the instrument', _runIntervalId);
+            RAISE WARNING '%', _message;
+
+            _logErrors := false;
             RAISE EXCEPTION '%', _message;
         End If;
-
-        _logErrors := true;
 
         If Not _infoOnly Then
             _message := format('Calling update_dataset_interval_for_multiple_instruments for instrument %s, calling user %s',
                                 _instrumentName, _callingUser);
+
+            RAISE INFO '%', _message;
 
             CALL post_log_entry ('Info', _message, 'Update_Run_Interval_Instrument_Usage');
         End If;
@@ -138,4 +138,12 @@ BEGIN
 END
 $$;
 
-COMMENT ON PROCEDURE public.update_run_interval_instrument_usage IS 'UpdateRunIntervalInstrumentUsage';
+
+ALTER PROCEDURE public.update_run_interval_instrument_usage(IN _runintervalid integer, IN _daystoprocess integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
+-- Name: PROCEDURE update_run_interval_instrument_usage(IN _runintervalid integer, IN _daystoprocess integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON PROCEDURE public.update_run_interval_instrument_usage(IN _runintervalid integer, IN _daystoprocess integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UpdateRunIntervalInstrumentUsage';
+
