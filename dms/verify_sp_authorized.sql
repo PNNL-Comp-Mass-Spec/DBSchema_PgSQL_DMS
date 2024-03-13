@@ -62,6 +62,7 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          03/12/2024 mem - Use 127.0.0.1 for the client host IP if inet_client_addr() is null
 **
 *****************************************************/
 DECLARE
@@ -98,16 +99,19 @@ BEGIN
     ---------------------------------------------------
 
     -- Option 1:
-    SELECT inet_client_addr(),      -- This will be null if the current connection is via a Unix-domain socket.
+    -- Note that inet_client_addr() is null if the current connection is via a Unix-domain socket
+
+    SELECT Coalesce(inet_client_addr(), '127.0.0.1'::inet) AS inet_client_addr,
            CURRENT_USER
-           -- , inet_server_addr() as host
-           -- , inet_server_port() as port
-           -- , current_database() as db_name
+           -- , inet_server_addr() AS host
+           -- , inet_server_port() AS port
+           -- , current_database() AS db_name
     INTO _clientHostIP, _userName;
 
     -- Option 2:
+    -- Note that get_active_connections() reports null for host_ip if the current connection is via a Unix-domain socket.
     /*
-        SELECT a.host_ip,               -- This will be null if the current connection is via a Unix-domain socket.
+        SELECT a.host_ip,
                a.user_name
         INTO _clientHostIP, _userName
         FROM public.get_active_connections() a
