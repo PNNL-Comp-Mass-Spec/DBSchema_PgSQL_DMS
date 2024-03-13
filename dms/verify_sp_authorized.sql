@@ -151,7 +151,7 @@ BEGIN
             'FROM %s auth '
             'WHERE auth.procedure_name = $1::citext AND '
                   '(auth.login_name = $2::citext OR login_name LIKE ''PNL\\%%'' AND Substring(login_name, 5)::citext = $2::citext) AND '
-                  '(auth.host_ip = $3::text Or auth.host_ip = ''*'')',
+                  '(auth.host_ip = $3 Or auth.host_ip = ''*'')',
             _authorizationTableWithSchema);
 
     EXECUTE _s
@@ -166,12 +166,12 @@ BEGIN
                 'FROM %s auth '
                 'WHERE auth.procedure_name = ''*'' AND '
                       '(auth.login_name = $1::citext OR login_name LIKE ''PNL\\%%'' AND Substring(login_name, 5)::citext = $1::citext) AND '
-                      '(auth.host_ip = $2::text Or auth.host_ip = ''*'')',
+                      '(auth.host_ip = $2 Or auth.host_ip = ''*'')',
                 _authorizationTableWithSchema);
 
         EXECUTE _s
         INTO _result
-        USING _userName, host(_clientHostIP);
+        USING Coalesce(_userName, '??'), host(_clientHostIP);
 
         If _result > 0 Then
             _authorized := true;
@@ -182,25 +182,27 @@ BEGIN
 
     If _authorized Then
         RETURN QUERY
-        SELECT true, _procedureName, _userName, host(_clientHostIP), '' as message;
+        SELECT true, _procedureName, _userName, host(_clientHostIP), '' AS message;
 
         RETURN;
     End If;
 
     If _infoOnly Then
         _message := format('Access denied to %s for current user (%s on host IP %s)',
-                            _procedureNameWithSchema, SESSION_USER, Coalesce(_clientHostIP::text, 'null'));
+                           Coalesce(_procedureNameWithSchema, _procedureName),
+                           Coalesce(_userName, '??'),
+                           Coalesce(host(_clientHostIP), 'null'));
 
         RETURN QUERY
-        SELECT false, _procedureName, _userName, host(_clientHostIP), _message as message;
+        SELECT false, _procedureName, _userName, host(_clientHostIP), _message AS message;
 
         RETURN;
     End If;
 
     _message := format('User %s cannot call procedure %s from host IP %s',
-                Coalesce(_userName, '??'),
-                Coalesce(_procedureNameWithSchema, _procedureName),
-                Coalesce(_clientHostIP::text, 'null'));
+                       Coalesce(_userName, '??'),
+                       Coalesce(_procedureNameWithSchema, _procedureName),
+                       Coalesce(host(_clientHostIP), 'null'));
 
     If _logError Then
         -- Set _ignoreErrors to true when calling post_log_entry since the calling user might not have permission to add a row to t_log_entries
@@ -208,7 +210,7 @@ BEGIN
     End If;
 
     RETURN QUERY
-    SELECT false, _procedureName, _userName, host(_clientHostIP), _message as message;
+    SELECT false, _procedureName, _userName, host(_clientHostIP), _message AS message;
 
 EXCEPTION
     WHEN OTHERS THEN
@@ -224,7 +226,7 @@ EXCEPTION
                         _logError => false, _displayError => true);
 
     RETURN QUERY
-    SELECT false, _procedureName, _userName, host(_clientHostIP), _message as message;
+    SELECT false, _procedureName, _userName, host(_clientHostIP), _message AS message;
 END
 $_$;
 
