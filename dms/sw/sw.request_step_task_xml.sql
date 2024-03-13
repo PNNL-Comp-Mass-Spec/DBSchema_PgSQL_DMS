@@ -128,6 +128,7 @@ CREATE OR REPLACE PROCEDURE sw.request_step_task_xml(IN _processorname text, INO
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/27/2023 mem - Apply a row-level lock to sw.t_job_steps using FOR UPDATE
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **
 *****************************************************/
 DECLARE
@@ -187,15 +188,18 @@ BEGIN
     INTO _currentSchema, _currentProcedure, _nameWithSchema
     FROM get_current_function_info('<auto>', _showDebug => false);
 
-    SELECT authorized
-    INTO _authorized
+    SELECT authorized, message
+    INTO _authorized, _message
     FROM public.verify_sp_authorized(_currentProcedure, _currentSchema, _logError => true);
 
     If Not _authorized Then
         -- Commit changes to persist the message logged to public.t_log_entries
         COMMIT;
 
-        _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
+        If Coalesce(_message, '') = '' Then
+            _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
+        End If;
+
         RAISE EXCEPTION '%', _message;
     End If;
 

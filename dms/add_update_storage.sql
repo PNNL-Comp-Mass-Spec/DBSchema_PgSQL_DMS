@@ -67,6 +67,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_storage(IN _path text, IN _volname
 **                         - Validate machine name vs. t_storage_path_hosts
 **          01/03/2024 mem - Update warning message
 **          01/11/2024 mem - Check for empty strings instead of using char_length()
+**          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **
 *****************************************************/
 DECLARE

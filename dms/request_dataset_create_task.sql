@@ -51,6 +51,7 @@ CREATE OR REPLACE PROCEDURE public.request_dataset_create_task(IN _processorname
 **  Auth:   mem
 **          10/25/2023 mem - Initial version
 **          10/27/2023 mem - Apply a row-level lock to t_dataset_create_queue using FOR UPDATE
+**          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **
 *****************************************************/
 DECLARE
@@ -83,15 +84,18 @@ BEGIN
     INTO _currentSchema, _currentProcedure, _nameWithSchema
     FROM get_current_function_info('<auto>', _showDebug => false);
 
-    SELECT authorized
-    INTO _authorized
+    SELECT authorized, message
+    INTO _authorized, _message
     FROM public.verify_sp_authorized(_currentProcedure, _currentSchema, _logError => true);
 
     If Not _authorized Then
         -- Commit changes to persist the message logged to public.t_log_entries
         COMMIT;
 
-        _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
+        If Coalesce(_message, '') = '' Then
+            _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
+        End If;
+
         RAISE EXCEPTION '%', _message;
     End If;
 

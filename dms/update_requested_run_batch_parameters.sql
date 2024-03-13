@@ -55,6 +55,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_batch_parameters(IN _blo
 **          02/11/2023 mem - Update the usage message sent to Post_Usage_Log_Entry
 **          03/10/2023 mem - Call update_cached_requested_run_batch_stats to update T_Cached_Requested_Run_Batch_Stats
 **          03/06/2024 mem - Ported to PostgreSQL
+**          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **
 *****************************************************/
 DECLARE
@@ -101,15 +102,18 @@ BEGIN
     INTO _currentSchema, _currentProcedure, _nameWithSchema
     FROM get_current_function_info('<auto>', _showDebug => false);
 
-    SELECT authorized
-    INTO _authorized
+    SELECT authorized, message
+    INTO _authorized, _message
     FROM public.verify_sp_authorized(_currentProcedure, _currentSchema, _logError => true);
 
     If Not _authorized Then
         -- Commit changes to persist the message logged to public.t_log_entries
         COMMIT;
 
-        _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
+        If Coalesce(_message, '') = '' Then
+            _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
+        End If;
+
         RAISE EXCEPTION '%', _message;
     End If;
 

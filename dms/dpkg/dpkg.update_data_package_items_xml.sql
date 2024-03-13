@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE dpkg.update_data_package_items_xml(IN _paramlistxml 
 **          08/17/2023 mem - Ported to PostgreSQL
 **          09/11/2023 mem - Use schema name with try_cast
 **          03/03/2024 mem - Trim whitespace when extracting values from XML
+**          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **
 *****************************************************/
 DECLARE
@@ -65,15 +66,18 @@ BEGIN
     INTO _currentSchema, _currentProcedure, _nameWithSchema
     FROM get_current_function_info('<auto>', _showDebug => false);
 
-    SELECT authorized
-    INTO _authorized
+    SELECT authorized, message
+    INTO _authorized, _message
     FROM public.verify_sp_authorized(_currentProcedure, _currentSchema, _logError => true);
 
     If Not _authorized Then
         -- Commit changes to persist the message logged to public.t_log_entries
         COMMIT;
 
-        _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
+        If Coalesce(_message, '') = '' Then
+            _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
+        End If;
+
         RAISE EXCEPTION '%', _message;
     End If;
 

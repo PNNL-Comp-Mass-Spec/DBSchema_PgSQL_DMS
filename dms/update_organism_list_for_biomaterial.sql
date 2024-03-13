@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE public.update_organism_list_for_biomaterial(IN _biom
 **          03/31/2021 mem - Expand Organism_Name, _unknownOrganism, and _newOrganismName to varchar(128)
 **          12/30/2023 mem - Ported to PostgreSQL
 **          01/03/2024 mem - Update warning message
+**          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **
 *****************************************************/
 DECLARE
@@ -53,15 +54,18 @@ BEGIN
     INTO _currentSchema, _currentProcedure, _nameWithSchema
     FROM get_current_function_info('<auto>', _showDebug => false);
 
-    SELECT authorized
-    INTO _authorized
+    SELECT authorized, message
+    INTO _authorized, _message
     FROM public.verify_sp_authorized(_currentProcedure, _currentSchema, _logError => true);
 
     If Not _authorized Then
         -- Commit changes to persist the message logged to public.t_log_entries
         COMMIT;
 
-        _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
+        If Coalesce(_message, '') = '' Then
+            _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
+        End If;
+
         RAISE EXCEPTION '%', _message;
     End If;
 
