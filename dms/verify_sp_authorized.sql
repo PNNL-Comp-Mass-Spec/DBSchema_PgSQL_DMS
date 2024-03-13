@@ -26,21 +26,24 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **
 **  Example usage:
 **
-**        SELECT schema_name, object_name, name_with_schema
-**        INTO _currentSchema, _currentProcedure, _nameWithSchema
-**        FROM get_current_function_info('<auto>', _showDebug => false);
+**      SELECT schema_name, object_name, name_with_schema
+**      INTO _currentSchema, _currentProcedure, _nameWithSchema
+**      FROM get_current_function_info('<auto>', _showDebug => false);
 **
-**        SELECT authorized
-**        INTO _authorized
-**        FROM public.verify_sp_authorized(_currentProcedure, _currentSchema, _logError => true);
+**      SELECT authorized, message
+**      INTO _authorized, _message
+**      FROM public.verify_sp_authorized(_currentProcedure, _currentSchema, _logError => true);
 **
-**        If Not _authorized Then
-**            -- Commit changes to persist the message logged to public.t_log_entries
-**            COMMIT;
+**      If Not _authorized Then
+**          -- Commit changes to persist the message logged to public.t_log_entries
+**          COMMIT;
 **
-**            _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
-**            RAISE EXCEPTION '%', _message;
-**        End If;
+**          If Coalesce(_message, '') = '' Then
+**              _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
+**          End If;
+**
+**          RAISE EXCEPTION '%', _message;
+**      End If;
 **
 **  Auth:   mem
 **  Date:   06/16/2017 mem - Initial version
@@ -63,6 +66,7 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          03/12/2024 mem - Use 127.0.0.1 for the client host IP if inet_client_addr() is null
+**                         - Use CURRENT_USER instead of SESSION_USER when _infoOnly is true
 **
 *****************************************************/
 DECLARE
@@ -119,18 +123,18 @@ BEGIN
 
         If Not FOUND Then
             _message := format('PID %s not found in the table returned by function get_active_connections; will assume access denied for the current user (%s)',
-                               pg_backend_pid(), SESSION_USER);
+                               pg_backend_pid(), CURRENT_USER);
 
             RETURN QUERY
-            SELECT false AS authorized, _procedureName AS procedure_name, _userName AS user_name, host(_clientHostIP) AS host_ip, _message as message;
+            SELECT false AS authorized, _procedureName AS procedure_name, _userName AS user_name, host(_clientHostIP) AS host_ip, _message AS message;
 
             RETURN;
         Elsif Coalesce(_userName, '') = '' Then
             _message := format('Function get_active_connections returned a blank username for PID %s; will assume access denied for the current user (%s)',
-                               pg_backend_pid(), SESSION_USER);
+                               pg_backend_pid(), CURRENT_USER);
 
             RETURN QUERY
-            SELECT false AS authorized, _procedureName AS procedure_name, _userName AS user_name, host(_clientHostIP) AS host_ip, _message as message;
+            SELECT false AS authorized, _procedureName AS procedure_name, _userName AS user_name, host(_clientHostIP) AS host_ip, _message AS message;
 
             RETURN;
         End If;
