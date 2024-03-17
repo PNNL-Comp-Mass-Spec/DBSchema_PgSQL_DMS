@@ -51,6 +51,8 @@ CREATE OR REPLACE PROCEDURE public.add_missing_predefined_jobs(IN _infoonly bool
 **          12/13/2023 mem - Call procedure create_pending_predefined_analysis_tasks to create jobs
 **                         - Ported to PostgreSQL
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          03/15/2024 mem - Show reason why datasets are skipped
+**                         - When _datasetIDFilterList is provided, if _infoOnly and _showDebug are true, only show the specified datasets in the output pane
 **
 *****************************************************/
 DECLARE
@@ -124,7 +126,8 @@ BEGIN
     CREATE TEMP TABLE Tmp_DatasetsToProcess (
         Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         Dataset_ID int NOT NULL,
-        Process_Dataset boolean
+        Process_Dataset boolean NOT NULL,
+        Skip_Reason text NOT NULL
     );
 
     CREATE TEMP TABLE Tmp_DSRating_Exclusion_List (
@@ -161,12 +164,11 @@ BEGIN
     -- Optionally only matches analysis tools with names matching _analysisToolNameFilter
     ---------------------------------------------------
 
-    -- First construct a list of all recent datasets that have an instrument class
-    -- that has an active predefined job
+    -- First construct a list of all recent datasets that have an instrument class that has an active predefined job
     -- Optionally filter on campaign
-    --
-    INSERT INTO Tmp_DatasetsToProcess (Dataset_ID, Process_Dataset)
-    SELECT DISTINCT DS.dataset_id, true AS Process_Dataset
+
+    INSERT INTO Tmp_DatasetsToProcess (Dataset_ID, Process_Dataset, Skip_Reason)
+    SELECT DISTINCT DS.dataset_id, true AS Process_Dataset, '' AS Skip_Reason
     FROM t_dataset DS
          INNER JOIN t_dataset_type_name DSType
            ON DSType.dataset_type_id = DS.dataset_type_ID
@@ -182,7 +184,7 @@ BEGIN
           NOT DSType.Dataset_Type IN ('tracking') AND
           NOT E.experiment in ('tracking') AND
           DS.created BETWEEN CURRENT_TIMESTAMP - make_interval(days => _dayCountForRecentDatasets) AND
-                             CURRENT_TIMESTAMP - INTERVAL '12 HOURS' AND
+                             CURRENT_TIMESTAMP - INTERVAL '12 hours' AND
           InstName.instrument_class IN ( SELECT DISTINCT InstClass.instrument_class
                                          FROM t_predefined_analysis PA
                                               INNER JOIN t_instrument_class InstClass
@@ -192,7 +194,7 @@ BEGIN
                                                 PA.analysis_tool_name ILIKE _analysisToolNameFilter) )
     ORDER BY DS.dataset_id;
 
-    _formatSpecifier := '%-15s %-25s %-10s %-20s %-8s %-9s %-7s %-80s %-60s';
+    _formatSpecifier := '%-15s %-25s %-10s %-20s %-8s %-9s %-7s %-80s %-80s %-60s';
 
     _infoHead := format(_formatSpecifier,
                         'Status',
@@ -202,6 +204,7 @@ BEGIN
                         'State_ID',
                         'Rating_ID',
                         'Process',
+                        'Skip_Reason',
                         'Dataset',
                         'Comment'
                        );
@@ -214,6 +217,7 @@ BEGIN
                                  '--------',
                                  '---------',
                                  '-------',
+                                 '--------------------------------------------------------------------------------',
                                  '--------------------------------------------------------------------------------',
                                  '------------------------------------------------------------'
                                 );
@@ -232,6 +236,7 @@ BEGIN
                    DS.dataset_state_id AS StateID,
                    DS.dataset_rating_id AS RatingID,
                    DTP.Process_Dataset AS Process,
+                   DTP.Skip_Reason,
                    DS.Dataset,
                    DS.Comment
             FROM Tmp_DatasetsToProcess DTP
@@ -251,6 +256,7 @@ BEGIN
                                 _previewData.StateID,
                                 _previewData.RatingID,
                                 _previewData.Process,
+                                _previewData.Skip_Reason,
                                 _previewData.Dataset,
                                 _previewData.Comment
                                );
@@ -260,18 +266,22 @@ BEGIN
 
     End If;
 
-    -- Now exclude any datasets that have analysis jobs in t_analysis_job
+    -- Now exclude any datasets that have analysis jobs in t_analysis_job (regardless of whether or not the analysis job was created by a predefine)
     -- Filter on _analysisToolNameFilter if not empty
 
     UPDATE Tmp_DatasetsToProcess DTP
-    SET Process_Dataset = false
-    FROM ( SELECT AJ.dataset_id AS Dataset_ID
-           FROM t_analysis_job AJ
-                INNER JOIN t_analysis_tool Tool
-                  ON AJ.analysis_tool_id = Tool.analysis_tool_id
-           WHERE (_analysisToolNameFilter = '' OR Tool.analysis_tool ILIKE _analysisToolNameFilter) AND
-                 (Not _ignoreJobsCreatedBeforeDisposition OR AJ.dataset_unreviewed = 0 )
-          ) JL
+    SET Process_Dataset = false,
+        Skip_Reason = CASE WHEN _analysisToolNameFilter = ''
+                           THEN 'Has an existing analysis job'
+                           ELSE format('Has a %s job', _analysisToolNameFilter)
+                      END
+    FROM (SELECT AJ.dataset_id AS Dataset_ID
+          FROM t_analysis_job AJ
+               INNER JOIN t_analysis_tool Tool
+                 ON AJ.analysis_tool_id = Tool.analysis_tool_id
+          WHERE (_analysisToolNameFilter = '' OR Tool.analysis_tool ILIKE _analysisToolNameFilter) AND
+                (Not _ignoreJobsCreatedBeforeDisposition OR AJ.dataset_unreviewed = 0 )
+         ) JL
     WHERE DTP.dataset_id = JL.dataset_id AND
           DTP.Process_Dataset;
 
@@ -289,6 +299,7 @@ BEGIN
                    DS.dataset_state_id AS StateID,
                    DS.dataset_rating_id AS RatingID,
                    DTP.Process_Dataset AS Process,
+                   DTP.Skip_Reason,
                    DS.dataset,
                    DS.comment
             FROM Tmp_DatasetsToProcess DTP
@@ -308,6 +319,7 @@ BEGIN
                                 _previewData.StateID,
                                 _previewData.RatingID,
                                 _previewData.Process,
+                                _previewData.Skip_Reason,
                                 _previewData.Dataset,
                                 _previewData.Comment
                                );
@@ -321,7 +333,8 @@ BEGIN
     -- This check also compares the dataset's current rating to the rating it had when previously processed
 
     UPDATE Tmp_DatasetsToProcess DTP
-    SET Process_Dataset = false
+    SET Process_Dataset = false,
+        Skip_Reason = 'Found in t_predefined_analysis_scheduling_queue_history'
     FROM t_dataset DS
          INNER JOIN t_predefined_analysis_scheduling_queue_history QH
            ON DS.dataset_id = QH.dataset_id AND
@@ -343,6 +356,7 @@ BEGIN
                    DS.dataset_state_id AS StateID,
                    DS.dataset_rating_id AS RatingID,
                    DTP.Process_Dataset AS Process,
+                   DTP.Skip_Reason,
                    DS.dataset,
                    DS.comment
             FROM Tmp_DatasetsToProcess DTP
@@ -362,6 +376,7 @@ BEGIN
                                 _previewData.StateID,
                                 _previewData.RatingID,
                                 _previewData.Process,
+                                _previewData.Skip_Reason,
                                 _previewData.Dataset,
                                 _previewData.Comment
                                );
@@ -373,16 +388,30 @@ BEGIN
 
     If Exists (SELECT Dataset_ID FROM Tmp_DatasetID_Filter_List) Then
         -- Exclude datasets not in Tmp_DatasetID_Filter_List
-        UPDATE Tmp_DatasetsToProcess
-        SET Process_Dataset = false
-        WHERE Process_Dataset AND
-              NOT Dataset_ID IN (SELECT Dataset_ID FROM Tmp_DatasetID_Filter_List);
+
+        If _infoOnly And _showDebug Then
+            -- Remove the datasets that we're not interested in, since we don't want to see them in the output pane
+            DELETE FROM Tmp_DatasetsToProcess
+            WHERE NOT EXISTS (SELECT 1
+                              FROM Tmp_DatasetID_Filter_List FilterList
+                              WHERE Tmp_DatasetsToProcess.dataset_id = FilterList.dataset_id);
+        Else
+            UPDATE Tmp_DatasetsToProcess
+            SET Process_Dataset = false,
+                Skip_Reason = 'Not in Dataset ID filter list'
+            WHERE Process_Dataset AND
+                  NOT EXISTS (SELECT 1
+                              FROM Tmp_DatasetID_Filter_List FilterList
+                              WHERE Tmp_DatasetsToProcess.dataset_id = FilterList.dataset_id);
+        End If;
+
     End If;
 
     -- Exclude datasets from instruments in _instrumentSkipList
     If _instrumentSkipList <> '' Then
         UPDATE Tmp_DatasetsToProcess
-        SET Process_Dataset = false
+        SET Process_Dataset = false,
+            Skip_Reason = format('Instrument %s is in the instrument skip list', InstName.instrument)
         FROM t_dataset DS
              INNER JOIN t_instrument_name InstName
                ON InstName.instrument_id = DS.instrument_id
@@ -395,14 +424,18 @@ BEGIN
     -- Add dataset _datasetNameIgnoreExistingJobs, if defined
     If _datasetNameIgnoreExistingJobs <> '' Then
         UPDATE Tmp_DatasetsToProcess AS Target
-        SET Process_Dataset = true
+        SET Process_Dataset = true,
+            Skip_Reason = CASE WHEN Skip_Reason = ''
+                               THEN ''
+                               ELSE format('Override skip since dataset name to ignore was provided: %s', Skip_Reason)
+                          END
         FROM t_dataset DS
         WHERE Target.dataset_id = DS.dataset_id AND
               DS.dataset = _datasetNameIgnoreExistingJobs::citext;
 
         If Not FOUND Then
-            INSERT INTO Tmp_DatasetsToProcess (Dataset_ID, Process_Dataset)
-            SELECT DS.dataset_id, true AS Process_Dataset
+            INSERT INTO Tmp_DatasetsToProcess (Dataset_ID, Process_Dataset, Skip_Reason)
+            SELECT DS.dataset_id, true AS Process_Dataset, '' AS Skip_Reason
             FROM t_dataset DS
             WHERE DS.dataset = _datasetNameIgnoreExistingJobs::citext;
         End If;
@@ -422,6 +455,7 @@ BEGIN
                    DS.dataset_state_id AS StateID,
                    DS.dataset_rating_id AS RatingID,
                    DTP.Process_Dataset AS Process,
+                   DTP.Skip_Reason,
                    DS.dataset,
                    DS.comment
             FROM Tmp_DatasetsToProcess DTP
@@ -440,6 +474,7 @@ BEGIN
                                 _previewData.StateID,
                                 _previewData.RatingID,
                                 _previewData.Process,
+                                _previewData.Skip_Reason,
                                 _previewData.Dataset,
                                 _previewData.Comment
                                );
@@ -461,6 +496,7 @@ BEGIN
                        DS.dataset_state_id AS StateID,
                        DS.dataset_rating_id AS RatingID,
                        DTP.Process_Dataset AS Process,
+                       DTP.Skip_Reason,
                        DS.dataset,
                        DS.comment
                 FROM Tmp_DatasetsToProcess DTP
@@ -479,6 +515,7 @@ BEGIN
                                     _previewData.StateID,
                                     _previewData.RatingID,
                                     _previewData.Process,
+                                    _previewData.Skip_Reason,
                                     _previewData.Dataset,
                                     _previewData.Comment
                                    );
