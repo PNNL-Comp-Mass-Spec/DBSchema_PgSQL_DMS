@@ -23,6 +23,20 @@ SET row_security = off;
 COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live, self_destruct, exclusive_execution, client_name, on_error) FROM stdin;
 3	run-vacuum	23 */2 * * *	\N	0	f	f	f	\N	\N
 4	clear-log	@reboot	\N	0	t	f	f	\N	\N
+6	Add missing predefined jobs	0 2 * * *	\N	0	t	f	f	\N	\N
+8	Auto add BOM tracking datasets	45 23 15 * *	\N	0	t	f	f	\N	\N
+10	Auto annotate broken instrument long intervals	0 22 1-5 * *	\N	0	t	f	f	\N	\N
+11	Auto define WPS for EUS requested runs	30 22 * * *	\N	0	t	f	f	\N	\N
+13	Auto reset failed jobs	20/30 * * * *	\N	0	t	f	f	\N	\N
+14	Auto skip failed UIMF calibration	24 * * * *	\N	0	t	f	f	\N	\N
+15	Auto supersede EUS proposals	23 8 3 * *	\N	0	t	f	f	\N	\N
+16	Auto update job priorities	53 * * * *	\N	0	t	f	f	\N	\N
+17	Auto update QC_Shew dataset rating	37 1/4 * * *	\N	0	t	f	f	\N	\N
+21	Backfill pipeline jobs	7/15 3 * * *	\N	0	t	f	f	\N	\N
+22	Cache dataset QC instruments	37 1/4 * * *	\N	0	t	f	f	\N	\N
+23	Check data integrity	19 17 * * *	\N	0	t	f	f	\N	\N
+24	Check for MyEMSL upload errors	27 0 * * *	\N	0	t	f	f	\N	\N
+25	Clean up operating logs	0 0 * * *	\N	0	t	f	f	\N	\N
 \.
 
 
@@ -30,7 +44,7 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 -- Name: chain_chain_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.chain_chain_id_seq', 5, true);
+SELECT pg_catalog.setval('timetable.chain_chain_id_seq', 25, true);
 
 
 --
