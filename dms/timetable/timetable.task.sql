@@ -111,6 +111,6 @@ ALTER TABLE ONLY timetable.task
 -- Name: TABLE task; Type: ACL; Schema: timetable; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE timetable.task TO writeaccess;
 GRANT INSERT,DELETE,TRUNCATE,UPDATE ON TABLE timetable.task TO pgdms;
+GRANT SELECT ON TABLE timetable.task TO readaccess;
 

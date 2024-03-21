@@ -110,6 +110,6 @@ ALTER TABLE ONLY timetable.chain
 -- Name: TABLE chain; Type: ACL; Schema: timetable; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE timetable.chain TO writeaccess;
 GRANT INSERT,DELETE,TRUNCATE,UPDATE ON TABLE timetable.chain TO pgdms;
+GRANT SELECT ON TABLE timetable.chain TO readaccess;
 
