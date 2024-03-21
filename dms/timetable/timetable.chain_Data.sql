@@ -32,11 +32,14 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 15	Auto supersede EUS proposals	23 8 3 * *	\N	0	t	f	f	\N	\N
 16	Auto update job priorities	53 * * * *	\N	0	t	f	f	\N	\N
 17	Auto update QC_Shew dataset rating	37 1/4 * * *	\N	0	t	f	f	\N	\N
-21	Backfill pipeline jobs	7/15 3 * * *	\N	0	t	f	f	\N	\N
 22	Cache dataset QC instruments	37 1/4 * * *	\N	0	t	f	f	\N	\N
 23	Check data integrity	19 17 * * *	\N	0	t	f	f	\N	\N
 24	Check for MyEMSL upload errors	27 0 * * *	\N	0	t	f	f	\N	\N
 25	Clean up operating logs	0 0 * * *	\N	0	t	f	f	\N	\N
+26	Cleanup capture tasks	9 4 * * 7	\N	0	t	f	f	\N	\N
+27	Cleanup pipeline jobs	15 5 * * 7	\N	0	t	f	f	\N	\N
+28	Clear data package manager errors	48 6 * * *	\N	0	t	f	f	\N	\N
+21	Backfill pipeline jobs	7/15 3-23 * * *	\N	0	t	f	f	\N	\N
 \.
 
 
@@ -44,7 +47,7 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 -- Name: chain_chain_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.chain_chain_id_seq', 25, true);
+SELECT pg_catalog.setval('timetable.chain_chain_id_seq', 28, true);
 
 
 --
