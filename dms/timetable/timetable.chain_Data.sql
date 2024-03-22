@@ -40,6 +40,17 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 27	Cleanup pipeline jobs	15 5 * * 7	\N	0	t	f	f	\N	\N
 28	Clear data package manager errors	48 6 * * *	\N	0	t	f	f	\N	\N
 21	Backfill pipeline jobs	7/15 3-23 * * *	\N	0	t	f	f	\N	\N
+29	Create pending predefined jobs	3/5 * * * *	\N	0	t	f	f	\N	\N
+30	Delete old historic logs	19 19 6 * *	\N	0	t	f	f	\N	\N
+31	Delete orphaned capture tasks	38 7 * * *	\N	0	t	f	f	\N	\N
+32	Disable archive-dependent step tools once	0 6 * * *	\N	0	f	f	f	\N	\N
+33	Disable MSGFPlus once	0 6 * * *	\N	0	f	f	f	\N	\N
+34	DMS notification event update	0 12 * * *	\N	0	t	f	f	\N	\N
+35	Enable archive update once	0 18 * * *	\N	0	f	f	f	\N	\N
+36	Enable archive-dependent step tools once	0 18 * * *	\N	0	f	f	f	\N	\N
+37	Enable MS-GF+	0 18 * * *	\N	0	f	f	f	\N	\N
+38	Find stale MyEMSL uploads	38 7 * * *	\N	0	t	f	f	\N	\N
+39	Reset failed dataset capture tasks	7 0 * * *	\N	0	t	f	f	\N	\N
 \.
 
 
@@ -47,7 +58,7 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 -- Name: chain_chain_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.chain_chain_id_seq', 28, true);
+SELECT pg_catalog.setval('timetable.chain_chain_id_seq', 39, true);
 
 
 --

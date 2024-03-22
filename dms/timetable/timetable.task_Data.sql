@@ -52,7 +52,7 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 38	25	40	Cleanup operating logs, cap	SQL	CALL cap.cleanup_operating_logs (\r\n        _infoHoldoffWeeks => 3, \r\n        _logRetentionIntervalDays => 180);	\N	\N	f	t	0
 39	25	50	Cleanup operating logs, dpkg	SQL	CALL dpkg.move_historic_log_entries (\r\n        _infoHoldoffWeeks => 3);	\N	\N	f	t	0
 35	25	10	Sleep 15 seconds	BUILTIN	Sleep	\N	\N	f	f	0
-40	26	10	Cleanup old tasks	BUILTIN	CALL cap.remove_old_tasks (_infoOnly => false);	\N	\N	f	f	0
+40	26	10	Cleanup old tasks	SQL	CALL cap.remove_old_tasks (_infoOnly => false);	\N	\N	f	t	0
 41	26	20	Cleanup old tasks	SQL	CALL cap.remove_old_tasks (_infoOnly => false);	\N	\N	f	t	0
 42	26	30	Update capture task stats	SQL	CALL cap.update_capture_task_stats (_infoOnly => false);	\N	\N	f	t	0
 43	26	40	Delete old tasks from history	SQL	CALL cap.delete_old_tasks_from_history (_infoOnly => false);	\N	\N	f	t	0
@@ -60,7 +60,25 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 45	27	20	Cleanup old jobs	SQL	CALL sw.remove_old_jobs (_validateJobStepSuccess => true);	\N	\N	f	t	0
 46	27	30	Update pipeline job stats	SQL	CALL sw.update_pipeline_job_stats (_infoOnly => false);	\N	\N	f	t	0
 47	27	40	Delete old jobs from history	SQL	CALL sw.delete_old_jobs_from_history (_infoOnly => false);	\N	\N	f	t	0
-48	28	10	Clear data package manager errors	BUILTIN	DELETE FROM dpkg.T_Log_Entries\r\nWHERE (message LIKE '%has an existing metadata file between 2 and 6.5 days old%' OR\r\n   message LIKE '%has not been validated in the archive after 5 days; %' OR\r\n   message LIKE '%is not available in MyEMSL after 24 hours; see %' OR\r\n   message LIKE '%was previously uploaded to MyEMSL, yet Simple Search did not return any files for this dataset%Skipping this data package %')\r\n    AND (type = 'error');	\N	\N	f	f	0
+49	29	10	Sleep 15 seconds	BUILTIN	Sleep	\N	\N	f	f	0
+50	29	20	Create pending predefined jobs	SQL	CALL create_pending_predefined_analysis_tasks (_infoOnly => false);	\N	\N	f	t	0
+52	31	10	Sleep 10 seconds	BUILTIN	Sleep	\N	\N	f	f	0
+53	31	20	Delete orphaned capture jobs	SQL	CALL cap.delete_orphaned_tasks (_infoOnly => false);	\N	\N	f	t	0
+48	28	10	Clear data package manager errors	SQL	DELETE FROM dpkg.T_Log_Entries\r\nWHERE (message LIKE '%has an existing metadata file between 2 and 6.5 days old%' OR\r\n   message LIKE '%has not been validated in the archive after 5 days; %' OR\r\n   message LIKE '%is not available in MyEMSL after 24 hours; see %' OR\r\n   message LIKE '%was previously uploaded to MyEMSL, yet Simple Search did not return any files for this dataset%Skipping this data package %')\r\n    AND (type = 'error');	\N	\N	f	t	0
+51	30	10	Delete old historic DMS DB logs	SQL	CALL logdms.delete_old_events_and_historic_logs (_infoOnly => false);	\N	\N	f	t	0
+54	32	10	Disable archive-dependent step tools	SQL	CALL cap.enable_disable_archive_step_tools (_enable => false, _disableComment => 'Disabled for scheduled archive maintenance');	\N	\N	f	t	0
+55	33	10	Disable MSGFPlus	SQL	CALL sw.enable_disable_step_tool_for_debugging (_tool => 'MSGFPlus', _debugMode => true);	\N	\N	f	t	0
+56	34	10	Requested run batch events	SQL	CALL make_notification_requested_run_batch_events ();	\N	\N	f	t	0
+57	34	20	Requested run batch events	SQL	CALL make_notification_requested_run_batch_events ();	\N	\N	f	t	0
+58	34	30	Step Name	SQL	CALL make_notification_sample_prep_request_events ();	\N	\N	f	t	0
+59	34	40	Step Name	SQL	CALL make_notification_dataset_events ();	\N	\N	f	t	0
+60	35	10	Enable archive update	SQL	CALL cap.enable_disable_task_step_tool_for_debugging (_tool => 'ArchiveUpdate', _debugMode => false);	\N	\N	f	t	0
+61	36	10	Enable archive-dependent step tools	SQL	CALL cap.enable_disable_archive_step_tools (_enable => 1, _disableComment => 'Disabled for scheduled archive maintenance');	\N	\N	f	t	0
+62	37	10	Re-enable MSGFPlus	SQL	CALL sw.enable_disable_step_tool_for_debugging ('MSGFPlus', _debugMode => false);	\N	\N	f	t	0
+63	38	10	Sleep 5 seconds	BUILTIN	Sleep	\N	\N	f	f	0
+64	38	20	Find stale MyEMSL uploads	SQL	CALL cap.find_stale_myemsl_uploads (_infoOnly => false);	\N	\N	f	t	0
+65	39	10	Sleep 7 seconds	BUILTIN	Sleep	\N	\N	f	f	0
+66	39	20	Reset failed dataset capture tasks	SQL	CALL reset_failed_dataset_capture_tasks (_resetHoldoffHours => 2, _infoOnly => false);	\N	\N	f	t	0
 \.
 
 
@@ -68,7 +86,7 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 -- Name: task_task_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.task_task_id_seq', 48, true);
+SELECT pg_catalog.setval('timetable.task_task_id_seq', 66, true);
 
 
 --
