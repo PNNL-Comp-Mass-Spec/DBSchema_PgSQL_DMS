@@ -1,8 +1,8 @@
 --
--- Name: reset_failed_dataset_purge_tasks(integer, integer, boolean, text, text, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: reset_failed_dataset_purge_tasks(numeric, integer, boolean, text, text, integer); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.reset_failed_dataset_purge_tasks(IN _resetholdoffhours integer DEFAULT 2, IN _maxtaskstoreset integer DEFAULT 0, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, INOUT _resetcount integer DEFAULT 0)
+CREATE OR REPLACE PROCEDURE public.reset_failed_dataset_purge_tasks(IN _resetholdoffhours numeric DEFAULT 2, IN _maxtaskstoreset integer DEFAULT 0, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, INOUT _resetcount integer DEFAULT 0)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -14,7 +14,7 @@ CREATE OR REPLACE PROCEDURE public.reset_failed_dataset_purge_tasks(IN _resethol
 **      at least _resetHoldoffHours hours before the present
 **
 **  Arguments:
-**    _resetHoldoffHours    Holdoff time to apply to column AS_state_Last_Affected
+**    _resetHoldoffHours    Holdoff time to apply to column archive_state_last_affected
 **    _maxTasksToReset      If greater than 0, will limit the number of tasks to reset
 **    _infoOnly             When true, preview the tasks that would be reset
 **    _message              Status message
@@ -23,11 +23,12 @@ CREATE OR REPLACE PROCEDURE public.reset_failed_dataset_purge_tasks(IN _resethol
 **
 **  Auth:   mem
 **  Date:   07/12/2010 mem - Initial version
-**          12/13/2010 mem - Changed _resetHoldoffHours from tinyint to real
+**          12/13/2010 mem - Change _resetHoldoffHours from tinyint to real
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          01/30/2017 mem - Switch from DateDiff to DateAdd
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
 **          02/21/2024 mem - Ported to PostgreSQL
+**          03/23/2024 mem - Change _resetHoldoffHours from integer to numeric
 **
 *****************************************************/
 DECLARE
@@ -35,6 +36,8 @@ DECLARE
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
+    _hours int;
+    _minutes int;
 
     _formatSpecifier text;
     _infoHead text;
@@ -58,6 +61,10 @@ BEGIN
     If _maxTasksToReset <= 0 Then
         _maxTasksToReset := 1000000;
     End If;
+
+    -- Convert _resetHoldoffHours to integer-based hours and minutes
+    _hours   := Floor(_resetHoldoffHours)::int;
+    _minutes := Floor((_resetHoldoffHours - _hours) * 60)::int;
 
     BEGIN
 
@@ -104,7 +111,7 @@ BEGIN
                      INNER JOIN t_storage_path SPath
                        ON DS.storage_path_id = SPath.storage_path_id
                 WHERE DA.archive_state_id = 8 AND
-                      DA.archive_state_last_affected < CURRENT_TIMESTAMP - make_interval(hours => _resetHoldoffHours)
+                      DA.archive_state_last_affected < CURRENT_TIMESTAMP - make_interval(hours => _hours, mins => _minutes)
                 ORDER BY SPath.vol_name_client, SPath.instrument, DS.dataset
             LOOP
                 _infoData := format(_formatSpecifier,
@@ -132,7 +139,7 @@ BEGIN
         WHERE dataset_id IN ( SELECT DA.dataset_id
                               FROM t_dataset_archive DA
                               WHERE DA.archive_state_id = 8 AND
-                                    Extract(epoch from CURRENT_TIMESTAMP - DA.archive_state_Last_Affected) / 60 >= _resetHoldoffHours * 60
+                                    DA.archive_state_last_affected < CURRENT_TIMESTAMP - make_interval(hours => _hours, mins => _minutes)
                               LIMIT _maxTasksToReset
                             );
         --
@@ -165,11 +172,5 @@ END
 $$;
 
 
-ALTER PROCEDURE public.reset_failed_dataset_purge_tasks(IN _resetholdoffhours integer, IN _maxtaskstoreset integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, INOUT _resetcount integer) OWNER TO d3l243;
-
---
--- Name: PROCEDURE reset_failed_dataset_purge_tasks(IN _resetholdoffhours integer, IN _maxtaskstoreset integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, INOUT _resetcount integer); Type: COMMENT; Schema: public; Owner: d3l243
---
-
-COMMENT ON PROCEDURE public.reset_failed_dataset_purge_tasks(IN _resetholdoffhours integer, IN _maxtaskstoreset integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, INOUT _resetcount integer) IS 'ResetFailedDatasetPurgeTasks';
+ALTER PROCEDURE public.reset_failed_dataset_purge_tasks(IN _resetholdoffhours numeric, IN _maxtaskstoreset integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, INOUT _resetcount integer) OWNER TO d3l243;
 
