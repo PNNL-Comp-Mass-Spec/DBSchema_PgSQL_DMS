@@ -2,7 +2,7 @@
 -- Name: update_cached_experiment_component_names(integer, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.update_cached_experiment_component_names(IN _expid integer, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.update_cached_experiment_component_names(IN _experimentid integer, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -12,10 +12,10 @@ CREATE OR REPLACE PROCEDURE public.update_cached_experiment_component_names(IN _
 **      of biomaterial names and reference compound names for each experiment
 **
 **  Arguments:
-**    _expID        Set to 0 to process all experiments, or a positive number to only process the given experiment
-**    _infoOnly     When true, preview updates
-**    _message      Status message
-**    _returnCode   Return code
+**    _experimentID     Set to 0 to process all experiments, or a positive number to only process the given experiment
+**    _infoOnly         When true, preview updates
+**    _message          Status message
+**    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   11/29/2017 mem - Initial version
@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_experiment_component_names(IN _
 **          07/21/2023 mem - Ported to PostgreSQL
 **          07/23/2023 mem - Use new alias names for tables
 **          09/07/2023 mem - Align assignment statements
+**          03/23/2024 mem - Rename the experiment ID argument to _experimentID
 **
 *****************************************************/
 DECLARE
@@ -45,10 +46,10 @@ BEGIN
     -- Validate the inputs
     ------------------------------------------------
 
-    _expID    := Coalesce(_expID, 0);
-    _infoOnly := Coalesce(_infoOnly, false);
+    _experimentID := Coalesce(_experimentID, 0);
+    _infoOnly     := Coalesce(_infoOnly, false);
 
-    If _expID > 0 Then
+    If _experimentID > 0 Then
 
         ------------------------------------------------
         -- Processing a single experiment
@@ -59,24 +60,24 @@ BEGIN
         FROM t_experiment_biomaterial ExpBiomaterial
              INNER JOIN t_biomaterial B
                ON ExpBiomaterial.Biomaterial_ID = B.Biomaterial_ID
-        WHERE ExpBiomaterial.Exp_ID = _expID;
+        WHERE ExpBiomaterial.Exp_ID = _experimentID;
 
         SELECT string_agg(RC.id_name, '; ' ORDER BY RC.id_name)
         INTO _refCompoundList
         FROM t_experiment_reference_compounds ERC
              INNER JOIN t_reference_compound RC
                ON ERC.compound_id = RC.compound_id
-        WHERE ERC.exp_id = _expID;
+        WHERE ERC.exp_id = _experimentID;
 
         If _infoOnly Then
             RAISE INFO '';
-            RAISE INFO 'Experiment ID: %', _expID;
+            RAISE INFO 'Experiment ID: %', _experimentID;
             RAISE INFO 'Biomaterials:  %', _biomaterialList;
             RAISE INFO 'Reference Compounds: %', _refCompoundList;
         Else
 
             MERGE INTO t_cached_experiment_components AS t
-            USING ( SELECT _expID AS Exp_ID,
+            USING ( SELECT _experimentID AS Exp_ID,
                            _biomaterialList AS Biomaterial_List,
                            _refCompoundList AS Reference_Compound_List
                   ) AS s
@@ -118,11 +119,11 @@ BEGIN
         Exp_ID int NOT NULL
     );
 
-    CREATE UNIQUE INDEX Tmp_ExperimentBiomaterial_ExpID ON Tmp_ExperimentBiomaterial (Exp_ID);
+    CREATE UNIQUE INDEX Tmp_ExperimentBiomaterial_experimentID ON Tmp_ExperimentBiomaterial (Exp_ID);
 
-    CREATE UNIQUE INDEX Tmp_ExperimentRefCompounds_ExpID ON Tmp_ExperimentRefCompounds (Exp_ID);
+    CREATE UNIQUE INDEX Tmp_ExperimentRefCompounds_experimentID ON Tmp_ExperimentRefCompounds (Exp_ID);
 
-    CREATE UNIQUE INDEX Tmp_AdditionalExperiments_ExpID ON Tmp_AdditionalExperiments (Exp_ID);
+    CREATE UNIQUE INDEX Tmp_AdditionalExperiments_experimentID ON Tmp_AdditionalExperiments (Exp_ID);
 
     -- Add mapping info for experiments with only one biomaterial
 
@@ -329,11 +330,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.update_cached_experiment_component_names(IN _expid integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE public.update_cached_experiment_component_names(IN _experimentid integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE update_cached_experiment_component_names(IN _expid integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE update_cached_experiment_component_names(IN _experimentid integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.update_cached_experiment_component_names(IN _expid integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateCachedExperimentComponentNames';
+COMMENT ON PROCEDURE public.update_cached_experiment_component_names(IN _experimentid integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateCachedExperimentComponentNames';
 
