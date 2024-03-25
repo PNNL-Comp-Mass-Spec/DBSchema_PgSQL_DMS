@@ -67,6 +67,7 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          03/12/2024 mem - Use 127.0.0.1 for the client host IP if inet_client_addr() is null
 **                         - Use CURRENT_USER instead of SESSION_USER when _infoOnly is true
+**          03/24/2024 mem - Include the authorization table name in the error message
 **
 *****************************************************/
 DECLARE
@@ -188,10 +189,11 @@ BEGIN
     End If;
 
     If _infoOnly Then
-        _message := format('Access denied to %s for current user (%s on host IP %s)',
+        _message := format('Access denied to %s for current user (%s on host IP %s); see table %s',
                            Coalesce(_procedureNameWithSchema, _procedureName),
                            Coalesce(_userName, '??'),
-                           Coalesce(host(_clientHostIP), 'null'));
+                           Coalesce(host(_clientHostIP), 'null'),
+                           _authorizationTableWithSchema);
 
         RETURN QUERY
         SELECT false, _procedureName, _userName, host(_clientHostIP), _message AS message;
@@ -199,10 +201,11 @@ BEGIN
         RETURN;
     End If;
 
-    _message := format('User %s cannot call procedure %s from host IP %s',
+    _message := format('User %s cannot call procedure %s from host IP %s; see table %s',
                        Coalesce(_userName, '??'),
                        Coalesce(_procedureNameWithSchema, _procedureName),
-                       Coalesce(host(_clientHostIP), 'null'));
+                       Coalesce(host(_clientHostIP), 'null'),
+                       _authorizationTableWithSchema);
 
     If _logError Then
         -- Set _ignoreErrors to true when calling post_log_entry since the calling user might not have permission to add a row to t_log_entries
