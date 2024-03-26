@@ -22,7 +22,7 @@ CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''
 **    _logIntervalThreshold     If this procedure runs longer than this threshold, status messages will be posted to the log
 **    _loggingEnabled           Set to true to immediately enable progress logging; if false, logging will auto-enable if _logIntervalThreshold seconds elapse
 **    _loopingUpdateInterval    Seconds between detailed logging while looping through the dependencies,
-**    _infoonly                 When true, preview updates
+**    _infoOnly                 When true, preview updates
 **
 **  Auth:   grk
 **  Date:   09/02/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)

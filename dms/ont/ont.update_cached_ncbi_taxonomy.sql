@@ -7,11 +7,12 @@ CREATE OR REPLACE FUNCTION ont.update_cached_ncbi_taxonomy(_deleteextras boolean
     AS $$
 /****************************************************
 **
-**  Desc:   Updates data in ont.t_ncbi_taxonomy_cached
+**  Desc:
+**      Updates data in ont.t_ncbi_taxonomy_cached
 **
 **  Arguments:
 **    _deleteExtras     When true, delete extra rows from ont.t_ncbi_taxonomy_cached
-**    _infoonly         When true, preview updates
+**    _infoOnly         When true, preview updates
 **
 **  Usage:
 **      SELECT * FROM ont.update_cached_ncbi_taxonomy(_deleteExtras => false, _infoOnly => true);
@@ -36,7 +37,7 @@ DECLARE
     _message text := '';
 BEGIN
     _deleteExtras := Coalesce(_deleteExtras, true);
-    _infoOnly := Coalesce(_infoOnly, true);
+    _infoOnly     := Coalesce(_infoOnly, true);
 
     If _infoOnly Then
         RETURN QUERY

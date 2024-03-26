@@ -17,7 +17,7 @@ CREATE OR REPLACE PROCEDURE cap.handle_dataset_capture_validation_failure(IN _da
 **  Arguments:
 **    _datasetNameOrID  Dataset name or dataset ID
 **    _comment          Text to append to the dataset comment
-**    _infoonly         When true, preview updates
+**    _infoOnly         When true, preview updates
 **    _message          Status message
 **    _returnCode       Return code
 **

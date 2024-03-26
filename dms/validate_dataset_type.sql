@@ -14,7 +14,7 @@ CREATE OR REPLACE PROCEDURE public.validate_dataset_type(IN _datasetid integer, 
 **    _datasetID                    Dataset ID
 **    _message                      Status message
 **    _returnCode                   Return code
-**    _infoonly                     When true, preview updates
+**    _infoOnly                     When true, preview updates
 **    _autoDefineOnAllMismatches    When true, auto-update the dataset type
 **
 **  Auth:   mem

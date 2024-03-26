@@ -24,7 +24,7 @@ CREATE OR REPLACE PROCEDURE public.add_missing_requested_run(IN _dataset text, I
 **    _eusProposalID    EUS proposal ID
 **    _eusUsageType     EUS usage type
 **    _eusUsersList     EUS User ID (integer); also supports the form 'Baker, Erin (41136)'. Prior to February 2020, supported a comma-separated list of EUS user IDs
-**    _infoonly         When true, preview updates
+**    _infoOnly         When true, preview updates
 **    _message          Status message
 **    _returnCode       Return code
 **
