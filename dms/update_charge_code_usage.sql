@@ -151,7 +151,7 @@ BEGIN
                                                             GROUP BY CC.Charge_Code ) StatsQ
                                                      WHERE StatsQ.SPR_Usage > 0 AND
                                                            StatsQ.Charge_Code = CC.Charge_Code ) );
-   --
+    --
     GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
     If _updateCount > 0 Then

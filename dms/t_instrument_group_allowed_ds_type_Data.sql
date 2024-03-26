@@ -28,7 +28,9 @@ Lumos	DIA-HMS-HCD-HMSn		921	583
 QEHFX	DIA-HMS-HCD-HMSn		207	207
 Eclipse	HMS-HCD-HMSn		9810	2332
 Bruker_FTMS	HMS	Typical mode	150733	10367
+DataFolders	DataFiles		1382	182
 21T	DIA-HMS-HCD-HMSn		0	0
+Eclipse	HMS-HCD-MSn		2928	949
 Ascend	DIA-HMS-HCD-HMSn		117	117
 Ascend	HMS-HCD-CID-HMSn		0	0
 Ascend	HMS-HCD-CID-MSn		0	0
@@ -101,7 +103,6 @@ Bruker_FTMS	MALDI-HMS	Single-scan MALDI (not imaging)	12141	1660
 Bruker_QTOF	HMS		3228	0
 Bruker_QTOF	HMS-HMSn		180	0
 Bruker_QTOF	MALDI-HMS		0	0
-DataFolders	DataFiles		1382	183
 Eclipse	HMS		562	9
 Eclipse	HMS-CID/ETD-HMSn		1	0
 Eclipse	HMS-CID/ETD-MSn		0	0
@@ -132,7 +133,6 @@ Eclipse_Frac	HMS-ETciD-MSn		0	0
 Eclipse_Frac	HMS-ETD-HMSn		0	0
 Eclipse	DIA-HMS-HCD-HMSn		927	679
 Eclipse	HMS-HCD-CID-MSn		168	0
-Eclipse	HMS-HCD-MSn		2928	955
 Eclipse_Frac	HMS-ETD-MSn		0	0
 Eclipse_Frac	HMS-EThcD-HMSn		0	0
 Eclipse_Frac	HMS-EThcD-MSn		0	0
@@ -244,10 +244,10 @@ Waters_TOF	HMS-HMSn		32	0
 Exploris	HMS-HCD-HMSn		3954	3874
 IMS	IMS-HMS-HMSn		28278	881
 Lumos	HMS-HCD-CID-MSn		7967	3324
+Lumos	HMS-HCD-HMSn		28477	2930
 MALDI-Imaging	MALDI-HMS	Typical mode	2078	264
 Waters_IMS	HMS		8834	879
 Waters_IMS	HMS-HMSn		719	37
-Lumos	HMS-HCD-HMSn		28477	2944
 Lumos	HMS-HCD-MSn		7487	1904
 11T	HMS	Typical mode	0	0
 11T	HMS-HMSn	Rarely used	0	0
@@ -346,8 +346,8 @@ VelosPro	MS		10	0
 VelosPro	MS-CID/ETD-MSn		0	0
 VelosPro	MS-ETD-MSn		0	0
 VelosOrbi	HMS-HCD-CID-MSn		60225	4199
-QEHFX	HMS-HCD-HMSn		33115	5921
-QExactive	HMS-HCD-HMSn		112666	23614
+QEHFX	HMS-HCD-HMSn		33115	5914
+QExactive	HMS-HCD-HMSn		112666	23137
 \.
 
 

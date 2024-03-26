@@ -118,7 +118,6 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 105	57	20	Update cached instrument usage by proposal	SQL	CALL update_cached_instrument_usage_by_proposal ();	\N	\N	f	t	0
 106	58	10	Sleep 27 seconds	BUILTIN	Sleep	\N	\N	f	f	0
 107	58	20	Update cached existing jobs	SQL	CALL update_cached_job_request_existing_jobs (\r\n    _processingMode => 0,\r\n    _requestId => 0,\r\n    _jobSearchHours => 350,\r\n    _infoOnly => false);	\N	\N	f	t	0
-121	67	20	Update charge code usage	SQL	SELECT * FROM update_charge_code_usage (_infoOnly => false);	\N	\N	f	t	0
 109	60	10	Sleep 36 seconds	BUILTIN	Sleep	\N	\N	f	f	0
 110	60	20	Update cached RRB stats	SQL	CALL update_cached_requested_run_batch_stats (_batchID => 0, _fullRefresh => false);	\N	\N	f	t	0
 111	61	10	Sleep 37 seconds	BUILTIN	Sleep	\N	\N	f	f	0
@@ -134,6 +133,8 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 123	68	20	Update charge codes from warehouse	SQL	CALL update_charge_codes_from_warehouse (_infoOnly => false);	\N	\N	f	t	0
 124	69	10	Update data package EUS info	SQL	CALL dpkg.update_data_package_eus_info ('0');	\N	\N	f	t	0
 125	70	10	Sleep 10 seconds	BUILTIN	Sleep	\N	\N	f	f	0
+121	67	20	Update charge code usage	SQL	CALL public.update_charge_code_usage_proc (_infoOnly => false);	\N	\N	f	t	0
+108	59	10	Update cached NCBI taxonomy	SQL	CALL ont.update_cached_ncbi_taxonomy_proc (_deleteExtras => true, _infoOnly => false);	\N	\N	f	t	0
 128	72	10	Sleep 10 seconds	BUILTIN	Sleep	\N	\N	f	f	0
 129	72	20	DMS user update daily	SQL	CALL update_users_from_warehouse (_infoOnly => false);	\N	\N	f	t	0
 130	73	10	Update EUS proposals	SQL	CALL update_eus_proposals_from_eus_imports ();	\N	\N	f	t	0
@@ -150,7 +151,6 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 141	79	10	Update missed MyEMSLState info	SQL	CALL cap.update_missed_myemsl_state_values (_windowDays => 30, _infoOnly => false);	\N	\N	f	t	0
 142	80	10	Process pipeline jobs	SQL	CALL sw.update_context (_infoOnly => false);	\N	\N	f	t	0
 143	80	20	Update overall job progress	SQL	CALL update_job_progress (_mostRecentDays => 32, _job => 0, _infoOnly => false);	\N	\N	f	t	0
-108	59	10	Update cached NCBI taxonomy	SQL	SELECT * FROM ont.update_cached_ncbi_taxonomy (_deleteExtras => true, _infoOnly => false);	\N	\N	f	t	0
 144	81	10	Sleep 22 seconds	BUILTIN	Sleep	\N	\N	f	f	0
 145	81	20	Update prep LC run work packages	SQL	CALL update_prep_lc_run_work_package_list (0);	\N	\N	f	t	0
 146	82	10	Update capture pipeline status history	SQL	CALL cap.update_task_step_status_history (_minimumTimeIntervalMinutes => 4);	\N	\N	f	t	0
@@ -167,7 +167,7 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 158	87	20	Process waiting special processing jobs	SQL	CALL process_waiting_special_proc_jobs (_infoOnly => false);	\N	\N	f	t	0
 159	88	10	Validate job and dataset states	SQL	CALL validate_job_dataset_states (_infoOnly => false);	\N	\N	f	t	0
 126	70	20	Update dataset interval and instrument usage for multiple instruments	SQL	CALL update_dataset_interval_for_multiple_instruments (\r\n           _daysToProcess => 180,\r\n           _updateEMSLInstrumentUsage => true);	\N	\N	f	t	0
-152	85	20	Update tissue usage	SQL	SELECT * FROM ont.update_bto_usage (_infoOnly => false);	\N	\N	f	t	0
+152	85	20	Update tissue usage	SQL	CALL ont.update_bto_usage_proc (_infoOnly => false);	\N	\N	f	t	0
 \.
 
 

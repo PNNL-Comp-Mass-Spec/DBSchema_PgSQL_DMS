@@ -102,9 +102,9 @@ update_cart_parameters	2024-03-12 17:09:32.299809	127523
 update_requested_run_batch_parameters	2024-03-06 19:26:44.475492	528
 update_requested_run_factors	2024-03-06 19:26:44.475492	703
 update_requested_run_blocking_and_factors	2024-03-06 19:26:44.475492	608
-update_eus_proposals_from_eus_imports	2024-03-24 06:15:41.618721	375
-update_eus_users_from_eus_imports	2024-03-24 06:16:02.317477	378
-update_eus_instruments_from_eus_imports	2024-03-24 06:16:34.634145	377
+update_eus_proposals_from_eus_imports	2024-03-25 06:15:42.613455	376
+update_eus_users_from_eus_imports	2024-03-25 06:16:03.292309	379
+update_eus_instruments_from_eus_imports	2024-03-25 06:16:35.437714	378
 \.
 
 
