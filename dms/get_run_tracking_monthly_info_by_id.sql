@@ -30,6 +30,8 @@ CREATE OR REPLACE FUNCTION public.get_run_tracking_monthly_info_by_id(_eusinstru
 **          08/28/2023 mem - Use new column name "dataset_id" when querying t_run_interval
 **          08/29/2023 mem - Add missing table aliases
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          03/26/2024 mem - Fix bug referencing the start and end times of the previous dataset
+**                         - Rename columns in temp table and record to avoid using reserved words
 **
 *****************************************************/
 DECLARE
@@ -50,13 +52,13 @@ DECLARE
     _lastRunInterval int;
 BEGIN
 
-    CREATE TEMP Table Tmp_TX (
+    CREATE TEMP TABLE Tmp_TX (
         Seq int PRIMARY KEY,
         ID int NULL,
         Dataset text,
         Day int NULL,
-        Duration int NULL,
-        "interval" int NULL,
+        Duration int NULL,              -- Acquisition length, in minutes
+        Interval_Minutes int NULL,      -- Interval from the end of one dataset to the start of next dataset, in minutes
         Time_Start timestamp NULL,
         Time_End timestamp NULL,
         Instrument text NULL,
@@ -73,7 +75,7 @@ BEGIN
         VALUES (1, 'Bad arguments');
 
         RETURN QUERY
-        SELECT T.Seq, T.ID, T.Dataset, T.Day, T.Duration, T."interval",
+        SELECT T.Seq, T.ID, T.Dataset, T.Day, T.Duration, T.Interval_Minutes,
                T.Time_Start, T.Time_End, T.Instrument,
                T.Comment_State, T.Comment
         FROM Tmp_TX T;
@@ -100,7 +102,7 @@ BEGIN
         VALUES (1, format('Unrecognized EUS ID; no DMS instruments are mapped to EUS Instrument ID %s', _eusInstrumentId));
 
         RETURN QUERY
-        SELECT T.Seq, T.ID, T.Dataset, T.Day, T.Duration, T."interval",
+        SELECT T.Seq, T.ID, T.Dataset, T.Day, T.Duration, T.Interval_Minutes,
                T.Time_Start, T.Time_End, T.Instrument,
                T.Comment_State, T.Comment
         FROM Tmp_TX T;
@@ -120,16 +122,15 @@ BEGIN
     -- Get datasets whose start time falls within month
     ---------------------------------------------------
 
-    INSERT INTO Tmp_TX ( seq,
-                         id,
-                         dataset,
-                         day,
-                         time_Start,
-                         time_end,
-                         duration,
-                         "interval",
-                         instrument
-                       )
+    INSERT INTO Tmp_TX ( Seq,
+                         ID,
+                         Dataset,
+                         Day,
+                         Time_Start,
+                         Time_End,
+                         Duration,
+                         Interval_Minutes,
+                         Instrument )
     SELECT (_seqIncrement * ((Row_Number() OVER (ORDER BY TD.acq_time_start ASC)) - 1) + 1) + _seqOffset AS seq,
            TD.dataset_id AS id,
            TD.dataset AS dataset,
@@ -137,8 +138,8 @@ BEGIN
            TD.acq_time_start AS time_start,
            TD.acq_time_end AS time_end,
            TD.acq_length_minutes AS duration,
-           TD.interval_to_next_ds AS "interval",
-           _instrumentIDFirst AS Instrument
+           TD.interval_to_next_ds AS Interval_Minutes,
+           _instrumentIDFirst AS InstrumentID               -- _instrumentIDFirst is an integer, but it will be stored as text in Tmp_TX.Instrument
     FROM t_dataset AS TD
          INNER JOIN t_emsl_dms_instrument_mapping AS InstMapping
            ON TD.instrument_id = InstMapping.dms_instrument_id
@@ -153,14 +154,14 @@ BEGIN
     -- close to beginning of month
     ---------------------------------------------------
 
-    SELECT MIN(Tmp_TX.seq), MAX(Tmp_TX.seq)
+    SELECT MIN(Tmp_TX.Seq), MAX(Tmp_TX.Seq)
     INTO _firstRunSeq, _lastRunSeq
     FROM Tmp_TX;
 
-    SELECT Tmp_TX.time_start
+    SELECT Tmp_TX.Time_Start
     INTO _firstStart
     FROM Tmp_TX
-    WHERE Tmp_TX.seq = _firstRunSeq;
+    WHERE Tmp_TX.Seq = _firstRunSeq;
 
     -- The long interval threshold is 180 minutes
     _maxNormalInterval := public.get_long_interval_threshold();
@@ -169,12 +170,12 @@ BEGIN
     -- Use "extract(epoch ...) / 60" to get the difference in minutes between the two timestamps
 
     If Extract(epoch from (_firstStart - _firstDayOfStartingMonth)) / 60 > _maxNormalInterval Then
-        SELECT TD.dataset_id AS id,
-               TD.dataset AS dataset,
-               TD.acq_time_start AS start,
-               TD.acq_time_end AS end,
-               TD.acq_length_minutes AS duration,
-               TD.interval_to_next_ds AS "interval"
+        SELECT TD.dataset_id AS ID,
+               TD.dataset AS Dataset,
+               TD.acq_time_start AS AcqTimeStart,
+               TD.acq_time_end AS AcqTimeEnd,
+               TD.acq_length_minutes AS Duration,
+               TD.interval_to_next_ds AS IntervalMinutes
         INTO _preceedingDataset
         FROM t_dataset AS TD
              INNER JOIN t_emsl_dms_instrument_mapping AS InstMapping
@@ -187,37 +188,36 @@ BEGIN
 
         _initialGap := Extract(epoch from (_firstStart - _firstDayOfStartingMonth)) / 60;
 
-        -- If preceeding dataset's end time is before start of month, zero the duration and truncate the interval,
-        -- otherwise just truncate the duration
+        -- If preceeding dataset's end time is before start of month, zero the duration and truncate the interval
+        -- Otherwise just truncate the duration
 
-        If _precEnd < _firstDayOfStartingMonth Then
-            _preceedingDataset.duration := 0;
-            _preceedingDataset."interval" := _initialGap;
+        If _preceedingDataset.AcqTimeEnd < _firstDayOfStartingMonth Then
+            _preceedingDataset.Duration := 0;
+            _preceedingDataset.IntervalMinutes := _initialGap;
         Else
-            _preceedingDataset.duration := Extract(epoch from (_precStart - _firstDayOfStartingMonth)) / 60;    -- Duration, in minutes
+            _preceedingDataset.Duration := Extract(epoch from (_preceedingDataset.AcqTimeStart - _firstDayOfStartingMonth)) / 60;    -- Duration, in minutes
         End If;
 
-        -- Add preceeding dataset record (with truncated duration/interval)
-        -- at beginning of results
+        -- Add preceeding dataset record (with truncated duration/interval) at beginning of results
 
-        INSERT INTO Tmp_TX ( seq,
-                             dataset,
-                             id,
-                             day,
-                             time_start,
-                             time_end,
-                             duration,
-                             "interval",
-                             instrument )
+        INSERT INTO Tmp_TX ( Seq,
+                             Dataset,
+                             ID,
+                             Day,
+                             Time_Start,
+                             Time_End,
+                             Duration,
+                             Interval_Minutes,
+                             Instrument )
         VALUES( _firstRunSeq - 1,               -- seq
-                _preceedingDataset.dataset,
-                _preceedingDataset.id,
+                _preceedingDataset.Dataset,
+                _preceedingDataset.ID,
                 1,                              -- Day of month
-                _preceedingDataset.start,
-                _preceedingDataset.end,
-                _preceedingDataset.duration,
-                _preceedingDataset."interval",
-                _instrumentIDFirst);
+                _preceedingDataset.AcqTimeStart,
+                _preceedingDataset.AcqTimeEnd,
+                _preceedingDataset.Duration,
+                _preceedingDataset.IntervalMinutes,
+                _instrumentIDFirst);            -- _instrumentIDFirst is an integer, but it will be stored as text in Tmp_TX.Instrument
     End If;
 
     ---------------------------------------------------
@@ -230,21 +230,21 @@ BEGIN
 
     -- Otherwise, if interval hangs over succeeding month, truncate it
 
-    SELECT Tmp_TX.time_start,
-           Tmp_TX.time_end,
-           Tmp_TX."interval"       -- Interval, in minutes
+    SELECT Tmp_TX.Time_Start,
+           Tmp_TX.Time_End,
+           Tmp_TX.Interval_Minutes
     INTO _lastRunStart, _lastRunEnd, _lastRunInterval
     FROM Tmp_TX
-    WHERE Tmp_TX.seq = _lastRunSeq;
+    WHERE Tmp_TX.Seq = _lastRunSeq;
 
     If _lastRunEnd > _firstDayOfTrailingMonth Then
         UPDATE Tmp_TX
-        SET "interval" = 0,
-            duration = Extract(epoch from (_firstDayOfTrailingMonth - _lastRunStart)) / 60      -- Duration, in minutes
+        SET Interval_Minutes = 0,
+            Duration = Extract(epoch from (_firstDayOfTrailingMonth - _lastRunStart)) / 60          -- Duration, in minutes
         WHERE Tmp_TX.Seq = _lastRunSeq;
     ElsIf _lastRunEnd + make_interval(mins => _lastRunInterval) > _firstDayOfTrailingMonth Then
         UPDATE Tmp_TX
-        SET "interval" = Extract(epoch from (_firstDayOfTrailingMonth - _lastRunEnd)) / 60      -- Interval, in minutes
+        SET Interval_Minutes = Extract(epoch from (_firstDayOfTrailingMonth - _lastRunEnd)) / 60    -- Interval, in minutes
         WHERE Tmp_TX.Seq = _lastRunSeq;
     End If;
 
@@ -253,8 +253,8 @@ BEGIN
     ---------------------------------------------------
 
     UPDATE Tmp_TX
-    SET comment = I.comment,
-        comment_state = CASE WHEN Coalesce(I.comment, '') = ''
+    SET Comment = I.comment,
+        Comment_State = CASE WHEN Coalesce(I.comment, '') = ''
                              THEN '-'
                              ELSE '+'
                         END
@@ -262,11 +262,11 @@ BEGIN
     WHERE Tmp_TX.ID = I.dataset_id;
 
     UPDATE Tmp_TX
-    SET comment_state = 'x'
-    WHERE Tmp_TX.comment_state IS NULL;
+    SET Comment_State = 'x'
+    WHERE Tmp_TX.Comment_State IS NULL;
 
     RETURN QUERY
-    SELECT T.Seq, T.ID, T.Dataset, T.Day, T.Duration, T."interval",
+    SELECT T.Seq, T.ID, T.Dataset, T.Day, T.Duration, T.Interval_Minutes,
            T.Time_Start, T.Time_End, T.Instrument,
            T.Comment_State, T.Comment
     FROM Tmp_TX T;
