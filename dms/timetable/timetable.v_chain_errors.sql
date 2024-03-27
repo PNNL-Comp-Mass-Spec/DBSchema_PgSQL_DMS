@@ -25,7 +25,17 @@ CREATE VIEW timetable.v_chain_errors AS
             ((l.message_data -> 'chain'::text))::integer AS chain_id,
             ((l.message_data -> 'task'::text))::integer AS task_id
            FROM timetable.log l
-          WHERE (l.log_level = ANY (ARRAY['ERROR'::timetable.log_type, 'PANIC'::timetable.log_type]))) filterq
+          WHERE (l.log_level = ANY (ARRAY['ERROR'::timetable.log_type, 'PANIC'::timetable.log_type]))
+        UNION
+         SELECT l.ts,
+            l.log_level,
+            l.client_name,
+            (l.message || ' (error caught by exception handler)'::text),
+            l.message_data,
+            ((l.message_data -> 'chain'::text))::integer AS chain_id,
+            ((l.message_data -> 'task'::text))::integer AS task_id
+           FROM timetable.log l
+          WHERE ((l.message ~~* 'Notice%'::text) AND ((l.message_data ->> 'notice'::text) ~~* '%Error caught%'::text))) filterq
      LEFT JOIN timetable.chain c ON ((filterq.chain_id = c.chain_id)))
      LEFT JOIN timetable.task t ON ((filterq.task_id = t.task_id)));
 
