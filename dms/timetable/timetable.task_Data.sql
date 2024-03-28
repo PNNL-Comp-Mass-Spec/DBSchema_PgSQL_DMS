@@ -111,13 +111,13 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 98	55	10	Sleep 17 seconds	BUILTIN	Sleep	\N	\N	f	f	0
 100	56	10	Sleep 18 seconds	BUILTIN	Sleep	\N	\N	f	f	0
 101	56	20	Update cached experiment components	SQL	CALL update_cached_experiment_component_names (_experimentID => 0, _infoOnly => false);	\N	\N	f	t	0
-117	65	10	Update cached tissue names	SQL	CALL ont.update_cached_bto_names (_infoOnly => false);	\N	\N	f	t	0
 96	54	20	Update cached dataset instruments	SQL	CALL update_cached_dataset_instruments (_processingMode => 1, _infoOnly => false);	\N	\N	f	t	0
 99	55	20	Add new cached dataset instruments	SQL	CALL update_cached_dataset_instruments (_processingMode => 0, _infoOnly => false);	\N	\N	f	t	0
 104	57	10	Sleep 35 seconds	BUILTIN	Sleep	\N	\N	f	f	0
 105	57	20	Update cached instrument usage by proposal	SQL	CALL update_cached_instrument_usage_by_proposal ();	\N	\N	f	t	0
 106	58	10	Sleep 27 seconds	BUILTIN	Sleep	\N	\N	f	f	0
 107	58	20	Update cached existing jobs	SQL	CALL update_cached_job_request_existing_jobs (\r\n    _processingMode => 0,\r\n    _requestId => 0,\r\n    _jobSearchHours => 350,\r\n    _infoOnly => false);	\N	\N	f	t	0
+117	65	10	Update cached tissue names	SQL	CALL ont.update_cached_bto_names_proc (_infoOnly => false);	\N	\N	f	t	0
 109	60	10	Sleep 36 seconds	BUILTIN	Sleep	\N	\N	f	f	0
 110	60	20	Update cached RRB stats	SQL	CALL update_cached_requested_run_batch_stats (_batchID => 0, _fullRefresh => false);	\N	\N	f	t	0
 111	61	10	Sleep 37 seconds	BUILTIN	Sleep	\N	\N	f	f	0
