@@ -23,11 +23,9 @@ SET row_security = off;
 COPY public.t_usage_stats (posted_by, last_posting_time, usage_count) FROM stdin;
 set_archive_task_busy	2024-03-22 20:10:10.574991	198703
 set_archive_task_complete	2024-03-22 20:10:10.574991	99850
-update_analysis_job_state_name_cached	2024-03-22 22:03:40.008732	161
 update_lc_cart_block_assignments	2024-03-03 14:19:47.130945	5
 store_dta_ref_mass_error_stats	2024-03-04 15:24:42.836672	11837
 store_qcdm_results	2024-03-04 15:27:23.780553	5025
-update_analysis_job_tool_name_cached	2024-03-22 22:03:45.941634	161
 store_quameter_results	2024-03-04 15:29:28.055293	65721
 store_smaqc_results	2024-03-04 15:30:24.415671	5389
 create_psm_job_request	2024-02-21 09:59:29	38
@@ -42,6 +40,8 @@ SetArchiveTaskBusy	2023-02-24 15:26:32	1671314
 SetArchiveTaskComplete	2023-02-24 15:20:31	879396
 SetArchiveUpdateRequired	2023-02-24 15:49:01	1594913
 SetArchiveUpdateTaskBusy	2023-02-24 15:26:31	3634944
+update_analysis_job_state_name_cached	2024-03-27 22:03:45.582995	163
+update_analysis_job_tool_name_cached	2024-03-27 22:03:50.337937	163
 SetArchiveUpdateTaskComplete	2023-02-24 15:26:32	2063591
 SetCaptureTaskBusy	2023-02-24 15:26:32	1742848
 SetCaptureTaskComplete	2023-02-24 15:26:31	885550
@@ -58,6 +58,9 @@ update_analysis_jobs	2023-09-15 09:39:13	2
 update_eus_info_from_eus_imports	2024-01-02 18:50:13	1
 store_qcart_results	2024-03-04 15:26:06.174082	1
 UpdateRequestedRunFactors	2023-02-26 12:57:42	8687
+update_eus_proposals_from_eus_imports	2024-03-28 06:15:45.840962	379
+update_eus_users_from_eus_imports	2024-03-28 06:16:06.567893	382
+update_eus_instruments_from_eus_imports	2024-03-28 06:16:38.651696	381
 update_dataset_dispositions	2024-03-02 10:44:41	2076
 update_dataset_dispositions_by_name	2024-03-02 10:44:41	375
 update_instrument_group_allowed_dataset_type	2024-02-05 11:14:15	55
@@ -102,9 +105,6 @@ update_cart_parameters	2024-03-12 17:09:32.299809	127523
 update_requested_run_batch_parameters	2024-03-06 19:26:44.475492	528
 update_requested_run_factors	2024-03-06 19:26:44.475492	703
 update_requested_run_blocking_and_factors	2024-03-06 19:26:44.475492	608
-update_eus_proposals_from_eus_imports	2024-03-25 06:15:42.613455	376
-update_eus_users_from_eus_imports	2024-03-25 06:16:03.292309	379
-update_eus_instruments_from_eus_imports	2024-03-25 06:16:35.437714	378
 \.
 
 
