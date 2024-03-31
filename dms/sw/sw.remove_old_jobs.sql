@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE sw.remove_old_jobs(IN _intervaldaysforsuccess intege
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
+**          03/31/2024 mem - Assure that the newest 50 jobs with state Complete or 'No Intermediate Files Created' are not deleted
 **
 *****************************************************/
 DECLARE
@@ -110,7 +111,12 @@ BEGIN
         SELECT job, state
         FROM sw.t_jobs
         WHERE state IN (4, 7) AND        -- 4=Complete, 7=No Intermediate Files Created
-              Coalesce(finish, start) < _cutoffDateTimeForSuccess
+              Coalesce(finish, start) < _cutoffDateTimeForSuccess AND
+              NOT job IN (SELECT T.job
+                          FROM sw.t_jobs T
+                          WHERE T.State IN (4, 7)
+                          ORDER BY T.job DESC
+                          LIMIT 50)
         ORDER BY finish
         LIMIT _maxJobsToProcess;
 

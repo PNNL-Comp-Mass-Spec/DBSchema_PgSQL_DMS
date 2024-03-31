@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE cap.remove_old_tasks(IN _intervaldaysforsuccess inte
 **          09/07/2023 mem - Align assignment statements
 **          11/02/2023 mem - Also remove capture task jobs with state 15 = Skipped
 **                         - Add argument _returnCode when calling copy_task_to_history
+**          03/31/2024 mem - Assure that the newest 50 capture tasks with state Complete, Inactive, Skipped, or Ignore are not deleted
 **
 *****************************************************/
 DECLARE
@@ -109,7 +110,12 @@ BEGIN
         SELECT Job, State
         FROM cap.t_tasks
         WHERE State IN (3, 4, 15, 101) AND    -- Complete, Inactive, Skipped, or Ignore
-              Coalesce(Finish, Start) < _cutoffDateTimeForSuccess
+              Coalesce(Finish, Start) < _cutoffDateTimeForSuccess AND
+              NOT job IN (SELECT T.job
+                  FROM cap.t_tasks T
+                  WHERE T.State IN (3, 4, 15, 101)
+                  ORDER BY T.job DESC
+                  LIMIT 50)
         ORDER BY job;
 
         If _validateJobStepSuccess Then
@@ -128,7 +134,6 @@ BEGIN
                 RAISE INFO 'Successful capture task jobs have been confirmed to all have successful (or skipped) steps';
             End If;
         End If;
-
     End If;
 
     ---------------------------------------------------
