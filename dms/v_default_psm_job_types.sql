@@ -3,9 +3,9 @@
 --
 
 CREATE VIEW public.v_default_psm_job_types AS
- SELECT t_default_psm_job_types.job_type_name,
-    t_default_psm_job_types.job_type_description,
-    t_default_psm_job_types.job_type_id
+ SELECT job_type_name,
+    job_type_description,
+    job_type_id
    FROM public.t_default_psm_job_types;
 
 

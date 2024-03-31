@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_instrument_status_picklist AS
- SELECT t_instrument_state_name.state_name AS val
+ SELECT state_name AS val
    FROM public.t_instrument_state_name;
 
 

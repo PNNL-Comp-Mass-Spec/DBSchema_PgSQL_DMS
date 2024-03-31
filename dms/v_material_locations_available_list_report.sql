@@ -3,20 +3,20 @@
 --
 
 CREATE VIEW public.v_material_locations_available_list_report AS
- SELECT ml.location,
-    ml.freezer,
-    ml.shelf,
-    ml.rack,
-    ml."row",
-    ml.col,
-    ml.comment,
-    ml.container_limit,
-    ml.containers,
-    ml.available,
+ SELECT location,
+    freezer,
+    shelf,
+    rack,
+    "row",
+    col,
+    comment,
+    container_limit,
+    containers,
+    available,
     'New Container'::public.citext AS action,
-    ml.id
+    id
    FROM public.v_material_location_list_report ml
-  WHERE ((ml.available > 0) AND (ml.status OPERATOR(public.=) 'Active'::public.citext));
+  WHERE ((available > 0) AND (status OPERATOR(public.=) 'Active'::public.citext));
 
 
 ALTER VIEW public.v_material_locations_available_list_report OWNER TO d3l243;

@@ -3,9 +3,9 @@
 --
 
 CREATE VIEW public.v_operations_task_types AS
- SELECT t_operations_task_type.task_type_name
+ SELECT task_type_name
    FROM public.t_operations_task_type
-  WHERE (t_operations_task_type.task_type_active > 0);
+  WHERE (task_type_active > 0);
 
 
 ALTER VIEW public.v_operations_task_types OWNER TO d3l243;

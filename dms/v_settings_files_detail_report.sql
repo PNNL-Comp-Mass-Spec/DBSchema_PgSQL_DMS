@@ -3,15 +3,15 @@
 --
 
 CREATE VIEW public.v_settings_files_detail_report AS
- SELECT t_settings_files.settings_file_id AS id,
-    t_settings_files.analysis_tool,
-    t_settings_files.file_name,
-    t_settings_files.description,
-    t_settings_files.active,
-    t_settings_files.job_usage_count,
-    t_settings_files.msgfplus_auto_centroid,
-    t_settings_files.hms_auto_supersede,
-    public.xml_to_html(t_settings_files.contents) AS contents
+ SELECT settings_file_id AS id,
+    analysis_tool,
+    file_name,
+    description,
+    active,
+    job_usage_count,
+    msgfplus_auto_centroid,
+    hms_auto_supersede,
+    public.xml_to_html(contents) AS contents
    FROM public.t_settings_files;
 
 

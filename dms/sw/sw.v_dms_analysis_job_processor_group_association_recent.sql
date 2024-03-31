@@ -3,13 +3,13 @@
 --
 
 CREATE VIEW sw.v_dms_analysis_job_processor_group_association_recent AS
- SELECT v_analysis_job_processor_group_association_recent.group_name,
-    v_analysis_job_processor_group_association_recent.job,
-    v_analysis_job_processor_group_association_recent.state,
-    v_analysis_job_processor_group_association_recent.dataset,
-    v_analysis_job_processor_group_association_recent.tool,
-    v_analysis_job_processor_group_association_recent.param_file,
-    v_analysis_job_processor_group_association_recent.settings_file
+ SELECT group_name,
+    job,
+    state,
+    dataset,
+    tool,
+    param_file,
+    settings_file
    FROM public.v_analysis_job_processor_group_association_recent;
 
 

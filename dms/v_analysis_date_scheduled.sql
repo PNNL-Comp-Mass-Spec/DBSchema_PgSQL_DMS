@@ -3,11 +3,11 @@
 --
 
 CREATE VIEW public.v_analysis_date_scheduled AS
- SELECT t_analysis_job.job,
-    t_analysis_job.job_state_id AS state,
-    EXTRACT(year FROM t_analysis_job.created) AS y,
-    EXTRACT(month FROM t_analysis_job.created) AS m,
-    EXTRACT(day FROM t_analysis_job.created) AS d
+ SELECT job,
+    job_state_id AS state,
+    EXTRACT(year FROM created) AS y,
+    EXTRACT(month FROM created) AS m,
+    EXTRACT(day FROM created) AS d
    FROM public.t_analysis_job;
 
 

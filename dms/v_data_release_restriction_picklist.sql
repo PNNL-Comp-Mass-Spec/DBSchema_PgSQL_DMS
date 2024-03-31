@@ -3,8 +3,8 @@
 --
 
 CREATE VIEW public.v_data_release_restriction_picklist AS
- SELECT t_data_release_restrictions.release_restriction_id AS id,
-    t_data_release_restrictions.release_restriction AS name
+ SELECT release_restriction_id AS id,
+    release_restriction AS name
    FROM public.t_data_release_restrictions;
 
 

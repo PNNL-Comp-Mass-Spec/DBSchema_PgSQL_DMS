@@ -3,14 +3,14 @@
 --
 
 CREATE VIEW public.v_helper_prep_lc_column_list_report AS
- SELECT t_prep_lc_column.prep_column AS column_name,
-    t_prep_lc_column.mfg_name,
-    t_prep_lc_column.mfg_model,
-    t_prep_lc_column.mfg_serial AS mfg_serial_number,
-    t_prep_lc_column.comment,
-    t_prep_lc_column.created
+ SELECT prep_column AS column_name,
+    mfg_name,
+    mfg_model,
+    mfg_serial AS mfg_serial_number,
+    comment,
+    created
    FROM public.t_prep_lc_column
-  WHERE (t_prep_lc_column.state OPERATOR(public.=) 'Active'::public.citext);
+  WHERE (state OPERATOR(public.=) 'Active'::public.citext);
 
 
 ALTER VIEW public.v_helper_prep_lc_column_list_report OWNER TO d3l243;

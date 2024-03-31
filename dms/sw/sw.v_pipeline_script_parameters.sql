@@ -3,10 +3,10 @@
 --
 
 CREATE VIEW sw.v_pipeline_script_parameters AS
- SELECT t_scripts.script_id AS id,
-    t_scripts.script,
-    t_scripts.parameters,
-    t_scripts.fields
+ SELECT script_id AS id,
+    script,
+    parameters,
+    fields
    FROM sw.t_scripts;
 
 

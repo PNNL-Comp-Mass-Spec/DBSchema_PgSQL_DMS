@@ -3,13 +3,13 @@
 --
 
 CREATE VIEW public.v_param_file_report AS
- SELECT pf.param_file_name,
-    pf.param_file_description AS description,
-    COALESCE(pf.job_usage_count, 0) AS job_count,
-    pf.param_file_id,
-    pf.param_file_type_id,
-    pf.valid AS is_valid,
-    pf.date_created
+ SELECT param_file_name,
+    param_file_description AS description,
+    COALESCE(job_usage_count, 0) AS job_count,
+    param_file_id,
+    param_file_type_id,
+    valid AS is_valid,
+    date_created
    FROM public.t_param_files pf;
 
 

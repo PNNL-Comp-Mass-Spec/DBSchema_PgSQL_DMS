@@ -3,12 +3,12 @@
 --
 
 CREATE VIEW ont.v_ncbi_taxonomy_cached AS
- SELECT t_ncbi_taxonomy_cached.tax_id,
-    t_ncbi_taxonomy_cached.name,
-    t_ncbi_taxonomy_cached.rank,
-    t_ncbi_taxonomy_cached.parent_tax_id,
-    t_ncbi_taxonomy_cached.synonyms,
-    t_ncbi_taxonomy_cached.synonym_list
+ SELECT tax_id,
+    name,
+    rank,
+    parent_tax_id,
+    synonyms,
+    synonym_list
    FROM ont.t_ncbi_taxonomy_cached;
 
 

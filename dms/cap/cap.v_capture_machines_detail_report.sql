@@ -3,8 +3,8 @@
 --
 
 CREATE VIEW cap.v_capture_machines_detail_report AS
- SELECT t_machines.machine,
-    t_machines.bionet_available
+ SELECT machine,
+    bionet_available
    FROM cap.t_machines;
 
 

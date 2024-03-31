@@ -3,9 +3,9 @@
 --
 
 CREATE VIEW public.v_user_operation_picklist AS
- SELECT t_user_operations.operation_id AS id,
-    t_user_operations.operation AS name,
-    t_user_operations.operation_description AS description
+ SELECT operation_id AS id,
+    operation AS name,
+    operation_description AS description
    FROM public.t_user_operations;
 
 

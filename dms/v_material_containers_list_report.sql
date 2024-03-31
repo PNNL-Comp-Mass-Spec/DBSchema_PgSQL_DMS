@@ -3,18 +3,18 @@
 --
 
 CREATE VIEW public.v_material_containers_list_report AS
- SELECT containerq.container,
-    containerq.type,
-    containerq.location,
-    containerq.items,
-    containerq.filecount AS files,
-    containerq.comment,
-    containerq.status,
+ SELECT container,
+    type,
+    location,
+    items,
+    filecount AS files,
+    comment,
+    status,
     'New Biomaterial'::public.citext AS action,
-    containerq.created,
-    containerq.campaign,
-    containerq.researcher,
-    containerq.container_id AS id
+    created,
+    campaign,
+    researcher,
+    container_id AS id
    FROM ( SELECT mc.container,
             mc.type,
             ml.location,

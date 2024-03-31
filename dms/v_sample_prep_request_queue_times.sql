@@ -3,18 +3,18 @@
 --
 
 CREATE VIEW public.v_sample_prep_request_queue_times AS
- SELECT outerq.request_id,
-    outerq.created,
-    outerq.state_id,
-    outerq.complete_or_closed,
+ SELECT request_id,
+    created,
+    state_id,
+    complete_or_closed,
         CASE
-            WHEN (outerq.state_id = 0) THEN NULL::numeric
-            WHEN (outerq.state_id = ANY (ARRAY[4, 5])) THEN round((EXTRACT(epoch FROM (outerq.complete_or_closed - outerq.created)) / (86400)::numeric))
-            ELSE round((EXTRACT(epoch FROM (COALESCE((outerq.complete_or_closed)::timestamp with time zone, CURRENT_TIMESTAMP) - (outerq.created)::timestamp with time zone)) / (86400)::numeric))
+            WHEN (state_id = 0) THEN NULL::numeric
+            WHEN (state_id = ANY (ARRAY[4, 5])) THEN round((EXTRACT(epoch FROM (complete_or_closed - created)) / (86400)::numeric))
+            ELSE round((EXTRACT(epoch FROM (COALESCE((complete_or_closed)::timestamp with time zone, CURRENT_TIMESTAMP) - (created)::timestamp with time zone)) / (86400)::numeric))
         END AS days_in_queue,
         CASE
-            WHEN (outerq.state_id = 5) THEN NULL::numeric
-            ELSE round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (outerq.statefirstentered)::timestamp with time zone)) / (86400)::numeric))
+            WHEN (state_id = 5) THEN NULL::numeric
+            ELSE round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (statefirstentered)::timestamp with time zone)) / (86400)::numeric))
         END AS days_in_state
    FROM ( SELECT spr.prep_request_id AS request_id,
             spr.created,

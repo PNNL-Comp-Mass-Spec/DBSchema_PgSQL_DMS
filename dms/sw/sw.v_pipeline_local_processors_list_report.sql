@@ -3,13 +3,13 @@
 --
 
 CREATE VIEW sw.v_pipeline_local_processors_list_report AS
- SELECT t_local_processors.processor_name,
-    t_local_processors.state,
-    t_local_processors.groups,
-    t_local_processors.gp_groups,
-    t_local_processors.machine,
-    t_local_processors.latest_request,
-    t_local_processors.processor_id AS id
+ SELECT processor_name,
+    state,
+    groups,
+    gp_groups,
+    machine,
+    latest_request,
+    processor_id AS id
    FROM sw.t_local_processors;
 
 

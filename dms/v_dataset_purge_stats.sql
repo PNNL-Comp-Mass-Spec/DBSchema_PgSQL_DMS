@@ -3,13 +3,13 @@
 --
 
 CREATE VIEW public.v_dataset_purge_stats AS
- SELECT lookupq.year,
-    lookupq.month,
-    lookupq.storage_path,
-    lookupq.instrument,
-    lookupq.dataset_count,
-    lookupq.purged_datasets,
-    round((((lookupq.purged_datasets)::numeric / (lookupq.dataset_count)::numeric) * (100)::numeric), 2) AS percent_purged
+ SELECT year,
+    month,
+    storage_path,
+    instrument,
+    dataset_count,
+    purged_datasets,
+    round((((purged_datasets)::numeric / (dataset_count)::numeric) * (100)::numeric), 2) AS percent_purged
    FROM ( SELECT EXTRACT(year FROM ds.created) AS year,
             EXTRACT(month FROM ds.created) AS month,
             ((('\\'::text || (spath.machine_name)::text) || '\'::text) || (spath.storage_path)::text) AS storage_path,

@@ -3,8 +3,8 @@
 --
 
 CREATE VIEW mc.v_mgr_type_list_by_param AS
- SELECT groupq.param_name,
-    (string_agg((groupq.mgr_type_name)::text, (', '::public.citext)::text ORDER BY (groupq.mgr_type_name)::text))::public.citext AS mgr_type_list
+ SELECT param_name,
+    (string_agg((mgr_type_name)::text, (', '::public.citext)::text ORDER BY (mgr_type_name)::text))::public.citext AS mgr_type_list
    FROM ( SELECT DISTINCT pt.param_name,
             lookupq.mgr_type_name
            FROM (((mc.t_mgr_type_param_type_map mp
@@ -15,7 +15,7 @@ CREATE VIEW mc.v_mgr_type_list_by_param AS
                    FROM ((mc.t_mgr_type_param_type_map mtpm
                      JOIN mc.t_mgr_types mt2 ON ((mtpm.mgr_type_id = mt2.mgr_type_id)))
                      JOIN mc.t_param_type pt2 ON ((mtpm.param_type_id = pt2.param_type_id)))) lookupq ON ((pt.param_name OPERATOR(public.=) lookupq.param_name)))) groupq
-  GROUP BY groupq.param_name;
+  GROUP BY param_name;
 
 
 ALTER VIEW mc.v_mgr_type_list_by_param OWNER TO d3l243;

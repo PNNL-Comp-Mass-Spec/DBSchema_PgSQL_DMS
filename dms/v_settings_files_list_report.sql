@@ -3,14 +3,14 @@
 --
 
 CREATE VIEW public.v_settings_files_list_report AS
- SELECT t_settings_files.settings_file_id AS id,
-    t_settings_files.analysis_tool,
-    t_settings_files.file_name,
-    t_settings_files.description,
-    t_settings_files.active,
-    t_settings_files.job_usage_count AS jobs,
-    t_settings_files.msgfplus_auto_centroid,
-    t_settings_files.hms_auto_supersede
+ SELECT settings_file_id AS id,
+    analysis_tool,
+    file_name,
+    description,
+    active,
+    job_usage_count AS jobs,
+    msgfplus_auto_centroid,
+    hms_auto_supersede
    FROM public.t_settings_files;
 
 

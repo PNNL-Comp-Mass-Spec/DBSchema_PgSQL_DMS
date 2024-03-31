@@ -3,9 +3,9 @@
 --
 
 CREATE VIEW public.v_users AS
- SELECT t_users.username,
-    t_users.name,
-    t_users.user_id AS id
+ SELECT username,
+    name,
+    user_id AS id
    FROM public.t_users;
 
 

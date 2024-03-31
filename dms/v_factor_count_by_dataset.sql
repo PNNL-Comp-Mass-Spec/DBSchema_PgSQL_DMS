@@ -3,10 +3,10 @@
 --
 
 CREATE VIEW public.v_factor_count_by_dataset AS
- SELECT factorq.dataset_id,
+ SELECT dataset_id,
     sum(
         CASE
-            WHEN (factorq.factor IS NULL) THEN 0
+            WHEN (factor IS NULL) THEN 0
             ELSE 1
         END) AS factor_count
    FROM ( SELECT DISTINCT ds.dataset_id,
@@ -14,7 +14,7 @@ CREATE VIEW public.v_factor_count_by_dataset AS
            FROM ((public.t_factor f
              JOIN public.t_requested_run rr ON ((f.target_id = rr.request_id)))
              RIGHT JOIN public.t_dataset ds ON (((f.type OPERATOR(public.=) 'Run_Request'::public.citext) AND (rr.dataset_id = ds.dataset_id))))) factorq
-  GROUP BY factorq.dataset_id;
+  GROUP BY dataset_id;
 
 
 ALTER VIEW public.v_factor_count_by_dataset OWNER TO d3l243;

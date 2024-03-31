@@ -3,10 +3,10 @@
 --
 
 CREATE VIEW public.v_enzyme_picklist AS
- SELECT t_enzymes.enzyme_id AS id,
-    t_enzymes.enzyme_name AS name
+ SELECT enzyme_id AS id,
+    enzyme_name AS name
    FROM public.t_enzymes
-  WHERE (t_enzymes.enzyme_id > 0);
+  WHERE (enzyme_id > 0);
 
 
 ALTER VIEW public.v_enzyme_picklist OWNER TO d3l243;

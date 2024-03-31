@@ -3,14 +3,14 @@
 --
 
 CREATE VIEW sw.v_pipeline_step_tools_list_report AS
- SELECT t_step_tools.step_tool AS name,
-    t_step_tools.type,
-    t_step_tools.description,
-    t_step_tools.shared_result_version,
-    t_step_tools.filter_version,
-    t_step_tools.cpu_load,
-    t_step_tools.memory_usage_mb,
-    t_step_tools.step_tool_id AS id
+ SELECT step_tool AS name,
+    type,
+    description,
+    shared_result_version,
+    filter_version,
+    cpu_load,
+    memory_usage_mb,
+    step_tool_id AS id
    FROM sw.t_step_tools;
 
 

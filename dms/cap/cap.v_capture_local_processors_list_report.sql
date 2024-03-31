@@ -3,13 +3,13 @@
 --
 
 CREATE VIEW cap.v_capture_local_processors_list_report AS
- SELECT t_local_processors.processor_name,
-    t_local_processors.state,
-    t_local_processors.machine,
-    t_local_processors.manager_version,
-    (cap.get_ctm_processor_step_tool_list((t_local_processors.processor_name)::text))::public.citext AS tools,
-    (cap.get_ctm_processor_assigned_instrument_list((t_local_processors.processor_name)::text))::public.citext AS instruments,
-    t_local_processors.latest_request
+ SELECT processor_name,
+    state,
+    machine,
+    manager_version,
+    (cap.get_ctm_processor_step_tool_list((processor_name)::text))::public.citext AS tools,
+    (cap.get_ctm_processor_assigned_instrument_list((processor_name)::text))::public.citext AS instruments,
+    latest_request
    FROM cap.t_local_processors;
 
 

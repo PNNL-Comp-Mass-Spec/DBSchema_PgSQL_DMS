@@ -3,12 +3,12 @@
 --
 
 CREATE VIEW public.v_dataset_type_name_picklist AS
- SELECT t_dataset_type_name.dataset_type_id AS id,
-    t_dataset_type_name.dataset_type AS name,
-    t_dataset_type_name.description,
-    (((((((((t_dataset_type_name.dataset_type)::text || (' ... "'::public.citext)::text))::public.citext)::text || (t_dataset_type_name.description)::text))::public.citext)::text || ('"'::public.citext)::text))::public.citext AS name_with_description
+ SELECT dataset_type_id AS id,
+    dataset_type AS name,
+    description,
+    (((((((((dataset_type)::text || (' ... "'::public.citext)::text))::public.citext)::text || (description)::text))::public.citext)::text || ('"'::public.citext)::text))::public.citext AS name_with_description
    FROM public.t_dataset_type_name
-  WHERE (t_dataset_type_name.active > 0);
+  WHERE (active > 0);
 
 
 ALTER VIEW public.v_dataset_type_name_picklist OWNER TO d3l243;

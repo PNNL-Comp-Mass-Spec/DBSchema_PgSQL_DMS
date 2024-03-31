@@ -3,9 +3,9 @@
 --
 
 CREATE VIEW public.v_instrument_source_scan_dir AS
- SELECT t_misc_paths.server AS scan_file_dir
+ SELECT server AS scan_file_dir
    FROM public.t_misc_paths
-  WHERE (t_misc_paths.path_function OPERATOR(public.=) 'InstrumentSourceScanDir'::public.citext);
+  WHERE (path_function OPERATOR(public.=) 'InstrumentSourceScanDir'::public.citext);
 
 
 ALTER VIEW public.v_instrument_source_scan_dir OWNER TO d3l243;

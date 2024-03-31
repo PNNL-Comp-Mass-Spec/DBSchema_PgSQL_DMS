@@ -3,10 +3,10 @@
 --
 
 CREATE VIEW public.v_misc_paths AS
- SELECT t_misc_paths.path_function,
-    t_misc_paths.client,
-    t_misc_paths.server,
-    t_misc_paths.comment
+ SELECT path_function,
+    client,
+    server,
+    comment
    FROM public.t_misc_paths;
 
 

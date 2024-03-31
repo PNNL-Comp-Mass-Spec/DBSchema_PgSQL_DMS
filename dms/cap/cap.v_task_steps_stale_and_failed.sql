@@ -3,22 +3,22 @@
 --
 
 CREATE VIEW cap.v_task_steps_stale_and_failed AS
- SELECT dataq.warning_message,
-    dataq.dataset,
-    dataq.dataset_id,
-    dataq.job,
-    dataq.script,
-    dataq.tool,
-    (dataq.runtime_minutes)::integer AS runtime_minutes,
-    round((dataq.job_progress)::numeric, 1) AS job_progress,
-    dataq.runtime_predicted_hours,
-    (dataq.state_name)::public.citext AS state_name,
-    round(((dataq.last_cpu_status_minutes)::numeric / 60.0), 1) AS last_cpu_status_hours,
-    dataq.processor,
-    dataq.start,
-    dataq.step,
-    dataq.completion_message,
-    dataq.evaluation_message
+ SELECT warning_message,
+    dataset,
+    dataset_id,
+    job,
+    script,
+    tool,
+    (runtime_minutes)::integer AS runtime_minutes,
+    round((job_progress)::numeric, 1) AS job_progress,
+    runtime_predicted_hours,
+    (state_name)::public.citext AS state_name,
+    round(((last_cpu_status_minutes)::numeric / 60.0), 1) AS last_cpu_status_hours,
+    processor,
+    start,
+    step,
+    completion_message,
+    evaluation_message
    FROM ( SELECT
                 CASE
                     WHEN ((ts.state = 4) AND ((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (ts.start)::timestamp with time zone)) / (3600)::numeric) >= (5)::numeric)) THEN 'Job step running over 5 hours'::text
@@ -62,7 +62,7 @@ CREATE VIEW cap.v_task_steps_stale_and_failed AS
                           WHERE ((t.state = 5) AND (t.start >= (CURRENT_TIMESTAMP - '14 days'::interval)))) lookupq
                   WHERE (lookupq.rowrank = 1)) failedjobq ON (((ts.job = failedjobq.job) AND (ts.step = failedjobq.step))))
              LEFT JOIN cap.t_local_processors lp ON ((ts.processor OPERATOR(public.=) lp.processor_name)))) dataq
-  WHERE (dataq.warning_message <> ''::text);
+  WHERE (warning_message <> ''::text);
 
 
 ALTER VIEW cap.v_task_steps_stale_and_failed OWNER TO d3l243;

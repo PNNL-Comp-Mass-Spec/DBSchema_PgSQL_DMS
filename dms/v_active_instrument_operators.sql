@@ -3,9 +3,9 @@
 --
 
 CREATE VIEW public.v_active_instrument_operators AS
- SELECT v_active_instrument_users.username,
-    v_active_instrument_users.name,
-    v_active_instrument_users.username AS payroll_num
+ SELECT username,
+    name,
+    username AS payroll_num
    FROM public.v_active_instrument_users;
 
 

@@ -3,13 +3,13 @@
 --
 
 CREATE VIEW cap.v_myemsl_upload_stats AS
- SELECT (t_myemsl_uploads.entered)::date AS entered,
-    count(t_myemsl_uploads.entry_id) AS bundles,
-    sum((t_myemsl_uploads.file_count_new + t_myemsl_uploads.file_count_updated)) AS files,
-    round(sum(((((t_myemsl_uploads.bytes)::numeric / 1024.0) / 1024.0) / 1024.0)), 5) AS gb
+ SELECT (entered)::date AS entered,
+    count(entry_id) AS bundles,
+    sum((file_count_new + file_count_updated)) AS files,
+    round(sum(((((bytes)::numeric / 1024.0) / 1024.0) / 1024.0)), 5) AS gb
    FROM cap.t_myemsl_uploads
-  WHERE ((t_myemsl_uploads.error_code = 0) AND (COALESCE(t_myemsl_uploads.status_num, 0) > 0))
-  GROUP BY ((t_myemsl_uploads.entered)::date);
+  WHERE ((error_code = 0) AND (COALESCE(status_num, 0) > 0))
+  GROUP BY ((entered)::date);
 
 
 ALTER VIEW cap.v_myemsl_upload_stats OWNER TO d3l243;

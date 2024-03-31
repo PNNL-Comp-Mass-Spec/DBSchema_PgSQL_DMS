@@ -3,12 +3,12 @@
 --
 
 CREATE VIEW public.v_nexus_import_instruments AS
- SELECT vw_instruments.instrument_id,
-    vw_instruments.instrument_name,
-    vw_instruments.eus_display_name,
-    vw_instruments.available_hours,
-    vw_instruments.active_sw,
-    vw_instruments.primary_instrument
+ SELECT instrument_id,
+    instrument_name,
+    eus_display_name,
+    available_hours,
+    active_sw,
+    primary_instrument
    FROM eus.vw_instruments;
 
 

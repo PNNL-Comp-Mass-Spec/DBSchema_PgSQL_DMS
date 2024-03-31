@@ -3,18 +3,18 @@
 --
 
 CREATE VIEW public.v_analysis_job_backlog_crosstab AS
- SELECT pivotq.posting_time,
-    sum(pivotq."MSGFPlus") AS "MSGFPlus",
-    sum(pivotq."MSGFPlus_SplitFASTA") AS "MSGFPlus_SplitFASTA",
-    sum(pivotq."Decon2LS_V2") AS "Decon2LS_V2",
-    sum(pivotq."MASIC_Finnigan") AS "MASIC_Finnigan",
-    sum(pivotq."MaxQuant") AS "MaxQuant",
-    sum(pivotq."MSFragger") AS "MSFragger",
-    sum(pivotq."MSAlign") AS "MSAlign",
-    sum(pivotq."MSPathFinder") AS "MSPathFinder",
-    sum(pivotq."TopPIC") AS "TopPIC",
-    sum(pivotq."MAC_iTRAQ") AS "MAC_iTRAQ",
-    sum(pivotq."MSXML_Gen") AS "MSXML_Gen"
+ SELECT posting_time,
+    sum("MSGFPlus") AS "MSGFPlus",
+    sum("MSGFPlus_SplitFASTA") AS "MSGFPlus_SplitFASTA",
+    sum("Decon2LS_V2") AS "Decon2LS_V2",
+    sum("MASIC_Finnigan") AS "MASIC_Finnigan",
+    sum("MaxQuant") AS "MaxQuant",
+    sum("MSFragger") AS "MSFragger",
+    sum("MSAlign") AS "MSAlign",
+    sum("MSPathFinder") AS "MSPathFinder",
+    sum("TopPIC") AS "TopPIC",
+    sum("MAC_iTRAQ") AS "MAC_iTRAQ",
+    sum("MSXML_Gen") AS "MSXML_Gen"
    FROM ( SELECT date_trunc('minute'::text, v_analysis_job_backlog_history.posting_time) AS posting_time,
                 CASE
                     WHEN ((v_analysis_job_backlog_history.analysis_tool OPERATOR(public.~~) 'MSGFPlus%'::public.citext) AND (NOT (v_analysis_job_backlog_history.analysis_tool OPERATOR(public.~~) '%SplitFasta%'::public.citext))) THEN v_analysis_job_backlog_history.backlog_count
@@ -61,7 +61,7 @@ CREATE VIEW public.v_analysis_job_backlog_crosstab AS
                     ELSE (0)::bigint
                 END AS "MSXML_Gen"
            FROM public.v_analysis_job_backlog_history) pivotq
-  GROUP BY pivotq.posting_time;
+  GROUP BY posting_time;
 
 
 ALTER VIEW public.v_analysis_job_backlog_crosstab OWNER TO d3l243;

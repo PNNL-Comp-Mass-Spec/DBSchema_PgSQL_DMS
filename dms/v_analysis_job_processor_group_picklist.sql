@@ -3,9 +3,9 @@
 --
 
 CREATE VIEW public.v_analysis_job_processor_group_picklist AS
- SELECT t_analysis_job_processor_group.group_id AS id,
-    t_analysis_job_processor_group.group_name,
-    (((((((((t_analysis_job_processor_group.group_name)::text || (' ('::public.citext)::text))::public.citext)::text || ((t_analysis_job_processor_group.group_id)::public.citext)::text))::public.citext)::text || (')'::public.citext)::text))::public.citext AS name_with_id
+ SELECT group_id AS id,
+    group_name,
+    (((((((((group_name)::text || (' ('::public.citext)::text))::public.citext)::text || ((group_id)::public.citext)::text))::public.citext)::text || (')'::public.citext)::text))::public.citext AS name_with_id
    FROM public.t_analysis_job_processor_group;
 
 

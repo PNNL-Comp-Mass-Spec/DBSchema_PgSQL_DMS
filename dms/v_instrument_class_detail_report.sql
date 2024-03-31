@@ -3,11 +3,11 @@
 --
 
 CREATE VIEW public.v_instrument_class_detail_report AS
- SELECT t_instrument_class.instrument_class,
-    t_instrument_class.is_purgeable,
-    t_instrument_class.raw_data_type,
-    t_instrument_class.comment,
-    public.xml_to_html(t_instrument_class.params) AS params
+ SELECT instrument_class,
+    is_purgeable,
+    raw_data_type,
+    comment,
+    public.xml_to_html(params) AS params
    FROM public.t_instrument_class;
 
 

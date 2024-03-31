@@ -3,18 +3,18 @@
 --
 
 CREATE VIEW public.v_material_containers_detail_report AS
- SELECT containerq.container,
-    containerq.type,
-    containerq.location,
-    containerq.items,
-    containerq.comment,
-    containerq.freezer,
-    containerq.campaign,
-    containerq.created,
-    containerq.container_id AS id,
-    containerq.status,
-    containerq.researcher,
-    containerq.files
+ SELECT container,
+    type,
+    location,
+    items,
+    comment,
+    freezer,
+    campaign,
+    created,
+    container_id AS id,
+    status,
+    researcher,
+    files
    FROM ( SELECT mc.container,
             mc.type,
             ml.location,

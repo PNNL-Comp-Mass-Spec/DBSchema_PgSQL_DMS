@@ -3,10 +3,10 @@
 --
 
 CREATE VIEW public.v_prep_instrument_picklist AS
- SELECT t_instrument_name.instrument_id AS id,
-    t_instrument_name.instrument AS name
+ SELECT instrument_id AS id,
+    instrument AS name
    FROM public.t_instrument_name
-  WHERE ((t_instrument_name.instrument_group OPERATOR(public.=) 'PrepHPLC'::public.citext) AND (t_instrument_name.status OPERATOR(public.=) ANY (ARRAY['Active'::public.citext, 'Offline'::public.citext, 'PrepHPLC'::public.citext])));
+  WHERE ((instrument_group OPERATOR(public.=) 'PrepHPLC'::public.citext) AND (status OPERATOR(public.=) ANY (ARRAY['Active'::public.citext, 'Offline'::public.citext, 'PrepHPLC'::public.citext])));
 
 
 ALTER VIEW public.v_prep_instrument_picklist OWNER TO d3l243;

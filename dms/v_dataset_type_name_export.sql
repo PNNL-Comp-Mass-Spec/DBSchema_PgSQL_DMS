@@ -3,10 +3,10 @@
 --
 
 CREATE VIEW public.v_dataset_type_name_export AS
- SELECT t_dataset_type_name.dataset_type_id,
-    t_dataset_type_name.dataset_type,
-    t_dataset_type_name.description,
-    t_dataset_type_name.active
+ SELECT dataset_type_id,
+    dataset_type,
+    description,
+    active
    FROM public.t_dataset_type_name;
 
 

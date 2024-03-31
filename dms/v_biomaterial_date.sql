@@ -3,10 +3,10 @@
 --
 
 CREATE VIEW public.v_biomaterial_date AS
- SELECT t_biomaterial.biomaterial_name,
-    EXTRACT(year FROM t_biomaterial.created) AS year,
-    EXTRACT(month FROM t_biomaterial.created) AS month,
-    EXTRACT(day FROM t_biomaterial.created) AS day
+ SELECT biomaterial_name,
+    EXTRACT(year FROM created) AS year,
+    EXTRACT(month FROM created) AS month,
+    EXTRACT(day FROM created) AS day
    FROM public.t_biomaterial;
 
 

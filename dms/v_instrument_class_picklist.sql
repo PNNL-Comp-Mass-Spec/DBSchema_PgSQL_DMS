@@ -3,8 +3,8 @@
 --
 
 CREATE VIEW public.v_instrument_class_picklist AS
- SELECT t_instrument_class.instrument_class AS name,
-    t_instrument_class.comment AS description
+ SELECT instrument_class AS name,
+    comment AS description
    FROM public.t_instrument_class;
 
 

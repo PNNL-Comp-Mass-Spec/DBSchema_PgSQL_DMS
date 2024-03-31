@@ -3,16 +3,16 @@
 --
 
 CREATE VIEW public.v_statistics_entities_by_year AS
- SELECT pivotdata.year,
-    COALESCE(pivotdata.new_research_campaigns, 0) AS new_research_campaigns,
-    COALESCE(pivotdata.new_organisms, 0) AS new_organisms,
-    COALESCE(pivotdata.prepared_samples, 0) AS prepared_samples,
-    COALESCE(pivotdata.requested_instrument_runs, 0) AS requested_instrument_runs,
-    COALESCE(pivotdata.datasets, 0) AS datasets,
-    COALESCE(pivotdata.analysis_jobs, 0) AS analysis_jobs,
-    COALESCE(pivotdata.data_packages, 0) AS data_packages,
-    COALESCE(pivotdata.analysis_job_step_tool_started, 0) AS analysis_job_step_tool_started,
-    COALESCE(pivotdata.capture_task_step_tool_started, 0) AS capture_task_step_tool_started
+ SELECT year,
+    COALESCE(new_research_campaigns, 0) AS new_research_campaigns,
+    COALESCE(new_organisms, 0) AS new_organisms,
+    COALESCE(prepared_samples, 0) AS prepared_samples,
+    COALESCE(requested_instrument_runs, 0) AS requested_instrument_runs,
+    COALESCE(datasets, 0) AS datasets,
+    COALESCE(analysis_jobs, 0) AS analysis_jobs,
+    COALESCE(data_packages, 0) AS data_packages,
+    COALESCE(analysis_job_step_tool_started, 0) AS analysis_job_step_tool_started,
+    COALESCE(capture_task_step_tool_started, 0) AS capture_task_step_tool_started
    FROM public.crosstab('SELECT extract(year from Start) AS Year,
              ''analysis_jobs'' AS Item,
              COUNT(job) AS Items

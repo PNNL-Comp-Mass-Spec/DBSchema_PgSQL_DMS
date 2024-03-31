@@ -3,11 +3,11 @@
 --
 
 CREATE VIEW public.v_analysis_job_completed_count_by_day AS
- SELECT (j.finish)::date AS date,
-    count(j.job) AS number_of_analysis_jobs_completed
+ SELECT (finish)::date AS date,
+    count(job) AS number_of_analysis_jobs_completed
    FROM public.t_analysis_job j
-  WHERE (j.job_state_id = 4)
-  GROUP BY ((j.finish)::date);
+  WHERE (job_state_id = 4)
+  GROUP BY ((finish)::date);
 
 
 ALTER VIEW public.v_analysis_job_completed_count_by_day OWNER TO d3l243;

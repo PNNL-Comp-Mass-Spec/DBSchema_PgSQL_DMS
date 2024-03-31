@@ -3,11 +3,11 @@
 --
 
 CREATE VIEW public.v_analysis_job_request_rss AS
- SELECT ((('Request '::text || (lookupq.request_id)::text) || ' - '::text) || (lookupq.request_name)::text) AS post_title,
-    lookupq.request_id AS url_title,
-    lookupq.jobs_finished AS post_date,
-    (((((((((((((((((lookupq.request_name)::text || '|'::text) || (lookupq.requester)::text) || '|'::text) || ' ('::text) || 'Total:'::text) || (lookupq.total_jobs)::text) || ', '::text) || 'Complete:'::text) || (lookupq.completed_jobs)::text) || ', '::text) || 'Failed:'::text) || (lookupq.failed_jobs)::text) || ', '::text) || 'Busy:'::text) || (lookupq.busy_jobs)::text) || ')'::text) AS post_body,
-    (((((lookupq.request_id)::text || '-'::text) || (lookupq.total_jobs)::text) || '-'::text) || (lookupq.completed_jobs)::text) AS guid
+ SELECT ((('Request '::text || (request_id)::text) || ' - '::text) || (request_name)::text) AS post_title,
+    request_id AS url_title,
+    jobs_finished AS post_date,
+    (((((((((((((((((request_name)::text || '|'::text) || (requester)::text) || '|'::text) || ' ('::text) || 'Total:'::text) || (total_jobs)::text) || ', '::text) || 'Complete:'::text) || (completed_jobs)::text) || ', '::text) || 'Failed:'::text) || (failed_jobs)::text) || ', '::text) || 'Busy:'::text) || (busy_jobs)::text) || ')'::text) AS post_body,
+    (((((request_id)::text || '-'::text) || (total_jobs)::text) || '-'::text) || (completed_jobs)::text) AS guid
    FROM ( SELECT ajr.request_id,
             ajr.request_name,
             count(j.job) AS total_jobs,
@@ -34,7 +34,7 @@ CREATE VIEW public.v_analysis_job_request_rss AS
              JOIN public.t_users u ON ((ajr.user_id = u.user_id)))
           GROUP BY ajr.request_name, ajr.request_id, u.name, ajr.request_state_id, u.username
          HAVING ((max(j.finish) > (CURRENT_TIMESTAMP - '30 days'::interval)) AND (ajr.request_id > 1))) lookupq
-  WHERE (lookupq.total_jobs = (lookupq.failed_jobs + lookupq.completed_jobs));
+  WHERE (total_jobs = (failed_jobs + completed_jobs));
 
 
 ALTER VIEW public.v_analysis_job_request_rss OWNER TO d3l243;

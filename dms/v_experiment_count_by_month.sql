@@ -3,12 +3,12 @@
 --
 
 CREATE VIEW public.v_experiment_count_by_month AS
- SELECT v_experiment_date.year,
-    v_experiment_date.month,
-    count(v_experiment_date.experiment) AS number_of_experiments_created,
-    (((v_experiment_date.month)::text || '/'::text) || (v_experiment_date.year)::text) AS date
+ SELECT year,
+    month,
+    count(experiment) AS number_of_experiments_created,
+    (((month)::text || '/'::text) || (year)::text) AS date
    FROM public.v_experiment_date
-  GROUP BY v_experiment_date.year, v_experiment_date.month;
+  GROUP BY year, month;
 
 
 ALTER VIEW public.v_experiment_count_by_month OWNER TO d3l243;

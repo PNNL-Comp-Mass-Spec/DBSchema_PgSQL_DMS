@@ -3,26 +3,26 @@
 --
 
 CREATE VIEW public.v_requested_run_queue_times AS
- SELECT dataq.requested_run_id,
-    dataq.requested_run_created,
-    dataq.requested_run_name,
-    dataq.origin,
-    dataq.batch_id,
-    dataq.dataset_id,
-    dataq.dataset_created,
-    dataq.dataset_acqtimestart AS dataset_acq_time_start,
+ SELECT requested_run_id,
+    requested_run_created,
+    requested_run_name,
+    origin,
+    batch_id,
+    dataset_id,
+    dataset_created,
+    dataset_acqtimestart AS dataset_acq_time_start,
         CASE
-            WHEN (dataq.days_from_requested_run_create_to_dataset_acquired IS NULL) THEN
+            WHEN (days_from_requested_run_create_to_dataset_acquired IS NULL) THEN
             CASE
-                WHEN (dataq.state_name OPERATOR(public.=) 'Active'::public.citext) THEN round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (dataq.requested_run_created)::timestamp with time zone)) / (86400)::numeric))
+                WHEN (state_name OPERATOR(public.=) 'Active'::public.citext) THEN round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (requested_run_created)::timestamp with time zone)) / (86400)::numeric))
                 ELSE NULL::numeric
             END
-            WHEN (dataq.days_from_requested_run_create_to_dataset_acquired <= (0)::numeric) THEN
+            WHEN (days_from_requested_run_create_to_dataset_acquired <= (0)::numeric) THEN
             CASE
-                WHEN (dataq.origin OPERATOR(public.=) 'Auto'::public.citext) THEN NULL::numeric
-                ELSE dataq.days_from_requested_run_create_to_dataset_acquired
+                WHEN (origin OPERATOR(public.=) 'Auto'::public.citext) THEN NULL::numeric
+                ELSE days_from_requested_run_create_to_dataset_acquired
             END
-            ELSE dataq.days_from_requested_run_create_to_dataset_acquired
+            ELSE days_from_requested_run_create_to_dataset_acquired
         END AS days_in_queue
    FROM ( SELECT rr.request_id AS requested_run_id,
             rr.created AS requested_run_created,

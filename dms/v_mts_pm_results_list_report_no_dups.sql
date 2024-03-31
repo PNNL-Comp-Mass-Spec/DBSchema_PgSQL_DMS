@@ -3,33 +3,33 @@
 --
 
 CREATE VIEW public.v_mts_pm_results_list_report_no_dups AS
- SELECT filterq.dataset,
-    filterq.job,
-    filterq.tool_name,
-    filterq.task_start,
-    filterq.results_url,
-    filterq.task_id,
-    filterq.task_state_id,
-    filterq.task_finish,
-    filterq.task_server,
-    filterq.task_database,
-    filterq.tool_version,
-    filterq.output_folder_path,
-    filterq.mts_job_id,
-    filterq.instrument,
-    filterq.amts_1pct_fdr,
-    filterq.amts_5pct_fdr,
-    filterq.amts_10pct_fdr,
-    filterq.amts_25pct_fdr,
-    filterq.amts_50pct_fdr,
-    filterq.ppm_shift,
-    filterq.qid,
-    filterq.md_id,
-    filterq.param_file,
-    filterq.settings_file,
-    filterq.ini_file_name,
-    filterq.comparison_mass_tag_count,
-    filterq.md_state
+ SELECT dataset,
+    job,
+    tool_name,
+    task_start,
+    results_url,
+    task_id,
+    task_state_id,
+    task_finish,
+    task_server,
+    task_database,
+    tool_version,
+    output_folder_path,
+    mts_job_id,
+    instrument,
+    amts_1pct_fdr,
+    amts_5pct_fdr,
+    amts_10pct_fdr,
+    amts_25pct_fdr,
+    amts_50pct_fdr,
+    ppm_shift,
+    qid,
+    md_id,
+    param_file,
+    settings_file,
+    ini_file_name,
+    comparison_mass_tag_count,
+    md_state
    FROM ( SELECT ds.dataset,
             aj.job,
             pm.tool_name,
@@ -62,7 +62,7 @@ CREATE VIEW public.v_mts_pm_results_list_report_no_dups AS
              JOIN public.t_analysis_job aj ON ((ds.dataset_id = aj.dataset_id)))
              JOIN public.t_instrument_name inst ON ((ds.instrument_id = inst.instrument_id)))
              JOIN public.t_mts_peak_matching_tasks_cached pm ON ((aj.job = pm.dms_job)))) filterq
-  WHERE (filterq.finishrank = 1);
+  WHERE (finishrank = 1);
 
 
 ALTER VIEW public.v_mts_pm_results_list_report_no_dups OWNER TO d3l243;

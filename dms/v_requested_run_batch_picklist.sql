@@ -3,9 +3,9 @@
 --
 
 CREATE VIEW public.v_requested_run_batch_picklist AS
- SELECT t_requested_run_batches.batch_id AS id,
-    t_requested_run_batches.batch,
-    (((((((t_requested_run_batches.batch_id)::public.citext)::text || (': '::public.citext)::text))::public.citext)::text || (t_requested_run_batches.batch)::text))::public.citext AS id_with_batch
+ SELECT batch_id AS id,
+    batch,
+    (((((((batch_id)::public.citext)::text || (': '::public.citext)::text))::public.citext)::text || (batch)::text))::public.citext AS id_with_batch
    FROM public.t_requested_run_batches;
 
 

@@ -3,11 +3,11 @@
 --
 
 CREATE VIEW cap.v_capture_script_list_report AS
- SELECT t_scripts.script,
-    t_scripts.description,
-    t_scripts.enabled,
-    t_scripts.results_tag,
-    t_scripts.script_id AS id
+ SELECT script,
+    description,
+    enabled,
+    results_tag,
+    script_id AS id
    FROM cap.t_scripts;
 
 

@@ -3,10 +3,10 @@
 --
 
 CREATE VIEW public.v_lc_cart_picklist AS
- SELECT t_lc_cart.cart_id AS id,
-    t_lc_cart.cart_name AS name
+ SELECT cart_id AS id,
+    cart_name AS name
    FROM public.t_lc_cart
-  WHERE (t_lc_cart.cart_state_id = 2);
+  WHERE (cart_state_id = 2);
 
 
 ALTER VIEW public.v_lc_cart_picklist OWNER TO d3l243;

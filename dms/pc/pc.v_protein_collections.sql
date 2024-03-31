@@ -3,16 +3,16 @@
 --
 
 CREATE VIEW pc.v_protein_collections AS
- SELECT t_protein_collections.protein_collection_id,
-    (format('%s (%s Entries)'::text, t_protein_collections.collection_name, t_protein_collections.num_proteins))::public.citext AS display,
-    t_protein_collections.collection_name,
-    t_protein_collections.primary_annotation_type_id,
-    t_protein_collections.description,
-    t_protein_collections.contents_encrypted,
-    t_protein_collections.collection_type_id,
-    t_protein_collections.collection_state_id,
-    t_protein_collections.num_proteins,
-    t_protein_collections.num_residues
+ SELECT protein_collection_id,
+    (format('%s (%s Entries)'::text, collection_name, num_proteins))::public.citext AS display,
+    collection_name,
+    primary_annotation_type_id,
+    description,
+    contents_encrypted,
+    collection_type_id,
+    collection_state_id,
+    num_proteins,
+    num_residues
    FROM pc.t_protein_collections;
 
 

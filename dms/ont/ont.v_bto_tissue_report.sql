@@ -3,18 +3,18 @@
 --
 
 CREATE VIEW ont.v_bto_tissue_report AS
- SELECT bto.term_name AS tissue,
-    bto.identifier,
-    bto.is_leaf,
-    bto.parent_term_name AS parent_tissue,
-    bto.parent_term_id AS parent_id,
-    bto.grandparent_term_name AS grandparent_tissue,
-    bto.grandparent_term_id AS grandparent_id,
-    bto.synonyms,
-    bto.children,
-    bto.usage_last_12_months AS usage,
-    bto.usage_all_time,
-    bto.entry_id
+ SELECT term_name AS tissue,
+    identifier,
+    is_leaf,
+    parent_term_name AS parent_tissue,
+    parent_term_id AS parent_id,
+    grandparent_term_name AS grandparent_tissue,
+    grandparent_term_id AS grandparent_id,
+    synonyms,
+    children,
+    usage_last_12_months AS usage,
+    usage_all_time,
+    entry_id
    FROM ont.t_cv_bto bto;
 
 

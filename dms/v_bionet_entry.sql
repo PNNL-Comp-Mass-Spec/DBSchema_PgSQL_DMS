@@ -3,15 +3,15 @@
 --
 
 CREATE VIEW public.v_bionet_entry AS
- SELECT go.host,
-    go.ip,
-    go.alias,
-    go.entered,
-    go.last_online,
-    go.instruments,
-    go.active,
-    go.tag,
-    go.comment
+ SELECT host,
+    ip,
+    alias,
+    entered,
+    last_online,
+    instruments,
+    active,
+    tag,
+    comment
    FROM public.t_bionet_hosts go;
 
 

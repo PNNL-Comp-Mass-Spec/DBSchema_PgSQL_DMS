@@ -3,10 +3,10 @@
 --
 
 CREATE VIEW public.v_analysis_tool_picklist AS
- SELECT t_analysis_tool.analysis_tool_id AS id,
-    t_analysis_tool.analysis_tool AS name
+ SELECT analysis_tool_id AS id,
+    analysis_tool AS name
    FROM public.t_analysis_tool
-  WHERE (t_analysis_tool.active > 0);
+  WHERE (active > 0);
 
 
 ALTER VIEW public.v_analysis_tool_picklist OWNER TO d3l243;

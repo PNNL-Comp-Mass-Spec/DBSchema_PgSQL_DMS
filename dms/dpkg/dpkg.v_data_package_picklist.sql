@@ -3,8 +3,8 @@
 --
 
 CREATE VIEW dpkg.v_data_package_picklist AS
- SELECT (((((((t_data_package.data_pkg_id)::public.citext)::text || chr(32)))::public.citext)::text || (t_data_package.package_name)::text))::public.citext AS label,
-    t_data_package.data_pkg_id AS value
+ SELECT (((((((data_pkg_id)::public.citext)::text || chr(32)))::public.citext)::text || (package_name)::text))::public.citext AS label,
+    data_pkg_id AS value
    FROM dpkg.t_data_package;
 
 

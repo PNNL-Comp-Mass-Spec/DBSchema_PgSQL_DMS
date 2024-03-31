@@ -3,14 +3,14 @@
 --
 
 CREATE VIEW public.v_system_expensive_queries AS
- SELECT round(((((100)::double precision * ss.total_exec_time) / sum(ss.total_exec_time) OVER ()))::numeric, 2) AS percent,
-    round((ss.total_exec_time)::numeric, 2) AS total_exec_time,
-    ss.calls,
-    round((ss.mean_exec_time)::numeric, 2) AS mean_exec_time,
-    "substring"(ss.query, 1, 200) AS query_excerpt,
-    ss.queryid
+ SELECT round(((((100)::double precision * total_exec_time) / sum(total_exec_time) OVER ()))::numeric, 2) AS percent,
+    round((total_exec_time)::numeric, 2) AS total_exec_time,
+    calls,
+    round((mean_exec_time)::numeric, 2) AS mean_exec_time,
+    "substring"(query, 1, 200) AS query_excerpt,
+    queryid
    FROM public.pg_stat_statements ss
-  ORDER BY ss.total_exec_time DESC
+  ORDER BY total_exec_time DESC
  LIMIT 500;
 
 

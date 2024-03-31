@@ -3,8 +3,8 @@
 --
 
 CREATE VIEW sw.v_dms_pipeline_existing_jobs AS
- SELECT t_analysis_job.job,
-    t_analysis_job.job_state_id AS state
+ SELECT job,
+    job_state_id AS state
    FROM public.t_analysis_job;
 
 

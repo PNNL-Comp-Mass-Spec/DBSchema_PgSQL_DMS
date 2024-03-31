@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW mc.v_manager_type_detail AS
- SELECT t_mgr_types.mgr_type_id AS id,
+ SELECT mgr_type_id AS id,
     ''::text AS manager_list
    FROM mc.t_mgr_types;
 

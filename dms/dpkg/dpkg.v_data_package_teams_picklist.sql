@@ -3,8 +3,8 @@
 --
 
 CREATE VIEW dpkg.v_data_package_teams_picklist AS
- SELECT t_data_package_teams.team_name,
-    t_data_package_teams.description
+ SELECT team_name,
+    description
    FROM dpkg.t_data_package_teams;
 
 

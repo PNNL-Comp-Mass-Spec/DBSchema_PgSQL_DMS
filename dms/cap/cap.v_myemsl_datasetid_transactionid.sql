@@ -3,13 +3,13 @@
 --
 
 CREATE VIEW cap.v_myemsl_datasetid_transactionid AS
- SELECT t_myemsl_uploads.dataset_id,
-    COALESCE(t_myemsl_uploads.transaction_id, t_myemsl_uploads.status_num) AS transaction_id,
-    t_myemsl_uploads.verified,
-    t_myemsl_uploads.file_count_new,
-    t_myemsl_uploads.file_count_updated
+ SELECT dataset_id,
+    COALESCE(transaction_id, status_num) AS transaction_id,
+    verified,
+    file_count_new,
+    file_count_updated
    FROM cap.t_myemsl_uploads
-  WHERE ((NOT (t_myemsl_uploads.status_num IS NULL)) OR (NOT (t_myemsl_uploads.transaction_id IS NULL)));
+  WHERE ((NOT (status_num IS NULL)) OR (NOT (transaction_id IS NULL)));
 
 
 ALTER VIEW cap.v_myemsl_datasetid_transactionid OWNER TO d3l243;

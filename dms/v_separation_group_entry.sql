@@ -3,11 +3,11 @@
 --
 
 CREATE VIEW public.v_separation_group_entry AS
- SELECT sg.separation_group,
-    sg.comment,
-    sg.active,
-    sg.sample_prep_visible,
-    sg.fraction_count
+ SELECT separation_group,
+    comment,
+    active,
+    sample_prep_visible,
+    fraction_count
    FROM public.t_separation_group sg;
 
 

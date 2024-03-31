@@ -3,8 +3,8 @@
 --
 
 CREATE VIEW public.v_sample_labelling_picklist AS
- SELECT t_sample_labelling.label_id AS id,
-    t_sample_labelling.label
+ SELECT label_id AS id,
+    label
    FROM public.t_sample_labelling;
 
 

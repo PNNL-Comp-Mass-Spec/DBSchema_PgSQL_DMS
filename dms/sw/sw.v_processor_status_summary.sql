@@ -3,19 +3,19 @@
 --
 
 CREATE VIEW sw.v_processor_status_summary AS
- SELECT machineq.machine,
+ SELECT machine,
     (
         CASE
-            WHEN ((machineq.running = 0) AND (machineq.idle = 0) AND (machineq.errored = 0)) THEN 'Disabled'::text
-            WHEN ((machineq.running = 0) AND (machineq.errored > 0)) THEN 'Idle, Errored'::text
-            WHEN ((machineq.running > 0) AND (machineq.errored > 0)) THEN 'Running, Errored'::text
-            WHEN (machineq.running = 0) THEN 'Idle'::text
+            WHEN ((running = 0) AND (idle = 0) AND (errored = 0)) THEN 'Disabled'::text
+            WHEN ((running = 0) AND (errored > 0)) THEN 'Idle, Errored'::text
+            WHEN ((running > 0) AND (errored > 0)) THEN 'Running, Errored'::text
+            WHEN (running = 0) THEN 'Idle'::text
             ELSE 'Running'::text
         END)::public.citext AS status,
-    machineq.running,
-    machineq.idle,
-    machineq.errored,
-    machineq.disabled
+    running,
+    idle,
+    errored,
+    disabled
    FROM ( SELECT lp.machine,
             sum(
                 CASE

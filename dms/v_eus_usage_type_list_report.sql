@@ -3,12 +3,12 @@
 --
 
 CREATE VIEW public.v_eus_usage_type_list_report AS
- SELECT t_eus_usage_type.eus_usage_type_id AS id,
-    t_eus_usage_type.eus_usage_type,
-    t_eus_usage_type.description,
-    t_eus_usage_type.enabled,
-    t_eus_usage_type.enabled_campaign,
-    t_eus_usage_type.enabled_prep_request
+ SELECT eus_usage_type_id AS id,
+    eus_usage_type,
+    description,
+    enabled,
+    enabled_campaign,
+    enabled_prep_request
    FROM public.t_eus_usage_type;
 
 

@@ -3,11 +3,11 @@
 --
 
 CREATE VIEW public.v_instrument_operation_history_entry AS
- SELECT t_instrument_operation_history.entry_id AS id,
-    t_instrument_operation_history.instrument,
-    t_instrument_operation_history.entered,
-    t_instrument_operation_history.entered_by AS posted_by,
-    t_instrument_operation_history.note
+ SELECT entry_id AS id,
+    instrument,
+    entered,
+    entered_by AS posted_by,
+    note
    FROM public.t_instrument_operation_history;
 
 

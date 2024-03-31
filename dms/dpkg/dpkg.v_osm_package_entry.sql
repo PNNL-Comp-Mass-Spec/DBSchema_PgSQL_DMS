@@ -3,16 +3,16 @@
 --
 
 CREATE VIEW dpkg.v_osm_package_entry AS
- SELECT t_osm_package.osm_pkg_id AS id,
-    t_osm_package.osm_package_name AS name,
-    t_osm_package.package_type,
-    t_osm_package.description,
-    t_osm_package.keywords,
-    t_osm_package.comment,
-    t_osm_package.owner_username AS owner,
-    t_osm_package.state,
-    t_osm_package.sample_prep_requests AS sample_prep_request_list,
-    t_osm_package.user_folder_path
+ SELECT osm_pkg_id AS id,
+    osm_package_name AS name,
+    package_type,
+    description,
+    keywords,
+    comment,
+    owner_username AS owner,
+    state,
+    sample_prep_requests AS sample_prep_request_list,
+    user_folder_path
    FROM dpkg.t_osm_package;
 
 

@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_archive_path_function_picklist AS
- SELECT t_archive_path_function.apf_function AS name
+ SELECT apf_function AS name
    FROM public.t_archive_path_function;
 
 

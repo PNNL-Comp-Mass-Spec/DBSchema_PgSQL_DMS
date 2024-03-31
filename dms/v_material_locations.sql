@@ -3,17 +3,17 @@
 --
 
 CREATE VIEW public.v_material_locations AS
- SELECT t_material_locations.location_id,
-    t_material_locations.freezer_tag,
-    t_material_locations.shelf,
-    t_material_locations.rack,
-    t_material_locations."row",
-    t_material_locations.col,
-    t_material_locations.status,
-    t_material_locations.barcode,
-    t_material_locations.comment,
-    t_material_locations.container_limit,
-    t_material_locations.location
+ SELECT location_id,
+    freezer_tag,
+    shelf,
+    rack,
+    "row",
+    col,
+    status,
+    barcode,
+    comment,
+    container_limit,
+    location
    FROM public.t_material_locations;
 
 

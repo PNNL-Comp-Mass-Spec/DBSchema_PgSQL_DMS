@@ -3,10 +3,10 @@
 --
 
 CREATE VIEW public.v_instrument_class_list_report AS
- SELECT t_instrument_class.instrument_class,
-    t_instrument_class.is_purgeable,
-    t_instrument_class.raw_data_type,
-    t_instrument_class.comment
+ SELECT instrument_class,
+    is_purgeable,
+    raw_data_type,
+    comment
    FROM public.t_instrument_class;
 
 

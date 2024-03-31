@@ -32,16 +32,16 @@ CREATE VIEW ont.v_term_hierarchy_psi_mi AS
              JOIN termhierarchy termhierarchy_1 ON ((t_term_relationship.object_term_pk OPERATOR(public.=) termhierarchy_1.term_pk)))
           WHERE (child.namespace OPERATOR(public.=) 'PSI-MI'::public.citext)
         )
- SELECT termhierarchy.namespace,
-    termhierarchy.term_name,
-    termhierarchy.identifier,
-    termhierarchy.term_pk,
-    termhierarchy.is_obsolete,
-    termhierarchy.is_leaf,
-    termhierarchy.parent_name,
-    termhierarchy.parent_identifier,
-    termhierarchy.parent_pk,
-    termhierarchy.level
+ SELECT namespace,
+    term_name,
+    identifier,
+    term_pk,
+    is_obsolete,
+    is_leaf,
+    parent_name,
+    parent_identifier,
+    parent_pk,
+    level
    FROM termhierarchy;
 
 

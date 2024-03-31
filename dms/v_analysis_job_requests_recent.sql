@@ -3,24 +3,24 @@
 --
 
 CREATE VIEW public.v_analysis_job_requests_recent AS
- SELECT v_analysis_job_request_list_report.request,
-    v_analysis_job_request_list_report.name,
-    v_analysis_job_request_list_report.state,
-    v_analysis_job_request_list_report.requester,
-    v_analysis_job_request_list_report.created,
-    v_analysis_job_request_list_report.tool,
-    v_analysis_job_request_list_report.jobs,
-    v_analysis_job_request_list_report.param_file,
-    v_analysis_job_request_list_report.settings_file,
-    v_analysis_job_request_list_report.organism,
-    v_analysis_job_request_list_report.organism_db_file,
-    v_analysis_job_request_list_report.protein_collection_list,
-    v_analysis_job_request_list_report.protein_options,
-    v_analysis_job_request_list_report.datasets,
-    v_analysis_job_request_list_report.data_package,
-    v_analysis_job_request_list_report.comment
+ SELECT request,
+    name,
+    state,
+    requester,
+    created,
+    tool,
+    jobs,
+    param_file,
+    settings_file,
+    organism,
+    organism_db_file,
+    protein_collection_list,
+    protein_options,
+    datasets,
+    data_package,
+    comment
    FROM public.v_analysis_job_request_list_report
-  WHERE ((v_analysis_job_request_list_report.state OPERATOR(public.=) 'new'::public.citext) OR (v_analysis_job_request_list_report.created >= (CURRENT_TIMESTAMP - '5 days'::interval)));
+  WHERE ((state OPERATOR(public.=) 'new'::public.citext) OR (created >= (CURRENT_TIMESTAMP - '5 days'::interval)));
 
 
 ALTER VIEW public.v_analysis_job_requests_recent OWNER TO d3l243;

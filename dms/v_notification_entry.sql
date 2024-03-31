@@ -3,26 +3,26 @@
 --
 
 CREATE VIEW public.v_notification_entry AS
- SELECT t.username,
-    t.name,
+ SELECT username,
+    name,
         CASE
-            WHEN (t.r1 > 0) THEN 'Yes'::text
+            WHEN (r1 > 0) THEN 'Yes'::text
             ELSE 'No'::text
         END AS requested_run_batch,
         CASE
-            WHEN (t.r2 > 0) THEN 'Yes'::text
+            WHEN (r2 > 0) THEN 'Yes'::text
             ELSE 'No'::text
         END AS analysis_job_request,
         CASE
-            WHEN (t.r3 > 0) THEN 'Yes'::text
+            WHEN (r3 > 0) THEN 'Yes'::text
             ELSE 'No'::text
         END AS sample_prep_request,
         CASE
-            WHEN (t.r4 > 0) THEN 'Yes'::text
+            WHEN (r4 > 0) THEN 'Yes'::text
             ELSE 'No'::text
         END AS dataset_not_released,
         CASE
-            WHEN (t.r5 > 0) THEN 'Yes'::text
+            WHEN (r5 > 0) THEN 'Yes'::text
             ELSE 'No'::text
         END AS dataset_released
    FROM ( SELECT u.username,

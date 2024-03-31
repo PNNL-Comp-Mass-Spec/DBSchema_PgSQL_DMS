@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_lc_column_state_picklist AS
- SELECT t_lc_column_state_name.column_state AS val,
+ SELECT column_state AS val,
     ''::text AS ex
    FROM public.t_lc_column_state_name;
 

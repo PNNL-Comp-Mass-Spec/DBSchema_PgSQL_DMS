@@ -3,11 +3,11 @@
 --
 
 CREATE VIEW public.v_instrument_config_list_report AS
- SELECT t_instrument_name.instrument,
-    t_instrument_name.status,
-    t_instrument_name.description,
-    t_instrument_name.usage,
-    t_instrument_name.operations_role AS operations
+ SELECT instrument,
+    status,
+    description,
+    usage,
+    operations_role AS operations
    FROM public.t_instrument_name;
 
 

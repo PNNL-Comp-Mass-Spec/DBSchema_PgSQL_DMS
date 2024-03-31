@@ -3,9 +3,9 @@
 --
 
 CREATE VIEW mc.v_manager_entry AS
- SELECT t_mgrs.mgr_id AS manager_id,
-    t_mgrs.mgr_name AS manager_name,
-    t_mgrs.control_from_website
+ SELECT mgr_id AS manager_id,
+    mgr_name AS manager_name,
+    control_from_website
    FROM mc.t_mgrs;
 
 

@@ -3,9 +3,9 @@
 --
 
 CREATE VIEW sw.v_peptide_atlas_job_parameters AS
- SELECT selectionq.job,
-    selectionq.parameters,
-    selectionq.output_folder_name
+ SELECT job,
+    parameters,
+    output_folder_name
    FROM ( SELECT lookupq.job,
             lookupq.parameters,
             lookupq.output_folder_name,
@@ -27,7 +27,7 @@ CREATE VIEW sw.v_peptide_atlas_job_parameters AS
                      JOIN sw.t_job_parameters_history p ON (((j.job = p.job) AND (j.saved = p.saved))))
                      JOIN sw.t_job_steps_history js ON (((j.job = js.job) AND (j.saved = js.saved))))
                   WHERE ((j.script OPERATOR(public.=) 'PeptideAtlas'::public.citext) AND (js.step = 1) AND (j.most_recent_entry = 1))) lookupq) selectionq
-  WHERE (selectionq.rowrank = 1);
+  WHERE (rowrank = 1);
 
 
 ALTER VIEW sw.v_peptide_atlas_job_parameters OWNER TO d3l243;

@@ -3,14 +3,14 @@
 --
 
 CREATE VIEW public.v_bionet_hosts_export AS
- SELECT t_bionet_hosts.host,
-    t_bionet_hosts.ip,
-    t_bionet_hosts.alias,
-    t_bionet_hosts.entered,
-    t_bionet_hosts.last_online,
-    t_bionet_hosts.comment AS instruments,
-    t_bionet_hosts.tag,
-    t_bionet_hosts.active
+ SELECT host,
+    ip,
+    alias,
+    entered,
+    last_online,
+    comment AS instruments,
+    tag,
+    active
    FROM public.t_bionet_hosts;
 
 

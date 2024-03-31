@@ -3,13 +3,13 @@
 --
 
 CREATE VIEW public.v_mac_data_package_experiments AS
- SELECT dpe.data_pkg_id,
-    dpe.experiment_id,
-    dpe.experiment,
-    dpe.created,
-    dpe.item_added,
-    dpe.package_comment,
-    dpe.data_pkg_id AS data_package_id
+ SELECT data_pkg_id,
+    experiment_id,
+    experiment,
+    created,
+    item_added,
+    package_comment,
+    data_pkg_id AS data_package_id
    FROM dpkg.v_data_package_experiments_export dpe;
 
 

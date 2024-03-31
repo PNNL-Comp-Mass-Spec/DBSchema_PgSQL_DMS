@@ -3,8 +3,8 @@
 --
 
 CREATE VIEW ont.v_bto_id_to_name AS
- SELECT t_cv_bto_cached_names.identifier,
-    t_cv_bto_cached_names.term_name AS tissue
+ SELECT identifier,
+    term_name AS tissue
    FROM ont.t_cv_bto_cached_names;
 
 

@@ -3,14 +3,14 @@
 --
 
 CREATE VIEW public.v_helper_prep_lc_run_list_report AS
- SELECT t_prep_lc_run.prep_run_id AS id,
-    t_prep_lc_run.prep_run_name,
-    t_prep_lc_run.instrument,
-    t_prep_lc_run.type,
-    t_prep_lc_run.lc_column,
-    t_prep_lc_run.comment,
-    t_prep_lc_run.created,
-    t_prep_lc_run.number_of_runs
+ SELECT prep_run_id AS id,
+    prep_run_name,
+    instrument,
+    type,
+    lc_column,
+    comment,
+    created,
+    number_of_runs
    FROM public.t_prep_lc_run;
 
 

@@ -3,12 +3,12 @@
 --
 
 CREATE VIEW public.v_run_interval_entry AS
- SELECT t_run_interval.dataset_id AS id,
-    t_run_interval.instrument,
-    t_run_interval.entered,
-    t_run_interval.start,
-    t_run_interval."interval",
-    t_run_interval.comment
+ SELECT dataset_id AS id,
+    instrument,
+    entered,
+    start,
+    "interval",
+    comment
    FROM public.t_run_interval;
 
 

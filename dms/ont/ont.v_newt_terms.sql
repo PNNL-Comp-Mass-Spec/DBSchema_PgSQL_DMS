@@ -3,16 +3,16 @@
 --
 
 CREATE VIEW ont.v_newt_terms AS
- SELECT v_term_lineage.term_name,
-    v_term_lineage.identifier,
-    v_term_lineage.term_pk,
-    v_term_lineage.is_leaf,
-    v_term_lineage.parent_term_name,
-    v_term_lineage.parent_term_identifier,
-    v_term_lineage.grandparent_term_name,
-    v_term_lineage.grandparent_term_identifier
+ SELECT term_name,
+    identifier,
+    term_pk,
+    is_leaf,
+    parent_term_name,
+    parent_term_identifier,
+    grandparent_term_name,
+    grandparent_term_identifier
    FROM ont.v_term_lineage
-  WHERE ((v_term_lineage.ontology OPERATOR(public.=) 'NEWT'::public.citext) AND (v_term_lineage.is_obsolete = 0) AND (v_term_lineage.identifier OPERATOR(public.~) similar_to_escape(('[0-9]%'::public.citext)::text)));
+  WHERE ((ontology OPERATOR(public.=) 'NEWT'::public.citext) AND (is_obsolete = 0) AND (identifier OPERATOR(public.~) similar_to_escape(('[0-9]%'::public.citext)::text)));
 
 
 ALTER VIEW ont.v_newt_terms OWNER TO d3l243;

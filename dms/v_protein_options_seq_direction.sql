@@ -3,10 +3,10 @@
 --
 
 CREATE VIEW public.v_protein_options_seq_direction AS
- SELECT v_creation_string_lookup.string_element AS ex,
-    v_creation_string_lookup.display_value AS val
+ SELECT string_element AS ex,
+    display_value AS val
    FROM pc.v_creation_string_lookup
-  WHERE (v_creation_string_lookup.keyword OPERATOR(public.=) 'seq_direction'::public.citext);
+  WHERE (keyword OPERATOR(public.=) 'seq_direction'::public.citext);
 
 
 ALTER VIEW public.v_protein_options_seq_direction OWNER TO d3l243;

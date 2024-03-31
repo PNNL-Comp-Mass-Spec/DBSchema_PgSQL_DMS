@@ -3,15 +3,15 @@
 --
 
 CREATE VIEW ont.v_cv_bto AS
- SELECT t_cv_bto.entry_id,
-    t_cv_bto.term_name,
-    t_cv_bto.identifier,
-    t_cv_bto.is_leaf,
-    t_cv_bto.parent_term_name,
-    t_cv_bto.parent_term_id,
-    t_cv_bto.grandparent_term_name,
-    t_cv_bto.grandparent_term_id,
-    t_cv_bto.synonyms
+ SELECT entry_id,
+    term_name,
+    identifier,
+    is_leaf,
+    parent_term_name,
+    parent_term_id,
+    grandparent_term_name,
+    grandparent_term_id,
+    synonyms
    FROM ont.t_cv_bto;
 
 

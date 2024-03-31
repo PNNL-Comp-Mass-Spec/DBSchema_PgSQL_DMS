@@ -3,18 +3,18 @@
 --
 
 CREATE VIEW public.v_residues AS
- SELECT t_residues.residue_id,
-    t_residues.residue_symbol,
-    t_residues.description,
-    t_residues.average_mass,
-    t_residues.monoisotopic_mass,
-    t_residues.empirical_formula,
-    t_residues.num_c,
-    t_residues.num_h,
-    t_residues.num_n,
-    t_residues.num_o,
-    t_residues.num_s,
-    t_residues.amino_acid_name
+ SELECT residue_id,
+    residue_symbol,
+    description,
+    average_mass,
+    monoisotopic_mass,
+    empirical_formula,
+    num_c,
+    num_h,
+    num_n,
+    num_o,
+    num_s,
+    amino_acid_name
    FROM public.t_residues;
 
 

@@ -3,9 +3,9 @@
 --
 
 CREATE VIEW public.v_capture_method_picklist AS
- SELECT DISTINCT t_instrument_name.capture_method AS val
+ SELECT DISTINCT capture_method AS val
    FROM public.t_instrument_name
-  WHERE (t_instrument_name.status OPERATOR(public.=) 'active'::public.citext);
+  WHERE (status OPERATOR(public.=) 'active'::public.citext);
 
 
 ALTER VIEW public.v_capture_method_picklist OWNER TO d3l243;

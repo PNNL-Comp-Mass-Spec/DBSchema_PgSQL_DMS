@@ -3,9 +3,9 @@
 --
 
 CREATE VIEW public.v_table_row_counts AS
- SELECT (t.schema_name)::public.citext AS schema_name,
-    (t.relname)::public.citext AS object_name,
-        CASE t.relkind
+ SELECT (schema_name)::public.citext AS schema_name,
+    (relname)::public.citext AS object_name,
+        CASE relkind
             WHEN 'r'::public.citext THEN 'Table'::public.citext
             WHEN 'i'::public.citext THEN 'Index'::public.citext
             WHEN 'S'::public.citext THEN 'Sequence'::public.citext
@@ -16,17 +16,17 @@ CREATE VIEW public.v_table_row_counts AS
             WHEN 'f'::public.citext THEN 'Foreign Table'::public.citext
             WHEN 'p'::public.citext THEN 'Partitioned Table'::public.citext
             WHEN 'I'::public.citext THEN 'Partitioned Index'::public.citext
-            ELSE t.relkind
+            ELSE relkind
         END AS object_type,
-    t.table_row_count,
-    pg_size_pretty(t.size_bytes) AS size,
-    t.size_bytes,
+    table_row_count,
+    pg_size_pretty(size_bytes) AS size,
+    size_bytes,
         CASE
-            WHEN (t.relkind OPERATOR(public.=) ANY (ARRAY['r'::public.citext, 't'::public.citext, 'f'::public.citext, 'p'::public.citext])) THEN (t.relname)::public.citext
+            WHEN (relkind OPERATOR(public.=) ANY (ARRAY['r'::public.citext, 't'::public.citext, 'f'::public.citext, 'p'::public.citext])) THEN (relname)::public.citext
             ELSE NULL::public.citext
         END AS table_name,
         CASE
-            WHEN (t.relkind OPERATOR(public.=) ANY (ARRAY['v'::public.citext, 'm'::public.citext])) THEN (t.relname)::public.citext
+            WHEN (relkind OPERATOR(public.=) ANY (ARRAY['v'::public.citext, 'm'::public.citext])) THEN (relname)::public.citext
             ELSE NULL::public.citext
         END AS view_name
    FROM ( SELECT pg_namespace.nspname AS schema_name,
@@ -36,8 +36,8 @@ CREATE VIEW public.v_table_row_counts AS
             pg_relation_size((pg_class.oid)::regclass) AS size_bytes
            FROM (pg_class
              JOIN pg_namespace ON ((pg_class.relnamespace = pg_namespace.oid)))) t
-  WHERE (t.schema_name !~~ 'pg_%'::text)
-  ORDER BY t.size_bytes DESC;
+  WHERE (schema_name !~~ 'pg_%'::text)
+  ORDER BY size_bytes DESC;
 
 
 ALTER VIEW public.v_table_row_counts OWNER TO d3l243;

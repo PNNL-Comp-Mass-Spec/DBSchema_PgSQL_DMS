@@ -3,12 +3,12 @@
 --
 
 CREATE VIEW public.v_file_attachment_stats_by_id AS
- SELECT t_file_attachment.entity_type,
-    t_file_attachment.entity_id AS id,
-    count(t_file_attachment.attachment_id) AS attachments
+ SELECT entity_type,
+    entity_id AS id,
+    count(attachment_id) AS attachments
    FROM public.t_file_attachment
-  WHERE (t_file_attachment.active > 0)
-  GROUP BY t_file_attachment.entity_type, t_file_attachment.entity_id;
+  WHERE (active > 0)
+  GROUP BY entity_type, entity_id;
 
 
 ALTER VIEW public.v_file_attachment_stats_by_id OWNER TO d3l243;

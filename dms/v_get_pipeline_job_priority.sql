@@ -3,10 +3,10 @@
 --
 
 CREATE VIEW public.v_get_pipeline_job_priority AS
- SELECT j.job,
-    j.priority
+ SELECT job,
+    priority
    FROM public.t_analysis_job j
-  WHERE (j.job_state_id = ANY (ARRAY[1, 2, 8]));
+  WHERE (job_state_id = ANY (ARRAY[1, 2, 8]));
 
 
 ALTER VIEW public.v_get_pipeline_job_priority OWNER TO d3l243;

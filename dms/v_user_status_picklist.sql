@@ -3,8 +3,8 @@
 --
 
 CREATE VIEW public.v_user_status_picklist AS
- SELECT t_user_status.status,
-    t_user_status.status_description AS description
+ SELECT status,
+    status_description AS description
    FROM public.t_user_status;
 
 

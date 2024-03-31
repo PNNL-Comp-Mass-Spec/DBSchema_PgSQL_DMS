@@ -3,14 +3,14 @@
 --
 
 CREATE VIEW ont.v_cv_newt AS
- SELECT t_cv_newt.entry_id,
-    t_cv_newt.term_name,
-    t_cv_newt.identifier,
-    t_cv_newt.is_leaf,
-    t_cv_newt.parent_term_name,
-    t_cv_newt.parent_term_id,
-    t_cv_newt.grandparent_term_name,
-    t_cv_newt.grandparent_term_id
+ SELECT entry_id,
+    term_name,
+    identifier,
+    is_leaf,
+    parent_term_name,
+    parent_term_id,
+    grandparent_term_name,
+    grandparent_term_id
    FROM ont.t_cv_newt;
 
 

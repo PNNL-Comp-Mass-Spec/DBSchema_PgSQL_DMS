@@ -3,11 +3,11 @@
 --
 
 CREATE VIEW ont.v_helper_newt_list_report AS
- SELECT v_cv_newt.identifier,
-    v_cv_newt.term_name,
-    v_cv_newt.parent_term_name AS parent,
-    v_cv_newt.grandparent_term_name AS grandparent,
-    v_cv_newt.is_leaf
+ SELECT identifier,
+    term_name,
+    parent_term_name AS parent,
+    grandparent_term_name AS grandparent,
+    is_leaf
    FROM ont.v_cv_newt;
 
 

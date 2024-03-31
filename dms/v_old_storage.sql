@@ -3,14 +3,14 @@
 --
 
 CREATE VIEW public.v_old_storage AS
- SELECT t_storage_path.storage_path_id,
-    t_storage_path.storage_path,
-    t_storage_path.vol_name_client,
-    t_storage_path.vol_name_server,
-    t_storage_path.storage_path_function,
-    t_storage_path.instrument
+ SELECT storage_path_id,
+    storage_path,
+    vol_name_client,
+    vol_name_server,
+    storage_path_function,
+    instrument
    FROM public.t_storage_path
-  WHERE (t_storage_path.storage_path_function OPERATOR(public.=) 'old-storage'::public.citext);
+  WHERE (storage_path_function OPERATOR(public.=) 'old-storage'::public.citext);
 
 
 ALTER VIEW public.v_old_storage OWNER TO d3l243;

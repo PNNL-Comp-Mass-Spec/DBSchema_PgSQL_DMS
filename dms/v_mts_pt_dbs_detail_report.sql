@@ -3,17 +3,17 @@
 --
 
 CREATE VIEW public.v_mts_pt_dbs_detail_report AS
- SELECT ptdbs.peptide_db_name,
-    ptdbs.peptide_db_id,
-    ptdbs.description,
-    ptdbs.organism,
-    ptdbs.msms_jobs,
-    ptdbs.sic_jobs,
-    public.get_mtdbs_for_peptide_db((ptdbs.peptide_db_name)::text) AS mass_tag_dbs,
-    ptdbs.server_name,
-    ptdbs.state,
-    ptdbs.state_id,
-    ptdbs.last_affected
+ SELECT peptide_db_name,
+    peptide_db_id,
+    description,
+    organism,
+    msms_jobs,
+    sic_jobs,
+    public.get_mtdbs_for_peptide_db((peptide_db_name)::text) AS mass_tag_dbs,
+    server_name,
+    state,
+    state_id,
+    last_affected
    FROM public.t_mts_pt_dbs_cached ptdbs;
 
 

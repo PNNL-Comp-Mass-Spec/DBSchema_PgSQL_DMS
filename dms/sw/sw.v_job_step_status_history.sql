@@ -3,13 +3,13 @@
 --
 
 CREATE VIEW sw.v_job_step_status_history AS
- SELECT ct.posting_time,
-    COALESCE(ct."Waiting", 0) AS waiting,
-    COALESCE(ct."Enabled", 0) AS enabled,
-    COALESCE(ct."Running", 0) AS running,
-    COALESCE(ct."Completed", 0) AS completed,
-    COALESCE(ct."Failed", 0) AS failed,
-    COALESCE(ct."Holding", 0) AS holding
+ SELECT posting_time,
+    COALESCE("Waiting", 0) AS waiting,
+    COALESCE("Enabled", 0) AS enabled,
+    COALESCE("Running", 0) AS running,
+    COALESCE("Completed", 0) AS completed,
+    COALESCE("Failed", 0) AS failed,
+    COALESCE("Holding", 0) AS holding
    FROM public.crosstab('SELECT date_trunc(''minute'', JSH.Posting_Time) AS Posting_time,
            SSN.step_state as State_Name,
            Sum(Step_Count)

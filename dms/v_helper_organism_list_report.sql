@@ -3,16 +3,16 @@
 --
 
 CREATE VIEW public.v_helper_organism_list_report AS
- SELECT org.organism_id AS id,
-    org.organism AS name,
-    org.genus,
-    org.species,
-    org.strain,
-    org.description,
-    org.created,
-    org.active
+ SELECT organism_id AS id,
+    organism AS name,
+    genus,
+    species,
+    strain,
+    description,
+    created,
+    active
    FROM public.t_organisms org
-  WHERE (org.organism OPERATOR(public.<>) '(default)'::public.citext);
+  WHERE (organism OPERATOR(public.<>) '(default)'::public.citext);
 
 
 ALTER VIEW public.v_helper_organism_list_report OWNER TO d3l243;

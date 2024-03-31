@@ -17,21 +17,21 @@ CREATE VIEW public.v_datasets_stale_and_failed AS
           WHERE ((da.archive_state_id = ANY (ARRAY[2, 7, 12])) AND (js.state <> ALL (ARRAY[3, 5])))
           GROUP BY j.dataset_id
         )
- SELECT (unionq.warning_message)::public.citext AS warning_message,
-    unionq.dataset,
-    unionq.dataset_id,
-    unionq.dataset_created,
-    unionq.instrument,
-    (unionq.state)::public.citext AS state,
-    unionq.state_date,
-    unionq.script,
-    unionq.tool,
-    unionq.runtime_minutes,
-    unionq.step_state,
-    unionq.processor,
-    unionq.start,
-    unionq.step,
-    unionq.storage_path
+ SELECT (warning_message)::public.citext AS warning_message,
+    dataset,
+    dataset_id,
+    dataset_created,
+    instrument,
+    (state)::public.citext AS state,
+    state_date,
+    script,
+    tool,
+    runtime_minutes,
+    step_state,
+    processor,
+    start,
+    step,
+    storage_path
    FROM ( SELECT tasksteps.warning_message,
             ds.dataset,
             ds.dataset_id,
@@ -115,7 +115,7 @@ CREATE VIEW public.v_datasets_stale_and_failed AS
                     t_misc_options.comment
                    FROM public.t_misc_options
                   WHERE ((t_misc_options.name OPERATOR(public.=) 'ArchiveDisabled'::public.citext) AND (t_misc_options.value = 1))))))) unionq
-  WHERE (unionq.warning_message <> ''::text);
+  WHERE (warning_message <> ''::text);
 
 
 ALTER VIEW public.v_datasets_stale_and_failed OWNER TO d3l243;

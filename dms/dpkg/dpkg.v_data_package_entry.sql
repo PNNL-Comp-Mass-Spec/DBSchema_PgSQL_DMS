@@ -3,19 +3,19 @@
 --
 
 CREATE VIEW dpkg.v_data_package_entry AS
- SELECT t_data_package.data_pkg_id AS id,
-    t_data_package.package_name AS name,
-    t_data_package.package_type,
-    t_data_package.description,
-    t_data_package.comment,
-    t_data_package.owner_username AS owner,
-    t_data_package.requester,
-    t_data_package.state,
-    t_data_package.path_team AS team,
-    t_data_package.mass_tag_database,
-    t_data_package.wiki_page_link AS prismwiki_link,
-    t_data_package.data_doi,
-    t_data_package.manuscript_doi,
+ SELECT data_pkg_id AS id,
+    package_name AS name,
+    package_type,
+    description,
+    comment,
+    owner_username AS owner,
+    requester,
+    state,
+    path_team AS team,
+    mass_tag_database,
+    wiki_page_link AS prismwiki_link,
+    data_doi,
+    manuscript_doi,
     ''::text AS creation_params
    FROM dpkg.t_data_package;
 

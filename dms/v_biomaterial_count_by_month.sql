@@ -3,12 +3,12 @@
 --
 
 CREATE VIEW public.v_biomaterial_count_by_month AS
- SELECT v_biomaterial_date.year,
-    v_biomaterial_date.month,
-    count(v_biomaterial_date.biomaterial_name) AS number_of_items_created,
-    (((v_biomaterial_date.month)::text || '/'::text) || (v_biomaterial_date.year)::text) AS date
+ SELECT year,
+    month,
+    count(biomaterial_name) AS number_of_items_created,
+    (((month)::text || '/'::text) || (year)::text) AS date
    FROM public.v_biomaterial_date
-  GROUP BY v_biomaterial_date.year, v_biomaterial_date.month;
+  GROUP BY year, month;
 
 
 ALTER VIEW public.v_biomaterial_count_by_month OWNER TO d3l243;

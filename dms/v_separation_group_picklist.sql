@@ -3,11 +3,11 @@
 --
 
 CREATE VIEW public.v_separation_group_picklist AS
- SELECT t_separation_group.separation_group AS sep_group,
-    t_separation_group.sample_prep_visible,
-    t_separation_group.fraction_count
+ SELECT separation_group AS sep_group,
+    sample_prep_visible,
+    fraction_count
    FROM public.t_separation_group
-  WHERE (t_separation_group.active > 0);
+  WHERE (active > 0);
 
 
 ALTER VIEW public.v_separation_group_picklist OWNER TO d3l243;

@@ -3,10 +3,10 @@
 --
 
 CREATE VIEW public.v_organism_report AS
- SELECT t_organisms.organism AS name,
-    t_organisms.organism_db_path AS org_db_file_storage_path_client,
+ SELECT organism AS name,
+    organism_db_path AS org_db_file_storage_path_client,
     ''::text AS org_db_file_storage_path_server,
-    t_organisms.organism_db_name AS default_org_db_file_name
+    organism_db_name AS default_org_db_file_name
    FROM public.t_organisms;
 
 

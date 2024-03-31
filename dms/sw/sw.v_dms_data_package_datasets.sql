@@ -3,27 +3,27 @@
 --
 
 CREATE VIEW sw.v_dms_data_package_datasets AS
- SELECT dpd.data_pkg_id,
-    dpd.dataset_id,
-    dpd.dataset,
-    dpd.dataset_folder_path,
-    dpd.archive_folder_path,
-    dpd.instrument_name,
-    dpd.instrument_group,
-    dpd.instrument_class,
-    dpd.raw_data_type,
-    dpd.acq_time_start,
-    dpd.dataset_created,
-    dpd.organism,
-    dpd.experiment_newt_id,
-    dpd.experiment_newt_name,
-    dpd.experiment,
-    dpd.experiment_reason,
-    dpd.experiment_comment,
-    dpd.experiment_tissue_id,
-    dpd.experiment_tissue_name,
-    COALESCE(dpd.package_comment, ''::public.citext) AS package_comment,
-    dpd.data_pkg_id AS data_package_id
+ SELECT data_pkg_id,
+    dataset_id,
+    dataset,
+    dataset_folder_path,
+    archive_folder_path,
+    instrument_name,
+    instrument_group,
+    instrument_class,
+    raw_data_type,
+    acq_time_start,
+    dataset_created,
+    organism,
+    experiment_newt_id,
+    experiment_newt_name,
+    experiment,
+    experiment_reason,
+    experiment_comment,
+    experiment_tissue_id,
+    experiment_tissue_name,
+    COALESCE(package_comment, ''::public.citext) AS package_comment,
+    data_pkg_id AS data_package_id
    FROM dpkg.v_dms_data_package_aggregation_datasets dpd;
 
 

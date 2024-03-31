@@ -3,11 +3,11 @@
 --
 
 CREATE VIEW public.v_data_analysis_request_state_picklist AS
- SELECT t_data_analysis_request_state_name.state_name AS val,
-    t_data_analysis_request_state_name.state_name AS ex,
-    t_data_analysis_request_state_name.state_id
+ SELECT state_name AS val,
+    state_name AS ex,
+    state_id
    FROM public.t_data_analysis_request_state_name
-  WHERE (t_data_analysis_request_state_name.active = 1);
+  WHERE (active = 1);
 
 
 ALTER VIEW public.v_data_analysis_request_state_picklist OWNER TO d3l243;

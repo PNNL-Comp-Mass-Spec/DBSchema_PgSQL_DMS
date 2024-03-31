@@ -3,13 +3,13 @@
 --
 
 CREATE VIEW public.v_eus_proposals_entry AS
- SELECT p.proposal_id AS id,
-    p.state_id AS state,
-    p.title,
-    p.import_date,
-    p.proposal_type,
-    p.proposal_id_auto_supersede AS superseded_by,
-    public.get_proposal_eus_users_list((p.proposal_id)::text, 'I'::text, 1000) AS eus_users
+ SELECT proposal_id AS id,
+    state_id AS state,
+    title,
+    import_date,
+    proposal_type,
+    proposal_id_auto_supersede AS superseded_by,
+    public.get_proposal_eus_users_list((proposal_id)::text, 'I'::text, 1000) AS eus_users
    FROM public.t_eus_proposals p;
 
 

@@ -3,11 +3,11 @@
 --
 
 CREATE VIEW public.v_aj_batch_rss AS
- SELECT ('Batch '::text || (statsq.batch_id)::text) AS post_title,
+ SELECT ('Batch '::text || (batch_id)::text) AS post_title,
     ''::text AS url_title,
-    statsq.jobs_finished AS post_date,
-    (((((((((((statsq.batch_description)::text || ' ('::text) || 'Total:'::text) || (statsq.total_jobs)::text) || ', Complete:'::text) || (statsq.completed_jobs)::text) || ', Failed:'::text) || (statsq.failed_jobs)::text) || ', Busy:'::text) || (statsq.busy_jobs)::text) || ')'::text) AS post_body,
-    statsq.batch_created
+    jobs_finished AS post_date,
+    (((((((((((batch_description)::text || ' ('::text) || 'Total:'::text) || (total_jobs)::text) || ', Complete:'::text) || (completed_jobs)::text) || ', Failed:'::text) || (failed_jobs)::text) || ', Busy:'::text) || (busy_jobs)::text) || ')'::text) AS post_body,
+    batch_created
    FROM ( SELECT b.batch_id,
             b.batch_created,
             b.batch_description,
@@ -32,7 +32,7 @@ CREATE VIEW public.v_aj_batch_rss AS
              JOIN public.t_analysis_job j ON ((b.batch_id = j.batch_id)))
           GROUP BY b.batch_description, b.batch_created, b.batch_id
          HAVING (max(j.finish) > (CURRENT_TIMESTAMP - '30 days'::interval))) statsq
-  WHERE (statsq.total_jobs = (statsq.failed_jobs + statsq.completed_jobs));
+  WHERE (total_jobs = (failed_jobs + completed_jobs));
 
 
 ALTER VIEW public.v_aj_batch_rss OWNER TO d3l243;

@@ -3,11 +3,11 @@
 --
 
 CREATE VIEW logdms.v_historic_log_report AS
- SELECT t_log_entries.entry_id AS entry,
-    t_log_entries.posted_by,
-    t_log_entries.entered,
-    t_log_entries.type,
-    t_log_entries.message
+ SELECT entry_id AS entry,
+    posted_by,
+    entered,
+    type,
+    message
    FROM logdms.t_log_entries;
 
 

@@ -3,11 +3,11 @@
 --
 
 CREATE VIEW sw.v_mac_job_type_picklist AS
- SELECT t_scripts.script_id AS id,
-    t_scripts.script,
-    t_scripts.description
+ SELECT script_id AS id,
+    script,
+    description
    FROM sw.t_scripts
-  WHERE ((t_scripts.script OPERATOR(public.~) similar_to_escape('MAC[_]%'::text)) AND (t_scripts.enabled OPERATOR(public.=) 'Y'::public.citext) AND (NOT (t_scripts.parameters IS NULL)));
+  WHERE ((script OPERATOR(public.~) similar_to_escape('MAC[_]%'::text)) AND (enabled OPERATOR(public.=) 'Y'::public.citext) AND (NOT (parameters IS NULL)));
 
 
 ALTER VIEW sw.v_mac_job_type_picklist OWNER TO d3l243;

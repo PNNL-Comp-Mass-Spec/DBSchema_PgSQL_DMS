@@ -3,30 +3,30 @@
 --
 
 CREATE VIEW sw.v_job_steps_active AS
- SELECT dataq.job,
-    dataq.step,
-    dataq.script,
-    dataq.tool,
-    dataq.state_name AS step_state,
-    dataq.job_state_name AS job_state,
-    dataq.dataset,
-    dataq.start,
-    dataq.finish,
-    dataq.runtime_minutes,
-    dataq.processor,
-    round(((dataq.last_cpu_status_minutes)::numeric / 60.0), 1) AS last_cpu_status_hours,
-    dataq.job_progress,
-    dataq.runtime_predicted_hours,
-    dataq.priority,
-    dataq.settings_file,
-    dataq.parameter_file,
-    dataq.state,
+ SELECT job,
+    step,
+    script,
+    tool,
+    state_name AS step_state,
+    job_state_name AS job_state,
+    dataset,
+    start,
+    finish,
+    runtime_minutes,
+    processor,
+    round(((last_cpu_status_minutes)::numeric / 60.0), 1) AS last_cpu_status_hours,
+    job_progress,
+    runtime_predicted_hours,
+    priority,
+    settings_file,
+    parameter_file,
+    state,
     row_number() OVER (ORDER BY
         CASE
-            WHEN (dataq.state = 4) THEN '-2'::integer
-            WHEN (dataq.state = 6) THEN '-1'::integer
-            ELSE (dataq.state)::integer
-        END, dataq.job DESC, dataq.step) AS sort_order
+            WHEN (state = 4) THEN '-2'::integer
+            WHEN (state = 6) THEN '-1'::integer
+            ELSE (state)::integer
+        END, job DESC, step) AS sort_order
    FROM ( SELECT js.job,
             js.dataset,
             js.step,

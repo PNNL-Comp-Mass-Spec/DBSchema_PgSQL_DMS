@@ -3,9 +3,9 @@
 --
 
 CREATE VIEW sw.v_pipeline_machines_detail_report AS
- SELECT t_machines.machine,
-    t_machines.total_cpus,
-    t_machines.cpus_available
+ SELECT machine,
+    total_cpus,
+    cpus_available
    FROM sw.t_machines;
 
 

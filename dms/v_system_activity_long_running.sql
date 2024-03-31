@@ -3,19 +3,19 @@
 --
 
 CREATE VIEW public.v_system_activity_long_running AS
- SELECT a.pid,
-    a.datname AS database,
-    a.usename AS username,
-    a.application_name,
-    a.state,
-    a.query_start,
-    (now() - a.query_start) AS query_runtime,
-    a.xact_start,
-    a.query,
-    a.wait_event_type,
-    a.wait_event
+ SELECT pid,
+    datname AS database,
+    usename AS username,
+    application_name,
+    state,
+    query_start,
+    (now() - query_start) AS query_runtime,
+    xact_start,
+    query,
+    wait_event_type,
+    wait_event
    FROM pg_stat_activity a
-  WHERE ((now() - a.query_start) > '00:02:00'::interval);
+  WHERE ((now() - query_start) > '00:02:00'::interval);
 
 
 ALTER VIEW public.v_system_activity_long_running OWNER TO d3l243;

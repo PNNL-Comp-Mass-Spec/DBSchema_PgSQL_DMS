@@ -3,22 +3,22 @@
 --
 
 CREATE VIEW public.v_prep_lc_column_entry AS
- SELECT prepcolumn.prep_column AS column_name,
-    prepcolumn.mfg_name,
-    prepcolumn.mfg_model,
-    prepcolumn.mfg_serial AS mfg_serial_number,
-    prepcolumn.packing_mfg,
-    prepcolumn.packing_type,
-    prepcolumn.particle_size,
-    prepcolumn.particle_type,
-    prepcolumn.column_inner_dia,
-    prepcolumn.column_outer_dia,
-    prepcolumn.length,
-    prepcolumn.state,
-    prepcolumn.operator_username,
-    prepcolumn.comment,
-    prepcolumn.created,
-    prepcolumn.prep_column_id AS id
+ SELECT prep_column AS column_name,
+    mfg_name,
+    mfg_model,
+    mfg_serial AS mfg_serial_number,
+    packing_mfg,
+    packing_type,
+    particle_size,
+    particle_type,
+    column_inner_dia,
+    column_outer_dia,
+    length,
+    state,
+    operator_username,
+    comment,
+    created,
+    prep_column_id AS id
    FROM public.t_prep_lc_column prepcolumn;
 
 

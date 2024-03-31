@@ -3,8 +3,8 @@
 --
 
 CREATE VIEW public.v_reference_compound_type_name_picklist AS
- SELECT t_reference_compound_type_name.compound_type_id AS id,
-    t_reference_compound_type_name.compound_type_name AS name
+ SELECT compound_type_id AS id,
+    compound_type_name AS name
    FROM public.t_reference_compound_type_name;
 
 

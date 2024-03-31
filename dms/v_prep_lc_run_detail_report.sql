@@ -3,25 +3,25 @@
 --
 
 CREATE VIEW public.v_prep_lc_run_detail_report AS
- SELECT preprun.prep_run_id AS id,
-    preprun.prep_run_name AS name,
-    preprun.instrument,
-    preprun.type,
-    preprun.lc_column,
-    preprun.lc_column_2,
-    preprun.comment,
-    preprun.guard_column,
-    preprun.quality_control AS qc,
-    preprun.created,
-    preprun.operator_username,
-    preprun.digestion_method,
-    preprun.sample_type,
-    preprun.sample_prep_requests,
-    preprun.sample_prep_work_packages AS work_packages,
-    preprun.number_of_runs,
-    (public.get_prep_lc_experiment_groups_list(preprun.prep_run_id))::public.citext AS experiment_groups,
-    preprun.instrument_pressure,
-    (public.get_hplc_run_dataset_list(preprun.prep_run_id, 'name'::text))::public.citext AS datasets
+ SELECT prep_run_id AS id,
+    prep_run_name AS name,
+    instrument,
+    type,
+    lc_column,
+    lc_column_2,
+    comment,
+    guard_column,
+    quality_control AS qc,
+    created,
+    operator_username,
+    digestion_method,
+    sample_type,
+    sample_prep_requests,
+    sample_prep_work_packages AS work_packages,
+    number_of_runs,
+    (public.get_prep_lc_experiment_groups_list(prep_run_id))::public.citext AS experiment_groups,
+    instrument_pressure,
+    (public.get_hplc_run_dataset_list(prep_run_id, 'name'::text))::public.citext AS datasets
    FROM public.t_prep_lc_run preprun;
 
 

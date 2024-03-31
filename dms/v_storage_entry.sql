@@ -3,13 +3,13 @@
 --
 
 CREATE VIEW public.v_storage_entry AS
- SELECT t_storage_path.storage_path,
-    t_storage_path.vol_name_client,
-    t_storage_path.vol_name_server,
-    t_storage_path.storage_path_function,
-    t_storage_path.instrument,
-    t_storage_path.description,
-    t_storage_path.storage_path_id
+ SELECT storage_path,
+    vol_name_client,
+    vol_name_server,
+    storage_path_function,
+    instrument,
+    description,
+    storage_path_id
    FROM public.t_storage_path;
 
 

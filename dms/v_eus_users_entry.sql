@@ -3,10 +3,10 @@
 --
 
 CREATE VIEW public.v_eus_users_entry AS
- SELECT t_eus_users.person_id AS id,
-    t_eus_users.name_fm AS name,
-    t_eus_users.hid AS hanford_id,
-    t_eus_users.site_status_id AS site_status
+ SELECT person_id AS id,
+    name_fm AS name,
+    hid AS hanford_id,
+    site_status_id AS site_status
    FROM public.t_eus_users;
 
 

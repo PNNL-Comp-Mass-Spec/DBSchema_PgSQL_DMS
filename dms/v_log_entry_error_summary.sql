@@ -3,12 +3,12 @@
 --
 
 CREATE VIEW public.v_log_entry_error_summary AS
- SELECT v_log_entry_errors.schema,
-    v_log_entry_errors.posted_by,
+ SELECT schema,
+    posted_by,
     count(*) AS entries
    FROM public.v_log_entry_errors
-  GROUP BY v_log_entry_errors.schema, v_log_entry_errors.posted_by
-  ORDER BY v_log_entry_errors.schema, v_log_entry_errors.posted_by;
+  GROUP BY schema, posted_by
+  ORDER BY schema, posted_by;
 
 
 ALTER VIEW public.v_log_entry_error_summary OWNER TO d3l243;

@@ -3,8 +3,8 @@
 --
 
 CREATE VIEW public.v_archive_update_state_name_picklist AS
- SELECT t_dataset_archive_update_state_name.archive_update_state_id AS id,
-    t_dataset_archive_update_state_name.archive_update_state AS name
+ SELECT archive_update_state_id AS id,
+    archive_update_state AS name
    FROM public.t_dataset_archive_update_state_name;
 
 

@@ -3,16 +3,16 @@
 --
 
 CREATE VIEW public.v_table_size_summary AS
- SELECT (statsq.table_schema)::public.citext AS schema_name,
-    (statsq.table_name)::public.citext AS table_name,
-    statsq.table_row_count,
-    pg_size_pretty(statsq.size_bytes) AS size,
-    statsq.size_bytes,
-    statsq.index_count,
-    statsq.has_unique_idx,
-    statsq.single_column_idx,
-    statsq.multi_column_idx,
-    statsq.has_triggers
+ SELECT (table_schema)::public.citext AS schema_name,
+    (table_name)::public.citext AS table_name,
+    table_row_count,
+    pg_size_pretty(size_bytes) AS size,
+    size_bytes,
+    index_count,
+    has_unique_idx,
+    single_column_idx,
+    multi_column_idx,
+    has_triggers
    FROM ( SELECT pg_namespace.nspname AS table_schema,
             pg_class.relname AS table_name,
             pg_class.reltuples AS table_row_count,
@@ -48,7 +48,7 @@ CREATE VIEW public.v_table_size_summary AS
                      JOIN pg_class ipg ON ((ipg.oid = x_1.indexrelid)))) lookpuq ON ((pg_class.relname = lookpuq.ctablename)))
           WHERE ((NOT (pg_namespace.nspname = ANY (ARRAY['information_schema'::name, 'pg_catalog'::name]))) AND (NOT (pg_namespace.nspname ~ similar_escape('pg[_]%temp[_]%'::text, NULL::text))) AND (pg_class.relkind = ANY (ARRAY['r'::"char", 'm'::"char", 'f'::"char", 'p'::"char"])))
           GROUP BY pg_namespace.nspname, pg_class.relname, pg_class.reltuples, pg_class.relpages, x.is_unique, pg_class.relhastriggers) statsq
-  ORDER BY statsq.size_bytes DESC;
+  ORDER BY size_bytes DESC;
 
 
 ALTER VIEW public.v_table_size_summary OWNER TO d3l243;

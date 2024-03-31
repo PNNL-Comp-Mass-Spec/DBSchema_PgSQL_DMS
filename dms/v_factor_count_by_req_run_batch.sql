@@ -3,10 +3,10 @@
 --
 
 CREATE VIEW public.v_factor_count_by_req_run_batch AS
- SELECT factorq.batch_id,
+ SELECT batch_id,
     sum(
         CASE
-            WHEN (factorq.factor IS NULL) THEN 0
+            WHEN (factor IS NULL) THEN 0
             ELSE 1
         END) AS factor_count
    FROM ( SELECT DISTINCT rrb.batch_id,
@@ -15,7 +15,7 @@ CREATE VIEW public.v_factor_count_by_req_run_batch AS
              JOIN public.t_requested_run rr ON (((rrfactor.target_id = rr.request_id) AND (rrfactor.type OPERATOR(public.=) 'Run_Request'::public.citext))))
              JOIN public.t_requested_run_batches rrb ON ((rr.batch_id = rrb.batch_id)))
           WHERE (rrb.batch_id <> 0)) factorq
-  GROUP BY factorq.batch_id;
+  GROUP BY batch_id;
 
 
 ALTER VIEW public.v_factor_count_by_req_run_batch OWNER TO d3l243;

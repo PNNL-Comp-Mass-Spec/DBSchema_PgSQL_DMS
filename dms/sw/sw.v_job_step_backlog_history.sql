@@ -3,12 +3,12 @@
 --
 
 CREATE VIEW sw.v_job_step_backlog_history AS
- SELECT t_job_step_status_history.step_tool,
-    t_job_step_status_history.posting_time,
-    sum(t_job_step_status_history.step_count) AS backlog_count
+ SELECT step_tool,
+    posting_time,
+    sum(step_count) AS backlog_count
    FROM sw.t_job_step_status_history
-  WHERE (t_job_step_status_history.state = ANY (ARRAY[2, 4]))
-  GROUP BY t_job_step_status_history.step_tool, t_job_step_status_history.posting_time;
+  WHERE (state = ANY (ARRAY[2, 4]))
+  GROUP BY step_tool, posting_time;
 
 
 ALTER VIEW sw.v_job_step_backlog_history OWNER TO d3l243;

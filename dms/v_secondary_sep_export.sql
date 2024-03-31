@@ -3,12 +3,12 @@
 --
 
 CREATE VIEW public.v_secondary_sep_export AS
- SELECT t_secondary_sep.separation_type_id,
-    t_secondary_sep.separation_type,
-    t_secondary_sep.comment,
-    t_secondary_sep.active,
-    t_secondary_sep.separation_group,
-    t_secondary_sep.sample_type_id
+ SELECT separation_type_id,
+    separation_type,
+    comment,
+    active,
+    separation_group,
+    sample_type_id
    FROM public.t_secondary_sep;
 
 

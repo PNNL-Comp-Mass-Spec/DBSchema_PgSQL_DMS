@@ -3,10 +3,10 @@
 --
 
 CREATE VIEW public.v_internal_standards_picklist AS
- SELECT t_internal_standards.name AS val,
+ SELECT name AS val,
     ''::text AS ex
    FROM public.t_internal_standards
-  WHERE (t_internal_standards.internal_standard_id > 0);
+  WHERE (internal_standard_id > 0);
 
 
 ALTER VIEW public.v_internal_standards_picklist OWNER TO d3l243;

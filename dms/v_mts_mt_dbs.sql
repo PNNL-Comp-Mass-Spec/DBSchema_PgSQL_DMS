@@ -3,17 +3,17 @@
 --
 
 CREATE VIEW public.v_mts_mt_dbs AS
- SELECT mtdbs.mt_db_id,
-    mtdbs.mt_db_name,
-    mtdbs.state,
-    mtdbs.description,
-    mtdbs.organism,
-    mtdbs.campaign,
-    mtdbs.msms_jobs,
-    mtdbs.ms_jobs,
-    mtdbs.peptide_db,
-    mtdbs.server_name,
-    mtdbs.state_id
+ SELECT mt_db_id,
+    mt_db_name,
+    state,
+    description,
+    organism,
+    campaign,
+    msms_jobs,
+    ms_jobs,
+    peptide_db,
+    server_name,
+    state_id
    FROM public.t_mts_mt_dbs_cached mtdbs;
 
 

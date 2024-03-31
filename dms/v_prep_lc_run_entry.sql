@@ -3,23 +3,23 @@
 --
 
 CREATE VIEW public.v_prep_lc_run_entry AS
- SELECT preprun.prep_run_id AS id,
-    preprun.prep_run_name,
-    preprun.instrument,
-    preprun.type,
-    preprun.lc_column,
-    preprun.lc_column_2,
-    preprun.comment,
-    preprun.guard_column,
-    preprun.created,
-    preprun.operator_username,
-    preprun.digestion_method,
-    preprun.sample_type,
-    preprun.number_of_runs,
-    preprun.instrument_pressure,
-    preprun.sample_prep_requests,
-    preprun.quality_control,
-    public.get_hplc_run_dataset_list(preprun.prep_run_id, 'name'::text) AS datasets
+ SELECT prep_run_id AS id,
+    prep_run_name,
+    instrument,
+    type,
+    lc_column,
+    lc_column_2,
+    comment,
+    guard_column,
+    created,
+    operator_username,
+    digestion_method,
+    sample_type,
+    number_of_runs,
+    instrument_pressure,
+    sample_prep_requests,
+    quality_control,
+    public.get_hplc_run_dataset_list(prep_run_id, 'name'::text) AS datasets
    FROM public.t_prep_lc_run preprun;
 
 

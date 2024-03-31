@@ -3,9 +3,9 @@
 --
 
 CREATE VIEW public.v_settings_file_lookup AS
- SELECT sourceq.analysis_tool,
-    sourceq.file_name,
-    sourceq.mapped_tool
+ SELECT analysis_tool,
+    file_name,
+    mapped_tool
    FROM ( SELECT sf.file_name,
             sf.analysis_tool,
             sf.analysis_tool AS mapped_tool

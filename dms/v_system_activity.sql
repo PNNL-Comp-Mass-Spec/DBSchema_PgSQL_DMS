@@ -3,19 +3,19 @@
 --
 
 CREATE VIEW public.v_system_activity AS
- SELECT a.pid,
-    a.datname AS database,
-    a.usename AS username,
-    a.application_name,
-    a.state,
-    a.query_start,
-    (now() - a.query_start) AS query_runtime,
-    a.xact_start,
-    a.query,
-    a.wait_event_type,
-    a.wait_event
+ SELECT pid,
+    datname AS database,
+    usename AS username,
+    application_name,
+    state,
+    query_start,
+    (now() - query_start) AS query_runtime,
+    xact_start,
+    query,
+    wait_event_type,
+    wait_event
    FROM pg_stat_activity a
-  WHERE ((a.backend_type = 'client backend'::text) OR ((a.backend_type IS NULL) AND (COALESCE(a.usename, 'postgres'::name) <> 'postgres'::name)));
+  WHERE ((backend_type = 'client backend'::text) OR ((backend_type IS NULL) AND (COALESCE(usename, 'postgres'::name) <> 'postgres'::name)));
 
 
 ALTER VIEW public.v_system_activity OWNER TO d3l243;

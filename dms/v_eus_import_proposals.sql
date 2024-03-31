@@ -3,11 +3,11 @@
 --
 
 CREATE VIEW public.v_eus_import_proposals AS
- SELECT vw_proposals.project_id AS proposal_id,
-    vw_proposals.title,
-    vw_proposals.proposal_type_display AS proposal_type,
-    vw_proposals.actual_end_date,
-    vw_proposals.actual_start_date
+ SELECT project_id AS proposal_id,
+    title,
+    proposal_type_display AS proposal_type,
+    actual_end_date,
+    actual_start_date
    FROM eus.vw_proposals;
 
 

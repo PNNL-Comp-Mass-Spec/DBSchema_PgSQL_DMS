@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_instrument_ops_role_picklist AS
- SELECT DISTINCT t_instrument_name.operations_role AS val
+ SELECT DISTINCT operations_role AS val
    FROM public.t_instrument_name;
 
 

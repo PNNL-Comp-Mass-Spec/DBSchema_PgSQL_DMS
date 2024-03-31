@@ -3,14 +3,14 @@
 --
 
 CREATE VIEW cap.v_myemsl_upload_stats_monthly AS
- SELECT EXTRACT(year FROM t_myemsl_uploads.entered) AS year,
-    EXTRACT(month FROM t_myemsl_uploads.entered) AS month,
-    count(t_myemsl_uploads.entry_id) AS bundles,
-    sum((t_myemsl_uploads.file_count_new + t_myemsl_uploads.file_count_updated)) AS files,
-    round(sum((((((t_myemsl_uploads.bytes)::numeric / 1024.0) / 1024.0) / 1024.0) / 1024.0)), 5) AS tb
+ SELECT EXTRACT(year FROM entered) AS year,
+    EXTRACT(month FROM entered) AS month,
+    count(entry_id) AS bundles,
+    sum((file_count_new + file_count_updated)) AS files,
+    round(sum((((((bytes)::numeric / 1024.0) / 1024.0) / 1024.0) / 1024.0)), 5) AS tb
    FROM cap.t_myemsl_uploads
-  WHERE ((t_myemsl_uploads.error_code = 0) AND (COALESCE(t_myemsl_uploads.status_num, 0) > 0))
-  GROUP BY (EXTRACT(year FROM t_myemsl_uploads.entered)), (EXTRACT(month FROM t_myemsl_uploads.entered));
+  WHERE ((error_code = 0) AND (COALESCE(status_num, 0) > 0))
+  GROUP BY (EXTRACT(year FROM entered)), (EXTRACT(month FROM entered));
 
 
 ALTER VIEW cap.v_myemsl_upload_stats_monthly OWNER TO d3l243;

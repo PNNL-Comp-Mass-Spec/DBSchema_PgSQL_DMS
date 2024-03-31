@@ -3,13 +3,13 @@
 --
 
 CREATE VIEW public.v_lc_cart_config_history_detail_report AS
- SELECT t_lc_cart_config_history.entry_id AS id,
-    t_lc_cart_config_history.cart,
-    t_lc_cart_config_history.date_of_change,
-    t_lc_cart_config_history.description,
-    t_lc_cart_config_history.note,
-    t_lc_cart_config_history.entered,
-    t_lc_cart_config_history.entered_by
+ SELECT entry_id AS id,
+    cart,
+    date_of_change,
+    description,
+    note,
+    entered,
+    entered_by
    FROM public.t_lc_cart_config_history;
 
 

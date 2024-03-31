@@ -3,12 +3,12 @@
 --
 
 CREATE VIEW public.v_nexus_import_proposal_participants AS
- SELECT vw_proposal_participants.project_id,
-    vw_proposal_participants.user_id,
-    vw_proposal_participants.hanford_id,
-    vw_proposal_participants.last_name,
-    vw_proposal_participants.first_name,
-    vw_proposal_participants.name_fm
+ SELECT project_id,
+    user_id,
+    hanford_id,
+    last_name,
+    first_name,
+    name_fm
    FROM eus.vw_proposal_participants;
 
 

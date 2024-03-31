@@ -3,19 +3,19 @@
 --
 
 CREATE VIEW ont.v_term_leaf_nodes AS
- SELECT v_term.term_pk,
-    v_term.term_name,
-    v_term.identifier,
-    v_term.definition,
-    v_term.namespace,
-    v_term.is_obsolete,
-    v_term.is_root_term,
-    v_term.is_leaf,
-    v_term.ontology_id,
-    v_term.ontology_short_name,
-    v_term.ontology_full_name
+ SELECT term_pk,
+    term_name,
+    identifier,
+    definition,
+    namespace,
+    is_obsolete,
+    is_root_term,
+    is_leaf,
+    ontology_id,
+    ontology_short_name,
+    ontology_full_name
    FROM ont.v_term
-  WHERE (v_term.is_leaf = 1);
+  WHERE (is_leaf = 1);
 
 
 ALTER VIEW ont.v_term_leaf_nodes OWNER TO d3l243;

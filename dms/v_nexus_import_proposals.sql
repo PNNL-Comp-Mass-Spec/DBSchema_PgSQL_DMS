@@ -3,14 +3,14 @@
 --
 
 CREATE VIEW public.v_nexus_import_proposals AS
- SELECT vw_proposals.project_id,
-    vw_proposals.title,
-    vw_proposals.proposal_type,
-    vw_proposals.proposal_type_display,
-    vw_proposals.actual_start_date,
-    vw_proposals.actual_end_date,
-    vw_proposals.project_uuid,
-    row_number() OVER (PARTITION BY vw_proposals.project_id ORDER BY vw_proposals.actual_start_date DESC, vw_proposals.actual_end_date DESC) AS id_rank
+ SELECT project_id,
+    title,
+    proposal_type,
+    proposal_type_display,
+    actual_start_date,
+    actual_end_date,
+    project_uuid,
+    row_number() OVER (PARTITION BY project_id ORDER BY actual_start_date DESC, actual_end_date DESC) AS id_rank
    FROM eus.vw_proposals;
 
 

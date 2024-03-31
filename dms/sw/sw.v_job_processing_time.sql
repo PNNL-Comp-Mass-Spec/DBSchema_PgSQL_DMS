@@ -3,9 +3,9 @@
 --
 
 CREATE VIEW sw.v_job_processing_time AS
- SELECT steptoolq.job,
-    (sum(steptoolq.maxsecondselapsedbytool) / 60.0) AS processing_time_minutes,
-    (sum(steptoolq.maxsecondselapsedbytool_completedsteps) / 60.0) AS proc_time_minutes_completed_steps
+ SELECT job,
+    (sum(maxsecondselapsedbytool) / 60.0) AS processing_time_minutes,
+    (sum(maxsecondselapsedbytool_completedsteps) / 60.0) AS proc_time_minutes_completed_steps
    FROM ( SELECT statsq.job,
             statsq.step_tool,
             max((COALESCE(statsq.secondselapsedcomplete, (0)::numeric) + COALESCE(statsq.secondselapsedinprogress, (0)::numeric))) AS maxsecondselapsedbytool,
@@ -38,7 +38,7 @@ CREATE VIEW sw.v_job_processing_time AS
                         END AS secondselapsedinprogress
                    FROM sw.t_job_steps) statsq
           GROUP BY statsq.job, statsq.step_tool) steptoolq
-  GROUP BY steptoolq.job;
+  GROUP BY job;
 
 
 ALTER VIEW sw.v_job_processing_time OWNER TO d3l243;

@@ -3,8 +3,8 @@
 --
 
 CREATE VIEW public.v_secondary_sep_sample_type_picklist AS
- SELECT t_secondary_sep_sample_type.sample_type_id AS id,
-    t_secondary_sep_sample_type.name
+ SELECT sample_type_id AS id,
+    name
    FROM public.t_secondary_sep_sample_type;
 
 

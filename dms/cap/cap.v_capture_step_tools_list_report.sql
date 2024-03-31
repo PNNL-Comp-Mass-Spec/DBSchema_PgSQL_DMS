@@ -3,15 +3,15 @@
 --
 
 CREATE VIEW cap.v_capture_step_tools_list_report AS
- SELECT t_step_tools.step_tool AS name,
-    t_step_tools.description,
-    t_step_tools.bionet_required,
-    t_step_tools.only_on_storage_server,
-    t_step_tools.instrument_capacity_limited,
-    t_step_tools.step_tool_id AS id,
-    t_step_tools.holdoff_interval_minutes,
-    t_step_tools.number_of_retries,
-    t_step_tools.processor_assignment_applies
+ SELECT step_tool AS name,
+    description,
+    bionet_required,
+    only_on_storage_server,
+    instrument_capacity_limited,
+    step_tool_id AS id,
+    holdoff_interval_minutes,
+    number_of_retries,
+    processor_assignment_applies
    FROM cap.t_step_tools;
 
 

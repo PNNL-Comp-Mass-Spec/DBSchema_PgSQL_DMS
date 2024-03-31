@@ -3,16 +3,16 @@
 --
 
 CREATE VIEW public.v_instrument_group_picklist AS
- SELECT lookupq.instrument_group,
-    lookupq.usage,
-    lookupq.instruments,
-    lookupq.comment,
-    lookupq.allowed_dataset_types,
-    lookupq.sample_prep_visible,
-    lookupq.requested_run_visible,
+ SELECT instrument_group,
+    usage,
+    instruments,
+    comment,
+    allowed_dataset_types,
+    sample_prep_visible,
+    requested_run_visible,
         CASE
-            WHEN (lookupq.instruments OPERATOR(public.=) ''::public.citext) THEN (((lookupq.instrument_group)::text || (' (no active instruments)'::public.citext)::text))::public.citext
-            ELSE (((((((lookupq.instrument_group)::text || (' ('::public.citext)::text))::public.citext)::text || (lookupq.instruments)::text) || (')'::public.citext)::text))::public.citext
+            WHEN (instruments OPERATOR(public.=) ''::public.citext) THEN (((instrument_group)::text || (' (no active instruments)'::public.citext)::text))::public.citext
+            ELSE (((((((instrument_group)::text || (' ('::public.citext)::text))::public.citext)::text || (instruments)::text) || (')'::public.citext)::text))::public.citext
         END AS instrument_group_and_instruments
    FROM ( SELECT g.instrument_group,
             g.usage,

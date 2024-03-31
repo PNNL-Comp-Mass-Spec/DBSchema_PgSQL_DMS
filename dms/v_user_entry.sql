@@ -3,15 +3,15 @@
 --
 
 CREATE VIEW public.v_user_entry AS
- SELECT t_users.username,
-    t_users.hid AS hanford_id,
+ SELECT username,
+    hid AS hanford_id,
     'Last Name, First Name, and Email are auto-updated when "User Update" = Y'::text AS entry_note,
-    t_users.name AS last_name_first_name,
-    t_users.email,
-    t_users.status AS user_status,
-    t_users.update AS user_update,
-    public.get_user_operations_list(t_users.user_id) AS operations_list,
-    t_users.comment
+    name AS last_name_first_name,
+    email,
+    status AS user_status,
+    update AS user_update,
+    public.get_user_operations_list(user_id) AS operations_list,
+    comment
    FROM public.t_users;
 
 

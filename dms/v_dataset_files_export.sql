@@ -3,15 +3,15 @@
 --
 
 CREATE VIEW public.v_dataset_files_export AS
- SELECT df.dataset_file_id,
-    df.dataset_id,
-    df.file_path,
-    df.file_size_bytes,
-    df.file_hash,
-    df.file_size_rank,
-    df.allow_duplicates
+ SELECT dataset_file_id,
+    dataset_id,
+    file_path,
+    file_size_bytes,
+    file_hash,
+    file_size_rank,
+    allow_duplicates
    FROM public.t_dataset_files df
-  WHERE (df.deleted = false);
+  WHERE (deleted = false);
 
 
 ALTER VIEW public.v_dataset_files_export OWNER TO d3l243;

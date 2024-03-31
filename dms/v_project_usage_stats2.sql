@@ -3,31 +3,31 @@
 --
 
 CREATE VIEW public.v_project_usage_stats2 AS
- SELECT v_project_usage_stats.entry_id,
-    v_project_usage_stats.start_date,
-    v_project_usage_stats.end_date,
-    v_project_usage_stats.year,
-    v_project_usage_stats.week,
-    v_project_usage_stats.proposal_id,
-    v_project_usage_stats.work_package,
-    v_project_usage_stats.proposal_active,
-    v_project_usage_stats.project_type,
-    v_project_usage_stats.samples,
-    v_project_usage_stats.datasets,
-    v_project_usage_stats.jobs,
-    v_project_usage_stats.usage_type,
-    v_project_usage_stats.proposal_user,
-    v_project_usage_stats.proposal_title,
-    v_project_usage_stats.instrument_first,
-    v_project_usage_stats.instrument_last,
-    v_project_usage_stats.job_tool_first,
-    v_project_usage_stats.job_tool_last,
-    v_project_usage_stats.proposal_start_date,
-    v_project_usage_stats.proposal_end_date,
-    v_project_usage_stats.proposal_type,
-    v_project_usage_stats.sort_key
+ SELECT entry_id,
+    start_date,
+    end_date,
+    year,
+    week,
+    proposal_id,
+    work_package,
+    proposal_active,
+    project_type,
+    samples,
+    datasets,
+    jobs,
+    usage_type,
+    proposal_user,
+    proposal_title,
+    instrument_first,
+    instrument_last,
+    job_tool_first,
+    job_tool_last,
+    proposal_start_date,
+    proposal_end_date,
+    proposal_type,
+    sort_key
    FROM public.v_project_usage_stats
-  WHERE (((v_project_usage_stats.year)::numeric = EXTRACT(year FROM CURRENT_TIMESTAMP)) AND ((v_project_usage_stats.week)::numeric >= (EXTRACT(week FROM CURRENT_TIMESTAMP) - (1)::numeric)) AND (NOT ((v_project_usage_stats.usage_type OPERATOR(public.=) ANY (ARRAY['CAP_DEV'::public.citext, 'MAINTENANCE'::public.citext, 'RESOURCE_OWNER'::public.citext])) AND (v_project_usage_stats.project_type OPERATOR(public.=) 'Unknown'::public.citext))));
+  WHERE (((year)::numeric = EXTRACT(year FROM CURRENT_TIMESTAMP)) AND ((week)::numeric >= (EXTRACT(week FROM CURRENT_TIMESTAMP) - (1)::numeric)) AND (NOT ((usage_type OPERATOR(public.=) ANY (ARRAY['CAP_DEV'::public.citext, 'MAINTENANCE'::public.citext, 'RESOURCE_OWNER'::public.citext])) AND (project_type OPERATOR(public.=) 'Unknown'::public.citext))));
 
 
 ALTER VIEW public.v_project_usage_stats2 OWNER TO d3l243;

@@ -3,13 +3,13 @@
 --
 
 CREATE VIEW public.v_campaign_report AS
- SELECT t_campaign.campaign,
-    t_campaign.project,
-    (public.get_campaign_role_person(t_campaign.campaign_id, 'Project Mgr'::text))::public.citext AS project_mgr,
-    (public.get_campaign_role_person(t_campaign.campaign_id, 'PI'::text))::public.citext AS pi,
-    t_campaign.comment,
-    t_campaign.created,
-    t_campaign.state
+ SELECT campaign,
+    project,
+    (public.get_campaign_role_person(campaign_id, 'Project Mgr'::text))::public.citext AS project_mgr,
+    (public.get_campaign_role_person(campaign_id, 'PI'::text))::public.citext AS pi,
+    comment,
+    created,
+    state
    FROM public.t_campaign;
 
 

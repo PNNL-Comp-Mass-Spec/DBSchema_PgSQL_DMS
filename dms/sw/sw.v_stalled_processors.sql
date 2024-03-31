@@ -3,15 +3,15 @@
 --
 
 CREATE VIEW sw.v_stalled_processors AS
- SELECT t_local_processors.processor_id AS id,
-    t_local_processors.processor_name,
-    t_local_processors.state,
-    t_local_processors.groups,
-    t_local_processors.gp_groups,
-    t_local_processors.machine,
-    t_local_processors.latest_request
+ SELECT processor_id AS id,
+    processor_name,
+    state,
+    groups,
+    gp_groups,
+    machine,
+    latest_request
    FROM sw.t_local_processors
-  WHERE ((t_local_processors.latest_request >= '2008-12-01 00:00:00'::timestamp without time zone) AND (t_local_processors.latest_request < (CURRENT_TIMESTAMP - '12:00:00'::interval)));
+  WHERE ((latest_request >= '2008-12-01 00:00:00'::timestamp without time zone) AND (latest_request < (CURRENT_TIMESTAMP - '12:00:00'::interval)));
 
 
 ALTER VIEW sw.v_stalled_processors OWNER TO d3l243;

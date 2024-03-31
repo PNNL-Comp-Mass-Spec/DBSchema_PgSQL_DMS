@@ -3,22 +3,22 @@
 --
 
 CREATE VIEW sw.v_job_steps_stale_and_failed AS
- SELECT dataq.warning_message,
-    dataq.job,
-    dataq.tool,
-    (round(dataq.runtime_minutes, 0))::integer AS runtime_minutes,
-    round((dataq.job_progress)::numeric, 1) AS job_progress,
-    dataq.runtime_predicted_hours,
-    (dataq.state_name)::public.citext AS state_name,
-    round(((dataq.last_cpu_status_minutes)::numeric / 60.0), 1) AS last_cpu_status_hours,
-    dataq.processor,
-    dataq.start,
-    dataq.step,
-    dataq.dataset,
-    dataq.settings_file,
-    dataq.parameter_file,
-    dataq.completion_message,
-    dataq.evaluation_message
+ SELECT warning_message,
+    job,
+    tool,
+    (round(runtime_minutes, 0))::integer AS runtime_minutes,
+    round((job_progress)::numeric, 1) AS job_progress,
+    runtime_predicted_hours,
+    (state_name)::public.citext AS state_name,
+    round(((last_cpu_status_minutes)::numeric / 60.0), 1) AS last_cpu_status_hours,
+    processor,
+    start,
+    step,
+    dataset,
+    settings_file,
+    parameter_file,
+    completion_message,
+    evaluation_message
    FROM ( SELECT
                 CASE
                     WHEN ((js.state = 4) AND (js.last_cpu_status_minutes >= (4 * 60))) THEN 'No status update for 4 hours'::public.citext
@@ -67,7 +67,7 @@ CREATE VIEW sw.v_job_steps_stale_and_failed AS
                   WHERE (lookupq.rowrank = 1)) failedjobq ON (((js.job = failedjobq.job) AND (js.step = failedjobq.step))))
              LEFT JOIN sw.t_local_processors lp ON ((js.processor OPERATOR(public.=) lp.processor_name)))
              LEFT JOIN public.t_analysis_job aj ON ((js.job = aj.job)))) dataq
-  WHERE ((dataq.warning_message)::text <> ''::text);
+  WHERE ((warning_message)::text <> ''::text);
 
 
 ALTER VIEW sw.v_job_steps_stale_and_failed OWNER TO d3l243;

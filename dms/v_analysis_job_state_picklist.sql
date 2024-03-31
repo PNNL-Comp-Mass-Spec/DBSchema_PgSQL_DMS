@@ -3,9 +3,9 @@
 --
 
 CREATE VIEW public.v_analysis_job_state_picklist AS
- SELECT t_analysis_job_state.job_state_id AS id,
-    t_analysis_job_state.job_state AS name,
-    t_analysis_job_state.comment
+ SELECT job_state_id AS id,
+    job_state AS name,
+    comment
    FROM public.t_analysis_job_state;
 
 

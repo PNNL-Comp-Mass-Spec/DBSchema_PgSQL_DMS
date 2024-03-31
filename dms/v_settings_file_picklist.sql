@@ -3,14 +3,14 @@
 --
 
 CREATE VIEW public.v_settings_file_picklist AS
- SELECT filterq.file_name,
-    filterq.description,
-    filterq.job_count,
-    filterq.jobs_all_time,
-    filterq.analysis_tool,
+ SELECT file_name,
+    description,
+    job_count,
+    jobs_all_time,
+    analysis_tool,
         CASE
-            WHEN (filterq.job_count > 0) THEN (filterq.job_count + 1000000)
-            ELSE filterq.jobs_all_time
+            WHEN (job_count > 0) THEN (job_count + 1000000)
+            ELSE jobs_all_time
         END AS sort_key
    FROM ( SELECT sf.file_name,
             sf.description,

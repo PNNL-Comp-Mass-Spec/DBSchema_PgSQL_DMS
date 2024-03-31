@@ -3,10 +3,10 @@
 --
 
 CREATE VIEW public.v_material_location_entry AS
- SELECT ml.location_id AS id,
-    ml.location,
-    ml.comment,
-    ml.status
+ SELECT location_id AS id,
+    location,
+    comment,
+    status
    FROM public.t_material_locations ml;
 
 

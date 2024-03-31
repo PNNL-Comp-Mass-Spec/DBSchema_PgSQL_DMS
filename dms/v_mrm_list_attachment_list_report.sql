@@ -3,14 +3,14 @@
 --
 
 CREATE VIEW public.v_mrm_list_attachment_list_report AS
- SELECT t_attachments.attachment_id AS id,
-    t_attachments.attachment_name AS name,
-    t_attachments.attachment_description AS description,
-    t_attachments.owner_username AS owner,
-    t_attachments.active,
-    t_attachments.created
+ SELECT attachment_id AS id,
+    attachment_name AS name,
+    attachment_description AS description,
+    owner_username AS owner,
+    active,
+    created
    FROM public.t_attachments
-  WHERE (t_attachments.attachment_type OPERATOR(public.=) 'MRM Transition List'::public.citext);
+  WHERE (attachment_type OPERATOR(public.=) 'MRM Transition List'::public.citext);
 
 
 ALTER VIEW public.v_mrm_list_attachment_list_report OWNER TO d3l243;

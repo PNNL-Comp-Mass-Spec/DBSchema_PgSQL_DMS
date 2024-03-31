@@ -3,21 +3,21 @@
 --
 
 CREATE VIEW public.v_instrument_tracked AS
- SELECT filterq.name,
-    filterq.reporting,
-    filterq.description,
-    filterq.ops_role,
-    filterq.emsl_primary,
-    filterq."group",
-    filterq.class,
-    filterq.eus_instrument_name,
-    filterq.eus_instrument_id,
-    filterq.eus_available_hours,
-    filterq.eus_active_sw,
-    filterq.eus_primary_instrument,
-    filterq.percent_emsl_owned,
-    filterq.tracked,
-    (((((((((filterq.name)::text || (' ('::public.citext)::text))::public.citext)::text || (filterq.reporting)::text))::public.citext)::text || (')'::public.citext)::text))::public.citext AS name_with_reporting
+ SELECT name,
+    reporting,
+    description,
+    ops_role,
+    emsl_primary,
+    "group",
+    class,
+    eus_instrument_name,
+    eus_instrument_id,
+    eus_available_hours,
+    eus_active_sw,
+    eus_primary_instrument,
+    percent_emsl_owned,
+    tracked,
+    (((((((((name)::text || (' ('::public.citext)::text))::public.citext)::text || (reporting)::text))::public.citext)::text || (')'::public.citext)::text))::public.citext AS name_with_reporting
    FROM ( SELECT td.instrument AS name,
             (((
                 CASE

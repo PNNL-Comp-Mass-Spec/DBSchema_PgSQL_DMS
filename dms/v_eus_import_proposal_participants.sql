@@ -3,13 +3,13 @@
 --
 
 CREATE VIEW public.v_eus_import_proposal_participants AS
- SELECT vw_proposal_participants.project_id AS proposal_id,
-    vw_proposal_participants.user_id AS person_id,
-    vw_proposal_participants.hanford_id,
-    vw_proposal_participants.last_name,
-    vw_proposal_participants.first_name,
-    vw_proposal_participants.name_fm,
-    (((((vw_proposal_participants.last_name)::public.citext)::text || (', '::public.citext)::text) || ((vw_proposal_participants.first_name)::public.citext)::text))::public.citext AS name_fm_computed
+ SELECT project_id AS proposal_id,
+    user_id AS person_id,
+    hanford_id,
+    last_name,
+    first_name,
+    name_fm,
+    (((((last_name)::public.citext)::text || (', '::public.citext)::text) || ((first_name)::public.citext)::text))::public.citext AS name_fm_computed
    FROM eus.vw_proposal_participants;
 
 

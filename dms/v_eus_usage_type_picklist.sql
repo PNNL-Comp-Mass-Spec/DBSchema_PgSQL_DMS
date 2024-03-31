@@ -3,13 +3,13 @@
 --
 
 CREATE VIEW public.v_eus_usage_type_picklist AS
- SELECT t_eus_usage_type.eus_usage_type_id AS id,
-    t_eus_usage_type.eus_usage_type AS name,
-    t_eus_usage_type.description,
-    t_eus_usage_type.enabled_campaign,
-    t_eus_usage_type.enabled_prep_request
+ SELECT eus_usage_type_id AS id,
+    eus_usage_type AS name,
+    description,
+    enabled_campaign,
+    enabled_prep_request
    FROM public.t_eus_usage_type
-  WHERE ((t_eus_usage_type.eus_usage_type_id > 1) AND (t_eus_usage_type.enabled > 0));
+  WHERE ((eus_usage_type_id > 1) AND (enabled > 0));
 
 
 ALTER VIEW public.v_eus_usage_type_picklist OWNER TO d3l243;

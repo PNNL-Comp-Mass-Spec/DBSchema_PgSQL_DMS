@@ -3,11 +3,11 @@
 --
 
 CREATE VIEW public.v_internal_standards_predigest_picklist AS
- SELECT t_internal_standards.internal_standard_id AS id,
-    t_internal_standards.name,
-    t_internal_standards.description
+ SELECT internal_standard_id AS id,
+    name,
+    description
    FROM public.t_internal_standards
-  WHERE ((t_internal_standards.active OPERATOR(public.=) 'A'::public.citext) AND (t_internal_standards.type OPERATOR(public.=) ANY (ARRAY['Predigest'::public.citext, 'All'::public.citext])) AND (t_internal_standards.internal_standard_id > 0));
+  WHERE ((active OPERATOR(public.=) 'A'::public.citext) AND (type OPERATOR(public.=) ANY (ARRAY['Predigest'::public.citext, 'All'::public.citext])) AND (internal_standard_id > 0));
 
 
 ALTER VIEW public.v_internal_standards_predigest_picklist OWNER TO d3l243;

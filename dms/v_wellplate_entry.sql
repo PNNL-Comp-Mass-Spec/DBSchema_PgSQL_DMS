@@ -3,10 +3,10 @@
 --
 
 CREATE VIEW public.v_wellplate_entry AS
- SELECT t_wellplates.wellplate_id AS id,
-    t_wellplates.wellplate,
-    t_wellplates.description,
-    t_wellplates.created
+ SELECT wellplate_id AS id,
+    wellplate,
+    description,
+    created
    FROM public.t_wellplates;
 
 

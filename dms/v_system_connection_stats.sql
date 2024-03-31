@@ -3,11 +3,11 @@
 --
 
 CREATE VIEW public.v_system_connection_stats AS
- SELECT COALESCE(countq.database, '<All DBs>'::name) AS database,
-    countq.open,
-    countq.active,
-    countq.idle,
-    countq.idle_in_transaction
+ SELECT COALESCE(database, '<All DBs>'::name) AS database,
+    open,
+    active,
+    idle,
+    idle_in_transaction
    FROM ( SELECT filterq.datname AS database,
             count(*) AS open,
             count(*) FILTER (WHERE (filterq.state = 'active'::text)) AS active,

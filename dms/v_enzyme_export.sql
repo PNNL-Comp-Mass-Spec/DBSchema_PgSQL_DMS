@@ -3,17 +3,17 @@
 --
 
 CREATE VIEW public.v_enzyme_export AS
- SELECT t_enzymes.enzyme_id,
-    t_enzymes.enzyme_name,
-    t_enzymes.description,
-    t_enzymes.p1,
-    t_enzymes.p1_exception,
-    t_enzymes.p2,
-    t_enzymes.p2_exception,
-    t_enzymes.cleavage_method,
-    t_enzymes.cleavage_offset,
-    t_enzymes.sequest_enzyme_index,
-    t_enzymes.protein_collection_name
+ SELECT enzyme_id,
+    enzyme_name,
+    description,
+    p1,
+    p1_exception,
+    p2,
+    p2_exception,
+    cleavage_method,
+    cleavage_offset,
+    sequest_enzyme_index,
+    protein_collection_name
    FROM public.t_enzymes;
 
 

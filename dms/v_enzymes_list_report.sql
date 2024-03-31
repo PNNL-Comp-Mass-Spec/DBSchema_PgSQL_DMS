@@ -3,20 +3,20 @@
 --
 
 CREATE VIEW public.v_enzymes_list_report AS
- SELECT t_enzymes.enzyme_id,
-    t_enzymes.enzyme_name,
-    t_enzymes.description,
-    t_enzymes.p1 AS left_cleave_residues,
-    t_enzymes.p1_exception AS left_exception,
-    t_enzymes.p2 AS right_cleave_residues,
-    t_enzymes.p2_exception AS right_exception,
-    t_enzymes.cleavage_method,
+ SELECT enzyme_id,
+    enzyme_name,
+    description,
+    p1 AS left_cleave_residues,
+    p1_exception AS left_exception,
+    p2 AS right_cleave_residues,
+    p2_exception AS right_exception,
+    cleavage_method,
         CASE
-            WHEN (t_enzymes.cleavage_offset = 0) THEN 'Cleave Before'::public.citext
+            WHEN (cleavage_offset = 0) THEN 'Cleave Before'::public.citext
             ELSE 'Cleave After'::public.citext
         END AS cleavage_offset,
-    t_enzymes.protein_collection_name AS protein_collection,
-    t_enzymes.comment
+    protein_collection_name AS protein_collection,
+    comment
    FROM public.t_enzymes;
 
 

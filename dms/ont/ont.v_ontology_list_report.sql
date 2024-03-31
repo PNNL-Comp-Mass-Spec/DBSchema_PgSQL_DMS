@@ -3,15 +3,15 @@
 --
 
 CREATE VIEW ont.v_ontology_list_report AS
- SELECT v_cv_union.source,
-    v_cv_union.term_name,
-    v_cv_union.identifier,
-    v_cv_union.is_leaf,
-    v_cv_union.parent_term_name,
-    v_cv_union.parent_term_id,
-    v_cv_union.grandparent_term_name,
-    v_cv_union.grandparent_term_id,
-    v_cv_union.term_pk
+ SELECT source,
+    term_name,
+    identifier,
+    is_leaf,
+    parent_term_name,
+    parent_term_id,
+    grandparent_term_name,
+    grandparent_term_id,
+    term_pk
    FROM ont.v_cv_union;
 
 

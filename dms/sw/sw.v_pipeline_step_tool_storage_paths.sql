@@ -3,11 +3,11 @@
 --
 
 CREATE VIEW sw.v_pipeline_step_tool_storage_paths AS
- SELECT t_step_tools.step_tool_id,
-    t_step_tools.step_tool,
-    t_step_tools.type,
-    t_step_tools.description,
-    COALESCE(t_step_tools.param_file_storage_path, ''::public.citext) AS param_file_storage_path
+ SELECT step_tool_id,
+    step_tool,
+    type,
+    description,
+    COALESCE(param_file_storage_path, ''::public.citext) AS param_file_storage_path
    FROM sw.t_step_tools;
 
 

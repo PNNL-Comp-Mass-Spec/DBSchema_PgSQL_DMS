@@ -3,14 +3,14 @@
 --
 
 CREATE VIEW public.v_mrm_list_attachment_entry AS
- SELECT t_attachments.attachment_id AS id,
-    t_attachments.attachment_type,
-    t_attachments.attachment_name,
-    t_attachments.attachment_description,
-    t_attachments.owner_username,
-    t_attachments.active,
-    t_attachments.contents,
-    t_attachments.file_name
+ SELECT attachment_id AS id,
+    attachment_type,
+    attachment_name,
+    attachment_description,
+    owner_username,
+    active,
+    contents,
+    file_name
    FROM public.t_attachments;
 
 

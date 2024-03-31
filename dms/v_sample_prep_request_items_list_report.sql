@@ -3,20 +3,20 @@
 --
 
 CREATE VIEW public.v_sample_prep_request_items_list_report AS
- SELECT t_sample_prep_request_items.prep_request_id AS id,
-    t_sample_prep_request_items.item_id,
-    t_sample_prep_request_items.item_name,
-    t_sample_prep_request_items.item_type,
-    t_sample_prep_request_items.status,
-    t_sample_prep_request_items.created,
-    t_sample_prep_request_items.item_added,
+ SELECT prep_request_id AS id,
+    item_id,
+    item_name,
+    item_type,
+    status,
+    created,
+    item_added,
         CASE
-            WHEN (t_sample_prep_request_items.item_type OPERATOR(public.=) 'dataset'::public.citext) THEN t_sample_prep_request_items.item_name
-            WHEN (t_sample_prep_request_items.item_type OPERATOR(public.=) 'experiment'::public.citext) THEN t_sample_prep_request_items.item_name
-            WHEN (t_sample_prep_request_items.item_type OPERATOR(public.=) 'experiment_group'::public.citext) THEN (t_sample_prep_request_items.item_id)::public.citext
-            WHEN (t_sample_prep_request_items.item_type OPERATOR(public.=) 'material_container'::public.citext) THEN t_sample_prep_request_items.item_name
-            WHEN (t_sample_prep_request_items.item_type OPERATOR(public.=) 'prep_lc_run'::public.citext) THEN (t_sample_prep_request_items.item_id)::public.citext
-            WHEN (t_sample_prep_request_items.item_type OPERATOR(public.=) 'requested_run'::public.citext) THEN (t_sample_prep_request_items.item_id)::public.citext
+            WHEN (item_type OPERATOR(public.=) 'dataset'::public.citext) THEN item_name
+            WHEN (item_type OPERATOR(public.=) 'experiment'::public.citext) THEN item_name
+            WHEN (item_type OPERATOR(public.=) 'experiment_group'::public.citext) THEN (item_id)::public.citext
+            WHEN (item_type OPERATOR(public.=) 'material_container'::public.citext) THEN item_name
+            WHEN (item_type OPERATOR(public.=) 'prep_lc_run'::public.citext) THEN (item_id)::public.citext
+            WHEN (item_type OPERATOR(public.=) 'requested_run'::public.citext) THEN (item_id)::public.citext
             ELSE ''::public.citext
         END AS link
    FROM public.t_sample_prep_request_items;

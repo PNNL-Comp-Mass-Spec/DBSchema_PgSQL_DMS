@@ -3,10 +3,10 @@
 --
 
 CREATE VIEW public.v_experiment_date AS
- SELECT t_experiments.experiment,
-    EXTRACT(year FROM t_experiments.created) AS year,
-    EXTRACT(month FROM t_experiments.created) AS month,
-    EXTRACT(day FROM t_experiments.created) AS day
+ SELECT experiment,
+    EXTRACT(year FROM created) AS year,
+    EXTRACT(month FROM created) AS month,
+    EXTRACT(day FROM created) AS day
    FROM public.t_experiments;
 
 

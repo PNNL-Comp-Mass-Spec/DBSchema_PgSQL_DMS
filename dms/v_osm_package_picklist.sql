@@ -3,9 +3,9 @@
 --
 
 CREATE VIEW public.v_osm_package_picklist AS
- SELECT t_osm_package.osm_pkg_id AS id,
-    t_osm_package.osm_package_name AS name,
-    (((((((t_osm_package.osm_pkg_id)::public.citext)::text || (': '::public.citext)::text))::public.citext)::text || (t_osm_package.osm_package_name)::text))::public.citext AS id_with_name
+ SELECT osm_pkg_id AS id,
+    osm_package_name AS name,
+    (((((((osm_pkg_id)::public.citext)::text || (': '::public.citext)::text))::public.citext)::text || (osm_package_name)::text))::public.citext AS id_with_name
    FROM dpkg.t_osm_package;
 
 

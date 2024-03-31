@@ -3,16 +3,16 @@
 --
 
 CREATE VIEW public.v_users_export AS
- SELECT u.user_id AS id,
-    u.username,
-    u.name,
-    u.hid AS hanford_id,
-    u.status,
-    u.email,
-    u.comment,
-    u.created AS created_dms,
-    u.name_with_username,
-    u.active
+ SELECT user_id AS id,
+    username,
+    name,
+    hid AS hanford_id,
+    status,
+    email,
+    comment,
+    created AS created_dms,
+    name_with_username,
+    active
    FROM public.t_users u;
 
 

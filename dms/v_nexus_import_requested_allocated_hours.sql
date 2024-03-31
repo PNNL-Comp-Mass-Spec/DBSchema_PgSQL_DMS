@@ -3,12 +3,12 @@
 --
 
 CREATE VIEW public.v_nexus_import_requested_allocated_hours AS
- SELECT vw_requested_allocated_hours.instrument_id,
-    vw_requested_allocated_hours.eus_display_name,
-    vw_requested_allocated_hours.proposal_id,
-    vw_requested_allocated_hours.requested_hours,
-    vw_requested_allocated_hours.allocated_hours,
-    vw_requested_allocated_hours.fy
+ SELECT instrument_id,
+    eus_display_name,
+    proposal_id,
+    requested_hours,
+    allocated_hours,
+    fy
    FROM eus.vw_requested_allocated_hours;
 
 

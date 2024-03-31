@@ -3,10 +3,10 @@
 --
 
 CREATE VIEW public.v_experiment_stats_list_report AS
- SELECT countq.year,
-    countq.month,
-    countq.experiments,
-    countq.researcher
+ SELECT year,
+    month,
+    experiments,
+    researcher
    FROM ( SELECT EXTRACT(month FROM e.created) AS month,
             EXTRACT(year FROM e.created) AS year,
             count(e.exp_id) AS experiments,
@@ -21,7 +21,7 @@ CREATE VIEW public.v_experiment_stats_list_report AS
            FROM (public.t_experiments e
              JOIN public.t_users u ON ((e.researcher_username OPERATOR(public.=) u.username)))
           GROUP BY (EXTRACT(month FROM e.created)), (EXTRACT(year FROM e.created)), u.name) countq
-  ORDER BY countq.year DESC, countq.month DESC, countq.experiments DESC;
+  ORDER BY year DESC, month DESC, experiments DESC;
 
 
 ALTER VIEW public.v_experiment_stats_list_report OWNER TO d3l243;

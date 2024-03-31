@@ -3,28 +3,28 @@
 --
 
 CREATE VIEW public.v_system_table_activity AS
- SELECT t.schemaname AS schema,
-    t.relname AS table_name,
-    t.seq_scan AS sequential_scans,
-    t.seq_tup_read AS seq_scan_rows_read,
-    t.idx_scan AS index_scans,
-    t.idx_tup_fetch AS index_scan_rows_read,
-    t.n_tup_ins AS rows_inserted,
-    t.n_tup_upd AS rows_updated,
-    t.n_tup_del AS rows_deleted,
-    t.n_ins_since_vacuum AS rows_inserted_since_last_vacuum,
+ SELECT schemaname AS schema,
+    relname AS table_name,
+    seq_scan AS sequential_scans,
+    seq_tup_read AS seq_scan_rows_read,
+    idx_scan AS index_scans,
+    idx_tup_fetch AS index_scan_rows_read,
+    n_tup_ins AS rows_inserted,
+    n_tup_upd AS rows_updated,
+    n_tup_del AS rows_deleted,
+    n_ins_since_vacuum AS rows_inserted_since_last_vacuum,
         CASE
-            WHEN ((NOT (t.last_autovacuum IS NULL)) AND (t.last_vacuum < t.last_autovacuum)) THEN t.last_autovacuum
-            ELSE t.last_vacuum
+            WHEN ((NOT (last_autovacuum IS NULL)) AND (last_vacuum < last_autovacuum)) THEN last_autovacuum
+            ELSE last_vacuum
         END AS last_vacuum,
         CASE
-            WHEN ((NOT (t.last_autoanalyze IS NULL)) AND (t.last_analyze < t.last_autoanalyze)) THEN t.last_autoanalyze
-            ELSE t.last_analyze
+            WHEN ((NOT (last_autoanalyze IS NULL)) AND (last_analyze < last_autoanalyze)) THEN last_autoanalyze
+            ELSE last_analyze
         END AS last_analyze,
-    t.vacuum_count,
-    t.autovacuum_count,
-    t.analyze_count,
-    t.autoanalyze_count
+    vacuum_count,
+    autovacuum_count,
+    analyze_count,
+    autoanalyze_count
    FROM pg_stat_user_tables t;
 
 

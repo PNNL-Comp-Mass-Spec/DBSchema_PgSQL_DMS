@@ -3,32 +3,32 @@
 --
 
 CREATE VIEW sw.v_job_step_processing_stats2 AS
- SELECT dataq.entered,
-    dataq.job,
-    dataq.dataset,
-    dataq.step,
-    dataq.script,
-    dataq.tool,
-    dataq.start,
-    dataq.finish,
-    dataq.runtime_minutes_snapshot,
-    dataq.current_runtime_minutes,
-    dataq.job_progress_snapshot,
-    dataq.current_progress,
-    dataq.runtime_predicted_hours_snapshot,
-    dataq.current_runtime_predicted_hours,
-    dataq.processor,
-    dataq.prog_runner_core_usage,
-    dataq.cpu_load,
-    dataq.actual_cpu_load,
-    dataq.current_state_name,
-    dataq.current_state,
-    dataq.transfer_folder_path,
-    ((((((((dataq.logfolderpath ||
+ SELECT entered,
+    job,
+    dataset,
+    step,
+    script,
+    tool,
+    start,
+    finish,
+    runtime_minutes_snapshot,
+    current_runtime_minutes,
+    job_progress_snapshot,
+    current_progress,
+    runtime_predicted_hours_snapshot,
+    current_runtime_predicted_hours,
+    processor,
+    prog_runner_core_usage,
+    cpu_load,
+    actual_cpu_load,
+    current_state_name,
+    current_state,
+    transfer_folder_path,
+    ((((((((logfolderpath ||
         CASE
-            WHEN (EXTRACT(year FROM CURRENT_TIMESTAMP) <> EXTRACT(year FROM dataq.start)) THEN (dataq.theyear || '\'::text)
+            WHEN (EXTRACT(year FROM CURRENT_TIMESTAMP) <> EXTRACT(year FROM start)) THEN (theyear || '\'::text)
             ELSE ''::text
-        END) || 'AnalysisMgr_'::text) || dataq.theyear) || '-'::text) || dataq.themonth) || '-'::text) || dataq.theday) || '.txt'::text) AS log_file_path
+        END) || 'AnalysisMgr_'::text) || theyear) || '-'::text) || themonth) || '-'::text) || theday) || '.txt'::text) AS log_file_path
    FROM ( SELECT jsps.entered,
             jsps.job,
             j.dataset,

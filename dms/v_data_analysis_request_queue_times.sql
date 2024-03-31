@@ -3,16 +3,16 @@
 --
 
 CREATE VIEW public.v_data_analysis_request_queue_times AS
- SELECT outerq.request_id,
-    outerq.created,
-    outerq.state,
-    outerq.closed,
+ SELECT request_id,
+    created,
+    state,
+    closed,
         CASE
-            WHEN (outerq.state = 0) THEN NULL::numeric
-            WHEN (outerq.state = 4) THEN round((EXTRACT(epoch FROM (outerq.closed - outerq.created)) / (86400)::numeric))
-            ELSE round((EXTRACT(epoch FROM (COALESCE((outerq.closed)::timestamp with time zone, CURRENT_TIMESTAMP) - (outerq.created)::timestamp with time zone)) / (86400)::numeric))
+            WHEN (state = 0) THEN NULL::numeric
+            WHEN (state = 4) THEN round((EXTRACT(epoch FROM (closed - created)) / (86400)::numeric))
+            ELSE round((EXTRACT(epoch FROM (COALESCE((closed)::timestamp with time zone, CURRENT_TIMESTAMP) - (created)::timestamp with time zone)) / (86400)::numeric))
         END AS days_in_queue,
-    round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (outerq.statefirstentered)::timestamp with time zone)) / (86400)::numeric)) AS days_in_state
+    round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (statefirstentered)::timestamp with time zone)) / (86400)::numeric)) AS days_in_state
    FROM ( SELECT r.request_id,
             r.created,
             r.state,

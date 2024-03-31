@@ -3,16 +3,16 @@
 --
 
 CREATE VIEW sw.v_pipeline_step_tools_entry AS
- SELECT t_step_tools.step_tool_id AS id,
-    t_step_tools.step_tool AS name,
-    t_step_tools.type,
-    t_step_tools.description,
-    t_step_tools.shared_result_version,
-    t_step_tools.filter_version,
-    t_step_tools.cpu_load,
-    t_step_tools.memory_usage_mb,
-    t_step_tools.parameter_template,
-    t_step_tools.param_file_storage_path
+ SELECT step_tool_id AS id,
+    step_tool AS name,
+    type,
+    description,
+    shared_result_version,
+    filter_version,
+    cpu_load,
+    memory_usage_mb,
+    parameter_template,
+    param_file_storage_path
    FROM sw.t_step_tools;
 
 
