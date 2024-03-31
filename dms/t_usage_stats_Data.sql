@@ -60,9 +60,6 @@ store_qcart_results	2024-03-04 15:26:06.174082	1
 UpdateRequestedRunFactors	2023-02-26 12:57:42	8687
 update_dataset_dispositions	2024-03-02 10:44:41	2076
 update_dataset_dispositions_by_name	2024-03-02 10:44:41	375
-update_eus_proposals_from_eus_imports	2024-03-29 06:15:47.114743	380
-update_eus_users_from_eus_imports	2024-03-29 06:16:07.801985	383
-update_eus_instruments_from_eus_imports	2024-03-29 06:16:40.227248	382
 update_instrument_group_allowed_dataset_type	2024-02-05 11:14:15	55
 update_organism_list_for_biomaterial	2023-09-25 10:17:19	419
 update_requested_run_assignments	2024-02-28 15:07:08	2715
@@ -105,6 +102,9 @@ update_cart_parameters	2024-03-12 17:09:32.299809	127523
 update_requested_run_batch_parameters	2024-03-06 19:26:44.475492	528
 update_requested_run_factors	2024-03-06 19:26:44.475492	703
 update_requested_run_blocking_and_factors	2024-03-06 19:26:44.475492	608
+update_eus_proposals_from_eus_imports	2024-03-31 06:15:26.977275	381
+update_eus_users_from_eus_imports	2024-03-31 06:15:47.795887	384
+update_eus_instruments_from_eus_imports	2024-03-31 06:16:19.931974	383
 \.
 
 
