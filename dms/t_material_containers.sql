@@ -10,8 +10,8 @@ CREATE TABLE public.t_material_containers (
     rfid_hex_id public.citext GENERATED ALWAYS AS (
 CASE
     WHEN (container OPERATOR(public.~~) 'MC-%'::public.citext) THEN "left"(upper((encode((container)::bytea, 'hex'::text) || '000000000000000000000000'::text)), 24)
-    ELSE "left"(upper((encode('\x4d432d303030303030'::bytea, 'hex'::text) || '000000000000000000000000'::text)), 24)
-END) STORED,
+    ELSE '4D432D303030303030000000'::text
+END) STORED NOT NULL,
     location_id integer NOT NULL,
     campaign_id integer,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -31,6 +31,12 @@ END) STORED
 
 
 ALTER TABLE public.t_material_containers OWNER TO d3l243;
+
+--
+-- Name: TABLE t_material_containers; Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON TABLE public.t_material_containers IS 'The else clause value of "4D432D303030303030000000" is the text obtained from the following formula: left(upper((encode(''\x4d432d303030303030''::bytea, ''hex'') || ''000000000000000000000000'')), 24)';
 
 --
 -- Name: t_material_containers_container_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
