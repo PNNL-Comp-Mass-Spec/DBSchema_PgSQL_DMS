@@ -112,4 +112,5 @@ ALTER TABLE ONLY timetable.chain
 
 GRANT INSERT,DELETE,TRUNCATE,UPDATE ON TABLE timetable.chain TO pgdms;
 GRANT SELECT ON TABLE timetable.chain TO readaccess;
+GRANT SELECT ON TABLE timetable.chain TO writeaccess;
 

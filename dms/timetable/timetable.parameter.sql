@@ -38,4 +38,5 @@ ALTER TABLE ONLY timetable.parameter
 
 GRANT INSERT,DELETE,TRUNCATE,UPDATE ON TABLE timetable.parameter TO pgdms;
 GRANT SELECT ON TABLE timetable.parameter TO readaccess;
+GRANT SELECT ON TABLE timetable.parameter TO writeaccess;
 

@@ -22,3 +22,10 @@ CREATE VIEW timetable.v_chain_start_times AS
 
 ALTER VIEW timetable.v_chain_start_times OWNER TO d3l243;
 
+--
+-- Name: TABLE v_chain_start_times; Type: ACL; Schema: timetable; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE timetable.v_chain_start_times TO writeaccess;
+GRANT INSERT,DELETE,TRUNCATE,UPDATE ON TABLE timetable.v_chain_start_times TO pgdms;
+

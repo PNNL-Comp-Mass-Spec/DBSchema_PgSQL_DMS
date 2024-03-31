@@ -42,4 +42,5 @@ CREATE UNIQUE INDEX ix_t_cron_interval_cron_interval ON timetable.t_cron_interva
 --
 
 GRANT SELECT ON TABLE timetable.t_cron_interval TO readaccess;
+GRANT SELECT ON TABLE timetable.t_cron_interval TO writeaccess;
 

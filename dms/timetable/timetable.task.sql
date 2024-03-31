@@ -113,4 +113,5 @@ ALTER TABLE ONLY timetable.task
 
 GRANT INSERT,DELETE,TRUNCATE,UPDATE ON TABLE timetable.task TO pgdms;
 GRANT SELECT ON TABLE timetable.task TO readaccess;
+GRANT SELECT ON TABLE timetable.task TO writeaccess;
 
