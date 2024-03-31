@@ -53,13 +53,19 @@ BEGIN
     -- (by default, PostgreSQL sorts underscores after letters)
     --
     -- Use the following to create the 'general_ci_ai' custom collation
+    --   CREATE COLLATION public.general_ci_ai (
+    --      provider = icu,
+    --      deterministic = false,
+    --      locale = 'und-u-ks-level1');        -- This means to ignore case and ignore accents
+
+    --   The following collation was used with PostgreSQL 11, but it is superseded by 'und-u-ks-level1'
+    --
     --   CREATE COLLATION general_ci_ai (
     --      PROVIDER = icu,
     --      DETERMINISTIC = FALSE,
-    --      LOCALE = '@ColStrength=primary'     -- This means to ignore case and ignore accents
+    --      LOCALE = '@ColStrength=primary');   -- This means to ignore case and ignore accents
     --                                          -- To ignore accents but consider case, use
     --                                          -- 'LOCALE = 'und@colStrength=primary;colCaseLevel=yes'
-    --   );
     --
     -- See also:
     --   https://dba.stackexchange.com/a/313982/122858
