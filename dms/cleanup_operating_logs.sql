@@ -25,10 +25,10 @@ CREATE OR REPLACE PROCEDURE public.cleanup_operating_logs(IN _logretentioninterv
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          06/09/2022 mem - Update default log retention interval
 **          08/01/2023 mem - Ported to PostgreSQL
+**          03/30/2024 mem - Remove unused variable
 **
 *****************************************************/
 DECLARE
-    _callingProcName text;
     _currentLocation text := 'Start';
 
     _sqlState text;
