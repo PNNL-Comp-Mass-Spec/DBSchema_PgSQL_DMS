@@ -65,6 +65,7 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 52	31	10	Sleep 10 seconds	BUILTIN	Sleep	\N	\N	f	f	0
 53	31	20	Delete orphaned capture jobs	SQL	CALL cap.delete_orphaned_tasks (_infoOnly => false);	\N	\N	f	t	0
 90	52	20	Update cached dataset folder paths, all datasets	SQL	CALL update_cached_dataset_folder_paths (_processingMode => 2);	\N	\N	f	t	0
+160	89	10	Delete timetable log entries	SQL	CALL cleanup_timetable_logs (_infoOnly => false);	\N	\N	f	t	0
 48	28	10	Clear data package manager errors	SQL	DELETE FROM dpkg.T_Log_Entries\r\nWHERE (message LIKE '%has an existing metadata file between 2 and 6.5 days old%' OR\r\n   message LIKE '%has not been validated in the archive after 5 days; %' OR\r\n   message LIKE '%is not available in MyEMSL after 24 hours; see %' OR\r\n   message LIKE '%was previously uploaded to MyEMSL, yet Simple Search did not return any files for this dataset%Skipping this data package %')\r\n    AND (type = 'error');	\N	\N	f	t	0
 74	45	20	Set external dataset purge priority	SQL	CALL set_external_dataset_purge_priority (_infoOnly => false);	\N	\N	f	t	0
 51	30	10	Delete old historic DMS DB logs	SQL	CALL logdms.delete_old_events_and_historic_logs (_infoOnly => false);	\N	\N	f	t	0
@@ -175,7 +176,7 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 -- Name: task_task_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.task_task_id_seq', 159, true);
+SELECT pg_catalog.setval('timetable.task_task_id_seq', 160, true);
 
 
 --
