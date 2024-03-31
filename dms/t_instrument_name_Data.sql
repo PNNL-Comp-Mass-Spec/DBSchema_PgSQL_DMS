@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.6
--- Dumped by pg_dump version 16.1
+-- Dumped from database version 16.2
+-- Dumped by pg_dump version 16.2
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -80,6 +80,7 @@ COPY public.t_instrument_name (instrument_id, instrument, instrument_class, inst
 62	VOrbiETD04	LTQ_FT	VelosOrbi	265	3859	secfso	Inactive	EMSL 1526	Velos Pro with an LTQ Orbitrap Velos (supports ETD)		Production	0	100	1	11	2010-01-16 00:00:00	1	\\\\proto-4\\	F:\\	VOrbiETD04\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/VOrbiETD04	\\\\agate.emsl.pnl.gov\\dmsarch\\VOrbiETD04	0	0	1	3	1
 63	Orbi_FB1	LTQ_FT	Orbitrap	267	2072	secfso	Inactive	331 Building, Rm 315	OBP sponsored Fungal Biotech Workstation		Research	0	0	1	11	2010-05-01 00:00:00	1	\\\\proto-5\\	I:\\	Orbi_FB1\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/Orbi_FB1	\\\\agate.emsl.pnl.gov\\dmsarch\\Orbi_FB1	0	0	1	3	1
 64	FHCRC_Orb1	LTQ_FT	Orbitrap	1142	276	fso	Inactive	FHCRC (Seattle, WA)	Fred Hutchinson Cancer Research Center Data	(Katze)	Offsite	0	0	1	11	2010-06-09 00:00:00	0	\N	\N	\N		\N	\N	\N	0	0	1	3	1
+227	Precious	Waters_Acquity_LC	Waters_Acquity_LC	4578	4712	secfso	Active	EMSL 1142	Waters Acquity M-Class LC		Production	0	0	1	11	2023-11-02 17:26:15	1	\\\\proto-5\\	H:\\	Precious\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/Precious	\\\\agate.emsl.pnl.gov\\dmsarch\\Precious	0	0	1	3	1
 65	12T_FTICR_B	BrukerFT_BAF	Bruker_FTMS	1397	4111	secfso	Inactive	EMSL 1621	12T FTICR with updated workstation; set to inactive in May 2022 when the 15T instrument (with MALDI and paracell analyzer) was moved to the 12T magnet due to 15T magnet problems and helium rationing; see 12T_FTICR_P & 12T_FTICR_P_Imaging		Production	0	100	1	11	2010-07-09 00:00:00	1	\\\\proto-9\\	G:\\	12T_FTICR_B\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/12T_FTICR_B	\\\\agate.emsl.pnl.gov\\dmsarch\\12T_FTICR_B	0	0	1	3	1
 66	BrukerTOF_01	BrukerMALDI_Spot	MALDI-TOF	295	1091	secfso	Inactive	EMSL 1621	Bruker Ultraflextreme MALDI TOFTOF		Research	0	0	1	11	2010-08-02 00:00:00	1	\\\\proto-5\\	F:\\	BrukerTOF_01\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/BrukerTOF_01	\\\\agate.emsl.pnl.gov\\dmsarch\\BrukerTOF_01	0	0	1	3	1
 67	External_LTQ	Finnigan_Ion_Trap	LTQ	2539	2538	fso	Inactive	Offsite	LTQ data acquired outside PNNL		Offsite	0	0	1	11	2010-08-16 00:00:00	1	\\\\proto-5\\	I:\\	External_LTQ\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/External_LTQ	\\\\agate.emsl.pnl.gov\\dmsarch\\External_LTQ	0	0	1	3	1
@@ -245,7 +246,6 @@ COPY public.t_instrument_name (instrument_id, instrument, instrument_class, inst
 224	Sauron	Waters_Acquity_LC	Waters_Acquity_LC	4575	4709	secfso	Active	EMSL 1521	Waters nanoAcquity LC		Production	0	100	1	11	2023-11-02 17:24:04	1	\\\\proto-5\\	H:\\	Sauron\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/Sauron	\\\\agate.emsl.pnl.gov\\dmsarch\\Sauron	0	0	1	3	1
 225	Arwen	Waters_Acquity_LC	Waters_Acquity_LC	4576	4710	secfso	Active	EMSL 1314	Waters Acquity M-Class LC		Production	0	67	1	11	2023-11-02 17:25:10	1	\\\\proto-5\\	H:\\	Arwen\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/Arwen	\\\\agate.emsl.pnl.gov\\dmsarch\\Arwen	0	0	1	3	1
 226	Balzac	Waters_Acquity_LC	Waters_Acquity_LC	4577	4711	secfso	Active	EMSL 1142	Waters Acquity M-Class LC		Production	0	0	1	11	2023-11-02 17:25:42	1	\\\\proto-5\\	H:\\	Balzac\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/Balzac	\\\\agate.emsl.pnl.gov\\dmsarch\\Balzac	0	0	1	3	1
-227	Precious	Waters_Acquity_LC	Waters_Acquity_LC	4578	4712	secfso	Active	EMSL 1142	Waters Acquity M-Class LC		Production	0	0	1	11	2023-11-02 17:26:15	1	\\\\proto-5\\	H:\\	Precious\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/Precious	\\\\agate.emsl.pnl.gov\\dmsarch\\Precious	0	0	1	3	1
 228	Rage	Waters_Acquity_LC	Waters_Acquity_LC	4579	4713	secfso	Active	EMSL 1142	Waters Acquity M-Class LC		Production	0	0	1	11	2023-11-02 17:26:37	1	\\\\proto-5\\	H:\\	Rage\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/Rage	\\\\agate.emsl.pnl.gov\\dmsarch\\Rage	0	0	1	3	1
 229	Lola	Waters_Acquity_LC	Waters_Acquity_LC	4580	4714	secfso	Active	EMSL 1521	Waters Acquity H-Class LC		Production	0	0	1	11	2023-11-02 17:27:37	1	\\\\proto-5\\	H:\\	Lola\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/Lola	\\\\agate.emsl.pnl.gov\\dmsarch\\Lola	0	0	1	3	1
 230	Bilbo	Waters_Acquity_LC	Waters_Acquity_LC	4581	4715	secfso	Active	EMSL 1526	Waters nanoAcquity LC		Production	0	0	1	11	2023-11-03 10:17:43	1	\\\\proto-5\\	H:\\	Bilbo\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/Bilbo	\\\\agate.emsl.pnl.gov\\dmsarch\\Bilbo	0	0	1	3	1

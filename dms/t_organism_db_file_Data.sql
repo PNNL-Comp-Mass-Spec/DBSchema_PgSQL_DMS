@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.6
--- Dumped by pg_dump version 16.1
+-- Dumped from database version 16.2
+-- Dumped by pg_dump version 16.2
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -2068,6 +2068,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 2269	S_Glen_Falls_metagenome_deep_JGI1001461_TryPigBov_2017-05-18.fasta	1561	South Glen Falls, NY, metagenome from deep core of contaminated Hudson River site, combined with common contaminants	1	17527	4489572	1	6687	2017-05-18 14:52:00
 2270	S_Glen_Falls_metagenome_mid_JGI1001464_TrypPigBov_2017-05-18.fasta	1561	South Glen Falls, NY, metagenome from mid level core of contaminated Hudson River site, combined with common contaminants	1	211001	423310192	1	683855	2017-05-18 14:57:00
 2271	S_Glen_Falls_metagenome_shallow_JGI1001467_TryPigBov_2017-05-18.fasta	1561	South Glen Falls, NY, metagenome from shallow level core of contaminated Hudson River site, combined with common contaminants	1	2282242	440622083	1	722378	2017-05-18 15:00:00
+2426	S_Glen_Falls_metagenome_deep_shallow_TrypPigBov_2017-05-31_25x_20.fasta	1561	Auto-created	0	48731	12014272	1	14425	2017-05-31 17:55:00
 2273	S_Glen_Falls_metagenome_upstream_JGI1001470_TrypPigBov_2017-05-18.fasta	1561	South Glen Falls, NY, metagenome from uncontaminated upstream Hudson Riversite, combined with common contaminants	1	2945631	570185689	1	947024	2017-05-18 15:06:00
 2274	S_Glen_Falls_metagenome_deep_JGI1001461_TryPigBov_2017-05-18_25x_01.fasta	1561	Auto-created	0	652	179100	1	259	2017-05-18 15:14:00
 2275	S_Glen_Falls_metagenome_deep_JGI1001461_TryPigBov_2017-05-18_25x_02.fasta	1561	Auto-created	0	691	179596	1	264	2017-05-18 15:14:00
@@ -2221,7 +2222,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 2423	S_Glen_Falls_metagenome_deep_shallow_TrypPigBov_2017-05-31_25x_17.fasta	1561	Auto-created	0	48829	12015453	1	14432	2017-05-31 17:55:00
 2424	S_Glen_Falls_metagenome_deep_shallow_TrypPigBov_2017-05-31_25x_18.fasta	1561	Auto-created	0	49203	12015296	1	14450	2017-05-31 17:55:00
 2425	S_Glen_Falls_metagenome_deep_shallow_TrypPigBov_2017-05-31_25x_19.fasta	1561	Auto-created	0	48719	12014905	1	14426	2017-05-31 17:55:00
-2426	S_Glen_Falls_metagenome_deep_shallow_TrypPigBov_2017-05-31_25x_20.fasta	1561	Auto-created	0	48731	12014272	1	14425	2017-05-31 17:55:00
 2427	S_Glen_Falls_metagenome_deep_shallow_TrypPigBov_2017-05-31_25x_21.fasta	1561	Auto-created	0	48863	12014790	1	14432	2017-05-31 17:55:00
 2428	S_Glen_Falls_metagenome_deep_shallow_TrypPigBov_2017-05-31_25x_22.fasta	1561	Auto-created	0	48608	12014744	1	14420	2017-05-31 17:55:00
 2429	S_Glen_Falls_metagenome_deep_shallow_TrypPigBov_2017-05-31_25x_23.fasta	1561	Auto-created	0	48979	12014861	1	14438	2017-05-31 17:55:00
@@ -3585,6 +3585,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 3808	H4018_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
 3809	H4019_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
 3810	H4020_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
+4316	M2028_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_4.fasta	1596	Auto-created	0	283242	61316551	1	76081	2018-09-06 02:40:00
 3811	H4022_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
 3812	H4023_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
 3813	H4024_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
@@ -4086,7 +4087,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 4313	M2028_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_1.fasta	1596	Auto-created	0	282991	61316096	1	76079	2018-09-06 02:40:00
 4314	M2028_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_2.fasta	1596	Auto-created	0	283175	61316530	1	76080	2018-09-06 02:40:00
 4315	M2028_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_3.fasta	1596	Auto-created	0	283437	61317203	1	76082	2018-09-06 02:40:00
-4316	M2028_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_4.fasta	1596	Auto-created	0	283242	61316551	1	76081	2018-09-06 02:40:00
 4317	M2028_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_5.fasta	1596	Auto-created	0	283997	61319283	1	76120	2018-09-06 02:40:00
 4318	M2034_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_1.fasta	1596	Auto-created	0	311948	65133463	1	81531	2018-09-06 02:58:00
 4319	M2034_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_2.fasta	1596	Auto-created	0	311557	65133396	1	81522	2018-09-06 02:58:00
@@ -5076,6 +5076,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 5306	BrdU_F1.2B_project407787_GraSo_3300000443_10802.assembled_prodigal_prot_oneline_15x_13.fasta	16	Auto-created	0	360064	22851397	1	65508	2019-12-14 14:54:00
 5307	BrdU_F1.2B_project407787_GraSo_3300000443_10802.assembled_prodigal_prot_oneline_15x_14.fasta	16	Auto-created	0	359933	22851375	1	65493	2019-12-14 14:54:00
 5308	BrdU_F1.2B_project407787_GraSo_3300000443_10802.assembled_prodigal_prot_oneline_15x_15.fasta	16	Auto-created	0	359984	22851365	1	65499	2019-12-14 14:54:00
+7635	Blodgett_Soil_Metagenomes_Plot1_TrypPigBov_2023-05-11_25x_02.fasta	1675	Auto-created	0	943905	209055581	1	322680	2023-05-15 13:46:00
 5309	AcetateAmended_BrdU_F2.1B_project407786_GraSo_3300000561_10803.assembled_prodigal_prot_oneline_15x_01.fasta	16	Auto-created	0	224743	12943990	1	39543	2019-12-14 16:54:00
 5310	AcetateAmended_BrdU_F2.1B_project407786_GraSo_3300000561_10803.assembled_prodigal_prot_oneline_15x_02.fasta	16	Auto-created	0	224904	12944048	1	39560	2019-12-14 16:54:00
 5311	AcetateAmended_BrdU_F2.1B_project407786_GraSo_3300000561_10803.assembled_prodigal_prot_oneline_15x_03.fasta	16	Auto-created	0	224853	12944055	1	39553	2019-12-14 16:54:00
@@ -5117,6 +5118,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 5346	EMSL_49989_Bhatnager_Exp2NN3_JGI_3300032421_TryPigBov_2020-01-29.fasta	1670	https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=NN3metagenome_2; 3300032421.faa combined with 3300032421.gene_product.txt; 315 duplicates removed	0	2411418	312091669	1	463217	2020-01-30 14:37:00
 5347	EMSL_49989_Bhatnager_Exp2YC_JGI_3300033475_TryPigBov_2020-01-29.fasta	1670	https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=YCmetagenome_2; 3300033475.faa combined with 3300033475.gene_product.txt; 23,393 duplicates removed	0	4894331	851849945	1	1.177e+06	2020-01-30 14:38:00
 5348	EMSL_49989_Bhatnager_Exp2YN3_JGI_3300031716_TryPigBov_2020-01-29.fasta	1670	https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=YN3metagenome_2; 3300031716.faa combined with 3300031716.gene_product.txt; 2,594 duplicates removed	0	10346068	1320100584	1	1.954284e+06	2020-01-30 14:39:00
+7632	Blodgett_Soil_Metagenomes_Plot3_TrypPigBov_2023-05-11.fasta	1675	Blodgett Forest Research Station soil metagenomes, plot 3, sequenced as LBNL and JGI, provided by Ulas Karaoz (ukaraoz@lbl.gov)	1	23564496	5206557808	1	8.077433e+06	2023-05-12 17:55:00
 5449	EMSL_49989_Bhatnager_Suicot1_Exp1NC_JGI_3300033412_TryPigBov_2020-02-06.fasta	1670	https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=Suicot1 Suicot1_GeneCatalog_proteins_20171209.aa.fasta combined with Suicot1_secondary_alleles_proteins_20171209.aa.fasta 1378 duplicates removed, https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=NCmetagenome_2; 3300033412.faa combined with 3300033412.gene_product.txt; 14,938 duplicates removed\r\n	1	4800204	839417168	1	1.156199e+06	2020-02-06 08:25:00
 5450	EMSL_49989_Bhatnager_Suicot1_Exp1NN3_JGI_3300032421_TryPigBov_2020-02-06.fasta	1670	https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=Suicot1 Suicot1_GeneCatalog_proteins_20171209.aa.fasta combined with Suicot1_secondary_alleles_proteins_20171209.aa.fasta 1378 duplicates removed, https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=NN3metagenome_2; 3300032421.faa combined with 3300032421.gene_product.txt; 315 duplicates removed\r\n	1	2435840	321750544	1	475508	2020-02-06 08:36:00
 5451	EMSL_49989_Bhatnager_Suicot_Exp1YC_JGI_3300033475_TryPigBov_2020-02-06.fasta	1670	https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=Suicot1 Suicot1_GeneCatalog_proteins_20171209.aa.fasta combined with Suicot1_secondary_alleles_proteins_20171209.aa.fasta 1378 duplicates removed, https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=YCmetagenome_2; 3300033475.faa combined with 3300033475.gene_product.txt; 23,393 duplicates removed\r\n	1	4918753	861508820	1	1.18929e+06	2020-02-06 08:48:00
@@ -5550,6 +5552,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 5881	C2-1B_ga0395857_TrypPigBov_2020-07-01.fasta	1632	https://genome.jgi.doe.gov/portal/C21Bmetagenome_FD/C21Bmetagenome_FD.download.html; 27 duplicates removed	1	458003	43904138	1	99821	2020-07-01 21:24:00
 5882	C2-3A_ga0395858_TrypPigBov_2020-07-01.fasta	1632	https://genome.jgi.doe.gov/portal/C23Ametagenome_FD/C23Ametagenome_FD.download.html; 12 duplicates removed	1	257679	24098452	1	55595	2020-07-01 21:24:00
 5883	C2-3B_ga0395859_TrypPigBov_2020-07-01.fasta	1632	https://genome.jgi.doe.gov/portal/C23Bmetagenome_FD/C23Bmetagenome_FD.download.html; 5 duplicates removed	1	161670	14635366	1	34393	2020-07-01 21:24:00
+7636	Blodgett_Soil_Metagenomes_Plot1_TrypPigBov_2023-05-11_25x_03.fasta	1675	Auto-created	0	943029	209055549	1	322592	2023-05-15 13:46:00
 5884	C2-3C_ga0395860_TrypPigBov_2020-07-01.fasta	1632	https://genome.jgi.doe.gov/portal/C23Cmetagenome_FD/C23Cmetagenome_FD.download.html; 3 duplicates removed	1	167540	15087012	1	35531	2020-07-01 21:24:00
 5885	C2-7A_ga0395861_TrypPigBov_2020-07-01.fasta	1632	https://genome.jgi.doe.gov/portal/C27Ametagenome_FD/C27Ametagenome_FD.download.html; 28 duplicates removed	1	324596	30725189	1	70420	2020-07-01 21:24:00
 5886	C2-7B_ga0395862_TrypPigBov_2020-07-01.fasta	1632	https://genome.jgi.doe.gov/portal/C27Bmetagenome_FD/C27Bmetagenome_FD.download.html; 19 duplicates removed	1	284385	27253881	1	62375	2020-07-01 21:24:00
@@ -5785,6 +5788,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 6113	C6-7_combined_proteins_TrypPigBov_2020-07-13.fasta	1632	Created from C6-7A_ga0395828,C6-7B_ga0395829, and C6-7C_ga0395830 metagenomes combined with TrypPigBov, 2,864 duplicates collapsed	1	1368219	132177091	1	100000	2020-07-13 16:34:00
 6114	C6-9_combined_proteins_TrypPigBov_2020-07-13.fasta	1632	Created from C6-9A_ga0395831,C6-9B_ga0395832, and C6-9C_ga0395833 metagenomes combined with TrypPigBov, 8,826 duplicates collapsed	1	2713626	2713626	1	100000	2020-07-13 16:36:00
 6115	C7-1_combined_proteins_TrypPigBov_2020-07-13.fasta	1632	Created from C7-1B_ga0395834 and C7-1C_ga0395835 metagenomes combined with TrypPigBov, 23,249 duplicates collapsed	1	5083656	525802716	1	100000	2020-07-13 16:38:00
+7637	Blodgett_Soil_Metagenomes_Plot1_TrypPigBov_2023-05-11_25x_04.fasta	1675	Auto-created	0	943847	209055683	1	322709	2023-05-15 13:46:00
 6116	C7-3_combined_proteins_TrypPigBov_2020-07-13.fasta	1632	Created from C7-3A_ga0395836,C7-3B_ga0395837, and C7-3C_ga0395838 metagenomes combined with TrypPigBov, 15,237 duplicates collapsed	1	3452126	355223239	1	100000	2020-07-13 16:39:00
 6117	C7-7_combined_proteins_TrypPigBov_2020-07-13.fasta	1632	Created from C7-7A_ga0395839,C7-7B_ga0395840, and C7-7C_ga0395841 metagenomes combined with TrypPigBov, 26,595 duplicates collapsed	1	5219769	547154707	1	100000	2020-07-13 16:41:00
 6118	C7-9_combined_proteins_TrypPigBov_2020-07-13.fasta	1632	Created from C7-9A_ga0395842,C7-9B_ga0395843, and C7-9C_ga0395844 metagenomes combined with TrypPigBov, 7,910 duplicates collapsed	1	2218371	221129727	1	100000	2020-07-13 16:43:00
@@ -7186,6 +7190,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 7535	Proteobacteria_UniProt_2022-03-02.fasta	1748	https://www.uniprot.org/uniprot/?query=proteobacteria+AND+reviewed%3Ayes&sort=score	1	149964	49033779	1	71369	2022-05-02 14:09:00
 7536	Wrighton_metagenomes_all_ColumbiaRiver_assemblies_ge2point5kb_clean_TrypPigBov_2022-05-02.fasta	1482	Rodriguez Ramos,Josue <Josue.Rodriguez_Ramos@colostate.edu>;SBR proteome to unbinned scaffolds? We have concatenated all the assembled scaffolds >2.5k	1	1594717	407685857	1	466183	2022-05-02 16:38:00
 7537	FICUS_Selbman_2_Ga0500038_metagenome_TrypPigBov_2022-05-09.fasta	1704	Associated with the Linnaeus Terrace samples for EMSL 51548; https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=FICUS_Selbmann_2_11_FD; no duplicates to collapse	1	1443532	195553670	1	420542	2022-05-09 15:52:00
+7633	Blodgett_Soil_Metagenomes_PlotX_TrypPigBov_2023-05-11.fasta	1675	Blodgett Forest Research Station soil metagenomes, plot 1,2,3, sequenced as LBNL and JGI, provided by Ulas Karaoz (ukaraoz@lbl.gov)	1	4040413	937957193	1	1.586044e+06	2023-05-12 17:55:00
 7538	FICUS_Selbman_37_Ga0500073_metagenome_TrypPigBov_2022-05-09.fasta	1704	Associated with the Mt New Zealand samples for EMSL 51548; https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=FICUS_Selbmann_3_12; no duplicates to collapse	1	868316	128351337	1	266887	2022-05-09 15:54:00
 7539	Jepson_Prairie_Metagenome_TrypPigBov_2022-05-10.fasta	1710	Proteins predicted (Prodigal) from Jepson Prairie Preserve metagenome provided by Christian Santos Medellin (cmsantosm@ucdavis.edu)	1	8229153	2216382858	1	3.28044e+06	2022-05-10 12:23:00
 7540	Jepson_Prairie_Virome_TrypPigBov_2022-05-10.fasta	1710	Proteins predicted (Prodigal) from Jepson Prairie Preserve virome provided by Christian Santos Medellin (cmsantosm@ucdavis.edu)	1	728434	149261212	1	248563	2022-05-10 12:23:00
@@ -7234,6 +7239,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 7583	Rhodococcus_ALL_uniprot_taxid1827_TryPigBov_2022-01-11_5x_4.fasta	1706	Auto-created	0	179244	58005876	1	80626	2022-06-10 09:42:00
 7584	Rhodococcus_ALL_uniprot_taxid1827_TryPigBov_2022-01-11_5x_5.fasta	1706	Auto-created	0	178994	58005608	1	80592	2022-06-10 09:42:00
 7585	YNP_MS_Metagenome_TrypPigBov_2022-06-21.fasta	1579	Metagenome from dominant species of Mushroom and Octopus Springs of YNP; compiled as requested by David Ward (umbdw@montana.edu); same proteins as YNP_MS_Metagenome_TrypPigBov_2022-06-03.fasta but with new protein names	1	67169	21347110	1	29566	2022-06-21 20:46:00
+7634	Blodgett_Soil_Metagenomes_Plot1_TrypPigBov_2023-05-11_25x_01.fasta	1675	Auto-created	0	943749	209055784	1	322685	2023-05-15 13:46:00
 7586	H_sapiens_Uniprot_Human_Mastitis_Metagenome_TrypPigBov_2022-07-05.fasta	1691	H_sapiens_UniProt_SPROT_2021-06-20 plus 28 microbe species; curated by Ryan Pace, selecting proteins with = 1% relative abundance and/or = 25% prevalence and/or = 25% max relative abundance	1	518335	171700323	1	239807	2022-07-05 15:38:00
 7587	FICUS_Selbman_2_Ga0500038_metagenome_TrypPigBov_2022-05-09_5x_1.fasta	1704	Auto-created	0	289218	39110561	1	82232	2022-08-15 17:20:00
 7588	FICUS_Selbman_2_Ga0500038_metagenome_TrypPigBov_2022-05-09_5x_2.fasta	1704	Auto-created	0	288493	39110650	1	82064	2022-08-15 17:20:00
@@ -7280,12 +7286,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 7629	H_sapiens_microglia_isoseq_ORFs_2023-05-10.fasta	8	Homo sapiens microglia stringtie2 isoseq ORFs, from Raj Roussos lab	1	102825	46856809	1	49274	2023-05-10 13:35:00
 7630	Blodgett_Soil_Metagenomes_Plot1_TrypPigBov_2023-05-11.fasta	1675	Blodgett Forest Research Station soil metagenomes, plot 1, sequenced as LBNL and JGI, provided by Ulas Karaoz (ukaraoz@lbl.gov)	1	23597255	5226395833	1	8.060681e+06	2023-05-12 17:55:00
 7631	Blodgett_Soil_Metagenomes_Plot2_TrypPigBov_2023-05-11.fasta	1675	Blodgett Forest Research Station soil metagenomes, plot 2, sequenced as LBNL and JGI, provided by Ulas Karaoz (ukaraoz@lbl.gov)	1	16514728	3636585597	1	5.629697e+06	2023-05-12 17:55:00
-7632	Blodgett_Soil_Metagenomes_Plot3_TrypPigBov_2023-05-11.fasta	1675	Blodgett Forest Research Station soil metagenomes, plot 3, sequenced as LBNL and JGI, provided by Ulas Karaoz (ukaraoz@lbl.gov)	1	23564496	5206557808	1	8.077433e+06	2023-05-12 17:55:00
-7633	Blodgett_Soil_Metagenomes_PlotX_TrypPigBov_2023-05-11.fasta	1675	Blodgett Forest Research Station soil metagenomes, plot 1,2,3, sequenced as LBNL and JGI, provided by Ulas Karaoz (ukaraoz@lbl.gov)	1	4040413	937957193	1	1.586044e+06	2023-05-12 17:55:00
-7634	Blodgett_Soil_Metagenomes_Plot1_TrypPigBov_2023-05-11_25x_01.fasta	1675	Auto-created	0	943749	209055784	1	322685	2023-05-15 13:46:00
-7635	Blodgett_Soil_Metagenomes_Plot1_TrypPigBov_2023-05-11_25x_02.fasta	1675	Auto-created	0	943905	209055581	1	322680	2023-05-15 13:46:00
-7636	Blodgett_Soil_Metagenomes_Plot1_TrypPigBov_2023-05-11_25x_03.fasta	1675	Auto-created	0	943029	209055549	1	322592	2023-05-15 13:46:00
-7637	Blodgett_Soil_Metagenomes_Plot1_TrypPigBov_2023-05-11_25x_04.fasta	1675	Auto-created	0	943847	209055683	1	322709	2023-05-15 13:46:00
 7638	Blodgett_Soil_Metagenomes_Plot1_TrypPigBov_2023-05-11_25x_05.fasta	1675	Auto-created	0	943647	209055675	1	322677	2023-05-15 13:46:00
 7639	Blodgett_Soil_Metagenomes_Plot1_TrypPigBov_2023-05-11_25x_06.fasta	1675	Auto-created	0	943332	209055591	1	322636	2023-05-15 13:46:00
 7640	Blodgett_Soil_Metagenomes_Plot1_TrypPigBov_2023-05-11_25x_07.fasta	1675	Auto-created	0	944342	209055849	1	322782	2023-05-15 13:46:00

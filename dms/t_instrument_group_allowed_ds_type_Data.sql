@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.6
--- Dumped by pg_dump version 16.1
+-- Dumped from database version 16.2
+-- Dumped by pg_dump version 16.2
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -26,7 +26,6 @@ Exploris	DIA-HMS-HCD-HMSn		1031	1031
 21T	HMS		22782	1989
 Lumos	DIA-HMS-HCD-HMSn		921	583
 QEHFX	DIA-HMS-HCD-HMSn		207	207
-Bruker_FTMS	HMS	Typical mode	150733	10282
 Eclipse	HMS-HCD-HMSn		9810	2321
 DataFolders	DataFiles		1382	182
 21T	DIA-HMS-HCD-HMSn		0	0
@@ -102,7 +101,7 @@ Bruker_FTMS	MALDI-HMS	Single-scan MALDI (not imaging)	12141	1660
 Bruker_QTOF	HMS		3228	0
 Bruker_QTOF	HMS-HMSn		180	0
 Bruker_QTOF	MALDI-HMS		0	0
-Eclipse	HMS-HCD-MSn		2928	948
+Bruker_FTMS	HMS	Typical mode	150733	10189
 Eclipse	HMS		562	9
 Eclipse	HMS-CID/ETD-HMSn		1	0
 Eclipse	HMS-CID/ETD-MSn		0	0
@@ -131,8 +130,9 @@ Eclipse_Frac	HMS-ETciD-EThcD-MSn		0	0
 Eclipse_Frac	HMS-ETciD-HMSn		0	0
 Eclipse_Frac	HMS-ETciD-MSn		0	0
 Eclipse_Frac	HMS-ETD-HMSn		0	0
-Eclipse	DIA-HMS-HCD-HMSn		927	674
+Eclipse	HMS-HCD-MSn		2928	936
 Eclipse	HMS-HCD-CID-MSn		168	0
+Eclipse	DIA-HMS-HCD-HMSn		927	667
 Eclipse_Frac	HMS-ETD-MSn		0	0
 Eclipse_Frac	HMS-EThcD-HMSn		0	0
 Eclipse_Frac	HMS-EThcD-MSn		0	0
@@ -244,7 +244,7 @@ Waters_TOF	HMS-HMSn		32	0
 Exploris	HMS-HCD-HMSn		3954	3874
 IMS	IMS-HMS-HMSn		28278	881
 Lumos	HMS-HCD-CID-MSn		7967	3324
-Lumos	HMS-HCD-HMSn		28477	2900
+Lumos	HMS-HCD-HMSn		28477	2894
 Waters_IMS	HMS-HMSn		719	35
 MALDI-Imaging	MALDI-HMS	Typical mode	2078	263
 Lumos	HMS-HCD-MSn		7487	1904
@@ -283,7 +283,7 @@ Ascend	HMS-ETciD-MSn		0	0
 Ascend	HMS-ETD-HMSn		0	0
 Ascend	HMS-ETD-MSn		0	0
 Agilent_QQQ	HMS		2650	268
-Agilent_GC-MS	GC-MS		49939	2954
+Agilent_GC-MS	GC-MS		49939	2926
 Ascend	HMS-EThcD-HMSn		0	0
 Ascend	HMS-EThcD-MSn		0	0
 Eclipse	HMS-ETciD-MSn		0	0
@@ -300,7 +300,6 @@ QEHFX	HMS-HMSn		0	0
 QEHFX_Frac	HMS		0	0
 QEHFX_Frac	HMS-HCD-HMSn		0	0
 QEHFX_Frac	HMS-HMSn		0	0
-QExactive	HMS		22149	2754
 QExactive	HMS-HMSn		15	0
 QExactive-Imaging	HMS		66	49
 QExactive-Imaging	HMS-HCD-HMSn		10	9
@@ -346,8 +345,9 @@ VelosPro	MS-CID/ETD-MSn		0	0
 VelosPro	MS-ETD-MSn		0	0
 VelosOrbi	HMS-HCD-CID-MSn		60225	4145
 VelosOrbi	HMS		11863	1426
-QEHFX	HMS-HCD-HMSn		33115	5889
-QExactive	HMS-HCD-HMSn		112666	22622
+QExactive	HMS		22149	2753
+QEHFX	HMS-HCD-HMSn		33115	5872
+QExactive	HMS-HCD-HMSn		112666	22420
 \.
 
 

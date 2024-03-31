@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.6
--- Dumped by pg_dump version 16.1
+-- Dumped from database version 16.2
+-- Dumped by pg_dump version 16.2
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -23,9 +23,6 @@ SET row_security = off;
 COPY public.t_general_statistics (entry_id, category, label, value, last_affected) FROM stdin;
 1021	RawDataTB	Last 30 days	1	2024-03-28 05:03:49.831035
 1006	Campaign_Count	Last 30 days	0.000	2024-03-28 11:03:49.988972
-1002	Job_Count	Last 30 days	917.000	2024-03-28 14:03:50.056005
-1012	Dataset_Count	Last 30 days	2223.000	2024-03-28 14:03:50.056005
-1015	Experiment_Count	Last 30 days	142.000	2024-03-28 14:03:50.056005
 1018	Organism_Count	Last 30 days	7.000	2024-03-25 20:03:47.355035
 1000	Job_Count	All	2231972.000	2024-03-22 23:03:44.010865
 1001	Job_Count	Last 7 days	0.000	2024-03-22 23:03:44.010865
@@ -43,6 +40,9 @@ COPY public.t_general_statistics (entry_id, category, label, value, last_affecte
 1017	Organism_Count	Last 7 days	0.000	2024-03-22 23:03:44.010865
 1019	RawDataTB	All	700	2024-03-22 23:03:44.010865
 1020	RawDataTB	Last 7 days	0	2024-03-22 23:03:44.010865
+1002	Job_Count	Last 30 days	529.000	2024-03-29 11:03:51.251313
+1012	Dataset_Count	Last 30 days	1023.000	2024-03-29 11:03:51.251313
+1015	Experiment_Count	Last 30 days	129.000	2024-03-29 11:03:51.251313
 \.
 
 
