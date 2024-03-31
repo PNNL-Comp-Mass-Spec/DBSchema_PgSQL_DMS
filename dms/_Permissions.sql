@@ -173,6 +173,24 @@ GRANT SELECT ON SEQUENCE dpkg.t_uri_paths_uri_path_id_seq TO writeaccess;
 GRANT SELECT ON SEQUENCE logcap.t_log_entries_local_entry_id_seq TO writeaccess;
 
 --
+-- Name: SEQUENCE t_task_events_id_seq; Type: ACL; Schema: logcap; Owner: d3l243
+--
+
+GRANT SELECT ON SEQUENCE logcap.t_task_events_id_seq TO writeaccess;
+
+--
+-- Name: SEQUENCE t_task_step_events_id_seq; Type: ACL; Schema: logcap; Owner: d3l243
+--
+
+GRANT SELECT ON SEQUENCE logcap.t_task_step_events_id_seq TO writeaccess;
+
+--
+-- Name: SEQUENCE t_task_step_processing_log_id_seq; Type: ACL; Schema: logcap; Owner: d3l243
+--
+
+GRANT SELECT ON SEQUENCE logcap.t_task_step_processing_log_id_seq TO writeaccess;
+
+--
 -- Name: SEQUENCE t_log_entries_local_entry_id_seq; Type: ACL; Schema: logdms; Owner: d3l243
 --
 
@@ -731,6 +749,13 @@ GRANT SELECT ON SEQUENCE public.t_data_analysis_request_updates_id_seq TO readac
 GRANT SELECT ON SEQUENCE public.t_data_analysis_request_updates_id_seq TO writeaccess;
 
 --
+-- Name: SEQUENCE t_dataset_create_queue_entry_id_seq; Type: ACL; Schema: public; Owner: d3l243
+--
+
+GRANT SELECT ON SEQUENCE public.t_dataset_create_queue_entry_id_seq TO readaccess;
+GRANT SELECT ON SEQUENCE public.t_dataset_create_queue_entry_id_seq TO writeaccess;
+
+--
 -- Name: SEQUENCE t_dataset_dataset_id_seq; Type: ACL; Schema: public; Owner: d3l243
 --
 
@@ -778,6 +803,34 @@ GRANT SELECT ON SEQUENCE public.t_default_psm_job_parameters_entry_id_seq TO wri
 
 GRANT SELECT ON SEQUENCE public.t_default_psm_job_settings_entry_id_seq TO readaccess;
 GRANT SELECT ON SEQUENCE public.t_default_psm_job_settings_entry_id_seq TO writeaccess;
+
+--
+-- Name: SEQUENCE t_deleted_factor_entry_id_seq; Type: ACL; Schema: public; Owner: d3l243
+--
+
+GRANT SELECT ON SEQUENCE public.t_deleted_factor_entry_id_seq TO readaccess;
+GRANT SELECT ON SEQUENCE public.t_deleted_factor_entry_id_seq TO writeaccess;
+
+--
+-- Name: SEQUENCE t_deleted_requested_run_batch_entry_id_seq; Type: ACL; Schema: public; Owner: d3l243
+--
+
+GRANT SELECT ON SEQUENCE public.t_deleted_requested_run_batch_entry_id_seq TO readaccess;
+GRANT SELECT ON SEQUENCE public.t_deleted_requested_run_batch_entry_id_seq TO writeaccess;
+
+--
+-- Name: SEQUENCE t_deleted_requested_run_batch_group_entry_id_seq; Type: ACL; Schema: public; Owner: d3l243
+--
+
+GRANT SELECT ON SEQUENCE public.t_deleted_requested_run_batch_group_entry_id_seq TO readaccess;
+GRANT SELECT ON SEQUENCE public.t_deleted_requested_run_batch_group_entry_id_seq TO writeaccess;
+
+--
+-- Name: SEQUENCE t_deleted_requested_run_entry_id_seq; Type: ACL; Schema: public; Owner: d3l243
+--
+
+GRANT SELECT ON SEQUENCE public.t_deleted_requested_run_entry_id_seq TO readaccess;
+GRANT SELECT ON SEQUENCE public.t_deleted_requested_run_entry_id_seq TO writeaccess;
 
 --
 -- Name: SEQUENCE t_email_alerts_email_alert_id_seq; Type: ACL; Schema: public; Owner: d3l243
@@ -1200,6 +1253,20 @@ GRANT SELECT ON SEQUENCE public.t_reference_compound_type_name_compound_type_id_
 GRANT SELECT ON SEQUENCE public.t_reference_compound_type_name_compound_type_id_seq TO writeaccess;
 
 --
+-- Name: SEQUENCE t_requested_run_batch_group_batch_group_id_seq; Type: ACL; Schema: public; Owner: d3l243
+--
+
+GRANT SELECT ON SEQUENCE public.t_requested_run_batch_group_batch_group_id_seq TO readaccess;
+GRANT SELECT ON SEQUENCE public.t_requested_run_batch_group_batch_group_id_seq TO writeaccess;
+
+--
+-- Name: SEQUENCE t_requested_run_batch_location_history_entry_id_seq; Type: ACL; Schema: public; Owner: d3l243
+--
+
+GRANT SELECT ON SEQUENCE public.t_requested_run_batch_location_history_entry_id_seq TO readaccess;
+GRANT SELECT ON SEQUENCE public.t_requested_run_batch_location_history_entry_id_seq TO writeaccess;
+
+--
 -- Name: SEQUENCE t_requested_run_batches_batch_id_seq; Type: ACL; Schema: public; Owner: d3l243
 --
 
@@ -1303,6 +1370,27 @@ GRANT SELECT ON SEQUENCE public.t_settings_files_xml_history_event_id_seq TO wri
 
 GRANT SELECT ON SEQUENCE public.t_sp_authorization_entry_id_seq TO readaccess;
 GRANT SELECT ON SEQUENCE public.t_sp_authorization_entry_id_seq TO writeaccess;
+
+--
+-- Name: SEQUENCE t_spectral_library_library_id_seq; Type: ACL; Schema: public; Owner: d3l243
+--
+
+GRANT SELECT ON SEQUENCE public.t_spectral_library_library_id_seq TO readaccess;
+GRANT SELECT ON SEQUENCE public.t_spectral_library_library_id_seq TO writeaccess;
+
+--
+-- Name: SEQUENCE t_spectral_library_state_library_state_id_seq; Type: ACL; Schema: public; Owner: d3l243
+--
+
+GRANT SELECT ON SEQUENCE public.t_spectral_library_state_library_state_id_seq TO readaccess;
+GRANT SELECT ON SEQUENCE public.t_spectral_library_state_library_state_id_seq TO writeaccess;
+
+--
+-- Name: SEQUENCE t_spectral_library_type_library_type_id_seq; Type: ACL; Schema: public; Owner: d3l243
+--
+
+GRANT SELECT ON SEQUENCE public.t_spectral_library_type_library_type_id_seq TO readaccess;
+GRANT SELECT ON SEQUENCE public.t_spectral_library_type_library_type_id_seq TO writeaccess;
 
 --
 -- Name: SEQUENCE t_storage_path_storage_path_id_seq; Type: ACL; Schema: public; Owner: d3l243

@@ -23,5 +23,6 @@ ALTER TABLE ONLY public.pgbench_branches
 -- Name: TABLE pgbench_branches; Type: ACL; Schema: public; Owner: d3l243
 --
 
+GRANT SELECT ON TABLE public.pgbench_branches TO readaccess;
 GRANT SELECT ON TABLE public.pgbench_branches TO writeaccess;
 

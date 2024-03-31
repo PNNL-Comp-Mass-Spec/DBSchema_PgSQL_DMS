@@ -24,5 +24,6 @@ ALTER TABLE ONLY public.pgbench_tellers
 -- Name: TABLE pgbench_tellers; Type: ACL; Schema: public; Owner: d3l243
 --
 
+GRANT SELECT ON TABLE public.pgbench_tellers TO readaccess;
 GRANT SELECT ON TABLE public.pgbench_tellers TO writeaccess;
 

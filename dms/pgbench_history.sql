@@ -18,5 +18,6 @@ ALTER TABLE public.pgbench_history OWNER TO d3l243;
 -- Name: TABLE pgbench_history; Type: ACL; Schema: public; Owner: d3l243
 --
 
+GRANT SELECT ON TABLE public.pgbench_history TO readaccess;
 GRANT SELECT ON TABLE public.pgbench_history TO writeaccess;
 
