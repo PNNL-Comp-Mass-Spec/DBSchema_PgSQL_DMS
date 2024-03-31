@@ -28,12 +28,14 @@ CREATE OR REPLACE PROCEDURE cap.remove_selected_tasks(IN _infoonly boolean DEFAU
 **          06/29/2023 mem - Disable trigger trig_t_tasks_after_delete on cap.t_tasks when deleting in bulk
 **                         - Update comments and messages
 **          07/11/2023 mem - Use COUNT(job) instead of COUNT(*)
+**          03/31/2023 mem - No longer disable trigger trig_t_tasks_after_delete
 **
 *****************************************************/
 DECLARE
     _job int;
     _jobCount int;
     _deleteCount int;
+    _toggleTrigger bool = false;
 
     _formatSpecifier text;
     _infoHead text;
@@ -154,14 +156,21 @@ BEGIN
         -- Delete in bulk
         ---------------------------------------------------
 
-        ALTER TABLE cap.t_tasks DISABLE TRIGGER trig_t_tasks_after_delete;
+        -- Optionally disable this trigger before deleting capture tasks
+        -- However, only the table owner can disable a trigger, and user pgdms uses this procedure to remove old tasks, and pgdms is not the table owner
+
+        If _toggleTrigger Then
+            ALTER TABLE cap.t_tasks DISABLE TRIGGER trig_t_tasks_after_delete;
+        End If;
 
         DELETE FROM cap.t_tasks
         WHERE job IN (SELECT job FROM Tmp_Selected_Jobs);
         --
         GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
-        ALTER TABLE cap.t_tasks ENABLE TRIGGER trig_t_tasks_after_delete;
+        If _toggleTrigger Then
+            ALTER TABLE cap.t_tasks ENABLE TRIGGER trig_t_tasks_after_delete;
+        End If;
 
     End If;
 

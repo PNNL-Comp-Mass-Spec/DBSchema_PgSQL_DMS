@@ -33,12 +33,14 @@ CREATE OR REPLACE PROCEDURE sw.remove_selected_jobs(IN _infoonly boolean DEFAULT
 **          09/24/2014 mem - Rename Job in T_Job_Step_Dependencies
 **          06/29/2023 mem - Ported to PostgreSQL
 **          08/08/2023 mem - Store the deletion count summary in _message
+**          03/31/2023 mem - No longer disable triggers trig_t_job_steps_after_delete or trig_t_jobs_after_delete
 **
 *****************************************************/
 DECLARE
     _job int;
     _jobCount int;
     _deleteCount int;
+    _toggleTrigger bool = false;
 
     _formatSpecifier text;
     _infoHead text;
@@ -161,7 +163,12 @@ BEGIN
         RAISE INFO 'Deleted % % from sw.t_job_parameters', _deleteCount, public.check_plural(_deleteCount, 'row', 'rows');
     End If;
 
-    ALTER TABLE sw.t_job_steps DISABLE TRIGGER trig_t_job_steps_after_delete;
+    -- Optionally disable this trigger before deleting capture tasks
+    -- However, only the table owner can disable a trigger, and user pgdms uses this procedure to remove old jobs, and pgdms is not the table owner
+
+    If _toggleTrigger Then
+        ALTER TABLE sw.t_job_steps DISABLE TRIGGER trig_t_job_steps_after_delete;
+    End If;
 
     ---------------------------------------------------
     -- Delete job steps
@@ -176,7 +183,9 @@ BEGIN
         RAISE INFO 'Deleted % % from sw.t_job_steps', _deleteCount, public.check_plural(_deleteCount, 'row', 'rows');
     End If;
 
-    ALTER TABLE sw.t_job_steps ENABLE TRIGGER trig_t_job_steps_after_delete;
+    If _toggleTrigger Then
+        ALTER TABLE sw.t_job_steps ENABLE TRIGGER trig_t_job_steps_after_delete;
+    End If;
 
     ---------------------------------------------------
     -- Delete entries in sw.t_jobs
@@ -219,7 +228,12 @@ BEGIN
         -- Delete in bulk
         ---------------------------------------------------
 
-        ALTER TABLE sw.t_jobs DISABLE TRIGGER trig_t_jobs_after_delete;
+        -- Optionally disable this trigger before deleting capture tasks
+        -- However, only the table owner can disable a trigger, and user pgdms uses this procedure to remove old jobs, and pgdms is not the table owner
+
+        If _toggleTrigger Then
+             ALTER TABLE sw.t_jobs DISABLE TRIGGER trig_t_jobs_after_delete;
+        End If;
 
         DELETE FROM sw.t_jobs
         WHERE job IN (SELECT job FROM Tmp_Selected_Jobs);
@@ -232,7 +246,9 @@ BEGIN
             RAISE INFO '%', _message;
         End If;
 
-        ALTER TABLE sw.t_jobs ENABLE TRIGGER trig_t_jobs_after_delete;
+        If _toggleTrigger Then
+            ALTER TABLE sw.t_jobs ENABLE TRIGGER trig_t_jobs_after_delete;
+        End If;
 
     End If;
 
