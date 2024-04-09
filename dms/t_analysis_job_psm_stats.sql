@@ -19,6 +19,7 @@ CREATE TABLE public.t_analysis_job_psm_stats (
     keratin_peptides_fdr integer,
     trypsin_peptides_fdr integer,
     acetyl_peptides_fdr integer,
+    ubiquitin_peptides_fdr integer,
     percent_msn_scans_no_psm real,
     maximum_scan_gap_adjacent_msn integer,
     dynamic_reporter_ion smallint DEFAULT 0 NOT NULL,

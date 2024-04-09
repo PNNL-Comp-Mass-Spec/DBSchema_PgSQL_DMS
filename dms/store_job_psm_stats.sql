@@ -1,8 +1,8 @@
 --
--- Name: store_job_psm_stats(integer, real, real, integer, integer, integer, integer, integer, integer, integer, integer, real, integer, integer, integer, integer, real, real, integer, integer, integer, integer, real, real, integer, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: store_job_psm_stats(integer, real, real, integer, integer, integer, integer, integer, integer, integer, integer, real, integer, integer, integer, integer, real, real, integer, integer, integer, integer, real, real, integer, integer, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.store_job_psm_stats(IN _job integer, IN _msgfthreshold real, IN _fdrthreshold real, IN _spectrasearched integer, IN _totalpsms integer, IN _uniquepeptides integer, IN _uniqueproteins integer, IN _totalpsmsfdrfilter integer DEFAULT 0, IN _uniquepeptidesfdrfilter integer DEFAULT 0, IN _uniqueproteinsfdrfilter integer DEFAULT 0, IN _msgfthresholdisevalue integer DEFAULT 0, IN _percentmsnscansnopsm real DEFAULT 0, IN _maximumscangapadjacentmsn integer DEFAULT 0, IN _uniquephosphopeptidecountfdr integer DEFAULT 0, IN _uniquephosphopeptidesctermk integer DEFAULT 0, IN _uniquephosphopeptidesctermr integer DEFAULT 0, IN _missedcleavageratio real DEFAULT 0, IN _missedcleavageratiophospho real DEFAULT 0, IN _trypticpeptides integer DEFAULT 0, IN _keratinpeptides integer DEFAULT 0, IN _trypsinpeptides integer DEFAULT 0, IN _dynamicreporterion integer DEFAULT 0, IN _percentpsmsmissingntermreporterion real DEFAULT 0, IN _percentpsmsmissingreporterion real DEFAULT 0, IN _uniqueacetylpeptidesfdr integer DEFAULT 0, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.store_job_psm_stats(IN _job integer, IN _msgfthreshold real, IN _fdrthreshold real, IN _spectrasearched integer, IN _totalpsms integer, IN _uniquepeptides integer, IN _uniqueproteins integer, IN _totalpsmsfdrfilter integer DEFAULT 0, IN _uniquepeptidesfdrfilter integer DEFAULT 0, IN _uniqueproteinsfdrfilter integer DEFAULT 0, IN _msgfthresholdisevalue integer DEFAULT 0, IN _percentmsnscansnopsm real DEFAULT 0, IN _maximumscangapadjacentmsn integer DEFAULT 0, IN _uniquephosphopeptidecountfdr integer DEFAULT 0, IN _uniquephosphopeptidesctermk integer DEFAULT 0, IN _uniquephosphopeptidesctermr integer DEFAULT 0, IN _missedcleavageratio real DEFAULT 0, IN _missedcleavageratiophospho real DEFAULT 0, IN _trypticpeptides integer DEFAULT 0, IN _keratinpeptides integer DEFAULT 0, IN _trypsinpeptides integer DEFAULT 0, IN _dynamicreporterion integer DEFAULT 0, IN _percentpsmsmissingntermreporterion real DEFAULT 0, IN _percentpsmsmissingreporterion real DEFAULT 0, IN _uniqueacetylpeptidesfdr integer DEFAULT 0, IN _uniqueubiquitinpeptidesfdr integer DEFAULT 0, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -35,21 +35,23 @@ CREATE OR REPLACE PROCEDURE public.store_job_psm_stats(IN _job integer, IN _msgf
 **    _dynamicReporterIon                   Set to 1 if TMT (or iTRAQ) was a dynamic modification, e.g. MSGFPlus_PartTryp_DynMetOx_TMT_6Plex_Stat_CysAlk_20ppmParTol.txt
 **    _percentPSMsMissingNTermReporterIon   When _dynamicReporterIon is 1, the percent of PSMs that have an N-terminus without TMT; value between 0 and 100
 **    _percentPSMsMissingReporterIon        When _dynamicReporterIon is 1, the percent of PSMs that have an N-terminus or a K without TMT; value between 0 and 100
-**    _uniqueAcetylPeptidesFDR              Number of peptides with any acetylated K; filtered using _fdrThreshold
+**    _uniqueAcetylPeptidesFDR              Number of peptides with an acetylated K; filtered using _fdrThreshold
+**    _uniqueUbiquitinPeptidesFDR           Number of peptides with a ubiquitinated K; filtered using _fdrThreshold
 **    _infoOnly                             When true, preview updates
 **    _message                              Status message
 **    _returnCode                           Return code
 **
 **  Auth:   mem
 **  Date:   02/21/2012 mem - Initial version
-**          05/08/2012 mem - Added _fdrThreshold, _totalPSMsFDRFilter, _uniquePeptidesFDRFilter, and _uniqueProteinsFDRFilter
-**          01/17/2014 mem - Added _msgfThresholdIsEValue
-**          01/21/2016 mem - Added _percentMSnScansNoPSM and _maximumScanGapAdjacentMSn
-**          09/28/2016 mem - Added three _uniquePhosphopeptide parameters, two _missedCleavageRatio parameters, and _trypticPeptides, _keratinPeptides, and _trypsinPeptides
-**          07/15/2020 mem - Added _dynamicReporterIon, _percentPSMsMissingNTermReporterIon, and _percentPSMsMissingReporterIon
-**          07/15/2020 mem - Added _uniqueAcetylPeptidesFDR
+**          05/08/2012 mem - Add parameters _fdrThreshold, _totalPSMsFDRFilter, _uniquePeptidesFDRFilter, and _uniqueProteinsFDRFilter
+**          01/17/2014 mem - Add parameter _msgfThresholdIsEValue
+**          01/21/2016 mem - Add parameters _percentMSnScansNoPSM and _maximumScanGapAdjacentMSn
+**          09/28/2016 mem - Add three _uniquePhosphopeptide parameters, two _missedCleavageRatio parameters, _trypticPeptides, _keratinPeptides, and _trypsinPeptides
+**          07/15/2020 mem - Add parameters _dynamicReporterIon, _percentPSMsMissingNTermReporterIon, and _percentPSMsMissingReporterIon
+**          07/15/2020 mem - Add parameter _uniqueAcetylPeptidesFDR
 **          12/17/2023 mem - Ported to PostgreSQL
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          04/08/2024 mem - Add parameter _uniqueUbiquitinPeptidesFDR
 **
 *****************************************************/
 DECLARE
@@ -89,6 +91,7 @@ BEGIN
     _percentPSMsMissingReporterIon      := Coalesce(_percentPSMsMissingReporterIon, 0);
 
     _uniqueAcetylPeptidesFDR            := Coalesce(_uniqueAcetylPeptidesFDR, 0);
+    _uniqueUbiquitinPeptidesFDR         := Coalesce(_uniqueUbiquitinPeptidesFDR, 0);
 
     ---------------------------------------------------
     -- Make sure _job is defined in t_analysis_job
@@ -107,7 +110,7 @@ BEGIN
 
         RAISE INFO '';
 
-        _formatSpecifier := '%-9s %-14s %-13s %-24s %-16s %-15s %-20s %-20s %-14s %-19s %-19s %-24s %-29s %-15s %-23s %-23s %-25s %-29s %-16s %-16s %-16s %-15s %-20s %-39s %-33s';
+        _formatSpecifier := '%-9s %-14s %-13s %-24s %-16s %-15s %-20s %-20s %-14s %-19s %-19s %-24s %-29s %-15s %-23s %-23s %-25s %-29s %-16s %-16s %-16s %-15s %-18s %-20s %-39s %-33s';
 
         _infoHead := format(_formatSpecifier,
                             'Job',
@@ -132,6 +135,7 @@ BEGIN
                             'Keratin_Peptides',
                             'Trypsin_Peptides',
                             'Acetyl_Peptides',
+                            'Ubiquitin_Peptides',
                             'Dynamic_Reporter_Ion',
                             'Percent_PSMs_Missing_NTerm_Reporter_Ion',
                             'Percent_PSMs_Missing_Reporter_Ion'
@@ -160,6 +164,7 @@ BEGIN
                                      '----------------',
                                      '----------------',
                                      '---------------',
+                                     '------------------',
                                      '--------------------',
                                      '---------------------------------------',
                                      '---------------------------------'
@@ -191,6 +196,7 @@ BEGIN
                             _keratinPeptides,
                             _trypsinPeptides,
                             _uniqueAcetylPeptidesFDR,
+                            _uniqueUbiquitinPeptidesFDR,
                             _dynamicReporterIon,
                             _percentPSMsMissingNTermReporterIon,
                             _percentPSMsMissingReporterIon
@@ -224,6 +230,7 @@ BEGIN
                    _keratinPeptides AS Keratin_Peptides_FDR,
                    _trypsinPeptides AS Trypsin_Peptides_FDR,
                    _uniqueAcetylPeptidesFDR AS Acetyl_Peptides_FDR,
+                   _uniqueUbiquitinPeptidesFDR AS Ubiquitin_Peptides_FDR,
                    _dynamicReporterIon AS Dynamic_Reporter_Ion,
                    _percentPSMsMissingNTermReporterIon AS Percent_PSMs_Missing_NTerm_Reporter_Ion,
                    _percentPSMsMissingReporterIon AS Percent_PSMs_Missing_Reporter_Ion
@@ -248,6 +255,7 @@ BEGIN
             Keratin_Peptides_FDR                    = Source.Keratin_Peptides_FDR,
             Trypsin_Peptides_FDR                    = Source.Trypsin_Peptides_FDR,
             Acetyl_Peptides_FDR                     = Source.Acetyl_Peptides_FDR,
+            Ubiquitin_Peptides_FDR                  = Source.Ubiquitin_Peptides_FDR,
             Dynamic_Reporter_Ion                    = Source.Dynamic_Reporter_Ion,
             Percent_PSMs_Missing_NTerm_Reporter_Ion = Source.Percent_PSMs_Missing_NTerm_Reporter_Ion,
             Percent_PSMs_Missing_Reporter_Ion       = Source.Percent_PSMs_Missing_Reporter_Ion,
@@ -272,6 +280,7 @@ BEGIN
                 Keratin_Peptides_FDR,
                 Trypsin_Peptides_FDR,
                 Acetyl_Peptides_FDR,
+                Ubiquitin_Peptides_FDR,
                 Dynamic_Reporter_Ion,
                 Percent_PSMs_Missing_NTerm_Reporter_Ion,
                 Percent_PSMs_Missing_Reporter_Ion,
@@ -294,6 +303,7 @@ BEGIN
                 Source.Keratin_Peptides_FDR,
                 Source.Trypsin_Peptides_FDR,
                 Source.Acetyl_Peptides_FDR,
+                Source.Ubiquitin_Peptides_FDR,
                 Source.Dynamic_Reporter_Ion,
                 Source.Percent_PSMs_Missing_NTerm_Reporter_Ion,
                 Source.Percent_PSMs_Missing_Reporter_Ion,
@@ -354,11 +364,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.store_job_psm_stats(IN _job integer, IN _msgfthreshold real, IN _fdrthreshold real, IN _spectrasearched integer, IN _totalpsms integer, IN _uniquepeptides integer, IN _uniqueproteins integer, IN _totalpsmsfdrfilter integer, IN _uniquepeptidesfdrfilter integer, IN _uniqueproteinsfdrfilter integer, IN _msgfthresholdisevalue integer, IN _percentmsnscansnopsm real, IN _maximumscangapadjacentmsn integer, IN _uniquephosphopeptidecountfdr integer, IN _uniquephosphopeptidesctermk integer, IN _uniquephosphopeptidesctermr integer, IN _missedcleavageratio real, IN _missedcleavageratiophospho real, IN _trypticpeptides integer, IN _keratinpeptides integer, IN _trypsinpeptides integer, IN _dynamicreporterion integer, IN _percentpsmsmissingntermreporterion real, IN _percentpsmsmissingreporterion real, IN _uniqueacetylpeptidesfdr integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE public.store_job_psm_stats(IN _job integer, IN _msgfthreshold real, IN _fdrthreshold real, IN _spectrasearched integer, IN _totalpsms integer, IN _uniquepeptides integer, IN _uniqueproteins integer, IN _totalpsmsfdrfilter integer, IN _uniquepeptidesfdrfilter integer, IN _uniqueproteinsfdrfilter integer, IN _msgfthresholdisevalue integer, IN _percentmsnscansnopsm real, IN _maximumscangapadjacentmsn integer, IN _uniquephosphopeptidecountfdr integer, IN _uniquephosphopeptidesctermk integer, IN _uniquephosphopeptidesctermr integer, IN _missedcleavageratio real, IN _missedcleavageratiophospho real, IN _trypticpeptides integer, IN _keratinpeptides integer, IN _trypsinpeptides integer, IN _dynamicreporterion integer, IN _percentpsmsmissingntermreporterion real, IN _percentpsmsmissingreporterion real, IN _uniqueacetylpeptidesfdr integer, IN _uniqueubiquitinpeptidesfdr integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE store_job_psm_stats(IN _job integer, IN _msgfthreshold real, IN _fdrthreshold real, IN _spectrasearched integer, IN _totalpsms integer, IN _uniquepeptides integer, IN _uniqueproteins integer, IN _totalpsmsfdrfilter integer, IN _uniquepeptidesfdrfilter integer, IN _uniqueproteinsfdrfilter integer, IN _msgfthresholdisevalue integer, IN _percentmsnscansnopsm real, IN _maximumscangapadjacentmsn integer, IN _uniquephosphopeptidecountfdr integer, IN _uniquephosphopeptidesctermk integer, IN _uniquephosphopeptidesctermr integer, IN _missedcleavageratio real, IN _missedcleavageratiophospho real, IN _trypticpeptides integer, IN _keratinpeptides integer, IN _trypsinpeptides integer, IN _dynamicreporterion integer, IN _percentpsmsmissingntermreporterion real, IN _percentpsmsmissingreporterion real, IN _uniqueacetylpeptidesfdr integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE store_job_psm_stats(IN _job integer, IN _msgfthreshold real, IN _fdrthreshold real, IN _spectrasearched integer, IN _totalpsms integer, IN _uniquepeptides integer, IN _uniqueproteins integer, IN _totalpsmsfdrfilter integer, IN _uniquepeptidesfdrfilter integer, IN _uniqueproteinsfdrfilter integer, IN _msgfthresholdisevalue integer, IN _percentmsnscansnopsm real, IN _maximumscangapadjacentmsn integer, IN _uniquephosphopeptidecountfdr integer, IN _uniquephosphopeptidesctermk integer, IN _uniquephosphopeptidesctermr integer, IN _missedcleavageratio real, IN _missedcleavageratiophospho real, IN _trypticpeptides integer, IN _keratinpeptides integer, IN _trypsinpeptides integer, IN _dynamicreporterion integer, IN _percentpsmsmissingntermreporterion real, IN _percentpsmsmissingreporterion real, IN _uniqueacetylpeptidesfdr integer, IN _uniqueubiquitinpeptidesfdr integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.store_job_psm_stats(IN _job integer, IN _msgfthreshold real, IN _fdrthreshold real, IN _spectrasearched integer, IN _totalpsms integer, IN _uniquepeptides integer, IN _uniqueproteins integer, IN _totalpsmsfdrfilter integer, IN _uniquepeptidesfdrfilter integer, IN _uniqueproteinsfdrfilter integer, IN _msgfthresholdisevalue integer, IN _percentmsnscansnopsm real, IN _maximumscangapadjacentmsn integer, IN _uniquephosphopeptidecountfdr integer, IN _uniquephosphopeptidesctermk integer, IN _uniquephosphopeptidesctermr integer, IN _missedcleavageratio real, IN _missedcleavageratiophospho real, IN _trypticpeptides integer, IN _keratinpeptides integer, IN _trypsinpeptides integer, IN _dynamicreporterion integer, IN _percentpsmsmissingntermreporterion real, IN _percentpsmsmissingreporterion real, IN _uniqueacetylpeptidesfdr integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'StoreJobPSMStats';
+COMMENT ON PROCEDURE public.store_job_psm_stats(IN _job integer, IN _msgfthreshold real, IN _fdrthreshold real, IN _spectrasearched integer, IN _totalpsms integer, IN _uniquepeptides integer, IN _uniqueproteins integer, IN _totalpsmsfdrfilter integer, IN _uniquepeptidesfdrfilter integer, IN _uniqueproteinsfdrfilter integer, IN _msgfthresholdisevalue integer, IN _percentmsnscansnopsm real, IN _maximumscangapadjacentmsn integer, IN _uniquephosphopeptidecountfdr integer, IN _uniquephosphopeptidesctermk integer, IN _uniquephosphopeptidesctermr integer, IN _missedcleavageratio real, IN _missedcleavageratiophospho real, IN _trypticpeptides integer, IN _keratinpeptides integer, IN _trypsinpeptides integer, IN _dynamicreporterion integer, IN _percentpsmsmissingntermreporterion real, IN _percentpsmsmissingreporterion real, IN _uniqueacetylpeptidesfdr integer, IN _uniqueubiquitinpeptidesfdr integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'StoreJobPSMStats';
 
