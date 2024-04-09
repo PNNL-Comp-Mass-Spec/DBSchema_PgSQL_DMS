@@ -18,6 +18,8 @@ CREATE VIEW public.v_dataset_psm_and_pm_list_report AS
     psm.keratin_pep,
     psm.phospho_pep,
     psm.trypsin_pep,
+    psm.acetyl_pep,
+    psm.ubiquitin_pep,
     psm.instrument,
     psm.dataset_id,
     dtn.dataset_type,

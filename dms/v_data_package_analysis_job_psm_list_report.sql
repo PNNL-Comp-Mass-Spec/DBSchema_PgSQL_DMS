@@ -24,6 +24,7 @@ CREATE VIEW public.v_data_package_analysis_job_psm_list_report AS
     psm.keratin_peptides_fdr AS keratin_pep,
     psm.trypsin_peptides_fdr AS trypsin_pep,
     psm.acetyl_peptides_fdr AS acetyl_pep,
+    psm.ubiquitin_peptides_fdr AS ubiquitin_pep,
     (psm.percent_psms_missing_nterm_reporter_ion)::numeric(9,2) AS pct_missing_nterm_rep_ion,
     (psm.percent_psms_missing_reporter_ion)::numeric(9,2) AS pct_missing_rep_ion,
     psm.last_affected AS psm_stats_date,

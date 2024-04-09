@@ -30,6 +30,7 @@ CREATE VIEW public.v_analysis_job_psm_detail_report AS
     psm.keratin_peptides_fdr AS unique_keratin_peptides,
     psm.trypsin_peptides_fdr AS unique_trypsin_peptides,
     psm.acetyl_peptides_fdr AS unique_acetyl_peptides,
+    psm.ubiquitin_peptides_fdr AS unique_ubiquitin_peptides,
     (psm.percent_psms_missing_nterm_reporter_ion)::numeric(9,2) AS pct_missing_nterm_reporter_ions,
     (psm.percent_psms_missing_reporter_ion)::numeric(9,2) AS pct_missing_reporter_ions,
     psm.last_affected AS psm_stats_date,
