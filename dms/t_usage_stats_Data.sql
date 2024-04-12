@@ -40,8 +40,6 @@ SetArchiveTaskBusy	2023-02-24 15:26:32	1671314
 SetArchiveTaskComplete	2023-02-24 15:20:31	879396
 SetArchiveUpdateRequired	2023-02-24 15:49:01	1594913
 SetArchiveUpdateTaskBusy	2023-02-24 15:26:31	3634944
-update_analysis_job_state_name_cached	2024-03-27 22:03:45.582995	163
-update_analysis_job_tool_name_cached	2024-03-27 22:03:50.337937	163
 SetArchiveUpdateTaskComplete	2023-02-24 15:26:32	2063591
 SetCaptureTaskBusy	2023-02-24 15:26:32	1742848
 SetCaptureTaskComplete	2023-02-24 15:26:31	885550
@@ -102,9 +100,11 @@ update_cart_parameters	2024-03-12 17:09:32.299809	127523
 update_requested_run_batch_parameters	2024-03-06 19:26:44.475492	528
 update_requested_run_factors	2024-03-06 19:26:44.475492	703
 update_requested_run_blocking_and_factors	2024-03-06 19:26:44.475492	608
-update_eus_proposals_from_eus_imports	2024-03-31 06:15:26.977275	381
-update_eus_users_from_eus_imports	2024-03-31 06:15:47.795887	384
-update_eus_instruments_from_eus_imports	2024-03-31 06:16:19.931974	383
+update_eus_users_from_eus_imports	2024-04-11 06:15:43.76751	395
+update_eus_instruments_from_eus_imports	2024-04-11 06:16:16.531529	394
+update_analysis_job_state_name_cached	2024-04-10 22:03:22.332859	168
+update_analysis_job_tool_name_cached	2024-04-10 22:03:25.44336	168
+update_eus_proposals_from_eus_imports	2024-04-11 06:15:22.62313	392
 \.
 
 

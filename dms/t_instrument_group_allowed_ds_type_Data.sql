@@ -97,7 +97,6 @@ Bruker_FTMS	HMS-HMSn		1894	37
 Bruker_QTOF	HMS		3228	0
 Bruker_QTOF	HMS-HMSn		180	0
 Bruker_QTOF	MALDI-HMS		0	0
-Eclipse	HMS		562	9
 Eclipse	HMS-CID/ETD-HMSn		1	0
 Eclipse	HMS-CID/ETD-MSn		0	0
 Eclipse	HMS-ETciD-EThcD-HMSn		0	0
@@ -139,6 +138,7 @@ Eclipse_Frac	HMS-HCD-HMSn		0	0
 Eclipse_Frac	HMS-HCD-MSn		0	0
 Eclipse_Frac	HMS-HMSn		0	0
 Eclipse_Frac	HMS-MSn		0	0
+Eclipse	HMS		562	8
 Eclipse_Frac	HMS-PQD-CID/ETD-MSn		0	0
 Eclipse_Frac	HMS-PQD-ETD-MSn		0	0
 Eclipse_Frac	MS-MSn		0	0
@@ -270,7 +270,6 @@ Ascend	HMS-ETciD-HMSn		0	0
 Ascend	HMS-ETciD-MSn		0	0
 Ascend	HMS-ETD-HMSn		0	0
 Ascend	HMS-ETD-MSn		0	0
-Agilent_QQQ	HMS		2650	268
 Ascend	HMS-EThcD-HMSn		0	0
 Ascend	HMS-EThcD-MSn		0	0
 Eclipse	HMS-ETciD-MSn		0	0
@@ -304,7 +303,6 @@ SLIM	IMS-HMS	\N	6060	0
 SLIM	IMS-HMS-HMSn	\N	0	0
 SLIM	IMS-HMS-MSn	\N	0	0
 timsTOF	IMS-HMS		0	0
-TSQ	MRM	Use for MRM	142391	7920
 TSQ	MS		166	0
 TSQ	MS-MSn	Use for MSn	2935	0
 TSQ_Frac	MRM		0	0
@@ -333,21 +331,23 @@ VelosPro	MS-ETD-MSn		0	0
 VelosOrbi	HMS-HCD-CID-MSn		60225	4145
 VelosOrbi	HMS		11863	1426
 QExactive	HMS		22149	2753
-21T	HMS		22782	1971
 DataFolders	DataFiles		1382	180
-Bruker_FTMS	MALDI-HMS	Single-scan MALDI (not imaging)	12141	1646
 Bruker_FTMS	HMS	Typical mode	150733	9722
-Waters_IMS	HMS-HMSn		719	13
-Waters_IMS	HMS		8834	816
-Eclipse	DIA-HMS-HCD-HMSn		927	652
-Eclipse	HMS-HCD-MSn		2928	920
-MALDI-Imaging	MALDI-HMS	Typical mode	2078	260
-Lumos	HMS-HCD-MSn		7487	1888
-Eclipse	HMS-HCD-HMSn		9810	2318
-Lumos	HMS-HCD-HMSn		28477	2866
-Agilent_GC-MS	GC-MS		49939	2859
-QEHFX	HMS-HCD-HMSn		33115	5841
-QExactive	HMS-HCD-HMSn		112666	22180
+Waters_IMS	HMS-HMSn		719	2
+Waters_IMS	HMS		8834	810
+MALDI-Imaging	MALDI-HMS	Typical mode	2078	255
+Agilent_QQQ	HMS		2650	256
+Agilent_GC-MS	GC-MS		49939	2725
+QEHFX	HMS-HCD-HMSn		33115	5633
+QExactive	HMS-HCD-HMSn		112666	21209
+Lumos	HMS-HCD-HMSn		28477	2772
+Eclipse	HMS-HCD-HMSn		9810	2288
+Eclipse	DIA-HMS-HCD-HMSn		927	601
+Lumos	HMS-HCD-MSn		7487	1720
+21T	HMS		22782	1953
+Bruker_FTMS	MALDI-HMS	Single-scan MALDI (not imaging)	12141	1632
+TSQ	MRM	Use for MRM	142391	7775
+Eclipse	HMS-HCD-MSn		2928	899
 \.
 
 
