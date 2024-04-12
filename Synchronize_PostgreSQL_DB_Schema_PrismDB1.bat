@@ -8,6 +8,6 @@ F:
 pushd "F:\Documents\Projects\DataMining\Database_Tools\DB_Schema_Export_Tool\Automation"
 
 @echo on
-..\bin\DB_Schema_Export_Tool.exe /conf:PgSQL_ExportOptions_Prismweb3.conf
+..\bin\DB_Schema_Export_Tool.exe /conf:PgSQL_ExportOptions_PrismDB1.conf
 
 popd
