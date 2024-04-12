@@ -13,5 +13,6 @@ ALTER SCHEMA public OWNER TO postgres;
 
 REVOKE USAGE ON SCHEMA public FROM PUBLIC;
 GRANT USAGE ON SCHEMA public TO readaccess;
+GRANT ALL ON SCHEMA public TO d3l243;
 GRANT ALL ON SCHEMA public TO writeaccess;
 

@@ -15,7 +15,7 @@ message=''
 # walg_last_backup_cmd="""pgbackrest --output=json info | jq '.[0] | .backup[-1] | .timestamp.stop'"""
 
 # get latest wal-g backup timestamp (for specific stanza):
-walg_last_backup_cmd="""pgbackrest --output=json info | jq '.[] | select( .name == "dmsdev3") | .backup[-1] | .timestamp.stop'"""
+walg_last_backup_cmd="""pgbackrest --output=json info | jq '.[] | select( .name == "dmsdev1") | .backup[-1] | .timestamp.stop'"""
 
 p = subprocess.run(walg_last_backup_cmd, stdout=subprocess.PIPE, encoding='utf-8', shell=True)
 if p.returncode != 0:
