@@ -1,0 +1,102 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 16.2
+-- Dumped by pg_dump version 16.2
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Data for Name: t_dataset_qc_instruments; Type: TABLE DATA; Schema: public; Owner: d3l243
+--
+
+COPY public.t_dataset_qc_instruments (instrument, instrument_id, last_updated) FROM stdin;
+21T_Agilent	106	2015-11-04 16:46:10
+AMOLF_VOrbiETD01	102	2015-11-04 16:46:10
+LCQ_D1	9	2024-03-18 21:38:13.67836
+Ascend01	192	2023-04-24 09:37:48
+Broad_Exploris01	184	2021-10-22 13:37:49
+Broad_QEHFX01	168	2019-11-21 21:37:48
+Broad_QExactP01	148	2017-12-06 17:37:48
+Broad_VOrbiETD01	87	2015-11-04 16:46:10
+CBSS_Orb1	112	2015-11-04 16:46:10
+Eclipse01	171	2020-09-08 13:37:48
+Eclipse02	178	2021-04-30 13:37:49
+Emory_Lumos01	150	2018-01-15 21:37:49
+Exact01	54	2015-11-04 16:46:10
+Exact03	57	2015-11-04 16:46:10
+Exact04	82	2015-11-04 16:46:10
+Exploris01	173	2020-09-29 09:37:48
+Exploris02	193	2023-04-25 13:37:48
+Exploris03	197	2023-08-10 13:37:49
+Exploris04	239	2023-12-07 01:37:49
+Exploris05	242	2024-01-12 21:37:48
+Exploris06	246	2024-03-01 21:37:49
+External_Agilent_QQQ	175	2021-02-16 13:37:49
+External_Ascend	195	2023-07-18 17:37:49
+External_Astral	244	2024-02-05 17:37:48
+External_Eclipse	176	2021-01-27 17:37:48
+External_Exploris	179	2021-05-05 17:37:49
+External_LTQ	67	2017-09-01 21:37:49
+External_Lumos	196	2023-07-18 13:37:49
+External_Orbitrap	68	2015-11-04 16:46:10
+External_Orbitrap_Fusion	177	2021-01-28 13:37:49
+External_QEHFX	170	2020-02-10 17:37:48
+External_QExactive	116	2015-11-04 16:46:10
+External_Thermo_FAIMS	161	2019-04-15 13:37:48
+GCQE01	136	2015-11-30 17:37:48
+JCVI_VPro01	114	2015-11-04 16:46:10
+JHU_QExactP01	149	2017-12-17 13:37:48
+JHU_VOrbiETD01	91	2015-11-04 16:46:10
+LTQ_2	33	2015-11-04 16:46:10
+LTQ_3	34	2015-11-04 16:46:10
+LTQ_4	39	2015-11-04 16:46:10
+LTQ_ETD_1	52	2015-11-04 16:46:10
+LTQ_FB1	38	2015-11-04 16:46:10
+LTQ_FT1	32	2015-11-04 16:46:10
+LTQ_Orb_1	44	2015-11-04 16:46:10
+LTQ_Orb_2	48	2015-11-04 16:46:10
+LTQ_Orb_3	51	2015-11-04 16:46:10
+LTQ_Orb_4	146	2018-08-21 17:37:48
+Lumos01	138	2016-01-04 17:37:48
+Lumos02	145	2017-03-22 17:37:48
+Lumos03	160	2019-04-22 21:37:48
+NU_QExactive	137	2015-11-05 13:37:48
+Orbi_FB1	63	2015-11-04 16:46:10
+QEHFX01	158	2019-01-29 13:37:48
+QEHFX02	159	2019-02-01 13:37:49
+QEHFX03	169	2020-01-16 21:37:49
+QExact01	103	2015-11-04 16:46:10
+QExactHF03	127	2015-11-04 16:46:10
+QExactHF05	130	2015-11-04 16:46:10
+QExactHF05_Imaging	180	2021-07-16 17:37:49
+QExactP02	121	2015-11-04 16:46:10
+QExactP04	128	2015-11-04 16:46:10
+QExactP06	143	2016-10-24 17:37:48
+SLIM09_QExactP06	198	2023-08-23 17:37:49
+SW_TEST_LCQ	7	2015-11-04 16:46:10
+UNC_VOrbiETD01	115	2015-11-04 16:46:10
+Vanderbilt_VOrbiETD01	89	2015-11-04 16:46:10
+VOrbi05	85	2015-11-04 16:46:10
+VOrbiETD01	58	2015-11-04 16:46:10
+VOrbiETD02	60	2015-11-04 16:46:10
+VOrbiETD03	61	2015-11-04 16:46:10
+VOrbiETD04	62	2015-11-04 16:46:10
+VPro01	93	2015-11-04 16:46:10
+\.
+
+
+--
+-- PostgreSQL database dump complete
+--
+

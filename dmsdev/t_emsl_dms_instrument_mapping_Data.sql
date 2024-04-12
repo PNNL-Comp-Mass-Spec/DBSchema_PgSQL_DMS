@@ -1,0 +1,126 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 16.2
+-- Dumped by pg_dump version 16.2
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Data for Name: t_emsl_dms_instrument_mapping; Type: TABLE DATA; Schema: public; Owner: d3l243
+--
+
+COPY public.t_emsl_dms_instrument_mapping (eus_instrument_id, dms_instrument_id) FROM stdin;
+1163	10
+1164	12
+34039	17
+34038	19
+34015	23
+34014	32
+34012	33
+34013	34
+34034	39
+34035	44
+34037	45
+34099	46
+34017	47
+34070	48
+34081	49
+34074	51
+34080	52
+34097	53
+34111	54
+34149	56
+34113	57
+34114	58
+34150	59
+34115	60
+34116	61
+34127	62
+34011	65
+34139	69
+34172	70
+33200	71
+33200	74
+34145	75
+34153	76
+34157	77
+34139	78
+34154	79
+34156	80
+34155	81
+34112	82
+34011	83
+34152	84
+34175	85
+34194	94
+34236	96
+34235	105
+34225	106
+34173	117
+34228	121
+34230	123
+34230	124
+34229	125
+34234	126
+34231	127
+34232	128
+34256	130
+34244	136
+34245	138
+34259	140
+34254	143
+34267	145
+34068	146
+34281	155
+34297	158
+34298	159
+34289	165
+34313	171
+34314	172
+34332	182
+34332	183
+34195	103
+34258	109
+34307	167
+34308	169
+34322	173
+34210	174
+34321	178
+34011	186
+34011	187
+34139	190
+35015	194
+35026	95
+35025	111
+35038	129
+35034	147
+35035	151
+35031	160
+35032	180
+35007	181
+35037	189
+35024	191
+35027	192
+35028	193
+35029	197
+35033	198
+35036	199
+35030	239
+\.
+
+
+--
+-- PostgreSQL database dump complete
+--
+
