@@ -4,7 +4,7 @@
 
 CREATE OR REPLACE FUNCTION public.get_table_bloat_approx_sql(OUT full_table_name text, OUT approx_bloat_percent double precision, OUT approx_bloat_bytes double precision, OUT fillfactor integer) RETURNS SETOF record
     LANGUAGE sql SECURITY DEFINER
-    SET search_path TO 'public', 'public', 'mc'
+    SET search_path TO 'public', 'public', 'sw', 'cap', 'dpkg', 'mc', 'ont', 'pc', 'logdms', 'logcap', 'logsw'
     AS $$
 
 select /* pgwatch2_generated */
