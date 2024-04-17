@@ -123,7 +123,6 @@ COPY public.t_emsl_instruments (eus_instrument_id, eus_display_name, eus_instrum
 34115	Lipidomics Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Velos Orbitrap LC-MS (2009)	24	Mass Spectrometer: ORB-LTQ	\N	2024-03-02 06:15:34	0	0
 34116	Mass Spectrometer: Orbitrap	Mass Spectrometer: LTQ_Orb_Velos 3	24	Mass Spectrometer: ORB-LTQ	\N	2024-03-02 06:15:34	0	0
 34127	Mass Spectrometer: Orbitrap	Mass Spectrometer: LTQ_Orb_Velos 4	24	Mass Spectrometer: ORB-LTQ	\N	2024-03-02 06:15:34	0	0
-34139	Fourier-Transform Ion Cyclotron Resonance (FTICR)	Mass Spectrometer: 15T FTICR (2010)	10	Mass Spectrometer:  Fourier-Transform Ion Cyclotron Resonance	\N	2024-03-02 06:15:34	1	1
 34145	Mass Spectrometer: MALDI-TOF	Mass Spectrometer: Maxis_01	10	Mass Spectrometer: Imaging-MS	\N	2024-03-02 06:15:34	0	0
 34150	Gas Chromatography-Mass Spectrometry (GC-MS)	Mass Spectrometer: Agilent GC-MS 1 (2009)	10	Mass Spectrometry:  GC-MS	\N	2024-03-02 06:15:34	1	0
 34152	Mass Spectrometer: GC-MS (metabolomics)	Mass Spectrometer: Thermo_GC_MS_01	10	Mass Spectrometry:  GC-MS	\N	2024-03-02 06:15:34	0	0
@@ -164,6 +163,7 @@ COPY public.t_emsl_instruments (eus_instrument_id, eus_display_name, eus_instrum
 34298	Bottom-up (Fragmented) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q Exactive LC-MS HFX 2 (2020)	24	\N	\N	2024-03-26 06:16:36.746797	1	1
 34308	Bottom-up (Fragmented) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q Exactive LC-MS HFX 3 (2019)	24	\N	\N	2024-03-26 06:16:36.746797	1	0
 35027	Mass Spectrometer: Orbitrap Ascend	Mass Spectrometer: Ascend Orbitrap LC-MS 1 (2023)	10	\N	\N	2024-03-26 06:16:36.746797	1	0
+34139	Fourier-Transform Ion Cyclotron Resonance (FTICR)	Mass Spectrometer: 15T FTICR (2010)	10	Mass Spectrometer:  Fourier-Transform Ion Cyclotron Resonance	\N	2024-04-12 06:16:07.543088	0	1
 \.
 
 

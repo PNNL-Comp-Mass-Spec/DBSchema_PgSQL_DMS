@@ -29,8 +29,6 @@ COPY public.t_general_statistics (entry_id, category, label, value, last_affecte
 1007	CellCulture_Count	All	18019.000	2024-03-22 23:03:44.010865
 1008	CellCulture_Count	Last 7 days	0.000	2024-03-22 23:03:44.010865
 1009	CellCulture_Count	Last 30 days	0.000	2024-03-22 23:03:44.010865
-1010	Dataset_Count	All	1180037.000	2024-03-22 23:03:44.010865
-1011	Dataset_Count	Last 7 days	0.000	2024-03-22 23:03:44.010865
 1013	Experiment_Count	All	365665.000	2024-03-22 23:03:44.010865
 1014	Experiment_Count	Last 7 days	0.000	2024-03-22 23:03:44.010865
 1016	Organism_Count	All	801.000	2024-03-22 23:03:44.010865
@@ -41,8 +39,10 @@ COPY public.t_general_statistics (entry_id, category, label, value, last_affecte
 1003	Job_Count	New	5.000	2024-03-30 23:03:30.698584
 1015	Experiment_Count	Last 30 days	0.000	2024-03-31 17:03:31.366288
 1021	RawDataTB	Last 30 days	0	2024-03-31 17:03:31.366288
-1002	Job_Count	Last 30 days	4.000	2024-04-01 17:03:32.590814
-1012	Dataset_Count	Last 30 days	89.000	2024-04-01 17:03:32.590814
+1002	Job_Count	Last 30 days	0.000	2024-04-14 17:03:19.976552
+1010	Dataset_Count	All	1180126.000	2024-04-16 05:03:21.705958
+1011	Dataset_Count	Last 7 days	89.000	2024-04-16 05:03:21.705958
+1012	Dataset_Count	Last 30 days	89.000	2024-04-16 05:03:21.705958
 \.
 
 

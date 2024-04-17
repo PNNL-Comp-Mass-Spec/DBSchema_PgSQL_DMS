@@ -100,11 +100,11 @@ update_cart_parameters	2024-03-12 17:09:32.299809	127523
 update_requested_run_batch_parameters	2024-03-06 19:26:44.475492	528
 update_requested_run_factors	2024-03-06 19:26:44.475492	703
 update_requested_run_blocking_and_factors	2024-03-06 19:26:44.475492	608
-update_eus_users_from_eus_imports	2024-04-11 06:15:43.76751	395
-update_eus_instruments_from_eus_imports	2024-04-11 06:16:16.531529	394
-update_analysis_job_state_name_cached	2024-04-10 22:03:22.332859	168
-update_analysis_job_tool_name_cached	2024-04-10 22:03:25.44336	168
-update_eus_proposals_from_eus_imports	2024-04-11 06:15:22.62313	392
+update_eus_proposals_from_eus_imports	2024-04-16 06:15:17.734739	397
+update_eus_users_from_eus_imports	2024-04-16 06:15:38.91209	400
+update_eus_instruments_from_eus_imports	2024-04-16 06:16:11.870167	399
+update_analysis_job_state_name_cached	2024-04-15 22:03:17.43567	170
+update_analysis_job_tool_name_cached	2024-04-15 22:03:21.220518	170
 \.
 
 

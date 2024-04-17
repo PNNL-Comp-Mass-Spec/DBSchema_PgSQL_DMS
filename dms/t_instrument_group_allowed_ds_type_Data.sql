@@ -320,7 +320,6 @@ VelosOrbi	HMS-HCD-ETD-MSn		216	0
 VelosOrbi	HMS-HCD-HMSn		28711	0
 VelosOrbi	HMS-HCD-MSn		130	16
 VelosOrbi	HMS-HMSn		3007	0
-VelosOrbi	HMS-MSn		66463	200
 VelosOrbi	HMS-PQD-CID/ETD-MSn		35	0
 VelosOrbi	HMS-PQD-ETD-MSn		0	0
 VelosOrbi	LAESI-HMS	LAESI source coupled to an Orbitrap; results are in folders with a .raw file plus related files	2	0
@@ -331,23 +330,24 @@ VelosPro	MS-ETD-MSn		0	0
 VelosOrbi	HMS-HCD-CID-MSn		60225	4145
 VelosOrbi	HMS		11863	1426
 QExactive	HMS		22149	2753
-DataFolders	DataFiles		1382	180
 Bruker_FTMS	HMS	Typical mode	150733	9722
 Waters_IMS	HMS-HMSn		719	2
 Waters_IMS	HMS		8834	810
-MALDI-Imaging	MALDI-HMS	Typical mode	2078	255
-Agilent_QQQ	HMS		2650	256
-Agilent_GC-MS	GC-MS		49939	2725
-QEHFX	HMS-HCD-HMSn		33115	5633
-QExactive	HMS-HCD-HMSn		112666	21209
-Lumos	HMS-HCD-HMSn		28477	2772
-Eclipse	HMS-HCD-HMSn		9810	2288
-Eclipse	DIA-HMS-HCD-HMSn		927	601
-Lumos	HMS-HCD-MSn		7487	1720
+Agilent_QQQ	HMS		2650	209
+DataFolders	DataFiles		1382	176
+Eclipse	DIA-HMS-HCD-HMSn		927	580
 21T	HMS		22782	1953
+Eclipse	HMS-HCD-HMSn		9810	2280
+Agilent_GC-MS	GC-MS		49939	2684
+VelosOrbi	HMS-MSn		66463	152
 Bruker_FTMS	MALDI-HMS	Single-scan MALDI (not imaging)	12141	1632
-TSQ	MRM	Use for MRM	142391	7775
-Eclipse	HMS-HCD-MSn		2928	899
+MALDI-Imaging	MALDI-HMS	Typical mode	2078	254
+TSQ	MRM	Use for MRM	142391	7767
+Eclipse	HMS-HCD-MSn		2928	871
+QEHFX	HMS-HCD-HMSn		33115	5584
+QExactive	HMS-HCD-HMSn		112666	20774
+Lumos	HMS-HCD-HMSn		28477	2712
+Lumos	HMS-HCD-MSn		7487	1676
 \.
 
 
