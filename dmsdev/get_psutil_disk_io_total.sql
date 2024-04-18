@@ -26,5 +26,6 @@ COMMENT ON FUNCTION public.get_psutil_disk_io_total(OUT read_count double precis
 -- Name: FUNCTION get_psutil_disk_io_total(OUT read_count double precision, OUT write_count double precision, OUT read_bytes double precision, OUT write_bytes double precision); Type: ACL; Schema: public; Owner: d3l243
 --
 
+REVOKE ALL ON FUNCTION public.get_psutil_disk_io_total(OUT read_count double precision, OUT write_count double precision, OUT read_bytes double precision, OUT write_bytes double precision) FROM PUBLIC;
 GRANT ALL ON FUNCTION public.get_psutil_disk_io_total(OUT read_count double precision, OUT write_count double precision, OUT read_bytes double precision, OUT write_bytes double precision) TO pgwatch2;
 

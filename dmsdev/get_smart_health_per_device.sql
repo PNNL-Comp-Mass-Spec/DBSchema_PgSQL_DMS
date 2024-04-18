@@ -39,5 +39,6 @@ COMMENT ON FUNCTION public.get_smart_health_per_device(OUT device text, OUT retc
 -- Name: FUNCTION get_smart_health_per_device(OUT device text, OUT retcode integer); Type: ACL; Schema: public; Owner: d3l243
 --
 
+REVOKE ALL ON FUNCTION public.get_smart_health_per_device(OUT device text, OUT retcode integer) FROM PUBLIC;
 GRANT ALL ON FUNCTION public.get_smart_health_per_device(OUT device text, OUT retcode integer) TO pgwatch2;
 

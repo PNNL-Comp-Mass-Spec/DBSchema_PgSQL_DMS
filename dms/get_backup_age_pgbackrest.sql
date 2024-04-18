@@ -48,5 +48,6 @@ COMMENT ON FUNCTION public.get_backup_age_pgbackrest(OUT retcode integer, OUT ba
 -- Name: FUNCTION get_backup_age_pgbackrest(OUT retcode integer, OUT backup_age_seconds integer, OUT message text); Type: ACL; Schema: public; Owner: d3l243
 --
 
+REVOKE ALL ON FUNCTION public.get_backup_age_pgbackrest(OUT retcode integer, OUT backup_age_seconds integer, OUT message text) FROM PUBLIC;
 GRANT ALL ON FUNCTION public.get_backup_age_pgbackrest(OUT retcode integer, OUT backup_age_seconds integer, OUT message text) TO pgwatch2;
 

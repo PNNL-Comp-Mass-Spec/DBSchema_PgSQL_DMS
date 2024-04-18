@@ -23,5 +23,6 @@ COMMENT ON FUNCTION public.get_load_average(OUT load_1min double precision, OUT 
 -- Name: FUNCTION get_load_average(OUT load_1min double precision, OUT load_5min double precision, OUT load_15min double precision); Type: ACL; Schema: public; Owner: d3l243
 --
 
+REVOKE ALL ON FUNCTION public.get_load_average(OUT load_1min double precision, OUT load_5min double precision, OUT load_15min double precision) FROM PUBLIC;
 GRANT ALL ON FUNCTION public.get_load_average(OUT load_1min double precision, OUT load_5min double precision, OUT load_15min double precision) TO pgwatch2;
 
