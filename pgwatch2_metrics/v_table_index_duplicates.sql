@@ -3,8 +3,8 @@
 --
 
 CREATE VIEW public.v_table_index_duplicates AS
- SELECT pg_namespace.nspname AS table_schema,
-    pg_class.relname AS table_name,
+ SELECT (pg_namespace.nspname)::public.citext AS table_schema,
+    (pg_class.relname)::public.citext AS table_name,
     duplicateindexq.index_size_bytes,
     duplicateindexq.idx1,
     duplicateindexq.idx2,
@@ -32,5 +32,5 @@ CREATE VIEW public.v_table_index_duplicates AS
   ORDER BY duplicateindexq.index_size_bytes DESC;
 
 
-ALTER TABLE public.v_table_index_duplicates OWNER TO d3l243;
+ALTER VIEW public.v_table_index_duplicates OWNER TO d3l243;
 

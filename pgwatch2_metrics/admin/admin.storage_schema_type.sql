@@ -5,7 +5,7 @@
 CREATE TABLE admin.storage_schema_type (
     schema_type text NOT NULL,
     initialized_on timestamp with time zone DEFAULT now() NOT NULL,
-    CONSTRAINT storage_schema_type_schema_type_check CHECK ((schema_type = ANY (ARRAY['metric'::text, 'metric-time'::text, 'metric-dbname-time'::text, 'custom'::text])))
+    CONSTRAINT storage_schema_type_schema_type_check CHECK ((schema_type = ANY (ARRAY['metric'::text, 'metric-time'::text, 'metric-dbname-time'::text, 'custom'::text, 'timescale'::text])))
 );
 
 

@@ -13,7 +13,7 @@ DECLARE
 BEGIN
   SELECT schema_type INTO l_schema_type FROM admin.storage_schema_type;
 
-  IF l_schema_type IN ('metric', 'metric-time') THEN
+  IF l_schema_type IN ('metric', 'metric-time', 'timescale') THEN
     FOR r IN select * from admin.get_top_level_metric_tables()
     LOOP
       raise notice 'deleting data for %', r.table_name;

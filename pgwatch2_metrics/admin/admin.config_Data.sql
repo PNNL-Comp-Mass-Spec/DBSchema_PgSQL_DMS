@@ -17,11 +17,12 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Data for Name: storage_schema_type; Type: TABLE DATA; Schema: admin; Owner: pgwatch2
+-- Data for Name: config; Type: TABLE DATA; Schema: admin; Owner: pgwatch2
 --
 
-COPY admin.storage_schema_type (schema_type, initialized_on) FROM stdin;
-metric-time	2024-04-15 19:51:26.245361-07
+COPY admin.config (key, value, created_on, last_modified_on) FROM stdin;
+timescale_chunk_interval	2 days	2024-04-15 19:51:26.245361-07	\N
+timescale_compress_interval	1 day	2024-04-15 19:51:26.245361-07	\N
 \.
 
 
