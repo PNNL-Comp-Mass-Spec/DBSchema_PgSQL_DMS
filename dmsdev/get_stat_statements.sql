@@ -4,7 +4,7 @@
 
 CREATE OR REPLACE FUNCTION public.get_stat_statements() RETURNS SETOF public.pg_stat_statements
     LANGUAGE sql SECURITY DEFINER
-    SET search_path TO 'public', 'public', 'mc'
+    SET search_path TO 'public', 'public', 'sw', 'cap', 'dpkg', 'mc', 'ont', 'pc', 'logdms', 'logcap', 'logsw'
     AS $$
   select
     s.*
