@@ -53,6 +53,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_interval_for_multiple_instrume
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
+**          04/30/2024 mem - Only call update_emsl_instrument_usage_report if the instrument is an "EUS Primary Instrument" or if T_Instrument_Name has the Tracking flag enabled
 **
 *****************************************************/
 DECLARE
@@ -361,11 +362,15 @@ BEGIN
             If Not _updateEMSLInstrumentUsage Then
                 If _infoOnly And (_instrumentInfo.EMSL_Primary_Instrument In ('Y', '1') Or _instrumentInfo.Tracked = 1) Then
                     RAISE INFO '';
-                    RAISE INFO 'Skip call to Update_EMSL_Instrument_Usage_Report for Instrument %', _instrumentInfo.Instrument;
+                    RAISE INFO 'Skip call to Update_EMSL_Instrument_Usage_Report for instrument % (since _updateEMSLInstrumentUsage is false)', _instrumentInfo.Instrument;
                     RAISE INFO '';
                 End If;
 
                 CONTINUE;
+            End If;
+
+            If _infoOnly Then
+                RAISE INFO '';
             End If;
 
             -- Call Update_EMSL_Instrument_Usage_Report for this month, plus optionally previous months (if _instrumentUsageMonthsToUpdate is greater than 1)
@@ -374,12 +379,22 @@ BEGIN
 
             FOR _iteration IN 1 .. _instrumentUsageMonthsToUpdate
             LOOP
+                -- Only call update_emsl_instrument_usage_report if the instrument is an "EUS Primary Instrument" or if T_Instrument_Name has the Tracking flag enabled
+                If Not (_instrumentInfo.EMSL_Primary_Instrument In ('Y', '1') Or _instrumentInfo.Tracked = 1) Then
+                    If _infoOnly Then
+                        RAISE INFO 'Skip call to Update_EMSL_Instrument_Usage_Report for instrument % since it is not an EUS Primary Instrument and the Tracked flag is 0',
+                                    _instrumentInfo.Instrument;
+                    End If;
+
+                    -- Break out of the for loop
+                    EXIT;
+                End If;
+
                 If _infoOnly Then
                     RAISE INFO 'Call Update_EMSL_Instrument_Usage_Report for Instrument %, target month %-%',
                                 _instrumentInfo.Instrument,
                                 Extract(year  from _currentInstrumentUsageMonth),
                                 Extract(month from _currentInstrumentUsageMonth);
-
                 End If;
 
                 If Not _infoOnly Or _infoOnly And _previewProcedureCall Then
