@@ -54,6 +54,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_interval_for_multiple_instrume
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          04/30/2024 mem - Only call update_emsl_instrument_usage_report if the instrument is an "EUS Primary Instrument" or if T_Instrument_Name has the Tracking flag enabled
+**          05/01/2024 mem - Ignore case when filtering on instrument name
 **
 *****************************************************/
 DECLARE
@@ -175,7 +176,7 @@ BEGIN
     );
 
     CREATE TEMP TABLE Tmp_InstrumentFilter (
-        Instrument text
+        Instrument citext
     );
 
     CREATE TEMP TABLE Tmp_EUS_IDs_Processed (
