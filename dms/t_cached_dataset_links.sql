@@ -27,11 +27,11 @@ ALTER TABLE public.t_cached_dataset_links OWNER TO d3l243;
 COMMENT ON TABLE public.t_cached_dataset_links IS 'dataset_row_version comes from t_dataset.xmin and storage_path_row_version comes from t_storage_path.xmin';
 
 --
--- Name: t_cached_dataset_links pk_cached_dataset_links; Type: CONSTRAINT; Schema: public; Owner: d3l243
+-- Name: t_cached_dataset_links pk_t_cached_dataset_links; Type: CONSTRAINT; Schema: public; Owner: d3l243
 --
 
 ALTER TABLE ONLY public.t_cached_dataset_links
-    ADD CONSTRAINT pk_cached_dataset_links PRIMARY KEY (dataset_id);
+    ADD CONSTRAINT pk_t_cached_dataset_links PRIMARY KEY (dataset_id);
 
 --
 -- Name: ix_t_cached_dataset_links_update_required; Type: INDEX; Schema: public; Owner: d3l243
