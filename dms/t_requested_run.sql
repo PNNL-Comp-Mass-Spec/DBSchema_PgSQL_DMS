@@ -52,6 +52,104 @@ CREATE TABLE public.t_requested_run (
 ALTER TABLE public.t_requested_run OWNER TO d3l243;
 
 --
+-- Name: TABLE t_requested_run; Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON TABLE public.t_requested_run IS '
+For fast lookups on requested run name, utilize index
+ix_t_requested_run_request_name_lower_text_pattern_ops,
+with queries of the form:
+
+SELECT *
+FROM t_requested_run
+WHERE Lower(request_name::text) LIKE Lower(''Citric-acid'');
+
+Query performance comparisons:
+
+-- Query 1: no filter
+EXPLAIN (ANALYZE, COSTS, VERBOSE, BUFFERS, FORMAT TEXT)
+SELECT *
+FROM t_requested_run
+ORDER BY request_id DESC
+LIMIT 125;
+
+Limit (cost=0.43..12.75 rows=125 width=367)
+     (actual time=0.052..0.144 rows=125 loops=1)
+  ->  Index Scan Backward using pk_t_requested_run on public.t_requested_run
+      (cost=0.43..119848.79 rows=1215538 width=367)
+      (actual time=0.049..0.119 rows=125 loops=1)
+Planning Time: 0.376 ms
+Execution Time: 0.246 ms
+
+-- Query 2: filter on request name
+EXPLAIN (ANALYZE, COSTS, VERBOSE, BUFFERS, FORMAT TEXT)
+SELECT *
+FROM t_requested_run
+WHERE request_name SIMILAR TO ''NanoPOTS%TMT%Lib%''
+ORDER BY request_id DESC
+LIMIT 125;
+
+Limit (cost=0.43..2527.72 rows=125 width=367)
+      (actual time=15.970..696.066 rows=97 loops=1)
+  ->  Index Scan Backward using pk_t_requested_run on public.t_requested_run
+      (cost=0.43..122887.64 rows=6078 width=367)
+      (actual time=15.967..696.049 rows=97 loops=1)
+        Filter: (t_requested_run.request_name ~ ''^(?:NanoPOTS.*TMT.*Lib.*)$''::text)
+        Rows Removed by Filter: 1215108
+Planning Time: 0.361 ms
+Execution Time: 696.164 ms
+
+-- Query 3: when filtering, cast to text and use lower()
+EXPLAIN (ANALYZE, COSTS, VERBOSE, BUFFERS, FORMAT TEXT)
+SELECT *
+FROM t_requested_run
+WHERE Lower(request_name::text) SIMILAR TO Lower(''NanoPOTS%TMT%Lib%'')
+ORDER BY request_id DESC
+LIMIT 125;
+
+Limit (cost=7.01..7.31 rows=122 width=367)
+      (actual time=17.074..17.087 rows=97 loops=1)
+  ->  Sort
+      (cost=7.01..7.31 rows=122 width=367)
+      (actual time=17.071..17.077 rows=97 loops=1)
+        Sort Key: t_requested_run.request_id DESC
+        Sort Method: quicksort  Memory: 74kB
+        ->  Index Scan using ix_t_requested_run_request_name_lower_text_pattern_ops
+            (cost=0.55..2.78 rows=122 width=367)
+            (actual time=9.697..17.015 rows=97 loops=1)
+              Index Cond: ((lower((t_requested_run.request_name)::text) ~>=~ ''nanopots''::text) AND
+                           (lower((t_requested_run.request_name)::text) ~<~ ''nanopott''::text))
+              Filter: (lower((t_requested_run.request_name)::text) ~ ''^(?:nanopots.*tmt.*lib.*)$''::text)
+              Rows Removed by Filter: 4873
+Planning Time: 1.038 ms
+Execution Time: 17.183 ms
+
+-- Query 4: use LIKE instead of SIMILAR TO
+EXPLAIN (ANALYZE, COSTS, VERBOSE, BUFFERS, FORMAT TEXT)
+SELECT *
+FROM t_requested_run
+WHERE Lower(request_name::text) LIKE Lower(''NanoPOTS%TMT%Lib%'')
+ORDER BY request_id DESC
+LIMIT 125;
+
+Limit (cost=7.01..7.31 rows=122 width=367)
+      (actual time=8.000..8.013 rows=97 loops=1)
+  ->  Sort (cost=7.01..7.31 rows=122 width=367)
+           (actual time=7.998..8.004 rows=97 loops=1)
+        Sort Key: t_requested_run.request_id DESC
+        Sort Method: quicksort  Memory: 74kB
+        ->  Index Scan using ix_t_requested_run_request_name_lower_text_pattern_ops
+            (cost=0.55..2.78 rows=122 width=367)
+            (actual time=4.849..7.951 rows=97 loops=1)
+              Index Cond: ((lower((t_requested_run.request_name)::text) ~>=~ ''nanopots''::text) AND
+                           (lower((t_requested_run.request_name)::text) ~<~ ''nanopott''::text))
+              Filter: (lower((t_requested_run.request_name)::text) ~~ ''nanopots%tmt%lib%''::text)
+              Rows Removed by Filter: 4873
+Planning Time: 0.665 ms
+Execution Time: 8.101 ms
+';
+
+--
 -- Name: t_requested_run_request_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
 --
 

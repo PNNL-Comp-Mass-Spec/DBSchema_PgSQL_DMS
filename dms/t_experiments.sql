@@ -37,6 +37,109 @@ CREATE TABLE public.t_experiments (
 ALTER TABLE public.t_experiments OWNER TO d3l243;
 
 --
+-- Name: TABLE t_experiments; Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON TABLE public.t_experiments IS '
+For fast lookups on experiment name, utilize index
+ix_t_experiments_experiment_lower_text_pattern_ops,
+with queries of the form:
+
+SELECT *
+FROM t_experiments
+WHERE Lower(experiment::text) LIKE Lower(''DS%Leaf%'');
+
+Query performance comparisons:
+
+-- Query 1: no filter
+EXPLAIN (ANALYZE, COSTS, VERBOSE, BUFFERS, FORMAT TEXT)
+SELECT *
+FROM t_experiments
+ORDER BY exp_id DESC
+LIMIT 125;
+
+Limit (cost=0.42..11.43 rows=125 width=290)
+      (actual time=0.050..0.214 rows=125 loops=1)
+  ->  Index Scan Backward using pk_t_experiments
+      (cost=0.42..32534.47 rows=369300 width=290)
+      (actual time=0.048..0.188 rows=125 loops=1)
+Planning Time: 0.277 ms
+Execution Time: 0.290 ms
+
+-- Query 2: filter on request name
+EXPLAIN (ANALYZE, COSTS, VERBOSE, BUFFERS, FORMAT TEXT)
+SELECT *
+FROM t_experiments
+WHERE experiment SIMILAR TO ''DS%Leaf%''
+ORDER BY exp_id DESC
+LIMIT 125;
+
+Limit (cost=0.42..2265.95 rows=125 width=290)
+      (actual time=49.371..150.310 rows=96 loops=1)
+  ->  Index Scan Backward using pk_t_experiments
+      (cost=0.42..33457.72 rows=1846 width=290)
+      (actual time=49.367..150.296 rows=96 loops=1)
+        Filter: (t_experiments.experiment ~ ''^(?:DS.*Leaf.*)$''::text)
+        Rows Removed by Filter: 369204
+Planning Time: 0.366 ms
+Execution Time: 150.404 ms
+
+-- Query 3: when filtering, cast to text and use lower()
+EXPLAIN (ANALYZE, COSTS, VERBOSE, BUFFERS, FORMAT TEXT)
+SELECT *
+FROM t_experiments
+WHERE Lower(experiment::text) SIMILAR TO Lower(''DS%Leaf%'')
+ORDER BY exp_id DESC
+LIMIT 125;
+
+Limit (cost=1968.82..1968.91 rows=37 width=290)
+      (actual time=2.946..2.972 rows=96 loops=1)
+  ->  Sort (cost=1968.82..1968.91 rows=37 width=290)
+           (actual time=2.944..2.955 rows=96 loops=1)
+        Sort Key: t_experiments.exp_id DESC
+        Sort Method: quicksort  Memory: 73kB
+        ->  Bitmap Heap Scan on public.t_experiments
+            (cost=29.89..1967.85 rows=37 width=290)
+            (actual time=1.842..2.883 rows=96 loops=1)
+              Filter: (lower((t_experiments.experiment)::text) ~ ''^(?:ds.*leaf.*)$''::text)
+              Rows Removed by Filter: 1022
+              ->  Bitmap Index Scan on ix_t_experiments_experiment_lower_text_pattern_ops
+                  (cost=0.00..29.88 rows=1846 width=0)
+                  (actual time=0.216..0.217 rows=1118 loops=1)
+                    Index Cond: ((lower((t_experiments.experiment)::text) ~>=~ ''ds''::text) AND
+                                 (lower((t_experiments.experiment)::text) ~<~ ''dt''::text))
+Planning Time: 0.466 ms
+Execution Time: 3.080 ms
+
+-- Query 4: use LIKE instead of SIMILAR TO
+EXPLAIN (ANALYZE, COSTS, VERBOSE, BUFFERS, FORMAT TEXT)
+SELECT *
+FROM t_experiments
+WHERE Lower(experiment::text) LIKE Lower(''DS%Leaf%'')
+ORDER BY exp_id DESC
+LIMIT 125;
+
+Limit (cost=1968.82..1968.91 rows=37 width=290)
+      (actual time=1.821..1.852 rows=96 loops=1)
+  ->  Sort (cost=1968.82..1968.91 rows=37 width=290)
+           (actual time=1.819..1.832 rows=96 loops=1)
+        Sort Key: t_experiments.exp_id DESC
+        Sort Method: quicksort  Memory: 73kB
+        ->  Bitmap Heap Scan on public.t_experiments
+            (cost=29.89..1967.85 rows=37 width=290)
+            (actual time=1.165..1.756 rows=96 loops=1)
+              Filter: (lower((t_experiments.experiment)::text) ~~ ''ds%leaf%''::text)
+              Rows Removed by Filter: 1022
+              ->  Bitmap Index Scan on ix_t_experiments_experiment_lower_text_pattern_ops
+                  (cost=0.00..29.88 rows=1846 width=0)
+                  (actual time=0.227..0.227 rows=1118 loops=1)
+                    Index Cond: ((lower((t_experiments.experiment)::text) ~>=~ ''ds''::text) AND
+                                 (lower((t_experiments.experiment)::text) ~<~ ''dt''::text))
+Planning Time: 0.380 ms
+Execution Time: 1.948 ms
+';
+
+--
 -- Name: t_experiments_exp_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
 --
 
@@ -97,6 +200,12 @@ CREATE INDEX ix_t_experiments_exp_id_container_id ON public.t_experiments USING 
 --
 
 CREATE INDEX ix_t_experiments_exp_id_ex_campaign_id ON public.t_experiments USING btree (exp_id, campaign_id);
+
+--
+-- Name: ix_t_experiments_experiment_lower_text_pattern_ops; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_experiments_experiment_lower_text_pattern_ops ON public.t_experiments USING btree (lower((experiment)::text) text_pattern_ops);
 
 --
 -- Name: ix_t_experiments_experiment_name; Type: INDEX; Schema: public; Owner: d3l243

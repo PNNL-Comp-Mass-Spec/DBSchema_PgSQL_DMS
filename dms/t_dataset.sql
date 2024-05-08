@@ -42,6 +42,106 @@ CREATE TABLE public.t_dataset (
 ALTER TABLE public.t_dataset OWNER TO d3l243;
 
 --
+-- Name: TABLE t_dataset; Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON TABLE public.t_dataset IS '
+For fast lookups on dataset name, utilize index
+ix_t_dataset_dataset_lower_text_pattern_ops,
+with queries of the form:
+
+SELECT *
+FROM t_dataset
+WHERE Lower(dataset::text) LIKE Lower(''QC_Mam_23_01%Samwise%Apr24%'');
+
+Query performance comparisons:
+
+-- Query 1: no filter
+EXPLAIN (ANALYZE, COSTS, VERBOSE, BUFFERS, FORMAT TEXT)
+SELECT *
+FROM t_dataset
+ORDER BY dataset_id DESC LIMIT 150;
+
+Limit (cost=0.43..14.14 rows=150 width=255)
+      (actual time=0.055..0.171 rows=150 loops=1)
+  ->  Index Scan Backward using pk_t_dataset on public.t_dataset
+      (cost=0.43..109071.97 rows=1193119 width=255)
+      (actual time=0.052..0.140 rows=150 loops=1)
+Planning Time: 0.459 ms
+Execution Time: 0.254 ms
+
+-- Query 2: filter on dataset name
+EXPLAIN (ANALYZE, COSTS, VERBOSE, BUFFERS, FORMAT TEXT)
+SELECT *
+FROM t_dataset
+WHERE dataset SIMILAR TO ''QC_Mam_23_01%Samwise%Apr24%''
+ORDER BY dataset_id DESC LIMIT 150;
+
+Limit (cost=0.43..2817.75 rows=150 width=255)
+      (actual time=0.604..744.357 rows=24 loops=1)
+  ->  Index Scan Backward using pk_t_dataset on public.t_dataset
+      (cost=0.43..112054.77 rows=5966 width=255)
+      (actual time=0.602..744.350 rows=24 loops=1)
+        Filter: (t_dataset.dataset ~ ''^(?:QC.Mam.23.01.*Samwise.*Apr24.*)$''::text)
+        Rows Removed by Filter: 1193096
+Planning Time: 0.335 ms
+Execution Time: 744.432 ms
+
+-- Query 3: when filtering, cast to text and use lower()
+EXPLAIN (ANALYZE, COSTS, VERBOSE, BUFFERS, FORMAT TEXT)
+SELECT *
+FROM t_dataset
+WHERE Lower(dataset::text) SIMILAR TO Lower(''QC_Mam_23_01%Samwise%Apr24%'')
+ORDER BY dataset_id DESC LIMIT 150;
+
+Limit (cost=6369.90..6370.20 rows=119 width=255)
+      (actual time=222.345..222.356 rows=24 loops=1)
+  ->  Sort
+      (cost=6369.90..6370.20 rows=119 width=255)
+      (actual time=222.341..222.348 rows=24 loops=1)
+        Sort Key: t_dataset.dataset_id DESC
+        Sort Method: quicksort  Memory: 37kB
+        ->  Bitmap Heap Scan on public.t_dataset
+            (cost=116.34..6365.80 rows=119 width=255)
+            (actual time=20.281..222.316 rows=24 loops=1)
+              Filter: (lower((t_dataset.dataset)::text) ~ ''^(?:qc.mam.23.01.*samwise.*apr24.*)$''::text)
+              Rows Removed by Filter: 97718
+              ->  Bitmap Index Scan on ix_t_dataset_dataset_lower_text_pattern_ops
+                  (cost=0.00..116.31 rows=5966 width=0)
+                  (actual time=13.000..13.001 rows=97748 loops=1)
+                    Index Cond: ((lower((t_dataset.dataset)::text) ~>=~ ''qc''::text) AND
+                                 (lower((t_dataset.dataset)::text) ~<~ ''qd''::text))
+Planning Time: 0.494 ms
+Execution Time: 222.457 ms
+
+-- Query 4: use LIKE instead of SIMILAR TO
+EXPLAIN (ANALYZE, COSTS, VERBOSE, BUFFERS, FORMAT TEXT)
+SELECT *
+FROM t_dataset
+WHERE Lower(dataset::text) LIKE Lower(''QC_Mam_23_01%Samwise%Apr24%'')
+ORDER BY dataset_id DESC LIMIT 150;
+
+Limit (cost=6369.90..6370.20 rows=119 width=255)
+      (actual time=124.664..124.674 rows=24 loops=1)
+  ->  Sort (cost=6369.90..6370.20 rows=119 width=255)
+           (actual time=124.661..124.667 rows=24 loops=1)
+        Sort Key: t_dataset.dataset_id DESC
+        Sort Method: quicksort  Memory: 37kB
+        ->  Bitmap Heap Scan on public.t_dataset
+            (cost=116.34..6365.80 rows=119 width=255)
+            (actual time=19.583..124.637 rows=24 loops=1)
+              Filter: (lower((t_dataset.dataset)::text) ~~ ''qc_mam_23_01%samwise%apr24%''::text)
+              Rows Removed by Filter: 97718
+              ->  Bitmap Index Scan on ix_t_dataset_dataset_lower_text_pattern_ops
+                  (cost=0.00..116.31 rows=5966 width=0)
+                  (actual time=13.477..13.477 rows=97748 loops=1)
+                    Index Cond: ((lower((t_dataset.dataset)::text) ~>=~ ''qc''::text) AND
+                                 (lower((t_dataset.dataset)::text) ~<~ ''qd''::text))
+Planning Time: 0.463 ms
+Execution Time: 124.758 ms
+';
+
+--
 -- Name: t_dataset_dataset_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
 --
 
