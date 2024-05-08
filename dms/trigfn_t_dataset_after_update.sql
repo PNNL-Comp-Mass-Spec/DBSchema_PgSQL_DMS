@@ -14,17 +14,18 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_dataset_after_update() RETURNS trigge
 **
 **  Auth:   grk
 **  Date:   01/01/2003
-**          05/16/2007 mem - Now updating last_affected when dataset_state_id changes (Ticket #478)
-**          08/15/2007 mem - Updated to use an Insert query and to make an entry if dataset_rating_id is changed (Ticket #519)
-**          11/01/2007 mem - Updated to make entries in t_event_log only if the state actually changes (Ticket #569)
-**          07/19/2010 mem - Now updating t_entity_rename_log if the dataset is renamed
-**          11/15/2013 mem - Now updating t_cached_dataset_folder_paths
-**          11/22/2013 mem - Now updating date_sort_key
-**          07/25/2017 mem - Now updating t_cached_dataset_links
+**          05/16/2007 mem - Update last_affected when dataset_state_id changes (Ticket #478)
+**          08/15/2007 mem - Update to use an Insert query and to make an entry if dataset_rating_id is changed (Ticket #519)
+**          11/01/2007 mem - Update to make entries in t_event_log only if the state actually changes (Ticket #569)
+**          07/19/2010 mem - Update t_entity_rename_log if the dataset is renamed
+**          11/15/2013 mem - Update t_cached_dataset_folder_paths
+**          11/22/2013 mem - Update date_sort_key
+**          07/25/2017 mem - Update t_cached_dataset_links
 **          08/05/2022 mem - Ported to PostgreSQL
 **          08/08/2022 mem - Move value comparison to WHEN condition of trigger
 **                         - Reference the OLD and NEW variables directly instead of using transition tables (which contain every updated row, not just the current row)
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          05/03/2024 mem - Set update_required to 1 in t_cached_experiment_stats
 **
 *****************************************************/
 
@@ -106,7 +107,12 @@ BEGIN
         FROM t_experiments E
         WHERE t_dataset.dataset_id = NEW.dataset_id AND
               E.exp_id = NEW.exp_id;
+    End If;
 
+    If OLD.exp_id <> NEW.exp_id Then
+        UPDATE t_cached_experiment_stats
+        SET update_required = 1, Last_Affected = CURRENT_TIMESTAMP
+        WHERE exp_id IN (NEW.exp_id, OLD.exp_id);
     End If;
 
     RETURN null;

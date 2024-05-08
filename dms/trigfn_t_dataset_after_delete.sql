@@ -12,11 +12,12 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_dataset_after_delete() RETURNS trigge
 **
 **  Auth:   grk
 **  Date:   01/01/2003
-**          08/15/2007 mem - Updated to use an Insert query (Ticket #519)
-**          10/02/2007 mem - Updated to append the dataset name to the entered_by field (Ticket #543)
-**          10/31/2007 mem - Added Set NoCount statement (Ticket #569)
+**          08/15/2007 mem - Update to use an Insert query (Ticket #519)
+**          10/02/2007 mem - Update to append the dataset name to the entered_by field (Ticket #543)
+**          10/31/2007 mem - Add Set NoCount statement (Ticket #569)
 **          08/04/2022 mem - Ported to PostgreSQL
 **          05/31/2023 mem - Use format() for string concatenation
+**          05/03/2024 mem - Set update_required to 1 in t_cached_experiment_stats
 **
 *****************************************************/
 BEGIN
@@ -39,6 +40,12 @@ BEGIN
            format('%s; %s', SESSION_USER, dataset)
     FROM deleted
     ORDER BY dataset_id;
+
+    -- Set update_required to 1 for experiments associated with the deleted dataset(s)
+    UPDATE t_cached_experiment_stats
+    SET update_required = 1, last_affected = CURRENT_TIMESTAMP
+    FROM deleted
+    WHERE t_cached_experiment_stats.exp_id = deleted.exp_id;
 
     RETURN null;
 END
