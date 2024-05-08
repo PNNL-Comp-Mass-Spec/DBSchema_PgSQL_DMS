@@ -23,9 +23,9 @@ CREATE VIEW public.v_experiment_detail_report_ex AS
     e.sample_prep_request_id AS request,
     bto.identifier AS tissue_id,
     public.get_experiment_group_list(e.exp_id) AS experiment_groups,
-    COALESCE(dscountq.datasets, (0)::bigint) AS datasets,
-    dscountq.most_recent_dataset,
-    COALESCE(fc.factor_count, (0)::bigint) AS factors,
+    COALESCE((ces.dataset_count)::bigint, (0)::bigint) AS datasets,
+    ces.most_recent_dataset,
+    COALESCE((ces.factor_count)::bigint, (0)::bigint) AS factors,
     COALESCE(expfilecount.filecount, (0)::bigint) AS experiment_files,
     COALESCE(expgroupfilecount.filecount, (0)::bigint) AS experiment_group_files,
     e.exp_id AS id,
@@ -36,7 +36,7 @@ CREATE VIEW public.v_experiment_detail_report_ex AS
     e.wellplate,
     e.well,
     e.barcode
-   FROM ((((((((((((((public.t_experiments e
+   FROM (((((((((((((public.t_experiments e
      JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id)))
      JOIN public.t_users u ON ((e.researcher_username OPERATOR(public.=) u.username)))
      JOIN public.t_enzymes enz ON ((e.enzyme_id = enz.enzyme_id)))
@@ -45,12 +45,7 @@ CREATE VIEW public.v_experiment_detail_report_ex AS
      JOIN public.t_organisms org ON ((e.organism_id = org.organism_id)))
      JOIN public.t_material_containers mc ON ((e.container_id = mc.container_id)))
      JOIN public.t_material_locations ml ON ((mc.location_id = ml.location_id)))
-     LEFT JOIN ( SELECT count(t_dataset.dataset_id) AS datasets,
-            max(t_dataset.created) AS most_recent_dataset,
-            t_dataset.exp_id
-           FROM public.t_dataset
-          GROUP BY t_dataset.exp_id) dscountq ON ((dscountq.exp_id = e.exp_id)))
-     LEFT JOIN public.v_factor_count_by_experiment fc ON ((fc.exp_id = e.exp_id)))
+     LEFT JOIN public.t_cached_experiment_stats ces ON ((ces.exp_id = e.exp_id)))
      LEFT JOIN ( SELECT t_file_attachment.entity_id,
             count(t_file_attachment.attachment_id) AS filecount
            FROM public.t_file_attachment
