@@ -101,6 +101,9 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 87	Update waiting special processing jobs	2/5 * * * *	\N	0	t	f	f	\N	\N
 88	Validate job and dataset states	22 0/6 * * *	\N	0	t	f	f	\N	\N
 89	Delete timetable logs	36 0/6 * * *	\N	0	t	f	f	\N	\N
+90	Update cached experiment stats, mode 0	0/10 * * * *	\N	0	t	f	f	\N	\N
+91	Update cached experiment stats, mode 1	37 1/6 * * *	\N	0	t	f	f	\N	\N
+92	Update cached experiment stats, mode 2	16 17 * * 6	\N	0	t	f	f	\N	\N
 \.
 
 
@@ -108,7 +111,7 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 -- Name: chain_chain_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.chain_chain_id_seq', 89, true);
+SELECT pg_catalog.setval('timetable.chain_chain_id_seq', 92, true);
 
 
 --

@@ -66,6 +66,7 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 53	31	20	Delete orphaned capture jobs	SQL	CALL cap.delete_orphaned_tasks (_infoOnly => false);	\N	\N	f	t	0
 90	52	20	Update cached dataset folder paths, all datasets	SQL	CALL update_cached_dataset_folder_paths (_processingMode => 2);	\N	\N	f	t	0
 160	89	10	Delete timetable log entries	SQL	CALL cleanup_timetable_logs (_infoOnly => false);	\N	\N	f	t	0
+161	90	10	Sleep 21 seconds	BUILTIN	Sleep	\N	\N	f	f	0
 48	28	10	Clear data package manager errors	SQL	DELETE FROM dpkg.T_Log_Entries\r\nWHERE (message LIKE '%has an existing metadata file between 2 and 6.5 days old%' OR\r\n   message LIKE '%has not been validated in the archive after 5 days; %' OR\r\n   message LIKE '%is not available in MyEMSL after 24 hours; see %' OR\r\n   message LIKE '%was previously uploaded to MyEMSL, yet Simple Search did not return any files for this dataset%Skipping this data package %')\r\n    AND (type = 'error');	\N	\N	f	t	0
 74	45	20	Set external dataset purge priority	SQL	CALL set_external_dataset_purge_priority (_infoOnly => false);	\N	\N	f	t	0
 51	30	10	Delete old historic DMS DB logs	SQL	CALL logdms.delete_old_events_and_historic_logs (_infoOnly => false);	\N	\N	f	t	0
@@ -169,6 +170,11 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 159	88	10	Validate job and dataset states	SQL	CALL validate_job_dataset_states (_infoOnly => false);	\N	\N	f	t	0
 126	70	20	Update dataset interval and instrument usage for multiple instruments	SQL	CALL update_dataset_interval_for_multiple_instruments (\r\n           _daysToProcess => 180,\r\n           _updateEMSLInstrumentUsage => true);	\N	\N	f	t	0
 152	85	20	Update tissue usage	SQL	CALL ont.update_bto_usage_proc (_infoOnly => false);	\N	\N	f	t	0
+162	90	20	Update cached experiment stats, mode 0	SQL	CALL update_cached_experiment_stats (_processingMode => 0);	\N	\N	f	t	0
+163	91	10	Sleep 37 seconds	BUILTIN	Sleep	\N	\N	f	f	0
+164	91	20	Update cached experiment stats, mode 1	SQL	CALL update_cached_experiment_stats (_processingMode => 1);	\N	\N	f	t	0
+165	92	10	Sleep 16 seconds	BUILTIN	Sleep	\N	\N	f	f	0
+166	92	20	Update cached experiment stats, mode 2	SQL	CALL update_cached_experiment_stats (_processingMode => 2);	\N	\N	f	t	0
 \.
 
 
@@ -176,7 +182,7 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 -- Name: task_task_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.task_task_id_seq', 160, true);
+SELECT pg_catalog.setval('timetable.task_task_id_seq', 166, true);
 
 
 --
