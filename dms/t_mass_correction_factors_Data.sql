@@ -21,6 +21,12 @@ SET row_security = off;
 --
 
 COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, description, monoisotopic_mass, average_mass, affected_atom, original_source, original_source_name, alternative_name, empirical_formula) FROM stdin;
+1120	Acetyl	Acetylation	42.010567	42.0367	-	UniMod	Acetyl	Acetylation	C(2) H(2) O
+1529	AcNoTMT16	Acetylation on TMT16-labeled samples; for use when using a static TMT 16-plex mod	-262.196586	\N	-	PNNL	AcetNoTMT16	\N	\N
+1530	CbNoTMT16	Carbamylation on TMT-labled samples; for use when using a static TMT 6-plex mod	-261.201332	\N	-	PNNL	CarbamylNoTMT16	\N	\N
+1535	MethNoTMT	Methylation on TMT-labeled samples; remove 6-plex TMT and add Methyl	-215.147283	\N	-	PNNL	MethylNoTMT	\N	H(-18) C(-7) 13C(-4) N(-1) 15N(-1) O(-2)
+1536	UbNoTMT16	Ubiquitination on TMT-labeled samples; remove 16-plex TMT and add Ubiq	-190.164215	\N	-	PNNL	UbiqNoTMT16	\N	\N
+1495	AcNoTMT	Acetylation on TMT-labeled samples; remove 6-plexe TMT and add Acetyl	-187.15234	\N	-	PNNL	AcetNoTMT	\N	H(-18) C(-6) 13C(-4) N(-1) 15N(-1) O(-1)
 1521	Me3NoTMT	Trimethylation on TMT-labeled samples; remove 6-plex TMT and add tri-methylation	-187.115983	\N	-	PNNL	TrimethylNoTMT	\N	\N
 1518	TriMethNoTMT	Dupe/Obsolete; use ME3NoTMT	-187.1158	\N	-	PNNL	TriMethylNoTMT	\N	\N
 1520	Me3MockNoTMT	Mock trimethyl K residues that do not have TMT	-187.07995	\N	-	PNNL	Me3MockNoTMT	\N	\N
@@ -72,6 +78,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1519	DeamideMock	Mock Deamidation: 0.0193 + 1.0034; to estimate the FDR of the deamidation and citrullination peptides	1.022694	\N	-	PNNL	MockDeamidated	\N	\N
 1322	N15_2x	Residue with two 15N-labeled atoms	1.99407	1.9868	K	UniMod	Label:15N(2)	N15_2x	N(-2) 15N(2)
 1390	GluToMet	Glu to Met substitution	1.997892	\N	-	UniMod	Glu->Met	Misacylation of the tRNA or editing of the charged tRNA	H(2) O(-2) S
+1334	NEProbe	ABP NE Probe for lysine	95.0491	\N	-	PNNL		\N	\N
 1149	One_O18	One O18 addition	2.004246	1.9998	-	UniMod	Label:18O(1)	One_O18	O(-1) 18O
 1062	Iso_O18	Isotopic O18	2.004246	1.9998	O	UniMod	Label:18O(1)	Iso_O18	O(-1) 18O
 1303	2xDeut	Incorporation of 2 deuterium atoms for SILAC	2.0126	\N	-	PNNL		\N	\N
@@ -109,10 +116,12 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1170	Aminaton	Addition of NH	15.010899	15.0146	-	UniMod	Amino	Amination (aka NH, appropriate for reaction with NH2)	H N
 1115	Plus1Oxy	One O16 Addition (Oxidation)	15.994915	15.9994	-	UniMod	Oxidation	Oxidation	O
 1194	NH2	NH2 addition	16.01872	16.0226	-	PNNL		NH2 (appropriate for reaction with NH3)	H(2) N
-1158	Met_O18	Methylation with One O18	16.028204	16.0389	-	UniMod	Methyl:2H(2)	Methylation, one O18	2H(2) C
+1158	Met_O18	Methylation with one O18	16.019896	16.0264	-	PNNL	Methyl:18O(1)		H(2) C O(-1) 18O
+1570	Met_De	Deuterium methylation	16.028205	16.0389	-	UniMod	Methyl:2H(2)	DeMet	2H(2) C
 1084	DeutMeth	Deuterated Methoxy	17.034479	17.045099	-	UniMod	Methyl:2H(3)	Deuterated Methoxy	H(-1) 2H(3) C
 1221	LeuToMet	Replacement of Leuceine to Methionine alternate start site	17.956421	\N	-	UniMod	Xle->Met	\N	H(-2) C(-1) S
 1159	Met_2O18	Methylation with Two O18	18.0241	18.0262	-	PNNL	Methyl_plus_two_O18	Methylation, two O18	H(2) C O(-2) 18O(2)
+1569	Met_C13	Deuterium methylation with C13	18.037835	18.0377	-	UniMod	Methyl:2H(3)13C(1)	Methyl-Heavy	H(-1) 2H(3) 13C
 1156	DuMtO18	One O18 & Deuterated Methoxy	19.0387	\N	-	PNNL		DuMtO18	H(-1) 2H(3) C O(-1) 18O
 1209	NH+5Da	NH addition, plus 5 Da shift	20.0109	20.0147	-	PNNL		NH with 5 Da shift	\N
 1183	Two_C12	Two Carbon 12 additions (crosslinking)	24	24.0214	-	PNNL	Delta:C(2)	Two_C12	C(2)
@@ -122,22 +131,21 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1276	Formam	Formamidination (+C1N1H1) of primary amines	27.010899	\N	-	UniMod	Ser->Asn	\N	H C N
 1296	DiMetXOH	dimethylation replacing a hydroxyl (-OH)	27.0684	\N	-	PNNL		\N	\N
 1155	Formyl	Formylation	27.994915	28.0101	-	UniMod	Formyl	Formylation	C O
-1208	Dimethyl	Incorporation of two methyl moieties on the same amino acid	28.0313	\N	-	UniMod	Dimethyl	\N	H(4) C(2)
+1208	Dimethyl	Incorporation of two methyl moieties on the same amino acid	28.0313	28.0532	-	UniMod	Dimethyl	\N	H(4) C(2)
 1566	Ethyl	Ethylation	28.0313000001	28.0532	-	UniMod	Ethyl	Ethyl	H(4) C(2)
 1060	Nitrosyl	Nitrosylation	28.990164	28.9982	-	UniMod	Nitrosyl	Nitrosylation	H(-1) N O
 1212	NH+15Da	NH addition, plus 15 Da shift	30.0109	30.0147	-	PNNL		NH with 15 Da shift	\N
 1567	Ethyl_C13	Ethylation, heavy form	30.038009	30.0607	-	PNNL	Ethyl:13C(2)	\N	H(4) 13C(2)
 1220	ValToMet	Switches Valine to Methionine for alternate start sites	31.972071	32.065	-	UniMod	Sulfide	persulfide	S
 1064	Plus2Oxy	Two O16 Additions	31.989828	31.9988	-	UniMod	Dioxidation	Two O16	O(2)
-1373	DeutForm	Addition of CHD2	32.056407	32.0778	-	UniMod		deuterated formaldehyde?	2H(4) C(2)
+1373	DeutForm	Addition of CHD2 (DiMethyl-CHD2)	32.056407	32.0778	-	UniMod	Dimethyl:2H(4)	CHD2	2H(4) C(2)
 1420	Leu2MetO	Leu->Met, oxidized	33.951335	\N	-	UniMod	Leu->MetOx	\N	H(-2) C(-1) O S
 1181	Chloro	Chlorination	33.96103	34.4448	-	PNNL		Chloro	H(-1) Cl
 1218	Sulfur	Addition of sulfur atom	36.066	\N	-	PNNL		\N	\N
-1375	C13DtFrm	Addition of 13CHD2	36.07567	36.0754	-	UniMod		13C and deuterium on formylation	H(-2) 2H(6) 13C(2)
+1375	C13DtFrm	Addition of 13CHD2 (13C and deuterium on formylation); also, heavy dimethylation	36.07567	36.0754	-	UniMod	Dimethyl:2H(6)13C(2)	Dimethyl-Heavy	H(-2) 2H(6) 13C(2)
 1266	CAANL	Neutral loss of ammonia from chloroacetamidine (CAA)	39.010899	39.035999	-	UniMod	Phe->Trp	Ammonia_NL_from_Chloroacetamidine	H C(2) N
 1338	Pyro-cmC	Pyro-cmC	39.994915	40.0208	-	UniMod	Pyro-carbamidomethyl	Glyoxal-derived hydroimiadazolone	C(2) O
 1236	AcetAmid	Acetamidation, conversion of amine to acetamidine (by methyl acetimidate)	41.026549	\N	-	UniMod	Amidine	Amidine	H(3) C(2) N
-1120	Acetyl	Acetylation	42.010567	42.0367	-	UniMod	Acetyl	Acetylation	C(2) H(2) O
 1050	Guanid	Guanidination	42.021797	42.04	-	UniMod	Guanidinyl	Guanid	H(2) C N(2)
 1083	DCAT_D0	DCAT d0	42.0375	0	-	PNNL		DCAT_D0	\N
 1188	TriMeth	Triple methylation	42.046951	42.0797	-	UniMod	Trimethyl	Triple Methylation	H(6) C(3)
@@ -196,7 +204,6 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1123	Biotinyl	Biotin Addition (bare biotin; do not use)	89.0061	0	-	PNNL		Biotinyl	\N
 1447	Acrolein	Acrolein addition +94	94.041865	94.1112	-	UniMod		\N	H(6) C(6) O
 1330	CysA95	Probe addition of 95.0371 Da to Cysteine	95.0371	\N	-	PNNL		\N	\N
-1334	NEProbe	ABP NE Probe for lysine	95.0491	\N	-	PNNL		\N	\N
 1494	C6H7O	ATP probe on Lysine	95.0496872	95.119	-	PNNL		\N	C(6) H(7) O
 1071	PhosphH	Phosph H (Thiophosphorylation)	95.943489	96.0455	-	UniMod	Thiophospho	Thiophospho	H O(2) P S
 1227	NH2SO3	Aminotyrosine derivative N-substituted with -SO3	95.97554	96.08682	-	PNNL		Aminotyrosine SO3	\N
@@ -209,6 +216,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1224	EthPhos	O-Ethylphosphorylation	107.997627	108.033096	-	UniMod	Ethylphosphate	MonoEthyl_Phosph	H(5) C(2) O(3) P
 1176	Pyrylium	Fructosamine fragmentation product (loss of 3H2O from 162.0528)	108.021126	108.0948	-	UniMod	HydroxymethylOP	Pyrylium	H(4) C(6) O(2)
 1543	DTDP	Dithiodipyridine	108.9986198	109.15006	-	PNNL	Dithiodipyridine	\N	H(3) C(5) S N
+1454	DACT	Diaminochlorotriazine	110.0466684	\N	-	PNNL		\N	H(4) C(3) N(5)
 1021	Ubiq_02	Ubiquitinylation (on Lys)	114.042931	114.1026	-	UniMod	GG	GlyGly	H(6) C(4) N(2) O(2)
 1246	EGS	Addition of EGS cross linker to Lys	115.02694	115.08744	-	PNNL		EGS cross linker	C4 H5 N O3
 1136	SATA_Lgt	SATA Addition Light	115.9932	0	-	PNNL		SATA_Light	\N
@@ -340,6 +348,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1413	NeuGc	NeuGc	307.0903183	\N	-	UniMod	NeuGc	N-glycoyl neuraminic acid	\N
 1177	Farnesyl	Farnesylation of sulfur containing residues	307.197	\N	-	PNNL		Farnesyl	\N
 1331	CysA311	Probe addition of 311.1052 Da to Cysteine	311.1052	\N	-	PNNL		\N	\N
+1315	Cys311	Click additions to Cys, 311.1416 Da	311.1416	\N	-	PNNL		\N	\N
 1446	Hex2	Two hex groups	324.105647	\N	-	UniMod	Hex(2)	\N	C(12) H(20) O(10)
 1381	iodoTMT0	Thermo iodoTMT0 (zero) label	324.216156	\N	-	UniMod	iodoTMT	\N	H(28) C(16) N(4) O(3)
 1333	CysA326	Probe addition of 326.1161 Da to Cysteine	326.1161	\N	-	PNNL		\N	\N
@@ -393,12 +402,6 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1069	TrypPD4	Tryp_PhIATd4	494.74	0	-	PNNL		Tryp_PhIATd4	\N
 1320	Cys498	Click addition of 497.2261	498.2261	\N	-	PNNL		\N	\N
 1203	SumoEstr	Methyl esterified Sumoylation of Lys or Met	498.2417	\N	-	PNNL		Methyl esterified Sumoylation	\N
-1529	AcNoTMT16	Acetylation on TMT16-labeled samples; for use when using a static TMT 16-plex mod	-262.196586	\N	-	PNNL	AcetNoTMT16	\N	\N
-1530	CbNoTMT16	Carbamylation on TMT-labled samples; for use when using a static TMT 6-plex mod	-261.201332	\N	-	PNNL	CarbamylNoTMT16	\N	\N
-1535	MethNoTMT	Methylation on TMT-labeled samples; remove 6-plex TMT and add Methyl	-215.147283	\N	-	PNNL	MethylNoTMT	\N	H(-18) C(-7) 13C(-4) N(-1) 15N(-1) O(-2)
-1536	UbNoTMT16	Ubiquitination on TMT-labeled samples; remove 16-plex TMT and add Ubiq	-190.164215	\N	-	PNNL	UbiqNoTMT16	\N	\N
-1495	AcNoTMT	Acetylation on TMT-labeled samples; remove 6-plexe TMT and add Acetyl	-187.15234	\N	-	PNNL	AcetNoTMT	\N	H(-18) C(-6) 13C(-4) N(-1) 15N(-1) O(-1)
-1454	DACT	Diaminochlorotriazine	110.0466684	\N	-	PNNL		\N	H(4) C(3) N(5)
 1253	PCGalNAz	PC Gal NAz mod	502.202332	\N	-	UniMod	AMTzHexNAc2	\N	H(30) C(19) N(6) O(10)
 1321	Cys513	Click addition of 513.2237	513.237	\N	-	PNNL		\N	\N
 1424	H2HNac	Hex(2) HexNAc	527.185	\N	-	PNNL	Hex(2)HexNAc(1)	Hex(2) HexNAc	\N
@@ -407,6 +410,23 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1306	ADPRibos	ADP Ribose addition (UniMod #231)	541.061096	\N	-	UniMod	ADP-Ribosyl	\N	H(21) C(15) N(5) O(13) P(2)
 1483	ABP_FP2	Probe addition of 542.25 Da to Serine	542.2505384	\N	-	PNNL		\N	C(24) H(39) N(4) O(8) P
 1075	SBEDCapt	Sulfo SBED Capture	547.22	0	-	PNNL		Sulfo SBED Capture	\N
+1493	B12ABPc	B12 ABP Carbene Mode, fragment c (mass difference between 1547.6618 and 997.4806 in Lindsey-B12-ABP-1-20HCD.raw)	550.1812	\N	-	PNNL	B12_ABP_Carbene_FragmentC	B12_ABP_Carbene_FragmentC	C(24) H(31) N(4) O(9) P
+1067	GluCPD4	GluC_PhIATd4	550.1953	0	-	PNNL		GluCPD4	\N
+1265	ATW8TEV	ATW8 Probe, TEV, C27H48N8O5	564.3748	\N	-	PNNL		\N	\N
+1438	IAAABPTU	NCS_IAAABP_TEV_1->3 probe, minus H	567.3128796	\N	-	PNNL		\N	C(24) H(41) N(9) O(7)
+1363	IAAABPTV	NCS_IAAABP_TEV_1->3 probe addition to Cysteine	568.3207	568.6567	-	PNNL		\N	C24 H42 N9 O7
+1260	TMPPAc	TMPP-Ac	572.181152	572.5401	-	UniMod	TMPP-Ac	tris(2,4,6-trimethoxyphenyl)phosphonium acetic acid	H(33) C(29) O(10) P
+1191	Lipid2	S-diaglycerol-L-cysteine lipid modification alternative	576.51178	576.933411	-	UniMod	Diacylglycerol	S-diacylglycerol-L-cysteine	H(68) C(37) O(4)
+1264	2ENTEV	2EN probe, TEV, C29H38N8O5	578.2965	\N	-	PNNL		\N	\N
+1059	NHSPEO4	NHS PEO4	588.2465	0	-	PNNL		NHSPEO4	\N
+1524	BC-558-2	Alkylation with BC-558-2	598.2613628	\N	C	PNNL		\N	H(38) C(34) N(4) O(4) S
+1263	ATW8BtnS	ATW8 probe, Biotin stripped, C30H50N7O4S	604.3645	\N	-	PNNL		\N	\N
+1052	Heme_Sas	Heme Sasha Corr	614.1819	0	-	PNNL		Heme_Sas	\N
+1035	Heme_615	Heme 615 adduct	615.169458	615.4795	-	PNNL	Heme_615	Heme_615	H31 C34 N4 O4 Fe
+1005	HemeAddn	Heme adduct	616.177307	616.487305	-	UniMod	Heme	HemeAddn	H(32) C(34) N(4) O(4) Fe
+1023	Heme_617	Heme 617 adduct	617	0	-	PNNL		Heme_617	\N
+1262	2ENBtnSt	2EN probe, Biotin Stripped, C32H40N7O4S	618.2863	\N	-	PNNL		\N	\N
+1485	ABP_TEV2	Activity based proteomics TEV-FP2 tag for serine	633.3250968	633.674861	-	PNNL	ABP_TEV_FP2	ABP_TEV_FP2	H(48) C(26) N(7) O(9) (P)
 1442	Hex4	Four hex groups	648.211294	\N	-	UniMod	Hex(4)	\N	C(24) H(40) O(20)
 1300	GalNAFuc	PCGalNAz_Fuc	648.2603	\N	-	PNNL		\N	\N
 1386	HHN	Hex HexNAc NeuAc	656.2276	\N	-	UniMod	Hex(1)HexNAc(1)NeuAc(1)	HHN	\N
@@ -436,24 +456,6 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1204	UbqLFrag	Fragment of Ubiquitin retained by ubiquination	1641.775	\N	-	PNNL		Ubiquitination fragment	\N
 1444	Hex8HNA2	Hex(8) HexNAc(2)	1702.581333	\N	-	UniMod	Hex(8)HexNAc(2)	\N	Hex(8) HexNAc(2)
 1445	Hex9HNA2	Hex(9) HexNAc(2)	1864.634157	\N	-	UniMod	Hex(9)HexNAc(2)	\N	Hex(9) HexNAc(2)
-1315	Cys311	Click additions to Cys, 311.1416 Da	311.1416	\N	-	PNNL		\N	\N
-1493	B12ABPc	B12 ABP Carbene Mode, fragment c (mass difference between 1547.6618 and 997.4806 in Lindsey-B12-ABP-1-20HCD.raw)	550.1812	\N	-	PNNL	B12_ABP_Carbene_FragmentC	B12_ABP_Carbene_FragmentC	C(24) H(31) N(4) O(9) P
-1067	GluCPD4	GluC_PhIATd4	550.1953	0	-	PNNL		GluCPD4	\N
-1265	ATW8TEV	ATW8 Probe, TEV, C27H48N8O5	564.3748	\N	-	PNNL		\N	\N
-1438	IAAABPTU	NCS_IAAABP_TEV_1->3 probe, minus H	567.3128796	\N	-	PNNL		\N	C(24) H(41) N(9) O(7)
-1363	IAAABPTV	NCS_IAAABP_TEV_1->3 probe addition to Cysteine	568.3207	568.6567	-	PNNL		\N	C24 H42 N9 O7
-1260	TMPPAc	TMPP-Ac	572.181152	572.5401	-	UniMod	TMPP-Ac	tris(2,4,6-trimethoxyphenyl)phosphonium acetic acid	H(33) C(29) O(10) P
-1191	Lipid2	S-diaglycerol-L-cysteine lipid modification alternative	576.51178	576.933411	-	UniMod	Diacylglycerol	S-diacylglycerol-L-cysteine	H(68) C(37) O(4)
-1264	2ENTEV	2EN probe, TEV, C29H38N8O5	578.2965	\N	-	PNNL		\N	\N
-1059	NHSPEO4	NHS PEO4	588.2465	0	-	PNNL		NHSPEO4	\N
-1524	BC-558-2	Alkylation with BC-558-2	598.2613628	\N	C	PNNL		\N	H(38) C(34) N(4) O(4) S
-1263	ATW8BtnS	ATW8 probe, Biotin stripped, C30H50N7O4S	604.3645	\N	-	PNNL		\N	\N
-1052	Heme_Sas	Heme Sasha Corr	614.1819	0	-	PNNL		Heme_Sas	\N
-1035	Heme_615	Heme 615 adduct	615.169458	615.4795	-	PNNL	Heme_615	Heme_615	H31 C34 N4 O4 Fe
-1005	HemeAddn	Heme adduct	616.177307	616.487305	-	UniMod	Heme	HemeAddn	H(32) C(34) N(4) O(4) Fe
-1023	Heme_617	Heme 617 adduct	617	0	-	PNNL		Heme_617	\N
-1262	2ENBtnSt	2EN probe, Biotin Stripped, C32H40N7O4S	618.2863	\N	-	PNNL		\N	\N
-1485	ABP_TEV2	Activity based proteomics TEV-FP2 tag for serine	633.3250968	633.674861	-	PNNL	ABP_TEV_FP2	ABP_TEV_FP2	H(48) C(26) N(7) O(9) (P)
 \.
 
 
@@ -461,7 +463,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 -- Name: t_mass_correction_factors_mass_correction_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_mass_correction_factors_mass_correction_id_seq', 1567, true);
+SELECT pg_catalog.setval('public.t_mass_correction_factors_mass_correction_id_seq', 1570, true);
 
 
 --

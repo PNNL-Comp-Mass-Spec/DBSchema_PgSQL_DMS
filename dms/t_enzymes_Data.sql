@@ -44,6 +44,7 @@ COPY public.t_enzymes (enzyme_id, enzyme_name, description, p1, p1_exception, p2
 28	Trypsin_plus_Chymotrypsin	Trypsin and Chymotrypsin	KRFWYL-	na	KRFWYL-	na	Standard	1	\N	Tryp_Pig_Bov	\N
 29	Trypsin_plus_GluC	Trypsin and Endoproteinas GluC	KRED-	na	KRED-	na	Standard	1	\N	Tryp_Pig_Bov	\N
 30	ALP	Alpha-Lytic Protease	TASV	na	TASV	na	Standard	1	\N	HumanContam	\N
+31	Collagenase_III	Collagenase III	GLI	na	GLI	na	Standard	1	\N	Tryp_Pig_Bov	\N
 \.
 
 
@@ -51,7 +52,7 @@ COPY public.t_enzymes (enzyme_id, enzyme_name, description, p1, p1_exception, p2
 -- Name: t_enzymes_enzyme_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_enzymes_enzyme_id_seq', 30, true);
+SELECT pg_catalog.setval('public.t_enzymes_enzyme_id_seq', 31, true);
 
 
 --

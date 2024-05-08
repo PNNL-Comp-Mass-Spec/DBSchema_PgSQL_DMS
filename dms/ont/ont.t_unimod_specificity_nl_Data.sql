@@ -21,6 +21,9 @@ SET row_security = off;
 --
 
 COPY ont.t_unimod_specificity_nl (unimod_id, specificity_entry_id, neutral_loss_entry_id, mono_mass, avg_mass, composition, flag) FROM stdin;
+143	3	1	406.1588	406.385	HexNAc(2)	f
+1590	2	1	810.2641	810.703	Hex(5)	f
+144	1	1	486.1585	486.4218	Hex(3)	f
 21	5	1	97.9769	97.9952	H(3) O(4) P	f
 21	6	1	97.9769	97.9952	H(3) O(4) P	f
 35	4	1	63.99828	64.1069	H(4) C O S	f
@@ -50,8 +53,6 @@ COPY ont.t_unimod_specificity_nl (unimod_id, specificity_entry_id, neutral_loss_
 142	3	1	349.1373	349.3337	dHex HexNAc	f
 143	1	1	406.1588	406.385	HexNAc(2)	f
 143	2	1	406.1588	406.385	HexNAc(2)	f
-143	3	1	406.1588	406.385	HexNAc(2)	f
-144	1	1	486.1585	486.4218	Hex(3)	f
 144	2	1	486.1585	486.4218	Hex(3)	f
 144	3	1	486.1585	486.4218	Hex(3)	f
 145	1	1	495.1952	495.4749	dHex(2) HexNAc	f
@@ -376,7 +377,6 @@ COPY ont.t_unimod_specificity_nl (unimod_id, specificity_entry_id, neutral_loss_
 1589	1	1	810.2212	810.7294	O(3) S Hex(2) HexNAc(2)	f
 1589	2	1	810.2212	810.7294	O(3) S Hex(2) HexNAc(2)	f
 1590	1	1	810.2641	810.703	Hex(5)	f
-1590	2	1	810.2641	810.703	Hex(5)	f
 1591	1	1	812.3175	812.7701	HexNAc(4)	f
 1591	2	1	812.3175	812.7701	HexNAc(4)	f
 1592	1	1	817.26	817.7005	HexNAc(1) NeuGc(2)	f

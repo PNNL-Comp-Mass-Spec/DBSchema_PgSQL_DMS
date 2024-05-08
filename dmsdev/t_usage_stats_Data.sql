@@ -30,8 +30,6 @@ store_quameter_results	2024-03-04 15:29:28.055293	65721
 store_smaqc_results	2024-03-04 15:30:24.415671	5389
 create_psm_job_request	2024-02-21 09:59:29	38
 CreatePSMJobRequest	2023-02-24 11:07:11	453
-update_analysis_job_state_name_cached	2024-04-10 22:03:25.18987	169
-update_analysis_job_tool_name_cached	2024-04-10 22:03:30.222594	169
 set_archive_update_required	2024-03-02 16:28:00	118154
 set_archive_update_task_busy	2024-03-02 16:30:31	413031
 set_archive_update_task_complete	2024-03-02 16:30:31	210788
@@ -42,9 +40,11 @@ SetArchiveTaskBusy	2023-02-24 15:26:32	1671314
 SetArchiveTaskComplete	2023-02-24 15:20:31	879396
 SetArchiveUpdateRequired	2023-02-24 15:49:01	1594913
 SetArchiveUpdateTaskBusy	2023-02-24 15:26:31	3634944
+update_analysis_job_state_name_cached	2024-04-17 22:03:32.067137	172
 SetArchiveUpdateTaskComplete	2023-02-24 15:26:32	2063591
 SetCaptureTaskBusy	2023-02-24 15:26:32	1742848
 SetCaptureTaskComplete	2023-02-24 15:26:31	885550
+update_analysis_job_tool_name_cached	2024-04-17 22:03:36.468047	172
 SetPurgeTaskComplete	2023-02-27 16:49:15	903729
 StoreDatasetFileInfo	2019-04-02 18:28:21	6
 StoreDTARefMassErrorStats	2023-02-27 11:18:50	92358
@@ -60,11 +60,8 @@ store_qcart_results	2024-03-04 15:26:06.174082	1
 UpdateRequestedRunFactors	2023-02-26 12:57:42	8687
 update_dataset_dispositions	2024-03-02 10:44:41	2076
 update_dataset_dispositions_by_name	2024-03-02 10:44:41	375
-update_eus_proposals_from_eus_imports	2024-04-12 06:15:26.031953	393
-update_eus_users_from_eus_imports	2024-04-12 06:15:47.274947	396
 update_instrument_group_allowed_dataset_type	2024-02-05 11:14:15	55
 update_organism_list_for_biomaterial	2023-09-25 10:17:19	419
-update_eus_instruments_from_eus_imports	2024-04-12 06:16:20.245866	395
 update_requested_run_assignments	2024-02-28 15:07:08	2715
 update_research_team_for_campaign	2024-02-27 10:19:29	159
 update_notification_user_registration	2024-03-06 17:01:31.919675	8
@@ -99,6 +96,9 @@ UpdateRequestedRunCopyFactors	2022-09-06 12:11:49	1326
 UpdateSampleRequestAssignments	2022-02-17 08:18:40	233
 UpdateUser	2013-03-25 19:01:27	125
 update_requested_run_admin	2024-03-07 13:53:14.962146	289
+update_eus_proposals_from_eus_imports	2024-04-18 06:15:32.38077	399
+update_eus_users_from_eus_imports	2024-04-18 06:15:53.63262	402
+update_eus_instruments_from_eus_imports	2024-04-18 06:16:26.607154	401
 update_research_team_observer	2024-03-07 20:00:51.126192	10
 update_dataset_file_info_xml	2024-03-07 21:07:50.857607	98688
 update_cart_parameters	2024-03-12 17:09:32.299809	127523

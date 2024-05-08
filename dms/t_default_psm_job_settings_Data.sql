@@ -21,6 +21,30 @@ SET row_security = off;
 --
 
 COPY public.t_default_psm_job_settings (entry_id, tool_name, job_type_name, stat_cys_alk, dyn_sty_phos, settings_file_name, enabled) FROM stdin;
+1	Sequest	Low Res ms1	0	0	FinniganDefSettings.xml	0
+3	Sequest	High Res ms1	0	0	FinniganDefSettings_DeconMSN.xml	0
+4	Sequest	iTRAQ 4-plex	0	0	FinniganDefSettings_DeconMSN.xml	0
+5	Sequest	Low Res ms1	1	0	FinniganDefSettings.xml	0
+6	Sequest	High Res ms1	1	0	FinniganDefSettings_DeconMSN.xml	0
+7	Sequest	iTRAQ 4-plex	1	0	FinniganDefSettings_DeconMSN.xml	0
+8	Sequest	Low Res ms1	0	1	FinniganDefSettings.xml	0
+9	Sequest	High Res ms1	0	1	FinniganDefSettings_DeconMSN.xml	0
+10	Sequest	iTRAQ 4-plex	0	1	FinniganDefSettings_DeconMSN.xml	0
+11	Sequest	Low Res ms1	1	1	FinniganDefSettings.xml	0
+12	Sequest	High Res ms1	1	1	FinniganDefSettings_DeconMSN.xml	0
+13	Sequest	iTRAQ 4-plex	1	1	FinniganDefSettings_DeconMSN.xml	0
+14	Sequest_DTARefinery	High Res ms1	0	0	FinniganDefSettings_DeconMSN_DTARef_NoMods.xml	0
+15	Sequest_DTARefinery	iTRAQ 4-plex	0	0	FinniganDefSettings_DeconMSN_DTARef_4plexITRAQ.xml	0
+16	Sequest_DTARefinery	High Res ms1	1	0	FinniganDefSettings_DeconMSN_DTARef_StatCysAlk.xml	0
+17	Sequest_DTARefinery	iTRAQ 4-plex	1	0	FinniganDefSettings_DeconMSN_DTARef_StatCysAlk_4plexITRAQ.xml	0
+18	Sequest_DTARefinery	High Res ms1	0	1	FinniganDefSettings_DeconMSN_DTARef_phospho.xml	0
+19	Sequest_DTARefinery	iTRAQ 4-plex	0	1	FinniganDefSettings_DeconMSN_DTARef_4plexITRAQ_phospho.xml	0
+20	Sequest_DTARefinery	High Res ms1	1	1	FinniganDefSettings_DeconMSN_DTARef_StatCysAlk_phospho.xml	0
+21	Sequest_DTARefinery	iTRAQ 4-plex	1	1	FinniganDefSettings_DeconMSN_DTARef_StatCysAlk_4plexITRAQ_phospho.xml	0
+22	MSGFPlus	Low Res ms1	0	0	IonTrapDefSettings.xml	0
+23	MSGFPlus	High Res ms1	0	0	IonTrapDefSettings_DeconMSN.xml	0
+24	MSGFPlus	iTRAQ 4-plex	0	0	IonTrapDefSettings_DeconMSN.xml	0
+25	MSGFPlus	Low Res ms1	1	0	IonTrapDefSettings.xml	0
 26	MSGFPlus	High Res ms1	1	0	IonTrapDefSettings_DeconMSN.xml	0
 27	MSGFPlus	iTRAQ 4-plex	1	0	IonTrapDefSettings_DeconMSN.xml	0
 28	MSGFPlus	Low Res ms1	0	1	IonTrapDefSettings.xml	0
@@ -49,47 +73,6 @@ COPY public.t_default_psm_job_settings (entry_id, tool_name, job_type_name, stat
 115	Sequest	iTRAQ 8-plex	0	1	FinniganDefSettings_DeconMSN.xml	0
 116	Sequest	iTRAQ 8-plex	1	0	FinniganDefSettings_DeconMSN.xml	0
 117	Sequest	iTRAQ 8-plex	1	1	FinniganDefSettings_DeconMSN.xml	0
-190	MSGFPlus_MzML	iTRAQ 4-plex	0	0	IonTrapDefSettings_MzML_4plexITRAQ.xml	1
-191	MSGFPlus_MzML	iTRAQ 4-plex	0	1	IonTrapDefSettings_MzML_4plexITRAQ_phospho.xml	1
-192	MSGFPlus_MzML	iTRAQ 4-plex	1	0	IonTrapDefSettings_MzML_StatCysAlk_4plexITRAQ.xml	1
-193	MSGFPlus_MzML	iTRAQ 4-plex	1	1	IonTrapDefSettings_MzML_StatCysAlk_4plexITRAQ_phospho.xml	1
-194	MSGFPlus_MzML	iTRAQ 8-plex	0	0	IonTrapDefSettings_MzML_8plexITRAQ.xml	1
-195	MSGFPlus_MzML	iTRAQ 8-plex	0	1	IonTrapDefSettings_MzML_8plexITRAQ_phospho.xml	1
-196	MSGFPlus_MzML	iTRAQ 8-plex	1	0	IonTrapDefSettings_MzML_StatCysAlk_8plexITRAQ.xml	1
-197	MSGFPlus_MzML	iTRAQ 8-plex	1	1	IonTrapDefSettings_MzML_StatCysAlk_8plexITRAQ_phospho.xml	1
-198	MSGFPlus_MzML	TMT 6-plex	1	0	IonTrapDefSettings_MzML_StatCysAlk_6plexTMT.xml	1
-199	MSGFPlus_MzML	TMT 6-plex	1	1	IonTrapDefSettings_MzML_StatCysAlk_6plexTMT_phospho.xml	1
-200	MSGFPlus_MzML	TMT 6-plex	0	0	IonTrapDefSettings_MzML_6plexTMT.xml	1
-201	MSGFPlus_MzML	TMT 6-plex	0	1	IonTrapDefSettings_MzML_6plexTMT_phospho.xml	1
-202	MSGFPlus_MzML	TMT Zero	1	1	IonTrapDefSettings_MzML_StatCysAlk_phospho.xml	1
-204	MSGFPlus_MzML	TMT Zero	1	0	IonTrapDefSettings_MzML_StatCysAlk_6plexTMT.xml	1
-205	MSGFPlus_MzML	TMT 16-plex	1	0	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	1
-206	MSGFPlus_MzML	TMT 16-plex	1	1	MzML_StatCysAlk_S_Phospho_Dyn_TY_Phospho_16plexTMT.xml	1
-207	MSGFPlus	TMT 16-plex	1	0	IonTrapDefSettings_MSConvert.xml	0
-1	Sequest	Low Res ms1	0	0	FinniganDefSettings.xml	0
-3	Sequest	High Res ms1	0	0	FinniganDefSettings_DeconMSN.xml	0
-4	Sequest	iTRAQ 4-plex	0	0	FinniganDefSettings_DeconMSN.xml	0
-5	Sequest	Low Res ms1	1	0	FinniganDefSettings.xml	0
-6	Sequest	High Res ms1	1	0	FinniganDefSettings_DeconMSN.xml	0
-7	Sequest	iTRAQ 4-plex	1	0	FinniganDefSettings_DeconMSN.xml	0
-8	Sequest	Low Res ms1	0	1	FinniganDefSettings.xml	0
-9	Sequest	High Res ms1	0	1	FinniganDefSettings_DeconMSN.xml	0
-10	Sequest	iTRAQ 4-plex	0	1	FinniganDefSettings_DeconMSN.xml	0
-11	Sequest	Low Res ms1	1	1	FinniganDefSettings.xml	0
-12	Sequest	High Res ms1	1	1	FinniganDefSettings_DeconMSN.xml	0
-13	Sequest	iTRAQ 4-plex	1	1	FinniganDefSettings_DeconMSN.xml	0
-14	Sequest_DTARefinery	High Res ms1	0	0	FinniganDefSettings_DeconMSN_DTARef_NoMods.xml	0
-15	Sequest_DTARefinery	iTRAQ 4-plex	0	0	FinniganDefSettings_DeconMSN_DTARef_4plexITRAQ.xml	0
-16	Sequest_DTARefinery	High Res ms1	1	0	FinniganDefSettings_DeconMSN_DTARef_StatCysAlk.xml	0
-17	Sequest_DTARefinery	iTRAQ 4-plex	1	0	FinniganDefSettings_DeconMSN_DTARef_StatCysAlk_4plexITRAQ.xml	0
-18	Sequest_DTARefinery	High Res ms1	0	1	FinniganDefSettings_DeconMSN_DTARef_phospho.xml	0
-19	Sequest_DTARefinery	iTRAQ 4-plex	0	1	FinniganDefSettings_DeconMSN_DTARef_4plexITRAQ_phospho.xml	0
-20	Sequest_DTARefinery	High Res ms1	1	1	FinniganDefSettings_DeconMSN_DTARef_StatCysAlk_phospho.xml	0
-21	Sequest_DTARefinery	iTRAQ 4-plex	1	1	FinniganDefSettings_DeconMSN_DTARef_StatCysAlk_4plexITRAQ_phospho.xml	0
-22	MSGFPlus	Low Res ms1	0	0	IonTrapDefSettings.xml	0
-23	MSGFPlus	High Res ms1	0	0	IonTrapDefSettings_DeconMSN.xml	0
-24	MSGFPlus	iTRAQ 4-plex	0	0	IonTrapDefSettings_DeconMSN.xml	0
-25	MSGFPlus	Low Res ms1	1	0	IonTrapDefSettings.xml	0
 118	Sequest_DTARefinery	iTRAQ 8-plex	0	0	FinniganDefSettings_DeconMSN_DTARef_8plexITRAQ.xml	0
 119	Sequest_DTARefinery	iTRAQ 8-plex	0	1	FinniganDefSettings_DeconMSN_DTARef_8plexITRAQ_phospho.xml	0
 120	Sequest_DTARefinery	iTRAQ 8-plex	1	0	FinniganDefSettings_DeconMSN_DTARef_StatCysAlk_8plexITRAQ.xml	0
@@ -120,6 +103,23 @@ COPY public.t_default_psm_job_settings (entry_id, tool_name, job_type_name, stat
 187	MSGFPlus_MzML	High Res ms1	0	1	IonTrapDefSettings_MzML_phospho.xml	1
 188	MSGFPlus_MzML	High Res ms1	1	0	IonTrapDefSettings_MzML_StatCysAlk.xml	1
 189	MSGFPlus_MzML	High Res ms1	1	1	IonTrapDefSettings_MzML_StatCysAlk_phospho.xml	1
+190	MSGFPlus_MzML	iTRAQ 4-plex	0	0	IonTrapDefSettings_MzML_4plexITRAQ.xml	1
+191	MSGFPlus_MzML	iTRAQ 4-plex	0	1	IonTrapDefSettings_MzML_4plexITRAQ_phospho.xml	1
+192	MSGFPlus_MzML	iTRAQ 4-plex	1	0	IonTrapDefSettings_MzML_StatCysAlk_4plexITRAQ.xml	1
+193	MSGFPlus_MzML	iTRAQ 4-plex	1	1	IonTrapDefSettings_MzML_StatCysAlk_4plexITRAQ_phospho.xml	1
+194	MSGFPlus_MzML	iTRAQ 8-plex	0	0	IonTrapDefSettings_MzML_8plexITRAQ.xml	1
+195	MSGFPlus_MzML	iTRAQ 8-plex	0	1	IonTrapDefSettings_MzML_8plexITRAQ_phospho.xml	1
+196	MSGFPlus_MzML	iTRAQ 8-plex	1	0	IonTrapDefSettings_MzML_StatCysAlk_8plexITRAQ.xml	1
+197	MSGFPlus_MzML	iTRAQ 8-plex	1	1	IonTrapDefSettings_MzML_StatCysAlk_8plexITRAQ_phospho.xml	1
+198	MSGFPlus_MzML	TMT 6-plex	1	0	IonTrapDefSettings_MzML_StatCysAlk_6plexTMT.xml	1
+199	MSGFPlus_MzML	TMT 6-plex	1	1	IonTrapDefSettings_MzML_StatCysAlk_6plexTMT_phospho.xml	1
+200	MSGFPlus_MzML	TMT 6-plex	0	0	IonTrapDefSettings_MzML_6plexTMT.xml	1
+201	MSGFPlus_MzML	TMT 6-plex	0	1	IonTrapDefSettings_MzML_6plexTMT_phospho.xml	1
+202	MSGFPlus_MzML	TMT Zero	1	1	IonTrapDefSettings_MzML_StatCysAlk_phospho.xml	1
+204	MSGFPlus_MzML	TMT Zero	1	0	IonTrapDefSettings_MzML_StatCysAlk_6plexTMT.xml	1
+205	MSGFPlus_MzML	TMT 16-plex	1	0	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	1
+206	MSGFPlus_MzML	TMT 16-plex	1	1	MzML_StatCysAlk_S_Phospho_Dyn_TY_Phospho_16plexTMT.xml	1
+207	MSGFPlus	TMT 16-plex	1	0	IonTrapDefSettings_MSConvert.xml	0
 \.
 
 

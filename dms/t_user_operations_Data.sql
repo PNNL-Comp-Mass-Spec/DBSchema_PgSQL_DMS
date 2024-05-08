@@ -32,6 +32,7 @@ COPY public.t_user_operations (operation_id, operation, operation_description) F
 34	DMS_Instrument_Tracking	Permission for instrument usage tracking admin operations, in particular creating placeholder tracking datasets via http://dms2.pnl.gov/tracking_dataset/create
 35	DMS_Data_Analysis_Request	Selectable personnel for data analysis requests
 36	DMS_Sample_Prep_Request_State	Permission for updating sample prep request states and for updating operations_tasks items (but not listed in the prep request user picklist)
+37	DMS_LC_Column_Entry	Permissions to add/update LC columns and Prep LC columns
 \.
 
 
@@ -39,7 +40,7 @@ COPY public.t_user_operations (operation_id, operation, operation_description) F
 -- Name: t_user_operations_operation_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_user_operations_operation_id_seq', 36, true);
+SELECT pg_catalog.setval('public.t_user_operations_operation_id_seq', 37, true);
 
 
 --

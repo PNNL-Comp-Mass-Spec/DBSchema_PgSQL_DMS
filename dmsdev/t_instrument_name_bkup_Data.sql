@@ -21,13 +21,14 @@ SET row_security = off;
 --
 
 COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class, source_path_id, storage_path_id, capture_method, room_number, description, created) FROM stdin;
+11	QTOF_1322	QStar_QTOF	42	134	fso	EMSL 1426	QTOF-1322	2001-07-27 00:00:00
+129	12T_FTICR_Agilent	Agilent_Ion_Trap	1701	4736	secfso	EMSL 1621	Agilent 12T FTICR magnet. Originally had a Velos Pro front end, but that was later moved to the 21T and this instrument had Exploris01 as its front end. In FY24 the Velos Pro will move back to this instrument and Exploris01 will move to the 21T. This instrument is active so that helium refills can be tracked.  Datasets are uploaded via either the Velos Pro or the Exploris front end.	2015-06-13 06:12:48
 3	7T_FTICR	Finnigan_FTICR	8	89	secfso	EMSL 1621 (excessed)	7 T FTICR	2000-06-20 00:00:00
 6	3T_FTICR	Finnigan_FTICR	12	34	ftp	EMSL 1621 (excessed)	3.5 T FTICR	2000-05-17 00:00:00
 7	SW_TEST_LCQ	Finnigan_Ion_Trap	16	195	fso	n/a	LCQ TEST	2003-04-29 00:00:00
 8	SW_TEST_FTICR	Finnigan_FTICR	18	176	secfso	n/a	FTICR TEST	2003-04-29 00:00:00
 9	LCQ_D1	Finnigan_Ion_Trap	37	130	secfso	EMSL 1326	LCQ-DUO1	2001-02-22 00:00:00
 10	LCQ_D2	Finnigan_Ion_Trap	40	131	secfso	EMSL 1526 (in hallway)	LCQ-DUO2	2001-05-02 00:00:00
-11	QTOF_1322	QStar_QTOF	42	134	fso	EMSL 1426	QTOF-1322	2001-07-27 00:00:00
 12	LCQ_XP1	Finnigan_Ion_Trap	44	132	secfso	BSF 1213	LCQ_DECA_XP1	2001-10-17 00:00:00
 13	9T_FTICR	BRUKERFTMS	46	289	secfso	EMSL 1629	9.4T Bruker FTICR	2001-10-22 00:00:00
 14	LCQ_XP2	Finnigan_Ion_Trap	51	133	secfso	BSF 1213 (not conneted to network)	LCQ_DECA_XP2	2002-01-14 00:00:00
@@ -71,11 +72,8 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 53	TSQ_2	Triple_Quad	242	241	secfso	EMSL 1521	TSQ Quantum Ultra for MRM-based experiments, Excessing July 2021	2008-12-29 00:00:00
 54	Exact01	Thermo_Exactive	244	1306	secfso	EMSL 1621	Fast scanning high resolution mass spectrometer	2009-04-22 00:00:00
 55	Exact02	Thermo_Exactive	250	249	secfso	EMSL 1526	Fast scanning high resolution mass spectrometer	2009-06-01 00:00:00
-56	TSQ_3	Triple_Quad	252	4663	secfso	EMSL 1401	Thermo TSQ Vantage, MS:1001510	2009-05-29 00:00:00
 57	Exact03	Thermo_Exactive	255	2848	secfso	EMSL 1526	Fast scanning high resolution mass spectrometer	2009-06-24 00:00:00
 58	VOrbiETD01	LTQ_FT	257	3857	secfso	EMSL 1444	LTQ Velos Pro with an LTQ Orbitrap Velos Pro (supports ETD)	2009-08-10 00:00:00
-59	Agilent_GC_MS_01	Agilent_Ion_Trap	2627	4664	secfso	EMSL 1401	Agilent single quadrupole GC-MS for metabolomics. 7890A GC coupled to a 5975C inert XL MSD, with a 7683 series injector (G2614A)	2010-07-30 00:00:00
-60	VOrbiETD02	LTQ_FT	261	4656	secfso	EMSL 1444	LTQ Velos with Orbitrap Elite (upgraded from an Orbitrap in October 2013); for MassIVE, use LTQ Orbitrap Velos (MS:1001742)	2009-12-10 00:00:00
 61	VOrbiETD03	LTQ_FT	263	4133	secfso	EMSL 1526	LTQ Velos with an LTQ Orbitrap Velos (supports ETD)	2010-01-06 00:00:00
 62	VOrbiETD04	LTQ_FT	265	3859	secfso	EMSL 1526	Velos Pro with an LTQ Orbitrap Velos (supports ETD)	2010-01-16 00:00:00
 63	Orbi_FB1	LTQ_FT	267	2072	secfso	331 Building, Rm 315	OBP sponsored Fungal Biotech Workstation	2010-05-01 00:00:00
@@ -100,7 +98,6 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 82	Exact04	Thermo_Exactive	314	3062	secfso	EMSL 1426	Coupled to IMS06 in 2016, Given to BYU	2011-03-18 10:40:45
 83	12T_FTICR_Imaging	BrukerMALDI_Imaging_V2	1397	3762	secfso	EMSL 1621	12T FTICR with MALDI imaging; was BrukerMALDI_Imaging prior to October 2012; switched to BrukerMALDI_Imaging_V2 with .D folders in 2012; superseded by 12T_FTICR_P_Imaging	2011-05-27 11:16:10
 84	Thermo_GC_MS_01	Triple_Quad	1006	3861	secfso	EMSL 1142	GC-MS using a TSQ Quantum XLS; Currently in storage in EMSL 1346	2011-05-27 21:21:20
-85	VOrbi05	LTQ_FT	1009	4658	secfso	EMSL 1429	LTQ Velos with an LTQ Orbitrap Velos (no ETD), MS:1000855	2011-06-02 11:20:25
 86	DMS_Pipeline_Data	Data_Folders	2	1079	fso	In-silico	Used for placeholder datasets created for DMS_Pipeline DB jobs	2012-01-09 19:43:00
 87	Broad_VOrbiETD01	LTQ_FT	1891	3597	fso	MIT - Broad (Massachusetts)	Broad Institute LTQ-Velos Orbitrap, Q Exactive, and Lumos data.  Q Exactive Plus data is tracked with instrument Broad_QExactP01	2012-01-13 14:31:13
 88	Bruker_FT_IonTrap01	Bruker_Amazon_Ion_Trap	1088	1090	fso	EMSL 1553	Instrument to track FT/Ion trap data from Bruker	2012-01-31 11:33:18
@@ -109,9 +106,6 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 91	JHU_VOrbiETD01	LTQ_FT	1136	2631	fso	JHU (Baltimore)	Johns Hopkins University LTQ-Velos Orbitrap and Orbitrap Lumos	2012-06-05 21:16:51
 92	MIT_Orbi01	LTQ_FT	1137	1139	fso	MIT - Forest White lab (Massachusets)	MIT Orbitrap Elite or Orbitrap XL	2012-06-05 21:28:14
 93	VPro01	Finnigan_Ion_Trap	1162	1345	secfso	EMSL 1621	Velos Pro Ion Trap	2012-07-13 14:11:46
-94	Agilent_GC_MS_02	Agilent_Ion_Trap	2628	4650	secfso	EMSL 1401	Agilent single quadrupole GC-MS for metabolomics. 7890A GC coupled to a 5975C inert XL MSD, with a 7693 Autosampler	2012-07-30 13:57:15
-95	SLIM02_AgQTOF02	IMS_Agilent_TOF_UIMF	1183	4665	secfso	EMSL 1422	IMS with SLIM; WD41434 for AgQTOF02 (serial US42300267)	2012-08-21 09:51:34
-96	Agilent_QQQ_04	Agilent_TOF_V2	1184	4666	secfso	EMSL 1521	Agilent 6490 Triple Quad LC/MS	2012-08-22 15:32:19
 97	PrepHPLC1	PrepHPLC	1189	1211	secfso	BSF 1208	Used for entering operation and maintenance notes, plus also for Prep LC runs (no datasets)	2012-09-21 13:33:42
 98	PrepHPLC2	PrepHPLC	1190	2	secfso	BSF 1208	Used for entering operation and maintenance notes, plus also for Prep LC runs (no datasets)	2012-09-21 13:33:56
 99	PrepHPLC3	PrepHPLC	1191	2	secfso	BSF	Used for entering operation and maintenance notes, plus also for Prep LC runs (no datasets)	2012-09-21 13:34:09
@@ -120,11 +114,8 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 102	AMOLF_VOrbiETD01	LTQ_FT	1230	1231	fso	AMOLF (Netherlands)	AMOLF Orbitrap data from Ron Heeren	2012-12-03 12:31:26
 103	QExact01	LTQ_FT	1232	2859	secfso	EMSL 1526	Q-Exactive 1	2012-12-07 14:32:20
 104	TIMS_Maxis	IMS_Agilent_TOF_UIMF	1268	2860	secfso	EMSL 1142	TIMS coupled with Maxis	2013-01-29 17:54:56
-105	TSQ_4	Triple_Quad	1274	4667	secfso	EMSL 1521	Thermo TSQ Vantage, MS:1001510	2013-03-13 17:35:14
-106	21T_Agilent	LTQ_FT	1859	4668	secfso	EMSL 1621	21T Agilent magnet. Coupled to a Velos Pro and thus instrument data is stored as .raw files; for MassIVE, use LTQ Orbitrap Velos Pro, MS:1003096	2013-05-23 16:00:25
 107	AgTOF05	Agilent_TOF_V2	1346	2	secfso	EMSL 1430	TOF portion of IMS04_AgTOF05	2013-07-22 10:41:59
 108	IMS07_AgTOF06	IMS_Agilent_TOF_UIMF	1348	1540	secfso	EMSL 1430	Deactivated 4/7/2014 since AgTOF06 is now on SLIM03	2013-08-01 16:14:31
-109	IMS08_AgQTOF05	IMS_Agilent_TOF_DotD	1353	4669	secfso	EMSL 1521	First generation IMS from Agilent; PT27418 for AgQTOF05	2013-08-21 17:35:26
 110	SLIM01_AgQTOF04	IMS_Agilent_TOF_UIMF	1356	3867	secfso	EMSL 1430	IMS with SLIM; WD59488 for AgQTof04	2013-08-28 13:54:08
 111	IMS05_AgQTOF03	IMS_Agilent_TOF_UIMF	1357	4389	secfso	EMSL 1426	WE17561 for IMS05; WD59467 for AgQTOF03, IMS cart has been removed as of October 2022, and is not going back in front of the QTOF.	2013-09-03 14:40:23
 112	CBSS_Orb1	LTQ_FT	1391	1941	fso	331 Building	Chemical and Biological Signature Sciences	2013-11-05 11:49:32
@@ -136,135 +127,144 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 118	IMS07_AgTOF04	IMS_Agilent_TOF_UIMF	1494	3870	secfso	EMSL 1430	Excessed in 2020: IMS with 20,000 m/z upper limit; WD56206 for TOF04	2014-05-02 15:13:29
 119	5500XL_SOLiD_Dutch	AB_Sequencer	1496	2	fso	BSF	Applied Biosciences next gen sequencer (Galya Orr)	2014-05-20 17:18:30
 120	5500XL_SOLiD_Milo	AB_Sequencer	1496	2	fso	BSF	Applied Biosciences next gen sequencer (Galya Orr)	2014-05-20 17:18:46
-121	QExactP02	LTQ_FT	1497	4654	secfso	EMSL 1526	Q Exactive Plus, MS:1002634	2014-05-29 11:08:29
 122	AgQTOF05	Agilent_TOF_V2	1545	3273	secfso	EMSL 1401	Agilent QTOF for Metallomics.	2014-05-29 11:20:30
 123	7T_FTICR_B	BrukerFT_BAF	1502	2426	secfso	EMSL 1649	7T; not uploading datasets, but still maintaining and entering instrument operation notes; see https://dms2.pnl.gov/instrument_config_history/report/7T	2014-06-20 17:08:16
 124	7T_FTICR_B_Imaging	BrukerMALDI_Imaging_V2	1502	2313	secfso	EMSL 1649	7T, imaging	2014-06-20 17:10:12
-125	TSQ_6	Triple_Quad	1503	4670	secfso	EMSL 1401	Thermo TSQ Vantage, MS:1001510	2014-06-24 17:42:18
 126	TSQ_5	Triple_Quad	1504	3270	secfso	EMSL 1401	Thermo TSQ Vantage, MS:1001510	2014-06-26 12:04:38
-127	QExactHF03	LTQ_FT	1633	4671	secfso	EMSL 1526	Q Exactive HF, MS:1002523\t	2015-02-19 10:12:31
-128	QExactP04	LTQ_FT	1662	4640	secfso	EMSL 1444	Q Exactive Plus, MS:1002634	2015-04-08 14:47:10
-216	Bart	Thermo_SII_LC	4567	4701	secfso	BSF 1229	Vanquish Neo LC (binary pump, autosampler, and column compartment)	2023-11-01 10:16:39
-129	12T_FTICR_Agilent	Agilent_Ion_Trap	1701	4672	secfso	EMSL 1621	Agilent 12T FTICR magnet. Originally had a Velos Pro front end, but that was later moved to the 21T and this instrument had Exploris01 as its front end. In FY24 the Velos Pro will move back to this instrument and Exploris01 will move to the 21T. This instrument is active so that helium refills can be tracked.  Datasets are uploaded via either the Velos Pro or the Exploris front end.	2015-06-13 06:12:48
-130	QExactHF05	LTQ_FT	1706	4660	secfso	EMSL 1621	Q Exactive HF, MS:1002523. Has HMR/UHMR configuration (boards swapped). Supports MALDI (Spectroglyph), UVPD, and ECD/ETD, depending on the connected hardware. While the MALDI source is attached, use instrument QExactHF05_Imaging for new datasets.	2015-06-29 10:54:50
+125	TSQ_6	Triple_Quad	1503	4821	secfso	EMSL 1401	Thermo TSQ Vantage, MS:1001510	2014-06-24 17:42:18
 132	BSF_GCMS01	Agilent_Ion_Trap	1755	2	secfso	BSF 1229	GC-MS	2015-07-06 16:24:23
 133	BSF_GCMS02	Agilent_Ion_Trap	1756	2	secfso	BSF 1229	GC-MS	2015-07-06 16:24:34
 134	BSF_GCMS03	Agilent_Ion_Trap	1757	2	secfso	BSF 1229	GC-MS	2015-07-06 16:24:45
 135	Agilent_GC_01	Agilent_Ion_Trap	1758	2	secfso	EMSL 1142	GC with TCD	2015-07-07 16:52:47
-136	GCQE01	GC_QExactive	1889	4673	secfso	EMSL 1401	GC QExactive: Thermo Trace 1310 GC with a QExactive detector; for MassIVE use Q Exactive GC Orbitrap, MS:1003395	2015-10-20 14:37:03
 137	NU_QExactive	LTQ_FT	1892	1893	fso	Northwestern University - Kelleher lab	For instrument data shared under the CPTAC project	2015-11-05 11:00:55
-138	Lumos01	LTQ_FT	1901	4643	secfso	EMSL 1526	Orbitrap Fusion Lumos, MS:1002732	2015-12-15 16:13:14
 139	BSF_GC02	Agilent_Ion_Trap	1991	2	secfso	BSF 1215	GC with FID	2016-01-27 11:33:06
-140	IMS09_AgQToF06	IMS_Agilent_TOF_DotD	2066	4674	secfso	EMSL 1521	Second IMS from Agilent; property tag WD56541	2016-05-09 14:21:26
 141	Agilent_RTHDMS	Agilent_Ion_Trap	2	2	secfso	EMSL 1648	Real-Time High Definition Mass Spectrometry.  Saves data to .D folders	2016-05-25 20:59:39
-143	QExactP06	LTQ_FT	2226	4675	secfso	EMSL 1426	Q Exactive Plus, MS:1002634. WD56888	2016-10-19 13:33:16
 144	External_Illumina	Illumina_Sequencer	2238	2240	fso	0	RNA sequence data collected onsite or offsite	2016-11-18 15:38:55
-145	Lumos02	LTQ_FT	2318	4635	secfso	BSF 1217	Orbitrap Fusion Lumos, MS:1002732	2017-03-22 15:11:53
 146	LTQ_Orb_4	LTQ_FT	2373	2994	fso	EMSL 1429	LTQ XL with an LTQ Orbitrap	2017-04-11 15:22:21
-147	Altis01	Triple_Quad	2545	4676	secfso	EMSL 1142	Thermo Altis triple quad, MS:1002874	2017-09-28 10:40:11
 148	Broad_QExactP01	LTQ_FT	2625	2711	fso	MIT - Broad (Massachusetts)	Broad Institute Q Exactive Plus Orbitrap	2017-12-05 11:53:30
 149	JHU_QExactP01	LTQ_FT	2629	2630	fso	JHU (Baltimore)	Johns Hopkins University Q Exactive Orbitrap	2017-12-15 14:02:55
 150	Emory_Lumos01	LTQ_FT	2680	2681	fso	Emory (Atlanta, GA)	Emory School of Medicine Orbitrap Fusion Lumos	2018-01-15 15:46:16
-151	Altis02	Triple_Quad	2791	4641	secfso	EMSL 1142	Thermo Altis triple quad, MS:1002874	2018-04-17 11:33:50
 152	SLIM03_AgQTOF04	IMS_Agilent_TOF_UIMF	2999	3002	fso	EMSL 1526	IMS with SLIM	2018-05-15 11:00:50
 153	PrepHPLC6	PrepHPLC	2869	2	secfso	BSF 1206	Used for entering operation and maintenance notes, plus also for Prep LC runs (no datasets)	2018-07-31 15:14:01
 154	PrepHPLC7	PrepHPLC	2896	2	secfso	BSF 2240	Used for entering operation and maintenance notes, plus also for Prep LC runs (no datasets)	2018-10-03 15:52:27
-155	SynaptG2_01	Waters_IMS	2929	4677	secfso	EMSL 1142	Waters Synapt G2-Si, travelling wave IMS, with MALDI, MS:1002726	2018-11-26 11:19:39
 156	SLIM04_AgQTOF02	IMS_Agilent_TOF_UIMF	2952	3524	secfso	EMSL 1526	WD59517 for AgQTOF02	2019-01-03 18:19:18
 157	SLIM07_AgTOF08	IMS_Agilent_TOF_UIMF	2953	4263	secfso	EMSL 1422	WD56643 for AgTOF08; online, but not uploading data to DMS	2019-01-03 18:20:52
-158	QEHFX01	LTQ_FT	2996	4642	secfso	EMSL 1444	Q Exactive HF-X, MS:1002877	2019-01-16 16:21:27
-159	QEHFX02	LTQ_FT	2997	4653	secfso	EMSL 1444	Q Exactive HF-X, MS:1002877	2019-01-16 16:21:38
-160	Lumos03	LTQ_FT	2998	4645	secfso	EMSL 1444	Orbitrap Fusion Lumos, MS:1002732	2019-01-16 16:30:45
 161	External_Thermo_FAIMS	LTQ_FT	3047	3360	fso	Thermo (San Jose, CA)	External Thermo Lumos with a FAIMS source	2019-04-15 11:09:32
 162	SLIM03_AgQTOF01	IMS_Agilent_TOF_UIMF	3089	2	secfso	EMSL 1526	IMS with SLIM	2019-05-03 19:30:45
 163	Shimadzu_GC_MS_01	Shimadzu_GC	3094	3095	secfso	EMSL 1444	GC-2010 coupled to a GCMS-QP2010	2019-05-08 14:52:36
 164	External_Bruker_timsTOF	BrukerTOF_TDF	3098	3126	fso	Offsite	Data acquired at Bruker	2019-06-11 14:52:16
 165	IMS10_AgQTOF07	IMS_Agilent_TOF_DotD	3184	2	secfso	EMSL 1526	Agilent 6560;  property tag PT27672	2019-07-24 11:27:40
 166	21T_Booster	FT_Booster_Data	3271	2	secfso	EMSL 1621	Data created by the TI PXIe system connected to the 21T	2019-10-28 17:10:35
-167	Altis03	Triple_Quad	3275	4655	secfso	EMSL 1142	Thermo Altis triple quad, MS:1002874	2019-11-18 16:27:17
 168	Broad_QEHFX01	LTQ_FT	3277	3596	fso	MIT - Broad (Massachusetts)	Broad Institute Q Exactive HF-X, MS:1002877	2019-11-21 16:22:22
-169	QEHFX03	LTQ_FT	3318	4639	secfso	EMSL 1444	Q Exactive HF-X, MS:1002877	2020-01-14 15:05:55
 170	External_QEHFX	LTQ_FT	3355	3358	fso	Offsite	Q Exactive HF-X data acquired outside PNNL, MS:1002877	2020-02-07 15:10:04
-171	Eclipse01	LTQ_FT	3525	4638	secfso	EMSL 1444	Orbitrap Eclipse Tribrid, MS:1003029	2020-09-04 17:54:11
 172	IMS11_AgQTOF08	IMS_Agilent_TOF_DotD	3526	4548	secfso	EMSL 1430	Agilent 6560B IM-QTOF; replaced under warranty. Powered down, packaged, and shipped back to Agilent by Agilent technicians as of February 23rd, 2023. Warranty replacement instrument is IMS12-AgQTOF09	2020-09-04 18:01:52
-173	Exploris01	LTQ_FT	3535	4678	secfso	EMSL 1621	Thermo Exploris 480; goal to eventually connect it to the 21T in place of the current Orbitrap Velos Pro hardware, with initial development on the Agilent 12T magnet.	2020-09-18 00:25:51
 174	XevoG2_01	Waters_TOF	3536	4679	secfso	BSF 1215	Transfer/Moved from BSEL in September 2020	2020-09-23 12:48:22
 175	External_Agilent_QQQ	Agilent_TOF_V2	3709	3714	fso	Offsite	Agilent triple-quad data acquired offsite	2021-01-19 20:47:37
 177	External_Orbitrap_Fusion	LTQ_FT	3712	4031	fso	Offsite	Orbitrap Fusion Lumos data acquired outside PNNL, MS:1002732	2021-01-28 10:35:08
-178	Eclipse02	LTQ_FT	3789	4648	secfso	EMSL 1526	Orbitrap Eclipse Tribrid - CPTAC loan, MS:1003029	2021-04-29 14:55:13
 179	External_Exploris	LTQ_FT	3791	4495	fso	Offsite	Data acquired offsite using a Thermo Exploris mass spec	2021-05-05 15:31:49
 180	QExactHF05_Imaging	LTQ_FT	1706	4661	secfso	EMSL 1621	Q Exactive HF, MS:1002523. Has HMR/UHMR configuration (boards swapped). Supports MALDI (Spectroglyph), UVPD, and ECD/ETD, depending on the connected hardware. When the MALDI source is attached, use instrument QExactHF05_Imaging for new datasets.	2021-06-24 16:09:22
-181	Agilent_GC_MS_03	Agilent_Ion_Trap	3878	4649	secfso	EMSL 1401	Agilent single quadrupole GC-MS for metabolomics. 8890 GC coupled to a 5977 Inert Plus MSD, with a 7693A Autosampler	2021-07-29 17:51:13
-182	SciMax01	BrukerFT_BAF	3881	4651	secfso	EMSL 1649	Bruker scimaX with ESI/MALDI source	2021-08-25 13:21:50
-183	SciMax01_Imaging	BrukerMALDI_Imaging_V2	3881	4659	secfso	EMSL 1649	Bruker scimaX with MALDI Imaging datasets	2021-08-25 13:23:06
 184	Broad_Exploris01	LTQ_FT	3987	3989	fso	MIT - Broad (Massachusetts)	Broad Institute Exploris, MS:1003029	2021-10-22 09:24:08
 185	External_Agilent_QTOF	Agilent_TOF_V2	4073	4079	fso	Offsite	Agilent Q-TOF data acquired offsite	2022-02-25 08:31:43
-186	12T_FTICR_P	BrukerFT_BAF	4149	4680	secfso	EMSL 1621	Bruker 12T FTICR with spectrometer from the 15T magnet (the 15T magnet was de-energized in spring 2022 due to magnet helium fill problems and helium shortage)	2022-04-21 15:05:49
-187	12T_FTICR_P_Imaging	BrukerMALDI_Imaging_V2	4149	4647	secfso	EMSL 1621	Bruker 12T FTICR with MALDI imaging capability (mass spectrometer was previously used with the 15T magnet)	2022-04-21 15:08:42
 188	External_IMS_AgQTOF	IMS_Agilent_TOF_DotD	4152	2	fso	Offsite	IMS .d datasets acquired offsite	2022-05-20 09:15:09
 189	AgTOF10	Agilent_TOF_V2	4294	4728	secfso	EMSL 1422	G6230BA TOF purchased by instrument development group	2022-10-21 14:27:28
-190	15T_FTICR_I	BrukerFT_BAF	4295	4681	secfso	EMSL 1621	Bruker Solarix 15T with an infinity cell	2022-11-02 11:33:18
-191	IMS12-AgQTOF09	IMS_Agilent_TOF_DotD	4399	4682	secfso	EMSL 1430	Agilent 6560C IM-QTOF; warranty replacement for IMS11_AgQTOF08	2023-03-02 14:43:27
-192	Ascend01	LTQ_FT	4440	4683	secfso	BSF 1229	Purchased by Leidos	2023-04-18 12:19:15
-193	Exploris02	LTQ_FT	4441	4644	secfso	BSF 1229	Exploris 240	2023-04-18 12:19:29
 194	timsTOFScp01	BrukerTOF_TDF	4442	4652	secfso	EMSL 1314	Bruker timsTOF for single cell proteomics	2023-04-19 16:36:27
 195	External_Ascend	LTQ_FT	4491	4493	fso	Offsite	Data acquired offsite using a Thermo Ascend mass spec	2023-07-18 12:50:05
 196	External_Lumos	LTQ_FT	4492	4494	fso	Offsite	Data acquired offsite using a Thermo Lumos mass spec	2023-07-18 12:51:28
-197	Exploris03	LTQ_FT	4496	4637	secfso	BSF 1229	Exploris 480	2023-07-27 16:14:06
-205	Elm	Thermo_SII_LC	4556	4690	secfso	EMSL 1444	LCMSNet LC with Thermo RSLCnano NCS-3200RS nano/loading pump	2023-11-01 10:09:23
-206	Oak	Thermo_SII_LC	4557	4691	secfso	EMSL 1526	LCMSNet LC with Thermo RSLCnano NCS-3200RS nano/loading pump	2023-11-01 10:09:47
 1	LCQ_C2	Finnigan_Ion_Trap	4	127	secfso	EMSL 1526	LCQ-C2	2001-03-12 00:00:00
 2	LCQ_C1	Finnigan_Ion_Trap	6	126	secfso	EMSL 1326 (not conneted to network)	LCQ-C1	2000-05-15 00:00:00
+186	12T_FTICR_P	BrukerFT_BAF	4149	4737	secfso	EMSL 1621	Bruker 12T FTICR with spectrometer from the 15T magnet (the 15T magnet was de-energized in spring 2022 due to magnet helium fill problems and helium shortage)	2022-04-21 15:05:49
+187	12T_FTICR_P_Imaging	BrukerMALDI_Imaging_V2	4149	4738	secfso	EMSL 1621	Bruker 12T FTICR with MALDI imaging capability (mass spectrometer was previously used with the 15T magnet)	2022-04-21 15:08:42
+190	15T_FTICR_I	BrukerFT_BAF	4295	4739	secfso	EMSL 1621	Bruker Solarix 15T with an infinity cell	2022-11-02 11:33:18
+106	21T_Agilent	LTQ_FT	1859	4740	secfso	EMSL 1621	21T Agilent magnet. Coupled to a Velos Pro and thus instrument data is stored as .raw files; for MassIVE, use LTQ Orbitrap Velos Pro, MS:1003096	2013-05-23 16:00:25
+59	Agilent_GC_MS_01	Agilent_Ion_Trap	2627	4741	secfso	EMSL 1401	Agilent single quadrupole GC-MS for metabolomics. 7890A GC coupled to a 5975C inert XL MSD, with a 7683 series injector (G2614A)	2010-07-30 00:00:00
+94	Agilent_GC_MS_02	Agilent_Ion_Trap	2628	4742	secfso	EMSL 1401	Agilent single quadrupole GC-MS for metabolomics. 7890A GC coupled to a 5975C inert XL MSD, with a 7693 Autosampler	2012-07-30 13:57:15
+181	Agilent_GC_MS_03	Agilent_Ion_Trap	3878	4743	secfso	EMSL 1401	Agilent single quadrupole GC-MS for metabolomics. 8890 GC coupled to a 5977 Inert Plus MSD, with a 7693A Autosampler	2021-07-29 17:51:13
+96	Agilent_QQQ_04	Agilent_TOF_V2	1184	4744	secfso	EMSL 1521	Agilent 6490 Triple Quad LC/MS	2012-08-22 15:32:19
+236	Alder	LCMSNet_LC	4587	4745	secfso	EMSL 1621	LCMSNet LC with a Shimadzu LC40D infusion pump. Used for LCDatasetCapture tasks.  The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets.	2023-11-06 11:15:20
+147	Altis01	Triple_Quad	2545	4746	secfso	EMSL 1142	Thermo Altis triple quad, MS:1002874	2017-09-28 10:40:11
+151	Altis02	Triple_Quad	2791	4747	secfso	EMSL 1142	Thermo Altis triple quad, MS:1002874	2018-04-17 11:33:50
+167	Altis03	Triple_Quad	3275	4748	secfso	EMSL 1142	Thermo Altis triple quad, MS:1002874	2019-11-18 16:27:17
+225	Arwen	Waters_Acquity_LC	4576	4750	secfso	EMSL 1314	Waters Acquity M-Class LC	2023-11-02 17:25:10
+192	Ascend01	LTQ_FT	4440	4751	secfso	BSF 1229	Purchased by Leidos	2023-04-18 12:19:15
+226	Balzac	Waters_Acquity_LC	4577	4752	secfso	EMSL 1142	Waters Acquity M-Class LC	2023-11-02 17:25:42
+218	Bane	Waters_Acquity_LC	4569	4753	secfso	EMSL 1444	Waters nanoAcquity LC	2023-11-02 17:19:40
+216	Bart	Thermo_SII_LC	4567	4754	secfso	BSF 1229	Vanquish Neo LC (binary pump, autosampler, and column compartment)	2023-11-01 10:16:39
+230	Bilbo	Waters_Acquity_LC	4581	4755	secfso	EMSL 1526	Waters nanoAcquity LC	2023-11-03 10:17:43
+232	Brandi	Waters_Acquity_LC	4583	4757	secfso	EMSL 1444	Waters Acquity H-Class LC	2023-11-03 10:18:37
+171	Eclipse01	LTQ_FT	3525	4761	secfso	EMSL 1444	Orbitrap Eclipse Tribrid, MS:1003029	2020-09-04 17:54:11
 4	11T_FTICR	Finnigan_FTICR	10	88	ftp	EMSL 1621	11.5 T FTICR	2000-05-17 00:00:00
+178	Eclipse02	LTQ_FT	3789	4762	secfso	EMSL 1526	Orbitrap Eclipse Tribrid - CPTAC loan, MS:1003029	2021-04-29 14:55:13
+205	Elm	Thermo_SII_LC	4556	4763	secfso	EMSL 1444	LCMSNet LC with Thermo RSLCnano NCS-3200RS nano/loading pump	2023-11-01 10:09:23
+173	Exploris01	LTQ_FT	3535	4765	secfso	EMSL 1621	Thermo Exploris 480; goal to eventually connect it to the 21T in place of the current Orbitrap Velos Pro hardware, with initial development on the Agilent 12T magnet.	2020-09-18 00:25:51
+193	Exploris02	LTQ_FT	4441	4766	secfso	BSF 1229	Exploris 240	2023-04-18 12:19:29
+197	Exploris03	LTQ_FT	4496	4767	secfso	BSF 1229	Exploris 480	2023-07-27 16:14:06
+239	Exploris04	LTQ_FT	4631	4768	secfso	BSF 1229	Exploris 480	2023-11-28 15:37:15
+237	Fir	LCMSNet_LC	4588	4771	secfso	EMSL 1621	LCMSNet LC with a Shimadzu LC40D infusion pump. Used for LCDatasetCapture tasks.  The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets.	2023-11-06 11:15:33
+219	Frodo	Waters_Acquity_LC	4570	4772	secfso	EMSL 1401	Waters nanoAcquity LC	2023-11-02 17:20:59
+220	Gandalf	Waters_Acquity_LC	4571	4773	secfso	EMSL 1401	Waters nanoAcquity LC	2023-11-02 17:21:33
+136	GCQE01	GC_QExactive	1889	4774	secfso	EMSL 1401	GC QExactive: Thermo Trace 1310 GC with a QExactive detector; for MassIVE use Q Exactive GC Orbitrap, MS:1003395	2015-10-20 14:37:03
+109	IMS08_AgQTOF05	IMS_Agilent_TOF_DotD	1353	4778	secfso	EMSL 1521	First generation IMS from Agilent; PT27418 for AgQTOF05	2013-08-21 17:35:26
+140	IMS09_AgQToF06	IMS_Agilent_TOF_DotD	2066	4779	secfso	EMSL 1521	Second IMS from Agilent; property tag WD56541	2016-05-09 14:21:26
+191	IMS12-AgQTOF09	IMS_Agilent_TOF_DotD	4399	4780	secfso	EMSL 1430	Agilent 6560C IM-QTOF; warranty replacement for IMS11_AgQTOF08	2023-03-02 14:43:27
+207	Larch	Thermo_SII_LC	4558	4781	secfso	EMSL 1422	LCMSNet LC with Thermo RSLCnano NCS-3200RS nano/loading pump	2023-11-01 10:10:06
+217	Lisa	Thermo_SII_LC	4568	4782	secfso	BSF 1229	Vanquish Neo LC (binary pump, autosampler, and column compartment)	2023-11-01 10:16:58
+229	Lola	Waters_Acquity_LC	4580	4783	secfso	EMSL 1521	Waters Acquity H-Class LC	2023-11-02 17:27:37
+138	Lumos01	LTQ_FT	1901	4784	secfso	EMSL 1526	Orbitrap Fusion Lumos, MS:1002732	2015-12-15 16:13:14
+145	Lumos02	LTQ_FT	2318	4785	secfso	BSF 1217	Orbitrap Fusion Lumos, MS:1002732	2017-03-22 15:11:53
+160	Lumos03	LTQ_FT	2998	4786	secfso	EMSL 1444	Orbitrap Fusion Lumos, MS:1002732	2019-01-16 16:30:45
+238	Magnolia	LCMSNet_LC	4589	4787	secfso	EMSL 1621	LCMSNet LC with a Shimadzu LC40D infusion pump. Used for LCDatasetCapture tasks.  The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets.	2023-11-06 11:15:48
+201	Maple	Thermo_SII_LC	4552	4788	secfso	EMSL 1444	LCMSNet LC with Thermo RSLCnano NCS-3500RS nano/loading pump	2023-10-26 14:37:17
+221	Merry	Waters_Acquity_LC	4572	4790	secfso	EMSL 1526	Waters nanoAcquity LC	2023-11-02 17:22:12
+206	Oak	Thermo_SII_LC	4557	4792	secfso	EMSL 1526	LCMSNet LC with Thermo RSLCnano NCS-3200RS nano/loading pump	2023-11-01 10:09:47
 33	LTQ_2	Finnigan_Ion_Trap	141	3049	secfso	EMSL 1526	Finnigan LTQ #2	2004-11-08 00:00:00
+203	Olympic	Thermo_SII_LC	4554	4793	secfso	EMSL 1526	Vanquish Flex LC for metabolomics (binary pump, autosampler, and 2 column compartments)	2023-10-26 14:39:31
+222	Pippin	Waters_Acquity_LC	4573	4794	secfso	BSF 1217	Waters nanoAcquity LC	2023-11-02 17:22:48
+227	Precious	Waters_Acquity_LC	4578	4795	secfso	EMSL 1142	Waters Acquity M-Class LC	2023-11-02 17:26:15
+158	QEHFX01	LTQ_FT	2996	4796	secfso	EMSL 1444	Q Exactive HF-X, MS:1002877	2019-01-16 16:21:27
+159	QEHFX02	LTQ_FT	2997	4797	secfso	EMSL 1444	Q Exactive HF-X, MS:1002877	2019-01-16 16:21:38
+169	QEHFX03	LTQ_FT	3318	4798	secfso	EMSL 1444	Q Exactive HF-X, MS:1002877	2020-01-14 15:05:55
+127	QExactHF03	LTQ_FT	1633	4799	secfso	EMSL 1526	Q Exactive HF, MS:1002523\t	2015-02-19 10:12:31
+130	QExactHF05	LTQ_FT	1706	4800	secfso	EMSL 1621	Q Exactive HF, MS:1002523. Has HMR/UHMR configuration (boards swapped). Supports MALDI (Spectroglyph), UVPD, and ECD/ETD, depending on the connected hardware. While the MALDI source is attached, use instrument QExactHF05_Imaging for new datasets.	2015-06-29 10:54:50
+121	QExactP02	LTQ_FT	1497	4801	secfso	EMSL 1526	Q Exactive Plus, MS:1002634	2014-05-29 11:08:29
+128	QExactP04	LTQ_FT	1662	4802	secfso	EMSL 1444	Q Exactive Plus, MS:1002634	2015-04-08 14:47:10
+143	QExactP06	LTQ_FT	2226	4803	secfso	EMSL 1426	Q Exactive Plus, MS:1002634. WD56888	2016-10-19 13:33:16
+228	Rage	Waters_Acquity_LC	4579	4804	secfso	EMSL 1142	Waters Acquity M-Class LC	2023-11-02 17:26:37
+214	Rainier	Thermo_SII_LC	4565	4805	secfso	EMSL 1521	Vanquish LC for high-flow (binary pump, autosampler, and column compartment)	2023-11-01 10:15:33
+209	Romulus	Thermo_SII_LC	4560	4807	secfso	EMSL 1444	Thermo RSLCnano Autosampler and pump	2023-11-01 10:12:26
+233	Roxanne	Waters_Acquity_LC	4584	4808	secfso	EMSL 1142	Waters Acquity H-Class LC	2023-11-03 10:18:56
+223	Samwise	Waters_Acquity_LC	4574	4809	secfso	EMSL 1444	Waters nanoAcquity LC	2023-11-02 17:23:27
+224	Sauron	Waters_Acquity_LC	4575	4810	secfso	EMSL 1521	Waters nanoAcquity LC	2023-11-02 17:24:04
+182	SciMax01	BrukerFT_BAF	3881	4811	secfso	EMSL 1649	Bruker scimaX with ESI/MALDI source	2021-08-25 13:21:50
+183	SciMax01_Imaging	BrukerMALDI_Imaging_V2	3881	4812	secfso	EMSL 1649	Bruker scimaX with MALDI Imaging datasets	2021-08-25 13:23:06
+95	SLIM02_AgQTOF02	IMS_Agilent_TOF_UIMF	1183	4813	secfso	EMSL 1422	IMS with SLIM; WD41434 for AgQTOF02 (serial US42300267)	2012-08-21 09:51:34
+231	Smeagol	Waters_Acquity_LC	4582	4814	secfso	EMSL 1314	Waters nanoAcquity LC	2023-11-03 10:18:01
+155	SynaptG2_01	Waters_IMS	2929	4815	secfso	EMSL 1142	Waters Synapt G2-Si, travelling wave IMS, with MALDI, MS:1002726	2018-11-26 11:19:39
+215	Teton	Thermo_SII_LC	4566	4816	secfso	EMSL 1444	Vanquish Neo LC (binary pump, autosampler, and column compartment)	2023-11-01 10:16:16
+212	Titus	Thermo_SII_LC	4563	4817	secfso	EMSL 1526	Thermo RSLCnano Autosampler and pump	2023-11-01 10:13:27
+235	Trillium	LCMSNet_LC	4586	4818	secfso	EMSL 1142	LCMSNet LC with a VICI M60 infusion pump. Used for LCDatasetCapture tasks.  The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets.	2023-11-06 11:13:36
+56	TSQ_3	Triple_Quad	252	4819	secfso	EMSL 1401	Thermo TSQ Vantage, MS:1001510	2009-05-29 00:00:00
+105	TSQ_4	Triple_Quad	1274	4820	secfso	EMSL 1521	Thermo TSQ Vantage, MS:1001510	2013-03-13 17:35:14
+85	VOrbi05	LTQ_FT	1009	4822	secfso	EMSL 1429	LTQ Velos with an LTQ Orbitrap Velos (no ETD), MS:1000855	2011-06-02 11:20:25
+60	VOrbiETD02	LTQ_FT	261	4823	secfso	EMSL 1444	LTQ Velos with Orbitrap Elite (upgraded from an Orbitrap in October 2013); for MassIVE, use LTQ Orbitrap Velos (MS:1001742)	2009-12-10 00:00:00
 131	BSF_GC01	Agilent_Ion_Trap	1754	2	secfso	BSF 1229	GC with FID	2015-07-06 16:23:30
 176	External_Eclipse	LTQ_FT	3710	3780	fso	Offsite	Orbitrap Eclipse data acquired outside PNNL	2021-01-26 17:09:47
 198	SLIM09_QExactP06	LTQ_FT	4499	4500	fso	EMSL 1426	SLIM instrument connected to QExactP06, brought online in 2023	2023-08-23 16:15:45
-199	EMSL-NMR-LC	PrepHPLC	4502	4684	secfso	EMSL 1430	EMSL-NMR-LC, or Tonga; for uploading occasional files with DAD data	2023-09-22 10:23:35
-200	Crater	Thermo_SII_LC	4551	4685	secfso	EMSL 1444	Vanquish Flex LC for lipids and metabolomics (2 binary pumps, autosampler, 2 column compartments, and charged aerosol detector)	2023-10-25 20:19:53
-201	Maple	Thermo_SII_LC	4552	4686	secfso	EMSL 1444	LCMSNet LC with Thermo RSLCnano NCS-3500RS nano/loading pump	2023-10-26 14:37:17
-202	Holly	Thermo_SII_LC	4553	4687	secfso	EMSL 1526	LCMSNet LC with Thermo RSLCnano NCS-3500RS nano/loading pump	2023-10-26 14:37:36
-203	Olympic	Thermo_SII_LC	4554	4688	secfso	EMSL 1526	Vanquish Flex LC for metabolomics (binary pump, autosampler, and 2 column compartments)	2023-10-26 14:39:31
-204	Birch	Thermo_SII_LC	4555	4689	secfso	BSF 1229	LCMSNet LC with Thermo RSLCnano NCS-3500RS nano/loading pump	2023-10-26 14:41:17
-207	Larch	Thermo_SII_LC	4558	4692	secfso	EMSL 1422	LCMSNet LC with Thermo RSLCnano NCS-3200RS nano/loading pump	2023-11-01 10:10:06
-208	Remus	Thermo_SII_LC	4559	4693	secfso	EMSL 1444	Thermo RSLCnano Autosampler and pump	2023-11-01 10:12:06
-209	Romulus	Thermo_SII_LC	4560	4694	secfso	EMSL 1444	Thermo RSLCnano Autosampler and pump	2023-11-01 10:12:26
-210	Cato	Thermo_SII_LC	4561	4695	secfso	EMSL 1401	Thermo RSLCnano Autosampler and pump	2023-11-01 10:12:52
-211	Cicero	Thermo_SII_LC	4562	4696	secfso	EMSL 1526	Thermo RSLCnano Autosampler and pump	2023-11-01 10:13:08
-212	Titus	Thermo_SII_LC	4563	4697	secfso	EMSL 1526	Thermo RSLCnano Autosampler and pump	2023-11-01 10:13:27
-213	Glacier	Thermo_SII_LC	4564	4698	secfso	EMSL 1521	Vanquish LC for high-flow (binary pump, autosampler, and column compartment)	2023-11-01 10:15:10
-214	Rainier	Thermo_SII_LC	4565	4699	secfso	EMSL 1521	Vanquish LC for high-flow (binary pump, autosampler, and column compartment)	2023-11-01 10:15:33
-215	Teton	Thermo_SII_LC	4566	4700	secfso	EMSL 1444	Vanquish Neo LC (binary pump, autosampler, and column compartment)	2023-11-01 10:16:16
-217	Lisa	Thermo_SII_LC	4568	4702	secfso	BSF 1229	Vanquish Neo LC (binary pump, autosampler, and column compartment)	2023-11-01 10:16:58
-218	Bane	Waters_Acquity_LC	4569	4703	secfso	EMSL 1444	Waters nanoAcquity LC	2023-11-02 17:19:40
-219	Frodo	Waters_Acquity_LC	4570	4704	secfso	EMSL 1401	Waters nanoAcquity LC	2023-11-02 17:20:59
-220	Gandalf	Waters_Acquity_LC	4571	4705	secfso	EMSL 1401	Waters nanoAcquity LC	2023-11-02 17:21:33
-221	Merry	Waters_Acquity_LC	4572	4706	secfso	EMSL 1526	Waters nanoAcquity LC	2023-11-02 17:22:12
-222	Pippin	Waters_Acquity_LC	4573	4707	secfso	BSF 1217	Waters nanoAcquity LC	2023-11-02 17:22:48
-223	Samwise	Waters_Acquity_LC	4574	4708	secfso	EMSL 1444	Waters nanoAcquity LC	2023-11-02 17:23:27
-224	Sauron	Waters_Acquity_LC	4575	4709	secfso	EMSL 1521	Waters nanoAcquity LC	2023-11-02 17:24:04
-225	Arwen	Waters_Acquity_LC	4576	4710	secfso	EMSL 1314	Waters Acquity M-Class LC	2023-11-02 17:25:10
-226	Balzac	Waters_Acquity_LC	4577	4711	secfso	EMSL 1142	Waters Acquity M-Class LC	2023-11-02 17:25:42
-227	Precious	Waters_Acquity_LC	4578	4712	secfso	EMSL 1142	Waters Acquity M-Class LC	2023-11-02 17:26:15
-228	Rage	Waters_Acquity_LC	4579	4713	secfso	EMSL 1142	Waters Acquity M-Class LC	2023-11-02 17:26:37
-229	Lola	Waters_Acquity_LC	4580	4714	secfso	EMSL 1521	Waters Acquity H-Class LC	2023-11-02 17:27:37
-230	Bilbo	Waters_Acquity_LC	4581	4715	secfso	EMSL 1526	Waters nanoAcquity LC	2023-11-03 10:17:43
-231	Smeagol	Waters_Acquity_LC	4582	4716	secfso	EMSL 1314	Waters nanoAcquity LC	2023-11-03 10:18:01
-232	Brandi	Waters_Acquity_LC	4583	4717	secfso	EMSL 1444	Waters Acquity H-Class LC	2023-11-03 10:18:37
-233	Roxanne	Waters_Acquity_LC	4584	4718	secfso	EMSL 1142	Waters Acquity H-Class LC	2023-11-03 10:18:56
-234	Aragorn	Waters_Acquity_LC	4585	4719	secfso	EMSL 1142	Waters nanoAcquity LC	2023-11-03 13:15:38
-235	Trillium	LCMSNet_LC	4586	4720	secfso	EMSL 1142	LCMSNet LC with a VICI M60 infusion pump. Used for LCDatasetCapture tasks.  The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets.	2023-11-06 11:13:36
-236	Alder	LCMSNet_LC	4587	4721	secfso	EMSL 1621	LCMSNet LC with a Shimadzu LC40D infusion pump. Used for LCDatasetCapture tasks.  The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets.	2023-11-06 11:15:20
-237	Fir	LCMSNet_LC	4588	4722	secfso	EMSL 1621	LCMSNet LC with a Shimadzu LC40D infusion pump. Used for LCDatasetCapture tasks.  The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets.	2023-11-06 11:15:33
-238	Magnolia	LCMSNet_LC	4589	4723	secfso	EMSL 1621	LCMSNet LC with a Shimadzu LC40D infusion pump. Used for LCDatasetCapture tasks.  The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets.	2023-11-06 11:15:48
-239	Exploris04	LTQ_FT	4631	4636	secfso	BSF 1229	Exploris 480	2023-11-28 15:37:15
-240	Homer	Thermo_SII_LC	4632	4724	secfso	BSF 1229	Vanquish Neo LC (binary pump, autosampler, and column compartment). Used for LCDatasetCapture tasks. The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets.	2023-12-01 16:47:28
+204	Birch	Thermo_SII_LC	4555	4756	secfso	BSF 1229	LCMSNet LC with Thermo RSLCnano NCS-3500RS nano/loading pump	2023-10-26 14:41:17
+210	Cato	Thermo_SII_LC	4561	4758	secfso	EMSL 1401	Thermo RSLCnano Autosampler and pump	2023-11-01 10:12:52
+211	Cicero	Thermo_SII_LC	4562	4759	secfso	EMSL 1526	Thermo RSLCnano Autosampler and pump	2023-11-01 10:13:08
+200	Crater	Thermo_SII_LC	4551	4760	secfso	EMSL 1444	Vanquish Flex LC for lipids and metabolomics (2 binary pumps, autosampler, 2 column compartments, and charged aerosol detector)	2023-10-25 20:19:53
+199	EMSL-NMR-LC	PrepHPLC	4502	4764	secfso	EMSL 1430	EMSL-NMR-LC, or Tonga; for uploading occasional files with DAD data	2023-09-22 10:23:35
+213	Glacier	Thermo_SII_LC	4564	4775	secfso	EMSL 1521	Vanquish LC for high-flow (binary pump, autosampler, and column compartment)	2023-11-01 10:15:10
+202	Holly	Thermo_SII_LC	4553	4776	secfso	EMSL 1526	LCMSNet LC with Thermo RSLCnano NCS-3500RS nano/loading pump	2023-10-26 14:37:36
+208	Remus	Thermo_SII_LC	4559	4806	secfso	EMSL 1444	Thermo RSLCnano Autosampler and pump	2023-11-01 10:12:06
+234	Aragorn	Waters_Acquity_LC	4585	4749	secfso	EMSL 1142	Waters nanoAcquity LC	2023-11-03 13:15:38
 241	PrepHPLC8	PrepHPLC	4646	2	secfso	BSF 2240	Thermo Vanquish Flex Autosampler/Fraction Collector, controlled with Chromeleon software	2024-01-02 11:41:48
-242	Exploris05	LTQ_FT	4657	4662	secfso	BSF 1229	Katrina's PPI (Predictive Phenomics Initiative) instrument	2024-01-09 14:29:09
-243	Marge	Thermo_SII_LC	4725	4729	secfso	BSF 1229	Vanquish Neo LC (binary pump, autosampler, and column compartment). Used for LCDatasetCapture tasks. The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets. Purchased with Exploris05, Katrina's PPI (Predictive Phenomics Initiative)	2024-01-16 10:04:23
 244	External_Astral	LTQ_FT	4726	4727	fso	Offsite	Thermo TOF/Orbitrap tribrid	2024-02-05 11:21:14
-245	Ned	Thermo_SII_LC	4732	2	secfso	EMSL 1526	Vanquish Neo LC (binary pump and autosampler). Used for LCDatasetCapture tasks. The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets. Purchased with Exploris06, EMSL owned	2024-03-01 10:58:45
-246	Exploris06	LTQ_FT	4733	4734	secfso	EMSL 1526	Exploris 480 purchased by EMSL	2024-03-01 11:00:40
+242	Exploris05	LTQ_FT	4657	4769	secfso	BSF 1229	Katrina's PPI (Predictive Phenomics Initiative) instrument	2024-01-09 14:29:09
+246	Exploris06	LTQ_FT	4733	4770	secfso	EMSL 1526	Exploris 480 purchased by EMSL	2024-03-01 11:00:40
+240	Homer	Thermo_SII_LC	4632	4777	secfso	BSF 1229	Vanquish Neo LC (binary pump, autosampler, and column compartment). Used for LCDatasetCapture tasks. The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets.	2023-12-01 16:47:28
+243	Marge	Thermo_SII_LC	4725	4789	secfso	BSF 1229	Vanquish Neo LC (binary pump, autosampler, and column compartment). Used for LCDatasetCapture tasks. The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets. Purchased with Exploris05, Katrina's PPI (Predictive Phenomics Initiative)	2024-01-16 10:04:23
+245	Ned	Thermo_SII_LC	4732	4791	secfso	EMSL 1526	Vanquish Neo LC (binary pump and autosampler). Used for LCDatasetCapture tasks. The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets. Purchased with Exploris06, EMSL owned	2024-03-01 10:58:45
 \.
 
 

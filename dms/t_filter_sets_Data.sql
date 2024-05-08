@@ -21,6 +21,21 @@ SET row_security = off;
 --
 
 COPY public.t_filter_sets (filter_set_id, filter_type_id, filter_set_name, filter_set_description, date_created, date_modified) FROM stdin;
+100	3	Yates custom 1, no cleavage rules	XCorr >= 1.9, 2.2, or 3.5 for 1+, 2+, or >=3+ if seen once, XCorr >= 1.9 if seen >= 2 times, no cleavage rules, min length 4	2004-03-27 13:59:48	2004-08-19 14:21:10
+101	3	Yates custom 2, no cleavage rules	XCorr >= 1.9, 2.2, or 3.5 for 1+, 2+, or >=3+ if seen once or twice, XCorr >= 1.9 if seen >= 3 times, no cleavage rules, min length 4	2004-03-27 13:59:48	2004-08-19 14:21:10
+102	3	Yates custom 3, no cleavage rules	XCorr >= 1.9, 2.2, or 3.5 for 1+, 2+, or >=3+, no cleavage rules, min length 4	2004-03-27 13:59:48	2004-08-19 14:21:10
+103	3	Yates custom 4, no cleavage rules	XCorr >= 1.9, 2.2, or 3.5 for 1+, 2+, or >=3+ if seen once, XCorr >= 0 if seen >= 2 times, no cleavage rules, min length 4	2004-03-27 17:10:00	2004-08-19 14:21:10
+104	1	None (accept all)	no rules	2004-03-31 14:02:39	2004-08-19 14:21:10
+105	3	Yates custom 5, no cleavage rules	XCorr >= 1.9, 2.2, or 3.5 for 1+, 2+, or >=3+ if seen once, XCorr >= 1.9 if seen >= 2 times, Log_EValue <= -2, no cleavage rules, min length 6	2004-04-13 07:35:14	2004-08-19 14:21:10
+106	3	High confidence 1	XCorr >= 3.0, 3.6, or 4.0 for 1+, 2+, or >=3+, Log_EValue <= -4, partially or fully tryptic, min length 6, obs count >= 3	2004-05-11 11:49:08	2004-08-19 14:21:10
+107	3	Washburn/Yates, partially tryptic, 1% XTandem FDR	XCorr >= 1.9, 2.2, or 3.75 for 1+, 2+, or >=3+, Log_EValue <= -2, partially or fully tryptic or non-tryptic protein terminal peptide, min length 6	2004-07-06 16:19:52	2005-03-27 17:49:00
+108	3	Kim Hixson custom 1	XCorr >= 1.9, 2.2, or 3.0 for 1+, 2+, or 3+ fully tryptic, and >= 2.7, 3.1, and 3.7 for partially tryptic or non-tryptic protein terminal peptide, min length 6	2004-07-23 12:17:00	2005-03-27 17:49:00
+109	3	Weijun Qian custom 2 (human plasma criteria)	XCorr >= 2.0, 2.4, or 3.7 for 1+, 2+, or 3+ fully tryptic, and >= 3.0, 3.5, and 4.5 for partially tryptic or non-tryptic protein terminal peptide, min length 6	2004-07-15 19:27:55	2005-03-26 14:20:00
+110	3	Weijun Qian custom 1 (human cell line criteria)	XCorr >= 1.5, 1.9, or 2.9 for 1+, 2+, or 3+ fully tryptic, and >= 3.1, 3.8, and 4.5 for partially tryptic or non-tryptic protein terminal peptide, min length 6	2004-07-15 19:28:02	2005-03-26 14:20:00
+111	3	Ruihua custom 1	XCorr >= 1.9, 1.9, or 3.2 for 1+, 2+, or 3+, partially or fully tryptic, min length 6	2004-07-20 14:04:05	2004-08-19 14:21:10
+112	3	Washburn/Yates, no cleavage rules	XCorr >= 1.9, 2.2, or 3.75 for 1+, 2+, or >=3+, no cleavage rules, min length 6	2004-07-21 16:15:52	2004-08-19 14:21:10
+113	3	Yates custom 6, no cleavage rules	XCorr >= 1.9, 2.2, or 3.0 for 1+, 2+, or >=3+ if seen once, XCorr >= 1.9 if seen >= 2 times, no cleavage rules, min length 4	2004-07-23 12:14:00	2004-08-19 14:21:10
+114	3	Weijun Qian custom 3	XCorr >= 1.5, 1.8, or 2.8 for 1+, 2+, or 3+ fully tryptic, and >= 2.1, 2.7, or 3.9 for partially tryptic or non-tryptic protein terminal peptide, min length 6	2004-07-23 13:08:00	2005-03-26 14:20:00
 115	3	Weijun Qian custom 4	XCorr >= 1.5, 1.5, or 2.4 for 1+, 2+, or 3+ fully tryptic, and >= 2.5, 3.5, or 4.0 for partially tryptic or non-tryptic protein terminal peptide, min length 6, Max DelCn 0.05	2004-08-02 22:16:20	2005-03-26 14:20:00
 116	3	Weijun Qian custom 5	XCorr >= 1.5, 1.9, or 2.9 for 1+, 2+, or 3+ fully tryptic, and >= 3.1, 3.8, or 4.5 for partially tryptic or non-tryptic protein terminal peptide, min length 6, Max DelCn 0.05	2004-08-02 22:17:30	2005-03-26 14:20:00
 117	2	Partially or fully tryptic	no XCorr or analysis count filters, partially or fully tryptic or non-tryptic protein terminal peptide, min length 6	2004-08-07 12:13:52	2005-03-27 17:49:00
@@ -68,6 +83,7 @@ COPY public.t_filter_sets (filter_set_id, filter_type_id, filter_set_name, filte
 164	3	Bryan Ham custom 1	XCorr >= 1.4, 2.0, or 2.2 for 1+, 2+, or >=3+, no tryptic rules	2007-02-08 17:39:16	2007-02-08 17:39:16
 165	3	Bryan Ham custom 2	XCorr >= 1.4, 2.4, or 3.3 for 1+, 2+, or >=3+, DelCn2 >= 0.13, no tryptic rules	2007-02-21 11:33:26	2007-02-21 11:33:26
 166	1	RankXc=1 only	RankXc = 1, no other filters; this will give the top scoring match for each spectrum	2007-02-27 11:30:55	2007-02-27 11:30:55
+167	3	Bryan Ham custom 3	XCorr >= 3.0 for 2+, 3+ or 4+,DelCn2 >=0.09, no tryptic rules	2007-04-17 10:06:50	2007-04-17 10:06:50
 168	3	Jon Jacobs Custom 1	XCorr >= 1.5, 2.3, or 3.1 for 1+, 2+, or 3+ fully tryptic, and >= 3.0, 3.7, or 4.4 for partially tryptic or non-tryptic protein terminal peptide, min length 6, DeltaCn <= 0.05	2007-10-11 18:17:53	2007-10-11 18:17:53
 169	3	Bryan Ham custom 4	XCorr >= 1.4, 2.2, 2.7, or 2.6 for 1+, 2+, 3+, >=4+, DelCn2 >= 0.13, no tryptic rules	2007-10-22 16:41:57	2007-10-22 16:41:57
 170	3	Yates custom 10	XCorr >= 1.9, 2.2, or 3.0 for 1+, 2+, or >=3+, Log_EValue <= -2, observation count >= 10, partially or fully tryptic or non-tryptic protein terminal peptide, min length 6	2008-03-01 23:40:22	2008-03-01 23:40:22
@@ -92,7 +108,6 @@ COPY public.t_filter_sets (filter_set_id, filter_type_id, filter_set_name, filte
 194	3	Modified Washburn/Yates, all filter-passing hits	XCorr >= 1.9, 2.2, or 3.2 for 1+, 2+, or >=3+, Log_EValue <= -2, for partially tryptic or non-tryptic protein terminal peptide	2010-04-13 11:01:33	2010-04-13 11:01:33
 195	3	Qibin Custom 2	XCorr >= 1.7, 2.1, 2.7, 3.5, or 4.3 for 1+ 2+, 3+, 4+, or 5+ full tryptic, XCorr >= 2.7, 3.0, 4.0, 4.7, or 5.1 for 1+, 2+, 3+, 4+ or 5+ partially tryptic or non-tryptic protein terminal peptide,  min length 6, DelCN2 >= 0.1; RankXC = 1	2010-06-28 12:05:51	2010-06-28 12:05:51
 196	1	Peptide DB minima 9	XCorr >= 1.5 for 1+ or 2+, XCorr >= 2.5 for >=3+, partially/fully tryptic or protein terminal; DeltaCn <= 0.1; XCorr >= 3 for 1+ non-tryptic; XCorr >= 4 for >= 2+ non-tryptic; alternatively, MSGF < 1E-8, regardless of cleavage state or charge state; for MSAlign, requires PValue < 1E-5	2010-07-23 13:06:02	2010-07-23 13:06:02
-104	1	None (accept all)	no rules	2004-03-31 14:02:39	2004-08-19 14:21:10
 197	3	Sam Payne Custom 1	XCorr >= 1.9, 2.2, or 3.5 for 1+, 2+, or >=3+ if seen once, XCorr >= 1.9 if seen >= 2 times, Log_EValue <= -2, MSGF <= 1E-9, no cleavage rules, min length 6	2010-11-11 18:30:47	2010-11-11 18:30:47
 198	3	Sam Payne Loose	MSGF <= 1E-8, Peptide Prophet >= 0.5, and NET Error <= 0.05	2011-01-11 14:16:21	2011-01-11 14:16:21
 199	3	Sam Payne Strict	MSGF <= 1E-10 and Peptide Prophet >= 0.5	2011-01-11 14:17:33	2011-01-11 14:17:33
@@ -103,6 +118,18 @@ COPY public.t_filter_sets (filter_set_id, filter_type_id, filter_set_name, filte
 204	3	MSGF <= 1E-8, partially/fully tryptic; peptide prophet >= 0.5	MSGF <= 1E-8, partially/fully tryptic or protein terminal; peptide prophet >= 0.5	2011-03-22 22:23:02	2011-03-22 22:23:02
 205	3	MSGF <= 1E-9, fully tryptic; peptide prophet >= 0.5	MSGF <= 1E-9, fully tryptic; peptide prophet >= 0.5	2011-03-22 22:23:09	2011-03-22 22:23:09
 206	3	MSGF <= 1E-9, partially/fully tryptic; peptide prophet >= 0.5	MSGF <= 1E-9, partially/fully tryptic or protein terminal; peptide prophet >= 0.5	2011-03-22 22:23:37	2011-03-22 22:23:37
+207	3	MSGF <= 1E-10, partially/fully tryptic; peptide prophet >= 0.5	MSGF <= 1E-10, partially/fully tryptic or protein terminal; peptide prophet >= 0.5	2011-03-22 22:24:59	2011-03-22 22:24:59
+208	3	MSGF <= 1E-10; peptide prophet >= 0.5	MSGF <= 1E-10, no cleavage rules; peptide prophet >= 0.5	2011-03-22 22:42:08	2011-03-22 22:42:08
+209	3	MSGF <= 1E-11; peptide prophet >= 0.5	MSGF <= 1E-11, no cleavage rules; peptide prophet >= 0.5	2011-03-22 22:43:06	2011-03-22 22:43:06
+210	3	Josh Alfaro Custom 1, 0.1% FDR	MSGF <= 1E-12 for partial tryptic or 1E-9 for fully tryptic (regardless of DelCN2); when DelCN2 >= 0.1, then MSGF <= 1E-10 for partial tryptic or 5E-9 for fully tryptic	2011-05-05 20:16:10	2011-05-05 20:16:10
+211	3	MSGF <= 1E-12; no pep prophet filter	MSGF <= 1E-12, no cleavage rules; no peptide prophet filter; MSAlign PValue < 1E-9	2011-05-06 15:11:26	2011-05-06 15:11:26
+212	3	MSGF <= 1E-12; peptide prophet >= 0.5	MSGF <= 1E-12, no cleavage rules; peptide prophet >= 0.5	2011-11-14 18:22:01	2011-11-14 18:22:01
+213	3	MS-GF+ FDR <= 10%	MS-GF+ FDR <= 10%, no cleavage rules	2012-01-18 12:31:42	2012-01-18 12:31:42
+214	3	MS-GF+ FDR <= 5%, MSAlign < 1E-5	MS-GF+ FDR <= 5%, MSAlign PValue < 1E-5, no cleavage rules	2012-01-18 12:36:25	2012-01-18 12:36:25
+215	3	MS-GF+ FDR <= 1%, MSAlign < 1E-6	MS-GF+ FDR <= 1%, MSAlign PValue < 1E-6, no cleavage rules	2012-01-18 12:36:33	2012-01-18 12:36:33
+216	3	MS-GF+ FDR <= 0.5%	MS-GF+ FDR <= 0.5%, no cleavage rules	2012-01-18 12:37:48	2012-01-18 12:37:48
+217	3	MSGF <= 1E-08, partially/fully tryptic; no pep prophet filter	MSGF <= 1E-08, partially/fully tryptic or protein terminal; no peptide prophet filter; MSAlign PValue < 1E-5	2012-02-27 11:59:43	2012-02-27 11:59:43
+218	3	MSGF <= 1E-09, partially/fully tryptic; no pep prophet filter	MSGF <= 1E-09, partially/fully tryptic or protein terminal; no peptide prophet filter; MSAlign PValue < 1E-6	2012-02-27 11:59:49	2012-02-27 11:59:49
 219	3	MSGF <= 1E-10, partially/fully tryptic; no pep prophet filter	MSGF <= 1E-10, partially/fully tryptic or protein terminal; no peptide prophet filter; MSAlign PValue < 1E-7	2012-02-27 11:59:55	2012-02-27 11:59:55
 220	3	MSGF <= 1E-11; no pep prophet filter	MSGF <= 1E-11, no cleavage rules; no peptide prophet filter; MSAlign PValue < 1E-8	2012-02-27 11:59:59	2012-02-27 11:59:59
 221	1	Peptide DB minima 11 with MSGF <= 1E-9 or MSGF+ QValue < 0.1	MSGF <= 1E-9; XCorr >= 1.5 for 1+ or 2+, XCorr >= 2.5 for >=3+, partially/fully tryptic or protein terminal; DeltaCn <= 0.1; XCorr >= 3 for 1+ non-tryptic; XCorr >= 4 for >= 2+ non-tryptic; Alternatively, MSGF+ QValue < 0.1	2012-04-03 10:43:59	2012-04-03 10:43:59
@@ -125,33 +152,6 @@ COPY public.t_filter_sets (filter_set_id, filter_type_id, filter_set_name, filte
 240	3	MS-GF+ FDR <= 5%, observation count >= 2	MS-GF+ FDR <= 5%, obs count >= 2, no cleavage rules	2015-12-18 15:05:46	2015-12-18 15:05:46
 241	3	MS-GF+ FDR <= 1%, observation count >= 2	MS-GF+ FDR <= 1%, obs count >= 2, no cleavage rules	2015-12-18 15:15:34	2015-12-18 15:15:34
 242	3	MS-GF+ FDR <= 0.1% and MSGF_SpecProb <= 1E-13	MS-GF+ FDR <= 0.1%, no cleavage rules, MSGF_SpecProb <= 1E-13	2019-06-14 10:50:48	2019-06-14 10:50:48
-100	3	Yates custom 1, no cleavage rules	XCorr >= 1.9, 2.2, or 3.5 for 1+, 2+, or >=3+ if seen once, XCorr >= 1.9 if seen >= 2 times, no cleavage rules, min length 4	2004-03-27 13:59:48	2004-08-19 14:21:10
-101	3	Yates custom 2, no cleavage rules	XCorr >= 1.9, 2.2, or 3.5 for 1+, 2+, or >=3+ if seen once or twice, XCorr >= 1.9 if seen >= 3 times, no cleavage rules, min length 4	2004-03-27 13:59:48	2004-08-19 14:21:10
-102	3	Yates custom 3, no cleavage rules	XCorr >= 1.9, 2.2, or 3.5 for 1+, 2+, or >=3+, no cleavage rules, min length 4	2004-03-27 13:59:48	2004-08-19 14:21:10
-103	3	Yates custom 4, no cleavage rules	XCorr >= 1.9, 2.2, or 3.5 for 1+, 2+, or >=3+ if seen once, XCorr >= 0 if seen >= 2 times, no cleavage rules, min length 4	2004-03-27 17:10:00	2004-08-19 14:21:10
-105	3	Yates custom 5, no cleavage rules	XCorr >= 1.9, 2.2, or 3.5 for 1+, 2+, or >=3+ if seen once, XCorr >= 1.9 if seen >= 2 times, Log_EValue <= -2, no cleavage rules, min length 6	2004-04-13 07:35:14	2004-08-19 14:21:10
-106	3	High confidence 1	XCorr >= 3.0, 3.6, or 4.0 for 1+, 2+, or >=3+, Log_EValue <= -4, partially or fully tryptic, min length 6, obs count >= 3	2004-05-11 11:49:08	2004-08-19 14:21:10
-107	3	Washburn/Yates, partially tryptic, 1% XTandem FDR	XCorr >= 1.9, 2.2, or 3.75 for 1+, 2+, or >=3+, Log_EValue <= -2, partially or fully tryptic or non-tryptic protein terminal peptide, min length 6	2004-07-06 16:19:52	2005-03-27 17:49:00
-108	3	Kim Hixson custom 1	XCorr >= 1.9, 2.2, or 3.0 for 1+, 2+, or 3+ fully tryptic, and >= 2.7, 3.1, and 3.7 for partially tryptic or non-tryptic protein terminal peptide, min length 6	2004-07-23 12:17:00	2005-03-27 17:49:00
-109	3	Weijun Qian custom 2 (human plasma criteria)	XCorr >= 2.0, 2.4, or 3.7 for 1+, 2+, or 3+ fully tryptic, and >= 3.0, 3.5, and 4.5 for partially tryptic or non-tryptic protein terminal peptide, min length 6	2004-07-15 19:27:55	2005-03-26 14:20:00
-110	3	Weijun Qian custom 1 (human cell line criteria)	XCorr >= 1.5, 1.9, or 2.9 for 1+, 2+, or 3+ fully tryptic, and >= 3.1, 3.8, and 4.5 for partially tryptic or non-tryptic protein terminal peptide, min length 6	2004-07-15 19:28:02	2005-03-26 14:20:00
-111	3	Ruihua custom 1	XCorr >= 1.9, 1.9, or 3.2 for 1+, 2+, or 3+, partially or fully tryptic, min length 6	2004-07-20 14:04:05	2004-08-19 14:21:10
-112	3	Washburn/Yates, no cleavage rules	XCorr >= 1.9, 2.2, or 3.75 for 1+, 2+, or >=3+, no cleavage rules, min length 6	2004-07-21 16:15:52	2004-08-19 14:21:10
-113	3	Yates custom 6, no cleavage rules	XCorr >= 1.9, 2.2, or 3.0 for 1+, 2+, or >=3+ if seen once, XCorr >= 1.9 if seen >= 2 times, no cleavage rules, min length 4	2004-07-23 12:14:00	2004-08-19 14:21:10
-114	3	Weijun Qian custom 3	XCorr >= 1.5, 1.8, or 2.8 for 1+, 2+, or 3+ fully tryptic, and >= 2.1, 2.7, or 3.9 for partially tryptic or non-tryptic protein terminal peptide, min length 6	2004-07-23 13:08:00	2005-03-26 14:20:00
-167	3	Bryan Ham custom 3	XCorr >= 3.0 for 2+, 3+ or 4+,DelCn2 >=0.09, no tryptic rules	2007-04-17 10:06:50	2007-04-17 10:06:50
-207	3	MSGF <= 1E-10, partially/fully tryptic; peptide prophet >= 0.5	MSGF <= 1E-10, partially/fully tryptic or protein terminal; peptide prophet >= 0.5	2011-03-22 22:24:59	2011-03-22 22:24:59
-208	3	MSGF <= 1E-10; peptide prophet >= 0.5	MSGF <= 1E-10, no cleavage rules; peptide prophet >= 0.5	2011-03-22 22:42:08	2011-03-22 22:42:08
-209	3	MSGF <= 1E-11; peptide prophet >= 0.5	MSGF <= 1E-11, no cleavage rules; peptide prophet >= 0.5	2011-03-22 22:43:06	2011-03-22 22:43:06
-210	3	Josh Alfaro Custom 1, 0.1% FDR	MSGF <= 1E-12 for partial tryptic or 1E-9 for fully tryptic (regardless of DelCN2); when DelCN2 >= 0.1, then MSGF <= 1E-10 for partial tryptic or 5E-9 for fully tryptic	2011-05-05 20:16:10	2011-05-05 20:16:10
-211	3	MSGF <= 1E-12; no pep prophet filter	MSGF <= 1E-12, no cleavage rules; no peptide prophet filter; MSAlign PValue < 1E-9	2011-05-06 15:11:26	2011-05-06 15:11:26
-212	3	MSGF <= 1E-12; peptide prophet >= 0.5	MSGF <= 1E-12, no cleavage rules; peptide prophet >= 0.5	2011-11-14 18:22:01	2011-11-14 18:22:01
-213	3	MS-GF+ FDR <= 10%	MS-GF+ FDR <= 10%, no cleavage rules	2012-01-18 12:31:42	2012-01-18 12:31:42
-214	3	MS-GF+ FDR <= 5%, MSAlign < 1E-5	MS-GF+ FDR <= 5%, MSAlign PValue < 1E-5, no cleavage rules	2012-01-18 12:36:25	2012-01-18 12:36:25
-215	3	MS-GF+ FDR <= 1%, MSAlign < 1E-6	MS-GF+ FDR <= 1%, MSAlign PValue < 1E-6, no cleavage rules	2012-01-18 12:36:33	2012-01-18 12:36:33
-216	3	MS-GF+ FDR <= 0.5%	MS-GF+ FDR <= 0.5%, no cleavage rules	2012-01-18 12:37:48	2012-01-18 12:37:48
-217	3	MSGF <= 1E-08, partially/fully tryptic; no pep prophet filter	MSGF <= 1E-08, partially/fully tryptic or protein terminal; no peptide prophet filter; MSAlign PValue < 1E-5	2012-02-27 11:59:43	2012-02-27 11:59:43
-218	3	MSGF <= 1E-09, partially/fully tryptic; no pep prophet filter	MSGF <= 1E-09, partially/fully tryptic or protein terminal; no peptide prophet filter; MSAlign PValue < 1E-6	2012-02-27 11:59:49	2012-02-27 11:59:49
 \.
 
 

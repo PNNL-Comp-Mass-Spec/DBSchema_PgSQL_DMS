@@ -29,6 +29,20 @@ COPY public.t_acceptable_param_entries (entry_id, parameter_name, description, p
 6	PartialSequenceToMatch	\N	SearchSettings	\N	Partial Sequence to Match	partial_sequence	1	2.0	\N	3	\N	270
 7	CreateOutputFiles	\N	SearchOptions	True	Create Output Files	create_output_files	1	2.0	\N	8	\N	265
 8	NumberOfResultsToProcess	\N	MiscellaneousOptions	500	Number of Results to Process	num_results	1	3.0	\N	1	\N	80
+10	MaximumNumAAPerDynMod	\N	MiscellaneousOptions	4	Maximum Number of Residues Per Dynamic Mod	max_num_differential_AA_per_mod	1	2.0	\N	1	\N	135
+12	PeptideMassTolerance	\N	SearchTolerances	3.0000	Parent Mass Tolerance	peptide_mass_tolerance	1	2.0	\N	7	\N	30
+13	FragmentIonTolerance	\N	SearchTolerances	0.0000	Fragment Mass Tolerance	fragment_ion_tolerance	1	2.0	\N	7	\N	55
+14	NumberOfOutputLines	\N	MiscellaneousOptions	10	Number of Output Lines	num_output_lines	1	2.0	\N	1	\N	70
+15	NumberOfDescriptionLines	\N	MiscellaneousOptions	3	Number of Description Lines to Show	num_description_lines	1	2.0	\N	1	\N	90
+16	ShowFragmentIons	\N	SearchOptions	False	Show Fragment Ions	show_fragment_ions	1	2.0	\N	8	\N	100
+17	PrintDuplicateReferences	\N	SearchOptions	True	Print Duplicate References	print_duplicate_references	1	2.0	\N	8	\N	110
+18	SelectedNucReadingFrameIndex	\N	MiscellaneousOptions	0	Selected Nucleotide Reading Frame	nucleotide_reading_frame	1	2.0	\N	4	[{"value":0,"display":"None (Protein Database)"},{"value":1,"display":"Frame 1 - Forward"},{"value":2,"display":"Frame 2 - Forward"},{"value":3,"display":"Frame 3 - Forward"},{"value":4,"display":"Frame 1 - Reverse"},{"value":5,"display":"Frame 2 - Reverse"},{"value":6,"display":"Frame 3 - Reverse"},{"value":7,"display":"Three Forward Frames"},{"value":8,"display":"Three Reverse Frames"},{"value":9,"display":"All Six Frames"}]	160
+19	RemovePrecursorPeak	\N	SearchOptions	False	Remove Precursor Peak	remove_precursor_peak	1	2.0	\N	8	\N	200
+20	IonCutoffPercentage	\N	SearchTolerances	0.000	Preliminary Score Cutoff Percentage (as decimal)	ion_cutoff_percentage	1	2.0	\N	7	\N	210
+21	MinimumProteinMassToSearch	\N	SearchTolerances	0	Minimum Protein Mass to Search	protein_mass_filter	1	2.0	\N	2	\N	230
+22	MaximumProteinMassToSearch	\N	SearchTolerances	0	Maximum Protein Mass to Search	protein_mass_filter	1	2.0	\N	2	\N	235
+23	NumberOfDetectedPeaksToMatch	\N	MiscellaneousOptions	0	Number of Detected Peaks to Match	match_peak_count	1	2.0	\N	1	\N	240
+25	NumberOfAllowedDetectedPeakErrors	\N	MiscellaneousOptions	1	Number of Allowed Errors in Matching Auto-detected Peaks	match_peak_allowed_error	1	2.0	\N	1	\N	250
 26	MatchedPeakMassTolerance	\N	SearchTolerances	1.0000	Mass Tolerance for Matching Auto-detected Peaks	match_peak_tolerance	1	2.0	\N	7	\N	260
 27	AminoAcidsAllUpperCase	\N	SearchOptions	True	FASTA File has Residues in Upper Case	residues_in_upper_case	1	2.0	3.1	8	\N	265
 28	SequenceHeaderInfoToFilter	\N	MiscellaneousOptions	\N	Sequence Header Information to Filter	sequence_header_filter	1	2.0	\N	3	\N	280
@@ -47,20 +61,6 @@ COPY public.t_acceptable_param_entries (entry_id, parameter_name, description, p
 46	FragmentMassUnits	\N	SearchTolerances	0	Fragment Ion Mass Units	fragment_ion_units	1	3.2	\N	4	[{"value": 0,"display":"amu"},{"value": 1,"display":"mmu"},{"value": 2,"display":"ppm"}]	45
 47	UsePhosphoFragmentation	\N	SearchSettings	false	Use Phospho Fragmentation Rules	use_phospho_fragmentation	1	3.2	\N	8	\N	155
 49	TerminalStaticMods	\N	StaticMods	\N	Terminal Static Modifications	term_static_mods	1	3.2	\N	6	\N	290
-10	MaximumNumAAPerDynMod	\N	MiscellaneousOptions	4	Maximum Number of Residues Per Dynamic Mod	max_num_differential_AA_per_mod	1	2.0	\N	1	\N	135
-12	PeptideMassTolerance	\N	SearchTolerances	3.0000	Parent Mass Tolerance	peptide_mass_tolerance	1	2.0	\N	7	\N	30
-13	FragmentIonTolerance	\N	SearchTolerances	0.0000	Fragment Mass Tolerance	fragment_ion_tolerance	1	2.0	\N	7	\N	55
-14	NumberOfOutputLines	\N	MiscellaneousOptions	10	Number of Output Lines	num_output_lines	1	2.0	\N	1	\N	70
-15	NumberOfDescriptionLines	\N	MiscellaneousOptions	3	Number of Description Lines to Show	num_description_lines	1	2.0	\N	1	\N	90
-16	ShowFragmentIons	\N	SearchOptions	False	Show Fragment Ions	show_fragment_ions	1	2.0	\N	8	\N	100
-17	PrintDuplicateReferences	\N	SearchOptions	True	Print Duplicate References	print_duplicate_references	1	2.0	\N	8	\N	110
-18	SelectedNucReadingFrameIndex	\N	MiscellaneousOptions	0	Selected Nucleotide Reading Frame	nucleotide_reading_frame	1	2.0	\N	4	[{"value":0,"display":"None (Protein Database)"},{"value":1,"display":"Frame 1 - Forward"},{"value":2,"display":"Frame 2 - Forward"},{"value":3,"display":"Frame 3 - Forward"},{"value":4,"display":"Frame 1 - Reverse"},{"value":5,"display":"Frame 2 - Reverse"},{"value":6,"display":"Frame 3 - Reverse"},{"value":7,"display":"Three Forward Frames"},{"value":8,"display":"Three Reverse Frames"},{"value":9,"display":"All Six Frames"}]	160
-19	RemovePrecursorPeak	\N	SearchOptions	False	Remove Precursor Peak	remove_precursor_peak	1	2.0	\N	8	\N	200
-20	IonCutoffPercentage	\N	SearchTolerances	0.000	Preliminary Score Cutoff Percentage (as decimal)	ion_cutoff_percentage	1	2.0	\N	7	\N	210
-21	MinimumProteinMassToSearch	\N	SearchTolerances	0	Minimum Protein Mass to Search	protein_mass_filter	1	2.0	\N	2	\N	230
-22	MaximumProteinMassToSearch	\N	SearchTolerances	0	Maximum Protein Mass to Search	protein_mass_filter	1	2.0	\N	2	\N	235
-23	NumberOfDetectedPeaksToMatch	\N	MiscellaneousOptions	0	Number of Detected Peaks to Match	match_peak_count	1	2.0	\N	1	\N	240
-25	NumberOfAllowedDetectedPeakErrors	\N	MiscellaneousOptions	1	Number of Allowed Errors in Matching Auto-detected Peaks	match_peak_allowed_error	1	2.0	\N	1	\N	250
 \.
 
 

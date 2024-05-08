@@ -21,10 +21,10 @@ SET row_security = off;
 --
 
 COPY public.t_lc_cart (cart_id, cart_name, cart_state_id, cart_description, created) FROM stdin;
-12	Doc	10		2006-03-10 10:28:00
 1	unknown	1	Not a valid cart	\N
 2	No_Cart	2	An ad hoc or non cart based LC apparatus was used	2006-03-10 10:34:00
 11	Andromeda	10	Single emmitter system.	2006-03-10 12:47:00
+12	Doc	10		2006-03-10 10:28:00
 13	Draco	10		2006-03-14 09:07:00
 14	Earth	10		2006-03-13 07:36:00
 15	Firefly	2	nanoPOTS autosampler	2006-03-10 16:14:00
@@ -50,6 +50,7 @@ COPY public.t_lc_cart (cart_id, cart_name, cart_state_id, cart_description, crea
 41	Tambora	10	Agilent cart	2009-10-01 14:24:00
 42	Mazama	10	Agilent Cart	2009-09-29 16:10:00
 43	Tiger	2	First ARRA NexGen L 3 Agilent Pumps (2 nano and 1 cap) 8 Two Position Valves and 4 Multi-Position valves, PAL	2010-03-16 12:38:00
+98	Yew	10		2017-09-28 12:52:00
 44	Lion	10	Second Dimension HILIC cart.  Next Generation LC 3 Agilent Pumps (2 nano and 1 cap) 8 Two Position Valves and 4 Multi-Position valves, PAL	2010-10-21 11:58:00
 45	Lynx	3	2nd ARRA Next-Gen 3 Agilent Pumps (2 nano and 1 cap) 8 Two Position Valves and 4 Multi-Position valves, PAL	2010-04-16 22:17:00
 46	Cougar	10	3rd ARRA Next Generation LC 3 Agilent Pumps (2 nano and 1 cap) 8 Two Position Valves and 4 Multi-Position valves, PAL	2010-05-21 18:14:00
@@ -97,7 +98,6 @@ COPY public.t_lc_cart (cart_id, cart_name, cart_state_id, cart_description, crea
 95	Magnolia	2	Micro-flow infusion cart	2017-03-15 12:15:00
 96	Aspen	10	Infusion system composed of a PAL autosampler and an Agilent nano pump.	2017-06-16 14:50:00
 97	IronMan	2	Dionex Ultimate 3000 nano RSLC for metallomics	2017-08-30 09:18:00
-98	Yew	10		2017-09-28 12:52:00
 107	GCQE01	2	Thermo GC Q-Exactive	2017-11-21 14:17:00
 108	ValcoNanoPump	2	This is manual testing configuration for pump from Valco Feb 2018	2018-02-22 13:12:00
 109	Juniper	10	Thermo/Dionex pump (800 bar). Long armed pal. LCMSnet controlled. Small form factor cart, laptop computer	2018-03-02 17:53:00
@@ -114,9 +114,6 @@ COPY public.t_lc_cart (cart_id, cart_name, cart_state_id, cart_description, crea
 121	Kristin	2	Agilent 1290 LC system	2020-03-18 12:48:00
 122	Guam	10	Agilent 1290 Infinity ALS (Autosampler) Model: G1329A Serial: DE64776208, Agilent 1200 Bin Pump Model: G1312A Serial: DE63060488	2020-10-07 14:18:00
 123	Glacier	2	Thermo Vanquish System running Thermo SII	2020-10-13 16:17:00
-138	Homer	2	Thermo Vanquish Neo system	2023-12-01 16:45:00
-139	Marge	2	Thermo Vanquish Neo system	2024-01-12 12:06:00
-140	Ned	2	Thermo Vanquish Neo system	2024-03-01 14:04:00
 124	Stretch	2	Dionex Ultimate 3000 RSLCnano System	2020-10-20 17:34:00
 125	Roxanne	2	Waters High-Flow H-class+ Sample Manager-FTN and Quaternary Solvent Manager	2020-11-16 16:45:00
 126	Titus	2	Thermo Dionex Ultimate 3000 with autosampler, gradient pump, loading pump, and column heating / trapping compartment	2021-09-13 13:25:00
@@ -131,6 +128,9 @@ COPY public.t_lc_cart (cart_id, cart_name, cart_state_id, cart_description, crea
 135	Bart	2	Thermo Vanquish Neo system	2023-04-24 11:42:00
 136	Maple	2	Thermo/Dionex pump (800 bar) with Loading Pump. Long armed pal. LCMSnet controlled. EMSL owned.	2023-08-23 13:27:00
 137	Holly	2	Thermo/Dionex pump (800 bar) with Loading Pump. Long armed pal. LCMSnet controlled. EMSL owned.	2023-08-23 13:27:00
+138	Homer	2	Thermo Vanquish Neo system	2023-12-01 16:45:00
+139	Marge	2	Thermo Vanquish Neo system	2024-01-12 12:06:00
+140	Ned	2	Thermo Vanquish Neo system	2024-03-01 14:04:00
 \.
 
 

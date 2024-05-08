@@ -21,8 +21,14 @@ SET row_security = off;
 --
 
 COPY public.t_prep_lc_column (prep_column_id, prep_column, mfg_name, mfg_model, mfg_serial, packing_mfg, packing_type, particle_size, particle_type, column_inner_dia, column_outer_dia, length, state, operator_username, comment, created) FROM stdin;
+1037	XBridge_003	Waters XBridge	186003117	0129394413643	Waters	silica	5 um	C18	4.6 mm	10 mm	250 mm	Retired	D3L365	NCRR Mammalian General Use Column	2010-06-09 15:22:10
+1038	XBridge_004	Waters XBridge	186003117	01293934413638	Waters	silica	5 um	C18	4.6 mm	10 mm	250 mm	Retired	D3L365	NCRR HUMAN Sample Column	2010-06-09 15:22:30
+1200												New	d3g716		2023-04-05 16:49:05
+1002	Mouse_SMix_01	Seppro IgY-M-Supermix-LC5	28-288-23364-LC5	\N	Genway	IgY	N/A	Ig antibodies	N/A	N/A	N/A	Active	D3M765	Received July 9, 2008. Weijun's old mouse supermix column.	2009-08-19 08:36:03
+1003	Mouse_M7_01	Seppro IgY-M7 LC10	28-288-12007-LC10	\N	Genway	IgY	N/A	Ig antibodies	N/A	N/A	N/A	Retired	D3M765	Weijun's old M7 column. 2 test runs on 6/12/12. The column is not binding as efficiently as it should. Column is retired and should not be used.	2009-08-19 08:37:43
 1004	SCX-200-04	Poly LC PolysulfoethylA	202SE0503	J2466B	Poly LC	SCX	5 um	300-A	N/A	2.1mm	200mm	Retired	D3M765	Column is for mammalian samples only!,,Samples run prior to DMS: 170, , Retired by MG on 06/02/2014 after performance testing.	2009-08-19 08:42:37
 1005	SCX-200-05	Poly LC PolysulfoethylA	202SE0503	J2467E	Poly LC	SCX	5 um	300-A	N/A	2.1mm	200mm	Retired	D3M765	This column is for human plasma samples only! Put in use 10/8/07.,,Samples run prior to DMS: 12. Column sent to Broad, SCX-200-08 sent to PNNL as replacement.	2009-08-19 08:44:28
+1006	SCX-200-06	Poly LC  PolysulfoethylA	P202SE0503	C0582A	Poly LC	SCX	5 um	300-A	N/A	2.1mm	200mm	Retired	D3M765	General use column. Received 6/1/08, put in use 6/24/08.,,Samples run prior to DMS: 190	2009-08-19 08:46:25
 1007	SCX-35-01	Poly LC PolysulfoethylA	3.52SE0303	I1362	Poly LC	SCX	3 um	300-A	N/A	2.1mm	35mm	Retired	D3M765	General use. Put in use 5/1/07.,,Samples run prior to DMS: 200	2009-08-19 08:48:27
 1008	SCX-35-02	Poly LC PolysulfoethylA	3.52SE0303	H1571	Poly LC	SCX	3 um	300-A	N/A	2.1mm	35mm	Retired	D3M765	Column is for human and mammalian samples only! Put in use 10/15/07.,,Samples run prior to DMS: 129	2009-08-19 08:49:07
 1009	Mouse_M7_02	Seppro Mouse LC10	S5699-1EA	128K0503	Sigma	IgY	N/A	Ig antibodies	N/A	N/A	N/A	Active	D3M765	Weijun's new M7 column. 5/19/09	2009-08-20 08:14:59
@@ -51,14 +57,11 @@ COPY public.t_prep_lc_column (prep_column_id, prep_column, mfg_name, mfg_model, 
 1034	Human_IgY14_LC10_06	Seppro IgY14 LC10	S5074-1EA	050M6007	Sigma	IgY	N/A	Ig antibodies	N/A	N/A	N/A	Retired	D3M765	Tom Metz's IgY14 LC10 column. 5/25/10. SL10204	2010-05-25 15:32:58
 1035	Human_Supermix_05	Seppro Supermix LC5	S5324-1EA	020M6235	Sigma	IgY	N/A	Ig antibodies	N/A	N/A	N/A	Retired	D3M765	Tao Liu's Supermix column for EIF. 5/25/10. SL10105	2010-05-26 08:13:08
 1036	Human_IgY14_LC10_09	Seppro IgY14 LC10	S5074-1EA	050M6007	Sigma	IgY	N/A	Ig antibodies	N/A	N/A	N/A	Retired	D3M765	Tao Liu's IgY14 LC10 column for EIF. 5/25/10. SL10204	2010-05-26 08:14:38
-1037	XBridge_003	Waters XBridge	186003117	0129394413643	Waters	silica	5 um	C18	4.6 mm	10 mm	250 mm	Retired	D3L365	NCRR Mammalian General Use Column	2010-06-09 15:22:10
-1038	XBridge_004	Waters XBridge	186003117	01293934413638	Waters	silica	5 um	C18	4.6 mm	10 mm	250 mm	Retired	D3L365	NCRR HUMAN Sample Column	2010-06-09 15:22:30
 1039	SCX-200-09	Poly LC  PolysulfoethylA	P202SE0503	I0292D	Poly LC	SCX	5 um	300-A	N/A	2.1mm	200mm	Active	D3L365	In 2240	2010-06-09 15:45:29
 1040	SCX-200-10	Poly LC  PolysulfoethylA	P202SE0503	A1391I	Poly LC	SCX	5 um	300-A	N/A	2.1mm	200mm	New	D3L365	New Replacement column - not conditioned!	2010-06-09 15:45:36
 1041	SCX-9mm-200-01	Poly LC  PolysulfoethylA	209SE0503	F18920	Poly LC	SCX	5 um	300-A	N/A	9.4mm	200mm	New	D3P704	Large SCX column for Prokaryotic Phosphopeptide enrichment fractionations	2010-07-08 14:14:39
 1042	XBridge_005	Waters XBridge	186003117	013330125138 32	Waters	silica	5 um	C18	4.6 mm	10 mm	250 mm	Retired	D3L365	RETIRED - NO LONGER IN SERVICE	2010-07-08 15:28:14
 1045	ZorbaxC18_50	Agilent Zorbax	765750-902	USUG001189	Agilent	Silica	3.5 um	C18	2.1 mm?	15 mm?	50 mm	Active	EMSL1521	For use with high pH reverse phase separations--small column.	2010-07-15 07:55:19
-1210	ZORBAX_012	ZORBAX	custom	USDHP01240	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	POC- M.Gritsenko	2024-01-03 12:26:30
 1046	Boron_01_062410	n/a	n/a	n/a	Handpacked by Qibin Zhang	Pierce material	Unk	Boronate affinity	Unk	Unk	Unk	Retired	d3m765	Qibin's boron column 1, packed on 6/24/10	2010-07-21 12:48:30
 1047	Boron_02_062410	n/a	n/a	n/a	Handpacked by Qibin Zhang	Pierce material	Unk	Boronate affinity	Unk	Unk	Unk	Retired	d3m765	Qibin's boron column 2, packed on 6/24/10	2010-07-21 12:48:44
 1048	Human_IgY14_LC5_01	Seppro IgY14 LC5	S4949-1EA	129K6067	Sigma	IgY	N/A	Ig antibodies	N/A	N/A	N/A	Retired	D3M765	Qibin's IgY14 LC5 column. 8/4/10. SL09522	2010-08-04 09:31:41
@@ -93,7 +96,6 @@ COPY public.t_prep_lc_column (prep_column_id, prep_column, mfg_name, mfg_model, 
 1081	GraphitizedCarbon60CM_5_SRK	Packed by Scott Kronewitter to ~6,500 psi	Inhouse packing 1 column at a time	5	PolyMicro	PolyMicro	3um	HyperCarb	150um	360um	60cm	Retired	kron626	SRK, SK Hypercarb 3um 150id 60cm #5 04/12/11.  Unknown condition.  May have been killed by sialic acid reaction but I don't know.  Killed with rat gut sample 9-11-11.  it was fine before that	2011-07-25 13:32:16
 1082	GraphitizedCarbon60CM_75_1_SRK	Packed by Scott Kronewitter to ~6,500 psi	Inhouse packing 1 column at a time	1	PolyMicro	PolyMicro	3um	HyperCarb	75um	360um	60cm	Retired	kron626	SRK, SK Hypercarb 3um 75id 60cm #1 05/02/11.  Killed on High throughput digestion set	2011-07-25 13:35:52
 1083	GraphitizedCarbon60CM_75_2_SRK	Packed by Scott Kronewitter to ~6,500 psi	Inhouse packing 1 column at a time	2	PolyMicro	PolyMicro	3um	HyperCarb	75um	360um	60cm	Retired	kron626	SRK, SK Hypercarb 3um 75id #2 06/01/11, Should be good.  Used 7-25-11, clipped end but should be ok.  QC Load!!!!! 9-8-11  Possible damage.	2011-07-25 13:36:03
-1100	XBridge_007	Waters XBridge	186003117	0154331471	Waters	silica	5 um	C18	4.6 mm	10 mm	250 mm	Active	D3J704	General Use	2013-09-17 15:53:25
 1084	GraphitizedCarbon60CM_75_3_SRK	Packed by Scott Kronewitter to ~8,500 psi	Inhouse packing 1 column at a time	3	PolyMicro	PolyMicro	3um	HyperCarb	75um	360um	60cm	Retired	kron626	SRK, SK Hypercarb 3um 75id #3 09/06/11, Should be good.  The packing went extremely fast and the depressurization was fast as well.  It may not be as dense as the others.  It needs to be checked to see if it is ok.  Bad Frit.	2011-09-06 09:10:52
 1085	GraphitizedCarbon60CM_75_4_SRK	Packed by Scott Kronewitter to ~8,500 psi	Inhouse packing 1 column at a time	4	PolyMicro	PolyMicro	3um	HyperCarb	75um	360um	60cm	Retired	kron626	SRK, SK Hypercarb 3um 75id #4 09/06/11, Great.  Possible QC Load!!! 9-8-11.	2011-09-06 09:11:15
 1086	GraphitizedCarbon60CM_75_5_SRK	Packed by Scott Kronewitter to ~8,500 psi	Inhouse packing 1 column at a time	5	PolyMicro	PolyMicro	3um	HyperCarb	75um	360um	60cm	Retired	kron626	SRK, SK Hypercarb 3um 75id #5 09/07/11, Great	2011-09-08 11:44:22
@@ -108,6 +110,7 @@ COPY public.t_prep_lc_column (prep_column_id, prep_column, mfg_name, mfg_model, 
 1097	SEC_Yarra_3u_01	Yarra 3u SEC-2000	00H-4512-KO	633588-5	Phenomenex	SEC	3um	SEC	unk	7.80mm	300mm	Active	d3m765	B/N 5622-15. Ask Qibin before using.	2012-09-05 08:11:25
 1098	Human_IgY14_LC5_03	Seppro IgY14 LC5	S4949-1EA	1001235007	Sigma	IgY	N/A	Ig antibodies	N/A	N/A	N/A	Retired	D3M765	EDRN's IgY14 LC5 column. 5/1/13. Lot SLBB1542V	2013-05-01 14:35:18
 1099	Human_IgY14_LC5_04	Seppro IgY14 LC5	S4949-1EA	1001235007	Sigma	IgY	N/A	Ig antibodies	N/A	N/A	N/A	Retired	D3M765	EDRN's IgY14 LC5 column. 5/1/13. Lot SLBB1542V	2013-05-01 14:35:25
+1100	XBridge_007	Waters XBridge	186003117	0154331471	Waters	silica	5 um	C18	4.6 mm	10 mm	250 mm	Active	D3J704	General Use	2013-09-17 15:53:25
 1102	Human_IgY14_LC2_01	Sigma	Seppro	20269324	Seppro	IgY14	N/A	Ig antibodies	N/A	N/A	N/A	Active	cham566	TB project only	2013-10-21 09:00:43
 1103	Human_IgY14_LC2_02	Sigma	Seppro	20269324	Seppro	IgY14	N/A	Ig antibodies	N/A	N/A	N/A	Active	cham566	TB project only	2013-10-21 09:03:03
 1104	Human_IgY14_LC2_03	Sigma	Seppro	20269324	Seppro	IgY14	N/A	Ig antibodies	N/A	N/A	N/A	Active	cham566	TB project only	2013-10-21 09:03:07
@@ -133,11 +136,11 @@ COPY public.t_prep_lc_column (prep_column_id, prep_column, mfg_name, mfg_model, 
 1125	Human_MARS_14_100mm_11	Multi Affinity Removal Column	5188-6558	100589951E	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	100 mm	Retired	d3m765	TEDDY Use Only. Received 10/31/14	2014-11-20 10:50:31
 1126	XBridge_011	Waters XBridge	186003117	01603413913834	Waters	silica	5 um	C18	4.6 mm	10 mm	250 mm	Active	D3H534	New column for BSF 1206	2016-06-09 10:44:17
 1127	XBridge_012	Waters XBridge	186003117	01783614023826	Waters	Silica	5 um	C18	4.6 mm	10 mm	250 mm	Retired	D3H534	CPTAC prospective column	2016-08-10 11:46:02
-1002	Mouse_SMix_01	Seppro IgY-M-Supermix-LC5	28-288-23364-LC5	\N	Genway	IgY	N/A	Ig antibodies	N/A	N/A	N/A	Active	D3M765	Received July 9, 2008. Weijun's old mouse supermix column.	2009-08-19 08:36:03
 1128	XBridge_013	Waters XBridge	186003117	01783614023830	Waters	Silica	5 um	C18	4.6 mm	10 mm	250 mm	Active	D3M765	Athena's column. Please ask before using.	2016-09-02 06:13:07
 1129	XBridge_014	Waters XBridge	186003117	1	Waters	Silica	5 um	C18	4.6 mm	10 mm	250 mm	Retired	D3K875	Carrie's column. Please ask before using.	2016-09-09 17:06:18
 1130	XBridge_015	Waters XBridge	186003117	018113631523891	Waters	Silica	5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	CPTAC Column- See Marina/Tao before use	2016-12-20 10:50:51
 1131	Human_Mars_14_100mm_12	Multi Affinity Removal Column	5188-6558	100780583K	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	100 mm	Retired	D3L365	Erin Baker/Pregnancy Study. Exp 06/30/2018	2016-12-20 10:58:15
+1134	Rep-CFE-001	\N	\N	\N	ReproSil-Pur 120 C18-AQ	Column with Frit	1.9	Batch 5910	75um	360	33CM	New	D3L282	\N	2016-12-22 08:40:23
 1135	Rep-CFE-002	\N	\N	\N	ReproSil-Pur 120 C18-AQ	Column with Frit	1.9	Batch 5910	75um	360	33CM	New	D3L282	\N	2016-12-22 08:41:08
 1136	Rep-CFE-003	\N	\N	\N	ReproSil-Pur 120 C18-AQ	Column with Frit	1.9	Batch 5910	75um	360	33CM	New	D3L282	\N	2016-12-22 08:41:43
 1137	Rep-CFE-004	\N	\N	\N	ReproSil-Pur 120 C18-AQ	Column with Frit	1.9	Batch 5910	75um	360	33CM	New	D3L282	\N	2016-12-22 08:42:09
@@ -170,6 +173,7 @@ COPY public.t_prep_lc_column (prep_column_id, prep_column, mfg_name, mfg_model, 
 1172	Human_Mars_14_50mm_07	Multi Affinity Removal Column	5188-6557	101024331Q	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	50 mm	Retired	D3M765	See Weijun before using., Exp 6/30/21, Resin 0006428887	2019-10-23 08:03:37
 1173	Human_Mars_14_100mm_21	Multi Affinity Removal Column	5188-6558	101024510B	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	100 mm	Active	D3L365	BRAVE use only (POC - Marina Gritsenko). Exp 06/30/2021	2020-01-24 14:45:22
 1174	Human_Mars_14_100mm_22	Multi Affinity Removal Column	5188-6558	101098188E	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	100 mm	Active	D3M765	See Weijun Qian before using. Resin 0006428887. Exp 01/30/22	2020-07-13 15:11:26
+1175	Human_Mars_14_100mm_23	Multi Affinity Removal Column	5188-6558	101196117P	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	100 mm	Active	D3L365	AH (J. Jacobs). Exp 10/30/2022	2021-01-08 10:54:59
 1176	ZORBAX_008	ZORBAX	custom	USDHP01096	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	Exclusively for MoTrPAC - human study. POC-P.Piehowski; M.Gritsenko	2021-02-17 13:49:47
 1177	Human_Mars_14_100mm_24	Multi Affinity Removal Column	5188-6558	101230463E	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	100 mm	Active	D3L365	NAMRU use only (POC - Marina Gritsenko). Exp 01/30/2023	2021-03-15 15:43:31
 1178	ZORBAX_009	ZORBAX	custom	USDHP01044	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	For Clinical Projects; POC-Marina Gritsenko	2021-04-08 15:55:48
@@ -194,7 +198,6 @@ COPY public.t_prep_lc_column (prep_column_id, prep_column, mfg_name, mfg_model, 
 1197	Human_Mars_14_100mm_28	Multi Affinity Removal Column	5188-6558	101324544P	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	100 mm	Active	D3L365	TB Vaccine Correlates Project (J.Kyle). Exp 11/30/2023	2022-05-06 10:15:52
 1198	ZORBAX_010	ZORBAX	custom	USDHP01226	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	Exclusevely for CPTAC 4; POC-Marina Gritsenko	2023-02-27 17:53:17
 1199	ZORBAX_011	ZORBAX	custom	USDHP01227	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	Exclusively for MoTrPAC - animal study 2. POC-P.Piehowski; M.Gritsenko	2023-02-27 17:54:58
-1200												New	d3g716		2023-04-05 16:49:05
 1201	Human_Mars_14_50mm_23	Multi Affinity Removal Column	5188-6557	101510663J	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	50 mm	Active	D3M765	Macaque Project. See Jon Jacobs before using.	2023-06-08 06:50:06
 1202	Human_Mars_14_50mm_24	Multi Affinity Removal Column	5188-6557	101510663C	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	50 mm	Retired	D3M765	Macaque Project. See Jon Jacobs before using. 7/23: Column is defective. It is being returned to Agilent.	2023-06-08 06:50:19
 1203	Human_Mars_14_50mm_25	Multi Affinity Removal Column	5188-6557	101510663U	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	50 mm	Active	D3M765	Macaque Project. See Jon Jacobs before using.	2023-07-08 18:05:32
@@ -203,12 +206,9 @@ COPY public.t_prep_lc_column (prep_column_id, prep_column, mfg_name, mfg_model, 
 1206	23-07-03				Separation Methods Technologies - C2	Column with Frit	3um	MEB2-3-300, C2	75um	360um	71cm	New	ROSE554	Packed at 8000psi and let depressurize over night	2023-07-25 12:28:11
 1207	23-07-04				Separation Methods Technologies - C2	Column with Frit	3um	MEB2-3-300, C2	75um	360um	66cm	New	ROSE554	Packed at 8000psi and let depressurize over night	2023-07-25 12:28:20
 1208	Human_Mars_14_50mm_26	Multi Affinity Removal Column	5188-6557	101514206G	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	50 mm	Active	D3M765	Macaque Project. See Jon Jacobs before using.	2023-10-17 05:11:00
-1211	XBridge_020	Waters XBridge	186003943	02493324013808	Waters	Silica	5 um	C18	4.6 mm	10 mm	250 mm	Active	D3L365		2024-01-03 13:57:03
-1003	Mouse_M7_01	Seppro IgY-M7 LC10	28-288-12007-LC10	\N	Genway	IgY	N/A	Ig antibodies	N/A	N/A	N/A	Retired	D3M765	Weijun's old M7 column. 2 test runs on 6/12/12. The column is not binding as efficiently as it should. Column is retired and should not be used.	2009-08-19 08:37:43
-1006	SCX-200-06	Poly LC  PolysulfoethylA	P202SE0503	C0582A	Poly LC	SCX	5 um	300-A	N/A	2.1mm	200mm	Retired	D3M765	General use column. Received 6/1/08, put in use 6/24/08.,,Samples run prior to DMS: 190	2009-08-19 08:46:25
-1134	Rep-CFE-001	\N	\N	\N	ReproSil-Pur 120 C18-AQ	Column with Frit	1.9	Batch 5910	75um	360	33CM	New	D3L282	\N	2016-12-22 08:40:23
-1175	Human_Mars_14_100mm_23	Multi Affinity Removal Column	5188-6558	101196117P	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	100 mm	Active	D3L365	AH (J. Jacobs). Exp 10/30/2022	2021-01-08 10:54:59
 1209	Human_Mars_14_50mm_27	Multi Affinity Removal Column	5188-6557	101514206M	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	50 mm	Active	D3M765	Macaque Project. See Jon Jacobs before using.	2023-10-17 05:11:13
+1210	ZORBAX_012	ZORBAX	custom	USDHP01240	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	POC- M.Gritsenko	2024-01-03 12:26:30
+1211	XBridge_020	Waters XBridge	186003943	02493324013808	Waters	Silica	5 um	C18	4.6 mm	10 mm	250 mm	Active	D3L365		2024-01-03 13:57:03
 \.
 
 

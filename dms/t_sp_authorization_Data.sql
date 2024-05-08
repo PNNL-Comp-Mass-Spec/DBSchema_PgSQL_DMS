@@ -22,6 +22,8 @@ SET row_security = off;
 
 COPY public.t_sp_authorization (entry_id, procedure_name, login_name, host_name, host_ip) FROM stdin;
 1	*	DMSWebUser	gigasax	130.20.225.2
+2	*	DMSWebUser	prismweb2	130.20.224.55
+3	*	DMSWebUser	prismweb3	130.20.225.91
 4	*	DMSWebUser	prismwebdev2	130.20.227.157
 5	*	gigasax\\msdadmin	seqcluster5	0.0.0.0
 6	*	PNL\\D3L243	*	*
@@ -32,9 +34,7 @@ COPY public.t_sp_authorization (entry_id, procedure_name, login_name, host_name,
 20	*	DMSWebUser	WE43320	130.20.228.1
 21	add_requested_run_batch_location_scan	LCMSNetUser	*	*
 23	*	DMSWebUser	prismweb2_IPv6	2620:0:50f1:118::5fd
-2	*	DMSWebUser	prismweb2	130.20.224.55
 24	*	DMSWebUser	prismweb3_IPv6	2620:0:50f1:118::199
-3	*	DMSWebUser	prismweb3	130.20.225.91
 25	*	pgdms	localhost	127.0.0.1
 \.
 
