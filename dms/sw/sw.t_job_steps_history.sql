@@ -76,10 +76,10 @@ CREATE INDEX ix_t_job_steps_history_state_output_folder_name ON sw.t_job_steps_h
 CREATE INDEX ix_t_job_steps_history_tool_start ON sw.t_job_steps_history USING btree (tool, start);
 
 --
--- Name: t_job_steps_history_tool_version_id; Type: INDEX; Schema: sw; Owner: d3l243
+-- Name: ix_t_job_steps_history_tool_version_id; Type: INDEX; Schema: sw; Owner: d3l243
 --
 
-CREATE INDEX t_job_steps_history_tool_version_id ON sw.t_job_steps_history USING btree (tool_version_id);
+CREATE INDEX ix_t_job_steps_history_tool_version_id ON sw.t_job_steps_history USING btree (tool_version_id);
 
 --
 -- Name: t_job_steps_history trig_t_job_steps_history_after_delete; Type: TRIGGER; Schema: sw; Owner: d3l243
