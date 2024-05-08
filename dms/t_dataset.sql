@@ -116,6 +116,12 @@ CREATE INDEX ix_t_dataset_dataset_id_include_dataset_instrument_id ON public.t_d
 CREATE INDEX ix_t_dataset_dataset_id_instrument_id_storage_path_id ON public.t_dataset USING btree (dataset_id, instrument_id, storage_path_id);
 
 --
+-- Name: ix_t_dataset_dataset_lower_text_pattern_ops; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_dataset_dataset_lower_text_pattern_ops ON public.t_dataset USING btree (lower((dataset)::text) text_pattern_ops);
+
+--
 -- Name: ix_t_dataset_date_sort_key; Type: INDEX; Schema: public; Owner: d3l243
 --
 

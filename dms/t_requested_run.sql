@@ -150,6 +150,12 @@ CREATE INDEX ix_t_requested_run_queue_state_include_request_type_id ON public.t_
 CREATE INDEX ix_t_requested_run_request_name_code ON public.t_requested_run USING btree (request_name_code);
 
 --
+-- Name: ix_t_requested_run_request_name_lower_text_pattern_ops; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_requested_run_request_name_lower_text_pattern_ops ON public.t_requested_run USING btree (lower((request_name)::text) text_pattern_ops);
+
+--
 -- Name: ix_t_requested_run_run_order_include_id; Type: INDEX; Schema: public; Owner: d3l243
 --
 
