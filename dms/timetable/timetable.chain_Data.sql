@@ -103,7 +103,10 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 89	Delete timetable logs	36 0/6 * * *	\N	0	t	f	f	\N	\N
 90	Update cached experiment stats, mode 0	0/10 * * * *	\N	0	t	f	f	\N	\N
 91	Update cached experiment stats, mode 1	37 1/6 * * *	\N	0	t	f	f	\N	\N
-92	Update cached experiment stats, mode 2	16 17 * * 6	\N	0	t	f	f	\N	\N
+92	Update cached experiment stats, mode 2	17 17 * * 6	\N	0	t	f	f	\N	\N
+93	Update cached dataset stats, mode 0	1/5 * * * *	\N	0	t	f	f	\N	\N
+95	Update cached dataset stats, mode 1	43 2/6 * * *	\N	0	t	f	f	\N	\N
+96	Update cached dataset stats, mode 2	28 18 * * 6	\N	0	t	f	f	\N	\N
 \.
 
 
@@ -111,7 +114,7 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 -- Name: chain_chain_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.chain_chain_id_seq', 92, true);
+SELECT pg_catalog.setval('timetable.chain_chain_id_seq', 96, true);
 
 
 --

@@ -175,6 +175,12 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 164	91	20	Update cached experiment stats, mode 1	SQL	CALL update_cached_experiment_stats (_processingMode => 1);	\N	\N	f	t	0
 165	92	10	Sleep 16 seconds	BUILTIN	Sleep	\N	\N	f	f	0
 166	92	20	Update cached experiment stats, mode 2	SQL	CALL update_cached_experiment_stats (_processingMode => 2);	\N	\N	f	t	0
+167	93	10	Sleep 26 seconds	BUILTIN	Sleep	\N	\N	f	f	0
+168	93	20	Update cached dataset stats, mode 0	SQL	CALL update_cached_dataset_stats (_processingMode => 0);	\N	\N	f	t	0
+170	95	20	Update cached dataset stats, mode 1	SQL	CALL update_cached_dataset_stats (_processingMode => 1);	\N	\N	f	t	0
+172	96	20	Update cached dataset stats, mode 2	SQL	CALL update_cached_dataset_stats (_processingMode => 2);	\N	\N	f	t	0
+169	95	10	Sleep 41 seconds	BUILTIN	Sleep	\N	\N	f	f	0
+171	96	10	Sleep 52 seconds	BUILTIN	Sleep	\N	\N	f	f	0
 \.
 
 
@@ -182,7 +188,7 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 -- Name: task_task_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.task_task_id_seq', 166, true);
+SELECT pg_catalog.setval('timetable.task_task_id_seq', 172, true);
 
 
 --
