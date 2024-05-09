@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_experiment_stats(IN _processing
 **
 **  Auth:   mem
 **  Date:   05/05/2024 mem - Initial version
+**          05/08/2024 mem - Filter on Experiment ID in the dataset count subquery
 **
 *****************************************************/
 DECLARE
@@ -32,7 +33,8 @@ DECLARE
     _experimentIdEnd int;
     _experimentIdMax int;
     _experimentBatchSize int;
-    _experimentID int;
+    _currentBatchExpIdStart int;
+    _currentBatchExpIdEnd int;
     _addon text;
     _startTime timestamp;
     _runtimeSeconds numeric;
@@ -106,7 +108,7 @@ BEGIN
 
     -- Cache the Experiment IDs to update
     CREATE TEMP TABLE Tmp_Experiment_IDs (
-        exp_id int NOT NULL PRIMARY KEY
+        Exp_ID int NOT NULL PRIMARY KEY
     );
 
     If _processingMode IN (0, 1) Then
@@ -114,14 +116,14 @@ BEGIN
         -- Find experiments with update_required > 0
         -- If _processingMode is 1, also process the 10,000 most recent experiments, regardless of the value of update_required
         --
-        -- Notes regarding T_Dataset
-        --   Trigger trig_i_Dataset will set update_required to 1 when a dataset is added to T_Dataset
-        --   Trigger trig_u_Dataset will set update_required to 1 when the exp_id column is updated in T_Dataset
-        --   Trigger trig_d_Dataset will set update_required to 1 when a dataset is deleted from T_Dataset
+        -- Notes regarding t_dataset
+        --   Trigger trig_t_dataset_after_insert     will set update_required to 1 when a dataset is added to t_dataset
+        --   Trigger trig_t_dataset_after_update_row will set update_required to 1 when the exp_id column is updated in t_dataset
+        --   Trigger trig_t_dataset_after_delete_row will set update_required to 1 when a dataset is deleted from t_dataset
         ------------------------------------------------
 
         If _processingMode = 0 Then
-            INSERT INTO Tmp_Experiment_IDs (exp_id)
+            INSERT INTO Tmp_Experiment_IDs (Exp_ID)
             SELECT exp_id
             FROM t_cached_experiment_stats
             WHERE update_required > 0;
@@ -129,13 +131,13 @@ BEGIN
             GET DIAGNOSTICS _matchCount = ROW_COUNT;
         Else
             INSERT INTO Tmp_Experiment_IDs (Exp_ID)
-            SELECT Exp_ID
-            FROM T_Cached_Experiment_Stats
-            WHERE Update_Required > 0
+            SELECT exp_id
+            FROM t_cached_experiment_stats
+            WHERE update_required > 0
             UNION
-            SELECT Exp_ID
-            FROM T_Experiments
-            WHERE Exp_ID >= _minimumExperimentID;
+            SELECT exp_id
+            FROM t_experiments
+            WHERE exp_id >= _minimumExperimentID;
             --
             GET DIAGNOSTICS _matchCount = ROW_COUNT;
         End If;
@@ -149,8 +151,8 @@ BEGIN
                      _matchCount,
                      public.check_plural(_matchCount, 'row', 'rows'),
                      CASE WHEN _processingMode = 0
-                          THEN 'Update_Required is 1'
-                          ELSE format('Exp_ID >= %s Or Update_Required is 1', _minimumExperimentID)
+                          THEN 'update_required is 1'
+                          ELSE format('exp_id >= %s Or update_required is 1', _minimumExperimentID)
                      END;
         End If;
     Else
@@ -158,7 +160,7 @@ BEGIN
         -- Process all experiments in t_cached_experiment_stats since _processingMode is 2
         ------------------------------------------------
 
-        INSERT INTO Tmp_Experiment_IDs (exp_id)
+        INSERT INTO Tmp_Experiment_IDs (Exp_ID)
         SELECT exp_id
         FROM t_cached_experiment_stats;
         --
@@ -192,8 +194,22 @@ BEGIN
 
     WHILE true
     LOOP
-        If _showDebug Then
-            RAISE INFO 'Updating Experiment IDs % to %', _experimentIdStart, _experimentIdEnd;
+        If _experimentBatchSize > 0 Then
+            _currentBatchExpIdStart := _experimentIdStart;
+            _currentBatchExpIdEnd   := _experimentIdEnd;
+
+            If _showDebug Then
+                RAISE INFO 'Updating Experiment IDs % to %', _experimentIdStart, _experimentIdEnd;
+            End If;
+        Else
+            SELECT Min(Exp_ID),
+                   Max(Exp_ID)
+            INTO _currentBatchExpIdStart, _currentBatchExpIdEnd
+            FROM Tmp_Experiment_IDs;
+
+            If _showDebug Then
+                RAISE INFO 'Updating Experiment IDs % to %', _currentBatchExpIdStart, _currentBatchExpIdEnd;
+            End If;
         End If;
 
         ------------------------------------------------
@@ -203,21 +219,22 @@ BEGIN
         UPDATE t_cached_experiment_stats
         SET Dataset_Count       = Coalesce(StatsQ.Dataset_Count, 0),
             Most_Recent_Dataset = StatsQ.Most_Recent_Dataset
-        FROM ( SELECT E.exp_id,
+        FROM ( SELECT E.Exp_ID,
                       DSCountQ.Dataset_Count,
                       DSCountQ.Most_Recent_Dataset
                FROM Tmp_Experiment_IDs E
                     LEFT OUTER JOIN ( SELECT exp_id,
                                              COUNT(dataset_id) AS Dataset_Count,
                                              MAX(created) AS Most_Recent_Dataset
-                                      FROM T_Dataset
+                                      FROM t_dataset
+                                      WHERE exp_id BETWEEN _currentBatchExpIdStart AND _currentBatchExpIdEnd
                                       GROUP BY exp_id ) AS DSCountQ
-                      ON DSCountQ.exp_id = E.exp_id
-               WHERE E.Exp_ID BETWEEN _experimentIdStart AND _experimentIdEnd
+                      ON DSCountQ.exp_id = E.Exp_ID
+               WHERE E.Exp_ID BETWEEN _currentBatchExpIdStart AND _currentBatchExpIdEnd
              ) StatsQ
-        WHERE t_cached_experiment_stats.exp_id = StatsQ.exp_id AND
-              (t_cached_experiment_stats.Dataset_Count       IS DISTINCT FROM Coalesce(StatsQ.Dataset_Count, 0) OR
-               t_cached_experiment_stats.Most_Recent_Dataset IS DISTINCT FROM StatsQ.Most_Recent_Dataset);
+        WHERE t_cached_experiment_stats.exp_id = StatsQ.Exp_ID AND
+              (t_cached_experiment_stats.dataset_count       <> Coalesce(StatsQ.dataset_count, 0) OR
+               t_cached_experiment_stats.most_recent_dataset IS DISTINCT FROM StatsQ.most_recent_dataset);
         --
         GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
@@ -225,19 +242,20 @@ BEGIN
 
         ------------------------------------------------
         -- Update factor counts for entries in Tmp_Experiment_IDs
+        -- A Left Outer Join is not required because view V_Factor_Count_By_Experiment includes all experiments
         ------------------------------------------------
 
         UPDATE t_cached_experiment_stats
         SET Factor_Count = Coalesce(StatsQ.Factor_Count, 0)
-        FROM ( SELECT E.exp_id,
+        FROM ( SELECT E.Exp_ID,
                       FC.Factor_Count
                FROM Tmp_Experiment_IDs E
                     INNER JOIN V_Factor_Count_By_Experiment FC
-                      ON FC.exp_id = E.exp_id
-               WHERE E.Exp_ID BETWEEN _experimentIdStart AND _experimentIdEnd
+                      ON FC.exp_id = E.Exp_ID
+               WHERE E.Exp_ID BETWEEN _currentBatchExpIdStart AND _currentBatchExpIdEnd
              ) StatsQ
-        WHERE t_cached_experiment_stats.exp_id = StatsQ.exp_id AND
-              t_cached_experiment_stats.Factor_Count IS DISTINCT FROM Coalesce(StatsQ.Factor_Count, 0);
+        WHERE t_cached_experiment_stats.exp_id = StatsQ.Exp_ID AND
+              t_cached_experiment_stats.factor_count <> Coalesce(StatsQ.Factor_Count, 0);
         --
         GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
@@ -245,18 +263,18 @@ BEGIN
 
         If _experimentBatchSize <= 0 Then
             UPDATE T_Cached_Experiment_Stats
-            SET Update_Required = 0
-            WHERE Update_Required > 0 AND
-                  Exp_ID IN (SELECT E.Exp_ID FROM Tmp_Experiment_IDs E);
+            SET update_required = 0
+            WHERE update_required > 0 AND
+                  exp_id IN (SELECT E.Exp_ID FROM Tmp_Experiment_IDs E);
 
             -- Break out of the while loop
             EXIT;
         End If;
 
         UPDATE T_Cached_Experiment_Stats
-        SET Update_Required = 0
-        WHERE Update_Required > 0 AND
-              Exp_ID IN (SELECT E.Exp_ID
+        SET update_required = 0
+        WHERE update_required > 0 AND
+              exp_id IN (SELECT E.Exp_ID
                          FROM Tmp_Experiment_IDs E
                          WHERE E.Exp_ID BETWEEN _experimentIdStart AND _experimentIdEnd);
 

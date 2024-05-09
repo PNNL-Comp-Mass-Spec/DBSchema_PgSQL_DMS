@@ -43,13 +43,14 @@ CREATE OR REPLACE PROCEDURE public.delete_dataset(IN _datasetname text, IN _info
 **          11/16/2018 mem - Delete dataset file info from cap.T_Dataset_Info_XML
 **                           Change the default for _infoOnly to true
 **                           Rename the first parameter
-**          04/17/2019 mem - Delete rows in T_Cached_Dataset_Instruments
+**          04/17/2019 mem - Delete rows in t_cached_dataset_stats (previously t_cached_dataset_instruments)
 **          11/02/2021 mem - Show the full path to the dataset directory at the console
 **          09/15/2023 mem - Ported to PostgreSQL
 **          09/29/2023 mem - Store the dataset's storage_path_id in _datasetDirectoryPath if V_Dataset_Folder_Paths does not have the dataset
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
 **          02/04/2024 mem - Add parameter _showDebug
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
+**          05/08/2024 mem - Delete rows from t_cached_dataset_stats instead of t_cached_dataset_instruments
 **
 *****************************************************/
 DECLARE
@@ -537,14 +538,14 @@ BEGIN
     WHERE dataset_id = _datasetID;
 
     ---------------------------------------------------
-    -- Delete rows in t_cached_dataset_instruments
+    -- Delete rows in t_cached_dataset_stats
     ---------------------------------------------------
 
     If _showDebug Then
-        RAISE INFO 'Delete dataset ID % from t_cached_dataset_instruments', _datasetID;
+        RAISE INFO 'Delete dataset ID % from t_cached_dataset_stats', _datasetID;
     End If;
 
-    DELETE from t_cached_dataset_instruments
+    DELETE FROM t_cached_dataset_stats
     WHERE dataset_id = _datasetID;
 
     ---------------------------------------------------

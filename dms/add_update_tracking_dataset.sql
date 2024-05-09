@@ -460,7 +460,7 @@ BEGIN
                 RAISE EXCEPTION 'Consume operation failed: dataset % -> %', _datasetName, _message;
             End If;
 
-            -- Update t_cached_dataset_instruments
+            -- Update t_cached_dataset_stats
             CALL public.update_cached_dataset_instruments (
                             _processingMode => 0,
                             _datasetId      => _datasetID,

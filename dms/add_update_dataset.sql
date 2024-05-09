@@ -1333,13 +1333,13 @@ BEGIN
                 CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Dataset');
             End If;
 
-            -- Update t_cached_dataset_instruments
+            -- Update t_cached_dataset_stats
             CALL public.update_cached_dataset_instruments (
-                                _processingMode => 0,
-                                _datasetId      => _datasetID,
-                                _infoOnly       => false,
-                                _message        => _message,        -- Output
-                                _returnCode     => _returnCode);    -- Output
+                            _processingMode => 0,
+                            _datasetId      => _datasetID,
+                            _infoOnly       => false,
+                            _message        => _message,        -- Output
+                            _returnCode     => _returnCode);    -- Output
 
         End If;
 
@@ -1559,7 +1559,7 @@ BEGIN
                 End If;
             End If;
 
-            -- Update t_cached_dataset_instruments
+            -- Update t_cached_dataset_stats
             CALL public.update_cached_dataset_instruments (
                             _processingMode => 0,
                             _datasetId      => _datasetID,

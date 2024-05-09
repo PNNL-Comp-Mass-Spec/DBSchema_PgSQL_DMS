@@ -8,7 +8,7 @@ CREATE VIEW public.v_dataset_list_report_2 AS
     e.experiment,
     c.campaign,
     dsn.dataset_state AS state,
-    dsinst.instrument,
+    cds.instrument,
     ds.created,
     ds.comment,
     dsrating.dataset_rating AS rating,
@@ -37,7 +37,7 @@ CREATE VIEW public.v_dataset_list_report_2 AS
    FROM (((((((((((((public.t_dataset_state_name dsn
      JOIN public.t_dataset ds ON ((dsn.dataset_state_id = ds.dataset_state_id)))
      JOIN public.t_dataset_type_name dtn ON ((ds.dataset_type_id = dtn.dataset_type_id)))
-     LEFT JOIN public.t_cached_dataset_instruments dsinst ON ((ds.dataset_id = dsinst.dataset_id)))
+     LEFT JOIN public.t_cached_dataset_stats cds ON ((ds.dataset_id = cds.dataset_id)))
      JOIN public.t_dataset_rating_name dsrating ON ((ds.dataset_rating_id = dsrating.dataset_rating_id)))
      JOIN public.t_experiments e ON ((ds.exp_id = e.exp_id)))
      JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id)))

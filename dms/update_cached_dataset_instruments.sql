@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_dataset_instruments(IN _process
 /****************************************************
 **
 **  Desc:
-**      Update t_cached_dataset_instruments
+**      Update instrument name and ID in t_cached_dataset_stats
 **
 **  Arguments:
 **    _processingMode   Processing mode: 0 to only add new datasets; 1 to add new datasets and update existing information
@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_dataset_instruments(IN _process
 **  Auth:   mem
 **  Date:   04/15/2019 mem - Initial version
 **          10/06/2023 mem - Ported to PostgreSQL
+**          05/08/2024 mem - Update t_cached_dataset_stats instead of t_cached_dataset_instruments
 **
 *****************************************************/
 DECLARE
@@ -45,7 +46,7 @@ BEGIN
     _infoOnly       := Coalesce(_infoOnly, false);
 
     If _datasetId > 0 And Not _infoOnly Then
-        MERGE INTO t_cached_dataset_instruments AS t
+        MERGE INTO t_cached_dataset_stats AS t
         USING ( SELECT DS.dataset_id,
                        DS.instrument_id AS Instrument_ID,
                        InstName.instrument AS Instrument
@@ -71,7 +72,7 @@ BEGIN
     If _processingMode = 0 Or _infoOnly Then
 
         ------------------------------------------------
-        -- Add new datasets to t_cached_dataset_instruments
+        -- Add new datasets to t_cached_dataset_stats
         ------------------------------------------------
 
         If _infoOnly Then
@@ -104,11 +105,11 @@ BEGIN
                 SELECT DS.Dataset_ID,
                        DS.Instrument_ID,
                        InstName.Instrument,
-                       'Dataset to add to t_cached_dataset_instruments' AS Status
+                       'Dataset to add to t_cached_dataset_stats' AS Status
                 FROM t_dataset DS
                      INNER JOIN t_instrument_name InstName
                        ON DS.instrument_id = InstName.instrument_id
-                     LEFT OUTER JOIN t_cached_dataset_instruments CachedInst
+                     LEFT OUTER JOIN t_cached_dataset_stats CachedInst
                        ON DS.dataset_id = CachedInst.dataset_id
                 WHERE CachedInst.dataset_id IS Null AND (_datasetId = 0 OR DS.dataset_id = _datasetId)
                 ORDER BY DS.dataset_id
@@ -127,7 +128,7 @@ BEGIN
 
             If _matchCount = 0 Then
                 RAISE INFO '';
-                RAISE INFO 'No datasets need to be added to t_cached_dataset_instruments';
+                RAISE INFO 'No datasets need to be added to t_cached_dataset_stats';
             End If;
 
         Else
@@ -136,16 +137,16 @@ BEGIN
             -- Add new datasets
             ------------------------------------------------
 
-            INSERT INTO t_cached_dataset_instruments (dataset_id,
-                                                      instrument_id,
-                                                      instrument)
+            INSERT INTO t_cached_dataset_stats (dataset_id,
+                                                instrument_id,
+                                                instrument)
             SELECT DS.dataset_id,
                    DS.instrument_id,
                    InstName.instrument
             FROM t_dataset DS
                  INNER JOIN t_instrument_name InstName
                    ON DS.instrument_id = InstName.instrument_id
-                 LEFT OUTER JOIN t_cached_dataset_instruments CachedInst
+                 LEFT OUTER JOIN t_cached_dataset_stats CachedInst
                    ON DS.dataset_id = CachedInst.dataset_id
             WHERE CachedInst.dataset_id IS NULL;
             --
@@ -204,7 +205,7 @@ BEGIN
                    t.Instrument AS Instrument_Name,
                    s.instrument AS Instrument_Name_New,
                    'Dataset to update in t_instrument_name' AS Status
-            FROM t_cached_dataset_instruments t
+            FROM t_cached_dataset_stats t
                  INNER JOIN ( SELECT DS.dataset_id,
                                      DS.instrument_id AS Instrument_ID,
                                      InstName.instrument AS Instrument
@@ -231,7 +232,7 @@ BEGIN
 
         If _matchCount = 0 Then
             RAISE INFO '';
-            RAISE INFO 'No data in t_cached_dataset_instruments needs to be updated';
+            RAISE INFO 'No data in t_cached_dataset_stats needs to be updated';
         End If;
 
         RETURN;
@@ -241,7 +242,7 @@ BEGIN
     -- Update cached info
     ------------------------------------------------
 
-    MERGE INTO t_cached_dataset_instruments AS t
+    MERGE INTO t_cached_dataset_stats AS t
     USING ( SELECT DS.dataset_id,
                    DS.instrument_id AS Instrument_ID,
                    InstName.instrument AS Instrument
@@ -268,7 +269,6 @@ BEGIN
     End If;
 
     -- CALL post_log_entry ('Debug', _message, 'Update_Cached_Dataset_Instruments');
-
 END
 $$;
 

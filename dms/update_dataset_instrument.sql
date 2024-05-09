@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_instrument(IN _datasetname tex
 **          08/02/2023 mem - Add call to update_cached_dataset_instruments
 **          02/27/2024 mem - Call update_cached_dataset_folder_paths
 **          02/29/2024 mem - Ported to PostgreSQL
+**          05/08/2024 mem - Reference t_cached_dataset_stats instead of t_cached_dataset_instruments
 **
 *****************************************************/
 DECLARE
@@ -191,7 +192,7 @@ BEGIN
                    DS.dataset,
                    E.experiment,
                    DSN.dataset_state,
-                   DSInst.instrument  AS instrument_old,
+                   CDS.instrument     AS instrument_old,
                    _instrumentNameNew AS instrument_new,
                    _storagePathOld    AS storage_path_old,
                    _storagePathNew    AS storage_path_new,
@@ -201,8 +202,8 @@ BEGIN
                    ON DS.exp_id = E.exp_id
                  INNER JOIN t_dataset_state_name DSN
                    ON DSN.dataset_state_id = DS.dataset_state_id
-                 LEFT OUTER JOIN t_cached_dataset_instruments DSInst
-                   ON DS.dataset_id = DSInst.dataset_id
+                 LEFT OUTER JOIN t_cached_dataset_stats CDS
+                   ON DS.dataset_id = CDS.dataset_id
             WHERE DS.dataset_id = _datasetId
         LOOP
             _infoData := format(_formatSpecifier,
@@ -364,7 +365,7 @@ BEGIN
 
     CALL post_log_entry ('Normal', _message, 'Update_Dataset_Instrument');
 
-    -- Update t_cached_dataset_instruments
+    -- Update t_cached_dataset_stats
     CALL public.update_cached_dataset_instruments (
                     _processingMode => 0,
                     _datasetId      => _datasetID,

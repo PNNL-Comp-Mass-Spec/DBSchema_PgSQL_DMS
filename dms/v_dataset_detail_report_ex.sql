@@ -35,8 +35,8 @@ CREATE VIEW public.v_dataset_detail_report_ex AS
             ELSE ((dfp.dataset_url)::text || (dl.masic_directory_name)::text)
         END AS masic_qc_link,
     dl.qc_metric_stats,
-    COALESCE(jobcountq.jobs, (0)::bigint) AS jobs,
-    COALESCE(psmjobsq.jobs, (0)::bigint) AS psm_jobs,
+    COALESCE((cds.job_count)::bigint, (0)::bigint) AS jobs,
+    COALESCE((cds.psm_job_count)::bigint, (0)::bigint) AS psm_jobs,
     public.get_dataset_pm_task_count(ds.dataset_id) AS peak_matching_results,
     public.get_dataset_factor_count(ds.dataset_id) AS factors,
     public.get_dataset_predefine_job_count(ds.dataset_id) AS predefines_triggered,
@@ -69,7 +69,7 @@ CREATE VIEW public.v_dataset_detail_report_ex AS
     tispre.name AS predigest_int_std,
     tispost.name AS postdigest_int_std,
     t_myemsl_state.myemsl_state_name AS myemsl_state
-   FROM (((((((((((((((ont.v_bto_id_to_name bto
+   FROM ((((((((((((((ont.v_bto_id_to_name bto
      RIGHT JOIN ((((((((((public.t_dataset ds
      JOIN public.t_dataset_state_name tdsn ON ((ds.dataset_state_id = tdsn.dataset_state_id)))
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
@@ -89,15 +89,7 @@ CREATE VIEW public.v_dataset_detail_report_ex AS
      JOIN public.t_requested_run rr ON ((lccart.cart_id = rr.cart_id)))
      LEFT JOIN public.t_eus_proposals eup ON ((rr.eus_proposal_id OPERATOR(public.=) eup.proposal_id)))
      LEFT JOIN public.t_eus_proposal_type ept ON ((eup.proposal_type OPERATOR(public.=) ept.proposal_type))) ON ((ds.dataset_id = rr.dataset_id)))
-     LEFT JOIN ( SELECT t_analysis_job.dataset_id,
-            count(t_analysis_job.job) AS jobs
-           FROM public.t_analysis_job
-          GROUP BY t_analysis_job.dataset_id) jobcountq ON ((jobcountq.dataset_id = ds.dataset_id)))
-     LEFT JOIN ( SELECT j.dataset_id,
-            count(psms.job) AS jobs
-           FROM (public.t_analysis_job_psm_stats psms
-             JOIN public.t_analysis_job j ON ((psms.job = j.job)))
-          GROUP BY j.dataset_id) psmjobsq ON ((psmjobsq.dataset_id = ds.dataset_id)))
+     LEFT JOIN public.t_cached_dataset_stats cds ON ((cds.dataset_id = ds.dataset_id)))
      LEFT JOIN (public.t_dataset_archive da
      JOIN public.t_myemsl_state ON ((da.myemsl_state = t_myemsl_state.myemsl_state))) ON ((da.dataset_id = ds.dataset_id)))
      LEFT JOIN public.t_eus_usage_type eut ON ((rr.eus_usage_type_id = eut.eus_usage_type_id)))
