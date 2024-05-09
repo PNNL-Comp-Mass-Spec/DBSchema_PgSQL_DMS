@@ -31,7 +31,7 @@ CREATE INDEX ix_t_cached_experiment_stats_update_required ON public.t_cached_exp
 -- Name: t_cached_experiment_stats trig_t_cached_experiment_stats_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_cached_experiment_stats_after_update AFTER UPDATE ON public.t_cached_experiment_stats FOR EACH ROW WHEN (((old.dataset_count IS DISTINCT FROM new.dataset_count) OR (old.factor_count IS DISTINCT FROM new.factor_count) OR (old.most_recent_dataset IS DISTINCT FROM new.most_recent_dataset))) EXECUTE FUNCTION public.trigfn_t_cached_experiment_stats_after_update();
+CREATE TRIGGER trig_t_cached_experiment_stats_after_update AFTER UPDATE ON public.t_cached_experiment_stats FOR EACH ROW WHEN (((old.dataset_count <> new.dataset_count) OR (old.factor_count <> new.factor_count) OR (old.most_recent_dataset IS DISTINCT FROM new.most_recent_dataset))) EXECUTE FUNCTION public.trigfn_t_cached_experiment_stats_after_update();
 
 --
 -- Name: t_cached_experiment_stats fk_t_cached_experiment_stats_t_experiments; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
