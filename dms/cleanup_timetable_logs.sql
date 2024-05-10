@@ -2,7 +2,7 @@
 -- Name: cleanup_timetable_logs(integer, integer, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.cleanup_timetable_logs(IN _logretentionhours integer DEFAULT 24, IN _executionlogretentiondays integer DEFAULT 14, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.cleanup_timetable_logs(IN _logretentionhours integer DEFAULT 48, IN _executionlogretentiondays integer DEFAULT 14, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -10,15 +10,19 @@ CREATE OR REPLACE PROCEDURE public.cleanup_timetable_logs(IN _logretentionhours 
 **  Desc:
 **      Delete old log entries from timetable.log and timetable.execution_log
 **
+**      The default value of 48 hours for _logRetentionHours results in the timetable.log table having around 135,000 rows
+**      The default value of 14 days for _executionLogRetentionDays results in the timetable.execution_log table having around 175,000 rows
+**
 **  Arguments:
 **    _logRetentionHours            Threshold, in hours, for deleting log entries from timetable.log; required to be at least 2
 **    _executionLogRetentionDays    Threshold, in days,  for deleting log entries from timetable.execution_log; required to be at least 1
-**    _infoOnly                         When true, show the number of log entries that would be removed or moved
-**    _message                          Status message
-**    _returnCode                       Return code
+**    _infoOnly                     When true, show the number of log entries that would be removed or moved
+**    _message                      Status message
+**    _returnCode                   Return code
 **
 **  Auth:   mem
-**  Date:   03/31/2023 mem - Initial version
+**  Date:   03/31/2024 mem - Initial version
+**          05/09/2024 mem - Change the default value for _logRetentionHours to 48 hours
 **
 *****************************************************/
 DECLARE
