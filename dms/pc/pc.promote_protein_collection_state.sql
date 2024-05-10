@@ -16,8 +16,8 @@ CREATE OR REPLACE PROCEDURE pc.promote_protein_collection_state(IN _addnewprotei
 **    _addNewProteinHeaders     When true, call pc.add_new_protein_headers to add new proteins to pc.t_protein_headers
 **    _mostRecentMonths         Used to filter which protein collections will be examined (if 0 or negative, will use 12 instead)
 **    _infoOnly                 When true, preview updates
-**    _message              Status message
-**    _returnCode           Return code
+**    _message                  Status message
+**    _returnCode               Return code
 **
 **  Auth:   mem
 **  Date:   09/13/2007
@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE pc.promote_protein_collection_state(IN _addnewprotei
 **          09/12/2016 mem - Add parameter _mostRecentMonths
 **          08/22/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          05/09/2024 mem - Cache protein collection lists in a temporary table, removing the need to re-query t_analysis_job for each protein collection
 **
 *****************************************************/
 DECLARE
@@ -37,7 +38,7 @@ DECLARE
 
     _proteinCollectionID int;
     _proteinCollectionName text;
-    _nameFilter text;
+    _nameFilter citext;
     _jobCount int;
     _proteinCollectionsUpdated text := '';
     _proteinCollectionCountUpdated int := 0;
@@ -88,84 +89,99 @@ BEGIN
         If _countTotal = 0 Then
             RAISE INFO 'Did not find any protein collections created after % that have state 1', _dateThreshold;
         Else
-            RAISE INFO 'Examining % protein % created after % that have state 1',
-                            _countTotal,
-                            public.check_plural(_countTotal, 'collection', 'collections'),
-                            _dateThreshold;
-        End If;
+            RAISE INFO 'Caching protein collection lists used by analysis jobs';
 
-        FOR _proteinCollectionID, _proteinCollectionName IN
-            SELECT protein_collection_id, collection_name
-            FROM pc.t_protein_collections
-            WHERE collection_state_id = 1 AND
-                  date_created >= _dateThreshold
-            ORDER BY protein_collection_id
-        LOOP
-            _currentLocation := format('Look for jobs in public.t_analysis_job that used %s', _proteinCollectionName);
+            CREATE TEMP TABLE Tmp_Analysis_Job_Protein_Collections (
+                Protein_Collection_List citext NOT NULL PRIMARY KEY,
+                Jobs int NOT NULL
+            );
+
+            INSERT INTO Tmp_Analysis_Job_Protein_Collections (Protein_Collection_List, Jobs)
+            SELECT protein_collection_list, COUNT(*) AS Jobs
+            FROM public.t_analysis_job
+            WHERE NOT protein_collection_list IS NULL
+            GROUP BY protein_collection_list;
+
+            RAISE INFO 'Examining % protein % created after %, with state 1',
+                    _countTotal,
+                    public.check_plural(_countTotal, 'collection', 'collections'),
+                    _dateThreshold;
+
+            FOR _proteinCollectionID, _proteinCollectionName IN
+                SELECT protein_collection_id, collection_name
+                FROM pc.t_protein_collections
+                WHERE collection_state_id = 1 AND
+                      date_created >= _dateThreshold
+                ORDER BY protein_collection_id
+            LOOP
+                _currentLocation := format('Look for jobs in public.t_analysis_job that used %s', _proteinCollectionName);
+
+                If _infoOnly Then
+                    RAISE INFO '';
+                    RAISE INFO '%', _currentLocation;
+                ElseIf Extract(epoch from (clock_timestamp() - _lastStatusTime)) > 4 Then
+                    -- Show a status message since four seconds have elapsed
+                    RAISE INFO ' ... processed % / % protein collections', _countProcessed, _countTotal;
+                    _lastStatusTime := clock_timestamp();
+                End If;
+
+                _nameFilter := '%' || _proteinCollectionName || '%';
+
+                SELECT Sum(Jobs) AS Jobs
+                INTO _jobCount
+                FROM Tmp_Analysis_Job_Protein_Collections
+                WHERE Protein_Collection_List LIKE _nameFilter;
+
+                If _jobCount > 0 Then
+                    _message := format('%s state from 1 to 3 for protein collection "%s" since %s defined in DMS with this protein collection',
+                                       CASE WHEN _infoOnly THEN 'Would update' ELSE 'Updated' END,
+                                       _proteinCollectionName,
+                                       public.check_plural(_jobCount, 'a job is', _jobCount::text || ' jobs are'));
+
+                    If _infoOnly Then
+                        RAISE INFO '%', _message;
+                    Else
+                        _currentLocation := format('Update state for Collection ID %s', _proteinCollectionID);
+
+                        UPDATE pc.t_protein_collections
+                        SET collection_state_id = 3
+                        WHERE protein_collection_id = _proteinCollectionID;
+
+                        CALL public.post_log_entry ('Normal', _message, 'Promote_Protein_Collection_State', 'pc');
+                    End If;
+
+                    _proteinCollectionsUpdated := public.append_to_text(_proteinCollectionsUpdated, _proteinCollectionName, _delimiter => ', ');
+                    _proteinCollectionCountUpdated := _proteinCollectionCountUpdated + 1;
+
+                ElsIf _infoOnly Then
+                    RAISE INFO 'Protein collection not used by any analysis jobs, leaving state as 1: %', _proteinCollectionName;
+                End If;
+
+                _countProcessed := _countProcessed + 1;
+            END LOOP;
+
+            _currentLocation := 'Done iterating';
+
+            If _proteinCollectionCountUpdated = 0 Then
+                _message := 'No protein collections were found with state 1 and jobs defined in DMS';
+            Else
+                -- If more than one collection was affected, update _message with the overall stats
+                If _proteinCollectionCountUpdated > 1 Then
+                    _message := format('%s the state for %s protein %s from 1 to 3 since existing jobs were found: %s',
+                                       CASE WHEN _infoOnly THEN 'Would update' ELSE 'Updated' END,
+                                       _proteinCollectionCountUpdated,
+                                       public.check_plural(_proteinCollectionCountUpdated, 'collection', 'collections'),
+                                       _proteinCollectionsUpdated);
+                End If;
+
+            End If;
 
             If _infoOnly Then
                 RAISE INFO '';
-                RAISE INFO '%', _currentLocation;
-            ElseIf Extract(epoch from (clock_timestamp() - _lastStatusTime)) > 4 Then
-                -- Show a status message since four seconds have elapsed
-                RAISE INFO ' ... processed % / % protein collections', _countProcessed, _countTotal;
-                _lastStatusTime := clock_timestamp();
+                RAISE INFO '%', _message;
             End If;
 
-            _nameFilter := '%' || _proteinCollectionName || '%';
-
-            SELECT COUNT(job)
-            INTO _jobCount
-            FROM public.t_analysis_job
-            WHERE protein_collection_list ILIKE _nameFilter;
-
-            If _jobCount > 0 Then
-                _message := format('%s state from 1 to 3 for protein collection "%s" since %s defined in DMS with this protein collection',
-                                   CASE WHEN _infoOnly THEN 'Would update' ELSE 'Updated' END,
-                                   _proteinCollectionName,
-                                   public.check_plural(_jobCount, 'a job is', _jobCount::text || ' jobs are'));
-
-                If _infoOnly Then
-                    RAISE INFO '%', _message;
-                Else
-                    _currentLocation := format('Update state for Collection ID %s', _proteinCollectionID);
-
-                    UPDATE pc.t_protein_collections
-                    SET collection_state_id = 3
-                    WHERE protein_collection_id = _proteinCollectionID;
-
-                    CALL public.post_log_entry ('Normal', _message, 'Promote_Protein_Collection_State', 'pc');
-                End If;
-
-                _proteinCollectionsUpdated := public.append_to_text(_proteinCollectionsUpdated, _proteinCollectionName, _delimiter => ', ');
-                _proteinCollectionCountUpdated := _proteinCollectionCountUpdated + 1;
-
-            ElsIf _infoOnly Then
-                RAISE INFO 'Protein collection not used by any analysis jobs, leaving state as 1: %', _proteinCollectionName;
-            End If;
-
-            _countProcessed := _countProcessed + 1;
-        END LOOP;
-
-        _currentLocation := 'Done iterating';
-
-        If _proteinCollectionCountUpdated = 0 Then
-            _message := 'No protein collections were found with state 1 and jobs defined in DMS';
-        Else
-            -- If more than one collection was affected, update _message with the overall stats
-            If _proteinCollectionCountUpdated > 1 Then
-                _message := format('%s the state for %s protein %s from 1 to 3 since existing jobs were found: %s',
-                                   CASE WHEN _infoOnly THEN 'Would update' ELSE 'Updated' END,
-                                   _proteinCollectionCountUpdated,
-                                   public.check_plural(_proteinCollectionCountUpdated, 'collection', 'collections'),
-                                   _proteinCollectionsUpdated);
-            End If;
-
-        End If;
-
-        If _infoOnly Then
-            RAISE INFO '';
-            RAISE INFO '%', _message;
+            DROP TABLE Tmp_Analysis_Job_Protein_Collections;
         End If;
 
         If _addNewProteinHeaders Then
@@ -178,6 +194,8 @@ BEGIN
                 _message := public.append_to_text (_message, _msg);
             End If;
         End If;
+
+        RETURN;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -196,6 +214,7 @@ BEGIN
         End If;
     END;
 
+    DROP TABLE If Exists Tmp_Analysis_Job_Protein_Collections;
 END
 $$;
 
