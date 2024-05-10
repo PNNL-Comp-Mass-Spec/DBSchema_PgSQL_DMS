@@ -109,6 +109,8 @@ COPY timetable.parameter (task_id, order_id, value) FROM stdin;
 167	1	26
 169	1	41
 171	1	52
+173	1	\N
+176	1	\N
 \.
 
 

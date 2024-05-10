@@ -107,6 +107,8 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 93	Update cached dataset stats, mode 0	1/5 * * * *	\N	0	t	f	f	\N	\N
 95	Update cached dataset stats, mode 1	43 2/6 * * *	\N	0	t	f	f	\N	\N
 96	Update cached dataset stats, mode 2	28 18 * * 6	\N	0	t	f	f	\N	\N
+97	Promote protein collection states	10 20 * * *	\N	0	t	f	f	\N	\N
+98	Promote protein collection states, 100 years	10 21 * * 7	\N	0	t	f	f	\N	\N
 \.
 
 
@@ -114,7 +116,7 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 -- Name: chain_chain_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.chain_chain_id_seq', 96, true);
+SELECT pg_catalog.setval('timetable.chain_chain_id_seq', 98, true);
 
 
 --

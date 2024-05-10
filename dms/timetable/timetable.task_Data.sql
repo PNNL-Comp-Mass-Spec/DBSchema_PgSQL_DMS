@@ -181,6 +181,10 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 172	96	20	Update cached dataset stats, mode 2	SQL	CALL update_cached_dataset_stats (_processingMode => 2);	\N	\N	f	t	0
 169	95	10	Sleep 41 seconds	BUILTIN	Sleep	\N	\N	f	f	0
 171	96	10	Sleep 52 seconds	BUILTIN	Sleep	\N	\N	f	f	0
+173	97	10	Promote protein collection states (6 months)	SQL	CALL pc.promote_protein_collection_state (_addNewProteinHeaders => true, _mostRecentMonths => 6);	\N	\N	f	t	0
+174	97	20	Add new protein headers	SQL	CALL pc.add_new_protein_headers (_infoOnly => false);	\N	\N	f	t	0
+175	97	30	Cache protein collection members	SQL	CALL pc.update_cached_protein_collection_members (_maxCollectionsToUpdate => 0);	\N	\N	f	t	0
+176	98	10	Promote protein collection states (1200 months)	SQL	CALL pc.promote_protein_collection_state (_addNewProteinHeaders => false, _mostRecentMonths => 1200);	\N	\N	f	t	0
 \.
 
 
@@ -188,7 +192,7 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 -- Name: task_task_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.task_task_id_seq', 172, true);
+SELECT pg_catalog.setval('timetable.task_task_id_seq', 176, true);
 
 
 --
