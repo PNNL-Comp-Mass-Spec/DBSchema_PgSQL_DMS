@@ -11,13 +11,13 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist
 **      Enable or disable all managers, optionally filtering by manager type ID or manager name
 **
 **  Arguments:
-**    _managerTypeIDList   Optional: comma-separated list of manager type IDs to disable, e.g. '1, 2, 3'
-**    _managerNameList     Optional: if defined, only managers specified here will be enabled;
-**                         Supports the % wildcard; also supports 'all'
-**    _enable              True to enable, false to disable
-**    _infoOnly            When true, show the managers that would be updated
-**    _message          Status message
-**    _returnCode       Return code
+**    _managerTypeIDList    Optional: comma-separated list of manager type IDs to disable, e.g. '1, 2, 3'
+**    _managerNameList      Optional: if defined, only managers specified here will be enabled;
+**                          Supports the % wildcard; also supports 'all'
+**    _enable               True to enable, false to disable
+**    _infoOnly             When true, show the managers that would be updated
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Example usage:
 **
@@ -25,9 +25,9 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist
 **          -- Disable the Capture Task Managers and the Analysis Tool Managers on Pub-80 through Pub-89
 **          CALL mc.enable_disable_all_managers(
 **                _managerTypeIDList => '15, 11',
-**                _managerNameList => 'Pub-8[0-1]%',
-**                _enable => false,
-**                _infoOnly => true
+**                _managerNameList   => 'Pub-8[0-1]%',
+**                _enable            => false,
+**                _infoOnly          => true
 **              );
 **      END;
 **

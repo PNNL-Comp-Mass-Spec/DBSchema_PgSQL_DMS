@@ -14,8 +14,8 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable boolean, IN _m
 **    _enable           False to disable, true to enable
 **    _managerTypeID    Defined in table T_MgrTypes.  8=Space, 9=DataImport, 11=Analysis Tool Manager, 15=CaptureTaskManager
 **    _managerNameList  Required when _enable is true.  Only managers specified here will be enabled, though you can use 'All' to enable All managers.
-**                      When _enable is false, if this parameter is blank (or All) then all managers of the given type will be disabled
-**                      supports the % wildcard
+**                      When _enable is false, if this parameter is blank (or 'All'), all managers of the given type will be disabled
+**                      Supports the % wildcard
 **    _infoOnly         When true, show the managers that would be updated
 **    _includeDisabled  By default, this procedure skips managers with control_from_website = 0 in t_mgrs; set _includeDisabled to true to also include them
 **    _results          Cursor for obtaining results
@@ -26,10 +26,10 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable boolean, IN _m
 **
 **      BEGIN;
 **          CALL mc.enable_disable_managers(
-**              _enable => true,
-**              _managerTypeID => 11,
+**              _enable          => true,
+**              _managerTypeID   => 11,
 **              _managerNameList => 'Pub-80%',
-**              _infoOnly => true,
+**              _infoOnly        => true,
 **              _includeDisabled => false
 **          );
 **          FETCH ALL FROM _results;
@@ -37,10 +37,10 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_managers(IN _enable boolean, IN _m
 **
 **  Auth:   mem
 **  Date:   07/12/2007
-**          05/09/2008 mem - Added parameter @ManagerNameList
+**          05/09/2008 mem - Added parameter _managerNameList
 **          06/09/2011 mem - Now filtering on MT_Active > 0 in T_MgrTypes
-**                         - Now allowing @ManagerNameList to be All when @Enable = 1
-**          10/12/2017 mem - Allow @ManagerTypeID to be 0 if @ManagerNameList is provided
+**                         - Now allowing _managerNameList to be 'All' when _enable is 1
+**          10/12/2017 mem - Allow _managerTypeID to be 0 if _managerNameList is provided
 **          03/28/2018 mem - Use different messages when updating just one manager
 **          01/30/2020 mem - Ported to PostgreSQL
 **          02/04/2020 mem - Rename columns to mgr_id and mgr_name

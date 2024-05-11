@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_space_managers(IN _infoonly boolean DEFAUL
 /****************************************************
 **
 **  Desc:
-**      Enable managers that rely on MyEMSL
+**      Enable the space managers
 **
 **  Arguments:
 **    _infoOnly         When true, preview updates
