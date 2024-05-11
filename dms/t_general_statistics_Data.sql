@@ -21,12 +21,12 @@ SET row_security = off;
 --
 
 COPY public.t_general_statistics (entry_id, category, label, value, last_affected) FROM stdin;
+1006	Campaign_Count	Last 30 days	5.000	2024-05-10 14:03:05.239981
 1004	Campaign_Count	All	1984.000	2024-04-22 23:03:29.166312
 1005	Campaign_Count	Last 7 days	0.000	2024-04-22 23:03:29.166312
 1007	CellCulture_Count	All	18022.000	2024-04-22 23:03:29.166312
 1008	CellCulture_Count	Last 7 days	0.000	2024-04-22 23:03:29.166312
 1009	CellCulture_Count	Last 30 days	0.000	2024-04-22 23:03:29.166312
-1010	Dataset_Count	All	1193119.000	2024-04-22 23:03:29.166312
 1013	Experiment_Count	All	369300.000	2024-04-22 23:03:29.166312
 1016	Organism_Count	All	823.000	2024-04-22 23:03:29.166312
 1017	Organism_Count	Last 7 days	0.000	2024-04-22 23:03:29.166312
@@ -35,14 +35,14 @@ COPY public.t_general_statistics (entry_id, category, label, value, last_affecte
 1020	RawDataTB	Last 7 days	0	2024-04-22 23:03:29.166312
 1003	Job_Count	New	5.000	2024-04-24 11:03:30.507372
 1014	Experiment_Count	Last 7 days	0.000	2024-04-24 11:03:30.507372
-1011	Dataset_Count	Last 7 days	0.000	2024-04-24 14:03:30.674754
-1002	Job_Count	Last 30 days	4483.000	2024-05-07 17:04:02.320684
-1012	Dataset_Count	Last 30 days	3660.000	2024-05-07 17:04:02.320684
-1006	Campaign_Count	Last 30 days	6.000	2024-05-04 17:03:41.635986
-1021	RawDataTB	Last 30 days	5	2024-05-04 17:03:41.635986
+1021	RawDataTB	Last 30 days	2	2024-05-11 08:03:06.287382
+1015	Experiment_Count	Last 30 days	481.000	2024-05-11 11:03:06.426938
+1002	Job_Count	Last 30 days	3074.000	2024-05-11 14:03:06.50316
+1012	Dataset_Count	Last 30 days	2787.000	2024-05-11 14:03:06.50316
+1010	Dataset_Count	All	1193120.000	2024-05-07 20:04:02.43877
 1001	Job_Count	Last 7 days	0.000	2024-04-26 05:03:32.34285
-1015	Experiment_Count	Last 30 days	853.000	2024-05-05 17:03:42.630257
 1000	Job_Count	All	2249907.000	2024-04-24 05:03:30.212011
+1011	Dataset_Count	Last 7 days	0.000	2024-05-09 20:03:04.572215
 \.
 
 

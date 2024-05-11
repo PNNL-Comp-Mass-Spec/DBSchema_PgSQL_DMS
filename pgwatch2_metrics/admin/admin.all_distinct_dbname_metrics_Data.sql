@@ -24,9 +24,6 @@ COPY admin.all_distinct_dbname_metrics (dbname, metric, created_on) FROM stdin;
 DMSDev	object_changes	2024-04-22 20:10:57.351801-07
 DMSDev	sproc_changes	2024-04-22 20:20:57.408536-07
 DMS	index_changes	2024-04-29 23:41:58.638075-07
-DMSDev	change_events	2024-05-07 10:48:55.531534-07
-DMS	logical_subscriptions	2024-05-07 10:48:56.321208-07
-DMS	replication_slots	2024-05-07 10:48:56.33035-07
 DMS	db_stats	2024-04-17 15:08:40.760511-07
 DMS	locks	2024-04-17 15:08:40.761212-07
 DMS	instance_up	2024-04-17 15:08:40.762727-07
@@ -95,14 +92,6 @@ DMSDev	stat_activity_realtime	2024-04-21 19:53:51.993124-07
 DMS	stat_activity_realtime	2024-04-21 19:53:52.040306-07
 DMS	sproc_changes	2024-04-25 21:32:57.876433-07
 DMS	table_changes	2024-04-30 00:05:58.793318-07
-DMSDev	replication	2024-05-07 10:48:55.222142-07
-DMSDev	replication_slots	2024-05-07 10:48:55.223398-07
-DMSDev	logical_subscriptions	2024-05-07 10:48:55.2274-07
-DMSDev	wal_receiver	2024-05-07 10:48:55.229414-07
-DMSDev	sproc_stats	2024-05-07 10:48:55.229905-07
-DMS	wal_receiver	2024-05-07 10:48:56.317665-07
-DMS	change_events	2024-05-07 10:48:56.32386-07
-DMS	replication	2024-05-07 10:48:56.325269-07
 \.
 
 

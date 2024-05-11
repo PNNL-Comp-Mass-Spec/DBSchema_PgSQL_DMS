@@ -97,11 +97,11 @@ UpdateResearchTeamForCampaign	2023-02-24 16:04:54	1671
 UpdateResearchTeamObserver	2022-09-30 10:37:22	256
 UpdateSampleRequestAssignments	2022-02-17 08:18:40	233
 UpdateUser	2013-03-25 19:01:27	125
-update_analysis_job_state_name_cached	2024-05-06 22:03:39.985679	187
-update_analysis_job_tool_name_cached	2024-05-06 22:03:44.268364	187
-update_eus_proposals_from_eus_imports	2024-05-07 06:15:40.263786	439
-update_eus_users_from_eus_imports	2024-05-07 06:16:01.676447	442
-update_eus_instruments_from_eus_imports	2024-05-07 06:16:34.736356	441
+update_eus_instruments_from_eus_imports	2024-05-11 06:15:57.050308	445
+update_analysis_job_state_name_cached	2024-05-10 22:03:01.703736	189
+update_analysis_job_tool_name_cached	2024-05-10 22:03:04.917602	189
+update_eus_proposals_from_eus_imports	2024-05-11 06:15:02.222431	443
+update_eus_users_from_eus_imports	2024-05-11 06:15:23.651371	446
 \.
 
 

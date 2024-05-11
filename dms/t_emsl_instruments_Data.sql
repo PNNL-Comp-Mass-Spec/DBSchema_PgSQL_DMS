@@ -22,6 +22,7 @@ SET row_security = off;
 
 COPY public.t_emsl_instruments (eus_instrument_id, eus_display_name, eus_instrument_name, eus_available_hours, local_category_name, local_instrument_name, last_affected, eus_active_sw, eus_primary_instrument) FROM stdin;
 34146	Mass Spectrometer: MALDI FTICR 	Mass Spectrometer: MALDI FTICR	10	Mass Spectrometer: Imaging-MS	Mass Spectrometer: MALDI 9.4T FTICR	2024-04-23 06:16:19.440348	0	0
+35046	Aerosol Mass Spectrometry (MS) Nanospray Desorption Electrospray Ionization (nano-DESI)	Mass Spectrometer: nano-DESI Orbitrap MX (2024)	10	\N	\N	2024-05-10 06:15:55.661749	1	0
 1009	Mass Spectrometer: Fourier-Transform	Mass Spectrometer: 7-Tesla, Electrospray Ionization FTICR	10	\N	\N	2024-04-21 06:15:35	0	0
 1010	Mass Spectrometer: Finnigan LCQ Classic #1	Mass Spectrometer: Finnigan LCQ Classic #1	24	\N	\N	2024-04-21 06:15:35	0	0
 1011	Mass Spectrometer: MALDI TOF	Mass Spectrometer: MALDI TOF	10	\N	\N	2024-04-21 06:15:35	0	0
