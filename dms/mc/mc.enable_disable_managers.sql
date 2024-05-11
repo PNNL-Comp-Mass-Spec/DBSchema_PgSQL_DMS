@@ -114,7 +114,7 @@ BEGIN
         RETURN;
     End If;
 
-    If _managerTypeID = 0 And _managerNameList, '' <> '' And _managerNameList::citext <> 'All' Then
+    If _managerTypeID = 0 And Coalesce(_managerNameList, '') <> '' And _managerNameList::citext <> 'All' Then
         _managerTypeName := 'Any';
     Else
         -- Make sure _managerTypeID is valid
@@ -184,7 +184,7 @@ BEGIN
                                              INNER JOIN mc.t_mgrs M
                                                ON M.mgr_name = U.manager_name AND
                                                   M.mgr_type_id = _managerTypeID
-                                        WHERE control_from_website > 0);
+                                        WHERE M.control_from_website > 0);
         End If;
     Else
         -- Populate Tmp_ManagerList with all managers in mc.t_mgrs (of type _managerTypeID)
@@ -352,8 +352,9 @@ BEGIN
             RAISE INFO '%', _infoData;
         END LOOP;
 
-        _message := format('Would set %s managers to %s; see the Output window for details',
+        _message := format('Would set %s managers %sto %s; see the Output window for details',
                             _countToUpdate,
+                            CASE WHEN _managerTypeID = 0 THEN '' ELSE format('of type %s ', _managerTypeID) END,
                             _activeStateDescription);
 
         Open _results For
