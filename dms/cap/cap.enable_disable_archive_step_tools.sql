@@ -29,6 +29,7 @@ CREATE OR REPLACE FUNCTION cap.enable_disable_archive_step_tools(_enable boolean
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          01/03/2024 mem - Update warning messages
+**          05/10/2024 mem - Include table name in update queries
 **
 *****************************************************/
 DECLARE
@@ -86,6 +87,18 @@ BEGIN
         WHERE ProcTool.enabled = _oldState
         ORDER BY ProcTool.processor_name;
 
+        If Not FOUND Then
+            RETURN QUERY
+            SELECT _task AS Task,
+                   format('Did not find any rows in cap.t_processor_tool with Enabled = %s and Tool_Name = %s',
+                          _oldState, 'DatasetArchive, ArchiveUpdate, ArchiveVerify, or ArchiveStatusCheck')::citext AS processor_name,
+                   ''::citext  AS tool_name,
+                   0::smallint AS priority,
+                   0::smallint AS enabled,
+                   ''::citext  AS comment,
+                   current_timestamp::timestamp without time zone AS last_affected;
+        End If;
+
         DROP TABLE Tmp_ToolsToUpdate;
         RETURN;
     End If;
@@ -114,8 +127,8 @@ BEGIN
         If Not _enable Then
             UPDATE cap.t_processor_tool Proctool
             SET comment = CASE
-                              WHEN comment = '' THEN _disableComment
-                              ELSE format('%s; %s', comment, _disableComment)
+                              WHEN Proctool.comment = '' THEN _disableComment
+                              ELSE format('%s; %s', Proctool.comment, _disableComment)
                           END
             FROM Tmp_ToolsToUpdate FilterQ
             WHERE ProcTool.Tool_Name = FilterQ.Tool_Name AND
@@ -126,8 +139,8 @@ BEGIN
 
             UPDATE cap.t_processor_tool Proctool
             SET comment = CASE
-                              WHEN comment = _disableComment THEN ''
-                              ELSE Replace(comment, format('; %s', _disableComment), '')
+                              WHEN Proctool.comment = _disableComment THEN ''
+                              ELSE Replace(Proctool.comment, format('; %s', _disableComment), '')
                           END
             FROM Tmp_ToolsToUpdate FilterQ
             WHERE ProcTool.Tool_Name = FilterQ.Tool_Name AND
