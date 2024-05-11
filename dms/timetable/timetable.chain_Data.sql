@@ -51,16 +51,9 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 29	Create pending predefined jobs	3/5 * * * *	\N	0	t	f	f	\N	\N
 30	Delete old historic logs	19 19 6 * *	\N	0	t	f	f	\N	\N
 31	Delete orphaned capture tasks	38 7 * * *	\N	0	t	f	f	\N	\N
-32	Disable archive-dependent step tools once	0 6 * * *	\N	0	f	f	f	\N	\N
-33	Disable MSGFPlus once	0 6 * * *	\N	0	f	f	f	\N	\N
 34	DMS notification event update	0 12 * * *	\N	0	t	f	f	\N	\N
-35	Enable archive update once	0 18 * * *	\N	0	f	f	f	\N	\N
-36	Enable archive-dependent step tools once	0 18 * * *	\N	0	f	f	f	\N	\N
-37	Enable MS-GF+	0 18 * * *	\N	0	f	f	f	\N	\N
 38	Find stale MyEMSL uploads	38 7 * * *	\N	0	t	f	f	\N	\N
-41	Reset failed managers	0 6 * * *	\N	0	f	f	f	\N	\N
 42	Reset failed MyEMSL uploads	17 1-23 * * *	\N	0	t	f	f	\N	\N
-40	Reset failed dataset purge tasks	23 3-23 * * *	\N	0	t	f	f	\N	\N
 39	Reset failed dataset capture tasks	7/30 * * * *	\N	0	t	f	f	\N	\N
 43	Retire stale campaigns	16 15 * * 4	\N	0	t	f	f	\N	\N
 44	Retire stale LC columns	15 15 * * 4	\N	0	t	f	f	\N	\N
@@ -103,12 +96,25 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 89	Delete timetable logs	36 0/6 * * *	\N	0	t	f	f	\N	\N
 90	Update cached experiment stats, mode 0	0/10 * * * *	\N	0	t	f	f	\N	\N
 91	Update cached experiment stats, mode 1	37 1/6 * * *	\N	0	t	f	f	\N	\N
+37	Enable MS-GF+ once	33 20 * * *	\N	0	f	f	f	\N	\N
+41	Reset failed analysis job managers	0 6 * * *	\N	0	f	f	f	\N	\N
+33	Disable MSGFPlus once	31 20 * * *	\N	0	f	f	f	\N	\N
+40	Reset failed dataset purge tasks	23 3-23 * * *	\N	0	f	f	f	\N	\N
 92	Update cached experiment stats, mode 2	17 17 * * 6	\N	0	t	f	f	\N	\N
 93	Update cached dataset stats, mode 0	1/5 * * * *	\N	0	t	f	f	\N	\N
 95	Update cached dataset stats, mode 1	43 2/6 * * *	\N	0	t	f	f	\N	\N
 96	Update cached dataset stats, mode 2	28 18 * * 6	\N	0	t	f	f	\N	\N
 97	Promote protein collection states	10 20 * * *	\N	0	t	f	f	\N	\N
 98	Promote protein collection states, 100 years	10 21 * * 7	\N	0	t	f	f	\N	\N
+101	Disable Archive-Dependent Managers Once	22 16 * * *	\N	0	f	f	f	\N	\N
+104	Enable Archive-Dependent Managers Once	23 16 * * *	\N	0	f	f	f	\N	\N
+102	Disable Capture Task Managers Once	25 16 * * *	\N	0	f	f	f	\N	\N
+103	Enable All Managers Once	26 16 * * *	\N	0	f	f	f	\N	\N
+32	Disable archive-dependent step tools once	14 20 * * *	\N	0	f	f	f	\N	\N
+36	Enable archive-dependent step tools once	27 20 * * *	\N	0	f	f	f	\N	\N
+35	Enable archive update step tool once	49 20 * * *	\N	0	f	f	f	\N	\N
+99	Disable All Managers Once	16 15 * * *	\N	0	f	f	f	\N	\N
+100	Disable Analysis Managers Once	05 16 * * *	\N	0	f	f	f	\N	\N
 \.
 
 
@@ -116,7 +122,7 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 -- Name: chain_chain_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.chain_chain_id_seq', 98, true);
+SELECT pg_catalog.setval('timetable.chain_chain_id_seq', 104, true);
 
 
 --

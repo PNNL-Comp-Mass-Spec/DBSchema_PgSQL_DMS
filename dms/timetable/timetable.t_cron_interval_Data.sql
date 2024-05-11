@@ -98,6 +98,10 @@ COPY timetable.t_cron_interval (interval_id, cron_interval, interval_description
 75	1/5 * * * *	Every 5 minutes, starting at 12:01 AM
 76	43 2/6 * * *	Every 6 hours, starting at 2:43 AM
 77	28 18 * * 6	Weekly, on Saturday at 6:28 PM
+81	10 21 * * 7	On Sunday, at 9:10pm
+80	10 20 * * *	Daily at 8:10pm
+78	0 9 10 5 *	At 9:00 AM on May 10th
+79	0 18 10 5 *	At 6:00 PM on May 10th
 \.
 
 
@@ -105,7 +109,7 @@ COPY timetable.t_cron_interval (interval_id, cron_interval, interval_description
 -- Name: t_cron_interval_interval_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.t_cron_interval_interval_id_seq', 77, true);
+SELECT pg_catalog.setval('timetable.t_cron_interval_interval_id_seq', 81, true);
 
 
 --
