@@ -1,8 +1,8 @@
 --
--- Name: enable_archive_dependent_managers(boolean, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
+-- Name: enable_space_managers(boolean, text, text); Type: PROCEDURE; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE mc.enable_archive_dependent_managers(IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE mc.enable_space_managers(IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -40,11 +40,11 @@ END
 $$;
 
 
-ALTER PROCEDURE mc.enable_archive_dependent_managers(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE mc.enable_space_managers(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE enable_archive_dependent_managers(IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
+-- Name: PROCEDURE enable_space_managers(IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: mc; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE mc.enable_archive_dependent_managers(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'EnableArchiveDependentManagers';
+COMMENT ON PROCEDURE mc.enable_space_managers(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'EnableSpaceManagers (previously EnableArchiveDependentManagers)';
 
