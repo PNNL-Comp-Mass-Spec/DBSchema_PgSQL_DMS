@@ -23,18 +23,19 @@ CREATE OR REPLACE PROCEDURE mc.disable_analysis_managers(IN _infoonly boolean DE
 **          03/23/2022 mem - Use mc schema when calling Enable_Disable_All_Managers
 **          04/02/2022 mem - Use new procedure name
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
+**          05/11/2024 mem - Use => operator when calling enable_disable_all_managers
 **
 *****************************************************/
 DECLARE
 
 BEGIN
     CALL mc.enable_disable_all_managers (
-        _managerTypeIDList := '11',
-        _managerNameList := '',
-        _enable := false,
-        _infoOnly := _infoOnly,
-        _message := _message,
-        _returnCode := _returnCode);
+        _managerTypeIDList => '11',
+        _managerNameList   => '',
+        _enable            => false,
+        _infoOnly          => _infoOnly,
+        _message           => _message,
+        _returnCode        => _returnCode);
 
 END
 $$;

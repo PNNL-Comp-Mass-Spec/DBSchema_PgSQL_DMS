@@ -53,6 +53,7 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          05/11/2024 mem - Use => operator when calling enable_disable_managers
 **
 *****************************************************/
 DECLARE
@@ -78,7 +79,7 @@ BEGIN
     _managerNameList   := Trim(Coalesce(_managerNameList, ''));
     _infoOnly          := Coalesce(_infoOnly, false);
 
-    If _managerTypeIDList <> '' THEN
+    If _managerTypeIDList <> '' Then
         -- Parse _managerTypeIDList
 
         _mgrTypeIDs := ARRAY (
@@ -104,13 +105,13 @@ BEGIN
     LOOP
 
         CALL mc.enable_disable_managers (
-                    _enable := _enable,
-                    _managerTypeID := _mgrTypeID,
-                    _managerNameList := _managerNameList,
-                    _infoOnly := _infoOnly,
-                    _results := _results,
-                    _message := _msg,
-                    _returnCode := _returnCode);
+                    _enable          => _enable,
+                    _managerTypeID   => _mgrTypeID,
+                    _managerNameList => _managerNameList,
+                    _infoOnly        => _infoOnly,
+                    _results         => _results,
+                    _message         => _msg,
+                    _returnCode      => _returnCode);
 
         -- Close the cursor
         If Not _results Is Null Then
