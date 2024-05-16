@@ -25,11 +25,11 @@ CREATE VIEW dpkg.v_data_package_datasets_list_report AS
     ds.comment,
     dtn.dataset_type AS type,
     rr.eus_proposal_id AS proposal,
-    psm.jobs AS psm_jobs,
-    psm.max_total_psms,
-    psm.max_unique_peptides,
-    psm.max_unique_proteins,
-    psm.max_unique_peptides_fdr_filter
+    cds.psm_job_count AS psm_jobs,
+    cds.max_total_psms,
+    cds.max_unique_peptides,
+    cds.max_unique_proteins,
+    cds.max_unique_peptides_fdr_filter
    FROM (((((((((((dpkg.t_data_package_datasets dpd
      JOIN public.t_dataset ds ON ((dpd.dataset_id = ds.dataset_id)))
      JOIN public.t_dataset_type_name dtn ON ((ds.dataset_type_id = dtn.dataset_type_id)))
@@ -41,18 +41,7 @@ CREATE VIEW dpkg.v_data_package_datasets_list_report AS
      JOIN public.t_dataset_rating_name dsrating ON ((ds.dataset_rating_id = dsrating.dataset_rating_id)))
      LEFT JOIN public.t_cached_dataset_links dl ON ((ds.dataset_id = dl.dataset_id)))
      LEFT JOIN public.t_requested_run rr ON ((ds.dataset_id = rr.dataset_id)))
-     LEFT JOIN ( SELECT aj.dataset_id,
-            count(aj.job) AS jobs,
-            COALESCE(max(psm_1.total_psms_fdr_filter), max(psm_1.total_psms)) AS max_total_psms,
-            COALESCE(max(psm_1.unique_peptides_fdr_filter), max(psm_1.unique_peptides)) AS max_unique_peptides,
-            COALESCE(max(psm_1.unique_proteins_fdr_filter), max(psm_1.unique_proteins)) AS max_unique_proteins,
-            max(psm_1.unique_peptides_fdr_filter) AS max_unique_peptides_fdr_filter
-           FROM (public.t_analysis_job aj
-             JOIN public.t_analysis_job_psm_stats psm_1 ON ((aj.job = psm_1.job)))
-          WHERE (aj.analysis_tool_id IN ( SELECT t_analysis_tool.analysis_tool_id
-                   FROM public.t_analysis_tool
-                  WHERE (t_analysis_tool.result_type OPERATOR(public.~~) '%peptide_hit'::public.citext)))
-          GROUP BY aj.dataset_id) psm ON ((dpd.dataset_id = psm.dataset_id)));
+     LEFT JOIN public.t_cached_dataset_stats cds ON ((dpd.dataset_id = cds.dataset_id)));
 
 
 ALTER VIEW dpkg.v_data_package_datasets_list_report OWNER TO d3l243;
