@@ -8,7 +8,11 @@ CREATE TABLE public.t_cached_dataset_stats (
     instrument public.citext NOT NULL,
     job_count integer DEFAULT 0 NOT NULL,
     psm_job_count integer DEFAULT 0 NOT NULL,
-    update_required smallint DEFAULT 0 NOT NULL,
+    max_total_psms integer DEFAULT 0 NOT NULL,
+    max_unique_peptides integer DEFAULT 0 NOT NULL,
+    max_unique_proteins integer DEFAULT 0 NOT NULL,
+    max_unique_peptides_fdr_filter integer DEFAULT 0 NOT NULL,
+    update_required smallint DEFAULT 1 NOT NULL,
     last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
@@ -38,7 +42,7 @@ CREATE INDEX ix_t_cached_dataset_stats_instrument_name_dataset_id ON public.t_ca
 -- Name: t_cached_dataset_stats trig_t_cached_dataset_stats_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
-CREATE TRIGGER trig_t_cached_dataset_stats_after_update AFTER UPDATE ON public.t_cached_dataset_stats FOR EACH ROW WHEN (((old.job_count <> new.job_count) OR (old.psm_job_count <> new.psm_job_count) OR (old.instrument_id <> new.instrument_id) OR (old.instrument OPERATOR(public.<>) new.instrument))) EXECUTE FUNCTION public.trigfn_t_cached_dataset_stats_after_update();
+CREATE TRIGGER trig_t_cached_dataset_stats_after_update AFTER UPDATE ON public.t_cached_dataset_stats FOR EACH ROW WHEN (((old.job_count <> new.job_count) OR (old.psm_job_count <> new.psm_job_count) OR (old.max_total_psms <> new.max_total_psms) OR (old.max_unique_peptides <> new.max_unique_peptides) OR (old.max_unique_proteins <> new.max_unique_proteins) OR (old.max_unique_peptides_fdr_filter <> new.max_unique_peptides_fdr_filter) OR (old.instrument_id <> new.instrument_id) OR (old.instrument OPERATOR(public.<>) new.instrument))) EXECUTE FUNCTION public.trigfn_t_cached_dataset_stats_after_update();
 
 --
 -- Name: t_cached_dataset_stats fk_t_cached_dataset_stats_t_dataset; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

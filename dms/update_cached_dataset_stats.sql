@@ -8,7 +8,9 @@ CREATE OR REPLACE PROCEDURE public.update_cached_dataset_stats(IN _processingmod
 /****************************************************
 **
 **  Desc:
-**      Update job counts in t_cached_dataset_stats, which is used by the dataset detail report view (v_dataset_detail_report_ex)
+**      Update job counts in t_cached_dataset_stats, which is used by the following pages (and views):
+**      - Dataset Detail Report             (v_dataset_detail_report_ex)
+**      - Data Package Datasets List Report (v_data_package_datasets_list_report)
 **
 **      This procedure does not update cached instrument info for existing rows in t_cached_dataset_stats
 **      - Use procedure update_cached_dataset_instruments to update the cached instrument name and ID
@@ -24,6 +26,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_dataset_stats(IN _processingmod
 **
 **  Auth:   mem
 **  Date:   05/08/2024 mem - Initial version
+**          05/15/2024 mem - Add PSM stat columns: max_total_psms, max_unique_peptides, max_unique_proteins, and max_unique_peptides_fdr_filter
 **
 *****************************************************/
 DECLARE
@@ -224,12 +227,20 @@ BEGIN
         -- Update job counts for entries in Tmp_Dataset_IDs
         ------------------------------------------------
 
-        UPDATE t_cached_dataset_stats
-        SET Job_Count     = Coalesce(StatsQ.Job_Count, 0),
-            PSM_Job_Count = Coalesce(StatsQ.PSM_Job_Count, 0)
+        UPDATE t_cached_dataset_stats CDS
+        SET Job_Count                      = Coalesce(StatsQ.Job_Count, 0),
+            PSM_Job_Count                  = Coalesce(StatsQ.PSM_Job_Count, 0),
+            Max_Total_PSMs                 = Coalesce(StatsQ.Max_Total_PSMs, 0),
+            Max_Unique_Peptides            = Coalesce(StatsQ.Max_Unique_Peptides, 0),
+            Max_Unique_Proteins            = Coalesce(StatsQ.Max_Unique_Proteins, 0),
+            Max_Unique_Peptides_FDR_Filter = Coalesce(StatsQ.Max_Unique_Peptides_FDR_Filter, 0)
         FROM (SELECT DS.Dataset_ID,
                      JobsQ.Job_Count,
-                     PSMJobsQ.PSM_Job_Count
+                     PSMJobsQ.PSM_Job_Count,
+                     PSMJobsQ.Max_Total_PSMs,
+                     PSMJobsQ.Max_Unique_Peptides,
+                     PSMJobsQ.Max_Unique_Proteins,
+                     PSMJobsQ.Max_Unique_Peptides_FDR_Filter
               FROM Tmp_Dataset_IDs DS
                    LEFT OUTER JOIN (SELECT J.dataset_id,
                                            COUNT(J.job) AS Job_Count
@@ -239,7 +250,11 @@ BEGIN
                                    ) AS JobsQ
                      ON JobsQ.dataset_id = DS.Dataset_ID
                    LEFT OUTER JOIN (SELECT J.dataset_id,
-                                           COUNT(PSMs.job) AS PSM_Job_Count
+                                           COUNT(PSMs.job) AS PSM_Job_Count,
+                                           Coalesce(MAX(PSMs.total_psms_fdr_filter), MAX(PSMs.total_psms)) AS Max_Total_PSMs,
+                                           Coalesce(MAX(PSMs.unique_peptides_fdr_filter), MAX(PSMs.unique_peptides)) AS Max_Unique_Peptides,
+                                           Coalesce(MAX(PSMs.unique_proteins_fdr_filter), MAX(PSMs.unique_proteins)) AS Max_Unique_Proteins,
+                                           MAX(PSMs.unique_peptides_fdr_filter) AS Max_Unique_Peptides_FDR_Filter
                                     FROM t_analysis_job_psm_stats PSMs
                                          INNER JOIN t_analysis_job J ON PSMs.job = J.job
                                     WHERE J.dataset_ID BETWEEN _currentBatchDatasetIdStart AND _currentBatchDatasetIdEnd
@@ -248,9 +263,13 @@ BEGIN
                      ON PSMJobsQ.dataset_id = DS.Dataset_ID
               WHERE DS.Dataset_ID BETWEEN _datasetIdStart AND _datasetIdEnd
              ) StatsQ
-        WHERE t_cached_dataset_stats.dataset_id = StatsQ.Dataset_ID AND
-              (t_cached_dataset_stats.Job_Count       <> Coalesce(StatsQ.Job_Count, 0) OR
-               t_cached_dataset_stats.PSM_Job_Count   <> Coalesce(StatsQ.PSM_Job_Count, 0));
+        WHERE CDS.dataset_id = StatsQ.Dataset_ID AND
+              (CDS.Job_Count                      <> Coalesce(StatsQ.Job_Count, 0) OR
+               CDS.PSM_Job_Count                  <> Coalesce(StatsQ.PSM_Job_Count, 0) OR
+               CDS.Max_Total_PSMs                 <> Coalesce(StatsQ.Max_Total_PSMs, 0) OR
+               CDS.Max_Unique_Peptides            <> Coalesce(StatsQ.Max_Unique_Peptides, 0) OR
+               CDS.Max_Unique_Proteins            <> Coalesce(StatsQ.Max_Unique_Proteins, 0) OR
+               CDS.Max_Unique_Peptides_FDR_Filter <> Coalesce(StatsQ.Max_Unique_Peptides_FDR_Filter, 0));
         --
         GET DIAGNOSTICS _matchCount = ROW_COUNT;
 
