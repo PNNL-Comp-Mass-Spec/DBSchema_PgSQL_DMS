@@ -40,23 +40,36 @@ CREATE OR REPLACE PROCEDURE public.update_users_from_warehouse(IN _infoonly bool
 **          FOREIGN DATA WRAPPER tds_fdw
 **          OPTIONS (servername 'SQLSrvProd02.pnl.gov', database 'OPWHSE', port '915');    -- port '915', tds_version '7.3'
 **
-**          -- SELECT * FROM pg_catalog.pg_user;
+**      3) Because this procedure directly queries views pnnldata."VW_PUB_BMI_EMPLOYEE" and pnnldata."VW_PUB_BMI_NT_ACCT_TBL",
+**         we need to add a user mapping for several users
+**         (procedures update_charge_codes_from_warehouse and auto_add_charge_code_users also directly query pnnldata views)
+**
+**          SELECT * FROM pg_catalog.pg_user;
 **
 **          CREATE USER MAPPING FOR postgres SERVER op_warehouse_fdw OPTIONS (username 'PRISM', password '5.......');       -- PasswordUpdateTool.exe /decode 4HhhXbvo
 **          CREATE USER MAPPING FOR d3l243   SERVER op_warehouse_fdw OPTIONS (username 'PRISM', password '5.......');       -- PasswordUpdateTool.exe /decode 4HhhXbvo
+**          CREATE USER MAPPING FOR pgdms    SERVER op_warehouse_fdw OPTIONS (username 'PRISM', password '5.......');
 **
-**          SELECT * FROM pg_user_mapping;
+**          SELECT * FROM pg_user_mapping ORDER BY oid;
+**          SELECT * FROM pg_catalog.pg_foreign_data_wrapper;
+**          SELECT * FROM pg_catalog.pg_foreign_server;
+**          SELECT * FROM pg_catalog.pg_foreign_table;
 **
-**          oid     umuser  umserver  umoptions
-**          ------  ------  --------  ---------------------------------
-**          67,762  16,489  67,761    {user=dmsreader,password=dms....}
-**          85,757  10      85,756    {username=PRISM,password=5.......}
-**          85,758  16489   85,756    {username=PRISM,password=5.......}
+**          oid         umuser  umserver  umoptions                           Username  Foreign data wrapper name
+**          ------      ------  --------  ---------------------------------   --------  -------------------------
+**          26,714      16,493  26,713    {password=dms....,user=dmsreader}   d3l243    nexus_fdw
+**          26,716      16,493  26,715    {password=5.......,username=PRISM}  d3l243    op_warehouse_fdw
+**          26,717      10      26,715    {password=5.......,username=PRISM}  postgres  op_warehouse_fdw
+**          14,786,646  27,702  26,715    {username=PRISM,password=5.......}  pgdms     op_warehouse_fdw
 **
-**          -- The following is needed if the user is not a superuser, but it doesn't hurt to use it here
+**
+**          -- The following is needed if the user is not a superuser, but it doesn't hurt to use it for d3l243 anyway
 **          GRANT USAGE ON FOREIGN SERVER op_warehouse_fdw TO d3l243;
+**          GRANT USAGE ON FOREIGN SERVER op_warehouse_fdw TO pgdms;
 **
 **          CREATE SCHEMA IF NOT EXISTS pnnldata;
+**
+**          -- Import all of the views from the remote server
 **          IMPORT FOREIGN SCHEMA dbo FROM SERVER op_warehouse_fdw INTO pnnldata;
 **
 **          SELECT * FROM pnnldata."VW_PUB_BMI_EMPLOYEE" limit 5;

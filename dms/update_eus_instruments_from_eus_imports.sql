@@ -28,6 +28,9 @@ CREATE OR REPLACE PROCEDURE public.update_eus_instruments_from_eus_imports(INOUT
 **          CREATE SCHEMA IF NOT EXISTS eus;
 **          IMPORT FOREIGN SCHEMA proteomics_views FROM SERVER NEXUS_fdw INTO eus;
 **
+**      We do not need to create user mappings for other users, since the various EUS update procedures query the v_eus_import views,
+**      and those views are owned by user d3l243, which has permission to use the NEXUS foreign data wrapper
+**
 **  Arguments:
 **    _message      Status message
 **    _returnCode   Return code
