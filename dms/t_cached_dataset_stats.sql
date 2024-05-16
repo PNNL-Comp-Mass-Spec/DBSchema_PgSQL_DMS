@@ -11,7 +11,9 @@ CREATE TABLE public.t_cached_dataset_stats (
     max_total_psms integer DEFAULT 0 NOT NULL,
     max_unique_peptides integer DEFAULT 0 NOT NULL,
     max_unique_proteins integer DEFAULT 0 NOT NULL,
+    max_total_psms_fdr_filter integer DEFAULT 0 NOT NULL,
     max_unique_peptides_fdr_filter integer DEFAULT 0 NOT NULL,
+    max_unique_proteins_fdr_filter integer DEFAULT 0 NOT NULL,
     update_required smallint DEFAULT 1 NOT NULL,
     last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
