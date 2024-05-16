@@ -1,4 +1,10 @@
 --
+-- Name: FOREIGN SERVER op_warehouse_fdw; Type: ACL; Schema: -; Owner: d3l243
+--
+
+GRANT ALL ON FOREIGN SERVER op_warehouse_fdw TO pgdms;
+
+--
 -- Name: SEQUENCE t_log_entries_entry_id_seq; Type: ACL; Schema: cap; Owner: d3l243
 --
 
