@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
+-- Dumped from database version 16.3
 -- Dumped by pg_dump version 16.2
 
 SET statement_timeout = 0;
@@ -36,6 +36,7 @@ COPY public.t_sp_authorization (entry_id, procedure_name, login_name, host_name,
 23	*	DMSWebUser	prismweb2_IPv6	2620:0:50f1:118::5fd
 24	*	DMSWebUser	prismweb3_IPv6	2620:0:50f1:118::199
 25	*	pgdms	localhost	127.0.0.1
+26	*	DMSWebUser	prismweb2_IPv6_alt	2620:0:50f1:118::11fd
 \.
 
 
@@ -43,7 +44,7 @@ COPY public.t_sp_authorization (entry_id, procedure_name, login_name, host_name,
 -- Name: t_sp_authorization_entry_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_sp_authorization_entry_id_seq', 25, true);
+SELECT pg_catalog.setval('public.t_sp_authorization_entry_id_seq', 26, true);
 
 
 --
