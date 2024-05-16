@@ -18,7 +18,7 @@ CREATE VIEW public.v_analysis_job_psm_summary_export AS
      JOIN public.t_analysis_job_psm_stats psm ON ((j.job = psm.job)))
   WHERE (j.analysis_tool_id IN ( SELECT t_analysis_tool.analysis_tool_id
            FROM public.t_analysis_tool
-          WHERE ((t_analysis_tool.result_type OPERATOR(public.~~) '%peptide_hit'::public.citext) OR (t_analysis_tool.result_type OPERATOR(public.=) 'Gly_ID'::public.citext))))
+          WHERE (t_analysis_tool.result_type OPERATOR(public.~~) '%peptide_hit'::public.citext)))
   GROUP BY j.dataset_id;
 
 

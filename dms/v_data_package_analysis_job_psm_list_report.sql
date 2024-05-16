@@ -71,7 +71,7 @@ CREATE VIEW public.v_data_package_analysis_job_psm_list_report AS
      LEFT JOIN public.t_analysis_job_psm_stats_phospho phosphopsm ON ((psm.job = phosphopsm.job)))
   WHERE (aj.analysis_tool_id IN ( SELECT t_analysis_tool.analysis_tool_id
            FROM public.t_analysis_tool
-          WHERE ((t_analysis_tool.result_type OPERATOR(public.~~) '%peptide_hit'::public.citext) OR (t_analysis_tool.result_type OPERATOR(public.=) 'Gly_ID'::public.citext))));
+          WHERE (t_analysis_tool.result_type OPERATOR(public.~~) '%peptide_hit'::public.citext)));
 
 
 ALTER VIEW public.v_data_package_analysis_job_psm_list_report OWNER TO d3l243;

@@ -51,7 +51,7 @@ CREATE VIEW dpkg.v_data_package_datasets_list_report AS
              JOIN public.t_analysis_job_psm_stats psm_1 ON ((aj.job = psm_1.job)))
           WHERE (aj.analysis_tool_id IN ( SELECT t_analysis_tool.analysis_tool_id
                    FROM public.t_analysis_tool
-                  WHERE ((t_analysis_tool.result_type OPERATOR(public.~~) '%peptide_hit'::public.citext) OR (t_analysis_tool.result_type OPERATOR(public.=) 'Gly_ID'::public.citext))))
+                  WHERE (t_analysis_tool.result_type OPERATOR(public.~~) '%peptide_hit'::public.citext)))
           GROUP BY aj.dataset_id) psm ON ((dpd.dataset_id = psm.dataset_id)));
 
 

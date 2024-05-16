@@ -43,7 +43,7 @@ CREATE VIEW dpkg.v_data_package_datasets_list_report_for_data_pkg AS
      LEFT JOIN public.t_requested_run rr ON ((ds.dataset_id = rr.dataset_id)))
      LEFT JOIN public.t_analysis_job aj ON (((ds.dataset_id = aj.dataset_id) AND (aj.analysis_tool_id IN ( SELECT t_analysis_tool.analysis_tool_id
            FROM public.t_analysis_tool
-          WHERE ((t_analysis_tool.result_type OPERATOR(public.~~) '%peptide_hit'::public.citext) OR (t_analysis_tool.result_type OPERATOR(public.=) 'Gly_ID'::public.citext)))))))
+          WHERE (t_analysis_tool.result_type OPERATOR(public.~~) '%peptide_hit'::public.citext))))))
      LEFT JOIN public.t_analysis_job_psm_stats psm_1 ON ((aj.job = psm_1.job)))
   GROUP BY dpd.data_pkg_id, ds.dataset, dpd.dataset_id, e.experiment, instname.instrument, dpd.package_comment, c.campaign, dsn.dataset_state, ds.created, dsrating.dataset_rating, dl.dataset_folder_path, COALESCE(ds.acq_time_start, rr.request_run_start), COALESCE(ds.acq_time_end, rr.request_run_finish), ds.acq_length_minutes, ds.scan_count, lc.lc_column, ds.separation_type, rr.request_id, dpd.item_added, ds.comment, dtn.dataset_type, rr.eus_proposal_id;
 
@@ -54,7 +54,7 @@ ALTER VIEW dpkg.v_data_package_datasets_list_report_for_data_pkg OWNER TO d3l243
 -- Name: VIEW v_data_package_datasets_list_report_for_data_pkg; Type: COMMENT; Schema: dpkg; Owner: d3l243
 --
 
-COMMENT ON VIEW dpkg.v_data_package_datasets_list_report_for_data_pkg IS 'This view has excellent performance if you filter ona single data package; performance is poor without a filter';
+COMMENT ON VIEW dpkg.v_data_package_datasets_list_report_for_data_pkg IS 'This view has excellent performance if you filter on a single data package; performance is poor without a filter';
 
 --
 -- Name: TABLE v_data_package_datasets_list_report_for_data_pkg; Type: ACL; Schema: dpkg; Owner: d3l243
