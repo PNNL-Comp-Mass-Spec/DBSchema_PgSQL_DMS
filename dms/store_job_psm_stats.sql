@@ -52,9 +52,11 @@ CREATE OR REPLACE PROCEDURE public.store_job_psm_stats(IN _job integer, IN _msgf
 **          12/17/2023 mem - Ported to PostgreSQL
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          04/08/2024 mem - Add parameter _uniqueUbiquitinPeptidesFDR
+**          05/16/2024 mem - Update t_cached_dataset_stats for the dataset associated with this job
 **
 *****************************************************/
 DECLARE
+    _datasetID int;
     _formatSpecifier text;
     _infoHead text;
     _infoHeadSeparator text;
@@ -97,7 +99,12 @@ BEGIN
     -- Make sure _job is defined in t_analysis_job
     ---------------------------------------------------
 
-    If Not Exists (SELECT job FROM t_analysis_job WHERE job = _job) Then
+    SELECT dataset_id
+    INTO _datasetID
+    FROM T_Analysis_Job
+    WHERE job = _job;
+
+    If Not FOUND Then
         _message := format('Analysis job not found in t_analysis_job: %s', _job);
         _returnCode := 'U5201';
         RETURN;
@@ -353,6 +360,14 @@ BEGIN
                     CURRENT_TIMESTAMP);
 
     End If;
+
+    -----------------------------------------------
+    -- Schedule the cached data in T_Cached_Dataset_Stats to get updated
+    -----------------------------------------------
+    --
+    UPDATE t_cached_dataset_stats
+    SET update_required = 1
+    WHERE dataset_id = _datasetID;
 
     _message := 'PSM stats storage successful';
 
