@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE public.update_charge_codes_from_warehouse(IN _infoon
 **          07/21/2022 mem - Also examine SubAccount_Inactive_Date when considering changing Charge_Code_State from 0 to 1 for work packages that are no longer Deactivated
 **                         - When _infoOnly and _onlyShowChanged are both true, only show new or updated work packages
 **          12/14/2023 mem - Ported to PostgreSQL
+**          05/18/2024 mem - Call procedure update_cached_wp_activation_states
 **
 *****************************************************/
 DECLARE
@@ -50,6 +51,8 @@ DECLARE
     _infoHeadSeparator text;
     _previewData record;
     _infoData text;
+    _msg text;
+    _currentChargeCode citext;
 
     _sqlState text;
     _exceptionMessage text;
@@ -481,11 +484,32 @@ BEGIN
             -- We only add users associated with charge codes that have been used in DMS
             ----------------------------------------------------------
 
+            _currentLocation := 'Call auto_add_charge_code_users';
+
             CALL public.auto_add_charge_code_users (
                             _infoOnly                   => false,
                             _includeInactiveChargeCodes => false,
                             _message                    => _message,
                             _returnCode                 => _returnCode);
+
+            ----------------------------------------------------------
+            -- Make sure that Cached_WP_Activation_State is up-to-date in T_Requested_Run
+            ----------------------------------------------------------
+
+            If Exists (SELECT * FROM Tmp_CCsExplicit) Then
+                FOR _currentChargeCode IN
+                    SELECT Charge_Code
+                    FROM Tmp_CCsExplicit
+                LOOP
+                    _currentLocation := format('Calling update_cached_wp_activation_states for work package %s', _currentChargeCode);
+                    RAISE INFO '%', _currentLocation;
+                    CALL update_cached_wp_activation_states (_workPackage => _currentChargeCode, _message => _msg, _returnCode => _returnCode, _showDebug => false);
+                END LOOP;
+            Else
+                _currentLocation := 'Calling update_cached_wp_activation_states to update cached activation states for all requested runs';
+                RAISE INFO '%', _currentLocation;
+                CALL update_cached_wp_activation_states (_workPackage => '', _message => _msg, _returnCode => _returnCode, _showDebug => false);
+            End If;
 
             DROP TABLE Tmp_CCsInUseLast3Years;
             DROP TABLE Tmp_CCsExplicit;
