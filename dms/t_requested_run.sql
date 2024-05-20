@@ -21,6 +21,7 @@ CREATE TABLE public.t_requested_run (
     request_run_finish timestamp without time zone,
     request_internal_standard public.citext,
     work_package public.citext,
+    cached_wp_activation_state smallint DEFAULT 0 NOT NULL,
     batch_id integer DEFAULT 0 NOT NULL,
     blocking_factor public.citext,
     block integer,
@@ -272,6 +273,12 @@ CREATE INDEX ix_t_requested_run_state_name ON public.t_requested_run USING btree
 CREATE INDEX ix_t_requested_run_updated ON public.t_requested_run USING btree (updated);
 
 --
+-- Name: ix_t_requested_run_work_package_include_id_cached_wp_act_state; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_requested_run_work_package_include_id_cached_wp_act_state ON public.t_requested_run USING btree (work_package) INCLUDE (request_id, cached_wp_activation_state);
+
+--
 -- Name: t_requested_run trig_t_requested_run_after_delete; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
@@ -295,6 +302,13 @@ CREATE TRIGGER trig_t_requested_run_after_update AFTER UPDATE ON public.t_reques
 
 ALTER TABLE ONLY public.t_requested_run
     ADD CONSTRAINT fk_t_requested_run_t_attachments FOREIGN KEY (mrm_attachment) REFERENCES public.t_attachments(attachment_id);
+
+--
+-- Name: t_requested_run fk_t_requested_run_t_charge_code_activation_state; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_requested_run
+    ADD CONSTRAINT fk_t_requested_run_t_charge_code_activation_state FOREIGN KEY (cached_wp_activation_state) REFERENCES public.t_charge_code_activation_state(activation_state);
 
 --
 -- Name: t_requested_run fk_t_requested_run_t_dataset; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
