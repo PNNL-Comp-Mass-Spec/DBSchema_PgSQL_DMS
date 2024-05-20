@@ -60,6 +60,7 @@ CREATE OR REPLACE PROCEDURE public.add_requested_run_fractions(IN _sourcerequest
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          01/08/2024 mem - Remove procedure name from error message
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
+**          05/17/2024 mem - Update column cached_wp_activation_state
 **
 *****************************************************/
 DECLARE
@@ -108,6 +109,8 @@ DECLARE
     _locationID int := null;
     _allowNoneWP boolean := _autoPopulateUserListIfBlank;
     _requireWP boolean := true;
+    _matchedWorkPackage citext := '';
+    _workPackageActivationState smallint := 0;
     _targetType int;
     _alterEnteredByMessage text;
 
@@ -603,10 +606,16 @@ BEGIN
 
         -- Make sure the Work Package is capitalized properly
 
-        SELECT charge_code
-        INTO _workPackage
+        SELECT charge_code, activation_state
+        INTO _matchedWorkPackage, _workPackageActivationState
         FROM t_charge_code
         WHERE charge_code = _workPackage::citext;
+
+        If FOUND Then
+            _workPackage := _matchedWorkPackage;
+        Else
+            _workPackageActivationState := 0;
+        End If;
 
         If Not _autoPopulateUserListIfBlank Then
             If Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackage::citext AND deactivated = 'Y') Then
@@ -721,6 +730,7 @@ BEGIN
                     priority,
                     exp_id,
                     work_package,
+                    cached_wp_activation_state,
                     batch_id,
                     wellplate,
                     well,
@@ -745,6 +755,7 @@ BEGIN
                     _defaultPriority,
                     _experimentID,
                     _workPackage,
+                    _workPackageActivationState,
                     _sourceRequestBatchID,
                     _wellplateName,
                     _wellNumber,

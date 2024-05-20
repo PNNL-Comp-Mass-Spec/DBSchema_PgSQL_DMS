@@ -153,6 +153,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run(IN _requestname text
 **                         - If the requested run is active and is associated with a batch, do not allow the instrument group to be changed if the batch has other active requests with a different instrument group than this request's instrument group
 **          01/23/2024 mem - Use a different instrument group warning message if the instrument group is unchanged, but the associated batch already has a mix of instrument groups
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
+**          05/17/2024 mem - Update column cached_wp_activation_state
 **
 *****************************************************/
 DECLARE
@@ -184,7 +185,9 @@ DECLARE
     _newUsername text;
     _datasetTypeID int;
     _matchedSeparationGroup citext := '';
-    _matchedInstrumentGroup text := '';
+    _matchedInstrumentGroup citext := '';
+    _matchedWorkPackage citext := '';
+    _workPackageActivationState smallint := 0;
     _mrmAttachmentID int;
     _eusUsageTypeID int;
     _addingItem boolean := false;
@@ -814,10 +817,16 @@ BEGIN
 
         -- Make sure the Work Package is capitalized properly
 
-        SELECT charge_code
-        INTO _workPackage
+        SELECT charge_code, activation_state
+        INTO _matchedWorkPackage, _workPackageActivationState
         FROM t_charge_code
         WHERE charge_code = _workPackage::citext;
+
+        If FOUND Then
+            _workPackage := _matchedWorkPackage;
+        Else
+            _workPackageActivationState := 0;
+        End If;
 
         If Not _autoPopulateUserListIfBlank Then
             If Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _workPackage::citext AND deactivated = 'Y') Then
@@ -917,6 +926,7 @@ BEGIN
                 priority,
                 exp_id,
                 work_package,
+                cached_wp_activation_state,
                 wellplate,
                 well,
                 request_internal_standard,
@@ -943,6 +953,7 @@ BEGIN
                 _defaultPriority,
                 _experimentID,
                 _workPackage,
+                _workPackageActivationState,
                 _wellplateName,
                 _wellNumber,
                 _internalStandard,
@@ -1014,29 +1025,30 @@ BEGIN
             WHERE request_id = _requestID;
 
             UPDATE t_requested_run
-            SET request_name              = CASE WHEN _requestIDForUpdate > 0 THEN _requestName ELSE request_name END,
-                requester_username        = _requesterUsername,
-                comment                   = _comment,
-                instrument_group          = _instrumentGroup,
-                request_type_id           = _datasetTypeID,
-                instrument_setting        = _instrumentSettings,
-                exp_id                    = _experimentID,
-                work_package              = _workPackage,
-                wellplate                 = _wellplateName,
-                well                      = _wellNumber,
-                request_internal_standard = _internalStandard,
-                batch_id                  = _batch,
-                block                     = _block,
-                run_order                 = _runOrder,
-                eus_proposal_id           = _eusProposalID,
-                eus_usage_type_id         = _eusUsageTypeID,
-                separation_group          = _separationGroup,
-                mrm_attachment            = _mrmAttachmentID,
-                state_name                = _status,
-                created                   = CASE WHEN _oldStatus = 'Inactive' AND _status::citext = 'Active' THEN CURRENT_TIMESTAMP ELSE created END,
-                vialing_conc              = _vialingConc,
-                vialing_vol               = _vialingVol,
-                location_id               = _locationId
+            SET request_name               = CASE WHEN _requestIDForUpdate > 0 THEN _requestName ELSE request_name END,
+                requester_username         = _requesterUsername,
+                comment                    = _comment,
+                instrument_group           = _instrumentGroup,
+                request_type_id            = _datasetTypeID,
+                instrument_setting         = _instrumentSettings,
+                exp_id                     = _experimentID,
+                work_package               = _workPackage,
+                cached_wp_activation_state = _workPackageActivationState,
+                wellplate                  = _wellplateName,
+                well                       = _wellNumber,
+                request_internal_standard  = _internalStandard,
+                batch_id                   = _batch,
+                block                      = _block,
+                run_order                  = _runOrder,
+                eus_proposal_id            = _eusProposalID,
+                eus_usage_type_id          = _eusUsageTypeID,
+                separation_group           = _separationGroup,
+                mrm_attachment             = _mrmAttachmentID,
+                state_name                 = _status,
+                created                    = CASE WHEN _oldStatus = 'Inactive' AND _status::citext = 'Active' THEN CURRENT_TIMESTAMP ELSE created END,
+                vialing_conc               = _vialingConc,
+                vialing_vol                = _vialingVol,
+                location_id                = _locationId
             WHERE request_id = _requestID;
 
             -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
