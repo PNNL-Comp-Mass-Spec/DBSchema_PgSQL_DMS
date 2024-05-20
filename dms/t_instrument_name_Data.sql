@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
+-- Dumped from database version 16.3
 -- Dumped by pg_dump version 16.2
 
 SET statement_timeout = 0;
@@ -21,6 +21,7 @@ SET row_security = off;
 --
 
 COPY public.t_instrument_name (instrument_id, instrument, instrument_class, instrument_group, source_path_id, storage_path_id, capture_method, status, room_number, description, usage, operations_role, tracking, percent_emsl_owned, max_simultaneous_captures, capture_exclusion_window, created, auto_define_storage_path, auto_sp_vol_name_client, auto_sp_vol_name_server, auto_sp_path_root, auto_sp_url_domain, auto_sp_archive_server_name, auto_sp_archive_path_root, auto_sp_archive_share_path_root, default_purge_policy, perform_calibration, scan_source_dir, default_purge_priority, storage_purge_holdoff_months) FROM stdin;
+248	Moe	Thermo_SII_LC	Thermo_SII_LC	4829	4833	secfso	Active	EMSL 1142	Vanquish Neo LC (binary pump and autosampler). Used for LCDatasetCapture tasks. The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets. Purchased with Altis04, not EMSL owned		Production	0	0	1	11	2024-04-16 17:03:03	1	\\\\proto-5\\	H:\\	Moe\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/Moe	\\\\agate.emsl.pnl.gov\\dmsarch\\Moe	0	0	1	3	1
 6	3T_FTICR	Finnigan_FTICR	Other	12	34	ftp	Inactive	EMSL 1621 (excessed)	3.5 T FTICR		Unused	0	0	1	11	2000-05-17 00:00:00	0	\N	\N	\N		\N	\N	\N	0	0	1	3	1
 3	7T_FTICR	Finnigan_FTICR	Other	8	89	secfso	Inactive	EMSL 1621 (excessed)	7 T FTICR		Research	0	0	2	11	2000-06-20 00:00:00	1	\\\\proto-7\\	E:\\	7T_FTICR\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/7T_FTICR	\\\\agate.emsl.pnl.gov\\dmsarch\\7T_FTICR	0	0	1	3	1
 7	SW_TEST_LCQ	Finnigan_Ion_Trap	LCQ	16	195	fso	Inactive	n/a	LCQ TEST		QC	0	0	1	11	2003-04-29 00:00:00	0	\N	\N	\N		\N	\N	\N	0	0	1	3	1
@@ -265,9 +266,8 @@ COPY public.t_instrument_name (instrument_id, instrument, instrument_class, inst
 244	External_Astral	LTQ_FT	Astral	4726	4727	fso	Active	Offsite	Thermo TOF/Orbitrap tribrid		Offsite	0	0	1	11	2024-02-05 11:21:14	1	\\\\proto-7\\	G:\\	External_Astral\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/External_Astral	\\\\agate.emsl.pnl.gov\\dmsarch\\External_Astral	0	0	1	3	1
 245	Ned	Thermo_SII_LC	Thermo_SII_LC	4732	4826	secfso	Active	EMSL 1526	Vanquish Neo LC (binary pump and autosampler). Used for LCDatasetCapture tasks. The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets. Purchased with Exploris06, EMSL owned		Production	0	100	1	11	2024-03-01 10:58:45	1	\\\\proto-5\\	H:\\	Ned\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/Ned	\\\\agate.emsl.pnl.gov\\dmsarch\\Ned	0	0	1	3	1
 246	Exploris06	LTQ_FT	Exploris	4733	4747	secfso	Active	EMSL 1526	Orbitrap Exploris 480 purchased by EMSL; MS:1003028,		Production	0	100	1	11	2024-03-01 11:00:40	1	\\\\proto-7\\	G:\\	Exploris06\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/Exploris06	\\\\agate.emsl.pnl.gov\\dmsarch\\Exploris06	0	0	1	3	1
-247	Altis04	Triple_Quad	TSQ	4828	2	secfso	Active	EMSL 1142	Thermo Altis Plus triple quad, MS:1003292		Production	0	0	1	11	2024-04-16 16:59:57	1	\\\\proto-7\\	E:\\	Altis04\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/Altis04	\\\\agate.emsl.pnl.gov\\dmsarch\\Altis04	0	0	1	3	1
-248	Moe	Thermo_SII_LC	Thermo_SII_LC	4829	2	secfso	Active	EMSL 1142	Vanquish Neo LC (binary pump and autosampler). Used for LCDatasetCapture tasks. The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets. Purchased with Altis04, not EMSL owned		Production	0	0	1	11	2024-04-16 17:03:03	1	\\\\proto-5\\	H:\\	Moe\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/Moe	\\\\agate.emsl.pnl.gov\\dmsarch\\Moe	0	0	1	3	1
-249	Barney	Thermo_SII_LC	Thermo_SII_LC	4830	2	secfso	Active	EMSL 1142	Vanquish Neo LC (binary pump and autosampler). Used for LCDatasetCapture tasks. The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets. Purchased by same project as Exploris03, not EMSL owned		Production	0	0	1	11	2024-04-16 17:03:48	1	\\\\proto-5\\	H:\\	Barney\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/Barney	\\\\agate.emsl.pnl.gov\\dmsarch\\Barney	0	0	1	3	1
+247	Altis04	Triple_Quad	TSQ	4828	4831	secfso	Active	EMSL 1142	Thermo Altis Plus triple quad, MS:1003292		Production	0	0	1	11	2024-04-16 16:59:57	1	\\\\proto-7\\	E:\\	Altis04\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/Altis04	\\\\agate.emsl.pnl.gov\\dmsarch\\Altis04	0	0	1	3	1
+249	Barney	Thermo_SII_LC	Thermo_SII_LC	4830	4832	secfso	Active	EMSL 1142	Vanquish Neo LC (binary pump and autosampler). Used for LCDatasetCapture tasks. The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets. Purchased by same project as Exploris03, not EMSL owned		Production	0	0	1	11	2024-04-16 17:03:48	1	\\\\proto-5\\	H:\\	Barney\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/Barney	\\\\agate.emsl.pnl.gov\\dmsarch\\Barney	0	0	1	3	1
 \.
 
 

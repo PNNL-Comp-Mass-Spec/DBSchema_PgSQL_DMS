@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
+-- Dumped from database version 16.3
 -- Dumped by pg_dump version 16.2
 
 SET statement_timeout = 0;
@@ -21,20 +21,47 @@ SET row_security = off;
 --
 
 COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class, source_path_id, storage_path_id, capture_method, room_number, description, created) FROM stdin;
-1	LCQ_C2	Finnigan_Ion_Trap	4	127	secfso	EMSL 1526	LCQ-C2	2001-03-12 00:00:00
-4	11T_FTICR	Finnigan_FTICR	10	88	ftp	EMSL 1621	11.5 T FTICR	2000-05-17 00:00:00
-33	LTQ_2	Finnigan_Ion_Trap	141	3049	secfso	EMSL 1526	Finnigan LTQ #2	2004-11-08 00:00:00
+6	3T_FTICR	Finnigan_FTICR	12	34	ftp	EMSL 1621 (excessed)	3.5 T FTICR	2000-05-17 00:00:00
+3	7T_FTICR	Finnigan_FTICR	8	89	secfso	EMSL 1621 (excessed)	7 T FTICR	2000-06-20 00:00:00
+7	SW_TEST_LCQ	Finnigan_Ion_Trap	16	195	fso	n/a	LCQ TEST	2003-04-29 00:00:00
+8	SW_TEST_FTICR	Finnigan_FTICR	18	176	secfso	n/a	FTICR TEST	2003-04-29 00:00:00
+9	LCQ_D1	Finnigan_Ion_Trap	37	130	secfso	EMSL 1326	LCQ-DUO1	2001-02-22 00:00:00
+10	LCQ_D2	Finnigan_Ion_Trap	40	131	secfso	EMSL 1526 (in hallway)	LCQ-DUO2	2001-05-02 00:00:00
+11	QTOF_1322	QStar_QTOF	42	134	fso	EMSL 1426	QTOF-1322	2001-07-27 00:00:00
+40	QC_LTQ_FT	LTQ_FT	158	191	fso	EMSL 1553	QC Process LTQ_FT	2005-06-28 00:00:00
+12	LCQ_XP1	Finnigan_Ion_Trap	44	132	secfso	BSF 1213	LCQ_DECA_XP1	2001-10-17 00:00:00
+13	9T_FTICR	BRUKERFTMS	46	289	secfso	EMSL 1629	9.4T Bruker FTICR	2001-10-22 00:00:00
+14	LCQ_XP2	Finnigan_Ion_Trap	51	133	secfso	BSF 1213 (not conneted to network)	LCQ_DECA_XP2	2002-01-14 00:00:00
+15	LCQ_C3	Finnigan_Ion_Trap	56	128	fso	331 Building	LCQ_CLASSIC_3	2002-03-08 00:00:00
+16	SW_Test_Bruker	BRUKERFTMS	87	177	fso	n/a	Bruker SW Test Data	2003-04-29 00:00:00
+17	Agilent_SL1	Agilent_Ion_Trap	94	123	fso	EMSL 1422 (excessed)	Agilent 1100 SL 1	2003-11-11 00:00:00
+18	QTOF_MM1	Waters_TOF	96	135	secfso	EMSL 1526	Micromass QTOF 1	2004-03-08 00:00:00
+19	Agilent_XCT1	Agilent_Ion_Trap	99	125	fso	EMSL 1422	Agilent 1100 LC/MSD XCT 1	2004-03-30 00:00:00
+20	AgTOF01	Agilent_TOF	101	124	fso	EMSL 1326	Agilent LC/MSD TOF 1	2004-04-06 00:00:00
+21	9T_FTICR_Q	BRUKERFTMS	103	173	fso	EMSL 1326	9.4T Bruker w/special quad	2004-01-28 00:00:00
+22	11T_FTICR_B	BRUKERFTMS	106	105	secfso	EMSL 1621	11T w/Bruker WS	2004-02-17 00:00:00
+23	LTQ_1	Finnigan_Ion_Trap	108	400	secfso	EMSL 1617	Finnigan LTQ #1; broken since April 2011	2004-06-19 00:00:00
+24	QC_LCQ	Finnigan_Ion_Trap	110	189	fso	EMSL 1553	LCQ-type instrument for QC Process	2004-07-29 00:00:00
+25	QC_Bruker_ICR	BRUKERFTMS	112	175	fso	EMSL 1553	Bruker-type instrument for QC Process	2004-07-30 00:00:00
+26	QC_Ag_XCT	Agilent_Ion_Trap	114	113	fso	EMSL 1553	Agilent XCT-type instrument for QC Process	2005-05-01 00:00:00
+27	QC_Ag_TOF	Agilent_TOF	116	188	fso	EMSL 1553	Agilent TOF-type instrument for QC Process	2005-05-11 00:00:00
+28	QC_MM_TOF	Waters_TOF	118	117	fso	EMSL 1553	Micromass TOF-type instrument for QC Process	2006-11-08 00:00:00
+29	QC_LTQ	Finnigan_Ion_Trap	120	190	fso	EMSL 1553	LTQ-type instrument for QC Process	2004-10-15 00:00:00
+30	QC_Fin_ICR	Finnigan_FTICR	122	121	fso	EMSL 1553	Finnigan FTICR-type instrument for QC Process	2006-12-13 00:00:00
+31	LCQ_JA_GTL	Finnigan_Ion_Trap	137	136	fso	EMSL 2588	Virtual Instrument for GTL_Core	2004-09-27 00:00:00
+32	LTQ_FT1	LTQ_FT	139	1054	secfso	EMSL 1617	LTQ-FT 1 (LTQ3QFVL41)	2004-10-22 00:00:00
+34	LTQ_3	Finnigan_Ion_Trap	143	2840	secfso	BSF 1208	Finnigan LTQ #3	2004-11-22 00:00:00
 35	11T_Aux2	BRUKERFTMS	145	144	secfso	EMSL 1621	Virtual 11T FTICR	2005-02-23 00:00:00
 36	12T_FTICR	BRUKERFTMS	147	247	secfso	EMSL 1621	Bruker 12T FTICR magnet	2005-02-24 00:00:00
 37	AgTOF02	Agilent_TOF	1063	1188	fso	EMSL 1422	Agilent LC/MSD TOF2	2005-05-04 00:00:00
 38	LTQ_FB1	Finnigan_Ion_Trap	153	1247	secfso	PSL 522	Agilent LC/Thermo LTQ (Fungal)	2005-04-28 00:00:00
 39	LTQ_4	Finnigan_Ion_Trap	156	3855	secfso	EMSL 1526	Finnigan LTQ #4	2005-05-27 00:00:00
-40	QC_LTQ_FT	LTQ_FT	158	191	fso	EMSL 1553	QC Process LTQ_FT	2005-06-28 00:00:00
 41	QC_LTQ_Orbitrap	LTQ_FT	165	192	fso	EMSL 1553	Orbitrap Test Data	2005-07-22 00:00:00
 42	FHCRC_LTQ1	Finnigan_Ion_Trap	167	166	fso	FHCRC (Seattle, WA)	Fred Hutchinson Cancer Research Center Data	2005-11-17 00:00:00
 43	LTQ_RITE	Finnigan_Ion_Trap	169	168	fso	n/a	Virtual instrument for relocated RITE data	2005-12-01 00:00:00
 44	LTQ_Orb_1	LTQ_FT	171	3051	secfso	EMSL 1444	LTQ with an LTQ Orbitrap	2006-01-06 00:00:00
 45	IMS_TOF_1	IMS_Agilent_TOF_UIMF	200	199	secfso	EMSL 1430	IMS AGILENT TOF	2009-04-01 00:00:00
+46	IMS03_AgQTOF01	IMS_Agilent_TOF_UIMF	202	3161	secfso	EMSL 1430	IMS Agilent TOF, WD59518	2009-04-10 00:00:00
 47	IMS02_AgTOF06	IMS_Agilent_TOF_UIMF	204	1337	secfso	EMSL 1429	Deactivated 8/1/2013 since now part of IMS07_AgTOF06	2009-04-15 00:00:00
 48	LTQ_Orb_2	LTQ_FT	206	3053	secfso	EMSL 1444	LTQ with an LTQ Orbitrap, Returned to Thermo	2006-10-23 00:00:00
 49	TSQ_1	Triple_Quad	2317	2845	fso	EMSL 1142	TSQ_Quantum Ultra for MRM-based experiments	2007-03-21 00:00:00
@@ -45,6 +72,10 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 54	Exact01	Thermo_Exactive	244	1306	secfso	EMSL 1621	Fast scanning high resolution mass spectrometer	2009-04-22 00:00:00
 55	Exact02	Thermo_Exactive	250	249	secfso	EMSL 1526	Fast scanning high resolution mass spectrometer	2009-06-01 00:00:00
 57	Exact03	Thermo_Exactive	255	2848	secfso	EMSL 1526	Fast scanning high resolution mass spectrometer	2009-06-24 00:00:00
+1	LCQ_C2	Finnigan_Ion_Trap	4	127	secfso	EMSL 1526	LCQ-C2	2001-03-12 00:00:00
+2	LCQ_C1	Finnigan_Ion_Trap	6	126	secfso	EMSL 1326 (not conneted to network)	LCQ-C1	2000-05-15 00:00:00
+4	11T_FTICR	Finnigan_FTICR	10	88	ftp	EMSL 1621	11.5 T FTICR	2000-05-17 00:00:00
+33	LTQ_2	Finnigan_Ion_Trap	141	3049	secfso	EMSL 1526	Finnigan LTQ #2	2004-11-08 00:00:00
 58	VOrbiETD01	LTQ_FT	257	3857	secfso	EMSL 1444	LTQ Velos Pro with an LTQ Orbitrap Velos Pro (supports ETD); for MassIVE, use LTQ Orbitrap Velos (MS:1001742)	2009-08-10 00:00:00
 59	Agilent_GC_MS_01	Agilent_Ion_Trap	2627	4765	secfso	EMSL 1401	Agilent single quadrupole GC-MS for metabolomics. 7890A GC coupled to a 5975C inert XL MSD, with a 7683 series injector (G2614A)	2010-07-30 00:00:00
 61	VOrbiETD03	LTQ_FT	263	4133	secfso	EMSL 1526	LTQ Velos with an LTQ Orbitrap Velos (supports ETD); for MassIVE, use LTQ Orbitrap Velos (MS:1001742)	2010-01-06 00:00:00
@@ -89,10 +120,15 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 102	AMOLF_VOrbiETD01	LTQ_FT	1230	1231	fso	AMOLF (Netherlands)	AMOLF Orbitrap data from Ron Heeren	2012-12-03 12:31:26
 103	QExact01	LTQ_FT	1232	2859	secfso	EMSL 1526	Q-Exactive 1	2012-12-07 14:32:20
 104	TIMS_Maxis	IMS_Agilent_TOF_UIMF	1268	2860	secfso	EMSL 1142	TIMS coupled with Maxis	2013-01-29 17:54:56
-105	TSQ_4	Triple_Quad	1274	4770	secfso	EMSL 1521	Thermo TSQ Vantage, MS:1001510	2013-03-13 17:35:14
 106	21T_Agilent	LTQ_FT	1859	4771	secfso	EMSL 1621	21T Agilent magnet. Prior to March 2024, was coupled to a Velos Pro and thus instrument data was stored as .raw files; for MassIVE, use LTQ Orbitrap Velos Pro, MS:1003096.  Instrument status is Offline since this instrument is used to track helium refills for the 21T.	2013-05-23 16:00:25
 107	AgTOF05	Agilent_TOF_V2	1346	2	secfso	EMSL 1430	TOF portion of IMS04_AgTOF05	2013-07-22 10:41:59
 108	IMS07_AgTOF06	IMS_Agilent_TOF_UIMF	1348	1540	secfso	EMSL 1430	Deactivated 4/7/2014 since AgTOF06 is now on SLIM03	2013-08-01 16:14:31
+205	Elm	Thermo_SII_LC	4556	4790	secfso	EMSL 1444	LCMSNet LC with Thermo RSLCnano NCS-3200RS nano/loading pump	2023-11-01 10:09:23
+56	TSQ_3	Triple_Quad	252	4764	secfso	EMSL 1401	Thermo TSQ Vantage, MS:1001510	2009-05-29 00:00:00
+60	VOrbiETD02	LTQ_FT	261	4766	secfso	EMSL 1444	LTQ Velos with Orbitrap Elite (upgraded from an Orbitrap in October 2013); for MassIVE, use LTQ Orbitrap Velos (MS:1001742)	2009-12-10 00:00:00
+85	VOrbi05	LTQ_FT	1009	4767	secfso	EMSL 1429	LTQ Velos with an LTQ Orbitrap Velos (no ETD), MS:1000855	2011-06-02 11:20:25
+95	SLIM02_AgQTOF02	IMS_Agilent_TOF_UIMF	1183	4768	secfso	EMSL 1422	IMS with SLIM; WD41434 for AgQTOF02 (serial US42300267)	2012-08-21 09:51:34
+105	TSQ_4	Triple_Quad	1274	4770	secfso	EMSL 1521	Thermo TSQ Vantage, MS:1001510	2013-03-13 17:35:14
 109	IMS08_AgQTOF05	IMS_Agilent_TOF_DotD	1353	4772	secfso	EMSL 1521	First generation IMS from Agilent; PT27418 for AgQTOF05	2013-08-21 17:35:26
 110	SLIM01_AgQTOF04	IMS_Agilent_TOF_UIMF	1356	3867	secfso	EMSL 1430	IMS with SLIM; WD59488 for AgQTof04	2013-08-28 13:54:08
 111	IMS05_AgQTOF03	IMS_Agilent_TOF_UIMF	1357	4389	secfso	EMSL 1426	WE17561 for IMS05; WD59467 for AgQTOF03, IMS cart has been removed as of October 2022, and is not going back in front of the QTOF.	2013-09-03 14:40:23
@@ -175,6 +211,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 189	AgTOF10	Agilent_TOF_V2	4294	4760	secfso	EMSL 1422	G6230BA TOF purchased by instrument development group	2022-10-21 14:27:28
 190	15T_FTICR_I	BrukerFT_BAF	4295	4782	secfso	EMSL 1621	Bruker Solarix 15T with an infinity cell	2022-11-02 11:33:18
 191	IMS12-AgQTOF09	IMS_Agilent_TOF_DotD	4399	4783	secfso	EMSL 1430	Agilent 6560C IM-QTOF; warranty replacement for IMS11_AgQTOF08	2023-03-02 14:43:27
+192	Ascend01	LTQ_FT	4440	4762	secfso	BSF 1229	Purchased by Leidos	2023-04-18 12:19:15
 193	Exploris02	LTQ_FT	4441	4750	secfso	BSF 1229	Orbitrap Exploris 240, MS:1003094	2023-04-18 12:19:29
 194	timsTOFScp01	BrukerTOF_TDF	4442	4751	secfso	EMSL 1314	Bruker timsTOF for single cell proteomics	2023-04-19 16:36:27
 195	External_Ascend	LTQ_FT	4491	4493	fso	Offsite	Data acquired offsite using a Thermo Ascend mass spec	2023-07-18 12:50:05
@@ -187,7 +224,6 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 202	Holly	Thermo_SII_LC	4553	4787	secfso	EMSL 1526	LCMSNet LC with Thermo RSLCnano NCS-3500RS nano/loading pump	2023-10-26 14:37:36
 203	Olympic	Thermo_SII_LC	4554	4788	secfso	EMSL 1526	Vanquish Flex LC for metabolomics (binary pump, autosampler, and 2 column compartments)	2023-10-26 14:39:31
 204	Birch	Thermo_SII_LC	4555	4789	secfso	BSF 1229	LCMSNet LC with Thermo RSLCnano NCS-3500RS nano/loading pump	2023-10-26 14:41:17
-205	Elm	Thermo_SII_LC	4556	4790	secfso	EMSL 1444	LCMSNet LC with Thermo RSLCnano NCS-3200RS nano/loading pump	2023-11-01 10:09:23
 206	Oak	Thermo_SII_LC	4557	4791	secfso	EMSL 1526	LCMSNet LC with Thermo RSLCnano NCS-3200RS nano/loading pump	2023-11-01 10:09:47
 207	Larch	Thermo_SII_LC	4558	4792	secfso	EMSL 1422	LCMSNet LC with Thermo RSLCnano NCS-3200RS nano/loading pump	2023-11-01 10:10:06
 208	Remus	Thermo_SII_LC	4559	4793	secfso	EMSL 1444	Thermo RSLCnano Autosampler and pump	2023-11-01 10:12:06
@@ -229,45 +265,9 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 244	External_Astral	LTQ_FT	4726	4727	fso	Offsite	Thermo TOF/Orbitrap tribrid	2024-02-05 11:21:14
 245	Ned	Thermo_SII_LC	4732	4826	secfso	EMSL 1526	Vanquish Neo LC (binary pump and autosampler). Used for LCDatasetCapture tasks. The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets. Purchased with Exploris06, EMSL owned	2024-03-01 10:58:45
 246	Exploris06	LTQ_FT	4733	4747	secfso	EMSL 1526	Orbitrap Exploris 480 purchased by EMSL; MS:1003028,	2024-03-01 11:00:40
-247	Altis04	Triple_Quad	4828	2	secfso	EMSL 1142	Thermo Altis Plus triple quad, MS:1003292	2024-04-16 16:59:57
 248	Moe	Thermo_SII_LC	4829	2	secfso	EMSL 1142	Vanquish Neo LC (binary pump and autosampler). Used for LCDatasetCapture tasks. The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets. Purchased with Altis04, not EMSL owned	2024-04-16 17:03:03
-249	Barney	Thermo_SII_LC	2	2	secfso	EMSL 1142	Vanquish Neo LC (binary pump and autosampler). Used for LCDatasetCapture tasks. The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets. Purchased by same project as Exploris03, not EMSL owned	2024-04-16 17:03:48
-46	IMS03_AgQTOF01	IMS_Agilent_TOF_UIMF	202	3161	secfso	EMSL 1430	IMS Agilent TOF, WD59518	2009-04-10 00:00:00
-3	7T_FTICR	Finnigan_FTICR	8	89	secfso	EMSL 1621 (excessed)	7 T FTICR	2000-06-20 00:00:00
-6	3T_FTICR	Finnigan_FTICR	12	34	ftp	EMSL 1621 (excessed)	3.5 T FTICR	2000-05-17 00:00:00
-7	SW_TEST_LCQ	Finnigan_Ion_Trap	16	195	fso	n/a	LCQ TEST	2003-04-29 00:00:00
-8	SW_TEST_FTICR	Finnigan_FTICR	18	176	secfso	n/a	FTICR TEST	2003-04-29 00:00:00
-9	LCQ_D1	Finnigan_Ion_Trap	37	130	secfso	EMSL 1326	LCQ-DUO1	2001-02-22 00:00:00
-10	LCQ_D2	Finnigan_Ion_Trap	40	131	secfso	EMSL 1526 (in hallway)	LCQ-DUO2	2001-05-02 00:00:00
-11	QTOF_1322	QStar_QTOF	42	134	fso	EMSL 1426	QTOF-1322	2001-07-27 00:00:00
-12	LCQ_XP1	Finnigan_Ion_Trap	44	132	secfso	BSF 1213	LCQ_DECA_XP1	2001-10-17 00:00:00
-13	9T_FTICR	BRUKERFTMS	46	289	secfso	EMSL 1629	9.4T Bruker FTICR	2001-10-22 00:00:00
-14	LCQ_XP2	Finnigan_Ion_Trap	51	133	secfso	BSF 1213 (not conneted to network)	LCQ_DECA_XP2	2002-01-14 00:00:00
-15	LCQ_C3	Finnigan_Ion_Trap	56	128	fso	331 Building	LCQ_CLASSIC_3	2002-03-08 00:00:00
-16	SW_Test_Bruker	BRUKERFTMS	87	177	fso	n/a	Bruker SW Test Data	2003-04-29 00:00:00
-17	Agilent_SL1	Agilent_Ion_Trap	94	123	fso	EMSL 1422 (excessed)	Agilent 1100 SL 1	2003-11-11 00:00:00
-18	QTOF_MM1	Waters_TOF	96	135	secfso	EMSL 1526	Micromass QTOF 1	2004-03-08 00:00:00
-19	Agilent_XCT1	Agilent_Ion_Trap	99	125	fso	EMSL 1422	Agilent 1100 LC/MSD XCT 1	2004-03-30 00:00:00
-20	AgTOF01	Agilent_TOF	101	124	fso	EMSL 1326	Agilent LC/MSD TOF 1	2004-04-06 00:00:00
-21	9T_FTICR_Q	BRUKERFTMS	103	173	fso	EMSL 1326	9.4T Bruker w/special quad	2004-01-28 00:00:00
-22	11T_FTICR_B	BRUKERFTMS	106	105	secfso	EMSL 1621	11T w/Bruker WS	2004-02-17 00:00:00
-23	LTQ_1	Finnigan_Ion_Trap	108	400	secfso	EMSL 1617	Finnigan LTQ #1; broken since April 2011	2004-06-19 00:00:00
-24	QC_LCQ	Finnigan_Ion_Trap	110	189	fso	EMSL 1553	LCQ-type instrument for QC Process	2004-07-29 00:00:00
-25	QC_Bruker_ICR	BRUKERFTMS	112	175	fso	EMSL 1553	Bruker-type instrument for QC Process	2004-07-30 00:00:00
-26	QC_Ag_XCT	Agilent_Ion_Trap	114	113	fso	EMSL 1553	Agilent XCT-type instrument for QC Process	2005-05-01 00:00:00
-27	QC_Ag_TOF	Agilent_TOF	116	188	fso	EMSL 1553	Agilent TOF-type instrument for QC Process	2005-05-11 00:00:00
-28	QC_MM_TOF	Waters_TOF	118	117	fso	EMSL 1553	Micromass TOF-type instrument for QC Process	2006-11-08 00:00:00
-29	QC_LTQ	Finnigan_Ion_Trap	120	190	fso	EMSL 1553	LTQ-type instrument for QC Process	2004-10-15 00:00:00
-30	QC_Fin_ICR	Finnigan_FTICR	122	121	fso	EMSL 1553	Finnigan FTICR-type instrument for QC Process	2006-12-13 00:00:00
-31	LCQ_JA_GTL	Finnigan_Ion_Trap	137	136	fso	EMSL 2588	Virtual Instrument for GTL_Core	2004-09-27 00:00:00
-32	LTQ_FT1	LTQ_FT	139	1054	secfso	EMSL 1617	LTQ-FT 1 (LTQ3QFVL41)	2004-10-22 00:00:00
-34	LTQ_3	Finnigan_Ion_Trap	143	2840	secfso	BSF 1208	Finnigan LTQ #3	2004-11-22 00:00:00
-2	LCQ_C1	Finnigan_Ion_Trap	6	126	secfso	EMSL 1326 (not conneted to network)	LCQ-C1	2000-05-15 00:00:00
-192	Ascend01	LTQ_FT	4440	4762	secfso	BSF 1229	Purchased by Leidos	2023-04-18 12:19:15
-56	TSQ_3	Triple_Quad	252	4764	secfso	EMSL 1401	Thermo TSQ Vantage, MS:1001510	2009-05-29 00:00:00
-60	VOrbiETD02	LTQ_FT	261	4766	secfso	EMSL 1444	LTQ Velos with Orbitrap Elite (upgraded from an Orbitrap in October 2013); for MassIVE, use LTQ Orbitrap Velos (MS:1001742)	2009-12-10 00:00:00
-85	VOrbi05	LTQ_FT	1009	4767	secfso	EMSL 1429	LTQ Velos with an LTQ Orbitrap Velos (no ETD), MS:1000855	2011-06-02 11:20:25
-95	SLIM02_AgQTOF02	IMS_Agilent_TOF_UIMF	1183	4768	secfso	EMSL 1422	IMS with SLIM; WD41434 for AgQTOF02 (serial US42300267)	2012-08-21 09:51:34
+247	Altis04	Triple_Quad	4828	4831	secfso	EMSL 1142	Thermo Altis Plus triple quad, MS:1003292	2024-04-16 16:59:57
+249	Barney	Thermo_SII_LC	4830	4832	secfso	EMSL 1142	Vanquish Neo LC (binary pump and autosampler). Used for LCDatasetCapture tasks. The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets. Purchased by same project as Exploris03, not EMSL owned	2024-04-16 17:03:48
 \.
 
 

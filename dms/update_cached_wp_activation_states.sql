@@ -1,4 +1,8 @@
-CREATE OR REPLACE PROCEDURE public.update_cached_wp_activation_states(IN _workPackage text DEFAULT '', IN _showdebug boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+--
+-- Name: update_cached_wp_activation_states(text, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+
+CREATE OR REPLACE PROCEDURE public.update_cached_wp_activation_states(IN _workpackage text DEFAULT ''::text, IN _showdebug boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -99,7 +103,7 @@ BEGIN
     End If;
 
     If _rowCountUpdated > 0 Then
-        _message = format('Updated %s %s in t_requested_run', _rowCountUpdated, public.check_plural(_rowCountUpdated, ' row', ' rows'));
+        _message = format('Updated %s %s in t_requested_run', _rowCountUpdated, public.check_plural(_rowCountUpdated, 'row', 'rows'));
 
         If _showDebug Then
             RAISE INFO '%', _message;
@@ -108,3 +112,7 @@ BEGIN
 
 END
 $$;
+
+
+ALTER PROCEDURE public.update_cached_wp_activation_states(IN _workpackage text, IN _showdebug boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+

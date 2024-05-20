@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
+-- Dumped from database version 16.3
 -- Dumped by pg_dump version 16.2
 
 SET statement_timeout = 0;
@@ -21,7 +21,6 @@ SET row_security = off;
 --
 
 COPY public.t_general_statistics (entry_id, category, label, value, last_affected) FROM stdin;
-1006	Campaign_Count	Last 30 days	5.000	2024-05-10 14:03:05.239981
 1004	Campaign_Count	All	1984.000	2024-04-22 23:03:29.166312
 1005	Campaign_Count	Last 7 days	0.000	2024-04-22 23:03:29.166312
 1007	CellCulture_Count	All	18022.000	2024-04-22 23:03:29.166312
@@ -34,15 +33,16 @@ COPY public.t_general_statistics (entry_id, category, label, value, last_affecte
 1019	RawDataTB	All	714	2024-04-22 23:03:29.166312
 1020	RawDataTB	Last 7 days	0	2024-04-22 23:03:29.166312
 1003	Job_Count	New	5.000	2024-04-24 11:03:30.507372
+1006	Campaign_Count	Last 30 days	0.000	2024-05-17 11:03:05.53878
 1014	Experiment_Count	Last 7 days	0.000	2024-04-24 11:03:30.507372
-1021	RawDataTB	Last 30 days	2	2024-05-11 08:03:06.287382
-1015	Experiment_Count	Last 30 days	481.000	2024-05-11 11:03:06.426938
-1002	Job_Count	Last 30 days	3074.000	2024-05-11 14:03:06.50316
-1012	Dataset_Count	Last 30 days	2787.000	2024-05-11 14:03:06.50316
-1010	Dataset_Count	All	1193120.000	2024-05-07 20:04:02.43877
+1021	RawDataTB	Last 30 days	0	2024-05-17 11:03:05.53878
+1011	Dataset_Count	Last 7 days	0.000	2024-05-18 05:03:06.190595
 1001	Job_Count	Last 7 days	0.000	2024-04-26 05:03:32.34285
+1010	Dataset_Count	All	1193212.000	2024-05-16 05:03:04.079829
+1015	Experiment_Count	Last 30 days	1.000	2024-05-19 11:03:07.694895
+1002	Job_Count	Last 30 days	351.000	2024-05-19 20:03:08.025229
 1000	Job_Count	All	2249907.000	2024-04-24 05:03:30.212011
-1011	Dataset_Count	Last 7 days	0.000	2024-05-09 20:03:04.572215
+1012	Dataset_Count	Last 30 days	481.000	2024-05-19 20:03:08.025229
 \.
 
 

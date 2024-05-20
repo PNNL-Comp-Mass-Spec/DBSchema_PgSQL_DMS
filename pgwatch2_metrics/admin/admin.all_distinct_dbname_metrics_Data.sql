@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
+-- Dumped from database version 16.3
 -- Dumped by pg_dump version 16.2
 
 SET statement_timeout = 0;
@@ -92,6 +92,7 @@ DMSDev	stat_activity_realtime	2024-04-21 19:53:51.993124-07
 DMS	stat_activity_realtime	2024-04-21 19:53:52.040306-07
 DMS	sproc_changes	2024-04-25 21:32:57.876433-07
 DMS	table_changes	2024-04-30 00:05:58.793318-07
+DMSDev	configuration_changes	2024-05-15 14:02:56.232519-07
 \.
 
 
