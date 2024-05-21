@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE public.update_charge_codes_from_warehouse(IN _infoon
 **                         - When _infoOnly and _onlyShowChanged are both true, only show new or updated work packages
 **          12/14/2023 mem - Ported to PostgreSQL
 **          05/18/2024 mem - Call procedure update_cached_wp_activation_states
+**          05/20/2024 mem - Use parameter names when calling function charge_code_activation_state()
 **
 *****************************************************/
 DECLARE
@@ -304,7 +305,10 @@ BEGIN
                       source.inactive_date, source.sub_account_inactive_date, source.deactivated, source.auth_amt, source.auth_username, source.auth_hid,
                       1,        -- auto_defined=1
                       1,        -- charge_code_state = 1 (Interest Unknown)
-                      charge_code_activation_state(source.deactivated, 1, 0, 0),
+                      public.charge_code_activation_state(_deactivated       => source.deactivated,
+                                                          _chargeCodeState   => 1,
+                                                          _usageSamplePrep   => 0,
+                                                          _usageRequestedRun => 0),
                       CURRENT_TIMESTAMP
                     );
 
