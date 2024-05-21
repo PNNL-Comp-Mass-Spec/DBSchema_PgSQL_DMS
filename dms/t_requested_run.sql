@@ -201,10 +201,10 @@ CREATE INDEX ix_t_requested_run_created ON public.t_requested_run USING btree (c
 CREATE INDEX ix_t_requested_run_dataset_id_include_created_id_batch ON public.t_requested_run USING btree (dataset_id) INCLUDE (created, request_id, batch_id);
 
 --
--- Name: ix_t_requested_run_dataset_id_status; Type: INDEX; Schema: public; Owner: d3l243
+-- Name: ix_t_requested_run_dataset_id_state; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE INDEX ix_t_requested_run_dataset_id_status ON public.t_requested_run USING btree (dataset_id, state_name);
+CREATE INDEX ix_t_requested_run_dataset_id_state ON public.t_requested_run USING btree (dataset_id, state_name);
 
 --
 -- Name: ix_t_requested_run_eus_proposal_id_include_id_dataset_id; Type: INDEX; Schema: public; Owner: d3l243
@@ -219,16 +219,16 @@ CREATE INDEX ix_t_requested_run_eus_proposal_id_include_id_dataset_id ON public.
 CREATE INDEX ix_t_requested_run_eus_usage_type_include_eus_proposal_id ON public.t_requested_run USING btree (eus_usage_type_id) INCLUDE (eus_proposal_id, dataset_id);
 
 --
--- Name: ix_t_requested_run_exp_id_include_name_idstatus; Type: INDEX; Schema: public; Owner: d3l243
+-- Name: ix_t_requested_run_exp_id_include_name_id_state; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE INDEX ix_t_requested_run_exp_id_include_name_idstatus ON public.t_requested_run USING btree (exp_id) INCLUDE (request_name, request_id, state_name);
+CREATE INDEX ix_t_requested_run_exp_id_include_name_id_state ON public.t_requested_run USING btree (exp_id) INCLUDE (request_name, request_id, state_name);
 
 --
--- Name: ix_t_requested_run_name_status_include_id; Type: INDEX; Schema: public; Owner: d3l243
+-- Name: ix_t_requested_run_name_state_include_id; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE INDEX ix_t_requested_run_name_status_include_id ON public.t_requested_run USING btree (request_name, state_name) INCLUDE (request_id);
+CREATE INDEX ix_t_requested_run_name_state_include_id ON public.t_requested_run USING btree (request_name, state_name) INCLUDE (request_id);
 
 --
 -- Name: ix_t_requested_run_proposal_id_work_package_entered; Type: INDEX; Schema: public; Owner: d3l243
