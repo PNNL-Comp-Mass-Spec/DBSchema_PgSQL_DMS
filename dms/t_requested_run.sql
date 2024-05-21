@@ -189,6 +189,12 @@ CREATE INDEX ix_t_requested_run_batch_id_include_exp_id ON public.t_requested_ru
 CREATE INDEX ix_t_requested_run_block_include_id ON public.t_requested_run USING btree (block) INCLUDE (request_id);
 
 --
+-- Name: ix_t_requested_run_cached_wp_act_state_include_request_type_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_requested_run_cached_wp_act_state_include_request_type_id ON public.t_requested_run USING btree (cached_wp_activation_state) INCLUDE (request_type_id);
+
+--
 -- Name: ix_t_requested_run_created; Type: INDEX; Schema: public; Owner: d3l243
 --
 
