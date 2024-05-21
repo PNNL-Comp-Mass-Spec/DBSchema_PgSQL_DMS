@@ -20,7 +20,7 @@ CREATE VIEW public.v_requested_run_list_report_2 AS
     qs.queue_state_name AS queue_state,
     COALESCE(assignedinstrument.instrument, ''::public.citext) AS queued_instrument,
     rr.work_package,
-    COALESCE(cc.activation_state_name, ''::public.citext) AS wp_state,
+    COALESCE(cca.activation_state_name, ''::public.citext) AS wp_state,
     eut.eus_usage_type AS usage,
     rr.eus_proposal_id AS proposal,
     ept.abbreviation AS proposal_type,
@@ -47,8 +47,8 @@ CREATE VIEW public.v_requested_run_list_report_2 AS
             ELSE 120
         END AS days_in_queue_bin,
         CASE
-            WHEN ((rr.state_name OPERATOR(public.=) 'Active'::public.citext) AND (cc.activation_state >= 3)) THEN 10
-            ELSE (cc.activation_state)::integer
+            WHEN ((rr.state_name OPERATOR(public.=) 'Active'::public.citext) AND (rr.cached_wp_activation_state >= 3)) THEN 10
+            ELSE (rr.cached_wp_activation_state)::integer
         END AS wp_activation_state
    FROM (((((((((((((((((public.t_requested_run rr
      JOIN public.t_dataset_type_name dtn ON ((dtn.dataset_type_id = rr.request_type_id)))
@@ -58,12 +58,12 @@ CREATE VIEW public.v_requested_run_list_report_2 AS
      JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id)))
      JOIN public.t_lc_cart lc ON ((rr.cart_id = lc.cart_id)))
      JOIN public.t_requested_run_queue_state qs ON ((rr.queue_state = qs.queue_state)))
+     JOIN public.t_charge_code_activation_state cca ON ((rr.cached_wp_activation_state = cca.activation_state)))
      LEFT JOIN public.t_dataset ds ON ((rr.dataset_id = ds.dataset_id)))
      LEFT JOIN public.t_lc_cart_configuration cartconfig ON ((rr.cart_config_id = cartconfig.cart_config_id)))
      LEFT JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
      LEFT JOIN public.t_instrument_name assignedinstrument ON ((rr.queue_instrument_id = assignedinstrument.instrument_id)))
      LEFT JOIN public.v_requested_run_queue_times qt ON ((rr.request_id = qt.requested_run_id)))
-     LEFT JOIN public.v_charge_code_status cc ON ((rr.work_package OPERATOR(public.=) cc.charge_code)))
      LEFT JOIN public.t_eus_proposals eup ON ((rr.eus_proposal_id OPERATOR(public.=) eup.proposal_id)))
      LEFT JOIN public.t_eus_proposal_type ept ON ((eup.proposal_type OPERATOR(public.=) ept.proposal_type)))
      LEFT JOIN public.t_eus_proposal_state_name psn ON ((eup.state_id = psn.state_id)))

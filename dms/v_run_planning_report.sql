@@ -100,8 +100,8 @@ CREATE VIEW public.v_run_planning_report AS
                     u.name AS requester,
                     rr.created AS request_created,
                     rr.work_package,
-                    COALESCE(cc.activation_state_name, ''::public.citext) AS wp_state,
-                    cc.activation_state AS wp_activation_state,
+                    COALESCE(cca.activation_state_name, ''::public.citext) AS wp_state,
+                    rr.cached_wp_activation_state AS wp_activation_state,
                     rr.eus_proposal_id AS proposal,
                     ept.abbreviation AS proposal_type,
                     rrb.locked,
@@ -142,8 +142,8 @@ CREATE VIEW public.v_run_planning_report AS
                      JOIN public.t_requested_run_batches rrb ON ((rr.batch_id = rrb.batch_id)))
                      JOIN public.t_sample_prep_request spr ON ((e.sample_prep_request_id = spr.prep_request_id)))
                      JOIN public.t_separation_group sg ON ((rr.separation_group OPERATOR(public.=) sg.separation_group)))
+                     JOIN public.t_charge_code_activation_state cca ON ((rr.cached_wp_activation_state = cca.activation_state)))
                      LEFT JOIN public.v_sample_prep_request_queue_times qt ON ((spr.prep_request_id = qt.request_id)))
-                     LEFT JOIN public.v_charge_code_status cc ON ((rr.work_package OPERATOR(public.=) cc.charge_code)))
                      LEFT JOIN public.t_eus_proposals eup ON ((rr.eus_proposal_id OPERATOR(public.=) eup.proposal_id)))
                      LEFT JOIN public.t_eus_proposal_type ept ON ((eup.proposal_type OPERATOR(public.=) ept.proposal_type)))
                      LEFT JOIN public.t_instrument_name assignedinstrument ON ((rr.queue_instrument_id = assignedinstrument.instrument_id)))

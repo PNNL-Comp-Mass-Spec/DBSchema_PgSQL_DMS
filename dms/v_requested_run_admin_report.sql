@@ -16,7 +16,7 @@ CREATE VIEW public.v_requested_run_admin_report AS
     rr.state_name AS status,
     u.name AS requester,
     rr.work_package AS wpn,
-    COALESCE(cc.activation_state_name, ''::public.citext) AS wp_state,
+    COALESCE(cca.activation_state_name, ''::public.citext) AS wp_state,
     qt.days_in_queue,
     qs.queue_state_name AS queue_state,
     COALESCE(assignedinstrument.instrument, ''::public.citext) AS queued_instrument,
@@ -36,8 +36,8 @@ CREATE VIEW public.v_requested_run_admin_report AS
             ELSE 120
         END AS days_in_queue_bin,
         CASE
-            WHEN ((rr.state_name OPERATOR(public.=) 'Active'::public.citext) AND (cc.activation_state >= 3)) THEN 10
-            ELSE (cc.activation_state)::integer
+            WHEN ((rr.state_name OPERATOR(public.=) 'Active'::public.citext) AND (rr.cached_wp_activation_state >= 3)) THEN 10
+            ELSE (rr.cached_wp_activation_state)::integer
         END AS wp_activation_state
    FROM ((((((((((public.t_requested_run rr
      JOIN public.t_dataset_type_name dtn ON ((dtn.dataset_type_id = rr.request_type_id)))
@@ -45,11 +45,11 @@ CREATE VIEW public.v_requested_run_admin_report AS
      JOIN public.t_experiments e ON ((rr.exp_id = e.exp_id)))
      JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id)))
      JOIN public.t_requested_run_queue_state qs ON ((rr.queue_state = qs.queue_state)))
+     JOIN public.t_charge_code_activation_state cca ON ((rr.cached_wp_activation_state = cca.activation_state)))
      LEFT JOIN public.t_dataset ds ON ((rr.dataset_id = ds.dataset_id)))
      LEFT JOIN public.t_instrument_name datasetinstrument ON ((ds.instrument_id = datasetinstrument.instrument_id)))
      LEFT JOIN public.t_instrument_name assignedinstrument ON ((rr.queue_instrument_id = assignedinstrument.instrument_id)))
-     LEFT JOIN public.v_requested_run_queue_times qt ON ((rr.request_id = qt.requested_run_id)))
-     LEFT JOIN public.v_charge_code_status cc ON ((rr.work_package OPERATOR(public.=) cc.charge_code)));
+     LEFT JOIN public.v_requested_run_queue_times qt ON ((rr.request_id = qt.requested_run_id)));
 
 
 ALTER VIEW public.v_requested_run_admin_report OWNER TO d3l243;
