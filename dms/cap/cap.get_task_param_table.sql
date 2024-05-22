@@ -55,6 +55,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_table(_job integer, _dataset text,
 **          10/28/2023 mem - Add _scriptName argument
 **                         - Add parameter modifications for script 'LCDatasetCapture' (bcg)
 **          03/03/2024 mem - Trim whitespace when extracting values from XML
+**          05/21/2024 mem - Add parameters request_run_start and request_run_finish (which come from t_requested_run)
 **
 *****************************************************/
 DECLARE
@@ -136,7 +137,9 @@ BEGIN
                   eus_operator_id::text AS eus_operator_id,
                   operator_username,
                   timestamp_text(acq_time_start) AS acq_time_start,
-                  timestamp_text(acq_time_end) AS acq_time_end
+                  timestamp_text(acq_time_end) AS acq_time_end,
+                  timestamp_text(request_run_start) AS request_run_start,
+                  timestamp_text(request_run_finish) AS request_run_finish
            FROM cap.V_DMS_Dataset_Metadata
            WHERE Dataset_ID = _datasetID) AS m
          CROSS JOIN LATERAL (
@@ -159,7 +162,9 @@ BEGIN
                 ('EUS_Operator_ID', m.eus_operator_id),
                 ('Operator_Username', m.operator_username),
                 ('Acq_Time_Start', m.acq_time_start),
-                ('Acq_Time_End', m.acq_time_end)
+                ('Acq_Time_End', m.acq_time_end),
+                ('Request_Run_Start', m.request_run_start),
+                ('Request_Run_Finish', m.request_run_finish)
            ) AS UnpivotQ(Name, Value)
     WHERE NOT UnpivotQ.value IS NULL;
 

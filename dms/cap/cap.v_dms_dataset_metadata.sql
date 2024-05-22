@@ -19,6 +19,8 @@ CREATE VIEW cap.v_dms_dataset_metadata AS
     ds.created,
     ds.acq_time_start,
     ds.acq_time_end,
+    rr.request_run_start,
+    rr.request_run_finish,
     sourcepath.storage_path AS source_path,
     sourcepath.vol_name_server AS source_vol,
     sourcepath.storage_path_id AS source_path_id,
