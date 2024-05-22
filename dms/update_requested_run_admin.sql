@@ -42,6 +42,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_admin(IN _requestlist te
 **          05/23/2023 mem - Allow deleting requested runs of type 'auto' or 'fraction'
 **          03/07/2024 mem - Ported to PostgreSQL
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
+**          05/21/2024 mem - Call update_cached_requested_run_batch_stats after deleting requested runs
 **
 *****************************************************/
 DECLARE
@@ -57,7 +58,9 @@ DECLARE
     _stateID int := 0;
     _logMessage text;
     _argLength int;
-    _requestID int := -100000;
+    _requestID int;
+    _batchID int;
+    _msg text;
     _targetType int;
     _alterEnteredByMessage text;
 BEGIN
@@ -223,7 +226,7 @@ BEGIN
                               WHEN _mode = 'inactive' THEN 'Inactive'
                               ELSE state_name
                          END
-        WHERE request_id IN ( SELECT Request_ID FROM Tmp_Requests ) AND
+        WHERE request_id IN (SELECT Request_ID FROM Tmp_Requests) AND
               state_name <> 'Completed';
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
@@ -231,9 +234,8 @@ BEGIN
         _usageMessage := format('Updated %s requested %s', _updateCount, public.check_plural(_updateCount, 'run', 'runs'));
 
         If _callingUser <> '' Then
-            -- _callingUser is defined; call public.alter_event_log_entry_user_multi_id
-            -- to alter the entered_by field in t_event_log
-            -- This procedure uses Tmp_ID_Update_List
+            -- _callingUser is defined; call public.alter_event_log_entry_user_multi_id to alter the entered_by field in t_event_log
+            -- That procedure uses Tmp_ID_Update_List
 
             SELECT state_id
             INTO _stateID
@@ -244,7 +246,9 @@ BEGIN
             CALL public.alter_event_log_entry_user_multi_id ('public', _targetType, _stateID, _callingUser, _message => _alterEnteredByMessage);
         End If;
 
+        -----------------------------------------------------------
         -- Call update_cached_requested_run_eus_users for each entry in Tmp_Requests
+        -----------------------------------------------------------
 
         FOR _requestID IN
             SELECT request_id
@@ -264,8 +268,18 @@ BEGIN
         -- Delete requested runs
         -----------------------------------------------------------
 
+        CREATE TEMPORARY TABLE Tmp_Batch_IDs (
+            Batch_ID int NOT NULL
+        );
+
+        INSERT INTO Tmp_Batch_IDs (Batch_ID)
+        SELECT DISTINCT batch_id
+        FROM t_requested_run
+        WHERE request_id IN (SELECT Request_ID FROM Tmp_Requests) AND
+              state_name <> 'Completed';
+
         DELETE FROM t_requested_run
-        WHERE request_id IN ( SELECT request_id FROM Tmp_Requests ) AND
+        WHERE request_id IN (SELECT request_id FROM Tmp_Requests) AND
               state_name <> 'Completed';
         --
         GET DIAGNOSTICS _matchCount = ROW_COUNT;
@@ -273,9 +287,8 @@ BEGIN
         _usageMessage := format('Deleted %s requested %s', _matchCount, public.check_plural(_matchCount, 'run', 'runs'));
 
         If _callingUser <> '' Then
-            -- _callingUser is defined; call public.alter_event_log_entry_user_multi_id
-            -- to alter the entered_by field in t_event_log
-            -- This procedure uses Tmp_ID_Update_List
+            -- _callingUser is defined; call public.alter_event_log_entry_user_multi_id to alter the entered_by field in t_event_log
+            -- That procedure uses Tmp_ID_Update_List
 
             _targetType := 11;
             _stateID := 0;
@@ -285,10 +298,39 @@ BEGIN
 
         -- Remove any cached EUS user lists
         DELETE FROM t_active_requested_run_cached_eus_users
-        WHERE EXISTS ( SELECT Request_ID
-                       FROM Tmp_Requests
-                       WHERE Request_ID = t_active_requested_run_cached_eus_users.request_id);
+        WHERE EXISTS (SELECT Request_ID
+                      FROM Tmp_Requests
+                      WHERE Request_ID = t_active_requested_run_cached_eus_users.request_id);
 
+        -----------------------------------------------------------
+        -- Update batches associated with the deleted requested runs
+        -- (skipping Batch_ID 0)
+        -----------------------------------------------------------
+
+        FOR _batchID IN
+            SELECT Batch_ID
+            FROM Tmp_Batch_IDs
+            ORDER BY Batch_ID
+        LOOP
+
+            If _batchID = 0 Then
+                RAISE INFO 'Skipping call to update_cached_requested_run_batch_stats for batch 0';
+                CONTINUE;
+            End If;
+
+            RAISE INFO 'Calling update_cached_requested_run_batch_stats for batch %', _batchID;
+
+            CALL public.update_cached_requested_run_batch_stats (
+                            _batchID    => _batchID,
+                            _message    => _msg,            -- Output
+                            _returnCode => _returnCode);    -- Output
+
+            If _returnCode <> '' Then
+                _message := public.append_to_text(_message, _msg);
+            End If;
+        END LOOP;
+
+        DROP TABLE Tmp_Batch_IDs;
     End If;
 
     If _mode = Lower('UnassignInstrument') Then
@@ -299,7 +341,7 @@ BEGIN
         UPDATE t_requested_run
         SET queue_state = 1,
             queue_instrument_id = NULL
-        WHERE request_id IN ( SELECT Request_ID FROM Tmp_Requests ) AND
+        WHERE request_id IN (SELECT Request_ID FROM Tmp_Requests) AND
               state_name <> 'Completed' AND
               (queue_state = 2 OR NOT queue_instrument_id IS NULL);
         --
