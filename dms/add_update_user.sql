@@ -2,7 +2,7 @@
 -- Name: add_update_user(text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.add_update_user(IN _username text, IN _hanfordidnum text, IN _lastnamefirstname text, IN _email text, IN _userstatus text, IN _userupdate text, IN _operationslist text, IN _comment text DEFAULT ''::text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.add_update_user(IN _username text, IN _hanfordid text, IN _lastnamefirstname text, IN _email text, IN _userstatus text, IN _userupdate text, IN _operationslist text, IN _comment text DEFAULT ''::text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -12,7 +12,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_user(IN _username text, IN _hanfor
 **
 **  Arguments:
 **    _username             Network login for the user (was traditionally D+Payroll number, but switched to last name plus 3 digits around 2011)
-**    _hanfordIdNum         Hanford ID number for user; cannot be blank
+**    _hanfordID            Hanford ID number for user; cannot be blank
 **    _lastNameFirstName    Cannot be blank (though this field is auto-updated by procedure update_users_from_warehouse)
 **    _email                Can be blank; will be auto-updated by update_users_from_warehouse
 **    _userStatus           Status: 'Active' or 'Inactive'; when 'Active', the user is active in DMS
@@ -31,20 +31,21 @@ CREATE OR REPLACE PROCEDURE public.add_update_user(IN _username text, IN _hanfor
 **          06/05/2013 mem - Now calling Add_Update_User_Operations
 **          06/11/2013 mem - Renamed the first two parameters (previously _username and _username)
 **          02/23/2016 mem - Add Set XACT_ABORT on
-**          08/23/2016 mem - Auto-add 'H' when _mode is 'add' and _hanfordIdNum starts with a number
+**          08/23/2016 mem - Auto-add 'H' when _mode is 'add' and _hanfordID starts with a number
 **          11/18/2016 mem - Log try/catch errors using post_log_entry
 **          12/05/2016 mem - Exclude logging some try/catch errors
 **          12/16/2016 mem - Use _logErrors to toggle logging errors caught by the try/catch block
 **          06/13/2017 mem - Use SCOPE_IDENTITY()
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
-**          07/11/2017 mem - Require _hanfordIdNum to be at least 2 characters long
+**          07/11/2017 mem - Require _hanfordID to be at least 2 characters long
 **          08/01/2017 mem - Use THROW if not authorized
 **          08/16/2018 mem - Remove any text before a backslash in _username (e.g., change from PNL\D3L243 to D3L243)
 **          02/10/2022 mem - Remove obsolete payroll field
-**                         - Always add 'H' to _hanfordIdNum if it starts with a number
+**                         - Always add 'H' to _hanfordID if it starts with a number
 **          03/16/2022 mem - Replace tab characters with spaces
 **          01/21/2024 mem - Ported to PostgreSQL
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
+**          05/22/2024 mem - Rename the Hanford ID parameter to _hanfordID
 **
 *****************************************************/
 DECLARE
@@ -97,7 +98,7 @@ BEGIN
         ---------------------------------------------------
 
         _username          := Trim(Replace(Coalesce(_username, ''),          chr(9), ' '));
-        _hanfordIdNum      := Trim(Replace(Coalesce(_hanfordIdNum, ''),      chr(9), ' '));
+        _hanfordID         := Trim(Replace(Coalesce(_hanfordID, ''),         chr(9), ' '));
         _lastNameFirstName := Trim(Replace(Coalesce(_lastNameFirstName, ''), chr(9), ' '));
         _email             := Trim(Replace(Coalesce(_email, ''),             chr(9), ' '));
         _userStatus        := Trim(Coalesce(_userStatus, ''));
@@ -120,7 +121,7 @@ BEGIN
             RAISE EXCEPTION 'Last Name, First Name must be specified' USING ERRCODE = 'U5202';
         End If;
 
-        If char_length(_hanfordIdNum) <= 1 Then
+        If char_length(_hanfordID) <= 1 Then
             RAISE EXCEPTION 'Hanford ID number cannot be blank or a single character' USING ERRCODE = 'U5203';
         End If;
 
@@ -165,11 +166,11 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Add an H to _hanfordIdNum if it starts with a number
+        -- Add an H to _hanfordID if it starts with a number
         ---------------------------------------------------
 
-        If _hanfordIdNum SIMILAR TO '[0-9]%' Then
-            _hanfordIdNum := format('H%s', _hanfordIdNum);
+        If _hanfordID SIMILAR TO '[0-9]%' Then
+            _hanfordID := format('H%s', _hanfordID);
         End If;
 
         _logErrors := true;
@@ -190,7 +191,7 @@ BEGIN
             ) VALUES (
                 _username,
                 _lastNameFirstName,
-                _hanfordIdNum,
+                _hanfordID,
                 _email,
                 _userStatus,
                 _userUpdate,
@@ -210,7 +211,7 @@ BEGIN
 
                 UPDATE t_users
                 SET name    = _lastNameFirstName,
-                    hid     = _hanfordIdNum,
+                    hid     = _hanfordID,
                     email   = _email,
                     status  = _userStatus,
                     active  = 'N',
@@ -222,7 +223,7 @@ BEGIN
 
                 UPDATE t_users
                 SET name    = _lastNameFirstName,
-                    hid     = _hanfordIdNum,
+                    hid     = _hanfordID,
                     email   = _email,
                     status  = _userStatus,
                     update  = _userUpdate,
@@ -269,11 +270,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.add_update_user(IN _username text, IN _hanfordidnum text, IN _lastnamefirstname text, IN _email text, IN _userstatus text, IN _userupdate text, IN _operationslist text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE public.add_update_user(IN _username text, IN _hanfordid text, IN _lastnamefirstname text, IN _email text, IN _userstatus text, IN _userupdate text, IN _operationslist text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE add_update_user(IN _username text, IN _hanfordidnum text, IN _lastnamefirstname text, IN _email text, IN _userstatus text, IN _userupdate text, IN _operationslist text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE add_update_user(IN _username text, IN _hanfordid text, IN _lastnamefirstname text, IN _email text, IN _userstatus text, IN _userupdate text, IN _operationslist text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.add_update_user(IN _username text, IN _hanfordidnum text, IN _lastnamefirstname text, IN _email text, IN _userstatus text, IN _userupdate text, IN _operationslist text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text) IS 'AddUpdateUser';
+COMMENT ON PROCEDURE public.add_update_user(IN _username text, IN _hanfordid text, IN _lastnamefirstname text, IN _email text, IN _userstatus text, IN _userupdate text, IN _operationslist text, IN _comment text, IN _mode text, INOUT _message text, INOUT _returncode text) IS 'AddUpdateUser';
 
