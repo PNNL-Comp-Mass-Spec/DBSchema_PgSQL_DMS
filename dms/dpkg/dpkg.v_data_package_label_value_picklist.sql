@@ -1,25 +1,25 @@
 --
--- Name: v_data_package_picklist; Type: VIEW; Schema: dpkg; Owner: d3l243
+-- Name: v_data_package_label_value_picklist; Type: VIEW; Schema: dpkg; Owner: d3l243
 --
 
-CREATE VIEW dpkg.v_data_package_picklist AS
+CREATE VIEW dpkg.v_data_package_label_value_picklist AS
  SELECT (((((((data_pkg_id)::public.citext)::text || chr(32)))::public.citext)::text || (package_name)::text))::public.citext AS label,
     data_pkg_id AS value
    FROM dpkg.t_data_package;
 
 
-ALTER VIEW dpkg.v_data_package_picklist OWNER TO d3l243;
+ALTER VIEW dpkg.v_data_package_label_value_picklist OWNER TO d3l243;
 
 --
--- Name: VIEW v_data_package_picklist; Type: COMMENT; Schema: dpkg; Owner: d3l243
+-- Name: VIEW v_data_package_label_value_picklist; Type: COMMENT; Schema: dpkg; Owner: d3l243
 --
 
-COMMENT ON VIEW dpkg.v_data_package_picklist IS 'Used by ad-hoc query "data_package_list"; see https://dmsdev.pnl.gov/config_db/edit_table/ad_hoc_query.db/utility_queries';
+COMMENT ON VIEW dpkg.v_data_package_label_value_picklist IS 'Used by ad-hoc query "data_package_list"; see https://dmsdev.pnl.gov/config_db/edit_table/ad_hoc_query.db/utility_queries';
 
 --
--- Name: TABLE v_data_package_picklist; Type: ACL; Schema: dpkg; Owner: d3l243
+-- Name: TABLE v_data_package_label_value_picklist; Type: ACL; Schema: dpkg; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE dpkg.v_data_package_picklist TO readaccess;
-GRANT SELECT ON TABLE dpkg.v_data_package_picklist TO writeaccess;
+GRANT SELECT ON TABLE dpkg.v_data_package_label_value_picklist TO readaccess;
+GRANT SELECT ON TABLE dpkg.v_data_package_label_value_picklist TO writeaccess;
 
