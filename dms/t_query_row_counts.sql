@@ -9,7 +9,7 @@ CREATE TABLE public.t_query_row_counts (
     row_count bigint DEFAULT 0 NOT NULL,
     last_used timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     last_refresh timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    refresh_interval_hours numeric DEFAULT 4,
+    refresh_interval_hours numeric DEFAULT 4 NOT NULL,
     entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
