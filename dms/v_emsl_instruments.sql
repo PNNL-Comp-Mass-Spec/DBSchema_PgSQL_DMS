@@ -7,6 +7,7 @@ CREATE VIEW public.v_emsl_instruments AS
     emslinst.eus_instrument_name,
     emslinst.eus_instrument_id,
     emslinst.local_instrument_name,
+    emslinst.local_category_name,
     instmap.dms_instrument_id,
     dmsinstname.instrument
    FROM ((public.t_instrument_name dmsinstname
