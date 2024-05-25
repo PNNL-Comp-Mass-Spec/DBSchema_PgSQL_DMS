@@ -26,6 +26,7 @@ CREATE OR REPLACE FUNCTION public.get_query_row_count(_objectname text, _wherecl
 **
 **  Auth:   mem
 **  Date:   05/22/2024 mem - Initial version
+**          05/24/2024 mem - Change the object name to lowercase
 **
 *****************************************************/
 DECLARE
@@ -40,7 +41,7 @@ BEGIN
     -- Validate the inputs
     ------------------------------------------------
 
-    _objectName  := Trim(Coalesce(_objectName, ''));
+    _objectName  := Lower(Trim(Coalesce(_objectName, '')));
     _whereClause := Trim(Coalesce(_whereClause, ''));
 
     If _objectName = '' Then
