@@ -47,5 +47,5 @@ CREATE INDEX ix_t_query_row_counts_object_name_include_where_clause_row_cnt ON p
 --
 
 GRANT SELECT ON TABLE public.t_query_row_counts TO readaccess;
-GRANT SELECT ON TABLE public.t_query_row_counts TO writeaccess;
+GRANT SELECT,INSERT,UPDATE ON TABLE public.t_query_row_counts TO writeaccess;
 
