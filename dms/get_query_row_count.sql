@@ -27,12 +27,14 @@ CREATE OR REPLACE FUNCTION public.get_query_row_count(_objectname text, _wherecl
 **  Auth:   mem
 **  Date:   05/22/2024 mem - Initial version
 **          05/24/2024 mem - Change the object name to lowercase
+**          05/25/2024 mem - Increment column Usage in t_query_row_counts
 **
 *****************************************************/
 DECLARE
     _queryID int;
     _rowCount int8;
     _lastRefresh timestamp with time zone;
+    _usage int;
     _refreshIntervalHours numeric;
     _rowCountAgeHours numeric;
     _sql text;
@@ -59,8 +61,8 @@ BEGIN
     -- Look for a cached row count
     ------------------------------------------------
 
-    SELECT query_id, row_count, last_refresh, refresh_interval_hours
-    INTO _queryID, _rowCount, _lastRefresh, _refreshIntervalHours
+    SELECT query_id, row_count, last_refresh, usage, refresh_interval_hours
+    INTO _queryID, _rowCount, _lastRefresh, _usage, _refreshIntervalHours
     FROM t_query_row_counts
     WHERE object_name  = _objectName AND
           where_clause = _whereClause;
@@ -71,9 +73,10 @@ BEGIN
                                      _lastRefresh) / 3600.0;
 
         If _rowCountAgeHours < _refreshIntervalHours Then
-            -- Use the cached row count value, but first update column last_used
+            -- Use the cached row count value, but first update columns last_used and usage
             UPDATE t_query_row_counts
-            SET last_used = CURRENT_TIMESTAMP
+            SET last_used = CURRENT_TIMESTAMP,
+                usage = _usage + 1
             WHERE query_id = _queryID;
 
             RAISE INFO 'Using row count obtained % hours ago (will refresh after %)',
@@ -85,6 +88,7 @@ BEGIN
         End If;
     Else
         _queryID := -1;
+        _usage   := 0;
     End If;
 
     ------------------------------------------------
@@ -103,8 +107,8 @@ BEGIN
     INTO _rowCount;
 
     If _queryID <= 0 Then
-        INSERT INTO t_query_row_counts (object_name, where_clause, row_count)
-        VALUES (_objectName, _whereClause, _rowCount);
+        INSERT INTO t_query_row_counts (object_name, where_clause, row_count, usage)
+        VALUES (_objectName, _whereClause, _rowCount, 1);
 
         RETURN _rowCount;
     End If;
@@ -112,7 +116,8 @@ BEGIN
     UPDATE t_query_row_counts
     SET row_count = _rowCount,
         last_used = CURRENT_TIMESTAMP,
-        last_refresh = CURRENT_TIMESTAMP
+        last_refresh = CURRENT_TIMESTAMP,
+        usage = _usage + 1
     WHERE query_id = _queryID;
 
     RETURN _rowCount;
