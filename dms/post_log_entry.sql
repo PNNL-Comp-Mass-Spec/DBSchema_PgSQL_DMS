@@ -45,16 +45,19 @@ CREATE OR REPLACE PROCEDURE public.post_log_entry(IN _type text, IN _message tex
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          02/27/2024 mem - Log messages to t_log_entries_local when the target schema is 'logdms', 'logcap', or 'logsw'
+**          05/25/2024 mem - If _targetSchema is not public (or an empty string), but _type is 'Error', also log the error message to public.t_log_entries
 **
 *****************************************************/
 DECLARE
     _targetTable text;
     _targetTableWithSchema text;
+    _publicSchemaTargetTable text;
     _logTableFound boolean;
     _minimumPostingTime timestamp;
     _duplicateRowCount int := 0;
     _s text;
     _insertCount int;
+    _msg text;
     _sqlState text;
     _exceptionMessage text;
     _exceptionContext text;
@@ -74,14 +77,15 @@ BEGIN
         _targetTable := 't_log_entries_local';
     End If;
 
-    _targetTableWithSchema := format('%I.%I', _targetSchema, _targetTable);
+    _targetTableWithSchema   := format('%I.%I', _targetSchema, _targetTable);
+    _publicSchemaTargetTable := 'public.t_log_entries';
 
     SELECT table_exists
     INTO _logTableFound
     FROM public.resolve_table_name(_targetTableWithSchema);
 
     If Not _logTableFound Then
-        _targetTableWithSchema := 'public.t_log_entries';
+        _targetTableWithSchema := _publicSchemaTargetTable;
     End If;
 
     _type                       := Trim(Coalesce(_type, 'Normal'));
@@ -113,7 +117,6 @@ BEGIN
         EXECUTE _s
         INTO _duplicateRowCount
         USING _message, _type, _minimumPostingTime;
-
     End If;
 
     If _duplicateRowCount > 0 THEN
@@ -122,7 +125,7 @@ BEGIN
     End If;
 
     _s := format('INSERT INTO %s (posted_by, entered, type, message) '
-                 'VALUES ( $1, CURRENT_TIMESTAMP, $2, $3)',
+                 'VALUES ($1, CURRENT_TIMESTAMP, $2, $3)',
                  _targetTableWithSchema);
 
     EXECUTE _s
@@ -131,8 +134,28 @@ BEGIN
     GET DIAGNOSTICS _insertCount = ROW_COUNT;
 
     If _insertCount = 0 Then
-        _message := format('Warning: log message not added to %s', _targetTableWithSchema);
-        RAISE WARNING '%', _message;
+        _msg := format('Warning: log message not added to %s', _targetTableWithSchema);
+        RAISE WARNING '%', _msg;
+    End If;
+
+    If _type::citext = 'Error' And _targetSchema <> 'public' Then
+        -- Also log the error in public.t_log_entries so that we can query a single table to check for errors
+
+        _s := format('INSERT INTO %s (posted_by, entered, type, message) '
+                     'VALUES ($1, CURRENT_TIMESTAMP, $2, $3)',
+                     _publicSchemaTargetTable);
+
+        _message := format('%s schema: %s', _targetSchema, _message);
+
+        EXECUTE _s
+        USING _postedBy, _type, _message;
+        --
+        GET DIAGNOSTICS _insertCount = ROW_COUNT;
+
+        If _insertCount = 0 Then
+            _msg := format('Warning: log message not added to %s', _publicSchemaTargetTable);
+            RAISE WARNING '%', _msg;
+        End If;
     End If;
 
 EXCEPTION
