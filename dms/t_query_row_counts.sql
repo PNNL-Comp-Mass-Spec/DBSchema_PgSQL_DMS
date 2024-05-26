@@ -9,6 +9,7 @@ CREATE TABLE public.t_query_row_counts (
     row_count bigint DEFAULT 0 NOT NULL,
     last_used timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     last_refresh timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    usage integer DEFAULT 0 NOT NULL,
     refresh_interval_hours numeric DEFAULT 4 NOT NULL,
     entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
@@ -41,6 +42,12 @@ ALTER TABLE ONLY public.t_query_row_counts
 --
 
 CREATE INDEX ix_t_query_row_counts_object_name_include_where_clause_row_cnt ON public.t_query_row_counts USING btree (object_name) INCLUDE (where_clause, row_count, last_refresh, refresh_interval_hours, query_id);
+
+--
+-- Name: ix_t_query_row_counts_usage; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_query_row_counts_usage ON public.t_query_row_counts USING btree (usage);
 
 --
 -- Name: TABLE t_query_row_counts; Type: ACL; Schema: public; Owner: d3l243
