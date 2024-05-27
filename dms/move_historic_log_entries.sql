@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE public.move_historic_log_entries(IN _intervalhrs int
 **          08/26/2022 mem - Use new column name in T_Log_Entries
 **          02/23/2023 bcg - Rename procedure and parameters to a case-insensitive match to postgres
 **          08/01/2023 mem - Ported to PostgreSQL
+**          05/26/2024 mem - Use ON CONFLICT () to handle primary key conflicts
 **
 *****************************************************/
 DECLARE
@@ -52,7 +53,7 @@ BEGIN
         SELECT COUNT(entry_id)
         INTO _rowCount
         FROM public.t_log_entries
-        WHERE Entered < _cutoffDateTime AND
+        WHERE entered < _cutoffDateTime AND
              ( message IN ('Archive or update complete for all available tasks',
                            'Verfication complete for all available tasks',
                            'Capture complete for all available tasks') OR
@@ -75,7 +76,7 @@ BEGIN
         SELECT COUNT(entry_id)
         INTO _rowCount
         FROM public.t_log_entries
-        WHERE Entered < _cutoffDateTime;
+        WHERE entered < _cutoffDateTime;
 
         If _rowCount > 0 Then
             RAISE INFO 'Would move % old % from public.t_log_entries to logdms.t_log_entries (using threshold %)',
@@ -92,7 +93,7 @@ BEGIN
 
     -- Delete log entries that we do not want to move to the DMS Historic Log DB
     DELETE FROM public.t_log_entries
-    WHERE Entered < _cutoffDateTime AND
+    WHERE entered < _cutoffDateTime AND
          ( message IN ('Archive or update complete for all available tasks',
                        'Verfication complete for all available tasks',
                        'Capture complete for all available tasks') OR
@@ -103,19 +104,25 @@ BEGIN
            );
 
     -- Copy entries into the historic log tables
-    INSERT INTO logdms.t_log_entries (entry_id, posted_by, Entered, type, message)
+    INSERT INTO logdms.t_log_entries (entry_id, posted_by, entered, type, message)
     SELECT entry_id,
            posted_by,
-           Entered,
+           entered,
            type,
            message
     FROM public.t_log_entries
-    WHERE Entered < _cutoffDateTime
-    ORDER BY entry_id;
+    WHERE entered < _cutoffDateTime
+    ORDER BY entry_id
+    ON CONFLICT (entry_id)
+    DO UPDATE SET
+      posted_by  = EXCLUDED.posted_by,
+      entered    = EXCLUDED.entered,
+      type       = EXCLUDED.type,
+      message    = EXCLUDED.message;
 
     -- Remove the old entries from t_log_entries
     DELETE FROM public.t_log_entries
-    WHERE Entered < _cutoffDateTime;
+    WHERE entered < _cutoffDateTime;
 
 END
 $$;

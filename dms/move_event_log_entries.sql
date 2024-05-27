@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE public.move_event_log_entries(IN _intervaldays integ
 **          07/31/2012 mem - Renamed Historic Log DB from DMSHistoricLog1 to DMSHistoricLog
 **          06/08/2022 mem - Rename column Index to Event_ID
 **          08/01/2023 mem - Ported to PostgreSQL
+**          05/26/2024 mem - Use ON CONFLICT () to handle primary key conflicts
 **
 *****************************************************/
 DECLARE
@@ -76,7 +77,15 @@ BEGIN
            entered_by
     FROM public.t_event_log
     WHERE entered < _cutoffDateTime
-    ORDER BY event_id;
+    ORDER BY event_id
+    ON CONFLICT (event_id)
+    DO UPDATE SET
+      target_type       = EXCLUDED.target_type,
+      target_id         = EXCLUDED.target_id,
+      target_state      = EXCLUDED.target_state,
+      prev_target_state = EXCLUDED.prev_target_state,
+      entered           = EXCLUDED.entered,
+      entered_by        = EXCLUDED.entered_by;
 
     -- Remove the old entries from t_event_log
 
