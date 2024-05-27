@@ -14,6 +14,7 @@ CREATE OR REPLACE PROCEDURE dpkg.move_historic_log_entries(IN _infoholdoffweeks 
 **          08/26/2022 mem - Use new column name in T_Log_Entries
 **          08/15/2023 mem - Update the where clause filter for finding unimporant log entries
 **                         - Ported to PostgreSQL
+**          05/26/2024 mem - Use ON CONFLICT () to handle primary key conflicts
 **
 *****************************************************/
 DECLARE
@@ -82,7 +83,15 @@ BEGIN
     INSERT INTO logdms.t_log_entries_data_package (entry_id, posted_by, Entered, type, message)
     SELECT entry_id, posted_by, Entered, type, message
     FROM dpkg.t_log_entries
-    WHERE Entered < _cutoffDateTime;
+    WHERE Entered < _cutoffDateTime
+    ORDER BY entry_id
+    ON CONFLICT (entry_id)
+    DO UPDATE SET
+      posted_by  = EXCLUDED.posted_by,
+      entered    = EXCLUDED.entered,
+      type       = EXCLUDED.type,
+      message    = EXCLUDED.message;
+
 
     -- Remove the old entries from dpkg.t_log_entries
     DELETE FROM dpkg.t_log_entries
