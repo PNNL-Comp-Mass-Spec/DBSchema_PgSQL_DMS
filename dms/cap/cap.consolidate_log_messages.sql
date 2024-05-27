@@ -33,6 +33,7 @@ CREATE OR REPLACE FUNCTION cap.consolidate_log_messages(_messagetype text DEFAUL
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          05/26/2024 mem - Pass procedure name and schema to local_error_handler() since multiple schemas have procedure consolidate_log_messages
 **
 *****************************************************/
 DECLARE
@@ -224,7 +225,10 @@ EXCEPTION
 
     _message := local_error_handler (
                     _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                    _callingProcLocation => '', _logError => true);
+                    _callingProcLocation => _currentLocation,
+                    _callingProcName     => 'cleanup_operating_logs',
+                    _callingProcSchema   => 'cap',
+                    _logError            => true);
 
     RAISE WARNING '%', _message;
 
