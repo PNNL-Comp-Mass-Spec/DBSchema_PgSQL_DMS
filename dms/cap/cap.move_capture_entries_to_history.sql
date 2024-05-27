@@ -27,6 +27,8 @@ CREATE OR REPLACE PROCEDURE cap.move_capture_entries_to_history(IN _intervaldays
 **          05/13/2023 mem - Rename variables
 **          07/11/2023 mem - Use COUNT(job) and COUNT(entry_id) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
+**          05/26/2024 mem - Remove Commit statements
+**                         - Show debug messages that include the date cutoff for moving rows into logcap
 **
 *****************************************************/
 DECLARE
@@ -67,6 +69,7 @@ BEGIN
             End If;
 
         Else
+            RAISE INFO 'Copying data from cap.t_task_events to logcap.t_task_events, filtering on entered < %', public.timestamp_text(_cutoffDateTime);
 
             INSERT INTO logcap.t_task_events (
                 event_id,
@@ -105,7 +108,6 @@ BEGIN
             End If;
         End If;
 
-        COMMIT;
     END;
 
     ----------------------------------------------------------
@@ -126,6 +128,7 @@ BEGIN
             End If;
 
         Else
+            RAISE INFO 'Copying data from cap.t_task_step_events to logcap.t_task_step_events, filtering on entered < %', public.timestamp_text(_cutoffDateTime);
 
             INSERT INTO logcap.t_task_step_events (
                 event_id,
@@ -167,7 +170,6 @@ BEGIN
             End If;
         End If;
 
-        COMMIT;
     END;
 
     ----------------------------------------------------------
@@ -188,6 +190,7 @@ BEGIN
             End If;
 
         Else
+            RAISE INFO 'Copying data from cap.t_task_step_processing_log to logcap.t_task_step_processing_log, filtering on entered < %', public.timestamp_text(_cutoffDateTime);
 
             INSERT INTO logcap.t_task_step_processing_log (
                 event_id,
@@ -226,7 +229,6 @@ BEGIN
             End If;
         End If;
 
-        COMMIT;
     END;
 
     ----------------------------------------------------------
@@ -248,6 +250,7 @@ BEGIN
             End If;
 
         Else
+            RAISE INFO 'Copying data from cap.t_log_entries to logcap.t_log_entries, filtering on entered < %', public.timestamp_text(_cutoffDateTime);
 
             INSERT INTO logcap.t_log_entries (
                 entry_id,
@@ -286,7 +289,6 @@ BEGIN
             End If;
         End If;
 
-        COMMIT;
     END;
 
     ----------------------------------------------------------

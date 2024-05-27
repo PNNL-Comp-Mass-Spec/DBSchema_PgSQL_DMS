@@ -30,7 +30,9 @@ CREATE OR REPLACE PROCEDURE cap.cleanup_operating_logs(IN _infoholdoffweeks inte
 **          05/12/2023 mem - Rename variables
 **          07/11/2023 mem - Use COUNT(entry_id) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
+**          05/26/2024 mem - Remove Commit statements
 **                         - Pass procedure name and schema to local_error_handler() since multiple schemas have procedure cleanup_operating_logs
+**                         - Show a debug message that includes the date cutoff for deleting Info and Warn entries
 **
 *****************************************************/
 DECLARE
@@ -48,73 +50,69 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    ---------------------------------------------------
-    -- Validate the inputs
-    ---------------------------------------------------
-
-    If Coalesce(_infoHoldoffWeeks, 0) < 1 Then
-        _infoHoldoffWeeks := 1;
-    End If;
-
-    If Coalesce(_logRetentionIntervalDays, 0) < 14 Then
-        _logRetentionIntervalDays := 14;
-    End If;
-
-    _infoCutoffDateTime := CURRENT_TIMESTAMP - make_interval(weeks => _infoHoldoffWeeks);
-    _dateThreshold      := public.timestamp_text(_infoCutoffDateTime);
-
-    ----------------------------------------------------
-    -- Delete Info and Warn entries posted more than _infoHoldoffWeeks weeks ago
-    --
-    -- Typically only public.t_log_entries will have Info or Warn log messages,
-    -- so the following queries will likely not match any rows
-    ----------------------------------------------------
-
     BEGIN
-        _currentLocation := 'Delete Info and Warn entries';
+        ---------------------------------------------------
+        -- Validate the inputs
+        ---------------------------------------------------
 
-        If _infoOnly Then
-            SELECT COUNT(entry_id)
-            INTO _matchCount
-            FROM cap.t_log_entries
-            WHERE (entered < _infoCutoffDateTime) AND
-                  (type = 'info' OR
-                  (type = 'warn' AND message = 'Dataset Quality tool is not presently active') );
-
-            If _matchCount > 0 Then
-                RAISE INFO 'Would delete % rows from cap.t_log_entries since Info or Warn messages older than %', _matchCount, _dateThreshold;
-            Else
-                RAISE INFO 'All Info entries in cap.% are newer than %', RPAD('t_log_entries', 26, ' '), _dateThreshold;
-            End If;
-
-        Else
-
-            DELETE FROM cap.t_log_entries
-            WHERE (entered < _infoCutoffDateTime) AND
-                  (type = 'info' OR
-                  (type = 'warn' AND message = 'Dataset Quality tool is not presently active') );
-            --
-            GET DIAGNOSTICS _deleteCount = ROW_COUNT;
-
-            If _deleteCount > 0 Then
-                RAISE INFO 'Deleted % rows from cap.t_log_entries since Info or Warn messages older than %', _deleteCount, _dateThreshold;
-            End If;
+        If Coalesce(_infoHoldoffWeeks, 0) < 1 Then
+            _infoHoldoffWeeks := 1;
         End If;
 
-        COMMIT;
-    END;
+        If Coalesce(_logRetentionIntervalDays, 0) < 14 Then
+            _logRetentionIntervalDays := 14;
+        End If;
 
-    ----------------------------------------------------
-    -- Move old log entries and event entries to historic log tables
-    ----------------------------------------------------
+        _infoCutoffDateTime := CURRENT_TIMESTAMP - make_interval(weeks => _infoHoldoffWeeks);
+        _dateThreshold      := public.timestamp_text(_infoCutoffDateTime);
 
-    _currentLocation := 'Call cap.move_capture_entries_to_history';
+        ----------------------------------------------------
+        -- Delete Info and Warn entries posted more than _infoHoldoffWeeks weeks ago
+        --
+        -- Typically only public.t_log_entries will have Info or Warn log messages,
+        -- so the following queries will likely not match any rows
+        ----------------------------------------------------
 
-    CALL cap.move_capture_entries_to_history (_logRetentionIntervalDays, _infoOnly);
+        BEGIN
+            _currentLocation := 'Delete Info and Warn entries';
 
-    If _infoOnly Then
-        _message := 'See the output window for status messages';
-    End If;
+            If _infoOnly Then
+                SELECT COUNT(entry_id)
+                INTO _matchCount
+                FROM cap.t_log_entries
+                WHERE (entered < _infoCutoffDateTime) AND
+                      (type = 'info' OR
+                      (type = 'warn' AND message = 'Dataset Quality tool is not presently active') );
+
+                If _matchCount > 0 Then
+                    RAISE INFO 'Would delete % rows from cap.t_log_entries since Info or Warn messages older than %', _matchCount, _dateThreshold;
+                Else
+                    RAISE INFO 'All Info entries in cap.% are newer than %', RPAD('t_log_entries', 26, ' '), _dateThreshold;
+                End If;
+
+            Else
+                RAISE INFO 'Deleting Info and Warn entries from cap.t_log_entries where entered < %', public.timestamp_text(_infoCutoffDateTime);
+
+                DELETE FROM cap.t_log_entries
+                WHERE (entered < _infoCutoffDateTime) AND
+                      (type = 'info' OR
+                      (type = 'warn' AND message = 'Dataset Quality tool is not presently active') );
+                --
+                GET DIAGNOSTICS _deleteCount = ROW_COUNT;
+
+                If _deleteCount > 0 Then
+                    RAISE INFO 'Deleted % rows from cap.t_log_entries since Info or Warn messages older than %', _deleteCount, _dateThreshold;
+                End If;
+            End If;
+        END;
+
+        ----------------------------------------------------
+        -- Move old log entries and event entries to historic log tables
+        ----------------------------------------------------
+
+        _currentLocation := 'Call cap.move_capture_entries_to_history';
+
+        RAISE INFO 'Calling cap.move_capture_entries_to_history';
 
         CALL cap.move_capture_entries_to_history (_logRetentionIntervalDays, _infoOnly);
 
