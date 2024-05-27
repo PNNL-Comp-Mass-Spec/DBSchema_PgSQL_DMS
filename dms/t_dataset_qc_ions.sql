@@ -24,5 +24,5 @@ ALTER TABLE ONLY public.t_dataset_qc_ions
 --
 
 GRANT SELECT ON TABLE public.t_dataset_qc_ions TO readaccess;
-GRANT SELECT ON TABLE public.t_dataset_qc_ions TO writeaccess;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.t_dataset_qc_ions TO writeaccess;
 
