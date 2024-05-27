@@ -1,6 +1,7 @@
 --
 -- Name: add_analysis_job_group(text, integer, text, text, text, text, text, text, text, text, text, text, integer, integer, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
+-- Overload 1
 
 CREATE OR REPLACE PROCEDURE public.add_analysis_job_group(IN _datasetlist text, IN _priority integer, IN _toolname text, IN _paramfilename text, IN _settingsfilename text, IN _organismdbname text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _ownerusername text, IN _comment text, IN _specialprocessing text, IN _requestid integer DEFAULT 0, IN _datapackageid integer DEFAULT 0, IN _associatedprocessorgroup text DEFAULT ''::text, IN _propagationmode text DEFAULT 'Export'::text, IN _removedatasetswithjobs text DEFAULT 'Y'::text, IN _mode text DEFAULT 'preview'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
     LANGUAGE plpgsql
@@ -8,7 +9,8 @@ CREATE OR REPLACE PROCEDURE public.add_analysis_job_group(IN _datasetlist text, 
 /****************************************************
 **
 **  Desc:
-**      Create new analysis jobs for a set of datasets, typically using parameters from an analysis job request
+**      Create new analysis jobs for a set of datasets (or for a data package),
+**      typically using parameters from an analysis job request
 **
 **  Arguments:
 **    _datasetList                  Comma-separated list of dataset names; ignored if _dataPackageID is a positive integer
@@ -1127,4 +1129,119 @@ ALTER PROCEDURE public.add_analysis_job_group(IN _datasetlist text, IN _priority
 --
 
 COMMENT ON PROCEDURE public.add_analysis_job_group(IN _datasetlist text, IN _priority integer, IN _toolname text, IN _paramfilename text, IN _settingsfilename text, IN _organismdbname text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _ownerusername text, IN _comment text, IN _specialprocessing text, IN _requestid integer, IN _datapackageid integer, IN _associatedprocessorgroup text, IN _propagationmode text, IN _removedatasetswithjobs text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddAnalysisJobGroup';
+
+--
+-- Name: add_analysis_job_group(text, integer, text, text, text, text, text, text, text, text, text, text, integer, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+-- Overload 2
+
+CREATE OR REPLACE PROCEDURE public.add_analysis_job_group(IN _datasetlist text, IN _priority integer, IN _toolname text, IN _paramfilename text, IN _settingsfilename text, IN _organismdbname text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _ownerusername text, IN _comment text, IN _specialprocessing text, IN _requestid integer DEFAULT 0, IN _datapackageid text DEFAULT ''::text, IN _associatedprocessorgroup text DEFAULT ''::text, IN _propagationmode text DEFAULT 'Export'::text, IN _removedatasetswithjobs text DEFAULT 'Y'::text, IN _mode text DEFAULT 'preview'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
+/****************************************************
+**
+**  Desc:
+**      Create new analysis jobs for a set of datasets (or for a data package),
+**      typically using parameters from an analysis job request
+**
+**      This is an overloaded version of add_analysis_job_group where _dataPackageID is text
+**      This procedure is used by the DMS website, e.g. https://dmsdev2.pnl.gov/analysis_group/create/analysis_job_request/33323
+**
+**  Arguments:
+**    _datasetList                  Comma-separated list of dataset names; ignored if _dataPackageID is a positive integer
+**    _priority                     Job priority (1 means highest priority)
+**    _toolName                     Analysis tool name
+**    _paramFileName                Parameter file name
+**    _settingsFileName             Settings file name
+**    _organismDBName               Legacy FASTA name; 'na' if using protein collections
+**    _organismName                 Organism name
+**    _protCollNameList             Comma-separated list of protein collection names
+**    _protCollOptionsList          Protein collection options
+**    _ownerUsername                Owner username; will be updated to _callingUser if _callingUser is valid
+**    _comment                      Job comment
+**    _specialProcessing            Special processing parameters
+**    _requestID                    Analysis job request ID; 0 if not associated with a job request; otherwise, request ID in t_analysis_job_request
+**    _dataPackageID                Data package ID (integer, as text; allowed to be '')
+**    _associatedProcessorGroup     Processor group name; deprecated in May 2015
+**    _propagationMode              Propagation mode: 'Export', 'No Export'
+**    _removeDatasetsWithJobs       If 'N' or 'No', do not remove datasets with existing jobs (ignored if _dataPackageID is non-zero)
+**    _mode                         Mode: 'add' or 'preview'
+**    _message                      Status message
+**    _returnCode                   Return code
+**    _callingUser                  Username of the calling user
+**
+**  Auth:   mem
+**  Date:   05/26/2024 mem - Initial version
+**
+*****************************************************/
+DECLARE
+    _dataPackageIdValue int;
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
+BEGIN
+    _message := '';
+    _returnCode := '';
+
+    BEGIN
+        _dataPackageIdValue := public.try_cast(Coalesce(_dataPackageID, ''), 0);
+
+        -- Uncomment to log a debug message
+        --
+        -- _message := format('Calling add_analysis_job_group with _requestID %s and _dataPackageID %s', _requestID, _dataPackageID);
+        -- CALL post_log_entry('Debug', _message, 'add_analysis_job_group');
+        -- _message := '';
+
+        CALL add_analysis_job_group (
+                _datasetList                => _datasetList,
+                _priority                   => _priority,
+                _toolName                   => _toolName,
+                _paramFileName              => _paramFileName,
+                _settingsFileName           => _settingsFileName,
+                _organismDBName             => _organismDBName,
+                _organismName               => _organismName,
+                _protCollNameList           => _protCollNameList,
+                _protCollOptionsList        => _protCollOptionsList,
+                _ownerUsername              => _ownerUsername,
+                _comment                    => _comment,
+                _specialProcessing          => _specialProcessing,
+                _requestID                  => _requestID,
+                _dataPackageID              => _dataPackageIdValue,
+                _associatedProcessorGroup   => _associatedProcessorGroup,
+                _propagationMode            => _propagationMode,
+                _removeDatasetsWithJobs     => _removeDatasetsWithJobs,
+                _mode                       => _mode,
+                _message                    => _message,
+                _returnCode                 => _returnCode,
+                _callingUser                => _callingUser);
+
+        If (Coalesce(_dataPackageIdValue, 0) = 0) Then
+            _dataPackageID := '';
+        Else
+            _dataPackageID := _dataPackageIdValue::text;
+        End If;
+
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS
+                _sqlState         = returned_sqlstate,
+                _exceptionMessage = message_text,
+                _exceptionDetail  = pg_exception_detail,
+                _exceptionContext = pg_exception_context;
+
+        _message := local_error_handler (
+                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                        _callingProcLocation => '', _logError => true);
+
+        If Coalesce(_returnCode, '') = '' Then
+            _returnCode := _sqlState;
+        End If;
+    END;
+
+END
+$$;
+
+
+ALTER PROCEDURE public.add_analysis_job_group(IN _datasetlist text, IN _priority integer, IN _toolname text, IN _paramfilename text, IN _settingsfilename text, IN _organismdbname text, IN _organismname text, IN _protcollnamelist text, IN _protcolloptionslist text, IN _ownerusername text, IN _comment text, IN _specialprocessing text, IN _requestid integer, IN _datapackageid text, IN _associatedprocessorgroup text, IN _propagationmode text, IN _removedatasetswithjobs text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
 
