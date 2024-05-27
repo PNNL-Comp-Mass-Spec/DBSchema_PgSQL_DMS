@@ -110,8 +110,9 @@ BEGIN
 
     If _duplicateRate > 0.05 Then
 
-        _msg := format('More than 5%% of the uploads to MyEMSL involved uploading the same data package and subfolder 2 or more times; duplicate rate: %s%% for %s DataPkg/folder combos',
-                            Round(_duplicateRate * 100, 0), _dataPkgFolderUploads);
+        _msg := format('More than 5%% of the uploads to MyEMSL involved uploading the same data package and subfolder 2 or more times; '
+                       'duplicate rate: %s%% for %s DataPkg/folder combos',
+                       Round(_duplicateRate * 100, 0), _dataPkgFolderUploads);
 
         If _logErrors Then
             CALL public.post_log_entry ('Error', _msg, 'Check_For_MyEMSL_Errors', 'dpkg');
