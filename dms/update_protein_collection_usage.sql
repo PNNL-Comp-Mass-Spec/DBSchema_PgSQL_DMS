@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE public.update_protein_collection_usage(INOUT _messag
 **          05/19/2023 mem - Remove redundant parentheses
 **          07/10/2023 mem - Use COUNT(J.job) instead of COUNT(*)
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
+**          05/26/2024 mem - Fix bug that used the wrong source column when adding missing protein collection lists to t_cached_protein_collection_list_map
 **
 *****************************************************/
 DECLARE
@@ -66,22 +67,24 @@ BEGIN
 
         ---------------------------------------------------
         -- Update the usage counts in t_protein_collection_usage
-        -- We use tables t_cached_protein_collection_list_map and
-        -- t_cached_protein_collection_list_members to
-        -- minimize calls to public.parse_delimited_list
+        --
+        -- We use tables t_cached_protein_collection_list_map and t_cached_protein_collection_list_members
+        -- to minimize calls to public.parse_delimited_list
         ---------------------------------------------------
 
         -- First add any missing protein collection lists to t_cached_protein_collection_list_map
 
         INSERT INTO t_cached_protein_collection_list_map (protein_collection_list)
-        SELECT target.protein_collection_list
-        FROM t_cached_protein_collection_list_map Target
-             RIGHT OUTER JOIN ( SELECT J.protein_collection_list
-                                FROM t_analysis_job J
-                                GROUP BY J.protein_collection_list ) Source
-               ON Target.protein_collection_list = Source.protein_collection_list
+        SELECT SourceQ.protein_collection_list
+        FROM (SELECT J.protein_collection_list
+              FROM t_analysis_job J
+              WHERE NOT J.protein_collection_list Is Null
+              GROUP BY J.protein_collection_list
+             ) SourceQ
+             LEFT OUTER JOIN t_cached_protein_collection_list_map Target
+               ON Target.protein_collection_list = SourceQ.protein_collection_list
         WHERE Target.protein_collection_list IS NULL
-        ORDER BY target.protein_collection_list;
+        ORDER BY SourceQ.protein_collection_list;
 
         -- Next add missing rows to t_cached_protein_collection_list_members
 
