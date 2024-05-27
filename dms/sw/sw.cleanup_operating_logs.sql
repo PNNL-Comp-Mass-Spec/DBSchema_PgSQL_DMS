@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE sw.cleanup_operating_logs(IN _infoholdoffweeks integ
 **          02/23/2016 mem - Add set XACT_ABORT on
 **          08/25/2022 mem - Use new column name in T_Log_Entries
 **          08/01/2023 mem - Ported to PostgreSQL
+**          05/26/2024 mem - Pass procedure name and schema to local_error_handler() since multiple schemas have procedure cleanup_operating_logs
 **
 *****************************************************/
 DECLARE
@@ -38,7 +39,6 @@ BEGIN
     _returnCode := '';
 
     BEGIN
-
         ---------------------------------------------------
         -- Validate the inputs
         ---------------------------------------------------
@@ -100,7 +100,7 @@ BEGIN
                     _message    => _message,        -- Output
                     _returnCode => _returnCode);    -- Output
 
-   EXCEPTION
+    EXCEPTION
         WHEN OTHERS THEN
             GET STACKED DIAGNOSTICS
                 _sqlState         = returned_sqlstate,
@@ -110,7 +110,10 @@ BEGIN
 
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => _currentLocation, _logError => true);
+                        _callingProcLocation => _currentLocation,
+                        _callingProcName     => 'cleanup_operating_logs',
+                        _callingProcSchema   => 'sw',
+                        _logError            => true);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;

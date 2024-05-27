@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE cap.cleanup_operating_logs(IN _infoholdoffweeks inte
 **          05/12/2023 mem - Rename variables
 **          07/11/2023 mem - Use COUNT(entry_id) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
+**                         - Pass procedure name and schema to local_error_handler() since multiple schemas have procedure cleanup_operating_logs
 **
 *****************************************************/
 DECLARE
@@ -115,21 +116,31 @@ BEGIN
         _message := 'See the output window for status messages';
     End If;
 
-EXCEPTION
-    WHEN OTHERS THEN
-        GET STACKED DIAGNOSTICS
-            _sqlState         = returned_sqlstate,
-            _exceptionMessage = message_text,
-            _exceptionDetail  = pg_exception_detail,
-            _exceptionContext = pg_exception_context;
+        CALL cap.move_capture_entries_to_history (_logRetentionIntervalDays, _infoOnly);
 
-    _message := local_error_handler (
-                    _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                    _callingProcLocation => _currentLocation, _logError => true);
+        If _infoOnly Then
+            _message := 'See the output window for status messages';
+        End If;
 
-    If Coalesce(_returnCode, '') = '' Then
-        _returnCode := _sqlState;
-    End If;
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS
+                _sqlState         = returned_sqlstate,
+                _exceptionMessage = message_text,
+                _exceptionDetail  = pg_exception_detail,
+                _exceptionContext = pg_exception_context;
+
+        _message := local_error_handler (
+                        _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
+                        _callingProcLocation => _currentLocation,
+                        _callingProcName     => 'cleanup_operating_logs',
+                        _callingProcSchema   => 'cap',
+                        _logError            => true);
+
+        If Coalesce(_returnCode, '') = '' Then
+            _returnCode := _sqlState;
+        End If;
+    END;
 END
 $$;
 

@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE public.cleanup_operating_logs(IN _logretentioninterv
 **          06/09/2022 mem - Update default log retention interval
 **          08/01/2023 mem - Ported to PostgreSQL
 **          03/30/2024 mem - Remove unused variable
+**          05/26/2024 mem - Pass procedure name and schema to local_error_handler() since multiple schemas have procedure cleanup_operating_logs
 **
 *****************************************************/
 DECLARE
@@ -40,7 +41,6 @@ BEGIN
     _returnCode := '';
 
     BEGIN
-
         ---------------------------------------------------
         -- Validate the inputs
         ---------------------------------------------------
@@ -81,13 +81,15 @@ BEGIN
 
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => '', _logError => true);
+                        _callingProcLocation => _currentLocation,
+                        _callingProcName     => 'cleanup_operating_logs',
+                        _callingProcSchema   => 'public',
+                        _logError            => true);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
         End If;
     END;
-
 END
 $$;
 
