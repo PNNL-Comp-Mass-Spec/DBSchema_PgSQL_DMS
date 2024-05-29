@@ -11,8 +11,19 @@ CREATE OR REPLACE FUNCTION public.get_dataset_stats_by_campaign(_mostrecentweeks
 **      Return a table summarizing datasets stats, grouped by campaign, work package, and instrument over the given time frame
 **
 **  Arguments:
-**    _startDate   Ignored if _mostRecentWeeks is non-zero
-**    _endDate     Ignored if _mostRecentWeeks is non-zero
+**    _mostRecentWeeks              Summarize datasets created within this many weeks
+**                                  - If this is 0, uses _startDate and _endDate
+**                                  - However, if _startDate is not a valid date, CURRENT_TIMESTAMP - INTERVAL '20 weeks'
+**                                  - Also, if _endDate is not a valid date, uses CURRENT_TIMESTAMP
+**    _startDate                    Start date; ignored if _mostRecentWeeks is non-zero
+**    _endDate                      End date;   ignored if _mostRecentWeeks is non-zero
+**    _includeInstrument            When 1, include instrument name in the output (and group the stats by instrument); when 0, ignore instrument names
+**    _excludeQCAndBlankWithoutWP   When 1, exclude QC and Blank datasets that don't have a work package
+**    _excludeAllQCAndBlank         When 1, exclude all QC and Blank datasets
+**    _campaignNameFilter           Campaign next text to filter on
+**    _campaignNameExclude
+**    _instrumentBuilding
+**    _previewSql boolean
 **
 **  Auth:   mem
 **  Date:   06/07/2019 mem - Initial release
@@ -63,18 +74,22 @@ BEGIN
     End If;
 
     If _campaignNameFilter Like ':%' And char_length(_campaignNameFilter) > 1 Then
+        -- The campaign name filter starts with a colon; exclude campaigns with the given name, instead of including
+
         _campaignNameFilter := Substring(_campaignNameFilter, 2, char_length(_campaignNameFilter) - 1);
         _optionalCampaignNot := 'Not';
     End If;
 
     If _instrumentBuilding Like ':%' And char_length(_instrumentBuilding) > 1 Then
+        -- The instrument name filter starts with a colon; exclude instruments with the given name, instead of including
+
         _instrumentBuilding := Substring(_instrumentBuilding, 2, char_length(_instrumentBuilding) - 1);
         _optionalBuildingNot := 'Not';
     End If;
 
-    _campaignNameFilter := validate_wildcard_filter(_campaignNameFilter);
+    _campaignNameFilter  := validate_wildcard_filter(_campaignNameFilter);
     _campaignNameExclude := validate_wildcard_filter(_campaignNameExclude);
-    _instrumentBuilding := validate_wildcard_filter(_instrumentBuilding);
+    _instrumentBuilding  := validate_wildcard_filter(_instrumentBuilding);
 
     If _previewSql And _campaignNameFilter <> '' Then
         RAISE INFO 'Filtering on campaign name matching ''%''', _campaignNameFilter;
