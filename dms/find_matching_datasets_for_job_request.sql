@@ -2,7 +2,7 @@
 -- Name: find_matching_datasets_for_job_request(integer); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.find_matching_datasets_for_job_request(_requestid integer) RETURNS TABLE(dataset public.citext, jobs integer, new integer, busy integer, complete integer, failed integer, holding integer)
+CREATE OR REPLACE FUNCTION public.find_matching_datasets_for_job_request(_requestid integer) RETURNS TABLE(sel text, dataset public.citext, jobs integer, new integer, busy integer, complete integer, failed integer, holding integer)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -12,7 +12,6 @@ CREATE OR REPLACE FUNCTION public.find_matching_datasets_for_job_request(_reques
 **      (regardless of whether or not the job is linked to the request)
 **
 **      Used by web page https://dms2.pnl.gov/helper_aj_request_datasets_ckbx/param
-**      when it calls find_matching_datasets_for_job_request_proc
 **
 **  Auth:   grk
 **  Date:   01/08/2008 grk - Initial release
@@ -23,6 +22,7 @@ CREATE OR REPLACE FUNCTION public.find_matching_datasets_for_job_request(_reques
 **          06/09/2017 mem - Add support for state 13 (inactive)
 **          06/30/2022 mem - Rename parameter file argument
 **          07/13/2023 mem - Ported to PostgreSQL
+**          05/29/2024 mem - Add "Sel" column, which the web page renders as a checkbox
 **
 *****************************************************/
 DECLARE
@@ -130,7 +130,8 @@ BEGIN
     ---------------------------------------------------
 
     RETURN QUERY
-    SELECT M.Dataset,
+    SELECT '' AS Sel,
+           M.Dataset,
            M.Jobs,
            M.New,
            M.Busy,
@@ -139,7 +140,8 @@ BEGIN
            M.Holding
     FROM Tmp_MatchingJobDatasets M
     UNION
-    SELECT RD.Dataset,
+    SELECT '' AS Sel,
+           RD.dataset,
            0 AS Jobs,
            0 AS New,
            0 AS Busy,
