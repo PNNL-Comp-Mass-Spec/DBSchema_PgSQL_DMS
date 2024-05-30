@@ -27,10 +27,12 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_rules(_datasetname text, _
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          12/08/2023 mem - Add support for scan type inclusion or exclusion
+**          05/29/2024 mem - If the dataset name is invalid or no rules are matched, return a single row that includes the warning message
 **
 *****************************************************/
 DECLARE
     _message text;
+    _returnCode text;
 
     _datasetID int;
     _datasetRating smallint;
@@ -44,6 +46,7 @@ DECLARE
     _predefineID int;
 BEGIN
     _message := '';
+    _returnCode := '';
 
     _datasetName                := Trim(Coalesce(_datasetName, ''));
     _excludeDatasetsNotReleased := Coalesce(_excludeDatasetsNotReleased, true);
@@ -66,11 +69,12 @@ BEGIN
         _message := format('Dataset name not found in DMS: %s', _datasetName);
 
         RAISE WARNING '%', _message;
-        RETURN;
+
+        _returnCode := 'U5350';
     End If;
 
-    -- Only perform the following checks if the rating is less than 2
-    If _datasetRating < 2 And _datasetRating <> -10 Then
+    -- Only perform the following checks if the rating is less than 2 and not -10
+    If _returnCode = '' And _datasetRating < 2 And _datasetRating <> -10 Then
 
         If Not _excludeDatasetsNotReleased And _datasetRating In (-4, -5, -6) Then
             -- Allow the jobs to be created
@@ -86,9 +90,56 @@ BEGIN
                 _message := format('Dataset rating (%s) does not allow creation of jobs: %s', _datasetRating, _datasetName);
 
                 RAISE INFO '%', _message;
-                RETURN;
+
+                _returnCode := 'U5351';
             End If;
         End If;
+    End If;
+
+    If _returnCode <> '' Then
+
+        RETURN QUERY
+        SELECT
+            0,              -- step
+            0,              -- level
+            0,              -- seq
+            0,              -- predefine_id
+            0,              -- next_lvl
+            '',             -- trigger_mode
+            '',             -- export_mode
+            '',             -- action
+            _message,       -- reason
+            _returnCode,    -- notes
+            '',             -- analysis_tool
+            ''::citext,     -- instrument_class_criteria
+            ''::citext,     -- instrument_criteria
+            ''::citext,     -- instrument_exclusion
+            ''::citext,     -- campaign_criteria
+            ''::citext,     -- campaign_exclusion
+            ''::citext,     -- experiment_criteria
+            ''::citext,     -- experiment_exclusion
+            ''::citext,     -- exp_comment_criteria
+            ''::citext,     -- organism_criteria
+            ''::citext,     -- dataset_criteria
+            ''::citext,     -- dataset_exclusion
+            ''::citext,     -- dataset_type
+            ''::citext,     -- scan_type_criteria
+            ''::citext,     -- scan_type_exclusion
+            ''::citext,     -- labelling_inclusion
+            ''::citext,     -- labelling_exclusion
+            ''::citext,     -- separation_type_criteria
+            0,              -- scan_count_min
+            0,              -- scan_count_max
+            '',             -- param_file
+            '',             -- settings_file
+            '',             -- organism
+            '',             -- protein_collections
+            '',             -- protein_options
+            '',             -- organism_db
+            '',             -- special_processing
+            0;              -- priority
+
+        RETURN;
     End If;
 
     ---------------------------------------------------
