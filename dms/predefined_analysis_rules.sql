@@ -1,8 +1,8 @@
 --
--- Name: predefined_analysis_rules(text, boolean, text); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: predefined_analysis_rules(text, boolean, text, boolean); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.predefined_analysis_rules(_datasetname text, _excludedatasetsnotreleased boolean DEFAULT true, _analysistoolnamefilter text DEFAULT ''::text) RETURNS TABLE(step integer, level integer, seq integer, predefine_id integer, next_lvl integer, trigger_mode text, export_mode text, action text, reason text, notes text, analysis_tool text, instrument_class_criteria public.citext, instrument_criteria public.citext, instrument_exclusion public.citext, campaign_criteria public.citext, campaign_exclusion public.citext, experiment_criteria public.citext, experiment_exclusion public.citext, exp_comment_criteria public.citext, organism_criteria public.citext, dataset_criteria public.citext, dataset_exclusion public.citext, dataset_type public.citext, scan_type_criteria public.citext, scan_type_exclusion public.citext, labelling_inclusion public.citext, labelling_exclusion public.citext, separation_type_criteria public.citext, scan_count_min integer, scan_count_max integer, param_file text, settings_file text, organism text, protein_collections text, protein_options text, organism_db text, special_processing text, priority integer)
+CREATE OR REPLACE FUNCTION public.predefined_analysis_rules(_datasetname text, _excludedatasetsnotreleased boolean DEFAULT true, _analysistoolnamefilter text DEFAULT ''::text, _returnresultifnorulesfound boolean DEFAULT false) RETURNS TABLE(step integer, level integer, seq integer, predefine_id integer, next_lvl integer, trigger_mode text, export_mode text, action text, reason text, notes text, analysis_tool text, instrument_class_criteria public.citext, instrument_criteria public.citext, instrument_exclusion public.citext, campaign_criteria public.citext, campaign_exclusion public.citext, experiment_criteria public.citext, experiment_exclusion public.citext, exp_comment_criteria public.citext, organism_criteria public.citext, dataset_criteria public.citext, dataset_exclusion public.citext, dataset_type public.citext, scan_type_criteria public.citext, scan_type_exclusion public.citext, labelling_inclusion public.citext, labelling_exclusion public.citext, separation_type_criteria public.citext, scan_count_min integer, scan_count_max integer, param_file text, settings_file text, organism text, protein_collections text, protein_options text, organism_db text, special_processing text, priority integer)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_rules(_datasetname text, _
 **    _datasetName                      Dataset to evaluate
 **    _excludeDatasetsNotReleased       When true, excludes datasets with a rating of -5 (by default we exclude datasets with a rating < 2 and <> -10)
 **    _analysisToolNameFilter           If not blank, only considers predefines that match the given tool name (can contain wildcards)
+**    _returnResultIfNoRulesFound       When true, return a single row that includes the message 'No matching rules were found' in the "Reason" column
 **
 **  Auth:   mem
 **          11/08/2022 mem - Initial version
@@ -28,6 +29,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_rules(_datasetname text, _
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          12/08/2023 mem - Add support for scan type inclusion or exclusion
 **          05/29/2024 mem - If the dataset name is invalid or no rules are matched, return a single row that includes the warning message
+**                         - Add argument _returnResultIfNoRulesFound
 **
 *****************************************************/
 DECLARE
@@ -51,6 +53,7 @@ BEGIN
     _datasetName                := Trim(Coalesce(_datasetName, ''));
     _excludeDatasetsNotReleased := Coalesce(_excludeDatasetsNotReleased, true);
     _analysisToolNameFilter     := Trim(Coalesce(_analysisToolNameFilter, ''));
+    _returnResultIfNoRulesFound := Coalesce(_returnResultIfNoRulesFound, false);
 
     ----------------------------
     -- Rule selection section --
@@ -335,6 +338,52 @@ BEGIN
 
         DROP TABLE Tmp_Criteria;
         DROP TABLE Tmp_PredefineRuleEval;
+
+        If Not _returnResultIfNoRulesFound Then
+            RETURN;
+        End If;
+
+        RETURN QUERY
+        SELECT
+            0,              -- step
+            0,              -- level
+            0,              -- seq
+            0,              -- predefine_id
+            0,              -- next_lvl
+            '',             -- trigger_mode
+            '',             -- export_mode
+            '',             -- action
+            _message,       -- reason
+            '',             -- notes
+            '',             -- analysis_tool
+            ''::citext,     -- instrument_class_criteria
+            ''::citext,     -- instrument_criteria
+            ''::citext,     -- instrument_exclusion
+            ''::citext,     -- campaign_criteria
+            ''::citext,     -- campaign_exclusion
+            ''::citext,     -- experiment_criteria
+            ''::citext,     -- experiment_exclusion
+            ''::citext,     -- exp_comment_criteria
+            ''::citext,     -- organism_criteria
+            ''::citext,     -- dataset_criteria
+            ''::citext,     -- dataset_exclusion
+            ''::citext,     -- dataset_type
+            ''::citext,     -- scan_type_criteria
+            ''::citext,     -- scan_type_exclusion
+            ''::citext,     -- labelling_inclusion
+            ''::citext,     -- labelling_exclusion
+            ''::citext,     -- separation_type_criteria
+            0,              -- scan_count_min
+            0,              -- scan_count_max
+            '',             -- param_file
+            '',             -- settings_file
+            '',             -- organism
+            '',             -- protein_collections
+            '',             -- protein_options
+            '',             -- organism_db
+            '',             -- special_processing
+            0;              -- priority
+
         RETURN;
     End If;
 
@@ -513,11 +562,11 @@ END
 $$;
 
 
-ALTER FUNCTION public.predefined_analysis_rules(_datasetname text, _excludedatasetsnotreleased boolean, _analysistoolnamefilter text) OWNER TO d3l243;
+ALTER FUNCTION public.predefined_analysis_rules(_datasetname text, _excludedatasetsnotreleased boolean, _analysistoolnamefilter text, _returnresultifnorulesfound boolean) OWNER TO d3l243;
 
 --
--- Name: FUNCTION predefined_analysis_rules(_datasetname text, _excludedatasetsnotreleased boolean, _analysistoolnamefilter text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION predefined_analysis_rules(_datasetname text, _excludedatasetsnotreleased boolean, _analysistoolnamefilter text, _returnresultifnorulesfound boolean); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.predefined_analysis_rules(_datasetname text, _excludedatasetsnotreleased boolean, _analysistoolnamefilter text) IS 'Implements modes "Show Rules" from EvaluatePredefinedAnalysisRules';
+COMMENT ON FUNCTION public.predefined_analysis_rules(_datasetname text, _excludedatasetsnotreleased boolean, _analysistoolnamefilter text, _returnresultifnorulesfound boolean) IS 'Implements modes "Show Rules" from EvaluatePredefinedAnalysisRules';
 

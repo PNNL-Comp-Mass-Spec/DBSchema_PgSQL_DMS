@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE public.predefined_analysis_rules_proc(IN _datasetnam
 **          01/27/2023 mem - Rename columns in the query results
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          05/29/2024 mem - Change the _results parameter to INOUT (the DMS website can only retrieve the query results if it is an output parameter)
+**                         - Set _returnResultIfNoRulesFound to true when querying predefined_analysis_rules()
 **
 *****************************************************/
 DECLARE
@@ -91,7 +92,8 @@ BEGIN
         FROM public.predefined_analysis_rules(
                         _datasetName,
                         _excludeDatasetsNotReleased => _excludeDatasetsNotReleased,
-                        _analysisToolNameFilter     => _analysisToolNameFilter);
+                        _analysisToolNameFilter     => _analysisToolNameFilter,
+                        _returnResultIfNoRulesFound => true);
 
 EXCEPTION
     WHEN OTHERS THEN
@@ -112,5 +114,5 @@ END
 $$;
 
 
-ALTER PROCEDURE public.predefined_analysis_rules_proc(IN _datasetname text, IN _results refcursor, INOUT _message text, INOUT _returncode text, IN _excludedatasetsnotreleased boolean, IN _analysistoolnamefilter text) OWNER TO d3l243;
+ALTER PROCEDURE public.predefined_analysis_rules_proc(IN _datasetname text, INOUT _results refcursor, INOUT _message text, INOUT _returncode text, IN _excludedatasetsnotreleased boolean, IN _analysistoolnamefilter text) OWNER TO d3l243;
 
