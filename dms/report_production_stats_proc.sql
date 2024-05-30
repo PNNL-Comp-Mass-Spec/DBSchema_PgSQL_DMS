@@ -189,6 +189,7 @@ CREATE OR REPLACE PROCEDURE public.report_production_stats_proc(IN _startdate te
 **
 **  Auth:   mem
 **  Date:   02/20/2024 mem - Initial version
+**          05/29/2024 mem - Move the Proposal_Type column to the right of the Instrument column
 **
 *****************************************************/
 DECLARE
@@ -215,6 +216,7 @@ BEGIN
         If _includeProposalType > 0 Then
             Open _results For
                 SELECT Src.instrument,
+                       Src.proposal_type,
                        Src.total_datasets,
                        Src.days_in_range,
                        Src.datasets_per_day,
@@ -240,7 +242,6 @@ BEGIN
                        Src.pct_study_specific_datasets,
                        Src.pct_ef_study_specific_datasets,
                        Src.pct_ef_study_specific_by_acqtime,
-                       Src.proposal_type,
                        Src.inst
                 FROM report_production_stats(_startDate, _endDate, _productionOnly, _campaignIDFilterList, _eusUsageFilterList, _instrumentFilterList, _includeProposalType) AS Src
                 ORDER BY Src.instrument;
