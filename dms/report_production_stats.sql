@@ -65,6 +65,8 @@ CREATE OR REPLACE FUNCTION public.report_production_stats(_startdate text, _endd
 **          03/17/2023 mem - Add @includeProposalType
 **          03/20/2023 mem - Treat proposal types 'Capacity' and 'Staff Time' as EMSL funded
 **          02/19/2024 mem - Ported to PostgreSQL
+**          05/29/2024 mem - Do not update t_log_entries for data validation errors
+**                         - Instead, return a single row that has the error message in the instrument column
 **
 *****************************************************/
 DECLARE
@@ -74,6 +76,7 @@ DECLARE
     _eDate timestamp;
     _message text;
     _returnCode text;
+    _logErrors boolean := true;
     _valueList text;
     _eDateAlternate timestamp;
     _datasetInfo record;
@@ -82,6 +85,7 @@ DECLARE
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
+    _msg citext;
 BEGIN
 
     BEGIN
@@ -122,6 +126,8 @@ BEGIN
                 DROP TABLE Tmp_CampaignFilter;
                 RETURN;
             Else
+                -- Invalid campaign ID(s)
+                _logErrors := false;
                 RAISE EXCEPTION '%', _message;
             End If;
         End If;
@@ -150,6 +156,8 @@ BEGIN
 
                 RETURN;
             Else
+                -- Invalid instrument(s)
+                _logErrors := false;
                 RAISE EXCEPTION '%', _message;
             End If;
         End If;
@@ -201,6 +209,8 @@ BEGIN
 
                     RETURN;
                 Else
+                    -- Invalid usage types(s)
+                    _logErrors := false;
                     RAISE EXCEPTION '%', _message;
                 End If;
             End If;
@@ -241,6 +251,8 @@ BEGIN
 
                 RETURN;
             Else
+                -- Could not resolve start and end dates
+                _logErrors := false;
                 RAISE EXCEPTION '%', _message;
             End If;
         End If;
@@ -721,14 +733,51 @@ BEGIN
                 _exceptionDetail  = pg_exception_detail,
                 _exceptionContext = pg_exception_context;
 
+        _msg := _exceptionMessage;
+
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => '', _logError => true);
+                        _callingProcLocation => '', _logError => _logErrors);
 
         RAISE WARNING '%', _message;
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
+        End If;
+
+        If Not _logErrors Then
+            -- There was a data validation error
+            -- Return a single row, displaying the error message in the instrument column
+
+            RETURN QUERY
+            SELECT _msg,                -- instrument
+                   0::numeric,          -- total_datasets
+                   0,                   -- days_in_range
+                   0::numeric,          -- datasets_per_day
+                   0::numeric,          -- blank_datasets
+                   0::numeric,          -- qc_datasets
+                   0::numeric,          -- bad_datasets
+                   0::numeric,          -- study_specific_datasets
+                   0::numeric,          -- study_specific_datasets_per_day
+                   0::numeric,          -- emsl_funded_study_specific_datasets
+                   0::numeric,          -- ef_study_specific_datasets_per_day
+                   0::numeric,          -- total_acqtimedays
+                   0::numeric,          -- study_specific_acqtimedays
+                   0::numeric,          -- ef_total_acqtimedays
+                   0::numeric,          -- ef_study_specific_acqtimedays
+                   0::numeric,          -- hours_acqtime_per_day
+                   ''::citext,          -- inst_
+                   0,                   -- pct_inst_emsl_owned
+                   0::numeric,          -- ef_total_datasets
+                   0::numeric,          -- ef_datasets_per_day
+                   0::numeric,          -- pct_blank_datasets
+                   0::numeric,          -- pct_qc_datasets
+                   0::numeric,          -- pct_bad_datasets
+                   0::numeric,          -- pct_study_specific_datasets
+                   0::numeric,          -- pct_ef_study_specific_datasets
+                   0::numeric,          -- pct_ef_study_specific_by_acqtime
+                   ''::citext,          -- proposal_type
+                   _returnCode::citext; -- inst
         End If;
     END;
 

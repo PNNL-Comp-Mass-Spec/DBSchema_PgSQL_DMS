@@ -24,6 +24,7 @@ CREATE OR REPLACE FUNCTION public.report_tissue_usage_stats(_startdate text, _en
 **  Auth:   mem
 **  Date:   07/23/2019 mem - Initial version
 **          02/20/2024 mem - Ported to PostgreSQL
+**          05/29/2024 mem - For data validation errors, return a single row that has the error message in the instrument_last column
 **
 *****************************************************/
 DECLARE
@@ -40,6 +41,7 @@ DECLARE
     _exceptionMessage text;
     _exceptionDetail text;
     _exceptionContext text;
+    _msg citext;
 BEGIN
 
     BEGIN
@@ -256,12 +258,32 @@ BEGIN
                 _exceptionDetail  = pg_exception_detail,
                 _exceptionContext = pg_exception_context;
 
+        _msg := _exceptionMessage;
+
         If _logErrors Then
             _message := local_error_handler (
                             _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
                             _callingProcLocation => '', _logError => true);
         Else
             _message := _exceptionMessage;
+
+            -- There was a data validation error
+            -- Return a single row, displaying the error message in the instrument_last column
+
+            RETURN QUERY
+            SELECT ''::citext,         -- tissue_id
+                   ''::citext,         -- tissue
+                   0,                  -- experiments
+                   0,                  -- datasets
+                   0,                  -- instruments
+                   'Warning'::citext,  -- instrument_first
+                   _msg,               -- instrument_last
+                   null::timestamp,    -- dataset_or_exp_created_min
+                   null::timestamp,    -- dataset_or_exp_created_max
+                   ''::citext,         -- organism_first
+                   ''::citext,         -- organism_last
+                   ''::citext,         -- campaign_first
+                   ''::citext;         -- campaign_last
         End If;
 
         RAISE WARNING '%', _message;
