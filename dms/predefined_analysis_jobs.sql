@@ -118,10 +118,7 @@ BEGIN
             RAISE WARNING '%', _message;
         End If;
 
-        If _returnCode = '' Then
-            _returnCode := 'U5350';
-        End If;
-
+        _returnCode := 'U5350';
     End If;
 
     -- Only perform the following checks if the rating is less than 2
@@ -149,7 +146,6 @@ BEGIN
                 End If;
 
                 _returnCode := 'U5351';
-
             End If;
         End If;
     End If;
@@ -358,10 +354,10 @@ BEGIN
     -- Get number of existing jobs for dataset
     ---------------------------------------------------
 
-    SELECT COUNT(job)
+    SELECT COUNT(J.job)
     INTO _existingJobCount
-    FROM t_analysis_job
-    WHERE dataset_id = _datasetID;
+    FROM t_analysis_job J
+    WHERE J.dataset_id = _datasetID;
 
     ---------------------------------------------------
     -- Get list of jobs to create
