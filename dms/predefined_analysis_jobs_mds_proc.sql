@@ -2,7 +2,7 @@
 -- Name: predefined_analysis_jobs_mds_proc(text, refcursor, text, text, boolean, boolean, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.predefined_analysis_jobs_mds_proc(IN _datasetlist text, IN _results refcursor DEFAULT '_results'::refcursor, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _excludedatasetsnotreleased boolean DEFAULT true, IN _createjobsforunrevieweddatasets boolean DEFAULT true, IN _analysistoolnamefilter text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.predefined_analysis_jobs_mds_proc(IN _datasetlist text, INOUT _results refcursor DEFAULT '_results'::refcursor, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _excludedatasetsnotreleased boolean DEFAULT true, IN _createjobsforunrevieweddatasets boolean DEFAULT true, IN _analysistoolnamefilter text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -25,7 +25,8 @@ CREATE OR REPLACE PROCEDURE public.predefined_analysis_jobs_mds_proc(IN _dataset
 **
 **      BEGIN;
 **          CALL public.predefined_analysis_jobs_mds_proc (
-**              _datasetList => 'QC_Mam_19_01_d_09Aug22_Pippin_WBEH-22-02-04-50u, QC_Mam_19_01_a_09Aug22_Pippin_WBEH-22-02-04-50u, QC_Mam_19_01_Run-1_09Aug22_Oak_WBEH_22-06-17'
+**              _datasetList => 'QC_Mam_19_01_d_09Aug22_Pippin_WBEH-22-02-04-50u, QC_Mam_19_01_a_09Aug22_Pippin_WBEH-22-02-04-50u, QC_Mam_19_01_Run-1_09Aug22_Oak_WBEH_22-06-17',
+**              _excludeDatasetsNotReleased => true
 **          );
 **          FETCH ALL FROM _results;
 **      END;
@@ -37,6 +38,7 @@ CREATE OR REPLACE PROCEDURE public.predefined_analysis_jobs_mds_proc(IN _dataset
 **                         - Show legacy FASTA file name after the protein collection info
 **          02/08/2023 mem - Switch from PRN to username
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          05/29/2024 mem - Change the _results parameter to INOUT (the DMS website can only retrieve the query results if it is an output parameter)
 **
 *****************************************************/
 DECLARE

@@ -2,7 +2,7 @@
 -- Name: predefined_analysis_rules_proc(text, refcursor, text, text, boolean, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.predefined_analysis_rules_proc(IN _datasetname text, IN _results refcursor DEFAULT '_results'::refcursor, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _excludedatasetsnotreleased boolean DEFAULT true, IN _analysistoolnamefilter text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.predefined_analysis_rules_proc(IN _datasetname text, INOUT _results refcursor DEFAULT '_results'::refcursor, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _excludedatasetsnotreleased boolean DEFAULT true, IN _analysistoolnamefilter text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -24,7 +24,8 @@ CREATE OR REPLACE PROCEDURE public.predefined_analysis_rules_proc(IN _datasetnam
 **
 **      BEGIN;
 **          CALL public.predefined_analysis_rules_proc (
-**              _datasetName => 'QC_Mam_19_01_d_09Aug22_Pippin_WBEH-22-02-04-50u'
+**              _datasetName => 'QC_Mam_19_01_d_09Aug22_Pippin_WBEH-22-02-04-50u',
+**              _excludeDatasetsNotReleased => true
 **          );
 **          FETCH ALL FROM _results;
 **      END;
@@ -33,6 +34,7 @@ CREATE OR REPLACE PROCEDURE public.predefined_analysis_rules_proc(IN _datasetnam
 **  Date:   11/08/2022 mem - Initial version
 **          01/27/2023 mem - Rename columns in the query results
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          05/29/2024 mem - Change the _results parameter to INOUT (the DMS website can only retrieve the query results if it is an output parameter)
 **
 *****************************************************/
 DECLARE
