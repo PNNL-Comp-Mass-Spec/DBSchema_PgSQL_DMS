@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE public.predefined_analysis_jobs_proc(IN _datasetname
 **          02/08/2023 mem - Switch from PRN to username
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          05/29/2024 mem - Change the _results parameter to INOUT (the DMS website can only retrieve the query results if it is an output parameter)
+**                         - If function predefined_analysis_jobs() does not return any rows, display the error message in the Comment column in the returned results
 **
 *****************************************************/
 DECLARE
@@ -123,8 +124,8 @@ BEGIN
 
     If Not FOUND Then
         _message := format('Function predefined_analysis_jobs did not return any results for dataset %s', _datasetName);
-        RAISE WARNING '%', _message;
 
+        RAISE WARNING '%', _message;
         _returnCode := 'U5203';
     End If;
 
@@ -135,6 +136,11 @@ BEGIN
         WHERE id <= 0
         LIMIT 1;
 
+        If Not FOUND Then
+            _message := format('Function predefined_analysis_jobs did not return any results for dataset %s', _datasetName);
+        End If;
+
+        RAISE WARNING '%', _message;
         _returnCode := 'U5202';
     End If;
 
@@ -168,7 +174,10 @@ BEGIN
                 existing_job_count AS jobs,
                 analysis_tool_name AS tool,
                 priority AS pri,
-                comment,
+                CASE WHEN id <= 0 AND _returnCode <> ''
+                     THEN _message
+                     ELSE comment
+                END,
                 param_file_name AS param_file,
                 settings_file_name AS settings_file,
                 organism_name AS organism,
@@ -202,5 +211,5 @@ END;
 $$;
 
 
-ALTER PROCEDURE public.predefined_analysis_jobs_proc(IN _datasetname text, IN _results refcursor, INOUT _message text, INOUT _returncode text, IN _excludedatasetsnotreleased boolean, IN _createjobsforunrevieweddatasets boolean, IN _analysistoolnamefilter text) OWNER TO d3l243;
+ALTER PROCEDURE public.predefined_analysis_jobs_proc(IN _datasetname text, INOUT _results refcursor, INOUT _message text, INOUT _returncode text, IN _excludedatasetsnotreleased boolean, IN _createjobsforunrevieweddatasets boolean, IN _analysistoolnamefilter text) OWNER TO d3l243;
 
