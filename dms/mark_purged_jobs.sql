@@ -18,7 +18,7 @@ CREATE OR REPLACE PROCEDURE public.mark_purged_jobs(IN _joblist text, IN _infoon
 **
 **  Auth:   mem
 **  Date:   06/13/2012 grk - Initial version
-**          12/15/2024 mem - Ported to PostgreSQL
+**          02/15/2024 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
